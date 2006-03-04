@@ -85,7 +85,7 @@ $ALLOWED_TAGS =
  * @global string $ALLOWED_PROTOCOLS
  */
 $ALLOWED_PROTOCOLS = array('http', 'https', 'ftp', 'news', 'mailto', 'rtsp', 'teamspeak', 'gopher', 'mms',
-                           'color', 'callto', 'cursor', 'text-align', 'font-size', 'font-weight', 'font-style', 
+                           'color', 'callto', 'cursor', 'text-align', 'font-size', 'font-weight', 'font-style',
                            'border', 'margin', 'padding');   // CSS as well to get through kses
 
 
@@ -660,7 +660,7 @@ function close_window($delay=0) {
  * @param    type description
  * @todo Finish documenting this function
  */
-function choose_from_menu ($options, $name, $selected='', $nothing='choose', $script='', 
+function choose_from_menu ($options, $name, $selected='', $nothing='choose', $script='',
                            $nothingvalue='0', $return=false, $disabled=false, $tabindex=0) {
 
     if ($nothing == 'choose') {
@@ -763,7 +763,7 @@ function choose_from_menu_nested($options,$name,$selected='',$nothing='choose',$
 
 /**
  * Given an array of values, creates a group of radio buttons to be part of a form
- * 
+ *
  * @param array  $options  An array of value-label pairs for the radio group (values as keys)
  * @param string $name     Name of the radiogroup (unique in the form)
  * @param string $checked  The value that is already checked
@@ -867,7 +867,7 @@ function print_textfield ($name, $value, $alt = '',$size=50,$maxlength= 0,$retur
     $htmlid = 'auto-tf'.sprintf('%04d', ++$idcounter);
     $output  = '<span class="textfield '.$name."\">";
     $output .= '<input name="'.$name.'" id="'.$htmlid.'" type="text" value="'.$value.'" size="'.$size.'" '.$maxlength.' alt="'.$alt.'" />';
- 
+
     $output .= '</span>'."\n";
 
     if (empty($return)) {
@@ -1219,7 +1219,7 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
     }
 
     $CFG->currenttextiscacheable = true;   // Default status - can be changed by any filter
-    
+
     switch ($format) {
         case FORMAT_HTML:
             if (!empty($options->smiley)) {
@@ -1234,7 +1234,7 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
             break;
 
         case FORMAT_PLAIN:
-            $text = s($text); 
+            $text = s($text);
             $text = rebuildnolinktag($text);
             $text = str_replace('  ', '&nbsp; ', $text);
             $text = nl2br($text);
@@ -1256,7 +1256,7 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
             if (empty($options->noclean)) {
                 $text = clean_text($text, $format);
             }
-            
+
             if (!empty($options->filter)) {
                 $text = filter_text($text, $courseid);
             }
@@ -1267,7 +1267,7 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
             if (empty($options->noclean)) {
                 $text = clean_text($text, $format);
             }
-            
+
             if (!empty($options->filter)) {
                 $text = filter_text($text, $courseid);
             }
@@ -1287,7 +1287,7 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
 /** Converts the text format from the value to the 'internal'
  *  name or vice versa. $key can either be the value or the name
  *  and you get the other back.
- *  
+ *
  *  @param mixed int 0-4 or string one of 'moodle','html','plain','markdown'
  *  @return mixed as above but the other way around!
  */
@@ -1831,7 +1831,7 @@ function print_header ($title='', $heading='', $navigation='', $focus='', $meta=
                        $cache=true, $button='&nbsp;', $menu='', $usexml=false, $bodytags='') {
 
     global $USER, $CFG, $THEME, $SESSION, $ME, $SITE, $HTTPSPAGEREQUIRED;
-    
+
 /// This is an ugly hack to be replaced later by a proper global $COURSE
     global $course;
     if (!empty($course->lang)) {
@@ -3143,38 +3143,42 @@ function print_textarea($usehtmleditor, $rows, $cols, $width, $height, $name, $v
     $mincols = 65;
     $minrows = 10;
 
-    if (empty($courseid)) {
-        if (!empty($course->id)) {  // search for it in global context
-            $courseid = $course->id;
-        }
-    }
-
-    if (empty($scriptcount)) {
-        $scriptcount = 0;
-    }
-
-    if ($usehtmleditor) {
-
-        if (!empty($courseid) and isteacher($courseid)) {
-            echo ($scriptcount < 1) ? '<script type="text/javascript" src="'. $CFG->wwwroot .'/lib/editor/htmlarea.php?id='. $courseid .'"></script>'."\n" : '';
-        } else {
-            echo ($scriptcount < 1) ? '<script type="text/javascript" src="'. $CFG->wwwroot .'/lib/editor/htmlarea.php"></script>'."\n" : '';
-        }
-        echo ($scriptcount < 1) ? '<script type="text/javascript" src="'. $CFG->wwwroot .'/lib/editor/lang/en.php"></script>'."\n" : '';
-        $scriptcount++;
-
-        if ($height) {    // Usually with legacy calls
-            if ($rows < $minrows) {
-                $rows = $minrows;
+    if ( empty($CFG->editorsrc) ) { // for backward compatibility.
+        if (empty($courseid)) {
+            if (!empty($course->id)) {  // search for it in global context
+                $courseid = $course->id;
             }
         }
-        if ($width) {    // Usually with legacy calls
-            if ($cols < $mincols) {
-                $cols = $mincols;
+
+        if (empty($scriptcount)) {
+            $scriptcount = 0;
+        }
+
+        if ($usehtmleditor) {
+
+            if (!empty($courseid) and isteacher($courseid)) {
+                echo ($scriptcount < 1) ? '<script type="text/javascript" src="'.
+                $CFG->wwwroot .'/lib/editor/htmlarea/htmlarea.php?id='. $courseid .'"></script>'."\n" : '';
+            } else {
+                echo ($scriptcount < 1) ? '<script type="text/javascript" src="'.
+                $CFG->wwwroot .'/lib/editor/htmlarea/htmlarea.php"></script>'."\n" : '';
+            }
+            echo ($scriptcount < 1) ? '<script type="text/javascript" src="'.
+            $CFG->wwwroot .'/lib/editor/htmlarea/lang/en.php"></script>'."\n" : '';
+            $scriptcount++;
+
+            if ($height) {    // Usually with legacy calls
+                if ($rows < $minrows) {
+                    $rows = $minrows;
+                }
+            }
+            if ($width) {    // Usually with legacy calls
+                if ($cols < $mincols) {
+                    $cols = $mincols;
+                }
             }
         }
     }
-
     echo '<textarea id="edit-'. $name .'" name="'. $name .'" rows="'. $rows .'" cols="'. $cols .'">';
     if ($usehtmleditor) {
         echo htmlspecialchars(stripslashes_safe($value)); // needed for editing of cleaned text!
@@ -3287,7 +3291,7 @@ function update_studentview_button($courseid) {
 function update_mymoodle_icon() {
 
     global $CFG, $USER;
-    
+
     if (!empty($USER->editing)) {
         $string = get_string('updatemymoodleoff');
         $edit = 'off';
@@ -4230,7 +4234,7 @@ function obfuscate_mailto($email, $label='', $dimmed=false) {
  * @param int $totalcount Thetotal number of entries available to be paged through
  * @param int $page The page you are currently viewing
  * @param int $perpage The number of entries that should be shown per page
- * @param string $baseurl The url which will be used to create page numbered links. Each page will consist of the base url appended by the page 
+ * @param string $baseurl The url which will be used to create page numbered links. Each page will consist of the base url appended by the page
 var an equal sign, then the page number.
  * @param string $pagevar This is the variable name that you use for the page number in your code (ie. 'tablepage', 'blogpage', etc)
  */
@@ -4308,14 +4312,14 @@ function print_side_block($heading='', $content='', $list=NULL, $icons=NULL, $fo
     global $CFG;
     static $block_id = 0;
     $block_id++;
-    $skip_link = "<a href='#sb-$block_id' title='Skip block' class='skip-block'><img alt='Skip block' src='$CFG->wwwroot/pix/spacer.gif' /></a>"; 
+    $skip_link = "<a href='#sb-$block_id' title='Skip block' class='skip-block'><img alt='Skip block' src='$CFG->wwwroot/pix/spacer.gif' /></a>";
     $skip_dest = "<span id='sb-$block_id' class='skip-block-to'>&nbsp;</span>";
     if (! empty($heading)) {
         $heading .= $skip_link;
     } else {
         echo $skip_link;
     }
-    
+
     print_side_block_start($heading, $attributes);
 
     if ($content) {
@@ -4337,7 +4341,7 @@ function print_side_block($heading='', $content='', $list=NULL, $icons=NULL, $fo
                 echo "</li>\n";
                 $row = $row ? 0:1;
             }
-            echo "</ul>\n";         
+            echo "</ul>\n";
         }
         if ($footer) {
             echo '<div class="footer">'. $footer .'</div>';
@@ -4391,11 +4395,11 @@ function print_side_block_start($heading='', $attributes = array()) {
 
     echo '<div '.$attrtext.'>';
     if ($heading) {
-    	//Accessibility: replaced <div> with H2 - required mods, moodleblock.class.php:_title_html
-    	echo '<h2 class="header">'.$heading.'</h2>';
+        //Accessibility: replaced <div> with H2 - required mods, moodleblock.class.php:_title_html
+        echo '<h2 class="header">'.$heading.'</h2>';
     }
     echo '<div class="content">';
-        
+
 }
 
 
@@ -4612,7 +4616,7 @@ class tabobject {
     /// Set the class for inactive cells
         if ($inactive) {
             $cstr .= ' inactive';
-            
+
         /// Set the class for active cells in the second row
             if ($activetwo) {
                 $cstr .= ' activetwo';
@@ -4685,7 +4689,7 @@ function print_tabs($tabrows, $selected=NULL, $inactive=NULL, $activetwo=NULL, $
     if (!is_array($inactive)) {
         $inactive = array();
     }
-    
+
 /// $activetwo must be an array
     if (!is_array($activetwo)) {
         $activetwo = array();
@@ -4739,27 +4743,27 @@ function print_tabs($tabrows, $selected=NULL, $inactive=NULL, $activetwo=NULL, $
  */
 function page_doc_link($text='', $iconpath='') {
     global $ME, $CFG;
-    
+
     if (empty($CFG->docroot) || !isteacher()) {
         return '';
     }
-    
+
     if (empty($CFG->pagepath)) {
         $CFG->pagepath = $ME;
     }
-    
+
     $path = str_replace($CFG->httpswwwroot.'/','', $CFG->pagepath);  // Because the page could be HTTPSPAGEREQUIRED
     $path = str_replace('.php', '', $path);
     $lang = str_replace('_utf8', '', current_language());
-    
+
     $str = '<a href="' .$CFG->docroot. '/' .$lang. '/' .$path. '">';
-    
+
     if (empty($iconpath)) {
         $iconpath = $CFG->wwwroot . '/pix/docs.gif';
     }
-    
+
     $str .= '<img src="' .$iconpath. '" alt="Docs" />' .$text. '</a>';
-    
+
     return $str;
 }
 
