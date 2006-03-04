@@ -300,7 +300,7 @@
 
 /// Open the selected hotpot report and display it
 
-	$mode = clean_filename($mode);
+	$mode = clean_param($mode, PARAM_SAFEDIR);
 
 	if (! is_readable("report/$mode/report.php")) {
 		error("Report not known (".clean_text($mode).")", $course_homeurl);

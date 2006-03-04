@@ -25,7 +25,7 @@
         error("You must be a teacher to use this page.");
     }
 
-    $filename = clean_filename(strip_tags(format_string($glossary->name,true))).'.xml';
+    $filename = clean_filename(strip_tags(format_string($glossary->name,true)).'.xml');
     $content = glossary_generate_export_file($glossary,$l,$cat);
     
     send_file($content, $filename, 0, 0, true, true);

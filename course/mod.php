@@ -65,7 +65,7 @@
         }
         
         $mod->course = $course->id;
-        $mod->modulename = clean_filename($mod->modulename);  // For safety
+        $mod->modulename = clean_param($mod->modulename, PARAM_SAFEDIR);  // For safety
         $modlib = "$CFG->dirroot/mod/$mod->modulename/lib.php";
 
         if (file_exists($modlib)) {

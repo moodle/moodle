@@ -35,7 +35,7 @@
 
     if ($form = data_submitted()) {   /// Filename
 
-        $form->format = clean_filename($form->format); // For safety
+        $form->format = clean_param($form->format, PARAM_SAFEDIR); // For safety
 
         if (empty($_FILES['newfile'])) {      // file was just uploaded
             notify(get_string("uploadproblem") );

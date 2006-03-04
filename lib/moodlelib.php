@@ -164,7 +164,6 @@ define('PARAM_LOCALURL', 0x0180);
 /**
  * PARAM_CLEANFILE - safe file name, all dangerous and regional chars are removed,
  * use when you want to store a new file submitted by students
- * @TODO: fix clean_filename() to handle UTF8 properly
  */
 define('PARAM_CLEANFILE',0x0200);
 

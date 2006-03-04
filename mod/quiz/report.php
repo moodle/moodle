@@ -60,10 +60,10 @@
 
 /// Open the selected quiz report and display it
 
-    $mode = clean_filename($mode);
+    $mode = clean_param($mode, PARAM_SAFEDIR);
 
     if (! is_readable("report/$mode/report.php")) {
-        error("Report not known (".clean_text($mode).")");
+        error("Report not known ($mode)");
     }
 
     include("report/default.php");  // Parent class
