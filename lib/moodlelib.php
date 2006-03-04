@@ -35,7 +35,7 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package moodlecore
  */
- 
+
 /// CONSTANTS (Encased in phpdoc proper comments)/////////////////////////
 
 /**
@@ -471,7 +471,7 @@ function clean_param($param, $options) {
     }
 
     if ($options & PARAM_CLEANHTML) {
-        $param = stripslashes($param);         // Remove any slashes 
+        $param = stripslashes($param);         // Remove any slashes
         $param = clean_text($param);           // Sweep for scripts, etc
         $param = trim($param);                 // Sweep for scripts, etc
     }
@@ -550,9 +550,9 @@ function optional_variable(&$var, $default=0) {
  *
  * Set a key/value pair in both this session's {@link $CFG} global variable
  * and in the 'config' database table for future sessions.
- * 
- * Can also be used to update keys for plugin-scoped configs in config_plugin table. 
- * In that case it doesn't affect $CFG. 
+ *
+ * Can also be used to update keys for plugin-scoped configs in config_plugin table.
+ * In that case it doesn't affect $CFG.
  *
  * @param string $name the key to set
  * @param string $value the value to set
@@ -567,7 +567,7 @@ function set_config($name, $value, $plugin=NULL) {
 
     if (empty($plugin)) {
         $CFG->$name = $value;  // So it's defined for this invocation at least
-        
+
         if (get_field('config', 'name', 'name', $name)) {
             return set_field('config', 'value', $value, 'name', $name);
         } else {
@@ -588,15 +588,15 @@ function set_config($name, $value, $plugin=NULL) {
 }
 
 /**
- * Get configuration values from the global config table 
+ * Get configuration values from the global config table
  * or the config_plugins table.
  *
  * If called with no parameters it will do the right thing
  * generating $CFG safely from the database without overwriting
- * existing values.  
+ * existing values.
  *
- * @param string $plugin 
- * @param string $name 
+ * @param string $plugin
+ * @param string $name
  * @uses $CFG
  * @return hash-like object or single value
  *
@@ -633,21 +633,21 @@ function get_config($plugin=NULL, $name=NULL) {
                 if (!isset($localcfg[$config->name])) {
                     $localcfg[$config->name] = $config->value;
                 } else {
-                    if ($localcfg[$config->name] != $config->value ) { 
+                    if ($localcfg[$config->name] != $config->value ) {
                         // complain if the DB has a different
                         // value than config.php does
                         error_log("\$CFG->{$config->name} in config.php ({$localcfg[$config->name]}) overrides database setting ({$config->value})");
                     }
                 }
             }
-            
+
             $localcfg = (object)$localcfg;
             return $localcfg;
         } else {
             // preserve $CFG if DB returns nothing or error
             return $CFG;
         }
-        
+
     }
 }
 
@@ -755,7 +755,7 @@ function unset_user_preference($name, $userid=NULL) {
     if (isset($USER->preference[$name])) {
         unset($USER->preference[$name]);
     }
-    
+
     //Then from DB
     return delete_records('user_preferences', 'userid', $userid, 'name', $name);
 }
@@ -1099,7 +1099,7 @@ function usertimezone($timezone=99) {
     else {
         return 'GMT'.$tz;
     }
-        
+
 }
 
 /**
@@ -1178,7 +1178,7 @@ function get_timezone_record($timezonename) {
         return $cache[$timezonename];
     }
 
-    return get_record_sql('SELECT * FROM '.$CFG->prefix.'timezone 
+    return get_record_sql('SELECT * FROM '.$CFG->prefix.'timezone
                             WHERE name = '.$db->qstr($timezonename).' ORDER BY year DESC', true);
 }
 
@@ -1413,7 +1413,7 @@ function find_day_in_month($startday, $weekday, $month, $year) {
         }
 
         return $lastinmonth;
-        
+
     }
     else {
 
@@ -1849,7 +1849,7 @@ function check_for_restricted_user($username=NULL, $redirect='') {
 
 function is_restricted_user($username){
     global $CFG;
-    
+
     if (!empty($CFG->restrictusers)) {
         $names = explode(',', $CFG->restrictusers);
         if (in_array($username, $names)) {
@@ -1906,7 +1906,7 @@ function sync_metacourse($metacourseid) {
     // now get the list of valid enrolments in the child courses
     $sql = 'SELECT DISTINCT userid,1 FROM '.$CFG->prefix.'user_students WHERE course IN ('.$instr.')';
     $enrolments = get_records_sql($sql);
-    
+
     // put it into a nice array we can happily use array_diff on.
     $ce = array();
     if (!empty($enrolments)) {
@@ -1935,14 +1935,14 @@ function sync_metacourse($metacourseid) {
     foreach ($userstoadd as $userid) {
         enrol_student($userid,$metacourseid,0,0,'metacourse');
     }
-    
+
     // and next make sure that we have the right start time and end time (ie max and min) for them all.
     if ($enrolments = get_records('user_students','course',$metacourseid,'','id,userid')) {
         foreach ($enrolments as $enrol) {
             if ($maxmin = get_record_sql("SELECT min(timestart) AS timestart, max(timeend) AS timeend
                FROM {$CFG->prefix}user_students u,
-                    {$CFG->prefix}course_meta mc 
-               WHERE u.course = mc.child_course 
+                    {$CFG->prefix}course_meta mc
+               WHERE u.course = mc.child_course
                AND userid = $enrol->userid
                AND mc.parent_course = $metacourseid")) {
                 $enrol->timestart = $maxmin->timestart;
@@ -2493,7 +2493,7 @@ function update_user_record($username) {
                 $confkey = 'field_updatelocal_' . $key;
                 if (!empty($authconfig->$confkey) && $authconfig->$confkey === 'onlogin') {
                     $value = addslashes(stripslashes($value));   // Just in case
-                    set_field('user', $key, $value, 'username', $username) 
+                    set_field('user', $key, $value, 'username', $username)
                         || error_log("Error updating $key for $username");
                 }
             }
@@ -2676,7 +2676,7 @@ function authenticate_user_login($username, $password) {
  *
  * @uses $CFG
  * @uses SITEID
- * @param string $field The user field to be checked for a given value. 
+ * @param string $field The user field to be checked for a given value.
  * @param string $value The value to match for $field.
  * @return user A {@link $USER} object.
  */
@@ -2754,7 +2754,7 @@ function get_user_info_from_db($field, $value) {  // For backward compatibility
     return get_complete_user_data($field, $value);
 }
 
-/* 
+/*
  * When logging in, this function is run to set certain preferences
  * for the current SESSION
  */
@@ -2778,7 +2778,7 @@ function set_login_session_preferences() {
 /**
  * Enrols (or re-enrols) a student in a given course
  *
- * NOTE: Defaults to 'manual' enrolment - enrolment plugins 
+ * NOTE: Defaults to 'manual' enrolment - enrolment plugins
  * must set it explicitly.
  *
  * @uses $CFG
@@ -3059,7 +3059,7 @@ function remove_admin($userid) {
 /**
  * Delete a course, including all related data from the database,
  * and any associated files from the moodledata folder.
- * 
+ *
  * @param int $courseid The id of the course to delete.
  * @param bool $showfeedback Whether to display notifications of each action the function performs.
  * @return bool true if all the removals succeeded. false if there were any failures. If this
@@ -3069,7 +3069,7 @@ function remove_admin($userid) {
 function delete_course($courseid, $showfeedback = true) {
     global $CFG;
     $result = true;
-    
+
     if (!remove_course_contents($courseid, $showfeedback)) {
         if ($showfeedback) {
             notify("An error occurred while deleting some of the course contents.");
@@ -3090,7 +3090,7 @@ function delete_course($courseid, $showfeedback = true) {
         }
         $result = false;
     }
-    
+
     return $result;
 }
 
@@ -3246,35 +3246,35 @@ function remove_course_contents($courseid, $showfeedback=true) {
 
     if (delete_records("grade_category", "courseid", $course->id)) {
       if ($showfeedback) {
-	notify("$strdeleted grade categories");
+    notify("$strdeleted grade categories");
       }
     } else {
       $result = false;
     }
     if (delete_records("grade_exceptions", "courseid", $course->id)) {
       if ($showfeedback) {
-	notify("$strdeleted grade exceptions");
+    notify("$strdeleted grade exceptions");
       }
     } else {
       $result = false;
     }
     if (delete_records("grade_item", "courseid", $course->id)) {
       if ($showfeedback) {
-	notify("$strdeleted grade items");
+    notify("$strdeleted grade items");
       }
     } else {
       $result = false;
     }
     if (delete_records("grade_letter", "courseid", $course->id)) {
       if ($showfeedback) {
-	notify("$strdeleted grade letters");
+    notify("$strdeleted grade letters");
       }
     } else {
       $result = false;
     }
     if (delete_records("grade_preferences", "courseid", $course->id)) {
       if ($showfeedback) {
-	notify("$strdeleted grade preferences");
+    notify("$strdeleted grade preferences");
       }
     } else {
       $result = false;
@@ -3556,10 +3556,10 @@ function set_current_group($courseid, $groupid) {
  */
 function get_current_group($courseid, $full=false) {
     global $SESSION, $USER;
-    
+
     if (!isset($SESSION->currentgroup[$courseid])) {
         if (empty($USER->groupmember[$courseid]) or isteacheredit($courseid)) {
-            
+
             return 0;
         } else {
             //trying to add a hack >.<, always first select the first one in list
@@ -3653,7 +3653,7 @@ function get_and_set_current_group($course, $groupmode, $groupid=-1) {
 function setup_and_print_groups($course, $groupmode, $urlroot) {
 
     global $USER, $SESSION; //needs his id, need to hack his groups in session
-    
+
     if (isset($_GET['group'])) {
         $changegroup = $_GET['group'];  /// 0 or higher
     } else {
@@ -3669,7 +3669,7 @@ function setup_and_print_groups($course, $groupmode, $urlroot) {
         //we are in separate groups and the current group is group 0, as last set.
         //this can mean that either, this guy has no group
         //or, this guy just came from a visible all forum, and he left when he set his current group to 0 (show all)
-        
+
         //for the second situation, we need to perform the trick and get him a group.
         $courseid = $course->id;
         if (!empty($USER->groupmember[$courseid])){
@@ -3926,7 +3926,7 @@ function setnew_password_and_mail($user) {
     $message = get_string('newusernewpasswordtext', '', $a);
 
     $subject  = $site->fullname .': '. get_string('newusernewpasswordsubj');
-                
+
     return email_to_user($user, $from, $subject, $message);
 
 }
@@ -3949,7 +3949,7 @@ function reset_password_and_mail($user) {
     $external = false;
     if (!is_internal_auth($user->auth)) {
         include_once($CFG->dirroot . '/auth/' . $user->auth . '/lib.php');
-        if (empty($CFG->{'auth_'.$user->auth.'_stdchangepassword'}) 
+        if (empty($CFG->{'auth_'.$user->auth.'_stdchangepassword'})
             || !function_exists('auth_user_update_password')) {
             trigger_error("Attempt to reset user password for user $user->username with Auth $user->auth.");
             return false;
@@ -4361,7 +4361,7 @@ function get_directory_size($rootdir, $excludefile='') {
             return get_real_size(intval($output[0]).'k'); // we told it to return k.
         }
     }
-    
+
     $size = 0;
 
     if (!is_dir($rootdir)) {          // Must be a directory
@@ -4576,7 +4576,7 @@ function clean_getstring_data( $a ) {
             $new_a_vars[$fname] = clean_getstring_data( $a_var );
         }
         return (object)$new_a_vars;
-    } 
+    }
     else {
         return $a;
     }
@@ -4728,7 +4728,7 @@ function get_string($identifier, $module='', $a=NULL) {
                 if (!empty($parentlang)) {   // found it!
 
                     //first, see if there's a local file for parent
-                    $locallangfile = $location.$parentlang.'_local'.'/'.$module.'.php';    
+                    $locallangfile = $location.$parentlang.'_local'.'/'.$module.'.php';
                     if (file_exists($locallangfile)) {
                         if ($result = get_string_from_file($identifier, $locallangfile, "\$resultstring")) {
                             eval($result);
@@ -4771,7 +4771,7 @@ function get_string($identifier, $module='', $a=NULL) {
         }
     }
 
-/// And, because under 1.6 en is defined as en_utf8 child, me must try 
+/// And, because under 1.6 en is defined as en_utf8 child, me must try
 /// if it hasn't been queried before.
     if ($defaultlang  == 'en') {
         $defaultlang = 'en_utf8';
@@ -4881,7 +4881,7 @@ function get_list_of_languages() {
     }
 
     if (!empty($CFG->langlist)) {       // use admin's list of languages
-    
+
         $langlist = explode(',', $CFG->langlist);
         foreach ($langlist as $lang) {
             $lang = trim($lang);   //Just trim spaces to be a bit more permissive
@@ -4942,7 +4942,7 @@ function get_list_of_languages() {
                 fwrite($file, "$key $value\n");
             }
             fclose($file);
-        } 
+        }
     }
 
     return $languages;
@@ -4999,7 +4999,7 @@ function get_list_of_countries() {
             $lang = $defaultlang;  // countries.php must exist in this pack
         }
     }
-    
+
     if (file_exists($CFG->dataroot .'/lang/'. $lang .'/countries.php')) {
         include($CFG->dataroot .'/lang/'. $lang .'/countries.php');
     } else if (file_exists($CFG->dirroot .'/lang/'. $lang .'/countries.php')) {
@@ -5906,7 +5906,7 @@ function random_string ($length=15) {
 }
 
 /*
- * Given some text (which may contain HTML) and an ideal length, 
+ * Given some text (which may contain HTML) and an ideal length,
  * this function truncates the text neatly on a word boundary if possible
  */
 function shorten_text($text, $ideal=30) {
@@ -6277,7 +6277,7 @@ function address_in_subnet($addr, $subnetstr) {
 }
 
 /**
- * This function sets the $HTTPSPAGEREQUIRED global 
+ * This function sets the $HTTPSPAGEREQUIRED global
  * (used in some parts of moodle to change some links)
  * and calculate the proper wwwroot to be used
  *
@@ -6586,7 +6586,7 @@ function unzip_show_status ($list,$removepath) {
     return '';
 }
 
-/** 
+/**
  * Cleans a remote address ready to put into the log table
  */
 function cleanremoteaddr($addr) {
@@ -6605,13 +6605,13 @@ function cleanremoteaddr($addr) {
         // 10.0.0.0 - 10.255.255.255
         // 172.16.0.0 - 172.31.255.255
         // 192.168.0.0 - 192.168.255.255
-        // 169.254.0.0 -169.254.255.255 
+        // 169.254.0.0 -169.254.255.255
         $bits = explode('.',$match[0]);
         if (count($bits) != 4) {
             // weird, preg match shouldn't give us it.
             continue;
         }
-        if (($bits[0] == 10) 
+        if (($bits[0] == 10)
             || ($bits[0] == 172 && $bits[1] >= 16 && $bits[1] <= 31)
             || ($bits[0] == 192 && $bits[1] == 168)
             || ($bits[0] == 169 && $bits[1] == 254)) {
@@ -6628,7 +6628,7 @@ function cleanremoteaddr($addr) {
         } else {
             return array_pop($lanmatches);
         }
-    } 
+    }
     if (count($goodmatches) == 1) {
         return $goodmatches[0];
     }
@@ -6665,7 +6665,7 @@ if(!function_exists('html_entity_decode')) {
  * Modified 2005-09-29 by Eloy (from Julian Sedding proposal)
  * Found a better implementation (more checks and possibilities) from PEAR:
  * http://cvs.php.net/co.php/pear/PHP_Compat/Compat/Function/clone.php
- * 
+ *
  * @param object $obj
  * @return object
  */
@@ -6744,7 +6744,7 @@ function array_is_nested($array) {
 
 /**
  *** get_performance_info() pairs up with init_performance_info()
- *** loaded in setup.php. Returns an array with 'html' and 'txt' 
+ *** loaded in setup.php. Returns an array with 'html' and 'txt'
  *** values ready for use, and each of the individual stats provided
  *** separately as well.
  ***
@@ -6757,7 +6757,7 @@ function get_performance_info() {
     $info['txt']  = me() . ' '; // holds log-friendly representation
 
     $info['realtime'] = microtime_diff($PERF->starttime, microtime());
-     
+
     $info['html'] .= '<span class="timeused">'.$info['realtime'].' secs</span> ';
     $info['txt'] .= 'time: '.$info['realtime'].'s ';
 
@@ -6790,7 +6790,7 @@ function get_performance_info() {
         $ptimes = posix_times();
         if (is_array($ptimes)) {
             foreach ($ptimes as $key => $val) {
-                $info[$key] = $ptimes[$key] -  $PERF->startposixtimes[$key];            
+                $info[$key] = $ptimes[$key] -  $PERF->startposixtimes[$key];
             }
             $info['html'] .= "<span class=\"posixtimes\">ticks: $info[ticks] user: $info[utime] sys: $info[stime] cuser: $info[cutime] csys: $info[cstime]</span> ";
             $info['txt'] .= "ticks: $info[ticks] user: $info[utime] sys: $info[stime] cuser: $info[cutime] csys: $info[cstime] ";
@@ -6815,7 +6815,7 @@ function get_performance_info() {
         $info['html'] .= '<span class="serverload">Load average: '.$info['serverload'].'</span> ';
         $info['txt'] .= 'serverload: '.$info['serverload'];
     }
-    
+
 
     $info['html'] = '<div class="performanceinfo">'.$info['html'].'</div>';
     return $info;
@@ -6844,7 +6844,7 @@ function remove_dir($dir, $content_only=false) {
         }
     }
     closedir($handle);
-    if ($content_only) { 
+    if ($content_only) {
         return true;
     }
     return rmdir($dir);
@@ -6853,9 +6853,9 @@ function remove_dir($dir, $content_only=false) {
 //Function to check if a directory exists
 //and, optionally, create it
 function check_dir_exists($dir,$create=false) {
-    
-    global $CFG; 
-    
+
+    global $CFG;
+
     $status = true;
     if(!is_dir($dir)) {
         if (!$create) {
@@ -6940,6 +6940,19 @@ function custom_script_path($urlpath='') {
     } else {
         return false;
     }
+}
+
+/**
+ * Wrapper function to load necessary editor scripts
+ * to $CFG->editorsrc array. Params can be coursei id
+ * or associative array('courseid' => value, 'name' => 'editorname').
+ * @uses $CFG
+ * @param mixed $args Courseid or associative array.
+ */
+function loadeditor($args) {
+    global $CFG;
+    include($CFG->libdir .'/editorlib.php');
+    return editorObject::loadeditor($args);
 }
 
 // vim:autoindent:expandtab:shiftwidth=4:tabstop=4:tw=140:
