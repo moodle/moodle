@@ -56,8 +56,8 @@
 
 /// This full path constants must be defined too, transforming backslashes
 /// to forward slashed beacuse Typo3 requires it.
-    define ('PATH_t3lib', str_replace('\\','/',$CFG->dirroot.'/testutf/typo3/'));
-    define ('PATH_typo3', str_replace('\\','/',$CFG->dirroot.'/testutf/typo3/'));
+    define ('PATH_t3lib', str_replace('\\','/',$CFG->libdir.'/typo3/'));
+    define ('PATH_typo3', str_replace('\\','/',$CFG->libdir.'/typo3/'));
     define ('PATH_site', str_replace('\\','/',$CFG->dataroot.'/temp/'));
     define ('TYPO3_OS', stristr(PHP_OS,'win')&&!stristr(PHP_OS,'darwin')?'WIN':'');
 
@@ -168,6 +168,11 @@ class textlib {
     function strrpos($haystack,$needle) {
     /// Call Typo3 utf8_strrpos() function. It will do all the work
         return $this->typo3cs->utf8_strrpos($haystack,$needle);
+    }
+
+    /* Try to convert upper unicode characters to plain ascii*/
+    function specialtoascii($text,$charset='utf-8') {
+        return $this->typo3cs->specCharsToASCII(strtolower($charset),$text);
     }
 
 }
