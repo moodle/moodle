@@ -59,11 +59,11 @@
 
             print_header("$site->fullname: $strloginas", "$site->fullname: $strloginas",
                          ' ', 'passwordform.password');
-            print_simple_box_start('center', '', '', 20);
+            print_simple_box_start('center', '50%', '', 5, 'noticebox');
             ?>
-            <p><?php echo $strloginaspasswordexplain?></p>
+            <p align="center"><?php echo $strloginaspasswordexplain?></p>
             <form action="loginas.php" name="passwordform" method="post">
-            <table border="0" cellpadding="3" cellspacing="3">
+            <table border="0" cellpadding="3" cellspacing="3" align="center">
                 <tr><td><?php echo $strpassword?>:</td>
                     <td><input type="password" name="password" size="15" value="" alt="<?php p($strpassword)?>" /></td>
                     <td><input type="submit" value="<?php p($strloginas)?>" /></td>

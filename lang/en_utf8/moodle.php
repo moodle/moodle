@@ -702,7 +702,7 @@ $string['login'] = 'Login';
 $string['login_failure_logs'] = 'Login failure logs';
 $string['loginalready'] = 'You are already logged in';
 $string['loginas'] = 'Login as';
-$string['loginaspasswordexplain'] = '<p>You must enter password to use this feature.<br />If you do not know it ask you server administrator.</p>';
+$string['loginaspasswordexplain'] = '<p>You must enter the special \"loginas password\" to use this feature.<br />If you do not know it, ask your server administrator.</p>';$string['loginguest'] = 'Login as a guest';
 $string['loginguest'] = 'Login as a guest';
 $string['loginsite'] = 'Login to the site';
 $string['loginsteps'] = 'Hi! For full access to courses you\'ll need to take
