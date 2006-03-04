@@ -1,5 +1,6 @@
 <form method="post" action="editor.php">
 <input type="hidden" name="sesskey" value="<?php echo $USER->sesskey ?>" />
+<input type="hidden" name="tab" value="<?php p($currentpage) ?>" />
 <table border="0" cellpadding="4" cellspacing="2">
 <tr>
     <td align="right" valign="top">htmleditor:</td>
@@ -15,6 +16,7 @@
     <?php print_string('confightmleditor', 'admin') ?>
     </td>
 </tr>
+<?php if ( $currenttab == 'htmlarea' ) { ?>
 <tr>
     <td align="right" valign="top">editorbackgroundcolor:</td>
     <td valign="top"><input type="text" name="backgroundcolor" size="10" value="<?php print($CFG->editorbackgroundcolor);?>" /></td>
@@ -112,18 +114,18 @@
         <input type="checkbox" name="buttons[formatblock]"<?php print(in_array("formatblock", $buttons)) ? " checked=\"checked\"": "";?> /> <?php print_string("formatblock","editor");?></td>
     </tr>
     <tr>
-        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/images/ed_format_bold.gif" width="18" height="18" alt="<?php print_string("bold","editor");?>" title="<?php print_string("bold","editor");?>" /></td>
-        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/images/ed_format_italic.gif" width="18" height="18" alt="<?php print_string("italic","editor");?>" title="<?php print_string("italic","editor");?>" /></td>
-        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/images/ed_format_underline.gif" width="18" height="18" alt="<?php print_string("underline","editor");?>" title="<?php print_string("underline","editor");?>" /></td>
-        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/images/ed_format_strike.gif" width="18" height="18" alt="<?php print_string("strikethrough","editor");?>" title="<?php print_string("strikethrough","editor");?>" /></td>
-        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/images/ed_format_sub.gif" width="18" height="18" alt="<?php print_string("subscript","editor");?>" title="<?php print_string("subscript","editor");?>" /></td>
-        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/images/ed_format_sup.gif" width="18" height="18" alt="<?php print_string("superscript","editor");?>" title="<?php print_string("superscript","editor");?>" /></td>
-        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/images/ed_copy.gif" width="18" height="18" alt="<?php print_string("copy","editor");?>" title="<?php print_string("copy","editor");?>" /></td>
-        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/images/ed_cut.gif" width="18" height="18" alt="<?php print_string("cut","editor");?>" title="<?php print_string("cut","editor");?>" /></td>
-        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/images/ed_paste.gif" width="18" height="18" alt="<?php print_string("paste","editor");?>" title="<?php print_string("paste","editor");?>" /></td>
-        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/images/ed_wordclean.gif" width="18" height="18" alt="<?php print_string("wordclean","editor");?>" title="<?php print_string("wordclean","editor");?>" /></td>
-        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/images/ed_undo.gif" width="18" height="18" alt="<?php print_string("undo","editor");?>" title="<?php print_string("undo","editor");?>" /></td>
-        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/images/ed_redo.gif" width="18" height="18" alt="<?php print_string("redo","editor");?>" title="<?php print_string("redo","editor");?>" /></td>
+        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/htmlarea/images/ed_format_bold.gif" width="18" height="18" alt="<?php print_string("bold","editor");?>" title="<?php print_string("bold","editor");?>" /></td>
+        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/htmlarea/images/ed_format_italic.gif" width="18" height="18" alt="<?php print_string("italic","editor");?>" title="<?php print_string("italic","editor");?>" /></td>
+        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/htmlarea/images/ed_format_underline.gif" width="18" height="18" alt="<?php print_string("underline","editor");?>" title="<?php print_string("underline","editor");?>" /></td>
+        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/htmlarea/images/ed_format_strike.gif" width="18" height="18" alt="<?php print_string("strikethrough","editor");?>" title="<?php print_string("strikethrough","editor");?>" /></td>
+        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/htmlarea/images/ed_format_sub.gif" width="18" height="18" alt="<?php print_string("subscript","editor");?>" title="<?php print_string("subscript","editor");?>" /></td>
+        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/htmlarea/images/ed_format_sup.gif" width="18" height="18" alt="<?php print_string("superscript","editor");?>" title="<?php print_string("superscript","editor");?>" /></td>
+        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/htmlarea/images/ed_copy.gif" width="18" height="18" alt="<?php print_string("copy","editor");?>" title="<?php print_string("copy","editor");?>" /></td>
+        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/htmlarea/images/ed_cut.gif" width="18" height="18" alt="<?php print_string("cut","editor");?>" title="<?php print_string("cut","editor");?>" /></td>
+        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/htmlarea/images/ed_paste.gif" width="18" height="18" alt="<?php print_string("paste","editor");?>" title="<?php print_string("paste","editor");?>" /></td>
+        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/htmlarea/images/ed_wordclean.gif" width="18" height="18" alt="<?php print_string("wordclean","editor");?>" title="<?php print_string("wordclean","editor");?>" /></td>
+        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/htmlarea/images/ed_undo.gif" width="18" height="18" alt="<?php print_string("undo","editor");?>" title="<?php print_string("undo","editor");?>" /></td>
+        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/htmlarea/images/ed_redo.gif" width="18" height="18" alt="<?php print_string("redo","editor");?>" title="<?php print_string("redo","editor");?>" /></td>
     </tr>
     <tr>
         <td><input type="checkbox" name="buttons[bold]"<?php print(in_array("bold", $buttons)) ? " checked=\"checked\"" : "" ;?> /></td>
@@ -140,18 +142,18 @@
         <td><input type="checkbox" name="buttons[redo]"<?php print(in_array("redo", $buttons)) ? " checked=\"checked\"" : "" ;?> /></td>
     </tr>
     <tr>
-        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/images/ed_align_left.gif" width="18" height="18" alt="<?php print_string("justifyleft","editor");?>" title="<?php print_string("justifyleft","editor");?>" /></td>
-        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/images/ed_align_center.gif" width="18" height="18" alt="<?php print_string("justifycenter","editor");?>" title="<?php print_string("justifycenter","editor");?>" /></td>
-        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/images/ed_align_right.gif" width="18" height="18" alt="<?php print_string("justifyright","editor");?>" title="<?php print_string("justifyright","editor");?>" /></td>
-        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/images/ed_align_justify.gif" width="18" height="18" alt="<?php print_string("justifyfull","editor");?>" title="<?php print_string("justifyfull","editor");?>" /></td>
-        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/images/ed_left_to_right.gif" width="18" height="18" alt="<?php print_string("lefttoright","editor");?>" title="<?php print_string("lefttoright","editor");?>" /></td>
-        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/images/ed_right_to_left.gif" width="18" height="18" alt="<?php print_string("righttoleft","editor");?>" title="<?php print_string("righttoleft","editor");?>" /></td>
-        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/images/ed_list_num.gif" width="18" height="18" alt="<?php print_string("orderedlist","editor");?>" title="<?php print_string("orderedlist","editor");?>" /></td>
-        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/images/ed_list_bullet.gif" width="18" height="18" alt="<?php print_string("unorderedlist","editor");?>" title="<?php print_string("unorderedlist","editor");?>" /></td>
-        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/images/ed_indent_less.gif" width="18" height="18" alt="<?php print_string("outdent","editor");?>" title="<?php print_string("outdent","editor");?>" /></td>
-        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/images/ed_indent_more.gif" width="18" height="18" alt="<?php print_string("indent","editor");?>" title="<?php print_string("indent","editor");?>" /></td>
-        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/images/ed_color_fg.gif" width="18" height="18" alt="<?php print_string("forecolor","editor");?>" title="<?php print_string("forecolor","editor");?>" /></td>
-        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/images/ed_color_bg.gif" width="18" height="18" alt="<?php print_string("hilitecolor","editor");?>" title="<?php print_string("hilitecolor","editor");?>" /></td>
+        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/htmlarea/images/ed_align_left.gif" width="18" height="18" alt="<?php print_string("justifyleft","editor");?>" title="<?php print_string("justifyleft","editor");?>" /></td>
+        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/htmlarea/images/ed_align_center.gif" width="18" height="18" alt="<?php print_string("justifycenter","editor");?>" title="<?php print_string("justifycenter","editor");?>" /></td>
+        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/htmlarea/images/ed_align_right.gif" width="18" height="18" alt="<?php print_string("justifyright","editor");?>" title="<?php print_string("justifyright","editor");?>" /></td>
+        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/htmlarea/images/ed_align_justify.gif" width="18" height="18" alt="<?php print_string("justifyfull","editor");?>" title="<?php print_string("justifyfull","editor");?>" /></td>
+        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/htmlarea/images/ed_left_to_right.gif" width="18" height="18" alt="<?php print_string("lefttoright","editor");?>" title="<?php print_string("lefttoright","editor");?>" /></td>
+        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/htmlarea/images/ed_right_to_left.gif" width="18" height="18" alt="<?php print_string("righttoleft","editor");?>" title="<?php print_string("righttoleft","editor");?>" /></td>
+        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/htmlarea/images/ed_list_num.gif" width="18" height="18" alt="<?php print_string("orderedlist","editor");?>" title="<?php print_string("orderedlist","editor");?>" /></td>
+        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/htmlarea/images/ed_list_bullet.gif" width="18" height="18" alt="<?php print_string("unorderedlist","editor");?>" title="<?php print_string("unorderedlist","editor");?>" /></td>
+        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/htmlarea/images/ed_indent_less.gif" width="18" height="18" alt="<?php print_string("outdent","editor");?>" title="<?php print_string("outdent","editor");?>" /></td>
+        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/htmlarea/images/ed_indent_more.gif" width="18" height="18" alt="<?php print_string("indent","editor");?>" title="<?php print_string("indent","editor");?>" /></td>
+        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/htmlarea/images/ed_color_fg.gif" width="18" height="18" alt="<?php print_string("forecolor","editor");?>" title="<?php print_string("forecolor","editor");?>" /></td>
+        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/htmlarea/images/ed_color_bg.gif" width="18" height="18" alt="<?php print_string("hilitecolor","editor");?>" title="<?php print_string("hilitecolor","editor");?>" /></td>
     </tr>
     <tr>
         <td><input type="checkbox" name="buttons[justifyleft]"<?php print(in_array("justifyleft", $buttons)) ? " checked=\"checked\"" : "" ;?> /></td>
@@ -168,18 +170,18 @@
         <td><input type="checkbox" name="buttons[hilitecolor]"<?php print(in_array("hilitecolor", $buttons)) ? " checked=\"checked\"" : "" ;?> /></td>
     </tr>
     <tr>
-        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/images/ed_hr.gif" width="18" height="18" alt="<?php print_string("horizontalrule","editor");?>" title="<?php print_string("horizontalrule","editor");?>" /></td>
-        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/images/ed_anchor.gif" width="18" height="18" alt="<?php print_string("createanchor","editor");?>" title="<?php print_string("createanchor","editor");?>" /></td>
-        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/images/ed_link.gif" width="18" height="18" alt="<?php print_string("insertlink","editor");?>" title="<?php print_string("insertlink","editor");?>" /></td>
-        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/images/ed_unlink.gif" width="18" height="18" alt="<?php print_string("removelink","editor");?>" title="<?php print_string("removelink","editor");?>" /></td>
-        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/images/ed_image.gif" width="18" height="18" alt="<?php print_string("insertimage","editor");?>" title="<?php print_string("insertimage","editor");?>" /></td>
-        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/images/insert_table.gif" width="18" height="18" alt="<?php print_string("inserttable","editor");?>" title="<?php print_string("inserttable","editor");?>" /></td>
-        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/images/em.icon.smile.gif" width="18" height="18" alt="<?php print_string("insertsmile","editor");?>" title="<?php print_string("insertsmile","editor");?>" /></td>
-        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/images/icon_ins_char.gif" width="18" height="18" alt="<?php print_string("insertchar","editor");?>" title="<?php print_string("insertchar","editor");?>" /></td>
-        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/images/spell-check.gif" width="18" height="18" alt="<?php print_string("spellcheck","editor");?>" title="<?php print_string("spellcheck","editor");?>" /></td>
-        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/images/ed_html.gif" width="18" height="18" alt="<?php print_string("htmlmode","editor");?>" title="<?php print_string("htmlmode","editor");?>" /></td>
-        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/images/fullscreen_maximize.gif" width="18" height="18" alt="<?php print_string("popupeditor","editor");?>" title="<?php print_string("popupeditor","editor");?>" /></td>
-        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/images/ed_replace.gif" width="18" height="18" alt="<?php print_string("popupeditor","editor");?>" title="<?php print_string("searchandreplace","editor");?>" /></td>
+        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/htmlarea/images/ed_hr.gif" width="18" height="18" alt="<?php print_string("horizontalrule","editor");?>" title="<?php print_string("horizontalrule","editor");?>" /></td>
+        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/htmlarea/images/ed_anchor.gif" width="18" height="18" alt="<?php print_string("createanchor","editor");?>" title="<?php print_string("createanchor","editor");?>" /></td>
+        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/htmlarea/images/ed_link.gif" width="18" height="18" alt="<?php print_string("insertlink","editor");?>" title="<?php print_string("insertlink","editor");?>" /></td>
+        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/htmlarea/images/ed_unlink.gif" width="18" height="18" alt="<?php print_string("removelink","editor");?>" title="<?php print_string("removelink","editor");?>" /></td>
+        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/htmlarea/images/ed_image.gif" width="18" height="18" alt="<?php print_string("insertimage","editor");?>" title="<?php print_string("insertimage","editor");?>" /></td>
+        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/htmlarea/images/insert_table.gif" width="18" height="18" alt="<?php print_string("inserttable","editor");?>" title="<?php print_string("inserttable","editor");?>" /></td>
+        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/htmlarea/images/em.icon.smile.gif" width="18" height="18" alt="<?php print_string("insertsmile","editor");?>" title="<?php print_string("insertsmile","editor");?>" /></td>
+        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/htmlarea/images/icon_ins_char.gif" width="18" height="18" alt="<?php print_string("insertchar","editor");?>" title="<?php print_string("insertchar","editor");?>" /></td>
+        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/htmlarea/images/spell-check.gif" width="18" height="18" alt="<?php print_string("spellcheck","editor");?>" title="<?php print_string("spellcheck","editor");?>" /></td>
+        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/htmlarea/images/ed_html.gif" width="18" height="18" alt="<?php print_string("htmlmode","editor");?>" title="<?php print_string("htmlmode","editor");?>" /></td>
+        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/htmlarea/images/fullscreen_maximize.gif" width="18" height="18" alt="<?php print_string("popupeditor","editor");?>" title="<?php print_string("popupeditor","editor");?>" /></td>
+        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/htmlarea/images/ed_replace.gif" width="18" height="18" alt="<?php print_string("popupeditor","editor");?>" title="<?php print_string("searchandreplace","editor");?>" /></td>
     </tr>
     <tr>
         <td><input type="checkbox" name="buttons[inserthorizontalrule]"<?php print(in_array("inserthorizontalrule", $buttons)) ? " checked=\"checked\"" : "" ;?> /></td>
@@ -196,7 +198,7 @@
         <td><input type="checkbox" name="buttons[search_replace]"<?php print(in_array("search_replace", $buttons)) ? " checked=\"checked\"" : "" ;?> /></td>
     </tr>
     <tr>
-        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/images/ed_nolink.gif" width="18" height="18" alt="<?php print_string("horizontalrule","editor");?>" title="<?php print_string("nolink","editor");?>" /></td>
+        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/htmlarea/images/ed_nolink.gif" width="18" height="18" alt="<?php print_string("horizontalrule","editor");?>" title="<?php print_string("nolink","editor");?>" /></td>
         <td>&nbsp;</td>
         <td>&nbsp;</td>
         <td>&nbsp;</td>
@@ -226,6 +228,69 @@
     </table>
     </td>
 </tr>
+<?php
+    }
+    else if ( $currenttab == 'tinymce' ) {
+    ?>
+<tr>
+    <td>tinymcetheme:</td>
+    <td><?php
+    $options = array('advanced' => 'Advanced','simple' => 'Simple');
+    choose_from_menu ($options, "tinymcetheme", $CFG->tinymcetheme, "", "", "");
+    ?></td>
+    <td>&nbsp;</td>
+</tr>
+<tr>
+    <td valign="top">tinymceplugins:</td>
+    <td nowrap="nowrap"><?php
+    $pluginsdir = $CFG->libdir .'/editor/tinymce/jscripts/tiny_mce/plugins';
+    $plugins = editor_get_tiny_plugins();
+    $pluginsinuse = explode(",", $CFG->tinymceplugins);
+
+    sort($plugins);
+    $cnt = 0;
+    echo '<table border="0" cellpadding="2">';
+    foreach ( $plugins as $plugin ) {
+        $num = ($cnt % 2);
+        if ( $num < 1 ) {
+            echo '<tr>';
+        }
+        echo '<td><input type="checkbox" name="tinymceplugins[]" value="'. s($plugin) .'"';
+        if ( in_array($plugin, $pluginsinuse) ) {
+            echo ' checked="checked"';
+        }
+        echo ' /> '. $plugin .'</td>'."\n";
+
+        if ( $num > 0 ) {
+            echo '</tr>';
+        }
+        $cnt++;
+    }
+    echo '</table>';
+    ?></td>
+    <td>&nbsp;</td>
+</tr>
+<tr>
+    <td>tinymcecontentcss:</td>
+    <td><input type="text" name="tinymcecontentcss" value="<?php
+    !empty($CFG->tinymcecontentcss) ? p($CFG->tinymcecontentcss) : ''; ?>" size="40" /></td>
+    <td>&nbsp;</td>
+</tr>
+<tr>
+    <td>tinymcepopupcss:</td>
+    <td><input type="text" name="tinymcepopupcss" value="<?php
+    !empty($CFG->tinymcepopupcss) ? p($CFG->tinymcepopupcss) : ''; ?>" size="40" /></td>
+    <td>&nbsp;</td>
+</tr>
+<tr>
+    <td>tinymceeditorcss:</td>
+    <td><input type="text" name="tinymceeditorcss" value="<?php
+    !empty($CFG->tinymceeditorcss) ? p($CFG->tinymceeditorcss) : ''; ?>" size="40" /></td>
+    <td>&nbsp;</td>
+</tr>
+    <?php
+    }
+    ?>
 <tr>
     <td colspan="3" align="center"><input type="submit" value="<?php print_string("savechanges");?>" /></td>
 </tr>
@@ -234,6 +299,7 @@
 
 <form method="post" action="<?php print($GLOBALS['ME']);?>">
 <input type="hidden" name="sesskey" value="<?php echo $USER->sesskey ?>" />
+<input type="hidden" name="tab" value="<?php p($currentpage) ?>" />
 <center>
 <input type="submit" name="resettodefaults" value="<?php print_string('editorresettodefaults') ?>" />
 </center>

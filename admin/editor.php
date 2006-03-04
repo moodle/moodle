@@ -3,6 +3,7 @@
 
     require_once("../config.php");
     require_login();
+    $currentpage = optional_param('tab', 1, PARAM_INT);
 
     if (!isadmin()) {
         error("Only admins can access this page");
@@ -12,19 +13,37 @@
 
         // do we want default values?
         if (isset($data->resettodefaults)) {
-            if (!(reset_to_defaults())) {
+            if (!(reset_to_defaults($currentpage))) {
                 error("Editor settings could not be restored!");
             }
         } else {
 
-            if (!(editor_update_config($data))) {
+            if (!(editor_update_config($data, $currentpage))) {
                 error("Editor settings could not be updated!");
             }
         }
-        redirect("$CFG->wwwroot/$CFG->admin/editor.php", get_string("changessaved"), 1);
+        redirect("$CFG->wwwroot/$CFG->admin/editor.php?tab=$currentpage", get_string("changessaved"), 1);
 
     } else {
         // Generate edit form
+
+        $inactive = NULL;
+        switch ( $currentpage ) {
+            case 1:
+                $currenttab = 'htmlarea';
+                $inactive = array();
+            break;
+            case 2:
+                $currenttab = 'tinymce';
+                $inactive = array();
+            break;
+        }
+
+        $url = 'editor.php?tab=';
+        $tabrow = array();
+        $tabrow[] = new tabobject('htmlarea',$url . '1', 'HTMLArea');
+        $tabrow[] = new tabobject('tinymce',$url . '2', 'TinyMCE');
+        $tabs = array($tabrow);
 
         $fontlist = editor_convert_to_array($CFG->editorfontlist);
         $dicts    = editor_get_dictionaries();
@@ -37,8 +56,11 @@
                      "<a href=\"index.php\">$stradmin</a> -> ".
                      "<a href=\"configure.php\">$strconfiguration</a> -> $streditorsettings");
         print_heading($streditorsettings);
+
         print_simple_box("<center>$streditorsettingshelp</center>","center","50%");
         print("<br />\n");
+        print_tabs($tabs, $currenttab, $inactive);
+
         print_simple_box_start("center");
         include("editor.html");
         print_simple_box_end();
@@ -67,7 +89,7 @@ function editor_convert_to_array ($string) {
    return $fonts;
 }
 
-function editor_update_config ($data) {
+function editor_update_config ($data, $editor) {
 
 /// Updates the editor config values.
 
@@ -75,6 +97,8 @@ function editor_update_config ($data) {
         return false;
     }
 
+    switch($editor) {
+        case 1: // HTMLArea.
     // Make array for unwanted characters.
     $nochars = array(chr(33),chr(34),chr(35),chr(36),chr(37),
                      chr(38),chr(39),chr(40),chr(41),chr(42),
@@ -115,6 +139,30 @@ function editor_update_config ($data) {
         }
     }
     $updatedata['editorhidebuttons'] = trim($hidebuttons);
+        break;
+
+        case 2: // TinyMCE.
+        $updatedata = array();
+        $updatedata['htmleditor'] = !empty($data->htmleditor) ? $data->htmleditor : 0;
+
+        // Process plugins
+        if ( !empty($data->tinymceplugins) ) {
+            foreach ( $data->tinymceplugins as $key => $value ) {
+                $value = stripslashes(clean_param($value, PARAM_ALPHA));
+                $data->tinymceplugins[$key] = addslashes($value);
+            }
+        }
+        $updatedata['tinymceplugins'] = !empty($data->tinymceplugins) ? implode(",", $data->tinymceplugins) : '';
+        $updatedata['tinymcetheme'] = !empty($data->tinymcetheme) ?
+                                           clean_param($data->tinymcetheme, PARAM_ALPHA) : '';
+        $updatedata['tinymcecontentcss'] = !empty($data->tinymcecontentcss) ?
+                                           clean_param($data->tinymcecontentcss, PARAM_URL) : '';
+        $updatedata['tinymcepopupcss'] = !empty($data->tinymcepopupcss) ?
+                                           clean_param($data->tinymcepopupcss, PARAM_URL) : '';
+        $updatedata['tinymceeditorcss'] = !empty($data->tinymceeditorcss) ?
+                                           clean_param($data->tinymceeditorcss, PARAM_URL) : '';
+        break;
+    }
 
     foreach ($updatedata as $name => $value) {
         if (!(set_config($name, $value))) {
@@ -125,7 +173,7 @@ function editor_update_config ($data) {
     return true;
 }
 
-function reset_to_defaults () {
+function reset_to_defaults ($editor) {
 /// Reset the values to default
 
     global $CFG;
@@ -133,6 +181,8 @@ function reset_to_defaults () {
 
     $updatedata = array();
 
+    switch ( $editor ) {
+        case 1: // HTMLArea.
     $updatedata['editorbackgroundcolor'] = $defaults['editorbackgroundcolor'];
     $updatedata['editorfontfamily'] = $defaults['editorfontfamily'];
     $updatedata['editorfontsize'] = $defaults['editorfontsize'];
@@ -141,6 +191,16 @@ function reset_to_defaults () {
     $updatedata['editorfontlist'] = $defaults['editorfontlist'];
     $updatedata['editorhidebuttons'] = $defaults['editorhidebuttons'];
     $updatedata['editordictionary'] = '';
+        break;
+
+        case 2: // TinyMCE.
+        $updatedata['tinymceplugins'] = $defaults['tinymceplugins'];
+        $updatedata['tinymcetheme']   = $defaults['tinymcetheme'];
+        $updatedata['tinymcecontentcss'] = $defaults['tinymcecontentcss'];
+        $updatedata['tinymcepopupcss'] = $defaults['tinymcepopupcss'];
+        $updatedata['tinymceeditorcss'] = $defaults['tinymceeditorcss'];
+        break;
+    }
 
     foreach ($updatedata as $name => $value) {
         if (!(set_config($name, $value))) {
@@ -211,4 +271,34 @@ function editor_get_dictionaries () {
 
 }
 
+function editor_get_tiny_plugins() {
+    global $CFG;
+
+    $plugins = array();
+    $plugindir = $CFG->libdir .'/editor/tinymce/jscripts/tiny_mce/plugins';
+
+    if ( !$fp = opendir($plugindir) ) {
+        return $plugins;
+        exit;
+    }
+
+    while ( ($file = readdir($fp)) !== false ) {
+
+        if  ( preg_match("/^\.+/", $file) ) {
+            continue;
+        }
+
+        if ( is_dir($plugindir .'/'. $file) ) {
+            array_push($plugins, $file);
+        }
+
+    }
+
+    if ( $fp ) {
+        closedir($fp);
+    }
+
+    return $plugins;
+
+}
 ?>
