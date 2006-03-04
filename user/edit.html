@@ -44,7 +44,7 @@ if (isadmin()) {
     $auth_options = array();
     foreach ($modules as $module) {
         $auth_options[$module] = get_string("auth_$module"."title", "auth");
-    } 
+    }
     if (!$adminself) {    /// Main admin is ALWAYS default manual
         echo '<tr>';
         echo '<th>'.get_string("chooseauthmethod","auth").':</th>' . "\n<td>";
@@ -76,10 +76,10 @@ if (isadmin()) {
              }
              echo '<tr>';
              echo '<th>'.get_string('forcepasswordchange').':</th>';
-             echo '<td><input type="checkbox" name="forcepasswordchange" alt="'.get_string('forcepasswordchange').'" '.$checked.' /> '.get_string('forcepasswordchangehelp').'</td>';            
+             echo '<td><input type="checkbox" name="forcepasswordchange" alt="'.get_string('forcepasswordchange').'" '.$checked.' /> '.get_string('forcepasswordchangehelp').'</td>';
              echo '</tr>';
         }
-                 
+
         echo '<tr><td colspan="2"><hr /></td></tr>';
     }
 }
@@ -189,6 +189,7 @@ if (isadmin()) {
     unset($choices);
     $choices["0"] = get_string("texteditor");
     $choices["1"] = get_string("htmleditor");
+    $choices["2"] = get_string("tinymceeditor");
     choose_from_menu ($choices, "htmleditor", $user->htmleditor, "") ?>
     </td>
 </tr>
@@ -203,7 +204,7 @@ if (isadmin()) {
 <tr>
     <th><?php print_string("country") ?>:</th>
     <td>
-    <?php 
+    <?php
 
     if (!$user->country and $CFG->country) {
         $user->country = $CFG->country;
@@ -242,7 +243,7 @@ if (isadmin()) {
 <?php if (!empty($CFG->allowuserthemes)) { ?>
 <tr>
     <th><?php print_string("preferredtheme") ?>:</th>
-    <td><?php 
+    <td><?php
          $themes[''] = get_string('default');
          $themes += get_list_of_themes();
          choose_from_menu($themes, 'theme', $user->theme, "", "", "");
@@ -253,7 +254,7 @@ if (isadmin()) {
 <?php } ?>
 <tr>
     <th><?php print_string("userdescription") ?>:</th>
-    <td><?php 
+    <td><?php
         if (isset($err["description"])) {
             formerr($err["description"]);
             echo "<br />";
@@ -291,7 +292,7 @@ if (isadmin()) {
 <tr>
     <th><?php print_string("newpicture") ?>:</th>
     <td>
-    <?php 
+    <?php
        require_once($CFG->dirroot.'/lib/uploadlib.php');
        upload_print_form_fragment(1,array('imagefile'),null,false,null,0,0,false);
        helpbutton("picture", get_string("helppicture"));
@@ -304,7 +305,7 @@ if (isadmin()) {
 <tr>
     <th><?php print_string("newpicture") ?>:</th>
     <td>
-    <?php 
+    <?php
         echo "<a href=\"$CFG->wwwroot/$CFG->admin/config.php\">";
         print_string('gdnot');
         echo "</a>";
