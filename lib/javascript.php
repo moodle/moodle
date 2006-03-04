@@ -8,6 +8,13 @@
     if(!empty($CFG->aspellpath)) {      // Enable global access to spelling feature.
         echo '<script language="JavaScript" type="text/javascript" src="'.$CFG->httpswwwroot.'/lib/speller/spellChecker.js"></script>'."\n";
     }
+
+    if ( !empty($CFG->editorsrc) ) {
+        foreach ( $CFG->editorsrc as $scriptsource ) {
+            echo '<script language="javascript" type="text/javascript" src="'. $scriptsource .'"></script>'."\n";
+        }
+    }
+
 ?>
 <!--<style type="text/css">/*<![CDATA[*/ body{behavior:url(<?php echo $CFG->httpswwwroot ?>/lib/csshover.htc);} /*]]>*/</style>-->
 
