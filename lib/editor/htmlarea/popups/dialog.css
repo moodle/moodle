@@ -1,0 +1,72 @@
+/*******************************************************************************
+**
+** HTML Text Editing Component for hosting in Web Pages
+** Copyright (C) 2001  Ramesys (Contracting Services) Limited
+** 
+** This library is free software; you can redistribute it and/or
+** modify it under the terms of the GNU Lesser General Public
+** License as published by the Free Software Foundation; either
+** version 2.1 of the License, or (at your option) any later version.
+**
+** This library is distributed in the hope that it will be useful,
+** but WITHOUT ANY WARRANTY; without even the implied warranty of
+** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+** Lesser General Public License for more details.
+**
+** You should have received a copy of the GNU LesserGeneral Public License
+** along with this program; if not a copy can be obtained from 
+**
+**    http://www.gnu.org/copyleft/lesser.html
+**
+** or by writing to:
+**
+**    Free Software Foundation, Inc.
+**    59 Temple Place - Suite 330,
+**    Boston,
+**    MA  02111-1307,
+**    USA.
+** 
+** Original Developer:
+**
+**	Austin David France
+**	Ramesys (Contracting Services) Limited
+**	Mentor House
+**	Ainsworth Street
+**	Blackburn
+**	Lancashire
+**	BB1 6AY
+**	United Kingdom
+**  email: Austin.France@Ramesys.com
+**
+** Home Page:    http://richtext.sourceforge.net/
+** Support:      http://richtext.sourceforge.net/
+** 
+*******************************************************************************/
+html, body {
+  background: ButtonFace;
+  color: ButtonText;
+  font: 11px Tahoma,Verdana,sans-serif;
+  margin: 0px;
+  padding: 0px;
+}
+body { padding: 5px; }
+table {
+font: 11px Tahoma,Verdana,sans-serif;
+}
+form p {
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+td.smile {
+background-color: transparent;
+font-family: "Courier New", courier;
+font-size: 10pt;
+}
+select, input, button { font: 11px Tahoma,Verdana,sans-serif; }
+button { width: 70px; }
+.space { padding: 2px; }
+
+.title { background: #ddf; color: #000; font-weight: bold; font-size: 120%; padding: 3px 10px; margin-bottom: 10px;
+border-bottom: 1px solid black; letter-spacing: 2px;
+}
+form { padding: 0px; margin: 0px; }

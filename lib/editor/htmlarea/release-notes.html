@@ -1,0 +1,82 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 3.2//EN">
+<html>
+  <head>
+    <title>HTMLArea-3.0-beta release notes</title>
+  </head>
+
+  <body>
+
+    <h1>HTMLArea-3.0-beta release notes</h1>
+
+    <p>This release was compiled on Aug 11, 2003 [21:30] GMT.</p>
+
+
+    <p>Changes since 3.0-Alpha:</p>
+
+    <ul>
+
+      <li>Performance improvements.</li>
+
+      <li>Many bugs fixed.</li>
+
+      <li>Plugin infrastructure.</li>
+
+      <li>TableOperations plugin.</li>
+
+      <li>SpellChecker plugin.</li>
+
+      <li>Status bar.</li>
+
+      <li>API for registering custom buttons and drop-down boxes in the
+        toolbar.</li>
+
+      <li>Toolbar can contain text labels.</li>
+
+      <li>Cut, copy, paste, undo, redo buttons.</li>
+
+    </ul>
+
+    <h2>Rationale for Beta</h2>
+
+    <p>Why was this released as "Beta"?  The code is quite stable and it
+    didn't deserve a "Beta" qualification.  However, there are some things
+    left to do for the real 3.0 version.  These things will not affect the
+    API to work with HTMLArea, in other words, you can install the Beta
+    right now and then install the final release without modifying your
+    code.  That's if you don't modify HTMLArea itself.  ;-)</p>
+
+    <h2>To-Do before 3.0 final</h2>
+
+    <ol>
+
+      <li>We should use a single popup interface.  Currently there are two:
+      dialog.js and popupwin.js; dialog.js emulates modal dialogs, which
+      sucks when you want to open "select-color" from another popup and not
+      from the editor itself.  Very buggy in IE.  We should probably use only
+      modeless dialogs (that is, popupwin.js).</li>
+
+      <li>Internationalization for the SpellChecker plugin.</li>
+
+      <li>Internationalization for the TableOperations plugin.</li>
+
+      <li>People who sent translations are invited to re-iterate through
+        their work and make it up-to-date with lang/en.js which is the main
+        lang file for HTMLArea-3.0.  Some things have changed but not all
+        translations are updated.</li>
+
+      <li><strong>Documentation</strong>.</li>
+
+    </ol>
+
+
+    <hr />
+    <address><a href="http://students.infoiasi.ro/~mishoo/">Mihai Bazon</a></address>
+<!-- Created: Sun Aug  3 16:55:08 EEST 2003 -->
+<!-- hhmts start -->
+Last modified on Sun Aug 10 19:31:39 2003
+<!-- hhmts end -->
+<!-- doc-lang: English -->
+  </body>
+</html>
+
+
