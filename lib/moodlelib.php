@@ -214,28 +214,28 @@ define('PAGE_COURSE_VIEW', 'course-view');
  * used like this:
  *    $id = required_param('id');
  *
- * @param string $varname the name of the parameter variable we want
- * @param int $options a bit field that specifies any cleaning needed
+ * @param string $parname the name of the page parameter we want
+ * @param int $type expected type of parameter
  * @return mixed
  */
-function required_param($varname, $options=PARAM_CLEAN) {
+function required_param($parname, $type=PARAM_CLEAN) {
 
     // detect_unchecked_vars addition
     global $CFG;
     if (!empty($CFG->detect_unchecked_vars)) {
         global $UNCHECKED_VARS;
-        unset ($UNCHECKED_VARS->vars[$varname]);
+        unset ($UNCHECKED_VARS->vars[$parname]);
     }
 
-    if (isset($_POST[$varname])) {       // POST has precedence
-        $param = $_POST[$varname];
-    } else if (isset($_GET[$varname])) {
-        $param = $_GET[$varname];
+    if (isset($_POST[$parname])) {       // POST has precedence
+        $param = $_POST[$parname];
+    } else if (isset($_GET[$parname])) {
+        $param = $_GET[$parname];
     } else {
-        error('A required parameter ('.$varname.') was missing');
+        error('A required parameter ('.$parname.') was missing');
     }
 
-    return clean_param($param, $options);
+    return clean_param($param, $type);
 }
 
 /**
@@ -247,29 +247,29 @@ function required_param($varname, $options=PARAM_CLEAN) {
  * used like this:
  *    $name = optional_param('name', 'Fred');
  *
- * @param string $varname the name of the parameter variable we want
+ * @param string $parname the name of the page parameter we want
  * @param mixed  $default the default value to return if nothing is found
- * @param int $options a bit field that specifies any cleaning needed
+ * @param int $type expected type of parameter
  * @return mixed
  */
-function optional_param($varname, $default=NULL, $options=PARAM_CLEAN) {
+function optional_param($parname, $default=NULL, $type=PARAM_CLEAN) {
 
     // detect_unchecked_vars addition
     global $CFG;
     if (!empty($CFG->detect_unchecked_vars)) {
         global $UNCHECKED_VARS;
-        unset ($UNCHECKED_VARS->vars[$varname]);
+        unset ($UNCHECKED_VARS->vars[$parname]);
     }
 
-    if (isset($_POST[$varname])) {       // POST has precedence
-        $param = $_POST[$varname];
-    } else if (isset($_GET[$varname])) {
-        $param = $_GET[$varname];
+    if (isset($_POST[$parname])) {       // POST has precedence
+        $param = $_POST[$parname];
+    } else if (isset($_GET[$parname])) {
+        $param = $_GET[$parname];
     } else {
         return $default;
     }
 
-    return clean_param($param, $options);
+    return clean_param($param, $type);
 }
 
 /**
@@ -313,170 +313,137 @@ function isset_param($varname) {
  * @uses PARAM_LOCALURL
  * @uses PARAM_CLEANHTML
  * @param mixed $param the variable we are cleaning
- * @param int $options a bit field that specifies the cleaning needed. This field is specified by combining PARAM_* definitions together with a logical or.
+ * @param int $type expected format of param after cleaning.
  * @return mixed
  */
-function clean_param($param, $options) {
+function clean_param($param, $type) {
 
     global $CFG;
 
     if (is_array($param)) {              // Let's loop
         $newparam = array();
         foreach ($param as $key => $value) {
-            $newparam[$key] = clean_param($value, $options);
+            $newparam[$key] = clean_param($value, $type);
         }
         return $newparam;
     }
 
-    if (!$options) {
-        return $param;                   // Return raw value
-    }
+    switch ($type) {
+        case PARAM_CLEAN:        // General HTML cleaning, try to use more specific type if possible
+            if (is_numeric($param)) {
+                return $param;
+            }
+            $param = stripslashes($param);   // Needed for kses to work fine
+            $param = clean_text($param);     // Sweep for scripts, etc
+            return addslashes($param);       // Restore original request parameter slashes
 
-    if ((string)$param == (string)(int)$param) {  // It's just an integer
-        return (int)$param;
-    }
+        case PARAM_CLEANHTML:    // prepare html fragment for display, do not store it into db!!
+            $param = stripslashes($param);   // Remove any slashes
+            $param = clean_text($param);     // Sweep for scripts, etc
+            return trim($param);
 
-    if ($options & PARAM_CLEAN) {
-        $param = stripslashes($param);   // Needed by kses to work fine
-        $param = clean_text($param);     // Sweep for scripts, etc
-        $param = addslashes($param);     // Restore original request parameter slashes
-    }
+        case PARAM_INT:
+            return (int)$param;  // Convert to integer
 
-    if ($options & PARAM_INT) {
-        $param = (int)$param;            // Convert to integer
-    }
+        case PARAM_ALPHA:        // Remove everything not a-z
+            return eregi_replace('[^a-zA-Z]', '', $param);
 
-    if ($options & PARAM_ALPHA) {        // Remove everything not a-z
-        $param = eregi_replace('[^a-zA-Z]', '', $param);
-    }
+        case PARAM_ALPHANUM:     // Remove everything not a-zA-Z0-9
+            return eregi_replace('[^A-Za-z0-9]', '', $param);
 
-    if ($options & PARAM_ALPHANUM) {     // Remove everything not a-zA-Z0-9
-        $param = eregi_replace('[^A-Za-z0-9]', '', $param);
-    }
+        case PARAM_ALPHAEXT:     // Remove everything not a-zA-Z/_-
+            return eregi_replace('[^a-zA-Z/_-]', '', $param);
 
-    if ($options & PARAM_ALPHAEXT) {     // Remove everything not a-zA-Z/_-
-        $param = eregi_replace('[^a-zA-Z/_-]', '', $param);
-    }
+        case PARAM_BOOL:         // Convert to 1 or 0
+            $tempstr = strtolower($param);
+            if ($tempstr == 'on') {
+                $param = 1;
+            } else if ($tempstr == 'off') {
+                $param = 0;
+            } else {
+                $param = empty($param) ? 0 : 1;
+            }
+            return $param;
 
-    if ($options & PARAM_BOOL) {         // Convert to 1 or 0
-        $tempstr = strtolower($param);
-        if ($tempstr == 'on') {
-            $param = 1;
-        } else if ($tempstr == 'off') {
-            $param = 0;
-        } else {
-            $param = empty($param) ? 0 : 1;
-        }
-    }
+        case PARAM_NOTAGS:       // Strip all tags
+            return strip_tags($param);
 
-    if ($options & PARAM_NOTAGS) {       // Strip all tags completely
-        $param = strip_tags($param);
-    }
+        case PARAM_SAFEDIR:      // Remove everything not a-zA-Z0-9_-
+            return eregi_replace('[^a-zA-Z0-9_-]', '', $param);
 
-    if ($options & PARAM_SAFEDIR) {     // Remove everything not a-zA-Z0-9_-
-        $param = eregi_replace('[^a-zA-Z0-9_-]', '', $param);
-    }
+        case PARAM_CLEANFILE:    // allow only safe characters
+            return clean_filename($param);
 
-    if ($options & PARAM_CLEANFILE) {    // allow only safe characters
-        $param = clean_filename($param);
-    }
-
-    if ($options & PARAM_FILE) {         // Strip all suspicious characters from filename
-        $param = ereg_replace('[[:cntrl:]]|[<>"`\|\':\\/]', '', $param);
-        $param = ereg_replace('\.\.+', '', $param);
-        if($param == '.') {
-            $param = '';
-        }
-    }
-
-    if ($options & PARAM_PATH) {         // Strip all suspicious characters from file path
-        $param = str_replace('\\\'', '\'', $param);
-        $param = str_replace('\\"', '"', $param);
-        $param = str_replace('\\', '/', $param);
-        $param = ereg_replace('[[:cntrl:]]|[<>"`\|\':]', '', $param);
-        $param = ereg_replace('\.\.+', '', $param);
-        $param = ereg_replace('//+', '/', $param);
-        $param = ereg_replace('/(\./)+', '/', $param);
-    }
-
-    if ($options & PARAM_HOST) {         // allow FQDN or IPv4 dotted quad
-        preg_replace('/[^\.\d\w-]/','', $param ); // only allowed chars
-        // match ipv4 dotted quad
-        if (preg_match('/(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/',$param, $match)){
-            // confirm values are ok
-            if ( $match[0] > 255
-                 || $match[1] > 255
-                 || $match[3] > 255
-                 || $match[4] > 255 ) {
-                // hmmm, what kind of dotted quad is this?
+        case PARAM_FILE:         // Strip all suspicious characters from filename
+            $param = ereg_replace('[[:cntrl:]]|[<>"`\|\':\\/]', '', $param);
+            $param = ereg_replace('\.\.+', '', $param);
+            if($param == '.') {
                 $param = '';
             }
-        } elseif ( preg_match('/^[\w\d\.-]+$/', $param) // dots, hyphens, numbers
-                   && !preg_match('/^[\.-]/',  $param) // no leading dots/hyphens
-                   && !preg_match('/[\.-]$/',  $param) // no trailing dots/hyphens
-                   ) {
-            // all is ok - $param is respected
-        } else {
-            // all is not ok...
-            $param='';
-        }
-    }
+            return $param;
 
-    if ($options & PARAM_URL) { // allow safe ftp, http, mailto urls
+        case PARAM_PATH:         // Strip all suspicious characters from file path
+            $param = str_replace('\\\'', '\'', $param);
+            $param = str_replace('\\"', '"', $param);
+            $param = str_replace('\\', '/', $param);
+            $param = ereg_replace('[[:cntrl:]]|[<>"`\|\':]', '', $param);
+            $param = ereg_replace('\.\.+', '', $param);
+            $param = ereg_replace('//+', '/', $param);
+            return ereg_replace('/(\./)+', '/', $param);
 
-        include_once($CFG->dirroot . '/lib/validateurlsyntax.php');
-
-        //
-        // Parameters to validateurlsyntax()
-        //
-        // s? scheme is optional
-        //   H? http optional
-        //   S? https optional
-        //   F? ftp   optional
-        //   E? mailto optional
-        // u- user section not allowed
-        //   P- password not allowed
-        // a? address optional
-        //   I? Numeric IP address optional (can use IP or domain)
-        //   p-  port not allowed -- restrict to default port
-        // f? "file" path section optional
-        //   q? query section optional
-        //   r? fragment (anchor) optional
-        //
-        if (!empty($param) && validateUrlSyntax($param, 's?H?S?F?E?u-P-a?I?p-f?q?r?')) {
-            // all is ok, param is respected
-        } else {
-            $param =''; // not really ok
-        }
-        $options ^= PARAM_URL; // Turn off the URL bit so that simple PARAM_URLs don't test true for PARAM_LOCALURL
-    }
-
-    if ($options & PARAM_LOCALURL) {
-        // assume we passed the PARAM_URL test...
-        // allow http absolute, root relative and relative URLs within wwwroot
-        if (!empty($param)) {
-            if (preg_match(':^/:', $param)) {
-                // root-relative, ok!
-            } elseif (preg_match('/^'.preg_quote($CFG->wwwroot, '/').'/i',$param)) {
-                // absolute, and matches our wwwroot
-            } else {
-                // relative - let's make sure there are no tricks
-                if (validateUrlSyntax($param, 's-u-P-a-p-f+q?r?')) {
-                    // looks ok.
-                } else {
+        case PARAM_HOST:         // allow FQDN or IPv4 dotted quad
+            preg_replace('/[^\.\d\w-]/','', $param ); // only allowed chars
+            // match ipv4 dotted quad
+            if (preg_match('/(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/',$param, $match)){
+                // confirm values are ok
+                if ( $match[0] > 255
+                     || $match[1] > 255
+                     || $match[3] > 255
+                     || $match[4] > 255 ) {
+                    // hmmm, what kind of dotted quad is this?
                     $param = '';
                 }
+            } elseif ( preg_match('/^[\w\d\.-]+$/', $param) // dots, hyphens, numbers
+                       && !preg_match('/^[\.-]/',  $param) // no leading dots/hyphens
+                       && !preg_match('/[\.-]$/',  $param) // no trailing dots/hyphens
+                       ) {
+                // all is ok - $param is respected
+            } else {
+                // all is not ok...
+                $param='';
             }
-        }
-    }
+            return $param;
 
-    if ($options & PARAM_CLEANHTML) {
-        $param = stripslashes($param);         // Remove any slashes
-        $param = clean_text($param);           // Sweep for scripts, etc
-        $param = trim($param);                 // Sweep for scripts, etc
-    }
+        case PARAM_URL:          // allow safe ftp, http, mailto urls
+            include_once($CFG->dirroot . '/lib/validateurlsyntax.php');
+            if (!empty($param) && validateUrlSyntax($param, 's?H?S?F?E?u-P-a?I?p-f?q?r?')) {
+                // all is ok, param is respected
+            } else {
+                $param =''; // not really ok
+            }
+            return $param;
 
-    return $param;
+        case PARAM_LOCALURL:     // allow http absolute, root relative and relative URLs within wwwroot
+            clean_param($param, PARAM_URL);
+            if (!empty($param)) {
+                if (preg_match(':^/:', $param)) {
+                    // root-relative, ok!
+                } elseif (preg_match('/^'.preg_quote($CFG->wwwroot, '/').'/i',$param)) {
+                    // absolute, and matches our wwwroot
+                } else {
+                    // relative - let's make sure there are no tricks
+                    if (validateUrlSyntax($param, 's-u-P-a-p-f+q?r?')) {
+                        // looks ok.
+                    } else {
+                        $param = '';
+                    }
+                }
+            }
+            return $param;
+
+        default:                 // throw error, switched parameters in optional_param or another serious problem
+            error("Unknown parameter type: $type");
+    }
 }
 
 /**
