@@ -4,9 +4,11 @@
 <?php global $CFG, $course; ?>
 <div id="footer">
 <?php
+  if (function_exists('page_doc_link')) {
     echo '<p class="helplink">';
     echo page_doc_link(get_string('moodledocslink'));
     echo '</p>';
+  }
 ?>
 <?php echo $loggedinas ?>
 <?php echo $homelink ?>
