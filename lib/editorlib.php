@@ -99,7 +99,7 @@ class editorObject {
                 break;
                 case 2:
                 case 'tinymce':
-                    array_push($CFG->editorsrc, "$editorbaseurl/tinymce/jscripts/tiny_mce/tiny_mce_src.js");
+                    array_push($CFG->editorsrc, "$editorbaseurl/tinymce/jscripts/tiny_mce/tiny_mce_gzip.php");
                     array_push($CFG->editorsrc, "$editorbaseurl/tinymce/moodledialog.js");
                     $classfile = "$editorbasedir/tinymce/tinymce.class.php";
                     include_once($classfile);
