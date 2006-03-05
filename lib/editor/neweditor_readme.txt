@@ -42,4 +42,40 @@ we'll startup the editor almost as usual:
 After $editor->use_html_editor() -method is called $CFG->editorsrc array is cleared,
 so these scripts are loaded only when necessary.
 
+Special usage
+=============
+
+In some rare cases programmer needs to force sertain settings. If you don't want to 
+take care of both editor's settings you can force your module to use one editor only.
+In that case you'll have to pass an associative array as an argument 
+for loadeditor function:
+
+
+    $args = array('courseid' => $course->id, 'name' => 'tinymce');
+    $editor = loadeditor($args);
+    
+Then you can define settings for the editor that you wish to use. For setting up new
+settings use setconfig() method:
+	
+    Tiny example1:
+
+    $editor->setconfig('mode','exact');
+    $editor->setconfig('elements','mytextarea');
+    $editor->setconfig('plugins','advhr,table,flash');
+    
+    // Merge config to defaults and startup the editor.
+    $editor->starteditor('merge');
+
+    Tiny example2:
+    
+    $args['mode'] = 'exact';
+    $args['elements'] = 'mytextarea';
+
+    $args['plugins'] = 'advhr,table,flash';
+
+    // merge config to defaults and startup the editor.
+    $editor->starteditor('merge');
+
+To be continue...
+    
 $Id$
