@@ -6,7 +6,7 @@
     define("MAX_USERS_PER_PAGE", 50);
 
     $id = required_param('id',PARAM_INT);         // course id
-    $add = optional_param('add', '', PARAM_ALPHA);
+    $add = optional_param('add', '', PARAM_INT);
     $remove = optional_param('remove', '', PARAM_ALPHA);
     $search = optional_param('search', '', PARAM_CLEAN); // search string
 
