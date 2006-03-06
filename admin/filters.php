@@ -2,171 +2,170 @@
     // filters.php
     // Edit list of available text filters
 
-    require_once "../config.php";
-    require_once "$CFG->libdir/tablelib.php";
+    require_once '../config.php';
+    require_once $CFG->libdir.'/tablelib.php';
 
     // defines
-    define( 'FILTER_TABLE','filter_administration_table' );
+    define('FILTER_TABLE','filter_administration_table');
 
     // check for allowed access
     require_login();
+
     if (!isadmin()) {
-        error( 'Only administrators can use the filters administration page' );
+        error('Only administrators can use the filters administration page');
     }
     if (!$site = get_site()) {
-        error( 'Site is not defined in filters administration page' );
+        error('Site is not defined in filters administration page');
     }
 
     // get values from page
-    $params = new Object;
-    $params->action = optional_param( 'action','',PARAM_ALPHA );
-    $params->filterpath = optional_param( 'filterpath', '',PARAM_PATH );
-    $params->cachetext = optional_param( 'cachetext','0',PARAM_INT );
-    $params->filteruploadedfiles = optional_param( 'filteruploadedfiles','',PARAM_ALPHA );
-    $params->filterall = optional_param( 'filterall','',PARAM_ALPHA );
-    $params->filtermatchoneperpage = optional_param( 'filtermatchoneperpage','',PARAM_ALPHA );
-    $params->filtermatchonepertext = optional_param( 'filtermatchonepertext','',PARAM_ALPHA );
+    $params = new object();
+    $params->action     = optional_param('action', '', PARAM_ACTION);
+    $params->filterpath = optional_param('filterpath', '', PARAM_PATH);
+    $params->cachetext  = optional_param('cachetext', 0, PARAM_INT);
+    $params->filterall  = optional_param('filterall', 0, PARAM_BOOL);
+    $params->filteruploadedfiles   = optional_param('filteruploadedfiles', 0, PARAM_INT);
+    $params->filtermatchoneperpage = optional_param('filtermatchoneperpage', 0, PARAM_BOOL);
+    $params->filtermatchonepertext = optional_param('filtermatchonepertext', 0, PARAM_BOOL);
+
+    // some basic information
+    $url = 'filters.php';
+    $myurl = "$url?sesskey=" . sesskey();
+    $img = "$CFG->pixpath/t";
 
     // get translated strings for use on page
-    $txt = new Object;
-    $txt->managefilters = get_string( 'managefilters' );
-    $txt->administration = get_string( 'administration' );
-    $txt->configuration = get_string( 'configuration' );
-    $txt->name = get_string( 'name' );
-    $txt->hide = get_string( 'hide' );
-    $txt->show = get_string( 'show' );
+    $txt = new object();
+    $txt->managefilters = get_string('managefilters');
+    $txt->administration = get_string('administration');
+    $txt->configuration = get_string('configuration');
+    $txt->name = get_string('name');
+    $txt->hide = get_string('hide');
+    $txt->show = get_string('show');
     $txt->hideshow = "$txt->hide/$txt->show";
-    $txt->settings = get_string( 'settings' );
-    $txt->up = get_string( 'up' );
-    $txt->down = get_string( 'down' );
+    $txt->settings = get_string('settings');
+    $txt->up = get_string('up');
+    $txt->down = get_string('down');
     $txt->updown = "$txt->up/$txt->down";
-    $txt->cachetext = get_string( 'cachetext', 'admin' );
-    $txt->configcachetext = get_string( 'configcachetext', 'admin' );
-    $txt->filteruploadedfiles = get_string( 'filteruploadedfiles','admin' );
-    $txt->configfilteruploadedfiles = get_string( 'configfilteruploadedfiles','admin' );
-    $txt->filterall = get_string( 'filterall','admin' );
-    $txt->filtermatchoneperpage = get_string( 'filtermatchoneperpage','admin' );
-    $txt->filtermatchonepertext = get_string( 'filtermatchonepertext','admin' );
-    $txt->configfilterall = get_string( 'configfilterall','admin' );
-    $txt->configfiltermatchoneperpage = get_string( 'configfiltermatchoneperpage','admin' );
-    $txt->configfiltermatchonepertext = get_string( 'configfiltermatchonepertext','admin' );
-    $txt->cachecontrols = get_string( 'cachecontrols' );
-    $txt->yes = get_string( 'yes' );
+    $txt->cachetext = get_string('cachetext', 'admin');
+    $txt->configcachetext = get_string('configcachetext', 'admin');
+    $txt->filteruploadedfiles = get_string('filteruploadedfiles','admin');
+    $txt->configfilteruploadedfiles = get_string('configfilteruploadedfiles','admin');
+    $txt->filterall = get_string('filterall','admin');
+    $txt->filtermatchoneperpage = get_string('filtermatchoneperpage','admin');
+    $txt->filtermatchonepertext = get_string('filtermatchonepertext','admin');
+    $txt->configfilterall = get_string('configfilterall','admin');
+    $txt->configfiltermatchoneperpage = get_string('configfiltermatchoneperpage','admin');
+    $txt->configfiltermatchonepertext = get_string('configfiltermatchonepertext','admin');
+    $txt->cachecontrols = get_string('cachecontrols');
+    $txt->yes = get_string('yes');
     $txt->no = get_string('no');
     $txt->none = get_string('none');
     $txt->allfiles = get_string('allfiles');
     $txt->htmlfilesonly = get_string('htmlfilesonly');
 
     // get a list of possible filters (and translate name if possible)
-    // note filters can be in the dedicated filters area OR in their 
+    // note filters can be in the dedicated filters area OR in their
     // associated modules
-    $allfilters = array();
+    $installedfilters = array();
     $filtersettings = array();
     $filterlocations = array('mod','filter');
     foreach ($filterlocations as $filterlocation) {
-        $plugins = get_list_of_plugins( $filterlocation );
+        $plugins = get_list_of_plugins($filterlocation);
         foreach ($plugins as $plugin) {
             $pluginpath = "$CFG->dirroot/$filterlocation/$plugin/filter.php";
             $settingspath = "$CFG->dirroot/$filterlocation/$plugin/filterconfig.html";
-            if (is_readable( $pluginpath )) {
-                $name = trim( get_string("filtername", $plugin) );
+            if (is_readable($pluginpath)) {
+                $name = trim(get_string("filtername", $plugin));
                 if (empty($name) or ($name == '[[filtername]]')) {
-                    $name = $plugin;
+                    $name = ucfirst($plugin);
                 }
-            $allfilters[ "$filterlocation/$plugin" ] = ucfirst( $name );
-            }
-            if (is_readable($settingspath)) {
-                $filtersettings[] = "$filterlocation/$plugin";
+                $installedfilters["$filterlocation/$plugin"] = $name;
+                if (is_readable($settingspath)) {
+                    $filtersettings[] = "$filterlocation/$plugin";
+                }
             }
         }
     }
 
     // get all the currently selected filters
     if (!empty($CFG->textfilters)) {
-        $installedfilters = explode( ',', $CFG->textfilters );    
-    }
-    else { 
-        $installedfilters = array();
+        $oldactivefilters = explode(',', $CFG->textfilters);
+        $oldactivefilters = array_unique($oldactivefilters);
+    } else {
+        $oldactivefilters = array();
     }
 
     // take this opportunity to clean up filters
-    $oldinstalledfilters = $installedfilters;
-    $installedfilters = array();
-    foreach ($oldinstalledfilters as $key => $installedfilter ) {
-        if (!empty( $installedfilter ) and array_key_exists( $installedfilter, $allfilters ) ) {
-            $installedfilters[ $key ] = $installedfilter;
+    $activefilters = array();
+    foreach ($oldactivefilters as $oldactivefilter) {
+        if (!empty($oldactivefilter) and array_key_exists($oldactivefilter, $installedfilters)) {
+            $activefilters[] = $oldactivefilter;
         }
     }
-    $installedfilters = array_unique($installedfilters);
-    set_config( 'textfilters', implode( ',', $installedfilters ) );
 
     //======================
     // Process Actions
     //======================
 
-    if (($params->action=="hide") and confirm_sesskey()) {
-        $key=array_search( $params->filterpath, $installedfilters );
+    if ($params->action=="") {
+        // store cleaned active filers in db
+        set_config('textfilters', implode(',', $activefilters));
+    } elseif (($params->action=="hide") and confirm_sesskey()) {
+        $key=array_search($params->filterpath, $activefilters);
         // check filterpath is valid
         if ($key===false) {
-            error( "Filter $params->filterpath is not a currently installed filter" );
-        }    
-        // just delete it
-        unset( $installedfilters[ $key ] );
-        set_config( 'textfilters', implode( ',', $installedfilters ) );
-    }
-
-    if (($params->action=="show") and confirm_sesskey()) {
+            // ignore it - doubleclick??
+        } else {
+            // just delete it
+            unset($activefilters[$key]);
+            set_config('textfilters', implode(',', $activefilters));
+        }
+    } elseif (($params->action=="show") and confirm_sesskey()) {
         // check filterpath is valid
-        if (!array_key_exists( $params->filterpath, $allfilters ) ) {
-            error( "Filter $params->filterpath is not a currently installed filter" );
-        }    
-        if (array_search( $params->filterpath,$installedfilters ) ) {
-            error( "Filter $params->filterpath is already active" );
-        } 
-        // add it to installed filters
-        $installedfilters[] = $params->filterpath;
-        $installedfilters = array_unique($installedfilters);
-        set_config( 'textfilters', implode( ',', $installedfilters ) );
-    }
-
-    if (($params->action=="down") and confirm_sesskey()) {
-        $key=array_search( $params->filterpath, $installedfilters );
+        if (!array_key_exists($params->filterpath, $installedfilters)) {
+            error("Filter $params->filterpath is not currently installed", $url);
+        } elseif (array_search($params->filterpath,$activefilters)) {
+            // filterpath is already active - doubleclick??
+        } else {
+            // add it to installed filters
+            $activefilters[] = $params->filterpath;
+            $activefilters = array_unique($activefilters);
+            set_config('textfilters', implode(',', $activefilters));
+        }
+    } elseif (($params->action=="down") and confirm_sesskey()) {
+        $key=array_search($params->filterpath, $activefilters);
         // check filterpath is valid
-        if ($key===false ) {
-            error( "Filter $params->filterpath is not a currently installed filter" );
-        }    
-        if ($key>=(count($installedfilters)-1)) {
-            error( "Filter $params->filterpath cannot be moved any further down" );
-        } 
-        // swap with $key+1
-        $fsave = $installedfilters[$key];
-        $installedfilters[$key] = $installedfilters[$key+1];
-        $installedfilters[$key+1] = $fsave;
-        set_config( 'textfilters', implode( ',', $installedfilters ) );
-    }
-
-    if (($params->action=="up") and confirm_sesskey()) {
-        $key=array_search( $params->filterpath, $installedfilters );
+        if ($key===false) {
+            error("Filter $params->filterpath is not currently active", $url);
+        } elseif ($key>=(count($activefilters)-1)) {
+            // cannot be moved any further down - doubleclick??
+        } else {
+            // swap with $key+1
+            $fsave = $activefilters[$key];
+            $activefilters[$key] = $activefilters[$key+1];
+            $activefilters[$key+1] = $fsave;
+            set_config('textfilters', implode(',', $activefilters));
+        }
+    } elseif (($params->action=="up") and confirm_sesskey()) {
+        $key=array_search($params->filterpath, $activefilters);
         // check filterpath is valid
-        if ($key===false ) {
-            error( "Filter $params->filterpath is not a currently installed filter" );
-        }    
-        if ($key<1) {
-            error( "Filter $params->filterpath cannot be moved any further up" );
-        } 
-        // swap with $key-1
-        $fsave = $installedfilters[$key];
-        $installedfilters[$key] = $installedfilters[$key-1];
-        $installedfilters[$key-1] = $fsave;
-        set_config( 'textfilters', implode( ',', $installedfilters ) );
-    }
-
-    if (($params->action=="config") and confirm_sesskey()) {
-        set_config( 'cachetext', $params->cachetext );
-        set_config( 'filteruploadedfiles', $params->filteruploadedfiles );
-        set_config( 'filterall', $params->filterall );
-        set_config( 'filtermatchoneperpage', $params->filtermatchoneperpage );
-        set_config( 'filtermatchonepertext', $params->filtermatchonepertext );
+        if ($key===false) {
+            error("Filter $params->filterpath is not currently active", $url);
+        } elseif ($key<1) {
+            //cannot be moved any further up - doubleclick??
+        } else {
+            // swap with $key-1
+            $fsave = $activefilters[$key];
+            $activefilters[$key] = $activefilters[$key-1];
+            $activefilters[$key-1] = $fsave;
+            set_config('textfilters', implode(',', $activefilters));
+        }
+    } elseif (($params->action=="config") and confirm_sesskey()) {
+        set_config('cachetext', $params->cachetext);
+        set_config('filteruploadedfiles', $params->filteruploadedfiles);
+        set_config('filterall', $params->filterall);
+        set_config('filtermatchoneperpage', $params->filtermatchoneperpage);
+        set_config('filtermatchonepertext', $params->filtermatchonepertext);
     }
 
     //======================
@@ -176,37 +175,32 @@
     // construct the display array with installed filters
     // at the top in the right order
     $displayfilters = array();
-    foreach ($installedfilters as $installedfilter) {
-        $name = $allfilters[ $installedfilter ];
-        $displayfilters[ $installedfilter ] = $name;
+    foreach ($activefilters as $activefilter) {
+        $name = $installedfilters[$activefilter];
+        $displayfilters[$activefilter] = $name;
     }
-    foreach ($allfilters as $key => $filter) {
-        if (!array_key_exists( $key, $displayfilters )) {
-            $displayfilters[ $key ] = $filter;
+    foreach ($installedfilters as $key => $filter) {
+        if (!array_key_exists($key, $displayfilters)) {
+            $displayfilters[$key] = $filter;
         }
     }
 
     // construct the flexible table ready to display
     $table = new flexible_table(FILTER_TABLE);
-    $table->define_columns( array( 'name', 'hideshow', 'order', 'settings' ) );
-    $table->define_headers( array( $txt->name, $txt->hideshow, $txt->updown, $txt->settings ) );
-    $table->define_baseurl( "$CFG->wwwroot/admin/filters.php" );
-    $table->set_attribute( 'id', 'blocks' );
-    $table->set_attribute( 'class', 'flexible generaltable generalbox' );
+    $table->define_columns(array('name', 'hideshow', 'order', 'settings'));
+    $table->define_headers(array($txt->name, $txt->hideshow, $txt->updown, $txt->settings));
+    $table->define_baseurl("$CFG->wwwroot/admin/filters.php");
+    $table->set_attribute('id', 'blocks');
+    $table->set_attribute('class', 'flexible generaltable generalbox');
     $table->setup();
-
-    // some basic information 
-    $url = strip_querystring( qualified_me() );
-    $myurl = "$url?sesskey=" . sesskey();
-    $img = "$CFG->pixpath/t";
 
     // iterate through filters adding to display table
     $updowncount = 1;
-    $installedfilterscount = count( $installedfilters );
-    foreach( $displayfilters as $path => $name ) {
-        $upath = urlencode( $path );
+    $activefilterscount = count($activefilters);
+    foreach ($displayfilters as $path => $name) {
+        $upath = urlencode($path);
         // get hide/show link
-        if (in_array( $path, $installedfilters )) {
+        if (in_array($path, $activefilters)) {
             $hideshow = "<a href=\"$myurl&amp;action=hide&amp;filterpath=$upath\">";
             $hideshow .= "<img src=\"$img/hide.gif\" alt=\"hide\" /></a>";
             $hidden = false;
@@ -229,7 +223,7 @@
             else {
                 $updown .= "<img src=\"$CFG->pixpath/spacer.gif\" height=\"16\" width=\"16\" alt=\"\" />&nbsp;";
             }
-            if ($updowncount<$installedfilterscount) {
+            if ($updowncount<$activefilterscount) {
                 $updown .= "<a href=\"$myurl&amp;action=down&amp;filterpath=$upath\">";
                 $updown .= "<img src=\"$img/down.gif\" alt=\"down\" /></a>";
             }
@@ -238,16 +232,16 @@
             }
             ++$updowncount;
         }
- 
+
         // settings link (if defined)
         $settings = '';
-        if (in_array( $path, $filtersettings )) {
+        if (in_array($path, $filtersettings)) {
             $settings = "<a href=\"filter.php?filter=" . urlencode($path) . "\">";
             $settings .= "{$txt->settings}</a>";
         }
 
         // write data into the table object
-        $table->add_data( array( $displayname, $hideshow, $updown, $settings ) );
+        $table->add_data(array($displayname, $hideshow, $updown, $settings));
     }
 
     // build options list for cache lifetime
@@ -275,17 +269,17 @@
     // Display logic
     //==============================
 
-    print_header( "$site->shortname: $txt->managefilters", "$site->fullname",
+    print_header("$site->shortname: $txt->managefilters", "$site->fullname",
         "<a href=\"index.php\">$txt->administration</a> -> <a href=\"configure.php\">$txt->configuration</a> " .
-        "-> $txt->managefilters" );
+        "-> $txt->managefilters");
 
-    print_heading_with_help( $txt->managefilters, 'filters' );
+    print_heading_with_help($txt->managefilters, 'filters');
 
     // print the table of all the filters
     $table->print_html();
 
     // print the table for the cache controls
-    print_heading( $txt->cachecontrols ); 
+    print_heading($txt->cachecontrols);
     print_simple_box_start('center');
     ?>
 
@@ -295,28 +289,28 @@
         <table cellpadding="20">
             <tr valign="top">
                 <td nowrap="nowrap" align="right"><?php echo $txt->cachetext; ?></td>
-                <td><?php choose_from_menu( $options, "cachetext", $CFG->cachetext, "", "", "" ); ?></td>
+                <td><?php choose_from_menu($options, "cachetext", $CFG->cachetext, "", "", ""); ?></td>
                 <td><?php echo $txt->configcachetext; ?></td>
             </tr>
             <tr valign="top">
                 <td nowrap="nowrap" align="right"><?php echo $txt->filteruploadedfiles; ?></td>
-                <td><?php choose_from_menu( array($txt->none,$txt->allfiles,$txt->htmlfilesonly),
+                <td><?php choose_from_menu(array($txt->none,$txt->allfiles,$txt->htmlfilesonly),
                     "filteruploadedfiles", $CFG->filteruploadedfiles,"","",""); ?></td>
                 <td><?php echo $txt->configfilteruploadedfiles; ?></td>
             </tr>
             <tr valign="top">
                 <td nowrap="nowrap" align="right"><?php echo $txt->filtermatchoneperpage; ?></td>
-                <td><?php choose_from_menu( array($txt->no,$txt->yes), "filtermatchoneperpage", $CFG->filtermatchoneperpage,"","",""); ?></td>
+                <td><?php choose_from_menu(array($txt->no,$txt->yes), "filtermatchoneperpage", $CFG->filtermatchoneperpage,"","",""); ?></td>
                 <td><?php echo $txt->configfiltermatchoneperpage; ?></td>
-	    <tr valign="top">
-		<td nowrap="nowrap" align="right"><?php echo $txt->filtermatchonepertext; ?></td>
-		<td><?php choose_from_menu( array($txt->no,$txt->yes), "filtermatchonepertext", $CFG->filtermatchonepertext,"","",""); ?></td>
-		<td><?php echo $txt->configfiltermatchonepertext; ?></td>
-	    </tr>
+        <tr valign="top">
+        <td nowrap="nowrap" align="right"><?php echo $txt->filtermatchonepertext; ?></td>
+        <td><?php choose_from_menu(array($txt->no,$txt->yes), "filtermatchonepertext", $CFG->filtermatchonepertext,"","",""); ?></td>
+        <td><?php echo $txt->configfiltermatchonepertext; ?></td>
+        </tr>
             </tr>
             <tr valign="top">
                 <td nowrap="nowrap" align="right"><?php echo $txt->filterall; ?></td>
-                <td><?php choose_from_menu( array($txt->no,$txt->yes), "filterall", $CFG->filterall,"","",""); ?></td>
+                <td><?php choose_from_menu(array($txt->no,$txt->yes), "filterall", $CFG->filterall,"","",""); ?></td>
                 <td><?php echo $txt->configfilterall; ?></td>
             </tr>
             <tr valign="top">
@@ -324,11 +318,12 @@
                 <td><input type="submit" value="<?php print_string('savechanges'); ?>" /></td>
                 <td>&nbsp;</td>
             </tr>
-        </table>   
+        </table>
     </form>
 
     <?php
     print_simple_box_end();
 
     print_footer();
+
 ?>
