@@ -88,7 +88,7 @@ function HTMLArea(textarea, config) {
     var scripts = HTMLArea._scripts = [ _editor_url + "htmlarea.js",
                         _editor_url + "dialog.js",
                         _editor_url + "popupwin.js",
-                        _editor_url + "lang/" + _editor_lang + ".js" ];
+                        _editor_url + "plugins/GetHtml/get-html.js" ];
     var head = document.getElementsByTagName("head")[0];
     // start from 1, htmlarea.js is already loaded
     for (var i = 1; i < scripts.length; ++i) {
@@ -575,6 +575,9 @@ HTMLArea.prototype._createStatusBar = function() {
 // Creates the HTMLArea object and replaces the textarea with it.
 HTMLArea.prototype.generate = function () {
     var editor = this;  // we'll need "this" in some nested functions
+    try {
+        editor.registerPlugin(GetHtml);
+    } catch (e) {}
     // get the textarea
     var textarea = this._textArea;
     if (typeof textarea == "string") {
