@@ -45,7 +45,7 @@ so these scripts are loaded only when necessary.
 Special usage
 =============
 
-In some rare cases programmer needs to force sertain settings. If you don't want to 
+In some rare cases programmer needs to force certain settings. If you don't want to 
 take care of both editor's settings you can force your module to use one editor only.
 In that case you'll have to pass an associative array as an argument 
 for loadeditor function:
