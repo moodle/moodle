@@ -540,6 +540,7 @@ $string['formattext'] = 'Moodle auto-format';
 $string['formattexttype'] = 'Formatting';
 $string['formattopics'] = 'Topics format';
 $string['formatweeks'] = 'Weekly format';
+$string['formatweekscss'] = 'Weekly format - CSS/No tables';
 $string['formatwiki'] = 'Wiki-like format';
 $string['from'] = 'From';
 $string['frontpagecategorynames'] = 'List of categories';
