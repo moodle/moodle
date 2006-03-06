@@ -202,8 +202,11 @@ body#admin-index .copyright {
 /***
  *** Blocks
  ***/
+a.skip-block {
+  text-decoration:none;
+}
 
-.sideblock .header {
+.sideblock .header, .sideblock h2 {
   font-size:0.9em;
   font-weight: bold;
 }

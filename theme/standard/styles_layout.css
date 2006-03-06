@@ -234,6 +234,17 @@ form.popupform {
   display: inline;
 }
 
+/*Accessibility: text 'seen' by screen readers but not visual users. */
+.accesshide {
+  position:absolute;
+  left:-10000px;
+}
+img.resize {
+  width:1em;
+  height:1em;
+}
+
+
 /***
  *** Header
  ***/
@@ -398,7 +409,7 @@ table.flexible th.c0 {
 a.skip-block, .skip-block {
   display:block;
   width:2em; 
-  height:3px;
+  height:4px;
 }
 .skip-block-to {
   font-size:1px;
@@ -427,9 +438,14 @@ ul.list, ul.list li {
   text-align: left;
   margin:0%;
   padding:4px;
+  padding-bottom:0%;
   border-width: 1px;
   border-style: solid;
   border-bottom: none;
+}
+.sideblock h2 {
+  margin:0%;
+  padding:0%;
 }
 
 .sideblock .header .hide-show {

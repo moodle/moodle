@@ -238,20 +238,22 @@ class block_base {
         global $CFG;
 
         //Accessibility: validation, can't have <div> inside <h2>, use <span>.
-        $title = '<span class="title">';
+        $title = '<div class="title">';
         
         if (!empty($CFG->allowuserblockhiding)) {
             //Accessibility: added static 'alt' text for the +- icon.
-            $title .= '<span class="hide-show"><a href="#" onclick="elementToggleHide(this, true, function(el) {return findParentNode(el, \'DIV\', \'sideblock\'); } ); return false;"><img src="'.$CFG->pixpath.'/spacer.gif" alt="hide OR show block" class="hide-show-image" /></a></span>';
+            //TODO (nfreear): language string 'hide OR show block'
+            $title .= '<div class="hide-show"><a title="'.get_string('showhideblock','access').'" href="#" onclick="elementToggleHide(this, true, function(el) {return findParentNode(el, \'DIV\', \'sideblock\'); } ); return false;"><img src="'.$CFG->pixpath.'/spacer.gif" alt="'.get_string('showhideblock','access').'" class="hide-show-image" /></a></div>';
         }
 
-        $title .= $this->title;
+        //Accesssibility: added H2 (was in, weblib.php: print_side_block)
+        $title .= '<h2>'.$this->title.'</h2>';
 
         if ($this->edit_controls !== NULL) {
             $title .= $this->edit_controls;
         }
 
-        $title .= '</span>';
+        $title .= '</div>';
 
         return $title;
     }
