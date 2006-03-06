@@ -170,7 +170,10 @@ class textlib {
         return $this->typo3cs->utf8_strrpos($haystack,$needle);
     }
 
-    /* Try to convert upper unicode characters to plain ascii*/
+    /* Try to convert upper unicode characters to plain ascii,
+    *  the returned string may cantain unconverted unicode characters.
+    */
+
     function specialtoascii($text,$charset='utf-8') {
         return $this->typo3cs->specCharsToASCII(strtolower($charset),$text);
     }
