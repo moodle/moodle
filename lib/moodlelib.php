@@ -3126,6 +3126,10 @@ function remove_course_contents($courseid, $showfeedback=true) {
         error('No modules are installed!');
     }
 
+    // Give local code a chance to delete its references to this course.
+    require_once('locallib.php');
+    notify_local_delete_course($courseid, $showfeedback);
+
     // Delete course blocks
     if (delete_records('block_instance', 'pagetype', PAGE_COURSE_VIEW, 'pageid', $course->id)) {
         if ($showfeedback) {
