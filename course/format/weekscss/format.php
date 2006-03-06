@@ -12,6 +12,12 @@
  *   3. Reorder columns so that in linear view content is first then blocks;
  * styles to maintain original graphical (side by side) view.
  *
+ * Target: 3-column graphical view using relative widths for pixel screen sizes 
+ * 800x600, 1024x768... on IE6, Firefox. Below 800 columns will shift downwards.
+ * 
+ * http://www.maxdesign.com.au/presentation/em/ Ideal length for content.
+ * http://www.svendtofte.com/code/max_width_in_ie/ Max width in IE.
+ *
  * @copyright © 2006 The Open University
  * @author N.D.Freear@open.ac.uk
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
@@ -21,7 +27,7 @@
 
     require_once("$CFG->dirroot/mod/forum/lib.php");
 
-    // Bounds for block widths
+    // Bounds for block widths; in PIXELS.
     define('BLOCK_L_MIN_WIDTH', 100);
     define('BLOCK_L_MAX_WIDTH', 210);
     define('BLOCK_R_MIN_WIDTH', 100);
@@ -31,6 +37,15 @@
                                             BLOCK_L_MAX_WIDTH);
     $preferred_width_right = bounded_number(BLOCK_R_MIN_WIDTH, blocks_preferred_width($pageblocks[BLOCK_POS_RIGHT]), 
                                             BLOCK_R_MAX_WIDTH);
+    // 'Answer' in pixels: left 180, right 210.
+    
+    //Accessibility: relative block widths to approximate current pixel widths.
+    // Min/max-width not supported by IE6.
+    $preferred_width_left  = '18%; ';
+    $preferred_width_right = '18%; ';
+    $width_center = '60%; ';
+    $min_max_block= 'min-width:100px; max-width:210px; ';
+    $min_max_main = 'min-width:25em; max-width:37em; '; //33em
 
     if (isset($week)) {
         $displaysection = course_set_display($course->id, $week);
@@ -65,18 +80,23 @@
 
 
 /// Layout the whole page as three big columns.
-    echo '<table id="layout-table" cellspacing="0"><tr>';
+    ///echo '<table id="layout-table" cellspacing="0"><tr>';
+    echo '<div id="layout-table">';
 
 /// The left column ...
 
     if (blocks_have_content($pageblocks, BLOCK_POS_LEFT) || $editing) {
-        echo '<td style="width: '.$preferred_width_left.'px;" id="left-column">';
+        ///echo '<td style="width: '.$preferred_width_left.'px;" id="left-column">';
+        echo '<div style="width:'.$preferred_width_left.$min_max_block.'float:left;" id="left-column">';        blocks_print_group($PAGE, $pageblocks, BLOCK_POS_LEFT);
         blocks_print_group($PAGE, $pageblocks, BLOCK_POS_LEFT);
-        echo '</td>';
+        echo '</div>';
+        ///echo '</td>';
     }
 
 /// Start main column
-    echo '<td id="middle-column">';
+    ///echo '<td id="middle-column">';
+    echo '<div id="middle-column" style="width:'.$width_center.$min_max_main.'float:left;">';
+
 
     print_heading_block(get_string('weeklyoutline'), 'outline');
 
@@ -258,15 +278,20 @@
         echo '</div>';
     }
 
-    echo '</td>';
+    ///echo '</td>';
+    echo '</div>';
 
     // The right column
     if (blocks_have_content($pageblocks, BLOCK_POS_RIGHT) || $editing) {
-        echo '<td style="width: '.$preferred_width_right.'px;" id="right-column">';
+        ///echo '<td style="width: '.$preferred_width_right.'px;" id="right-column">';
+        echo '<div style="width:'.$preferred_width_right.$min_max_block.' float:right;" id="right-column">';
         blocks_print_group($PAGE, $pageblocks, BLOCK_POS_RIGHT);
-        echo '</td>';
+        echo '</div>';
+        ///echo '</td>';
     }
 
-    echo '</tr></table>';
+    ///echo '</tr></table>';
+    echo '<div class="clearer"></div>';
+    echo '</div>';
 
 ?>
