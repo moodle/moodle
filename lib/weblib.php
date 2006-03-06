@@ -4308,12 +4308,11 @@ function rebuildnolinktag($text) {
  */
 function print_side_block($heading='', $content='', $list=NULL, $icons=NULL, $footer='', $attributes = array()) {
 
-//TODO (nfreear): Accessibility: skip block link. Proposed new file, lang/en_utf8/accessibility.php
-    global $CFG;
+    //Accessibility: skip block link.
     static $block_id = 0;
     $block_id++;
-    $skip_link = "<a href='#sb-$block_id' title='Skip block' class='skip-block'><img alt='Skip block' src='$CFG->wwwroot/pix/spacer.gif' /></a>";
-    $skip_dest = "<span id='sb-$block_id' class='skip-block-to'>&nbsp;</span>";
+    $skip_link = '<a href="#sb-'.$block_id.'" class="skip-block" title="'.get_string('skipblock','access').'"><span class="accesshide">'.get_string('skipblock','access').'</span></a>'; 
+    $skip_dest = '<span id="sb-'.$block_id.'" class="skip-block-to"></span>';
     if (! empty($heading)) {
         $heading .= $skip_link;
     } else {
@@ -4395,8 +4394,8 @@ function print_side_block_start($heading='', $attributes = array()) {
 
     echo '<div '.$attrtext.'>';
     if ($heading) {
-        //Accessibility: replaced <div> with H2 - required mods, moodleblock.class.php:_title_html
-        echo '<h2 class="header">'.$heading.'</h2>';
+        //Accessibility: replaced <div> with H2; no, H2 more appropriate in moodleblock.class.php: _title_html.
+        echo '<div class="header">'.$heading.'</div>';
     }
     echo '<div class="content">';
 
