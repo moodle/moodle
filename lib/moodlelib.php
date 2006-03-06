@@ -6920,26 +6920,36 @@ function object_property_exists( $obj, $property ) {
 function custom_script_path($urlpath='') {
     global $CFG;
 
-    if (empty($urlpath) or (strpos($CFG->wwwroot, $urlpath) === false) ) {
-        $urlpath = qualified_me();
-        if (!$urlpath) return false;
+    // set default $urlpath, if necessary
+    if (empty($urlpath)) {
+        $urlpath = qualified_me(); // e.g. http://www.this-server.com/moodle/this-script.php
     }
 
-    /// Strip wwwroot out
-    $scriptpath = str_replace($CFG->wwwroot, $CFG->customscripts, $urlpath);
+    // clean the $urlpath
+    $urlpath = clean_param($urlpath, PARAM_URL);
 
-    /// Clean the path
-    $scriptpath = clean_param($scriptpath, PARAM_PATH);
-
-    /// Strip the query string out
-    $parts = parse_url($scriptpath);
-    $scriptpath = $parts['path'];
-
-    /// put an index.php on the end if no explicit script name present
-    if (rtrim($scriptpath, '/') != $scriptpath) {
-        $scriptpath .= 'index.php';
+    // $urlpath is invalid if it is empty or does not start with the Moodle wwwroot
+    if (empty($urlpath) or (strpos($urlpath, $CFG->wwwroot) === false )) {
+        return false;
     }
 
+    // replace wwwroot with the path to the customscripts folder
+    $scriptpath = $CFG->customscripts . substr($urlpath, strlen($CFG->wwwroot));
+
+    // remove the query string, if any
+    if (($strpos = strpos($scriptpath, '?')) !== false) {
+        $scriptpath = substr($scriptpath, 0, $strpos);
+    }
+
+    // remove trailing slashes, if any
+    $scriptpath = rtrim($scriptpath, '/\\');
+
+    // append index.php, if necessary
+    if (is_dir($scriptpath)) {
+        $scriptpath .= '/index.php';
+    }
+
+    // check the custom script exists
     if (file_exists($scriptpath)) {
         return $scriptpath;
     } else {
