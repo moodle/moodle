@@ -1,13 +1,9 @@
 <?PHP // $Id$
       // Admin only script to assign course creator rights to users
 
-    require_once("../config.php");
+    require_once('../config.php');
 
     define("MAX_USERS_PER_PAGE", 50);
-
-    $search = optional_param('search', '', PARAM_CLEAN);
-    $add = optional_param('add', '', PARAM_CLEAN);
-    $remove = optional_param('remove', '', PARAM_CLEAN );
 
     if (! $site = get_site()) {
         redirect("$CFG->wwwroot/$CFG->admin/index.php");
@@ -50,6 +46,7 @@
 
     if (!$frm = data_submitted()) {
         print_simple_box("<center>".get_string("adminhelpassigncreators")."</center>", "center", "50%");
+        $frm = new object();
 
 /// A form was submitted so process the input
 

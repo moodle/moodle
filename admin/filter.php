@@ -2,8 +2,8 @@
     // filter.php
     // Edit text filter settings
 
-    require_once "../config.php";
-    require_once "$CFG->libdir/tablelib.php";
+    require_once '../config.php';
+    require_once $CFG->libdir.'/tablelib.php';
 
     // check for allowed access
     require_login();
@@ -16,10 +16,12 @@
 
     // get parameters
     $param = new Object;
-    $param->filter = required_param( 'filter' );
-    $param->submit = optional_param( 'submit','',PARAM_ALPHA );
-    $param->reset = optional_param( 'reset','',PARAM_ALPHA );
-    $filtername =  substr( $param->filter, strpos( $param->filter, '/' )+1 ) ;
+
+    $param->filter = required_param('filter', PARAM_PATH);
+    $param->submit = optional_param('submit', 0, PARAM_BOOL);
+    $param->reset  = optional_param('reset', 0, PARAM_BOOL);
+
+    $filtername =  substr($param->filter, strpos( $param->filter, '/' )+1 ) ;
 
     // get translated strings for use on page
     $txt = new Object;

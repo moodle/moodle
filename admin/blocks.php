@@ -6,7 +6,7 @@
     require_once($CFG->libdir.'/blocklib.php');
     require_once($CFG->libdir.'/tablelib.php');
 
-    $confirm  = optional_param('confirm', 0, PARAM_INT);
+    $confirm  = optional_param('confirm', 0, PARAM_BOOL);
     $hide     = optional_param('hide', 0, PARAM_INT);
     $show     = optional_param('show', 0, PARAM_INT);
     $delete   = optional_param('delete', 0, PARAM_INT);

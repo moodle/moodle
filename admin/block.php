@@ -14,7 +14,7 @@
         error("Site isn't defined!");
     }
 
-    $blockid = required_param( 'block',PARAM_INT );
+    $blockid = required_param('block', PARAM_INT);
    
     if(($blockrecord = blocks_get_record($blockid)) === false) {
         error('This block does not exist');

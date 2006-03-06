@@ -2,9 +2,9 @@
        // enrol.php - allows admin to edit all enrollment variables
        //             Yes, enrol is correct English spelling.
 
-    include("../config.php");
+    include('../config.php');
 
-    $enrol = optional_param('enrol', $CFG->enrol, PARAM_ALPHA);
+    $enrol = optional_param('enrol', $CFG->enrol, PARAM_SAFEDIR);
 
     require_login();
 
@@ -43,6 +43,7 @@
 
 
     $modules = get_list_of_plugins("enrol");
+    $options = array();
     foreach ($modules as $module) {
         $options[$module] = get_string("enrolname", "enrol_$module");
     }

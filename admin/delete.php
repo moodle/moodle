@@ -7,8 +7,8 @@
 
     require_login();
 
-    $sure = optional_param('sure', '');
-    $reallysure = optional_param('reallysure', '');
+    $sure       = optional_param('sure', 0, PARAM_BOOL);
+    $reallysure = optional_param('reallysure', 0, PARAM_BOOL);
 
     if (!isadmin()) {
         error('You must be admin to use this script!');

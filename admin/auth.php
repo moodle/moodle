@@ -1,9 +1,9 @@
 <?PHP  // $Id$
        // config.php - allows admin to edit all configuration variables
 
-    include("../config.php");
+    require_once('../config.php');
 
-    $auth = optional_param( 'auth','',PARAM_CLEAN );
+    $auth = optional_param('auth', '', PARAM_SAFEDIR);
 
     require_login();
 
@@ -19,8 +19,9 @@
         error(get_string('confirmsesskeybad', 'error'));
     }
 
-/// If data submitted, then process and store.
+    $focus = '';
 
+/// If data submitted, then process and store.
 
     if ($config = data_submitted()) {
 
@@ -66,6 +67,7 @@
     }
 
     $modules = get_list_of_plugins("auth");
+    $options = array();
     foreach ($modules as $module) {
         $options[$module] = get_string("auth_$module"."title", "auth");
     }
@@ -104,10 +106,6 @@
         $config->{'auth_'.$auth.'_changepasswordhelp'} = '';
     }
     $user_fields = array("firstname", "lastname", "email", "phone1", "phone2", "department", "address", "city", "country", "description", "idnumber", "lang");
-
-    if (empty($focus)) {
-        $focus = "";
-    }
 
     $guestoptions[0] = get_string("hide");
     $guestoptions[1] = get_string("show");

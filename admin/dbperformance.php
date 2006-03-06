@@ -1,11 +1,11 @@
 <?PHP  // $Id$
        // dbperformance.php - shows latest ADOdb stats for the current server
 
-    require_once("../config.php");
+    require_once('../config.php');
 
-    $topframe = optional_param( 'topframe', '', PARAM_ALPHA);
-    $bottomframe = optional_param( 'bottomframe', '', PARAM_ALPHA);
-    $do = optional_param( 'do','',PARAM_ALPHA);
+    $topframe    = optional_param('topframe', 0, PARAM_BOOL);
+    $bottomframe = optional_param('bottomframe', 0, PARAM_BOOL);
+    $do          = optional_param('do', '', PARAM_ALPHA);
 
     require_login();
 

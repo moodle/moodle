@@ -1,5 +1,6 @@
 <?php // $Id$
       // Shane Elliott
+defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
 
 /// Add new sitewide configuration variables to this file.
 

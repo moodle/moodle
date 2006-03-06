@@ -35,9 +35,8 @@
 
 
 /// Parameters
-    $action = optional_param('action', '', PARAM_ALPHA);
-    $sesskey = optional_param('sesskey');
-    $version = optional_param('version');
+    $action  = optional_param('action', '', PARAM_ACTION);
+    $version = optional_param('version', '', PARAM_FILE); //
 
 /// Security checks
     require_login();

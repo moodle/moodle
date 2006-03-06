@@ -1,13 +1,9 @@
 <?PHP // $Id$
       // Admin-only script to assign administrative rights to users
 
-    require_once("../config.php");
+    require_once('../config.php');
     
     define("MAX_USERS_PER_PAGE", 50);
-
-    $add = optional_param('add', "", PARAM_ALPHA);
-    $remove = optional_param('remove', '', PARAM_ALPHA);
-    $search = optional_param('search', '', PARAM_ALPHA);
 
     if (! $site = get_site()) {
         redirect("$CFG->wwwroot/$CFG->admin/index.php");

@@ -3,6 +3,8 @@
 
     require_once('../config.php');
 
+    $focus = '';
+
     if ($site = get_site()) {   // If false then this is a new installation
         require_login();
         if (!isadmin()) {
@@ -76,9 +78,6 @@
             $config->locale = $CFG->lang;
         }
     }
-    if (empty($focus)) {
-        $focus = '';
-    }
 
     $sesskey = !empty($USER->id) ? $USER->sesskey : '';
 
@@ -102,7 +101,7 @@
 
 
 /// Get all the configuration fields and helptext
-    include('configvars.php');
+    require('configvars.php');
 
 /// Cycle through the sections to get the sectionnames
     $linktext = '';

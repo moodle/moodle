@@ -1,9 +1,11 @@
 <?php // $Id$
 /// configuration routines for HTMLArea editor
 
-    require_once("../config.php");
-    require_login();
+    require_once('../config.php');
+
     $currentpage = optional_param('tab', 1, PARAM_INT);
+
+    require_login();
 
     if (!isadmin()) {
         error("Only admins can access this page");
@@ -27,16 +29,16 @@
     } else {
         // Generate edit form
 
-        $inactive = NULL;
+        $inactive = array();
         switch ( $currentpage ) {
             case 1:
                 $currenttab = 'htmlarea';
-                $inactive = array();
-            break;
+                break;
             case 2:
                 $currenttab = 'tinymce';
-                $inactive = array();
-            break;
+                break;
+            default:
+                error("Unknown currentpage: $currentpage");
         }
 
         $url = 'editor.php?tab=';
