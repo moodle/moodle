@@ -107,6 +107,7 @@ class tinymce extends editorObject {
                 $this->defaults['theme_advanced_buttons3_add'] = "emotions,iespell,flash,advhr,separator,print,separator,ltr,rtl,separator,fullscreen";
                 $this->defaults['theme_advanced_toolbar_location'] = "top";
                 $this->defaults['theme_advanced_toolbar_align'] = "left";
+                $this->defaults['theme_advanced_statusbar_location'] = "bottom";
                 $this->defaults['theme_advanced_resizing'] = true;
                 $this->defaults['theme_advanced_resize_horizontal'] = true;
             }
