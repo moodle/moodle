@@ -256,6 +256,10 @@ class tinymce extends editorObject {
                     continue;
                 }
 
+                if ( $cnt > 1 ) {
+                    echo ',' ."\n";
+                }
+
                 echo "\t" . $key .' : ';
 
                 if ( is_bool($value) ) {
@@ -264,10 +268,6 @@ class tinymce extends editorObject {
                     echo '"'. $value .'"';
                 }
 
-                if ( $cnt < $max ) {
-                    echo ',';
-                }
-                echo "\n";
                 $cnt++;
             }
         }
