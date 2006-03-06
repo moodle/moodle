@@ -1,19 +1,23 @@
-<?php
+<?php //$Id$
 ///This file only manages the installation of 1.6 lang packs.
 ///in downloads.moodle.org, they are store in separate directory /lang16
 ///in local server, they are stored in $CFG->dataroot/lang
 ///This helps to avoid confusion.
+
+    require_once('../config.php');
+
+    $mode          = optional_param('mode', 0, PARAM_INT);     //phase
+    $pack          = optional_param('pack', '', PARAM_FILE);   //pack to install
+    $displaylang   = $pack;
+    $uninstalllang = optional_param('uninstalllang', '', PARAM_FILE);
+    $confirm       = optional_param('confirm', 0, PARAM_BOOL);
+    $sitelang      = optional_param('sitelangconfig', '', PARAM_FILE);
 
     define('INSTALLATION_OF_SELECTED_LANG', 2);
     define('CHANGE_SITE_LANG', 3);
     define('DELETION_OF_SELECTED_LANG', 4);
     define('UPDATE_ALL_LANG', 5);
 
-    include('../config.php');
-    $mode = optional_param('mode',0,PARAM_INT);    //phase
-    $pack = optional_param('pack','',PARAM_NOTAGS);    //pack to install
-    $displaylang = $pack;
-    $uninstalllang = optional_param('uninstalllang','',PARAM_NOTAGS);
     require_login();
 
     if (!isadmin()) {
@@ -45,7 +49,7 @@
         case INSTALLATION_OF_SELECTED_LANG:    ///installation of selected language pack
         
             if (confirm_sesskey()) {
-                if (optional_param('confirm')) {
+                if ($confirm) {
                     @mkdir ($CFG->dataroot.'/temp/');    //make it in case it's a fresh install, it might not be there
                     @mkdir ($CFG->dataroot.'/lang/');
                     
@@ -104,9 +108,8 @@
 
             if (confirm_sesskey) {
                 $langconfig = get_record('config','name','lang');
-                $sitelang = required_param('sitelangconfig',PARAM_NOTAGS);
                 $langconfig->value = $sitelang;
-                if (update_record('config',$langconfig)){
+                if (!empty($sitelang) && update_record('config',$langconfig)){
                     echo '<div align="center">';
                     notify (get_string('sitelangchanged','admin'));
                     echo '<form action="langimport.php" method="POST">';
@@ -120,7 +123,7 @@
         break;
         case DELETION_OF_SELECTED_LANG:    //delete a directory(ies) containing a lang pack completely
 
-            if (!optional_param('confirm') && confirm_sesskey()) {
+            if (!$confirm && confirm_sesskey()) {
                 print_simple_box_start('center','100%');
                 echo '<div align="center">';
                 echo '<form name="langform" action="langimport.php?mode=4" method="POST">';

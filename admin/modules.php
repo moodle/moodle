@@ -1,13 +1,13 @@
 <?PHP // $Id$
       // Allows the admin to manage activity modules
 
-    require_once("../config.php");
-    require_once("../course/lib.php");
+    require_once('../config.php');
+    require_once('../course/lib.php');
 
-    $disable = optional_param('disable');
-    $enable = optional_param('enable');
-    $delete = optional_param('delete');
-    $confirm = optional_param('confirm');
+    $show    = optional_param('show', '', PARAM_SAFEDIR);
+    $hide    = optional_param('hide', '', PARAM_SAFEDIR);
+    $delete  = optional_param('delete', '', PARAM_SAFEDIR);
+    $confirm = optional_param('confirm', '', PARAM_BOOL);
 
     require_login();
 
@@ -62,9 +62,9 @@
       
         $strmodulename = get_string("modulename", "$delete");
 
-        if (empty($confirm)) {
+        if (!$confirm) {
             notice_yesno(get_string("moduledeleteconfirm", "", $strmodulename), 
-                         "modules.php?delete=$delete&amp;confirm=$delete&amp;sesskey=$USER->sesskey", 
+                         "modules.php?delete=$delete&amp;confirm=1&amp;sesskey=$USER->sesskey", 
                          "modules.php");
             print_footer();
             exit;

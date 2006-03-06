@@ -1,7 +1,9 @@
 <?PHP  // $Id$
        // module.php - allows admin to edit all local configuration variables for a module
 
-    require_once("../config.php");
+    require_once('../config.php');
+
+    $module = required_param('module', PARAM_SAFEDIR);
 
     require_login();
 
@@ -13,6 +15,8 @@
         error("Site isn't defined!");
     }
 
+    require_once("$CFG->dirroot/mod/$module/lib.php");
+
 /// If data submitted, then process and store.
 
     if ($config = data_submitted()) {
@@ -20,15 +24,14 @@
         if (!confirm_sesskey()) {
             error(get_string('confirmsesskeybad', 'error'));
         }
-        
-        if ($module = optional_param('module', '', PARAM_CLEANFILE)) {
+
+        if ($module) {
             // if the config.html contains a hidden form field giving
             // the module name then the form does not have to prefix all
             // its variable names, we will do it here.
             $moduleprefix = $module.'_';
             // let the module process the form data if it has to,
             // $config is passed to this function by reference
-            require_once("$CFG->dirroot/mod/$module/lib.php");
             $moduleconfig = $module.'_process_options';
             if (function_exists($moduleconfig)) {
                 $moduleconfig($config);
@@ -45,9 +48,6 @@
     }
 
 /// Otherwise print the form.
-
-    $module = optional_param('module', '', PARAM_CLEANFILE);
-    require_once("$CFG->dirroot/mod/$module/lib.php");
 
     $stradmin = get_string("administration");
     $strconfiguration = get_string("configuration");

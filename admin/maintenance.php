@@ -4,7 +4,6 @@
     require('../config.php');
 
     $action = optional_param('action', '', PARAM_ALPHA);
-    $sesskey = optional_param('sesskey');
 
     require_login();
 
