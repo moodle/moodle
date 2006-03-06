@@ -329,6 +329,9 @@ function clean_param($param, $type) {
     }
 
     switch ($type) {
+        case PARAM_RAW:          // no cleaning at all
+            return $param;
+
         case PARAM_CLEAN:        // General HTML cleaning, try to use more specific type if possible
             if (is_numeric($param)) {
                 return $param;
