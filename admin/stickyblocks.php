@@ -1,12 +1,11 @@
-<?
-{
+<?PHP // $Id$
     
-    require_once(dirname(dirname(__FILE__)).'/config.php');
+    require_once('../config.php');
     require_once($CFG->dirroot.'/my/pagelib.php');
     require_once($CFG->dirroot.'/lib/pagelib.php');
     require_once($CFG->dirroot.'/lib/blocklib.php');
 
-    $pt  = optional_param('pt',null,PARAM_CLEAN);
+    $pt  = optional_param('pt', null, PARAM_SAFEDIR); //alhanumeric and -
 
     $pagetypes = array(PAGE_MY_MOODLE => array('id' => PAGE_MY_MOODLE,
                                               'lib' => '/my/pagelib.php',
@@ -83,8 +82,5 @@
 
     print_footer();
     
-
-}
-
 
 ?>

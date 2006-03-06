@@ -5,12 +5,12 @@
       // This page is not yet in service, the whole plug-in architecture
       // for question types is still under construction.
 
-    require_once("../config.php");
+    require_once('../config.php');
 
-    $disable = optional_param('disable');
-    $enable = optional_param('enable');
-    $delete = optional_param('delete');
-    $confirm = optional_param('confirm');
+    $show    = optional_param('show', '', PARAM_SAFEDIR);
+    $hide    = optional_param('hide', '', PARAM_SAFEDIR);
+    $delete  = optional_param('delete', '', PARAM_SAFEDIR);
+    $confirm = optional_param('confirm', '', PARAM_BOOL);
 
     require_login();
 
@@ -62,9 +62,9 @@
       
         $strqtypename = get_string("qtypename", "qtype_$delete");
 
-        if (empty($confirm)) {
+        if (!$confirm) {
             notice_yesno(get_string("qtypedeleteconfirm", "admin", $strqtypename), 
-                         "questiontypes.php?delete=$delete&amp;confirm=$delete&amp;sesskey=$USER->sesskey", 
+                         "questiontypes.php?delete=$delete&amp;confirm=1&amp;sesskey=$USER->sesskey", 
                          "questiontypes.php");
             print_footer();
             exit;

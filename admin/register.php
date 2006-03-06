@@ -1,7 +1,7 @@
 <?php  // $Id$
        // register.php - allows admin to register their site on moodle.org
 
-    include("../config.php");
+    require_once('../config.php');
 
     require_login();
 

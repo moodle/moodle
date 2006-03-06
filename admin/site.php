@@ -1,7 +1,7 @@
 <?php // $Id$
 
-    require_once("../config.php");
-    require_once("../course/lib.php");
+    require_once('../config.php');
+    require_once('../course/lib.php');
 
     if ($site = get_site()) {
         require_login();
@@ -10,6 +10,8 @@
         }
         $site->format = "social";   // override
     }
+
+    $focus = "form.fullname";
 
 /// If data submitted, then process and store.
 
@@ -100,10 +102,6 @@
     } else {
         $form->frontpage = FRONTPAGECOURSELIST;  // Show course list by default
         set_config("frontpage", $form->frontpage);
-    }
-
-    if (empty($focus)) {
-        $focus = "form.fullname";
     }
 
     $stradmin = get_string("administration");

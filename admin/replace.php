@@ -1,10 +1,10 @@
 <?php /// $Id$
       /// Search and replace strings throughout all texts in the whole database
 
-require('../config.php');
+require_once('../config.php');
 
-$search  = optional_param('search', '');
-$replace = optional_param('replace', '');
+$search  = optional_param('search', '', PARAM_RAW);
+$replace = optional_param('replace', '', PARAM_RAW);
 
 require_login();
 

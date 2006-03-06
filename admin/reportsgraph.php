@@ -1,12 +1,12 @@
-<?php
-{
-    require_once(dirname(dirname(__FILE__)).'/config.php');
+<?php // $Id$
+
+    require_once('../config.php');
     require_once($CFG->dirroot.'/lib/statslib.php');
     require_once($CFG->dirroot.'/lib/graphlib.php');
 
-    $report = required_param('report',0,PARAM_INT);
-    $time = required_param('time',0,PARAM_INT);
-    $numcourses = required_param('numcourses',20,PARAM_INT);
+    $report     = required_param('report', PARAM_INT);
+    $time       = required_param('time', PARAM_INT);
+    $numcourses = required_param('numcourses', PARAM_INT);
 
     require_login();
 
@@ -51,6 +51,4 @@
 
     $graph->draw_stack();
     
-
-}
 ?>
