@@ -1,8 +1,8 @@
 <?PHP // $Id$
 
-    require_once("../config.php");
+    require_once('../config.php');
 
-    $mode = optional_param('mode', '', PARAM_ALPHA);
+    $mode        = optional_param('mode', '', PARAM_ALPHA);
     $currentfile = optional_param('currentfile', 'moodle.php', PARAM_FILE);
 
     require_login();

@@ -1,6 +1,8 @@
 <?php
 
-   include('../config.php');
+   require_once('../config.php');
+
+   $confirm = optional_param('confirm', 0, PARAM_BOOL);
 
    require_login();
 
@@ -12,7 +14,7 @@
                 "Convert all tables from MYISAM to InnoDB");
 
 
-   if (!empty($confirm) and confirm_sesskey()) {
+   if ($confirm and confirm_sesskey()) {
 
        print_heading("Please be patient and wait for this to complete...");
 
@@ -24,7 +26,7 @@
        }
    } else {
        notice_yesno("Are you sure you want convert all your tables to the InnoDB format?", 
-                    "innodb.php?confirm=yes&sesskey=".sesskey(), "index.php");
+                    "innodb.php?confirm=1&sesskey=".sesskey(), "index.php");
    }
 
 ?>

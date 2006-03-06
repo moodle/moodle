@@ -1,23 +1,23 @@
 <?php // $Id$
 
 /// Check that config.php exists, if not then call the install script
-    if (!file_exists("../config.php")) {
+    if (!file_exists('../config.php')) {
         header('Location: ../install.php');
         die;
     }
    
-    require_once("../config.php");
-    include_once("$CFG->dirroot/lib/adminlib.php");  // Contains various admin-only functions
+    require_once('../config.php');
+    include_once($CFG->dirroot.'/lib/adminlib.php');  // Contains various admin-only functions
 
-    $id = optional_param('id', '', PARAM_ALPHANUM);
-    $confirmupgrade = optional_param('confirmupgrade','');
+    $id             = optional_param('id', '', PARAM_ALPHANUM);
+    $confirmupgrade = optional_param('confirmupgrade', 0, PARAM_BOOL);
 
 
 /// Check that PHP is of a sufficient version
 
-    if (!check_php_version("4.1.0")) {
-        $version = phpversion();
-        print_heading("Sorry, Moodle requires PHP 4.1.0 or later (currently using version $version)");
+    if (!check_php_version("4.1.0")) { //TODO: should we bump it up to 4.3.0??
+        $phpversion = phpversion();
+        print_heading("Sorry, Moodle requires PHP 4.1.0 or later (currently using version $phpversion)");
         die;
     }
 

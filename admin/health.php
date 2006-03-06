@@ -7,7 +7,8 @@
     define('SEVERITY_SIGNIFICANT', 'significant');
     define('SEVERITY_CRITICAL',    'critical');
 
-    $resetsesserrorcounter = optional_param( 'resetsesserrorcounter' );
+    $resetsesserrorcounter = optional_param('resetsesserrorcounter', 0, PARAM_BOOL);
+    $solution              = optional_param('solution', 0, PARAM_SAFEDIR); //in fact it is class name alhanumeric and _
 
     require_login();
     if (!isadmin()) {
@@ -83,9 +84,7 @@ dd.solution li {
 </style>
 STYLES;
 
-    $solution = optional_param('solution', NULL);
-
-    if(!empty($solution) && class_exists($solution)) {
+    if(strpos($solution, 'problem_') === 0 && class_exists($solution)) {
         health_print_solution($solution);
     }
     else {

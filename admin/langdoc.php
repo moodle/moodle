@@ -9,6 +9,7 @@ Based on:   lang.php in 1.4.3+ release
 Thanks:     Jaime Villate for important bug fixing, koen roggemans for his job and all moodlers
             for intensive testing of this my first contribution
 */
+    require_once('../config.php');
 
     //
     // Some local configuration
@@ -20,8 +21,6 @@ Thanks:     Jaime Villate for important bug fixing, koen roggemans for his job a
     $fileoldmark = ' (old?)';       // mark to add to filenames in selection form id english version is newer
                                     // or to filenames with filesize() == 0
     $filetemplate = '';             // template for new files, i.e. '$Id$';
-
-    require_once("../config.php");
 
     $currentfile = optional_param('currentfile', 'docs/README.txt', PARAM_PATH); 
 
