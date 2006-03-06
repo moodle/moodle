@@ -4248,6 +4248,43 @@ function print_file_upload_error($filearray = '', $returnerror = false) {
 }
 
 /**
+ * handy function to loop through an array of files and resolve any filename conflicts
+ * both in the array of filenames and for what is already on disk.
+ * not really compatible with the similar function in uploadlib.php
+ * but this could be used for files/index.php for moving files around.
+ */
+
+function resolve_filename_collisions($destination,$files,$format='%s_%d.%s') {
+    foreach ($files as $k => $f) {
+        if (check_potential_filename($destination,$f,$files)) {
+            $bits = explode('.', $f);
+            for ($i = 1; true; $i++) {
+                $try = sprintf($format, $bits[0], $i, $bits[1]);
+                if (!check_potential_filename($destination,$try,$files)) {
+                    $files[$k] = $try;
+                    break;
+                }
+            }
+        }
+    }
+    return $files;
+}
+
+/**
+ * @used by resolve_filename_collisions
+ */
+function check_potential_filename($destination,$filename,$files) {
+    if (file_exists($destination.'/'.$filename)) {
+        return true;
+    }
+    if (count(array_keys($files,$filename)) > 1) {
+        return true;
+    }
+    return false;
+}
+
+
+/**
  * Returns an array with all the filenames in
  * all subdirectories, relative to the given rootdir.
  * If excludefile is defined, then that file/directory is ignored
