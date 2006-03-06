@@ -4475,7 +4475,7 @@ function display_size($size) {
  */
 function clean_filename($string) {
     global $CFG;
-    if (empty($CFG->unicodecleanfilename) || current_charset() != 'UTF-8') {
+    if (empty($CFG->unicodecleanfilename) || empty($CFG->unicodedb)) {
         $textlib = textlib_get_instance();
         $string = $textlib->specialtoascii($string, current_charset());
         $string = preg_replace('/[^\.a-zA-Z\d\_-]/','_', $string ); // only allowed chars

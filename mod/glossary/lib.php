@@ -1732,7 +1732,7 @@ require_once "../../lib/xmlize.php";
         }
         fclose($h);
     }
-    if (current_charset() != 'UTF-8') {
+    if (empty($CFG->unicodedb)) {
         $textlib = textlib_get_instance();
         $line = $textlib->convert($line, 'UTF-8', current_charset());
     }
@@ -1762,7 +1762,7 @@ function glossary_end_tag($tag,$level=0,$endline=true) {
 //Return the start tag, the contents and the end tag
 function glossary_full_tag($tag,$level=0,$endline=true,$content) {
         $st = glossary_start_tag($tag,$level,$endline);
-        if (current_charset() != 'UFT-8') {
+        if (empty($CFG->unicodedb)) {
             $textlib = textlib_get_instance();
             $content = $textlib->convert($content, current_charset(), 'UTF-8');
         }
