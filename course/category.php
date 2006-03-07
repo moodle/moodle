@@ -6,17 +6,17 @@
     require_once("../config.php");
     require_once("lib.php");
 
-    $id      = required_param('id', PARAM_INT);          // Category id
-    $page    = optional_param('page', 0, PARAM_INT);     // which page to show
-    $perpage = optional_param('perpage', 20, PARAM_INT); // how many per page
-    $edit = optional_param('edit','',PARAM_ALPHA);
-    $hide = optional_param('hide',0,PARAM_INT);
-    $show = optional_param('show',0,PARAM_INT);
-    $moveup = optional_param('moveup',0,PARAM_INT);
-    $movedown = optional_param('movedown',0,PARAM_INT);
-    $moveto = optional_param('moveto',0,PARAM_INT);
-    $rename = optional_param('rename','');
-    $resort = optional_param('resort','');
+    $id       = required_param('id', PARAM_INT);          // Category id
+    $page     = optional_param('page', 0, PARAM_INT);     // which page to show
+    $perpage  = optional_param('perpage', 20, PARAM_INT); // how many per page
+    $edit     = optional_param('edit', -1, PARAM_BOOL);
+    $hide     = optional_param('hide', 0, PARAM_INT);
+    $show     = optional_param('show', 0, PARAM_INT);
+    $moveup   = optional_param('moveup', 0, PARAM_INT);
+    $movedown = optional_param('movedown', 0, PARAM_INT);
+    $moveto   = optional_param('moveto', 0, PARAM_INT);
+    $rename   = optional_param('rename', '', PARAM_NOTAGS);
+    $resort   = optional_param('resort', 0, PARAM_BOOL);
 
     if (!$site = get_site()) {
         error("Site isn't defined!");
@@ -31,12 +31,8 @@
     }
 
     if (iscreator()) {
-        if (!empty($edit) and confirm_sesskey()) {
-            if ($edit == "on") {
-                $USER->categoryediting = true;
-            } else if ($edit == "off") {
-                $USER->categoryediting = false;
-            }
+        if ($edit !== -1) {
+            $USER->categoryediting = $edit;
         }
         $navbaritem = update_category_button($category->id);
 
@@ -64,7 +60,7 @@
 
         /// Resort the category if requested
 
-        if (!empty($resort) and confirm_sesskey()) {
+        if ($resort and confirm_sesskey()) {
             if ($courses = get_courses($category->id, "fullname ASC", 'c.id,c.fullname,c.sortorder')) {
                 // move it off the range
                 $count = get_record_sql('SELECT MAX(sortorder) AS max, 1

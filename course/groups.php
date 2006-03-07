@@ -28,8 +28,8 @@
     require_once('../config.php');
     require_once('lib.php');
 
-    $courseid      = required_param('id');           // Course id
-    $selectedgroup = optional_param('group', NULL);  // Current group id
+    $courseid      = required_param('id', PARAM_INT);           // Course id
+    $selectedgroup = optional_param('group', NULL, PARAM_INT);  // Current group id
 
     if (! $course = get_record('course', 'id', $courseid) ) {
         error("That's an invalid course id");

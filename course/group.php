@@ -8,9 +8,8 @@
     require_once('../config.php');
     require_once('lib.php');
 
-    $id    = required_param('id');          // Course id
-    $group = optional_param('group', 0);    // Optionally look at other groups
-    $edit  = optional_param('edit', false); // Editing can be turned on
+    $id    = required_param('id', PARAM_INT);          // Course id
+    $group = optional_param('group', 0, PARAM_INT);    // Optionally look at other groups
 
     if (! $course = get_record('course', 'id', $id) ) {
         error("That's an invalid course id");
@@ -38,7 +37,6 @@
     if ($form = data_submitted() and confirm_sesskey()) { 
 
         if (empty($form->name)) {
-            $edit = true;
             $err['name'] = get_string("missingname");
 
         } else {
@@ -75,23 +73,11 @@
     }
 
 
-/// Are we editing?  If so, handle it.
-
-    if ($usehtmleditor = can_use_richtext_editor()) {
-        $defaultformat = FORMAT_HTML;
-    } else {
-        $defaultformat = FORMAT_MOODLE;
-    }
-
     $usehtmleditor = false;
 
     $sesskey = !empty($USER->id) ? $USER->sesskey : '';
 
     include('group-edit.html');
-
-    if ($usehtmleditor) {
-        use_html_editor("description");
-    }
 
     echo "</body></html>";
 ?>

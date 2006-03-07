@@ -5,7 +5,7 @@
 	require_once('../../../config.php');
     require_once('../../lib.php');
 	
-	$mycourseid = required_param('id');    // Course id
+	$mycourseid = required_param('id', PARAM_INT);    // Course id
     
 	if (! $course = get_record('course', 'id', $mycourseid) ) {
         error("That's an invalid course id");

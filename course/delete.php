@@ -3,8 +3,8 @@
 
     require_once("../config.php");
 
-    $id = required_param('id',PARAM_INT);       // course id
-    $delete = optional_param('delete');   // delete confirmation
+    $id     = required_param('id', PARAM_INT);              // course id
+    $delete = optional_param('delete', '', PARAM_ALPHANUM); // delete confirmation hash
 
     require_login();
 
