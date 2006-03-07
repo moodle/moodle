@@ -282,6 +282,7 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
 
                     if ($debug) {
                         echo "<br>Total number of records is ..".$totalrecords;
+                        echo "<br/>Counter is $counter";
                     }
                     
 
@@ -292,6 +293,9 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
                         $SQL = 'SELECT * FROM '.$CFG->prefix.$dbtablename.' '.sql_paging_limit($counter, $recordsetsize);
                         if ($records = get_records_sql($SQL)) {
                             foreach ($records as $record) {
+                                if ($debug) {
+                                    print_object($record);
+                                }
                                 //if we are up this far, either no crash, or crash with same table, field name.
                                 if ($crash){
                                     if ($crash->record != $record->id) {    //might set to < just in case record is deleted
@@ -378,6 +382,10 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
                                 if (($processedrecords) % 5000 == 0) {
                                     echo '...'.$dbtablename.'...'.$fieldname.'...'.$record->id;
                                 }
+                            }
+                        }else {
+                            if ($debug) {
+                                notify('no records found!');
                             }
                         }
                     }   //close the while loop
