@@ -131,7 +131,7 @@
                     // Delete the field.
                     delete_records('data_fields', 'id', $fid);
 
-                    add_to_log($course->id, 'data', 'fields delete', "fields.php?d=$data->id", $data->id, $cm->id);
+                    add_to_log($course->id, 'data', 'fields delete', "fields.php?d=$data->id", $fieldRecordSet->name, $cm->id);
                     
                     $displayflag = get_string('fielddeleted', 'data');
                 }
@@ -174,8 +174,8 @@
                     
                     // Update the templates.
                     data_replace_field_in_forms($currentfield->dataid, $currentfield->name, $field->name);
-
-                    add_to_log($course->id, 'data', 'fields add', "fields.php?d=$data->id&amp;mode=display&amp;fid=$field->id", $field->id, $cm->id);
+                    
+                    add_to_log($course->id, 'data', 'fields update', "fields.php?d=$data->id&amp;mode=display&amp;fid=$field->id", $field->id, $cm->id);
                     
                     $displayflag = get_string('fieldupdated','data');
                 }
@@ -285,14 +285,11 @@
         print_simple_box_end();
         echo '</form>';
 
-    }else {    //display native update form
-
-        if (confirm_sesskey()){
-            $currentfield = get_record('data_fields','id',$fid);
-            $g = data_get_field($currentfield);
-            $g->display_edit_field($currentfield->id);
-            unset($g);
-        }
+    } else {    //display native update form
+        $currentfield = get_record('data_fields','id',$fid);
+        $g = data_get_field($currentfield);
+        $g->display_edit_field($currentfield->id);
+        unset($g);
     }
 
 /// Finish the page

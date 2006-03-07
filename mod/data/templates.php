@@ -65,7 +65,7 @@
         }
     }
 
-    add_to_log($course->id, 'data', 'templates', "templates.php?id=$cm->id", $data->id, $cm->id);
+    //add_to_log($course->id, 'data', 'templates view', "templates.php?id=$cm->id", $data->id, $cm->id);
 
 
 /// Print the page header
@@ -88,6 +88,7 @@
             data_generate_default_form($data->id, 'listtemplate');
             data_generate_default_form($data->id, 'addtemplate');
             data_generate_default_form($data->id, 'rsstemplate');
+            add_to_log($course->id, 'data', 'templates defaults', "templates.php?id=$cm->id", $data->id, $cm->id);
         }
         else {
 
@@ -105,6 +106,7 @@
             if ($mode != 'addtemplate' or data_tags_check($data->id, $newtemplate->{$mode})){
                 update_record('data',$newtemplate);
             }
+            add_to_log($course->id, 'data', 'templates saved', "templates.php?id=$cm->id", $data->id, $cm->id);
         }
     }
 

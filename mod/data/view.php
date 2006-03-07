@@ -178,6 +178,9 @@
                     }
                     delete_records('data_records','id',$delete);
                     delete_records('data_content','recordid',$delete);
+                    
+                    add_to_log($course->id, 'data', 'record delete', "view.php?id=$cm->id", $data->id, $cm->id);
+                    
                     notify (get_string('recorddeleted','data'));
                 }
             }

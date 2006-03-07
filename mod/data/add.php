@@ -214,7 +214,7 @@
     echo '<form enctype="multipart/form-data" action="add.php" method="post">';
     echo '<input name="d" value="'.$data->id.'" type="hidden" />';
     echo '<input name="rid" value="'.$rid.'" type="hidden" />';
-    echo '<input name="sesskey" value="'.sesskey().'" type="hidden"/>';
+    echo '<input name="sesskey" value="'.sesskey().'" type="hidden" />';
     print_simple_box_start('center','80%');
     
     if (!$rid){
