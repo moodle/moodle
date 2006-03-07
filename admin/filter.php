@@ -23,6 +23,10 @@
 
     $filtername =  substr($param->filter, strpos( $param->filter, '/' )+1 ) ;
 
+    // $CFG->pagepath is used to generate the body and id attributes for the body tag
+    // of the page. It is also used to generate the link to the Moodle Docs for this view.
+    $CFG->pagepath = 'filter/' . $filtername . '/config';
+    
     // get translated strings for use on page
     $txt = new Object;
     $txt->managefilters = get_string( 'managefilters' );
@@ -70,10 +74,6 @@
     //==============================
     // Display logic
     //==============================
-    
-    // $CFG->pagepath is used to generate the body and id attributes for the body tag
-    // of the page. It is also used to generate the link to the Moodle Docs for this view.
-    $CFG->pagepath = 'filter/' . $filtername . '/config';
     
     $filtername = ucfirst($filtername);
     print_header( "$site->shortname: $txt->managefilters", "$site->fullname",
