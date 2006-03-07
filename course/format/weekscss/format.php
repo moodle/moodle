@@ -18,8 +18,8 @@
  * http://www.maxdesign.com.au/presentation/em/ Ideal length for content.
  * http://www.svendtofte.com/code/max_width_in_ie/ Max width in IE.
  *
- * @copyright © 2006 The Open University
- * @author N.D.Freear@open.ac.uk
+ * @copyright &copy; 2006 The Open University
+ * @author N.D.Freear@open.ac.uk, and others.
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package  
  */
@@ -87,7 +87,7 @@
 
     if (blocks_have_content($pageblocks, BLOCK_POS_LEFT) || $editing) {
         ///echo '<td style="width: '.$preferred_width_left.'px;" id="left-column">';
-        echo '<div style="width:'.$preferred_width_left.$min_max_block.'float:left;" id="left-column">';        blocks_print_group($PAGE, $pageblocks, BLOCK_POS_LEFT);
+        echo '<div style="width:'.$preferred_width_left.$min_max_block.'float:left;" id="left-column">';
         blocks_print_group($PAGE, $pageblocks, BLOCK_POS_LEFT);
         echo '</div>';
         ///echo '</td>';
@@ -143,6 +143,7 @@
         echo '</td>';
         echo '<td class="right side">&nbsp;</td>';
         echo '</tr>';
+        //TODO (nfreear): Accessibility: how to get rid of the 'separator' row??
         echo '<tr class="section separator"><td colspan="3" class="spacer"></td></tr>';
 
     }
@@ -263,6 +264,7 @@
             }
 
             echo '</td></tr>';
+            //TODO (nfreear): Accessibility: how to get rid of the 'separator' row??
             echo '<tr class="section separator"><td colspan="3" class="spacer"></td></tr>';
         }
 
