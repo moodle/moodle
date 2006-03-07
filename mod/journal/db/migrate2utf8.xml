@@ -11,7 +11,7 @@
           <SQL_DETECT_COURSE>
            SELECT j.course
            FROM {$CFG->prefix}journal j,
-                {$CFG->prefix}journal_entries
+                {$CFG->prefix}journal_entries je
            WHERE j.id = je.journal
                  AND je.id = RECORDID
           </SQL_DETECT_COURSE>
@@ -25,7 +25,7 @@
           <SQL_DETECT_COURSE>
            SELECT j.course
            FROM {$CFG->prefix}journal j,
-                {$CFG->prefix}journal_entries
+                {$CFG->prefix}journal_entries je
            WHERE j.id = je.journal
                  AND je.id = RECORDID
           </SQL_DETECT_COURSE>
