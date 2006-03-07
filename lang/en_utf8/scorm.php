@@ -91,6 +91,14 @@ $string['newattempt'] = 'Start a new attempt';
 $string['sided'] = 'On the left side';
 $string['popupmenu'] = 'In a popup menu';
 $string['hidden'] = 'Hidden';
+$string['attempt'] = 'attempt';
+$string['attempts'] = 'attempts';
+$string['nolimit'] = 'Unlimited attempts';
+$string['averageattempt'] = 'Average attempts';
+$string['highestattempt'] = 'Highest attempt';
+$string['lastattempt'] = 'Last attempt';
+$string['firstattempt'] = 'First attempt';
+$string['whatgrade'] = 'Attempts grading';
 
 
 // Validation
