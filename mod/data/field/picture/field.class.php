@@ -99,7 +99,7 @@ class data_field_picture extends data_field_file {// extends
         $str .= get_string('picture','data'). ': <input type="file" name ="field_'.$field->id.'" id="field_'.$field->id.'" /><br />';
         $str .= get_string('optionaldescription','data') .': <input type="text" name="field_'
                 .$field->id.'_1" id="field_'.$field->id.'_1" value="'.$des.'" /><br />';
-        $str .= '<input type="hidden" name="MAX_FILE_SIZE" value="'.$field->param4.'" />';
+        $str .= '<input type="hidden" name="MAX_FILE_SIZE" value="'.$field->param3.'" />';
         if ($rid and $contents[0]){
             $str .= '<img width="50" height="50" src="'.$source.'/'.$contents[0].'">';
         }
