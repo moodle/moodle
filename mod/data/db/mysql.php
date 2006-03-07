@@ -29,6 +29,16 @@ function data_upgrade($oldversion) {
         table_column("data_comments", "", "modified", "integer", "10");
     }
     
+    if ($oldversion < 2006030700) {
+        modify_database('', "INSERT INTO prefix_log_display VALUES ('data', 'add', 'data', 'name')");
+        modify_database('', "INSERT INTO prefix_log_display VALUES ('data', 'update', 'data', 'name')");
+        modify_database('', "INSERT INTO prefix_log_display VALUES ('data', 'record delete', 'data', 'name')");
+        modify_database('', "INSERT INTO prefix_log_display VALUES ('data', 'fields add', 'data_fields', 'name')");
+        modify_database('', "INSERT INTO prefix_log_display VALUES ('data', 'fields update', 'data_fields', 'name')");
+        modify_database('', "INSERT INTO prefix_log_display VALUES ('data', 'templates saved', 'data', 'name')");
+        modify_database('', "INSERT INTO prefix_log_display VALUES ('data', 'templates defaults', 'data', 'name')");
+    }
+    
     return true;
 }
 

@@ -106,3 +106,10 @@ CREATE TABLE prefix_data_ratings (
 
 
 INSERT INTO prefix_log_display VALUES ('data', 'view', 'data', 'name');
+INSERT INTO prefix_log_display VALUES ('data', 'add', 'data', 'name');
+INSERT INTO prefix_log_display VALUES ('data', 'update', 'data', 'name');
+INSERT INTO prefix_log_display VALUES ('data', 'record delete', 'data', 'name');
+INSERT INTO prefix_log_display VALUES ('data', 'fields add', 'data_fields', 'name');
+INSERT INTO prefix_log_display VALUES ('data', 'fields update', 'data_fields', 'name');
+INSERT INTO prefix_log_display VALUES ('data', 'templates saved', 'data', 'name');
+INSERT INTO prefix_log_display VALUES ('data', 'templates defaults', 'data', 'name');
