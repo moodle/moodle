@@ -1,8 +1,8 @@
 <?PHP  //$Id$
 
-    require("../config.php");
+    require_once('../config.php');
 
-    $confirm = optional_param('confirm');
+    $confirm = optional_param('confirm', 0, PARAM_BOOL);
 
     require_login();
 

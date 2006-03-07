@@ -141,6 +141,7 @@ $string['authinstructions'] = 'Here you can provide instructions for your users,
 $string['changepassword'] = 'Change password URL';
 $string['changepasswordhelp'] = 'Here you can specify a location at which your users can recover or change their username/password if they\'ve forgotten it.  This will be provided to users as a button on the login page and their user page.  if you leave this blank the button will not be printed.';
 $string['chooseauthmethod'] = 'Choose an authentication method';
+$string['createpasswordifneeded'] = 'Create password if needed';
 $string['infilefield'] = 'Field required in file';
 $string['forcechangepassword'] = 'Force change password';
 $string['forcechangepassword_help'] = 'Force users to change password on their next login to Moodle.';

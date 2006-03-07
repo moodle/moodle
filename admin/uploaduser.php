@@ -3,9 +3,12 @@
 /// Bulk user registration script from a comma separated file
 /// Returns list of users with their user ids
 
-    require_once("../config.php");
+    require_once('../config.php');
+    require_once($CFG->libdir.'/uploadlib.php');
 
-    $numusers = optional_param('numusers', 0, PARAM_INT);
+    $createpassword = optional_param('createpassword', 0, PARAM_BOOL);
+    $updateaccounts = optional_param('updateaccounts', 0, PARAM_BOOL);
+    $allowrenames   = optional_param('allowrenames', 0, PARAM_BOOL);
 
     require_login();
 
@@ -17,17 +20,13 @@
         error("Could not find site-level course");
     }
 
-    if (!confirm_sesskey()) {
-        error(get_string('confirmsesskeybad', 'error'));
-    }
-
     if (!$adminuser = get_admin()) {
         error("Could not find site admin");
     }
 
     $streditmyprofile = get_string("editmyprofile");
     $stradministration = get_string("administration");
-    $strchoose = get_string("choose");
+    $strfile = get_string("file");
     $struser = get_string("user");
     $strusers = get_string("users");
     $strusersnew = get_string("usersnew");
@@ -36,7 +35,7 @@
     $straddnewuser = get_string("importuser");
 
     $csv_encode = '/\&\#44/';
-    if (isset($CFG->CSV_DELIMITER)) {        
+    if (isset($CFG->CSV_DELIMITER)) {
         $csv_delimiter = '\\' . $CFG->CSV_DELIMITER;
         $csv_delimiter2 = $CFG->CSV_DELIMITER;
 
@@ -50,17 +49,17 @@
 
 /// Print the header
 
-    print_header("$site->shortname: $struploadusers", $site->fullname, 
-                 "<a href=\"index.php\">$stradministration</a> -> 
+    print_header("$site->shortname: $struploadusers", $site->fullname,
+                 "<a href=\"index.php\">$stradministration</a> ->
                   <a href=\"users.php\">$strusers</a> -> $struploadusers");
 
 
 /// If a file has been uploaded, then process it
 
 
-    require_once($CFG->dirroot.'/lib/uploadlib.php');
     $um = new upload_manager('userfile',false,false,null,false,0);
-    if ($um->preprocess_files()) {
+
+    if ($um->preprocess_files() && confirm_sesskey()) {
         $filename = $um->files['userfile']['tmp_name'];
 
         // Large files are likely to take their time and memory. Let PHP know
@@ -68,7 +67,7 @@
         // to free up memory.
         @set_time_limit(0);
         @raise_memory_limit("128M");
-        if (function_exists('apache_child_terminate')) { 
+        if (function_exists('apache_child_terminate')) {
             @apache_child_terminate();
         }
 
@@ -82,55 +81,43 @@
         $fp = fopen($filename, "r");
 
         // make arrays of valid fields for error checking
-        $required = array("username" => 1, 
-                          "password" => 1, 
-                          "firstname" => 1, 
+        $required = array("username" => 1,
+                          "password" => !$createpassword,
+                          "firstname" => 1,
                           "lastname" => 1,
                           "email" => 1);
-        $optionalDefaults = array("institution" => 1, 
-                                  "department" => 1, 
-                                  "city" => 1, 
+        $optionalDefaults = array("institution" => 1,
+                                  "department" => 1,
+                                  "city" => 1,
                                   "country" => 1,
                                   "lang" => 1,
                                   "auth" => 1,
                                   "timezone" => 1);
-        $optional = array("idnumber" => 1, 
-                          "icq" => 1, 
-                          "phone1" => 1, 
+        $optional = array("idnumber" => 1,
+                          "icq" => 1,
+                          "phone1" => 1,
                           "phone2" => 1,
-                          "address" => 1, 
+                          "address" => 1,
                           "url" => 1,
-                          "description" => 1, 
-                          "mailformat" => 1, 
-                          "maildisplay" => 1, 
-                          "htmleditor" => 1, 
+                          "description" => 1,
+                          "mailformat" => 1,
+                          "maildisplay" => 1,
+                          "htmleditor" => 1,
                           "autosubscribe" => 1,
-                          "idnumber" => 1, 
-                          "icq" => 1, 
-                          "course1" => 1, 
+                          "idnumber" => 1,
+                          "icq" => 1,
+                          "course1" => 1,
                           "course2" => 1,
-                          "course3" => 1, 
-                          "course4" => 1, 
+                          "course3" => 1,
+                          "course4" => 1,
                           "course5" => 1,
                           "group1" => 1,
                           "group2" => 1,
                           "group3" => 1,
                           "group4" => 1,
-                          "group5" =>1);
-
-        // form data cleanup
-        $frmpassword         = optional_param('frmpassword',         '',     PARAM_ALPHA);
-        $updateaccounts      = optional_param('updateaccounts',      false,  PARAM_BOOL);
-        $allowrenames         = optional_param('allowrenames',         false,  PARAM_BOOL);
-
-        if ($frmpassword === 'create') {
-            unset($required['password']);
-            $optional['password'] = 1;
-        }
-
-        if ($allowrenames) {
-            $optional['oldusername'] = 1;
-        }
+                          "group5" =>1,
+                          "password" => $createpassword,
+                          "oldusername" => $allowrenames);
 
         // --- get header (field names) ---
         $header = split($csv_delimiter, fgets($fp,1024));
@@ -141,12 +128,12 @@
                 error(get_string('invalidfieldname', 'error', $h), 'uploaduser.php?sesskey='.$USER->sesskey);
             }
             if ($required[$h]) {
-                $required[$h] = 2;
+                $required[$h] = 0;
             }
         }
         // check for required fields
         foreach ($required as $key => $value) {
-            if ($value < 2) {
+            if ($value) { //required field missing
                 error(get_string('fieldrequired', 'error', $key), 'uploaduser.php?sesskey='.$USER->sesskey);
             }
         }
@@ -175,7 +162,6 @@
             }
             if ($record[$header[0]]) {
                 // add a new user to the database
-                $newuser = optional_param('newuser', "", PARAM_CLEAN); 
 
                 // add fields to object $user
                 foreach ($record as $name => $value) {
@@ -183,7 +169,7 @@
                     if ($required[$name] and !$value) {
                         error(get_string('missingfield', 'error', $name). " ".
                               get_string('erroronline', 'error', $linenum) .". ".
-                              get_string('processingstops', 'error'), 
+                              get_string('processingstops', 'error'),
                               'uploaduser.php?sesskey='.$USER->sesskey);
                     }
                     // password needs to be encrypted
@@ -230,7 +216,7 @@
                     continue;
                 }
 
-                // before insert/update, check whether we should be updating 
+                // before insert/update, check whether we should be updating
                 // an old record instead
                 if ($allowrenames && !empty($user->oldusername) ) {
                     $user->oldusername = moodle_strtolower($user->oldusername);
@@ -251,7 +237,7 @@
                 }
 
                 if ($olduser = get_record("user","username",$username)) {
-                    if ($updateaccounts) { 
+                    if ($updateaccounts) {
                         // Record is being updated
                         $user->id = $olduser->id;
                         if (update_record('user', $user)) {
@@ -268,19 +254,19 @@
                         //This can be used to obtain a list of userids for existing users
                         notify("$user->id ".get_string('usernotaddedregistered', 'error', $username));
                         $userserrors++;
-                        continue; 
+                        continue;
                     }
 
-                } else { // new user 
+                } else { // new user
                     if ($user->id = insert_record("user", $user)) {
                         notify("$struser: $user->id = $user->username");
                         $usersnew++;
-                        if (empty($user->password) && $frmpassword === 'create') {
+                        if (empty($user->password) && $createpassword) {
                             // passwords will be created and sent out on cron
-                            insert_record('user_preferences', array( userid => $user->id, 
+                            insert_record('user_preferences', array( userid => $user->id,
                                                                      name   => 'create_password',
                                                                      value  => 1));
-                            insert_record('user_preferences', array( userid => $user->id, 
+                            insert_record('user_preferences', array( userid => $user->id,
                                                                      name   => 'auth_forcepasswordchange',
                                                                      value  => 1));
                         }
@@ -363,29 +349,28 @@
     $maxuploadsize = get_max_upload_file_size();
     echo '<center>';
     echo '<form method="post" enctype="multipart/form-data" action="uploaduser.php">'.
-         $strchoose.':<input type="hidden" name="MAX_FILE_SIZE" value="'.$maxuploadsize.'">'.
+         $strfile.'&nbsp;<input type="hidden" name="MAX_FILE_SIZE" value="'.$maxuploadsize.'">'.
          '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'">'.
-         '<input type="file" name="userfile" size="30">'.
-         '<input type="submit" value="'.$struploadusers.'">';
+         '<input type="file" name="userfile" size="30">';
     print_heading(get_string('settings'));
     echo '<table>';
-    echo '<tr><td>' . get_string('passwordhandling', 'auth') . "</td><td>";
-    $passwordopts = array( infile => get_string('infilefield',    'auth'),
-                           create => get_string('createpassword', 'auth'),                           
+    echo '<tr><td>' . get_string('passwordhandling', 'auth') . '</td><td>';
+    $passwordopts = array( 0 => get_string('infilefield', 'auth'),
+                           1 => get_string('createpasswordifneeded', 'auth'),
                           );
-    choose_from_menu($passwordopts, 'frmpassword', 'infile');
-    echo "</td></tr>";
+    choose_from_menu($passwordopts, 'createpassword', $createpassword);
+    echo '</td></tr>';
 
-    echo '<tr><td>' . get_string('updateaccounts', 'admin')  . "</td><td>";
-    choose_from_menu($noyesoptions, 'updateaccounts', 0);
-    echo "</td></tr>";
+    echo '<tr><td>' . get_string('updateaccounts', 'admin') . '</td><td>';
+    choose_from_menu($noyesoptions, 'updateaccounts', $updateaccounts);
+    echo '</td></tr>';
 
-    echo '<tr><td>' . get_string('allowrenames', 'admin')  . "</td><td>";
-    choose_from_menu($noyesoptions, 'allowrenames', 0);
-    echo "</td></tr>";
-
-    echo '</table>';
-    echo '</form></br>';
+    echo '<tr><td>' . get_string('allowrenames', 'admin') . '</td><td>';
+    choose_from_menu($noyesoptions, 'allowrenames', $allowrenames);
+    echo '</td></tr>';
+    echo '</table><br />';
+    echo '<input type="submit" value="'.$struploadusers.'">';
+    echo '</form><br />';
     echo '</center>';
 
     print_footer($course);

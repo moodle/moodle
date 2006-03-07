@@ -1,9 +1,9 @@
 <?PHP  //$Id$
 
-    require("../config.php");
-    require("$CFG->dirroot/mod/forum/lib.php");
+    require_once('../config.php');
+    require_once($CFG->dirroot.'/mod/forum/lib.php');
 
-    $confirm = optional_param('confirm');
+    $confirm = optional_param('confirm', 0, PARAM_BOOL);
 
     require_login();
 
