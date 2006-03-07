@@ -16,7 +16,7 @@
 
     require_login();
 
-    $courseid  = required_param('courseid', 0, PARAM_INT);
+    $courseid  = required_param('courseid', PARAM_INT);
 
     // The optional parameter 'clean' allows us to clear module information,
     // guaranteeing a module-independent  question bank editing interface
