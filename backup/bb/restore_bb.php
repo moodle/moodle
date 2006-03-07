@@ -1,9 +1,11 @@
-<?php
+<?php // $Id$
 // This file facilitates the conversion of a Blackboard course export
 // into a Moodle course export.  It assumes an unzipped directory and makes in-place alterations.
-  
+
+defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
+
 // Ziba Scott <ziba@linuxbox.com> 10-25-04
-require_once('xsl_emulate_xslt.inc');
+require_once($CFG->dirroot.'/backup/bb/xsl_emulate_xslt.inc');
   
 function get_subdirs($directory){
     $opendirectory = opendir( $directory );
