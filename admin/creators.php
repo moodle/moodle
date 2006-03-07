@@ -70,7 +70,7 @@
     }
 
 /// Is there a current search?
-    $previoussearch = (!empty($frm->search) or ($frm->previoussearch == 1)) ;
+    $previoussearch = (!empty($frm->search) or (isset($frm->previoussearch) && $frm->previoussearch == 1)) ;
 
 
 /// Get all existing creators
