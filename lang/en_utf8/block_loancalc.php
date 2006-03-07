@@ -1,4 +1,4 @@
-<?
+<?php // $Id$
 $string['loancalc'] = 'Loan calculator';
 $string['amountofloan'] = 'Amount of loan';
 $string['repaymentamount'] = 'Repayment amount';

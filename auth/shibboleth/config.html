@@ -45,7 +45,7 @@
     <td align="right"><?php  print_string("auth_shib_convert_data", "auth") ?>:</td>
     <td>
     <input name="pluginconfig_convert_data" type="text" size="30" value="<?php echo $pluginconfig->convert_data?>"> 
-    <? 
+    <?php 
           if ($pluginconfig->convert_data && $pluginconfig->convert_data != '' && !is_readable($pluginconfig->convert_data)){
               echo '<br><font color="red">';
               print_string("auth_shib_convert_data_warning", "auth");

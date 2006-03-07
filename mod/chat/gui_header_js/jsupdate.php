@@ -146,6 +146,6 @@
                 echo '<embed src="../beep.wav" autostart="true" hidden="true" name="beep" />';
             }
         ?>
-       <a href="<? echo $refreshurl ?>" name="refreshLink">Refresh link</a>
+       <a href="<?php echo $refreshurl ?>" name="refreshLink">Refresh link</a>
     </body>
 </html>

@@ -1,4 +1,4 @@
-<? // $Id:
+<?php // $Id$
 /**
 * Class question_category_object
 *

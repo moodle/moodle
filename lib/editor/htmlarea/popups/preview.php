@@ -29,7 +29,7 @@
 </head>
 <body bgcolor="#ffffff">
 
-<? echo $imagetag ?>
+<?php echo $imagetag ?>
 
 </body>
 </html>

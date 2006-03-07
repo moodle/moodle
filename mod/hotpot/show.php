@@ -34,10 +34,10 @@
 		}
 		if (obj && window.clipboardData) {
 			window.clipboardData.setData("Text", obj.innerText);
-			alert('<? print_string('copiedtoclipboard', 'hotpot') ?>');
+			alert('<?php print_string('copiedtoclipboard', 'hotpot') ?>');
 		}
 	}
-	document.write('<span class="helplink"> &nbsp; <a href="javascript:copy_contents()"><? print_string('copytoclipboard', 'hotpot') ?></A></span>');
+	document.write('<span class="helplink"> &nbsp; <a href="javascript:copy_contents()"><?php print_string('copytoclipboard', 'hotpot') ?></A></span>');
 -->
 </script>
 <?php
