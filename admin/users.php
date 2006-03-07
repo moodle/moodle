@@ -1,6 +1,6 @@
 <?php // $Id$
 
-    require_once("../config.php");
+    require_once('../config.php');
 
     require_login();
 

@@ -1,8 +1,8 @@
-<?php
+<?php //$Id$
 ///dummy field names are used to help adding and dropping indexes. There's only 1 case now, in scorm_scoes_track
 
     require_once('../config.php');
-    require_once($CFG->dirroot.'/lib/adminlib.php');
+    require_once($CFG->libdir.'/adminlib.php');
     require_once($CFG->libdir.'/environmentlib.php');
 
     require_login();
@@ -19,8 +19,8 @@
         error ('unicode db migration has already been performed!');
     }
 
-    $migrate = optional_param('migrate');
-    $confirm = optional_param('confirm');
+    $migrate = optional_param('migrate', 0, PARAM_BOOL);
+    $confirm = optional_param('confirm', 0, PARAM_BOOL);
     
     $textlib = textlib_get_instance();
 
@@ -151,8 +151,8 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
     @ob_implicit_flush(true);
     @ob_end_flush();
 
-    $maxrecords = optional_param('maxrecords',0, PARAM_INT);
-    $globallang = optional_param('globallang');
+    $maxrecords = optional_param('maxrecords', 0, PARAM_INT);
+    $globallang = optional_param('globallang', '', PARAM_FILE);
     $processedrecords = 0;
 
     $ignoretables = array();    //list of tables to ignore, optional
@@ -353,7 +353,7 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
                                           
                                     break;
 
-                                    case 'PHP_FUNCTION';    //use the default php function to execute
+                                    case 'PHP_FUNCTION':    //use the default php function to execute
                                         if ($debug) {
                                             $db->debug=999;
                                         }

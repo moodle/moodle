@@ -1,38 +1,35 @@
 <?php // $Id$
 
-    require_once("../config.php");
+    require_once('../config.php');
 
-    $newuser = optional_param('newuser', "");
-    $delete = optional_param('delete', "");
-    $confirm = optional_param('confirm', "");
-    $confirmuser = optional_param('confirmuser', "");
-    $sort = optional_param('sort', "name", PARAM_ALPHA);
-    $dir = optional_param('dir', "ASC");
-    $page = optional_param('page', 0);
-    $search = optional_param('search', "");
-    if (!empty($search)) {
-        $search=trim($search);
-    }
-    $lastinitial = optional_param('lastinitial', "");     // only show students with this last initial
-    $firstinitial = optional_param('firstinitial', "");    // only show students with this first initial
-    $perpage = optional_param('perpage', 30, PARAM_INT);       // how many per page
-
-    unset($user);
-    unset($admin);
-    unset($teacher);
+    $newuser      = optional_param('newuser', 0, PARAM_BOOL);
+    $delete       = optional_param('delete', 0, PARAM_INT);
+    $confirm      = optional_param('confirm', '', PARAM_ALPHANUM);   //md5 confirmation hash
+    $confirmuser  = optional_param('confirmuser', 0, PARAM_INT);
+    $sort         = optional_param('sort', 'name', PARAM_ALPHA);
+    $dir          = optional_param('dir', 'ASC', PARAM_ALPHA);
+    $page         = optional_param('page', 0, PARAM_INT);
+    $perpage      = optional_param('perpage', 30, PARAM_INT);        // how many per page
+    $search       = optional_param('search', '', PARAM_RAW);
+    $lastinitial  = optional_param('lastinitial', '', PARAM_CLEAN);  // only show students with this last initial
+    $firstinitial = optional_param('firstinitial', '', PARAM_CLEAN); // only show students with this first initial
 
     $search = trim($search);
 
+    $user    = new object();
+    $admin   = new object();
+    $teacher = new object();
+
     if (! record_exists("user_admins")) {   // No admin user yet
 
-        $user->firstname = get_string("admin");
-        $user->lastname  = get_string("user");
-        $user->username  = "admin";
-        $user->password  = md5("admin");
-        $user->email     = "root@localhost";
-        $user->confirmed = 1;
-        $user->lang = $CFG->lang;
-        $user->maildisplay = 1;
+        $user->firstname    = get_string("admin");
+        $user->lastname     = get_string("user");
+        $user->username     = "admin";
+        $user->password     = md5("admin");
+        $user->email        = "root@localhost";
+        $user->confirmed    = 1;
+        $user->lang         = $CFG->lang;
+        $user->maildisplay  = 1;
         $user->timemodified = time();
 
         if (! $user->id = insert_record("user", $user)) {
@@ -85,14 +82,14 @@
     }
 
     if ($newuser and confirm_sesskey()) {                 // Create a new user
-        $user->auth      = "manual";
-        $user->firstname = "";
-        $user->lastname  = "";
-        $user->username  = "changeme";
-        $user->password  = "";
-        $user->email     = "";
-        $user->lang      = $CFG->lang;
-        $user->confirmed = 1;
+        $user->auth         = "manual";
+        $user->firstname    = "";
+        $user->lastname     = "";
+        $user->username     = "changeme";
+        $user->password     = "";
+        $user->email        = "";
+        $user->lang         = $CFG->lang;
+        $user->confirmed    = 1;
         $user->timemodified = time();
 
         if (! $user->id = insert_record("user", $user)) {
@@ -130,7 +127,7 @@
                 error("No such user!");
             }
 
-            unset($confirmeduser);
+            $confirmeduser = new object();
             $confirmeduser->id = $confirmuser;
             $confirmeduser->confirmed = 1;
             $confirmeduser->timemodified = time();
@@ -158,7 +155,7 @@
 
                 exit;
             } else if (!$user->deleted) {
-                unset($updateuser);
+                $updateuser = new object();
                 $updateuser->id = $user->id;
                 $updateuser->deleted = "1";
                 $updateuser->username = "$user->email.".time();  // Remember it just in case
@@ -199,7 +196,7 @@
                 $columnicon = " <img src=\"$CFG->pixpath/t/$columnicon.gif\" alt=\"\" />";
 
             }
-            $$column = "<a href=\"user.php?sort=$column&amp;dir=$columndir&amp;search=$search&amp;firstinitial=$firstinitial&amp;lastinitial=$lastinitial\">".$string[$column]."</a>$columnicon";
+            $$column = "<a href=\"user.php?sort=$column&amp;dir=$columndir&amp;search=".urlencode(stripslashes($search))."&amp;firstinitial=$firstinitial&amp;lastinitial=$lastinitial\">".$string[$column]."</a>$columnicon";
         }
 
         if ($sort == "name") {
@@ -262,15 +259,15 @@
         echo "</center>";
 
         print_paging_bar($usercount, $page, $perpage,
-                "user.php?sort=$sort&amp;dir=$dir&amp;perpage=$perpage&amp;firstinitial=$firstinitial&amp;lastinitial=$lastinitial&amp;search=$search&amp;");
+                "user.php?sort=$sort&amp;dir=$dir&amp;perpage=$perpage&amp;firstinitial=$firstinitial&amp;lastinitial=$lastinitial&amp;search=".urlencode(stripslashes($search))."&amp;");
 
         flush();
 
 
         if (!$users) {
             $match = array();
-            if ($search) {
-               $match[] = $search;
+            if ($search !== '') {
+               $match[] = s($search);
             }
             if ($firstinitial) {
                $match[] = get_string("firstname").": $firstinitial"."___";
@@ -336,7 +333,7 @@
 
         echo "<table class=\"searchbox\" align=\"center\" cellpadding=\"10\"><tr><td>";
         echo "<form action=\"user.php\" method=\"get\">";
-        echo "<input type=\"text\" name=\"search\" value=\"$search\" size=\"20\" />";
+        echo "<input type=\"text\" name=\"search\" value=\"".s($search)."\" size=\"20\" />";
         echo "<input type=\"submit\" value=\"$strsearch\" />";
         if ($search) {
             echo "<input type=\"button\" onclick=\"document.location='user.php';\" value=\"$strshowallusers\" />";
@@ -349,7 +346,7 @@
             print_table($table);
             print_paging_bar($usercount, $page, $perpage,
                              "user.php?sort=$sort&amp;dir=$dir&amp;perpage=$perpage".
-                             "&amp;firstinitial=$firstinitial&amp;lastinitial=$lastinitial&amp;search=$search&amp;");
+                             "&amp;firstinitial=$firstinitial&amp;lastinitial=$lastinitial&amp;search=".urlencode(stripslashes($search))."&amp;");
             print_heading("<a href=\"user.php?newuser=true&amp;sesskey=$USER->sesskey\">".get_string("addnewuser")."</a>");
         }
 
