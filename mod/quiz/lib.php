@@ -288,7 +288,7 @@ function quiz_delete_course($course, $feedback=true) {
     $strcatdeleted = get_string('unusedcategorydeleted', 'quiz');
 
     if ($categories = get_records('question_categories', 'course', $course->id, 'parent', 'id, parent, name, course')) {
-        require_once("locallib.php");
+        require_once($CFG->dirroot.'/mod/quiz/locallib.php');
         //Sort categories following their tree (parent-child) relationships
         $categories = sort_categories_by_tree($categories);
 
