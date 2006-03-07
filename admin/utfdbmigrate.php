@@ -1,4 +1,4 @@
-<?
+<?php
 ///dummy field names are used to help adding and dropping indexes. There's only 1 case now, in scorm_scoes_track
 
     require_once('../config.php');
@@ -294,7 +294,7 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
                             foreach ($records as $record) {
                                 //if we are up this far, either no crash, or crash with same table, field name.
                                 if ($crash){
-                                    if ($crash->record != $record->id) {
+                                    if ($crash->record != $record->id) {    //might set to < just in case record is deleted
                                         continue;
                                     } else {
                                         $crash = 0;
