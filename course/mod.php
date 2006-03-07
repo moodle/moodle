@@ -265,7 +265,7 @@
 
     } else if (isset_param('indent') and confirm_sesskey()) {
 
-        $id = required_param('id',0,PARAM_INT);
+        $id = required_param('id',PARAM_INT);
 
         if (! $cm = get_record("course_modules", "id", $id)) {
             error("This course module doesn't exist");
@@ -345,7 +345,7 @@
 
     } else if (isset_param('groupmode') and confirm_sesskey()) {
 
-        $id = required_param( 'id',0,PARAM_INT );
+        $id = required_param( 'id', PARAM_INT );
 
         if (! $cm = get_record("course_modules", "id", $id)) {
             error("This course module doesn't exist");
@@ -578,8 +578,8 @@
             die;
         }
 
-        $id = required_param('id',0,PARAM_INT);
-        $section = required_param('section',0,PARAM_INT);
+        $id = required_param('id',PARAM_INT);
+        $section = required_param('section',PARAM_INT);
 
         if (! $course = get_record("course", "id", $id)) {
             error("This course doesn't exist");
