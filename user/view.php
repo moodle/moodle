@@ -265,18 +265,20 @@
         print_row(get_string("lastaccess").":", $datestring);
     }
 
-    $groupstr = '';
 
-    ///printing groups
-    if (isteacher($course->id)){
-        if ($mygroups = user_group($course->id, $user->id)){
-            foreach ($mygroups as $group){
-                $groupstr .= link_to_popup_window('/user/index.php?id='.$course->id.'&amp;group='.$group->id,'popup',$group->name,400,500,'edit group','none',true).", ";
+/// Printing groups
+    $isseparategroups = ($course->groupmode == SEPARATEGROUPS and $course->groupmodeforce and
+                             !isteacheredit($course->id));
+    if (!$isseparategroups){
+        if ($usergroups = user_group($course->id, $user->id)){
+            $groupstr = '';
+            foreach ($usergroups as $group){
+                $groupstr .= ' <a href="'.$CFG->wwwroot.'/user/index.php?id='.$course->id.'&amp;group='.$group->id.'">'.$group->name.'</a>,';
             }
+            print_row(get_string("group").":", rtrim($groupstr, ', '));
         }
-    print_row(get_string("group").":", rtrim($groupstr, ', '));
     }
-    ///End of printing groups
+/// End of printing groups
 
     echo "</table>";
 
