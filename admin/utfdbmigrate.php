@@ -370,9 +370,13 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
                                         print_continue('utfdbmigrate.php?confirm=1&amp;maxrecords='.$maxrecords.'&amp;sesskey='.sesskey());
                                         print_footer();
                                         die();
-                                    } else {
-                                        $processedrecords++;
-                                    }
+                                    } 
+                                }
+                                
+                                $processedrecords++;
+                                //print some output once in a while
+                                if (($processedrecords) % 5000 == 0) {
+                                    echo '...'.$dbtablename.'...'.$fieldname.'...'.$record->id;
                                 }
                             }
                         }
