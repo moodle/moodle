@@ -1,4 +1,4 @@
-<?
+<?php // $Id$
 function migrate2utf8_scorm_scoes_manifest($recordid){
     global $CFG, $globallang;
 

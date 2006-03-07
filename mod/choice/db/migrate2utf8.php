@@ -1,4 +1,4 @@
-<?
+<?php // $Id$
 function migrate2utf8_choice_options_text($recordid){
     global $CFG, $globallang;
 

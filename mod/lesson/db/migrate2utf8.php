@@ -1,4 +1,4 @@
-<?
+<?php // $Id$
 function migrate2utf8_lesson_answers_answer($recordid){
     global $CFG, $globallang;
 

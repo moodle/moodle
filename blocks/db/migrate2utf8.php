@@ -1,4 +1,4 @@
-<?
+<?php // $Id$
 function migrate2utf8_block_instance_configdata($recordid){
     global $CFG, $globallang;
 

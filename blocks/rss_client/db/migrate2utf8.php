@@ -1,4 +1,4 @@
-<?
+<?php // $Id$
 function migrate2utf8_block_rss_client_title($recordid){
     global $CFG, $globallang;
 

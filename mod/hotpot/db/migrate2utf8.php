@@ -1,4 +1,4 @@
-<?
+<?php // $Id$
 
 function migrate2utf8_hotpot_strings_string($recordid){
     global $CFG, $globallang;

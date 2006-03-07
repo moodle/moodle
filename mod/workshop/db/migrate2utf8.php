@@ -1,4 +1,4 @@
-<?
+<?php // $Id$
 function migrate2utf8_workshop_stockcomments_comments($recordid){
     global $CFG, $globallang;
 

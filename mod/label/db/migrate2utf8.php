@@ -1,4 +1,4 @@
-<?
+<?php // $Id$
 function migrate2utf8_label_name($recordid){
     global $CFG, $globallang;
 

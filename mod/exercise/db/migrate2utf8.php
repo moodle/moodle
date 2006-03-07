@@ -1,4 +1,4 @@
-<?
+<?php // $Id$
 function migrate2utf8_exercise_elements_description($recordid){
     global $CFG, $globallang;
 

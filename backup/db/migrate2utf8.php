@@ -1,4 +1,4 @@
-<?
+<?php // $Id$
 
 function migrate2utf8_backup_ids_info($recordid){
     global $CFG, $globallang;
