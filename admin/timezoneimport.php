@@ -6,7 +6,7 @@
     require_once($CFG->libdir.'/filelib.php');
     require_once($CFG->libdir.'/olson.php');
 
-    $ok = optional_param('ok');
+    $ok = optional_param('ok', 0, PARAM_BOOL);
 
     require_login();
 

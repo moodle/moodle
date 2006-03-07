@@ -35,8 +35,7 @@
         }
         if(isset($form->forcetimezone)) {
             // To protect from SQL injections ...
-            $form->forcetimezone = str_replace(';', '', $form->forcetimezone);
-            $form->forcetimezone = str_replace('\'', '', $form->forcetimezone);
+            $form->timezone = clean_param($form->timezone, PARAM_PATH); //not a path, but it looks like it anyway
             set_config('forcetimezone', $form->forcetimezone);
         }
         if(isset($form->startwday)) {

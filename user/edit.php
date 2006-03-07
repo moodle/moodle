@@ -121,8 +121,7 @@
             if ($CFG->forcetimezone != 99) { // Don't allow changing this in any way
                 unset($usernew->timezone);
             } else { // Clean up the data a bit, just in case of injections
-                $usernew->timezone = str_replace(';', '',  $usernew->timezone);
-                $usernew->timezone = str_replace('\'', '', $usernew->timezone);
+                $usernew->timezone = clean_param($usernew->timezone, PARAM_PATH); //not a path, but it looks like it anyway
             }
         }
 

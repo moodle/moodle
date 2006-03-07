@@ -1,6 +1,8 @@
 <?php   // $Id$
 
-    include("../config.php");
+    require_once('../config.php');
+
+    $zone = optional_param('zone', '', PARAM_PATH); //not a path, but it looks like it anyway
 
     require_login();
 
@@ -17,7 +19,7 @@
 
     print_heading("");
 
-    if (isset($zone) and confirm_sesskey()) {
+    if (!empty($zone) and confirm_sesskey()) {
         $db->debug = true;
         echo "<center>";
         execute_sql("UPDATE {$CFG->prefix}user SET timezone = '$zone'");
@@ -27,29 +29,12 @@
         $USER->timezone = $zone;
     }
 
-    $user = $USER;
-
-    if (abs($user->timezone) > 13) {
-        $user->timezone = 99;
-    }
-    $timenow = time();
-    $timeformat = get_string('strftimedaytime');
-
-    for ($tz = -26; $tz <= 26; $tz++) {
-        $zone = (float)$tz/2.0;
-        $usertime = $timenow + ($tz * 1800);
-        if ($tz == 0) {
-            $timezones["$zone"] = gmstrftime($timeformat, $usertime)." (GMT)";
-        } else if ($tz < 0) {
-            $timezones["$zone"] = gmstrftime($timeformat, $usertime)." (GMT$zone)";
-        } else {
-            $timezones["$zone"] = gmstrftime($timeformat, $usertime)." (GMT+$zone)";
-        }
-    }
+    require_once($CFG->dirroot.'/calendar/lib.php');
+    $timezones = get_list_of_timezones();
 
     echo '<center><form action="timezone.php" method="get">';
     echo "$strusers ($strall): ";
-    choose_from_menu ($timezones, "zone", $user->timezone, get_string("serverlocaltime"), "", "99");
+    choose_from_menu ($timezones, "zone", 99, get_string("serverlocaltime"), "", "99");
     echo "<input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\">";
     echo "<input type=\"submit\" value=\"$strsavechanges\">";
     echo "</form></center>";
