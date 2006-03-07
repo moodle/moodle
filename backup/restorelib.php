@@ -2920,7 +2920,9 @@
         //This function is used to get the current contents property value
         //They are trimed (and converted from utf8 if needed)
         function getContents() {
-            if (current_charset() != 'UTF-8') {
+            global $CFG;
+
+            if (empty($CFG->unicodedb)) {
                 return trim(utf8_decode($this->content));
             } else {
                 return trim($this->content);
