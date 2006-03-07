@@ -1653,6 +1653,11 @@ function main_upgrade($oldversion=0) {
         table_column('course_request','','password','varchar',50);
     }
 
+    if ($oldversion < 2006030800) { # add extra indexes to log (see bug #4112)
+        modify_database('',"ALTER TABLE prefix_log ADD INDEX userid (userid);");
+        modify_database('',"ALTER TABLE prefix_log ADD INDEX info (info);");
+    }
+
     return $result;
 }
 
