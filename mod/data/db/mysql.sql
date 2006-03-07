@@ -112,4 +112,4 @@ INSERT INTO prefix_log_display VALUES ('data', 'record delete', 'data', 'name');
 INSERT INTO prefix_log_display VALUES ('data', 'fields add', 'data_fields', 'name');
 INSERT INTO prefix_log_display VALUES ('data', 'fields update', 'data_fields', 'name');
 INSERT INTO prefix_log_display VALUES ('data', 'templates saved', 'data', 'name');
-INSERT INTO prefix_log_display VALUES ('data', 'templates defaults', 'data', 'name');
+INSERT INTO prefix_log_display VALUES ('data', 'templates def', 'data', 'name');

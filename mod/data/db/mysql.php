@@ -36,7 +36,7 @@ function data_upgrade($oldversion) {
         modify_database('', "INSERT INTO prefix_log_display VALUES ('data', 'fields add', 'data_fields', 'name')");
         modify_database('', "INSERT INTO prefix_log_display VALUES ('data', 'fields update', 'data_fields', 'name')");
         modify_database('', "INSERT INTO prefix_log_display VALUES ('data', 'templates saved', 'data', 'name')");
-        modify_database('', "INSERT INTO prefix_log_display VALUES ('data', 'templates defaults', 'data', 'name')");
+        modify_database('', "INSERT INTO prefix_log_display VALUES ('data', 'templates def', 'data', 'name')");
     }
     
     return true;
