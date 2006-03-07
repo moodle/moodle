@@ -93,9 +93,11 @@ define('HOURMINS', 60);
 /// or clean_param() should have a specified type of parameter.  //////////////
 
 /**
- * PARAM_RAW specifies a parameter that is not cleaned/processed in any way.
+ * PARAM_RAW specifies a parameter that is not cleaned/processed in any way;
+ * originally was 0, but changed because we need to detect unknown
+ * parameter types and swiched order in clean_param().
  */
-define('PARAM_RAW',      0x0000);
+define('PARAM_RAW', 666);
 
 /**
  * PARAM_CLEAN - obsoleted, please try to use more specific type of parameter.
