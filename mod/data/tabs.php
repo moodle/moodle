@@ -32,13 +32,13 @@
     $inactive = NULL;
     $row = array();
     
-    $row[] = new tabobject('browse', $CFG->wwwroot.'/mod/data/view.php?d='.$data->id, get_string('browse','data'));
+    $row[] = new tabobject('browse', $CFG->wwwroot.'/mod/data/view.php?d='.$data->id, get_string('browse','data'), '', true);
     if (isteacher($course->id) or ($data->participants == PARTICIPANTS_S) or ($data->participants == PARTICIPANTS_TS)){
-        $row[] = new tabobject('add', $CFG->wwwroot.'/mod/data/add.php?d='.$data->id, get_string('add','data'));
+        $row[] = new tabobject('add', $CFG->wwwroot.'/mod/data/add.php?d='.$data->id, get_string('add','data'), '', true);
     }
     if (isteacher($course->id)) {
         $row[] = new tabobject('templates', $CFG->wwwroot.'/mod/data/templates.php?d='.$data->id.'&amp;mode=singletemplate', get_string('templates','data'));
-        $row[] = new tabobject('fields', $CFG->wwwroot.'/mod/data/fields.php?d='.$data->id, get_string('fields','data'));
+        $row[] = new tabobject('fields', $CFG->wwwroot.'/mod/data/fields.php?d='.$data->id, get_string('fields','data'), '', true);
     }
 
     $tabs[] = $row;
