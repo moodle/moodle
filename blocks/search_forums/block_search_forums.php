@@ -26,11 +26,12 @@ class block_search_forums extends block_base {
 
         $advancedsearch = get_string('advancedsearch', 'block_search_forums');
 
+        //Accessibility: replaced <input value=">" type="submit"> with button-embedded image.
         $this->content->text  = '<div class="searchform">';
         $this->content->text .= '<form name="search" action="'.$CFG->wwwroot.'/mod/forum/search.php" style="display:inline">';
         $this->content->text .= '<input name="id" type="hidden" value="'.$this->instance->pageid.'" />';  // course
         $this->content->text .= '<input name="search" type="text" size="16" value="" alt="search" />';
-        $this->content->text .= '<input value=">" type="submit" /><br />';
+        $this->content->text .= '<button type="submit" title="'.get_string('search').'"><img src="'.$CFG->wwwroot.'/pix/em1_bwgreater.gif" alt="" class="resize" /><i class="accesshide">'.get_string('search').'</i></button><br />'; 
         $this->content->text .= '<a href="'.$CFG->wwwroot.'/mod/forum/search.php?id='.$this->instance->pageid.'">'.$advancedsearch.'</a>';
         $this->content->text .= helpbutton('search', $advancedsearch, 'moodle', true, false, '', true);
         $this->content->text .= '</form></div>';
