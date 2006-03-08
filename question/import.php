@@ -105,17 +105,17 @@
 
             if (! $qformat->importpreprocess($category,$course)) {             // Do anything before that we need to
                 error("Error occurred during pre-processing!",
-                      "$CFG->wwwroot/mod/quiz/import.php?category=$category->id");
+                      "$CFG->wwwroot/question/import.php?category=$category->id");
             }
 
             if (! $qformat->importprocess($_FILES['newfile']['tmp_name'])) {     // Process the uploaded file
                 error("Error occurred during processing!",
-                      "$CFG->wwwroot/mod/quiz/import.php?category=$category->id");
+                      "$CFG->wwwroot/question/import.php?category=$category->id");
             }
 
             if (! $qformat->importpostprocess()) {                     // In case anything needs to be done after
                 error("Error occurred during post-processing!",
-                      "$CFG->wwwroot/mod/quiz/import.php?category=$category->id");
+                      "$CFG->wwwroot/question/import.php?category=$category->id");
             }
 
             echo "<hr />";

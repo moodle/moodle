@@ -92,17 +92,17 @@
 
         if (! $qformat->exportpreprocess($category, $course)) {   // Do anything before that we need to
             error("Error occurred during pre-processing!",
-                    "$CFG->wwwroot/mod/quiz/export.php?category=$category->id");
+                    "$CFG->wwwroot/question/export.php?category=$category->id");
         }
 
         if (! $qformat->exportprocess($exportfilename)) {         // Process the export data
             error("Error occurred during processing!",
-                    "$CFG->wwwroot/mod/quiz/export.php?category=$category->id");
+                    "$CFG->wwwroot/question/export.php?category=$category->id");
         }
 
         if (! $qformat->exportpostprocess()) {                    // In case anything needs to be done after
             error("Error occurred during post-processing!",
-                    "$CFG->wwwroot/mod/quiz/export.php?category=$category->id");
+                    "$CFG->wwwroot/question/export.php?category=$category->id");
         }
         echo "<hr />";
 
