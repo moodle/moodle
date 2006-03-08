@@ -131,6 +131,15 @@ h4 {
   font-weight: bold;
 }
 
+/*Accessibility: resizable icons. */
+img.resize {
+  width: 1em;
+  height: 1em;
+}
+
+acronym, abbr {
+  cursor: help;
+}
 
 /***
  *** Header
@@ -206,6 +215,15 @@ a.skip-block {
   text-decoration:none;
 }
 
+.sideblock img.resize {
+  width: 0.8em;
+  height: 0.9em;
+}
+.sideblock .searchform button {
+  width: 1.7em;
+  height: 1.7em;
+}
+
 .sideblock .header, .sideblock h2 {
   font-size:0.9em;
   font-weight: bold;
@@ -259,6 +277,9 @@ a.skip-block {
 /***
  *** Calendar
  ***/
+.block_calendar_month abbr {
+  border: none;
+}
 
 #calendar .maincalendar .eventlist .event .referer {
   font-weight:bold;
