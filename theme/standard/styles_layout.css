@@ -62,6 +62,7 @@ h6.main {
   height:1px;
   border:none;
   background:transparent;
+  display:block;
 }
 
 .clearfix:after {
@@ -239,10 +240,6 @@ form.popupform {
   position:absolute;
   left:-10000px;
 }
-img.resize {
-  width:1em;
-  height:1em;
-}
 
 
 /***
@@ -273,10 +270,23 @@ img.resize {
   border-width:1px;
   border-style:solid;
 }
+div.navbar {
+  width:auto;
+}
 
 .navbar .breadcrumb {
   float:left;
   margin:0.2em 0em;
+}
+
+.breadcrumb ul {
+  padding:0%;
+  margin:0%;
+  text-indent:0%;
+  list-style:none;
+}
+.breadcrumb li {
+  display:inline;
 }
 
 .navbar .navbutton,
@@ -409,6 +419,9 @@ table.flexible th.c0 {
 a.skip-block, .skip-block {
   display:block;
   width:2em; 
+  height:1px;
+}
+.sideblock .skip-block {
   height:4px;
 }
 .skip-block-to {
