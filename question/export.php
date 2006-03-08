@@ -14,8 +14,8 @@
 
     $categoryid = optional_param('category',0, PARAM_INT);
     $courseid = required_param('courseid',PARAM_INT);
-    $format = optional_param('format','', PARAM_CLEANFILE );
-    $exportfilename = optional_param('exportfilename','',PARAM_CLEANFILE );
+    $format = optional_param('format','', PARAM_FILE );
+    $exportfilename = optional_param('exportfilename','',PARAM_FILE );
 
     if (! $course = get_record("course", "id", $courseid)) {
         error("Course does not exist!");

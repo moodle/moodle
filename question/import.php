@@ -14,7 +14,7 @@
 
     $categoryid = optional_param('category', 0, PARAM_INT);
     $courseid = optional_param('course', 0, PARAM_INT);
-    $format = optional_param('format','',PARAM_CLEANFILE);
+    $format = optional_param('format','',PARAM_FILE);
 
     if (!$categoryid) { // try to get category from modform
         $showcatmenu = true; // will ensure that user can choose category
