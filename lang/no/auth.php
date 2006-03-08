@@ -3,7 +3,7 @@
 
 
 $string['auth_dbdescription'] = 'Denne metoden bruker en ekstern database for å kontrollere om et gittt brukernavn og passord er gyldig. Hvis kontoen er ny, kan oplysninger fra andre felter også kopieres inn til Moodle.';
-$string['auth_dbextrafields'] = 'Disse feltene er valgfrie. Du kan velge å forhåndsutfylle noen brukerfelter i Moodle fra <B>den eksterne databasen</B> som du skriver her.<P> Hvis du ikke skriver noe her, vil standardverdierne bli brukt.<P> I alle tilfeller vil brukeren være i stand til å endre disse feltene når de er innlogget.';
+$string['auth_dbextrafields'] = 'Disse feltene er valgfrie. Du kan velge å forhåndsutfylle noen brukerfelter i Moodle fra <b>den eksterne databasen</b> som du skriver her.<p> Hvis du ikke skriver noe her, vil standardverdierne bli brukt.<p> I alle tilfeller vil brukeren være i stand til å endre disse feltene når de er innlogget.';
 $string['auth_dbfieldpass'] = 'Navn på feltet som inneholder passord';
 $string['auth_dbfielduser'] = 'Navn på feltet som inneholder brukernavn';
 $string['auth_dbhost'] = 'Datamaskinen som er vertsmaskon for databaseserveren';
@@ -32,7 +32,7 @@ $string['auth_ldap_search_sub'] = 'Sett verdi &lt;&gt; 0 hvis du vil søke etter 
 $string['auth_ldap_update_userinfo'] = 'Oppdater brukerinfo (fornavn, etternavn, adresse...) fra LDAP til Moodle. Se /auth/ldap/attr_mappings.php for informasjon';
 $string['auth_ldap_user_attribute'] = 'Atributten for å navngi og søke etter brukere (vanligvis \'cn\').';
 $string['auth_ldapdescription'] = 'Denne metoden krever godkjenning opp mot en ekstern LDAP-server. Hvis det gitte brukernavnet/passordet er gyldig oppretter Moodle en ny bruger i databasen. Denne modulen kan lese brugerinfo fra LDAP og forhåndsutfylle ønskede felter i Moodle. For senere innlogging blir kun brukernavn og passord kontrollert.';
-$string['auth_ldapextrafields'] = 'Disse feltene er valgfrie.  Du kan velge å forhåndsutfylle noen brukerfelter i Moodle på forhånd fra <B>LDAP-felterne</B> som du spesifiserer her. <P>Hvis du ikke skriver noe her, vil det ikke overføres noe fra LDAP og standardene i Moodle vil bli brukt i stedet.<P>Uansett vil brukeren være i stand til å endre disse feltene etter at de har logget inn.';
+$string['auth_ldapextrafields'] = 'Disse feltene er valgfrie.  Du kan velge å forhåndsutfylle noen brukerfelter i Moodle på forhånd fra <b>LDAP-felterne</b> som du spesifiserer her. <p>Hvis du ikke skriver noe her, vil det ikke overføres noe fra LDAP og standardene i Moodle vil bli brukt i stedet.<p>Uansett vil brukeren være i stand til å endre disse feltene etter at de har logget inn.';
 $string['auth_ldaptitle'] = 'Bruk en LDAP-server';
 $string['auth_manualdescription'] = 'Denne metoden fjerner alle muligheter for brukere til å registrere seg på egenhånd. Alle kontoene må lages manuelt av administrator.';
 $string['auth_manualtitle'] = 'Bare manuelle kontoer';
