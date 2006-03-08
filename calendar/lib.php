@@ -165,7 +165,9 @@ function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_y
     ///global $CALENDARDAYS; appears to be broken.
     $days_title = array('sunday','monday','tuesday','wednesday','thursday','friday','saturday');
 
-    $content .= '<table class="minicalendar" summary="Mini calendar with 7 columns and 6 rows.">'; // Begin table
+    $summary = get_string('calendarheading', 'calendar', userdate(make_timestamp($y, $m), get_string('strftimemonthyear')));
+    $summary = get_string('tabledata', 'access', $summary);
+    $content .= '<table class="minicalendar" summary="'.$summary.'">'; // Begin table
     $content .= '<tr class="weekdays">'; // Header row: day names
 
     // Print out the names of the weekdays
@@ -277,7 +279,7 @@ function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_y
         }
 
         // Special visual fx for today
-        //:TODO (nfreear): Accessibility: $string['today']  <abbr title="'.$text.'">..</abbr>	
+        //Accessibility: hidden text for today, and popup.	
         if($display->thismonth && $day == $d) {
             $class .= ' today';
             $today = get_string('today', 'calendar').' '.userdate(time(), get_string('strftimedayshort'));
@@ -611,10 +613,15 @@ function calendar_top_controls($type, $data) {
     $data['m'] = $date['mon'];
     $data['y'] = $date['year'];
 
+    //Accessibility: calendar block controls, replaced <table> with <div>.
+    $nexttext = '<img src="'. $CFG->wwwroot .'/pix/a/em1_greater.gif" alt="'.get_string('monthnext','access').'" class="resize" />'; ///'<span class="resize">M <b>&gt;&gt; &lt;&lt;</b></span>'; ///&gt;
+    $prevtext = '<img src="'. $CFG->wwwroot .'/pix/a/em1_lesser.gif" alt="'.get_string('monthprev','access').'" class="resize" />'; ///&lt;
+
     switch($type) {
         case 'frontpage':
             list($prevmonth, $prevyear) = calendar_sub_month($data['m'], $data['y']);
             list($nextmonth, $nextyear) = calendar_add_month($data['m'], $data['y']);
+/*TODO (nfreear): delete.
             $nextlink = calendar_get_link_tag('&gt;&gt;', 'index.php?', 0, $nextmonth, $nextyear);
             $prevlink = calendar_get_link_tag('&lt;&lt;', 'index.php?', 0, $prevmonth, $prevyear);
             $content .= '<table class="calendar-controls"><tr>';
@@ -622,6 +629,14 @@ function calendar_top_controls($type, $data) {
             $content .= '<td class="current"><a href="'.calendar_get_link_href(CALENDAR_URL.'view.php?view=month&amp;', 1, $data['m'], $data['y']).'">'.userdate($time, get_string('strftimemonthyear')).'</a></td>';
             $content .= '<td class="next">'.$nextlink."</td>\n";
             $content .= '</tr></table>';
+*/
+            $nextlink = calendar_get_link_tag($nexttext, 'index.php?', 0, $nextmonth, $nextyear);
+            $prevlink = calendar_get_link_tag($prevtext, 'index.php?', 0, $prevmonth, $prevyear);
+            $content .= '<div class="calendar-controls">';
+            $content .= '<span class="previous" title="'.get_string('monthprev','access').'">'.$prevlink."</span>\n";
+            $content .= '<span class="hide"> | </span><span class="current"><a href="'.calendar_get_link_href(CALENDAR_URL.'view.php?view=month&amp;', 1, $data['m'], $data['y']).'">'.userdate($time, get_string('strftimemonthyear')).'</a></span>';
+            $content .= '<span class="hide"> | </span><span class="next" title="'.get_string('monthnext','access').'">'.$nextlink."</span>\n";
+            $content .= '<span class="clearer"></span></div>';
         break;
         case 'course':
             list($prevmonth, $prevyear) = calendar_sub_month($data['m'], $data['y']);
