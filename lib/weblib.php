@@ -4340,12 +4340,14 @@ class tabobject {
     var $id;
     var $link;
     var $text;
+    var $linkedwhenselected;
 
     /// A constructor just because I like constructors
-    function tabobject ($id, $link='', $text='') {
+    function tabobject ($id, $link='', $text='', $linkedwhenselected=false) {
         $this->id   = $id;
         $this->link = $link;
         $this->text = $text;
+        $this->linkedwhenselected = $linkedwhenselected;
     }
 
 
@@ -4357,7 +4359,7 @@ class tabobject {
         $cstr = '';
 
     /// The text and anchor for this tab
-        if ($inactive || $activetwo || $selected) {
+        if ($inactive || $activetwo || ($selected && !$this->linkedwhenselected) ) {
             $astr .= $this->text;
         } else {
             $astr .= '<a href="'.$this->link.'" title="'.$this->text.'">'.$this->text.'</a>';
