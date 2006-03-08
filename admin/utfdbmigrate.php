@@ -290,7 +290,7 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
                      * converting each record *
                      **************************/
                     while(($counter < $totalrecords) and ($fieldname !='dummy') and ($method!='NO_CONV')) {    //while there is still something
-                        $SQL = 'SELECT * FROM '.$CFG->prefix.$dbtablename.' '.sql_paging_limit($counter, $recordsetsize);
+                        $SQL = 'SELECT * FROM '.$CFG->prefix.$dbtablename.' ORDER BY id ASC '.sql_paging_limit($counter, $recordsetsize);
                         if ($records = get_records_sql($SQL)) {
                             foreach ($records as $record) {
                                 if ($debug) {
@@ -349,7 +349,7 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
                                             if ($debug) {
                                                 $db->debug=0;
                                             }
-                                          }
+                                        }
                                           
                                     break;
 
