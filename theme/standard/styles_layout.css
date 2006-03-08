@@ -240,6 +240,9 @@ form.popupform {
   position:absolute;
   left:-10000px;
 }
+.hide {
+  display:none;
+}
 
 
 /***
@@ -765,23 +768,31 @@ table.minicalendar th {
   padding-bottom:2px;
 }
 
-table.calendar-controls {
+/*Accessibility: controls now div and span, 20:58:20% or 12:74:12% */
+.calendar-controls {
   width: 100%;
 }
 
-table.calendar-controls .previous,
-table.calendar-controls .next
+.calendar-controls .previous,
+.calendar-controls .next
 {
   width: 12%;
 }
-table.calendar-controls .previous {
+.calendar-controls .previous {
   text-align: left;
 }
-table.calendar-controls .current {
+.calendar-controls .current {
   text-align: center;
 }
-table.calendar-controls .next {
+.calendar-controls .next {
   text-align: right;
+}
+span.previous, span.current, span.next {
+  display: block;
+  float: left;
+}
+span.current {
+  width: 76%;
 }
 
 #calendar .maincalendar .calendar-controls .previous,
