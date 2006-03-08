@@ -67,7 +67,7 @@
 
     $strdata = get_string('modulenameplural','data');
 
-    print_header_simple($data->name, "", "<a href='index.php?id=$course->id'>$strdata</a> -> $data->name", "", "", true, "", navmenu($course));
+    print_header_simple($data->name, "", "<a href='index.php?id=$course->id'>$strdata</a> -> $data->name", "", "", true, "", navmenu($course, $cm));
 
     print_heading(format_string($data->name));
     
