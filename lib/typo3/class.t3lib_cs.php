@@ -995,8 +995,7 @@ class t3lib_cs {
 			// Only process if the tables are not yet loaded
 		switch($mode)	{
 			case 'case':
-				if (is_array($this->caseFolding['utf-8']))	return 1;
-
+				if (!empty($this->caseFolding['utf-8']) && is_array($this->caseFolding['utf-8']))	return 1; //dirty skodak's hack to get rid of the warning
 					// Use cached version if possible
 				if ($cacheFileCase && @is_file($cacheFileCase))	{
 					$this->caseFolding['utf-8'] = unserialize(t3lib_div::getUrl($cacheFileCase));
@@ -1005,7 +1004,7 @@ class t3lib_cs {
 				break;
 
 			case 'ascii':
-				if (is_array($this->toASCII['utf-8']))	return 1;
+				if (!empty($this->toASCII['utf-8']) && is_array($this->toASCII['utf-8']))	return 1; //dirty skodak's hack to get rid of the warning
 
 					// Use cached version if possible
 				if ($cacheFileASCII && @is_file($cacheFileASCII))	{
@@ -1840,7 +1839,8 @@ class t3lib_cs {
 				return $str;
 		}
 
-		for($i=0; strlen($str{$i}); $i++)	{
+        $length = strlen($str); //dirty skodak's hack to get rid of the warning
+		for($i=0; $i<$length && strlen($str{$i}); $i++)	{
 			$c = ord($str{$i});
 			if (!($c & 0x80))	// single-byte (0xxxxxx)
 				$mbc = $str{$i};
