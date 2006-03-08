@@ -512,7 +512,11 @@
         }
         $strnav = "<a href=\"$CFG->wwwroot/mod/$module->name/view.php?id=$cm->id\">".format_string($form->name,true)."</a> ->";
         
-        $CFG->pagepath = 'mod/'.$module->name.'/mod';
+        if ($module->name == 'resource') {
+            $CFG->pagepath = 'mod/'.$module->name.'/'.$form->type;
+        } else {
+            $CFG->pagepath = 'mod/'.$module->name.'/mod';
+        }
 
     } else if (isset_param('duplicate') and confirm_sesskey()) {   // value = course module
 
