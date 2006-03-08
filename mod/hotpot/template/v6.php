@@ -773,15 +773,15 @@ class hotpot_xml_quiz_template extends hotpot_xml_template_default {
 		$str = '';
 		switch ($this->parent->quiztype) {
 			case 'jcloze':
-				$str .= "I = new Array();\n";
 				$tags = 'data,gap-fill,question-record';
 				while (($question="[$q]['#']") && $this->parent->xml_value($tags, $question)) {
 					$a = 0;
 					$aa = 0;
 					while (($answer=$question."['answer'][$a]['#']") && $this->parent->xml_value($tags, $answer)) {
 						$text = $this->js_value($tags,  $answer."['text'][0]['#']", true);
-						if ($text) {
+						if (strlen($text)) {
 							if ($aa==0) { // first time only
+								$str .= "\n";
 								$str .= "I[$q] = new Array();\n";
 								$str .= "I[$q][1] = new Array();\n";
 							}
@@ -794,7 +794,7 @@ class hotpot_xml_quiz_template extends hotpot_xml_template_default {
 					// add clue, if any answers were found
 					if ($aa) {
 						$clue = $this->js_value($tags, $question."['clue'][0]['#']", true);
-						$str .= "I[$q][2]='$clue';\n";
+						$str .= "I[$q][2] = '$clue';\n";
 					}
 					$q++;
 				}
@@ -818,15 +818,16 @@ class hotpot_xml_quiz_template extends hotpot_xml_template_default {
 						$correct =  $this->int_value($tags, $answer."['correct'][0]['#']");
 						$percent =  $this->int_value($tags, $answer."['percent-correct'][0]['#']");
 						$include =  $this->int_value($tags, $answer."['include-in-mc-options'][0]['#']");
-						if ($text) {
+						if (strlen($text)) {
 							if ($aa==0) { // first time only
-								$str .= "I[$q]=new Array();\n";
-								$str .= "I[$q][0]=$weighting;\n";
-								$str .= "I[$q][1]='$clue';\n";
-								$str .= "I[$q][2]='".($question_type-1)."';\n";
-								$str .= "I[$q][3]=new Array();\n";
+								$str .= "\n";
+								$str .= "I[$q] = new Array();\n";
+								$str .= "I[$q][0] = $weighting;\n";
+								$str .= "I[$q][1] = '$clue';\n";
+								$str .= "I[$q][2] = '".($question_type-1)."';\n";
+								$str .= "I[$q][3] = new Array();\n";
 							}
-							$str .= "I[$q][3][$aa]=new Array('$text','$feedback',$correct,$percent,$include);\n";
+							$str .= "I[$q][3][$aa] = new Array('$text','$feedback',$correct,$percent,$include);\n";
 							$aa++;
 						}
 						$a++;
@@ -854,30 +855,44 @@ class hotpot_xml_quiz_template extends hotpot_xml_template_default {
 		$includeclues = $this->v6_expand_Clues();
 		$cluecaption = $this->v6_expand_ClueCaption();
 
+		// detect if cloze starts with gap
+		$strpos = strpos($this->parent->source, '<gap-fill><question-record>');
+		if (is_numeric($strpos)) {
+			$startwithgap = true;
+		} else {
+			$startwithgap = false;
+		}
+
 		// initialize loop values
 		$q = 0;
 		$tags = 'data,gap-fill';
 
 		// loop through text and gaps
-		while ($text = $this->parent->xml_value($tags, "[0]['#'][$q]")) {
-			$str .= $text;
+		do {
+			$text = $this->parent->xml_value($tags, "[0]['#'][$q]");
+			$gap = '';
 			if (($question="[$q]['#']") && $this->parent->xml_value("$tags,question-record", $question)) {
-				$str .= '<span class="GapSpan" id="GapSpan'.$q.'">';
+				$gap .= '<span class="GapSpan" id="GapSpan'.$q.'">';
 				if ($this->v6_use_DropDownList()) {
-					$str .= '<select id="Gap'.$q.'"><option value=""></option>'.$dropdownlist.'</select>';
+					$gap .= '<select id="Gap'.$q.'"><option value=""></option>'.$dropdownlist.'</select>';
 				} else {
-					$str .= '<input type="text" id="Gap'.$q.'" onfocus="TrackFocus('.$q.')" onblur="LeaveGap()" class="GapBox" size="6"></input>';
+					$gap .= '<input type="text" id="Gap'.$q.'" onfocus="TrackFocus('.$q.')" onblur="LeaveGap()" class="GapBox" size="6"></input>';
 				}
 				if ($includeclues) {
 					$clue = $this->parent->xml_value("$tags,question-record", $question."['clue'][0]['#']");
 					if (strlen($clue)) {
-						$str .= '<button style="line-height: 1.0" class="FuncButton" onfocus="FuncBtnOver(this)" onmouseover="FuncBtnOver(this)" onblur="FuncBtnOut(this)" onmouseout="FuncBtnOut(this)" onmousedown="FuncBtnDown(this)" onmouseup="FuncBtnOut(this)" onclick="ShowClue('.$q.')">'.$cluecaption.'</button>';
+						$gap .= '<button style="line-height: 1.0" class="FuncButton" onfocus="FuncBtnOver(this)" onmouseover="FuncBtnOver(this)" onblur="FuncBtnOut(this)" onmouseout="FuncBtnOut(this)" onmousedown="FuncBtnDown(this)" onmouseup="FuncBtnOut(this)" onclick="ShowClue('.$q.')">'.$cluecaption.'</button>';
 					}
 				}
-				$str .= '</span>';
+				$gap .= '</span>';
+			}
+			if ($startwithgap) {
+				$str .= "$gap$text";
+			} else {
+				$str .= "$text$gap";
 			}
 			$q++;
-		}
+		} while (strlen($text) || strlen($gap));
 
 		return $str;
 	}
