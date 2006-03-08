@@ -293,9 +293,7 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
                         $SQL = 'SELECT * FROM '.$CFG->prefix.$dbtablename.' ORDER BY id ASC '.sql_paging_limit($counter, $recordsetsize);
                         if ($records = get_records_sql($SQL)) {
                             foreach ($records as $record) {
-                                if ($debug) {
-                                    print_object($record);
-                                }
+
                                 //if we are up this far, either no crash, or crash with same table, field name.
                                 if ($crash){
                                     if ($crash->record != $record->id) {    //might set to < just in case record is deleted
