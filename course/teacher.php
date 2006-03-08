@@ -7,7 +7,7 @@
 
     $id = required_param('id',PARAM_INT);         // course id
     $add = optional_param('add', '', PARAM_INT);
-    $remove = optional_param('remove', '', PARAM_ALPHA);
+    $remove = optional_param('remove', '', PARAM_INT);
     $search = optional_param('search', '', PARAM_CLEAN); // search string
 
     require_login();
@@ -102,7 +102,7 @@
     }
 
 /// Remove a teacher if one is specified.
-
+    
     if (!empty($remove) and confirm_sesskey()) {
         if (! remove_teacher($remove, $course->id)) {
             error("Could not remove that teacher from this course!");
