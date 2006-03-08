@@ -161,7 +161,11 @@ function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_y
     //calendar_events_by_day($events, $display->tstart, $eventsbyday, $durationbyday, $typesbyday);
     calendar_events_by_day($events, $m, $y, $eventsbyday, $durationbyday, $typesbyday);
 
-    $content .= '<table class="minicalendar">'; // Begin table
+    //Accessibility: added summary and <abbr> elements.
+    ///global $CALENDARDAYS; appears to be broken.
+    $days_title = array('sunday','monday','tuesday','wednesday','thursday','friday','saturday');
+
+    $content .= '<table class="minicalendar" summary="Mini calendar with 7 columns and 6 rows.">'; // Begin table
     $content .= '<tr class="weekdays">'; // Header row: day names
 
     // Print out the names of the weekdays
@@ -169,7 +173,8 @@ function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_y
     for($i = $display->minwday; $i <= $display->maxwday; ++$i) {
         // This uses the % operator to get the correct weekday no matter what shift we have
         // applied to the $display->minwday : $display->maxwday range from the default 0 : 6
-        $content .= '<th>'.get_string($days[$i % 7], 'calendar').'</th>';
+        $content .= '<th scope="col"><abbr title="'. get_string($days_title[$i % 7], 'calendar') .'">'.
+            get_string($days[$i % 7], 'calendar') ."</abbr></th>\n";
     }
 
     $content .= '</tr><tr>'; // End of day names; prepare for day numbers
@@ -181,8 +186,6 @@ function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_y
     for($i = $display->minwday; $i < $startwday; ++$i) {
         $content .= '<td>&nbsp;</td>'."\n";
     }
-
-    //TODO (nfreear): delete, $strftimetimedayshort = get_string('strftimedayshort');
 
     // Now display all the calendar
     for($day = 1; $day <= $display->maxdays; ++$day, ++$dayweek) {
@@ -240,12 +243,7 @@ function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_y
             } else {
             	$popup = calendar_get_popup(false, $events[$eventid]->timestart, $popupcontent);
             } 
-           
-/*TODO (nfreear): delete.
-            $popupcaption = get_string('eventsfor', 'calendar', userdate($events[$eventid]->timestart, $strftimetimedayshort));
-            $popupcontent = str_replace("'", "\'", htmlspecialchars($popupcontent));
-            $popup = 'onmouseover="return overlib(\''.$popupcontent.'\', CAPTION, \''.$popupcaption.'\');" onmouseout="return nd();"';
-*/
+
             // Class and cell content
             if(isset($typesbyday[$day]['startglobal'])) {
                 $class .= ' event_global';
@@ -285,6 +283,7 @@ function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_y
             $today = get_string('today', 'calendar').' '.userdate(time(), get_string('strftimedayshort'));
                         
             if(! isset($eventsbyday[$day])) {
+                $class .= ' eventnone';            	
             	$popup = calendar_get_popup(true, false);
             	$cell = '<a href="#" '.$popup.'>'.$day.'</a>';
             }
