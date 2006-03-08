@@ -28,6 +28,7 @@ $string['eventendtime'] = 'End time';
 $string['eventinstanttime'] = 'Time';
 $string['eventkind'] = 'Type of event';
 $string['eventname'] = 'Name';
+$string['eventnone'] = 'No events';
 $string['eventrepeat'] = 'Repeats';
 $string['eventsfor'] = '$a events';
 $string['eventstarttime'] = 'Start time';
