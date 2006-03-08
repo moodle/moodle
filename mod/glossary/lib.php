@@ -1722,7 +1722,9 @@ function glossary_generate_export_file($glossary, $hook = "", $hook = 0) {
 
 // Read import file and convert to current charset
 function glossary_read_imported_file($file) {
-require_once "../../lib/xmlize.php";
+    require_once "../../lib/xmlize.php";
+    global $CFG;
+
     $h = fopen($file,"r");
     $line = '';
     if ($h) {
@@ -1761,6 +1763,8 @@ function glossary_end_tag($tag,$level=0,$endline=true) {
     
 //Return the start tag, the contents and the end tag
 function glossary_full_tag($tag,$level=0,$endline=true,$content) {
+        global $CFG;
+    
         $st = glossary_start_tag($tag,$level,$endline);
         if (empty($CFG->unicodedb)) {
             $textlib = textlib_get_instance();
