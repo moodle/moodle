@@ -2,7 +2,7 @@
 
     require_once("../../config.php");
 
-    $id = required_param('id', '', PARAM_INT);   // course id
+    $id = required_param('id', PARAM_INT);   // course id
 
     if (!empty($id)) {
         if (! $course = get_record("course", "id", $id)) {

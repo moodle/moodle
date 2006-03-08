@@ -219,7 +219,7 @@ if (self.name == 'editquestion') {
 
     if (isset($_REQUEST['repaginate']) and confirm_sesskey()) { /// Re-paginate the quiz
         if (isset($_REQUEST['questionsperpage'])) {
-            $modform->questionsperpage = required_param('questionsperpage', 1, PARAM_INT);
+            $modform->questionsperpage = required_param('questionsperpage', PARAM_INT);
             if (!set_field('quiz', 'questionsperpage', $modform->questionsperpage, 'id', $modform->id)) {
                 error('Could not save number of questions per page');
             }

@@ -3,7 +3,7 @@
     require_once('lib.php');
 
     $id    = required_param('id', PARAM_INT);           // course module ID
-    $entry = required_param('entry', 0, PARAM_INT);     // Entry ID
+    $entry = required_param('entry', PARAM_INT);     // Entry ID
     $confirm = optional_param('confirm', 0, PARAM_INT); // confirmation
 
     $hook = optional_param('hook', '', PARAM_ALPHANUM);

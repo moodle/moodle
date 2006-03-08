@@ -10,7 +10,7 @@
     //
     $id = optional_param('id', '', PARAM_INT);       // Course Module ID, or
     $a = optional_param('a', '', PARAM_INT);         // scorm ID
-    $scoid = required_param('scoid', '', PARAM_INT);  // sco ID
+    $scoid = required_param('scoid', PARAM_INT);  // sco ID
     $mode = optional_param('mode', 'normal', PARAM_ALPHA); // navigation mode
     $currentorg = optional_param('currentorg', '', PARAM_RAW); // selected organization
     $newattempt = optional_param('newattempt', 'off', PARAM_ALPHA); // the user request to start a new attempt

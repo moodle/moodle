@@ -5,7 +5,7 @@
     require_once("../../config.php");
     require_once("lib.php");
 
-    $id = required_param('id',0,PARAM_INT);      // The forum to subscribe or unsubscribe to
+    $id = required_param('id',PARAM_INT);      // The forum to subscribe or unsubscribe to
     $force = optional_param('force','',PARAM_ALPHA);  // Force everyone to be subscribed to this forum?
     $user = optional_param('user',0,PARAM_INT);
 

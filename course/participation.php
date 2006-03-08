@@ -5,7 +5,7 @@
 
     define('DEFAULT_PAGE_SIZE', 20);
     
-    $id         = required_param('id',0,PARAM_INT); // course id.
+    $id         = required_param('id',PARAM_INT); // course id.
     $moduleid   = optional_param('moduleid',0,PARAM_INT); // module id.
     $oldmod     = optional_param('oldmod',0,PARAM_INT);
     $teachers   = optional_param('teachers',0,PARAM_BOOL); // show teachers? off = students.

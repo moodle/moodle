@@ -4,8 +4,8 @@
     
     $id = optional_param('id', '', PARAM_INT);       // Course Module ID, or
     $a = optional_param('a', '', PARAM_INT);         // scorm ID
-    $scoid = required_param('scoid', '', PARAM_INT);  // sco ID
-    $attempt = required_param('attempt', '', PARAM_INT);  // attempt number
+    $scoid = required_param('scoid', PARAM_INT);  // sco ID
+    $attempt = required_param('attempt', PARAM_INT);  // attempt number
 
     if (!empty($id)) {
         if (! $cm = get_record("course_modules", "id", $id)) {
