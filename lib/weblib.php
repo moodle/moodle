@@ -2397,13 +2397,17 @@ function print_navigation ($navigation) {
    global $CFG, $USER;
 
    if ($navigation) {
+       //Accessibility: breadcrumb links now in a list, &raquo; replaced with image.
+   	   $nav_text = get_string('youarehere','access');
+   	   echo '<i class="accesshide">'.$nav_text.':</i><ul>';
        if (! $site = get_site()) {
            $site->shortname = get_string('home');
        }
-       $navigation = str_replace('->', '&raquo;', $navigation);
-       echo '<a target="'. $CFG->framename .'" href="'. $CFG->wwwroot.((!isadmin() && !empty($USER->id) && !empty($CFG->mymoodleredirect) && !isguest())
-                                                                       ? '/my' : '') .'/">'. $site->shortname .'</a> &raquo; '. $navigation;
-
+       $navigation = '<li title="'.$nav_text.'"><img src="'.$CFG->wwwroot.'/pix/a/em1_raquo.gif" alt="" /> '
+           .str_replace('->', '</li><li title="'.$nav_text.'"><img src="'.$CFG->wwwroot.'/pix/a/em1_raquo.gif" alt="" /> ', $navigation)."</li>\n";
+       echo '<li class="first"><a target="'. $CFG->framename .'" href="'. $CFG->wwwroot.((!isadmin() && !empty($USER->id) && !empty($CFG->mymoodleredirect) && !isguest())
+                                                                       ? '/my' : '') .'/">'. $site->shortname ."</a></li>\n". $navigation;
+       echo "</ul>\n";  
    }
 }
 
@@ -4308,10 +4312,11 @@ function rebuildnolinktag($text) {
  */
 function print_side_block($heading='', $content='', $list=NULL, $icons=NULL, $footer='', $attributes = array()) {
 
-    //Accessibility: skip block link.
+    //Accessibility: skip block link, with $block_id to differentiate links.
     static $block_id = 0;
     $block_id++;
-    $skip_link = '<a href="#sb-'.$block_id.'" class="skip-block" title="'.get_string('skipblock','access').'"><span class="accesshide">'.get_string('skipblock','access').'</span></a>'; 
+    $skip_text = get_string('skipblock','access').' '.$block_id;
+    $skip_link = '<a href="#sb-'.$block_id.'" class="skip-block" title="'.$skip_text.'"><span class="accesshide">'.$skip_text.'</span></a>'; 
     $skip_dest = '<span id="sb-'.$block_id.'" class="skip-block-to"></span>';
     if (! empty($heading)) {
         $heading .= $skip_link;
