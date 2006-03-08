@@ -217,7 +217,7 @@ function question_list($course, $categoryid, $quizid,
     }
 
     print_paging_bar($totalnumber, $page, $perpage,
-                "edit.php?perpage=$perpage&amp;");
+                "edit.php?courseid={$course->id}&amp;perpage=$perpage&amp;");
 
     $canedit = isteacheredit($category->course);
 
@@ -274,7 +274,7 @@ function question_list($course, $categoryid, $quizid,
         echo "</tr>\n";
     }
     echo '<tr><td colspan="3">';
-    print_paging_bar($totalnumber, $page, $perpage, "edit.php?perpage=$perpage&amp;");
+    print_paging_bar($totalnumber, $page, $perpage, "edit.php?courseid={$course->id}&amp;perpage=$perpage&amp;");
     echo "</td></tr></table>\n";
     print_simple_box_end();
 
