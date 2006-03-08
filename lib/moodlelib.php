@@ -3141,26 +3141,33 @@ function remove_course_contents($courseid, $showfeedback=true) {
         $result = false;
     }
 
-    // Delete any user stuff
-
-    if (delete_records('user_students', 'course', $course->id)) {
-        if ($showfeedback) {
-            notify($strdeleted .' user_students');
+    // Delete Other stuff.
+    // This array stores the tables that need to be cleared, as
+    // table_name => column_name that contains the course id.
+    $tablestoclear = array(
+        'user_students' => 'course', // Delete any user stuff
+        'user_teachers' => 'course',
+        'event' => 'courseid', // Delete events
+        'log' => 'course', // Delete logs
+        'course_sections' => 'course', // Delete any course stuff
+        'course_modules' => 'course',
+        'grade_category' => 'courseid', // Delete gradebook stuff
+        'grade_exceptions' => 'courseid',
+        'grade_item' => 'courseid',
+        'grade_letter' => 'courseid',
+        'grade_preferences' => 'courseid'
+    );
+    foreach ($tablestoclear as $table => $col) {
+        if (delete_records($table, $col, $course->id)) {
+            if ($showfeedback) {
+                notify($strdeleted . ' ' . $table);
+            }
+        } else {
+            $result = false;
         }
-    } else {
-        $result = false;
-    }
-
-    if (delete_records('user_teachers', 'course', $course->id)) {
-        if ($showfeedback) {
-            notify($strdeleted .' user_teachers');
-        }
-    } else {
-        $result = false;
     }
 
     // Delete any groups
-
     if ($groups = get_records('groups', 'courseid', $course->id)) {
         foreach ($groups as $group) {
             if (delete_records('groups_members', 'groupid', $group->id)) {
@@ -3179,83 +3186,6 @@ function remove_course_contents($courseid, $showfeedback=true) {
             }
         }
     }
-
-    // Delete events
-
-    if (delete_records('event', 'courseid', $course->id)) {
-        if ($showfeedback) {
-            notify($strdeleted .' event');
-        }
-    } else {
-        $result = false;
-    }
-
-    // Delete logs
-
-    if (delete_records('log', 'course', $course->id)) {
-        if ($showfeedback) {
-            notify($strdeleted .' log');
-        }
-    } else {
-        $result = false;
-    }
-
-    // Delete any course stuff
-
-    if (delete_records('course_sections', 'course', $course->id)) {
-        if ($showfeedback) {
-            notify($strdeleted .' course_sections');
-        }
-    } else {
-        $result = false;
-    }
-
-    if (delete_records('course_modules', 'course', $course->id)) {
-        if ($showfeedback) {
-            notify($strdeleted .' course_modules');
-        }
-    } else {
-        $result = false;
-    }
-
-    // Delete gradebook stuff
-
-    if (delete_records("grade_category", "courseid", $course->id)) {
-      if ($showfeedback) {
-    notify("$strdeleted grade categories");
-      }
-    } else {
-      $result = false;
-    }
-    if (delete_records("grade_exceptions", "courseid", $course->id)) {
-      if ($showfeedback) {
-    notify("$strdeleted grade exceptions");
-      }
-    } else {
-      $result = false;
-    }
-    if (delete_records("grade_item", "courseid", $course->id)) {
-      if ($showfeedback) {
-    notify("$strdeleted grade items");
-      }
-    } else {
-      $result = false;
-    }
-    if (delete_records("grade_letter", "courseid", $course->id)) {
-      if ($showfeedback) {
-    notify("$strdeleted grade letters");
-      }
-    } else {
-      $result = false;
-    }
-    if (delete_records("grade_preferences", "courseid", $course->id)) {
-      if ($showfeedback) {
-    notify("$strdeleted grade preferences");
-      }
-    } else {
-      $result = false;
-    }
-
 
     if ($course->metacourse) {
         delete_records("course_meta","parent_course",$course->id);
