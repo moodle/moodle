@@ -1,8 +1,8 @@
 <?php // $Id$
       //  Displays live view of recent logs
 
-    require_once("../config.php");
-    require_once("lib.php");
+    require_once("../../../config.php");
+    require_once("../../lib.php");
 
     $id   = required_param('id', PARAM_INT);
     $page = optional_param('page', 0, PARAM_INT);     // which page to show

@@ -4,8 +4,20 @@
         die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
     }
 
-    $strlogs = get_string('logs');
-    echo "<center><a href=\"{$CFG->wwwroot}/course/report/log/index.php?id={$course->id}\">";
-    echo "$strlogs</a></center>\n";
+    require_once($CFG->dirroot.'/course/lib.php');
+    require_once($CFG->dirroot.'/course/report/log/lib.php');
+
+    print_simple_box_start('center', '90%');
+    print_heading(get_string('chooselogs') .':');
+
+    print_log_selector_form($course); 
+
+    echo '<br />';
+    print_heading(get_string('chooselivelogs') .':');
+
+    echo '<center><h3>';
+    link_to_popup_window('/course/report/log/live.php?id='. $course->id,'livelog', get_string('livelogs'), 500, 800);
+    echo '</h3></center>';
+    print_simple_box_end();
 
 ?>
