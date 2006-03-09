@@ -4632,8 +4632,11 @@ function get_string($identifier, $module='', $a=NULL) {
 
 /// Define the two or three major locations of language strings for this module
 
-    if ($module == 'install') {
+    if (isset($CFG->running_installer)) {
+        $module = 'installer';
+        $filetocheck = 'installer.php';
         $locations = array( $CFG->dirroot.'/install/lang/', $CFG->dataroot.'/lang/',  $CFG->dirroot.'/lang/' );
+        $defaultlang = 'en_utf8';
     } else {
         $locations = array( $CFG->dataroot.'/lang/',  $CFG->dirroot.'/lang/' );
     }
