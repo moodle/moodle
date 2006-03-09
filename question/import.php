@@ -28,7 +28,7 @@
         if ($courseid) {
             $category = get_default_question_category($courseid);
         } else {
-            error("No category specified");
+            error( get_string('nocategory','quiz') );
         }
     }
 
@@ -43,7 +43,7 @@
     require_login($course->id, false);
 
     if (!isteacheredit($course->id)) {
-        error("Only editing teachers can import quiz questions!");
+        error( get_string('onlyteachersimport','quiz') );
     }
 
     // ensure the files area exists for this course
@@ -94,7 +94,7 @@
         } else {  // Valid file is found
 
             if (! is_readable("format/$format/format.php")) {
-                error("Format not known ($format)");
+                error( get_string('formatnotfound','quiz', $format) );
             }
 
             require("format.php");  // Parent class
@@ -104,18 +104,18 @@
             $qformat = new $classname();
 
             if (! $qformat->importpreprocess($category,$course)) {             // Do anything before that we need to
-                error("Error occurred during pre-processing!",
-                      "$CFG->wwwroot/question/import.php?category=$category->id");
+                error( get_string('importerror','quiz'),
+                      "$CFG->wwwroot/question/import.php?courseid={$course->id}&amp;category=$category->id");
             }
 
             if (! $qformat->importprocess($_FILES['newfile']['tmp_name'])) {     // Process the uploaded file
-                error("Error occurred during processing!",
-                      "$CFG->wwwroot/question/import.php?category=$category->id");
+                error( get_string('importerror','quiz'),
+                      "$CFG->wwwroot/question/import.php?courseid={$course->id}&amp;category=$category->id");
             }
 
             if (! $qformat->importpostprocess()) {                     // In case anything needs to be done after
-                error("Error occurred during post-processing!",
-                      "$CFG->wwwroot/question/import.php?category=$category->id");
+                error( get_string('importerror','quiz'),
+                      "$CFG->wwwroot/question/import.php?courseid={$course->id}&amp;category=$category->id");
             }
 
             echo "<hr />";

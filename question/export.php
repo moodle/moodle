@@ -33,13 +33,13 @@
     }
 
     if (! $categorycourse = get_record("course", "id", $category->course)) {
-        error("This category doesn't belong to a valid course!");
+        error( get_string('nocategory','quiz') );
     }
 
     require_login($course->id, false);
 
     if (!isteacher($course->id)) {
-        error("Only the teacher can export quiz questions!");
+        error( get_string('onlyteachersexport','quiz') );
     }
 
     // ensure the files area exists for this course
@@ -91,18 +91,18 @@
         $qformat = new $classname();
 
         if (! $qformat->exportpreprocess($category, $course)) {   // Do anything before that we need to
-            error("Error occurred during pre-processing!",
-                    "$CFG->wwwroot/question/export.php?category=$category->id");
+            error( get_string('exporterror','quiz'),
+                    "$CFG->wwwroot/question/export.php?courseid={$course->id}&amp;category=$category->id");
         }
 
         if (! $qformat->exportprocess($exportfilename)) {         // Process the export data
-            error("Error occurred during processing!",
-                    "$CFG->wwwroot/question/export.php?category=$category->id");
+            error( get_string('exporterror','quiz'),
+                    "$CFG->wwwroot/question/export.php?courseid={$course->id}&amp;category=$category->id");
         }
 
         if (! $qformat->exportpostprocess()) {                    // In case anything needs to be done after
-            error("Error occurred during post-processing!",
-                    "$CFG->wwwroot/question/export.php?category=$category->id");
+            error( get_string('exporterror','quiz'),
+                    "$CFG->wwwroot/question/export.php?courseid={$course->id}&amp;category=$category->id");
         }
         echo "<hr />";
 

@@ -41,16 +41,16 @@ class qformat_default {
     /// Processes a given file.  There's probably little need to change this
 
         if (! $lines = $this->readdata($filename)) {
-            notify("File could not be read, or was empty");
+            notify( get_string('cannotread','quiz') );
             return false;
         }
 
         if (! $questions = $this->readquestions($lines)) {   // Extract all the questions
-            notify("There are no questions in this file!");
+            notify( get_string('noquestionsinfile','quiz') );
             return false;
         }
 
-        notify("Importing ".count($questions)." questions");
+        notify( get_string('importingquestions','quiz',count($questions)) );
 
         $count = 0;
 
@@ -64,7 +64,7 @@ class qformat_default {
             $question->version = 1;                    // Original version of this question
 
             if (!$question->id = insert_record("question", $question)) {
-                error("Could not insert new question!");
+                error( get_string('cannotinsert','quiz') );
             }
 
             $this->questionids[] = $question->id;
@@ -158,7 +158,8 @@ class qformat_default {
     /// this format, this function converts it into a question 
     /// object suitable for processing and insertion into Moodle.
 
-        echo "<p>This quiz format has not yet been completed!</p>";
+        $formatnotimplemented = get_string( 'formatnotimplemented','quiz' );
+        echo "<p>$formatnotimplemented</p>";
 
         return NULL;
     }
@@ -210,7 +211,7 @@ class qformat_default {
         $path = $CFG->dataroot.'/'.$courseid.'/'.$dirname;
         if (!is_dir($path)) {
             if (!mkdir($path, $CFG->directorypermissions)) {
-              error("Cannot create path: $path");
+              error( get_string('cannotcreatepath','quiz',$path) );
             }
         }
 
@@ -218,9 +219,10 @@ class qformat_default {
         // only get q's with no parents (no cloze subquestions specifically)
         $questions = get_questions_category( $this->category, true );
 
-        notify("Exporting questions.");
+        notify( get_string('exportingquestions','quiz') );
         if (!count($questions)) {
-            return true;
+            notify( get_string('noquestions','quiz') );
+            return false;
         }
         $count = 0;
 
@@ -245,10 +247,10 @@ class qformat_default {
         // write file
         $filepath = $path."/".$filename . $this->export_file_extension();
         if (!$fh=fopen($filepath,"w")) {
-            error("Cannot open for writing: $filepath");
+            error( get_string('cannotopen','quiz',$filepath) );
         }
         if (!fwrite($fh, $expout)) {
-            error("Cannot write exported questions to $filepath");
+            error( get_string('cannotwrite','quiz',$filepath) );
         }
         fclose($fh);
 
@@ -265,7 +267,9 @@ class qformat_default {
     /// Turns a question object into textual output in the given format 
     /// must be overidden
 
-        echo "<p>This quiz format has not yet been completed!</p>";
+        // if not overidden, then this is an error.
+        $formatnotimplemented = get_string( 'formatnotimplemented','quiz' );
+        echo "<p>$formatnotimplemented</p>";
 
         return NULL;
     }
