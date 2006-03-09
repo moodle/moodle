@@ -2,8 +2,8 @@
 
 // Display user activity reports for a course (totals)
 
-    require_once("../config.php");
-    require_once("lib.php");
+    require_once("../../../config.php");
+    require_once("../../lib.php");
 
     $modes = array("outline", "complete", "todaylogs", "alllogs");
 
@@ -29,14 +29,16 @@
     $strcomplete       = get_string("complete");
     $stralllogs        = get_string("alllogs");
     $strtodaylogs      = get_string("todaylogs");
+    $strreports      = get_string("reports");
 
     if ($course->category) {
         print_header("$course->shortname: $stractivityreport", "$course->fullname",
-                 "<a href=\"../course/view.php?id=$course->id\">$course->shortname</a> ->
+                 "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> ->
+                  <a href=\"../../report.php?id=$course->id\">$strreports</a> ->
                   $stractivityreport");
     } else {
         print_header("$course->shortname: $stractivityreport ($mode)", "$course->fullname",
-                 "<a href=\"../user/view.php?id=$user->id&amp;course=$course->id\">".fullname($user)."</a> -> 
+                 "<a href=\"../../user/view.php?id=$user->id&amp;course=$course->id\">".fullname($user)."</a> -> 
                   $stractivityreport -> $strmode");
     }
     print_heading("$course->fullname");
@@ -104,13 +106,16 @@
 
 
 function print_outline_row($mod, $instance, $result) {
-    $image = "<img src=\"../mod/$mod->modname/icon.gif\" height=\"16\" width=\"16\" alt=\"$mod->modfullname\" />";
+
+    global $CFG;
+
+    $image = "<img src=\"$CFG->modpixpath/$mod->modname/icon.gif\" height=\"16\" width=\"16\" alt=\"$mod->modfullname\" />";
 
     echo "<tr>";
     echo "<td valign=\"top\">$image</td>";
     echo "<td valign=\"top\" width=\"300\">";
     echo "   <a title=\"$mod->modfullname\"";
-    echo "   href=\"../mod/$mod->modname/view.php?id=$mod->id\">$instance->name</a></td>";
+    echo "   href=\"$CFG->wwwroot/mod/$mod->modname/view.php?id=$mod->id\">$instance->name</a></td>";
     echo "<td>&nbsp;&nbsp;&nbsp;</td>";
     echo "<td valign=\"top\" bgcolor=\"white\">";
     if (isset($result->info)) {
