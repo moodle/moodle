@@ -1906,7 +1906,7 @@ function print_header ($title='', $heading='', $navigation='', $focus='', $meta=
                         $menu .= get_string('failedloginattemptsall', '', $count);
                     }
                     if (isadmin()) {
-                        $menu .= ' (<a href="'.$CFG->wwwroot.'/course/log.php'.
+                        $menu .= ' (<a href="'.$CFG->wwwroot.'/course/report/log/index.php'.
                                              '?chooselog=1&amp;id=1&amp;modid=site_errors">'.get_string('logs').'</a>)';
                     }
                     $menu .= '</font>';
@@ -3611,7 +3611,7 @@ function navmenu($course, $cm=NULL, $targetwindow='self') {
     }
     if ($selectmod and $isteacher) {
         $logslink = "<td><a target=\"$CFG->framename\" href=".
-                    "\"$CFG->wwwroot/course/log.php?chooselog=1&amp;user=0&amp;date=0&amp;id=$course->id&amp;modid=$selectmod->cm\">".
+                    "\"$CFG->wwwroot/course/report/log/index.php?chooselog=1&amp;user=0&amp;date=0&amp;id=$course->id&amp;modid=$selectmod->cm\">".
                     "<img border=\"0\" height=\"16\" width=\"16\" src=\"$CFG->pixpath/i/log.gif\" alt=\"\" /></a></td>";
 
     }
