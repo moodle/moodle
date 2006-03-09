@@ -1,6 +1,6 @@
 <?PHP // $Id$ 
       // lesson.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005020101)
-      
+
 $string['accesscontrol'] = 'Access control';
 $string['actionaftercorrectanswer'] = 'Action after correct answer';
 $string['activitylink'] = 'Link to an activity';
@@ -57,6 +57,7 @@ $string['customscoring'] = 'Custom scoring';
 $string['deadline'] = 'Deadline';
 $string['defaultessayresponse'] = 'Your essay will be graded by the course instructor.';
 $string['deleteattempts'] = 'Delete student attempts for this lesson (user id)';
+$string['deletedefaults'] = 'Deleted $a x lesson default';      
 $string['deletedpage'] = 'Deleted page';
 $string['deleting'] = 'Deleting';
 $string['deletingpage'] = 'Deleting page: $a';
@@ -274,7 +275,5 @@ $string['yourcurrentgradeis'] = 'Your current grade is $a';
 $string['yourgradeisnow'] = 'Your grade for the lesson has been changed to $a';
 $string['yourresponse'] = 'Your response';
 $string['youshouldview'] = 'You should view at least: $a';
-
-
 
 ?>
