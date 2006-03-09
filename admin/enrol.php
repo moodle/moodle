@@ -70,6 +70,12 @@
 
     $modules = get_list_of_plugins("enrol");
     foreach ($modules as $module) {
+
+        // skip if directory is empty
+        if (!file_exists("$CFG->dirroot/enrol/$module/enrol.php")) {
+            continue;
+        }
+
         $name = get_string("enrolname", "enrol_$module");
         $plugin = enrolment_factory::factory($module);
         $enable = '<input type="checkbox" name="enable[]" value="'.$module.'"';
