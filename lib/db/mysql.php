@@ -1673,6 +1673,11 @@ function main_upgrade($oldversion=0) {
         execute_sql("UPDATE {$CFG->prefix}user_teachers SET enrol='manual' WHERE enrol=''");
     }
 
+    if ($oldversion < 2005103101) { // rename internal to manual
+        set_config('enrol_plugins_enabled', str_replace('internal', 'manual', $CFG->enrol_plugins_enabled));
+        set_config('enrol', str_replace('internal', 'manual', $CFG->enrol));
+    }
+
     return $result;
 }
 
