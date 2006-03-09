@@ -144,6 +144,8 @@ class block_admin extends block_list {
 
                 $this->content->items[]='<a href="'.$CFG->wwwroot.'/course/import.php?id='.$this->instance->pageid.'">'.get_string('import').'</a>';
                 $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/restore.gif" height="16" width="16" alt="" />';
+                $this->content->items[]='<a href="'.$CFG->wwwroot.'/course/report.php?id='.$this->instance->pageid.'">'.get_string('reports').'</a>';
+                $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/stats.gif" height="16" width="16" alt="" />';
 
                 $this->content->items[]='<a href="'.$CFG->wwwroot.'/question/edit.php?courseid='.$this->instance->pageid.'&amp;clean=true">'.get_string('questions', 'quiz').'</a>';
                 $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/questions.gif" height="16" width="16" alt="" />';
@@ -151,10 +153,6 @@ class block_admin extends block_list {
                 $this->content->items[]='<a href="scales.php?id='.$this->instance->pageid.'">'.get_string('scales').'</a>';
                 $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/scales.gif" height="16" width="16" alt="" />';
 
-                if (!empty($CFG->enablestats)) {
-                    $this->content->items[] = '<a href="'.$CFG->wwwroot.'/course/stats.php?course='.$this->instance->pageid.'">'.get_string('stats').'</a>';
-                    $this->content->icons[] = '<img src="'.$CFG->pixpath.'/i/stats.gif" height="16" width="16" alt="" />';
-                }
             }
 
             $this->content->items[]='<a href="'.$CFG->wwwroot.'/grade/index.php?id='.$this->instance->pageid.'">'.get_string('grades').'</a>';
