@@ -10,19 +10,3 @@
 /// using strings defined in installer_strings (same dir)
 
 $string['closewindow'] = 'Isara ang bintanang ito';
-$string['continue'] = 'Ituloy';
-$string['error'] = 'Error';
-$string['help'] = 'Tulong';
-$string['info'] = 'Impormasyon';
-$string['language'] = 'Lengguwahe';
-$string['name'] = 'Pangalan';
-$string['next'] = 'Susunod';
-$string['ok'] = 'OK';
-$string['parentlanguage'] = 'tl_utf8';
-$string['password'] = 'Password';
-$string['previous'] = 'Nakaraan';
-$string['status'] = 'Katayuan';
-$string['thischarset'] = 'UTF-8';
-$string['thislanguage'] = 'Filipino';
-$string['user'] = 'User';
-?>

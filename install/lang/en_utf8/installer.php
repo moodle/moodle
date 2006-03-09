@@ -79,6 +79,8 @@ directly via the web.';
 $string['dirroot'] = 'Moodle Directory';
 $string['dirrooterror'] = 'The \'Moodle Directory\' setting seems to be incorrect - we can\'t find a Moodle installation there.  The value below has been reset.';
 $string['download'] = 'Download';
+$string['downloadlanguagehead'] = 'Download language pack';
+$string['downloadlanguagesub'] = 'Now the installer is trying to download the complete lang pack that you have selected in order to continue the installation using it.';
 $string['environmenterrortodo'] = 'You must solve all the environmental problems (errors) found above before proceeding to install this Moodle version!';
 $string['environmenthead'] = 'Checking your environment ...';
 $string['environmentrecommendinstall'] = 'is recommended to be installed/enabled';
