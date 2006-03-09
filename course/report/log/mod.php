@@ -5,7 +5,7 @@
     }
 
     $strlogs = get_string('logs');
-    echo "<center><a href=\"{$CFG->wwwroot}/course/report/logs/index.php?id={$course->id}\">";
+    echo "<center><a href=\"{$CFG->wwwroot}/course/report/log/index.php?id={$course->id}\">";
     echo "$strlogs</a></center>\n";
 
 ?>

@@ -142,7 +142,7 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate="today"
     }
 
     echo "<center>\n";
-    echo "<form action=\"log.php\" method=\"get\">\n";
+    echo "<form action=\"index.php\" method=\"get\">\n";
     echo "<input type=\"hidden\" name=\"chooselog\" value=\"1\" />\n";
     echo "<input type=\"hidden\" name=\"showusers\" value=\"$showusers\" />\n";
     echo "<input type=\"hidden\" name=\"showcourses\" value=\"$showcourses\" />\n";
@@ -154,7 +154,7 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate="today"
         $courses[$course->id] = $course->fullname . ((empty($course->category)) ? ' (Site) ' : '');
         choose_from_menu($courses,"id",$course->id,false);
         if (isadmin()) {
-            $a->url = "log.php?chooselog=0&group=$selectedgroup&user=$selecteduser"
+            $a->url = "index.php?chooselog=0&group=$selectedgroup&user=$selecteduser"
                 ."&id=$course->id&date=$selecteddate&modid=$selectedactivity&showcourses=1&showusers=$showusers";
             print_string('logtoomanycourses','moodle',$a);
         }
@@ -185,7 +185,7 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate="today"
             $users[0] = get_string('allparticipants');
         }
         choose_from_menu($users,'user',$selecteduser,false);
-        $a->url = "log.php?chooselog=0&group=$selectedgroup&user=$selecteduser"
+        $a->url = "index.php?chooselog=0&group=$selectedgroup&user=$selecteduser"
             ."&id=$course->id&date=$selecteddate&modid=$selectedactivity&showusers=1&showcourses=$showcourses";
         print_string('logtoomanyusers','moodle',$a);
     }

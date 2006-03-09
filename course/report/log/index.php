@@ -36,6 +36,7 @@
 
     $strlogs = get_string('logs');
     $stradministration = get_string('administration');
+    $strreports = get_string('reports');
 
     session_write_close();
 
@@ -55,31 +56,35 @@
 
         if ($course->category) {
             print_header($course->shortname .': '. $strlogs, $course->fullname, 
-                         "<a href=\"view.php?id=$course->id\">$course->shortname</a> ->
-                          <a href=\"log.php?id=$course->id\">$strlogs</a> -> $userinfo, $dateinfo", '');
+                         "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> ->
+                          <a href=\"$CFG->wwwroot/course/report.php?id=$course->id\">$strreports</a> ->
+                          <a href=\"index.php?id=$course->id\">$strlogs</a> -> $userinfo, $dateinfo", '');
         } else {
             print_header($course->shortname .': '. $strlogs, $course->fullname, 
-                         "<a href=\"../$CFG->admin/index.php\">$stradministration</a> ->
-                          <a href=\"log.php?id=$course->id\">$strlogs</a> -> $userinfo, $dateinfo", '');
+                         "<a href=\"$CFG->wwwroot/$CFG->admin/index.php\">$stradministration</a> ->
+                          <a href=\"$CFG->wwwroot/$CFG->admin/report.php\">$strreports</a> ->
+                          <a href=\"index.php?id=$course->id\">$strlogs</a> -> $userinfo, $dateinfo", '');
         }
         
         print_heading("$course->fullname: $userinfo, $dateinfo (".usertimezone().")");
 
         print_log_selector_form($course, $user, $date, $modname, $modid, $modaction, $group, $showcourses, $showusers);
         
-        echo '<p align="center">[ <a href="'.$CFG->wwwroot.'/course/stats.php?course='.$course->id.'">'.get_string('seealsostats').'</a> ]</p>';
-
         print_log($course, $user, $date, 'l.time DESC', $page, $perpage, 
-                  "log.php?id=$course->id&amp;chooselog=1&amp;user=$user&amp;date=$date&amp;modid=$modid&amp;modaction=$modaction&amp;group=$group", 
+                  "index.php?id=$course->id&amp;chooselog=1&amp;user=$user&amp;date=$date&amp;modid=$modid&amp;modaction=$modaction&amp;group=$group", 
                   $modname, $modid, $modaction, $group);
 
     } else {
         if ($course->category) {
             print_header($course->shortname .': '. $strlogs, $course->fullname, 
-                     "<a href=\"view.php?id=$course->id\">$course->shortname</a> -> $strlogs", '');
+                     "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> -> 
+                      <a href=\"$CFG->wwwroot/course/report.php?id=$course->id\">$strreports</a> ->
+                      $strlogs", '');
         } else {
             print_header($course->shortname .': '. $strlogs, $course->fullname, 
-                     "<a href=\"../$CFG->admin/index.php\">$stradministration</a> -> $strlogs", '');
+                     "<a href=\"$CFG->wwwroot/$CFG->admin/index.php\">$stradministration</a> -> 
+                      <a href=\"$CFG->wwwroot/$CFG->admin/report.php\">$strreports</a> ->
+                      $strlogs", '');
         }
 
         print_heading(get_string('chooselogs') .':');
