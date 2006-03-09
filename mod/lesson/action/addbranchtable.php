@@ -1,5 +1,7 @@
 <?php
 /************** add branch table ************************************/
+    $CFG->pagepath = 'mod/lesson/addbranchtable';
+    
     if (!isteacher($course->id)) {
         error("Only teachers can look at this page");
     }

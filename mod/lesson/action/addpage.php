@@ -1,7 +1,8 @@
 <?php
 
 /************** add page ************************************/
-
+    $CFG->pagepath = 'mod/lesson/addpage';
+    
     if (!isteacher($course->id)) {
         error("Only teachers can look at this page");
     }
