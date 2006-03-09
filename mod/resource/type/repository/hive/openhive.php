@@ -17,7 +17,7 @@
         die;
     }
 
-$query .= '&HISTORY=';
+$query .= 'HISTORY=';
 $query .= '&hiveLanguage=en_AU';
 $query .= '&PUBCATEGORY_LIST=';
 $query .= '&CATEGORY_LIST=';
@@ -30,6 +30,7 @@ $query .= '&HIVE_REQ=2113';
 $query .= '&HIVE_ERRCODE=0';
 $query .= '&mklms=Doodle';
 $query .= '&HIVE_PROD=0';
+$query .= '&HIVE_CURRENTBUREAUID='.$CFG->decsbureauid;
 $query .= '&HIVE_REF=hin:hive@Hive%20Login%20HTML%20Template';
 $query .= '&HIVE_LITEMODE=liteBrowse';
 $query .= '&HIVE_SEREF='.$CFG->wwwroot.'/sso/hive/expired.php';

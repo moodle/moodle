@@ -36,7 +36,6 @@
     <td>
     <?php
         echo "<input type=\"text\" name=\"reference\" size=\"90\" value=\"$form->reference\" alt=\"reference\" /><br />";
-//MW add image icon next to Hive... button
     ?>
     </td>
     </tr>
@@ -46,18 +45,14 @@
     </td>
     <td>
     <?php
-//MW END
-//MW add controls to popup
         $options = 'menubar,location,toolbar,scrollbars,resizable,width=750,height=500';
         button_to_popup_window ('/mod/resource/type/repository/hive/openlitebrowse.php',
                                 'LiteBrowse', 'Browse for content in Hive', 500, 750,
                                 'Browse for content in the HarvestRoad Hive repository', $options);
-        button_to_popup_window ('/mod/resource/type/repository/hive/openlitesearch.php', 
+        button_to_popup_window ('/mod/resource/type/repository/hive/openlitesearch.php',
                                 'LiteSearch', 'Search for content in Hive ', 500, 750,
                                 'Search for content in the HarvestRoad Hive repository', $options);
         helpbutton("hive", "HarvestRoad Hive", "resource/type", true);
-//MW END
-//        button_to_popup_window ('/mod/resource/type/repository/hive/openhive.php', 'Hive', 'Hive', 500, 750, $strchooseafile);
     ?>
     </td>
 </tr>

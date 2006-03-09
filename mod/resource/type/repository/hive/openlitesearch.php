@@ -18,52 +18,30 @@
     }
 
 // MW Redirect to the Hive page. No need for a self-posting form as there is no sensitive data.
-$query .= '&HISTORY=';
-$query .= '&hiveLanguage=en_AU';
-$query .= '&PUBCATEGORY_LIST=';
-$query .= '&CATEGORY_LIST=';
-$query .= '&HIDE_LOGOUT=Y';
-$query .= '&mkurl='.$CFG->wwwroot.'/mod/resource/type/repository/hive/makelink.php';
-$query .= '&HIDE_CHANGEUSERDETAILS=Y';
-$query .= '&HIVE_RET=ORG';
-$query .= '&HIVE_REQ=2113';
-$query .= '&HIVE_ERRCODE=0';
-$query .= '&mklms=Moodle';
-$query .= '&HIVE_PROD=0';
-$query .= '&HIVE_REF=hin:hive@Hive%20Login%20HTML%20Template';
-$query .= '&HIVE_LITEMODE=liteSearch';
-$query .= '&HIVE_SEREF='.$CFG->wwwroot.'/sso/hive/expired.php';
-$query .= '&HIVE_SESSION='.$SESSION->HIVE_SESSION;
 
+///=====================================================
+    $stylesheets = '';
+    foreach ($CFG->stylesheets as $stylesheet) {
+        if(empty($stylesheets)) {
+          $stylesheets = $stylesheet;
+        } else {
+          $stylesheets .= '%26'.$stylesheet;
+        }
+    }
+
+ $query  = '';
+ /// $query .= 'HIVE_REF=hin:hive@Demo%20LMS%20Browse';
+ $query .= 'HIVE_REF=hin:hive@LMS%20Search';
+ $query .= '&HIVE_RET=ORG';
+ $query .= '&HIVE_REQ=2113';
+ $query .= '&HIVE_PROD=0';
+ $query .= '&HIVE_CURRENTBUREAUID='.$CFG->decsbureauid;
+ $query .= '&HIVE_BUREAU='.$CFG->decsbureauid;
+ $query .= '&HIVE_ITEMTYPE='.$CFG->decsitemtypeid;
+ $query .= '&mkurl='.$CFG->wwwroot.'/mod/resource/type/repository/hive/makelink.php';
+ $query .= '&mklms=Moodle';
+ $query .= '&HIVE_SEREF='.$CFG->wwwroot.'/sso/hive/expired.php';
+ $query .= '&HIVE_SESSION='.$SESSION->HIVE_SESSION;
+ $query .= '&mklmsstyle='.$stylesheets;
     redirect($CFG->hiveprotocol .'://'. $CFG->hivehost .':'. $CFG->hiveport .''. $CFG->hivepath .'?'.$query);
-/***********
-// MW The original form
-    notify('Opening HarvestRoad Hive. Please wait. Contacting '. $CFG->hivehost );
-
-    echo '<form name="OPEN_HIVE_FORM" action="'. $CFG->hiveprotocol .'://'. $CFG->hivehost .':'. $CFG->hiveport .''. $CFG->hivepath .'" method="post">';
-
-    echo '<input type="hidden" name="HISTORY" value="">';
-    echo '<input type="hidden" name="hiveLanguage" value="en_AU">';
-    echo '<input type="hidden" name="PUBCATEGORY_LIST" value="">';
-    echo '<input type="hidden" name="CATEGORY_LIST" value="">';
-    echo '<input type="hidden" name="HIDE_LOGOUT" value="Y">';
-    echo '<input type="hidden" name="mkurl" value="'.$CFG->wwwroot.'/mod/resource/type/repository/hive/makelink.php">';
-    echo '<input type="hidden" name="HIDE_CHANGEUSERDETAILS" value="Y">';
-    echo '<input type="hidden" name="HIVE_RET" value="ORG">';
-    echo '<input type="hidden" name="HIVE_PAGE" value="Lite Browse">';
-    echo '<input type="hidden" name="HIVE_REQ" value="2113">';
-    echo '<input type="hidden" name="HIVE_ERRCODE" value="0">';
-    echo '<input type="hidden" name="mklms" value="Moodle">';
-    echo '<input type="hidden" name="HIVE_PROD" value="0">';
-    echo '<input type="hidden" name="HIVE_REF" value="hin:hive@Hive Login HTML Template">';
-    echo '<input type="hidden" name="HIVE_LITEMODE" value="liteBrowse">';
-    echo '<input type="hidden" name="HIVE_SEREF" value="'.$CFG->wwwroot.'/sso/hive/expired.php">';
-    echo '<input type="hidden" name="HIVE_SESSION" value="'.$SESSION->HIVE_SESSION.'">';
-    echo '</form>';
-    echo '<script language="javascript"/>';
-    echo 'document.OPEN_HIVE_FORM.submit();';
-    echo '</script>';
-
-    print_footer();
-*************/
 ?>

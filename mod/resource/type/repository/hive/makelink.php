@@ -22,7 +22,10 @@
     if ($format != 'orig') {
         $hive_ret = 'HIVE_RET=CNV';
     }
-    $resource = $hive_ref.'&amp;'. $hive_ret .'&amp;HIVE_REQ=2113';
+
+    $reference = $hive_ref.'&amp;'. $hive_ret .'&amp;HIVE_REQ=2113';
+
+    $resource =  $CFG->hiveprotocol .'://'. $CFG->hivehost .':'. $CFG->hiveport .''. $CFG->hivepath . '/'.$filename.'?'. $reference;
 
     
 ?>

@@ -255,9 +255,7 @@ function display() {
 
     $inpopup = !empty($_GET["inpopup"]);
     
-
-    $fullurl =  $CFG->hiveprotocol .'://'. $CFG->hivehost .':'. $CFG->hiveport .''. $CFG->hivepath . '?'. $resource->reference . '&amp;HIVE_SESSION='.$SESSION->HIVE_SESSION;
-
+       $fullurl =  $resource->reference. '&amp;HIVE_SESSION='.$SESSION->HIVE_SESSION;
     if (!empty($querystring)) {
         $urlpieces = parse_url($resource->reference);
         if (empty($urlpieces['query'])) {
