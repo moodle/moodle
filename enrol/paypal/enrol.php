@@ -179,20 +179,20 @@ function sanitise_for_paypal($text) {
     if (!empty($CFG->sanitise_for_paypal)) {
         //Array of characters to replace (not allowed by PayPal)
         //Can be expanded as necessary to add other diacritics
-        $replace = array('ï¿½' => 'a',        //Spanish characters
-                         'ï¿½' => 'e',
-                         'ï¿½' => 'i',
-                         'ï¿½' => 'o',
-                         'ï¿½' => 'u',
-                         'ï¿½' => 'A',
-                         'ï¿½' => 'E',
-                         'ï¿½' => 'I',
-                         'ï¿½' => 'O',
-                         'ï¿½' => 'U',
-                         'ï¿½' => 'n',
-                         'ï¿½' => 'N',
-                         'ï¿½' => 'u',
-                         'ï¿½' => 'U');
+        $replace = array('á' => 'a',        //Spanish characters
+                         'é' => 'e',
+                         'í' => 'i',
+                         'ó' => 'o',
+                         'ú' => 'u',
+                         'Á' => 'A',
+                         'É' => 'E',
+                         'Í' => 'I',
+                         'Ó' => 'O',
+                         'Ú' => 'U',
+                         'ñ' => 'n',
+                         'Ñ' => 'N',
+                         'ü' => 'u',
+                         'Ü' => 'U');
         $text = strtr($text, $replace);
     
         //Make here other sanities if necessary
