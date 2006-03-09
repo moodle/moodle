@@ -116,7 +116,7 @@
     <td align="right"><?php  print_string("enrolmentplugins") ?>:</td>
     <td><?php
             unset($choices);
-            $modules = get_list_of_plugins("enrol");
+            $modules = explode(',', $CFG->enrol_plugins_enabled);
             foreach ($modules as $module) {
                 $name = get_string("enrolname", "enrol_$module");
                 $plugin = enrolment_factory::factory($module);
@@ -126,7 +126,7 @@
             }
             asort($choices);
             $choices = array_flip($choices);
-            $choices = array_merge(array('' => get_string('sitedefault')), $choices);
+            $choices = array_merge(array('' => get_string('sitedefault').' ('.get_string("enrolname", "enrol_$CFG->enrol").')'), $choices);
             choose_from_menu ($choices, "enrol", "$form->enrol", "");
             helpbutton("courseenrolmentplugins", get_string("enrolmentplugins"));
     ?></td>
