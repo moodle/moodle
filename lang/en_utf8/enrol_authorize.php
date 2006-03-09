@@ -9,11 +9,13 @@ $string['adminauthorizewide'] = 'Site-Wide Settings';
 $string['adminavs'] = 'Check this if you have activated Address Verification System (AVS) in your authorize.net account. This demands address fields like street, state, country and zip when user fills out payment form.';
 $string['admincronsetup'] = 'The cron.php maintenance script has not been run for at least 24 hours. <br />Cron must be enabled if you want to use autocapture feature.<br /><a href=\"../doc/?frame=install.html&sub=cron\">Setup cron</a> or uncheck an_review again.<br />If you disable autocapture, transactions will be cancelled unless you review them within 30 days.<br />Check an_review and enter \'0\' to an_capture_day field<br />if you want to manually accept/deny payments within 30 days.';
 $string['adminemailexpired'] = 'Send warning email to admins <b>$a</b> days ago how many status of \'authorized/pending capture\' transaction is there, before transactions have expired. (0=disable sending email, default=2, max=5)<br />This is useful if you enabled capturing manually (an_review=checked, an_capture_day=0).';
+$string['adminhelpcapturetitle'] = 'Auto-Capture Day';
 $string['adminhelpcapture'] = 'Not only I want to manually accept/deny payments. But also, use autocapture to prevent cancelling payment. What will I do?
 
  - Setup cron.
  - Check an_review.
  - Enter a number between 1 and 29 to an_capture_day field. Card will be captured and user will be enrolled to course unless you capture it within an_capture_day.';
+$string['adminhelpreviewtitle'] = 'Order Review';
 $string['adminhelpreview'] = 'How will I manually accept/deny payments?
 - Check an_review.
 - Enter \'0\' to an_capture_day field.
@@ -76,17 +78,17 @@ $string['ccno'] = 'Credit Card Number';
 $string['cctype'] = 'Credit Card Type';
 $string['ccvv'] = 'Card Verification';
 $string['ccvvhelp'] = 'Look at the back of card (last 3 digits)';
-$string['choosemethod'] = 'If you know enrolment key of the course, enter it; otherwise you need to pay for this course.';
+$string['choosemethod'] = 'If you know the enrolment key of the cource, please enter it; otherwise you need to pay for this course.';
 $string['chooseone'] = 'Fill one or both of the following two fields';
 $string['cutofftime'] = 'Transaction Cut-Off Time. When the last transaction is picked up for settlement?';
 $string['delete'] = 'Destroy';
-$string['description'] = 'The Authorize.net module allows you to set up paid courses by merchants.  If the cost for any course is zero, then students are not asked to pay for entry.  There is a site-wide cost that you set here as a default for the whole site and then a course setting that you can set for each course individually. The course cost overrides the site cost.<br /><br /><b>Note:</b> If you enter an enrolment key in the course settings, then students will also have the option to enrol using a key. This is useful if you have a mixture of paying and non-paying students.';
+$string['description'] = 'The Authorize.net module allows you to set up paid courses via CC providers.  If the cost for any course is zero, then students are not asked to pay for entry.  Two ways to set the course cost (1) a site-wide cost as a default for the whole site or (2) a course setting that you can set for each course individually. The course cost overrides the site cost.<br /><br /><b>Note:</b> If you enter an enrolment key in the course settings, then students will also have the option to enrol using a key. This is useful if you have a mixture of paying and non-paying students.';
 $string['enrolname'] = 'Authorize.net Credit Card Gateway';
 $string['expired'] = 'Expired';
 $string['howmuch'] = 'How much?';
-$string['httpsrequired'] = 'We are sorry to inform you that your request cannot be processed currently. This site\'s configuration couldn\'t be set up correctly.
+$string['httpsrequired'] = 'We are sorry to inform you that your request cannot be processed now. This site\'s configuration couldn\'t be set up correctly.
 <br /><br />
-Please don\'t enter your credit card number unless you see a yellow lock at the bottom of the browser. It means, it simply encrypts all data sent between client and server. So the information during the transaction between 2 computers is protected and your credit card number cannot captured over the internet.';
+Please don\'t enter your credit card number unless you see a yellow lock at the bottom of the browser. If the symbol appears, it means the page encrypts all data sent between client and server. So the information during the transaction between the two computers is protected, hence your credit card number cannot be captured over the internet.';
 $string['logindesc'] = 'This option must be ON. <br /><br />
 Please ensure that you have turned <a href=\"$a->url\">loginhttps ON</a> in Admin >> Variables >> Security.<br /><br />
 Turning this on will make Moodle use a secure https connection just for the login and payment pages.';
@@ -106,7 +108,7 @@ $string['pendingordersemail'] = ' Dear admin,
 
 $a->pending transactions will be expired unless you accept payment with in $a->days days.
 
-This is a warning message, because you didn\'t enable autocapture. Means you have to accept or deny payments manually.
+This is a warning message, because you didn\'t enable autocapture. It means you have to accept or deny payments manually.
 
 To accept/deny pending payments go to:
 $a->url

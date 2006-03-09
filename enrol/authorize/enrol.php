@@ -643,6 +643,7 @@ class enrolment_plugin_authorize
         $elapsed = time();
         @set_time_limit(0);
         $this->log = "AUTHORIZE.NET AUTOCAPTURE CRON: " . userdate($timenow) . "\n";
+
         foreach ($orders as $order) {
             $message = '';
             $extra = NULL;
@@ -697,6 +698,7 @@ class enrolment_plugin_authorize
         if (empty($sendem)) {
             return;
         }
+
         $lastcourse = 0;
         $select = "SELECT E.id, E.courseid, E.userid, C.fullname " .
                   "FROM {$CFG->prefix}enrol_authorize E " .
