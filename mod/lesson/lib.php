@@ -297,6 +297,29 @@ function lesson_delete_instance($id) {
     return $result;
 }
 
+/**
+ * Given a course object, this function will clean up anything that
+ * would be leftover after all the instances were deleted.
+ *
+ * As of now, this function just cleans the lesson_default table
+ *
+ * @param object $course an object representing the course that is being deleted
+ * @param boolean $feedback to specify if the process must output a summary of its work
+ * @return boolean
+ */
+function lesson_delete_course($course, $feedback=true) {
+
+    $count = count_records('lesson_default', 'course', $course->id);
+    delete_records('lesson_default', 'course', $course->id);
+    
+    //Inform about changes performed if feedback is enabled
+    if ($feedback) {
+        notify(get_string('deletedefaults', 'lesson', $count));
+    }
+    
+    return true;
+}
+
 /*******************************************************************/
 function lesson_user_outline($course, $user, $mod, $lesson) {
 /// Return a small object with summary information about what a 
