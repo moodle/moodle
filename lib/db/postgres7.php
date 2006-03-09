@@ -1391,13 +1391,18 @@ function main_upgrade($oldversion=0) {
         table_column('course','','enrolenddate','integer');
     }
 
-    if ($oldversion < 2005101200) { # add enrolment key to course_request.
+
+    if ($oldversion < 2005101200) { // add enrolment key to course_request.
         table_column('course_request','','password','text');
     }
 
     if ($oldversion < 2006030800) { # add extra indexes to log (see bug #4112)
         modify_database('',"CREATE INDEX prefix_log_userid_idx ON prefix_log (userid);");
         modify_database('',"CREATE INDEX prefix_log_info_idx ON prefix_log (info);");
+    }
+
+    if ($oldversion < 2006030900) {
+        table_column('course','','enrol','varchar','20','','');
     }
     
     return $result;

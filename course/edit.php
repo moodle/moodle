@@ -4,6 +4,7 @@
     require_once("../config.php");
     require_once("lib.php");
     require_once("$CFG->libdir/blocklib.php");
+    require_once("$CFG->dirroot/enrol/enrol.class.php");
 
     $id       = optional_param('id', 0, PARAM_INT); // course id
     $category = optional_param('category', 0, PARAM_INT); // possible default category

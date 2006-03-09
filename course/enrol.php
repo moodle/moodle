@@ -5,7 +5,7 @@
 
     require_once("../config.php");
     require_once("lib.php");
-    require_once("$CFG->dirroot/enrol/$CFG->enrol/enrol.php");
+    require_once("$CFG->dirroot/enrol/enrol.class.php");
 
     $id = required_param('id',PARAM_INT);
 
@@ -27,12 +27,23 @@
 
     check_for_restricted_user($USER->username);
 
-    $enrol = new enrolment_plugin();
-
 /// Refreshing enrolment data in the USER session
-    $enrol->get_student_courses($USER);
-    $enrol->get_teacher_courses($USER);
+    if (!($plugins = explode(',', $CFG->enrol_plugins_enabled))) {
+        $plugins = array($CFG->enrol);
+    }
+    require_once($CFG->dirroot .'/enrol/enrol.class.php');
+    foreach ($plugins as $p) {
+        $enrol = enrolment_factory::factory($p);
+        if (method_exists($enrol, 'get_student_courses')) {
+            $enrol->get_student_courses($USER);
+        }
+        if (method_exists($enrol, 'get_teacher_courses')) {
+            $enrol->get_teacher_courses($USER);
+        }
+        unset($enrol);
+    }
 
+    $enrol = enrolment_factory::factory($course->enrol);
 
 /// Double check just in case they are actually enrolled already 
 /// This might occur if they were enrolled during this session
@@ -66,6 +77,11 @@
     }
 
 /// Check if the course is enrollable
+    if (!method_exists($enrol, 'print_entry')) {
+        print_header_simple();
+        notice(get_string('enrolmentnointernal'), $CFG->wwwroot);
+    }
+
     if (!$course->enrollable ||
             ($course->enrollable == 2 && $course->enrolstartdate > 0 && $course->enrolstartdate > time()) ||
             ($course->enrollable == 2 && $course->enrolenddate > 0 && $course->enrolenddate <= time())

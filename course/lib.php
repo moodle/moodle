@@ -1401,14 +1401,7 @@ function print_courses($category, $width="100%", $hidesitecourse = false) {
             print_course($course, $width);
         }
     } else {
-        print_heading(get_string('nocoursesyet'));
-        if (iscreator()) {
-            $options = array();
-            $options['category'] = $category->id;
-            echo '<div class="addcoursebutton" align="center">';
-            print_single_button($CFG->wwwroot.'/course/edit.php', $options, get_string('addnewcourse'));
-            echo '</div>';
-        }
+        print_heading(get_string("nocoursesyet"));
     }
 
 }
@@ -1418,12 +1411,9 @@ function print_course($course, $width="100%") {
 
     global $CFG, $USER;
 
-    static $enrol;
+    require_once("$CFG->dirroot/enrol/enrol.class.php");
 
-    if (empty($enrol)) {
-        require_once("$CFG->dirroot/enrol/$CFG->enrol/enrol.php");
-        $enrol = new enrolment_plugin;
-    }
+    $enrol = enrolment_factory::factory($course->enrol);
 
     print_simple_box_start("center", "$width", '', 5, "coursebox");
 

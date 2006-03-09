@@ -247,11 +247,19 @@
     }
 
 /// Run the enrolment cron, if any
-    require_once("$CFG->dirroot/enrol/$CFG->enrol/enrol.php");
-    $enrol = new enrolment_plugin();
-    $enrol->cron();
-    if (!empty($enrol->log)) {
-        mtrace($enrol->log);
+    if (!($plugins = explode(',', $CFG->enrol_plugins_enabled))) {
+        $plugins = array($CFG->enrol);
+    }
+    require_once($CFG->dirroot .'/enrol/enrol.class.php');
+    foreach ($plugins as $p) {
+        $enrol = enrolment_factory::factory($p);
+        if (method_exists($enrol, 'cron')) {
+            $enrol->cron();
+        }
+        if (!empty($enrol->log)) {
+            mtrace($enrol->log);
+        }
+        unset($enrol);
     }
 
     if (!empty($CFG->enablestats)) {

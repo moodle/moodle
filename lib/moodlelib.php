@@ -2674,12 +2674,22 @@ function get_complete_user_data($field, $value) {
 
     $user->student[SITEID] = isstudent(SITEID, $user->id);
 
-/// Determine enrolments based on current enrolment module
+/// Load the list of enrolment plugin enabled
 
-    require_once($CFG->dirroot .'/enrol/'. $CFG->enrol .'/enrol.php');
-    $enrol = new enrolment_plugin();
-    $enrol->get_student_courses($user);
-    $enrol->get_teacher_courses($user);
+    if (!($plugins = explode(',', $CFG->enrol_plugins_enabled))) {
+        $plugins = array($CFG->enrol);
+    }
+    require_once($CFG->dirroot .'/enrol/enrol.class.php');
+    foreach ($plugins as $p) {
+        $enrol = enrolment_factory::factory($p);
+        if (method_exists($enrol, 'get_student_courses')) {
+            $enrol->get_student_courses($user);
+        }
+        if (method_exists($enrol, 'get_teacher_courses')) {
+            $enrol->get_teacher_courses($user);
+        }
+        unset($enrol);
+    }
 
 /// Get various settings and preferences
 

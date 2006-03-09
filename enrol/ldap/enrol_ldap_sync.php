@@ -11,12 +11,12 @@
     require_once($CFG->dirroot . '/course/lib.php');
     require_once($CFG->dirroot . '/lib/moodlelib.php');
     require_once($CFG->dirroot . '/lib/datalib.php');
-    require_once($CFG->dirroot . "/enrol/" . $CFG->enrol . "/enrol.php");
+    require_once($CFG->dirroot . "/enrol/ldap/enrol.php");
 
     // ensure errors are well explained
     $CFG->debug=10;
     // update enrolments -- these handlers should autocreate courses if required
-    $enrol = new enrolment_plugin();
+    $enrol = new enrolment_plugin_ldap();
     $enrol->enrol_ldap_connect();    
     $enrol->sync_enrolments('student', true);
     $enrol->sync_enrolments('teacher', true);

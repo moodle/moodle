@@ -4,7 +4,7 @@
 require_once("$CFG->dirroot/enrol/enrol.class.php");
 
 
-class enrolment_plugin extends enrolment_base {
+class enrolment_plugin_paypal {
 
 
 /// Override the base print_entry() function
@@ -29,8 +29,8 @@ function print_entry($course) {
 
     if (abs($cost) < 0.01) { // no cost, default to base class entry to course
 
-
-        parent::print_entry($course);
+        $internal = enrolment_factory::factory('internal');
+        $internal->print_entry($course);
 
     } else {
 
@@ -83,7 +83,8 @@ function get_access_icons($course) {
     }
 
     if (abs($cost) < 0.01) {
-        $str = parent::get_access_icons($course);
+        $internal = enrolment_factory::factory('internal');
+        $str = $internal->get_access_icons($course);
 
     } else {
     
@@ -178,20 +179,20 @@ function sanitise_for_paypal($text) {
     if (!empty($CFG->sanitise_for_paypal)) {
         //Array of characters to replace (not allowed by PayPal)
         //Can be expanded as necessary to add other diacritics
-        $replace = array('á' => 'a',        //Spanish characters
-                         'é' => 'e',
-                         'í' => 'i',
-                         'ó' => 'o',
-                         'ú' => 'u',
-                         'Á' => 'A',
-                         'É' => 'E',
-                         'Í' => 'I',
-                         'Ó' => 'O',
-                         'Ú' => 'U',
-                         'ñ' => 'n',
-                         'Ñ' => 'N',
-                         'ü' => 'u',
-                         'Ü' => 'U');
+        $replace = array('ï¿½' => 'a',        //Spanish characters
+                         'ï¿½' => 'e',
+                         'ï¿½' => 'i',
+                         'ï¿½' => 'o',
+                         'ï¿½' => 'u',
+                         'ï¿½' => 'A',
+                         'ï¿½' => 'E',
+                         'ï¿½' => 'I',
+                         'ï¿½' => 'O',
+                         'ï¿½' => 'U',
+                         'ï¿½' => 'n',
+                         'ï¿½' => 'N',
+                         'ï¿½' => 'u',
+                         'ï¿½' => 'U');
         $text = strtr($text, $replace);
     
         //Make here other sanities if necessary

@@ -7,7 +7,7 @@ require_once $CFG->dirroot.'/enrol/authorize/const.php';
  * enrolment_plugin_authorize
  *
  */
-class enrolment_plugin extends enrolment_base
+class enrolment_plugin_authorize 
 {
     /**
      * Credit card error messages.
@@ -36,9 +36,10 @@ class enrolment_plugin extends enrolment_base
     {
         global $CFG, $USER, $form;
 
-        if ($this->zero_cost($course) || isguest()) {
-            parent::print_entry($course);
-            return; // No money for guests ;)
+        if ($this->zero_cost($course) || isguest()) { // No money for guests ;)
+            $internal = enrolment_factory::factory('internal');
+            $internal->print_entry($course);
+            return;
         }
 
         $this->prevent_double_paid($course);
@@ -82,8 +83,9 @@ class enrolment_plugin extends enrolment_base
      * @access public
      */
     function check_entry($form, $course) {
-        if ((!empty($form->password)) || isguest() || $this->zero_cost($course)) {
-            parent::check_entry($form, $course);
+        if ($this->zero_cost($course) || isguest() || (!empty($form->password))) {
+            $internal = enrolment_factory::factory('internal');
+            $internal->print_entry($course);
         } elseif ((!empty($form->ccsubmit)) && $this->validate_enrol_form($form)) {
             $this->cc_submit($form, $course);
         }
@@ -371,7 +373,9 @@ class enrolment_plugin extends enrolment_base
      */
     function get_access_icons($course) {
 
-        $str = parent::get_access_icons($course);
+
+        $internal = enrolment_factory::factory('internal');
+        $str = $internal->get_access_icons($course);
         $curcost = $this->get_course_cost($course);
 
         if (abs($curcost['cost']) > 0.00) {
@@ -570,7 +574,8 @@ class enrolment_plugin extends enrolment_base
     function cron()
     {
         global $CFG;
-        parent::cron();
+        $internal = enrolment_factory::factory('internal');
+        $internal->cron();
         require_once $CFG->dirroot.'/enrol/authorize/action.php';
 
         $oneday = 86400;

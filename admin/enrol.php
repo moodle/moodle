@@ -20,27 +20,33 @@
         error(get_string('confirmsesskeybad', 'error'));
     }
 
-    require_once("$CFG->dirroot/enrol/$enrol/enrol.php");   /// Open the class
+    require_once("$CFG->dirroot/enrol/enrol.class.php");   /// Open the factory class
 
-    $enrolment = new enrolment_plugin();
-
-
-/// If data submitted, then process and store.
+/// Save settings
 
     if ($frm = data_submitted()) {
-        if ($enrolment->process_config($frm)) {
-            set_config('enrol', $frm->enrol);
-            redirect("enrol.php?sesskey=$USER->sesskey", get_string("changessaved"), 1);
+        if (empty($frm->enable)) {
+            $frm->enable = array();
         }
-    } else {
-        $frm = $CFG;
+        if (empty($frm->default)) {
+            $frm->default = '';
+        }
+        if ($frm->default && !in_array($frm->default, $frm->enable)) {
+            $frm->enable[] = $frm->default;
+        }
+        asort($frm->enable);
+        set_config('enrol_plugins_enabled', implode(',', $frm->enable));
+        set_config('enrol', $frm->default);
+        redirect("enrol.php?sesskey=$USER->sesskey", get_string("changessaved"), 1);
     }
 
-/// Otherwise fill and print the form.
+/// Print the form
 
-    /// get language strings
-    $str = get_strings(array('enrolments', 'users', 'administration', 'settings'));
+    $str = get_strings(array('enrolmentplugins', 'users', 'administration', 'settings', 'edit'));
 
+    print_header("$site->shortname: $str->enrolmentplugins", "$site->fullname",
+                  "<a href=\"index.php\">$str->administration</a> -> 
+                   <a href=\"users.php\">$str->users</a> -> $str->enrolmentplugins");
 
     $modules = get_list_of_plugins("enrol");
     $options = array();
@@ -49,41 +55,49 @@
     }
     asort($options);
 
-    print_header("$site->shortname: $str->enrolments", "$site->fullname",
-                  "<a href=\"index.php\">$str->administration</a> -> 
-                   <a href=\"users.php\">$str->users</a> -> $str->enrolments");
+    print_simple_box("blah", 'center', '700');
 
     echo "<form target=\"{$CFG->framename}\" name=\"enrolmenu\" method=\"post\" action=\"enrol.php\">";
     echo "<input type=\"hidden\" name=\"sesskey\" value=\"".$USER->sesskey."\">";
-    echo "<div align=\"center\"><p><b>";
 
+    $table = new stdClass();
+    $table->head = array(get_string('name'), get_string('enable'), get_string('default'), $str->settings);
+    $table->align = array('left', 'center', 'center', 'center');
+    $table->size = array('60%', '', '', '15%');
+    $table->width = '700';
+    $table->data = array();
 
-/// Choose an enrolment method
-    echo get_string('chooseenrolmethod').': ';
-    choose_from_menu ($options, "enrol", $enrol, "",
-                      "document.location='enrol.php?sesskey=$USER->sesskey&enrol='+document.enrolmenu.enrol.options[document.enrolmenu.enrol.selectedIndex].value", "");
+    $modules = get_list_of_plugins("enrol");
+    foreach ($modules as $module) {
+        $name = get_string("enrolname", "enrol_$module");
+        $plugin = enrolment_factory::factory($module);
+        $enable = '<input type="checkbox" name="enable[]" value="'.$module.'"';
+        if (stristr($CFG->enrol_plugins_enabled, $module) !== false) {
+            $enable .= ' checked="checked"';
+        }
+        if ($module == 'internal') {
+            $enable .= ' disabled="disabled" /><input type="hidden" name="enable[]" value="'.$module.'"';
+        }
+        $enable .= ' />';
+        if (method_exists($plugin, 'print_entry')) {
+            $default = '<input type="radio" name="default" value="'.$module.'"';
+            if ($CFG->enrol == $module) {
+                $default .= ' checked="checked"';
+            }
+            $default .= ' />';
+        } else {
+            $default = '';
+        }
+        $table->data[$name] = array($name, $enable, $default,
+                                '<a href="enrol_config.php?sesskey='.$USER->sesskey.'&amp;enrol='.$module.'">'.$str->edit.'</a>');
+    }
+    asort($table->data);
 
-    echo "</b></p></div>";
-    
-/// Print current enrolment type description    
-    print_simple_box_start("center", "80%");
-    print_heading($options[$enrol]);
+    print_table($table);
 
-    print_simple_box_start("center", "60%", '', 5, 'informationbox');
-    print_string("description", "enrol_$enrol");
-    print_simple_box_end();
-
-    echo "<hr />";
-   // print_heading($str->settings);
-    
-    $enrolment->config_form($frm);
-
-    echo "<center><p><input type=\"submit\" value=\"".get_string("savechanges")."\"></p></center>\n";
+    echo "<center><input type=\"submit\" value=\"".get_string("savechanges")."\"></center>\n";
     echo "</form>";
-
-    print_simple_box_end();
 
     print_footer();
 
-    exit;
 ?>

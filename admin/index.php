@@ -401,7 +401,7 @@
     $userdata .= '<div class="adminlink"><a href="'.$CFG->wwwroot.'/'.$CFG->admin.'/uploaduser.php?sesskey='.$USER->sesskey.'">'.
                  get_string('uploadusers').'</a> - <span class="explanation">'.get_string('adminhelpuploadusers').'</span></div>';
 
-    $userdata .= '<hr /><div class="adminlink"><a href="enrol.php?sesskey='.$USER->sesskey.'">'.get_string('enrolments').
+    $userdata .= '<hr /><div class="adminlink"><a href="enrol.php?sesskey='.$USER->sesskey.'">'.get_string('enrolmentplugins').
                  '</a> - <span class="explanation">'.get_string('adminhelpenrolments').'</span></div>';
     $userdata .= '<div class="adminlink"><a href="../course/index.php?edit=off&amp;sesskey='.$USER->sesskey.'">'.
                  get_string('assignstudents').'</a> - <span class="explanation">'.get_string('adminhelpassignstudents').'</span></div>';
@@ -430,6 +430,7 @@
     }
     $table->data[] = array('<strong><a href="environment.php">'.get_string('environment','admin').'</a></strong>',
                            '<div class="explanation">'.get_string('adminhelpenvironment').'</div>');
+
     if (file_exists("$CFG->dirroot/$CFG->admin/$CFG->dbtype")) {
         $table->data[] = array("<strong><a href=\"$CFG->dbtype/frame.php\">".get_string('managedatabase').'</a></strong>',
                                get_string('adminhelpmanagedatabase'));

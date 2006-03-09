@@ -15,6 +15,9 @@
     if (!isset($form->theme)) {
         $form->theme = '';
     }
+    if (!isset($form->enrol)) {
+        $form->enrol = '';
+    }
     if (!isset($form->enrollable)) {
         $form->enrollable = 1;
     }
@@ -107,6 +110,25 @@
     <td><?php
            print_date_selector("startday", "startmonth", "startyear", $form->startdate);
            helpbutton("coursestartdate", get_string("startdate"));
+    ?></td>
+</tr>
+<tr valign="top">
+    <td align="right"><?php  print_string("enrolmentplugins") ?>:</td>
+    <td><?php
+            unset($choices);
+            $modules = get_list_of_plugins("enrol");
+            foreach ($modules as $module) {
+                $name = get_string("enrolname", "enrol_$module");
+                $plugin = enrolment_factory::factory($module);
+                if (method_exists($plugin, 'print_entry')) {
+                    $choices[$name] = $module;
+                }
+            }
+            asort($choices);
+            $choices = array_flip($choices);
+            $choices = array_merge(array('' => get_string('sitedefault')), $choices);
+            choose_from_menu ($choices, "enrol", "$form->enrol", "");
+            helpbutton("courseenrolmentplugins", get_string("enrolmentplugins"));
     ?></td>
 </tr>
 <tr valign="top">
@@ -249,7 +271,7 @@
     </td>
 </tr>
 <?php
-    if ($CFG->enrol != 'internal') {
+    if (method_exists(enrolment_factory::factory($course->enrol), 'print_entry') && $course->enrol != 'internal') {
 ?>
 <tr valign="top">
     <td align="right"><?php  print_string("cost") ?>:</td>

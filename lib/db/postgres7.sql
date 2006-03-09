@@ -55,7 +55,8 @@ CREATE TABLE prefix_course (
    notifystudents integer NOT NULL default '0',
    enrollable integer NOT NULL default '1',
    enrolstartdate integer NOT NULL default '0',
-   enrolenddate integer NOT NULL default '0'
+   enrolenddate integer NOT NULL default '0',
+   enrol varchar(20) NOT NULL default ''
 );
 
 CREATE UNIQUE INDEX prefix_course_category_sortorder_uk ON prefix_course (category,sortorder);

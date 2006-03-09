@@ -1,7 +1,7 @@
 <?php  // $Id$
 
     require("../../config.php");
-    require_once("$CFG->dirroot/enrol/$CFG->enrol/enrol.php");
+    require_once("$CFG->dirroot/enrol/paypal/enrol.php");
 
     require_variable($id);
 
@@ -12,7 +12,7 @@
     require_login();
 
 /// Refreshing enrolment data in the USER session
-    $enrol = new enrolment_plugin();
+    $enrol = new enrolment_plugin_paypal();
     $enrol->get_student_courses($USER);
 
     if ($SESSION->wantsurl) {

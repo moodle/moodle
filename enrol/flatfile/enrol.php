@@ -1,41 +1,15 @@
 <?php
-require_once("$CFG->dirroot/enrol/enrol.class.php");
-
 // The following flags are set in the configuration
 // $CFG->enrol_flatfilelocation:       where is the file we are looking for?
-// $CFG->enrol_allowinternal:          allow internal enrolment in courses
 // $CFG->enrol_emailstudents:          send email to students when they are enrolled in a course
 // $CFG->enrol_emailteachers:          send email to teachers when they are enrolled in a course
 // $CFG->enrol_emailadmins:            email the log from the cron job to the admin
 
 
 
-class enrolment_plugin extends enrolment_base {
+class enrolment_plugin_flatfile {
 
     var $log;    
-
-/// Override the base print_entry() function
-function print_entry($course) {
-    global $CFG;
-
-    if (! empty($CFG->enrol_allowinternal) ) {
-        parent::print_entry($course);
-    } else {
-        print_header();
-        notice(get_string("enrolmentnointernal"), $CFG->wwwroot);
-    }
-}
-
-
-/// Override the base check_entry() function
-function check_entry($form, $course) {
-    global $CFG;
-
-    if (! empty($CFG->enrol_allowinternal) ) {
-        parent::check_entry($form, $course);
-    }
-}
-
 
 /// Override the base config_form() function
 function config_form($frm) {
@@ -74,13 +48,12 @@ function process_config($config) {
     }
     set_config('enrol_mailadmins', $config->enrol_mailadmins);
 
-    if (!isset($config->enrol_allowinternal)) {
-        $config->enrol_allowinternal = '';
-    }
-    set_config('enrol_allowinternal', $config->enrol_allowinternal);
-    
     return true;
 
+}
+
+/// Override the get_access_icons() function
+function get_access_icons($course) {
 }
 
 /**
@@ -98,9 +71,6 @@ function process_config($config) {
 */
     function cron() {
         global $CFG;
-
-        /// call the base class
-        parent::cron();
 
         if (empty($CFG->enrol_flatfilelocation)) {
             $filename = "$CFG->dataroot/1/enrolments.txt";  // Default location

@@ -3,34 +3,24 @@
 require_once("$CFG->dirroot/enrol/enrol.class.php");
 require_once("$CFG->dirroot/course/lib.php");
 require_once("$CFG->dirroot/lib/blocklib.php");
-require_once("$CFG->dirroot//lib/pagelib.php");
+require_once("$CFG->dirroot/lib/pagelib.php");
 
 $CFG->enrol_localcoursefield = 'idnumber';
 
-class enrolment_plugin extends enrolment_base {
+class enrolment_plugin_ldap {
 
     var $log;    
-
-/// Leave get_teacher_courses() function unchanged for the time being
-
-
-/// Leave cron() function unchanged
-
 
 /// Overide the base get_student_courses() function
 function get_student_courses(&$user) {
     global $CFG;
-    parent::get_student_courses($user); // populate known enrolments
-    $this->get_user_courses($user, 'student');
-    return parent::get_student_courses($user);    
+    return $this->get_user_courses($user, 'student');
 }
 
 /// Overide the base get_teacher_courses() function
 function get_teacher_courses(&$user) {
     global $CFG;
-    parent::get_teacher_courses($user); // populate known enrolments
-    $this->get_user_courses($user, 'teacher');
-    return parent::get_teacher_courses($user);
+    return $this->get_user_courses($user, 'teacher');
 }
 
 /// Overide the base get_student_courses() function
@@ -327,28 +317,6 @@ function sync_enrolments($type, $enrol) {
 }
 
 
-/// Override the base print_entry() function
-function print_entry($course) {
-    global $CFG;
-
-    if (! empty($CFG->enrol_allowinternal) ) {
-        parent::print_entry($course);
-    } else {
-        print_header();
-        notice(get_string("enrolmentnointernal"), $CFG->wwwroot);
-    }
-}
-
-/// Override the base check_entry() function
-function check_entry($form, $course) {
-    global $CFG;
-
-    if (! empty($CFG->enrol_allowinternal) ) {
-        parent::check_entry($form, $course);
-    }
-}
-
-
 /// Overide the get_access_icons() function
 function get_access_icons($course) {
 }
@@ -455,12 +423,7 @@ function process_config($config) {
         $config->enrol_ldap_autocreate = '0';
     }
     set_config('enrol_ldap_autocreate', $config->enrol_ldap_autocreate);                 
-   
-    if (!isset($config->enrol_allowinternal)) {
-        $config->enrol_allowinternal = '';
-    }
-    set_config('enrol_allowinternal', $config->enrol_allowinternal);
-    
+
     return true;
 
 }
