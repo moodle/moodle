@@ -1,6 +1,6 @@
 <?php
 
-    require_once(dirname(dirname(__FILE__)).'/config.php');
+    require_once('../../../config.php');
     require_once($CFG->dirroot.'/lib/statslib.php');
 
     if (empty($CFG->enablestats)) {
@@ -188,9 +188,9 @@
             echo "(".get_string("gdneed").")";
         } else {
             if ($mode == STATS_MODE_DETAILED) {
-                echo '<center><img src="'.$CFG->wwwroot.'/course/statsgraph.php?mode='.$mode.'&course='.$course->id.'&time='.$time.'&report='.$report.'&userid='.$userid.'" /></center>';
+                echo '<center><img src="'.$CFG->wwwroot.'/course/graph.php?mode='.$mode.'&course='.$course->id.'&time='.$time.'&report='.$report.'&userid='.$userid.'" /></center>';
             } else {
-                echo '<center><img src="'.$CFG->wwwroot.'/course/statsgraph.php?mode='.$mode.'&course='.$course->id.'&time='.$time.'&report='.$report.'" /></center>';
+                echo '<center><img src="'.$CFG->wwwroot.'/course/graph.php?mode='.$mode.'&course='.$course->id.'&time='.$time.'&report='.$report.'" /></center>';
             }
         }
 
