@@ -32,6 +32,15 @@ $string['configurationcompletehead'] = 'Configuration completed';
 $string['configurationcompletesub'] = 'Moodle made an attempt to save your configuration in a file in the root of your Moodle installation.';
 $string['continue'] = 'Continue';
 $string['database'] = 'Database';
+$string['databasecreationsettingshead'] = 'Now you need to configure the database settings where most Moodle data
+    will be stored.  This database will be created automatically by the installer
+    with the settings specified below.';
+$string['databasecreationsettingssub'] = '<b>Type:</b> fixed to \"mysql\" by the installer<br />
+       <b>Host:</b> fixed to \"localhost\" by the installer<br />
+       <b>Name:</b> database name, eg moodle<br />
+       <b>User:</b> fixed to \"root\" by the installer<br />
+       <b>Password:</b> your database password<br />
+       <b>Tables Prefix:</b> optional prefix to use for all table names';
 $string['databasesettingshead'] = 'Now you need to configure the database where most Moodle data
     will be stored.  This database must already have been created
     and a username and password created to access it.';
@@ -151,6 +160,7 @@ $string['welcomep50'] = 'The use of all the applications in this package is gove
 $string['welcomep60'] = 'The following pages will lead you through some easy to follow steps to 
     configure and set up <strong>Moodle</strong> on your computer. You may accept the default 
     settings or, optionally, amend them to suit your own needs.';
+$string['welcomep70'] = 'Click the \"Next\" button below to continue with the set up of <strong>Moodle</strong>.';
 $string['wwwroot'] = 'Web address';
 $string['wwwrooterror'] = 'The web address does not appear to be valid - this Moodle installation doesn\'t appear to be there.';
 ?>
