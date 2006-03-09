@@ -175,7 +175,12 @@ class textlib {
     */
 
     function specialtoascii($text,$charset='utf-8') {
-        return $this->typo3cs->specCharsToASCII(strtolower($charset),$text);
+    /// Avoid some notices from Typo3 code
+        $oldlevel = error_reporting(E_PARSE);
+        $result = $this->typo3cs->specCharsToASCII(strtolower($charset),$text);
+    /// Restore original debug level
+        error_reporting($oldlevel);
+        return $result;
     }
 
 }
