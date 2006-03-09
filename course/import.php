@@ -18,7 +18,7 @@
 
     foreach ($directories as $directory) {
         echo '<div class="plugin">';
-        include_once($CFG->dirroot.'/course/import/'.$directory.'/mod.html');
+        include_once($CFG->dirroot.'/course/import/'.$directory.'/mod.php');
         echo '</div>';
     }
 

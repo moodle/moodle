@@ -1,5 +1,9 @@
 <?php
 
+    if (!defined('MOODLE_INTERNAL')) {
+        die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
+    }
+
     $streditmyprofile = get_string("editmyprofile");
     $stradministration = get_string("administration");
     $strchoose = get_string("choose");
