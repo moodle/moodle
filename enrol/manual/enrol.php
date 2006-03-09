@@ -24,14 +24,14 @@
 
 
 /**
-* enrolment_plugin_internal is the default enrolment plugin
+* enrolment_plugin_manual is the default enrolment plugin
 *
 * This class provides all the functionality for an enrolment plugin
-* In fact it includes all the code for the default, "internal" method
+* In fact it includes all the code for the default, "manual" method
 * so that other plugins can override these as necessary.
 */
 
-class enrolment_plugin_internal {
+class enrolment_plugin_manual {
 
 var $errormsg;
 
@@ -186,7 +186,7 @@ function print_entry($course) {
 
     print_course($course, "80%");
 
-    include("$CFG->dirroot/enrol/internal/enrol.html");
+    include("$CFG->dirroot/enrol/manual/enrol.html");
 
     print_footer();
 

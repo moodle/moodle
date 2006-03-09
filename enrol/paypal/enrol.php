@@ -29,8 +29,8 @@ function print_entry($course) {
 
     if (abs($cost) < 0.01) { // no cost, default to base class entry to course
 
-        $internal = enrolment_factory::factory('internal');
-        $internal->print_entry($course);
+        $manual = enrolment_factory::factory('manual');
+        $manual->print_entry($course);
 
     } else {
 
@@ -59,7 +59,7 @@ function print_entry($course) {
 
         if ($course->password) {  // Second option
             $password = '';
-            include($CFG->dirroot.'/enrol/internal/enrol.html');
+            include($CFG->dirroot.'/enrol/manual/enrol.html');
         }
 
         print_footer();
@@ -83,8 +83,8 @@ function get_access_icons($course) {
     }
 
     if (abs($cost) < 0.01) {
-        $internal = enrolment_factory::factory('internal');
-        $str = $internal->get_access_icons($course);
+        $manual = enrolment_factory::factory('manual');
+        $str = $manual->get_access_icons($course);
 
     } else {
     

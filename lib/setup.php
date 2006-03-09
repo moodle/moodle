@@ -203,7 +203,7 @@ global $HTTPSPAGEREQUIRED;
 
 /// Set a default enrolment configuration (see bug 1598)
     if (!isset($CFG->enrol)) {
-        $CFG->enrol = 'internal';
+        $CFG->enrol = 'manual';
     }
 
 /// File permissions on created directories in the $CFG->dataroot
