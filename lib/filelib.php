@@ -2,8 +2,14 @@
 
 define('BYTESERVING_BOUNDARY', 's1k2o3d4a5k6s7'); //unique string constant
 
-function mimeinfo($element, $filename) {
-    $mimeinfo = array (
+/**
+ * @return List of information about file types based on extensions. 
+ *   Associative array of extension (lower-case) to associative array
+ *   from 'element name' to data. Current element names are 'type' and 'icon'.
+ *   Unknown types should use the 'xxx' entry which includes defaults. 
+ */
+function get_mimetypes_array() {
+    return array (
         'xxx'  => array ('type'=>'document/unknown', 'icon'=>'unknown.gif'),
         '3gp'  => array ('type'=>'video/quicktime', 'icon'=>'video.gif'),
         'ai'   => array ('type'=>'application/postscript', 'icon'=>'image.gif'),
@@ -128,6 +134,20 @@ function mimeinfo($element, $filename) {
         'xsl'  => array ('type'=>'text/xml', 'icon'=>'xml.gif'),
         'zip'  => array ('type'=>'application/zip', 'icon'=>'zip.gif')
     );
+}
+
+/** 
+ * Obtains information about a filetype based on its extension. Will
+ * use a default if no information is present about that particular
+ * extension.
+ * @param string $element Desired information (usually 'icon' 
+ *   for icon filename or 'type' for MIME type)
+ * @param string $filename Filename we're looking up  
+ * @return string Requested piece of information from array
+ */
+function mimeinfo($element, $filename) {
+    static $mimeinfo;
+    $mimeinfo=get_mimetypes_array();
 
     if (eregi('\.([a-z0-9]+)$', $filename, $match)) {
         if (isset($mimeinfo[strtolower($match[1])][$element])) {
@@ -140,6 +160,27 @@ function mimeinfo($element, $filename) {
     }
 }
 
+/** 
+ * Obtains information about a filetype based on the MIME type rather than
+ * the other way around.
+ * @param string $element Desired information (usually 'icon')
+ * @param string $mimetype MIME type we're looking up  
+ * @return string Requested piece of information from array
+ */
+function mimeinfo_from_type($element, $mimetype) {
+    static $mimeinfo;
+    $mimeinfo=get_mimetypes_array();
+    
+    foreach($mimeinfo as $values) {
+        if($values['type']==$mimetype) {
+            if(isset($values[$element])) {
+                return $values[$element];
+            }
+            break;
+        }
+    }
+    return $mimeinfo['xxx'][$element]; // Default
+}
 
 /** 
  * @PARAM $filter int 0=no filtering, 1=all files, 2=html files only
