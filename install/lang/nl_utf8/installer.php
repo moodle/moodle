@@ -27,6 +27,13 @@ $string['configurationcompletehead'] = 'Configuratie klaar';
 $string['configurationcompletesub'] = 'Moodle probeerde je configuratie te bewaren in een bestand in de root van je installatie.';
 $string['continue'] = 'Ga door';
 $string['database'] = 'Databank';
+$string['databasecreationsettingshead'] = 'Nu moet je de databankinstellingen configureren. In deze databank zullen de meeste gegevens van Moodle opgeslagen worden. De databank zal automatisch gemaakt worden door het installatiescript met volgende instellingen.';
+$string['databasecreationsettingssub'] = '<b>Type:</b> \"mysql\" gekozen door het installatiescript<br />
+<b>Host:</b> \"localhost\" gekozen door het installatiescript<br />
+<b>Naam:</b> database naam, bv moodle<br />
+<b>Gebruiker:</b> \"root\" gekozen door het installatiescript<br />
+<b>Wachtwoord:</b> het wachtwoord van jouw databank<br />
+<b>Tabelvoorvoegsel:</b> een voorvoegsel dat je wil gebruiken voor alle tabelnamen.';
 $string['databasesettingshead'] = 'Nu moet je de databank waarin Moodle geïnstalleerd zal worden, configureren. Deze databank moet al aangemaakt zijn en je hebt een gebruikersnaam en wachtwoord ervan nodig om Moodle toegang te geven.';
 $string['databasesettingssub'] = '<b>Type:</b> mysql of postgres7<br />
 <b>Host:</b> vb localhost of db.isp.com<br />
@@ -122,6 +129,7 @@ $string['welcomep40'] = 'Dit pakket bevat ook <strong>Moodle $a->moodlerelease (
 $string['welcomep50'] = 'Het gebruik van alle programma\'s in dit pakket wordt geregeld door hun respectievelijke licenties. Het complete <strong>$a->installername</strong> pakket is
 <a href=\"http://www.opensource.org/docs/definition_plain.html\">open source</a> en wordt verdeeld onder de <a href=\"http://www.gnu.org/copyleft/gpl.html\">GPL</a> licentie.';
 $string['welcomep60'] = 'De volgende pagina\'s leiden je door een aantal makkelijk te volgen stappen om <strong>Moodle</strong> te installeren op je computer. Je kunt de standaardinstellingen overnemen of, optionneel, ze aanpassen aan je noden.';
+$string['welcomep70'] = 'Klik op de \"volgende\"-knop om verder te gaan met de installatie van <strong>Moodle</strong>';
 $string['wwwroot'] = 'Web adres';
 $string['wwwrooterror'] = 'Het webadres lijkt niet geldig te zijn - deze Moodle-installatie is blijkbaar niet op die plaats.';
 ?>

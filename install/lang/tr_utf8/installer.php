@@ -27,6 +27,14 @@ $string['configurationcompletehead'] = 'Yapılandırma tamamlandı';
 $string['configurationcompletesub'] = 'Ana moodle dizine yapılandırma dosyasının kaydedilmesi için girişimde bulunuldu.';
 $string['continue'] = 'Devam';
 $string['database'] = 'Veritabanı';
+$string['databasecreationsettingshead'] = 'Şimdi, Moodle verilerinin saklanacağı veritabanını
+oluşturmanız gerekiyor. Bu veritabanı kurulum programı tarafından aşağıdaki ayarlara göre otomatik olarak oluşturulacak.';
+$string['databasecreationsettingssub'] = '<b>Tipi:</b> kurulum tarafından mysql olarak sabitlendi<br />
+<b>Sunucu:</b> kurulum tarafından localhost olarak sabitlendi<br />
+<b>Adı:</b> veritabanı adı, ör: moodle<br />
+<b>Kullanıcı:</b> kurulum tarafından root olarak sabitlendi<br />
+<b>Şifre:</b> kullanıcı şifresi<br />
+<b>Tablo öneki:</b> tüm tablo isimleri için isteğe bağlı önek';
 $string['databasesettingshead'] = 'Şimdi, Moodle verilerinin saklanacağı veritabanını
 oluşturmanız gerekiyor. Bu veritabanı önceden oluşturulmalı
 ve bu veritabanına erişmek için kullanıcı adı - şifre ayarlanmalı.';
@@ -141,6 +149,7 @@ $string['welcomep10'] = '$a->installername ($a->installerversion)';
 $string['welcomep20'] = 'Bilgisayarınıza <strong>$a->packname $a->packversion</strong> paketini başarıyla kurdunuz. Tebrikler!';
 $string['welcomep40'] = 'Bu paket <strong>Moodle $a->moodlerelease ($a->moodleversion)</strong> sürümünü de içerir.';
 $string['welcomep60'] = 'Aşağıdaki sayfalar <strong>Moodle</strong>ın kurulumu ve yapılandırılması için size basitçe yol gösterecektir. Varsayılan ayarları kabul edebilir veya ihtiyaçlarınıza göre bunları değiştirebilirsiniz.';
+$string['welcomep70'] = '<strong>Moodle</strong> kurulumu için aşağıdaki \"İleri\" tuşuna basın.';
 $string['wwwroot'] = 'Web adresi';
 $string['wwwrooterror'] = 'Web adresi doğru ayarlanmış görünmüyor. Moodle kurulumu belirtilen yerde görünmüyor.';
 ?>

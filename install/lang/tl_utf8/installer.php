@@ -28,6 +28,13 @@ $string['configurationcompletehead'] = 'Nakumpleto na ang pagsasaayos';
 $string['configurationcompletesub'] = 'Tinangka ng Moodle na isave ang kaayusan mo sa isang file sa root ng instalasyon mo ng Moodle.';
 $string['continue'] = 'Ituloy';
 $string['database'] = 'Database';
+$string['databasecreationsettingshead'] = 'Ngayon ay kailangan mo namang isaayos ang mga kaayusan ng database kung saan nalalagak ang karamihan sa datos ng Moodle.  Ang database na ito ay awtomatikong lilikhain ng pang-instol, at itatakda nito ang sumusunod na kaayusan.';
+$string['databasecreationsettingssub'] = '<b>Uri:</b> ipinirmi ng pang-instol sa \"mysql\"<br />
+<b>Host:</b> ipinirmi ng pang-instol sa \"localhost\"<br />
+<b>Pangalan:</b> pangalan ng database, hal. moodle<br />
+<b>User:</b> ipinirmi ng pang-instol sa \"root\"<br />
+<b>Password:</b> ang password ng database mo<br />
+<b>Unlapi ng Teybol:</b> opsiyonal na unlapi na gagamitin sa lahat ng pangalan ng teybol';
 $string['databasesettingshead'] = 'Ngayon naman ay kailangan mong isaayos ang database kung saan iimbakin
     ang karamihan sa datos ng Moodle.  Dapat ay nalikha na ang database na ito
     at may username at password na upang mapasok ito.';
@@ -141,6 +148,7 @@ $string['welcomep30'] = 'Ang lathala ng <strong>$a->installername</strong> na it
 $string['welcomep40'] = 'Nilalaman din ng paketeng ito ang  <strong>Moodle $a->moodlerelease ($a->moodleversion)</strong>.';
 $string['welcomep50'] = 'Ang paggamit ng lahat ng aplikasyon sa paketeng ito ay alinsunod sa kani-kaniyang lisensiya.  Ang kumpletong pakete na <strong>$a->installername</strong> ay  <a href=\"http://www.opensource.org/docs/definition_plain.html\">open source</a> at ipinamamahagi alinsunod sa lisensiyang <a href=\"http://www.gnu.org/copyleft/gpl.html\">GPL</a>';
 $string['welcomep60'] = 'Dadalhin kayo ng mga sumusunod na pahina sa mga madaling hakbang upang maisaayos at mapatakbo ang <strong>Moodle</strong> sa kompyuter ninyo.  Kung gusto ninyo ay panatilihin ang default o kaya ay baguhin ito ayon sa inyong pangangailangan.';
+$string['welcomep70'] = 'Iklik ang \"Susunod\" na buton sa ibaba upang maituloy ang pasasaayos ng <strong>Moodle</strong>.';
 $string['wwwroot'] = 'Web address';
 $string['wwwrooterror'] = 'Mukhang hindi tanggap ang web address - mukhang wala roon ang instalasyong ito ng Moodle.';
 ?>

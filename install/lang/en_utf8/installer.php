@@ -19,6 +19,13 @@ $string['admindirsettingsub'] = '    A very few webhosts use /admin as a special
     new name here.  For example: <br /> <br /><b>moodleadmin</b><br /> <br />
     This will fix admin links in Moodle.';
 $string['bypassed'] = 'Bypassed';
+$string['cannotcreatetempdir'] = 'Cannot create temp dir.';
+$string['cannotdownloadcomponents'] = 'Cannot download components.';
+$string['cannotdownloadzipfile'] = 'Cannot download ZIP file.';
+$string['cannotfindcomponent'] = 'Cannot find component.';
+$string['cannotsavemd5file'] = 'Cannot save md5 file.';
+$string['cannotsavezipfile'] = 'Cannot save ZIP file.';
+$string['cannotunzipfile'] = 'Cannot unzip file.';
 $string['caution'] = 'Caution';
 $string['check'] = 'Check';
 $string['chooselanguagehead'] = 'Choose a language';
@@ -26,6 +33,7 @@ $string['chooselanguagesub'] = 'Please choose a language for the installation ON
 $string['closewindow'] = 'Close this window';
 $string['compatibilitysettingshead'] = 'Checking your PHP settings ...';
 $string['compatibilitysettingssub'] = 'Your server should pass all these tests to make Moodle run properly';
+$string['componentisuptodate'] = 'Component is up to date.';
 $string['configfilenotwritten'] = 'The installer script was not able to automatically create a config.php file containing your chosen settings, probably because the Moodle directory is not writeable. You can manually copy the following code into a file named config.php within the root directory of Moodle.';
 $string['configfilewritten'] = 'config.php has been successfully created';
 $string['configurationcompletehead'] = 'Configuration completed';
@@ -79,6 +87,7 @@ directly via the web.';
 $string['dirroot'] = 'Moodle Directory';
 $string['dirrooterror'] = 'The \'Moodle Directory\' setting seems to be incorrect - we can\'t find a Moodle installation there.  The value below has been reset.';
 $string['download'] = 'Download';
+$string['downloadedfilecheckfailed'] = 'Downloaded file check failed.';
 $string['downloadlanguagehead'] = 'Download language pack';
 $string['downloadlanguagesub'] = 'Now the installer is trying to download the complete lang pack that you have selected in order to continue the installation using it.';
 $string['environmenterrortodo'] = 'You must solve all the environmental problems (errors) found above before proceeding to install this Moodle version!';
@@ -101,6 +110,7 @@ $string['help'] = 'Help';
 $string['iconvrecommended'] = 'Installing the optional ICONV library is highly recommended in order to improve site performance, particularly if your site is supporting non-latin languages.';
 $string['info'] = 'Information';
 $string['installation'] = 'Installation';
+$string['invalidmd5'] = 'Invalid md5';
 $string['language'] = 'Language';
 $string['magicquotesruntime'] = 'Magic Quotes Run Time';
 $string['magicquotesruntimeerror'] = 'This should be off';
@@ -125,6 +135,7 @@ $string['memorylimithelp'] = '<p>The PHP memory limit for your server is current
     <p>However, on some servers this will prevent <b>all</b> PHP pages from working 
     (you will see errors when you look at pages) so you\'ll have to remove the .htaccess file.</p></li>
 </ol>';
+$string['missingrequiredfield'] = 'Some required field is missing';
 $string['mysql416bypassed'] = 'However, if your site is using iso-8859-1 (latin) languages ONLY, you may continue using your currently installed MySQL 4.1.12 (or higher).';
 $string['mysql416required'] = 'MySQL 4.1.16 is the minimum version required for Moodle 1.6 in order to guarantee that all data can be converted to UTF-8 in the future.';
 $string['mysqlextensionisnotpresentinphp'] = 'PHP has not been properly configured with the MySQL extension so that it can communicate with MySQL.  Please check your php.ini file or recompile PHP.';
@@ -139,6 +150,7 @@ $string['phpversionhelp'] = '<p>Moodle requires a PHP version of at least 4.1.0.
 <p>You are currently running version $a</p>
 <p>You must upgrade PHP or move to a host with a newer version of PHP!</p>';
 $string['previous'] = 'Previous';
+$string['remotedownloadnotallowed'] = 'Download of components to your server isn\'t allowed (allow_url_fopen is disabled).<br /><br />You must download the <a href=\"$a->url\">$a->url</a> file manually, copy it to \"$a->dest\" in your server and unzip it there.';
 $string['report'] = 'Report';
 $string['safemode'] = 'Safe Mode';
 $string['safemodeerror'] = 'Moodle may have trouble with safe mode on';
@@ -163,6 +175,9 @@ $string['welcomep60'] = 'The following pages will lead you through some easy to 
     configure and set up <strong>Moodle</strong> on your computer. You may accept the default 
     settings or, optionally, amend them to suit your own needs.';
 $string['welcomep70'] = 'Click the \"Next\" button below to continue with the set up of <strong>Moodle</strong>.';
+$string['wrongdestpath'] = 'Wrong destination path.';
+$string['wrongsourcebase'] = 'Wrong source URL base.';
+$string['wrongzipfilename'] = 'Wrong ZIP filename.';
 $string['wwwroot'] = 'Web address';
 $string['wwwrooterror'] = 'The web address does not appear to be valid - this Moodle installation doesn\'t appear to be there.';
 ?>

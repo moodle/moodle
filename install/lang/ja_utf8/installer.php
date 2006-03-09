@@ -28,6 +28,13 @@ $string['configurationcompletehead'] = '設定が完了しました。';
 $string['configurationcompletesub'] = 'Moodleは、Moodleインストレーションのルートへの設定内容保存を試みました。';
 $string['continue'] = '続ける';
 $string['database'] = 'データベース';
+$string['databasecreationsettingshead'] = 'ほとんどのMoodleデータが保存されるデータベース設定を行ってください。このデータベースはインストーラーにより、下記の設定が指定された形で自動的に作成されます。';
+$string['databasecreationsettingssub'] = '<b>タイプ:</b> インストーラーにより「mysql」に修正されました。<br />
+<b>ホスト:</b> インストーラーにより「localhost」に修正されました。<br />
+<b>データベース名:</b> データベース名、例 moodle<br />
+<b>ユーザ名:</b> インストーラーにより「root」に修正されました。<br />
+<b>パスワード:</b> あなたのデータベースパスワードです。<br />
+<b>テーブル接頭辞:</b> すべてのテーブル名に使用される任意の接頭辞です。';
 $string['databasesettingshead'] = 'ほとんどのMoodleデータが保存されるデータベースの設定を行います。このデータベースは、アクセスするためのユーザ名およびパスワードと共にすでに作成されている必要があります。';
 $string['databasesettingssub'] = '<b>タイプ:</b> mysql または postgres7<br />
 <b>ホスト:</b> 例 localhost または db.isp.com<br />
@@ -123,6 +130,7 @@ $string['welcomep30'] = 'このリリース <strong>$a->installername</strong> �
 $string['welcomep40'] = 'パッケージには <strong>Moodle $a->moodlerelease ($a->moodleversion)</strong> も含まれています。';
 $string['welcomep50'] = 'このパッケージ内のすべてのアプリケーションの使用は個々のライセンスによって規定されています。全体の <strong>$a->installername</strong> パッケージは <a href=\"http://www.opensource.org/docs/definition_plain.html\">オープンソース</a> であり、<a href=\"http://www.gnu.org/copyleft/gpl.html\">GPL</a>ライセンスの下で配布されています。';
 $string['welcomep60'] = '次からのページは、あなたのコンピュータに <strong>Moodle</strong> を簡単に設定およびセットアップする手順にしたがって進みます。デフォルトの設定を使用することも、必要に応じて任意で設定を変更することもできます。';
+$string['welcomep70'] = '<strong>Moodle</strong>のセットアップを続けるには「次へ」ボタンをクリックしてください。';
 $string['wwwroot'] = 'ウェブアドレス';
 $string['wwwrooterror'] = 'ウェブアドレスが間違っています - インストール済みMoodleはここに表示されません。';
 ?>
