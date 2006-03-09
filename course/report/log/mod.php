@@ -7,7 +7,7 @@
     require_once($CFG->dirroot.'/course/lib.php');
     require_once($CFG->dirroot.'/course/report/log/lib.php');
 
-    print_simple_box_start('center', '90%');
+
     print_heading(get_string('chooselogs') .':');
 
     print_log_selector_form($course); 
@@ -18,6 +18,5 @@
     echo '<center><h3>';
     link_to_popup_window('/course/report/log/live.php?id='. $course->id,'livelog', get_string('livelogs'), 500, 800);
     echo '</h3></center>';
-    print_simple_box_end();
 
 ?>
