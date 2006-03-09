@@ -206,6 +206,11 @@ global $HTTPSPAGEREQUIRED;
         $CFG->enrol = 'manual';
     }
 
+/// Set default enabled enrolment plugins
+    if (!isset($CFG->enrol_plugins_enabled)) {
+        $CFG->enrol_plugins_enabled = 'manual';
+    }
+
 /// File permissions on created directories in the $CFG->dataroot
 
     if (empty($CFG->directorypermissions)) {
