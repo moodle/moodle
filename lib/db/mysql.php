@@ -1664,7 +1664,7 @@ function main_upgrade($oldversion=0) {
         require_once("$CFG->dirroot/enrol/enrol.class.php");
         $defaultenrol = enrolment_factory::factory($CFG->enrol);
         if (!method_exists($defaultenrol, 'print_entry')) { // switch enrollable to off for all courses in this case
-            modify_database('', 'UPDATE prefix_couse SET enrollable = 0');
+            modify_database('', 'UPDATE prefix_course SET enrollable = 0');
         }
     }
 
