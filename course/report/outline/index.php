@@ -17,11 +17,11 @@
         error("Course id is incorrect.");
     }
 
-    if (! (isteacher($course->id) or ($course->showreports and $USER->id == $user->id))) {
+    if (!isteacher($course->id)) {
         error("You are not allowed to look at this page");
     }
 
-    add_to_log($course->id, "course", "course report", "course.php?id=$course->id",$course->id); 
+    add_to_log($course->id, "course", "report outline", "course.php?id=$course->id",$course->id); 
 
     $stractivityreport = get_string("activityreport");
     $strparticipants   = get_string("participants");
@@ -29,18 +29,13 @@
     $strcomplete       = get_string("complete");
     $stralllogs        = get_string("alllogs");
     $strtodaylogs      = get_string("todaylogs");
-    $strreports      = get_string("reports");
+    $strreports        = get_string("reports");
 
-    if ($course->category) {
-        print_header("$course->shortname: $stractivityreport", "$course->fullname",
-                 "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> ->
+    print_header("$course->shortname: $stractivityreport", "$course->fullname",
+                 "<a href=\"../../view.php?id=$course->id\">$course->shortname</a> ->
                   <a href=\"../../report.php?id=$course->id\">$strreports</a> ->
                   $stractivityreport");
-    } else {
-        print_header("$course->shortname: $stractivityreport ($mode)", "$course->fullname",
-                 "<a href=\"../../user/view.php?id=$user->id&amp;course=$course->id\">".fullname($user)."</a> -> 
-                  $stractivityreport -> $strmode");
-    }
+
     print_heading("$course->fullname");
 
     echo "<table cellpadding=\"10\" align=\"center\"><tr>";
