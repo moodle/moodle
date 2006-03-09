@@ -182,6 +182,26 @@ function mimeinfo_from_type($element, $mimetype) {
     return $mimeinfo['xxx'][$element]; // Default
 }
 
+/**
+ * Obtains descriptions for file types (e.g. 'Microsoft Word document') from the 
+ * mimetypes.php language file. 
+ * @param string $mimetype MIME type (can be obtained using the mimeinfo function)
+ * @param bool $capitalise If true, capitalises first character of result
+ * @return string Text description 
+ */
+function get_mimetype_description($mimetype,$capitalise=false) {
+    $result=get_string($mimetype,'mimetypes');
+    // Surrounded by square brackets indicates that there isn't a string for that
+    // (maybe there is a better way to find this out?)
+    if(strpos($result,'[')===0) {
+        $result=get_string('document/unknown','mimetypes');
+    } 
+    if($capitalise) {
+        $result=ucfirst($result);
+    }
+    return $result;
+}
+
 /** 
  * @PARAM $filter int 0=no filtering, 1=all files, 2=html files only
  */
