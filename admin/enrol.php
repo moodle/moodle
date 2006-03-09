@@ -31,10 +31,11 @@
         if (empty($frm->default)) {
             $frm->default = '';
         }
-        if ($frm->default && !in_array($frm->default, $frm->enable)) {
+        if ($frm->default && $frm->default != 'internal' && !in_array($frm->default, $frm->enable)) {
             $frm->enable[] = $frm->default;
         }
         asort($frm->enable);
+        $frm->enable = array_merge(array('internal'), $frm->enable); // make sure internal plugin is called first
         set_config('enrol_plugins_enabled', implode(',', $frm->enable));
         set_config('enrol', $frm->default);
         redirect("enrol.php?sesskey=$USER->sesskey", get_string("changessaved"), 1);
@@ -76,7 +77,7 @@
             $enable .= ' checked="checked"';
         }
         if ($module == 'internal') {
-            $enable .= ' disabled="disabled" /><input type="hidden" name="enable[]" value="'.$module.'"';
+            $enable .= ' disabled="disabled"';
         }
         $enable .= ' />';
         if (method_exists($plugin, 'print_entry')) {
