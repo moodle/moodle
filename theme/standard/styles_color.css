@@ -455,6 +455,19 @@ body#course-user .section {
   border-color:#AAAAAA;
 }
 
+#course-report .plugin,
+#course-import .plugin {
+  margin-bottom: 20px;
+  margin-left:10%;
+  margin-right:10%;
+
+  border-bottom: 1px solid #cecece;
+  border-top: 1px solid #cecece;
+  border-right: 1px solid #cecece;
+  border-left: 1px solid #cecece;
+
+  background-color: #fdfdfd;
+}
 
 
 /***
