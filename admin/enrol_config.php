@@ -49,7 +49,7 @@
     print_header("$site->shortname: $str->enrolmentplugins", "$site->fullname",
                   "<a href=\"index.php\">$str->administration</a> -> 
                    <a href=\"users.php\">$str->users</a> -> 
-                   <a href=\"enrol.php\">$str->enrolmentplugins</a> -> 
+                   <a href=\"enrol.php?sesskey=$USER->sesskey\">$str->enrolmentplugins</a> -> 
                    $str->configuration");
 
     echo "<form target=\"{$CFG->framename}\" name=\"enrolmenu\" method=\"post\" action=\"enrol_config.php\">";
