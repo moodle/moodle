@@ -202,16 +202,10 @@ class component_installer {
 
         $this->requisitesok = false;
 
-    /// Check for admin (this will be out in the future)
-        if (!isadmin()) {
-            $this->errorstring='onlyadmins';
-            return false;
-        } else {
         /// Check for fopen remote enabled
-            if (!ini_get('allow_url_fopen')) {
-                $this->errorstring='remotedownloadnotallowed';
-                return false;
-            }
+        if (!ini_get('allow_url_fopen')) {
+            $this->errorstring='remotedownloadnotallowed';
+            return false;
         }
     /// Check that everything we need is present
         if (empty($this->sourcebase) || empty($this->zippath) || empty($this->zipfilename)) {
