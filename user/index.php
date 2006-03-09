@@ -97,6 +97,23 @@
                      get_string('participants'), "", "", true, "&nbsp;", navmenu($course));
     }
 
+
+    //setting up tags
+    if ($id == SITEID) {
+        $filtertype = 'site';
+    } else if ($id && !$currentgroup) {
+        $filtertype = 'course';
+        $filterselect = $id;
+    } else {
+        $filtertype = 'group';
+        $filterselect = $currentgroup;
+    }
+    $currenttab = 'participants';
+    $user = $USER;
+
+    require_once($CFG->dirroot .'/user/tabs.php');
+
+
 /// Get the hidden field list
     if ($isteacher || isadmin()) {
         $hiddenfields = array();  // teachers and admins are allowed to see everything
@@ -108,6 +125,18 @@
 
     echo '<table class="controls" cellspacing="0"><tr>';
 
+    //print my course menus
+    echo '<td class="left">';
+    print_string('mycourses');
+    echo ': ';
+    $mycourses = get_my_courses($USER->id);
+    foreach ($mycourses as $mycourse) {
+        $my_course[$mycourse->id] = $mycourse->shortname;
+    }
+    //choose_from_menu($my_course, 'id', $course->id, '', 'courseform.submit()');
+    popup_form($CFG->wwwroot.'/user/index.php?id=',$my_course,'courseform',$course->id);
+    echo '</td></tr>';
+    
     if ($groupmode == VISIBLEGROUPS or ($groupmode and isteacheredit($course->id))) {
         if ($groups = get_records_menu("groups", "courseid", $course->id, "name ASC", "id,name")) {
             echo '<td class="left">';
