@@ -1403,22 +1403,23 @@ function main_upgrade($oldversion=0) {
 
     if ($oldversion < 2006030900) {
         table_column('course','','enrol','varchar','20','','');
-        set_config('enrol_plugins_enabled', ($CFG->enrol == 'internal'?$CFG->enrol:'internal,' . $CFG->enrol));
+
+        if ($CFG->enrol == 'internal' || $CFG->enrol == 'manual') {
+            set_config('enrol_plugins_enabled', 'manual');
+            set_config('enrol', 'manual');
+        } else {
+            set_config('enrol_plugins_enabled', 'manual,'.$CFG->enrol);
+        }
+
         require_once("$CFG->dirroot/enrol/enrol.class.php");
         $defaultenrol = enrolment_factory::factory($CFG->enrol);
         if (!method_exists($defaultenrol, 'print_entry')) { // switch enrollable to off for all courses in this case
             modify_database('', 'UPDATE prefix_course SET enrollable = 0');
         }
-    }
-    
-    if ($oldversion < 2005103100) { // Repair enrol field in user_students/user_teacher table
+
         execute_sql("UPDATE {$CFG->prefix}user_students SET enrol='manual' WHERE enrol='' OR enrol='internal'");
         execute_sql("UPDATE {$CFG->prefix}user_teachers SET enrol='manual' WHERE enrol=''");
-    }
 
-    if ($oldversion < 2005103101) { // rename internal to manual
-        set_config('enrol_plugins_enabled', str_replace('internal', 'manual', $CFG->enrol_plugins_enabled));
-        set_config('enrol', str_replace('internal', 'manual', $CFG->enrol));
     }
 
     return $result;
