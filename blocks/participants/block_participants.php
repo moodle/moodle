@@ -35,15 +35,6 @@ class block_participants extends block_list {
             $this->content->items[] = '<a title="'.get_string('listofallpeople').'" href="'.
                                       $CFG->wwwroot.'/user/index.php?id='.$this->instance->pageid.'">'.get_string('participants').'</a>';
             $this->content->icons[] = '<img src="'.$CFG->pixpath.'/i/users.gif" height="16" width="16" alt="" />';
-
-            if (isteacher($this->instance->pageid)) {
-                $strparticipation = get_string('participationreport');
-                $this->content->items[] = '<a title="'.$strparticipation.'" href="'.
-                    $CFG->wwwroot.'/course/participation.php?id='.$this->instance->pageid.'">'.$strparticipation.'</a>';
-                $this->content->icons[] = '<img src="'.$CFG->pixpath.'/i/users.gif" height="16" width="16" alt="" />';
-                
-            }
-
         }
 
 
