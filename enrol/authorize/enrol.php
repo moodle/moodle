@@ -36,10 +36,10 @@ class enrolment_plugin_authorize
     {
         global $CFG, $USER, $form;
 
-        if ($this->zero_cost($course) || isguest()) { // No money for guests ;)
-            $internal = enrolment_factory::factory('internal');
-            $internal->print_entry($course);
-            return;
+        if ($this->zero_cost($course) || isguest()) {
+            $manual = enrolment_factory::factory('manual');
+            $manual->print_entry($course);
+            return; // No money for guests ;)
         }
 
         $this->prevent_double_paid($course);
@@ -64,7 +64,7 @@ class enrolment_plugin_authorize
         if ($course->password) {
             print_simple_box(get_string('choosemethod', 'enrol_authorize'), 'center');
             $password = '';
-            include $CFG->dirroot.'/enrol/internal/enrol.html';
+            include $CFG->dirroot.'/enrol/manual/enrol.html';
         }
 
         print_simple_box_start('center');
@@ -83,9 +83,9 @@ class enrolment_plugin_authorize
      * @access public
      */
     function check_entry($form, $course) {
-        if ($this->zero_cost($course) || isguest() || (!empty($form->password))) {
-            $internal = enrolment_factory::factory('internal');
-            $internal->print_entry($course);
+        if ((!empty($form->password)) || isguest() || $this->zero_cost($course)) {
+            $manual = enrolment_factory::factory('manual');
+            $manual->check_entry($form, $course);
         } elseif ((!empty($form->ccsubmit)) && $this->validate_enrol_form($form)) {
             $this->cc_submit($form, $course);
         }
@@ -373,9 +373,8 @@ class enrolment_plugin_authorize
      */
     function get_access_icons($course) {
 
-
-        $internal = enrolment_factory::factory('internal');
-        $str = $internal->get_access_icons($course);
+        $manual = enrolment_factory::factory('manual');
+        $str = $manual->get_access_icons($course);
         $curcost = $this->get_course_cost($course);
 
         if (abs($curcost['cost']) > 0.00) {
@@ -574,8 +573,6 @@ class enrolment_plugin_authorize
     function cron()
     {
         global $CFG;
-        $internal = enrolment_factory::factory('internal');
-        $internal->cron();
         require_once $CFG->dirroot.'/enrol/authorize/action.php';
 
         $oneday = 86400;
