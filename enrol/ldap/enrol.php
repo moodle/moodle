@@ -5,11 +5,12 @@ require_once("$CFG->dirroot/course/lib.php");
 require_once("$CFG->dirroot/lib/blocklib.php");
 require_once("$CFG->dirroot/lib/pagelib.php");
 
-$CFG->enrol_localcoursefield = 'idnumber';
 
 class enrolment_plugin_ldap {
 
     var $log;    
+    
+    var $enrol_localcoursefield = 'idnumber';
 
 /// Overide the base get_student_courses() function
 function get_student_courses(&$user) {
@@ -58,7 +59,7 @@ function get_user_courses(&$user, $type) {
         
         // create the course  ir required
         $course_obj = get_record( 'course',
-                                  $CFG->enrol_localcoursefield,
+                                  $this->enrol_localcoursefield,
                                   $course_ext_id );
 
         if (empty($course_obj)){ // course doesn't exist
@@ -66,7 +67,7 @@ function get_user_courses(&$user, $type) {
                 error_log("CREATE User $user->username enrolled to a nonexistant course $course_ext_id \n");
                 $newcourseid = $this->create_course($enrol);
                 $course_obj = get_record( 'course',
-                                  $CFG->enrol_localcoursefield,
+                                  $this->enrol_localcoursefield,
                                    $newcourseid);
             } else {
                 error_log("User $user->username enrolled to a nonexistant course $course_ext_id \n");
@@ -216,7 +217,7 @@ function sync_enrolments($type, $enrol) {
                 // does the course exist in moodle already? 
                 $course_obj = false;
                 $course_obj = get_record( 'course',
-                                          $CFG->enrol_localcoursefield,
+                                          $this->enrol_localcoursefield,
                                           $idnumber );
                 if (!is_object($course_obj)) {
                     // ok, now then let's create it!
