@@ -115,6 +115,13 @@ $string['status'] = 'Status';
 $string['thischarset'] = 'UTF-8';
 $string['thislanguage'] = 'Nederlands';
 $string['user'] = 'Gebruiker';
+$string['welcomep10'] = '$a->installername ($a->installerversion)';
+$string['welcomep20'] = 'Je krijgt deze pagina te zien omdat je met succes het <strong>$a->packname $a->packversion</strong> packet op je computer gezet en gestart hebt. Proficiat! 	';
+$string['welcomep30'] = 'Deze uitgave van <strong>$a->installername</strong> bevat de software die nodig is om een omgeving te creëren waarin <strong>Moodle</strong> zal werken, namelijk:';
+$string['welcomep40'] = 'Dit pakket bevat ook <strong>Moodle $a->moodlerelease ($a->moodleversion)</strong>.';
+$string['welcomep50'] = 'Het gebruik van alle programma\'s in dit pakket wordt geregeld door hun respectievelijke licenties. Het complete <strong>$a->installername</strong> pakket is
+<a href=\"http://www.opensource.org/docs/definition_plain.html\">open source</a> en wordt verdeeld onder de <a href=\"http://www.gnu.org/copyleft/gpl.html\">GPL</a> licentie.';
+$string['welcomep60'] = 'De volgende pagina\'s leiden je door een aantal makkelijk te volgen stappen om <strong>Moodle</strong> te installeren op je computer. Je kunt de standaardinstellingen overnemen of, optionneel, ze aanpassen aan je noden.';
 $string['wwwroot'] = 'Web adres';
 $string['wwwrooterror'] = 'Het webadres lijkt niet geldig te zijn - deze Moodle-installatie is blijkbaar niet op die plaats.';
 ?>

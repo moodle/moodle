@@ -138,6 +138,19 @@ $string['status'] = 'Status';
 $string['thischarset'] = 'UTF-8';
 $string['thislanguage'] = 'English';
 $string['user'] = 'User';
+$string['welcomep10'] = '$a->installername ($a->installerversion)';
+$string['welcomep20'] = 'You are seeing this page because you have successfully installed and 
+    launched the <strong>$a->packname $a->packversion</strong> package in your computer. Congratulations!';
+$string['welcomep30'] = 'This release of the <strong>$a->installername</strong> includes the applications 
+    to create an environment in which <strong>Moodle</strong> will operate, namely:';
+$string['welcomep40'] = 'The package also includes <strong>Moodle $a->moodlerelease ($a->moodleversion)</strong>.';
+$string['welcomep50'] = 'The use of all the applications in this package is governed by their respective 
+    licences. The complete <strong>$a->installername</strong> package is 
+    <a href=\"http://www.opensource.org/docs/definition_plain.html\">open source</a> and is distributed 
+    under the <a href=\"http://www.gnu.org/copyleft/gpl.html\">GPL</a> license.';
+$string['welcomep60'] = 'The following pages will lead you through some easy to follow steps to 
+    configure and set up <strong>Moodle</strong> on your computer. You may accept the default 
+    settings or, optionally, amend them to suit your own needs.';
 $string['wwwroot'] = 'Web address';
 $string['wwwrooterror'] = 'The web address does not appear to be valid - this Moodle installation doesn\'t appear to be there.';
 ?>

@@ -137,6 +137,10 @@ $string['status'] = 'Durum';
 $string['thischarset'] = 'UTF-8';
 $string['thislanguage'] = 'Türkçe';
 $string['user'] = 'Kullanıcı';
+$string['welcomep10'] = '$a->installername ($a->installerversion)';
+$string['welcomep20'] = 'Bilgisayarınıza <strong>$a->packname $a->packversion</strong> paketini başarıyla kurdunuz. Tebrikler!';
+$string['welcomep40'] = 'Bu paket <strong>Moodle $a->moodlerelease ($a->moodleversion)</strong> sürümünü de içerir.';
+$string['welcomep60'] = 'Aşağıdaki sayfalar <strong>Moodle</strong>ın kurulumu ve yapılandırılması için size basitçe yol gösterecektir. Varsayılan ayarları kabul edebilir veya ihtiyaçlarınıza göre bunları değiştirebilirsiniz.';
 $string['wwwroot'] = 'Web adresi';
 $string['wwwrooterror'] = 'Web adresi doğru ayarlanmış görünmüyor. Moodle kurulumu belirtilen yerde görünmüyor.';
 ?>

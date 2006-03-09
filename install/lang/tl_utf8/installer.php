@@ -135,6 +135,12 @@ $string['status'] = 'Katayuan';
 $string['thischarset'] = 'UTF-8';
 $string['thislanguage'] = 'Tagalog';
 $string['user'] = 'User';
+$string['welcomep10'] = '$a->installername ($a->installerversion)';
+$string['welcomep20'] = 'Nakikita mo ang pahinang ito dahil matagumpay mong naiinstol at napagana ang paketeng <strong>$a->packname $a->packversion</strong> sa iyong kompyuter.  Maligayang bati!';
+$string['welcomep30'] = 'Ang lathala ng <strong>$a->installername</strong> na ito ay naglalaman ng mga aplikasyon na lilikha ng kapaligiran na tatakbuhan ng  <strong>Moodle</strong>, ito ay ang mga sumusunod:';
+$string['welcomep40'] = 'Nilalaman din ng paketeng ito ang  <strong>Moodle $a->moodlerelease ($a->moodleversion)</strong>.';
+$string['welcomep50'] = 'Ang paggamit ng lahat ng aplikasyon sa paketeng ito ay alinsunod sa kani-kaniyang lisensiya.  Ang kumpletong pakete na <strong>$a->installername</strong> ay  <a href=\"http://www.opensource.org/docs/definition_plain.html\">open source</a> at ipinamamahagi alinsunod sa lisensiyang <a href=\"http://www.gnu.org/copyleft/gpl.html\">GPL</a>';
+$string['welcomep60'] = 'Dadalhin kayo ng mga sumusunod na pahina sa mga madaling hakbang upang maisaayos at mapatakbo ang <strong>Moodle</strong> sa kompyuter ninyo.  Kung gusto ninyo ay panatilihin ang default o kaya ay baguhin ito ayon sa inyong pangangailangan.';
 $string['wwwroot'] = 'Web address';
 $string['wwwrooterror'] = 'Mukhang hindi tanggap ang web address - mukhang wala roon ang instalasyong ito ng Moodle.';
 ?>
