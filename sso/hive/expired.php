@@ -10,7 +10,7 @@
     //MW theres no easy way to log in seamlessly. We need the users unhashed password.
     // It's a security risk to carry that in $SESSION so we put up login form.
     print_header();
-    notify('Your Hive session has expired. Please reauthenticate using your usual Moodle login'); 
+    notify('Your session has expired. Please log in again.'); 
 ?>
       <form action="login.php" method="post" name="login" id="login">
         <table border="0" align="center">

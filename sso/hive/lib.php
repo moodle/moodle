@@ -41,13 +41,6 @@ function sso_user_login($username, $password) {
 /// We use POST to call Hive with a bit more security
     $snoopy->submit($submit_url,$submit_vars);
 
-/// If there's a bug, we may need to use GET instead
-/// foreach ($submit_vars as $name => $value) {
-///      $params[] = "$name=".urlencode($value);
-/// }
-/// $submit_url .= '?'.implode('&', $params);
-/// $snoopy->fetch($submit_url);
-
 /// Extract HIVE_SESSION from headers
 
     foreach ($snoopy->headers as $header) {
@@ -57,11 +50,29 @@ function sso_user_login($username, $password) {
                 $cookie = explode(';', $header[1]);
                 $cookie = $cookie[0];
                 $SESSION->HIVE_SESSION = $cookie;
-                $SESSION->HIVE_PASSWORD = $password;
                 return true;
             }
         }
     }
+
+/// Try again with the guest username and password
+
+    $submit_vars['HIVE_UNAME']  = $CFG->hiveusername;
+    $submit_vars['HIVE_UPASS']  = $CFG->hivepassword;
+    $submit_vars['HIVE_ENDUSER']= $CFG->hiveusername;
+    $snoopy->submit($submit_url,$submit_vars);
+    foreach ($snoopy->headers as $header) {
+        if (strpos($header, 'HIVE_SESSION=') !== false) {
+            $header = explode('HIVE_SESSION=', $header);
+            if (count($header) > 1) {
+                $cookie = explode(';', $header[1]);
+                $cookie = $cookie[0];
+                $SESSION->HIVE_SESSION = $cookie;
+                return true;
+            }
+        }
+    }
+
     return false;  // No cookie found
 }
 

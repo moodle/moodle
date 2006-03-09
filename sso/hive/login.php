@@ -14,7 +14,7 @@
     if (sso_user_login($frm->username, $frm->password)) {  
 
         /// reopen Hive
-        redirect($CFG->wwwroot.'/mod/resource/type/repository/hive/openhive.php');
+        redirect($CFG->wwwroot.'/mod/resource/type/repository/hive/openlitebrowse.php');
     } else {
         redirect($CFG->wwwroot.'/sso/hive/expired.php');
     }
