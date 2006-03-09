@@ -4641,6 +4641,9 @@ function get_string($identifier, $module='', $a=NULL) {
     if ($module != 'moodle') {
         if (strpos($module, 'block_') === 0) {  // It's a block lang file
             $locations[] =  $CFG->dirroot .'/blocks/'.substr($module, 6).'/lang/';
+        } else if (strpos($module, 'report_') === 0) {  // It's a report lang file
+            $locations[] =  $CFG->dirroot .'/admin/report/'.substr($module, 6).'/lang/';
+            $locations[] =  $CFG->dirroot .'/course/report/'.substr($module, 6).'/lang/';
         } else {                                // It's a normal activity
             $locations[] =  $CFG->dirroot .'/mod/'.$module.'/lang/';
         }
