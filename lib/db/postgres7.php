@@ -1403,7 +1403,7 @@ function main_upgrade($oldversion=0) {
 
     if ($oldversion < 2006030900) {
         table_column('course','','enrol','varchar','20','','');
-        set_config('enrol_plugins_enabled', $CFG->enrol);
+        set_config('enrol_plugins_enabled', ($CFG->enrol == 'internal'?$CFG->enrol:'internal,' . $CFG->enrol));
         require_once("$CFG->dirroot/enrol/enrol.class.php");
         $defaultenrol = enrolment_factory::factory($CFG->enrol);
         if (!method_exists($defaultenrol, 'print_entry')) { // switch enrollable to off for all courses in this case
