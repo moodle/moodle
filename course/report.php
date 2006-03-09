@@ -9,6 +9,10 @@
         error("That's an invalid course id");
     }
 
+    if (!isteacher($course->id)) {
+        error("You are not allowed to look at this page");
+    }
+
     $strreports = get_string('reports');
 
     print_header($course->fullname.': '.$strreports, $course->fullname.': '.$strreports, 
@@ -17,7 +21,7 @@
     $directories = get_list_of_plugins('course/report');
 
     foreach ($directories as $directory) {
-        echo '<div class="plugin">';
+        echo '<div class="plugin '.$directory.'">';
         include_once($CFG->dirroot.'/course/report/'.$directory.'/mod.php');  // Fragment for listing
         echo '</div>';
     }

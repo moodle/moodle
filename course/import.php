@@ -9,6 +9,10 @@
         error("That's an invalid course id");
     }
 
+    if (!isteacher($course->id)) {
+        error("You are not allowed to look at this page");
+    }
+
     $strimport = get_string('import');
 
     print_header($course->fullname.': '.$strimport, $course->fullname.': '.$strimport, 
