@@ -17,6 +17,7 @@
        'auth'                     => 'email',
        'auth_pop3mailbox'         => 'INBOX',
        'autologinguests'          =>  0,
+       'bloglevel'                =>  0,
        'cachetext'                =>  60,
        'changepassword'           =>  '',
        'country'                  => '',
