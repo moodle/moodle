@@ -37,7 +37,7 @@ function get_student_courses(&$user) {
 
                 foreach ($courselist as $coursefield) {
                     if ($course = get_record('course', $CFG->enrol_localcoursefield, $coursefield)) {
-                        $newstudent[$course->id] = true;             /// Add it to new list
+                        $newstudent[$course->id] = 'database';             /// Add it to new list
                         if (isset($user->student[$course->id])) {   /// We have it already
                             unset($user->student[$course->id]);       /// Remove from old list
                         } else {
@@ -51,11 +51,11 @@ function get_student_courses(&$user) {
                 foreach ($user->student as $courseid => $value) {
 
                     // unenrol only if it's a record pulled from external db
-                    if (get_record('user_students', 'userid', $user->id, 'course', $courseid, 'enrol', 'database')) {
+                    if ($value == 'database') {
                         unenrol_student($user->id, $courseid);       /// Unenrol the student
                         unset($user->student[$course->id]);           /// Remove from old list
                     } else {
-                        $newstudent[$courseid] = true;
+                        $newstudent[$courseid] = $value;
                     }
                 }
             }

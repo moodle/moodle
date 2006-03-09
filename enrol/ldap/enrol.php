@@ -73,7 +73,7 @@ function get_user_courses(&$user, $type) {
                 error_log("User $user->username enrolled to a nonexistant course $course_ext_id \n");
             }
         } else { // the course object exists before we call...
-            if ($course_obj->visible==0) {
+            if ($course_obj->visible==0 && $user->{$type}[$course_obj->id] == 'ldap') {
                 // non-visible courses don't show up in the enrolled 
                 // array, so we should skip them -- 
                 unset($user->{$type}[$course_obj->id]);
@@ -83,7 +83,7 @@ function get_user_courses(&$user, $type) {
         
         // deal with enrolment in the moodle db
         if (!empty($course_obj)) { // does course exist now?     
-            if(isset($user->{$type}[$course_obj->id])){
+            if(isset($user->{$type}[$course_obj->id]) && $user->{$type}[$course_obj->id] == 'ldap'){
                 unset($user->{$type}[$course_obj->id]); // remove from old list
             } else {
                 $CFG->debug=10;
@@ -104,11 +104,8 @@ function get_user_courses(&$user, $type) {
     // ok, if there's any thing still left in the $user->student or $user->teacher
     // array, those are old enrolments that we want to remove (or are they?)
     if(!empty($user->{$type})){
-        $courses = array_keys($user->{$type});
-        foreach ($courses as $courseid){
-            // get the record if it's ldap
-            $rec = get_record('user_' . $type . 's', 'userid', $user->id, 'course', $courseid, 'enrol', 'ldap');
-            if(!empty($rec)){ // this was a legacy 
+        foreach ($user->{$type} as $courseid => $value){
+            if($value == 'ldap'){ // this was a legacy 
                 if ($type === 'student') { // enrol
                     unenrol_student($user->id, $courseid);
                 } else if ($type === 'teacher') {

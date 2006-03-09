@@ -59,7 +59,7 @@ function get_student_courses(&$user) {
 
                 if ( ( $student->timestart == 0 or ( $currenttime > $student->timestart )) and 
                      ( $student->timeend   == 0 or ( $currenttime < $student->timeend )) ) {
-                    $user->student[$student->course] = true;
+                    $user->student[$student->course] = $student->enrol;
                     $user->timeaccess[$student->course] = $student->timeaccess;
                 }
             }
@@ -89,7 +89,7 @@ function get_teacher_courses(&$user) {
             if ( ( $teacher->timestart == 0 or ( $currenttime > $teacher->timestart )) and 
                  ( $teacher->timeend   == 0 or ( $currenttime < $teacher->timeend )) ) {
 
-                $user->teacher[$teacher->course] = true;
+                $user->teacher[$teacher->course] = $teacher->enrol;
 
                 if ($teacher->editall) {
                     $user->teacheredit[$teacher->course] = true;
