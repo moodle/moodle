@@ -311,64 +311,64 @@
       <FIELDS>
         <FIELD name="password" method="PHP_FUNCTION" type="varchar" length="50">
           <PHP_FUNCTION>
-            migrate2utf8_user_password(RECORDID)
+            migrate2utf8_course_password(RECORDID)
           </PHP_FUNCTION>
         </FIELD>
         <FIELD name="fullname" method="PHP_FUNCTION" type="varchar" length="254">
           <PHP_FUNCTION>
-            migrate2utf8_user_fullname(RECORDID)
+            migrate2utf8_course_fullname(RECORDID)
           </PHP_FUNCTION>
         </FIELD>
         <FIELD name="shortname" method="PHP_FUNCTION" type="varchar" length="15" dropindex="shortname" addindex="shortname(shortname(15))">
           <PHP_FUNCTION>
-            migrate2utf8_user_shortname(RECORDID)
+            migrate2utf8_course_shortname(RECORDID)
           </PHP_FUNCTION>
         </FIELD>
         <FIELD name="idnumber" method="PHP_FUNCTION" type="varchar" length="100" dropindex="idnumber" addindex="idnumber(idnumber(100))">
           <PHP_FUNCTION>
-            migrate2utf8_user_idnumber(RECORDID)
+            migrate2utf8_course_idnumber(RECORDID)
           </PHP_FUNCTION>
         </FIELD>
         <FIELD name="summary" method="PHP_FUNCTION" type="text" length="0">
           <PHP_FUNCTION>
-            migrate2utf8_user_summary(RECORDID)
+            migrate2utf8_course_summary(RECORDID)
           </PHP_FUNCTION>
         </FIELD>
         <FIELD name="format" method="NO_CONV" type="varchar" length="10" default="topics"/>
         <FIELD name="modinfo" method="PHP_FUNCTION" type="longtext" length="0">
           <PHP_FUNCTION>
-            migrate2utf8_user_modinfo(RECORDID)
+            migrate2utf8_course_modinfo(RECORDID)
           </PHP_FUNCTION>
         </FIELD>
         <FIELD name="teacher" method="PHP_FUNCTION" type="varchar" length="100" default="Teacher">
           <PHP_FUNCTION>
-            migrate2utf8_user_teacher(RECORDID)
+            migrate2utf8_course_teacher(RECORDID)
           </PHP_FUNCTION>
         </FIELD>
         <FIELD name="teachers" method="PHP_FUNCTION" type="varchar" length="100" default="Teachers">
           <PHP_FUNCTION>
-            migrate2utf8_user_teachers(RECORDID)
+            migrate2utf8_course_teachers(RECORDID)
           </PHP_FUNCTION>
         </FIELD>
         <FIELD name="student" method="PHP_FUNCTION" type="varchar" length="100" default="Student">
           <PHP_FUNCTION>
-            migrate2utf8_user_student(RECORDID)
+            migrate2utf8_course_student(RECORDID)
           </PHP_FUNCTION>
         </FIELD>
         <FIELD name="students" method="PHP_FUNCTION" type="varchar" length="100" default="Students">
           <PHP_FUNCTION>
-            migrate2utf8_user_students(RECORDID)
+            migrate2utf8_course_students(RECORDID)
           </PHP_FUNCTION>
         </FIELD>
         <FIELD name="cost" method="PHP_FUNCTION" type="varchar" length="10">
           <PHP_FUNCTION>
-            migrate2utf8_user_cost(RECORDID)
+            migrate2utf8_course_cost(RECORDID)
           </PHP_FUNCTION>
         </FIELD>
         <FIELD name="theme" method="NO_CONV" type="varchar" length="50" />
         <FIELD name="lang" method="PHP_FUNCTION" type="varchar" length="10" default="en_utf8">
           <PHP_FUNCTION>
-            migrate2utf8_user_lang(RECORDID)
+            migrate2utf8_course_lang(RECORDID)
           </PHP_FUNCTION>
         </FIELD>
       </FIELDS>
