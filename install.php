@@ -42,7 +42,7 @@ $INSTALL = &$_SESSION['INSTALL'];   // Makes it easier to reference
 if ( empty($INSTALL['language']) and empty($_POST['language']) ) {
 
     /// set defaults
-    $INSTALL['language']        = 'en';
+    $INSTALL['language']        = 'en_utf8';
 
     $INSTALL['dbhost']          = 'localhost';
     $INSTALL['dbuser']          = '';
@@ -105,6 +105,7 @@ $CFG->libdir = $INSTALL['dirroot'].'/lib';
 $CFG->dataroot = $INSTALL['dataroot'];
 $CFG->admin = $INSTALL['admindirname'];
 $CFG->directorypermissions = 00777;
+$CFG->running_installer = true;
 
 /// Include some moodle libraries
 
@@ -570,7 +571,7 @@ function form_table($nextstage = WELCOME, $formaction = "install.php") {
             <tr>
                 <td class="td_left"><p><?php print_string('language') ?></p></td>
                 <td class="td_right">
-                <?php choose_from_menu (get_list_of_languages(), 'language', $INSTALL['language'], '') ?>
+                <?php choose_from_menu (get_installer_list_of_languages(), 'language', $INSTALL['language'], '') ?>
                 </td>
             </tr>
 
@@ -808,6 +809,36 @@ function check_memory_limit() {
     /// Otherwise, see if we can change it ourselves
     @ini_set('memory_limit', '16M');
     return ((int)str_replace('M', '', get_memory_limit()) >= 16);
+}
+
+//==========================================================================//
+
+/* This function returns a list of languages and their full names. The
+ * list of available languages is fetched from install/lang/xx/installer.php
+ * and it's used exclusively by the installation process
+ * @return array An associative array with contents in the form of LanguageCode => LanguageName
+ */
+function get_installer_list_of_languages() {
+
+    global $CFG;
+
+    $languages = array();
+
+/// Get raw list of lang directories
+    $langdirs = get_list_of_plugins('install/lang');
+    asort($langdirs);
+/// Get some info from each lang
+    foreach ($langdirs as $lang) {
+        if (file_exists($CFG->dirroot .'/install/lang/'. $lang .'/installer.php')) {
+            include($CFG->dirroot .'/install/lang/'. $lang .'/installer.php');
+            if (!empty($string['thislanguage'])) {
+                $languages[$lang] = $string['thislanguage'] .' ('. $lang .')';
+            }
+            unset($string);
+        }
+    }
+/// Return array
+    return $languages;
 }
 
 //==========================================================================//
