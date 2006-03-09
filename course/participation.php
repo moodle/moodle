@@ -48,7 +48,7 @@
 
     $allowedmodules = array('assignment','book','chat','choice','exercise','forum','glossary','hotpot',
                             'journal','lesson','questionnaire','quiz','resource','scorm',
-                            'survey','wiki','workshop'); // some don't make sense here - eg 'label'
+                            'survey','wiki','workshop', 'data'); // some don't make sense here - eg 'label'
 
     if (!$modules = get_records_sql('SELECT DISTINCT module,name FROM '.$CFG->prefix.'course_modules cm JOIN '.
                                     $CFG->prefix.'modules m ON cm.module = m.id WHERE course = '.$course->id)) {
