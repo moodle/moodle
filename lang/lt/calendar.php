@@ -1,19 +1,15 @@
 <?PHP // $Id$ 
-      // calendar.php - created with Moodle 1.3 (2004052500)
+      // calendar.php - created with Moodle 1.5.3+ (2005060230)
 
 
-$string['april'] = 'Balandis';
-$string['august'] = 'Rugpjûtis';
 $string['calendar'] = 'Kalendorius';
 $string['calendarheading'] = '$a kalendorius';
 $string['clickhide'] = 'paslëpkite';
 $string['clickshow'] = 'atvaizduokite';
 $string['confirmeventdelete'] = 'Ar tikrai norite paðalinti ðá ávyká?';
 $string['courseevents'] = 'Kurso ávykiai';
-$string['day'] = 'diena';
 $string['dayview'] = 'Dienos vaizdas';
 $string['daywithnoevents'] = 'Ðiandien nëra ávykiø';
-$string['december'] = 'Gruodis';
 $string['default'] = 'Nustatytasis';
 $string['deleteevent'] = 'Iðtrinti ávyká';
 $string['detailedmonthview'] = 'Detalus mënesio vaizdas';
@@ -42,41 +38,36 @@ $string['eventview'] = 'Ávykio apraðymas';
 $string['expired'] = 'Pasibaigæ(s)';
 $string['explain_lookahead'] = 'Nurodykite maksimalø dienø skaièiø iki ávykio pradþios. Vëlesni ávykiai nebus atvaizduojami. Atvaizduojamø ekrane ávykiø skaièiø taip pat riboja sisteminis kintamasis „explain_maxevents“.';
 $string['explain_maxevents'] = 'Nurodykite maksimalø bûsimø ávykiø skaièiø, kuriuos norite atvaizduoti ekrane.';
+$string['explain_persistflt'] = 'Jei paþymëta, tai Moodle atisimins paskutinio filtro nustatymus ir juos ájungs, kai kità kartà prisijungsite.';
 $string['explain_startwday'] = 'Kalendoriaus savaitës bus rodomos nuo èia áraðytos dienos';
 $string['explain_timeformat'] = 'Galite parinkti 12 arba 24 valandø formatà. Nurodþius \"default\" bus parinktas formatas, nustatytas kompiuterio regioninëse nuostatose.';
-$string['february'] = 'Vasaris';
 $string['fri'] = 'Pn';
 $string['friday'] = 'Penktadienis';
 $string['globalevents'] = 'Bendras ávykis';
 $string['gotocalendar'] = 'Pereiti á kalendoriø';
 $string['groupevents'] = 'Grupës ávykis';
 $string['hidden'] = 'paslëpta(s)';
-$string['january'] = 'Sausis';
-$string['july'] = 'Liepa';
-$string['june'] = 'Birþelis';
 $string['manyevents'] = '$a ávykiai';
-$string['march'] = 'Kovas';
-$string['may'] = 'Geguþë';
 $string['mon'] = 'Pr';
 $string['monday'] = 'Pirmadienis';
 $string['monthlyview'] = 'Mënesio vaizdas';
 $string['newevent'] = 'Naujas ávykis';
 $string['noupcomingevents'] = 'Nëra ávykiø';
-$string['november'] = 'Lapkritis';
-$string['october'] = 'Spalis';
 $string['oneevent'] = '1 ávykis';
 $string['pref_lookahead'] = 'Bûsimi ávykiai';
 $string['pref_maxevents'] = 'Maks. bûsimø ávykiø skaièius';
+$string['pref_persistflt'] = 'Atsiminti filtro nustaymus';
 $string['pref_startwday'] = 'Pirma savaitës diena';
 $string['pref_timeformat'] = 'Laiko formatas';
 $string['preferences'] = 'Nuostatos';
 $string['preferences_available'] = 'Asmeninës nuostatos';
+$string['repeateditall'] = 'Ágalinti pakeitimus visiems $a ávykiams ðiose kartojimo serijose';
+$string['repeateditthis'] = 'Ágalinti pakeitimus tik ðiam ávykiui';
 $string['repeatnone'] = 'Nepasikartoja';
 $string['repeatweeksl'] = 'Kartoto kas savaitæ';
 $string['repeatweeksr'] = 'ávykiai';
 $string['sat'] = 'Ðt';
 $string['saturday'] = 'Ðeðtadienis';
-$string['september'] = 'Rugsëjis';
 $string['shown'] = 'matomas';
 $string['spanningevents'] = 'Ávykiai prasideda';
 $string['sun'] = 'Sk';
@@ -108,5 +99,6 @@ $string['userevents'] = 'Vartotojo ávykiai';
 $string['wed'] = 'Tr';
 $string['wednesday'] = 'Treèiadienis';
 $string['yesterday'] = 'Vakar';
+$string['youcandeleteallrepeats'] = 'Ðis ávykis yra dalis pasikartojanèio ávykio serijø. Galite naikinti tik ðá ávyká arba visus $a ávykius serijose iðkarto.';
 
 ?>
