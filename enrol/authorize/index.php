@@ -51,7 +51,11 @@ function authorize_orders()
     $userid = optional_param('user', 0, PARAM_INT);
     $courseid = optional_param('course', 0, PARAM_INT);
     $status = optional_param('status', AN_STATUS_NONE, PARAM_INT);
-    $baseurl = $CFG->wwwroot."/enrol/authorize/index.php?course=$courseid&amp;user=$userid";
+    if ($courseid == SITEID) {
+    	$courseid = 0; // no filter
+    }
+
+    $baseurl = $CFG->wwwroot."/enrol/authorize/index.php?user=$userid";
     $statusmenu = array(AN_STATUS_NONE => get_string('all'),
                         AN_STATUS_AUTH => $authstrs->authorizedpendingcapture,
                         AN_STATUS_AUTHCAPTURE => $authstrs->authcaptured,
@@ -61,7 +65,18 @@ function authorize_orders()
     );
 
     print_simple_box_start('center');
-    echo $strs->status . ': ' . popup_form($baseurl.'&amp;status=', $statusmenu, 'statusmenu', $status, '', '', '', true);
+    echo "$strs->status: ";
+    echo popup_form($baseurl.'&amp;course='.$courseid.'&amp;status=', $statusmenu, 'statusmenu', $status, '', '', '', true);
+    if ($courses = get_courses('all', 'c.sortorder ASC', 'c.id,c.fullname,c.enrol')) {
+        $popupcrs = array();
+        foreach ($courses as $crs) {
+            if ($crs->enrol == 'authorize' || (empty($crs->enrol) && $CFG->enrol == 'authorize')) {
+                $popupcrs[(int)$crs->id] = $crs->fullname;
+            }
+        }
+        echo " &nbsp; $strs->course: ";
+        echo popup_form($baseurl.'&amp;status='.$status.'&amp;course=', $popupcrs, 'coursesmenu', $courseid, '', '', '', true);
+    }
     print_simple_box_end();
 
     $table = new flexible_table('enrol-authorize');
