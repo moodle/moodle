@@ -850,6 +850,7 @@ function migrate2utf8_update_record($table,$record) {
 }
 
 function migrate2utf8_set_config($name, $value, $plugin=NULL) {
+    global $CFG;
     if ($CFG->dbtype == 'mysql') {
         set_config($name, $value, $plugin);
     } else {
