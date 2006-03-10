@@ -432,7 +432,7 @@
     $table->data[] = array('<strong><a href="stickyblocks.php">'.get_string('stickyblocks','admin').'</a></strong>',
                            '<div class="explanation">'.get_string('adminhelpstickyblocks').'</div>');
     if (!empty($CFG->enablestats)) {
-        $table->data[] = array('<strong><a href="reports.php">'.get_string('reports').'</a></strong>', 
+        $table->data[] = array('<strong><a href="report.php">'.get_string('reports').'</a></strong>', 
                                  '<div class="explanation">'.get_string('adminhelpreports').'</div>');
     }
     $table->data[] = array('<strong><a href="environment.php">'.get_string('environment','admin').'</a></strong>',
