@@ -115,6 +115,8 @@ directly via the web.';
 $string['dirroot'] = 'Moodle Directory';
 $string['dirrooterror'] = 'The \'Moodle Directory\' setting seems to be incorrect - we can\'t find a Moodle installation there.  The value below has been reset.';
 $string['download'] = 'Download';
+$string['downloadlanguagehead'] = 'Download language pack';
+$string['downloadlanguagesub'] = 'Now the installer is trying to download the complete lang pack that you have selected in order to continue the installation using it.';
 $string['environmenthead'] = 'Checking your environment ...';
 $string['environmentsub'] = 'We are checking if the various components of your system meet the system requirements';
 $string['fail'] = 'Fail';
@@ -153,6 +155,8 @@ $string['globalsquoteshelp'] = '<p>Combination of disabled Magic Quotes GPC and 
 </p>   
    ';
 $string['installation'] = 'Installation';
+$string['langdownloadok'] = 'Language $a installed successfully. The rest of the installation will follow in your selected language';
+$string['langdownloaderror'] = 'Language $a not installed. The rest of the installation will continue in English. You can download and install other languages once the installation ends';
 $string['magicquotesruntime'] = 'Magic Quotes Run Time';
 $string['magicquotesruntimeerror'] = 'This should be off';
 $string['magicquotesruntimehelp'] = '<p>Magic quotes runtime should be turned off for Moodle to function properly.</p>

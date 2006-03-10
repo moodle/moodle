@@ -2,6 +2,7 @@
       // error.php - created with Moodle 1.2 development (2003122600)
 
 $string['adminprimarynoedit'] = 'The primary admin cannot be edited by others';
+$string['cannotcreatelangdir'] = 'Cannot create lang dir.';
 $string['cannotcreatetempdir'] = 'Cannot create temp dir.';
 $string['cannotdownloadcomponents'] = 'Cannot download components.';
 $string['cannotdownloadzipfile'] = 'Cannot download ZIP file.';
