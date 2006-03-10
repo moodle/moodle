@@ -1,0 +1,16 @@
+Omsetting til Moodle v. 1.5.2 
+
+6. februar 2006
+
+Fjerna ein del bokmålsrestar i moodle.php
+Endra "klasse" til "kurs"
+Generell språkvask
+
+9.november 2005:
+
+Omsettinga inneheld også språkpakke for modular som ikkje er med i standardutgåva av Moodle, t.d. flash-card og matching.
+
+Ho er langt ifrå ferdig, men eg arbeider med saken.
+
+Tormod Aagaard
+thormodr@start.no
