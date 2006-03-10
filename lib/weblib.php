@@ -2399,7 +2399,7 @@ function print_navigation ($navigation) {
    if ($navigation) {
        //Accessibility: breadcrumb links now in a list, &raquo; replaced with image.
    	   $nav_text = get_string('youarehere','access');
-   	   echo '<i class="accesshide">'.$nav_text.':</i><ul>';
+   	   echo '<span class="accesshide">'.$nav_text.':</span><ul>';
        if (! $site = get_site()) {
            $site->shortname = get_string('home');
        }
@@ -4340,7 +4340,7 @@ function print_side_block($heading='', $content='', $list=NULL, $icons=NULL, $fo
             foreach ($list as $key => $string) {
                 echo '<li class="r'. $row .'">';
                 if ($icons) {
-                    echo '<i class="icon c0">'. $icons[$key] .'</i>';
+                    echo '<span class="icon c0">'. $icons[$key] .'</span>';
                 }
                 echo '<span class="c1">'. $string .'</span>';
                 echo "</li>\n";
