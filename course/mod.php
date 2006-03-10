@@ -40,7 +40,7 @@
     }
 
 
-    if (isset_param('course') and confirm_sesskey()) {    // add or update form submitted
+    if (!empty($course) and confirm_sesskey()) {    // add or update form submitted
 
         if (empty($mod->coursemodule)) { //add
             if (! $course = get_record("course", "id", $mod->course)) {
@@ -220,13 +220,13 @@
         exit;
     }
 
-    if ((isset_param('movetosection') or isset_param('moveto')) and confirm_sesskey()) {
+    if ((!empty($movetosection) or !empty($moveto)) and confirm_sesskey()) {
 
         if (! $cm = get_record("course_modules", "id", $USER->activitycopy)) {
             error("The copied course module doesn't exist!");
         }
 
-        if (isset_param('movetosection')) {
+        if (!empty($movetosection)) {
             if (! $section = get_record("course_sections", "id", $movetosection)) {
                 error("This section doesn't exist");
             }
@@ -263,7 +263,7 @@
             redirect("view.php?id=$section->course#section-$sectionreturn");
         }
 
-    } else if (isset_param('indent') and confirm_sesskey()) {
+    } else if (!empty($indent) and confirm_sesskey()) {
 
         $id = required_param('id',PARAM_INT);
 
@@ -292,7 +292,7 @@
         }
         exit;
 
-    } else if (isset_param('hide') and confirm_sesskey()) {
+    } else if (!empty($hide) and confirm_sesskey()) {
 
         if (! $cm = get_record("course_modules", "id", $hide)) {
             error("This course module doesn't exist");
@@ -313,7 +313,7 @@
         }
         exit;
 
-    } else if (isset_param('show') and confirm_sesskey()) {
+    } else if (!empty($show) and confirm_sesskey()) {
 
         if (! $cm = get_record("course_modules", "id", $show)) {
             error("This course module doesn't exist");
@@ -343,7 +343,7 @@
         }
         exit;
 
-    } else if (isset_param('groupmode') and confirm_sesskey()) {
+    } else if (!empty($groupmode) and confirm_sesskey()) {
 
         $id = required_param( 'id', PARAM_INT );
 
@@ -366,7 +366,7 @@
         }
         exit;
 
-    } else if (isset_param('copy') and confirm_sesskey()) { // value = course module
+    } else if (!empty($copy) and confirm_sesskey()) { // value = course module
 
         if (! $cm = get_record("course_modules", "id", $copy)) {
             error("This course module doesn't exist");
@@ -394,7 +394,7 @@
 
         redirect("view.php?id=$cm->course#section-$sectionreturn");
 
-    } else if (isset_param('cancelcopy') and confirm_sesskey()) { // value = course module
+    } else if (!empty($cancelcopy) and confirm_sesskey()) { // value = course module
 
         $courseid = $USER->activitycopycourse;
 
@@ -404,7 +404,7 @@
 
         redirect("view.php?id=$courseid#section-$sectionreturn");
 
-    } else if (isset_param('delete') and confirm_sesskey()) {   // value = course module
+    } else if (!empty($delete) and confirm_sesskey()) {   // value = course module
 
         if (! $cm = get_record("course_modules", "id", $delete)) {
             error("This course module doesn't exist");
@@ -461,7 +461,7 @@
         exit;
 
 
-    } else if (isset_param('update') and confirm_sesskey()) {   // value = course module
+    } else if (!empty($update) and confirm_sesskey()) {   // value = course module
 
         if (! $cm = get_record("course_modules", "id", $update)) {
             error("This course module doesn't exist");
@@ -518,7 +518,7 @@
             $CFG->pagepath = 'mod/'.$module->name.'/mod';
         }
 
-    } else if (isset_param('duplicate') and confirm_sesskey()) {   // value = course module
+    } else if (!empty($duplicate) and confirm_sesskey()) {   // value = course module
 
 
         if (! $cm = get_record("course_modules", "id", $duplicate)) {
@@ -575,12 +575,7 @@
         $CFG->pagepath = 'mod/'.$module->name.'/mod';
 
 
-    } else if (isset_param('add') and confirm_sesskey()) {
-
-        if (empty($add)) {
-            redirect($_SERVER["HTTP_REFERER"]);
-            die;
-        }
+    } else if (!empty($add) and confirm_sesskey()) {
 
         $id = required_param('id',PARAM_INT);
         $section = required_param('section',PARAM_INT);
