@@ -24,9 +24,7 @@
 
     require_once('../../config.php');
     require_once('lib.php');
-    require_once($CFG->libdir.'/blocklib.php');
 
-    require_once('pagelib.php');
     require_login();
 
     $mode ='addtemplate';    //define the mode for this page, only 1 mode available
@@ -64,7 +62,7 @@
     }
 
     ///checking for participants
-    if ((!isteacher($course->id)) && $data->participants ==PARTICIPANTS_T) {
+    if ((!isteacher($course->id)) && $data->participants == PARTICIPANTS_T) {
         error ('students are not allowed to participate in this activity');
     }
 
