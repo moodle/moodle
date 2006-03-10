@@ -19,6 +19,7 @@ $string['admindirsettingsub'] = '    A very few webhosts use /admin as a special
     new name here.  For example: <br /> <br /><b>moodleadmin</b><br /> <br />
     This will fix admin links in Moodle.';
 $string['bypassed'] = 'Bypassed';
+$string['cannotcreatelangdir'] = 'Cannot create lang dir.';
 $string['cannotcreatetempdir'] = 'Cannot create temp dir.';
 $string['cannotdownloadcomponents'] = 'Cannot download components.';
 $string['cannotdownloadzipfile'] = 'Cannot download ZIP file.';
