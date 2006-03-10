@@ -266,7 +266,7 @@ class configvarrss extends configvar {
     }  
     $allowstr .= '</select>';
 
-    $permissions['defaultallowedmoules'] = new configvar (get_string('configdefaultallowedmodules','admin'),$allowstr);
+    $permissions['defaultallowedmodules'] = new configvar (get_string('configdefaultallowedmodules','admin'),$allowstr);
 
 
 /// course requests
