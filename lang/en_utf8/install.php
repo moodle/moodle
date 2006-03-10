@@ -113,10 +113,12 @@ directory should be readable AND WRITEABLE by the web server user
 (usually \'nobody\' or \'apache\'), but it should not be accessible 
 directly via the web.';
 $string['dirroot'] = 'Moodle Directory';
-$string['dirrooterror'] = 'The \'Moodle Directory\' setting seems to be incorrect - we can\'t find a Moodle installation there.  The value below has been reset.';
+$string['dirrooterror'] = 'The \'Moodle Directory\' setting seems to be incorrect - we can\'t find a Moodle installation there. The value below has been reset.';
 $string['download'] = 'Download';
+$string['downloadlanguagebutton'] = 'Download the &quot;$a&quot; language pack';
 $string['downloadlanguagehead'] = 'Download language pack';
-$string['downloadlanguagesub'] = 'Now the installer is trying to download the complete lang pack that you have selected in order to continue the installation using it.';
+$string['downloadlanguagenotneeded'] = 'You may continue the installation process using the default language pack, \"$a\".';
+$string['downloadlanguagesub'] = 'You now have the option of downloading a language pack and continuing the installation process in this language.<br /><br />If you are unable to download the language pack, the installation process will continue in English. (Once the installation process is complete, you will have the opportunity to download and install additional language packs.)';
 $string['environmenthead'] = 'Checking your environment ...';
 $string['environmentsub'] = 'We are checking if the various components of your system meet the system requirements';
 $string['fail'] = 'Fail';
@@ -155,8 +157,8 @@ $string['globalsquoteshelp'] = '<p>Combination of disabled Magic Quotes GPC and 
 </p>   
    ';
 $string['installation'] = 'Installation';
-$string['langdownloadok'] = 'Language $a installed successfully. The rest of the installation will follow in your selected language';
-$string['langdownloaderror'] = 'Language $a not installed. The rest of the installation will continue in English. You can download and install other languages once the installation ends';
+$string['langdownloadok'] = 'The language \"$a\" was installed successfully. The installation process will continue in this language.';
+$string['langdownloaderror'] = 'Unfortunately the language \"$a\" was not installed. The installation process will continue in English.';
 $string['magicquotesruntime'] = 'Magic Quotes Run Time';
 $string['magicquotesruntimeerror'] = 'This should be off';
 $string['magicquotesruntimehelp'] = '<p>Magic quotes runtime should be turned off for Moodle to function properly.</p>
@@ -226,6 +228,6 @@ $string['welcomep60'] = 'The following pages will lead you through some easy to 
     settings or, optionally, amend them to suit your own needs.';
 $string['welcomep70'] = 'Click the \"Next\" button below to continue with the set up of <strong>Moodle</strong>.';
 $string['wwwroot'] = 'Web address';
-$string['wwwrooterror'] = 'The web address does not appear to be valid - this Moodle installation doesn\'t appear to be there.';
+$string['wwwrooterror'] = 'The \'Web Address\' does not appear to be valid - this Moodle installation doesn\'t appear to be there. The value below has been reset.';
 
 ?>
