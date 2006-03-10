@@ -614,8 +614,8 @@ function calendar_top_controls($type, $data) {
     $data['y'] = $date['year'];
 
     //Accessibility: calendar block controls, replaced <table> with <div>.
-    $nexttext = '<img src="'. $CFG->wwwroot .'/pix/a/em1_greater.gif" alt="'.get_string('monthnext','access').'" class="resize" />'; ///'<span class="resize">M <b>&gt;&gt; &lt;&lt;</b></span>'; ///&gt;
-    $prevtext = '<img src="'. $CFG->wwwroot .'/pix/a/em1_lesser.gif" alt="'.get_string('monthprev','access').'" class="resize" />'; ///&lt;
+    $nexttext = '<img src="'. $CFG->pixpath .'/a/r_next.gif" alt="'.get_string('monthnext','access').'" class="resize" />';
+    $prevtext = '<img src="'. $CFG->pixpath .'/a/r_previous.gif" alt="'.get_string('monthprev','access').'" class="resize" />';
 
     switch($type) {
         case 'frontpage':
