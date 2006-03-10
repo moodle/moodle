@@ -1,0 +1,9 @@
+<h1>Automatic creation of new courses</h1>
+
+<p>The IMS Enterprise enrolment plugin can create new courses for any it finds in the IMS data but not in Moodle's database, if this setting is activated.</p>
+
+<p>Courses are first queried by their "idnumber" - an alphanumeric field in Moodle's course table, which can specify the code used to identify the course in the Student Information System (for example). If that is not found, the course table is searched for the "short description", which in Moodle is the short course identifier as displayed in the breadcrumbs etc. (In some systems these two fields may well be identical.) Only when that search has failed can the plugin optionally create new courses.</p>
+
+<p>Any newly-generated courses are HIDDEN when created. This is to prevent the possibility of students wandering into completely empty courses that the teacher may be unaware of.</p>
+
+
