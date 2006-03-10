@@ -36,7 +36,7 @@ function migrate2utf8_event_name($recordid){
         $newevent = new object;
         $newevent->id = $recordid;
         $newevent->name = $result;
-        update_record('event',$newevent);
+        migrate2utf8_update_record('event',$newevent);
     }
 /// And finally, just return the converted field
     return $result;
@@ -77,7 +77,7 @@ function migrate2utf8_event_description($recordid){
         $newevent = new object;
         $newevent->id = $recordid;
         $newevent->description = $result;
-        update_record('event',$newevent);
+        migrate2utf8_update_record('event',$newevent);
     }
 /// And finally, just return the converted field
     return $result;
@@ -115,7 +115,7 @@ function migrate2utf8_config_value($recordid){
         $newconfig = new object;
         $newconfig->id = $recordid;
         $newconfig->value = $result;
-        update_record('config',$newconfig);
+        migrate2utf8_update_record('config',$newconfig);
     }
 /// And finally, just return the converted field
     return $result;
@@ -153,7 +153,7 @@ function migrate2utf8_config_plugins_value($recordid){
         $newconfigplugins = new object;
         $newconfigplugins->id = $recordid;
         $newconfigplugins->value = $result;
-        update_record('config_plugins',$newconfigplugins);
+        migrate2utf8_update_record('config_plugins',$newconfigplugins);
     }
 /// And finally, just return the converted field
     return $result;
@@ -191,7 +191,7 @@ function migrate2utf8_course_categories_name($recordid){
         $newcoursecategories = new object;
         $newcoursecategories->id = $recordid;
         $newcoursecategories->name = $result;
-        update_record('course_categories',$newcoursecategories);
+        migrate2utf8_update_record('course_categories',$newcoursecategories);
     }
 /// And finally, just return the converted field
     return $result;
@@ -230,7 +230,7 @@ function migrate2utf8_course_categories_description($recordid){
         $newcoursecategories = new object;
         $newcoursecategories->id = $recordid;
         $newcoursecategories->description = $result;
-        update_record('course_categories',$newcoursecategories);
+        migrate2utf8_update_record('course_categories',$newcoursecategories);
     }
 /// And finally, just return the converted field
     return $result;
@@ -269,7 +269,7 @@ function migrate2utf8_course_sections_summary($recordid){
         $newcoursesections = new object;
         $newcoursesections->id = $recordid;
         $newcoursesections->summary = $result;
-        update_record('course_sections',$newcoursesections);
+        migrate2utf8_update_record('course_sections',$newcoursesections);
     }
 /// And finally, just return the converted field
     return $result;
@@ -310,7 +310,7 @@ function migrate2utf8_course_request_fullname($recordid){
         $newcourserequest = new object;
         $newcourserequest->id = $recordid;
         $newcourserequest->fullname = $result;
-        update_record('course_request',$newcourserequest);
+        migrate2utf8_update_record('course_request',$newcourserequest);
     }
 /// And finally, just return the converted field
     return $result;
@@ -351,7 +351,7 @@ function migrate2utf8_course_request_shortname($recordid){
         $newcourserequest = new object;
         $newcourserequest->id = $recordid;
         $newcourserequest->shortname = $result;
-        update_record('course_request',$newcourserequest);
+        migrate2utf8_update_record('course_request',$newcourserequest);
     }
 /// And finally, just return the converted field
     return $result;
@@ -392,7 +392,7 @@ function migrate2utf8_course_request_summary($recordid){
         $newcourserequest = new object;
         $newcourserequest->id = $recordid;
         $newcourserequest->summary = $result;
-        update_record('course_request',$newcourserequest);
+        migrate2utf8_update_record('course_request',$newcourserequest);
     }
 /// And finally, just return the converted field
     return $result;
@@ -433,7 +433,7 @@ function migrate2utf8_course_request_reason($recordid){
         $newcourserequest = new object;
         $newcourserequest->id = $recordid;
         $newcourserequest->reason = $result;
-        update_record('course_request',$newcourserequest);
+        migrate2utf8_update_record('course_request',$newcourserequest);
     }
 /// And finally, just return the converted field
     return $result;
@@ -474,7 +474,7 @@ function migrate2utf8_course_request_password($recordid){
         $newcourserequest = new object;
         $newcourserequest->id = $recordid;
         $newcourserequest->password = $result;
-        update_record('course_request',$newcourserequest);
+        migrate2utf8_update_record('course_request',$newcourserequest);
     }
 /// And finally, just return the converted field
     return $result;
@@ -512,7 +512,7 @@ function migrate2utf8_grade_category_name($recordid){
         $newgradecategory = new object;
         $newgradecategory->id = $recordid;
         $newgradecategory->name = $result;
-        update_record('grade_category',$newgradecategory);
+        migrate2utf8_update_record('grade_category',$newgradecategory);
     }
 /// And finally, just return the converted field
     return $result;
@@ -551,7 +551,7 @@ function migrate2utf8_grade_letter_letter($recordid){
         $newgradeletter = new object;
         $newgradeletter->id = $recordid;
         $newgradeletter->letter = $result;
-        update_record('grade_letter',$newgradeletter);
+        migrate2utf8_update_record('grade_letter',$newgradeletter);
     }
 /// And finally, just return the converted field
     return $result;
@@ -590,7 +590,7 @@ function migrate2utf8_groups_name($recordid){
         $newgroup = new object;
         $newgroup->id = $recordid;
         $newgroup->name = $result;
-        update_record('groups',$newgroup);
+        migrate2utf8_update_record('groups',$newgroup);
     }
 /// And finally, just return the converted field
     return $result;
@@ -629,7 +629,7 @@ function migrate2utf8_groups_description($recordid){
         $newgroup = new object;
         $newgroup->id = $recordid;
         $newgroup->description = $result;
-        update_record('groups',$newgroup);
+        migrate2utf8_update_record('groups',$newgroup);
     }
 /// And finally, just return the converted field
     return $result;
@@ -668,7 +668,7 @@ function migrate2utf8_groups_lang($recordid){
         $newgroup = new object;
         $newgroup->id = $recordid;
         $newgroup->lang = $result;
-        update_record('groups',$newgroup);
+        migrate2utf8_update_record('groups',$newgroup);
     }
 /// And finally, just return the converted field
     return $result;
@@ -707,7 +707,7 @@ function migrate2utf8_groups_password($recordid){
         $newgroup = new object;
         $newgroup->id = $recordid;
         $newgroup->password = $result;
-        update_record('groups',$newgroup);
+        migrate2utf8_update_record('groups',$newgroup);
     }
 /// And finally, just return the converted field
     return $result;
@@ -748,7 +748,7 @@ function migrate2utf8_message_message($recordid){
         $newmessage = new object;
         $newmessage->id = $recordid;
         $newmessage->message = $result;
-        update_record('message',$newmessage);
+        migrate2utf8_update_record('message',$newmessage);
     }
 /// And finally, just return the converted field
     return $result;
@@ -789,7 +789,7 @@ function migrate2utf8_message_read_message($recordid){
         $newmessageread = new object;
         $newmessageread->id = $recordid;
         $newmessageread->message = $result;
-        update_record('message_read',$newmessageread);
+        migrate2utf8_update_record('message_read',$newmessageread);
     }
 /// And finally, just return the converted field
     return $result;
@@ -828,7 +828,7 @@ function migrate2utf8_modules_search($recordid){
         $newmodules = new object;
         $newmodules->id = $recordid;
         $newmodules->search = $result;
-        update_record('modules',$newmodules);
+        migrate2utf8_update_record('modules',$newmodules);
     }
 /// And finally, just return the converted field
     return $result;
@@ -864,7 +864,7 @@ function migrate2utf8_user_idnumber($recordid){
         $newuser = new object;
         $newuser->id = $recordid;
         $newuser->idnumber = $result;
-        update_record('user',$newuser);
+        migrate2utf8_update_record('user',$newuser);
     }
 /// And finally, just return the converted field
     return $result;
@@ -900,7 +900,7 @@ function migrate2utf8_user_firstname($recordid){
         $newuser = new object;
         $newuser->id = $recordid;
         $newuser->firstname = $result;
-        update_record('user',$newuser);
+        migrate2utf8_update_record('user',$newuser);
     }
 /// And finally, just return the converted field
     return $result;
@@ -936,7 +936,7 @@ function migrate2utf8_user_lastname($recordid){
         $newuser = new object;
         $newuser->id = $recordid;
         $newuser->lastname = $result;
-        update_record('user',$newuser);
+        migrate2utf8_update_record('user',$newuser);
     }
 /// And finally, just return the converted field
     return $result;
@@ -971,7 +971,7 @@ function migrate2utf8_user_institution($recordid){
         $newuser = new object;
         $newuser->id = $recordid;
         $newuser->institution = $result;
-        update_record('user',$newuser);
+        migrate2utf8_update_record('user',$newuser);
     }
 /// And finally, just return the converted field
     return $result;
@@ -1007,7 +1007,7 @@ function migrate2utf8_user_department($recordid){
         $newuser = new object;
         $newuser->id = $recordid;
         $newuser->department = $result;
-        update_record('user',$newuser);
+        migrate2utf8_update_record('user',$newuser);
     /// And finally, just return the converted field
     }
     return $result;
@@ -1042,7 +1042,7 @@ function migrate2utf8_user_address($recordid){
         $newuser = new object;
         $newuser->id = $recordid;
         $newuser->address = $result;
-        update_record('user',$newuser);
+        migrate2utf8_update_record('user',$newuser);
     }
 /// And finally, just return the converted field
     return $result;
@@ -1078,7 +1078,7 @@ function migrate2utf8_user_city($recordid){
         $newuser = new object;
         $newuser->id = $recordid;
         $newuser->city = $result;
-        update_record('user',$newuser);
+        migrate2utf8_update_record('user',$newuser);
     }
 /// And finally, just return the converted field
     return $result;
@@ -1113,7 +1113,7 @@ function migrate2utf8_user_description($recordid){
         $newuser = new object;
         $newuser->id = $recordid;
         $newuser->description = $result;
-        update_record('user',$newuser);
+        migrate2utf8_update_record('user',$newuser);
     }
 /// And finally, just return the converted field
     return $result;
@@ -1149,7 +1149,7 @@ function migrate2utf8_user_secret($recordid){
         $newuser = new object;
         $newuser->id = $recordid;
         $newuser->secret = $result;
-        update_record('user',$newuser);
+        migrate2utf8_update_record('user',$newuser);
     }
 /// And finally, just return the converted field
     return $result;
@@ -1174,13 +1174,13 @@ function migrate2utf8_user_lang($recordid){
     $newuser = new object;
     $newuser->id = $user->id;
     $newuser->lang = $user->lang;
-    $result = update_record('user',$newuser);
+    $result = migrate2utf8_update_record('user',$newuser);
     
     $langsused = get_record('config','name','langsused');
     $langs = explode(',',$langsused->value);
     if (!in_array($user->lang, $langs)) {
         $langsused->value .= ','.$user->lang;
-        update_record('config',$langsused);
+        migrate2utf8_update_record('config',$langsused);
     }
     
 
@@ -1221,7 +1221,7 @@ function migrate2utf8_course_password($recordid){
         $newcourse = new object;
         $newcourse->id = $recordid;
         $newcourse->password = $result;
-        update_record('course',$newcourse);
+        migrate2utf8_update_record('course',$newcourse);
     }
 /// And finally, just return the converted field
     return $result;
@@ -1260,7 +1260,7 @@ function migrate2utf8_course_fullname($recordid){
         $newcourse = new object;
         $newcourse->id = $recordid;
         $newcourse->fullname = $result;
-        update_record('course',$newcourse);
+        migrate2utf8_update_record('course',$newcourse);
     }
 /// And finally, just return the converted field
     return $result;
@@ -1298,7 +1298,7 @@ function migrate2utf8_course_shortname($recordid){
         $newcourse = new object;
         $newcourse->id = $recordid;
         $newcourse->shortname = $result;
-        update_record('course',$newcourse);
+        migrate2utf8_update_record('course',$newcourse);
     }
 /// And finally, just return the converted field
     return $result;
@@ -1336,7 +1336,7 @@ function migrate2utf8_course_idnumber($recordid){
         $newcourse = new object;
         $newcourse->id = $recordid;
         $newcourse->idnumber = $result;
-        update_record('course',$newcourse);
+        migrate2utf8_update_record('course',$newcourse);
     }
 /// And finally, just return the converted field
     return $result;
@@ -1373,7 +1373,7 @@ function migrate2utf8_course_summary($recordid){
         $newcourse = new object;
         $newcourse->id = $recordid;
         $newcourse->summary = $result;
-        update_record('course',$newcourse);
+        migrate2utf8_update_record('course',$newcourse);
     }
 /// And finally, just return the converted field
     return $result;
@@ -1417,7 +1417,7 @@ function migrate2utf8_course_teacher($recordid){
         $newcourse = new object;
         $newcourse->id = $recordid;
         $newcourse->teacher = $result;
-        update_record('course',$newcourse);
+        migrate2utf8_update_record('course',$newcourse);
     }
 /// And finally, just return the converted field
     return $result;
@@ -1456,7 +1456,7 @@ function migrate2utf8_course_teachers($recordid){
         $newcourse = new object;
         $newcourse->id = $recordid;
         $newcourse->teachers = $result;
-        update_record('course',$newcourse);
+        migrate2utf8_update_record('course',$newcourse);
     }
 /// And finally, just return the converted field
     return $result;
@@ -1495,7 +1495,7 @@ function migrate2utf8_course_student($recordid){
         $newcourse = new object;
         $newcourse->id = $recordid;
         $newcourse->student = $result;
-        update_record('course',$newcourse);
+        migrate2utf8_update_record('course',$newcourse);
     }
 /// And finally, just return the converted field
     return $result;
@@ -1533,7 +1533,7 @@ function migrate2utf8_course_students($recordid){
         $newcourse = new object;
         $newcourse->id = $recordid;
         $newcourse->students = $result;
-        update_record('course',$newcourse);
+        migrate2utf8_update_record('course',$newcourse);
     }
 /// And finally, just return the converted field
     return $result;
@@ -1571,7 +1571,7 @@ function migrate2utf8_course_cost($recordid){
         $newcourse = new object;
         $newcourse->id = $recordid;
         $newcourse->cost = $result;
-        update_record('course',$newcourse);
+        migrate2utf8_update_record('course',$newcourse);
     /// And finally, just return the converted field
     }
     return $result;
@@ -1591,9 +1591,17 @@ function migrate2utf8_course_lang($recordid){
     $newcourse = new object;
     $newcourse->id = $course->id;
     $newcourse->lang = $course->lang;
-    update_record('course',$newcourse);
+    migrate2utf8_update_record('course',$newcourse);
     require_once($CFG->dirroot.'/course/lib.php');
+    if ($CFG->dbtype == 'postgres7') {
+        $backup_db = $GLOBALS['db'];
+        $GLOBALS['db'] = &get_postgres_db();
+    }
     $result = rebuild_course_cache($recordid);    //takes care of serialized modinfo
+    if ($CFG->dbtype == 'postgres7') {
+        $GLOBALS['db'] = $backup_db;
+        unset($backup_db);
+    }
 /// And finally, just return the converted field
 
 
@@ -1601,7 +1609,7 @@ function migrate2utf8_course_lang($recordid){
     $langs = explode(',',$langsused->value);
     if (!in_array($course->lang, $langs)) {
         $langsused->value .= ','.$course->lang;
-        update_record('config',$langsused);
+        migrate2utf8_update_record('config',$langsused);
     }
 
     return $result;

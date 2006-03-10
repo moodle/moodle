@@ -43,7 +43,7 @@ function migrate2utf8_exercise_elements_description($recordid){
         $newexerciseelement = new object;
         $newexerciseelement->id = $recordid;
         $newexerciseelement->description = $result;
-        update_record('exercise_elements',$newexerciseelement);
+        migrate2utf8_update_record('exercise_elements',$newexerciseelement);
     }
 /// And finally, just return the converted field
     return $result;
@@ -92,7 +92,7 @@ function migrate2utf8_exercise_grades_feedback($recordid){
         $newexercisegrade = new object;
         $newexercisegrade->id = $recordid;
         $newexercisegrade->feedback = $result;
-        update_record('exercise_grades',$newexercisegrade);
+        migrate2utf8_update_record('exercise_grades',$newexercisegrade);
     }
 /// And finally, just return the converted field
     return $result;
@@ -141,7 +141,7 @@ function migrate2utf8_exercise_rubrics_description($recordid){
         $newexerciserubric = new object;
         $newexerciserubric->id = $recordid;
         $newexerciserubric->description = $result;
-        update_record('exercise_rubrics',$newexerciserubric);
+        migrate2utf8_update_record('exercise_rubrics',$newexerciserubric);
     }
 /// And finally, just return the converted field
     return $result;
@@ -179,7 +179,7 @@ function migrate2utf8_exercise_name($recordid){
         $newexercise = new object;
         $newexercise->id = $recordid;
         $newexercise->name = $result;
-        update_record('exercise',$newexercise);
+        migrate2utf8_update_record('exercise',$newexercise);
     }
 /// And finally, just return the converted field
     return $result;

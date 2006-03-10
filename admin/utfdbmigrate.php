@@ -49,55 +49,79 @@
 
     //else if $migrate
     else if ($migrate && confirm_sesskey()) {
-        echo '<div align="center">';
-        print_simple_box_start('center','50%');
-        print_string('dbmigratewarning2','admin');
-        print_simple_box_end();
-        //put the site in maintenance mode
-        check_dir_exists($CFG->dataroot.'/'.SITEID, true);
-        
-        if (touch($filename)) {
-            $file = fopen($filename, 'w');
-            fwrite($file, get_string('maintinprogress','admin'));
-            fclose($file);
-        } else {
-            notify (get_string('maintfileopenerror','admin'));
-        }
-        //print second confirmation box
-        echo '<form name="migratefrom" action="utfdbmigrate.php" method="POST">';
-        echo '<input name="confirm" type="hidden" value="1" />';
-        echo '<input name="sesskey" type="hidden" value="'.sesskey().'" />';
-        
-        $xmls = utf_get_xml();
-        $sumrecords = 0;   //this is the sum of all records of relavent tables.
-        foreach ($xmls as $xml) {    ///foreach xml file, we must get a list of tables
-            $dbtables = $xml['DBMIGRATION']['#']['TABLES'][0]['#']['TABLE'];    //real db tables
-            
-            foreach ($dbtables as $dbtable) {
-                $dbtablename = $dbtable['@']['name'];
-                $sumrecords += count_records($dbtablename);
+        if ($CFG->dbtype == 'postgres7' && !is_postgres_utf8()) {
+            $continue = false;
+            if (($form = data_submitted()) && isset($form->dbhost)) {
+                validate_form($form, $err);
+
+                if (count($err) == 0) {
+                    $_SESSION['newpostgresdb'] = $form;
+                    $continue = true;
+                }
             }
+        } else {
+            $continue = true;
         }
-        echo 'Total number of records in your database is <b>'.$sumrecords.'</b>';
-        if ($sumrecords > 10000) {
-            echo '<br />Number of Records to process before halting (Leave blank for no limit) <input name="maxrecords" type="text" value="" />';
-        }
+        if ($continue) {
+            echo '<div align="center">';
+            print_simple_box_start('center','50%');
+            print_string('dbmigratewarning2','admin');
+            print_simple_box_end();
+            //put the site in maintenance mode
+            check_dir_exists($CFG->dataroot.'/'.SITEID, true);
 
-        //print the "i-know-what-lang-to-use" menu
-        $enc = array('af' => 'iso-8859-1', 'ar' => 'windows-1256', 'be' => 'windows-1251', 'bg' => 'windows-1251', 'bs' => 'windows-1250', 'cs' => 'iso-8859-2', 'da' => 'iso-8859-1', 'de' => 'iso-8859-1', 'de_du' => 'iso-8859-1', 'de_utf8' => 'utf-8', 'el' => 'windows-1253', 'en' => 'iso-8859-1', 'en_ja' => 'euc-jp', 'en_us' => 'iso-8859-1', 'en_utf8' => 'utf-8', 'es' => 'iso-8859-1', 'es_ar' => 'iso-8859-1', 'es_es' => 'iso-8859-1', 'es_mx' => 'iso-8859-1', 'et' => 'iso-8859-1', 'eu' => 'iso-8859-1', 'fa' => 'windows-1256', 'fa_utf8' => 'utf-8', 'fi' => 'iso-8859-1', 'fil' => 'iso-8859-15', 'fr' => 'iso-8859-1', 'fr_ca' => 'iso-8859-15', 'ga' => 'iso-8859-1', 'gl' => 'iso-8859-1', 'he' => 'ISO-8859-8-I', 'he_utf8' => 'utf-8', 'hi' => 'iso-8859-1', 'hr' => 'windows-1250', 'hr_utf8' => 'utf-8', 'hu' => 'iso-8859-2', 'id' => 'iso-8859-1', 'it' => 'iso-8859-1', 'ja' => 'EUC-JP', 'ja_utf8' => 'UTF-8', 'ka_utf8' => 'UTF-8', 'km_utf8' => 'UTF-8', 'kn_utf8' => 'utf-8', 'ko' => 'EUC-KR', 'ko_utf8' => 'UTF-8', 'lt' => 'windows-1257', 'lv' => 'ISO-8859-4', 'mi_nt' => 'iso-8859-1', 'mi_tn_utf8' => 'utf-8', 'ms' => 'iso-8859-1', 'nl' => 'iso-8859-1', 'nn' => 'iso-8859-1', 'no' => 'iso-8859-1', 'no_gr' => 'iso-8859-1', 'pl' => 'iso-8859-2', 'pt' => 'iso-8859-1', 'pt_br' => 'iso-8859-1', 'ro' => 'iso-8859-2', 'ru' => 'windows-1251', 'sk' => 'iso-8859-2', 'sl' => 'iso-8859-2', 'sl_utf8' => 'utf-8', 'so' => 'iso-8859-1', 'sq' => 'iso-8859-1', 'sr_utf8' => 'utf-8', 'sv' => 'iso-8859-1', 'th' => 'TIS-620', 'th_utf8' => 'UTF-8', 'tl' => 'iso-8859-15', 'tl_utf8' => 'UTF-8', 'tr' => 'iso-8859-9', 'uk' => 'windows-1251', 'vi_utf8' => 'UTF-8', 'zh_cn' => 'GB18030', 'zh_cn_utf8' => 'UTF-8', 'zh_tw' => 'Big5', 'zh_tw_utf8' => 'UTF-8');
-
-        echo '<br />The whole site is in this encoding: (leave blank if you are not sure)';
-        echo '<select name="globallang"><option value="">I am not sure</option>';
-        foreach ($enc as $lang => $encoding) {
-            echo '<option value="'.$encoding.'">'.$lang.'</option>';
-        }
-        echo '</select>';
+            if (touch($filename)) {
+                $file = fopen($filename, 'w');
+                fwrite($file, get_string('maintinprogress','admin'));
+                fclose($file);
+            } else {
+                notify (get_string('maintfileopenerror','admin'));
+            }
+            //print second confirmation box
+            echo '<form name="migratefrom" action="utfdbmigrate.php" method="POST">';
+            echo '<input name="confirm" type="hidden" value="1" />';
+            echo '<input name="sesskey" type="hidden" value="'.sesskey().'" />';
         
-        echo '<p /><input type="submit" value="'.get_string('continue').'"/>';
-        echo '<input type="button" value="'.get_string('cancel').'" onclick="javascript:history.go(-1)" />';
-        echo '</form>';
-        echo '</div>';
+            $xmls = utf_get_xml();
+            $sumrecords = 0;   //this is the sum of all records of relavent tables.
+            foreach ($xmls as $xml) {    ///foreach xml file, we must get a list of tables
+                $dbtables = $xml['DBMIGRATION']['#']['TABLES'][0]['#']['TABLE'];    //real db tables
+            
+                foreach ($dbtables as $dbtable) {
+                    $dbtablename = $dbtable['@']['name'];
+                    $sumrecords += count_records($dbtablename);
+                }
+            }
+            echo 'Total number of records in your database is <b>'.$sumrecords.'</b>';
+            if ($sumrecords > 10000) {
+                echo '<br />Number of Records to process before halting (Leave blank for no limit) <input name="maxrecords" type="text" value="" />';
+            }
 
+            //print the "i-know-what-lang-to-use" menu
+            $enc = array('af' => 'iso-8859-1', 'ar' => 'windows-1256', 'be' => 'windows-1251', 'bg' => 'windows-1251', 'bs' => 'windows-1250', 'cs' => 'iso-8859-2', 'da' => 'iso-8859-1', 'de' => 'iso-8859-1', 'de_du' => 'iso-8859-1', 'de_utf8' => 'utf-8', 'el' => 'windows-1253', 'en' => 'iso-8859-1', 'en_ja' => 'euc-jp', 'en_us' => 'iso-8859-1', 'en_utf8' => 'utf-8', 'es' => 'iso-8859-1', 'es_ar' => 'iso-8859-1', 'es_es' => 'iso-8859-1', 'es_mx' => 'iso-8859-1', 'et' => 'iso-8859-1', 'eu' => 'iso-8859-1', 'fa' => 'windows-1256', 'fa_utf8' => 'utf-8', 'fi' => 'iso-8859-1', 'fil' => 'iso-8859-15', 'fr' => 'iso-8859-1', 'fr_ca' => 'iso-8859-15', 'ga' => 'iso-8859-1', 'gl' => 'iso-8859-1', 'he' => 'ISO-8859-8-I', 'he_utf8' => 'utf-8', 'hi' => 'iso-8859-1', 'hr' => 'windows-1250', 'hr_utf8' => 'utf-8', 'hu' => 'iso-8859-2', 'id' => 'iso-8859-1', 'it' => 'iso-8859-1', 'ja' => 'EUC-JP', 'ja_utf8' => 'UTF-8', 'ka_utf8' => 'UTF-8', 'km_utf8' => 'UTF-8', 'kn_utf8' => 'utf-8', 'ko' => 'EUC-KR', 'ko_utf8' => 'UTF-8', 'lt' => 'windows-1257', 'lv' => 'ISO-8859-4', 'mi_nt' => 'iso-8859-1', 'mi_tn_utf8' => 'utf-8', 'ms' => 'iso-8859-1', 'nl' => 'iso-8859-1', 'nn' => 'iso-8859-1', 'no' => 'iso-8859-1', 'no_gr' => 'iso-8859-1', 'pl' => 'iso-8859-2', 'pt' => 'iso-8859-1', 'pt_br' => 'iso-8859-1', 'ro' => 'iso-8859-2', 'ru' => 'windows-1251', 'sk' => 'iso-8859-2', 'sl' => 'iso-8859-2', 'sl_utf8' => 'utf-8', 'so' => 'iso-8859-1', 'sq' => 'iso-8859-1', 'sr_utf8' => 'utf-8', 'sv' => 'iso-8859-1', 'th' => 'TIS-620', 'th_utf8' => 'UTF-8', 'tl' => 'iso-8859-15', 'tl_utf8' => 'UTF-8', 'tr' => 'iso-8859-9', 'uk' => 'windows-1251', 'vi_utf8' => 'UTF-8', 'zh_cn' => 'GB18030', 'zh_cn_utf8' => 'UTF-8', 'zh_tw' => 'Big5', 'zh_tw_utf8' => 'UTF-8');
+
+            echo '<br />The whole site is in this encoding: (leave blank if you are not sure)';
+            echo '<select name="globallang"><option value="">I am not sure</option>';
+            foreach ($enc as $lang => $encoding) {
+                echo '<option value="'.$encoding.'">'.$lang.'</option>';
+            }
+            echo '</select>';
+        
+            echo '<p /><input type="submit" value="'.get_string('continue').'"/>';
+            echo '<input type="button" value="'.get_string('cancel').'" onclick="javascript:history.go(-1)" />';
+            echo '</form>';
+            echo '</div>';
+
+        } else {
+            echo '<div align="center">';
+            print_simple_box_start('center','50%');
+            print_string('dbmigratepostgres','admin');
+            print_simple_box_end();
+
+            print_simple_box_start("center", "");
+            include("utfdbmigrate.html");
+            print_simple_box_end();
+        }
     }
     
     else {    //else, print welcome to migrate page message
@@ -164,6 +188,40 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
 
     //if unicodedb is set, migration is complete. die here;
     if (!$crash = get_record('config','name','dbmigration')) {
+        //Duplicate the database if not unicode for postgres7
+        if ($CFG->dbtype == 'postgres7' && !is_postgres_utf8() && !is_postgres_setup()) {
+            echo '<script>';
+            echo 'document.getElementById("text").innerHTML = "Copying data to the UTF8 database for processing...";'."\n";
+            echo '</script>';
+
+            if ($_SESSION['newpostgresdb']->dbcluster) {
+                $cluster = ' --cluster ' . $_SESSION['newpostgresdb']->dbcluster;
+            } else {
+                $cluster = '';
+            }
+            $cmd = "PGPASSWORD={$CFG->dbpass} pg_dump -Fp -E 'UNICODE' -O -x -U {$CFG->dbuser}$cluster";
+            if ($CFG->dbhost)  {
+                $host = split(":", $CFG->dbhost);
+                if ($host[0]) $cmd .= " -h {$host[0]}";
+                if (isset($host[1])) $cmd .= " -p {$host[1]}";
+            }
+            $cmd .= " {$CFG->dbname} | iconv -f UTF-8 -t UTF-8 -c | PGPASSWORD={$_SESSION['newpostgresdb']->dbpass} psql -q -U {$_SESSION['newpostgresdb']->dbuser} -v ON_ERROR_STOP=1$cluster";
+            if ($_SESSION['newpostgresdb']->dbhost)  {
+                $host = split(":", $_SESSION['newpostgresdb']->dbhost);
+                if ($host[0]) $cmd .= " -h {$host[0]}";
+                if (isset($host[1])) $cmd .= " -p {$host[1]}";
+            }
+            $cmd .= " {$_SESSION['newpostgresdb']->dbname}";
+            exec($cmd.' 2>&1 > /dev/null', $output, $return_var);
+            if ($return_var) { // we are dead!
+                echo '<br />';
+                print_simple_box_start('center','50%');
+                print_string('dbmigrationdupfailed','admin',htmlspecialchars(implode("\n", $output)));
+                print_simple_box_end();
+                print_footer();
+                exit;
+            }
+        }
 
         $migrationconfig = new object;
         $migrationconfig->name = 'dbmigration';
@@ -330,8 +388,8 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
                                                 $courseid = get_record_sql(preg_replace($patterns, $replacements, $sqldetectcourse));
 
                                                 $sitelang   = $CFG->lang;
-                                                $courselang = get_course_lang($courseid->course);
-                                                $userlang   = get_user_lang($userid->userid);
+                                                $courselang = get_course_lang(isset($courseid->course)?$courseid->course:1);
+                                                $userlang   = get_user_lang(isset($userid->userid)?$userid->userid:1);
 
                                                 $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
                                             }
@@ -342,7 +400,7 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
                                                 $newrecord = new object;
                                                 $newrecord->id = $record->id;
                                                 $newrecord->{$fieldname} = $result;
-                                                update_record($dbtablename,$newrecord);
+                                                migrate2utf8_update_record($dbtablename,$newrecord);
                                             }
                                             if ($debug) {
                                                 $db->debug=0;
@@ -474,6 +532,7 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
                     } else {
 
                     //posgresql code here
+                    //No we don't need to do anything here
                     
                     }
 
@@ -513,6 +572,7 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
 
                 } else {
                   ///posgresql code here
+                  ///No we don't need to do anything here
 
                 }
 
@@ -542,23 +602,39 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
             } else {
 
                 ///posgresql code here
+                ///No we don't need to do anything here
             }
         }
     }
 
-    /*********************************
-     * now we modify the db encoding *
-     *********************************/
-    $SQL = 'ALTER DATABASE '.$CFG->dbname.' CHARACTER SET utf8';
-    execute_sql($SQL, $debug);
+    if ($CFG->dbtype=='mysql') {
+        /*********************************
+         * now we modify the db encoding *
+         *********************************/
+        $SQL = 'ALTER DATABASE '.$CFG->dbname.' CHARACTER SET utf8';
+        execute_sql($SQL, $debug);
+    } else {
+        if (!is_postgres_utf8()) {
+            //This old database is now deprecated
+            set_config('migrated_to_new_db','1');
+        }
+    }
     delete_records('config','name','dbmigration');    //bye bye
     
     //These have to go!
     if ($debug) {
         $db->debug=999;
     }
+    if ($CFG->dbtype == 'postgres7') {
+        $backup_db = $GLOBALS['db'];
+        $GLOBALS['db'] = &get_postgres_db();
+    }
     execute_sql('TRUNCATE TABLE '.$CFG->prefix.'cache_text', $debug);
     execute_sql('TRUNCATE TABLE '.$CFG->prefix.'cache_filters', $debug);
+    if ($CFG->dbtype == 'postgres7') {
+        $GLOBALS['db'] = $backup_db;
+        unset($backup_db);
+    }
     if ($debug) {
         $db->debug=0;
     }
@@ -566,7 +642,7 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
     $sitelanguage = get_record('config','name', 'lang');
     if (strstr($sitelanguage->value, 'utf8')===false and $sitelanguage->value) {
         $sitelanguage->value.='_utf8';
-        update_record('config',$sitelanguage);
+        migrate2utf8_update_record('config',$sitelanguage);
     }
 
     //finish the javascript bar
@@ -592,7 +668,7 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
     @unlink($CFG->dataroot.'/cache/languages');
 
     //set the final flag
-    set_config('unicodedb','true');    //this is the main flag for unicode db
+    migrate2utf8_set_config('unicodedb','true');    //this is the main flag for unicode db
     
 }
 
@@ -704,6 +780,85 @@ function utfconvert($string, $enc) {
     return $result;
 }
 
+function validate_form(&$form, &$err) {
+    global $CFG;
+
+    $newdb = &ADONewConnection('postgres7');
+    error_reporting(0);  // Hide errors
+    $dbconnected = $newdb->Connect($form->dbhost,$form->dbuser,$form->dbpass,$form->dbname);
+    error_reporting($CFG->debug);  // Show errors
+    if (!$dbconnected) {
+        $err['dbconnect'] = get_string('dbmigrateconnecerror', 'admin');
+        return;
+    }
+
+    if (!is_postgres_utf8($newdb)) {
+        $err['dbconnect'] = get_string('dbmigrateencodingerror', 'admin', $encoding);
+        return;
+    }
+
+    return;
+}
+
+function is_postgres_utf8($thedb = null) {
+    if ($thedb === null) {
+        $thedb = &$GLOBALS['db'];
+    }
+
+    $db_encoding_postgres = $thedb->GetOne('SHOW server_encoding');
+    if (strtoupper($db_encoding_postgres) == 'UNICODE' || strtoupper($db_encoding_postgres) == 'UTF8') {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+function &get_postgres_db() {
+    static $postgres_db;
+
+    if (!$postgres_db) {
+        if (is_postgres_utf8()) {
+            $postgres_db = &$GLOBALS['db'];
+        } else {
+            $postgres_db = &ADONewConnection('postgres7');
+            $postgres_db->Connect($_SESSION['newpostgresdb']->dbhost,$_SESSION['newpostgresdb']->dbuser,$_SESSION['newpostgresdb']->dbpass,$_SESSION['newpostgresdb']->dbname);
+        }
+    }
+
+    return $postgres_db;
+}
+
+function is_postgres_setup() {
+    $postgres_db = &get_postgres_db();
+
+    return $GLOBALS['db']->MetaTables() == $postgres_db->MetaTables();
+}
+
+function migrate2utf8_update_record($table,$record) {
+    global $CFG;
+
+    if ($CFG->dbtype == 'mysql') {
+        update_record($table,$record);
+    } else {
+        $backup_db = $GLOBALS['db'];
+        $GLOBALS['db'] = &get_postgres_db();
+        global $in;
+        $in = true;
+        update_record($table,$record);
+        $GLOBALS['db'] = $backup_db;
+    }
+}
+
+function migrate2utf8_set_config($name, $value, $plugin=NULL) {
+    if ($CFG->dbtype == 'mysql') {
+        set_config($name, $value, $plugin);
+    } else {
+        $backup_db = $GLOBALS['db'];
+        $GLOBALS['db'] = &get_postgres_db();
+        set_config($name, $value, $plugin);
+        $GLOBALS['db'] = $backup_db;
+    }
+}
 
 function utf_get_xml () {
     global $CFG;

@@ -128,8 +128,13 @@ $string['confirmation'] = 'Confirmation';
 $string['confirminstall'] = 'You are about to install language pack ($a), are you sure?';
 $string['cronwarning'] = 'The <a href=\"cron.php\">cron.php maintenance script</a> has not been run for at least 24 hours. <br />The <a href=\"../doc/?frame=install.html&amp;sub=cron\">installation documentation</a> explains how you can automate this.';
 $string['dbmigrate'] = 'Moodle Database Migration';
+$string['dbmigrationdeprecateddb'] = '<font color=\"#ff0000\">This database is migrated to a new UTF8 database and deprecated. Please edit your config.php and use the new database for this moodle.</font>';
+$string['dbmigrationdupfailed'] = 'Database duplication failed with possible error:<font color=\"#ff0000\"><pre>$a</pre></font>';
 $string['dbmigratewarning'] = 'Please make sure that you have backed up your moodle database before commencing this procedure. If you are unsure of how to do that, please contact your system admin. Your Moodle site will be put under maintenance mode after you start the migration process';
 $string['dbmigratewarning2'] = '<b>Warning: You are about to start the database migration process. Please be very sure that your entire Moodle database is backed up.</b>';
+$string['dbmigrateconnecerror'] = 'Could not connect to the database specified.';
+$string['dbmigrateencodingerror'] = 'The database specified has encoding $a rather than required UNICODE/UTF8.<br />Please specify another.';
+$string['dbmigratepostgres'] = 'It seems that you are using PostgreSQL as the database server. To continue the migration process you need to manually create a new database with encoding \"UNICODE\"(PostgreSQL 7) or \"UTF8\" (PostgreSQL 8) to store the migrated data. Please enter your new database connection settings below to continue:';
 $string['density'] = 'Density';
 $string['download'] = 'Download';
 $string['edithelpdocs'] = 'Edit help documents';
@@ -195,6 +200,12 @@ $string['pathdvips'] = 'Path of <i>dvips</i> binary';
 $string['pathconvert'] = 'Path of <i>convert</i> binary';
 $string['pathlatex'] = 'Path of <i>latex</i> binary';
 $string['pleaseregister'] = 'Please register your site to remove this button';
+$string['pgcluster'] = 'PostgreSQL Cluster';
+$string['pgclusterdescription'] = '<pre>PostgreSQL version/cluster parameter
+for command line operations.
+If you only have one postgresql
+on your system or you are not
+sure what this is, leave this blank.</pre>';
 $string['remotelangnotavailable'] = 'Because Moodle can not connect to download.moodle.org, we are unable to do language pack installation automatically. Please download the appropriate zip file(s) from the list below, copy them to your $a directory and unzip them manually.';
 $string['sitelangchanged'] = 'Site language setting changed successfully';
 $string['sitemaintenance'] = 'The site is undergoing maintenance and is currently not available';

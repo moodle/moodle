@@ -41,7 +41,7 @@ function migrate2utf8_glossary_categories_name($recordid){
         $newglossarycategory = new object;
         $newglossarycategory->id = $recordid;
         $newglossarycategory->name = $result;
-        update_record('glossary_categories',$newglossarycategory);
+        migrate2utf8_update_record('glossary_categories',$newglossarycategory);
     }
 /// And finally, just return the converted field
     return $result;
@@ -79,7 +79,7 @@ function migrate2utf8_glossary_name($recordid){
         $newglossary = new object;
         $newglossary->id = $recordid;
         $newglossary->name = $result;
-        update_record('glossary',$newglossary);
+        migrate2utf8_update_record('glossary',$newglossary);
     }
 /// And finally, just return the converted field
     return $result;
@@ -117,7 +117,7 @@ function migrate2utf8_glossary_intro($recordid){
         $newglossary = new object;
         $newglossary->id = $recordid;
         $newglossary->intro = $result;
-        update_record('glossary',$newglossary);
+        migrate2utf8_update_record('glossary',$newglossary);
     }
 /// And finally, just return the converted field
     return $result;

@@ -316,6 +316,13 @@
     print_simple_box_start('center', '100%', '', 20);
     print_heading($stradministration);
 
+/// Deprecated database! Warning!!
+    if (!empty($CFG->migrated_to_new_db)) {
+        print_simple_box_start('center','50%');
+        print_string('dbmigrationdeprecateddb','admin');
+        print_simple_box_end();
+    }
+
     if (!empty($CFG->upgrade)) {  // Print notice about extra upgrading that needs to be done
         print_simple_box(get_string("upgrade$CFG->upgrade", "admin",
                                     "$CFG->wwwroot/$CFG->admin/upgrade$CFG->upgrade.php"), "center", '50%');

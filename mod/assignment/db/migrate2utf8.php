@@ -30,7 +30,7 @@ function migrate2utf8_assignment_name($recordid){
         $newassignment = new object;
         $newassignment->id = $recordid;
         $newassignment->name = $result;
-        update_record('assignment',$newassignment);
+        migrate2utf8_update_record('assignment',$newassignment);
     }
 /// And finally, just return the converted field
 
@@ -68,7 +68,7 @@ function migrate2utf8_assignment_description($recordid){
         $newassignment = new object;
         $newassignment->id = $recordid;
         $newassignment->description = $result;
-        update_record('assignment',$newassignment);
+        migrate2utf8_update_record('assignment',$newassignment);
     }
 /// And finally, just return the converted field
     return $result;

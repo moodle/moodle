@@ -43,7 +43,7 @@ function migrate2utf8_scorm_scoes_manifest($recordid){
         $newscormscoes = new object;
         $newscormscoes->id = $recordid;
         $newscormscoes->manifest = $result;
-        update_record('scorm_scoes',$newscormscoes);
+        migrate2utf8_update_record('scorm_scoes',$newscormscoes);
     }
 /// And finally, just return the converted field
     return $result;
@@ -93,7 +93,7 @@ function migrate2utf8_scorm_scoes_organization($recordid){
         $newscormscoes = new object;
         $newscormscoes->id = $recordid;
         $newscormscoes->organization = $result;
-        update_record('scorm_scoes',$newscormscoes);
+        migrate2utf8_update_record('scorm_scoes',$newscormscoes);
     }
 /// And finally, just return the converted field
     return $result;
@@ -143,7 +143,7 @@ function migrate2utf8_scorm_scoes_parent($recordid){
         $newscormscoes = new object;
         $newscormscoes->id = $recordid;
         $newscormscoes->parent = $result;
-        update_record('scorm_scoes',$newscormscoes);
+        migrate2utf8_update_record('scorm_scoes',$newscormscoes);
     }
 /// And finally, just return the converted field
     return $result;
@@ -193,7 +193,7 @@ function migrate2utf8_scorm_scoes_identifier($recordid){
         $newscormscoes = new object;
         $newscormscoes->id = $recordid;
         $newscormscoes->identifier = $result;
-        update_record('scorm_scoes',$newscormscoes);
+        migrate2utf8_update_record('scorm_scoes',$newscormscoes);
     }
 /// And finally, just return the converted field
     return $result;
@@ -242,7 +242,7 @@ function migrate2utf8_scorm_scoes_launch($recordid){
         $newscormscoes = new object;
         $newscormscoes->id = $recordid;
         $newscormscoes->launch = $result;
-        update_record('scorm_scoes',$newscormscoes);
+        migrate2utf8_update_record('scorm_scoes',$newscormscoes);
     }
 /// And finally, just return the converted field
     return $result;
@@ -292,7 +292,7 @@ function migrate2utf8_scorm_scoes_parameters($recordid){
         $newscormscoes = new object;
         $newscormscoes->id = $recordid;
         $newscormscoes->parameters = $result;
-        update_record('scorm_scoes',$newscormscoes);
+        migrate2utf8_update_record('scorm_scoes',$newscormscoes);
     }
 /// And finally, just return the converted field
     return $result;
@@ -342,7 +342,7 @@ function migrate2utf8_scorm_scoes_scormtype($recordid){
         $newscormscoes = new object;
         $newscormscoes->id = $recordid;
         $newscormscoes->scormtype = $result;
-        update_record('scorm_scoes',$newscormscoes);
+        migrate2utf8_update_record('scorm_scoes',$newscormscoes);
     }
 /// And finally, just return the converted field
     return $result;
@@ -392,7 +392,7 @@ function migrate2utf8_scorm_scoes_title($recordid){
         $newscormscoes = new object;
         $newscormscoes->id = $recordid;
         $newscormscoes->title = $result;
-        update_record('scorm_scoes',$newscormscoes);
+        migrate2utf8_update_record('scorm_scoes',$newscormscoes);
     }
 /// And finally, just return the converted field
     return $result;
@@ -442,7 +442,7 @@ function migrate2utf8_scorm_scoes_prerequisites($recordid){
         $newscormscoes = new object;
         $newscormscoes->id = $recordid;
         $newscormscoes->prerequisites = $result;
-        update_record('scorm_scoes',$newscormscoes);
+        migrate2utf8_update_record('scorm_scoes',$newscormscoes);
     }
 /// And finally, just return the converted field
     return $result;
@@ -492,7 +492,7 @@ function migrate2utf8_scorm_scoes_maxtimeallowed($recordid){
         $newscormscoes = new object;
         $newscormscoes->id = $recordid;
         $newscormscoes->maxtimeallowed = $result;
-        update_record('scorm_scoes',$newscormscoes);
+        migrate2utf8_update_record('scorm_scoes',$newscormscoes);
     }
 /// And finally, just return the converted field
     return $result;
@@ -542,7 +542,7 @@ function migrate2utf8_scorm_scoes_timelimitaction($recordid){
         $newscormscoes = new object;
         $newscormscoes->id = $recordid;
         $newscormscoes->timelimitaction = $result;
-        update_record('scorm_scoes',$newscormscoes);
+        migrate2utf8_update_record('scorm_scoes',$newscormscoes);
     }
 /// And finally, just return the converted field
     return $result;
@@ -592,7 +592,7 @@ function migrate2utf8_scorm_scoes_datafromlms($recordid){
         $newscormscoes = new object;
         $newscormscoes->id = $recordid;
         $newscormscoes->datafromlms = $result;
-        update_record('scorm_scoes',$newscormscoes);
+        migrate2utf8_update_record('scorm_scoes',$newscormscoes);
     }
 /// And finally, just return the converted field
     return $result;
@@ -641,7 +641,7 @@ function migrate2utf8_scorm_scoes_masteryscore($recordid){
         $newscormscoes = new object;
         $newscormscoes->id = $recordid;
         $newscormscoes->masteryscore = $result;
-        update_record('scorm_scoes',$newscormscoes);
+        migrate2utf8_update_record('scorm_scoes',$newscormscoes);
     }
 /// And finally, just return the converted field
     return $result;
@@ -680,7 +680,7 @@ function migrate2utf8_scorm_name($recordid){
         $newscorm = new object;
         $newscorm->id = $recordid;
         $newscorm->name = $result;
-        update_record('scorm',$newscorm);
+        migrate2utf8_update_record('scorm',$newscorm);
     }
 /// And finally, just return the converted field
     return $result;
@@ -718,7 +718,7 @@ function migrate2utf8_scorm_reference($recordid){
         $newscorm = new object;
         $newscorm->id = $recordid;
         $newscorm->reference = $result;
-        update_record('scorm',$newscorm);
+        migrate2utf8_update_record('scorm',$newscorm);
     }
 /// And finally, just return the converted field
     return $result;
@@ -756,7 +756,7 @@ function migrate2utf8_scorm_summary($recordid){
         $newscorm = new object;
         $newscorm->id = $recordid;
         $newscorm->summary = $result;
-        update_record('scorm',$newscorm);
+        migrate2utf8_update_record('scorm',$newscorm);
     }
 /// And finally, just return the converted field
     return $result;
@@ -794,7 +794,7 @@ function migrate2utf8_scorm_options($recordid){
         $newscorm = new object;
         $newscorm->id = $recordid;
         $newscorm->options = $result;
-        update_record('scorm',$newscorm);
+        migrate2utf8_update_record('scorm',$newscorm);
     }
 /// And finally, just return the converted field
     return $result;

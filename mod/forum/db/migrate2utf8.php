@@ -31,7 +31,7 @@ function migrate2utf8_forum_name($recordid){
         $newforum = new object;
         $newforum->id = $recordid;
         $newforum->name = $result;
-        update_record('forum',$newforum);
+        migrate2utf8_update_record('forum',$newforum);
     }
 /// And finally, just return the converted field
     return $result;
@@ -70,7 +70,7 @@ function migrate2utf8_forum_intro($recordid){
         $newforum = new object;
         $newforum->id = $recordid;
         $newforum->intro = $result;
-        update_record('forum',$newforum);
+        migrate2utf8_update_record('forum',$newforum);
     }
 /// And finally, just return the converted field
     return $result;

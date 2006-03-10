@@ -43,7 +43,7 @@ function migrate2utf8_choice_options_text($recordid){
         $newchoiceoption = new object;
         $newchoiceoption->id = $recordid;
         $newchoiceoption->text = $result;
-        update_record('choice_options',$newchoiceoption);
+        migrate2utf8_update_record('choice_options',$newchoiceoption);
     }
 /// And finally, just return the converted field
     return $result;
@@ -80,7 +80,7 @@ function migrate2utf8_choice_name($recordid){
         $newchoice = new object;
         $newchoice->id = $recordid;
         $newchoice->name = $result;
-        update_record('choice',$newchoice);
+        migrate2utf8_update_record('choice',$newchoice);
     }
 /// And finally, just return the converted field
     return $result;
@@ -117,7 +117,7 @@ function migrate2utf8_choice_text($recordid){
         $newchoice = new object;
         $newchoice->id = $recordid;
         $newchoice->text = $result;
-        update_record('choice',$newchoice);
+        migrate2utf8_update_record('choice',$newchoice);
     }
 /// And finally, just return the converted field
     return $result;

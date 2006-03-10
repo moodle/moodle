@@ -33,7 +33,7 @@ function migrate2utf8_survey_name($recordid){
         $newsurvey = new object;
         $newsurvey->id = $recordid;
         $newsurvey->name = $result;
-        update_record('survey',$newsurvey);
+        migrate2utf8_update_record('survey',$newsurvey);
     }
 /// And finally, just return the converted field
     return $result;
@@ -71,7 +71,7 @@ function migrate2utf8_survey_intro($recordid){
         $newsurvey = new object;
         $newsurvey->id = $recordid;
         $newsurvey->intro = $result;
-        update_record('survey',$newsurvey);
+        migrate2utf8_update_record('survey',$newsurvey);
     }
 /// And finally, just return the converted field
     return $result;

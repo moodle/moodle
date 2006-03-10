@@ -32,7 +32,7 @@ function migrate2utf8_wiki_name($recordid){
         $newwiki = new object;
         $newwiki->id = $recordid;
         $newwiki->name = $result;
-        update_record('wiki',$newwiki);
+        migrate2utf8_update_record('wiki',$newwiki);
     }
 /// And finally, just return the converted field
     return $result;
@@ -71,7 +71,7 @@ function migrate2utf8_wiki_summary($recordid){
         $newwiki = new object;
         $newwiki->id = $recordid;
         $newwiki->summary = $result;
-        update_record('wiki',$newwiki);
+        migrate2utf8_update_record('wiki',$newwiki);
     }
 /// And finally, just return the converted field
     return $result;
@@ -110,7 +110,7 @@ function migrate2utf8_wiki_pagename($recordid){
         $newwiki = new object;
         $newwiki->id = $recordid;
         $newwiki->pagename = $result;
-        update_record('wiki',$newwiki);
+        migrate2utf8_update_record('wiki',$newwiki);
     }
 /// And finally, just return the converted field
     return $result;
@@ -148,7 +148,7 @@ function migrate2utf8_wiki_initialcontent($recordid){
         $newwiki = new object;
         $newwiki->id = $recordid;
         $newwiki->initialcontent = $result;
-        update_record('wiki',$newwiki);
+        migrate2utf8_update_record('wiki',$newwiki);
     }
 /// And finally, just return the converted field
     return $result;

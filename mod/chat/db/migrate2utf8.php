@@ -31,7 +31,7 @@ function migrate2utf8_chat_name($recordid){
         $newchat = new object;
         $newchat->id = $recordid;
         $newchat->name = $result;
-        update_record('chat',$newchat);
+        migrate2utf8_update_record('chat',$newchat);
     }
 /// And finally, just return the converted field
     return $result;
@@ -69,7 +69,7 @@ function migrate2utf8_chat_intro($recordid){
         $newchat = new object;
         $newchat->id = $recordid;
         $newchat->intro = $result;
-        update_record('chat',$newchat);
+        migrate2utf8_update_record('chat',$newchat);
     }
 /// And finally, just return the converted field
     return $result;

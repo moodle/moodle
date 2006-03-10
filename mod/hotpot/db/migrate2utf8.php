@@ -33,7 +33,7 @@ function migrate2utf8_hotpot_strings_string($recordid){
         $newhotpotstrings = new object;
         $newhotpotstrings->id = $recordid;
         $newhotpotstrings->string = $result;
-        update_record('hotpot_strings',$newhotpotstrings);
+        migrate2utf8_update_record('hotpot_strings',$newhotpotstrings);
     /// And finally, just return the converted field
     }
     return $result;
@@ -81,7 +81,7 @@ function migrate2utf8_hotpot_questions_name($recordid){
         $newhotpotquestion = new object;
         $newhotpotquestion->id = $recordid;
         $newhotpotquestion->name = $result;
-        update_record('hotpot_questions',$newhotpotquestion);
+        migrate2utf8_update_record('hotpot_questions',$newhotpotquestion);
     /// And finally, just return the converted field
     }
     return $result;
@@ -119,7 +119,7 @@ function migrate2utf8_hotpot_name($recordid){
         $newhotpot = new object;
         $newhotpot->id = $recordid;
         $newhotpot->name = $result;
-        update_record('hotpot',$newhotpot);
+        migrate2utf8_update_record('hotpot',$newhotpot);
 /// And finally, just return the converted field
     }
     return $result;
@@ -157,7 +157,7 @@ function migrate2utf8_hotpot_summary($recordid){
         $newhotpot = new object;
         $newhotpot->id = $recordid;
         $newhotpot->summary = $result;
-        update_record('hotpot',$newhotpot);
+        migrate2utf8_update_record('hotpot',$newhotpot);
     }
 /// And finally, just return the converted field
     return $result;
@@ -195,7 +195,7 @@ function migrate2utf8_hotpot_password($recordid){
         $newhotpot = new object;
         $newhotpot->id = $recordid;
         $newhotpot->password = $result;
-        update_record('hotpot',$newhotpot);
+        migrate2utf8_update_record('hotpot',$newhotpot);
     }
 /// And finally, just return the converted field
     return $result;

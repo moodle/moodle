@@ -33,7 +33,7 @@ function migrate2utf8_block_rss_client_title($recordid){
         $newrssclient = new object;
         $newrssclient->id = $recordid;
         $newrssclient->title = $result;
-        update_record('block_rss_client',$newrssclient);
+        migrate2utf8_update_record('block_rss_client',$newrssclient);
     }
 /// And finally, just return the converted field
     return $result;
@@ -83,7 +83,7 @@ function migrate2utf8_block_rss_client_preferredtitle($recordid){
         $newrssclient = new object;
         $newrssclient->id = $recordid;
         $newrssclient->preferredtitle = $result;
-        update_record('block_rss_client',$newrssclient);
+        migrate2utf8_update_record('block_rss_client',$newrssclient);
 /// And finally, just return the converted field
     }
     return $result;
@@ -132,7 +132,7 @@ function migrate2utf8_block_rss_client_description($recordid){
         $newrssclient = new object;
         $newrssclient->id = $recordid;
         $newrssclient->description = $result;
-        update_record('block_rss_client',$newrssclient);
+        migrate2utf8_update_record('block_rss_client',$newrssclient);
     }
 /// And finally, just return the converted field
     return $result;

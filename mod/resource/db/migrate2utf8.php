@@ -31,7 +31,7 @@ function migrate2utf8_resource_name($recordid){
         $newresource = new object;
         $newresource->id = $recordid;
         $newresource->name = $result;
-        update_record('resource',$newresource);
+        migrate2utf8_update_record('resource',$newresource);
     }
 /// And finally, just return the converted field
     return $result;
@@ -70,7 +70,7 @@ function migrate2utf8_resource_reference($recordid){
         $newresource = new object;
         $newresource->id = $recordid;
         $newresource->reference = $result;
-        update_record('resource',$newresource);
+        migrate2utf8_update_record('resource',$newresource);
     }
 /// And finally, just return the converted field
     return $result;
@@ -107,7 +107,7 @@ function migrate2utf8_resource_summary($recordid){
         $newresource = new object;
         $newresource->id = $recordid;
         $newresource->summary = $result;
-        update_record('resource',$newresource);
+        migrate2utf8_update_record('resource',$newresource);
     }
 /// And finally, just return the converted field
     return $result;
@@ -143,7 +143,7 @@ function migrate2utf8_resource_alltext($recordid){
         $newresource = new object;
         $newresource->id = $recordid;
         $newresource->alltext = $result;
-        update_record('resource',$newresource);
+        migrate2utf8_update_record('resource',$newresource);
     }
 /// And finally, just return the converted field
     return $result;

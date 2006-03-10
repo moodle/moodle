@@ -31,7 +31,7 @@ function migrate2utf8_label_name($recordid){
         $newlabel = new object;
         $newlabel->id = $recordid;
         $newlabel->name = $result;
-        update_record('label',$newlabel);
+        migrate2utf8_update_record('label',$newlabel);
     }
 /// And finally, just return the converted field
     return $result;
@@ -69,7 +69,7 @@ function migrate2utf8_label_content($recordid){
         $newlabel = new object;
         $newlabel->id = $recordid;
         $newlabel->content = $result;
-        update_record('label',$newlabel);
+        migrate2utf8_update_record('label',$newlabel);
     }
 /// And finally, just return the converted field
     return $result;

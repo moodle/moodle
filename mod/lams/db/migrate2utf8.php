@@ -32,7 +32,7 @@ function migrate2utf8_lams_name($recordid){
         $newlams = new object;
         $newlams->id = $recordid;
         $newlams->name = $result;
-        update_record('lams',$newlams);
+        migrate2utf8_update_record('lams',$newlams);
     }
 /// And finally, just return the converted field
     return $result;
@@ -70,7 +70,7 @@ function migrate2utf8_lams_introduction($recordid){
         $newlams = new object;
         $newlams->id = $recordid;
         $newlams->introduction = $result;
-        update_record('lams',$newlams);
+        migrate2utf8_update_record('lams',$newlams);
     }
 /// And finally, just return the converted field
     return $result;

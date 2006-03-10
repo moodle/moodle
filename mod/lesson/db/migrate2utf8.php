@@ -42,7 +42,7 @@ function migrate2utf8_lesson_answers_answer($recordid){
         $newlessonanswers = new object;
         $newlessonanswers->id = $recordid;
         $newlessonanswers->answer = $result;
-        update_record('lesson_answers',$newlessonanswers);
+        migrate2utf8_update_record('lesson_answers',$newlessonanswers);
     }
 /// And finally, just return the converted field
     return $result;
@@ -91,7 +91,7 @@ function migrate2utf8_lesson_answers_response($recordid){
         $newlessonanswers = new object;
         $newlessonanswers->id = $recordid;
         $newlessonanswers->response = $result;
-        update_record('lesson_answers',$newlessonanswers);
+        migrate2utf8_update_record('lesson_answers',$newlessonanswers);
     }
 /// And finally, just return the converted field
     return $result;
@@ -147,7 +147,7 @@ function migrate2utf8_lesson_pages_contents($recordid){
         $newlessonpages = new object;
         $newlessonpages->id = $recordid;
         $newlessonpages->contents = $result;
-        update_record('lesson_pages',$newlessonpages);
+        migrate2utf8_update_record('lesson_pages',$newlessonpages);
     }
 /// And finally, just return the converted field
     return $result;
@@ -195,7 +195,7 @@ function migrate2utf8_lesson_pages_title($recordid){
         $newlessonpages = new object;
         $newlessonpages->id = $recordid;
         $newlessonpages->title = $result;
-        update_record('lesson_pages',$newlessonpages);
+        migrate2utf8_update_record('lesson_pages',$newlessonpages);
     }
 /// And finally, just return the converted field
     return $result;
@@ -233,7 +233,7 @@ function migrate2utf8_lesson_name($recordid){
         $newlesson = new object;
         $newlesson->id = $recordid;
         $newlesson->name = $result;
-        update_record('lesson',$newlesson);
+        migrate2utf8_update_record('lesson',$newlesson);
     }
 /// And finally, just return the converted field
     return $result;

@@ -42,7 +42,7 @@ function migrate2utf8_data_fields_name($recordid){
         $newdatafield = new object;
         $newdatafield->id = $recordid;
         $newdatafield->name = $result;
-        update_record('data_fields',$newdatafield);
+        migrate2utf8_update_record('data_fields',$newdatafield);
     }
 /// And finally, just return the converted field
     return $result;
@@ -91,7 +91,7 @@ function migrate2utf8_data_fields_description($recordid){
         $newdatafield = new object;
         $newdatafield->id = $recordid;
         $newdatafield->description = $result;
-        update_record('data_fields',$newdatafield);
+        migrate2utf8_update_record('data_fields',$newdatafield);
     }
 /// And finally, just return the converted field
     return $result;
@@ -129,7 +129,7 @@ function migrate2utf8_data_name($recordid){
         $newdata= new object;
         $newdata->id = $recordid;
         $newdata->name = $result;
-        update_record('data',$newdata);
+        migrate2utf8_update_record('data',$newdata);
     }
 /// And finally, just return the converted field
     return $result;
@@ -167,7 +167,7 @@ function migrate2utf8_data_intro($recordid){
         $newdata= new object;
         $newdata->id = $recordid;
         $newdata->intro = $result;
-        update_record('data',$newdata);
+        migrate2utf8_update_record('data',$newdata);
     }
 /// And finally, just return the converted field
     return $result;
@@ -206,7 +206,7 @@ function migrate2utf8_data_singletemplate($recordid){
         $newdata= new object;
         $newdata->id = $recordid;
         $newdata->singletemplate = $result;
-        update_record('data',$newdata);
+        migrate2utf8_update_record('data',$newdata);
     }
 /// And finally, just return the converted field
     return $result;
@@ -245,7 +245,7 @@ function migrate2utf8_data_listtemplate($recordid){
         $newdata= new object;
         $newdata->id = $recordid;
         $newdata->listtemplate = $result;
-        update_record('data',$newdata);
+        migrate2utf8_update_record('data',$newdata);
     }
 /// And finally, just return the converted field
     return $result;
@@ -284,7 +284,7 @@ function migrate2utf8_data_addtemplate($recordid){
         $newdata= new object;
         $newdata->id = $recordid;
         $newdata->addtemplate = $result;
-        update_record('data',$newdata);
+        migrate2utf8_update_record('data',$newdata);
     }
 /// And finally, just return the converted field
     return $result;
@@ -322,7 +322,7 @@ function migrate2utf8_data_rsstemplate($recordid){
         $newdata= new object;
         $newdata->id = $recordid;
         $newdata->rsstemplate = $result;
-        update_record('data',$newdata);
+        migrate2utf8_update_record('data',$newdata);
     }
 /// And finally, just return the converted field
     return $result;
@@ -359,7 +359,7 @@ function migrate2utf8_data_listtemplateheader($recordid){
         $newdata= new object;
         $newdata->id = $recordid;
         $newdata->listtemplateheader = $result;
-        update_record('data',$newdata);
+        migrate2utf8_update_record('data',$newdata);
     }
 /// And finally, just return the converted field
     return $result;
@@ -397,7 +397,7 @@ function migrate2utf8_data_listtemplatefooter($recordid){
         $newdata= new object;
         $newdata->id = $recordid;
         $newdata->listtemplatefooter = $result;
-        update_record('data',$newdata);
+        migrate2utf8_update_record('data',$newdata);
     }
 /// And finally, just return the converted field
     return $result;

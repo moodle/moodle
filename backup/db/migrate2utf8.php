@@ -33,7 +33,7 @@ function migrate2utf8_backup_ids_info($recordid){
         $newbackupids = new object;
         $newbackupids->id = $recordid;
         $newbackupids->info = $result;
-        update_record('backup_ids',$newbackupids);
+        migrate2utf8_update_record('backup_ids',$newbackupids);
     }
 /// And finally, just return the converted field
     return $result;

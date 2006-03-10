@@ -31,7 +31,7 @@ function migrate2utf8_block_instance_configdata($recordid){
         
         $blockinstance->configdata = base64_encode(serialize($blah));
 
-        update_record('block_instance',$blockinstance);
+        migrate2utf8_update_record('block_instance',$blockinstance);
 
         return $blah;
 
@@ -57,7 +57,7 @@ function migrate2utf8_block_instance_configdata($recordid){
 
         $blockinstance->configdata = base64_encode(serialize($blah));
 
-        update_record('block_instance',$blockinstance);
+        migrate2utf8_update_record('block_instance',$blockinstance);
 
         return $blah;
 

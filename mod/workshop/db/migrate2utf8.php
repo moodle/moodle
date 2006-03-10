@@ -43,7 +43,7 @@ function migrate2utf8_workshop_stockcomments_comments($recordid){
         $newworkshopstockcomments = new object;
         $newworkshopstockcomments->id = $recordid;
         $newworkshopstockcomments->comments = $result;
-        update_record('workshop_stockcomments',$newworkshopstockcomments);
+        migrate2utf8_update_record('workshop_stockcomments',$newworkshopstockcomments);
     }
 /// And finally, just return the converted field
     return $result;
@@ -93,7 +93,7 @@ function migrate2utf8_workshop_rubrics_description($recordid){
         $newworkshoprubrics = new object;
         $newworkshoprubrics->id = $recordid;
         $newworkshoprubrics->description = $result;
-        update_record('workshop_rubrics',$newworkshoprubrics);
+        migrate2utf8_update_record('workshop_rubrics',$newworkshoprubrics);
     }
 /// And finally, just return the converted field
     return $result;
@@ -143,7 +143,7 @@ function migrate2utf8_workshop_grades_feedback($recordid){
         $newworkshopgrades = new object;
         $newworkshopgrades->id = $recordid;
         $newworkshopgrades->feedback = $result;
-        update_record('workshop_grades',$newworkshopgrades);
+        migrate2utf8_update_record('workshop_grades',$newworkshopgrades);
     }
 /// And finally, just return the converted field
     return $result;
@@ -193,7 +193,7 @@ function migrate2utf8_workshop_elements_description($recordid){
         $newworkshopelements = new object;
         $newworkshopelements->id = $recordid;
         $newworkshopelements->description = $result;
-        update_record('workshop_elements',$newworkshopelements);
+        migrate2utf8_update_record('workshop_elements',$newworkshopelements);
     }
 /// And finally, just return the converted field
     return $result;
@@ -231,7 +231,7 @@ function migrate2utf8_workshop_name($recordid){
         $newworkshop = new object;
         $newworkshop->id = $recordid;
         $newworkshop->name = $result;
-        update_record('workshop',$newworkshop);
+        migrate2utf8_update_record('workshop',$newworkshop);
     }
 /// And finally, just return the converted field
     return $result;
@@ -269,7 +269,7 @@ function migrate2utf8_workshop_description($recordid){
         $newworkshop = new object;
         $newworkshop->id = $recordid;
         $newworkshop->description = $result;
-        update_record('workshop',$newworkshop);
+        migrate2utf8_update_record('workshop',$newworkshop);
     }
 /// And finally, just return the converted field
     return $result;
@@ -307,7 +307,7 @@ function migrate2utf8_workshop_password($recordid){
         $newworkshop = new object;
         $newworkshop->id = $recordid;
         $newworkshop->password = $result;
-        update_record('workshop',$newworkshop);
+        migrate2utf8_update_record('workshop',$newworkshop);
     }
 /// And finally, just return the converted field
     return $result;

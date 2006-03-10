@@ -31,7 +31,7 @@ function migrate2utf8_journal_name($recordid){
         $newjournal = new object;
         $newjournal->id = $recordid;
         $newjournal->name = $result;
-        update_record('journal',$newjournal);
+        migrate2utf8_update_record('journal',$newjournal);
     }
 /// And finally, just return the converted field
     return $result;
@@ -69,7 +69,7 @@ function migrate2utf8_journal_intro($recordid){
         $newjournal = new object;
         $newjournal->id = $recordid;
         $newjournal->intro = $result;
-        update_record('journal',$newjournal);
+        migrate2utf8_update_record('journal',$newjournal);
     }
 /// And finally, just return the converted field
     return $result;
