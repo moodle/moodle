@@ -1421,6 +1421,47 @@ function main_upgrade($oldversion=0) {
         execute_sql("UPDATE {$CFG->prefix}user_teachers SET enrol='manual' WHERE enrol=''");
 
     }
+    
+    if ($oldversion > 2006031000) {
+
+        modify_database("","CREATE TABLE prefix_post (
+          id SERIAL PRIMARY KEY,
+          userid INTEGER NOT NULL default 0,
+          courseid INTEGER NOT NULL default 0,
+          groupid INTEGER NOT NULL default 0,
+          moduleid INTEGER NOT NULL default 0,
+          coursemoduleid INTEGER NOT NULL default 0,
+          subject varchar(128) NOT NULL default '',
+          summary longtext,
+          content longtext,
+          uniquehash varchar(128) NOT NULL default '',
+          rating INTEGER NOT NULL default 0,
+          format INTEGER NOT NULL default 0,
+          publishstate varchar(10) CHECK (type IN ('draft','site','public')) NOT NULL default 'draft',
+          lastmodified INTEGER NOT NULL default '0',
+          created INTEGER NOT NULL default '0'
+        );");
+
+         modify_database("","CREATE INDEX id_user_idx ON prefix_post  (id, courseid);");
+         modify_database("","CREATE INDEX post_lastmodified_idx ON prefix_post (lastmodified);");
+         modify_database("","CREATE INDEX post_subject_idx ON prefix_post (subject);");
+
+         modify_database("","CREATE TABLE prefix_tags (
+          id SERIAL PRIMARY KEY,
+          type varchar(255) NOT NULL default 'official',
+          userid INTEGER NOT NULL default 0,
+          text varchar(255) NOT NULL default ''
+        );");
+
+         modify_database("","CREATE TABLE prefix_blog_tag_instance (
+          id SERIAL PRIMARY KEY,
+          entryid id SERIAL PRIMARY KEY, NOT NULL default 0,
+          tagid id SERIAL PRIMARY KEY, NOT NULL default 0,
+          groupid id SERIAL PRIMARY KEY, NOT NULL default 0,
+          courseid id SERIAL PRIMARY KEY, NOT NULL default 0,
+          userid id SERIAL PRIMARY KEY, NOT NULL default 0
+        );");
+    }
 
     return $result;
 }

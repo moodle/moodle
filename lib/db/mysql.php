@@ -1678,6 +1678,49 @@ function main_upgrade($oldversion=0) {
         execute_sql("UPDATE {$CFG->prefix}user_teachers SET enrol='manual' WHERE enrol=''");
 
     }
+    
+    if ($oldversion < 2006031000) {
+
+        modify_database("","CREATE TABLE prefix_post (
+          `id` int(11) NOT NULL auto_increment,
+          `userid` int(11) NOT NULL default '0',
+          `courseid` int(11) NOT NULL default'0',
+          `groupid` int(11) NOT NULL default'0',
+          `moduleid` int(11) NOT NULL default'0',
+          `coursemoduleid` int(11) NOT NULL default'0',
+          `subject` varchar(128) NOT NULL default '',
+          `summary` longtext,
+          `content` longtext,
+          `uniquehash` varchar(128) NOT NULL default '',
+          `rating` int(11) NOT NULL default'0',
+          `format` int(11) NOT NULL default'0',
+          `publishstate` enum('draft','site','public') NOT NULL default 'draft',
+          `lastmodified` int(10) NOT NULL default '0',
+          `created` int(10) NOT NULL default '0',
+          PRIMARY KEY  (`id`),
+          UNIQUE KEY `id_user_idx` (`id`, `userid`),
+          KEY `post_lastmodified_idx` (`lastmodified`),
+          KEY `post_subject_idx` (`subject`)
+        ) TYPE=MyISAM  COMMENT='New moodle post table. Holds data posts such as forum entries or blog entries.';");
+
+        modify_database("","CREATE TABLE prefix_tags (
+          `id` int(11) NOT NULL auto_increment,
+          `type` varchar(255) NOT NULL default 'official',
+          `userid` int(11) NOT NULL default'0',
+          `text` varchar(255) NOT NULL default '',
+          PRIMARY KEY  (`id`)
+        ) TYPE=MyISAM COMMENT ='tags structure for moodle.';");
+
+        modify_database("","CREATE TABLE prefix_blog_tag_instance (
+          `id` int(11) NOT NULL auto_increment,
+          `entryid` int(11) NOT NULL default'0',
+          `tagid` int(11) NOT NULL default'0',
+          `groupid` int(11) NOT NULL default'0',
+          `courseid` int(11) NOT NULL default'0',
+          `userid` int(11) NOT NULL default'0',
+          PRIMARY KEY  (`id`)
+          ) TYPE=MyISAM COMMENT ='tag instance for blogs.';");
+    }
 
     return $result;
 }

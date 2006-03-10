@@ -92,6 +92,16 @@ class configvarrss extends configvar {
     $misc['mymoodleredirect'] = new configvar (get_string('configmymoodleredirect','admin'),
         choose_from_menu($noyesoptions,'mymoodleredirect',$config->mymoodleredirect,'','','',true));
 
+    unset($options);
+    $options[5] = get_string('worldblogs','blog');
+    $options[4] = get_string('siteblogs','blog');
+    $options[3] = get_string('courseblogs','blog');
+    $options[2] = get_string('groupblogs','blog');
+    $options[1] = get_string('personalblogs','blog');
+    $options[0] = get_string('diableblogs','blog');
+
+    $misc['bloglevel'] = new configvar (get_string('blogleveldes', 'admin'),
+        choose_from_menu ($options, 'bloglevel', $config->bloglevel,'','','',true));
 
 ////////////////////////////////////////////////////////////////////
 /// OPERATING SYSTEM config variables
