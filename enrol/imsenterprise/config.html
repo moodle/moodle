@@ -8,14 +8,14 @@
 <tr valign="top">
     <td align="right"><?php  print_string("location", "enrol_imsenterprise") ?>:</td>
     <td colspan="2">
-        <input type="text" size="50" name="enrol_imsfilelocation" value="<?php echo $frm->enrol_imsfilelocation ?>" />
+        <input type="text" size="50" name="enrol_imsfilelocation" value="<?php echo ($frm->enrol_imsfilelocation ? $frm->enrol_imsfilelocation : '') ?>" />
     </td>
 </tr>
 
 <tr valign="top">
     <td align="right"><?php  print_string("logtolocation", "enrol_imsenterprise") ?>:</td>
     <td colspan="2">
-        <input type="text" size="50" name="enrol_logtolocation" value="<?php echo $frm->enrol_logtolocation ?>" />
+        <input type="text" size="50" name="enrol_logtolocation" value="<?php echo ($frm->enrol_logtolocation ? $frm->enrol_logtolocation : '') ?>" />
     </td>
 </tr>
 

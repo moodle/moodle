@@ -143,7 +143,8 @@ function process_config($config) {
     }
     set_config('enrol_imsrestricttarget', $config->enrol_imsrestricttarget);
 
-
+    set_config('enrol_ims_prev_md5',  ''); // Forget the MD5 - to force re-processing if we change the config setting
+    set_config('enrol_ims_prev_time', ''); // Ditto
     return true;
 
 }
@@ -418,7 +419,10 @@ function process_group_tag($tagcontents){
         // Third, check if the course(s) exist
         foreach($group->coursecode as $coursecode){
             $coursecode = trim($coursecode);
-            if(!get_field('course', 'id', 'idnumber', $coursecode) && $CFG->enrol_createnewcourses){
+            if(!get_field('course', 'id', 'idnumber', $coursecode)) {
+              if(!$CFG->enrol_createnewcourses) {
+                  $this->log_line("Course $coursecode not found in Moodle's course idnumbers.");
+              } else {
                 // Create the (hidden) course(s) if not found
                 $course->fullname = $group->description;
                 $course->shortname = $coursecode;
@@ -495,6 +499,7 @@ function process_group_tag($tagcontents){
                 }else{
                     $this->log_line('Failed to create course '.$coursecode.' in Moodle');
                 }
+              }
             }elseif($recstatus==3 && ($courseid = get_field('course', 'id', 'idnumber', $coursecode))){
                 // If course does exist, but recstatus==3 (delete), then set the course as hidden
                 set_field('course', 'visible', '0', 'id', $courseid);
@@ -680,6 +685,7 @@ function process_membership_tag($tagcontents){
             $memberstoreobj->course = $ship->courseid;
             $memberstoreobj->time = time();
             $memberstoreobj->timemodified = time();
+            if($memberstoreobj->userid)
             switch($member->roletype){
                 case '01':
                 case 'Student':
@@ -736,7 +742,7 @@ function process_membership_tag($tagcontents){
                     if(intval($member->status) == 1){
                         // Enrol
                         if (! add_teacher($memberstoreobj->userid, $memberstoreobj->course, 0, '', $timeframe->begin, $timeframe->end, 'imsenterprise')) {
-                            $this->log_line('Error adding teacher to course');
+                            $this->log_line("Error adding teacher $memberstoreobj->userid to course");
                         }else{
                             $teacherstally++;
                         }
