@@ -86,7 +86,7 @@ directory should be readable AND WRITEABLE by the web server user
 (usually \'nobody\' or \'apache\'), but it should not be accessible 
 directly via the web.';
 $string['dirroot'] = 'Moodle Directory';
-$string['dirrooterror'] = 'The \'Moodle Directory\' setting seems to be incorrect - we can\'t find a Moodle installation there.  The value below has been reset.';
+$string['dirrooterror'] = 'The \'Moodle Directory\' setting seems to be incorrect - we can\'t find a Moodle installation there. The value below has been reset.';
 $string['download'] = 'Download';
 $string['downloadedfilecheckfailed'] = 'Downloaded file check failed.';
 $string['downloadlanguagebutton'] = 'Download the &quot;$a&quot; language pack';
@@ -184,5 +184,5 @@ $string['wrongdestpath'] = 'Wrong destination path.';
 $string['wrongsourcebase'] = 'Wrong source URL base.';
 $string['wrongzipfilename'] = 'Wrong ZIP filename.';
 $string['wwwroot'] = 'Web address';
-$string['wwwrooterror'] = 'The web address does not appear to be valid - this Moodle installation doesn\'t appear to be there.';
+$string['wwwrooterror'] = 'The web address does not appear to be valid - this Moodle installation doesn\'t appear to be there. The value below has been reset.';
 ?>
