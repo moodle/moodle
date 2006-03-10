@@ -217,7 +217,7 @@
     if ($rid){    //set per page to 1, if looking for 1 specific record
         set_user_preference('data_perpage', PERPAGE_SINGLE);
     }
-    
+  
     /*****************************
      * Setting up page variables *
      *****************************/
@@ -243,11 +243,9 @@
     }
 
     if ($sort) {    //supports (sort and search)
-
         //first find the field that we are sorting
         $sortfield = data_get_field(get_record('data_fields','id',$sort));
         $sortcontent = $sortfield->get_sort_field();
-
         ///SEARCH AND SORT SQL
         $sql = 'SELECT DISTINCT c.recordid, c.recordid
                 FROM '.$CFG->prefix.'data_content c, '

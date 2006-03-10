@@ -407,6 +407,7 @@ function data_get_field_from_name($name){
  ************************************************************************/
 function data_get_field($field){
     if ($field){
+        
         require_once('field/'.$field->type.'/field.class.php');
         $newfield = 'data_field_'.$field->type;
         $newfield = new $newfield($field->id);
