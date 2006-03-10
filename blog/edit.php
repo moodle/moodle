@@ -141,7 +141,7 @@ if ($editid != '') {  // User is editing a post
 }
 
 if (isset($post->postid) && ($post->postid != -1) ) {
-    $formHeading = get_string('updateentrywithid', 'blog') . $post->postid;
+    $formHeading = get_string('updateentrywithid', 'blog', $post->postid);
 } else {
     $formHeading = get_string('addnewentry', 'blog');
 }
