@@ -119,6 +119,7 @@ $string['langdownloadok'] = 'The language \"$a\" was installed successfully. The
 $string['language'] = 'Language';
 $string['magicquotesruntime'] = 'Magic Quotes Run Time';
 $string['magicquotesruntimeerror'] = 'This should be off';
+$string['mbstringrecommended'] = 'Installing the optional MBSTRING library is highly recommended in order to improve site performance, particularly if your site is supporting non-latin languages.';
 $string['memorylimit'] = 'Memory Limit';
 $string['memorylimiterror'] = 'The PHP memory limit is set quite low ... you may run into problems later.';
 $string['memorylimithelp'] = '<p>The PHP memory limit for your server is currently set to $a.</p>
