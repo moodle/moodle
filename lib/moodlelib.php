@@ -275,20 +275,6 @@ function optional_param($parname, $default=NULL, $type=PARAM_CLEAN) {
 }
 
 /**
- * HACK ALERT! Do not use this function, it will be removed soon!!
- * @todo Remove this function soon!
- */
-function isset_param($varname) {
-  if (isset($_GET[$varname])) {
-    return true;
-  }
-  if (isset($_POST[$varname])) {
-    return true;
-  }
-  return false;
-}
-
-/**
  * Used by {@link optional_param()} and {@link required_param()} to
  * clean the variables and/or cast to specific types, based on
  * an options field.
