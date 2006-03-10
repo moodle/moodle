@@ -1,0 +1,227 @@
+<?php //$Id$
+    // get the category drop down form element
+    $blogFilter =& new BlogFilter($userid, '', '', $post->courseid);
+    if (!isset($post->groupid)) {
+        $post->groupid = 0;
+    }
+
+    // find all the tags this post uses
+    if (isset($post->id)) {
+        if ($tagsused = get_records('blog_tag_instance', 'entryid', $post->postid)) {
+            foreach ($tagsused as $usedtag) {
+                $usedtags[] = $usedtag -> tagid;
+            }
+        }
+    }
+?>
+
+
+
+<!-- the following form is based on moodle/mod/forum/post.html -->
+
+<form name="entry" method="post" action="<?php echo $CFG->wwwroot;?>/blog/edit.php" id="entry" <?php echo $onsubmit; ?> enctype="multipart/form-data">
+
+<input type="hidden" name="realcourse" value="0" />
+<input type="hidden" name="realgroup" value="0" />
+
+<table border="0" cellpadding="5" id="edittable">
+<tr valign="top">
+    <td align="right">&nbsp;
+    </td>
+    <td colspan="2"><strong><?php echo $formHeading; ?></strong>
+    </td>
+</tr>
+<tr valign="top">
+    <td align="right"><strong><?php print_string('entrytitle', 'blog'); ?>:</strong></td>
+    <td colspan="2">
+        <input type="text" name="etitle" size="60" value="<?php p($post->etitle) ?>" id="etitle" />
+    </td>
+</tr>
+<tr valign="top">
+    <td align="right">
+        <strong><?php print_string('publishto', 'blog'); ?>:</strong>
+    </td>
+    <td colspan="2">
+     <?php
+        $options = blog_applicable_publish_states($post->courseid); //$blogEntry may be null
+        choose_from_menu($options, 'publishstate', $post->publishstate, '');
+     ?>
+    <?php
+        helpbutton('publish_state', get_string('helppublish', 'blog'), 'blog');
+     ?>
+    </td>
+</tr>
+<tr>
+    <td>
+    <b>Official Tags</b>
+    </td>
+    
+    
+    <td>
+    <b>User Defined Tags</b>
+    </td>
+</tr>
+
+<tr>
+    <td>
+    <select name="otags[]" multiple="multiple" size="8">
+    <?php
+        $otags = get_records_sql('SELECT * from '.$CFG->prefix.'tags WHERE type=\'official\' ORDER by text ASC');
+        foreach ($otags as $otag) {
+            if (in_array($otag->id, $usedtags)) {
+                echo '<option value="'.$otag->id.'" selected="selected">'.$otag->text.'</option>';
+            } else {
+                echo '<option value="'.$otag->id.'">'.$otag->text.'</option>';
+            }
+        }
+    ?>
+    </select>
+    </td>
+
+
+    <td>
+    <select name="ptags[]" multiple="multiple" size="8">
+    <?php
+        $ptags = get_records_sql('SELECT * from '.$CFG->prefix.'tags WHERE type=\'personal\' ORDER by text ASC');
+        foreach ($ptags as $ptag) {
+            if (in_array($ptag->id, $usedtags)) {
+                echo '<option value="'.$ptag->id.'" selected="selected">'.$ptag->text.'</option>';
+            } else {
+                echo '<option value="'.$ptag->id.'">'.$ptag->text.'</option>';
+            }
+        }
+    ?>
+    </select>
+    </td>
+</tr>
+
+
+<tr>
+    <td>
+    <?php
+    link_to_popup_window($CFG->wwwroot."//blog/tags.php",'popup',get_string('tagmanagement','blog'));
+    ?>
+    </td>
+</tr>
+<tr valign="top">
+    <td align="right"><strong>
+    <?php 
+        if (isset($post->useextendedbody) && $post->useextendedbody) {
+            print_string('entryexcerpt', 'blog'); 
+        } else {
+            print_string('entrybody', 'blog');         
+        }
+    ?>:
+    </strong><br /><br />
+    <small><small>
+    <?php
+        helpbutton('reading', get_string('helpreading'), 'moodle', true, true);
+        echo '<br />';
+        helpbutton('writing', get_string('helpwriting'), 'moodle', true, true);
+        echo '<br />';
+        helpbutton('questions', get_string('helpquestions'), 'moodle', true, true);
+        echo '<br />';
+        if ($usehtmleditor) {
+           helpbutton('richtext', get_string('helprichtext'), 'moodle', true, true);
+        } else {
+           emoticonhelpbutton('entry', 'body');
+        }
+    ?>     
+    </small></small>              
+    </td>
+    <td align="left" colspan="2">
+    <?php
+        if (isset($post->useextendedbody) && $post->useextendedbody) {
+            print_string('entrybodydesc', 'blog');
+        } else {
+            print_string('entrybodyonlydesc', 'blog');
+        }
+        print '<br />'."\n";
+        // usage: print_textarea($usehtmleditor, $rows, $cols, $width, $height, $name, $value="", $courseid)
+        print_textarea($usehtmleditor, 6, 60, 600, 500, 'body', $post->body, $post->courseid); ?>
+    </td>
+</tr>
+<?php  
+    if (isset($post->useextendedbody) && $post->useextendedbody) {
+        print '<tr valign=top>'."\n";
+        print '<td align=right><strong>'."\n";
+        print_string('entryextendedbody', 'blog');
+        print ':</strong></td>'. "\n";
+        print '<td align=left colspan=2>'."\n";
+        print_string('entryextendedbodydesc', 'blog');
+        print '<br />'."\n";
+        print_textarea($usehtmleditor, 25, 60, 600, 500, 'extendedbody', $post->extendedbody, $post->courseid);
+        print '</td></tr>';
+   } else { 
+        print '<input type="hidden" name="extendedbody" value="" />';
+   }
+
+?>
+<tr valign="top">
+    <td align="right"><strong><?php print_string('formattexttype'); ?>:</strong></td>
+    <td colspan="2">
+    <?php
+       choose_from_menu(format_text_menu(), 'format', $post->format, '');
+     ?>
+    <small><small>
+    <?php
+        helpbutton('textformat', get_string('helpformatting'));
+     ?>
+    </small></small>
+    </td>
+</tr>
+
+    <?php
+    if ($CFG->blog_enable_trackback_out || $CFG->blog_enable_pingback_out) {
+        print '<tr valign="top">';
+        print '<td align="right"><strong>';
+        print_string('advancedoptions', 'blog');
+        print '</strong></td><td align="left">';
+        
+
+         if ($CFG->blog_enable_pingback_out) {
+             print '<input type="checkbox" name="sendpingbacks" value="1" id="sendpingpacks" /><small><small>';      
+             print_string('sendpingback', 'blog');     
+             helpbutton('pingback', get_string('helppingback', 'blog'), 'blog');
+             print '</small></small><br />';       
+         }
+
+          if ($CFG->blog_enable_trackback_out) {
+              print '<input type="checkbox" name="sendtrackbacks" value="1" id="sendtrackbacks" /><small><small>';  
+              print_string('sendtrackback', 'blog');
+              helpbutton('trackback', get_string('helptrackback', 'blog'), 'blog');
+              print '</small></small><br />';
+          }
+
+        print '</td></tr>';
+    }
+    ?>
+<tr>
+    <td align="center" colspan="3">
+        <input type="hidden" name="editform" value="1" id="editform" />
+        <input type="hidden" name="courseid" value="<?php p($post->courseid) ?>" id="courseid" />
+        <?php 
+            //groups not supported quite yet - pseudocode:        
+            /*if ( isset($post->groupid) ) {
+                print '<input type="hidden" name="groupid" value="'. p($post->groupid) .'" />';
+            }*/
+        ?>
+        <input type="hidden" name="userid" value="<?php p($post->userid) ?>" id="userid" />
+        <input type="hidden" name="userid" value="<?php echo $userid; ?>" id="userid" />
+        <input type="hidden" name="tem" id="tem" />
+<?php
+    if (isset($post->postid) && ($post->postid != -1) ) {
+    ?>
+        <input type="hidden" name="postid" value="<?php echo $post->postid; ?>" id="postid" />
+        <input type="hidden" name="act" value="update" id="act" />
+        <input type="submit" value="Update" id="Submit1" name="Submit1" />&nbsp;
+        <input type="button" value="Cancel" onclick="javascript:history.go(-1)" id="cancel" name="cancel" />
+<?php
+    } else { ?>
+        <input type="hidden" name="act" value="save" id="act" />
+        <input type="submit" value="<?php print_string('savechanges'); ?>" id="savechanges" name="Submit2" />&nbsp;
+<?php } ?>
+    </td>
+</tr>
+</table>
+</form>

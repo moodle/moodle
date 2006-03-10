@@ -1,0 +1,45 @@
+<?php
+    // print out the extra form element needed to support post previews
+    blog_print_preview_form($bloginfo->userid);
+?>
+
+<form method="post" action="preferences.php" name="entry" id="entry">
+
+<table cellpadding="9" cellspacing="0">
+<tr valign="top">
+    <td><?php print_string('title', 'blog');?>:</td>
+    <td><input type="text" size="20" maxlength="32" name="blogtitle" value="<?php echo $bloginfo->get_blog_title();?>" /></td>
+</tr>
+<tr>
+    <td><?php print_string('tagline', 'blog');?>:</td>
+    <td><input type="text" size="32" maxlength="128" name="blogtagline" value="<?php echo $bloginfo->get_blog_tagline();?>" /></td>
+</tr>
+
+<tr>
+    <td><?php print_string('pagesize', 'blog');?>:</td>
+    <td><input type="text" size="32" maxlength="128" name="pagesize" value="<?php echo get_user_preferences('blogpagesize',8);?>" />
+    </td>
+</tr>
+<?php  if (!empty($CFG->allowblogthemes)) { ?>
+<tr valign="top">
+    <td align="right"> <?php print_string("forcetheme") ?>: </td>
+    <td>
+      <?php
+         $themes[''] = get_string("forceno");
+         $themes += get_list_of_themes();
+         choose_from_menu($themes, 'theme', $bloginfo->get_blog_theme(), "", "", "");
+      ?>
+    </td>
+</tr>
+<?php } ?>
+<tr>
+    <td colspan="2" align="center">
+
+    <input type="hidden" name="format" value="1" />
+    <input type="hidden" name="etitle" value="This is a preview of this template" />
+    <input type="hidden" name="body" value="Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. Duis autem vel eum iriure d" />
+
+	<input type="submit" value="<?php print_string("savechanges") ?>" /></td>
+</tr>
+</table>
+</form>

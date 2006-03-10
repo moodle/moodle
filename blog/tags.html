@@ -1,0 +1,82 @@
+<?php
+print_heading(get_string('tagsmanagement','blog'));
+?>
+
+<table>
+    <tr>
+        <td width="50%">Official Tags</td>
+        <td width="50%">User Defined Tags</td>
+    </tr>
+    
+    <tr>
+        <td>
+            <form action="tags.php" method="POST">
+            <?php if (isadmin()){ ?>
+            <select name="tags[]" multiple="multiple" size="8">
+            <?php
+                $otags = get_records_sql('SELECT * from '.$CFG->prefix.'tags WHERE type=\'official\' ORDER by text ASC');
+                foreach ($otags as $otag) {
+                    echo '<option value="'.$otag->id.'">'.$otag->text.'</option>';
+                }
+            ?>
+            </select>
+            <input type="hidden" name="mode" value="delete" />
+            <br />
+            <input type="submit" value="delete" />
+            <?php }
+                else {
+                    $otags = get_records_sql('SELECT * from '.$CFG->prefix.'tags WHERE type=\'official\' ORDER by text ASC');
+                    foreach ($otags as $otag) {
+                        echo '<br />'.$otag->text;
+                    }
+                }
+            ?>
+            </form>
+        </td>
+        
+        <td>
+            <form action="tags.php" method="POST">
+            <select name="tags[]" multiple="multiple" size="8">
+            <?php
+                $ptags1 = get_records_sql('SELECT * from '.$CFG->prefix.'tags WHERE type=\'personal\' AND userid = '.$USER->id.' ORDER by text ASC');
+                $ptags2 = get_records_sql('SELECT * from '.$CFG->prefix.'tags WHERE type=\'personal\' AND userid <> '.$USER->id.' ORDER by text ASC');;
+                $ptags = array_merge($ptags1, $ptags2);
+                foreach ($ptags as $ptag) {
+                    echo '<option value="'.$ptag->id.'">'.$ptag->text.'</option>';
+                }
+            ?>
+            </select>
+            <input type="hidden" name="mode" value="delete" />
+            <br />
+            <input type="submit" value="delete" />
+            </form>
+        </td>
+    </tr>
+    
+    <tr>
+        <td>
+            <?php if (isadmin()) { ?>
+            <form action="tags.php" method="POST">
+            Add Official:<br/>
+            <input type="text" name="otag" />
+            <input type="submit" value="add" />
+            <input type="hidden" name="mode" value="addofficial" />
+            </form>
+            <?php }?>
+        </td>
+        
+        <td>
+            <form action="tags.php" method="POST">
+            Add Personal:<br/>
+            <input type="text" name="ptag" />
+            <input type="submit" value="add" />
+            <input type="hidden" name="mode" value="addpersonal" />
+            </form>
+        </td>
+    </tr>
+    
+</table>
+
+<p align="center">
+    <a href="#" onclick="window.close()">close this window</a>
+</p>
