@@ -135,7 +135,7 @@ switch ($filtertype) {
         $user = get_record('user', 'id', $filterselect);
         $participants = get_string('participants');
 
-        if ($course->id && $course->id != SITEID) {
+        if (isset($course->id) && $course->id && $course->id != SITEID) {
             if ($tagid) {
                 print_header("$course->shortname: $blogstring", "$course->fullname",
                         '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">'.$course->shortname.'</a> ->
