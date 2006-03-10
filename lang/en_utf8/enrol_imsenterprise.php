@@ -9,7 +9,7 @@ $string['coursesettings'] = 'Course data options';
 $string['miscsettings'] = 'Miscellaneous';
 
 // Labels in the config page
-$string['description'] = 'This method will repeatedly check for and process a specially-formatted text file in the location that you specify.  The file must follow the <a href=\'../help.php?module=enrol-imsenterprise&file=formatoverview.html\' target=\'blank\'>IMS Enterprise specifications</a> containing person, group, and membership XML elements.';
+$string['description'] = 'This method will repeatedly check for and process a specially-formatted text file in the location that you specify.  The file must follow the <a href=\'../help.php?module=enrol/imsenterprise&file=formatoverview.html\' target=\'blank\'>IMS Enterprise specifications</a> containing person, group, and membership XML elements.';
 $string['createnewusers'] = 'Create user accounts for users not yet registered in Moodle';
 $string['deleteusers'] = 'Delete user accounts when specified in IMS data';
 $string['fixcaseusernames'] = 'Change usernames to lower case';
