@@ -15,6 +15,13 @@ $string['admindirsettinghead'] = 'S\'està configurant el directori d\'administr
 $string['admindirsettingsub'] = 'Alguns proveïdors d\'espai web utilitzen /admin com una adreça URL especial per accedir a un tauler de control o quelcom semblant. Malauradament això interfereix amb la ubicació estàndard de les pàgines d\'administració de Moodle. Podeu solucionar aquest problema canviant el nom del directori admin en la vostra instal·lació i introduint aquí el nou nom. Per exemple: <br /> <br /><b>moodleadmin</b><br /> <br />
 Això repararà tots els enllaços d\'administració de Moodle.';
 $string['bypassed'] = 'S\'ha deixat de banda';
+$string['cannotcreatetempdir'] = 'No s\'ha pogut crear el directori temporal';
+$string['cannotdownloadcomponents'] = 'No s\'han pogut baixar components';
+$string['cannotdownloadzipfile'] = 'No s\'ha pogut baixar el fitxer zip';
+$string['cannotfindcomponent'] = 'No s\'ha pogut trobar un component';
+$string['cannotsavemd5file'] = 'No s\'ha pogut desar el fitxer md5';
+$string['cannotsavezipfile'] = 'No s\'ha pogut desar el fitxer zip';
+$string['cannotunzipfile'] = 'No s\'ha pogut descomprimir el fitxer';
 $string['caution'] = 'Alerta';
 $string['check'] = 'Comprova';
 $string['chooselanguagehead'] = 'Trieu un idioma';
@@ -22,6 +29,7 @@ $string['chooselanguagesub'] = 'Trieu un idioma NOMÉS per a la instal·lació. 
 $string['closewindow'] = 'Tanca aquesta finestra';
 $string['compatibilitysettingshead'] = 'S\'estan comprovant els paràmetres del PHP...';
 $string['compatibilitysettingssub'] = 'El vostre servidor hauria de passar totes aquestes proves per tal que Moodle funcioni correctament.';
+$string['componentisuptodate'] = 'El component està al dia';
 $string['configfilenotwritten'] = 'La seqüència d\'instal·lació no ha estat capaç de crear automàticament un fitxer config.php que contingui els paràmetres que heu triat, probablement perquè no pugui escriure al directori de Moodle. Podeu copiar a mà el codi següent en un fitxer anomenat config.php dins del directori arrel de Moodle.';
 $string['configfilewritten'] = 'S\'ha creat amb èxit el fitxer config.php';
 $string['configurationcompletehead'] = 'S\'ha completat la configuració';
@@ -62,6 +70,7 @@ Necessiteu un lloc on Moodle pugui desar els fitxers que es pengin. L\'usuari de
 $string['dirroot'] = 'Directori de Moodle';
 $string['dirrooterror'] = 'El paràmetre \'Directori de Moodle\' sembla incorrecte: no s\'hi ha pogut trobat cap instal·lació de Moodle. S\'ha reiniciat el valor del paràmetre.';
 $string['download'] = 'Baixa';
+$string['downloadedfilecheckfailed'] = 'Ha fallat la comprovació del fitxer baixat';
 $string['environmenterrortodo'] = 'Abans d\'instal·lar aquesta versió de Moodle heu de resoldre tots els problemes d\'entorn (errors) que s\'han trobat.';
 $string['environmenthead'] = 'S\'està comprovant el vostre entorn';
 $string['environmentrecommendinstall'] = 'es recomana instal·lar/habilitar';
@@ -82,6 +91,7 @@ $string['help'] = 'Ajuda';
 $string['iconvrecommended'] = 'És sumament recomanable instal·lar la biblioteca opcional ICONV a fi de millorar el rendiment del lloc, especialment si el vostre lloc utilitza llengües no romàniques.';
 $string['info'] = 'Informació';
 $string['installation'] = 'Instal·lació';
+$string['invalidmd5'] = 'El md5 no és vàlid';
 $string['language'] = 'Idioma';
 $string['magicquotesruntime'] = 'Magic Quotes Run Time';
 $string['magicquotesruntimeerror'] = 'Hauria d\'estar desactivat';
@@ -99,6 +109,7 @@ $string['memorylimithelp'] = '<p>El límit de memòria del PHP del vostre servid
 <p><blockquote>php_value memory_limit 16M</blockquote></p>
 <p>Tanmateix, en alguns servidors això farà que no funcioni <b>cap</b> pàgina PHP (es visualitzaran errors) en el qual cas hauríeu de suprimir el fitxer .htaccess.</p></li>
 </ol>';
+$string['missingrequiredfield'] = 'Falta algun camp necessari';
 $string['mysql416bypassed'] = 'Tanmateix, si el vostre lloc fa servir NOMÉS llengües romàniques (iso-8859-1), podeu seguir utilitzant el MySQL 4.1.12 (o superior) instal·lat.';
 $string['mysql416required'] = 'MySQL 4.1.16 és la versió mínima requerida per Moodle 1.6 a fi de garantir la conversió de totes les dades a UTF-8 en el futur.';
 $string['mysqlextensionisnotpresentinphp'] = 'El PHP no s\'ha configurat correctament amb l\'extensió MySQL per tal que es pugui comunicar amb MySQL. Comproveu el fitxer php.ini o recompileu el PHP.';
@@ -113,6 +124,7 @@ $string['phpversionhelp'] = '<p>Moodle necessita la versió de PHP 4.1.0 o poste
 <p>A hores d\'ara esteu utilitzant la versió $a.</p>
 <p>Us caldrà actualitzar el PHP o traslladar Moodle a un ordinador amb una versió de PHP més recent.</p>';
 $string['previous'] = 'Anterior';
+$string['remotedownloadnotallowed'] = 'El vostre servidor no permet baixar components ((allow_url_fopen inhabilitat).<br /><br />Baixeu manualment el fitxer <a href=\"$a->url\">$a->url</a>, copieu en la ubicació \"$a->dest\" del vostre servidor i descomprimiu-lo allí.';
 $string['report'] = 'Informe';
 $string['safemode'] = 'Mode segur';
 $string['safemodeerror'] = 'Moodle pot tenir problemes amb el mode segur activat';
@@ -132,6 +144,9 @@ $string['welcomep50'] = 'L\'ús de totes les aplicacions d\'aquest paquet és go
 sota llicència <a href=\"http://www.gnu.org/copyleft/gpl.html\">GPL</a>.';
 $string['welcomep60'] = 'Les pàgines següents us guiaran per una sèrie de passos fàcils de seguir per configurar <strong>Moodle</strong> en el vostre ordinador. Podeu acceptar els paràmetres per defecte o, opcionalment, modificar-los perquè s\'ajustin a les vostres necessitats.';
 $string['welcomep70'] = 'Feu clic en el botó \"Següent\" per continuar la configuració de <strong>Moodle</strong>.';
+$string['wrongdestpath'] = 'El camí de destinació és erroni';
+$string['wrongsourcebase'] = 'L\'adreça (URL) base de la font és errònia';
+$string['wrongzipfilename'] = 'El nom del fitxer zip és erroni';
 $string['wwwroot'] = 'Adreça web';
 $string['wwwrooterror'] = 'L\'adreça web no sembla vàlida. La instal·lació de Moodle no sembla que sigui en aquesta ubicació,';
 ?>

@@ -15,6 +15,13 @@ $string['admindirsettinghead'] = 'Itinatakda ang direktoryong pang-admin...';
 $string['admindirsettingsub'] = 'May ilang webhost na ginagamit ang /admin bilang isang espesyal na URL, halimbawa ay para makapasok sa isang kontrol panel.  Nguni\'t nakakagulo ito sa istandard na lokasyon ng mga pahinang pang-admin ng Moodle.  Malulutas ninyo ito sa pamamagitan ng pagbabago ng pangalan ng direktoryong pang-admin sa instalasyon ninyo, tapos ay isulat ang bagong pangalan dito.  Halimbawa:  <br /> <br /><b>moodleadmin</b><br /> <br />
 Maayos nito ang mga link na pang-admin sa Moodle.';
 $string['bypassed'] = 'Nilagpasan';
+$string['cannotcreatetempdir'] = 'Hindi makalikha ng temp dir.';
+$string['cannotdownloadcomponents'] = 'Hindi maidownload ang mga piyesa';
+$string['cannotdownloadzipfile'] = 'Hindi maidownload ang ZIP file.';
+$string['cannotfindcomponent'] = 'Hindi makita ang piyesa.';
+$string['cannotsavemd5file'] = 'Hindi maisave ang md5 file.';
+$string['cannotsavezipfile'] = 'Hindi maisave ang ZIP file.';
+$string['cannotunzipfile'] = 'Hindi mai-unzip ang file.';
 $string['caution'] = 'Mag-ingat';
 $string['check'] = 'Suriin';
 $string['chooselanguagehead'] = 'Pumilì ng wika';
@@ -22,6 +29,7 @@ $string['chooselanguagesub'] = 'Pumili po ng wika para sa pag-iinstol LAMANG.  S
 $string['closewindow'] = 'Isara ang bintanang ito';
 $string['compatibilitysettingshead'] = 'Sinusuri ang iyong kaayusan ng PHP...';
 $string['compatibilitysettingssub'] = 'Kailangang pumasa ang server mo sa lahat ng pagsubok upang mapatakbo nang mahusay ang Moodle';
+$string['componentisuptodate'] = 'Bago ang piyesa.';
 $string['configfilenotwritten'] = 'Hindi awtomatikong nakalikha ang installer script ng config.php file na siyang naglalaman ng mga pinilì mong kaayusan.  Marahil ay dahil sa hindi masulatan ang direktoryo ng Moodle.  Maaari mong kopyahin nang mano-mano ang sumusunod na code sa isang file na nagngangalang config.php sa loob ng punong direktoryo ng Moodle.';
 $string['configfilewritten'] = 'matagumpay na nalikha ang config.php';
 $string['configurationcompletehead'] = 'Nakumpleto na ang pagsasaayos';
@@ -74,6 +82,7 @@ direkta sa pamamagitan ng web.';
 $string['dirroot'] = 'Direktoryo ng Moodle';
 $string['dirrooterror'] = 'Mukhang mali ang kaayusan ng \'Direktoryo ng Moodle\' - wala kaming matagpuang instalasyon ng Moodle doon.  Inireset ang halaga sa ibaba.';
 $string['download'] = 'Idownload';
+$string['downloadedfilecheckfailed'] = 'Bigo ang  pagsusuri  sa dinawnload na file.';
 $string['environmenterrortodo'] = 'Kailangan mo munang lutasin ang lahat ng suliraning pangkapaligiran (mga error) bago mo maituloy ang pag-instol ng bersiyon ng Moodle na ito.';
 $string['environmenthead'] = 'Sinusuri ang kapaligiran mo...';
 $string['environmentrecommendinstall'] = 'ay iminumungkahing mainstol/mabuhay';
@@ -94,6 +103,7 @@ $string['help'] = 'Tulong';
 $string['iconvrecommended'] = 'Mahigpit na iminumungkahi ang pag-instol ng opsiyonal na ICONV library upang mapahusay ang paggana ng site, lalupa\'t kung sinusuportahan ng site mo ang mga di-latin na wika.';
 $string['info'] = 'Impormasyon';
 $string['installation'] = 'Instalasyon';
+$string['invalidmd5'] = 'Ditanggap na md5';
 $string['language'] = 'Wikà';
 $string['magicquotesruntime'] = 'Magic Quotes Run Time';
 $string['magicquotesruntimeerror'] = 'Dapat ay patay ito';
@@ -118,6 +128,7 @@ $string['memorylimithelp'] = '<p>Ang memory limit ng PHP para sa server mo ay ka
     <p>Subali\'t sa ilang server ay pipigilin nito ang paggana ng <b>lahat</b> ng pahinang PHP 
     (makakakita ka ng mga error kapag tumingin ka sa mga pahina) kaya\'t kakailanganin mong tanggalin ang .htaccess file.</p></li>
 </ol>';
+$string['missingrequiredfield'] = 'May ilang nawawalang field na kailangan';
 $string['mysql416bypassed'] = 'Magkagayuman, kung TANGING iso-8859-1 (latin) na wika ang ginagamit ng site mo, maaari mong ipagpatuloy ang kasalukuyan mong nakainstol na MySQL 4.1.12 (o mas bago).';
 $string['mysql416required'] = 'Ang MySQL 4.1.16 ang minimum na bersiyong kinakailangan ng Moodle 1.6 upang matiyak na lahat ng datos ay makukumberte sa UTF-8, sa hinaharap.';
 $string['mysqlextensionisnotpresentinphp'] = 'Hindi isinaayos ang PHP na may MySQL extension para magawa nitong makipag-usap sa MySQL.  Pakitsek ang iyong php.ini file o muling icompile ang PHP.';
@@ -132,6 +143,8 @@ $string['phpversionhelp'] = '<p>Kinakailangan ng Moodle ang isang bersiyon ng PH
 <p>Sa kasalukuyan ay pinatatakbo mo ang bersiyon $a</p>
 <p>Kailangan mong gawing bago ang PHP o lumipat sa isang host na may mas bagong bersiyon ng PHP!</p>';
 $string['previous'] = 'Nakaraan';
+$string['remotedownloadnotallowed'] = 'Ang pagdownload ng mga piyesa sa server mo ay hindi pinapahintulutan (ang allow_url_fopen ay pinatay).<br /><br />Kailangan mong idownload ang 
+ <a href=\"$a->url\">$a->url</a> file nang mano-mano, kopyahin ito sa \"$a->dest\" ng iyong server at iunzip ito doon.';
 $string['report'] = 'Ulat';
 $string['safemode'] = 'Safe Mode';
 $string['safemodeerror'] = 'Maaaring magkaproblema ang moodle kung naka-ON ang safe mode';
@@ -149,6 +162,9 @@ $string['welcomep40'] = 'Nilalaman din ng paketeng ito ang  <strong>Moodle $a->m
 $string['welcomep50'] = 'Ang paggamit ng lahat ng aplikasyon sa paketeng ito ay alinsunod sa kani-kaniyang lisensiya.  Ang kumpletong pakete na <strong>$a->installername</strong> ay  <a href=\"http://www.opensource.org/docs/definition_plain.html\">open source</a> at ipinamamahagi alinsunod sa lisensiyang <a href=\"http://www.gnu.org/copyleft/gpl.html\">GPL</a>';
 $string['welcomep60'] = 'Dadalhin kayo ng mga sumusunod na pahina sa mga madaling hakbang upang maisaayos at mapatakbo ang <strong>Moodle</strong> sa kompyuter ninyo.  Kung gusto ninyo ay panatilihin ang default o kaya ay baguhin ito ayon sa inyong pangangailangan.';
 $string['welcomep70'] = 'Iklik ang \"Susunod\" na buton sa ibaba upang maituloy ang pasasaayos ng <strong>Moodle</strong>.';
+$string['wrongdestpath'] = 'Mali ang patutunguhang landas';
+$string['wrongsourcebase'] = 'Mali ang URL base ng source.';
+$string['wrongzipfilename'] = 'Mali ang filename ng ZIP';
 $string['wwwroot'] = 'Web address';
 $string['wwwrooterror'] = 'Mukhang hindi tanggap ang web address - mukhang wala roon ang instalasyong ito ng Moodle.';
 ?>

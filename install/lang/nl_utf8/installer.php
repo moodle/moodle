@@ -14,6 +14,13 @@ $string['admindirname'] = 'Admin-map';
 $string['admindirsettinghead'] = 'Admin-map instellen..';
 $string['admindirsettingsub'] = 'Enkele webhosts gebruiken /admin als een speciale url om een controle paneel of iets dergelijks te openen. Dat kan jammer genoeg conflict geven met de standaardlocatie van de Moodle admin pagina\'s. Je kunt dit in orde brengen door de adminmap van Moodle hier te hernoemen en die nieuwe naam hier te zetten, bijvoorbeeld <br /><br /><b>moodleadmin</b><br /><br  />Dit zal de links naar de adminmap in Moodle herstellen.';
 $string['bypassed'] = 'Omzeild';
+$string['cannotcreatetempdir'] = 'Kan tijdelijke map niet maken.';
+$string['cannotdownloadcomponents'] = 'Kan componenten niet downloaden.';
+$string['cannotdownloadzipfile'] = 'Kan ZIP-bestand niet downloaden.';
+$string['cannotfindcomponent'] = 'Kan component niet vinden.';
+$string['cannotsavemd5file'] = 'Kan md5-bestand niet bewaren.';
+$string['cannotsavezipfile'] = 'Kan ZIP-bestand niet bewaren.';
+$string['cannotunzipfile'] = 'Kan bestand niet unzippen';
 $string['caution'] = 'Opgelet';
 $string['check'] = 'Controleer';
 $string['chooselanguagehead'] = 'Kies een taal';
@@ -21,6 +28,7 @@ $string['chooselanguagesub'] = 'De taalinstelling die je hier kiest is enkel voo
 $string['closewindow'] = 'Sluit dit venster';
 $string['compatibilitysettingshead'] = 'Bezig met je PHP-instellingen te controleren ...';
 $string['compatibilitysettingssub'] = 'Om Moodle goed te laten werken, moet je server slagen voor al deze testen.';
+$string['componentisuptodate'] = 'Component niet up-to-date';
 $string['configfilenotwritten'] = 'Het installatiescript kon het bestand config.php met jouw gekozen instellingen niet automatisch aanmaken.  Kopieer de volgende code in een bestand dat je config.php noemt en plaats dat in de rootmap van Moodle.';
 $string['configfilewritten'] = 'Het maken van config.php is gelukt';
 $string['configurationcompletehead'] = 'Configuratie klaar';
@@ -63,6 +71,7 @@ Je hebt een plaats nodig waar Moodle bestanden kan opslaat. Deze map moet leesba
 $string['dirroot'] = 'Moodle-map';
 $string['dirrooterror'] = 'De instelling voor \'Moodle-map\' was niet juist - we kunnen daar geen Moodle-installatie vinden. Onderstaande waarde is gereset.';
 $string['download'] = 'Download';
+$string['downloadedfilecheckfailed'] = 'Controle van het gedownloade bestand mislukt';
 $string['environmenterrortodo'] = 'Je moet all de problemen over de installatie-omgeving die hierboven gevonden zijn, oplossen. Ga pas dan verder met het installeren van deze Moodleversie.';
 $string['environmenthead'] = 'Omgeving controleren ...';
 $string['environmentrecommendinstall'] = 'wordt aangeraden om te installeren of in te schakelen';
@@ -83,6 +92,7 @@ $string['help'] = 'Help';
 $string['iconvrecommended'] = 'Als je site andere talen dan die uit de Latin1 tekenset gebruikt, dan is het installeren van de optionele ICONV library ten zeerste aangeraden om de performantie van de site te verhogen.';
 $string['info'] = 'Informatie';
 $string['installation'] = 'Installatie';
+$string['invalidmd5'] = 'Ongeldig md5';
 $string['language'] = 'Taal';
 $string['magicquotesruntime'] = 'Magic Quotes runtime';
 $string['magicquotesruntimeerror'] = 'Dit moet uitgeschakeld zijn';
@@ -99,6 +109,7 @@ Hierdoor kan Moodle zelf zijn geheugenlimiet instellen.
 <li>Op sommige PHP-servers kun je een .htaccess-bestand maken in de Moodle-map met volgende lijn: <p><blockquote>php_value memory_limit 16M</blockquote></p>
 <p>Opgelet: op sommige servers zal dit verhinderen dat <b>alle</b> PHP-bestanden uitgevoerd worden. (je zult foutmeldingen zien wanneer je naar php-pagina\'s kijkt) Je zult dan het .htaccess-bestand moeten verwijderen.</li>
 </ol>';
+$string['missingrequiredfield'] = 'Vereist veld ontbreekt';
 $string['mysql416bypassed'] = 'Als je site echter UITSLUITEND iso-8859-1 (latin) talen gebruikt, dan kun je MySQL 4.1.12 (of hoger) blijven gebruiken.';
 $string['mysql416required'] = 'MySQL 4.1.16 is de minimum versie die nodig is voor Moodle 1.6 om te kunnen garanderen dat alle gegevens naar UTF-8 geconverteerd zullen worden.';
 $string['mysqlextensionisnotpresentinphp'] = 'PHP is niet goed geconfigureerd met de MySQL-extentie om met MySQL te communiceren. Controleer je php.ini-bestand of hercompileer PHP.';
@@ -112,6 +123,7 @@ $string['phpversionerror'] = 'PHP-versie moet minstens 4.1.0 zijn';
 $string['phpversionhelp'] = '<p>Moodle heeft minstens PHP-versie 4.1.0 nodig.</p> <p>De huidige versie op je server is $a</p>
 <p>Je moet PHP upgraden of verhuizen naar een host met een nieuwere versie van PHP!</p>';
 $string['previous'] = 'Vorige';
+$string['remotedownloadnotallowed'] = 'Het downloaden van componenten naar je server is niet toegelaten (allow_url_fopen is uitgeschakeld)<br /><br />Je moet het <a href=\"$a->url\">$a->url</a>bestand manueel downloaden en het kopiëren naar \"$a->dest\" op je server en het daar unzippen.';
 $string['report'] = 'Rapport';
 $string['safemode'] = 'Safe Mode';
 $string['safemodeerror'] = 'Moodle kan bestanden niet juist behandelen met safe mode ingeschakeld';
@@ -130,6 +142,9 @@ $string['welcomep50'] = 'Het gebruik van alle programma\'s in dit pakket wordt g
 <a href=\"http://www.opensource.org/docs/definition_plain.html\">open source</a> en wordt verdeeld onder de <a href=\"http://www.gnu.org/copyleft/gpl.html\">GPL</a> licentie.';
 $string['welcomep60'] = 'De volgende pagina\'s leiden je door een aantal makkelijk te volgen stappen om <strong>Moodle</strong> te installeren op je computer. Je kunt de standaardinstellingen overnemen of, optionneel, ze aanpassen aan je noden.';
 $string['welcomep70'] = 'Klik op de \"volgende\"-knop om verder te gaan met de installatie van <strong>Moodle</strong>';
+$string['wrongdestpath'] = 'Fout pad voor bestemming';
+$string['wrongsourcebase'] = 'Foute URL voor de bron';
+$string['wrongzipfilename'] = 'Foute ZIP-bestandsnaam';
 $string['wwwroot'] = 'Web adres';
 $string['wwwrooterror'] = 'Het webadres lijkt niet geldig te zijn - deze Moodle-installatie is blijkbaar niet op die plaats.';
 ?>

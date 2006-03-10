@@ -13,11 +13,19 @@ $string['admindirerror'] = 'La directory di amministrazione specificata non è c
 $string['admindirname'] = 'Directory di amministrazione';
 $string['admindirsettinghead'] = 'Impostazione la directory admin...';
 $string['bypassed'] = 'Aggirato';
+$string['cannotcreatetempdir'] = 'Non &egrave; possibile creare la cartella temporanea.';
+$string['cannotdownloadcomponents'] = 'Non &egrave; possibile scaricare componenti.';
+$string['cannotdownloadzipfile'] = 'Non &egrave; possibile scaricare il file compresso.';
+$string['cannotfindcomponent'] = 'Non &egrave; possibile trovare il componente.';
+$string['cannotsavemd5file'] = 'Non &egrave; possibile salvare il file md5.';
+$string['cannotsavezipfile'] = 'Non &egrave; possibile salvare il file compresso.';
+$string['cannotunzipfile'] = 'Non &egrave; possibile scompattare il file.';
 $string['caution'] = 'Attenzione';
 $string['check'] = 'Controlla';
 $string['chooselanguagehead'] = 'Scegli la lingua';
 $string['closewindow'] = 'Chiudi questa finestra';
 $string['compatibilitysettingshead'] = 'Controllo impostazioni PHP...';
+$string['componentisuptodate'] = 'Componente aggiornato.';
 $string['configfilenotwritten'] = 'Il sistema di installazione non è in grado di creare il file config.php contenente le vostre impostazioni, probabilmente perchè la directory di Moodle non è scrivibile. È possbile copiare manualmente il codice seguente in un file chiamato config.php nella directory principale di Moodle.';
 $string['configfilewritten'] = 'Il config.php è stato creato correttamente';
 $string['configurationcompletehead'] = 'Configurazione completata';
@@ -33,6 +41,7 @@ $string['dbtype'] = 'Tipo';
 $string['dirroot'] = 'Directory di Moodle';
 $string['dirrooterror'] = 'L\'impostazione \'Directory di Moodle\' sembra essere scorretta - non è possibile trovare un\'installazione di Moodle nel percorso specificato. Il valore sotto è stato ripristinato.';
 $string['download'] = 'Download';
+$string['downloadedfilecheckfailed'] = 'Controllo file scaricato fallito.';
 $string['environmenterrortodo'] = 'Dovete risolvere tutti i problemi relativi all\'ambiente (errori) trovati qui sopra prima di procedere con l\'installazione di questa versione di Moodle!';
 $string['environmentrecommendinstall'] = 'è raccomandata l\'installazione/abilitazione';
 $string['environmentrecommendversion'] = 'È raccomandata la versione $a->needed e la vostra versione attuale è $a->current';
@@ -49,6 +58,7 @@ $string['help'] = 'Aiuto';
 $string['iconvrecommended'] = 'Installare la libreria opzionale ICONV &egrave; caldamente consigliato per migliorare le prestazioni del sito, in particolare se il vostro sito supporta lingue non latine.';
 $string['info'] = 'Informazioni';
 $string['installation'] = 'Installazione';
+$string['invalidmd5'] = 'MD5 non valido';
 $string['language'] = 'Lingua';
 $string['magicquotesruntime'] = 'Magic Quotes Run Time';
 $string['magicquotesruntimeerror'] = 'Questo deve essere impostato a off';
@@ -65,6 +75,7 @@ Questo permetterà  a Moodle di impostare il limite di memoria da solo.</li>
 <li>Su alcuni server PHP è possibile creare un file .htaccess nella Directory di Moodle che contenga questa linea:
 <blockquote>php_value memory_limit 16M</blockquote>
 <p>Tuttavia, su alcuni server questo impedirà  a <b>tutte</b> le pagine PHP di funzionare (vedrete degli errori quando visualizzerete le pagine) cosi dovrete rimuovere il file .htaccess.</li></ol>';
+$string['missingrequiredfield'] = 'Mancano alcuni campi richiesti';
 $string['mysql416bypassed'] = 'Comunque, se il vostro sito sta utilizzando SOLO lingue iso-8859-1 (latin), potete continuare ad utilizzare MySQL 4.1.12 (o successivo) attualmente installato.';
 $string['mysql416required'] = 'MySQL 4.1.16 &egrave; la versione minima richiesta per Moodle 1.6 per garantire che tutti i dati possano essere convertiti in UTF-8 in futuro.';
 $string['mysqlextensionisnotpresentinphp'] = 'Il PHP non è stato correttamente configurato con l\'estensione di MySQL. Controllate il vostro php.ini o ricompilate il PHP.';
@@ -79,6 +90,7 @@ $string['phpversionhelp'] = '<p>Moodle richiede come minimo la versione 4.1.0 de
 <p>Attualmente state utilizzando la versione $a</p>
 <p>È necessario aggiornare il PHP o spostarsi su un server con una versione di PHP più recente!</p>';
 $string['previous'] = 'Precedente';
+$string['remotedownloadnotallowed'] = 'Non &egrave; permesso scaricare i componenti su vostro server (allow_url_fopen &egrave; disabilitato). <br /><br /> &Egrave; necessario scaricare manualmente il file <a href=\"$a->url\">$a->url</a>, copiarlo in \"$a->dest\" sul vostro server e scompattarlo la.';
 $string['report'] = 'Risultato';
 $string['safemode'] = 'Safe Mode';
 $string['safemodeerror'] = 'Moodle può avere problemi con il safemode impostato a on';
@@ -88,6 +100,9 @@ $string['status'] = 'Status';
 $string['thischarset'] = 'UTF-8';
 $string['thislanguage'] = 'Italiano';
 $string['user'] = 'Utente';
+$string['wrongdestpath'] = 'Percorso della destinazione errato.';
+$string['wrongsourcebase'] = 'Indirizzo (URL) base sorgente errato. ';
+$string['wrongzipfilename'] = 'Nome file compresso errato.';
 $string['wwwroot'] = 'Indirizzo web';
 $string['wwwrooterror'] = 'L\'indirizzo web sembra non essere valido - questa installazione di Moodle non sembra esere li.';
 ?>

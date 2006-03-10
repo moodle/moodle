@@ -20,6 +20,7 @@ $string['fail'] = 'Errorea';
 $string['fileuploads'] = 'Fitxategiak igo';
 $string['gdversion'] = 'GD bertsioa';
 $string['help'] = 'Laguntza';
+$string['info'] = 'Informazioa';
 $string['installation'] = 'Instalazioa';
 $string['language'] = 'Hizkuntza';
 $string['name'] = 'Izena';

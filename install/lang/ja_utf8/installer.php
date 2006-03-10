@@ -15,6 +15,14 @@ $string['admindirsettinghead'] = '管理ディレクトリの設定中 ...';
 $string['admindirsettingsub'] = 'まれなケースですが /admin をコントロールパネルまたはその他のページにアクセスするための特別なURLとして使用しているウェブホストがあります。残念ですが、これは標準的なMoodle管理ページのロケーションと衝突します。あなたのインストールに関するadminディレクトリをリネームすることで、この衝突を回避できます。例えば: <br /> <br /><b>moodleadmin</b><br /> <br />
 これによりMoodleの管理ページへのリンクは修正されます。';
 $string['bypassed'] = 'バイパス';
+$string['cannotcreatelangdir'] = 'langディレクトリを作成できません。';
+$string['cannotcreatetempdir'] = 'tempディレクトリを作成できません。';
+$string['cannotdownloadcomponents'] = 'コンポーネットをダウンロードできません。';
+$string['cannotdownloadzipfile'] = 'ZIPファイルをダウンロードできません。';
+$string['cannotfindcomponent'] = 'コンポーネントを見つけることができません。';
+$string['cannotsavemd5file'] = 'mp5ファイルを保存できません。';
+$string['cannotsavezipfile'] = 'ZIPファイルを保存できません。';
+$string['cannotunzipfile'] = 'ZIPファイルを解凍できません。';
 $string['caution'] = '警告';
 $string['check'] = 'チェック';
 $string['chooselanguagehead'] = '言語を選択してください。';
@@ -22,6 +30,7 @@ $string['chooselanguagesub'] = 'インストールのみに使用する言語を
 $string['closewindow'] = 'ウィンドウを閉じる';
 $string['compatibilitysettingshead'] = 'PHP設定を確認しています ...';
 $string['compatibilitysettingssub'] = 'Moodleを適切に動作させるためには、あなたのサーバがこれらすべてのテストに通る必要があります。';
+$string['componentisuptodate'] = 'コンポーネントは最新です。';
 $string['configfilenotwritten'] = 'インストールスクリプトは、自動的にあなたの選択した設定を反映したconfig.phpファイルを作成することができませんでした。おそらく、Moodleディレクトリに書き込み権が無いためだと思われます。下記のコードをconfig.phpという名称のファイルとしてMoodleのルートディレクトリにコピーすることができます。';
 $string['configfilewritten'] = 'config.phpが正常に作成されました。';
 $string['configurationcompletehead'] = '設定が完了しました。';
@@ -64,6 +73,7 @@ Moodleが、アップロードされたファイルを保存する場所が必�
 $string['dirroot'] = 'Moodleディレクトリ';
 $string['dirrooterror'] = '「Moodleディレクトリ」設定が間違っているようです - インストール済みMoodleが見つかりませんでした。下記の値がリセットされました。';
 $string['download'] = 'ダウンロード';
+$string['downloadedfilecheckfailed'] = 'ダウンロードファイルのチェックが失敗しました。';
 $string['environmenterrortodo'] = 'このバージョンのMoodleをインストールする前に、発見された動作環境の問題 ( エラー ) を解消してください!';
 $string['environmenthead'] = 'あなたの環境を確認しています ...';
 $string['environmentrecommendinstall'] = 'インストールおよび Enabled を推奨します。';
@@ -84,6 +94,7 @@ $string['help'] = 'ヘルプ';
 $string['iconvrecommended'] = 'より良いパフォーマンスを得るため、ICONVライブラリのインストールおよび稼動を強くお勧めします。あなたのサイトがラテン文字以外をサポートしている場合、特にお勧めします。';
 $string['info'] = '情報';
 $string['installation'] = 'インストレーション';
+$string['invalidmd5'] = '無効なmp5ファイルです。';
 $string['language'] = '言語設定';
 $string['magicquotesruntime'] = 'Magic Quotesランタイム';
 $string['magicquotesruntimeerror'] = 'これは無効にしてください。';
@@ -100,6 +111,7 @@ $string['memorylimithelp'] = '<p>現在、サーバのPHPメモリー制限が $
 <p><blockquote>php_value memory_limit 16M</blockquote></p>
 <p>しかし、この設定が<b>すべての</b>PHPページの動作を妨げる場合もあります。ページ閲覧時にエラーが表示される場合は、.htaccessファイルを削除してください。</p>
 </ol>';
+$string['missingrequiredfield'] = 'いくつかの必須入力フィールドに入力されていません。';
 $string['mysql416bypassed'] = 'あなたのサイトが iso-8859-1 ( ラテン ) 言語のみを使用している場合、現在インストールされている MySQL 4.1.12 ( またはそれ以上 ) を使用することができます。';
 $string['mysql416required'] = 'Moodle1.6では、将来すべてのデータをUTF-8に変換するため、MySQL 4.1.16 が要求される最低限のバージョンです。';
 $string['mysqlextensionisnotpresentinphp'] = 'MySQLと通信できるようにPHPのMySQL extension設定が正しく設定されていません。php.iniを確認するか、PHPを再度コンパイルしてください。';
@@ -114,6 +126,7 @@ $string['phpversionhelp'] = '<p>MoodleではPHPバージョン4.1.0以上が必�
 <p>現在、バージョン $a が動作しています。</p>
 <p>PHPをアップグレードするか、新しいバージョンがインストールされているホストに移動してください!</p>';
 $string['previous'] = '前へ';
+$string['remotedownloadnotallowed'] = 'あなたのサーバーにコンポーネントをダウンロードすることができません ( allow_url_fopen が無効 )。<br /><br /><a href=\"$a->url\">$a->url</a> ファイルを手動でダウンロードして、サーバの「 $a->dest 」にコピーした後、解凍してください。';
 $string['report'] = 'レポート';
 $string['safemode'] = 'セーフモード';
 $string['safemodeerror'] = 'セーフモードが有効の場合、Moodleに問題が発生する場合があります。';
@@ -131,6 +144,9 @@ $string['welcomep40'] = 'パッケージには <strong>Moodle $a->moodlerelease 
 $string['welcomep50'] = 'このパッケージ内のすべてのアプリケーションの使用は個々のライセンスによって規定されています。全体の <strong>$a->installername</strong> パッケージは <a href=\"http://www.opensource.org/docs/definition_plain.html\">オープンソース</a> であり、<a href=\"http://www.gnu.org/copyleft/gpl.html\">GPL</a>ライセンスの下で配布されています。';
 $string['welcomep60'] = '次からのページは、あなたのコンピュータに <strong>Moodle</strong> を簡単に設定およびセットアップする手順にしたがって進みます。デフォルトの設定を使用することも、必要に応じて任意で設定を変更することもできます。';
 $string['welcomep70'] = '<strong>Moodle</strong>のセットアップを続けるには「次へ」ボタンをクリックしてください。';
+$string['wrongdestpath'] = '宛先パスが間違っています。';
+$string['wrongsourcebase'] = 'ソースURLベースが間違っています。';
+$string['wrongzipfilename'] = 'ZIPファイル名が間違っています。';
 $string['wwwroot'] = 'ウェブアドレス';
 $string['wwwrooterror'] = 'ウェブアドレスが間違っています - インストール済みMoodleはここに表示されません。';
 ?>
