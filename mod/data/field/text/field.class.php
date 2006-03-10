@@ -31,6 +31,6 @@ class data_field_text extends data_field_base {
 
     function get_sort_field() {
         return parent::get_sort_field();
-                                                                                }
+    }
 }
 ?>
