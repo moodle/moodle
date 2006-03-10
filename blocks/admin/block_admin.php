@@ -68,6 +68,17 @@ class block_admin extends block_list {
                 $this->content->items[] = '<a href="'.$CFG->wwwroot.'/'.$CFG->admin.'/'.$CFG->dbtype.'/frame.php">'.get_string('managedatabase').'</a>';
                 $this->content->icons[] = '<img src="'.$CFG->pixpath.'/i/db.gif" height="16" width="16" alt="" />';
             }
+
+            if ($CFG->enrol == 'authorize') {
+                require_once $CFG->dirroot.'/enrol/authorize/const.php';
+                $paymenturl = '<a href="'.$CFG->wwwroot.'/enrol/authorize/index.php">'.get_string('payments').'</a>';
+                if ($cnt = count_records('enrol_authorize', 'status', AN_STATUS_AUTH)) {
+                    $paymenturl .= '<a href="'.$CFG->wwwroot.'/enrol/authorize/index.php?status='.AN_STATUS_AUTH.'">(<b>'.$cnt.'</b> '.get_string('pending').')</a>';
+                }
+                $this->content->items[] = $paymenturl;
+                $this->content->icons[] = '<img src="'.$CFG->pixpath.'/i/payment.gif" height="16" width="16" alt="" />';
+            }
+
             $this->content->footer = '<a href="'.$CFG->wwwroot.'/'.$CFG->admin.'/">'.get_string('admin').'...</a>';
         }
     }
@@ -82,8 +93,6 @@ class block_admin extends block_list {
         }
 
         $course = get_record('course', 'id', $this->instance->pageid);
-
-
 
         if (isteacher($this->instance->pageid)) {
 
@@ -164,6 +173,16 @@ class block_admin extends block_list {
             if ($isteacheredit) {
                 $this->content->items[]='<a href="'.$CFG->wwwroot.'/files/index.php?id='.$this->instance->pageid.'">'.get_string('files').'</a>';
                 $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/files.gif" height="16" width="16" alt="" />';
+            }
+
+            if ($CFG->enrol == 'authorize') {
+                require_once $CFG->dirroot.'/enrol/authorize/const.php';
+                $paymenturl = '<a href="'.$CFG->wwwroot.'/enrol/authorize/index.php?course='.$course->id.'">'.get_string('payments').'</a>';
+                if ($cnt = count_records('enrol_authorize', 'status', AN_STATUS_AUTH, 'courseid', $course->id)) {
+                    $paymenturl .= '<a href="'.$CFG->wwwroot.'/enrol/authorize/index.php?status='.AN_STATUS_AUTH.'&amp;course='.$course->id.'">(<b>'.$cnt.'</b> '.get_string('pending').')</a>';
+                }
+                $this->content->items[] = $paymenturl;
+                $this->content->icons[] = '<img src="'.$CFG->pixpath.'/i/payment.gif" height="16" width="16" alt="" />';
             }
 
             $this->content->items[]='<a href="'.$CFG->wwwroot.'/doc/view.php?id='.$this->instance->pageid.'&amp;file=teacher.html">'.get_string('help').'</a>';
