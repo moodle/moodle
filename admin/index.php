@@ -449,9 +449,9 @@
     //////////////////////////////////////////////////////////////////////////////////////////////////
     ////  IT IS ILLEGAL AND A VIOLATION OF THE GPL TO REMOVE OR MODIFY THE COPYRIGHT NOTICE BELOW ////
     $copyrighttext = '<a href="http://moodle.org/">Moodle</a> '.
-                     '<a href="../doc/?frame=release.html">'.$CFG->release.'</a> ('.$CFG->version.')<br />'.
-                     'Copyright &copy; 1999-2006 Martin Dougiamas<br />'.
-                     '<a href="../doc/?frame=licence.html">GNU Public License</a>';
+                     '<a href="http://docs.moodle.org/en/Release">'.$CFG->release.'</a> ('.$CFG->version.')<br />'.
+                     'Copyright &copy; 1999 onwards, Martin Dougiamas<br />'.
+                     '<a href="http://docs.moodle.org/en/License">GNU Public License</a>';
     echo '<p class="copyright">'.$copyrighttext.'</p>';
     //////////////////////////////////////////////////////////////////////////////////////////////////
 
