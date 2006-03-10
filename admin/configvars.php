@@ -98,9 +98,9 @@ class configvarrss extends configvar {
     $options[3] = get_string('courseblogs','blog');
     $options[2] = get_string('groupblogs','blog');
     $options[1] = get_string('personalblogs','blog');
-    $options[0] = get_string('diableblogs','blog');
+    $options[0] = get_string('disableblogs','blog');
 
-    $misc['bloglevel'] = new configvar (get_string('blogleveldes', 'admin'),
+    $misc['bloglevel'] = new configvar (get_string('configbloglevel', 'admin'),
         choose_from_menu ($options, 'bloglevel', $config->bloglevel,'','','',true));
 
 ////////////////////////////////////////////////////////////////////
