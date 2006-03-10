@@ -18,8 +18,9 @@ define ('DIRECTORY',          2); /// 2. Directory settings
 define ('DATABASE',           3); /// 2. Database settings
 define ('ADMIN',              4); /// 4. Administration directory name
 define ('ENVIRONMENT',        5); /// 5. Administration directory name
-define ('SAVE',               6); /// 6. Save or display the settings
-define ('REDIRECT',           7); /// 7. Redirect to index.php
+define ('DOWNLOADLANG',       6); /// 6. Load complete lang from download.moodle.org
+define ('SAVE',               7); /// 7. Save or display the settings
+define ('REDIRECT',           8); /// 8. Redirect to index.php
 ///==========================================================================//
 
 
@@ -115,6 +116,7 @@ require_once('./lib/weblib.php');
 require_once('./lib/adodb/adodb.inc.php');
 require_once('./lib/environmentlib.php');
 require_once('./lib/xmlize.php');
+require_once('./lib/componentlib.class.php');
 require_once('./version.php');
 
 /// Set version and release
@@ -135,6 +137,7 @@ $headstagetext = array(WELCOME       => get_string('chooselanguagehead', 'instal
                        DATABASE      => get_string('databasesettingshead', 'install'),
                        ADMIN         => get_string('admindirsettinghead', 'install'),
                        ENVIRONMENT   => get_string('environmenthead', 'install'),
+                       DOWNLOADLANG  => get_string('downloadlanguagehead', 'install'),
                        SAVE          => get_string('configurationcompletehead', 'install')
                         );
 
@@ -144,6 +147,7 @@ $substagetext = array(WELCOME       => get_string('chooselanguagesub', 'install'
                       DATABASE      => get_string('databasesettingssub', 'install'),
                       ADMIN         => get_string('admindirsettingsub', 'install'),
                       ENVIRONMENT   => get_string('environmentsub', 'install'),
+                      DOWNLOADLANG  => get_string('downloadlanguagesub', 'install'),
                       SAVE          => get_string('configurationcompletesub', 'install')
                        );
 
@@ -360,7 +364,6 @@ if ($INSTALL['stage'] == ENVIRONMENT) {
         $nextstage = DATABASE;
     }
 }
-
 
 //==========================================================================//
 
@@ -707,7 +710,62 @@ function form_table($nextstage = WELCOME, $formaction = "install.php") {
                 </td>
             </tr>
 
+<?php
+            break;
+        case DOWNLOADLANG: /// Download language from download.moodle.org
+?>
 
+            <tr>
+                <td colspan="2">
+                <?php
+                    $downloadsuccess = false;
+                    $errormsg = '';
+
+                    error_reporting(0);  // Hide errors
+
+                /// Create necessary lang dir
+                    if (!make_upload_directory('lang', false)) {
+                        $errormsg = get_string('cannotcreatelangdir', 'error');
+                    }
+
+                /// Download and install component
+                    if (($cd = new component_installer('http://download.moodle.org', 'lang16',
+                                                        $INSTALL['language'].'.zip', 'languages.md5', 'lang')) && empty($errormsg)) {
+                        $status = $cd->install(); //returns ERROR | UPTODATE | INSTALLED
+                        switch ($status) {
+                            case ERROR:
+                                if ($cd->get_error() == 'remotedownloadnotallowed') {
+                                    $a = new stdClass();
+                                    $a->url = 'http://download.moodle.org/lang16/'.$pack.'zip';
+                                    $a->dest= $CFG->dataroot.'/lang';
+                                    $errormsg = get_string($cd->get_error(), 'error', $a);
+                                } else {
+                                    $errormsg = get_string($cd->get_error(), 'error');
+                                }
+                            break;
+                            case UPTODATE:
+                            case INSTALLED:
+                                $downloadsuccess = true;
+                            break;
+                            default:
+                                //We shouldn't reach this point
+                        }
+                    } else {
+                        //We shouldn't reach this point
+                    }
+
+                    if (!empty($errormsg)) echo "<p class=\"errormsg\" align=\"center\">$errormsg</p>\n";
+
+                    error_reporting(7);  // Show errors
+
+                    if ($downloadsuccess) {
+                        print_simple_box(get_string('langdownloadok', 'install', $INSTALL['language']), 'center');
+                    } else {
+                        print_simple_box(get_string('langdownloaderror', 'install', $INSTALL['language']), 'center');
+                    }
+                ?>
+                </td>
+            </tr>
 
 <?php
             break;
