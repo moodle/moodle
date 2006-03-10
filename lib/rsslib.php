@@ -27,6 +27,17 @@ function rss_get_link($courseid, $userid, $modulename, $id, $tooltiptext='') {
 
 }
 
+function rss_get_url($courseid, $userid, $modulename, $id) {
+    global $CFG;
+    if ($CFG->slasharguments) {
+        $rsspath = "$CFG->wwwroot/rss/file.php/$courseid/$userid/$modulename/$id/rss.xml";
+    } else {
+        $rsspath = "$CFG->wwwroot/rss/file.php?file=/$courseid/$userid/$modulename/$id/rss.xml";
+    }
+    return $rsspath;
+}
+
+
 //This function prints the icon (from theme) with the link to rss/file.php
 function rss_print_link($courseid, $userid, $modulename, $id, $tooltiptext='') {
 
