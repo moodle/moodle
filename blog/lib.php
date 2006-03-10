@@ -838,9 +838,9 @@ function blog_print_entry_content ($template, $entryid, $filtertype='', $filters
 
 /// Links to tags
 
-    if ($blogtags = get_records_sql('SELECT tags.* FROM '.$CFG->prefix.'tags, '.$CFG->prefix.'blog_tag_instance
-                                 WHERE tags.id = blog_tag_instance.tagid
-                                 AND blog_tag_instance.entryid = '.$entryid)) {
+    if ($blogtags = get_records_sql('SELECT t.* FROM '.$CFG->prefix.'tags t, '.$CFG->prefix.'blog_tag_instance ti
+                                 WHERE t.id = ti.tagid
+                                 AND ti.entryid = '.$entryid)) {
         echo '<p />';
         print_string('tags', 'blog');
         foreach ($blogtags as $blogtag) {
