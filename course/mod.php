@@ -600,7 +600,7 @@
         $form->coursemodule = "";
         $form->mode       = "add";
         $form->sesskey    = !empty($USER->id) ? $USER->sesskey : '';
-        if (isset_param('type')) {
+        if (!empty($type)) {
             $form->type = $type;
         }
 
