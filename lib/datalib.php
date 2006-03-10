@@ -1241,6 +1241,10 @@ function update_record($table, $dataobject) {
     foreach ($columns as $column) {
         if ($column->name <> 'id' and isset($data[$column->name]) ) {
             $ddd[$column->name] = $data[$column->name];
+            // PostgreSQL bytea support
+            if ($CFG->dbtype == 'postgres7' && $column->type == 'bytea') {
+                $ddd[$column->name] = $db->BlobEncode($ddd[$column->name]);
+            }
         }
     }
 
