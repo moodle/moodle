@@ -186,7 +186,7 @@
 
             if (isadmin()) {
                 if (!empty($usernew->newpassword)) {
-                    $usernew->password = md5($usernew->newpassword);
+                    $usernew->password = hash_internal_user_password($usernew->newpassword);
                     // update external passwords
                     if (!empty($CFG->{'auth_'. $user->auth.'_stdchangepassword'})) {
                         if (function_exists('auth_user_update_password')){

@@ -2,7 +2,7 @@
 
     require_once('../config.php');
 
-    $id = optional_param('id', SITEID);
+    $id = optional_param('id', SITEID, PARAM_INT);
 
     //HTTPS is potentially required in this page
     httpsrequired();
@@ -26,19 +26,14 @@
         update_login_count();
 
         if (!count((array)$err)) {
-            $username = $frm->username;
-            $password = md5($frm->newpassword1);
-
-            $user = get_complete_user_data('username', $username);
+            $user = get_complete_user_data('username', $frm->username);
 
             if (isguest($user->id)) {
                 error('Can\'t change guest password!');
             }
             
             if (is_internal_auth($user->auth)){
-                if (set_field('user', 'password', $password, 'username', $username)) {
-                    $user->password = $password;
-                } else {
+                if (!update_internal_user_password($user, $frm->newpassword1)) {
                     error('Could not set the new password');
                 }
             } else { // external users
@@ -49,7 +44,7 @@
                     if (function_exists('auth_user_update_password')){
                         // note that we pass cleartext password 
                         if (auth_user_update_password($user->username, $frm->newpassword1)){
-                            $user->password = $password;
+                            update_internal_user_password($user, $frm->newpassword1, false);
                         } else {
                             error('Could not set the new password');
                         }

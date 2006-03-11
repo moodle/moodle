@@ -2409,11 +2409,7 @@ function create_user_record($username, $password, $auth='') {
 
     $newuser->auth = (empty($auth)) ? $CFG->auth : $auth;
     $newuser->username = $username;
-    if(empty($CFG->{$newuser->auth.'_preventpassindb'})){  //Prevent passwords in Moodle's DB
-        $newuser->password = md5($password);
-    } else {
-        $newuser->password = 'not cached';  //Unusable password
-    }
+    update_internal_user_password($newuser, $password, false);
     $newuser->lang = $CFG->lang;
     $newuser->confirmed = 1;
     $newuser->lastIP = getremoteaddr();
@@ -2529,8 +2525,6 @@ function authenticate_user_login($username, $password) {
 
     global $CFG;
 
-    $md5password = md5($password);
-
     // First try to find the user in the database
 
     if (!$user = get_complete_user_data('username', $username)) {
@@ -2573,14 +2567,7 @@ function authenticate_user_login($username, $password) {
             if (empty($user->auth)) {             // For some reason auth isn't set yet
                 set_field('user', 'auth', $auth, 'username', $username);
             }
-            if (empty($CFG->{$user->auth.'_preventpassindb'})){   //Calculate the password to update
-                $passfield = $md5password;
-            } else {
-                 $passfield = 'not cached';
-            }
-            if ($passfield <> $user->password) {   // Update local copy of password for reference
-                set_field('user', 'password',  $passfield, 'username', $username); //Update password
-            }
+            update_internal_user_password($user, $password);
             if (!is_internal_auth()) {            // update user record from external DB
                 $user = update_user_record($username);
             }
@@ -2625,6 +2612,78 @@ function authenticate_user_login($username, $password) {
         error_log('[client '.$_SERVER['REMOTE_ADDR']."]  $CFG->wwwroot  Failed Login:  $username  ".$_SERVER['HTTP_USER_AGENT']);
         return false;
     }
+}
+
+/**
+ * Compare password against hash stored in local user table.
+ * If necessary it also updates the stored hash to new format.
+ * 
+ * @param object user
+ * @param string plain text password
+ * @return bool is password valid?
+ */
+function validate_internal_user_password(&$user, $password) {
+    global $CFG;
+
+    $validated = false;
+
+    if (!empty($CFG->unicodedb)) {
+        $textlib = textlib_get_instance();
+        $convpassword = $textlib->convert($password, 'UTF-8', get_string('oldcharset'));
+    } else {
+        $convpassword = false;
+    }
+
+    if ($user->password == md5($password)) {
+        $validated = true;
+    } elseif ($convpassword !== false && $user->password == md5($convpassword)) {
+        $validated = true;
+    }
+
+    if ($validated) {
+        update_internal_user_password($user, $password);
+    }
+
+    return $validated;
+}
+
+/**
+ * Calculate hashed value from password using current hash mechanism.
+ * This mechanism might change in future, older methodes are handled in validate_internal_user_password()
+ * 
+ * @param string password
+ * @return string password hash
+ */
+function hash_internal_user_password($password) {
+    return md5($password);
+}
+
+/**
+ * Update pssword hash in user object.
+ * 
+ * @param object user
+ * @param string plain text password
+ * @param bool store changes also in db, default true
+ * @return true if hash changed
+ */
+function update_internal_user_password(&$user, $password, $storeindb=true) {
+    global $CFG;
+
+    if (!empty($CFG->{$user->auth.'_preventpassindb'})) {
+        $hashedpassword = 'not cached';
+    } else {
+        $hashedpassword = hash_internal_user_password($password);
+    }
+
+    if ($user->password != $hashedpassword) {
+        if ($storeindb) {
+            if (!set_field('user', 'password',  $hashedpassword, 'username', $user->username)) {
+                return false;
+            }
+        }
+        $user->password = $hashedpassword;
+    }
+    return true;
 }
 
 /**

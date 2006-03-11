@@ -174,7 +174,7 @@
                     }
                     // password needs to be encrypted
                     else if ($name == "password" && !empty($value)) {
-                        $user->password = md5($value);
+                        $user->password = hash_internal_user_password($value);
                     }
                     else if ($name == "username") {
                         $user->username = addslashes(moodle_strtolower($value));

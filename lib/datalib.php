@@ -1281,26 +1281,6 @@ function update_record($table, $dataobject) {
 /// USER DATABASE ////////////////////////////////////////////////
 
 /**
- * Does this username and password specify a valid admin user?
- *
- * @uses $CFG
- * @param string $username The name of the user to be tested for admin rights
- * @param string $md5password The password supplied by the user in md5 encrypted format.
- * @return bool
- */
-function adminlogin($username, $md5password) {
-
-    global $CFG;
-
-    return record_exists_sql("SELECT u.id
-                                FROM {$CFG->prefix}user u,
-                                     {$CFG->prefix}user_admins a
-                              WHERE u.id = a.userid
-                                AND u.username = '$username'
-                                AND u.password = '$md5password'");
-}
-
-/**
  * Get the guest user information from the database
  *
  * @return object(user) An associative array with the details of the guest user account.

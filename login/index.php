@@ -2,7 +2,7 @@
 
     require_once("../config.php");
 
-    $loginguest = optional_param('loginguest', false); // determines whether visitors are logged in as guest automatically
+    $loginguest = optional_param('loginguest', 0, PARAM_BOOL); // determines whether visitors are logged in as guest automatically
 
 /// Check for timed out sessions
     if (!empty($SESSION->has_timed_out)) {
@@ -19,7 +19,7 @@
     if (! record_exists("user", "username", "guest")) {
         $guest->auth        = "manual"; 
         $guest->username    = "guest"; 
-        $guest->password    = md5("guest");
+        $guest->password    = hash_internal_user_password("guest");
         $guest->firstname   = addslashes(get_string("guestuser"));
         $guest->lastname    = " ";
         $guest->email       = "root@localhost";

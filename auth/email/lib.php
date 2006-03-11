@@ -7,11 +7,11 @@ function auth_user_login ($username, $password) {
 
     global $CFG;
 
-    if (! $user = get_record('user', 'username', $username)) {
-        return false;
+    if ($user = get_record('user', 'username', $username)) {
+        return validate_internal_user_password($user, $password);
     }
-    
-    return ($user->password == md5($password));
+
+    return false;
 }
 
 

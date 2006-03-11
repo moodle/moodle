@@ -21,7 +21,7 @@
 
         if (count((array)$err) == 0) {
             $plainpass = $user->password;
-            $user->password = md5($user->password);
+            $user->password = hash_internal_user_password($plainpass);
             $user->confirmed = 0;
             $user->lang = current_language();
             $user->firstaccess = time();

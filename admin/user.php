@@ -25,7 +25,7 @@
         $user->firstname    = get_string("admin");
         $user->lastname     = get_string("user");
         $user->username     = "admin";
-        $user->password     = md5("admin");
+        $user->password     = hash_internal_user_password("admin");
         $user->email        = "root@localhost";
         $user->confirmed    = 1;
         $user->lang         = $CFG->lang;

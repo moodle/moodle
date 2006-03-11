@@ -42,7 +42,7 @@ function auth_user_login ($username, $password) {
             // user exists exterally
             // check username/password internally
             if ($user = get_record('user', 'username', $username)) {
-                return ($user->password == md5($password));
+                return validate_internal_user_password($user, $password);
             }
         } else {
             // user does not exist externally
