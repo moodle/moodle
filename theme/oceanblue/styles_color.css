@@ -593,14 +593,17 @@ table.message_search_results td {
 .tabrow td.selected:hover .tablink {
   background-image:url(pix/tab/right_active_hover.gif);
 }
-
+.tabs .r0,
+.tabs .r1 {
+  background: #AAAAFF;
+}
 
 /***
  *** User
  ***/
 
 .userpicture {
-  background:#EEEEEE; 
+  background: #EEEEEE;
 }
 
 .userinfobox {
