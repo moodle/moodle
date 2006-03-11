@@ -238,7 +238,7 @@
                 case LESSON_SHORTANSWER:
                 case LESSON_NUMERICAL:                    
                     echo "<tr><td><b>".get_string("answer", "lesson")." $nplus1:</b>\n";
-                    if ($flags & LESSON_ANSWER_EDITOR) {
+                    if ($flags & LESSON_ANSWER_EDITOR and $page->qtype != LESSON_SHORTANSWER and $page->qtype != LESSON_NUMERICAL) {
                         echo " [".get_string("useeditor", "lesson").": ".
                             "<label for=\"answereditor[$n]\" class=\"hidden-label\">answereditor[$n]</label><input type=\"checkbox\" id=\"answereditor[$n]\" name=\"answereditor[$n]\" value=\"1\" 
                             checked=\"checked\">";
@@ -247,11 +247,16 @@
                         print_textarea($usehtmleditor, 20, 70, 630, 300, "answer[$n]", $answer->answer);
                         use_html_editor("answer[$n]"); // switch on the editor
                     } else {
-                        echo " [".get_string("useeditor", "lesson").": ".
-                            "<label for=\"answereditor[$n]\" class=\"hidden-label\">answereditor[$n]</label><input type=\"checkbox\" id=\answereditor[$n]\" name=\"answereditor[$n]\" value=\"1\">";
-                        helpbutton("useeditor", get_string("useeditor", "lesson"), "lesson");
-                        echo "]<br />\n";
-                        print_textarea(false, 6, 70, 630, 300, "answer[$n]", $answer->answer);
+                        if ($page->qtype != LESSON_SHORTANSWER and $page->qtype != LESSON_NUMERICAL) {
+                            echo " [".get_string("useeditor", "lesson").": ".
+                                "<label for=\"answereditor[$n]\" class=\"hidden-label\">answereditor[$n]</label><input type=\"checkbox\" id=\answereditor[$n]\" name=\"answereditor[$n]\" value=\"1\">"; //CDC hidden label.
+                            helpbutton("useeditor", get_string("useeditor", "lesson"), "lesson");
+                            echo "]<br />\n";
+                            print_textarea(false, 6, 70, 630, 300, "answer[$n]", $answer->answer);
+                        } else {
+                            echo "<br />\n";
+                            print_textarea(false, 1, 70, 630, 300, "answer[$n]", $answer->answer);
+                        }
                     }
                     echo "</td></tr>\n";
                     echo "<tr><td><b>".get_string("response", "lesson")." $nplus1:</b>\n";
@@ -382,11 +387,16 @@
                 case LESSON_SHORTANSWER:
                 case LESSON_NUMERICAL:
                     echo "<tr><td><b>".get_string("answer", "lesson")." $iplus1:</b>\n";
-                    echo " [".get_string("useeditor", "lesson").": ".
-                        "<input type=\"checkbox\" name=\"answereditor[$i]\" value=\"1\">";
-                    helpbutton("useeditor", get_string("useeditor", "lesson"), "lesson");
-                    echo "]<br />\n";
-                    print_textarea(false, 10, 70, 630, 300, "answer[$i]");
+                    if ($page->qtype != LESSON_SHORTANSWER and $page->qtype != LESSON_NUMERICAL) {
+                        echo " [".get_string("useeditor", "lesson").": ".
+                            "<input type=\"checkbox\" name=\"answereditor[$i]\" value=\"1\">";
+                        helpbutton("useeditor", get_string("useeditor", "lesson"), "lesson");
+                        echo "]<br />\n";
+                        print_textarea(false, 10, 70, 630, 300, "answer[$i]");
+                    } else {
+                        echo "<br />\n";
+                        print_textarea(false, 1, 70, 630, 300, "answer[$i]");
+                    }
                     echo "</td></tr>\n";
                     echo "<tr><td><b>".get_string("response", "lesson")." $iplus1:</b>\n";
                     echo " [".get_string("useeditor", "lesson").": ".

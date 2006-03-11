@@ -87,8 +87,14 @@
                 if ($form->answerid[$i]) {
                     $oldanswer = new stdClass;
                     $oldanswer->id = clean_param($form->answerid[$i], PARAM_INT);
-                    $oldanswer->flags = optional_param("answereditor[$i]", 0, PARAM_INT) * LESSON_ANSWER_EDITOR +
-                        optional_param("responseeditor[$i]", 0, PARAM_INT) * LESSON_RESPONSE_EDITOR;
+                    if (!isset($form->answereditor[$i])) {
+                        $form->answereditor[$i] = 0;
+                    }
+                    if (!isset($form->responseeditor[$i])) {
+                        $form->responseeditor[$i] = 0;
+                    }
+                    $oldanswer->flags = $form->answereditor[$i] * LESSON_ANSWER_EDITOR +
+                                        $form->responseeditor[$i] * LESSON_RESPONSE_EDITOR;
                     $oldanswer->timemodified = $timenow;
                     $oldanswer->answer = trim($form->answer[$i]);
                     if (isset($form->response[$i])) {
@@ -108,8 +114,14 @@
                     $newanswer = new stdClass; // need to clear id if more than one new answer is ben added
                     $newanswer->lessonid = $lesson->id;
                     $newanswer->pageid = $page->id;
-                    $newanswer->flags = optional_param("answereditor[$i]", 0, PARAM_INT) * LESSON_ANSWER_EDITOR +
-                        optional_param("responseeditor[$i]", 0, PARAM_INT) * LESSON_RESPONSE_EDITOR;
+                    if (!isset($form->answereditor[$i])) {
+                        $form->answereditor[$i] = 0;
+                    }
+                    if (!isset($form->responseeditor[$i])) {
+                        $form->responseeditor[$i] = 0;
+                    }
+                    $newanswer->flags = $form->answereditor[$i] * LESSON_ANSWER_EDITOR +
+                                        $form->responseeditor[$i] * LESSON_RESPONSE_EDITOR;
                     $newanswer->timecreated = $timenow;
                     $newanswer->answer = trim($form->answer[$i]);
                     if (isset($form->response[$i])) {
@@ -134,8 +146,14 @@
                     } else {
                         $oldanswer = new stdClass;
                         $oldanswer->id = clean_param($form->answerid[$i], PARAM_INT);
-                        $oldanswer->flags = optional_param("answereditor[$i]", 0, PARAM_INT) * LESSON_ANSWER_EDITOR +
-                        optional_param("responseeditor[$i]", 0, PARAM_INT) * LESSON_RESPONSE_EDITOR;
+                        if (!isset($form->answereditor[$i])) {
+                            $form->answereditor[$i] = 0;
+                        }
+                        if (!isset($form->responseeditor[$i])) {
+                            $form->responseeditor[$i] = 0;
+                        }                        
+                        $oldanswer->flags = $form->answereditor[$i] * LESSON_ANSWER_EDITOR +
+                                            $form->responseeditor[$i] * LESSON_RESPONSE_EDITOR;
                         $oldanswer->timemodified = $timenow;
                         $oldanswer->answer = NULL;
                         if (!update_record("lesson_answers", $oldanswer)) {
