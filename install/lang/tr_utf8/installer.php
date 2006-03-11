@@ -111,6 +111,7 @@ $string['langdownloadok'] = 'Dil paketi ($a) başarıyla kuruldu. Kurulumun kala
 $string['language'] = 'Dil';
 $string['magicquotesruntime'] = 'Magic Quotes Run Time';
 $string['magicquotesruntimeerror'] = 'Bu kapalı olmalı';
+$string['mbstringrecommended'] = 'Sitenizde latin olmayan dilleri kullanıyorsanız isteğe bağlı MBSTRING kütüphanesinin kurulması site performansını arttırmak için şiddetle tavsiye edilir.';
 $string['memorylimit'] = 'Bellek Limiti';
 $string['memorylimiterror'] = 'PHP bellek limiti ayarı çok düşük... Daha sonra bu ayardan dolayı bazı sorunlar oluşabilir.';
 $string['memorylimithelp'] = '<p>Sunucunuz için PHP bellek limiti şu anda $a olarak ayarlanmış durumda.</p>

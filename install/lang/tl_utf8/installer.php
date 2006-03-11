@@ -107,6 +107,7 @@ $string['invalidmd5'] = 'Ditanggap na md5';
 $string['language'] = 'Wikà';
 $string['magicquotesruntime'] = 'Magic Quotes Run Time';
 $string['magicquotesruntimeerror'] = 'Dapat ay patay ito';
+$string['mbstringrecommended'] = 'Ang pag-iinstol ng opsiyonal na MBSTRING library ay mahigpit na inirerekomenda upang mapahusay ang paggana ng site, lalupa\'t kung sinusuportahan ng site mo ang mga di-latin na wika.';
 $string['memorylimit'] = 'Memory Limit';
 $string['memorylimiterror'] = 'Labis na mababa ang memory limit ng PHP ... maaaring magkaproblema ka mamaya.';
 $string['memorylimithelp'] = '<p>Ang memory limit ng PHP para sa server mo ay kasalukuyang nakatakda sa $a.</p>

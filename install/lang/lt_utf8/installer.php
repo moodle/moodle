@@ -18,6 +18,7 @@ $string['name'] = 'Vardas';
 $string['next'] = 'Toliau';
 $string['ok'] = 'OK';
 $string['password'] = 'Slaptažodis';
+$string['previous'] = 'Ankstesnis';
 $string['status'] = 'Būsena';
 $string['thischarset'] = 'UTF-8';
 $string['thislanguage'] = 'Lietuvių';

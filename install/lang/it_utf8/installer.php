@@ -62,6 +62,7 @@ $string['invalidmd5'] = 'MD5 non valido';
 $string['language'] = 'Lingua';
 $string['magicquotesruntime'] = 'Magic Quotes Run Time';
 $string['magicquotesruntimeerror'] = 'Questo deve essere impostato a off';
+$string['mbstringrecommended'] = 'Installare la libreria opzionale MBSTRING &egrave; caldamente consigliato per migliorare le prestazioni del sito, in particolare se il vostro sito supporta lingue non latine.';
 $string['memorylimit'] = 'Limite memoria';
 $string['memorylimiterror'] = 'Il limite di memoria del PHP è impostato a un valore basso ... potrebbero verificarsi probremi in futuro.';
 $string['memorylimithelp'] = '<p>Il limite della memoria assegnata a PHP attualmente è $a.</p>
