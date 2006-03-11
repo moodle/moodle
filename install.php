@@ -56,9 +56,18 @@ if ( empty($INSTALL['language']) and empty($_POST['language']) ) {
     $INSTALL['showskipdbencodingtest'] = false;
     $INSTALL['skipdbencodingtest']     = false;
 
+    $INSTALL['downloadlangpack']       = false;
+    $INSTALL['showdownloadlangpack']   = true;
+    $INSTALL['downloadlangpackerror']  = '';
+
+/// To be used by the Installer
     $INSTALL['wwwroot']         = '';
     $INSTALL['dirroot']         = dirname(__FILE__);
     $INSTALL['dataroot']        = dirname(dirname(__FILE__)) . '/moodledata';
+
+/// To be configured in the Installer
+    $INSTALL['wwwrootform']         = '';
+    $INSTALL['dirrootform']         = dirname(__FILE__);
 
     $INSTALL['admindirname']    = 'admin';
 
@@ -76,8 +85,10 @@ if (isset($_POST['stage'])) {
 
     if ( $goforward = (! empty( $_POST['next'] )) ) {
         $nextstage = $_POST['stage'] + 1;
-    } else {
+    } else if (! empty( $_POST['prev'])) {
         $nextstage = $_POST['stage'] - 1;
+    } else if (! empty( $_POST['same'] )) {
+        $nextstage = $_POST['stage'];
     }
 
 
@@ -129,6 +140,7 @@ $db = &ADONewConnection($INSTALL['dbtype']);
 /// guess the www root
 if ($INSTALL['wwwroot'] == '') {
     list($INSTALL['wwwroot'], $xtra) = explode('/install.php', qualified_me());
+    $INSTALL['wwwrootform'] = $INSTALL['wwwroot'];
 }
 
 $headstagetext = array(WELCOME       => get_string('chooselanguagehead', 'install'),
@@ -186,29 +198,26 @@ if ($INSTALL['stage'] == DIRECTORY) {
 
     error_reporting(0);
     
-            
-    /// check dirroot
-    if (($fh = @fopen($INSTALL['dirroot'].'/install.php', 'r')) === false ) {
-        $CFG->dirroot = dirname(__FILE__);
-        $INSTALL['dirroot'] = dirname(__FILE__);
-        $errormsg .= get_string('dirrooterror', 'install').'<br />';
-    } 
-    if ($fh) fclose($fh);
-            
-    $CFG->dirroot = $INSTALL['dirroot'];
-
     /// check wwwroot
     if (ini_get('allow_url_fopen')) {
-        if (($fh = @fopen($INSTALL['wwwroot'].'/install.php', 'r')) === false) {
+        if (($fh = @fopen($INSTALL['wwwrootform'].'/install.php', 'r')) === false) {
             $errormsg .= get_string('wwwrooterror', 'install').'<br />';
+            $INSTALL['wwwrootform'] = $INSTALL['wwwroot'];
         }
     }
+    if ($fh) fclose($fh);
+            
+    /// check dirroot
+    if (($fh = @fopen($INSTALL['dirrootform'].'/install.php', 'r')) === false ) {
+        $errormsg .= get_string('dirrooterror', 'install').'<br />';
+        $INSTALL['dirrootform'] = $INSTALL['dirroot'];
+    } 
     if ($fh) fclose($fh);
 
     /// check dataroot
     $CFG->dataroot = $INSTALL['dataroot'];
     if (make_upload_directory('sessions', false) === false ) {
-        $errormsg = get_string('datarooterror', 'install').'<br />';
+        $errormsg .= get_string('datarooterror', 'install').'<br />';
     }
     if ($fh) fclose($fh); 
 
@@ -365,6 +374,65 @@ if ($INSTALL['stage'] == ENVIRONMENT) {
     }
 }
 
+
+
+//==========================================================================//
+
+// Try to download the lang pack if it has been selected
+
+if ($INSTALL['stage'] == DOWNLOADLANG && $INSTALL['downloadlangpack']) {
+
+    $downloadsuccess = false;
+    $downloaderror = '';
+
+    error_reporting(0);  // Hide errors
+
+/// Create necessary lang dir
+    if (!make_upload_directory('lang', false)) {
+        $downloaderror = get_string('cannotcreatelangdir', 'error');
+    }
+
+/// Download and install component
+    if (($cd = new component_installer('http://download.moodle.org', 'lang16',
+        $INSTALL['language'].'.zip', 'languages.md5', 'lang')) && empty($errormsg)) {
+        $status = $cd->install(); //returns ERROR | UPTODATE | INSTALLED
+        switch ($status) {
+            case ERROR:
+                if ($cd->get_error() == 'remotedownloadnotallowed') {
+                    $a = new stdClass();
+                    $a->url = 'http://download.moodle.org/lang16/'.$pack.'zip';
+                    $a->dest= $CFG->dataroot.'/lang';
+                    $downloaderror = get_string($cd->get_error(), 'error', $a);
+                } else {
+                    $downloaderror = get_string($cd->get_error(), 'error');
+                }
+            break;
+            case UPTODATE:
+            case INSTALLED:
+                $downloadsuccess = true;
+            break;
+            default:
+                //We shouldn't reach this point
+        }
+    } else {
+        //We shouldn't reach this point
+    }
+
+    error_reporting(7);  // Show errors
+
+    if ($downloadsuccess) {
+        $INSTALL['downloadlangpack']       = false;
+        $INSTALL['showdownloadlangpack']   = false;
+        $INSTALL['downloadlangpackerror']  = $downloaderror;
+    } else {
+        $INSTALL['downloadlangpack']       = false;
+        $INSTALL['showdownloadlangpack']   = false;
+        $INSTALL['downloadlangpackerror']  = $downloaderror;
+    }
+}    
+
+
+
 //==========================================================================//
 
 /// Display or print the data
@@ -390,8 +458,8 @@ if ($nextstage == SAVE) {
     $str .= '$CFG->prefix    = \''.$INSTALL['prefix']."';\r\n";
     $str .= "\r\n";
 
-    $str .= '$CFG->wwwroot   = \''.$INSTALL['wwwroot']."';\r\n";
-    $str .= '$CFG->dirroot   = \''.$INSTALL['dirroot']."';\r\n";
+    $str .= '$CFG->wwwroot   = \''.$INSTALL['wwwrootform']."';\r\n";
+    $str .= '$CFG->dirroot   = \''.$INSTALL['dirrootform']."';\r\n";
     $str .= '$CFG->dataroot  = \''.$INSTALL['dataroot']."';\r\n";
     $str .= '$CFG->admin     = \''.$INSTALL['admindirname']."';\r\n";
     $str .= "\r\n";
@@ -559,11 +627,19 @@ function print_object($object) {
 function form_table($nextstage = WELCOME, $formaction = "install.php") {
     global $INSTALL, $db;
 
-    /// standard lines for all forms
+    /// Print the standard form if we aren't in the DOWNLOADLANG page
+    /// because it has its own form.
+    if ($nextstage != DOWNLOADLANG) {
+        $needtoopenform = false;
 ?>
+        <form name="installform" method="post" action="<?php echo $formaction ?>">
+        <input type="hidden" name="stage" value="<?php echo $nextstage ?>" />
 
-    <form name="installform" method="post" action="<?php echo $formaction ?>">
-    <input type="hidden" name="stage" value="<?php echo $nextstage ?>" />
+<?php
+    } else {
+        $needtoopenform = true;
+    }
+?>
     <table class="install_table" cellspacing="3" cellpadding="3" align="center">
 
 <?php
@@ -608,13 +684,13 @@ function form_table($nextstage = WELCOME, $formaction = "install.php") {
             <tr>
                 <td class="td_left"><p><?php print_string('wwwroot', 'install') ?></p></td>
                 <td class="td_right">
-                    <input type="text" size="40"name="wwwroot" value="<?php echo $INSTALL['wwwroot'] ?>" />
+                    <input type="text" size="40"name="wwwrootform" value="<?php echo $INSTALL['wwwrootform'] ?>" />
                 </td>
             </tr>
             <tr>
                 <td class="td_left"><p><?php print_string('dirroot', 'install') ?></p></td>
                 <td class="td_right">
-                    <input type="text" size="40" name="dirroot" value="<?php echo $INSTALL['dirroot'] ?>" />
+                    <input type="text" size="40" name="dirrootform" value="<?php echo $INSTALL['dirrootform'] ?>" />
                 </td>
             </tr>
             <tr>
@@ -718,50 +794,30 @@ function form_table($nextstage = WELCOME, $formaction = "install.php") {
             <tr>
                 <td colspan="2">
                 <?php
-                    $downloadsuccess = false;
-                    $errormsg = '';
-
-                    error_reporting(0);  // Hide errors
-
-                /// Create necessary lang dir
-                    if (!make_upload_directory('lang', false)) {
-                        $errormsg = get_string('cannotcreatelangdir', 'error');
-                    }
-
-                /// Download and install component
-                    if (($cd = new component_installer('http://download.moodle.org', 'lang16',
-                                                        $INSTALL['language'].'.zip', 'languages.md5', 'lang')) && empty($errormsg)) {
-                        $status = $cd->install(); //returns ERROR | UPTODATE | INSTALLED
-                        switch ($status) {
-                            case ERROR:
-                                if ($cd->get_error() == 'remotedownloadnotallowed') {
-                                    $a = new stdClass();
-                                    $a->url = 'http://download.moodle.org/lang16/'.$pack.'zip';
-                                    $a->dest= $CFG->dataroot.'/lang';
-                                    $errormsg = get_string($cd->get_error(), 'error', $a);
-                                } else {
-                                    $errormsg = get_string($cd->get_error(), 'error');
-                                }
-                            break;
-                            case UPTODATE:
-                            case INSTALLED:
-                                $downloadsuccess = true;
-                            break;
-                            default:
-                                //We shouldn't reach this point
+                /// Get array of languages, we are going to use it
+                    $languages=get_installer_list_of_languages();
+                /// Print the download form (button) if necessary
+                    if ($INSTALL['showdownloadlangpack'] == true && substr($INSTALL['language'],0,2) != 'en') {
+                        $options = array();
+                        $options['downloadlangpack'] = true;
+                        $options['stage'] = DOWNLOADLANG;
+                        $options['same'] = true;
+                        print_simple_box_start('center');
+                        print_single_button('install.php', $options, get_string('downloadlanguagebutton','install', $languages[$INSTALL['language']]), 'POST');
+                        print_simple_box_end();
+                    } else {
+                /// Show result info 
+                    /// English lang packs aren't downloaded
+                        if (substr($INSTALL['language'],0,2) == 'en') {
+                            print_simple_box(get_string('downloadlanguagenotneeded', 'install', $languages[$INSTALL['language']]), 'center', '80%');
+                        } else {
+                            if ($INSTALL['downloadlangpackerror']) {
+                                echo "<p class=\"errormsg\" align=\"center\">".$INSTALL['downloadlangpackerror']."</p>\n";
+                                print_simple_box(get_string('langdownloaderror', 'install', $languages[$INSTALL['language']]), 'center', '80%');
+                            } else {
+                                print_simple_box(get_string('langdownloadok', 'install', $languages[$INSTALL['language']]), 'center', '80%');
+                            }
                         }
-                    } else {
-                        //We shouldn't reach this point
-                    }
-
-                    if (!empty($errormsg)) echo "<p class=\"errormsg\" align=\"center\">$errormsg</p>\n";
-
-                    error_reporting(7);  // Show errors
-
-                    if ($downloadsuccess) {
-                        print_simple_box(get_string('langdownloadok', 'install', $INSTALL['language']), 'center');
-                    } else {
-                        print_simple_box(get_string('langdownloaderror', 'install', $INSTALL['language']), 'center');
                     }
                 ?>
                 </td>
@@ -776,8 +832,25 @@ function form_table($nextstage = WELCOME, $formaction = "install.php") {
     <tr>
         <td colspan="<?php echo ($nextstage == COMPATIBILITY) ? 3 : 2; ?>">
 
+<?php
+    if ($needtoopenform) {
+?>
+            <form name="installform" method="post" action="<?php echo $formaction ?>">
+            <input type="hidden" name="stage" value="<?php echo $nextstage ?>" />
+<?php
+    }
+?>
+
             <?php echo ($nextstage < SAVE) ? "<input type=\"submit\" name=\"next\" value=\"".get_string('next')."  &raquo;\" style=\"float: right\"/>\n" : "&nbsp;\n" ?>
             <?php echo ($nextstage > WELCOME) ? "<input type=\"submit\" name=\"prev\" value=\"&laquo;  ".get_string('previous')."\" style=\"float: left\"/>\n" : "&nbsp;\n" ?>
+
+<?php
+    if ($needtoopenform) {
+?>
+            </form>
+<?php
+    }
+?>
 
 
         </td>
@@ -785,7 +858,13 @@ function form_table($nextstage = WELCOME, $formaction = "install.php") {
     </tr>
     
     </table>
+<?php
+    if (!$needtoopenform) {
+?>
     </form>
+<?php
+    }
+?>
 
 <?php
 }
