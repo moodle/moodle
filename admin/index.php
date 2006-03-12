@@ -337,7 +337,9 @@
 /// If no recently cron run
     $lastcron = get_field_sql('SELECT max(lastcron) FROM ' . $CFG->prefix . 'modules');
     if (time() - $lastcron > 3600 * 24) {
-        print_simple_box(get_string('cronwarning', 'admin') , 'center', '50%');
+        $strinstallation = get_string('installation', 'install');
+        $helpbutton = helpbutton('install', $strinstallation, 'moodle', true, false, '', true);
+        print_simple_box(get_string('cronwarning', 'admin').$helpbutton, 'center', '50%');
     }
 
 /// Alert if we are currently in maintenance mode
