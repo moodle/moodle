@@ -420,7 +420,9 @@ CREATE TABLE `prefix_log` (
   PRIMARY KEY  (`id`),
   KEY `timecoursemoduleaction` (time,course,module,action),
   KEY `coursemoduleaction` (course,module,action),
-  KEY `courseuserid` (course,userid)
+  KEY `courseuserid` (course,userid),
+  KEY `userid` (userid),
+  KEY `info` (info)
 ) TYPE=MyISAM COMMENT='Every action is logged as far as possible.';
 # --------------------------------------------------------
 
