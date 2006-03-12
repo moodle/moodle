@@ -127,6 +127,7 @@ $string['configzip'] = 'Indicate the location of your zip program (Unix only, op
 $string['confirmation'] = 'Confirmation';
 $string['confirminstall'] = 'You are about to install language pack ($a), are you sure?';
 $string['cronwarning'] = 'The <a href=\"cron.php\">cron.php maintenance script</a> has not been run for at least 24 hours. <br />The <a href=\"../doc/?frame=install.html&amp;sub=cron\">installation documentation</a> explains how you can automate this.';
+$string['cronwarning2'] = 'The <a href=\"cron.php\">cron.php maintenance script</a> has not been run for at least 24 hours. <br />See the $a for information on how you should automate this.';
 $string['dbmigrate'] = 'Moodle Database Migration';
 $string['dbmigrationdeprecateddb'] = '<font color=\"#ff0000\">This database is migrated to a new UTF8 database and deprecated. Please edit your config.php and use the new database for this moodle.</font>';
 $string['dbmigrationdupfailed'] = 'Database duplication failed with possible error:<font color=\"#ff0000\"><pre>$a</pre></font>';
