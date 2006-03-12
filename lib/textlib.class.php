@@ -121,8 +121,13 @@ class textlib {
 
     /* Multibyte safe substr() function, uses mbstring if available. */
     function substr($text, $start, $len=null, $charset='utf-8') {
+    /// Avoid some notices from Typo3 code
+        $oldlevel = error_reporting(E_PARSE);
     /// Call Typo3 substr() function. It will do all the work
-        return $this->typo3cs->substr(strtolower($charset),$text,$start,$len);
+        $result = $this->typo3cs->substr(strtolower($charset),$text,$start,$len);
+    /// Restore original debug level
+        error_reporting($oldlevel);
+        return $result;
     }
 
     /* Multibyte safe strlen() function, uses mbstring if available. */
