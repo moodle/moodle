@@ -339,7 +339,7 @@
     if (time() - $lastcron > 3600 * 24) {
         $strinstallation = get_string('installation', 'install');
         $helpbutton = helpbutton('install', $strinstallation, 'moodle', true, false, '', true);
-        print_simple_box(get_string('cronwarning', 'admin').$helpbutton, 'center', '50%');
+        print_simple_box(get_string('cronwarning', 'admin')."&nbsp;".$helpbutton, 'center');
     }
 
 /// Alert if we are currently in maintenance mode
