@@ -1062,6 +1062,85 @@ function quiz_upgrade($oldversion) {
         execute_sql('ALTER TABLE '.$CFG->prefix.'question_categories ALTER COLUMN id SET DEFAULT nextval(\''.$CFG->prefix.'question_categories_id_seq\')',false);
     }
 
+    if ($oldversion < 2006031202) {
+        execute_sql("ALTER TABLE {$CFG->prefix}quiz_truefalse RENAME TO {$CFG->prefix}question_truefalse", false);
+        execute_sql('ALTER TABLE '.$CFG->prefix.'quiz_truefalse_id_seq RENAME TO '.$CFG->prefix.'question_truefalse_id_seq',false);
+        execute_sql('ALTER TABLE '.$CFG->prefix.'question_truefalse ALTER COLUMN id SET DEFAULT nextval(\''.$CFG->prefix.'question_truefalse_id_seq\')',false);
+
+        execute_sql("ALTER TABLE {$CFG->prefix}quiz_shortanswer RENAME TO {$CFG->prefix}question_shortanswer", false);
+        execute_sql('ALTER TABLE '.$CFG->prefix.'quiz_shortanswer_id_seq RENAME TO '.$CFG->prefix.'question_shortanswer_id_seq',false);
+        execute_sql('ALTER TABLE '.$CFG->prefix.'question_shortanswer ALTER COLUMN id SET DEFAULT nextval(\''.$CFG->prefix.'question_shortanswer_id_seq\')',false);
+
+        execute_sql("ALTER TABLE {$CFG->prefix}quiz_multianswers RENAME TO {$CFG->prefix}question_multianswer", false);
+        execute_sql('ALTER TABLE '.$CFG->prefix.'quiz_multianswers_id_seq RENAME TO '.$CFG->prefix.'question_multianswer_id_seq',false);
+        execute_sql('ALTER TABLE '.$CFG->prefix.'question_multianswer ALTER COLUMN id SET DEFAULT nextval(\''.$CFG->prefix.'question_multianswer_id_seq\')',false);
+
+        execute_sql("ALTER TABLE {$CFG->prefix}quiz_multichoice RENAME TO {$CFG->prefix}question_multichoice", false);
+        execute_sql('ALTER TABLE '.$CFG->prefix.'quiz_multichoice_id_seq RENAME TO '.$CFG->prefix.'question_multichoice_id_seq',false);
+        execute_sql('ALTER TABLE '.$CFG->prefix.'question_multichoice ALTER COLUMN id SET DEFAULT nextval(\''.$CFG->prefix.'question_multichoice_id_seq\')',false);
+
+        execute_sql("ALTER TABLE {$CFG->prefix}quiz_numerical RENAME TO {$CFG->prefix}question_numerical", false);
+        execute_sql('ALTER TABLE '.$CFG->prefix.'quiz_numerical_id_seq RENAME TO '.$CFG->prefix.'question_numerical_id_seq',false);
+        execute_sql('ALTER TABLE '.$CFG->prefix.'question_numerical ALTER COLUMN id SET DEFAULT nextval(\''.$CFG->prefix.'question_numerical_id_seq\')',false);
+
+        execute_sql("ALTER TABLE {$CFG->prefix}quiz_numerical_units RENAME TO {$CFG->prefix}question_numerical_units", false);
+        execute_sql('ALTER TABLE '.$CFG->prefix.'quiz_numerical_units_id_seq RENAME TO '.$CFG->prefix.'question_numerical_units_id_seq',false);
+        execute_sql('ALTER TABLE '.$CFG->prefix.'question_numerical_units ALTER COLUMN id SET DEFAULT nextval(\''.$CFG->prefix.'question_numerical_units_id_seq\')',false);
+
+        execute_sql("ALTER TABLE {$CFG->prefix}quiz_randomsamatch RENAME TO {$CFG->prefix}question_randomsamatch", false);
+        execute_sql('ALTER TABLE '.$CFG->prefix.'quiz_randomsamatch_id_seq RENAME TO '.$CFG->prefix.'question_randomsamatch_id_seq',false);
+        execute_sql('ALTER TABLE '.$CFG->prefix.'question_randomsamatch ALTER COLUMN id SET DEFAULT nextval(\''.$CFG->prefix.'question_randomsamatch_id_seq\')',false);
+
+        execute_sql("ALTER TABLE {$CFG->prefix}quiz_match RENAME TO {$CFG->prefix}question_match", false);
+        execute_sql('ALTER TABLE '.$CFG->prefix.'quiz_match_id_seq RENAME TO '.$CFG->prefix.'question_match_id_seq',false);
+        execute_sql('ALTER TABLE '.$CFG->prefix.'question_match ALTER COLUMN id SET DEFAULT nextval(\''.$CFG->prefix.'question_match_id_seq\')',false);
+
+        execute_sql("ALTER TABLE {$CFG->prefix}quiz_match_sub RENAME TO {$CFG->prefix}question_match_sub", false);
+        execute_sql('ALTER TABLE '.$CFG->prefix.'quiz_match_sub_id_seq RENAME TO '.$CFG->prefix.'question_match_sub_id_seq',false);
+        execute_sql('ALTER TABLE '.$CFG->prefix.'question_match_sub ALTER COLUMN id SET DEFAULT nextval(\''.$CFG->prefix.'question_match_sub_id_seq\')',false);
+
+        execute_sql("ALTER TABLE {$CFG->prefix}quiz_calculated RENAME TO {$CFG->prefix}question_calculated", false);
+        execute_sql('ALTER TABLE '.$CFG->prefix.'quiz_calculated_id_seq RENAME TO '.$CFG->prefix.'question_calculated_id_seq',false);
+        execute_sql('ALTER TABLE '.$CFG->prefix.'question_calculated ALTER COLUMN id SET DEFAULT nextval(\''.$CFG->prefix.'question_calculated_id_seq\')',false);
+
+        execute_sql("ALTER TABLE {$CFG->prefix}quiz_dataset_definitions RENAME TO {$CFG->prefix}question_dataset_definitions", false);
+        execute_sql('ALTER TABLE '.$CFG->prefix.'quiz_dataset_definitions_id_seq RENAME TO '.$CFG->prefix.'question_dataset_definitions_id_seq',false);
+        execute_sql('ALTER TABLE '.$CFG->prefix.'question_dataset_definitions ALTER COLUMN id SET DEFAULT nextval(\''.$CFG->prefix.'question_dataset_definitions_id_seq\')',false);
+
+        execute_sql("ALTER TABLE {$CFG->prefix}quiz_dataset_items RENAME TO {$CFG->prefix}question_dataset_items", false);
+        execute_sql('ALTER TABLE '.$CFG->prefix.'quiz_dataset_items_id_seq RENAME TO '.$CFG->prefix.'question_dataset_items_id_seq',false);
+        execute_sql('ALTER TABLE '.$CFG->prefix.'question_dataset_items ALTER COLUMN id SET DEFAULT nextval(\''.$CFG->prefix.'question_dataset_items_id_seq\')',false);
+
+        execute_sql("ALTER TABLE {$CFG->prefix}quiz_question_datasets RENAME TO {$CFG->prefix}question_datasets", false);
+        execute_sql('ALTER TABLE '.$CFG->prefix.'quiz_question_datasets_id_seq RENAME TO '.$CFG->prefix.'question_datasets_id_seq',false);
+        execute_sql('ALTER TABLE '.$CFG->prefix.'question_datasets ALTER COLUMN id SET DEFAULT nextval(\''.$CFG->prefix.'question_datasets_id_seq\')',false);
+
+        execute_sql("ALTER TABLE {$CFG->prefix}quiz_rqp RENAME TO {$CFG->prefix}question_rqp", false);
+        execute_sql('ALTER TABLE '.$CFG->prefix.'quiz_rqp_id_seq RENAME TO '.$CFG->prefix.'question_rqp_id_seq',false);
+        execute_sql('ALTER TABLE '.$CFG->prefix.'question_rqp ALTER COLUMN id SET DEFAULT nextval(\''.$CFG->prefix.'question_rqp_id_seq\')',false);
+
+        execute_sql("ALTER TABLE {$CFG->prefix}quiz_rqp_servers RENAME TO {$CFG->prefix}question_rqp_servers", false);
+        execute_sql('ALTER TABLE '.$CFG->prefix.'quiz_rqp_servers_id_seq RENAME TO '.$CFG->prefix.'question_rqp_servers_id_seq',false);
+        execute_sql('ALTER TABLE '.$CFG->prefix.'question_rqp_servers ALTER COLUMN id SET DEFAULT nextval(\''.$CFG->prefix.'question_rqp_servers_id_seq\')',false);
+
+        execute_sql("ALTER TABLE {$CFG->prefix}quiz_rqp_states RENAME TO {$CFG->prefix}question_rqp_states", false);
+        execute_sql('ALTER TABLE '.$CFG->prefix.'quiz_rqp_states_id_seq RENAME TO '.$CFG->prefix.'question_rqp_states_id_seq',false);
+        execute_sql('ALTER TABLE '.$CFG->prefix.'question_rqp_states ALTER COLUMN id SET DEFAULT nextval(\''.$CFG->prefix.'question_rqp_states_id_seq\')',false);
+
+        execute_sql("ALTER TABLE {$CFG->prefix}quiz_rqp_types RENAME TO {$CFG->prefix}question_rqp_types", false);
+        execute_sql('ALTER TABLE '.$CFG->prefix.'quiz_rqp_types_id_seq RENAME TO '.$CFG->prefix.'question_rqp_types_id_seq',false);
+        execute_sql('ALTER TABLE '.$CFG->prefix.'question_rqp_types ALTER COLUMN id SET DEFAULT nextval(\''.$CFG->prefix.'question_rqp_types_id_seq\')',false);
+
+        execute_sql("ALTER TABLE {$CFG->prefix}quiz_essay RENAME TO {$CFG->prefix}question_essay", false);
+        execute_sql('ALTER TABLE '.$CFG->prefix.'quiz_essay_id_seq RENAME TO '.$CFG->prefix.'question_essay_id_seq',false);
+        execute_sql('ALTER TABLE '.$CFG->prefix.'question_essay ALTER COLUMN id SET DEFAULT nextval(\''.$CFG->prefix.'question_essay_id_seq\')',false);
+
+        execute_sql("ALTER TABLE {$CFG->prefix}quiz_essay_states RENAME TO {$CFG->prefix}question_essay_states", false);
+        execute_sql('ALTER TABLE '.$CFG->prefix.'quiz_essay_states_id_seq RENAME TO '.$CFG->prefix.'question_essay_states_id_seq',false);
+        execute_sql('ALTER TABLE '.$CFG->prefix.'question_essay_states ALTER COLUMN id SET DEFAULT nextval(\''.$CFG->prefix.'question_essay_states_id_seq\')',false);
+
+    }
+
     return true;
 }
 

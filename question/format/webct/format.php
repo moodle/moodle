@@ -58,7 +58,7 @@ function unhtmlentities($string){
     return preg_replace ($search, $replace, $string);
 }
 
-class qformat_webct_modified_calculated_qtype extends quiz_calculated_qtype {
+class qformat_webct_modified_calculated_qtype extends question_calculated_qtype {
 // We need to make a modification of this qtype so that
 // it will be able to save webct style calculated questions
 // The difference between webct and Moodle is that webct
@@ -98,8 +98,8 @@ class qformat_webct_modified_calculated_qtype extends quiz_calculated_qtype {
         global $CFG;
         $datasetdefs = get_records_sql(
                 "SELECT a.*
-                   FROM {$CFG->prefix}quiz_dataset_definitions a,
-                        {$CFG->prefix}quiz_question_datasets b
+                   FROM {$CFG->prefix}question_dataset_definitions a,
+                        {$CFG->prefix}question_datasets b
                   WHERE a.id = b.datasetdefinition
                     AND b.question = '$question->id' ");
 
@@ -110,7 +110,7 @@ class qformat_webct_modified_calculated_qtype extends quiz_calculated_qtype {
             $item->definition = $datasetdef->id;
             for ($item->number=1 ; isset($datasetdata->items["$item->number"]) ; ++$item->number) {
                 $item->value = $datasetdata->items["$item->number"];
-                if (!insert_record('quiz_dataset_items', $item)) {
+                if (!insert_record('question_dataset_items', $item)) {
                     error("Unable to insert dataset item $item->number with $item->value for $datasetdef->name");
                 }
             }
@@ -132,7 +132,7 @@ class qformat_webct_modified_calculated_qtype extends quiz_calculated_qtype {
 
             // Save definition
             if ($datasetdef->itemcount || $datasetdef->options) {
-                if (!update_record('quiz_dataset_definitions', $datasetdef)) {
+                if (!update_record('question_dataset_definitions', $datasetdef)) {
                     error("Unable to update dataset definition $datasetdef->name on question $question->id");
                 }
             }

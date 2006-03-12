@@ -21,43 +21,43 @@
     //           |                        |                    |                   |             |.......................................
     //           |               quiz_grades                   |        quiz_question_versions   |                                      .
     //           |           (UL,pk->id,fk->quiz)              |         (CL,pk->id,fk->quiz)    |                                      .
-    //           |                                             |                         .       |    ----quiz_question_datasets----    .
+    //           |                                             |                         .       |    ------question_datasets-------    .
     //      quiz_attempts                          quiz_question_instances               .       |    |  (CL,pk->id,fk->question,  |    .
     //  (UL,pk->id,fk->quiz)                    (CL,pk->id,fk->quiz,question)            .       |    |   fk->dataset_definition)  |    .
     //             |                                              |                      .       |    |                            |    .
     //             |               question_sessions              |                      .       |    |                            |    .
     //             |---------(UL,pk->id,fk->attempt,question)-----|                      .       |    |                            |    .
-    //             |                        .                     |                      .       |    |                       quiz_dataset_definitions
+    //             |                        .                     |                      .       |    |                       question_dataset_definitions
     //             |                        .                     |                      .       |    |                      (CL,pk->id,fk->category)
     //             |                 question_states              |                          question                                   |
     //             ----------(UL,pk->id,fk->attempt,question)--------------------------(CL,pk->id,fk->category,files)                   |
-    //                                      |                                                    |                             quiz_dataset_items
+    //                                      |                                                    |                             question_dataset_items
     //                                      |                                                    |                          (CL,pk->id,fk->definition)
     //                              ---------                                                    |
     //                              |                                                            |
-    //                        quiz_rqp_states                                                    |
-    //                    (UL,pk->id,fk->stateid)                                                |                                   quiz_rqp_type
+    //                        question_rqp_states                                                    |
+    //                    (UL,pk->id,fk->stateid)                                                |                                   question_rqp_type
     //                                                                                           |                                    (SL,pk->id)
     //                                                                                           |                                         |
     //             --------------------------------------------------------------------------------------------------------------          |
-    //             |             |              |              |                       |                  |                     |        quiz_rqp
+    //             |             |              |              |                       |                  |                     |        question_rqp
     //             |             |              |              |                       |                  |                     |--(CL,pk->id,fk->question)
-    //             |             |              |              |                 quiz_calculated          |                     |
-    //      quiz_truefalse       |       quiz_multichoice      |             (CL,pl->id,fk->question)     |                     |
-    // (CL,pk->id,fk->question)  |   (CL,pk->id,fk->question)  |                       .                  |                     |    quiz_randomsamatch
+    //             |             |              |              |                 question_calculated          |                     |
+    //      question_truefalse       |       question_multichoice      |             (CL,pl->id,fk->question)     |                     |
+    // (CL,pk->id,fk->question)  |   (CL,pk->id,fk->question)  |                       .                  |                     |    question_randomsamatch
     //             .             |              .              |                       .                  |                     |--(CL,pk->id,fk->question)
-    //             .      quiz_shortanswer      .       quiz_numerical                 .            quiz_multianswer.           |
+    //             .      question_shortanswer      .       question_numerical                 .            question_multianswer.           |
     //             .  (CL,pk->id,fk->question)  .  (CL,pk->id,fk->question)            .        (CL,pk->id,fk->question)        |
-    //             .             .              .              .                       .                  .                     |         quiz_match
+    //             .             .              .              .                       .                  .                     |         question_match
     //             .             .              .              .                       .                  .                     |--(CL,pk->id,fk->question)
     //             .             .              .              .                       .                  .                     |             .
     //             .             .              .              .                       .                  .                     |             .
     //             .             .              .              .                       .                  .                     |             .
-    //             .             .              .              .                       .                  .                     |       quiz_match_sub
+    //             .             .              .              .                       .                  .                     |       question_match_sub
     //             ........................................................................................                     |--(CL,pk->id,fk->question)
     //                                                   .                                                                      |
     //                                                   .                                                                      |
-    //                                                   .                                                                      |    quiz_numerical_units
+    //                                                   .                                                                      |    question_numerical_units
     //                                                question_answers                                                              |--(CL,pk->id,fk->question)
     //                                         (CL,pk->id,fk->question)----------------------------------------------------------
     //
@@ -76,23 +76,23 @@
     // 1.-We restore every category and their questions (complete structure). It includes this tables:
     //     - question_categories
     //     - question
-    //     - quiz_truefalse
-    //     - quiz_shortanswer
-    //     - quiz_multianswer
-    //     - quiz_multichoice
-    //     - quiz_numerical
-    //     - quiz_randomsamatch
-    //     - quiz_match
-    //     - quiz_match_sub
-    //     - quiz_calculated
+    //     - question_truefalse
+    //     - question_shortanswer
+    //     - question_multianswer
+    //     - question_multichoice
+    //     - question_numerical
+    //     - question_randomsamatch
+    //     - question_match
+    //     - question_match_sub
+    //     - question_calculated
     //     - question_answers
-    //     - quiz_numerical_units
-    //     - quiz_question_datasets
-    //     - quiz_dataset_definitions
-    //     - quiz_dataset_items
+    //     - question_numerical_units
+    //     - question_datasets
+    //     - question_dataset_definitions
+    //     - question_dataset_items
     //    All this backup info has its own section in moodle.xml (QUESTION_CATEGORIES) and it's generated
     //    before every module backup standard invocation. And only if to restore quizzes has been selected !!
-    //    It's invoked with quiz_restore_question_categories. (course independent).
+    //    It's invoked with restore_question_categories. (course independent).
 
     // 2.-Standard module restore (Invoked via quiz_restore_mods). It includes thes tables:
     //     - quiz
@@ -104,7 +104,7 @@
     //    This step is the standard mod backup. (course dependent).
 
 //STEP 1. Restore categories/questions and associated structures (course independent)
-    function quiz_restore_question_categories($category,$restore) {
+    function restore_question_categories($category,$restore) {
 
         global $CFG;
 
@@ -127,32 +127,32 @@
             //$GLOBALS['traverse_array']="";                                                              //Debug
 
             //Now, build the question_categories record structure
-            $quiz_cat->course = $restore->course_id;
-            $quiz_cat->name = backup_todb($info['QUESTION_CATEGORY']['#']['NAME']['0']['#']);
-            $quiz_cat->info = backup_todb($info['QUESTION_CATEGORY']['#']['INFO']['0']['#']);
-            $quiz_cat->publish = backup_todb($info['QUESTION_CATEGORY']['#']['PUBLISH']['0']['#']);
-            $quiz_cat->stamp = backup_todb($info['QUESTION_CATEGORY']['#']['STAMP']['0']['#']);
-            $quiz_cat->parent = backup_todb($info['QUESTION_CATEGORY']['#']['PARENT']['0']['#']);
-            $quiz_cat->sortorder = backup_todb($info['QUESTION_CATEGORY']['#']['SORTORDER']['0']['#']);
+            $question_cat->course = $restore->course_id;
+            $question_cat->name = backup_todb($info['QUESTION_CATEGORY']['#']['NAME']['0']['#']);
+            $question_cat->info = backup_todb($info['QUESTION_CATEGORY']['#']['INFO']['0']['#']);
+            $question_cat->publish = backup_todb($info['QUESTION_CATEGORY']['#']['PUBLISH']['0']['#']);
+            $question_cat->stamp = backup_todb($info['QUESTION_CATEGORY']['#']['STAMP']['0']['#']);
+            $question_cat->parent = backup_todb($info['QUESTION_CATEGORY']['#']['PARENT']['0']['#']);
+            $question_cat->sortorder = backup_todb($info['QUESTION_CATEGORY']['#']['SORTORDER']['0']['#']);
 
-            if ($catfound = restore_get_best_question_category($quiz_cat, $restore->course)) {
+            if ($catfound = restore_get_best_question_category($question_cat, $restore->course)) {
                 $newid = $catfound;
             } else {
-                if (!$quiz_cat->stamp) {
-                    $quiz_cat->stamp = make_unique_id_code();
+                if (!$question_cat->stamp) {
+                    $question_cat->stamp = make_unique_id_code();
                 }
-                $newid = insert_record ("question_categories",$quiz_cat);
+                $newid = insert_record ("question_categories",$question_cat);
             }
 
             //Do some output
             if ($newid) {
                 if (!defined('RESTORE_SILENTLY')) {
-                    echo "<li>".get_string('category', 'quiz')." \"".$quiz_cat->name."\"<br />";
+                    echo "<li>".get_string('category', 'quiz')." \"".$question_cat->name."\"<br />";
                 }
             } else {
                 //We must never arrive here !!
                 if (!defined('RESTORE_SILENTLY')) {
-                    echo "<li>".get_string('category', 'quiz')." \"".$quiz_cat->name."\" Error!<br />";
+                    echo "<li>".get_string('category', 'quiz')." \"".$question_cat->name."\" Error!<br />";
                 }
                 $status = false;
             }
@@ -164,7 +164,7 @@
                 backup_putid($restore->backup_unique_code,"question_categories",
                              $category->id, $newid);
                 //Now restore question
-                $status = quiz_restore_questions ($category->id, $newid,$info,$restore);
+                $status = restore_questions ($category->id, $newid,$info,$restore);
             } else {
                 $status = false;
             }
@@ -176,7 +176,7 @@
         return $status;
     }
 
-    function quiz_restore_questions ($old_category_id,$new_category_id,$info,$restore) {
+    function restore_questions ($old_category_id,$new_category_id,$info,$restore) {
 
         global $CFG;
 
@@ -261,38 +261,38 @@
             //If it's a new question in the DB, restore it
             if ($restored_questions[$i]->is_new) {
                 //Now, restore every question_answers in this question
-                $status = quiz_restore_answers($oldid,$newid,$que_info,$restore);
+                $status = question_restore_answers($oldid,$newid,$que_info,$restore);
                 //Now, depending of the type of questions, invoke different functions
                 if ($question->qtype == "1") {
-                    $status = quiz_restore_shortanswer($oldid,$newid,$que_info,$restore);
+                    $status = question_restore_shortanswer($oldid,$newid,$que_info,$restore);
                 } else if ($question->qtype == "2") {
-                    $status = quiz_restore_truefalse($oldid,$newid,$que_info,$restore);
+                    $status = question_restore_truefalse($oldid,$newid,$que_info,$restore);
                 } else if ($question->qtype == "3") {
-                    $status = quiz_restore_multichoice($oldid,$newid,$que_info,$restore);
+                    $status = question_restore_multichoice($oldid,$newid,$que_info,$restore);
                 } else if ($question->qtype == "4") {
                     //Random question. Nothing to do.
                 } else if ($question->qtype == "5") {
-                    $status = quiz_restore_match($oldid,$newid,$que_info,$restore);
+                    $status = question_restore_match($oldid,$newid,$que_info,$restore);
                 } else if ($question->qtype == "6") {
-                    $status = quiz_restore_randomsamatch($oldid,$newid,$que_info,$restore);
+                    $status = question_restore_randomsamatch($oldid,$newid,$que_info,$restore);
                 } else if ($question->qtype == "7") {
                     //Description question. Nothing to do.
                 } else if ($question->qtype == "8") {
-                    $status = quiz_restore_numerical($oldid,$newid,$que_info,$restore);
+                    $status = question_restore_numerical($oldid,$newid,$que_info,$restore);
                 } else if ($question->qtype == "9") {
-                    $status = quiz_restore_multianswer($oldid,$newid,$que_info,$restore);
+                    $status = question_restore_multianswer($oldid,$newid,$que_info,$restore);
                 } else if ($question->qtype == "10") {
-                    $status = quiz_restore_calculated($oldid,$newid,$que_info,$restore);
+                    $status = question_restore_calculated($oldid,$newid,$que_info,$restore);
                 } else if ($question->qtype == "11") {
-                    $status = quiz_restore_rqp($oldid,$newid,$que_info,$restore);
+                    $status = question_restore_rqp($oldid,$newid,$que_info,$restore);
                 } else if ($question->qtype == "12") {
-                    $status = quiz_restore_essay($oldid,$newid,$que_info,$restore);
+                    $status = question_restore_essay($oldid,$newid,$que_info,$restore);
                 }
             } else {
                 //We are NOT creating the question, but we need to know every question_answers
                 //map between the XML file and the database to be able to restore the states
                 //in each attempt.
-                $status = quiz_restore_map_answers($oldid,$newid,$que_info,$restore);
+                $status = question_restore_map_answers($oldid,$newid,$que_info,$restore);
                 //Now, depending of the type of questions, invoke different functions
                 //to create the necessary mappings in backup_ids, because we are not
                 //creating the question, but need some records in backup table
@@ -305,7 +305,7 @@
                 } else if ($question->qtype == "4") {
                     //Random question. Nothing to remap
                 } else if ($question->qtype == "5") {
-                    $status = quiz_restore_map_match($oldid,$newid,$que_info,$restore);
+                    $status = question_restore_map_match($oldid,$newid,$que_info,$restore);
                 } else if ($question->qtype == "6") {
                     //Randomsamatch question. Nothing to remap
                 } else if ($question->qtype == "7") {
@@ -313,7 +313,7 @@
                 } else if ($question->qtype == "8") {
                     //Numerical question. Nothing to remap
                 } else if ($question->qtype == "9") {
-                    $status = quiz_restore_map_multianswer($oldid,$newid,$que_info,$restore);
+                    $status = question_restore_map_multianswer($oldid,$newid,$que_info,$restore);
                 } else if ($question->qtype == "10") {
                     //Calculated question. Nothing to remap
                 }
@@ -333,7 +333,7 @@
         return $status;
     }
 
-    function quiz_restore_answers ($old_question_id,$new_question_id,$info,$restore) {
+    function question_restore_answers ($old_question_id,$new_question_id,$info,$restore) {
 
         global $CFG;
 
@@ -386,7 +386,7 @@
         return $status;
     }
 
-    function quiz_restore_map_answers ($old_question_id,$new_question_id,$info,$restore) {
+    function question_restore_map_answers ($old_question_id,$new_question_id,$info,$restore) {
 
         global $CFG;
 
@@ -447,7 +447,7 @@
         return $status;
     }
 
-    function quiz_restore_shortanswer ($old_question_id,$new_question_id,$info,$restore) {
+    function question_restore_shortanswer ($old_question_id,$new_question_id,$info,$restore) {
 
         global $CFG;
 
@@ -463,7 +463,7 @@
             //print_object ($GLOBALS['traverse_array']);                                                  //Debug
             //$GLOBALS['traverse_array']="";                                                              //Debug
 
-            //Now, build the QUIZ_SHORTANSWER record structure
+            //Now, build the QUESTION_SHORTANSWER record structure
             $shortanswer->question = $new_question_id;
             $shortanswer->answers = backup_todb($sho_info['#']['ANSWERS']['0']['#']);
             $shortanswer->usecase = backup_todb($sho_info['#']['USECASE']['0']['#']);
@@ -490,8 +490,8 @@
             //We have the answers field recoded to its new ids
             $shortanswer->answers = $answers_field;
 
-            //The structure is equal to the db, so insert the quiz_shortanswer
-            $newid = insert_record ("quiz_shortanswer",$shortanswer);
+            //The structure is equal to the db, so insert the question_shortanswer
+            $newid = insert_record ("question_shortanswer",$shortanswer);
 
             //Do some output
             if (($i+1) % 50 == 0) {
@@ -512,7 +512,7 @@
         return $status;
     }
 
-    function quiz_restore_truefalse ($old_question_id,$new_question_id,$info,$restore) {
+    function question_restore_truefalse ($old_question_id,$new_question_id,$info,$restore) {
 
         global $CFG;
 
@@ -528,7 +528,7 @@
             //print_object ($GLOBALS['traverse_array']);                                                  //Debug
             //$GLOBALS['traverse_array']="";                                                              //Debug
 
-            //Now, build the QUIZ_TRUEFALSE record structure
+            //Now, build the QUESTION_TRUEFALSE record structure
             $truefalse->question = $new_question_id;
             $truefalse->trueanswer = backup_todb($tru_info['#']['TRUEANSWER']['0']['#']);
             $truefalse->falseanswer = backup_todb($tru_info['#']['FALSEANSWER']['0']['#']);
@@ -545,8 +545,8 @@
                 $truefalse->falseanswer = $answer->new_id;
             }
 
-            //The structure is equal to the db, so insert the quiz_truefalse
-            $newid = insert_record ("quiz_truefalse",$truefalse);
+            //The structure is equal to the db, so insert the question_truefalse
+            $newid = insert_record ("question_truefalse",$truefalse);
 
             //Do some output
             if (($i+1) % 50 == 0) {
@@ -567,7 +567,7 @@
         return $status;
     }
 
-    function quiz_restore_multichoice ($old_question_id,$new_question_id,$info,$restore) {
+    function question_restore_multichoice ($old_question_id,$new_question_id,$info,$restore) {
 
         global $CFG;
 
@@ -583,7 +583,7 @@
             //print_object ($GLOBALS['traverse_array']);                                                  //Debug
             //$GLOBALS['traverse_array']="";                                                              //Debug
 
-            //Now, build the QUIZ_MULTICHOICE record structure
+            //Now, build the QUESTION_MULTICHOICE record structure
             $multichoice->question = $new_question_id;
             $multichoice->layout = backup_todb($mul_info['#']['LAYOUT']['0']['#']);
             $multichoice->answers = backup_todb($mul_info['#']['ANSWERS']['0']['#']);
@@ -612,8 +612,8 @@
             //We have the answers field recoded to its new ids
             $multichoice->answers = $answers_field;
 
-            //The structure is equal to the db, so insert the quiz_shortanswer
-            $newid = insert_record ("quiz_multichoice",$multichoice);
+            //The structure is equal to the db, so insert the question_shortanswer
+            $newid = insert_record ("question_multichoice",$multichoice);
 
             //Do some output
             if (($i+1) % 50 == 0) {
@@ -634,7 +634,7 @@
         return $status;
     }
 
-    function quiz_restore_match ($old_question_id,$new_question_id,$info,$restore) {
+    function question_restore_match ($old_question_id,$new_question_id,$info,$restore) {
 
         global $CFG;
 
@@ -657,13 +657,13 @@
             //We'll need this later!!
             $oldid = backup_todb($mat_info['#']['ID']['0']['#']);
 
-            //Now, build the QUIZ_MATCH_SUB record structure
+            //Now, build the QUESTION_MATCH_SUB record structure
             $match_sub->question = $new_question_id;
             $match_sub->questiontext = backup_todb($mat_info['#']['QUESTIONTEXT']['0']['#']);
             $match_sub->answertext = backup_todb($mat_info['#']['ANSWERTEXT']['0']['#']);
 
-            //The structure is equal to the db, so insert the quiz_match_sub
-            $newid = insert_record ("quiz_match_sub",$match_sub);
+            //The structure is equal to the db, so insert the question_match_sub
+            $newid = insert_record ("question_match_sub",$match_sub);
 
             //Do some output
             if (($i+1) % 50 == 0) {
@@ -678,7 +678,7 @@
 
             if ($newid) {
                 //We have the newid, update backup_ids
-                backup_putid($restore->backup_unique_code,"quiz_match_sub",$oldid,
+                backup_putid($restore->backup_unique_code,"question_match_sub",$oldid,
                              $newid);
                 //We have a new match_sub, append it to subquestions_field
                 if ($in_first) {
@@ -696,8 +696,8 @@
         $match->question = $new_question_id;
         $match->subquestions = $subquestions_field;
 
-        //The structure is equal to the db, so insert the quiz_match_sub
-        $newid = insert_record ("quiz_match",$match);
+        //The structure is equal to the db, so insert the question_match_sub
+        $newid = insert_record ("question_match",$match);
 
         if (!$newid) {
             $status = false;
@@ -706,7 +706,7 @@
         return $status;
     }
 
-    function quiz_restore_map_match ($old_question_id,$new_question_id,$info,$restore) {
+    function question_restore_map_match ($old_question_id,$new_question_id,$info,$restore) {
 
         global $CFG;
 
@@ -729,7 +729,7 @@
             //We'll need this later!!
             $oldid = backup_todb($mat_info['#']['ID']['0']['#']);
 
-            //Now, build the QUIZ_MATCH_SUB record structure
+            //Now, build the QUESTION_MATCH_SUB record structure
             $match_sub->question = $new_question_id;
             $match_sub->questiontext = backup_todb($mat_info['#']['QUESTIONTEXT']['0']['#']);
             $match_sub->answertext = backup_todb($mat_info['#']['ANSWERTEXT']['0']['#']);
@@ -740,7 +740,7 @@
             //mappings in backup_ids to use them later where restoring states (user level).
 
             //Get the match_sub from DB (by question, questiontext and answertext)
-            $db_match_sub = get_record ("quiz_match_sub","question",$new_question_id,
+            $db_match_sub = get_record ("question_match_sub","question",$new_question_id,
                                                       "questiontext",$match_sub->questiontext,
                                                       "answertext",$match_sub->answertext);
             //Do some output
@@ -757,7 +757,7 @@
             //We have the database match_sub, so update backup_ids
             if ($db_match_sub) {
                 //We have the newid, update backup_ids
-                backup_putid($restore->backup_unique_code,"quiz_match_sub",$oldid,
+                backup_putid($restore->backup_unique_code,"question_match_sub",$oldid,
                              $db_match_sub->id);
             } else {
                 $status = false;
@@ -767,7 +767,7 @@
         return $status;
     }
 
-    function quiz_restore_map_multianswer ($old_question_id,$new_question_id,$info,$restore) {
+    function question_restore_map_multianswer ($old_question_id,$new_question_id,$info,$restore) {
 
         global $CFG;
 
@@ -785,7 +785,7 @@
             //We need this later
             $oldid = backup_todb($mul_info['#']['ID']['0']['#']);
 
-            //Now, build the QUIZ_MULTIANSWER record structure
+            //Now, build the QUESTION_MULTIANSWER record structure
             $multianswer->question = $new_question_id;
             $multianswer->answers = backup_todb($mul_info['#']['ANSWERS']['0']['#']);
             $multianswer->positionkey = backup_todb($mul_info['#']['POSITIONKEY']['0']['#']);
@@ -798,7 +798,7 @@
             //mappings in backup_ids to use them later where restoring states (user level).
 
             //Get the multianswer from DB (by question and positionkey)
-            $db_multianswer = get_record ("quiz_multianswers","question",$new_question_id,
+            $db_multianswer = get_record ("question_multianswer","question",$new_question_id,
                                                       "positionkey",$multianswer->positionkey);
             //Do some output
             if (($i+1) % 50 == 0) {
@@ -814,7 +814,7 @@
             //We have the database multianswer, so update backup_ids
             if ($db_multianswer) {
                 //We have the newid, update backup_ids
-                backup_putid($restore->backup_unique_code,"quiz_multianswers",$oldid,
+                backup_putid($restore->backup_unique_code,"question_multianswer",$oldid,
                              $db_multianswer->id);
             } else {
                 $status = false;
@@ -824,7 +824,7 @@
         return $status;
     }
 
-    function quiz_restore_randomsamatch ($old_question_id,$new_question_id,$info,$restore) {
+    function question_restore_randomsamatch ($old_question_id,$new_question_id,$info,$restore) {
 
         global $CFG;
 
@@ -840,13 +840,13 @@
             //print_object ($GLOBALS['traverse_array']);                                                  //Debug
             //$GLOBALS['traverse_array']="";                                                              //Debug
 
-            //Now, build the QUIZ_RANDOMSAMATCH record structure
+            //Now, build the QUESTION_RANDOMSAMATCH record structure
             $randomsamatch->question = $new_question_id;
             $randomsamatch->choose = backup_todb($ran_info['#']['CHOOSE']['0']['#']);
             $randomsamatch->shuffleanswers = backup_todb($ran_info['#']['SHUFFLEANSWERS']['0']['#']);
 
-            //The structure is equal to the db, so insert the quiz_randomsamatch
-            $newid = insert_record ("quiz_randomsamatch",$randomsamatch);
+            //The structure is equal to the db, so insert the question_randomsamatch
+            $newid = insert_record ("question_randomsamatch",$randomsamatch);
 
             //Do some output
             if (($i+1) % 50 == 0) {
@@ -867,7 +867,7 @@
         return $status;
     }
 
-    function quiz_restore_numerical ($old_question_id,$new_question_id,$info,$restore) {
+    function question_restore_numerical ($old_question_id,$new_question_id,$info,$restore) {
 
         global $CFG;
 
@@ -883,7 +883,7 @@
             //print_object ($GLOBALS['traverse_array']);                                                  //Debug
             //$GLOBALS['traverse_array']="";                                                              //Debug
 
-            //Now, build the QUIZ_NUMERICAL record structure
+            //Now, build the QUESTION_NUMERICAL record structure
             $numerical->question = $new_question_id;
             $numerical->answer = backup_todb($num_info['#']['ANSWER']['0']['#']);
             $numerical->tolerance = backup_todb($num_info['#']['TOLERANCE']['0']['#']);
@@ -894,8 +894,8 @@
                 $numerical->answer = $answer->new_id;
             }
 
-            //The structure is equal to the db, so insert the quiz_numerical
-            $newid = insert_record ("quiz_numerical",$numerical);
+            //The structure is equal to the db, so insert the question_numerical
+            $newid = insert_record ("question_numerical",$numerical);
 
             //Do some output
             if (($i+1) % 50 == 0) {
@@ -909,7 +909,7 @@
             }
 
             //Now restore numerical_units
-            $status = quiz_restore_numerical_units ($old_question_id,$new_question_id,$num_info,$restore);
+            $status = question_restore_numerical_units ($old_question_id,$new_question_id,$num_info,$restore);
 
             if (!$newid) {
                 $status = false;
@@ -919,7 +919,7 @@
         return $status;
     }
 
-    function quiz_restore_calculated ($old_question_id,$new_question_id,$info,$restore) {
+    function question_restore_calculated ($old_question_id,$new_question_id,$info,$restore) {
 
         global $CFG;
 
@@ -935,7 +935,7 @@
             //print_object ($GLOBALS['traverse_array']);                                                  //Debug
             //$GLOBALS['traverse_array']="";                                                              //Debug
 
-            //Now, build the QUIZ_CALCULATED record structure
+            //Now, build the QUESTION_CALCULATED record structure
             $calculated->question = $new_question_id;
             $calculated->answer = backup_todb($cal_info['#']['ANSWER']['0']['#']);
             $calculated->tolerance = backup_todb($cal_info['#']['TOLERANCE']['0']['#']);
@@ -949,8 +949,8 @@
                 $calculated->answer = $answer->new_id;
             }
 
-            //The structure is equal to the db, so insert the quiz_calculated
-            $newid = insert_record ("quiz_calculated",$calculated);
+            //The structure is equal to the db, so insert the question_calculated
+            $newid = insert_record ("question_calculated",$calculated);
 
             //Do some output
             if (($i+1) % 50 == 0) {
@@ -964,11 +964,11 @@
             }
 
             //Now restore numerical_units
-            $status = quiz_restore_numerical_units ($old_question_id,$new_question_id,$cal_info,$restore);
+            $status = question_restore_numerical_units ($old_question_id,$new_question_id,$cal_info,$restore);
 
             //Now restore dataset_definitions
             if ($status && $newid) {
-                $status = quiz_restore_dataset_definitions ($old_question_id,$new_question_id,$cal_info,$restore);
+                $status = question_restore_dataset_definitions ($old_question_id,$new_question_id,$cal_info,$restore);
             }
 
             if (!$newid) {
@@ -979,7 +979,7 @@
         return $status;
     }
 
-    function quiz_restore_multianswer ($old_question_id,$new_question_id,$info,$restore) {
+    function question_restore_multianswer ($old_question_id,$new_question_id,$info,$restore) {
 
         global $CFG;
 
@@ -997,7 +997,7 @@
             //We need this later
             $oldid = backup_todb($mul_info['#']['ID']['0']['#']);
 
-            //Now, build the QUIZ_MULTIANSWER record structure
+            //Now, build the QUESTION_MULTIANSWER record structure
             $multianswer->question = $new_question_id;
             $multianswer->sequence = backup_todb($mul_info['#']['SEQUENCE']['0']['#']);
 
@@ -1022,12 +1022,12 @@
             }
             //We have the answers field recoded to its new ids
             $multianswer->sequence = $sequence_field;
-            //The structure is equal to the db, so insert the quiz_multianswers
-            $newid = insert_record ("quiz_multianswers",$multianswer);
+            //The structure is equal to the db, so insert the question_multianswer
+            $newid = insert_record ("question_multianswer",$multianswer);
 
             //Save ids in backup_ids
             if ($newid) {
-                backup_putid($restore->backup_unique_code,"quiz_multianswers",
+                backup_putid($restore->backup_unique_code,"question_multianswer",
                              $oldid, $newid);
             }
 
@@ -1042,15 +1042,15 @@
                 backup_flush(300);
             }
 /*
-            //If we have created the quiz_multianswers record, now, depending of the
+            //If we have created the question_multianswer record, now, depending of the
             //answertype, delegate the restore to every qtype function
             if ($newid) {
                 if ($multianswer->answertype == "1") {
-                    $status = quiz_restore_shortanswer ($old_question_id,$new_question_id,$mul_info,$restore);
+                    $status = question_restore_shortanswer ($old_question_id,$new_question_id,$mul_info,$restore);
                 } else if ($multianswer->answertype == "3") {
-                    $status = quiz_restore_multichoice ($old_question_id,$new_question_id,$mul_info,$restore);
+                    $status = question_restore_multichoice ($old_question_id,$new_question_id,$mul_info,$restore);
                 } else if ($multianswer->answertype == "8") {
-                    $status = quiz_restore_numerical ($old_question_id,$new_question_id,$mul_info,$restore);
+                    $status = question_restore_numerical ($old_question_id,$new_question_id,$mul_info,$restore);
                 }
             } else {
                 $status = false;
@@ -1061,7 +1061,7 @@
         return $status;
     }
 
-    function quiz_restore_rqp ($old_question_id,$new_question_id,$info,$restore) {
+    function question_restore_rqp ($old_question_id,$new_question_id,$info,$restore) {
 
         global $CFG;
 
@@ -1077,7 +1077,7 @@
             //print_object ($GLOBALS['traverse_array']);                                                  //Debug
             //$GLOBALS['traverse_array']="";                                                              //Debug
 
-            //Now, build the QUIZ_RQP record structure
+            //Now, build the QUESTION_RQP record structure
             $rqp->question = $new_question_id;
             $rqp->type = backup_todb($tru_info['#']['TYPE']['0']['#']);
             $rqp->source = backup_todb($tru_info['#']['SOURCE']['0']['#']);
@@ -1085,8 +1085,8 @@
             $rqp->flags = backup_todb($tru_info['#']['FLAGS']['0']['#']);
             $rqp->maxscore = backup_todb($tru_info['#']['MAXSCORE']['0']['#']);
 
-            //The structure is equal to the db, so insert the quiz_rqp
-            $newid = insert_record ("quiz_rqp",$rqp);
+            //The structure is equal to the db, so insert the question_rqp
+            $newid = insert_record ("question_rqp",$rqp);
 
             //Do some output
             if (($i+1) % 50 == 0) {
@@ -1107,7 +1107,7 @@
         return $status;
     }
     
-    function quiz_restore_essay ($old_question_id,$new_question_id,$info,$restore) {
+    function question_restore_essay ($old_question_id,$new_question_id,$info,$restore) {
 
         global $CFG;
 
@@ -1123,7 +1123,7 @@
             //print_object ($GLOBALS['traverse_array']);                                                  //Debug
             //$GLOBALS['traverse_array']="";                                                              //Debug
 
-            //Now, build the QUIZ_TRUEFALSE record structure
+            //Now, build the QUESTION_TRUEFALSE record structure
             $essay->question = $new_question_id;
             $essay->answer = backup_todb($essay_info['#']['ANSWER']['0']['#']);
 
@@ -1133,8 +1133,8 @@
                 $essay->answer = $answer->new_id;
             }
 
-            //The structure is equal to the db, so insert the quiz_truefalse
-            $newid = insert_record ("quiz_essay",$essay);
+            //The structure is equal to the db, so insert the question_truefalse
+            $newid = insert_record ("question_essay",$essay);
 
             //Do some output
             if (($i+1) % 50 == 0) {
@@ -1153,7 +1153,7 @@
         return $status;
     }
 
-    function quiz_restore_numerical_units ($old_question_id,$new_question_id,$info,$restore) {
+    function question_restore_numerical_units ($old_question_id,$new_question_id,$info,$restore) {
 
         global $CFG;
 
@@ -1169,13 +1169,13 @@
             //print_object ($GLOBALS['traverse_array']);                                                  //Debug
             //$GLOBALS['traverse_array']="";                                                              //Debug
 
-            //Now, build the QUIZ_NUMERICAL_UNITS record structure
+            //Now, build the QUESTION_NUMERICAL_UNITS record structure
             $numerical_unit->question = $new_question_id;
             $numerical_unit->multiplier = backup_todb($nu_info['#']['MULTIPLIER']['0']['#']);
             $numerical_unit->unit = backup_todb($nu_info['#']['UNIT']['0']['#']);
 
-            //The structure is equal to the db, so insert the quiz_numerical_units
-            $newid = insert_record ("quiz_numerical_units",$numerical_unit);
+            //The structure is equal to the db, so insert the question_numerical_units
+            $newid = insert_record ("question_numerical_units",$numerical_unit);
 
             if (!$newid) {
                 $status = false;
@@ -1185,7 +1185,7 @@
         return $status;
     }
 
-    function quiz_restore_dataset_definitions ($old_question_id,$new_question_id,$info,$restore) {
+    function question_restore_dataset_definitions ($old_question_id,$new_question_id,$info,$restore) {
 
         global $CFG;
 
@@ -1201,7 +1201,7 @@
             //print_object ($GLOBALS['traverse_array']);                                                  //Debug
             //$GLOBALS['traverse_array']="";                                                              //Debug
 
-            //Now, build the QUIZ_DATASET_DEFINITION record structure
+            //Now, build the QUESTION_DATASET_DEFINITION record structure
             $dataset_definition->category = backup_todb($dd_info['#']['CATEGORY']['0']['#']);
             $dataset_definition->name = backup_todb($dd_info['#']['NAME']['0']['#']);
             $dataset_definition->type = backup_todb($dd_info['#']['TYPE']['0']['#']);
@@ -1226,7 +1226,7 @@
                 //The category isn't 0, so it's a category question dataset_definition, we have to see if it exists
                 //Look for a definition with the same category, name and type
                 if ($definitionrec = get_record_sql("SELECT d.*
-                                                     FROM {$CFG->prefix}quiz_dataset_definitions d
+                                                     FROM {$CFG->prefix}question_dataset_definitions d
                                                      WHERE d.category = '$dataset_definition->category' AND
                                                            d.name = '$dataset_definition->name' AND
                                                            d.type = '$dataset_definition->type'")) {
@@ -1248,20 +1248,20 @@
 
             //If we've to create the definition, do it
             if ($create_definition) {
-                //The structure is equal to the db, so insert the quiz_dataset_definitions
-                $newid = insert_record ("quiz_dataset_definitions",$dataset_definition);
+                //The structure is equal to the db, so insert the question_dataset_definitions
+                $newid = insert_record ("question_dataset_definitions",$dataset_definition);
                 if ($newid) {
-                    //Restore quiz_dataset_items
-                    $status = quiz_restore_dataset_items($newid,$dd_info,$restore);
+                    //Restore question_dataset_items
+                    $status = question_restore_dataset_items($newid,$dd_info,$restore);
                 }
             }
 
-            //Now, we must have a definition (created o reused). Its id is in newid. Create the quiz_question_datasets record
+            //Now, we must have a definition (created o reused). Its id is in newid. Create the question_datasets record
             //to join the question and the dataset_definition
             if ($newid) {
                 $question_dataset->question = $new_question_id;
                 $question_dataset->datasetdefinition = $newid;
-                $newid = insert_record ("quiz_question_datasets",$question_dataset);
+                $newid = insert_record ("question_datasets",$question_dataset);
             }
 
             if (!$newid) {
@@ -1272,7 +1272,7 @@
         return $status;
     }
 
-    function quiz_restore_dataset_items ($definitionid,$info,$restore) {
+    function question_restore_dataset_items ($definitionid,$info,$restore) {
 
         global $CFG;
 
@@ -1288,13 +1288,13 @@
             //print_object ($GLOBALS['traverse_array']);                                                  //Debug
             //$GLOBALS['traverse_array']="";                                                              //Debug
 
-            //Now, build the QUIZ_DATASET_ITEMS record structure
+            //Now, build the QUESTION_DATASET_ITEMS record structure
             $dataset_item->definition = $definitionid;
             $dataset_item->number = backup_todb($di_info['#']['NUMBER']['0']['#']);
             $dataset_item->value = backup_todb($di_info['#']['VALUE']['0']['#']);
 
-            //The structure is equal to the db, so insert the quiz_dataset_items
-            $newid = insert_record ("quiz_dataset_items",$dataset_item);
+            //The structure is equal to the db, so insert the question_dataset_items
+            $newid = insert_record ("question_dataset_items",$dataset_item);
 
             if (!$newid) {
                 $status = false;
@@ -1707,9 +1707,9 @@
                             $match_question_id = $exploded[0];
                             $match_answer_id = $exploded[1];
                             //Get the match_sub from backup_ids (for the question)
-                            $match_que = backup_getid($restore->backup_unique_code,"quiz_match_sub",$match_question_id);
+                            $match_que = backup_getid($restore->backup_unique_code,"question_match_sub",$match_question_id);
                             //Get the match_sub from backup_ids (for the answer)
-                            $match_ans = backup_getid($restore->backup_unique_code,"quiz_match_sub",$match_answer_id);
+                            $match_ans = backup_getid($restore->backup_unique_code,"question_match_sub",$match_answer_id);
                             if ($match_que) {
                                 //It the question hasn't response, it must be 0
                                 if (!$match_ans and $match_answer_id == 0) {
@@ -1776,11 +1776,11 @@
                             $multianswer_id = $exploded[0];
                             $answer = $exploded[1];
                             //Get the multianswer from backup_ids
-                            $mul = backup_getid($restore->backup_unique_code,"quiz_multianswers",$multianswer_id);
+                            $mul = backup_getid($restore->backup_unique_code,"question_multianswer",$multianswer_id);
                             if ($mul) {
-                                //Now, depending of the answertype field in quiz_multianswers
+                                //Now, depending of the answertype field in question_multianswer
                                 //we do diferent things
-                                $mul_db = get_record ("quiz_multianswers","id",$mul->new_id);
+                                $mul_db = get_record ("question_multianswer","id",$mul->new_id);
                                 if ($mul_db->answertype == "1") {
                                     //Shortanswer
                                     //The answer is text, do nothing
@@ -1838,8 +1838,8 @@
                 backup_putid($restore->backup_unique_code,"question_states",$oldid,
                              $newid);
                 //Now process question type specific state information
-                $status = quiz_rqp_states_restore_mods($newid,$res_info,$restore);
-                $status = quiz_essay_states_restore_mods($newid,$res_info,$restore);
+                $status = question_rqp_states_restore_mods($newid,$res_info,$restore);
+                $status = question_essay_states_restore_mods($newid,$res_info,$restore);
             } else {
                 $status = false;
             }
@@ -1887,14 +1887,14 @@
         return $status;
     }
 
-    //This function restores the quiz_rqp_states
-    function quiz_rqp_states_restore_mods($state_id,$info,$restore) {
+    //This function restores the question_rqp_states
+    function question_rqp_states_restore_mods($state_id,$info,$restore) {
 
         global $CFG;
 
         $status = true;
 
-        //Get the quiz_rqp_state
+        //Get the question_rqp_state
         $rqp_state = $info['#']['RQP_STATE']['0'];
         if ($rqp_state) {
 
@@ -1905,20 +1905,20 @@
             $state->template_vars = backup_todb($rqp_state['#']['TEMPLATE_VARS']['0']['#']);
 
             //The structure is equal to the db, so insert the question_states
-            $newid = insert_record ("quiz_rqp_states",$state);
+            $newid = insert_record ("question_rqp_states",$state);
         }
 
     return $status;
     }
     
-    //This function restores the quiz_essay_states
-    function quiz_essay_states_restore_mods($state_id,$info,$restore) {
+    //This function restores the question_essay_states
+    function question_essay_states_restore_mods($state_id,$info,$restore) {
 
         global $CFG;
 
         $status = true;
 
-        //Get the quiz_essay_state
+        //Get the question_essay_state
         $essay_state = $info['#']['ESSAY_STATE']['0'];
         if ($essay_state) {
 
@@ -1929,7 +1929,7 @@
             $state->response = backup_todb($essay_state['#']['RESPONSE']['0']['#']);
 
             //The structure is equal to the db, so insert the question_states
-            $newid = insert_record ("quiz_essay_states",$state);
+            $newid = insert_record ("question_essay_states",$state);
         }
 
         return $status;

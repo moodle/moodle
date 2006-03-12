@@ -279,7 +279,7 @@
                         if (!$neweststate = get_record('question_sessions', 'attemptid', $attempt->uniqueid, 'questionid', $question->id)) {
                             error("Can not find newest states for attempt $attempt->uniqueid for question $question->id");
                         }
-                        if (!$questionstate = get_record('quiz_essay_states', 'stateid', $neweststate->newest)) {
+                        if (!$questionstate = get_record('question_essay_states', 'stateid', $neweststate->newest)) {
                             error('Could not find question state');
                         }
                         if (!$questionstate->graded) {
@@ -369,7 +369,7 @@
                         error("Can not find newest states for attempt $attempt->uniqueid for question $questionid");
                     }
 
-                    if (!$questionstate = get_record('quiz_essay_states', 'stateid', $neweststate->newest)) {
+                    if (!$questionstate = get_record('question_essay_states', 'stateid', $neweststate->newest)) {
                         error('Could not find question state');
                     }
                     // change the color of the link based on being graded or not

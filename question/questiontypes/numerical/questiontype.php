@@ -16,7 +16,7 @@
 
 require_once("$CFG->dirroot/question/questiontypes/shortanswer/questiontype.php");
 
-class quiz_numerical_qtype extends quiz_shortanswer_qtype {
+class question_numerical_qtype extends question_shortanswer_qtype {
 
     function name() {
         return 'numerical';
@@ -24,14 +24,14 @@ class quiz_numerical_qtype extends quiz_shortanswer_qtype {
 
     function get_question_options(&$question) {
         // Get the question answers and their respective tolerances
-        // Note: quiz_numerical is an extension of the answer table rather than
+        // Note: question_numerical is an extension of the answer table rather than
         //       the question table as is usually the case for qtype
         //       specific tables.
         global $CFG;
         if (!$question->options->answers = get_records_sql(
                                 "SELECT a.*, n.tolerance " .
                                 "FROM {$CFG->prefix}question_answers a, " .
-                                "     {$CFG->prefix}quiz_numerical n " .
+                                "     {$CFG->prefix}question_numerical n " .
                                 "WHERE a.question = $question->id " .
                                 "AND   a.id = n.answer;")) {
             notify('Error: Missing question answer!');
@@ -55,7 +55,7 @@ class quiz_numerical_qtype extends quiz_shortanswer_qtype {
     }
 
     function get_numerical_units(&$question) {
-        if ($question->options->units = get_records('quiz_numerical_units',
+        if ($question->options->units = get_records('question_numerical_units',
                                          'question', $question->id, 'id ASC')) {
             $question->options->units  = array_values($question->options->units);
             usort($question->options->units, create_function('$a, $b', // make sure the default unit is at index 0
@@ -98,7 +98,7 @@ class quiz_numerical_qtype extends quiz_shortanswer_qtype {
             $oldanswers = array();
         }
 
-        if (!$oldoptions = get_records("quiz_numerical", "question", $question->id)) {
+        if (!$oldoptions = get_records("question_numerical", "question", $question->id)) {
             $oldoptions = array();
         }
 
@@ -141,12 +141,12 @@ class quiz_numerical_qtype extends quiz_shortanswer_qtype {
 
                 // Save options
                 if (isset($options->id)) { // reusing existing record
-                    if (! update_record('quiz_numerical', $options)) {
+                    if (! update_record('question_numerical', $options)) {
                         $result->error = "Could not update quiz numerical options! (id=$options->id)";
                         return $result;
                     }
                 } else { // new options
-                    if (! insert_record('quiz_numerical', $options)) {
+                    if (! insert_record('question_numerical', $options)) {
                         $result->error = "Could not insert quiz numerical options!";
                         return $result;
                     }
@@ -162,7 +162,7 @@ class quiz_numerical_qtype extends quiz_shortanswer_qtype {
                 // delete old answer records
                 if (!empty($oldoptions)) {
                     foreach($oldoptions as $oo) {
-                        delete_records('quiz_numerical', 'id', $oo->id);
+                        delete_records('question_numerical', 'id', $oo->id);
                     }
                 }
 
@@ -171,7 +171,7 @@ class quiz_numerical_qtype extends quiz_shortanswer_qtype {
     }
 
     function save_numerical_units($question) {
-        if (!$oldunits = get_records("quiz_numerical_units", "question", $question->id)) {
+        if (!$oldunits = get_records("question_numerical_units", "question", $question->id)) {
             $oldunits = array();
         }
 
@@ -202,16 +202,16 @@ class quiz_numerical_qtype extends quiz_shortanswer_qtype {
         /// Save units
         for ($i = 0; $i < $n; $i++) {
             if (!isset($units[$i]) && isset($oldunits[$i])) { // Delete if it hasn't been resubmitted
-                delete_records('quiz_numerical_units', 'id', $oldunits[$i]->id);
+                delete_records('question_numerical_units', 'id', $oldunits[$i]->id);
             } else if ($oldunits != $units) { // answer has changed or is new
                 if (isset($oldunits[$i]->id)) { // answer has changed
                     $units[$i]->id = $oldunits[$i]->id;
-                    if (! update_record('quiz_numerical_units', $units[$i])) {
-                        $result->error = "Could not update quiz_numerical_unit $units[$i]->unit";
+                    if (! update_record('question_numerical_units', $units[$i])) {
+                        $result->error = "Could not update question_numerical_unit $units[$i]->unit";
                         return $result;
                     }
                 } else if (isset($units[$i])) { // answer is new
-                    if (! insert_record('quiz_numerical_units', $units[$i])) {
+                    if (! insert_record('question_numerical_units', $units[$i])) {
                         $result->error = "Unable to insert new unit $units[$i]->unit";
                         return $result;
                     }
@@ -229,8 +229,8 @@ class quiz_numerical_qtype extends quiz_shortanswer_qtype {
     * @param object $question  The question being deleted
     */
     function delete_question($question) {
-        delete_records("quiz_numerical", "question", $question->id);
-        delete_records("quiz_numerical_units", "question", $question->id);
+        delete_records("question_numerical", "question", $question->id);
+        delete_records("question_numerical_units", "question", $question->id);
         return true;
     }
 
@@ -409,6 +409,6 @@ class quiz_numerical_qtype extends quiz_shortanswer_qtype {
 //////////////////////////////////////////////////////////////////////////
 //// INITIATION - Without this line the question type is not in use... ///
 //////////////////////////////////////////////////////////////////////////
-$QTYPES[NUMERICAL]= new quiz_numerical_qtype();
+$QTYPES[NUMERICAL]= new question_numerical_qtype();
 
 ?>

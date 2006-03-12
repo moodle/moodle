@@ -1,9 +1,9 @@
 <?php // $Id$
 
     if (!empty($question->id)) {
-        $options = get_record("quiz_match", "question", $question->id);
+        $options = get_record("question_match", "question", $question->id);
         if (!empty($options->subquestions)) {
-            $oldsubquestions = get_records_list("quiz_match_sub", "id", $options->subquestions);
+            $oldsubquestions = get_records_list("question_match_sub", "id", $options->subquestions);
         }
     } else {
         $options->shuffleanswers = 1;

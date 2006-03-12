@@ -23,7 +23,7 @@ class quiz_embedded_cloze_qtype extends quiz_default_questiontype {
         global $QTYPES;
 
         // Get relevant data indexed by positionkey from the multianswers table
-        if (!$sequence = get_field('quiz_multianswers', 'sequence', 'question', $question->id)) {
+        if (!$sequence = get_field('question_multianswer', 'sequence', 'question', $question->id)) {
             notify('Error: Missing question options!');
             return false;
         }
@@ -89,15 +89,15 @@ class quiz_embedded_cloze_qtype extends quiz_default_questiontype {
             $multianswer->question = $question->id;
             $multianswer->sequence = implode(',', $sequence);
             if ($oldid =
-             get_field('quiz_multianswers', 'id', 'question', $question->id)) {
+             get_field('question_multianswer', 'id', 'question', $question->id)) {
                 $multianswer->id = $oldid;
-                if (!update_record("quiz_multianswers", $multianswer)) {
+                if (!update_record("question_multianswer", $multianswer)) {
                     $result->error = "Could not update quiz multianswer! " .
                      "(id=$multianswer->id)";
                     return $result;
                 }
             } else {
-                if (!insert_record("quiz_multianswers", $multianswer)) {
+                if (!insert_record("question_multianswer", $multianswer)) {
                     $result->error = "Could not insert quiz multianswer!";
                     return $result;
                 }
@@ -172,7 +172,7 @@ class quiz_embedded_cloze_qtype extends quiz_default_questiontype {
     * @param object $question  The question being deleted
     */
     function delete_question($question) {
-        delete_records("quiz_multianswers", "question", $question->id);
+        delete_records("question_multianswer", "question", $question->id);
         return true;
     }
 

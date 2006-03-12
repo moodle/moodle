@@ -5,7 +5,7 @@
 /////////////////
 
 /// QUESTION TYPE CLASS //////////////////
-class quiz_truefalse_qtype extends quiz_default_questiontype {
+class question_truefalse_qtype extends quiz_default_questiontype {
 
     function name() {
         return 'truefalse';
@@ -67,13 +67,13 @@ class quiz_truefalse_qtype extends quiz_default_questiontype {
             }
         }
 
-        // Save question options in quiz_truefalse table
-        if ($options = get_record("quiz_truefalse", "question", $question->id)) {
+        // Save question options in question_truefalse table
+        if ($options = get_record("question_truefalse", "question", $question->id)) {
             // No need to do anything, since the answer IDs won't have changed
             // But we'll do it anyway, just for robustness
             $options->trueanswer  = $true->id;
             $options->falseanswer = $false->id;
-            if (!update_record("quiz_truefalse", $options)) {
+            if (!update_record("question_truefalse", $options)) {
                 $result->error = "Could not update quiz truefalse options! (id=$options->id)";
                 return $result;
             }
@@ -82,7 +82,7 @@ class quiz_truefalse_qtype extends quiz_default_questiontype {
             $options->question    = $question->id;
             $options->trueanswer  = $true->id;
             $options->falseanswer = $false->id;
-            if (!insert_record("quiz_truefalse", $options)) {
+            if (!insert_record("question_truefalse", $options)) {
                 $result->error = "Could not insert quiz truefalse options!";
                 return $result;
             }
@@ -96,7 +96,7 @@ class quiz_truefalse_qtype extends quiz_default_questiontype {
     function get_question_options(&$question) {
         // Get additional information from database
         // and attach it to the question object
-        if (!$question->options = get_record('quiz_truefalse', 'question', $question->id)) {
+        if (!$question->options = get_record('question_truefalse', 'question', $question->id)) {
             notify('Error: Missing question options!');
             return false;
         }
@@ -116,7 +116,7 @@ class quiz_truefalse_qtype extends quiz_default_questiontype {
     * @param object $question  The question being deleted
     */
     function delete_question($question) {
-        delete_records("quiz_truefalse", "question", $question->id);
+        delete_records("question_truefalse", "question", $question->id);
         return true;
     }
 
@@ -211,6 +211,6 @@ class quiz_truefalse_qtype extends quiz_default_questiontype {
 //////////////////////////////////////////////////////////////////////////
 //// INITIATION - Without this line the question type is not in use... ///
 //////////////////////////////////////////////////////////////////////////
-$QTYPES[TRUEFALSE]= new quiz_truefalse_qtype();
+$QTYPES[TRUEFALSE]= new question_truefalse_qtype();
 
 ?>

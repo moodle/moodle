@@ -106,10 +106,10 @@ CREATE TABLE prefix_quiz_attempts (
 -- --------------------------------------------------------
 
 -- 
--- Table structure for table `prefix_quiz_calculated`
+-- Table structure for table `prefix_question_calculated`
 -- 
 
-CREATE TABLE prefix_quiz_calculated (
+CREATE TABLE prefix_question_calculated (
   id int(10) unsigned NOT NULL auto_increment,
   question int(10) unsigned NOT NULL default '0',
   answer int(10) unsigned NOT NULL default '0',
@@ -144,10 +144,10 @@ CREATE TABLE prefix_question_categories (
 -- --------------------------------------------------------
 
 -- 
--- Table structure for table `prefix_quiz_dataset_definitions`
+-- Table structure for table `prefix_question_dataset_definitions`
 -- 
 
-CREATE TABLE prefix_quiz_dataset_definitions (
+CREATE TABLE prefix_question_dataset_definitions (
   id int(10) unsigned NOT NULL auto_increment,
   category int(10) unsigned NOT NULL default '0',
   name varchar(255) NOT NULL default '',
@@ -161,10 +161,10 @@ CREATE TABLE prefix_quiz_dataset_definitions (
 -- --------------------------------------------------------
 
 -- 
--- Table structure for table `prefix_quiz_dataset_items`
+-- Table structure for table `prefix_question_dataset_items`
 -- 
 
-CREATE TABLE prefix_quiz_dataset_items (
+CREATE TABLE prefix_question_dataset_items (
   id int(10) unsigned NOT NULL auto_increment,
   definition int(10) unsigned NOT NULL default '0',
   number int(10) unsigned NOT NULL default '0',
@@ -176,10 +176,10 @@ CREATE TABLE prefix_quiz_dataset_items (
 -- --------------------------------------------------------
 
 -- 
--- Table structure for table `mdl_quiz_essay`
+-- Table structure for table `mdl_question_essay`
 -- 
 
-CREATE TABLE `prefix_quiz_essay` (
+CREATE TABLE `prefix_question_essay` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `question` int(10) unsigned NOT NULL default '0',
   `answer` varchar(255) NOT NULL default '',
@@ -190,10 +190,10 @@ CREATE TABLE `prefix_quiz_essay` (
 -- --------------------------------------------------------
 
 -- 
--- Table structure for table `mdl_quiz_essay_states`
+-- Table structure for table `mdl_question_essay_states`
 -- 
 
-CREATE TABLE `prefix_quiz_essay_states` (
+CREATE TABLE `prefix_question_essay_states` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `stateid` int(10) unsigned NOT NULL default '0',
   `graded` tinyint(4) unsigned NOT NULL default '0',
@@ -222,10 +222,10 @@ CREATE TABLE prefix_quiz_grades (
 -- --------------------------------------------------------
 
 -- 
--- Table structure for table `prefix_quiz_match`
+-- Table structure for table `prefix_question_match`
 -- 
 
-CREATE TABLE prefix_quiz_match (
+CREATE TABLE prefix_question_match (
   id int(10) unsigned NOT NULL auto_increment,
   question int(10) unsigned NOT NULL default '0',
   subquestions varchar(255) NOT NULL default '',
@@ -237,10 +237,10 @@ CREATE TABLE prefix_quiz_match (
 -- --------------------------------------------------------
 
 -- 
--- Table structure for table `prefix_quiz_match_sub`
+-- Table structure for table `prefix_question_match_sub`
 -- 
 
-CREATE TABLE prefix_quiz_match_sub (
+CREATE TABLE prefix_question_match_sub (
   id int(10) unsigned NOT NULL auto_increment,
   code int(10) unsigned NOT NULL default '0',
   question int(10) unsigned NOT NULL default '0',
@@ -253,10 +253,10 @@ CREATE TABLE prefix_quiz_match_sub (
 -- --------------------------------------------------------
 
 -- 
--- Table structure for table `prefix_quiz_multianswers`
+-- Table structure for table `prefix_question_multianswer`
 -- 
 
-CREATE TABLE prefix_quiz_multianswers (
+CREATE TABLE prefix_question_multianswer (
   id int(10) unsigned NOT NULL auto_increment,
   question int(10) unsigned NOT NULL default '0',
   sequence text NOT NULL default '',
@@ -267,10 +267,10 @@ CREATE TABLE prefix_quiz_multianswers (
 -- --------------------------------------------------------
 
 -- 
--- Table structure for table `prefix_quiz_multichoice`
+-- Table structure for table `prefix_question_multichoice`
 -- 
 
-CREATE TABLE prefix_quiz_multichoice (
+CREATE TABLE prefix_question_multichoice (
   id int(10) unsigned NOT NULL auto_increment,
   question int(10) unsigned NOT NULL default '0',
   layout tinyint(4) NOT NULL default '0',
@@ -301,10 +301,10 @@ CREATE TABLE prefix_question_sessions (
 -- --------------------------------------------------------
 
 -- 
--- Table structure for table `prefix_quiz_numerical`
+-- Table structure for table `prefix_question_numerical`
 -- 
 
-CREATE TABLE prefix_quiz_numerical (
+CREATE TABLE prefix_question_numerical (
   id int(10) unsigned NOT NULL auto_increment,
   question int(10) unsigned NOT NULL default '0',
   answer int(10) unsigned NOT NULL default '0',
@@ -317,10 +317,10 @@ CREATE TABLE prefix_quiz_numerical (
 -- --------------------------------------------------------
 
 -- 
--- Table structure for table `prefix_quiz_numerical_units`
+-- Table structure for table `prefix_question_numerical_units`
 -- 
 
-CREATE TABLE prefix_quiz_numerical_units (
+CREATE TABLE prefix_question_numerical_units (
   id int(10) unsigned NOT NULL auto_increment,
   question int(10) unsigned NOT NULL default '0',
   multiplier decimal(40,20) NOT NULL default '1.00000000000000000000',
@@ -332,10 +332,10 @@ CREATE TABLE prefix_quiz_numerical_units (
 -- --------------------------------------------------------
 
 -- 
--- Table structure for table `prefix_quiz_question_datasets`
+-- Table structure for table `prefix_question_datasets`
 -- 
 
-CREATE TABLE prefix_quiz_question_datasets (
+CREATE TABLE prefix_question_datasets (
   id int(10) unsigned NOT NULL auto_increment,
   question int(10) unsigned NOT NULL default '0',
   datasetdefinition int(10) unsigned NOT NULL default '0',
@@ -404,10 +404,10 @@ CREATE TABLE prefix_question (
 -- --------------------------------------------------------
 
 -- 
--- Table structure for table `prefix_quiz_randomsamatch`
+-- Table structure for table `prefix_question_randomsamatch`
 -- 
 
-CREATE TABLE prefix_quiz_randomsamatch (
+CREATE TABLE prefix_question_randomsamatch (
   id int(10) unsigned NOT NULL auto_increment,
   question int(10) unsigned NOT NULL default '0',
   choose int(10) unsigned NOT NULL default '4',
@@ -419,10 +419,10 @@ CREATE TABLE prefix_quiz_randomsamatch (
 -- --------------------------------------------------------
 
 -- 
--- Table structure for table `prefix_quiz_rqp`
+-- Table structure for table `prefix_question_rqp`
 -- 
 
-CREATE TABLE prefix_quiz_rqp (
+CREATE TABLE prefix_question_rqp (
   id int(10) unsigned NOT NULL auto_increment,
   question int(10) unsigned NOT NULL default '0',
   type int(10) unsigned NOT NULL default '0',
@@ -437,10 +437,10 @@ CREATE TABLE prefix_quiz_rqp (
 -- --------------------------------------------------------
 
 -- 
--- Table structure for table `prefix_quiz_rqp_servers`
+-- Table structure for table `prefix_question_rqp_servers`
 -- 
 
-CREATE TABLE prefix_quiz_rqp_servers (
+CREATE TABLE prefix_question_rqp_servers (
   id int(10) unsigned NOT NULL auto_increment,
   typeid int(10) unsigned NOT NULL default '0',
   url varchar(255) NOT NULL default '',
@@ -452,10 +452,10 @@ CREATE TABLE prefix_quiz_rqp_servers (
 -- --------------------------------------------------------
 
 -- 
--- Table structure for table `prefix_quiz_rqp_states`
+-- Table structure for table `prefix_question_rqp_states`
 -- 
 
-CREATE TABLE prefix_quiz_rqp_states (
+CREATE TABLE prefix_question_rqp_states (
   id int(10) unsigned NOT NULL auto_increment,
   stateid int(10) unsigned NOT NULL default '0',
   responses text NOT NULL default '',
@@ -467,10 +467,10 @@ CREATE TABLE prefix_quiz_rqp_states (
 -- --------------------------------------------------------
 
 -- 
--- Table structure for table `prefix_quiz_rqp_types`
+-- Table structure for table `prefix_question_rqp_types`
 -- 
 
-CREATE TABLE prefix_quiz_rqp_types (
+CREATE TABLE prefix_question_rqp_types (
   id int(10) unsigned NOT NULL auto_increment,
   name varchar(255) NOT NULL default '',
   PRIMARY KEY  (id),
@@ -480,10 +480,10 @@ CREATE TABLE prefix_quiz_rqp_types (
 -- --------------------------------------------------------
 
 -- 
--- Table structure for table `prefix_quiz_shortanswer`
+-- Table structure for table `prefix_question_shortanswer`
 -- 
 
-CREATE TABLE prefix_quiz_shortanswer (
+CREATE TABLE prefix_question_shortanswer (
   id int(10) unsigned NOT NULL auto_increment,
   question int(10) unsigned NOT NULL default '0',
   answers varchar(255) NOT NULL default '',
@@ -518,10 +518,10 @@ CREATE TABLE prefix_question_states (
 -- --------------------------------------------------------
 
 -- 
--- Table structure for table `prefix_quiz_truefalse`
+-- Table structure for table `prefix_question_truefalse`
 -- 
 
-CREATE TABLE prefix_quiz_truefalse (
+CREATE TABLE prefix_question_truefalse (
   id int(10) unsigned NOT NULL auto_increment,
   question int(10) unsigned NOT NULL default '0',
   trueanswer int(10) unsigned NOT NULL default '0',

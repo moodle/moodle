@@ -16,7 +16,7 @@ require_once($CFG->dirroot . '/question/questiontypes/rqp/remote.php');
 /**
 * RQP question type class
 */
-class quiz_rqp_qtype extends quiz_default_questiontype {
+class question_rqp_qtype extends quiz_default_questiontype {
 
     /**
     * Name of the rqp question type
@@ -37,12 +37,12 @@ class quiz_rqp_qtype extends quiz_default_questiontype {
         global $CFG;
 
         // Check source type
-        if (!$type = get_record('quiz_rqp_types', 'id', $form->type)) {
+        if (!$type = get_record('question_rqp_types', 'id', $form->type)) {
             $result->notice = get_string('invalidsourcetype', 'quiz');
             return $result;
         }
 
-        // Create the object to be stored in quiz_rqp table
+        // Create the object to be stored in question_rqp table
         $options = new object;
         $options->question = $form->id;
         $options->type = $form->type;
@@ -58,7 +58,7 @@ class quiz_rqp_qtype extends quiz_default_questiontype {
         }
         if (is_soap_fault($item)) {
             $result->notice = get_string('invalidsource', 'quiz', $item);
-            quiz_rqp_debug_soap($item);
+            question_rqp_debug_soap($item);
             return $result;
         }
         if ($item->error) {
@@ -83,18 +83,18 @@ class quiz_rqp_qtype extends quiz_default_questiontype {
         $options->flags |= $item->adaptive ? REMOTE_ADAPTIVE : 0;
 
         // Save the options
-        if ($old = get_record('quiz_rqp', 'question', $form->id)) {
+        if ($old = get_record('question_rqp', 'question', $form->id)) {
             $old->type   = $options->type;
             $old->source = $options->source;
             $old->format = $options->format;
             $old->flags  = $options->flags;
             $old->maxscore  = $options->maxscore;
-            if (!update_record('quiz_rqp', $old)) {
+            if (!update_record('question_rqp', $old)) {
                 $result->error = "Could not update quiz rqp options! (id=$old->id)";
                 return $result;
             }
         } else {
-            if (!insert_record('quiz_rqp', $options)) {
+            if (!insert_record('question_rqp', $options)) {
                 $result->error = 'Could not insert quiz rqp options!';
                 return $result;
             }
@@ -113,10 +113,10 @@ class quiz_rqp_qtype extends quiz_default_questiontype {
     function get_question_options(&$question) {
 
         $options =& $question->options;
-        if (! ($options = get_record('quiz_rqp', 'question', $question->id))) {
+        if (! ($options = get_record('question_rqp', 'question', $question->id))) {
             return false;
         }
-        if (!$type = get_record('quiz_rqp_types', 'id', $options->type)) {
+        if (!$type = get_record('question_rqp_types', 'id', $options->type)) {
             return false;
         }
         $options->type_name = $type->name;
@@ -130,8 +130,8 @@ class quiz_rqp_qtype extends quiz_default_questiontype {
     * @param object $question  The question being deleted
     */
     function delete_question($question) {
-        delete_records("quiz_rqp", "question", $questionid);
-        //TODO: delete also the states from quiz_rqp_states
+        delete_records("question_rqp", "question", $questionid);
+        //TODO: delete also the states from question_rqp_states
         return true;
     }
 
@@ -180,7 +180,7 @@ class quiz_rqp_qtype extends quiz_default_questiontype {
     * Restores the session data and most recent responses for the given state
     *
     * This function loads any session data associated with the question session
-    * in the given state from the quiz_rqp_states table into the state object.
+    * in the given state from the question_rqp_states table into the state object.
     * @return bool            Indicates success or failure.
     * @param object $question The question object for the question including any
     *                         question type specific information.
@@ -190,13 +190,13 @@ class quiz_rqp_qtype extends quiz_default_questiontype {
     *                         (it is passed by reference).
     */
     function restore_session_and_responses(&$question, &$state) {
-        if (!$options = get_record('quiz_rqp_states', 'stateid', $state->id)) {
+        if (!$options = get_record('question_rqp_states', 'stateid', $state->id)) {
             return false;
         }
-        $state->responses = quiz_rqp_explode($options->responses);
+        $state->responses = question_rqp_explode($options->responses);
         $state->options->persistent_data = $options->persistent_data;
         $state->options->template_vars =
-         quiz_rqp_explode($options->template_vars, true);
+         question_rqp_explode($options->template_vars, true);
         return true;
     }
 
@@ -204,7 +204,7 @@ class quiz_rqp_qtype extends quiz_default_questiontype {
     * Saves the session data and responses for the question in a new state
     *
     * This function saves all session data from the state object into the
-    * quiz_rqp_states table
+    * question_rqp_states table
     * @return bool            Indicates success or failure.
     * @param object $question The question object for the question including
     *                         the question type specific information.
@@ -213,19 +213,19 @@ class quiz_rqp_qtype extends quiz_default_questiontype {
     */
     function save_session_and_responses(&$question, &$state) {
         $options->stateid = $state->id;
-        $options->responses = quiz_rqp_implode($state->responses);
+        $options->responses = question_rqp_implode($state->responses);
         $options->persistent_data = $state->options->persistent_data;
         $options->template_vars =
-         quiz_rqp_implode($state->options->template_vars);
+         question_rqp_implode($state->options->template_vars);
         if ($state->update) {
-            if (!$options->id = get_field('quiz_rqp_states', 'id', 'stateid', $state->id)) {
+            if (!$options->id = get_field('question_rqp_states', 'id', 'stateid', $state->id)) {
                 return false;
             }
-            if (!update_record('quiz_rqp_states', $options)) {
+            if (!update_record('question_rqp_states', $options)) {
                 return false;
             }
         } else {
-            if (!insert_record('quiz_rqp_states', $options)) {
+            if (!insert_record('question_rqp_states', $options)) {
                 return false;
             }
         }
@@ -264,7 +264,7 @@ class quiz_rqp_qtype extends quiz_default_questiontype {
             }
             if (is_soap_fault($output)) {
                 notify(get_string('errorrendering', 'quiz'));
-                quiz_rqp_debug_soap($output);
+                question_rqp_debug_soap($output);
                 unset($output);
                 exit;
             }
@@ -437,6 +437,6 @@ class quiz_rqp_qtype extends quiz_default_questiontype {
 //////////////////////////////////////////////////////////////////////////
 //// INITIATION - Without this line the question type is not in use... ///
 //////////////////////////////////////////////////////////////////////////
-$QTYPES[RQP]= new quiz_rqp_qtype();
+$QTYPES[RQP]= new question_rqp_qtype();
 
 ?>

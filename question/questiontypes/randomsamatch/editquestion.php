@@ -1,6 +1,6 @@
 <?php // $Id$
     if (!empty($question->id)) {
-        $options = get_record("quiz_randomsamatch", "question", $question->id);
+        $options = get_record("question_randomsamatch", "question", $question->id);
     } else {
         $options->choose = "";
         $options->shuffleanswers = 1;

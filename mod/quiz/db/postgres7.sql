@@ -101,10 +101,10 @@ CREATE UNIQUE INDEX prefix_quiz_attempts_uniqueid_uk ON prefix_quiz_attempts (un
 
 # --------------------------------------------------------
 #
-# Table structure for table prefix_quiz_calculated
+# Table structure for table prefix_question_calculated
 #
 
-CREATE TABLE prefix_quiz_calculated (
+CREATE TABLE prefix_question_calculated (
     id SERIAL8 PRIMARY KEY,
     question INT8  NOT NULL default '0',
     answer INT8  NOT NULL default '0',
@@ -114,8 +114,8 @@ CREATE TABLE prefix_quiz_calculated (
     correctanswerformat INT8 NOT NULL default '2'
 );
 
-CREATE INDEX prefix_quiz_calculated_question_idx ON prefix_quiz_calculated (question);
-CREATE INDEX prefix_quiz_calculated_answer_idx ON prefix_quiz_calculated (answer);
+CREATE INDEX prefix_question_calculated_question_idx ON prefix_question_calculated (question);
+CREATE INDEX prefix_question_calculated_answer_idx ON prefix_question_calculated (answer);
 
 
 # --------------------------------------------------------
@@ -139,11 +139,11 @@ CREATE INDEX prefix_question_categories_course_idx ON prefix_question_categories
 
 # --------------------------------------------------------
 #
-# Table structure for table prefix_quiz_dataset_definitions
+# Table structure for table prefix_question_dataset_definitions
 #
 
 
-CREATE TABLE prefix_quiz_dataset_definitions (
+CREATE TABLE prefix_question_dataset_definitions (
     id SERIAL8 PRIMARY KEY,
     category INT8  NOT NULL default '0',
     name varchar(255) NOT NULL default '',
@@ -152,29 +152,29 @@ CREATE TABLE prefix_quiz_dataset_definitions (
     itemcount INT8  NOT NULL default '0'
 );
 
-CREATE INDEX prefix_quiz_dataset_definitions_category_idx ON prefix_quiz_dataset_definitions (category);
+CREATE INDEX prefix_question_dataset_definitions_category_idx ON prefix_question_dataset_definitions (category);
 
 # --------------------------------------------------------
 #
-# Table structure for table prefix_quiz_dataset_items
+# Table structure for table prefix_question_dataset_items
 #
 
-CREATE TABLE prefix_quiz_dataset_items (
+CREATE TABLE prefix_question_dataset_items (
     id SERIAL8 PRIMARY KEY,
     definition INT8  NOT NULL default '0',
     number INT8  NOT NULL default '0',
     value varchar(255) NOT NULL default ''
 );
 
-CREATE INDEX prefix_quiz_dataset_items_definition_idx  ON prefix_quiz_dataset_items (definition);
+CREATE INDEX prefix_question_dataset_items_definition_idx  ON prefix_question_dataset_items (definition);
 
 # --------------------------------------------------------
 
 #
-# Table structure for table prefix_quiz_essay
+# Table structure for table prefix_question_essay
 #
 
-CREATE TABLE mdl_quiz_essay (
+CREATE TABLE mdl_question_essay (
     id serial NOT NULL,
     question integer NOT NULL DEFAULT 0,
     answer varchar(255) NOT NULL DEFAULT ''
@@ -184,10 +184,10 @@ CREATE TABLE mdl_quiz_essay (
 # --------------------------------------------------------
 
 #
-# Table structure for table prefix_quiz_essay_states
+# Table structure for table prefix_question_essay_states
 #
 
-CREATE TABLE mdl_quiz_essay_states (
+CREATE TABLE mdl_question_essay_states (
     id serial NOT NULL,
     stateid integer NOT NULL DEFAULT 0,
     graded integer NOT NULL DEFAULT 0,
@@ -214,54 +214,54 @@ CREATE INDEX prefix_quiz_grades_userid_idx ON prefix_quiz_grades (userid);
 # --------------------------------------------------------
 
 #
-# Table structure for table prefix_quiz_match
+# Table structure for table prefix_question_match
 #
 
-CREATE TABLE prefix_quiz_match (
+CREATE TABLE prefix_question_match (
   id SERIAL PRIMARY KEY,
   question integer NOT NULL default '0',
   subquestions varchar(255) NOT NULL default '',
   shuffleanswers integer NOT NULL default '1'
 );
 
-CREATE INDEX prefix_quiz_match_question_idx ON prefix_quiz_match (question);
+CREATE INDEX prefix_question_match_question_idx ON prefix_question_match (question);
 
 # --------------------------------------------------------
 
 #
-# Table structure for table prefix_quiz_match_sub
+# Table structure for table prefix_question_match_sub
 #
 
-CREATE TABLE prefix_quiz_match_sub (
+CREATE TABLE prefix_question_match_sub (
   id SERIAL PRIMARY KEY,
   code integer NOT NULL default '0',
   question integer NOT NULL default '0',
   questiontext text NOT NULL default '',
   answertext varchar(255) NOT NULL default ''
 );
-CREATE INDEX prefix_quiz_match_sub_question_idx ON prefix_quiz_match_sub (question);
+CREATE INDEX prefix_question_match_sub_question_idx ON prefix_question_match_sub (question);
 
 # --------------------------------------------------------
 
 #
-# Table structure for table prefix_quiz_multianswers
+# Table structure for table prefix_question_multianswer
 #
 
-CREATE TABLE prefix_quiz_multianswers (
+CREATE TABLE prefix_question_multianswer (
   id SERIAL PRIMARY KEY,
   question integer NOT NULL default '0',
   sequence text NOT NULL default ''
 );
 
-CREATE INDEX prefix_quiz_multianswers_question_idx ON prefix_quiz_multianswers (question);
+CREATE INDEX prefix_question_multianswer_question_idx ON prefix_question_multianswer (question);
 
 # --------------------------------------------------------
 
 #
-# Table structure for table prefix_quiz_multichoice
+# Table structure for table prefix_question_multichoice
 #
 
-CREATE TABLE prefix_quiz_multichoice (
+CREATE TABLE prefix_question_multichoice (
   id SERIAL PRIMARY KEY,
   question integer NOT NULL default '0',
   layout integer NOT NULL default '0',
@@ -270,7 +270,7 @@ CREATE TABLE prefix_quiz_multichoice (
   shuffleanswers integer NOT NULL default '1'
 );
 
-CREATE INDEX prefix_quiz_multichoice_question_idx ON prefix_quiz_multichoice (question);
+CREATE INDEX prefix_question_multichoice_question_idx ON prefix_question_multichoice (question);
 
 
 # --------------------------------------------------------
@@ -294,45 +294,45 @@ CREATE UNIQUE INDEX prefix_question_sessions_attempt_idx ON prefix_question_sess
 # --------------------------------------------------------
 
 #
-# Table structure for table prefix_quiz_numerical
+# Table structure for table prefix_question_numerical
 #
 
-CREATE TABLE prefix_quiz_numerical (
+CREATE TABLE prefix_question_numerical (
   id SERIAL PRIMARY KEY,
   question integer NOT NULL default '0',
   answer integer NOT NULL default '0',
   tolerance varchar(255) NOT NULL default '0.0'
 );
 
-CREATE INDEX prefix_quiz_numerical_answer_idx ON prefix_quiz_numerical (answer);
-CREATE INDEX prefix_quiz_numerical_question_idx ON prefix_quiz_numerical (question);
+CREATE INDEX prefix_question_numerical_answer_idx ON prefix_question_numerical (answer);
+CREATE INDEX prefix_question_numerical_question_idx ON prefix_question_numerical (question);
 
 # --------------------------------------------------------
 #
-# Table structure for table prefix_quiz_numerical_units
+# Table structure for table prefix_question_numerical_units
 #
 
-CREATE TABLE prefix_quiz_numerical_units (
+CREATE TABLE prefix_question_numerical_units (
     id SERIAL8 PRIMARY KEY,
     question INT8  NOT NULL default '0',
     multiplier decimal(40,20) NOT NULL default '1.00000000000000000000',
     unit varchar(50) NOT NULL default ''
 );
 
-CREATE INDEX prefix_quiz_numerical_units_question_idx ON prefix_quiz_numerical_units (question);
+CREATE INDEX prefix_question_numerical_units_question_idx ON prefix_question_numerical_units (question);
 
 # --------------------------------------------------------
 #
-# Table structure for table prefix_quiz_question_datasets
+# Table structure for table prefix_question_datasets
 #
 
-CREATE TABLE prefix_quiz_question_datasets (
+CREATE TABLE prefix_question_datasets (
     id SERIAL8 PRIMARY KEY,
     question INT8  NOT NULL default '0',
     datasetdefinition INT8  NOT NULL default '0'
 );
 
-CREATE INDEX prefix_quiz_question_datasets_question_datasetdefinition_idx  ON prefix_quiz_question_datasets (question,datasetdefinition);
+CREATE INDEX prefix_question_datasets_question_datasetdefinition_idx  ON prefix_question_datasets (question,datasetdefinition);
 
 # --------------------------------------------------------
 
@@ -394,25 +394,25 @@ CREATE INDEX prefix_question_category_idx ON prefix_question (category);
 # --------------------------------------------------------
 
 #
-# Table structure for table prefix_quiz_randomsamatch
+# Table structure for table prefix_question_randomsamatch
 #
 
-CREATE TABLE prefix_quiz_randomsamatch (
+CREATE TABLE prefix_question_randomsamatch (
   id SERIAL PRIMARY KEY,
   question integer NOT NULL default '0',
   choose integer NOT NULL default '4',
   shuffleanswers integer NOT NULL default '1'
 );
 
-CREATE INDEX prefix_quiz_randomsamatch_question_idx ON prefix_quiz_randomsamatch (question);
+CREATE INDEX prefix_question_randomsamatch_question_idx ON prefix_question_randomsamatch (question);
 
 # --------------------------------------------------------
 
 #
-# Table structure for table prefix_quiz_rqp
+# Table structure for table prefix_question_rqp
 #
 
-CREATE TABLE prefix_quiz_rqp (
+CREATE TABLE prefix_question_rqp (
   id SERIAL PRIMARY KEY,
   question integer NOT NULL default '0',
   type integer NOT NULL default '0',
@@ -422,16 +422,16 @@ CREATE TABLE prefix_quiz_rqp (
   maxscore integer NOT NULL default '1'
 );
 
-CREATE INDEX prefix_quiz_rqp_question_idx ON prefix_quiz_rqp (question);
+CREATE INDEX prefix_question_rqp_question_idx ON prefix_question_rqp (question);
 
 
 # --------------------------------------------------------
 
 #
-# Table structure for table prefix_quiz_rqp_states
+# Table structure for table prefix_question_rqp_states
 #
 
-CREATE TABLE prefix_quiz_rqp_states (
+CREATE TABLE prefix_question_rqp_states (
   id SERIAL PRIMARY KEY,
   stateid integer NOT NULL default '0',
   responses text NOT NULL,
@@ -442,10 +442,10 @@ CREATE TABLE prefix_quiz_rqp_states (
 # --------------------------------------------------------
 
 #
-# Table structure for table prefix_quiz_rqp_type
+# Table structure for table prefix_question_rqp_type
 #
 
-CREATE TABLE prefix_quiz_rqp_types (
+CREATE TABLE prefix_question_rqp_types (
   id SERIAL PRIMARY KEY,
   name varchar(255) NOT NULL default '',
   rendering_server varchar(255) NOT NULL default '',
@@ -453,22 +453,22 @@ CREATE TABLE prefix_quiz_rqp_types (
   flags integer NOT NULL default '0'
 );
 
-CREATE UNIQUE INDEX prefix_quiz_rqp_types_name_uk ON prefix_quiz_rqp_types (name);
+CREATE UNIQUE INDEX prefix_question_rqp_types_name_uk ON prefix_question_rqp_types (name);
 
 
 # --------------------------------------------------------
 
 #
-# Table structure for table prefix_quiz_shortanswer
+# Table structure for table prefix_question_shortanswer
 #
 
-CREATE TABLE prefix_quiz_shortanswer (
+CREATE TABLE prefix_question_shortanswer (
   id SERIAL PRIMARY KEY,
   question integer NOT NULL default '0',
   answers varchar(255) NOT NULL default '',
   usecase integer NOT NULL default '0'
 );
-CREATE INDEX prefix_quiz_shortanswer_question_idx ON prefix_quiz_shortanswer (question);
+CREATE INDEX prefix_question_shortanswer_question_idx ON prefix_question_shortanswer (question);
 
 
 # --------------------------------------------------------
@@ -497,16 +497,16 @@ CREATE INDEX prefix_question_states_question_idx ON prefix_question_states (ques
 
 # --------------------------------------------------------
 #
-# Table structure for table prefix_quiz_truefalse
+# Table structure for table prefix_question_truefalse
 #
 
-CREATE TABLE prefix_quiz_truefalse (
+CREATE TABLE prefix_question_truefalse (
   id SERIAL PRIMARY KEY,
   question integer NOT NULL default '0',
   trueanswer integer NOT NULL default '0',
   falseanswer integer NOT NULL default '0'
 );
-CREATE INDEX prefix_quiz_truefalse_question_idx ON prefix_quiz_truefalse (question);
+CREATE INDEX prefix_question_truefalse_question_idx ON prefix_question_truefalse (question);
 
 
 INSERT INTO prefix_log_display VALUES ('quiz', 'add', 'quiz', 'name');

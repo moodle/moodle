@@ -5,21 +5,21 @@
 /////////////
 
 /// QUESTION TYPE CLASS //////////////////
-class quiz_match_qtype extends quiz_default_questiontype {
+class question_match_qtype extends quiz_default_questiontype {
 
     function name() {
         return 'match';
     }
 
     function get_question_options(&$question) {
-        $question->options = get_record('quiz_match', 'question', $question->id);
-        $question->options->subquestions = get_records("quiz_match_sub", "question", $question->id, "id ASC" );
+        $question->options = get_record('question_match', 'question', $question->id);
+        $question->options->subquestions = get_records("question_match_sub", "question", $question->id, "id ASC" );
         return true;
     }
 
     function save_question_options($question) {
 
-        if (!$oldsubquestions = get_records("quiz_match_sub", "question", $question->id, "id ASC")) {
+        if (!$oldsubquestions = get_records("question_match_sub", "question", $question->id, "id ASC")) {
             $oldsubquestions = array();
         }
 
@@ -47,7 +47,7 @@ class quiz_match_qtype extends quiz_default_questiontype {
                 if ($subquestion = array_shift($oldsubquestions)) {  // Existing answer, so reuse it
                     $subquestion->questiontext = $questiontext;
                     $subquestion->answertext   = $answertext;
-                    if (!update_record("quiz_match_sub", $subquestion)) {
+                    if (!update_record("question_match_sub", $subquestion)) {
                         $result->error = "Could not insert quiz match subquestion! (id=$subquestion->id)";
                         return $result;
                     }
@@ -55,13 +55,13 @@ class quiz_match_qtype extends quiz_default_questiontype {
                     unset($subquestion);
                     // Determine a unique random code
                     $subquestion->code = rand(1,999999999);
-                    while (record_exists('quiz_match_sub', 'code', $subquestion->code)) {
+                    while (record_exists('question_match_sub', 'code', $subquestion->code)) {
                         $subquestion->code = rand();
                     }
                     $subquestion->question = $question->id;
                     $subquestion->questiontext = $questiontext;
                     $subquestion->answertext   = $answertext;
-                    if (!$subquestion->id = insert_record("quiz_match_sub", $subquestion)) {
+                    if (!$subquestion->id = insert_record("question_match_sub", $subquestion)) {
                         $result->error = "Could not insert quiz match subquestion!";
                         return $result;
                     }
@@ -73,7 +73,7 @@ class quiz_match_qtype extends quiz_default_questiontype {
         // delete old subquestions records
         if (!empty($oldsubquestions)) {
             foreach($oldsubquestions as $os) {
-                delete_records('quiz_match_sub', 'id', $os->id);
+                delete_records('question_match_sub', 'id', $os->id);
             }
         }
 
@@ -82,10 +82,10 @@ class quiz_match_qtype extends quiz_default_questiontype {
             return $result;
         }
 
-        if ($options = get_record("quiz_match", "question", $question->id)) {
+        if ($options = get_record("question_match", "question", $question->id)) {
             $options->subquestions = implode(",",$subquestions);
             $options->shuffleanswers = $question->shuffleanswers;
-            if (!update_record("quiz_match", $options)) {
+            if (!update_record("question_match", $options)) {
                 $result->error = "Could not update quiz match options! (id=$options->id)";
                 return $result;
             }
@@ -94,7 +94,7 @@ class quiz_match_qtype extends quiz_default_questiontype {
             $options->question = $question->id;
             $options->subquestions = implode(",",$subquestions);
             $options->shuffleanswers = $question->shuffleanswers;
-            if (!insert_record("quiz_match", $options)) {
+            if (!insert_record("question_match", $options)) {
                 $result->error = "Could not insert quiz match options!";
                 return $result;
             }
@@ -109,13 +109,13 @@ class quiz_match_qtype extends quiz_default_questiontype {
     * @param integer $question->id
     */
     function delete_question($question) {
-        delete_records("quiz_match", "question", $question->id);
-        delete_records("quiz_match_sub", "question", $question->id);
+        delete_records("question_match", "question", $question->id);
+        delete_records("question_match_sub", "question", $question->id);
         return true;
     }
 
     function create_session_and_responses(&$question, &$state, $cmoptions, $attempt) {
-        if (!$state->options->subquestions = get_records('quiz_match_sub',
+        if (!$state->options->subquestions = get_records('question_match_sub',
          'question', $question->id)) {
            notify('Error: Missing subquestions!');
            return false;
@@ -147,12 +147,12 @@ class quiz_match_qtype extends quiz_default_questiontype {
     function restore_session_and_responses(&$question, &$state) {
         // The serialized format for matching questions is a comma separated
         // list of question answer pairs (e.g. 1-1,2-3,3-2), where the ids of
-        // both refer to the id in the table quiz_match_sub.
+        // both refer to the id in the table question_match_sub.
         $responses = explode(',', $state->responses['']);
         $responses = array_map(create_function('$val',
          'return explode("-", $val);'), $responses);
 
-        if (!$questions = get_records('quiz_match_sub',
+        if (!$questions = get_records('question_match_sub',
          'question', $question->id)) {
            notify('Error: Missing subquestions!');
            return false;
@@ -337,6 +337,6 @@ class quiz_match_qtype extends quiz_default_questiontype {
 //////////////////////////////////////////////////////////////////////////
 //// INITIATION - Without this line the question type is not in use... ///
 //////////////////////////////////////////////////////////////////////////
-$QTYPES[MATCH]= new quiz_match_qtype();
+$QTYPES[MATCH]= new question_match_qtype();
 
 ?>

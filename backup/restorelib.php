@@ -596,15 +596,15 @@
     }
 
    /**
-    * Returns the best quiz category (id) found to restore one
-    * quiz category from a backup file. Works by stamp (since Moodle 1.1)
+    * Returns the best question category (id) found to restore one
+    * question category from a backup file. Works by stamp (since Moodle 1.1)
     * or by name (for older versions).
     *
-    * @param object  $cat      the quiz_categories record to be searched
+    * @param object  $cat      the question_categories record to be searched
     * @param integer $courseid the course where we are restoring
-    * @return integer the id of a existing quiz_category or 0 (not found)
+    * @return integer the id of a existing question_category or 0 (not found)
     */
-    function restore_get_best_quiz_category($cat, $courseid) {
+    function restore_get_best_question_category($cat, $courseid) {
         
         $found = 0;
 
@@ -618,10 +618,10 @@
         }
         
         //First shot. Try to get the category from the course being restored
-        if ($fcat = get_record('quiz_categories','course',$courseid,$searchfield,$searchvalue)) {
+        if ($fcat = get_record('question_categories','course',$courseid,$searchfield,$searchvalue)) {
             $found = $fcat->id;
         //Second shot. Try to obtain any concordant category and check its publish status and editing rights
-        } else if ($fcats = get_records('quiz_categories', $searchfield, $searchvalue, 'id', 'id, publish, course')) {
+        } else if ($fcats = get_records('question_categories', $searchfield, $searchvalue, 'id', 'id, publish, course')) {
             foreach ($fcats as $fcat) {
                 if ($fcat->publish == 1 && isteacheredit($fcat->course)) {
                     $found = $fcat->id;
@@ -1820,7 +1820,7 @@
     }
 
     //This function creates all the categories and questions
-    //from xml (STEP1 of quiz restore)
+    //from xml 
     function restore_create_questions($restore,$xml_file) {
 
         global $CFG, $db;
@@ -1844,7 +1844,7 @@
                 foreach ($info as $category) {
                     //Skip empty categories (some backups can contain them)
                     if (!empty($category->id)) {
-                        $catrestore = "quiz_restore_question_categories";
+                        $catrestore = "restore_question_categories";
                         if (function_exists($catrestore)) {
                             //print_object ($category);                                                //Debug
                             $status = $catrestore($category,$restore);
@@ -1859,20 +1859,20 @@
                 $categories = get_records_sql("SELECT old_id, new_id 
                                                FROM {$CFG->prefix}backup_ids
                                                WHERE backup_code = $restore->backup_unique_code AND
-                                                     table_name = 'quiz_categories'");
+                                                     table_name = 'question_categories'");
                 if ($categories) {
                     foreach ($categories as $category) {
-                        $restoredcategory = get_record('quiz_categories','id',$category->new_id);
+                        $restoredcategory = get_record('question_categories','id',$category->new_id);
                         if ($restoredcategory->parent != 0) {
                             //echo 'Parent '.$restoredcategory->parent.' is ';           //Debug
-                            $idcat = backup_getid($restore->backup_unique_code,'quiz_categories',$restoredcategory->parent);
+                            $idcat = backup_getid($restore->backup_unique_code,'question_categories',$restoredcategory->parent);
                             if ($idcat->new_id) {
                                 $restoredcategory->parent = $idcat->new_id;
                             } else {
                                 $restoredcategory->parent = 0;
                             }
                             //echo $restoredcategory->parent.' now<br />';  //Debug
-                            update_record('quiz_categories', $restoredcategory);
+                            update_record('question_categories', $restoredcategory);
                         }
                     }
                 }
@@ -4153,7 +4153,7 @@
                     //Get id from data
                     $category_id = $data["QUESTION_CATEGORY"]["#"]["ID"]["0"]["#"];
                     //Save to db
-                    $status = backup_putid($this->preferences->backup_unique_code,"quiz_categories",$category_id,
+                    $status = backup_putid($this->preferences->backup_unique_code,"question_categories",$category_id,
                                      null,$data);
                     //Create returning info
                     $ret_info->id = $category_id;
@@ -4822,6 +4822,8 @@
                 }
             }
         }
+        // The following will be enabled once the quiz and question restore code are separated
+        //include_once("$CFG->dirroot/question/restorelib.php");
 
         if (!defined('RESTORE_SILENTLY')) {
             //Start the main table

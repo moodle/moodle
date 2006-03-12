@@ -14,7 +14,7 @@
         error("Could not load the options for this question");
     }
 
-    if (!$type = get_record('quiz_rqp_types', 'id', $question->options->type)) {
+    if (!$type = get_record('question_rqp_types', 'id', $question->options->type)) {
         error("Invalid remote question type");
     }
 

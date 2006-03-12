@@ -48,7 +48,7 @@ if (empty($form)) {
         $units[$i]->unit = '';
     }
     if (!empty($question->id) and $unitsraw = get_records(
-            'quiz_numerical_units', 'question', $question->id)) {
+            'question_numerical_units', 'question', $question->id)) {
         /// Find default unit and have it put in the zero slot
         /// This procedure might be overridden later when
         /// the unit is stripped form an answer...

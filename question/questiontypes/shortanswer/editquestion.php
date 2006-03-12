@@ -1,6 +1,6 @@
 <?php // $Id$
     if (!empty($question->id)) {
-        $options = get_record("quiz_shortanswer", "question", $question->id);
+        $options = get_record("question_shortanswer", "question", $question->id);
     } else {
         $options->usecase = 0;
     }

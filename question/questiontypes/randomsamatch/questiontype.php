@@ -8,7 +8,7 @@
 /// can not also be used by a random question
 
 /// QUESTION TYPE CLASS //////////////////
-class quiz_randomsamatch_qtype extends quiz_match_qtype {
+class question_randomsamatch_qtype extends question_match_qtype {
 /// Extends MATCH as there are quite a few simularities...
 
     function name() {
@@ -16,7 +16,7 @@ class quiz_randomsamatch_qtype extends quiz_match_qtype {
     }
 
     function get_question_options(&$question) {
-        if (!$question->options = get_record('quiz_randomsamatch', 'question', $question->id)) {
+        if (!$question->options = get_record('question_randomsamatch', 'question', $question->id)) {
             notify('Error: Missing question options!');
             return false;
         }
@@ -39,15 +39,15 @@ class quiz_randomsamatch_qtype extends quiz_match_qtype {
             return $result;
         }
 
-        if ($existing = get_record("quiz_randomsamatch",
+        if ($existing = get_record("question_randomsamatch",
                                    "question", $options->question)) {
             $options->id = $existing->id;
-            if (!update_record("quiz_randomsamatch", $options)) {
+            if (!update_record("question_randomsamatch", $options)) {
                 $result->error = "Could not update quiz randomsamatch options!";
                 return $result;
             }
         } else {
-            if (!insert_record("quiz_randomsamatch", $options)) {
+            if (!insert_record("question_randomsamatch", $options)) {
                 $result->error = "Could not insert quiz randomsamatch options!";
                 return $result;
             }
@@ -62,7 +62,7 @@ class quiz_randomsamatch_qtype extends quiz_match_qtype {
     * @param object $question  The question being deleted
     */
     function delete_question($question) {
-        delete_records("quiz_randomsamatch", "question", $question->id);
+        delete_records("question_randomsamatch", "question", $question->id);
         return true;
     }
 
@@ -248,6 +248,6 @@ class quiz_randomsamatch_qtype extends quiz_match_qtype {
 //////////////////////////////////////////////////////////////////////////
 //// INITIATION - Without this line the question type is not in use... ///
 //////////////////////////////////////////////////////////////////////////
-$QTYPES[RANDOMSAMATCH]= new quiz_randomsamatch_qtype();
+$QTYPES[RANDOMSAMATCH]= new question_randomsamatch_qtype();
 
 ?>

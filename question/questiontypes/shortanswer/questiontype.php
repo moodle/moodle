@@ -11,7 +11,7 @@
 /// question type embeddable within a multianswer (cloze) question
 ///
 
-class quiz_shortanswer_qtype extends quiz_default_questiontype {
+class question_shortanswer_qtype extends quiz_default_questiontype {
 
     function name() {
         return 'shortanswer';
@@ -20,7 +20,7 @@ class quiz_shortanswer_qtype extends quiz_default_questiontype {
     function get_question_options(&$question) {
         // Get additional information from database
         // and attach it to the question object
-        if (!$question->options = get_record('quiz_shortanswer', 'question', $question->id)) {
+        if (!$question->options = get_record('question_shortanswer', 'question', $question->id)) {
             notify('Error: Missing question options!');
             return false;
         }
@@ -71,10 +71,10 @@ class quiz_shortanswer_qtype extends quiz_default_questiontype {
             }
         }
 
-        if ($options = get_record("quiz_shortanswer", "question", $question->id)) {
+        if ($options = get_record("question_shortanswer", "question", $question->id)) {
             $options->answers = implode(",",$answers);
             $options->usecase = $question->usecase;
-            if (!update_record("quiz_shortanswer", $options)) {
+            if (!update_record("question_shortanswer", $options)) {
                 $result->error = "Could not update quiz shortanswer options! (id=$options->id)";
                 return $result;
             }
@@ -83,7 +83,7 @@ class quiz_shortanswer_qtype extends quiz_default_questiontype {
             $options->question = $question->id;
             $options->answers = implode(",",$answers);
             $options->usecase = $question->usecase;
-            if (!insert_record("quiz_shortanswer", $options)) {
+            if (!insert_record("question_shortanswer", $options)) {
                 $result->error = "Could not insert quiz shortanswer options!";
                 return $result;
             }
@@ -113,8 +113,8 @@ class quiz_shortanswer_qtype extends quiz_default_questiontype {
     * @param object $question  The question being deleted
     */
     function delete_question($question) {
-        delete_records("quiz_shortanswer", "question", $question->id);
-        //TODO: delete also the states from quiz_rqp_states
+        delete_records("question_shortanswer", "question", $question->id);
+        //TODO: delete also the states from question_rqp_states
         return true;
     }
 
@@ -246,6 +246,6 @@ class quiz_shortanswer_qtype extends quiz_default_questiontype {
 //////////////////////////////////////////////////////////////////////////
 //// INITIATION - Without this line the question type is not in use... ///
 //////////////////////////////////////////////////////////////////////////
-$QTYPES[SHORTANSWER]= new quiz_shortanswer_qtype();
+$QTYPES[SHORTANSWER]= new question_shortanswer_qtype();
 
 ?>

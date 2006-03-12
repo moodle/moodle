@@ -115,6 +115,8 @@ if (self.name == 'editquestion') {
         $modform->grades = quiz_get_all_question_grades($modform);
     }
 
+    $SESSION->returnurl = $FULLME;
+
 /// Now, check for commands on this page and modify variables as necessary
 
     if (isset($_REQUEST['up']) and confirm_sesskey()) { /// Move the given question up a slot

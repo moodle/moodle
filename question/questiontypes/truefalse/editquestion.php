@@ -1,7 +1,7 @@
 <?php // $Id$
 
     if (!empty($question->id)) {
-        $options = get_record("quiz_truefalse", "question", "$question->id");
+        $options = get_record("question_truefalse", "question", "$question->id");
     }
     if (!empty($options->trueanswer)) {
         $true    = get_record("question_answers", "id", $options->trueanswer);

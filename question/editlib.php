@@ -35,7 +35,7 @@ $QTYPE_MENU = array ( MULTICHOICE   => get_string("multichoice", "quiz"),
                               ESSAY         => get_string("essay", "quiz")
                               );
 // add remote question types
-if ($rqp_types = get_records('quiz_rqp_types')) {
+if ($rqp_types = get_records('question_rqp_types')) {
     foreach($rqp_types as $type) {
         $QTYPE_MENU[100+$type->id] = $type->name;
     }

@@ -10,7 +10,7 @@ define("LITERAL", "1");
 define("FILE", "2");
 define("LINK", "3");
 
-class quiz_dataset_dependent_questiontype extends quiz_default_questiontype {
+class question_dataset_dependent_questiontype extends quiz_default_questiontype {
 
     var $virtualqtype = false;
 
@@ -28,8 +28,8 @@ class quiz_dataset_dependent_questiontype extends quiz_default_questiontype {
         global $CFG;
         if(!$maxnumber = (int)get_field_sql(
                             "SELECT MAX(a.itemcount)
-                            FROM {$CFG->prefix}quiz_dataset_definitions a,
-                                 {$CFG->prefix}quiz_question_datasets b
+                            FROM {$CFG->prefix}question_dataset_definitions a,
+                                 {$CFG->prefix}question_datasets b
                             WHERE b.question = $question->id
                             AND   a.id = b.datasetdefinition")) {
             error("Couldn't get the specified dataset for a calculated " .
@@ -125,9 +125,9 @@ class quiz_dataset_dependent_questiontype extends quiz_default_questiontype {
         // dataset item on this question...
         global $CFG;
         if (get_record_sql(" SELECT *
-                 FROM {$CFG->prefix}quiz_dataset_items i,
-                      {$CFG->prefix}quiz_dataset_definitions d,
-                      {$CFG->prefix}quiz_question_datasets q
+                 FROM {$CFG->prefix}question_dataset_items i,
+                      {$CFG->prefix}question_dataset_definitions d,
+                      {$CFG->prefix}question_datasets q
                 WHERE i.value = '$relativefilepath'
                   AND d.id = i.definition AND d.type = 2
                   AND d.id = q.datasetdefinition
@@ -223,8 +223,8 @@ class quiz_dataset_dependent_questiontype extends quiz_default_questiontype {
         if (!empty($form->id)) {
             global $CFG;
             $sql = "SELECT i.*
-                    FROM {$CFG->prefix}quiz_question_datasets d,
-                         {$CFG->prefix}quiz_dataset_definitions i
+                    FROM {$CFG->prefix}question_datasets d,
+                         {$CFG->prefix}question_dataset_definitions i
                     WHERE d.question = '$form->id'
                     AND   d.datasetdefinition = i.id
                    ";
@@ -265,13 +265,13 @@ class quiz_dataset_dependent_questiontype extends quiz_default_questiontype {
             if (isset($datasetdef->id)) {
                 // This dataset is not used any more, delete it
                 if (!isset($tmpdatasets[$defid])) {
-                    delete_records('quiz_question_datasets',
+                    delete_records('question_datasets',
                                'question', $form->id,
                                'datasetdefinition', $datasetdef->id);
                     if ($datasetdef->category == 0) { // Question local dataset
-                        delete_records('quiz_dataset_definitions',
+                        delete_records('question_dataset_definitions',
                          'id', $datasetdef->id);
-                        delete_records('quiz_dataset_items',
+                        delete_records('question_dataset_items',
                          'definition', $datasetdef->id);
                     }
                 }
@@ -281,7 +281,7 @@ class quiz_dataset_dependent_questiontype extends quiz_default_questiontype {
             }
 
             if (!$datasetdef->id = insert_record(
-                    'quiz_dataset_definitions', $datasetdef)) {
+                    'question_dataset_definitions', $datasetdef)) {
                 error("Unable to create dataset $defid");
             }
 
@@ -292,7 +292,7 @@ class quiz_dataset_dependent_questiontype extends quiz_default_questiontype {
                 // can manage to automatically take care of
                 // some possible realtime concurrence
                 if ($olderdatasetdefs = get_records_select(
-                        'quiz_dataset_definitions',
+                        'question_dataset_definitions',
                         "type = '$datasetdef->type'
                         AND name = '$datasetdef->name'
                         AND category = '$datasetdef->category'
@@ -300,7 +300,7 @@ class quiz_dataset_dependent_questiontype extends quiz_default_questiontype {
                         ORDER BY id DESC")) {
 
                     while ($olderdatasetdef = array_shift($olderdatasetdefs)) {
-                        delete_records('quiz_dataset_definitions',
+                        delete_records('question_dataset_definitions',
                                    'id', $datasetdef->id);
                         $datasetdef = $olderdatasetdef;
                     }
@@ -311,7 +311,7 @@ class quiz_dataset_dependent_questiontype extends quiz_default_questiontype {
             $questiondataset = new stdClass;
             $questiondataset->question = $form->id;
             $questiondataset->datasetdefinition = $datasetdef->id;
-            if (!insert_record('quiz_question_datasets',
+            if (!insert_record('question_datasets',
                                $questiondataset)) {
                 error("Unable to create relation to dataset $name");
             }
@@ -322,13 +322,13 @@ class quiz_dataset_dependent_questiontype extends quiz_default_questiontype {
         // to datasets in other categories:
         if (!empty($datasetdefinitions)) {
             foreach ($datasetdefinitions as $def) {
-                delete_records('quiz_question_datasets',
+                delete_records('question_datasets',
                                'question', $form->id,
                                'datasetdefinition', $def->id);
 
                 if ($def->category == 0) { // Question local dataset
-                    delete_records('quiz_dataset_definitions', 'id', $def->id);
-                    delete_records('quiz_dataset_items',
+                    delete_records('question_dataset_definitions', 'id', $def->id);
+                    delete_records('question_dataset_items',
                                    'definition', $def->id);
                 }
             }
@@ -455,9 +455,9 @@ class quiz_dataset_dependent_questiontype extends quiz_default_questiontype {
         global $CFG;
         if (!$dataset = get_records_sql(
                         "SELECT d.name, i.value
-                        FROM {$CFG->prefix}quiz_dataset_definitions d,
-                             {$CFG->prefix}quiz_dataset_items i,
-                             {$CFG->prefix}quiz_question_datasets q
+                        FROM {$CFG->prefix}question_dataset_definitions d,
+                             {$CFG->prefix}question_dataset_items i,
+                             {$CFG->prefix}question_datasets q
                         WHERE q.question = $question->id
                         AND q.datasetdefinition = d.id
                         AND d.id = i.definition
@@ -528,8 +528,8 @@ class quiz_dataset_dependent_questiontype extends quiz_default_questiontype {
         global $CFG;
         $currentdatasetdef = get_record_sql(
                 "SELECT a.*
-                   FROM {$CFG->prefix}quiz_dataset_definitions a,
-                        {$CFG->prefix}quiz_question_datasets b
+                   FROM {$CFG->prefix}question_dataset_definitions a,
+                        {$CFG->prefix}question_datasets b
                   WHERE a.id = b.datasetdefinition
                     AND b.question = '$form->id'
                     AND a.name = '$name'")
@@ -547,8 +547,8 @@ class quiz_dataset_dependent_questiontype extends quiz_default_questiontype {
         // Construct question category options
         $categorydatasetdefs = get_records_sql(
                 "SELECT a.type, a.id
-                   FROM {$CFG->prefix}quiz_dataset_definitions a,
-                        {$CFG->prefix}quiz_question_datasets b
+                   FROM {$CFG->prefix}question_dataset_definitions a,
+                        {$CFG->prefix}question_datasets b
                   WHERE a.id = b.datasetdefinition
                     AND a.category = '$form->category'
                     AND a.name = '$name'");

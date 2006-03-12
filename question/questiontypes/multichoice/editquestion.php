@@ -1,7 +1,7 @@
 <?php // $Id$
 
     if (!empty($question->id)) {
-        $options = get_record("quiz_multichoice", "question", $question->id);
+        $options = get_record("question_multichoice", "question", $question->id);
     } else {
         $options->single = 1;
         $options->shuffleanswers = 1;

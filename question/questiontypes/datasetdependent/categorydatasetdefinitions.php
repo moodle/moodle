@@ -43,12 +43,12 @@
             $definition->type = $form->type[$key];
 
             if ($definition->id) {
-                if (!update_record('quiz_dataset_definitions', $definition)) {
+                if (!update_record('question_dataset_definitions', $definition)) {
                     notify("Could not update dataset item definition");
                 }
 
             } else if ($definition->name) {
-                if (!insert_record('quiz_dataset_definitions', $definition)) {
+                if (!insert_record('question_dataset_definitions', $definition)) {
                     notify("Could not insert dataset item defintion");
                 }
 
@@ -76,7 +76,7 @@
 
     echo "<table cellpadding=\"5\">";
 
-    $definitions = get_records('quiz_dataset_definitions',
+    $definitions = get_records('question_dataset_definitions',
                                'category',
                                $category->id);
     for ($idef = 1, $total = max(5, count($definitions)) ; $idef <= $total ; ++$idef) {

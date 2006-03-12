@@ -13,18 +13,18 @@
     //           |                        |                    |                   |             |.......................................
     //           |                        |                    |                   |             |                                      .
     //           |                        |                    |                   |             |                                      .
-    //      quiz_attempts        quiz_grades       quiz_question_grades   quiz_question_versions |    ----quiz_question_datasets----    .
+    //      quiz_attempts        quiz_grades       quiz_question_grades   quiz_question_versions |    ----question_datasets----    .
     // (UL,pk->id, fk->quiz) (UL,pk->id,fk->quiz)  (CL,pk->id,fk->quiz)    (CL,pk->id,fk->quiz)  |    |  (CL,pk->id,fk->question,  |    .
     //             |                                              |                      .       |    |   fk->dataset_definition)  |    .
     //             |                                              |                      .       |    |                            |    .
     //             |                                              |                      .       |    |                            |    .
     //             |                                              |                      .       |    |                            |    .
-    //       quiz_responses                                       |                      question                       quiz_dataset_definitions
+    //       quiz_responses                                       |                      question                       question_dataset_definitions
     //  (UL,pk->id, fk->attempt)----------------------------------------------------(CL,pk->id,fk->category,files)            (CL,pk->id,fk->category)
     //                                                                                           |                                      |
     //                                                                                           |                                      |
     //                                                                                           |                                      |
-    //                                                                                           |                               quiz_dataset_items
+    //                                                                                           |                               question_dataset_items
     //                                                                                           |                            (CL,pk->id,fk->definition)
     //                                                                                           |
     //                                                                                           |
@@ -32,22 +32,22 @@
     //             --------------------------------------------------------------------------------------------------------------
     //             |             |              |              |                       |                  |                     |
     //             |             |              |              |                       |                  |                     |
-    //             |             |              |              |                 quiz_calculated          |                     |    quiz_randomsamatch
-    //      quiz_truefalse       |       quiz_multichoice      |             (CL,pl->id,fk->question)     |                     |--(CL,pl->id,fk->question)
+    //             |             |              |              |                 question_calculated          |                     |    question_randomsamatch
+    //      question_truefalse       |       question_multichoice      |             (CL,pl->id,fk->question)     |                     |--(CL,pl->id,fk->question)
     // (CL,pl->id,fk->question)  |   (CL,pl->id,fk->question)  |                       .                  |                     |
     //             .             |              .              |                       .                  |                     |
-    //             .      quiz_shortanswer      .       quiz_numerical                 .            quiz_multianswer.           |
-    //             .  (CL,pl->id,fk->question)  .  (CL,pl->id,fk->question)            .        (CL,pl->id,fk->question)        |         quiz_match
+    //             .      question_shortanswer      .       question_numerical                 .            question_multianswer.           |
+    //             .  (CL,pl->id,fk->question)  .  (CL,pl->id,fk->question)            .        (CL,pl->id,fk->question)        |         question_match
     //             .             .              .              .                       .                  .                     |--(CL,pl->id,fk->question)
     //             .             .              .              .                       .                  .                     |             .
     //             .             .              .              .                       .                  .                     |             .
     //             .             .              .              .                       .                  .                     |             .
-    //             .             .              .              .                       .                  .                     |       quiz_match_sub
+    //             .             .              .              .                       .                  .                     |       question_match_sub
     //             .             .              .              .                       .                  .                     |--(CL,pl->id,fk->question)
     //             ........................................................................................                     |
     //                                                   .                                                                      |
     //                                                   .                                                                      |
-    //                                                   .                                                                      |    quiz_numerical_units
+    //                                                   .                                                                      |    question_numerical_units
     //                                                question_answers                                                              |--(CL,pl->id,fk->question)
     //                                         (CL,pk->id,fk->question)----------------------------------------------------------
     //
@@ -64,20 +64,20 @@
     // 1.-We restore every category and their questions (complete structure). It includes this tables:
     //     - question_categories
     //     - question
-    //     - quiz_truefalse
-    //     - quiz_shortanswer
-    //     - quiz_multianswer
-    //     - quiz_multichoice
-    //     - quiz_numerical
-    //     - quiz_randomsamatch
-    //     - quiz_match
-    //     - quiz_match_sub
-    //     - quiz_calculated
+    //     - question_truefalse
+    //     - question_shortanswer
+    //     - question_multianswer
+    //     - question_multichoice
+    //     - question_numerical
+    //     - question_randomsamatch
+    //     - question_match
+    //     - question_match_sub
+    //     - question_calculated
     //     - question_answers
-    //     - quiz_numerical_units
-    //     - quiz_question_datasets
-    //     - quiz_dataset_definitions
-    //     - quiz_dataset_items
+    //     - question_numerical_units
+    //     - question_datasets
+    //     - question_dataset_definitions
+    //     - question_dataset_items
     //    All this backup info have its own section in moodle.xml (QUESTION_CATEGORIES) and it's generated
     //    before every module backup standard invocation. And only if to restore quizzes has been selected !!
     //    It's invoked with quiz_restore_question_categories. (course independent).
@@ -458,7 +458,7 @@
             //print_object ($GLOBALS['traverse_array']);                                                  //Debug
             //$GLOBALS['traverse_array']="";                                                              //Debug
 
-            //Now, build the QUIZ_SHORTANSWER record structure
+            //Now, build the question_shortanswer record structure
             $shortanswer->question = $new_question_id;
             $shortanswer->answers = backup_todb($sho_info['#']['ANSWERS']['0']['#']);
             $shortanswer->usecase = backup_todb($sho_info['#']['USECASE']['0']['#']);
@@ -485,10 +485,10 @@
             //We have the answers field recoded to its new ids
             $shortanswer->answers = $answers_field;
 
-            //The structure is equal to the db, so insert the quiz_shortanswer
+            //The structure is equal to the db, so insert the question_shortanswer
             //Only if there aren't restrictions or there are restriction concordance
             if (empty($restrictto) || (!empty($restrictto) && $shortanswer->answers == $restrictto)) {
-                $newid = insert_record ("quiz_shortanswer",$shortanswer);
+                $newid = insert_record ("question_shortanswer",$shortanswer);
             } 
 
             //Do some output
@@ -526,7 +526,7 @@
             //print_object ($GLOBALS['traverse_array']);                                                  //Debug
             //$GLOBALS['traverse_array']="";                                                              //Debug
 
-            //Now, build the QUIZ_TRUEFALSE record structure
+            //Now, build the question_truefalse record structure
             $truefalse->question = $new_question_id;
             $truefalse->trueanswer = backup_todb($tru_info['#']['TRUEANSWER']['0']['#']);
             $truefalse->falseanswer = backup_todb($tru_info['#']['FALSEANSWER']['0']['#']);
@@ -543,8 +543,8 @@
                 $truefalse->falseanswer = $answer->new_id;
             }
 
-            //The structure is equal to the db, so insert the quiz_truefalse
-            $newid = insert_record ("quiz_truefalse",$truefalse);
+            //The structure is equal to the db, so insert the question_truefalse
+            $newid = insert_record ("question_truefalse",$truefalse);
 
             //Do some output
             if (($i+1) % 50 == 0) {
@@ -581,7 +581,7 @@
             //print_object ($GLOBALS['traverse_array']);                                                  //Debug
             //$GLOBALS['traverse_array']="";                                                              //Debug
 
-            //Now, build the QUIZ_MULTICHOICE record structure
+            //Now, build the question_multichoice record structure
             $multichoice->question = $new_question_id;
             $multichoice->layout = backup_todb($mul_info['#']['LAYOUT']['0']['#']);
             $multichoice->answers = backup_todb($mul_info['#']['ANSWERS']['0']['#']);
@@ -609,10 +609,10 @@
             //We have the answers field recoded to its new ids
             $multichoice->answers = $answers_field;
 
-            //The structure is equal to the db, so insert the quiz_shortanswer
+            //The structure is equal to the db, so insert the question_shortanswer
             //Only if there aren't restrictions or there are restriction concordance
             if (empty($restrictto) || (!empty($restrictto) && $multichoice->answers == $restrictto)) {
-                $newid = insert_record ("quiz_multichoice",$multichoice);
+                $newid = insert_record ("question_multichoice",$multichoice);
             }
 
             //Do some output
@@ -657,13 +657,13 @@
             //We'll need this later!!
             $oldid = backup_todb($mat_info['#']['ID']['0']['#']);
 
-            //Now, build the QUIZ_MATCH_SUB record structure
+            //Now, build the question_match_SUB record structure
             $match_sub->question = $new_question_id;
             $match_sub->questiontext = backup_todb($mat_info['#']['QUESTIONTEXT']['0']['#']);
             $match_sub->answertext = backup_todb($mat_info['#']['ANSWERTEXT']['0']['#']);
 
-            //The structure is equal to the db, so insert the quiz_match_sub
-            $newid = insert_record ("quiz_match_sub",$match_sub);
+            //The structure is equal to the db, so insert the question_match_sub
+            $newid = insert_record ("question_match_sub",$match_sub);
 
             //Do some output
             if (($i+1) % 50 == 0) {
@@ -678,7 +678,7 @@
 
             if ($newid) {
                 //We have the newid, update backup_ids
-                backup_putid($restore->backup_unique_code,"quiz_match_sub",$oldid,
+                backup_putid($restore->backup_unique_code,"question_match_sub",$oldid,
                              $newid);
                 //We have a new match_sub, append it to subquestions_field
                 if ($in_first) {
@@ -696,8 +696,8 @@
         $match->question = $new_question_id;
         $match->subquestions = $subquestions_field;
 
-        //The structure is equal to the db, so insert the quiz_match_sub
-        $newid = insert_record ("quiz_match",$match);
+        //The structure is equal to the db, so insert the question_match_sub
+        $newid = insert_record ("question_match",$match);
 
         if (!$newid) {
             $status = false;
@@ -729,7 +729,7 @@
             //We'll need this later!!
             $oldid = backup_todb($mat_info['#']['ID']['0']['#']);
 
-            //Now, build the QUIZ_MATCH_SUB record structure
+            //Now, build the question_match_SUB record structure
             $match_sub->question = $new_question_id;
             $match_sub->questiontext = backup_todb($mat_info['#']['QUESTIONTEXT']['0']['#']);
             $match_sub->answertext = backup_todb($mat_info['#']['ANSWERTEXT']['0']['#']);
@@ -740,7 +740,7 @@
             //mappings in backup_ids to use them later where restoring responses (user level).
 
             //Get the match_sub from DB (by question, questiontext and answertext)
-            $db_match_sub = get_record ("quiz_match_sub","question",$new_question_id,
+            $db_match_sub = get_record ("question_match_sub","question",$new_question_id,
                                                       "questiontext",$match_sub->questiontext,
                                                       "answertext",$match_sub->answertext);
             //Do some output
@@ -757,7 +757,7 @@
             //We have the database match_sub, so update backup_ids
             if ($db_match_sub) {
                 //We have the newid, update backup_ids
-                backup_putid($restore->backup_unique_code,"quiz_match_sub",$oldid,
+                backup_putid($restore->backup_unique_code,"question_match_sub",$oldid,
                              $db_match_sub->id);
             } else {
                 $status = false;
@@ -783,12 +783,12 @@
             //print_object ($GLOBALS['traverse_array']);                                                  //Debug
             //$GLOBALS['traverse_array']="";                                                              //Debug
 
-            //Now, build the QUIZ_RANDOMSAMATCH record structure
+            //Now, build the question_randomsamatch record structure
             $randomsamatch->question = $new_question_id;
             $randomsamatch->choose = backup_todb($ran_info['#']['CHOOSE']['0']['#']);
 
-            //The structure is equal to the db, so insert the quiz_randomsamatch
-            $newid = insert_record ("quiz_randomsamatch",$randomsamatch);
+            //The structure is equal to the db, so insert the question_randomsamatch
+            $newid = insert_record ("question_randomsamatch",$randomsamatch);
 
             //Do some output
             if (($i+1) % 50 == 0) {
@@ -825,7 +825,7 @@
             //print_object ($GLOBALS['traverse_array']);                                                  //Debug
             //$GLOBALS['traverse_array']="";                                                              //Debug
 
-            //Now, build the QUIZ_NUMERICAL record structure
+            //Now, build the question_numerical record structure
             $numerical->question = $new_question_id;
             $numerical->answer = backup_todb($num_info['#']['ANSWER']['0']['#']);
             $numerical->min = backup_todb($num_info['#']['MIN']['0']['#']);
@@ -844,10 +844,10 @@
             //We have to calculate the tolerance field of the numerical question
             $numerical->tolerance = ($numerical->max - $numerical->min)/2;
 
-            //The structure is equal to the db, so insert the quiz_numerical
+            //The structure is equal to the db, so insert the question_numerical
             //Only if there aren't restrictions or there are restriction concordance
             if (empty($restrictto) || (!empty($restrictto) && in_array($numerical->answer,explode(",",$restrictto)))) {
-                $newid = insert_record ("quiz_numerical",$numerical);
+                $newid = insert_record ("question_numerical",$numerical);
             }
 
             //Do some output
@@ -890,7 +890,7 @@
             //print_object ($GLOBALS['traverse_array']);                                                  //Debug
             //$GLOBALS['traverse_array']="";                                                              //Debug
 
-            //Now, build the QUIZ_CALCULATED record structure
+            //Now, build the question_calculated record structure
             $calculated->question = $new_question_id;
             $calculated->answer = backup_todb($cal_info['#']['ANSWER']['0']['#']);
             $calculated->tolerance = backup_todb($cal_info['#']['TOLERANCE']['0']['#']);
@@ -909,8 +909,8 @@
                 $calculated->correctanswerformat = 2;
             }
 
-            //The structure is equal to the db, so insert the quiz_calculated
-            $newid = insert_record ("quiz_calculated",$calculated);
+            //The structure is equal to the db, so insert the question_calculated
+            $newid = insert_record ("question_calculated",$calculated);
 
             //Do some output
             if (($i+1) % 50 == 0) {
@@ -968,7 +968,7 @@
             //We need this later
             $oldid = backup_todb($mul_info['#']['ID']['0']['#']);
 
-            //Now, build the QUIZ_MULTIANSWER record structure
+            //Now, build the question_multianswer record structure
             $multianswer->question = $new_question_id;
             $multianswer->answers = backup_todb($mul_info['#']['ANSWERS']['0']['#']);
             $multianswer->positionkey = backup_todb($mul_info['#']['POSITIONKEY']['0']['#']);
@@ -1051,7 +1051,7 @@
             $multianswerdb = new object;
             $multianswerdb->question = $parentquestion->id;
             $multianswerdb->sequence = implode(",",$createdquestions);
-            $mid = insert_record('quiz_multianswers', $multianswerdb);
+            $mid = insert_record('question_multianswer', $multianswerdb);
   
             if (!$mid) {
                 $status = false;
@@ -1077,13 +1077,13 @@
             //print_object ($GLOBALS['traverse_array']);                                                  //Debug
             //$GLOBALS['traverse_array']="";                                                              //Debug
 
-            //Now, build the QUIZ_NUMERICAL_UNITS record structure
+            //Now, build the question_numerical_UNITS record structure
             $numerical_unit->question = $new_question_id;
             $numerical_unit->multiplier = backup_todb($nu_info['#']['MULTIPLIER']['0']['#']);
             $numerical_unit->unit = backup_todb($nu_info['#']['UNIT']['0']['#']);
 
-            //The structure is equal to the db, so insert the quiz_numerical_units
-            $newid = insert_record ("quiz_numerical_units",$numerical_unit);
+            //The structure is equal to the db, so insert the question_numerical_units
+            $newid = insert_record ("question_numerical_units",$numerical_unit);
 
             if (!$newid) {
                 $status = false;
@@ -1109,7 +1109,7 @@
             //print_object ($GLOBALS['traverse_array']);                                                  //Debug
             //$GLOBALS['traverse_array']="";                                                              //Debug
 
-            //Now, build the QUIZ_DATASET_DEFINITION record structure
+            //Now, build the question_dataset_DEFINITION record structure
             $dataset_definition->category = backup_todb($dd_info['#']['CATEGORY']['0']['#']);
             $dataset_definition->name = backup_todb($dd_info['#']['NAME']['0']['#']);
             $dataset_definition->type = backup_todb($dd_info['#']['TYPE']['0']['#']);
@@ -1134,7 +1134,7 @@
                 //The category isn't 0, so it's a category question dataset_definition, we have to see if it exists
                 //Look for a definition with the same category, name and type
                 if ($definitionrec = get_record_sql("SELECT d.*
-                                                     FROM {$CFG->prefix}quiz_dataset_definitions d
+                                                     FROM {$CFG->prefix}question_dataset_definitions d
                                                      WHERE d.category = '$dataset_definition->category' AND
                                                            d.name = '$dataset_definition->name' AND
                                                            d.type = '$dataset_definition->type'")) {
@@ -1156,20 +1156,20 @@
 
             //If we've to create the definition, do it
             if ($create_definition) {
-                //The structure is equal to the db, so insert the quiz_dataset_definitions
-                $newid = insert_record ("quiz_dataset_definitions",$dataset_definition);
+                //The structure is equal to the db, so insert the question_dataset_definitions
+                $newid = insert_record ("question_dataset_definitions",$dataset_definition);
                 if ($newid) {
-                    //Restore quiz_dataset_items
+                    //Restore question_dataset_items
                     $status = quiz_restore_pre15_dataset_items($newid,$dd_info,$restore);
                 }
             }
 
-            //Now, we must have a definition (created o reused). Its id is in newid. Create the quiz_question_datasets record
+            //Now, we must have a definition (created o reused). Its id is in newid. Create the question_datasets record
             //to join the question and the dataset_definition
             if ($newid) {
                 $question_dataset->question = $new_question_id;
                 $question_dataset->datasetdefinition = $newid;
-                $newid = insert_record ("quiz_question_datasets",$question_dataset);
+                $newid = insert_record ("question_datasets",$question_dataset);
             }
 
             if (!$newid) {
@@ -1196,13 +1196,13 @@
             //print_object ($GLOBALS['traverse_array']);                                                  //Debug
             //$GLOBALS['traverse_array']="";                                                              //Debug
 
-            //Now, build the QUIZ_DATASET_ITEMS record structure
+            //Now, build the question_dataset_ITEMS record structure
             $dataset_item->definition = $definitionid;
             $dataset_item->number = backup_todb($di_info['#']['NUMBER']['0']['#']);
             $dataset_item->value = backup_todb($di_info['#']['VALUE']['0']['#']);
 
-            //The structure is equal to the db, so insert the quiz_dataset_items
-            $newid = insert_record ("quiz_dataset_items",$dataset_item);
+            //The structure is equal to the db, so insert the question_dataset_items
+            $newid = insert_record ("question_dataset_items",$dataset_item);
 
             if (!$newid) {
                 $status = false;
@@ -1627,9 +1627,9 @@
                             $match_question_id = $exploded[0];
                             $match_answer_id = $exploded[1];
                             //Get the match_sub from backup_ids (for the question)
-                            $match_que = backup_getid($restore->backup_unique_code,"quiz_match_sub",$match_question_id);
+                            $match_que = backup_getid($restore->backup_unique_code,"question_match_sub",$match_question_id);
                             //Get the match_sub from backup_ids (for the answer)
-                            $match_ans = backup_getid($restore->backup_unique_code,"quiz_match_sub",$match_answer_id);
+                            $match_ans = backup_getid($restore->backup_unique_code,"question_match_sub",$match_answer_id);
                             if ($match_que) {
                                 //It the question hasn't response, it must be 0
                                 if (!$match_ans and $match_answer_id == 0) {
@@ -1688,7 +1688,7 @@
                     case 9:    //MULTIANSWER QTYPE
                         //The answer is a comma separated list of hypen separated multianswer ids and answers. We must recode them.
                         //We need to have the sequence of questions here to be able to detect qtypes
-                        $multianswerdb = get_record('quiz_multianswers','question',$response->question);
+                        $multianswerdb = get_record('question_multianswer','question',$response->question);
                         //Make an array of sequence to easy access
                         $sequencearr = explode(",",$multianswerdb->sequence);
                         $answer_field = "";
@@ -1711,7 +1711,7 @@
                             //Calculate question type
                             $questiondb = get_record('question','id',$sequencearr[$counter-1]);
                             $questiontype = $questiondb->qtype;
-                            //Now, depending of the answertype field in quiz_multianswers
+                            //Now, depending of the answertype field in question_multianswer
                             //we do diferent things
                             if ($questiontype == "1") {
                                 //Shortanswer

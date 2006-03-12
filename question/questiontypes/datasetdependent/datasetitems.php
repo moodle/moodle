@@ -37,7 +37,7 @@
         if (isset($datasetdef->id)
          && $datasetdef->options != $olddatasetdefs[$defid]->options) {
             // Save the new value for options
-            update_record('quiz_dataset_definitions', $datasetdef);
+            update_record('question_dataset_definitions', $datasetdef);
         }
 
         // Get maxnumber
@@ -56,12 +56,12 @@
             if ($form->itemid[$key]) {
                 // Reuse an previously used record
                 $addeditem->id = $form->itemid[$key];
-                if (!update_record('quiz_dataset_items', $addeditem)) {
+                if (!update_record('question_dataset_items', $addeditem)) {
                     error("Error: Unable to update dataset item");
                 }
             } else {
                 unset($addeditem->id);
-                if (!insert_record('quiz_dataset_items', $addeditem)) {
+                if (!insert_record('question_dataset_items', $addeditem)) {
                     error("Error: Unable to insert dataset item");
                 }
             }
@@ -70,7 +70,7 @@
                 if (isset($newdef->id) && $newdef->itemcount <= $maxnumber) {
                     $newdef->itemcount = $maxnumber+1;
                     // Save the new value for options
-                    update_record('quiz_dataset_definitions', $newdef);
+                    update_record('question_dataset_definitions', $newdef);
                 }
             }
         }
@@ -83,7 +83,7 @@
         foreach ($datasetdefs as $datasetdef) {
             if ($datasetdef->itemcount == $maxnumber) {
                 $datasetdef->itemcount--;
-                if (!update_record('quiz_dataset_definitions',
+                if (!update_record('question_dataset_definitions',
                                    $datasetdef)) {
                      error("Error: Unable to update itemcount");
                 }
@@ -107,7 +107,7 @@
         if (isset($datasetdef->id)) {
             $datasetdefs[$defid]->items = get_records_sql( // Use number as key!!
                     " SELECT number, definition, id, value
-                      FROM {$CFG->prefix}quiz_dataset_items
+                      FROM {$CFG->prefix}question_dataset_items
                       WHERE definition = $datasetdef->id ");
         }
 

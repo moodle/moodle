@@ -54,24 +54,24 @@
                 break;
             }
             // add new type to database unless it exists already
-            if (!$type = get_record('quiz_rqp_types', 'name', $form->name)) {
+            if (!$type = get_record('question_rqp_types', 'name', $form->name)) {
                 $type->name = $form->name;
-                if (!$type->id = insert_record('quiz_rqp_types', $type)) {
+                if (!$type->id = insert_record('question_rqp_types', $type)) {
                     error("Could not save type $type");
                 }
             }
             // add new server to database unless it exists already
-            if (!$server = get_record('quiz_rqp_servers', 'url', $form->url)) {
+            if (!$server = get_record('question_rqp_servers', 'url', $form->url)) {
                 $server->typeid = $type->id;
                 $server->url = $form->url;
                 $server->can_render = $serverinfo->rendering ? 1 : 0;
-                if (!insert_record('quiz_rqp_servers', $server)) {
+                if (!insert_record('question_rqp_servers', $server)) {
                     error("Could not save server $form->url");
                 }
             }
             // print info about new server
             print_heading(get_string('serveradded', 'quiz'));
-            quiz_rqp_print_serverinfo($serverinfo);
+            question_rqp_print_serverinfo($serverinfo);
         
             break;
     
@@ -80,14 +80,14 @@
 
     if ($delete and confirm_sesskey()) { // delete server
         if ($confirm) {
-            delete_records('quiz_rqp_servers', 'id', $delete);
+            delete_records('question_rqp_servers', 'id', $delete);
         } else {
-            if (!$server = get_record('quiz_rqp_servers', 'id', $delete)) {
+            if (!$server = get_record('question_rqp_servers', 'id', $delete)) {
                 error('Invalid server id');
             }
-            if ((count_records('quiz_rqp_servers', 'typeid', $server->typeid) == 1) // this is the last server of its type
-                    and record_exists('quiz_rqp', 'type', $server->typeid)) { // and there are questions using it
-                $type = get_record('quiz_rqp_types', 'id', $server->typeid);
+            if ((count_records('question_rqp_servers', 'typeid', $server->typeid) == 1) // this is the last server of its type
+                    and record_exists('question_rqp', 'type', $server->typeid)) { // and there are questions using it
+                $type = get_record('question_rqp_types', 'id', $server->typeid);
                 notify(get_string('serverinuse', 'quiz', $type->name));
             }
             notice_yesno(get_string('confirmserverdelete', 'quiz', $server->url), 'types.php?delete='.$delete.'&amp;sesskey='.sesskey().'&amp;confirm=true', 'types.php');
@@ -95,7 +95,7 @@
     }
     
     if ($info) { // show info for server
-        if (!$server = get_record('quiz_rqp_servers', 'id', $info)) {
+        if (!$server = get_record('question_rqp_servers', 'id', $info)) {
             error('Invalid server id');
         }
         // Check server exists and works
@@ -104,7 +104,7 @@
         } else {
             // print the info
             print_heading(get_string('serverinfo', 'quiz'));
-            quiz_rqp_print_serverinfo($serverinfo);
+            question_rqp_print_serverinfo($serverinfo);
         }
     }
 
@@ -130,7 +130,7 @@
 
 /// Create table rows
     // Get list of types
-    $types = get_records('quiz_rqp_types', '', '', 'name ASC');
+    $types = get_records('question_rqp_types', '', '', 'name ASC');
 
     $strinfo = get_string('info');
     $strdelete = get_string('delete');
@@ -138,8 +138,8 @@
 
     if ($types) {
         foreach ($types as $type) {
-            if (!$servers = get_records('quiz_rqp_servers', 'typeid', $type->id)) {
-                delete_records('quiz_rqp_types', 'id', $type->id);
+            if (!$servers = get_records('question_rqp_servers', 'typeid', $type->id)) {
+                delete_records('question_rqp_types', 'id', $type->id);
             } else {
                 foreach ($servers as $server) {
                     $actions = '<a title="' . $strinfo . '" href="types.php?info='.$server->id.'&amp;sesskey='.sesskey().'"><img src="'.$CFG->pixpath.'/i/info.gif" border="0" alt="'.$strinfo.'" align="absbottom" /></a>&nbsp;<a title="'.$strdelete.'" href="types.php?delete='.$server->id.'&amp;sesskey='.sesskey().'"><img src="../../../../pix/t/delete.gif" border="0" alt="'.$strdelete.'" /></a>';

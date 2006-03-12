@@ -8,7 +8,7 @@
 
 require_once("$CFG->dirroot/question/questiontypes/datasetdependent/abstractqtype.php");
 
-class quiz_calculated_qtype extends quiz_dataset_dependent_questiontype {
+class question_calculated_qtype extends question_dataset_dependent_questiontype {
 
     // Used by the function custom_generator_tools:
     var $calcgenerateidhasbeenadded = false;
@@ -23,7 +23,7 @@ class quiz_calculated_qtype extends quiz_dataset_dependent_questiontype {
             return false;
         }
 
-        if (!$options = get_record('quiz_calculated', 'question', $question->id)) {
+        if (!$options = get_record('question_calculated', 'question', $question->id)) {
             notify("No options were found for calculated question
              #{$question->id}! Proceeding with defaults.");
             $options = new stdClass;
@@ -59,7 +59,7 @@ class quiz_calculated_qtype extends quiz_dataset_dependent_questiontype {
             "SELECT a.*, c.tolerance, c.tolerancetype,
                     c.correctanswerlength, c.id AS calcid
                FROM {$CFG->prefix}question_answers a,
-                    {$CFG->prefix}quiz_calculated c
+                    {$CFG->prefix}question_calculated c
               WHERE c.question = $question->id AND a.id = c.answer")) {
             $oldanswers = array();
         }
@@ -94,7 +94,7 @@ class quiz_calculated_qtype extends quiz_dataset_dependent_questiontype {
                 } else {
                     // notify("Answer updated successfully for calculated question $question->name");
                 }
-                if (!update_record('quiz_calculated', $calcrec)) {
+                if (!update_record('question_calculated', $calcrec)) {
                     error("Unable to update options for calculated question #{$question->id}!");
                 } else {
                     // notify("Options updated successfully for calculated question $question->name");
@@ -108,7 +108,7 @@ class quiz_calculated_qtype extends quiz_dataset_dependent_questiontype {
                 } else {
                     // notify("Answer inserted successfully for calculated question $question->id");
                 }
-                if (!insert_record('quiz_calculated', $calcrec)) {
+                if (!insert_record('question_calculated', $calcrec)) {
                     error("Unable to insert options calculared question $question->id");
                 } else {
                     // notify("Options inserted successfully for calculated question $question->id");
@@ -123,7 +123,7 @@ class quiz_calculated_qtype extends quiz_dataset_dependent_questiontype {
             } else {
                 // notify("Old answers deleted successfully for calculated question $question->id");
             }
-            if (!delete_records('quiz_calculated', 'id', $oldanswer->calcid)) {
+            if (!delete_records('question_calculated', 'id', $oldanswer->calcid)) {
                 error("Unable to delete old options for calculated question $question->id");
             } else {
                 // notify("Old options deleted successfully for calculated question $question->id");
@@ -204,10 +204,10 @@ class quiz_calculated_qtype extends quiz_dataset_dependent_questiontype {
     * @param object $question  The question being deleted
     */
     function delete_question($question) {
-        delete_records("quiz_calculated", "question", $question->id);
-        delete_records("quiz_numerical_units", "question", $question->id);
-        delete_records("quiz_question_datasets", "question", $question->id);
-        //TODO: delete entries from the quiz_dataset_items and quiz_dataset_definitions tables
+        delete_records("question_calculated", "question", $question->id);
+        delete_records("question_numerical_units", "question", $question->id);
+        delete_records("question_datasets", "question", $question->id);
+        //TODO: delete entries from the question_dataset_items and question_dataset_definitions tables
         return true;
     }
 
@@ -309,7 +309,7 @@ class quiz_calculated_qtype extends quiz_dataset_dependent_questiontype {
     function create_virtual_qtype() {
         global $CFG;
         require_once("$CFG->dirroot/question/questiontypes/numerical/questiontype.php");
-        return new quiz_numerical_qtype();
+        return new question_numerical_qtype();
     }
 
     function supports_dataset_item_generation() {
@@ -477,7 +477,7 @@ class quiz_calculated_qtype extends quiz_dataset_dependent_questiontype {
 
     function comment_on_datasetitems($question, $data, $number) {
         /// Find a default unit:
-        if (!empty($question->id) && $unit = get_record('quiz_numerical_units',
+        if (!empty($question->id) && $unit = get_record('question_numerical_units',
                 'question', $question->id, 'multiplier', 1.0)) {
             $unit = $unit->unit;
         } else {
@@ -593,7 +593,7 @@ class quiz_calculated_qtype extends quiz_dataset_dependent_questiontype {
 //////////////////////////////////////////////////////////////////////////
 //// INITIATION - Without this line the question type is not in use... ///
 //////////////////////////////////////////////////////////////////////////
-$QTYPES[CALCULATED]= new quiz_calculated_qtype();
+$QTYPES[CALCULATED]= new question_calculated_qtype();
 
 function quiz_qtype_calculated_calculate_answer($formula, $individualdata,
         $tolerance, $tolerancetype, $answerlength, $answerformat='1', $unit='') {

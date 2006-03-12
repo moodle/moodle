@@ -72,7 +72,7 @@ class qformat_hotpot extends qformat_default {
         // detect old Moodles (1.4 and earlier)
         global $CFG, $db;
         $moodle_14 = false;
-        if ($columns = $db->MetaColumns("{$CFG->prefix}quiz_multianswers")) {
+        if ($columns = $db->MetaColumns("{$CFG->prefix}question_multianswer")) {
             foreach ($columns as $column) {
                 if ($column->name=='answers' || $column->name=='positionkey' || $column->name=='answertype' || $column->name=='norm') {
                     $moodle_14 = true;

@@ -5,7 +5,7 @@
 /////////////////
 
 /// QUESTION TYPE CLASS //////////////////
-class quiz_essay_qtype extends quiz_default_questiontype {
+class question_essay_qtype extends quiz_default_questiontype {
 
     function name() {
         return 'essay';
@@ -14,7 +14,7 @@ class quiz_essay_qtype extends quiz_default_questiontype {
     function get_question_options(&$question) {
         // Get additional information from database
         // and attach it to the question object
-        if (!$question->options = get_record('quiz_essay', 'question', $question->id)) {
+        if (!$question->options = get_record('question_essay', 'question', $question->id)) {
             notify('Error: Missing question options!');
             return false;
         }
@@ -48,11 +48,11 @@ class quiz_essay_qtype extends quiz_default_questiontype {
                 return $result;
             }
         }
-        if ($options = get_record("quiz_essay", "question", $question->id)) {
+        if ($options = get_record("question_essay", "question", $question->id)) {
             // No need to do anything, since the answer IDs won't have changed
             // But we'll do it anyway, just for robustness
             $options->answer  = $answer->id;
-            if (!update_record("quiz_essay", $options)) {
+            if (!update_record("question_essay", $options)) {
                 $result->error = "Could not update quiz essay options! (id=$options->id)";
                 return $result;
             }
@@ -60,7 +60,7 @@ class quiz_essay_qtype extends quiz_default_questiontype {
             unset($options);
             $options->question = $question->id;
             $options->answer  = $answer->id;
-            if (!insert_record("quiz_essay", $options)) {
+            if (!insert_record("question_essay", $options)) {
                 $result->error = "Could not insert quiz essay options!";
                 return $result;
             }
@@ -75,7 +75,7 @@ class quiz_essay_qtype extends quiz_default_questiontype {
     * @param object $question  The question being deleted
     */
     function delete_question($question) {
-        delete_records("quiz_essay", "question", $question->id);
+        delete_records("question_essay", "question", $question->id);
         return true;
     }
 
@@ -198,7 +198,7 @@ class quiz_essay_qtype extends quiz_default_questiontype {
     }
     
     function restore_session_and_responses(&$question, &$state) {
-        if (!$options = get_record('quiz_essay_states', 'stateid', $state->id)) {
+        if (!$options = get_record('question_essay_states', 'stateid', $state->id)) {
             return false;
         }
         $state->options->graded = $options->graded;
@@ -224,14 +224,14 @@ class quiz_essay_qtype extends quiz_default_questiontype {
             $options->response = addslashes( clean_param($state->responses['response'], PARAM_CLEANHTML) );
         }
         if (isset($state->update)) {
-            if (!$options->id = get_field('quiz_essay_states', 'id', 'stateid', $state->id)) {
+            if (!$options->id = get_field('question_essay_states', 'id', 'stateid', $state->id)) {
                 return false;
             }
-            if (!update_record('quiz_essay_states', $options)) {
+            if (!update_record('question_essay_states', $options)) {
                 return false;
             }
         } else {
-            if (!insert_record('quiz_essay_states', $options)) {
+            if (!insert_record('question_essay_states', $options)) {
                 return false;
             }
         }     
@@ -289,7 +289,7 @@ class quiz_essay_qtype extends quiz_default_questiontype {
                         if (!$neweststate = get_record('question_sessions', 'attemptid', $attempt->uniqueid, 'questionid', $question->id)) {
                             error("Can not find newest states for attempt $attempt->uniqueid for question $question->id");
                         }
-                        if (!$questionstate = get_record('quiz_essay_states', 'stateid', $neweststate->newest)) {
+                        if (!$questionstate = get_record('question_essay_states', 'stateid', $neweststate->newest)) {
                             error('Could not find question state');
                         }
                         if (!$questionstate->graded) {
@@ -311,6 +311,6 @@ class quiz_essay_qtype extends quiz_default_questiontype {
 //////////////////////////////////////////////////////////////////////////
 //// INITIATION - Without this line the question type is not in use... ///
 //////////////////////////////////////////////////////////////////////////
-$QTYPES[ESSAY] = new quiz_essay_qtype();
+$QTYPES[ESSAY] = new question_essay_qtype();
 
 ?>

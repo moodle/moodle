@@ -11,15 +11,15 @@
 */
 
 
-function quiz_rqp_save_type($type) {
+function question_rqp_save_type($type) {
     if (empty($type->id)) {
-        return insert_record('quiz_rqp_types', $type, false);
+        return insert_record('question_rqp_types', $type, false);
     }
-    return update_record('quiz_rqp_types', $type);
+    return update_record('question_rqp_types', $type);
 }
 
-function quiz_rqp_delete_type($id) {
-    return delete_records('quiz_rqp_type', 'id', $id);
+function question_rqp_delete_type($id) {
+    return delete_records('question_rqp_type', 'id', $id);
 }
 
 /**
@@ -28,14 +28,14 @@ function quiz_rqp_delete_type($id) {
 *
 * An associative array of values or an associative array of arrays is imploded
 * to a string by creating a colon separated list of space separated values. The
-* key is treated as the first value. The {@link quiz_rqp_explode} function can
+* key is treated as the first value. The {@link question_rqp_explode} function can
 * restore the array from this string representation.
 * @return string      The string representation of the array. This is a colon
 *                     separated list of space separated values.
 * @param array $array An associative array of single values or an associative
 *                     array of arrays to be imploded.
 */
-function quiz_rqp_implode($array) {
+function question_rqp_implode($array) {
     if (count($array) < 1) {
         return '';
     }
@@ -64,7 +64,7 @@ function quiz_rqp_implode($array) {
 * string representation
 *
 * Takes a colon separated list of space separated values as produced by
-* {@link quiz_rqp_implode} and recreates the array. If an array of single values
+* {@link question_rqp_implode} and recreates the array. If an array of single values
 * is expected then an error results if an element has more than one value.
 * Otherwise every value is an array.
 * @return array         The associative array restored from the string. Every
@@ -78,7 +78,7 @@ function quiz_rqp_implode($array) {
 *                       The default is false indicating an array of single
 *                       values is expected.
 */
-function quiz_rqp_explode($str, $multi=false) {
+function question_rqp_explode($str, $multi=false) {
     // Explode by colon
     if ($str === '') {
         return array();
@@ -107,7 +107,7 @@ function quiz_rqp_explode($str, $multi=false) {
     return $return;
 }
 
-function quiz_rqp_print_serverinfo($serverinfo) {
+function question_rqp_print_serverinfo($serverinfo) {
     $info->align = array('right', 'left');
     $info->data = array(); // will hold the data for the info table
     $info->data[] = array('<b>'.get_string('url', 'quiz').':</b>',$serverinfo->url);
@@ -117,7 +117,7 @@ function quiz_rqp_print_serverinfo($serverinfo) {
     print_table($info);
 }
 
-function quiz_rqp_debug_soap($item) {
+function question_rqp_debug_soap($item) {
     global $CFG;
     if ($CFG->debug) {
         echo 'Here is the dump of the soap fault:<pre>';

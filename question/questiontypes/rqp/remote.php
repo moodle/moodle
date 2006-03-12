@@ -38,7 +38,7 @@ function remote_connect($typeid) {
 
     if (!array_key_exists($typeid, $remote_connections)) {
         // get the available servers
-        if (!$servers = get_records('quiz_rqp_servers', 'typeid', $typeid)) {
+        if (!$servers = get_records('question_rqp_servers', 'typeid', $typeid)) {
             // we don't have a server for this question type
             return false;
         }
@@ -84,7 +84,7 @@ function remote_server_info($url) {
 /**
 * Create connection to an RQP server and requests server information
 *
-* @param object $options  The RQP question options as stored in the quiz_rqp table
+* @param object $options  The RQP question options as stored in the question_rqp table
 * @return object      An object holding the results of the ItemInformation call 
 *                     Returns false in the case of failure
 */

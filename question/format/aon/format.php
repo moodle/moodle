@@ -156,7 +156,7 @@ class qformat_aon extends qformat_default {
 
              $extracts = get_records_sql("SELECT q.questiontext, a.answer
                                             FROM {$CFG->prefix}question q,
-                                                 {$CFG->prefix}quiz_shortanswer sa,
+                                                 {$CFG->prefix}question_shortanswer sa,
                                                  {$CFG->prefix}question_answers a
                                            WHERE q.id in ($extractids) 
                                              AND sa.question = q.id
@@ -194,7 +194,7 @@ class qformat_aon extends qformat_default {
              /// Delete the old short-answer questions
 
              execute_sql("DELETE FROM {$CFG->prefix}question WHERE id IN ($extractids)", false);
-             execute_sql("DELETE FROM {$CFG->prefix}quiz_shortanswer WHERE question IN ($extractids)", false);
+             execute_sql("DELETE FROM {$CFG->prefix}question_shortanswer WHERE question IN ($extractids)", false);
              execute_sql("DELETE FROM {$CFG->prefix}question_answers WHERE question IN ($extractids)", false);
              
         }
@@ -202,7 +202,7 @@ class qformat_aon extends qformat_default {
         if ($count) {    /// Delete the remaining ones
             foreach ($shortanswerids as $shortanswerid) {
                 delete_records("question", "id", $shortanswerid);
-                delete_records("quiz_shortanswer", "question", $shortanswerid);
+                delete_records("question_shortanswer", "question", $shortanswerid);
                 delete_records("question_answers", "question", $shortanswerid);
             }
         }

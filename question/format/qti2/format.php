@@ -735,7 +735,7 @@ function xml_entitize(&$collection) {
         $questiontext = strip_tags($question->questiontext, $allowabletags);
         if (preg_match_all('/(.*){#([0-9]+)}/U', $questiontext, $matches)) {
             // matches[1] contains the text inbetween the question blanks
-            // matches[2] contains the id of the question blanks (db: quiz_multianswers.positionkey)
+            // matches[2] contains the id of the question blanks (db: question_multianswer.positionkey)
             
             // find any trailing text after the last {#XX} and add it to the array
             if (preg_match('/.*{#[0-9]+}(.*)$/', $questiontext, $tail)) {

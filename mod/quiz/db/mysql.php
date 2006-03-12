@@ -506,7 +506,7 @@ function quiz_upgrade($oldversion) {
         modify_database('', 'ALTER TABLE `prefix_quiz_numerical` DROP `max`'); // Replaced by tolerance
 
     /// Tables for Remote Questions
-        modify_database ('', "CREATE TABLE `prefix_quiz_rqp` (
+        modify_database ('', "CREATE TABLE `prefix_question_rqp` (
                               `id` int(10) unsigned NOT NULL auto_increment,
                               `question` int(10) unsigned NOT NULL default '0',
                               `type` int(10) unsigned NOT NULL default '0',
@@ -518,7 +518,7 @@ function quiz_upgrade($oldversion) {
                               KEY `question` (`question`)
                               ) TYPE=MyISAM COMMENT='Options for RQP questions';");
 
-        modify_database ('', "CREATE TABLE `prefix_quiz_rqp_type` (
+        modify_database ('', "CREATE TABLE `prefix_question_rqp_type` (
                               `id` int(10) unsigned NOT NULL auto_increment,
                               `name` varchar(255) NOT NULL default '',
                               `rendering_server` varchar(255) NOT NULL default '',
@@ -528,7 +528,7 @@ function quiz_upgrade($oldversion) {
                               UNIQUE KEY `name` (`name`)
                               ) TYPE=MyISAM COMMENT='RQP question types and the servers to be used to process them';");
 
-        modify_database ('', "CREATE TABLE `prefix_quiz_rqp_states` (
+        modify_database ('', "CREATE TABLE `prefix_question_rqp_states` (
                               `id` int(10) unsigned NOT NULL auto_increment,
                               `stateid` int(10) unsigned NOT NULL default '0',
                               `responses` text NOT NULL default '',
@@ -551,8 +551,8 @@ function quiz_upgrade($oldversion) {
     }
 
     if ($oldversion < 2005051400) {
-        modify_database('', 'ALTER TABLE prefix_quiz_rqp_type RENAME prefix_quiz_rqp_types;');
-    	modify_database('', "CREATE TABLE `prefix_quiz_rqp_servers` (
+        modify_database('', 'ALTER TABLE prefix_question_rqp_type RENAME prefix_question_rqp_types;');
+    	modify_database('', "CREATE TABLE `prefix_question_rqp_servers` (
     			      id int(10) unsigned NOT NULL auto_increment,
     			      typeid int(10) unsigned NOT NULL default '0',
     			      url varchar(255) NOT NULL default '',
@@ -560,17 +560,17 @@ function quiz_upgrade($oldversion) {
     			      can_author tinyint(2) unsigned NOT NULL default '0',
     			      PRIMARY KEY  (id)
     			    ) TYPE=MyISAM COMMENT='Information about RQP servers';");
-    	if ($types = get_records('quiz_rqp_types')) {
+    	if ($types = get_records('question_rqp_types')) {
     	    foreach($types as $type) {
         		$server->typeid = $type->id;
         		$server->url = $type->rendering_server;
         		$server->can_render = 1;
-        		insert_record('quiz_rqp_servers', $server);
+        		insert_record('question_rqp_servers', $server);
     	    }
     	}
-        modify_database('', 'ALTER TABLE prefix_quiz_rqp_types DROP rendering_server');
-        modify_database('', 'ALTER TABLE prefix_quiz_rqp_types DROP cloning_server');
-        modify_database('', 'ALTER TABLE prefix_quiz_rqp_types DROP flags');
+        modify_database('', 'ALTER TABLE prefix_question_rqp_types DROP rendering_server');
+        modify_database('', 'ALTER TABLE prefix_question_rqp_types DROP cloning_server');
+        modify_database('', 'ALTER TABLE prefix_question_rqp_types DROP flags');
     }
 
     if ($oldversion < 2005051401) {
@@ -948,6 +948,28 @@ function quiz_upgrade($oldversion) {
     if ($oldversion < 2006022800) {
         execute_sql("ALTER TABLE {$CFG->prefix}quiz_answers RENAME {$CFG->prefix}question_answers", false);
         execute_sql("ALTER TABLE {$CFG->prefix}quiz_categories RENAME {$CFG->prefix}question_categories", false);
+    }
+
+    if ($oldversion < 2006031202) {
+        execute_sql("ALTER TABLE {$CFG->prefix}quiz_truefalse RENAME {$CFG->prefix}question_truefalse", false);
+        execute_sql("ALTER TABLE {$CFG->prefix}quiz_shortanswer RENAME {$CFG->prefix}question_shortanswer", false);
+        execute_sql("ALTER TABLE {$CFG->prefix}quiz_multianswers RENAME {$CFG->prefix}question_multianswer", false);
+        execute_sql("ALTER TABLE {$CFG->prefix}quiz_multichoice RENAME {$CFG->prefix}question_multichoice", false);
+        execute_sql("ALTER TABLE {$CFG->prefix}quiz_numerical RENAME {$CFG->prefix}question_numerical", false);
+        execute_sql("ALTER TABLE {$CFG->prefix}quiz_numerical_units RENAME {$CFG->prefix}question_numerical_units", false);
+        execute_sql("ALTER TABLE {$CFG->prefix}quiz_randomsamatch RENAME {$CFG->prefix}question_randomsamatch", false);
+        execute_sql("ALTER TABLE {$CFG->prefix}quiz_match RENAME {$CFG->prefix}question_match", false);
+        execute_sql("ALTER TABLE {$CFG->prefix}quiz_match_sub RENAME {$CFG->prefix}question_match_sub", false);
+        execute_sql("ALTER TABLE {$CFG->prefix}quiz_calculated RENAME {$CFG->prefix}question_calculated", false);
+        execute_sql("ALTER TABLE {$CFG->prefix}quiz_dataset_definitions RENAME {$CFG->prefix}question_dataset_definitions", false);
+        execute_sql("ALTER TABLE {$CFG->prefix}quiz_dataset_items RENAME {$CFG->prefix}question_dataset_items", false);
+        execute_sql("ALTER TABLE {$CFG->prefix}quiz_question_datasets RENAME {$CFG->prefix}question_datasets", false);
+        execute_sql("ALTER TABLE {$CFG->prefix}quiz_rqp RENAME {$CFG->prefix}question_rqp", false);
+        execute_sql("ALTER TABLE {$CFG->prefix}quiz_rqp_servers RENAME {$CFG->prefix}question_rqp_servers", false);
+        execute_sql("ALTER TABLE {$CFG->prefix}quiz_rqp_states RENAME {$CFG->prefix}question_rqp_states", false);
+        execute_sql("ALTER TABLE {$CFG->prefix}quiz_rqp_types RENAME {$CFG->prefix}question_rqp_types", false);
+        execute_sql("ALTER TABLE {$CFG->prefix}quiz_essay RENAME {$CFG->prefix}question_essay", false);
+        execute_sql("ALTER TABLE {$CFG->prefix}quiz_essay_states RENAME {$CFG->prefix}question_essay_states", false);
     }
 
     return true;

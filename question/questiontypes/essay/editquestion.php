@@ -1,7 +1,7 @@
 <?php // $Id$
 
     if (!empty($question->id)) {
-        $options = get_record("quiz_essay", "question", "$question->id");
+        $options = get_record("question_essay", "question", "$question->id");
     }
 
     if (!empty($options->answer)) {

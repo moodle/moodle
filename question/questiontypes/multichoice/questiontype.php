@@ -11,7 +11,7 @@
 /// question type embeddable within a multianswer (cloze) question
 ///
 
-class quiz_multichoice_qtype extends quiz_default_questiontype {
+class question_multichoice_qtype extends quiz_default_questiontype {
 
     function name() {
         return 'multichoice';
@@ -20,7 +20,7 @@ class quiz_multichoice_qtype extends quiz_default_questiontype {
     function get_question_options(&$question) {
         // Get additional information from database
         // and attach it to the question object
-        if (!$question->options = get_record('quiz_multichoice', 'question',
+        if (!$question->options = get_record('question_multichoice', 'question',
          $question->id)) {
             notify('Error: Missing question options!');
             return false;
@@ -93,11 +93,11 @@ class quiz_multichoice_qtype extends quiz_default_questiontype {
             }
         }
 
-        if ($options = get_record("quiz_multichoice", "question", $question->id)) {
+        if ($options = get_record("question_multichoice", "question", $question->id)) {
             $options->answers = implode(",",$answers);
             $options->single = $question->single;
             $options->shuffleanswers = $question->shuffleanswers;
-            if (!update_record("quiz_multichoice", $options)) {
+            if (!update_record("question_multichoice", $options)) {
                 $result->error = "Could not update quiz multichoice options! (id=$options->id)";
                 return $result;
             }
@@ -107,7 +107,7 @@ class quiz_multichoice_qtype extends quiz_default_questiontype {
             $options->answers = implode(",",$answers);
             $options->single = $question->single;
             $options->shuffleanswers = $question->shuffleanswers;
-            if (!insert_record("quiz_multichoice", $options)) {
+            if (!insert_record("question_multichoice", $options)) {
                 $result->error = "Could not insert quiz multichoice options!";
                 return $result;
             }
@@ -145,7 +145,7 @@ class quiz_multichoice_qtype extends quiz_default_questiontype {
     * @param object $question  The question being deleted
     */
     function delete_question($question) {
-        delete_records("quiz_multichoice", "question", $question->id);
+        delete_records("question_multichoice", "question", $question->id);
         return true;
     }
 
@@ -372,6 +372,6 @@ class quiz_multichoice_qtype extends quiz_default_questiontype {
 //////////////////////////////////////////////////////////////////////////
 //// INITIATION - Without this line the question type is not in use... ///
 //////////////////////////////////////////////////////////////////////////
-$QTYPES[MULTICHOICE]= new quiz_multichoice_qtype();
+$QTYPES[MULTICHOICE]= new question_multichoice_qtype();
 
 ?>
