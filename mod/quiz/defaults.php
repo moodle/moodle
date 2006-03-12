@@ -20,6 +20,8 @@
        'quiz_optionflags' => 1,
        'quiz_penaltyscheme' => 1,
        'quiz_adaptive' => QUIZ_ADAPTIVE,
+       'quiz_delay1' => 0,
+       'quiz_delay2' => 0,
 
        'quiz_fix_review' => 0,
        'quiz_fix_attemptonlast' => 0,
@@ -37,6 +39,7 @@
        'quiz_fix_penaltyscheme' => 0,
 	   'quiz_fix_delay1' => 0,
        'quiz_fix_delay2' => 0,
+
 	   'attemptuniqueid' => 0
     );
 
