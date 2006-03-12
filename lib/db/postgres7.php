@@ -1432,12 +1432,12 @@ function main_upgrade($oldversion=0) {
           moduleid INTEGER NOT NULL default 0,
           coursemoduleid INTEGER NOT NULL default 0,
           subject varchar(128) NOT NULL default '',
-          summary longtext,
-          content longtext,
+          summary text,
+          content text,
           uniquehash varchar(128) NOT NULL default '',
           rating INTEGER NOT NULL default 0,
           format INTEGER NOT NULL default 0,
-          publishstate varchar(10) CHECK (type IN ('draft','site','public')) NOT NULL default 'draft',
+          publishstate varchar(10) CHECK (publishstate IN ('draft','site','public')) NOT NULL default 'draft',
           lastmodified INTEGER NOT NULL default '0',
           created INTEGER NOT NULL default '0'
         );");
@@ -1455,11 +1455,11 @@ function main_upgrade($oldversion=0) {
 
          modify_database("","CREATE TABLE prefix_blog_tag_instance (
           id SERIAL PRIMARY KEY,
-          entryid id SERIAL PRIMARY KEY, NOT NULL default 0,
-          tagid id SERIAL PRIMARY KEY, NOT NULL default 0,
-          groupid id SERIAL PRIMARY KEY, NOT NULL default 0,
-          courseid id SERIAL PRIMARY KEY, NOT NULL default 0,
-          userid id SERIAL PRIMARY KEY, NOT NULL default 0
+          entryid integer NOT NULL default 0,
+          tagid integer NOT NULL default 0,
+          groupid integer NOT NULL default 0,
+          courseid integer NOT NULL default 0,
+          userid integer NOT NULL default 0
         );");
     }
 

@@ -266,6 +266,8 @@ CREATE TABLE prefix_log (
 CREATE INDEX prefix_log_coursemoduleaction_idx ON prefix_log (course,module,action);
 CREATE INDEX prefix_log_timecoursemoduleaction_idx ON prefix_log (time,course,module,action);
 CREATE INDEX prefix_log_courseuserid_idx ON prefix_log (course,userid);
+CREATE INDEX prefix_log_userid_idx ON prefix_log (userid);
+CREATE INDEX prefix_log_info_idx ON prefix_log (info);
 
 CREATE TABLE prefix_log_display (
    module varchar(20) NOT NULL default '',
@@ -385,12 +387,12 @@ CREATE TABLE prefix_cache_text (
 
 CREATE INDEX prefix_cache_text_md5key_idx ON prefix_cache_text (md5key);
 
-#
-# Table structure for table `user`
-#
-# When updating field length, modify
-# truncate_userinfo() in moodlelib.php
-#
+--
+-- Table structure for table `user`
+--
+-- When updating field length, modify
+-- truncate_userinfo() in moodlelib.php
+--
 CREATE TABLE prefix_user (
    id SERIAL PRIMARY KEY,
    auth varchar(20) NOT NULL default 'manual',
@@ -628,12 +630,12 @@ CREATE TABLE prefix_post (
   moduleid INTEGER NOT NULL default 0,
   coursemoduleid INTEGER NOT NULL default 0,
   subject varchar(128) NOT NULL default '',
-  summary longtext,
-  content longtext,
+  summary text,
+  content text,
   uniquehash varchar(128) NOT NULL default '',
   rating INTEGER NOT NULL default 0,
   format INTEGER NOT NULL default 0,
-  publishstate varchar(10) CHECK (type IN ('draft','site','public')) NOT NULL default 'draft',
+  publishstate varchar(10) CHECK (publishstate IN ('draft','site','public')) NOT NULL default 'draft',
   lastmodified INTEGER NOT NULL default '0',
   created INTEGER NOT NULL default '0'
 );
@@ -651,11 +653,11 @@ CREATE TABLE prefix_tags (
 
 CREATE TABLE prefix_blog_tag_instance (
   id SERIAL PRIMARY KEY,
-  entryid id SERIAL PRIMARY KEY, NOT NULL default 0,
-  tagid id SERIAL PRIMARY KEY, NOT NULL default 0,
-  groupid id SERIAL PRIMARY KEY, NOT NULL default 0,
-  courseid id SERIAL PRIMARY KEY, NOT NULL default 0,
-  userid id SERIAL PRIMARY KEY, NOT NULL default 0
+  entryid integer NOT NULL default 0,
+  tagid integer NOT NULL default 0,
+  groupid integer NOT NULL default 0,
+  courseid integer NOT NULL default 0,
+  userid integer NOT NULL default 0
 );
 
 INSERT INTO prefix_log_display VALUES ('user', 'view', 'user', 'firstname||\' \'||lastname');
