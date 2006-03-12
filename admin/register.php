@@ -139,7 +139,7 @@
     echo "<input type=\"hidden\" name=\"posts\" value=\"$count\">\n";
     echo '<br />';
 
-    $count = count_records('quiz_questions');
+    $count = count_records('question');
     echo get_string("questions", 'quiz').": ".$count;
     echo "<input type=\"hidden\" name=\"questions\" value=\"$count\">\n";
     echo '<br />';
