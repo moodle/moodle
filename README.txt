@@ -24,10 +24,11 @@ a few minutes:
 
 For more information, see the INSTALL DOCUMENTATION:
 
-   http://moodle.org/doc
+   http://docs.moodle.org/en/Installing_Moodle 
 
-If you have real trouble, please visit the Moodle course 
-"Using Moodle" on moodle.org.
+A local copy can also be found in 
+
+   lang/en_utf8/help/install.html   (or your language)
 
 
 Good luck and have fun!
