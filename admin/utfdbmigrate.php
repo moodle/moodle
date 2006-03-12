@@ -199,7 +199,7 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
             } else {
                 $cluster = '';
             }
-            $cmd = "PGPASSWORD={$CFG->dbpass} pg_dump -Fp -E 'UNICODE' -O -x -U {$CFG->dbuser}$cluster";
+            $cmd = "PGPASSWORD={$CFG->dbpass} PGCLIENTENCODING='UNICODE' pg_dump -Fp -O -x -U {$CFG->dbuser}$cluster";
             if ($CFG->dbhost)  {
                 $host = split(":", $CFG->dbhost);
                 if ($host[0]) $cmd .= " -h {$host[0]}";
