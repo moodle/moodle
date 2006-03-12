@@ -17,6 +17,7 @@
   doc
   login
   message
+  question
   tabs
   user
 
@@ -526,6 +527,32 @@ table.message_search_results td {
 
 .message .content {
 }
+
+/***
+ *** Question
+ ***/
+
+.question {
+	border-color: #DDD;
+}
+.question .r0 {
+	background-color: #F5F5F5;
+}
+.question .r1 {
+	background-color: #EEE;
+}
+.calculated .answer,
+.numerical .answer,
+.shortanswer .answer,
+.truefalse .answer {
+	background-color: #EEE;
+}
+.calculated .feedback,
+.numerical .feedback,
+.shortanswer .feedback,
+.truefalse .feedback {
+  border-color: #DDD;
+}	
 
 /***
  *** Logs

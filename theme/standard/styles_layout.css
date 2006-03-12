@@ -1037,11 +1037,6 @@ body#message-messages {
  *** Question
  ***/
 
-/* NOTE: new for all questions
-I will separate the properties
-when the work on questions is
-finished --Urs */
-
 #mod-quiz-attempt #page {
 	text-align: center;
 }
@@ -1049,7 +1044,7 @@ finished --Urs */
 	width: 90%;
 	text-align: left;
 	margin: 10px auto 15px auto;
-	border: 1px solid #DDD;
+	border: 1px solid;
 	clear: both;
 }
 .question .info {
@@ -1057,13 +1052,8 @@ finished --Urs */
 	margin: 5px;
 	width: 8%;
 }
-.question .no {
-	font-size: 1.2em;
-	font-weight: bold;
-}
 .question .grade {
 	margin-top: 0.5em;
-	font-size: 0.8em;
 }
 .question .content {
 	float: right;
@@ -1101,12 +1091,6 @@ finished --Urs */
 	padding: 0.3em 0 0.3em 0.3em;
 	vertical-align: top;
 }
-.question .r0 {
-	background-color: #F5F5F5;
-}
-.question .r1 {
-	background-color: #EEE;
-}
 .multichoice .c0 {
   width: 5%;
 	vertical-align: top;
@@ -1116,7 +1100,6 @@ finished --Urs */
 .numerical .answer,
 .shortanswer .answer,
 .truefalse .answer {
-	background-color: #EEE;
 	padding: 0.3em 0 0.3em 0.3em;
 }
 .shortanswer .answer input {
@@ -1130,7 +1113,7 @@ finished --Urs */
 	float: right;
 	width: 83%;
 	padding: 0 0 0.3em 0.3em;
-  border: 1px solid #DDD;
+  border: 1px solid;
 }	
 .question .grading, 
 .question .history {

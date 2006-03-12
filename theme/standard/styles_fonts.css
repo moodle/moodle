@@ -17,6 +17,7 @@
   grades
   login
   message
+  question
   tabs
   user
 
@@ -484,6 +485,17 @@ body#grade-index .grades .header {
   font-size:1.1em;
 }
 
+/***
+ *** Question
+ ***/
+
+.question .no {
+	font-size: 1.2em;
+	font-weight: bold;
+}
+.question .grade {
+	font-size: 0.8em;
+}
 
 /***
  *** Tabs
