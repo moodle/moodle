@@ -1,0 +1,30 @@
+<!-- $Id: config.html,v 1.1 2006/03/12 18:39:59 skodak Exp $ //-->
+
+<form method="post" action="module.php" name="form">
+<input type="hidden" name="sesskey" value="<?php echo $USER->sesskey ?>" />
+
+<table cellpadding="9" cellspacing="0">
+<tr valign="top">
+    <td align="right">
+        <p>book_tocwidth:</p>
+    </td>
+    <td>
+        <?php
+        $choices = array('140'=>'140', '160'=>'160', '180'=>'180', '200'=>'200',
+                         '220'=>'220', '240'=>'240', '260'=>'260', '280'=>'280', '300'=>'300');
+        choose_from_menu ($choices, 'book_tocwidth', $CFG->book_tocwidth, '');
+        ?>
+    </td>
+    <td>
+        <?php print_string('tocwidth', 'book') ?>
+    </td>
+</tr>
+
+<tr>
+    <td colspan="3" align="center">
+        <input type="submit" value="<?php print_string('savechanges') ?>" />
+    </td>
+</tr>
+</table>
+
+</form>

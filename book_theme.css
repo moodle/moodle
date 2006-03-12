@@ -1,0 +1,94 @@
+/* $Id: book_theme.css,v 1.1 2006/03/12 18:39:59 skodak Exp $*/
+/* later should be defined in themes*/
+
+
+.book_chapter_title {
+    font-family: Tahoma, Verdana, Arial, Helvetica, sans-serif;
+    text-align: left;
+    font-size: large;
+    font-weight: bold;
+
+    margin-left: 0px;
+    margin-bottom: 20px;
+}
+
+.book_content {
+    text-align: left;
+}
+
+/* == TOC styles == */
+
+/* toc style NONE */
+.book_toc_none ul {
+    margin-left: 5px;
+    padding-left: 0px;
+}
+.book_toc_none ul ul {
+    margin-left: 0px;
+    padding-left: 0px;
+}
+.book_toc_none li {
+    margin-top: 5px;
+    list-style: none;
+}
+.book_toc_none li li {
+    margin-top: 0px;
+    list-style: none;
+}
+
+
+/* toc style NUMBERED */
+.book_toc_numbered ul {
+    margin-left: 5px;
+    padding-left: 0px;
+}
+.book_toc_numbered ul ul {
+    margin-left: 0px;
+    padding-left: 0px;
+}
+.book_toc_numbered li {
+    margin-top: 5px;
+    list-style: none;
+}
+.book_toc_numbered li li {
+    margin-top: 0px;
+    list-style: none;
+}
+
+
+/*toc style BULLETS */
+.book_toc_bullets ul {
+    margin-left: 5px;
+    padding-left: 0px;
+}
+.book_toc_bullets ul ul {
+    margin-left: 20px;
+    padding-left: 0px;
+}
+.book_toc_bullets li {
+    margin-top: 5px;
+    list-style: none;
+}
+.book_toc_bullets li li {
+    margin-top: 0px;
+    list-style: circle;
+}
+
+
+/* toc style INDENTED*/
+.book_toc_indented ul {
+    margin-left: 5px;
+    padding-left: 0px;
+}
+.book_toc_indented ul ul {
+    margin-left: 15px;
+    padding-left: 0px;
+}
+.book_toc_indented li {
+    margin-top: 5px;
+    list-style: none;
+}
+.book_toc_indented li li {
+    margin-top: 0px;
+    list-style: none;
+}
