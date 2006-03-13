@@ -406,8 +406,7 @@ class quiz_report extends quiz_default_report {
                                 if ($gradedstateid = get_field('question_sessions', 'newgraded', 'attemptid', $attempt->attemptuniqueid, 'questionid', $questionid)) {
                                     $grade = round(get_field('question_states', 'grade', 'id', $gradedstateid), $quiz->decimalpoints);
                                 } else {
-                                    // This is an old-style attempt
-                                    $grade = round(get_field('question_states', 'grade', 'attempt', $attempt->attempt, 'question', $questionid), $quiz->decimalpoints);
+                                    $grade = '--';
                                 }
                                 if (!$download) {
                                     $row[] = link_to_popup_window ('/mod/quiz/reviewquestion.php?state='.$gradedstateid.'&amp;number='.$questions[$questionid]->number, 'reviewquestion', $grade, 450, 650, $strreviewquestion, 'none', true);
