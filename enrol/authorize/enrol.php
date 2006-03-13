@@ -7,7 +7,7 @@ require_once $CFG->dirroot.'/enrol/authorize/const.php';
  * enrolment_plugin_authorize
  *
  */
-class enrolment_plugin_authorize 
+class enrolment_plugin_authorize
 {
     /**
      * Credit card error messages.
@@ -467,6 +467,7 @@ class enrolment_plugin_authorize
         // optional authorize.net settings
         set_config('an_avs', optional_param('an_avs', ''));
         set_config('an_test', optional_param('an_test', ''));
+        set_config('an_teachermanagepay', optional_param('an_teachermanagepay', ''));
         set_config('an_referer', optional_param('an_referer', 'http://', PARAM_URL));
 
         $cutoff_hour = optional_param('an_cutoff_hour', 0, PARAM_INT);

@@ -43,20 +43,17 @@ print_footer();
 
 function authorize_orders()
 {
-    global $CFG;
+    global $CFG, $USER;
     global $strs, $authstrs;
     require_once $CFG->libdir.'/tablelib.php';
 
     $perpage = 10;
     $userid = optional_param('user', 0, PARAM_INT);
-    $courseid = optional_param('course', 0, PARAM_INT);
+    $courseid = optional_param('course', SITEID, PARAM_INT);
     $status = optional_param('status', AN_STATUS_NONE, PARAM_INT);
-    if ($courseid == SITEID) {
-    	$courseid = 0; // no filter
-    }
 
-    if (!isstudent($courseid, $userid) && !isteacher($courseid, $userid)) {
-         error("You must be a teacher/student to use this page.");
+    if (!isteacher($courseid)) {
+        $userid = $USER->id;
     }
 
     $baseurl = $CFG->wwwroot."/enrol/authorize/index.php?user=$userid";
@@ -122,7 +119,7 @@ function authorize_orders()
     if ($userid > 0) {
         $where .= "AND (userid = '" . $userid . "') ";
     }
-    if ($courseid > 0) {
+    if ($courseid != SITEID) {
         $where .= "AND (courseid = '" . $courseid . "') ";
     }
 
@@ -198,9 +195,9 @@ function authorize_order_details($orderno) {
         return;
     }
 
-    if ($USER->id != $order->userid) {
-        if (! (isadmin() || isteacher($order->courseid, $order->userid))) {
-            error("Students can view their order.");
+    if ($USER->id != $order->userid) { // Current user viewing someone else's order
+        if (!isteacher($order->courseid)) {
+           error("Students can view their order.");
         }
     }
 
@@ -489,12 +486,12 @@ function authorize_order_details($orderno) {
 
 function get_order_status_desc($order)
 {
-    global $CFG;
+    global $CFG, $USER;
 
     $ret = new stdClass();
 
     if (intval($order->transid) == 0) { // test transaction
-        if (isadmin()) {
+        if (isadmin() || (!empty($CFG->an_teachermanagepay) && isteacher($order->courseid))) {
         	$ret->actions = array(ORDER_DELETE);
         }
         $ret->status = 'tested';
@@ -507,13 +504,13 @@ function get_order_status_desc($order)
         if (getsettletime($order->timecreated) < $timediff30) {
             $order->status = AN_STATUS_EXPIRE;
             update_record("enrol_authorize", $order);
-            if (isadmin()) {
+            if (isadmin() || (!empty($CFG->an_teachermanagepay) && isteacher($order->courseid))) {
             	$ret->actions = array(ORDER_DELETE);
             }
             $ret->status = 'expired';
         }
         else {
-            if (isadmin()) {
+            if (isadmin() || (!empty($CFG->an_teachermanagepay) && isteacher($order->courseid))) {
             	$ret->actions = array(ORDER_CAPTURE, ORDER_VOID);
             }
             $ret->status = 'authorizedpendingcapture';
@@ -522,13 +519,13 @@ function get_order_status_desc($order)
 
     case AN_STATUS_AUTHCAPTURE:
         if (settled($order)) {
-            if (isadmin()) {
+            if (isadmin() || (!empty($CFG->an_teachermanagepay) && isteacher($order->courseid))) {
             	$ret->actions = array(ORDER_REFUND);
             }
             $ret->status = 'capturedsettled';
         }
         else {
-            if (isadmin()) {
+            if (isadmin() || (!empty($CFG->an_teachermanagepay) && isteacher($order->courseid))) {
             	$ret->actions = array(ORDER_VOID);
             }
             $ret->status = 'capturedpendingsettle';
@@ -541,7 +538,7 @@ function get_order_status_desc($order)
             $ret->status = 'settled';
         }
         else {
-            if (isadmin()) {
+            if (isadmin() || (!empty($CFG->an_teachermanagepay) && isteacher($order->courseid))) {
             	$ret->actions = array(ORDER_VOID);
             }
             $ret->status = 'refunded';
@@ -554,8 +551,7 @@ function get_order_status_desc($order)
         return $ret;
 
     case AN_STATUS_EXPIRE:
-
-        if (isadmin()) {
+        if (isadmin() || (!empty($CFG->an_teachermanagepay) && isteacher($order->courseid))) {
         	$ret->actions = array(ORDER_DELETE);
         }
         $ret->status = 'expired';
