@@ -1,16 +1,17 @@
 <?php
-print_heading(get_string('tagsmanagement','blog'));
+print_heading(get_string('tagmanagement','blog'));
 ?>
 
 <table>
     <tr>
-        <td width="50%">Official Tags</td>
-        <td width="50%">User Defined Tags</td>
+        <td width="50%"><?php print_string('otags','blog');?></td>
+        <td width="50%"><?php print_string('ptags','blog');?></td>
     </tr>
     
     <tr>
         <td>
             <form action="tags.php" method="POST">
+            <input type="hidden" name="sesskey" value="<?php echo sesskey(); ?>" />
             <?php if (isadmin()){ ?>
             <select name="tags[]" multiple="multiple" size="8">
             <?php
@@ -22,7 +23,7 @@ print_heading(get_string('tagsmanagement','blog'));
             </select>
             <input type="hidden" name="mode" value="delete" />
             <br />
-            <input type="submit" value="delete" />
+            <input type="submit" value="<?php print_string('delete');?>" />
             <?php }
                 else {
                     $otags = get_records_sql('SELECT * from '.$CFG->prefix.'tags WHERE type=\'official\' ORDER by text ASC');
@@ -36,6 +37,7 @@ print_heading(get_string('tagsmanagement','blog'));
         
         <td>
             <form action="tags.php" method="POST">
+            <input type="hidden" name="sesskey" value="<?php echo sesskey(); ?>" />
             <select name="tags[]" multiple="multiple" size="8">
             <?php
                 $ptags1 = get_records_sql('SELECT * from '.$CFG->prefix.'tags WHERE type=\'personal\' AND userid = '.$USER->id.' ORDER by text ASC');
@@ -48,7 +50,7 @@ print_heading(get_string('tagsmanagement','blog'));
             </select>
             <input type="hidden" name="mode" value="delete" />
             <br />
-            <input type="submit" value="delete" />
+            <input type="submit" value="<?php print_string('delete');?>" />
             </form>
         </td>
     </tr>
@@ -57,9 +59,10 @@ print_heading(get_string('tagsmanagement','blog'));
         <td>
             <?php if (isadmin()) { ?>
             <form action="tags.php" method="POST">
-            Add Official:<br/>
+            <input type="hidden" name="sesskey" value="<?php echo sesskey(); ?>" />
+            <?php print_string('addotags','blog');?>:<br/>
             <input type="text" name="otag" />
-            <input type="submit" value="add" />
+            <input type="submit" value="<?php print_string('add');?>" />
             <input type="hidden" name="mode" value="addofficial" />
             </form>
             <?php }?>
@@ -67,9 +70,10 @@ print_heading(get_string('tagsmanagement','blog'));
         
         <td>
             <form action="tags.php" method="POST">
-            Add Personal:<br/>
+            <input type="hidden" name="sesskey" value="<?php echo sesskey(); ?>" />
+            <?php print_string('addptags','blog');?><br/>
             <input type="text" name="ptag" />
-            <input type="submit" value="add" />
+            <input type="submit" value="<?php print_string('add');?>" />
             <input type="hidden" name="mode" value="addpersonal" />
             </form>
         </td>
@@ -78,5 +82,5 @@ print_heading(get_string('tagsmanagement','blog'));
 </table>
 
 <p align="center">
-    <a href="#" onclick="window.close()">close this window</a>
+    <a href="#" onclick="window.close()"><?php print_string('closewindow');?></a>
 </p>

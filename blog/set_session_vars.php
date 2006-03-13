@@ -4,19 +4,19 @@
     require_once('../config.php');
     require_once('lib.php');
 
-    require_variable($_GET['referrer']);
-    require_variable($_GET['var']);
-    optional_variable($_GET['value']);
-    optional_variable($_GET['userid']);
-    optional_variable($_GET['courseid']);
-    optional_variable($_GET['categoryid']);
-    optional_variable($_GET['d']);
-    optional_variable($_GET['m']);
-    optional_variable($_GET['y']);
+    $referrer = required_param('referrer');
+    $var = required_param('var');
+    $value = optional_param('value');
+    $userid = optional_param('userid');
+    $courseid = optional_param('courseid');
+    $d = optional_param('d');
+    $m = optional_param('m');
+    $y = optional_param('y');
+    $id = optional_param('id');
 
-    switch($_GET['var']) {
+    switch($var) {
         case 'setcourse':
-            $id = intval($_GET['id']);
+            $id = intval($id);
             if($id == 0) {
                 $SESSION->cal_courses_shown = array();
                 calendar_set_referring_course(0);

@@ -16,10 +16,8 @@ if (isguest()) {
     error(get_string('noguestpost', 'forum'), $referrer);
 }
 
-optional_variable($userid, 0);
-optional_variable($editid, '');
-optional_variable($sendpingbacks, 0);
-optional_variable($sendtrackbacks, 0);
+$userid = optional_param('userid', 0);
+$editid = optional_param('editid', '');
 
 global $USER, $CFG;
 
@@ -40,14 +38,6 @@ if (!empty($userid) && $userid != 0) {
 $pageNavigation = 'edit';
 
 include($CFG->dirroot .'/blog/header.php');
-
-if (!empty($course)) {
-    $courseid = $course->id;
-} else if (!isadmin() && $CFG->blog_enable_moderation) {
-    // the user is not an admin, blog moderation is on and there is no course association
-    //Daryl Hawes note: possible bug here if editing a personal post that existed before blog moderation was enabled for the site.
-    error('Blog moderation is enabled. Your entries must be associated with a course.');
-}
 
 //print_object($PAGE->bloginfo); //debug
 
@@ -79,9 +69,9 @@ if ($usehtmleditor = can_use_richtext_editor()) {
     $onsubmit = '';
 }
 
-if ($post = data_submitted( get_referer() ) ) {
+if (($post = data_submitted( get_referer() )) && confirm_sesskey()) {
     if (!empty($post->editform)) { //make sure we're processing the edit form here
-        //print_object($post); //debug
+        print_object($post); //debug
 
         ///these varaibles needs to be changed because of the javascript hack
         ///post->courseid
@@ -95,9 +85,9 @@ if ($post = data_submitted( get_referer() ) ) {
             $post->error = get_string('emptymessage', 'forum');
         }
         if ($post->act == 'save') {
-            do_save($post, $PAGE->bloginfo, $sendpingbacks, $sendtrackbacks);
+            do_save($post, $PAGE->bloginfo);
         } else if ($post->act == 'update') {
-            do_update($post, $PAGE->bloginfo, $sendpingbacks, $sendtrackbacks);
+            do_update($post, $PAGE->bloginfo);
         } else if ($post->act == 'del') {
             require_variable($postid);
             do_delete($PAGE->bloginfo, $postid);
@@ -141,7 +131,9 @@ if ($editid != '') {  // User is editing a post
 }
 
 if (isset($post->postid) && ($post->postid != -1) ) {
-    $formHeading = get_string('updateentrywithid', 'blog', $post->postid);
+
+    $formHeading = get_string('updateentrywithid', 'blog');
+
 } else {
     $formHeading = get_string('addnewentry', 'blog');
 }
@@ -202,7 +194,7 @@ function do_delete(&$bloginfo_arg, $postid) {
 * @param object $post argument is a reference to the post object which is used to store information for the form
 * @param object $bloginfo_arg argument is reference to a blogInfo object.
 */
-function do_save(&$post, &$bloginfo_arg, $sendpingbacks, $sendtrackbacks) {
+function do_save(&$post, &$bloginfo_arg) {
     global $USER, $CFG;
 //    echo 'Debug: Post object in do_save function of edit.php<br />'; //debug
 //    print_object($post); //debug
@@ -265,7 +257,7 @@ function do_save(&$post, &$bloginfo_arg, $sendpingbacks, $sendtrackbacks) {
             add_to_log($site->id, 'blog', 'add', 'archive.php?userid='. $bloginfo_arg->userid .'&postid='. $entryID, 'created new blog entry with entry id# '. $entryID);
         }
         //to debug this save function comment out the following redirect code
-        if ($courseid == 1 || $courseid == 0 || $courseid == '') {
+        if ($courseid == SITEID || $courseid == 0 || $courseid == '') {
             redirect($CFG->wwwroot .'/blog/index.php?userid='. $bloginfo_arg->userid);
         } else {
             redirect($CFG->wwwroot .'/course/view.php?id='. $courseid);
@@ -278,7 +270,7 @@ function do_save(&$post, &$bloginfo_arg, $sendpingbacks, $sendtrackbacks) {
  * @param . $bloginfo_arg argument is reference to a blogInfo object.
  * @todo complete documenting this function. enable trackback and pingback between entries on the same server
  */
-function do_update(&$post, &$bloginfo, $sendpingbacks, $sendtrackbacks) {
+function do_update(&$post, &$bloginfo) {
 
     global $CFG, $USER;
     

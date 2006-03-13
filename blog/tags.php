@@ -7,6 +7,11 @@ $mode = optional_param('mode','',PARAM_ALPHA);
 
 switch ($mode) {
     case 'addofficial':
+    
+        if (!isadmin() || !confirm_sesskey()) {
+            die('you can not add official tags');
+        }
+        
         if (($otag = optional_param('otag')) && (!get_record('tags','text',$otag))) {
             $tag->userid = $USER->id;
             $tag->text = $otag;
@@ -24,7 +29,11 @@ switch ($mode) {
 
     break;
     
-    case 'addpersonal':
+    case 'addpersonal':    /// everyone can add
+        if (!confirm_sesskey() || isguest() || !isset($USER->id)) {
+            error ('you can not add tags');
+        }
+        
         if (($ptag = optional_param('ptag')) && (!get_record('tags','text',$ptag))) {
             $tag->userid = $USER->id;
             $tag->text = $ptag;
@@ -43,6 +52,10 @@ switch ($mode) {
     break;
     
     case 'delete':
+        if (!confirm_sesskey()) {
+            error('you can not delete tags');
+        }
+        
         $tags = optional_param('tags');
         print_object($tags);
         foreach ($tags as $tag) {
@@ -54,6 +67,7 @@ switch ($mode) {
                 continue;
             }
             
+            /// Only admin can delete tags that are referenced
             if (!isadmin() && get_records('blog_tag_instance','tagid', $tag)) {
                 notify('tag is used by other users, can not delete!');
                 continue;
@@ -62,7 +76,7 @@ switch ($mode) {
             delete_records('tags','id',$tag);
             delete_records('blog_tag_instance', 'tagid', $tag);
 
-            //remove parent window option
+            /// remove parent window option via javascript
             echo '<script>
             var i=0;
             while (i < window.opener.document.entry[\'otags[]\'].length) {

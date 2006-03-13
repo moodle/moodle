@@ -17,20 +17,21 @@ require_once($CFG->libdir .'/blocklib.php');
 
 $id = optional_param('id');
 $limit = optional_param('limit');
-optional_variable($formstart, 'none');
-optional_variable($m, ''); //month
-optional_variable($y, ''); //year
-optional_variable($d, ''); //day
-optional_variable($limit, 'none');
-optional_variable($formstart, 'none');
+$formstart = optional_param('formstart', 'none');
+$m = optional_param('m', ''); //month
+$y = optional_param('y', ''); //year
+$d = optional_param('d', ''); //day
+$limit = optional_param('limit', 'none');
+$formstart = optional_param('formstart', 'none');
 
 $userid = optional_param('userid',0,PARAM_INT);
 $groupid = optional_param('groupid',0,PARAM_INT);
 $courseid = optional_param('courseid',0,PARAM_INT);
 $tag = optional_param('tag');
 $tagid = optional_param('tagid');
-$filtertype = optional_param('filtertype','',PARAM_ALPHA);
-$filterselect = optional_param('filterselect','',PARAM_NOTAGS);
+
+$filtertype = optional_param('filtertype', '', PARAM_ALPHA);
+$filterselect = optional_param('filterselect', 0, PARAM_INT);
 
 /// overwrite filter code here
 /// the the following code does the rights checkings?
@@ -95,14 +96,14 @@ if ($filtertype) {
 
 switch ($filtertype) {
     case 'site':
-        if ($CFG->bloglevel < 4) {
+        if ($CFG->bloglevel < BLOG_SITE_LEVEL) {
             error ('site blogs is not enabled');
-        } else if ($CFG->bloglevel < 5) {
+        } else if ($CFG->bloglevel < BLOG_GLOBAL_LEVEL) {
             require_login();
         }
     break;
     case 'course':
-        if ($CFG->bloglevel < 3) {
+        if ($CFG->bloglevel < BLOG_COURSE_LEVEL) {
             error ('course blogs is not enabled');
         }
 
@@ -112,7 +113,7 @@ switch ($filtertype) {
         /// check if viewer is student
     break;
     case 'group':
-        if ($CFG->bloglevel < 2) {
+        if ($CFG->bloglevel < BLOG_GROUP_LEVEL) {
             error ('group blogs is not enabled');
         }
         if (!isteacheredit($course) and (groupmode($course) == SEPARATEGROUPS)) {
@@ -123,7 +124,7 @@ switch ($filtertype) {
         /// check if user is editting teacher, or if spg, is member
     break;
     case 'user':
-        if ($CFG->bloglevel < 1) {
+        if ($CFG->bloglevel < BLOG_USER_LEVEL) {
             error ('Blogs is not enabled');
         }
         $canview = 0;    //bad start
@@ -146,7 +147,7 @@ switch ($filtertype) {
                 }
             }
         }
-        if (!$canview && $CFG->bloglevel < 4) {
+        if (!$canview && $CFG->bloglevel < BLOG_SITE_LEVEL) {
             error ('you can not view this user\'s blogs');
         }
         /// check to see if the viewer is sharing no_group, visible group course.

@@ -6,7 +6,7 @@
     }
 
     // find all the tags this post uses
-    if (isset($post->id)) {
+    if (isset($post->postid)) {
         if ($tagsused = get_records('blog_tag_instance', 'entryid', $post->postid)) {
             foreach ($tagsused as $usedtag) {
                 $usedtags[] = $usedtag -> tagid;
@@ -16,11 +16,10 @@
 ?>
 
 
-
 <!-- the following form is based on moodle/mod/forum/post.html -->
 
 <form name="entry" method="post" action="<?php echo $CFG->wwwroot;?>/blog/edit.php" id="entry" <?php echo $onsubmit; ?> enctype="multipart/form-data">
-
+<input type="hidden" name="sesskey" value="<?php echo sesskey(); ?>" />
 <input type="hidden" name="realcourse" value="0" />
 <input type="hidden" name="realgroup" value="0" />
 
@@ -78,7 +77,6 @@
     </select>
     </td>
 
-
     <td>
     <select name="ptags[]" multiple="multiple" size="8">
     <?php
@@ -94,7 +92,6 @@
     </select>
     </td>
 </tr>
-
 
 <tr>
     <td>
@@ -170,32 +167,6 @@
     </small></small>
     </td>
 </tr>
-
-    <?php
-    if ($CFG->blog_enable_trackback_out || $CFG->blog_enable_pingback_out) {
-        print '<tr valign="top">';
-        print '<td align="right"><strong>';
-        print_string('advancedoptions', 'blog');
-        print '</strong></td><td align="left">';
-        
-
-         if ($CFG->blog_enable_pingback_out) {
-             print '<input type="checkbox" name="sendpingbacks" value="1" id="sendpingpacks" /><small><small>';      
-             print_string('sendpingback', 'blog');     
-             helpbutton('pingback', get_string('helppingback', 'blog'), 'blog');
-             print '</small></small><br />';       
-         }
-
-          if ($CFG->blog_enable_trackback_out) {
-              print '<input type="checkbox" name="sendtrackbacks" value="1" id="sendtrackbacks" /><small><small>';  
-              print_string('sendtrackback', 'blog');
-              helpbutton('trackback', get_string('helptrackback', 'blog'), 'blog');
-              print '</small></small><br />';
-          }
-
-        print '</td></tr>';
-    }
-    ?>
 <tr>
     <td align="center" colspan="3">
         <input type="hidden" name="editform" value="1" id="editform" />

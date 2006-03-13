@@ -8,25 +8,21 @@ require_once($CFG->dirroot .'/blog/blogpage.php');
 require_once($CFG->libdir .'/blocklib.php');
 require_once($CFG->dirroot .'/course/lib.php');
 
-optional_param('blockaction');
-optional_param('instanceid', 0, PARAM_INT);
-optional_param('blockid',    0, PARAM_INT);
-optional_param('groupid',    0, PARAM_INT);
-optional_param('userid',     0, PARAM_INT);
+$blockaction = optional_param('blockaction');
+$instanceid = optional_param('instanceid', 0, PARAM_INT);
+$blockid = optional_param('blockid',    0, PARAM_INT);
+$groupid = optional_param('groupid',    0, PARAM_INT);
+$userid = optional_param('userid',     0, PARAM_INT);
 
-optional_variable($categoryid, '');
-optional_variable($groupid, '');
-optional_variable($pageTitle, '');
-optional_variable($pageHeading, ''/*$site->fullname*/);
-optional_variable($pageFocus, '');
-optional_variable($pageMeta, '');
-optional_variable($pageNavigation, '');
+$pageTitle = optional_param('pageTitle');
+$pageHeading = optional_param('pageHeading'/*$site->fullname*/);
+$pageFocus = optional_param('pageFocus');
+$pageMeta = optional_param('pageMeta');
+$pageNavigation = optional_param('pageNavigation');
 
 if (!isset($courseid)) {
     $courseid = optional_param('courseid', SITEID, PARAM_INT);
 }
-
-//header('X-Pingback: '. $CFG->wwwroot .'/blog/api.php'."\n");
 
 if (!$site = get_site()) {
     redirect($CFG->wwwroot.'/index.php');
@@ -43,14 +39,6 @@ if ($courseid != SITEID) {
     }
     require_login($course->id);
 }
-
-// ensure that if a group is specified that the user is in fact a member of that group
-/*
-if ($groupid) {
-    if (!ismember($groupid) && !isteacher($course->id)) {
-        error('You are not a member of the specified group. Group with id#('. $groupid .')');
-    }
-}*/
 
 // Bounds for block widths within this page
 define('BLOCK_L_MIN_WIDTH', 160);
@@ -86,6 +74,11 @@ if (!isset($filtertype)) {
     $filterselect = $USER->id;
 }
 
+/// navigations
+/// site blogs - sitefullname -> blogs -> (?tag)
+/// course blogs - sitefullname -> course fullname ->blogs ->(?tag)
+/// group blogs - sitefullname -> course fullname ->group ->(?tag)
+/// user blogs - sitefullname -> (?coursefullname) -> participants -> blogs -> (?tag)
 $blogstring = get_string('blogs','blog');
 $tagstring = get_string('tag','blog');
 
@@ -178,20 +171,14 @@ switch ($filtertype) {
     break;
 }
 
-
-/// site blogs - sitefullname -> blogs -> (?tag)
-/// course blogs - sitefullname -> course fullname ->blogs ->(?tag)
-/// group blogs - sitefullname -> course fullname ->group ->(?tag)
-/// user blogs - sitefullname -> (?coursefullname) -> participants -> blogs -> (?tag)
-
 $editing = false;
 if ($PAGE->user_allowed_editing()) {
     $editing = $PAGE->user_is_editing();
 }
 
 // Calculate the preferred width for left, right and center (both center positions will use the same)
-optional_variable($preferred_width_left,  blocks_preferred_width($pageblocks[BLOCK_POS_LEFT]));
-optional_variable($preferred_width_right, blocks_preferred_width($pageblocks[BLOCK_POS_RIGHT]));
+$preferred_width_left = optional_param('preferred_width_left',  blocks_preferred_width($pageblocks[BLOCK_POS_LEFT]));
+$preferred_width_right = optional_param('preferred_width_right', blocks_preferred_width($pageblocks[BLOCK_POS_RIGHT]));
 $preferred_width_left = min($preferred_width_left, BLOCK_L_MAX_WIDTH);
 $preferred_width_left = max($preferred_width_left, BLOCK_L_MIN_WIDTH);
 $preferred_width_right = min($preferred_width_right, BLOCK_R_MAX_WIDTH);

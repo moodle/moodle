@@ -16,11 +16,11 @@
 
     //ensure that the logged in user is not using the guest account
     if (isguest()) {
-        error(get_string('noguestpost', 'forum'), $referrer);
+        error(get_string('noguestpost', 'blog'), $referrer);
     }
     
     if (!blog_isLoggedIn() ) {
-        error(get_string('noguestpost', 'forum'), $referrer);
+        error(get_string('noguestpost', 'blog'), $referrer);
     }
     $userid = $USER->id;
     $bloginfo =& new BlogInfo($userid);
@@ -29,24 +29,7 @@
 
 	if ($post = data_submitted()) {
         print_header();
-        if (!isset($post->blogtitle) || !isset($post->blogtagline) ) {
-            error(get_string('settingsupdatederror', 'blog'), $referrer);
-        }
 
-        if (! $bloginfo->set_blog_title($post->blogtitle)) {
-            error(get_string('settingsupdatederror', 'blog'), $referrer );
-        }
-
-        if (! $bloginfo->set_blog_tagline($post->blogtagline)) {
-            error(get_string('settingsupdatederror', 'blog'), $referrer );
-        }
-    
-        if (isset($post->theme)) {
-            if (! $bloginfo->set_blog_theme($post->theme)) {
-                error(get_string('settingsupdatederror', 'blog'), $referrer );
-            }
-        }
-        
         set_user_preference('blogpagesize', optional_param('pagesize'));
         
         redirect($referrer, get_string('changessaved'), 1);
@@ -56,7 +39,7 @@
     $site = get_site();
     $pageMeta = '<script language="javascript" type="text/javascript" src="'. $CFG->wwwroot .'/blog/blog.js"></script>' . "\n";
 
-    $strpreferences = get_string('preferences', 'calendar');
+    $strpreferences = get_string('preferences','blog');
 
     $navigation = '<a href="'. $bloginfo->get_blog_url() .'">'. $bloginfo->get_blog_title() . '</a> -> '. $strpreferences;
 

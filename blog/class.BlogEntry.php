@@ -170,71 +170,6 @@ class BlogEntry {
         }
         return true;
     }
-    
-    /**
-     * get_formatted_karma_link
-     *
-     * @return string If allowed a link to set karma for this entry will be returned
-     * @uses $USER
-     * @uses $CFG
-     */
-    function get_formatted_karma_link() {
-        global $USER, $CFG;
-        $str = '';
-        if (!empty($CFG->blog_ratename)) {
-            $str .= $CFG->blog_ratename .': ';
-        }
-        $str .= $this->entryKarma;
-        if ( !isguest() && blog_isLoggedIn()) {
-            $str .= ' ( <a href="'. $CFG->wwwroot .'/blog/karma.php?op=add&amp;userid='. $this->entryuserid .'&amp;postid='. $this->entryId .'">+</a> / <a href="'. $CFG->wwwroot .'/blog/karma.php?op=sub&amp;userid='. $this->entryuserid .'&amp;postid='. $this->entryId .'">-</a> )';
-        }
-        return $str;
-    }
-
-    /**
-     * get_formatted_category_link
-     *
-     * @return string unordered list of categories this entry is associated with
-     * @uses $CFG
-     */
-    function get_formatted_category_link() {
-        global $CFG;
-        $returnstring = '<span class="post-category">';
-        
-        if (!empty($this->entryCategoryIds)) {
-            $count = count($this->entryCategoryIds);
-            foreach ($this->entryCategoryIds as $categoryid) {
-                $returnstring .= '<a href="'. $CFG->wwwroot .'/blog/index.php?user='. $this->entryuserid .'&amp;categoryid='. $categoryid .'">'. $this->entryCategories[$categoryid] .'</a>';
-                $count--;
-                if ($count != 0) {
-                    $returnstring .= ',&nbsp;';
-                }
-                $returnstring .= "\n";
-            }
-        }
-
-        return $returnstring.'</span>' . "\n";
-    }
-    
-    
-    /**
-     * get_formatted_course_link
-     *
-     * @return string Returns and unordered list of courses that this entry is associated with
-     * @uses $CFG
-     */
-    function get_formatted_course_link() {
-        global $CFG;
-        $returnstring = '<span class="post-course">';
-        $courseid = $this->entryCourseId;
-        if ( !empty($courseid) && !($courseid == 0 || $courseid == '' || ! is_numeric($courseid) )) {
-            if ($course = get_record('course', 'id', $courseid, '', '', '', '', 'fullname')) {
-                $returnstring .= '<a href="'. $CFG->wwwroot .'/course/view.php?id='. $courseid .'">'. $course->fullname .'</a>' . "\n";
-            }
-        }
-    
-        return $returnstring.'</span>' . "\n";
-    }
 
     /**
      * get_formatted_entry_link
@@ -263,7 +198,7 @@ class BlogEntry {
         return $str;
     
     }
-    
+
     /**
      * get_blog_this_URL added by Daryl Hawes for moodle integration
      *
@@ -284,12 +219,12 @@ class BlogEntry {
             } else {
                 $blogThisString = get_string('blogthis', 'blog');
             }
-            if (!$showImage) { 
-                $str .= '('; 
+            if (!$showImage) {
+                $str .= '(';
             }
             $str .= '<a href="'. $this->get_entryblogthisurl() .'">'. $blogThisString .'</a>';
-            if (!$showImage) { 
-                $str .= ')'; 
+            if (!$showImage) {
+                $str .= ')';
             }
         }
         return $str;
@@ -404,7 +339,7 @@ class BlogEntry {
         }
         return stripslashes_safe($this->entryBody);
     }
-    
+
     /**
      * get_unformatted_entry_body
      * getter for ->entryBody

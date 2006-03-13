@@ -10,6 +10,13 @@ require_once($CFG->libdir .'/blocklib.php');
 require_once($CFG->libdir .'/pagelib.php');
 require_once($CFG->dirroot .'/blog/blogpage.php');
 
+/* blog access level constant declaration */
+define ('BLOG_USER_LEVEL', 1);
+define ('BLOG_GROUP_LEVEL', 2);
+define ('BLOG_COURSE_LEVEL', 3);
+define ('BLOG_SITE_LEVEL', 4);
+define ('BLOG_GLOBAL_LEVEL', 5);
+
 /**
  * Definition of blogcourse page type (blog page with course id present).
  */
@@ -649,7 +656,7 @@ function blog_print_html_formatted_entries(&$blogFilter, $filtertype, $filtersel
 
             if (blog_isLoggedIn()) {
                 $morelink = '<br />&nbsp;&nbsp;';
-                $morelink .= $blogFilter->get_complete_link('<a href="'. $CFG->wwwroot .'/blog/edit.php', get_string('addentries', 'blog'))."\n";
+                $morelink .= $blogFilter->get_complete_link('<a href="'. $CFG->wwwroot .'/blog/edit.php', get_string('addnewentry', 'blog'))."\n";
                 
             }
         }
@@ -663,7 +670,7 @@ function blog_print_html_formatted_entries(&$blogFilter, $filtertype, $filtersel
         //yu: testing code
         if (blog_isLoggedIn()) {
         //the user's blog is enabled and they are viewing their own blog
-            $morelink .= $blogFilter->get_complete_link($CFG->wwwroot .'/blog/edit.php', get_string('addentries', 'blog'));
+            $morelink .= $blogFilter->get_complete_link($CFG->wwwroot .'/blog/edit.php', get_string('addnewentry', 'blog'));
         }
 
         print $morelink.'<br />'."\n";
@@ -683,7 +690,7 @@ function blog_print_html_formatted_entries(&$blogFilter, $filtertype, $filtersel
     
     if (blog_isLoggedIn()) {
         //the user's blog is enabled and they are viewing their own blog
-        $output .= $blogFilter->get_complete_link($CFG->wwwroot .'/blog/edit.php', get_string('addentries', 'blog'));
+        $output .= $blogFilter->get_complete_link($CFG->wwwroot .'/blog/edit.php', get_string('addnewentry', 'blog'));
     }
     print $output;
     unset($blogFilter->filtered_entries);
