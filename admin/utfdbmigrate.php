@@ -199,27 +199,38 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
             } else {
                 $cluster = '';
             }
-            $cmd = "PGPASSWORD={$CFG->dbpass} PGCLIENTENCODING='UNICODE' pg_dump -Fp -O -x -U {$CFG->dbuser}$cluster";
+            $cmd = "PGPASSWORD={$CFG->dbpass} PGCLIENTENCODING='UNICODE' PGDATABASE={$CFG->dbname} pg_dump -Fp -O -x -U {$CFG->dbuser}$cluster";
             if ($CFG->dbhost)  {
                 $host = split(":", $CFG->dbhost);
                 if ($host[0]) $cmd .= " -h {$host[0]}";
                 if (isset($host[1])) $cmd .= " -p {$host[1]}";
             }
-            $cmd .= " {$CFG->dbname} | iconv -f UTF-8 -t UTF-8 -c | PGPASSWORD={$_SESSION['newpostgresdb']->dbpass} psql -q -U {$_SESSION['newpostgresdb']->dbuser} -v ON_ERROR_STOP=1$cluster";
+            $cmds[] = $cmd;
+            $cmds[] = 'iconv -f UTF-8 -t UTF-8 -c';
+            $cmd = "PGPASSWORD={$_SESSION['newpostgresdb']->dbpass} PGDATABASE={$_SESSION['newpostgresdb']->dbname} psql -q -U {$_SESSION['newpostgresdb']->dbuser} -v ON_ERROR_STOP=1$cluster";
             if ($_SESSION['newpostgresdb']->dbhost)  {
                 $host = split(":", $_SESSION['newpostgresdb']->dbhost);
                 if ($host[0]) $cmd .= " -h {$host[0]}";
                 if (isset($host[1])) $cmd .= " -p {$host[1]}";
             }
-            $cmd .= " {$_SESSION['newpostgresdb']->dbname}";
-            exec($cmd.' 2>&1 > /dev/null', $output, $return_var);
-            if ($return_var) { // we are dead!
-                echo '<br />';
-                print_simple_box_start('center','50%');
-                print_string('dbmigrationdupfailed','admin',htmlspecialchars(implode("\n", $output)));
-                print_simple_box_end();
-                print_footer();
-                exit;
+            $cmds[] = $cmd;
+            foreach ($cmds as $key => $cmd) {
+                $files[] = tempnam($CFG->dataroot, 'utf8_');
+                exec($cmd . ($key?" < {$files[$key-1]}":'') . " 2>&1 > {$files[$key]}", $output, $return_var);
+                if ($return_var) { // we are dead!
+                    foreach ($files as $file) {
+                        unlink($file);
+                    }
+                    echo '<br />';
+                    print_simple_box_start('center','50%');
+                    print_string('dbmigrationdupfailed','admin',htmlspecialchars(implode("\n", $output)));
+                    print_simple_box_end();
+                    print_footer();
+                    exit;
+                }
+            }
+            foreach ($files as $file) {
+                unlink($file);
             }
         }
 
