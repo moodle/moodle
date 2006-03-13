@@ -3,10 +3,10 @@
     require_once("../../config.php");
     require_once("lib.php");
 
-    require_variable($id);                // forum
-    optional_variable($group);            // change of group
+    $id = required_param('id', PARAM_INT); // forum
+    $group = optional_param('group');      // change of group
 
-    optional_variable($edit);     // Turn editing on and off
+    $edit = optional_param('edit');     // Turn editing on and off
 
     if (! $forum = get_record("forum", "id", $id)) {
         error("Forum ID is incorrect");

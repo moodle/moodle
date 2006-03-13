@@ -5,9 +5,9 @@
     require_once("../../config.php");
     require_once("lib.php");
 
-    require_variable($id);      // The forum to subscribe or unsubscribe to
-    optional_variable($force);  // Force everyone to be subscribed to this forum?
-    optional_variable($user);
+    $id    = required_param('id', PARAM_INT);      // The forum to subscribe or unsubscribe to
+    $force = optional_param('force');  // Force everyone to be subscribed to this forum?
+    $user  = optional_param('user');
 
     if (! $forum = get_record("forum", "id", $id)) {
         error("Forum ID was incorrect");
