@@ -2801,7 +2801,9 @@ function instance_is_visible($moduletype, $module) {
  * @param    string  $user    If log regards $user other than $USER
  */
 function add_to_log($courseid, $module, $action, $url='', $info='', $cm=0, $user=0) {
-
+    // Note that this function intentionally does not follow the normal Moodle DB access idioms.
+    // This is for a good reason: it is the most frequently used DB update function,
+    // so it has been optimised for speed.
     global $db, $CFG, $USER;
 
     if ($cm === '' || is_null($cm)) { // postgres won't translate empty string to its default
