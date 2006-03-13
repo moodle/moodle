@@ -98,5 +98,5 @@ $string['thischarset'] = 'UTF-8';
 $string['thislanguage'] = 'Español - Internacional';
 $string['user'] = 'Usuario';
 $string['wwwroot'] = 'Dirección Web';
-$string['wwwrooterror'] = 'La \'Dirección Web\' no parece ser válida - esta instalación de Moodle no parece estar ahí. El valor ha sido cambiado por el original';
+$string['wwwrooterror'] = 'La \'Dirección Web\' parece incorrecto. No se pudo encontrar una instalación de Moodle. El valor ha sido cambiado por el original';
 ?>
