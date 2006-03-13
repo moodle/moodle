@@ -39,7 +39,7 @@
     $site = get_site();
     $pageMeta = '<script language="javascript" type="text/javascript" src="'. $CFG->wwwroot .'/blog/blog.js"></script>' . "\n";
 
-    $strpreferences = get_string('preferences','blog');
+    $strpreferences = get_string('preferences');
 
     $navigation = '<a href="'. $bloginfo->get_blog_url() .'">'. $bloginfo->get_blog_title() . '</a> -> '. $strpreferences;
 

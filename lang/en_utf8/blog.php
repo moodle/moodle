@@ -1,33 +1,29 @@
-<?PHP 
+<?php  // $Id$
 
-$string['addnewentry'] = 'Add a New Entry';
-$string['addotags'] = 'Add Official Tags';
-$string['addptags'] = 'Add User Defined Tags';
-$string['blockmenutitle'] = 'Blog Menu';
+$string['addnewentry'] = 'Add a new entry';
+$string['addotags'] = 'Add official tags';
+$string['addptags'] = 'Add user-defined tags';
+$string['blockmenutitle'] = 'Blog menu';
 $string['blogs'] = 'Blogs';
-$string['blogpreferences'] = 'Blog Preferences';
-$string['entrybody'] = 'Blog Entry Body';
-$string['entrybodyonlydesc'] = 'Entry Description';
+$string['blogpreferences'] = 'Blog preferences';
+$string['entrybody'] = 'Blog entry body';
+$string['entrybodyonlydesc'] = 'Entry description';
 $string['entryerrornotyours'] = 'This entry is not yours';
-$string['entrytitle'] = 'Entry Title';
-$string['entryupdated'] = 'Blog Entry Updated';
+$string['entrytitle'] = 'Entry title';
+$string['entryupdated'] = 'Blog entry updated';
 $string['noguestpost'] = 'Guest can not post blogs!';
 $string['notallowedtoedit'] = 'You are not allowed to edit this entry';
-$string['otags'] = 'Official Tags';
-$string['pagesize'] = 'Number of Blog Entries per Page';
-$string['preferences'] = 'Preferences';
-$string['ptags'] = 'User Defined Tags';
-$string['publishto'] = 'Publish To';
-$string['publishtonoone'] = 'Draft';
-$string['publishtosite'] = 'Publish To Site';
-$string['publishtoworld'] = 'Publish To World';
-$string['settingsupdatederror'] = 'An error has occured, blog preference setting could not be updated';
-$string['tag'] = 'Tag';
-$string['tagmanagement'] = 'Tags Management';
-$string['tags'] = 'Tags: ';
-$string['updateentrywithid'] = 'Updating Entry';
-$string['viewcourseentries'] = 'View My Entries';
-$string['viewmyentries'] = 'View My Entries';
-$string['viewsiteentries'] = 'View Site Entries';
+$string['otags'] = 'Official tags';
+$string['pagesize'] = 'Number of blog entries per Page';
+$string['ptags'] = 'User defined tags';
+$string['publishto'] = 'Publish to';
+$string['publishtonoone'] = 'Yourself (draft)';
+$string['publishtosite'] = 'Anyone on this site';
+$string['publishtoworld'] = 'Anyone in the world';
+$string['settingsupdatederror'] = 'An error has occurred, blog preference setting could not be updated';
+$string['updateentrywithid'] = 'Updating entry';
+$string['viewcourseentries'] = 'View my entries';
+$string['viewmyentries'] = 'View my entries';
+$string['viewsiteentries'] = 'View site entries';
 
 ?>

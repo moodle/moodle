@@ -80,7 +80,7 @@ if (!isset($filtertype)) {
 /// group blogs - sitefullname -> course fullname ->group ->(?tag)
 /// user blogs - sitefullname -> (?coursefullname) -> participants -> blogs -> (?tag)
 $blogstring = get_string('blogs','blog');
-$tagstring = get_string('tag','blog');
+$tagstring = get_string('tag');
 
 switch ($filtertype) {
     case 'site':
