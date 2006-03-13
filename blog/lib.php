@@ -849,7 +849,8 @@ function blog_print_entry_content ($template, $entryid, $filtertype='', $filters
                                  WHERE t.id = ti.tagid
                                  AND ti.entryid = '.$entryid)) {
         echo '<p />';
-        print_string('tags', 'blog');
+        print_string('tags');
+        echo ': ';
         foreach ($blogtags as $blogtag) {
             echo '<a href="index.php?courseid='.$course->id.'&amp;filtertype='.$filtertype.'&amp;filterselect='.$filterselect.'&amp;tagid='.$blogtag->id.'">'.$blogtag->text.'</a>, ';
         }
