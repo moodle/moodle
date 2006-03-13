@@ -2791,8 +2791,6 @@ function set_login_session_preferences() {
     $SESSION->justloggedin = true;
 
     unset($SESSION->lang);
-    unset($SESSION->encoding);
-    $SESSION->encoding = current_charset();
 
     // Restore the calendar filters, if saved
     if (intval(get_user_preferences('calendar_persistflt', 0))) {

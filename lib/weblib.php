@@ -1920,7 +1920,6 @@ function print_header ($title='', $heading='', $navigation='', $focus='', $meta=
     if (!empty($CFG->courselang)) {
         moodle_setlocale();
     }
-    $SESSION->encoding = $encoding;
 
     $meta = '<meta http-equiv="content-type" content="text/html; charset='. $encoding .'" />'. "\n". $meta ."\n";
     if (!$usexml) {

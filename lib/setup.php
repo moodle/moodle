@@ -457,7 +457,6 @@ global $HTTPSPAGEREQUIRED;
         if (!detect_munged_arguments($lang, 0) and (file_exists($CFG->dataroot .'/lang/'. $lang) or 
                                                     file_exists($CFG->dirroot .'/lang/'. $lang))) {
             $SESSION->lang = $lang;
-            $SESSION->encoding = get_string('thischarset');
         }
     }
     if (empty($CFG->lang)) {

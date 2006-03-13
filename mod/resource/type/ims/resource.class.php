@@ -676,24 +676,16 @@ class resource_ims extends resource_base {
     /// Configure links behaviour
         $fullurl = $CFG->wwwroot.'/mod/resource/view.php?r='.$resource->id.'&amp;frameset=ims&amp;page=';
 
-    /// Decide if we have to leave text in UTF-8, else convert to ISO-8859-1
-    /// (interim solution until everything was migrated to UTF-8). Then we'll
-    //  delete this hack.
-        $convert = true;
-        if ($SESSION->encoding == 'UTF-8') {
-            $convert = false;
-        }
-
     /// Iterate over items to build the menu
         $currlevel = 0;
         $currorder = 0;
         $endlevel  = 0;
         foreach ($items as $item) {
-        /// Convert text to ISO-8859-1 if specified (will remove this once utf-8 migration was complete- 1.6)
-        if ($convert) {
-            $item->title = utf8_decode($item->title);
-        }
-        
+        /// Convert text from UTF-8 to current charset if needed
+		    if (empty($CFG->unicodedb)) {
+                $textlib = textlib_get_instance();
+                $item->title = $textlib->convert($item->title, 'UTF-8', current_charset());
+            }
         /// Skip pages until we arrive to $page
             if ($item->id < $page) {
                 continue;
