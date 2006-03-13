@@ -34,7 +34,7 @@
                 get_string('participants'));
 
             $toprow[] = new tabobject('blogs', $CFG->wwwroot.'/blog/index.php?filtertype=site&amp;',
-                get_string('blogs'));
+                get_string('blogs','blog'));
         }
 
     /**************************************
@@ -50,7 +50,7 @@
             $toprow[] = new tabobject('participants', $CFG->wwwroot.'/user/index.php?id='.$filterselect.'&amp;group=0',
                 get_string('participants'));    //the groupid hack is necessary, otherwise the group in the session willbe used
         
-            $toprow[] = new tabobject('blogs', $CFG->wwwroot.'/blog/index.php?filtertype=course&amp;filterselect='.$filterselect, get_string('blogs'));
+            $toprow[] = new tabobject('blogs', $CFG->wwwroot.'/blog/index.php?filtertype=course&amp;filterselect='.$filterselect, get_string('blogs','blog'));
         }
 
     /**************************************
@@ -67,7 +67,7 @@
                 get_string('participants'));
 
         
-            $toprow[] = new tabobject('blogs', $CFG->wwwroot.'/blog/index.php?filtertype=group&amp;filterselect='.$filterselect, get_string('blogs'));
+            $toprow[] = new tabobject('blogs', $CFG->wwwroot.'/blog/index.php?filtertype=group&amp;filterselect='.$filterselect, get_string('blogs','blog'));
         }
 
     /*********************************************************************
@@ -77,7 +77,7 @@
 
         print_heading('');
         $toprow[] = new tabobject('blogs', $CFG->wwwroot.'/blog/index.php?filtertype=site&amp;',
-                get_string('blogs'));
+                get_string('blogs','blog'));
 
     /**************************************
      * User Level participation or Blogs  *
