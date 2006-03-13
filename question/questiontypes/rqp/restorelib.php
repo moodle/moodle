@@ -44,4 +44,30 @@
 
         return $status;
     }
+
+    
+    //This function restores the question_rqp_states
+    function question_rqp_states_restore($state_id,$info,$restore) {
+
+        global $CFG;
+
+        $status = true;
+
+        //Get the question_rqp_state
+        $rqp_state = $info['#']['RQP_STATE']['0'];
+        if ($rqp_state) {
+
+            //Now, build the RQP_STATES record structure
+            $state->stateid = $state_id;
+            $state->responses = backup_todb($rqp_state['#']['RESPONSES']['0']['#']);
+            $state->persistent_data = backup_todb($rqp_state['#']['PERSISTENT_DATA']['0']['#']);
+            $state->template_vars = backup_todb($rqp_state['#']['TEMPLATE_VARS']['0']['#']);
+
+            //The structure is equal to the db, so insert the question_states
+            $newid = insert_record ("question_rqp_states",$state);
+        }
+
+    return $status;
+    }
+    
 ?>

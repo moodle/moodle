@@ -4822,8 +4822,6 @@
                 }
             }
         }
-        // The following will be enabled once the quiz and question restore code are separated
-        //include_once("$CFG->dirroot/question/restorelib.php");
 
         if (!defined('RESTORE_SILENTLY')) {
             //Start the main table
@@ -5041,8 +5039,9 @@
         }
         
 
-        //Now create categories and questions as needed (STEP1)
+        //Now create categories and questions as needed
         if ($status and ($restore->mods['quiz']->restore)) {
+            include_once("$CFG->dirroot/question/restorelib.php");
             if (!defined('RESTORE_SILENTLY')) {
                 echo "</li><li>".get_string("creatingcategoriesandquestions");
                 echo "<ul>";

@@ -44,4 +44,30 @@
 
         return $status;
     }
+
+
+    //This function restores the question_essay_states
+    function question_essay_states_restore($state_id,$info,$restore) {
+
+        global $CFG;
+
+        $status = true;
+
+        //Get the question_essay_state
+        $essay_state = $info['#']['ESSAY_STATE']['0'];
+        if ($essay_state) {
+
+            //Now, build the ESSAY_STATES record structure
+            $state->stateid = $state_id;
+            $state->graded = backup_todb($essay_state['#']['GRADED']['0']['#']);
+            $state->fraction = backup_todb($essay_state['#']['FRACTION']['0']['#']);
+            $state->response = backup_todb($essay_state['#']['RESPONSE']['0']['#']);
+
+            //The structure is equal to the db, so insert the question_states
+            $newid = insert_record ("question_essay_states",$state);
+        }
+
+        return $status;
+    }
+
 ?>
