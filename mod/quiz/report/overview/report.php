@@ -403,7 +403,7 @@ class quiz_report extends quiz_default_report {
                         }
                         else {
                             foreach($questionids as $questionid) {
-                                if ($gradedstateid = get_field('quiz_newest_states', 'newgraded', 'attemptid', $attempt->attemptuniqueid, 'questionid', $questionid)) {
+                                if ($gradedstateid = get_field('question_sessions', 'newgraded', 'attemptid', $attempt->attemptuniqueid, 'questionid', $questionid)) {
                                     $grade = round(get_field('question_states', 'grade', 'id', $gradedstateid), $quiz->decimalpoints);
                                 } else {
                                     // This is an old-style attempt
