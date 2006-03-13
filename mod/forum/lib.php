@@ -788,8 +788,8 @@ function forum_print_overview($courses,&$htmlarray) {
             ' FROM '.$CFG->prefix.'forum_posts p '.
             ' JOIN '.$CFG->prefix.'forum_discussions d ON p.discussion = d.id '.
             ' LEFT JOIN '.$CFG->prefix.'forum_read r ON r.postid = p.id AND r.userid = '.$USER->id.' WHERE (';
-        foreach ($courses as $course) {
-            $sql .= '(d.course = '.$course->id.' AND (d.groupid = -1 OR d.groupid = 0 OR d.groupid = '.get_current_group($course->id,false).')) OR ';
+        foreach ($trackingforums as $track) {
+            $sql .= '(d.forum = '.$track->id.' AND (d.groupid = -1 OR d.groupid = 0 OR d.groupid = '.get_current_group($track->course,false).')) OR ';
         }
         $sql = substr($sql,0,-3); // take off the last OR
         $sql .= ') AND p.modified >= '.$cutoffdate.' AND r.id is NULL GROUP BY d.forum,d.course';
