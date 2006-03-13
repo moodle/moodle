@@ -104,7 +104,7 @@ $string['noreturns'] = 'No returns!';
 $string['notsettled'] = 'Not settled';
 $string['orderid'] = 'Order ID';
 $string['paymentmanagement'] = 'Payment Management';
-$string['paymentpending'] = 'Your payment is pending for this course with this order number $a->orderid.';
+$string['paymentpending'] = 'Your payment is pending for this course with this order number $a->orderid.  See <a href=\'$a->url\'>Order Details</a>.';
 $string['pendingordersemail'] = ' Dear admin,
 
 $a->pending transactions will be expired unless you accept payment with in $a->days days.
