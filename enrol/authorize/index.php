@@ -15,8 +15,8 @@ if (!($site = get_site())) {
 
 require_login();
 
-if (!isadmin()) {
-    error("You must be an administrator to use this page.");
+if (isguest()) {
+    error("Guests cannot use this page.");
 }
 
 $orderid = optional_param('order', 0, PARAM_INT);
@@ -53,6 +53,10 @@ function authorize_orders()
     $status = optional_param('status', AN_STATUS_NONE, PARAM_INT);
     if ($courseid == SITEID) {
     	$courseid = 0; // no filter
+    }
+
+    if (!isstudent($courseid, $userid) && !isteacher($courseid, $userid)) {
+         error("You must be a teacher/student to use this page.");
     }
 
     $baseurl = $CFG->wwwroot."/enrol/authorize/index.php?user=$userid";
@@ -142,10 +146,17 @@ function authorize_orders()
     if ($records = get_records_sql($select . $from . $where . $sort . $limit)) {
         foreach ($records as $record) {
             $actionstatus = get_order_status_desc($record);
-            $actions = '&nbsp;';
-            foreach ($actionstatus->actions as $value) {
-                $actions .= "&nbsp;&nbsp;<a href='index.php?$value=y&amp;order=$record->id'>{$authstrs->$value}</a> ";
+            $actions = '';
+
+            if (empty($actionstatus->actions)) {
+                $actions .= $strs->none;
             }
+            else {
+                foreach ($actionstatus->actions as $value) {
+                    $actions .= "&nbsp;&nbsp;<a href='index.php?$value=y&amp;order=$record->id'>{$authstrs->$value}</a> ";
+                }
+            }
+
             $table->add_data(array(
                 "<a href='index.php?order=$record->id'>$record->id</a>",
                 userdate($record->timecreated),
@@ -161,7 +172,7 @@ function authorize_orders()
 
 
 function authorize_order_details($orderno) {
-    global $CFG;
+    global $CFG, $USER;
     global $strs, $authstrs;
 
     $unenrol = optional_param('unenrol', '');
@@ -187,6 +198,12 @@ function authorize_order_details($orderno) {
         return;
     }
 
+    if ($USER->id != $order->userid) {
+        if (! (isadmin() || isteacher($order->courseid, $order->userid))) {
+            error("Students can view their order.");
+        }
+    }
+
     echo "<form action='index.php' method='post'>\n";
     echo "<input type='hidden' name='order' value='$orderno'>\n";
 
@@ -207,6 +224,10 @@ function authorize_order_details($orderno) {
     $table->data[] = array("&nbsp;", "<hr size='1' noshade>\n");
 
     if (!empty($cmdcapture)) { // CAPTURE
+        if (!in_array(ORDER_CAPTURE, $status->actions)) {
+            error("You can't do this action:" + ORDER_CAPTURE);
+        }
+
         if (empty($cmdconfirm)) {
             $table->data[] = array("<b>$strs->confirm:</b>",
             "$authstrs->captureyes<br /><a href='index.php?order=$orderno&amp;capture=y&amp;confirm=y'>$strs->yes</a>
@@ -251,6 +272,10 @@ function authorize_order_details($orderno) {
         print_table($table);
     }
     elseif (!empty($cmdrefund)) { // REFUND
+        if (!in_array(ORDER_REFUND, $status->actions)) {
+            error("You can't do this action:" + ORDER_REFUND);
+        }
+
         $extra = new stdClass();
         $extra->sum = 0.0;
         $extra->orderid = $orderno;
@@ -305,6 +330,10 @@ function authorize_order_details($orderno) {
         print_table($table);
     }
     elseif (!empty($cmdvoid)) { // VOID
+        if (!in_array(ORDER_VOID, $status->actions)) {
+            error("You can't do this action:" + ORDER_VOID);
+        }
+
         $suborderno = optional_param('suborder', 0, PARAM_INT);
         if (empty($suborderno)) { // cancel original transaction.
             if (empty($cmdconfirm)) {
@@ -382,8 +411,11 @@ function authorize_order_details($orderno) {
     }
     elseif (!empty($cmddelete)) { // DELETE
         if (!in_array(ORDER_DELETE, $status->actions)) {
-            error("Order $orderno cannot be deleted. Status must be expired.");
+            error("You can't do this action:" + ORDER_DELETE);
         }
+        //if (!in_array(ORDER_DELETE, $status->actions)) {
+        //    error("Order $orderno cannot be deleted. Status must be expired.");
+        //}
         if (empty($cmdconfirm)) {
             $table->data[] = array("<b>$authstrs->unenrolstudent</b>",
                 "<input type='checkbox' name='unenrol' value='y'" . (!empty($unenrol) ? " checked" : "") . ">");
@@ -462,7 +494,9 @@ function get_order_status_desc($order)
     $ret = new stdClass();
 
     if (intval($order->transid) == 0) { // test transaction
-        $ret->actions = array(ORDER_DELETE);
+        if (isadmin()) {
+        	$ret->actions = array(ORDER_DELETE);
+        }
         $ret->status = 'tested';
         return $ret;
     }
@@ -473,22 +507,30 @@ function get_order_status_desc($order)
         if (getsettletime($order->timecreated) < $timediff30) {
             $order->status = AN_STATUS_EXPIRE;
             update_record("enrol_authorize", $order);
-            $ret->actions = array(ORDER_DELETE);
+            if (isadmin()) {
+            	$ret->actions = array(ORDER_DELETE);
+            }
             $ret->status = 'expired';
         }
         else {
-            $ret->actions = array(ORDER_CAPTURE, ORDER_VOID);
+            if (isadmin()) {
+            	$ret->actions = array(ORDER_CAPTURE, ORDER_VOID);
+            }
             $ret->status = 'authorizedpendingcapture';
         }
         return $ret;
 
     case AN_STATUS_AUTHCAPTURE:
         if (settled($order)) {
-            $ret->actions = array(ORDER_REFUND);
+            if (isadmin()) {
+            	$ret->actions = array(ORDER_REFUND);
+            }
             $ret->status = 'capturedsettled';
         }
         else {
-            $ret->actions = array(ORDER_VOID);
+            if (isadmin()) {
+            	$ret->actions = array(ORDER_VOID);
+            }
             $ret->status = 'capturedpendingsettle';
         }
         return $ret;
@@ -499,7 +541,9 @@ function get_order_status_desc($order)
             $ret->status = 'settled';
         }
         else {
-            $ret->actions = array(ORDER_VOID);
+            if (isadmin()) {
+            	$ret->actions = array(ORDER_VOID);
+            }
             $ret->status = 'refunded';
         }
         return $ret;
@@ -510,7 +554,10 @@ function get_order_status_desc($order)
         return $ret;
 
     case AN_STATUS_EXPIRE:
-        $ret->actions = array(ORDER_DELETE);
+
+        if (isadmin()) {
+        	$ret->actions = array(ORDER_DELETE);
+        }
         $ret->status = 'expired';
         return $ret;
 
