@@ -278,8 +278,15 @@ a.skip-block {
 /***
  *** Calendar
  ***/
+#calendar .sidecalendar abbr,
 .block_calendar_month abbr {
   border: none;
+}
+#calendar .eventnone a,
+.block_calendar_month .eventnone a {
+  text-decoration:none;
+  color:black;
+  cursor:text;
 }
 
 #calendar .maincalendar .eventlist .event .referer {
