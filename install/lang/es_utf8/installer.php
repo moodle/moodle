@@ -12,20 +12,37 @@
 $string['admindirerror'] = 'El directorio especificado para admin es incorrecto';
 $string['admindirname'] = 'Directorio Admin';
 $string['caution'] = 'Precaución';
+$string['chooselanguagehead'] = 'Seleccionar idioma';
+$string['chooselanguagesub'] = 'Por favor, seleccione un idioma para el proceso de instalación.';
 $string['closewindow'] = 'Cerrar esta ventana';
+$string['compatibilitysettingssub'] = 'Su servidor debería pasar todos estas comprobaciones para que Moodle pueda funcionar correctamente.';
 $string['configfilenotwritten'] = 'El script instalador no ha podido crear automáticamente un archivo config.php con las especificaciones elegidas. Por favor, copie el siguiente código en un archivo llamado config.php y coloque ese archivo en el directorio raíz de Moodle.';
 $string['configfilewritten'] = 'config.php se ha creado con éxito';
 $string['continue'] = 'Continuar';
 $string['database'] = 'Base de datos';
-$string['dataroot'] = 'Datos';
-$string['datarooterror'] = 'El ajuste \'Data\' es incorrecto';
+$string['dataroot'] = 'Directorio de Datos';
+$string['datarooterror'] = 'El \'Directorio de Datos\' no pudo ser encontrado o creado. Corrija la ruta o cree el directorio manualmente';
 $string['dbconnectionerror'] = 'Error de conexión con la base de datos. Por favor, compruebe los ajustes de la base de datos';
 $string['dbcreationerror'] = 'Error al crear la base de datos. No se ha podido crear la base de datos con el nombre y ajustes suministrados';
 $string['dbhost'] = 'Servidor';
 $string['dbprefix'] = 'Prefijo de tablas';
 $string['dbtype'] = 'Tipo';
-$string['dirroot'] = 'Directorio';
-$string['dirrooterror'] = 'El ajuste de \'Directorio\' es incorrecto. Inténtelo con el siguiente';
+$string['directorysettingshead'] = 'Por favor confirme las siguientes localizaciones de su instalación';
+$string['directorysettingssub'] = '<b>Dirección Web:</b>
+Especifique la dirección web completa en la que se accederá a Moodle.
+Si su sitio es accesible desde diferentes URLs entonces elija
+la más natural que sus estudiantes deberían utilizar. No incluya la barra final.
+<br />
+<br />
+<b>Directorio Moodle:</b>
+Especifique la ruta completa de esta instalación. Asegurese de que las mayúsculas/minúsculas son correctas.
+<br /><br />
+<b>Directorio de Datos:</b>
+Es necesario un lugar donde Moodle pueda guardar los archivos subidos. Este directorio debe ser legible y
+escribible por el usuario de su servidor web (normalmente \'nobody\' o \'apache\'), pero no debería ser
+directamente accesible desde la red.';
+$string['dirroot'] = 'Directorio Moodle';
+$string['dirrooterror'] = 'El \'Directorio de Moodle\' parece incorrecto. No se pudo encontrar una instalación de Moodle. El valor ha sido cambiado por el original.';
 $string['download'] = 'Descargar';
 $string['error'] = 'Error';
 $string['fail'] = 'Fallo';
@@ -80,6 +97,6 @@ $string['status'] = 'Estatus';
 $string['thischarset'] = 'UTF-8';
 $string['thislanguage'] = 'Español - Internacional';
 $string['user'] = 'Usuario';
-$string['wwwroot'] = 'WWW';
-$string['wwwrooterror'] = 'El ajuste \'WWW\' es incorrecto';
+$string['wwwroot'] = 'Dirección Web';
+$string['wwwrooterror'] = 'La \'Dirección Web\' no parece ser válida - esta instalación de Moodle no parece estar ahí. El valor ha sido cambiado por el original';
 ?>
