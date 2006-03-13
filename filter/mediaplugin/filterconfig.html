@@ -11,6 +11,8 @@
     $txt->mediapluginmpg = get_string( 'mediapluginmpg','admin' );
     $txt->mediapluginavi = get_string( 'mediapluginavi','admin' );
     $txt->mediapluginflv = get_string( 'mediapluginflv','admin' );
+    $txt->mediapluginram = get_string( 'mediapluginram','admin' );
+    $txt->mediapluginrm  = get_string( 'mediapluginrm','admin' );
     $txt->yes = get_string( 'yes' );
     $txt->no = get_string( 'no' );
 
@@ -52,5 +54,15 @@
         <td align="right"><?php echo $txt->mediapluginflv ?></td>
         <td><?php choose_from_menu( $yesno,'filter_mediaplugin_enable_flv',
              $CFG->filter_mediaplugin_enable_flv ); ?></td> 
+    </tr>
+    <tr valign="top">
+        <td align="right"><?php echo $txt->mediapluginram ?></td>
+        <td><?php choose_from_menu( $yesno,'filter_mediaplugin_enable_ram',
+             $CFG->filter_mediaplugin_enable_ram ); ?></td> 
+    </tr>
+    <tr valign="top">
+        <td align="right"><?php echo $txt->mediapluginrm ?></td>
+        <td><?php choose_from_menu( $yesno,'filter_mediaplugin_enable_rm',
+             $CFG->filter_mediaplugin_enable_rm ); ?></td> 
     </tr>
 </table>
