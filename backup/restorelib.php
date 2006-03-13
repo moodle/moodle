@@ -2476,7 +2476,7 @@
                         $modrestore = $mod->modtype."_restore_mods";
                         if (function_exists($modrestore)) {
                             //print_object ($mod);                                                //Debug
-                            $status = $modrestore($mod,$restore);
+                            $status &= $modrestore($mod,$restore);
                         } else {
                             //Something was wrong. Function should exist.
                             $status = false;
