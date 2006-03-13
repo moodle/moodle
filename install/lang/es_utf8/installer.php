@@ -75,7 +75,7 @@ $string['gdversionerror'] = 'La librería GD debería estar presente para proces
 $string['globalsquotes'] = 'Manejo Inseguro de Ajustes Globales';
 $string['globalsquoteserror'] = 'Fije sus ajustes PHP: deshabilite register_globals y/o habilite magic_quotes_gpc';
 $string['help'] = 'Ayuda';
-$string['iconvrecommended'] = 'La instalación de la librería opcional MBSTRING es muy recomendable para mejorar el rendimiento del sitio, especialmente si su sitio está soportando idiomas no latinos';
+$string['iconvrecommended'] = 'La instalación de la librería opcional ICONV es muy recomendable para mejorar el rendimiento del sitio, especialmente si su sitio está soportando idiomas no latinos.';
 $string['info'] = 'Información';
 $string['installation'] = 'Instalación';
 $string['langdownloaderror'] = 'El idioma \"$a\" no pudo ser instalado. El proceso de instalación continuará en inglés.';
@@ -83,7 +83,7 @@ $string['langdownloadok'] = 'El idioma \"$a\" ha sido instalado correctamente. E
 $string['language'] = 'Idioma';
 $string['magicquotesruntime'] = 'Magic Quotes Run Time';
 $string['magicquotesruntimeerror'] = 'Debe estar desactivado';
-$string['mbstringrecommended'] = 'La instalación de la librería opcional MBSTRING es muy recomendable para mejorar el rendimiento del sitio, especialmente si su sitio está soportando idiomas no latinos';
+$string['mbstringrecommended'] = 'La instalación de la librería opcional MBSTRING es muy recomendable para mejorar el rendimiento del sitio, especialmente si su sitio está soportando idiomas no latinos.';
 $string['memorylimit'] = 'Límite de memoria';
 $string['memorylimiterror'] = 'El límite de memoria PHP es demasiado bajo... Puede tener problemas más tarde.';
 $string['memorylimithelp'] = '<p>El límite de memoria PHP en su servidor es actualmente $a.</p>
@@ -103,7 +103,7 @@ a, digamos, 16M. Si no lo tiene, pida a su administrador que lo haga por usted.<
 (podrá ver los errores cuando mire las páginas) de modo que tendrá que eliminar el archivo .htaccess.</p></li>
 </ol>';
 $string['mysql416bypassed'] = 'En cualquier caso, si su sitio únicamente está utilizando idiomas ISO-8859-1 (latin), puede continuar con su versión de MySQL actual (4.1.12 o superior).';
-$string['mysql416required'] = 'MySQL 4.1.16 es la verisón mínima requerida para trabajar con Moodle 1.6 y garantizar que toda la información podrá ser convertida a UTF-8 en el futuro.';
+$string['mysql416required'] = 'MySQL 4.1.16 es la versión mínima requerida para trabajar con Moodle 1.6 y garantizar que toda la información podrá ser convertida a UTF-8 en el futuro.';
 $string['mysqlextensionisnotpresentinphp'] = 'PHP no ha sido adecuadamente configurado con la extensión MySQL de modo que pueda comunicarse con MySQL. Por favor, compruebe el archivo php.ini o recompile PHP.';
 $string['name'] = 'Nombre';
 $string['next'] = 'Siguiente';
