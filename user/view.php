@@ -349,6 +349,13 @@
             echo "</form></td>";
         }
     }
+    if ($course->enrol == 'authorize' || (empty($course->enrol) && $CFG->enrol == 'authorize')) {
+        echo "<td nowrap=\"nowrap\"><form action=\"../enrol/authorize/index.php\" method=\"get\">";
+        echo "<input type=\"hidden\" name=\"id\" value=\"$course->id\" />";
+        echo "<input type=\"hidden\" name=\"user\" value=\"$user->id\" />";
+        echo "<input type=\"submit\" value=\"".get_string('payments')."\" />";
+        echo "</form></td>";
+    }
     echo "<td></td>";
     echo "</tr></table></div>\n";
 
