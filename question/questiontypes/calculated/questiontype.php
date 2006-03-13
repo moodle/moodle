@@ -255,6 +255,11 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
         return parent::grade_responses($numericalquestion, $state, $cmoptions);
     }
 
+    function response_summary($state, $length=80) {
+        // The actual response is the bit after the hyphen
+        return substr($state->answer, strpos($state->answer, '-')+1, $length);
+    }
+
     // ULPGC ecastro
     function check_response(&$question, &$state) {
         // Forward the checking to the virtual qtype
