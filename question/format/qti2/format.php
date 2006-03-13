@@ -1,4 +1,4 @@
-<?php  
+<?php  // $Id$
 require_once("$CFG->dirroot/question/format/qti2/qt_common.php");
 ////////////////////////////////////////////////////////////////////////////
 /// IMS QTI 2.0 FORMAT
@@ -117,8 +117,7 @@ class qformat_qti2 extends qformat_default {
         
         // assign the language for the export: by parameter, SESSION, USER, or the default of 'en'
         if (is_null($lang)) {
-            global $SESSION, $USER;
-            $lang = empty($SESSION->lang) ? (empty($USER->lang) ? 'en' : $USER->lang) : $SESSION->lang;
+            $lang = current_language();
         }
         $this->lang = $lang;
         
