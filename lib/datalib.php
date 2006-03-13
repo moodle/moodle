@@ -545,27 +545,37 @@ function get_record($table, $field1, $value1, $field2='', $value2='', $field3=''
 }
 
 /**
- * Get a single record as an object using the specified SQL statement
+ * Get a single record as an object using an SQL statement
  *
- * A LIMIT is normally added to only look for 1 record
- * If debugging is OFF only the first record is returned even if there is
- * more than one matching record!
+ * The SQL statement should normally only return one record. In debug mode
+ * you will get a warning if more record is returned (unless you
+ * set $expectmultiple to true). In non-debug mode, it just returns
+ * the first record. 
  *
  * @uses $CFG
  * @uses $db
- * @param string $sql The SQL string you wish to be executed.
+ * @param string $sql The SQL string you wish to be executed, should normally only return one record.
+ * @param bool $expectmultiple If the SQL cannot be written to conviniently return just one record, 
+ *      set this to true to hide the debug message.
+ * @param bool $nolimit sometimes appending ' LIMIT 1' to the SQL causes an error. Set this to true
+ *      to stop your SQL being modified. This argument should probably be deprecated.
  * @return Found record as object. False if not found or error
  */
 function get_record_sql($sql, $expectmultiple=false, $nolimit=false) {
 
     global $CFG;
 
-    if (isset($CFG->debug) && $CFG->debug > 7 && !$expectmultiple) {    // Debugging mode - don't use limit
-       $limit = '';
-    } else if ($nolimit) {
-       $limit = '';
+    if ($nolimit) {
+        $limit = '';
+    } else if ($expectmultiple) {
+        $limit = ' LIMIT 1';
+    } else if (isset($CFG->debug) && $CFG->debug) {
+        // Debugging mode - don't use a limit of 1, but do change the SQL, because sometimes that
+        // causes errors, and in non-debug mode you don't see the error message and it is 
+        // impossible to know what's wrong.
+        $limit = ' LIMIT 100';
     } else {
-       $limit = ' LIMIT 1';    // Workaround - limit to one record
+        $limit = ' LIMIT 1';
     }
 
     if (!$rs = get_recordset_sql($sql . $limit)) {
