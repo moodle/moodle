@@ -31,16 +31,17 @@
         <div class="headermenu"><?php echo $menu ?></div>
     </div>
 <?php } ?>
-    <div class="clearer">&nbsp;</div>
-<?php if ($navigation) { // This is the navigation table with breadcrumbs  ?>
-    <table class="navbar"><tr><td>
+    <div class="clearer"></div>
+<?php //Accessibility: breadcrumb trail/navbar now a DIV, not a table.
+      if ($navigation) { // This is the navigation bar with breadcrumbs  ?>
+    <div class="navbar">
         <div class="breadcrumb"><?php print_navigation($navigation); ?></div>
         <div class="navbutton"><?php echo $button; ?></div>
-    </td></tr></table>
+        <span class="clearer"></span>
+    </div>   
 <?php } else if ($heading) { // If no navigation, but a heading, then print a line  
 ?>
         <hr size="1" noshade="noshade" />
 <?php } ?>
-    <div class="clearer">&nbsp;</div>
     <!-- END OF HEADER -->
     <div id="content">
