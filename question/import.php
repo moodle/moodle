@@ -11,10 +11,26 @@
 
     require_once("../config.php");
     require_once($CFG->libdir.'/questionlib.php');
+    require_once($CFG->dirroot.'/lib/uploadlib.php');
 
+    // get parameters
+    $params = new stdClass;
+    $params->choosefile = optional_param('choosefile','',PARAM_PATH);
     $categoryid = optional_param('category', 0, PARAM_INT);
     $courseid = optional_param('course', 0, PARAM_INT);
     $format = optional_param('format','',PARAM_FILE);
+
+    // get display strings
+    $txt = new stdClass();
+    $txt->category = get_string('category','quiz');
+    $txt->choosefile = get_string('choosefile','quiz');
+    $txt->file = get_string('file');
+    $txt->fileformat = get_string('fileformat','quiz');
+    $txt->importfilearea = get_string('importfilearea','quiz');
+    $txt->importfileupload = get_string('importfileupload','quiz');
+    $txt->upload = get_string('upload');
+    $txt->uploadproblem = get_string('uploadproblem');
+    $txt->uploadthisfile = get_string('uploadthisfile');
 
     if (!$categoryid) { // try to get category from modform
         $showcatmenu = true; // will ensure that user can choose category
@@ -55,8 +71,9 @@
     $strquizzes = get_string('modulenameplural', 'quiz');
     $streditingquiz = get_string(isset($SESSION->modform->instance) ? "editingquiz" : "editquestions", "quiz");
 
-    
-    /// Header:
+    //==========
+    // PAGE HEADER
+    //==========
 
     if (isset($SESSION->modform->instance) and $quiz = get_record('quiz', 'id', $SESSION->modform->instance)) {
         $strupdatemodule = isteacheredit($course->id)
@@ -78,20 +95,39 @@
     }
 
 
-    if (!empty($format)) {   /// Filename
+    // file upload form sumitted
+    if (!empty($format) and confirm_sesskey() ) { 
 
-        if (!confirm_sesskey()) {
-            error( 'sesskey error' );
+        // file checks out ok
+        $fileisgood = false;
+
+        // work out if this is an uploaded file 
+        // or one from the filesarea.
+        if (!empty($params->choosefile)) {
+            $importfile = "{$CFG->dataroot}/{$course->id}/{$params->choosefile}";
+            if (file_exists($importfile)) {
+                $fileisgood = true;
+            }
+            else {
+                notify($txt->uploadproblem);
+            }
+        }
+        else {
+            // must be upload file
+            if (empty($_FILES['newfile'])) {
+                notify( $txt->uploadproblem );
+            }
+            else if ((!is_uploaded_file($_FILES['newfile']['tmp_name']) or $_FILES['newfile']['size'] == 0)) {
+                notify( $txt->uploadproblem );
+            }
+            else {
+                $importfile = $_FILES['newfile']['tmp_name'];
+                $fileisgood = true;
+            }
         }
 
-        if (empty($_FILES['newfile'])) {      // file was just uploaded
-            notify(get_string("uploadproblem") );
-        }
-        
-        if ((!is_uploaded_file($_FILES['newfile']['tmp_name']) or $_FILES['newfile']['size'] == 0)) {
-            notify(get_string("uploadnofilefound") );
-
-        } else {  // Valid file is found
+        // process if we are happy file is ok
+        if ($fileisgood) { 
 
             if (! is_readable("format/$format/format.php")) {
                 error( get_string('formatnotfound','quiz', $format) );
@@ -108,7 +144,7 @@
                       "$CFG->wwwroot/question/import.php?courseid={$course->id}&amp;category=$category->id");
             }
 
-            if (! $qformat->importprocess($_FILES['newfile']['tmp_name'])) {     // Process the uploaded file
+            if (! $qformat->importprocess($importfile) ) {     // Process the uploaded file
                 error( get_string('importerror','quiz'),
                       "$CFG->wwwroot/question/import.php?courseid={$course->id}&amp;category=$category->id");
             }
@@ -159,43 +195,67 @@
            $catmenu[$cat->id] = $cat->indentedname;
        }
     }
-    
-    print_simple_box_start("center");
-    echo "<form enctype=\"multipart/form-data\" method=\"post\" action=\"import.php\">\n";
-    echo "<input type=\"hidden\" name=\"sesskey\" value=\"" . sesskey() . "\" />\n";
-    echo "<table cellpadding=\"5\">\n";
+   
+    //==========
+    // DISPLAY
+    //==========
+ 
+    ?>
 
-    echo "<tr><td align=\"right\">";
-    print_string("category", "quiz");
-    echo ":</td><td>";
-    if (!showcatmenu) { // category already specified
-        echo question_category_coursename($category);
-        echo " <input type=\"hidden\" name=\"category\" value=\"$category->id\" />";
-    } else { // no category specified, let user choose
-        choose_from_menu($catmenu, "category", $category->id, "");
-    }
-    echo "</tr>\n";
+    <form name="form" enctype="multipart/form-data" method="post" action="import.php">
+        <input type="hidden" name="sesskey" value="<?php echo sesskey(); ?>" />
+        <?php print_simple_box_start("center"); ?>
+        <table cellpadding="5">
+            <tr>
+                <td align="right"><?php echo $txt->category; ?>:</td>
+                <td><?php choose_from_menu($catmenu, "category", $category->id, ""); ?></td>
+            </tr>
 
-    echo "<tr><td align=\"right\">";
-    print_string("fileformat", "quiz");
-    echo ":</td><td>";
-    choose_from_menu($fileformatnames, "format", "gift", "");
-    helpbutton("import", $strimportquestions, "quiz");
-    echo "</tr>\n";
+            <tr>
+                <td align="right"><?php echo $txt->fileformat; ?>:</td>
+                <td><?php choose_from_menu($fileformatnames, "format", "gift", "");
+                    helpbutton("import", $strimportquestions, "quiz"); ?></td>
+            </tr>
+        </table>
+        <?php
+        print_simple_box_end();
 
-    echo "<tr><td align=\"right\">";
-    print_string("upload");
-    echo ":</td><td>";
-    require_once($CFG->dirroot.'/lib/uploadlib.php');
-    upload_print_form_fragment(1,array('newfile'),null,false,null,$course->maxbytes,0,false);
-    echo "</tr><tr><td>&nbsp;</td><td>";
-    echo " <input type=\"submit\" name=\"save\" value=\"".get_string("uploadthisfile")."\" />";
-    echo "</td></tr>\n";
+        print_simple_box_start('center'); ?>
+        <?php echo $txt->importfileupload; ?>
+        <table cellpadding="5">
+            <tr>
+                <td align="right"><?php echo $txt->upload; ?>:</td>
+                <td><?php upload_print_form_fragment(1,array('newfile'),null,false,null,$course->maxbytes,0,false); ?></td>
+            </tr>
 
-    echo "</table>\n";
-    echo "</form>\n";
-    print_simple_box_end();
+            <tr>
+                <td>&nbsp;</td>
+                <td><input type="submit" name="save" value="<?php echo $txt->uploadthisfile; ?>" /></td>
+            </tr>
+        </table>
+        <?php
+        print_simple_box_end();
 
+        print_simple_box_start('center'); ?>
+        <?php echo $txt->importfilearea; ?>
+        <table cellpadding="5">
+            <tr>
+                <td align="right"><?php echo $txt->file; ?>:</td>
+                <td><input type="text" name="choosefile" size="50" /></td>
+            </tr>
+
+            <tr>
+                <td>&nbsp;</td>
+                <td><?php  button_to_popup_window ("/files/index.php?id={$course->id}&amp;choose=form.choosefile", 
+                    "coursefiles", $txt->choosefile, 500, 750, $txt->choosefile); ?>
+                    <input type="submit" name="save" value="<?php echo $txt->uploadthisfile; ?>" /></td>
+            </tr>
+        </table>
+        <?php 
+        print_simple_box_end(); ?>
+    </form>
+
+    <?php
     print_footer($course);
 
 ?>
