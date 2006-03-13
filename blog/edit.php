@@ -16,8 +16,8 @@ if (isguest()) {
     error(get_string('noguestpost', 'forum'), $referrer);
 }
 
-$userid = optional_param('userid', 0);
-$editid = optional_param('editid', '');
+$userid = optional_param('userid', 0, PARAM_INT);
+$editid = optional_param('editid', 0, PARAM_INT);
 
 global $USER, $CFG;
 
@@ -228,8 +228,9 @@ function do_save(&$post, &$bloginfo_arg) {
 
 //        print 'Debug: created a new entry - entryId = '.$entryID.'<br />'; //debug
 //        echo 'Debug: do_save() in edit.php calling blog_do_*back_pings<br />'."\n"; //debug
-        $otags = optional_param('otags');
-        $ptags = optional_param('ptags');
+        $otags = optional_param('otags','', PARAM_INT);
+        $ptags = optional_param('ptags','', PARAM_INT);
+
         // Add tags information
         foreach ($otags as $otag) {
             $tag->entryid = $entryID;
@@ -312,8 +313,8 @@ function do_update(&$post, &$bloginfo) {
 //        echo 'Debug: do_update in edit.php calling do_pings<br />'."\n"; //debug
         delete_records('blog_tag_instance', 'entryid', $blogentry->entryId);
 
-        $otags = optional_param('otags');
-        $ptags = optional_param('ptags');
+        $otags = optional_param('otags','', PARAM_INT);
+        $ptags = optional_param('ptags','', PARAM_INT);
         // Add tags information
         foreach ($otags as $otag) {
             $tag->entryid = $blogentry->entryId;

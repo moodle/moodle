@@ -596,7 +596,7 @@ function blog_get_course_selection_popup($courseid='') {
  */
 function blog_print_html_formatted_entries(&$blogFilter, $filtertype, $filterselect) {
     global $CFG, $USER;
-    $blogpage = optional_param('blogpage', 0);
+    $blogpage = optional_param('blogpage', 0, PARAM_INT);
     $bloglimit = get_user_preferences('blogpagesize',8); // expose as user pref when MyMoodle comes around
 
     // First let's see if the batchpublish form has submitted data

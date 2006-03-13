@@ -15,20 +15,18 @@ require_once('../config.php');
 require_once($CFG->dirroot .'/blog/lib.php');
 require_once($CFG->libdir .'/blocklib.php');
 
-$id = optional_param('id');
-$limit = optional_param('limit');
-$formstart = optional_param('formstart', 'none');
-$m = optional_param('m', ''); //month
-$y = optional_param('y', ''); //year
-$d = optional_param('d', ''); //day
-$limit = optional_param('limit', 'none');
-$formstart = optional_param('formstart', 'none');
+$id = optional_param('id', 0, PARAM_INT);
+$limit = optional_param('limit', 0, PARAM_INT);
+$formstart = optional_param('formstart', 'none', PARAM_ALPHA);
+$m = optional_param('m', 0, PARAM_INT); //month
+$y = optional_param('y', 0, PARAM_INT); //year
+$d = optional_param('d', 0, PARAM_INT); //day
 
 $userid = optional_param('userid',0,PARAM_INT);
 $groupid = optional_param('groupid',0,PARAM_INT);
 $courseid = optional_param('courseid',0,PARAM_INT);
-$tag = optional_param('tag');
-$tagid = optional_param('tagid');
+$tag = urldecode(optional_param('tag', '', PARAM_NOTAGS));
+$tagid = optional_param('tagid', 0, PARAM_INT);
 
 $filtertype = optional_param('filtertype', '', PARAM_ALPHA);
 $filterselect = optional_param('filterselect', 0, PARAM_INT);

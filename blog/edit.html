@@ -52,12 +52,12 @@
 </tr>
 <tr>
     <td>
-    <b>Official Tags</b>
+    <b><?php print_string('otags','blog'); ?></b>
     </td>
     
     
     <td>
-    <b>User Defined Tags</b>
+    <b><?php print_string('ptags','blog'); ?></b>
     </td>
 </tr>
 
@@ -76,7 +76,7 @@
     ?>
     </select>
     </td>
-
+    
     <td>
     <select name="ptags[]" multiple="multiple" size="8">
     <?php
@@ -96,7 +96,7 @@
 <tr>
     <td>
     <?php
-    link_to_popup_window($CFG->wwwroot."/blog/tags.php",'popup',get_string('tagmanagement'));
+    link_to_popup_window("/blog/tags.php",'popup',get_string('tagmanagement'));
     ?>
     </td>
 </tr>
@@ -138,7 +138,7 @@
         print_textarea($usehtmleditor, 6, 60, 600, 500, 'body', $post->body, $post->courseid); ?>
     </td>
 </tr>
-<?php  
+<?php
     if (isset($post->useextendedbody) && $post->useextendedbody) {
         print '<tr valign=top>'."\n";
         print '<td align=right><strong>'."\n";
@@ -149,7 +149,7 @@
         print '<br />'."\n";
         print_textarea($usehtmleditor, 25, 60, 600, 500, 'extendedbody', $post->extendedbody, $post->courseid);
         print '</td></tr>';
-   } else { 
+   } else {
         print '<input type="hidden" name="extendedbody" value="" />';
    }
 
@@ -171,18 +171,12 @@
     <td align="center" colspan="3">
         <input type="hidden" name="editform" value="1" id="editform" />
         <input type="hidden" name="courseid" value="<?php p($post->courseid) ?>" id="courseid" />
-        <?php 
-            //groups not supported quite yet - pseudocode:        
-            /*if ( isset($post->groupid) ) {
-                print '<input type="hidden" name="groupid" value="'. p($post->groupid) .'" />';
-            }*/
-        ?>
         <input type="hidden" name="userid" value="<?php p($post->userid) ?>" id="userid" />
         <input type="hidden" name="userid" value="<?php echo $userid; ?>" id="userid" />
         <input type="hidden" name="tem" id="tem" />
 <?php
     if (isset($post->postid) && ($post->postid != -1) ) {
-    ?>
+?>
         <input type="hidden" name="postid" value="<?php echo $post->postid; ?>" id="postid" />
         <input type="hidden" name="act" value="update" id="act" />
         <input type="submit" value="Update" id="Submit1" name="Submit1" />&nbsp;

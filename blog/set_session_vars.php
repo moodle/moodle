@@ -4,15 +4,15 @@
     require_once('../config.php');
     require_once('lib.php');
 
-    $referrer = required_param('referrer');
-    $var = required_param('var');
-    $value = optional_param('value');
-    $userid = optional_param('userid');
-    $courseid = optional_param('courseid');
-    $d = optional_param('d');
-    $m = optional_param('m');
-    $y = optional_param('y');
-    $id = optional_param('id');
+    $referrer = required_param('referrer', PARAM_NOTAGS);
+    $var = required_param('var',PARAM_ALPHA);
+    $value = optional_param('value','', PARAM_NOTAGS);
+    $userid = optional_param('userid',0 , PARAM_INT);
+    $courseid = optional_param('courseid',0, PARAM_INT);
+    $d = optional_param('d', 0, PARAM_INT);
+    $m = optional_param('m', 0, PARAM_INT);
+    $y = optional_param('y', 0, PARAM_INT);
+    $id = optional_param('id', 0, PARAM_INT);
 
     switch($var) {
         case 'setcourse':

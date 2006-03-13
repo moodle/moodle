@@ -30,7 +30,7 @@
 	if ($post = data_submitted()) {
         print_header();
 
-        set_user_preference('blogpagesize', optional_param('pagesize'));
+        set_user_preference('blogpagesize', optional_param('pagesize', 10, PARAM_INT));
         
         redirect($referrer, get_string('changessaved'), 1);
         exit;

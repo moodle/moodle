@@ -8,17 +8,11 @@ require_once($CFG->dirroot .'/blog/blogpage.php');
 require_once($CFG->libdir .'/blocklib.php');
 require_once($CFG->dirroot .'/course/lib.php');
 
-$blockaction = optional_param('blockaction');
+$blockaction = optional_param('blockaction','', PARAM_ALPHA);
 $instanceid = optional_param('instanceid', 0, PARAM_INT);
 $blockid = optional_param('blockid',    0, PARAM_INT);
 $groupid = optional_param('groupid',    0, PARAM_INT);
 $userid = optional_param('userid',     0, PARAM_INT);
-
-$pageTitle = optional_param('pageTitle');
-$pageHeading = optional_param('pageHeading'/*$site->fullname*/);
-$pageFocus = optional_param('pageFocus');
-$pageMeta = optional_param('pageMeta');
-$pageNavigation = optional_param('pageNavigation');
 
 if (!isset($courseid)) {
     $courseid = optional_param('courseid', SITEID, PARAM_INT);
@@ -134,7 +128,7 @@ switch ($filtertype) {
                         '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">'.$course->shortname.'</a> ->
                         <a href="'.$CFG->wwwroot.'/user/index.php?id='.$course->id.'">'.$participants.'</a> ->
                         <a href="'.$CFG->wwwroot.'/user/view.php?id='.$filterselect.'&amp;course='.$course->id.'">'.fullname($user).'</a> ->
-                        <a href="index.php?courseid='.optional_param('courseid').'&amp;filtertype=user&amp;filterselect='.$filterselect.'">'. "$blogstring</a> -> $tagstring: $taginstance->text",'','',true,$PAGE->get_extra_header_string());
+                        <a href="index.php?courseid='.optional_param('courseid', 0, PARAM_INT).'&amp;filtertype=user&amp;filterselect='.$filterselect.'">'. "$blogstring</a> -> $tagstring: $taginstance->text",'','',true,$PAGE->get_extra_header_string());
 
             } else {
                 print_header("$course->shortname: $blogstring", "$course->fullname",
@@ -177,8 +171,8 @@ if ($PAGE->user_allowed_editing()) {
 }
 
 // Calculate the preferred width for left, right and center (both center positions will use the same)
-$preferred_width_left = optional_param('preferred_width_left',  blocks_preferred_width($pageblocks[BLOCK_POS_LEFT]));
-$preferred_width_right = optional_param('preferred_width_right', blocks_preferred_width($pageblocks[BLOCK_POS_RIGHT]));
+$preferred_width_left = optional_param('preferred_width_left',  blocks_preferred_width($pageblocks[BLOCK_POS_LEFT]), PARAM_INT);
+$preferred_width_right = optional_param('preferred_width_right', blocks_preferred_width($pageblocks[BLOCK_POS_RIGHT]), PARAM_INT);
 $preferred_width_left = min($preferred_width_left, BLOCK_L_MAX_WIDTH);
 $preferred_width_left = max($preferred_width_left, BLOCK_L_MIN_WIDTH);
 $preferred_width_right = min($preferred_width_right, BLOCK_R_MAX_WIDTH);
