@@ -222,7 +222,8 @@ function authorize_order_details($orderno) {
 
     if (!empty($cmdcapture)) { // CAPTURE
         if (!in_array(ORDER_CAPTURE, $status->actions)) {
-            error("You can't do this action:" + ORDER_CAPTURE);
+            $a->action = ORDER_CAPTURE;
+            error(get_string('youcantdo', 'enrol_authorize', $a));
         }
 
         if (empty($cmdconfirm)) {
@@ -270,7 +271,8 @@ function authorize_order_details($orderno) {
     }
     elseif (!empty($cmdrefund)) { // REFUND
         if (!in_array(ORDER_REFUND, $status->actions)) {
-            error("You can't do this action:" + ORDER_REFUND);
+            $a->action = ORDER_REFUND;
+            error(get_string('youcantdo', 'enrol_authorize', $a));
         }
 
         $extra = new stdClass();
@@ -328,7 +330,8 @@ function authorize_order_details($orderno) {
     }
     elseif (!empty($cmdvoid)) { // VOID
         if (!in_array(ORDER_VOID, $status->actions)) {
-            error("You can't do this action:" + ORDER_VOID);
+            $a->action = ORDER_VOID;
+            error(get_string('youcantdo', 'enrol_authorize', $a));
         }
 
         $suborderno = optional_param('suborder', 0, PARAM_INT);
@@ -408,7 +411,8 @@ function authorize_order_details($orderno) {
     }
     elseif (!empty($cmddelete)) { // DELETE
         if (!in_array(ORDER_DELETE, $status->actions)) {
-            error("You can't do this action:" + ORDER_DELETE);
+            $a->action = ORDER_DELETE;
+            error(get_string('youcantdo', 'enrol_authorize', $a));
         }
         //if (!in_array(ORDER_DELETE, $status->actions)) {
         //    error("Order $orderno cannot be deleted. Status must be expired.");
@@ -489,6 +493,7 @@ function get_order_status_desc($order)
     global $CFG, $USER;
 
     $ret = new stdClass();
+    $ret->actions = array();
 
     if (intval($order->transid) == 0) { // test transaction
         if (isadmin() || (!empty($CFG->an_teachermanagepay) && isteacher($order->courseid))) {

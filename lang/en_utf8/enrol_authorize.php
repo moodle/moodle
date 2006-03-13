@@ -149,7 +149,7 @@ $string['transid'] = 'Transaction ID';
 $string['unenrolstudent'] = 'Unenrol student?';
 $string['void'] = 'Void';
 $string['voidyes'] = 'Transaction will be cancelled. Are you sure?';
-$string['youcantdo'] = 'You can\'t this action: $a->action';
+$string['youcantdo'] = 'You can\'t do this action: $a->action';
 $string['zipcode'] = 'Zip Code';
 
 ?>
