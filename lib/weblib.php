@@ -2403,8 +2403,8 @@ function print_navigation ($navigation) {
        if (! $site = get_site()) {
            $site->shortname = get_string('home');
        }
-       $navigation = '<li title="'.$nav_text.'"><img src="'.$CFG->wwwroot.'/pix/a/em1_raquo.gif" alt="" /> '
-           .str_replace('->', '</li><li title="'.$nav_text.'"><img src="'.$CFG->wwwroot.'/pix/a/em1_raquo.gif" alt="" /> ', $navigation)."</li>\n";
+       $navigation = '<li title="'.$nav_text.'"><img src="'.$CFG->pixpath.'/a/r_breadcrumb.gif" alt="" /> '
+           .str_replace('->', '</li><li title="'.$nav_text.'"><img src="'.$CFG->pixpath.'/a/r_breadcrumb.gif" alt="" /> ', $navigation)."</li>\n";
        echo '<li class="first"><a target="'. $CFG->framename .'" href="'. $CFG->wwwroot.((!isadmin() && !empty($USER->id) && !empty($CFG->mymoodleredirect) && !isguest())
                                                                        ? '/my' : '') .'/">'. $site->shortname ."</a></li>\n". $navigation;
        echo "</ul>\n";  
