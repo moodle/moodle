@@ -78,6 +78,15 @@
             set_config( 'filter_mediaplugin_enable_ram', 1 );
         }
     }
+    if (!isset($CFG->filter_mediaplugin_enable_rpm) or $forcereset) {
+        if (isset($CFG->filter_mediaplugin_ignore_rpm)) {
+            set_config( 'filter_mediaplugin_enable_rpm', !$CFG->filter_mediaplugin_ignore_rpm );
+            set_config( 'filter_mediaplugin_ignore_rpm','' );
+        }
+        else {
+            set_config( 'filter_mediaplugin_enable_rpm', 1 );
+        }
+    }
     if (!isset($CFG->filter_mediaplugin_enable_rm) or $forcereset) {
         if (isset($CFG->filter_mediaplugin_ignore_rm)) {
             set_config( 'filter_mediaplugin_enable_rm', !$CFG->filter_mediaplugin_ignore_rm );
