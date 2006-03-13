@@ -216,13 +216,14 @@ a.skip-block {
   text-decoration:none;
 }
 
-.sideblock img.resize {
+.sideblock img.resize,
+.breadcrumb img.resize {
   width: 0.8em;
   height: 0.9em;
 }
-.sideblock .searchform button {
-  width: 1.7em;
-  height: 1.7em;
+.sideblock .searchform img.resize {
+  width: 1em;
+  height: 1.1em;
 }
 
 .sideblock .header, .sideblock h2 {
