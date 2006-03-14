@@ -141,6 +141,11 @@ img.resize {
 acronym, abbr {
   cursor: help;
 }
+a.useredit, a:hover.useredit, .blink {
+  color: black;
+  text-decoration: blink;
+  cursor: help;
+}
 
 /***
  *** Header
