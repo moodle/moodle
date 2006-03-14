@@ -2317,7 +2317,7 @@ function assignment_print_overview($courses, &$htmlarray) {
         $assignmentclass = "assignment_$assignment->assignmenttype";
         $instance = new $assignmentclass($assignment->coursemodule, $assignment);
 
-        $str = '<a title="'.$instance->strassignment.'" href="'.$CFG->wwwroot.'/mod/assignment/view.php?id='.$instance->cm->id.'">'
+        $str = '<a '.($assignment->visible?'':' class="dimmed"').'title="'.$instance->strassignment.'" href="'.$CFG->wwwroot.'/mod/assignment/view.php?id='.$instance->cm->id.'">'
             .$instance->strassignment.': '.$instance->assignment->name.'</a><br />';
         $str .= $strduedate.': '.userdate($instance->assignment->timedue).'<br />';
         if (isteacher($instance->course->id)) {
