@@ -25,7 +25,7 @@
     require_once('../../config.php');
     require_once('lib.php');
     require_once($CFG->libdir.'/blocklib.php');
-
+    
     require_login();
 
     $id    = optional_param('id', 0, PARAM_INT);  // course module id
@@ -71,9 +71,10 @@
 /// Print the page header
 
     $strdata = get_string('modulenameplural','data');
-
-    print_header_simple($data->name, "", "<a href='index.php?id=$course->id'>$strdata</a> -> $data->name", "", "", true, "", navmenu($course, $cm));
-
+    
+    print_header_simple($data->name, '', "<a href='index.php?id=$course->id'>$strdata</a> -> $data->name",
+                        '', '', true, '', navmenu($course, $cm), '', '');
+    
     print_heading(format_string($data->name));
     
      ///processing submitted data, i.e updating form
@@ -127,7 +128,7 @@
     if (empty($data->addtemplate) and empty($data->singletemplate) and empty($data->listtemplate) and empty($data->rsstemplate)){
         echo '<div align="center"><input type="submit" name="allforms" value="'.get_string('autogenallforms','data').'" /></div>';
     }
-    
+        
     print_simple_box_start('center','80%');
     echo '<table><tr><td colspan="2">';
 
@@ -135,12 +136,20 @@
     echo get_string('availabletags','data');
     helpbutton('tags', get_string('tags','data'), 'data');
     echo '</td></tr><tr><td valign="top">';
-    echo '<select name="fields1[]" size="10" onclick="insertAtCursor(document.tempform.template, this.options[selectedIndex].value)">';    //the insertAtCursor thing only works when editting in plain text =(
-    if ($fields = get_records('data_fields','dataid',$data->id)){
-        foreach ($fields as $field) {
-            echo '<option value="[['.$field->name.']]">'.$field->name.' ('. get_string($field->type, 'data'). ')</option>';
-        }
+    
+    echo '<select name="fields1[]" size="10" ';
+    echo 'onclick="';
+    //echo 'alert(editor._editMode); ';
+    echo 'if (editor._editMode == \'wysiwyg\') {';
+    echo '    editor.insertHTML(this.options[selectedIndex].value); ';     // HTMLArea-specific.
+    echo '} else {';
+    echo 'insertAtCursor(\'document.tempform.template\', this.options[selectedIndex].value);';   // Hack for inserting when in HTMLArea code view or for normal textareas.
+    echo '}">';
+    
+    foreach ($fields as $field) {
+        echo '<option value="[['.$field->name.']]">'.$field->name.' ('. get_string($field->type, 'data'). ')</option>';
     }
+    
     //print special tags
     echo '<option value="##edit##">##' .get_string('edit', 'data'). '##</option>';
     echo '<option value="##more##">##' .get_string('more', 'data'). '##</option>';
@@ -176,7 +185,7 @@
     print_simple_box_end();
     echo '</form>';
     if ($usehtmleditor) {
-        use_html_editor('template');
+        use_html_editor('template');        
         if ($mode == 'listtemplate'){
             use_html_editor('listtemplateheader');
             use_html_editor('listtemplatefooter');

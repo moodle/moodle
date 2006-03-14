@@ -119,12 +119,12 @@ class data_field_textarea extends data_field_base {
         
         if ($usehtmleditor) {
             if (!empty($courseid) and isteacher($courseid)) {
-                $output .= ($scriptcount < 1) ? '<script type="text/javascript" src="'. $CFG->wwwroot .'/lib/editor/htmlarea.php?id='. $courseid .'"></script>'."\n" : '';
+                $output .= ($scriptcount < 1) ? '<script type="text/javascript" src="'. $CFG->wwwroot .'/lib/editor/htmlarea/htmlarea.php?id='. $courseid .'"></script>'."\n" : '';
             }
             else {
-                $output .= ($scriptcount < 1) ? '<script type="text/javascript" src="'. $CFG->wwwroot .'/lib/editor/htmlarea.php"></script>'."\n" : '';
+                $output .= ($scriptcount < 1) ? '<script type="text/javascript" src="'. $CFG->wwwroot .'/lib/editor/htmlarea/htmlarea.php"></script>'."\n" : '';
             }
-            $output .= ($scriptcount < 1) ? '<script type="text/javascript" src="'. $CFG->wwwroot .'/lib/editor/lang/en.php"></script>'."\n" : '';
+            $output .= ($scriptcount < 1) ? '<script type="text/javascript" src="'. $CFG->wwwroot .'/lib/editor/htmlarea/lang/en.php"></script>'."\n" : '';
             $scriptcount++;
         }
 
@@ -155,30 +155,88 @@ class data_field_textarea extends data_field_base {
      * applied to that field - otherwise it will be used
      * on every textarea in the page.
      *
-     * This is basically the same as use_html_editor() in
-     * /lib/weblib.php, except that this function returns a
-     * string instead of echoing out the javascript. The
-     * reasons why /lib/weblib.php has not been modified are:
-     * 
-     * 1) So that the database module is compatible with
-     *    Moodle 1.5.x
-     * 2) The weblib will be reworked in the future use
-     *    smarty
+     * For Moodle 1.6, this is nearly exactly the same as
+     * use_html_editor() in /lib/weblib.php. For Moodle 1.5, this
+     * function is different to that in /lib/weblib.php. The
+     * reason is because we need the database module to be
+     * compatible with 1.5.
      *
      * @param string $name Form element to replace with HTMl editor by name
      */
     function use_html_editor($name='', $editorhidebuttons='') {
-        echo '<script language="javascript" type="text/javascript" defer="defer">' . "\n";
-        echo print_editor_config($editorhidebuttons, false);
+        echo '<script language="javascript" type="text/javascript" defer="defer">'."\n";
+        echo "editor = new HTMLArea('$name');\n";
+
+        echo $this->print_editor_config($editorhidebuttons);
 
         if (empty($name)) {
-            echo "\n".'HTMLArea.replaceAll(config);'."\n";
-        }
-        else {
-            echo "\nHTMLArea.replace('$name', config);\n";
+            echo "\n".'HTMLArea.replaceAll(editor.config);'."\n";
+        } else {
+            echo "\neditor.generate();\n";
         }
         echo '</script>'."\n";
     }
+    
+    
+    /**
+     * Versioning issue same as above.
+     */
+     function print_editor_config($editorhidebuttons='', $return=false) {
+         global $CFG;
+
+         $str = "var config = editor.config;\n";
+         $str .= "config.pageStyle = \"body {";
+
+         if (!(empty($CFG->editorbackgroundcolor))) {
+             $str .= " background-color: $CFG->editorbackgroundcolor;";
+         }
+
+         if (!(empty($CFG->editorfontfamily))) {
+             $str .= " font-family: $CFG->editorfontfamily;";
+         }
+
+         if (!(empty($CFG->editorfontsize))) {
+             $str .= " font-size: $CFG->editorfontsize;";
+         }
+
+         $str .= " }\";\n";
+         $str .= "config.killWordOnPaste = ";
+         $str .= (empty($CFG->editorkillword)) ? "false":"true";
+         $str .= ';'."\n";
+         $str .= 'config.fontname = {'."\n";
+
+         $fontlist = isset($CFG->editorfontlist) ? explode(';', $CFG->editorfontlist) : array();
+         $i = 1;                     // Counter is used to get rid of the last comma.
+
+         foreach ($fontlist as $fontline) {
+             if (!empty($fontline)) {
+                 if ($i > 1) {
+                     $str .= ','."\n";
+                 }
+                 list($fontkey, $fontvalue) = split(':', $fontline);
+                 $str .= '"'. $fontkey ."\":\t'". $fontvalue ."'";
+
+                 $i++;
+             }
+         }
+         $str .= '};';
+
+         if (!empty($editorhidebuttons)) {
+             $str .= "\nconfig.hideSomeButtons(\" ". $editorhidebuttons ." \");\n";
+         } else if (!empty($CFG->editorhidebuttons)) {
+             $str .= "\nconfig.hideSomeButtons(\" ". $CFG->editorhidebuttons ." \");\n";
+         }
+
+         if (!empty($CFG->editorspelling) && !empty($CFG->aspellpath)) {
+             $str .= print_speller_code($usehtmleditor=true, true);
+         }
+
+         if ($return) {
+             return $str;
+         }
+         echo $str;
+     }
+    
     
 
     function display_edit_field($id, $mode=0) {
