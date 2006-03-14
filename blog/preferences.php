@@ -39,7 +39,7 @@
     }
     
     $site = get_site();
-    $pageMeta = '<script language="javascript" type="text/javascript" src="'. $CFG->wwwroot .'/blog/blog.js"></script>' . "\n";
+    $pageMeta = '' . "\n";
 
     $strpreferences = get_string('preferences');
 
