@@ -83,6 +83,7 @@ function question_category_form($course, $current, $recurse=1, $showhidden=false
     echo '</td></tr></table>';
     echo '<form method="post" action="edit.php" name="displayoptions">';
     echo '<table><tr><td>';
+    echo "<input type=\"hidden\" name=\"courseid\" value=\"{$course->id}\" />";
     echo '<input type="hidden" name="recurse" value="0" />';
     echo '<input type="checkbox" name="recurse" value="1"';
     if ($recurse) {
