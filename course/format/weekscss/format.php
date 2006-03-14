@@ -80,21 +80,17 @@
 
 
 /// Layout the whole page as three big columns.
-    ///echo '<table id="layout-table" cellspacing="0"><tr>';
-    echo '<div id="layout-table">';
+    echo '<div id="layout-table" class="weekscss">';
 
 /// The left column ...
 
     if (blocks_have_content($pageblocks, BLOCK_POS_LEFT) || $editing) {
-        ///echo '<td style="width: '.$preferred_width_left.'px;" id="left-column">';
         echo '<div style="width:'.$preferred_width_left.$min_max_block.'float:left;" id="left-column">';
         blocks_print_group($PAGE, $pageblocks, BLOCK_POS_LEFT);
         echo '</div>';
-        ///echo '</td>';
     }
 
 /// Start main column
-    ///echo '<td id="middle-column">';
     echo '<div id="middle-column" style="width:'.$width_center.$min_max_main.'float:left;">';
 
 
@@ -280,19 +276,15 @@
         echo '</div>';
     }
 
-    ///echo '</td>';
     echo '</div>';
 
     // The right column
     if (blocks_have_content($pageblocks, BLOCK_POS_RIGHT) || $editing) {
-        ///echo '<td style="width: '.$preferred_width_right.'px;" id="right-column">';
         echo '<div style="width:'.$preferred_width_right.$min_max_block.' float:right;" id="right-column">';
         blocks_print_group($PAGE, $pageblocks, BLOCK_POS_RIGHT);
         echo '</div>';
-        ///echo '</td>';
     }
 
-    ///echo '</tr></table>';
     echo '<div class="clearer"></div>';
     echo '</div>';
 
