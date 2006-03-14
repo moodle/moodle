@@ -15,7 +15,6 @@
     }
 ?>
 
-
 <!-- the following form is based on moodle/mod/forum/post.html -->
 
 <form name="entry" method="post" action="<?php echo $CFG->wwwroot;?>/blog/edit.php" id="entry" <?php echo $onsubmit; ?> enctype="multipart/form-data">
@@ -54,8 +53,6 @@
     <td>
     <b><?php print_string('otags','blog'); ?></b>
     </td>
-    
-    
     <td>
     <b><?php print_string('ptags','blog'); ?></b>
     </td>
@@ -128,32 +125,12 @@
     </td>
     <td align="left" colspan="2">
     <?php
-        if (isset($post->useextendedbody) && $post->useextendedbody) {
-            print_string('entrybodydesc', 'blog');
-        } else {
-            print_string('entrybodyonlydesc', 'blog');
-        }
+        print_string('entrybodyonlydesc', 'blog');
         print '<br />'."\n";
         // usage: print_textarea($usehtmleditor, $rows, $cols, $width, $height, $name, $value="", $courseid)
         print_textarea($usehtmleditor, 6, 60, 600, 500, 'body', $post->body, $post->courseid); ?>
     </td>
 </tr>
-<?php
-    if (isset($post->useextendedbody) && $post->useextendedbody) {
-        print '<tr valign=top>'."\n";
-        print '<td align=right><strong>'."\n";
-        print_string('entryextendedbody', 'blog');
-        print ':</strong></td>'. "\n";
-        print '<td align=left colspan=2>'."\n";
-        print_string('entryextendedbodydesc', 'blog');
-        print '<br />'."\n";
-        print_textarea($usehtmleditor, 25, 60, 600, 500, 'extendedbody', $post->extendedbody, $post->courseid);
-        print '</td></tr>';
-   } else {
-        print '<input type="hidden" name="extendedbody" value="" />';
-   }
-
-?>
 <tr valign="top">
     <td align="right"><strong><?php print_string('formattexttype'); ?>:</strong></td>
     <td colspan="2">
@@ -170,8 +147,6 @@
 <tr>
     <td align="center" colspan="3">
         <input type="hidden" name="editform" value="1" id="editform" />
-        <input type="hidden" name="courseid" value="<?php p($post->courseid) ?>" id="courseid" />
-        <input type="hidden" name="userid" value="<?php p($post->userid) ?>" id="userid" />
         <input type="hidden" name="userid" value="<?php echo $userid; ?>" id="userid" />
         <input type="hidden" name="tem" id="tem" />
 <?php

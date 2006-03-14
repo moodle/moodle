@@ -847,11 +847,11 @@ function blog_print_entry_content ($template, $entryid, $filtertype='', $filters
 
     if (isset($USER->id)) {
         if (($template['userid'] == $USER->id) or isteacher($course->id)) {
-                echo '<a href="'.$CFG->wwwroot.'/blog/edit.php?editid='.$entryid.'">'.$stredit.'</a>';
+                echo '<a href="'.$CFG->wwwroot.'/blog/edit.php?editid='.$entryid.'&amplsesskey='.sesskey().'">'.$stredit.'</a>';
         }
 
         if (($template['userid'] == $USER->id) or isteacher($course->id)) {
-            echo '| <a href="'.$CFG->wwwroot.'/blog/edit.php?act=del&amp;postid='.$entryid.'">'.$strdelete.'</a>';
+            echo '| <a href="'.$CFG->wwwroot.'/blog/edit.php?act=del&amp;postid='.$entryid.'&amplsesskey='.sesskey().'">'.$strdelete.'</a>';
         }
     }
 

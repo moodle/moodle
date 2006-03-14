@@ -13,13 +13,11 @@ if (isset($_SERVER['HTTP_REFERER'])) {
 
 //first verify that user is not a guest
 if (isguest()) {
-    error(get_string('noguestpost', 'forum'), $referrer);
+    error(get_string('noguestpost', 'blog'), $referrer);
 }
 
 $userid = optional_param('userid', 0, PARAM_INT);
 $editid = optional_param('editid', 0, PARAM_INT);
-
-global $USER, $CFG;
 
 //check to see if there is a requested blog to edit
 if (!empty($userid) && $userid != 0) {
@@ -56,10 +54,16 @@ if ( !blog_user_has_rights($PAGE->bloginfo) ) {
 
 //////////// SECURITY AND SETUP COMPLETE - NOW PAGE LOGIC ///////////////////
 
-if (isset($act) && $act == 'del')
+if (isset($act) && $act == 'del' && confirm_sesskey())
 {
-    require_variable($postid);
-    do_delete($PAGE->bloginfo, $postid);
+    if (optional_param($confirm,0,PARAM_INT)) {
+        require_variable($postid);
+        do_delete($PAGE->bloginfo, $postid);
+    } else {
+    /// prints blog entry and what confirmation form
+
+
+    }
 }
 if ($usehtmleditor = can_use_richtext_editor()) {
     $defaultformat = FORMAT_HTML;

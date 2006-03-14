@@ -11,18 +11,6 @@
     <td><input type="text" size="32" maxlength="128" name="pagesize" value="<?php echo get_user_preferences('blogpagesize',8);?>" />
     </td>
 </tr>
-<?php  if (!empty($CFG->allowblogthemes)) { ?>
-<tr valign="top">
-    <td align="right"> <?php print_string("forcetheme") ?>: </td>
-    <td>
-      <?php
-         $themes[''] = get_string("forceno");
-         $themes += get_list_of_themes();
-         choose_from_menu($themes, 'theme', $bloginfo->get_blog_theme(), "", "", "");
-      ?>
-    </td>
-</tr>
-<?php } ?>
 <tr>
     <td colspan="2" align="center">
 	<input type="submit" value="<?php print_string("savechanges") ?>" /></td>
