@@ -2282,4 +2282,74 @@ function assignment_upgrade_submodules() {
     }
 }
 
+function assignment_print_overview($courses, &$htmlarray) {
+    global $USER, $CFG;
+
+    if (empty($courses) || !is_array($courses) || count($courses) == 0) {
+        return array();
+    }
+
+    if (!$assignments = get_all_instances_in_courses('assignment',$courses)) {
+        return;
+    }
+
+    // Do assignment_base::isopen() here without loading the whole thing for speed
+    foreach ($assignments as $key => $assignment) {
+        $time = time();
+        if ($assignment->preventlate && $assignment->timedue) {
+            $isopen = ($assignment->timeavailable <= $time && $time <= $assignment->timedue);
+        } else {
+            $isopen = ($assignment->timeavailable <= $time);
+        }
+        if (!$isopen) {
+            unset($assignments[$key]);
+        }
+    }
+
+    $strduedate = get_string('duedate', 'assignment');
+    $strgraded = get_string('graded', 'assignment');
+    $strnotgradedyet = get_string('notgradedyet', 'assignment');
+    $strnotsubmittedyet = get_string('notsubmittedyet', 'assignment');
+    $strsubmitted = get_string('submitted', 'assignment');
+
+    foreach ($assignments as $assignment) {
+        require_once("$CFG->dirroot/mod/assignment/type/$assignment->assignmenttype/assignment.class.php");
+        $assignmentclass = "assignment_$assignment->assignmenttype";
+        $instance = new $assignmentclass($assignment->coursemodule, $assignment);
+
+        $str = '<a title="'.$instance->strassignment.'" href="'.$CFG->wwwroot.'/mod/assignment/view.php?id='.$instance->cm->id.'">'
+            .$instance->strassignment.': '.$instance->assignment->name.'</a><br />';
+        $str .= $strduedate.': '.userdate($instance->assignment->timedue).'<br />';
+        if (isteacher($instance->course->id)) {
+            $submissions = count_records_sql("SELECT COUNT(a.*)
+                              FROM {$CFG->prefix}assignment_submissions a, 
+                                   {$CFG->prefix}user_students s,
+                                   {$CFG->prefix}user u
+                             WHERE a.userid = s.userid
+                               AND u.id = a.userid
+                               AND s.course = '{$instance->course->id}'
+                               AND a.assignment = '{$instance->assignment->id}'
+                               AND a.teacher = 0
+                               AND a.timemarked = 0");
+            if ($submissions) {
+                $str .= get_string('submissionsnotgraded', 'assignment', $submissions);
+            }
+        } else {
+            $sql = "SELECT *
+                      FROM {$CFG->prefix}assignment_submissions
+                     WHERE userid = '$USER->id'";
+            if ($submission = get_record_sql($sql)) {
+                if ($submission->teacher == 0 && $submission->timemarked == 0) {
+                    $str .= $strsubmitted . ', ' . $strnotgradedyet;
+                } else {
+                    $str .= $strsubmitted . ', ' . $strgraded;
+                }
+            } else {
+                $str .= $strnotsubmittedyet . ' ' . $instance->display_lateness(time());
+            }
+        }
+        $htmlarray[$instance->course->id]['assignment'] .= $str;
+    }
+}
+
 ?>
