@@ -3215,13 +3215,72 @@ function print_richedit_javascript($form, $name, $source='no') {
  */
 function use_html_editor($name='', $editorhidebuttons='') {
     echo '<script language="javascript" type="text/javascript" defer="defer">'."\n";
-    print_editor_config($editorhidebuttons);
+    echo "editor = new HTMLArea('edit-$name');\n";
+    
+    echo print_editor_config($editorhidebuttons);
+    
     if (empty($name)) {
-        echo "\n".'HTMLArea.replaceAll(config);'."\n";
+        echo "\n".'HTMLArea.replaceAll(editor.config);'."\n";
     } else {
-        echo "\nHTMLArea.replace('edit-$name', config);\n";
+        echo "\neditor.generate();\n";
     }
     echo '</script>'."\n";
+}
+
+function print_editor_config($editorhidebuttons='', $return=false) {
+    global $CFG;
+        
+    $str = "var config = editor.config;\n";
+    $str .= "config.pageStyle = \"body {";
+    
+    if (!(empty($CFG->editorbackgroundcolor))) {
+        $str .= " background-color: $CFG->editorbackgroundcolor;";
+    }
+
+    if (!(empty($CFG->editorfontfamily))) {
+        $str .= " font-family: $CFG->editorfontfamily;";
+    }
+
+    if (!(empty($CFG->editorfontsize))) {
+        $str .= " font-size: $CFG->editorfontsize;";
+    }
+
+    $str .= " }\";\n";
+    $str .= "config.killWordOnPaste = ";
+    $str .= (empty($CFG->editorkillword)) ? "false":"true";
+    $str .= ';'."\n";
+    $str .= 'config.fontname = {'."\n";
+    
+    $fontlist = isset($CFG->editorfontlist) ? explode(';', $CFG->editorfontlist) : array();
+    $i = 1;                     // Counter is used to get rid of the last comma.
+
+    foreach ($fontlist as $fontline) {
+        if (!empty($fontline)) {
+            if ($i > 1) {
+                $str .= ','."\n";
+            }
+            list($fontkey, $fontvalue) = split(':', $fontline);
+            $str .= '"'. $fontkey ."\":\t'". $fontvalue ."'";
+
+            $i++;
+        }
+    }
+    $str .= '};';
+
+    if (!empty($editorhidebuttons)) {
+        $str .= "\nconfig.hideSomeButtons(\" ". $editorhidebuttons ." \");\n";
+    } else if (!empty($CFG->editorhidebuttons)) {
+        $str .= "\nconfig.hideSomeButtons(\" ". $CFG->editorhidebuttons ." \");\n";
+    }
+
+    if (!empty($CFG->editorspelling) && !empty($CFG->aspellpath)) {
+        $str .= print_speller_code($usehtmleditor=true, true);
+    }
+            
+    if ($return) {
+        return $str;
+    }
+    echo $str;
 }
 
 /**
@@ -3631,7 +3690,6 @@ function navmenu($course, $cm=NULL, $targetwindow='self') {
             '</td><td>'. $nextmod .'</td></tr></table>';
 }
 
-
 /**
  * Given a course
  * This function returns a small popup menu with all the
@@ -3723,8 +3781,6 @@ function navmenulist($course, $sections, $modinfo, $isteacher, $strsection, $str
 
     return implode("\n", $menu);
 }
-
-
 
 /**
  * Prints form items with the names $day, $month and $year
@@ -4424,63 +4480,6 @@ function print_side_block_end($attributes = array()) {
 
 
 /**
- * Prints out the HTML editor config.
- *
- * @uses $CFG
- */
- function print_editor_config($editorhidebuttons='') {
-
-    global $CFG;
-
-    // print new config
-    echo 'var config = new HTMLArea.Config();'."\n";
-    echo "config.pageStyle = \"body {";
-    if(!(empty($CFG->editorbackgroundcolor))) {
-        echo " background-color: $CFG->editorbackgroundcolor;";
-    }
-
-    if(!(empty($CFG->editorfontfamily))) {
-        echo " font-family: $CFG->editorfontfamily;";
-    }
-
-    if(!(empty($CFG->editorfontsize))) {
-        echo " font-size: $CFG->editorfontsize;";
-    }
-
-    echo " }\";\n";
-    echo "config.killWordOnPaste = ";
-    echo(empty($CFG->editorkillword)) ? "false":"true";
-    echo ';'."\n";
-    echo 'config.fontname = {'."\n";
-
-    $fontlist = isset($CFG->editorfontlist) ? explode(';', $CFG->editorfontlist) : array();
-    $i = 1;                     // Counter is used to get rid of the last comma.
-
-    foreach($fontlist as $fontline) {
-        if(!empty($fontline)) {
-            if ($i > 1) {
-                echo ','."\n";
-            }
-            list($fontkey, $fontvalue) = split(':', $fontline);
-            echo '"'. $fontkey ."\":\t'". $fontvalue ."'";
-
-            $i++;
-        }
-    }
-    echo '};';
-
-    if (!empty($editorhidebuttons)) {
-        echo "\nconfig.hideSomeButtons(\" ". $editorhidebuttons ." \");\n";
-    } else if (!empty($CFG->editorhidebuttons)) {
-        echo "\nconfig.hideSomeButtons(\" ". $CFG->editorhidebuttons ." \");\n";
-    }
-
-    if(!empty($CFG->editorspelling) && !empty($CFG->aspellpath)) {
-        print_speller_code($usehtmleditor=true);
-    }
-}
-
-/**
  * Prints out code needed for spellchecking.
  * Original idea by Ludo (Marc Alier).
  *
@@ -4488,29 +4487,34 @@ function print_side_block_end($attributes = array()) {
  * @param boolean $usehtmleditor ?
  * @todo Finish documenting this function
  */
-function print_speller_code ($usehtmleditor=false) {
+function print_speller_code ($usehtmleditor=false, $return=false) {
     global $CFG;
-
+    $str = '';
+    
     if(!$usehtmleditor) {
-        echo "\n".'<script language="javascript" type="text/javascript">'."\n";
-        echo 'function openSpellChecker() {'."\n";
-        echo "\tvar speller = new spellChecker();\n";
-        echo "\tspeller.popUpUrl = \"" . $CFG->wwwroot ."/lib/speller/spellchecker.html\";\n";
-        echo "\tspeller.spellCheckScript = \"". $CFG->wwwroot ."/lib/speller/server-scripts/spellchecker.php\";\n";
-        echo "\tspeller.spellCheckAll();\n";
-        echo '}'."\n";
-        echo '</script>'."\n";
+        $str .= "\n".'<script language="javascript" type="text/javascript">'."\n";
+        $str .= 'function openSpellChecker() {'."\n";
+        $str .= "\tvar speller = new spellChecker();\n";
+        $str .= "\tspeller.popUpUrl = \"" . $CFG->wwwroot ."/lib/speller/spellchecker.html\";\n";
+        $str .= "\tspeller.spellCheckScript = \"". $CFG->wwwroot ."/lib/speller/server-scripts/spellchecker.php\";\n";
+        $str .= "\tspeller.spellCheckAll();\n";
+        $str .= '}'."\n";
+        $str .= '</script>'."\n";
     } else {
-        echo "\nfunction spellClickHandler(editor, buttonId) {\n";
-        echo "\teditor._textArea.value = editor.getHTML();\n";
-        echo "\tvar speller = new spellChecker( editor._textArea );\n";
-        echo "\tspeller.popUpUrl = \"" . $CFG->wwwroot ."/lib/speller/spellchecker.html\";\n";
-        echo "\tspeller.spellCheckScript = \"". $CFG->wwwroot ."/lib/speller/server-scripts/spellchecker.php\";\n";
-        echo "\tspeller._moogle_edit=1;\n";
-        echo "\tspeller._editor=editor;\n";
-        echo "\tspeller.openChecker();\n";
-        echo '}'."\n";
+        $str .= "\nfunction spellClickHandler(editor, buttonId) {\n";
+        $str .= "\teditor._textArea.value = editor.getHTML();\n";
+        $str .= "\tvar speller = new spellChecker( editor._textArea );\n";
+        $str .= "\tspeller.popUpUrl = \"" . $CFG->wwwroot ."/lib/speller/spellchecker.html\";\n";
+        $str .= "\tspeller.spellCheckScript = \"". $CFG->wwwroot ."/lib/speller/server-scripts/spellchecker.php\";\n";
+        $str .= "\tspeller._moogle_edit=1;\n";
+        $str .= "\tspeller._editor=editor;\n";
+        $str .= "\tspeller.openChecker();\n";
+        $str .= '}'."\n";
     }
+    if ($return) {
+        return $str;
+    }
+    echo $str;
 }
 
 /**
