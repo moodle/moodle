@@ -1722,6 +1722,14 @@ function main_upgrade($oldversion=0) {
           ) TYPE=MyISAM COMMENT ='tag instance for blogs.';");
     }
 
+    if ($oldversion < 2006031400) {
+        require_once("$CFG->dirroot/enrol/enrol.class.php");
+        $defaultenrol = enrolment_factory::factory($CFG->enrol);
+        if (!method_exists($defaultenrol, 'print_entry')) {
+            set_config('enrol', 'manual');
+        }
+    }
+
     return $result;
 }
 
