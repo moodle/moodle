@@ -4,7 +4,7 @@
 ?>
 
 <form method="post" action="preferences.php" name="entry" id="entry">
-
+<input type="hidden" name="referrer" value="<?php echo $referrer; ?>" />
 <table cellpadding="9" cellspacing="0">
 <tr>
     <td><?php print_string('pagesize', 'blog');?>:</td>

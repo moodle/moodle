@@ -8,10 +8,13 @@
     global $USER;
 
     // detemine where the user is coming from in case we need to send them back there
-    if (isset($_SERVER['HTTP_REFERER'])) {
-        $referrer = $_SERVER['HTTP_REFERER'];
-    } else {
-        $referrer = $CFG->wwwroot;
+
+    if (!$referrer = optional_param('referrer','', PARAM_NOTAGS)) {
+        if (isset($_SERVER['HTTP_REFERER'])) {
+            $referrer = $_SERVER['HTTP_REFERER'];
+        } else {
+            $referrer = $CFG->wwwroot;
+        }
     }
 
     //ensure that the logged in user is not using the guest account
@@ -31,7 +34,6 @@
         print_header();
 
         set_user_preference('blogpagesize', optional_param('pagesize', 10, PARAM_INT));
-        
         redirect($referrer, get_string('changessaved'), 1);
         exit;
     }

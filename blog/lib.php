@@ -3,6 +3,7 @@
 /**
  * Library of functions and constants for blog
  */
+ 
 require_once($CFG->dirroot .'/blog/class.BlogInfo.php');
 require_once($CFG->dirroot .'/blog/class.BlogEntry.php');
 require_once($CFG->dirroot .'/blog/class.BlogFilter.php');

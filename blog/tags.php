@@ -2,7 +2,6 @@
 require_once('../config.php');
 
 //form process
-
 $mode = optional_param('mode','',PARAM_ALPHA);
 
 switch ($mode) {
