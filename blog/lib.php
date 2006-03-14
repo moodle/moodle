@@ -211,7 +211,6 @@ function blog_print_preview_form($userid=0, $categoryelement='<input type="hidde
     $returnstring .= "\n".'<form name="prev" action="preview.php" method="post" target="preview">';
     $returnstring .= "\n".'<input type="hidden" name="etitle" />';
     $returnstring .= "\n".'<input type="hidden" name="body" />';
-    $returnstring .= "\n".'<input type="hidden" name="extendedbody" />';
     $returnstring .= "\n".'<input type="hidden" name="comm" />';
     $returnstring .= "\n".'<input type="hidden" name="tem" />';
     $returnstring .= "\n".'<input type="hidden" name="userid" value="'. $userid .'" />';
@@ -772,27 +771,12 @@ function blog_print_entry(&$blogEntry, $viewtype='full', $filtertype, $filtersel
     $template['body'] = $blogEntry->get_formatted_entry_body();
     $template['countofextendedbody'] = 0;
     
-    if ($template['extendedbody'] = $blogEntry->get_formatted_entry_extended_body()) {
-        $template['extendedbody'] = $blogEntry->get_formatted_entry_extended_body();
-        $template['countofextendedbody'] = count_words($template->extendedbody);
-    } else {
-        $template['extendedbody'] = '';
-    }
-    
-    if ($viewtype=='full' && !empty($template['extendedbody'])) {
-        $template['body'] .= '<hr width="80%" />' . $template['extendedbody'];
-    } else if ( !empty($template->extendedbody) && $template->countofextendedbody != 0) {
-        $template['body'] .= '<br />&nbsp;&nbsp;&nbsp;<a href="'. $blogEntry->get_entryurl() .'">'. get_string('moreelipses', 'blog') .' ('. $template['countofextendedbody'] .' words)</a>';
-    }
-
     $template['title'] = '<a name="'. $blogEntry->entryId .'"></a>';
     //enclose the title in nolink tags so that moodle formatting doesn't autolink the text
     $template['title'] .= '<span class="nolink">'. stripslashes_safe($blogEntry->entryTitle);
     $template['title'] .= '</span>';
 
     // add editing controls if allowed
-    $template['editbuttons'] = $blogEntry->get_formatted_edit_URL(true);
-    $template['editbuttons'] .= $blogEntry->get_formatted_delete_URL(true);
     $template['courseid'] = $blogEntry->entryCourseId;
     $template['userid'] = $blogEntry->entryuserid;
     $template['authorviewurl'] = $CFG->wwwroot .'/user/view.php?course=1&amp;id='. $template['userid'];

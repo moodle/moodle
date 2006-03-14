@@ -81,7 +81,6 @@ class BlogFilter {
 
             $this->blogtitle = &$this->blogInfo->blogtitle;
             $this->blogtagline = &$this->blogInfo->blogtagline;
-            $this->blogtheme = $this->blogInfo->get_blog_theme();
         }
         
         if (!is_numeric($courseid) || $courseid == 0 || $courseid == 1) {
@@ -201,17 +200,6 @@ class BlogFilter {
             return $this->filtered_entries;
         }
         //still no entries - they must all be filtered away or there simply are none. return null.
-        return NULL;
-    }
-    
-    /**
-     *
-     */    
-    function get_bloginfo() {
-        //returns blog entries based on current filters as stored by but not created by this class
-        if (!empty($this->blogInfo) ) {
-            return $this->blogInfo;
-        }
         return NULL;
     }
         
@@ -364,92 +352,6 @@ class BlogFilter {
     }
 
     /**
-     * get_where_clause
-     *
-     * This function will take all of this BlogFilter's instance variables and 
-     * calculate the proper sql string needed to fetch the appropriate entries.
-     * fields are referred to as e.* in the post table
-     * and c.* if they are in the blog_categories_entries table
-     *
-     * @return string The where clause for searching using this filter's settings
-     */
-    function get_where_clause() {
-        $hascats = false;
-        $where = '';
-        if ( !empty($this->categoryid) ) {
-            $hascats = true;
-        }
-
-        if ($this->is_userid_valid()) {
-            $where .= 'e.userid='. $this->userid;
-        }
-        if ($this->is_courseid_valid()) {
-            if ($where != '') {
-                $where .= ' AND ';
-            }
-            $where .= 'e.courseid='. $this->courseid;
-        }
-
-        if ($this->is_userid_valid() && $this->is_postid_valid()) {
-            // a blog and a specific entry in that blog were specified. our mission is clear
-            if ($where != '') {
-                $where .= ' AND ';
-            }
-            $where .= 'e.id='. $this->postid .' ';
-        } else {
-            // we do not have a specific post id, so get all posts that match additional criteria if present
-            if ($hascats) {
-                if ($where != '') {
-                    $where .= ' AND ';
-                }
-                // where the discovered post id matches the categories_entries table entryid and the catid matches
-                $where .= ' e.id = c.entryid AND c.categoryid='. $this->categoryid;
-                
-            }
-        }
-        
-        if ( !empty($this->tstart) && !empty($this->tend) ) {
-            if ($where != '') {
-                $where .= ' AND ';
-            }
-            $where .= 'e.lastmodified >= '. $this->tstart .' AND e.lastmodified <= '. $this->tend;
-        }
-
-        //http://www.techonthenet.com/sql/like.htm
-        $keywords = $this->keywords;
-        if (!empty($keywords) && count($keywords) > 0) {
-            if (!empty($keywords['body'])) {
-                if ($where != '') {
-                    $where .= ' AND ';
-                }
-                $where .= "(e.body LIKE '%". $keywords['body'] ."%' OR e.extendedbody LIKE '%". $keywords['body'] ."%') ";
-            }
-            if (!empty($keywords['body'])) {
-                if ($where != '') {
-                    $where .= ' AND ';
-                }
-                $where .= "(e.title LIKE '%". $keywords['title'] ."%') ";
-            }
-        }
-        return $where;
-    }
-    
-    /**
-     * get the count of entries in db without applying full filtering
-     */
-    function get_entry_count($where='', $hascats=false) {
-        global $CFG;
-        $sql = 'post e';
-        if ($hascats) {
-            $sql .= ', '. $CFG->prefix .'blog_categories_entries c ';
-        }
-        if (empty($where)) {
-            $where = $this->get_where_clause();
-        }
-        return count_records_select($sql, $where);
-    }
-
-    /**
      * get the count of viewable entries, easiest way is to count fetch_entries
      * this is used for print_paging_bar
      */
@@ -463,7 +365,7 @@ class BlogFilter {
      */
     function get_filtered_entry_count() {
         global $CFG;
-
+        //might need to use a count_records_sql.
         $entries = $this->get_filtered_entries();
         return count($entries);
     }
@@ -492,7 +394,7 @@ class BlogFilter {
         $link .= $linktext . '</a>';
         return $link;
     }
-    
+
     /**
     * The unused param is defined as either
     * <code>
@@ -514,7 +416,7 @@ class BlogFilter {
             $unused = array($unused);
         }
         if (!in_array('startmonth', $unused)) {
-            $getargs .= '&amp;m=' . $this->startmonth; 
+            $getargs .= '&amp;m=' . $this->startmonth;
         }
         if (!in_array('startday', $unused)) {
             $getargs .= '&amp;d=' . $this->startday;
@@ -541,70 +443,6 @@ class BlogFilter {
             $getargs .= '&amp;groupid=' . $this->groupid;
         }
         return $getargs;
-    }
-    
-    function is_userid_valid() {
-        if (is_numeric($this->userid) && $this->userid != 0 && $this->userid != '') {
-            return true;
-        } 
-        return false;
-    }
-
-    function is_groupid_valid() {
-        if (is_numeric($this->groupid) && $this->groupid != 0 && $this->groupid != '') {
-            return true;
-        } 
-        return false;
-    }
-
-    function is_courseid_valid() {
-        if (is_numeric($this->courseid) && $this->courseid != 0 && $this->courseid != '') {
-            return true;
-        } 
-        return false;
-    }
-
-    function is_postid_valid() {
-        if (is_numeric($this->postid) && $this->postid != 0 && $this->postid != '') {
-            return true;
-        } 
-        return false;
-    }
-
-    /**
-     * get_member_list
-     *
-     * @param string $sort
-     * @param int $limitnum
-     * @return object containing records with ->id and ->title of member blogs
-     */
-    function get_member_list($sort='', $limitnum='') {
-        global $CFG;
-        if (!empty($this->memberlist)) {
-            return $this->memberlist;
-        }
-
-        //temporarily change $this->fetchstart to unlimit the entries from db and fetch
-        $oldstart = $this->fetchstart;
-        $this->fetchstart = '';
-        $entries = $this->fetch_entries();
-        $this->fetchstart = $oldstart;
-
-        $records = array();
-        $bids = array();
-        foreach ($entries as $entry) {
-            if (!in_array($entry->entryuserid, $bids)) {
-                $bids[$entry->entryuserid] = $entry->entryuserid;
-            }
-        }
-
-        foreach ($bids as $bid) {
-            $thisrecord->id = $bid;
-            $thisrecord->title = get_user_preferences('blogtitle', $CFG->blog_default_title, $bid);
-            $records[] = $thisrecord;
-        }
-        $this->memberlist = $records;
-        return $records;
     }
 
 }    //end class BlogFilter

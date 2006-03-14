@@ -71,7 +71,7 @@ if ($usehtmleditor = can_use_richtext_editor()) {
 
 if (($post = data_submitted( get_referer() )) && confirm_sesskey()) {
     if (!empty($post->editform)) { //make sure we're processing the edit form here
-        print_object($post); //debug
+        //print_object($post); //debug
 
         ///these varaibles needs to be changed because of the javascript hack
         ///post->courseid
@@ -306,8 +306,6 @@ function do_update(&$post, &$bloginfo) {
     }
     $blogentry->set_format($post->format);
     $blogentry->set_publishstate($post->publishstate); //we don't care about the return value here
-    $blogentry->set_courseid($courseid);
-    $blogentry->set_groupid($groupid);
 
     if ( !$error = $blogentry->save() ) {
 //        echo 'Debug: do_update in edit.php calling do_pings<br />'."\n"; //debug

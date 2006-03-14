@@ -172,158 +172,6 @@ class BlogEntry {
     }
 
     /**
-     * get_formatted_entry_link
-     *
-     * @return string Permalink URL wrapped in an HTML link
-     */
-    function get_formatted_entry_link() {
-    
-        // removed the word 'permalink' and replaced with 'Read More' to
-        // further eliminate jargon from moodle blog
-        // Daryl Hawes note: must localize this line now
-        $str = '<a href="'. $this->get_entryurl() .'">Read More</a>';
-        return $str;
-
-    }
-
-    /*
-    * get_simple_entry_link - Just the link, with no extra html. 
-    *
-    * @return string Returns just a URL with no HTML.
-    * (Daryl Hawes note: this function moved to class.Blogentry from lib.php)
-    */
-    function get_simple_entry_link() {
-    
-        $str = htmlspecialchars( $this->get_entryurl() );    
-        return $str;
-    
-    }
-
-    /**
-     * get_blog_this_URL added by Daryl Hawes for moodle integration
-     *
-     * @param bool $showImage If true then the return string is an HTML image tag
-     *                          If false then the return string is an HTML text link
-     * @uses $CFG
-     * @return string An HTML image tag or text link depending upon $showImage argument
-     */
-    function get_blog_this_URL($showImage=false) {
-        $str = '';
-        global $CFG;
-        //ensure user is logged in and that they have a blog to edit
-        if ( !isguest() && blog_isLoggedIn() ) {
-            $blogThisString = '';
-            if ($showImage) {
-                $blogThisString = '<img src="'. $CFG->pixpath .'/blog/blog.gif" alt="'. get_string('blogthis', 'blog');
-                $blogThisString .= '!" title="'. get_string('blogthis', 'blog') .'!" border="0" align="middle" />';
-            } else {
-                $blogThisString = get_string('blogthis', 'blog');
-            }
-            if (!$showImage) {
-                $str .= '(';
-            }
-            $str .= '<a href="'. $this->get_entryblogthisurl() .'">'. $blogThisString .'</a>';
-            if (!$showImage) {
-                $str .= ')';
-            }
-        }
-        return $str;
-    }
-
-    /**
-     * get_formatted_edit_URL added by Daryl Hawes for moodle integration
-     * An empty string is returned if the user is a guest, the user is not logged in,
-     * or the user is not currently editing their blog page (turn editing on button)
-     * we will only show edit link if the entry is in draft status or the user is an admin
-     * note: teacher should not be allowed to edit or delete - only demote back to draft
-     *
-     * @param bool $showImage If false a text link is printed. If true a linked edit icon is printed.
-     * @uses $USER
-     * @uses $CFG
-     * @todo get_formatted_delete_URL and get_formatted_edit_URL should be merged into a single function
-     */
-    function get_formatted_edit_URL($showImage=false) {
-        global $USER, $CFG;
-        $str = '';
-
-        if ( !isguest() && blog_isLoggedIn() && blog_isediting() && blog_is_blog_admin($this->entryuserid) 
-             && (!$CFG->blog_enable_moderation || isadmin() || $blogEntry->entryPublishState == 'draft') ) {            
-            $str = '<div class="blogedit">';
-
-            //check if user is in blog's acl
-            //instead of creating a new BlogInfo object might a BlogInfo pointer in BlogEntry constructor be better? Does php have singleton objects? if not then a bloginfo reference as an argument to the constructor of BlogEntry would be a good idea. (The only problem here is in pages with multiple bloginfo objects represented - aggregate pages.)
-            $bloginfo = new BlogInfo($this->entryuserid);
-            //if so then show them an edit link
-            if (blog_user_has_rights($bloginfo)) {
-                $editString = '';
-                if ($showImage) {
-                    $editString = '<img src="'. $CFG->pixpath .'/t/edit.gif" alt="'. get_string('edit');
-                    $editString .= '" title="'. get_string('edit') .'" align="absmiddle" height="16" width="16" border="0" />';
-                } else {
-                    $editString = get_string('edit');
-                }
-                if (!$showImage) { 
-                    $str .= '('; 
-                }
-                $str .= '<a title="'. get_string('edit') .'" href="'. $this->get_entryediturl() .'">'. $editString .'</a>';
-                if (!$showImage) { 
-                    $str .= ')'; 
-                }
-            }
-            $str .= '</div>';
-            unset($blogInfo); //clean up after ourselves        
-        }
-        return $str;
-    }
-    
-    /**
-     * get_formatted_delete_URL added by Daryl Hawes for moodle integration
-     * An empty string is returned if the user is a guest, the user is not logged in,
-     * or the user is not currently editing their blog page (turn editing on button)
-     * we will only show edit link if the entry is in draft status or the user is an admin
-     * note: teacher should not be allowed to edit or delete - only demote back to draft
-     *
-     * @uses $USER
-     * @uses $CFG
-     * @param bool $showImage If false a text link is printed. If true a linked delete icon is printed.
-     * @todo get_formatted_delete_URL and get_formatted_edit_URL should be merged into a single function
-     */
-    function get_formatted_delete_URL($showImage=false) {
-        global $USER, $CFG;
-        $str = '';
-        
-        if ( !isguest() && blog_isLoggedIn() && blog_isediting() && blog_is_blog_admin($this->entryuserid)
-             && (!$CFG->blog_enable_moderation || isadmin() || $blogEntry->entryPublishState == 'draft') ) {
-            
-            $str = '<div class="blogdelete">';
-            
-            //check if user is in blog's acl
-            //instead of creating a new BlogInfo object might a BlogInfo pointer in BlogEntry constructor be better? Does php have singleton objects? if not then a bloginfo reference as an argument to the constructor of BlogEntry would be a good idea.
-            $bloginfo =& new BlogInfo($this->entryuserid);
-            //if so then show them an edit link
-            if (blog_user_has_rights($bloginfo)) {
-                $deleteString = '';
-                if ($showImage) {
-                    $deleteString = '<img src="'. $CFG->pixpath .'/t/delete.gif" alt="'. get_string('delete');
-                    $deleteString .= '" title="'. get_string('delete') .'" align="absmiddle" border="0" />';
-                } else {
-                    $deleteString = get_string('delete');
-                }
-                if (!$showImage) {
-                    $str .= '(';
-                }
-                $str .= '<a title="'. get_string('delete') .'" href="'. $this->get_entrydeleteurl() .'">'. $deleteString .'</a>';
-                if (!$showImage) { 
-                    $str .= ')'; 
-                }
-            }
-            $str .= '</div>';
-            unset($blogInfo); //clean up after ourselves
-        }
-        return $str;
-    }
-
-    /**
      * get_formatted_entry_body
      * getter for ->entryBody.
      *
@@ -426,42 +274,6 @@ class BlogEntry {
         return $CFG->wwwroot .'/blog/archive.php?userid='. $this->entryuserid .'&amp;postid='. $this->entryId;
     }
 
-    /**
-     *  The url of the news feed containing this item. Uses global admin config to determin what feed type to point to.
-     * @return string
-     */
-    function get_entryfeedurl() {
-        global $CFG;
-        return $CFG->wwwroot .'/blog/rss.php?userid='. $this->entryuserid;
-    }
-
-    /**
-     *  
-     * @return string
-     */
-    function get_entryediturl() {
-        global $CFG;
-        return $CFG->wwwroot .'/blog/edit.php?userid='. $this->entryuserid .'&amp;editid='. $this->entryId;
-    }
-
-
-    /**
-     *  
-     * @return string
-     */
-    function get_entrydeleteurl() {
-        global $CFG;
-        return 'javascript:del(\''. $CFG->wwwroot .'/blog/\', '. $this->entryId .', '. $this->entryuserid .')';
-    }
-
-    /**
-     *  
-     * @return string
-     */
-    function get_entryblogthisurl() {
-        global $CFG;
-        return $CFG->wwwroot .'/blog/blogthis.php?userid='. $this->entryuserid .'&amp;act=use&amp;postid='. $this->entryId;
-    }
 
     /**
      * BlogEntry setters do not save to the database.
@@ -490,54 +302,6 @@ class BlogEntry {
         return false;
     }
 
-    /**
-     * BlogEntry setters do not save to the database.
-     * To save changes call the BlogEntry->save() function when ready.
-     *
-     * @param int $courseid The course by id that this entry should be associated with.
-     */
-    function set_courseid($courseid) {
-        $this->entryCourseId = $courseid;
-    }
-
-    /**
-     * BlogEntry setters do not save to the database.
-     * To save changes call the BlogEntry->save() function when ready.
-     *
-     * @param int $groupid The groupid that this entry should be associated with.
-     */
-    function set_groupid($groupid) {
-        $this->entryGroupId = $groupid;
-    }
-
-    /**
-     * BlogEntry setters do not save to the database.
-     * To save changes call the BlogEntry->save() function when ready.
-     *
-     * @param array $catids An array of category ids to associate this entry with. 
-     */
-    function set_categoryids($catids) {
-        $this->entryCategoryIds = $catids;
-
-        if (!empty($this->entryCategoryIds)) {
-            if (!is_array($this->entryCategoryIds)) {
-                $this->entryCategoryIds = array($this->entryCategoryIds);
-            }
-            $this->entryCategoryIds = array_unique($this->entryCategoryIds);
-        }
-        
-        // now populate the entryCategories array
-        if (!empty($this->entryCategoryIds)) {
-            foreach ($this->entryCategoryIds as $categoryid) {
-                if (! $currcat = get_record('blog_categories', 'id', $categoryid)) {
-                    print 'Could not find category id '. $categoryid ."\n";
-                    $this->entryCategories[$categoryid] = '';
-                } else {
-                    $this->entryCategories[$categoryid] = $currcat->catname;
-                }
-            }
-        }
-    }
 
     /**
      * This function will determine if the user is logged in and
@@ -595,20 +359,7 @@ class BlogEntry {
             if ( ! $uid == '' && ! isguest() ) {
                 return true;
             }
-        } else if ($this->entryPublishState == 'course') {
-            //there is a courseid and the user is a member of that course
-            if ( isset($this->entryCourseId) && (isteacher($this->entryCourseId, $uid) || isstudent($this->entryCourseId, $uid) ) ) {
-                return true;
-            }
-        } else if ($this->entryPublishState == 'teacher') {
-            if ( isset($this->entryCourseId) && isteacher($this->entryCourseId, $uid) )  {
-                return true;
-            }
-        } else if ($this->entryPublishState == 'group') {
-            if ( isset($this->entryGroupId) && ismember($this->entryGroupId, $uid) )  {
-                return true;
-            }            
-        }
+        } 
 
         //nothing qualified - the user requesting access is not allowed to view this entry!
         return false;
