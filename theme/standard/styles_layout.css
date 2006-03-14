@@ -431,6 +431,11 @@ a.skip-block, .skip-block {
   font-size:1px;
 }
 
+.sideblock .icon img {
+  width:16px;
+  height:16px;
+}
+
 ul.list, ul.list li {
   list-style-type:none;
   padding:0%;
