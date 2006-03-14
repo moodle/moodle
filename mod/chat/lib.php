@@ -636,4 +636,31 @@ function chat_get_post_actions() {
     return array('talk');
 }
 
+function chat_print_overview($courses, &$htmlarray) {
+    global $USER, $CFG;
+
+    if (empty($courses) || !is_array($courses) || count($courses) == 0) {
+        return array();
+    }
+
+    if (!$chats = get_all_instances_in_courses('chat',$courses)) {
+        return;
+    }
+
+    $strchat = get_string('modulename', 'chat');
+    $strnextsession  = get_string('nextsession', 'chat');
+    $strnoscheduledsession = get_string('noscheduledsession', 'chat');
+
+    foreach ($chats as $chat) {
+        $str = '<a '.($chat->visible?'':' class="dimmed"').' href="'.$CFG->wwwroot.'/mod/chat/view.php?id='.$chat->coursemodule.'">'
+            .$strchat.': '.$chat->name.'</a><br />';
+        if ($chat->chattime and $chat->schedule) {  // A chat is scheduled
+            $str .= "$strnextsession: ".userdate($chat->chattime).' ('.usertimezone($USER->timezone).')<br />';
+        } else {
+            $str .= $strnoscheduledsession.'<br />';
+        }
+        $htmlarray[$chat->course]['chat'] .= $str;
+    }
+}
+
 ?>
