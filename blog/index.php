@@ -25,7 +25,7 @@ $d = optional_param('d', 0, PARAM_INT); //day
 $userid = optional_param('userid',0,PARAM_INT);
 $groupid = optional_param('groupid',0,PARAM_INT);
 $courseid = optional_param('courseid',0,PARAM_INT);
-$tag = urldecode(optional_param('tag', '', PARAM_NOTAGS));
+$tag = s(urldecode(optional_param('tag', '', PARAM_NOTAGS)));
 $tagid = optional_param('tagid', 0, PARAM_INT);
 
 $filtertype = optional_param('filtertype', '', PARAM_ALPHA);
