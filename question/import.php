@@ -24,10 +24,19 @@
     $txt = new stdClass();
     $txt->category = get_string('category','quiz');
     $txt->choosefile = get_string('choosefile','quiz');
+    $txt->editingquiz = get_string(isset($SESSION->modform->instance) ? "editingquiz" : "editquestions", "quiz");
     $txt->file = get_string('file');
     $txt->fileformat = get_string('fileformat','quiz');
+    $txt->importerror = get_string('importerror','quiz');
     $txt->importfilearea = get_string('importfilearea','quiz');
     $txt->importfileupload = get_string('importfileupload','quiz');
+    $txt->importquestions = get_string("importquestions", "quiz");
+    $txt->modulename = get_string('modulename','quiz');
+    $txt->modulenameplural = get_string('modulenameplural','quiz');
+    $txt->nocategory = get_string('nocategory','quiz');
+    $txt->onlyteachersimport = get_string('onlyteachersimport','quiz');
+    $txt->questions = get_string("questions", "quiz");
+    $txt->quizzes = get_string('modulenameplural', 'quiz');
     $txt->upload = get_string('upload');
     $txt->uploadproblem = get_string('uploadproblem');
     $txt->uploadthisfile = get_string('uploadthisfile');
@@ -44,7 +53,7 @@
         if ($courseid) {
             $category = get_default_question_category($courseid);
         } else {
-            error( get_string('nocategory','quiz') );
+            error( $txt->nocategory );
         }
     }
 
@@ -59,17 +68,12 @@
     require_login($course->id, false);
 
     if (!isteacheredit($course->id)) {
-        error( get_string('onlyteachersimport','quiz') );
+        error( $txt->onlyteachersimport );
     }
 
     // ensure the files area exists for this course
     make_upload_directory( "$course->id" );
 
-    $strimportquestions = get_string("importquestions", "quiz");
-    $strquestions = get_string("questions", "quiz");
-
-    $strquizzes = get_string('modulenameplural', 'quiz');
-    $streditingquiz = get_string(isset($SESSION->modform->instance) ? "editingquiz" : "editquestions", "quiz");
 
     //==========
     // PAGE HEADER
@@ -77,18 +81,18 @@
 
     if (isset($SESSION->modform->instance) and $quiz = get_record('quiz', 'id', $SESSION->modform->instance)) {
         $strupdatemodule = isteacheredit($course->id)
-            ? update_module_button($SESSION->modform->cmid, $course->id, get_string('modulename', 'quiz'))
+            ? update_module_button($SESSION->modform->cmid, $course->id, $txt->modulename)
             : "";
-        print_header_simple($strimportquestions, '',
-                 "<a href=\"$CFG->wwwroot/mod/quiz/index.php?id=$course->id\">".get_string('modulenameplural', 'quiz').'</a>'.
+        print_header_simple($txt->importquestions, '',
+                 "<a href=\"$CFG->wwwroot/mod/quiz/index.php?id=$course->id\">".$txt->modulenameplural.'</a>'.
                  " -> <a href=\"$CFG->wwwroot/mod/quiz/view.php?q=$quiz->id\">".format_string($quiz->name).'</a>'.
-                 ' -> '.$strimportquestions,
+                 ' -> '.$txt->importquestions,
                  "", "", true, $strupdatemodule);
         $currenttab = 'edit';
         $mode = 'import';
         include($CFG->dirroot.'/mod/quiz/tabs.php');
     } else {
-        print_header_simple($strimportquestions, '', $strimportquestions);
+        print_header_simple($txt->importquestions, '', $txt->importquestions);
         // print tabs
         $currenttab = 'import';
         include('tabs.php');
@@ -140,17 +144,17 @@
             $qformat = new $classname();
 
             if (! $qformat->importpreprocess($category,$course)) {             // Do anything before that we need to
-                error( get_string('importerror','quiz'),
+                error( $txt->importerror ,
                       "$CFG->wwwroot/question/import.php?courseid={$course->id}&amp;category=$category->id");
             }
 
             if (! $qformat->importprocess($importfile) ) {     // Process the uploaded file
-                error( get_string('importerror','quiz'),
+                error( $txt->importerror ,
                       "$CFG->wwwroot/question/import.php?courseid={$course->id}&amp;category=$category->id");
             }
 
             if (! $qformat->importpostprocess()) {                     // In case anything needs to be done after
-                error( get_string('importerror','quiz'),
+                error( $txt->importerror ,
                       "$CFG->wwwroot/question/import.php?courseid={$course->id}&amp;category=$category->id");
             }
 
@@ -166,7 +170,7 @@
     // get list of available import formats
     $fileformatnames = get_import_export_formats( 'import' );
 
-    print_heading_with_help($strimportquestions, "import", "quiz");
+    print_heading_with_help($txt->importquestions, "import", "quiz");
 
     /// Get all the existing categories now
     if (isadmin()) { // the admin can import into all categories
@@ -214,7 +218,7 @@
             <tr>
                 <td align="right"><?php echo $txt->fileformat; ?>:</td>
                 <td><?php choose_from_menu($fileformatnames, "format", "gift", "");
-                    helpbutton("import", $strimportquestions, "quiz"); ?></td>
+                    helpbutton("import", $txt->importquestions, "quiz"); ?></td>
             </tr>
         </table>
         <?php
