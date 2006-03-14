@@ -987,7 +987,10 @@ function message_post_message($userfrom, $userto, $message, $format, $messagetyp
 
     $preference = (object)get_user_preferences(NULL, NULL, $userto->id);
 
-    if (!empty($preference->message_emailmessages)) {  // Receiver wants mail forwarding
+    if (!isset($preference->message_emailmessages) or $preference->message_emailmessages) {  // Receiver wants mail forwarding
+        if (!isset($preference->message_emailtimenosee)) {
+            $preference->message_emailtimenosee = 10;
+        }
         if ((time() - $userto->lastaccess) > ((int)$preference->message_emailtimenosee * 60)) { // Long enough
 
             $message = stripslashes_safe($message);
@@ -1005,7 +1008,9 @@ function message_post_message($userfrom, $userto, $message, $format, $messagetyp
                 $messagehtml = NULL;
             }
 
-            $userto->email = $preference->message_emailaddress;   // Use custom messaging address
+            if (!empty($preference->message_emailaddress)) {
+                $userto->email = $preference->message_emailaddress;   // Use custom messaging address
+            }
             email_to_user($userto, $userfrom, $messagesubject, $messagetext, $messagehtml);
         }
     }
