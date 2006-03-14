@@ -72,15 +72,22 @@
 
     $strdata = get_string('modulenameplural','data');
     
+    // For the javascript for inserting template tags: initialise the default textarea to
+    // 'edit_template' - it is always present in all different possible views.
+    $bodytag = 'onload="';
+    $bodytag .= 'currEditor = edit_template; ';
+    $bodytag .= 'currTextarea = document.tempform.template;';
+    $bodytag .= '" ';
+    
     print_header_simple($data->name, '', "<a href='index.php?id=$course->id'>$strdata</a> -> $data->name",
-                        '', '', true, '', navmenu($course, $cm), '', '');
+                        '', '', true, '', navmenu($course, $cm), '', $bodytag);
     
     print_heading(format_string($data->name));
     
-     ///processing submitted data, i.e updating form
+     /// Processing submitted data, i.e updating form.
     if (($mytemplate = data_submitted($CFG->wwwroot.'/mod/data/templates.php')) && confirm_sesskey()){
 
-        //generate default template
+        // Generate default template.
         if (!empty($mytemplate->defaultform)){
             data_generate_default_form($data->id, $mode);
         }
@@ -103,7 +110,7 @@
                 $newtemplate->listtemplatefooter = $mytemplate->listtemplatefooter;
             }
 
-            //check for multiple tags, only need to check for add template
+            // Check for multiple tags, only need to check for add template.
             if ($mode != 'addtemplate' or data_tags_check($data->id, $newtemplate->{$mode})){
                 update_record('data',$newtemplate);
             }
@@ -111,17 +118,17 @@
         }
     }
 
-/// Print the tabs
+/// Print the tabs.
     $currenttab = 'templates';
     include('tabs.php'); 
 
-/// Print the browsing interface
+/// Print the browsing interface.
 
     echo '<div align="center">'.get_string('header'.$mode,'data').'</div><br />';
 
     echo '<form name="tempform" action="templates.php?d='.$data->id.'&amp;mode='.$mode.'" method="post">';
     echo '<input name="sesskey" value="'.sesskey().'" type="hidden" />';
-    //print button to autogen all forms, if all templates are empty
+    // Print button to autogen all forms, if all templates are empty
 
     $data = get_record('data', 'id', $d);    //reload because of possible updates so far!
 
@@ -130,49 +137,70 @@
     }
         
     print_simple_box_start('center','80%');
-    echo '<table><tr><td colspan="2">';
+    echo '<table cellpadding="4" cellspacing="0" border="0">';
 
-    ///add all the available fields for this data
+
+/// Add the HTML editor(s).
+    echo '<td>';
+    $usehtmleditor = can_use_html_editor();
+    if ($mode == 'listtemplate'){
+        // Print the list template header.
+        echo '<tr>';
+        echo '<td>&nbsp;</td>';
+        echo '<td>';
+        echo '<div align="center">'.get_string('header','data').'</div>';
+        print_textarea($usehtmleditor, 10, 72, 0, 0, 'listtemplateheader', $data->listtemplateheader);
+        echo '</td>';
+        echo '</tr>';
+    }
+    
+    // Print the main template.
+    // Add all the available fields for this data.
+    echo '<tr><td valign="top">';
     echo get_string('availabletags','data');
     helpbutton('tags', get_string('tags','data'), 'data');
-    echo '</td></tr><tr><td valign="top">';
     
     echo '<select name="fields1[]" size="10" ';
+    
+    // Javascript to insert the field tags into the textarea.
     echo 'onclick="';
-    echo 'if (typeof(editor) != \'undefined\' && editor._editMode == \'wysiwyg\') {';
-    echo '    editor.insertHTML(this.options[selectedIndex].value); ';     // HTMLArea-specific.
+    echo 'if (typeof(currEditor) != \'undefined\' && currEditor._editMode == \'wysiwyg\') {';
+    echo '    currEditor.insertHTML(this.options[selectedIndex].value); ';     // HTMLArea-specific.
     echo '} else {';
-    echo 'insertAtCursor(document.tempform.template, this.options[selectedIndex].value);';   // Hack for inserting when in HTMLArea code view or for normal textareas.
-    echo '}">';
+    echo 'insertAtCursor(currTextarea, this.options[selectedIndex].value);';   // For inserting when in HTMLArea code view or for normal textareas.
+    echo '}';
+    echo '">';
     
     foreach ($fields as $field) {
         echo '<option value="[['.$field->name.']]">'.$field->name.' ('. get_string($field->type, 'data'). ')</option>';
     }
     
-    //print special tags
+    // Print special tags.
     echo '<option value="##edit##">##' .get_string('edit', 'data'). '##</option>';
     echo '<option value="##more##">##' .get_string('more', 'data'). '##</option>';
     echo '<option value="##delete##">##' .get_string('delete', 'data'). '##</option>';
     echo '<option value="##approve##">##' .get_string('approve', 'data'). '##</option>';
     echo '<option value="##comments##">##' .get_string('comments', 'data'). '##</option>';
     echo '</select>';
-
-    ///add the HTML editor(s)
-    echo '</td><td>';
-    $usehtmleditor = can_use_html_editor();
+    echo '</td>';
+    
+    echo '<td>';
     if ($mode == 'listtemplate'){
-        echo '<div align="center">'.get_string('header','data').'</div>';
-        print_textarea($usehtmleditor, 10, 72, 0, 0, 'listtemplateheader', $data->listtemplateheader);
-    }
-    if ($mode == 'listtemplate'){
-        echo '<div align="center">'.get_string('multientry','data').'</div>';
+        echo '<div align="center">'.get_string('multientry','data').'</div>';        
     }
     print_textarea($usehtmleditor, 20, 72, 0, 0, 'template', $data->{$mode});
+    echo '</td>';
+    echo '</tr>';
+    
     if ($mode == 'listtemplate'){
+        echo '<tr>';
+        echo '<td>&nbsp;</td>';
+        echo '<td>';
         echo '<div align="center">'.get_string('footer','data').'</div>';
         print_textarea($usehtmleditor, 10, 72, 0, 0, 'listtemplatefooter', $data->listtemplatefooter);
+        echo '</td>';
+        echo '</tr>';
     }
-    echo '</td></tr>';
 
     echo '<tr><td align="center" colspan="2">';
     echo '<input type="submit" value="'.get_string('savetemplate','data').'" />&nbsp;';
@@ -181,6 +209,8 @@
     }
     
     echo '</td></tr></table>';
+    
+    
     print_simple_box_end();
     echo '</form>';
     if ($usehtmleditor) {
@@ -192,7 +222,5 @@
     }
 
 /// Finish the page
-    
     print_footer($course);
-
 ?>
