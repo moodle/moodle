@@ -56,13 +56,27 @@ if ( !blog_user_has_rights($PAGE->bloginfo) ) {
 
 if (isset($act) && $act == 'del' && confirm_sesskey())
 {
-    if (optional_param($confirm,0,PARAM_INT)) {
-        require_variable($postid);
+    $postid = required_param('postid', PARAM_INT);
+    if (optional_param('confirm',0,PARAM_INT)) {
         do_delete($PAGE->bloginfo, $postid);
     } else {
     /// prints blog entry and what confirmation form
-
-
+        echo '<div align="center"><form method="GET" action="edit.php">';
+        echo '<input type="hidden" name="act" value="del" />';
+        echo '<input type="hidden" name="confirm" value="1" />';
+        echo '<input type="hidden" name="postid" value="'.$postid.'" />';
+        echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
+        print_string('blogdeleteconfirm', 'blog');
+        
+        $post = get_record('post', 'id', $postid);
+        $entry = new BlogEntry($post);
+        blog_print_entry($entry);
+        echo '<br />';
+        echo '<input type="submit" value="'.get_string('delete').'" /> ';
+        echo ' <input type="button" value="'.get_string('cancel').'" onclick="javascript:history.go(-1)" />';
+        echo '</form></div>';
+        print_footer($course);
+        die;
     }
 }
 if ($usehtmleditor = can_use_richtext_editor()) {
@@ -109,7 +123,6 @@ if (($post = data_submitted( get_referer() )) && confirm_sesskey()) {
     $post->categoryid = array(1);
     $post->publishstate = 'draft';
     $post->courseid  = $courseid;
-    
 
 }
 

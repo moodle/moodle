@@ -753,7 +753,7 @@ function blog_get_moodle_pix_path(){
  *     in its complete form (eg. archive page). If anything other than 'full'
  *     display the entry in its abbreviated format (eg. index page)
  */
-function blog_print_entry(&$blogEntry, $viewtype='full', $filtertype, $filterselect) {
+function blog_print_entry(&$blogEntry, $viewtype='full', $filtertype='', $filterselect='') {
     global $CFG, $THEME, $USER;
     static $bloginfoarray;
 
@@ -847,11 +847,11 @@ function blog_print_entry_content ($template, $entryid, $filtertype='', $filters
 
     if (isset($USER->id)) {
         if (($template['userid'] == $USER->id) or isteacher($course->id)) {
-                echo '<a href="'.$CFG->wwwroot.'/blog/edit.php?editid='.$entryid.'&amplsesskey='.sesskey().'">'.$stredit.'</a>';
+                echo '<a href="'.$CFG->wwwroot.'/blog/edit.php?editid='.$entryid.'&amp;sesskey='.sesskey().'">'.$stredit.'</a>';
         }
 
         if (($template['userid'] == $USER->id) or isteacher($course->id)) {
-            echo '| <a href="'.$CFG->wwwroot.'/blog/edit.php?act=del&amp;postid='.$entryid.'&amplsesskey='.sesskey().'">'.$strdelete.'</a>';
+            echo '| <a href="'.$CFG->wwwroot.'/blog/edit.php?act=del&amp;postid='.$entryid.'&amp;sesskey='.sesskey().'">'.$strdelete.'</a>';
         }
     }
 
