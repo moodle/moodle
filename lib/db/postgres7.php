@@ -1422,7 +1422,7 @@ function main_upgrade($oldversion=0) {
 
     }
     
-    if ($oldversion > 2006031000) {
+    if ($oldversion < 2006031000) {
 
         modify_database("","CREATE TABLE prefix_post (
           id SERIAL PRIMARY KEY,
