@@ -431,7 +431,7 @@ a.skip-block, .skip-block {
   font-size:1px;
 }
 
-.sideblock .icon img {
+.sideblock li .icon img {
   width:16px;
   height:16px;
 }
