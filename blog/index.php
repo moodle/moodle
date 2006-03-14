@@ -155,7 +155,6 @@ switch ($filtertype) {
     break;
 }
 
-
 //first set the start and end day equal to the day argument passed in from the get vars
 $startday = $d;
 $endday = $d + 1;

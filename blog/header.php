@@ -12,7 +12,10 @@ $blockaction = optional_param('blockaction','', PARAM_ALPHA);
 $instanceid = optional_param('instanceid', 0, PARAM_INT);
 $blockid = optional_param('blockid',    0, PARAM_INT);
 $groupid = optional_param('groupid',    0, PARAM_INT);
-$userid = optional_param('userid',     0, PARAM_INT);
+
+if (!isset($userid)) {
+    $userid = optional_param('userid',     0, PARAM_INT);
+}
 
 if (!isset($courseid)) {
     $courseid = optional_param('courseid', SITEID, PARAM_INT);
