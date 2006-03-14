@@ -139,11 +139,10 @@
     
     echo '<select name="fields1[]" size="10" ';
     echo 'onclick="';
-    //echo 'alert(editor._editMode); ';
-    echo 'if (editor._editMode == \'wysiwyg\') {';
+    echo 'if (typeof(editor) != \'undefined\' && editor._editMode == \'wysiwyg\') {';
     echo '    editor.insertHTML(this.options[selectedIndex].value); ';     // HTMLArea-specific.
     echo '} else {';
-    echo 'insertAtCursor(\'document.tempform.template\', this.options[selectedIndex].value);';   // Hack for inserting when in HTMLArea code view or for normal textareas.
+    echo 'insertAtCursor(document.tempform.template, this.options[selectedIndex].value);';   // Hack for inserting when in HTMLArea code view or for normal textareas.
     echo '}">';
     
     foreach ($fields as $field) {
