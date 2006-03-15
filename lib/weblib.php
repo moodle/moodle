@@ -823,6 +823,8 @@ function print_checkbox ($name, $value, $checked = true, $label = '', $alt = '',
 
     if ($checked) {
         $strchecked = ' checked="checked"';
+    } else {
+        $strchecked = '';
     }
 
     $htmlid = 'auto-cb'.sprintf('%04d', ++$idcounter);
