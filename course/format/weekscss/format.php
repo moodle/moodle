@@ -126,7 +126,7 @@
         if (isediting($course->id)) {
             echo '<a title="'.$streditsummary.'" '.
                  ' href="editsection.php?id='.$thissection->id.'"><img src="'.$CFG->pixpath.'/t/edit.gif" '.
-                 ' class="icon icon11" alt="'.$streditsummary.'" /></a><br /><br />';
+                 ' class="icon edit" alt="'.$streditsummary.'" /></a><br /><br />';
         }
         echo '</div>';
         
@@ -217,7 +217,7 @@
 
                 if (isediting($course->id)) {
                     echo ' <a title="'.$streditsummary.'" href="editsection.php?id='.$thissection->id.'">'.
-                         '<img src="'.$CFG->pixpath.'/t/edit.gif" class="icon icon11" alt="'.$streditsummary.'" /></a><br /><br />';
+                         '<img src="'.$CFG->pixpath.'/t/edit.gif" class="icon edit" alt="'.$streditsummary.'" /></a><br /><br />';
                 }
                 echo '</div>';
 
@@ -233,29 +233,29 @@
 
             if ($displaysection == $section) {
                 echo '<a href="view.php?id='.$course->id.'&amp;week=all#section-'.$section.'" title="'.$strshowallweeks.'">'.
-                     '<img src="'.$CFG->pixpath.'/i/all.gif" class="icon" alt="'.$strshowallweeks.'" /></a><br />';
+                     '<img src="'.$CFG->pixpath.'/i/all.gif" class="icon wkall" alt="'.$strshowallweeks.'" /></a><br />';
             } else {
                 $strshowonlyweek = get_string("showonlyweek", "", $section);
                 echo '<a href="view.php?id='.$course->id.'&amp;week='.$section.'" title="'.$strshowonlyweek.'">'.
-                     '<img src="'.$CFG->pixpath.'/i/one.gif" class="icon icon16" alt="'.$strshowonlyweek.'" /></a><br />';
+                     '<img src="'.$CFG->pixpath.'/i/one.gif" class="icon wkone" alt="'.$strshowonlyweek.'" /></a><br />';
             }
 
             if (isediting($course->id)) {
                 if ($thissection->visible) {        // Show the hide/show eye
                     echo '<a href="view.php?id='.$course->id.'&amp;hide='.$section.'&amp;sesskey='.$USER->sesskey.'#section-'.$section.'" title="'.$strweekhide.'">'.
-                         '<img src="'.$CFG->pixpath.'/i/hide.gif" class="icon icon16" alt="'.$strweekhide.'" /></a><br />';
+                         '<img src="'.$CFG->pixpath.'/i/hide.gif" class="icon hide" alt="'.$strweekhide.'" /></a><br />';
                 } else {
                     echo '<a href="view.php?id='.$course->id.'&amp;show='.$section.'&amp;sesskey='.$USER->sesskey.'#section-'.$section.'" title="'.$strweekhide.'">'.
-                         '<img src="'.$CFG->pixpath.'/i/show.gif" class="icon icon16" alt="'.$strweekhide.'" /></a><br />';
+                         '<img src="'.$CFG->pixpath.'/i/show.gif" class="icon hide" alt="'.$strweekhide.'" /></a><br />';
                 }
                 if ($section > 1) {                       // Add a arrow to move section up
                     echo '<a href="view.php?id='.$course->id.'&amp;section='.$section.'&amp;move=-1&amp;sesskey='.$USER->sesskey.'#section-'.($section-1).'" title="'.$strmoveup.'">'.
-                         '<img src="'.$CFG->pixpath.'/t/up.gif" class="icon icon11" alt="'.$strmoveup.'" /></a><br />';
+                         '<img src="'.$CFG->pixpath.'/t/up.gif" class="icon up" alt="'.$strmoveup.'" /></a><br />';
                 }
 
                 if ($section < $course->numsections) {    // Add a arrow to move section down
                     echo '<a href="view.php?id='.$course->id.'&amp;section='.$section.'&amp;move=1&amp;sesskey='.$USER->sesskey.'#section-'.($section+1).'" title="'.$strmovedown.'">'.
-                         '<img src="'.$CFG->pixpath.'/t/down.gif" class="icon icon11" alt="'.$strmovedown.'" /></a><br />';
+                         '<img src="'.$CFG->pixpath.'/t/down.gif" class="icon down" alt="'.$strmovedown.'" /></a><br />';
                 }
             }
 
