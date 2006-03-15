@@ -457,7 +457,7 @@ function print_overview($courses) {
     }
 
     foreach ($courses as $course) {
-        print_simple_box_start("center", '400', '', 5, "coursebox");
+        print_simple_box_start('center', '100%', '', 5, "coursebox");
         $linkcss = '';
         if (empty($course->visible)) {
             $linkcss = 'class="dimmed"';
