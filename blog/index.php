@@ -17,10 +17,7 @@ require_once($CFG->libdir .'/blocklib.php');
 
 $id = optional_param('id', 0, PARAM_INT);
 $limit = optional_param('limit', 0, PARAM_INT);
-$formstart = optional_param('formstart', 'none', PARAM_ALPHA);
-$m = optional_param('m', 0, PARAM_INT); //month
-$y = optional_param('y', 0, PARAM_INT); //year
-$d = optional_param('d', 0, PARAM_INT); //day
+$start = optional_param('formstart', 0, PARAM_INT);
 
 $userid = optional_param('userid',0,PARAM_INT);
 $groupid = optional_param('groupid',0,PARAM_INT);
@@ -156,22 +153,8 @@ switch ($filtertype) {
 }
 
 //first set the start and end day equal to the day argument passed in from the get vars
-$startday = $d;
-$endday = $d + 1;
-if ( empty($d) && !empty($m) && !empty($y) ) {
-    //if there was no day specified then the entire month is wanted.
-    $startday = 1;
-    $endday = blog_mk_getLastDayofMonth($m, $y);
-}
-
 if ($limit == 'none') {
     $limit = get_user_preferences('blogpagesize',8);
-}
-
-if ($formstart == 'none' || $formstart < 0) {
-    $start = 0;
-} else {
-    $start = $formstart;
 }
 
 $blogFilter =& new BlogFilter($userid, '', $limit, $start,$filtertype, $filterselect, $tagid, $tag);

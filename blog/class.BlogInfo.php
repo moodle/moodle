@@ -95,12 +95,13 @@ class BlogInfo {
     /**
      * Getter for this blog's title, ->blogtitle
      */
+    /*
     function get_blog_title() {
         if (!isset($this->blogtitle)) {
             return '';
         }
         return $this->blogtitle;
-    }
+    }*/
 
     /**
      *

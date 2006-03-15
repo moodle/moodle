@@ -42,10 +42,11 @@
     $pageMeta = '' . "\n";
 
     $strpreferences = get_string('preferences');
+    $strblogs = get_string('blogs', 'blog');
 
-    $navigation = '<a href="'. $bloginfo->get_blog_url() .'">'. $bloginfo->get_blog_title() . '</a> -> '. $strpreferences;
+    $navigation = "<a href='".$CFG->wwwroot."/blog/'>$strblogs</a> -> $strpreferences";
 
-    print_header("$site->shortname: ". $bloginfo->get_blog_title() .": $strpreferences", $bloginfo->get_blog_title(), $navigation, '', $pageMeta, true, '', '');
+    print_header("$site->shortname: $strblogs : $strpreferences", $strblogs, $navigation, '', $pageMeta, true, '', '');
 
     print_heading($strpreferences);
 
