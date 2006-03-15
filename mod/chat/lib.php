@@ -649,17 +649,21 @@ function chat_print_overview($courses, &$htmlarray) {
 
     $strchat = get_string('modulename', 'chat');
     $strnextsession  = get_string('nextsession', 'chat');
-    $strnoscheduledsession = get_string('noscheduledsession', 'chat');
 
     foreach ($chats as $chat) {
-        $str = '<a '.($chat->visible?'':' class="dimmed"').' href="'.$CFG->wwwroot.'/mod/chat/view.php?id='.$chat->coursemodule.'">'
-            .$strchat.': '.$chat->name.'</a><br />';
         if ($chat->chattime and $chat->schedule) {  // A chat is scheduled
-            $str .= "$strnextsession: ".userdate($chat->chattime).' ('.usertimezone($USER->timezone).')<br />';
-        } else {
-            $str .= $strnoscheduledsession.'<br />';
+            $str = '<div class="chat overview"><div class="name">'.
+                   $strchat.': <a '.($chat->visible?'':' class="dimmed"').
+                   ' href="'.$CFG->wwwroot.'/mod/chat/view.php?id='.$chat->coursemodule.'">'.
+                   $chat->name.'</a></div>';
+            $str .= '<div class="info">'.$strnextsession.': '.userdate($chat->chattime).'</div></div>';
+
+            if (empty($htmlarray[$chat->course]['chat'])) {
+                $htmlarray[$chat->course]['chat'] = $str;
+            } else {
+                $htmlarray[$chat->course]['chat'] .= $str;
+            }
         }
-        $htmlarray[$chat->course]['chat'] .= $str;
     }
 }
 
