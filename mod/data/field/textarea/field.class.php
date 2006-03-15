@@ -128,7 +128,7 @@ class data_field_textarea extends data_field_base {
             $scriptcount++;
         }
 
-        $output .= '<textarea id="' . $name .'" name="'. $name .'" rows="'. $rows .'" cols="'. $cols .'">';
+        $output .= '<textarea id="edit-' . $name .'" name="edit-'. $name .'" rows="'. $rows .'" cols="'. $cols .'">';
         
         if ($usehtmleditor) {
             $output .= htmlspecialchars(stripslashes_safe($value)); // needed for editing of cleaned text!
@@ -144,106 +144,16 @@ class data_field_textarea extends data_field_base {
     
     function print_after_form() {
         if (can_use_richtext_editor()) {
-            $this->use_html_editor('field_' . $this->id);
+            use_html_editor('field_' . $this->id);
         }
     }
     
     
-    /**
-     * Sets up the HTML editor on textareas in the current page.
-     * If a field name is provided, then it will only be
-     * applied to that field - otherwise it will be used
-     * on every textarea in the page.
-     *
-     * For Moodle 1.6, this is nearly exactly the same as
-     * use_html_editor() in /lib/weblib.php. For Moodle 1.5, this
-     * function is different to that in /lib/weblib.php. The
-     * reason is because we need the database module to be
-     * compatible with 1.5.
-     *
-     * @param string $name Form element to replace with HTMl editor by name
-     */
-    function use_html_editor($name='', $editorhidebuttons='') {
-        echo '<script language="javascript" type="text/javascript" defer="defer">'."\n";
-        echo "editor = new HTMLArea('$name');\n";
-
-        echo $this->print_editor_config($editorhidebuttons);
-
-        if (empty($name)) {
-            echo "\n".'HTMLArea.replaceAll(editor.config);'."\n";
-        } else {
-            echo "\neditor.generate();\n";
-        }
-        echo '</script>'."\n";
-    }
-    
-    
-    /**
-     * Versioning issue same as above.
-     */
-     function print_editor_config($editorhidebuttons='', $return=false) {
-         global $CFG;
-
-         $str = "var config = editor.config;\n";
-         $str .= "config.pageStyle = \"body {";
-
-         if (!(empty($CFG->editorbackgroundcolor))) {
-             $str .= " background-color: $CFG->editorbackgroundcolor;";
-         }
-
-         if (!(empty($CFG->editorfontfamily))) {
-             $str .= " font-family: $CFG->editorfontfamily;";
-         }
-
-         if (!(empty($CFG->editorfontsize))) {
-             $str .= " font-size: $CFG->editorfontsize;";
-         }
-
-         $str .= " }\";\n";
-         $str .= "config.killWordOnPaste = ";
-         $str .= (empty($CFG->editorkillword)) ? "false":"true";
-         $str .= ';'."\n";
-         $str .= 'config.fontname = {'."\n";
-
-         $fontlist = isset($CFG->editorfontlist) ? explode(';', $CFG->editorfontlist) : array();
-         $i = 1;                     // Counter is used to get rid of the last comma.
-
-         foreach ($fontlist as $fontline) {
-             if (!empty($fontline)) {
-                 if ($i > 1) {
-                     $str .= ','."\n";
-                 }
-                 list($fontkey, $fontvalue) = split(':', $fontline);
-                 $str .= '"'. $fontkey ."\":\t'". $fontvalue ."'";
-
-                 $i++;
-             }
-         }
-         $str .= '};';
-
-         if (!empty($editorhidebuttons)) {
-             $str .= "\nconfig.hideSomeButtons(\" ". $editorhidebuttons ." \");\n";
-         } else if (!empty($CFG->editorhidebuttons)) {
-             $str .= "\nconfig.hideSomeButtons(\" ". $CFG->editorhidebuttons ." \");\n";
-         }
-
-         if (!empty($CFG->editorspelling) && !empty($CFG->aspellpath)) {
-             $str .= print_speller_code($usehtmleditor=true, true);
-         }
-
-         if ($return) {
-             return $str;
-         }
-         echo $str;
-     }
-    
-    
-
     function display_edit_field($id, $mode=0) {
         parent::display_edit_field($id, $mode);
     }
         
-
+    
     function update($fieldobject) {
         $fieldobject->param1 = trim($fieldobject->param1);
         $fieldobject->param2 = trim($fieldobject->param2);
