@@ -415,11 +415,9 @@ table.minicalendar {
   border-color:#DDDDDD;
 }
 
+#course-view li.section,
 #course-view .section td {
   border-color:#DDDDDD;
-}
-
-#course-view .section .content {
 }
 
 #course-view .section .side {
@@ -431,8 +429,13 @@ table.minicalendar {
 #course-view .section .right {
 }
 
-#course-view .current .side{
+#course-view .weekscss .current,
+#course-view .weeks .current .side{
   background: #FFD991;
+}
+
+#course-view .current .content {
+  background: white;
 }
 
 #course-view .topics {

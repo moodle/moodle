@@ -822,7 +822,7 @@ span.current {
   vertical-align:top;
 }
 
-#course-view .section .content {
+#course-view .weeks .section .content {
   padding:5px;
   border-style:solid;
   border-width:1px;
@@ -834,19 +834,19 @@ span.current {
   clear: both;
 }
 
-#course-view .section .side {
+#course-view .weeks .section .side {
   padding:5px;
   border-style:solid;
   border-width:1px;
 }
 
-#course-view .section .left {
+#course-view .weeks .section .left {
   border-right:0px;
   text-align:center;
   width: 1.5em;
 }
 
-#course-view .section .right {
+#course-view .weeks .section .right {
   border-left:0px;
   text-align:center;
   width: 1.5em;
@@ -860,6 +860,36 @@ span.current {
 }
 
 #course-view .section .weekdates {
+}
+
+
+/*Accessibility: No-tables course format. */
+#course-view ul.weekscss, .weekscss li {
+  margin: 0;
+  padding: 0;
+  text-indent: 0;
+  list-style: none;
+}
+.weekscss li.section {
+  margin-bottom: 0.5em;
+  width: 100%;
+  border-style:solid;
+  border-width:1px;
+}
+.weekscss .content, .weekscss .side {
+  padding: 5px;
+}
+.weekscss .content {
+  margin-left: 4%;  /* Why? Firefox 8%; IE 4% */
+  width: 80%;
+  float: left;
+}
+.weekscss .side {
+  width: 8%;
+  float: left;
+}
+.weekscss .clearer {
+  height: 0;
 }
 
 .section .activity img.activityicon {
