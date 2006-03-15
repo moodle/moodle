@@ -139,8 +139,6 @@ if ($editid != '') {  // User is editing a post
     $post->categoryid = $blogEntry->entryCategoryIds;
     $post->format = $blogEntry->entryFormat;
     $post->publishstate = $blogEntry->entryPublishState;
-    $post->courseid  = $blogEntry->entryCourseId;
-    $post->groupid = (int)$blogEntry->entryGroupId;
 }
 
 if (isset($post->postid) && ($post->postid != -1) ) {

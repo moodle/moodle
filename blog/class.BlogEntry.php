@@ -39,13 +39,9 @@ class BlogEntry {
     // member variables
     var $entryId; // post.id
     var $entryBody; // post.summary
-    var $entryExtendedBody; // post.content
     var $entryTitle; // post.subject
-    var $entryKarma; // post.rating
     var $entryFormat; // post.format
     var $entryuserid; // post.author    
-    var $entryGroupId; // post.groupid
-    var $entryCourseId; // post.courseid
     var $entryPublishState; // post.publishstate
     var $entryAuthorName; // blog_users.name
     var $entryAuthorEmail; // blog_users.email
@@ -100,11 +96,6 @@ class BlogEntry {
 //        print_object($this->entryCategoryIds); //debug
         
         $this->entryBody = ereg_replace('<tick>', "'", stripslashes_safe($entrydetails->summary));
-        if (isset($entrydetails->extendedbody)) {
-            $this->entryExtendedBody = ereg_replace('<tick>', "'", stripslashes_safe($entrydetails->extendedbody));
-        } else {
-            $this->entryExtendedBody = '';
-        }
         
         $strftimedaydatetime = get_string('strftimedaydatetime');
         $this->entryLastModified = $entrydetails->lastmodified;
@@ -121,14 +112,6 @@ class BlogEntry {
         $this->entryTitle = ereg_replace('<tick>', "'", stripslashes_safe($entrydetails->subject));   //subject, not title!
         
         $this->entryFormat = $entrydetails->format;
-
-        //Daryl Hawes additions: course and group ids
-        if (isset($entrydetails->groupid) ) {
-            $this->entryGroupId = $entrydetails->groupid;
-        }
-        if (isset($entrydetails->courseid) ) {
-            $this->entryCourseId = $entrydetails->courseid;
-        }
 
         if (isset($entrydetails->publishstate) ) {
             $this->entryPublishState = $entrydetails->publishstate;
@@ -377,7 +360,7 @@ class BlogEntry {
         $menu = '';
         if ($this->user_can_change_publish_state() && blog_isediting() ) {
             $menu .= '<div class="publishto">'. get_string('publishto', 'blog').': ';
-            $options = blog_applicable_publish_states($this->entryCourseId);
+            $options = blog_applicable_publish_states();
             $menu .= choose_from_menu($options, $this->entryuserid .'-'. $this->entryId, $this->entryPublishState, '', '', '0', true);
             $menu .= "\n".'</div>'."\n";
             if ($includehelp) {

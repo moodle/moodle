@@ -384,13 +384,11 @@ function blog_print_entry(&$blogEntry, $viewtype='full', $filtertype='', $filter
     $template['title'] .= '</span>';
 
     // add editing controls if allowed
-    $template['courseid'] = $blogEntry->entryCourseId;
     $template['userid'] = $blogEntry->entryuserid;
     $template['author'] = $blogEntry->entryAuthorName;
     $template['lastmod'] = $blogEntry->formattedEntryLastModified;
     $template['created'] = $blogEntry->formattedEntryCreated;
     $template['publishtomenu'] = $blogEntry->get_publish_to_menu(true, true);
-    $template['groupid'] = $blogEntry->entryGroupId;
     //forum style printing of blogs
     blog_print_entry_content ($template, $blogEntry->entryId, $filtertype, $filterselect);
 
@@ -408,7 +406,7 @@ function blog_print_entry_content ($template, $entryid, $filtertype='', $filters
     echo '<div align="center"><table cellspacing="0" class="forumpost" width="100%">';
 
     echo '<tr class="header"><td class="picture left">';
-    print_user_picture($template['userid'], $template['courseid'], $user->picture);
+    print_user_picture($template['userid'], SITEID, $user->picture);
     echo '</td>';
 
     echo '<td class="topic starter"><div class="subject">'.$template['title'].'</div><div class="author">';
@@ -420,11 +418,6 @@ function blog_print_entry_content ($template, $entryid, $filtertype='', $filters
     echo '</div></td></tr>';
 
     echo '<tr><td class="left side">';
-    if ($group = get_record('groups','id',$template['groupid'])) {
-        print_group_picture($group, $course->id, false, false, true);
-    } else {
-        echo '&nbsp;';
-    }
 
 /// Actual content
 
