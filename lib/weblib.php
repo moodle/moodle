@@ -3215,22 +3215,22 @@ function print_richedit_javascript($form, $name, $source='no') {
  */
 function use_html_editor($name='', $editorhidebuttons='') {
     echo '<script language="javascript" type="text/javascript" defer="defer">'."\n";
-    echo "editor = new HTMLArea('edit-$name');\n";
+    echo "edit_$name = new HTMLArea('edit-$name');\n";
+    echo "var config = edit_$name.config;\n";
     
     echo print_editor_config($editorhidebuttons);
     
     if (empty($name)) {
         echo "\n".'HTMLArea.replaceAll(editor.config);'."\n";
     } else {
-        echo "\neditor.generate();\n";
+        echo "\nedit_$name.generate();\n";
     }
     echo '</script>'."\n";
 }
 
 function print_editor_config($editorhidebuttons='', $return=false) {
     global $CFG;
-        
-    $str = "var config = editor.config;\n";
+    
     $str .= "config.pageStyle = \"body {";
     
     if (!(empty($CFG->editorbackgroundcolor))) {
