@@ -3136,7 +3136,7 @@ function print_recent_activity_note($time, $user, $isteacher, $text, $link) {
  * @param int $courseid ?
  * @todo Finish documenting this function
  */
-function print_textarea($usehtmleditor, $rows, $cols, $width, $height, $name, $value='', $courseid=0) {
+function print_textarea($usehtmleditor, $rows, $cols, $width, $height, $name, $value='', $courseid=0, $return=false) {
 /// $width and height are legacy fields and no longer used as pixels like they used to be.
 /// However, you can set them to zero to override the mincols and minrows values below.
 
@@ -3160,13 +3160,13 @@ function print_textarea($usehtmleditor, $rows, $cols, $width, $height, $name, $v
         if ($usehtmleditor) {
 
             if (!empty($courseid) and isteacher($courseid)) {
-                echo ($scriptcount < 1) ? '<script type="text/javascript" src="'.
+                $str = ($scriptcount < 1) ? '<script type="text/javascript" src="'.
                 $CFG->wwwroot .'/lib/editor/htmlarea/htmlarea.php?id='. $courseid .'"></script>'."\n" : '';
             } else {
-                echo ($scriptcount < 1) ? '<script type="text/javascript" src="'.
+                $str = ($scriptcount < 1) ? '<script type="text/javascript" src="'.
                 $CFG->wwwroot .'/lib/editor/htmlarea/htmlarea.php"></script>'."\n" : '';
             }
-            echo ($scriptcount < 1) ? '<script type="text/javascript" src="'.
+            $str .= ($scriptcount < 1) ? '<script type="text/javascript" src="'.
             $CFG->wwwroot .'/lib/editor/htmlarea/lang/en.php"></script>'."\n" : '';
             $scriptcount++;
 
@@ -3182,13 +3182,18 @@ function print_textarea($usehtmleditor, $rows, $cols, $width, $height, $name, $v
             }
         }
     }
-    echo '<textarea id="edit-'. $name .'" name="'. $name .'" rows="'. $rows .'" cols="'. $cols .'">';
+    $str .= '<textarea id="edit-'. $name .'" name="'. $name .'" rows="'. $rows .'" cols="'. $cols .'">';
     if ($usehtmleditor) {
-        echo htmlspecialchars(stripslashes_safe($value)); // needed for editing of cleaned text!
+        $str .= htmlspecialchars(stripslashes_safe($value)); // needed for editing of cleaned text!
     } else {
-        p ($value);
+        $str .= s($value);
     }
-    echo '</textarea>'."\n";
+    $str .= '</textarea>'."\n";
+    
+    if ($return) {
+        return $str;
+    }
+    echo $str;
 }
 
 /**
