@@ -52,7 +52,7 @@ class block_admin extends block_list {
         }
 
         if (isadmin()) {
-            $this->content->items[] = '<a href="'.$CFG->wwwroot.'/course/log.php?id='.SITEID.'">'.get_string('logs').'</a>';
+            $this->content->items[] = '<a href="'.$CFG->wwwroot.'/course/report/log/index.php?id='.SITEID.'">'.get_string('logs').'</a>';
             $this->content->icons[] = '<img src="'.$CFG->pixpath.'/i/log.gif" alt="" />';
 
 
@@ -169,7 +169,7 @@ class block_admin extends block_list {
             $this->content->items[]='<a href="'.$CFG->wwwroot.'/grade/index.php?id='.$this->instance->pageid.'">'.get_string('grades').'</a>';
             $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/grades.gif" alt="" />';
 
-            $this->content->items[]='<a href="log.php?id='.$this->instance->pageid.'">'.get_string('logs').'</a>';
+            $this->content->items[]='<a href="report/log/index.php?id='.$this->instance->pageid.'">'.get_string('logs').'</a>';
             $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/log.gif" alt="" />';
 
             if ($isteacheredit) {
