@@ -306,10 +306,6 @@ function blog_print_html_formatted_entries(&$blogFilter, $filtertype, $filtersel
     print '</div>';
     if (isset($blogEntries) ) {
 
-        if (blog_isLoggedIn() && blog_isediting() ) {
-            print '<form name="batchpublishform" method="post" action="'. $blogFilter->baseurl .'" id="batchpublishform" enctype="multipart/form-data">';
-        }
-
         $count = 0;
         foreach ($blogEntries as $blogEntry) {
             blog_print_entry($blogEntry, 'list', $filtertype, $filterselect); //print this entry.
@@ -354,21 +350,6 @@ function blog_print_html_formatted_entries(&$blogFilter, $filtertype, $filtersel
 }
 
 /**
- * blog_get_moodle_pix_path
- *
- * Returns the directory path to the current theme's pix folder.
- * @return string
- */
-function blog_get_moodle_pix_path(){
-    global $CFG, $THEME;
-    if (empty($THEME->custompix)) {
-        return $CFG->wwwroot.'/pix';
-    } else {
-        return $CFG->themedir.current_theme().'/pix';
-    }
-}
-
-/**
  *  This function is in lib and not in BlogInfo because entries being searched
  *   might be found in any number of blogs rather than just one.
  *
@@ -405,8 +386,6 @@ function blog_print_entry(&$blogEntry, $viewtype='full', $filtertype='', $filter
     // add editing controls if allowed
     $template['courseid'] = $blogEntry->entryCourseId;
     $template['userid'] = $blogEntry->entryuserid;
-    $template['authorviewurl'] = $CFG->wwwroot .'/user/view.php?course=1&amp;id='. $template['userid'];
-    $template['moodlepix'] = blog_get_moodle_pix_path();
     $template['author'] = $blogEntry->entryAuthorName;
     $template['lastmod'] = $blogEntry->formattedEntryLastModified;
     $template['created'] = $blogEntry->formattedEntryCreated;
