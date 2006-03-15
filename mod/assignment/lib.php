@@ -2304,10 +2304,11 @@ function assignment_print_overview($courses, &$htmlarray) {
     $strassignment = get_string('modulename', 'assignment');
 
     foreach ($assignments as $assignment) {
-        $str = '<a '.($assignment->visible?'':' class="dimmed"').
+        $str = '<div class="assignment notice">'.$strassignment. ': '.
+               '<a '.($assignment->visible ? '':' class="dimmed"').
                'title="'.$strassignment.'" href="'.$CFG->wwwroot.
-               '/mod/assignment/view.php?id='.$assignment->coursemodule.'">'
-               .$strassignment.': '.$assignment->name.'</a><br />';
+               '/mod/assignment/view.php?id='.$assignment->coursemodule.'">'.
+               $assignment->name.'</a><br />';
         $str .= $strduedate.': '.userdate($assignment->timedue).'<br />';
 
         if (isteacher($assignment->course)) {
@@ -2338,6 +2339,7 @@ function assignment_print_overview($courses, &$htmlarray) {
                 $str .= $strnotsubmittedyet . ' ' . assignment_display_lateness(time(), $assignment->timedue);
             }
         }
+        $str .= '</div>';
         if (empty($htmlarray[$assignment->course]['assignment'])) {
             $htmlarray[$assignment->course]['assignment'] = $str;
         } else {
