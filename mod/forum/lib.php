@@ -745,7 +745,7 @@ function forum_user_complete($course, $user, $mod, $forum) {
 
 function forum_print_overview($courses,&$htmlarray) {
     global $USER, $CFG;
-    
+
     if (empty($courses) || !is_array($courses) || count($courses) == 0) {
         return array();
     }
@@ -754,9 +754,6 @@ function forum_print_overview($courses,&$htmlarray) {
         return;
     }
 
-    $strforum = get_string('modulename','forum');
-    $strnumunread = get_string('overviewnumunread','forum');
-    $strnumpostssince = get_string('overviewnumpostssince','forum');
 
     // get all forum logs in ONE query (much better!)
     $sql = "SELECT instance,cmid,l.course,COUNT(l.id) as count FROM {$CFG->prefix}log l "
@@ -800,6 +797,14 @@ function forum_print_overview($courses,&$htmlarray) {
     } else {
         $unread = array();
     }
+
+    if (empty($unread) and empty($new)) {
+        return;
+    }
+
+    $strforum = get_string('modulename','forum');
+    $strnumunread = get_string('overviewnumunread','forum');
+    $strnumpostssince = get_string('overviewnumpostssince','forum');
 
     foreach ($forums as $forum) {
         $str = '';
