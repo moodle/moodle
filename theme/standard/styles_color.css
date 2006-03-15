@@ -448,7 +448,10 @@ table.minicalendar {
 }
 
 #course-view .section .weekdates {
-  color:#AAAAAA;
+  color: #777777;
+}
+#course-view .weekscss .weekdates {
+  color: #333333;
 }
 
 .categoryboxcontent,
