@@ -106,7 +106,7 @@
 
         case CHANGE_SITE_LANG:    //change site language
 
-            if (confirm_sesskey) {
+            if (confirm_sesskey()) {
                 $langconfig = get_record('config','name','lang');
                 $langconfig->value = $sitelang;
                 if (!empty($sitelang) && update_record('config',$langconfig)){
