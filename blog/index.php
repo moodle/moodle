@@ -167,17 +167,15 @@ if ( empty($d) && !empty($m) && !empty($y) ) {
 if ($limit == 'none') {
     $limit = get_user_preferences('blogpagesize',8);
 }
-	
+
 if ($formstart == 'none' || $formstart < 0) {
     $start = 0;
 } else {
     $start = $formstart;
 }
 
-$blogFilter =& new BlogFilter($userid, '', $courseid, $groupid, $limit, $start, $m, $startday, $y, $m, $endday, $y,$filtertype, $filterselect, $tagid, $tag);
+$blogFilter =& new BlogFilter($userid, '', $limit, $start,$filtertype, $filterselect, $tagid, $tag);
 //print_object($blogFilter); //debug
-
-$pageNavigation = '';
 
 include($CFG->dirroot .'/blog/header.php');
 

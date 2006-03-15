@@ -64,7 +64,7 @@ class BlogFilter {
      * @param  int $courseid = if needed the entries can be restricted to those associated with a given course.
      * @param  int $postid = a specific blog entry that is being sought
      */
-    function BlogFilter($userid='', $postid='', $courseid='', $groupid='', $fetchlimit='', $fetchstart='', $startmonth='', $startday='', $startyear='', $endmonth='', $endday='', $endyear='', $filtertype='', $filterselect='', $tagid='', $tag ='', $sort='lastmodified DESC') {
+    function BlogFilter($userid='', $postid='', $fetchlimit='', $fetchstart='', $filtertype='', $filterselect='', $tagid='', $tag ='', $sort='lastmodified DESC') {
 
         global $CFG;    //filter settings to be pass in for baseurl
 
@@ -83,11 +83,6 @@ class BlogFilter {
             $this->blogtagline = &$this->blogInfo->blogtagline;
         }
         
-        if (!is_numeric($courseid) || $courseid == 0 || $courseid == 1) {
-            $this->courseid = '';
-        } else {
-            $this->courseid = $courseid;        
-        }
         if (! is_numeric($userid) ) {
             $this->userid = 0;
         } else {
@@ -98,24 +93,15 @@ class BlogFilter {
         } else {
             $this->fetchstart = $fetchstart;
         }
+        
         if (!is_numeric($fetchlimit) ) {
             $this->fetchlimit = $CFG->blog_default_fetch_num_entries;
         } else {
             $this->fetchlimit = $fetchlimit;
         }
         
-        $this->postid = $postid;
-        $this->groupid = $groupid;
         
-        $this->startmonth = $startmonth;
-        $this->startday = $startday;
-        $this->startyear = $startyear;
-        $this->endmonth = $endmonth;
-        $this->endday = $endday;
-        $this->endyear = $endyear;
-
-        $this->tstart = blog_get_month_time($startyear, $startmonth, $startday);
-        $this->tend = blog_get_month_time($endyear, $endmonth, $endday);
+        $this->postid = $postid;
 
         $this->sort = $sort;
         $this->filtertype = $filtertype;
@@ -214,6 +200,7 @@ class BlogFilter {
      */
     function fetch_entries($limit=true) {
         global $CFG, $USER;
+        
 /*
         echo "<br />filter trying to do its job";
         echo "<br />filtertype = $this->filtertype";
