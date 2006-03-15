@@ -199,7 +199,7 @@
 
             if ($displaysection == $section) {
                 echo '<a href="view.php?id='.$course->id.'&amp;week=all#section-'.$section.'" title="'.$strshowallweeks.'">'.
-                     '<img src="'.$CFG->pixpath.'/i/all.gif" height="25" width="16" border="0" /></a><br />';
+                     '<img src="'.$CFG->pixpath.'/i/all.gif" height="25" width="16" border="0" alt="'.$strshowallweeks.'" /></a><br />';
             } else {
                 $strshowonlyweek = get_string("showonlyweek", "", $section);
                 echo '<a href="view.php?id='.$course->id.'&amp;week='.$section.'" title="'.$strshowonlyweek.'">'.
