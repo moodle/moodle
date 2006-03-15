@@ -3222,11 +3222,11 @@ function use_html_editor($name='', $editorhidebuttons='') {
     echo '<script language="javascript" type="text/javascript" defer="defer">'."\n";
     echo "edit_$name = new HTMLArea('edit-$name');\n";
     echo "var config = edit_$name.config;\n";
-    
+
     echo print_editor_config($editorhidebuttons);
-    
+
     if (empty($name)) {
-        echo "\n".'HTMLArea.replaceAll(editor.config);'."\n";
+        echo "\nHTMLArea.replaceAll(edit_$name.config);\n";
     } else {
         echo "\nedit_$name.generate();\n";
     }
