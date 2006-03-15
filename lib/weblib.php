@@ -4759,7 +4759,7 @@ function print_tabs($tabrows, $selected=NULL, $inactive=NULL, $activetwo=NULL, $
 function page_doc_link($text='', $iconpath='') {
     global $ME, $CFG;
 
-    if (empty($CFG->docroot) || !isteacher()) {
+    if (empty($CFG->docroot) || !isteacherinanycourse()) {
         return '';
     }
 
