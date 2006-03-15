@@ -3110,7 +3110,7 @@ function use_html_editor($name='', $editorhidebuttons='') {
 function print_editor_config($editorhidebuttons='', $return=false) {
     global $CFG;
     
-    $str .= "config.pageStyle = \"body {";
+    $str = "config.pageStyle = \"body {";
     
     if (!(empty($CFG->editorbackgroundcolor))) {
         $str .= " background-color: $CFG->editorbackgroundcolor;";
