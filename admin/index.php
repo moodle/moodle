@@ -427,8 +427,6 @@
 
     $table->data[] = array('<strong><a href="../course/index.php?edit=on&amp;sesskey='.$USER->sesskey.'">'.get_string('courses').'</a></strong>',
                            '<div class="explanation">'.get_string('adminhelpcourses').'</div>');
-    $table->data[] = array('<strong><a href="../course/log.php?id='.$site->id.'">'.get_string('logs').'</a></strong>',
-                           '<div class="explanation">'.get_string('adminhelplogs').'</div>');
     $table->data[] = array('<strong><a href="../files/index.php?id='.$site->id.'">'.get_string('sitefiles').'</a></strong>',
                            '<div class="explanation">'.get_string('adminhelpsitefiles').'</div>');
     $table->data[] = array('<strong><a href="stickyblocks.php">'.get_string('stickyblocks','admin').'</a></strong>',
