@@ -91,148 +91,7 @@ class BlogInfo {
     }
 
 ////////// getters and setters ///////////////
-
-    /**
-     * Getter for this blog's title, ->blogtitle
-     */
-    /*
-    function get_blog_title() {
-        if (!isset($this->blogtitle)) {
-            return '';
-        }
-        return $this->blogtitle;
-    }*/
-
-    /**
-     *
-     */
-    function set_blog_title($title) {
-        if (set_user_preference('blogtitle', $title, $this->userid)) {
-            $this->blogtitle = $title;
-            return true;
-        }
-        return false;
-    }
-   
-    /**
-     *
-     */
-    function get_blog_use_extended_body() {
-        return $this->bloguseextendedbody;
-    }
-
-    /**
-     *
-     */
-    function set_blog_use_extended_body($extend) {
-        if (set_user_preference('bloguseextendedbody', $extend, $this->userid)) {
-            $this->useextendedbody = $extend;
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     *
-     */
-    function get_blog_tagline() {
-        if (!isset($this->blogtagline)) {
-            return '';
-        }
-        return $this->blogtagline;
-    }
     
-    /**
-     *
-     */
-    function set_blog_tagline($tag) {
-        if (set_user_preference('blogtagline', $tag, $this->userid)) {
-            $this->blogtagline = $tag;
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * 
-     */
-    function get_blog_url() {
-        global $CFG;
-        return $CFG->blog_blogurl .'?userid='. $this->userid;
-    }
-    // no setter for blog URL, as there is no place to put it.
-
-    /**
-     *
-     */
-    function get_blog_theme() {
-        return $this->blogtheme;
-    }
-    
-    /**
-     *
-     */
-    function set_blog_theme($theme) {
-        if (set_user_preference('blogtheme', $theme, $this->userid)) {
-            $this->blogtheme = $theme;
-            return true;
-        }
-        return false;
-    }
-    
-    /**
-     * Getter for this blog owner's full name
-     * Warning: Do not attempt to directly access ->blogadminname from this class
-     *          as it is loaded lazily - NULL until this getter is called
-     */
-    function get_blogadminname() {
-        if (empty($this->blogadminuser)) {
-            $this->blogadminuser = get_user_info_from_db('id', $this->userid);
-            $this->blogadminname = fullname($this->blogadminuser);
-        }
-        return $this->blogadminname;
-    }
-
-    /**
-     * Getter for this blog owner's email address
-     * Warning: Do not attempt to directly access ->blogadminemail from this class
-     *          as it is loaded lazily - NULL until this getter is called
-     */
-    function get_blogadminemail() {
-        if (empty($this->blogadminuser)) {
-            $this->blogadminuser = get_user_info_from_db('id', $this->userid);
-            $this->blogadminemail = $this->blogadminuser->email;
-        }
-        return $this->blogadminemail;
-    }
-
-    /**
-     * Getter for this blog owner's contact URL
-     * Warning: Do not attempt to directly access ->blogadminurl from this class
-     *          as it is loaded lazily - NULL until this getter is called
-     */
-    function get_blogadminurl() {
-        if (empty($this->blogadminuser)) {
-            $this->blogadminuser = get_user_info_from_db('id', $this->userid);
-            $this->blogadminurl = $this->blogadminuser->url;
-        }
-        return $this->blogadminurl;
-    }
-
-    function get_blogurl() {
-        return NULL;
-    }
-
-    /**
-     * return the timestamp when this blog was last updated.
-     * @return string Date of last modification in moodle's userdate() format.
-     */
-    function get_last_update() {
-        $where = 'userid='. $this->userid;
-        $record = get_record_select('post', $where, 'lastmodified');
-        return userdate($record->lastmodified);
-    }
-
     /**
      * Use this function to get a single numbered BlogEntry object
      * for this blog.
@@ -295,22 +154,6 @@ class BlogInfo {
         return false;
     }
     
-    /**
-     * This function will return a list, in order, formatted as "YYYY-MM" for each year and month
-     * in which this blog has entries. Used by the 'blog_archives' block.
-     */
-    function get_year_month_of_entries() {
-        $entries = get_records('post', 'userid', $this->userid, 'lastmodified ASC');
-        $dateHash = array();
-        if ( !empty($entries) ) {
-            foreach ($entries as $entry) {
-                $date = $entry->lastmodified;
-                $truncDate = date("Y-m", $date); // this will return 9999-99 for the date.
-                $dateHash[$truncDate] = 1;
-            }
-        }
-        return $dateHash;
-    }
 
     /**
      * Use this method to insert/create a new entry in the post table for
@@ -326,7 +169,7 @@ class BlogInfo {
      * @param int $groupid .
      * @return int
      */
-    function insert_blog_entry($title, $body, $extendedbody, $userid, $formatId, $publishstate='draft', $courseid='', $groupid='') {
+    function insert_blog_entry($title, $body, $userid, $formatId, $publishstate='draft', $courseid='', $groupid='') {
         global $CFG;
         
         // first, make sure the title and body are safe for insert.
@@ -334,18 +177,13 @@ class BlogInfo {
         $body = ereg_replace("'", '<tick>', $body);
         // The wysiwyg html editor adds a <br /> tag to the extendedbody.
         // cleanup the extendedbody first
-        if ($extendedbody == '<br />' || $extendedbody == '<br /><br />') {
-            $extendedbody = '';
-        }
-        $extendedbody = ereg_replace("'", '<tick>', $extendedbody);
+        
         $title = addslashes($title);
         $body = addslashes($body);
-        $extendedbody = addslashes($extendedbody);
 
         // come up with a new timestamp to insert.
         // now insert the new entry.
         $dataobject->summary = $body;
-        $dataobject->content = $extendedbody;
         $dataobject->userid = $userid;
         $dataobject->subject = $title;
         $dataobject->format = $formatId;
@@ -354,12 +192,6 @@ class BlogInfo {
         $dataobject->lastmodified = $timenow;        
         $dataobject->created = $timenow;
         $dataobject->publishstate = $publishstate;
-        if ($courseid != '') {
-            $dataobject->courseid = intval($courseid);
-        }
-        if ($groupid != '') {
-            $dataobject->groupid = intval($groupid);
-        }
 
         $newentryid = insert_record('post', $dataobject);
 
@@ -440,7 +272,7 @@ class BlogInfo {
         * Used by api.php
         * @uses USER
         */
-    function update_blog_entry_by_id($entryId, $title, $body, $extendedbody, $formatId, $categoryId, $publishstate='draft', $courseid='', $groupid='') {
+    function update_blog_entry_by_id($entryId, $title, $body, $formatId, $categoryId, $publishstate='draft', $courseid='', $groupid='') {
         // figure out who the currently logged in user is.
         global $USER;
 

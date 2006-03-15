@@ -117,8 +117,6 @@ if (($post = data_submitted( get_referer() )) && confirm_sesskey()) {
     $post->etitle = '';
     $post->userid = $USER->id;
     $post->body = '';
-    $post->extendedbody = '';
-    $post->useextendedbody = $PAGE->bloginfo->get_blog_use_extended_body();
     $post->format = $defaultformat;
     $post->categoryid = array(1);
     $post->publishstate = 'draft';
@@ -135,8 +133,6 @@ if ($editid != '') {  // User is editing a post
 
     //using an unformatted entry body here so that extra formatting information is not stored in the db
     $post->body = $blogEntry->get_unformatted_entry_body();
-    $post->extendedbody = $blogEntry->get_unformatted_entry_extended_body();
-    $post->useextendedbody = $PAGE->bloginfo->get_blog_use_extended_body();
     $post->etitle = $blogEntry->entryTitle;    
     $post->postid = $editid;
     $post->userid = $PAGE->bloginfo->userid;
@@ -241,7 +237,7 @@ function do_save(&$post, &$bloginfo_arg) {
         }*/
 
         // Insert the new blog entry.
-        $entryID = $bloginfo_arg->insert_blog_entry($post->etitle, $post->body, $post->extendedbody, $USER->id, $post->format, $post->publishstate, $courseid, $groupid);
+        $entryID = $bloginfo_arg->insert_blog_entry($post->etitle, $post->body, $USER->id, $post->format, $post->publishstate, $courseid, $groupid);
 
 //        print 'Debug: created a new entry - entryId = '.$entryID.'<br />'; //debug
 //        echo 'Debug: do_save() in edit.php calling blog_do_*back_pings<br />'."\n"; //debug
@@ -318,9 +314,6 @@ function do_update(&$post, &$bloginfo) {
 
     $blogentry->set_title($post->etitle);
     $blogentry->set_body($post->body);
-    if (isset($post->extendedbody)) {
-        $blogentry->set_extendedbody($post->extendedbody);
-    }
     $blogentry->set_format($post->format);
     $blogentry->set_publishstate($post->publishstate); //we don't care about the return value here
 

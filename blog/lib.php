@@ -763,10 +763,6 @@ function blog_print_entry(&$blogEntry, $viewtype='full', $filtertype='', $filter
         $bloginfocache[$blogEntry->entryuserid] = new BlogInfo($blogEntry->entryuserid);
         $bloginfo = $bloginfocache[$blogEntry->entryuserid];
     }
-
-    $template['blogtitle'] = $bloginfo->blogtitle;
-    $template['blogtagline'] = $bloginfo->blogtagline;
-    $template['blogurl'] = $bloginfo->get_blogurl();
     
     $template['body'] = $blogEntry->get_formatted_entry_body();
     $template['countofextendedbody'] = 0;
