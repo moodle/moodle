@@ -1568,17 +1568,7 @@ class assignment_base {
      * @return string
      */
     function display_lateness($timesubmitted) {
-        if (!$this->assignment->timedue) {
-            return '';
-        }
-        $time = $this->assignment->timedue - $timesubmitted;
-        if ($time < 0) {
-            $timetext = get_string('late', 'assignment', format_time($time));
-            return ' (<span class="late">'.$timetext.'</span>)';
-        } else {
-            $timetext = get_string('early', 'assignment', format_time($time));
-            return ' (<span class="early">'.$timetext.'</span>)';
-        }
+        return assignment_display_lateness($timesubmitted, $this->assignment->timedue);
     }
 
 
@@ -2311,24 +2301,24 @@ function assignment_print_overview($courses, &$htmlarray) {
     $strnotgradedyet = get_string('notgradedyet', 'assignment');
     $strnotsubmittedyet = get_string('notsubmittedyet', 'assignment');
     $strsubmitted = get_string('submitted', 'assignment');
+    $strassignment = get_string('modulename', 'assignment');
 
     foreach ($assignments as $assignment) {
-        require_once("$CFG->dirroot/mod/assignment/type/$assignment->assignmenttype/assignment.class.php");
-        $assignmentclass = "assignment_$assignment->assignmenttype";
-        $instance = new $assignmentclass($assignment->coursemodule, $assignment);
+        $str = '<a '.($assignment->visible?'':' class="dimmed"').
+               'title="'.$strassignment.'" href="'.$CFG->wwwroot.
+               '/mod/assignment/view.php?id='.$assignment->coursemodule.'">'
+               .$strassignment.': '.$assignment->name.'</a><br />';
+        $str .= $strduedate.': '.userdate($assignment->timedue).'<br />';
 
-        $str = '<a '.($assignment->visible?'':' class="dimmed"').'title="'.$instance->strassignment.'" href="'.$CFG->wwwroot.'/mod/assignment/view.php?id='.$instance->cm->id.'">'
-            .$instance->strassignment.': '.$instance->assignment->name.'</a><br />';
-        $str .= $strduedate.': '.userdate($instance->assignment->timedue).'<br />';
-        if (isteacher($instance->course->id)) {
-            $submissions = count_records_sql("SELECT COUNT(a.*)
+        if (isteacher($assignment->course)) {
+            $submissions = count_records_sql("SELECT COUNT(*)
                               FROM {$CFG->prefix}assignment_submissions a, 
                                    {$CFG->prefix}user_students s,
                                    {$CFG->prefix}user u
                              WHERE a.userid = s.userid
                                AND u.id = a.userid
-                               AND s.course = '{$instance->course->id}'
-                               AND a.assignment = '{$instance->assignment->id}'
+                               AND s.course = '{$assignment->course}'
+                               AND a.assignment = '{$assignment->id}'
                                AND a.teacher = 0
                                AND a.timemarked = 0");
             if ($submissions) {
@@ -2345,10 +2335,28 @@ function assignment_print_overview($courses, &$htmlarray) {
                     $str .= $strsubmitted . ', ' . $strgraded;
                 }
             } else {
-                $str .= $strnotsubmittedyet . ' ' . $instance->display_lateness(time());
+                $str .= $strnotsubmittedyet . ' ' . assignment_display_lateness(time(), $assignment->timedue);
             }
         }
-        $htmlarray[$instance->course->id]['assignment'] .= $str;
+        if (empty($htmlarray[$assignment->course]['assignment'])) {
+            $htmlarray[$assignment->course]['assignment'] = $str;
+        } else {
+            $htmlarray[$assignment->course]['assignment'] .= $str;
+        }
+    }
+}
+
+function assignment_display_lateness($timesubmitted, $timedue) {
+    if (!$timedue) {
+        return '';
+    }
+    $time = $timedue - $timesubmitted;
+    if ($time < 0) {
+        $timetext = get_string('late', 'assignment', format_time($time));
+        return ' (<span class="late">'.$timetext.'</span>)';
+    } else {
+        $timetext = get_string('early', 'assignment', format_time($time));
+        return ' (<span class="early">'.$timetext.'</span>)';
     }
 }
 
