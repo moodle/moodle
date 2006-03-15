@@ -104,41 +104,8 @@ class data_field_textarea extends data_field_base {
     
     function gen_textarea($usehtmleditor, $name, $cols=65, $rows=10, $value='') {
         global $CFG, $course;
-        static $scriptcount; // For loading the htmlarea script only once.
         
-        if (empty($courseid)) {
-            if (!empty($course->id)) {  // Search for it in global context.
-                $courseid = $course->id;
-            }
-        }
-        if (empty($scriptcount)) {
-            $scriptcount = 0;
-        }
-        
-        $output = '';
-        
-        if ($usehtmleditor) {
-            if (!empty($courseid) and isteacher($courseid)) {
-                $output .= ($scriptcount < 1) ? '<script type="text/javascript" src="'. $CFG->wwwroot .'/lib/editor/htmlarea/htmlarea.php?id='. $courseid .'"></script>'."\n" : '';
-            }
-            else {
-                $output .= ($scriptcount < 1) ? '<script type="text/javascript" src="'. $CFG->wwwroot .'/lib/editor/htmlarea/htmlarea.php"></script>'."\n" : '';
-            }
-            $output .= ($scriptcount < 1) ? '<script type="text/javascript" src="'. $CFG->wwwroot .'/lib/editor/htmlarea/lang/en.php"></script>'."\n" : '';
-            $scriptcount++;
-        }
-
-        $output .= '<textarea id="edit-' . $name .'" name="edit-'. $name .'" rows="'. $rows .'" cols="'. $cols .'">';
-        
-        if ($usehtmleditor) {
-            $output .= htmlspecialchars(stripslashes_safe($value)); // needed for editing of cleaned text!
-        }
-        else {
-            $output .= $value;
-        }
-        $output .= '</textarea>'."\n";
-        
-        return $output;
+        return print_textarea($usehtmleditor, $rows, $cols, '', '', $name, $value='', $courseid, true);
     }
     
     
