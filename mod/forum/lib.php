@@ -815,12 +815,14 @@ function forum_print_overview($courses,&$htmlarray) {
             $showunread = true;
         }
         if ($count > 0 || $thisunread > 0) {
-            $str .= '<a title="'.$strforum.'" href="'.$CFG->wwwroot.'/mod/forum/view.php?f='.$forum->id.'">'
-                .$strforum.': '.$forum->name.'</a><br />';
-            $str .= $count.' '.$strnumpostssince."<br />";
+            $str .= '<div class="overview forum"><div class="name">'.$strforum.': <a title="'.$strforum.'" href="'.$CFG->wwwroot.'/mod/forum/view.php?f='.$forum->id.'">'.
+                $forum->name.'</a></div>';
+            $str .= '<div class="info">';
+            $str .= $count.' '.$strnumpostssince;
             if (!empty($showunread)) {
-                $str .= $thisunread .' '.$strnumunread.'<br />';
+                $str .= '<br />'.$thisunread .' '.$strnumunread;
             }
+            $str .= '</div></div>';
         }
         if (!empty($str)) { 
             if (!array_key_exists($forum->course,$htmlarray)) {
