@@ -3014,7 +3014,7 @@ function print_recent_activity_note($time, $user, $isteacher, $text, $link) {
  * @param int $courseid ?
  * @todo Finish documenting this function
  */
-function print_textarea($usehtmleditor, $rows, $cols, $width, $height, $name, $value='', $courseid=0) {
+function print_textarea($usehtmleditor, $rows, $cols, $width, $height, $name, $value='', $courseid=0, $return=false) {
 /// $width and height are legacy fields and no longer used as pixels like they used to be.
 /// However, you can set them to zero to override the mincols and minrows values below.
 
@@ -3037,11 +3037,11 @@ function print_textarea($usehtmleditor, $rows, $cols, $width, $height, $name, $v
     if ($usehtmleditor) {
 
         if (!empty($courseid) and isteacher($courseid)) {
-            echo ($scriptcount < 1) ? '<script type="text/javascript" src="'. $CFG->wwwroot .'/lib/editor/htmlarea.php?id='. $courseid .'"></script>'."\n" : '';
+            $str = ($scriptcount < 1) ? '<script type="text/javascript" src="'. $CFG->wwwroot .'/lib/editor/htmlarea.php?id='. $courseid .'"></script>'."\n" : '';
         } else {
-            echo ($scriptcount < 1) ? '<script type="text/javascript" src="'. $CFG->wwwroot .'/lib/editor/htmlarea.php"></script>'."\n" : '';
+            $str = ($scriptcount < 1) ? '<script type="text/javascript" src="'. $CFG->wwwroot .'/lib/editor/htmlarea.php"></script>'."\n" : '';
         }
-        echo ($scriptcount < 1) ? '<script type="text/javascript" src="'. $CFG->wwwroot .'/lib/editor/lang/en.php"></script>'."\n" : '';
+        $str .= ($scriptcount < 1) ? '<script type="text/javascript" src="'. $CFG->wwwroot .'/lib/editor/lang/en.php"></script>'."\n" : '';
         $scriptcount++;
 
         if ($height) {    // Usually with legacy calls
@@ -3056,13 +3056,18 @@ function print_textarea($usehtmleditor, $rows, $cols, $width, $height, $name, $v
         }
     }
 
-    echo '<textarea id="edit-'. $name .'" name="'. $name .'" rows="'. $rows .'" cols="'. $cols .'">';
+    $str .= '<textarea id="edit-'. $name .'" name="'. $name .'" rows="'. $rows .'" cols="'. $cols .'">';
     if ($usehtmleditor) {
-        echo htmlspecialchars(stripslashes_safe($value)); // needed for editing of cleaned text!
+        $str .= htmlspecialchars(stripslashes_safe($value)); // needed for editing of cleaned text!
     } else {
         p ($value);
     }
-    echo '</textarea>'."\n";
+    $str .= '</textarea>'."\n";
+    
+    if ($return) {
+        return $str;
+    }
+    echo $str;
 }
 
 /**
@@ -3089,13 +3094,72 @@ function print_richedit_javascript($form, $name, $source='no') {
  */
 function use_html_editor($name='', $editorhidebuttons='') {
     echo '<script language="javascript" type="text/javascript" defer="defer">'."\n";
-    print_editor_config($editorhidebuttons);
+    echo "edit_$name = new HTMLArea('edit-$name');\n";
+    echo "var config = edit_$name.config;\n";
+    
+    echo print_editor_config($editorhidebuttons);
+    
     if (empty($name)) {
-        echo "\n".'HTMLArea.replaceAll(config);'."\n";
+        echo "\n".'HTMLArea.replaceAll(editor.config);'."\n";
     } else {
-        echo "\nHTMLArea.replace('edit-$name', config);\n";
+        echo "\nedit_$name.generate();\n";
     }
     echo '</script>'."\n";
+}
+
+function print_editor_config($editorhidebuttons='', $return=false) {
+    global $CFG;
+    
+    $str .= "config.pageStyle = \"body {";
+    
+    if (!(empty($CFG->editorbackgroundcolor))) {
+        $str .= " background-color: $CFG->editorbackgroundcolor;";
+    }
+
+    if (!(empty($CFG->editorfontfamily))) {
+        $str .= " font-family: $CFG->editorfontfamily;";
+    }
+
+    if (!(empty($CFG->editorfontsize))) {
+        $str .= " font-size: $CFG->editorfontsize;";
+    }
+
+    $str .= " }\";\n";
+    $str .= "config.killWordOnPaste = ";
+    $str .= (empty($CFG->editorkillword)) ? "false":"true";
+    $str .= ';'."\n";
+    $str .= 'config.fontname = {'."\n";
+    
+    $fontlist = isset($CFG->editorfontlist) ? explode(';', $CFG->editorfontlist) : array();
+    $i = 1;                     // Counter is used to get rid of the last comma.
+
+    foreach ($fontlist as $fontline) {
+        if (!empty($fontline)) {
+            if ($i > 1) {
+                $str .= ','."\n";
+            }
+            list($fontkey, $fontvalue) = split(':', $fontline);
+            $str .= '"'. $fontkey ."\":\t'". $fontvalue ."'";
+
+            $i++;
+        }
+    }
+    $str .= '};';
+
+    if (!empty($editorhidebuttons)) {
+        $str .= "\nconfig.hideSomeButtons(\" ". $editorhidebuttons ." \");\n";
+    } else if (!empty($CFG->editorhidebuttons)) {
+        $str .= "\nconfig.hideSomeButtons(\" ". $CFG->editorhidebuttons ." \");\n";
+    }
+
+    if (!empty($CFG->editorspelling) && !empty($CFG->aspellpath)) {
+        $str .= print_speller_code($usehtmleditor=true, true);
+    }
+            
+    if ($return) {
+        return $str;
+    }
+    echo $str;
 }
 
 /**
@@ -4178,64 +4242,6 @@ function print_side_block_end($attributes) {
         echo '<script type="text/javascript"><!-- '."\n".'elementCookieHide("'.$attributes['id'].'"); '."\n".'--></script>';
     }
 
-}
-
-
-/**
- * Prints out the HTML editor config.
- *
- * @uses $CFG
- */
- function print_editor_config($editorhidebuttons='') {
-
-    global $CFG;
-
-    // print new config
-    echo 'var config = new HTMLArea.Config();'."\n";
-    echo "config.pageStyle = \"body {";
-    if(!(empty($CFG->editorbackgroundcolor))) {
-        echo " background-color: $CFG->editorbackgroundcolor;";
-    }
-
-    if(!(empty($CFG->editorfontfamily))) {
-        echo " font-family: $CFG->editorfontfamily;";
-    }
-
-    if(!(empty($CFG->editorfontsize))) {
-        echo " font-size: $CFG->editorfontsize;";
-    }
-
-    echo " }\";\n";
-    echo "config.killWordOnPaste = ";
-    echo(empty($CFG->editorkillword)) ? "false":"true";
-    echo ';'."\n";
-    echo 'config.fontname = {'."\n";
-
-    $fontlist = isset($CFG->editorfontlist) ? explode(';', $CFG->editorfontlist) : array();
-    $i = 1;                     // Counter is used to get rid of the last comma.
-
-    foreach($fontlist as $fontline) {
-        if(!empty($fontline)) {
-            if ($i > 1) {
-                echo ','."\n";
-            }
-            list($fontkey, $fontvalue) = split(':', $fontline);
-            echo '"'. $fontkey ."\":\t'". $fontvalue ."'";
-
-            $i++;
-        }
-    }
-    echo '};';
-
-    if (!empty($editorhidebuttons)) {
-        echo "\nconfig.hideSomeButtons(\" ". $editorhidebuttons ." \");\n";
-    } else if (!empty($CFG->editorhidebuttons)) {
-        echo "\nconfig.hideSomeButtons(\" ". $CFG->editorhidebuttons ." \");\n";
-    }
-
-    if(!empty($CFG->editorspelling) && !empty($CFG->aspellpath)) {
-        print_speller_code($usehtmleditor=true);
-    }
 }
 
 /**
