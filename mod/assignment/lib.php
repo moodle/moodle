@@ -2304,12 +2304,12 @@ function assignment_print_overview($courses, &$htmlarray) {
     $strassignment = get_string('modulename', 'assignment');
 
     foreach ($assignments as $assignment) {
-        $str = '<div class="assignment notice">'.$strassignment. ': '.
+        $str = '<div class="assignment notice"><div class="name">'.$strassignment. ': '.
                '<a '.($assignment->visible ? '':' class="dimmed"').
                'title="'.$strassignment.'" href="'.$CFG->wwwroot.
                '/mod/assignment/view.php?id='.$assignment->coursemodule.'">'.
-               $assignment->name.'</a><br />';
-        $str .= $strduedate.': '.userdate($assignment->timedue).'<br />';
+               $assignment->name.'</a></div>';
+        $str .= '<div class="info">'.$strduedate.': '.userdate($assignment->timedue).'</div>';
 
         if (isteacher($assignment->course)) {
             $submissions = count_records_sql("SELECT COUNT(*)
