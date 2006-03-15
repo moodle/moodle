@@ -3100,7 +3100,7 @@ function use_html_editor($name='', $editorhidebuttons='') {
     echo print_editor_config($editorhidebuttons);
     
     if (empty($name)) {
-        echo "\n".'HTMLArea.replaceAll(editor.config);'."\n";
+        echo "\nHTMLArea.replaceAll(edit_$name.config);\n";
     } else {
         echo "\nedit_$name.generate();\n";
     }
