@@ -27,14 +27,6 @@ class BlogFilter {
     // you can use variable names directly to access properties.
     //ie. $blogFilter->month
     
-    var $startmonth; 
-    var $startday;
-    var $startyear;
-    var $endmonth; 
-    var $endday;
-    var $endyear;
-    var $tstart; //start time, calculated from the values of startmonth, startday and startyear
-    var $tend; //end time, calculated from the values of endmonth, endday and endyear
     var $fetchlimit; //max # of entries to read from database
     var $fetchstart; //entry # to start reading from database at
     var $max_entries; //maximum number of matching entries available in database
@@ -42,11 +34,6 @@ class BlogFilter {
     var $courseid;
     var $userid; // moodle userid to specify a specific user's blog
     var $postid; //id of a single blog entry
-    var $categoryid;
-    var $groupid;
-    var $blogtitle;
-    var $blogtagline;
-    var $blogtheme;
     var $blogInfo;
     var $memberlist; //do not access directly - use getter get_member_list()
     var $filtered_entries = array();
@@ -68,20 +55,13 @@ class BlogFilter {
 
         global $CFG;    //filter settings to be pass in for baseurl
 
-        if (!empty($userid) && $userid != 0 && $userid != '') {
+        if (!empty($userid)) {
 //            print "creating blogInfo object for user with id '$userid'<br />"; //debug
             $this->blogInfo =& new BlogInfo($userid);
         }
         if ( empty($this->blogInfo) || empty($this->blogInfo->userid)) {
             unset($this->blogInfo);
-            $this->blogtitle = '';
-            $this->blogtagline = '';
-            $this->blogtheme = '';
-        } else {
-
-            $this->blogtitle = &$this->blogInfo->blogtitle;
-            $this->blogtagline = &$this->blogInfo->blogtagline;
-        }
+        } 
         
         if (! is_numeric($userid) ) {
             $this->userid = 0;
@@ -200,11 +180,6 @@ class BlogFilter {
     function fetch_entries($limit=true) {
         global $CFG, $USER;
         
-/*
-        echo "<br />filter trying to do its job";
-        echo "<br />filtertype = $this->filtertype";
-        echo "<br />filterselect = $this->filterselect";
-        */
         if (!isset($USER->id)) {
             $USER->id = 0;    //hack, for guests
         }
@@ -305,7 +280,7 @@ class BlogFilter {
 
         }
         
-        if ($this->fetchstart !== '' && $limit) {    //this can be changed to use mysql_paging_limit
+        if ($this->fetchstart !== '' && $limit) {
             $limit = sql_paging_limit($this->fetchstart, $this->fetchlimit);
         } else {
             $limit = '';
@@ -401,32 +376,14 @@ class BlogFilter {
             //argument is not an array, hopefully it's a string. wrap it in an array for comparisons below.
             $unused = array($unused);
         }
-        if (!in_array('startmonth', $unused)) {
-            $getargs .= '&amp;m=' . $this->startmonth;
-        }
-        if (!in_array('startday', $unused)) {
-            $getargs .= '&amp;d=' . $this->startday;
-        }
-        if (!in_array('startyear', $unused)) {
-            $getargs .= '&amp;y=' . $this->startyear;
-        }
         if (!in_array('limit', $unused)) {
             $getargs .= '&amp;limit=' . $this->fetchlimit;
-        }
-        if (!in_array('formstart', $unused)) {
-            $getargs .= '&amp;formstart=' . $this->fetchstart;
         }
         if (!in_array('courseid', $unused)) {
             $getargs .= '&amp;courseid=' . $this->courseid;
         }
         if (!in_array('userid', $unused)) {
             $getargs .= '&amp;userid=' . $this->userid;
-        }
-        if (!in_array('categoryid', $unused)) {
-            $getargs .= '&amp;categoryid=' . $this->categoryid;
-        }
-        if (!in_array('groupid', $unused)) {
-            $getargs .= '&amp;groupid=' . $this->groupid;
         }
         return $getargs;
     }

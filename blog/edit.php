@@ -214,26 +214,6 @@ function do_save(&$post, &$bloginfo_arg) {
         $post->error =  get_string('nomessagebodyerror', 'blog');
     } else {
 
-        //initialize courseid and groupid if specified
-        if (isset($post->courseid)) {
-            $courseid = $post->courseid;
-        } else {
-            $courseid = 1;
-        }
-        if (isset($post->groupid)) {
-            $groupid = $post->groupid;
-        } else {
-            $groupid = '';
-        }
-       
-/*     
-        //group pseudocode 
-        if ($groupid != '') {
-            if (! ismember($post->groupid) ) {
-                error('You are not a member of the specified group. Group with id#('.$groupid.')'); //Daryl Hawes note: LOCALIZATION NEEDED FOR THIS LINE
-            }
-        }*/
-
         // Insert the new blog entry.
         $entryID = $bloginfo_arg->insert_blog_entry($post->etitle, $post->body, $USER->id, $post->format, $post->publishstate, $courseid, $groupid);
 
@@ -242,7 +222,7 @@ function do_save(&$post, &$bloginfo_arg) {
         $otags = optional_param('otags','', PARAM_INT);
         $ptags = optional_param('ptags','', PARAM_INT);
 
-        // Add tags information
+        /// Add tags information
         foreach ($otags as $otag) {
             $tag->entryid = $entryID;
             $tag->tagid = $otag;
@@ -286,26 +266,6 @@ function do_update(&$post, &$bloginfo) {
 
     global $CFG, $USER;
     
-    //initialize courseid and groupid if specified
-    if (isset($post->courseid)) {
-        $courseid = $post->courseid;
-    } else {
-        $courseid = 1;
-    }
-    if (isset($post->groupid)) {
-        $groupid = $post->groupid;
-    } else {
-        $groupid = '';
-    }
-
-/*
-    //pseudocode for handling groups
-    if ($groupid != '') {
-        if (! ismember($groupid) ) {
-            error('You are not a member of the specified group. Group with id#('. $groupid .')'); //Daryl Hawes note: LOCALIZATION NEEDED FOR THIS LINE
-        }
-    }*/
-    
     $blogentry = $bloginfo->get_blog_entry_by_id($post->postid);
     echo "id id ".$post->postid;
 //  print_object($blogentry);  //debug
@@ -320,7 +280,7 @@ function do_update(&$post, &$bloginfo) {
 
         $otags = optional_param('otags','', PARAM_INT);
         $ptags = optional_param('ptags','', PARAM_INT);
-        // Add tags information
+        /// Add tags information
         foreach ($otags as $otag) {
             $tag->entryid = $blogentry->entryId;
             $tag->tagid = $otag;
