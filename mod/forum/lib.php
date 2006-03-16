@@ -2392,7 +2392,7 @@ function forum_print_attachments($post, $return=NULL) {
                         $imagereturn .= "<br /><img src=\"$ffurl\" alt=\"\" />";
                     } else {
                         echo "<a href=\"$ffurl\">$image</a> ";
-                        echo "<a href=\"$ffurl\">$file</a><br />";
+                        echo filter_text("<a href=\"$ffurl\">$file</a><br />");
                     }
                 }
             }
