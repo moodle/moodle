@@ -291,7 +291,7 @@ CREATE TABLE `prefix_grade_category` (
   `drop_x_lowest` int(10) unsigned NOT NULL default '0',
   `bonus_points` int(10) unsigned NOT NULL default '0',
   `hidden` int(10) unsigned NOT NULL default '0',
-  `weight` decimal(4,2) default '0.00',
+  `weight` decimal(5,2) default '0.00',
   PRIMARY KEY  (`id`),
   KEY `courseid` (`courseid`)
 ) TYPE=MyISAM ;

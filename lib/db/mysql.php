@@ -1729,6 +1729,10 @@ function main_upgrade($oldversion=0) {
             set_config('enrol', 'manual');
         }
     }
+    
+    if ($oldversion < 2006031600) {
+        execute_sql(" ALTER TABLE `{$CFG->prefix}grade_category` CHANGE `weight` `weight` decimal(5,2) default '0.00';");
+    }
 
     return $result;
 }
