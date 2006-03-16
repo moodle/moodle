@@ -3147,7 +3147,8 @@ function print_textarea($usehtmleditor, $rows, $cols, $width, $height, $name, $v
 
     $mincols = 65;
     $minrows = 10;
-
+    $str = '';
+    
     if ( empty($CFG->editorsrc) ) { // for backward compatibility.
         if (empty($courseid)) {
             if (!empty($course->id)) {  // search for it in global context
@@ -3162,10 +3163,10 @@ function print_textarea($usehtmleditor, $rows, $cols, $width, $height, $name, $v
         if ($usehtmleditor) {
 
             if (!empty($courseid) and isteacher($courseid)) {
-                $str = ($scriptcount < 1) ? '<script type="text/javascript" src="'.
+                $str .= ($scriptcount < 1) ? '<script type="text/javascript" src="'.
                 $CFG->wwwroot .'/lib/editor/htmlarea/htmlarea.php?id='. $courseid .'"></script>'."\n" : '';
             } else {
-                $str = ($scriptcount < 1) ? '<script type="text/javascript" src="'.
+                $str .= ($scriptcount < 1) ? '<script type="text/javascript" src="'.
                 $CFG->wwwroot .'/lib/editor/htmlarea/htmlarea.php"></script>'."\n" : '';
             }
             $str .= ($scriptcount < 1) ? '<script type="text/javascript" src="'.
