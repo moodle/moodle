@@ -146,7 +146,12 @@
     <td align="right"><strong><?php print_string('formattexttype'); ?>:</strong></td>
     <td colspan="2">
     <?php
-       choose_from_menu(format_text_menu(), 'format', $post->format, '');
+        if ($usehtmleditor) {   /// Trying this out for a while
+            print_string('formathtml');
+            echo '<input type="hidden" name="format" value="'.FORMAT_HTML.'" />';
+        } else {
+            choose_from_menu(format_text_menu(), "format", $post->format, "");
+        }
      ?>
     <small><small>
     <?php
