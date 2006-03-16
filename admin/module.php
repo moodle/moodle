@@ -3,8 +3,6 @@
 
     require_once('../config.php');
 
-    $module = required_param('module', PARAM_SAFEDIR);
-
     require_login();
 
     if (!isadmin()) {
@@ -15,17 +13,17 @@
         error("Site isn't defined!");
     }
 
-    require_once("$CFG->dirroot/mod/$module/lib.php");
-
 /// If data submitted, then process and store.
 
     if ($config = data_submitted()) {
+        $module = optional_param('module', '', PARAM_SAFEDIR);
 
         if (!confirm_sesskey()) {
             error(get_string('confirmsesskeybad', 'error'));
         }
 
-        if ($module) {
+        if ($module != '') {
+            require_once("$CFG->dirroot/mod/$module/lib.php");
             // if the config.html contains a hidden form field giving
             // the module name then the form does not have to prefix all
             // its variable names, we will do it here.
@@ -48,6 +46,8 @@
     }
 
 /// Otherwise print the form.
+    $module = required_param('module', PARAM_SAFEDIR);
+    require_once("$CFG->dirroot/mod/$module/lib.php");
 
     $stradmin = get_string("administration");
     $strconfiguration = get_string("configuration");
