@@ -310,7 +310,6 @@ function do_update(&$post, &$bloginfo) {
     echo "id id ".$post->postid;
 //  print_object($blogentry);  //debug
 
-    $blogentry->set_title($post->etitle);
     $blogentry->set_body($post->body);
     $blogentry->set_format($post->format);
     $blogentry->set_publishstate($post->publishstate); //we don't care about the return value here

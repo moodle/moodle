@@ -100,7 +100,6 @@ class BlogFilter {
             $this->fetchlimit = $fetchlimit;
         }
         
-        
         $this->postid = $postid;
 
         $this->sort = $sort;

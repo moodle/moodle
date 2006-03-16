@@ -59,11 +59,11 @@ else {
 $PAGE->courseid = $courseid;
 $PAGE->init_full(); //init the BlogInfo object and the courserecord object
 
-if (isset($tagid) && $tagid) {
+if (!empty($tagid)) {
     $taginstance = get_record('tags', 'id', $tagid);
 } else {
     $tagid = '';
-    if (isset($tag) && $tag) {
+    if (!empty($tag)) {
         $tagrec = get_record('tags', 'text', $tag);
         $tagid = $tagrec->id;
         $taginstance = get_record('tags', 'id', $tagid);
@@ -84,7 +84,7 @@ $tagstring = get_string('tag');
 
 switch ($filtertype) {
     case 'site':
-        if ($tagid || (isset($tag) && $tag)) {
+        if ($tagid || !empty($tag)) {
             print_header("$site->shortname: $blogstring", "$site->fullname",
                         '<a href="index.php?filtertype=site">'. "$blogstring</a> -> $tagstring: $taginstance->text",'','',true,$PAGE->get_extra_header_string());
         } else {
@@ -94,7 +94,7 @@ switch ($filtertype) {
     break;
 
     case 'course':
-        if ($tagid || (isset($tag) && $tag)) {
+        if ($tagid || !empty($tag)) {
             print_header("$course->shortname: $blogstring", "$course->fullname",
                         '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$filterselect.'">'.$course->shortname.'</a> ->
                         <a href="index.php?filtertype=course&amp;filterselect='.$filterselect.'">'. "$blogstring</a> -> $tagstring: $taginstance->text",'','',true,$PAGE->get_extra_header_string());
@@ -109,7 +109,7 @@ switch ($filtertype) {
 
         $thisgroup = get_record('groups', 'id', $filterselect);
 
-        if ($tagid || (isset($tag) && $tag)) {
+        if ($tagid || !empty($tag)) {
             print_header("$course->shortname: $blogstring", "$course->fullname",
                         '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">'.$course->shortname.'</a> ->
                         <a href="'.$CFG->wwwroot.'/user/index.php?id='.$course->id.'&amp;group='.$filterselect.'">'.$thisgroup->name.'</a> ->
@@ -129,7 +129,7 @@ switch ($filtertype) {
         $participants = get_string('participants');
 
         if (isset($course->id) && $course->id && $course->id != SITEID) {
-            if ($tagid || (isset($tag) && $tag)) {
+            if ($tagid || !empty($tag)) {
                 print_header("$course->shortname: $blogstring", "$course->fullname",
                         '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">'.$course->shortname.'</a> ->
                         <a href="'.$CFG->wwwroot.'/user/index.php?id='.$course->id.'">'.$participants.'</a> ->
@@ -149,7 +149,7 @@ switch ($filtertype) {
         //in top view
         else {
 
-            if ($tagid || (isset($tag) && $tag)) {
+            if ($tagid || !empty($tag)) {
                 print_header("$site->shortname: $blogstring", "$site->fullname",
                         '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$filterselect.'">'.fullname($user).'</a> ->
                         <a href="index.php?filtertype=user&amp;filterselect='.$filterselect.'">'. "$blogstring</a> -> $tagstring: $taginstance->text",'','',true,$PAGE->get_extra_header_string());

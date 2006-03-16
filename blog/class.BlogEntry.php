@@ -72,24 +72,6 @@ class BlogEntry {
 
         $this->entryId = $entrydetails->id;
 
-        if (!empty($entrydetails->categoryid)) {
-            if (is_array($entrydetails->categoryid)) {
-                $this->entryCategoryIds = $entrydetails->categoryid;
-            } else {
-                $this->entryCategoryIds = array($entrydetails->categoryid);
-            }
-        } else {
-            // load up all categories that this entry is associated with
-            // cannot use moodle's get_records() here because this table does not conform well enough
-            $sql = 'SELECT * FROM '. $CFG->prefix .'blog_categories_entries WHERE entryid='. $this->entryId;
-            if($rs = $db->Execute($sql)) {
-                while (!$rs->EOF) {
-                    $this->entryCategoryIds[] = $rs->fields['categoryid'];
-                    $rs->MoveNext();            
-                }
-            }
-        }
-        $this->entryCategoryIds = array_unique($this->entryCategoryIds);
 //        print "Debug: entryId: $this->entryId"; //debug
 //        print_object($this->entryCategoryIds); //debug
         
@@ -103,9 +85,7 @@ class BlogEntry {
         
         $this->entryuserid = $entrydetails->userid;
         
-
         //added stripslashes_safe here for rss feeds. Will this conflict anywhere?
-        
         
         $this->entryTitle = ereg_replace('<tick>', "'", stripslashes_safe($entrydetails->subject));   //subject, not title!
         
@@ -126,17 +106,6 @@ class BlogEntry {
         //need to make sure that email is actually just a link to our email sending page.
         $this->entryAuthorEmail = $rs->email;
 
-        // then each category
-        if (!empty($this->entryCategoryIds)) {
-            foreach ($this->entryCategoryIds as $categoryid) {
-                if (! $currcat = get_record('blog_categories', 'id', $categoryid)) {
-                    print 'Could not find category id '. $categoryid ."\n";
-                    $this->entryCategories[$categoryid] = '';
-                } else {
-                    $this->entryCategories[$categoryid] = $currcat->catname;
-                }
-            }
-        }
     }
 
     /**
@@ -375,16 +344,6 @@ class BlogEntry {
         $dataobject->userid = intval($this->entryuserid);
         $dataobject->publishstate = $this->entryPublishState;
 
-        if ($this->entryCourseId) {
-            $dataobject->courseid = $this->entryCourseId;
-        } else {
-            $dataobject->courseid = SITEID;    //yu: in case change to all course
-        }
-        if ($this->entryGroupId) {
-            $dataobject->groupid = $this->entryGroupId;
-        } else {
-            $dataobject->groupid = 0;    //yu: in case we change to all groups
-        }
         $dataobject->lastmodified = $timenow;
 
         $dataobject->summary = ereg_replace("'", '<tick>', $dataobject->summary);
@@ -402,18 +361,6 @@ class BlogEntry {
         // First update the entry's categories. Remove all, then add back those passed in
         $sql = 'DELETE FROM '. $CFG->prefix .'blog_categories_entries WHERE entryid='. $this->entryId;
         $rs = $db->Execute($sql);
-
-        if (!empty($this->entryCategoryIds)) {
-            if (!is_array($this->entryCategoryIds)) {
-                $this->entryCategoryIds = array($this->entryCategoryIds);
-            }
-            $this->entryCategoryIds = array_unique($this->entryCategoryIds);
-            foreach ($this->entryCategoryIds as $categoryid) {
-                $cat->entryid = $this->entryId;
-                $cat->categoryid = $categoryid;
-                insert_record('blog_categories_entries', $cat);
-            }
-        }
 
         // next update the entry itself
         if (update_record('post', $dataobject)) {
