@@ -50,45 +50,56 @@
     </td>
 </tr>
 <tr>
-    <td>
-    <b><?php print_string('otags','blog'); ?></b>
+    <td align="right">
+        <strong><?php print_string('tags'); echo ':';?></strong>
     </td>
+
     <td>
-    <b><?php print_string('ptags','blog'); ?></b>
+        <table>
+            <tr>
+                <td>
+                <b><?php print_string('otags','blog'); ?></b>
+                </td>
+                <td>
+                <b><?php print_string('ptags','blog'); ?></b>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                <select name="otags[]" multiple="multiple" size="8">
+                <?php
+                    $otags = get_records_sql('SELECT * from '.$CFG->prefix.'tags WHERE type=\'official\' ORDER by text ASC');
+                    foreach ($otags as $otag) {
+                        if (in_array($otag->id, $usedtags)) {
+                            echo '<option value="'.$otag->id.'" selected="selected">'.$otag->text.'</option>';
+                        } else {
+                            echo '<option value="'.$otag->id.'">'.$otag->text.'</option>';
+                        }
+                    }
+                ?>
+                </select>
+                </td>
+
+                <td>
+                <select name="ptags[]" multiple="multiple" size="8">
+                <?php
+                    $ptags = get_records_sql('SELECT * from '.$CFG->prefix.'tags WHERE type=\'personal\' ORDER by text ASC');
+                    foreach ($ptags as $ptag) {
+                        if (in_array($ptag->id, $usedtags)) {
+                            echo '<option value="'.$ptag->id.'" selected="selected">'.$ptag->text.'</option>';
+                        } else {
+                            echo '<option value="'.$ptag->id.'">'.$ptag->text.'</option>';
+                        }
+                    }
+                ?>
+                </select>
+                </td>
+            </tr>
+        </table>
     </td>
 </tr>
 
-<tr>
-    <td>
-    <select name="otags[]" multiple="multiple" size="8">
-    <?php
-        $otags = get_records_sql('SELECT * from '.$CFG->prefix.'tags WHERE type=\'official\' ORDER by text ASC');
-        foreach ($otags as $otag) {
-            if (in_array($otag->id, $usedtags)) {
-                echo '<option value="'.$otag->id.'" selected="selected">'.$otag->text.'</option>';
-            } else {
-                echo '<option value="'.$otag->id.'">'.$otag->text.'</option>';
-            }
-        }
-    ?>
-    </select>
-    </td>
-    
-    <td>
-    <select name="ptags[]" multiple="multiple" size="8">
-    <?php
-        $ptags = get_records_sql('SELECT * from '.$CFG->prefix.'tags WHERE type=\'personal\' ORDER by text ASC');
-        foreach ($ptags as $ptag) {
-            if (in_array($ptag->id, $usedtags)) {
-                echo '<option value="'.$ptag->id.'" selected="selected">'.$ptag->text.'</option>';
-            } else {
-                echo '<option value="'.$ptag->id.'">'.$ptag->text.'</option>';
-            }
-        }
-    ?>
-    </select>
-    </td>
-</tr>
+
 
 <tr>
     <td>

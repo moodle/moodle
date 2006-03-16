@@ -9,7 +9,7 @@
 
     // detemine where the user is coming from in case we need to send them back there
 
-    if (!$referrer = optional_param('referrer','', PARAM_NOTAGS)) {
+    if (!$referrer = optional_param('referrer','', PARAM_URL)) {
         if (isset($_SERVER['HTTP_REFERER'])) {
             $referrer = $_SERVER['HTTP_REFERER'];
         } else {
