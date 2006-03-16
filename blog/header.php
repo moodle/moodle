@@ -1,7 +1,5 @@
 <?php //$Id$
 
-global $CFG, $USER;
-
 require_once($CFG->dirroot .'/blog/lib.php');
 require_once($CFG->libdir .'/pagelib.php');
 require_once($CFG->dirroot .'/blog/blogpage.php');

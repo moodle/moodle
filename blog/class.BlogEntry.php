@@ -10,7 +10,6 @@
  * @package blog
  ******************************************************************/
 
-global $CFG;
 include_once($CFG->dirroot .'/blog/lib.php');
 
 /**
@@ -30,7 +29,6 @@ include_once($CFG->dirroot .'/blog/lib.php');
  make sure that both the ->save and ->update function operate properly on an entry that does not yet exist!
  this way one could:
  $newEntry = new BlogEntry();
- $newEntry->set_title('a title');
  $newEntry->set_body('a post here');
  $newEntry->set_userid(2);
  $newEntry->save();
@@ -182,43 +180,6 @@ class BlogEntry {
     }
 
     /**
-     * get_formatted_entry_extended_body
-     * getter for ->entryExtendedBody
-     *
-     * @uses $CFG
-     * @return string Entry extended body/content run through moodle's format_text formatter and 
-     *                  with slashes stripped from database entry
-     */
-    function get_formatted_entry_extended_body() {
-        global $CFG;
-        include_once($CFG->libdir .'/weblib.php');
-        if ( isset($this->entryFormat) ) {
-            return format_text($this->entryExtendedBody, $this->entryFormat);
-        }
-        return stripslashes_safe($this->entryExtendedBody);
-    }
-
-    /**
-     * get_unformatted_entry_extended_body
-     * getter for ->entryExtendedBody
-     *
-     * @return string Entry extended body/content - raw string from database
-     */
-    function get_unformatted_entry_extended_body() {
-        return $this->entryExtendedBody;
-    }
-
-    /**
-     * BlogEntry setters do not save to the database.
-     * To save changes call the BlogEntry->save() function when ready.
-     *
-     * @param string $title New entry subject
-     */
-    function set_title($title) {
-        $this->entryTitle = $title;
-    }
-
-    /**
      * BlogEntry setters do not save to the database.
      * To save changes call the BlogEntry->save() function when ready.
      *
@@ -232,31 +193,11 @@ class BlogEntry {
      * BlogEntry setters do not save to the database.
      * To save changes call the BlogEntry->save() function when ready.
      *
-     * @param string $extendedbody New entry content
-     */
-    function set_extendedbody($extendedbody) {
-        $this->entryExtendedBody = $extendedbody;
-    }
-
-    /**
-     * BlogEntry setters do not save to the database.
-     * To save changes call the BlogEntry->save() function when ready.
-     *
      * @param string $format Moodle format_text format type.
      */
     function set_format($format) {
         $this->entryFormat = $format;
     }
-    
-    /**
-     *
-     * @return string
-     */
-    function get_entryurl() {
-        global $CFG;
-        return $CFG->wwwroot .'/blog/archive.php?userid='. $this->entryuserid .'&amp;postid='. $this->entryId;
-    }
-
 
     /**
      * BlogEntry setters do not save to the database.
