@@ -65,4 +65,26 @@
 
         return $status;
     }
+
+    function question_multichoice_recode_answer($state, $restore) {
+        $answer_field = "";
+        $in_first = true;
+        $tok = strtok($state->answer,",");
+        while ($tok) {
+            //Get the answer from backup_ids
+            $answer = backup_getid($restore->backup_unique_code,"question_answers",$tok);
+            if ($answer) {
+                if ($in_first) {
+                    $answer_field .= $answer->new_id;
+                    $in_first = false;
+                } else {
+                    $answer_field .= ",".$answer->new_id;
+                }
+            }
+            //check for next
+            $tok = strtok(",");
+        }
+        return $answer_field;
+    }
+
 ?>

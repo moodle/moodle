@@ -325,7 +325,8 @@
                 backup_putid($restore->backup_unique_code,"quiz_attempts",$oldid,
                              $newid);
                 //Now process question_states
-                $status = question_states_restore_mods($newid,$att_info,$restore);
+                // This function is defined in question/restorelib.php
+                $status = question_states_restore_mods($attempt->uniqueid,$att_info,$restore);
             } else {
                 $status = false;
             }

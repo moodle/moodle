@@ -85,8 +85,10 @@
     // load questiontype-specific functions
     unset($restorefns);
     unset($restoremapfns);
+    unset($restorestatefns);
+    unset($recodeansfns);
     //if ($qtypes = get_records('question_types')) {
-        if ($qtypes = get_list_of_plugins('question/questiontypes')) {
+    if ($qtypes = get_list_of_plugins('question/questiontypes')) {
         foreach ($qtypes as $name) {
             $qtype->name = $name;
             $restorelib = $CFG->dirroot.'/question/questiontypes/'.$qtype->name.'/restorelib.php';
@@ -103,6 +105,10 @@
                 $restorestatefn = 'question_'.$qtype->name.'_states_restore';
                 if (function_exists($restorestatefn)) {
                     $restorestatefns[$qtype->name] = $restorestatefn;
+                }
+                $recodeansfn = 'question_'.$qtype->name.'_recode_answer';
+                if (function_exists($recodeansfn)) {
+                    $recodeansfns[$qtype->name] = $recodeansfn;
                 }
             }
         }
@@ -566,7 +572,7 @@
     //This function restores the question_states
     function question_states_restore_mods($attempt_id,$info,$restore) {
 
-        global $CFG;
+        global $CFG, $restorestatefns;
 
         $status = true;
 

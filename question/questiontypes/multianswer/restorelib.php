@@ -137,4 +137,39 @@
 
         return $status;
     }
+
+    function question_multianswer_recode_answer($state, $restore) {
+        global $recodeansfns;
+        //The answer is a comma separated list of hypen separated multianswer_id and answers. We must recode them.
+        $answer_field = "";
+        $in_first = true;
+        $tok = strtok($state->answer,",");
+        while ($tok) {
+            //Extract the multianswer_id and the answer
+            $exploded = explode("-",$tok);
+            $multianswer_id = $exploded[0];
+            $answer = $exploded[1];
+            //Get the multianswer from backup_ids
+            $mul = backup_getid($restore->backup_unique_code,"question_multianswer",$multianswer_id);
+            if ($mul) {
+                //Now, depending of the answertype field in question_multianswer
+                //we do diferent things
+                $mul_db = get_record ("question_multianswer","id",$mul->new_id);
+                if (isset($recodeansfns[$question->type])) {
+                }
+
+                //Finaly, build the new answer field for each pair
+                if ($in_first) {
+                    $answer_field .= $mul->new_id."-".$answer;
+                    $in_first = false;
+                } else {
+                    $answer_field .= ",".$mul->new_id."-".$answer;
+                }
+            }
+            //check for next
+            $tok = strtok(",");
+        }
+        return $answer_field;
+    }
+
 ?>
