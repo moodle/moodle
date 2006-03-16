@@ -162,17 +162,20 @@ class page_blog extends page_base {
     /////////// Blog page specific functions
     function get_extra_header_string() {
         global $SESSION, $CFG, $USER;
+
         $editformstring = '';        
-        if (!empty($SESSION->blog_editing_enabled) && ($SESSION->blog_editing_enabled)) {
-            $editingString = get_string('turneditingoff');
-        } else {
-            $editingString = get_string('turneditingon');
+        if (blog_isLoggedin()) {
+            if (!empty($SESSION->blog_editing_enabled) && ($SESSION->blog_editing_enabled)) {
+                $editingString = get_string('turneditingoff');
+            } else {
+                $editingString = get_string('turneditingon');
+            }
+            $editformstring = '<form target="'. $CFG->framename .'" method="get" action="'. $CFG->wwwroot .'/blog/set_session_vars.php">'.
+                '<input type="hidden" name="referrer" value="'. me() .'" />'.
+                '<input type="hidden" name="var" value="showediting" />'.
+                '<input type="submit" value="'. $editingString .'" /></form>';
         }
-        $editformstring = '<form target="'. $CFG->framename .'" method="get" action="'. $CFG->wwwroot .'/blog/set_session_vars.php">'.
-            '<input type="hidden" name="referrer" value="'. me() .'" />'.
-            '<input type="hidden" name="var" value="showediting" />'.
-            '<input type="submit" value="'. $editingString .'" /></form>';
-       
+
         return $editformstring;        
     }    
 }
