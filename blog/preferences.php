@@ -33,7 +33,11 @@
 	if ($post = data_submitted()) {
         print_header();
 
-        set_user_preference('blogpagesize', optional_param('pagesize', 10, PARAM_INT));
+        $pagesize = optional_param('pagesize', 10, PARAM_INT);
+        if ($pagesize < 1 ) {
+            error ('invalid page size');
+        }
+        set_user_preference('blogpagesize', $pagesize);
         redirect($referrer, get_string('changessaved'), 1);
         exit;
     }
