@@ -2748,6 +2748,7 @@ function print_user($user, $course, $messageselect=false) {
         }
         echo '<br />';
     }
+
     if (!isset($hiddenfields['lastaccess'])) {
         if ($user->lastaccess) {
             echo $string->lastaccess .': '. userdate($user->lastaccess);
@@ -2757,7 +2758,9 @@ function print_user($user, $course, $messageselect=false) {
         }
     }
     echo '</div></td><td class="links">';
-
+    //link to blogs
+    
+    echo '<a href="'.$CFG->wwwroot.'/blog/index.php?userid='.$user->id.'">'.get_string('blogs','blog').'</a><br />';
     if ($isteacher) {
         $timemidnight = usergetmidnight(time());
         echo '<a href="'. $CFG->wwwroot .'/course/user.php?id='. $course->id .'&amp;user='. $user->id .'">'. $string->activity .'</a><br />';
