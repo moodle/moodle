@@ -470,6 +470,7 @@ function blocks_execute_action($page, &$pageblocks, $blockaction, $instanceorid,
                 echo '</form>';
 
                 echo '</div>';
+                $CFG->pagepath = 'blocks/' . $block->name;
                 print_footer();
                 die(); // Do not go on with the other page-related stuff
             }
