@@ -38,6 +38,9 @@
             $moduleprefix = '';
         }
 
+        unset($config->sesskey);
+        unset($config->module);
+
         foreach ($config as $name => $value) {
             set_config($moduleprefix.$name, $value);
         }
