@@ -2500,36 +2500,50 @@ function print_simple_box($message, $align='', $width='', $color='', $padding=5,
 /**
  * Print the top portion of a standard themed box.
  *
- * @param string $align ?
- * @param string $width ?
- * @param string $color ?
- * @param int $padding ?
- * @param string $class ?
+ * @param string $align string, alignment of the box, not the text (left, center, right).
+ * @param string $width string, width of the box, including units, for example '100%'. 
+ * @param string $color string, background colour of the box, for example '#eee'.
+ * @param int $padding integer, padding in pixels, specified without units.
+ * @param string $class string, space-separated class names.
  * @todo Finish documenting this function
  */
 function print_simple_box_start($align='', $width='', $color='', $padding=5, $class='generalbox', $id='') {
 
+    //TODO (nfreear): Accessibility: tidy up, print_simple_box <table> to 2 <div>s.
+    $style_out = '';
+    $style_in  = '';
+    if ($padding) {
+        $style_in .= 'padding:'. $padding .'px; ';	
+    }
+    
     if ($color) {
+        $style_out .= 'background-color:'. $color .'; ';
         $color = 'bgcolor="'. $color .'"';
     }
     if ($align) {
-        $align = 'align="'. $align .'"';
+    	$align = 'align="'. $align .'"';
     }
     if ($width) {
+    	//Note, width units provided.
+    	$style_out .= 'width:'. $width .'; margin-left:auto; margin-right:auto;';
         $width = 'width="'. $width .'"';
     }
     if ($id) {
         $id = 'id="'. $id .'"';
     }
-    echo "<table $align $width $id class=\"$class\" border=\"0\" cellpadding=\"$padding\" cellspacing=\"0\">".
+    
+    /*echo "<table $align $width $id class=\"$class\" border=\"0\" cellpadding=\"$padding\" cellspacing=\"0\">".
          "<tr><td $color class=\"$class"."content\">";
+    */
+    echo "<div $id class=\"$class\" style=\"$style_out\"><div class=\"$class"."content\" style=\"$style_in\">\n";
 }
 
 /**
  * Print the end portion of a standard themed box.
  */
 function print_simple_box_end() {
-    echo '</td></tr></table>';
+    //echo '</td></tr></table>';
+    echo "</div></div>\n";
 }
 
 /**
