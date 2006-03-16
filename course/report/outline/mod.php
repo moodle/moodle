@@ -4,8 +4,9 @@
         die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
     }
 
+    echo '<p style="text-align:center;">';
     $activityreport = get_string( 'activityreport' );
-    echo "<center><a href=\"{$CFG->wwwroot}/course/report/outline/index.php?id={$course->id}\">";
-    echo "$activityreport</a></center>\n";
-
+    echo "<a href=\"{$CFG->wwwroot}/course/report/outline/index.php?id={$course->id}\">";
+    echo "$activityreport</a>\n";
+    echo '</p>';
 ?>

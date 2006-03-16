@@ -21,10 +21,14 @@
     $directories = get_list_of_plugins('course/report');
 
     foreach ($directories as $directory) {
-        echo '<div class="plugin '.$directory.'">';
-        include_once($CFG->dirroot.'/course/report/'.$directory.'/mod.php');  // Fragment for listing
-        echo '</div>';
+        $pluginfile = $CFG->dirroot.'/course/report/'.$directory.'/mod.php';
+        if (file_exists($pluginfile)) {
+            echo '<div class="plugin">';
+            //echo $pluginfile;
+            include_once($pluginfile);  // Fragment for listing
+            echo '</div>';
+        }
     }
-
+    
     print_footer();
 ?>

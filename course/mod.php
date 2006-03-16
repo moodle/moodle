@@ -674,5 +674,4 @@
     }
 
     print_footer($course);
-
 ?>

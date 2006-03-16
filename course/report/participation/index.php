@@ -103,7 +103,7 @@
     
     
     // print first controls.
-    echo '<form action="index.php" action="get">'."\n".
+    echo '<form action="index.php" method="get">'."\n".
         '<input type="hidden" name="id" value="'.$course->id.'" />'."\n".
         '<input type="hidden" name="oldmod" value="'.$moduleid.'" />'."\n".
         '<input type="hidden" name="instanceid" value="'.$instanceid.'" />'."\n".

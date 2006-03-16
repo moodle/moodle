@@ -66,7 +66,7 @@
     
     
     // print first controls.
-    echo '<form action="'.$CFG->wwwroot.'/course/report/participation/index.php" action="get">'."\n".
+    echo '<form action="'.$CFG->wwwroot.'/course/report/participation/index.php" method="get">'."\n".
         '<input type="hidden" name="id" value="'.$course->id.'" />'."\n".
         '<table align="center" cellpadding="10"><tr>'."\n".
         "<td>\n".
