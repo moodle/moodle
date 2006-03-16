@@ -51,7 +51,7 @@ class block_blog_menu extends block_base {
             $addentrylink = '';
                             
             $coursearg = '';
-            if(isset($course) && isset($course->id) && $course->id !=0 && $course->id!=SITEID && $CFG->bloglevel >=3 ) {
+            if(blog_isLoggedIn() && isset($course) && isset($course->id) && $course->id !=0 && $course->id!=SITEID && $CFG->bloglevel >=3 ) {
                 $coursearg = '&courseid='. $course->id;
                 // a course is specified
                 
@@ -60,22 +60,20 @@ class block_blog_menu extends block_base {
             }
                 
             $blogmodon = false;
-            if (isset($CFG->blog_enable_moderation) && $CFG->blog_enable_moderation) {
-                // blog moderation is enabled
-                $blogmodon = true;
-            }
-            if ((isadmin() || !$blogmodon || ($blogmodon && $coursearg != '')) && $CFG->bloglevel >= 1) {
-                // show Add entry link - user is not admin, moderation is off, or moderation is on and the user is viewing the block within the context of a course
-                $addentrylink = '<a href="'. $CFG->wwwroot. '/blog/edit.php?userid='. $userBlog->userid . $coursearg .'">'. get_string('addnewentry', 'blog') .'</a><br />';
-                
-            // show View my entries link
-            $addentrylink .= '<a href="'. $CFG->wwwroot .'/blog/index.php?userid='. $userBlog->userid.'">';
-            $addentrylink .= get_string('viewmyentries', 'blog') .'</a><br />';
-            // show link to manage blog prefs
-            $addentrylink .= '<a href="'. $CFG->wwwroot. '/blog/preferences.php?userid='. $userBlog->userid . $coursearg .'">'. get_string('blogpreferences', 'blog') .'</a><br />';
-            
-            $output = $addentrylink;
-            $output .= $courseviewlink;
+
+                if (blog_isLoggedIn() && (isadmin() || !$blogmodon || ($blogmodon && $coursearg != '')) && $CFG->bloglevel >= 1) {
+
+                    // show Add entry link - user is not admin, moderation is off, or moderation is on and the user is viewing the block within the context of a course
+                        $addentrylink = '<a href="'. $CFG->wwwroot. '/blog/edit.php?userid='. $userBlog->userid . $coursearg .'">'. get_string('addnewentry', 'blog') .'</a><br />';
+
+                    // show View my entries link
+                    $addentrylink .= '<a href="'. $CFG->wwwroot .'/blog/index.php?userid='. $userBlog->userid.'">';
+                    $addentrylink .= get_string('viewmyentries', 'blog') .'</a><br />';
+                    // show link to manage blog prefs
+                    $addentrylink .= '<a href="'. $CFG->wwwroot. '/blog/preferences.php?userid='. $userBlog->userid . $coursearg .'">'. get_string('blogpreferences', 'blog') .'</a><br />';
+
+                    $output = $addentrylink;
+                    $output .= $courseviewlink;
 
             }
 
