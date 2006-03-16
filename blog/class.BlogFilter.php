@@ -51,7 +51,7 @@ class BlogFilter {
      * @param  int $courseid = if needed the entries can be restricted to those associated with a given course.
      * @param  int $postid = a specific blog entry that is being sought
      */
-    function BlogFilter($userid='', $postid='', $fetchlimit='', $fetchstart='', $filtertype='', $filterselect='', $tagid='', $tag ='', $sort='lastmodified DESC') {
+    function BlogFilter($userid='', $postid='', $fetchlimit=10, $fetchstart='', $filtertype='', $filterselect='', $tagid='', $tag ='', $sort='lastmodified DESC') {
 
         global $CFG;    //filter settings to be pass in for baseurl
 
@@ -73,12 +73,8 @@ class BlogFilter {
         } else {
             $this->fetchstart = $fetchstart;
         }
-        
-        if (!is_numeric($fetchlimit) ) {
-            $this->fetchlimit = $CFG->blog_default_fetch_num_entries;
-        } else {
-            $this->fetchlimit = $fetchlimit;
-        }
+
+        $this->fetchlimit = $fetchlimit;
         
         $this->postid = $postid;
 

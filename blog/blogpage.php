@@ -142,7 +142,7 @@ class page_blog extends page_base {
             $blocknames = $CFG->{'defaultblocks_'. $this->get_type()};
         } else {
             /// Failsafe - in case nothing was defined.
-            $blocknames = 'admin,calendar_month,blog_member_list:login,online_users,blog_menu,blog_categories,blog_recent_entries,blog_news_feeds';
+            $blocknames = 'admin,calendar_month,online_users,blog_menu';
         }
         
         return $blocknames;

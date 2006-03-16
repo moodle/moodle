@@ -81,13 +81,7 @@ class BlogInfo {
         
         $this->blogEntries = array();
         $this->userid = $userid;
-        $this->blogtitle = stripslashes_safe(get_user_preferences('blogtitle', $CFG->blog_default_title, $userid));
-        $this->blogtagline = stripslashes_safe(get_user_preferences('blogtagline', '', $userid));
-        $this->bloguseextendedbody = get_user_preferences('bloguseextendedbody', false, $userid);
-        $this->blogtheme = get_user_preferences('blogtheme', 0, $userid); //Daryl Hawes note: investigate blogtheme usage again
-/*        if ($this->userid == 0) { 
-            $this->userid = 1;
-        }*/
+
     }
 
 ////////// getters and setters ///////////////

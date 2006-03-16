@@ -33,45 +33,6 @@ $BLOG_YES_NO_MODES = array ( '0'  => get_string('no'),
 if (empty($SESSION->blog_editing_enabled)) {
     $SESSION->blog_editing_enabled = false;
 }
-if (!(isset($CFG->blog_enable_trackback_in) )) {
-    $CFG->blog_enable_trackback_in = 0; //default is 0 == do not allow for site
-}
-if (!(isset($CFG->blog_enable_moderation) )) {
-    $CFG->blog_enable_moderation = 0; //default is 0 == do not enable blog moderation on this site
-}
-if (!(isset($CFG->blog_enable_pingback_in) )) {
-    $CFG->blog_enable_pingback_in = 0; //default is 0 == do not allow for site
-}
-if (!(isset($CFG->blog_enable_trackback_out) )) {
-    $CFG->blog_enable_trackback_out = 0; //default is 0 == do not allow for site
-}
-if (!(isset($CFG->blog_enable_pingback_out) )) {
-    $CFG->blog_enable_pingback_out = 0; //default is 0 == do not allow for site
-}
-if (!(isset($CFG->blog_enable_moderation) )) {
-    $CFG->blog_enable_moderation = 0; //default is 0 == do not turn on moderation for site
-}
-if (!(isset($CFG->blog_useweblog_rpc) )) {
-    $CFG->blog_useweblog_rpc = 0;//default is 0 == do not publish to weblogs.com
-}
-if (empty($CFG->blog_ratename) ) {
-    $CFG->blog_ratename = 'Rating'; //default name for entry ratings
-}
-if (empty($CFG->blog_default_title) ) {
-    $CFG->blog_default_title = 'Moodle Blog'; //default blog title
-}
-if (empty($CFG->blog_blogurl) ) {
-    $CFG->blog_blogurl = $CFG->wwwroot.'/blog/index.php';
-}
-if (!(isset($CFG->blog_enable_trackback) )) {
-    $CFG->blog_enable_trackback = 0;
-}
-if (!(isset($CFG->blog_enable_pingback) )) {
-    $CFG->blog_enable_pingback = 0;
-}
-if (empty($CFG->blog_default_fetch_num_entries) ) {
-    $CFG->blog_default_fetch_num_entries = 8;
-}
 
 /**
  * Verify that a user is logged in based on the session
@@ -174,83 +135,6 @@ function blog_user_bloginfo($userid='') {
             $bloginfosingleton = $thisbloginfo;
         }*/
     return $thisbloginfo;
-}
-
-/**
- * build and return list of all member blogs
- *
- * @param stdObject $memberrecords An object of record entries as output from the get_member_list() function in BlogFilter (->id, ->title are the required variables).
- * @param int $format - 0, 1 or 2; 0 = hyperlinked list of members, 1 = select element, 2 = select element wrapped in entire form
- * @param bool $return  indicates whether the function should return the text 
- *   as a string or echo it directly to the page being rendered
- * @param BlogFilter $blogFilter - a BlogFilter object with the details of the members listed in $memberrecords.
- * @param string $hyperlink This is the target link to be used - there is a sensible default for each format.
- */
-function blog_member_list(&$blogFilter, &$memberrecords, $format=1, $return=true, $hyperlink='') {
-    global $CFG, $USER;
-    
-//echo "userid = $blogFilter->userid"; //debug
-//print_object($memberrecords); //debug
-    $returnstring = '';
-    if (!empty($memberrecords)) {
-        switch($format) {
-            case '0':
-                foreach($memberrecords as $record) {
-                    if (empty($hyperlink)) {
-                        $CFG->wwwroot .'/blog/index.php?userid='. $record->id;	
-                    }
-                    $returnstring .= '<a href="'. $hyperlink . $record->id .'">'. stripslashes_safe($record->title) .'</a><br />';	
-                }
-                break;
-            case '2':
-                $selected = '';
-                $options = array('' => 'All Member Blogs');
-                $formlink = $hyperlink; //TESTING
-                if (empty($hyperlink)) {
-                    $getvars = $blogFilter->get_getvars('userid');
-                    $self = basename($_SERVER['PHP_SELF']); 
-                    $formlink = $self . $getvars .'&amp;userid=';
-                }                    
-                foreach($memberrecords as $record) {
-                    $id = $record->id;
-                    if (blog_isLoggedIn() && $id == $USER->id ) {
-                        $optiontitle = 'My Blog';
-                    } else {
-                        $optiontitle = stripslashes_safe($record->title);
-                    }
-                    $options[$id] = $optiontitle; //TESTING
-                    if ( ($blogFilter->userid == $record->id) && ($blogFilter->userid != 0) ) {
-                        $selected = $id;
-                    }
-                }
-                
-                //attach a random number to the popup function's form name
-                //becuase there may be multiple instances of this form on each page
-                $returnstring = popup_form($formlink,
-                       $options, 'blog_member_list'. mt_rand(), $selected, '', '', '', true);
-                $returnstring = str_replace('<form', '<form style="display: inline;"', $returnstring);
-                break;
-            
-            case '1':
-            default:
-                $returnstring = '<select name="userid">';
-                foreach($memberrecords as $record) {            
-                    $returnstring .= '<option value="'. $record->id .'"';
-                    if ( ($record->id == $blogFilter->userid) && ($blogFilter->userid != 0) ) {
-                        $returnstring .= ' selected';
-                    }
-                    $returnstring .= '>'. stripslashes_safe($record->title) .'</option>';
-                }
-                $returnstring .= '</select>';
-                break;
-        }
-    
-    }
-    if ($return) {
-        return $returnstring;
-    }
-    print $returnstring;
-    return;
 }
 
 /**
@@ -480,7 +364,7 @@ function blog_applicable_publish_states($courseid='') {
         }
     }
 
-    if (!$CFG->blog_enable_moderation || isadmin() || (is_numeric($courseid) && isteacher($courseid)) ) {
+    if (isadmin() || (is_numeric($courseid) && isteacher($courseid)) ) {
         // only admins and teachers can see site and public options when moderation is enabled
         $options['site'] = get_string('publishtosite', 'blog');
         $options['public'] = get_string('publishtoworld', 'blog');
