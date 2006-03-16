@@ -261,7 +261,7 @@
                    "   AND q.id IN ($questionlist)".
                    "   AND q.qtype = '".ESSAY."'".
                    "   ORDER BY q.name";
-            if (!$questions = get_records_sql($sql)) {
+            if (empty($questionlist) or !$questions = get_records_sql($sql)) {
                 print_heading(get_string('noessayquestionsfound', 'quiz'));
                 print_footer($course);
                 exit();
