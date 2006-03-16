@@ -109,7 +109,8 @@ class block_site_main_menu extends block_list {
                     } else {
                         $this->content->items[] = '<a title="'.$mod->modfullname.'" '.$linkcss.' '.$extra.
                             ' href="'.$CFG->wwwroot.'/mod/'.$mod->modname.'/view.php?id='.$mod->id.'">'.$instancename.'</a>'.$editbuttons;
-                        $this->content->icons[] = '<img src="'.$icon.'" height="16" width="16" alt="'.$mod->modfullname.'" />';
+                        //Accessibility: incidental image - should be empty Alt text; removed unnecessary height/width. 
+                        $this->content->icons[] = '<img src="'.$icon.'" alt="" />';
                     }
                 }
             }
