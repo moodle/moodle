@@ -150,27 +150,6 @@ function blog_print_html_formatted_entries(&$blogFilter, $filtertype, $filtersel
 
     // First let's see if the batchpublish form has submitted data
     $post = data_submitted();
-    if (!empty($post->batchpublish)) { //make sure we're processing the edit form here
-//        print_object($post); //debug
-        foreach ($post as $key => $publishto) {
-            if ($key != 'batchpublish') {
-                $useridandentryid = explode('-', $key);
-                $userid = $useridandentryid[0];
-                $entryid = $useridandentryid[1];
-                $bloginfo = new BlogInfo($userid);
-                $blogentry = $bloginfo->get_blog_entry_by_id($entryid);
-                if ($blogentry->entryPublishState != $publishto) {
-                    if (!$blogentry->set_publishstate($publishto)) {
-                        echo 'Entry "'. $blogentry->entryTitle .'" could not be published.';
-                    } else {
-                        if ($error = $blogentry->save()) {
-                            echo 'New publish setting for entry "'. $blogentry->entryTitle .'" could not be saved. ERROR:'. $error.':<br />';
-                        }
-                    }
-                }
-            }
-        }
-    }
 
     $morelink = '<br />&nbsp;&nbsp;';
     // show personal or general heading block as applicable
@@ -188,6 +167,15 @@ function blog_print_html_formatted_entries(&$blogFilter, $filtertype, $filtersel
     // show page next/previous links if applicable
     print_paging_bar($blogFilter->get_viewable_entry_count(), $blogpage, $bloglimit, $blogFilter->baseurl, 'blogpage');
     print '</div>';
+
+    if (blog_isLoggedIn()) {
+        //the user's blog is enabled and they are viewing their own blog
+        $addlink = '<div align="center">';
+        $addlink .= $blogFilter->get_complete_link($CFG->wwwroot .'/blog/edit.php', get_string('addnewentry', 'blog'));
+        $addlink .='</div>';
+        echo $addlink;
+    }
+
     if (isset($blogEntries) ) {
 
         $count = 0;
@@ -198,17 +186,6 @@ function blog_print_html_formatted_entries(&$blogFilter, $filtertype, $filtersel
         if (!$count) {
             print '<br /><center>'. get_string('noentriesyet', 'blog') .'</center><br />';
 
-            if (blog_isLoggedIn()) {
-                $morelink = '<br />&nbsp;&nbsp;';
-                $morelink .= $blogFilter->get_complete_link('<a href="'. $CFG->wwwroot .'/blog/edit.php', get_string('addnewentry', 'blog'))."\n";
-                
-            }
-        }
-
-        //yu: testing code
-        if (blog_isLoggedIn()) {
-        //the user's blog is enabled and they are viewing their own blog
-            $morelink .= $blogFilter->get_complete_link($CFG->wwwroot .'/blog/edit.php', get_string('addnewentry', 'blog'));
         }
 
         print $morelink.'<br />'."\n";
@@ -224,11 +201,7 @@ function blog_print_html_formatted_entries(&$blogFilter, $filtertype, $filtersel
     }
 
     $output = '<br /><center>'. get_string('noentriesyet', 'blog') .'</center><br />';
-    
-    if (blog_isLoggedIn()) {
-        //the user's blog is enabled and they are viewing their own blog
-        $output .= $blogFilter->get_complete_link($CFG->wwwroot .'/blog/edit.php', get_string('addnewentry', 'blog'));
-    }
+
     print $output;
     unset($blogFilter->filtered_entries);
 }
