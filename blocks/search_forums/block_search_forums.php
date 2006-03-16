@@ -30,7 +30,7 @@ class block_search_forums extends block_base {
         $this->content->text  = '<div class="searchform">';
         $this->content->text .= '<form name="search" action="'.$CFG->wwwroot.'/mod/forum/search.php" style="display:inline">';
         $this->content->text .= '<input name="id" type="hidden" value="'.$this->instance->pageid.'" />';  // course
-        $this->content->text .= '<input name="search" type="text" size="16" value="" alt="search" />';
+        $this->content->text .= '<input name="search" type="text" size="16" value="" />';
         $this->content->text .= '<button type="submit" title="'.get_string('search').'"><img src="'.$CFG->pixpath.'/a/r_go.gif" alt="" class="resize" /><span class="accesshide">'.get_string('search').'</span></button><br />'; 
         $this->content->text .= '<a href="'.$CFG->wwwroot.'/mod/forum/search.php?id='.$this->instance->pageid.'">'.$advancedsearch.'</a>';
         $this->content->text .= helpbutton('search', $advancedsearch, 'moodle', true, false, '', true);
