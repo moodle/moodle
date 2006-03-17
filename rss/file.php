@@ -31,7 +31,7 @@
     // extract relative path components
     $args = explode('/', trim($relativepath, '/'));
 
-    $isblog = ($args[0] == 'blogs');
+    $isblog = ($args[0] == 'blog');
 
     if (count($args) < 5 && !$isblog) {
         not_found();
