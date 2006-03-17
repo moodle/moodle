@@ -334,18 +334,10 @@ if ($um->preprocess_files() && confirm_sesskey()) {
                         if ($course[$i] && $groupid[$i]) {
                             if (record_exists('user_students','userid',$user->id,'course',$course[$i]->id) ||
                                     record_exists('user_teachers','userid',$user->id,'course',$course[$i]->id)) {
-                                $usergroup = user_group($course[$i]->id,$user->id);
-                                if ($usergroup) {
-                                    notify('-->' . get_string('groupalready','error',$usergroup->name));
+                                if (add_user_to_group($groupid[$i], $user->id)) {
+                                    notify('-->' . get_string('addedtogroup','',$addgroup[$i]));
                                 } else {
-                                    $group_member->groupid = $groupid[$i];
-                                    $group_member->userid = $user->id;
-                                    $group_member->timeadded = time();
-                                    if (insert_record("groups_members",$group_member)) {
-                                        notify('-->' . get_string('addedtogroup','',$addgroup[$i]));
-                                    } else {
-                                        notify('-->' . get_string('addedtogroupnot','',$addgroup[$i]));
-                                    }
+                                    notify('-->' . get_string('addedtogroupnot','',$addgroup[$i]));
                                 }
                             } else {
                                 notify('-->' . get_string('addedtogroupnotenrolled','',$addgroup[$i]));
