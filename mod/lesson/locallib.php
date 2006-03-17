@@ -683,10 +683,10 @@ function lesson_display_cluster_jump($lesson_id, $pageid) {
  * This function is only executed when a teacher is 
  * checking the navigation for a lesson.
  *
- * @param int $lessonid Id of the lesson that is to be checked.
+ * @param int $lesson Id of the lesson that is to be checked.
  * @return boolean True or false.
  **/
-function execute_teacherwarning($lesson) {
+function lesson_display_teacher_warning($lesson) {
     // get all of the lesson answers
     if (!$lessonanswers = get_records_select("lesson_answers", "lessonid = $lesson")) {
         // no answers, then not useing cluster or unseen

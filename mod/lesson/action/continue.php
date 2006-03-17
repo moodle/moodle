@@ -37,7 +37,7 @@
 
     // This is the warning msg for teachers to inform them that cluster and unseen does not work while logged in as a teacher
     if(isteacher($course->id)) {
-        if (execute_teacherwarning($lesson->id)) {
+        if (lesson_display_teacher_warning($lesson->id)) {
             $warningvars->cluster = get_string("clusterjump", "lesson");
             $warningvars->unseen = get_string("unseenpageinbranch", "lesson");
             echo "<p align=\"center\">".get_string("teacherjumpwarning", "lesson", $warningvars)."</p>";
