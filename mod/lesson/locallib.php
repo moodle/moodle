@@ -2,81 +2,153 @@
 /// mnielsen
 /// locallib.php is the new lib file for lesson module.
 /// including locallib.php is the same as including the old lib.php
-    
+
+/**
+* Next page -> any page not seen before
+*/    
 if (!defined("LESSON_UNSEENPAGE")) {
     define("LESSON_UNSEENPAGE", 1); // Next page -> any page not seen before
-    }
+}
+/**
+* Next page -> any page not answered correctly
+*/
 if (!defined("LESSON_UNANSWEREDPAGE")) {
     define("LESSON_UNANSWEREDPAGE", 2); // Next page -> any page not answered correctly
-    }
+}
 
+/**
+* Define different lesson flows for next page
+*/
 $LESSON_NEXTPAGE_ACTION = array (0 => get_string("normal", "lesson"),
                           LESSON_UNSEENPAGE => get_string("showanunseenpage", "lesson"),
                           LESSON_UNANSWEREDPAGE => get_string("showanunansweredpage", "lesson") );
 
+// Lesson jump types defined
+//  TODO: instead of using define statements, create an array with all the jump values
 
+/**
+ * Jump to Next Page
+ */
 if (!defined("LESSON_NEXTPAGE")) {
-    define("LESSON_NEXTPAGE", -1); // Next page
-    }
+    define("LESSON_NEXTPAGE", -1);
+}
+/**
+ * End of Lesson
+ */
 if (!defined("LESSON_EOL")) {
-    define("LESSON_EOL", -9); // End of Lesson
-    }
+    define("LESSON_EOL", -9);
+}
+/**
+ * Jump to an unseen page within a branch and end of branch or end of lesson
+ */
 if (!defined("LESSON_UNSEENBRANCHPAGE")) {
-    define("LESSON_UNSEENBRANCHPAGE", -50); // Unseen branch page
-    }
+    define("LESSON_UNSEENBRANCHPAGE", -50);
+}
+/**
+ * Jump to Previous Page
+ */
 if (!defined("LESSON_PREVIOUSPAGE")) {
-    define("LESSON_PREVIOUSPAGE", -40); // previous page
-    }
+    define("LESSON_PREVIOUSPAGE", -40);
+}
+/**
+ * Jump to a random page within a branch and end of branch or end of lesson
+ */
 if (!defined("LESSON_RANDOMPAGE")) {
-    define("LESSON_RANDOMPAGE", -60); // random branch page
-    }
+    define("LESSON_RANDOMPAGE", -60);
+}
+/**
+ * Jump to a random Branch
+ */
 if (!defined("LESSON_RANDOMBRANCH")) {
-    define("LESSON_RANDOMBRANCH", -70); // random branch
-    }
+    define("LESSON_RANDOMBRANCH", -70);
+}
+/**
+ * Cluster Jump
+ */
 if (!defined("LESSON_CLUSTERJUMP")) {
-    define("LESSON_CLUSTERJUMP", -80); // random within a cluster
-    }
+    define("LESSON_CLUSTERJUMP", -80);
+}
+/**
+ * Undefined
+ */    
 if (!defined("LESSON_UNDEFINED")) {
-    define("LESSON_UNDEFINED", -99); // undefined
-    }
+    define("LESSON_UNDEFINED", -99);
+}
 
+// Lesson question types defined
+
+/**
+ * Short answer question type
+ */
 if (!defined("LESSON_SHORTANSWER")) {
     define("LESSON_SHORTANSWER",   "1");
 }        
+/**
+ * True/False question type
+ */
 if (!defined("LESSON_TRUEFALSE")) {
     define("LESSON_TRUEFALSE",     "2");
 }
-if (!defined("LESSON_MULTICHOICE")) { // if you change the value of this (WHICH YOU SHOULDNT) then you need to change it in restorelib.php as well
+/**
+ * Multichoice question type
+ *
+ * If you change the value of this then you need 
+ * to change it in restorelib.php as well.
+ */
+if (!defined("LESSON_MULTICHOICE")) {
     define("LESSON_MULTICHOICE",   "3");
 }
+/**
+ * Random question type - not used
+ */
 if (!defined("LESSON_RANDOM")) {
     define("LESSON_RANDOM",        "4");
 }
-if (!defined("LESSON_MATCHING")) { // if you change the value of this (WHICH YOU SHOULDNT) then you need to change it in restorelib.php, in mysql.php and postgres7.php as well
+/**
+ * Matching question type
+ *
+ * If you change the value of this then you need
+ * to change it in restorelib.php, in mysql.php 
+ * and postgres7.php as well.
+ */
+if (!defined("LESSON_MATCHING")) {
     define("LESSON_MATCHING",      "5");
 }
+/**
+ * Not sure - not used
+ */
 if (!defined("LESSON_RANDOMSAMATCH")) {
     define("LESSON_RANDOMSAMATCH", "6");
 }
+/**
+ * Not sure - not used
+ */
 if (!defined("LESSON_DESCRIPTION")) {
     define("LESSON_DESCRIPTION",   "7");
 }
+/**
+ * Numerical question type
+ */
 if (!defined("LESSON_NUMERICAL")) {
     define("LESSON_NUMERICAL",     "8");
 }
+/**
+ * Multichoice with multianswer question type
+ */
 if (!defined("LESSON_MULTIANSWER")) {
     define("LESSON_MULTIANSWER",   "9");
 }
+/**
+ * Essay question type
+ */
 if (!defined("LESSON_ESSAY")) {
     define("LESSON_ESSAY", "10");
 }
-if (!defined("LESSON_CLUSTER")) {
-    define("LESSON_CLUSTER",   "30");
-}
-if (!defined("LESSON_ENDOFCLUSTER")) {
-    define("LESSON_ENDOFCLUSTER",   "31");
-}
 
+/**
+ * Lesson question type array.
+ * Contains all question types used
+ */
 $LESSON_QUESTION_TYPE = array ( LESSON_MULTICHOICE => get_string("multichoice", "quiz"),
                               LESSON_TRUEFALSE     => get_string("truefalse", "quiz"),
                               LESSON_SHORTANSWER   => get_string("shortanswer", "quiz"),
@@ -89,16 +161,44 @@ $LESSON_QUESTION_TYPE = array ( LESSON_MULTICHOICE => get_string("multichoice", 
 //                            LESSON_MULTIANSWER   => get_string("multianswer", "quiz"),
                               );
 
+// Non-question page types
+
+/**
+ * Branch Table page
+ */
 if (!defined("LESSON_BRANCHTABLE")) {
     define("LESSON_BRANCHTABLE",   "20");
 }
+/**
+ * End of Branch page
+ */
 if (!defined("LESSON_ENDOFBRANCH")) {
     define("LESSON_ENDOFBRANCH",   "21");
 }
+/**
+ * Start of Cluster page
+ */
+if (!defined("LESSON_CLUSTER")) {
+    define("LESSON_CLUSTER",   "30");
+}
+/**
+ * End of Cluster page
+ */
+if (!defined("LESSON_ENDOFCLUSTER")) {
+    define("LESSON_ENDOFCLUSTER",   "31");
+}
 
+// other variables...
+
+/**
+ * Flag for the editor for the answer textarea.
+ */
 if (!defined("LESSON_ANSWER_EDITOR")) {
     define("LESSON_ANSWER_EDITOR",   "1");
 }
+/**
+ * Flag for the editor for the response textarea.
+ */
 if (!defined("LESSON_RESPONSE_EDITOR")) {
     define("LESSON_RESPONSE_EDITOR",   "2");
 }
@@ -107,21 +207,24 @@ if (!defined("LESSON_RESPONSE_EDITOR")) {
 /// Any other lesson functions go here.  Each of them must have a name that 
 /// starts with lesson_
 
-/*******************************************************************/
+/**
+ * Given some question info and some data about the the answers
+ * this function parses, organises and saves the question
+ *
+ * This is only used when IMPORTING questions and is only called
+ * from format.php
+ * Lifted from mod/quiz/lib.php - 
+ *    1. all reference to oldanswers removed
+ *    2. all reference to quiz_multichoice table removed
+ *    3. In SHORTANSWER questions usecase is store in the qoption field
+ *    4. In NUMERIC questions store the range as two answers
+ *    5. TRUEFALSE options are ignored
+ *    6. For MULTICHOICE questions with more than one answer the qoption field is true
+ * 
+ * @param opject $question Contains question data like question, type and answers.
+ * @return object Returns $result->error or $result->notice.
+ **/
 function lesson_save_question_options($question) {
-/// Given some question info and some data about the the answers
-/// this function parses, organises and saves the question
-/// This is only used when IMPORTING questions and is only called
-/// from format.php
-/// Lifted from mod/quiz/lib.php - 
-///    1. all reference to oldanswers removed
-///    2. all reference to quiz_multichoice table removed
-///    3. In SHORTANSWER questions usecase is store in the qoption field
-///    4. In NUMERIC questions store the range as two answers
-///    5. TRUEFALSE options are ignored
-///    6. For MULTICHOICE questions with more than one answer the qoption field is true
-///
-/// Returns $result->error or $result->notice
     
     $timenow = time();
     switch ($question->qtype) {
@@ -415,11 +518,21 @@ function lesson_save_question_options($question) {
     }
     return true;
 }
-/*******************************************************************/
-function lesson_choose_from_menu ($options, $name, $selected="", $nothing="choose", $script="", $nothingvalue="0", $return=false) {
-/// Given an array of value, creates a popup menu to be part of a form
-/// $options["value"]["label"]
-    
+
+/**
+ * Given an array of value, creates a popup menu to be part of a form.
+ * 
+ * @param array $options Used to create the popup menu values ( $options["value"]["label"] ).
+ * @param string $name Name of the select form element.
+ * @param string $selected Current value selected in the popup menu.
+ * @param string $nothing If set, used as the first value in the popup menu.
+ * @param string $script OnChange javascript code.
+ * @param string|int $nothingvalue Value of the $nothing parameter.
+ * @param boolean $return False: Print out the popup menu automatically  True: Return the popup menu.
+ * @return string May return the popup menu as a string.
+ * @todo replace the use of this function with choose_from_menu in lib/weblib.php
+ **/
+function lesson_choose_from_menu ($options, $name, $selected="", $nothing="choose", $script="", $nothingvalue="0", $return=false) {    
     if ($nothing == "choose") {
         $nothing = get_string("choose")."...";
     }
@@ -463,9 +576,18 @@ function lesson_choose_from_menu ($options, $name, $selected="", $nothing="choos
     }
 }   
 
-/*******************************************************************/
+/**
+ * Determins if a jumpto value is correct or not.
+ *
+ * returns true if jumpto page is (logically) after the pageid page or
+ * if the jumpto value is a special value.  Returns false in all other cases.
+ * 
+ * @param int $pageid Id of the page from which you are jumping from.
+ * @param int $jumpto The jumpto number.
+ * @return boolean True or false after a series of tests.
+ * @todo Can be optimized to only have to make 1 or 2 database calls instead of 1 foreach page in the lesson
+ **/
 function lesson_iscorrect($pageid, $jumpto) {
-    // returns true is jumpto page is (logically) after the pageid page, other returns false
     
     // first test the special values
     if (!$jumpto) {
@@ -497,12 +619,17 @@ function lesson_iscorrect($pageid, $jumpto) {
     return false; // should never be reached
 }
 
-/*******************************************************************/
+/**
+ * Checks to see if a page is a branch table or is
+ * a page that is enclosed by a branch table and an end of branch or end of lesson.
+ * May call this function: {@link lesson_is_page_in_branch()}
+ *
+ * @param int $lesson_id Id of the lesson to which the page belongs.
+ * @param int $pageid Id of the page.
+ * @return boolean True or false.
+ * @todo Change $lesson_id param to $lessonid.
+ **/
 function lesson_display_branch_jumps($lesson_id, $pageid) {
-// this fucntion checks to see if a page is a branch or is
-// a page that is enclosed by a branch table and an endofbranch/eol
-
-    // NoticeFix  ... this may cause problems... not sure
     if($pageid == 0) {
         // first page
         return false;
@@ -520,12 +647,17 @@ function lesson_display_branch_jumps($lesson_id, $pageid) {
     return lesson_is_page_in_branch($lessonpages, $pageid);
 }
 
-/*******************************************************************/
+/**
+ * Checks to see if a page is a cluster page or is
+ * a page that is enclosed by a cluster page and an end of cluster or end of lesson 
+ * May call this function: {@link lesson_is_page_in_cluster()}
+ * 
+ * @param int $lesson_id Id of the lesson to which the page belongs.
+ * @param int $pageid Id of the page.
+ * @return boolean True or false.
+ * @todo Change $lesson_id param to $lessonid.
+ **/
 function lesson_display_cluster_jump($lesson_id, $pageid) {
-// this fucntion checks to see if a page is a cluster page or is
-// a page that is enclosed by a cluster page and an endofcluster/eol
-
-    // NoticeFix  ... this may cause problems... not sure
     if($pageid == 0) {
         // first page
         return false;
@@ -544,14 +676,17 @@ function lesson_display_cluster_jump($lesson_id, $pageid) {
 
 }
 
-// 6/21/04
-/*******************************************************************/
+/**
+ * Checks to see if a LESSON_CLUSTERJUMP or 
+ * a LESSON_UNSEENBRANCHPAGE is used in a lesson.
+ *
+ * This function is only executed when a teacher is 
+ * checking the navigation for a lesson.
+ *
+ * @param int $lessonid Id of the lesson that is to be checked.
+ * @return boolean True or false.
+ **/
 function execute_teacherwarning($lesson) {
-// this function checks to see if a LESSON_CLUSTERJUMP or 
-// a LESSON_UNSEENBRANCHPAGE is used in a lesson.
-// This function is only executed when a teacher is 
-// checking the navigation for a lesson.
-
     // get all of the lesson answers
     if (!$lessonanswers = get_records_select("lesson_answers", "lessonid = $lesson")) {
         // no answers, then not useing cluster or unseen
@@ -569,16 +704,22 @@ function execute_teacherwarning($lesson) {
 }
 
 
-// 6/18/04
-/*******************************************************************/
+/**
+ * Interprets LESSON_CLUSTERJUMP jumpto value.
+ *
+ * This will select a page randomly
+ * and the page selected will be inbetween a cluster page and end of cluter or end of lesson
+ * and the page selected will be a page that has not been viewed already
+ * and if any pages are within a branch table or end of branch then only 1 page within 
+ * the branch table or end of branch will be randomly selected (sub clustering).
+ * 
+ * @param int $lesson Id of the lesson.
+ * @param int $user Id of the user.
+ * @param int $pageid Id of the current page from which we are jumping from.
+ * @return int The id of the next page.
+ * @todo Change $lesson param to $lessonid and $user param to $userid
+ **/
 function lesson_cluster_jump($lesson, $user, $pageid) {
-// this fucntion interprets LESSON_CLUSTERJUMP
-// it will select a page randomly
-// and the page selected will be inbetween a cluster page and endofcluter/eol
-// and the page selected will be a page that has not been viewed already
-// and if any pages are within a branchtable/endofbranch then only 1 page within 
-// the branchtable/endofbranch will be randomly selected (sub clustering)
-
     // get the number of retakes
     if (!$retakes = count_records("lesson_grades", "lessonid", $lesson, "userid", $user)) {
         $retakes = 0;
@@ -669,10 +810,14 @@ function lesson_cluster_jump($lesson, $user, $pageid) {
     }
 }
 
-/*******************************************************************/
+/**
+ * Returns pages that are within a branch table and another branch table, end of branch or end of lesson
+ * 
+ * @param array $lessonpages An array of lesson page objects.
+ * @param int $branchid The id of the branch table that we would like the containing pages for.
+ * @return array An array of lesson page objects.
+ **/
 function lesson_pages_in_branch($lessonpages, $branchid) {
-// returns pages that are within a branch
-    
     $pageid = $lessonpages[$branchid]->nextpageid;  // move to the first page after the branch table
     $pagesinbranch = array();
     
@@ -691,11 +836,19 @@ function lesson_pages_in_branch($lessonpages, $branchid) {
     return $pagesinbranch;
 }
 
-/*******************************************************************/
+/**
+ * Interprets the LESSON_UNSEENBRANCHPAGE jump.
+ * 
+ * will return the pageid of a random unseen page that is within a branch
+ *
+ * @see lesson_pages_in_branch()
+ * @param int $lesson Id of the lesson.
+ * @param int $user Id of the user.
+ * @param int $pageid Id of the page from which we are jumping.
+ * @return int Id of the next page.
+ * @todo Change params $lesson to $lessonid and $user to $userid.
+ **/
 function lesson_unseen_question_jump($lesson, $user, $pageid) {
-// This function interprets the LESSON_UNSEENBRANCHPAGE jump.
-// will return the pageid of a random unseen page that is within a branch
-
     // get the number of retakes
     if (!$retakes = count_records("lesson_grades", "lessonid", $lesson, "userid", $user)) {
         $retakes = 0;
@@ -755,11 +908,15 @@ function lesson_unseen_question_jump($lesson, $user, $pageid) {
     }
 }
 
-// 6/15/04
-/*******************************************************************/
+/**
+ * Handles the unseen branch table jump.
+ *
+ * @param int $lesson Lesson id.
+ * @param int $user User id.
+ * @return int Will return the page id of a branch table or end of lesson
+ * @todo Change $lesson param to $lessonid and change $user param to $userid.
+ **/
 function lesson_unseen_branch_jump($lesson, $user) {
-// This will return a random unseen branch table
-
     if (!$retakes = count_records("lesson_grades", "lessonid", $lesson, "userid", $user)) {
         $retakes = 0;
     }
@@ -808,11 +965,15 @@ function lesson_unseen_branch_jump($lesson, $user) {
     }
 }
 
-/*******************************************************************/
+/**
+ * Handles the random jump between a branch table and end of branch or end of lesson (LESSON_RANDOMPAGE).
+ * 
+ * @param int $lesson Lesson id.
+ * @param int $pageid The id of the page that we are jumping from (?)
+ * @return int The pageid of a random page that is within a branch table
+ * @todo Change $lesson param to $lessonid.
+ **/
 function lesson_random_question_jump($lesson, $pageid) {
-// This function will return the pageid of a random page 
-// that is within a branch table
-
     // get the lesson pages
     if (!$lessonpages = get_records_select("lesson_pages", "lessonid = $lesson")) {
         error("Error: could not find records in lesson_pages table");
@@ -838,11 +999,18 @@ function lesson_random_question_jump($lesson, $pageid) {
     }
 }
 
-// 6/15/04
-/*******************************************************************/
+/**
+ * Check to see if a page is below a branch table (logically).
+ * 
+ * Will return true if a branch table is found logically above the page.
+ * Will return false if an end of branch, cluster or the beginning
+ * of the lesson is found before a branch table.
+ *
+ * @param array $pages An array of lesson page objects.
+ * @param int $pageid Id of the page for testing.
+ * @return boolean
+ */
 function lesson_is_page_in_branch($pages, $pageid) {
-// This function's purpose is to check if a page is within a branch or not
-
     $pageid = $pages[$pageid]->prevpageid; // move up one
 
     // go up the pages till branch table    
@@ -861,10 +1029,18 @@ function lesson_is_page_in_branch($pages, $pageid) {
 
 }
 
-/*******************************************************************/
+/**
+ * Check to see if a page is below a cluster page (logically).
+ * 
+ * Will return true if a cluster is found logically above the page.
+ * Will return false if an end of cluster or the beginning
+ * of the lesson is found before a cluster page.
+ *
+ * @param array $pages An array of lesson page objects.
+ * @param int $pageid Id of the page for testing.
+ * @return boolean
+ */
 function lesson_is_page_in_cluster($pages, $pageid) {
-// This function checks to see if a page is within a cluster or not
-
     $pageid = $pages[$pageid]->prevpageid; // move up one
 
     // go up the pages till branch table    
@@ -880,11 +1056,23 @@ function lesson_is_page_in_cluster($pages, $pageid) {
     }
 }
 
-/*******************************************************************/
+/**
+ * Prints the contents for the left menu
+ *
+ * Runs through all of the lesson pages and calls {@link lesson_print_tree_link_menu()}
+ * to print out the link.
+ * 
+ * @see lesson_print_tree_link_menu()
+ * @param int $lessonid Lesson id.
+ * @param int $pageid Page id of the first page of the lesson.
+ * @param int $id The cmid of the lesson.
+ * @param boolean $showpages An optional paramater to show question pages as well as branch tables in the left menu (NYI)
+ * @todo change $id param to $cmid.  Finnish implementing the $showpages feature.  
+ *       Not necessary to pass $pageid, we can find that out in the function.  
+ *       Also, no real need for {@link lesson_print_tree_link_menu()}.  Everything can be handled in this function.
+ */
 function lesson_print_tree_menu($lessonid, $pageid, $id, $showpages=false) {
-// prints the contents of the left menu
-
-    if(!$pages = get_records_select("lesson_pages", "lessonid = $lessonid")) {
+    if (!$pages = get_records_select("lesson_pages", "lessonid = $lessonid")) {
         error("Error: could not find lesson pages");
     }
     echo '<ul>';
@@ -895,10 +1083,17 @@ function lesson_print_tree_menu($lessonid, $pageid, $id, $showpages=false) {
     echo '</ul>';
 }
 
-/*******************************************************************/
+/**
+ * Prints the actual link for the left menu
+ *
+ * Only prints branch tables that have display set to on.
+ * 
+ * @param object $page Lesson page object.
+ * @param int $id The cmid of the lesson.
+ * @param boolean $showpages An optional paramater to show question pages as well as branch tables in the left menu (NYI)
+ * @todo change $id param to $cmid.  Finnish implementing the $showpages feature.
+ */
 function lesson_print_tree_link_menu($page, $id, $showpages=false) { 
-// prints the actual link for the left menu
-
     if ($page->qtype == LESSON_BRANCHTABLE && !$page->display) {
         return false;
     } elseif ($page->qtype != LESSON_BRANCHTABLE) {
@@ -930,9 +1125,23 @@ function lesson_print_tree_link_menu($page, $id, $showpages=false) {
     echo $output;
 } 
 
-/*******************************************************************/
+/**
+ * Prints out the tree view list.
+ *
+ * Each page in the lesson is printed out as a link.  If the page is a branch table
+ * or an end of branch then the link color changes and the answer jumps are also printed
+ * alongside the links.  Also, the editing buttons (move, update, delete) are printed
+ * next to the links.
+ * 
+ * @uses $USER
+ * @param int $pageid Page id of the first page of the lesson.
+ * @param int $lessonid Id of the lesson.
+ * @param int $cmid The course module id of the lesson.
+ * @param string $pixpath Path to the pictures.
+ * @todo $pageid does not need to be passed.  Can be found in the function.  $pixpath is just
+ *       $CFG->pixpath.  So $CFG should be declaired globally and be used instead of passed.
+ */
 function lesson_print_tree($pageid, $lessonid, $cmid, $pixpath) {
-// this function prints out the tree view list
     global $USER;
 
     if(!$pages = get_records_select("lesson_pages", "lessonid = $lessonid")) {
@@ -992,9 +1201,25 @@ function lesson_print_tree($pageid, $lessonid, $cmid, $pixpath) {
     echo "</table>";
 }
 
-/*******************************************************************/
-function lesson_calculate_ongoing_score($lesson, $userid, $retries, $return=false) {
-// this calculates and prints the ongoing score for students    
+/**
+ * Calculates a user's grade for a lesson.
+ *
+ * This is used for the ongoing score feature.  It will calculate the user's
+ * score based on how many points they have earned thus far in the lesson out
+ * of the maximum that they could have earned.  Example: user answers 4 questions out
+ * of 20.  Of the 4, the user earned 5 points out of a possible 12.  So, their current
+ * score would be 5 out of 12 and not 5 out of the total for the whole lesson.
+ * This function is also used by essay grading.  It is used to recalculate a students grade
+ * after a teacher assigns a grade for an essay.
+ * 
+ * @param object $lesson The lesson that the user is taking.
+ * @param int $userid Id of the user.
+ * @param int $retries The attempt number.
+ * @param boolean $return A flag to return the grade or print it out.
+ * @return float May return the grade.
+ * @todo Break out the grading section of this code to use for grading lessons (also have grading code in view.php)
+ */
+function lesson_calculate_ongoing_score($lesson, $userid, $retries, $return=false) {  
     if (!$lesson->custom) {
         $ncorrect = 0;                    
         $temp = array();    
@@ -1100,9 +1325,16 @@ function lesson_calculate_ongoing_score($lesson, $userid, $retries, $return=fals
     }
 }
 
-/*******************************************************************/
+/**
+ * Prints tabs for the editing and adding pages.  Each tab is a question type.
+ *  
+ * @param array $qtypes The question types array (may not need to pass this because it is defined in this file)
+ * @param string $selected Current selected tab
+ * @param string $link The base href value of the link for the tab
+ * @param string $onclick Javascript for the tab link
+ * @return void
+ */
 function lesson_qtype_menu($qtypes, $selected="", $link="", $onclick="") {
-// prints the question types for when editing and adding a page
     $tabs = array();
     $tabrows = array();
 
@@ -1115,10 +1347,12 @@ function lesson_qtype_menu($qtypes, $selected="", $link="", $onclick="") {
 
 }
 
-/*******************************************************************/
+/**
+ * Checks to see if the nickname is naughty or not.
+ * 
+ * @todo Move this to highscores.php
+ */
 function lesson_check_nickname($name) {
-// used to check high score nicknames.
-// checks nickname against a list of "bad words"
 
     if (empty($name)) {
         return false;
