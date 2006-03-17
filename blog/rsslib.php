@@ -14,9 +14,9 @@
         $rsspix = $CFG->pixpath .'/i/rss.gif';
 
         if ($CFG->slasharguments) {
-            $rsspath = $CFG->wwwroot.'/rss/file.php/blogs/'.$filtertype.'/'.$filterselect.'/rss.xml';
+            $rsspath = $CFG->wwwroot.'/rss/file.php/blog/'.$filtertype.'/'.$filterselect.'/rss.xml';
         } else {
-            $rsspath = $CFG->wwwroot.'/rss/file.php?file=/blogs/'.$filtertype.'/'.$filterselect.'/rss.xml';
+            $rsspath = $CFG->wwwroot.'/rss/file.php?file=/blog/'.$filtertype.'/'.$filterselect.'/rss.xml';
         }
         print '<div align="right"><a href="'. $rsspath .'"><img src="'. $rsspix .'" title="'. strip_tags($tooltiptext) .'" alt="" /></a></div>';
 
@@ -44,7 +44,7 @@
      */
     function blog_rss_file_name($type, $id) {
         global $CFG;
-        $filename = "$CFG->dataroot/rss/blogs/$type/$id/rss.xml";
+        $filename = "$CFG->dataroot/rss/blog/$type/$id/rss.xml";
         return $filename;
     }
     
