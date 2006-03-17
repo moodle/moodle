@@ -24,6 +24,7 @@ $groupid = optional_param('groupid',0,PARAM_INT);
 $courseid = optional_param('courseid',0,PARAM_INT);
 $tag = s(urldecode(optional_param('tag', '', PARAM_NOTAGS)));
 $tagid = optional_param('tagid', 0, PARAM_INT);
+$postid = optional_param('postid',0,PARAM_INT);
 
 $filtertype = optional_param('filtertype', '', PARAM_ALPHA);
 $filterselect = optional_param('filterselect', 0, PARAM_INT);
@@ -122,29 +123,9 @@ switch ($filtertype) {
         if ($CFG->bloglevel < BLOG_USER_LEVEL) {
             error ('Blogs is not enabled');
         }
-        $canview = 0;    //bad start
-        
-        $usercourses = get_my_courses($filterselect);
-        foreach ($usercourses as $usercourse) {
-            /// if viewer and user sharing same non-spg course, then grant permission
-            if (groupmode($usercourse)!= SEPARATEGROUPS){
-                if (isstudent($usercourse->id) || isteacher($usercourse->id)) {
-                    $canview = 1;
-                }
-            } else {
-                /// now we need every group the user is in, and check to see if view is a member
-                if ($usergroups = user_group($usercourse->id, $filterselect)) {
-                    foreach ($usergroups as $usergroup) {
-                        if (ismember($usergroup->id)) {
-                            $canview = 1;
-                        }
-                    }
-                }
-            }
-        }
-        if (!$canview && $CFG->bloglevel < BLOG_SITE_LEVEL) {
-            error ('you can not view this user\'s blogs');
-        }
+
+        blog_user_can_view_user_post($filterselect);
+
         /// check to see if the viewer is sharing no_group, visible group course.
         /// if not , check if the viewer is in any spg group as the user
     break;
@@ -157,7 +138,7 @@ if ($limit == 'none') {
     $limit = get_user_preferences('blogpagesize',8);
 }
 
-$blogFilter =& new BlogFilter($userid, '', $limit, $start,$filtertype, $filterselect, $tagid, $tag);
+$blogFilter =& new BlogFilter($userid, $postid, $limit, $start,$filtertype, $filterselect, $tagid, $tag);
 //print_object($blogFilter); //debug
 
 include($CFG->dirroot .'/blog/header.php');

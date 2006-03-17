@@ -9,6 +9,7 @@ require_once($CFG->dirroot .'/blog/class.BlogEntry.php');
 require_once($CFG->dirroot .'/blog/class.BlogFilter.php');
 require_once($CFG->libdir .'/blocklib.php');
 require_once($CFG->libdir .'/pagelib.php');
+require_once('rsslib.php');
 require_once($CFG->dirroot .'/blog/blogpage.php');
 
 /* blog access level constant declaration */
@@ -166,6 +167,8 @@ function blog_print_html_formatted_entries(&$blogFilter, $filtertype, $filtersel
     $blogEntries = $blogFilter->get_filtered_entries();
     // show page next/previous links if applicable
     print_paging_bar($blogFilter->get_viewable_entry_count(), $blogpage, $bloglimit, $blogFilter->baseurl, 'blogpage');
+
+    blog_rss_print_link($filtertype, $filterselect);
     print '</div>';
 
     if (blog_isLoggedIn()) {
@@ -333,4 +336,42 @@ function blog_applicable_publish_states($courseid='') {
     return $options;
 }
 
+/// Checks to see if a user can view the blogs of another user.
+/// He can do so, if he is admin, in any same non-spg course,
+/// or spg group, but same group member
+function blog_user_can_view_user_post($targetuserid) {
+
+    $canview = 0;    //bad start
+    
+    if (isadmin()) {
+        return true;
+    }
+
+    $usercourses = get_my_courses($targetuserid);
+    foreach ($usercourses as $usercourse) {
+            /// if viewer and user sharing same non-spg course, then grant permission
+        if (groupmode($usercourse)!= SEPARATEGROUPS){
+            if (isstudent($usercourse->id) || isteacher($usercourse->id)) {
+                $canview = 1;
+                return $canview;
+            }
+        } else {
+            /// now we need every group the user is in, and check to see if view is a member
+            if ($usergroups = user_group($usercourse->id, $targetuserid)) {
+                foreach ($usergroups as $usergroup) {
+                    if (ismember($usergroup->id)) {
+                        $canview = 1;
+                        return $canview;
+                    }
+                }
+            }
+        }
+    }
+
+    if (!$canview && $CFG->bloglevel < BLOG_SITE_LEVEL) {
+        error ('you can not view this user\'s blogs');
+    }
+
+    return $canview;
+}
 ?>

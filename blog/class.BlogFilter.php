@@ -191,6 +191,18 @@ class BlogFilter {
             $tagquerysql = '';
         }
         
+        // if we have specified an ID
+        if ($this->postid) {
+
+            if ($post = get_record('post', 'id', $this->postid)) {
+                $blogEntry = new BlogEntry($post);
+                $blogEntries[] = $blogEntry;
+
+                $this->filtered_entries = $blogEntries;
+                return $this->filtered_entries;
+            }
+        }
+
         /****************************************
          * depending on the type, there are 4   *
          * different possible sqls              *
