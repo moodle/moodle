@@ -41,7 +41,7 @@
     </td>
     <td colspan="2">
      <?php
-        $options = blog_applicable_publish_states($post->courseid); //$blogEntry may be null
+        $options = blog_applicable_publish_states(); //$blogEntry may be null
         choose_from_menu($options, 'publishstate', $post->publishstate, '');
      ?>
     <?php

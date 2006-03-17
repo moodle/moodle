@@ -15,6 +15,11 @@ require_once('../config.php');
 require_once($CFG->dirroot .'/blog/lib.php');
 require_once($CFG->libdir .'/blocklib.php');
 
+/* rss testing code */
+require_once('rsslib.php');
+blog_rss_feeds();
+
+
 $id = optional_param('id', 0, PARAM_INT);
 $limit = optional_param('limit', 0, PARAM_INT);
 $start = optional_param('formstart', 0, PARAM_INT);

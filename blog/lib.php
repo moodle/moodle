@@ -221,7 +221,7 @@ function blog_print_html_formatted_entries(&$blogFilter, $filtertype, $filtersel
  *     in its complete form (eg. archive page). If anything other than 'full'
  *     display the entry in its abbreviated format (eg. index page)
  */
-function blog_print_entry(&$blogEntry, $viewtype='full', $filtertype='', $filterselect='') {
+function blog_print_entry(&$blogEntry, $viewtype='full', $filtertype='', $filterselect='', $mode='loud') {
     global $CFG, $THEME, $USER;
     static $bloginfoarray;
 
@@ -247,12 +247,12 @@ function blog_print_entry(&$blogEntry, $viewtype='full', $filtertype='', $filter
     $template['created'] = $blogEntry->formattedEntryCreated;
     $template['publishtomenu'] = $blogEntry->get_publish_to_menu(true, true);
     //forum style printing of blogs
-    blog_print_entry_content ($template, $blogEntry->entryId, $filtertype, $filterselect);
+    blog_print_entry_content ($template, $blogEntry->entryId, $filtertype, $filterselect, $mode);
 
 }
 
 //forum style printing of blogs
-function blog_print_entry_content ($template, $entryid, $filtertype='', $filterselect='') {
+function blog_print_entry_content ($template, $entryid, $filtertype='', $filterselect='', $mode='loud') {
     global $USER, $CFG, $course, $ME;
 
     $stredit = get_string('edit');
@@ -327,21 +327,9 @@ function blog_applicable_publish_states($courseid='') {
     
     // everyone gets draft access
     $options = array ( 'draft' => get_string('publishtonoone', 'blog') );
-    if (is_numeric($courseid) && $courseid != SITEID && $course = get_record('course', 'id', $courseid, '', '', '', '', 'shortname') ) {
-        require_login($courseid);
-        // if we're viewing a course allow publishing to course teachers
-        $options['teacher'] = get_string('publishtoteachers', 'blog', $course->shortname);
-        if (!$CFG->blog_enable_moderation || isadmin() || isteacher($courseid) ) {
-            // only admins and teachers can publish to course members when moderation is enabled
-            $options['course'] = get_string('publishtocourse', 'blog', $course->shortname);
-        }
-    }
+    $options['site'] = get_string('publishtosite', 'blog');
+    $options['public'] = get_string('publishtoworld', 'blog');
 
-    if (isadmin() || (is_numeric($courseid) && isteacher($courseid)) ) {
-        // only admins and teachers can see site and public options when moderation is enabled
-        $options['site'] = get_string('publishtosite', 'blog');
-        $options['public'] = get_string('publishtoworld', 'blog');
-    }
     return $options;
 }
 

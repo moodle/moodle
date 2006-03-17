@@ -126,9 +126,7 @@ if (($post = data_submitted( get_referer() )) && confirm_sesskey()) {
 
 if ($editid != '') {  // User is editing a post
     // ensure that editing is allowed first - admin users can edit any posts
-    if (!isadmin() && $CFG->blog_enable_moderation && $blogEntry->entryPublishState != 'draft') {
-        error('You are not allowed to modify a published entry. A teacher must first change this post back to draft status.'); //Daryl Hawes note: localize this line
-    }
+
     $blogEntry = $PAGE->bloginfo->get_blog_entry_by_id($editid);
 
     //using an unformatted entry body here so that extra formatting information is not stored in the db
