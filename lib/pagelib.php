@@ -427,6 +427,9 @@ class page_course extends page_base {
     // the format_name might be that activity's name etc.
     function get_format_name() {
         $this->init_full();
+        if (defined('ADMIN_STICKYBLOCKS')) {
+            return PAGE_COURSE_VIEW;
+        }
         if($this->id == SITEID) {
             return parent::get_format_name();
         }
