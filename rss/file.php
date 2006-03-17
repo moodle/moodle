@@ -31,8 +31,6 @@
     // extract relative path components
     $args = explode('/', trim($relativepath, '/'));
 
-
-
     if (count($args) < 5) {
         rss_not_found();
     }
@@ -46,7 +44,9 @@
     if ($isblog = $modulename == 'blog') {
        $blogid   = (int)$args[4];  // could be groupid / courseid  / userid  depending on $instance
        if ($args[5] != 'rss.xml') {
-           $tag   = clean_param($args[5], PARAM_FILE);  // could be groupid / courseid  / userid  depending on $instance
+           $tagid = (int)$args[5];
+       } else {
+           $tagid = 0;
        }
     } else {
         $instance = (int)$instance;  // we know it's an id number
@@ -81,31 +81,21 @@
     }
 
     //Check for "security" if the course is hidden or the activity is hidden
-    if ((!$course->visible || !$cm->visible) && (!$isteacher)) {
+    if (!$isblog and (!$course->visible || !$cm->visible) && (!$isteacher)) {
         rss_not_found();
     }
 
+    //Work out the filename of the RSS file
     if ($isblog) {
-        if (empty($tag)) {
-            $pathname = $CFG->dataroot.'/rss/blog/'.$instance.'/'.$blogid.'.xml';
-        } else {
-            $pathname = $CFG->dataroot.'/rss/blog/'.$instance.'/'.$blogid.'/'.$tag.'.xml';
-        }
+        require_once($CFG->dirroot.'/blog/rsslib.php');
+        $pathname = blog_generate_rss_feed($instance, $blogid, $tagid);
     } else {
         $pathname = $CFG->dataroot.'/rss/'.$modulename.'/'.$instance.'.xml';
     }
+
     //Check that file exists
     if (!file_exists($pathname)) {
-        if ($isblog) {
-            if (filemtime($pathname) + 3600 < time()) {
-                require_once($CFG->dirroot.'/blog/rsslib.php');
-                if (!blog_generate_rss_feed($instance, $blogid)) {
-                   rss_not_found();
-                }
-            }
-        } else {
-            rss_not_found();
-        }
+        rss_not_found();
     }
 
     //Send it to user!

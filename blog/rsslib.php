@@ -5,67 +5,103 @@
 
     // This function returns the icon (from theme) with the link to rss/file.php
     // needs some hacking to rss/file.php
-    function blog_rss_print_link($filtertype, $filterselect, $tooltiptext='') {
+    function blog_rss_print_link($filtertype, $filterselect, $tagid=0, $tooltiptext='') {
 
         global $CFG, $USER;
 
-        static $pixpath = '';
-        static $rsspath = '';
+        if (empty($USER->id)) {
+            $userid = 1;
+        } else {
+            $userid = $USER->id;
+        }
+
+        switch ($filtertype) {
+            case 'site':
+                $path = SITEID.'/'.$userid.'/blog/site/'.SITEID;
+            break;
+            case 'course':
+                $path = $filterselect.'/'.$userid.'/blog/course/'.$filterselect;
+            break;
+            case 'group':
+                $path = SITEID.'/'.$userid.'/blog/group/'.$filterselect;  
+            break;
+            case 'user':
+                $path = SITEID.'/'.$userid.'/blog/user/'.$filterselect;
+            break;
+        }
+
+        if ($tagid) {
+            $path .= '/'.$tagid;
+        }
+
+        $path .= '/rss.xml';
         $rsspix = $CFG->pixpath .'/i/rss.gif';
 
         if ($CFG->slasharguments) {
-            $rsspath = $CFG->wwwroot.'/rss/file.php/blog/'.$filtertype.'/'.$filterselect.'/rss.xml';
+            $path = $CFG->wwwroot.'/rss/file.php/'.$path;
         } else {
-            $rsspath = $CFG->wwwroot.'/rss/file.php?file=/blog/'.$filtertype.'/'.$filterselect.'/rss.xml';
+            $path = $CFG->wwwroot.'/rss/file.php?file='.$path;
         }
-        print '<div align="right"><a href="'. $rsspath .'"><img src="'. $rsspix .'" title="'. strip_tags($tooltiptext) .'" alt="" /></a></div>';
+        print '<div align="right"><a href="'. $path .'"><img src="'. $rsspix .'" title="'. strip_tags($tooltiptext) .'" alt="" /></a></div>';
 
     }
 
-    // This file adds support to rss feeds generation
-    // This function is the main entry point to database module
-    // rss feeds generation. Foreach database with rss enabled
-    // build one XML rss structure.
-    function blog_rss_feeds() {
 
-        blog_site_feeds();    //generate site level feeds, last 20 entries?
-        blog_course_feeds();    //generate all course level feeds, last 20 entries
-        blog_group_feeds();    //generate all group level feeds, last 20 entries
-        blog_user_feeds();    //generate all user level feeds, last 20 entries
-        
-    }
+    // Generate any blog RSS feed via one function (called by ../rss/file.php)
+    function blog_generate_rss_feed($type, $id, $tagid=0) {
 
+        $filename = blog_rss_file_name($type, $id, $tagid);
 
-    function blog_generate_rss_feed($type, $id, $tag='') {
+        if (file_exists($filename)) {
+            if (filemtime($filename) + 3600 > time()) {
+                return $filename;   /// It's already done so we return cached version
+            }
+        }
+
+        // Proceed to generate it
+
         switch ($type) {
            case 'site':
-               return blog_site_feeds($tag);
+               if (blog_site_feeds($tagid)) {
+                   return $filename;
+               }
            break;
            case 'course':
-               return blog_course_feed($id,$tag);
+               if ( blog_course_feed($id,$tagid)) {
+                   return $filename;
+               }
            break;
            case 'group':
-               return blog_group_feed($id,$tag);
+               if ( blog_group_feed($id,$tagid)) {
+                   return $filename;
+               }
            break;
            case 'user':
-               return blog_user_feed($id,$tag);
+               if ( blog_user_feed($id,$tagid)) {
+                   return $filename;
+               }
            break;
         }
 
-        return false;
+        return false;   // Couldn't find it or make it
     }
+
 
     /* Rss files for blogs
      * 4 different ways to store feeds.
-     * site - $CFG->dataroot/rss/blogs/site/SITEID.xml
-     * course - $CFG->dataroot/rss/blogs/course/courseid.xml
-     * group - $CFG->dataroot/rss/blogs/group/groupid.xml
-     * user - $CFG->dataroot/rss/blogs/user/userid.xml
+     * site - $CFG->dataroot/rss/blog/site/SITEID.xml
+     * course - $CFG->dataroot/rss/blog/course/courseid.xml
+     * group - $CFG->dataroot/rss/blog/group/groupid.xml
+     * user - $CFG->dataroot/rss/blog/user/userid.xml
      */
-    function blog_rss_file_name($type, $id) {
+    function blog_rss_file_name($type, $id, $tagid=0) {
         global $CFG;
-        $filename = "$CFG->dataroot/rss/blog/$type/$id/rss.xml";
-        return $filename;
+
+        if ($tagid) {
+            return "$CFG->dataroot/rss/blog/$type/$id/$tagid.xml";
+        } else {
+            return "$CFG->dataroot/rss/blog/$type/$id.xml";
+        }
     }
     
     //This function saves to file the rss feed specified in the parameters
@@ -80,7 +116,7 @@
         }
 
         if ($status) {
-            $file = blog_rss_file_name($type, $id);
+            $file = blog_rss_file_name($type, $id, $tagid);
             $rss_file = fopen($file, "w");
             if ($rss_file) {
                 $status = fwrite ($rss_file, $result);
@@ -94,7 +130,7 @@
      
     
     // Only 1 view, site level feeds
-    function blog_site_feeds($tag='') {
+    function blog_site_feeds($tagid=0) {
 
         global $CFG;
         $status = true;
@@ -112,7 +148,7 @@
         // It's working so we start...
         else {
             // Iterate over all data.
-            $filename = blog_rss_file_name('site', SITEID);  // RSS file
+            $filename = blog_rss_file_name('site', SITEID, $tagid);  // RSS file
                 // Get the most recent 20 posts
             $sql = 'SELECT p.* FROM '.$CFG->prefix.'post p,
                 '.$CFG->prefix.'user u
@@ -179,7 +215,7 @@
     }
 
     // takes in course object from db
-    function blog_course_feed($course, $tag='') {
+    function blog_course_feed($course, $tagid=0) {
 
         global $CFG;
         $status = true;
@@ -197,7 +233,7 @@
         // It's working so we start...
         else {
             // Iterate over all data.
-            $filename = blog_rss_file_name('course', $course->id);  // RSS file
+            $filename = blog_rss_file_name('course', $course->id, $tagid);  // RSS file
                 // Get the most recent 20 posts
 
             $sql = '(SELECT p.* FROM '.$CFG->prefix.'post p, '
@@ -270,7 +306,7 @@
     }
 
     // takes in course object from db
-    function blog_group_feed($group, $tag='') {
+    function blog_group_feed($group, $tagid=0) {
 
         global $CFG;
         $status = true;
@@ -288,7 +324,7 @@
         // It's working so we start...
         else {
             // Iterate over all data.
-            $filename = blog_rss_file_name('group', $group->id);  // RSS file
+            $filename = blog_rss_file_name('group', $group->id, $tagid);  // RSS file
                 // Get the most recent 20 posts
 
             $sql= 'SELECT p.* FROM '.$CFG->prefix.'post p, '
@@ -354,7 +390,7 @@
     }
 
     // takes in course object from db
-    function blog_user_feed($user, $tag='') {
+    function blog_user_feed($user, $tagid=0) {
 
         global $CFG;
         $status = true;
@@ -372,7 +408,7 @@
         // It's working so we start...
         else {
             // Iterate over all data.
-            $filename = blog_rss_file_name('user', $user->id);  // RSS file
+            $filename = blog_rss_file_name('user', $user->id, $tagid);  // RSS file
                 // Get the most recent 20 posts
 
             $sql = 'SELECT p.* FROM '.$CFG->prefix.'post p, '
