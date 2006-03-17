@@ -1,18 +1,9 @@
-<!--DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-  <title>Moodle Docs: Accessibility</title>
-  <link rel="stylesheet" href="./docstyles.css" type="TEXT/CSS" />
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-</head>
-<body>
--->
-<pre>
+<!--
+TODO:  Update as accessibility status changes.
 FILE:  lang/en_utf8/docs/accessibility.html
 NOTES: Hard-coded links need to be edited/ scripted.
        May need editing for local Moodle sites.
-</pre>
+-->
 
 
 <h1>Accessibility</h1>
@@ -33,9 +24,8 @@ NOTES: Hard-coded links need to be edited/ scripted.
  At present there are still some tables used for layout, but in general presentation (using style sheets) is separated from content.
 </p>
 
-<p>We welcome feedback, particularly reports of any inaccessible content. Please contact us via
- [<a href="./message/discussion.php?id=2">Message to admin</a>]
- [<a href="mailto:webmaster@MYSITE.EDU" title="Email us">webmaster@MYSITE.EDU</a>]
+<p>We welcome feedback, particularly reports of any inaccessible content. 
+ Please [<a href="./message/discussion.php?id=2">message the administrator</a>].
 </p>
 
 
@@ -46,16 +36,16 @@ NOTES: Hard-coded links need to be edited/ scripted.
 
 <h2>Links</h2>
 
+<p>There is a link before each side block, which allows screen reader users to skip the block.
+ Note, the link is hidden from graphical browsers.</p>
+
 <p>Many links have title attributes 
 that describe the link in greater detail, unless the text of the link already 
 fully describes the target (such as the headline of an article). If a link has 
 an access key this will be announced in the link title.</p>
 
-<p>Whenever possible, links are written to make sense out of context.</p>
-
-<p>There are no javascript: pseudo-links. All links can be followed in any 
- browser, even if scripting is turned off. There are no links that open 
- new windows without warning.</p>
+<p>Whenever possible, links are written to make sense out of context.
+ There are no javascript: pseudo-links. </p>
 
 
 <h2>Images</h2>
@@ -64,28 +54,17 @@ an access key this will be announced in the link title.</p>
 provide alternate text where appropriate; images that are purely decorative 
 contain a null alt attribute. Images, such as maps, that present complex 
 information have a longdesc attribute linking them to a text description of the 
-image content. When a page is viewed using the simplified layout the content of 
-this description page is displayed along with the image it describes.</p>
+image content.</p>
 
 
 <h2>Standards compliance</h2>
 
 <p>This site is built using valid 
  <acronym title="Extensible Hyper-Text Markup Language">XHTML</acronym> 
- for markup and uses CSS for presentation. All XHTML pages are served using 
- the application/xhtml+xml MIME type to browsers that accept it - this helps us 
- ensure that the content on all pages remains well-formed.</p>
+ for markup and uses CSS for presentation.</p>
 
 <p style="text-align:center">
-  <a href="http://validator.w3.org/check?verbose=1&ss=1&uri=http%3A%2F%2moodle.FMYSITE.EDU" title="Use the W3C validator">Validate HTML</a> 
-| <a href="http://www.contentquality.com/mynewtester/cynthia.exe?rptmode=-1&url1=http%3A%2F%2Fmoodle.FMYSITE.EDU" title="Test with Cynthia">Section 508 Check</a> 
-| <a href="http://www.contentquality.com/mynewtester/cynthia.exe?rptmode=0&warnp2n3e=1&url1=http%3A%2F%2Fmoodle.FMYSITE.EDU" title="Test with Cynthia">WCAG 1 (2,3) Check</a>
+  <a href="http://validator.w3.org/check?verbose=1&ss=1&uri=<?php echo $CFG->wwwroot; ?>" title="Use the W3C validator">Validate HTML</a> 
+| <a href="http://www.contentquality.com/mynewtester/cynthia.exe?rptmode=-1&url1=<?php echo $CFG->wwwroot; ?>" title="Test with Cynthia">Section 508 Check</a> 
+| <a href="http://www.contentquality.com/mynewtester/cynthia.exe?rptmode=0&warnp2n3e=1&url1=<?php echo $CFG->wwwroot; ?>" title="Test with Cynthia">WCAG 1 (2,3) Check</a>
 </p>
-
-<!--
-<p style="text-align:center"><font size="1"><a href="." target="_top">Moodle Documentation</a></font></p>
-<p style="text-align:center"><font size="1">Version: $Id$</font></p>
-
-</body>
-</html>
--->
