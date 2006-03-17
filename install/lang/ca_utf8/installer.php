@@ -154,7 +154,7 @@ $string['welcomep60'] = 'Les pàgines següents us guiaran per una sèrie de pas
 $string['welcomep70'] = 'Feu clic en el botó \"Següent\" per continuar la configuració de <strong>Moodle</strong>.';
 $string['wrongdestpath'] = 'El camí de destinació és erroni';
 $string['wrongsourcebase'] = 'L\'adreça (URL) base de la font és errònia';
-$string['wrongzipfilename'] = 'El nom del fitxer zip és erroni';
+$string['wrongzipfilename'] = 'El nom del fitxer ZIP és erroni';
 $string['wwwroot'] = 'Adreça web';
 $string['wwwrooterror'] = 'L\'adreça web no sembla vàlida. La instal·lació de Moodle no sembla que sigui en aquesta ubicació,';
 ?>
