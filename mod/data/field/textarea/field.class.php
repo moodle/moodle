@@ -105,7 +105,7 @@ class data_field_textarea extends data_field_base {
     function gen_textarea($usehtmleditor, $name, $cols=65, $rows=10, $value='') {
         global $CFG, $course;
         
-        return print_textarea($usehtmleditor, $rows, $cols, '', '', $name, $value='', $courseid, true);
+        return print_textarea($usehtmleditor, $rows, $cols, '', '', $name, $value, '', true);
     }
     
     
