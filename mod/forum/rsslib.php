@@ -269,12 +269,14 @@
                 if (!empty($post_files)) {            
                     $item->attachments = array();
                     foreach ($post_files as $file) {                    
+                        $attachment = new stdClass;
                         if ($CFG->slasharguments) {
-                            $ffurl = "{$CFG->wwwroot}/file.php/$post_file_area_name/$file";
+                            $attachment->url = "{$CFG->wwwroot}/file.php/$post_file_area_name/$file";
                         } else {
-                            $ffurl = "{$CFG->wwwroot}/file.php?file=/$post_file_area_name/$file";
+                            $attachment->url = "{$CFG->wwwroot}/file.php?file=/$post_file_area_name/$file";
                         }                         
-                        $item->attachments[] = $ffurl;
+                        $attachment->length = filesize("$CFG->dataroot/$post_file_area_name/$file");
+                        $item->attachments[] = $attachment;
                     }
                 }
 

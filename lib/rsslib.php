@@ -171,10 +171,12 @@ function rss_standard_header($title = NULL, $link = NULL, $description = NULL) {
         }
         $today = getdate();
         $result .= rss_full_tag('copyright', 2, false, '&copy; '. $today['year'] .' '. $site->fullname);
-        if (!empty($USER->email)) {
+        /*
+	   if (!empty($USER->email)) {
             $result .= rss_full_tag('managingEditor', 2, false, fullname($USER));
             $result .= rss_full_tag('webMaster', 2, false, fullname($USER));
         }
+	   */
 
         //write image info
         $rsspix = $CFG->pixpath."/i/rsssitelogo.gif";
@@ -217,7 +219,8 @@ function rss_add_items($items) {
             }
             $result .= rss_full_tag('title',3,false,$item->title);
             $result .= rss_full_tag('link',3,false,$item->link);
-            $result .= rss_full_tag('pubDate',3,false,date('r',$item->pubdate));
+            $result .= '<guid isPermaLink="true">' . utf8_encode(htmlspecialchars($item->link)) . '</guid>';
+            $result .= rss_full_tag('pubDate',3,false,date('D, d M Y H:i:s T',$item->pubdate));
             //Include the author if exists 
             if (isset($item->author)) {
                 //$result .= rss_full_tag('author',3,false,$item->author);
@@ -515,13 +518,6 @@ function rss_add_enclosures($item){
     $returnstring = '';
     $rss_text = $item->description;
     
-    // take into account attachments (e.g. from forum)
-    if (isset($item->attachments) && is_array($item->attachments)) {
-        foreach ($item->attachments as $attachment){
-            $rss_text .= " <a href='$attachment'/>"; //just to make sure the regexp groks it
-        }
-    }
-    
     // list of media file extensions and their respective mime types
     // could/should we put this to some more central place?
     $mediafiletypes = array(
@@ -540,6 +536,14 @@ function rss_add_enclosures($item){
     // regular expression (hopefully) matching all links to media files
     $medialinkpattern = '@href\s*=\s*(\'|")(\S+(' . implode('|', array_keys($mediafiletypes)) . '))\1@Usie';
 
+    // take into account attachments (e.g. from forum) - with these, we are able to know the file size
+    if (isset($item->attachments) && is_array($item->attachments)) {
+        foreach ($item->attachments as $attachment){
+            $type = $mediafiletypes[substr($attachment->url, strrpos($attachment->url, '.')+1)];
+            $returnstring .= "\n<enclosure url='$attachment->url' type='$type' length='$attachment->length' />\n";
+        }
+    }
+    
     if (!preg_match_all($medialinkpattern, $rss_text, $matches)){
         return $returnstring;
     }
