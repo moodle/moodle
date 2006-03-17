@@ -31,32 +31,42 @@
     // extract relative path components
     $args = explode('/', trim($relativepath, '/'));
 
-    $isblog = ($args[0] == 'blog');
 
-    $needcourse = !$isblog;
 
-    if (count($args) < 5 && !$isblog) {
+    if (count($args) < 5) {
         rss_not_found();
     }
 
     $courseid   = (int)$args[0];
     $userid     = (int)$args[1];
     $modulename = clean_param($args[2], PARAM_FILE);
-    $instance   = (int)$args[3];
+    $instance   = $args[3];
     $filename   = 'rss.xml';
 
-    if ($needcourse and (!$course = get_record('course', 'id', $courseid))) {
+    if ($isblog = $modulename == 'blog') {
+       $blogid   = (int)$args[4];  // could be groupid / courseid  / userid  depending on $instance
+       if ($args[5] != 'rss.xml') {
+           $tag   = clean_param($args[5], PARAM_FILE);  // could be groupid / courseid  / userid  depending on $instance
+       }
+    } else {
+        $instance = (int)$instance;  // we know it's an id number
+    }
+
+
+    if (!$course = get_record('course', 'id', $courseid)) {
         rss_not_found();
     }
 
     //Check name of module
-    $mods = get_list_of_plugins("mod");
-    if ($needcourse and !in_array(strtolower($modulename), $mods)) {
-        rss_not_found();
+    if (!$isblog) {
+        $mods = get_list_of_plugins("mod");
+        if (!in_array(strtolower($modulename), $mods)) {
+            rss_not_found();
+        }
     }
 
     //Get course_module to check it's visible
-    if ($needcourse && (!$cm = get_coursemodule_from_instance($modulename,$instance,$courseid)) ) {
+    if (!$isblog && (!$cm = get_coursemodule_from_instance($modulename,$instance,$courseid)) ) {
         rss_not_found();
     }
 
@@ -65,24 +75,37 @@
 
     //Check for "security" if !course->guest or course->password
     if ($course->id != SITEID) {
-        if ($needcourse and ((!$course->guest || $course->password) && (!($isstudent || $isteacher)))) {
+        if ((!$course->guest || $course->password) && (!($isstudent || $isteacher))) {
             rss_not_found();
         }
     }
 
     //Check for "security" if the course is hidden or the activity is hidden
-    if ($needcourse and ((!$course->visible || !$cm->visible) && (!$isteacher))) {
+    if ((!$course->visible || !$cm->visible) && (!$isteacher)) {
         rss_not_found();
     }
 
     if ($isblog) {
-        $pathname = $CFG->dataroot.'/rss/'.$relativepath;
+        if (empty($tag)) {
+            $pathname = $CFG->dataroot.'/rss/blog/'.$instance.'/'.$blogid.'.xml';
+        } else {
+            $pathname = $CFG->dataroot.'/rss/blog/'.$instance.'/'.$blogid.'/'.$tag.'.xml';
+        }
     } else {
         $pathname = $CFG->dataroot.'/rss/'.$modulename.'/'.$instance.'.xml';
     }
     //Check that file exists
     if (!file_exists($pathname)) {
-        rss_not_found();
+        if ($isblog) {
+            if (filemtime($pathname) + 3600 < time()) {
+                require_once($CFG->dirroot.'/blog/rsslib.php');
+                if (!blog_generate_rss_feed($instance, $blogid)) {
+                   rss_not_found();
+                }
+            }
+        } else {
+            rss_not_found();
+        }
     }
 
     //Send it to user!

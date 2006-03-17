@@ -35,6 +35,26 @@
         
     }
 
+
+    function blog_generate_rss_feed($type, $id, $tag='') {
+        switch ($type) {
+           case 'site':
+               return blog_site_feeds($tag);
+           break;
+           case 'course':
+               return blog_course_feed($id,$tag);
+           break;
+           case 'group':
+               return blog_group_feed($id,$tag);
+           break;
+           case 'user':
+               return blog_user_feed($id,$tag);
+           break;
+        }
+
+        return false;
+    }
+
     /* Rss files for blogs
      * 4 different ways to store feeds.
      * site - $CFG->dataroot/rss/blogs/site/SITEID.xml
@@ -74,7 +94,7 @@
      
     
     // Only 1 view, site level feeds
-    function blog_site_feeds() {
+    function blog_site_feeds($tag='') {
 
         global $CFG;
         $status = true;
@@ -159,7 +179,7 @@
     }
 
     // takes in course object from db
-    function blog_course_feed($course) {
+    function blog_course_feed($course, $tag='') {
 
         global $CFG;
         $status = true;
@@ -250,7 +270,7 @@
     }
 
     // takes in course object from db
-    function blog_group_feed($group) {
+    function blog_group_feed($group, $tag='') {
 
         global $CFG;
         $status = true;
@@ -334,7 +354,7 @@
     }
 
     // takes in course object from db
-    function blog_user_feed($user) {
+    function blog_user_feed($user, $tag='') {
 
         global $CFG;
         $status = true;
