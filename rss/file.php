@@ -25,7 +25,7 @@
 
 
     if (!$relativepath) {
-        not_found();
+        rss_not_found();
     }
 
     // extract relative path components
@@ -33,8 +33,10 @@
 
     $isblog = ($args[0] == 'blog');
 
+    $needcourse = !$isblog;
+
     if (count($args) < 5 && !$isblog) {
-        not_found();
+        rss_not_found();
     }
 
     $courseid   = (int)$args[0];
@@ -43,19 +45,19 @@
     $instance   = (int)$args[3];
     $filename   = 'rss.xml';
 
-    if ((!$course = get_record("course", "id", $courseid)) && !$isblog) {
-        not_found();
+    if ($needcourse and (!$course = get_record('course', 'id', $courseid))) {
+        rss_not_found();
     }
 
     //Check name of module
     $mods = get_list_of_plugins("mod");
-    if (!in_array(strtolower($modulename), $mods) && !$isblog) {
-        not_found();
+    if ($needcourse and !in_array(strtolower($modulename), $mods)) {
+        rss_not_found();
     }
 
     //Get course_module to check it's visible
-    if (!$isblog && (!$cm = get_coursemodule_from_instance($modulename,$instance,$courseid)) ) {
-        not_found();
+    if ($needcourse && (!$cm = get_coursemodule_from_instance($modulename,$instance,$courseid)) ) {
+        rss_not_found();
     }
 
     $isstudent = isstudent($courseid,$userid);
@@ -63,14 +65,14 @@
 
     //Check for "security" if !course->guest or course->password
     if ($course->id != SITEID) {
-        if (((!$course->guest || $course->password) && (!($isstudent || $isteacher))) && !$isblog) {
-            not_found();
+        if ($needcourse and ((!$course->guest || $course->password) && (!($isstudent || $isteacher)))) {
+            rss_not_found();
         }
     }
 
     //Check for "security" if the course is hidden or the activity is hidden
-    if (((!$course->visible || !$cm->visible) && (!$isteacher)) && !$isblog) {
-        not_found();
+    if ($needcourse and ((!$course->visible || !$cm->visible) && (!$isteacher))) {
+        rss_not_found();
     }
 
     if ($isblog) {
@@ -80,13 +82,13 @@
     }
     //Check that file exists
     if (!file_exists($pathname)) {
-        not_found();
+        rss_not_found();
     }
 
     //Send it to user!
     send_file($pathname, $filename, $lifetime);
 
-    function not_found() {
+    function rss_not_found() {
         /// error, send some XML with error message
         global $lifetime, $filename;
         send_file(rss_geterrorxmlfile(), $filename, $lifetime, false, true);
