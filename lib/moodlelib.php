@@ -3732,6 +3732,9 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml='', $a
 
     include_once($CFG->libdir .'/phpmailer/class.phpmailer.php');
 
+/// We are going to use textlib services here
+    $textlib = textlib_get_instance();
+
     if (empty($user)) {
         return false;
     }
@@ -3840,6 +3843,37 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml='', $a
             require_once($CFG->libdir.'/filelib.php');
             $mimetype = mimeinfo('type', $attachname);
             $mail->AddAttachment($CFG->dataroot .'/'. $attachment, $attachname, 'base64', $mimetype);
+        }
+    }
+
+
+
+/// If we are running under Unicode and sitemailcharset or allowusermailcharset are set, convert the email
+/// encoding to the specified one
+    if ($CFG->unicodedb && (!empty($CFG->sitemailcharset) || !empty($CFG->allowusermailcharset))) {
+    /// Set it to site mail charset
+        $charset = $CFG->sitemailcharset;
+    /// Overwrite it with the user mail charset
+        if (!empty($CFG->allowusermailcharset)) {
+            if ($useremailcharset = get_user_preferences('mailcharset', '0', $user->id)) {
+                $charset = $useremailcharset;
+            }
+        }
+    /// If it has changed, convert all the necessary strings
+        if ($mail->CharSet != $charset) {
+        /// Save the new mail charset
+            $mail->CharSet = $charset;
+        /// And convert some strings
+            $mail->FromName = $textlib->convert($mail->FromName, 'utf-8', $mail->CharSet); //From Name
+            foreach ($mail->ReplyTo as $key => $rt) {                                      //ReplyTo Names
+                $mail->ReplyTo[$key][1] = $textlib->convert($rt, 'utf-8', $mail->CharSet);
+            }
+            $mail->Subject = $textlib->convert($mail->Subject, 'utf-8', $mail->CharSet);   //Subject
+            foreach ($mail->to as $key => $to) {
+                $mail->to[$key][1] = $textlib->convert($to, 'utf-8', $mail->CharSet);      //To Names
+            }
+            $mail->Body = $textlib->convert($mail->Body, 'utf-8', $mail->CharSet);         //Body
+            $mail->AltBody = $textlib->convert($mail->AltBody, 'utf-8', $mail->CharSet);   //Subject
         }
     }
 
