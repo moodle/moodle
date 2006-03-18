@@ -866,20 +866,33 @@ class hotpot_xml_quiz_template extends hotpot_xml_template_default {
 		// initialize loop values
 		$q = 0;
 		$tags = 'data,gap-fill';
+		$question_record = "$tags,question-record";
 
 		// loop through text and gaps
 		do {
 			$text = $this->parent->xml_value($tags, "[0]['#'][$q]");
 			$gap = '';
-			if (($question="[$q]['#']") && $this->parent->xml_value("$tags,question-record", $question)) {
+			if (($question="[$q]['#']") && $this->parent->xml_value($question_record, $question)) {
 				$gap .= '<span class="GapSpan" id="GapSpan'.$q.'">';
 				if ($this->v6_use_DropDownList()) {
 					$gap .= '<select id="Gap'.$q.'"><option value=""></option>'.$dropdownlist.'</select>';
 				} else {
-					$gap .= '<input type="text" id="Gap'.$q.'" onfocus="TrackFocus('.$q.')" onblur="LeaveGap()" class="GapBox" size="6"></input>';
+					// minimum gap size
+					$gapsize = 6;
+
+					// increase gap size to length of longest answer for this gap
+					$a = 0;
+					while (($answer=$question."['answer'][$a]['#']") && $this->parent->xml_value($question_record, $answer)) {
+						$answertext = $this->parent->xml_value($question_record,  $answer."['text'][0]['#']");
+						$answertext = preg_replace('|&[#a-zA-Z0-9]+;|', 'x', $answertext);
+						$gapsize = max($gapsize, strlen($answertext));
+						$a++;
+					}
+
+					$gap .= '<input type="text" id="Gap'.$q.'" onfocus="TrackFocus('.$q.')" onblur="LeaveGap()" class="GapBox" size="'.$gapsize.'"></input>';
 				}
 				if ($includeclues) {
-					$clue = $this->parent->xml_value("$tags,question-record", $question."['clue'][0]['#']");
+					$clue = $this->parent->xml_value($question_record, $question."['clue'][0]['#']");
 					if (strlen($clue)) {
 						$gap .= '<button style="line-height: 1.0" class="FuncButton" onfocus="FuncBtnOver(this)" onmouseover="FuncBtnOver(this)" onblur="FuncBtnOut(this)" onmouseout="FuncBtnOut(this)" onmousedown="FuncBtnDown(this)" onmouseup="FuncBtnOut(this)" onclick="ShowClue('.$q.')">'.$cluecaption.'</button>';
 					}
