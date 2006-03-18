@@ -1,7 +1,8 @@
-<?php
+<?php  // $Id$
 
-require_once(dirname(dirname(__FILE__)).'/config.php');
-require_once(dirname(dirname(__FILE__)).'/course/lib.php');
+require_once('../config.php');
+require_once($CFG->dirroot.'/course/lib.php');
+
 require_login();
 
 $courses = get_my_courses($USER->id);
@@ -12,7 +13,7 @@ if (array_key_exists($site->id,$courses)) {
 }
 
 foreach ($courses as $course) {
-    if (array_key_exists($course->id,$USER->timeaccess)) {
+    if (isset($USER->timeaccess) && array_key_exists($course->id,$USER->timeaccess)) {
         $courses[$course->id]->lastaccess = $USER->timeaccess[$course->id];
     } else {
         $courses[$course->id]->lastaccess = 0;
