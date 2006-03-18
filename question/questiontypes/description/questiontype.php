@@ -66,6 +66,9 @@ class quiz_description_qtype extends quiz_default_questiontype {
 //////////////////////////////////////////////////////////////////////////
 //// INITIATION - Without this line the question type is not in use... ///
 //////////////////////////////////////////////////////////////////////////
+// define("DESCRIPTION",   "7"); // already defined in questionlib.php
 $QTYPES[DESCRIPTION]= new quiz_description_qtype();
+// The following adds the questiontype to the menu of types shown to teachers
+$QTYPE_MENU[DESCRIPTION] = get_string("description", "quiz");
 
 ?>

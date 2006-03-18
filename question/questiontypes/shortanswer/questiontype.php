@@ -246,6 +246,9 @@ class question_shortanswer_qtype extends quiz_default_questiontype {
 //////////////////////////////////////////////////////////////////////////
 //// INITIATION - Without this line the question type is not in use... ///
 //////////////////////////////////////////////////////////////////////////
+// define("SHORTANSWER",   "1"); // already defined in questionlib.php
 $QTYPES[SHORTANSWER]= new question_shortanswer_qtype();
+// The following adds the questiontype to the menu of types shown to teachers
+$QTYPE_MENU[SHORTANSWER] = get_string("shortanswer", "quiz");
 
 ?>

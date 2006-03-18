@@ -237,6 +237,7 @@ class quiz_random_qtype extends quiz_default_questiontype {
 //////////////////////////////////////////////////////////////////////////
 //// INITIATION - Without this line the question type is not in use... ///
 //////////////////////////////////////////////////////////////////////////
+// define("RANDOM",        "4"); // already defined in questionlib.php
 $QTYPES[RANDOM]= new quiz_random_qtype();
 
 ?>

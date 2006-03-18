@@ -15,31 +15,6 @@
 
     require_once($CFG->libdir.'/questionlib.php');
 
-/**
-* Array of question types names translated to the user's language
-*
-* The $QTYPE_MENU array holds the names of all the question types that the user should
-* be able to create directly. Some internal question types like random questions are excluded.
-* The complete list of question types can be found in {@link $QTYPES}.
-*/
-
-$QTYPE_MENU = array ( MULTICHOICE   => get_string("multichoice", "quiz"),
-                              TRUEFALSE     => get_string("truefalse", "quiz"),
-                              SHORTANSWER   => get_string("shortanswer", "quiz"),
-                              NUMERICAL     => get_string("numerical", "quiz"),
-                              CALCULATED    => get_string("calculated", "quiz"),
-                              MATCH         => get_string("match", "quiz"),
-                              DESCRIPTION   => get_string("description", "quiz"),
-                              RANDOMSAMATCH => get_string("randomsamatch", "quiz"),
-                              MULTIANSWER   => get_string("multianswer", "quiz"),
-                              ESSAY         => get_string("essay", "quiz")
-                              );
-// add remote question types
-if ($rqp_types = get_records('question_rqp_types')) {
-    foreach($rqp_types as $type) {
-        $QTYPE_MENU[100+$type->id] = $type->name;
-    }
-}
 
 function question_category_form($course, $current, $recurse=1, $showhidden=false) {
     global $CFG;

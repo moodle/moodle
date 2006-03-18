@@ -311,6 +311,9 @@ class question_essay_qtype extends quiz_default_questiontype {
 //////////////////////////////////////////////////////////////////////////
 //// INITIATION - Without this line the question type is not in use... ///
 //////////////////////////////////////////////////////////////////////////
+// define("ESSAY",        "12"); // already defined in questionlib.php
 $QTYPES[ESSAY] = new question_essay_qtype();
+// The following adds the questiontype to the menu of types shown to teachers
+$QTYPE_MENU[ESSAY] = get_string("essay", "quiz");
 
 ?>

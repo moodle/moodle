@@ -43,6 +43,8 @@ function quiz_add_instance($quiz) {
                                                     $quiz->availableminute);
     }
 
+    $quiz->timelimit = round($quiz->timelimit);
+
     if (empty($quiz->name)) {
         if (empty($quiz->intro)) {
             $quiz->name = get_string('modulename', 'quiz');
@@ -133,6 +135,8 @@ function quiz_update_instance($quiz) {
                                                     $quiz->availableday, $quiz->availablehour, 
                                                     $quiz->availableminute);
     }
+
+    $quiz->timelimit = round($quiz->timelimit);
 
     $quiz->id = $quiz->instance;
 
@@ -268,7 +272,7 @@ function quiz_delete_instance($id) {
  */
 function quiz_delete_course($course, $feedback=true) {
 
-    global $CFG;
+    global $CFG, $QTYPES;
 
     //To detect if we have created the "container category"
     $concatid = 0;

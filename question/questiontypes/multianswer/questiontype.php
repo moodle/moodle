@@ -24,7 +24,7 @@ class quiz_embedded_cloze_qtype extends quiz_default_questiontype {
 
         // Get relevant data indexed by positionkey from the multianswers table
         if (!$sequence = get_field('question_multianswer', 'sequence', 'question', $question->id)) {
-            notify('Error: Missing question options!');
+            notify('Error: Cloze question '.$question->id.' is missing question options!');
             return false;
         }
 
@@ -92,13 +92,13 @@ class quiz_embedded_cloze_qtype extends quiz_default_questiontype {
              get_field('question_multianswer', 'id', 'question', $question->id)) {
                 $multianswer->id = $oldid;
                 if (!update_record("question_multianswer", $multianswer)) {
-                    $result->error = "Could not update quiz multianswer! " .
+                    $result->error = "Could not update cloze question options! " .
                      "(id=$multianswer->id)";
                     return $result;
                 }
             } else {
                 if (!insert_record("question_multianswer", $multianswer)) {
-                    $result->error = "Could not insert quiz multianswer!";
+                    $result->error = "Could not insert cloze question options!";
                     return $result;
                 }
             }
@@ -322,7 +322,7 @@ class quiz_embedded_cloze_qtype extends quiz_default_questiontype {
                    echo '</select>';
                    break;
                default:
-                   error("Unable to recognized questiontype ($wrapped->qtype) of
+                   error("Unable to recognize questiontype ($wrapped->qtype) of
                           question part $positionkey.");
                    break;
            }
@@ -380,8 +380,10 @@ class quiz_embedded_cloze_qtype extends quiz_default_questiontype {
 //////////////////////////////////////////////////////////////////////////
 //// INITIATION - Without this line the question type is not in use... ///
 //////////////////////////////////////////////////////////////////////////
+// define("MULTIANSWER",   "9"); // already defined in questionlib.php
 $QTYPES[MULTIANSWER]= new quiz_embedded_cloze_qtype();
-
+// The following adds the questiontype to the menu of types shown to teachers
+$QTYPE_MENU[MULTIANSWER] = get_string("multianswer", "quiz");
 
 /////////////////////////////////////////////////////////////
 //// ADDITIONAL FUNCTIONS

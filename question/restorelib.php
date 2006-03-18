@@ -82,37 +82,6 @@
     //-----------------------------------------------------------
 
     include_once($CFG->libdir.'/questionlib.php');
-    // load questiontype-specific functions
-    unset($restorefns);
-    unset($restoremapfns);
-    unset($restorestatefns);
-    unset($recodeansfns);
-    //if ($qtypes = get_records('question_types')) {
-    if ($qtypes = get_list_of_plugins('question/questiontypes')) {
-        foreach ($qtypes as $name) {
-            $qtype->name = $name;
-            $restorelib = $CFG->dirroot.'/question/questiontypes/'.$qtype->name.'/restorelib.php';
-            if (file_exists($restorelib)) {
-                include_once($restorelib);
-                $restorefn = 'question_'.$qtype->name.'_restore';
-                if (function_exists($restorefn)) {
-                    $restorefns[$qtype->name] = $restorefn;
-                }
-                $restoremapfn = 'question_'.$qtype->name.'_restore_map';
-                if (function_exists($restoremapfn)) {
-                    $restoremapfns[$qtype->name] = $restoremapfn;
-                }
-                $restorestatefn = 'question_'.$qtype->name.'_states_restore';
-                if (function_exists($restorestatefn)) {
-                    $restorestatefns[$qtype->name] = $restorestatefn;
-                }
-                $recodeansfn = 'question_'.$qtype->name.'_recode_answer';
-                if (function_exists($recodeansfn)) {
-                    $recodeansfns[$qtype->name] = $recodeansfn;
-                }
-            }
-        }
-    }
 
     function restore_question_categories($category,$restore) {
 
@@ -188,8 +157,30 @@
 
     function restore_questions ($old_category_id,$new_category_id,$info,$restore) {
 
-        global $CFG;
+        global $CFG, $QTYPES;
 
+        // load questiontype-specific functions
+        unset($restorefns);
+        unset($restoremapfns);
+        unset($recodeansfns);
+        foreach ($QTYPES as $key => $qtype) {
+            $restorelib = $CFG->dirroot.'/question/questiontypes/'.$qtype->name().'/restorelib.php';
+            if (file_exists($restorelib)) {
+                include_once($restorelib);
+                $restorefn = 'question_'.$qtype->name().'_restore';
+                if (function_exists($restorefn)) {
+                    $restorefns[$key] = $restorefn;
+                }else {echo $restorefn;}
+                $restoremapfn = 'question_'.$qtype->name().'_restore_map';
+                if (function_exists($restoremapfn)) {
+                    $restoremapfns[$key] = $restoremapfn;
+                }
+                $recodeansfn = 'question_'.$qtype->name().'_recode_answer';
+                if (function_exists($recodeansfn)) {
+                    $recodeansfns[$key] = $recodeansfn;
+                }
+            }
+        }
         $status = true;
         $restored_questions = array();
 
@@ -273,8 +264,8 @@
                 //Now, restore every question_answers in this question
                 $status = question_restore_answers($oldid,$newid,$que_info,$restore);
                 //Now, depending of the type of questions, invoke different functions
-                if (isset($restorefns[$question->type])) {
-                    $status = $restorefns[$question->type]->restore($oldid,$newid,$que_info,$restore);
+                if (isset($restorefns[$question->qtype])) {
+                    $status = $restorefns[$question->qtype]($oldid,$newid,$que_info,$restore);
                 }
             } else {
                 //We are NOT creating the question, but we need to know every question_answers
@@ -284,8 +275,8 @@
                 //Now, depending of the type of questions, invoke different functions
                 //to create the necessary mappings in backup_ids, because we are not
                 //creating the question, but need some records in backup table
-                if (isset($restoremapfns[$question->type])) {
-                    $status = $restoremapfns[$question->type]->restore($oldid,$newid,$que_info,$restore);
+                if (isset($restoremapfns[$question->qtype])) {
+                    $status = $restoremapfns[$question->qtype]($oldid,$newid,$que_info,$restore);
                 }
             }
 
@@ -615,10 +606,12 @@
             //We have to recode the answer field
             //It depends of the question type !!
             //We get the question first
-            $question = get_record("question","id",$state->question);
+            if (!$question = get_record("question","id",$state->question)) {
+                error("Can't find the record for question $state->question for which I am trying to restore a state");
+            }
             //It exists
             if ($question) {
-                //Depending of the qtype, we make different recodes
+                //Depending on the qtype, we make different recodes
                 switch ($question->qtype) {
                     case 1:    //SHORTANSWER QTYPE
                         //Nothing to do. The response is a text.
@@ -728,41 +721,38 @@
                         //Nothing to do. The response is a text.
                         break;
                     case 9:    //MULTIANSWER QTYPE
-                        //The answer is a comma separated list of hypen separated multianswer_id and answers. We must recode them.
+                        //The answer is a comma separated list of hypen separated sequence number and answers. We may have to recode the answers
                         $answer_field = "";
                         $in_first = true;
                         $tok = strtok($state->answer,",");
                         while ($tok) {
                             //Extract the multianswer_id and the answer
                             $exploded = explode("-",$tok);
-                            $multianswer_id = $exploded[0];
+                            $seqnum = $exploded[0];
                             $answer = $exploded[1];
-                            //Get the multianswer from backup_ids
-                            $mul = backup_getid($restore->backup_unique_code,"question_multianswer",$multianswer_id);
-                            if ($mul) {
-                                //Now, depending of the answertype field in question_multianswer
-                                //we do diferent things
-                                $mul_db = get_record ("question_multianswer","id",$mul->new_id);
-                                if ($mul_db->answertype == "1") {
-                                    //Shortanswer
-                                    //The answer is text, do nothing
-                                } else if ($mul_db->answertype == "3") {
-                                    //Multichoice
-                                    //The answer is an answer_id, look for it in backup_ids
-                                    $ans = backup_getid($restore->backup_unique_code,"question_answers",$answer);
-                                    $answer = $ans->new_id;
-                                } else if ($mul_db->answertype == "8") {
-                                    //Numeric
-                                    //The answer is text, do nothing
-                                }
-
-                                //Finaly, build the new answer field for each pair
-                                if ($in_first) {
-                                    $answer_field .= $mul->new_id."-".$answer;
-                                    $in_first = false;
-                                } else {
-                                    $answer_field .= ",".$mul->new_id."-".$answer;
-                                }
+                            // $sequence is an ordered array of the question ids.
+                            if (!$sequence = get_field('question_multianswer', 'sequence', 'question', $question->id)) {
+                                error("The cloze question $question->id is missing its options");
+                            }
+                            $sequence = explode(',', $sequence);
+                            // The id of the current question.
+                            $wrappedquestionid = $sequence[$seqnum-1];
+                            // now we can find the question
+                            if (!$wrappedquestion = get_record('question', 'id', $wrappedquestionid)) {
+                                error("Can't find the subquestion $wrappedquestionid that is used as part $seqnum in cloze question $question->id");
+                            }
+                            // For multichoice question we need to recode the answer
+                            if ($wrappedquestion->qtype == MULTICHOICE) {
+                                //The answer is an answer_id, look for it in backup_ids
+                                $ans = backup_getid($restore->backup_unique_code,"question_answers",$answer);
+                                $answer = $ans->new_id;
+                            }
+                            //build the new answer field for each pair
+                            if ($in_first) {
+                                $answer_field .= $seqnum."-".$answer;
+                                $in_first = false;
+                            } else {
+                                $answer_field .= ",".$seqnum."-".$answer;
                             }
                             //check for next
                             $tok = strtok(",");
@@ -800,8 +790,19 @@
                 backup_putid($restore->backup_unique_code,"question_states",$oldid,
                              $newid);
                 //Now process question type specific state information
-                foreach ($restorestatefns as $restorestatefn) {
-                    $restorestatefn($newid,$res_info,$restore);
+
+                if ($qtypes = get_list_of_plugins('question/questiontypes')) {
+                    foreach ($qtypes as $name) {
+                        $qtype->name = $name;
+                        $restorelib = $CFG->dirroot.'/question/questiontypes/'.$qtype->name.'/restorelib.php';
+                        if (file_exists($restorelib)) {
+                            include_once($restorelib);
+                            $restorestatefn = 'question_'.$qtype->name.'_states_restore';
+                            if (function_exists($restorestatefn)) {
+                                $restorestatefn($newid,$res_info,$restore);
+                            }
+                        }
+                    }
                 }
             } else {
                 $status = false;

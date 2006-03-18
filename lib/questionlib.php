@@ -33,9 +33,7 @@ define('QUESTION_EVENTSUBMIT', '7');
 /**#@-*/
 
 /**#@+
-* The defined question types
-*
-* @todo It would be nicer to have a fully automatic plug-in system
+* The core question types
 */
 define("SHORTANSWER",   "1");
 define("TRUEFALSE",     "2");
@@ -59,14 +57,24 @@ define("QUESTION_NUMANS", "10");
 /**
 * Array holding question type objects
 */
-$QTYPES= array();
+global $QTYPES;
+$QTYPES = array(); // This array will be populated when the questiontype.php files are loaded
+
+/**
+* Array of question types names translated to the user's language
+*
+* The $QTYPE_MENU array holds the names of all the question types that the user should
+* be able to create directly. Some internal question types like random questions are excluded.
+* The complete list of question types can be found in {@link $QTYPES}.
+*/
+$QTYPE_MENU = array(); // This array will be populated when the questiontype.php files are loaded
 
 require_once("$CFG->dirroot/question/questiontypes/questiontype.php");
 
 /*
 * Load the questiontype.php file for each question type
 * These files in turn instantiate the corresponding question type class
-* and adds it to the $QTYPES array
+* and add them to the $QTYPES array
 */
 $qtypenames= get_list_of_plugins('question/questiontypes');
 foreach($qtypenames as $qtypename) {
@@ -156,7 +164,9 @@ class cmoptions {
 */
 function delete_question($question) {
     global $QTYPES;
-    $QTYPES[$question->qtype]->delete_question($question);
+    if (isset($QTYPES[$question->qtype])) {
+        $QTYPES[$question->qtype]->delete_question($question);
+    } else {echo 'qtype: '.$question->qtype.'<br />';}
     delete_records("question_answers", "question", $question->id);
     delete_records("question_states", "question", $question->id);
     delete_records("question_sessions", "questionid", $question->id);
