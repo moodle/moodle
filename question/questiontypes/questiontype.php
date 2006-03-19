@@ -718,7 +718,6 @@ class quiz_default_questiontype {
         // arrays. The ordering of the arrays does not matter.
         // Question types may wish to override this (eg. to ignore trailing
         // white space or to make "7.0" and "7" compare equal).
-        if ($question->qtype = MATCH) {var_dump($state->responses);echo '<br>Teststate:';var_dump($teststate->responses);}
         return $state->responses == $teststate->responses;
     }
 
