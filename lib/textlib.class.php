@@ -193,6 +193,10 @@ class textlib {
      * paravoid (http://www.php.net/manual/en/function.mb-encode-mimeheader.php#60283).
      */
     function encode_mimeheader($text, $charset='utf-8') {
+    /// If the text is pure ASCII, we don't need to encode it
+        if ($this->convert($text, $charset, 'ascii') == $text) {
+            return $text;
+        }
     /// Although RFC says that line feed should be \r\n, it seems that
     /// some mailers double convert \r, so we are going to use \n alone
         $linefeed="\n";
