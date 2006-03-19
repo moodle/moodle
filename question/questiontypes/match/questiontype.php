@@ -55,7 +55,7 @@ class question_match_qtype extends quiz_default_questiontype {
                     unset($subquestion);
                     // Determine a unique random code
                     $subquestion->code = rand(1,999999999);
-                    while (record_exists('question_match_sub', 'code', $subquestion->code)) {
+                    while (record_exists('question_match_sub', 'code', $subquestion->code, 'question', $question->id)) {
                         $subquestion->code = rand();
                     }
                     $subquestion->question = $question->id;
