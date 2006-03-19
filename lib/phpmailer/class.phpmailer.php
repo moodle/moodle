@@ -1151,6 +1151,15 @@ class PHPMailer
      * @return string
      */
     function EncodeHeader ($str, $position = 'text') {
+
+    /// Start Moodle Hack - if we are running under unicodedb, we'll try our own
+    /// encode_header code that's multibyte-safe
+        global $CFG;
+        if ($CFG->unicodedb) {
+            $textlib = textlib_get_instance();
+            return $textlib->encode_mimeheader($str, $this->CharSet);
+        }
+    /// End Moodle Hack
       $x = 0;
       
       switch (strtolower($position)) {
