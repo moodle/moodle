@@ -194,6 +194,9 @@ class question_truefalse_qtype extends quiz_default_questiontype {
         // Only allow one attempt at the question
         $state->penalty = 1;
 
+        // mark the state as graded
+        $state->event = ($state->event ==  QUESTION_EVENTCLOSE) ? QUESTION_EVENTCLOSEANDGRADE : QUESTION_EVENTGRADE;
+
         return true;
     }
 

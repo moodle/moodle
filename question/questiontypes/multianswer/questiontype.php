@@ -356,6 +356,9 @@ class quiz_embedded_cloze_qtype extends quiz_default_questiontype {
         }
         $state->penalty = $question->penalty * $question->maxgrade;
 
+        // mark the state as graded
+        $state->event = ($state->event ==  QUESTION_EVENTCLOSE) ? QUESTION_EVENTCLOSEANDGRADE : QUESTION_EVENTGRADE;
+
         return true;
     }
 

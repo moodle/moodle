@@ -22,14 +22,15 @@
 /**#@+
 * The different types of events that can create question states
 */
-define('QUESTION_EVENTOPEN', '0');
-define('QUESTION_EVENTNAVIGATE', '1');
-define('QUESTION_EVENTSAVE', '2');
-define('QUESTION_EVENTGRADE', '3');
-define('QUESTION_EVENTDUPLICATEGRADE', '4');
-define('QUESTION_EVENTVALIDATE', '5');
-define('QUESTION_EVENTCLOSE', '6');
-define('QUESTION_EVENTSUBMIT', '7');
+define('QUESTION_EVENTOPEN', '0');      // The state was created by Moodle
+define('QUESTION_EVENTNAVIGATE', '1');  // The responses were saved because the student navigated to another page (this is not currently used)
+define('QUESTION_EVENTSAVE', '2');      // The student has requested that the responses should be saved but not submitted or validated
+define('QUESTION_EVENTGRADE', '3');     // Moodle has graded the responses. A SUBMIT event can be changed to a GRADE event by Moodle.
+define('QUESTION_EVENTDUPLICATE', '4'); // The responses submitted were the same as previously
+define('QUESTION_EVENTVALIDATE', '5');  // The student has requested a validation. This causes the responses to be saved as well, but not graded.
+define('QUESTION_EVENTCLOSEANDGRADE', '6'); // Moodle has graded the responses. A CLOSE event can be changed to a CLOSEANDGRADE event by Moodle.
+define('QUESTION_EVENTSUBMIT', '7');    // The student response has been submitted but it has not yet been marked
+define('QUESTION_EVENTCLOSE', '8');     // The response has been submitted and the session has been closed, either because the student requested it or because Moodle did it (e.g. because of a timelimit). The responses have not been graded.
 /**#@-*/
 
 /**#@+
@@ -275,7 +276,6 @@ function get_question_states(&$questions, $cmoptions, $attempt) {
                 $states[$i]->last_graded = $gradedstates[$i];
             } else {
                 $states[$i]->last_graded = clone($states[$i]);
-                $states[$i]->last_graded->responses = array('' => '');
             }
         } else {
             // Create a new state object
@@ -445,7 +445,17 @@ function save_question_session(&$question, &$state) {
 * @param object $state
 */
 function question_state_is_graded($state) {
-    return ($state->event == QUESTION_EVENTGRADE or $state->event == QUESTION_EVENTCLOSE);
+    return ($state->event == QUESTION_EVENTGRADE or $state->event == QUESTION_EVENTCLOSEANDGRADE);
+}
+
+/**
+* Determines whether a state has been closed by looking at the event field
+*
+* @return boolean         true if the state has been closed
+* @param object $state
+*/
+function question_state_is_closed($state) {
+    return ($state->event == QUESTION_EVENTCLOSE or $state->event == QUESTION_EVENTCLOSEANDGRADE);
 }
 
 
@@ -479,7 +489,7 @@ function question_extract_responses($questions, $responses, $defaultevent) {
             if ($key === 'validate') {
                 $actions[$quid]->event = QUESTION_EVENTVALIDATE;
             } else if ($key === 'mark') {
-                $actions[$quid]->event = QUESTION_EVENTGRADE;
+                $actions[$quid]->event = QUESTION_EVENTSUBMIT;
             } else {
                 $actions[$quid]->event = $defaultevent;
             }
@@ -537,10 +547,11 @@ function regrade_question_in_attempt($question, $attempt, $cmoptions, $verbose=f
             if (((count($states) - 1) === $j) && ($attempt->timefinish > 0)) {
                 $action->event = QUESTION_EVENTCLOSE;
 
-            // Grade instead of closing, question_process_responses will then
-            // work out whether to close it
-            } else if (QUESTION_EVENTCLOSE == $states[$j]->event) {
-                $action->event = QUESTION_EVENTGRADE;
+            // Change event to submit so that it will be reprocessed
+            } else if (QUESTION_EVENTCLOSE == $states[$j]->event
+                       or QUESTION_EVENTGRADE == $states[$j]->event
+                       or QUESTION_EVENTCLOSEANDGRADE == $states[$j]->event) {
+                $action->event = QUESTION_EVENTSUBMIT;
 
             // By default take the event that was saved in the database
             } else {
@@ -605,14 +616,15 @@ function question_process_responses(&$question, &$state, $action, $cmoptions, &$
     unset($action->responses['mark'], $action->responses['validate']);
 
     // Check the question session is still open
-    if (QUESTION_EVENTCLOSE == $state->event) {
+    if (question_state_is_closed($state)) {
         return true;
     }
+
     // If $action->event is not set that implies saving
     if (! isset($action->event)) {
         $action->event = QUESTION_EVENTSAVE;
     }
-    // Check if we are grading the question; compare against last graded
+    // If submitted then compare against last graded
     // responses, not last given responses in this case
     if (question_isgradingevent($action->event)) {
         $state->responses = $state->last_graded->responses;
@@ -622,6 +634,8 @@ function question_process_responses(&$question, &$state, $action, $cmoptions, &$
     $sameresponses = (($state->responses == $action->responses) or
      ($state->responses == array(''=>'') && array_keys(array_count_values($action->responses))===array('')));
 
+    // If the response has not been changed then we do not have to process it again
+    // unless the attempt is closing or validation is requested
     if ($sameresponses and QUESTION_EVENTCLOSE != $action->event
      and QUESTION_EVENTVALIDATE != $action->event) {
         return true;
@@ -646,11 +660,10 @@ function question_process_responses(&$question, &$state, $action, $cmoptions, &$
         // Grade the response but don't update the overall grade
         $QTYPES[$question->qtype]->grade_responses(
          $question, $state, $cmoptions);
-        // Force the event to save or validate (even if the grading caused the
-        // state to close)
+        // Don't allow the processing to change the event type
         $state->event = $action->event;
 
-    } else if (QUESTION_EVENTGRADE == $action->event) {
+    } else if (QUESTION_EVENTSUBMIT == $action->event) {
 
         // Work out if the current responses (or equivalent responses) were
         // already given in
@@ -658,33 +671,35 @@ function question_process_responses(&$question, &$state, $action, $cmoptions, &$
         // b. any other graded attempt
         if($QTYPES[$question->qtype]->compare_responses(
          $question, $state, $state->last_graded)) {
-            $state->event = QUESTION_EVENTDUPLICATEGRADE;
+            $state->event = QUESTION_EVENTDUPLICATE;
         } else {
             if ($cmoptions->optionflags & QUIZ_IGNORE_DUPRESP) {
                 /* Walk back through the previous graded states looking for
                 one where the responses are equivalent to the current
                 responses. If such a state is found, set the current grading
                 details to those of that state and set the event to
-                QUESTION_EVENTDUPLICATEGRADE */
+                QUESTION_EVENTDUPLICATE */
                 question_search_for_duplicate_responses($question, $state);
             }
-            // If we did not find a duplicate, perform grading
-            if (QUESTION_EVENTDUPLICATEGRADE != $state->event) {
-                // Decrease sumgrades by previous grade and then later add new grade
-                $attempt->sumgrades -= (float)$state->last_graded->grade;
-
-                $QTYPES[$question->qtype]->grade_responses(
-                 $question, $state, $cmoptions);
-                // Calculate overall grade using correct penalty method
-                question_apply_penalty_and_timelimit($question, $state, $attempt, $cmoptions);
-                // Update the last graded state (don't simplify!)
-                unset($state->last_graded);
-                $state->last_graded = clone($state);
-                unset($state->last_graded->changed);
-
-                $attempt->sumgrades += (float)$state->last_graded->grade;
-            }
         }
+
+        // If we did not find a duplicate, perform grading
+        if (QUESTION_EVENTDUPLICATE != $state->event) {
+            // Decrease sumgrades by previous grade and then later add new grade
+            $attempt->sumgrades -= (float)$state->last_graded->grade;
+
+            $QTYPES[$question->qtype]->grade_responses(
+             $question, $state, $cmoptions);
+            // Calculate overall grade using correct penalty method
+            question_apply_penalty_and_timelimit($question, $state, $attempt, $cmoptions);
+            // Update the last graded state (don't simplify!)
+            unset($state->last_graded);
+            $state->last_graded = clone($state);
+            unset($state->last_graded->changed);
+
+            $attempt->sumgrades += (float)$state->last_graded->grade;
+        }
+
     } else if (QUESTION_EVENTCLOSE == $action->event) {
         // decrease sumgrades by previous grade and then later add new grade
         $attempt->sumgrades -= (float)$state->last_graded->grade;
@@ -696,8 +711,6 @@ function question_process_responses(&$question, &$state, $action, $cmoptions, &$
             // Calculate overall grade using correct penalty method
             question_apply_penalty_and_timelimit($question, $state, $attempt, $cmoptions);
         }
-        // Force the state to close (as the attempt is closing)
-        $state->event = QUESTION_EVENTCLOSE;
         
         // Update the last graded state (don't simplify!)
         unset($state->last_graded);
@@ -715,7 +728,7 @@ function question_process_responses(&$question, &$state, $action, $cmoptions, &$
 * Determine if event requires grading
 */
 function question_isgradingevent($event) {
-    return (QUESTION_EVENTGRADE == $event || QUESTION_EVENTCLOSE == $event);
+    return (QUESTION_EVENTSUBMIT == $event || QUESTION_EVENTCLOSE == $event);
 }
 
 /**
@@ -725,6 +738,8 @@ function question_isgradingevent($event) {
 * to ignore the marking request for the current response. However this
 * check against all previous graded responses is only performed if
 * the QUIZ_IGNORE_DUPRESP bit in $cmoptions->optionflags is set
+* If the current response is a duplicate of a previously graded response then
+* $STATE->event is set to QUESTION_EVENTDUPLICATE.
 * @return boolean         Indicates if a state with duplicate responses was
 *                         found.
 * @param object $question
@@ -743,12 +758,12 @@ function question_search_for_duplicate_responses(&$question, &$state) {
          $question, $oldstate)) {
             if(!$QTYPES[$question->qtype]->compare_responses(
              $question, $state, $oldstate)) {
-                $state->event = QUESTION_EVENTDUPLICATEGRADE;
+                $state->event = QUESTION_EVENTDUPLICATE;
                 break;
             }
         }
     }
-    return (QUESTION_EVENTDUPLICATEGRADE == $state->event);
+    return (QUESTION_EVENTDUPLICATE == $state->event);
 }
 
 /**
@@ -771,7 +786,7 @@ function question_search_for_duplicate_responses(&$question, &$state) {
 *                           for incorrect earlier responses are subtracted.
 */
 function question_apply_penalty_and_timelimit(&$question, &$state, $attempt, $cmoptions) {
-    // deal with penaly
+    // deal with penalty
     if ($cmoptions->penaltyscheme) {
             $state->grade = $state->raw_grade - $state->sumpenalty;
             $state->sumpenalty += (float) $state->penalty;

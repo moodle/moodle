@@ -350,6 +350,9 @@ class question_multichoice_qtype extends quiz_default_questiontype {
         // Apply the penalty for this attempt
         $state->penalty = $question->penalty * $question->maxgrade;
 
+        // mark the state as graded
+        $state->event = ($state->event ==  QUESTION_EVENTCLOSE) ? QUESTION_EVENTCLOSEANDGRADE : QUESTION_EVENTGRADE;
+
         return true;
     }
 

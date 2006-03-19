@@ -198,6 +198,9 @@ class question_shortanswer_qtype extends quiz_default_questiontype {
                             0.0), 1.0) * $question->maxgrade;
         $state->penalty = $question->penalty * $question->maxgrade;
 
+        // mark the state as graded
+        $state->event = ($state->event ==  QUESTION_EVENTCLOSE) ? QUESTION_EVENTCLOSEANDGRADE : QUESTION_EVENTGRADE;
+
         return true;
     }
 

@@ -360,6 +360,7 @@ class question_rqp_qtype extends quiz_default_questiontype {
     * This function calls RQP_Render to perform response processing and grading
     * and updates the state accordingly. It also caches the rendering output in case
     * it is needed later.
+    * TODO: set $state->event appropriately
     * @return boolean         Indicates success or failure.
     * @param object $question The question to be graded.
     * @param object $state    The state of the question to grade. The current

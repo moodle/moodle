@@ -458,7 +458,7 @@ class quiz_default_questiontype {
         $grade = '';
         if ($question->maxgrade and $options->scores) {
             if ($cmoptions->optionflags & QUIZ_ADAPTIVE) {
-                $grade = (!($state->last_graded->event == QUESTION_EVENTGRADE)) ? '--/' : round($state->last_graded->grade, $cmoptions->decimalpoints).'/';
+                $grade = (!question_state_is_graded($state->last_graded)) ? '--/' : round($state->last_graded->grade, $cmoptions->decimalpoints).'/';
             }
             $grade .= $question->maxgrade;
         }
@@ -470,7 +470,7 @@ class quiz_default_questiontype {
                 $states = get_records_select('question_states', "attempt = '$state->attempt' AND question = '$question->id' AND event > '0'", 'seq_number DESC');
             } else {
                 // show only graded states
-                $states = get_records_select('question_states', "attempt = '$state->attempt' AND question = '$question->id' AND event = '".QUESTION_EVENTGRADE."'", 'seq_number DESC');
+                $states = get_records_select('question_states', "attempt = '$state->attempt' AND question = '$question->id' AND event IN (".QUESTION_EVENTGRADE.','.QUESTION_EVENTCLOSEANDGRADE.")", 'seq_number DESC');
             }
             if (count($states) > 1) {
                 $strreviewquestion = get_string('reviewresponse', 'quiz');
@@ -531,12 +531,12 @@ class quiz_default_questiontype {
         attempt and displays the overall grade obtained counting all previous
         responses (and penalties) */
 
-        if (QUESTION_EVENTDUPLICATEGRADE == $state->event) {
+        if (QUESTION_EVENTDUPLICATE == $state->event) {
             echo ' ';
             print_string('duplicateresponse', 'quiz');
         }
         if (!empty($question->maxgrade) && $options->scores) {
-            if ($state->last_graded->event == QUESTION_EVENTGRADE) {
+            if (question_state_is_graded($state->last_graded)) {
                 // Display the grading details from the last graded state
                 $grade->cur = round($state->last_graded->grade, $cmoptions->decimalpoints);
                 $grade->max = $question->maxgrade;
@@ -566,7 +566,7 @@ class quiz_default_questiontype {
                     }
                     // print info about new penalty
                     // penalty is relevant only if the answer is not correct and further attempts are possible
-                    if (($state->last_graded->raw_grade < $question->maxgrade) and (QUESTION_EVENTCLOSE !== $state->event)) {
+                    if (($state->last_graded->raw_grade < $question->maxgrade) and (QUESTION_EVENTCLOSEANDGRADE !== $state->event)) {
                         if ('' !== $state->last_graded->penalty && ((float)$state->last_graded->penalty) > 0.0) {
                             // A penalty was applied so display it
                             print_string('gradingdetailspenalty', 'quiz', $state->last_graded->penalty);
@@ -718,6 +718,7 @@ class quiz_default_questiontype {
         // arrays. The ordering of the arrays does not matter.
         // Question types may wish to override this (eg. to ignore trailing
         // white space or to make "7.0" and "7" compare equal).
+        if ($question->qtype = MATCH) {var_dump($state->responses);echo '<br>Teststate:';var_dump($teststate->responses);}
         return $state->responses == $teststate->responses;
     }
 
@@ -750,7 +751,7 @@ class quiz_default_questiontype {
     *                         must be updated. The method is able to
     *                         close the question session (preventing any further
     *                         attempts at this question) by setting
-    *                         $state->event to QUESTION_EVENTCLOSE.
+    *                         $state->event to QUESTION_EVENTCLOSEANDGRADE
     * @param object $cmoptions
     */
     function grade_responses(&$question, &$state, $cmoptions) {
@@ -775,6 +776,9 @@ class quiz_default_questiontype {
         }
         // Only allow one attempt at the question
         $state->penalty = 1;
+
+        // mark the state as graded
+        $state->event = ($state->event ==  QUESTION_EVENTCLOSE) ? QUESTION_EVENTCLOSEANDGRADE : QUESTION_EVENTGRADE;
 
         return true;
     }
