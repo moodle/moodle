@@ -24,6 +24,10 @@
 
             //Now, build the question_match_SUB record structure
             $match_sub->question = $new_question_id;
+            $match_sub->code = backup_todb($mat_info['#']['CODE']['0']['#']);
+            if (!$match_sub->code) {
+                $match_sub->code = $oldid;
+            }
             $match_sub->questiontext = backup_todb($mat_info['#']['QUESTIONTEXT']['0']['#']);
             $match_sub->answertext = backup_todb($mat_info['#']['ANSWERTEXT']['0']['#']);
 

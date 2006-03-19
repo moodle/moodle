@@ -476,9 +476,9 @@
                 $status = fwrite ($bf,start_tag("MATCH",7,true));
                 //Print match contents
                 fwrite ($bf,full_tag("ID",8,false,$match->id));
+                fwrite ($bf,full_tag("CODE",8,false,$match->code));
                 fwrite ($bf,full_tag("QUESTIONTEXT",8,false,$match->questiontext));
                 fwrite ($bf,full_tag("ANSWERTEXT",8,false,$match->answertext));
-                fwrite ($bf,full_tag("SHUFFLEANSWERS",8,false,$randomsamatch->shuffleanswers));
                 $status = fwrite ($bf,end_tag("MATCH",7,true));
             }
             $status = fwrite ($bf,end_tag("MATCHS",6,true));
