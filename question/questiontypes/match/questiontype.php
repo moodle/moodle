@@ -218,6 +218,8 @@ class question_match_qtype extends quiz_default_questiontype {
         $answers        = array();
         $responses      = &$state->responses;
 
+        $formatoptions->noclean = true;
+        $formatoptions->para = false;
 
         foreach ($subquestions as $subquestion) {
             foreach ($subquestion->options->answers as $ans) {
@@ -231,7 +233,7 @@ class question_match_qtype extends quiz_default_questiontype {
         // Print formulation
         $questiontext = format_text($question->questiontext,
                          $question->questiontextformat,
-                         NULL, $cmoptions->course);
+                         $formatoptions, $cmoptions->course);
         $image = get_question_image($question, $cmoptions->course);
 
         ///// Print the input controls //////
@@ -240,7 +242,7 @@ class question_match_qtype extends quiz_default_questiontype {
 
             /// Subquestion text:
             $a->text = format_text($subquestion->questiontext,
-                $question->questiontextformat, NULL, $cmoptions->course);
+                $question->questiontextformat, $formatoptions, $cmoptions->course);
 
             /// Drop-down list:
             $menuname = $nameprefix.$subquestion->id;

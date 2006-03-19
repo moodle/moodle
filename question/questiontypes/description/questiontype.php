@@ -38,9 +38,12 @@ class quiz_description_qtype extends quiz_default_questiontype {
             $editlink = link_to_popup_window('/question/question.php?id='.$question->id, $stredit, $linktext, 450, 550, $stredit, '', true);
         }
 
+        $formatoptions->noclean = true;
+        $formatoptions->para = false;
+
         $questiontext = format_text($question->questiontext,
                          $question->questiontextformat,
-                         NULL, $cmoptions->course);
+                         $formatoptions, $cmoptions->course);
         $image = get_question_image($question, $cmoptions->course);
 
         include "$CFG->dirroot/question/questiontypes/description/question.html";

@@ -261,12 +261,13 @@ class question_multichoice_qtype extends quiz_default_questiontype {
         $readonly = empty($options->readonly) ? '' : 'readonly="readonly"';
 
         $formatoptions = new stdClass;
+        $formatoptions->noclean = true;
         $formatoptions->para = false;
 
         // Print formulation
         $questiontext = format_text($question->questiontext,
                          $question->questiontextformat,
-                         NULL, $cmoptions->course);
+                         $formatoptions, $cmoptions->course);
         $image = get_question_image($question, $cmoptions->course);
         $answerprompt = ($question->options->single) ? get_string('singleanswer', 'quiz') :
             get_string('multipleanswers', 'quiz');
@@ -305,11 +306,11 @@ class question_multichoice_qtype extends quiz_default_questiontype {
                 'highlight' : '';
 
             // Print the answer text
-            $a->text = format_text("$qnumchar. $answer->answer", FORMAT_MOODLE, $formatoptions);
+            $a->text = format_text("$qnumchar. $answer->answer", FORMAT_MOODLE, $formatoptions, $cmoptions->course);
 
             // Print feedback if feedback is on
             $a->feedback = (($options->feedback || $options->correct_responses) && $checked) ?
-               $feedback = format_text($answer->feedback, true, false) : '';
+               $feedback = format_text($answer->feedback, true, $formatoptions, $cmoptions->course) : '';
 
             $anss[] = clone($a);
         }

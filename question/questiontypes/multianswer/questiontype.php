@@ -195,6 +195,8 @@ class quiz_embedded_cloze_qtype extends quiz_default_questiontype {
     function print_question_formulation_and_controls(&$question, &$state, $cmoptions, $options) {
         global $QTYPES;
         $readonly = empty($options->readonly) ? '' : 'readonly="readonly"';
+        $formatoptions->noclean = true;
+        $formatoptions->para = false;
         $nameprefix = $question->name_prefix;
 
         // For this question type, we better print the image on top:
@@ -202,7 +204,7 @@ class quiz_embedded_cloze_qtype extends quiz_default_questiontype {
 
         $qtextremaining = format_text($question->questiontext,
                                       $question->questiontextformat,
-                                      NULL, $cmoptions->course);
+                                      $formatoptions, $cmoptions->course);
 
         $strfeedback = get_string('feedback', 'quiz');
 

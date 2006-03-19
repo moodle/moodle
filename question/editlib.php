@@ -134,7 +134,8 @@ function question_list($course, $categoryid, $quizid,
         return;
     }
     echo "<center>";
-    echo format_text($category->info, FORMAT_MOODLE);
+    $formatoptions->noclean = true;
+    echo format_text($category->info, FORMAT_MOODLE, $formatoptions, $course->id);
 
     echo '<table><tr>';
 

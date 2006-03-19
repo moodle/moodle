@@ -138,11 +138,13 @@ class question_truefalse_qtype extends quiz_default_questiontype {
         global $CFG;
 
         $readonly = $options->readonly ? ' readonly="readonly"' : '';
+        $formatoptions->noclean = true;
+        $formatoptions->para = false;
 
         // Print question formulation
         $questiontext = format_text($question->questiontext,
                          $question->questiontextformat,
-                         NULL, $cmoptions->course);
+                         $formatoptions, $cmoptions->course);
         $image = get_question_image($question, $cmoptions->course);
 
         $answers = &$question->options->answers;
@@ -179,7 +181,7 @@ class question_truefalse_qtype extends quiz_default_questiontype {
         $feedback = '';
         if ($options->feedback and isset($answers[$state->responses['']])) {
             $chosenanswer = $answers[$state->responses['']];
-            $feedback = format_text($chosenanswer->feedback, true, false);
+            $feedback = format_text($chosenanswer->feedback, true, $formatoptions, $cmoptions->course);
         }
         
         include("$CFG->dirroot/question/questiontypes/truefalse/display.html");

@@ -84,12 +84,14 @@ class question_essay_qtype extends quiz_default_questiontype {
         $answers = &$question->options->answers;
         //$correctanswers = $this->get_correct_responses($question, $state);  // no correct answers ;)
         $readonly = empty($options->readonly) ? '' : 'disabled="disabled"';
+        $formatoptions->noclean = true;
+        $formatoptions->para = false;
         $nameprefix = $question->name_prefix;
         
         /// Print question text and media
        echo format_text($question->questiontext,
                          $question->questiontextformat,
-                         NULL, $cmoptions->course);
+                         $formatoptions, $cmoptions->course);
                          
         echo get_question_image($question, $cmoptions->course);
 
@@ -156,7 +158,7 @@ class question_essay_qtype extends quiz_default_questiontype {
             if (empty($value)) {  // no comment yet
                 echo format_text(get_string('nocommentsyet', 'quiz'));
             } else {
-                echo format_text($value);    
+                echo format_text($value, '', $formatoptions, $cmoptions->course);    
             }
             echo '</div></p>';
         }
@@ -164,7 +166,7 @@ class question_essay_qtype extends quiz_default_questiontype {
         // feedback
         if ($options->feedback) {
             foreach ($answers as $answer) {
-                format_text("<p align=\"right\">$answer->feedback</p>");
+                format_text("<p align=\"right\">$answer->feedback</p>", '', $formatoptions, $cmoptions->course);
             }
         }
         $this->print_question_submit_buttons($question, $state, $cmoptions, $options);

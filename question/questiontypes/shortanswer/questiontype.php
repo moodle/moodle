@@ -124,13 +124,15 @@ class question_shortanswer_qtype extends quiz_default_questiontype {
         $answers = &$question->options->answers;
         $correctanswers = $this->get_correct_responses($question, $state);
         $readonly = empty($options->readonly) ? '' : 'readonly="readonly"';
+        $formatoptions->noclean = true;
+        $formatoptions->para = false;
         $nameprefix = $question->name_prefix;
 
         /// Print question text and media
 
         $questiontext =  format_text($question->questiontext,
                          $question->questiontextformat,
-                         NULL, $cmoptions->course);
+                         $formatoptions, $cmoptions->course);
         $image = get_question_image($question, $cmoptions->course);
 
         /// Print input controls
@@ -146,7 +148,7 @@ class question_shortanswer_qtype extends quiz_default_questiontype {
         if ($options->feedback) {
             foreach($answers as $answer) {
                 if($answer->feedback and $this->test_response($question, $state, $answer)) {
-                    $feedback = format_text($answer->feedback, true, false);
+                    $feedback = format_text($answer->feedback, true, $formatoptions, $cmoptions->course);
                     break;
                 }
             }
