@@ -716,7 +716,7 @@ function get_recordset_select($table, $select='', $sort='', $fields='*', $limitf
  *
  * @param string $table the table to query.
  * @param string $field a field to check (optional).
- * @param string $values the value the field must have (requred if field1 is given, else optional).
+ * @param string $values comma separated list of values the field must have (requred if field is given, else optional).
  * @param string $sort an order to sort the results in (optional, a valid SQL ORDER BY parameter).
  * @param string $fields a comma separated list of fields to return (optional, by default all fields are returned).
  * @param int $limitfrom return a subset of records, starting at this point (optional, required if $limitnum is set).
