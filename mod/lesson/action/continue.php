@@ -15,20 +15,15 @@
             echo '<table><tr valign="top"><td>';
             // skip navigation link
             echo '<a href="#maincontent" class="skip">'.get_string('skip', 'lesson').'</a>';
-            echo '<form name="lessonpages2" method="post" action="view.php">'."\n";
-            echo '<input type="hidden" name="id" value="'. $cm->id .'" />'."\n";
-            echo '<input type="hidden" name="action" value="navigation" />'."\n";
-            echo '<input type="hidden" name="pageid" />'."\n";
-                echo '<div class="leftmenu_container">'."\n";
-                    echo '<div class="leftmenu_title">'.get_string('lessonmenu', 'lesson').'</div>'."\n";
-                    echo '<div class="leftmenu_courselink">';
-                    echo "<a href=\"../../course/view.php?id=$course->id\">".get_string("mainmenu", "lesson")."</a>";
-                    echo '</div>'."\n";
-                    echo '<div class="leftmenu_links">'."\n";
-                    lesson_print_tree_menu($lesson->id, $firstpageid, $cm->id);
-                    echo '</div>'."\n";
-                echo '</div>'."\n";
-            echo '</form>'."\n";
+            echo "<div class=\"leftmenu_container\">\n";
+                echo '<div class="leftmenu_title">'.get_string('lessonmenu', 'lesson')."</div>\n";
+                echo "<div class=\"leftmenu_courselink\">\n";
+                echo "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">".get_string("mainmenu", "lesson")."</a>\n";
+                echo "</div>\n";
+                echo "<div class=\"leftmenu_links\">\n";
+                lesson_print_tree_menu($lesson->id, $firstpageid, $cm->id);
+                echo "</div>\n";
+            echo "</div>\n";
             echo '</td><td align="center" width="100%">';
             // skip to anchor
             echo '<a name="maincontent" id="maincontent" title="'.get_string('anchortitle', 'lesson').'"></a>';
