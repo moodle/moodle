@@ -103,6 +103,8 @@
             $usernew->mailcharset = clean_param($usernew->mailcharset, PARAM_CLEAN);
             if (!empty($usernew->mailcharset)) {
                 set_user_preference('mailcharset', $usernew->mailcharset, $user->id);
+            } else {
+                 unset_user_preference('mailcharset', $user->id);
             }
         } else {
             unset_user_preference('mailcharset', $user->id);
