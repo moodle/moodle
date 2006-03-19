@@ -173,7 +173,7 @@ class question_essay_qtype extends quiz_default_questiontype {
     function grade_responses(&$question, &$state, $cmoptions) {
         $state->raw_grade = 0;
         // if a fraction is submitted, then we use it, otherwise the raw grade is 0
-        if ($state->responses['fraction']) {
+        if (isset($state->responses['fraction']) and $state->responses['fraction']) {
             $state->raw_grade = $state->responses['fraction'];
             $state->options->graded = 1;
             // mark the state as graded
