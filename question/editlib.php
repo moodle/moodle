@@ -249,8 +249,11 @@ function question_list($course, $categoryid, $quizid,
         echo "</td>\n";
         echo "</tr>\n";
     }
-    echo '<tr><td colspan="3">';
+    echo '<tr><td align="center" colspan="3">';
     print_paging_bar($totalnumber, $page, $perpage, "edit.php?courseid={$course->id}&amp;perpage=$perpage&amp;");
+    if ($totalnumber > $perpage) {
+        echo '<a href="edit.php?courseid='.$course->id.'&amp;perpage=1000">'.get_string('showall', 'moodle', $totalnumber).'</a>';
+    }
     echo "</td></tr></table>\n";
     print_simple_box_end();
 
