@@ -832,77 +832,64 @@
                     case LESSON_BRANCHTABLE :                        
                         $options = new stdClass;
                         $options->para = false;
-                        $buttons = array('next' => '', 'prev' => '', 'other' => array());
-                        // seperate out next and previous jumps from the other jumps 
+                        $buttons = array('next' => array(), 'prev' => array(), 'other' => array());
+                    /// seperate out next and previous jumps from the other jumps 
                         foreach ($answers as $answer) {
                             if ($answer->jumpto == LESSON_NEXTPAGE) {
-                                $buttons['next'] = '<div class="lessonbutton nextbutton"><a href="javascript:document.answerform.jumpto.value='.$answer->jumpto.';document.answerform.submit();">'.
-                                        strip_tags(format_text($answer->answer, FORMAT_MOODLE, $options)).'</a></div>';
+                                $buttons['next'][] = '<a href="javascript:document.answerform.jumpto.value='.$answer->jumpto.';document.answerform.submit();">'.
+                                        strip_tags(format_text($answer->answer, FORMAT_MOODLE, $options)).'</a>';
                             } else if ($answer->jumpto == LESSON_PREVIOUSPAGE) {
-                                $buttons['prev'] = '<div class="lessonbutton previousbutton"><a href="javascript:document.answerform.jumpto.value='.$answer->jumpto.';document.answerform.submit();">'.
-                                        strip_tags(format_text($answer->answer, FORMAT_MOODLE, $options)).'</a></div>';
+                                $buttons['prev'][] = '<a href="javascript:document.answerform.jumpto.value='.$answer->jumpto.';document.answerform.submit();">'.
+                                        strip_tags(format_text($answer->answer, FORMAT_MOODLE, $options)).'</a>';
                             } else {
-                                $buttons['other'][] = '<div class="lessonbutton standardbutton"><a href="javascript:document.answerform.jumpto.value='.$answer->jumpto.';document.answerform.submit();">'.
-                                        strip_tags(format_text($answer->answer, FORMAT_MOODLE, $options)).'</a></div>';
+                                $buttons['other'][] = '<a href="javascript:document.answerform.jumpto.value='.$answer->jumpto.';document.answerform.submit();">'.
+                                        strip_tags(format_text($answer->answer, FORMAT_MOODLE, $options)).'</a>';
                             }
                         }
-                        
-                        if ($lesson->slideshow) {
-                            $px = $lesson->width - 30; // give us some breathing room
-                            $width = ' width="'.$px.'px"';
-                        } else {
-                            $width = ' width="100%"';
-                        }
-                        
-                        $fullbuttonhtml = '<div class="branchbuttoncontainer">'."\n";
+                    
+                    /// set the order and orientation (order is very important for the divs to work for horizontal!)
                         if ($page->layout) {
-                            // tried to do this with CSS, but couldnt get it to work in MacIE browser.  Using tables instead :(
-                            // don't care if empty or not because we want to keep the table structure
-                            $fullbuttonhtml .= '<table '.$width.' align="center"><tr><td align="left" width="20%">'.$buttons['prev']."</td>\n";
-                            $fullbuttonhtml .= '<td><table align="center"><tr><td>'.implode("</td>\n<td>", $buttons['other'])."</td></tr></table></td>\n";
-                            $fullbuttonhtml .= '<td align="right" width="20%">'.$buttons['next']."</td></tr></table>\n";
+                            $orientation = 'horizontal';
+                            $a = 'a';
+                            $b = 'b';
+                            $c = 'c';
+                            $implode = ' ';
+                            $implode2 = "\n    ";
+                            if (empty($buttons['other'])) {
+                                $buttons['other'][] = '&nbsp;';  // very critical! If nothing is in the middle, 
+                                                                 // then the div style float left/right will not 
+                                                                 // render properly with next/previous buttons
+                            }
                         } else {
-                            // care about emptyness here
-                            $temparray = array();
-                            if (!empty($buttons['next'])) {
-                                $temparray[] = $buttons['next'];
-                            }
-                            if (!empty($buttons['other'])) {
-                                $temparray = array_merge($temparray, $buttons['other']);
-                            }
-                            if (!empty($buttons['prev'])) {
-                                $temparray[] = $buttons['prev'];
-                            }
-                            $fullbuttonhtml .= '<table align="center" cellpadding="3px"><tr><td align="center">'.
-                                                implode("</td></tr>\n<tr><td align=\"center\">", $temparray).
-                                                "</td></tr></table>\n";
+                            $orientation = 'vertical';
+                            $a = 'c';
+                            $b = 'a';
+                            $c = 'b';
+                            $implode = '<br /><br />';
+                            $implode2 = "<br />\n    ";
                         }
-                        $fullbuttonhtml .= "</div>\n";
+                        $buttonsarranged = array();
+                        $buttonsarranged[$a] = '<div class="lessonbutton prevbutton prev'.$orientation.'">'.implode($implode, $buttons['prev']).'</div>';
+                        $buttonsarranged[$b] = '<div class="lessonbutton nextbutton next'.$orientation.'">'.implode($implode, $buttons['next']).'</div>';
+                        $buttonsarranged[$c] = '<div class="lessonbutton standardbutton standard'.$orientation.'">'.implode($implode, $buttons['other']).'</div>';
+                        ksort($buttonsarranged); // sort by key
+                        
+                        $fullbuttonhtml = "\n<div class=\"branchbuttoncontainer\">\n    " . implode($implode2, $buttonsarranged). "\n</div>\n";
                     
                         if ($lesson->slideshow) {
-                            //echo '<div class="branchslidetop">' . $fullbuttonhtml . '</div>';
+                            echo '<div class="branchslidetop">' . $fullbuttonhtml . '</div>';
                             $options = new stdClass;
                             $options->noclean = true;
-                            echo '<div class="contents">'.format_text($page->contents, FORMAT_MOODLE, $options).'</div>';;
-                            echo '</table></div><table cellpadding="5" cellspacing="5" align="center">';
+                            echo '<div class="contents">'.format_text($page->contents, FORMAT_MOODLE, $options)."</div>\n";
+                            echo '</div><!--end slideshow div-->';
+                            echo '<div class="branchslidebottom">' . $fullbuttonhtml . '</div>';
                         } else {
-                            echo '<tr><td><table width="100%">';
+                            print_simple_box_start('center');
+                            echo $fullbuttonhtml;
+                            print_simple_box_end();
                         }
                         echo '<input type="hidden" name="jumpto" />';
                         
-                        if (!$lesson->slideshow) {
-                            if (!empty($buttons['next']) or !empty($buttons['prev'])) {
-                                print_simple_box_start("center", '100%');
-                            } else {
-                                print_simple_box_start("center");
-                            }
-                            
-                            echo $fullbuttonhtml;
-                            echo '</table></table>';
-                            print_simple_box_end();
-                        } else {
-                            echo '<div class="branchslidebottom">' . $fullbuttonhtml . '</div>';
-                        }
                         break;
                     case LESSON_ESSAY :
                         if (isset($USER->modattempts[$lesson->id])) {
@@ -1231,10 +1218,6 @@
 
             echo "<div align=\"center\" style=\"padding: 5px;\" class=\"lessonbutton standardbutton\"><a href=\"../../course/view.php?id=$course->id\">".get_string("mainmenu", "lesson")."</a></div>\n"; // Back to the menu (course view).
             echo "<div align=\"center\" style=\"padding: 5px;\" class=\"lessonbutton standardbutton\"><a href=\"../../grade/index.php?id=$course->id\">".get_string("viewgrades", "lesson")."</a></div>\n"; //view grades
-        }
-        
-        if ($lesson->slideshow) {  // ends the slideshow div
-            echo '</div>';
         }
         
         if ($lesson->displayleft || $lesson->slideshow) {  // this ends the table cell and table for the leftmenu or for slideshow

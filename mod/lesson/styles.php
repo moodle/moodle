@@ -143,9 +143,35 @@
 .mod-lesson .standardbutton {
 }
 
+/* Next three classes are for branch table buttons when displayed horizontally */
+.mod-lesson .prevhorizontal {
+    display: inline;
+    float: left;
+}
+
+.mod-lesson .nexthorizontal {
+    display: inline;
+    float: right;
+}
+
+.mod-lesson .standardhorizontal {
+    display: inline;
+}
+
+/* Next three classes are for branch table buttons when displayed vertically */
+.mod-lesson .prevvertical {
+}
+
+.mod-lesson .nextvertical a {
+}
+
+.mod-lesson .standardvertical a {
+}
+
 /*  branchbuttoncontainer wraps around branch table buttons */
 .mod-lesson .branchbuttoncontainer {
     text-align: center;
+    padding: 3px;
 }
 
 /*  branchslidetop and branchslidebottom classes are wrapped around the branch buttons (branchslidetop around 
@@ -155,13 +181,14 @@
     /*  You could float them out of the slide
     position: absolute;
     top: 60px;*/
-    /*  You may choose to not show them at all
-    display: none;*/
+    /*  You may choose to not show them at all */
+    display: none;
 }
 
 .mod-lesson .branchslidebottom {
-    /*  You may choose to not show them at all 
+    /*  You may choose to not show them at all
     display: none; */
+    padding-top: 10px;
 }
 
 /***
