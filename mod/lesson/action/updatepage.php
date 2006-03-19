@@ -103,7 +103,7 @@
                         $oldanswer->response = '';
                     }
                     $oldanswer->jumpto = clean_param($form->jumpto[$i], PARAM_INT);
-                    if ($lesson->custom) {
+                    if (isset($form->score[$i])) {
                         $oldanswer->score = clean_param($form->score[$i], PARAM_INT);
                     }
                     if (!update_record("lesson_answers", $oldanswer)) {
@@ -128,7 +128,9 @@
                         $newanswer->response = trim($form->response[$i]);
                     }
                     $newanswer->jumpto = clean_param($form->jumpto[$i], PARAM_INT);
-                    $newanswer->score = clean_param($form->score[$i], PARAM_INT);
+                    if (isset($form->score[$i])) {
+                        $newanswer->score = clean_param($form->score[$i], PARAM_INT);
+                    }
                     $newanswerid = insert_record("lesson_answers", $newanswer);
                     if (!$newanswerid) {
                         error("Update page: answer record not inserted");
