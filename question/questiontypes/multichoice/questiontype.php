@@ -22,12 +22,12 @@ class question_multichoice_qtype extends quiz_default_questiontype {
         // and attach it to the question object
         if (!$question->options = get_record('question_multichoice', 'question',
          $question->id)) {
-            notify('Error: Missing question options!');
+            notify('Error: Missing question options for multichoice question'.$question->id.'!');
             return false;
         }
 
         if (!$question->options->answers = get_records_select('question_answers', 'id IN ('.$question->options->answers.')')) {
-           notify('Error: Missing question answers!');
+           notify('Error: Missing question answers for multichoice question'.$question->id.'!');
            return false;
         }
 
