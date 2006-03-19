@@ -11,8 +11,19 @@
 
 $string['admindirerror'] = 'O diretório  admin indicado não é correto';
 $string['admindirname'] = 'Diretório Admin';
+$string['bypassed'] = 'Ignorado';
+$string['cannotcreatelangdir'] = 'Impossível criar diretório lang';
+$string['cannotcreatetempdir'] = 'Impossível criar diretório temp';
+$string['cannotdownloadcomponents'] = 'Impossível baixar componentes';
+$string['cannotdownloadzipfile'] = 'Impossível bixar arquivo ZIP';
+$string['cannotfindcomponent'] = 'Impossível achar componente';
+$string['cannotsavemd5file'] = 'Impossível salvar arquivo md5';
+$string['cannotsavezipfile'] = 'Impossível salvar arquivo ZIP';
+$string['cannotunzipfile'] = 'Impossível descompactar arquivo ZIP';
 $string['caution'] = 'Atenção';
+$string['check'] = 'Controlar';
 $string['closewindow'] = 'Fechar esta janela';
+$string['componentisuptodate'] = 'Componente atualizado';
 $string['configfilenotwritten'] = 'O script do instalador não conseguiu criar o arquivo config.php com as configurações que você definiu, provavelmente o diretório não está protegido e não aceita modificações. Você pode copiar o seguinte código manualmente em um arquivo de texto com o nome config.php e carregar este arquivo no diretório principal de Moodle.';
 $string['configfilewritten'] = 'config.php foi criado com sucesso';
 $string['continue'] = 'Continuar';
@@ -27,6 +38,7 @@ $string['dbtype'] = 'Tipo';
 $string['dirroot'] = 'Diretório Moodle';
 $string['dirrooterror'] = 'A configuração do percurso de acesso ao Diretório Moodle parece errada - não foi possível encontrar uma instalação de Moodle neste endereço. O valor abaixo foi reconfigurado.';
 $string['download'] = 'Download';
+$string['downloadedfilecheckfailed'] = 'Impossível fazer o controle do arquivo baixado';
 $string['error'] = 'Erro';
 $string['fail'] = 'Erro';
 $string['fileuploads'] = 'Carregamento de arquivos';
@@ -38,6 +50,7 @@ $string['globalsquoteserror'] = 'Corrija a configuração do seu PHP: desabilita
 $string['help'] = 'Ajuda';
 $string['info'] = 'Informação';
 $string['installation'] = 'Instalação';
+$string['invalidmd5'] = 'md5 não válido';
 $string['language'] = 'Idioma';
 $string['magicquotesruntime'] = 'Run Time Magic Quotes ';
 $string['magicquotesruntimeerror'] = 'Isto deve estar desativado';
@@ -56,6 +69,7 @@ Com esta operação Moodle será capaz de configurar o limite de memória sózin
 <p><blockquote>php_value memory_limit 16M</blockquote></p>
 <p>Alguns servidores não aceitam este procedimento e <b>todas</b> as páginas PHP do servidor ficam bloqueadas ou imprimem mensagens de erro. Neste caso será necessário cancelar o arquivo .htaccess .</p>
 </li></ol> ';
+$string['missingrequiredfield'] = 'Faltam informações obrigatórias';
 $string['mysqlextensionisnotpresentinphp'] = 'O pHP não foi configurado corretamente com a extensão MySQL e não pode comunicar com a base de dados. Controle o seu php.ini ou faça a recompilação do PHP.';
 $string['name'] = 'Nome';
 $string['next'] = 'Próximo';
@@ -68,6 +82,8 @@ $string['phpversionhelp'] = '<p>Moodle requer a versão 4.1.0 de PHP ou posterio
 <p>A sua versão é $a</p>
 <p>Atualize a versão do PHP!</p>';
 $string['previous'] = 'Anterior';
+$string['remotedownloadnotallowed'] = 'Não é permitido baixar componentes no seu servidor (allow_url_fopen está desabilitado).).<br /><br />Você deve baixar o arquivo <a href=\"$a->url\">$a->url</a> manualmente, copiar em \"$a->dest\" no seu servidor e descomprimir o arquivo nesta posição.';
+$string['report'] = 'Relatório';
 $string['safemode'] = 'Modalidade segura';
 $string['safemodeerror'] = 'Moodle pode ter problemas se a modalidade segura estiver ativa';
 $string['sessionautostart'] = 'Início da sessão automático';
@@ -76,6 +92,9 @@ $string['status'] = 'Status';
 $string['thischarset'] = 'UTF-8';
 $string['thislanguage'] = 'Português - Brasil';
 $string['user'] = 'Usuário';
+$string['wrongdestpath'] = 'Percurso do destino errado';
+$string['wrongsourcebase'] = 'URL do recurso errado';
+$string['wrongzipfilename'] = 'Nome do arquivo ZIP errado';
 $string['wwwroot'] = 'Endereço web';
 $string['wwwrooterror'] = 'Este endereço web não está correto - a instalação do Moodle não foi lencontrada.';
 ?>
