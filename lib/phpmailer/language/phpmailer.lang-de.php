@@ -18,6 +18,6 @@ $PHPMAILER_LANG["recipients_failed"] = 'SMTP Fehler: Die folgenden ' .
 $PHPMAILER_LANG["data_not_accepted"] = 'SMTP Fehler: Daten werden nicht akzeptiert.';
 $PHPMAILER_LANG["connect_host"] = 'SMTP Fehler: Konnte keine Verbindung zum SMTP-Host herstellen.';
 $PHPMAILER_LANG["file_access"] = 'Zugriff auf folgende Datei fehlgeschlagen: ';
-$PHPMAILER_LANG["file_open"] = 'Datei Fehler: Konnte Date nicht &ouml;ffnen: ';
+$PHPMAILER_LANG["file_open"] = 'Datei Fehler: konnte folgende Datei nicht &ouml;ffnen: ';
 $PHPMAILER_LANG["encoding"] = 'Unbekanntes Encoding-Format: ';
 ?>

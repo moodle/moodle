@@ -1,7 +1,7 @@
 <?php
 /**
- * Norwegian language file.
- * English Version
+ * PHPMailer language file.
+ * Norwegian Version
  */
 
 $PHPMAILER_LANG = array();

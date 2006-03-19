@@ -1,23 +1,23 @@
 <?php
 /**
- * PHPMailer language file.
+ * PHPMailer language file.  
  * Dutch Version
  */
 
 $PHPMAILER_LANG = array();
 
-$PHPMAILER_LANG["provide_address"] = 'U moet op zijn minst één ontvanger ' .
-                                     'opgeven';
-$PHPMAILER_LANG["mailer_not_supported"] = ' e-mail service wordt niet ondersteund.';
-$PHPMAILER_LANG["execute"] = 'Kan niet worden uitgevoerd: ';
-$PHPMAILER_LANG["instantiate"] = 'Kan mail functie niet op gang brengen.';
-$PHPMAILER_LANG["authenticate"] = 'SMTP fout: Ongeldige gebruikersnaam of wachtwoord.';
-$PHPMAILER_LANG["from_failed"] = 'De volgende afzenders zijn ongeldig: ';
-$PHPMAILER_LANG["recipients_failed"] = 'SMTP Fout: Kon email niet verzend ' .
-                                       'naar de volgende ontvangers : ';
+$PHPMAILER_LANG["provide_address"] = 'Er moet tenmiste &eacute;&eacute;n ' .
+                                     'ontvanger emailadres opgegeven worden.';
+$PHPMAILER_LANG["mailer_not_supported"] = ' mailer wordt niet ondersteund.';
+$PHPMAILER_LANG["execute"] = 'Kon niet uitvoeren: ';
+$PHPMAILER_LANG["instantiate"] = 'Kon mail functie niet initialiseren.';
+$PHPMAILER_LANG["authenticate"] = 'SMTP Fout: authenticatie mislukt.';
+$PHPMAILER_LANG["from_failed"] = 'De volgende afzender adressen zijn mislukt: ';
+$PHPMAILER_LANG["recipients_failed"] = 'SMTP Fout: De volgende ' .
+                                       'ontvangers zijn mislukt: ';
 $PHPMAILER_LANG["data_not_accepted"] = 'SMTP Fout: Data niet geaccepteerd.';
-$PHPMAILER_LANG["connect_host"] = 'SMTP Fout: Kan geen verbinding maken met de SMTP server.';
-$PHPMAILER_LANG["file_access"] = 'Bijlage kon niet worden geopend: ';
-$PHPMAILER_LANG["file_open"] = 'Bijlage kon niet worden geopend: ';
+$PHPMAILER_LANG["connect_host"] = 'SMTP Fout: Kon niet verbinden met SMTP host.';
+$PHPMAILER_LANG["file_access"] = 'Kreeg geen toegang tot bestand: ';
+$PHPMAILER_LANG["file_open"] = 'Bestandsfout: Kon bestand niet openen: ';
 $PHPMAILER_LANG["encoding"] = 'Onbekende codering: ';
 ?>
