@@ -3850,7 +3850,7 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml='', $a
 
 /// If we are running under Unicode and sitemailcharset or allowusermailcharset are set, convert the email
 /// encoding to the specified one
-    if ($CFG->unicodedb && (!empty($CFG->sitemailcharset) || !empty($CFG->allowusermailcharset))) {
+    if (!empty($CFG->unicodedb) && (!empty($CFG->sitemailcharset) || !empty($CFG->allowusermailcharset))) {
     /// Set it to site mail charset
         $charset = $CFG->sitemailcharset;
     /// Overwrite it with the user mail charset
