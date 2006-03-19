@@ -17,7 +17,7 @@ class question_randomsamatch_qtype extends question_match_qtype {
 
     function get_question_options(&$question) {
         if (!$question->options = get_record('question_randomsamatch', 'question', $question->id)) {
-            notify('Error: Missing question options!');
+            notify('Error: Missing question options for random short answer question '.$question->id.'!');
             return false;
         }
 
