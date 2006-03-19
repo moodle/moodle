@@ -1,5 +1,10 @@
 ChangeLog
 
+Version 1.73 (Sun, Jun 10 2005)
+* Fixed denial of service bug: http://www.cybsec.com/vuln/PHPMailer-DOS.pdf
+* Now has a total of 20 translations
+* Fixed alt attachments bug: http://tinyurl.com/98u9k
+
 Version 1.72 (Wed, May 25 2004)
 * Added Dutch, Swedish, Czech, Norwegian, and Turkish translations.
 * Received: Removed this method because spam filter programs like 

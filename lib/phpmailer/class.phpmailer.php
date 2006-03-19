@@ -119,13 +119,13 @@ class PHPMailer
      * is in a different directory than the PHP include path.  
      * @var string
      */
-    var $PluginDir         = '';
+    var $PluginDir         = "";
 
     /**
      *  Holds PHPMailer version.
      *  @var string
      */
-    var $Version           = "1.72";
+    var $Version           = "1.73";
 
     /**
      * Sets the email address that a reading confirmation will be sent.
@@ -239,7 +239,7 @@ class PHPMailer
         $this->PluginDir = $CFG->libdir.'/phpmailer/';
     }
 
-    
+
 
     /**
      * Sets message type to HTML.  
@@ -471,7 +471,7 @@ class PHPMailer
      * @return bool
      */
     function SmtpSend($header, $body) {
-        include_once($this->PluginDir.'class.smtp.php');
+        include_once($this->PluginDir."class.smtp.php");
         $error = "";
         $bad_rcpt = array();
 
@@ -756,7 +756,7 @@ class PHPMailer
         {
            case "alt":
               // fall through
-           case "alt_attachment":
+           case "alt_attachments":
               $this->AltBody = $this->WrapText($this->AltBody, $this->WordWrap);
               break;
            default:
@@ -1103,9 +1103,12 @@ class PHPMailer
             $this->SetError($this->Lang("file_open") . $path);
             return "";
         }
+        $magic_quotes = get_magic_quotes_runtime();
+        set_magic_quotes_runtime(0);
         $file_buffer = fread($fd, filesize($path));
         $file_buffer = $this->EncodeString($file_buffer, $encoding);
         fclose($fd);
+        set_magic_quotes_runtime($magic_quotes);
 
         return $file_buffer;
     }

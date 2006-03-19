@@ -333,11 +333,10 @@ class SMTP
             while(strlen($line) > $max_line_length) {
                 $pos = strrpos(substr($line,0,$max_line_length)," ");
 
-                // Fix from http://www.addict3d.org/index.php?page=viewarticle&type=security&ID=4079
-                if (!$pos) {
+                # Patch to fix DOS attack
+                if(!$pos) {
                     $pos = $max_line_length - 1;
                 }
-                // End of fix
 
                 $lines_out[] = substr($line,0,$pos);
                 $line = substr($line,$pos + 1);
