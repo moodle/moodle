@@ -188,5 +188,44 @@ class textlib {
         return $result;
     }
 
+    /* Generate a correct base64 encoded header to be used in MIME mail messages.
+     * This function seems to be 100% compliant with RFC1342. Credits go to:
+     * paravoid (http://www.php.net/manual/en/function.mb-encode-mimeheader.php#60283).
+     */
+    function encode_mimeheader($text, $charset='utf-8') {
+    /// Although RFC says that line feed should be \r\n, it seems that
+    /// some mailers double convert \r, so we are going to use \n alone
+        $linefeed="\n";
+    /// Define start and end of every chunk
+        $start = "=?$charset?B?";
+        $end = "?=";
+    /// Acumulate results
+        $encoded = '';
+    /// Max line length is 75 (including start and end)
+        $length = 75 - strlen($start) - strlen($end);
+    /// Multi-byte ratio
+        $ratio = $this->strlen($text, $charset) / strlen($text);
+    /// Base64 ratio
+        $magic = $avglength = floor(3 * $length * $ratio / 4);
+    /// Iterate over the string in magic chunks
+        for ($i=0; $i <= $this->strlen($text, $charset); $i+=$magic) {
+            $magic = $avglength;
+            $offset = 0;
+        /// Ensure the chunk fits in length, reduding magic if necessary
+            do {
+                $magic -= $offset;
+                $chunk = $this->substr($text, $i, $magic, $charset);
+                $chunk = base64_encode($chunk);
+                $offset++;
+            } while (strlen($chunk) > $length);
+        /// This chunk doen't break any multi-byte char. Use it.
+            if ($chunk)
+                $encoded .= ' '.$start.$chunk.$end.$linefeed;
+        }
+    /// Strip the first space and the last linefeed 
+        $encoded = substr($encoded, 1, -strlen($linefeed));
+
+        return $encoded;
+    }
 }
 ?>
