@@ -164,7 +164,7 @@ class question_essay_qtype extends quiz_default_questiontype {
         // feedback
         if ($options->feedback) {
             foreach ($answers as $answer) {
-                quiz_print_comment("<p align=\"right\">$answer->feedback</p>");
+                format_text("<p align=\"right\">$answer->feedback</p>");
             }
         }
         $this->print_question_submit_buttons($question, $state, $cmoptions, $options);
