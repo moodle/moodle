@@ -458,7 +458,7 @@ class quiz_default_questiontype {
         $grade = '';
         if ($question->maxgrade and $options->scores) {
             if ($cmoptions->optionflags & QUIZ_ADAPTIVE) {
-                $grade = (!$state->last_graded->event == QUESTION_EVENTGRADE) ? '--/' : round($state->last_graded->grade, $cmoptions->decimalpoints).'/';
+                $grade = (!($state->last_graded->event == QUESTION_EVENTGRADE)) ? '--/' : round($state->last_graded->grade, $cmoptions->decimalpoints).'/';
             }
             $grade .= $question->maxgrade;
         }
