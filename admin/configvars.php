@@ -570,19 +570,21 @@ class configvarrss extends configvar {
     $mail['denyemailaddresses'] = new configvar (get_string('configdenyemailaddresses', 'admin'),
         '<input name="denyemailaddresses" type="text" size="60" value="'.s($config->denyemailaddresses).'" alt="denyemailaddresses" />' );
 
-/// sitemailcharset
-    unset($options);
-    unset($charsets);
-    $charsets = get_list_of_charsets();
-    $options['0'] = get_string('none');
-    $options = array_merge($options, $charsets);
-    $mail['sitemailcharset'] = new configvar (get_string('configsitemailcharset', 'admin'),
-        choose_from_menu($options, 'sitemailcharset', $config->sitemailcharset, '', '', '', true));
+    if (!empty($CFG->unicodedb)) { ///These options are only available if running under unicodedb
+    /// sitemailcharset
+        unset($options);
+        unset($charsets);
+        $charsets = get_list_of_charsets();
+        $options['0'] = get_string('none');
+        $options = array_merge($options, $charsets);
+        $mail['sitemailcharset'] = new configvar (get_string('configsitemailcharset', 'admin'),
+            choose_from_menu($options, 'sitemailcharset', $config->sitemailcharset, '', '', '', true));
 
-/// allowusermailcharset
-    $mail['allowusermailcharset'] = new configvar (get_string('configallowusermailcharset', 'admin'),
-        choose_from_menu($noyesoptions, 'allowusermailcharset', $config->allowusermailcharset, '', '', '', true));
-
+    /// allowusermailcharset
+        $mail['allowusermailcharset'] = new configvar (get_string('configallowusermailcharset', 'admin'),
+            choose_from_menu($noyesoptions, 'allowusermailcharset', $config->allowusermailcharset, '', '', '', true));
+    }
+    
 /// enable stats
     $stats['enablestats'] = new configvar (get_string('configenablestats','admin'),
         choose_from_menu($noyesoptions, 'enablestats', $config->enablestats, '', '', '', true) );
