@@ -5,7 +5,7 @@
 //////////////
 
 /// QUESTION TYPE CLASS //////////////////
-class quiz_random_qtype extends quiz_default_questiontype {
+class quiz_random_qtype extends default_questiontype {
 
     var $excludedtypes = array(RANDOM, RANDOMSAMATCH, ESSAY, DESCRIPTION);
 

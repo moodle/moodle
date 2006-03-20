@@ -11,7 +11,7 @@
 /// question type embeddable within a multianswer (cloze) question
 ///
 
-class question_multichoice_qtype extends quiz_default_questiontype {
+class question_multichoice_qtype extends default_questiontype {
 
     function name() {
         return 'multichoice';

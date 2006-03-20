@@ -13,7 +13,7 @@
 
 /// Question type class //////////////////////////////////////////////
 
-class quiz_default_questiontype {
+class default_questiontype {
 
     /**
     * Name of the question type

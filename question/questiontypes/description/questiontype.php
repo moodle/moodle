@@ -11,7 +11,7 @@
 // and it therefore often sticks to some kind of odd behaviour
 //
 
-class quiz_description_qtype extends quiz_default_questiontype {
+class quiz_description_qtype extends default_questiontype {
 
     function name() {
         return 'description';

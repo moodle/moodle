@@ -5,7 +5,7 @@
 /////////////////
 
 /// QUESTION TYPE CLASS //////////////////
-class question_truefalse_qtype extends quiz_default_questiontype {
+class question_truefalse_qtype extends default_questiontype {
 
     function name() {
         return 'truefalse';

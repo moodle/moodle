@@ -10,7 +10,7 @@ define("LITERAL", "1");
 define("FILE", "2");
 define("LINK", "3");
 
-class question_dataset_dependent_questiontype extends quiz_default_questiontype {
+class question_dataset_dependent_questiontype extends default_questiontype {
 
     var $virtualqtype = false;
 

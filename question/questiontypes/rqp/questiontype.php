@@ -16,7 +16,7 @@ require_once($CFG->dirroot . '/question/questiontypes/rqp/remote.php');
 /**
 * RQP question type class
 */
-class question_rqp_qtype extends quiz_default_questiontype {
+class question_rqp_qtype extends default_questiontype {
 
     /**
     * Name of the rqp question type

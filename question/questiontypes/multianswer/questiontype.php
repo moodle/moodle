@@ -13,7 +13,7 @@
 ///
 
 /// QUESTION TYPE CLASS //////////////////
-class quiz_embedded_cloze_qtype extends quiz_default_questiontype {
+class quiz_embedded_cloze_qtype extends default_questiontype {
 
     function name() {
         return 'multianswer';

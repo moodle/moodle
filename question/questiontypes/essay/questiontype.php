@@ -5,7 +5,7 @@
 /////////////////
 
 /// QUESTION TYPE CLASS //////////////////
-class question_essay_qtype extends quiz_default_questiontype {
+class question_essay_qtype extends default_questiontype {
 
     function name() {
         return 'essay';
