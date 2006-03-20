@@ -1481,6 +1481,7 @@ function main_upgrade($oldversion=0) {
         table_column('blog_tag_instance','','timemodified','integer','10','unsigned','0','not null', 'userid');
         modify_database('',"ALTER TABLE prefix_blog_tag_instance ADD INDEX bti_entryid_idx (entryid);");
         modify_database('',"ALTER TABLE prefix_blog_tag_instance ADD INDEX bti_tagid_idx (tagid);");
+        modify_database('',"UPDATE prefix_blog_tag_instance SET timemodified = '".time()."';");
     }
 
     return $result;
