@@ -215,14 +215,6 @@ $CFG->admin = 'admin';
 // This setting will make some graphs (eg user logs) use lines instead of bars
 //      $CFG->preferlinegraphs = true;
 //
-// Enabling this will make most text-based filters only match the first time
-// a phrase occurs in a given text.  Otherwise all are matched.
-//      $CFG->filtermatchonepertext = true;
-//
-// Enabling this will make most text-based filters only match the first time
-// a phrase occurs in a given page.  Otherwise all are matched.
-//      $CFG->filtermatchoneperpage = true;
-//
 // Enabling this will allow custom scripts to replace existing moodle scripts.
 // For example: if $CFG->customscripts/course/view.php exists then
 // it will be used instead of $CFG->wwwroot/course/view.php
