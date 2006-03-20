@@ -96,15 +96,8 @@ class BlogEntry {
         } else {
             $this->entryPublishState = 'draft';
         }
-
-        // need to get the email address of the author.
-        if (! $rs = get_record('user', 'id', $this->entryuserid)) {
-                error('Could not find user '. $this->entryuserid ."\n"); //Daryl Hawes note: needs localization
-                die;
-        }
-        $this->entryAuthorName = $rs->firstname .' '. $rs->lastname;
-        //need to make sure that email is actually just a link to our email sending page.
-        $this->entryAuthorEmail = $rs->email;
+        $this->entryAuthorName = fullname($entrydetails);  // firstname and lastname defined
+        $this->entryAuthorEmail = $entrydetails->email;
 
     }
 

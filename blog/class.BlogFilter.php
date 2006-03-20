@@ -207,13 +207,16 @@ class BlogFilter {
          * depending on the type, there are 4   *
          * different possible sqls              *
          ****************************************/
+
+        $requiredfields = 'p.*, u.firstname,u.lastname,u.email';
+       
         switch ($this->filtertype) {
 
             case 'site':
             
                 if (!isguest() && isloggedin()) {
 
-                    $SQL = 'SELECT p.* FROM '.$CFG->prefix.'post p, '.$tagtablesql
+                    $SQL = 'SELECT '.$requiredfields.' FROM '.$CFG->prefix.'post p, '.$tagtablesql
                             .$CFG->prefix.'user u
                             WHERE p.userid = u.id '.$tagquerysql.'
                             AND (p.publishstate = \'site\' OR p.publishstate = \'public\' OR p.userid = '.$USER->id.')
@@ -221,7 +224,7 @@ class BlogFilter {
 
                 } else {
 
-                    $SQL = 'SELECT p.* FROM '.$CFG->prefix.'post p, '.$tagtablesql
+                    $SQL = 'SELECT '.$requiredfields.' FROM '.$CFG->prefix.'post p, '.$tagtablesql
                             .$CFG->prefix.'user u
                             WHERE p.userid = u.id '.$tagquerysql.'
                             AND p.publishstate = \'public\'
@@ -232,24 +235,26 @@ class BlogFilter {
             
             case 'course':
                 if ($this->filterselect != SITEID) {
-                    $SQL = '(SELECT p.* FROM '.$CFG->prefix.'post p, '.$tagtablesql
-                            .$CFG->prefix.'user_students u
-                            WHERE p.userid = u.userid '.$tagquerysql.'
-                            AND u.course = '.$this->filterselect.'
+                    $SQL = '(SELECT '.$requiredfields.' FROM '.$CFG->prefix.'post p, '.$tagtablesql
+                            .$CFG->prefix.'user_students s, '.$CFG->prefix.'user u
+                            WHERE p.userid = s.userid '.$tagquerysql.'
+                            AND s.course = '.$this->filterselect.'
+                            AND u.id = p.userid
                             AND (p.publishstate = \'site\' OR p.publishstate = \'public\' OR p.userid = '.$USER->id.'))
 
                             UNION
 
-                            (SELECT p.* FROM '.$CFG->prefix.'post p, '.$tagtablesql
-                            .$CFG->prefix.'user_teachers u
-                            WHERE p.userid = u.userid '.$tagquerysql.'
-                            AND u.course = '.$this->filterselect.'
+                            (SELECT '.$requiredfields.' FROM '.$CFG->prefix.'post p, '.$tagtablesql
+                            .$CFG->prefix.'user_teachers t, '.$CFG->prefix.'user u
+                            WHERE p.userid = t.userid '.$tagquerysql.'
+                            AND t.course = '.$this->filterselect.'
+                            AND u.id = p.userid
                             AND (p.publishstate = \'site\' OR p.publishstate = \'public\' OR p.userid = '.$USER->id.'))';    //this will break for postgres, i think
                 } else {
 
                     if (isloggedin()) {
 
-                        $SQL = 'SELECT p.* FROM '.$CFG->prefix.'post p, '.$tagtablesql
+                        $SQL = 'SELECT '.$requiredfields.' FROM '.$CFG->prefix.'post p, '.$tagtablesql
                                 .$CFG->prefix.'user u
                                 WHERE p.userid = u.id '.$tagquerysql.'
                                 AND (p.publishstate = \'site\' OR p.publishstate = \'public\' OR p.userid = '.$USER->id.')
@@ -257,7 +262,7 @@ class BlogFilter {
 
                     } else {
 
-                        $SQL = 'SELECT p.* FROM '.$CFG->prefix.'post p, '.$tagtablesql
+                        $SQL = 'SELECT '.$requiredfields.' FROM '.$CFG->prefix.'post p, '.$tagtablesql
                                 .$CFG->prefix.'user u
                                 WHERE p.userid = u.id '.$tagquerysql.'
                                 AND p.publishstate = \'public\'
@@ -270,9 +275,10 @@ class BlogFilter {
             
             case 'group':
 
-                $SQL = 'SELECT p.* FROM '.$CFG->prefix.'post p, '.$tagtablesql
-                        .$CFG->prefix.'groups_members m
+                $SQL = 'SELECT '.$requiredfields.' FROM '.$CFG->prefix.'post p, '.$tagtablesql
+                        .$CFG->prefix.'groups_members m, '.$CFG->prefix.'user u
                         WHERE p.userid = m.userid '.$tagquerysql.'
+                        AND u.id = p.userid
                         AND m.groupid = '.$this->filterselect.'
                         AND (p.publishstate = \'site\' OR p.publishstate = \'public\' OR p.userid = '.$USER->id.')';
             
@@ -280,7 +286,7 @@ class BlogFilter {
             
             case 'user':
 
-                $SQL = 'SELECT p.* FROM '.$CFG->prefix.'post p, '.$tagtablesql
+                $SQL = 'SELECT '.$requiredfields.' FROM '.$CFG->prefix.'post p, '.$tagtablesql
                         .$CFG->prefix.'user u
                         WHERE p.userid = u.id '.$tagquerysql.'
                         AND u.id = '.$this->filterselect.'
@@ -309,7 +315,7 @@ class BlogFilter {
             return array();
         } else {
             $blogEntries = array();
-            foreach($records as $record) {
+            foreach ($records as $record) {
                 $blogEntry = new BlogEntry($record);
                 $blogEntries[] = $blogEntry;
             }

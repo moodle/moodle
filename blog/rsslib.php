@@ -1,6 +1,7 @@
 <?php
 
     require_once($CFG->dirroot.'/lib/rsslib.php');
+    require_once($CFG->dirroot .'/blog/lib.php');
 
 
     // This function returns the icon (from theme) with the link to rss/file.php
@@ -49,6 +50,14 @@
 
     // Generate any blog RSS feed via one function (called by ../rss/file.php)
     function blog_generate_rss_feed($type, $id, $tagid=0) {
+        global $CFG, $SITE;
+
+        if (empty($CFG->enablerssfeeds)) {
+            if ($CFG->debug > 7) {
+                notify('Sorry, RSS feeds are disabled on this site');
+            }
+            return '';
+        }
 
         $filename = blog_rss_file_name($type, $id, $tagid);
 
@@ -58,42 +67,64 @@
             }
         }
 
-        // Proceed to generate it
+    /// Get all the posts from the database
 
-        switch ($type) {
-           case 'site':
-               if (blog_site_feeds($tagid)) {
-                   return $filename;
-               }
-           break;
-           case 'course':
-               if ( blog_course_feed($id,$tagid)) {
-                   return $filename;
-               }
-           break;
-           case 'group':
-               if ( blog_group_feed($id,$tagid)) {
-                   return $filename;
-               }
-           break;
-           case 'user':
-               if ( blog_user_feed($id,$tagid)) {
-                   return $filename;
-               }
-           break;
+        $blogFilter =& new BlogFilter(0, 0, 20, 0, $type, $id, $tagid);
+        $blogposts = $blogFilter->fetch_entries();
+
+    /// Now generate an array of RSS items
+        if ($blogposts) {
+            $items = array();
+            foreach ($blogposts as $blogpost) {
+                $item = NULL;
+                $item->author = $blogpost->entryAuthorName;
+                $item->title = $blogpost->entryTitle;
+                $item->pubdate = $blogpost->entryLastModified;
+                $item->link = $CFG->wwwroot.'/blog/index.php?postid='.$blogpost->entryId;
+                $item->description = format_text($blogpost->entryBody, $blogpost->entryFormat);
+                $items[] = $item;
+            }
+            $articles = rss_add_items($items);   /// Change structure to XML
+        } else {
+            $articles = '';
         }
 
-        return false;   // Couldn't find it or make it
+    /// Get header and footer information
+     
+        switch ($type) {
+            case 'user':
+                $info = fullname(get_record('user', 'id', $id, '','','','','firstname,lastname'));
+                break;
+            case 'course':
+                $info = get_field('course', 'fullname', 'id', $id);
+                break;
+            case 'site':
+                $info = $SITE->fullname;
+                break;
+            case 'group':
+                $info = get_field('groups', 'name', 'id', $id);
+                break;
+        }
+
+        $header = rss_standard_header(get_string($type.'blog','blog', $info), 
+                                      $CFG->wwwroot.'/blog/index.php', 
+                                      get_string('intro','blog'));
+                                                      
+        $footer = rss_standard_footer();
+
+
+    /// Save the XML contents to file.
+
+        $rssdata = $header.$articles.$footer;
+
+        if (blog_rss_save_file($type,$id,$tagid,$rssdata)) {
+            return $filename;
+        } else {
+            return false;   // Couldn't find it or make it
+        }
     }
 
 
-    /* Rss files for blogs
-     * 4 different ways to store feeds.
-     * site - $CFG->dataroot/rss/blog/site/SITEID.xml
-     * course - $CFG->dataroot/rss/blog/course/courseid.xml
-     * group - $CFG->dataroot/rss/blog/group/groupid.xml
-     * user - $CFG->dataroot/rss/blog/user/userid.xml
-     */
     function blog_rss_file_name($type, $id, $tagid=0) {
         global $CFG;
 
@@ -105,361 +136,23 @@
     }
     
     //This function saves to file the rss feed specified in the parameters
-    function blog_rss_save_file($type, $id, $result) {
+    function blog_rss_save_file($type, $id, $tagid=0, $contents='') {
         global $CFG;
 
-        $status = true;
+        if (! $basedir = make_upload_directory("rss/blog/$type/$id")) {
+            return false;
+        }
 
-        if (! $basedir = make_upload_directory ('rss/blogs/'. $type.'/'.$id)) {
-            //Cannot be created, so error
+        $file = blog_rss_file_name($type, $id, $tagid);
+        $rss_file = fopen($file, 'w');
+        if ($rss_file) {
+            $status = fwrite ($rss_file, $contents);
+            fclose($rss_file);
+        } else {
             $status = false;
         }
 
-        if ($status) {
-            $file = blog_rss_file_name($type, $id, $tagid);
-            $rss_file = fopen($file, "w");
-            if ($rss_file) {
-                $status = fwrite ($rss_file, $result);
-                fclose($rss_file);
-            } else {
-                $status = false;
-            }
-        }
-        return $status;
-    }
-     
-    
-    // Only 1 view, site level feeds
-    function blog_site_feeds($tagid=0) {
-
-        global $CFG;
-        $status = true;
-
-        //////$CFG->debug = true;
-
-        // Check CFG->enablerssfeeds.
-        if (empty($CFG->enablerssfeeds)) {
-            //Some debug...
-            if ($CFG->debug > 7) {
-                echo "DISABLED (admin variables)";
-            }
-        }
-
-        // It's working so we start...
-        else {
-            // Iterate over all data.
-            $filename = blog_rss_file_name('site', SITEID, $tagid);  // RSS file
-                // Get the most recent 20 posts
-            $sql = 'SELECT p.* FROM '.$CFG->prefix.'post p,
-                '.$CFG->prefix.'user u
-                WHERE p.userid = u.id 
-                AND (p.publishstate = \'site\' OR p.publishstate = \'public\')
-                AND u.deleted = 0 ORDER BY lastmodified DESC LIMIT 0,20';
-
-            $blogposts = get_records_sql($sql);
-
-            // Now all the rss items.
-            $items = array();
-
-            foreach ($blogposts as $blogpost) {
-                $item = null;
-                $temp = array();
-                array_push($temp, $blogpost);
-
-                $user = get_record('user','id',$blogpost->userid);
-                $item->author = fullname($user);
-                $item->title = $blogpost->subject;
-                $item->pubdate = $blogpost->lastmodified;
-                $item->link = $CFG->wwwroot.'/blog/index.php?postid='.$blogpost->id;
-                $item->description = format_text($blogpost->summary, $blogpost->format);
-                array_push($items, $item);
-            }
-
-            // First all rss feeds common headers.
-            $header = rss_standard_header(format_string('siteblog',true),
-                                                      $CFG->wwwroot.'/blog/index.php',
-                                                      format_string('intro',true));
-
-            if (!empty($header)) {
-                $articles = rss_add_items($items);
-            }
-
-            // Now all rss feeds common footers.
-            if (!empty($header) && !empty($articles)) {
-                $footer = rss_standard_footer();
-            }
-            // Now, if everything is ok, concatenate it.
-            if (!empty($header) && !empty($articles) && !empty($footer)) {
-                $rss = $header.$articles.$footer;
-
-                //Save the XML contents to file.
-                $status = blog_rss_save_file('site', SITEID, $rss);
-            }
-            else {
-                $status = false;
-            }
-        }
         return $status;
     }
 
-
-    /// Generate the feeds for all courses
-    function blog_course_feeds() {
-
-        $courses = get_records('course');
-        foreach ($courses as $course) {
-            if ($course->id != SITEID) {
-                blog_course_feed($course);
-            }
-        }
-    }
-
-    // takes in course object from db
-    function blog_course_feed($course, $tagid=0) {
-
-        global $CFG;
-        $status = true;
-
-        ////$CFG->debug = true;
-
-        // Check CFG->enablerssfeeds.
-        if (empty($CFG->enablerssfeeds)) {
-            //Some debug...
-            if ($CFG->debug > 7) {
-                echo "DISABLED (admin variables)";
-            }
-        }
-
-        // It's working so we start...
-        else {
-            // Iterate over all data.
-            $filename = blog_rss_file_name('course', $course->id, $tagid);  // RSS file
-                // Get the most recent 20 posts
-
-            $sql = '(SELECT p.* FROM '.$CFG->prefix.'post p, '
-                            .$CFG->prefix.'user_students u
-                            WHERE p.userid = u.userid
-                            AND u.course = '.$course->id.'
-                            AND (p.publishstate = \'site\' OR p.publishstate = \'public\'))
-
-                            UNION
-
-                            (SELECT p.* FROM '.$CFG->prefix.'post p, '
-                            .$CFG->prefix.'user_teachers u
-                            WHERE p.userid = u.userid
-                            AND u.course = '.$course->id.'
-                            AND (p.publishstate = \'site\' OR p.publishstate = \'public\')) ORDER BY lastmodified DESC LIMIT 0,20';
-
-            $blogposts = get_records_sql($sql);
-
-            // Now all the rss items.
-            $items = array();
-
-            foreach ($blogposts as $blogpost) {
-                $item = null;
-                $temp = array();
-                array_push($temp, $blogpost);
-
-                $user = get_record('user','id',$blogpost->userid);
-                $item->author = fullname($user);
-                $item->title = $blogpost->subject;
-                $item->pubdate = $blogpost->lastmodified;
-                $item->link = $CFG->wwwroot.'/blog/index.php?postid='.$blogpost->id;
-                $item->description = format_text($blogpost->summary, $blogpost->format);
-                array_push($items, $item);
-            }
-
-            // First all rss feeds common headers.
-            $header = rss_standard_header(format_string('courseblog',true),
-                                                      $CFG->wwwroot.'/blog/index.php',
-                                                      format_string('intro',true));
-                                                      
-            if (!empty($header)) {
-                $articles = rss_add_items($items);
-            }
-
-            // Now all rss feeds common footers.
-            if (!empty($header) && !empty($articles)) {
-                $footer = rss_standard_footer();
-            }
-            // Now, if everything is ok, concatenate it.
-            if (!empty($header) && !empty($articles) && !empty($footer)) {
-                $rss = $header.$articles.$footer;
-
-                //Save the XML contents to file.
-                $status = blog_rss_save_file('course',$course->id, $rss);
-            }
-            else {
-                $status = false;
-            }
-        }
-        return $status;
-    }
-    
-    
-    function blog_group_feeds() {
-
-        $groups = get_records('groups');
-        foreach ($groups as $group) {
-            blog_group_feed($group);
-        }
-    }
-
-    // takes in course object from db
-    function blog_group_feed($group, $tagid=0) {
-
-        global $CFG;
-        $status = true;
-
-        //$CFG->debug = true;
-
-        // Check CFG->enablerssfeeds.
-        if (empty($CFG->enablerssfeeds)) {
-            //Some debug...
-            if ($CFG->debug > 7) {
-                echo "DISABLED (admin variables)";
-            }
-        }
-
-        // It's working so we start...
-        else {
-            // Iterate over all data.
-            $filename = blog_rss_file_name('group', $group->id, $tagid);  // RSS file
-                // Get the most recent 20 posts
-
-            $sql= 'SELECT p.* FROM '.$CFG->prefix.'post p, '
-                .$CFG->prefix.'groups_members m
-                WHERE p.userid = m.userid
-                AND m.groupid = '.$group->id.'
-                AND (p.publishstate = \'site\' OR p.publishstate = \'public\') ORDER BY lastmodified DESC LIMIT 0,20';
-
-            
-
-            // Now all the rss items.
-            $items = array();
-            if ($blogposts = get_records_sql($sql)) {
-                foreach ($blogposts as $blogpost) {
-                    $item = null;
-                    $temp = array();
-                    array_push($temp, $blogpost);
-
-                    $user = get_record('user','id',$blogpost->userid);
-                    $item->author = fullname($user);
-                    $item->title = $blogpost->subject;
-                    $item->pubdate = $blogpost->lastmodified;
-                    $item->link = $CFG->wwwroot.'/blog/index.php?postid='.$blogpost->id;
-                    $item->description = format_text($blogpost->summary, $blogpost->format);
-                    array_push($items, $item);
-                }
-            }
-
-            // First all rss feeds common headers.
-            $header = rss_standard_header(format_string('groupblog',true),
-                                                      $CFG->wwwroot.'/blog/index.php',
-                                                      format_string('intro',true));
-
-            if (!empty($header)) {
-                $articles = rss_add_items($items);
-            }
-
-            // Now all rss feeds common footers.
-            if (!empty($header) && !empty($articles)) {
-                $footer = rss_standard_footer();
-            }
-            // Now, if everything is ok, concatenate it.
-            if (!empty($header) && !empty($articles) && !empty($footer)) {
-                $rss = $header.$articles.$footer;
-
-                //Save the XML contents to file.
-                $status = blog_rss_save_file('group',$group->id, $rss);
-            }
-            else {
-                $status = false;
-            }
-        }
-        return $status;
-    }
-    
-    
-    function blog_user_feeds() {
-
-    $users = get_records('user');
-        foreach ($users as $user) {
-            blog_user_feed($user);
-        }
-    }
-
-    // takes in course object from db
-    function blog_user_feed($user, $tagid=0) {
-
-        global $CFG;
-        $status = true;
-
-        ////$CFG->debug = true;
-
-        // Check CFG->enablerssfeeds.
-        if (empty($CFG->enablerssfeeds)) {
-            //Some debug...
-            if ($CFG->debug > 7) {
-                echo "DISABLED (admin variables)";
-            }
-        }
-
-        // It's working so we start...
-        else {
-            // Iterate over all data.
-            $filename = blog_rss_file_name('user', $user->id, $tagid);  // RSS file
-                // Get the most recent 20 posts
-
-            $sql = 'SELECT p.* FROM '.$CFG->prefix.'post p, '
-                        .$CFG->prefix.'user u
-                        WHERE p.userid = u.id
-                        AND u.id = '.$user->id.'
-                        AND (p.publishstate = \'site\' OR p.publishstate = \'public\') ORDER BY lastmodified DESC LIMIT 0,20';
-
-            
-
-            // Now all the rss items.
-            $items = array();
-            if ($blogposts = get_records_sql($sql)) {
-                foreach ($blogposts as $blogpost) {
-                    $item = null;
-                    $temp = array();
-                    array_push($temp, $blogpost);
-
-                    $user = get_record('user','id',$blogpost->userid);
-                    $item->author = fullname($user);
-                    $item->title = $blogpost->subject;
-                    $item->pubdate = $blogpost->lastmodified;
-                    $item->link = $CFG->wwwroot.'/blog/index.php?postid='.$blogpost->id;
-                    $item->description = format_text($blogpost->summary, $blogpost->format);
-                    array_push($items, $item);
-                }
-            }
-            // First all rss feeds common headers.
-            $header = rss_standard_header(format_string('userblog',true),
-                                                      $CFG->wwwroot.'/blog/index.php',
-                                                      format_string('intro',true));
-
-            if (!empty($header)) {
-                $articles = rss_add_items($items);
-            }
-
-            // Now all rss feeds common footers.
-            if (!empty($header) && !empty($articles)) {
-                $footer = rss_standard_footer();
-            }
-            // Now, if everything is ok, concatenate it.
-            if (!empty($header) && !empty($articles) && !empty($footer)) {
-                $rss = $header.$articles.$footer;
-
-                //Save the XML contents to file.
-                $status = blog_rss_save_file('user',$user->id, $rss);
-            }
-            else {
-                $status = false;
-            }
-        }
-        return $status;
-    }
 ?>

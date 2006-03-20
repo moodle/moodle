@@ -341,6 +341,8 @@ function blog_applicable_publish_states($courseid='') {
 /// or spg group, but same group member
 function blog_user_can_view_user_post($targetuserid) {
 
+    global $CFG;
+
     $canview = 0;    //bad start
     
     if (isadmin()) {

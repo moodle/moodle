@@ -139,7 +139,6 @@ if ($limit == 'none') {
 }
 
 $blogFilter =& new BlogFilter($userid, $postid, $limit, $start,$filtertype, $filterselect, $tagid, $tag);
-//print_object($blogFilter); //debug
 
 include($CFG->dirroot .'/blog/header.php');
 
