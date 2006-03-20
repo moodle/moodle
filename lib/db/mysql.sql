@@ -843,10 +843,11 @@ CREATE TABLE prefix_stats_user_monthly (
 );
 
 #
-# Table structure for BRAND NEW MOODLE POST table `prefix_post`
+# Table structure for table `prefix_post`
 #
 CREATE TABLE prefix_post (
   `id` int(11) NOT NULL auto_increment,
+  `module` varchar(20) NOT NULL default '',
   `userid` int(11) NOT NULL default '0',
   `courseid` int(11) NOT NULL default'0',
   `groupid` int(11) NOT NULL default'0',
@@ -864,8 +865,10 @@ CREATE TABLE prefix_post (
   PRIMARY KEY  (`id`),
   UNIQUE KEY `id_user_idx` (`id`, `userid`),
   KEY `post_lastmodified_idx` (`lastmodified`),
+  KEY `post_module_idx` (`module`),
   KEY `post_subject_idx` (`subject`)
-) TYPE=MyISAM  COMMENT='New moodle post table. Holds data posts such as forum entries or blog entries.';
+) TYPE=MyISAM  COMMENT='Generic post table to hold data blog entries etc in different modules.';
+
 
 # tags are not limited to blogs
 CREATE TABLE prefix_tags (

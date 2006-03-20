@@ -181,6 +181,7 @@ class BlogInfo {
         $dataobject->userid = $userid;
         $dataobject->subject = $title;
         $dataobject->format = $formatId;
+        $dataobject->module = 'blog';
         
         $timenow = time();
         $dataobject->lastmodified = $timenow;        

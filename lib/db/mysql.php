@@ -1734,6 +1734,12 @@ function main_upgrade($oldversion=0) {
         execute_sql(" ALTER TABLE `{$CFG->prefix}grade_category` CHANGE `weight` `weight` decimal(5,2) default '0.00';");
     }
 
+    if ($oldversion < 2006032000) {
+        table_column('post','','module','varchar','20','','','not null', 'id');
+        modify_database('',"ALTER TABLE prefix_post ADD INDEX post_module_idx (module);");
+        modify_database('',"UPDATE prefix_post SET module = 'blog';");
+    }
+
     return $result;
 }
 

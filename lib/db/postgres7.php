@@ -1471,6 +1471,12 @@ function main_upgrade($oldversion=0) {
         }
     }
 
+    if ($oldversion < 2006032000) {
+        table_column('post','','module','varchar','20','','','not null', 'id');
+        modify_database('',"ALTER TABLE prefix_post ADD INDEX post_module_idx (module);");
+        modify_database('',"UPDATE prefix_post SET module = 'blog';");
+    }
+
     return $result;
 }
 

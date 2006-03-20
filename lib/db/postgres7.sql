@@ -624,6 +624,7 @@ CREATE INDEX prefix_stats_user_monthly_timeend_idx ON prefix_stats_user_monthly 
 
 CREATE TABLE prefix_post (
   id SERIAL PRIMARY KEY,
+  module varchar(20) NOT NULL default '',
   userid INTEGER NOT NULL default 0,
   courseid INTEGER NOT NULL default 0,
   groupid INTEGER NOT NULL default 0,
@@ -642,6 +643,7 @@ CREATE TABLE prefix_post (
 
 CREATE INDEX id_user_idx ON prefix_post  (id, courseid);
 CREATE INDEX post_lastmodified_idx ON prefix_post (lastmodified);
+CREATE INDEX post_module_idx ON prefix_post (module);
 CREATE INDEX post_subject_idx ON prefix_post (subject);
 
 CREATE TABLE prefix_tags (
