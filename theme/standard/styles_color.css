@@ -178,6 +178,16 @@ table.formtable tbody th {
 }
 
 
+.generaltable .cell {
+  background-color:#FFFFFF;
+  border-color:#EEEEEE; 
+}
+
+.generaltable {
+  border-color:#EEEEEE; 
+}
+
+
 
 /***
  *** Header

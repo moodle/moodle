@@ -154,6 +154,17 @@ img.grouppicture,
 .feedback {
 }
 
+.generaltable {
+  border-width: 1px;
+  border-style: solid;
+}
+
+.generaltable .cell {
+  border-width: 1px;
+  border-style: solid;
+  border-collapse: collapse;
+}
+
 .initialbar {
   text-align: center;
 }
