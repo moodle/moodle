@@ -85,7 +85,7 @@ class BlogFilter {
             $this->tag = $tagid;
         } else if ($tag) {
             if ($tagrec = get_record_sql('SELECT * FROM '.$CFG->prefix.'tags WHERE text LIKE "'.$tag.'"')) {
-                $this->tag = $tagrec -> id;
+                $this->tag = $tagrec->id;
             } else {
                 $this->tag = -1;    //no record found
             }

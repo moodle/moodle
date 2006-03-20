@@ -168,7 +168,7 @@ function blog_print_html_formatted_entries(&$blogFilter, $filtertype, $filtersel
     // show page next/previous links if applicable
     print_paging_bar($blogFilter->get_viewable_entry_count(), $blogpage, $bloglimit, $blogFilter->baseurl, 'blogpage');
 
-    blog_rss_print_link($filtertype, $filterselect);
+    blog_rss_print_link($filtertype, $filterselect, $blogFilter->tag);
     print '</div>';
 
     if (blog_isLoggedIn()) {
