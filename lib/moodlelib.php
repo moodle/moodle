@@ -1136,8 +1136,8 @@ function get_timezone_record($timezonename) {
         return $cache[$timezonename];
     }
 
-    return get_record_sql('SELECT * FROM '.$CFG->prefix.'timezone
-                            WHERE name = '.$db->qstr($timezonename).' ORDER BY year DESC', true);
+    return $cache[$timezonename] = get_record_sql('SELECT * FROM '.$CFG->prefix.'timezone
+                                      WHERE name = '.$db->qstr($timezonename).' ORDER BY year DESC', true);
 }
 
 /**
