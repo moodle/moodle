@@ -19,7 +19,7 @@
        'quiz_timelimit' => 0,
        'quiz_optionflags' => 1,
        'quiz_penaltyscheme' => 1,
-       'quiz_adaptive' => QUIZ_ADAPTIVE,
+       'QUESTION_ADAPTIVE' => QUESTION_ADAPTIVE,
        'quiz_delay1' => 0,
        'quiz_delay2' => 0,
 

@@ -1,27 +1,29 @@
 <?php  // $Id$
 /**
-* Code for handling and processing questions
-*
-* This is code that is module independent, i.e., can be used by any module that
-* uses questions, like quiz, lesson, ..
-* This script also loads the questiontype classes
-* Code for handling the editing of questions is in {@link editlib.php}
-*
-* TODO: separate those functions which form part of the API
-*       from the helper functions.
-*
-* @version $Id$
-* @author Martin Dougiamas and many others. This has recently been completely
-*         rewritten by Alex Smith, Julian Sedding and Gustav Delius as part of
-*         the Serving Mathematics project
-*         {@link http://maths.york.ac.uk/serving_maths}
-* @license http://www.gnu.org/copyleft/gpl.html GNU Public License
-* @package question
-*/
+ * Code for handling and processing questions
+ *
+ * This is code that is module independent, i.e., can be used by any module that
+ * uses questions, like quiz, lesson, ..
+ * This script also loads the questiontype classes
+ * Code for handling the editing of questions is in {@link question/editlib.php}
+ *
+ * TODO: separate those functions which form part of the API
+ *       from the helper functions.
+ *
+ * @version $Id$
+ * @author Martin Dougiamas and many others. This has recently been completely
+ *         rewritten by Alex Smith, Julian Sedding and Gustav Delius as part of
+ *         the Serving Mathematics project
+ *         {@link http://maths.york.ac.uk/serving_maths}
+ * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+ * @package question
+ */
+
+/// CONSTANTS ///////////////////////////////////
 
 /**#@+
-* The different types of events that can create question states
-*/
+ * The different types of events that can create question states
+ */
 define('QUESTION_EVENTOPEN', '0');      // The state was created by Moodle
 define('QUESTION_EVENTNAVIGATE', '1');  // The responses were saved because the student navigated to another page (this is not currently used)
 define('QUESTION_EVENTSAVE', '2');      // The student has requested that the responses should be saved but not submitted or validated
@@ -34,8 +36,8 @@ define('QUESTION_EVENTCLOSE', '8');     // The response has been submitted and t
 /**#@-*/
 
 /**#@+
-* The core question types
-*/
+ * The core question types
+ */
 define("SHORTANSWER",   "1");
 define("TRUEFALSE",     "2");
 define("MULTICHOICE",   "3");
@@ -50,24 +52,50 @@ define("RQP",          "11");
 define("ESSAY",        "12");
 /**#@-*/
 
+/**
+ * Constant determines the number of answer boxes supplied in the editing
+ * form for multiple choice and similar question types.
+ */
 define("QUESTION_NUMANS", "10");
 
+
+/**#@+
+ * Option flags for ->optionflags
+ * The options are read out via bitwise operation using these constants
+ */
+/**
+ * Whether the questions is to be run in adaptive mode. If this is not set then
+ * a question closes immediately after the first submission of responses. This
+ * is how question is Moodle always worked before version 1.5
+ */
+define('QUESTION_ADAPTIVE', 1);
+
+/** When processing responses the code checks that the new responses at
+ * a question differ from those given on the previous submission. If
+ * furthermore this flag is set to true
+ * then the code goes through the whole history of responses and checks if
+ * ANY of them are identical to the current response in which case the 
+ * current response is ignored.
+ */
+define('QUESTION_IGNORE_DUPRESP', 2);
+
+/**#@-*/
 
 /// QTYPES INITIATION //////////////////
 
 /**
-* Array holding question type objects
-*/
+ * Array holding question type objects
+ */
 global $QTYPES;
-$QTYPES = array(); // This array will be populated when the questiontype.php files are loaded
+$QTYPES = array(); // This array will be populated when the questiontype.php files are loaded below
 
 /**
-* Array of question types names translated to the user's language
-*
-* The $QTYPE_MENU array holds the names of all the question types that the user should
-* be able to create directly. Some internal question types like random questions are excluded.
-* The complete list of question types can be found in {@link $QTYPES}.
-*/
+ * Array of question types names translated to the user's language
+ *
+ * The $QTYPE_MENU array holds the names of all the question types that the user should
+ * be able to create directly. Some internal question types like random questions are excluded.
+ * The complete list of question types can be found in {@link $QTYPES}.
+ */
 $QTYPE_MENU = array(); // This array will be populated when the questiontype.php files are loaded
 
 require_once("$CFG->dirroot/question/questiontypes/questiontype.php");
@@ -91,8 +119,8 @@ foreach($qtypenames as $qtypename) {
 /// OTHER CLASSES /////////////////////////////////////////////////////////
 
 /**
-* This holds the options that are determined by the course module
-*/
+ * This holds the options that are set by the course module
+ */
 class cmoptions {
     /**
     * Whether a new attempt should be based on the previous one. If true
@@ -105,7 +133,7 @@ class cmoptions {
     * Various option flags. The flags are accessed via bitwise operations
     * using the constants defined in the CONSTANTS section above.
     */
-    var $optionflags = QUIZ_ADAPTIVE;
+    var $optionflags = QUESTION_ADAPTIVE;
 
     /**
     * Determines whether in the calculation of the score for a question
@@ -142,13 +170,6 @@ class cmoptions {
     * The number of decimals to be shown when scores are printed
     */
     var $decimalpoints = 2;
-
-    /**
-    * Determines when a student is allowed to review. The information is read
-    * out from the bits with the help of the constants defined earlier
-    * We initialise this to allow the student to see everything (all bits set)
-    */
-    var $review = 16777215;
 }
 
 
@@ -157,12 +178,12 @@ class cmoptions {
 
 
 /**
-* Deletes question and all associated data from the database
-*
-* TODO: remove quiz dependence
-*
-* @param object $question  The question being deleted
-*/
+ * Deletes question and all associated data from the database
+ *
+ * TODO: remove quiz dependence
+ *
+ * @param object $question  The question being deleted
+ */
 function delete_question($question) {
     global $QTYPES;
     if (isset($QTYPES[$question->qtype])) {
@@ -673,7 +694,7 @@ function question_process_responses(&$question, &$state, $action, $cmoptions, &$
          $question, $state, $state->last_graded)) {
             $state->event = QUESTION_EVENTDUPLICATE;
         } else {
-            if ($cmoptions->optionflags & QUIZ_IGNORE_DUPRESP) {
+            if ($cmoptions->optionflags & QUESTION_IGNORE_DUPRESP) {
                 /* Walk back through the previous graded states looking for
                 one where the responses are equivalent to the current
                 responses. If such a state is found, set the current grading
@@ -737,7 +758,7 @@ function question_isgradingevent($event) {
 * This is used by {@link question_process_responses()} to determine whether
 * to ignore the marking request for the current response. However this
 * check against all previous graded responses is only performed if
-* the QUIZ_IGNORE_DUPRESP bit in $cmoptions->optionflags is set
+* the QUESTION_IGNORE_DUPRESP bit in $cmoptions->optionflags is set
 * If the current response is a duplicate of a previously graded response then
 * $STATE->event is set to QUESTION_EVENTDUPLICATE.
 * @return boolean         Indicates if a state with duplicate responses was

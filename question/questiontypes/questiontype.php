@@ -457,7 +457,7 @@ class quiz_default_questiontype {
 
         $grade = '';
         if ($question->maxgrade and $options->scores) {
-            if ($cmoptions->optionflags & QUIZ_ADAPTIVE) {
+            if ($cmoptions->optionflags & QUESTION_ADAPTIVE) {
                 $grade = (!question_state_is_graded($state->last_graded)) ? '--/' : round($state->last_graded->grade, $cmoptions->decimalpoints).'/';
             }
             $grade .= $question->maxgrade;
@@ -644,7 +644,7 @@ class quiz_default_questiontype {
         types. It prints a mark button in the case where individual marking is
         allowed. */
 
-        if (($cmoptions->optionflags & QUIZ_ADAPTIVE) and !$options->readonly) {
+        if (($cmoptions->optionflags & QUESTION_ADAPTIVE) and !$options->readonly) {
             echo '<input type="submit" name="';
             echo $question->name_prefix;
             echo 'mark" value="';

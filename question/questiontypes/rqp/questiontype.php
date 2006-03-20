@@ -345,7 +345,7 @@ class question_rqp_qtype extends quiz_default_questiontype {
         echo 'validate" value="';
         print_string('validate', 'quiz');
         echo '" />&nbsp;';
-        if ($cmoptions->optionflags & QUIZ_ADAPTIVE) {
+        if ($cmoptions->optionflags & QUESTION_ADAPTIVE) {
             echo '<input type="submit" name="';
             echo $question->name_prefix;
             echo 'mark" value="';

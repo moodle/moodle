@@ -15,28 +15,6 @@
 /// CONSTANTS ///////////////////////////////////////////////////////////////////
 
 /**#@+
-* Option flags for ->optionflags
-* The options are read out via bitwise operation using these constants
-*/
-/**
-* Whether the questions to be run in adaptive mode. If this is not set then
-* a question closes immediately after the first submission of responses. This
-* is how Moodle worked before version 1.5
-*/
-define('QUIZ_ADAPTIVE', 1);
-
-/** When processing responses the code checks that the new responses at
-* a question differ from those given on the previous submission. If
-* furthermore $ignoredupresp (ignore duplicate responses) is set to true
-* then the code goes through the whole history of attempts and checks if
-* ANY of them are identical to the current response in which case the 
-* current response is ignored.
-*/
-define('QUIZ_IGNORE_DUPRESP', 2);
-
-/**#@-*/
-
-/**#@+
 * The different review options are stored in the bits of $quiz->review
 * These constants help to extract the options
 */

@@ -481,7 +481,7 @@
     echo "<center>\n";
 
     echo "<input type=\"submit\" name=\"saveattempt\" value=\"".get_string("savenosubmit", "quiz")."\" />\n";
-    if ($quiz->optionflags & QUIZ_ADAPTIVE) {
+    if ($quiz->optionflags & QUESTION_ADAPTIVE) {
         echo "<input type=\"submit\" name=\"markall\" value=\"".get_string("markall", "quiz")."\" />\n";
     }
     echo "<input type=\"submit\" name=\"finishattempt\" value=\"".get_string("finishattempt", "quiz")."\" onclick=\"$onclick\" />\n";
