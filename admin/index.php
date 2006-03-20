@@ -371,7 +371,7 @@
     $table->wrap = array ("nowrap", "nowrap");
     $table->cellpadding = 5;
     $table->cellspacing = 0;
-    $table->width = "40%";
+    $table->width = '100%';
 
     $configdata  = '<div class="adminlink"><a href="config.php">'.get_string('configvariables', 'admin').
                    '</a> - <span class="explanation">'.get_string('adminhelpconfigvariables').'</span></div>';
