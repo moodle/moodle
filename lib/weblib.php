@@ -1215,8 +1215,10 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
     if (!empty($CFG->cachetext)) {
         $time = time() - $CFG->cachetext;
         $md5key = md5($text.'-'.$courseid.$options->noclean.$options->smiley.$options->filter.$options->para.$options->newlines);
-        if ($cacheitem = get_record_select('cache_text', "md5key = '$md5key' AND timemodified > '$time'")) {
-            return $cacheitem->formattedtext;
+        if ($oldcacheitem = get_record_sql('SELECT * FROM '.$CFG->prefix.'cache_text WHERE md5key = \''.$md5key.'\'', true)) {
+            if ($oldcacheitem->timemodified >= $time) {
+                return $oldcacheitem->formattedtext;
+            }
         }
     }
 
@@ -1277,10 +1279,23 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
     }
 
     if (!empty($CFG->cachetext) and $CFG->currenttextiscacheable) {
-        $newrecord->md5key = $md5key;
-        $newrecord->formattedtext = addslashes($text);
-        $newrecord->timemodified = time();
-        @insert_record('cache_text', $newrecord);
+        $newcacheitem->md5key = $md5key;
+        $newcacheitem->formattedtext = addslashes($text);
+        $newcacheitem->timemodified = time();
+        if ($oldcacheitem) {                               // See bug 4677 for discussion
+            $newcacheitem->id = $oldcacheitem->id;
+            @update_record('cache_text', $newcacheitem);   // Update existing record in the cache table
+                                                           // It's unlikely that the cron cache cleaner could have 
+                                                           // deleted this entry in the meantime, as it allows
+                                                           // some extra time to cover these cases.
+        } else {
+            @insert_record('cache_text', $newcacheitem);   // Insert a new record in the cache table
+                                                           // Again, it's possible that another user has caused this
+                                                           // record to be created already in the time that it took 
+                                                           // to traverse this function.  That's OK too, as the 
+                                                           // call above handles duplicate entries, and eventually
+                                                           // the cron cleaner will delete them.
+        }
     }
 
     return $text;

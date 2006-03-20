@@ -166,8 +166,8 @@
         /// Delete old cached texts
 
         if (!empty($CFG->cachetext)) {   // Defined in config.php
-            $cachelifetime = time() - $CFG->cachetext;
-            delete_records_select("cache_text", "timemodified < '$cachelifetime'");
+            $cachelifetime = time() - $CFG->cachetext - 60;  // Add an extra minute to allow for really heavy sites
+            delete_records_select('cache_text', "timemodified < '$cachelifetime'");
         }
         flush();
 
