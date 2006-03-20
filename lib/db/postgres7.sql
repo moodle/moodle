@@ -660,7 +660,10 @@ CREATE TABLE prefix_blog_tag_instance (
   groupid integer NOT NULL default 0,
   courseid integer NOT NULL default 0,
   userid integer NOT NULL default 0
+  timemodified integer NOT NULL default 0
 );
+CREATE INDEX bti_entryid_idx ON prefix_blog_tag_instance (entryid);
+CREATE INDEX bti_tagid_idx ON prefix_blog_tag_instance (tagid);
 
 INSERT INTO prefix_log_display VALUES ('user', 'view', 'user', 'firstname||\' \'||lastname');
 INSERT INTO prefix_log_display VALUES ('course', 'user report', 'user', 'firstname||\' \'||lastname');

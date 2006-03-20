@@ -849,16 +849,16 @@ CREATE TABLE prefix_post (
   `id` int(11) NOT NULL auto_increment,
   `module` varchar(20) NOT NULL default '',
   `userid` int(11) NOT NULL default '0',
-  `courseid` int(11) NOT NULL default'0',
-  `groupid` int(11) NOT NULL default'0',
-  `moduleid` int(11) NOT NULL default'0',
-  `coursemoduleid` int(11) NOT NULL default'0',
+  `courseid` int(11) NOT NULL default '0',
+  `groupid` int(11) NOT NULL default '0',
+  `moduleid` int(11) NOT NULL default '0',
+  `coursemoduleid` int(11) NOT NULL default '0',
   `subject` varchar(128) NOT NULL default '',
   `summary` longtext,
   `content` longtext,
   `uniquehash` varchar(128) NOT NULL default '',
-  `rating` int(11) NOT NULL default'0',
-  `format` int(11) NOT NULL default'0',
+  `rating` int(11) NOT NULL default '0',
+  `format` int(11) NOT NULL default '0',
   `publishstate` enum('draft','site','public') NOT NULL default 'draft',
   `lastmodified` int(10) NOT NULL default '0',
   `created` int(10) NOT NULL default '0',
@@ -874,7 +874,7 @@ CREATE TABLE prefix_post (
 CREATE TABLE prefix_tags (
   `id` int(11) NOT NULL auto_increment,
   `type` varchar(255) NOT NULL default 'official',
-  `userid` int(11) NOT NULL default'0',
+  `userid` int(11) NOT NULL default '0',
   `text` varchar(255) NOT NULL default '',
   PRIMARY KEY  (`id`)
 ) TYPE=MyISAM COMMENT ='tags structure for moodle.';
@@ -882,11 +882,14 @@ CREATE TABLE prefix_tags (
 # instance of a tag for a blog
 CREATE TABLE prefix_blog_tag_instance (
   `id` int(11) NOT NULL auto_increment,
-  `entryid` int(11) NOT NULL default'0',
-  `tagid` int(11) NOT NULL default'0',
-  `groupid` int(11) NOT NULL default'0',
-  `courseid` int(11) NOT NULL default'0',
-  `userid` int(11) NOT NULL default'0',
+  `entryid` int(11) NOT NULL default '0',
+  `tagid` int(11) NOT NULL default '0',
+  `groupid` int(11) NOT NULL default '0',
+  `courseid` int(11) NOT NULL default '0',
+  `userid` int(11) NOT NULL default '0',
+  `timemodified` int(10) unsigned NOT NULL default '0',
+  KEY `bti_entryid_idx` (`entryid`),
+  KEY `bti_tagid_idx` (`tagid`),
   PRIMARY KEY  (`id`)
 ) TYPE=MyISAM COMMENT ='tag instance for blogs.';
 
