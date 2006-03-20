@@ -2910,6 +2910,7 @@ function print_png($url, $sizex, $sizey, $returnstring, $parameters='alt=""') {
  *     <li>$table->wrap - An array of "nowrap"s or nothing
  *     <li>$table->data[] - An array of arrays containing the data.
  *     <li>$table->width  - A percentage of the page
+ *     <li>$table->tablealign  - Align the whole table
  *     <li>$table->cellpadding  - Padding on each cell
  *     <li>$table->cellspacing  - Spacing between cells
  * </ul>
@@ -2950,6 +2951,10 @@ function print_table($table) {
         $table->width = '80%';
     }
 
+    if (empty($table->tablealign)) {
+        $table->tablealign = 'center';
+    }
+
     if (empty($table->cellpadding)) {
         $table->cellpadding = '5';
     }
@@ -2964,8 +2969,7 @@ function print_table($table) {
 
     $tableid = empty($table->id) ? '' : 'id="'.$table->id.'"';
 
-    print_simple_box_start('center', $table->width, '#ffffff', 0);
-    echo '<table width="100%" border="0" align="center" ';
+    echo '<table width="'.$table->width.'" border="0" align="'.$table->tablealign.'" ';
     echo " cellpadding=\"$table->cellpadding\" cellspacing=\"$table->cellspacing\" class=\"$table->class\" $tableid>\n";
 
     $countcols = 0;
@@ -3011,7 +3015,6 @@ function print_table($table) {
         }
     }
     echo '</table>'."\n";
-    print_simple_box_end();
 
     return true;
 }

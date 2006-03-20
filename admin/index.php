@@ -366,12 +366,12 @@
         print_simple_box_end();
     }
 
-    $table->tablealign = "right";
+    $table->tablealign = "center";
     $table->align = array ("right", "left");
     $table->wrap = array ("nowrap", "nowrap");
     $table->cellpadding = 5;
     $table->cellspacing = 0;
-    $table->width = '100%';
+    $table->width = '40%';
 
     $configdata  = '<div class="adminlink"><a href="config.php">'.get_string('configvariables', 'admin').
                    '</a> - <span class="explanation">'.get_string('adminhelpconfigvariables').'</span></div>';
