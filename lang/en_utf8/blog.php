@@ -15,6 +15,7 @@ $string['entrytitle'] = 'Entry title';
 $string['entryupdated'] = 'Blog entry updated';
 $string['groupblog'] = 'Group blog: $a';
 $string['intro'] = 'This RSS feed was automatically generated from one or more blogs.';
+$string['noentriesyet'] = 'No visible entries here';
 $string['noguestpost'] = 'Guest can not post blogs!';
 $string['notallowedtoedit'] = 'You are not allowed to edit this entry';
 $string['otags'] = 'Official tags';
