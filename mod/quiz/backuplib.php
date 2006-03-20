@@ -105,7 +105,7 @@
     //Insert necessary category ids to backup_ids table
     function insert_category_ids ($course,$backup_unique_code,$instances=null) {
         global $CFG;
-        include_once("$CFG->dirroot/mod/quiz/constants.php");
+        include_once("$CFG->dirroot/mod/quiz/lib.php");
 
         //Create missing categories and reasign orphaned questions
         fix_orphaned_questions($course);
