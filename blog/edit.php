@@ -217,27 +217,26 @@ function do_save(&$post, &$bloginfo_arg) {
 
 //        print 'Debug: created a new entry - entryId = '.$entryID.'<br />'; //debug
 //        echo 'Debug: do_save() in edit.php calling blog_do_*back_pings<br />'."\n"; //debug
+
         $otags = optional_param('otags','', PARAM_INT);
         $ptags = optional_param('ptags','', PARAM_INT);
 
+
+        $tag = NULL;
+        $tag->entryid = $entryID;
+        $tag->groupid = $groupid;
+        $tag->courseid = $courseid;
+        $tag->userid = $USER->id;
+        $tag->timemodified = time();
+
         /// Add tags information
         foreach ($otags as $otag) {
-            $tag->entryid = $entryID;
             $tag->tagid = $otag;
-            $tag->groupid = $groupid;
-            $tag->courseid = $courseid;
-            $tag->userid = $USER->id;
-
             insert_record('blog_tag_instance',$tag);
         }
         
         foreach ($ptags as $ptag) {
-            $tag->entryid = $entryID;
             $tag->tagid = $ptag;
-            $tag->groupid = $groupid;
-            $tag->courseid = $courseid;
-            $tag->userid = $USER->id;
-
             insert_record('blog_tag_instance',$tag);
         }
 
@@ -273,31 +272,29 @@ function do_update(&$post, &$bloginfo) {
     $blogentry->set_publishstate($post->publishstate); //we don't care about the return value here
 
     if ( !$error = $blogentry->save() ) {
-//        echo 'Debug: do_update in edit.php calling do_pings<br />'."\n"; //debug
         delete_records('blog_tag_instance', 'entryid', $blogentry->entryId);
 
         $otags = optional_param('otags','', PARAM_INT);
         $ptags = optional_param('ptags','', PARAM_INT);
+
+        $tag = NULL;
+        $tag->entryid = $blogentry->entryId;
+        $tag->groupid = $groupid;
+        $tag->courseid = $courseid;
+        $tag->userid = $USER->id;
+        $tag->timemodified = time();
+
         /// Add tags information
         foreach ($otags as $otag) {
-            $tag->entryid = $blogentry->entryId;
             $tag->tagid = $otag;
-            $tag->groupid = $groupid;
-            $tag->courseid = $courseid;
-            $tag->userid = $USER->id;
-
             insert_record('blog_tag_instance',$tag);
         }
 
         foreach ($ptags as $ptag) {
-            $tag->entryid = $blogentry->entryId;
             $tag->tagid = $ptag;
-            $tag->groupid = $groupid;
-            $tag->courseid = $courseid;
-            $tag->userid = $USER->id;
-
             insert_record('blog_tag_instance',$tag);
         }
+
         // only do pings if the entry is published to the world
         // Daryl Hawes note - eventually should check if it's on the same server
         // and if so allow pb/tb as well - especially now that moderation is in place
