@@ -108,9 +108,9 @@ class question_match_qtype extends default_questiontype {
     * @return boolean Success/Failure
     * @param integer $question->id
     */
-    function delete_question($question) {
-        delete_records("question_match", "question", $question->id);
-        delete_records("question_match_sub", "question", $question->id);
+    function delete_question($questionid) {
+        delete_records("question_match", "question", $questionid);
+        delete_records("question_match_sub", "question", $questionid);
         return true;
     }
 

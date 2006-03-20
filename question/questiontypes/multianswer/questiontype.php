@@ -171,8 +171,8 @@ class quiz_embedded_cloze_qtype extends default_questiontype {
     * @return boolean Success/Failure
     * @param object $question  The question being deleted
     */
-    function delete_question($question) {
-        delete_records("question_multianswer", "question", $question->id);
+    function delete_question($questionid) {
+        delete_records("question_multianswer", "question", $questionid);
         return true;
     }
 

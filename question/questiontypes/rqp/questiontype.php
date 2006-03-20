@@ -129,9 +129,13 @@ class question_rqp_qtype extends default_questiontype {
     * @return boolean Success/Failure
     * @param object $question  The question being deleted
     */
-    function delete_question($question) {
+    function delete_question($questionid) {
         delete_records("question_rqp", "question", $questionid);
-        //TODO: delete also the states from question_rqp_states
+        if ($states = get_records('question_states', 'question', $questionid)) {
+            foreach ($states as $state) {
+                delete_records('question_rqp_states', 'stateid', $state->id);
+            }
+        }
         return true;
     }
 

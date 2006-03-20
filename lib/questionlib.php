@@ -173,39 +173,61 @@ class cmoptions {
 }
 
 
-
 /// FUNCTIONS //////////////////////////////////////////////////////
 
+/**
+ * Returns an array with all the course modules that use this question
+ *
+ * @param object $questionid 
+ */
+function question_whereused($questionid) {
+    $instances = array();
+    $modules = get_records('modules');
+    foreach ($modules as $module) {
+        $fn = $module->name.'_question_whereused';
+        if (function_exists($fn)) {
+            $instances[] = $fn($questionid);
+        }
+    }
+    return $instances;
+}
 
 /**
  * Deletes question and all associated data from the database
  *
- * TODO: remove quiz dependence
- *
+ * It will not delete a question if it is used by an activity module
  * @param object $question  The question being deleted
  */
-function delete_question($question) {
+function delete_question($questionid) {
     global $QTYPES;
+    
+    // Do not delete a question if it is used by an activity module
+    if (count(question_whereused($questionid))) {
+        return;
+    }
+
+    // delete questiontype-specific data
     if (isset($QTYPES[$question->qtype])) {
-        $QTYPES[$question->qtype]->delete_question($question);
-    } else {echo 'qtype: '.$question->qtype.'<br />';}
-    delete_records("question_answers", "question", $question->id);
-    delete_records("question_states", "question", $question->id);
-    delete_records("question_sessions", "questionid", $question->id);
-    if ($newversions = get_records('quiz_question_versions', 'oldquestion', $question->id)) {
-        foreach ($newversions as $newversion) {
-            $newquestion = get_record('question', 'id', $newversion->newquestion);
-            delete_question($newquestion);
-        }
-        delete_records("quiz_question_versions", "oldquestion", $question->id);
+        $QTYPES[$question->qtype]->delete_question($questionid);
     }
-    delete_records("quiz_question_versions", "newquestion", $question->id);
-    if ($children = get_records('question', 'parent', $question->id)) {
+
+    // delete entries from all other question tables
+    // It is important that this is done only after calling the questiontype functions
+    delete_records("question_answers", "question", $questionid);
+    delete_records("question_states", "question", $questionid);
+    delete_records("question_sessions", "questionid", $questionid);
+
+    // Now recursively delete all child questions
+    if ($children = get_records('question', 'parent', $questionid)) {
         foreach ($children as $child) {
-            delete_question($child);
+            delete_question($child->id);
         }
     }
-    return true;
+    
+    // Finally delete the question record itself
+    delete_records('question', 'id', $questionid);
+
+    return;
 }
 
 /**

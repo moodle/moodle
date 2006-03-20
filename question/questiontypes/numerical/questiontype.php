@@ -228,9 +228,9 @@ class question_numerical_qtype extends question_shortanswer_qtype {
     * @return boolean Success/Failure
     * @param object $question  The question being deleted
     */
-    function delete_question($question) {
-        delete_records("question_numerical", "question", $question->id);
-        delete_records("question_numerical_units", "question", $question->id);
+    function delete_question($questionid) {
+        delete_records("question_numerical", "question", $questionid);
+        delete_records("question_numerical_units", "question", $questionid);
         return true;
     }
 

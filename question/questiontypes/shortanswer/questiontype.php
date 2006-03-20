@@ -112,9 +112,8 @@ class question_shortanswer_qtype extends default_questiontype {
     * @return boolean Success/Failure
     * @param object $question  The question being deleted
     */
-    function delete_question($question) {
-        delete_records("question_shortanswer", "question", $question->id);
-        //TODO: delete also the states from question_rqp_states
+    function delete_question($questionid) {
+        delete_records("question_shortanswer", "question", $questionid);
         return true;
     }
 

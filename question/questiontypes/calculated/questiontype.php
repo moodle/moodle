@@ -203,11 +203,16 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
     * @return boolean Success/Failure
     * @param object $question  The question being deleted
     */
-    function delete_question($question) {
-        delete_records("question_calculated", "question", $question->id);
-        delete_records("question_numerical_units", "question", $question->id);
-        delete_records("question_datasets", "question", $question->id);
-        //TODO: delete entries from the question_dataset_items and question_dataset_definitions tables
+    function delete_question($questionid) {
+        delete_records("question_calculated", "question", $questionid);
+        delete_records("question_numerical_units", "question", $questionid);
+        if ($datasets = get_records('question_datasets', 'question', $questionid)) {
+            foreach ($datasets as $dataset) {
+                delete_records('question_dataset_definitions', 'id', $datasets->datasetdefinition);
+                delete_records('question_dataset_items', 'definition', $datasets->datasetdefinition);
+            }
+        }
+        delete_records("question_datasets", "question", $questionid);
         return true;
     }
 

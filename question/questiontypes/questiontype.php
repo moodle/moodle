@@ -183,7 +183,7 @@ class default_questiontype {
     * @return boolean Success/Failure
     * @param object $question  The question being deleted
     */
-    function delete_question($question) {
+    function delete_question($questionid) {
         /// The default question type does not have any tables of its own
         // therefore there is nothing to delete
 

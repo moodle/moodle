@@ -11,7 +11,6 @@
 */
 
 require_once($CFG->libdir.'/pagelib.php');
-require_once($CFG->dirroot.'/mod/quiz/constants.php');
 
 /// CONSTANTS ///////////////////////////////////////////////////////////////////
 
@@ -377,7 +376,7 @@ function quiz_delete_course($course, $feedback=true) {
                 //deleting questions
                 if ($questions = get_records("question", "category", $category->id)) {
                     foreach ($questions as $question) {
-                        delete_question($question);
+                        delete_question($question->id);
                     }
                     delete_records("question", "category", $category->id);
                 }
