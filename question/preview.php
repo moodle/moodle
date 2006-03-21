@@ -58,6 +58,7 @@
     if (empty($quizid)) {
         $quiz = new cmoptions;
         $quiz->id = 0;
+        $quiz->review = $CFG->quiz_review;
 
     } else if (!$quiz = get_record('quiz', 'id', $quizid)) {
         error("Quiz id $quizid does not exist");
