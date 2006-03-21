@@ -1,6 +1,5 @@
 <?php //$Id$
-    //This php script contains all the stuff to backup/restore
-    //quiz mods
+    //This php script contains all the stuff to restore quiz mods
 
 // Todo:
 

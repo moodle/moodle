@@ -1,5 +1,5 @@
 <?php //$Id$
-    //This php script contains all the stuff to backup/restore questions
+    //This php script contains all the stuff to restore questions
 
 // Todo:
     // the restoration of the parent and sortorder fields in the category table needs

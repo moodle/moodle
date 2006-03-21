@@ -625,7 +625,7 @@ function schedule_backup_course_execute($preferences,$starttime = 0) {
         //questions structure (step 1). See notes on mod/quiz/backuplib.php
         if ($status and $preferences->mods['quiz']->backup) {
             schedule_backup_log($starttime,$preferences->backup_course,"      categories & questions");
-            $status = quiz_backup_question_categories($backup_file,$preferences);
+            $status = backup_question_categories($backup_file,$preferences);
         }
         
         //Print logs if selected

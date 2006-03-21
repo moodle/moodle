@@ -18,7 +18,7 @@
             }
             //Now print question_answers
             if ($include_answers) {
-                $status = quiz_backup_answers($bf,$preferences,$question);
+                $status = question_backup_answers($bf,$preferences,$question);
             }
         }
         return $status;

@@ -148,7 +148,7 @@
         if ($status and $preferences->mods['quiz']->backup) {
             echo "<li>".get_string("writingcategoriesandquestions").'</li>';
             require_once($CFG->dirroot.'/mod/quiz/backuplib.php');
-            if (!$status = quiz_backup_question_categories($backup_file,$preferences)) {
+            if (!$status = backup_question_categories($backup_file,$preferences)) {
                 notify("An error occurred while backing up quiz categories");
             }
         }
