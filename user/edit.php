@@ -220,7 +220,12 @@
             if (update_record("user", $usernew)) {
                 if (function_exists("auth_user_update")){
                     // pass a true $userold here 
-                    auth_user_update($userold, $usernew);
+                    if (!auth_user_update($userold, $usernew)) {
+                        // auth update failed, rollback for moodle
+                        update_record("user", $userold);
+                        error('Failed to update user data on external auth: '.$user->auth.
+                                            '. See the server logs for more details.');
+                    }
                 };
 
                  if ($userold->email != $usernew->email) {
