@@ -241,8 +241,12 @@ function delete_question($questionid) {
     }
 
     // delete questiontype-specific data
-    if (isset($QTYPES[$question->qtype])) {
-        $QTYPES[$question->qtype]->delete_question($questionid);
+    if ($question = get_record('question', 'id', $questionid)) {
+        if (isset($QTYPES[$question->qtype])) {
+            $QTYPES[$question->qtype]->delete_question($questionid);
+        }
+    } else {
+        echo "Question with id $questionid does not exist.<br />";
     }
 
     // delete entries from all other question tables
