@@ -59,6 +59,11 @@
     require_login($course->id, false, $cm);
     $isteacher = isteacher($course->id);
 
+    // if no questions have been set up yet redirect to edit.php
+    if (!$quiz->questions and isteacheredit($course->id)) {
+        redirect('edit.php?quizid='.$quiz->id);
+    }
+
 // Get number for the next or unfinished attempt
     if(!$attemptnumber = (int)get_field_sql('SELECT MAX(attempt)+1 FROM ' .
      "{$CFG->prefix}quiz_attempts WHERE quiz = '{$quiz->id}' AND " .

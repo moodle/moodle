@@ -48,6 +48,11 @@
         error("Only teachers authorized to edit the course '{$course->fullname}' can use this page!");
     }
 
+    // if no questions have been set up yet redirect to edit.php
+    if (!$quiz->questions) {
+        redirect('edit.php?quizid='.$quiz->id);
+    }
+
     add_to_log($course->id, "quiz", "manualgrading", "grading.php?quizid=$quiz->id", "$quiz->id", "$cm->id");
 
 /// GROUP CODE FROM ATTEMPTS.PHP no sure how to use just yet... need to update later perhaps
