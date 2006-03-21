@@ -5,7 +5,8 @@
     include('../config.php');
 
     $enrol = optional_param('enrol', $CFG->enrol, PARAM_SAFEDIR);
-
+    $CFG->pagepath = 'enrol';
+    
     require_login();
 
     if (!$site = get_site()) {
