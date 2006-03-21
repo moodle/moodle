@@ -219,7 +219,7 @@ function rss_add_items($items) {
             }
             $result .= rss_full_tag('title',3,false,$item->title);
             $result .= rss_full_tag('link',3,false,$item->link);
-            $result .= '<guid isPermaLink="true">' . utf8_encode(htmlspecialchars($item->link)) . '</guid>';
+            $result .= rss_add_enclosures($item);
             $result .= rss_full_tag('pubDate',3,false,date('D, d M Y H:i:s T',$item->pubdate));
             //Include the author if exists 
             if (isset($item->author)) {
@@ -230,7 +230,7 @@ function rss_add_items($items) {
                 $item->description = get_string('byname','',$item->author).'. &nbsp;<p />'.$item->description.'</p>';
             }
             $result .= rss_full_tag('description',3,false,$item->description);
-            $result .= rss_add_enclosures($item);
+            $result .= "      <guid isPermaLink=\"true\">" . utf8_encode(htmlspecialchars($item->link)) . "</guid>\n";
             $result .= rss_end_tag('item',2,true);
 
         }
@@ -512,11 +512,22 @@ onClick=\"window.open('http://feedvalidator.org/check.cgi?url='+document.block_r
 
 
 /**
-* Adds RSS Media Enclosures for "podcasting" by examining links to media files
+* Adds RSS Media Enclosures for "podcasting" by examining links to media files,
+* and attachments which are media files. Please note that the RSS that is 
+* produced cannot be strictly valid for the linked files, since we do not know
+* the files' sizes and cannot include them in the "length" attribute. At 
+* present, the validity (and therefore the podcast working in most software)
+* can only be ensured for attachments, and not for links.
+* Note also that iTunes does some things very badly - one thing it does is 
+* refuse to download ANY of your files if you're using "file.php?file=blah"
+* and can't use the more elegant "file.php/blah" slasharguments setting. It 
+* stops after ".php" and assumes the files are not media files, despite what 
+* is specified in the "type" attribute. Dodgy coding all round!
 * 
 * @param    $item     object representing an RSS item
 * @return   string    RSS enclosure tags
 * @author   Hannes Gassert <hannes@mediagonal.ch>
+* @author   Dan Stowell
 */
 function rss_add_enclosures($item){
 
@@ -545,7 +556,7 @@ function rss_add_enclosures($item){
     if (isset($item->attachments) && is_array($item->attachments)) {
         foreach ($item->attachments as $attachment){
             $type = $mediafiletypes[substr($attachment->url, strrpos($attachment->url, '.')+1)];
-            $returnstring .= "\n<enclosure url='$attachment->url' type='$type' length='$attachment->length' />\n";
+            $returnstring .= "\n<enclosure url=\"$attachment->url\" length=\"$attachment->length\" type=\"$type\" />\n";
         }
     }
     
