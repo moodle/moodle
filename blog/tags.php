@@ -23,7 +23,7 @@ switch ($mode) {
             opener.document.entry[\'otags[]\'].insertBefore(o, null);
             </script>';
         } else {
-            error ('there is already a tag with this name!');
+            notify(get_string('tagalready'));
         }
 
     break;
@@ -45,7 +45,7 @@ switch ($mode) {
             opener.document.entry[\'ptags[]\'].insertBefore(o, null);
             </script>';
         } else {
-            error ('there is already a tag with this name!');
+            notify(get_string('tagalready'));
         }
         //write back to window.opener
     break;

@@ -49,7 +49,7 @@
      ?>
     </td>
 </tr>
-<tr>
+<tr valign="top">
     <td align="right">
         <strong><?php print_string('tags'); echo ':';?></strong>
     </td>
@@ -93,12 +93,10 @@
                     }
                 ?>
                 </select>
+    <?php link_to_popup_window("/blog/tags.php",'popup',get_string('tagmanagement')); ?>
                 </td>
             </tr>
         </table>
-    <?php
-    link_to_popup_window("/blog/tags.php",'popup',get_string('tagmanagement'));
-    ?>
     </td>
 </tr>
 
@@ -131,11 +129,7 @@
     </small></small>              
     </td>
     <td align="left" colspan="2">
-    <?php
-        print_string('entrybodyonlydesc', 'blog');
-        print '<br />'."\n";
-        // usage: print_textarea($usehtmleditor, $rows, $cols, $width, $height, $name, $value="", $courseid)
-        print_textarea($usehtmleditor, 6, 60, 600, 500, 'body', $post->body, $post->courseid); ?>
+    <?php print_textarea($usehtmleditor, 25, 62, 500, 600, 'body', $post->body, $post->courseid); ?>
     </td>
 </tr>
 <tr valign="top">

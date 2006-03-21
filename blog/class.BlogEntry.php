@@ -68,13 +68,9 @@ class BlogEntry {
      */
     function BlogEntry(&$entrydetails) {
         global $db, $CFG;
-//        print_object($entrydetails); //debug
 
         $this->entryId = $entrydetails->id;
 
-//        print "Debug: entryId: $this->entryId"; //debug
-//        print_object($this->entryCategoryIds); //debug
-        
         $this->entryBody = ereg_replace('<tick>', "'", stripslashes_safe($entrydetails->summary));
         
         $strftimedaydatetime = get_string('strftimedaydatetime');
@@ -96,9 +92,14 @@ class BlogEntry {
         } else {
             $this->entryPublishState = 'draft';
         }
-        $this->entryAuthorName = fullname($entrydetails);  // firstname and lastname defined
-        $this->entryAuthorEmail = $entrydetails->email;
-
+        if (isset($entrydetails->email)) {
+            $this->entryAuthorEmail = $entrydetails->email;
+            $this->entryAuthorName = fullname($entrydetails);  // firstname and lastname defined
+        } else {
+            $user = get_record('user', 'id', $entrydetails->userid);
+            $this->entryAuthorEmail = $user->email;
+            $this->entryAuthorName = fullname($user); 
+        }
     }
 
     /**
