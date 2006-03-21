@@ -4098,7 +4098,7 @@ function make_mod_upload_directory($courseid) {
     if (file_exists($CFG->dirroot .'/lang/'. $CFG->lang .'/docs/module_files.txt')) {
         copy($CFG->dirroot .'/lang/'. $CFG->lang .'/docs/module_files.txt', $moddata .'/'. $strreadme .'.txt');
     } else {
-        copy($CFG->dirroot .'/lang/en/docs/module_files.txt', $moddata .'/'. $strreadme .'.txt');
+        copy($CFG->dirroot .'/lang/en_utf8/docs/module_files.txt', $moddata .'/'. $strreadme .'.txt');
     }
     return $moddata;
 }
