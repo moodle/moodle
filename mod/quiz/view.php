@@ -10,7 +10,7 @@
     $id          = optional_param('id', 0, PARAM_INT); // Course Module ID, or
     $q           = optional_param('q',  0, PARAM_INT);  // quiz ID
     $edit        = optional_param('edit', '');
-
+    
     if ($id) {
         if (! $cm = get_record("course_modules", "id", $id)) {
             error("There is no coursemodule with id $id");
@@ -160,7 +160,7 @@
     $strtimetaken     = get_string("timetaken", "quiz");
     $strtimecompleted = get_string("timecompleted", "quiz");
     $strgrade         = get_string("grade");
-    $strmarks          = get_string('marks', 'quiz');
+    $strmarks         = get_string('marks', 'quiz');
     $strbestgrade     = $QUIZ_GRADE_METHOD[$quiz->grademethod];
 
     $windowoptions = "left=0, top=0, channelmode=yes, fullscreen=yes, scrollbars=yes, resizeable=no, directories=no, toolbar=no, titlebar=no, location=no, status=no, menubar=no";
@@ -311,11 +311,41 @@
 
                 echo "<br />";
                 echo "</p>";
-                echo "<div align=\"center\">";
-
-                include("view_js.php");
-
-                echo "</div>\n";
+                if ($quiz->delay1 or $quiz->delay2) {
+                     //quiz enforced time delay
+                     $lastattempt_obj = get_record_select('quiz_attempts', "quiz = $quiz->id AND attempt = $numattempts AND userid = $USER->id", 'timefinish');
+                     if ($lastattempt_obj) {
+                         $lastattempt = $lastattempt_obj->timefinish;
+                     }
+                     echo "<div align=\"center\">";
+                     if($numattempts == 1 && $quiz->delay1) {
+                         if ($timenow - $quiz->delay1 > $lastattempt) {
+                              include("view_js.php");
+                         }
+                         else {
+                             $notify_msg = get_string('temporaryblocked', 'quiz') . '<b>'. userdate($lastattempt + $quiz->delay1). '<b>';
+                             print_simple_box($notify_msg, "center");
+                         }
+                     }
+                     else if($numattempts > 1 && $quiz->delay2) {
+                         if ($timenow - $quiz->delay2 > $lastattempt) {
+                              include("view_js.php");
+                         }
+                         else {
+                              $notify_msg = get_string('temporaryblocked', 'quiz') . '<b>'. userdate($lastattempt + $quiz->delay2). '<b>';
+                              print_simple_box($notify_msg, "center");
+                         }
+                     }
+                     else {
+                         include("view_js.php");
+                     }
+                     echo "</div>\n";
+                }
+                else {
+                     echo "<div align=\"center\">"; 
+                     include("view_js.php");
+                     echo "</div>\n";
+                }     
             }
         } else {
             print_heading(get_string("nomoreattempts", "quiz"));

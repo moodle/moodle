@@ -174,7 +174,6 @@ function quiz_update_instance($quiz) {
     $quiz->timelimit = round($quiz->timelimit);
 
     $quiz->id = $quiz->instance;
-
     if (!update_record("quiz", $quiz)) {
         return false;  // some error occurred
     }
