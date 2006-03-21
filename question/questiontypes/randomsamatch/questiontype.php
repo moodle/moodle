@@ -241,6 +241,32 @@ class question_randomsamatch_qtype extends question_match_qtype {
          "AND hidden = '0'" .
          "AND id NOT IN ($questionsinuse)");
     }
+    
+/// BACKUP FUNCTIONS ////////////////////////////
+
+    /*
+     * Backup the data in the question
+     *
+     * This is used in question/backuplib.php
+     */
+    function backup($bf,$preferences,$question,$level=6) {
+
+        $status = true;
+
+        $randomsamatchs = get_records("question_randomsamatch","question",$question,"id");
+        //If there are randomsamatchs
+        if ($randomsamatchs) {
+            //Iterate over each randomsamatch
+            foreach ($randomsamatchs as $randomsamatch) {
+                $status = fwrite ($bf,start_tag("RANDOMSAMATCH",6,true));
+                //Print randomsamatch contents
+                fwrite ($bf,full_tag("CHOOSE",7,false,$randomsamatch->choose));
+                fwrite ($bf,full_tag("SHUFFLEANSWERS",7,false,$randomsamatch->shuffleanswers));
+                $status = fwrite ($bf,end_tag("RANDOMSAMATCH",6,true));
+            }
+        }
+        return $status;
+    }
 }
 
 //// END OF CLASS ////

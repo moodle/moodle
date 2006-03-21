@@ -942,6 +942,19 @@ class default_questiontype {
         echo '<input type="hidden" name="versioning" value="on" />
               </td></tr>';
     }
+    
+/// BACKUP FUNCTIONS ////////////////////////////
+
+    /*
+     * Backup the data in the question
+     *
+     * This is used in question/backuplib.php
+     */
+    function backup($bf,$preferences,$question,$level=6) {
+        // The default type has nothing to back up
+        return true;
+    }
+
 
 }
 

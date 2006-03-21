@@ -307,6 +307,33 @@ class question_essay_qtype extends default_questiontype {
     
         return array($ungradedcount, count($usercount));
     }
+    
+/// BACKUP FUNCTIONS ////////////////////////////
+
+    /*
+     * Backup the data in a truefalse question
+     *
+     * This is used in question/backuplib.php
+     */
+    function backup($bf,$preferences,$question,$level=6) {
+
+        $status = true;
+
+        $essays = get_records('question_essay', 'question', $question, "id");
+        //If there are essays
+        if ($essays) {
+            //Iterate over each essay
+            foreach ($essays as $essay) {
+                $status = fwrite ($bf,start_tag("ESSAY",$level,true));
+                //Print essay contents
+                fwrite ($bf,full_tag("ANSWER",$level+1,false,$essay->answer));                
+                $status = fwrite ($bf,end_tag("ESSAY",$level,true));
+            }
+            //Now print question_answers
+            $status = question_backup_answers($bf,$preferences,$question);
+        }
+        return $status;
+    }
 
 }
 //// END OF CLASS ////

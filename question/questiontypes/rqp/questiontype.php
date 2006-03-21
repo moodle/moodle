@@ -437,6 +437,35 @@ class question_rqp_qtype extends default_questiontype {
         $link->link = 'types.php';
         return array($link);
     }
+    
+/// BACKUP FUNCTIONS ////////////////////////////
+
+    /*
+     * Backup the data in the question
+     *
+     * This is used in question/backuplib.php
+     */
+    function backup($bf,$preferences,$question,$level=6) {
+
+        $status = true;
+
+        $rqps = get_records("question_rqp","question",$question,"id");
+        //If there are rqps
+        if ($rqps) {
+            //Iterate over each rqp
+            foreach ($rqps as $rqp) {
+                $status = fwrite ($bf,start_tag("RQP",$level,true));
+                //Print rqp contents
+                fwrite ($bf,full_tag("TYPE",$level+1,false,$rqp->type));
+                fwrite ($bf,full_tag("SOURCE",$level+1,false,$rqp->source));
+                fwrite ($bf,full_tag("FORMAT",$level+1,false,$rqp->format));
+                fwrite ($bf,full_tag("FLAGS",$level+1,false,$rqp->flags));
+                fwrite ($bf,full_tag("MAXSCORE",$level+1,false,$rqp->maxscore));
+                $status = fwrite ($bf,end_tag("RQP",$level,true));
+            }
+        }
+        return $status;
+    }
 
 }
 //////////////////////////////////////////////////////////////////////////

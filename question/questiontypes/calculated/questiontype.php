@@ -597,6 +597,42 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
         }
         return $str;
     }
+    
+/// BACKUP FUNCTIONS ////////////////////////////
+
+    /*
+     * Backup the data in the question
+     *
+     * This is used in question/backuplib.php
+     */
+    function backup($bf,$preferences,$question,$level=6) {
+
+        $status = true;
+
+        $calculateds = get_records("question_calculated","question",$question,"id");
+        //If there are calculated-s
+        if ($calculateds) {
+            //Iterate over each calculateds
+            foreach ($calculateds as $calculated) {
+                $status = $status &&fwrite ($bf,start_tag("CALCULATED",$level,true));
+                //Print calculated contents
+                fwrite ($bf,full_tag("ANSWER",$level+1,false,$calculated->answer));
+                fwrite ($bf,full_tag("TOLERANCE",$level+1,false,$calculated->tolerance));
+                fwrite ($bf,full_tag("TOLERANCETYPE",$level+1,false,$calculated->tolerancetype));
+                fwrite ($bf,full_tag("CORRECTANSWERLENGTH",$level+1,false,$calculated->correctanswerlength));
+                fwrite ($bf,full_tag("CORRECTANSWERFORMAT",$level+1,false,$calculated->correctanswerformat));
+                //Now backup numerical_units
+                $status = question_backup_numerical_units($bf,$preferences,$question,7);
+                //Now backup required dataset definitions and items...
+                $status = question_backup_datasets($bf,$preferences,$question,7);
+                //End calculated data
+                $status = $status &&fwrite ($bf,end_tag("CALCULATED",$level,true));
+            }
+            //Now print question_answers
+            $status = question_backup_answers($bf,$preferences,$question);
+        }
+        return $status;
+    }
 }
 //// END OF CLASS ////
 

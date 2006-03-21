@@ -29,7 +29,8 @@
     // When we backup a quiz we also need to backup the questions and possibly
     // the data about student interaction with the questions. The functions to do
     // that are included with the following library
-    include_once("$CFG->dirroot/question/backuplib.php");
+    require_once("$CFG->libdir/questionlib.php");
+    require_once("$CFG->dirroot/question/backuplib.php");
 
 //STEP 1. Backup categories/questions and associated structures
     //    (course independent)
