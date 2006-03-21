@@ -2,7 +2,7 @@
 
 class block_blog_tags extends block_base {
     function init() {
-        $this->title = get_string('blogtags');
+        $this->title = get_string('blogtags', 'blog');
         $this->version = 2006032000;
     }
 
