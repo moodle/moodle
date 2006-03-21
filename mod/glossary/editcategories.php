@@ -8,7 +8,7 @@
     $id = required_param('id', PARAM_INT);                       // Course Module ID, or
     $usedynalink = optional_param('usedynalink', 0, PARAM_INT);  // category ID
     $confirm     = optional_param('confirm', 0, PARAM_INT);      // confirm the action
-    $name        = optional_param('name', '', PARAM_ALPHANUM);  // confirm the name
+    $name        = optional_param('name', '', PARAM_CLEAN);  // confirm the name
 
     $action = optional_param('action', '', PARAM_ALPHA ); // what to do
     $hook   = optional_param('hook', '', PARAM_ALPHANUM); // category ID
