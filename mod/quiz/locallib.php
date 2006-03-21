@@ -540,36 +540,4 @@ function quiz_get_reviewoptions($cmoptions, $attempt, $isteacher=false) {
     return $options;
 }
 
-
-/**
-* Array of names of quizzes a category (and optionally its childs) appears in
-*
-* @return array   Array of quiz names (with quiz->id as array keys)
-* @param integer  Quiz category id
-* @param boolean  Examine category childs recursively
-*/
-function quizzes_category_used($id, $recursive = false) {
-
-    $quizlist = array();
-
-    //Look for each question in the category
-    if ($questions = get_records('question', 'category', $id)) {
-        foreach ($questions as $question) {
-            $qlist = question_used($question->id);
-            $quizlist = $quizlist + $qlist;
-        }
-    }
-
-    //Look under child categories recursively
-    if ($recursive) {
-        if ($childs = get_records('question_categories', 'parent', $id)) {
-            foreach ($childs as $child) {
-                $quizlist = $quizlist + quizzes_category_used($child->id, $recursive);
-            }
-        }
-    }
-
-    return $quizlist;
-}
-
 ?>

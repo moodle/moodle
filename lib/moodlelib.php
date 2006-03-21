@@ -3170,7 +3170,7 @@ function remove_course_contents($courseid, $showfeedback=true) {
                 }
 
                 if (function_exists($moddeletecourse)) {
-                    $moddeletecourse($course);
+                    $moddeletecourse($course, $showfeedback);
                 }
             }
             if ($showfeedback) {
@@ -3256,6 +3256,10 @@ function remove_course_contents($courseid, $showfeedback=true) {
             }
         }
     }
+
+    // Delete questions and question categories
+    include_once($CFG->libdir.'/questionlib.php');
+    question_delete_course($course, $showfeedback);
 
     return $result;
 

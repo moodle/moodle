@@ -176,21 +176,55 @@ class cmoptions {
 /// FUNCTIONS //////////////////////////////////////////////////////
 
 /**
- * Returns an array with all the course modules that use this question
+ * Returns an array of names of activity modules that use this question
  *
- * @param object $questionid 
+ * @param object $questionid
+ * @return array of strings
  */
-function question_whereused($questionid) {
+function question_list_instances($questionid) {
     $instances = array();
     $modules = get_records('modules');
     foreach ($modules as $module) {
-        $fn = $module->name.'_question_whereused';
+        $fn = $module->name.'_question_list_instances';
         if (function_exists($fn)) {
-            $instances[] = $fn($questionid);
+            $instances = $instances + $fn($questionid);
         }
     }
     return $instances;
 }
+
+/**
+ * Tests whether a category is in use by any activity module
+ *
+ * @return boolean
+ * @param integer $categoryid 
+ * @param boolean $recursive Whether to examine category children recursively
+ */
+function question_category_isused($categoryid, $recursive = false) {
+
+    //Look at each question in the category
+    if ($questions = get_records('question', 'category', $categoryid)) {
+        foreach ($questions as $question) {
+            if (count(question_list_instances($question->id))) {
+                return true;
+            }
+        }
+    }
+
+    //Look under child categories recursively
+    if ($recursive) {
+        if ($children = get_records('question_categories', 'parent', $categoryid)) {
+            foreach ($children as $child) {
+                if (question_category_isused($child->id, $recursive)) {
+                    return true;
+                }
+            }
+        }
+    }
+
+    return false;
+}
+
 
 /**
  * Deletes question and all associated data from the database
@@ -202,7 +236,7 @@ function delete_question($questionid) {
     global $QTYPES;
     
     // Do not delete a question if it is used by an activity module
-    if (count(question_whereused($questionid))) {
+    if (count(question_list_instances($questionid))) {
         return;
     }
 
@@ -229,6 +263,118 @@ function delete_question($questionid) {
 
     return;
 }
+
+/**
+ * All non-used question categories and their questions are deleted and
+ * categories still used by other courses are moved to the site course.
+ *
+ * @param object $course an object representing the course
+ * @param boolean $feedback to specify if the process must output a summary of its work
+ * @return boolean
+ */
+function question_delete_course($course, $feedback=true) {
+
+    global $CFG, $QTYPES;
+
+    //To detect if we have created the "container category"
+    $concatid = 0;
+
+    //The "container" category we'll create if we need if
+    $contcat = new object;
+
+    //To temporary store changes performed with parents
+    $parentchanged = array();
+
+    //To store feedback to be showed at the end of the process
+    $feedbackdata   = array();
+
+    //Cache some strings
+    $strcatcontainer=get_string('containercategorycreated', 'quiz');
+    $strcatmoved   = get_string('usedcategorymoved', 'quiz');
+    $strcatdeleted = get_string('unusedcategorydeleted', 'quiz');
+
+    if ($categories = get_records('question_categories', 'course', $course->id, 'parent', 'id, parent, name, course')) {
+
+        //Sort categories following their tree (parent-child) relationships
+        $categories = sort_categories_by_tree($categories);
+
+        foreach ($categories as $cat) {
+
+            //Get the full record
+            $category = get_record('question_categories', 'id', $cat->id);
+
+            //Check if the category is being used anywhere
+            if(question_category_isused($category->id, true)) {
+                //It's being used. Cannot delete it, so:
+                //Create a container category in SITEID course if it doesn't exist
+                if (!$concatid) {
+                    $concat->course = SITEID;
+                    if (!isset($course->shortname)) {
+                        $course->shortname = 'id=' . $course->id;
+                    }
+                    $concat->name = get_string('savedfromdeletedcourse', 'quiz', $course->shortname);
+                    $concat->info = $concat->name;
+                    $concat->publish = 1;
+                    $concat->stamp = make_unique_id_code();
+                    $concatid = insert_record('question_categories', $concat);
+
+                    //Fill feedback
+                    $feedbackdata[] = array($concat->name, $strcatcontainer);
+                }
+                //Move the category to the container category in SITEID course
+                $category->course = SITEID;
+                //Assign to container if the category hasn't parent or if the parent is wrong (not belongs to the course)
+                if (!$category->parent || !isset($categories[$category->parent])) {
+                    $category->parent = $concatid;
+                }
+                //If it's being used, its publish field should be 1
+                $category->publish = 1;
+                //Let's update it
+                update_record('question_categories', $category);
+
+                //Save this parent change for future use
+                $parentchanged[$category->id] = $category->parent;
+
+                //Fill feedback
+                $feedbackdata[] = array($category->name, $strcatmoved);
+
+            } else {
+                //Category isn't being used so:
+                //Delete it completely (questions and category itself)
+                //deleting questions
+                if ($questions = get_records("question", "category", $category->id)) {
+                    foreach ($questions as $question) {
+                        delete_question($question->id);
+                    }
+                    delete_records("question", "category", $category->id);
+                }
+                //delete the category
+                delete_records('question_categories', 'id', $category->id);
+
+                //Save this parent change for future use
+                if (!empty($category->parent)) {
+                    $parentchanged[$category->id] = $category->parent;
+                } else {
+                    $parentchanged[$category->id] = $concatid;
+                }
+
+                //Update all its child categories to re-parent them to grandparent.
+                set_field ('question_categories', 'parent', $parentchanged[$category->id], 'parent', $category->id);
+
+                //Fill feedback
+                $feedbackdata[] = array($category->name, $strcatdeleted);
+            }
+        }
+        //Inform about changes performed if feedback is enabled
+        if ($feedback) {
+            $table->head = array(get_string('category','quiz'), get_string('action'));
+            $table->data = $feedbackdata;
+            print_table($table);
+        }
+    }
+    return true;
+}
+
 
 /**
 * Updates the question objects with question type specific
@@ -948,25 +1094,6 @@ function question_new_attempt_uniqueid() {
     return $CFG->attemptuniqueid;
 }
 
-/**
-* Array of names of course modules a question appears in
-*
-* TODO: Currently this works with quiz only
-*
-* @return array   Array of quiz names
-* @param integer $id Question id
-*/
-function question_used($id) {
-
-    $quizlist = array();
-    if ($instances = get_records('quiz_question_instances', 'question', $id)) {
-        foreach($instances as $instance) {
-            $quizlist[$instance->quiz] = get_field('quiz', 'name', 'id', $instance->quiz);
-        }
-    }
-
-    return $quizlist;
-}
 
 /// FUNCTIONS THAT SIMPLY WRAP QUESTIONTYPE METHODS //////////////////////////////////
 

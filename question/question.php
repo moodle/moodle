@@ -133,7 +133,7 @@
 
         } else {
             // TODO: check for other modules using this question
-            if ($quiznames = question_used($id)) {
+            if ($quiznames = question_list_instances($id)) {
                 $a->questionname = $question->name;
                 $a->quiznames = implode(', ', $quiznames);
                 notify(get_string('questioninuse', 'quiz', $a));
