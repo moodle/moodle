@@ -104,6 +104,13 @@
             case 'group':
                 $info = get_field('groups', 'name', 'id', $id);
                 break;
+            default:
+                $info = '';
+                break;
+        }
+
+        if ($tagid) {
+            $info .= ': '.get_field('tags', 'text', 'id', $tagid);
         }
 
         $header = rss_standard_header(get_string($type.'blog','blog', $info), 
