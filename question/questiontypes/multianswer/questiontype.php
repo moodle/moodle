@@ -476,21 +476,6 @@ class quiz_embedded_cloze_qtype extends default_questiontype {
                 }
                 backup_flush(300);
             }
-/*
-            //If we have created the question_multianswer record, now, depending of the
-            //answertype, delegate the restore to every qtype function
-            if ($newid) {
-                if ($multianswer->answertype == "1") {
-                    $status = quiz_restore_shortanswer ($old_question_id,$new_question_id,$mul_info,$restore);
-                } else if ($multianswer->answertype == "3") {
-                    $status = quiz_restore_multichoice ($old_question_id,$new_question_id,$mul_info,$restore);
-                } else if ($multianswer->answertype == "8") {
-                    $status = quiz_restore_numerical ($old_question_id,$new_question_id,$mul_info,$restore);
-                }
-            } else {
-                $status = false;
-            }
-*/
         }
 
         return $status;

@@ -974,7 +974,7 @@ class default_questiontype {
 
     function restore_recode_answer($state, $restore) {
         // There is nothing to decode
-        return true;
+        return $state->answer;
     }    
 
     //This function restores the question_rqp_states
