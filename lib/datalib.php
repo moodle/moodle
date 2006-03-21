@@ -2803,7 +2803,7 @@ function instance_is_visible($moduletype, $module) {
  * @uses SITEID
  * @param    int     $courseid  The course id
  * @param    string  $module  The module name - e.g. forum, journal, resource, course, user etc
- * @param    string  $action  View, edit, post (often but not always the same as the file.php)
+ * @param    string  $action  'view', 'update', 'add' or 'delete', possibly followed by another word to clarify.
  * @param    string  $url     The file and parameters used to see the results of the action
  * @param    string  $info    Additional description information
  * @param    string  $cm      The course_module->id if there is one
