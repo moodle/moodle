@@ -155,6 +155,8 @@ class block_admin extends block_list {
 
                 $this->content->items[]='<a href="'.$CFG->wwwroot.'/course/import.php?id='.$this->instance->pageid.'">'.get_string('import').'</a>';
                 $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/restore.gif" alt="" />';
+                $this->content->items[]='<a href="'.$CFG->wwwroot.'/course/reset.php?id='.$this->instance->pageid.'">'.get_string('reset').'</a>';
+                $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/return.gif" alt="" />';
                 $this->content->items[]='<a href="'.$CFG->wwwroot.'/course/report.php?id='.$this->instance->pageid.'">'.get_string('reports').'</a>';
                 $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/stats.gif" alt="" />';
 
