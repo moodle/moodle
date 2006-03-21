@@ -161,28 +161,6 @@
 
         global $CFG, $QTYPES;
 
-        // load questiontype-specific functions
-        unset($restorefns);
-        unset($restoremapfns);
-        unset($recodeansfns);
-        foreach ($QTYPES as $key => $qtype) {
-            $restorelib = $CFG->dirroot.'/question/questiontypes/'.$qtype->name().'/restorelib.php';
-            if (file_exists($restorelib)) {
-                include_once($restorelib);
-                $restorefn = 'question_'.$qtype->name().'_restore';
-                if (function_exists($restorefn)) {
-                    $restorefns[$key] = $restorefn;
-                }
-                $restoremapfn = 'question_'.$qtype->name().'_restore_map';
-                if (function_exists($restoremapfn)) {
-                    $restoremapfns[$key] = $restoremapfn;
-                }
-                $recodeansfn = 'question_'.$qtype->name().'_recode_answer';
-                if (function_exists($recodeansfn)) {
-                    $recodeansfns[$key] = $recodeansfn;
-                }
-            }
-        }
         $status = true;
         $restored_questions = array();
 
@@ -269,21 +247,15 @@
             if ($restored_questions[$i]->is_new) {
                 //Now, restore every question_answers in this question
                 $status = question_restore_answers($oldid,$newid,$que_info,$restore);
-                //Now, depending of the type of questions, invoke different functions
-                if (isset($restorefns[$question->qtype])) {
-                    $status = $restorefns[$question->qtype]($oldid,$newid,$que_info,$restore);
-                }
+                // Restore questiontype specific data
+                $status = $QTYPES[$question->qtype]->restore($oldid,$newid,$que_info,$restore);
             } else {
                 //We are NOT creating the question, but we need to know every question_answers
                 //map between the XML file and the database to be able to restore the states
                 //in each attempt.
                 $status = question_restore_map_answers($oldid,$newid,$que_info,$restore);
-                //Now, depending of the type of questions, invoke different functions
-                //to create the necessary mappings in backup_ids, because we are not
-                //creating the question, but need some records in backup table
-                if (isset($restoremapfns[$question->qtype])) {
-                    $status = $restoremapfns[$question->qtype]($oldid,$newid,$que_info,$restore);
-                }
+                // Do the questiontype specific mapping
+                $status = $QTYPE[$question->qtype]->restore_map($oldid,$newid,$que_info,$restore);
             }
 
             //Do some output
@@ -571,7 +543,7 @@
     //This function restores the question_states
     function question_states_restore_mods($attempt_id,$info,$restore) {
 
-        global $CFG, $restorestatefns;
+        global $CFG, $QTYPES;
 
         $status = true;
 
@@ -625,175 +597,7 @@
             }
             //Depending on the qtype, we make different recodes
             if ($state->answer) {
-                switch ($question->qtype) {
-                    case 1:    //SHORTANSWER QTYPE
-                        //Nothing to do. The response is a text.
-                        break;
-                    case 2:    //TRUEFALSE QTYPE
-                        //The answer is one answer id. We must recode it
-                        $answer = backup_getid($restore->backup_unique_code,"question_answers",$state->answer);
-                        if ($answer) {
-                            $state->answer = $answer->new_id;
-                        } else {
-                            echo 'Could not recode truefalse answer id '.$state->answer.' for state '.$oldid.'<br />';
-                        }
-                        break;
-                    case 3:    //MULTICHOICE QTYPE
-                        $pos = strpos($state->answer, ':');
-                        $order = array();
-                        $responses = array();
-                        if (false === $pos) { // No order of answers is given, so use the default
-                            if ($state->answer) {
-                                $responses = explode(',', $state->answer);
-                            }
-                        } else {
-                            $order = explode(',', substr($state->answer, 0, $pos));
-                            if ($responsestring = substr($state->answer, $pos + 1)) {
-                                $responses = explode(',', $responsestring);
-                            }
-                        }
-                        if ($order) {
-                            foreach ($order as $key => $oldansid) {
-                                $answer = backup_getid($restore->backup_unique_code,"question_answers",$oldansid);
-                                if ($answer) {
-                                    $order[$key] = $answer->new_id;
-                                } else {
-                                    echo 'Could not recode multichoice answer id '.$oldansid.' for state '.$oldid.'<br />';
-                                }
-                            }
-                        }
-                        if ($responses) {
-                            foreach ($responses as $key => $oldansid) {
-                                $answer = backup_getid($restore->backup_unique_code,"question_answers",$oldansid);
-                                if ($answer) {
-                                    $responses[$key] = $answer->new_id;
-                                } else {
-                                    echo 'Could not recode multichoice response answer id '.$oldansid.' for state '.$oldid.'<br />';
-                                }
-                            }
-                        }
-                        $state->answer = implode(',', $order).':'.implode(',', $responses);
-                        break;
-                    case 4:    //RANDOM QTYPE
-                        //The answer links to another question id, we must recode it
-                        $answer_link = backup_getid($restore->backup_unique_code,"question",$state->answer);
-                        if ($answer_link) {
-                            $state->answer = $answer_link->new_id;
-                        } else {
-                            echo 'Could not recode random question link '.$state->answer.' for state '.$oldid.'<br />';
-                        }
-                        break;
-                    case 5:    //MATCH QTYPE
-                        //The answer is a comma separated list of hypen separated math_subs (for question and answer)
-                        $answer_field = "";
-                        $in_first = true;
-                        $tok = strtok($state->answer,",");
-                        while ($tok) {
-                            //Extract the match_sub for the question and the answer
-                            $exploded = explode("-",$tok);
-                            $match_question_id = $exploded[0];
-                            $match_answer_code = $exploded[1];
-                            //Get the match_sub from backup_ids (for the question)
-                            if (!$match_que = backup_getid($restore->backup_unique_code,"question_match_sub",$match_question_id)) {
-                                echo 'Could not recode question_match_sub '.$match_question_id.'<br />';
-                            }
-                            if ($in_first) {
-                                $answer_field .= $match_que->new_id."-".$match_answer_code;
-                                $in_first = false;
-                            } else {
-                                $answer_field .= ",".$match_que->new_id."-".$match_answer_code;
-                            }
-                            //check for next
-                            $tok = strtok(",");
-                        }
-                        $state->answer = $answer_field;
-                        break;
-                    case 6:    //RANDOMSAMATCH QTYPE
-                        //The answer is a comma separated list of hypen separated question_id and answer_id. We must recode them
-                        $answer_field = "";
-                        $in_first = true;
-                        $tok = strtok($state->answer,",");
-                        while ($tok) {
-                            //Extract the question_id and the answer_id
-                            $exploded = explode("-",$tok);
-                            $question_id = $exploded[0];
-                            $answer_id = $exploded[1];
-                            //Get the question from backup_ids
-                            if (!$que = backup_getid($restore->backup_unique_code,"question",$question_id)) {
-                                echo 'Could not recode randomsamatch question '.$question_id.'<br />';
-                            }
-                            
-                            if ($answer_id == 0) { // no response yet
-                                $ans->new_id = 0;
-                            } else {
-                                //Get the answer from backup_ids
-                                if (!$ans = backup_getid($restore->backup_unique_code,"question_answers",$answer_id)) {
-                                    echo 'Could not recode randomsamatch answer '.$answer_id.'<br />';
-                                }
-                            }
-                            if ($in_first) {
-                                $answer_field .= $que->new_id."-".$ans->new_id;
-                                $in_first = false;
-                            } else {
-                                $answer_field .= ",".$que->new_id."-".$ans->new_id;
-                            }
-                            //check for next
-                            $tok = strtok(",");
-                        }
-                        $state->answer = $answer_field;
-                        break;
-                    case 7:    //DESCRIPTION QTYPE
-                        //Nothing to do (there is no awser to this qtype)
-                        //But this case must exist !!
-                        break;
-                    case 8:    //NUMERICAL QTYPE
-                        //Nothing to do. The response is a text.
-                        break;
-                    case 9:    //MULTIANSWER QTYPE
-                        //The answer is a comma separated list of hypen separated sequence number and answers. We may have to recode the answers
-                        $answer_field = "";
-                        $in_first = true;
-                        $tok = strtok($state->answer,",");
-                        while ($tok) {
-                            //Extract the multianswer_id and the answer
-                            $exploded = explode("-",$tok);
-                            $seqnum = $exploded[0];
-                            $answer = $exploded[1];
-                            // $sequence is an ordered array of the question ids.
-                            if (!$sequence = get_field('question_multianswer', 'sequence', 'question', $question->id)) {
-                                error("The cloze question $question->id is missing its options");
-                            }
-                            $sequence = explode(',', $sequence);
-                            // The id of the current question.
-                            $wrappedquestionid = $sequence[$seqnum-1];
-                            // now we can find the question
-                            if (!$wrappedquestion = get_record('question', 'id', $wrappedquestionid)) {
-                                error("Can't find the subquestion $wrappedquestionid that is used as part $seqnum in cloze question $question->id");
-                            }
-                            // For multichoice question we need to recode the answer
-                            if ($answer and $wrappedquestion->qtype == MULTICHOICE) {
-                                //The answer is an answer_id, look for it in backup_ids
-                                if (!$ans = backup_getid($restore->backup_unique_code,"question_answers",$answer)) {
-                                    echo 'Could not recode cloze multichoice answer '.$answer.'<br />';
-                                }
-                                $answer = $ans->new_id;
-                            }
-                            //build the new answer field for each pair
-                            if ($in_first) {
-                                $answer_field .= $seqnum."-".$answer;
-                                $in_first = false;
-                            } else {
-                                $answer_field .= ",".$seqnum."-".$answer;
-                            }
-                            //check for next
-                            $tok = strtok(",");
-                        }
-                        $state->answer = $answer_field;
-                        break;
-                    case 10:    //CALCULATED QTYPE
-                        //Nothing to do. The response is a text.
-                        break;
-                }
+                $state->answer = $QTYPES[$question->qtype]->restore_recode_answer($state, $restore);
             }
 
             //The structure is equal to the db, so insert the question_states
@@ -815,20 +619,8 @@
                 backup_putid($restore->backup_unique_code,"question_states",$oldid,
                              $newid);
                 //Now process question type specific state information
-
-                if ($qtypes = get_list_of_plugins('question/questiontypes')) {
-                    foreach ($qtypes as $name) {
-                        $qtype->name = $name;
-                        $restorelib = $CFG->dirroot.'/question/questiontypes/'.$qtype->name.'/restorelib.php';
-                        if (file_exists($restorelib)) {
-                            include_once($restorelib);
-                            $restorestatefn = 'question_'.$qtype->name.'_states_restore';
-                            if (function_exists($restorestatefn)) {
-                                $restorestatefn($newid,$res_info,$restore);
-                            }
-                        }
-                    }
-                }
+                $qtype = get_field('question', 'qtype', 'id', $state->question);
+                $status = $QTYPES[$qtype]->restore_state($newid,$res_info,$restore);
             } else {
                 $status = false;
             }

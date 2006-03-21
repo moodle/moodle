@@ -955,6 +955,33 @@ class default_questiontype {
         return true;
     }
 
+/// RESTORE FUNCTIONS /////////////////
+
+    /*
+     * Restores the data in the question
+     *
+     * This is used in question/restorelib.php
+     */
+    function restore($old_question_id,$new_question_id,$info,$restore) {
+        // The default question type has nothing to restore
+        return true;
+    }
+
+    function restore_map($old_question_id,$new_question_id,$info,$restore) {
+        // There is nothing to decode
+        return true;
+    }
+
+    function restore_recode_answer($state, $restore) {
+        // There is nothing to decode
+        return true;
+    }    
+
+    //This function restores the question_rqp_states
+    function restore_state($state_id,$info,$restore) {
+        // The default question type does not keep its own state information
+        return true;
+    }
 
 }
 
