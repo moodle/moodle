@@ -38,18 +38,18 @@ define('QUESTION_EVENTCLOSE', '8');     // The response has been submitted and t
 /**#@+
  * The core question types
  */
-define("SHORTANSWER",   "1");
-define("TRUEFALSE",     "2");
-define("MULTICHOICE",   "3");
-define("RANDOM",        "4");
-define("MATCH",         "5");
-define("RANDOMSAMATCH", "6");
-define("DESCRIPTION",   "7");
-define("NUMERICAL",     "8");
-define("MULTIANSWER",   "9");
-define("CALCULATED",   "10");
-define("RQP",          "11");
-define("ESSAY",        "12");
+define("SHORTANSWER",   "shortanswer");
+define("TRUEFALSE",     "truefalse");
+define("MULTICHOICE",   "multichoice");
+define("RANDOM",        "random");
+define("MATCH",         "match");
+define("RANDOMSAMATCH", "randomsamatch");
+define("DESCRIPTION",   "description");
+define("NUMERICAL",     "numerical");
+define("MULTIANSWER",   "multianswer");
+define("CALCULATED",    "calculated");
+define("RQP",           "rqp");
+define("ESSAY",         "essay");
 /**#@-*/
 
 /**

@@ -972,6 +972,22 @@ function quiz_upgrade($oldversion) {
         execute_sql("ALTER TABLE {$CFG->prefix}quiz_essay_states RENAME {$CFG->prefix}question_essay_states", false);
     }
 
+    if ($oldversion < 2006032100) {
+        table_column('question', 'qtype', 'qtype',  'varchar', 20, '', '', 'not null');
+        set_field('question', 'qtype', 'shortanswer', 'qtype', 1);
+        set_field('question', 'qtype', 'truefalse', 'qtype', 2);
+        set_field('question', 'qtype', 'multichoice', 'qtype', 3);
+        set_field('question', 'qtype', 'random', 'qtype', 4);
+        set_field('question', 'qtype', 'match', 'qtype', 5);
+        set_field('question', 'qtype', 'randomsamatch', 'qtype', 6);
+        set_field('question', 'qtype', 'description', 'qtype', 7);
+        set_field('question', 'qtype', 'numerical', 'qtype', 8);
+        set_field('question', 'qtype', 'multianswer', 'qtype', 9);
+        set_field('question', 'qtype', 'calculated', 'qtype', 10);
+        set_field('question', 'qtype', 'rqp', 'qtype', 11);
+        set_field('question', 'qtype', 'essay', 'qtype', 12);
+    }
+
     return true;
 }
 

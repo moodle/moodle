@@ -392,7 +392,7 @@ CREATE TABLE prefix_question (
   image varchar(255) NOT NULL default '',
   defaultgrade int(10) unsigned NOT NULL default '1',
   penalty float NOT NULL default '0.1',
-  qtype smallint(6) NOT NULL default '0',
+  qtype varchar(20) NOT NULL default '',
   length int(10) unsigned NOT NULL default '1',
   stamp varchar(255) NOT NULL default '',
   version int(10) NOT NULL default '1',
