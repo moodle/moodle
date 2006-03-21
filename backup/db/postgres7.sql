@@ -9,7 +9,7 @@ CREATE TABLE prefix_backup_files (
   path varchar(255) NOT NULL default '',
   old_id integer default NULL,
   new_id integer default NULL,
-  CONSTRAINT backup_files_uk UNIQUE (backup_code, file_type, path)
+  CONSTRAINT prefix_backup_files_uk UNIQUE (backup_code, file_type, path)
 );
 
 
