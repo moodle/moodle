@@ -216,12 +216,28 @@
 
             } else {
                 html_header($course, $wdir);
+
+                echo '<p align=\"center\">'.get_string('deletecheckwarning').':</p>';
+
+                print_simple_box_start("center");
+                printfilelist($USER->filelist);
+                print_simple_box_end();
+                echo "<br />";
+                print_simple_box_start("center");
+
                 if (setfilelist($_POST)) {
-                    echo "<p align=\"center\">".get_string("deletecheckwarning").":</p>";
-                    print_simple_box_start("center");
-                    printfilelist($USER->filelist);
+                    foreach ($USER->filelist as $file) {
+                        //if file is part of resource then update resource table as well
+                        $clean_name = substr($file, 1);
+                        if (record_exists('resource', 'reference', $clean_name)) {
+                            $resource_id = files_get_cm_from_resource_name($clean_name);
+                            echo '<p align=\"center\"><b>'.get_string('warningdeleteresource', '', $file)."</align><a href='$CFG->wwwroot/course/mod.php?update=$resource_id&sesskey=$USER->sesskey'> Update</a></b>";
+                        }
+                    }
+
                     print_simple_box_end();
                     echo "<br />";
+
                     notice_yesno (get_string("deletecheckfiles"), 
                                 "index.php?id=$id&amp;wdir=$wdir&amp;action=delete&amp;confirm=1&amp;sesskey=$USER->sesskey&amp;choose=$choose",
                                 "index.php?id=$id&amp;wdir=$wdir&amp;action=cancel&amp;choose=$choose");
@@ -267,12 +283,29 @@
                 html_header($course, $wdir);
                 $name = clean_filename($name);
                 if (file_exists($basedir.$wdir."/".$name)) {
-                    echo "Error: $name already exists!";
+                    echo "<center>Error: $name already exists!</center>";
                 } else if (!rename($basedir.$wdir."/".$oldname, $basedir.$wdir."/".$name)) {
-                    echo "Error: could not rename $oldname to $name";
+                    echo "<p align=\"center\">Error: could not rename $oldname to $name</p>";
+                }
+
+                //if file is part of resource then update resource table as well
+                //this line only catch the root directory
+                if (record_exists('resource', 'reference', $oldname)) {
+                    set_field('resource', 'reference', $name, 'reference', $oldname);
+                }
+                
+                if (get_dir_name_from_resource($oldname)) {
+                    $resources = get_dir_name_from_resource($oldname);
+                    print_simple_box_start("center");
+                    echo "<b>The following files might be referenced as a resource :</b><br>";
+                    foreach ($resources as $resource) {
+                        $resource_id = files_get_cm_from_resource_name($name);
+                        echo '<p align=\"center\">'. "$resource->reference :"."</align><a href='$CFG->wwwroot/course/mod.php?update=$resource_id&sesskey=$USER->sesskey'> ".get_string('update')."</a>"; 
+                    }
+                    print_simple_box_end("center");
                 }
                 displaydir($wdir);
-                    
+
             } else {
                 $strrename = get_string("rename");
                 $strcancel = get_string("cancel");
@@ -837,6 +870,25 @@ function displaydir ($wdir) {
     echo "</table>";
     echo "<hr width=\"640\" align=\"center\" noshade=\"noshade\" size=\"1\" />";
 
+}
+
+function files_get_cm_from_resource_name($clean_name) {
+    global $CFG;
+
+    $SQL =  'SELECT a.id  FROM '.$CFG->prefix.'course_modules a, '.$CFG->prefix.'resource b
+        WHERE a.instance = b.id AND b.reference = "'.$clean_name.'"';
+    $resource = get_record_sql($SQL);
+    return $resource->id;
+}
+
+function get_dir_name_from_resource($clean_name) {
+    global $CFG;
+
+    $LIKE    = sql_ilike();
+
+    $SQL  = 'SELECT * FROM '.$CFG->prefix.'resource WHERE reference '.$LIKE. "\"%$clean_name%\"";
+    $resource = get_records_sql($SQL);
+    return $resource;
 }
 
 ?>
