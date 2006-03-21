@@ -1229,7 +1229,6 @@ function addslashes_object( $dataobject ) {
  * @param string $table The database table to be checked against.
  * @param array $dataobject An object with contents equal to fieldname=>fieldvalue. Must have an entry for 'id' to map to the table specified.
  * @return bool
- * @todo Finish documenting this function. Dataobject is actually an associateive array, correct?
  */
 function update_record($table, $dataobject) {
 
