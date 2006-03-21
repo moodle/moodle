@@ -3979,4 +3979,61 @@ function forum_check_throttling($forum) {
     
 }
 
+
+//This function is used by the remove_course_userdata function in moodlelib.
+//If this function exists, remove_course_userdata will execute it.
+//This function will remove all posts from the specified forum.
+function forum_delete_userdata($data, $showfeedback=true) {
+    global $CFG;
+
+    $sql = 'DELETE FROM fp USING '.$CFG->prefix.'forum_discussions fd, 
+                                 '.$CFG->prefix.'forum_posts fp, 
+                                 '.$CFG->prefix.'forum f
+            WHERE fp.discussion=fd.id and f.course='.$data->courseid.' AND f.id=fd.forum';
+
+    $strreset = get_string('reset');
+
+    if (!empty($data->reset_forum_news)) {
+        $select = "$sql and f.type = 'news' ";
+        if (execute_sql($select, false) and $showfeedback) {
+            notify($strreset.': '.get_string('namenews','forum'), 'notifysuccess');
+        }
+    }
+    if (!empty($data->reset_forum_teacher)) {
+        $select = "$sql and f.type = 'teacher' ";
+        if (execute_sql($select, false) and $showfeedback) {
+            notify($strreset.': '.get_string('nameteacher','forum'), 'notifysuccess');
+        }
+    }
+    if (!empty($data->reset_forum_single)) {
+        $select = "$sql and f.type = 'single' and fp.parent > 0 ";
+        if (execute_sql($select, false) and $showfeedback) {
+            notify($strreset.': '.get_string('singleforum','forum'), 'notifysuccess');
+        }
+    }
+    if (!empty($data->reset_forum_eachuser)) {
+        $select = "$sql and f.type = 'eachuser' ";
+        if (execute_sql($select, false) and $showfeedback) {
+            notify($strreset.': '.get_string('eachuserforum','forum'), 'notifysuccess');
+        }
+    }
+    if (!empty($data->reset_forum_general)) {
+        $select = "$sql and f.type = 'general' ";
+        if (execute_sql($select, false) and $showfeedback) {
+            notify($strreset.': '.get_string('generalforum','forum'), 'notifysuccess');
+        }
+    }
+}
+
+// Called by course/reset.php
+
+function forum_reset_course_form($course) {
+    echo get_string('resetforums', 'forum'); echo ':<br />';
+    print_checkbox('reset_forum_news', 1, true, get_string('namenews','forum'), '', '');  echo '<br />';
+    print_checkbox('reset_forum_teacher', 1, true, get_string('nameteacher','forum'), '', '');  echo '<br />';
+    print_checkbox('reset_forum_single', 1, true, get_string('singleforum','forum'), '', '');  echo '<br />';
+    print_checkbox('reset_forum_eachuser', 1, true, get_string('eachuserforum','forum'), '', '');  echo '<br />';
+    print_checkbox('reset_forum_general', 1, true, get_string('generalforum','forum'), '', '');  echo '<br />';
+}
+
 ?>

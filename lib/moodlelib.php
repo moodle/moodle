@@ -3261,34 +3261,25 @@ function remove_course_contents($courseid, $showfeedback=true) {
 
 }
 
-/**
- * This function will empty a course of user data as much as
- * possible. It will retain the activities and the structure
- * of the course.
- *
- * @uses $CFG
- * @param int $courseid The id of the course that is being emptied of user data.
- * @param bool $showfeedback Whether to display notifications of each action the function performs.
- * @param bool $removestudents Whether to remove matching records from the user_students and groups_members table.
- * @param bool $removeteachers Whether to remove matching records from the user_teachers table.
- * @param bool $removegroups Whether to remove matching records from the groups table.
- * @param bool $removeevents Whether to remove matching records from the event table.
- * @param bool $removelogs Whether to remove matching records from the log table.
- * @return bool true if all the removals succeeded. false if there were any failures. If this
- *             method returns false, some of the removals will probably have succeeded, and others
- *             failed, but you have no way of knowing which.
- */
-function remove_course_userdata($courseid, $showfeedback=true,
-                                $removestudents=true, $removeteachers=false, $removegroups=true,
-                                $removeevents=true, $removelogs=false) {
 
-    global $CFG;
+/**
+ * This function will empty a course of USER data as much as
+/// possible. It will retain the activities and the structure
+/// of the course.
+ *
+ * @uses $USER
+ * @uses $SESSION
+ * @uses $CFG
+ * @param object $data an object containing all the boolean settings and courseid
+ * @param bool $showfeedback  if false then do it all silently
+ * @return bool
+ * @todo Finish documenting this function
+ */
+function reset_course_userdata($data, $showfeedback=true) {
+
+    global $CFG, $USER, $SESSION;
 
     $result = true;
-
-    if (! $course = get_record('course', 'id', $courseid)) {
-        error('Course ID was incorrect (can\'t find it)');
-    }
 
     $strdeleted = get_string('deleted');
 
@@ -3299,11 +3290,10 @@ function remove_course_userdata($courseid, $showfeedback=true,
             $modname = $mod->name;
             $modfile = $CFG->dirroot .'/mod/'. $modname .'/lib.php';
             $moddeleteuserdata = $modname .'_delete_userdata';   // Function to delete user data
-            $count=0;
             if (file_exists($modfile)) {
                 @include_once($modfile);
                 if (function_exists($moddeleteuserdata)) {
-                    $moddeleteuserdata($course, $showfeedback);
+                    $moddeleteuserdata($data, $showfeedback);
                 }
             }
         }
@@ -3313,21 +3303,21 @@ function remove_course_userdata($courseid, $showfeedback=true,
 
     // Delete other stuff
 
-    if ($removestudents) {
+    if (!empty($data->reset_students)) {
         /// Delete student enrolments
-        if (delete_records('user_students', 'course', $course->id)) {
+        if (delete_records('user_students', 'course', $data->courseid)) {
             if ($showfeedback) {
-                notify($strdeleted .' user_students');
+                notify($strdeleted .' user_students', 'notifysuccess');
             }
         } else {
             $result = false;
         }
         /// Delete group members (but keep the groups)
-        if ($groups = get_records('groups', 'courseid', $course->id)) {
+        if ($groups = get_records('groups', 'courseid', $data->courseid)) {
             foreach ($groups as $group) {
                 if (delete_records('groups_members', 'groupid', $group->id)) {
                     if ($showfeedback) {
-                        notify($strdeleted .' groups_members');
+                        notify($strdeleted .' groups_members', 'notifysuccess');
                     }
                 } else {
                     $result = false;
@@ -3336,22 +3326,22 @@ function remove_course_userdata($courseid, $showfeedback=true,
         }
     }
 
-    if ($removeteachers) {
-        if (delete_records('user_teachers', 'course', $course->id)) {
+    if (!empty($data->reset_teachers)) {
+        if (delete_records('user_teachers', 'course', $data->courseid)) {
             if ($showfeedback) {
-                notify($strdeleted .' user_teachers');
+                notify($strdeleted .' user_teachers', 'notifysuccess');
             }
         } else {
             $result = false;
         }
     }
 
-    if ($removegroups) {
-        if ($groups = get_records('groups', 'courseid', $course->id)) {
+    if (!empty($data->reset_groups)) {
+        if ($groups = get_records('groups', 'courseid', $data->courseid)) {
             foreach ($groups as $group) {
                 if (delete_records('groups', 'id', $group->id)) {
                     if ($showfeedback) {
-                        notify($strdeleted .' groups');
+                        notify($strdeleted .' groups', 'notifysuccess');
                     }
                 } else {
                     $result = false;
@@ -3360,20 +3350,20 @@ function remove_course_userdata($courseid, $showfeedback=true,
         }
     }
 
-    if ($removeevents) {
-        if (delete_records('event', 'courseid', $course->id)) {
+    if (!empty($data->reset_events)) {
+        if (delete_records('event', 'courseid', $data->courseid)) {
             if ($showfeedback) {
-                notify($strdeleted .' event');
+                notify($strdeleted .' event', 'notifysuccess');
             }
         } else {
             $result = false;
         }
     }
 
-    if ($removelogs) {
-        if (delete_records('log', 'course', $course->id)) {
+    if (!empty($data->reset_logs)) {
+        if (delete_records('log', 'course', $data->courseid)) {
             if ($showfeedback) {
-                notify($strdeleted .' log');
+                notify($strdeleted .' log', 'notifysuccess');
             }
         } else {
             $result = false;
@@ -3381,8 +3371,8 @@ function remove_course_userdata($courseid, $showfeedback=true,
     }
 
     return $result;
-
 }
+
 
 /// GROUPS /////////////////////////////////////////////////////////
 
