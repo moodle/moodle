@@ -671,7 +671,7 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
             echo $lang.',';
         }
     }
-    echo '</b></div>';
+    echo '</b><br/><a href="'.$CFG->wwwroot.'/admin/langimport.php">Language Import Utility</a></div>';
     print_simple_box_end();
     delete_records('config','name','langsused');
 
