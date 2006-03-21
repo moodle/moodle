@@ -172,11 +172,11 @@ function rss_standard_header($title = NULL, $link = NULL, $description = NULL) {
         $today = getdate();
         $result .= rss_full_tag('copyright', 2, false, '&copy; '. $today['year'] .' '. $site->fullname);
         /*
-	   if (!empty($USER->email)) {
+       if (!empty($USER->email)) {
             $result .= rss_full_tag('managingEditor', 2, false, fullname($USER));
             $result .= rss_full_tag('webMaster', 2, false, fullname($USER));
         }
-	   */
+       */
 
         //write image info
         $rsspix = $CFG->pixpath."/i/rsssitelogo.gif";
@@ -338,6 +338,11 @@ if (!isset($CFG->block_rss_timeout) ) {
 }
 
 // Defines for moodle's use of magpierss classes
+ // Defines for moodle's use of magpierss classes
+if(isset($CFG->proxyhost) && $CFG->proxyhost) {
+  define('MAGPIE_PROXY_HOST', $CFG->proxyhost);
+  define('MAGPIE_PROXY_PORT', $CFG->proxyport);
+}
 define('MAGPIE_DIR', $CFG->dirroot.'/lib/magpie/');
 define('MAGPIE_CACHE_DIR', $CFG->dataroot .'/cache/rsscache');
 define('MAGPIE_CACHE_ON', true); //might want to expose as an admin config option, but perhaps this is something that should truly just be on unless the code is tweaked

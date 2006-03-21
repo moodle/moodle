@@ -61,6 +61,7 @@ require_once( $CFG->libdir .'/snoopy/Snoopy.class.inc');
  *
  * MAGPIE_DEBUG - Display debugging notices?
  *
+ * MAGPIE_PROXY_HOST, MAGPIE_PROXY_PORT - Proxy settings if needed
 */
 
 
@@ -278,6 +279,8 @@ function magpie_error ($errormsg="") {
 function _fetch_remote_file ($url, $headers = "", $postdata=null ) {
     // Snoopy is an HTTP client in PHP
     $client = new Snoopy();
+    $client->proxy_host = MAGPIE_PROXY_HOST;
+    $client->proxy_port = MAGPIE_PROXY_PORT;
     $client->agent = MAGPIE_USER_AGENT;
     $client->read_timeout = MAGPIE_FETCH_TIME_OUT;
     $client->use_gzip = MAGPIE_USE_GZIP;
