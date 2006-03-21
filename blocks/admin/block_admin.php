@@ -57,7 +57,7 @@ class block_admin extends block_list {
 
 
             if (!empty($CFG->enablestats)) {
-                $this->content->items[] = '<a href="'.$CFG->wwwroot.'/course/stats.php?course='.SITEID.'">'.get_string('stats').'</a>';
+                $this->content->items[] = '<a href="'.$CFG->wwwroot.'/course/report/stats/index.php?course='.SITEID.'">'.get_string('stats').'</a>';
                 $this->content->icons[] = '<img src="'.$CFG->pixpath.'/i/stats.gif" alt="" />';
             }
 
