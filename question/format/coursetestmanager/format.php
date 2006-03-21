@@ -18,8 +18,9 @@ class qformat_coursetestmanager extends qformat_default {
         $this->category = $category;  // Important
         return true;
     }
+
     function importprocess($filename) {
-      global $CFG,$QUIZ_FILE_FORMAT,$strimportquestions,$form,$question_category,$category,$course,
+      global $CFG,$strimportquestions,$form,$question_category,$category,$course,
       $hostname, $mdapath, $mdbpath;
             if ((PHP_OS == "Linux") and isset($hostname)) {
                 $hostname = trim($hostname);
