@@ -32,6 +32,7 @@
 
     $strexportquestions = get_string("exportquestions", "quiz");
     $strquestions = get_string("questions", "quiz");
+    $strexportfilename = get_string('exportfilename','quiz');
 
     $strquizzes = get_string('modulenameplural', 'quiz');
     $streditingquiz = get_string(isset($SESSION->modform->instance) ? "editingquiz" : "editquestions", "quiz");
@@ -78,10 +79,10 @@
         $download_str = get_string( 'download', 'quiz' );
         $downloadextra_str = get_string( 'downloadextra','quiz' );
         if ($CFG->slasharguments) {
-          $efile = "{$CFG->wwwroot}/file.php/$course->id/quiz/$exportfilename".$file_ext;
+          $efile = "{$CFG->wwwroot}/file.php/$course->id/$strexportfilename/$exportfilename".$file_ext;
         }
         else {
-          $efile = "{$CFG->wwwroot}/file.php?file=/$course->id/quiz/$exportfilename".$file_ext;
+          $efile = "{$CFG->wwwroot}/file.php?file=/$course->id/$strexportfilename/$exportfilename".$file_ext;
         }
         echo "</p><center><a href=\"$efile\">$download_str</a></center></p>";
         echo "</p><center><font size=\"-1\">$downloadextra_str</font></center></p>";
