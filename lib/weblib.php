@@ -2515,7 +2515,7 @@ function print_simple_box($message, $align='', $width='', $color='', $padding=5,
 /**
  * Print the top portion of a standard themed box.
  *
- * @param string $align string, alignment of the box, not the text (not used, box is always centred).
+ * @param string $align string, alignment of the box, not the text (default left, center, right).
  * @param string $width string, width of the box, including units, for example '100%'. 
  * @param string $color string, background colour of the box, for example '#eee'.
  * @param int $padding integer, padding in pixels, specified without units.
@@ -2534,22 +2534,30 @@ function print_simple_box_start($align='', $width='', $color='', $padding=5, $cl
     if ($color) {
         $style_out .= 'background-color:'. $color .'; ';
     }
-    //Note, $align not used - box is always centred.
+    if ($align && 'center' == $align) {
+    	$style_out .= 'margin-left:auto; margin-right:auto; ';
+    }
+    elseif (!align || 'left' == $align) {
+        $style_out .= 'float:left; ';
+    }
+    else {
+        $style_out .= 'float:right; ';	
+    }
     if ($width) {
     	//Note, width units provided.
-    	$style_out .= 'width:'. $width .'; margin-left:auto; margin-right:auto;';
+    	$style_out .= 'width:'. $width .'; ';
     }
     if ($id) {
         $id = 'id="'. $id .'"';
     } 
-    echo "<div $id class=\"$class\" style=\"$style_out\"><div class=\"$class"."content\" style=\"$style_in\">\n";
+    echo "<div $id class=\"$class\" style=\"$style_out\"><div class=\"$class"."content\" style=\"$style_in\">\n"; 
 }
 
 /**
  * Print the end portion of a standard themed box.
  */
 function print_simple_box_end() {
-    echo "</div></div>\n";
+    echo "</div></div><div class=\"clearer\"></div>\n";
 }
 
 /**
