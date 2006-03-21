@@ -24,13 +24,16 @@
 
     require_once('../../config.php');
     require_once('lib.php');
+    require_once($CFG->libdir.'/uploadlib.php');
 
     require_login();
 
-    $id    = optional_param('id', 0, PARAM_INT);    // course module id
-    $d     = optional_param('d', 0, PARAM_INT);    // database id
-    $rid   = optional_param('rid', 0, PARAM_INT);    //record id
-
+    $id              = optional_param('id', 0, PARAM_INT);  // course module id
+    $d               = optional_param('d', 0, PARAM_INT);   // database id
+    $rid             = optional_param('rid', 0, PARAM_INT); // record id
+    $fielddelimiter  = optional_param('fielddelimiter', ',', PARAM_CLEANHTML); // characters used as field delimiters for csv file import
+    $fieldenclosure = optional_param('fieldenclosure', '', PARAM_CLEANHTML);   // characters used as record delimiters for csv file import
+        
     if ($id) {
         if (! $cm = get_record('course_modules', 'id', $id)) {
             error('Course Module ID was incorrect');
@@ -73,85 +76,137 @@
   
 
 /// Print the page header
-
     $strdata = get_string('modulenameplural','data');
-
     print_header_simple($data->name, "", "<a href='index.php?id=$course->id'>$strdata</a> -> $data->name", "", "", true, "", navmenu($course));
-
     print_heading(format_string($data->name));
 
 /// Print the tabs
-
     $currenttab = 'add';
     include('tabs.php');
-
-    if ($records = data_get_records_csv($CFG->dataroot.'/'.$course->id.'/dataimport.csv')) {
-
-        $db->debug =true;
-        $fieldnames = array_shift($records);
-
-        foreach ($records as $record) {
-
-            if ($recordid = data_add_record($data->id, 0)) {    //add instance to data_record
-                $fields = get_records('data_fields','dataid',$data->id, '', 'name,id,type');
-                print_object($fields);
-                
-                //do a manual round of inserting, to make sure even empty conentes get stored
-                foreach ($fields as $field) {
-                    $content->recordid = $recordid;
-                    $content->fieldid = $field->id;
-                    insert_record('data_content',$content);
-                }
-                //for each field in the add form, add it to the data_content.
-                foreach ($record as $key => $value) {
-                    $name = $fieldnames[$key];
-                    $field = $fields[$name];
-                    require_once($CFG->dirroot.'/mod/data/field/'.$field->type.'/field.class.php');
-                    $newfield = 'data_field_'.$field->type;
-                    $currentfield = new $newfield($field->id);
-
-                    $currentfield->update_data_content($currentfield->id, $recordid, $value, $name);
-                }
-            }
+    
+    
+    $um = new upload_manager('recordsfile', false, false, null, false, 0);
+    
+    if ($um->preprocess_files() && confirm_sesskey()) {
+        $filename = $um->files['recordsfile']['tmp_name'];
+        
+        // Large files are likely to take their time and memory. Let PHP know
+        // that we'll take longer, and that the process should be recycled soon
+        // to free up memory.
+        @set_time_limit(0);
+        @raise_memory_limit("64M");
+        if (function_exists('apache_child_terminate')) {
+            @apache_child_terminate();
         }
-    }
+        
+        //Fix mac/dos newlines
+        $text = my_file_get_contents($filename);
+        $text = preg_replace('!\r\n?!',"\n",$text);
+        $fp = fopen($filename, "w");
+        fwrite($fp, $text);
+        fclose($fp);
+        
+        $recordsadded = 0;
+        
+        if (!$records = data_get_records_csv($filename, $fielddelimiter, $fieldenclosure)) {
+            error('get_records_csv failed to read data from the uploaded file. Please check file for field name typos and formatting errors.');
+        } else {
+            //$db->debug = true;
+            $fieldnames = array_shift($records);
+            
+            foreach ($records as $record) {
+                if ($recordid = data_add_record($data->id, 0)) {  // add instance to data_record
+                    $fields = get_records('data_fields', 'dataid', $data->id, '', 'name, id, type');
+                    
+                    // do a manual round of inserting, to make sure even empty contents get stored
+                    foreach ($fields as $field) {
+                        $content->recordid = $recordid;
+                        $content->fieldid = $field->id;
+                        insert_record('data_content', $content);
+                    }
+                    // for each field in the add form, add it to the data_content.
+                    foreach ($record as $key => $value) {
+                        $name = $fieldnames[$key];
+                        $field = $fields[$name];
+                        require_once($CFG->dirroot.'/mod/data/field/'.$field->type.'/field.class.php');
+                        $newfield = 'data_field_'.$field->type;
+                        $currentfield = new $newfield($field->id);
 
-/// Print entry saved msg, if any
-    if (!empty($entrysaved)){
-        notify (get_string('entrysaved','data'));
-        echo '<p />';
+                        $currentfield->update_data_content($currentfield->id, $recordid, $value, $name);
+                    }
+                    $recordsadded++;
+                }
+            } // End foreach
+        } // End else
+    }//sun without love motivo atillas
+
+    if ($recordsadded > 0) {
+        notify($recordsadded. ' '. get_string('recordssaved', 'data'));
+    } else {
+        notify(get_string('recordsnotsaved', 'data'));
     }
+    echo '<p />';
 
 
 /// Finish the page
-    
     print_footer($course);
 
 
 
 
-function data_get_records_csv($file) {
-    global $CFG, $db;
+function my_file_get_contents($filename, $use_include_path = 0) {
+/// Returns the file as one big long string
 
-    if(!($handle = @fopen($file, 'r'))) {
-        error('get_records_csv failed to open '.$file);
+    $data = "";
+    $file = @fopen($filename, "rb", $use_include_path);
+    if ($file) {
+        while (!feof($file)) {
+            $data .= fread($file, 1024);
+        }
+        fclose($file);
     }
+    return $data;
+}
 
+
+
+// Read the records from the given file.
+// Perform a simple field count check for each record.
+function data_get_records_csv($filename, $fielddelimiter=',', $fieldenclosure="\n") {
+    global $db;
+    
+    if (empty($fielddelimiter)) {
+        $fielddelimiter = ',';
+    }
+    if (empty($fieldenclosure)) {
+        $fieldenclosure = "\n";
+    }
+    
+    if (!$fp = fopen($filename, "r")) {
+        error('get_records_csv failed to open '.$filename);
+    }
+    $fieldnames = array();
     $rows = array();
 
-    $fieldnames = fgetcsv($handle, 4096);
-    if(empty($fieldnames)) {
-        fclose($handle);
+    $fieldnames = fgetcsv($fp, 4096, $fielddelimiter, $fieldenclosure);
+    
+    if (empty($fieldnames)) {
+        fclose($fp);
         return false;
     }
-
     $rows[] = $fieldnames;
-
-    while (($data = fgetcsv($handle, 4096)) !== false) {
+    
+    while (($data = fgetcsv($fp, 4096, $fielddelimiter, $fieldenclosure)) !== false) {
+        if (count($data) > count($fieldnames)) {
+            // For any given record, we can't have more data entities than the number of fields.
+            fclose($fp);
+            return false;
+        }
         $rows[] = $data;
     }
-
-    fclose($handle);
+    
+    fclose($fp);
     return $rows;
 }
+
 ?>

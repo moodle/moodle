@@ -136,14 +136,18 @@ class data_field_checkbox extends data_field_base {
     }
     
     
-    function format_data_field_checkbox_content($contentArr) {
-         $str = '';
-         foreach ($contentArr as $val) {
-             $str .= $val . '##';
-         }
-         $str = substr($str, 0, -2);
-         $str = clean_param($str, PARAM_NOTAGS);
-         return $str;
+    function format_data_field_checkbox_content($content) {
+        if (!is_array($content)) {
+            $str = $content;
+        } else {
+            $str = '';
+            foreach ($content as $val) {
+                $str .= $val . '##';
+            }
+            $str = substr($str, 0, -2);
+        }
+        $str = clean_param($str, PARAM_NOTAGS);
+        return $str;
     }
     
     

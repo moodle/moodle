@@ -277,8 +277,8 @@ class data_field_file extends data_field_base {// extends
     function delete_data_content_files($dataid, $recordid, $content){
         global $CFG, $course;
         $filepath = $CFG->dataroot.'/'.$course->id.'/'.$CFG->moddata.'/data/'.$dataid.'/'.$this->id.'/'.$recordid;
-        unlink($filepath . '/' . $content);
-        rmdir($filepath);
+        @unlink($filepath . '/' . $content);
+        @rmdir($filepath);
         notify (get_string('file', 'data') . ' ' . $content . ' ' . get_string('deleted', 'data'));
     }
     
