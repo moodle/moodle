@@ -146,6 +146,7 @@ function blog_user_bloginfo($userid='') {
  */
 function blog_print_html_formatted_entries(&$blogFilter, $filtertype, $filterselect) {
     global $CFG, $USER;
+
     $blogpage = optional_param('blogpage', 0, PARAM_INT);
     $bloglimit = get_user_preferences('blogpagesize',8); // expose as user pref when MyMoodle comes around
 
@@ -294,9 +295,10 @@ function blog_print_entry_content ($template, $entryid, $filtertype='', $filters
         echo '<p />';
         print_string('tags');
         echo ': ';
-        foreach ($blogtags as $blogtag) {
-            echo '<a href="index.php?courseid='.$course->id.'&amp;filtertype='.$filtertype.'&amp;filterselect='.$filterselect.'&amp;tagid='.$blogtag->id.'">'.$blogtag->text.'</a>, ';
+        foreach ($blogtags as $key => $blogtag) {
+            $taglist[] = '<a href="index.php?courseid='.$course->id.'&amp;filtertype='.$filtertype.'&amp;filterselect='.$filterselect.'&amp;tagid='.$blogtag->id.'">'.$blogtag->text.'</a>';
         }
+        echo implode(', ', $taglist);
     }
     
 /// Commands

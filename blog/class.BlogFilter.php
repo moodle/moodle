@@ -178,10 +178,31 @@ class BlogFilter {
      */
     function fetch_entries($limit=true) {
         global $CFG, $USER;
-        
+
+
         if (!isset($USER->id)) {
             $USER->id = 0;    //hack, for guests
         }
+
+        // if we have specified an ID
+        if ($this->postid) {
+
+            if ($post = get_record('post', 'id', $this->postid)) {
+
+                if ($user = get_record('user', 'id', $post->userid)) {
+                    $post->email = $user->email;
+                    $post->firstname = $user->firstname;
+                    $post->lastname = $user->lastname;
+                }
+
+                $blogEntry = new BlogEntry($post);
+                $blogEntries[] = $blogEntry;
+
+                $this->filtered_entries = $blogEntries;
+                return $this->filtered_entries;
+            }
+        }
+        
         
         if ($this->tag) {
             $tagtablesql = $CFG->prefix.'blog_tag_instance bt, ';
@@ -191,17 +212,6 @@ class BlogFilter {
             $tagquerysql = '';
         }
         
-        // if we have specified an ID
-        if ($this->postid) {
-
-            if ($post = get_record('post', 'id', $this->postid)) {
-                $blogEntry = new BlogEntry($post);
-                $blogEntries[] = $blogEntry;
-
-                $this->filtered_entries = $blogEntries;
-                return $this->filtered_entries;
-            }
-        }
 
         /****************************************
          * depending on the type, there are 4   *
