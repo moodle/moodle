@@ -302,7 +302,7 @@
     if ($responses = data_submitted() and empty($_POST['quizpassword'])) {
 
         // set the default event. This can be overruled by individual buttons.
-        $event = (array_key_exists('markall', $responses)) ? QUESTION_EVENTGRADE :
+        $event = (array_key_exists('markall', $responses)) ? QUESTION_EVENTSUBMIT :
          ($finishattempt ? QUESTION_EVENTCLOSE : QUESTION_EVENTSAVE);
 
         // Unset any variables we know are not responses
