@@ -6,7 +6,7 @@
 // Moodle - Modular Object-Oriented Dynamic Learning Environment         //
 //          http://moodle.org                                            //
 //                                                                       //
-// Copyright (C) 2005 Martin Dougiamas  http://dougiamas.com             //
+// Copyright (C) 1990-onwards Moodle Pty Ltd   http://moodle.com         //
 //                                                                       //
 // This program is free software; you can redistribute it and/or modify  //
 // it under the terms of the GNU General Public License as published by  //
@@ -32,6 +32,7 @@
     }
 
     require_course_login($course);
+
     add_to_log($course->id, "data", "view all", "index.php?id=$course->id", "");
 
     $strweek = get_string('week');
@@ -40,10 +41,10 @@
     $strdata = get_string('modulename','data');
   
     if (! $datas = get_all_instances_in_course("data", $course)) {
-        notice("There are no databases", "../../course/view.php?id=$course->id");
+        notice("There are no databases", "$CFG->wwwroot/course/view.php?id=$course->id");
     }
 
-    print_header_simple($strdata, "", $strdata, "", "", true, "", navmenu($course));
+    print_header_simple($strdata, '', $strdata, '', '', true, "", navmenu($course));
 
     $timenow  = time();
     $strname  = get_string('name');

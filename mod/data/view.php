@@ -65,7 +65,7 @@
     }
 
     if (isteacher($course->id)) {
-        if (!count_records('data_fields','dataid',$data->id)) {      // Brand new database!
+        if (!record_exists('data_fields','dataid',$data->id)) {      // Brand new database!
             redirect($CFG->wwwroot.'/mod/data/fields.php?d='.$data->id);  // Redirect to field entry
         }
     }
@@ -81,6 +81,7 @@
     }
     
     $d = $data->id;//set this so tabs can work properly
+
     add_to_log($course->id, 'data', 'view', "view.php?id=$cm->id", $data->id, $cm->id);
 
 
@@ -120,11 +121,10 @@
 
     print_heading(format_string($data->name));
     
-    
     // Do we need to show a link to the RSS feed for the records?
     if (isset($CFG->enablerssfeeds) && isset($CFG->data_enablerssfeeds) && $data->rssarticles > 0) {
         echo '<div style="float:right;">';
-        rss_print_link($course->id, $USER->id, 'data', $data->id, $tooltiptext='RSS feed for entries');
+        rss_print_link($course->id, $USER->id, 'data', $data->id, get_string('rsstype'));
         echo '</div>';
         echo '<div style="clear:both;"></div>';
     }
@@ -136,7 +136,9 @@
 
 /// Check to see if groups are being used here
     if ($groupmode = groupmode($course, $cm)) {   // Groups are being used
-        $currentgroup = setup_and_print_groups($course, $groupmode, 'view.php?d='.$data->id.'&amp;search='.s($search).'&amp;sort='.s($sort).'&amp;order='.s($order).'&amp;');
+        $currentgroup = setup_and_print_groups($course, $groupmode, 
+                                            'view.php?d='.$data->id.'&amp;search='.s($search).'&amp;sort='.s($sort).
+                                            '&amp;order='.s($order).'&amp;');
     } else {
         $currentgroup = 0;
     }
@@ -159,6 +161,7 @@
     if (optional_param('approved','0',PARAM_INT)) {
         print_heading(get_string('recordapproved','data'));
     }
+
     /***************************
      * code to delete a record *
      ***************************/

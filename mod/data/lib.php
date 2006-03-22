@@ -437,17 +437,23 @@ function data_replace_field_in_templates($data, $searchfieldname, $newfieldname)
 function data_append_new_field_to_templates($data, $newfieldname) {
 
     $newdata->id = $data->id;
+    $change = false;
 
     if (!empty($data->singletemplate)) {
         $newdata->singletemplate = addslashes($data->singletemplate.' [[' . $newfieldname .']]');
+        $change = true;
     }
     if (!empty($data->addtemplate)) {
         $newdata->addtemplate = addslashes($data->addtemplate.' [[' . $newfieldname . ']]');
+        $change = true;
     }
     if (!empty($data->rsstemplate)) {
         $newdata->rsstemplate = addslashes($data->singletemplate.' [[' . $newfieldname . ']]');
+        $change = true;
     }
-    update_record('data', $newdata);
+    if ($change) {
+        update_record('data', $newdata);
+    }
 }
 
 
