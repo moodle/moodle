@@ -11,7 +11,7 @@
 // and it therefore often sticks to some kind of odd behaviour
 //
 
-class quiz_description_qtype extends default_questiontype {
+class description_qtype extends default_questiontype {
 
     function name() {
         return 'description';
@@ -70,7 +70,7 @@ class quiz_description_qtype extends default_questiontype {
 //// INITIATION - Without this line the question type is not in use... ///
 //////////////////////////////////////////////////////////////////////////
 // define("DESCRIPTION",   "7"); // already defined in questionlib.php
-$QTYPES['description']= new quiz_description_qtype();
+$QTYPES['description']= new description_qtype();
 // The following adds the questiontype to the menu of types shown to teachers
 $QTYPE_MENU['description'] = get_string("description", "quiz");
 

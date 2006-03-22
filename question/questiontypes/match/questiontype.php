@@ -48,7 +48,7 @@ class question_match_qtype extends default_questiontype {
                     $subquestion->questiontext = $questiontext;
                     $subquestion->answertext   = $answertext;
                     if (!update_record("question_match_sub", $subquestion)) {
-                        $result->error = "Could not insert quiz match subquestion! (id=$subquestion->id)";
+                        $result->error = "Could not insert match subquestion! (id=$subquestion->id)";
                         return $result;
                     }
                 } else {
@@ -62,7 +62,7 @@ class question_match_qtype extends default_questiontype {
                     $subquestion->questiontext = $questiontext;
                     $subquestion->answertext   = $answertext;
                     if (!$subquestion->id = insert_record("question_match_sub", $subquestion)) {
-                        $result->error = "Could not insert quiz match subquestion!";
+                        $result->error = "Could not insert match subquestion!";
                         return $result;
                     }
                 }
@@ -86,7 +86,7 @@ class question_match_qtype extends default_questiontype {
             $options->subquestions = implode(",",$subquestions);
             $options->shuffleanswers = $question->shuffleanswers;
             if (!update_record("question_match", $options)) {
-                $result->error = "Could not update quiz match options! (id=$options->id)";
+                $result->error = "Could not update match options! (id=$options->id)";
                 return $result;
             }
         } else {
@@ -95,7 +95,7 @@ class question_match_qtype extends default_questiontype {
             $options->subquestions = implode(",",$subquestions);
             $options->shuffleanswers = $question->shuffleanswers;
             if (!insert_record("question_match", $options)) {
-                $result->error = "Could not insert quiz match options!";
+                $result->error = "Could not insert match options!";
                 return $result;
             }
         }
@@ -267,7 +267,7 @@ class question_match_qtype extends default_questiontype {
             // the wrapped shortanswer questions.
             //if ($options->feedback
             // && !empty($subquestion->options->answers[$responses[$key]]->feedback)) {
-            //    quiz_print_comment($subquestion->options->answers[$responses[$key]]->feedback);
+            //    print_comment($subquestion->options->answers[$responses[$key]]->feedback);
             //}
 
             $anss[] = clone($a);

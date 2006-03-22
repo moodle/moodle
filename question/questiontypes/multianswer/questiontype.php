@@ -13,7 +13,7 @@
 ///
 
 /// QUESTION TYPE CLASS //////////////////
-class quiz_embedded_cloze_qtype extends default_questiontype {
+class embedded_cloze_qtype extends default_questiontype {
 
     function name() {
         return 'multianswer';
@@ -39,7 +39,7 @@ class quiz_embedded_cloze_qtype extends default_questiontype {
                 notify("Unable to get options for questiontype {$wrapped->qtype} (id={$wrapped->id})");
             }
             // for wrapped questions the maxgrade is always equal to the defaultgrade,
-            // there is no entry in the quiz_question_instances table for them
+            // there is no entry in the question_instances table for them
             $wrapped->maxgrade = $wrapped->defaultgrade;
             
             $question->options->questions[$sequence[$wrapped->id]] = clone($wrapped); // ??? Why do we need a clone here?
@@ -106,7 +106,7 @@ class quiz_embedded_cloze_qtype extends default_questiontype {
     }
 
     function save_question($authorizedquestion, $form, $course) {
-        $question = quiz_qtype_multianswer_extract_question ($form->questiontext);
+        $question = qtype_multianswer_extract_question ($form->questiontext);
         if (isset($authorizedquestion->id)) {
             $question->id = $authorizedquestion->id;
             $question->version = $form->version = $authorizedquestion->version;
@@ -583,7 +583,7 @@ class quiz_embedded_cloze_qtype extends default_questiontype {
 //////////////////////////////////////////////////////////////////////////
 //// INITIATION - Without this line the question type is not in use... ///
 //////////////////////////////////////////////////////////////////////////
-$QTYPES['multianswer']= new quiz_embedded_cloze_qtype();
+$QTYPES['multianswer']= new embedded_cloze_qtype();
 // The following adds the questiontype to the menu of types shown to teachers
 $QTYPE_MENU['multianswer'] = get_string("multianswer", "quiz");
 
@@ -597,13 +597,13 @@ $QTYPE_MENU['multianswer'] = get_string("multianswer", "quiz");
 /////////////////////////////////////////////////////////////
 
 
-function quiz_qtype_multianswer_extract_question($text) {
+function qtype_multianswer_extract_question($text) {
 
 ////////////////////////////////////////////////
 //// Define some constants first. It is not the
-//// pattern commonly used in quiz/questiontypes.
+//// pattern commonly used in questiontypes.
 //// The reason is that it has been moved here from
-//// quiz/format/multianswer/format.php
+//// question/format/multianswer/format.php
 ////////////////////////////////////////////////
 
 

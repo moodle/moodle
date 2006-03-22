@@ -819,6 +819,8 @@ class default_questiontype {
     * Includes configuration settings for the question type on the quiz admin
     * page
     *
+    * TODO: It makes no sense any longer to do the admin for question types
+    * from the quiz admin page. This should be changed.
     * Returns an array of objects describing the options for the question type
     * to be included on the quiz module admin page.
     * Configuration options can be included by setting the following fields in
@@ -876,6 +878,8 @@ class default_questiontype {
 
     /**
     * Prints a table of course modules in which the question is used
+    *
+    * TODO: This should be made quiz-independent
     *
     * This function is used near the end of the question edit forms in all question types
     * It prints the table of quizzes in which the question is used

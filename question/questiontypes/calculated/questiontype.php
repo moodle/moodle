@@ -169,7 +169,7 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
                             get_string('missingformula', 'quiz');
                     }
                     if ($formulaerrors =
-                     quiz_qtype_calculated_find_formula_errors($answer)) {
+                     qtype_calculated_find_formula_errors($answer)) {
                         $calculatedmessages[] = $formulaerrors;
                     }
                     if (! isset($form->tolerance[$key])) {
@@ -231,7 +231,7 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
         }
         foreach ($numericalquestion->options->answers as $key => $answer) {
             $answer = &$numericalquestion->options->answers[$key]; // for PHP 4.x
-            $correctanswer = quiz_qtype_calculated_calculate_answer(
+            $correctanswer = qtype_calculated_calculate_answer(
                  $answer->answer, $state->options->dataset, $answer->tolerance,
                  $answer->tolerancetype, $answer->correctanswerlength,
                  $answer->correctanswerformat, $unit->unit);
@@ -502,7 +502,7 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
         $delimiter = ': ';
         $virtualqtype = $this->get_virtual_qtype();
         foreach ($answers as $answer) {
-            $calculated = quiz_qtype_calculated_calculate_answer(
+            $calculated = qtype_calculated_calculate_answer(
                     $answer->answer, $data, $answer->tolerance,
                     $answer->tolerancetype, $answer->correctanswerlength,
                     $answer->correctanswerformat, $unit);
@@ -574,7 +574,7 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
         $unit = $virtualqtype->get_default_numerical_unit($question);
         foreach ($question->options->answers as $answer) {
             if (((int) $answer->fraction) === 1) {
-                $answernumerical = quiz_qtype_calculated_calculate_answer(
+                $answernumerical = qtype_calculated_calculate_answer(
                  $answer->answer, $state->options->dataset, $answer->tolerance,
                  $answer->tolerancetype, $answer->correctanswerlength,
                  $answer->correctanswerformat, $unit->unit);
@@ -586,7 +586,7 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
 
     function substitute_variables($str, $dataset) {
         $formula = parent::substitute_variables($str, $dataset);
-        if ($error = quiz_qtype_calculated_find_formula_errors($formula)) {
+        if ($error = qtype_calculated_find_formula_errors($formula)) {
             return $error;
         }
         /// Calculate the correct answer
@@ -708,7 +708,7 @@ $QTYPES['calculated']= new question_calculated_qtype();
 // The following adds the questiontype to the menu of types shown to teachers
 $QTYPE_MENU['calculated'] = get_string("calculated", "quiz");
 
-function quiz_qtype_calculated_calculate_answer($formula, $individualdata,
+function qtype_calculated_calculate_answer($formula, $individualdata,
         $tolerance, $tolerancetype, $answerlength, $answerformat='1', $unit='') {
 /// The return value has these properties:
 /// ->answer    the correct answer
@@ -802,7 +802,7 @@ function quiz_qtype_calculated_calculate_answer($formula, $individualdata,
 }
 
 
-function quiz_qtype_calculated_find_formula_errors($formula) {
+function qtype_calculated_find_formula_errors($formula) {
 /// Validates the formula submitted from the question edit page.
 /// Returns false if everything is alright.
 /// Otherwise it constructs an error message
