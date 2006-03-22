@@ -192,6 +192,14 @@
             $question->version = backup_todb($que_info['#']['VERSION']['0']['#']);
             $question->hidden = backup_todb($que_info['#']['HIDDEN']['0']['#']);
 
+            if ($restore->backup_version < 2006032200) {
+                // The qtype was an integer that now needs to be converted to the name
+                $qtypenames = array(1=>'shortanswer',2=>'truefalse',3=>'multichoice',4=>'random',5=>'match',
+                 6=>'randomsamatch',7=>'description',8=>'numerical',9=>'multianswer',10=>'calculated',
+                 11=>'rqp',12=>'essay');
+                $question->qtype = $qtypenames[$question->qtype];
+            }
+
             ////We have to recode the parent field
             // This should work alright because we ordered the questions appropriately during backup so that
             // questions that can be parents are restored first
