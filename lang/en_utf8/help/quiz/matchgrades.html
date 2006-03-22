@@ -27,5 +27,20 @@ fixed list of valid grades, as follows...</p>
 </ul>
 
 <p>negative values of the above list
-are also permitted</p>
+are also permitted.</p>
 
+<p>There are two settings for this switch. They affect how
+the import routine treats values that do not <strong>exactly</strong>
+match one of the values in the above list</p>
+
+<ul>
+  <li><strong>Error if grade not listed</strong><br />
+  If a question contains any grades not found in the list an error is displayed
+  and that question will not be imported.</li>
+  <li><strong>Nearest grade if not listed</strong><br />
+  If a grade is found that does not match a value in the list, the grade is changed
+  to the closest matching value in the list</li>
+</ul>
+
+<p><i>Note: some custom import formats write directly to the database and may bypass
+this check</i></p>
