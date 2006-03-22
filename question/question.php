@@ -26,15 +26,15 @@
     require_once($CFG->libdir.'/questionlib.php');
     require_once($CFG->libdir.'/filelib.php');
 
-    $id = optional_param('id');        // question id
+    $id = optional_param('id', 0, PARAM_INT);        // question id
 
-    $qtype = optional_param('qtype');
-    $category = optional_param('category');
+    $qtype = optional_param('qtype', '', PARAM_FILE);
+    $category = optional_param('category', 0, PARAM_INT);
 
-    // a qtype > 99 means a remote question
-    if ($qtype > 99) {
-    $typeid = $qtype - 100;
-    $qtype = RQP;
+    // rqp questions set the type to rqp_nn where nn is the rqp_type id
+    if (substr($qtype, 0, 4) == 'rqp_') {
+        $typeid = (int) substr($qtype, 4);
+        $qtype = 'rqp';
     }
 
     if ($id) {
