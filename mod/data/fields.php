@@ -139,16 +139,17 @@
                 if ($confirm = optional_param('confirm', 0, PARAM_INT)) {
 
                     // Delete the field completely
-                    $field = data_get_field_from_id($fid, $data);
-                    $field->delete_field();
+                    if ($field = data_get_field_from_id($fid, $data)) {
+                        $field->delete_field();
 
-                    // Update the templates.
-                    data_replace_field_in_templates($data, $field->field->name, '');
-                    
-                    add_to_log($course->id, 'data', 'fields delete', 
-                               "fields.php?d=$data->id", $field->field->name, $cm->id);
-
-                    $displaynoticegood = get_string('fielddeleted', 'data');
+                        // Update the templates.
+                        data_replace_field_in_templates($data, $field->field->name, '');
+                        
+                        add_to_log($course->id, 'data', 'fields delete', 
+                                   "fields.php?d=$data->id", $field->field->name, $cm->id);
+    
+                        $displaynoticegood = get_string('fielddeleted', 'data');
+                    }
 
                 } else {
                     // Print confirmation message.
@@ -200,15 +201,9 @@
 
     } else {                                              /// Display the main listing of all fields
       
-        echo '<div class="fieldadd" align="center">';
-        echo get_string('newfield','data').': ';
-        popup_form($CFG->wwwroot.'/mod/data/fields.php?d='.$data->id.'&amp;mode=new&amp;sesskey='.
-                   sesskey().'&amp;newtype=', $menufield, 'fieldform', '', 'choose');
-        helpbutton('fields', get_string('addafield','data'), 'data');
-        echo '</div>';
         
         if (!record_exists('data_fields','dataid',$data->id)) {
-            print_string('nofieldindatabase','data');  // nothing in database
+            notify(get_string('nofieldindatabase','data'));  // nothing in database
 
         } else {    //else print quiz style list of fields
 
@@ -241,6 +236,13 @@
             }
             print_table($table);
         } 
+        
+        echo '<div class="fieldadd" align="center">';
+        echo get_string('newfield','data').': ';
+        popup_form($CFG->wwwroot.'/mod/data/fields.php?d='.$data->id.'&amp;mode=new&amp;sesskey='.
+                   sesskey().'&amp;newtype=', $menufield, 'fieldform', '', 'choose');
+        helpbutton('fields', get_string('addafield','data'), 'data');
+        echo '</div>';
         
         print_simple_box_end();
 
