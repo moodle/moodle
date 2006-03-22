@@ -27,10 +27,11 @@
 
     require_login();
 
-    $mode ='addtemplate';    //define the mode for this page, only 1 mode available
     $id    = optional_param('id', 0, PARAM_INT);    // course module id
     $d     = optional_param('d', 0, PARAM_INT);    // database id
     $rid   = optional_param('rid', 0, PARAM_INT);    //record id
+    $import   = optional_param('import', 0, PARAM_INT);    // show import form
+    $mode ='addtemplate';    //define the mode for this page, only 1 mode available
 
     if ($id) {
         if (! $cm = get_record('course_modules', 'id', $id)) {
@@ -255,36 +256,40 @@
 /// Upload records section. Only for teachers and the admin.
     
     if (isteacher($course->id)) {
-        echo "\n\n";
-        print_simple_box_start('center','80%');
-        print_heading(get_string('uploadrecords', 'data'), '', 3);
-        
-        $maxuploadsize = get_max_upload_file_size();
-        echo '<div align="center">';
-        echo '<form enctype="multipart/form-data" action="import.php" method="post">';
-        echo '<input type="hidden" name="MAX_FILE_SIZE" value="'.$maxuploadsize.'">';
-        echo '<input name="d" value="'.$data->id.'" type="hidden" />';
-        echo '<input name="sesskey" value="'.sesskey().'" type="hidden" />';
-        echo '<table align="center" cellspacing="0" cellpadding="2" border="0">';
-        echo '<tr>';
-        echo '<td align="right">'.get_string('csvfile', 'data').'</td>';
-        echo '<td><input type="file" name="recordsfile" size="30">';
-        helpbutton('', get_string('csvimporthelptitle', 'data'), 'data', true, false,
-                    get_string('csvimporthelptext', 'data'), false);
-        echo '</td><tr>';
-        echo '<td align="right">'.get_string('fielddelimiter', 'data').'</td>';
-        echo '<td><input type="text" name="fielddelimiter" size="6">';
-        echo get_string('defaultfielddelimiter', 'data').'</td>';
-        echo '</tr>';
-        echo '<td align="right">'.get_string('fieldenclosure', 'data').'</td>';
-        echo '<td><input type="text" name="fieldenclosure" size="6">';
-        echo get_string('defaultfieldenclosure', 'data').'</td>';
-        echo '</tr>';
-        echo '</table>';
-        echo '<input type="submit" value="'.get_string('uploadfile', 'data').'">';
-        echo '</form>';
-        echo '</div>';
-        print_simple_box_end();
+        if ($import) {
+            print_simple_box_start('center','80%');
+            print_heading(get_string('uploadrecords', 'data'), '', 3);
+
+            $maxuploadsize = get_max_upload_file_size();
+            echo '<div align="center">';
+            echo '<form enctype="multipart/form-data" action="import.php" method="post">';
+            echo '<input type="hidden" name="MAX_FILE_SIZE" value="'.$maxuploadsize.'">';
+            echo '<input name="d" value="'.$data->id.'" type="hidden" />';
+            echo '<input name="sesskey" value="'.sesskey().'" type="hidden" />';
+            echo '<table align="center" cellspacing="0" cellpadding="2" border="0">';
+            echo '<tr>';
+            echo '<td align="right">'.get_string('csvfile', 'data').':</td>';
+            echo '<td><input type="file" name="recordsfile" size="30">';
+            helpbutton('importcvs', get_string('csvimport', 'data'), 'data', true, false);
+            echo '</td><tr>';
+            echo '<td align="right">'.get_string('fielddelimiter', 'data').':</td>';
+            echo '<td><input type="text" name="fielddelimiter" size="6">';
+            echo get_string('defaultfielddelimiter', 'data').'</td>';
+            echo '</tr>';
+            echo '<td align="right">'.get_string('fieldenclosure', 'data').':</td>';
+            echo '<td><input type="text" name="fieldenclosure" size="6">';
+            echo get_string('defaultfieldenclosure', 'data').'</td>';
+            echo '</tr>';
+            echo '</table>';
+            echo '<input type="submit" value="'.get_string('uploadfile', 'data').'">';
+            echo '</form>';
+            echo '</div>';
+            print_simple_box_end();
+        } else {
+            echo '<div align="center">';
+            echo '<a href="add.php?d='.$data->id.'&amp;import=1">'.get_string('uploadrecords', 'data').'</a>';
+            echo '</div>';
+        }
     }
 
 

@@ -165,44 +165,28 @@
     /***************************
      * code to delete a record *
      ***************************/
-    if (($delete = optional_param('delete',0,PARAM_INT)) && confirm_sesskey()){
+    if (($delete = optional_param('delete',0,PARAM_INT)) && confirm_sesskey()) {
         if (isteacheredit($course) or data_isowner($delete)){
-            if ($confirm = optional_param('confirm',0,PARAM_INT)){
-                //find all contents in this record?
-                if ($contents = get_records('data_content','recordid',$delete)){
-
-                    //for each content, delete the file associated
-                    foreach ($contents as $content){
-                        $field = get_record('data_fields','id',$content->fieldid);
-
-                        if ($g = data_get_field($field, $data)){    //it is possible that the field is deleted by teacher
-                            $g->delete_content($data->id, $delete, $content->content);
+            if ($confirm = optional_param('confirm',0,PARAM_INT)) {
+                if ($contents = get_records('data_content','recordid', $delete)) {
+                    foreach ($contents as $content) {  // Delete files or whatever else this field allows
+                        if ($field = data_get_field_from_id($content->fieldid, $data)) { // Might not be there
+                            $field->delete_content($content->recordid);
                         }
                     }
-                    delete_records('data_records','id',$delete);
-                    delete_records('data_content','recordid',$delete);
-                    
-                    add_to_log($course->id, 'data', 'record delete', "view.php?id=$cm->id", $data->id, $cm->id);
-                    
-                    notify (get_string('recorddeleted','data'));
                 }
-            }
-            else {    //prints annoying confirmation dialogue
-                $field = get_record('data_records','id',$delete);
-                print_simple_box_start('center', '60%');
-                echo '<div align="center">';
-                echo '<form action = "view.php?d='.$data->id.'&amp;delete='.$delete.'" method="post">';
-                //add sesskey
-                echo get_string('confirmdeleterecord','data');
-                echo '<p />';
-                echo '<input type="hidden" value="'.sesskey().'" name="sesskey">';
-                echo '<input type="submit" value="'.get_string('ok').'"> ';
-                echo '<input type="hidden" name="confirm" value="1">';
-                echo '<input type="button" value="'.get_string('cancel').'" onclick="javascript:history.go(-1);" />';
-                echo '</form>';
-                echo '</div>';
-                print_simple_box_end();
-                echo '</td></tr></table>';
+                delete_records('data_content','recordid',$delete);
+                delete_records('data_records','id',$delete);
+                    
+                add_to_log($course->id, 'data', 'record delete', "view.php?id=$cm->id", $data->id, $cm->id);
+                    
+                notify(get_string('recorddeleted','data'));
+
+            } else {   // Print a confirmation page
+                notice_yesno(get_string('confirmdeleterecord','data'), 
+                             'view.php?d='.$data->id.'&amp;delete='.$delete.'&amp;confirm=1&amp;sesskey='.sesskey(),
+                             'view.php?d='.$data->id);
+
                 print_footer($course);
                 exit;
             }
