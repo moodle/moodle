@@ -212,7 +212,6 @@ class data_field_base {     /// Base class for Database Field Types (see field/*
 /// Display the content of the field in browse mode
     function display_browse_field($recordid, $template) {
         if ($content = get_record('data_content','fieldid', $this->field->id, 'recordid', $recordid)) {
-        print_object($content);
             if (isset($content->content)) {                
                 $options->para = false;
                 $str = format_text($content->content, $content->content1, $options);
