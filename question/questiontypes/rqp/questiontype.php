@@ -352,7 +352,7 @@ class question_rqp_qtype extends default_questiontype {
         if ($cmoptions->optionflags & QUESTION_ADAPTIVE) {
             echo '<input type="submit" name="';
             echo $question->name_prefix;
-            echo 'mark" value="';
+            echo 'submit" value="';
             print_string('mark', 'quiz');
             echo '" />';
         }

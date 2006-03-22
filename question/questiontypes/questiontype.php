@@ -422,7 +422,6 @@ class default_questiontype {
     * submitted responses and the interactions. The default implementation calls
     * various other methods to print each of these parts and most question types
     * will just override those methods.
-    * @todo Use CSS stylesheet
     * @param object $question The question to be rendered. Question type
     *                         specific information is included. The
     *                         maximum possible grade is in ->maxgrade. The name
@@ -624,7 +623,7 @@ class default_questiontype {
     * This function prints the submit button(s) for the question in the
     * given state. The name of any button created will be prefixed with the
     * unique prefix for the question in $question->name_prefix. The suffix
-    * 'mark' is reserved for the single question mark button and the suffix
+    * 'submit' is reserved for the single question submit button and the suffix
     * 'validate' is reserved for the single question validate button (for
     * question types which support it). Other suffixes will result in a response
     * of that name in $state->responses which the printing and grading methods
@@ -647,7 +646,7 @@ class default_questiontype {
         if (($cmoptions->optionflags & QUESTION_ADAPTIVE) and !$options->readonly) {
             echo '<input type="submit" name="';
             echo $question->name_prefix;
-            echo 'mark" value="';
+            echo 'submit" value="';
             print_string('mark', 'quiz');
             echo '" class="submit btn"';
             echo ' />';

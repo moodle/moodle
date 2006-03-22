@@ -561,6 +561,7 @@ function get_question_states(&$questions, $cmoptions, $attempt) {
                 $states[$i]->last_graded = $gradedstates[$i];
             } else {
                 $states[$i]->last_graded = clone($states[$i]);
+                $states[$i]->last_graded->responses = array('' => '');
             }
         } else {
             // Create a new state object
@@ -745,18 +746,26 @@ function question_state_is_closed($state) {
 
 
 /**
-* Extracts responses from submitted form
-*
-* TODO: Finish documenting this
-* @return array            array of action objects, indexed by question ids.
-* @param array $questions  an array containing at least all questions that are used on the form
-* @param array $responses
-* @param integer $defaultevent
-*/
-function question_extract_responses($questions, $responses, $defaultevent) {
+ * Extracts responses from submitted form
+ *
+ * This can extract the responses given to one or several questions present on a page
+ * It returns an array with one entry for each question, indexed by question id
+ * Each entry is an object with the properties
+ *  ->event     The event that has triggered the submission. This is determined by which button
+ *               the user has pressed.
+ *  ->responses An array holding the responses to an individual question, indexed by the
+ *               name of the corresponding form element.
+ *  ->timestamp A unix timestamp
+ * @return array            array of action objects, indexed by question ids.
+ * @param array $questions  an array containing at least all questions that are used on the form
+ * @param array $formdata   the data submitted by the form on the question page
+ * @param integer $defaultevent  the event type used if no 'mark' or 'validate' is submitted
+ */
+function question_extract_responses($questions, $formdata, $defaultevent=QUESTION_EVENTSAVE) {
 
+    $time = time();
     $actions = array();
-    foreach ($responses as $key => $response) {
+    foreach ($formdata as $key => $response) {
         // Get the question id from the response name
         if (false !== ($quid = question_get_id_from_name_prefix($key))) {
             // check if this is a valid id
@@ -773,7 +782,7 @@ function question_extract_responses($questions, $responses, $defaultevent) {
             // Check for question validate and mark buttons & set events
             if ($key === 'validate') {
                 $actions[$quid]->event = QUESTION_EVENTVALIDATE;
-            } else if ($key === 'mark') {
+            } else if ($key === 'submit') {
                 $actions[$quid]->event = QUESTION_EVENTSUBMIT;
             } else {
                 $actions[$quid]->event = $defaultevent;
@@ -781,6 +790,9 @@ function question_extract_responses($questions, $responses, $defaultevent) {
 
             // Update the state with the new response
             $actions[$quid]->responses[$key] = $response;
+            
+            // Set the timestamp
+            $actions[$quid]->timestamp = $time;
         }
     }
     return $actions;
@@ -1182,7 +1194,12 @@ function question_get_id_from_name_prefix($name) {
 }
 
 /**
- * TODO: document this
+ * Returns the unique id for a new attempt
+ *
+ * Every module can keep their own attempts table with their own sequential ids but
+ * the question code needs to also have a unique id by which to identify all these
+ * attempts. Hence a module, when creating a new attempt, calls this function and
+ * stores the return value in the 'uniqueid' field of its attempts table.
  */
 function question_new_attempt_uniqueid() {
     global $CFG;
@@ -1193,11 +1210,16 @@ function question_new_attempt_uniqueid() {
 
 /// FUNCTIONS THAT SIMPLY WRAP QUESTIONTYPE METHODS //////////////////////////////////
 
-/**
-* Prints a question
-*
-* Simply calls the question type specific print_question() method.
-*/
+ /**
+ * Prints a question
+ *
+ * Simply calls the question type specific print_question() method.
+ * @param object $question The question to be rendered.
+ * @param object $state    The state to render the question in.
+ * @param integer $number  The number for this question.
+ * @param object $cmoptions  The options specified by the course module
+ * @param object $options  An object specifying the rendering options.
+ */
 function print_question(&$question, &$state, $number, $cmoptions, $options=null) {
     global $QTYPES;
 

@@ -469,7 +469,7 @@
     $pagequestions = explode(',', $pagelist);
     $number = quiz_first_questionnumber($attempt->layout, $pagelist);
     foreach ($pagequestions as $i) {
-        $options = quiz_get_renderoptions($quiz, $states[$i]);
+        $options = quiz_get_renderoptions($quiz->review, $states[$i]);
         // Print the question
         if ($i > 0) {
             echo "<br />\n";

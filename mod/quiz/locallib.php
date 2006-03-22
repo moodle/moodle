@@ -479,21 +479,24 @@ function quiz_get_question_review($quiz, $question) {
 
 
 /**
-* Determine render options
-*/
-function quiz_get_renderoptions($cmoptions, $state) {
+ * Determine render options
+ *
+ * @param int $reviewoptions
+ * @param object $state
+ */
+function quiz_get_renderoptions($reviewoptions, $state) {
     // Show the question in readonly (review) mode if the question is in
     // the closed state
-    $options->readonly = QUESTION_EVENTCLOSE === $state->event;
+    $options->readonly = question_state_is_closed($state);
 
     // Show feedback once the question has been graded (if allowed by the quiz)
-    $options->feedback = ($state->event == QUESTION_EVENTGRADE) && ($cmoptions->review & QUIZ_REVIEW_FEEDBACK & QUIZ_REVIEW_IMMEDIATELY);
+    $options->feedback = question_state_is_graded($state) && ($reviewoptions & QUIZ_REVIEW_FEEDBACK & QUIZ_REVIEW_IMMEDIATELY);
 
     // Show validation only after a validation event
     $options->validation = QUESTION_EVENTVALIDATE === $state->event;
 
     // Show correct responses in readonly mode if the quiz allows it
-    $options->correct_responses = $options->readonly && ($cmoptions->review & QUIZ_REVIEW_ANSWERS & QUIZ_REVIEW_IMMEDIATELY);
+    $options->correct_responses = $options->readonly && ($reviewoptions & QUIZ_REVIEW_ANSWERS & QUIZ_REVIEW_IMMEDIATELY);
 
     // Always show responses and scores
     $options->responses = true;
