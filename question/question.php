@@ -274,6 +274,11 @@
         } else {
             // use the old code which simply overwrites old versions
             // it is also used for creating new questions
+
+            if (isset($form->makecopy)) {
+                $question->hidden = 0; // explicitly requested copies should be unhidden
+                $question->id = 0;  // This will prompt save_question to create a new question
+            }
             $question = $QTYPES[$qtype]->save_question($question, $form, $course);
             $replaceinquiz = 'all';
         }
