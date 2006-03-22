@@ -156,20 +156,10 @@
                     // Print confirmation message.
                     $field = data_get_field_from_id($fid, $data);
 
-                    print_simple_box_start('center', '60%');
-                    echo '<div align="center">';
-                    echo '<form action = "fields.php?d='.$data->id.'&amp;mode=delete&amp;fid='.$fid.'" method="post">';
-                    echo '<input name="sesskey" value="'.sesskey().'" type="hidden" />';
-                    echo '<input name="confirm" value="1" type="hidden" />';
-                    echo '<strong>'.$field->field->name.'</strong> - '.get_string('confirmdeletefield','data');
-                    echo '<p>';
-                    echo '<input type="submit" value="'.get_string('ok').'" /> ';
-                    echo '<input type="button" value="'.get_string('cancel').'" onclick="javascript:history.go(-1);" />';
-                    echo '<p>';
-                    echo '</form>';
-                    echo '</div>';
-                    print_simple_box_end();
-                    echo '</td></tr></table>';
+                    notice_yesno('<strong>'.$field->name().': '.$field->field->name.'</strong><br /><br />'. get_string('confirmdeletefield','data'), 
+                                 'fields.php?d='.$data->id.'&amp;mode=delete&amp;fid='.$fid.'&amp;sesskey='.sesskey().'&amp;confirm=1',
+                                 'fields.php?d='.$data->id);
+
                     print_footer($course);
                     exit;
                 }
