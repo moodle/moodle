@@ -37,7 +37,11 @@ class qformat_default {
         return true;
     }
 
-    function importprocess($filename) {
+    /**
+     *
+     * @PARAM $matchgrades string 'error' or 'nearest', mismatched grades handling
+     */
+    function importprocess($filename, $matchgrades='error') {
     /// Processes a given file.  There's probably little need to change this
 
         if (! $lines = $this->readdata($filename)) {
@@ -52,12 +56,36 @@ class qformat_default {
 
         notify( get_string('importingquestions','quiz',count($questions)) );
 
+        // get list of valid answer grades
+        $grades = get_grade_options();
+        $gradeoptionsfull = $grades->gradeoptionsfull;
+
         $count = 0;
 
         foreach ($questions as $question) {   // Process and store each question
             $count++;
 
             echo "<hr /><p><b>$count</b>. ".stripslashes($question->questiontext)."</p>";
+
+            // check for answer grades validity (must match fixed list of grades)
+            $fractions = $question->fraction;
+            $answersvalid = true; // in case they are!
+            foreach ($fractions as $key => $fraction) {
+                $newfraction = match_grade_options($gradeoptionsfull, $fraction, $matchgrades);
+                if ($newfraction===false) {
+                    $answersvalid = false;
+                }
+                else {
+                    $fractions[$key] = $newfraction;
+                }
+            }
+            if (!$answersvalid) {
+                notify( get_string('matcherror','quiz') );
+                continue;
+            }
+            else {
+                $question->fraction = $fractions;
+            }
 
             $question->category = $this->category->id;
             $question->stamp = make_unique_id_code();  // Set the unique code (not to be changed)

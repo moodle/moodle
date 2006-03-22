@@ -19,6 +19,7 @@
     $categoryid = optional_param('category', 0, PARAM_INT);
     $courseid = optional_param('course', 0, PARAM_INT);
     $format = optional_param('format','',PARAM_FILE);
+    $params->matchgrades = optional_param('matchgrades','',PARAM_ALPHA);
 
     // get display strings
     $txt = new stdClass();
@@ -31,6 +32,9 @@
     $txt->importfilearea = get_string('importfilearea','quiz');
     $txt->importfileupload = get_string('importfileupload','quiz');
     $txt->importquestions = get_string("importquestions", "quiz");
+    $txt->matchgrades = get_string('matchgrades','quiz');
+    $txt->matchgradeserror = get_string('matchgradeserror','quiz');
+    $txt->matchgradesnearest = get_string('matchgradesnearest','quiz');
     $txt->modulename = get_string('modulename','quiz');
     $txt->modulenameplural = get_string('modulenameplural','quiz');
     $txt->nocategory = get_string('nocategory','quiz');
@@ -40,6 +44,11 @@
     $txt->upload = get_string('upload');
     $txt->uploadproblem = get_string('uploadproblem');
     $txt->uploadthisfile = get_string('uploadthisfile');
+
+    // matching options
+    $matchgrades = array();
+    $matchgrades['error'] = $txt->matchgradeserror;
+    $matchgrades['nearest'] = $txt->matchgradesnearest;
 
     if (!$categoryid) { // try to get category from modform
         $showcatmenu = true; // will ensure that user can choose category
@@ -148,7 +157,7 @@
                       "$CFG->wwwroot/question/import.php?courseid={$course->id}&amp;category=$category->id");
             }
 
-            if (! $qformat->importprocess($importfile) ) {     // Process the uploaded file
+            if (! $qformat->importprocess($importfile, $params->matchgrades) ) {     // Process the uploaded file
                 error( $txt->importerror ,
                       "$CFG->wwwroot/question/import.php?courseid={$course->id}&amp;category=$category->id");
             }
@@ -220,6 +229,11 @@
                 <td><?php choose_from_menu($fileformatnames, "format", "gift", "");
                     helpbutton("import", $txt->importquestions, "quiz"); ?></td>
             </tr>
+            <tr>
+                <td align="right"><?php echo $txt->matchgrades; ?></td>
+                <td><?php choose_from_menu($matchgrades,'matchgrades',$txt->matchgradeserror,'' );
+                    helpbutton('matchgrades', $txt->matchgrades, 'quiz'); ?></td>
+            </td>
         </table>
         <?php
         print_simple_box_end();
