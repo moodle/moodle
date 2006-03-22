@@ -224,8 +224,8 @@ function do_save(&$post, &$bloginfo_arg) {
 
         $tag = NULL;
         $tag->entryid = $entryID;
-        $tag->groupid = $groupid;
-        $tag->courseid = $courseid;
+        $tag->groupid = $post->groupid;
+        $tag->courseid = $post->courseid;
         $tag->userid = $USER->id;
         $tag->timemodified = time();
 
@@ -279,11 +279,11 @@ function do_update(&$post, &$bloginfo) {
 
         $tag = NULL;
         $tag->entryid = $blogentry->entryId;
-        $tag->groupid = $groupid;
-        $tag->courseid = $courseid;
+        $tag->groupid = $post->groupid;
+        $tag->courseid = $post->courseid;
         $tag->userid = $USER->id;
         $tag->timemodified = time();
-
+        
         /// Add tags information
         foreach ($otags as $otag) {
             $tag->tagid = $otag;
@@ -294,7 +294,7 @@ function do_update(&$post, &$bloginfo) {
             $tag->tagid = $ptag;
             insert_record('blog_tag_instance',$tag);
         }
-
+        
         // only do pings if the entry is published to the world
         // Daryl Hawes note - eventually should check if it's on the same server
         // and if so allow pb/tb as well - especially now that moderation is in place
