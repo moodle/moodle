@@ -30,6 +30,6 @@
     $yesnooptions[1] = get_string("yes");
 
     print_heading_with_help(get_string("editingmultichoice", "quiz"), "multichoice", "quiz");
-    require("$CFG->dirroot/question/questiontypes/multichoice/multichoice.html");
+    require("$CFG->dirroot/question/questiontypes/multichoice/editquestion.html");
 
 ?>

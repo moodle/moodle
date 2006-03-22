@@ -22,6 +22,6 @@
     }
 
     print_heading_with_help(get_string("editingnumerical", "quiz"), "numerical", "quiz");
-    require("$CFG->dirroot/question/questiontypes/numerical/numerical.html");
+    require("$CFG->dirroot/question/questiontypes/numerical/editquestion.html");
 
 ?>

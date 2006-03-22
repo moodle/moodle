@@ -4,9 +4,9 @@
 $qtypeobj = $QTYPES[CALCULATED];
 
 if (empty($form)) {
-/*********************************************************/
-/***** First page in question wizard - calculated.html! **/
-/*********************************************************/
+/****************************************************************/
+/***** First page in question wizard - editquestion.html.html! **/
+/****************************************************************/
 // Inside this block everything works as for non-wizardquestions
 
     // The layout of the editing page will only support
@@ -83,7 +83,7 @@ if (empty($form)) {
         }
     }
     print_heading_with_help(get_string("editingcalculated", "quiz"), "calculated", "quiz");
-    require("$CFG->dirroot/question/questiontypes/calculated/calculated.html");
+    require("$CFG->dirroot/question/questiontypes/calculated/editquestion.html");
 } else { // $form is not empty
     /*********************************************************/
     /*****    Any subsequent page of the question wizard    **/

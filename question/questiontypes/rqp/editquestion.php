@@ -19,6 +19,6 @@
     }
 
     print_heading_with_help(get_string('editingrqp', 'quiz', $type->name), 'rqp', 'quiz');
-    require('rqp.html');
+    require('editquestion.html');
 
 ?>
