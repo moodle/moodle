@@ -1948,6 +1948,9 @@ function print_header ($title='', $heading='', $navigation='', $focus='', $meta=
     } else {
         $direction = ' dir="ltr"';
     }
+    //Accessibility: added the 'lang' attribute to $direction, used in theme <html> tag.
+    $language = str_replace('_utf8','',$CFG->lang);
+    $direction .= ' lang="'.$language.'" xml:lang="'.$language.'"';
 
     if ($cache) {  // Allow caching on "back" (but not on normal clicks)
         @header('Cache-Control: private, pre-check=0, post-check=0, max-age=0');
@@ -1986,7 +1989,6 @@ function print_header ($title='', $heading='', $navigation='', $focus='', $meta=
         echo '//' . strtoupper($currentlanguage) . '" "'. $CFG->xml_dtd .'">'."\n";
         $direction = " xmlns=\"http://www.w3.org/1999/xhtml\"
                        xmlns:math=\"http://www.w3.org/1998/Math/MathML\"
-                       xml:lang=\"en\"
                        xmlns:xlink=\"http://www.w3.org/1999/xlink\"
                        $direction";
         if($mathplayer) {
