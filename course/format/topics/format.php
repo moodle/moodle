@@ -99,6 +99,7 @@
         $summaryformatoptions->noclean = true;
         echo format_text($thissection->summary, FORMAT_HTML, $summaryformatoptions);
 
+        //Accessibility: added Alt, filled empty Alt-link text.
         if (isediting($course->id)) {
             echo '<a title="'.$streditsummary.'" '.
                  ' href="editsection.php?id='.$thissection->id.'"><img src="'.$CFG->pixpath.'/t/edit.gif" '.
@@ -183,7 +184,7 @@
 
                 if (isediting($course->id)) {
                     echo ' <a title="'.$streditsummary.'" href="editsection.php?id='.$thissection->id.'">'.
-                         '<img src="'.$CFG->pixpath.'/t/edit.gif" border="0" height="11" width="11" alt="" /></a><br /><br />';
+                         '<img src="'.$CFG->pixpath.'/t/edit.gif" border="0" height="11" width="11" alt="'.$streditsummary.'" /></a><br /><br />';
                 }
                 echo '</div>';
 
@@ -198,38 +199,38 @@
             echo '<td class="right side">';
             if ($displaysection == $section) {      // Show the zoom boxes
                 echo '<a href="view.php?id='.$course->id.'&amp;topic=all#section-'.$section.'" title="'.$strshowalltopics.'">'.
-                     '<img src="'.$CFG->pixpath.'/i/all.gif" height="25" width="16" border="0" /></a><br />';
+                     '<img src="'.$CFG->pixpath.'/i/all.gif" height="25" width="16" border="0" alt="'.$strshowalltopics.'" /></a><br />';
             } else {
                 $strshowonlytopic = get_string('showonlytopic', '', $section);
                 echo '<a href="view.php?id='.$course->id.'&amp;topic='.$section.'" title="'.$strshowonlytopic.'">'.
-                     '<img src="'.$CFG->pixpath.'/i/one.gif" height="16" width="16" border="0" alt="" /></a><br />';
+                     '<img src="'.$CFG->pixpath.'/i/one.gif" height="16" width="16" border="0" alt="'.$strshowonlytopic.'" /></a><br />';
             }
 
             if (isediting($course->id)) {
                 if ($course->marker == $section) {  // Show the "light globe" on/off
                     echo '<a href="view.php?id='.$course->id.'&amp;marker=0&amp;sesskey='.$USER->sesskey.'#section-'.$section.'" title="'.$strmarkedthistopic.'">'.
-                         '<img src="'.$CFG->pixpath.'/i/marked.gif" vspace="3" height="16" width="16" border="0" alt="" /></a><br />';
+                         '<img src="'.$CFG->pixpath.'/i/marked.gif" vspace="3" height="16" width="16" border="0" alt="'.$strmarkedthistopic.'" /></a><br />';
                 } else {
                     echo '<a href="view.php?id='.$course->id.'&amp;marker='.$section.'&amp;sesskey='.$USER->sesskey.'#section-'.$section.'" title="'.$strmarkthistopic.'">'.
-                         '<img src="'.$CFG->pixpath.'/i/marker.gif" vspace="3" height="16" width="16" border="0" alt="" /></a><br />';
+                         '<img src="'.$CFG->pixpath.'/i/marker.gif" vspace="3" height="16" width="16" border="0" alt="'.$strmarkthistopic.'" /></a><br />';
                 }
 
                 if ($thissection->visible) {        // Show the hide/show eye
                     echo '<a href="view.php?id='.$course->id.'&amp;hide='.$section.'&amp;sesskey='.$USER->sesskey.'#section-'.$section.'" title="'.$strtopichide.'">'.
-                         '<img src="'.$CFG->pixpath.'/i/hide.gif" vspace="3" height="16" width="16" border="0" alt="" /></a><br />';
+                         '<img src="'.$CFG->pixpath.'/i/hide.gif" vspace="3" height="16" width="16" border="0" alt="'.$strtopichide.'" /></a><br />';
                 } else {
                     echo '<a href="view.php?id='.$course->id.'&amp;show='.$section.'&amp;sesskey='.$USER->sesskey.'#section-'.$section.'" title="'.$strtopichide.'">'.
-                         '<img src="'.$CFG->pixpath.'/i/show.gif" vspace="3" height="16" width="16" border="0" alt="" /></a><br />';
+                         '<img src="'.$CFG->pixpath.'/i/show.gif" vspace="3" height="16" width="16" border="0" alt="'.$strtopichide.'" /></a><br />';
                 }
 
                 if ($section > 1) {                       // Add a arrow to move section up
                     echo '<a href="view.php?id='.$course->id.'&amp;section='.$section.'&amp;move=-1&amp;sesskey='.$USER->sesskey.'#section-'.($section-1).'" title="'.$strmoveup.'">'.
-                         '<img src="'.$CFG->pixpath.'/t/up.gif" vspace="3" height="11" width="11" border="0" alt="" /></a><br />';
+                         '<img src="'.$CFG->pixpath.'/t/up.gif" vspace="3" height="11" width="11" border="0" alt="'.$strmoveup.'" /></a><br />';
                 }
 
                 if ($section < $course->numsections) {    // Add a arrow to move section down
                     echo '<a href="view.php?id='.$course->id.'&amp;section='.$section.'&amp;move=1&amp;sesskey='.$USER->sesskey.'#section-'.($section+1).'" title="'.$strmovedown.'">'.
-                         '<img src="'.$CFG->pixpath.'/t/down.gif" vspace="3" height="11" width="11" border="0" alt="" /></a><br />';
+                         '<img src="'.$CFG->pixpath.'/t/down.gif" vspace="3" height="11" width="11" border="0" alt="'.$strmovedown.'" /></a><br />';
                 }
 
             }
