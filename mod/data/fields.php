@@ -30,7 +30,7 @@
     $id      = optional_param('id', 0, PARAM_INT);            // course module id
     $d       = optional_param('d', 0, PARAM_INT);             // database id
     $fid     = optional_param('fid', 0 , PARAM_INT);          // update field id
-    $newtype = optional_param('fieldmenu','',PARAM_ALPHA);    // type of the new field
+    $newtype = optional_param('newtype','',PARAM_ALPHA);    // type of the new field
     $mode    = optional_param('mode','',PARAM_ALPHA);
     
     $displaynotice = '';    //str to print after an operation,
@@ -207,18 +207,13 @@
         $field->display_edit_field();
 
     } else {                                              /// Display the main listing of all fields
-
-        echo '<form name="fieldform" action="fields.php" method="post">';
-        echo '<input name="d" type="hidden" value="'.$data->id.'" />';
-        echo '<input type="hidden" name="mode" value="" />';
-        echo '<input name="sesskey" value="'.sesskey().'" type="hidden" />';
-        print_simple_box_start('center','50%');
-
-        echo '<table width="100%"><tr>';
-        echo '<td>'.get_string('newfield','data').' ';
-        choose_from_menu($menufield,'fieldmenu','0','choose','fieldform.mode.value=\'new\';fieldform.submit();','0');
+      
+        echo '<div class="fieldadd" align="center">';
+        echo get_string('newfield','data').': ';
+        popup_form($CFG->wwwroot.'/mod/data/fields.php?d='.$data->id.'&amp;mode=new&amp;sesskey='.
+                   sesskey().'&amp;newtype=', $menufield, 'fieldform', '', 'choose');
         helpbutton('fields', get_string('addafield','data'), 'data');
-        echo '</td></tr>';
+        echo '</div>';
         
         if (!record_exists('data_fields','dataid',$data->id)) {
             echo '<tr><td colspan="2">'.get_string('nofieldindatabase','data').'</td></tr>';  // nothing in database
@@ -265,7 +260,6 @@
         echo '</td></tr></table>';
 
         print_simple_box_end();
-        echo '</form>';
 
     }
 
