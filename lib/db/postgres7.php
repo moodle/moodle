@@ -1473,14 +1473,14 @@ function main_upgrade($oldversion=0) {
 
     if ($oldversion < 2006032000) {
         table_column('post','','module','varchar','20','','','not null', 'id');
-        modify_database('',"ALTER TABLE prefix_post ADD INDEX post_module_idx (module);");
+        modify_database('',"CREATE INDEX post_module_idx ON prefix_post (module);");
         modify_database('',"UPDATE prefix_post SET module = 'blog';");
     }
 
     if ($oldversion < 2006032001) {
-        table_column('blog_tag_instance','','timemodified','integer','10','unsigned','0','not null', 'userid');
-        modify_database('',"ALTER TABLE prefix_blog_tag_instance ADD INDEX bti_entryid_idx (entryid);");
-        modify_database('',"ALTER TABLE prefix_blog_tag_instance ADD INDEX bti_tagid_idx (tagid);");
+        table_column('blog_tag_instance','','timemodified','integer','10','unsigned','0','not null', 'userid'); 
+        modify_database('',"CREATE INDEX bti_entryid_idx ON prefix_blog_tag_instance (entryid);");
+        modify_database('',"CREATE INDEX bti_tagid_idx ON prefix_blog_tag_instance (tagid);");
         modify_database('',"UPDATE prefix_blog_tag_instance SET timemodified = '".time()."';");
     }
 
