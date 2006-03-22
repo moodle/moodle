@@ -34,16 +34,17 @@ class data_field_textarea extends data_field_base {
     function display_add_field($recordid=0) {
         global $CFG;
 
+        $text   = '';
+        $format = 0;
+
         if ($recordid){
-            $content = get_record('data_content', 'fieldid', $this->field->id, 'recordid', $recordid);
-            $text   = $content->content;
-            $format = $content->content1;
-        } else {
-            $text   = '';
-            $format = '';
+            if ($content = get_record('data_content', 'fieldid', $this->field->id, 'recordid', $recordid)) {
+                $text   = $content->content;
+                $format = $content->content1;
+            }
         }
 
-        $str = '<div title="'.$thisfield->description.'">';
+        $str = '<div title="'.$this->field->description.'">';
         
         if (can_use_richtext_editor()) {
             // Show a rich text html editor.

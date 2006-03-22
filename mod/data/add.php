@@ -104,15 +104,11 @@
     include('tabs.php');
 
 
-/********************************************
- * code to handle form processing           *
- * add individual data_content              *
- ********************************************/
-    $entrysaved = false;    //flag for displaying entry saved msg
-
-    $ignorenames = array('MAX_FILE_SIZE','sesskey','d','rid');  // strings to be ignored in input data
+/// Process incoming data for adding/updating records
 
     if ($datarecord = data_submitted($CFG->wwwroot.'/mod/data/add.php') and confirm_sesskey()) {
+
+        $ignorenames = array('MAX_FILE_SIZE','sesskey','d','rid');  // strings to be ignored in input data
 
         if ($rid) {                                          /// Update some records
 
@@ -200,8 +196,9 @@
     }  // End of form processing
    
 
-///Check if maximum number of entry as specified by this database is reached
-///Of course, you can't be stopped if you are an editting teacher! =)
+/// Check if maximum number of entry as specified by this database is reached
+/// Of course, you can't be stopped if you are an editting teacher! =)
+
     if (data_atmaxentries($data) and !isteacheredit($course->id)){
         notify (get_string('atmaxentry','data'));
         print_footer($course);

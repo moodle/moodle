@@ -30,7 +30,6 @@ class data_field_checkbox extends data_field_base {
         parent::data_field_base($field, $data);
     }
     
-    
     function display_add_field($recordid=0) {
         global $CFG;
        
@@ -41,11 +40,11 @@ class data_field_checkbox extends data_field_base {
             $content = explode('##', $content);
         }
 
-        $str = '<div title="'.$field->description.'">';
+        $str = '<div title="'.$this->field->description.'">';
         
-        foreach (explode("\n", $field->param1) as $checkbox) {
-            $checkbox = ltrim(rtrim($checkbox));
-            $str .= '<input type="checkbox" name="field_' . $field->id . '[]" ';
+        foreach (explode("\n", $this->field->param1) as $checkbox) {
+            $checkbox = trim($checkbox);
+            $str .= '<input type="checkbox" name="field_' . $this->field->id . '[]" ';
             $str .= 'value="' . $checkbox . '" ';
             
             if (array_search($checkbox, $content) !== false) {

@@ -39,6 +39,7 @@ class data_field_picture extends data_field_file {
         global $CFG;
 
         $filepath = '';
+        $filename = '';
         $description = '';
 
         if ($recordid){

@@ -27,13 +27,12 @@
 
     require_login();
     
-    $id    = optional_param('id', 0, PARAM_INT);    // course module id
-    $d     = optional_param('d', 0, PARAM_INT);    // database id
-    $fid   = optional_param('fid', 0 , PARAM_INT);    //update field id
-    $newtype = optional_param('fieldmenu','',PARAM_ALPHA);    //type of the new field
-
-    //action specifies what action is performed when data is submitted
-    $mode = optional_param('mode','',PARAM_ALPHA);
+    $id      = optional_param('id', 0, PARAM_INT);            // course module id
+    $d       = optional_param('d', 0, PARAM_INT);             // database id
+    $fid     = optional_param('fid', 0 , PARAM_INT);          // update field id
+    $newtype = optional_param('fieldmenu','',PARAM_ALPHA);    // type of the new field
+    $mode    = optional_param('mode','',PARAM_ALPHA);
+    
     $displaynotice = '';    //str to print after an operation,
     
     if ($id) {
@@ -235,7 +234,7 @@
                 foreach ($fff as $ff) {
                     $field = data_get_field($ff, $data);
 
-                    ///Print Action Column
+                    /// Print Action Column
 
                     echo '<tr><td align="center">';
                     echo '<a href="fields.php?d='.$data->id.'&amp;mode=display&amp;fid='.$field->field->id.'&amp;sesskey='.sesskey().'">';
@@ -245,14 +244,14 @@
                     echo '<img src="'.$CFG->pixpath.'/t/delete.gif" height="11" width="11" border="0" alt="'.get_string('delete').'" /></a>';
                     echo '</td>';
 
-                    ///Print Fieldname Column
+                    /// Print Fieldname Column
 
                     echo '<td>';
                     echo '<a href="fields.php?mode=display&amp;d='.$data->id;
                     echo '&amp;fid='.$field->field->id.'&amp;sesskey='.sesskey().'">'.$field->field->name.'</a>';
                     echo '</td>';
 
-                    ///Print Type Column
+                    /// Print Type Column
 
                     echo '<td align="center">';
                     echo $field->image();    //print type icon
