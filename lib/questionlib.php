@@ -193,6 +193,60 @@ function question_list_instances($questionid) {
     return $instances;
 }
 
+
+/** 
+ * Returns list of 'allowed' grades for grade selection
+ * formatted suitably for dropdown box function
+ * @return object ->gradeoptionsfull full array ->gradeoptions +ve only
+ */
+function get_grade_options() {
+    // define basic array of grades
+    $grades = array(
+        1,
+        0.9,
+        0.8,
+        0.75,
+        0.70,
+        0.66666,
+        0.60,
+        0.50,
+        0.40,
+        0.33333,
+        0.30,
+        0.25,
+        0.20,
+        0.16666,
+        0.142857,
+        0.125,
+        0.11111,
+        0.10,
+        0.05,
+        0);
+
+    // iterate through grades generating full range of options
+    $gradeoptionsfull = array();
+    $gradeoptions = array();
+    foreach ($grades as $grade) {
+        $percentage = 100 * $grade;
+        $neggrade = -$grade;
+        $gradeoptions["$grade"] = "$percentage %";
+        $gradeoptionsfull["$grade"] = "$percentage %";
+        $gradeoptionsfull["$neggrade"] = -$percentage." %";
+    }
+    $gradeoptionsfull["0"] = $gradeoptions["0"] = get_string("none");
+
+    // sort lists
+    arsort($gradeoptions, SORT_NUMERIC);
+    arsort($gradeoptionsfull, SORT_NUMERIC);
+
+    // construct return object
+    $grades = new stdClass;
+    $grades->gradeoptions = $gradeoptions;
+    $grades->gradeoptionsfull = $gradeoptionsfull;
+
+    return $grades;
+}
+
 /**
  * Tests whether a category is in use by any activity module
  *
