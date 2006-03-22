@@ -19,6 +19,7 @@
     $file   = optional_param('file', '', PARAM_CLEAN);
     $text   = optional_param('text', 'No text to display', PARAM_CLEAN);
     $module = optional_param('module', 'moodle', PARAM_ALPHAEXT);
+    $forcelang = optional_param('forcelang', '', PARAM_ALPHAEXT);
 
     print_header();
 
@@ -29,8 +30,11 @@
     print_simple_box_start('center', '96%');
 
     $helpfound = false;
-    $langs = array(current_language(), get_string('parentlanguage'), 'en');  // Fallback
-
+    if (empty($forcelang)) {
+        $langs = array(current_language(), get_string('parentlanguage'), 'en_utf8');  // Fallback
+    } else {
+        $langs = array($forcelang);
+    } 
     if (!empty($file)) {
         foreach ($langs as $lang) {
             if (empty($lang)) {
