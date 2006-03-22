@@ -178,7 +178,19 @@ class default_questiontype {
     }
 
     /**
-    * Deletes question from the question-type specific tables
+    * Deletes states from the question-type specific tables
+    *
+    * @param string $stateslist  Comma separated list of state ids to be deleted
+    */
+    function delete_states($stateslist) {
+        /// The default question type does not have any tables of its own
+        // therefore there is nothing to delete
+
+        return true;
+    }
+
+    /**
+    * Deletes a question from the question-type specific tables
     *
     * @return boolean Success/Failure
     * @param object $question  The question being deleted

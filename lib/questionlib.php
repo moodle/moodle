@@ -317,6 +317,29 @@ function question_category_isused($categoryid, $recursive = false) {
     return false;
 }
 
+/**
+ * Deletes all data associated to an attempt from the database
+ *
+ * @param object $question  The question being deleted
+ */
+function delete_attempt($attemptid) {
+    global $QTYPES;
+
+    $states = get_records('question_states', 'attempt', $attemptid);
+    $stateslist = implode(',', array_keys($states));
+
+    // delete questiontype-specific data
+    foreach ($QTYPES as $qtype) {
+        $qtype->delete_states($stateslist);
+    }
+
+    // delete entries from all other question tables
+    // It is important that this is done only after calling the questiontype functions
+    delete_records("question_states", "attempt", $attemptid);
+    delete_records("question_sessions", "attemptid", $attemptid);
+
+    return;
+}
 
 /**
  * Deletes question and all associated data from the database
@@ -339,6 +362,14 @@ function delete_question($questionid) {
         }
     } else {
         echo "Question with id $questionid does not exist.<br />";
+    }
+
+    $states = get_records('question_states', 'question', $questionid);
+    $stateslist = implode(',', array_keys($states));
+
+    // delete questiontype-specific data
+    foreach ($QTYPES as $qtype) {
+        $qtype->delete_states($stateslist);
     }
 
     // delete entries from all other question tables

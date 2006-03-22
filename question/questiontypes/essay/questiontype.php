@@ -69,9 +69,18 @@ class question_essay_qtype extends default_questiontype {
     }
 
     /**
-    * Deletes question from the question-type specific tables
+    * Deletes states from the question-type specific tables
     *
-    * @return boolean Success/Failure
+    * @param string $stateslist  Comma separated list of state ids to be deleted
+    */
+    function delete_states($stateslist) {
+        delete_records_select("question_essay_states", "stateid IN ($stateslist)");
+        return true;
+    }
+
+    /**
+    * Deletes a question from the question-type specific tables
+    *
     * @param object $question  The question being deleted
     */
     function delete_question($questionid) {

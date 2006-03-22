@@ -124,6 +124,16 @@ class question_rqp_qtype extends default_questiontype {
     }
 
     /**
+    * Deletes states from the question-type specific tables
+    *
+    * @param string $stateslist  Comma separated list of state ids to be deleted
+    */
+    function delete_states($stateslist) {
+        delete_records_select("question_rqp_states", "stateid IN ($stateslist)");
+        return true;
+    }
+
+    /**
     * Deletes question from the question-type specific tables
     *
     * @return boolean Success/Failure
@@ -131,11 +141,6 @@ class question_rqp_qtype extends default_questiontype {
     */
     function delete_question($questionid) {
         delete_records("question_rqp", "question", $questionid);
-        if ($states = get_records('question_states', 'question', $questionid)) {
-            foreach ($states as $state) {
-                delete_records('question_rqp_states', 'stateid', $state->id);
-            }
-        }
         return true;
     }
 

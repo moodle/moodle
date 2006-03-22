@@ -207,10 +207,7 @@
                 delete_records('quiz_grades', 'quiz', $quiz->id, 'userid', $USER->id);
                 foreach ($oldattempts as $oldattempt) {
                     // there should only be one but we loop just in case
-                    // TODO: the following should become a function in questionlib.php which
-                    // really deletes all records associated to this attempt.
-                    delete_records('question_states', 'attempt', $oldattempt->uniqueid);
-                    delete_records('question_sessions', 'attemptid', $oldattempt->uniqueid);
+                    delete_attempt($oldattempt->uniqueid);
                 }
             }
         }
