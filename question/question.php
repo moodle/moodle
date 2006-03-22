@@ -290,18 +290,9 @@
     }
 
     // prepare the grades selector drop-down used by many question types
-    $grades = array(1,0.9,0.8,0.75,0.70,0.66666,0.60,0.50,0.40,0.33333,0.30,0.25,0.20,0.16666,0.142857,0.125,0.11111,0.10,0.05,0);
-    foreach ($grades as $grade) {
-        $percentage = 100 * $grade;
-        $neggrade = -$grade;
-        $gradeoptions["$grade"] = "$percentage %";
-        $gradeoptionsfull["$grade"] = "$percentage %";
-        $gradeoptionsfull["$neggrade"] = -$percentage." %";
-    }
-    $gradeoptionsfull["0"] = $gradeoptions["0"] = get_string("none");
-
-    arsort($gradeoptions, SORT_NUMERIC);
-    arsort($gradeoptionsfull, SORT_NUMERIC);
+    $creategrades = get_grade_options();
+    $gradeoptions = $creategrades->gradeoptions;
+    $gradeoptionsfull = $creategrades->gradeoptionsfull;
 
     if (!$categories = question_category_menu($course->id, false)) {
         error("No categories!");
