@@ -145,6 +145,8 @@
     echo "<table border=\"0\" width=\"100%\" cellpadding=\"4\">";
 
     require_once("$CFG->dirroot/auth/$auth/config.html");
+    $CFG->pagepath = 'auth/' . $auth;
+    
     echo '<tr><td colspan="3">';
     print_heading(get_string('auth_common_settings', 'auth'));
     echo '<td/></tr>';
