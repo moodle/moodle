@@ -170,7 +170,8 @@ $langdir/$currentfile")."</font></p>";
         echo "<textarea rows=\"$fileeditorrows\" cols=\"$fileeditorcols\" name=\"\">\n";
         echo htmlspecialchars(file_get_contents("$enlangdir/$currentfile"));
         echo "</textarea>\n";
-        link_to_popup_window("/lang/en_utf8/$currentfile", "popup", get_string("preview"));
+        //link_to_popup_window("/lang/en_utf8/$currentfile", "popup", get_string("preview"));
+        link_to_popup_window(help_preview_url($currentfile).'&amp;forcelang=en_utf8', 'popup', get_string('preview'));
         echo "</td>\n";
         if ($fileeditorinline == 1) {
             echo "</tr>\n<tr valign=\"center\">\n";
@@ -184,15 +185,13 @@ $langdir/$currentfile")."</font></p>";
         }
 
         echo "<textarea rows=\"$fileeditorrows\" cols=\"$fileeditorcols\" name=\"filedata\">\n";
-
         if (file_exists("$langdir/$currentfile")) {
 	    echo htmlspecialchars(file_get_contents("$langdir/$currentfile"));
         } else {
             echo ($filetemplate);
         }
-
         echo "</textarea>\n";
-        link_to_popup_window("/lang/$currentlang/$currentfile", "popup", get_string("preview"));
+        link_to_popup_window(help_preview_url($currentfile), 'popup', get_string('preview'));
         echo "</td>\n</tr>\n</table>";
 
         if ($editable) {
@@ -239,6 +238,20 @@ function langdoc_save_file($path, $file, $content) {
     }
 
     return true;
+}
+
+
+function help_preview_url($currentfile) {
+    if (substr($currentfile, 0, 5) == 'help/') {
+        $currentfile = substr($currentfile, 5);
+    }
+    $currentpathexp = explode('/', $currentfile);
+    if (count($currentpathexp) > 1) {
+        $url = '/help.php?module='.$currentpathexp[0].'&amp;file='.$currentpathexp[1];
+    } else {
+        $url = '/help.php?module=moodle&amp;file='.$currentfile;
+    }
+    return $url;
 }
 
 ?>
