@@ -216,49 +216,40 @@
         echo '</div>';
         
         if (!record_exists('data_fields','dataid',$data->id)) {
-            echo '<tr><td colspan="2">'.get_string('nofieldindatabase','data').'</td></tr>';  // nothing in database
+            print_string('nofieldindatabase','data');  // nothing in database
 
         } else {    //else print quiz style list of fields
-            echo '<tr><td>';
-            print_simple_box_start('center','90%');
-            echo '<table width="100%"><tr><td align="center"><b>'.get_string('action','data').
-                 '</b></td><td><b>'.get_string('fieldname','data').
-                 '</b></td><td align="center"><b>'.get_string('type','data').'</b></td></tr>';
+
+            $table->head = array(get_string('action','data'), get_string('fieldname','data'), get_string('type','data'));
+            $table->align = array('center','left','right');
 
             if ($fff = get_records('data_fields','dataid',$data->id)){
                 foreach ($fff as $ff) {
                     $field = data_get_field($ff, $data);
 
                     /// Print Action Column
+                    $table->data[] = array(
 
-                    echo '<tr><td align="center">';
-                    echo '<a href="fields.php?d='.$data->id.'&amp;mode=display&amp;fid='.$field->field->id.'&amp;sesskey='.sesskey().'">';
-                    echo '<img src="'.$CFG->pixpath.'/t/edit.gif" height="11" width="11" border="0" alt="'.get_string('edit').'" /></a>';
-                    echo '&nbsp;';
-                    echo '<a href="fields.php?d='.$data->id.'&amp;mode=delete&amp;fid='.$field->field->id.'&amp;sesskey='.sesskey().'">';
-                    echo '<img src="'.$CFG->pixpath.'/t/delete.gif" height="11" width="11" border="0" alt="'.get_string('delete').'" /></a>';
-                    echo '</td>';
+                    '<a href="fields.php?d='.$data->id.'&amp;mode=display&amp;fid='.$field->field->id.'&amp;sesskey='.sesskey().'">'.
+                    '<img src="'.$CFG->pixpath.'/t/edit.gif" height="11" width="11" border="0" alt="'.get_string('edit').'" /></a>'.
+                    '&nbsp;'.
+                    '<a href="fields.php?d='.$data->id.'&amp;mode=delete&amp;fid='.$field->field->id.'&amp;sesskey='.sesskey().'">'.
+                    '<img src="'.$CFG->pixpath.'/t/delete.gif" height="11" width="11" border="0" alt="'.get_string('delete').'" /></a>',
 
-                    /// Print Fieldname Column
 
-                    echo '<td>';
-                    echo '<a href="fields.php?mode=display&amp;d='.$data->id;
-                    echo '&amp;fid='.$field->field->id.'&amp;sesskey='.sesskey().'">'.$field->field->name.'</a>';
-                    echo '</td>';
+                    '<a href="fields.php?mode=display&amp;d='.$data->id.
+                    '&amp;fid='.$field->field->id.'&amp;sesskey='.sesskey().'">'.$field->field->name.'</a>'.
+                    '</td>',
 
-                    /// Print Type Column
 
-                    echo '<td align="center">';
-                    echo $field->image();    //print type icon
-                    echo '</td></tr>';
+                    get_string($field->type, 'data').
+                    '&nbsp;'.
+                    $field->image());
                 }
             }
-            echo '</table>';
-            print_simple_box_end();
-        }    //close else
+            print_table($table);
+        } 
         
-        echo '</td></tr></table>';
-
         print_simple_box_end();
 
     }
