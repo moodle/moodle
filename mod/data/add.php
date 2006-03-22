@@ -129,8 +129,8 @@
             foreach ($datarecord as $name => $value) {
                 if (!in_array($name, $ignorenames)) {
                     $namearr = explode('_',$name);  // Second one is the field id
-                    if (isset($field->field->id) && $namestring[1] != $field->field->id) {  // Try to reuse classes
-                        $field = data_get_field_from_id($namestring[1], $data);
+                    if (empty($field->field) || ($namearr[1] != $field->field->id)) {  // Try to reuse classes
+                        $field = data_get_field_from_id($namearr[1], $data);
                     }
                     if ($field) {
                         $field->update_content($rid, $value, $name);
@@ -151,8 +151,8 @@
             foreach ($datarecord as $name => $value) {  
                 if (!in_array($name, $ignorenames)) {
                     $namearr = explode('_', $name);  // Second one is the field id
-                    if (isset($field->field->id) && $namestring[1] != $field->field->id) {  // Try to reuse classes
-                        $field = data_get_field_from_id($namestring[1], $data);
+                    if (empty($field->field) || ($namearr[1] != $field->field->id)) {  // Try to reuse classes
+                        $field = data_get_field_from_id($namearr[1], $data);
                     }
                     if ($field->notemptyfield($value, $name)) {
                         $emptyform = false;    
@@ -179,8 +179,8 @@
                 foreach ($datarecord as $name => $value){
                     if (!in_array($name, $ignorenames)) {
                         $namearr = explode('_',$name);  // Second one is the field id
-                        if (isset($field->field->id) && $namestring[1] != $field->field->id) {  // Try to reuse classes
-                            $field = data_get_field_from_id($namestring[1], $data);
+                        if (empty($field->field) || ($namearr[1] != $field->field->id)) {  // Try to reuse classes
+                            $field = data_get_field_from_id($namearr[1], $data);
                         }
                         if ($field) {
                             $field->update_content($rid, $value, $name);

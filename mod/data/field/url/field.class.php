@@ -87,7 +87,7 @@ class data_field_url extends data_field_base {
                 break;
         }
         
-        if (!$oldcontent = get_record('data_content','fieldid', $this->field->id, 'recordid', $recordid)) {
+        if ($oldcontent = get_record('data_content','fieldid', $this->field->id, 'recordid', $recordid)) {
             $content->id = $oldcontent->id;
             return update_record('data_content', $content);
         } else {

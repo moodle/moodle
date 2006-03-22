@@ -67,7 +67,7 @@ class data_field_multimenu extends data_field_base {
         $content->recordid = $recordid;
         $content->content = $this->format_data_field_multimenu_content($value);
 
-        if (!$oldcontent = get_record('data_content','fieldid', $this->field->id, 'recordid', $recordid)) {
+        if ($oldcontent = get_record('data_content','fieldid', $this->field->id, 'recordid', $recordid)) {
             $content->id = $oldcontent->id;
             return update_record('data_content', $content);
         } else {
