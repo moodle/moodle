@@ -67,21 +67,6 @@ CREATE TABLE prefix_question_answers (
 -- --------------------------------------------------------
 
 -- 
--- Table structure for table `prefix_quiz_attemptonlast_datasets`
--- 
-
-CREATE TABLE prefix_quiz_attemptonlast_datasets (
-  id int(10) unsigned NOT NULL auto_increment,
-  category int(10) unsigned NOT NULL default '0',
-  userid int(10) unsigned NOT NULL default '0',
-  datasetnumber int(10) unsigned NOT NULL default '0',
-  PRIMARY KEY  (id),
-  UNIQUE KEY category (category,userid)
-) TYPE=MyISAM COMMENT='Dataset number for attemptonlast attempts per user';
-
--- --------------------------------------------------------
-
--- 
 -- Table structure for table `prefix_quiz_attempts`
 -- 
 

@@ -64,20 +64,6 @@ CREATE INDEX prefix_question_answers_question_idx ON prefix_question_answers (qu
 
 # --------------------------------------------------------
 #
-# Table structure for table prefix_quiz_attemptonlast_datasets
-#
-
-CREATE TABLE prefix_quiz_attemptonlast_datasets (
-    id SERIAL8 PRIMARY KEY,
-    category INT8  NOT NULL default '0',
-    userid INT8  NOT NULL default '0',
-    datasetnumber INT8  NOT NULL default '0',
-    CONSTRAINT  prefix_quiz_attemptonlast_datasets_category_userid UNIQUE (category,userid)
-);
-
-
-# --------------------------------------------------------
-#
 # Table structure for table prefix_quiz_attempts
 #
 
