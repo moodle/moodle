@@ -6,6 +6,7 @@
     }
 
     // find all the tags this post uses
+    $usedtags = array();
     if (isset($post->postid)) {
         if ($tagsused = get_records('blog_tag_instance', 'entryid', $post->postid)) {
             foreach ($tagsused as $usedtag) {
