@@ -108,6 +108,8 @@
     $options = quiz_get_reviewoptions($quiz, $attempt, $isteacher);
     $options->validation = ($state->event == QUESTION_EVENTVALIDATE);
     $options->history = 'all';
+    // Provide the links to this question review script
+    $options->questionreviewlink = '/mod/quiz/reviewquestion.php';
 
 /// Print infobox
     $table->align  = array("right", "left");

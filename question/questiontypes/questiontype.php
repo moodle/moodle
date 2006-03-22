@@ -474,6 +474,17 @@ class default_questiontype {
             $grade .= $question->maxgrade;
         }
 
+        $history = $this->history($question, $state, $number, $cmoptions, $options);
+
+        include "$CFG->dirroot/question/questiontypes/question.html";
+    }
+
+    /*
+     * Print history of responses
+     *
+     * Used by print_question()
+     */
+    function history($question, $state, $number, $cmoptions, $options) {
         $history = '';
         if(isset($options->history) and $options->history) {
             if ($options->history == 'all') {
@@ -501,8 +512,18 @@ class default_questiontype {
                 foreach ($states as $st) {
                     $b = ($state->id == $st->id) ? '<b>' : '';
                     $be = ($state->id == $st->id) ? '</b>' : '';
+                    if ($state->id == $st->id) {
+                        $link = '<b>'.$st->seq_number.'</b>';
+                    } else {
+                        if(isset($options->questionreviewlink)) {
+                            $link = link_to_popup_window ($options->questionreviewlink.'?state='.$st->id.'&amp;number='.$number,
+                             'reviewquestion', $st->seq_number, 450, 650, $strreviewquestion, 'none', true);
+                        } else {
+                            $link = $st->seq_number;
+                        }
+                    }
                     $table->data[] = array (
-                        ($state->id == $st->id) ? '<b>'.$st->seq_number.'</b>' : link_to_popup_window ('/question/reviewquestion.php?state='.$st->id.'&amp;number='.$number, 'reviewquestion', $st->seq_number, 450, 650, $strreviewquestion, 'none', true),
+                        $link,
                         $b.get_string('event'.$st->event, 'quiz').$be,
                         $b.$this->response_summary($st).$be,
                         $b.userdate($st->timestamp, get_string('timestr', 'quiz')).$be,
@@ -514,7 +535,7 @@ class default_questiontype {
                 $history = make_table($table);
             }
         }
-        include "$CFG->dirroot/question/questiontypes/question.html";
+        return $history;
     }
 
 
