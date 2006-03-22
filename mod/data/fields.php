@@ -33,8 +33,6 @@
     $newtype = optional_param('newtype','',PARAM_ALPHA);    // type of the new field
     $mode    = optional_param('mode','',PARAM_ALPHA);
     
-    $displaynotice = '';    //str to print after an operation,
-    
     if ($id) {
         if (! $cm = get_record('course_modules', 'id', $id)) {
             error('Course Module ID was incorrect');
@@ -81,7 +79,7 @@
             /// Only store this new field if it doesn't already exist.
                 if (data_fieldname_exists($fieldinput->name, $data->id)) {
 
-                    $displaynotice = get_string('invalidfieldname','data');
+                    $displaynoticebad = get_string('invalidfieldname','data');
 
                 } else {   
                     
@@ -101,7 +99,7 @@
                     add_to_log($course->id, 'data', 'fields add', 
                                "fields.php?d=$data->id&amp;mode=display&amp;fid=$fid", $fid, $cm->id);
                     
-                    $displaynotice = get_string('fieldadded','data');
+                    $displaynoticegood = get_string('fieldadded','data');
                 }
             }
             break;
@@ -113,7 +111,7 @@
                 $fieldinput->name = optional_param('name','',PARAM_NOTAGS);
 
                 if (data_fieldname_exists($fieldinput->name, $data->id, $fid)) {
-                    $displaynotice = get_string('invalidfieldname','data');
+                    $displaynoticebad = get_string('invalidfieldname','data');
 
                 } else {
                 /// Check for arrays and convert to a comma-delimited string
@@ -130,7 +128,7 @@
                     add_to_log($course->id, 'data', 'fields update', 
                                "fields.php?d=$data->id&amp;mode=display&amp;fid=$fid", $fid, $cm->id);
                     
-                    $displaynotice = get_string('fieldupdated','data');
+                    $displaynoticegood = get_string('fieldupdated','data');
                 }
             }
             break;
@@ -150,7 +148,7 @@
                     add_to_log($course->id, 'data', 'fields delete', 
                                "fields.php?d=$data->id", $field->field->name, $cm->id);
 
-                    $displaynotice = get_string('fielddeleted', 'data');
+                    $displaynoticegood = get_string('fielddeleted', 'data');
 
                 } else {
                     // Print confirmation message.
@@ -186,7 +184,11 @@
     }
     asort($menufield);    //sort in alphabetical order
     
-    notify($displaynotice);    //print message, if any
+    if (!empty($displaynoticegood)) {
+        notify($displaynoticegood, 'notifysuccess');    // good (usually green)
+    } else if (!empty($displaynoticebad)) {
+        notify($displaynoticebad);                     // bad (usuually red)
+    }
 
     if (($mode == 'new') && confirm_sesskey()) {          ///  Adding a new field
         $field = data_get_field_new($newtype, $data);

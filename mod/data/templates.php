@@ -90,15 +90,14 @@
         // Generate default template.
         if (!empty($mytemplate->defaultform)){
             data_generate_default_form($data->id, $mode);
-        }
-        else if (!empty($mytemplate->allforms)){    //generate all default templates
+
+        } else if (!empty($mytemplate->allforms)){    //generate all default templates
             data_generate_default_form($data->id, 'singletemplate');
             data_generate_default_form($data->id, 'listtemplate');
             data_generate_default_form($data->id, 'addtemplate');
             data_generate_default_form($data->id, 'rsstemplate');
             add_to_log($course->id, 'data', 'templates def', "templates.php?id=$cm->id&amp;d=$data->id", $data->id, $cm->id);
-        }
-        else {
+        } else {
 
             $newtemplate->id = $data->id;
             $newtemplate->{$mode} = $mytemplate->template;
@@ -171,8 +170,9 @@
     echo '}';
     echo '">';
     
+    $fields = get_records('data_fields', 'dataid', $data->id);
     foreach ($fields as $field) {
-        echo '<option value="[['.$field->name.']]">'.$field->name.' ('. get_string($field->type, 'data'). ')</option>';
+        echo '<option value="[['.$field->name.']]">'.$field->name.'</option>';
     }
     
     // Print special tags.
