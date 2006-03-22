@@ -248,6 +248,44 @@ function get_grade_options() {
 }
 
 /**
+ * match grade options
+ * if no match return error or match nearest
+ * @param array $gradeoptionsfull list of valid options
+ * @param int $grade grade to be tested
+ * @param string $matchgrades 'error' or 'nearest'
+ * @return mixed either 'fixed' value or false if erro
+ */
+function match_grade_options($gradeoptionsfull, $grade, $matchgrades='error') {
+    // if we just need an error...
+    if ($matchgrades=='error') {
+        foreach($gradeoptionsfull as $value => $option) {
+            if ($grade==$value) {
+                return $grade;
+            }
+        }
+        // didn't find a match so that's an error
+        return false;
+    }
+    // work out nearest value
+    else if ($matchgrades=='nearest') {
+        $hownear = array();
+        foreach($gradeoptionsfull as $value => $option) {
+            if ($grade==$value) {
+                return $grade;
+            }
+            $hownear[ $value ] = abs( $grade - $value );
+        }
+        // reverse sort list of deltas and grab the last (smallest)
+        asort( $hownear, SORT_NUMERIC );
+        reset( $hownear );
+        return key( $hownear );
+    }
+    else {
+        return false;
+    } 
+}
+
+/**
  * Tests whether a category is in use by any activity module
  *
  * @return boolean
