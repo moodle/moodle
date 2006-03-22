@@ -2,7 +2,7 @@
 
 // PostgreSQL commands for upgrading this enrolment module
 
-function paypal_upgrade($oldversion=0) {
+function enrol_paypal_upgrade($oldversion=0) {
 
     global $CFG, $THEME, $db;
 

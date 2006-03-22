@@ -44,6 +44,7 @@ $string['notavailable'] = 'That is not currently available';
 $string['onlyeditown'] = 'You can only edit your own information';
 $string['onlyeditingteachers'] = 'Only editing teachers can do that.';
 $string['onlyadmins'] = 'Only administrators can do that.';
+$string['pluginrequirementsnotmet'] = 'Plugin \"$a->pluginname\" ($a->pluginversion) could not be installed.  It requires a newer version of Moodle (currently you are using $a->currentmoodle, you need $a->requiremoodle).';
 $string['processingstops'] = 'Processing stops here. Remaining records ignored.';
 $string['remotedownloadnotallowed'] = 'Download of components to your server isn\'t allowed (allow_url_fopen is disabled).<br /><br />You must download the <a href=\"$a->url\">$a->url</a> file manually, copy it to \"$a->dest\" in your server and unzip it there.';
 $string['restricteduser'] = 'Sorry, but your current account \"$a\" is restricted from doing that.';

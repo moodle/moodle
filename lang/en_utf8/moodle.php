@@ -991,6 +991,7 @@ $string['periodending'] = 'Period ending ($a)';
 $string['personalprofile'] = 'Personal profile';
 $string['phone'] = 'Phone';
 $string['phpinfo'] = 'PHP info';
+$string['pluginsetup'] = 'Setting up plugin tables';
 $string['policyagree'] = 'You must agree to this policy to continue using this site.  Do you agree?';
 $string['policyagreement'] = 'Site Policy Agreement';
 $string['policyagreementclick'] = 'Click here to read the Site Policy Agreement';

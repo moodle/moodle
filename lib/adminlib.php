@@ -11,93 +11,92 @@
  */
 
 /**
- * upgrade_enrol_plugins
- *
- * long description
+ * Upgrade plugins
  *
  * @uses $db
  * @uses $CFG
- * @param string  $return The url to prompt the user to continue to
- * @todo Finish documenting this function
+ * @param string $type The type of plugins that should be updated (e.g. 'enrol', 'qtype')
+ * @param string $dir  The directory where the plugins are located (e.g. 'question/questiontypes')
+ * @param string $return The url to prompt the user to continue to
  */ 
-function upgrade_enrol_plugins($return) {
+function upgrade_plugins($type, $dir, $return) {
     global $CFG, $db;
 
-    if (!$mods = get_list_of_plugins('enrol') ) {
-        error('No modules installed!');
+    if (!$plugs = get_list_of_plugins($dir) ) {
+        error('No '.$type.' plugins installed!');
     }
 
-    foreach ($mods as $mod) {
+    foreach ($plugs as $plug) {
 
-        $fullmod = $CFG->dirroot .'/enrol/'. $mod;
+        $fullplug = $CFG->dirroot .'/'.$dir.'/'. $plug;
 
-        unset($module);
+        unset($plugin);
 
-        if ( is_readable($fullmod .'/version.php')) {
-            include_once($fullmod .'/version.php');  // defines $module with version etc
+        if ( is_readable($fullplug .'/version.php')) {
+            include_once($fullplug .'/version.php');  // defines $plugin with version etc
         } else {
             continue;                              // Nothing to do.
         }
 
-        if ( is_readable($fullmod .'/db/'. $CFG->dbtype .'.php')) {
-            include_once($fullmod .'/db/'. $CFG->dbtype .'.php');  // defines upgrading function
+        if ( is_readable($fullplug .'/db/'. $CFG->dbtype .'.php')) {
+            include_once($fullplug .'/db/'. $CFG->dbtype .'.php');  // defines upgrading function
         } else {
             continue;
         }
 
-        if (!isset($module)) {
+        if (!isset($plugin)) {
             continue;
         }
 
-        if (!empty($module->requires)) {
-            if ($module->requires > $CFG->version) {
-                $info->modulename = $mod;
-                $info->moduleversion  = $module->version;
+        if (!empty($plugin->requires)) {
+            if ($plugin->requires > $CFG->version) {
+                $info->pluginname = $plug;
+                $info->pluginversion  = $plugin->version;
                 $info->currentmoodle = $CFG->version;
-                $info->requiremoodle = $module->requires;
-                notify(get_string('modulerequirementsnotmet', 'error', $info));
+                $info->requiremoodle = $plugin->requires;
+                notify(get_string('pluginrequirementsnotmet', 'error', $info));
                 unset($info);
                 continue;
             }
         }
 
-        $module->name = $mod;   // The name MUST match the directory
+        $plugin->name = $plug;   // The name MUST match the directory
 
-        $moduleversion = 'enrol_'.$mod.'_version';
+        $pluginversion = $type.'_'.$plug.'_version';
 
-        if (!isset($CFG->$moduleversion)) {
-            set_config($moduleversion, 0);
+        if (!isset($CFG->$pluginversion)) {
+            set_config($pluginversion, 0);
         }
         
-        if ($CFG->$moduleversion == $module->version) {
+        if ($CFG->$pluginversion == $plugin->version) {
             // do nothing
-        } else if ($CFG->$moduleversion < $module->version) {
-            if (empty($updated_modules)) {
-                $strmodulesetup  = get_string('modulesetup');
-                print_header($strmodulesetup, $strmodulesetup, $strmodulesetup, '', '', false, '&nbsp;', '&nbsp;');
+        } else if ($CFG->$pluginversion < $plugin->version) {
+            if (empty($updated_plugins)) {
+                $strpluginsetup  = get_string('pluginsetup');
+                print_header($strpluginsetup, $strpluginsetup, $strpluginsetup, '', '', false, '&nbsp;', '&nbsp;');
             }
-            print_heading($module->name .' module needs upgrading');
-            $upgrade_function = $module->name .'_upgrade';
+            print_heading($plugin->name .' plugin needs upgrading');
+            $upgrade_function = $type.'_'.$plugin->name .'_upgrade';
             if (function_exists($upgrade_function)) {
                 $db->debug=true;
-                if ($upgrade_function($CFG->$moduleversion)) {
+                if ($upgrade_function($CFG->$pluginversion)) {
                     $db->debug=false;
-                    // OK so far, now update the modules record
-                    set_config($moduleversion, $module->version);
-                    notify(get_string('modulesuccess', '', $module->name), 'notifysuccess');
+                    // OK so far, now update the plugins record
+                    set_config($pluginversion, $plugin->version);
+                    notify(get_string('modulesuccess', '', $plugin->name), 'notifysuccess');
                     echo '<hr />';
                 } else {
                     $db->debug=false;
-                    notify('Upgrading '. $module->name .' from '. $CFG->$moduleversion .' to '. $module->version .' FAILED!');
+                    notify('Upgrading '. $plugin->name .' from '. $CFG->$pluginversion .' to '. $plugin->version .' FAILED!');
                 }
             }
-            $updated_modules = true;
+            $updated_plugins = true;
         } else {
-            error('Version mismatch: '. $module->name .' can\'t downgrade '. $CFG->$moduleversion .' -> '. $module->version .' !');
+            error('Version mismatch: '. $plugin->name .' can\'t downgrade '. $CFG->$pluginversion .' -> '. $plugin->version .' !');
         }
     }
 
-    if (!empty($updated_modules)) {
+    if (!empty($updated_plugins)) {
         print_continue($return);
         die;
     }

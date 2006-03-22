@@ -239,6 +239,9 @@
         redirect("config.php");
     }
 
+/// Check all questiontype plugins and upgrade if necessary
+    upgrade_plugins('qtype', 'question/questiontypes', "$CFG->wwwroot/$CFG->admin/index.php");  // Return here afterwards
+
 /// Find and check all main modules and load them up or upgrade them if necessary
     upgrade_activity_modules("$CFG->wwwroot/$CFG->admin/index.php");  // Return here afterwards
 
@@ -254,7 +257,7 @@
     upgrade_blocks_plugins("$CFG->wwwroot/$CFG->admin/index.php");  // Return here afterwards
 
 /// Check all enrolment plugins and upgrade if necessary
-    upgrade_enrol_plugins("$CFG->wwwroot/$CFG->admin/index.php");  // Return here afterwards
+    upgrade_plugins('enrol', 'enrol', "$CFG->wwwroot/$CFG->admin/index.php");  // Return here afterwards
 
 /// Check for local database customisations
     require_once("$CFG->dirroot/lib/locallib.php");

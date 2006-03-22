@@ -2,7 +2,7 @@
 
 // MySQL commands for upgrading this enrolment module
 
-function authorize_upgrade($oldversion=0) {
+function enrol_authorize_upgrade($oldversion=0) {
     global $CFG, $THEME, $db;
     require_once("$CFG->dirroot/enrol/authorize/const.php");
 
