@@ -1142,6 +1142,7 @@ function quiz_upgrade($oldversion) {
     }
 
     if ($oldversion < 2006032100) {
+    	// change from the old questiontype numbers to using the questiontype names
         table_column('question', 'qtype', 'qtype',  'varchar', 20, '', '', 'not null');
         set_field('question', 'qtype', 'shortanswer', 'qtype', 1);
         set_field('question', 'qtype', 'truefalse', 'qtype', 2);
@@ -1155,6 +1156,20 @@ function quiz_upgrade($oldversion) {
         set_field('question', 'qtype', 'calculated', 'qtype', 10);
         set_field('question', 'qtype', 'rqp', 'qtype', 11);
         set_field('question', 'qtype', 'essay', 'qtype', 12);
+    }
+
+    if ($oldversion < 2006032200) {
+        // set version for all questiontypes that already have their tables installed
+        set_config('qtype_calculated_version', 2006032100);
+        set_config('qtype_essay_version', 2006032100);
+        set_config('qtype_match_version', 2006032100);
+        set_config('qtype_multianswer_version', 2006032100);
+        set_config('qtype_multichoice_version', 2006032100);
+        set_config('qtype_numerical_version', 2006032100);
+        set_config('qtype_randomsamatch_version', 2006032100);
+        set_config('qtype_rqp_version', 2006032100);
+        set_config('qtype_shortanswer_version', 2006032100);
+        set_config('qtype_truefalse_version', 2006032100);
     }
 
     return true;
