@@ -60,18 +60,12 @@
         error(get_string('noaccess','data'));
     }
 
-    $strdata = get_string('modulenameplural','data');
-
-    print_header_simple($data->name, '', "<a href='index.php?id=$course->id'>$strdata</a> -> $data->name", 
-                                     '', '', true, '', navmenu($course, $cm));
-
-    print_heading(format_string($data->name));
     
     
     /************************************
      *        Data Processing           *
      ***********************************/
-    switch ($mode){
+    switch ($mode) {
 
         case 'add':    ///add a new field
             if (confirm_sesskey() and $fieldinput = data_submitted($CFG->wwwroot.'/mod/data/fields.php')){
@@ -136,7 +130,9 @@
 
         case 'delete':    // Delete a field
             if (confirm_sesskey()){
+
                 if ($confirm = optional_param('confirm', 0, PARAM_INT)) {
+
 
                     // Delete the field completely
                     if ($field = data_get_field_from_id($fid, $data)) {
@@ -152,6 +148,9 @@
                     }
 
                 } else {
+
+                    data_fields_print_header($course,$cm,$data, false);
+
                     // Print confirmation message.
                     $field = data_get_field_from_id($fid, $data);
 
@@ -169,10 +168,7 @@
             break;
     }
 
-/// Print the tabs
 
-    $currenttab = 'fields';
-    include('tabs.php'); 
 
 /// Print the browsing interface
     
@@ -185,21 +181,25 @@
     }
     asort($menufield);    //sort in alphabetical order
     
-    if (!empty($displaynoticegood)) {
-        notify($displaynoticegood, 'notifysuccess');    // good (usually green)
-    } else if (!empty($displaynoticebad)) {
-        notify($displaynoticebad);                     // bad (usuually red)
-    }
 
     if (($mode == 'new') && confirm_sesskey()) {          ///  Adding a new field
+        $CFG->pagepath='mod/data/field/'.$newtype;
+        data_fields_print_header($course,$cm,$data);
+
         $field = data_get_field_new($newtype, $data);
         $field->display_edit_field();
 
     } else if ($mode == 'display' && confirm_sesskey()) { /// Display/edit existing field
+        $CFG->pagepath='mod/data/field/'.$newtype;
+        data_fields_print_header($course,$cm,$data);
+
         $field = data_get_field_from_id($fid, $data);
         $field->display_edit_field();
 
     } else {                                              /// Display the main listing of all fields
+
+        $CFG->pagepath='mod/data/field/'.$newtype;
+        data_fields_print_header($course,$cm,$data);
       
         
         if (!record_exists('data_fields','dataid',$data->id)) {
@@ -250,5 +250,33 @@
 
 /// Finish the page
     print_footer($course);
+
+
+    function data_fields_print_header($course,$cm,$data,$showtabs=true) {
+
+        global $CFG, $displaynoticegood, $displaynoticebad;
+
+        $strdata = get_string('modulenameplural','data');
+
+        print_header_simple($data->name, '', "<a href='index.php?id=$course->id'>$strdata</a> -> $data->name", 
+                '', '', true, '', navmenu($course, $cm));
+
+        print_heading(format_string($data->name));
+
+        /// Print the tabs
+
+        if ($showtabs) {
+            $currenttab = 'fields';
+            include_once('tabs.php'); 
+        }
+
+        /// Print any notices
+
+        if (!empty($displaynoticegood)) {
+            notify($displaynoticegood, 'notifysuccess');    // good (usually green)
+        } else if (!empty($displaynoticebad)) {
+            notify($displaynoticebad);                     // bad (usuually red)
+        }
+    }
 
 ?>

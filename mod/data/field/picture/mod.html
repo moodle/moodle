@@ -1,51 +1,54 @@
 <table width="100%">
     <tr>
-        <td>
-            <?php echo get_string('fieldname', 'data');?>:</td><td><input style="width:300px;" type="text" name="name" id="name" value = "<?php echo($this->field->name); ?>" />
+        <td class="c0">
+            <?php echo get_string('fieldname', 'data');?>:</td>
+        <td class="c1"><input class="fieldname" type="text" name="name" id="name" value = "<?php echo($this->field->name); ?>" />
         </td>
     </tr>
     <tr>
-        <td>
+        <td class="c0">
             <?php echo get_string('fielddescription', 'data');?>:
         </td>
-        <td>
-            <input style="width:300px;" type="text" name="description" id="description" value = "<?php echo ($this->field->description);?>" />
+        <td class="c1">
+            <input class="fielddescription" type="text" name="description" id="description" value = "<?php echo ($this->field->description);?>" />
         </td>
     </tr>
     <tr>
-        <td>
+        <td class="c0">
             <?php echo get_string('fieldwidthsingleview', 'data');?>:
         </td>
-        <td>
+        <td class="c1">
             <input style="width:70px;" type="text" name="param1" id="param1" value = "<?php if (!empty($this->field->param1)) echo $this->field->param1; ?>" />
         </td>
     </tr>
     <tr>
-        <td>
+        <td class="c0">
             <?php echo get_string('fieldheightsingleview', 'data');?>:
         </td>
-        <td>
+        <td class="c1">
             <input style="width:70px;" type="text" name="param2" id="param2" value = "<?php if (!empty($this->field->param2)) echo $this->field->param2; ?>" />
         </td>
     </tr>
     <tr>
-        <td>
-            <?php echo get_string('fieldwidthlistview', 'data');?>:</td><td><input style="width:70px;" type="text" name="param4" id="param4" value = "<?php if (!empty($this->field->param4)) echo $this->field->param4; ?>" />
+        <td class="c0">
+            <?php echo get_string('fieldwidthlistview', 'data');?>:
+        </td>
+        <td class="c1"><input style="width:70px;" type="text" name="param4" id="param4" value = "<?php if (!empty($this->field->param4)) echo $this->field->param4; ?>" />
         </td>
     </tr>
     <tr>
-        <td>
+        <td class="c0">
             <?php echo get_string('fieldheightlistview', 'data');?>:
         </td>
-        <td>
+        <td class="c1">
             <input style="width:70px;" type="text" name="param5" id="param5" value = "<?php if (!empty($this->field->param5)) echo $this->field->param5; ?>" />
         </td>
     </tr>
     <tr>
-        <td>
+        <td class="c0">
             <?php echo get_string('maxsize', 'data'); ?>:
         </td>
-        <td>
+        <td class="c1">
             <?php
                 $course->maxbytes = get_field('course', 'maxbytes', 'id', $this->data->course);
                 $choices = get_max_upload_sizes($CFG->maxbytes, $course->maxbytes);
