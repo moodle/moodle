@@ -1,4 +1,4 @@
-<?php ///Class file for textarea field, extends base_field
+<?php // $Id$
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
 // NOTICE OF COPYRIGHT                                                   //
@@ -6,7 +6,7 @@
 // Moodle - Modular Object-Oriented Dynamic Learning Environment         //
 //          http://moodle.org                                            //
 //                                                                       //
-// Copyright (C) 2005 Martin Dougiamas  http://dougiamas.com             //
+// Copyright (C) 1999-onwards Moodle Pty Ltd  http://moodle.com          //
 //                                                                       //
 // This program is free software; you can redistribute it and/or modify  //
 // it under the terms of the GNU General Public License as published by  //
@@ -22,15 +22,13 @@
 //                                                                       //
 ///////////////////////////////////////////////////////////////////////////
 
-/// Please refer to lib.php for method comments
-
 class data_field_text extends data_field_base {
 
     var $type = 'text';
-    var $id;
 
-    function get_sort_field() {
-        return parent::get_sort_field();
+    function data_field_text($field=0, $data=0) {
+        parent::data_field_base($field, $data);
     }
 }
+
 ?>

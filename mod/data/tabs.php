@@ -33,7 +33,7 @@
     $row = array();
     
     $row[] = new tabobject('browse', $CFG->wwwroot.'/mod/data/view.php?d='.$data->id, get_string('browse','data'), '', true);
-    if (isteacher($course->id) or ($data->participants == PARTICIPANTS_S) or ($data->participants == PARTICIPANTS_TS)){
+    if (isteacher($course->id) or ($data->participants == DATA_STUDENTS_ONLY) or ($data->participants == DATA_TEACHERS_AND_STUDENTS)){
         $row[] = new tabobject('add', $CFG->wwwroot.'/mod/data/add.php?d='.$data->id, get_string('add','data'), '', true);
     }
     if (isteacher($course->id)) {

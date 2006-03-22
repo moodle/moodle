@@ -56,14 +56,14 @@
     }
     
     if (isteacher($course->id)) {
-        if (!count_records('data_fields','dataid',$data->id)) {      // Brand new database!
+        if (!record_exists('data_fields','dataid',$data->id)) {      // Brand new database!
             redirect($CFG->wwwroot.'/mod/data/fields.php?d='.$data->id);  // Redirect to field entry
         }
     }
 
     ///checking for participants
-    if ((!isteacher($course->id)) && $data->participants == PARTICIPANTS_T) {
-        error ('students are not allowed to participate in this activity');
+    if ((!isteacher($course->id)) && $data->participants == DATA_TEACHERS_ONLY) {
+        error (get_string('noaccess','data'));
     }
 
     if ($rid){    //editting a record, do you have access to edit this?
@@ -83,6 +83,7 @@
     print_heading(format_string($data->name));
 
 /// Check to see if groups are being used here
+
     if ($groupmode = groupmode($course, $cm)) {   // Groups are being used
         $currentgroup = setup_and_print_groups($course, $groupmode, 'add.php?d='.$data->id.'&amp;sesskey='.sesskey().'&amp;');
     } else {
@@ -109,27 +110,34 @@
  ********************************************/
     $entrysaved = false;    //flag for displaying entry saved msg
 
-    if ($datarecord = data_submitted($CFG->wwwroot.'/mod/data/add.php') and confirm_sesskey()) {
-        //if rid is present, we are in updating mode
-        if ($rid){
+    $ignorenames = array('MAX_FILE_SIZE','sesskey','d','rid');  // strings to be ignored in input data
 
-            //set flag to unapproved after each edit
+    if ($datarecord = data_submitted($CFG->wwwroot.'/mod/data/add.php') and confirm_sesskey()) {
+
+        if ($rid) {                                          /// Update some records
+
+            /// All student edits are marked unapproved by default
             $record = get_record('data_records','id',$rid);
-            if (isteacher($course->id)) {
+            if (!isteacher($course->id)) {
                 $record->approved = 1;
             } else {
                 $record->approved = 0;
             }
            
             $record->groupid = $currentgroup;
+            $record->timemodified = time();
             update_record('data_records',$record);
 
-            foreach ($datarecord as $name=>$value){
-                //this creates a new field subclass object
-                if ($name != 'MAX_FILE_SIZE' && $name != 'sesskey' and $name!='d' and $name!='rid'){
-                    if (($currentfield = data_get_field_from_name($name)) !== false) {
-                        //use native subclass method to store field data
-                        $currentfield->update_data_content($currentfield->id, $rid, $value, $name);
+            /// Update all content
+            $field = NULL;
+            foreach ($datarecord as $name => $value) {
+                if (!in_array($name, $ignorenames)) {
+                    $namearr = explode('_',$name);  // Second one is the field id
+                    if (isset($field->field->id) && $namestring[1] != $field->field->id) {  // Try to reuse classes
+                        $field = data_get_field_from_id($namestring[1], $data);
+                    }
+                    if ($field) {
+                        $field->update_content($rid, $value, $name);
                     }
                 }
             }
@@ -138,63 +146,59 @@
 
             redirect($CFG->wwwroot.'/mod/data/view.php?d='.$data->id);
 
-        } else {    //we are adding a new record
+        } else {                                             /// Add some new records
 
             ///Empty form checking - you can't submit an empty form!
-            $emptyform = true;   //a bad beginning
-            $defaults = array();    //this is a list of strings to be ignored in empty check
-            
-            foreach ($datarecord as $name => $value){    //check to see if everything is empty
 
-                if ($name != 'MAX_FILE_SIZE' and $name != 'sesskey' and $name!='d' and $name!='rid'){
-                    //call native method to check validity
-                    $currentfield = data_get_field_from_name($name);
-                    if ($currentfield->notemptyfield($value, $name)){
-                        $emptyform = false;    //if anything is valid, this form is not empty!
+            $emptyform = true;      // assume the worst
+            
+            foreach ($datarecord as $name => $value) {  
+                if (!in_array($name, $ignorenames)) {
+                    $namearr = explode('_', $name);  // Second one is the field id
+                    if (isset($field->field->id) && $namestring[1] != $field->field->id) {  // Try to reuse classes
+                        $field = data_get_field_from_id($namestring[1], $data);
+                    }
+                    if ($field->notemptyfield($value, $name)) {
+                        $emptyform = false;    
+                        break;             // if anything has content, this form is not empty, so stop now!
                     }
                 }
-            }    ///End of Empty form checking
+            }  
 
-
-            if (!$emptyform && $recordid = data_add_record($data->id, $currentgroup)){    //add instance to data_record
-                $fields = get_records('data_fields','dataid',$data->id);
-                
-                //do a manual round of inserting, to make sure even empty conentes get stored
-                foreach ($fields as $field) {
-                    $content ->recordid = $recordid;
-                    $content ->fieldid = $field->id;
-                    insert_record('data_content',$content);
-                }
-                //for each field in the add form, add it to the data_content.
-                foreach ($datarecord as $name => $value){
-                    if ($name != 'MAX_FILE_SIZE' && $name != 'sesskey' and $name!='d' and $name!='rid'){  //hack to skip these inputs
-                        $currentfield = data_get_field_from_name($name);
-                        //use native subclass method to sore field data
-                        $currentfield->update_data_content($currentfield->id, $recordid, $value, $name);
-                    }
-                }
-                $entrysaved = true;
-            }
-            
             if ($emptyform){    //nothing gets written to database
                 notify(get_string('emptyaddform','data'));
             }
-            
-            if ($entrysaved) {
+
+            if (!$emptyform && $recordid = data_add_record($data, $currentgroup)) {    //add instance to data_record
+
+                /// Insert a whole lot of empty records to make sure we have them
+                $fields = get_records('data_fields','dataid',$data->id);
+                foreach ($fields as $field) {
+                    $content->recordid = $recordid;
+                    $content->fieldid = $field->id;
+                    insert_record('data_content',$content);
+                }
+
+                //for each field in the add form, add it to the data_content.
+                foreach ($datarecord as $name => $value){
+                    if (!in_array($name, $ignorenames)) {
+                        $namearr = explode('_',$name);  // Second one is the field id
+                        if (isset($field->field->id) && $namestring[1] != $field->field->id) {  // Try to reuse classes
+                            $field = data_get_field_from_id($namestring[1], $data);
+                        }
+                        if ($field) {
+                            $field->update_content($rid, $value, $name);
+                        }
+                    }
+                }
+
                 add_to_log($course->id, 'data', 'add', "view.php?d=$data->id&amp;rid=$recordid", $data->id, $cm->id);
+
+                notify(get_string('entrysaved','data'));
             }
         }
-    }
-/**************************
- * End of form processing *
- **************************/
-    
-/// Print entry saved msg, if any
-    if (!empty($entrysaved)){
-        notify (get_string('entrysaved','data'));
-        echo '<p />';
-    }
-
+    }  // End of form processing
+   
 
 ///Check if maximum number of entry as specified by this database is reached
 ///Of course, you can't be stopped if you are an editting teacher! =)
@@ -227,10 +231,10 @@
         $possiblefields = get_records('data_fields','dataid',$data->id);
         
         ///then we generate strings to replace
-        foreach ($possiblefields as $cfield){
-            $patterns[]="/\[\[".$cfield->name."\]\]/i";
-            $g = data_get_field($cfield);
-            $replacements[] = $g->display_add_field($cfield->id, $rid);
+        foreach ($possiblefields as $eachfield){
+            $field = data_get_field($eachfield, $data);
+            $patterns[]="/\[\[".$field->field->name."\]\]/i";
+            $replacements[] = $field->display_add_field($rid);
             
             unset($g);
         }

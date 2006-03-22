@@ -172,8 +172,8 @@
                     foreach ($contents as $content){
                         $field = get_record('data_fields','id',$content->fieldid);
 
-                        if ($g = data_get_field($field)){    //it is possible that the field is deleted by teacher
-                            $g->delete_data_content_files($data->id, $delete, $content->content);
+                        if ($g = data_get_field($field, $data)){    //it is possible that the field is deleted by teacher
+                            $g->delete_content($data->id, $delete, $content->content);
                         }
                     }
                     delete_records('data_records','id',$delete);
@@ -215,7 +215,7 @@
     }
 
     if ($rid){    //set per page to 1, if looking for 1 specific record
-        set_user_preference('data_perpage', PERPAGE_SINGLE);
+        set_user_preference('data_perpage', DATA_PERPAGE_SINGLE);
     }
   
     /*****************************
@@ -244,7 +244,7 @@
 
     if ($sort) {    //supports (sort and search)
         //first find the field that we are sorting
-        $sortfield = data_get_field(get_record('data_fields','id',$sort));
+        $sortfield = data_get_field_from_id($sort, $data);
         $sortcontent = $sortfield->get_sort_field();
         ///SEARCH AND SORT SQL
         $sql = 'SELECT DISTINCT c.recordid, c.recordid
@@ -336,7 +336,7 @@
     }
     
     $limit = $perpage > 1 ? sql_paging_limit($page * $perpage, $perpage)
-                            : $limit = sql_paging_limit($page, PERPAGE_SINGLE);
+                            : $limit = sql_paging_limit($page, DATA_PERPAGE_SINGLE);
 
     $sql = $sql . $limit;
  

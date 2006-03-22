@@ -1,4 +1,4 @@
-<?php ///Class file for textarea field, extends base_field
+<?php // $Id$
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
 // NOTICE OF COPYRIGHT                                                   //
@@ -6,7 +6,7 @@
 // Moodle - Modular Object-Oriented Dynamic Learning Environment         //
 //          http://moodle.org                                            //
 //                                                                       //
-// Copyright (C) 2005 Martin Dougiamas  http://dougiamas.com             //
+// Copyright (C) 1999-onwards Moodle Pty Ltd  http://moodle.com          //
 //                                                                       //
 // This program is free software; you can redistribute it and/or modify  //
 // it under the terms of the GNU General Public License as published by  //
@@ -22,72 +22,35 @@
 //                                                                       //
 ///////////////////////////////////////////////////////////////////////////
 
-/// Please refer to lib.php for method comments
-
 class data_field_multimenu extends data_field_base {
 
     var $type = 'multimenu';
-    var $id;
+    
+    function data_field_multimenu($field=0, $data=0) {
+        parent::data_field_base($field, $data);
+    }
+    
+    
+    function display_add_field($recordid=0) {
 
-    
-    function data_field_multimenu($fid=0){
-        parent::data_field_base($fid);
-    }
-    
-    
-    /***********************************************
-     * Saves the field into the database           *
-     ***********************************************/
-    function insert_field($dataid, $type='multimenu', $name, $desc='', $options='') {
-        $newfield = new object;
-        $newfield->dataid = $dataid;
-        $newfield->type = $type;
-        $newfield->name = $name;
-        $newfield->description = $desc;
-        $newfield->param1 = $options;
+        if ($recordid){
+            $content = get_field('data_content', 'content', 'fieldid', $this->field->id, 'recordid', $recordid);
+            $content = explode('##', $content);
+        } else {
+            $content = array();
+        }
+
+        $str = '<div title="'.$this->field->description.'">';
+        $str .= '<select name="field_' . $this->field->id . '[]" id="field_' . $this->field->id . '" multiple="multiple">';
         
-        if (!insert_record('data_fields', $newfield)) {
-            notify('Insertion of new field failed!');
-        }
-    }
-    
-    
-    /***********************************************
-     * Prints the form element in the add template *
-     ***********************************************/
-    function display_add_field($id, $rid=0) {
-        global $CFG;
-        if (!$field = get_record('data_fields', 'id', $id)){
-            notify('That is not a valid field id!');
-            exit;
-        }
-        $content = array();
-        
-        if ($rid) {
-            $dbcontent = get_record('data_content', 'fieldid', $id, 'recordid', $rid);
-            if (isset($dbcontent->content)) {
-                $content = $dbcontent->content;
-                $content = explode('##', $content);
-            }
-        }
-        $str = '';
-        /*
-        if ($field->description) {
-            $str .= '<img src="'.$CFG->pixpath.'/help.gif" alt="'.$field->description.'" title="'.$field->description.'" />&nbsp;';
-        }
-        */
-        $str .= '<div title="'.$field->description.'">';
-        $str .= '<select name="field_' . $field->id . '[]" id="field_' . $field->id . '" multiple="multiple">';
-        
-        foreach (explode("\n",$field->param1) as $option) {
-            $option = ltrim(rtrim($option));
+        foreach (explode("\n",$this->field->param1) as $option) {
+            $option = trim($option);
             $str .= '<option value="' . $option . '"';
 
             if (array_search($option, $content) !== false) {
                 // Selected by user.
                 $str .= ' selected >';
-            }
-            else {
+            } else {
                 $str .= '>';
             }
             $str .= $option . '</option>';
@@ -98,46 +61,19 @@ class data_field_multimenu extends data_field_base {
         return $str;
     }
 
-
-    function display_edit_field($id, $mode=0) {
-        parent::display_edit_field($id, $mode);
-    }
-    
-    
-
-    function update($fieldobject) {
-        $fieldobject->param2 = trim($fieldobject->param1);
-        
-        if (!update_record('data_fields',$fieldobject)){
-            notify ('upate failed');
-        }
-    }
-    
-    
-    function store_data_content($fieldid, $recordid, $value) {
+    function update_content($recordid, $value, $name='') {
         $content = new object;
-        $content->fieldid = $fieldid;
+        $content->fieldid = $this->field->id;
         $content->recordid = $recordid;
         $content->content = $this->format_data_field_multimenu_content($value);
-        insert_record('data_content', $content);
-    }
-    
-    
-    function update_data_content($fieldid, $recordid, $value) {
-        $content = new object;
-        $content->fieldid = $fieldid;
-        $content->recordid = $recordid;
-        $content->content = $this->format_data_field_multimenu_content($value);
-        
-        if ($oldcontent = get_record('data_content', 'fieldid', $fieldid, 'recordid', $recordid)) {
+
+        if (!$oldcontent = get_record('data_content','fieldid', $this->field->id, 'recordid', $recordid)) {
             $content->id = $oldcontent->id;
-            update_record('data_content', $content);
-        }
-        else {
-            $this->store_data_content($fieldid, $recordid, $value);
+            return update_record('data_content', $content);
+        } else {
+            return insert_record('data_content', $content);
         }
     }
-    
     
     function format_data_field_multimenu_content($content) {
         if (!is_array($content)) {
@@ -154,12 +90,9 @@ class data_field_multimenu extends data_field_base {
     }
     
     
-    function display_browse_field($fieldid, $recordid, $template) {
-        global $CFG, $USER, $course;
+    function display_browse_field($recordid, $template) {
 
-        $field = get_record('data_fields', 'id', $fieldid);
-
-        if ($content = get_record('data_content', 'fieldid', $fieldid, 'recordid', $recordid)){
+        if ($content = get_record('data_content', 'fieldid', $this->field->id, 'recordid', $recordid)){
             $contentArr = array();
             if (!empty($content->content)) {
                 $contentArr = explode('##', $content->content);

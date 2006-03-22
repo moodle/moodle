@@ -24,9 +24,7 @@
 
     require_once('../../config.php');
     require_once('lib.php');
-    require_once($CFG->libdir.'/blocklib.php');
 
-    require_once('pagelib.php');
     require_login();
     
     $id    = optional_param('id', 0, PARAM_INT);    // course module id
@@ -36,7 +34,7 @@
 
     //action specifies what action is performed when data is submitted
     $mode = optional_param('mode','',PARAM_ALPHA);
-    $displayflag = '';    //str to print after an operation,
+    $displaynotice = '';    //str to print after an operation,
     
     if ($id) {
         if (! $cm = get_record('course_modules', 'id', $id)) {
@@ -67,7 +65,8 @@
 
     $strdata = get_string('modulenameplural','data');
 
-    print_header_simple($data->name, "", "<a href='index.php?id=$course->id'>$strdata</a> -> $data->name", "", "", true, "", navmenu($course, $cm));
+    print_header_simple($data->name, '', "<a href='index.php?id=$course->id'>$strdata</a> -> $data->name", 
+                                     '', '', true, '', navmenu($course, $cm));
 
     print_heading(format_string($data->name));
     
@@ -75,112 +74,105 @@
     /************************************
      *        Data Processing           *
      ***********************************/
-    switch($mode){
+    switch ($mode){
 
         case 'add':    ///add a new field
-            if (confirm_sesskey() and $field = data_submitted($CFG->wwwroot.'/mod/data/fields.php')){
+            if (confirm_sesskey() and $fieldinput = data_submitted($CFG->wwwroot.'/mod/data/fields.php')){
 
-                $sql = 'SELECT * from '.$CFG->prefix.'data_fields WHERE name LIKE "'.$field->name.
-                       '" AND dataid = '.$data->id;
-                
-                if ($field->name and !get_record_sql($sql)){    
-                    $field->dataid = $data->id;
-                    
-                    // Check for arrays. If we encounter an array, we save the array as a
-                    // comma-delimited string in the database.
-                    foreach ($field as $key=>$val) {
-                        if (is_array($val)) {
-                            $str = '';
-                            foreach ($val as $inner) {
-                                $str .= $inner . ',';
-                            }
-                            $str = substr($str, 0, -1);
-                            
-                            $field->$key = $str;
-                        }
-                    }
-                    $field->id = insert_record('data_fields', $field);
-                    
-                    // Add the new field to the form templates.
-                    data_append_field_in_form($field->dataid, $field->name);
+            /// Only store this new field if it doesn't already exist.
+                if (data_fieldname_exists($fieldinput->name, $data->id)) {
 
-                    add_to_log($course->id, 'data', 'fields add', "fields.php?d=$data->id&amp;mode=display&amp;fid=$field->id", $field->id, $cm->id);
+                    $displaynotice = get_string('invalidfieldname','data');
+
+                } else {   
                     
-                    $displayflag = get_string('fieldadded','data');
-                }
-                else {    //no duplicate names allowed in one database!
-                    $displayflag = get_string('invalidfieldname','data');
+                /// Check for arrays and convert to a comma-delimited string
+                    data_convert_arrays_to_strings($fieldinput);
+
+                /// Create a field object to collect and store the data safely
+                    $type = required_param('type', PARAM_FILE);
+                    $field = data_get_field_new($type, $data);
+
+                    $field->define_field($fieldinput);
+                    $field->insert_field();
+
+                /// Update some templates
+                    data_append_new_field_to_templates($data, $field->field->name);
+
+                    add_to_log($course->id, 'data', 'fields add', 
+                               "fields.php?d=$data->id&amp;mode=display&amp;fid=$fid", $fid, $cm->id);
+                    
+                    $displaynotice = get_string('fieldadded','data');
                 }
             }
             break;
 
+
+        case 'update':    ///update a field
+            if (confirm_sesskey() and $fieldinput = data_submitted($CFG->wwwroot.'/mod/data/fields.php')){
+
+                $fieldinput->name = optional_param('name','',PARAM_NOTAGS);
+
+                if (data_fieldname_exists($fieldinput->name, $data->id, $fid)) {
+                    $displaynotice = get_string('invalidfieldname','data');
+
+                } else {
+                /// Check for arrays and convert to a comma-delimited string
+                    data_convert_arrays_to_strings($fieldinput);
+
+                /// Create a field object to collect and store the data safely
+                    $field = data_get_field_from_id($fid, $data);
+                    $oldfieldname = $field->field->name;
+                    $field->update_field($fieldinput);
+                    
+                /// Update the templates.
+                    data_replace_field_in_templates($data, $oldfieldname, $field->field->name);
+                    
+                    add_to_log($course->id, 'data', 'fields update', 
+                               "fields.php?d=$data->id&amp;mode=display&amp;fid=$fid", $fid, $cm->id);
+                    
+                    $displaynotice = get_string('fieldupdated','data');
+                }
+            }
+            break;
+
+
         case 'delete':    // Delete a field
             if (confirm_sesskey()){
                 if ($confirm = optional_param('confirm', 0, PARAM_INT)) {
-                    // Delete the associated data_contents and files.
-                    if (!$fieldRecordSet = get_record('data_fields', 'id', $fid)) {
-                        notify('Field not found');
-                        exit;
-                    }
-                    $field = data_get_field($fieldRecordSet);
-                    $field->delete_data_contents();
-                    
+
+                    // Delete the field completely
+                    $field = data_get_field_from_id($fid, $data);
+                    $field->delete_field();
+
                     // Update the templates.
-                    data_replace_field_in_forms($fieldRecordSet->dataid, $fieldRecordSet->name, '');
-
-                    // Delete the field.
-                    delete_records('data_fields', 'id', $fid);
-
-                    add_to_log($course->id, 'data', 'fields delete', "fields.php?d=$data->id", $fieldRecordSet->name, $cm->id);
+                    data_replace_field_in_templates($data, $field->field->name, '');
                     
-                    $displayflag = get_string('fielddeleted', 'data');
-                }
-                else {
+                    add_to_log($course->id, 'data', 'fields delete', 
+                               "fields.php?d=$data->id", $field->field->name, $cm->id);
+
+                    $displaynotice = get_string('fielddeleted', 'data');
+
+                } else {
                     // Print confirmation message.
-                    $field = get_record('data_fields','id',$fid);
+                    $field = data_get_field_from_id($fid, $data);
+
                     print_simple_box_start('center', '60%');
                     echo '<div align="center">';
                     echo '<form action = "fields.php?d='.$data->id.'&amp;mode=delete&amp;fid='.$fid.'" method="post">';
                     echo '<input name="sesskey" value="'.sesskey().'" type="hidden" />';
                     echo '<input name="confirm" value="1" type="hidden" />';
-                    echo '<strong>'.$field->name.'</strong> - '.get_string('confirmdeletefield','data');
-                    echo '<p />';
+                    echo '<strong>'.$field->field->name.'</strong> - '.get_string('confirmdeletefield','data');
+                    echo '<p>';
                     echo '<input type="submit" value="'.get_string('ok').'" /> ';
                     echo '<input type="button" value="'.get_string('cancel').'" onclick="javascript:history.go(-1);" />';
+                    echo '<p>';
                     echo '</form>';
                     echo '</div>';
                     print_simple_box_end();
                     echo '</td></tr></table>';
                     print_footer($course);
                     exit;
-                }
-            }
-            break;
-
-        case 'update':    ///update a field
-            if (confirm_sesskey() and $field = data_submitted($CFG->wwwroot.'/mod/data/fields.php')){
-                $field->id = $fid;
-
-                $field->name = optional_param('name','',PARAM_NOTAGS);
-                $sql = 'SELECT * from '.$CFG->prefix.'data_fields WHERE name LIKE "'.$field->name.
-                       '" AND dataid = '.$data->id.' AND ((id < '.$field->id.') OR (id > '.$field->id.'))';
-
-                if ($field->name and !get_records_sql($sql)){
-                    //depends on the type of field, perform native update methods
-                    $currentfield = get_record('data_fields','id',$fid);
-                    $g = data_get_field($currentfield);
-                    $g->update($field);
-                    unset($g);
-                    
-                    // Update the templates.
-                    data_replace_field_in_forms($currentfield->dataid, $currentfield->name, $field->name);
-                    
-                    add_to_log($course->id, 'data', 'fields update', "fields.php?d=$data->id&amp;mode=display&amp;fid=$field->id", $field->id, $cm->id);
-                    
-                    $displayflag = get_string('fieldupdated','data');
-                }
-                else {
-                    $displayflag = get_string('invalidfieldname','data');
                 }
             }
             break;
@@ -205,59 +197,51 @@
     }
     asort($menufield);    //sort in alphabetical order
     
-    notify ($displayflag);    //print message, if any
+    notify($displaynotice);    //print message, if any
 
-    if (($mode == 'new') && confirm_sesskey() ){    //adding new field
+    if (($mode == 'new') && confirm_sesskey()) {          ///  Adding a new field
+        $field = data_get_field_new($newtype, $data);
+        $field->display_edit_field();
 
-        require_once('field/'.$newtype.'/field.class.php');
-        $f = 'data_field_'.$newtype;
-        $g = new $f;
-        $g->display_edit_field(0, $data->id);
-        unset($f);
-        unset($g);
-    }
-    
-    else if ($mode != 'display'){    //display main form - add new, update, delete
+    } else if ($mode == 'display' && confirm_sesskey()) { /// Display/edit existing field
+        $field = data_get_field_from_id($fid, $data);
+        $field->display_edit_field();
 
-        //echo '<form name="fieldform" action="fields.php?d='.$data->id.'&amp;" method="POST">';
+    } else {                                              /// Display the main listing of all fields
+
         echo '<form name="fieldform" action="fields.php" method="post">';
         echo '<input name="d" type="hidden" value="'.$data->id.'" />';
         echo '<input type="hidden" name="mode" value="" />';
         echo '<input name="sesskey" value="'.sesskey().'" type="hidden" />';
         print_simple_box_start('center','50%');
 
-        ///New fields
         echo '<table width="100%"><tr>';
         echo '<td>'.get_string('newfield','data').' ';
         choose_from_menu($menufield,'fieldmenu','0','choose','fieldform.mode.value=\'new\';fieldform.submit();','0');
         helpbutton('fields', get_string('addafield','data'), 'data');
         echo '</td></tr>';
         
-        /*******************************************
-         * Print List of Fields in Quiz Style      *
-         *******************************************/
-        
-        if (!count_records('data_fields','dataid',$data->id)) {
+        if (!record_exists('data_fields','dataid',$data->id)) {
             echo '<tr><td colspan="2">'.get_string('nofieldindatabase','data').'</td></tr>';  // nothing in database
-        }
-        else {    //else print quiz style list of fields
-            
+
+        } else {    //else print quiz style list of fields
             echo '<tr><td>';
             print_simple_box_start('center','90%');
             echo '<table width="100%"><tr><td align="center"><b>'.get_string('action','data').
                  '</b></td><td><b>'.get_string('fieldname','data').
                  '</b></td><td align="center"><b>'.get_string('type','data').'</b></td></tr>';
 
-            if ($fields = get_records('data_fields','dataid',$data->id)){
-                foreach ($fields as $field) {
+            if ($fff = get_records('data_fields','dataid',$data->id)){
+                foreach ($fff as $ff) {
+                    $field = data_get_field($ff, $data);
 
                     ///Print Action Column
 
                     echo '<tr><td align="center">';
-                    echo '<a href="fields.php?d='.$data->id.'&amp;mode=display&amp;fid='.$field->id.'&amp;sesskey='.sesskey().'">';
+                    echo '<a href="fields.php?d='.$data->id.'&amp;mode=display&amp;fid='.$field->field->id.'&amp;sesskey='.sesskey().'">';
                     echo '<img src="'.$CFG->pixpath.'/t/edit.gif" height="11" width="11" border="0" alt="'.get_string('edit').'" /></a>';
                     echo '&nbsp;';
-                    echo '<a href="fields.php?d='.$data->id.'&amp;mode=delete&amp;fid='.$field->id.'&amp;sesskey='.sesskey().'">';
+                    echo '<a href="fields.php?d='.$data->id.'&amp;mode=delete&amp;fid='.$field->field->id.'&amp;sesskey='.sesskey().'">';
                     echo '<img src="'.$CFG->pixpath.'/t/delete.gif" height="11" width="11" border="0" alt="'.get_string('delete').'" /></a>';
                     echo '</td>';
 
@@ -265,14 +249,13 @@
 
                     echo '<td>';
                     echo '<a href="fields.php?mode=display&amp;d='.$data->id;
-                    echo '&amp;fid='.$field->id.'&amp;sesskey='.sesskey().'">'.$field->name.'</a>';
+                    echo '&amp;fid='.$field->field->id.'&amp;sesskey='.sesskey().'">'.$field->field->name.'</a>';
                     echo '</td>';
 
                     ///Print Type Column
 
                     echo '<td align="center">';
-                    $g = data_get_field($field);
-                    echo $g->image($data->id);    //print type icon
+                    echo $field->image();    //print type icon
                     echo '</td></tr>';
                 }
             }
@@ -285,11 +268,6 @@
         print_simple_box_end();
         echo '</form>';
 
-    } else {    //display native update form
-        $currentfield = get_record('data_fields','id',$fid);
-        $g = data_get_field($currentfield);
-        $g->display_edit_field($currentfield->id);
-        unset($g);
     }
 
 /// Finish the page

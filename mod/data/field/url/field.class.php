@@ -1,4 +1,4 @@
-<?php
+<?php  // $Id$
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
 // NOTICE OF COPYRIGHT                                                   //
@@ -6,7 +6,7 @@
 // Moodle - Modular Object-Oriented Dynamic Learning Environment         //
 //          http://moodle.org                                            //
 //                                                                       //
-// Copyright (C) 2005 Martin Dougiamas  http://dougiamas.com             //
+// Copyright (C) 1999-onwards Moodle Pty Ltd  http://moodle.com          //
 //                                                                       //
 // This program is free software; you can redistribute it and/or modify  //
 // it under the terms of the GNU General Public License as published by  //
@@ -22,76 +22,43 @@
 //                                                                       //
 ///////////////////////////////////////////////////////////////////////////
 
-/// Please refer to lib.php for method comments
-
-global $CFG;
-
-require_once($CFG->dirroot.'/mod/data/lib.php');
-
-class data_field_url extends data_field_base {// extends
-
-    function data_field_url($fid=0){
-        parent::data_field_base($fid);
-    }
+class data_field_url extends data_field_base {
 
     var $type = 'url';
-    var $id;    //field id
 
-    function insert_field($dataid, $type='text', $name, $des=''){
-        $newfield = new object;
-        $newfield->dataid = $dataid;
-        $newfield->type = $type;
-        $newfield->name = $name;
-        $newfield->description = $des;
-        if (!insert_record('data_fields',$newfield)){
-            notify('Insertion of new field failed!');
-        }
+    function data_field_text($field=0, $data=0) {
+        parent::data_field_base($field, $data);
     }
 
-    function display_add_field($id, $rid=0){
+    function display_add_field($recordid=0){
         global $CFG;
-        if (!$field = get_record('data_fields','id',$id)){
-            notify("that is not a valid field id!");
-            exit;
-        }
 
-        //look for that record and pull it out
-        if ($rid){
-            $datacontent = get_record('data_content','fieldid',$id,'recordid',$rid);
-            $contents = array();
-            if (isset($datacontent->content)){
-                $content = $datacontent->content;
-                $contents[0] = $datacontent->content;
-                $contents[1] = $datacontent->content1;
-            }else {
-                $contents[0]='';
-                $contents[1]='';
+
+        $url = '';
+        $text = '';
+
+        if ($recordid){
+            if ($content = get_record('data_content', 'fieldid', $this->field->id, 'recordid', $recordid)) {
+                $url  = $content->content;
+                $text = $content->content1;
             }
         }
-        $url = empty($contents[0])? 'http://':$contents[0];
-        $text = empty($contents[1])? '':$contents[1];
+        $url  = empty($url) ?  'http://' : $url;
 
-        $str = '<div title="'.$field->description.'">';
+        $str = '<div title="'.$this->field->description.'">';
         $str .= '<table><tr><td align="right">';
-        /*
-        if ($field->description){
-            $str .= '<img src="'.$CFG->pixpath.'/help.gif" alt="'.$field->description.'" title="'.$field->description.'">&nbsp;';
+        $str .= get_string('url','data').':</td><td><input type="text" name="field_'.$this->field->id.'_0" id="field_'.$this->field->id.'_0" value="'.$url.'" /></td></tr>';
+        if (!empty($this->field->param1)) {
+            $str .= '<tr><td align="right">'.get_string('text','data').':</td><td><input type="text" name="field_'.$this->field->id.'_1" id="field_'.$this->field->id.'_1" value="'.$text.'" /></td></tr>';
         }
-        */
-        $str .= get_string('url','data').':</td><td><input type="text" name="field_'.$field->id.'_0" id="field_'.$field->id.'_0" value="'.$url.'" /></td></tr>';
-        $str .= '<tr><td align="right">'.get_string('text','data').':</td><td><input type="text" name="field_'.$field->id.'_1" id="field_'.$field->id.'_1" value="'.$text.'" /></td></tr>';
         $str .= '</table>';
         $str .= '</div>';
         
         return $str;
     }
 
-    function display_edit_field($id, $mode=0){
-        parent::display_edit_field($id, $mode);
-    }
-
-    function display_browse_field($fieldid, $recordid, $template) {
-        if ($content = get_record('data_content', 'fieldid', $fieldid, 'recordid', $recordid)){
+    function display_browse_field($recordid, $template) {
+        if ($content = get_record('data_content', 'fieldid', $this->field->id, 'recordid', $recordid)){
             $url = empty($content->content)? '':$content->content;
             $text = empty($content->content1)? '':$content->content1;
             if (empty($text)){
@@ -100,76 +67,31 @@ class data_field_url extends data_field_base {// extends
             return '<a href = "'.$url.'">'.$text.'</a>';
         }
         return false;
-        
     }
 
-    function update($fieldobject){
-        if (!update_record('data_fields',$fieldobject)){
-            notify ('upate failed');
-        }
-    }
-
-    function store_data_content($fieldid, $recordid, $value, $name=''){
+    function update_content($recordid, $value, $name='') {
         $content = new object;
-        $content->fieldid = $fieldid;
+        $content->fieldid = $this->field->id;
         $content->recordid = $recordid;
-        $content->content = $value;
-        $names = explode('_',$name);
-        switch ($names[2]){
-            case 1:    //add text
-                if ($oldcontent = get_record('data_content','fieldid', $fieldid, 'recordid', $recordid)){
-                    if ($value){
-                        $content->id = $oldcontent->id;
-                        $content->content = $oldcontent->content;
-                        $content->content1 = clean_param($value, PARAM_NOTAGS);
-                        update_record('data_content',$content);
-                    }
-                }
-                break;
-            case 0:    //add link
-                if ($value){
-                    $content->content = clean_param($value, PARAM_URL);
-                    if ($content->content != 'http://' && $content->content != ''){
-                        insert_record('data_content',$content);    //after trim if content is still there
-                    }
-                    else {
-                        notify(get_string('invalidurl','data'));
-                    }
-                }    //no point adding if it's empty
-                break;
-            default:
-                break;
-        }
-    }
+        $content->content = $this->format_data_field_multimenu_content($value);
 
-    function update_data_content($fieldid, $recordid, $value, $name){
-        //if data_content already exists, we update
-        if ($oldcontent = get_record('data_content','fieldid', $fieldid, 'recordid', $recordid)){
-            $content = new object;
-            $content->fieldid = $fieldid;
-            $content->recordid = $recordid;
-            $content->id = $oldcontent->id;
-            
-            $contents[0] = $oldcontent->content;
-            $contents[1] = $oldcontent->content1;
-            $names = explode('_',$name);
-            switch ($names[2]){
-            case 1:    //add text
-                $content->content = $contents[0];
-                $content->content1 = clean_param($value, PARAM_NOTAGS);
-                update_record('data_content',$content);
-                break;
-            case 0:    //update link
+        $names = explode('_', $name);
+        switch ($names[2]){
+            case 0:    // update link
                 $content->content = clean_param($value, PARAM_URL);
-                $content->content1 = $contents[1];
-                update_record('data_content',$content);
+                break;
+            case 1:    // add text
+                $content->content1 = clean_param($value, PARAM_NOTAGS);
                 break;
             default:
                 break;
-            }
         }
-        else {    //make 1 if there isn't one already
-            $this->store_data_content($fieldid, $recordid, $value, $name);
+        
+        if (!$oldcontent = get_record('data_content','fieldid', $this->field->id, 'recordid', $recordid)) {
+            $content->id = $oldcontent->id;
+            return update_record('data_content', $content);
+        } else {
+            return insert_record('data_content', $content);
         }
     }
     

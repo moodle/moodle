@@ -23,122 +23,195 @@
 ///////////////////////////////////////////////////////////////////////////
 
 /// Some constants
-define ('PARTICIPANTS_T', 1);
-define ('PARTICIPANTS_S', 2);
-define ('PARTICIPANTS_TS', 3);
-define ('DATAMAXENTRIES', 50);
-define ('PERPAGE_SINGLE', 1);
+define ('DATA_TEACHERS_ONLY', 1);
+define ('DATA_STUDENTS_ONLY', 2);
+define ('DATA_TEACHERS_AND_STUDENTS', 3);
+define ('DATA_MAX_ENTRIES', 50);
+define ('DATA_PERPAGE_SINGLE', 1);
 
-class data_field_base {    //base class (text field)
+class data_field_base {     /// Base class for Database Field Types (see field/*/field.class.php)
 
-    var $type = 'text';     /// Base class implements "text" field type completely.
-    var $id;    //field id
+    var $type = 'unknown';  /// Subclasses must override the type with their name
+    var $data = NULL;       /// The database object that this field belongs to
+    var $field = NULL;      /// The field object itself, if we know it
 
-    //constructor
-    function data_field_base($fid=0){
-        $this->id = $fid;
-    }
-    
-    //returns the name/type of the field
-    function name(){
-        return get_string('name'.$this->type, 'data');
-    }
-    
-    //prints the respective type icon
-    function image($dataid) {
-        global $CFG;
-        $str = '<a href="fields.php?d='.$dataid.'&amp;fid='.$this->id.'&amp;mode=display&amp;sesskey='.sesskey().'">';
-        $str .= '<img src="'.$CFG->modpixpath.'/data/field/'.$this->type.'/icon.gif" ';
-        $str .= 'height="16" width="16" border="0" alt="'.$this->type.'" title="'.$this->type.'" /></a>';
-        return $str;
-    }
-    
-    function insert_field($dataid, $type='text', $name, $des='', $autolink=0){
-        $newfield = new object;
-        $newfield->dataid = $dataid;
-        $newfield->type = $type;
-        $newfield->name = $name;
-        $newfield->description = $des;
-        $newfield->param1 = $autolink;
-        if (!insert_record('data_fields',$newfield)){
-            notify('Insertion of new field failed!');
-        }
-    }
+    var $iconwidth = 16;    /// Width of the icon for this fieldtype
+    var $iconheight = 16;   /// Width of the icon for this fieldtype
 
-    /***********************************************
-     * prints the form element in the add template *
-     * eg:                                         *
-     * Your Name: [       ]                        *
-     ***********************************************/
-    function display_add_field($id, $rid=0){
-        global $CFG;
-        if (!$field = get_record('data_fields','id',$id)){
-            notify("that is not a valid field id!");
-            exit;
+
+/// Constructor function
+    function data_field_base($field=0, $data=0) {   // Field or data or both, each can be id or object
+
+        if (empty($field) && empty($data)) {
+            error('Programmer error: You must specify field and/or data when defining field class. ');
         }
 
-        if ($rid){
-            $content = get_record('data_content','fieldid',$id,'recordid',$rid);
-            if (isset($content->content)){
-                $content = $content->content;
+        if (!empty($field)) {
+            if (is_object($field)) {
+                $this->field = $field;  // Programmer knows what they are doing, we hope
+            } else if (!$this->field = get_record('data_fields','id',$field)) {
+                error('Bad field ID encountered: '.$field);
+            }
+            if (empty($data)) {
+                if (!$this->data = get_record('data','id',$this->field->dataid)) {
+                    error('Bad data ID encountered in field data');
+                }
             }
         }
-        else {
+
+        if (empty($this->data)) {         // We need to define this properly
+            if (!empty($data)) {
+                if (is_object($data)) {
+                    $this->data = $data;  // Programmer knows what they are doing, we hope
+                } else if (!$this->data = get_record('data','id',$data)) {
+                    error('Bad data ID encountered: '.$data);
+                }
+            } else {                      // No way to define it!
+                error('Data id or object must be provided to field class');
+            }
+        }
+
+        if (empty($this->field)) {         // We need to define some default values
+            $this->define_default_field();
+        }
+    }
+
+    
+/// This field just sets up a default field object
+    function define_default_field() {
+        if (empty($this->data->id)) {
+            notify('Programmer error: dataid not defined in field class');
+        }
+        $this->field = new object;
+        $this->field->id = 0;
+        $this->field->dataid = $this->data->id;
+        $this->field->type   = $this->type;
+        $this->field->param1 = '';
+        $this->field->param2 = '';
+        $this->field->param3 = '';
+        $this->field->name = '';
+        $this->field->description = '';
+
+        return true;
+    }
+
+/// Set up the field object according to data in an object.  Now is the time to clean it!
+    function define_field($data) {
+        $this->field->type        = $this->type;
+        $this->field->dataid      = $this->data->id;
+
+        $this->field->name        = trim($data->name);
+        $this->field->description = trim($data->description);
+
+        if (isset($data->param1)) {
+            $this->field->param1 = trim($data->param1);
+        }
+        if (isset($data->param2)) {
+            $this->field->param1 = trim($data->param2);
+        }
+        if (isset($data->param3)) {
+            $this->field->param3 = trim($data->param3);
+        }
+        if (isset($data->param4)) {
+            $this->field->param4 = trim($data->param4);
+        }
+        if (isset($data->param5)) {
+            $this->field->param5 = trim($data->param5);
+        }
+
+        return true;
+    }
+    
+/// Insert a new field in the database
+/// We assume the field object is already defined as $this->field
+    function insert_field() {
+        if (empty($this->field)) {
+            notify('Programmer error: Field has not been defined yet!  See define_field()');
+            return false;
+        }
+
+        if (!$this->field->id = insert_record('data_fields',$this->field)){
+            notify('Insertion of new field failed!');
+            return false;
+        }
+        return true;
+    }
+
+
+/// Update a field in the database
+    function update_field() {
+        if (!update_record('data_fields', $this->field)) {
+            notify('updating of new field failed!');
+            return false;
+        }
+        return true;
+    }
+
+/// Delete a field completely
+    function delete_field() {
+        if (!empty($this->field->id)) {
+            delete_records('data_fields', 'id', $this->field->id);
+            $this->delete_content();
+        }
+        return true;
+    }
+
+/// Print the relevant form element in the ADD template for this field
+    function display_add_field($recordid=0){
+        if ($recordid){
+            $content = get_field('data_content', 'content', 'fieldid', $this->field->id, 'recordid', $recordid);
+        } else {
             $content = '';
         }
         
-        $str = '';
-        /*
-        if ($field->description){
-            $str .= '<img src="'.$CFG->pixpath.'/help.gif" alt="'.$field->description.'" title="'.$field->description.'">&nbsp;';
-        }
-        */
-        $str .= '<div title="'.$field->description.'">';
-        $str .= '<input style="width:300px;" type="text" name="field_'.$field->id.'" id="field_'.$field->id.'" value="'.$content.'" />';
+        $str = '<div title="'.$this->field->description.'">';
+        $str .= '<input style="width:300px;" type="text" name="field_'.$this->field->id.'" id="field_'.$this->field->id.'" value="'.s($content).'" />';
         $str .= '</div>';
+
         return $str;
     }
 
-    /**********************************************************************
-     * prints the field that defines the attributes for editting a field, *
-     * only accessible by teachers                                        *
-     * eg.                                                                *
-     * name of the picture: [        ]                                    *
-     * size  [      ]                                                     *
-     * width [      ]                                                     *
-     **********************************************************************/
-    function display_edit_field($id, $dataid=0){
-        global $CFG, $course;
+/// Print the relevant form element to define the attributes for this field
+/// viewable by teachers only.
+    function display_edit_field() {
+        global $CFG;
 
-        $newfield = 0;
-        if (!$field = get_record('data_fields','id',$id)){
-            if ($dataid){    //if is a new field
-                $field->dataid = $dataid;
-                $newfield = 1;
-                $field->id = 0;
-                $field->param1 = '';
-                $field->param2 = '';
-                $field->param3 = '';
-                $field->name = '';
-                $field->description = '';
-            }
-            else {
-                notify("that is not a valid field id!");
-                exit;
-            }
+        if (empty($this->field)) {   // No field has been defined yet, try and make one
+            $this->define_default_field();
         }
         print_simple_box_start('center','80%');
+
+        echo '<form name="editfield" action="'.$CFG->wwwroot.'/mod/data/fields.php" method="post">'."\n";
+        echo '<input type="hidden" name="d" value="'.$this->data->id.'" />'."\n";
+        if (empty($this->field->id)) {
+            echo '<input type="hidden" name="mode" value="add" />'."\n";
+            $savebutton = get_string('add');
+        } else {
+            echo '<input type="hidden" name="fid" value="'.$this->field->id.'" />'."\n";
+            echo '<input type="hidden" name="mode" value="update" />'."\n";
+            $savebutton = get_string('savechanges');
+        }
+        echo '<input type="hidden" name="type" value="'.$this->type.'" />'."\n";
+        echo '<input name="sesskey" value="'.sesskey().'" type="hidden" />'."\n";
+   
+        print_heading($this->name());
+
         require_once($CFG->dirroot.'/mod/data/field/'.$this->type.'/mod.html');
+
+        echo '<div align="center">';
+        echo '<input type="submit" value="'.$savebutton.'" />'."\n";
+        echo '<input type="submit" value="'.get_string('cancel').'" '.
+             'onclick="document.editfield.mode.value=\'void\';" />'."\n";
+        echo '</div">';
+
+        echo '</form>';
+
         print_simple_box_end();
     }
     
-    /*********************************************************************
-     * prints the browse mode content when viewed                         *
-     * eg.                                                                *
-     * [icon] Word.doc                                                    *
-     **********************************************************************/
-    function display_browse_field($fieldid, $recordid, $template){
-        if ($content = get_record('data_content', 'fieldid', $fieldid, 'recordid', $recordid)){
+/// Display the content of the field in browse mode
+    function display_browse_field($recordid, $template) {
+        if ($content = get_record('data_content','fieldid', $this->field->id, 'recordid', $recordid)) {
             if (isset($content->content)) {                
                 $options->para = false;
                 $str = format_text($content->content, $content->content1, $options);
@@ -150,92 +223,88 @@ class data_field_base {    //base class (text field)
         return false;
     }
     
-    /****************************
-     * updates a field          *
-     ****************************/
-    function update($fieldobject){
-        //special thing is checking param1, if not present, set to 0
-        $fieldobject->param1 = isset($fieldobject->param1)?$fieldobject->param1:0;
-        if (!update_record('data_fields',$fieldobject)){
-            notify ('upate failed');
-        }
-    }
-    
-    /************************************
-     * store content of this field type *
-     ************************************/
-    function store_data_content($fieldid, $recordid, $value, $name=''){
+/// Update the content of one data field in the data_content table
+    function update_content($recordid, $value, $name=''){
         $content = new object;
-        $content->fieldid = $fieldid;
+        $content->fieldid = $this->field->id;
         $content->recordid = $recordid;
         $content->content = clean_param($value, PARAM_NOTAGS);
-        insert_record('data_content', $content);
-    }
 
-    /*************************************
-     * update content of this field type *
-     *************************************/
-    function update_data_content($fieldid, $recordid, $value, $name=''){
-        //if data_content already exit, we update
-        if ($oldcontent = get_record('data_content','fieldid', $fieldid, 'recordid', $recordid)){
-            $content = new object;
-            $content->fieldid = $fieldid;
-            $content->recordid = $recordid;
-            $content->content = clean_param($value, PARAM_NOTAGS);
+        if ($oldcontent = get_record('data_content','fieldid', $this->field->id, 'recordid', $recordid)) {
             $content->id = $oldcontent->id;
-            update_record('data_content',$content);
-        }
-        else {    //make 1 if there isn't one already
-            $this->store_data_content($fieldid, $recordid, $value, $name='');
+            return update_record('data_content', $content);
+        } else {
+            return insert_record('data_content', $content);
         }
     }
     
-    /*************************************************************
-     * this function checks if a field from an add form is empty *
-     * input $param string $value                                *
-     *       $param string $name                                 *
-     * output boolean                                            *
-     *************************************************************/
+/// Delete all content associated with the field
+    function delete_content($recordid=0) {
+
+        $this->delete_content_files($recordid);
+        
+        if ($recordid) {
+            return delete_records('data_content', 'fieldid', $this->field->id, 'recordid', $recordid);
+        } else {
+            return delete_records('data_content', 'fieldid', $this->field->id);
+        }
+    }
+
+/// Deletes any files associated with this field
+    function delete_content_files($recordid='') {
+        global $CFG;
+
+        require_once($CFG->libdir.'/filelib.php');
+
+        $dir = $CFG->dataroot.'/'.$this->data->course.'/'.$CFG->moddata.'/data/'.$this->data->id.'/'.$this->field->id;
+        if ($recordid) {
+            $dir .= '/'.$recordid;
+        }
+
+        return fulldelete($dir);
+    }
+    
+
+/// Check if a field from an add form is empty
     function notemptyfield($value, $name) {
         return !empty($value);
     }
     
-    /*********************************************************************
-     * This function deletes all data_contents associated with the field *
-     *********************************************************************/
-    function delete_data_contents() {
-        return delete_records('data_content', 'fieldid', $this->id);
+/// Just in case a field needs to print something before the whole form
+    function print_before_form() {
     }
-    
-    /*************************************************************************
-     * This function checks if there's any file associated with this file,   *
-     * and is uploaded, if so, it deletes it. E.g file or picture type field *
-     *************************************************************************/
-    function delete_data_content_files($dataid, $recordid, $content) {
-        //does nothing
-    }
-    
-    
-    /*************************************************************************
-     * This function prints anything that the field wants to output after    *
-     * the html form. This is handy for the javascript rich text editor      *
-     *************************************************************************/
+
+/// Just in case a field needs to print something after the whole form
     function print_after_form() {
-        // Overridden as needed in sub classes.
     }
     
     
-    /* returns the sortable field for the content. By default, it's just content
-     * but for some plugins, it could be content 1 - content4
-     */
+/// Returns the sortable field for the content. By default, it's just content
+/// but for some plugins, it could be content 1 - content4
     function get_sort_field() {
         return 'content';
     }
+
+/// Returns the name/type of the field
+    function name(){
+        return get_string('name'.$this->type, 'data');
+    }
     
-}//end of class data_field_base
+/// Prints the respective type icon
+    function image() {
+        global $CFG;
+
+        $str = '<a href="fields.php?d='.$this->data->id.'&amp;fid='.$this->field->id.'&amp;mode=display&amp;sesskey='.sesskey().'">';
+        $str .= '<img src="'.$CFG->modpixpath.'/data/field/'.$this->type.'/icon.gif" ';
+        $str .= 'height="'.$this->iconheight.'" width="'.$this->iconwidth.'" border="0" alt="'.$this->type.'" title="'.$this->type.'" /></a>';
+        return $str;
+    }
+
+    
+}  //end of major class data_field_base
 
 
-///Field methods
+
 /*****************************************************************************
 /* Given a mode and a dataid, generate a default case template               *
  * input @param mode - addtemplate, singletemplate, listtempalte, rsstemplate*
@@ -313,7 +382,7 @@ function data_generate_empty_add_form($id, $rid=0){
                 $str .= '</td>';
 
                 $str .='<td valign="top">';
-                $g = data_get_field($cfield);
+                $g = data_get_field($cfield, $currentdata);
                 $str .= $g->display_add_field($cfield->id,$rid);
                 $str .= '</td>';
                 $str .= '</tr>';
@@ -335,11 +404,7 @@ function data_generate_empty_add_form($id, $rid=0){
  * form templates. Set $newfieldname as '' if you want to delete the   *
  * field from the form.                                                *
  ***********************************************************************/
-function data_replace_field_in_forms($dataid, $searchfieldname, $newfieldname) {
-    if (!$data = get_record('data', 'id', $dataid)) {
-        // Form does not exist.
-        return false;
-    }
+function data_replace_field_in_templates($data, $searchfieldname, $newfieldname) {
     if (!empty($newfieldname)) {
         $prestring = '[[';
         $poststring = ']]';
@@ -369,35 +434,62 @@ function data_replace_field_in_forms($dataid, $searchfieldname, $newfieldname) {
 /********************************************************
  * Appends a new field at the end of the form template. *
  ********************************************************/
-function data_append_field_in_form($dataid, $newfieldname) {
-    if (!$data = get_record('data', 'id', $dataid)) {
-        // Form does not exist.
-        return false;
-    }
+function data_append_new_field_to_templates($data, $newfieldname) {
+
+    $newdata->id = $data->id;
+
     if (!empty($data->singletemplate)) {
-        $data->singletemplate .= ' [[' . $newfieldname .']]';
+        $newdata->singletemplate = addslashes($data->singletemplate.' [[' . $newfieldname .']]');
+    }
+    if (!empty($data->addtemplate)) {
+        $newdata->addtemplate = addslashes($data->addtemplate.' [[' . $newfieldname . ']]');
     }
     if (!empty($data->rsstemplate)) {
-        $data->rsstemplate .= ' [[' . $newfieldname . ']]';
+        $newdata->rsstemplate = addslashes($data->singletemplate.' [[' . $newfieldname . ']]');
     }
-    update_record('data', $data);
+    update_record('data', $newdata);
 }
 
 
 /************************************************************************
- * give a name in the format of field_## where ## is the field id,      *
+ * given a field name *
  * this function creates an instance of the particular subfield class   *
  ************************************************************************/
-function data_get_field_from_name($name){
-    $namestring = explode('_',$name);
-    $fieldid = $namestring[1];//the one after _ is the id.
-    $field = get_record('data_fields','id',$fieldid);
+function data_get_field_from_name($name, $data){
+    $field = get_record('data_fields','name',$name);
 
-    if ($field){
-        return data_get_field($field);
+    if ($field) {
+        return data_get_field($field, $data);
     } else {
         return false;
     }
+}
+
+/************************************************************************
+ * given a field id *
+ * this function creates an instance of the particular subfield class   *
+ ************************************************************************/
+function data_get_field_from_id($fieldid, $data){
+    $field = get_record('data_fields','id',$fieldid);
+
+    if ($field) {
+        return data_get_field($field, $data);
+    } else {
+        return false;
+    }
+}
+
+/************************************************************************
+ * given a field id *
+ * this function creates an instance of the particular subfield class   *
+ ************************************************************************/
+function data_get_field_new($type, $data) {
+    global $CFG;
+
+    require_once($CFG->dirroot.'/mod/data/field/'.$type.'/field.class.php');
+    $newfield = 'data_field_'.$type;
+    $newfield = new $newfield(0, $data);
+    return $newfield;
 }
 
 /************************************************************************
@@ -405,12 +497,13 @@ function data_get_field_from_name($name){
  * invoke plugin methods                                                *
  * input: $param $field - record from db                                *
  ************************************************************************/
-function data_get_field($field){
-    if ($field){
-        
+function data_get_field($field, $data) {
+    global $CFG;
+
+    if ($field) {
         require_once('field/'.$field->type.'/field.class.php');
         $newfield = 'data_field_'.$field->type;
-        $newfield = new $newfield($field->id);
+        $newfield = new $newfield($field, $data);
         return $newfield;
     }
 }
@@ -468,14 +561,14 @@ function data_numentries($data){
  * input @param int $dataid, $groupid                           *
  * output bool                                                  *
  ****************************************************************/
-function data_add_record($dataid, $groupid=0){
-    global $USER, $course;
+function data_add_record($data, $groupid=0){
+    global $USER;
+
     $record->userid = $USER->id;
+    $record->dataid = $data->id;
     $record->groupid = $groupid;
-    $record->dataid = $dataid;
-    $record->timecreated = time();
-    $record->timemodified = time();
-    if (isteacher($course->id)) {
+    $record->timecreated = $record->timemodified = time();
+    if (isteacher($data->course)) {
         $record->approved = 1;
     } else {
         $record->approved = 0;
@@ -627,8 +720,8 @@ function data_delete_instance($id) {    //takes the dataid
         foreach($contents as $content){
             
             $field = get_record('data_fields','id',$content->fieldid);
-            if ($g = data_get_field($field)){
-                $g->delete_data_content_files($id, $content->recordid, $content->content);
+            if ($g = data_get_field($field, $data)){
+                $g->delete_content_files($id, $content->recordid, $content->content);
             }
             //delete the content itself
             delete_records('data_content','id', $content->id);
@@ -757,7 +850,7 @@ function data_print_template($records, $data, $search, $template, $sort, $page=0
         ///then we generate strings to replace for normal tags
         foreach ($possiblefields as $cfield) {
             $patterns[]='/\[\['.$cfield->name.'\]\]/i';
-            $g = data_get_field($cfield);
+            $g = data_get_field($cfield, $data);
             $replacement[] = highlight($search, $g->display_browse_field($cfield->id, $record->id, $template));
             unset($g);
         }
@@ -1143,6 +1236,34 @@ function data_get_view_actions() {
 function data_get_post_actions() {
     return array('add','update','record delete');
 }
+
+function data_fieldname_exists($name, $dataid, $fieldid=0) {
+    global $CFG;
+
+    if ($fieldid) { 
+        return record_exists_sql('SELECT * from '.$CFG->prefix.'data_fields 
+                                  WHERE name LIKE "'.$name.'" AND dataid = '.$dataid.'
+                                    AND ((id < '.$fieldid.') OR (id > '.$fieldid.'))');
+    } else {
+        return record_exists_sql('SELECT * from '.$CFG->prefix.'data_fields 
+                                  WHERE name LIKE "'.$name.'" AND dataid = '.$dataid);
+    }
+}
+
+function data_convert_arrays_to_strings(&$fieldinput) {
+    foreach ($fieldinput as $key => $val) {
+        if (is_array($val)) {
+            $str = '';
+            foreach ($val as $inner) {
+                $str .= $inner . ',';
+            }
+            $str = substr($str, 0, -1);
+
+            $fieldinput->$key = $str;
+        }
+    }
+}
+
 
 /*
 INSERT INTO prefix_log_display VALUES ('data', 'view', 'data', 'name');

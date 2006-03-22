@@ -30,7 +30,7 @@
         $form->schedule = 0;
     }
     if (!isset($form->participants)) {
-        $form->participants = PARTICIPANTS_TS;
+        $form->participants = DATA_TEACHERS_AND_STUDENTS;
     }
     if (!isset($form->requiredentries)) {
         $form->requiredentries = 0;
@@ -174,8 +174,8 @@
     <?php
         $a->teachers = $course->teachers;
         $a->students = $course->students;
-        $options = array(PARTICIPANTS_T => $a->teachers,
-                         PARTICIPANTS_TS => get_string('teachersandstudents', 'data', $a));
+        $options = array(DATA_TEACHERS_ONLY => $a->teachers,
+                         DATA_TEACHERS_AND_STUDENTS => get_string('teachersandstudents', 'data', $a));
         choose_from_menu($options, 'participants', $form->participants, '');
         helpbutton('participants', get_string('participants', 'data'), 'data');
     ?>
@@ -188,7 +188,7 @@
     <td>
     <?php
         $countoptions = array();
-        for($count=1;$count<=DATAMAXENTRIES;$count++) $countoptions[$count] = $count;
+        for($count=1;$count<=DATA_MAX_ENTRIES;$count++) $countoptions[$count] = $count;
         choose_from_menu($countoptions, 'requiredentries', $form->requiredentries, get_string('none'));
         helpbutton('requiredentries', get_string('requiredentries', 'data'), 'data');
     ?>

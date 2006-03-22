@@ -64,7 +64,7 @@
     }
 
     ///checking for participants
-    if ((!isteacher($course->id)) && $data->participants ==PARTICIPANTS_T) {
+    if ((!isteacher($course->id)) && $data->participants == DATA_TEACHERS_ONLY) {
         error ('students are not allowed to participate in this activity');
     }
 
