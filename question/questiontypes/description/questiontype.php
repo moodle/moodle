@@ -7,7 +7,7 @@
 /// QUESTION TYPE CLASS //////////////////
 
 //
-// The question type DESCRIPTION is not really a question type
+// The question type 'description' is not really a question type
 // and it therefore often sticks to some kind of odd behaviour
 //
 
@@ -70,8 +70,8 @@ class quiz_description_qtype extends default_questiontype {
 //// INITIATION - Without this line the question type is not in use... ///
 //////////////////////////////////////////////////////////////////////////
 // define("DESCRIPTION",   "7"); // already defined in questionlib.php
-$QTYPES[DESCRIPTION]= new quiz_description_qtype();
+$QTYPES['description']= new quiz_description_qtype();
 // The following adds the questiontype to the menu of types shown to teachers
-$QTYPE_MENU[DESCRIPTION] = get_string("description", "quiz");
+$QTYPE_MENU['description'] = get_string("description", "quiz");
 
 ?>

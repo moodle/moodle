@@ -312,9 +312,8 @@ class question_truefalse_qtype extends default_questiontype {
 //////////////////////////////////////////////////////////////////////////
 //// INITIATION - Without this line the question type is not in use... ///
 //////////////////////////////////////////////////////////////////////////
-// define("TRUEFALSE",     "2"); // already defined in questionlib.php
-$QTYPES[TRUEFALSE]= new question_truefalse_qtype();
+$QTYPES['truefalse']= new question_truefalse_qtype();
 // The following adds the questiontype to the menu of types shown to teachers
-$QTYPE_MENU[TRUEFALSE] = get_string("truefalse", "quiz");
+$QTYPE_MENU['truefalse'] = get_string("truefalse", "quiz");
 
 ?>

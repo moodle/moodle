@@ -704,10 +704,9 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
 //////////////////////////////////////////////////////////////////////////
 //// INITIATION - Without this line the question type is not in use... ///
 //////////////////////////////////////////////////////////////////////////
-// define("CALCULATED",   "10"); // already defined in questionlib.php
-$QTYPES[CALCULATED]= new question_calculated_qtype();
+$QTYPES['calculated']= new question_calculated_qtype();
 // The following adds the questiontype to the menu of types shown to teachers
-$QTYPE_MENU[CALCULATED] = get_string("calculated", "quiz");
+$QTYPE_MENU['calculated'] = get_string("calculated", "quiz");
 
 function quiz_qtype_calculated_calculate_answer($formula, $individualdata,
         $tolerance, $tolerancetype, $answerlength, $answerformat='1', $unit='') {
@@ -718,7 +717,7 @@ function quiz_qtype_calculated_calculate_answer($formula, $individualdata,
 
     /// Exchange formula variables with the correct values...
     global $QTYPES;
-    $answer = $QTYPES[CALCULATED]->substitute_variables($formula, $individualdata);
+    $answer = $QTYPES['calculated']->substitute_variables($formula, $individualdata);
     if ('1' == $answerformat) { /* Answer is to have $answerlength decimals */
         /*** Adjust to the correct number of decimals ***/
 

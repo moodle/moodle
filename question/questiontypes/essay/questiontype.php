@@ -274,7 +274,7 @@ class question_essay_qtype extends default_questiontype {
                "       {$CFG->prefix}quiz_question_instances i".
                " WHERE i.quiz = '$cmoptions->id' AND q.id = i.question".
                "   AND q.id IN ($questionlist)".
-               "   AND q.qtype = '".ESSAY."'".
+               "   AND q.qtype = '".'essay'."'".
                "   ORDER BY q.name";
                
         if (empty($attemptid)) {
@@ -412,9 +412,8 @@ class question_essay_qtype extends default_questiontype {
 //////////////////////////////////////////////////////////////////////////
 //// INITIATION - Without this line the question type is not in use... ///
 //////////////////////////////////////////////////////////////////////////
-// define("ESSAY",        "12"); // already defined in questionlib.php
-$QTYPES[ESSAY] = new question_essay_qtype();
+$QTYPES['essay'] = new question_essay_qtype();
 // The following adds the questiontype to the menu of types shown to teachers
-$QTYPE_MENU[ESSAY] = get_string("essay", "quiz");
+$QTYPE_MENU['essay'] = get_string("essay", "quiz");
 
 ?>

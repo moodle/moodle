@@ -9,13 +9,13 @@
             if (empty($wrapped->questiontext)) {
                 $parsableanswerdef = '{' . $wrapped->defaultgrade . ':';
                 switch ($wrapped->qtype) {
-                    case MULTICHOICE:
+                    case 'multichoice':
                         $parsableanswerdef .= 'MULTICHOICE:';
                         break;
-                    case SHORTANSWER:
+                    case 'shortanswer':
                         $parsableanswerdef .= 'SHORTANSWER:';
                         break;
-                    case NUMERICAL:
+                    case 'numerical':
                         $parsableanswerdef .= 'NUMERICAL:';
                         break;
                     default:

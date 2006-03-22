@@ -1,7 +1,7 @@
 <?php // $Id$
 
 // Get a handle to the question type we are dealing with here
-$qtypeobj = $QTYPES[CALCULATED];
+$qtypeobj = $QTYPES['calculated'];
 
 if (empty($form)) {
 /****************************************************************/

@@ -532,9 +532,8 @@ class question_match_qtype extends default_questiontype {
 //////////////////////////////////////////////////////////////////////////
 //// INITIATION - Without this line the question type is not in use... ///
 //////////////////////////////////////////////////////////////////////////
-// define("MATCH",         "5"); // already defined in questionlib.php
-$QTYPES[MATCH]= new question_match_qtype();
+$QTYPES['match']= new question_match_qtype();
 // The following adds the questiontype to the menu of types shown to teachers
-$QTYPE_MENU[MATCH] = get_string("match", "quiz");
+$QTYPE_MENU['match'] = get_string("match", "quiz");
 
 ?>

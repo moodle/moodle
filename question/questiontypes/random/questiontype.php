@@ -7,7 +7,7 @@
 /// QUESTION TYPE CLASS //////////////////
 class quiz_random_qtype extends default_questiontype {
 
-    var $excludedtypes = array(RANDOM, RANDOMSAMATCH, ESSAY, DESCRIPTION);
+    var $excludedtypes = array('random', 'randomsamatch', 'essay', 'description');
 
     // Carries questions available as randoms sorted by category
     // This array is used when needed only
@@ -87,7 +87,7 @@ class quiz_random_qtype extends default_questiontype {
         }
         $question->questiontext = '<span class="notifyproblem">'.
          get_string('toomanyrandom', 'quiz'). '</span>';
-        $question->qtype = DESCRIPTION;
+        $question->qtype = 'description';
         $state->responses = array('' => '');
         return true;
     }
@@ -115,7 +115,7 @@ class quiz_random_qtype extends default_questiontype {
                 // This is the case if there weren't enough questions available in the category.
                 $question->questiontext = '<span class="notifyproblem">'.
                  get_string('toomanyrandom', 'quiz'). '</span>';
-                $question->qtype = DESCRIPTION;
+                $question->qtype = 'description';
                 return true;
             }
             // this must be an old-style state which stores only the id for the wrapped question

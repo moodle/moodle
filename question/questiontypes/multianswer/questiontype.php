@@ -7,9 +7,9 @@
 ///
 /// The multianswer question type is special in that it
 /// depends on a few other question types, i.e.
-/// MULTICHOICE, SHORTANSWER and NUMERICAL.
+/// 'multichoice', 'shortanswer' and 'numerical'.
 /// These question types have got a few special features that
-/// makes them useable by the MULTIANSWER question type
+/// makes them useable by the 'multianswer' question type
 ///
 
 /// QUESTION TYPE CLASS //////////////////
@@ -233,7 +233,7 @@ class quiz_embedded_cloze_qtype extends default_questiontype {
             if ($options->feedback) {
                 $chosenanswer = null;
                 switch ($wrapped->qtype) {
-                    case NUMERICAL:
+                    case 'numerical':
                         $testedstate = clone($state);
                         $testedstate->responses[''] = $response;
                         $raw_grade   = 0;
@@ -247,7 +247,7 @@ class quiz_embedded_cloze_qtype extends default_questiontype {
                             }
                         }
                         break;
-                    case SHORTANSWER:
+                    case 'shortanswer':
                         $testedstate = clone($state);
                         $testedstate->responses[''] = $response;
                         $teststate   = clone($state);
@@ -263,7 +263,7 @@ class quiz_embedded_cloze_qtype extends default_questiontype {
                             }
                         }
                         break;
-                    case MULTICHOICE:
+                    case 'multichoice':
                         if (isset($answers[$response])) {
                             $chosenanswer = clone($answers[$response]);
                         }
@@ -307,12 +307,12 @@ class quiz_embedded_cloze_qtype extends default_questiontype {
 
             // Print the input control
             switch ($wrapped->qtype) {
-                case SHORTANSWER:
-                case NUMERICAL:
+                case 'shortanswer':
+                case 'numerical':
                     echo " <input $style $readonly $popup name=\"$inputname\"
                             type=\"text\" value=\"$response\" size=\"12\" /> ";
                     break;
-                case MULTICHOICE:
+                case 'multichoice':
                     $outputoptions = '<option></option>'; // Default empty option
                     foreach ($answers as $mcanswer) {
                         $selected = $response == $mcanswer->id
@@ -555,7 +555,7 @@ class quiz_embedded_cloze_qtype extends default_questiontype {
                 error("Can't find the subquestion $wrappedquestionid that is used as part $seqnum in cloze question $state->question");
             }
             // For multichoice question we need to recode the answer
-            if ($answer and $wrappedquestion->qtype == MULTICHOICE) {
+            if ($answer and $wrappedquestion->qtype == 'multichoice') {
                 //The answer is an answer_id, look for it in backup_ids
                 if (!$ans = backup_getid($restore->backup_unique_code,"question_answers",$answer)) {
                     echo 'Could not recode cloze multichoice answer '.$answer.'<br />';
@@ -583,15 +583,14 @@ class quiz_embedded_cloze_qtype extends default_questiontype {
 //////////////////////////////////////////////////////////////////////////
 //// INITIATION - Without this line the question type is not in use... ///
 //////////////////////////////////////////////////////////////////////////
-// define("MULTIANSWER",   "9"); // already defined in questionlib.php
-$QTYPES[MULTIANSWER]= new quiz_embedded_cloze_qtype();
+$QTYPES['multianswer']= new quiz_embedded_cloze_qtype();
 // The following adds the questiontype to the menu of types shown to teachers
-$QTYPE_MENU[MULTIANSWER] = get_string("multianswer", "quiz");
+$QTYPE_MENU['multianswer'] = get_string("multianswer", "quiz");
 
 /////////////////////////////////////////////////////////////
 //// ADDITIONAL FUNCTIONS
 //// The functions below deal exclusivly with editing
-//// of questions with question type MULTIANSWER.
+//// of questions with question type 'multianswer'.
 //// Therefore they are kept in this file.
 //// They are not in the class as they are not
 //// likely to be subject for overriding.
@@ -688,7 +687,7 @@ function quiz_qtype_multianswer_extract_question($text) {
 ////////////////////////////////////////
 
     $question = new stdClass;
-    $question->qtype = MULTIANSWER;
+    $question->qtype = 'multianswer';
     $question->questiontext = $text;
     $question->options->questions = array();
     $question->defaultgrade = 0; // Will be increased for each answer norm
@@ -700,14 +699,14 @@ function quiz_qtype_multianswer_extract_question($text) {
         $wrapped->defaultgrade = $answerregs[ANSWER_REGEX_NORM]
             or $wrapped->defaultgrade = '1';
         if (!empty($answerregs[ANSWER_REGEX_ANSWER_TYPE_NUMERICAL])) {
-            $wrapped->qtype = NUMERICAL;
+            $wrapped->qtype = 'numerical';
             $wrapped->multiplier = array();
             $wrapped->units      = array();
         } else if(!empty($answerregs[ANSWER_REGEX_ANSWER_TYPE_SHORTANSWER])) {
-            $wrapped->qtype = SHORTANSWER;
+            $wrapped->qtype = 'shortanswer';
             $wrapped->usecase = 0;
         } else if(!empty($answerregs[ANSWER_REGEX_ANSWER_TYPE_MULTICHOICE])) {
-            $wrapped->qtype = MULTICHOICE;
+            $wrapped->qtype = 'multichoice';
             $wrapped->single = 1;
         } else {
             error("Cannot identify qtype $answerregs[2]");

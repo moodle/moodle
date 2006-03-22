@@ -195,7 +195,7 @@ class default_questiontype {
     *
     * This function returns the number of question numbers to be assigned
     * to the question. Most question types will have length one; they will be
-    * assigned one number. The DESCRIPTION type, however does not use up a
+    * assigned one number. The 'description' type, however does not use up a
     * number and so has a length of zero. Other question types may wish to
     * handle a bundle of questions and hence return a number greater than one.
     * @return integer         The number of question numbers which should be

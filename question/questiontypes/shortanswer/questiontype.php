@@ -119,7 +119,7 @@ class question_shortanswer_qtype extends default_questiontype {
 
     function print_question_formulation_and_controls(&$question, &$state, $cmoptions, $options) {
         global $CFG;
-    /// This implementation is also used by question type NUMERICAL
+    /// This implementation is also used by question type 'numerical'
         $answers = &$question->options->answers;
         $correctanswers = $this->get_correct_responses($question, $state);
         $readonly = empty($options->readonly) ? '' : 'readonly="readonly"';
@@ -345,9 +345,8 @@ class question_shortanswer_qtype extends default_questiontype {
 //////////////////////////////////////////////////////////////////////////
 //// INITIATION - Without this line the question type is not in use... ///
 //////////////////////////////////////////////////////////////////////////
-// define("SHORTANSWER",   "1"); // already defined in questionlib.php
-$QTYPES[SHORTANSWER]= new question_shortanswer_qtype();
+$QTYPES['shortanswer']= new question_shortanswer_qtype();
 // The following adds the questiontype to the menu of types shown to teachers
-$QTYPE_MENU[SHORTANSWER] = get_string("shortanswer", "quiz");
+$QTYPE_MENU['shortanswer'] = get_string("shortanswer", "quiz");
 
 ?>

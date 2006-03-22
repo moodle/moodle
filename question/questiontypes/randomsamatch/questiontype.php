@@ -9,7 +9,7 @@
 
 /// QUESTION TYPE CLASS //////////////////
 class question_randomsamatch_qtype extends question_match_qtype {
-/// Extends MATCH as there are quite a few simularities...
+/// Extends 'match' as there are quite a few simularities...
 
     function name() {
         return 'randomsamatch';
@@ -235,7 +235,7 @@ class question_randomsamatch_qtype extends question_match_qtype {
 
     function get_sa_candidates($categorylist, $questionsinuse=0) {
         return get_records_select('question',
-         "qtype = '".SHORTANSWER."' " .
+         "qtype = '".'shortanswer'."' " .
          "AND category IN ($categorylist) " .
          "AND parent = '0' " .
          "AND hidden = '0'" .
@@ -356,9 +356,8 @@ class question_randomsamatch_qtype extends question_match_qtype {
 //////////////////////////////////////////////////////////////////////////
 //// INITIATION - Without this line the question type is not in use... ///
 //////////////////////////////////////////////////////////////////////////
-// define("RANDOMSAMATCH", "6"); // already defined in questionlib.php
-$QTYPES[RANDOMSAMATCH]= new question_randomsamatch_qtype();
+$QTYPES['randomsamatch']= new question_randomsamatch_qtype();
 // The following adds the questiontype to the menu of types shown to teachers
-$QTYPE_MENU[RANDOMSAMATCH] = get_string("randomsamatch", "quiz");
+$QTYPE_MENU['randomsamatch'] = get_string("randomsamatch", "quiz");
 
 ?>
