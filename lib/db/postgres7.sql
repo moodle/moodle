@@ -659,7 +659,7 @@ CREATE TABLE prefix_blog_tag_instance (
   tagid integer NOT NULL default 0,
   groupid integer NOT NULL default 0,
   courseid integer NOT NULL default 0,
-  userid integer NOT NULL default 0
+  userid integer NOT NULL default 0,
   timemodified integer NOT NULL default 0
 );
 CREATE INDEX bti_entryid_idx ON prefix_blog_tag_instance (entryid);
