@@ -81,7 +81,7 @@ class qformat_xml extends qformat_default {
         $image = $question['#']['image'][0]['#'];
         $penalty = $question['#']['penalty'][0]['#'];
 
-        $qo = null;
+        $qo = $this->defaultquestion();
         $qo->name = $name;
         $qo->questiontext = $qtext;
         $qo->questiontextformat = $this->trans_format( $qformat );
@@ -223,6 +223,32 @@ class qformat_xml extends qformat_default {
         return $qo;
     }
 
+    function import_matching( $question ) {
+        // import matching question
+
+        // get common parts
+        $qo = $this->import_headers( $question );
+
+        // header parts particular to matching
+        $qo->qtype = MATCH;
+        $qo->shuffleanswers = $question['#']['shuffleanswers'][0]['#'];
+
+        // get subquestions
+        $subquestions = $question['#']['subquestion'];
+        $qo->subquestions = array();
+        $qo->subanswers = array();
+
+        // run through subquestions
+        foreach ($subquestions as $subquestion) {
+            $qtext = $subquestion['#']['text'][0]['#'];
+            $atext = $subquestion['#']['answer'][0]['#']['text'][0]['#'];
+            $qo->subquestions[] = $qtext;
+            $qo->subanswers[] = $atext;
+        }
+//echo "<pre>"; print_r( $qo ); die;
+        return $qo;
+    }
+
     function readquestions($lines) {
     // parse the array of lines into an array of questions
     // this *could* burn memory - but it won't happen that much
@@ -257,6 +283,9 @@ class qformat_xml extends qformat_default {
             }
             elseif ($question_type=='numerical') {
                 $qo = $this->import_numerical( $question );
+            }
+            elseif ($question_type=='matching') {
+                $qo = $this->import_matching( $question );
             }
             else {
                 $notsupported = get_string( 'xmlnotsupported','quiz',$question_type );
@@ -492,6 +521,7 @@ class qformat_xml extends qformat_default {
         $expout .= "    <image>".$question->image."</image>\n";
         $expout .= "    <penalty>{$question->penalty}</penalty>\n";
         $expout .= "    <hidden>{$question->hidden}</hidden>\n";
+        $expout .= "    <shuffleanswers>{$question->options->shuffleanswers}</shuffleanswers>\n";
 
         // output depends on question type
         switch($question->qtype) {
