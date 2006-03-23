@@ -107,7 +107,7 @@ class data_field_base {     /// Base class for Database Field Types (see field/*
             $this->field->param1 = trim($data->param1);
         }
         if (isset($data->param2)) {
-            $this->field->param1 = trim($data->param2);
+            $this->field->param2 = trim($data->param2);
         }
         if (isset($data->param3)) {
             $this->field->param3 = trim($data->param3);
@@ -1271,14 +1271,4 @@ function data_convert_arrays_to_strings(&$fieldinput) {
 }
 
 
-/*
-INSERT INTO prefix_log_display VALUES ('data', 'view', 'data', 'name');
-INSERT INTO prefix_log_display VALUES ('data', 'add', 'data', 'name');
-INSERT INTO prefix_log_display VALUES ('data', 'update', 'data', 'name');
-INSERT INTO prefix_log_display VALUES ('data', 'record delete', 'data', 'name');
-INSERT INTO prefix_log_display VALUES ('data', 'fields add', 'data_fields', 'name');
-INSERT INTO prefix_log_display VALUES ('data', 'fields update', 'data_fields', 'name');
-INSERT INTO prefix_log_display VALUES ('data', 'templates saved', 'data', 'name');
-INSERT INTO prefix_log_display VALUES ('data', 'templates def', 'data', 'name');
-*/
 ?>
