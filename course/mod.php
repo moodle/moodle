@@ -19,7 +19,7 @@
     $movetosection = optional_param( 'movetosection',0,PARAM_INT );
     $delete = optional_param( 'delete',0,PARAM_INT );
     $course = optional_param( 'course',0,PARAM_INT );
-    $groupmode = optional_param( 'groupmode',0,PARAM_INT );
+    $groupmode = optional_param( 'groupmode',-1,PARAM_INT );
     $duplicate = optional_param( 'duplicate',0,PARAM_INT );
 
     if (isset($SESSION->modform)) {   // Variables are stored in the session
@@ -343,7 +343,7 @@
         }
         exit;
 
-    } else if (isset($groupmode) and confirm_sesskey()) {
+    } else if ($groupmode > -1 and confirm_sesskey()) {
 
         $id = required_param( 'id', PARAM_INT );
 
