@@ -68,7 +68,7 @@
     <td align="right"><b><?php  print_string("defaultgrade", "quiz") ?>:</b></td>
     <td align="left">
         <input type="text" name="defaultgrade" size="3" value="<?php  p($question->defaultgrade) ?>" alt="<?php  print_string("defaultgrade", "quiz") ?>" />
-        <?php helpbutton('defaultgrade', get_string('defaultgrade', 'quiz'), 'quiz'); ?>
+
         <?php  if (isset($err["defaultgrade"])) formerr($err["defaultgrade"]); ?>
     </td>
 </tr>
