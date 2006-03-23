@@ -12,6 +12,12 @@ var timesup = "<?php print_string("timesup","quiz");?>";
 var quizclose = <?php echo ($quiz->timeclose - time()) - $timerstartvalue; ?>; // in seconds
 var quizTimerValue = <?php echo $timerstartvalue; ?>; // in seconds
 parseInt(quizTimerValue);
+
+// @EC PF : client time when page was opened
+var ec_page_start = new Date().getTime();
+// @EC PF : client time when quiz should end
+var ec_quiz_finish = ec_page_start + <?php echo ($timerstartvalue * 1000); ?>;
+
 // -->
 </script>
 <script language="javascript" type="text/javascript" src="timer.js"></script>

@@ -6,7 +6,12 @@
 //
 function countdown_clock(theTimer) {
     var timeout_id = null;
-    quizTimerValue = quizTimerValue - 1;
+
+	// @EC PF : current client time
+	var ec_now_epoch = new Date().getTime();
+
+	// @EC PF : time left according to client
+	quizTimerValue = Math.floor( (ec_quiz_finish - ec_now_epoch) /1000 );
 
     if(quizTimerValue == 0) {
         clearTimeout(timeout_id);
