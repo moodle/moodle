@@ -360,7 +360,6 @@ function data_generate_default_form($dataid, $mode){
  * output: null                                          *
  *********************************************************/
 function data_generate_empty_add_form($id, $rid=0){
-
     $currentdata = get_record('data','id',$id);
     //check if there is an add entry
     if (!$currentdata->addtemplate){
@@ -383,7 +382,7 @@ function data_generate_empty_add_form($id, $rid=0){
 
                 $str .='<td valign="top">';
                 $g = data_get_field($cfield, $currentdata);
-                $str .= $g->display_add_field($cfield->id,$rid);
+                $str .= $g->display_add_field($rid);
                 $str .= '</td>';
                 $str .= '</tr>';
                 unset($g);
@@ -393,7 +392,6 @@ function data_generate_empty_add_form($id, $rid=0){
             $str .= '</div>';
 
         }
-
         echo $str;
     }
 }

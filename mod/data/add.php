@@ -179,7 +179,7 @@
                 //for each field in the add form, add it to the data_content.
                 foreach ($datarecord as $name => $value){
                     if (!in_array($name, $ignorenames)) {
-                        $namearr = explode('_',$name);  // Second one is the field id
+                        $namearr = explode('_', $name);  // Second one is the field id
                         if (empty($field->field) || ($namearr[1] != $field->field->id)) {  // Try to reuse classes
                             $field = data_get_field_from_id($namearr[1], $data);
                         }
@@ -221,7 +221,7 @@
     if (!$rid){
         print_heading(get_string('newentry','data'), '', 2);
     }
-    
+        
     /******************************************
      * Regular expression replacement section *
      ******************************************/
