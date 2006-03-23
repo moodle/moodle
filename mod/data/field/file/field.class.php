@@ -130,11 +130,11 @@ class data_field_file extends data_field_base {
         $names = explode('_',$name);
         switch ($names[2]) {
             case 0:    //file just uploaded
-                $course = get_course('course', 'id', $this->data->course);
+                //$course = get_course('course', 'id', $this->data->course);
 
                 $filename = $_FILES[$names[0].'_'.$names[1]];
                 $filename = $filename['name'];
-                $dir = $course->id.'/'.$CFG->moddata.'/data/'.$this->data->id.'/'.$this->field->id.'/'.$recordid;
+                $dir = $this->data->course.'/'.$CFG->moddata.'/data/'.$this->data->id.'/'.$this->field->id.'/'.$recordid;
 
                 //only use the manager if file is present, to avoid "are you sure you selected a file to upload" msg
                 if ($filename){
