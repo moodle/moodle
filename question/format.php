@@ -69,22 +69,24 @@ class qformat_default {
 
             // check for answer grades validity (must match fixed list of grades)
             $fractions = $question->fraction;
-            $answersvalid = true; // in case they are!
-            foreach ($fractions as $key => $fraction) {
-                $newfraction = match_grade_options($gradeoptionsfull, $fraction, $matchgrades);
-                if ($newfraction===false) {
-                    $answersvalid = false;
+            if (!empty($fractions)) {
+                $answersvalid = true; // in case they are!
+                foreach ($fractions as $key => $fraction) {
+                    $newfraction = match_grade_options($gradeoptionsfull, $fraction, $matchgrades);
+                    if ($newfraction===false) {
+                        $answersvalid = false;
+                    }
+                    else {
+                        $fractions[$key] = $newfraction;
+                    }
+                }
+                if (!$answersvalid) {
+                    notify( get_string('matcherror','quiz') );
+                    continue;
                 }
                 else {
-                    $fractions[$key] = $newfraction;
+                    $question->fraction = $fractions;
                 }
-            }
-            if (!$answersvalid) {
-                notify( get_string('matcherror','quiz') );
-                continue;
-            }
-            else {
-                $question->fraction = $fractions;
             }
 
             $question->category = $this->category->id;
