@@ -247,8 +247,11 @@
     } else {
         $focus = "login.username";
     }
-
-    if ($CFG->auth == "email" or $CFG->auth == "none" or chop($CFG->auth_instructions) <> "" ) {
+    
+    if (isset($CFG->auth_instructions)) {
+        $CFG->auth_instructions = trim($CFG->auth_instructions);
+    }
+    if ($CFG->auth == "email" or $CFG->auth == "none" or !empty($CFG->auth_instructions)) {
         $show_instructions = true;
     } else {
         $show_instructions = false;
