@@ -17,6 +17,7 @@ $string['check'] = 'Revisar';
 $string['chooselanguagehead'] = 'Seleccionar idioma';
 $string['chooselanguagesub'] = 'Por favor, seleccione un idioma para el proceso de instalación.';
 $string['closewindow'] = 'Cerrar esta ventana';
+$string['compatibilitysettingshead'] = 'Comprobando sus ajustes PHP...';
 $string['compatibilitysettingssub'] = 'Su servidor debería pasar todos estas comprobaciones para que Moodle pueda funcionar correctamente.';
 $string['configfilenotwritten'] = 'El script instalador no ha podido crear automáticamente un archivo config.php con las especificaciones elegidas. Por favor, copie el siguiente código en un archivo llamado config.php y coloque ese archivo en el directorio raíz de Moodle.';
 $string['configfilewritten'] = 'config.php se ha creado con éxito';
@@ -24,6 +25,13 @@ $string['configurationcompletehead'] = 'Configuración completa';
 $string['configurationcompletesub'] = 'Moodle ha creado su fichero de configuración';
 $string['continue'] = 'Continuar';
 $string['database'] = 'Base de datos';
+$string['databasecreationsettingshead'] = 'Ahora necesita configurar los ajustes de la base de datos donde se almacenarán la mayoría de los datos de Moodle. El instalador creará la base de datos con los ajustes especificados más abajo.';
+$string['databasecreationsettingssub'] = '<b>Tipo:</b> el valor por defecto es \"mysql\"<br />
+<b>Servidor:</b> el valor por defecto es \"localhost\"<br />
+<b>Nombre:</b> nombre de la base de datos, e.g., moodle<br />
+<b>Usuario:</b> el valor por defecto es  \"root\"<br />
+<b>Contraseña:</b> contraseña de la base de datos<br />
+<b>Prefijo de tablas:</b> prefijo opcional para todas las tablas';
 $string['databasesettingshead'] = 'Ahora necesita configurar la base de datos en la que se almacenarán la mayor parte de los datos de Moodle. Esta base de datos debe haber sido ya creada y disponer de un nombre de usuario y una contraseña de acceso.';
 $string['databasesettingssub'] = '<b>Tipo:</b> mysql o postgres7<br />
 <b>Servidor:</b> p.ej.: localhost o db.tudominio.com<br />
@@ -125,6 +133,21 @@ $string['status'] = 'Estado';
 $string['thischarset'] = 'UTF-8';
 $string['thislanguage'] = 'Español - Internacional';
 $string['user'] = 'Usuario';
+$string['welcomep10'] = '$a->installername ($a->installerversion)';
+$string['welcomep20'] = 'Si está viendo esta página es porque ha podido ejecutar el paquete
+    <strong>$a->packname $a->packversion</strong> en su ordenador. !Enhorabuena!';
+$string['welcomep30'] = 'Esta versión de <strong>$a->installername</strong> incluye las 
+    aplicaciones necesarias para que <strong>Moodle</strong> funcione en su ordenador,
+    principalmente:';
+$string['welcomep40'] = 'El paquete también incluye <strong>Moodle $a->moodlerelease ($a->moodleversion)</strong>.';
+$string['welcomep50'] = 'El uso de todas las aplicaciones del paquete está gobernado por sus respectivas 
+    licencias. El programa <strong>$a->installername</strong> es 
+    <a href=\"http://www.opensource.org/docs/definition_plain.html\">código abierto</a> y se distribuye 
+    bajo licencia <a href=\"http://www.gnu.org/copyleft/gpl.html\">GPL</a>.';
+$string['welcomep60'] = 'Las siguientes páginas le guiarán a traves de algunos sencillos pasos para configurar
+    y ajustar <strong>Moodle</strong> en su ordenador. Puede utilizar los valores por defecto sugeridos o,
+    de forma opcional, modificarlos para que se ajusten a sus necesidades.';
+$string['welcomep70'] = 'Pulse en el botón \"Siguiente\" para continuar con la configuración de <strong>Moodle</strong>.';
 $string['wwwroot'] = 'Dirección Web';
 $string['wwwrooterror'] = 'La \'Dirección Web\' parece incorrecto. No se pudo encontrar una instalación de Moodle. El valor ha sido cambiado por el original.';
 ?>
