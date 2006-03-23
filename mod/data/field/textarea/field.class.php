@@ -87,7 +87,6 @@ class data_field_textarea extends data_field_base {
         $content = new object;
         $content->fieldid = $this->field->id;
         $content->recordid = $recordid;
-        $content->content = $this->format_data_field_multimenu_content($value);
 
         $names = explode('_', $name);
         if (!empty($names[2])) {
