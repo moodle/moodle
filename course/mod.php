@@ -343,7 +343,7 @@
         }
         exit;
 
-    } else if (!empty($groupmode) and confirm_sesskey()) {
+    } else if (isset($groupmode) and confirm_sesskey()) {
 
         $id = required_param( 'id', PARAM_INT );
 
