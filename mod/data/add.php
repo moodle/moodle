@@ -31,6 +31,7 @@
     $d     = optional_param('d', 0, PARAM_INT);    // database id
     $rid   = optional_param('rid', 0, PARAM_INT);    //record id
     $import   = optional_param('import', 0, PARAM_INT);    // show import form
+    $cancel   = optional_param('cancel', '');    // cancel an add
     $mode ='addtemplate';    //define the mode for this page, only 1 mode available
 
     if ($id) {
@@ -71,6 +72,10 @@
         if (!isteacher($course->id) or !data_isowner($rid) or !confirm_sesskey()){
             error (get_string('noaccess','data'));
         }
+    }
+
+    if ($cancel) {
+        redirect('view.php?d='.$data->id);
     }
   
 
@@ -233,20 +238,18 @@
             $field = data_get_field($eachfield, $data);
             $patterns[]="/\[\[".$field->field->name."\]\]/i";
             $replacements[] = $field->display_add_field($rid);
-            
-            unset($g);
         }
         $newtext = preg_replace($patterns, $replacements, $data->{$mode});
-    }
-    else {    //if the add template is not yet defined, print the default form!
-        data_generate_empty_add_form($data->id, $rid);
+
+    } else {    //if the add template is not yet defined, print the default form!
+        echo data_generate_default_template($data, 'addtemplate', $rid, true, false);
         $newtext = '';
     }
    
     echo $newtext;
     echo '<div align="center"><input type="submit" value="'.get_string('save','data').'" />';
     if ($rid){
-        echo '&nbsp;<input type="button" value="'.get_string('cancel').'" onclick="javascript:history.go(-1)">';
+        echo '&nbsp;<input type="submit" value="'.get_string('cancel').'" onclick="javascript:history.go(-1)">';
     }
     echo '</div>';
     print_simple_box_end();
@@ -296,13 +299,10 @@
 /// Finish the page
     
     // Print the stuff that need to come after the form fields.
-    $storedFields = get_records('data_fields', 'dataid', $data->id);
-    foreach ($storedFields as $sf) {
-        $fieldClass = 'data_field_' . $sf->type;
-        $fieldObj = new $fieldClass($sf->id);
-        
-        echo "\n\n";
-        $fieldObj->print_after_form();
+    $fields = get_records('data_fields', 'dataid', $data->id);
+    foreach ($fields as $eachfield) {
+        $field = data_get_field($eachfield, $data);
+        $field->print_after_form();
     }
     
     print_footer($course);

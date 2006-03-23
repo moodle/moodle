@@ -306,93 +306,60 @@ class data_field_base {     /// Base class for Database Field Types (see field/*
 
 
 /*****************************************************************************
-/* Given a mode and a dataid, generate a default case template               *
- * input @param mode - addtemplate, singletemplate, listtempalte, rsstemplate*
+/* Given a template and a dataid, generate a default case template               *
+ * input @param template - addtemplate, singletemplate, listtempalte, rsstemplate*
  *       @param dataid                                                       *
  * output null                                                               *
  *****************************************************************************/
-function data_generate_default_form($dataid, $mode){
-    if (!$dataid && !$mode){
+function data_generate_default_template($data, $template, $recordid=0, $form=false, $update=true) {
+
+    if (!$data && !$template){
         return false;
     }
     
     //get all the fields for that database
-    if ($fields = get_records('data_fields','dataid',$dataid)){
-        $data->id = $dataid;
-        $str = '';    //the string to write to the given $data->{$mode}
-        //this only applies to add and single template
+    if ($fields = get_records('data_fields', 'dataid', $data->id)){
    
-        $str .= '<div align="center">';
+        $str = '<div align="center">';
         $str .= '<table>';
 
-        foreach ($fields as $cfield){
+        foreach ($fields as $field){
 
             $str .= '<tr><td valign="top" align="right">';
-            $str .= $cfield->name.':';
+            $str .= $field->name.':';
             $str .= '</td>';
 
             $str .='<td>';
-            $str .= '[['.$cfield->name.']]';
+            if ($form) {   /// Print forms instead of data
+                $fieldobj = data_get_field($field, $data);
+                $str .= $fieldobj->display_add_field($recordid);
+
+            } else {           /// Just print the tag
+                $str .= '[['.$field->name.']]';
+            }
             $str .= '</td></tr>';
-            unset($g);
             
         }
-        if ($mode!='addtemplate' and $mode!='rsstemplate'){    //if not adding, we put tags in there
+        if ($template != 'addtemplate' and $template != 'rsstemplate') {    //if not adding, we put tags in there
             $str .= '<tr><td align="center" colspan="2">##Edit##  ##More##  ##Delete##  ##Approve##</td></tr>';
         }
 
         $str .= '</table>';
         $str .= '</div>';
 
-        if ($mode == 'listtemplate'){
+        if ($template == 'listtemplate'){
             $str .= '<br />';
         }
-        $data->{$mode} = $str;
-        //make the header and footer for listtempalte
-        update_record('data', $data);
-    }
-}
 
-
-/*********************************************************
- * generates an empty add form, if there is none.        *
- * input: @(int)id, id of the data                       *
- * output: null                                          *
- *********************************************************/
-function data_generate_empty_add_form($id, $rid=0){
-    $currentdata = get_record('data','id',$id);
-    //check if there is an add entry
-    if (!$currentdata->addtemplate){
-        echo '<div align="center">'.get_string('emptyadd', 'data').'</div><p></p>';
-        //get all the field entry, and print studnet version
-
-        if ($fields = get_records('data_fields','dataid',$currentdata->id)){
-            $str = '';    //the string to write to the given $data->{$mode}
-            //this only applies to add and single template
-
-            $str .= '<div align="center">';
-            $str .= '<table>';
-
-            foreach ($fields as $cfield){
-                
-                $str .= '<tr>';
-                $str .= '<td valign="top" align="right">';
-                $str .= $cfield->name.':';
-                $str .= '</td>';
-
-                $str .='<td valign="top">';
-                $g = data_get_field($cfield, $currentdata);
-                $str .= $g->display_add_field($rid);
-                $str .= '</td>';
-                $str .= '</tr>';
-                unset($g);
+        if ($update) {
+            $newdata->id = $data->id;
+            $newdata->{$mode} = $str;
+            if (!update_record('data', $newdata)) {
+                notify('Error updating template');
             }
-
-            $str .= '</table>';
-            $str .= '</div>';
-
         }
-        echo $str;
+
+        return $str;
     }
 }
 
@@ -594,11 +561,11 @@ function data_tags_check($dataid, $template){
     $possiblefields = get_records('data_fields','dataid',$dataid);
     ///then we generate strings to replace
     $tagsok = true; //let's be optimistic
-    foreach ($possiblefields as $cfield){
-        $pattern="/\[\[".$cfield->name."\]\]/i";
+    foreach ($possiblefields as $field){
+        $pattern="/\[\[".$field->name."\]\]/i";
         if (preg_match_all($pattern, $template, $dummy)>1){
             $tagsok = false;
-            notify ('[['.$cfield->name.']] - '.get_string('multipletags','data'));
+            notify ('[['.$field->name.']] - '.get_string('multipletags','data'));
         }
     }
     //else return true
@@ -852,11 +819,10 @@ function data_print_template($records, $data, $search, $template, $sort, $page=0
         $possiblefields = get_records('data_fields','dataid',$data->id);
         
         ///then we generate strings to replace for normal tags
-        foreach ($possiblefields as $cfield) {
-            $patterns[]='/\[\['.$cfield->name.'\]\]/i';
-            $g = data_get_field($cfield, $data);
-            $replacement[] = highlight($search, $g->display_browse_field($record->id, $template));
-            unset($g);
+        foreach ($possiblefields as $ff) {
+            $patterns[]='/\[\['.$ff->name.'\]\]/i';
+            $field = data_get_field($ff, $data);
+            $replacement[] = highlight($search, $field->display_browse_field($record->id, $template));
         }
 
         $record = get_record('data_records','id',$record->id);

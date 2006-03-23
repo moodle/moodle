@@ -89,13 +89,13 @@
 
         // Generate default template.
         if (!empty($mytemplate->defaultform)){
-            data_generate_default_form($data->id, $mode);
+            data_generate_default_templates($data->id, $mode);
 
         } else if (!empty($mytemplate->allforms)){    //generate all default templates
-            data_generate_default_form($data->id, 'singletemplate');
-            data_generate_default_form($data->id, 'listtemplate');
-            data_generate_default_form($data->id, 'addtemplate');
-            data_generate_default_form($data->id, 'rsstemplate');
+            data_generate_default_template($data, 'singletemplate');
+            data_generate_default_template($data, 'listtemplate');
+            data_generate_default_template($data, 'addtemplate');
+            data_generate_default_template($data, 'rsstemplate');
             add_to_log($course->id, 'data', 'templates def', "templates.php?id=$cm->id&amp;d=$data->id", $data->id, $cm->id);
         } else {
 
