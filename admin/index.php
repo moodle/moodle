@@ -239,11 +239,11 @@
         redirect("config.php");
     }
 
-/// Check all questiontype plugins and upgrade if necessary
-    upgrade_plugins('qtype', 'question/questiontypes', "$CFG->wwwroot/$CFG->admin/index.php");  // Return here afterwards
-
 /// Find and check all main modules and load them up or upgrade them if necessary
     upgrade_activity_modules("$CFG->wwwroot/$CFG->admin/index.php");  // Return here afterwards
+
+/// Check all questiontype plugins and upgrade if necessary
+    upgrade_plugins('qtype', 'question/questiontypes', "$CFG->wwwroot/$CFG->admin/index.php");  // Return here afterwards
 
 /// Upgrade backup/restore system if necessary
     require_once("$CFG->dirroot/backup/lib.php");
