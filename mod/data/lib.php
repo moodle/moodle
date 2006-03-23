@@ -855,7 +855,7 @@ function data_print_template($records, $data, $search, $template, $sort, $page=0
         foreach ($possiblefields as $cfield) {
             $patterns[]='/\[\['.$cfield->name.'\]\]/i';
             $g = data_get_field($cfield, $data);
-            $replacement[] = highlight($search, $g->display_browse_field($cfield->id, $record->id, $template));
+            $replacement[] = highlight($search, $g->display_browse_field($record->id, $template));
             unset($g);
         }
 

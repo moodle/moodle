@@ -73,7 +73,7 @@ class data_field_checkbox extends data_field_base {
     }
     
     function display_browse_field($recordid, $template) {
-
+        
         if ($content = get_record('data_content', 'fieldid', $this->field->id, 'recordid', $recordid)){
             $contentArr = array();
             if (!empty($content->content)) {
