@@ -446,6 +446,16 @@ global $HTTPSPAGEREQUIRED;
     }
 
 
+/// Calculate and set $CFG->ostype to be used everywhere. Possible values are:
+/// - WINDOWS: for any Windows flavour.
+/// - UNIX: for the rest
+/// Also, $CFG->os can continue being used if more specialization is required
+if (stristr(PHP_OS, 'win') && !stristr(PHP_OS, 'darwin')) {
+    $CFG->ostype = 'WINDOWS';
+} else {
+    $CFG->ostype = 'UNIX';
+}
+$CFG->os = PHP_OS;
 
 /// Set language/locale of printed times.  If user has chosen a language that
 /// that is different from the site language, then use the locale specified
