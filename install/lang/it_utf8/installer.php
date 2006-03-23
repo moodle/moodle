@@ -13,13 +13,14 @@ $string['admindirerror'] = 'La directory di amministrazione specificata non è c
 $string['admindirname'] = 'Directory di amministrazione';
 $string['admindirsettinghead'] = 'Impostazione la directory admin...';
 $string['bypassed'] = 'Aggirato';
-$string['cannotcreatetempdir'] = 'Non &egrave; possibile creare la cartella temporanea.';
-$string['cannotdownloadcomponents'] = 'Non &egrave; possibile scaricare componenti.';
-$string['cannotdownloadzipfile'] = 'Non &egrave; possibile scaricare il file compresso.';
-$string['cannotfindcomponent'] = 'Non &egrave; possibile trovare il componente.';
-$string['cannotsavemd5file'] = 'Non &egrave; possibile salvare il file md5.';
-$string['cannotsavezipfile'] = 'Non &egrave; possibile salvare il file compresso.';
-$string['cannotunzipfile'] = 'Non &egrave; possibile scompattare il file.';
+$string['cannotcreatelangdir'] = 'Non è possibile creare la cartella delle lingue.';
+$string['cannotcreatetempdir'] = 'Non è possibile creare la cartella temporanea.';
+$string['cannotdownloadcomponents'] = 'Non è possibile scaricare componenti.';
+$string['cannotdownloadzipfile'] = 'Non è possibile scaricare il file compresso.';
+$string['cannotfindcomponent'] = 'Non è possibile trovare il componente.';
+$string['cannotsavemd5file'] = 'Non è possibile salvare il file md5.';
+$string['cannotsavezipfile'] = 'Non è possibile salvare il file compresso.';
+$string['cannotunzipfile'] = 'Non è possibile scompattare il file.';
 $string['caution'] = 'Attenzione';
 $string['check'] = 'Controlla';
 $string['chooselanguagehead'] = 'Scegli la lingua';
@@ -55,14 +56,14 @@ $string['fileuploadserror'] = 'Questo deve essere impostato a on';
 $string['gdversion'] = 'Versione GD';
 $string['gdversionerror'] = 'La libreria GD deve essere presente per elaborare e creare immagini';
 $string['help'] = 'Aiuto';
-$string['iconvrecommended'] = 'Installare la libreria opzionale ICONV &egrave; caldamente consigliato per migliorare le prestazioni del sito, in particolare se il vostro sito supporta lingue non latine.';
+$string['iconvrecommended'] = 'Installare la libreria opzionale ICONV è caldamente consigliato per migliorare le prestazioni del sito, in particolare se il vostro sito supporta lingue non latine.';
 $string['info'] = 'Informazioni';
 $string['installation'] = 'Installazione';
 $string['invalidmd5'] = 'MD5 non valido';
 $string['language'] = 'Lingua';
 $string['magicquotesruntime'] = 'Magic Quotes Run Time';
 $string['magicquotesruntimeerror'] = 'Questo deve essere impostato a off';
-$string['mbstringrecommended'] = 'Installare la libreria opzionale MBSTRING &egrave; caldamente consigliato per migliorare le prestazioni del sito, in particolare se il vostro sito supporta lingue non latine.';
+$string['mbstringrecommended'] = 'Installare la libreria opzionale MBSTRING è caldamente consigliato per migliorare le prestazioni del sito, in particolare se il vostro sito supporta lingue non latine.';
 $string['memorylimit'] = 'Limite memoria';
 $string['memorylimiterror'] = 'Il limite di memoria del PHP è impostato a un valore basso ... potrebbero verificarsi probremi in futuro.';
 $string['memorylimithelp'] = '<p>Il limite della memoria assegnata a PHP attualmente è $a.</p>
@@ -78,7 +79,7 @@ Questo permetterà  a Moodle di impostare il limite di memoria da solo.</li>
 <p>Tuttavia, su alcuni server questo impedirà  a <b>tutte</b> le pagine PHP di funzionare (vedrete degli errori quando visualizzerete le pagine) cosi dovrete rimuovere il file .htaccess.</li></ol>';
 $string['missingrequiredfield'] = 'Mancano alcuni campi richiesti';
 $string['mysql416bypassed'] = 'Comunque, se il vostro sito sta utilizzando SOLO lingue iso-8859-1 (latin), potete continuare ad utilizzare MySQL 4.1.12 (o successivo) attualmente installato.';
-$string['mysql416required'] = 'MySQL 4.1.16 &egrave; la versione minima richiesta per Moodle 1.6 per garantire che tutti i dati possano essere convertiti in UTF-8 in futuro.';
+$string['mysql416required'] = 'MySQL 4.1.16 è la versione minima richiesta per Moodle 1.6 per garantire che tutti i dati possano essere convertiti in UTF-8 in futuro.';
 $string['mysqlextensionisnotpresentinphp'] = 'Il PHP non è stato correttamente configurato con l\'estensione di MySQL. Controllate il vostro php.ini o ricompilate il PHP.';
 $string['name'] = 'Nome';
 $string['next'] = 'Prossimo';
@@ -91,7 +92,7 @@ $string['phpversionhelp'] = '<p>Moodle richiede come minimo la versione 4.1.0 de
 <p>Attualmente state utilizzando la versione $a</p>
 <p>È necessario aggiornare il PHP o spostarsi su un server con una versione di PHP più recente!</p>';
 $string['previous'] = 'Precedente';
-$string['remotedownloadnotallowed'] = 'Non &egrave; permesso scaricare i componenti su vostro server (allow_url_fopen &egrave; disabilitato). <br /><br /> &Egrave; necessario scaricare manualmente il file <a href=\"$a->url\">$a->url</a>, copiarlo in \"$a->dest\" sul vostro server e scompattarlo la.';
+$string['remotedownloadnotallowed'] = 'Non è permesso scaricare i componenti su vostro server (allow_url_fopen è disabilitato). <br /><br /> È necessario scaricare manualmente il file <a href=\"$a->url\">$a->url</a>, copiarlo in \"$a->dest\" sul vostro server e scompattarlo la.';
 $string['report'] = 'Risultato';
 $string['safemode'] = 'Safe Mode';
 $string['safemodeerror'] = 'Moodle può avere problemi con il safemode impostato a on';
