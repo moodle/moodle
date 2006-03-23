@@ -167,7 +167,7 @@
             }
 
             if (!$emptyform && $recordid = data_add_record($data, $currentgroup)) {    //add instance to data_record
-
+                
                 /// Insert a whole lot of empty records to make sure we have them
                 $fields = get_records('data_fields','dataid',$data->id);
                 foreach ($fields as $field) {
@@ -184,7 +184,7 @@
                             $field = data_get_field_from_id($namearr[1], $data);
                         }
                         if ($field) {
-                            $field->update_content($rid, $value, $name);
+                            $field->update_content($recordid, $value, $name);
                         }
                     }
                 }
