@@ -51,27 +51,44 @@ class block_blog_tags extends block_base {
 
         if ($tags = get_records_sql($sql)) {
 
-            $size = 20; $lasttagcount = -1; $sizecount = 1;
+        /// There are 2 things to do:
+        /// 1. tags with the same count should have the same size class
+        /// 2. however many tags we have should be spread evenly over the
+        ///    20 size classes
+        
+            $totaltags  = count($tags);
+            $currenttag = 0;
+
+            $size = 20;
+            $lasttagct = -1;
+            
             $etags = array();
             foreach ($tags as $tag) {
+            
+                $currenttag++;
+
+                if ($currenttag == 1) {
+                    $lasttagct = $tag->ct;
+                    $size = 20;
+                } else if ($tag->ct != $lasttagct) {
+                    $lasttagct = $tag->ct;
+                    $size = 20 - ( (int)((($currenttag - 1) / $totaltags) * 20) );
+                }
+                
                 $tag->class = "$tag->type s$size";
                 $etags[] = $tag;
 
-                /// Set the size class
-                if ($tag->ct != $lasttagcount) {
-                    $size -= $sizecount;
-                    $lasttagcount = $tag->ct;
-                    $sizecount = 1;
-                } else {
-                    $sizecount++;
-                }
             }
 
+        /// Now we sort the tag display order
             usort($etags, "blog_tags_sort");
             
+        /// Finally we create the output
             foreach ($etags as $tag) {
-                $link = $CFG->wwwroot.'/blog/index.php?filtertype=site&tagid='.$tag->id;
-                $this->content->text .= '<a href="'.$link.'" class="'.$tag->class.'">'.$tag->text.'</a> ';
+                $link = $CFG->wwwroot.'/blog/index.php?courseid='.
+                        $this->instance->pageid.'&filtertype=site&tagid='.$tag->id;
+                $this->content->text .= '<a href="'.$link.'" class="'.
+                                        $tag->class.'">'.$tag->text.'</a> ';
             }
 
         }
