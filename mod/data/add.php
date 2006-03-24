@@ -231,7 +231,7 @@
      * Regular expression replacement section *
      ******************************************/
     if ($data->addtemplate){
-        $possiblefields = get_records('data_fields','dataid',$data->id);
+        $possiblefields = get_records('data_fields','dataid',$data->id,'id');
         
         ///then we generate strings to replace
         foreach ($possiblefields as $eachfield){

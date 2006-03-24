@@ -114,7 +114,19 @@
                 /// Create a field object to collect and store the data safely
                     $field = data_get_field_from_id($fid, $data);
                     $oldfieldname = $field->field->name;
-                    $field->update_field($fieldinput);
+                    
+                    $field->field->name = $fieldinput->name;
+                    $field->field->description = $fieldinput->description;
+                    
+                    for ($i=1; $i<=10; $i++) {
+                        if (isset($fieldinput->{'param'.$i})) {
+                            $field->field->{'param'.$i} = $fieldinput->{'param'.$i};
+                        } else {
+                            $field->field->{'param'.$i} = '';
+                        }
+                    }
+                    
+                    $field->update_field();
                     
                 /// Update the templates.
                     data_replace_field_in_templates($data, $oldfieldname, $field->field->name);
@@ -210,7 +222,7 @@
             $table->head = array(get_string('action','data'), get_string('fieldname','data'), get_string('type','data'));
             $table->align = array('center','left','right');
 
-            if ($fff = get_records('data_fields','dataid',$data->id)){
+            if ($fff = get_records('data_fields','dataid',$data->id,'id')){
                 foreach ($fff as $ff) {
                     $field = data_get_field($ff, $data);
 
@@ -267,7 +279,7 @@
 
         if ($showtabs) {
             $currenttab = 'fields';
-            include_once('tabs.php'); 
+            include_once('tabs.php');
         }
 
         /// Print any notices

@@ -318,7 +318,7 @@ function data_generate_default_template($data, $template, $recordid=0, $form=fal
     }
     
     //get all the fields for that database
-    if ($fields = get_records('data_fields', 'dataid', $data->id)) {
+    if ($fields = get_records('data_fields', 'dataid', $data->id, 'id')) {
    
         $str = '<div align="center">';
         $str .= '<table>';

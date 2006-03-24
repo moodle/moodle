@@ -33,7 +33,6 @@ class data_field_url extends data_field_base {
     function display_add_field($recordid=0){
         global $CFG;
 
-
         $url = '';
         $text = '';
 
@@ -48,7 +47,7 @@ class data_field_url extends data_field_base {
         $str = '<div title="'.$this->field->description.'">';
         $str .= '<table><tr><td align="right">';
         $str .= get_string('url','data').':</td><td><input type="text" name="field_'.$this->field->id.'_0" id="field_'.$this->field->id.'_0" value="'.$url.'" /></td></tr>';
-        if (!empty($this->field->param1)) {
+        if (!empty($this->field->param1) && $this->field->param1) {
             $str .= '<tr><td align="right">'.get_string('text','data').':</td><td><input type="text" name="field_'.$this->field->id.'_1" id="field_'.$this->field->id.'_1" value="'.$text.'" /></td></tr>';
         }
         $str .= '</table>';
@@ -61,10 +60,17 @@ class data_field_url extends data_field_base {
         if ($content = get_record('data_content', 'fieldid', $this->field->id, 'recordid', $recordid)){
             $url = empty($content->content)? '':$content->content;
             $text = empty($content->content1)? '':$content->content1;
-            if (empty($text)){
-                $text = $url;
+            
+            if ($this->field->param1) { // param1 defines whether we want to autolink the url.
+                if (!empty($text)) {
+                    $str = '<a href="'.$url.'">'.$text.'</a>';
+                } else {
+                    $str = '<a href="'.$url.'">'.$url.'</a>';
+                }
+            } else {
+                $str = $url;
             }
-            return '<a href = "'.$url.'">'.$text.'</a>';
+            return $str;
         }
         return false;
     }

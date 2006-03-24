@@ -7,4 +7,8 @@
         <td class="c0"> <?php echo get_string('fielddescription', 'data'); ?>: </td>
         <td class="c1"> <input class="fielddescription" type="text" name="description" id="description" value = "<?php echo ($this->field->description);?>" /> </td>
     </tr>
+    <tr>
+        <td class="c0"><?php echo get_string('autolinkurl', 'data') ?></td>
+        <td class="c1"><input type="checkbox" name="param1" id="param1" <?php if($this->field->param1) {echo 'checked="checked"';} ?> value="1" /></td>
+    </tr>
 </table>
