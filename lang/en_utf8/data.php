@@ -11,6 +11,7 @@ $string['approve'] = 'Approve';
 $string['ascending'] = 'Ascending';
 $string['atmaxentry'] = 'You have entered the maximum number of entries allowed!';
 $string['autogenallforms'] = 'Generate all default templates';
+$string['autolinkurl'] = 'Autolink the URL';
 $string['availablefromdate'] = 'Available from';
 $string['availabletags'] = 'Available tags';
 $string['availabletodate'] = 'Available to';
