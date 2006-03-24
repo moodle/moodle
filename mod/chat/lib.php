@@ -381,7 +381,7 @@ function chat_login_user($chatid, $version, $groupid, $course) {
     global $USER;
     if (($version != 'sockets') and $chatuser = get_record_select('chat_users', "chatid='$chatid' AND userid='$USER->id' AND groupid='$groupid'")) {
         $chatuser->version  = $version;
-        $chatuser->ip       = $USER->lastip;
+        $chatuser->ip       = $USER->lastIP;
         $chatuser->lastping = time();
         $chatuser->lang     = current_language();
 
@@ -536,7 +536,6 @@ function chat_format_message_manually($message, $courseid, $sender, $currentuser
         if($message->message == 'exit' or $message->message == 'enter') {
             $output->refreshusers = true; //force user panel refresh ASAP
         }
-
         return $output;
     }
 
@@ -548,11 +547,9 @@ function chat_format_message_manually($message, $courseid, $sender, $currentuser
 
     $options->para = false;
     $text = format_text($text, FORMAT_MOODLE, $options, $courseid);
-
     // And now check for special cases
-
     if (substr($text, 0, 5) == 'beep ') {
-        /// It's a beep!
+        /// It's a beep! 
         $beepwho = trim(substr($text, 5));
 
         if ($beepwho == 'all') {   // everyone
@@ -565,8 +562,8 @@ function chat_format_message_manually($message, $courseid, $sender, $currentuser
             $outinfo = $message->strtime.': '.get_string('messagebeepsyou', 'chat', fullname($sender));
             $outmain = '';
             $output->beep = true;
-
-        } else {
+          
+        } else {  //something is not caught?
             return false;
         }
     } else if (substr($text, 0, 1) == ':') {              /// It's an MOO emote
@@ -587,7 +584,7 @@ function chat_format_message_manually($message, $courseid, $sender, $currentuser
         $outinfo = $message->strtime.' '.$sender->firstname;
         $outmain = $text;
     }
-
+     
     /// Format the message as a small table
 
     $output->text  = strip_tags($outinfo.': '.$outmain);
@@ -598,7 +595,6 @@ function chat_format_message_manually($message, $courseid, $sender, $currentuser
         $output->html .= ": $outmain";
     }
     $output->html .= "</td></tr></table>";
-
     return $output;
 }
 
@@ -610,7 +606,6 @@ function chat_format_message($message, $courseid, $currentuser, $chat_lastrow=NU
     if (!$user = get_record("user", "id", $message->userid)) {
         return "Error finding user id = $message->userid";
     }
-
     return chat_format_message_manually($message, $courseid, $user, $currentuser, $chat_lastrow);
 
 }
