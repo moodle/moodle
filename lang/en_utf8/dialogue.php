@@ -46,6 +46,7 @@ $string['noavailablepeople'] = 'There is no one available to have a Dialogue wit
 $string['nopersonchosen'] = 'No Person Chosen';
 $string['nosubject'] = 'No Subject Entered';
 $string['notextentered'] = 'No Text Entered';
+$string['notavailable'] = 'Dialogues are not available to guest users';
 $string['notstarted'] = 'You have not started this dialogue yet';
 $string['notyetseen'] = 'Not yet seen';
 $string['numberofentries'] = 'Number of entries';
