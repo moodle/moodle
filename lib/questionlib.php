@@ -521,6 +521,10 @@ function get_question_options(&$questions) {
         $keys = array_keys($questions);
         // update each question object
         foreach ($keys as $i) {
+            if (!array_key_exists($questions[$i]->qtype, $QTYPES)) {
+                $questions[$i]->qtype = 'missingtype';
+            }
+            
             // set name prefix
             $questions[$i]->name_prefix = question_make_name_prefix($i);
 
@@ -529,6 +533,9 @@ function get_question_options(&$questions) {
         }
         return true;
     } else { // deal with single question
+        if (!array_key_exists($questions->qtype, $QTYPES)) {
+            $questions->qtype = 'missingtype';
+        }
         $questions->name_prefix = question_make_name_prefix($questions->id);
         return $QTYPES[$questions->qtype]->get_question_options($questions);
     }
@@ -1155,12 +1162,12 @@ function print_question_icon($question, $editlink=true, $return = false) {
 
     $namestr = get_string($question->qtype, 'quiz');
     $html = '<img border="0" height="16" width="16" src="'.$CFG->wwwroot.'/question/type/'.
-            $QTYPES[$question->qtype]->name().'/icon.gif" alt="'.
+            $question->qtype.'/icon.gif" alt="'.
             $namestr.'" title="'.$namestr.'" />';
 
     if ($editlink) {
         $html =  "<a href=\"$CFG->wwwroot/question/question.php?id=$question->id\" title=\""
-                .$QTYPES[$question->qtype]->name()."\">".
+                .$question->qtype."\">".
                 $html."</a>\n";
     }
     if ($return) {

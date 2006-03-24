@@ -126,10 +126,7 @@ class default_questiontype {
     *                          it is not a standard question object.
     */
     function save_question_options($question) {
-        /// This default implementation must be overridden:
-
-        $result->error = "Unsupported question type ($question->qtype)!";
-        return $result;
+        return null;
     }
 
     /**
@@ -330,9 +327,11 @@ class default_questiontype {
     function get_correct_responses(&$question, &$state) {
         /* The default implementation returns the response for the first answer
         that gives full marks. */
-        foreach ($question->options->answers as $answer) {
-            if (((int) $answer->fraction) === 1) {
-                return array('' => $answer->answer);
+        if ($question->options->answers) {
+            foreach ($question->options->answers as $answer) {
+                if (((int) $answer->fraction) === 1) {
+                    return array('' => $answer->answer);
+                }
             }
         }
         return null;

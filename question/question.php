@@ -52,6 +52,9 @@
         }
 
         $qtype = $question->qtype;
+        if (!isset($QTYPES[$qtype])) {
+            $qtype = 'missingtype';
+        }
 
     } else if ($category) { // only for creating new questions
         if (! $category = get_record("question_categories", "id", $category)) {
@@ -346,7 +349,7 @@
 
     echo '<br />';
     print_simple_box_start('center');
-    require_once('type/'.$QTYPES[$qtype]->name().'/editquestion.php');
+    require_once('type/'.$qtype.'/editquestion.php');
     print_simple_box_end();
 
     if ($usehtmleditor) {

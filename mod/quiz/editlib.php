@@ -181,9 +181,15 @@ function quiz_print_question_list($quiz, $allowdelete=true, $showbreaks=true, $r
     echo "<tr><th colspan=\"3\" nowrap=\"nowrap\" class=\"header\">$strorder</th><th class=\"header\">#</th><th align=\"left\" width=\"100%\" nowrap=\"nowrap\" class=\"header\">$strquestionname</th><th nowrap=\"nowrap\" class=\"header\">$strtype</th><th nowrap=\"nowrap\" class=\"header\">$strgrade</th><th align=\"center\" width=\"60\" nowrap=\"nowrap\" class=\"header\">$straction</th></tr>\n";
     foreach ($order as $i => $qnum) {
 
-        if ($qnum and empty($questions[$qnum])) {
+        if (!$qnum or empty($questions[$qnum])) {
             continue;
         }
+
+        // If the questiontype is missing change the question type
+        if (!array_key_exists($questions[$qnum]->qtype, $QTYPES)) {
+            $questions[$qnum]->qtype = 'missingtype';
+        }
+
         // Show the re-ordering field if the tool is turned on.
         // But don't show it in front of pagebreaks if they are hidden.
         if ($reordertool) {
