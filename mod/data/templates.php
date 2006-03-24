@@ -131,9 +131,7 @@
 
     $data = get_record('data', 'id', $d);    //reload because of possible updates so far!
 
-    if (empty($data->addtemplate) and empty($data->singletemplate) and empty($data->listtemplate) and empty($data->rsstemplate)){
-        echo '<div align="center"><input type="submit" name="allforms" value="'.get_string('autogenallforms','data').'" /></div>';
-    }
+    echo '<div align="center"><input type="submit" name="allforms" value="'.get_string('autogenallforms','data').'" /></div>';
         
     print_simple_box_start('center','80%');
     echo '<table cellpadding="4" cellspacing="0" border="0">';
