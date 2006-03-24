@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+
+<settings>
+    <type>text</type>
+    <name>Name</name>
+    <description>The name of this photo</description>
+</settings>
+
+<field>
+    <type>text</type>
+    <name>Name</name>
+    <description>The name of this photo</description>
+</field>
+
+<field>
+    <type>textarea</type>
+    <name>Description</name>
+    <description>Information about your photo</description>
+</field>
+
+<field>
+    <type>picture</type>
+    <name>Picture</name>
+    <description>Your uploaded image</description>
+    <param1>500</param1>
+    <param2>500</param2>
+    <param3>100</param3>
+    <param4>100</param4>
+</field>
