@@ -963,12 +963,6 @@ function data_print_approve_button($recordid, $d, $page='0', $rid='0', $search='
     return $str;
 }
 
-//silly function that approves a record
-function data_approve_record($recordid) {
-    $record = get_record('data_records','id',$recordid);
-    $record->approved = 1;
-    update_record('data_records',$record);
-}
 
 //silly function that prints the a form to do ratings
 function data_print_ratings($data, $record) {
