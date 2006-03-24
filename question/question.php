@@ -346,7 +346,7 @@
 
     echo '<br />';
     print_simple_box_start('center');
-    require_once('questiontypes/'.$QTYPES[$qtype]->name().'/editquestion.php');
+    require_once('type/'.$QTYPES[$qtype]->name().'/editquestion.php');
     print_simple_box_end();
 
     if ($usehtmleditor) {

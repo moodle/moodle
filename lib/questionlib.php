@@ -105,7 +105,7 @@ require_once("$CFG->dirroot/question/type/questiontype.php");
 * These files in turn instantiate the corresponding question type class
 * and add them to the $QTYPES array
 */
-$qtypenames= get_list_of_plugins('question/questiontypes');
+$qtypenames= get_list_of_plugins('question/type');
 foreach($qtypenames as $qtypename) {
     // Instanciates all plug-in question types
     $qtypefilepath= "$CFG->dirroot/question/type/$qtypename/questiontype.php";

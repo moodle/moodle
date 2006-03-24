@@ -11,7 +11,7 @@
  *
  * @param int courseid
  * @return array containing filenames
- * @calledfrom questiontypes/<typename>/editquestion.php 
+ * @calledfrom type/<typename>/editquestion.php 
  */
 function get_course_media_files($courseid) 
 {
