@@ -61,7 +61,7 @@
     
     if (isteacher($course->id)) {
         if (!count_records('data_fields','dataid',$data->id)) {      // Brand new database!
-            redirect($CFG->wwwroot.'/mod/data/fields.php?d='.$data->id);  // Redirect to field entry
+            redirect($CFG->wwwroot.'/mod/data/field.php?d='.$data->id);  // Redirect to field entry
         }
     }
 

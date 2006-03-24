@@ -38,7 +38,7 @@
     }
     if (isteacher($course->id)) {
         $row[] = new tabobject('templates', $CFG->wwwroot.'/mod/data/templates.php?d='.$data->id.'&amp;mode=singletemplate', get_string('templates','data'));
-        $row[] = new tabobject('fields', $CFG->wwwroot.'/mod/data/fields.php?d='.$data->id, get_string('fields','data'), '', true);
+        $row[] = new tabobject('fields', $CFG->wwwroot.'/mod/data/field.php?d='.$data->id, get_string('fields','data'), '', true);
     }
 
     $tabs[] = $row;

@@ -68,7 +68,7 @@
     switch ($mode) {
 
         case 'add':    ///add a new field
-            if (confirm_sesskey() and $fieldinput = data_submitted($CFG->wwwroot.'/mod/data/fields.php')){
+            if (confirm_sesskey() and $fieldinput = data_submitted($CFG->wwwroot.'/mod/data/field.php')){
 
             /// Only store this new field if it doesn't already exist.
                 if (data_fieldname_exists($fieldinput->name, $data->id)) {
@@ -91,7 +91,7 @@
                     data_append_new_field_to_templates($data, $field->field->name);
 
                     add_to_log($course->id, 'data', 'fields add', 
-                               "fields.php?d=$data->id&amp;mode=display&amp;fid=$fid", $fid, $cm->id);
+                               "field.php?d=$data->id&amp;mode=display&amp;fid=$fid", $fid, $cm->id);
                     
                     $displaynoticegood = get_string('fieldadded','data');
                 }
@@ -100,7 +100,7 @@
 
 
         case 'update':    ///update a field
-            if (confirm_sesskey() and $fieldinput = data_submitted($CFG->wwwroot.'/mod/data/fields.php')){
+            if (confirm_sesskey() and $fieldinput = data_submitted($CFG->wwwroot.'/mod/data/field.php')){
 
                 $fieldinput->name = optional_param('name','',PARAM_NOTAGS);
 
@@ -120,7 +120,7 @@
                     data_replace_field_in_templates($data, $oldfieldname, $field->field->name);
                     
                     add_to_log($course->id, 'data', 'fields update', 
-                               "fields.php?d=$data->id&amp;mode=display&amp;fid=$fid", $fid, $cm->id);
+                               "field.php?d=$data->id&amp;mode=display&amp;fid=$fid", $fid, $cm->id);
                     
                     $displaynoticegood = get_string('fieldupdated','data');
                 }
@@ -142,7 +142,7 @@
                         data_replace_field_in_templates($data, $field->field->name, '');
                         
                         add_to_log($course->id, 'data', 'fields delete', 
-                                   "fields.php?d=$data->id", $field->field->name, $cm->id);
+                                   "field.php?d=$data->id", $field->field->name, $cm->id);
     
                         $displaynoticegood = get_string('fielddeleted', 'data');
                     }
@@ -155,8 +155,8 @@
                     $field = data_get_field_from_id($fid, $data);
 
                     notice_yesno('<strong>'.$field->name().': '.$field->field->name.'</strong><br /><br />'. get_string('confirmdeletefield','data'), 
-                                 'fields.php?d='.$data->id.'&amp;mode=delete&amp;fid='.$fid.'&amp;sesskey='.sesskey().'&amp;confirm=1',
-                                 'fields.php?d='.$data->id);
+                                 'field.php?d='.$data->id.'&amp;mode=delete&amp;fid='.$fid.'&amp;sesskey='.sesskey().'&amp;confirm=1',
+                                 'field.php?d='.$data->id);
 
                     print_footer($course);
                     exit;
@@ -217,14 +217,14 @@
                     /// Print Action Column
                     $table->data[] = array(
 
-                    '<a href="fields.php?d='.$data->id.'&amp;mode=display&amp;fid='.$field->field->id.'&amp;sesskey='.sesskey().'">'.
+                    '<a href="field.php?d='.$data->id.'&amp;mode=display&amp;fid='.$field->field->id.'&amp;sesskey='.sesskey().'">'.
                     '<img src="'.$CFG->pixpath.'/t/edit.gif" height="11" width="11" border="0" alt="'.get_string('edit').'" /></a>'.
                     '&nbsp;'.
-                    '<a href="fields.php?d='.$data->id.'&amp;mode=delete&amp;fid='.$field->field->id.'&amp;sesskey='.sesskey().'">'.
+                    '<a href="field.php?d='.$data->id.'&amp;mode=delete&amp;fid='.$field->field->id.'&amp;sesskey='.sesskey().'">'.
                     '<img src="'.$CFG->pixpath.'/t/delete.gif" height="11" width="11" border="0" alt="'.get_string('delete').'" /></a>',
 
 
-                    '<a href="fields.php?mode=display&amp;d='.$data->id.
+                    '<a href="field.php?mode=display&amp;d='.$data->id.
                     '&amp;fid='.$field->field->id.'&amp;sesskey='.sesskey().'">'.$field->field->name.'</a>'.
                     '</td>',
 
@@ -239,7 +239,7 @@
         
         echo '<div class="fieldadd" align="center">';
         echo get_string('newfield','data').': ';
-        popup_form($CFG->wwwroot.'/mod/data/fields.php?d='.$data->id.'&amp;mode=new&amp;sesskey='.
+        popup_form($CFG->wwwroot.'/mod/data/field.php?d='.$data->id.'&amp;mode=new&amp;sesskey='.
                    sesskey().'&amp;newtype=', $menufield, 'fieldform', '', 'choose');
         helpbutton('fields', get_string('addafield','data'), 'data');
         echo '</div>';

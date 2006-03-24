@@ -181,7 +181,7 @@ class data_field_base {     /// Base class for Database Field Types (see field/*
         }
         print_simple_box_start('center','80%');
 
-        echo '<form name="editfield" action="'.$CFG->wwwroot.'/mod/data/fields.php" method="post">'."\n";
+        echo '<form name="editfield" action="'.$CFG->wwwroot.'/mod/data/field.php" method="post">'."\n";
         echo '<input type="hidden" name="d" value="'.$this->data->id.'" />'."\n";
         if (empty($this->field->id)) {
             echo '<input type="hidden" name="mode" value="add" />'."\n";
@@ -294,7 +294,7 @@ class data_field_base {     /// Base class for Database Field Types (see field/*
     function image() {
         global $CFG;
 
-        $str = '<a href="fields.php?d='.$this->data->id.'&amp;fid='.$this->field->id.'&amp;mode=display&amp;sesskey='.sesskey().'">';
+        $str = '<a href="field.php?d='.$this->data->id.'&amp;fid='.$this->field->id.'&amp;mode=display&amp;sesskey='.sesskey().'">';
         $str .= '<img src="'.$CFG->modpixpath.'/data/field/'.$this->type.'/icon.gif" ';
         $str .= 'height="'.$this->iconheight.'" width="'.$this->iconwidth.'" border="0" alt="'.$this->type.'" title="'.$this->type.'" /></a>';
         return $str;
