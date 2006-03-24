@@ -98,7 +98,7 @@ $QTYPES = array(); // This array will be populated when the questiontype.php fil
  */
 $QTYPE_MENU = array(); // This array will be populated when the questiontype.php files are loaded
 
-require_once("$CFG->dirroot/question/questiontypes/questiontype.php");
+require_once("$CFG->dirroot/question/type/questiontype.php");
 
 /*
 * Load the questiontype.php file for each question type
@@ -108,7 +108,7 @@ require_once("$CFG->dirroot/question/questiontypes/questiontype.php");
 $qtypenames= get_list_of_plugins('question/questiontypes');
 foreach($qtypenames as $qtypename) {
     // Instanciates all plug-in question types
-    $qtypefilepath= "$CFG->dirroot/question/questiontypes/$qtypename/questiontype.php";
+    $qtypefilepath= "$CFG->dirroot/question/type/$qtypename/questiontype.php";
 
     // echo "Loading $qtypename<br/>"; // Uncomment for debugging
     if (is_readable($qtypefilepath)) {
@@ -1153,7 +1153,7 @@ function print_question_icon($question, $editlink=true, $return = false) {
 
     global $QTYPES, $CFG;
 
-    $html = '<img border="0" height="16" width="16" src="'.$CFG->wwwroot.'/question/questiontypes/'.
+    $html = '<img border="0" height="16" width="16" src="'.$CFG->wwwroot.'/question/type/'.
             $QTYPES[$question->qtype]->name().'/icon.gif" alt="'.
             get_string($QTYPES[$question->qtype]->name(), 'quiz').'" />';
 
