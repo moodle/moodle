@@ -318,12 +318,12 @@ function data_generate_default_template($data, $template, $recordid=0, $form=fal
     }
     
     //get all the fields for that database
-    if ($fields = get_records('data_fields', 'dataid', $data->id)){
+    if ($fields = get_records('data_fields', 'dataid', $data->id)) {
    
         $str = '<div align="center">';
         $str .= '<table>';
 
-        foreach ($fields as $field){
+        foreach ($fields as $field) {
 
             $str .= '<tr><td valign="top" align="right">';
             $str .= $field->name.':';
@@ -353,7 +353,7 @@ function data_generate_default_template($data, $template, $recordid=0, $form=fal
 
         if ($update) {
             $newdata->id = $data->id;
-            $newdata->{$mode} = $str;
+            $newdata->{$template} = $str;
             if (!update_record('data', $newdata)) {
                 notify('Error updating template');
             }
