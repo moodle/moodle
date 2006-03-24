@@ -1153,9 +1153,10 @@ function print_question_icon($question, $editlink=true, $return = false) {
 
     global $QTYPES, $CFG;
 
+    $namestr = get_string($question->qtype, 'quiz');
     $html = '<img border="0" height="16" width="16" src="'.$CFG->wwwroot.'/question/type/'.
             $QTYPES[$question->qtype]->name().'/icon.gif" alt="'.
-            get_string($QTYPES[$question->qtype]->name(), 'quiz').'" />';
+            $namestr.'" title="'.$namestr.'" />';
 
     if ($editlink) {
         $html =  "<a href=\"$CFG->wwwroot/question/question.php?id=$question->id\" title=\""
