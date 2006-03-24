@@ -64,7 +64,7 @@ function stats_cron_daily () {
     }
 
 
-    $midnight = stats_usergetmidnight(time());
+    $midnight = stats_getmidnight(time());
     
     // check to make sure we're due to run, at least one day after last run
     if ((time() - 24*60*60) < $CFG->statslastdaily) {
@@ -435,7 +435,7 @@ function stats_get_base_daily($time=0) {
     if (empty($time)) {
         $time = time();
     }
-    return stats_usergetmidnight($time);
+    return stats_getmidnight($time);
 }
 
 function stats_get_base_weekly($time=0) {
@@ -447,26 +447,26 @@ function stats_get_base_weekly($time=0) {
     if (date('D',$time) == 'Mon')
         $str = 'now';
 
-    return stats_usergetmidnight(strtotime($str,$time));
+    return stats_getmidnight(strtotime($str,$time));
 }
 
 function stats_get_base_monthly($time=0) {
     if (empty($time)) {
         $time = time();
     }
-    return stats_usergetmidnight(strtotime(date('1-M-Y',$time)));
+    return stats_getmidnight(strtotime(date('1-M-Y',$time)));
 }
 
 function stats_get_next_monthend($lastmonth) {
-    return stats_usergetmidnight(strtotime(date('1-M-Y',$lastmonth).' +1 month'));
+    return stats_getmidnight(strtotime(date('1-M-Y',$lastmonth).' +1 month'));
 }
 
 function stats_get_next_weekend($lastweek) {
-    return stats_usergetmidnight(strtotime('+1 week',$lastweek));
+    return stats_getmidnight(strtotime('+1 week',$lastweek));
 }
 
 function stats_get_next_dayend($lastday) {
-    return stats_usergetmidnight(strtotime('+1 day',$lastday));
+    return stats_getmidnight(strtotime('+1 day',$lastday));
 }
 
 function stats_clean_old() {
@@ -926,13 +926,38 @@ function stats_check_uptodate($courseid=0) {
 }
 
 
-// copied from usergetmidnight, but we ignore dst.
-function stats_usergetmidnight($date, $timezone=99) {
+// copied from usergetmidnight, but we ignore dst
+function stats_getmidnight($date, $timezone=99) {
     $timezone = get_user_timezone_offset($timezone);
-    $userdate = usergetdate($date, $timezone);
-    
-    // Time of midnight of this user's day, in GMT
+    $userdate = stats_getdate($date, $timezone);
     return make_timestamp($userdate['year'], $userdate['mon'], $userdate['mday'], 0, 0, 0, $timezone,false ); // ignore dst for this.
+}
+
+function stats_getdate($time, $timezone=99) {
+
+    $timezone = get_user_timezone_offset($timezone);
+
+    if (abs($timezone) > 13) {    // Server time
+        return getdate($time);
+    }
+
+    // There is no gmgetdate so we use gmdate instead
+    $time += intval((float)$timezone * HOURSECS);
+    $datestring = strftime('%S_%M_%H_%d_%m_%Y_%w_%j_%A_%B', $time);
+    list(
+        $getdate['seconds'],
+        $getdate['minutes'],
+        $getdate['hours'],
+        $getdate['mday'],
+        $getdate['mon'],
+        $getdate['year'],
+        $getdate['wday'],
+        $getdate['yday'],
+        $getdate['weekday'],
+        $getdate['month']
+    ) = explode('_', $datestring);
+
+    return $getdate;
 }
 
 
