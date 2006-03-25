@@ -945,6 +945,16 @@ function userdate($date, $format='', $timezone=99, $fixday = true) {
         }
     }
 
+/// If we are running under Windows and unicode is enabled, try to convert the datestring
+/// to current_charset() (because it's impossible to specify UTF-8 to fetch locale info in Win32)
+
+   if (!empty($CFG->unicodedb) && $CFG->ostype == 'WINDOWS') {
+       if ($localewincharset = get_string('localewincharset')) {
+           $textlib = textlib_get_instance();
+           $datestring = $textlib->convert($datestring, $localewincharset, current_charset());
+       }
+   }
+
     return $datestring;
 }
 
@@ -4673,7 +4683,8 @@ function get_string($identifier, $module='', $a=NULL) {
 /// Depending upon $CFG->unicodedb, we are going to check moodle.php or langconfig.php,
 /// default to a different lang pack, and redefine the module for some special strings
 /// that, under 1.6 lang packs, reside under langconfig.php
-    $langconfigstrs = array('alphabet', 'backupnameformat', 'firstdayofweek', 'locale', 'oldcharset',
+    $langconfigstrs = array('alphabet', 'backupnameformat', 'firstdayofweek', 'locale', 
+                            'localewin', 'localewincharset', 'oldcharset',
                             'parentlanguage', 'strftimedate', 'strftimedateshort', 'strftimedatetime',
                             'strftimedaydate', 'strftimedaydatetime', 'strftimedayshort', 'strftimedaytime',
                             'strftimemonthyear', 'strftimerecent', 'strftimerecentfull', 'strftimetime',
@@ -4712,7 +4723,7 @@ function get_string($identifier, $module='', $a=NULL) {
         $locations = array( $CFG->dataroot.'/lang/',  $CFG->dirroot.'/lang/' );
     }
 
-    if ($module != 'moodle') {
+    if ($module != 'moodle' && $module != 'langconfig') {
         if (strpos($module, 'block_') === 0) {  // It's a block lang file
             $locations[] =  $CFG->dirroot .'/blocks/'.substr($module, 6).'/lang/';
         } else if (strpos($module, 'report_') === 0) {  // It's a report lang file
@@ -4724,7 +4735,6 @@ function get_string($identifier, $module='', $a=NULL) {
     }
 
 /// First check all the normal locations for the string in the current language
-
     foreach ($locations as $location) {
         $locallangfile = $location.$lang.'_local'.'/'.$module.'.php';    //first, see if there's a local file
         if (file_exists($locallangfile)) {
@@ -5845,25 +5855,49 @@ function moodle_setlocale($locale='') {
 
     global $SESSION, $USER, $CFG;
 
+/// Fetch the correct locale based on ostype
+    if(!empty($CFG->unicodedb) && $CFG->ostype == 'WINDOWS') {
+        $stringtofetch = 'localewin';
+    } else {
+        $stringtofetch = 'locale';
+    }
+
     if ($locale) {
         $CFG->locale = $locale;
     } else if (!empty($CFG->courselang) and ($CFG->courselang != $CFG->lang) ) {
-        $CFG->locale = get_string('locale');
+        $CFG->locale = get_string($stringtofetch);
     } else if (!empty($SESSION->lang) and ($SESSION->lang != $CFG->lang) ) {
-        $CFG->locale = get_string('locale');
+        $CFG->locale = get_string($stringtofetch);
     } else if (!empty($USER->lang) and ($USER->lang != $CFG->lang) ) {
-        $CFG->locale = get_string('locale');
+        $CFG->locale = get_string($stringtofetch);
     } else if (empty($CFG->locale)) {
-        $CFG->locale = get_string('locale');
+        $CFG->locale = get_string($stringtofetch);
         if (!get_field('config', 'value', 'name', 'locale')) {  // Make SURE there isn't one already
             set_config('locale', $CFG->locale);                 // Cache it to save lookups in future
         }
     }
-    setlocale (LC_TIME, $CFG->locale);
-    setlocale (LC_COLLATE, $CFG->locale);
 
-    if ($CFG->locale != 'tr_TR') {            // To workaround a well-known PHP bug with Turkish
-        setlocale (LC_CTYPE, $CFG->locale);
+/// Due to some strange BUG we cannot set the LC_TIME directly, so we fetch current values,
+/// set LC_ALL and then set values again. Just wondering why we cannot set LC_ALL only??? - stronk7
+/// Some day, numeric, monetary and other categories should be set too, I think. :-/
+
+/// Get current values
+    $monetary= setlocale (LC_MONETARY, 0);
+    $numeric = setlocale (LC_NUMERIC, 0);
+    $ctype   = setlocale (LC_CTYPE, 0);
+    if ($CFG->ostype != 'WINDOWS') {
+        $messages= setlocale (LC_MESSAGES, 0);
+    }
+/// Set locale to all
+    setlocale (LC_ALL, $CFG->locale);
+/// Set old values
+    setlocale (LC_MONETARY, $monetary);
+    setlocale (LC_NUMERIC, $numeric);
+    if ($CFG->ostype != 'WINDOWS') {
+        setlocale (LC_MESSAGES, $messages);
+    }
+    if ($CFG->locale == 'tr_TR') {            // To workaround a well-known PHP bug with Turkish
+        setlocale (LC_CTYPE, $ctype);
     }
 }
 
