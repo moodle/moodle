@@ -45,12 +45,14 @@ class data_field_url extends data_field_base {
         $url  = empty($url) ?  'http://' : $url;
 
         $str = '<div title="'.$this->field->description.'">';
-        $str .= '<table><tr><td align="right">';
-        $str .= get_string('url','data').':</td><td><input type="text" name="field_'.$this->field->id.'_0" id="field_'.$this->field->id.'_0" value="'.$url.'" /></td></tr>';
-        if (!empty($this->field->param1) && $this->field->param1) {
-            $str .= '<tr><td align="right">'.get_string('text','data').':</td><td><input type="text" name="field_'.$this->field->id.'_1" id="field_'.$this->field->id.'_1" value="'.$text.'" /></td></tr>';
+        if (!empty($this->field->param1)) {
+            $str .= '<table><tr><td align="right">';
+            $str .= get_string('url','data').':</td><td><input type="text" name="field_'.$this->field->id.'_0" id="field_'.$this->field->id.'_0" value="'.$url.'" size="60" /></td></tr>';
+            $str .= '<tr><td align="right">'.get_string('text','data').':</td><td><input type="text" name="field_'.$this->field->id.'_1" id="field_'.$this->field->id.'_1" value="'.$text.'" size="60" /></td></tr>';
+            $str .= '</table>';
+        } else {   // Just the URL field
+            $str .= '<input type="text" name="field_'.$this->field->id.'_0" id="field_'.$this->field->id.'_0" value="'.$url.'" size="60" />';
         }
-        $str .= '</table>';
         $str .= '</div>';
         
         return $str;
