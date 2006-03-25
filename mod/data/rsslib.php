@@ -4,12 +4,13 @@
     // This function is the main entry point to database module
     // rss feeds generation. Foreach database with rss enabled
     // build one XML rss structure.
+
+
     function data_rss_feeds() {
         global $CFG;
+
         $status = true;
 
-        $CFG->debug = true;
-        
         // Check CFG->enablerssfeeds.
         if (empty($CFG->enablerssfeeds)) {
             //Some debug...
@@ -27,44 +28,62 @@
         // It's working so we start...
         else {
             // Iterate over all data.
-            if ($dataActivities = get_records('data')) {
-                foreach ($dataActivities as $dataActivity) {
+            if ($datas = get_records('data')) {
+                foreach ($datas as $data) {
                     
-                    if ($dataActivity->rssarticles > 0) {
-                        $filename = rss_file_name('data', $dataActivity);  // RSS file
+                    if ($data->rssarticles > 0) {
+
+                        // Get the first field in the list  (a hack for now until we have a selector)
+
+                        if (!$firstfield = get_record_sql('SELECT id,name from '.$CFG->prefix.'data_fields WHERE dataid = '.$data->id.' ORDER by id', true)) {
+                            continue;
+                        }
                         
                         // Get the data_records out.
                         $sql = 'SELECT dr.* ' .
                                     "FROM {$CFG->prefix}data_records AS dr " .
-                                    "WHERE dr.dataid = {$dataActivity->id} " .
+                                    "WHERE dr.dataid = {$data->id} " .
                                     'ORDER BY dr.timecreated DESC ' .
-                                    "LIMIT {$dataActivity->rssarticles}";
+                                    "LIMIT {$data->rssarticles}";
                         
-                        $dataRecords = get_records_sql($sql);
+                        if (!$records = get_records_sql($sql)) {
+                            continue;
+                        }
+
+                        $firstrecord = array_shift($records);  // Get the first and put it back
+                        array_unshift($records, $firstrecord);
+
+                        $filename = rss_file_name('data', $data);
+                        if (file_exists($filename)) {
+                            if (filemtime($filename) >= $firstrecord->timemodified) {
+                                continue;
+                            }
+                        }
                         
-                        // Now all the rss items.
+                        // Now create all the articles
+                        mtrace('Creating feed for '.$data->name);
+
                         $items = array();
-                        
-                        foreach ($dataRecords as $dataRecord) {
+                        foreach ($records as $record) {
+
+                            $recordarray = array();
+                            array_push($recordarray, $record);
+
                             $item = null;
-                            $temp = array();
-                            array_push($temp, $dataRecord);
-                            
-                            /*$user->firstname = 'test';
-                            $user->lastname = 'test';
-                            $item->author = fullname($user);*/
-                            $item->title = $dataActivity->name;
-                            $item->pubdate = $dataRecord->timecreated;
-                            $item->link = $CFG->wwwroot.'/mod/data/view.php?d='.$dataActivity->id.'&rid='.$dataRecord->id;
-                            $item->description = data_print_template($temp, $dataActivity, '', 'rsstemplate', false, 0, 0, 'timecreated DESC', '', true);
+                            $item->title   = strip_tags(get_field('data_content', 'content', 
+                                                                  'fieldid', $firstfield->id, 'recordid', $record->id));
+                            $item->description = data_print_template($recordarray, $data, '', 'rsstemplate', false, 
+                                                                     0, 0, 'timecreated DESC', '', true);
+                            $item->pubdate = $record->timecreated;
+                            $item->link = $CFG->wwwroot.'/mod/data/view.php?d='.$data->id.'&rid='.$record->id;
                             
                             array_push($items, $item);
                         }
                         
                         // First all rss feeds common headers.
-                        $header = rss_standard_header(format_string($dataActivity->name,true),
-                                                      $CFG->wwwroot."/mod/data/view.php?d=".$dataActivity->id,
-                                                      format_string($dataActivity->intro,true));
+                        $header = rss_standard_header(format_string($data->name,true),
+                                                      $CFG->wwwroot."/mod/data/view.php?d=".$data->id,
+                                                      format_string($data->intro,true));
                         
                         if (!empty($header)) {
                             $articles = rss_add_items($items);
@@ -79,7 +98,7 @@
                             $rss = $header.$articles.$footer;
                             
                             //Save the XML contents to file.
-                            $status = rss_save_file("data", $dataActivity, $rss);
+                            $status = rss_save_file('data', $data, $rss);
                         }
                         else {
                             $status = false;
