@@ -79,7 +79,7 @@
     /// Print upload form
 
     $fileformats = get_list_of_plugins("mod/quiz/format");
-    $fileformatname = array();
+    $fileformatnames = array();
     foreach ($fileformats as $key => $fileformat) {
         $formatname = get_string($fileformat, 'lesson');
         if ($formatname == "[[$fileformat]]") {

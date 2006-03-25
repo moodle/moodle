@@ -297,6 +297,11 @@ function lesson_upgrade($oldversion) {
 	if ($oldversion < 2005110200) {
         table_column('lesson', '', 'activitylink', 'INT', '10', 'unsigned', '0', 'not null', 'tree');
 	}
+	
+	if ($oldversion < 2006031900) {
+	    execute_sql('ALTER TABLE  '. $CFG->prefix . 'lesson DROP COLUMN tree');
+	    execute_sql('ALTER TABLE  '. $CFG->prefix . 'lesson_default DROP COLUMN tree');
+	}
 
    return true;
 }

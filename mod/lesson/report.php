@@ -9,7 +9,8 @@
 
     $id     = required_param('id', PARAM_INT);    // Course Module ID
     $pageid = optional_param('pageid', NULL, PARAM_INT);    // Lesson Page ID
-    $action = optional_param('action');  // action to take
+    $action = optional_param('action', 'view', PARAM_ALPHA);  // action to take
+    $nothingtodisplay = false;
 
     if (! $cm = get_record('course_modules', 'id', $id)) {
         error('Course Module ID was incorrect');
@@ -24,7 +25,7 @@
     }
 
     if (! $attempts = get_records('lesson_attempts', 'lessonid', $lesson->id, 'timeseen')) {
-        error('Could not find any attempts for this lesson');
+        $nothingtodisplay = true;
     }
 
     if (! $students = get_records_sql("SELECT DISTINCT u.*
@@ -33,7 +34,7 @@
                                  WHERE a.lessonid = '$lesson->id' and
                                        u.id = a.userid
                                  ORDER BY u.lastname")) {
-        error("Error: could not find users");
+        $nothingtodisplay = true;
     }
 
 
@@ -48,7 +49,7 @@
 // make sure people are where they should be
     require_login($course->id, false);
 
-    if (!isteacheredit($course->id)) {
+    if (!isteacher($course->id)) {
         error("Must be teacher to view Reports");
     }
 
@@ -64,24 +65,37 @@
            '<input type="hidden" name="return" value="true" />'.
            '<input type="submit" value="'. get_string('editlessonsettings', 'lesson') .'" /></form>';
 
+    if ($action == 'view') {
+        $navigationend = get_string("reports", "lesson");
+    } else if ($action == 'detail' and !optional_param('userid', 0, PARAM_INT)) {
+        $navigationend = "<a href=\"report.php?id=$cm->id\">".get_string("reports", "lesson").'</a> -> '.get_string('detailedstats', 'lesson');
+    } else {
+        $navigationend = "<a href=\"report.php?id=$cm->id\">".get_string("reports", "lesson").'</a> -> '.get_string('review', 'lesson');
+    }
+
     print_header($course->shortname .': '. format_string($lesson->name), $course->fullname,
                  "$navigation <A HREF=index.php?id=$course->id>$strlessons</A> -> <a href=\"view.php?id=$cm->id\">".format_string($lesson->name,true)."</a>
-                 -> <a href=\"report.php?id=$cm->id\">".get_string("report", "lesson")."</a>",
-                  '', '', true, $button,
-                  navmenu($course, $cm));
+                 -> $navigationend", '', '', true, $button, navmenu($course, $cm));
+    
 
-    print_heading(get_string("lesson", "lesson", format_string($lesson->name)), "center", 5);
-
-    // navigational links
-    $detaillink = "<a href=\"report.php?id=$cm->id&amp;action=detail\">".get_string("detailedstats", "lesson")."</a>";
-    $overviewlink = "<a href=\"report.php?id=$cm->id\">".get_string("overview", "lesson")."</a>";
-    print_heading($overviewlink."&nbsp;&nbsp;&nbsp;".$detaillink);
-
+    if (!optional_param('userid', 0, PARAM_INT)) {
+        $currenttab = 'reports';
+        $mode = $action;
+    }
+    include('tabs.php');
+    
+    print_heading_with_help(format_string($lesson->name,true), "overview", "lesson");
+    
+    if ($nothingtodisplay) {
+        notify(get_string('nolessonattempts', 'lesson'));
+        print_footer($course);
+        exit();
+    }
 
     /**************************************************************************
     this action is for default view and overview view
     **************************************************************************/
-    if (empty($action) || $action == 'view') {
+    if ($action == 'view') {
         $studentdata = array();
 
         // build an array for output

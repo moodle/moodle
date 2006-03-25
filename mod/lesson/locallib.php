@@ -1110,11 +1110,9 @@ function lesson_print_tree_link_menu($page, $id, $showpages=false) {
     $output = "";
     $class = ' class="leftmenu_not_selected_link" ';
     
-    if (isset($_REQUEST['pageid'])) {
-        if($page->id == $_REQUEST['pageid']) { 
-            $class = ' class="leftmenu_selected_link" '; 
-        } 
-    }
+    if($page->id == optional_param('pageid', 0, PARAM_INT)) { 
+        $class = ' class="leftmenu_selected_link" '; 
+    } 
     
     $output .= '<li>';
     
@@ -1140,6 +1138,7 @@ function lesson_print_tree_link_menu($page, $id, $showpages=false) {
  * @param string $pixpath Path to the pictures.
  * @todo $pageid does not need to be passed.  Can be found in the function.  $pixpath is just
  *       $CFG->pixpath.  So $CFG should be declaired globally and be used instead of passed.
+ *       This function is only called once.  It should be removed and the code inside it moved to view.php
  */
 function lesson_print_tree($pageid, $lessonid, $cmid, $pixpath) {
     global $USER;

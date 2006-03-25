@@ -57,6 +57,11 @@
                  "$navigation <a href=index.php?id=$course->id>$strlessons</a> -> 
                   <a href=\"view.php?id=$cm->id\">".format_string($lesson->name,true)."</a>", "", "", true);
 
+    if ($action == 'continue' and isteacher($course->id)) {
+        $currenttab = 'navigation';
+        include('tabs.php');
+    }
+
     // include the appropriate action (check to make sure the file is there first)
     if (file_exists($CFG->dirroot.'/mod/lesson/action/'.$action.'.php')) {
         include($CFG->dirroot.'/mod/lesson/action/'.$action.'.php');    

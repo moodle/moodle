@@ -8,9 +8,6 @@
 
     confirm_sesskey();
 
-    if (empty($_GET['pageid'])) {
-        error("Delete: pageid missing");
-    }
     $pageid = required_param('pageid', PARAM_INT);
     if (!$thispage = get_record("lesson_pages", "id", $pageid)) {
         error("Delete: page record not found");

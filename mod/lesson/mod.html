@@ -62,9 +62,6 @@ if ($form->mode == "add") {
     if (!isset($form->maxtime)) {
         $form->maxtime = 20;
     }
-    if (!isset($form->tree)) {
-        $form->tree = 0;
-    }
     if (!isset($form->slideshow)) {
         $form->slideshow = 0;
     }
@@ -525,18 +522,6 @@ if ($form->mode == "add") {
     <td>
         <br/><?php print_heading(get_string("other", "lesson"), "left", 4); ?>
     </td><td></td>
-</tr>
-
-<tr>
-    <td align="right"><b><?php print_string("treeview", "lesson"); ?>:</b></td>
-    <td>
-    <?PHP 
-        $options = array();
-        $options[0] = get_string("no"); $options[1] = get_string("yes");
-        choose_from_menu($options, "tree", $form->tree, "");
-        helpbutton("tree", get_string("treeview", "lesson"), "lesson");
-    ?>
-    </td>
 </tr>
 
 <tr>

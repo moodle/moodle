@@ -14,9 +14,7 @@
         error("Edit page: page record not found");
     }
 
-    if (isset($_GET['qtype'])) {
-        $page->qtype = required_param('qtype', PARAM_INT);
-    }
+    $page->qtype = optional_param('qtype', $page->qtype, PARAM_INT);
 
     // set of jump array
     $jump = array();

@@ -88,7 +88,6 @@
         fwrite ($bf,full_tag("TIMED",4,false,$lesson->timed));
         fwrite ($bf,full_tag("MAXTIME",4,false,$lesson->maxtime));
         fwrite ($bf,full_tag("RETAKE",4,false,$lesson->retake));
-        fwrite ($bf,full_tag("TREE",4,false,$lesson->tree));
         fwrite ($bf,full_tag("MEDIAFILE",4,false,$lesson->mediafile));
         fwrite ($bf,full_tag("SLIDESHOW",4,false,$lesson->slideshow));
         fwrite ($bf,full_tag("WIDTH",4,false,$lesson->width));
@@ -404,7 +403,6 @@
             fwrite ($bf,full_tag("TIMED",5,false,$default->timed));
             fwrite ($bf,full_tag("MAXTIME",5,false,$default->maxtime));
             fwrite ($bf,full_tag("RETAKE",5,false,$default->retake));
-            fwrite ($bf,full_tag("TREE",5,false,$default->tree));
             fwrite ($bf,full_tag("SLIDESHOW",5,false,$default->slideshow));
             fwrite ($bf,full_tag("WIDTH",5,false,$default->width));
             fwrite ($bf,full_tag("HEIGHT",5,false,$default->height));

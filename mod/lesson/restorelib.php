@@ -73,7 +73,6 @@
             $lesson->timed = backup_todb($info['MOD']['#']['TIMED']['0']['#']);
             $lesson->maxtime = backup_todb($info['MOD']['#']['MAXTIME']['0']['#']);
             $lesson->retake = backup_todb($info['MOD']['#']['RETAKE']['0']['#']);
-            $lesson->tree = backup_todb($info['MOD']['#']['TREE']['0']['#']);
             $lesson->mediafile = backup_todb($info['MOD']['#']['MEDIAFILE']['0']['#']);
             $lesson->slideshow = backup_todb($info['MOD']['#']['SLIDESHOW']['0']['#']);
             $lesson->width = backup_todb($info['MOD']['#']['WIDTH']['0']['#']);
@@ -644,7 +643,6 @@
                 $default->timed = backup_todb($default_info['#']['TIMED']['0']['#']);
                 $default->maxtime = backup_todb($default_info['#']['MAXTIME']['0']['#']);
                 $default->retake = backup_todb($default_info['#']['RETAKE']['0']['#']);
-                $default->tree = backup_todb($default_info['#']['TREE']['0']['#']);
                 $default->slideshow = backup_todb($default_info['#']['SLIDESHOW']['0']['#']);
                 $default->width = backup_todb($default_info['#']['WIDTH']['0']['#']);
                 $default->height = backup_todb($default_info['#']['HEIGHT']['0']['#']);

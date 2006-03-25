@@ -89,9 +89,6 @@
     }
 
     // record answer (if necessary) and show response (if none say if answer is correct or not)
-    if (empty($_POST['pageid'])) {
-        error("Continue: pageid missing");
-    }
     $pageid = required_param('pageid', PARAM_INT);
     if (!$page = get_record("lesson_pages", "id", $pageid)) {
         error("Continue: Page record not found");
