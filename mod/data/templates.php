@@ -88,15 +88,9 @@
     if (($mytemplate = data_submitted($CFG->wwwroot.'/mod/data/templates.php')) && confirm_sesskey()){
 
         // Generate default template.
-        if (!empty($mytemplate->defaultform)){
-            data_generate_default_templates($data->id, $mode);
-
-        } else if (!empty($mytemplate->allforms)){    //generate all default templates
-            data_generate_default_template($data, 'singletemplate');
-            data_generate_default_template($data, 'listtemplate');
-            data_generate_default_template($data, 'addtemplate');
-            data_generate_default_template($data, 'rsstemplate');
-            add_to_log($course->id, 'data', 'templates def', "templates.php?id=$cm->id&amp;d=$data->id", $data->id, $cm->id);
+        if (!empty($mytemplate->defaultform)) {
+            data_generate_default_template($data, $mode);
+            add_to_log($course->id, 'data', 'templates def', "templates.php?id=$cm->id&amp;mode=$mode", $data->id, $cm->id);
         } else {
 
             $newtemplate->id = $data->id;
@@ -117,6 +111,15 @@
         }
     }
 
+/// If everything is empty then generate some defaults
+    if (empty($data->addtemplate) and empty($data->singletemplate) and 
+        empty($data->listtemplate) and empty($data->rsstemplate)){
+        data_generate_default_template($data, 'singletemplate');
+        data_generate_default_template($data, 'listtemplate');
+        data_generate_default_template($data, 'addtemplate');
+        data_generate_default_template($data, 'rsstemplate');
+    }
+
 /// Print the tabs.
     $currenttab = 'templates';
     include('tabs.php'); 
@@ -131,8 +134,6 @@
 
     $data = get_record('data', 'id', $d);    //reload because of possible updates so far!
 
-    echo '<div align="center"><input type="submit" name="allforms" value="'.get_string('autogenallforms','data').'" /></div>';
-        
     print_simple_box_start('center','80%');
     echo '<table cellpadding="4" cellspacing="0" border="0">';
 
@@ -156,6 +157,7 @@
     echo '<tr><td valign="top">';
     echo get_string('availabletags','data');
     helpbutton('tags', get_string('tags','data'), 'data');
+    echo '<br />';
     
     echo '<select name="fields1[]" size="10" ';
     
@@ -180,6 +182,7 @@
     echo '<option value="##approve##">##' .get_string('approve', 'data'). '##</option>';
     echo '<option value="##comments##">##' .get_string('comments', 'data'). '##</option>';
     echo '</select>';
+    echo '<br /><br /><br /><br /><input type="submit" name="defaultform" value="'.get_string('resettemplate','data').'" />';
     echo '</td>';
     
     echo '<td>';
@@ -202,9 +205,6 @@
 
     echo '<tr><td align="center" colspan="2">';
     echo '<input type="submit" value="'.get_string('savetemplate','data').'" />&nbsp;';
-    if (!$data->{$mode}){
-        echo '<input type="submit" name="defaultform" value="'.get_string('generatedefault','data').'" />';
-    }
     
     echo '</td></tr></table>';
     
