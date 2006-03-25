@@ -146,7 +146,7 @@
 
             add_to_log($course->id, 'data', 'update', "view.php?d=$data->id&amp;rid=$rid", $data->id, $cm->id);
 
-            redirect($CFG->wwwroot.'/mod/data/view.php?d='.$data->id);
+            redirect($CFG->wwwroot.'/mod/data/view.php?d='.$data->id.'&amp;rid='.$rid);
 
         } else {                                             /// Add some new records
 
