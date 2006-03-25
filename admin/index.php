@@ -243,7 +243,7 @@
     upgrade_activity_modules("$CFG->wwwroot/$CFG->admin/index.php");  // Return here afterwards
 
 /// Check all questiontype plugins and upgrade if necessary
-    upgrade_plugins('qtype', 'question/questiontypes', "$CFG->wwwroot/$CFG->admin/index.php");  // Return here afterwards
+    upgrade_plugins('qtype', 'question/type', "$CFG->wwwroot/$CFG->admin/index.php");  // Return here afterwards
 
 /// Upgrade backup/restore system if necessary
     require_once("$CFG->dirroot/backup/lib.php");
