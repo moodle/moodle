@@ -208,8 +208,8 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
         delete_records("question_numerical_units", "question", $questionid);
         if ($datasets = get_records('question_datasets', 'question', $questionid)) {
             foreach ($datasets as $dataset) {
-                delete_records('question_dataset_definitions', 'id', $datasets->datasetdefinition);
-                delete_records('question_dataset_items', 'definition', $datasets->datasetdefinition);
+                delete_records('question_dataset_definitions', 'id', $dataset->datasetdefinition);
+                delete_records('question_dataset_items', 'definition', $dataset->datasetdefinition);
             }
         }
         delete_records("question_datasets", "question", $questionid);
