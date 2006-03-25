@@ -32,6 +32,12 @@
     $fid     = optional_param('fid', 0 , PARAM_INT);          // update field id
     $newtype = optional_param('newtype','',PARAM_ALPHA);    // type of the new field
     $mode    = optional_param('mode','',PARAM_ALPHA);
+    $cancel  = optional_param('cancel', '');
+
+    if ($cancel) {
+        $mode = 'list';
+    }
+    
     
     if ($id) {
         if (! $cm = get_record('course_modules', 'id', $id)) {
@@ -219,8 +225,9 @@
 
         } else {    //else print quiz style list of fields
 
-            $table->head = array(get_string('action','data'), get_string('fieldname','data'), get_string('type','data'));
-            $table->align = array('center','left','right');
+            $table->head = array(get_string('action','data'), get_string('fieldname','data'), get_string('type','data'), get_string('fielddescription', 'data'));
+            $table->align = array('center','left','left','left');
+            $table->wrap = array(false,false,false,false);
 
             if ($fff = get_records('data_fields','dataid',$data->id,'id')){
                 foreach ($fff as $ff) {
@@ -241,9 +248,11 @@
                     '</td>',
 
 
-                    get_string($field->type, 'data').
-                    '&nbsp;'.
-                    $field->image());
+                    $field->image().'&nbsp;'.get_string($field->type, 'data'),
+
+                    shorten_text($field->field->description, 30) 
+                    
+                    );
                 }
             }
             print_table($table);

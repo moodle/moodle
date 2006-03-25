@@ -200,8 +200,7 @@ class data_field_base {     /// Base class for Database Field Types (see field/*
 
         echo '<div align="center">';
         echo '<input type="submit" value="'.$savebutton.'" />'."\n";
-        echo '<input type="submit" value="'.get_string('cancel').'" '.
-             'onclick="document.editfield.mode.value=\'void\';" />'."\n";
+        echo '<input type="submit" name="cancel" value="'.get_string('cancel').'" />'."\n";
         echo '</div">';
 
         echo '</form>';
