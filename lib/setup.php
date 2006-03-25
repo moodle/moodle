@@ -434,16 +434,19 @@ $CFG->httpswwwroot = $CFG->wwwroot;
     moodle_setlocale();
 
     if (!empty($CFG->opentogoogle)) {
-        if (empty($_SESSION['USER'])) {
+        if (empty($_SESSION['USER'])) {  // Ignore anyone logged in
             if (!empty($_SERVER['HTTP_USER_AGENT'])) {
                 if (strpos($_SERVER['HTTP_USER_AGENT'], 'Googlebot') !== false ) {
                     $USER = guest_user();
-                }
-                if (strpos($_SERVER['HTTP_USER_AGENT'], 'google.com') !== false ) {
+                } else if (strpos($_SERVER['HTTP_USER_AGENT'], 'google.com') !== false ) {
+                    $USER = guest_user();
+                } else if (strpos($_SERVER['HTTP_USER_AGENT'], 'Yahoo! Slurp') !== false ) {
+                    $USER = guest_user();
+                } else if (strpos($_SERVER['HTTP_USER_AGENT'], 'MSNBOT') !== false ) {
                     $USER = guest_user();
                 }
             }
-            if (empty($_SESSION['USER']) and !empty($_SERVER['HTTP_REFERER'])) {
+            if (empty($USER) && !empty($_SERVER['HTTP_REFERER'])) {
                 if (strpos($_SERVER['HTTP_REFERER'], 'google') !== false ) {
                     $USER = guest_user();
                 } else if (strpos($_SERVER['HTTP_REFERER'], 'altavista') !== false ) {
