@@ -364,12 +364,13 @@ function delete_question($questionid) {
         echo "Question with id $questionid does not exist.<br />";
     }
 
-    $states = get_records('question_states', 'question', $questionid);
-    $stateslist = implode(',', array_keys($states));
-
-    // delete questiontype-specific data
-    foreach ($QTYPES as $qtype) {
-        $qtype->delete_states($stateslist);
+    if ($states = get_records('question_states', 'question', $questionid)) {
+        $stateslist = implode(',', array_keys($states));
+    
+        // delete questiontype-specific data
+        foreach ($QTYPES as $qtype) {
+            $qtype->delete_states($stateslist);
+        }
     }
 
     // delete entries from all other question tables
