@@ -68,9 +68,9 @@
         error (get_string('noaccess','data'));
     }
 
-    if ($rid){    //editting a record, do you have access to edit this?
-        if (!isteacher($course->id) or !data_isowner($rid) or !confirm_sesskey()){
-            error (get_string('noaccess','data'));
+    if ($rid) {    // So do you have access?
+        if (!(isteacher($course->id) or data_isowner($rid)) or !confirm_sesskey() ) {
+            error(get_string('noaccess','data'));
         }
     }
 
