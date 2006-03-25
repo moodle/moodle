@@ -2539,7 +2539,7 @@ function print_simple_box_start($align='', $width='', $color='', $padding=5, $cl
     if ($align && 'center' == $align) {
     	$style_out .= 'margin-left:auto; margin-right:auto; ';
     }
-    elseif (!align || 'left' == $align) {
+    elseif (!$align || 'left' == $align) {
         $style_out .= 'float:left; ';
     }
     else {
