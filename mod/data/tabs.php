@@ -37,7 +37,19 @@
         $row[] = new tabobject('add', $CFG->wwwroot.'/mod/data/add.php?d='.$data->id, get_string('add','data'), '', true);
     }
     if (isteacher($course->id)) {
-        $row[] = new tabobject('templates', $CFG->wwwroot.'/mod/data/templates.php?d='.$data->id.'&amp;mode=singletemplate', get_string('templates','data'));
+        if ($currenttab == 'browse') {
+            if (get_user_preferences('data_perpage') == 1) {
+                $defaultemplate = 'singletemplate';
+            } else {
+                $defaultemplate = 'listtemplate';
+            }
+        } else if ($currenttab == 'add') {
+            $defaultemplate = 'addtemplate';
+        } else {
+            $defaultemplate = 'singletemplate';
+        }
+
+        $row[] = new tabobject('templates', $CFG->wwwroot.'/mod/data/templates.php?d='.$data->id.'&amp;mode='.$defaultemplate, get_string('templates','data'));
         $row[] = new tabobject('fields', $CFG->wwwroot.'/mod/data/field.php?d='.$data->id, get_string('fields','data'), '', true);
     }
 
