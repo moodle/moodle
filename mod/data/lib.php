@@ -310,7 +310,7 @@ class data_field_base {     /// Base class for Database Field Types (see field/*
  *       @param dataid                                                       *
  * output null                                                               *
  *****************************************************************************/
-function data_generate_default_template($data, $template, $recordid=0, $form=false, $update=true) {
+function data_generate_default_template(&$data, $template, $recordid=0, $form=false, $update=true) {
 
     if (!$data && !$template){
         return false;
@@ -355,6 +355,8 @@ function data_generate_default_template($data, $template, $recordid=0, $form=fal
             $newdata->{$template} = $str;
             if (!update_record('data', $newdata)) {
                 notify('Error updating template');
+            } else {
+                $data->{$template} = $str;
             }
         }
 
