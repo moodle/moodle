@@ -1,6 +1,6 @@
 <?PHP // $Id$ 
       // lesson.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005020101)
-     
+
 $string['accesscontrol'] = 'Access control';
 $string['actionaftercorrectanswer'] = 'Action after correct answer';
 $string['activitylink'] = 'Link to an activity';
@@ -111,6 +111,7 @@ $string['here'] = 'here';
 $string['highscore'] = 'High score';
 $string['highscores'] = 'High Scores';
 $string['hightime'] = 'High time';
+$string['importcount'] = 'Importing $a questions';
 $string['importppt'] = 'Import PowerPoint';
 $string['importquestions'] = 'Import questions';
 $string['insertedpage'] = 'Inserted page';
@@ -260,6 +261,7 @@ $string['timespentminutes'] = 'Time Spent (minutes)';
 $string['timetaken'] = 'Time taken';
 $string['topscorestitle'] = 'Top $a High Scores';
 $string['unseenpageinbranch'] = 'Unseen question within a branch';
+$string['unsupportedqtype'] = 'Unsupported question type ($a)!';
 $string['updatedpage'] = 'Updated page';
 $string['updatefailed'] = 'Update failed';
 $string['updatesuccess'] = 'Update successful';
@@ -284,6 +286,7 @@ $string['yourcurrentgradeis'] = 'Your current grade is $a';
 $string['yourgradeisnow'] = 'Your grade for the lesson has been changed to $a';
 $string['yourresponse'] = 'Your response';
 $string['youshouldview'] = 'You should view at least: $a';
+
 
 
 ?>
