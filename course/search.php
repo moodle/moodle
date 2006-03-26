@@ -8,6 +8,7 @@
     $search  = optional_param('search', '', PARAM_RAW);  // search words
     $page    = optional_param('page', 0, PARAM_INT);     // which page to show
     $perpage = optional_param('perpage', 10, PARAM_INT); // how many per page
+    $moveto  = optional_param('moveto', 0, PARAM_INT);   // move to category
 
     $search = trim(strip_tags($search)); // trim & clean raw searched string
 
@@ -103,7 +104,7 @@
         exit;
     }
 
-    if (isset($moveto) and $data = data_submitted() and confirm_sesskey()) {   // Some courses are being moved
+    if (!empty($moveto) and $data = data_submitted() and confirm_sesskey()) {   // Some courses are being moved
     
         if (! $destcategory = get_record("course_categories", "id", $data->moveto)) {
             error("Error finding the category");
