@@ -555,12 +555,12 @@ table.message_search_results td {
 
 .tablink a:link,
 .tablink a:visited {
-  color:#000066;
+  color:#AAAAFF;
 }
 
 .selected .tablink a:link,
 .selected .tablink a:visited {
-  color:#000000;
+  color:#000066;
 }
 .tabs .side,
 .tabrow td {
