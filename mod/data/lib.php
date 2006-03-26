@@ -1152,7 +1152,8 @@ function data_print_comment($data, $commentid) {
     echo '</td><td class="content" align="left">'."\n";
 
     // Print whole message
-    echo format_text($comment->content);
+    $options->para = false;
+    echo format_text($comment->content, FORMAT_MOODLE, $options);
 
 /// Commands
 

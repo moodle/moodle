@@ -131,7 +131,7 @@
         echo '<div style="clear:both;"></div>';
     }
     
-    if ($data->intro and empty($sort) and empty($search) and empty($page)) {
+    if ($data->intro and empty($sort) and empty($search) and empty($page) and empty($rid)) {
         print_simple_box(format_text($data->intro), 'center', '70%', '', 5, 'generalbox', 'intro');
     }
 
@@ -345,8 +345,7 @@
     if (!$records = get_records_sql($sql)){
         if ($search){
             notify(get_string('nomatch','data'));
-        }
-        else {
+        } else {
             notify(get_string('norecords','data'));
         }
             
