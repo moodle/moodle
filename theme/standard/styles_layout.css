@@ -1082,47 +1082,44 @@ body#message-messages {
  *** Question
  ***/
 
-#mod-quiz-attempt #page {
-	text-align: center;
-}
-.mod-quiz .question {
+.question {
 	width: 90%;
 	text-align: left;
 	margin: 10px auto 15px auto;
 	border: 1px solid;
 	clear: both;
 }
-.mod-quiz .question .info {
+.question .info {
 	float: left;
 	margin: 5px;
 	width: 8%;
 }
-.mod-quiz .question .grade {
+.question .grade {
 	margin-top: 0.5em;
 }
-.mod-quiz .question .content {
+.question .content {
 	float: right;
 	margin: 5px;
 	width: 88%;
 }
-.mod-quiz .question .qtext {
+.question .qtext {
 	margin-bottom: 1.5em;
 }
-.mod-quiz .question .ablock {
+.question .ablock {
 	margin: 0.7em 0 0.3em 0;
 }
-.mod-quiz .question .prompt {
+.question .prompt {
 	float: left;
 	width: 15%;
 	height: 2em;
 	padding-top: 0.3em;
 }
-.mod-quiz .question .answer {
+.question .answer {
 	float: right;
 	width: 83%;
 	margin-bottom: 0.5em;
 }
-.mod-quiz .question .submit {
+.question .submit {
 	position: relative;
 	clear: both;
 	float: left;
@@ -1131,8 +1128,8 @@ body#message-messages {
 * html .question .submit {
 	float: none;
 }
-.mod-quiz .question .c0,
-.mod-quiz .question .c1 {
+.question .c0,
+.question .c1 {
 	padding: 0.3em 0 0.3em 0.3em;
 	vertical-align: top;
 }
@@ -1160,8 +1157,8 @@ body#message-messages {
 	padding: 0 0 0.3em 0.3em;
   border: 1px solid;
 }	
-.mod-quiz .question .grading, 
-.mod-quiz .question .history {
+.question .grading, 
+.question .history {
 	float: right;
 	margin: 5px;
 	width: 88%;
@@ -1670,10 +1667,10 @@ body#mod-forum-search .introcontent {
  *** Modules: Quiz
  ***/
 
-/* .feedbacktext {
-  display:block;
-  text-align:right;
-} */
+
+#mod-quiz-attempt #page {
+	text-align: center;
+}
 
 body#mod-quiz-report table#attempts,
 body#mod-quiz-report table#commands,
