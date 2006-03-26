@@ -41,7 +41,6 @@
                 $newrating->userid = $USER->id;
                 $newrating->recordid = $recordid;
                 $newrating->rating = $rating;
-                print_object($newrating);
                 if (! insert_record("data_ratings", $newrating)) {
                     error("Could not insert a new rating ($recordid = $rating)");
                 }
