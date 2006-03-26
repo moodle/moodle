@@ -45,7 +45,7 @@ class data_field_url extends data_field_base {
         $url  = empty($url) ?  'http://' : $url;
 
         $str = '<div title="'.$this->field->description.'">';
-        if (!empty($this->field->param1)) {
+        if (!empty($this->field->param1) and empty($this->field->param2)) {
             $str .= '<table><tr><td align="right">';
             $str .= get_string('url','data').':</td><td><input type="text" name="field_'.$this->field->id.'_0" id="field_'.$this->field->id.'_0" value="'.$url.'" size="60" /></td></tr>';
             $str .= '<tr><td align="right">'.get_string('text','data').':</td><td><input type="text" name="field_'.$this->field->id.'_1" id="field_'.$this->field->id.'_1" value="'.$text.'" size="60" /></td></tr>';
@@ -62,6 +62,14 @@ class data_field_url extends data_field_base {
         if ($content = get_record('data_content', 'fieldid', $this->field->id, 'recordid', $recordid)){
             $url = empty($content->content)? '':$content->content;
             $text = empty($content->content1)? '':$content->content1;
+
+            if (empty($url) or ($url == 'http://')) {
+                return '';
+            }
+
+            if (!empty($this->field->param2)) { // param2 forces the text to something
+                $text = $this->field->param2;
+            }
             
             if ($this->field->param1) { // param1 defines whether we want to autolink the url.
                 if (!empty($text)) {

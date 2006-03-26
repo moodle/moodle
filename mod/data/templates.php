@@ -178,6 +178,7 @@
     // Print special tags.
     echo '<option value="##edit##">##' .get_string('edit', 'data'). '##</option>';
     echo '<option value="##more##">##' .get_string('more', 'data'). '##</option>';
+    echo '<option value="##moreurl##">##' .get_string('moreurl', 'data'). '##</option>';
     echo '<option value="##delete##">##' .get_string('delete', 'data'). '##</option>';
     echo '<option value="##approve##">##' .get_string('approve', 'data'). '##</option>';
     echo '<option value="##comments##">##' .get_string('comments', 'data'). '##</option>';

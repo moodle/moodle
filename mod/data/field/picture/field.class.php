@@ -80,27 +80,31 @@ class data_field_picture extends data_field_file {
                 $contents[1] = $content->content1;
             }
 
+            if (empty($contents[0])) {   // Nothing to show
+                return '';
+            }
+
             $alt = empty($contents[1])? '':$contents[1];
             $title = empty($contents[1])? '':$contents[1];
-            $src = empty($contents[0])? '':$contents[0];
+            $src = $contents[0];
 
             $path = $this->data->course.'/'.$CFG->moddata.'/data/'.$this->data->id.'/'.$this->field->id.'/'.$recordid;
 
             if ($CFG->slasharguments) {
-                $source = $CFG->wwwroot.'/file.php/'.$path;
+                $source = $CFG->wwwroot.'/file.php/'.$path.'/'.$src;
             } else {
-                $source = $CFG->wwwroot.'/file.php?file=/'.$path;
+                $source = $CFG->wwwroot.'/file.php?file=/'.$path.'/'.$src;
             }
 
             if ($template == 'listtemplate') {
                 $width = $this->field->param4 ? ' width="'.$this->field->param4.'" ' : ' ';
                 $height = $this->field->param5 ? ' height="'.$this->field->param5.'" ' : ' ';
                 $str = '<a href="view.php?d='.$this->field->dataid.'&amp;rid='.$recordid.'"><img '.
-                     $width.$height.' src="'.$source.'/'.$src.'" alt="'.$alt.'" title="'.$title.'" border="0" /></a>';
+                     $width.$height.' src="'.$source.'" alt="'.$alt.'" title="'.$title.'" border="0" /></a>';
             } else {
                 $width = $this->field->param1 ? ' width="'.$this->field->param1.'" ':' ';
                 $height = $this->field->param2 ? ' height="'.$this->field->param2.'" ':' ';
-                $str = '<img '.$width.$height.' src="'.$source.'/'.$src.'" alt="'.$alt.'" title="'.$title.'" />';
+                $str = '<a href="'.$source.'"><img '.$width.$height.' src="'.$source.'" alt="'.$alt.'" title="'.$title.'" border="0"/></a>';
             }
             return $str;
         }

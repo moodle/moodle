@@ -828,12 +828,8 @@ function data_print_template($records, $data, $search, $template, $sort, $page=0
 
         $record = get_record('data_records','id',$record->id);
         ///replacing special tags (##Edit##, ##Delete##, ##More##)
-        $patterns[]='/\#\#Edit\#\#/i';
-        $patterns[]='/\#\#Delete\#\#/i';
-        $patterns[]='/\#\#More\#\#/i';
-        $patterns[]='/\#\#Approve\#\#/i';
-        $patterns[]='/\#\#Comment\#\#/i';
 
+        $patterns[]='/\#\#Edit\#\#/i';
         if (data_isowner($record->id) or isteacheredit($course->id)){
             $replacement[] = '<a href="'.$CFG->wwwroot.'/mod/data/add.php?d='
                              .$data->id.'&amp;rid='.$record->id.'&amp;sesskey='.sesskey().'"><img src="'.$CFG->pixpath.'/t/edit.gif" height="11" width="11" border="0" alt="'.get_string('edit').'" /></a>';
@@ -841,20 +837,28 @@ function data_print_template($records, $data, $search, $template, $sort, $page=0
             $replacement[] = '';
         }
 
+        $patterns[]='/\#\#Delete\#\#/i';
         if (data_isowner($record->id) or isteacheredit($course->id)){
             $replacement[] = '<a href="'.$CFG->wwwroot.'/mod/data/view.php?d='
-                             .$data->id.'&amp;delete='.$record->id.'&amp;sesskey='.sesskey().'"><img src="'.$CFG->pixpath.'/t/delete.gif" height="11" width="11" border="0" alt="'.get_string('delete').'" /></a>';
+                             .$data->id.'&amp;rid='.$record->id.'&amp;delete='.$record->id.'&amp;sesskey='.sesskey().'"><img src="'.$CFG->pixpath.'/t/delete.gif" height="11" width="11" border="0" alt="'.get_string('delete').'" /></a>';
         }else {
             $replacement[] = '';
         }
+        $patterns[]='/\#\#More\#\#/i';
         $replacement[] = '<a href="'.$CFG->wwwroot.'/mod/data/view.php?d='.$data->id.'&amp;rid='.$record->id.'&amp;search='.$search.'&amp;sort='.$sort.'&amp;order='.$order.'&amp;group='.$group.'&amp;"><img src="'.$CFG->pixpath.'/i/search.gif" height="11" width="11" border="0" alt="'.get_string('more').'" /></a>';
 
+        $patterns[]='/\#\#MoreURL\#\#/i';
+        $replacement[] = $CFG->wwwroot.'/mod/data/view.php?d='.$data->id.'&amp;rid='.$record->id.'&amp;search='.$search.'&amp;sort='.$sort.'&amp;order='.$order.'&amp;group='.$group;
+
+
+        $patterns[]='/\#\#Approve\#\#/i';
         if (isteacher($course->id) && ($data->approval) && (!$record->approved)){
-            $replacement[] = data_print_approve_button($record->id, $data->id, $page, $rid, $search, $sort, $order);
-        }else {
+            $replacement[] = '<a href="'.$CFG->wwwroot.'/mod/data/view.php?d='.$data->id.'&amp;rid='.$record->id.'&amp;approve='.$record->id.'&search='.$search.'&amp;sort='.$sort.'&amp;order='.$order.'&amp;group='.$group.'&amp;sesskey='.sesskey().'"><img src="'.$CFG->pixpath.'/i/show.gif" height="11" width="11" border="0" alt="'.get_string('approve').'" /></a>';
+        } else {
             $replacement[] = '';
         }
         
+        $patterns[]='/\#\#Comment\#\#/i';
         if (($template == 'listtemplate') && ($data->comments)) {
             $comments = count_records('data_comments','recordid',$record->id);
             $replacement[] = '<a href="comment.php?recordid='.$record->id.'&amp;d='.$data->id.'&amp;search='.$search.'&amp;sort='.$sort.'&amp;order='.$order.'&amp;group='.$group.'&amp;page='.$page.'">'.$comments.' '.get_string('comment','data').'</a>';
@@ -884,7 +888,6 @@ function data_print_template($records, $data, $search, $template, $sort, $page=0
             data_print_comments($data, $record, $search, $template, $sort, $page, $rid, $order, $group);
         }
 
-        //if this record is not yet approved, and database requires approval, print silly button
     }
 }
 
@@ -899,8 +902,9 @@ function data_print_template($records, $data, $search, $template, $sort, $page=0
  ************************************************************************/
 function data_print_preference_form($data, $perpage, $search, $sort='', $order='ASC'){
     echo '<br />';
-    echo '<form name="options" action="view.php?d='.$data->id.'&amp;search='.s($search).'&amp;sort='.s($sort).'&amp;order='.s($order).'" method="post">';
-    echo '<input type="hidden" id="updatepref" name="updatepref" value="1" />';
+    echo '<form name="options" action="view.php" method="get">';
+    echo '<input type="hidden" name="d" value="'.$data->id.'" />';
+    echo '<input type="hidden" name="updatepref" value="1" />';
     echo '<table id="sortsearch" align="center">';
     echo '<tr>'.
          '<td class="c0 r1">'.get_string('pagesize','data').':</td>';
@@ -945,27 +949,10 @@ function data_print_preference_form($data, $perpage, $search, $sort='', $order='
     echo '<td colspan="2" align="center" class="r3">';
     echo '<input type="submit" value="'.get_string('savesettings','data').'" />';
     echo '</td></tr></table>';
+    echo '<input type="hidden" name="updatepref" value="1" />';
     echo '</form>';
 }
 
-//silly function that prints a button
-function data_print_approve_button($recordid, $d, $page='0', $rid='0', $search='', $sort='', $order='') {
-    $str= '<div align="center"><form action="approve.php" method="get">';
-    $str.= '<input type="hidden" name="d" value="'.$d.'" />';
-    $str.= '<input type="hidden" name="rid" value="'.$rid.'" />';
-    $str.= '<input type="hidden" name="page" value="'.$page.'" />';
-    $str.= '<input type="hidden" name="search" value="'.$search.'" />';
-    $str.= '<input type="hidden" name="sort" value="'.$sort.'" />';
-    $str.= '<input type="hidden" name="order" value="'.$order.'" />';
-    $str.= '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
-    $str.= '<input type="hidden" name="recordid" value="'.$recordid.'" />';
-    $str.= '<input type="submit" value="'.get_string('approve').'" />';
-    $str.= '</form></div>';
-    return $str;
-}
-
-
-//silly function that prints the a form to do ratings
 function data_print_ratings($data, $record) {
     global $USER, $course;
     $ratingsmenuused = false;
@@ -1118,7 +1105,6 @@ function data_print_comments($data, $record , $search, $template, $sort, $page=0
         }
     }
     
-    //prints silly comment form
     echo '<p /><div align="center"><form method="post" action="comment.php">';
     echo '<input type="hidden" name="mode" value="add" />';
     echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';

@@ -35,6 +35,8 @@
     $search = optional_param('search','',PARAM_NOTAGS);    //search string
     $page = optional_param('page', 0, PARAM_INT);    //offset of the current record
     $rid = optional_param('rid', 0, PARAM_INT);    //record id
+    $approve = optional_param('approve', 0, PARAM_INT);    //approval recordid
+    $delete = optional_param('delete', 0, PARAM_INT);    //delete recordid
     $perpagemenu = optional_param('perpage1', 0, PARAM_INT);    //value from drop down
     $sort = optional_param('sort',0,PARAM_INT);    //sort by field
     $order = optional_param('order','ASC',PARAM_ALPHA);    //sort order
@@ -71,7 +73,7 @@
     }
     
     //set user preference if available
-    if (isset($_POST['updatepref'])){
+    if (isset($_GET['updatepref'])){
    
         if (!$perpage = $perpagemenu){    //if menu not in use, use the text field
             $perpage = (int)optional_param('perpage',10);
@@ -156,16 +158,23 @@
     $currenttab = 'browse';
     include('tabs.php'); 
 
-/// Print the browsing interface
+/// Approve any requested records
 
-    if (optional_param('approved','0',PARAM_INT)) {
-        print_heading(get_string('recordapproved','data'));
+    if ($approve && confirm_sesskey() && isteacher($course->id)) {
+        if ($record = get_record('data_records', 'id', $approve)) {   // Need to check this is valid
+            if ($record->dataid == $data->id) {                       // Must be from this database
+                $newrecord->id = $record->id;
+                $newrecord->approved = 1;
+                if (update_record('data_records', $newrecord)) {
+                    notify(get_string('recordapproved','data'), 'notifysuccess');
+                }
+            }
+        }
     }
 
-    /***************************
-     * code to delete a record *
-     ***************************/
-    if (($delete = optional_param('delete',0,PARAM_INT)) && confirm_sesskey()) {
+/// Delete any requested records
+
+    if ($delete && confirm_sesskey()) {
         if (isteacheredit($course) or data_isowner($delete)){
             if ($confirm = optional_param('confirm',0,PARAM_INT)) {
                 if ($contents = get_records('data_content','recordid', $delete)) {
@@ -193,7 +202,7 @@
         }
     }
 
-    //if not editting teacher, check whether user has sufficient records to view
+// If not editting teacher, check whether user has sufficient records to view
     if (!isteacheredit($course->id) and data_numentries($data) < $data->requiredentriestoview){
         notify (($data->requiredentriestoview - data_numentries($data)).'&nbsp;'.get_string('insufficiententries','data'));
         echo '</td></tr></table>';
