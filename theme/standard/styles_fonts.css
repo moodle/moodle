@@ -571,11 +571,11 @@ body#grade-index .grades .header {
  *** Question
  ***/
 
-.question .no {
+.que .no {
 	font-size: 1.2em;
 	font-weight: bold;
 }
-.question .grade {
+.que .grade {
 	font-size: 0.8em;
 }
 

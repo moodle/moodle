@@ -1082,54 +1082,54 @@ body#message-messages {
  *** Question
  ***/
 
-.question {
+.que {
 	width: 90%;
 	text-align: left;
 	margin: 10px auto 15px auto;
 	border: 1px solid;
 	clear: both;
 }
-.question .info {
+.que .info {
 	float: left;
 	margin: 5px;
 	width: 8%;
 }
-.question .grade {
+.que .grade {
 	margin-top: 0.5em;
 }
-.question .content {
+.que .content {
 	float: right;
 	margin: 5px;
 	width: 88%;
 }
-.question .qtext {
+.que .qtext {
 	margin-bottom: 1.5em;
 }
-.question .ablock {
+.que .ablock {
 	margin: 0.7em 0 0.3em 0;
 }
-.question .prompt {
+.que .prompt {
 	float: left;
 	width: 15%;
 	height: 2em;
 	padding-top: 0.3em;
 }
-.question .answer {
+.que .answer {
 	float: right;
 	width: 83%;
 	margin-bottom: 0.5em;
 }
-.question .submit {
+.que .submit {
 	position: relative;
 	clear: both;
 	float: left;
 }
 /* MSIE Hack */
-* html .question .submit {
+* html .que .submit {
 	float: none;
 }
-.question .c0,
-.question .c1 {
+.que .c0,
+.que .c1 {
 	padding: 0.3em 0 0.3em 0.3em;
 	vertical-align: top;
 }
@@ -1157,8 +1157,8 @@ body#message-messages {
 	padding: 0 0 0.3em 0.3em;
   border: 1px solid;
 }	
-.question .grading, 
-.question .history {
+.que .grading, 
+.que .history {
 	float: right;
 	margin: 5px;
 	width: 88%;

@@ -555,13 +555,13 @@ table.message_search_results td {
  *** Question
  ***/
 
-.question {
+.que {
 	border-color: #DDD;
 }
-.question .r0 {
+.que .r0 {
 	background-color: #F5F5F5;
 }
-.question .r1 {
+.que .r1 {
 	background-color: #EEE;
 }
 .calculated .answer,
