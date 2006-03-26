@@ -225,22 +225,16 @@
 
         } else {    //else print quiz style list of fields
 
-            $table->head = array(get_string('action','data'), get_string('fieldname','data'), get_string('type','data'), get_string('fielddescription', 'data'));
-            $table->align = array('center','left','left','left');
+            $table->head = array(get_string('fieldname','data'), get_string('type','data'), get_string('fielddescription', 'data'), get_string('action','data'));
+            $table->align = array('left','left','left', 'center');
             $table->wrap = array(false,false,false,false);
 
             if ($fff = get_records('data_fields','dataid',$data->id,'id')){
                 foreach ($fff as $ff) {
                     $field = data_get_field($ff, $data);
 
-                    /// Print Action Column
                     $table->data[] = array(
 
-                    '<a href="field.php?d='.$data->id.'&amp;mode=display&amp;fid='.$field->field->id.'&amp;sesskey='.sesskey().'">'.
-                    '<img src="'.$CFG->pixpath.'/t/edit.gif" height="11" width="11" border="0" alt="'.get_string('edit').'" /></a>'.
-                    '&nbsp;'.
-                    '<a href="field.php?d='.$data->id.'&amp;mode=delete&amp;fid='.$field->field->id.'&amp;sesskey='.sesskey().'">'.
-                    '<img src="'.$CFG->pixpath.'/t/delete.gif" height="11" width="11" border="0" alt="'.get_string('delete').'" /></a>',
 
 
                     '<a href="field.php?mode=display&amp;d='.$data->id.
@@ -250,7 +244,13 @@
 
                     $field->image().'&nbsp;'.get_string($field->type, 'data'),
 
-                    shorten_text($field->field->description, 30) 
+                    shorten_text($field->field->description, 30),
+
+                    '<a href="field.php?d='.$data->id.'&amp;mode=display&amp;fid='.$field->field->id.'&amp;sesskey='.sesskey().'">'.
+                    '<img src="'.$CFG->pixpath.'/t/edit.gif" height="11" width="11" border="0" alt="'.get_string('edit').'" /></a>'.
+                    '&nbsp;'.
+                    '<a href="field.php?d='.$data->id.'&amp;mode=delete&amp;fid='.$field->field->id.'&amp;sesskey='.sesskey().'">'.
+                    '<img src="'.$CFG->pixpath.'/t/delete.gif" height="11" width="11" border="0" alt="'.get_string('delete').'" /></a>'
                     
                     );
                 }

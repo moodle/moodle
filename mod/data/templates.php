@@ -83,8 +83,12 @@
                         '', '', true, '', navmenu($course, $cm), '', $bodytag);
     
     print_heading(format_string($data->name));
-    
-     /// Processing submitted data, i.e updating form.
+
+/// Print the tabs.
+    $currenttab = 'templates';
+    include('tabs.php'); 
+
+/// Processing submitted data, i.e updating form.
     if (($mytemplate = data_submitted($CFG->wwwroot.'/mod/data/templates.php')) && confirm_sesskey()){
 
         // Generate default template.
@@ -105,10 +109,14 @@
 
             // Check for multiple tags, only need to check for add template.
             if ($mode != 'addtemplate' or data_tags_check($data->id, $newtemplate->{$mode})){
-                update_record('data',$newtemplate);
+                if (update_record('data',$newtemplate)) {
+                    notify(get_string('templatesaved','data'), 'notifysuccess');
+                }
             }
             add_to_log($course->id, 'data', 'templates saved', "templates.php?id=$cm->id&amp;d=$data->id", $data->id, $cm->id);
         }
+    } else {
+        echo '<div class="littleintro" align="center">'.get_string('header'.$mode,'data').'</div>';
     }
 
 /// If everything is empty then generate some defaults
@@ -120,13 +128,7 @@
         data_generate_default_template($data, 'rsstemplate');
     }
 
-/// Print the tabs.
-    $currenttab = 'templates';
-    include('tabs.php'); 
-
 /// Print the browsing interface.
-
-    echo '<div align="center">'.get_string('header'.$mode,'data').'</div><br />';
 
     echo '<form name="tempform" action="templates.php?d='.$data->id.'&amp;mode='.$mode.'" method="post">';
     echo '<input name="sesskey" value="'.sesskey().'" type="hidden" />';
