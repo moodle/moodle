@@ -33,7 +33,7 @@
                         $CFG->prefix.'data_fields AS df, ' .
                         $CFG->prefix.'data_records AS dr, ' .
                         $CFG->prefix.'data_content AS dc ' .
-                            "WHERE d.course = '$courseid' " .
+                            "WHERE (d.course = '$courseid' or d.course = '".SITEID."')" .
                             'AND d.id = df.dataid ' .
                             'AND df.id = dc.fieldid ' .
                             'AND d.id = dr.dataid ' .
