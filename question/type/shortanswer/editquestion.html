@@ -102,7 +102,7 @@
     <td align="right"><b><?php  echo get_string("answer", "quiz")." $i";  ?>:</b></td>
     <td align="left">
         <?php
-            if (empty($answers[$i-1]->answer)) {
+            if ($answers[$i-1]->answer === '') {
                 $answertext   = '';
                 $fractionval  = 0;
                 $feedbacktext = '';
