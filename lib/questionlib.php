@@ -603,60 +603,28 @@ function get_question_states(&$questions, $cmoptions, $attempt) {
                 $states[$i]->last_graded->responses = array('' => '');
             }
         } else {
-            // Create a new state object
-            if ($cmoptions->attemptonlast and $attempt->attempt > 1 and !$attempt->preview) {
-                // build on states from last attempt
-                if (!$lastattemptid = get_field('quiz_attempts', 'uniqueid', 'quiz', $attempt->quiz, 'userid', $attempt->userid, 'attempt', $attempt->attempt-1)) {
-                    error('Could not find previous attempt to build on');
-                }
-                // Load the last graded state for the question
-                $sql = "SELECT $statefields".
-                       "  FROM {$CFG->prefix}question_states s,".
-                       "       {$CFG->prefix}question_sessions n".
-                       " WHERE s.id = n.newgraded".
-                       "   AND n.attemptid = '$lastattemptid'".
-                       "   AND n.questionid = '$i'";
-                if (!$states[$i] = get_record_sql($sql)) {
-                    error('Could not find state for previous attempt to build on');
-                }
-                restore_question_state($questions[$i], $states[$i]);
-                $states[$i]->attempt = $attempt->uniqueid;
-                $states[$i]->question = (int) $i;
-                $states[$i]->seq_number = 0;
-                $states[$i]->timestamp = $attempt->timestart;
-                $states[$i]->event = ($attempt->timefinish) ? QUESTION_EVENTCLOSE : QUESTION_EVENTOPEN;
-                $states[$i]->grade = 0;
-                $states[$i]->raw_grade = 0;
-                $states[$i]->penalty = 0;
-                $states[$i]->sumpenalty = 0;
-                $states[$i]->changed = true;
-                $states[$i]->last_graded = clone($states[$i]);
-                $states[$i]->last_graded->responses = array('' => '');
+            // create a new empty state
+            $states[$i] = new object;
+            $states[$i]->attempt = $attempt->uniqueid;
+            $states[$i]->question = (int) $i;
+            $states[$i]->seq_number = 0;
+            $states[$i]->timestamp = $attempt->timestart;
+            $states[$i]->event = ($attempt->timefinish) ? QUESTION_EVENTCLOSE : QUESTION_EVENTOPEN;
+            $states[$i]->grade = 0;
+            $states[$i]->raw_grade = 0;
+            $states[$i]->penalty = 0;
+            $states[$i]->sumpenalty = 0;
+            $states[$i]->responses = array('' => '');
+            // Prevent further changes to the session from incrementing the
+            // sequence number
+            $states[$i]->changed = true;
 
-            } else {
-                // create a new empty state
-                $states[$i] = new object;
-                $states[$i]->attempt = $attempt->uniqueid;
-                $states[$i]->question = (int) $i;
-                $states[$i]->seq_number = 0;
-                $states[$i]->timestamp = $attempt->timestart;
-                $states[$i]->event = ($attempt->timefinish) ? QUESTION_EVENTCLOSE : QUESTION_EVENTOPEN;
-                $states[$i]->grade = 0;
-                $states[$i]->raw_grade = 0;
-                $states[$i]->penalty = 0;
-                $states[$i]->sumpenalty = 0;
-                $states[$i]->responses = array('' => '');
-                // Prevent further changes to the session from incrementing the
-                // sequence number
-                $states[$i]->changed = true;
-
-                // Create the empty question type specific information
-                if (!$QTYPES[$questions[$i]->qtype]
-                 ->create_session_and_responses($questions[$i], $states[$i], $cmoptions, $attempt)) {
-                    return false;
-                }
-                $states[$i]->last_graded = clone($states[$i]);
+            // Create the empty question type specific information
+            if (!$QTYPES[$questions[$i]->qtype]
+             ->create_session_and_responses($questions[$i], $states[$i], $cmoptions, $attempt)) {
+                return false;
             }
+            $states[$i]->last_graded = clone($states[$i]);
         }
     }
     return $states;
@@ -906,7 +874,7 @@ function regrade_question_in_attempt($question, $attempt, $cmoptions, $verbose=f
             }
 
             $replaystate->id = $states[$j]->id;
-            $replaystate->update = true;
+            $replaystate->update = true; // This will ensure that the existing database entry is updated rather than a new one created
             save_question_session($question, $replaystate);
         }
         if ($verbose) {

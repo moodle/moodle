@@ -293,6 +293,41 @@
         }
     }
 
+    // If the new attempt is to be based on a previous attempt copy responses over
+    if ($newattempt and $attempt->attempt > 1 and $quiz->attemptonlast and !$attempt->preview) {
+        // Find the previous attempt
+        if (!$lastattemptid = get_field('quiz_attempts', 'uniqueid', 'quiz', $attempt->quiz, 'userid', $attempt->userid, 'attempt', $attempt->attempt-1)) {
+            error('Could not find previous attempt to build on');
+        }
+        // For each question find the responses from the previous attempt and save them to the new session
+        foreach ($questions as $i => $question) {
+            // Load the last graded state for the question
+            $statefields = 'n.questionid as question, s.*, n.sumpenalty';
+            $sql = "SELECT $statefields".
+                   "  FROM {$CFG->prefix}question_states s,".
+                   "       {$CFG->prefix}question_sessions n".
+                   " WHERE s.id = n.newgraded".
+                   "   AND n.attemptid = '$lastattemptid'".
+                   "   AND n.questionid = '$i'";
+            if (!$laststate = get_record_sql($sql)) {
+                // Only restore previous responses that have been graded
+                continue;
+            }
+            // Restore the state so that the responses will be restored
+            restore_question_state($questions[$i], $laststate);
+            // prepare the previous responses for new processing
+            $action = new stdClass;
+            $action->responses = $laststate->responses;
+            $action->timestamp = $laststate->timestamp;
+            $action->event = QUESTION_EVENTOPEN;
+
+            // Process these responses ...
+            question_process_responses($questions[$i], $states[$i], $action, $quiz, $attempt);
+            // ... and save the new states
+            save_question_session($questions[$i], $states[$i]);
+        }
+    }
+
 
 /// Process form data /////////////////////////////////////////////////
 
