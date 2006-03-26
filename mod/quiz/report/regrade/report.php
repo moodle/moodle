@@ -12,6 +12,22 @@ class quiz_report extends quiz_default_report {
     /// Print header
         $this->print_header_and_tabs($cm, $course, $quiz, $reportmode="regrade");
 
+    /// Print heading
+        print_heading(get_string('regradingquiz', 'quiz', format_string($quiz->name)));
+
+    // Moodle 1.5 had a bug when regrading quizzes with attemptonlast set. This is
+    // fixed in Moodle 1.6
+        if ($quiz->attemptonlast) {
+            notify("Quizzes in which new attempts are based on the previous one can not
+                be regraded in Moodle 1.5. Please upgrade to Moodle 1.6.");
+            return true;
+        }
+
+    // Print explanation of output
+        echo '<center>';
+        print_string('regradedisplayexplanation', 'quiz');
+        echo '<center>';
+
     /// Fetch all attempts
         if (!$attempts = get_records_select('quiz_attempts', "quiz = '$quiz->id' AND preview = 0")) {
             print_heading(get_string('noattempts', 'quiz'));
@@ -28,12 +44,6 @@ class quiz_report extends quiz_default_report {
             error("Failed to get questions for regrading!");
         }
         quiz_get_question_options($questions);
-
-    /// Print heading
-        print_heading(get_string('regradingquiz', 'quiz', $quiz));
-        echo '<center>';
-        print_string('regradedisplayexplanation', 'quiz');
-        echo '<center>';
 
     /// Loop through all questions and all attempts and regrade while printing progress info
         foreach ($questions as $question) {
