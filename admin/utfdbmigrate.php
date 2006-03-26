@@ -206,6 +206,7 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
                 if (isset($host[1])) $cmd .= " -p {$host[1]}";
             }
             $cmds[] = $cmd;
+            $cmds[] = 'grep -v "COMMENT ON SCHEMA"';
             $cmds[] = 'iconv -f UTF-8 -t UTF-8 -c';
             $cmd = "PGPASSWORD={$_SESSION['newpostgresdb']->dbpass} PGDATABASE={$_SESSION['newpostgresdb']->dbname} psql -q -U {$_SESSION['newpostgresdb']->dbuser} -v ON_ERROR_STOP=1$cluster";
             if ($_SESSION['newpostgresdb']->dbhost)  {
@@ -217,10 +218,11 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
             foreach ($cmds as $key => $cmd) {
                 $files[] = tempnam($CFG->dataroot, 'utf8_');
                 exec($cmd . ($key?" < {$files[$key-1]}":'') . " 2>&1 > {$files[$key]}", $output, $return_var);
+                if ($key) {
+                    unlink($files[$key-1]);
+                }
                 if ($return_var) { // we are dead!
-                    foreach ($files as $file) {
-                        unlink($file);
-                    }
+                    unlink($files[$key]);
                     echo '<br />';
                     print_simple_box_start('center','50%');
                     print_string('dbmigrationdupfailed','admin',htmlspecialchars(implode("\n", $output)));
@@ -229,9 +231,7 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
                     exit;
                 }
             }
-            foreach ($files as $file) {
-                unlink($file);
-            }
+            unlink(array_pop($files));
         }
 
         $migrationconfig = new object;
