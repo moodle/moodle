@@ -46,15 +46,15 @@
 
         } else {  // Valid file is found
 
-            if (! is_readable("../quiz/format/$form->format/format.php")) {
+            if (! is_readable("$CFG->dirroot/question/format/$form->format/format.php")) {
                 error("Format not known ($form->format)");
             }
 
             require("format.php");  // Parent class
-            require("$CFG->dirroot/mod/quiz/locallib.php"); // for the constants used in quiz/format/<format>/format.php
-            require("$CFG->dirroot/mod/quiz/format/$form->format/format.php");
+            require("$CFG->libdir/questionlib.php"); // for the constants used in quiz/format/<format>/format.php
+            require("$CFG->dirroot/question/format/$form->format/format.php");
 
-            $classname = "quiz_format_$form->format";
+            $classname = "qformat_$form->format";
             $format = new $classname();
 
             if (! $format->importpreprocess()) {             // Do anything before that we need to
@@ -78,7 +78,7 @@
 
     /// Print upload form
 
-    $fileformats = get_list_of_plugins("mod/quiz/format");
+    $fileformats = get_list_of_plugins('question/format');
     $fileformatnames = array();
     foreach ($fileformats as $key => $fileformat) {
         $formatname = get_string($fileformat, 'lesson');

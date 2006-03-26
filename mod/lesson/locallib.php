@@ -413,7 +413,7 @@ function lesson_save_question_options($question) {
             $i = 0;
             // Insert all the new question+answer pairs
             foreach ($question->subquestions as $key => $questiontext) {
-                $answertext = $question->subanswers[$key]; echo $answertext; echo "<br>"; exit;
+                $answertext = $question->subanswers[$key];
                 if (!empty($questiontext) and !empty($answertext)) {
                     $answer = new stdClass;
                     $answer->lessonid   = $question->lessonid;

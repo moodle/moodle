@@ -8,11 +8,17 @@
 
 // Included by import.php
 
-class quiz_default_format {
+class qformat_default {
 
     var $displayerrors = true;
     var $category = NULL;
     var $questionids = array();
+    var $qtypeconvert = array(NUMERICAL   => LESSON_NUMERICAL,
+                              MULTICHOICE => LESSON_MULTICHOICE,
+                              TRUEFALSE   => LESSON_TRUEFALSE,
+                              SHORTANSWER => LESSON_SHORTANSWER,
+                              MATCH       => LESSON_MATCHING
+                              );
 
 /// Importing functions
 
@@ -35,8 +41,8 @@ class quiz_default_format {
             notify("There are no questions in this file!");
             return false;
         }
-
-        notify("Importing ".count($questions)." questions");
+        
+        notify(get_string('importcount', 'lesson', sizeof($questions)));
 
         $count = 0;
 
@@ -53,10 +59,12 @@ class quiz_default_format {
                     echo "<hr><p><b>$count</b>. ".stripslashes($question->questiontext)."</p>";
                     $newpage = new stdClass;
                     $newpage->lessonid = $lesson->id;
-                    $newpage->qtype = $question->qtype;
+                    $newpage->qtype = $this->qtypeconvert[$question->qtype];
                     switch ($question->qtype) {
                         case SHORTANSWER :
-                            $newpage->qoption = $question->usecase;
+                            if (isset($question->usecase)) {
+                                $newpage->qoption = $question->usecase;
+                            }
                             break;
                         case MULTICHOICE :
                             if (isset($question->single)) {
@@ -123,6 +131,7 @@ class quiz_default_format {
                     // Now to save all the answers and type-specific options
 
                     $question->lessonid = $lesson->id; // needed for foreign key
+                    $question->qtype = $this->qtypeconvert[$question->qtype];
                     $result = lesson_save_question_options($question);
 
                     if (!empty($result->error)) {
@@ -137,7 +146,7 @@ class quiz_default_format {
                     break;
             // the Bad ones
                 default :
-                    echo "<p>Unsupported question type ($question->qtype)!</p>";
+                    notify(get_string('unsupportedqtype', 'lesson', $question->qtype));
             }
  
         }
@@ -204,6 +213,17 @@ class quiz_default_format {
         return NULL;
     }
 
+    function defaultquestion() {
+    // returns an "empty" question
+    // Somewhere to specify question parameters that are not handled
+    // by import but are required db fields.
+    // This should not be overridden. 
+        $question = new stdClass();
+        $question->qoption = 0;
+        $question->layout = 1;
+        
+        return $question;
+    }
 
     function importpostprocess() {
     /// Does any post-processing that may be desired
