@@ -7,7 +7,11 @@ function authorize_upgrade($oldversion=0) {
 
     $result = true;
 
-    if ($oldversion == 0) {
+    if (!$tables = $db->MetaColumns($CFG->prefix . 'enrol_authorize')) {
+        $installfirst = true;
+    }
+
+    if ($oldversion == 0 || !empty($installfirst)) {
         modify_database("$CFG->dirroot/enrol/authorize/db/postgres7.sql");
     }
 
