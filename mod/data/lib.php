@@ -904,7 +904,6 @@ function data_print_preference_form($data, $perpage, $search, $sort='', $order='
     echo '<br />';
     echo '<form name="options" action="view.php" method="get">';
     echo '<input type="hidden" name="d" value="'.$data->id.'" />';
-    echo '<input type="hidden" name="updatepref" value="1" />';
     echo '<table id="sortsearch" align="center">';
     echo '<tr>'.
          '<td class="c0 r1">'.get_string('pagesize','data').':</td>';

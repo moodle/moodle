@@ -131,9 +131,8 @@
         echo '<div style="clear:both;"></div>';
     }
     
-    if ($data->intro) {
+    if ($data->intro and empty($sort) and empty($search) and empty($page)) {
         print_simple_box(format_text($data->intro), 'center', '70%', '', 5, 'generalbox', 'intro');
-        echo '<br />';
     }
 
 /// Check to see if groups are being used here
@@ -223,17 +222,13 @@
         set_user_preference('data_perpage', DATA_PERPAGE_SINGLE);
     }
   
-    /*****************************
-     * Setting up page variables *
-     *****************************/
-    
     $perpage = get_user_preferences('data_perpage', 10);    //get default per page
 
     $baseurl = 'view.php?d='.$data->id.'&amp;search='.s($search).'&amp;sort='.s($sort).'&amp;order='.s($order).'&amp;group='.$currentgroup.'&amp;';
 
 
-    //if database requires approval, then we need to do some work
-    //and get those approved entries, or entries belongs to owner
+/// Calculate all the records we're going to show.
+
     if ((!isteacher($course->id)) && ($data->approval)){
         $approvesql = ' AND (r.approved=1 OR r.userid='.$USER->id.') ';
     } else {
@@ -361,36 +356,34 @@
         exit;
     }
 
-    //print header for multi view
-    if ($perpage > 1){
-
-        echo $data->listtemplateheader;
+/// Print header for list view, and paging bar
+    if ($perpage > 1) {
         $listmode = 'listtemplate';
+        print_paging_bar($totalcount, $page, $perpage, $baseurl, $pagevar='page');
+        echo $data->listtemplateheader;
         if (empty($data->listtemplate)){
             notify(get_string('nolisttemplate','data'));
         }
-    }
-    else {
+    } else {
         $listmode = 'singletemplate';
         if (empty($data->singletemplate)){
             notify(get_string('nosingletemplate','data'));
         }
+        print_paging_bar($totalcount, $page, $perpage, $baseurl, $pagevar='page');
     }
 
-    print_paging_bar($totalcount, $page, $perpage, $baseurl, $pagevar='page');
     
-    //for each record we find, we do a string replacement for tags.
+/// Print the template, substituting in all our data
     data_print_template($records, $data, $search, $listmode, $sort, $page, $rid, $order, $currentgroup);
-    print_paging_bar($totalcount, $page, $perpage, $baseurl, $pagevar='page');
 
+/// Print footer
     if ($perpage > 1){
-        echo $data->listtemplatefooter;    //print footer
+        echo $data->listtemplatefooter;
     }
+
+    print_paging_bar($totalcount, $page, $perpage, $baseurl, $pagevar='page');
 
     data_print_preference_form($data, $perpage, $search, $sort, $order);
-    
-    // Finish the page
-    echo '</td></tr></table>';
     
     print_footer($course);
 
