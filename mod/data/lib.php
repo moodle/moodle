@@ -212,6 +212,11 @@ class data_field_base {     /// Base class for Database Field Types (see field/*
     function display_browse_field($recordid, $template) {
         if ($content = get_record('data_content','fieldid', $this->field->id, 'recordid', $recordid)) {
             if (isset($content->content)) {                
+                if ($this->field->param1 == '1') {  // We are autolinking this field, so disable linking within us
+                    //$content->content = '<span class="nolink">'.$content->content.'</span>';
+                    //$content->content1 = FORMAT_HTML;
+                    $options->filter=false;
+                }
                 $options->para = false;
                 $str = format_text($content->content, $content->content1, $options);
             } else {
@@ -901,25 +906,15 @@ function data_print_template($records, $data, $search, $template, $sort, $page=0
  * output null                                                          *
  ************************************************************************/
 function data_print_preference_form($data, $perpage, $search, $sort='', $order='ASC'){
-    echo '<br />';
+    echo '<br /><div class="datapreferences" align="center">';
     echo '<form name="options" action="view.php" method="get">';
     echo '<input type="hidden" name="d" value="'.$data->id.'" />';
-    echo '<table id="sortsearch" align="center">';
-    echo '<tr>'.
-         '<td class="c0 r1">'.get_string('pagesize','data').':</td>';
-    echo '<td class="c1 r1">';
+    echo get_string('pagesize','data').':';
     $pagesizes = array(1=>1,2=>2,3=>3,4=>4,5=>5,6=>6,7=>7,8=>8,9=>9,10=>10,15=>15,
                        20=>20,30=>30,40=>40,50=>50,100=>100,200=>200,300=>300,400=>400,500=>500,1000=>1000);
     choose_from_menu($pagesizes, 'perpage1', $perpage, 'choose', '', '0');
-    echo '</td></tr>';
-    echo '<tr>'.
-         '<td class="c0 r0">'.get_string('search').':</td>'.
-         '<td class="c1 r0"><input type="text" size="16" name="search" value="'.s($search).'" /></td>'.
-         '</tr>';
-    echo '<tr>';
-    echo '<td class="c0 r2">';
-    echo get_string('sortby').':';
-    echo '</td><td class="c1 r2">';
+    echo '&nbsp;'.get_string('search').': <input type="text" size="16" name="search" value="'.s($search).'" />';
+    echo '&nbsp;'.get_string('sortby').':';
     //foreach field, print the option
     $fields = get_records('data_fields','dataid',$data->id);
     echo '<select name="sort"><option value="0">'.get_string('dateentered','data').'</option>';
@@ -932,24 +927,22 @@ function data_print_preference_form($data, $perpage, $search, $sort='', $order='
     }
     echo '</select>';
     echo '<select name="order">';
-    if ($order == "ASC") {
+    if ($order == 'ASC') {
         echo '<option value="ASC" selected="selected">'.get_string('ascending','data').'</option>';
     } else {
         echo '<option value="ASC">'.get_string('ascending','data').'</option>';
     }
-    if ($order == "DESC") {
+    if ($order == 'DESC') {
         echo '<option value="DESC" selected="selected">'.get_string('descending','data').'</option>';
     } else {
         echo '<option value="DESC">'.get_string('descending','data').'</option>';
     }
     echo '</select>';
     //print ASC or DESC
-    echo '</td></tr><tr>';
-    echo '<td colspan="2" align="center" class="r3">';
     echo '<input type="submit" value="'.get_string('savesettings','data').'" />';
-    echo '</td></tr></table>';
     echo '<input type="hidden" name="updatepref" value="1" />';
     echo '</form>';
+    echo '</div>';
 }
 
 function data_print_ratings($data, $record) {
