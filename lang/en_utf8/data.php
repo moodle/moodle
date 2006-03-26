@@ -58,6 +58,7 @@ $string['fieldheightsingleview'] = 'Height in single view';
 $string['fieldwidthlistview'] = 'Width in list view';
 $string['fieldheightlistview'] = 'Height in list view';
 $string['file'] = 'File';
+$string['filtername'] = 'Database Auto-linking';
 $string['footer'] = 'Footer';
 $string['header'] = 'Header';
 $string['headeraddtemplate'] = 'Defines the interface when adding new entries';
