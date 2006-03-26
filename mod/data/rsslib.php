@@ -79,9 +79,11 @@
                             
                             array_push($items, $item);
                         }
+
+                        $course = get_record('course', 'id', $data->course);
                         
                         // First all rss feeds common headers.
-                        $header = rss_standard_header(format_string($data->name,true),
+                        $header = rss_standard_header($course->shortname.': '.format_string($data->name,true),
                                                       $CFG->wwwroot."/mod/data/view.php?d=".$data->id,
                                                       format_string($data->intro,true));
                         
