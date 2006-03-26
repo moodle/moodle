@@ -840,7 +840,7 @@ function data_print_template($records, $data, $search, $template, $sort, $page=0
         $patterns[]='/\#\#Delete\#\#/i';
         if (data_isowner($record->id) or isteacheredit($course->id)){
             $replacement[] = '<a href="'.$CFG->wwwroot.'/mod/data/view.php?d='
-                             .$data->id.'&amp;rid='.$record->id.'&amp;delete='.$record->id.'&amp;sesskey='.sesskey().'"><img src="'.$CFG->pixpath.'/t/delete.gif" height="11" width="11" border="0" alt="'.get_string('delete').'" /></a>';
+                             .$data->id.'&amp;delete='.$record->id.'&amp;sesskey='.sesskey().'"><img src="'.$CFG->pixpath.'/t/delete.gif" height="11" width="11" border="0" alt="'.get_string('delete').'" /></a>';
         }else {
             $replacement[] = '';
         }
@@ -853,7 +853,7 @@ function data_print_template($records, $data, $search, $template, $sort, $page=0
 
         $patterns[]='/\#\#Approve\#\#/i';
         if (isteacher($course->id) && ($data->approval) && (!$record->approved)){
-            $replacement[] = '<a href="'.$CFG->wwwroot.'/mod/data/view.php?d='.$data->id.'&amp;rid='.$record->id.'&amp;approve='.$record->id.'&search='.$search.'&amp;sort='.$sort.'&amp;order='.$order.'&amp;group='.$group.'&amp;sesskey='.sesskey().'"><img src="'.$CFG->pixpath.'/i/show.gif" height="11" width="11" border="0" alt="'.get_string('approve').'" /></a>';
+            $replacement[] = '<a href="'.$CFG->wwwroot.'/mod/data/view.php?d='.$data->id.'&amp;approve='.$record->id.'&search='.$search.'&amp;sort='.$sort.'&amp;order='.$order.'&amp;group='.$group.'&amp;sesskey='.sesskey().'"><img src="'.$CFG->pixpath.'/i/show.gif" height="11" width="11" border="0" alt="'.get_string('approve').'" /></a>';
         } else {
             $replacement[] = '';
         }

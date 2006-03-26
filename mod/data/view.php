@@ -158,6 +158,8 @@
     $currenttab = 'browse';
     include('tabs.php'); 
 
+    $perpage = get_user_preferences('data_perpage', 10);    //get default per page
+
 /// Approve any requested records
 
     if ($approve && confirm_sesskey() && isteacher($course->id)) {
@@ -168,6 +170,9 @@
                 if (update_record('data_records', $newrecord)) {
                     notify(get_string('recordapproved','data'), 'notifysuccess');
                 }
+                if ($perpage == 1) {
+                    $rid = $approve;
+                }
             }
         }
     }
@@ -175,7 +180,7 @@
 /// Delete any requested records
 
     if ($delete && confirm_sesskey()) {
-        if (isteacheredit($course) or data_isowner($delete)){
+        if (isteacher($course->id) or data_isowner($delete)){
             if ($confirm = optional_param('confirm',0,PARAM_INT)) {
                 if ($contents = get_records('data_content','recordid', $delete)) {
                     foreach ($contents as $content) {  // Delete files or whatever else this field allows
@@ -189,7 +194,11 @@
                     
                 add_to_log($course->id, 'data', 'record delete', "view.php?id=$cm->id", $data->id, $cm->id);
                     
-                notify(get_string('recorddeleted','data'));
+                notify(get_string('recorddeleted','data'), 'notifysuccess');
+
+                if ($perpage == 1) {
+                    $rid = $delete;
+                }
 
             } else {   // Print a confirmation page
                 notice_yesno(get_string('confirmdeleterecord','data'), 
@@ -202,15 +211,15 @@
         }
     }
 
-// If not editting teacher, check whether user has sufficient records to view
-    if (!isteacheredit($course->id) and data_numentries($data) < $data->requiredentriestoview){
+// If not teacher, check whether user has sufficient records to view
+    if (!isteacher($course->id) and data_numentries($data) < $data->requiredentriestoview){
         notify (($data->requiredentriestoview - data_numentries($data)).'&nbsp;'.get_string('insufficiententries','data'));
         echo '</td></tr></table>';
         print_footer($course);
         exit;
     }
 
-    if ($rid){    //set per page to 1, if looking for 1 specific record
+    if ($rid) {    //set per page to 1, if looking for 1 specific record
         set_user_preference('data_perpage', DATA_PERPAGE_SINGLE);
     }
   
