@@ -1171,6 +1171,7 @@ $string['state'] = 'State/Province';
 $string['stats'] = 'Statistics';
 $string['statsnodata'] = 'There is no available data for that combination of course and time period.';
 $string['statsnodatauser'] = 'There is no available data for that combination of course, user and time period.';
+$string['statsoff'] = 'Statistics is not currently enabled';
 $string['statsreportlogins'] = 'Logins';
 $string['statsreportreads'] = 'Views (teacher and student)';
 $string['statsreportwrites'] = 'Posts (teacher and student)';
