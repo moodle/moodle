@@ -27,12 +27,14 @@
 
     require_login();
     
-    $id      = optional_param('id', 0, PARAM_INT);            // course module id
-    $d       = optional_param('d', 0, PARAM_INT);             // database id
-    $fid     = optional_param('fid', 0 , PARAM_INT);          // update field id
-    $newtype = optional_param('newtype','',PARAM_ALPHA);    // type of the new field
-    $mode    = optional_param('mode','',PARAM_ALPHA);
-    $cancel  = optional_param('cancel', '');
+    $id             = optional_param('id', 0, PARAM_INT);            // course module id
+    $d              = optional_param('d', 0, PARAM_INT);             // database id
+    $fid            = optional_param('fid', 0 , PARAM_INT);          // update field id
+    $newtype        = optional_param('newtype','',PARAM_ALPHA);      // type of the new field
+    $mode           = optional_param('mode','',PARAM_ALPHA);
+    $defaultsort    = optional_param('defaultsort', 0, PARAM_INT);
+    $defaultsortdir = optional_param('defaultsortdir', 0, PARAM_INT);
+    $cancel         = optional_param('cancel', '');
 
     if ($cancel) {
         $mode = 'list';
@@ -158,6 +160,17 @@
 
                         // Update the templates.
                         data_replace_field_in_templates($data, $field->field->name, '');
+
+                        // Update the default sort field
+                        if ($fid == $data->defaultsort) {
+                            unset($rec);
+                            $rec->id = $data->id;
+                            $rec->defaultsort = 0;
+                            $rec->defaultsortdir = 0;
+                            if (!update_record('data', $rec)) {
+                                error('There was an error updating the database');
+                            }
+                        }
                         
                         add_to_log($course->id, 'data', 'fields delete', 
                                    "field.php?d=$data->id", $field->field->name, $cm->id);
@@ -182,6 +195,22 @@
             }
             break;
 
+
+        case 'sort':    // Set the default sort parameters
+            if (confirm_sesskey()) {
+                $rec->id = $data->id;
+                $rec->defaultsort = $defaultsort;
+                $rec->defaultsortdir = $defaultsortdir;
+
+                if (update_record('data', $rec)) {
+                    redirect($CFG->wwwroot.'/mod/data/field.php?d='.$data->id, get_string('changessaved'), 2);
+                } else {
+                    error('There was an error updating the database');
+                }
+                exit;
+            }
+            break;
+
         default:
             break;
     }
@@ -200,7 +229,7 @@
     asort($menufield);    //sort in alphabetical order
     
 
-    if (($mode == 'new') && confirm_sesskey()) {          ///  Adding a new field
+    if (($mode == 'new') && (!empty($newtype)) && confirm_sesskey()) {          ///  Adding a new field
         $CFG->pagepath='mod/data/field/'.$newtype;
         data_fields_print_header($course,$cm,$data);
 
@@ -231,6 +260,7 @@
 
             if ($fff = get_records('data_fields','dataid',$data->id,'id')){
                 foreach ($fff as $ff) {
+                    
                     $field = data_get_field($ff, $data);
 
                     $table->data[] = array(
@@ -259,12 +289,48 @@
         } 
         
         echo '<div class="fieldadd" align="center">';
+        echo '<form name="fieldform" action="'.$CFG->wwwroot.'/mod/data/field.php" method="get">';
+        echo '<input type="hidden" name="d" value="'.$data->id.'" />';
+        echo '<input type="hidden" name="mode" value="new" />';
+        echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
         echo get_string('newfield','data').': ';
-        popup_form($CFG->wwwroot.'/mod/data/field.php?d='.$data->id.'&amp;mode=new&amp;sesskey='.
-                   sesskey().'&amp;newtype=', $menufield, 'fieldform', '', 'choose');
-        helpbutton('fields', get_string('addafield','data'), 'data');
-        echo '</div>';
+        choose_from_menu($menufield, 'newtype');
+        echo '<input type="submit" value="'.get_string('create').'" />';
         
+        helpbutton('fields', get_string('addafield','data'), 'data');
+        echo '</form>';
+
+        
+        echo '</div>';
+
+
+        echo '<div class="sortdefault" align="center">';
+        echo '<form name="sortdefault" action="'.$CFG->wwwroot.'/mod/data/field.php" method="get">';
+        echo '<input type="hidden" name="d" value="'.$data->id.'" />';
+        echo '<input type="hidden" name="mode" value="sort" />';
+        echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
+        echo '&nbsp;'.get_string('sortbydefault','data').':';
+        $fields = get_records('data_fields','dataid',$data->id);
+        echo '<select name="defaultsort"><option value="0">'.get_string('dateentered','data').'</option>';
+        foreach ($fields as $field) {
+            if ($field->id == $data->defaultsort) {
+                echo '<option value="'.$field->id.'" selected="selected">'.$field->name.'</option>';
+            } else {
+                echo '<option value="'.$field->id.'">'.$field->name.'</option>';
+            }
+        }
+        echo '</select>';
+        
+        $options = array(0 => get_string('ascending', 'data'),
+                         1 => get_string('descending', 'data'));
+        choose_from_menu($options, 'defaultsortdir', $data->defaultsortdir, '');
+        
+        echo '<input type="submit" value="'.get_string('setdefaultsort','data').'" />';
+        
+        echo '</form>';
+        echo '</div>';
+
+
         print_simple_box_end();
 
     }
