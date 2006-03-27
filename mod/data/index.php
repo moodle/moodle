@@ -51,13 +51,15 @@
     $strweek  = get_string('week');
     $strtopic = get_string('topic');
     $strdescription = get_string("description");
+    $strnumrecords = get_string('numrecords', 'data');
+    $strnumnotapproved = get_string('numnotapproved', 'data');
 
     if ($course->format == 'weeks') {
-        $table->head  = array ($strweek, $strname, $strdescription);
-        $table->align = array ('center', 'center', 'center');
+        $table->head  = array ($strweek, $strname, $strdescription, $strnumrecords, $strnumnotapproved);
+        $table->align = array ('center', 'center', 'center', 'center', 'center');
     } else if ($course->format == 'topics') {
-        $table->head  = array ($strtopic, $strname, $strdescription);
-        $table->align = array ('center', 'center', 'center');
+        $table->head  = array ($strtopic, $strname, $strdescription, $strnumrecords, $strnumnotapproved);
+        $table->align = array ('center', 'center', 'center', 'center', 'center');
     } else {
         $table->head  = array ($strname);
         $table->align = array ('center', 'center');
@@ -86,7 +88,19 @@
             $link = "<a href=\"view.php?id=$data->coursemodule\">".format_string($data->name,true)."</a>";
         }
         if ($course->format == 'weeks' or $course->format == 'topics') {
-            $table->data[] = array ($printsection, $link, $data->intro);
+            
+            $numrecords = count_records_sql('SELECT COUNT(r.id) FROM '.$CFG->prefix.
+                                                'data_records r WHERE r.dataid ='.$data->id);
+            
+            if ($data->approval == 1) {
+                $numunapprovedrecords = count_records_sql('SELECT COUNT(r.id) FROM '.$CFG->prefix.
+                                                'data_records r WHERE r.dataid ='.$data->id.
+                                                ' AND r.approved <> 1');
+            } else {
+                $numunapprovedrecords = get_string('noapprovalrequired', 'data');
+            }
+            
+            $table->data[] = array ($printsection, $link, $data->intro, $numrecords, $numunapprovedrecords);
         } else {
             $table->data[] = array ($link);
         }
