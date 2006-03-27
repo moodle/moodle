@@ -362,7 +362,7 @@ class question_multichoice_qtype extends default_questiontype {
         $answers = $question->options->answers;
         if (!empty($state->responses)) {
             foreach ($state->responses as $aid =>$rid){
-                $answer = $answers[$rid]->answer;
+                $answer = $rid ? $answers[$rid]->answer : '';
                 $responses[] = $answer;
             }
         } else {

@@ -326,7 +326,7 @@ class question_match_qtype extends default_questiontype {
         if (isset($state->responses)) {
             foreach($state->responses as $left=>$right){
                 $lpair = $question->options->subquestions[$left]->questiontext;
-                $rpair = $question->options->subquestions[$right]->answertext;
+                $rpair = $right ? $question->options->subquestions[$right]->answertext : '';
                 $results[$left] = $lpair." : ".$rpair;
             }
             return $results;
