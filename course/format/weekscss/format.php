@@ -96,20 +96,16 @@
 
     print_heading_block(get_string('weeklyoutline'), 'outline');
 
-    //--echo '<table class="weeks" width="100%">';
-    echo "<ul class='weekscss'>\n"; //'weeks'
+    // Note, an ordered list would confuse - "1" could be the clipboard or summary.
+    echo "<ul class='weekscss'>\n";
 
 /// If currently moving a file then show the current clipboard
     if (ismoving($course->id)) {
         $stractivityclipboard = strip_tags(get_string('activityclipboard', '', addslashes($USER->activitycopyname)));
         $strcancel= get_string('cancel');
-        //--echo '<tr class="clipboard">';
-        //echo '<td colspan="3">';
         echo '<li class="clipboard">';
         echo $stractivityclipboard.'&nbsp;&nbsp;(<a href="mod.php?cancelcopy=true&amp;sesskey='.$USER->sesskey.'">'.$strcancel.'</a>)';
         echo "</li>\n";
-        //echo '</td>';
-        //--echo '</tr>';
     }
 
 /// Print Section 0 with general activities
@@ -118,11 +114,9 @@
     $thissection = $sections[$section];
 
     if ($thissection->summary or $thissection->sequence or isediting($course->id)) {
-        /*--echo '<tr id="section-0" class="section main">';
-        echo '<td class="left side">&nbsp;</td>';
-        echo '<td class="content">';
-        */
-        echo '<li id="section-0" class="section main" >'; //'<div class="left side">&nbsp;</div>
+
+        // Note, no need for a 'left side' cell or DIV.
+        echo '<li id="section-0" class="section main" >';
         echo '<div class="content">';
         
         echo '<div class="summary">';
@@ -142,11 +136,6 @@
             print_section_add_menus($course, $section, $modnames);
         }
 
-        /*--echo '</td>';
-        echo '<td class="right side">&nbsp;</td>';
-        echo '</tr>';
-        echo '<tr class="section separator"><td colspan="3" class="spacer"></td></tr>';
-        */
         echo '</div><div class="right side" >&nbsp;</div><div class="clearer"></div>';
         echo "</li>\n";
     }
@@ -208,11 +197,6 @@
                 $sectionstyle = '';
             }
 
-            /*--echo '<tr id="section-'.$section.'" class="section main'.$sectionstyle.'">';
-            echo '<td class="left side">&nbsp;</td>';
-
-            echo '<td class="content">';
-            */
             echo '<li id="section-'.$section.'" class="section main'.$sectionstyle.'" >'; //'<div class="left side">&nbsp;</div>';
 
             echo '<div class="content">';
@@ -238,10 +222,7 @@
                     print_section_add_menus($course, $section, $modnames);
                 }
             }
-            /*--echo '</td>';
 
-            echo '<td class="right side">';
-            */
             echo '</div><div class="right side">';
             
             if ($displaysection == $section) {
@@ -272,9 +253,6 @@
                 }
             }
 
-            /*--echo '</td></tr>';
-            echo '<tr class="section separator"><td colspan="3" class="spacer"></td></tr>';
-            */
             echo '</div><div class="clearer"></div>';
             echo "</li>\n";
         }
@@ -282,7 +260,6 @@
         $section++;
         $weekdate = $nextweekdate;
     }
-    //--echo '</table>';
     echo "</ul>\n";
 
     if (!empty($sectionmenu)) {
