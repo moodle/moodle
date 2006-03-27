@@ -792,9 +792,10 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
 
     $modinfo = unserialize($course->modinfo);
 
-    echo '<table width="'.$width.'" class="section">';
+    //Acccessibility: replace table with list <ul>, but don't output empty list.
     if (!empty($section->sequence)) {
 
+        echo "<ul class=\"section\" style=\"width:$width\">\n";
         $sectionmods = explode(",", $section->sequence);
 
         foreach ($sectionmods as $modnumber) {
@@ -804,7 +805,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
             $mod = $mods[$modnumber];
 
             if ($mod->visible or $isteacher) {
-                echo '<tr><td class="activity '.$mod->modname.'">';
+                echo '<li class="activity '.$mod->modname.'">'; //'<tr><td class="activity '.$mod->modname.'">';
                 if ($ismoving) {
                     if ($mod->id == $USER->activitycopy) {
                         continue;
@@ -882,21 +883,20 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                     echo '&nbsp;&nbsp;';
                     echo make_editing_buttons($mod, $absolute, true, $mod->indent, $section->section);
                 }
-                echo "</td>";
-                echo "</tr>";
+                echo "</li>\n";
             }
         }
-    } else {
-        echo "<tr><td></td></tr>"; // needed for XHTML compatibility
     }
     if ($ismoving) {
-        echo '<tr><td><a title="'.$strmovefull.'"'.
+        echo '<li><a title="'.$strmovefull.'"'. //'<tr><td><a title="'.$strmovefull.'"'.
              ' href="'.$CFG->wwwroot.'/course/mod.php?movetosection='.$section->id.'&amp;sesskey='.$USER->sesskey.'">'.
              '<img class="movetarget" src="'.$CFG->pixpath.'/movehere.gif" '.
-             ' alt="'.$strmovehere.'" /></a></td></tr>
+             ' alt="'.$strmovehere.'" /></a></li>
              ';
     }
-    echo "</table>\n\n";
+    if (!empty($section->sequence) || $ismoving) {
+        echo "</ul><!--class='section'-->\n\n";
+    }
 }
 
 
