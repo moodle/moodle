@@ -29,6 +29,7 @@ $string['csvimport'] = 'CSV file import';
 $string['dateentered'] = 'Date entered';
 $string['defaultfielddelimiter'] = '(default is the comma character)';
 $string['defaultfieldenclosure'] = '(default is none)';
+$string['defaultsortfield'] = 'Default sort field';
 $string['descending'] = 'Descending';
 $string['delete'] = 'Delete';
 $string['deleted'] = 'deleted';
