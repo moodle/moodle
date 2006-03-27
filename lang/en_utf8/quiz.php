@@ -387,6 +387,7 @@ $string['requirepasswordmessage'] = 'To attempt this quiz you need to know the q
 $string['requiresubnet'] = 'Require network address';
 $string['response'] = 'Response';
 $string['responses'] = 'Responses';
+$string['results'] = 'Results';
 $string['reuseifpossible'] = 'reuse previously removed';
 $string['review'] = 'Review';
 $string['reviewafter'] = 'Allow review after quiz is closed';
