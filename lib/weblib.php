@@ -3578,13 +3578,13 @@ function navmenulist($course, $sections, $modinfo, $isteacher, $strsection, $str
 /**
  * Prints form items with the names $day, $month and $year
  *
- * @param int $day ?
- * @param int $month ?
- * @param int $year ?
+ * @param string $day   fieldname
+ * @param string $month  fieldname
+ * @param string $year  fieldname
  * @param int $currenttime A default timestamp in GMT
- * @todo Finish documenting this function
+ * @param boolean $return 
  */
-function print_date_selector($day, $month, $year, $currenttime=0) {
+function print_date_selector($day, $month, $year, $currenttime=0, $return=false) {
 
     if (!$currenttime) {
         $currenttime = time();
@@ -3600,21 +3600,22 @@ function print_date_selector($day, $month, $year, $currenttime=0) {
     for ($i=2000; $i<=2010; $i++) {
         $years[$i] = $i;
     }
-    choose_from_menu($days,   $day,   $currentdate['mday'], '');
-    choose_from_menu($months, $month, $currentdate['mon'],  '');
-    choose_from_menu($years,  $year,  $currentdate['year'], '');
+    return choose_from_menu($days,   $day,   $currentdate['mday'], '', '', '0', $return)
+          .choose_from_menu($months, $month, $currentdate['mon'],  '', '', '0', $return)
+          .choose_from_menu($years,  $year,  $currentdate['year'], '', '', '0', $return);
+
 }
 
 /**
  *Prints form items with the names $hour and $minute
  *
- * @param ? $hour ?
- * @param ? $minute ?
+ * @param string $hour  fieldname
+ * @param string ? $minute  fieldname
  * @param $currenttime A default timestamp in GMT
- * @param int $step ?
- * @todo Finish documenting this function
+ * @param int $step minute spacing
+ * @param boolean $return 
  */
-function print_time_selector($hour, $minute, $currenttime=0, $step=5) {
+function print_time_selector($hour, $minute, $currenttime=0, $step=5, $return=false) {
 
     if (!$currenttime) {
         $currenttime = time();
@@ -3629,8 +3630,9 @@ function print_time_selector($hour, $minute, $currenttime=0, $step=5) {
     for ($i=0; $i<=59; $i+=$step) {
         $minutes[$i] = sprintf("%02d",$i);
     }
-    choose_from_menu($hours,   $hour,   $currentdate['hours'],   '');
-    choose_from_menu($minutes, $minute, $currentdate['minutes'], '');
+
+    return choose_from_menu($hours,   $hour,   $currentdate['hours'],   '','','',$return)
+          .choose_from_menu($minutes, $minute, $currentdate['minutes'], '','','',$return);
 }
 
 /**
@@ -3641,7 +3643,7 @@ function print_time_selector($hour, $minute, $currenttime=0, $step=5) {
  * @param string $unit ?
  * @todo Finish documenting this function
  */
-function print_timer_selector($timelimit = 0, $unit = '', $name = 'timelimit') {
+function print_timer_selector($timelimit = 0, $unit = '', $name = 'timelimit', $return=false) {
 
     global $CFG;
 
@@ -3655,7 +3657,7 @@ function print_timer_selector($timelimit = 0, $unit = '', $name = 'timelimit') {
     for ($i=1; $i<=$maxvalue; $i++) {
         $minutes[$i] = $i.$unit;
     }
-    choose_from_menu($minutes, $name, $timelimit, get_string('none'));
+    return choose_from_menu($minutes, $name, $timelimit, get_string('none'), '','','',$return);
 }
 
 /**
