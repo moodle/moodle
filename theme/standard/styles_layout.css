@@ -260,6 +260,12 @@ form.popupform {
  *** Header
  ***/
 
+.headerskip {
+  position:absolute;
+  right:20em;
+  font-size:0.8em;
+}
+
 #header-home {
 }
 

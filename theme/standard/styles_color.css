@@ -193,6 +193,10 @@ table.formtable tbody th {
  *** Header
  ***/
 
+.headerskip a {
+  color: #FFF;
+}
+
 /***
  *** Footer
  ***/
