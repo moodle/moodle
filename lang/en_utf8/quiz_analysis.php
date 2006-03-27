@@ -1,6 +1,6 @@
 <?php // $Id$
-      // quiz.php - created with Moodle 1.4 development (2004080300)
 
+$string['analysis'] = 'Item analysis';
 $string['analysisoptions'] = 'Analysis options';
 $string['attemptselection'] = 'Attempts to analyze per user ';
 $string['lowmarkslimit'] = "Don't analyse if score is less than: ";

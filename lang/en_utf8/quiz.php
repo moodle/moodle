@@ -493,5 +493,16 @@ $string['xmltypeunsupported'] = 'Question type $a is not supported by xml import
 $string['yourfinalgradeis'] = 'Your final grade for this quiz is $a';
 $string['zerosignificantfiguresnotallowed'] = 'The correct answer cannot have zero significant figures!';
 
+$string['backtoquestionlist'] = 'Back to Question List';
+$string['changessaved'] = 'Grading Changes Saved';
+$string['comments'] = 'Comments';
+$string['editingessay'] = 'Editing Essay';
+$string['essay'] = 'Essay';
+$string['essayquestions'] = 'Essay Questions';
+$string['gradeall'] = 'Grade All';
+$string['gradeessays'] = 'Grade Essays';
+$string['nocommentsyet'] = 'No comments yet.';
+$string['noessayquestionsfound'] = 'No Essay Questions Found';
+$string['ungraded'] = 'Ungraded';
 
 ?>

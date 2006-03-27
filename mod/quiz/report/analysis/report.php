@@ -348,10 +348,7 @@ class quiz_report extends quiz_default_report {
             }
         }
         
-        echo '<div id="titlecontainer" class="quiz-report-title">';
-        echo get_string("analysistitle", "quiz_analysis");
-        helpbutton("itemanalysis", get_string("reportanalysis","quiz_analysis"), "quiz");
-        echo '</div>';
+        print_heading_with_help(get_string("analysistitle", "quiz_analysis"),"itemanalysis", "quiz");
 
         echo '<div id="tablecontainer">';
         $table->print_html();

@@ -245,13 +245,13 @@ class quiz_report extends quiz_default_report {
                 // So join on groups_members and do an inner join on attempts.
                 $from  = 'FROM '.$CFG->prefix.'user u JOIN '.$CFG->prefix.'user_students us ON us.userid = u.id JOIN '.$CFG->prefix.'groups_members gm ON u.id = gm.userid '.
                     'JOIN '.$CFG->prefix.'quiz_attempts qa ON u.id = qa.userid AND qa.quiz = '.$quiz->id;
-                $where = ' WHERE  us.course = '.$course->id.' AND gm.groupid = '.$currentgroup;                
+                $where = ' WHERE  us.course = '.$course->id.' AND gm.groupid = '.$currentgroup.' AND qa.preview = 0';                
             } else if (!empty($currentgroup) && !empty($noattempts)) {
                 // We want a particular group and we want to do something funky with attempts
                 // So join on groups_members and left join on attempts... 
                 $from  = 'FROM '.$CFG->prefix.'user u JOIN '.$CFG->prefix.'user_students us ON us.userid = u.id JOIN '.$CFG->prefix.'groups_members gm ON u.id = gm.userid '.
                     'LEFT JOIN '.$CFG->prefix.'quiz_attempts qa ON u.id = qa.userid AND qa.quiz = '.$quiz->id;
-                $where = ' WHERE us.course = '.$course->id.' AND gm.groupid = '.$currentgroup;
+                $where = ' WHERE us.course = '.$course->id.' AND gm.groupid = '.$currentgroup.' AND qa.preview = 0';
                 if ($noattempts == 1) {
                     // noattempts = 1 means only no attempts, so make the left join ask for only records where the right is null (no attempts)
                     $where .= ' AND qa.userid IS NULL'; // show ONLY no attempts;
@@ -260,7 +260,7 @@ class quiz_report extends quiz_default_report {
                 // We don't care about group, and we only want to see students WITH attempts.
                 // So just do a striaght inner join on attempts, don't worry about the groups_members table
                 $from  = 'FROM '.$CFG->prefix.'user u JOIN '.$CFG->prefix.'quiz_attempts qa ON u.id = qa.userid ';
-                $where = ' WHERE qa.quiz = '.$quiz->id;
+                $where = ' WHERE qa.quiz = '.$quiz->id.' AND qa.preview = 0';
             } else if (empty($currentgroup) && !empty($noattempts)) {
                 // We don't care about group, and we to do something funky with attempts
                 // So do a left join on attempts
@@ -275,7 +275,7 @@ class quiz_report extends quiz_default_report {
         } else {
             if (empty($noattempts)) {
                 $from   = 'FROM '.$CFG->prefix.'user u JOIN '.$CFG->prefix.'quiz_attempts qa ON u.id = qa.userid ';
-                $where = ' WHERE qa.quiz = '.$quiz->id;
+                $where = ' WHERE qa.quiz = '.$quiz->id.' AND qa.preview = 0';
                 $countsql = 'SELECT COUNT(DISTINCT('.$db->Concat('u.id', '\'#\'', $db->IfNull('qa.attempt', '0')).')) '.$from.$where;
             }
         }

@@ -41,7 +41,7 @@
     if ($currenttab == 'reports' and isset($mode)) {
         $inactive[] = 'reports';
         $allreports = get_list_of_plugins("mod/quiz/report");
-        $reportlist = array ('overview', 'regrade', 'analysis');   // Standard reports we want to show first
+        $reportlist = array ('overview', 'regrade', 'grading', 'analysis');   // Standard reports we want to show first
 
         foreach ($allreports as $report) {
             if (!in_array($report, $reportlist)) {
@@ -53,7 +53,7 @@
         $currenttab = '';
         foreach ($reportlist as $report) {
             $row[] = new tabobject($report, "$CFG->wwwroot/mod/quiz/report.php?q=$quiz->id&amp;mode=$report",
-                                    get_string("report$report", "quiz"));
+                                    get_string($report, 'quiz_'.$report));
             if ($report == $mode) {
                 $currenttab = $report;
             }
