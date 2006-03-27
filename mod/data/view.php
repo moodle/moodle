@@ -237,8 +237,12 @@
 
 /// Calculate all the records we're going to show.
 
-    if ((!isteacher($course->id)) && ($data->approval)){
-        $approvesql = ' AND (r.approved=1 OR r.userid='.$USER->id.') ';
+    if ((!isteacher($course->id)) && ($data->approval)) {
+        if (isloggedin()) {
+            $approvesql = ' AND (r.approved=1 OR r.userid='.$USER->id.') ';
+        } else {
+            $approvesql = ' AND r.approved=1 ';
+        }
     } else {
         $approvesql = '';
     }
