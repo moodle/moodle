@@ -32,3 +32,5 @@ function authorize_upgrade($oldversion=0) {
     
     return $result;
 }
+
+?>
