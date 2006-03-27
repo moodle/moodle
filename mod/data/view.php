@@ -38,7 +38,7 @@
     $approve = optional_param('approve', 0, PARAM_INT);    //approval recordid
     $delete = optional_param('delete', 0, PARAM_INT);    //delete recordid
     $perpagemenu = optional_param('perpage1', 0, PARAM_INT);    //value from drop down
-    $sort = optional_param('sort',0,PARAM_INT);    //sort by field
+    $sort = optional_param('sort',-1,PARAM_INT);    //sort by field
     $order = optional_param('order','ASC',PARAM_ALPHA);    //sort order
     $group = optional_param('group','0',PARAM_INT);    //groupid
     
@@ -72,6 +72,12 @@
         if (!record_exists('data_fields','dataid',$data->id)) {      // Brand new database!
             redirect($CFG->wwwroot.'/mod/data/field.php?d='.$data->id);  // Redirect to field entry
         }
+    }
+
+    /// If we haven't set a sort field use the default sort field
+    if ($sort == -1) {
+        $sort = $data->defaultsort;
+        $order = ($data->defaultsortdir == 0) ? 'ASC' : 'DESC';
     }
     
     //set user preference if available
