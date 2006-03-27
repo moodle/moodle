@@ -23,6 +23,7 @@ CREATE TABLE prefix_data (
   assessed integer NOT NULL default '0',
   assesspublic integer NOT NULL default '0',
   defaultsort integer NOT NULL default '0',
+  defaultsortdir integer NOT NULL default '0',
   editany integer NOT NULL default '0'
 );
 

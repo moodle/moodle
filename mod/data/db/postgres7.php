@@ -42,6 +42,7 @@ function data_upgrade($oldversion) {
     
     if ($oldversion < 2006032700) {
         table_column("data", "", "defaultsort", "integer", "10", "signed");
+        table_column("data", "", "defaultsortdir", "tinyint", "4");
         table_column("data", "", "editany", "tinyint", "4");
     }
     
