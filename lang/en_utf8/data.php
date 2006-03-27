@@ -95,6 +95,7 @@ $string['nofieldindatabase'] = 'There are no fields defined for this database, p
 $string['nolisttemplate'] = 'List template is not yet defined';
 $string['nosingletemplate'] = 'Single template is not yet defined';
 $string['nomaximum'] = 'No maximum';
+$string['numnotapproved'] = 'Pending';
 $string['numberrssarticles'] = 'RSS articles';
 $string['numrecords'] = 'Records';
 $string['noaccess'] = 'You do not have access to this page';
