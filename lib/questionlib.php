@@ -33,6 +33,7 @@ define('QUESTION_EVENTVALIDATE', '5');  // The student has requested a validatio
 define('QUESTION_EVENTCLOSEANDGRADE', '6'); // Moodle has graded the responses. A CLOSE event can be changed to a CLOSEANDGRADE event by Moodle.
 define('QUESTION_EVENTSUBMIT', '7');    // The student response has been submitted but it has not yet been marked
 define('QUESTION_EVENTCLOSE', '8');     // The response has been submitted and the session has been closed, either because the student requested it or because Moodle did it (e.g. because of a timelimit). The responses have not been graded.
+define('QUESTION_EVENTMANUALGRADE', '9');   // Grade was entered by teacher
 /**#@-*/
 
 /**#@+
@@ -668,7 +669,7 @@ function restore_question_state(&$question, &$state) {
 * to the answer field of the database table. The information in the
 * question_sessions table is updated.
 * The question type specific data is then saved.
-* @return boolean         Indicates success or failure.
+* @return mixed           The id of the saved or updated state or false
 * @param object $question The question for which session is to be saved.
 * @param object $state    The state information to be saved. In particular the
 *                         most recent responses are in ->responses. The object
@@ -678,7 +679,7 @@ function save_question_session(&$question, &$state) {
     global $QTYPES;
     // Check if the state has changed
     if (!$state->changed && isset($state->id)) {
-        return true;
+        return $state->id;
     }
     // Set the legacy answer field
     $state->answer = isset($state->responses['']) ? $state->responses[''] : '';
@@ -728,7 +729,7 @@ function save_question_session(&$question, &$state) {
     }
     // Reset the changed flag
     $state->changed = false;
-    return true;
+    return $state->id;
 }
 
 /**
@@ -738,7 +739,9 @@ function save_question_session(&$question, &$state) {
 * @param object $state
 */
 function question_state_is_graded($state) {
-    return ($state->event == QUESTION_EVENTGRADE or $state->event == QUESTION_EVENTCLOSEANDGRADE);
+    return ($state->event == QUESTION_EVENTGRADE
+         or $state->event == QUESTION_EVENTCLOSEANDGRADE
+         or $state->event == QUESTION_EVENTMANUALGRADE);
 }
 
 /**
