@@ -497,7 +497,7 @@ function get_order_status_desc($order)
 
     if (intval($order->transid) == 0) { // test transaction
         if (isadmin() || (!empty($CFG->an_teachermanagepay) && isteacher($order->courseid))) {
-        	$ret->actions = array(ORDER_DELETE);
+            $ret->actions = array(ORDER_DELETE);
         }
         $ret->status = 'tested';
         return $ret;
@@ -510,13 +510,13 @@ function get_order_status_desc($order)
             $order->status = AN_STATUS_EXPIRE;
             update_record("enrol_authorize", $order);
             if (isadmin() || (!empty($CFG->an_teachermanagepay) && isteacher($order->courseid))) {
-            	$ret->actions = array(ORDER_DELETE);
+                $ret->actions = array(ORDER_DELETE);
             }
             $ret->status = 'expired';
         }
         else {
             if (isadmin() || (!empty($CFG->an_teachermanagepay) && isteacher($order->courseid))) {
-            	$ret->actions = array(ORDER_CAPTURE, ORDER_VOID);
+                $ret->actions = array(ORDER_CAPTURE, ORDER_VOID);
             }
             $ret->status = 'authorizedpendingcapture';
         }
@@ -525,13 +525,13 @@ function get_order_status_desc($order)
     case AN_STATUS_AUTHCAPTURE:
         if (settled($order)) {
             if (isadmin() || (!empty($CFG->an_teachermanagepay) && isteacher($order->courseid))) {
-            	$ret->actions = array(ORDER_REFUND);
+                $ret->actions = array(ORDER_REFUND);
             }
             $ret->status = 'capturedsettled';
         }
         else {
             if (isadmin() || (!empty($CFG->an_teachermanagepay) && isteacher($order->courseid))) {
-            	$ret->actions = array(ORDER_VOID);
+                $ret->actions = array(ORDER_VOID);
             }
             $ret->status = 'capturedpendingsettle';
         }
@@ -544,7 +544,7 @@ function get_order_status_desc($order)
         }
         else {
             if (isadmin() || (!empty($CFG->an_teachermanagepay) && isteacher($order->courseid))) {
-            	$ret->actions = array(ORDER_VOID);
+                $ret->actions = array(ORDER_VOID);
             }
             $ret->status = 'refunded';
         }
@@ -557,7 +557,7 @@ function get_order_status_desc($order)
 
     case AN_STATUS_EXPIRE:
         if (isadmin() || (!empty($CFG->an_teachermanagepay) && isteacher($order->courseid))) {
-        	$ret->actions = array(ORDER_DELETE);
+            $ret->actions = array(ORDER_DELETE);
         }
         $ret->status = 'expired';
         return $ret;
