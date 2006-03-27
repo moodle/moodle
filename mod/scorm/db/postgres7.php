@@ -197,7 +197,7 @@ function scorm_upgrade($oldversion) {
     
     if ($oldversion < 2005070600) {
         table_column("scorm", "", "hidetoc", "integer", "", "", "0", "NOT NULL", "browsemode");
-        $scorms = get_records_select("scorm","1","id ASC");
+        $scorms = get_records_select("scorm","","id ASC");
         table_column("scorm", "browsemode", "hidebrowse", "integer", "", "", "0", "NOT NULL", "");
         if (!empty($scorms)) {
             foreach($scorms as $scorm) {
