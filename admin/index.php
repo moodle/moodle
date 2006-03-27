@@ -204,17 +204,10 @@
         if (!set_config("release", $release)) {
             notify("ERROR: Could not update release version in database!!");
         }
-        if (!empty($CFG->unicodedb)) {
-            $defaultlang = 'en_utf8';
-        } else {
-            $defaultlang = 'en';
-        }
         print_continue("index.php");
         print_simple_box_start("CENTER");
-        if (file_exists("$CFG->dataroot/lang/$defaultlang/docs/release.html")) {
-            include("$CFG->dataroot/lang/$defaultlang/docs/release.html");
-        } else if (file_exists("$CFG->dirroot/lang/$defaultlang/docs/release.html")) {
-            include("$CFG->dirroot/lang/$defaultlang/docs/release.html");
+        if (file_exists("$CFG->dirroot/lang/en_utf8/docs/release.html")) {
+            include("$CFG->dirroot/lang/en_utf8/docs/release.html");
         }
         print_simple_box_end();
         print_continue("index.php");
