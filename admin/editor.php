@@ -41,11 +41,11 @@
                 error("Unknown currentpage: $currentpage");
         }
 
-        $url = 'editor.php?tab=';
-        $tabrow = array();
-        $tabrow[] = new tabobject('htmlarea',$url . '1', 'HTMLArea');
-        $tabrow[] = new tabobject('tinymce',$url . '2', 'TinyMCE');
-        $tabs = array($tabrow);
+        //$url = 'editor.php?tab=';
+        //$tabrow = array();
+        //$tabrow[] = new tabobject('htmlarea',$url . '1', 'HTMLArea');
+        //$tabrow[] = new tabobject('tinymce',$url . '2', 'TinyMCE');
+        //$tabs = array($tabrow);
 
         $fontlist = editor_convert_to_array($CFG->editorfontlist);
         $dicts    = editor_get_dictionaries();
@@ -61,7 +61,7 @@
 
         print_simple_box("<center>$streditorsettingshelp</center>","center","50%");
         print("<br />\n");
-        print_tabs($tabs, $currenttab, $inactive);
+        //print_tabs($tabs, $currenttab, $inactive);
 
         print_simple_box_start("center");
         include("editor.html");
