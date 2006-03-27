@@ -147,7 +147,7 @@ global $CFG;
     }
 
     if ($oldversion < 2005081600) {
-         $result = $result && modify_database('',"CREATE TABLE prefix_block_pinned ( 
+        modify_database('',"CREATE TABLE prefix_block_pinned ( 
             id SERIAL8 PRIMARY KEY,
             blockid INT8 NOT NULL default 0,
             pagetype varchar(20) NOT NULL default '',
