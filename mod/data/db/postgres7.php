@@ -40,6 +40,11 @@ function data_upgrade($oldversion) {
         modify_database('', "INSERT INTO prefix_log_display VALUES ('data', 'templates defaults', 'data', 'name')");
     }
     
+    if ($oldversion < 2006032700) {
+        table_column("data", "", "defaultsort", "integer", "10");
+        table_column("data", "", "editany", "tinyint", "4");
+    }
+    
     return true;
 }
 

@@ -21,7 +21,9 @@ CREATE TABLE prefix_data (
   approval int NOT NULL default '0',
   scale integer NOT NULL default '0',
   assessed integer NOT NULL default '0',
-  assesspublic integer NOT NULL default '0'
+  assesspublic integer NOT NULL default '0',
+  defaultsort integer NOT NULL default '0',
+  editany integer NOT NULL default '0'
 );
 
 
