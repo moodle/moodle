@@ -43,7 +43,6 @@ class data_field_date extends data_field_base {
         }
 
         $str = '<div title="'.$this->field->description.'">';
-        $str .= get_string('date').': ';
         $str .= print_date_selector('field_'.$this->field->id.'_day', 'field_'.$this->field->id.'_month', 
                                     'field_'.$this->field->id.'_year', $content, true);
         $str .= '</div>';
