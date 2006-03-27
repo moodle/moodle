@@ -80,4 +80,42 @@ function make_upload_directory($directory, $shownotices=true) {
     return $currdir;
 }
 
+/**
+ * This function will introspect inside DB to detect it it's a UTF-8 DB or no
+ * Used from setup.php to set correctly "set names" when the installation
+ * process is performed without the initial and beautiful installer
+ */
+function setup_is_unicodedb() {
+
+    global $CFG, $db;
+
+    $unicodedb = false;
+
+    switch ($CFG->dbtype) {
+        case 'mysql':
+        /// Get MySQL character_set_database value
+            $rs = $db->Execute("SHOW VARIABLES LIKE 'character_set_database'");
+            if ($rs && $rs->RecordCount() > 0) {
+                $records = $rs->GetAssoc(true);
+                $encoding = $records['character_set_database']['Value'];
+                if (strtoupper($encoding) == 'UTF8') {
+                    $unicodedb = true;
+                }
+            }
+            break;
+        case 'postgres7':
+        /// Get PostgreSQL server_encoding value
+            $rs = $db->Execute("SHOW server_encoding");
+            if ($rs && $rs->RecordCount() > 0) {
+                $encoding = $rs->fields['server_encoding'];
+                if (strtoupper($encoding) == 'UNICODE') {
+                    $unicodedb = true;
+                }
+            }
+            break;
+    }
+    return $unicodedb;
+}
+
+
 ?>

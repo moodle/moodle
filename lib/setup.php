@@ -149,14 +149,9 @@ global $HTTPSPAGEREQUIRED;
         die;
     }
 
-    /// Set the client/server and connection to utf8 if necessary
-    if ($dbconnected && $CFG->unicodedb) {
-        if ($db->databaseType == 'mysql') {
-            $db->Execute("SET NAMES 'utf8'");
-        } else if ($db->databaseType == 'postgres7') {
-            $db->Execute("SET NAMES 'utf8'");
-        }
-    }
+/// Starting here we have a correct DB conection but me must avoid
+/// to execute any DB transaction until "set names" has been executed
+/// some lines below!
 
     error_reporting(E_ALL);       // Show errors from now on.
 
@@ -199,6 +194,26 @@ global $HTTPSPAGEREQUIRED;
         $CFG->debug = 7;
     }
     error_reporting($CFG->debug);
+
+
+/// If $CFG->unicodedb is not set, calculate it because we need
+/// "set names" (below) properly executed *before* performing any
+/// DB transaction
+    if ($dbconnected && !isset($CFG->unicodedb)) {
+        $CFG->unicodedb = setup_is_unicodedb();
+    }
+
+
+/// Set the client/server and connection to utf8 if necessary
+    if ($dbconnected && $CFG->unicodedb) {
+        if ($db->databaseType == 'mysql') {
+            $db->Execute("SET NAMES 'utf8'");
+        } else if ($db->databaseType == 'postgres7') {
+            $db->Execute("SET NAMES 'utf8'");
+        }
+    }
+/// Now that "set names" has been executed it is safe to
+/// work with the DB, but never before this!
 
 
 /// Set a default enrolment configuration (see bug 1598)
