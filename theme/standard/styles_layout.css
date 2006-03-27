@@ -880,7 +880,8 @@ span.current {
 
 
 /*Accessibility: No-tables course format. */
-#course-view ul.weekscss, .weekscss li {
+#course-view ul.weekscss, .weekscss li,
+#course-view ul.section, .section li {
   margin: 0;
   padding: 0;
   text-indent: 0;
