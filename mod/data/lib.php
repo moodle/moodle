@@ -352,7 +352,7 @@ function data_generate_default_template(&$data, $template, $recordid=0, $form=fa
         $str .= '</div>';
 
         if ($template == 'listtemplate'){
-            $str .= '<br />';
+            $str .= '<hr />';
         }
 
         if ($update) {
