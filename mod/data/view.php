@@ -274,8 +274,7 @@
                      (c1.content1 LIKE "%'.$search.'%") OR
                      (c1.content2 LIKE "%'.$search.'%") OR
                      (c1.content3 LIKE "%'.$search.'%") OR
-                     (c1.content4 LIKE "%'.$search.'%")) '.$approvesql.'
-                ORDER BY c.'.$sortcontent.' '.$order.' ';
+                     (c1.content4 LIKE "%'.$search.'%")) '.$approvesql;
 
         //sqlindex is used to find the number of entries smaller than the current rid
         //useful for zooming into single view from multi view (so we can keep track
@@ -292,8 +291,7 @@
                      (c1.content1 LIKE "%'.$search.'%") OR
                      (c1.content2 LIKE "%'.$search.'%") OR
                      (c1.content3 LIKE "%'.$search.'%") OR
-                     (c1.content4 LIKE "%'.$search.'%")) '.$approvesql.'
-                ORDER BY c.'.$sortcontent.' '.$order.' ';
+                     (c1.content4 LIKE "%'.$search.'%")) '.$approvesql;
                 
     } else if ($search){    //search only, no sort. if in search mode, only search text fields
 
@@ -311,7 +309,7 @@
                 .$CFG->prefix.'data_records r
                 WHERE c.recordid = r.id '.$groupselect.' '.$approvesql.' AND
                 c.fieldid = f.id AND f.dataid = '
-                .$data->id.' AND c.content LIKE "%'.$search.'%" ORDER BY r.id '.$order.' ';
+                .$data->id.' AND c.content LIKE "%'.$search.'%"';
 
         $sqlindex = 'SELECT COUNT(DISTINCT c.recordid)
                 FROM '.$CFG->prefix.'data_content c, '
@@ -319,16 +317,16 @@
                 .$CFG->prefix.'data_records r
                 WHERE c.recordid = r.id '.$groupselect.' '.$approvesql.' AND
                 c.fieldid = f.id AND f.dataid = '
-                .$data->id.'  '.$ridsql.' AND c.content LIKE "%'.$search.'%" ORDER BY r.id '.$order.' ';
+                .$data->id.'  '.$ridsql.' AND c.content LIKE "%'.$search.'%"';
 
     } else {  //else get everything, no search, no sort
 
         $sql = 'SELECT * FROM '.$CFG->prefix.'data_records r WHERE r.dataid ='.$data->id.' '.$groupselect.' '.$approvesql.' ORDER BY r.id '.$order.' ';
-        $sqlcount = 'SELECT COUNT(*) FROM '.$CFG->prefix
-                    .'data_records r WHERE r.dataid ='.$data->id.' '.$groupselect.' '.$approvesql.'ORDER BY r.id '.$order.' ';
+        $sqlcount = 'SELECT COUNT(r.id) FROM '.$CFG->prefix
+                    .'data_records r WHERE r.dataid ='.$data->id.' '.$groupselect.' '.$approvesql;
 
-        $sqlindex = 'SELECT COUNT(*) FROM '.$CFG->prefix
-                    .'data_records r WHERE r.dataid ='.$data->id.' '.$groupselect.' '.$ridsql.' '.$approvesql .'ORDER BY r.id '.$order.' ';
+        $sqlindex = 'SELECT COUNT(r.id) FROM '.$CFG->prefix
+                    .'data_records r WHERE r.dataid ='.$data->id.' '.$groupselect.' '.$ridsql.' '.$approvesql;
     }
     
     if ($rid) {    //this is used in zooming
