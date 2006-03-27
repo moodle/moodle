@@ -120,12 +120,13 @@
 
             /// All student edits are marked unapproved by default
             $record = get_record('data_records','id',$rid);
-            if (isteacher($course->id)) {
+            
+            if ($data->approval == 1 || isteacher($course->id)) {
                 $record->approved = 1;
             } else {
                 $record->approved = 0;
             }
-           
+            
             $record->groupid = $currentgroup;
             $record->timemodified = time();
             update_record('data_records',$record);
