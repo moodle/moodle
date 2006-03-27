@@ -379,10 +379,10 @@ class quiz_numerical_qtype extends quiz_shortanswer_qtype {
             $answer->tolerancetype = 2; // nominal
         }
 
-        // We need to add a tiny fraction (0.00000000000000001) to make the
+        // We need to add a tiny fraction (0.0000000000001) to make the
         // comparison work correctly. Otherwise seemingly equal values can yield
         // false. (fixes bug #3225)
-        $tolerance = (float)$answer->tolerance + 0.00000000000000001;
+        $tolerance = (float)$answer->tolerance + 0.0000000000001;
         switch ($answer->tolerancetype) {
             case '1': case 'relative':
                 /// Recalculate the tolerance and fall through
