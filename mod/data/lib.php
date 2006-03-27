@@ -916,7 +916,7 @@ function data_print_preference_form($data, $perpage, $search, $sort='', $order='
     echo '&nbsp;'.get_string('search').': <input type="text" size="16" name="search" value="'.s($search).'" />';
     echo '&nbsp;'.get_string('sortby').':';
     //foreach field, print the option
-    $fields = get_records('data_fields','dataid',$data->id);
+    $fields = get_records('data_fields','dataid',$data->id, 'name');
     echo '<select name="sort"><option value="0">'.get_string('dateentered','data').'</option>';
     foreach ($fields as $field) {
         if ($field->id == $sort) {
