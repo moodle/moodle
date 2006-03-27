@@ -61,8 +61,8 @@
         $table->head  = array ($strtopic, $strname, $strdescription, $strnumrecords, $strnumnotapproved);
         $table->align = array ('center', 'center', 'center', 'center', 'center');
     } else {
-        $table->head  = array ($strname);
-        $table->align = array ('center', 'center');
+        $table->head  = array ($strname, $strdescription, $strnumrecords, $strnumnotapproved);
+        $table->align = array ('center', 'center', 'center', 'center');
     }
 
     $currentgroup = get_current_group($course->id);
@@ -87,22 +87,32 @@
             //Show normal if the mod is visible
             $link = "<a href=\"view.php?id=$data->coursemodule\">".format_string($data->name,true)."</a>";
         }
+
+        $numrecords = count_records_sql('SELECT COUNT(r.id) FROM '.$CFG->prefix.
+                'data_records r WHERE r.dataid ='.$data->id);
+
+        if ($data->approval == 1) {
+            $numunapprovedrecords = count_records_sql('SELECT COUNT(r.id) FROM '.$CFG->prefix.
+                    'data_records r WHERE r.dataid ='.$data->id.
+                    ' AND r.approved <> 1');
+        } else {
+            $numunapprovedrecords = get_string('noapprovalrequired', 'data');
+        }
+
         if ($course->format == 'weeks' or $course->format == 'topics') {
-            
-            $numrecords = count_records_sql('SELECT COUNT(r.id) FROM '.$CFG->prefix.
-                                                'data_records r WHERE r.dataid ='.$data->id);
-            
-            if ($data->approval == 1) {
-                $numunapprovedrecords = count_records_sql('SELECT COUNT(r.id) FROM '.$CFG->prefix.
-                                                'data_records r WHERE r.dataid ='.$data->id.
-                                                ' AND r.approved <> 1');
-            } else {
-                $numunapprovedrecords = get_string('noapprovalrequired', 'data');
+            if ($data->section !== $currentsection) {
+                if ($data->section) {
+                    $printsection = $data->section;
+                }
+                if ($currentsection !== '') {
+                    $table->data[] = 'hr';
+                }
+                $currentsection = $data->section;
             }
-            
+    
             $table->data[] = array ($printsection, $link, $data->intro, $numrecords, $numunapprovedrecords);
         } else {
-            $table->data[] = array ($link);
+            $table->data[] = array ($link, $data->intro, $numrecords, $numunapprovedrecords);
         }
     }
 
