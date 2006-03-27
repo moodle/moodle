@@ -233,6 +233,9 @@
         }
     }
 
+/// Send $CFG->unicodedb to DB to have it available for next requests
+    set_config('unicodedb', $CFG->unicodedb);
+
 /// If any new configurations were found then send to the config page to check
 
     if (!empty($configchange)) {
