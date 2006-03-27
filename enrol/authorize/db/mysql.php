@@ -8,7 +8,11 @@ function enrol_authorize_upgrade($oldversion=0) {
 
     $result = true;
 
-    if ($oldversion == 0) { // First time install
+    if (!$tables = $db->MetaColumns($CFG->prefix . 'enrol_authorize')) {
+        $installfirst = true;
+    }
+
+    if ($oldversion == 0 || !empty($installfirst)) { // First time install
         $result = modify_database("$CFG->dirroot/enrol/authorize/db/mysql.sql");
         return $result; // RETURN, sql file contains last upgrades.
     }
@@ -23,6 +27,11 @@ function enrol_authorize_upgrade($oldversion=0) {
         // Add some indexes for speed.
         execute_sql(" ALTER TABLE `{$CFG->prefix}enrol_authorize` ADD INDEX courseid(courseid) ");
         execute_sql(" ALTER TABLE `{$CFG->prefix}enrol_authorize` ADD INDEX userid(userid) ");
+    }
+
+    if ($oldversion < 2005071602) {
+        notify("If you are using the authorize.net enrolment plugin for credit card 
+                handling, please ensure that you have turned loginhttps ON in Admin >> Variables >> Security.");
     }
 
     if ($oldversion < 2005112100) {

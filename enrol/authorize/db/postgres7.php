@@ -19,6 +19,11 @@ function enrol_authorize_upgrade($oldversion=0) {
 
     // Authorize module was installed before. Upgrades must be applied to SQL file.
 
+    if ($oldversion < 2005071602) {
+        notify("If you are using the authorize.net enrolment plugin for credit card 
+                handling, please ensure that you have turned loginhttps ON in Admin >> Variables >> Security.");
+    }
+
     if ($oldversion < 2005080200) {
         // Be sure, only last 4 digit is inserted.
         table_column('enrol_authorize', 'cclastfour', 'cclastfour', 'integer', '4', 'unsigned', '0', 'not null');
