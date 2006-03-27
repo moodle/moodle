@@ -25,8 +25,6 @@
     require_once('../../config.php');
     require_once('lib.php');
 
-    require_login();
-
     $id    = optional_param('id', 0, PARAM_INT);    // course module id
     $d     = optional_param('d', 0, PARAM_INT);    // database id
     $rid   = optional_param('rid', 0, PARAM_INT);    //record id
@@ -56,6 +54,8 @@
             error('Course Module ID was incorrect');
         }
     }
+    
+    require_course_login($course, false, $cm);
     
     if (isteacher($course->id)) {
         if (!record_exists('data_fields','dataid',$data->id)) {      // Brand new database!
