@@ -92,7 +92,7 @@ class data_field_textarea extends data_field_base {
         if (!empty($names[2])) {
             $content->$names[2] = clean_param($value, PARAM_NOTAGS);  // content[1-4]
         } else {
-            $content->content = clean_param($value, PARAM_NOTAGS);
+            $content->content = clean_param($value, PARAM_CLEAN);
         }
 
         if ($oldcontent = get_record('data_content','fieldid', $this->field->id, 'recordid', $recordid)) {
