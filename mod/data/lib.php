@@ -1185,12 +1185,12 @@ function data_fieldname_exists($name, $dataid, $fieldid=0) {
     global $CFG;
 
     if ($fieldid) { 
-        return record_exists_sql('SELECT * from '.$CFG->prefix.'data_fields 
-                                  WHERE name LIKE "'.$name.'" AND dataid = '.$dataid.'
-                                    AND ((id < '.$fieldid.') OR (id > '.$fieldid.'))');
+        return record_exists_sql("SELECT * from {$CFG->prefix}data_fields AS df 
+                                  WHERE df.name LIKE '$name' AND df.dataid = $dataid
+                                    AND ((df.id < $fieldid) OR (df.id > $fieldid))");
     } else {
-        return record_exists_sql('SELECT * from '.$CFG->prefix.'data_fields 
-                                  WHERE name LIKE "'.$name.'" AND dataid = '.$dataid);
+        return record_exists_sql("SELECT * from {$CFG->prefix}data_fields AS df 
+                                  WHERE df.name LIKE '$name' AND df.dataid = $dataid");
     }
 }
 
