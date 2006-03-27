@@ -41,9 +41,9 @@ function data_upgrade($oldversion) {
     }
     
     if ($oldversion < 2006032700) {
-        table_column("data", "", "defaultsort", "integer", "10", "signed");
-        table_column("data", "", "defaultsortdir", "tinyint", "4");
-        table_column("data", "", "editany", "tinyint", "4");
+        table_column('data', '', 'defaultsort', 'integer', '10', 'unsigned', '0');
+        table_column('data', '', 'defaultsortdir', 'tinyint', '4', 'unsigned', '0', 'not null', 'defaultsort');
+        table_column('data', '', 'editany', 'tinyint', '4', 'unsigned', '0', 'not null', 'defaultsortdir');
     }
     
     return true;
