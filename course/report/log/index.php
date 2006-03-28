@@ -11,7 +11,7 @@
     $date = optional_param('date', 0, PARAM_CLEAN); // Date to display
     $modname = optional_param('modname', ''); // course_module->id
     $modid = optional_param('modid', ''); // course_module->id
-    $modaction = optional_param('modaction', ''); // an action as recorded in the logs
+    $modaction = optional_param('modaction', '', PARAM_ALPHAEXT); // an action as recorded in the logs
     $page = optional_param('page', '0', PARAM_INT);     // which page to show
     $perpage = optional_param('perpage', '100', PARAM_INT); // how many per page 
     $showcourses = optional_param('showcourses',0,PARAM_INT); // whether to show courses if we're over our limit.

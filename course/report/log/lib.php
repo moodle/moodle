@@ -113,6 +113,15 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate="today"
 
     asort($users);
 
+    // Prepare the list of action options.
+    $actions = array(
+        'view' => get_string('view'),
+        'add' => get_string('add'),
+        'update' => get_string('update'),
+        'delete' => get_string('delete'),
+        '-view' => get_string('allchanges')
+    );
+
     // Get all the possible dates
     // Note that we are keeping track of real (GMT) time and user time
     // User time is only used in displays - all calcs and passing is GMT
@@ -191,6 +200,7 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate="today"
     }
     choose_from_menu ($dates, "date", $selecteddate, get_string("alldays"));
     choose_from_menu ($activities, "modid", $selectedactivity, get_string("allactivities"), "", "");
+    choose_from_menu ($actions, 'modaction', $modaction, get_string("allactions"));
     echo '<input type="submit" value="'.get_string('showtheselogs').'" />';
     echo "</form>";
     echo "</center>";

@@ -303,7 +303,12 @@ function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $per
     }
 
     if ($modaction) {
-        $joins[] = "l.action = '$modaction'";
+        $firstletter = substr($modaction, 0, 1);
+        if (ctype_alpha($firstletter)) {
+            $joins[] = "lower(l.action) LIKE '%" . strtolower($modaction) . "%'";
+        } else if ($firstletter == '-') {
+            $joins[] = "lower(l.action) NOT LIKE '%" . strtolower(substr($modaction, 1)) . "%'";
+        }
     }
 
     /// Getting all members of a group.
