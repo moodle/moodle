@@ -87,6 +87,7 @@
        'runclamonupload'          =>  0,
        'secureforms'              =>  false,
        'sessioncookie'            => '',
+       'sessioncookiepath'        => '/',
        'sessiontimeout'           =>  7200,
        'showsiteparticipantslist' =>  0,
        'showblocksonmodpages'     =>  0,

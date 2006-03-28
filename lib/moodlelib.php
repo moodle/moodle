@@ -1467,7 +1467,7 @@ function require_logout() {
         session_unregister("SESSION");
     }
 
-    setcookie('MoodleSessionTest'.$CFG->sessioncookie, '', time() - 3600, '/');
+    setcookie('MoodleSessionTest'.$CFG->sessioncookie, '', time() - 3600, $CFG->sessioncookiepath);
     unset($_SESSION['USER']);
     unset($_SESSION['SESSION']);
 
@@ -6940,8 +6940,8 @@ function report_session_error() {
     }
     moodle_setlocale();
     //clear session cookies
-    setcookie('MoodleSession'.$CFG->sessioncookie, '', time() - 3600, '/');
-    setcookie('MoodleSessionTest'.$CFG->sessioncookie, '', time() - 3600, '/');
+    setcookie('MoodleSession'.$CFG->sessioncookie, '', time() - 3600, $CFG->sessioncookiepath);
+    setcookie('MoodleSessionTest'.$CFG->sessioncookie, '', time() - 3600, $CFG->sessioncookiepath);
     //increment database error counters
     if (isset($CFG->session_error_counter)) {
         set_config('session_error_counter', 1 + $CFG->session_error_counter);
