@@ -1659,10 +1659,11 @@
             
             // number of attempts on the lesson
             $attempts = count_records('lesson_grades', 'userid', $id, 'lessonid', $lesson->id);
-            $count = 0;
             
             // go through each essay
             foreach ($studentessays[$id] as $page => $tries) {
+                $count = 0;
+                
                 // go through each essay per page
                 foreach($tries as $try) {
                     if ($count == $attempts) {
