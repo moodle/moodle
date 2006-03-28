@@ -1268,7 +1268,9 @@ class hotpot_xml_tree {
 		eval('$value = &$this->xml'.$this->xml_root.$tags.$more_tags.';');
 
 		if (is_string($value)) {
-			$value = utf8_decode($value);
+            if (empty($CFG->unicodedb)) {
+			    $value = utf8_decode($value);
+            }
 
 			// decode angle brackets
 			$value = strtr($value, array('&#x003C;'=>'<', '&#x003E;'=>'>', '&#x0026;'=>'&'));
