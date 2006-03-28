@@ -680,6 +680,9 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
 
     //set the final flag
     migrate2utf8_set_config('unicodedb','true');    //this is the main flag for unicode db
+
+    // Regenerate some cached data
+    rebuild_course_cache();       
     
 }
 
