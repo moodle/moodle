@@ -227,10 +227,10 @@ function rss_add_items($items) {
                 //We put it in the description instead because it's more important 
                 //for moodle than most other feeds, and most rss software seems to ignore
                 //the author field ...
-                $item->description = get_string('byname','',$item->author).'. &nbsp;<p />'.$item->description.'</p>';
+                $item->description = get_string('byname','',$item->author).'. &nbsp;<p>'.$item->description.'</p>';
             }
             $result .= rss_full_tag('description',3,false,$item->description);
-            $result .= "      <guid isPermaLink=\"true\">" . utf8_encode(htmlspecialchars($item->link)) . "</guid>\n";
+            $result .= rss_full_tag('guid',3,false,$item->link,array('isPermaLink' => 'true'));
             $result .= rss_end_tag('item',2,true);
 
         }
@@ -291,13 +291,19 @@ function rss_geterrorxmlfile() {
 // diferences. Someday all they should go to a common place.
 
 //Return the xml start tag
-function rss_start_tag($tag,$level=0,$endline=false) {
+function rss_start_tag($tag,$level=0,$endline=false,$attributes=null) {
     if ($endline) {
        $endchar = "\n";
     } else {
        $endchar = "";
     }
-    return str_repeat(" ",$level*2)."<".$tag.">".$endchar;
+    $attrstring = '';
+    if (!empty($attributes) && is_array($attributes)) {
+        foreach ($attributes as $key => $value) {
+            $attrstring .= " ".$key."=\"".$value."\"";
+        }
+    }
+    return str_repeat(" ",$level*2)."<".$tag.$attrstring.">".$endchar;
 }
 
 //Return the xml end tag
@@ -311,16 +317,19 @@ function rss_end_tag($tag,$level=0,$endline=true) {
 }
 
 //Return the start tag, the contents and the end tag
-function rss_full_tag($tag,$level=0,$endline=true,$content,$to_utf=true) {
-    //Here we encode absolute links
-    $st = rss_start_tag($tag,$level,$endline);
+function rss_full_tag($tag,$level=0,$endline=true,$content,$attributes=null) {
+    global $CFG;
+    $st = rss_start_tag($tag,$level,$endline,$attributes);
     $co="";
-    if ($to_utf) {
-        $co = preg_replace("/\r\n|\r/", "\n", utf8_encode(htmlspecialchars($content)));
-    } else {
+    if (!empty($CFG->unicodedb)) {
+        // Don't perform the conversion. Contents are Unicode.
         $co = preg_replace("/\r\n|\r/", "\n", htmlspecialchars($content));
+    } else {
+        // Perform the conversion. Contents aren't Unicode.
+        $co = preg_replace("/\r\n|\r/", "\n", utf8_encode(htmlspecialchars($content)));
     }
     $et = rss_end_tag($tag,0,true);
+
     return $st.$co.$et;
 }
 
