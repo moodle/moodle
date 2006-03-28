@@ -206,7 +206,11 @@ function auth_user_create ($userobject,$plainpass) {
         }
         foreach ($values as $value) {
             if(!empty($userobject->$key) ){
-                $newuser[$value]=utf8_encode($userobject->$key);
+                if (!empty($CFG->unicodedb)) {
+                    $newuser[$value]= $userobject->$key;
+                } else {
+                    $newuser[$value]=utf8_encode($userobject->$key);
+                }
             }
         }
     }
