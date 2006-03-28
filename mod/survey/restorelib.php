@@ -401,7 +401,7 @@
             break;
         default:
             if (!defined('RESTORE_SILENTLY')) {
-                echo "action (".$log->module."-".$log->action.") unknow. Not restored<br />";                 //Debug
+                echo "action (".$log->module."-".$log->action.") unknown. Not restored<br />";                 //Debug
             }
             break;
         }
