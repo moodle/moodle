@@ -387,7 +387,11 @@ function handle_questions_media(&$questions, $path, $courseid) {
         $smarty->assign('course', $course);
         $smarty->assign('lang', $this->lang);
         $expout = $smarty->fetch('imsmanifest.tpl');
-        echo utf8_encode($expout);
+        if (!empty($CFG->unicodedb)) {
+            echo $expout;
+        } else {
+            echo utf8_encode($expout);
+        }
         return true;
     }
 

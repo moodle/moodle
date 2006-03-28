@@ -1255,7 +1255,9 @@ class hotpot_xml_tree {
 		if (empty($str)) {
 			$this->xml =  array();
 		} else {
-			$str = utf8_encode($str);
+            if (empty($CFG->unicodedb)) {
+			    $str = utf8_encode($str);
+            }
 			$this->xml =  xmlize($str, 0);
 		}
 		$this->xml_root = $xml_root;

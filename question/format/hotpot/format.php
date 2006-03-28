@@ -472,7 +472,9 @@ class hotpot_xml_tree {
             // encode htmlentities in JCloze
             $this->encode_cdata($str, 'gap-fill');
             // encode as utf8
-            $str = utf8_encode($str);
+            if (empty($CFG->unicodedb)) {
+                $str = utf8_encode($str);
+            }
             // xmlize (=convert xml to tree)
             $this->xml =  xmlize($str, 0);
         }
