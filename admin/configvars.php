@@ -141,6 +141,8 @@ class configvarrss extends configvar {
 /// sessioncookie
     $operatingsystem['sessioncookie'] = new configvar (get_string('configsessioncookie', 'admin'),
         '<input name="sessioncookie" type="text" size="10" value="'.s($config->sessioncookie).'" alt="sessioncookie" />' );
+    $operatingsystem['sessioncookiepath'] = new configvar (get_string('configsessioncookiepath', 'admin'),
+        '<input name="sessioncookiepath" type="text" size="10" value="'.s($config->sessioncookiepath).'" alt="sessioncookiepath" />' );
 
 /// zip
     $operatingsystem['zip'] = new configvar (get_string('configzip', 'admin'),
