@@ -384,15 +384,16 @@ class default_questiontype {
     *                         type specific information is included.
     */
     // ULPGC ecastro
-    function get_actual_response(&$question, &$state) {
-        /* The default implementation only returns the raw ->responses.
-          may be overridden by each type*/
-        //unset($resp);
-        if (isset($state->responses)) {
-            return $state->responses;
-        } else {
-            return null;
-        }
+    function get_actual_response($question, $state) {
+       // change length to truncate responses here if you want
+       $lmax = 40;
+       if (!empty($state->responses)) {
+              $responses[] = (strlen($state->responses['']) > $lmax) ?
+               substr($state->responses[''], 0, $lmax).'...' : $state->responses[''];
+       } else {
+           $responses[] = '';
+       }
+       return $responses;
     }
 
     // ULPGC ecastro
