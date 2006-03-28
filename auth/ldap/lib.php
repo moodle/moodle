@@ -127,10 +127,18 @@ function auth_get_userinfo($username){
             $ldapval = NULL;
             foreach ($values as $value) {
                 if(is_array($user_entry[0][strtolower($value)])) {
-                    $newval = addslashes(stripslashes(utf8_decode($user_entry[0][strtolower($value)][0])));
+                    if (!empty($CFG->unicodedb)) {
+                        $newval = addslashes(stripslashes($user_entry[0][strtolower($value)][0]));
+                    } else {
+                        $newval = addslashes(stripslashes(utf8_decode($user_entry[0][strtolower($value)][0])));
+                    }
                 }
                 else {
-                    $newval = addslashes(stripslashes(utf8_decode($user_entry[0][strtolower($value)])));
+                    if (!empty($CFG->unicodedb)) {
+                        $newval = addslashes(stripslashes($user_entry[0][strtolower($value)]));
+                    } else {
+                        $newval = addslashes(stripslashes(utf8_decode($user_entry[0][strtolower($value)])));
+                    }
                 }
                 if (!empty($newval)) { // favour ldap entries that are set
                     $ldapval = $newval;

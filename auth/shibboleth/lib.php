@@ -44,7 +44,11 @@ function auth_get_userinfo($username) {
     $search_attribs = array();
   
     foreach ($attrmap as $key=>$value) {
-        $result[$key]=utf8_decode($_SERVER[$value]);
+        if (!empty($CFG->unicodedb)) {
+            $result[$key]=$_SERVER[$value];
+        } else {
+            $result[$key]=utf8_decode($_SERVER[$value]);
+        }
     }
 
      // Provide an API to modify the information to fit the Moodle internal
