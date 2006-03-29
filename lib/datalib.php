@@ -20,7 +20,6 @@ if ($SITE = get_site()) {
      * If $SITE global from {@link get_site()} is set then SITEID to $SITE->id, otherwise set to 1.
      */
     define('SITEID', $SITE->id);
-    define('COURSEID', SITEID);   // For now.  This will usually get reset later in require_login() etc.
 } else {
     /**
      * @ignore
@@ -28,6 +27,8 @@ if ($SITE = get_site()) {
     define('SITEID', 1);
     define('COURSEID', 1);
 }
+
+$COURSE->id = SITEID;   // For now.  This will usually get reset later in require_login() etc.
 
 /// FUNCTIONS FOR DATABASE HANDLING  ////////////////////////////////
 
