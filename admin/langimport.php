@@ -49,15 +49,14 @@
         case INSTALLATION_OF_SELECTED_LANG:    ///installation of selected language pack
         
             if (confirm_sesskey()) {
-                if ($confirm) {
-                    @mkdir ($CFG->dataroot.'/temp/');    //make it in case it's a fresh install, it might not be there
-                    @mkdir ($CFG->dataroot.'/lang/');
-                    
-                    require_once($CFG->libdir.'/componentlib.class.php');
-                    if ($cd = new component_installer('http://download.moodle.org', 'lang16',
-                                                        $pack.'.zip', 'languages.md5', 'lang')) {
-                        $status = $cd->install(); //returns ERROR | UPTODATE | INSTALLED
-                        switch ($status) {
+                @mkdir ($CFG->dataroot.'/temp/');    //make it in case it's a fresh install, it might not be there
+                @mkdir ($CFG->dataroot.'/lang/');
+                
+                require_once($CFG->libdir.'/componentlib.class.php');
+                if ($cd = new component_installer('http://download.moodle.org', 'lang16',
+                                                    $pack.'.zip', 'languages.md5', 'lang')) {
+                    $status = $cd->install(); //returns ERROR | UPTODATE | INSTALLED
+                    switch ($status) {
 
                         case ERROR:
                             if ($cd->get_error() == 'remotedownloadnotallowed') {
@@ -69,36 +68,18 @@
                                 error(get_string($cd->get_error(), 'error'));
                             }
                         break;
-                        case UPTODATE:
-                            
-                        break;
+
                         case INSTALLED:
                             @unlink($CFG->dataroot.'/cache/languages');
-                            notice(get_string('langpackupdated','admin',$pack), 'langimport.php');
+                            redirect('langimport.php', get_string('langpackupdated','admin',$pack));
                         break;
-                        default:
-                            //We shouldn't reach this point
-                        }
-                    } else {
-                        //We shouldn't reach this point
-                    }
 
-                } else {    //print confirm box, no confirmation yet
-                    if (confirm_sesskey()) {
-                        print_simple_box_start('center','100%');
-                        echo '<div align="center">';
-                        echo '<form name="langform" action="langimport.php?mode=2" method="POST">';
-                        echo '<input name="pack" type="hidden" value="'.$pack.'" />';
-                        echo '<input name="displaylang" type="hidden" value="'.$displaylang.'" />';
-                        echo '<input name="confirm" type="hidden" value="1" />';
-                        echo '<input name="sesskey" type="hidden" value="'.sesskey().'" />';
-                        print_heading(get_string('confirminstall','admin',$displaylang),2);
-                        echo '<input type="submit" value="'.get_string('ok').'"/>';
-                        echo '&nbsp;<input type="button" value="'.get_string('cancel').'" onclick="javascript:history.go(-1)" />';
-                        echo '</form>';
-                        echo '</div>';
-                        print_simple_box_end();
+                        case UPTODATE:
+                        break;
+
                     }
+                } else {
+                    notify('Had an unspecified error with the component installer, sorry.');
                 }
             }
         break;
@@ -109,13 +90,9 @@
                 $langconfig = get_record('config','name','lang');
                 $langconfig->value = $sitelang;
                 if (!empty($sitelang) && update_record('config',$langconfig)){
-                    echo '<div align="center">';
-                    notify (get_string('sitelangchanged','admin'));
-                    echo '<form action="langimport.php" method="POST">';
-                    echo '<input type="submit" value="'.get_string('ok').'" />';
-                    echo '</form></div>';
+                    redirect('langimport.php', get_string('sitelangchanged','admin'));
                 } else {
-                    error ('can not update site language');
+                    error('Could not update the default site language!');
                 }
             }
 
@@ -123,20 +100,10 @@
         case DELETION_OF_SELECTED_LANG:    //delete a directory(ies) containing a lang pack completely
 
             if (!$confirm && confirm_sesskey()) {
-                print_simple_box_start('center','100%');
-                echo '<div align="center">';
-                echo '<form name="langform" action="langimport.php?mode=4" method="POST">';
-                echo '<input name="uninstalllang" type="hidden" value="'.$uninstalllang.'" />';
-                echo '<input name="confirm" type="hidden" value="1" />';
-                print_heading(get_string('uninstallconfirm','admin',$uninstalllang),2);
-                echo '<input name="sesskey" type="hidden" value="'.sesskey().'" />';
-                echo '<input type="submit" value="'.get_string('uninstall','admin').'"/>';
-                echo '&nbsp;<input type="button" value="'.get_string('cancel').'" onclick="javascript:history.go(-1)" />';
-                echo '</form>';
-                echo '</div>';
-                print_simple_box_end();
-            }
-            else if (confirm_sesskey()) {
+                notice_yesno(get_string('uninstallconfirm', 'admin', $uninstalllang), 
+                             'langimport.php?mode=4&amp;uninstalllang='.$uninstalllang.'&amp;confirm=1&amp;sesskey='.sesskey(),
+                             'langimport.php');
+            } else if (confirm_sesskey()) {
                 if ($uninstalllang == 'en_utf8') {
                     error ('en_utf8 can not be uninstalled!');
                 }
@@ -152,13 +119,9 @@
                 }
                 //delete the direcotries
                 if ($rm1 or $rm2) {
-                    echo '<div align="center">';
-                    print_string('langpackremoved','admin');
-                    echo '<form action="langimport.php" method="POST">';
-                    echo '<input type="submit" value="'.get_string('ok').'" />';
-                    echo '</form></div>';
+                    redirect('langimport.php', get_string('langpackremoved','admin'));
                 } else {    //nothing deleted, possibly due to permission error
-                    error ('An error has occurred, language pack is not completely uninstalled, please check file permission');
+                    error('An error has occurred, language pack is not completely uninstalled, please check file permissions');
                 }
             }
             @unlink($CFG->dataroot.'/cache/languages');
@@ -246,7 +209,7 @@
                         //Print error string or whatever you want to do
                     break;
                     case INSTALLED:
-                        print_string('langpackupdated','admin',$pack);
+                        notify(get_string('langpackupdated','admin',$pack), 'notifysuccess');
                         $updated = true;
                         //Print/do whatever you want
                     break;
@@ -257,15 +220,11 @@
                 }
             }
 
-            echo '<div align="center"><form action="langimport.php" method="POST">';
             if ($updated) {
-                echo '<br />';
-                notify(get_string('langupdatecomplete','admin'));
+                notice(get_string('langupdatecomplete','admin'), 'langimport.php');
             } else {
-                notify(get_string('nolangupdateneeded','admin'));
+                notice(get_string('nolangupdateneeded','admin'), 'langimport.php');
             }
-            echo '<input type="submit" value="'.get_string('ok').'" />';
-            echo '</form></div>';
 
         break;
         
@@ -369,7 +328,7 @@
             }
             if ($remote) {
                 echo '</select>';
-                echo '<br/ ><input type="submit" value="'.get_string('install','admin').'">';
+                echo '<br/ ><input type="submit" value="<-- '.get_string('install','admin').'">';
             }
             echo '</form>';
 
