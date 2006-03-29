@@ -89,8 +89,8 @@ class quiz_report extends quiz_default_report {
             }
             $sql .= ' WHERE qa.quiz = '.$quiz->id.  // ULPGC ecastro
                 ' AND ( qa.sumgrades >= '.$scorelimit.' ) ';
-                                                                                   // ^^^^^^ es posible seleccionar aquí TODOS los quizzes, como quiere Jussi,
-                                                                                   // pero habría que llevar la cuenta ed cada quiz para restaura las preguntas (quizquestions, states)
+                                                                                   // ^^^^^^ es posible seleccionar aquï¿½ TODOS los quizzes, como quiere Jussi,
+                                                                                   // pero habrï¿½a que llevar la cuenta ed cada quiz para restaura las preguntas (quizquestions, states)
         /// Fetch the attempts
         $attempts = get_records_sql($sql);
 
@@ -404,10 +404,10 @@ class quiz_report extends quiz_default_report {
         echo '<td>';        
         $options["download"] = "Excel";
         print_single_button("report.php", $options, get_string("downloadexcel"));
-        echo "</td>\n";
-        echo '<td>';        
+        echo "</td>\n";   
         
         if (file_exists("$CFG->libdir/phpdocwriter/lib/include.php")) {
+            echo '<td>';     
             $options["download"] = "OOo";
             print_single_button("report.php", $options, get_string("downloadooo", "quiz_analysis"));
             echo "</td>\n";
