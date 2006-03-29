@@ -224,7 +224,7 @@ class quiz_match_qtype extends quiz_default_questiontype {
             echo '</td>';
 
             /// Drop-down list:
-            $menuname = $nameprefix.$subquestion->id;
+            $menuname = $nameprefix.rc4encrypt($subquestion->id);
             $response = isset($state->responses[$subquestion->id])
                         ? $state->responses[$subquestion->id] : '0';
             if ($options->readonly
@@ -256,6 +256,14 @@ class quiz_match_qtype extends quiz_default_questiontype {
 
     function grade_responses(&$question, &$state, $quiz) {
         $subquestions = $state->options->subquestions;
+
+        foreach ($state->responses as $key => $value) {   // Decrypt strings back to numbers
+            if ((string)(int)$key == (string)$key) {      // Has been done before
+                continue;
+            }
+            unset($state->responses[$key]);
+            $state->responses[rc4decrypt($key)] = $value;
+        }
         $responses    = &$state->responses;
 
         $answers = array();
