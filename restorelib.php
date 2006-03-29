@@ -1,4 +1,4 @@
-<?PHP // $Id: restorelib.php,v 1.1 2006/03/12 18:39:59 skodak Exp $
+<?PHP // $Id: restorelib.php,v 1.2 2006/03/29 06:21:56 skodak Exp $
     //This php script contains all the stuff to backup/restore
     //book mods
 
@@ -191,7 +191,7 @@
                 break;
             default:
                 if (!defined('RESTORE_SILENTLY')) {
-                    echo "action (".$log->module."-".$log->action.") unknow. Not restored<br>";                 //Debug
+                    echo "action (".$log->module."-".$log->action.") unknown. Not restored<br>";                 //Debug
                 }
                 break;
         }
