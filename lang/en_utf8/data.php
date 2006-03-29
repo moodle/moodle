@@ -34,6 +34,7 @@ $string['descending'] = 'Descending';
 $string['delete'] = 'Delete';
 $string['deleted'] = 'deleted';
 $string['deletefield'] = 'Delete an existing field';
+$string['detail'] = 'Detail';
 $string['menu'] = 'Menu';
 $string['menuchoose'] = 'Choose...';
 $string['edit'] = 'Edit';
