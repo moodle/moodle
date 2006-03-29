@@ -44,6 +44,10 @@ function data_upgrade($oldversion) {
         table_column('data', '', 'defaultsortdir', 'tinyint', '4', 'unsigned', '0', 'not null', 'defaultsort');
         table_column('data', '', 'editany', 'tinyint', '4', 'unsigned', '0', 'not null', 'defaultsortdir');
     }
+
+    if ($oldversion < 2006032900) {
+        table_column('data', '', 'csstemplate', 'text', '', '', '', 'not null', 'rsstemplate');
+    }
     
     return true;
 }
