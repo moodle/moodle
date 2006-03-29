@@ -100,7 +100,7 @@
             print_header($strlicense, $strlicense, $strlicense, "", "", false, "&nbsp;", "&nbsp;");
             print_heading("<a href=\"http://moodle.org\">Moodle</a> - Modular Object-Oriented Dynamic Learning Environment");
             print_heading(get_string("copyrightnotice"));
-            print_simple_box_start("center");
+            print_simple_box_start("center", '80%');
             echo text_to_html(get_string("gpl"));
             print_simple_box_end();
             echo "<br />";
@@ -205,7 +205,7 @@
             notify("ERROR: Could not update release version in database!!");
         }
         print_continue("index.php");
-        print_simple_box_start("CENTER");
+        print_simple_box_start("center", '80%');
         if (file_exists("$CFG->dirroot/lang/en_utf8/docs/release.html")) {
             include("$CFG->dirroot/lang/en_utf8/docs/release.html");
         }
@@ -317,7 +317,7 @@
 
 /// Deprecated database! Warning!!
     if (!empty($CFG->migrated_to_new_db)) {
-        print_simple_box_start('center','50%');
+        print_simple_box_start('center','60%');
         print_string('dbmigrationdeprecateddb','admin');
         print_simple_box_end();
     }
@@ -357,7 +357,7 @@
     if (!isset($CFG->registered) || $CFG->registered < (time() - 3600*24*30*6)) {
         $options = array();
         $options['sesskey'] = $USER->sesskey;
-        print_simple_box_start('center');
+        print_simple_box_start('center','60%');
         echo '<div align="center">';
         print_string('pleaseregister', 'admin');
         print_single_button('register.php', $options, get_string('registration'));
@@ -470,15 +470,14 @@
 
     print_simple_box_end();
 
-    print_simple_box_start();
-    //////DUMMY FUNCTION HERE
     
-    if (optional_param('dbmigrate')) {
+    if (optional_param('dbmigrate')) {               // ??? Is this actually used?
+        print_simple_box_start('center','60%');
         require_once($CFG->dirroot.'/admin/utfdbmigrate.php');
         db_migrate2utf8();
+        print_simple_box_end();
     }
 
-    print_simple_box_end();
 
     print_footer($site);
 
