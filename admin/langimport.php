@@ -73,9 +73,8 @@
                             
                         break;
                         case INSTALLED:
-                            print_string('langpackupdated','admin',$pack);
                             @unlink($CFG->dataroot.'/cache/languages');
-                            print_continue('langimport.php');
+                            notice(get_string('langpackupdated','admin',$pack), 'langimport.php');
                         break;
                         default:
                             //We shouldn't reach this point
