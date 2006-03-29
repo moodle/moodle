@@ -58,32 +58,38 @@ function hotpot_update_to_v2_1_6() {
 function hotpot_update_to_v2_1_2() {
 	global $CFG, $db;
 	$ok = true;
-	// hotpot_attempts: make sure there is only one "in progress" attempt by each user on each hotpot (and it must be the most recent attempt)
-	// get info about attempts (grouped by user and hotpot)
-	//	countrecords : number of attempts in the group
-	//	maxtimestart : most recent timestart in the group
-	//	minstatus    : minimum status in the group
-	// (groups with only one attempt, or no "in progess" attempt are ignored)
-	$records = get_records_sql("
-		SELECT id, userid, hotpot, COUNT(*) as countrecords, MAX(timestart) AS maxtimestart, MIN(status) as minstatus
+
+	// save and switch off SQL message echo
+	$debug = $db->debug;
+	$db->debug = false;
+
+	// extract info about attempts by each user on each hotpot (cases where 
+	// the user has only one attempt, or no "in progess" attempt are ignored)
+	$rs = $db->Execute("
+		SELECT userid, hotpot, COUNT(*), MIN(status)
 		FROM {$CFG->prefix}hotpot_attempts
 		GROUP BY userid, hotpot
-		HAVING countrecords > 1 AND minstatus=1
+		HAVING COUNT(*)>1 AND MIN(status)=1
 	");
-	if ($records) {
-		// save and switch off SQL message echo
-		$debug = $db->debug;
-		$db->debug = false;
+	if ($rs && $rs->RecordCount()) {
+		$records = $rs->GetArray();
+
+		// start message to browser
 		print "adjusting status of ".count($records)." &quot;in progress&quot; attempts ... ";
+
+		// loop through records
 		foreach ($records as $record) {
+
 			// get all attempts by this user at this hotpot
 			$attempts = get_records_sql("
 				SELECT id, userid, hotpot, score, timestart, timefinish, status 
 				FROM {$CFG->prefix}hotpot_attempts 
-				WHERE userid = $record->userid AND hotpot=$record->hotpot
+				WHERE userid = ".$record['userid']." AND hotpot=".$record['hotpot']."
 				ORDER BY timestart DESC, id DESC
 			");
+
 			unset($previous_timestart);
+
 			foreach ($attempts as $attempt) {
 				// if this attempt has a status of "in progress" and is not 
 				// the most recent one in the group, set the status to "abandoned"
@@ -102,11 +108,15 @@ function hotpot_update_to_v2_1_2() {
 				$previous_timestart = $attempt->timestart;
 			} // end foreach $attempts
 		} // end foreach $records
+
+		// finish message to browser
 		print $ok ? get_string('success') : 'failed';
 		print "<br />\n";
-		// restore SQL message echo setting
-		$db->debug = $debug;
 	}
+
+	// restore SQL message echo setting
+	$db->debug = $debug;
+
 	return $ok;
 }
 function hotpot_update_to_v2_1() {
