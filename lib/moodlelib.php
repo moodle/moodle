@@ -1495,6 +1495,7 @@ function require_logout() {
  * @uses $USER
  * @uses $FULLME
  * @uses SITEID
+ * @uses COURSEID
  * @uses $MoodleSession
  * @param int $courseid id of the course
  * @param bool $autologinguest
@@ -1503,6 +1504,12 @@ function require_logout() {
 function require_login($courseid=0, $autologinguest=true, $cm=null) {
 
     global $CFG, $SESSION, $USER, $FULLME, $MoodleSession;
+
+    // Redefine global COURSEID, this is a new idea in 1.6 Beta and not to be relied on yet
+
+    if ($courseid) {
+        define('COURSEID', $courseid);
+    }
 
     // First check that the user is logged in to the site.
     if (! (isset($USER->loggedin) and $USER->confirmed and ($USER->site == $CFG->wwwroot)) ) { // They're not
