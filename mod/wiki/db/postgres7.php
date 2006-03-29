@@ -127,10 +127,22 @@ function wiki_upgrade($oldversion) {
     
     if ($oldversion < 2006032900) {
         global $db;
-        $data = $db->GetAll("SELECT id,refs FROM {$CFG->prefix}wiki_pages");
+        table_column("wiki_pages",'','content_base64','text');
+        table_column("wiki_pages",'','refs_base64','text');
+        $olddebug = $db->debug;
+        $db->debug = false;
+        $data = $db->GetAll("SELECT id,content,refs FROM {$CFG->prefix}wiki_pages");
         foreach ($data as $d) {
-            $db->AutoExecute("{$CFG->prefix}wiki_pages", array('refs_base64' => base64_encode($d['refs'])), 'UPDATE', 'id = '.$d['id']);
+            $db->AutoExecute("{$CFG->prefix}wiki_pages", array('refs_base64' => base64_encode($d['refs']), 'content_base64' => base64_encode($d['content'])), 'UPDATE', 'id = '.$d['id']);
         }
+        $db->debug = $olddebug;
+        execute_sql("ALTER TABLE {$CFG->prefix}wiki_pages DROP COLUMN content");
+        execute_sql("ALTER TABLE {$CFG->prefix}wiki_pages DROP COLUMN refs");
+        table_column("wiki_pages",'','content','bytea');
+        table_column("wiki_pages",'','refs','bytea');
+        execute_sql("UPDATE {$CFG->prefix}wiki_pages SET refs = decode(refs_base64, 'base64'), content = decode(content_base64, 'base64')");
+        execute_sql("ALTER TABLE {$CFG->prefix}wiki_pages DROP COLUMN content_base64");
+        execute_sql("ALTER TABLE {$CFG->prefix}wiki_pages DROP COLUMN refs_base64");
     }
 
     return true;
