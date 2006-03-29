@@ -1506,7 +1506,6 @@ function require_login($courseid=0, $autologinguest=true, $cm=null) {
     global $CFG, $SESSION, $USER, $FULLME, $MoodleSession;
 
     // Redefine global COURSEID, this is a new idea in 1.6 Beta and not to be relied on yet
-
     if ($courseid) {
         define('COURSEID', $courseid);
     }
