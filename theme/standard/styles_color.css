@@ -343,38 +343,44 @@ table.minicalendar {
   color:#999999;
 }
 
+/*Accessibility: increase contrast, darker link/weekend colors, lighter event backgrounds. */
+.minicalendar a,
+.calendarmonth a {
+  color:#000077;
+}
+
 #calendar .event_global,
 .minicalendar .event_global,
 .block_calendar_month .event_global {
-  border-color:#2EBA0E !important;
-  background-color:#2EBA0E;
+  border-color:#D6F8CD !important; /* #C5E7BC */
+  background-color:#D6F8CD;
 }
 
 #calendar .event_course,
 .minicalendar .event_course,
 .block_calendar_month .event_course {
-  border-color:#FF9966 !important;
-  background-color:#FF9966;
+  border-color:#FFD3BD !important; /* #EEC2AC */
+  background-color:#FFD3BD;
 }
 
 #calendar .event_group,
 .minicalendar .event_group,
 .block_calendar_month .event_group {
-  border-color:#FBBB23 !important;
-  background-color:#FBBB23;
+  border-color:#FEE7AE !important; /* #EDD69D */
+  background-color:#FEE7AE;
 }
 
 #calendar .event_user,
 .minicalendar .event_user,
 .block_calendar_month .event_user {
-  border-color:#A1BECB !important;
-  background-color:#A1BECB;
+  border-color:#DCE7EC !important; /* #CBD6DB */
+  background-color:#DCE7EC;
 }
 
 #calendar .duration_global,
 .minicalendar .duration_global {
-  border-top-color:#2EBA0E !important;
-  border-bottom-color:#2EBA0E !important;
+  border-top-color:#66D14D !important;
+  border-bottom-color:#66D14D !important;
 }
 
 #calendar .duration_course,
@@ -397,12 +403,12 @@ table.minicalendar {
 
 #calendar .weekend,
 .minicalendar .weekend {
-  color:#FF0000;
+  color:#990000;
 }
 
 #calendar .today,
 .minicalendar .today {
-  border-color:#000000 !important;
+  border-color:#444444 !important;
 }
 
 .cal_popup_fg {
