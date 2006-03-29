@@ -24,7 +24,7 @@ CREATE TABLE prefix_backup_ids (
   old_id integer NOT NULL default '0',
   new_id integer default NULL,
   info text,
-  CONSTRAINT backup_ids_uk UNIQUE (backup_code, table_name, old_id)
+  CONSTRAINT prefix_backup_ids_uk UNIQUE (backup_code, table_name, old_id)
 );
 
 

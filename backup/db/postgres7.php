@@ -33,7 +33,7 @@ function backup_upgrade($oldversion=0) {
                           path varchar(255) NOT NULL default '',
                           old_id integer default NULL,
                           new_id integer default NULL,
-                          CONSTRAINT backup_files_uk UNIQUE (backup_code, file_type, path))");
+                          CONSTRAINT {$CFG->prefix}backup_files_uk UNIQUE (backup_code, file_type, path))");
         }
         if ($result) {
             $result = execute_sql("DROP TABLE {$CFG->prefix}backup_ids");
@@ -46,7 +46,7 @@ function backup_upgrade($oldversion=0) {
                           old_id integer NOT NULL default '0',
                           new_id integer default NULL,
                           info text,
-                          CONSTRAINT backup_ids_uk UNIQUE (backup_code, table_name, old_id))");
+                          CONSTRAINT {$CFG->prefix}backup_ids_uk UNIQUE (backup_code, table_name, old_id))");
         }
     }
 

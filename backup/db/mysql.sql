@@ -10,7 +10,7 @@ CREATE TABLE `prefix_backup_files` (
   `old_id` int(10) unsigned default NULL,
   `new_id` int(10) unsigned default NULL,
   PRIMARY KEY  (`id`),
-  UNIQUE KEY `backup_files_uk` (`backup_code`,`file_type`,`path`)
+  UNIQUE KEY `prefix_backup_files_uk` (`backup_code`,`file_type`,`path`)
 ) TYPE=MyISAM COMMENT='To store and recode ids to user and course files.';
 # --------------------------------------------------------
 
@@ -26,7 +26,7 @@ CREATE TABLE `prefix_backup_ids` (
   `new_id` int(10) unsigned default NULL,
   `info` mediumtext,
   PRIMARY KEY  (`id`),
-  UNIQUE KEY `backup_ids_uk` (`backup_code` ,`table_name`,`old_id`)
+  UNIQUE KEY `prefix_backup_ids_uk` (`backup_code` ,`table_name`,`old_id`)
 ) TYPE=MyISAM COMMENT='To store and convert ids in backup/restore';
 # --------------------------------------------------------
 
