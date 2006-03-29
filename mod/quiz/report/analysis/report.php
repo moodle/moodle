@@ -401,10 +401,10 @@ class quiz_report extends quiz_default_report {
         echo '<td>';        
         $options["download"] = "Excel";
         print_single_button("report.php", $options, get_string("downloadexcel"));
-        echo "</td>\n";
-        echo '<td>';        
+        echo "</td>\n"; 
         
         if (file_exists("$CFG->libdir/phpdocwriter/lib/include.php")) {
+            echo '<td>';       
             $options["download"] = "OOo";
             print_single_button("report.php", $options, get_string("downloadooo", "quiz_analysis"));
             echo "</td>\n";
