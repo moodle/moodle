@@ -564,10 +564,10 @@ function data_add_record($data, $groupid=0){
  *******************************************************************/
 function data_tags_check($dataid, $template){
     //first get all the possible tags
-    $possiblefields = get_records('data_fields','dataid',$dataid);
+    $fields = get_records('data_fields','dataid',$dataid);
     ///then we generate strings to replace
     $tagsok = true; //let's be optimistic
-    foreach ($possiblefields as $field){
+    foreach ($fields as $field){
         $pattern="/\[\[".$field->name."\]\]/i";
         if (preg_match_all($pattern, $template, $dummy)>1){
             $tagsok = false;
@@ -748,7 +748,7 @@ function data_user_complete($course, $user, $mod, $data) {
 
     if ($records = get_records_sql($sql)){
 
-        data_print_template($records, $data, '', 'singletemplate');
+        data_print_template('singletemplate', $records, $data);
 
     }
 }
@@ -810,55 +810,54 @@ function data_get_coursemodule_info($coursemodule) {
  *       @param string $template                                        *
  * output null                                                          *
  ************************************************************************/
-function data_print_template($records, $data, $search, $template, $sort, $page=0, $rid=0, $order='', $group='', $return=false){
-    global $CFG, $course;
-    
+function data_print_template($template, $records, $data, $search='', $return=false){
+    global $CFG;
+
+    static $fields = NULL;
+    static $isteacher;
+
+    if (empty($fields)) {
+        $fieldrecords = get_records('data_fields','dataid', $data->id);
+        foreach ($fieldrecords as $fieldrecord) {
+            $fields[]= data_get_field($fieldrecord, $data);
+        }
+        $isteacher = isteacher($data->course);
+    }
+
     foreach ($records as $record) {    //only 1 record for single mode
 
-        //replacing tags
+    /// Replacing tags
         $patterns = array();
         $replacement = array();
-        if ($search || $sort){    //the ids are different for the 2 searches
-            $record->id = $record->recordid;
-        }
 
-        $possiblefields = get_records('data_fields','dataid',$data->id);
-        
-        ///then we generate strings to replace for normal tags
-        foreach ($possiblefields as $ff) {
-            $patterns[]='/\[\['.$ff->name.'\]\]/i';
-            $field = data_get_field($ff, $data);
+    /// Then we generate strings to replace for normal tags
+        foreach ($fields as $field) {
+            $patterns[]='/\[\['.$field->field->name.'\]\]/i';
             $replacement[] = highlight($search, $field->display_browse_field($record->id, $template));
         }
 
-        $record = get_record('data_records','id',$record->id);
-        ///replacing special tags (##Edit##, ##Delete##, ##More##)
-
+    /// Replacing special tags (##Edit##, ##Delete##, ##More##)
         $patterns[]='/\#\#Edit\#\#/i';
-        if (data_isowner($record->id) or isteacheredit($course->id)){
+        $patterns[]='/\#\#Delete\#\#/i';
+        if ($isteacher or data_isowner($record->id)) {
             $replacement[] = '<a href="'.$CFG->wwwroot.'/mod/data/add.php?d='
                              .$data->id.'&amp;rid='.$record->id.'&amp;sesskey='.sesskey().'"><img src="'.$CFG->pixpath.'/t/edit.gif" height="11" width="11" border="0" alt="'.get_string('edit').'" /></a>';
-        }else {
-            $replacement[] = '';
-        }
-
-        $patterns[]='/\#\#Delete\#\#/i';
-        if (data_isowner($record->id) or isteacheredit($course->id)){
             $replacement[] = '<a href="'.$CFG->wwwroot.'/mod/data/view.php?d='
                              .$data->id.'&amp;delete='.$record->id.'&amp;sesskey='.sesskey().'"><img src="'.$CFG->pixpath.'/t/delete.gif" height="11" width="11" border="0" alt="'.get_string('delete').'" /></a>';
-        }else {
+        } else {
+            $replacement[] = '';
             $replacement[] = '';
         }
         $patterns[]='/\#\#More\#\#/i';
-        $replacement[] = '<a href="'.$CFG->wwwroot.'/mod/data/view.php?d='.$data->id.'&amp;rid='.$record->id.'&amp;search='.$search.'&amp;sort='.$sort.'&amp;order='.$order.'&amp;group='.$group.'&amp;"><img src="'.$CFG->pixpath.'/i/search.gif" height="11" width="11" border="0" alt="'.get_string('more').'" /></a>';
+        $replacement[] = '<a href="'.$CFG->wwwroot.'/mod/data/view.php?d='.$data->id.'&amp;rid='.$record->id.'"><img src="'.$CFG->pixpath.'/i/search.gif" height="11" width="11" border="0" alt="'.get_string('more').'" /></a>';
 
         $patterns[]='/\#\#MoreURL\#\#/i';
-        $replacement[] = $CFG->wwwroot.'/mod/data/view.php?d='.$data->id.'&amp;rid='.$record->id.'&amp;search='.$search.'&amp;sort='.$sort.'&amp;order='.$order.'&amp;group='.$group;
+        $replacement[] = $CFG->wwwroot.'/mod/data/view.php?d='.$data->id.'&amp;rid='.$record->id;
 
 
         $patterns[]='/\#\#Approve\#\#/i';
-        if (isteacher($course->id) && ($data->approval) && (!$record->approved)){
-            $replacement[] = '<a href="'.$CFG->wwwroot.'/mod/data/view.php?d='.$data->id.'&amp;approve='.$record->id.'&search='.$search.'&amp;sort='.$sort.'&amp;order='.$order.'&amp;group='.$group.'&amp;sesskey='.sesskey().'"><img src="'.$CFG->pixpath.'/i/show.gif" height="11" width="11" border="0" alt="'.get_string('approve').'" /></a>';
+        if ($isteacher && ($data->approval) && (!$record->approved)){
+            $replacement[] = '<a href="'.$CFG->wwwroot.'/mod/data/view.php?d='.$data->id.'&amp;approve='.$record->id.'&amp;sesskey='.sesskey().'"><img src="'.$CFG->pixpath.'/i/show.gif" height="11" width="11" border="0" alt="'.get_string('approve').'" /></a>';
         } else {
             $replacement[] = '';
         }
@@ -866,7 +865,7 @@ function data_print_template($records, $data, $search, $template, $sort, $page=0
         $patterns[]='/\#\#Comment\#\#/i';
         if (($template == 'listtemplate') && ($data->comments)) {
             $comments = count_records('data_comments','recordid',$record->id);
-            $replacement[] = '<a href="comment.php?recordid='.$record->id.'&amp;d='.$data->id.'&amp;search='.$search.'&amp;sort='.$sort.'&amp;order='.$order.'&amp;group='.$group.'&amp;page='.$page.'">'.$comments.' '.get_string('comment','data').'</a>';
+            $replacement[] = '<a href="comment.php?d='.$data->id.'&amp;rid='.$record->id.'">'.$comments.' '.get_string('comment','data').'</a>';
         } else {
             $replacement[] = '';
         }
@@ -890,7 +889,7 @@ function data_print_template($records, $data, $search, $template, $sort, $page=0
          *    Printing Ratings Form       *
          *********************************/
         if (($template == 'singletemplate') && ($data->comments)) {    //prints ratings options
-            data_print_comments($data, $record, $search, $template, $sort, $page, $rid, $order, $group);
+            data_print_comments($data, $record);
         }
 
     }
@@ -912,7 +911,7 @@ function data_print_preference_form($data, $perpage, $search, $sort='', $order='
     echo get_string('pagesize','data').':';
     $pagesizes = array(1=>1,2=>2,3=>3,4=>4,5=>5,6=>6,7=>7,8=>8,9=>9,10=>10,15=>15,
                        20=>20,30=>30,40=>40,50=>50,100=>100,200=>200,300=>300,400=>400,500=>500,1000=>1000);
-    choose_from_menu($pagesizes, 'perpage1', $perpage, 'choose', '', '0');
+    choose_from_menu($pagesizes, 'perpage', $perpage, 'choose', '', '0');
     echo '&nbsp;'.get_string('search').': <input type="text" size="16" name="search" value="'.s($search).'" />';
     echo '&nbsp;'.get_string('sortby').':';
     //foreach field, print the option
@@ -940,26 +939,26 @@ function data_print_preference_form($data, $perpage, $search, $sort='', $order='
     echo '</select>';
     //print ASC or DESC
     echo '<input type="submit" value="'.get_string('savesettings','data').'" />';
-    echo '<input type="hidden" name="updatepref" value="1" />';
     echo '</form>';
     echo '</div>';
 }
 
 function data_print_ratings($data, $record) {
-    global $USER, $course;
+    global $USER;
+
     $ratingsmenuused = false;
     if ($data->ratings and !empty($USER->id)) {
         if ($ratings->scale = make_grades_menu($data->scale)) {
             $ratings->assesspublic = $data->assesspublic;
-            $ratings->allow = (($data->assessed != 2 or isteacher($course->id)) && !isguest());
+            $ratings->allow = (($data->assessed != 2 or isteacher($data->course)) && !isguest());
             if ($ratings->allow) {
                 echo '<p /><form name="form" method="post" action="rate.php">';
                 echo '<div class="ratings" align="center">';
                 $useratings = true;
 
                 if ($useratings) {
-                    if ((isteacher($course->id) or $ratings->assesspublic) and !data_isowner($record->id)) {
-                        data_print_ratings_mean($record->id, $ratings->scale, isteacher($course->id));
+                    if ((isteacher($data->course) or $ratings->assesspublic) and !data_isowner($record->id)) {
+                        data_print_ratings_mean($record->id, $ratings->scale, isteacher($data->course));
                         if (!empty($ratings->allow)) {
                             echo '&nbsp;';
                             data_print_rating_menu($record->id, $USER->id, $ratings->scale);
@@ -977,12 +976,12 @@ function data_print_ratings($data, $record) {
 
                 if ($data->scale < 0) {
                     if ($scale = get_record("scale", "id", abs($data->scale))) {
-                        print_scale_menu_helpbutton($course->id, $scale );
+                        print_scale_menu_helpbutton($data->course, $scale );
                     }
                 }
 
                 if ($ratingsmenuused) {
-                    echo '<input type="hidden" name="id" value="'.$course->id.'" />';
+                    echo '<input type="hidden" name="id" value="'.$data->course.'" />';
                     echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
                     echo "<input type=\"submit\" value=\"".get_string("sendinratings", "data")."\" />";
                 }
@@ -1088,7 +1087,7 @@ function data_get_ratings($recordid, $sort="u.firstname ASC") {
 
 
 //prints all comments + a text box for adding additional comment
-function data_print_comments($data, $record , $search, $template, $sort, $page=0, $rid=0, $order='', $group='') {
+function data_print_comments($data, $record) {
     //foreach comment, print it!
     //(with links to edit, remove etc, but no reply!!!!!)
     if ($comments = get_records('data_comments','recordid',$record->id)) {
@@ -1100,16 +1099,8 @@ function data_print_comments($data, $record , $search, $template, $sort, $page=0
     echo '<p /><div align="center"><form method="post" action="comment.php">';
     echo '<input type="hidden" name="mode" value="add" />';
     echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
-    echo '<input type="hidden" name="recordid" value="'.$record->id.'" />';
-    echo '<input type="hidden" name="d" value="'.$data->id.'" />';
-    echo '<input type="hidden" name="search" value="'.$search.'" />';
-    echo '<input type="hidden" name="rid" value="'.$rid.'" />';
-    echo '<input type="hidden" name="sort" value="'.$sort.'" />';
-    echo '<input type="hidden" name="order" value="'.$order.'" />';
-    echo '<input type="hidden" name="group" value="'.$group.'" />';
-    echo '<input type="hidden" name="page" value="'.$page.'" />';
-    echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
-    
+    echo '<input type="hidden" name="rid" value="'.$record->id.'" />';
+
     echo '<textarea name="commentcontent"></textarea>';
     echo '<br><input type="submit" value="'.get_string('addcomment','data').'" />';
     echo '</form></div>';
@@ -1118,7 +1109,7 @@ function data_print_comments($data, $record , $search, $template, $sort, $page=0
 //prints a single comment entry
 function data_print_comment($data, $commentid) {
 
-    global $USER, $CFG, $course;
+    global $USER, $CFG;
     
     $stredit = get_string('edit');
     $strdelete = get_string('delete');
@@ -1129,20 +1120,20 @@ function data_print_comment($data, $commentid) {
     echo '<div align="center"><table cellspacing="0" width ="50%" class="forumpost">';
 
     echo '<tr class="header"><td class="picture left">';
-    print_user_picture($comment->userid, $course->id, $user->picture);
+    print_user_picture($comment->userid, $data->course, $user->picture);
     echo '</td>';
 
     echo '<td class="topic starter" align="left"><div class="author">';
     $fullname = fullname($user, isteacher($comment->userid));
     $by->name = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.
-                $user->id.'&amp;course='.$course->id.'">'.$fullname.'</a>';
+                $user->id.'&amp;course='.$data->course.'">'.$fullname.'</a>';
     $by->date = userdate($comment->modified);
     print_string('bynameondate', 'data', $by);
     echo '</div></td></tr>';
 
     echo '<tr><td class="left side">';
-    if ($group = user_group($course->id, $comment->userid)) {
-        print_group_picture($group, $course->id, false, false, true);
+    if ($group = user_group($data->course, $comment->userid)) {
+        print_group_picture($group, $data->course, false, false, true);
     } else {
         echo '&nbsp;';
     }
@@ -1158,12 +1149,9 @@ function data_print_comment($data, $commentid) {
 /// Commands
 
     echo '<div class="commands">';
-    if (data_isowner($comment->recordid) or isteacher($course->id)) {
+    if (data_isowner($comment->recordid) or isteacher($data->course)) {
             echo '<a href="'.$CFG->wwwroot.'/mod/data/comment.php?d='.$data->id.'&amp;mode=edit&amp;commentid='.$comment->id.'">'.$stredit.'</a>';
-    }
-
-    if (data_isowner($comment->recordid) or isteacher($course->id)) {
-        echo '| <a href="'.$CFG->wwwroot.'/mod/data/comment.php?d='.$data->id.'&amp;mode=delete&amp;commentid='.$comment->id.'">'.$strdelete.'</a>';
+            echo '| <a href="'.$CFG->wwwroot.'/mod/data/comment.php?d='.$data->id.'&amp;mode=delete&amp;commentid='.$comment->id.'">'.$strdelete.'</a>';
     }
 
     echo '</div>';

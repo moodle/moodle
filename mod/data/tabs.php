@@ -32,12 +32,17 @@
     $inactive = NULL;
     $row = array();
     
-    $row[] = new tabobject('browse', $CFG->wwwroot.'/mod/data/view.php?d='.$data->id, get_string('browse','data'), '', true);
+    $row[] = new tabobject('list', $CFG->wwwroot.'/mod/data/view.php?d='.$data->id, get_string('browse','data'), '', true);
+    if (isset($record)) {
+        $row[] = new tabobject('single', $CFG->wwwroot.'/mod/data/view.php?d='.$data->id.'&rid='.$record->id, get_string('detail','data'), '', true);
+    } else {
+        $row[] = new tabobject('single', $CFG->wwwroot.'/mod/data/view.php?d='.$data->id.'&mode=single', get_string('detail','data'), '', true);
+    }
     if (isteacher($course->id) or ($data->participants == DATA_STUDENTS_ONLY) or ($data->participants == DATA_TEACHERS_AND_STUDENTS)){
         $row[] = new tabobject('add', $CFG->wwwroot.'/mod/data/add.php?d='.$data->id, get_string('add','data'), '', true);
     }
     if (isteacher($course->id)) {
-        if ($currenttab == 'browse') {
+        if ($currenttab == 'list') {
             if (get_user_preferences('data_perpage') == 1) {
                 $defaultemplate = 'singletemplate';
             } else {
@@ -64,7 +69,7 @@
         $row  = array();
         $currenttab ='';
         foreach ($templatelist as $template) {
-            $row[] = new tabobject($template, "templates.php?d=$d&amp;mode=$template",
+            $row[] = new tabobject($template, "templates.php?d=$data->id&amp;mode=$template",
                                     get_string("$template", "data"));
             if ($template == $mode) {
                 $currenttab = $template;
@@ -72,23 +77,6 @@
         }
         $tabs[] = $row;
     }
-    /*
-    if ($currenttab == 'browse' and isset($mode)) {
-        $inactive[] = 'browse';
-        $viewlist = array ('singletemplate', 'listtemplate');   // Standard reports we want to show first
-
-        $row  = array();
-        $currenttab ='';
-        foreach ($viewlist as $view) {
-            $row[] = new tabobject($view, "view.php?d=$d&amp;mode=$view",
-                                    get_string("$view", "data"));
-            if ($view == $mode) {
-                $currenttab = $view;
-            }
-        }
-        $tabs[] = $row;
-    }*/
-    
     
 
 /// Print out the tabs and continue!

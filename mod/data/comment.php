@@ -14,14 +14,14 @@
 
     //param needed for comment operations
     $mode = optional_param('mode','',PARAM_ALPHA);
-    $recordid = optional_param('recordid','',PARAM_INT);
+    $rid = optional_param('rid','',PARAM_INT);
     $commentid = optional_param('commentid','',PARAM_INT);
     $confirm = optional_param('confirm','',PARAM_INT);
     $commentcontent = optional_param('commentcontent','',PARAM_NOTAGS);
     $template = optional_param('template','',PARAM_ALPHA);
 
 
-    if ((!$record = get_record('data_records','id',$recordid))) {
+    if ((!$record = get_record('data_records','id',$rid))) {
         if (!$comment = get_record('data_comments','id',$commentid)) {
             error ('this record does not exist');
         } else {
@@ -39,7 +39,7 @@
             $newcomment->userid = $USER->id;
             $newcomment->created = time();
             $newcomment->modified = time();
-            if (($newcomment->content = $commentcontent) && ($newcomment->recordid = $recordid)) {
+            if (($newcomment->content = $commentcontent) && ($newcomment->recordid = $rid)) {
                 insert_record('data_comments',$newcomment);
             }
             redirect('view.php?d='.s($d).'&amp;search='.s($search).'&amp;sort='.s($sort).'&amp;order='.s($order).'&amp;group='.s($group).'&amp;page='.s($page).'&amp;rid='.s($rid), get_string("commentsaved", "data"));

@@ -30,18 +30,18 @@
     require_once('pagelib.php');
     
 
+/// One of these is necessary!
     $id    = optional_param('id', 0, PARAM_INT);  // course module id
     $d     = optional_param('d', 0, PARAM_INT);   // database id
-    $search = optional_param('search','',PARAM_NOTAGS);    //search string
-    $page = optional_param('page', 0, PARAM_INT);    //offset of the current record
-    $rid = optional_param('rid', 0, PARAM_INT);    //record id
+    $rid   = optional_param('rid', 0, PARAM_INT);    //record id
+
+    $mode  = optional_param('mode', '', PARAM_ALPHA);    // Force the browse mode  ('single')
+
+
+/// These can be added to perform an action on a record
     $approve = optional_param('approve', 0, PARAM_INT);    //approval recordid
     $delete = optional_param('delete', 0, PARAM_INT);    //delete recordid
-    $perpagemenu = optional_param('perpage1', 0, PARAM_INT);    //value from drop down
-    $sort = optional_param('sort',-1,PARAM_INT);    //sort by field
-    $order = optional_param('order','ASC',PARAM_ALPHA);    //sort order
-    $group = optional_param('group','0',PARAM_INT);    //groupid
-    
+
     
     if ($id) {
         if (! $cm = get_record('course_modules', 'id', $id)) {
@@ -53,8 +53,22 @@
         if (! $data = get_record('data', 'id', $cm->instance)) {
             error('Course module is incorrect');
         }
+        $record = NULL;
 
-    } else {
+    } else if ($rid) {
+        if (! $record = get_record('data_records', 'id', $rid)) {
+            error('Record ID is incorrect');
+        }
+        if (! $data = get_record('data', 'id', $record->dataid)) {
+            error('Data ID is incorrect');
+        }
+        if (! $course = get_record('course', 'id', $data->course)) {
+            error('Course is misconfigured');
+        }
+        if (! $cm = get_coursemodule_from_instance('data', $data->id, $course->id)) {
+            error('Course Module ID was incorrect');
+        }
+    } else {   // We must have $d
         if (! $data = get_record('data', 'id', $d)) {
             error('Data ID is incorrect');
         }
@@ -64,33 +78,50 @@
         if (! $cm = get_coursemodule_from_instance('data', $data->id, $course->id)) {
             error('Course Module ID was incorrect');
         }
+        $record = NULL;
     }
 
     require_course_login($course, true, $cm);
 
+/// If we have an empty Database then redirect because this page is useless without data
     if (isteacher($course->id)) {
         if (!record_exists('data_fields','dataid',$data->id)) {      // Brand new database!
             redirect($CFG->wwwroot.'/mod/data/field.php?d='.$data->id);  // Redirect to field entry
         }
     }
 
-    /// If we haven't set a sort field use the default sort field
-    if ($sort == -1) {
-        $sort = $data->defaultsort;
-        $order = ($data->defaultsortdir == 0) ? 'ASC' : 'DESC';
+
+/// Check further parameters that set browsing preferences
+    if (!isset($SESSION->dataprefs)) {
+        $SESSION->dataprefs = array();
     }
-    
-    //set user preference if available
-    if (isset($_GET['updatepref'])){
-   
-        if (!$perpage = $perpagemenu){    //if menu not in use, use the text field
-            $perpage = (int)optional_param('perpage',10);
-        }
-        $perpage = ($perpage <= 0) ? 10 : $perpage ;
-        set_user_preference('data_perpage', $perpage);
+    if (!isset($SESSION->dataprefs[$data->id])) {
+        $SESSION->dataprefs[$data->id] = array();
+        $SESSION->dataprefs[$data->id]['search'] = '';
+        $SESSION->dataprefs[$data->id]['sort'] = $data->defaultsort;
+        $SESSION->dataprefs[$data->id]['order'] = ($data->defaultsortdir == 0) ? 'ASC' : 'DESC';
     }
-    
-    $d = $data->id;//set this so tabs can work properly
+    $search = optional_param('search', $SESSION->dataprefs[$data->id]['search'], PARAM_NOTAGS);
+    $SESSION->dataprefs[$data->id]['search'] = $search;   // Make it sticky
+
+    $sort = optional_param('sort', $SESSION->dataprefs[$data->id]['sort'], PARAM_INT);
+    $SESSION->dataprefs[$data->id]['sort'] = $sort;       // Make it sticky
+
+    $order = (optional_param('order', $SESSION->dataprefs[$data->id]['order'], PARAM_ALPHA) == 'ASC') ? 'ASC': 'DESC';
+    $SESSION->dataprefs[$data->id]['order'] = $order;     // Make it sticky
+
+
+    $oldperpage = get_user_preferences('data_perpage_'.$data->id, 10);
+    $perpage = optional_param('perpage', $oldperpage, PARAM_INT);
+
+    if ($perpage < 2) {
+        $perpage = 2;
+    }
+    if ($perpage != $oldperpage) {
+        set_user_preference('data_perpage_'.$data->id, $perpage);
+    }
+
+    $page = optional_param('page', 0, PARAM_INT);
 
     add_to_log($course->id, 'data', 'view', "view.php?id=$cm->id", $data->id, $cm->id);
 
@@ -121,7 +152,8 @@
     
     echo '<table id="layout-table"><tr>';
 
-    if(!empty($CFG->showblocksonmodpages) && (blocks_have_content($pageblocks, BLOCK_POS_LEFT) || $PAGE->user_is_editing())) {
+    if (!empty($CFG->showblocksonmodpages) && 
+              (blocks_have_content($pageblocks, BLOCK_POS_LEFT) || $PAGE->user_is_editing())) {
         echo '<td style="width: '.$blocks_preferred_width.'px;" id="left-column">';
         blocks_print_group($PAGE, $pageblocks, BLOCK_POS_LEFT);
         echo '</td>';
@@ -139,7 +171,7 @@
         echo '<div style="clear:both;"></div>';
     }
     
-    if ($data->intro and empty($sort) and empty($search) and empty($page) and empty($rid)) {
+    if ($data->intro and empty($sort) and empty($search) and empty($page) and empty($record)) {
         print_simple_box(format_text($data->intro), 'center', '70%', '', 5, 'generalbox', 'intro');
     }
 
@@ -152,33 +184,26 @@
         $currentgroup = 0;
     }
 
-    if ($currentgroup) {
-        $groupselect = " AND (r.groupid = '$currentgroup' OR r.groupid = 0)";
-        $groupparam = "&amp;groupid=$currentgroup";
-    } else {
-        $groupselect = "";
-        $groupparam = "";
-    }
 
 /// Print the tabs
 
-    $currenttab = 'browse';
+    if ($record or $mode == 'single') {
+        $currenttab = 'single';
+    } else {
+        $currenttab = 'list';
+    }
     include('tabs.php'); 
 
-    $perpage = get_user_preferences('data_perpage', 10);    //get default per page
 
 /// Approve any requested records
 
     if ($approve && confirm_sesskey() && isteacher($course->id)) {
-        if ($record = get_record('data_records', 'id', $approve)) {   // Need to check this is valid
-            if ($record->dataid == $data->id) {                       // Must be from this database
-                $newrecord->id = $record->id;
+        if ($approverecord = get_record('data_records', 'id', $approve)) {   // Need to check this is valid
+            if ($approverecord->dataid == $data->id) {                       // Must be from this database
+                $newrecord->id = $approverecord->id;
                 $newrecord->approved = 1;
                 if (update_record('data_records', $newrecord)) {
                     notify(get_string('recordapproved','data'), 'notifysuccess');
-                }
-                if ($perpage == 1) {
-                    $rid = $approve;
                 }
             }
         }
@@ -186,35 +211,33 @@
 
 /// Delete any requested records
 
-    if ($delete && confirm_sesskey()) {
-        if (isteacher($course->id) or data_isowner($delete)){
-            if ($confirm = optional_param('confirm',0,PARAM_INT)) {
-                if ($contents = get_records('data_content','recordid', $delete)) {
-                    foreach ($contents as $content) {  // Delete files or whatever else this field allows
-                        if ($field = data_get_field_from_id($content->fieldid, $data)) { // Might not be there
-                            $field->delete_content($content->recordid);
+    if ($delete && confirm_sesskey() && (isteacher($course->id) or data_isowner($delete))) {
+        if ($confirm = optional_param('confirm',0,PARAM_INT)) {
+            if ($deleterecord = get_record('data_records', 'id', $delete)) {   // Need to check this is valid
+                if ($deleterecord->dataid == $data->id) {                       // Must be from this database
+                    if ($contents = get_records('data_content','recordid', $deleterecord->id)) {
+                        foreach ($contents as $content) {  // Delete files or whatever else this field allows
+                            if ($field = data_get_field_from_id($content->fieldid, $data)) { // Might not be there
+                                $field->delete_content($content->recordid);
+                            }
                         }
                     }
+                    delete_records('data_content','recordid', $deleterecord->id);
+                    delete_records('data_records','id', $deleterecord->id);
+
+                    add_to_log($course->id, 'data', 'record delete', "view.php?id=$cm->id", $data->id, $cm->id);
+
+                    notify(get_string('recorddeleted','data'), 'notifysuccess');
                 }
-                delete_records('data_content','recordid',$delete);
-                delete_records('data_records','id',$delete);
-                    
-                add_to_log($course->id, 'data', 'record delete', "view.php?id=$cm->id", $data->id, $cm->id);
-                    
-                notify(get_string('recorddeleted','data'), 'notifysuccess');
-
-                if ($perpage == 1) {
-                    $rid = $delete;
-                }
-
-            } else {   // Print a confirmation page
-                notice_yesno(get_string('confirmdeleterecord','data'), 
-                             'view.php?d='.$data->id.'&amp;delete='.$delete.'&amp;confirm=1&amp;sesskey='.sesskey(),
-                             'view.php?d='.$data->id);
-
-                print_footer($course);
-                exit;
             }
+
+        } else {   // Print a confirmation page
+            notice_yesno(get_string('confirmdeleterecord','data'), 
+                         'view.php?d='.$data->id.'&amp;delete='.$delete.'&amp;confirm=1&amp;sesskey='.sesskey(),
+                         'view.php?d='.$data->id);
+
+            print_footer($course);
+            exit;
         }
     }
 
@@ -226,174 +249,147 @@
         exit;
     }
 
-    if ($rid) {    //set per page to 1, if looking for 1 specific record
-        set_user_preference('data_perpage', DATA_PERPAGE_SINGLE);
-    }
-  
-    $perpage = get_user_preferences('data_perpage', 10);    //get default per page
 
-    $baseurl = 'view.php?d='.$data->id.'&amp;search='.s($search).'&amp;sort='.s($sort).'&amp;order='.s($order).'&amp;group='.$currentgroup.'&amp;';
-
-
-/// Calculate all the records we're going to show.
+/// We need to examine the whole dataset to produce the correct paging
 
     if ((!isteacher($course->id)) && ($data->approval)) {
         if (isloggedin()) {
-            $approvesql = ' AND (r.approved=1 OR r.userid='.$USER->id.') ';
+            $approveselect = ' AND (r.approved=1 OR r.userid='.$USER->id.') ';
         } else {
-            $approvesql = ' AND r.approved=1 ';
+            $approveselect = ' AND r.approved=1 ';
         }
     } else {
-        $approvesql = '';
+        $approveselect = ' ';
     }
 
-    if ($rid){    //only used for single mode, but rid should not appear in multi view anyway
-        $ridsql = 'AND r.id < '.$rid.' ';
-
+    if ($currentgroup) {
+        $groupselect = " AND (r.groupid = '$currentgroup' OR r.groupid = 0)";
     } else {
-        $ridsql = '';
+        $groupselect = ' ';
     }
 
-    if ($sort) {    //supports (sort and search)
-        //first find the field that we are sorting
+
+/// Find the field we are sorting on
+    if ($sort) {
         $sortfield = data_get_field_from_id($sort, $data);
         $sortcontent = $sortfield->get_sort_field();
-        ///SEARCH AND SORT SQL
-        $sql = 'SELECT DISTINCT c.recordid, c.recordid
-                FROM '.$CFG->prefix.'data_content c, '
-                .$CFG->prefix.'data_records r, '
-                .$CFG->prefix.'data_content c1
-                WHERE c.recordid = r.id
-                AND c1.recordid = r.id
-                AND r.dataid = '.$data->id.'
-                AND c.fieldid = '.$sort.' '.$groupselect.'
-                AND ((c1.content LIKE "%'.$search.'%") OR
-                     (c1.content1 LIKE "%'.$search.'%") OR
-                     (c1.content2 LIKE "%'.$search.'%") OR
-                     (c1.content3 LIKE "%'.$search.'%") OR
-                     (c1.content4 LIKE "%'.$search.'%")) '.$approvesql.'
-                ORDER BY c.'.$sortcontent.' '.$order.' ';
 
-        $sqlcount = 'SELECT COUNT(DISTINCT c.recordid)
-                FROM '.$CFG->prefix.'data_content c, '
-                .$CFG->prefix.'data_records r, '
-                .$CFG->prefix.'data_content c1
-                WHERE c.recordid = r.id
-                AND c1.recordid = r.id
-                AND r.dataid = '.$data->id.'
-                AND c.fieldid = '.$sort.' '.$groupselect.'
-                AND ((c1.content LIKE "%'.$search.'%") OR
-                     (c1.content1 LIKE "%'.$search.'%") OR
-                     (c1.content2 LIKE "%'.$search.'%") OR
-                     (c1.content3 LIKE "%'.$search.'%") OR
-                     (c1.content4 LIKE "%'.$search.'%")) '.$approvesql;
+        $what = ' DISTINCT r.id, r.approved ';
+        $count = ' COUNT(DISTINCT c.recordid) ';
+        $tables = $CFG->prefix.'data_content c,'.$CFG->prefix.'data_records r,'.$CFG->prefix.'data_content c1 ';
+        $where =  'WHERE c.recordid = r.id 
+                     AND c.fieldid = '.$sort.' 
+                     AND r.dataid = '.$data->id.' 
+                     AND c1.recordid = r.id ';
+        $sortorder = ' ORDER BY c.'.$sortcontent.' '.$order.' ';
 
-        //sqlindex is used to find the number of entries smaller than the current rid
-        //useful for zooming into single view from multi view (so we can keep track
-        //of exact and relative position of records
-        $sqlindex = 'SELECT COUNT(DISTINCT c.recordid)
-                FROM '.$CFG->prefix.'data_content c, '
-                .$CFG->prefix.'data_records r, '
-                .$CFG->prefix.'data_content c1
-                WHERE c.recordid = r.id
-                AND c1.recordid = r.id
-                AND r.dataid = '.$data->id.'
-                AND c.fieldid = '.$sort.' '.$ridsql.' '.$groupselect.'
-                AND ((c1.content LIKE "%'.$search.'%") OR
-                     (c1.content1 LIKE "%'.$search.'%") OR
-                     (c1.content2 LIKE "%'.$search.'%") OR
-                     (c1.content3 LIKE "%'.$search.'%") OR
-                     (c1.content4 LIKE "%'.$search.'%")) '.$approvesql;
-                
-    } else if ($search){    //search only, no sort. if in search mode, only search text fields
+    } else if ($search) { 
+        $what = ' DISTINCT r.id, r.approved ';
+        $count = ' COUNT(DISTINCT c.recordid) ';
+        $tables = $CFG->prefix.'data_content c,'.$CFG->prefix.'data_records r ';
+        $where =  'WHERE c.recordid = r.id 
+                     AND r.dataid = '.$data->id;
+        $sortorder = ' ORDER BY r.id ';
 
-        $sql = 'SELECT DISTINCT c.recordid, c.recordid
-                FROM '.$CFG->prefix.'data_content c, '
-                .$CFG->prefix.'data_fields f, '
-                .$CFG->prefix.'data_records r
-                WHERE c.recordid = r.id '.$groupselect.' '.$approvesql.' AND
-                c.fieldid = f.id AND f.dataid = '
-                .$data->id.' AND c.content LIKE "%'.$search.'%" ORDER BY r.id '.$order.' ';
-
-        $sqlcount = 'SELECT COUNT(DISTINCT c.recordid)
-                FROM '.$CFG->prefix.'data_content c, '
-                .$CFG->prefix.'data_fields f, '
-                .$CFG->prefix.'data_records r
-                WHERE c.recordid = r.id '.$groupselect.' '.$approvesql.' AND
-                c.fieldid = f.id AND f.dataid = '
-                .$data->id.' AND c.content LIKE "%'.$search.'%"';
-
-        $sqlindex = 'SELECT COUNT(DISTINCT c.recordid)
-                FROM '.$CFG->prefix.'data_content c, '
-                .$CFG->prefix.'data_fields f, '
-                .$CFG->prefix.'data_records r
-                WHERE c.recordid = r.id '.$groupselect.' '.$approvesql.' AND
-                c.fieldid = f.id AND f.dataid = '
-                .$data->id.'  '.$ridsql.' AND c.content LIKE "%'.$search.'%"';
-
-    } else {  //else get everything, no search, no sort
-
-        $sql = 'SELECT * FROM '.$CFG->prefix.'data_records r WHERE r.dataid ='.$data->id.' '.$groupselect.' '.$approvesql.' ORDER BY r.id '.$order.' ';
-        $sqlcount = 'SELECT COUNT(r.id) FROM '.$CFG->prefix
-                    .'data_records r WHERE r.dataid ='.$data->id.' '.$groupselect.' '.$approvesql;
-
-        $sqlindex = 'SELECT COUNT(r.id) FROM '.$CFG->prefix
-                    .'data_records r WHERE r.dataid ='.$data->id.' '.$groupselect.' '.$ridsql.' '.$approvesql;
+    } else {
+        $what = ' DISTINCT r.id, r.approved ';
+        $count = ' COUNT(r.id) ';
+        $tables = $CFG->prefix.'data_records r ';
+        $where =  'WHERE r.dataid = '.$data->id;
+        $sortorder = ' ORDER BY r.id ';
     }
-    
-    if ($rid) {    //this is used in zooming
-        $page = count_records_sql($sqlindex);
-    }
-    
-    $limit = $perpage > 1 ? sql_paging_limit($page * $perpage, $perpage)
-                            : $limit = sql_paging_limit($page, DATA_PERPAGE_SINGLE);
 
-    $sql = $sql . $limit;
- 
+/// Restrict by a search if we have one
+
+    if ($search) {
+        $searchselect = ' AND (c.content LIKE "%'.$search.'%") ';
+    } else {
+        $searchselect = ' ';
+    }
+
+/// To actually fetch the records
+
+    $fromsql = ' FROM '.$tables.$where.$groupselect.$approveselect.$searchselect;
+     
+    $sqlselect = 'SELECT '.$what.$fromsql.$sortorder;
+
+    $sqlcount  = 'SELECT '.$count.$fromsql;   // Total number of records
+
+/// Work out the paging numbers
+
     $totalcount = count_records_sql($sqlcount);
 
-    if (!$records = get_records_sql($sql)){
+    if ($record) {     // We need to just show one, so where is it in context?
+        $nowperpage = 1;
+        $mode = 'single';
+        if ($sort) {   // We need to search by that field
+            if ($content = get_field('data_content', 'content', 'recordid', $record->id, 'fieldid', $sort)) {
+                $content = addslashes($content);
+                if ($order == 'ASC') {
+                    $lessthan = " AND c.$sortcontent < '$content' ";
+                } else {
+                    $lessthan = " AND c.$sortcontent > '$content' ";
+                }
+            } else {   // Failed to find data (shouldn't happen), so fall back to something easy
+                $lessthan = " r.id < '$record->id' ";
+            }
+        } else {
+            $lessthan = " r.id < '$record->id' ";
+        }
+        $sqlindex = 'SELECT COUNT(DISTINCT c.recordid) '.$fromsql.$lessthan.$sortorder;
+        $page = count_records_sql($sqlindex);
+
+    } else if ($mode == 'single') {  // We rely on ambient $page settings
+        $nowperpage = 1;
+
+    } else {
+        $nowperpage = $perpage;
+    }
+
+/// Get the actual records
+
+    $limit = sql_paging_limit($page * $nowperpage, $nowperpage);
+    $records = get_records_sql($sqlselect.$limit);
+
+    if (empty($records)) {     // Nothing to show!
         if ($search){
             notify(get_string('nomatch','data'));
         } else {
             notify(get_string('norecords','data'));
         }
-            
-        data_print_preference_form($data, $perpage, $search);
-        echo '</td></tr></table>';
-        print_footer($course);
-        exit;
-    }
 
-/// Print header for list view, and paging bar
-    if ($perpage > 1) {
-        $listmode = 'listtemplate';
-        print_paging_bar($totalcount, $page, $perpage, $baseurl, $pagevar='page');
-        echo $data->listtemplateheader;
-        if (empty($data->listtemplate)){
-            notify(get_string('nolisttemplate','data'));
+    } else {                   //  We have some records to print
+
+        if ($mode == 'single') {                  // Single template
+            $baseurl = 'view.php?d='.$data->id.'&amp;mode=single&amp;';
+
+            print_paging_bar($totalcount, $page, $nowperpage, $baseurl, $pagevar='page');
+
+            if (empty($data->singletemplate)){
+                notify(get_string('nosingletemplate','data'));
+            }
+
+            data_print_template('singletemplate', $records, $data, $search);
+
+            print_paging_bar($totalcount, $page, $nowperpage, $baseurl, $pagevar='page');
+
+        } else {                                  // List template
+            $baseurl = 'view.php?d='.$data->id.'&amp;';
+
+            print_paging_bar($totalcount, $page, $nowperpage, $baseurl, $pagevar='page');
+
+            if (empty($data->listtemplate)){
+                notify(get_string('nolisttemplate','data'));
+            }
+            echo $data->listtemplateheader;
+            data_print_template('listtemplate', $records, $data, $search);
+            echo $data->listtemplatefooter;
+
+            print_paging_bar($totalcount, $page, $nowperpage, $baseurl, $pagevar='page');
         }
-    } else {
-        $listmode = 'singletemplate';
-        if (empty($data->singletemplate)){
-            notify(get_string('nosingletemplate','data'));
-        }
-        print_paging_bar($totalcount, $page, $perpage, $baseurl, $pagevar='page');
     }
-
-    
-/// Print the template, substituting in all our data
-    data_print_template($records, $data, $search, $listmode, $sort, $page, $rid, $order, $currentgroup);
-
-/// Print footer
-    if ($perpage > 1){
-        echo $data->listtemplatefooter;
-    }
-
-    print_paging_bar($totalcount, $page, $perpage, $baseurl, $pagevar='page');
 
     data_print_preference_form($data, $perpage, $search, $sort, $order);
-    
-    print_footer($course);
 
+    print_footer($course);
 ?>
