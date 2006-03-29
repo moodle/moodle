@@ -39,7 +39,8 @@
         $row[] = new tabobject('single', $CFG->wwwroot.'/mod/data/view.php?d='.$data->id.'&mode=single', get_string('detail','data'), '', true);
     }
     if (isteacher($course->id) or ($data->participants == DATA_STUDENTS_ONLY) or ($data->participants == DATA_TEACHERS_AND_STUDENTS)){
-        $row[] = new tabobject('add', $CFG->wwwroot.'/mod/data/add.php?d='.$data->id, get_string('add','data'), '', true);
+        $addstring = ($rid) ? get_string('editentry', 'data') : get_string('add', 'data');
+        $row[] = new tabobject('add', $CFG->wwwroot.'/mod/data/add.php?d='.$data->id, $addstring, '', true);
     }
     if (isteacher($course->id)) {
         if ($currenttab == 'list') {
