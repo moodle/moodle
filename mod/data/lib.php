@@ -810,7 +810,7 @@ function data_get_coursemodule_info($coursemodule) {
  *       @param string $template                                        *
  * output null                                                          *
  ************************************************************************/
-function data_print_template($template, $records, $data, $search='', $return=false){
+function data_print_template($template, $records, $data, $search='',$page=0, $return=false){
     global $CFG;
 
     static $fields = NULL;
@@ -865,7 +865,7 @@ function data_print_template($template, $records, $data, $search='', $return=fal
         $patterns[]='/\#\#Comment\#\#/i';
         if (($template == 'listtemplate') && ($data->comments)) {
             $comments = count_records('data_comments','recordid',$record->id);
-            $replacement[] = '<a href="comment.php?d='.$data->id.'&amp;rid='.$record->id.'">'.$comments.' '.get_string('comment','data').'</a>';
+            $replacement[] = '<a href="comment.php?rid='.$record->id.'&amp;page='.$page.'">'.$comments.' '.get_string('comment','data').'</a>';
         } else {
             $replacement[] = '';
         }
@@ -889,7 +889,7 @@ function data_print_template($template, $records, $data, $search='', $return=fal
          *    Printing Ratings Form       *
          *********************************/
         if (($template == 'singletemplate') && ($data->comments)) {    //prints ratings options
-            data_print_comments($data, $record);
+            data_print_comments($data, $record, $page);
         }
 
     }
@@ -1087,17 +1087,17 @@ function data_get_ratings($recordid, $sort="u.firstname ASC") {
 
 
 //prints all comments + a text box for adding additional comment
-function data_print_comments($data, $record) {
-    //foreach comment, print it!
-    //(with links to edit, remove etc, but no reply!!!!!)
+function data_print_comments($data, $record, $page=0) {
+
     if ($comments = get_records('data_comments','recordid',$record->id)) {
         foreach ($comments as $comment) {
-            data_print_comment($data, $comment->id);
+            data_print_comment($data, $comment, $page);
         }
     }
     
-    echo '<p /><div align="center"><form method="post" action="comment.php">';
+    echo '<div class="newcomment" align="center"><form method="post" action="comment.php">';
     echo '<input type="hidden" name="mode" value="add" />';
+    echo '<input type="hidden" name="page" value="'.$page.'" />';
     echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
     echo '<input type="hidden" name="rid" value="'.$record->id.'" />';
 
@@ -1107,14 +1107,13 @@ function data_print_comments($data, $record) {
 }
 
 //prints a single comment entry
-function data_print_comment($data, $commentid) {
+function data_print_comment($data, $comment, $page=0) {
 
     global $USER, $CFG;
     
     $stredit = get_string('edit');
     $strdelete = get_string('delete');
 
-    $comment = get_record('data_comments','id',$commentid);
     $user = get_record('user','id',$comment->userid);
 
     echo '<div align="center"><table cellspacing="0" width ="50%" class="forumpost">';
@@ -1150,8 +1149,8 @@ function data_print_comment($data, $commentid) {
 
     echo '<div class="commands">';
     if (data_isowner($comment->recordid) or isteacher($data->course)) {
-            echo '<a href="'.$CFG->wwwroot.'/mod/data/comment.php?d='.$data->id.'&amp;mode=edit&amp;commentid='.$comment->id.'">'.$stredit.'</a>';
-            echo '| <a href="'.$CFG->wwwroot.'/mod/data/comment.php?d='.$data->id.'&amp;mode=delete&amp;commentid='.$comment->id.'">'.$strdelete.'</a>';
+            echo '<a href="'.$CFG->wwwroot.'/mod/data/comment.php?rid='.$comment->recordid.'&amp;mode=edit&amp;commentid='.$comment->id.'&amp;page='.$page.'">'.$stredit.'</a>';
+            echo '| <a href="'.$CFG->wwwroot.'/mod/data/comment.php?rid='.$comment->recordid.'&amp;mode=delete&amp;commentid='.$comment->id.'&amp;page='.$page.'">'.$strdelete.'</a>';
     }
 
     echo '</div>';

@@ -369,7 +369,7 @@
                 notify(get_string('nosingletemplate','data'));
             }
 
-            data_print_template('singletemplate', $records, $data, $search);
+            data_print_template('singletemplate', $records, $data, $search, $page);
 
             print_paging_bar($totalcount, $page, $nowperpage, $baseurl, $pagevar='page');
 
@@ -382,7 +382,7 @@
                 notify(get_string('nolisttemplate','data'));
             }
             echo $data->listtemplateheader;
-            data_print_template('listtemplate', $records, $data, $search);
+            data_print_template('listtemplate', $records, $data, $search, $page);
             echo $data->listtemplatefooter;
 
             print_paging_bar($totalcount, $page, $nowperpage, $baseurl, $pagevar='page');
