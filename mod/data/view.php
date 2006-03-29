@@ -139,16 +139,19 @@
         }
     }
 
-/// RSS meta
-    $rssmeta = '';
+/// RSS and CSS meta
+    $meta = '';
     if (isset($CFG->enablerssfeeds) && isset($CFG->data_enablerssfeeds) && $data->rssarticles > 0) {
         $rsspath = rss_get_url($course->id, $USER->id, 'data', $data->id);
-        $rssmeta = '<link rel="alternate" type="application/rss+xml" ';
-        $rssmeta .= 'title ="'.$course->shortname.': %fullname%" href="'.$rsspath.'" />';
+        $meta .= '<link rel="alternate" type="application/rss+xml" ';
+        $meta .= 'title ="'.$course->shortname.': %fullname%" href="'.$rsspath.'" />';
+    }
+    if ($data->csstemplate) {
+        $meta .= '<link rel="stylesheet" type="text/css" href="'.$CFG->wwwroot.'/mod/data/css.php?d='.$data->id.'" /> ';
     }
     
 /// Print the page header
-    $PAGE->print_header($course->shortname.': %fullname%', '', $rssmeta);
+    $PAGE->print_header($course->shortname.': %fullname%', '', $meta);
     
     echo '<table id="layout-table"><tr>';
 
