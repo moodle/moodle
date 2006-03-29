@@ -125,6 +125,14 @@ function wiki_upgrade($oldversion) {
         }
     }
     
+    if ($oldversion < 2006032900) {
+        global $db;
+        $data = $db->GetAll("SELECT id,refs FROM {$CFG->prefix}wiki_pages");
+        foreach ($data as $d) {
+            $db->AutoExecute("{$CFG->prefix}wiki_pages", array('refs_base64' => base64_encode($d['refs'])), 'UPDATE', 'id = '.$d['id']);
+        }
+    }
+
     return true;
 }
 
