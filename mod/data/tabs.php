@@ -32,13 +32,14 @@
     $inactive = NULL;
     $row = array();
     
+    $row[] = new tabobject('list', $CFG->wwwroot.'/mod/data/view.php?d='.$data->id, get_string('browse','data'), '', true);
+
     if (isset($record)) {
         $row[] = new tabobject('single', $CFG->wwwroot.'/mod/data/view.php?d='.$data->id.'&rid='.$record->id, get_string('detail','data'), '', true);
     } else {
         $row[] = new tabobject('single', $CFG->wwwroot.'/mod/data/view.php?d='.$data->id.'&mode=single', get_string('detail','data'), '', true);
     }
 
-    $row[] = new tabobject('list', $CFG->wwwroot.'/mod/data/view.php?d='.$data->id, get_string('browse','data'), '', true);
     if (isteacher($course->id) or ($data->participants == DATA_STUDENTS_ONLY) or ($data->participants == DATA_TEACHERS_AND_STUDENTS)){
         $addstring = empty($rid) ? get_string('add', 'data') : get_string('editentry', 'data');
         $row[] = new tabobject('add', $CFG->wwwroot.'/mod/data/add.php?d='.$data->id, $addstring, '', true);
@@ -66,7 +67,7 @@
     *****************************/
     if ($currenttab == 'templates' and isset($mode)) {
         $inactive[] = 'templates';
-        $templatelist = array ('singletemplate', 'listtemplate', 'addtemplate', 'rsstemplate', 'csstemplate');
+        $templatelist = array ('listtemplate', 'singletemplate', 'addtemplate', 'rsstemplate', 'csstemplate');
 
         $row  = array();
         $currenttab ='';
