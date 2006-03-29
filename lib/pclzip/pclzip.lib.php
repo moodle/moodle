@@ -660,7 +660,7 @@
     // ----- Look for arguments
     if ($v_size > 0) {
       // ----- Get the arguments
-      $v_arg_list = &func_get_args();
+      $v_arg_list = func_get_args();
 
       // ----- Look for first arg
       if ((is_integer($v_arg_list[0])) && ($v_arg_list[0] > 77000)) {
