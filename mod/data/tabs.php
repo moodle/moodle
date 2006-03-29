@@ -39,7 +39,7 @@
         $row[] = new tabobject('single', $CFG->wwwroot.'/mod/data/view.php?d='.$data->id.'&mode=single', get_string('detail','data'), '', true);
     }
     if (isteacher($course->id) or ($data->participants == DATA_STUDENTS_ONLY) or ($data->participants == DATA_TEACHERS_AND_STUDENTS)){
-        $addstring = ($rid) ? get_string('editentry', 'data') : get_string('add', 'data');
+        $addstring = empty($rid) ? get_string('add', 'data') : get_string('editentry', 'data');
         $row[] = new tabobject('add', $CFG->wwwroot.'/mod/data/add.php?d='.$data->id, $addstring, '', true);
     }
     if (isteacher($course->id)) {
@@ -65,13 +65,13 @@
     *****************************/
     if ($currenttab == 'templates' and isset($mode)) {
         $inactive[] = 'templates';
-        $templatelist = array ('singletemplate', 'listtemplate', 'addtemplate', 'rsstemplate');   // Standard reports we want to show first
+        $templatelist = array ('singletemplate', 'listtemplate', 'addtemplate', 'rsstemplate', 'csstemplate');
 
         $row  = array();
         $currenttab ='';
         foreach ($templatelist as $template) {
             $row[] = new tabobject($template, "templates.php?d=$data->id&amp;mode=$template",
-                                    get_string("$template", "data"));
+                                    get_string($template, 'data'));
             if ($template == $mode) {
                 $currenttab = $template;
             }
