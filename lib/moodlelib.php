@@ -4936,6 +4936,12 @@ function get_list_of_languages() {
                 continue;
             }
         /// Search under dirroot/lang
+        /// If $CFG->unicodedb = false, ignore new lang packs
+            if (empty($CFG->unicodedb)) {
+                if (file_exists($CFG->dirroot .'/lang/'. $lang .'/langconfig.php')) {
+                    continue;
+                }
+            }
             if (file_exists($CFG->dirroot .'/lang/'. $lang .'/'. $filetocheck)) {
                 include($CFG->dirroot .'/lang/'. $lang .'/'. $filetocheck);
                 if (!empty($string['thislanguage'])) {
@@ -4944,6 +4950,12 @@ function get_list_of_languages() {
                 unset($string);
             }
         /// And moodledata/lang
+        /// If $CFG->unicodedb = false, ignore new lang packs
+            if (empty($CFG->unicodedb)) {
+                if (file_exists($CFG->dataroot .'/lang/'. $lang .'/langconfig.php')) {
+                    continue;
+                }
+            }
             if (file_exists($CFG->dataroot .'/lang/'. $lang .'/'. $filetocheck)) {
                 include($CFG->dataroot .'/lang/'. $lang .'/'. $filetocheck);
                 if (!empty($string['thislanguage'])) {
@@ -4966,12 +4978,26 @@ function get_list_of_languages() {
             if (strstr('_local',$lang)!==false) {
                 continue;
             }
+        /// Search under moodledata/lang
+        /// If $CFG->unicodedb = false, ignore new lang packs
+            if (empty($CFG->unicodedb)) {
+                if (file_exists($CFG->dataroot .'/lang/'. $lang .'/langconfig.php')) {
+                    continue;
+                }
+            }
             if (file_exists($CFG->dataroot .'/lang/'. $lang .'/'. $filetocheck)) {
                 include($CFG->dataroot .'/lang/'. $lang .'/'. $filetocheck);
                 if (!empty($string['thislanguage'])) {
                     $languages[$lang] = $string['thislanguage'] .' ('. $lang .')';
                 }
                 unset($string);
+            }
+        /// And dirroot/lang
+        /// If $CFG->unicodedb = false, ignore new lang packs
+            if (empty($CFG->unicodedb)) {
+                if (file_exists($CFG->dirroot .'/lang/'. $lang .'/langconfig.php')) {
+                    continue;
+                }
             }
             if (file_exists($CFG->dirroot .'/lang/'. $lang .'/'. $filetocheck)) {
                 include($CFG->dirroot .'/lang/'. $lang .'/'. $filetocheck);
