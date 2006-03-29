@@ -216,6 +216,23 @@ global $HTTPSPAGEREQUIRED;
 /// work with the DB, but never before this!
 
 
+//// Defining the site
+    if ($SITE = get_site()) {
+        /**
+         * If $SITE global from {@link get_site()} is set then SITEID to $SITE->id, otherwise set to 1.
+         */
+        define('SITEID', $SITE->id);
+    } else {
+        /**
+         * @ignore
+         */
+        define('SITEID', 1);
+        define('COURSEID', 1);
+    }
+/// And the 'default' course
+    $COURSE->id = SITEID;   // For now.  This will usually get reset later in require_login() etc.
+
+
 /// Set a default enrolment configuration (see bug 1598)
     if (!isset($CFG->enrol)) {
         $CFG->enrol = 'manual';
