@@ -65,6 +65,7 @@ $string['fieldheightlistview'] = 'Height in list view';
 $string['file'] = 'File';
 $string['filtername'] = 'Database Auto-linking';
 $string['footer'] = 'Footer';
+$string['forcelinkname'] = 'Forced name for the link';
 $string['header'] = 'Header';
 $string['headeraddtemplate'] = 'Defines the interface when editing entries';
 $string['headerlisttemplate'] = 'Defines browsing interface for multiple entries';
