@@ -554,7 +554,10 @@ function scorm_forge_cols_regexp($columns,$remodule='(".*")?,') {
     foreach ($columns as $column) {
         $regexp .= $remodule;
     }
-    $regexp = substr($regexp,0,-1) . '/';
+    if (substr($regexp,-1) == ',') {
+        $regexp = substr($regexp,0,-1);
+    }
+    $regexp .= '/';
     return $regexp;
 }
 
@@ -598,7 +601,7 @@ function scorm_parse_aicc($pkgdir,$scormid){
             $regexp = scorm_forge_cols_regexp($columns->columns);
             for ($i=1;$i<count($rows);$i++) {
                 if (preg_match($regexp,$rows[$i],$matches)) {
-                    for ($j=0;$j<count($columns->columns);$j++) {
+                    for ($j=0;$j<count($matches)-1;$j++) {
                         $column = $columns->columns[$j];
                         $courses[$courseid]->elements[substr(trim($matches[$columns->mastercol+1]),1,-1)]->$column = substr(trim($matches[$j+1]),1,-1);
                     }
@@ -611,7 +614,7 @@ function scorm_parse_aicc($pkgdir,$scormid){
             $regexp = scorm_forge_cols_regexp($columns->columns);
             for ($i=1;$i<count($rows);$i++) {
                 if (preg_match($regexp,$rows[$i],$matches)) {
-                    for ($j=0;$j<count($columns->columns);$j++) {
+                    for ($j=0;$j<count($matches)-1;$j++) {
                         $column = $columns->columns[$j];
                         $courses[$courseid]->elements[substr(trim($matches[$columns->mastercol+1]),1,-1)]->$column = substr(trim($matches[$j+1]),1,-1);
                     }
@@ -621,10 +624,10 @@ function scorm_parse_aicc($pkgdir,$scormid){
         if (isset($id->cst)) {
             $rows = file($pkgdir.'/'.$id->cst);
             $columns = scorm_get_aicc_columns($rows[0],'block');
-            $regexp = scorm_forge_cols_regexp($columns->columns,'(.+)?,');
+            $regexp = scorm_forge_cols_regexp($columns->columns,'("[\w]+")?,?');
             for ($i=1;$i<count($rows);$i++) {
                 if (preg_match($regexp,$rows[$i],$matches)) {
-                    for ($j=0;$j<count($columns->columns);$j++) {
+                    for ($j=0;$j<count($matches)-1;$j++) {
                         if ($j != $columns->mastercol) {
                             $courses[$courseid]->elements[substr(trim($matches[$j+1]),1,-1)]->parent = substr(trim($matches[$columns->mastercol+1]),1,-1);
                         }
