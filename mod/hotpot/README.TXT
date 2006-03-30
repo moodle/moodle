@@ -1,10 +1,10 @@
-This is v2.1.14 of the HotPot module
+This is v2.1.15 of the HotPot module
 
    This module allows teachers to administer Hot Potatoes and TexToys quizzes via Moodle.
    It has been tested on:
       - Hot Potatoes 6
       - Moodle 1.1 thru 1.6
-      - PHP 4.1 thru 5.0
+      - PHP 4.1 thru 5.1.2
       - MySQL and PostgreSQL databases
 
    This module may be distributed under the terms of the General Public License

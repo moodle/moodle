@@ -1,8 +1,10 @@
 <?php  // $Id$
 /// Overview report just displays a big table of all the attempts
 class hotpot_report extends hotpot_default_report {
+
 	function display(&$hotpot, &$cm, &$course, &$users, &$attempts, &$questions, &$options) {
-		$this->create_overview_table($hotpot, $cm, $course, $users, $attempts, $questions, $options, $tables=array());
+		$tables = array();
+		$this->create_overview_table($hotpot, $cm, $course, $users, $attempts, $questions, $options, $tables);
 		$this->print_report($course, $hotpot, $tables, $options);
 		return true;
 	}

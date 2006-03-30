@@ -3,9 +3,10 @@
 class hotpot_report extends hotpot_default_report {
 	function display(&$hotpot, &$cm, &$course, &$users, &$attempts, &$questions, &$options) {
 		global $CFG;
-		// create the table
-		$this->create_clickreport_table($hotpot, $cm, $course, $users, $attempts, $questions, $options, $tables=array());
-		// print the table
+		// create the tables
+		$tables = array();
+		$this->create_clickreport_table($hotpot, $cm, $course, $users, $attempts, $questions, $options, $tables);
+		// print the tables
 		$this->print_report($course, $hotpot, $tables, $options);
 		return true;
 	}

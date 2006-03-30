@@ -166,23 +166,23 @@ define("HOTPOT_DISPLAYNEXT_INDEX",  "2");
 
 
 // possible return values:
-//	false: 
-//		display moderr.html (if exists) OR "Could not update" and return to couse view
-//	string: 
-//		display as error message and return to course view
+//    false: 
+//        display moderr.html (if exists) OR "Could not update" and return to couse view
+//    string: 
+//        display as error message and return to course view
 //  true (or non-zero number):
-//		continue to $hp->redirect (if set) OR hotpot/view.php (to displsay quiz)
+//        continue to $hp->redirect (if set) OR hotpot/view.php (to displsay quiz)
 
 // $hp is an object containing the values of the form in mod.html
 // i.e. all the fields in the 'hotpot' table, plus the following:
-//    $hp->course       : an id in the 'course' table
-//    $hp->coursemodule : an id in the 'course_modules' table
-//    $hp->section      : an id in the 'course_sections' table
-//    $hp->module       : an id in the 'modules' table
-//    $hp->modulename   : always 'hotpot'
-//    $hp->instance     : an id in the 'hotpot' table
-//    $hp->mode         : 'add' or 'update'
-//    $hp->sesskey      : unique string required for Moodle's session management
+//	$hp->course       : an id in the 'course' table
+//	$hp->coursemodule : an id in the 'course_modules' table
+//	$hp->section      : an id in the 'course_sections' table
+//	$hp->module       : an id in the 'modules' table
+//	$hp->modulename   : always 'hotpot'
+//	$hp->instance     : an id in the 'hotpot' table
+//	$hp->mode         : 'add' or 'update'
+//	$hp->sesskey      : unique string required for Moodle's session management
 
 function hotpot_add_instance(&$hp) {
 	if (hotpot_set_form_values($hp)) {
@@ -1255,9 +1255,9 @@ class hotpot_xml_tree {
 		if (empty($str)) {
 			$this->xml =  array();
 		} else {
-            if (empty($CFG->unicodedb)) {
-			    $str = utf8_encode($str);
-            }
+			if (empty($CFG->unicodedb)) {
+				$str = utf8_encode($str);
+			}
 			$this->xml =  xmlize($str, 0);
 		}
 		$this->xml_root = $xml_root;
@@ -1268,9 +1268,9 @@ class hotpot_xml_tree {
 		eval('$value = &$this->xml'.$this->xml_root.$tags.$more_tags.';');
 
 		if (is_string($value)) {
-            if (empty($CFG->unicodedb)) {
-			    $value = utf8_decode($value);
-            }
+			if (empty($CFG->unicodedb)) {
+				$value = utf8_decode($value);
+			}
 
 			// decode angle brackets
 			$value = strtr($value, array('&#x003C;'=>'<', '&#x003E;'=>'>', '&#x0026;'=>'&'));
@@ -1296,7 +1296,7 @@ class hotpot_xml_tree {
 			// encode unicode characters as HTML entities
 			// (in particular, accented charaters that have not been encoded by HP)
 
-			// unicode characetsr can be detected by checking the hex value of a character
+			// unicode characters can be detected by checking the hex value of a character
 			//	00 - 7F : ascii char (roman alphabet + punctuation)
 			//	80 - BF : byte 2, 3 or 4 of a unicode char
 			//	C0 - DF : 1st byte of 2-byte char
@@ -1306,20 +1306,6 @@ class hotpot_xml_tree {
 			//	80 - FF : single-byte, non-ascii char
 			$search = '#('.'[\xc0-\xdf][\x80-\xbf]'.'|'.'[\xe0-\xef][\x80-\xbf]{2}'.'|'.'[\xf0-\xff][\x80-\xbf]{3}'.'|'.'[\x80-\xff]'.')#se';
 			$value = preg_replace($search, "hotpot_utf8_to_html_entity('\\1')", $value);
-
-			// NOTICE
-			// ======
-			// the following lines have been removed because 
-			// the final "preg_replace" takes several SECONDS to run
-
-			// encode any orphaned angle brackets back to html entities
-			//if (empty($this->tag_pattern)) {
-			//	$q   = "'"; // single quote
-			//	$qq  = '"'; // double quote
-			//	$this->tag_pattern = '<(([^>'.$q.$qq.']*)|('."{$q}[^$q]*$q".')|('."{$qq}[^$qq]*$qq".'))*>';
-			//}
-			//$value = preg_replace('/<([^>]*'.$this->tag_pattern.')/', '&lt;$1', $value);
-			//$value = preg_replace('/('.$this->tag_pattern.'[^<]*)>/', '$1&gt;', $value);
 		}
 		return $value;
 	}
@@ -1389,9 +1375,9 @@ class hotpot_xml_quiz extends hotpot_xml_tree {
 		$this->create_html = $create_html;
 
 		// extract fields from $obj
-		//	course       : the course id
-		// 	reference    : the filename within the files folder
-		//	location     : "site" files folder or "course" files folder
+		//	course	   : the course id
+		// 	reference	: the filename within the files folder
+		//	location	 : "site" files folder or "course" files folder
 		//	navigation   : type of navigation required in quiz
 		//	forceplugins : force Moodle compatible media players
 		$this->course = $this->obj_value($obj, 'course');
@@ -1664,10 +1650,10 @@ class hotpot_xml_quiz extends hotpot_xml_tree {
 			$filepath = "$Q\.($filetype)";
 
 			// pattern to match <param> tags which contain the file path
-			//	wmp        : url
+			//	wmp		: url
 			//	quicktime  : src
 			//	realplayer : src
-			//	flash      : movie (doesn't need replacing)
+			//	flash	  : movie (doesn't need replacing)
 			$param_url = "/<param$s{$n}name=$q(src|url)$q$s{$n}value=$q($filepath)$q$n>/is";
 
 			// pattern to match <a> tags which link to multimedia files (not swf)
@@ -2176,7 +2162,7 @@ if (!function_exists('html_entity_decode')) {
 
 // required for Moodle 1.x
 if (!isset($CFG->pixpath)) {
-    $CFG->pixpath = "$CFG->wwwroot/pix";
+	$CFG->pixpath = "$CFG->wwwroot/pix";
 }  
 
 if (!defined('PARAM_RAW')) define('PARAM_RAW', 0x0000);
