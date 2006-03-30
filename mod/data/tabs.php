@@ -46,11 +46,7 @@
     }
     if (isteacher($course->id)) {
         if ($currenttab == 'list') {
-            if (get_user_preferences('data_perpage') == 1) {
-                $defaultemplate = 'singletemplate';
-            } else {
-                $defaultemplate = 'listtemplate';
-            }
+            $defaultemplate = 'listtemplate';
         } else if ($currenttab == 'add') {
             $defaultemplate = 'addtemplate';
         } else {
