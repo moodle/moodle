@@ -77,12 +77,13 @@ function scorm_get_user_data($userid) {
 
 function scorm_string_wrap($stringa, $len=15) {
 // Crop the given string into max $len characters lines
-    if (strlen($stringa) > $len) {
+    $textlib = textlib_get_instance();
+    if ($textlib->strlen($stringa, current_charset()) > $len) {
         $words = explode(' ', $stringa);
         $newstring = '';
         $substring = '';
         foreach ($words as $word) {
-           if ((strlen($substring)+strlen($word)+1) < $len) {
+           if (($textlib->strlen($substring, current_charset())+$textlib->strlen($word, current_charset())+1) < $len) {
                $substring .= ' '.$word;
            } else {
                $newstring .= ' '.$substring.'<br />';
@@ -712,7 +713,10 @@ function scorm_forge_cols_regexp($columns,$remodule='(".*")?,') {
     foreach ($columns as $column) {
         $regexp .= $remodule;
     }
-    $regexp = substr($regexp,0,-1) . '/';
+    if (substr($regexp,-1) == ',') {
+        $regexp = substr($regexp,0,-1);
+    }
+    $regexp .= '/';
     return $regexp;
 }
 
@@ -756,7 +760,7 @@ function scorm_parse_aicc($pkgdir,$scormid){
             $regexp = scorm_forge_cols_regexp($columns->columns);
             for ($i=1;$i<count($rows);$i++) {
                 if (preg_match($regexp,$rows[$i],$matches)) {
-                    for ($j=0;$j<count($columns->columns);$j++) {
+                    for ($j=0;$j<count($matches)-1;$j++) {
                         $column = $columns->columns[$j];
                         $courses[$courseid]->elements[substr(trim($matches[$columns->mastercol+1]),1,-1)]->$column = substr(trim($matches[$j+1]),1,-1);
                     }
@@ -769,7 +773,7 @@ function scorm_parse_aicc($pkgdir,$scormid){
             $regexp = scorm_forge_cols_regexp($columns->columns);
             for ($i=1;$i<count($rows);$i++) {
                 if (preg_match($regexp,$rows[$i],$matches)) {
-                    for ($j=0;$j<count($columns->columns);$j++) {
+                    for ($j=0;$j<count($matches)-1;$j++) {
                         $column = $columns->columns[$j];
                         $courses[$courseid]->elements[substr(trim($matches[$columns->mastercol+1]),1,-1)]->$column = substr(trim($matches[$j+1]),1,-1);
                     }
@@ -779,10 +783,10 @@ function scorm_parse_aicc($pkgdir,$scormid){
         if (isset($id->cst)) {
             $rows = file($pkgdir.'/'.$id->cst);
             $columns = scorm_get_aicc_columns($rows[0],'block');
-            $regexp = scorm_forge_cols_regexp($columns->columns,'(.+)?,');
+            $regexp = scorm_forge_cols_regexp($columns->columns,'("[\w]+")?,?');
             for ($i=1;$i<count($rows);$i++) {
                 if (preg_match($regexp,$rows[$i],$matches)) {
-                    for ($j=0;$j<count($columns->columns);$j++) {
+                    for ($j=0;$j<count($matches)-1;$j++) {
                         if ($j != $columns->mastercol) {
                             $courses[$courseid]->elements[substr(trim($matches[$j+1]),1,-1)]->parent = substr(trim($matches[$columns->mastercol+1]),1,-1);
                         }
@@ -1206,6 +1210,46 @@ function scorm_repeater($what, $times) {
     return $return;
 }
 
+/**
+* Convert a utf-8 string to html entities
+*
+* @param string $str The UTF-8 string
+* @return string
+*/
+function scorm_utf8_to_entities($str) {
+    global $CFG;
+
+    $entities = '';
+    $values = array();
+    $lookingfor = 1;
+
+    if (empty($CFG->unicodedb)) {  // If Unicode DB support enable does not convert string
+        $textlib = textlib_get_instance();
+        for ($i = 0; $i < $textlib->strlen($str,'utf-8'); $i++) {
+            $thisvalue = ord($str[$i]);
+            if ($thisvalue < 128) {
+                $entities .= $str[$i]; // Leave ASCII chars unchanged 
+            } else {
+                if (count($values) == 0) {
+                    $lookingfor = ($thisvalue < 224) ? 2 : 3;
+                }
+                $values[] = $thisvalue;
+                if (count($values) == $lookingfor) {
+                    $number = ($lookingfor == 3) ?
+                        (($values[0] % 16) * 4096) + (($values[1] % 64) * 64) + ($values[2] % 64):
+                        (($values[0] % 32) * 64) + ($values[1] % 64);
+                    $entities .= '&#' . $number . ';';
+                    $values = array();
+                    $lookingfor = 1;
+                }
+            }
+        }
+        return $entities;
+    } else {
+        return $str;
+    }
+}
+
 /* Usage
  Grab some XML data, either from a file, URL, etc. however you want. Assume storage in $strYourXML;
 
@@ -1221,45 +1265,22 @@ class xml2Array {
    var $strXmlData;
    
    /**
-   * Convert a utf-8 string to html entities
-   *
-   * @param string $str The UTF-8 string
-   * @return string
-   */
-   function utf8_to_entities($str) {
-       $entities = '';
-       $values = array();
-       $lookingfor = 1;
-
-       for ($i = 0; $i < strlen($str); $i++) {
-           $thisvalue = ord($str[$i]);
-           if ($thisvalue < 128) {
-               $entities .= $str[$i]; // Leave ASCII chars unchanged 
-           } else {
-               if (count($values) == 0) {
-                   $lookingfor = ($thisvalue < 224) ? 2 : 3;
-               }
-               $values[] = $thisvalue;
-               if (count($values) == $lookingfor) {
-                   $number = ($lookingfor == 3) ?
-                       (($values[0] % 16) * 4096) + (($values[1] % 64) * 64) + ($values[2] % 64):
-                       (($values[0] % 32) * 64) + ($values[1] % 64);
-                   $entities .= '&#' . $number . ';';
-                   $values = array();
-                   $lookingfor = 1;
-               }
-           }
-       }
-       return $entities;
-   }
-
-   /**
    * Parse an XML text string and create an array tree that rapresent the XML structure
    *
    * @param string $strInputXML The XML string
    * @return array
    */
    function parse($strInputXML) {
+           /*if (($start = strpos($strInputXML,'encoding=')) !== false) {
+               $endchr = substr($strInputXML,$start+9,1);
+               if (($end = strpos($strInputXML,$endchr,$start+10)) !== false) {
+                   $charset = strtolower(substr($strInputXML,$start+10,$end-$start-10));
+                   if ($charset != 'utf-8') {
+                       $strInputXML = str_ireplace('encoding='.$endchr.$charset.$endchr,'encoding='.$endchr.'UTF-8'.$endchr,$strInputXML);
+                       $textlib = textlib_get_instance();
+                   }
+               }
+           }*/
            $this->resParser = xml_parser_create ('UTF-8');
            xml_set_object($this->resParser,$this);
            xml_set_element_handler($this->resParser, "tagOpen", "tagClosed");
@@ -1286,9 +1307,9 @@ class xml2Array {
    function tagData($parser, $tagData) {
        if(trim($tagData)) {
            if(isset($this->arrOutput[count($this->arrOutput)-1]['tagData'])) {
-               $this->arrOutput[count($this->arrOutput)-1]['tagData'] .= $this->utf8_to_entities($tagData);
+               $this->arrOutput[count($this->arrOutput)-1]['tagData'] .= scorm_utf8_to_entities($tagData);
            } else {
-               $this->arrOutput[count($this->arrOutput)-1]['tagData'] = $this->utf8_to_entities($tagData);
+               $this->arrOutput[count($this->arrOutput)-1]['tagData'] = scorm_utf8_to_entities($tagData);
            }
        }
    }
