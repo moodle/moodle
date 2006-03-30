@@ -25,7 +25,6 @@
     require_once('../../config.php');
     require_once('lib.php');
 
-    require_login();
     
     $id             = optional_param('id', 0, PARAM_INT);            // course module id
     $d              = optional_param('d', 0, PARAM_INT);             // database id
@@ -63,6 +62,8 @@
             error('Course Module ID was incorrect');
         }
     }
+
+    require_course_login($course, true, $cm);
 
     if (!isteacheredit($course->id)){
         error(get_string('noaccess','data'));

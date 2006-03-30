@@ -56,14 +56,20 @@
     }
     
     require_course_login($course, false, $cm);
+
+/// If it's hidden then it's don't show anything.  :)
+    if (empty($cm->visible) and !isteacher($course->id)) {
+        notice(get_string("activityiscurrentlyhidden"));
+    }
     
+/// Can't use this if there are no fields
     if (isteacher($course->id)) {
         if (!record_exists('data_fields','dataid',$data->id)) {      // Brand new database!
             redirect($CFG->wwwroot.'/mod/data/field.php?d='.$data->id);  // Redirect to field entry
         }
     }
 
-    ///checking for participants
+/// Check access for participants
     if ((!isteacher($course->id)) && $data->participants == DATA_TEACHERS_ONLY) {
         error (get_string('noaccess','data'));
     }

@@ -55,6 +55,8 @@
         }
     }
 
+    require_course_login($course, true, $cm);
+
     if (!isteacheredit($course->id)){
         error(get_string('noaccess','data'));
     }

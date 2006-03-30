@@ -81,7 +81,14 @@
         $record = NULL;
     }
 
+
     require_course_login($course, true, $cm);
+
+
+/// If it's hidden then it's don't show anything.  :)
+    if (empty($cm->visible) and !isteacher($course->id)) {
+        notice(get_string("activityiscurrentlyhidden"));
+    }
 
 /// If we have an empty Database then redirect because this page is useless without data
     if (isteacher($course->id)) {
