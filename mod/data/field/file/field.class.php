@@ -61,11 +61,11 @@ class data_field_file extends data_field_base {
         }
 
         $str = '<div title="' . $this->field->description . '">';
-        $str .= '<input type="hidden" name ="field_'.$this->field->id.'_0" value="fakevalue" />';
+        $str .= '<input type="hidden" name ="field_'.$this->field->id.'_file" value="fakevalue" />';
         $str .= get_string('file','data'). ': <input type="file" name ="field_'.$this->field->id.'" id="field_'.
                             $this->field->id.'" title="'.$this->field->description.'" /><br />';
-        $str .= get_string('optionalfilename','data').': <input type="text" name="field_'
-                .$this->field->id.'_1" id="field_'.$this->field->id.'_1" value="'.$displayname.'" /><br />';
+        $str .= get_string('optionalfilename','data').': <input type="text" name="field_' .$this->field->id.'_filename"
+                            id="field_'.$this->field->id.'_filename" value="'.$displayname.'" /><br />';
         $str .= '<input type="hidden" name="MAX_FILE_SIZE" value="'.$this->field->param3.'" />';
         $str .= '</div>';
 
@@ -129,7 +129,7 @@ class data_field_file extends data_field_base {
 
         $names = explode('_',$name);
         switch ($names[2]) {
-            case 0:    //file just uploaded
+            case 'file':    //file just uploaded
                 //$course = get_course('course', 'id', $this->data->course);
 
                 $filename = $_FILES[$names[0].'_'.$names[1]];
@@ -148,7 +148,7 @@ class data_field_file extends data_field_base {
                 }
                 break;
 
-            case 1:    //only changing alt tag
+            case 'filename':    //only changing alt tag
                 $content->content1 = clean_param($value, PARAM_NOTAGS);
                 update_record('data_content', $content);
                 break;
@@ -160,7 +160,7 @@ class data_field_file extends data_field_base {
 
     function notemptyfield($value, $name){
         $names = explode('_',$name);
-        if ($names[2] == '0'){
+        if ($names[2] == 'file'){
             $filename = $_FILES[$names[0].'_'.$names[1]];
             return !empty($filename['name']);    //if there's a file in $_FILES, not empty
         }
