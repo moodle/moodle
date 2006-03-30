@@ -87,6 +87,10 @@
 
 /// If it's hidden then it's don't show anything.  :)
     if (empty($cm->visible) and !isteacher($course->id)) {
+        $strdatabases = get_string("modulenameplural", "data");
+        $navigation = "<a href=\"index.php?id=$course->id\">$strdatabases</a> ->";
+        print_header_simple(format_string($data->name), "",
+                 "$navigation ".format_string($data->name), "", "", true, '', navmenu($course, $cm));
         notice(get_string("activityiscurrentlyhidden"));
     }
 
