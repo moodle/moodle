@@ -117,6 +117,9 @@
 /// Print the tabs
 
     $currenttab = 'add';
+    if ($rid) {
+        $editentry = true;  //used in tabs
+    }
     include('tabs.php');
 
 
