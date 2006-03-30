@@ -59,10 +59,10 @@ class data_field_picture extends data_field_file {
 
         $str = '';
         $str .= '<div title="'.$this->field->description.'">';
-        $str .= '<input type="hidden" name ="field_'.$this->field->id.'_0" id="field_'.$this->field->id.'_0"  value="fakevalue" />';
+        $str .= '<input type="hidden" name ="field_'.$this->field->id.'_file" id="field_'.$this->field->id.'_file"  value="fakevalue" />';
         $str .= get_string('picture','data'). ': <input type="file" name ="field_'.$this->field->id.'" id="field_'.$this->field->id.'" /><br />';
         $str .= get_string('optionaldescription','data') .': <input type="text" name="field_'
-                .$this->field->id.'_1" id="field_'.$this->field->id.'_1" value="'.$description.'" /><br />';
+                .$this->field->id.'_filename" id="field_'.$this->field->id.'_filename" value="'.$description.'" /><br />';
         $str .= '<input type="hidden" name="MAX_FILE_SIZE" value="'.$this->field->param3.'" />';
         if ($filepath){
             $str .= '<img width="'.$this->previewwidth.'" height="'.$this->previewheight.'" src="'.$filepath.'" />';
