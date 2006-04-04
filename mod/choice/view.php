@@ -30,7 +30,7 @@
     if ($form = data_submitted()) {
         $timenow = time();
 
-        if (isteacher($course->id, $user->id)) {
+        if (isteacher($course->id, $USER->id)) {
             if ($action == 'delete') { //some responses need to be deleted     
                 $attemptids = isset($_POST['attemptid']) ? $_POST['attemptid'] : array(); //get array of repsonses to delete.
                 choice_delete_responses($attemptids); //delete responses.
@@ -41,7 +41,7 @@
         if (empty($form->answer)) {
             redirect("view.php?id=$cm->id", get_string('mustchooseone', 'choice'));
         } else {
-            choice_user_submit_response($form->answer, $choice, $USER->id, $course->id);
+            choice_user_submit_response($form->answer, $choice, $USER->id, $course->id, $cm);
         }
         redirect("view.php?id=$cm->id");
         exit;

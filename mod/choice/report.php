@@ -116,9 +116,12 @@
                     $studentid=(!empty($user->idnumber) ? $user->idnumber : " ");
                     $myxls->write_string($row,2,$studentid);
                     $ug2 = '';
-                    foreach (user_group($course->id, $user->id) as $ug) {
-						$ug2 = $ug2. $ug->name;
-					}
+                    $usergrp = user_group($course->id, $user->id);
+                    if (!empty($usergrp)) {
+                        foreach ($usergrp as $ug) {
+						    $ug2 = $ug2. $ug->name;
+					    }
+			        }
                     $myxls->write_string($row,3,$ug2);
                     
                     $useroption = choice_get_option_text($choice, $answers[$user->id]->optionid);
@@ -156,17 +159,23 @@
       $i=0;  
       $row=1;
       if ($users) foreach ($users as $user) {
-          if (!($answers[$user->id]->optionid==0 && isadmin($user->id)) && 
+          if (!empty($answers[$user->id]) && !($answers[$user->id]->optionid==0 && isadmin($user->id)) && 
               (!($answers[$user->id]->optionid==0 && isteacher($course->id, $user->id) && !(isteacheredit($course->id, $user->id)) ) ) &&  
               !($choice->showunanswered==0 && $answers[$user->id]->optionid==0)  ) { //make sure admins and hidden teachers are not shown in not answered yet column, and not answered only shown if set in config page.
 
               echo $user->lastname;
               echo "\t".$user->firstname;
-              $studentid=(($user->idnumber != "") ? $user->idnumber : " ");
+              $studentid = " ";
+              if (!empty($user->idnumber)) {
+			      $studentid = $user->idnumber;
+		 	  }              
               echo "\t". $studentid."\t";
               $ug2 = '';
-              foreach (user_group($course->id, $user->id) as $ug) {
-			      $ug2 = $ug2. $ug->name;
+              $usergrp = user_group($course->id, $user->id);
+              if (!empty($usergrp)) {
+                  foreach ($usergrp as $ug) {
+			          $ug2 = $ug2. $ug->name;
+			      }
 			  }
               echo $ug2. "\t";
               echo format_string(choice_get_option_text($choice, $answers[$user->id]->optionid),true). "\n";

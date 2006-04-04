@@ -115,7 +115,9 @@ function choice_update_instance($choice) {
                 $option->id = substr($name, 9); // Get the ID of the answer that needs to be updated.
                 $option->text = $value;
                 $option->choiceid = $choice->id;
-                $option->maxanswers = $choice->{'oldlimit'.substr($name, 9)};
+                if (isset($choice->{'oldlimit'.substr($name, 9)})) {
+                    $option->maxanswers = $choice->{'oldlimit'.substr($name, 9)};
+                }
                 $option->timemodified = time();
                 update_record("choice_options", $option);
             } else { //empty old option - needs to be deleted.
@@ -149,11 +151,13 @@ $cdisplay = array();
         if (isset($text)) { //make sure there are no dud entries in the db with blank text values.
             $countanswers = (get_records("choice_answers", "optionid", $optionid));
             $countans = 0;           
-            foreach ($countanswers as $ca) { //only return enrolled users.				
-				if (isstudent($cm->course, $ca->userid) or isteacher($cm->course, $ca->userid)) {	
-			   	    $countans = $countans+1;
-			    }
-			}
+            if (!empty($countanswers)) {
+                foreach ($countanswers as $ca) { //only return enrolled users.				
+				    if (isstudent($cm->course, $ca->userid) or isteacher($cm->course, $ca->userid)) {	
+                        $countans = $countans+1;
+                    }
+                }
+            }
             if ($countanswers) {
                 $countanswers = count($countanswers);
             } else {
@@ -243,7 +247,7 @@ $cdisplay = array();
         echo "</center>";
 }
 
-function choice_user_submit_response($formanswer, $choice, $userid, $courseid) {
+function choice_user_submit_response($formanswer, $choice, $userid, $courseid, $cm) {
 
 $current = get_record('choice_answers', 'choiceid', $choice->id, 'userid', $userid);
 	
@@ -267,11 +271,11 @@ $current = get_record('choice_answers', 'choiceid', $choice->id, 'userid', $user
 					
                     $newanswer = $current;
                     $newanswer->optionid = $formanswer;
-                    $newanswer->timemodified = $timenow;
+                    $newanswer->timemodified = time();
                     if (! update_record("choice_answers", $newanswer)) {
                         error("Could not update your choice because of a database error");
                     }
-                    add_to_log($course->id, "choice", "choose again", "view.php?id=$cm->id", $choice->id, $cm->id);
+                    add_to_log($courseid, "choice", "choose again", "view.php?id=$cm->id", $choice->id, $cm->id);
                 } else {
                     $newanswer = NULL;
                     $newanswer->choiceid = $choice->id;
@@ -281,7 +285,7 @@ $current = get_record('choice_answers', 'choiceid', $choice->id, 'userid', $user
                     if (! insert_record("choice_answers", $newanswer)) {
                         error("Could not save your choice");
                     }
-                    add_to_log($course->id, "choice", "choose", "view.php?id=$cm->id", $choice->id, $cm->id);
+                    add_to_log($courseid, "choice", "choose", "view.php?id=$cm->id", $choice->id, $cm->id);
                 }
             } else {
                 error("this choice is full!");
@@ -429,13 +433,14 @@ function choice_show_results($choice, $course, $cm, $forcepublish='') {
                 }
                 echo "<td align=\"center\" class=\"count\">";
                 $countanswers = get_records("choice_answers", "optionid", $optionid);                
-                $countans = 0;                
-                foreach ($countanswers as $ca) { //only return enrolled users.		                			
+                $countans = 0;  
+                if (!empty($countanswers)) {              
+                    foreach ($countanswers as $ca) { //only return enrolled users.		                			
 				        if (isstudent($course->id, $ca->userid) or isteacher($course->id, $ca->userid)) {							
 			   	           $countans = $countans+1;
 			            }			        
-			    }
-                
+			        }
+                }
                 if ($choice->limitanswers && !$optionid==0) {
                     echo get_string("taken", "choice").":";
                     echo $countans;
