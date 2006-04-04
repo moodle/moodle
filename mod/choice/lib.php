@@ -128,7 +128,9 @@ function choice_update_instance($choice) {
                 $option = NULL;
                 $option->text = $value;
                 $option->choiceid = $choice->id;
-                $option->maxanswers = $choice->{'newlimit'.substr($name, 9)};
+                if (isset($choice->{'newlimit'.substr($name, 9)})) {
+                    $option->maxanswers = $choice->{'newlimit'.substr($name, 9)};
+                }
                 $option->timemodified = time();
                 insert_record("choice_options", $option);                
             }
