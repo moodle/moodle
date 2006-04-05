@@ -9,6 +9,10 @@ define('ORDER_DELETE',  'delete');
 define('ORDER_REFUND',  'refund');
 define('ORDER_VOID',    'void');
 
+/**
+ * print_authorize_orders
+ *
+ */
 function print_authorize_orders()
 {
     global $CFG, $USER;
@@ -110,7 +114,7 @@ function print_authorize_orders()
 
     if ($records = get_records_sql($select . $from . $where . $sort . $limit)) {
         foreach ($records as $record) {
-            $actionstatus = get_order_status_desc($record);
+            $actionstatus = get_status_action($record);
             $actions = '';
 
             if (empty($actionstatus->actions)) {
@@ -135,7 +139,11 @@ function print_authorize_orders()
     $table->print_html();
 }
 
-
+/**
+ * print_authorize_order_details
+ *
+ * @param int $orderno
+ */
 function print_authorize_order_details($orderno) {
     global $CFG, $USER;
     global $strs, $authstrs;
@@ -143,19 +151,18 @@ function print_authorize_order_details($orderno) {
     $unenrol = optional_param('unenrol', '');
     $cmdconfirm = optional_param('confirm', '', PARAM_ALPHA);
 
-    $cmdcapture = optional_param('capture', '', PARAM_ALPHA);
-    $cmddelete = optional_param('delete', '', PARAM_ALPHA);
-    $cmdrefund = optional_param('refund', '', PARAM_ALPHA);
-    $cmdvoid = optional_param('void', '', PARAM_ALPHA);
+    $cmdcapture = optional_param(ORDER_CAPTURE, '', PARAM_ALPHA);
+    $cmddelete = optional_param(ORDER_DELETE, '', PARAM_ALPHA);
+    $cmdrefund = optional_param(ORDER_REFUND, '', PARAM_ALPHA);
+    $cmdvoid = optional_param(ORDER_VOID, '', PARAM_ALPHA);
 
     $table->width = '100%';
     $table->size = array('30%', '70%');
     $table->align = array('right', 'left');
 
-    $sql = "SELECT E.*, C.shortname, C.enrolperiod " .
-    "FROM {$CFG->prefix}enrol_authorize E " .
-    "INNER JOIN {$CFG->prefix}course C ON C.id = E.courseid " .
-    "WHERE E.id = '$orderno'";
+    $sql = "SELECT E.*, C.shortname, C.enrolperiod FROM {$CFG->prefix}enrol_authorize E " .
+           "INNER JOIN {$CFG->prefix}course C ON C.id = E.courseid " .
+           "WHERE E.id = '$orderno'";
 
     $order = get_record_sql($sql);
     if (!$order) {
@@ -173,7 +180,7 @@ function print_authorize_order_details($orderno) {
     echo "<input type='hidden' name='order' value='$orderno'>\n";
 
     $settled = settled($order);
-    $status = get_order_status_desc($order);
+    $status = get_status_action($order);
 
     $table->data[] = array("<b>$authstrs->orderid:</b>", $orderno);
     $table->data[] = array("<b>$authstrs->transid:</b>", $order->transid);
@@ -196,7 +203,7 @@ function print_authorize_order_details($orderno) {
 
         if (empty($cmdconfirm)) {
             $table->data[] = array("<b>$strs->confirm:</b>",
-            "$authstrs->captureyes<br /><a href='index.php?order=$orderno&amp;capture=y&amp;confirm=y'>$strs->yes</a>
+            "$authstrs->captureyes<br /><a href='index.php?order=$orderno&amp;".ORDER_CAPTURE."=y&amp;confirm=y'>$strs->yes</a>
             &nbsp;&nbsp;&nbsp;&nbsp;<a href='index.php?order=$orderno'>$strs->no</a>");
         }
         else {
@@ -267,7 +274,7 @@ function print_authorize_order_details($orderno) {
                 $table->data[] = array("<b>$authstrs->howmuch</b>",
                     "<input type='hidden' name='confirm' value='y'>
                      <input type='text' size='5' name='amount' value='$amount'>
-                     $strcanbecredit<br /><input type='submit' name='refund' value='$authstrs->refund'>");
+                     $strcanbecredit<br /><input type='submit' name='".ORDER_REFUND."' value='$authstrs->refund'>");
             }
             else {
                 $extra->amount = $amount;
@@ -307,7 +314,7 @@ function print_authorize_order_details($orderno) {
             if (empty($cmdconfirm)) {
                 $strvoidyes = get_string('voidyes', 'enrol_authorize');
                 $table->data[] = array("<b>$strs->confirm:</b>",
-                    "$strvoidyes<br /><input type='hidden' name='void' value='y'>
+                    "$strvoidyes<br /><input type='hidden' name='".ORDER_VOID."' value='y'>
                      <input type='hidden' name='confirm' value='y'>
                      <input type='submit' value='$strs->yes'>
                      &nbsp;&nbsp;&nbsp;&nbsp;<a href='index.php?order=$orderno'>$strs->no</a>");
@@ -332,7 +339,10 @@ function print_authorize_order_details($orderno) {
             }
         }
         else { // cancel refunded transaction
-            $suborder = get_record('enrol_authorize_refunds', 'id', $suborderno, 'status', AN_STATUS_CREDIT);
+            $suborder = get_record('enrol_authorize_refunds',
+                                   'id', $suborderno,
+                                   'orderid', $orderno,
+                                   'status', AN_STATUS_CREDIT);
             if (!$suborder) { // not found
                 error("Transaction can not be voided because of already been voided.");
             }
@@ -346,7 +356,7 @@ function print_authorize_order_details($orderno) {
                         "<input type='checkbox' name='unenrol' value='y'" . (!empty($unenrol) ? " checked" : "") . ">");
 
                     $table->data[] = array("<b>$strs->confirm:</b>",
-                        "$strsubvoidyes<br /><input type='hidden' name='void' value='y'>
+                        "$strsubvoidyes<br /><input type='hidden' name='".ORDER_VOID."' value='y'>
                          <input type='hidden' name='confirm' value='y'>
                          <input type='hidden' name='suborder' value='$suborderno'>
                          <input type='submit' value='$strs->yes'>
@@ -382,15 +392,12 @@ function print_authorize_order_details($orderno) {
             $a->action = ORDER_DELETE;
             error(get_string('youcantdo', 'enrol_authorize', $a));
         }
-        //if (!in_array(ORDER_DELETE, $status->actions)) {
-        //    error("Order $orderno cannot be deleted. Status must be expired.");
-        //}
         if (empty($cmdconfirm)) {
             $table->data[] = array("<b>$authstrs->unenrolstudent</b>",
                 "<input type='checkbox' name='unenrol' value='y'" . (!empty($unenrol) ? " checked" : "") . ">");
 
             $table->data[] = array("<b>$strs->confirm:</b>",
-                "<input type='hidden' name='delete' value='y'>
+                "<input type='hidden' name='".ORDER_DELETE."' value='y'>
                  <input type='hidden' name='confirm' value='y'>
                  <input type='submit' value='$strs->yes'>
                  &nbsp;&nbsp;&nbsp;&nbsp;<a href='index.php?order=$orderno'>$strs->no</a>");
@@ -418,9 +425,9 @@ function print_authorize_order_details($orderno) {
         print_table($table);
         if ($settled) { // show refunds.
             echo "<h4>" . get_string('returns', 'enrol_authorize') . "</h4>\n";
-            $table2->size = array('15%', '15%', '20%', '35%', '15%');
-            $table2->align = array('right', 'right', 'right', 'left', 'right');
-            $table2->head = array($authstrs->transid,
+            $t2->size = array('15%', '15%', '20%', '35%', '15%');
+            $t2->align = array('right', 'right', 'right', 'left', 'right');
+            $t2->head = array($authstrs->transid,
                                   $authstrs->amount,
                                   $strs->status,
                                   $authstrs->settlementdate,
@@ -428,7 +435,7 @@ function print_authorize_order_details($orderno) {
             $refunds = get_records('enrol_authorize_refunds', 'orderid', $orderno);
             if ($refunds) {
                 foreach ($refunds as $rf) {
-                    $substatus = get_order_status_desc($rf);
+                    $substatus = get_status_action($rf);
                     $subactions = '&nbsp;';
                     if (empty($substatus->actions)) {
                         $subactions .= $strs->none;
@@ -439,24 +446,29 @@ function print_authorize_order_details($orderno) {
                             "<a href='index.php?$vl=y&amp;order=$orderno&amp;suborder=$rf->id'>{$authstrs->$vl}</a> ";
                         }
                     }
-                    $table2->data[] = array($rf->transid,
-                                            $rf->amount,
-                                            $authstrs->{$substatus->status},
-                                            userdate($rf->settletime),
-                                            $subactions);
+                    $t2->data[] = array($rf->transid,
+                    $rf->amount,
+                    $authstrs->{$substatus->status},
+                    userdate($rf->settletime),
+                    $subactions);
                 }
             }
             else {
-                $table2->data[] = array(get_string('noreturns', 'enrol_authorize'));
+                $t2->data[] = array(get_string('noreturns', 'enrol_authorize'));
             }
-            print_table($table2);
+            print_table($t2);
         }
     }
     echo '</form>';
 }
 
-
-function get_order_status_desc($order)
+/**
+ * get_status_action
+ *
+ * @param object $order Order details.
+ * @return object
+ */
+function get_status_action($order)
 {
     global $CFG, $USER;
 
@@ -507,7 +519,6 @@ function get_order_status_desc($order)
 
     case AN_STATUS_CREDIT:
         if (settled($order)) {
-            $ret->actions = array();
             $ret->status = 'settled';
         }
         else {
@@ -519,7 +530,6 @@ function get_order_status_desc($order)
         return $ret;
 
     case AN_STATUS_VOID:
-        $ret->actions = array();
         $ret->status = 'cancelled';
         return $ret;
 
@@ -533,6 +543,5 @@ function get_order_status_desc($order)
     default:
         return $ret;
     }
-
 }
 ?>
