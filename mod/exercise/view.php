@@ -15,9 +15,9 @@
 
 ************************************************/
 
-    require("../../config.php");
-    require("lib.php");
-    require("locallib.php");
+    require_once("../../config.php");
+    require_once("lib.php");
+    require_once("locallib.php");
 
     $id = required_param('id', PARAM_INT);    // Course Module ID
 

@@ -19,12 +19,12 @@
 
 ************************************************/
 
-    require("../../config.php");
-    require("lib.php");
-    require("locallib.php");
-    require("version.php");
+    require_once("../../config.php");
+    require_once("lib.php");
+    require_once("locallib.php");
+    require_once("version.php");
 
-    require_variable($id);    // Course Module ID
+    $id = required_param('id', PARAM_INT); // Course Module ID
 
     // get some essential stuff...
     if (! $cm = get_record("course_modules", "id", $id)) {
@@ -52,7 +52,7 @@
                   "", "", true);
 
     //...get the action!
-    require_variable($action);
+    $action = required_param('action');
 
 
     /******************* admin amend title ************************************/
