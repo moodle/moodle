@@ -148,13 +148,13 @@ function print_authorize_order_details($orderno) {
     global $CFG, $USER;
     global $strs, $authstrs;
 
-    $unenrol = optional_param('unenrol', '');
-    $cmdconfirm = optional_param('confirm', '', PARAM_ALPHA);
-
     $cmdcapture = optional_param(ORDER_CAPTURE, '', PARAM_ALPHA);
     $cmddelete = optional_param(ORDER_DELETE, '', PARAM_ALPHA);
     $cmdrefund = optional_param(ORDER_REFUND, '', PARAM_ALPHA);
     $cmdvoid = optional_param(ORDER_VOID, '', PARAM_ALPHA);
+
+    $unenrol = optional_param('unenrol', '', PARAM_ALPHA);
+    $confirm = optional_param('confirm', '', PARAM_ALPHA);
 
     $table->width = '100%';
     $table->size = array('30%', '70%');
@@ -185,7 +185,7 @@ function print_authorize_order_details($orderno) {
     $table->data[] = array("<b>$authstrs->orderid:</b>", $orderno);
     $table->data[] = array("<b>$authstrs->transid:</b>", $order->transid);
     $table->data[] = array("<b>$authstrs->amount:</b>", "$order->currency $order->amount");
-    if ((empty($cmdcapture) and empty($cmdrefund) and empty($cmdvoid))) {
+    if (empty($cmdcapture) and empty($cmdrefund) and empty($cmdvoid) and empty($cmddelete)) {
         $table->data[] = array("<b>$strs->course:</b>", $order->shortname);
         $table->data[] = array("<b>$strs->status:</b>", $authstrs->{$status->status});
         $table->data[] = array("<b>$strs->user:</b>", $order->ccname);
@@ -201,7 +201,7 @@ function print_authorize_order_details($orderno) {
             error(get_string('youcantdo', 'enrol_authorize', $a));
         }
 
-        if (empty($cmdconfirm)) {
+        if (empty($confirm)) {
             $table->data[] = array("<b>$strs->confirm:</b>",
             "$authstrs->captureyes<br /><a href='index.php?order=$orderno&amp;".ORDER_CAPTURE."=y&amp;confirm=y'>$strs->yes</a>
             &nbsp;&nbsp;&nbsp;&nbsp;<a href='index.php?order=$orderno'>$strs->no</a>");
@@ -266,7 +266,7 @@ function print_authorize_order_details($orderno) {
         }
         else {
             $amount = format_float(optional_param('amount', $upto), 2);
-            if (($amount > $upto) || empty($cmdconfirm)) {
+            if (($amount > $upto) || empty($confirm)) {
                 $a->upto = $upto;
                 $strcanbecredit = get_string('canbecredit', 'enrol_authorize', $a);
                 $table->data[] = array("<b>$authstrs->unenrolstudent</b>",
@@ -311,7 +311,7 @@ function print_authorize_order_details($orderno) {
 
         $suborderno = optional_param('suborder', 0, PARAM_INT);
         if (empty($suborderno)) { // cancel original transaction.
-            if (empty($cmdconfirm)) {
+            if (empty($confirm)) {
                 $strvoidyes = get_string('voidyes', 'enrol_authorize');
                 $table->data[] = array("<b>$strs->confirm:</b>",
                     "$strvoidyes<br /><input type='hidden' name='".ORDER_VOID."' value='y'>
@@ -347,7 +347,7 @@ function print_authorize_order_details($orderno) {
                 error("Transaction can not be voided because of already been voided.");
             }
             else {
-                if (empty($cmdconfirm)) {
+                if (empty($confirm)) {
                     $a->transid = $suborder->transid;
                     $a->amount = $suborder->amount;
                     $strsubvoidyes = get_string('subvoidyes', 'enrol_authorize', $a);
@@ -392,7 +392,7 @@ function print_authorize_order_details($orderno) {
             $a->action = $authstrs->delete;
             error(get_string('youcantdo', 'enrol_authorize', $a));
         }
-        if (empty($cmdconfirm)) {
+        if (empty($confirm)) {
             $table->data[] = array("<b>$authstrs->unenrolstudent</b>",
                 "<input type='checkbox' name='unenrol' value='y'" . (!empty($unenrol) ? " checked" : "") . ">");
 
