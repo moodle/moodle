@@ -1456,8 +1456,12 @@ function main_upgrade($oldversion=0) {
         }
     }
 
-    if ($oldversion < 2005060222) { // delete the mistakenly-added currencies table from enrol_authorize
+    if ($oldversion < 2005060222) { // Delete the mistakenly-added currencies table from enrol_authorize
         execute_sql("DROP TABLE {$CFG->prefix}currencies",false); // drop silently
+    }
+
+    if ($oldversion < 2005060231) { // Add an index to course_sections that was never upgraded (bug 5100)
+        execute_sql(" CREATE INDEX coursesection ON {$CFG->prefix}course_sections (course,section) ", false);
     }
 
     return $result;
