@@ -269,8 +269,7 @@
 
 
                     '<a href="field.php?mode=display&amp;d='.$data->id.
-                    '&amp;fid='.$field->field->id.'&amp;sesskey='.sesskey().'">'.$field->field->name.'</a>'.
-                    '</td>',
+                    '&amp;fid='.$field->field->id.'&amp;sesskey='.sesskey().'">'.$field->field->name.'</a>',
 
 
                     $field->image().'&nbsp;'.get_string($field->type, 'data'),
@@ -324,8 +323,6 @@
         echo '</form>';
         echo '</div>';
 
-
-        print_simple_box_end();
 
     }
 
