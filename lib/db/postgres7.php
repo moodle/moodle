@@ -1484,6 +1484,10 @@ function main_upgrade($oldversion=0) {
         modify_database('',"UPDATE prefix_blog_tag_instance SET timemodified = '".time()."';");
     }
 
+    if ($oldversion < 2006040500) { // Add an index to course_sections that was never upgraded (bug 5100)
+        execute_sql(" CREATE INDEX {$CFG->prefix}course_sections_coursesection_idx ON {$CFG->prefix}course_sections (course,section) ", false);
+    }
+
     return $result;
 }
 
