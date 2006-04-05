@@ -83,7 +83,8 @@
     }
 
     if(!empty($id) && isset($_REQUEST['hide']) && confirm_sesskey()) {
-        if(!set_field('question', 'hidden', $_REQUEST['hide'], 'id', $id)) {
+        $hide = required_param('hide', PARAM_INT);
+        if(!set_field('question', 'hidden', $hide, 'id', $id)) {
             error("Faild to hide the question.");
         }
         redirect($SESSION->returnurl);
@@ -114,6 +115,7 @@
     print_header_simple("$streditingquestion", "", $strediting);
 
     if (isset($_REQUEST['delete'])) {
+        $delete = required_param('delete', PARAM_INT);
         if (isset($confirm) and confirm_sesskey()) {
             if ($confirm == md5($delete)) {
                 if (record_exists('quiz_question_instances', 'question', $question->id) or
