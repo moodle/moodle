@@ -154,19 +154,17 @@ function init() {
   global $CFG;
 
   /// A default.ttf is searched for in this order:
-  ///      lang/xx/fonts
+  ///      dataroot/lang/xx/fonts
+  ///      dirroot/lang/xx/fonts
   ///      lib/
-  ///      lang/en
 
   $currlang = current_language();
-  if (file_exists("$CFG->dirroot/lang/$currlang/fonts/default.ttf")) {
+  if (file_exists("$CFG->dataroot/lang/$currlang/fonts/default.ttf")) {
+      $fontpath = "$CFG->dataroot/lang/$currlang/fonts/";
+  } else if (file_exists("$CFG->dirroot/lang/$currlang/fonts/default.ttf")) {
       $fontpath = "$CFG->dirroot/lang/$currlang/fonts/";
-
-  } else if (file_exists("$CFG->libdir/default.ttf")) {
-      $fontpath = "$CFG->libdir/";
-
   } else {
-      $fontpath = "$CFG->dirroot/lang/en/fonts/";
+      $fontpath = "$CFG->libdir/";
   }
 
   $this->parameter['path_to_fonts'] = $fontpath;
@@ -179,12 +177,10 @@ function init() {
 
   $this->parameter['lang_transcode'] = '';   /// by default
 
-  if (function_exists('iconv')) {
-      $charset = strtolower(get_string('thischarset'));
+  $charset = strtolower(current_charset());
 
-      if ($charset != 'iso-8859-1' and $charset != 'utf-8') {
-          $this->parameter['lang_transcode'] = $charset;
-      }
+  if ($charset != 'iso-8859-1' and $charset != 'utf-8') {
+      $this->parameter['lang_transcode'] = $charset;
   }
 
   /// End Moodle mods
