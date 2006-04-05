@@ -204,13 +204,7 @@
         if (!set_config("release", $release)) {
             notify("ERROR: Could not update release version in database!!");
         }
-        print_continue("index.php");
-        print_simple_box_start("center", '80%');
-        if (file_exists("$CFG->dirroot/lang/en_utf8/docs/release.html")) {
-            include("$CFG->dirroot/lang/en_utf8/docs/release.html");
-        }
-        print_simple_box_end();
-        print_continue("index.php");
+        notice(get_string('releasenoteslink', 'admin', 'http://docs.moodle.org/en/Release_Notes'), 'index.php');
         exit;
     }
 
@@ -437,7 +431,7 @@
 
     if (file_exists("$CFG->dirroot/$CFG->admin/$CFG->dbtype")) {
         $table->data[] = array("<strong><a href=\"$CFG->dbtype/frame.php\">".get_string('managedatabase').'</a></strong>',
-                               get_string('adminhelpmanagedatabase'));
+                               '<div class="explanation">'.get_string('adminhelpmanagedatabase').'</div>');
     }
 
 
@@ -453,20 +447,12 @@
     //////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-    echo '<table width="100%" cellspacing="0"><tr>';
-    echo '<td align="center" width="33%">';
-    print_single_button($CFG->wwwroot.'/doc/', NULL, get_string('documentation'));
-    echo '</td>';
-
-    echo '<td align="center" width="33%">';
-    print_single_button('phpinfo.php', NULL, get_string('phpinfo'));
-    echo '</td>';
-
-    echo '<td align="center" width="33%">';
+    echo '<div align="center">';
     $options = array();
     $options['sesskey'] = $USER->sesskey;
     print_single_button('register.php', $options, get_string('registration'));
-    echo '</td></tr></table>';
+    echo '</div>';
+
 
     print_simple_box_end();
 

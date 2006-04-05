@@ -139,6 +139,11 @@
 /// Gather and show results
     $status = check_moodle_environment($version, $environment_results);
 
+/// Other links
+    echo '<div align="center">';
+    print_single_button('phpinfo.php', NULL, get_string('phpinfo'));
+    echo '</div>';
+
 /// Print footer
     print_footer();
 ?>
