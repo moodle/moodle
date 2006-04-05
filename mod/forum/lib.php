@@ -2468,18 +2468,6 @@ function forum_update_post($post,&$message) {
 
     $post->modified = time();
 
-    if ($USER->id != $post->userid) {   // Not the original author
-        $data->name = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$USER->id.'&course='.$post->course.'">'.
-                      fullname($USER).'</a>';
-        $data->date = userdate($post->modified);
-        $editedby = get_string('editedby', 'forum', $data);
-        if ($post->format == FORMAT_HTML) {
-            $post->message .= '<p>(<span class="edited">'.$editedby.'</span>)</p>';
-        } else {
-            $post->message .= "\n\n(".$editedby.')';
-        }
-    }
-
     if (!$post->parent) {   // Post is a discussion starter - update discussion title too
         set_field("forum_discussions", "name", $post->subject, "id", $post->discussion);
     }

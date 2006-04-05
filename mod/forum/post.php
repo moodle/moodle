@@ -103,7 +103,7 @@
             }
 
             if ($realpost->userid <> $USER->id && !isadmin()){
-                error ("you can not update this post");
+                error("You can not update this post");
             }
 
             if (get_field('forum', 'type', 'id', $forum) == 'news' && !$post->parent) {
@@ -124,28 +124,29 @@
                     error(get_string("couldnotupdate", "forum"), $errordestination);
                 }
             }
+
             if (!isset($post->error)) {
 
-            if (forum_update_post($post,$message)) {
+                if (forum_update_post($post,$message)) {
 
-                add_to_log($course->id, "forum", "update post",
-                          "discuss.php?d=$post->discussion&amp;parent=$post->id", "$post->id", $cm->id);
+                    add_to_log($course->id, "forum", "update post",
+                            "discuss.php?d=$post->discussion&amp;parent=$post->id", "$post->id", $cm->id);
 
-                $timemessage = 2;
-                if (!empty($message)) { // if we're printing stuff about the file upload
-                    $timemessage = 4;
+                    $timemessage = 2;
+                    if (!empty($message)) { // if we're printing stuff about the file upload
+                        $timemessage = 4;
+                    }
+                    $message .= '<br />'.get_string("postupdated", "forum");
+
+                    if ($subscribemessage = forum_post_subscription($post)) {
+                        $timemessage = 4;
+                    }
+                    redirect(forum_go_back_to("discuss.php?d=$post->discussion#$post->id"), $message.$subscribemessage, $timemessage);
+
+                } else {
+                    error(get_string("couldnotupdate", "forum"), $errordestination);
                 }
-                $message .= '<br />'.get_string("postupdated", "forum");
-
-                if ($subscribemessage = forum_post_subscription($post)) {
-                    $timemessage = 4;
-                }
-                redirect(forum_go_back_to("discuss.php?d=$post->discussion#$post->id"), $message.$subscribemessage, $timemessage);
-
-            } else {
-                error(get_string("couldnotupdate", "forum"), $errordestination);
-            }
-            exit;
+                exit;
 
             }
         } else if ($post->discussion) { // Adding a new post to an existing discussion
@@ -199,35 +200,34 @@
             if ($newstopic && empty($post->timeenddisabled) && $discussion->timeend <= $discussion->timestart) {
                 $post->error = get_string('timestartenderror', 'forum');
             } else {
+                $message = '';
+                if ($discussion->id = forum_add_discussion($discussion,$message)) {
 
-            $message = '';
-            if ($discussion->id = forum_add_discussion($discussion,$message)) {
+                    add_to_log($course->id, "forum", "add discussion",
+                            "discuss.php?d=$discussion->id", "$discussion->id", $cm->id);
 
-                add_to_log($course->id, "forum", "add discussion",
-                           "discuss.php?d=$discussion->id", "$discussion->id", $cm->id);
+                    $timemessage = 2;
+                    if (!empty($message)) { // if we're printing stuff about the file upload
+                        $timemessage = 4;
+                    }
+                    $message .= '<br />'.get_string("postadded", "forum", format_time($CFG->maxeditingtime));
 
-                $timemessage = 2;
-                if (!empty($message)) { // if we're printing stuff about the file upload
-                    $timemessage = 4;
+                    if ($post->mailnow) {
+                        $message .= get_string("postmailnow", "forum");
+                        $timemessage = 4;
+                    }
+
+                    if ($subscribemessage = forum_post_subscription($discussion)) {
+                        $timemessage = 4;
+                    }
+
+                    redirect(forum_go_back_to("view.php?f=$post->forum"), $message.$subscribemessage, $timemessage);
+
+                } else {
+                    error(get_string("couldnotadd", "forum"), $errordestination);
                 }
-                $message .= '<br />'.get_string("postadded", "forum", format_time($CFG->maxeditingtime));
 
-                if ($post->mailnow) {
-                    $message .= get_string("postmailnow", "forum");
-                    $timemessage = 4;
-                }
-
-                if ($subscribemessage = forum_post_subscription($discussion)) {
-                    $timemessage = 4;
-                }
-
-                redirect(forum_go_back_to("view.php?f=$post->forum"), $message.$subscribemessage, $timemessage);
-
-            } else {
-                error(get_string("couldnotadd", "forum"), $errordestination);
-            }
-
-            exit;
+                exit;
             }
         }
     }
@@ -693,6 +693,18 @@
         notify($post->error);
     }
     echo '</center>';
+
+    if ($USER->id != $post->userid) {   // Not the original author, so add a message to the end
+        $data->date = userdate($post->modified);
+        if ($post->format == FORMAT_HTML) {
+            $data->name = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$USER->id.'&course='.$post->course.'">'.
+                           fullname($USER).'</a>';
+            $post->message .= '<p>(<span class="edited">'.get_string('editedby', 'forum', $data).'</span>)</p>';
+        } else {
+            $data->name = fullname($USER);
+            $post->message .= "\n\n(".get_string('editedby', 'forum', $data).')';
+        }
+    }
 
     print_simple_box_start("center");
     require("post.html");
