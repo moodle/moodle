@@ -1,7 +1,7 @@
 <?PHP  // $Id$
 
 //////////////////////////////////
-/// CONFIGURATION settings 
+/// CONFIGURATION settings
 
 if (!isset($CFG->hotpot_showtimes)) {
 	set_config("hotpot_showtimes", 0);
@@ -166,9 +166,9 @@ define("HOTPOT_DISPLAYNEXT_INDEX",  "2");
 
 
 // possible return values:
-//    false: 
+//    false:
 //        display moderr.html (if exists) OR "Could not update" and return to couse view
-//    string: 
+//    string:
 //        display as error message and return to course view
 //  true (or non-zero number):
 //        continue to $hp->redirect (if set) OR hotpot/view.php (to displsay quiz)
@@ -237,7 +237,7 @@ function hotpot_set_form_values(&$hp) {
 		$hp->timeopen = 0;
 	} else {
 		$hp->timeopen = make_timestamp(
-			$hp->openyear, $hp->openmonth, $hp->openday, 
+			$hp->openyear, $hp->openmonth, $hp->openday,
 			$hp->openhour, $hp->openminute, 0
 		);
 	}
@@ -246,7 +246,7 @@ function hotpot_set_form_values(&$hp) {
 		$hp->timeclose = 0;
 	} else {
 		$hp->timeclose = make_timestamp(
-			$hp->closeyear, $hp->closemonth, $hp->closeday, 
+			$hp->closeyear, $hp->closemonth, $hp->closeday,
 			$hp->closehour, $hp->closeminute, 0
 		);
 	}
@@ -506,14 +506,14 @@ function hotpot_add_chain(&$hp) {
 
 			if (! set_field("course_modules", "section", $sectionid, "id", $hp->coursemodule)) {
 				error("Could not update the course module with the correct section");
-			}   
+			}
 
-			add_to_log($hp->course, "course", "add mod", 
-				"../mod/$hp->modulename/view.php?id=$hp->coursemodule", 
+			add_to_log($hp->course, "course", "add mod",
+				"../mod/$hp->modulename/view.php?id=$hp->coursemodule",
 				"$hp->modulename $hp->instance"
-			); 
-			add_to_log($hp->course, $hp->modulename, "add", 
-				"view.php?id=$hp->coursemodule", 
+			);
+			add_to_log($hp->course, $hp->modulename, "add",
+				"view.php?id=$hp->coursemodule",
 				"$hp->instance", $hp->coursemodule
 			);
 
@@ -630,11 +630,11 @@ function hotpot_get_titles_and_next_ex(&$hp, $filepath, $get_next=false) {
 				}
 			}
 
-		} else { 
+		} else {
 			// xml file (...maybe)
 			$xml_tree = new hotpot_xml_tree($source);
 			$xml_tree->filetype = '';
-	
+
 			$keys = array_keys($xml_tree->xml);
 			foreach ($keys as $key) {
 				if (preg_match('/^(hotpot|textoys)-(\w+)-file$/i', $key, $matches)) {
@@ -648,7 +648,7 @@ function hotpot_get_titles_and_next_ex(&$hp, $filepath, $get_next=false) {
 
 				$title = strip_tags($xml_tree->xml_value('data,title'));
 				$subtitle = $xml_tree->xml_value('hotpot-config-file,'.$xml_tree->quiztype.',exercise-subtitle');
-	
+
 				if ($get_next) {
 					$include = $xml_tree->xml_value('hotpot-config-file,global,include-next-ex');
 					if (!empty($include)) {
@@ -679,8 +679,8 @@ function hotpot_get_all_instances_in_course($modulename, $course) {
 	}
 
 	$query = "
-		SELECT 
-			cm.id AS coursemodule, 
+		SELECT
+			cm.id AS coursemodule,
 			cm.course AS course,
 			cm.module AS module,
 			cm.instance AS instance,
@@ -692,12 +692,12 @@ function hotpot_get_all_instances_in_course($modulename, $course) {
 			cs.sequence AS sequence,
 			cs.visible AS sectionvisible,
 			thismodule.*
-		FROM 
+		FROM
 			{$CFG->prefix}course_modules AS cm,
 			{$CFG->prefix}course_sections AS cs,
 			{$CFG->prefix}modules AS m,
 			{$CFG->prefix}$modulename AS thismodule
-		WHERE 
+		WHERE
 			m.name = '$modulename' AND
 			m.id = cm.module AND
 			cm.course = '$course->id' AND
@@ -711,7 +711,7 @@ function hotpot_get_all_instances_in_course($modulename, $course) {
 
 		$explodesection = array();
 		$order = array();
-	
+
 		foreach ($rawmods as $rawmod) {
 
 			if (empty($explodesection[$rawmod->section])) {
@@ -736,7 +736,7 @@ function hotpot_get_all_instances_in_course($modulename, $course) {
 			}
 
 		} // end foreach $modinfo
-			
+
 		ksort($instances);
 		$instances = array_values($instances);
 	}
@@ -791,9 +791,9 @@ function hotpot_update_chain(&$hp) {
 	return $ok;
 }
 function hotpot_delete_instance($id) {
-/// Given an ID of an instance of this module, 
-/// this function will permanently delete the instance 
-/// and any data that depends on it.  
+/// Given an ID of an instance of this module,
+/// this function will permanently delete the instance
+/// and any data that depends on it.
 
 	$result = false;
 	if (delete_records("hotpot", "id", "$id")) {
@@ -820,7 +820,7 @@ function hotpot_delete_and_notify($table, $select, $strtable) {
 }
 
 function hotpot_user_complete($course, $user, $mod, $hp) {
-/// Print a detailed representation of what a  user has done with 
+/// Print a detailed representation of what a  user has done with
 /// a given particular instance of this module, for user activity reports.
 
 	$report = hotpot_user_outline($course, $user, $mod, $hp);
@@ -834,7 +834,7 @@ function hotpot_user_complete($course, $user, $mod, $hp) {
 }
 
 function hotpot_user_outline($course, $user, $mod, $hp) {
-/// Return a small object with summary information about what a 
+/// Return a small object with summary information about what a
 /// user has done with a given particular instance of this module
 /// Used for user activity reports.
 /// $report->time = the time they did it
@@ -880,8 +880,8 @@ function hotpot_format_status($record, $undefined='&nbsp;') {
 }
 
 function hotpot_print_recent_activity($course, $isteacher, $timestart) {
-/// Given a course and a time, this module should find recent activity 
-/// that has occurred in hotpot activities and print it out. 
+/// Given a course and a time, this module should find recent activity
+/// that has occurred in hotpot activities and print it out.
 /// Return true if there was output, or false is there was none.
 
 	global $CFG;
@@ -891,18 +891,18 @@ function hotpot_print_recent_activity($course, $isteacher, $timestart) {
 
 		$records = get_records_sql("
 			SELECT
-				h.id AS id, 
+				h.id AS id,
 				h.name AS name,
 				COUNT(*) AS count_attempts
-			FROM 
-				{$CFG->prefix}hotpot AS h, 
+			FROM
+				{$CFG->prefix}hotpot AS h,
 				{$CFG->prefix}hotpot_attempts AS a
-			WHERE 
-				h.course = $course->id 
-				AND h.id = a.hotpot 
+			WHERE
+				h.course = $course->id
+				AND h.id = a.hotpot
 				AND a.id = a.clickreportid
 				AND a.starttime > $timestart
-			GROUP  BY 
+			GROUP  BY
 				h.id, h.name
 		");
 		// note that PostGreSQL requires h.name in the GROUP BY clause
@@ -930,11 +930,11 @@ function hotpot_print_recent_activity($course, $isteacher, $timestart) {
 			$result = true;
 		}
 	}
-	return $result;  //  True if anything was printed, otherwise false 
+	return $result;  //  True if anything was printed, otherwise false
 }
 
 function hotpot_get_recent_mod_activity(&$activities, &$index, $sincetime, $courseid, $cmid="", $userid="", $groupid="") {
-// Returns all quizzes since a given time. 
+// Returns all quizzes since a given time.
 
 	global $CFG;
 
@@ -944,16 +944,16 @@ function hotpot_get_recent_mod_activity(&$activities, &$index, $sincetime, $cour
 
 	$records = get_records_sql("
 		SELECT
-			a.*, 
-			h.name, h.course, 
+			a.*,
+			h.name, h.course,
 			cm.instance, cm.section,
 			u.firstname, u.lastname, u.picture
-		FROM 
+		FROM
 			{$CFG->prefix}hotpot_attempts AS a,
 			{$CFG->prefix}hotpot AS h,
 			{$CFG->prefix}course_modules AS cm,
 			{$CFG->prefix}user AS u
-		WHERE 
+		WHERE
 			a.timefinish > '$sincetime'
 			AND a.id = a.clickreportid
 			AND a.userid = u.id $user_select
@@ -961,7 +961,7 @@ function hotpot_get_recent_mod_activity(&$activities, &$index, $sincetime, $cour
 			AND cm.instance = h.id
 			AND cm.course = '$courseid'
 			AND h.course = cm.course
-		ORDER BY 
+		ORDER BY
 			a.timefinish ASC
 	");
 
@@ -1044,8 +1044,8 @@ function hotpot_print_recent_mod_activity($activity, $course, $detail=false) {
 
 function hotpot_cron () {
 /// Function to be run periodically according to the moodle cron
-/// This function searches for things that need to be done, such 
-/// as sending out mail, toggling flags etc ... 
+/// This function searches for things that need to be done, such
+/// as sending out mail, toggling flags etc ...
 
 	global $CFG;
 
@@ -1053,7 +1053,7 @@ function hotpot_cron () {
 }
 
 function hotpot_grades($hotpotid) {
-/// Must return an array of grades for a given instance of this module, 
+/// Must return an array of grades for a given instance of this module,
 /// indexed by user.  It also returns a maximum allowed grade.
 
 	$hotpot = get_record('hotpot', 'id', $hotpotid);
@@ -1128,14 +1128,14 @@ function hotpot_get_participants($hotpotid) {
 	global $CFG;
 
 	return get_records_sql("
-		SELECT DISTINCT 
+		SELECT DISTINCT
 			u.id, u.id
-		FROM 
+		FROM
 			{$CFG->prefix}user u,
 			{$CFG->prefix}hotpot_attempts a
-		WHERE 
+		WHERE
 			u.id = a.userid
-			AND a.hotpot = '$hotpotid' 
+			AND a.hotpot = '$hotpotid'
 	");
 }
 
@@ -1144,7 +1144,7 @@ function hotpot_scale_used ($hotpotid, $scaleid) {
 //it it has support for grading and scales. Commented code should be
 //modified if necessary. See forum, glossary or journal modules
 //as reference.
-   
+
 	$report = false;
 
 	//$rec = get_record("hotpot","id","$hotpotid","scale","-$scaleid");
@@ -1152,12 +1152,12 @@ function hotpot_scale_used ($hotpotid, $scaleid) {
 	//if (!empty($rec)  && !empty($scaleid)) {
 	//	$report = true;
 	//}
-   
+
 	return $report;
 }
 
 //////////////////////////////////////////////////////////
-/// Any other hotpot functions go here.  
+/// Any other hotpot functions go here.
 /// Each of them must have a name that starts with hotpot
 
 
@@ -1177,7 +1177,7 @@ function hotpot_add_attempt($hotpotid) {
 
 	// set all previous "in progress" attempts at this quiz to "abandoned"
 	$db->Execute("
-		UPDATE 
+		UPDATE
 			{$CFG->prefix}hotpot_attempts as a
 		SET
 			a.timefinish = $timefinish,
@@ -1275,7 +1275,7 @@ class hotpot_xml_tree {
 			// decode angle brackets
 			$value = strtr($value, array('&#x003C;'=>'<', '&#x003E;'=>'>', '&#x0026;'=>'&'));
 
-			// remove white space between <table>, <ul|OL|DL> and <OBJECT|EMBED> parts 
+			// remove white space between <table>, <ul|OL|DL> and <OBJECT|EMBED> parts
 			// (so it doesn't get converted to <br />)
 			$htmltags = '('
 			.	'TABLE|/?CAPTION|/?COL|/?COLGROUP|/?TBODY|/?TFOOT|/?THEAD|/?TD|/?TH|/?TR'
@@ -1492,7 +1492,7 @@ class hotpot_xml_quiz extends hotpot_xml_tree {
 					$this->draganddrop = '';
 					if (
 						empty($this->real_outputformat) ||
-						$this->real_outputformat==HOTPOT_OUTPUTFORMAT_BEST || 
+						$this->real_outputformat==HOTPOT_OUTPUTFORMAT_BEST ||
 						empty($HOTPOT_OUTPUTFORMAT_DIR[$this->real_outputformat])
 					) {
 						if ($CFG->hotpotismobile && isset($HOTPOT_OUTPUTFORMAT_DIR[HOTPOT_OUTPUTFORMAT_MOBILE])) {
@@ -1868,7 +1868,7 @@ function hotpot_add_attempt_details(&$attempt) {
 				// adjust JCross question numbers
 				if (preg_match('/^(across|down)(.*)$/', $name, $matches)) {
 					$num .= '_'.$matches[1]; // e.g. 01_across, 02_down
-					$name = $matches[2]; 
+					$name = $matches[2];
 					if (substr($name, 0, 1)=='_') {
 						$name = substr($name, 1); // remove leading '_'
 					}
@@ -1972,8 +1972,8 @@ function hotpot_add_response(&$attempt, &$question, &$response) {
 			$loopcount++;
 			$question->name = "$questionname ($loopcount)";
 
-			// This method fails to correctly identify questions in 
-			// quizzes which allow questions to be shuffled or omitted. 
+			// This method fails to correctly identify questions in
+			// quizzes which allow questions to be shuffled or omitted.
 			// As yet, there is no workaround for such cases.
 
 		} else {
@@ -2163,13 +2163,14 @@ if (!function_exists('html_entity_decode')) {
 // required for Moodle 1.x
 if (!isset($CFG->pixpath)) {
 	$CFG->pixpath = "$CFG->wwwroot/pix";
-}  
+}
 
 if (!defined('PARAM_RAW')) define('PARAM_RAW', 0x0000);
-if (!defined('PARAM_CLEAN')) define('PARAM_CLEAN', 0x0001);
 if (!defined('PARAM_INT'))  define('PARAM_INT', 0x0002);
+if (!defined('PARAM_CLEAN')) define('PARAM_CLEAN', 0x0001);
 if (!defined('PARAM_ALPHA')) define('PARAM_ALPHA', 0x0004);
 if (!defined('PARAM_ALPHANUM')) define('PARAM_ALPHANUM', 0x0400);
+if (!defined('PARAM_SAFEDIR')) define('PARAM_SAFEDIR', 0x4000);
 
 if (!function_exists('required_param')) {
 	// add this function for Moodle version<1.4.2
@@ -2197,16 +2198,10 @@ if (!function_exists('optional_param')) {
 		return $param;
 	}
 }
-if (!function_exists('set_user_preference')) {
-	// add this function for Moodle 1.x
-	function set_user_preference($name, $value, $otheruser=NULL) {
-		return false;
-	}
-}
-if (!function_exists('get_user_preferences')) {
-	// add this function for Moodle 1.x
-	function get_user_preferences($name=NULL, $default=NULL, $userid=NULL) {
-		return $default;
+if (!function_exists('clean_param')) {
+	// add this function for Moodle 1.3 and less
+	function clean_param($param, $type) {
+		return $param;
 	}
 }
 if (!function_exists('fullname')) {
@@ -2215,32 +2210,43 @@ if (!function_exists('fullname')) {
 		return "$user->firstname $user->lastname";
 	}
 }
-
+if (!function_exists('get_user_preferences')) {
+	// add this function for Moodle 1.x
+	function get_user_preferences($name=NULL, $default=NULL, $userid=NULL) {
+		return $default;
+	}
+}
+if (!function_exists('set_user_preference')) {
+	// add this function for Moodle 1.x
+	function set_user_preference($name, $value, $otheruser=NULL) {
+		return false;
+	}
+}
 function hotpot_utf8_to_html_entity($char) {
 	// http://www.zend.com/codex.php?id=835&single=1
 
-	// array used to figure what number to decrement from character order value 
-	// according to number of characters used to map unicode to ascii by utf-8 
+	// array used to figure what number to decrement from character order value
+	// according to number of characters used to map unicode to ascii by utf-8
 	static $HOTPOT_UTF8_DECREMENT = array(
 		1=>0, 2=>192, 3=>224, 4=>240
 	);
 
-	// the number of bits to shift each character by 
+	// the number of bits to shift each character by
 	static $HOTPOT_UTF8_SHIFT = array(
 		1=>array(0=>0),
 		2=>array(0=>6,  1=>0),
 		3=>array(0=>12, 1=>6,  2=>0),
 		4=>array(0=>18, 1=>12, 2=>6, 3=>0)
 	);
-	 
-	$dec = 0; 
+
+	$dec = 0;
 	$len = strlen($char);
 	for ($pos=0; $pos<$len; $pos++) {
 		$ord = ord ($char{$pos});
-		$ord -= ($pos ? 128 : $HOTPOT_UTF8_DECREMENT[$len]); 
-		$dec += ($ord << $HOTPOT_UTF8_SHIFT[$len][$pos]); 
-	} 
-	return '&#x'.sprintf('%04X', $dec).';'; 
+		$ord -= ($pos ? 128 : $HOTPOT_UTF8_DECREMENT[$len]);
+		$dec += ($ord << $HOTPOT_UTF8_SHIFT[$len][$pos]);
+	}
+	return '&#x'.sprintf('%04X', $dec).';';
 }
 
 function hotpot_print_show_links($course, $location, $reference, $actions='', $spacer=' &nbsp; ', $new_window=false) {
