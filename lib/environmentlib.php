@@ -134,7 +134,7 @@ function print_moodle_environment($result, $environment_results) {
     $table->wrap  = array ('nowrap', '', '', 'nowrap');
     $table->size  = array ('10', 10, '100%', '10');
     $table->width = '90%';
-    $table->class = 'environmenttable';
+    $table->class = 'environmenttable generaltable';
 
 /// Iterate over each environment_result
     $continue = true;
