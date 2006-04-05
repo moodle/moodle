@@ -271,7 +271,7 @@
     </td>
 </tr>
 <?php
-    if (method_exists(enrolment_factory::factory($course->enrol), 'print_entry') && $course->enrol != 'manual') {
+    if (isset($course) && method_exists(enrolment_factory::factory($course->enrol), 'print_entry') && $course->enrol != 'manual') {
 ?>
 <tr valign="top">
     <td align="right"><?php  print_string("cost") ?>:</td>
