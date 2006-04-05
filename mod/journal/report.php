@@ -3,7 +3,7 @@
     require_once("../../config.php");
     require_once("lib.php");
 
-    require_variable($id);   // course module
+    $id = required_param('id', PARAM_INT);   // course module
 
     if (! $cm = get_record("course_modules", "id", $id)) {
         error("Course Module ID was incorrect");
