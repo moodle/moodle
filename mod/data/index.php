@@ -65,6 +65,14 @@
         $table->align = array ('center', 'center', 'center', 'center');
     }
 
+    $rss = (!empty($CFG->enablerssfeeds) && !empty($CFG->data_enablerssfeeds));
+
+    if ($rss) {
+        require_once($CFG->libdir."/rsslib.php");
+        array_push($table->head, 'RSS');
+        array_push($table->align, 'center');
+    }
+
     $currentgroup = get_current_group($course->id);
     if ($currentgroup and isteacheredit($course->id)) {
         $group = get_record("groups", "id", $currentgroup);
@@ -98,6 +106,11 @@
         } else {
             $numunapprovedrecords = get_string('noapprovalrequired', 'data');
         }
+        
+        $rsslink = '';
+        if ($rss && $data->rssarticles > 0) {
+            $rsslink = rss_get_link($course->id, $USER->id, 'data', $data->id, 'RSS');
+        }
 
         if ($course->format == 'weeks' or $course->format == 'topics') {
             if ($data->section !== $currentsection) {
@@ -109,11 +122,17 @@
                 }
                 $currentsection = $data->section;
             }
+            $row = array ($printsection, $link, $data->intro, $numrecords, $numunapprovedrecords);
     
-            $table->data[] = array ($printsection, $link, $data->intro, $numrecords, $numunapprovedrecords);
         } else {
-            $table->data[] = array ($link, $data->intro, $numrecords, $numunapprovedrecords);
+            $row = array ($link, $data->intro, $numrecords, $numunapprovedrecords);
         }
+
+        if ($rss) {
+            array_push($row, $rsslink);
+        }
+
+        $table->data[] = $row;
     }
 
     echo "<br />";

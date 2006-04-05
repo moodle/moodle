@@ -56,6 +56,10 @@
     }
     
     require_course_login($course, false, $cm);
+    
+    if (!isloggedin() or isguest()) {
+        redirect('view.php?d='.$data->id);
+    }
 
 /// If it's hidden then it's don't show anything.  :)
     if (empty($cm->visible) and !isteacher($course->id)) {
@@ -101,7 +105,7 @@
 /// Check to see if groups are being used here
 
     if ($groupmode = groupmode($course, $cm)) {   // Groups are being used
-        $currentgroup = setup_and_print_groups($course, $groupmode, 'add.php?d='.$data->id.'&amp;sesskey='.sesskey().'&amp;');
+        $currentgroup = setup_and_print_groups($course, $groupmode, 'edit.php?d='.$data->id.'&amp;sesskey='.sesskey().'&amp;');
     } else {
         $currentgroup = 0;
     }
@@ -125,7 +129,7 @@
 
 /// Process incoming data for adding/updating records
 
-    if ($datarecord = data_submitted($CFG->wwwroot.'/mod/data/add.php') and confirm_sesskey()) {
+    if ($datarecord = data_submitted($CFG->wwwroot.'/mod/data/edit.php') and confirm_sesskey()) {
 
         $ignorenames = array('MAX_FILE_SIZE','sesskey','d','rid');  // strings to be ignored in input data
 
@@ -211,6 +215,10 @@
                 add_to_log($course->id, 'data', 'add', "view.php?d=$data->id&amp;rid=$recordid", $data->id, $cm->id);
 
                 notify(get_string('entrysaved','data'));
+
+                if (!empty($datarecord->saveandview)) {
+                    redirect($CFG->wwwroot.'/mod/data/view.php?d='.$data->id.'&amp;rid='.$rid);
+                }
             }
         }
     }  // End of form processing
@@ -231,7 +239,7 @@
     $replacement = array();    //html to replace those yucky tags
 
     //form goes here first in case add template is empty
-    echo '<form enctype="multipart/form-data" action="add.php" method="post">';
+    echo '<form enctype="multipart/form-data" action="edit.php" method="post">';
     echo '<input name="d" value="'.$data->id.'" type="hidden" />';
     echo '<input name="rid" value="'.$rid.'" type="hidden" />';
     echo '<input name="sesskey" value="'.sesskey().'" type="hidden" />';
@@ -261,9 +269,11 @@
     }
    
     echo $newtext;
-    echo '<div align="center"><input type="submit" value="'.get_string('save','data').'" />';
-    if ($rid){
-        echo '&nbsp;<input type="submit" value="'.get_string('cancel').'" onclick="javascript:history.go(-1)">';
+    echo '<div align="center"><input type="submit" name="saveandview" value="'.get_string('saveandview','data').'" />';
+    if ($rid) {
+        echo '&nbsp;<input type="submit" name="cancel" value="'.get_string('cancel').'" onclick="javascript:history.go(-1)">';
+    } else {
+        echo '<input type="submit" value="'.get_string('saveandadd','data').'" />';
     }
     echo '</div>';
     print_simple_box_end();
@@ -304,7 +314,7 @@
             print_simple_box_end();
         } else {
             echo '<div align="center">';
-            echo '<a href="add.php?d='.$data->id.'&amp;import=1">'.get_string('uploadrecords', 'data').'</a>';
+            echo '<a href="edit.php?d='.$data->id.'&amp;import=1">'.get_string('uploadrecords', 'data').'</a>';
             echo '</div>';
         }
     }

@@ -38,11 +38,14 @@
                         if (!$firstfield = get_record_sql('SELECT id,name from '.$CFG->prefix.'data_fields WHERE dataid = '.$data->id.' ORDER by id', true)) {
                             continue;
                         }
-                        
+
+
                         // Get the data_records out.
+                        $approved = ($data->approval) ? ' AND dr.approved = 1 ' : ' ';
+
                         $sql = 'SELECT dr.* ' .
                                     "FROM {$CFG->prefix}data_records AS dr " .
-                                    "WHERE dr.dataid = {$data->id} " .
+                                    "WHERE dr.dataid = {$data->id} " .$approved.
                                     'ORDER BY dr.timecreated DESC ' .
                                     "LIMIT {$data->rssarticles}";
                         

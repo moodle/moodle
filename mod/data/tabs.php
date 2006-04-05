@@ -40,21 +40,26 @@
         $row[] = new tabobject('single', $CFG->wwwroot.'/mod/data/view.php?d='.$data->id.'&mode=single', get_string('single','data'), '', true);
     }
 
-    if (isteacher($course->id) or ($data->participants == DATA_STUDENTS_ONLY) or ($data->participants == DATA_TEACHERS_AND_STUDENTS)){
-        $addstring = empty($editentry) ? get_string('add', 'data') : get_string('editentry', 'data');
-        $row[] = new tabobject('add', $CFG->wwwroot.'/mod/data/add.php?d='.$data->id, $addstring, '', true);
-    }
-    if (isteacher($course->id)) {
-        if ($currenttab == 'list') {
-            $defaultemplate = 'listtemplate';
-        } else if ($currenttab == 'add') {
-            $defaultemplate = 'addtemplate';
-        } else {
-            $defaultemplate = 'singletemplate';
+    if (isloggedin() and !isguest()) {
+        if (isteacher($course->id) or ($data->participants == DATA_STUDENTS_ONLY) or 
+                                      ($data->participants == DATA_TEACHERS_AND_STUDENTS)){
+            $addstring = empty($editentry) ? get_string('add', 'data') : get_string('editentry', 'data');
+            $row[] = new tabobject('add', $CFG->wwwroot.'/mod/data/edit.php?d='.$data->id, $addstring, '', true);
         }
-
-        $row[] = new tabobject('templates', $CFG->wwwroot.'/mod/data/templates.php?d='.$data->id.'&amp;mode='.$defaultemplate, get_string('templates','data'));
-        $row[] = new tabobject('fields', $CFG->wwwroot.'/mod/data/field.php?d='.$data->id, get_string('fields','data'), '', true);
+        if (isteacher($course->id)) {
+            if ($currenttab == 'list') {
+                $defaultemplate = 'listtemplate';
+            } else if ($currenttab == 'add') {
+                $defaultemplate = 'addtemplate';
+            } else {
+                $defaultemplate = 'singletemplate';
+            }
+    
+            $row[] = new tabobject('templates', $CFG->wwwroot.'/mod/data/templates.php?d='.$data->id.
+                                                '&amp;mode='.$defaultemplate, get_string('templates','data'));
+            $row[] = new tabobject('fields', $CFG->wwwroot.'/mod/data/field.php?d='.$data->id, 
+                                             get_string('fields','data'), '', true);
+        }
     }
 
     $tabs[] = $row;

@@ -289,6 +289,11 @@ class data_field_base {     /// Base class for Database Field Types (see field/*
         return 'content';
     }
 
+/// Returns the SQL needed to refer to the column.  Some fields may need to CAST() etc.
+    function get_sort_sql($fieldname) {
+        return $fieldname;
+    }
+
 /// Returns the name/type of the field
     function name(){
         return get_string('name'.$this->type, 'data');
@@ -810,7 +815,7 @@ function data_get_coursemodule_info($coursemodule) {
  *       @param string $template                                        *
  * output null                                                          *
  ************************************************************************/
-function data_print_template($template, $records, $data, $search='',$page=0, $return=false){
+function data_print_template($template, $records, $data, $search='',$page=0, $return=false) {
     global $CFG;
 
     static $fields = NULL;
@@ -824,7 +829,11 @@ function data_print_template($template, $records, $data, $search='',$page=0, $re
         $isteacher = isteacher($data->course);
     }
 
-    foreach ($records as $record) {    //only 1 record for single mode
+    if (empty($records)) {
+        return;
+    }
+
+    foreach ($records as $record) {   /// Might be just one for the single template
 
     /// Replacing tags
         $patterns = array();
@@ -840,7 +849,7 @@ function data_print_template($template, $records, $data, $search='',$page=0, $re
         $patterns[]='/\#\#Edit\#\#/i';
         $patterns[]='/\#\#Delete\#\#/i';
         if ($isteacher or data_isowner($record->id)) {
-            $replacement[] = '<a href="'.$CFG->wwwroot.'/mod/data/add.php?d='
+            $replacement[] = '<a href="'.$CFG->wwwroot.'/mod/data/edit.php?d='
                              .$data->id.'&amp;rid='.$record->id.'&amp;sesskey='.sesskey().'"><img src="'.$CFG->pixpath.'/t/edit.gif" height="11" width="11" border="0" alt="'.get_string('edit').'" /></a>';
             $replacement[] = '<a href="'.$CFG->wwwroot.'/mod/data/view.php?d='
                              .$data->id.'&amp;delete='.$record->id.'&amp;sesskey='.sesskey().'"><img src="'.$CFG->pixpath.'/t/delete.gif" height="11" width="11" border="0" alt="'.get_string('delete').'" /></a>';
@@ -854,18 +863,21 @@ function data_print_template($template, $records, $data, $search='',$page=0, $re
         $patterns[]='/\#\#MoreURL\#\#/i';
         $replacement[] = $CFG->wwwroot.'/mod/data/view.php?d='.$data->id.'&amp;rid='.$record->id;
 
+        $patterns[]='/\#\#User\#\#/i';
+        $replacement[] = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$record->userid.
+                               '&amp;course='.$data->course.'">'.fullname($record).'</a>';
 
         $patterns[]='/\#\#Approve\#\#/i';
         if ($isteacher && ($data->approval) && (!$record->approved)){
-            $replacement[] = '<a href="'.$CFG->wwwroot.'/mod/data/view.php?d='.$data->id.'&amp;approve='.$record->id.'&amp;sesskey='.sesskey().'"><img src="'.$CFG->pixpath.'/i/show.gif" height="11" width="11" border="0" alt="'.get_string('approve').'" /></a>';
+            $replacement[] = '<a href="'.$CFG->wwwroot.'/mod/data/view.php?d='.$data->id.'&amp;approve='.$record->id.'&amp;sesskey='.sesskey().'"><img src="'.$CFG->pixpath.'/i/approve.gif" height="11" width="11" border="0" alt="'.get_string('approve').'" /></a>';
         } else {
             $replacement[] = '';
         }
         
-        $patterns[]='/\#\#Comment\#\#/i';
+        $patterns[]='/\#\#Comments\#\#/i';
         if (($template == 'listtemplate') && ($data->comments)) {
             $comments = count_records('data_comments','recordid',$record->id);
-            $replacement[] = '<a href="comment.php?rid='.$record->id.'&amp;page='.$page.'">'.$comments.' '.get_string('comment','data').'</a>';
+            $replacement[] = '<a href="view.php?rid='.$record->id.'#comments">'.get_string('comments','data', $comments).'</a>';
         } else {
             $replacement[] = '';
         }
@@ -1088,6 +1100,8 @@ function data_get_ratings($recordid, $sort="u.firstname ASC") {
 
 //prints all comments + a text box for adding additional comment
 function data_print_comments($data, $record, $page=0) {
+
+    echo '<a name="comments"></a>';
 
     if ($comments = get_records('data_comments','recordid',$record->id)) {
         foreach ($comments as $comment) {

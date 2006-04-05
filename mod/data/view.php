@@ -152,7 +152,7 @@
 
 /// RSS and CSS meta
     $meta = '';
-    if (isset($CFG->enablerssfeeds) && isset($CFG->data_enablerssfeeds) && $data->rssarticles > 0) {
+    if (!empty($CFG->enablerssfeeds) && !empty($CFG->data_enablerssfeeds) && $data->rssarticles > 0) {
         $rsspath = rss_get_url($course->id, $USER->id, 'data', $data->id);
         $meta .= '<link rel="alternate" type="application/rss+xml" ';
         $meta .= 'title ="'.$course->shortname.': %fullname%" href="'.$rsspath.'" />';
@@ -178,14 +178,14 @@
     print_heading(format_string($data->name));
     
     // Do we need to show a link to the RSS feed for the records?
-    if (isset($CFG->enablerssfeeds) && isset($CFG->data_enablerssfeeds) && $data->rssarticles > 0) {
+    if (!empty($CFG->enablerssfeeds) && !empty($CFG->data_enablerssfeeds) && $data->rssarticles > 0) {
         echo '<div style="float:right;">';
         rss_print_link($course->id, $USER->id, 'data', $data->id, get_string('rsstype'));
         echo '</div>';
         echo '<div style="clear:both;"></div>';
     }
     
-    if ($data->intro and empty($sort) and empty($search) and empty($page) and empty($record)) {
+    if ($data->intro and empty($page) and empty($record)) {
         print_simple_box(format_text($data->intro), 'center', '70%', '', 5, 'generalbox', 'intro');
     }
 
@@ -196,31 +196,6 @@
                                             '&amp;order='.s($order).'&amp;');
     } else {
         $currentgroup = 0;
-    }
-
-
-/// Print the tabs
-
-    if ($record or $mode == 'single') {
-        $currenttab = 'single';
-    } else {
-        $currenttab = 'list';
-    }
-    include('tabs.php'); 
-
-
-/// Approve any requested records
-
-    if ($approve && confirm_sesskey() && isteacher($course->id)) {
-        if ($approverecord = get_record('data_records', 'id', $approve)) {   // Need to check this is valid
-            if ($approverecord->dataid == $data->id) {                       // Must be from this database
-                $newrecord->id = $approverecord->id;
-                $newrecord->approved = 1;
-                if (update_record('data_records', $newrecord)) {
-                    notify(get_string('recordapproved','data'), 'notifysuccess');
-                }
-            }
-        }
     }
 
 /// Delete any requested records
@@ -246,12 +221,45 @@
             }
 
         } else {   // Print a confirmation page
-            notice_yesno(get_string('confirmdeleterecord','data'), 
-                         'view.php?d='.$data->id.'&amp;delete='.$delete.'&amp;confirm=1&amp;sesskey='.sesskey(),
-                         'view.php?d='.$data->id);
+            if ($deleterecord = get_record('data_records', 'id', $delete)) {   // Need to check this is valid
+                if ($deleterecord->dataid == $data->id) {                       // Must be from this database
+                    notice_yesno(get_string('confirmdeleterecord','data'), 
+                            'view.php?d='.$data->id.'&amp;delete='.$delete.'&amp;confirm=1&amp;sesskey='.sesskey(),
+                            'view.php?d='.$data->id);
 
-            print_footer($course);
-            exit;
+                    $records[] = $deleterecord;
+                    data_print_template('singletemplate', $records, $data);
+
+                    print_footer($course);
+                    exit;
+                }
+            }
+        }
+    }
+
+
+
+/// Print the tabs
+
+    if ($record or $mode == 'single') {
+        $currenttab = 'single';
+    } else {
+        $currenttab = 'list';
+    }
+    include('tabs.php'); 
+
+
+/// Approve any requested records
+
+    if ($approve && confirm_sesskey() && isteacher($course->id)) {
+        if ($approverecord = get_record('data_records', 'id', $approve)) {   // Need to check this is valid
+            if ($approverecord->dataid == $data->id) {                       // Must be from this database
+                $newrecord->id = $approverecord->id;
+                $newrecord->approved = 1;
+                if (update_record('data_records', $newrecord)) {
+                    notify(get_string('recordapproved','data'), 'notifysuccess');
+                }
+            }
         }
     }
 
@@ -282,44 +290,46 @@
         $groupselect = ' ';
     }
 
-
 /// Find the field we are sorting on
     if ($sort) {
         $sortfield = data_get_field_from_id($sort, $data);
         $sortcontent = $sortfield->get_sort_field();
+        $sortcontentfull = $sortfield->get_sort_sql('c.'.$sortcontent);
 
-        $what = ' DISTINCT r.id, r.approved ';
+        $what = ' DISTINCT r.id, r.approved, r.userid, u.firstname, u.lastname ';
         $count = ' COUNT(DISTINCT c.recordid) ';
-        $tables = $CFG->prefix.'data_content c,'.$CFG->prefix.'data_records r,'.$CFG->prefix.'data_content c1 ';
+        $tables = $CFG->prefix.'data_content c,'.$CFG->prefix.'data_records r,'.$CFG->prefix.'data_content c1, '.$CFG->prefix.'user u ';
         $where =  'WHERE c.recordid = r.id 
                      AND c.fieldid = '.$sort.' 
                      AND r.dataid = '.$data->id.' 
+                     AND r.userid = u.id 
                      AND c1.recordid = r.id ';
-        $sortorder = ' ORDER BY c.'.$sortcontent.' '.$order.' ';
+        $sortorder = ' ORDER BY '.$sortcontentfull.' '.$order.' ';
+        if ($search) {
+            $searchselect = ' AND (c1.content LIKE "%'.$search.'%") ';
+        } else {
+            $searchselect = ' ';
+        }
 
     } else if ($search) { 
-        $what = ' DISTINCT r.id, r.approved ';
+        $what = ' DISTINCT r.id, r.approved, r.userid, u.firstname, u.lastname ';
         $count = ' COUNT(DISTINCT c.recordid) ';
-        $tables = $CFG->prefix.'data_content c,'.$CFG->prefix.'data_records r ';
+        $tables = $CFG->prefix.'data_content c,'.$CFG->prefix.'data_records r, '.$CFG->prefix.'user u ';
         $where =  'WHERE c.recordid = r.id 
+                     AND r.userid = u.id 
                      AND r.dataid = '.$data->id;
         $sortorder = ' ORDER BY r.id ';
-
-    } else {
-        $what = ' DISTINCT r.id, r.approved ';
-        $count = ' COUNT(r.id) ';
-        $tables = $CFG->prefix.'data_records r ';
-        $where =  'WHERE r.dataid = '.$data->id;
-        $sortorder = ' ORDER BY r.id ';
-    }
-
-/// Restrict by a search if we have one
-
-    if ($search) {
         $searchselect = ' AND (c.content LIKE "%'.$search.'%") ';
+
     } else {
+        $what = ' DISTINCT r.id, r.approved, r.userid, u.firstname, u.lastname ';
+        $count = ' COUNT(r.id) ';
+        $tables = $CFG->prefix.'data_records r, '.$CFG->prefix.'user u ';
+        $where =  'WHERE r.dataid = '.$data->id. ' AND r.userid = u.id ';
+        $sortorder = ' ORDER BY r.timecreated '.$order. ' ';
         $searchselect = ' ';
     }
+
 
 /// To actually fetch the records
 
@@ -336,22 +346,31 @@
     if ($record) {     // We need to just show one, so where is it in context?
         $nowperpage = 1;
         $mode = 'single';
-        if ($sort) {   // We need to search by that field
-            if ($content = get_field('data_content', 'content', 'recordid', $record->id, 'fieldid', $sort)) {
-                $content = addslashes($content);
-                if ($order == 'ASC') {
-                    $lessthan = " AND c.$sortcontent < '$content' ";
-                } else {
-                    $lessthan = " AND c.$sortcontent > '$content' ";
-                }
-            } else {   // Failed to find data (shouldn't happen), so fall back to something easy
-                $lessthan = " r.id < '$record->id' ";
+#        if ($sort) {   // We need to search by that field
+#            if ($content = get_field('data_content', 'content', 'recordid', $record->id, 'fieldid', $sort)) {
+#                $content = addslashes($content);
+#                if ($order == 'ASC') {
+#                    $lessthan = " AND $sortcontentfull < '$content' ";
+#                } else {
+#                    $lessthan = " AND $sortcontentfull > '$content' ";
+#                }
+#            } else {   // Failed to find data (shouldn't happen), so fall back to something easy
+#                $lessthan = " r.id < '$record->id' ";
+#            }
+#        } else {
+#            $lessthan = " r.id < '$record->id' ";
+#        }
+#        $sqlindex = 'SELECT COUNT(DISTINCT c.recordid) '.$fromsql.$lessthan.$sortorder;
+#        $page = count_records_sql($sqlindex);
+
+        $allrecords = get_records_sql($sqlselect);      // Kludgey but accurate at least!
+        $page = 0;
+        foreach ($allrecords as $key => $allrecord) {
+            if ($key == $record->id) {
+                break;
             }
-        } else {
-            $lessthan = " r.id < '$record->id' ";
+            $page++;
         }
-        $sqlindex = 'SELECT COUNT(DISTINCT c.recordid) '.$fromsql.$lessthan.$sortorder;
-        $page = count_records_sql($sqlindex);
 
     } else if ($mode == 'single') {  // We rely on ambient $page settings
         $nowperpage = 1;
@@ -401,9 +420,9 @@
 
             print_paging_bar($totalcount, $page, $nowperpage, $baseurl, $pagevar='page');
         }
-    }
 
-    data_print_preference_form($data, $perpage, $search, $sort, $order);
+        data_print_preference_form($data, $perpage, $search, $sort, $order);
+    }
 
     print_footer($course);
 ?>
