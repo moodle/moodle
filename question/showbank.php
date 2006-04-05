@@ -39,7 +39,8 @@
 /// Now, check for commands on this page and modify variables as necessary
 
     if (isset($_REQUEST['move']) and confirm_sesskey()) { /// Move selected questions to new category
-        if (!$tocategory = get_record('question_categories', 'id', $_REQUEST['category'])) {
+        $tocategoryid = required_param('category', PARAM_INT);
+        if (!$tocategory = get_record('question_categories', 'id', $tocategoryid])) {
             error('Invalid category');
         }
         if (!isteacheredit($tocategory->course)) {
@@ -57,8 +58,9 @@
 
     if (isset($_REQUEST['deleteselected'])) { // delete selected questions from the category
 
-        if (isset($confirm) and confirm_sesskey()) { // teacher has already confirmed the action
-            if ($confirm == md5($deleteselected)) {
+        if (isset($_REQUEST['confirm']) and confirm_sesskey()) { // teacher has already confirmed the action
+            $deleteselected = required_param('deleteselected');
+            if ($_REQUEST['confirm'] == md5($deleteselected)) {
                 if ($questionlist = explode(',', $deleteselected)) {
                     // for each question either hide it if it is in use or delete it
                     foreach ($questionlist as $questionid) {
@@ -115,7 +117,7 @@
     }
 
     if (isset($_REQUEST['cat'])) { /// coming from category selection drop-down menu
-        $SESSION->questioncat = $cat;
+        $SESSION->questioncat = required_param['cat', PARAM_INT];
         $page = 0;
         $SESSION->questionpage = 0;
     }
