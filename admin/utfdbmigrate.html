@@ -14,12 +14,20 @@
    if (!isset($form->dbcluster)) {
        $form->dbcluster = '';
    }
+   if (!isset($form->pathtopgdump)) {
+       $form->pathtopgdump = '';
+   }
+   if (!isset($form->pathtopsql)) {
+       $form->pathtopsql = '';
+   }
 ?>
 <form name="migratefrom" action="utfdbmigrate.php" method="POST">
 <input name="migrate" type="hidden" value="1" />
 <input name="sesskey" type="hidden" value="<?php echo sesskey() ?>" />
 <?php if (isset($err["dbconnect"])) formerr($err["dbconnect"]); ?>
-<table cellpadding="9" cellspacing="0" >
+<?php if (isset($err["pathtopgdump"])) formerr($err["pathtopgdump"]); ?>
+<?php if (isset($err["pathtopsql"])) formerr($err["pathtopsql"]); ?>
+<table cellpadding="9" cellspacing="0" width="500">
 <tr valign="top">
     <td align="right"><?php print_string("dbhost", "install") ?>:</td>
     <td><input type="text" name="dbhost" value="<?php p($form->dbhost) ?>" />
@@ -43,9 +51,17 @@
 <tr valign="top">
     <td align="right"><?php print_string("pgcluster", "admin") ?>:</td>
     <td><input type="text" name="dbcluster" value="<?php p($form->dbcluster) ?>" />
-    <br />
-    <?php print_string("pgclusterdescription", "admin") ?>
-    </td>
+    <td><?php print_string("pgclusterdescription", "admin") ?></td>
+</tr>
+<tr valign="top">
+    <td align="right" nowrap="nowrap"><?php print_string("pathtopgdump","admin") ?>:</td>
+    <td><input type="text" name="pathtopgdump" value="<?php p($form->pathtopgdump) ?>" />
+    <td><?php print_string("pathtopgdumpdesc","admin"); ?></td>
+</tr>
+<tr valign="top">
+    <td align="right" nowrap="nowrap"><?php print_string("pathtopsql","admin") ?>:</td>
+    <td><input type="text" name="pathtopsql" value="<?php p($form->pathtopsql) ?>" />
+    <td><?php print_string("pathtopsqldesc","admin"); ?></td>
 </tr>
 </table>
 <center>

@@ -199,7 +199,16 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
             } else {
                 $cluster = '';
             }
-            $cmd = "PGPASSWORD={$CFG->dbpass} PGCLIENTENCODING='UNICODE' PGDATABASE={$CFG->dbname} pg_dump -Fp -O -x -U {$CFG->dbuser}$cluster";
+            $pgdump = 'pg_dump';
+            if (!empty($_SESSION['newpostgresdb']->pathtopgdump)) {
+                $pgdump = $_SESSION['newpostgresdb']->pathtopgdump;
+            }
+            $psql = 'psql';
+            if (!empty($_SESSION['newpostgresdb']->pathtopsql)) {
+                $pgsql = $_SESSION['newpostgresdb']->pathtopsql;
+            }
+            
+            $cmd = "PGPASSWORD={$CFG->dbpass} PGCLIENTENCODING='UNICODE' PGDATABASE={$CFG->dbname} $pgdump -Fp -O -x -U {$CFG->dbuser}$cluster";
             if ($CFG->dbhost)  {
                 $host = split(":", $CFG->dbhost);
                 if ($host[0]) $cmd .= " -h {$host[0]}";
@@ -208,7 +217,7 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
             $cmds[] = $cmd;
             $cmds[] = 'grep -v "COMMENT ON SCHEMA"';
             $cmds[] = 'iconv -f UTF-8 -t UTF-8 -c';
-            $cmd = "PGPASSWORD={$_SESSION['newpostgresdb']->dbpass} PGDATABASE={$_SESSION['newpostgresdb']->dbname} psql -q -U {$_SESSION['newpostgresdb']->dbuser} -v ON_ERROR_STOP=1$cluster";
+            $cmd = "PGPASSWORD={$_SESSION['newpostgresdb']->dbpass} PGDATABASE={$_SESSION['newpostgresdb']->dbname} $psql -q -U {$_SESSION['newpostgresdb']->dbuser} -v ON_ERROR_STOP=1$cluster";
             if ($_SESSION['newpostgresdb']->dbhost)  {
                 $host = split(":", $_SESSION['newpostgresdb']->dbhost);
                 if ($host[0]) $cmd .= " -h {$host[0]}";
@@ -217,7 +226,16 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
             $cmds[] = $cmd;
             foreach ($cmds as $key => $cmd) {
                 $files[] = tempnam($CFG->dataroot, 'utf8_');
-                exec($cmd . ($key?" < {$files[$key-1]}":'') . " 2>&1 > {$files[$key]}", $output, $return_var);
+                $cmd = $cmd . ($key?" < {$files[$key-1]}":'') . " 2>&1 > {$files[$key]}";
+                if (stripos(PHP_OS, 'darwin') !== false && stripos($cmd,'iconv') !== false) {
+                    // I know this looks DREADFULLY hackish, but the iconv in mac os x seems to have a return code of 1 for warnings
+                    // and I cannot figure out why, it's a very different version of iconv to most *nix versions, even seems to be a 
+                    // different gnu project.
+                    // If someone can figure out a better way to do this, FEEL FREE :)
+                    // - Penny
+                    $cmd .= ' || true';
+                }
+                exec($cmd, $output, $return_var);
                 if ($key) {
                     unlink($files[$key-1]);
                 }
@@ -810,6 +828,16 @@ function validate_form(&$form, &$err) {
         $err['dbconnect'] = get_string('dbmigrateencodingerror', 'admin', $encoding);
         return;
     }
+
+    if (!empty($form->pathtopgdump) && !is_executable($form->pathtopgdump)) {
+        $err['pathtopgdump'] = get_string('pathtopgdumpinvalid','admin');
+        return;
+    }
+
+    if (!empty($form->pathtopsql) && !is_executable($form->pathtopsql)) {
+        $err['pathtopsql'] = get_string('pathtopsqlinvalid','admin');
+        return;
+    }                                   
 
     return;
 }

@@ -203,13 +203,15 @@ $string['order3'] = 'Third';
 $string['pathdvips'] = 'Path of <i>dvips</i> binary';
 $string['pathconvert'] = 'Path of <i>convert</i> binary';
 $string['pathlatex'] = 'Path of <i>latex</i> binary';
+$string['pathtopgdump'] = 'Path to pg_dump';
+$string['pathtopgdumpdesc'] = 'This is only necessary to enter if you have more than one pg_dump on your system (for example if you have more than one version of postgresql installed)';
+$string['pathtopgdumpinvalid'] = 'Invalid path to pg_dump - either wrong path or not executable';
+$string['pathtopsql'] = 'Path to psql';
+$string['pathtopsqldesc'] = 'This is only necessary to enter if you have more than one psql on your system (for example if you have more than one version of postgresql installed)';
+$string['pathtopsqlinvalid'] = 'Invalid path to psql - either wrong path or not executable';
 $string['pleaseregister'] = 'Please register your site to remove this button';
 $string['pgcluster'] = 'PostgreSQL Cluster';
-$string['pgclusterdescription'] = '<pre>PostgreSQL version/cluster parameter
-for command line operations.
-If you only have one postgresql
-on your system or you are not
-sure what this is, leave this blank.</pre>';
+$string['pgclusterdescription'] = 'PostgreSQL version/cluster parameter for command line operations. If you only have one postgresql on your system or you are not sure what this is, leave this blank.';
 $string['remotelangnotavailable'] = 'Because Moodle can not connect to download.moodle.org, we are unable to do language pack installation automatically. Please download the appropriate zip file(s) from the list below, copy them to your $a directory and unzip them manually.';
 $string['sitelangchanged'] = 'Site language setting changed successfully';
 $string['sitemaintenance'] = 'The site is undergoing maintenance and is currently not available';
