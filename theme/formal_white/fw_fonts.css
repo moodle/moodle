@@ -126,6 +126,9 @@ table.minicalendar tr td {
   font-weight: bold;
   font-size: 1.2em;
 }
-  
 
-  
+/*Accessibility: resizable icons. */
+img.resize {
+  width: 1em;
+  height: 1em;
+}
