@@ -2,15 +2,15 @@
       // enrol_authorize.php - created with Moodle 1.6 development (2005101200)
 
 
-$string['adminauthorizeccapture'] = 'Order Review & Auto-Capture Settings';
+$string['adminauthorizeccapture'] = 'Order Review & Scheduled-Capture Settings';
 $string['adminauthorizeemail'] = 'Email Sending Settings';
 $string['adminauthorizesettings'] = 'Authorize.net Settings';
 $string['adminauthorizewide'] = 'Site-Wide Settings';
 $string['adminavs'] = 'Check this if you have activated Address Verification System (AVS) in your authorize.net account. This demands address fields like street, state, country and zip when user fills out payment form.';
-$string['admincronsetup'] = 'The cron.php maintenance script has not been run for at least 24 hours. <br />Cron must be enabled if you want to use autocapture feature.<br />Setup cron properly or uncheck an_review again.<br />If you disable autocapture, transactions will be cancelled unless you review them within 30 days.<br />Check an_review and enter \'0\' to an_capture_day field<br />if you want to manually accept/deny payments within 30 days.';
+$string['admincronsetup'] = 'The cron.php maintenance script has not been run for at least 24 hours. <br />Cron must be enabled if you want to use scheduled-capture feature.<br />Setup cron properly or uncheck an_review again.<br />If you disable scheduled-capture, transactions will be cancelled unless you review them within 30 days.<br />Check an_review and enter \'0\' to an_capture_day field<br />if you want to manually accept/deny payments within 30 days.';
 $string['adminemailexpired'] = 'Send warning email to admins <b>$a</b> days ago how many status of \'authorized/pending capture\' transaction is there, before transactions have expired. (0=disable sending email, default=2, max=5)<br />This is useful if you enabled capturing manually (an_review=checked, an_capture_day=0).';
-$string['adminhelpcapturetitle'] = 'Auto-Capture Day';
-$string['adminhelpcapture'] = 'Not only I want to manually accept/deny payments. But also, use autocapture to prevent cancelling payment. What will I do?
+$string['adminhelpcapturetitle'] = 'Scheduled-Capture Day';
+$string['adminhelpcapture'] = 'Not only I want to manually accept/deny payments. But also, use scheduled-capture to prevent cancelling payment. What will I do?
 
  - Setup cron.
  - Check an_review.
@@ -32,16 +32,16 @@ $string['adminneworder'] = ' Dear Admin,
    Course: $a->course
    Amount: $a->amount
                
-   AUTO-CAPTURE ENABLED?: $a->acstatus
+   SCHEDULED-CAPTURE ENABLED?: $a->acstatus
                 
-  If auto-capture enabled the credit card will be captured on $a->captureon
+  If scheduled-capture enabled the credit card will be captured on $a->captureon
   and then student will be enrolled to course, otherwise it will be expired
   on $a->expireon and cannot be captured after this day.
                 
   Also you can accept/deny the payment to enrol the student immediately following this link:
   $a->url';
 $string['adminnewordersubject'] = '$a->course: New Pending Order($a->orderid)';
-$string['adminpendingorders'] = 'You have disabled auto-capture feature.<br />Total $a->count transactions with a status of AN_STATUS_AUTH will be cancelled unless you check it.<br />To accept/deny payments go to <a href=\'$a->url\'>Payment Management</a> page.';
+$string['adminpendingorders'] = 'You have disabled scheduled-capture feature.<br />Total $a->count transactions with a status of AN_STATUS_AUTH will be cancelled unless you check it.<br />To accept/deny payments go to <a href=\'$a->url\'>Payment Management</a> page.';
 $string['adminreview'] = 'Review order before processing the credit card.';
 $string['adminteachermanagepay'] = 'Teachers can manage the payments of the course.';
 $string['amount'] = 'Amount';
@@ -109,12 +109,12 @@ $string['pendingordersemail'] = ' Dear admin,
 
 $a->pending transactions will be expired unless you accept payment with in $a->days days.
 
-This is a warning message, because you didn\'t enable autocapture. It means you have to accept or deny payments manually.
+This is a warning message, because you didn\'t enable scheduled-capture. It means you have to accept or deny payments manually.
 
 To accept/deny pending payments go to:
 $a->url
 
-To enable autocapture, means you will not receive any warning emails anymore, go to:
+To enable scheduled-capture, it means you will not receive any warning emails anymore, go to:
 $a->enrolurl';
 $string['reason11'] = 'A duplicate transaction has been submitted.';
 $string['reason13'] = 'The merchant Login ID is invalid or the account is inactive.';
@@ -136,7 +136,7 @@ $string['reason55'] = 'The sum of credits against the referenced transaction wou
 $string['refund'] = 'Refund';
 $string['refunded'] = 'Refunded';
 $string['returns'] = 'Returns';
-$string['reviewday'] = 'Capture the credit card automatically unless a teacher or administrator review the order within <b>$a</b> days. CRON MUST BE ENABLED.<br />(0 day means it will disable autocapture, also means teacher or admin review order manually. Transaction will be cancelled if you disable autocapture or unless you review it within 30 days.)';
+$string['reviewday'] = 'Capture the credit card automatically unless a teacher or administrator review the order within <b>$a</b> days. CRON MUST BE ENABLED.<br />(0 day means it will disable scheduled-capture, also means teacher or admin review order manually. Transaction will be cancelled if you disable scheduled-capture or unless you review it within 30 days.)';
 $string['reviewnotify'] = 'Your payment will be reviewed. Expect an email within a few days from your teacher.';
 $string['sendpaymentbutton'] = 'Send Payment';
 $string['settled'] = 'Settled';
