@@ -26,6 +26,10 @@
         return 210;
     }
 
+    function applicable_formats() {
+        return array('all' => true);
+    }
+
     function specialization() {
         // After the block has been loaded we customize the block's title display
         if (!empty($this->config) && !empty($this->config->title)) {
