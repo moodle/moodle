@@ -197,7 +197,7 @@ function print_authorize_order_details($orderno) {
 
     if (!empty($cmdcapture)) { // CAPTURE
         if (!in_array(ORDER_CAPTURE, $status->actions)) {
-            $a->action = ORDER_CAPTURE;
+            $a->action = $authstrs->capture;
             error(get_string('youcantdo', 'enrol_authorize', $a));
         }
 
@@ -246,7 +246,7 @@ function print_authorize_order_details($orderno) {
     }
     elseif (!empty($cmdrefund)) { // REFUND
         if (!in_array(ORDER_REFUND, $status->actions)) {
-            $a->action = ORDER_REFUND;
+            $a->action = $authstrs->refund;
             error(get_string('youcantdo', 'enrol_authorize', $a));
         }
 
@@ -305,7 +305,7 @@ function print_authorize_order_details($orderno) {
     }
     elseif (!empty($cmdvoid)) { // VOID
         if (!in_array(ORDER_VOID, $status->actions)) {
-            $a->action = ORDER_VOID;
+            $a->action = $authstrs->void;
             error(get_string('youcantdo', 'enrol_authorize', $a));
         }
 
@@ -389,7 +389,7 @@ function print_authorize_order_details($orderno) {
     }
     elseif (!empty($cmddelete)) { // DELETE
         if (!in_array(ORDER_DELETE, $status->actions)) {
-            $a->action = ORDER_DELETE;
+            $a->action = $authstrs->delete;
             error(get_string('youcantdo', 'enrol_authorize', $a));
         }
         if (empty($cmdconfirm)) {
