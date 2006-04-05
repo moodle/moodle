@@ -493,7 +493,7 @@ $CFG->os = PHP_OS;
 /// then use the one from the default language.  Otherwise (and this is the
 /// majority of cases), use the stored locale specified by admin.
 
-    if (isset($_GET['lang'])) {
+    if ($lang = optional_param('lang', PARAM_SAFEDIR)) {
         if (!detect_munged_arguments($lang, 0) and (file_exists($CFG->dataroot .'/lang/'. $lang) or 
                                                     file_exists($CFG->dirroot .'/lang/'. $lang))) {
             $SESSION->lang = $lang;
