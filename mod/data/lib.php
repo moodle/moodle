@@ -877,7 +877,7 @@ function data_print_template($template, $records, $data, $search='',$page=0, $re
         $patterns[]='/\#\#Comments\#\#/i';
         if (($template == 'listtemplate') && ($data->comments)) {
             $comments = count_records('data_comments','recordid',$record->id);
-            $replacement[] = '<a href="view.php?rid='.$record->id.'#comments">'.get_string('comments','data', $comments).'</a>';
+            $replacement[] = '<a href="view.php?rid='.$record->id.'#comments">'.get_string('commentsn','data', $comments).'</a>';
         } else {
             $replacement[] = '';
         }
