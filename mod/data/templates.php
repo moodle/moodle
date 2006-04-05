@@ -143,7 +143,6 @@
 
 
 /// Add the HTML editor(s).
-    echo '<td>';
     $usehtmleditor = can_use_html_editor() && ($mode != 'csstemplate');
     if ($mode == 'listtemplate'){
         // Print the list template header.

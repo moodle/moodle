@@ -37,7 +37,7 @@
     if (isset($record)) {
         $row[] = new tabobject('single', $CFG->wwwroot.'/mod/data/view.php?d='.$data->id.'&rid='.$record->id, get_string('single','data'), '', true);
     } else {
-        $row[] = new tabobject('single', $CFG->wwwroot.'/mod/data/view.php?d='.$data->id.'&mode=single', get_string('single','data'), '', true);
+        $row[] = new tabobject('single', $CFG->wwwroot.'/mod/data/view.php?d='.$data->id.'&amp;mode=single', get_string('single','data'), '', true);
     }
 
     if (isloggedin() and !isguest()) {
