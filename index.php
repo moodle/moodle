@@ -145,7 +145,7 @@
                     }
 
                     print_heading_block($headertext);
-                    forum_print_latest_discussions($SITE, $newsforum, $SITE->newsitems);
+                    forum_print_latest_discussions($SITE, $newsforum, $SITE->newsitems, 'plain', 'p.modified DESC');
                 }
             break;
 
