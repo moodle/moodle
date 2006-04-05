@@ -500,19 +500,6 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
                             }
                         }
 
-                        //BLOB TIME!
-                        $SQL = 'ALTER TABLE '.$CFG->prefix.$dbtablename.' CHANGE '.$fieldname.' '.$fieldname.' BLOB;';
-
-                        if ($fieldname != 'dummy') {
-                            if ($debug) {
-                                $db->debug=999;
-                            }
-                            execute_sql($SQL, $debug);
-                            if ($debug) {
-                                $db->debug=0;
-                            }
-                        }
-                        
                         /*********************************
                          * Change column encoding 2 phase*
                          *********************************/
@@ -521,7 +508,7 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
                         if ($length > 0) {
                             $SQL.='('.$length.') ';
                         }
-                        $SQL .= ' NOT NULL DEFAULT '.$default.';';
+                        $SQL .= ' CHARACTER SET binary NOT NULL DEFAULT '.$default.';';
                         if ($debug) {
                             $db->debug=999;
                         }
