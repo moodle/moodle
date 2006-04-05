@@ -184,7 +184,7 @@ class quiz_report extends quiz_default_report {
                 restore_question_state($question, $state);
                 $state->last_graded = $state;
     
-                $options = quiz_get_reviewoptions($quiz, $attempt, isteacher());
+                $options = quiz_get_reviewoptions($quiz, $attempt, true);
                 $options->validation = ($state->event == QUESTION_EVENTVALIDATE);  // not sure what this is
                 //$options->history = 'all';  // had this on, but seemed confusing for this
                 

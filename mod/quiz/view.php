@@ -169,24 +169,26 @@
 
 /// Now print table with existing attempts
 
-    if ($numattempts) {
+    if ($attempts) {
                     
     /// prepare table header
+        $table->head = array($strattempt, $strtimecompleted);
+        $table->align = array("center", "left");
+        $table->size = array("", "");
         if ($quiz->grade and $quiz->sumgrades) { // Grades used so have more columns in table
             if ($quiz->grade <> $quiz->sumgrades) {
-                $table->head = array($strattempt, $strtimetaken, $strtimecompleted, "$strmarks / $quiz->sumgrades", "$strgrade / $quiz->grade");
-                $table->align = array("center", "center", "left", "right", "right");
-                $table->size = array("", "", "", "", "");
-            } else {
-                $table->head = array($strattempt, $strtimetaken, $strtimecompleted, "$strgrade / $quiz->grade");
-                $table->align = array("center", "center", "left", "right");
-                $table->size = array("", "", "", "");
+                $table->head[] = "$strmarks / $quiz->sumgrades";
+                $table->align[] = 'right';
+                $table->size[] = '';
             }
-
-        } else {  // No grades are being used
-            $table->head = array($strattempt, $strtimetaken, $strtimecompleted);
-            $table->align = array("center", "center", "left");
-            $table->size = array("", "", "");
+            $table->head[] = "$strgrade / $quiz->grade";
+            $table->align[] = 'right';
+            $table->size[] = '';
+        }
+        if (isset($quiz->showtimetaken)) {
+            $table->head[] = $strtimetaken;
+            $table->align[] = 'center';
+            $table->size[] = '';
         }
 
     /// One row for each attempt
@@ -266,12 +268,10 @@
 
                 if ($quiz->grade <> $quiz->sumgrades) {
                     $table->data[] = array( $attempt->attempt,
-                                            $timetaken,
                                             $datecompleted,
                                             $attemptmark, $attemptgrade);
                 } else {
                     $table->data[] = array( $attempt->attempt,
-                                            $timetaken,
                                             $datecompleted,
                                             $attemptgrade);
                 }
@@ -284,8 +284,10 @@
                     }
                 }
                 $table->data[] = array( $attempt->attempt,
-                                        $timetaken,
                                         $datecompleted);
+            }
+            if (isset($quiz->showtimetaken)) {
+                $table->data[] = $timetaken;
             }
         }
         print_table($table);

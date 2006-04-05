@@ -30,9 +30,9 @@
 
     $row[] = new tabobject('info', "$CFG->wwwroot/mod/quiz/view.php?q=$quiz->id", get_string('info', 'quiz'));
     $row[] = new tabobject('reports', "$CFG->wwwroot/mod/quiz/report.php?q=$quiz->id", get_string('results', 'quiz'));
-    $row[] = new tabobject('preview', "$CFG->wwwroot/mod/quiz/attempt.php?q=$quiz->id", get_string('preview', 'quiz'), get_string('previewquiz', 'quiz', format_string($quiz->name)));
+    $row[] = new tabobject('preview', "$CFG->wwwroot/mod/quiz/attempt.php?q=$quiz->id", get_string('preview', 'quiz'));
     if (isteacheredit($course->id)) {
-        $row[] = new tabobject('edit', "$CFG->wwwroot/mod/quiz/edit.php?quizid=$quiz->id", get_string('edit'), get_string('editquizquestions', 'quiz'));
+        $row[] = new tabobject('edit', "$CFG->wwwroot/mod/quiz/edit.php?quizid=$quiz->id", get_string('edit'));
     }
 
     $tabs[] = $row;
@@ -75,7 +75,7 @@
         $row[] = new tabobject('categories', "$CFG->wwwroot/question/category.php?id=$course->id", get_string('categories', 'quiz'), get_string('editqcats', 'quiz'));
         $row[] = new tabobject('import', "$CFG->wwwroot/question/import.php?course=$course->id", get_string('import', 'quiz'), get_string('importquestions', 'quiz'));
         $row[] = new tabobject('export', "$CFG->wwwroot/question/export.php?courseid=$course->id", get_string('export', 'quiz'), get_string('exportquestions', 'quiz'));
-        $row[] = new tabobject('update', "$CFG->wwwroot/course/mod.php?update=$cm->id&amp;sesskey=$USER->sesskey", get_string('settings'), get_string('updatesettings'));
+        $row[] = new tabobject('update', "$CFG->wwwroot/course/mod.php?update=$cm->id&amp;sesskey=$USER->sesskey", get_string('settings'), get_string('updatesettings', 'quiz'));
 
         $tabs[] = $row;
     }

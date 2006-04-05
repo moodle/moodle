@@ -87,7 +87,7 @@ function get_last_soap_messages($connection) {
     return array('request'=>$connection->__getLastRequest(), 'response'=>$connection->__getLastResponse());
 }
 
-// Fix simple type encoding - work around a bug in PHP
+// Fix simple type encoding - work around a bug in early versions of PHP5 < 5.0.3, see http://bugs.php.net/bug.php?id=31832
 function soap_encode($value, $name, $type, $namespace, $encode=XSD_STRING) {
     $value = new SoapVar($value, $encode, $type, $namespace);
     if ('' === $name)
@@ -95,7 +95,7 @@ function soap_encode($value, $name, $type, $namespace, $encode=XSD_STRING) {
     return new SoapParam($value, $name);
 }
 
-// Fix complex type encoding - work around a bug in PHP
+// Fix complex type encoding - work around a bug in early versions of PHP5 < 5.0.3, see http://bugs.php.net/bug.php?id=31832
 function soap_encode_object($value, $name, $type, $namespace) {
     if (!is_object($value))
         return $value;
@@ -105,7 +105,7 @@ function soap_encode_object($value, $name, $type, $namespace) {
     return new SoapParam($value, $name);
 }
 
-// Fix array encoding - work around a bug in PHP
+// Fix array encoding - work around a bug in early versions of PHP5 < 5.0.3, see http://bugs.php.net/bug.php?id=31832
 function soap_encode_array($value, $name, $type, $namespace) {
     if (!is_array($value))
         return $value;

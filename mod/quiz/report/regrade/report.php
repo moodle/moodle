@@ -30,7 +30,7 @@ class quiz_report extends quiz_default_report {
         get_question_options($questions);
 
     /// Print heading
-        print_heading(get_string('regradingquiz', 'quiz', $quiz->name));
+        print_heading(get_string('regradingquiz', 'quiz', format_string($quiz->name)));
         echo '<center>';
         print_string('regradedisplayexplanation', 'quiz');
         echo '<center>';
@@ -40,7 +40,13 @@ class quiz_report extends quiz_default_report {
             echo '<b>'.get_string('regradingquestion', 'quiz', $question->name).'</b> '.get_string('attempts', 'quiz').": \n";
             foreach ($attempts as $attempt) {
                 set_time_limit(30);
-                regrade_question_in_attempt($question, $attempt, $quiz, true);
+                $changed = regrade_question_in_attempt($question, $attempt, $quiz, true);
+                if ($changed) {
+                    link_to_popup_window ('/mod/quiz/reviewquestion.php?attempt='.$attempt->id.'&amp;question='.$question->id,
+                     'reviewquestion', ' #'.$attempt->id, 450, 550, get_string('reviewresponse', 'quiz'));
+                } else {
+                    echo ' #'.$attempt->id;
+                }
             }
             echo '<br/ >';
             // the following makes sure that the output is sent immediately.

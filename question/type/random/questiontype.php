@@ -7,7 +7,7 @@
 /// QUESTION TYPE CLASS //////////////////
 class random_qtype extends default_questiontype {
 
-    var $excludedtypes = array('random', 'randomsamatch', 'essay', 'description');
+    var $excludedtypes = array("'random'", "'randomsamatch'", "'essay'", "'description'");
 
     // Carries questions available as randoms sorted by category
     // This array is used when needed only

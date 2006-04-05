@@ -46,6 +46,8 @@ function quiz_delete_quiz_question($id, &$modform) {
     if (!set_field('quiz', 'questions', $modform->questions, 'id', $modform->instance)) {
         error('Could not save question list');
     }
+    delete_records('quiz_question_instances', 'quiz', $modform->instance, 'question', $question);
+    return true;
 }
 
 

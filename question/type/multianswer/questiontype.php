@@ -59,12 +59,11 @@ class embedded_cloze_qtype extends default_questiontype {
         // will also create difficulties if questiontype specific tables reference the id.
         
         // First we get all the existing wrapped questions
-        if (!$oldwrappedids = get_records('question', 'parent', $question->id, '', 'id, id')) {
-         // We need to select 'id, id' because the first one is consumed by
-         // get_records.
+        if (!$oldwrappedids = get_field('question_multianswers', 'sequence', 'question', $question->id)) {
             $oldwrappedids = array();
+        } else {
+            $oldwrappedids = explode(',', $oldwrappedids);
         }
-        $oldwrappedids = array_keys($oldwrappedids);
         $sequence = array();
         foreach($question->options->questions as $wrapped) {
             // if we still have some old wrapped question ids, reuse the next of them

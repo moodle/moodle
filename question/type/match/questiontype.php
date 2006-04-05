@@ -252,7 +252,7 @@ class question_match_qtype extends default_questiontype {
                 and $options->correct_responses
                 and isset($correctanswers[$subquestion->id])
                 and ($correctanswers[$subquestion->id] == $response)) {
-                $a->class = ' class="highlight" ';
+                $a->class = ' highlight ';
             } else {
                 $a->class = '';
             }
@@ -333,6 +333,11 @@ class question_match_qtype extends default_questiontype {
         } else {
             return null;
         }
+    }
+
+    function response_summary($question, $state, $length=80) {
+        // This should almost certainly be overridden
+        return substr(implode(',', $this->get_actual_response($question, $state)), 0, $length);
     }
     
 /// BACKUP FUNCTIONS ////////////////////////////

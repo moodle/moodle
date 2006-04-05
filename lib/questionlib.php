@@ -819,7 +819,7 @@ function question_extract_responses($questions, $formdata, $defaultevent=QUESTIO
 *
 * TODO: Make sure this is not quiz-specific
 *
-* @return boolean            Indicates success/failure
+* @return boolean            Indicates whether the grade has changed
 * @param object  $question   A question object
 * @param object  $attempt    The attempt, in which the question needs to be regraded.
 * @param object  $cmoptions
@@ -843,19 +843,15 @@ function regrade_question_in_attempt($question, $attempt, $cmoptions, $verbose=f
         $replaystate = clone($state);
         $replaystate->last_graded = $state;
 
-        $changed = 0;
+        $changed = false;
         for($j = 1; $j < count($states); $j++) {
             restore_question_state($question, $states[$j]);
             $action = new stdClass;
             $action->responses = $states[$j]->responses;
             $action->timestamp = $states[$j]->timestamp;
 
-            // Close the last state of a finished attempt
-            if (((count($states) - 1) === $j) && ($attempt->timefinish > 0)) {
-                $action->event = QUESTION_EVENTCLOSE;
-
             // Change event to submit so that it will be reprocessed
-            } else if (QUESTION_EVENTCLOSE == $states[$j]->event
+            if (QUESTION_EVENTCLOSE == $states[$j]->event
                        or QUESTION_EVENTGRADE == $states[$j]->event
                        or QUESTION_EVENTCLOSEANDGRADE == $states[$j]->event) {
                 $action->event = QUESTION_EVENTSUBMIT;
@@ -872,28 +868,23 @@ function regrade_question_in_attempt($question, $attempt, $cmoptions, $verbose=f
 
             // We need rounding here because grades in the DB get truncated
             // e.g. 0.33333 != 0.3333333, but we want them to be equal here
-            if (round((float)$replaystate->grade, 5) != round((float)$states[$j]->grade, 5)) {
-                $changed++;
+            if ((round((float)$replaystate->raw_grade, 5) != round((float)$states[$j]->raw_grade, 5))
+                  or (round((float)$replaystate->penalty, 5) != round((float)$states[$j]->penalty, 5))
+                  or (round((float)$replaystate->grade, 5) != round((float)$states[$j]->grade, 5))) {
+                $changed = true;
             }
 
             $replaystate->id = $states[$j]->id;
             $replaystate->update = true; // This will ensure that the existing database entry is updated rather than a new one created
             save_question_session($question, $replaystate);
         }
-        if ($verbose) {
-            if ($changed) {
-                link_to_popup_window ('/question/reviewquestion.php?attempt='.$attempt->id.'&amp;question='.$question->id,
-                 'reviewquestion', ' #'.$attempt->id, 450, 550, get_string('reviewresponse', 'quiz'));
-                update_record('quiz_attempts', $attempt);
-            } else {
-                echo ' #'.$attempt->id;
-            }
-            echo "\n"; @flush(); @ob_flush();
+        if ($changed) {
+            update_record('quiz_attempts', $attempt);
         }
 
-        return true;
+        return $changed;
     }
-    return true;
+    return false;
 }
 
 /**

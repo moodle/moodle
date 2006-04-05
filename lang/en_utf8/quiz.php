@@ -258,6 +258,7 @@ $string['min'] = 'Min';
 $string['minutes'] = 'Minutes';
 $string['missinganswer'] = 'Too few :ANSWER, :Lx, :Rx statements for question line $a. You must define at last 2 possible answers';
 $string['missingcorrectanswer'] = 'Correct answer must be specified';
+$string['missingformula'] = 'Missing formula';
 $string['missingitemtypename'] = 'Missing name';
 $string['missingname'] = 'Missing question name';
 $string['missingquestion'] = 'Missing question label after line $a';

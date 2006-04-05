@@ -24,7 +24,7 @@
         if (! $state = get_record('question_states', 'id', $stateid)) {
             error('Invalid state id');
         }
-        if (! $attempt = get_record('quiz_attempts', 'id', $state->attempt)) {
+        if (! $attempt = get_record('quiz_attempts', 'uniqueid', $state->attempt)) {
             error('No such attempt ID exists');
         }
     } elseif ($attemptid) {

@@ -510,6 +510,8 @@ class default_questiontype {
                 $table->size = array ('', '', '', '', '', '', '');
                 $table->width = '100%';
                 foreach ($states as $st) {
+                    $st->responses[''] = $st->answer;
+                    $this->restore_session_and_responses($question, $st);
                     $b = ($state->id == $st->id) ? '<b>' : '';
                     $be = ($state->id == $st->id) ? '</b>' : '';
                     if ($state->id == $st->id) {
@@ -525,7 +527,7 @@ class default_questiontype {
                     $table->data[] = array (
                         $link,
                         $b.get_string('event'.$st->event, 'quiz').$be,
-                        $b.$this->response_summary($st).$be,
+                        $b.$this->response_summary($question, $st).$be,
                         $b.userdate($st->timestamp, get_string('timestr', 'quiz')).$be,
                         $b.round($st->raw_grade, $cmoptions->decimalpoints).$be,
                         $b.round($st->penalty, $cmoptions->decimalpoints).$be,
@@ -694,10 +696,11 @@ class default_questiontype {
     * summarizes the student's response in the given $state. This is used for
     * example in the response history table
     * @return string         The summary of the student response
+    * @param object $question 
     * @param object $state   The state whose responses are to be summarized
     * @param int $length     The maximum length of the returned string
     */
-    function response_summary($state, $length=80) {
+    function response_summary($question, $state, $length=80) {
         // This should almost certainly be overridden
         return substr($state->answer, 0, $length);
     }

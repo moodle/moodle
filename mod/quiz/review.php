@@ -101,7 +101,12 @@
 
 /// Print heading and tabs if this is part of a preview
     if ($isteacher) {
-        $currenttab = ($attempt->userid == $USER->id) ? 'preview' : '';
+        if ($attempt->userid == $USER->id) { // this is the report on a preview
+            $currenttab = 'preview';
+        } else {
+            $currenttab = 'reports';
+            $mode = '';
+        }
         include('tabs.php');
     } else {
         print_heading(format_string($quiz->name));

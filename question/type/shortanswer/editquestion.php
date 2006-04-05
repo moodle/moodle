@@ -15,11 +15,12 @@
         }
     }
 
+    $emptyanswer->answer = '';
     $i = count($answers);
     $limit = QUESTION_NUMANS;
     $limit = $limit <= $i ? $i+1 : $limit;
     for (; $i < $limit; $i++) {
-        $answers[] = "";   // Make answer slots, default as blank
+        $answers[] = $emptyanswer;   // Make answer slots, default as blank
     }
 
     print_heading_with_help(get_string("editingshortanswer", "quiz"), "shortanswer", "quiz");
