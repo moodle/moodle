@@ -54,3 +54,4 @@ function journal_upgrade($oldversion) {
 
     return $result;
 }
+?>

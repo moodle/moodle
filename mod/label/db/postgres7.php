@@ -41,6 +41,4 @@ function label_upgrade($oldversion) {
 }
 
 
-
 ?>
-
