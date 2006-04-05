@@ -176,7 +176,14 @@
             if (!confirm_sesskey()) {
                 error(get_string('confirmsesskeybad', 'error'));
             }
-            $newstrings = $_POST;
+            
+            $newstrings = array();
+            
+            foreach ($_POST as $postkey => $postval) {
+                $stringkey = lang_file_string_key($postkey);
+                $newstrings[$stringkey] = $postval;
+            }
+            
             unset($newstrings['currentfile']);
             if (lang_save_file($langdir, $currentfile, $newstrings)) {
                 notify(get_string("changessaved")." ($langdir/$currentfile)", "green");
@@ -272,12 +279,12 @@
                 $cols=50;
                 if (strstr($value, "\r") or strstr($value, "\n") or $valuelen > $cols) {
                     $rows = ceil($valuelen / $cols);
-                    echo '<textarea name="stringXXX'.$key.'" cols="'.$cols.'" rows="'.$rows.'">'.$value.'</textarea>'."\n";
+                    echo '<textarea name="stringXXX'.lang_form_string_key($key).'" cols="'.$cols.'" rows="'.$rows.'">'.$value.'</textarea>'."\n";
                 } else {
                     if ($valuelen) {
                         $cols = $valuelen + 2;
                     }
-                    echo '<input type="text" name="stringXXX'.$key.'" value="'.$value.'" size="'.$cols.'" />';
+                    echo '<input type="text" name="stringXXX'.lang_form_string_key($key).'" value="'.$value.'" size="'.$cols.'" />';
                 }
                 echo '</td>';
 
@@ -342,5 +349,20 @@ function lang_save_file($path, $file, $strings) {
 
     return true;
 }
+
+
+
+/// Following functions are required because '.' in form input names
+/// get replaced by '_' by PHP.
+
+function lang_form_string_key($keyfromfile) {
+    return str_replace('.', '##46#', $keyfromfile);  /// Derived from &#46, the ascii value for a period.
+}
+
+
+function lang_file_string_key($keyfromform) {
+    return str_replace('##46#', '.', $keyfromform);
+}
+
 
 ?>
