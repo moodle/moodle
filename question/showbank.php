@@ -40,7 +40,7 @@
 
     if (isset($_REQUEST['move']) and confirm_sesskey()) { /// Move selected questions to new category
         $tocategoryid = required_param('category', PARAM_INT);
-        if (!$tocategory = get_record('question_categories', 'id', $tocategoryid])) {
+        if (!$tocategory = get_record('question_categories', 'id', $tocategoryid)) {
             error('Invalid category');
         }
         if (!isteacheredit($tocategory->course)) {
@@ -117,7 +117,7 @@
     }
 
     if (isset($_REQUEST['cat'])) { /// coming from category selection drop-down menu
-        $SESSION->questioncat = required_param['cat', PARAM_INT];
+        $SESSION->questioncat = required_param('cat', PARAM_INT);
         $page = 0;
         $SESSION->questionpage = 0;
     }
