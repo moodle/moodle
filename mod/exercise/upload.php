@@ -1,10 +1,10 @@
 <?php  // $Id: upload.php, v1.0 30th April 2003
 
-    require("../../config.php");
-    require("lib.php");
-    require("locallib.php");
+    require_once("../../config.php");
+    require_once("lib.php");
+    require_once("locallib.php");
 
-    require_variable($id);          // course module ID
+    $id = required_param('id', PARAM_INT);           // course module ID
     $timenow = time();
 
     // get some esential stuff...

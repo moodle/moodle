@@ -28,11 +28,11 @@
 
 ************************************************/
 
-    require("../../config.php");
-    require("lib.php");
-    require("locallib.php");
+    require_once("../../config.php");
+    require_once("lib.php");
+    require_once("locallib.php");
 
-    require_variable($id);    // Course Module ID
+    $id = required_param('id', PARAM_INT);    // Course Module ID
 
     // get some esential stuff...
     if (! $cm = get_record("course_modules", "id", $id)) {
@@ -62,7 +62,7 @@
                   "", "", true);
 
     //...get the action
-    require_variable($action);
+    $action = required_param('action');
 
 
     /******************* admin amend Grading Grade ************************************/
@@ -174,7 +174,7 @@
     /****************** Assess resubmission (by teacher) ***************************/
     elseif ($action == 'assessresubmission') {
 
-        require_variable($sid);
+        $sid = required_param('sid');
 
         if (! $submission = get_record("exercise_submissions", "id", $sid)) {
             error("Assess submission is misconfigured - no submission record!");
@@ -212,7 +212,7 @@
     /****************** Assess submission (by teacher or student) ***************************/
     elseif ($action == 'assesssubmission') {
 
-        require_variable($sid);
+        $sid = required_param('sid');
 
         if (! $submission = get_record("exercise_submissions", "id", $sid)) {
             error("Assess submission is misconfigured - no submission record!");
@@ -633,8 +633,8 @@
             error("Only teachers can look at this page");
         }
 
-        require_variable($aid);
-        require_variable($sid);
+        $aid = required_param('aid', PARAM_INT);
+        $sid = required_param('sid', PARAM_INT);
         if (!$assessment = get_record("exercise_assessments", "id", $aid)) {
             error("Teacher assessment: User's assessment record not found");
         }
@@ -663,7 +663,7 @@
         $timenow = time();
         $form = data_submitted();
 
-        require_variable($aid);
+        $aid = required_param('aid', PARAM_INT);
         if (! $assessment = get_record("exercise_assessments", "id", $aid)) {
             error("exercise assessment is misconfigured");
         }
@@ -1089,7 +1089,7 @@
             error("Only teachers can look at this page");
             }
 
-        require_variable($aid);
+        $aid = required_param('aid', PARAM_INT);        
         // normalise gradinggrade
         $gradinggrade = $_POST['gradinggrade'] * 100 / $exercise->gradinggrade;
         if (!set_field("exercise_assessments", "gradinggrade", $gradinggrade, "id",
