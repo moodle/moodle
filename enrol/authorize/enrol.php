@@ -29,7 +29,7 @@ class enrolment_plugin extends enrolment_base {
         $this->check_paid();
 
         // I want to paid on SSL.
-        if (empty($_SERVER['HTTPS'])) {
+        if (empty($_SERVER['HTTPS']) || $_SERVER['HTTPS'] == 'off') {
             if (empty($CFG->loginhttps)) {
                 error(get_string("httpsrequired", "enrol_authorize"));
             } else {
