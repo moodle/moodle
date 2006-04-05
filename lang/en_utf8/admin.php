@@ -222,6 +222,7 @@ $string['stickyblocksduplicatenotice'] = 'If any block you add here is already p
 $string['stickyblockspagetype'] = 'Page type to configure';
 $string['stickyblocksmymoodle'] = 'My moodle';
 $string['stickyblockscourseview'] = 'Course page';
+$string['releasenoteslink'] = 'For information about this version of Moodle, please see the online <a target=\"_new\" href=\"$a\">Release Notes</a>';
 $string['renameerrors'] = 'Errors in renames';
 $string['tabselectedtofront'] = 'On tables with tabs, should the row with the currently selected tag be placed at the front';
 $string['therewereerrors'] = 'There were errors in your data';
