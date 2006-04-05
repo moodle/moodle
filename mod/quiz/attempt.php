@@ -371,7 +371,7 @@
         if ($isteacher) {
             notify(get_string('notavailabletostudents', 'quiz'));
         } else {
-            print_continue(get_string('notavailable', 'quiz'), "view.php?id={$cm->id}");
+            notice(get_string('notavailable', 'quiz'), "view.php?id={$cm->id}");
         }
     }
 
