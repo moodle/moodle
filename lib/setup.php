@@ -347,13 +347,11 @@ global $HTTPSPAGEREQUIRED;
     }
 
 
-/// The following is a hack to get around the problem of PHP installations
-/// that have "register_globals" turned off (default since PHP 4.1.0).
-/// This hack will be removed in 1.6.
-/// It is strongly recommended to disable "register_globals"!
-/// $CFG->disableglobalshack=true in config.php will override this (for dev testing)
+/// The following code can emulate "register globals" if required.
+/// This hack is no longer being applied as of Moodle 1.6 unless you really 
+/// really want to use it (by defining  $CFG->enableglobalshack = true)
 
-    if (empty($CFG->disableglobalshack)) {
+    if (!empty($CFG->enableglobalshack)) {
         if (!empty($CFG->detect_unchecked_vars)) {
             global $UNCHECKED_VARS;
             $UNCHECKED_VARS->url = $_SERVER['PHP_SELF'];
