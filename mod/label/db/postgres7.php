@@ -1,7 +1,5 @@
 <?php
 
-
-
 function label_upgrade($oldversion) {
 
 /// This function does anything necessary to upgrade 
@@ -41,6 +39,4 @@ function label_upgrade($oldversion) {
 }
 
 
-
 ?>
-
