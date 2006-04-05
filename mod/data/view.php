@@ -164,16 +164,17 @@
 /// Print the page header
     $PAGE->print_header($course->shortname.': %fullname%', '', $meta);
     
-    echo '<table id="layout-table"><tr>';
 
-    if (!empty($CFG->showblocksonmodpages) && 
-              (blocks_have_content($pageblocks, BLOCK_POS_LEFT) || $PAGE->user_is_editing())) {
-        echo '<td style="width: '.$blocks_preferred_width.'px;" id="left-column">';
-        blocks_print_group($PAGE, $pageblocks, BLOCK_POS_LEFT);
-        echo '</td>';
+/// If we have blocks, then print the left side here
+    if (!empty($CFG->showblocksonmodpages)) {
+        echo '<table id="layout-table"><tr>';
+        if ((blocks_have_content($pageblocks, BLOCK_POS_LEFT) || $PAGE->user_is_editing())) {
+            echo '<td style="width: '.$blocks_preferred_width.'px;" id="left-column">';
+            blocks_print_group($PAGE, $pageblocks, BLOCK_POS_LEFT);
+            echo '</td>';
+        }
+        echo '<td id="middle-column">';
     }
-
-    echo '<td id="middle-column">';
 
     print_heading(format_string($data->name));
     
@@ -422,6 +423,17 @@
         }
 
         data_print_preference_form($data, $perpage, $search, $sort, $order);
+    }
+
+/// If we have blocks, then print the left side here
+    if (!empty($CFG->showblocksonmodpages)) {
+        echo '</td>';   // Middle column
+        if ((blocks_have_content($pageblocks, BLOCK_POS_RIGHT) || $PAGE->user_is_editing())) {
+            echo '<td style="width: '.$blocks_preferred_width.'px;" id="right-column">';
+            blocks_print_group($PAGE, $pageblocks, BLOCK_POS_RIGHT);
+            echo '</td>';
+        }
+        echo '</table>';
     }
 
     print_footer($course);

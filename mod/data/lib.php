@@ -884,10 +884,11 @@ function data_print_template($template, $records, $data, $search='',$page=0, $re
 
         ///actual replacement of the tags
         $newtext = preg_replace($patterns, $replacement, $data->{$template});
+        $options->para=false;
         if ($return) {
-            return format_text($newtext);
+            return format_text($newtext, FORMAT_HTML, $options);
         } else {
-            echo format_text($newtext);    //prints the template with tags replaced
+            echo format_text($newtext, FORMAT_HTML, $options);    //prints the template with tags replaced
         }
 
         /**********************************
@@ -964,8 +965,8 @@ function data_print_ratings($data, $record) {
             $ratings->assesspublic = $data->assesspublic;
             $ratings->allow = (($data->assessed != 2 or isteacher($data->course)) && !isguest());
             if ($ratings->allow) {
-                echo '<p /><form name="form" method="post" action="rate.php">';
                 echo '<div class="ratings" align="center">';
+                echo '<form name="form" method="post" action="rate.php">';
                 $useratings = true;
 
                 if ($useratings) {
@@ -997,8 +998,8 @@ function data_print_ratings($data, $record) {
                     echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
                     echo "<input type=\"submit\" value=\"".get_string("sendinratings", "data")."\" />";
                 }
-                echo '</div>';
                 echo "</form>";
+                echo '</div>';
             }
         }
     }
@@ -1116,7 +1117,7 @@ function data_print_comments($data, $record, $page=0) {
     echo '<input type="hidden" name="rid" value="'.$record->id.'" />';
 
     echo '<textarea name="commentcontent"></textarea>';
-    echo '<br><input type="submit" value="'.get_string('addcomment','data').'" />';
+    echo '<br /><input type="submit" value="'.get_string('addcomment','data').'" />';
     echo '</form></div>';
 }
 
@@ -1130,7 +1131,7 @@ function data_print_comment($data, $comment, $page=0) {
 
     $user = get_record('user','id',$comment->userid);
 
-    echo '<div align="center"><table cellspacing="0" width ="50%" class="forumpost">';
+    echo '<table cellspacing="0" align="center" width="50%" class="datacomment forumpost">';
 
     echo '<tr class="header"><td class="picture left">';
     print_user_picture($comment->userid, $data->course, $user->picture);
@@ -1169,7 +1170,7 @@ function data_print_comment($data, $comment, $page=0) {
 
     echo '</div>';
 
-    echo '</td></tr></table><div>'."\n\n";
+    echo '</td></tr></table>'."\n\n";
 }
 
 
