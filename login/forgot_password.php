@@ -51,7 +51,7 @@ $page = ''; // page to display
 
 // if you are logged in then you shouldn't be here!
 if (isloggedin()) {
-    redirect( $CFG->wwwroot, $txt->loginalready, 5 );
+    redirect( $CFG->wwwroot.'/index.php', $txt->loginalready, 5 );
 }
 
 // changepassword link replaced by individual auth setting
@@ -219,7 +219,7 @@ if (count($errors)) {
 if ($page=='emailconfirm') {
     // Confirm (internal method) email sent
     $txt->emailpasswordconfirmsent = get_string( 'emailpasswordconfirmsent','',$user->email );
-    notice( $txt->emailpasswordconfirmsent,"$CFG->wwwroot/" ); 
+    notice( $txt->emailpasswordconfirmsent,$CFG->wwwroot.'/index.php'); 
 }
 
 elseif ($page=='external') { 
@@ -228,7 +228,7 @@ elseif ($page=='external') {
 
     // only print continue button if it makes sense
     if ($continue) {
-        print_continue( "{$CFG->wwwroot}/" );
+        print_continue($CFG->wwwroot.'/index.php');
     }
 }
 
@@ -239,7 +239,7 @@ elseif ($page=='emailsent') {
 
 elseif ($page=='duplicateemail') {
     // email address appears more than once
-    notice( $txt->forgottenduplicate, "{$CFG->wwwroot}/" );
+    notice( $txt->forgottenduplicate, $CFG->wwwroot.'/index.php');
 }
 
 else {
