@@ -34,6 +34,9 @@
 
     print_heading($strdbmigrate);
 
+    if ($CFG->dbtype == 'postgres7') {
+        $CFG->pagepath = 'admin/utfdbmigrate/postgresql';
+    }
     //if $confirm
     if ($confirm && confirm_sesskey()) {
         //do the real migration of db
