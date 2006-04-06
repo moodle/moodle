@@ -318,12 +318,12 @@
 
     if (!empty($CFG->upgrade)) {  // Print notice about extra upgrading that needs to be done
         print_simple_box(get_string("upgrade$CFG->upgrade", "admin",
-                                    "$CFG->wwwroot/$CFG->admin/upgrade$CFG->upgrade.php"), "center", '50%');
+                                    "$CFG->wwwroot/$CFG->admin/upgrade$CFG->upgrade.php"), "center", '60%');
         print_spacer(10,10);
     }
 
     if (ini_get_bool('register_globals') && !ini_get_bool('magic_quotes_gpc')) {
-        print_simple_box(get_string('globalsquoteswarning', 'admin'), 'center', '50%');
+        print_simple_box(get_string('globalsquoteswarning', 'admin'), 'center', '60%');
     }
 
 
@@ -332,17 +332,17 @@
     if (time() - $lastcron > 3600 * 24) {
         $strinstallation = get_string('installation', 'install');
         $helpbutton = helpbutton('install', $strinstallation, 'moodle', true, false, '', true);
-        print_simple_box(get_string('cronwarning', 'admin')."&nbsp;".$helpbutton, 'center');
+        print_simple_box(get_string('cronwarning', 'admin')."&nbsp;".$helpbutton, 'center', '60%');
     }
 
 /// Alert if we are currently in maintenance mode
     if (file_exists($CFG->dataroot.'/1/maintenance.html')) {
-        print_simple_box(get_string('sitemaintenancewarning', 'admin') , 'center', '50%');
+        print_simple_box(get_string('sitemaintenancewarning', 'admin') , 'center', '60%');
     }
 
 /// Alert if we are currently in maintenance mode
     if (empty($CFG->unicodedb)) {
-        print_simple_box(get_string('unicodeupgradenotice', 'admin') , 'center', '50%');
+        print_simple_box(get_string('unicodeupgradenotice', 'admin') , 'center', '60%');
     }
 
 /// Print slightly annoying registration button every six months   ;-)
@@ -429,10 +429,26 @@
     $table->data[] = array('<strong><a href="environment.php">'.get_string('environment','admin').'</a></strong>',
                            '<div class="explanation">'.get_string('adminhelpenvironment').'</div>');
 
+/// Optional stuff
     if (file_exists("$CFG->dirroot/$CFG->admin/$CFG->dbtype")) {
         $table->data[] = array("<strong><a href=\"$CFG->dbtype/frame.php\">".get_string('managedatabase').'</a></strong>',
                                '<div class="explanation">'.get_string('adminhelpmanagedatabase').'</div>');
     }
+
+/// Hooks for Matt Oquists contrib code for repositories and portfolio.  
+/// The eventual official versions may not look like this
+    if (isset($CFG->portfolio) && file_exists("$CFG->dirroot/$CFG->portfolio")) {
+                $table->data[] = array("<strong><a href=\"../portfolio/\">".get_string('portfolio','portfolio').'</a></
+trong>',
+                            '<div class="explanation">'.get_string('adminhelpportfolio','portfolio').'</div>');
+    }
+
+    if (isset($CFG->repo) && file_exists("$CFG->dirroot/$CFG->repo")) {
+            $table->data[] = array("<strong><a href=\"../repository/?repoid=1&action=list\">".get_string('repository','
+epository').'</a></strong>',
+                            '<div class="explanation">'.get_string('adminhelprepository','repository').'</div>');
+    }
+
 
 
     print_table($table);
