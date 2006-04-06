@@ -207,18 +207,20 @@ function blocks_delete_instance($instance) {
 // (causing them to calculate their content in the process). Returns true or false. Parameter passed
 // by reference for speed; the array is actually not modified.
 function blocks_have_content(&$pageblocks, $position) {
-    foreach($pageblocks[$position] as $instance) {
-        if(!$instance->visible) {
-            continue;
-        }
-        if(!$record = blocks_get_record($instance->blockid)) {
-            continue;
-        }
-        if(!$obj = block_instance($record->name, $instance)) {
-            continue;
-        }
-        if(!$obj->is_empty()) {
-            return true;
+    if (!empty($pageblocks[$position])) {
+        foreach($pageblocks[$position] as $instance) {
+            if (!$instance->visible) {
+                continue;
+            }
+            if (!$record = blocks_get_record($instance->blockid)) {
+                continue;
+            }
+            if (!$obj = block_instance($record->name, $instance)) {
+                continue;
+            }
+            if (!$obj->is_empty()) {
+                return true;
+            }
         }
     }
 
