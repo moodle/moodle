@@ -57,8 +57,7 @@ class data_field_picture extends data_field_file {
             }
         }
 
-        $str = '';
-        $str .= '<div title="'.$this->field->description.'">';
+        $str = '<div title="'.$this->field->description.'">';
         $str .= '<input type="hidden" name ="field_'.$this->field->id.'_file" id="field_'.$this->field->id.'_file"  value="fakevalue" />';
         $str .= get_string('picture','data'). ': <input type="file" name ="field_'.$this->field->id.'" id="field_'.$this->field->id.'" /><br />';
         $str .= get_string('optionaldescription','data') .': <input type="text" name="field_'
@@ -89,18 +88,21 @@ class data_field_picture extends data_field_file {
             $src = $contents[0];
 
             $path = $this->data->course.'/'.$CFG->moddata.'/data/'.$this->data->id.'/'.$this->field->id.'/'.$recordid;
+            $thumbnaillocation = $CFG->dataroot .'/'.$this->data->course.'/'.$CFG->moddata.'/data/'.$this->data->id.'/'.$this->field->id.'/'.$recordid.'/thumb/'.$src;
 
             if ($CFG->slasharguments) {
                 $source = $CFG->wwwroot.'/file.php/'.$path.'/'.$src;
+                $thumbnailsource = file_exists($thumbnaillocation) ? $CFG->wwwroot.'/file.php/'.$path.'/thumb/'.$src : $source;
             } else {
                 $source = $CFG->wwwroot.'/file.php?file=/'.$path.'/'.$src;
+                $thumbnailsource = file_exists($thumbnaillocation) ? $CFG->wwwroot.'/file.php?file=/'.$path.'/thumb/'.$src : $source;
             }
 
             if ($template == 'listtemplate') {
                 $width = $this->field->param4 ? ' width="'.$this->field->param4.'" ' : ' ';
                 $height = $this->field->param5 ? ' height="'.$this->field->param5.'" ' : ' ';
                 $str = '<a href="view.php?d='.$this->field->dataid.'&amp;rid='.$recordid.'"><img '.
-                     $width.$height.' src="'.$source.'" alt="'.$alt.'" title="'.$title.'" border="0" /></a>';
+                     $width.$height.' src="'.$thumbnailsource.'" alt="'.$alt.'" title="'.$title.'" border="0" /></a>';
             } else {
                 $width = $this->field->param1 ? ' width="'.$this->field->param1.'" ':' ';
                 $height = $this->field->param2 ? ' height="'.$this->field->param2.'" ':' ';
@@ -111,6 +113,130 @@ class data_field_picture extends data_field_file {
         return false;
     }
 
+    function update_field() {
+
+        // Get the old field data so that we can check whether the thumbnail dimensions have changed
+        $oldfield = clone($this->field);
+
+        if (!parent::update_field()) {
+            return false;
+        }
+
+        // Have the thumbnail dimensions changed?
+        if ($oldfield && ($oldfield->param4 != $this->field->param4 || $oldfield->param5 != $this->field->param5)) {
+
+            //print_simple_box(get_string('pleasewait', 'data');
+            //echo "\n\n"; // To make sure that ob_flush() has the desired effect
+            //ob_flush();
+
+            // Check through all existing records and update the thumbnail
+            if ($recordset = get_recordset('data_content', 'fieldid', $this->field->id)) { 
+                while ($row = $recordset->FetchNextObject()) {
+                    $this->update_thumbnail($row->RECORDID);
+                }
+            }
+        }
+        return true;
+    }
+
+    function update_content($recordid, $value, $name) {
+        parent::update_content($recordid, $value, $name);
+        $this->update_thumbnail($recordid); // Regenerate the thumbnail
+    }
+
+    /**
+    * (Re)generate thumbnail image according to the dimensions specified in the field settings.
+    * If thumbnail width and height are BOTH not specified then no thumbnail is generated, and
+    * additionally an attempted delete of the existing thumbnail takes place.
+    */
+    function update_thumbnail($recordid) {
+        global $CFG;
+        require_once($CFG->libdir . '/gdlib.php');
+        $content = get_record('data_content','fieldid', $this->field->id, 'recordid', $recordid);
+
+        $datalocation = $CFG->dataroot .'/'.$this->data->course.'/'.$CFG->moddata.'/data/'.$this->data->id.'/'.$this->field->id.'/'.$recordid;
+        $originalfile = $datalocation.'/'.$content->content;
+        if (!file_exists($datalocation.'/thumb')) {
+             mkdir($datalocation.'/thumb', 0777);
+        }
+        $thumbnaillocation = $datalocation.'/thumb/'.$content->content;
+        $imageinfo = GetImageSize($originalfile);
+        $image->width  = $imageinfo[0];
+        $image->height = $imageinfo[1];
+        $image->type   = $imageinfo[2];
+
+        switch ($image->type) {
+            case 1: 
+                if (function_exists('ImageCreateFromGIF')) {
+                    $im = ImageCreateFromGIF($originalfile); 
+                } else {
+                    return;
+                }
+                break;
+            case 2: 
+                if (function_exists('ImageCreateFromJPEG')) {
+                    $im = ImageCreateFromJPEG($originalfile); 
+                } else {
+                    return;
+                }
+                break;
+            case 3:
+                if (function_exists('ImageCreateFromPNG')) {
+                    $im = ImageCreateFromPNG($originalfile); 
+                } else {
+                    return;
+                }
+                break;
+        }
+        
+        $thumbwidth  = $this->field->param4;
+        $thumbheight = $this->field->param5;
+        
+        if ($thumbwidth || $thumbheight) { // Only if either width OR height specified do we want a thumbnail
+            
+            $wcrop = $image->width;
+            $hcrop = $image->height;
+            
+            if ($thumbwidth && !$thumbheight) {
+                $thumbheight = $image->height * $thumbwidth / $image->width;
+            } else if($thumbheight && !$thumbwidth) {
+                $thumbheight = $image->width * $thumbheight / $image->height;
+            } else { // BOTH are set - may need to crop if aspect ratio differs
+                $hratio = $image->height / $thumbheight;
+                $wratio = $image->width  / $thumbwidth;
+                if ($wratio > $hratio) { // Crop the width
+                    $wcrop = intval($thumbwidth * $hratio);
+                } elseif($hratio > $wratio) { // Crop the height
+                    $hcrop = intval($thumbheight * $wratio);
+                }
+            }
+            
+            // At this point both $thumbwidth and $thumbheight are set, and $wcrop and $hcrop
+            if (function_exists('ImageCreateTrueColor') and $CFG->gdversion >= 2) {
+                $im1 = ImageCreateTrueColor($thumbwidth,$thumbheight);
+            } else {
+                $im1 = ImageCreate($thumbwidth,$thumbheight);
+            }
+            $cx = $image->width  / 2;
+            $cy = $image->height / 2;
+    
+            // These "half" measurements use the "crop" values rather than the actual dimensions
+            $halfwidth  = floor($wcrop * 0.5);
+            $halfheight = floor($hcrop * 0.5);
+            
+            ImageCopyBicubic($im1, $im, 0, 0, $cx-$halfwidth, $cy-$halfheight, $thumbwidth, $thumbheight, $halfwidth*2, $halfheight*2);
+    
+            if (function_exists('ImageJpeg')) {
+                @touch($thumbnaillocation);  // Helps in Safe mode
+                if (ImageJpeg($im1, $thumbnaillocation, 90)) {
+                    @chmod($thumbnaillocation, 0666);
+                }
+            }
+            
+        } else { // Try and remove the thumbnail - we don't want thumbnailing active
+            @unlink($thumbnaillocation);
+        }
+    }
 }
 
 ?>
