@@ -116,23 +116,20 @@ class data_field_picture extends data_field_file {
     function update_field() {
 
         // Get the old field data so that we can check whether the thumbnail dimensions have changed
-        $oldfield = clone($this->field);
+        $oldfield = get_record('data_fields', 'id', $this->field->id);
 
-        if (!parent::update_field()) {
+        if (!update_record('data_fields', $this->field)) {
+            notify('updating of new field failed!');
             return false;
         }
 
         // Have the thumbnail dimensions changed?
         if ($oldfield && ($oldfield->param4 != $this->field->param4 || $oldfield->param5 != $this->field->param5)) {
 
-            //print_simple_box(get_string('pleasewait', 'data');
-            //echo "\n\n"; // To make sure that ob_flush() has the desired effect
-            //ob_flush();
-
             // Check through all existing records and update the thumbnail
-            if ($recordset = get_recordset('data_content', 'fieldid', $this->field->id)) { 
-                while ($row = $recordset->FetchNextObject()) {
-                    $this->update_thumbnail($row->RECORDID);
+            if ($contents = get_records('data_content', 'fieldid', $this->field->id)) { 
+                foreach ($contents as $content) {
+                    $this->update_thumbnail($content);
                 }
             }
         }
@@ -141,7 +138,10 @@ class data_field_picture extends data_field_file {
 
     function update_content($recordid, $value, $name) {
         parent::update_content($recordid, $value, $name);
-        $this->update_thumbnail($recordid); // Regenerate the thumbnail
+
+        $content = get_record('data_content','fieldid', $this->field->id, 'recordid', $recordid);
+
+        $this->update_thumbnail($content); // Regenerate the thumbnail
     }
 
     /**
@@ -149,13 +149,17 @@ class data_field_picture extends data_field_file {
     * If thumbnail width and height are BOTH not specified then no thumbnail is generated, and
     * additionally an attempted delete of the existing thumbnail takes place.
     */
-    function update_thumbnail($recordid) {
+    function update_thumbnail($content) {
         global $CFG;
-        require_once($CFG->libdir . '/gdlib.php');
-        $content = get_record('data_content','fieldid', $this->field->id, 'recordid', $recordid);
 
-        $datalocation = $CFG->dataroot .'/'.$this->data->course.'/'.$CFG->moddata.'/data/'.$this->data->id.'/'.$this->field->id.'/'.$recordid;
+        require_once($CFG->libdir . '/gdlib.php');
+
+        $datalocation = $CFG->dataroot .'/'.$this->data->course.'/'.$CFG->moddata.'/data/'.
+                        $this->data->id.'/'.$this->field->id.'/'.$content->recordid;
         $originalfile = $datalocation.'/'.$content->content;
+        if (!file_exists($originalfile)) {
+            return;
+        }
         if (!file_exists($datalocation.'/thumb')) {
              mkdir($datalocation.'/thumb', 0777);
         }
@@ -164,6 +168,10 @@ class data_field_picture extends data_field_file {
         $image->width  = $imageinfo[0];
         $image->height = $imageinfo[1];
         $image->type   = $imageinfo[2];
+
+        if (!$image->width || !$image->height) {  // Should not happen
+            return;
+        }
 
         switch ($image->type) {
             case 1: 
@@ -188,6 +196,7 @@ class data_field_picture extends data_field_file {
                 }
                 break;
         }
+
         
         $thumbwidth  = $this->field->param4;
         $thumbheight = $this->field->param5;
@@ -224,7 +233,8 @@ class data_field_picture extends data_field_file {
             $halfwidth  = floor($wcrop * 0.5);
             $halfheight = floor($hcrop * 0.5);
             
-            ImageCopyBicubic($im1, $im, 0, 0, $cx-$halfwidth, $cy-$halfheight, $thumbwidth, $thumbheight, $halfwidth*2, $halfheight*2);
+            ImageCopyBicubic($im1, $im, 0, 0, $cx-$halfwidth, $cy-$halfheight, 
+                             $thumbwidth, $thumbheight, $halfwidth*2, $halfheight*2);
     
             if (function_exists('ImageJpeg')) {
                 @touch($thumbnaillocation);  // Helps in Safe mode
