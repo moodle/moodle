@@ -625,7 +625,9 @@ function get_record_select($table, $select='', $fields='*') {
  * mightbe "time ASC" or "time DESC".
  * 
  * If $fields is specified, only those fields are returned.
- * Use this wherever possible to reduce memory requirements.
+ *
+ * This function is internal to datalib, and should NEVER should be called directly 
+ * from general Moodle scripts.  Use get_record, get_records etc.
  * 
  * If you only want some of the records, specify $limitfrom and $limitnum.
  * The query will skip the first $limitfrom records (according to the sort
@@ -724,9 +726,9 @@ function get_recordset_list($table, $field='', $values='', $sort='', $fields='*'
 }
 
 /**
- * Get a number of records as an ADODB RecordSet.
- *
- * $sql must be a complete SQL query.
+ * Get a number of records as an ADODB RecordSet.  $sql must be a complete SQL query.
+ * This function is internal to datalib, and should NEVER should be called directly 
+ * from general Moodle scripts.  Use get_record, get_records etc.
  *  
  * The return type is as for @see function get_recordset. 
  *
@@ -779,11 +781,6 @@ function recordset_to_array($rs) {
 /**
  * Get a number of records as an array of objects.
  *
- * Convenience call -- use only for small datasets. 
- * Consider using @see function get_recordset instead.
- *
- * Arguments as for @see function get_recordset.
- * 
  * If the query succeeds and returns at least one record, the
  * return value is an array of objects, one object for each
  * record found. The array key is the value from the first 
@@ -807,10 +804,6 @@ function get_records($table, $field='', $value='', $sort='', $fields='*', $limit
 /**
  * Get a number of records as an array of objects.
  *
- * Convenience call -- use only for small datasets. 
- * Consider using @see function get_recordset_select instead.
- *
- * Arguments as for @see function get_recordset_select.
  * Return value as for @see function get_records.
  *
  * @param string $table the table to query.
@@ -829,10 +822,6 @@ function get_records_select($table, $select='', $sort='', $fields='*', $limitfro
 /**
  * Get a number of records as an array of objects.
  *
- * Convenience call -- use only for small datasets. 
- * Consider using @see function get_recordset_list instead.
- *
- * Arguments as for @see function get_recordset_list.
  * Return value as for @see function get_records.
  *
  * @param string $table The database table to be checked against.
@@ -850,10 +839,6 @@ function get_records_list($table, $field='', $values='', $sort='', $fields='*', 
 /**
  * Get a number of records as an array of objects.
  *
- * Convenience call -- use only for small datasets. 
- * Consider using @see function get_recordset_sql instead.
- *
- * Arguments as for @see function get_recordset_sql.
  * Return value as for @see function get_records.
  * 
  * @param string $sql the SQL select query to execute.
