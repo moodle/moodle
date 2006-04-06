@@ -92,8 +92,8 @@ function question_category_form($course, $current, $recurse=1, $showhidden=false
 * @param int $perpage     Number of questions to show per page
 * @param boolean $showhidden   True if also hidden questions should be displayed
 */
-function question_list($course, $categoryid, $quizid,
- $recurse=1, $page, $perpage, $showhidden=false, $sortorder='qtype, name ASC') {
+function question_list($course, $categoryid, $quizid=0,
+ $recurse=1, $page=0, $perpage=100, $showhidden=false, $sortorder='qtype, name ASC') {
     global $QTYPE_MENU, $USER, $CFG;
 
     $strcategory = get_string("category", "quiz");
