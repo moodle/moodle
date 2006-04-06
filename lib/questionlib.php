@@ -573,7 +573,7 @@ function get_question_states(&$questions, $cmoptions, $attempt) {
 
     // The question field must be listed first so that it is used as the
     // array index in the array returned by get_records_sql
-    $statefields = 'n.questionid as question, s.*, n.sumpenalty';
+    $statefields = 'n.questionid as question, s.*, n.sumpenalty, n.comment';
     // Load the newest states for the questions
     $sql = "SELECT $statefields".
            "  FROM {$CFG->prefix}question_states s,".
@@ -715,6 +715,7 @@ function save_question_session(&$question, &$state) {
              $state->attempt, 'questionid', $question->id)) {
                 $newest->newgraded = $state->id;
                 $newest->sumpenalty = $state->sumpenalty;
+                $newest->comment = $state->comment;
                 update_record('question_sessions', $newest);
             }
         }

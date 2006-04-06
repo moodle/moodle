@@ -176,19 +176,15 @@
          ->get_correct_responses($questions[$id], $curstate);
     }
 
-    $strpreview = get_string('previewquestion', 'quiz');
+    $strpreview = get_string('preview', 'quiz').' '.s($questions[$id]->name);
     print_header($strpreview);
     print_heading($strpreview);
 
-    echo '<p align="center">' . get_string('modulename', 'quiz') . ': ';
-    if (empty($quizid)) {
-        echo '[' . get_string('default', 'quiz') . ']';
-    } else {
+    if (!empty($quizid)) {
+        echo '<p align="center">'.get_string('modulename', 'quiz') . ': ';
         p($quiz->name);
+        echo "</p>\n";
     }
-    echo '<br />'.get_string('question', 'quiz').': ';
-    p($questions[$id]->name);
-    echo "</p>\n";
     $number = 1;
     echo "<form method=\"post\" action=\"preview.php\" autocomplete=\"off\">\n";
     echo "<input type=\"hidden\" name=\"id\" value=\"$id\" />\n";

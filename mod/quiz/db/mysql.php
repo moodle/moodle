@@ -1003,6 +1003,10 @@ function quiz_upgrade($oldversion) {
         set_config('qtype_truefalse_version', 2006032100);
     }
 
+    if ($oldversion < 2006040600) {
+        table_column('question_sessions', '', 'comment', 'text', '', '', '', 'not null', 'sumpenalty');
+    }
+
     return true;
 }
 
