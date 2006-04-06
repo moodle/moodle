@@ -237,7 +237,6 @@ class question_match_qtype extends default_questiontype {
         $image = get_question_image($question, $cmoptions->course);
 
         ///// Print the input controls //////
-        echo '<table border="0" cellpadding="10" align="right">';
         foreach ($subquestions as $key => $subquestion) {
 
             /// Subquestion text:

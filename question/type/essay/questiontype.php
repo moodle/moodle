@@ -119,7 +119,7 @@ class question_essay_qtype extends default_questiontype {
 
         $inputname = $nameprefix;
         
-        echo "<p>$stranswer: ".
+        echo "<p>$stranswer: </p>".
             '<div style="padding-left: 30px;">';   
         if (empty($options->readonly)) {    
             // the student needs to type in their answer so print out a text editor
@@ -128,9 +128,9 @@ class question_essay_qtype extends default_questiontype {
         } else {
             // it is read only, so just format the students answer and output it
             echo format_text($value);
-            echo '<input type="hidden" name="'.$inputname.'" value="'.htmlSpecialChars($value).'">'; // need hidden one for grading
+            echo '<input type="hidden" name="'.$inputname.'" value="'.htmlSpecialChars($value).'" />'; // need hidden one for grading
         }    
-        echo '</div></p>';
+        echo '</div>';
                     
         if (isset($state->responses['response'])) {
             $value = $state->responses['response'];
@@ -162,14 +162,14 @@ class question_essay_qtype extends default_questiontype {
             choose_from_menu($gradeoptions, $nameprefix."fraction", $state->responses['fraction'],"");
         } else if (!empty($options->readonly)) {
             //read only so format the comment and print it out
-            echo "<p>$strcomment: ".
+            echo "<p>$strcomment: </p>".
                 '<div style="padding-left: 30px;">';
             if (empty($value)) {  // no comment yet
                 echo format_text(get_string('nocommentsyet', 'quiz'));
             } else {
                 echo format_text($value, '', $formatoptions, $cmoptions->course);    
             }
-            echo '</div></p>';
+            echo '</div>';
         }
 
         // feedback

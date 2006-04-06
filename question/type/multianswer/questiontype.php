@@ -194,6 +194,7 @@ class embedded_cloze_qtype extends default_questiontype {
     function print_question_formulation_and_controls(&$question, &$state, $cmoptions, $options) {
         global $QTYPES;
         $readonly = empty($options->readonly) ? '' : 'readonly="readonly"';
+        $disabled = empty($options->readonly) ? '' : 'disabled="disabled"';
         $formatoptions->noclean = true;
         $formatoptions->para = false;
         $nameprefix = $question->name_prefix;
@@ -318,7 +319,7 @@ class embedded_cloze_qtype extends default_questiontype {
                                 ? ' selected="selected" ' : '';
                         $outputoptions .= "<option value=\"$mcanswer->id\" $selected>$mcanswer->answer</option>";
                     }
-                   echo "<select $popup $readonly $style name=\"$inputname\">";
+                   echo "<select $popup $disabled $style name=\"$inputname\">";
                    echo $outputoptions;
                    echo '</select>';
                    break;
