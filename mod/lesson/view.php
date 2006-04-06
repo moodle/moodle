@@ -7,10 +7,11 @@
     require_once('locallib.php');
     require_once('lib.php');
 
-    $id = required_param('id', PARAM_INT);    // Course Module ID
-    $pageid = optional_param('pageid', NULL, PARAM_INT);    // Lesson Page ID
-    $display = optional_param('display', 0, PARAM_INT);  // for teacherview action
-    $mode = optional_param('mode', '', PARAM_ALPHA); // for eacherview action todo use user pref
+    $id      = required_param('id', PARAM_INT);             // Course Module ID
+    $pageid  = optional_param('pageid', NULL, PARAM_INT);   // Lesson Page ID
+    $action  = optional_param('action', '', PARAM_ALPHA);
+    $display = optional_param('display', 0, PARAM_INT);     // for teacherview action
+    $mode    = optional_param('mode', '', PARAM_ALPHA);     // for eacherview action todo use user pref
     
 
     if (! $cm = get_record('course_modules', 'id', $id)) {
