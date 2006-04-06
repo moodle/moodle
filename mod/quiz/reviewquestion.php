@@ -70,7 +70,7 @@
             error(get_string("noreview", "quiz"));
         }
         if ((time() - $attempt->timefinish) > 120) { // always allow review right after attempt
-            if (!$quiz->timeclose or time() < $quiz->timeclose and !($quiz->review & QUIZ_REVIEW_OPEN)) {
+            if ((!$quiz->timeclose or time() < $quiz->timeclose) and !($quiz->review & QUIZ_REVIEW_OPEN)) {
                 error(get_string("noreviewuntil", "quiz", userdate($quiz->timeclose)));
             }
             if ($quiz->timeclose and time() >= $quiz->timeclose and !($quiz->review & QUIZ_REVIEW_CLOSED)) {
@@ -107,7 +107,7 @@
 
     $options = quiz_get_reviewoptions($quiz, $attempt, $isteacher);
     $options->validation = ($state->event == QUESTION_EVENTVALIDATE);
-    $options->history = 'all';
+    $options->history = ($isteacher and !$attempt->preview) ? 'all' : 'graded';
     // Provide the links to this question review script
     $options->questionreviewlink = '/mod/quiz/reviewquestion.php';
 

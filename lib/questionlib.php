@@ -912,7 +912,7 @@ function question_process_responses(&$question, &$state, $action, $cmoptions, &$
     }
 
     // make sure these are gone!
-    unset($action->responses['mark'], $action->responses['validate']);
+    unset($action->responses['submit'], $action->responses['validate']);
 
     // Check the question session is still open
     if (question_state_is_closed($state)) {

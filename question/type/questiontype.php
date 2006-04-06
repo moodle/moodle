@@ -489,10 +489,10 @@ class default_questiontype {
         if(isset($options->history) and $options->history) {
             if ($options->history == 'all') {
                 // show all states
-                $states = get_records_select('question_states', "attempt = '$state->attempt' AND question = '$question->id' AND event > '0'", 'seq_number DESC');
+                $states = get_records_select('question_states', "attempt = '$state->attempt' AND question = '$question->id' AND event > '0'", 'seq_number ASC');
             } else {
                 // show only graded states
-                $states = get_records_select('question_states', "attempt = '$state->attempt' AND question = '$question->id' AND event IN (".QUESTION_EVENTGRADE.','.QUESTION_EVENTCLOSEANDGRADE.")", 'seq_number DESC');
+                $states = get_records_select('question_states', "attempt = '$state->attempt' AND question = '$question->id' AND event IN (".QUESTION_EVENTGRADE.','.QUESTION_EVENTCLOSEANDGRADE.")", 'seq_number ASC');
             }
             if (count($states) > 1) {
                 $strreviewquestion = get_string('reviewresponse', 'quiz');
@@ -702,7 +702,7 @@ class default_questiontype {
     */
     function response_summary($question, $state, $length=80) {
         // This should almost certainly be overridden
-        return substr($state->answer, 0, $length);
+        return substr(implode(',', $this->get_actual_response($question, $state)), 0, $length);
     }
 
     /**

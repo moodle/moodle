@@ -328,7 +328,7 @@ class question_match_qtype extends default_questiontype {
        foreach ($subquestions as $key => $sub) {
            foreach ($responses as $ind => $code) {
                if (isset($sub->options->answers[$code])) {
-                   $results[$ind] =  $subquestions[$ind]->questiontext . " : " . $sub->options->answers[$code]->answer;
+                   $results[$ind] =  $subquestions[$ind]->questiontext . ":" . $sub->options->answers[$code]->answer;
                }
            }
        }
@@ -337,7 +337,7 @@ class question_match_qtype extends default_questiontype {
 
     function response_summary($question, $state, $length=80) {
         // This should almost certainly be overridden
-        return substr(implode(',', $this->get_actual_response($question, $state)), 0, $length);
+        return substr(implode(', ', $this->get_actual_response($question, $state)), 0, $length);
     }
     
 /// BACKUP FUNCTIONS ////////////////////////////

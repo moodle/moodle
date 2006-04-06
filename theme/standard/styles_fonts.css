@@ -578,6 +578,9 @@ body#grade-index .grades .header {
 .que .grade {
 	font-size: 0.8em;
 }
+.que .history {
+    font-size:75%;
+}
 
 /***
  *** Tabs

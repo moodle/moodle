@@ -204,6 +204,7 @@ $string['gradingdetailsadjustment'] = 'With previous penalties this gives <stron
 $string['gradingdetailspenalty'] = 'This submission attracted a penalty of $a. ';
 $string['gradingdetailszeropenalty'] = 'You were not penalized for this submission. ';
 $string['guestsno'] = 'Sorry, guests cannot see or attempt quizzes';
+$string['history'] = 'History of Responses: ';
 $string['hotpot'] = 'Hot Potatoes format';
 $string['illegalformulasyntax'] = 'Illegal formula syntax starting with \'$a\'';
 $string['imagedisplay'] = 'Image to display';
