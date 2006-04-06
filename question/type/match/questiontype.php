@@ -322,18 +322,18 @@ class question_match_qtype extends default_questiontype {
 
     // ULPGC ecastro
     function get_actual_response($question, $state) {
-        unset($results);
-        if (isset($state->responses)) {
-            foreach($state->responses as $left=>$right){
-                $lpair = $question->options->subquestions[$left]->questiontext;
-                $rpair = $right ? $question->options->subquestions[$right]->answertext : '';
-                $results[$left] = $lpair." : ".$rpair;
-            }
-            return $results;
-        } else {
-            return null;
-        }
-    }
+       $subquestions = &$state->options->subquestions;
+       $responses    = &$state->responses;
+       $results=array();
+       foreach ($subquestions as $key => $sub) {
+           foreach ($responses as $ind => $code) {
+               if (isset($sub->options->answers[$code])) {
+                   $results[$ind] =  $subquestions[$ind]->questiontext . " : " . $sub->options->answers[$code]->answer;
+               }
+           }
+       }
+       return $results;
+   }
 
     function response_summary($question, $state, $length=80) {
         // This should almost certainly be overridden
