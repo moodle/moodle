@@ -3,7 +3,7 @@
     require("../../config.php");
     require_once("$CFG->dirroot/enrol/paypal/enrol.php");
 
-    require_variable($id);
+    $id = required_param('id', PARAM_INT);
 
     if (!$course = get_record("course", "id", $id)) {
         redirect($CFG->wwwroot);

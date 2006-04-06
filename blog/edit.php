@@ -107,7 +107,7 @@ if (($post = data_submitted( get_referer() )) && confirm_sesskey()) {
         } else if ($post->act == 'update') {
             do_update($post, $PAGE->bloginfo);
         } else if ($post->act == 'del') {
-            require_variable($postid);
+            $postid = required_param('postid', PARAM_INT);
             do_delete($PAGE->bloginfo, $postid);
         }
     }
