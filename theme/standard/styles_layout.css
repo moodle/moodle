@@ -289,8 +289,17 @@ form.popupform {
   border-width:1px;
   border-style:solid;
 }
-div.navbar {
+
+.navbar {
   width:auto;
+}
+
+.navbar .navbutton form {
+  float: left;
+}
+
+.navbar .navbutton {
+  margin-top: 3px;
 }
 
 .navbar .breadcrumb {
