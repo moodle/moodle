@@ -224,7 +224,7 @@ $cdisplay = array();
                                 echo ($cd->maxanswers - $cd->countanswers);
                                 echo " ".get_string('spaceleft', 'choice');
                             } else {
-                                echo ($cd->maxans - $cd->countanswers);
+                                echo ($cd->maxanswers - $cd->countanswers);
                                 echo " ".get_string('spacesleft', 'choice');
                             }
                             echo "</td>";
@@ -350,12 +350,14 @@ function choice_show_results($choice, $course, $cm, $forcepublish='') {
         foreach ($choice->option as $optionid => $text) {
             $useranswer[$optionid] = array();
         }
-        foreach ($users as $user) {
-            if (!empty($user->id) and !empty($answers[$user->id])) {
-                $answer = $answers[$user->id];
-                $useranswer[(int)$answer->optionid][] = $user;
-            } else {
-                $useranswer[0][] = $user;
+        if (!empty($users)) {
+            foreach ($users as $user) {
+                if (!empty($user->id) and !empty($answers[$user->id])) {
+                    $answer = $answers[$user->id];
+                    $useranswer[(int)$answer->optionid][] = $user;
+                } else {
+                    $useranswer[0][] = $user;
+                }
             }
         }
         foreach ($choice->option as $optionid => $text) {
@@ -473,7 +475,7 @@ function choice_show_results($choice, $course, $cm, $forcepublish='') {
             
             
             echo "</tr></table>";
-            if (isteacher($course->id, $user->id)) {
+            if (isteacher($course->id, $USER->id)) {
 			    echo "</form></div>";
 			}
             break;
