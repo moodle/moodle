@@ -1406,13 +1406,6 @@ function require_login($courseid=0, $autologinguest=true, $cm=null) {
             }
             return;
         }
-        if (! $course = get_record('course', 'id', $courseid)) {
-            error('That course doesn\'t exist');
-        }
-        if (!(isteacher($courseid) || !empty($USER->admin)) && (!$course->visible || !course_parent_visible($course))) {
-            print_header();
-            notice(get_string('coursehidden'), $CFG->wwwroot .'/');
-        }
         if (!empty($USER->student[$courseid]) or !empty($USER->teacher[$courseid]) or !empty($USER->admin)) {
             if (isset($USER->realuser)) {   // Make sure the REAL person can also access this course
                 if (!isteacher($courseid, $USER->realuser)) {
@@ -1424,6 +1417,13 @@ function require_login($courseid=0, $autologinguest=true, $cm=null) {
                 redirect($CFG->wwwroot.'/course/view.php?id='.$cm->course, get_string('activityiscurrentlyhidden'));
             }
             return;   // user is a member of this course.
+            if (! $course = get_record('course', 'id', $courseid)) { 
+                error('That course doesn\'t exist'); 
+            } 
+            if (!$course->visible) { 
+                print_header();
+                notice(get_string('coursehidden'), $CFG->wwwroot .'/');
+            }
         }
         if ($USER->username == 'guest') {
             switch ($course->guest) {
