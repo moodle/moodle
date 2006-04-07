@@ -2177,9 +2177,12 @@ function style_sheet_setup($lastmodified=0, $lifetime=300, $themename='', $force
 
     global $CFG, $THEME;
 
+    // Fix for IE6 caching - we don't want the filemtime('styles.php'), instead use now.
+    $lastmodified = time();
+
     header('Last-Modified: ' . gmdate("D, d M Y H:i:s", $lastmodified) . ' GMT');
     header('Expires: ' . gmdate("D, d M Y H:i:s", time() + $lifetime) . ' GMT');
-    header('Cache-control: max_age = '. $lifetime);
+    header('Cache-Control: max-age='. $lifetime);
     header('Pragma: ');
     header('Content-type: text/css');  // Correct MIME type
 
