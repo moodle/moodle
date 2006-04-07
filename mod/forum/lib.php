@@ -2742,7 +2742,7 @@ function forum_user_can_post($forum, $user=NULL) {
 }
 
 //checks to see if a user can view a particular post
-function forum_user_can_view_post($post, $course, $user=NULL){
+function forum_user_can_view_post($post, $course, $cm, $forum, $discussion, $user=NULL){
 
     global $CFG, $USER;
 
@@ -2750,43 +2750,29 @@ function forum_user_can_view_post($post, $course, $user=NULL){
         $user = $USER;
     }
 
-    $SQL = 'SELECT f.id, f.type, fd.course, fd.groupid FROM '.
-           $CFG->prefix.'forum_posts fp, '.
-           $CFG->prefix.'forum_discussions fd, '.
-           $CFG->prefix.'forum f
-           WHERE fp.id = '.$post.'
-           AND fp.discussion = fd.id
-           AND fd.forum = f.id';
-           
-    $forumcourse = get_record_sql($SQL);
-    if (isteacheredit($forumcourse->course)){
-        return true;    //if is editting teacher, you can see all post for this course
+    if (isteacheredit($course->id)) {
+        return true;   
     }
 
-    if ($forumcourse->type == 'teacher'){    //teacher type forum
-        return isteacher($forumcourse->course);
+    if ($forum->type == 'teacher'){    //teacher type forum
+        return isteacher($course->id);
     }
 
-    //first of all, the user must be in this course
-    if (!(isstudent($forumcourse->course) or 
-          isteacher($forumcourse->course) or 
+/// Make sure the user is allowed in the course
+    if (!(isstudent($course->id) or 
+          isteacher($course->id) or 
           ($course->id == SITEID && !$CFG->forcelogin) or 
           (isguest() && $course->guest) )){
         return false;
     }
 
-    if (! $cm = get_coursemodule_from_instance('forum', $forumcourse->id, $forumcourse->course)) {
-        return false;
+/// If it's a grouped discussion, make sure the user is a member
+    if ($discussion->groupid > 0) {
+        if ($cm->groupmode == SEPARATEGROUPS) {
+            return ismember($discussion->groupid);
+        }
     }
-
-    //if a group is specified, and the forum is in SPG mode
-    if (($forumcourse->groupid != -1) and ($cm->groupmode == SEPARATEGROUPS)){
-        //check membership
-        return ismember($forumcourse->groupid);
-    }
-    else {    //if visiblegorups or no groups,
-        return true;
-    }
+    return true;
 }
 
 function forum_user_can_see_discussion($forum,$discussion,$user=NULL) {
