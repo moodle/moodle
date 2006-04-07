@@ -1,0 +1,26 @@
+<?php
+/* This template determines the overall layout of a question. It is included by the 
+ * print_question() method.
+ */
+?>
+<table class="que comment">
+  <tr valign="top">
+    <td>
+      <b><?php print_string('comment', 'quiz'); ?>: </b>
+    </td>
+    <td>
+      <?php
+        print_textarea($usehtmleditor, 15, 60, 630, 300, 'comment', $state->comment);
+      ?>
+    </td>
+  </tr>
+  <tr valign="top">
+    <td>
+      <b><?php print_string('grade', 'quiz'); ?>: </b>
+    </td>
+    <td>
+      <input type="text" name="grade" size="2" value="<?php echo $grade; ?>" />/<?php echo $question->maxgrade; ?>
+    </td>
+  </tr>
+</table>
+<input type="submit" name="submit" value="<?php print_string('save', 'quiz'); ?>" />

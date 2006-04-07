@@ -473,6 +473,14 @@ class default_questiontype {
             }
             $grade .= $question->maxgrade;
         }
+        
+        $comment = $state->comment;
+        $commentlink = '';
+        if (isset($options->questioncommentlink)) {
+            $strcomment = get_string('commentorgrade', 'quiz');
+            $commentlink = '<div class="commentlink">'.link_to_popup_window ($options->questioncommentlink.'?attempt='.$state->attempt.'&amp;question='.$question->id,
+                             'commentquestion', $strcomment, 450, 650, $strcomment, 'none', true).'</div>';
+        }
 
         $history = $this->history($question, $state, $number, $cmoptions, $options);
 
@@ -503,11 +511,9 @@ class default_questiontype {
                     get_string('response', 'quiz'),
                     get_string('time'),
                     get_string('score', 'quiz'),
-                    get_string('penalty', 'quiz'),
+                    //get_string('penalty', 'quiz'),
                     get_string('grade', 'quiz'),
                 );
-                $table->align = array ('center', 'center', 'left', 'left', 'left', 'left', 'left');
-                $table->size = array ('', '', '', '', '', '', '');
                 $table->width = '100%';
                 foreach ($states as $st) {
                     $st->responses[''] = $st->answer;
@@ -530,7 +536,7 @@ class default_questiontype {
                         $b.$this->response_summary($question, $st).$be,
                         $b.userdate($st->timestamp, get_string('timestr', 'quiz')).$be,
                         $b.round($st->raw_grade, $cmoptions->decimalpoints).$be,
-                        $b.round($st->penalty, $cmoptions->decimalpoints).$be,
+                        //$b.round($st->penalty, $cmoptions->decimalpoints).$be,
                         $b.round($st->grade, $cmoptions->decimalpoints).$be
                     );
                 }

@@ -509,8 +509,11 @@ function quiz_get_renderoptions($reviewoptions, $state) {
 /**
 * Determine review options
 */
-function quiz_get_reviewoptions($cmoptions, $attempt, $isteacher=false) {
+function quiz_get_reviewoptions($quiz, $attempt, $isteacher=false) {
     $options->readonly = true;
+    // Provide the links to the question review and comment script
+    $options->questionreviewlink = '/mod/quiz/reviewquestion.php';
+
     if ($isteacher and !$attempt->preview) {
         // The teacher should be shown everything except during preview when the teachers
         // wants to see just what the students see
@@ -519,27 +522,32 @@ function quiz_get_reviewoptions($cmoptions, $attempt, $isteacher=false) {
         $options->feedback = true;
         $options->correct_responses = true;
         $options->solutions = false;
+        // Show a link to the comment box only for closed attempts
+        if ($attempt->timefinish) {
+            $options->questioncommentlink = '/mod/quiz/comment.php';
+        }
         return $options;
     }
     if ((time() - $attempt->timefinish) < 120) {
-        $options->responses = ($cmoptions->review & QUIZ_REVIEW_IMMEDIATELY & QUIZ_REVIEW_RESPONSES) ? 1 : 0;
-        $options->scores = ($cmoptions->review & QUIZ_REVIEW_IMMEDIATELY & QUIZ_REVIEW_SCORES) ? 1 : 0;
-        $options->feedback = ($cmoptions->review & QUIZ_REVIEW_IMMEDIATELY & QUIZ_REVIEW_FEEDBACK) ? 1 : 0;
-        $options->correct_responses = ($cmoptions->review & QUIZ_REVIEW_IMMEDIATELY & QUIZ_REVIEW_ANSWERS) ? 1 : 0;
-        $options->solutions = ($cmoptions->review & QUIZ_REVIEW_IMMEDIATELY & QUIZ_REVIEW_SOLUTIONS) ? 1 : 0;
-    } else if (!$cmoptions->timeclose or time() < $cmoptions->timeclose) {
-        $options->responses = ($cmoptions->review & QUIZ_REVIEW_OPEN & QUIZ_REVIEW_RESPONSES) ? 1 : 0;
-        $options->scores = ($cmoptions->review & QUIZ_REVIEW_OPEN & QUIZ_REVIEW_SCORES) ? 1 : 0;
-        $options->feedback = ($cmoptions->review & QUIZ_REVIEW_OPEN & QUIZ_REVIEW_FEEDBACK) ? 1 : 0;
-        $options->correct_responses = ($cmoptions->review & QUIZ_REVIEW_OPEN & QUIZ_REVIEW_ANSWERS) ? 1 : 0;
-        $options->solutions = ($cmoptions->review & QUIZ_REVIEW_OPEN & QUIZ_REVIEW_SOLUTIONS) ? 1 : 0;
+        $options->responses = ($quiz->review & QUIZ_REVIEW_IMMEDIATELY & QUIZ_REVIEW_RESPONSES) ? 1 : 0;
+        $options->scores = ($quiz->review & QUIZ_REVIEW_IMMEDIATELY & QUIZ_REVIEW_SCORES) ? 1 : 0;
+        $options->feedback = ($quiz->review & QUIZ_REVIEW_IMMEDIATELY & QUIZ_REVIEW_FEEDBACK) ? 1 : 0;
+        $options->correct_responses = ($quiz->review & QUIZ_REVIEW_IMMEDIATELY & QUIZ_REVIEW_ANSWERS) ? 1 : 0;
+        $options->solutions = ($quiz->review & QUIZ_REVIEW_IMMEDIATELY & QUIZ_REVIEW_SOLUTIONS) ? 1 : 0;
+    } else if (!$quiz->timeclose or time() < $quiz->timeclose) {
+        $options->responses = ($quiz->review & QUIZ_REVIEW_OPEN & QUIZ_REVIEW_RESPONSES) ? 1 : 0;
+        $options->scores = ($quiz->review & QUIZ_REVIEW_OPEN & QUIZ_REVIEW_SCORES) ? 1 : 0;
+        $options->feedback = ($quiz->review & QUIZ_REVIEW_OPEN & QUIZ_REVIEW_FEEDBACK) ? 1 : 0;
+        $options->correct_responses = ($quiz->review & QUIZ_REVIEW_OPEN & QUIZ_REVIEW_ANSWERS) ? 1 : 0;
+        $options->solutions = ($quiz->review & QUIZ_REVIEW_OPEN & QUIZ_REVIEW_SOLUTIONS) ? 1 : 0;
     } else {
-        $options->responses = ($cmoptions->review & QUIZ_REVIEW_CLOSED & QUIZ_REVIEW_RESPONSES) ? 1 : 0;
-        $options->scores = ($cmoptions->review & QUIZ_REVIEW_CLOSED & QUIZ_REVIEW_SCORES) ? 1 : 0;
-        $options->feedback = ($cmoptions->review & QUIZ_REVIEW_CLOSED & QUIZ_REVIEW_FEEDBACK) ? 1 : 0;
-        $options->correct_responses = ($cmoptions->review & QUIZ_REVIEW_CLOSED & QUIZ_REVIEW_ANSWERS) ? 1 : 0;
-        $options->solutions = ($cmoptions->review & QUIZ_REVIEW_CLOSED & QUIZ_REVIEW_SOLUTIONS) ? 1 : 0;
+        $options->responses = ($quiz->review & QUIZ_REVIEW_CLOSED & QUIZ_REVIEW_RESPONSES) ? 1 : 0;
+        $options->scores = ($quiz->review & QUIZ_REVIEW_CLOSED & QUIZ_REVIEW_SCORES) ? 1 : 0;
+        $options->feedback = ($quiz->review & QUIZ_REVIEW_CLOSED & QUIZ_REVIEW_FEEDBACK) ? 1 : 0;
+        $options->correct_responses = ($quiz->review & QUIZ_REVIEW_CLOSED & QUIZ_REVIEW_ANSWERS) ? 1 : 0;
+        $options->solutions = ($quiz->review & QUIZ_REVIEW_CLOSED & QUIZ_REVIEW_SOLUTIONS) ? 1 : 0;
     }
+
     return $options;
 }
 

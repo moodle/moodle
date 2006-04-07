@@ -113,26 +113,14 @@ class quiz_report extends quiz_default_report {
                 // with only one question there is only one entry in this array
                 $state = &$states[$question->id];
 
-                // this is the new response from the teacher
-                $state->responses = $response;
+                // the following will update the state and attempt
+                question_process_comment($question, $state, $attempt, $response['comment'], $response['grade']);
 
-                // Process the teacher responses
-                $QTYPES[$question->qtype]->process_teacher_responses($question, $state, $quiz);
-
-                // We need to indicate that the state has changed in order for it to be saved
-                $state->changed = 1;
-                // We want to update existing state (rather than creating new one) if it
-                // was itself created by a manual grading event
-                $state->update = ($state->event == QUESTION_EVENTMANUALGRADE) ? 1 : 0;
-                // Go ahead and save
-                save_question_session($question, $state);
-
-                if ($attempt->sumgrades != $sumgrades) {
-                    set_field('quiz_attempts', 'sumgrades', $sumgrades, 'id', $attempt->id);
+                // If the state has changed save it and update the quiz grade
+                if ($state->changed) {
+                    save_question_session($question, $state);
+                    quiz_save_best_grade($quiz);
                 }
-
-                // update user's grade
-                quiz_save_best_grade($quiz, $attempt->userid);
             }
             notify(get_string('changessaved', 'quiz'));
 

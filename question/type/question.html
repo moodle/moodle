@@ -8,8 +8,8 @@
     <span class="no"><?php echo $number; ?></span>
     <?php if ($editlink) { ?>
       <span class="edit"><?php echo $editlink; ?></span>
-    <?php } ?>
-    <?php if ($grade) { ?>
+    <?php }
+    if ($grade) { ?>
       <div class="grade">
         <?php echo get_string('marks', 'quiz').': '.$grade; ?>
       </div>
@@ -21,7 +21,16 @@
   <div class="grading">
     <?php $this->print_question_grading_details($question, $state, $cmoptions, $options); ?>
   </div>
-  <?php if ($history) { ?>
+  <?php if ($comment) { ?>
+	<div class="comment">
+	  <?php
+        echo get_string('comment', 'quiz').': ';
+        echo $comment;
+      ?>
+    </div>
+  <?php }
+  echo $commentlink;
+  if ($history) { ?>
 	<div class="history">
 	  <?php
         print_string('history', 'quiz');

@@ -235,8 +235,6 @@
         $options = quiz_get_reviewoptions($quiz, $attempt, $isteacher);
         $options->validation = QUESTION_EVENTVALIDATE === $states[$i]->event;
         $options->history = ($isteacher and !$attempt->preview) ? 'all' : 'graded';
-        // Provide the links to the question review script
-        $options->questionreviewlink = '/mod/quiz/reviewquestion.php';
         // Print the question
         if ($i > 0) {
             echo "<br />\n";

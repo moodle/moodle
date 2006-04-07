@@ -685,8 +685,7 @@ function save_question_session(&$question, &$state) {
     $state->answer = isset($state->responses['']) ? $state->responses[''] : '';
 
     // Save the state
-    if (isset($state->update)) { // this ->update field is only used by the 
-        // regrading function to force the old state record to be overwritten
+    if (isset($state->update)) { // this forces the old state record to be overwritten
         update_record('question_states', $state);
     } else {
         if (!$state->id = insert_record('question_states', $state)) {
@@ -694,30 +693,30 @@ function save_question_session(&$question, &$state) {
             unset($state->answer);
             return false;
         }
+    }
 
-        // this is the most recent state
-        if (!record_exists('question_sessions', 'attemptid',
-         $state->attempt, 'questionid', $question->id)) {
-            $new->attemptid = $state->attempt;
-            $new->questionid = $question->id;
-            $new->newest = $state->id;
-            $new->sumpenalty = $state->sumpenalty;
-            if (!insert_record('question_sessions', $new)) {
-                error('Could not insert entry in question_sessions');
-            }
-        } else {
-            set_field('question_sessions', 'newest', $state->id, 'attemptid',
-             $state->attempt, 'questionid', $question->id);
+    // create or update the session
+    if (!record_exists('question_sessions', 'attemptid',
+     $state->attempt, 'questionid', $question->id)) {
+        $new->attemptid = $state->attempt;
+        $new->questionid = $question->id;
+        $new->newest = $state->id;
+        $new->sumpenalty = $state->sumpenalty;
+        if (!insert_record('question_sessions', $new)) {
+            error('Could not insert entry in question_sessions');
         }
-        if (question_state_is_graded($state)) {
-            // this is also the most recent graded state
-            if ($newest = get_record('question_sessions', 'attemptid',
-             $state->attempt, 'questionid', $question->id)) {
-                $newest->newgraded = $state->id;
-                $newest->sumpenalty = $state->sumpenalty;
-                $newest->comment = $state->comment;
-                update_record('question_sessions', $newest);
-            }
+    } else {
+        set_field('question_sessions', 'newest', $state->id, 'attemptid',
+         $state->attempt, 'questionid', $question->id);
+    }
+    if (question_state_is_graded($state)) {
+        // this is also the most recent graded state
+        if ($newest = get_record('question_sessions', 'attemptid',
+         $state->attempt, 'questionid', $question->id)) {
+            $newest->newgraded = $state->id;
+            $newest->sumpenalty = $state->sumpenalty;
+            $newest->comment = $state->comment;
+            update_record('question_sessions', $newest);
         }
     }
 
@@ -752,7 +751,9 @@ function question_state_is_graded($state) {
 * @param object $state
 */
 function question_state_is_closed($state) {
-    return ($state->event == QUESTION_EVENTCLOSE or $state->event == QUESTION_EVENTCLOSEANDGRADE);
+    return ($state->event == QUESTION_EVENTCLOSE
+        or $state->event == QUESTION_EVENTCLOSEANDGRADE
+        or $state->event == QUESTION_EVENTMANUALGRADE);
 }
 
 
@@ -1166,6 +1167,59 @@ function get_question_image($question, $courseid) {
     }
     return $img;
 }
+
+function question_print_comment_box($question, $state, $attempt, $url) {
+    global $CFG;
+    if ($usehtmleditor = can_use_richtext_editor()) {
+        use_html_editor('comment');
+    }
+    $grade = round($state->last_graded->grade, 3);
+    echo '<form method="post" action="'.$url.'">';
+    include($CFG->dirroot.'/question/comment.html');
+    echo '<input type="hidden" name="attempt" value="'.$attempt->uniqueid.'" />';
+    echo '<input type="hidden" name="question" value="'.$question->id.'" />';
+    echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
+    echo '</form>';
+}
+
+function question_process_comment($question, &$state, &$attempt, $comment, $grade) {
+
+    // Update the comment and save it in the database
+    $state->comment = $comment;
+    if (!set_field('question_sessions', 'comment', $comment, 'attemptid', $attempt->uniqueid, 'questionid', $question->id)) {
+        error("Cannot save comment");
+    }
+
+    // If the teacher has changed the grade then update the attempt and the state
+    // The modified attempt is stored to the database, the state not yet but the
+    // $state->changed flag is set 
+    if (abs($state->last_graded->grade - $grade) > 0.002) {
+        // the teacher has changed the grade
+        $attempt->sumgrades = $attempt->sumgrades - $state->last_graded->grade + $grade;
+        $attempt->timemodified = time();
+        if (!update_record('quiz_attempts', $attempt)) {
+            error('Failed to save the current quiz attempt!');
+        }
+
+        $state->raw_grade = $grade;
+        $state->grade = $grade;
+        $state->penalty = 0;
+        $state->timestamp = time();
+        // We need to indicate that the state has changed in order for it to be saved
+        $state->changed = 1;
+        // We want to update existing state (rather than creating new one) if it
+        // was itself created by a manual grading event
+        $state->update = ($state->event == QUESTION_EVENTMANUALGRADE) ? 1 : 0;
+        $state->event = QUESTION_EVENTMANUALGRADE;
+
+        // Update the last graded state (don't simplify!)
+        unset($state->last_graded);
+        $state->last_graded = clone($state);
+        unset($state->last_graded->changed);
+    }
+
+}
+
 /**
 * Construct name prefixes for question form element names
 *

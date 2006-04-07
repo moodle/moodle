@@ -96,20 +96,25 @@
 /// Print heading
     print_heading(format_string($question->name));
 
-    $instance = get_record('quiz_question_instances', 'quiz', $quiz->id, 'question', $question->id);
-    $question->instance = $instance->id;
-    $question->maxgrade = $instance->grade;
-    $question->name_prefix = 'r';
-    $QTYPES[$question->qtype]->get_question_options($question);
+    $question->maxgrade = get_field('quiz_question_instances', 'grade', 'quiz', $quiz->id, 'question', $question->id);
+    // Some of the questions code is optimised to work with several questions
+    // at once so it wants the question to be in an array. 
+    $key = $question->id;
+    $questions[$key] = &$question;
+    // Add additional questiontype specific information to the question objects.
+    if (!get_question_options($questions)) {
+        error("Unable to load questiontype specific question information");
+    }
 
+    $session = get_record('question_sessions', 'attemptid', $attempt->uniqueid, 'questionid', $question->id);
+    $state->sumpenalty = $session->sumpenalty;
+    $state->comment = $session->comment;
     restore_question_state($question, $state);
     $state->last_graded = $state;
 
     $options = quiz_get_reviewoptions($quiz, $attempt, $isteacher);
     $options->validation = ($state->event == QUESTION_EVENTVALIDATE);
     $options->history = ($isteacher and !$attempt->preview) ? 'all' : 'graded';
-    // Provide the links to this question review script
-    $options->questionreviewlink = '/mod/quiz/reviewquestion.php';
 
 /// Print infobox
     $table->align  = array("right", "left");
