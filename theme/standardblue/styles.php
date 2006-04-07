@@ -13,6 +13,6 @@
     $themename = basename(dirname(__FILE__));           // Name of the folder we are in
     $forceconfig = optional_param('forceconfig', '', PARAM_FILE);   // Get config from this theme
 
-    style_sheet_setup(filemtime('config.php'), $lifetime, $themename, $forceconfig);
+    style_sheet_setup(time(), $lifetime, $themename, $forceconfig);
    
 ?>
