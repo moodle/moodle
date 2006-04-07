@@ -76,6 +76,10 @@ h6.main {
 * html .clearfix {height: 1%;}
 /* End hide from IE-mac */
 
+.mdl-align {
+  text-align: center;
+}
+
 .continuebutton {
   text-align: center;
 }
