@@ -144,7 +144,8 @@ function print_authorize_orders()
  *
  * @param int $orderno
  */
-function print_authorize_order_details($orderno) {
+function print_authorize_order_details($orderno)
+{
     global $CFG, $USER;
     global $strs, $authstrs;
 
@@ -471,6 +472,11 @@ function print_authorize_order_details($orderno) {
 function get_status_action($order)
 {
     global $CFG, $USER;
+    static $timediff30;
+
+    if (empty($timediff30)) {
+        $timediff30 = getsettletime(time()) - (30 * 3600 * 24);
+    }
 
     $ret = new stdClass();
     $ret->actions = array();
@@ -485,7 +491,6 @@ function get_status_action($order)
 
     switch ($order->status) {
     case AN_STATUS_AUTH:
-        $timediff30 = getsettletime(time()) - (30 * 3600 * 24);
         if (getsettletime($order->timecreated) < $timediff30) {
             $order->status = AN_STATUS_EXPIRE;
             update_record("enrol_authorize", $order);
