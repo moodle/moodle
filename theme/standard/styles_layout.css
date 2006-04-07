@@ -290,8 +290,12 @@ form.popupform {
   border-style:solid;
 }
 
-.navbar {
-  width:auto;
+div.navbar {
+  width: auto;
+}
+
+table.navbar {
+  width: 100%;
 }
 
 .navbar .navbutton form {
