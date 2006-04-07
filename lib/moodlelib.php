@@ -1417,14 +1417,17 @@ function require_login($courseid=0, $autologinguest=true, $cm=null) {
                 redirect($CFG->wwwroot.'/course/view.php?id='.$cm->course, get_string('activityiscurrentlyhidden'));
             }
             return;   // user is a member of this course.
-            if (! $course = get_record('course', 'id', $courseid)) { 
-                error('That course doesn\'t exist'); 
-            } 
-            if (!$course->visible) { 
-                print_header();
-                notice(get_string('coursehidden'), $CFG->wwwroot .'/');
-            }
         }
+        
+        if (! $course = get_record('course', 'id', $courseid)) { 
+            error('That course doesn\'t exist'); 
+        } 
+        
+        if (!$course->visible) { 
+            print_header();
+            notice(get_string('coursehidden'), $CFG->wwwroot .'/');
+        }
+        
         if ($USER->username == 'guest') {
             switch ($course->guest) {
                 case 0: // Guests not allowed
