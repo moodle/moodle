@@ -727,13 +727,13 @@ function data_delete_instance($id) {    //takes the dataid
  ************************************************************************/
 function data_user_outline($course, $user, $mod, $data) {
 
-    global $USER, $CFG;
-    
-    $sql = 'SELECT * from '.$CFG->prefix.'data_records WHERE dataid = "'.$data->id.'" AND userid = "'.$USER->id.'" ORDER BY timemodified DESC';
-    
-    if ($records = get_records_sql($sql)){
-        $result->info = count($records).' '.get_string('numrecords', 'data');
-        $lastrecord = array_pop($records);
+    global $CFG;
+
+    if ($countrecords = count_records('data_records', 'dataid', $data->id, 'userid', $user->id)) {
+        $result->info = get_string('numrecords', 'data', $countrecords);
+        $lastrecord   = get_record_sql('SELECT id,timemodified FROM '.$CFG->prefix.'data_records 
+                                         WHERE dataid = '.$data->id.' AND userid = '.$user->id.' 
+                                      ORDER BY timemodified DESC', true);
         $result->time = $lastrecord->timemodified;
         return $result;
     }
@@ -746,12 +746,8 @@ function data_user_outline($course, $user, $mod, $data) {
  ************************************************************************/
 function data_user_complete($course, $user, $mod, $data) {
 
-    global $USER, $CFG;
-
-    $sql = 'SELECT * from '.$CFG->prefix.'data_records WHERE dataid = "'.
-           $data->id.'" AND userid = "'.$USER->id.'" ORDER BY timemodified DESC';
-
-    if ($records = get_records_sql($sql)){
+    if ($records = get_records_select('data_records', 'dataid = '.$data->id.' AND userid = '.$user->id, 
+                                                      'timemodified DESC')) {
 
         data_print_template('singletemplate', $records, $data);
 
@@ -820,6 +816,13 @@ function data_print_template($template, $records, $data, $search='',$page=0, $re
 
     static $fields = NULL;
     static $isteacher;
+    static $dataid = NULL;
+
+    if (empty($dataid)) {
+        $dataid = $data->id;
+    } else if ($dataid != $data->id) {
+        $fields = NULL;
+    }
 
     if (empty($fields)) {
         $fieldrecords = get_records('data_fields','dataid', $data->id);
@@ -1110,13 +1113,13 @@ function data_print_comments($data, $record, $page=0) {
         }
     }
     
-    echo '<div class="newcomment" align="center"><form method="post" action="comment.php">';
+    echo '<div class="newcomment" align="center"><form method="post" action="'.$CFG->wwwroot.'/mod/data/comment.php">';
     echo '<input type="hidden" name="mode" value="add" />';
     echo '<input type="hidden" name="page" value="'.$page.'" />';
     echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
     echo '<input type="hidden" name="rid" value="'.$record->id.'" />';
 
-    echo '<textarea name="commentcontent"></textarea>';
+    echo '<textarea rows="8" cols="50" name="commentcontent"></textarea>';
     echo '<br /><input type="submit" value="'.get_string('addcomment','data').'" />';
     echo '</form></div>';
 }
