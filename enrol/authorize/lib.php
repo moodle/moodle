@@ -37,7 +37,7 @@ function print_authorize_orders()
                         AN_STATUS_EXPIRE => $authstrs->expired
     );
 
-    print_simple_box_start('center');
+    print_simple_box_start('center', '80%');
     echo "$strs->status: ";
     echo popup_form($baseurl.'&amp;course='.$courseid.'&amp;status=', $statusmenu, 'statusmenu', $status, '', '', '', true);
     if ($courses = get_courses('all', 'c.sortorder ASC', 'c.id,c.fullname,c.enrol')) {
