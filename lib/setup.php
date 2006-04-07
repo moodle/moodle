@@ -180,6 +180,29 @@ global $HTTPSPAGEREQUIRED;
     raise_memory_limit('64M');    // We should never NEED this much but just in case...
 
 
+/// Try to get unicodedb status from DB
+/// (this is the only one transaction executed before "set names")
+    $utftmp = get_config('', 'unicodedb');
+    if ($utftmp !== false) {  //Only if the record exists
+        $CFG->unicodedb = $utftmp->value;
+    }
+/// If $CFG->unicodedb is not set, calculate it because we need
+/// to know to "set names" properly.
+    if (!isset($CFG->unicodedb)) {
+        $CFG->unicodedb = setup_is_unicodedb();
+    }
+/// Set the client/server and connection to utf8 if necessary
+    if ($CFG->unicodedb) {
+        if ($db->databaseType == 'mysql') {
+            $db->Execute("SET NAMES 'utf8'");
+        } else if ($db->databaseType == 'postgres7') {
+            $db->Execute("SET NAMES 'utf8'");
+        }
+    }
+/// Now that "set names" has been executed it is safe to
+/// work with the DB, but never before this!
+
+
 /// Load up any configuration from the config table
     $CFG = get_config();
 
@@ -194,26 +217,6 @@ global $HTTPSPAGEREQUIRED;
         $CFG->debug = 7;
     }
     error_reporting($CFG->debug);
-
-
-/// If $CFG->unicodedb is not set, calculate it because we need
-/// "set names" (below) properly executed *before* performing any
-/// DB transaction
-    if ($dbconnected && !isset($CFG->unicodedb)) {
-        $CFG->unicodedb = setup_is_unicodedb();
-    }
-
-
-/// Set the client/server and connection to utf8 if necessary
-    if ($dbconnected && $CFG->unicodedb) {
-        if ($db->databaseType == 'mysql') {
-            $db->Execute("SET NAMES 'utf8'");
-        } else if ($db->databaseType == 'postgres7') {
-            $db->Execute("SET NAMES 'utf8'");
-        }
-    }
-/// Now that "set names" has been executed it is safe to
-/// work with the DB, but never before this!
 
 
 //// Defining the site
