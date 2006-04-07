@@ -515,7 +515,7 @@
 
     $strconfirmattempt = addslashes(get_string("confirmclose", "quiz"));
     $onclick = "return confirm('$strconfirmattempt')";
-    echo "<center>\n";
+    echo "<div class=\"submitbtns mdl-align\">\n";
 
     echo "<input type=\"submit\" name=\"saveattempt\" value=\"".get_string("savenosubmit", "quiz")."\" />\n";
     if ($quiz->optionflags & QUESTION_ADAPTIVE) {
@@ -524,7 +524,7 @@
     echo "<input type=\"submit\" name=\"finishattempt\" value=\"".get_string("finishattempt", "quiz")."\" onclick=\"$onclick\" />\n";
     echo '<input type="hidden" name="timeup" value="0" />';
 
-    echo "</center>";
+    echo "</div>";
 
     // Print the navigation panel if required
     if ($numpages > 1) {
