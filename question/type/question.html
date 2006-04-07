@@ -3,7 +3,7 @@
  * print_question() method.
  */
 ?>
-<table id="q<?php echo $question->id; ?>" class="que <?php echo $question->qtype; ?>"><tr><td>
+<div id="q<?php echo $question->id; ?>" class="que <?php echo $question->qtype; ?>">
   <div class="info">
     <span class="no"><?php echo $number; ?></span>
     <?php if ($editlink) { ?>
@@ -29,4 +29,4 @@
       ?>
 	</div>
   <?php } ?>
-</td></tr></table>
+</div>
