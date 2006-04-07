@@ -14,6 +14,6 @@
     $forceconfig = optional_param('forceconfig', '', PARAM_FILE);   // Get config from this theme
     $lang        = optional_param('lang', '', PARAM_FILE);          // Look for styles in this language
 
-    style_sheet_setup(filemtime('styles.php'), $lifetime, $themename, $forceconfig, $lang);
+    style_sheet_setup(filemtime('config.php'), $lifetime, $themename, $forceconfig, $lang);
    
 ?>
