@@ -69,7 +69,7 @@
 }
 .mod-lesson .leftmenu_links {
     font-size:.85em;
-    font-style: none;
+    font-style: normal;
 }
 .mod-lesson .leftmenu_links ul {
     list-style-type: none;
