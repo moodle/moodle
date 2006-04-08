@@ -186,5 +186,15 @@ body#mod-quiz-grading table#grading td
 * html .clearfix {height: 1%;}
 /* End hide from IE-mac */
 
+#mod-quiz-attempt #timer .generalbox {
+  width:150px
+}
+
+#mod-quiz-attempt #timer {
+  position:absolute;
+  /*top:100px; is set by js*/
+  left:10px
+}
+
 
 
