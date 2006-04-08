@@ -1,0 +1,27 @@
+<div class="qtext">
+  <?php echo $questiontext; ?>
+</div>
+
+<?php if ($image) { ?>
+  <img class="qimage" src="<?php echo $image; ?>" alt="" />
+<?php } ?>
+
+<div class="ablock clearfix">
+  <div class="prompt">
+    <?php echo $stranswer; ?>
+  </div>
+
+  <table class="answer">
+      <tr>
+          <td>
+              <?php echo $answer; ?>
+          </td>
+      </tr>
+      <tr>
+          <td class="c0 feedback">
+              <?php echo $feedback; ?>
+          </td>
+      </tr>
+  </table>
+  <?php $this->print_question_submit_buttons($question, $state, $cmoptions, $options); ?>
+</div>

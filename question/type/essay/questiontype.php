@@ -69,16 +69,6 @@ class question_essay_qtype extends default_questiontype {
     }
 
     /**
-    * Deletes states from the question-type specific tables
-    *
-    * @param string $stateslist  Comma separated list of state ids to be deleted
-    */
-    function delete_states($stateslist) {
-        delete_records_select("question_essay_states", "stateid IN ($stateslist)");
-        return true;
-    }
-
-    /**
     * Deletes a question from the question-type specific tables
     *
     * @param object $question  The question being deleted
@@ -89,233 +79,68 @@ class question_essay_qtype extends default_questiontype {
     }
 
     function print_question_formulation_and_controls(&$question, &$state, $cmoptions, $options) {
+        global $CFG;
 
-        $answers = &$question->options->answers;
-        //$correctanswers = $this->get_correct_responses($question, $state);  // no correct answers ;)
-        $readonly = empty($options->readonly) ? '' : 'disabled="disabled"';
-        $formatoptions->noclean = true;
-        $formatoptions->para = false;
-        $nameprefix = $question->name_prefix;
-        
-        /// Print question text and media
-       echo format_text($question->questiontext,
-                         $question->questiontextformat,
-                         $formatoptions, $cmoptions->course);
-                         
-        echo get_question_image($question, $cmoptions->course);
-
-        /// Print input controls
-        $stranswer = get_string("answer", "quiz");
-        $strcomment = get_string("comments", "quiz");
+        $answers       = &$question->options->answers;
+        $readonly      = empty($options->readonly) ? '' : 'disabled="disabled"';
         $usehtmleditor = can_use_html_editor();
         
-        // this prints out the student response box
-        if (isset($state->responses[''])) { 
-            // security problem. responses[''] is never cleaned before it is sent to the db (I think)
-            $value = clean_param(addslashes($state->responses['']), PARAM_CLEANHTML);
-        } else {
-            $value = "";
-        }
-
-        $inputname = $nameprefix;
+        $formatoptions          = new stdClass;
+        $formatoptions->noclean = true;
+        $formatoptions->para    = false;
         
-        echo "<p>$stranswer: </p>".
-            '<div style="padding-left: 30px;">';   
-        if (empty($options->readonly)) {    
-            // the student needs to type in their answer so print out a text editor
-            print_textarea($usehtmleditor, 18, 80, 630, 400, $inputname, $value);
-            use_html_editor($inputname);
-        } else {
-            // it is read only, so just format the students answer and output it
-            echo format_text($value, $question->questiontextformat,
-                         $formatoptions, $cmoptions->course);
-            echo '<input type="hidden" name="'.$inputname.'" value="'.htmlSpecialChars($value).'" />'; // need hidden one for grading
-        }    
-        echo '</div>';
-                    
-        if (isset($state->responses['response'])) {
-            $value = $state->responses['response'];
-        } else {
-            $value = "";
-        }
+        $inputname = $question->name_prefix;
+        $stranswer = get_string("answer", "quiz").': ';
+        
+        /// set question text and media
+        $questiontext = format_text($question->questiontext,
+                                   $question->questiontextformat,
+                                   $formatoptions, $cmoptions->course);
+                         
+        $image = get_question_image($question, $cmoptions->course);
 
-        $inputname = $nameprefix.'response';
-        if(!empty($options->regrade)) {  // special option set in regrade.php.  This means we want to grade the essay question
-            // print out a field for the teacher to add a comment
-            echo "<p>$strcomment: ".
-                '<div style="padding-left: 30px;">';
-            print_textarea($usehtmleditor, 18, 80, 630, 400, $inputname, $value);
-            use_html_editor($inputname);
-            echo '</div></p><br />';
-            
-            // dropdown for score... for the fraction
-            $grades = array(1,0.9,0.8,0.75,0.70,0.66666,0.60,0.50,0.40,0.33333,0.30,0.25,0.20,0.16666,0.142857,0.10,0.05,0);
-            foreach ($grades as $grade) {
-                $percentage = 100 * $grade;
-                $neggrade = -$grade;
-                $gradeoptions["$grade"] = "$percentage %";
-                $gradeoptionsfull["$grade"] = "$percentage %";
-                $gradeoptionsfull["$neggrade"] = -$percentage." %";
-            }
-            $gradeoptionsfull["0"] = $gradeoptions["0"] = get_string("none");
-            print_string("grade");
-            echo ":&nbsp;";
-            choose_from_menu($gradeoptions, $nameprefix."fraction", $state->responses['fraction'],"");
-        } else if (!empty($options->readonly)) {
-            //read only so format the comment and print it out
-            echo "<p>$strcomment: </p>".
-                '<div style="padding-left: 30px;">';
-            if (empty($value)) {  // no comment yet
-                echo format_text(get_string('nocommentsyet', 'quiz'));
-            } else {
-                echo format_text($value, '', $formatoptions, $cmoptions->course);    
-            }
-            echo '</div>';
-        }
-
-        // feedback
+        // feedback handling
+        $feedback = '';
         if ($options->feedback) {
             foreach ($answers as $answer) {
-                format_text("<p align=\"right\">$answer->feedback</p>", '', $formatoptions, $cmoptions->course);
+                $feedback = format_text($answer->feedback, '', $formatoptions, $cmoptions->course);
             }
         }
-        $this->print_question_submit_buttons($question, $state, $cmoptions, $options);
+        
+        // get response value
+        if (isset($state->responses[''])) { 
+            // security problem. responses[''] is never cleaned before it is sent to the db (I think)
+            $value = $state->responses[''];            
+        } else {
+            $value = "";
+        }
+
+        // answer
+        if (empty($options->readonly)) {    
+            // the student needs to type in their answer so print out a text editor
+            $answer = print_textarea($usehtmleditor, 18, 80, 630, 400, $inputname, $value, $cmoptions->course, true);
+        } else {
+            // it is read only, so just format the students answer and output it
+            $answer = format_text($value, $question->questiontextformat,
+                         $formatoptions, $cmoptions->course);
+        }
+        
+        include("$CFG->dirroot/question/type/essay/display.html");
+
+        if ($usehtmleditor) {
+            use_html_editor($inputname);
+        }
     }
 
     function grade_responses(&$question, &$state, $cmoptions) {
+        // All grading takes place in Manual Grading
+
+        clean_param($state->responses[''], PARAM_CLEANHTML);
+        
         $state->raw_grade = 0;
-        // if a fraction is submitted, then we use it, otherwise the raw grade is 0
-        if (isset($state->responses['fraction']) and $state->responses['fraction']) {
-            $state->raw_grade = $state->responses['fraction'];
-            $state->options->graded = 1;
-            // mark the state as graded
-            $state->event = ($state->event ==  QUESTION_EVENTCLOSE) ? QUESTION_EVENTCLOSEANDGRADE : QUESTION_EVENTGRADE;
-        } else {
-            $state->raw_grade = 0;
-        }
-
-        // Make sure we don't assign negative or too high marks
-        $state->raw_grade = min(max((float) $state->raw_grade,
-                            0.0), 1.0) * $question->maxgrade;
-        $state->penalty = $question->penalty * $question->maxgrade;  // should be no penalty for essays
+        $state->penalty = 0;
 
         return true;
-    }
-    
-    function create_session_and_responses(&$question, &$state, $cmoptions, $attempt) {
-        $state->options->graded = 0;  // our flag to indicated wheather an essay has been graded or not
-        $state->responses['fraction'] = 0;   // this fraction is used for grading.  The teacher sets it while grading
-        $state->responses['response'] = '';  // this is teacher response to the students essay
-        
-        return true;
-    }
-    
-    function restore_session_and_responses(&$question, &$state) {
-        if (!$options = get_record('question_essay_states', 'stateid', $state->id)) {
-            return false;
-        }
-        $state->options->graded = $options->graded;
-        $state->responses['fraction'] = $options->fraction;
-        $state->responses['response'] = $options->response;
-
-        return true;
-    }
-    
-    function save_session_and_responses(&$question, &$state) {
-        $options->stateid = $state->id;
-        
-        if (isset($state->options->graded)) {
-            $options->graded = $state->options->graded;
-        } else {
-            $options->graded = 0;
-        }
-        
-        if (isset($state->responses['fraction'])) {
-            $options->fraction = $state->responses['fraction'];
-        }
-        if (isset($state->responses['response'])) {
-            $options->response = addslashes( clean_param($state->responses['response'], PARAM_CLEANHTML) );
-        }
-        if (isset($state->update)) {
-            if (!$options->id = get_field('question_essay_states', 'id', 'stateid', $state->id)) {
-                return false;
-            }
-            if (!update_record('question_essay_states', $options)) {
-                return false;
-            }
-        } else {
-            if (!insert_record('question_essay_states', $options)) {
-                return false;
-            }
-        }     
-
-        return true;
-    }
-    
-    /**
-    * Utility function to count the number of ungraded essays
-    * and the number of students those essays belong to.
-    *
-    * @param object $cmoptions  Course module options
-    * @param mixed $users string/array Specify a specific user or a set of users as an array with ids as keys or as a comma separated list.  Defaults to current user.
-    * @param string $attemptid Specify a specific attempt
-    * @return array First item in array is the number of ungraded essays and the second is the number of students
-    * @todo make this function quiz independent
-    */
-    function get_ungraded_count($cmoptions, $users=0, $attemptid=0) {
-        global $USER, $CFG;
-        
-        // prep the userids variable
-        if (empty($users)) {
-            $userids = $USER->id;
-        }else if (is_array($users)) {
-            $userids = implode(', ', array_keys($users));
-        } else {
-            $userids = $users;
-        }
-        
-        $ungradedcount = 0;     // holds the number of ungraded essays
-        $usercount = array();   // holds the number of users of ungraded essays
-        
-        // get the essay questions
-        $questionlist = quiz_questions_in_quiz($cmoptions->questions);
-        $sql = "SELECT q.*, i.grade AS maxgrade, i.id AS instance".
-               "  FROM {$CFG->prefix}question q,".
-               "       {$CFG->prefix}quiz_question_instances i".
-               " WHERE i.quiz = '$cmoptions->id' AND q.id = i.question".
-               "   AND q.id IN ($questionlist)".
-               "   AND q.qtype = '".'essay'."'".
-               "   ORDER BY q.name";
-               
-        if (empty($attemptid)) {
-            $attemptsql = "quiz = $cmoptions->id and timefinish > 0 and userid IN ($userids)";
-        } else {
-            $attemptsql = "id = $attemptid";
-        }
-        if ($questions = get_records_sql($sql)) {
-            // get all the finished attempts by the users
-            if ($attempts = get_records_select('quiz_attempts', $attemptsql, 'userid, attempt')) {
-                foreach($questions as $question) {
-                    // determine the number of ungraded attempts essays
-                    foreach ($attempts as $attempt) {
-                        // grab the state then check if it is graded
-                        if (!$neweststate = get_record('question_sessions', 'attemptid', $attempt->uniqueid, 'questionid', $question->id)) {
-                            error("Can not find newest states for attempt $attempt->uniqueid for question $question->id");
-                        }
-                        if (!$questionstate = get_record('question_essay_states', 'stateid', $neweststate->newest)) {
-                            error('Could not find question state');
-                        }
-                        if (!$questionstate->graded) {
-                            $ungradedcount++;
-                        }
-                        // keep track of users
-                        $usercount[$attempt->userid] = 1;
-                    }
-                }
-            }
-        }
-    
-        return array($ungradedcount, count($usercount));
     }
     
 /// BACKUP FUNCTIONS ////////////////////////////
