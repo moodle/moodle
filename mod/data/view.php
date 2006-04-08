@@ -386,7 +386,17 @@
     $records = get_records_sql($sqlselect.$limit);
 
     if (empty($records)) {     // Nothing to show!
-        if ($search){
+        if ($record) {         // Something was requested so try to show that at least (bug 5132)
+            if (isteacher($course->id) || empty($data->approval) || 
+                     $record->approved || (isloggedin() && $record->userid == $USER->id)) {
+                if (!$currentgroup || $record->groupid == $currentgroup || $record->groupid == 0) {
+                    $records[] = $record;
+                }
+            }
+        }
+        if ($records) {  // OK, we can show this one
+            data_print_template('singletemplate', $records, $data, $search, $page);
+        } else if ($search){
             notify(get_string('nomatch','data'));
         } else {
             notify(get_string('norecords','data'));
