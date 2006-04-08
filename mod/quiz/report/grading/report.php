@@ -1,4 +1,4 @@
-<?php
+<?php  // $Id$
 
 // This file allows a teacher to grade essay questions.
 // Could be later expanded to change grades for all question types
@@ -124,6 +124,11 @@ class quiz_report extends quiz_default_report {
             }
             notify(get_string('changessaved', 'quiz'));
 
+            // Provide grading form for a particular question 
+            // (either for a particular attempt, a particular user, or for all attempts)
+
+            // First select the attempts to work on
+
         } else if ( ( !empty($attemptid) or !empty($gradeall) or !empty($userid)) and !empty($questionid) ) {  // need attemptid and questionid or gradeall and a questionid
             // this sql joins the attempts table and the user table
             $select = 'SELECT '.$db->Concat('u.id', '\'#\'', $db->IfNull('qa.attempt', '0')).' AS userattemptid,
@@ -139,10 +144,15 @@ class quiz_report extends quiz_default_report {
                 $where = 'WHERE qa.id='.$attemptid.' ';
             }
 
+            // ignore previews
+            $where .= ' AND preview = 0';
+
             $where .= 'AND '.$db->IfNull('qa.attempt', '0').' != 0 ';
             $where .= 'AND '.$db->IfNull('qa.timefinish', '0').' != 0 ';
             $sort = 'ORDER BY u.firstname, u.lastname, qa.attempt ASC';
             $attempts = get_records_sql($select.$from.$where.$sort);
+
+            // Display the form with one part for each selected attempt
 
             echo '<form method="post" action="report.php">'.
                 '<input type="hidden" name="mode" value="grading">'.
@@ -210,7 +220,7 @@ class quiz_report extends quiz_default_report {
                        "       {$CFG->prefix}quiz_question_instances i".
                        " WHERE i.quiz = '$quiz->id' AND q.id = i.question".
                        "   AND q.id IN ($questionlist)".
-                       "   AND q.qtype = '".ESSAY."'".
+                       "   AND q.qtype = 'essay'".
                        "   ORDER BY q.name";
                 if (empty($questionlist) or !$questions = get_records_sql($sql)) {
                     print_heading(get_string('noessayquestionsfound', 'quiz'));
@@ -218,7 +228,7 @@ class quiz_report extends quiz_default_report {
                     exit();
                 }
                 // get all the finished attempts by the users
-                if ($attempts = get_records_select('quiz_attempts', "quiz = $quiz->id and timefinish > 0 and userid IN ($userids)", 'userid, attempt')) {
+                if ($attempts = get_records_select('quiz_attempts', "quiz = $quiz->id and timefinish > 0 AND userid IN ($userids) AND preview = 0", 'userid, attempt')) {
                     foreach($questions as $question) {
 
                         $link = "<a href=\"report.php?mode=grading&amp;q=$quiz->id&amp;action=viewquestion&amp;questionid=$question->id\">".
@@ -283,7 +293,8 @@ class quiz_report extends quiz_default_report {
                 $where  = 'WHERE u.id IN ('.implode(',', array_keys($users)).') ';
                 $where .= 'AND '.$db->IfNull('qa.attempt', '0').' != 0 ';
                 $where .= 'AND '.$db->IfNull('qa.timefinish', '0').' != 0 ';
-
+                $where .= 'AND preview = 0 '; // ignore previews
+         
                 if($table->get_sql_where()) { // forgot what this does
                     $where .= 'AND '.$table->get_sql_where();
                 }
