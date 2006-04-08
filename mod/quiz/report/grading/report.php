@@ -71,6 +71,7 @@ class quiz_report extends quiz_default_report {
 
                 // If the state has changed save it and update the quiz grade
                 if ($state->changed) {
+                    $state->responses[''] = isset($state->responses['']) ? addslashes($state->responses['']) : ''; // should this go in save_question_session?
                     save_question_session($question, $state);
                     quiz_save_best_grade($quiz, $attempt->userid);
                 }
@@ -362,6 +363,8 @@ class quiz_report extends quiz_default_report {
 
             $options = quiz_get_reviewoptions($quiz, $attempt, true);
             unset($options->questioncommentlink);
+            $copy = $state->comment;
+            $state->comment = '';
 
             $options->readonly = 1;
 
@@ -372,9 +375,10 @@ class quiz_report extends quiz_default_report {
 
             print_question($question, $state, '', $quiz, $options);
             
-            $prefix = "manualgrades[$attempt->uniqueid]";
-            $grade = round($state->last_graded->grade, 3);
-
+            $prefix         = "manualgrades[$attempt->uniqueid]";
+            $grade          = round($state->last_graded->grade, 3);
+            $state->comment = $copy;
+            
             include($CFG->wwwroot.'/question/comment.html');
             
             echo '</div>';
