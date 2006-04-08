@@ -206,112 +206,7 @@ class quiz_report extends quiz_default_report {
                 $this->view_questions($quiz, $course, $userids);
                 break;
             case 'viewquestion':
-                // gonna use flexible_table (first time!)
-                $tablecolumns = array('picture', 'fullname', 'attempt');
-                $tableheaders = array('', get_string('fullname'), get_string("attempts", "quiz"));
-
-                $table = new flexible_table('mod-quiz-report-grading');
-
-                $table->define_columns($tablecolumns);
-                $table->define_headers($tableheaders);
-                $table->define_baseurl($CFG->wwwroot.'/mod/quiz/report.php?mode=grading&amp;q='.$quiz->id.'&amp;action=viewquestion&amp;questionid='.$question->id);
-
-                $table->sortable(true);
-                $table->initialbars(count($users)>20);  // will show initialbars if there are more than 20 users
-                $table->pageable(true);
-
-                $table->column_suppress('fullname');
-                $table->column_suppress('picture');
-
-                $table->column_class('picture', 'picture');
-
-                // attributes in the table tag
-                $table->set_attribute('cellspacing', '0');
-                $table->set_attribute('id', 'grading');
-                $table->set_attribute('class', 'generaltable generalbox');
-                $table->set_attribute('align', 'center');
-                $table->set_attribute('width', '50%');
-
-                // get it ready!
-                $table->setup();
-
-                // this sql is a join of the attempts table and the user table.  I do this so I can sort by user name and attempt number (not id)
-                $select = 'SELECT '.$db->Concat('u.id', '\'#\'', $db->IfNull('qa.attempt', '0')).' AS userattemptid, qa.id AS attemptid, qa.uniqueid, qa.attempt, u.id AS userid, u.firstname, u.lastname, u.picture ';
-                $from   = 'FROM '.$CFG->prefix.'user u LEFT JOIN '.$CFG->prefix.'quiz_attempts qa ON (u.id = qa.userid AND qa.quiz = '.$quiz->id.') ';
-                $where  = 'WHERE u.id IN ('.implode(',', array_keys($users)).') ';
-                $where .= 'AND '.$db->IfNull('qa.attempt', '0').' != 0 ';
-                $where .= 'AND '.$db->IfNull('qa.timefinish', '0').' != 0 ';
-                $where .= 'AND preview = 0 '; // ignore previews
-         
-                if($table->get_sql_where()) { // forgot what this does
-                    $where .= 'AND '.$table->get_sql_where();
-                }
-
-                // sorting of the table
-                if($sort = $table->get_sql_sort()) {
-                    $sort = 'ORDER BY '.$sort;  // seems like I would need to have u. or qa. infront of the ORDER BY attribues... but seems to work..
-                } else {
-                    // my default sort rule
-                    $sort = 'ORDER BY u.firstname, u.lastname, qa.attempt ASC';
-                }
-
-                // set up the pagesize
-                $total  = count_records_sql('SELECT COUNT(DISTINCT('.$db->Concat('u.id', '\'#\'', $db->IfNull('qa.attempt', '0')).')) '.$from.$where);
-                $table->pagesize(10, $total);
-
-                // this is for getting the correct records for a given page
-                if($table->get_page_start() !== '' && $table->get_page_size() !== '') {
-                    $limit = ' '.sql_paging_limit($table->get_page_start(), $table->get_page_size());
-                } else {
-                    $limit = '';
-                }
-                //$number = 1;
-                // get the attempts and process them
-                if ($attempts = get_records_sql($select.$from.$where.$sort.$limit)) {
-                    foreach($attempts as $attempt) {
-
-                        $picture = print_user_picture($attempt->userid, $course->id, $attempt->picture, false, true);
-
-                        // link here... grades all for this student
-                        $userlink = "<a href=\"report.php?mode=grading&amp;q=$quiz->id&amp;questionid=$question->id&amp;userid=$attempt->userid\">".
-                                    $attempt->firstname.' '.$attempt->lastname.'</a>';
-
-                        // nab the state of the attempt to see if it is graded or not
-                        // TODO: should be changed to use the event field
-                        if (!$neweststate = get_record('question_sessions', 'attemptid', $attempt->uniqueid, 'questionid', $question->id)) {
-                            error("Can not find newest states for attempt $attempt->uniqueid for question $questionid");
-                        }
-
-                        if (!$questionstate = get_record('question_essay_states', 'stateid', $neweststate->newest)) {
-                            error('Could not find question state');
-                        }
-                        // change the color of the link based on being graded or not
-                        if (!$questionstate->graded) {
-                            $style = 'style="color:#FF0000"';  // red
-                        } else {
-                            $style = 'style="color:#008000"';  // green
-                        }
-
-                        // link for the attempt
-                        $attemptlink = "<a $style href=\"report.php?mode=grading&amp;q=$quiz->id&amp;questionid=$question->id&amp;attemptid=$attempt->attemptid\">".  // &amp;number=$number
-                                $question->name." attempt $attempt->attempt</a>";
-
-                        $table->add_data( array($picture, $userlink, $attemptlink) );
-                    }
-                    //$number += $question->length;
-                }
-
-                // grade all and "back" links
-                $links = "<center><a href=\"report.php?mode=grading&amp;q=$quiz->id&amp;questionid=$questionid&amp;gradeall=1\">".get_string('gradeall', 'quiz').'</a> | '.
-                        "<a href=\"report.php?mode=grading&amp;q=$quiz->id&amp;action=viewquestions\">".get_string('backtoquestionlist', 'quiz').'</a></center>'.
-
-                // print everything here
-                print_heading($question->name);
-                echo $links;
-                echo '<div id="tablecontainer">';
-                $table->print_html();
-                echo '</div>';
-                echo $links;
+                $this->view_question($quiz, $question, $users);
                 break;
             default:
                 error("Invalid Action");
@@ -368,13 +263,7 @@ class quiz_report extends quiz_default_report {
                 $ungraded = 0;
                 foreach ($attempts as $attempt) {
                     // grab the state then check if it is graded
-                    if (!$state = get_record_sql("SELECT state.id, state.event FROM 
-                                                    {$CFG->prefix}question_states state, {$CFG->prefix}question_sessions sess 
-                                                    WHERE sess.newest = state.id AND 
-                                                    sess.attemptid = $attempt->uniqueid AND
-                                                    sess.questionid = $question->id")) {
-                        error('Could not find question state');
-                    }
+                    $state = $this->get_newest_state($question, $attempt);
                     
                     if (!question_state_is_graded($state)) {
                       $ungraded++;
@@ -387,6 +276,135 @@ class quiz_report extends quiz_default_report {
         } else {
             print_heading(get_string('noattempts', 'quiz'));
         }
+    }
+    
+    /**
+     * Prints a table with users and their attempts
+     *
+     * @return void
+     * @todo Add current grade to the table
+     *       Finnish documenting
+     **/
+    function view_question($quiz, $question, $users) {
+        global $CFG, $db;
+        
+        // gonna use flexible_table (first time!)
+        $tablecolumns = array('picture', 'fullname', 'attempt');
+        $tableheaders = array('', get_string('fullname'), get_string("attempts", "quiz"));
+
+        $table = new flexible_table('mod-quiz-report-grading');
+
+        $table->define_columns($tablecolumns);
+        $table->define_headers($tableheaders);
+        $table->define_baseurl($CFG->wwwroot.'/mod/quiz/report.php?mode=grading&amp;q='.$quiz->id.'&amp;action=viewquestion&amp;questionid='.$question->id);
+
+        $table->sortable(true);
+        $table->initialbars(count($users)>20);  // will show initialbars if there are more than 20 users
+        $table->pageable(true);
+
+        $table->column_suppress('fullname');
+        $table->column_suppress('picture');
+
+        $table->column_class('picture', 'picture');
+
+        // attributes in the table tag
+        $table->set_attribute('cellspacing', '0');
+        $table->set_attribute('id', 'grading');
+        $table->set_attribute('class', 'generaltable generalbox');
+        $table->set_attribute('align', 'center');
+        $table->set_attribute('width', '50%');
+
+        // get it ready!
+        $table->setup();
+
+        // this sql is a join of the attempts table and the user table.  I do this so I can sort by user name and attempt number (not id)
+        $select = 'SELECT '.$db->Concat('u.id', '\'#\'', $db->IfNull('qa.attempt', '0')).' AS userattemptid, qa.id AS attemptid, qa.uniqueid, qa.attempt, qa.timestart, u.id AS userid, u.firstname, u.lastname, u.picture ';
+        $from   = 'FROM '.$CFG->prefix.'user u LEFT JOIN '.$CFG->prefix.'quiz_attempts qa ON (u.id = qa.userid AND qa.quiz = '.$quiz->id.') ';
+        $where  = 'WHERE u.id IN ('.implode(',', array_keys($users)).') ';
+        $where .= 'AND '.$db->IfNull('qa.attempt', '0').' != 0 ';
+        $where .= 'AND '.$db->IfNull('qa.timefinish', '0').' != 0 ';
+        $where .= 'AND preview = 0 '; // ignore previews
+ 
+        if($table->get_sql_where()) { // forgot what this does
+            $where .= 'AND '.$table->get_sql_where();
+        }
+
+        // sorting of the table
+        if($sort = $table->get_sql_sort()) {
+            $sort = 'ORDER BY '.$sort;  // seems like I would need to have u. or qa. infront of the ORDER BY attribues... but seems to work..
+        } else {
+            // my default sort rule
+            $sort = 'ORDER BY u.firstname, u.lastname, qa.attempt ASC';
+        }
+
+        // set up the pagesize
+        $total  = count_records_sql('SELECT COUNT(DISTINCT('.$db->Concat('u.id', '\'#\'', $db->IfNull('qa.attempt', '0')).')) '.$from.$where);
+        $table->pagesize(10, $total);
+
+        // this is for getting the correct records for a given page
+        if($table->get_page_start() !== '' && $table->get_page_size() !== '') {
+            $limit = ' '.sql_paging_limit($table->get_page_start(), $table->get_page_size());
+        } else {
+            $limit = '';
+        }
+        // get the attempts and process them
+        if ($attempts = get_records_sql($select.$from.$where.$sort.$limit)) {
+            foreach($attempts as $attempt) {
+
+                $picture = print_user_picture($attempt->userid, $quiz->course, $attempt->picture, false, true);
+
+                // link here... grades all for this student
+                $userlink = "<a href=\"report.php?mode=grading&amp;q=$quiz->id&amp;questionid=$question->id&amp;userid=$attempt->userid\">".
+                            fullname($attempt, true).'</a>';
+
+                // grab the state then check if it is graded
+                $state = $this->get_newest_state($question, $attempt);
+
+                if (!question_state_is_graded($state)) {
+                    $style = 'class="manual-ungraded"';
+                } else {
+                    $style = 'class="manual-graded"';
+                }
+
+                // link for the attempt
+                $attemptlink = "<a $style href=\"report.php?mode=grading&amp;q=$quiz->id&amp;questionid=$question->id&amp;attemptid=$attempt->attemptid\">".
+                        userdate($attempt->timestart, get_string('strftimedatetime')).'</a>';
+
+                $table->add_data( array($picture, $userlink, $attemptlink) );
+            }
+        }
+
+        // grade all and "back" links
+        $links = "<center><a href=\"report.php?mode=grading&amp;q=$quiz->id&amp;questionid=$question->id&amp;gradeall=1\">".get_string('gradeall', 'quiz').'</a> | '.
+                "<a href=\"report.php?mode=grading&amp;q=$quiz->id&amp;action=viewquestions\">".get_string('backtoquestionlist', 'quiz').'</a></center>'.
+
+        // print everything here
+        print_heading($question->name);
+        echo $links;
+        echo '<div id="tablecontainer">';
+        $table->print_html();
+        echo '</div>';
+        echo $links;
+    }
+    
+    /**
+     * undocumented function
+     *
+     * @return void
+     * @author Mark Nielsen
+     **/
+    function get_newest_state($question, $attempt) {
+        global $CFG;
+        
+        if (!$state = get_record_sql("SELECT state.id, state.event FROM 
+                                        {$CFG->prefix}question_states state, {$CFG->prefix}question_sessions sess 
+                                        WHERE sess.newest = state.id AND 
+                                        sess.attemptid = $attempt->uniqueid AND
+                                        sess.questionid = $question->id")) {
+            error('Could not find question state');
+        }
+        
+        return $state;
     }
 
 }
