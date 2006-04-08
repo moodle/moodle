@@ -127,7 +127,8 @@ class question_essay_qtype extends default_questiontype {
             use_html_editor($inputname);
         } else {
             // it is read only, so just format the students answer and output it
-            echo format_text($value);
+            echo format_text($value, $question->questiontextformat,
+                         $formatoptions, $cmoptions->course);
             echo '<input type="hidden" name="'.$inputname.'" value="'.htmlSpecialChars($value).'" />'; // need hidden one for grading
         }    
         echo '</div>';

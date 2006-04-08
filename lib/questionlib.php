@@ -615,6 +615,7 @@ function get_question_states(&$questions, $cmoptions, $attempt) {
             $states[$i]->raw_grade = 0;
             $states[$i]->penalty = 0;
             $states[$i]->sumpenalty = 0;
+            $states[$i]->comment = '';
             $states[$i]->responses = array('' => '');
             // Prevent further changes to the session from incrementing the
             // sequence number
