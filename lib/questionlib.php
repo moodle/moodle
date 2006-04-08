@@ -1169,17 +1169,21 @@ function get_question_image($question, $courseid) {
 }
 
 function question_print_comment_box($question, $state, $attempt, $url) {
-    global $CFG;
-    if ($usehtmleditor = can_use_richtext_editor()) {
-        use_html_editor('comment');
-    }
-    $grade = round($state->last_graded->grade, 3);
-    echo '<form method="post" action="'.$url.'">';
-    include($CFG->dirroot.'/question/comment.html');
-    echo '<input type="hidden" name="attempt" value="'.$attempt->uniqueid.'" />';
-    echo '<input type="hidden" name="question" value="'.$question->id.'" />';
-    echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
-    echo '</form>';
+   global $CFG;
+
+   $usehtmleditor = can_use_richtext_editor();
+   $grade = round($state->last_graded->grade, 3);
+   echo '<form method="post" action="'.$url.'">';
+   include($CFG->dirroot.'/question/comment.html');
+   echo '<input type="hidden" name="attempt" value="'.$attempt->uniqueid.'" />';
+   echo '<input type="hidden" name="question" value="'.$question->id.'" />';
+   echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
+   echo '<input type="submit" name="submit" value="'.get_string('save', 'quiz').'" />';
+   echo '</form>';
+
+   if ($usehtmleditor) {
+       use_html_editor('comment');
+   }
 }
 
 function question_process_comment($question, &$state, &$attempt, $comment, $grade) {
