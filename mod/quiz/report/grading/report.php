@@ -28,7 +28,7 @@ class quiz_report extends quiz_default_report {
 
         $this->print_header_and_tabs($cm, $course, $quiz, $reportmode="grading");
         
-        notice('The manual grading is temporarily disabled during development work', $CFG->wwwroot.'/mod/quiz/report.php?q='.$quiz->id);
+        //notice('The manual grading is temporarily disabled during development work', $CFG->wwwroot.'/mod/quiz/report.php?q='.$quiz->id);
 
         if (!empty($questionid)) {
             if (! $question = get_record('question', 'id', $questionid)) {
@@ -203,59 +203,7 @@ class quiz_report extends quiz_default_report {
         // and all of their attempts at answering the question
         switch($action) {
             case 'viewquestions':
-                notify(get_string('essayonly', 'quiz_grading'));
-                // just a basic table for this...
-                $table = new stdClass;
-                $table->head = array(get_string("essayquestions", "quiz"), get_string("ungraded", "quiz"));
-                $table->align = array("left", "left");
-                $table->wrap = array("wrap", "wrap");
-                $table->width = "20%";
-                $table->size = array("*", "*");
-                $table->data = array();
-
-                // get the essay questions
-                $questionlist = quiz_questions_in_quiz($quiz->questions);
-                $sql = "SELECT q.*, i.grade AS maxgrade, i.id AS instance".
-                       "  FROM {$CFG->prefix}question q,".
-                       "       {$CFG->prefix}quiz_question_instances i".
-                       " WHERE i.quiz = '$quiz->id' AND q.id = i.question".
-                       "   AND q.id IN ($questionlist)".
-                       "   AND q.qtype = 'essay'".
-                       "   ORDER BY q.name";
-                if (empty($questionlist) or !$questions = get_records_sql($sql)) {
-                    print_heading(get_string('noessayquestionsfound', 'quiz'));
-                    print_footer($course);
-                    exit();
-                }
-                // get all the finished attempts by the users
-                if ($attempts = get_records_select('quiz_attempts', "quiz = $quiz->id and timefinish > 0 AND userid IN ($userids) AND preview = 0", 'userid, attempt')) {
-                    foreach($questions as $question) {
-
-                        $link = "<a href=\"report.php?mode=grading&amp;q=$quiz->id&amp;action=viewquestion&amp;questionid=$question->id\">".
-                                $question->name."</a>";
-                        // determine the number of ungraded attempts (essay question thing only)
-                        // TODO: This should be done with more efficient SQL
-                        // It should use the event field of the newest graded state
-                        $ungraded = 0;
-                        foreach ($attempts as $attempt) {
-                            // grab the state then check if it is graded
-                            if (!$neweststate = get_record('question_sessions', 'attemptid', $attempt->uniqueid, 'questionid', $question->id)) {
-                                error("Can not find newest states for attempt $attempt->uniqueid for question $question->id");
-                            }
-                            if (!$questionstate = get_record('question_essay_states', 'stateid', $neweststate->newest)) {
-                                error('Could not find question state');
-                            }
-                            if (!$questionstate->graded) {
-                                $ungraded++;
-                            }
-                        }
-
-                        $table->data[] = array($link, $ungraded);
-                    }
-                    print_table($table);
-                } else {
-                    print_heading(get_string('noattempts', 'quiz'));
-                }
+                $this->view_questions($quiz, $course, $userids);
                 break;
             case 'viewquestion':
                 // gonna use flexible_table (first time!)
@@ -369,6 +317,76 @@ class quiz_report extends quiz_default_report {
                 error("Invalid Action");
         }
         return true;
+    }
+    
+    /**
+     * Prints a table containing all manually graded questions
+     *
+     * @param object $quiz Quiz object of the currrent quiz
+     * @param object $course Course object of the current course
+     * @param string $userids Comma-separated list of userids in this course
+     * @return void
+     * @todo Look for the TODO in this code to see what still needs to be done
+     **/
+    function view_questions($quiz, $course, $userids) {
+        global $CFG;
+        
+        notify(get_string('essayonly', 'quiz_grading'));
+        
+        // setup the table
+        $table = new stdClass;
+        $table->head = array(get_string("essayquestions", "quiz"), get_string("ungraded", "quiz"));
+        $table->align = array("left", "left");
+        $table->wrap = array("wrap", "wrap");
+        $table->width = "20%";
+        $table->size = array("*", "*");
+        $table->data = array();
+
+        // get the essay questions
+        $questionlist = quiz_questions_in_quiz($quiz->questions);
+        $sql = "SELECT q.*, i.grade AS maxgrade, i.id AS instance".
+               "  FROM {$CFG->prefix}question q,".
+               "       {$CFG->prefix}quiz_question_instances i".
+               " WHERE i.quiz = '$quiz->id' AND q.id = i.question".
+               "   AND q.id IN ($questionlist)".
+// TODO: create an array of manually graded questions OR new function (preferred) in question class $QTYPE->is_manually_graded return boolean
+               "   AND q.qtype = 'essay'".
+               "   ORDER BY q.name";
+        if (empty($questionlist) or !$questions = get_records_sql($sql)) {
+// TODO: Make this none essay specific            
+            print_heading(get_string('noessayquestionsfound', 'quiz'));
+            print_footer($course);
+            exit();
+        }
+        // get all the finished attempts by the users
+        if ($attempts = get_records_select('quiz_attempts', "quiz = $quiz->id and timefinish > 0 AND userid IN ($userids) AND preview = 0", 'userid, attempt')) {
+            foreach($questions as $question) {
+
+                $link = "<a href=\"report.php?mode=grading&amp;q=$quiz->id&amp;action=viewquestion&amp;questionid=$question->id\">".
+                        $question->name."</a>";
+                // determine the number of ungraded attempts
+                $ungraded = 0;
+                foreach ($attempts as $attempt) {
+                    // grab the state then check if it is graded
+                    if (!$state = get_record_sql("SELECT state.id, state.event FROM 
+                                                    {$CFG->prefix}question_states state, {$CFG->prefix}question_sessions sess 
+                                                    WHERE sess.newest = state.id AND 
+                                                    sess.attemptid = $attempt->uniqueid AND
+                                                    sess.questionid = $question->id")) {
+                        error('Could not find question state');
+                    }
+                    
+                    if (!question_state_is_graded($state)) {
+                      $ungraded++;
+                    }
+                }
+
+                $table->data[] = array($link, $ungraded);
+            }
+            print_table($table);
+        } else {
+            print_heading(get_string('noattempts', 'quiz'));
+        }
     }
 
 }
