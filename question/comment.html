@@ -10,7 +10,7 @@
     </td>
     <td>
       <?php
-        print_textarea($usehtmleditor, 15, 60, 630, 300, 'comment', $state->comment);
+        print_textarea($usehtmleditor, 15, 60, 630, 300, $prefix.'[comment]', $state->comment);
       ?>
     </td>
   </tr>
@@ -19,7 +19,7 @@
       <b><?php print_string('grade', 'quiz'); ?>: </b>
     </td>
     <td>
-      <input type="text" name="grade" size="2" value="<?php echo $grade; ?>" />/<?php echo $question->maxgrade; ?>
+      <input type="text" name="<?php echo $prefix; ?>[grade]" size="2" value="<?php echo $grade; ?>" />/<?php echo $question->maxgrade; ?>
     </td>
   </tr>
 </table>
