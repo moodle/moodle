@@ -72,8 +72,12 @@ h6.main {
   clear: both; 
   visibility: hidden;
 }
+
+.clearfix {display: inline-table;}
+
 /* Hides from IE-mac \*/
 * html .clearfix {height: 1%;}
+.clearfix {display: block;}
 /* End hide from IE-mac */
 
 .mdl-align {
