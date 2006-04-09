@@ -152,6 +152,7 @@
         }
     break;
     case GLOSSARY_DATE_VIEW:
+        $printpivot = 0;
     case GLOSSARY_STANDARD_VIEW:
     default:
         $sqlselect  = "SELECT ge.*, ge.concept $as pivot";
