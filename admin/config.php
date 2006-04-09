@@ -114,7 +114,6 @@
         
     echo "<center>$linktext</center>\n";
 
-    print_simple_box_start('center');
     
     echo '<form method="post" action="config.php" name="form">';
     echo '<center><input type="submit" value="'.get_string('savechanges').'" /></center>';
@@ -150,7 +149,6 @@
                 
     echo '</form>';
     
-    print_simple_box_end();
 
 
     
