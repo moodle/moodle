@@ -159,7 +159,7 @@
     if ($attempt->userid <> $USER->id) {
        $student = get_record('user', 'id', $attempt->userid);
        $picture = print_user_picture($student->id, $course->id, $student->picture, false, true);
-       $table->data[] = array($picture, fullname($student, true));
+       $table->data[] = array($picture, '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$student->id.'&amp;course='.$course->id.'">'.fullname($student, true).'</a>');
     }
     if ($isteacher and count($attempts = get_records_select('quiz_attempts', "quiz = '$quiz->id' AND userid = '$attempt->userid'", 'attempt ASC')) > 1) {
         // print list of attempts
