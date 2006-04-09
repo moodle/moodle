@@ -408,7 +408,7 @@ table.minicalendar {
 
 #calendar .today,
 .minicalendar .today {
-  border-color:#444444 !important;
+  border-color:#444444;
 }
 
 .cal_popup_fg {

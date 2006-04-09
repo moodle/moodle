@@ -791,7 +791,7 @@ table.minicalendar th {
 
 #calendar .today,
 .minicalendar .today {
-  border:2px solid !important;
+  border:2px solid;
 }
   
 .cal_popup_bg {
