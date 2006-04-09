@@ -215,9 +215,6 @@ function question_list($course, $categoryid, $quizid=0,
     <th nowrap=\"nowrap\" class=\"header\">$strtype</th>";
     echo "</tr>\n";
     foreach ($questions as $question) {
-        if ($question->qtype == RANDOM) {
-            //continue;
-        }
         echo "<tr>\n<td nowrap=\"nowrap\">\n";
         if ($quizid) {
             echo "<a title=\"$straddtoquiz\" href=\"edit.php?addquestion=$question->id&amp;sesskey=$USER->sesskey\"><img
