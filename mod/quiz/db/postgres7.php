@@ -1176,6 +1176,10 @@ function quiz_upgrade($oldversion) {
         table_column('question_sessions', '', 'comment', 'text', '', '', '', 'not null', 'sumpenalty');
     }
 
+    if ($oldversion < 2006040900) {
+        modify_database('', "UPDATE prefix_question SET parent = id WHERE qtype ='random';");
+    }
+
     return true;
 }
 
