@@ -267,7 +267,7 @@
     echo '<input type="hidden" name="mode" value="search" />';
     echo '<input type="hidden" name="id" value="'.$cm->id.'" />';
     echo $strsearchindefinition;
-    print_simple_box_end();
+    echo '</td></tr></table>';
 
     echo '</form>';
     echo '<br />';
