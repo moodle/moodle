@@ -1171,6 +1171,7 @@ function get_question_image($question, $courseid) {
 function question_print_comment_box($question, $state, $attempt, $url) {
    global $CFG;
 
+   $prefix = 'response';
    $usehtmleditor = can_use_richtext_editor();
    $grade = round($state->last_graded->grade, 3);
    echo '<form method="post" action="'.$url.'">';
@@ -1182,7 +1183,7 @@ function question_print_comment_box($question, $state, $attempt, $url) {
    echo '</form>';
 
    if ($usehtmleditor) {
-       use_html_editor('comment');
+       use_html_editor();
    }
 }
 
