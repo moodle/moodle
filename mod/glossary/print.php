@@ -152,9 +152,10 @@
 
             // Setting the pivot for the current entry
             $pivot = $entry->pivot;
+            $upperpivot = $textlib->strtoupper($pivot, current_charset());
+            // Reduce pivot to 1cc if necessary
             if ( !$fullpivot ) {
-                $pivot = $textlib->substr($pivot, 0, 1, current_charset());
-                $upperpivot = $textlib->strtoupper($pivot, current_charset());
+                $upperpivot = $textlib->substr($upperpivot, 0, 1, current_charset());
             }            
             
             // If there's  group break
