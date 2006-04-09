@@ -43,4 +43,11 @@ $string['viewcourseentries'] = 'View course entries';
 $string['viewmyentries'] = 'View my entries';
 $string['viewsiteentries'] = 'View site entries';
 
+$string['worldblogs'] = 'Users can create world-accessible blogs';
+$string['siteblogs'] = 'Users can create blog posts to be read site-wide';
+$string['courseblogs'] = 'Users can create blog posts to be read course-wide only';
+$string['groupblogs'] = 'Users can create blog posts to be read group-wide only';
+$string['personalblogs'] = 'Users can create personal blog posts only';
+$string['disableblogs'] = 'Disable blog system completely';
+
 ?>
