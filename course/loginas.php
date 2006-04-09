@@ -115,8 +115,8 @@
     $strloginas    = get_string("loginas");
     $strloggedinas = get_string("loggedinas", "", $student_name);
 
-    print_header_simple("$strloginas $student_name", '', 
-                 "$strloginas $student_name");
+    print_header_simple("$strloginas $student_name", '', "$strloginas $student_name", '', '', 
+                       true, '&nbsp;', navmenu($course));
     notice($strloggedinas, "$CFG->wwwroot/course/view.php?id=$course->id");
 
 
