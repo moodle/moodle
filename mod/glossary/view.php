@@ -10,8 +10,8 @@
     $tab  = optional_param('tab', GLOSSARY_NO_VIEW, PARAM_ALPHA);    // browsing entries by categories?
     $displayformat = optional_param('displayformat',-1, PARAM_INT);  // override of the glossary display format
 
-    $mode       = optional_param('mode', 'approval', PARAM_ALPHA);   // term entry cat date letter search author approval
-    $hook       = optional_param('hook', 'ALL', PARAM_CLEAN);        // the term, entry, cat, etc... to look for based on mode
+    $mode       = optional_param('mode', '', PARAM_ALPHA);           // term entry cat date letter search author approval
+    $hook       = optional_param('hook', '', PARAM_CLEAN);           // the term, entry, cat, etc... to look for based on mode
     $fullsearch = optional_param('fullsearch', 0,PARAM_INT);         // full search (concept and definition) when searching?
     $sortkey    = optional_param('sortkey', 'CREATION', PARAM_ALPHA);// Sorted view: CREATION | UPDATE | FIRSTNAME | LASTNAME...
     $sortorder  = optional_param('sortorder', 'ASC', PARAM_ALPHA);   // it defines the order of the sorting (ASC or DESC)
@@ -70,6 +70,21 @@
 /// setting the default values for the display mode of the current glossary
 /// only if the glossary is viewed by the first time
     if ( $dp = get_record('glossary_formats','name', addslashes($glossary->displayformat)) ) {
+    /// Based on format->defaultmode, we build the defaulttab to be showed sometimes
+        switch ($dp->defaultmode) {
+            case 'cat':
+                $defaulttab = GLOSSARY_CATEGORY_VIEW;
+                break;
+            case 'date':
+                $defaulttab = GLOSSARY_DATE_VIEW;
+                break;
+            case 'author':
+                $defaulttab = GLOSSARY_AUTHOR_VIEW;
+                break;
+            default:
+                $defaulttab = GLOSSARY_STANDARD_VIEW;
+        }
+    /// Fetch the rest of variables
         $printpivot = $dp->showgroup;
         if ( $mode == '' and $hook == '' and $show == '') {
             $mode      = $dp->defaultmode;
@@ -78,6 +93,7 @@
             $sortorder = $dp->sortorder;
         }
     } else {
+        $defaulttab = GLOSSARY_STANDARD_VIEW;
         $printpivot = 1;
         if ( $mode == '' and $hook == '' and $show == '') {
             $mode = 'letter';
