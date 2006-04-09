@@ -601,7 +601,6 @@ function get_question_states(&$questions, $cmoptions, $attempt) {
                 $states[$i]->last_graded = $gradedstates[$i];
             } else {
                 $states[$i]->last_graded = clone($states[$i]);
-                $states[$i]->last_graded->responses = array('' => '');
             }
         } else {
             // create a new empty state
@@ -710,8 +709,8 @@ function save_question_session(&$question, &$state) {
         set_field('question_sessions', 'newest', $state->id, 'attemptid',
          $state->attempt, 'questionid', $question->id);
     }
-    if (question_state_is_graded($state)) {
-        // this is also the most recent graded state
+    if (question_state_is_graded($state) or $state->event == QUESTION_EVENTOPEN) {
+        // this state is graded or newly opened, so it goes into the lastgraded field as well
         if ($newest = get_record('question_sessions', 'attemptid',
          $state->attempt, 'questionid', $question->id)) {
             $newest->newgraded = $state->id;
@@ -1002,15 +1001,16 @@ function question_process_responses(&$question, &$state, $action, $cmoptions, &$
         }
 
     } else if (QUESTION_EVENTCLOSE == $action->event) {
-        // decrease sumgrades by previous grade and then later add new grade
-        $attempt->sumgrades -= (float)$state->last_graded->grade;
 
         // Only mark if they haven't been marked already
         if (!$sameresponses) {
+            // decrease sumgrades by previous grade and then later add new grade
+            $attempt->sumgrades -= (float)$state->last_graded->grade;
             $QTYPES[$question->qtype]->grade_responses(
              $question, $state, $cmoptions);
             // Calculate overall grade using correct penalty method
             question_apply_penalty_and_timelimit($question, $state, $attempt, $cmoptions);
+            $attempt->sumgrades += (float)$state->grade;
         }
         
         // Update the last graded state (don't simplify!)
@@ -1018,7 +1018,6 @@ function question_process_responses(&$question, &$state, $action, $cmoptions, &$
         $state->last_graded = clone($state);
         unset($state->last_graded->changed);
 
-        $attempt->sumgrades += (float)$state->last_graded->grade;
     }
     $attempt->timemodified = $action->timestamp;
 
