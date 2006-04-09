@@ -676,7 +676,7 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
     
     foreach ($langs as $lang) {
         if (!empty($lang) and $lang != 'en_utf8') {
-            echo $lang.',';
+            echo $lang.', ';
         }
     }
     echo '</b><br/><a href="'.$CFG->wwwroot.'/admin/langimport.php">Language Import Utility</a></div>';
