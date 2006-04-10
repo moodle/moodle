@@ -15,13 +15,33 @@
 
     //Optional
     $id = optional_param( 'id' );
-    $file = optional_param( 'file' );;
+    $file = optional_param( 'file' );
     $cancel = optional_param( 'cancel' );
     $launch = optional_param( 'launch' );
     $to = optional_param( 'to' );
+    $method = optional_param( 'method' );
 
     //Check login       
     require_login();
+
+/// With method=manual, we come from the FileManager so we delete all the backup/restore/import session structures
+    if ($method == 'manual') {
+        if (isset($SESSION->course_header)) {
+            unset ($SESSION->course_header);
+        }
+        if (isset($SESSION->info)) {
+            unset ($SESSION->info);
+        }
+        if (isset($SESSION->backupprefs)) {
+            unset ($SESSION->backupprefs);
+        }
+        if (isset($SESSION->restore)) {
+            unset ($SESSION->restore);
+        }
+        if (isset($SESSION->import_preferences)) {
+            unset ($SESSION->import_preferences);
+        }
+    }
 
     if (!$to && isset($SESSION->restore->restoreto) && isset($SESSION->restore->importing) && isset($SESSION->restore->course_id)) {
         $to = $SESSION->restore->course_id;
@@ -115,7 +135,6 @@
     raise_memory_limit("128M");
 
     //Call the form, depending the step we are
-
 
     if (!$launch) {
         include_once("restore_precheck.html");

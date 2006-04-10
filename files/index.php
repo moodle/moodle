@@ -571,7 +571,7 @@
                 echo "<p align=\"center\">".get_string("areyousuretorestorethisinfo")."</p>";
                 $restore_path = "$CFG->wwwroot/backup/restore.php";
                 notice_yesno (get_string("areyousuretorestorethis"),
-                                $restore_path."?id=".$id."&amp;file=".cleardoubleslashes($id.$wdir."/".$file),
+                                $restore_path."?id=".$id."&amp;file=".cleardoubleslashes($id.$wdir."/".$file)."&amp;method=manual",
                                 "index.php?id=$id&amp;wdir=$wdir&amp;action=cancel");
             } else {
                 displaydir($wdir);
