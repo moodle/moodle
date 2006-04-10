@@ -1718,6 +1718,14 @@ function print_header ($title='', $heading='', $navigation='', $focus='', $meta=
 
     global $USER, $CFG, $THEME, $SESSION, $ME, $SITE, $HTTPSPAGEREQUIRED;
 
+/// This makes sure that the header is never repeated twice on a page
+    static $headerprinted = false;
+
+    if ($headerprinted) {
+        return;
+    } else {
+        $headerprinted = true;
+    }
 
 /// This is an ugly hack to be replaced later by a proper global $COURSE
     global $course;
