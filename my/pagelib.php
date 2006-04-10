@@ -1,6 +1,4 @@
-<?php
-
-global $CFG;
+<?php  //$Id$
 
 require_once($CFG->libdir.'/pagelib.php');
 
