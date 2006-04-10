@@ -13,6 +13,23 @@
         error("You are not allowed to look at this page");
     }
 
+/// Always we begin an import, we delete all backup/restore/import session structures
+    if (isset($SESSION->course_header)) {
+        unset ($SESSION->course_header);
+    }
+    if (isset($SESSION->info)) {
+        unset ($SESSION->info);
+    }
+    if (isset($SESSION->backupprefs)) {
+        unset ($SESSION->backupprefs);
+    }
+    if (isset($SESSION->restore)) {
+        unset ($SESSION->restore);
+    }
+    if (isset($SESSION->import_preferences)) {
+        unset ($SESSION->import_preferences);
+    }
+
     $strimport = get_string('import');
 
     print_header($course->fullname.': '.$strimport, $course->fullname.': '.$strimport, 
