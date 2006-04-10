@@ -3,19 +3,9 @@
   *
   */
 
+.header,
 .navbar {
-  background-image:url(gradient.jpg);
-  width:100%;
-}
-
-.sideblock .header {
-  background-image:url(gradient.jpg);
-}
-
-.headingblock {
-  background-image:url(gradient.jpg);
-}
-
-.loginbox .header {
     background-image:url(gradient.jpg);
+    background-position:top;
+    background-repeat:repeat-x;
 }
