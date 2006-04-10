@@ -250,5 +250,7 @@ class question_essay_qtype extends default_questiontype {
 $QTYPES['essay'] = new question_essay_qtype();
 // The following adds the questiontype to the menu of types shown to teachers
 $QTYPE_MENU['essay'] = get_string("essay", "quiz");
+// Add essay to the list of manually graded questions
+$QTYPE_MANUAL = isset($QTYPE_MANUAL) ? $QTYPE_MANUAL.",'essay'" : "'essay'";
 
 ?>

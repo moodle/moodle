@@ -505,11 +505,11 @@ $string['changessaved'] = 'Grading Changes Saved';
 $string['comments'] = 'Comments';
 $string['editingessay'] = 'Editing Essay';
 $string['essay'] = 'Essay';
-$string['essayquestions'] = 'Essay Questions';
+$string['essayquestions'] = 'Questions';
 $string['gradeall'] = 'Grade All';
 $string['gradeessays'] = 'Grade Essays';
 $string['nocommentsyet'] = 'No comments yet.';
-$string['noessayquestionsfound'] = 'No Essay Questions Found';
+$string['noessayquestionsfound'] = 'No manually graded questions found';
 $string['ungraded'] = 'Ungraded';
 
 ?>

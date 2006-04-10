@@ -1,5 +1,5 @@
 <?php // $Id$
 
 $string['grading'] = 'Manual grading';
-$string['essayonly'] = 'Manual grading has so far been implemented for essay questions only';
+$string['essayonly'] = 'The following questions need to be graded manually';
 ?>

@@ -24,7 +24,7 @@ class quiz_report extends quiz_default_report {
         $questionid = optional_param('questionid', 0, PARAM_INT);
 
         $this->print_header_and_tabs($cm, $course, $quiz, $reportmode="grading");
-        
+
         if (!empty($questionid)) {
             if (! $question = get_record('question', 'id', $questionid)) {
                 error("Question with id $questionid not found");
@@ -85,10 +85,10 @@ class quiz_report extends quiz_default_report {
 
         // the second view displays the users who have answered the essay question
         // and all of their attempts at answering the question
-        
+
         // the third prints the question with a comment
         // and grade form underneath it
-        
+
         switch($action) {
             case 'viewquestions':
                 $this->view_questions($quiz);
@@ -102,7 +102,7 @@ class quiz_report extends quiz_default_report {
         }
         return true;
     }
-    
+
     /**
      * Prints a table containing all manually graded questions
      *
@@ -113,17 +113,15 @@ class quiz_report extends quiz_default_report {
      * @todo Look for the TODO in this code to see what still needs to be done
      **/
     function view_questions($quiz) {
-        global $CFG;
-        
+        global $CFG, $QTYPE_MANUAL;
+
         $users = get_course_students($quiz->course);
 
         if(empty($users)) {
             print_heading(get_string("noattempts", "quiz"));
             return true;
         }
-        
-        notify(get_string('essayonly', 'quiz_grading'));
-        
+
         // setup the table
         $table = new stdClass;
         $table->head = array(get_string("essayquestions", "quiz"), get_string("ungraded", "quiz"));
@@ -140,14 +138,15 @@ class quiz_report extends quiz_default_report {
                "       {$CFG->prefix}quiz_question_instances i".
                " WHERE i.quiz = '$quiz->id' AND q.id = i.question".
                "   AND q.id IN ($questionlist)".
-// TODO: create an array of manually graded questions OR new function (preferred) in question class $QTYPE->is_manually_graded return boolean
-               "   AND q.qtype = 'essay'".
+               "   AND q.qtype IN ($QTYPE_MANUAL)".
                "   ORDER BY q.name";
         if (empty($questionlist) or !$questions = get_records_sql($sql)) {
-// TODO: Make this none essay specific            
             print_heading(get_string('noessayquestionsfound', 'quiz'));
             return false;
         }
+
+        notify(get_string('essayonly', 'quiz_grading'));
+
         // get all the finished attempts by the users
         $userids = implode(', ', array_keys($users));
         if ($attempts = get_records_select('quiz_attempts', "quiz = $quiz->id and timefinish > 0 AND userid IN ($userids) AND preview = 0", 'userid, attempt')) {
@@ -169,10 +168,10 @@ class quiz_report extends quiz_default_report {
         } else {
             print_heading(get_string('noattempts', 'quiz'));
         }
-        
+
         return true;
     }
-    
+
     /**
      * Prints a table with users and their attempts
      *
@@ -182,11 +181,11 @@ class quiz_report extends quiz_default_report {
      **/
     function view_question($quiz, $question) {
         global $CFG, $db;
-        
+
         $users     = get_course_students($quiz->course);
         $userids   = implode(',', array_keys($users));
         $usercount = count($users);
-        
+
         // set up table
         $tablecolumns = array('picture', 'fullname', 'attempt');
         $tableheaders = array('', get_string('fullname'), get_string("attempts", "quiz"));
@@ -223,7 +222,7 @@ class quiz_report extends quiz_default_report {
         $where .= 'AND '.$db->IfNull('qa.attempt', '0').' != 0 ';
         $where .= 'AND '.$db->IfNull('qa.timefinish', '0').' != 0 ';
         $where .= 'AND preview = 0 '; // ignore previews
- 
+
         if($table->get_sql_where()) { // forgot what this does
             $where .= 'AND '.$table->get_sql_where();
         }
@@ -282,7 +281,7 @@ class quiz_report extends quiz_default_report {
         echo '</div>';
         echo $links;
     }
-    
+
     /**
      * Checks to see if a question in a particular attempt is graded
      *
@@ -291,18 +290,18 @@ class quiz_report extends quiz_default_report {
      **/
     function is_graded($question, $attempt) {
         global $CFG;
-        
-        if (!$state = get_record_sql("SELECT state.id, state.event FROM 
-                                        {$CFG->prefix}question_states state, {$CFG->prefix}question_sessions sess 
-                                        WHERE sess.newest = state.id AND 
+
+        if (!$state = get_record_sql("SELECT state.id, state.event FROM
+                                        {$CFG->prefix}question_states state, {$CFG->prefix}question_sessions sess
+                                        WHERE sess.newest = state.id AND
                                         sess.attemptid = $attempt->uniqueid AND
                                         sess.questionid = $question->id")) {
             error('Could not find question state');
         }
-        
+
         return question_state_is_graded($state);
     }
-    
+
     /**
      * Prints questions with comment and grade form underneath each question
      *
@@ -311,17 +310,17 @@ class quiz_report extends quiz_default_report {
      **/
     function print_questions_and_form($quiz, $question) {
         global $CFG, $db;
-        
+
         // grade question specific parameters
         $gradeall  = optional_param('gradeall', 0, PARAM_INT);
         $userid    = optional_param('userid', 0, PARAM_INT);
         $attemptid = optional_param('attemptid', 0, PARAM_INT);
-        
+
         $questions[$question->id] = &$question;
         $usehtmleditor = can_use_richtext_editor();
         $users     = get_course_students($quiz->course);
         $userids   = implode(',', array_keys($users));
-        
+
         // this sql joins the attempts table and the user table
         $select = 'SELECT '.$db->Concat('u.id', '\'#\'', $db->IfNull('qa.attempt', '0')).' AS userattemptid,
                     qa.id AS attemptid, qa.uniqueid, qa.attempt, qa.timefinish, qa.preview,
@@ -374,18 +373,18 @@ class quiz_report extends quiz_default_report {
                 get_string('attempt', 'quiz').$attempt->attempt;
 
             print_question($question, $state, '', $quiz, $options);
-            
+
             $prefix         = "manualgrades[$attempt->uniqueid]";
             $grade          = round($state->last_graded->grade, 3);
             $state->comment = $copy;
-            
+
             include($CFG->wwwroot.'/question/comment.html');
-            
+
             echo '</div>';
         }
         echo '<div align="center"><input type="submit" value="'.get_string('savechanges').'"></div>'.
             '</form>';
-            
+
         if ($usehtmleditor) {
             use_html_editor();
         }
