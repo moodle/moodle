@@ -128,7 +128,13 @@ class data_field_picture extends data_field_file {
 
             // Check through all existing records and update the thumbnail
             if ($contents = get_records('data_content', 'fieldid', $this->field->id)) { 
+                if (count($contents) > 20) {
+                    notify(get_string('resizingimages', 'data'), 'notifysuccess');
+                    echo "\n\n";   // To make sure that ob_flush() has the desired effect
+                    ob_flush();
+                }
                 foreach ($contents as $content) {
+                    @set_time_limit(300);     // Might be slow!
                     $this->update_thumbnail($content);
                 }
             }
