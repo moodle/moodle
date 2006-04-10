@@ -5,7 +5,7 @@
 # Table structure for table prefix_question_essay
 #
 
-CREATE TABLE mdl_question_essay (
+CREATE TABLE prefix_question_essay (
     id serial NOT NULL,
     question integer NOT NULL DEFAULT 0,
     answer varchar(255) NOT NULL DEFAULT ''
@@ -18,7 +18,7 @@ CREATE TABLE mdl_question_essay (
 # Table structure for table prefix_question_essay_states
 #
 
-CREATE TABLE mdl_question_essay_states (
+CREATE TABLE prefix_question_essay_states (
     id serial NOT NULL,
     stateid integer NOT NULL DEFAULT 0,
     graded integer NOT NULL DEFAULT 0,
