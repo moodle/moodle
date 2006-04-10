@@ -4935,6 +4935,11 @@ function get_list_of_languages() {
             if (strstr('_local',$lang)!==false) {
                 continue;
             }
+            if (substr($lang, -5) == '_utf8') {   //Remove the _utf8 suffix from the lang to show
+                $shortlang = substr($lang, 0, -5);
+            } else {
+                $shortlang = $lang;
+            }
         /// Search under dirroot/lang
         /// If $CFG->unicodedb = false, ignore new lang packs
             if (empty($CFG->unicodedb)) {
@@ -4945,7 +4950,7 @@ function get_list_of_languages() {
             if (file_exists($CFG->dirroot .'/lang/'. $lang .'/'. $filetocheck)) {
                 include($CFG->dirroot .'/lang/'. $lang .'/'. $filetocheck);
                 if (!empty($string['thislanguage'])) {
-                    $languages[$lang] = $string['thislanguage'].' ('. $lang .')';
+                    $languages[$lang] = $string['thislanguage'].' ('. $shortlang .')';
                 }
                 unset($string);
             }
@@ -4959,7 +4964,7 @@ function get_list_of_languages() {
             if (file_exists($CFG->dataroot .'/lang/'. $lang .'/'. $filetocheck)) {
                 include($CFG->dataroot .'/lang/'. $lang .'/'. $filetocheck);
                 if (!empty($string['thislanguage'])) {
-                    $languages[$lang] = $string['thislanguage'].' ('. $lang .')';
+                    $languages[$lang] = $string['thislanguage'].' ('. $shortlang .')';
                 }
                 unset($string);
             }
@@ -4978,6 +4983,11 @@ function get_list_of_languages() {
             if (strstr('_local',$lang)!==false) {
                 continue;
             }
+            if (substr($lang, -5) == '_utf8') {   //Remove the _utf8 suffix from the lang to show
+                $shortlang = substr($lang, 0, -5);
+            } else {
+                $shortlang = $lang;
+            }
         /// Search under moodledata/lang
         /// If $CFG->unicodedb = false, ignore new lang packs
             if (empty($CFG->unicodedb)) {
@@ -4988,7 +4998,7 @@ function get_list_of_languages() {
             if (file_exists($CFG->dataroot .'/lang/'. $lang .'/'. $filetocheck)) {
                 include($CFG->dataroot .'/lang/'. $lang .'/'. $filetocheck);
                 if (!empty($string['thislanguage'])) {
-                    $languages[$lang] = $string['thislanguage'] .' ('. $lang .')';
+                    $languages[$lang] = $string['thislanguage'] .' ('. $shortlang .')';
                 }
                 unset($string);
             }
@@ -5002,7 +5012,7 @@ function get_list_of_languages() {
             if (file_exists($CFG->dirroot .'/lang/'. $lang .'/'. $filetocheck)) {
                 include($CFG->dirroot .'/lang/'. $lang .'/'. $filetocheck);
                 if (!empty($string['thislanguage'])) {
-                    $languages[$lang] = $string['thislanguage'] .' ('. $lang .')';
+                    $languages[$lang] = $string['thislanguage'] .' ('. $shortlang .')';
                 }
                 unset($string);
             }
