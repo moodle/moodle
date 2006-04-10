@@ -293,11 +293,12 @@
 
 /// Find the field we are sorting on
     if ($sort) {
+        
         $sortfield = data_get_field_from_id($sort, $data);
         $sortcontent = $sortfield->get_sort_field();
         $sortcontentfull = $sortfield->get_sort_sql('c.'.$sortcontent);
 
-        $what = ' DISTINCT r.id, r.approved, r.userid, u.firstname, u.lastname ';
+        $what = ' DISTINCT r.id, r.approved, r.userid, u.firstname, u.lastname, c.'.$sortcontent.' ';
         $count = ' COUNT(DISTINCT c.recordid) ';
         $tables = $CFG->prefix.'data_content c,'.$CFG->prefix.'data_records r,'.$CFG->prefix.'data_content c1, '.$CFG->prefix.'user u ';
         $where =  'WHERE c.recordid = r.id 
@@ -323,7 +324,7 @@
         $searchselect = ' AND (c.content LIKE "%'.$search.'%") ';
 
     } else {
-        $what = ' DISTINCT r.id, r.approved, r.userid, u.firstname, u.lastname ';
+        $what = ' DISTINCT r.id, r.approved, r.timecreated, r.userid, u.firstname, u.lastname ';
         $count = ' COUNT(r.id) ';
         $tables = $CFG->prefix.'data_records r, '.$CFG->prefix.'user u ';
         $where =  'WHERE r.dataid = '.$data->id. ' AND r.userid = u.id ';
