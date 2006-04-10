@@ -104,6 +104,11 @@
             migrate2utf8_question_name(RECORDID)
           </PHP_FUNCTION>
         </FIELD>
+        <FIELD name="qtype" method="PHP_FUNCTION" type="varchar" length="20">
+          <PHP_FUNCTION>
+            migrate2utf8_question_qtype(RECORDID)
+          </PHP_FUNCTION>
+        </FIELD>
         <FIELD name="questiontext" method="PHP_FUNCTION" type="text" length="0">
           <PHP_FUNCTION>
             migrate2utf8_question_questiontext(RECORDID)

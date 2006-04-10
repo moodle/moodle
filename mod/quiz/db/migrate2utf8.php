@@ -48,6 +48,56 @@ function migrate2utf8_question_name($recordid){
     return $result;
 }
 
+
+function migrate2utf8_question_qtype($recordid){
+    global $CFG, $globallang;
+
+/// Some trivial checks
+    if (empty($recordid)) {
+        log_the_problem_somewhere();
+        return false;
+    }
+
+    $SQL = "SELECT qc.course
+           FROM {$CFG->prefix}question_categories qc,
+                {$CFG->prefix}question qq
+           WHERE qc.id = qq.category
+                 AND qq.id = $recordid";
+
+    if (!$quiz = get_record_sql($SQL)) {
+        log_the_problem_somewhere();
+        return false;
+    }
+
+    if (!$quizquestions = get_record('question','id',$recordid)) {
+        log_the_problem_somewhere();
+        return false;
+    }
+    if ($globallang) {
+        $fromenc = $globallang;
+    } else {
+        $sitelang   = $CFG->lang;
+        $courselang = get_course_lang($quiz->course);  //Non existing!
+        $userlang   = get_main_teacher_lang($quiz->course); //N.E.!!
+
+        $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+    }
+
+/// We are going to use textlib facilities
+
+/// Convert the text
+    if (($fromenc != 'utf-8') && ($fromenc != 'UTF-8')) {
+        $result = utfconvert($quizquestions->qtype, $fromenc);
+
+        $newquizquestion = new object;
+        $newquizquestion->id = $recordid;
+        $newquizquestion->qtype = $result;
+        update_record('question',$newquizquestion);
+    }
+/// And finally, just return the converted field
+    return $result;
+}
+
 function migrate2utf8_question_questiontext($recordid){
     global $CFG, $globallang;
 
