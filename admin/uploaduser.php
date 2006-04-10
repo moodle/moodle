@@ -322,11 +322,13 @@ if ($um->preprocess_files() && confirm_sesskey()) {
                                         $ret = enrol_student($user->id, $course[$i]->id);
                                         break;
                                 }
-                                if ($ret) {   // OK
-                                    notify('-->'. get_string('enrolledincourse', '', $addcourse[$i]));
-                                } else {
-                                    notify('-->'.get_string('enrolledincoursenot', '', $addcourse[$i]));
-                                }
+                            } else {
+                                $ret = enrol_student($user->id, $course[$i]->id);
+                            }
+                            if ($ret) {   // OK
+                                notify('-->'. get_string('enrolledincourse', '', $addcourse[$i]));
+                            } else {
+                                notify('-->'.get_string('enrolledincoursenot', '', $addcourse[$i]));
                             }
                         }
                     }
