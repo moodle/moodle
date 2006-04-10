@@ -54,6 +54,23 @@
             }
         }
     }
+    
+    function optiondeselector () {
+    	currentstate = document.getElementById('menuparam_navigationmenu').value;
+    	if (currentstate == 1) {
+    		document.getElementById('menuparam_tableofcontents').value = 0;
+    		document.getElementById('menuparam_skipsubmenus').value = 1;
+    		document.getElementById('menuparam_navigationupbutton').value = 0;
+    		document.getElementById('menuparam_tableofcontents').disabled = true;
+    		document.getElementById('menuparam_skipsubmenus').disabled = true;
+    		document.getElementById('menuparam_navigationupbutton').disabled = true;
+    	}
+    	else {
+    		document.getElementById('menuparam_tableofcontents').disabled = false;
+    		document.getElementById('menuparam_skipsubmenus').disabled = false;
+    		document.getElementById('menuparam_navigationupbutton').disabled = false;    		
+    	}
+    }
 </script>
 
 
@@ -168,7 +185,16 @@
     $yesno = array();
     $yesno[0] = get_string('no');
     $yesno[1] = get_string('yes');
-
+    
+    echo "<tr>\n";
+    echo "<td valign=\"top\" align=\"right\">\n";
+    echo 'Navigation Menu: ';
+    echo "</td>\n";
+    echo "<td valign=\"top\">\n";
+    choose_from_menu($yesno, "param_navigationmenu", $form->param_navigationmenu, "", "optiondeselector();");
+    echo "</td>\n";
+    echo "</tr>\n";
+    
     echo "<tr>\n";
     echo "<td valign=\"top\" align=\"right\">\n";
     echo get_string('tableofcontents','resource').': ';
@@ -186,6 +212,26 @@
     choose_from_menu($yesno, "param_navigationbuttons", $form->param_navigationbuttons, "");
     echo "</td>\n";
     echo "</tr>\n";
+    
+    echo "<tr>\n";
+    echo "<td valign=\"top\" align=\"right\">\n";
+    echo 'Skip Submenu Entries: ';
+    echo "</td>\n";
+    echo "<td valign=\"top\">\n";
+    choose_from_menu($yesno, "param_skipsubmenus", $form->param_skipsubmenus, "");
+    echo "</td>\n";
+    echo "</tr>\n";
+    
+    echo "<tr>\n";
+    echo "<td valign=\"top\" align=\"right\">\n";
+    echo 'Navigation \'Up\' Button: ';
+    echo "</td>\n";
+    echo "<td valign=\"top\">\n";
+    choose_from_menu($yesno, "param_navigationupbutton", $form->param_navigationupbutton, "");
+    echo "</td>\n";
+    echo "</tr>\n";
+    
+    echo "<script language=\"javascript\" type=\"text/javascript\"> optiondeselector(); </script>";
 ?>
 
 
