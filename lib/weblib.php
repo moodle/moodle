@@ -1853,6 +1853,9 @@ function print_header ($title='', $heading='', $navigation='', $focus='', $meta=
     static $headerprinted = false;
 
     if ($headerprinted) {
+        if ($CFG->debug > 7) {
+            notify('print_header() was called more than once - this should not happen.  Please check the code for this page closely, a common culprit is a call to error() after print_header().');
+        }
         return;
     } else {
         $headerprinted = true;
