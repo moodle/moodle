@@ -11,8 +11,7 @@
 
     $id             = optional_param('id', '', PARAM_ALPHANUM);
     $confirmupgrade = optional_param('confirmupgrade', 0, PARAM_BOOL);
-
-
+    $agreelicence = optional_param('agreelicence',0, PARAM_BOOL);
 /// Check that PHP is of a sufficient version
 
     if (!check_php_version("4.1.0")) { //TODO: should we bump it up to 4.3.0??
