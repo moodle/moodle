@@ -24,10 +24,22 @@
 //                                                                       //
 ///////////////////////////////////////////////////////////////////////////
 
+/// Options presented to user :
+/// (1) Side navigation menu (navigationmenu)
+/// (2) TOC (tableofcontents)
+/// (3) Navigation buttons (navigationbuttons)
+/// (4) Navigation up button (navigationupbutton)
+/// (5) Skip submenu pages (skipsubmenus)
+///
+/// (1) forces (2), (4) false and (5) true. Forced on setup
+/// (2) is a bit silly with (5). Maybe make a rule?
+/// (3) false => (5) false. Add graying out on setup.
+
+
 include_once ($CFG->libdir.'/filelib.php');
 
 /**
-* Extend the base resource class for ims resources
+* Extend the base resource class for ims resources 
 */
 class resource_ims extends resource_base {
 
@@ -43,6 +55,13 @@ class resource_ims extends resource_base {
         }
     /// set own attributes
         $this->parameters = $this->alltext2parameters($this->resource->alltext);
+        
+    /// navigation menu forces other settings
+        if ($this->parameters->navigationmenu) {
+            unset($this->parameters->tableofcontents);
+            unset($this->parameters->navigationuparrow);
+            $this->parameters->skipsubmenus = 1;
+        }
     }
 
     /***
@@ -53,7 +72,10 @@ class resource_ims extends resource_base {
         /// set parameter defaults
         $alltextfield = new stdClass();
         $alltextfield->tableofcontents=0;
-        $alltextfield->navigationbuttons=0;
+        $alltextfield->navigationbuttons=1;
+        $alltextfield->navigationmenu=1;
+        $alltextfield->skipsubmenus=1;
+        $alltextfield->navigationupbutton=1;
 
     /// load up any stored parameters
         if (!empty($alltext)) {
@@ -77,6 +99,9 @@ class resource_ims extends resource_base {
 
         $optionlist[] = 'tableofcontents='.$parameters->tableofcontents;
         $optionlist[] = 'navigationbuttons='.$parameters->navigationbuttons;
+        $optionlist[] = 'skipsubmenus='.$parameters->skipsubmenus;
+        $optionlist[] = 'navigationmenu='.$parameters->navigationmenu;
+        $optionlist[] = 'navigationupbutton='.$parameters->navigationupbutton;
 
         return implode(',', $optionlist);
     }
@@ -89,6 +114,9 @@ class resource_ims extends resource_base {
         $parameters = new stdClass;
         $parameters->tableofcontents = $resource->param_tableofcontents;
         $parameters->navigationbuttons = $resource->param_navigationbuttons;
+        $parameters->skipsubmenus = $resource->param_skipsubmenus;
+        $parameters->navigationmenu = $resource->param_navigationmenu;
+        $parameters->navigationupbutton = $resource->param_navigationupbutton;
 
         return $parameters;
     }
@@ -239,7 +267,7 @@ class resource_ims extends resource_base {
      *
      * @param    CFG     global object
      */
-    function display() {
+    function display() {       
         global $CFG, $THEME, $USER;
 
         require_once($CFG->libdir.'/filelib.php');
@@ -364,77 +392,11 @@ class resource_ims extends resource_base {
         }
 
 
-    /// If we aren't in a frame, build it (the main one)
-
-        if (empty($frameset)) {
-
-        /// Select encoding
-            $encoding = current_charset();
-
-        /// Select direction
-            if (get_string('thisdirection') == 'rtl') {
-                $direction = ' dir="rtl"';
-            } else {
-                $direction = ' dir="ltr"';
-            }
-
-        /// The frameset output starts
-
-            echo "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Frameset//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd\">\n";
-            echo "<html$direction>\n";
-            echo '<head>';
-            echo '<meta http-equiv="content-type" content="text/html; charset='.$encoding.'" />';
-            echo "<title>{$course->shortname}: ".strip_tags(format_string($resource->name,true))."</title></head>\n";
-            echo "<frameset rows=\"$CFG->resource_framesize,*\">"; //Main frameset
-            echo "<frame src=\"view.php?id={$cm->id}&amp;type={$resource->type}&amp;frameset=top\" />"; //Top frame
-            echo "<frame src=\"view.php?id={$cm->id}&amp;type={$resource->type}&amp;frameset=ims\" />"; //Ims frame
-            echo "</frameset>";
-            echo "</html>";
-        /// We can only get here once per resource, so add an entry to the log
-            add_to_log($course->id, "resource", "view", "view.php?id={$cm->id}", $resource->id, $cm->id);
-            exit;
-        }
-
-    /// If required we print the ims frameset
-
-        if ($frameset == 'ims') {
-
-        /// Calculate the file.php correct url
-            if ($CFG->slasharguments) {
-                $fileurl = "{$CFG->wwwroot}/file.php/{$course->id}/{$CFG->moddata}/resource/{$resource->id}";
-            } else {
-                $fileurl = "{$CFG->wwwroot}/file.php?file=/{$course->id}/{$CFG->moddata}/resource/{$resource->id}";
-            }
-
-        /// Calculate the view.php correct url
-            $viewurl = "view.php?id={$cm->id}&amp;type={$resource->type}&amp;frameset=toc&amp;page=";
-
-
-        /// Decide what to show (full toc, partial toc or package file)
-            $fullurl = '';
-            if (empty($page) && !empty($this->parameters->tableofcontents)) {
-            /// Full toc contents
-                $fullurl = $viewurl.$page;
-            } else {
-                if (empty($page)) {
-                /// If no page and no toc, set page 1
-                    $page = 1;
-                }
-                if (empty($items[$page]->href)) {
-                /// The page hasn't href, then partial toc contents
-                    $fullurl = $viewurl.$page;
-                } else {
-                /// The page has href, then its own file contents
-                /// but considering if it seems to be an external url or a internal one
-                    if (strpos($items[$page]->href, '//') !== false) {
-                    /// External URL
-                        $fullurl = $items[$page]->href;
-                    } else {
-                    /// Internal URL, use file.php
-                        $fullurl = $fileurl.'/'.$items[$page]->href;
-                    }
-                }
-            }
+    /// No frames or framesets anymore, except iframe. in print_ims, iframe filled.
+    /// needs callback to this file to display table of contents in the iframe so
+    /// $frameset = 'toc' leads to output of toc and blank or 'ims' produces the
+    /// iframe.
+        if (empty($frameset) || $frameset=='ims') {
 
         /// Select encoding
             $encoding = current_charset();
@@ -446,78 +408,137 @@ class resource_ims extends resource_base {
                 $direction = ' dir="ltr"';
             }
 
-        /// The frameset output starts
+        /// The output here
 
             echo "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Frameset//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd\">\n";
             echo "<html$direction>\n";
             echo '<head>';
             echo '<meta http-equiv="content-type" content="text/html; charset='.$encoding.'" />';
             echo "<title>{$course->shortname}: ".strip_tags(format_string($resource->name,true))."</title></head>\n";
-            if (!empty($this->parameters->navigationbuttons)) {
-                echo "<frameset rows=\"20,*\" border=\"0\">"; //Ims frameset with navigation buttons
-            } else {
-                echo "<frameset rows=\"*\">";    //Ims frameset without navigation buttons
-            }
-            if (!empty($this->parameters->navigationbuttons)) {
-                echo "<frame src=\"view.php?id={$cm->id}&amp;type={$resource->type}&amp;page={$page}&amp;frameset=nav\" scrolling=\"no\" noresize=\"noresize\" name=\"ims-nav\" />"; //Nav frame
-            }
-            echo "<frame src=\"{$fullurl}\" name=\"ims-content\" />"; //Content frame
-            echo "</frameset>";
-            echo "</html>";
-            exit;
-        }
-
-    /// If we are in the top frameset, just print it
-
-        if ($frameset == 'top') {
-
-        /// The header depends of the resource->popup
+        /// moodle header
             if ($resource->popup) {
                 print_header($pagetitle, $course->fullname.' : '.$resource->name);
             } else {
                 print_header($pagetitle, $course->fullname, "$this->navigation ".format_string($resource->name), "", "", true, update_module_button($cm->id, $course->id, $this->strresource), navmenu($course, $cm, "parent"));
             }
-            echo '</body></html>';
+        /// content - this produces everything else
+            $this->print_ims($cm, $course, $items, $resource, $page);
+        /// moodle footer
+            print_footer();
+
+        /// log it. clearly only run once.
+            add_to_log($course->id, "resource", "view", "view.php?id={$cm->id}", $resource->id, $cm->id);
             exit;
         }
-
-    /// If we are in the toc frameset, calculate and show the toc autobuilt page
 
         if ($frameset == 'toc') {
             print_header();
-            $table = new stdClass;
-            if (empty($page)) {
-                $table->head[] = '<b>'.$resource->name.'</b>';
-            } else {
-                $table->head[] = '<b>'.$items[$page]->title.'</b>';
-            }
-            $table->data[] = array(ims_generate_toc ($items, $resource, $page));
-            $table->width = '60%';
-            print_table($table);
-            print_footer();
-            exit;
-        }
-        
-    /// If we are in the nav frameset, just print it
-
-        if ($frameset == 'nav') {
-        /// Header
-            print_header();
-            echo '<div class="ims-nav-bar">';
-        /// Prev button
-            echo ims_get_prev_nav_button ($items, $this, $page);
-        /// Up button
-            echo ims_get_up_nav_button ($items, $this, $page);
-        /// Next button
-            echo ims_get_next_nav_button ($items, $this, $page);
-        /// Main TOC button
-            echo ims_get_toc_nav_button ($items, $this, $page);
-        /// Footer
-            echo '</div></div></div></body></html>';
+            $this->print_toc($items, $resource, $page);
+            echo '</div></div></body></html>';
             exit;
         }
     }
+    
+/// Function print_ims prints nearly the whole page. Stupid name subject to change :-)
+    function print_ims($cm, $course, $items, $resource, $page) {
+        global $CFG;
+        
+    /// Calculate the file.php correct url
+        if ($CFG->slasharguments) {
+            $fileurl = "{$CFG->wwwroot}/file.php/{$course->id}/{$CFG->moddata}/resource/{$resource->id}";
+        } else {
+            $fileurl = "{$CFG->wwwroot}/file.php?file=/{$course->id}/{$CFG->moddata}/resource/{$resource->id}";
+        }
 
+    /// Calculate the view.php correct url
+        $viewurl = "view.php?id={$cm->id}&amp;type={$resource->type}&amp;frameset=toc&amp;page=";
+
+
+    /// Decide what to show (full toc, partial toc or package file)
+        $fullurl = '';
+        if (empty($page) && !empty($this->parameters->tableofcontents)) {
+        /// Full toc contents
+            $fullurl = $viewurl.$page;
+        } else {
+            if (empty($page)) {
+            /// If no page and no toc, set page 1 unless skipping submenus, in which case fast forward:
+                $page = 1;
+                if (!empty($this->parameters->skipsubmenus)) {
+                    while (empty($items[$page]->href) && !empty($items[$page])) {
+                        $page++;    
+                    }
+                }
+            }
+            if (empty($items[$page]->href)) {
+            /// The page hasn't href, then partial toc contents
+                $fullurl = $viewurl.$page;
+            } else {
+            /// The page has href, then its own file contents
+            /// but considering if it seems to be an external url or a internal one
+                if (strpos($items[$page]->href, '//') !== false) {
+                /// External URL
+                    $fullurl = $items[$page]->href;
+                } else {
+                /// Internal URL, use file.php
+                    $fullurl = $fileurl.'/'.$items[$page]->href;
+                }
+            }
+        }
+
+    /// Select encoding
+        $encoding = current_charset();
+    
+    /// print navigation buttons if needed  
+        if (!empty($this->parameters->navigationbuttons)) {
+            $this->print_nav($items, $resource, $page);
+        }
+        
+    /// adds side navigation bar if needed. must also adjust width of iframe to accomodate
+        if (!empty($this->parameters->navigationmenu)) {
+            echo "<div style=\"float:left;width:300px;height:420px;overflow:scroll\">"; $this->print_navmenu($items, $resource, $page); echo "</div>";
+            $iframewidth = "700px";
+        }
+        else {
+            $iframewidth = "100%";
+        }
+        
+    /// prints iframe filled with $fullurl
+        echo "<iframe src=\"{$fullurl}\" style=\"border:0;width:".$iframewidth."\" height=\"420px\"></iframe>"; //Content frame
+    }
+
+/// Prints TOC    
+    function print_toc($items, $resource, $page) {
+        $table = new stdClass;
+        if (empty($page)) {
+            $table->head[] = '<b>'.$resource->name.'</b>';
+        } else {
+            $table->head[] = '<b>'.$items[$page]->title.'</b>';
+        }
+        $table->data[] = array(ims_generate_toc ($items, $resource, $page));
+        $table->width = '60%';
+        print_table($table);
+    }
+
+/// Prints side navigation menu. This is just the full TOC with no surround.    
+    function print_navmenu($items, $resource, $page=0) {
+        echo ims_generate_toc ($items, $resource, 0);
+    }
+    
+/// Prints navigation bar at the top of the page.
+    function print_nav($items, $resource, $page) {
+        echo '<div class="ims-nav-bar">';
+    /// Prev button
+        echo ims_get_prev_nav_button ($items, $this, $page);
+    /// Up button
+        echo ims_get_up_nav_button ($items, $this, $page);
+    /// Next button
+        echo ims_get_next_nav_button ($items, $this, $page);
+    /// Main TOC button
+        echo ims_get_toc_nav_button ($items, $this, $page);
+    /// Footer
+        echo '</div>';      
+    }        
+        
 
     /**
     * Setup a new file resource
@@ -599,7 +620,9 @@ class resource_ims extends resource_base {
         $parameters=$this->alltext2parameters($form->alltext);
         $form->param_tableofcontents = $parameters->tableofcontents;
         $form->param_navigationbuttons = $parameters->navigationbuttons;
-
+        $form->param_skipsubmenus = $parameters->skipsubmenus;
+        $form->param_navigationmenu = $parameters->navigationmenu;
+        $form->param_navigationupbutton = $parameters->navigationupbutton;
         //Show the setup form
         include("$CFG->dirroot/mod/resource/type/ims/ims.html");
 
@@ -682,7 +705,7 @@ class resource_ims extends resource_base {
         $endlevel  = 0;
         foreach ($items as $item) {
         /// Convert text from UTF-8 to current charset if needed
-		    if (empty($CFG->unicodedb)) {
+            if (empty($CFG->unicodedb)) {
                 $textlib = textlib_get_instance();
                 $item->title = $textlib->convert($item->title, 'UTF-8', current_charset());
             }
@@ -736,8 +759,15 @@ class resource_ims extends resource_base {
 
         $contents = '';
 
-        if ($page > 1 ) {  //0 and 1 pages haven't previous
-            $page--;
+        $page--;
+    /// Skips any menu pages since these are redundant with sidemenu.
+        if (!empty($resource_obj->parameters->skipsubmenus)) {
+            while(empty($items[$page]->href) && $page >= 0) {
+                $page--;
+            }
+        }
+
+        if ($page >= 0 ) {  //0 and 1 pages haven't previous
             $contents .= "<span class=\"ims-nav-button\"><a href=\"view.php?id={$cm->id}&amp;type={$resource->type}&amp;page={$page}&amp;frameset=ims\" target=\"_parent\">&lt;&lt;</a></span>"; 
         } else {
             $contents .= '<span class="ims-nav-dimmed">&lt;&lt;</span>';
@@ -755,9 +785,16 @@ class resource_ims extends resource_base {
         $resource = $resource_obj->resource;
 
         $contents = '';
-
-        if (!empty($items[$page+1])) {  //If the next page exists
-            $page++;
+        
+        $page++;
+    /// Skips any menu pages since these are redundant with sidemenu.
+        if (!empty($resource_obj->parameters->skipsubmenus)) {
+            while(empty($items[$page]->href) && !empty($items[$page])) {
+                $page++;
+            }
+        }
+        
+        if (!empty($items[$page])) {  //If the next page exists
             $contents .= "<span class=\"ims-nav-button\"><a href=\"view.php?id={$cm->id}&amp;type={$resource->type}&amp;page={$page}&amp;frameset=ims\" target=\"_parent\">&gt;&gt;</a></span>";
         } else {
             $contents .= '<span class="ims-nav-dimmed">&gt;&gt;</span>';
@@ -777,13 +814,14 @@ class resource_ims extends resource_base {
 
         $contents = '';
 
-        if ($page > 1 && $items[$page]->parent > 0 ) {  //If the page has parent
-            $page = $items[$page]->parent;
-            $contents .= "<span class=\"ims-nav-button\"><a href=\"view.php?id={$cm->id}&amp;type={$resource->type}&amp;page={$page}&amp;frameset=ims\" target=\"_parent\">&and;</a></span>";
-        } else {
-            $contents .= '<span class="ims-nav-dimmed">&and;</span>';
+        if (!empty($resource_obj->parameters->navigationupbutton)) {
+            if ($page > 1 && $items[$page]->parent > 0) {  //If the page has parent
+                $page = $items[$page]->parent;
+                $contents .= "<span class=\"ims-nav-button\"><a href=\"view.php?id={$cm->id}&amp;type={$resource->type}&amp;page={$page}&amp;frameset=ims\" target=\"_parent\">&and;</a></span>";
+            } else {
+                $contents .= '<span class="ims-nav-dimmed">&and;</span>';
+            }
         }
-
         return $contents;
     }
 
