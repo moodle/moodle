@@ -1771,6 +1771,10 @@ function main_upgrade($oldversion=0) {
         table_column('blog_tag_instance','courseid','courseid','integer','10','unsigned','0','not null');
         table_column('blog_tag_instance','userid','userid','integer','10','unsigned','0','not null');
     }
+
+    if ($oldversion < 2006041001) {
+        table_column('cache_text','formattedtext','formattedtext','longblob','','','','not null');
+    }
     
     return $result;
 }
