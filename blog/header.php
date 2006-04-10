@@ -1,5 +1,7 @@
 <?php //$Id$
 
+/// Sets up blocks and navigation for index.php, edit.php
+
 require_once($CFG->dirroot .'/blog/lib.php');
 require_once($CFG->libdir .'/pagelib.php');
 require_once($CFG->dirroot .'/blog/blogpage.php');
@@ -9,15 +11,6 @@ require_once($CFG->dirroot .'/course/lib.php');
 $blockaction = optional_param('blockaction','', PARAM_ALPHA);
 $instanceid = optional_param('instanceid', 0, PARAM_INT);
 $blockid = optional_param('blockid',    0, PARAM_INT);
-$groupid = optional_param('groupid',    0, PARAM_INT);
-
-if (!isset($userid)) {
-    $userid = optional_param('userid',     0, PARAM_INT);
-}
-
-if (!isset($courseid)) {
-    $courseid = optional_param('courseid', SITEID, PARAM_INT);
-}
 
 if (!$site = get_site()) {
     redirect($CFG->wwwroot.'/index.php');

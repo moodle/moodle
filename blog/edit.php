@@ -4,6 +4,11 @@ require_once('../config.php');
 include_once('lib.php');
 include_once('class.BlogInfo.php');
 require_login();
+
+$userid = optional_param('userid',     0, PARAM_INT);
+$courseid = optional_param('courseid', SITEID, PARAM_INT);
+$act = optional_param('act','',PARAM_ALPHA);
+
 // detemine where the user is coming from in case we need to send them back there
 if (isset($_SERVER['HTTP_REFERER'])) {
     $referrer = $_SERVER['HTTP_REFERER'];
@@ -54,7 +59,7 @@ if ( !blog_user_has_rights($PAGE->bloginfo) ) {
 
 //////////// SECURITY AND SETUP COMPLETE - NOW PAGE LOGIC ///////////////////
 
-if (isset($act) && $act == 'del' && confirm_sesskey())
+if (isset($act) && ($act == 'del') && confirm_sesskey())
 {
     $postid = required_param('postid', PARAM_INT);
     if (optional_param('confirm',0,PARAM_INT)) {

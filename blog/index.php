@@ -10,22 +10,19 @@ if (!file_exists('../config.php')) {
     header('Location: ../install.php');
     die;
 }
-require_once('../config.php');
 
+require_once('../config.php');
 require_once($CFG->dirroot .'/blog/lib.php');
 require_once($CFG->libdir .'/blocklib.php');
 
 $id = optional_param('id', 0, PARAM_INT);
 $limit = optional_param('limit', 0, PARAM_INT);
 $start = optional_param('formstart', 0, PARAM_INT);
-
 $userid = optional_param('userid',0,PARAM_INT);
-$groupid = optional_param('groupid',0,PARAM_INT);
 $courseid = optional_param('courseid',0,PARAM_INT);
 $tag = s(urldecode(optional_param('tag', '', PARAM_NOTAGS)));
 $tagid = optional_param('tagid', 0, PARAM_INT);
 $postid = optional_param('postid',0,PARAM_INT);
-
 $filtertype = optional_param('filtertype', '', PARAM_ALPHA);
 $filterselect = optional_param('filterselect', 0, PARAM_INT);
 
@@ -135,7 +132,7 @@ switch ($filtertype) {
 
 //first set the start and end day equal to the day argument passed in from the get vars
 if ($limit == 'none') {
-    $limit = get_user_preferences('blogpagesize',8);
+    $limit = get_user_preferences('blogpagesize',10);
 }
 
 $blogFilter =& new BlogFilter($userid, $postid, $limit, $start,$filtertype, $filterselect, $tagid, $tag);
