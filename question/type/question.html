@@ -3,21 +3,6 @@
  * print_question() method.
  */
 ?>
-
-<script language="javascript" type="text/javascript">
-    if (typeof showhidecomment == "undefined") {
-        function showhidecomment (id) {
-            divobj = document.getElementById(id);
-            if (divobj.style.display == 'none') {
-                divobj.style.display = 'block';
-            } else {
-                divobj.style.display = 'none';
-            }
-        }
-    }
-</script>
-
-<a name="<?php echo $question->id; ?>" id="<?php echo $question->id; ?>"></a>
 <div id="q<?php echo $question->id; ?>" class="que <?php echo $question->qtype; ?> clearfix">
   <div class="info">
     <span class="no"><?php echo $number; ?></span>
@@ -43,18 +28,8 @@
         echo $comment;
       ?>
     </div>
-  <?php } ?>
-  <div class="commentlink">
-      <?php 
-        if (!empty($commentlink)) {
+  <?php }
             echo $commentlink;
-      ?>
-      <div id="comment-wrapper-<?php echo $question->id; ?>">
-          <?php question_print_comment_box($question, $state, $attempt, $CFG->wwwroot.'/mod/quiz/review.php?attempt='.$attempt->id.'#'.$question->id) ?>
-      </div>
-      <?php } ?>
-  </div>      
-  <?php
   if ($history) { ?>
 	<div class="history">
 	  <?php
@@ -64,7 +39,3 @@
 	</div>
   <?php } ?>
 </div>
-
-<script language="javascript" type="text/javascript">
-    showhidecomment('comment-wrapper-<?php echo $question->id; ?>');
-</script>
