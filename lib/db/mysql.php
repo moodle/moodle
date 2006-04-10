@@ -1682,18 +1682,18 @@ function main_upgrade($oldversion=0) {
     if ($oldversion < 2006031000) {
 
         modify_database("","CREATE TABLE prefix_post (
-          `id` int(11) NOT NULL auto_increment,
-          `userid` int(11) NOT NULL default '0',
-          `courseid` int(11) NOT NULL default'0',
-          `groupid` int(11) NOT NULL default'0',
-          `moduleid` int(11) NOT NULL default'0',
-          `coursemoduleid` int(11) NOT NULL default'0',
+          `id` int(10) NOT NULL auto_increment,
+          `userid` int(10) NOT NULL default '0',
+          `courseid` int(10) NOT NULL default'0',
+          `groupid` int(10) NOT NULL default'0',
+          `moduleid` int(10) NOT NULL default'0',
+          `coursemoduleid` int(10) NOT NULL default'0',
           `subject` varchar(128) NOT NULL default '',
           `summary` longtext,
           `content` longtext,
           `uniquehash` varchar(128) NOT NULL default '',
-          `rating` int(11) NOT NULL default'0',
-          `format` int(11) NOT NULL default'0',
+          `rating` int(10) NOT NULL default'0',
+          `format` int(10) NOT NULL default'0',
           `publishstate` enum('draft','site','public') NOT NULL default 'draft',
           `lastmodified` int(10) NOT NULL default '0',
           `created` int(10) NOT NULL default '0',
@@ -1704,20 +1704,20 @@ function main_upgrade($oldversion=0) {
         ) TYPE=MyISAM  COMMENT='New moodle post table. Holds data posts such as forum entries or blog entries.';");
 
         modify_database("","CREATE TABLE prefix_tags (
-          `id` int(11) NOT NULL auto_increment,
+          `id` int(10) NOT NULL auto_increment,
           `type` varchar(255) NOT NULL default 'official',
-          `userid` int(11) NOT NULL default'0',
+          `userid` int(10) NOT NULL default'0',
           `text` varchar(255) NOT NULL default '',
           PRIMARY KEY  (`id`)
         ) TYPE=MyISAM COMMENT ='tags structure for moodle.';");
 
         modify_database("","CREATE TABLE prefix_blog_tag_instance (
-          `id` int(11) NOT NULL auto_increment,
-          `entryid` int(11) NOT NULL default'0',
-          `tagid` int(11) NOT NULL default'0',
-          `groupid` int(11) NOT NULL default'0',
-          `courseid` int(11) NOT NULL default'0',
-          `userid` int(11) NOT NULL default'0',
+          `id` int(10) NOT NULL auto_increment,
+          `entryid` int(10) NOT NULL default'0',
+          `tagid` int(10) NOT NULL default'0',
+          `groupid` int(10) NOT NULL default'0',
+          `courseid` int(10) NOT NULL default'0',
+          `userid` int(10) NOT NULL default'0',
           PRIMARY KEY  (`id`)
           ) TYPE=MyISAM COMMENT ='tag instance for blogs.';");
     }
@@ -1751,6 +1751,27 @@ function main_upgrade($oldversion=0) {
         execute_sql(" CREATE INDEX coursesection ON {$CFG->prefix}course_sections (course,section) ", false);
     }
 
+    /// change all the int(11) to int(10) for blogs and tags
+
+    if ($oldversion < 2006041000) {
+        table_column('post','id','id','integer','10','unsigned','0','not null');
+        table_column('post','userid','userid','integer','10','unsigned','0','not null');
+        table_column('post','courseid','courseid','integer','10','unsigned','0','not null');
+        table_column('post','groupid','groupid','integer','10','unsigned','0','not null');
+        table_column('post','moduleid','moduleid','integer','10','unsigned','0','not null');
+        table_column('post','coursemoduleid','coursemoduleid','integer','10','unsigned','0','not null');
+        table_column('post','rating','rating','integer','10','unsigned','0','not null');
+        table_column('post','format','format','integer','10','unsigned','0','not null');
+        table_column('tags','id','id','integer','10','unsigned','0','not null');
+        table_column('tags','userid','userid','integer','10','unsigned','0','not null');
+        table_column('blog_tag_instance','id','id','integer','10','unsigned','0','not null');
+        table_column('blog_tag_instance','entryid','entryid','integer','10','unsigned','0','not null');
+        table_column('blog_tag_instance','tagid','tagid','integer','10','unsigned','0','not null');
+        table_column('blog_tag_instance','groupid','groupid','integer','10','unsigned','0','not null');
+        table_column('blog_tag_instance','courseid','courseid','integer','10','unsigned','0','not null');
+        table_column('blog_tag_instance','userid','userid','integer','10','unsigned','0','not null');
+    }
+    
     return $result;
 }
 
