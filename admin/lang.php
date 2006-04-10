@@ -92,7 +92,10 @@
     }
 
     foreach ($stringfiles as $key => $file) {
-        if (substr($file, -4) != ".php") {
+        if (substr($file, -4) != ".php") { //Avoid non php files to be showed
+            unset($stringfiles[$key]);
+        }
+        if ($file == "langconfig.php") { //Avoid langconfig.php to be showed
             unset($stringfiles[$key]);
         }
     }
