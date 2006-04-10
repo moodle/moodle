@@ -82,14 +82,21 @@ class block_online_users extends block_base {
             }
         }
 
-        if ($teachers = get_records_sql("SELECT u.id, u.username, u.firstname, u.lastname, u.picture, u.lastaccess, s.timeaccess
+        $findteacherssql = "SELECT u.id, u.username, u.firstname, u.lastname, u.picture, u.lastaccess, s.timeaccess
                                      FROM {$CFG->prefix}user u,
                                           {$CFG->prefix}user_teachers s
                                           $groupmembers
-                                     WHERE u.id = s.userid $courseselect $groupselect $timeselect
-                                  ORDER BY s.timeaccess DESC")) {
+                                     WHERE u.id = s.userid $courseselect $groupselect $timeselect ";
+
+        if (!isteacher($course->id)) {
+            // Hide hidden teachers from students.
+            $findteacherssql .= 'AND s.authority > 0 ';
+        }
+        $findteacherssql .= 'ORDER BY s.timeaccess DESC';
+
+        if ($teachers = get_records_sql($findteacherssql)) {
             foreach ($teachers as $teacher) {
-                $teacher->fullname = '<b>'.fullname($teacher).'</b>';
+                $teacher->fullname = '<strong>'.fullname($teacher).'</strong>';
                 $users[$teacher->id] = $teacher;
             }
         }
