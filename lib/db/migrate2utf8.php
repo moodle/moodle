@@ -1,5 +1,156 @@
 <?php // $Id$
 
+function migrate2utf8_post_subject($recordid){
+    global $CFG, $globallang;
+
+/// Some trivial checks
+    if (empty($recordid)) {
+        log_the_problem_somewhere();
+        return false;
+    }
+
+    if (!$post = get_record('post', 'id', $recordid)) {
+        log_the_problem_somewhere();
+        return false;
+    }
+    if ($globallang) {
+        $fromenc = $globallang;
+    } else {
+        $sitelang   = $CFG->lang;
+        $courselang = null;  //Non existing!
+        if ($post->userid) {
+            $userlang = get_user_lang($post->userid);
+        }
+        $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+    }
+/// We are going to use textlib facilities
+
+/// Convert the text
+    if (($fromenc != 'utf-8') && ($fromenc != 'UTF-8')) {
+        $result = utfconvert($post->subject, $fromenc);
+
+        $newpost = new object;
+        $newpost->id = $recordid;
+        $newpost->subject = $result;
+        migrate2utf8_update_record('event',$newpost);
+    }
+/// And finally, just return the converted field
+    return $result;
+}
+
+function migrate2utf8_post_summary($recordid){
+    global $CFG, $globallang;
+
+/// Some trivial checks
+    if (empty($recordid)) {
+        log_the_problem_somewhere();
+        return false;
+    }
+
+    if (!$post = get_record('post', 'id', $recordid)) {
+        log_the_problem_somewhere();
+        return false;
+    }
+    if ($globallang) {
+        $fromenc = $globallang;
+    } else {
+        $sitelang   = $CFG->lang;
+        $courselang = null;  //Non existing!
+        if ($post->userid) {
+            $userlang = get_user_lang($post->userid);
+        }
+        $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+    }
+/// We are going to use textlib facilities
+
+/// Convert the text
+    if (($fromenc != 'utf-8') && ($fromenc != 'UTF-8')) {
+        $result = utfconvert($post->summary, $fromenc);
+
+        $newpost = new object;
+        $newpost->id = $recordid;
+        $newpost->summary = $result;
+        migrate2utf8_update_record('event',$newpost);
+    }
+/// And finally, just return the converted field
+    return $result;
+}
+
+function migrate2utf8_post_content($recordid){
+    global $CFG, $globallang;
+
+/// Some trivial checks
+    if (empty($recordid)) {
+        log_the_problem_somewhere();
+        return false;
+    }
+
+    if (!$post = get_record('post', 'id', $recordid)) {
+        log_the_problem_somewhere();
+        return false;
+    }
+    if ($globallang) {
+        $fromenc = $globallang;
+    } else {
+        $sitelang   = $CFG->lang;
+        $courselang = null;  //Non existing!
+        if ($post->userid) {
+            $userlang = get_user_lang($post->userid);
+        }
+        $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+    }
+/// We are going to use textlib facilities
+
+/// Convert the text
+    if (($fromenc != 'utf-8') && ($fromenc != 'UTF-8')) {
+        $result = utfconvert($post->content, $fromenc);
+
+        $newpost = new object;
+        $newpost->id = $recordid;
+        $newpost->content = $result;
+        migrate2utf8_update_record('event',$newpost);
+    }
+/// And finally, just return the converted field
+    return $result;
+}
+
+function migrate2utf8_tags_text($recordid){
+    global $CFG, $globallang;
+
+/// Some trivial checks
+    if (empty($recordid)) {
+        log_the_problem_somewhere();
+        return false;
+    }
+
+    if (!$tags = get_record('tags', 'id', $recordid)) {
+        log_the_problem_somewhere();
+        return false;
+    }
+    if ($globallang) {
+        $fromenc = $globallang;
+    } else {
+        $sitelang   = $CFG->lang;
+        $courselang = null;  //Non existing!
+        if ($tags->userid) {
+            $userlang = get_user_lang($tags->userid);
+        }
+        $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+    }
+/// We are going to use textlib facilities
+
+/// Convert the text
+    if (($fromenc != 'utf-8') && ($fromenc != 'UTF-8')) {
+        $result = utfconvert($tags->text, $fromenc);
+
+        $newtags = new object;
+        $newtags->id = $recordid;
+        $newtags->text = $result;
+        migrate2utf8_update_record('tags',$newtags);
+    }
+/// And finally, just return the converted field
+    return $result;
+}
 
 function migrate2utf8_event_name($recordid){
     global $CFG, $globallang;

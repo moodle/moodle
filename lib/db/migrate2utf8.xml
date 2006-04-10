@@ -1,5 +1,38 @@
 <DBMIGRATION type="lib" VERSION="2005120100">
   <TABLES>
+    <TABLE name="blog_tag_instance" />
+    <TABLE name="post">
+      <FIELDS>
+        <FIELD name="module" method="NO_CONV" type="varchar" length="20" dropindex="post_module_idx" addindex="post_module_idx(module(20))"/>
+        <FIELD name="subject" method="PHP_FUNCTION" type="varchar" length="128" dropindex="post_subject_idx" addindex=" post_subject_idx(subject(128))">
+          <PHP_FUNCTION>
+            migrate2utf8_post_subject(RECORDID)
+          </PHP_FUNCTION>
+        </FIELD>
+        <FIELD name="summary" method="PHP_FUNCTION" type="longtext" length="0">
+          <PHP_FUNCTION>
+            migrate2utf8_post_summary(RECORDID)
+          </PHP_FUNCTION>
+        </FIELD>
+        <FIELD name="content" method="PHP_FUNCTION" type="longtext" length="0">
+          <PHP_FUNCTION>
+            migrate2utf8_post_content(RECORDID)
+          </PHP_FUNCTION>
+        </FIELD>
+        <FIELD name="uniquehash" method="NO_CONV" type="varchar" length="128" />
+        <FIELD name="publishstate" method="NO_CONV" type="enum('draft', 'site', 'public')" length="0" default="draft" />
+      </FIELDS>
+    </TABLE>
+    <TABLE name="tags">
+      <FIELDS>
+        <FIELD name="type" method="NO_CONV" type="varchar" length="255" />
+        <FIELD name="text" method="PHP_FUNCTION" type="varchar" length="255">
+          <PHP_FUNCTION>
+            migrate2utf8_tags_text(RECORDID)
+          </PHP_FUNCTION>
+        </FIELD>
+      </FIELDS>
+    </TABLE>
     <TABLE name="config">
       <FIELDS>
         <FIELD name="name" method="NO_CONV" type="varchar" length="255" dropindex="name" adduniqueindex="name (name(255))"/>
