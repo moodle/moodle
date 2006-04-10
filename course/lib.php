@@ -1212,6 +1212,13 @@ function print_courses($category, $width="100%", $hidesitecourse = false) {
         }
     } else {
         print_heading(get_string("nocoursesyet"));
+        if (iscreator()) {  // Make it obvious for newbies on new sites how to add a course
+            $options = array();
+            $options['category'] = $category->id;
+            echo '<div class="addcoursebutton" align="center">';
+            print_single_button($CFG->wwwroot.'/course/edit.php', $options, get_string("addnewcourse"));
+            echo '</div>';
+        }
     }
 
 }
