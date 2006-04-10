@@ -1011,6 +1011,10 @@ function quiz_upgrade($oldversion) {
         modify_database('', "UPDATE prefix_question SET parent = id WHERE qtype ='random';");
     }
 
+    if ($oldversion < 2006041000) {
+        modify_database('', " INSERT INTO prefix_log_display VALUES ('quiz', 'continue attempt', 'quiz', 'name');");
+    }
+
     return true;
 }
 

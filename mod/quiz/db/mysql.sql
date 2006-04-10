@@ -298,3 +298,4 @@ INSERT INTO prefix_log_display VALUES ('quiz', 'editquestions', 'quiz', 'name');
 INSERT INTO prefix_log_display VALUES ('quiz', 'preview', 'quiz', 'name');
 INSERT INTO prefix_log_display VALUES ('quiz', 'start attempt', 'quiz', 'name');
 INSERT INTO prefix_log_display VALUES ('quiz', 'close attempt', 'quiz', 'name');
+INSERT INTO prefix_log_display VALUES ('quiz', 'continue attempt', 'quiz', 'name');
