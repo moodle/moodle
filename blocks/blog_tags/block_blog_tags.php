@@ -115,7 +115,7 @@ class block_blog_tags extends block_base {
         /// Finally we create the output
             foreach ($etags as $tag) {
                 $link = $CFG->wwwroot.'/blog/index.php?courseid='.
-                        $this->instance->pageid.'&filtertype=site&tagid='.$tag->id;
+                        $this->instance->pageid.'&amp;filtertype=site&amp;tagid='.$tag->id;
                 $this->content->text .= '<a href="'.$link.'" '.
                                         'class="'.$tag->class.'" '.
                                         'title="'.get_string('numberofentries','blog',$tag->ct).'">'.
