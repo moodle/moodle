@@ -14,9 +14,12 @@
         }
     }
 
-    //If restore session info exists, but we are posting parameters
-    //manually, this has prioriry
-    if (isset($restore) and isset($_POST['restore_restoreto'])) {
+    //Detect if we are coming from the restore form
+    $fromform = optional_param ('fromform', 0, PARAM_INT);
+
+    //If restore session info exists, but we are coming from the form
+    //it has prioriry
+    if (isset($restore) and !empty($fromform)) {
         unset($restore);
     }
 
@@ -69,10 +72,8 @@
         //restore_messages
         $restore_messages = required_param('restore_messages');
 
-        //Check we've selected a course
-        if (!isset($course_id)) {
-            $course_id = 0;
-        }
+        //Check we've selected a course to restore to
+        $course_id = optional_param('course_id', 0, PARAM_INT);
  
         //We are here, having all we need !!
         //Create the restore object and put it in the session
@@ -108,6 +109,7 @@
     } else {
         //We have the object, so check if we have a new course_id
         //passed as parammeter
+        $course_id = optional_param('course_id', 0, PARAM_INT);
         if ($course_id) {
             $restore->course_id=$course_id;
         }
