@@ -74,19 +74,15 @@ class default_questiontype {
             $question->defaultgrade = $form->defaultgrade;
         }
 
-        // Set the unique code
-        // TODO: set the stamp to a hash of the questiondata so that identical
-        // questions will get the same stamp. That will elliminate possible
-        // duplication during backup when questions get changed without changes
-        $question->stamp = make_unique_id_code();
-
         if (!empty($question->id)) { // Question already exists
-            $question->version ++;    // Update version number of question
+            // keep existing unique stamp code
+            $question->stamp = get_field('question', 'stamp', 'id', $question->id);
             if (!update_record("question", $question)) {
                 error("Could not update question!");
             }
         } else {         // Question is a new one
-            $question->version = 1;
+            // Set the unique code
+            $question->stamp = make_unique_id_code();
             if (!$question->id = insert_record("question", $question)) {
                 error("Could not insert new question!");
             }
@@ -112,6 +108,11 @@ class default_questiontype {
             notice_yesno($result->noticeyesno, "question.php?id=$question->id", "edit.php");
             print_footer($course);
             exit;
+        }
+
+        // Give the question a unique version stamp determined by question_hash()
+        if (!set_field('question', 'version', question_hash($question), 'id', $question->id)) {
+            error('Could not update question version field');
         }
 
         return $question;

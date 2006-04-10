@@ -212,7 +212,7 @@
             }
 
             //Check if the question exists
-            //by category and stamp
+            //by category, stamp, and version
             $question_exists = get_record ("question","category",$question->category,
                                                  "stamp",$question->stamp,"version",$question->version);
 

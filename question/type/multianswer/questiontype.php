@@ -108,9 +108,6 @@ class embedded_cloze_qtype extends default_questiontype {
         $question = qtype_multianswer_extract_question ($form->questiontext);
         if (isset($authorizedquestion->id)) {
             $question->id = $authorizedquestion->id;
-            $question->version = $form->version = $authorizedquestion->version;
-        } else {
-            $question->version = $form->version = 1;
         }
 
 

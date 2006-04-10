@@ -91,7 +91,6 @@ class qformat_default {
 
             $question->category = $this->category->id;
             $question->stamp = make_unique_id_code();  // Set the unique code (not to be changed)
-            $question->version = 1;                    // Original version of this question
 
             if (!$question->id = insert_record("question", $question)) {
                 error( get_string('cannotinsert','quiz') );
@@ -114,6 +113,9 @@ class qformat_default {
                 notify($result->notice);
                 return true;
             }
+
+            // Give the question a unique version stamp determined by question_hash()
+            set_field('question', 'version', question_hash($question), 'id', $question->id);
         }
         return true;
     }

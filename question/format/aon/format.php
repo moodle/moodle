@@ -191,7 +191,10 @@ class qformat_aon extends qformat_default {
                  notify($result->notice);
              }
 
-             /// Delete the old short-answer questions
+            // Give the question a unique version stamp determined by question_hash()
+            set_field('question', 'version', question_hash($question), 'id', $question->id);
+
+            /// Delete the old short-answer questions
 
              execute_sql("DELETE FROM {$CFG->prefix}question WHERE id IN ($extractids)", false);
              execute_sql("DELETE FROM {$CFG->prefix}question_shortanswer WHERE question IN ($extractids)", false);

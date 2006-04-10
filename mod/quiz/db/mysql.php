@@ -1015,6 +1015,10 @@ function quiz_upgrade($oldversion) {
         modify_database('', " INSERT INTO prefix_log_display VALUES ('quiz', 'continue attempt', 'quiz', 'name');");
     }
 
+    if ($oldversion < 2006041001) {
+        table_column('question', 'version', 'version', 'varchar', 255);
+    }
+
     return true;
 }
 

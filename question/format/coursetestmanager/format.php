@@ -243,7 +243,6 @@ class qformat_coursetestmanager extends qformat_default {
           echo "<hr /><p><b>$count</b>. ".stripslashes($question->questiontext)."</p>";
           $question->category = $this->category->id;
           $question->stamp = make_unique_id_code();  // Set the unique code (not to be changed)
-          $question->version = 1;                    // Original version of this question
           if (!$question->id = insert_record("question", $question)) {
               error("Could not insert new question!");
           }
@@ -260,6 +259,8 @@ class qformat_coursetestmanager extends qformat_default {
               $this->deletedatabase($filename);
               return true;
           }
+            // Give the question a unique version stamp determined by question_hash()
+            set_field('question', 'version', question_hash($question), 'id', $question->id);
         }
         $this->deletedatabase($filename);
         return true;

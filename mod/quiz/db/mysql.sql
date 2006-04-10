@@ -255,7 +255,7 @@ CREATE TABLE prefix_question (
   qtype varchar(20) NOT NULL default '',
   length int(10) unsigned NOT NULL default '1',
   stamp varchar(255) NOT NULL default '',
-  version int(10) NOT NULL default '1',
+  version varchar(255) NOT NULL default '',
   hidden int(1) unsigned NOT NULL default '0',
   PRIMARY KEY  (id),
   KEY category (category)

@@ -249,7 +249,7 @@ CREATE TABLE prefix_question (
   qtype varchar(20) NOT NULL default '0',
   length integer NOT NULL DEFAULT '1',
   stamp varchar(255) NOT NULL default '',
-  version integer NOT NULL default '1',
+  version varchar(255) NOT NULL default '',
   hidden integer NOT NULL default '0'
 );
 

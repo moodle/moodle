@@ -1269,6 +1269,18 @@ function question_new_attempt_uniqueid() {
     return $CFG->attemptuniqueid;
 }
 
+/* Creates a stamp that uniquely identifies this version of the question
+ *
+ * In future we want this to use a hash of the question data to guarantee that
+ * identical versions have the same version stamp.
+ *
+ * @param object $question
+ * @return string A unique version stamp
+ */
+function question_hash($question) {
+    return make_unique_id_code();
+}
+
 
 /// FUNCTIONS THAT SIMPLY WRAP QUESTIONTYPE METHODS //////////////////////////////////
 
