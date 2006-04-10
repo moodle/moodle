@@ -5,6 +5,9 @@
 
 th.header,
 td.header,
+h1.header,
+h2.header,
+h3.header,
 div.header {     
     background-image:url(gradient.jpg);     
     background-position:top;    
