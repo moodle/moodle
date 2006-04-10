@@ -27,6 +27,78 @@
                  AND dc.id = RECORDID
           </SQL_DETECT_COURSE>
         </FIELD>
+        <FIELD name="content1" method="PLAIN_SQL_UPDATE" type="longtext" length="0">
+          <SQL_DETECT_USER>
+           SELECT dr.userid
+           FROM {$CFG->prefix}data_records dr,
+                {$CFG->prefix}data_content dc
+           WHERE dr.id = dc.recordid
+                 AND dc.id = RECORDID
+          </SQL_DETECT_USER>
+          <SQL_DETECT_COURSE>
+           SELECT d.course
+           FROM {$CFG->prefix}data_records dr,
+                {$CFG->prefix}data d,
+                {$CFG->prefix}data_content dc
+           WHERE d.id = dr.dataid
+                 AND dr.id = dc.recordid
+                 AND dc.id = RECORDID
+          </SQL_DETECT_COURSE>
+        </FIELD>
+        <FIELD name="content2" method="PLAIN_SQL_UPDATE" type="longtext" length="0">
+          <SQL_DETECT_USER>
+           SELECT dr.userid
+           FROM {$CFG->prefix}data_records dr,
+                {$CFG->prefix}data_content dc
+           WHERE dr.id = dc.recordid
+                 AND dc.id = RECORDID
+          </SQL_DETECT_USER>
+          <SQL_DETECT_COURSE>
+           SELECT d.course
+           FROM {$CFG->prefix}data_records dr,
+                {$CFG->prefix}data d,
+                {$CFG->prefix}data_content dc
+           WHERE d.id = dr.dataid
+                 AND dr.id = dc.recordid
+                 AND dc.id = RECORDID
+          </SQL_DETECT_COURSE>
+        </FIELD>
+        <FIELD name="content3" method="PLAIN_SQL_UPDATE" type="longtext" length="0">
+          <SQL_DETECT_USER>
+           SELECT dr.userid
+           FROM {$CFG->prefix}data_records dr,
+                {$CFG->prefix}data_content dc
+           WHERE dr.id = dc.recordid
+                 AND dc.id = RECORDID
+          </SQL_DETECT_USER>
+          <SQL_DETECT_COURSE>
+           SELECT d.course
+           FROM {$CFG->prefix}data_records dr,
+                {$CFG->prefix}data d,
+                {$CFG->prefix}data_content dc
+           WHERE d.id = dr.dataid
+                 AND dr.id = dc.recordid
+                 AND dc.id = RECORDID
+          </SQL_DETECT_COURSE>
+        </FIELD>
+        <FIELD name="content4" method="PLAIN_SQL_UPDATE" type="longtext" length="0">
+          <SQL_DETECT_USER>
+           SELECT dr.userid
+           FROM {$CFG->prefix}data_records dr,
+                {$CFG->prefix}data_content dc
+           WHERE dr.id = dc.recordid
+                 AND dc.id = RECORDID
+          </SQL_DETECT_USER>
+          <SQL_DETECT_COURSE>
+           SELECT d.course
+           FROM {$CFG->prefix}data_records dr,
+                {$CFG->prefix}data d,
+                {$CFG->prefix}data_content dc
+           WHERE d.id = dr.dataid
+                 AND dr.id = dc.recordid
+                 AND dc.id = RECORDID
+          </SQL_DETECT_COURSE>
+        </FIELD>
       </FIELDS>
     </TABLE>
     <TABLE name="data_fields">
