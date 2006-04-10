@@ -968,8 +968,16 @@ function get_installer_list_of_languages() {
     foreach ($langdirs as $lang) {
         if (file_exists($CFG->dirroot .'/install/lang/'. $lang .'/installer.php')) {
             include($CFG->dirroot .'/install/lang/'. $lang .'/installer.php');
+            if (substr($lang, -5) == '_utf8') {   //Remove the _utf8 suffix from the lang to show
+                $shortlang = substr($lang, 0, -5);
+            } else {
+                $shortlang = $lang;
+            }
+            if ($lang == 'en') {  //Explain this is non-utf8 en
+                $shortlang = 'non-utf8 en';
+            }
             if (!empty($string['thislanguage'])) {
-                $languages[$lang] = $string['thislanguage'] .' ('. $lang .')';
+                $languages[$lang] = $string['thislanguage'] .' ('. $shortlang .')';
             }
             unset($string);
         }
