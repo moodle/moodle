@@ -166,7 +166,7 @@ CREATE TABLE prefix_question_sessions (
   newest integer NOT NULL default '0',
   newgraded integer NOT NULL default '0',
   sumpenalty real NOT NULL default '0',
-  comment text NOT NULL default '',
+  comment text NOT NULL default ''
 );
 
 CREATE UNIQUE INDEX prefix_question_sessions_attempt_idx ON prefix_question_sessions (attemptid,questionid);
