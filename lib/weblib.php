@@ -4138,7 +4138,7 @@ function notice ($message, $link='') {
     }
 
     echo '<br />';
-    print_simple_box($message, 'center', '50%', '', '20', 'generalbox noticebox');
+    print_simple_box($message, 'center', '50%', '', '20', 'generalbox', 'notice');
     print_continue($link);
     print_footer(get_site());
     die;
@@ -4159,7 +4159,7 @@ function notice_yesno ($message, $linkyes, $linkno) {
     $linkyes = clean_text($linkyes);
     $linkno = clean_text($linkno);
 
-    print_simple_box_start('center', '60%', '', 5, 'generalbox noticebox', 'notice');
+    print_simple_box_start('center', '60%', '', 5, 'generalbox', 'notice');
     echo '<p align="center">'. $message .'</p>';
     echo '<table align="center" cellpadding="20"><tr><td>';
     print_single_button($linkyes, NULL, get_string('yes'), 'post', $CFG->framename);
