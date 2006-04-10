@@ -2518,66 +2518,40 @@ function print_simple_box($message, $align='', $width='', $color='', $padding=5,
 }
 
 /**
- * Print the top portion of a standard themed box.
- *   To improve accessibility, the box is now a DIV, not a TABLE.
- * If the box is left aligned and width is not specified the box will shrink 
- *   to fit - as per the 1.5 table behaviour.
- * If alignment and width are not specified, the box will be centred and given
- *   a width of 30em, based on usability studies 
- * {@link http://www.maxdesign.com.au/presentation/em/ Ideal line length for content}.
- *   Text will be left aligned - the behaviour has changed, but will hopefully look OK.
+ * Print the top portion of a standard themed box using a TABLE.  Yes, we know.
+ * See bug 4943 for details on some accessibility work regarding this that didn't make it into 1.6.
  *
  * @param string $align string, alignment of the box, not the text (default center, left, right).
  * @param string $width string, width of the box, including % units, for example '100%'.
  * @param string $color string, background colour of the box, for example '#eee'.
  * @param int $padding integer, padding in pixels, specified without units.
  * @param string $class string, space-separated class names.
- * @todo Finish documenting this function
  */
 function print_simple_box_start($align='', $width='', $color='', $padding=5, $class='generalbox', $id='') {
 
-    //Accessibility: print_simple_box replaced <table> with nested <div>s.
-    $style_out = '';
-    $style_in  = '';
-    if ($padding) {
-        $style_in .= 'padding:'. $padding .'px; ';	
-    }
-    
     if ($color) {
-        $style_out .= 'background-color:'. $color .'; ';
+        $color = 'bgcolor="'. $color .'"';
     }
-    if (!$align || 'center' == $align) {
-    	if (! $width) {
-    	  $style_out .= 'width:30em; ';	
-    	}
-    	$style_out .= 'margin-left:auto; margin-right:auto; ';
-    }
-    elseif ($align && 'left' == $align) {
-        $style_out .= 'float:left; ';
-    }
-    else {
-        $style_out .= 'float:right; ';	
+    if ($align) {
+        $align = 'align="'. $align .'"';
     }
     if ($width) {
-    	//Note, width units provided.
-    	$style_out .= 'width:'. $width .'; ';
+        $width = 'width="'. $width .'"';
     }
     if ($id) {
         $id = 'id="'. $id .'"';
-    } 
-    echo "\n<div $id class=\"$class\" style=\"$style_out\"><div class=\"$class"."content\" style=\"$style_in\">\n";
-    global $CFG;
-    if ($CFG->debug > 7) {
-      echo "<!--PARAMS, a:$align, w:$width, c:$color, p:$padding, cl:$class, id:$id -->\n";  	
-    } 
+    }
+    echo "<table $align $width $id class=\"$class\" border=\"0\" cellpadding=\"$padding\" cellspacing=\"0\">".
+         "<tr><td $color class=\"$class"."content\">";
 }
 
 /**
  * Print the end portion of a standard themed box.
  */
 function print_simple_box_end() {
-    echo "</div></div><div class=\"clearer\"></div>\n";
+    echo '</td></tr></table>';
 }
+
 
 /**
  * Print a self contained form with a single submit button.
