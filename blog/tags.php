@@ -11,7 +11,7 @@ switch ($mode) {
             die('you can not add official tags');
         }
         
-        if (($otag = optional_param('otag', '', PARAM_ALPHA)) && (!get_record('tags','text',$otag))) {
+        if (($otag = optional_param('otag', '', PARAM_NOTAGS)) && (!get_record('tags','text',$otag))) {
             $tag->userid = $USER->id;
             $tag->text = $otag;
             $tag->type = 'official';
@@ -33,7 +33,7 @@ switch ($mode) {
             error ('you can not add tags');
         }
         
-        if (($ptag = optional_param('ptag', '', PARAM_ALPHA)) && (!get_record('tags','text',$ptag))) {
+        if (($ptag = optional_param('ptag', '', PARAM_NOTAGS)) && (!get_record('tags','text',$ptag))) {
             $tag->userid = $USER->id;
             $tag->text = $ptag;
             $tag->type = 'personal';
