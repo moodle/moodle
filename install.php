@@ -579,7 +579,7 @@ if ($nextstage == SAVE) {
 
         echo "<hr />\n";
         echo "<div style=\"text-align: left\">\n";
-        print_object(htmlentities($str));
+        print_object(s($str));
         echo "</div>\n";
     }
 } else {
