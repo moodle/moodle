@@ -1776,6 +1776,10 @@ function main_upgrade($oldversion=0) {
         table_column('cache_text','formattedtext','formattedtext','longblob','','','','not null');
     }
     
+    if ($oldversion < 2006041100) {
+        table_column('course_modules','','visibleold','integer','1','unsigned','1','not null', 'visible');
+    }
+    
     return $result;
 }
 

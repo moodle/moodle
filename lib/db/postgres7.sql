@@ -104,6 +104,7 @@ CREATE TABLE prefix_course_modules (
    score integer NOT NULL default '0',
    indent integer NOT NULL default '0',
    visible integer NOT NULL default '1',
+   visibleold integer NOT NULL default '1',
    groupmode integer NOT NULL default '0'
 );
 

@@ -1488,6 +1488,10 @@ function main_upgrade($oldversion=0) {
         execute_sql(" CREATE INDEX {$CFG->prefix}course_sections_coursesection_idx ON {$CFG->prefix}course_sections (course,section) ", false);
     }
 
+    if ($oldversion < 2006041100) {
+        table_column('course_modules','','visibleold','integer','1','unsigned','1','not null', 'visible');
+    }
+
     return $result;
 }
 
