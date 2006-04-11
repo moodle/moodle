@@ -10,10 +10,10 @@ define('ORDER_REFUND',  'refund');
 define('ORDER_VOID',    'void');
 
 /**
- * print_authorize_orders
+ * authorize_print_orders
  *
  */
-function print_authorize_orders()
+function authorize_print_orders()
 {
     global $CFG, $USER;
     global $strs, $authstrs;
@@ -140,11 +140,11 @@ function print_authorize_orders()
 }
 
 /**
- * print_authorize_order_details
+ * authorize_print_order_details
  *
  * @param int $orderno
  */
-function print_authorize_order_details($orderno)
+function authorize_print_order_details($orderno)
 {
     global $CFG, $USER;
     global $strs, $authstrs;
