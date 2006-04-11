@@ -65,16 +65,16 @@
 
     if ($data = data_submitted() and confirm_sesskey()) {
         // the following will update the state and attempt
-        question_process_comment($question, $state, $attempt, $data->comment, $data->grade);
+        question_process_comment($question, $state, $attempt, $data->response['comment'], $data->response['grade']);
         // If the state has changed save it and update the quiz grade
         if ($state->changed) {
             save_question_session($question, $state);
             quiz_save_best_grade($quiz);
         }
 
-        notify(print_string('changessaved'));
-        echo '<input type="button" onclick="window.close()" value="' .
-         get_string('closewindow') . "\" />";
+        notify(get_string('changessaved'));
+        echo '<center><input type="button" onclick="window.opener.location.reload(1); self.close();return false;" value="' .
+         get_string('closewindow') . "\" /></center>";
          
         print_footer();
         exit;
