@@ -16,6 +16,9 @@
 /// GLOBAL CONSTANTS /////////////////////////////////////////////////////////
 
 
+$empty_rs_cache = array();   // Keeps copies of the recordsets used in one invocation
+
+
 /// FUNCTIONS FOR DATABASE HANDLING  ////////////////////////////////
 
 /**
@@ -38,7 +41,9 @@ function execute_sql($command, $feedback=true) {
     if (!$feedback) {
         $db->debug = false;
     }
-    
+
+    $empty_rs_cache = array();  // Clear out the cache, just in case changes were made to table structures
+
     if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++; };
 
     $result = $db->Execute($command);
@@ -219,7 +224,11 @@ function modify_database($sqlfile='', $sqlstring='') {
 
 function table_column($table, $oldfield, $field, $type='integer', $size='10',
                       $signed='unsigned', $default='0', $null='not null', $after='') {
-    global $CFG, $db;
+    global $CFG, $db, $empty_rs_cache;
+
+    if (!empty($empty_rs_cache[$table])) {  // Clear the recordset cache because it's out of date
+        unset($empty_rs_cache[$table]);
+    }
 
     switch (strtolower($CFG->dbtype)) {
 
@@ -1094,16 +1103,15 @@ function delete_records_select($table, $select='') {
  */
 function insert_record($table, $dataobject, $returnid=true, $primarykey='id') {
 
-    global $db, $CFG;
-    static $empty_rs_cache;
+    global $db, $CFG, $empty_rs_cache;
 
     if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++; };
 
-    /// In Moodle we always use auto-numbering fields for the primary key
-    /// so let's unset it now before it causes any trouble later
+/// In Moodle we always use auto-numbering fields for the primary key
+/// so let's unset it now before it causes any trouble later
     unset($dataobject->{$primarykey});
 
-    /// Get an empty recordset. Cache for multiple inserts.
+/// Get an empty recordset. Cache for multiple inserts.
     if (empty($empty_rs_cache[$table])) {
         /// Execute a dummy query to get an empty recordset
         if (!$empty_rs_cache[$table] = $db->Execute('SELECT * FROM '. $CFG->prefix . $table .' WHERE '. $primarykey  .' = \'-1\'')) {
@@ -1113,11 +1121,11 @@ function insert_record($table, $dataobject, $returnid=true, $primarykey='id') {
 
     $rs = $empty_rs_cache[$table];
 
-    /// Postgres doesn't have the concept of primary key built in
-    /// and will return the OID which isn't what we want.
-    /// The efficient and transaction-safe strategy is to 
-    /// move the sequence forward first, and make the insert
-    /// with an explicit id.
+/// Postgres doesn't have the concept of primary key built in
+/// and will return the OID which isn't what we want.
+/// The efficient and transaction-safe strategy is to 
+/// move the sequence forward first, and make the insert
+/// with an explicit id.
     if ( $CFG->dbtype === 'postgres7' && $returnid == true ) {
         if ($nextval = (int)get_field_sql("SELECT NEXTVAL('{$CFG->prefix}{$table}_{$primarykey}_seq')")) {
             $dataobject->{$primarykey} = $nextval;            
