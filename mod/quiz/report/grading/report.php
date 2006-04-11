@@ -187,8 +187,8 @@ class quiz_report extends quiz_default_report {
         $usercount = count($users);
 
         // set up table
-        $tablecolumns = array('picture', 'fullname', 'attempt');
-        $tableheaders = array('', get_string('fullname'), get_string("attempts", "quiz"));
+        $tablecolumns = array('picture', 'fullname', 'attempt', 'grade');
+        $tableheaders = array('', get_string('fullname'), get_string("completedon", "quiz"), '');
 
         $table = new flexible_table('mod-quiz-report-grading');
 
@@ -199,24 +199,26 @@ class quiz_report extends quiz_default_report {
         $table->sortable(true);
         $table->initialbars($usercount>20);  // will show initialbars if there are more than 20 users
         $table->pageable(true);
+        $table->collapsible(true);
 
         $table->column_suppress('fullname');
         $table->column_suppress('picture');
+        $table->column_suppress('grade');
 
         $table->column_class('picture', 'picture');
 
         // attributes in the table tag
         $table->set_attribute('cellspacing', '0');
-        $table->set_attribute('id', 'grading');
+        $table->set_attribute('id', 'attempts');
         $table->set_attribute('class', 'generaltable generalbox');
         $table->set_attribute('align', 'center');
-        $table->set_attribute('width', '50%');
+        //$table->set_attribute('width', '50%');
 
         // get it ready!
         $table->setup();
 
         // this sql is a join of the attempts table and the user table.  I do this so I can sort by user name and attempt number (not id)
-        $select = 'SELECT '.$db->Concat('u.id', '\'#\'', $db->IfNull('qa.attempt', '0')).' AS userattemptid, qa.id AS attemptid, qa.uniqueid, qa.attempt, qa.timestart, u.id AS userid, u.firstname, u.lastname, u.picture ';
+        $select = 'SELECT '.$db->Concat('u.id', '\'#\'', $db->IfNull('qa.attempt', '0')).' AS userattemptid, qa.id AS attemptid, qa.uniqueid, qa.attempt, qa.timefinish, u.id AS userid, u.firstname, u.lastname, u.picture ';
         $from   = 'FROM '.$CFG->prefix.'user u LEFT JOIN '.$CFG->prefix.'quiz_attempts qa ON (u.id = qa.userid AND qa.quiz = '.$quiz->id.') ';
         $where  = 'WHERE u.id IN ('.$userids.') ';
         $where .= 'AND '.$db->IfNull('qa.attempt', '0').' != 0 ';
@@ -251,8 +253,8 @@ class quiz_report extends quiz_default_report {
 
                 $picture = print_user_picture($attempt->userid, $quiz->course, $attempt->picture, false, true);
 
-                // link here... grades all for this student
-                $userlink = "<a href=\"report.php?mode=grading&amp;action=grade&amp;q=$quiz->id&amp;questionid=$question->id&amp;userid=$attempt->userid\">".
+                // link to student profile
+                $userlink = "<a href=\"$CFG->wwwroot/user/view.php?id=$attempt->userid&amp;course=$quiz->course\">".
                             fullname($attempt, true).'</a>';
 
                 if (!$this->is_graded($question, $attempt)) {
@@ -263,9 +265,13 @@ class quiz_report extends quiz_default_report {
 
                 // link for the attempt
                 $attemptlink = "<a $style href=\"report.php?mode=grading&amp;action=grade&amp;q=$quiz->id&amp;questionid=$question->id&amp;attemptid=$attempt->attemptid\">".
-                        userdate($attempt->timestart, get_string('strftimedatetime')).'</a>';
+                        userdate($attempt->timefinish, get_string('strftimedatetime')).'</a>';
+                
+                // grade all attempts for this user
+                $gradelink = "<a href=\"report.php?mode=grading&amp;action=grade&amp;q=$quiz->id&amp;questionid=$question->id&amp;userid=$attempt->userid\">".
+                        get_string('grade').'</a>';
 
-                $table->add_data( array($picture, $userlink, $attemptlink) );
+                $table->add_data( array($picture, $userlink, $attemptlink, $gradelink) );
             }
         }
 
