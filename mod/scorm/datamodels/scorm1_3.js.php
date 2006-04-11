@@ -85,7 +85,7 @@ function SCORMapi1_3() {
         'cmi.interactions.n.description':{'pattern':CMIIndex, 'format':CMIString250, 'mod':'rw'},
         'cmi.launch_data':{'defaultvalue':<?php echo isset($userdata->datafromlms)?'\''.$userdata->datafromlms.'\'':'null' ?>, 'mod':'r'},
         'cmi.learner_id':{'defaultvalue':'<?php echo $userdata->student_id ?>', 'mod':'r'},
-        'cmi.learner_name':{'defaultvalue':'<?php echo $userdata->student_name ?>', 'mod':'r'},
+        'cmi.learner_name':{'defaultvalue':'<?php echo addslashes($userdata->student_name) ?>', 'mod':'r'},
         'cmi.learner_preference._children':{'defaultvalue':student_preference_children, 'mod':'r'},
         'cmi.learner_preference.audio_level':{'defaultvalue':'0', 'format':CMIDecimal, 'range':audio_range, 'mod':'rw'},
         'cmi.learner_preference.language':{'defaultvalue':'', 'format':CMIString250, 'mod':'rw'},
@@ -562,6 +562,7 @@ function SCORMapi1_3() {
         } else {
             datastring = CollectData(data,'cmi');
         }
+        datastring += '&attempt=<?php echo $attempt ?>';
         datastring += '&scoid=<?php echo $sco->id ?>';
         //popupwin(datastring);
         var myRequest = NewHttpReq();
