@@ -46,16 +46,18 @@
         if (!$module = get_record("modules", "name", $hide)) {
             error("Module doesn't exist!");
         }
-        set_field("modules", "visible", "0", "id", $module->id);            // Hide main module
-        set_field("course_modules", "visible", "0", "module", $module->id); // Hide all related activity modules
+        set_field("modules", "visible", "0", "id", $module->id);                               // Hide main module
+        set_field('course_modules', 'visibleold', '1', 'visible' ,'1', 'module', $module->id); // Remember the previous visible state so we can toggle this back if the module is unhidden.
+        set_field('course_modules', 'visibleold', '0', 'visible' ,'0', 'module', $module->id);
+        set_field("course_modules", "visible", "0", "module", $module->id);                    // Hide all related activity modules
     }
 
     if (!empty($show) and confirm_sesskey()) {
         if (!$module = get_record("modules", "name", $show)) {
             error("Module doesn't exist!");
         }
-        set_field("modules", "visible", "1", "id", $module->id);            // Show main module
-        set_field("course_modules", "visible", "1", "module", $module->id); // Show all related activity modules
+        set_field("modules", "visible", "1", "id", $module->id);                               // Show main module
+        set_field('course_modules', 'visible', '1', 'visibleold', '1', 'module', $module->id); // Get the previous saved visible state for the course module.
     }
 
     if (!empty($delete) and confirm_sesskey()) {
