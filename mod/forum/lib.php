@@ -2342,7 +2342,11 @@ function forum_move_attachments($discussion, $forumid) {
             if (is_dir($oldpostdir)) {
                 $newpost = $oldpost;
                 $newpost->forum = $forumid;
-                $newpostdir = forum_file_area($newpost);
+                $newpostdir = forum_file_area_name($newpost);
+                // take off the last directory because otherwise we're renaming to a directory that already exists
+                // and this is unhappy in certain situations, eg over an nfs mount and potentially on windows too.
+                make_upload_directory(substr($newpostdir,0,strrpos($newpostdir,'/')));
+                $newpostdir = $CFG->dataroot.'/'.forum_file_area_name($newpost);
                 $files = get_directory_list($oldpostdir); // get it before we rename it.
                 if (! @rename($oldpostdir, $newpostdir)) {
                     $return = false;
