@@ -1726,7 +1726,7 @@
         }
 
         if ($result != $content && $CFG->debug>7) {                                  //Debug
-            echo '<br /><hr />'.htmlentities($content).'<br />changed to<br />'.htmlentities($result).'<hr /><br />';        //Debug
+            echo '<br /><hr />'.s($content).'<br />changed to<br />'.s($result).'<hr /><br />';        //Debug
         }                                                                            //Debug
 
         return $result;
