@@ -1230,7 +1230,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     */
     function _XF(&$format)
     {
-        if ($format != 0) {
+        if (is_object($format)) {
             return($format->getXfIndex());
         } else {
             return(0x0F);
@@ -1683,7 +1683,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     function writeBlank($row, $col, $format)
     {
         // Don't write a blank cell unless it has a format
-        if ($format == 0) {
+        if (!is_object($format)) {
             return(0);
         }
 
@@ -1870,7 +1870,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         $record      = 0x01B8;                       // Record identifier
         $length      = 0x00000;                      // Bytes to follow
 
-        if ($format == 0) {
+        if (!is_object($format)) {
             $format = $this->_url_format;
         }
 
@@ -1930,7 +1930,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         $record      = 0x01B8;                       // Record identifier
         $length      = 0x00000;                      // Bytes to follow
 
-        if ($format == 0) {
+        if (!is_object($format)) {
             $format = $this->_url_format;
         }
 
@@ -2002,7 +2002,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         $record      = 0x01B8;                       // Record identifier
         $length      = 0x00000;                      // Bytes to follow
     
-        if ($format == 0) {
+        if (!is_object($format)) {
             $format = $this->_url_format;
         }
     
@@ -2158,7 +2158,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
             $grbit |= 0x0020;
         }
         $grbit |= 0x0040; // fUnsynced
-        if ($format) {
+        if (is_object($format)) {
             $grbit |= 0x0080;
         }
         $grbit |= 0x0100;

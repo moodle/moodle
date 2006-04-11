@@ -219,7 +219,7 @@ class MoodleExcelWorksheet {
      * @return mixed PEAR Excel Format object
      */
     function MoodleExcelFormat2PearExcelFormat($format) {
-        if ($format != 0) {
+        if (is_object($format)) {
             return $format->pear_excel_format;
         } else {
             return 0;
