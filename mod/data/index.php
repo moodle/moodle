@@ -51,17 +51,17 @@
     $strweek  = get_string('week');
     $strtopic = get_string('topic');
     $strdescription = get_string("description");
-    $strnumrecords = get_string('numrecords', 'data');
+    $strentries = get_string('entries', 'data');
     $strnumnotapproved = get_string('numnotapproved', 'data');
 
     if ($course->format == 'weeks') {
-        $table->head  = array ($strweek, $strname, $strdescription, $strnumrecords, $strnumnotapproved);
+        $table->head  = array ($strweek, $strname, $strdescription, $strentries, $strnumnotapproved);
         $table->align = array ('center', 'center', 'center', 'center', 'center');
     } else if ($course->format == 'topics') {
-        $table->head  = array ($strtopic, $strname, $strdescription, $strnumrecords, $strnumnotapproved);
+        $table->head  = array ($strtopic, $strname, $strdescription, $strentries, $strnumnotapproved);
         $table->align = array ('center', 'center', 'center', 'center', 'center');
     } else {
-        $table->head  = array ($strname, $strdescription, $strnumrecords, $strnumnotapproved);
+        $table->head  = array ($strname, $strdescription, $strentries, $strnumnotapproved);
         $table->align = array ('center', 'center', 'center', 'center');
     }
 
