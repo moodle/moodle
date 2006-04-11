@@ -317,8 +317,13 @@
             foreach ($availablelangs as $alang) {
                 if (trim($alang[0]) != "en_utf8") {
                     if ($remote){
+                        if (substr($alang[0], -5) == '_utf8') {   //Remove the _utf8 suffix from the lang to show
+                            $shortlang = substr($alang[0], 0, -5);
+                        } else {
+                            $shortlang = $alang[0];
+                        }
                         if (!is_installed_lang($alang[0], $alang[1])){    //if not already installed
-                            echo '<option value="'.$alang[0].'">'.$alang[2].' ('.$alang[0].')</option>';
+                            echo '<option value="'.$alang[0].'">'.$alang[2].' ('.$shortlang.')</option>';
                         }
                     } else {    //print list in local format, and instruction to install
                         echo '<tr><td>'.$alang[2].'</td><td><a href="http://download.moodle.org/lang16/'.$alang[0].'.zip">'.get_string('download','admin').'</a>';
