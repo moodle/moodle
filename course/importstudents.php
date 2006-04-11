@@ -1,17 +1,19 @@
-<?php
+<?php //  $Id$
 // script to assign students to a meta course by selecting which courses the meta course comprises.
 // this is basically a hack of student.php that uses courses instead.
 
-
     require_once("../config.php");
     require_once("lib.php");
- 
+
     define("MAX_COURSES_PER_PAGE", 1000);
 
-    $id = required_param('id',PARAM_INT);         // course id
-    $add = optional_param('add', '', PARAM_ALPHA);
-    $remove = optional_param('remove', '', PARAM_ALPHA);
-    $search = optional_param('search', '', PARAM_ALPHA); // search string
+    $id             = required_param('id',PARAM_INT); // course id
+    $add            = optional_param('add', 0, PARAM_BOOL);
+    $remove         = optional_param('remove', 0, PARAM_BOOL);
+    $showall        = optional_param('showall', 0, PARAM_BOOL);
+    $searchtext     = optional_param('searchtext', '', PARAM_RAW); // search string
+    $previoussearch = optional_param('previoussearch', 0, PARAM_BOOL);
+    $previoussearch = ($searchtext != '') or ($previoussearch) ? 1:0;
 
     if (! $site = get_site()) {
         redirect("$CFG->wwwroot/$CFG->admin/index.php");
@@ -26,7 +28,7 @@
     if (!$course->metacourse) {
         redirect("$CFG->wwwroot/course/student.php?id=$course->id");
     }
-    
+
     if (!isadmin() && !isteacheredit($course->id)) {
         error("You must be an admin or a teacher of this course");
     }
@@ -44,9 +46,9 @@
     $strcourses   = get_string("courses");
     $strshowall = get_string("showall");
 
-    print_header("$course->shortname: $strassigncourses", 
-                 "$site->fullname", 
-                 "<a href=\"view.php?id=$course->id\">$course->shortname</a> -> $strassigncourses", 
+    print_header("$course->shortname: $strassigncourses",
+                 "$site->fullname",
+                 "<a href=\"view.php?id=$course->id\">$course->shortname</a> -> $strassigncourses",
                  "studentform.searchtext");
 
 /// Don't allow restricted teachers to even see this page (because it contains
@@ -57,37 +59,37 @@
 /// Print a help notice about the need to use this page
 
     if (!$frm = data_submitted()) {
-        $note = get_string("importmetacoursenote");   
+        $note = get_string("importmetacoursenote");
         print_simple_box($note, "center", "50%");
 
 /// A form was submitted so process the input
 
     } else {
-        if (!empty($frm->add) and !empty($frm->addselect) and confirm_sesskey()) {
+        if ($add and !empty($frm->addselect) and confirm_sesskey()) {
             $timestart = $timeend = 0;
             foreach ($frm->addselect as $addcourse) {
+                $addcourse = clean_param($addcourse, PARAM_INT);
                 set_time_limit(10);
                 if (!add_to_metacourse($course->id,$addcourse)) {
                     error("Could not add the selected course to this meta course!");
                 }
             }
-        } else if (!empty($frm->remove) and !empty($frm->removeselect) and confirm_sesskey()) {
+        } else if ($remove and !empty($frm->removeselect) and confirm_sesskey()) {
             foreach ($frm->removeselect as $removecourse) {
                 set_time_limit(10);
+                $removecourse = clean_param($removecourse, PARAM_INT);
                 if (! remove_from_metacourse($course->id,$removecourse)) {
                     error("Could not remove the selected course from this meta course!");
                 }
             }
-        } else if (!empty($frm->showall) and confirm_sesskey()) {
-            unset($frm->searchtext);
-            $frm->previoussearch = 0;
+        } else if ($showall and confirm_sesskey()) {
+            $searchtext = '';
+            $previoussearch = 0;
         }
     }
-    
 
-    $previoussearch = (is_object($frm) && ((!empty($frm->search) or ($frm->previoussearch == 1)))) ;
 
-    /// Get all existing students and teachers for this course.
+/// Get all existing students and teachers for this course.
     if(! $alreadycourses = get_courses_in_metacourse($course->id)) {
         $alreadycourses = array();
     }
@@ -96,25 +98,26 @@
 
 
 /// Get search results excluding any users already in this course
-    if (!empty($frm->searchtext) and $previoussearch and confirm_sesskey()) {
-        $searchcourses = get_courses_search(explode(" ",$frm->searchtext),'fullname ASC',0,99999,$numcourses);
-        foreach ($searchcourses as $tmp) {
-            if (array_key_exists($tmp->id,$alreadycourses)) {
-                unset($searchcourses[$tmp->id]);
+    if (($searchtext != '') and $previoussearch and confirm_sesskey()) {
+        if ($searchcourses = get_courses_search(explode(" ",$searchtext),'fullname ASC',0,99999,$numcourses)) {
+            foreach ($searchcourses as $tmp) {
+                if (array_key_exists($tmp->id,$alreadycourses)) {
+                    unset($searchcourses[$tmp->id]);
+                }
+                if (!empty($tmp->metacourse)) {
+                    unset($searchcourses[$tmp->id]);
+                }
             }
-            if (!empty($tmp->metacourse)) {
-                unset($searchcourses[$tmp->id]);
+            if (array_key_exists($course->id,$searchcourses)) {
+                unset($searchcourses[$course->id]);
             }
+            $numcourses = count($searchcourses);
         }
-        if (array_key_exists($course->id,$searchcourses)) {
-            unset($searchcourses[$course->id]);
-        }
-        $numcourses = count($searchcourses);
     }
-    
+
 /// If no search results then get potential students for this course excluding users already in course
     if (empty($searchcourses)) {
-        
+
         $numcourses = get_courses_notin_metacourse($course->id,true);
 
         $courses = array();
@@ -125,9 +128,6 @@
     }
 
 
-    $searchtext = (isset($frm->searchtext)) ? $frm->searchtext : "";
-    $previoussearch = ($previoussearch) ? '1' : '0';
-
     print_simple_box_start("center");
 
     include('importstudents.html');
@@ -135,9 +135,5 @@
     print_simple_box_end();
 
     print_footer();
-
-
-
-
 
 ?>

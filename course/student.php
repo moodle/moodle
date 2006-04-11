@@ -5,10 +5,13 @@
 
     define("MAX_USERS_PER_PAGE", 5000);
 
-    $id = required_param('id',PARAM_INT); // course id
-    $add = optional_param('add', "", PARAM_ALPHA);
-    $remove = optional_param('remove', "", PARAM_ALPHA);
-    $search = optional_param('search', "", PARAM_CLEAN); // search string
+    $id             = required_param('id',PARAM_INT); // course id
+    $add            = optional_param('add', 0, PARAM_BOOL);
+    $remove         = optional_param('remove', 0, PARAM_BOOL);
+    $showall        = optional_param('showall', 0, PARAM_BOOL);
+    $searchtext     = optional_param('searchtext', '', PARAM_RAW); // search string
+    $previoussearch = optional_param('previoussearch', 0, PARAM_BOOL);
+    $previoussearch = ($searchtext != '') or ($previoussearch) ? 1:0;
 
     if (! $site = get_site()) {
         redirect("$CFG->wwwroot/$CFG->admin/index.php");
@@ -71,7 +74,7 @@
 /// A form was submitted so process the input
 
     } else {
-        if (!empty($frm->add) and !empty($frm->addselect) and confirm_sesskey()) {
+        if ($add and !empty($frm->addselect) and confirm_sesskey()) {
             if ($course->enrolperiod) {
                 $timestart = time();
                 $timeend   = $timestart + $course->enrolperiod;
@@ -79,23 +82,24 @@
                 $timestart = $timeend = 0;
             }
             foreach ($frm->addselect as $addstudent) {
+                $addstudent = clean_param($addstudent, PARAM_INT);
                 if (! enrol_student($addstudent, $course->id, $timestart, $timeend)) {
                     error("Could not add student with id $addstudent to this course!");
                 }
             }
-        } else if (!empty($frm->remove) and !empty($frm->removeselect) and confirm_sesskey()) {
+        } else if ($remove and !empty($frm->removeselect) and confirm_sesskey()) {
             foreach ($frm->removeselect as $removestudent) {
+                $removestudent = clean_param($removestudent, PARAM_INT);
                 if (! unenrol_student($removestudent, $course->id)) {
                     error("Could not remove student with id $removestudent from this course!");
                 }
             }
-        } else if (!empty($frm->showall)) {
-            unset($frm->searchtext);
-            $frm->previoussearch = 0;
+        } else if ($showall) {
+            $searchtext = '';
+            $previoussearch = 0;
         }
     }
 
-    $previoussearch = (!empty($frm) && (!empty($frm->search) or ($frm->previoussearch == 1))) ;
 
 /// Get all existing students and teachers for this course.
     if (!$students = get_course_students($course->id, "u.firstname ASC, u.lastname ASC", "", 0, 99999,
@@ -118,8 +122,8 @@
 
 
 /// Get search results excluding any users already in this course
-    if (!empty($frm->searchtext) and $previoussearch) {
-        $searchusers = get_users(true, $frm->searchtext, true, $existinguserlist, 'firstname ASC, lastname ASC',
+    if (($searchtext != '') and $previoussearch) {
+        $searchusers = get_users(true, $searchtext, true, $existinguserlist, 'firstname ASC, lastname ASC',
                                       '', '', 0, 99999, 'id, firstname, lastname, email');
         $usercount = get_users(false, '', true, $existinguserlist);
     }
@@ -139,12 +143,7 @@
     }
 
 
-    $searchtext = (isset($frm->searchtext)) ? $frm->searchtext : "";
-    $previoussearch = ($previoussearch) ? '1' : '0';
-
     print_simple_box_start("center");
-
-    $sesskey = !empty($USER->id) ? $USER->sesskey : '';
 
     include('student.html');
 
