@@ -32,7 +32,7 @@
     $category = optional_param('category', 0, PARAM_INT);
     
     $delete = optional_param('delete',  0, PARAM_INT);
-    $confirm = optional_param('confirm',  0, PARAM_INT);
+    $confirm = optional_param('confirm',  0, PARAM_ALPHANUM);
 
     // rqp questions set the type to rqp_nn where nn is the rqp_type id
     if (substr($qtype, 0, 4) == 'rqp_') {
