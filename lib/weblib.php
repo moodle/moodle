@@ -4091,7 +4091,7 @@ function helpbutton ($page, $title='', $module='moodle', $image=true, $linktext=
     $linkobject .= '</span>';
 
     if ($text) {
-        $url = '/help.php?module='. $module .'&amp;text='. htmlentities(urlencode($text));
+        $url = '/help.php?module='. $module .'&amp;text='. s(urlencode($text));
     } else {
         $url = '/help.php?module='. $module .'&amp;file='. $page .'.html';
     }

@@ -349,7 +349,7 @@ function choice_options_restore_mods($choiceid,$info,$restore) {
                     $status = update_record("choice",$choice);
                     if ($CFG->debug>7) {
                         if (!defined('RESTORE_SILENTLY')) {
-                            echo '<br /><hr />'.htmlentities($content).'<br />changed to<br />'.htmlentities($result).'<hr /><br />';
+                            echo '<br /><hr />'.s($content).'<br />changed to<br />'.s($result).'<hr /><br />';
                         }
                     }
                 }

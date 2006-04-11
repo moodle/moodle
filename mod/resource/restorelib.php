@@ -202,9 +202,9 @@
                     $status = update_record("resource",$resource);
                     if ($CFG->debug>7) {
                         if (!defined('RESTORE_SILENTLY')) {
-                            echo '<br /><hr />'.htmlentities($content1).'<br />changed to<br />'.htmlentities($result1).'<hr /><br />';
-                            echo '<br /><hr />'.htmlentities($content2).'<br />changed to<br />'.htmlentities($result2).'<hr /><br />';
-                            echo '<br /><hr />'.htmlentities($content3).'<br />changed to<br />'.htmlentities($result3).'<hr /><br />';
+                            echo '<br /><hr />'.s($content1).'<br />changed to<br />'.s($result1).'<hr /><br />';
+                            echo '<br /><hr />'.s($content2).'<br />changed to<br />'.s($result2).'<hr /><br />';
+                            echo '<br /><hr />'.s($content3).'<br />changed to<br />'.s($result3).'<hr /><br />';
                         }
                     }
                 }

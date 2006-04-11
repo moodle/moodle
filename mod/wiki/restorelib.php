@@ -357,7 +357,7 @@
                     $status = update_record("wiki_pages",$page);
                     if ($CFG->debug>7) {
                         if (!defined('RESTORE_SILENTLY')) {
-                            echo '<br /><hr />'.htmlentities($content).'<br />changed to<br />'.htmlentities($result).'<hr /><br />';
+                            echo '<br /><hr />'.s($content).'<br />changed to<br />'.s($result).'<hr /><br />';
                         }
                     }
                 }
@@ -391,7 +391,7 @@
                     $status = update_record("wiki",$wiki);
                     if ($CFG->debug>7) {
                         if (!defined('RESTORE_SILENTLY')) {
-                            echo '<br /><hr />'.htmlentities($content).'<br />changed to<br />'.htmlentities($result).'<hr /><br />';
+                            echo '<br /><hr />'.s($content).'<br />changed to<br />'.s($result).'<hr /><br />';
                         }
                     }
                 }

@@ -324,7 +324,7 @@
                     $status = update_record("assignment",$assignment);
                     if ($CFG->debug>7) {
                         if (!defined('RESTORE_SILENTLY')) {
-                            echo '<br /><hr />'.htmlentities($content).'<br />changed to<br />'.htmlentities($result).'<hr /><br />';
+                            echo '<br /><hr />'.s($content).'<br />changed to<br />'.s($result).'<hr /><br />';
                         }
                     }
                 }

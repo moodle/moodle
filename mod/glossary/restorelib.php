@@ -614,7 +614,7 @@
                     $status = update_record("glossary_entries",$entry);
                     if ($CFG->debug>7) {
                         if (!defined('RESTORE_SILENTLY')) {
-                            echo '<br /><hr />'.htmlentities($content).'<br />changed to<br />'.htmlentities($result).'<hr /><br />';
+                            echo '<br /><hr />'.s($content).'<br />changed to<br />'.s($result).'<hr /><br />';
                         }
                     }
                 }
@@ -648,7 +648,7 @@
                     $status = update_record("glossary",$glossary);
                     if ($CFG->debug>7) {
                         if (!defined('RESTORE_SILENTLY')) {
-                            echo '<br /><hr />'.htmlentities($content).'<br />changed to<br />'.htmlentities($result).'<hr /><br />';
+                            echo '<br /><hr />'.s($content).'<br />changed to<br />'.s($result).'<hr /><br />';
                         }
                     }
                 }

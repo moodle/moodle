@@ -218,7 +218,7 @@ function extract_data($pages, $courseid, $lessonname, $modname) {
         
         $tags = '<div><img>'; // should also allow <b><i>
         $string = strip_tags($content,$tags);
-        //echo htmlentities($string);
+        //echo s($string);
 
         $matches = array();
         // this will look for a non nested tag that is closed
