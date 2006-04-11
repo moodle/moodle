@@ -4,6 +4,8 @@
 
     require_once("$CFG->dirroot/mod/forum/lib.php");
 
+    $week = optional_param('week', -1, PARAM_INT);
+
     // Bounds for block widths
     define('BLOCK_L_MIN_WIDTH', 100);
     define('BLOCK_L_MAX_WIDTH', 210);
@@ -15,7 +17,7 @@
     $preferred_width_right = bounded_number(BLOCK_R_MIN_WIDTH, blocks_preferred_width($pageblocks[BLOCK_POS_RIGHT]), 
                                             BLOCK_R_MAX_WIDTH);
 
-    if (isset($week)) {
+    if ($week != -1) {
         $displaysection = course_set_display($course->id, $week);
     } else {
         if (isset($USER->display[$course->id])) {
@@ -198,7 +200,7 @@
             echo '<td class="right side">';
 
             if ($displaysection == $section) {
-                echo '<a href="view.php?id='.$course->id.'&amp;week=all#section-'.$section.'" title="'.$strshowallweeks.'">'.
+                echo '<a href="view.php?id='.$course->id.'&amp;week=0#section-'.$section.'" title="'.$strshowallweeks.'">'.
                      '<img src="'.$CFG->pixpath.'/i/all.gif" class="icon wkall" alt="'.$strshowallweeks.'" /></a><br />';
             } else {
                 $strshowonlyweek = get_string("showonlyweek", "", $section);

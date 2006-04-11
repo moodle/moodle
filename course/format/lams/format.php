@@ -6,6 +6,9 @@
 require_once($CFG->dirroot.'/mod/forum/lib.php');
 require_once($CFG->dirroot.'/mod/lams/constants.php');
 require_once($CFG->dirroot.'/lib/weblib.php');
+
+$topic = optional_param('topic', -1, PARAM_INT);
+
 // Bounds for block widths
 define('BLOCK_L_MIN_WIDTH', 100);
 define('BLOCK_L_MAX_WIDTH', 210);
@@ -17,7 +20,7 @@ $preferred_width_left  = bounded_number(BLOCK_L_MIN_WIDTH, blocks_preferred_widt
 $preferred_width_right = bounded_number(BLOCK_R_MIN_WIDTH, blocks_preferred_width($pageblocks[BLOCK_POS_RIGHT]), 
                                         BLOCK_R_MAX_WIDTH);
 
-if (isset($topic)) {
+if ($topic != -1) {
     $displaysection = course_set_display($course->id, $topic);
 } else {
     if (isset($USER->display[$course->id])) {       // for admins, mostly
@@ -269,7 +272,7 @@ while ($section <= $course->numsections) {
 
         echo '<td class="right side">';
         if ($displaysection == $section) {      // Show the zoom boxes
-            echo '<a href="view.php?id='.$course->id.'&amp;topic=all#section-'.$section.'" title="'.$strshowalltopics.'">'.
+            echo '<a href="view.php?id='.$course->id.'&amp;topic=0#section-'.$section.'" title="'.$strshowalltopics.'">'.
                 '<img src="'.$CFG->pixpath.'/i/all.gif" height="25" width="16" border="0" /></a><br />';
         } else {
             $strshowonlytopic = get_string('showonlytopic', '', $section);

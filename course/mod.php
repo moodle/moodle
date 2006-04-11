@@ -8,19 +8,21 @@
     require_login();
 
     $sectionreturn = optional_param('sr', '', PARAM_INT);
-    $add = optional_param( 'add','',PARAM_ALPHA );
-    $type = optional_param( 'type','',PARAM_ALPHA );
-    $indent = optional_param( 'indent',0,PARAM_INT );
-    $update = optional_param( 'update',0,PARAM_INT );
-    $hide = optional_param( 'hide',0,PARAM_INT );
-    $show = optional_param( 'show',0,PARAM_INT );
-    $copy = optional_param( 'copy',0,PARAM_INT );
-    $moveto = optional_param( 'moveto',0,PARAM_INT );
-    $movetosection = optional_param( 'movetosection',0,PARAM_INT );
-    $delete = optional_param( 'delete',0,PARAM_INT );
-    $course = optional_param( 'course',0,PARAM_INT );
-    $groupmode = optional_param( 'groupmode',-1,PARAM_INT );
-    $duplicate = optional_param( 'duplicate',0,PARAM_INT );
+    $add           = optional_param('add','', PARAM_ALPHA);
+    $type          = optional_param('type', '', PARAM_ALPHA);
+    $indent        = optional_param('indent', 0, PARAM_INT);
+    $update        = optional_param('update', 0, PARAM_INT);
+    $hide          = optional_param('hide', 0, PARAM_INT);
+    $show          = optional_param('show', 0, PARAM_INT);
+    $copy          = optional_param('copy', 0, PARAM_INT);
+    $moveto        = optional_param('moveto', 0, PARAM_INT);
+    $movetosection = optional_param('movetosection', 0, PARAM_INT);
+    $delete        = optional_param('delete', 0, PARAM_INT);
+    $course        = optional_param('course', 0, PARAM_INT);
+    $groupmode     = optional_param('groupmode', -1, PARAM_INT);
+    $duplicate     = optional_param('duplicate', 0, PARAM_INT);
+    $cancel        = optional_param('cancel', 0, PARAM_BOOL);
+    $cancelcopy    = optional_param('cancelcopy', 0, PARAM_BOOL);
 
     if (isset($SESSION->modform)) {   // Variables are stored in the session
         $mod = $SESSION->modform;
@@ -29,7 +31,7 @@
         $mod = (object)$_POST;
     }
 
-    if (isset($cancel)) {
+    if ($cancel) {
         if (!empty($SESSION->returnpage)) {
             $return = $SESSION->returnpage;
             unset($SESSION->returnpage);

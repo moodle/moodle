@@ -7,14 +7,15 @@
     require_once($CFG->libdir.'/blocklib.php');
 
     $id          = optional_param('id', 0, PARAM_INT);
-    $name        = optional_param('name');
-    $edit        = optional_param('edit','',PARAM_ALPHA);
-    $idnumber    = optional_param('idnumber');
-    $topic       = optional_param('topic',0,PARAM_INT);
-    $studentview = optional_param('studentview','',PARAM_ALPHA);
-    $section     = optional_param('section',0,PARAM_INT);
-    $move        = optional_param('move',0,PARAM_INT);
-    $marker      = optional_param('marker',0,PARAM_INT);
+    $name        = optional_param('name', '', PARAM_RAW);
+    $edit        = optional_param('edit', -1, PARAM_BOOL);
+    $hide        = optional_param('hide', 0, PARAM_INT);
+    $show        = optional_param('show', 0, PARAM_INT);
+    $idnumber    = optional_param('idnumber', '', PARAM_RAW);
+    $studentview = optional_param('studentview', -1, PARAM_BOOL);
+    $section     = optional_param('section', 0, PARAM_INT);
+    $move        = optional_param('move', 0, PARAM_INT);
+    $marker      = optional_param('marker',0 , PARAM_INT);
 
 
     if (empty($id) && empty($name) && empty($idnumber)) {
@@ -69,14 +70,14 @@
     }
 
     // need to check this here, as studentview=on disables edit allowed (where 'on' is checked)
-    if (($studentview == 'off') and confirm_sesskey()) {
+    if (($studentview == 0) and confirm_sesskey()) {
         $USER->studentview = false;
     }
 
     if ($PAGE->user_allowed_editing()) {
-        if (($edit == 'on') and confirm_sesskey()) {
+        if (($edit == 1) and confirm_sesskey()) {
             $USER->editing = true;
-        } else if (($edit == 'off') and confirm_sesskey()) {
+        } else if (($edit == 0) and confirm_sesskey()) {
             $USER->editing = false;
             if(!empty($USER->activitycopy) && $USER->activitycopycourse == $course->id) {
                 $USER->activitycopy       = false;
@@ -84,16 +85,16 @@
             }
         }
 
-        if (($studentview == 'on') and confirm_sesskey()) {
+        if (($studentview == 1) and confirm_sesskey()) {
             $USER->studentview = true;
             $USER->editing = false;
         }
 
-        if (isset($hide) && confirm_sesskey()) {
+        if ($hide && confirm_sesskey()) {
             set_section_visible($course->id, $hide, '0');
         }
 
-        if (isset($show) && confirm_sesskey()) {
+        if ($show && confirm_sesskey()) {
             set_section_visible($course->id, $show, '1');
         }
 

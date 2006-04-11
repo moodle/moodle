@@ -27,6 +27,8 @@
 
     require_once("$CFG->dirroot/mod/forum/lib.php");
 
+    $week = optional_param('week', -1, PARAM_INT);
+
     // Bounds for block widths; in PIXELS.
     define('BLOCK_L_MIN_WIDTH', 100);
     define('BLOCK_L_MAX_WIDTH', 210);
@@ -47,7 +49,7 @@
     $min_max_block= 'min-width:100px; max-width:210px; ';
     $min_max_main = 'min-width:25em; max-width:37em; '; //33em
 
-    if (isset($week)) {
+    if ($week != -1) {
         $displaysection = course_set_display($course->id, $week);
     } else {
         if (isset($USER->display[$course->id])) {
@@ -226,7 +228,7 @@
             echo '</div><div class="right side">';
             
             if ($displaysection == $section) {
-                echo '<a href="view.php?id='.$course->id.'&amp;week=all#section-'.$section.'" title="'.$strshowallweeks.'">'.
+                echo '<a href="view.php?id='.$course->id.'&amp;week=0#section-'.$section.'" title="'.$strshowallweeks.'">'.
                      '<img src="'.$CFG->pixpath.'/i/all.gif" class="icon wkall" alt="'.$strshowallweeks.'" /></a><br />';
             } else {
                 $strshowonlyweek = get_string("showonlyweek", "", $section);
