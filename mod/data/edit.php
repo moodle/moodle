@@ -131,7 +131,7 @@
 
     if ($datarecord = data_submitted($CFG->wwwroot.'/mod/data/edit.php') and confirm_sesskey()) {
 
-        $ignorenames = array('MAX_FILE_SIZE','sesskey','d','rid');  // strings to be ignored in input data
+        $ignorenames = array('MAX_FILE_SIZE','sesskey','d','rid','saveandview','cancel');  // strings to be ignored in input data
 
         if ($rid) {                                          /// Update some records
 
