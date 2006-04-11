@@ -322,7 +322,7 @@ class data_field_base {     /// Base class for Database Field Types (see field/*
  *****************************************************************************/
 function data_generate_default_template(&$data, $template, $recordid=0, $form=false, $update=true) {
 
-    if (!$data && !$template){
+    if (!$data && !$template) {
         return false;
     }
     
@@ -888,10 +888,11 @@ function data_print_template($template, $records, $data, $search='',$page=0, $re
         ///actual replacement of the tags
         $newtext = preg_replace($patterns, $replacement, $data->{$template});
         $options->para=false;
+        $options->noclean=true;
         if ($return) {
             return format_text($newtext, FORMAT_HTML, $options);
         } else {
-            echo format_text($newtext, FORMAT_HTML, $options);    //prints the template with tags replaced
+            echo format_text($newtext, FORMAT_HTML, $options); 
         }
 
         /**********************************
