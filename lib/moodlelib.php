@@ -453,7 +453,7 @@ function confirm_sesskey($sesskey=NULL) {
     }
 
     if (empty($sesskey)) {
-        $sesskey = required_param('sesskey');  // Check script parameters
+        $sesskey = required_param('sesskey', PARAM_RAW);  // Check script parameters
     }
 
     if (!isset($USER->sesskey)) {
