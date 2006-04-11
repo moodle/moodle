@@ -1113,15 +1113,17 @@ function data_print_comments($data, $record, $page=0) {
         }
     }
     
-    echo '<div class="newcomment" align="center"><form method="post" action="'.$CFG->wwwroot.'/mod/data/comment.php">';
-    echo '<input type="hidden" name="mode" value="add" />';
-    echo '<input type="hidden" name="page" value="'.$page.'" />';
-    echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
-    echo '<input type="hidden" name="rid" value="'.$record->id.'" />';
-
-    echo '<textarea rows="8" cols="50" name="commentcontent"></textarea>';
-    echo '<br /><input type="submit" value="'.get_string('addcomment','data').'" />';
-    echo '</form></div>';
+    if (isloggedin() and !isguest()) {
+        echo '<div class="newcomment" align="center"><form method="post" action="'.$CFG->wwwroot.'/mod/data/comment.php">';
+        echo '<input type="hidden" name="mode" value="add" />';
+        echo '<input type="hidden" name="page" value="'.$page.'" />';
+        echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
+        echo '<input type="hidden" name="rid" value="'.$record->id.'" />';
+    
+        echo '<textarea rows="8" cols="50" name="commentcontent"></textarea>';
+        echo '<br /><input type="submit" value="'.get_string('addcomment','data').'" />';
+        echo '</form></div>';
+    }
 }
 
 //prints a single comment entry
