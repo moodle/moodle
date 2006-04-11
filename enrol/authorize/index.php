@@ -33,10 +33,10 @@
 
 /// If orderid is empty, user wants to see all orders
     if (empty($orderid)) {
-        print_authorize_orders();
+        authorize_print_orders();
     }
     else {
-        print_authorize_order_details($orderid);
+        authorize_print_order_details($orderid);
     }
 
 /// Print footer

@@ -114,7 +114,7 @@ function authorize_print_orders()
 
     if ($records = get_records_sql($select . $from . $where . $sort . $limit)) {
         foreach ($records as $record) {
-            $actionstatus = get_status_action($record);
+            $actionstatus = authorize_get_status_action($record);
             $actions = '';
 
             if (empty($actionstatus->actions)) {
@@ -181,7 +181,7 @@ function authorize_print_order_details($orderno)
     echo "<input type='hidden' name='order' value='$orderno'>\n";
 
     $settled = settled($order);
-    $status = get_status_action($order);
+    $status = authorize_get_status_action($order);
 
     $table->data[] = array("<b>$authstrs->orderid:</b>", $orderno);
     $table->data[] = array("<b>$authstrs->transid:</b>", $order->transid);
@@ -436,7 +436,7 @@ function authorize_print_order_details($orderno)
             $refunds = get_records('enrol_authorize_refunds', 'orderid', $orderno);
             if ($refunds) {
                 foreach ($refunds as $rf) {
-                    $substatus = get_status_action($rf);
+                    $substatus = authorize_get_status_action($rf);
                     $subactions = '&nbsp;';
                     if (empty($substatus->actions)) {
                         $subactions .= $strs->none;
@@ -464,12 +464,12 @@ function authorize_print_order_details($orderno)
 }
 
 /**
- * get_status_action
+ * authorize_get_status_action
  *
  * @param object $order Order details.
  * @return object
  */
-function get_status_action($order)
+function authorize_get_status_action($order)
 {
     global $CFG, $USER;
     static $timediff30;
