@@ -5,15 +5,15 @@
     require_once("../config.php");
     require_once("lib.php");
 
-    $edit = optional_param( 'edit','',PARAM_ALPHA );
-    $delete = optional_param( 'delete',0,PARAM_INT );
-    $hide = optional_param( 'hide',0,PARAM_INT );
-    $show = optional_param( 'show',0,PARAM_INT );
-    $sure = optional_param( 'sure','',PARAM_CLEAN );
-    $move = optional_param( 'move',0,PARAM_INT );
-    $moveto = optional_param( 'moveto',-1,PARAM_INT );
-    $moveup = optional_param( 'moveup',0,PARAM_INT );
-    $movedown = optional_param( 'movedown',0,PARAM_INT );
+    $edit     = optional_param('edit', -1,PARAM_BOOL);
+    $delete   = optional_param('delete',0,PARAM_INT);
+    $hide     = optional_param('hide',0,PARAM_INT);
+    $show     = optional_param('show',0,PARAM_INT);
+    $sure     = optional_param('sure','',PARAM_ALPHANUM);
+    $move     = optional_param('move',0,PARAM_INT);
+    $moveto   = optional_param('moveto',-1,PARAM_INT);
+    $moveup   = optional_param('moveup',0,PARAM_INT);
+    $movedown = optional_param('movedown',0,PARAM_INT);
 
     if (!$site = get_site()) {
         error("Site isn't defined!");
@@ -24,16 +24,13 @@
     }
 
     if (isadmin()) {
-        if (!empty($edit) and confirm_sesskey()) {
-            if ($edit == "on") {
-                $USER->categoriesediting = true;
-            } else if ($edit == "off") {
-                $USER->categoriesediting = false;
-            }
+        if ($edit !== -1) {
+            $USER->categoryediting = $edit;
         }
+        $adminediting = !empty($USER->categoryediting);
+    } else {
+        $adminediting = false;
     }
-
-    $adminediting = (isadmin() and !empty($USER->categoriesediting));
 
 
 /// Unless it's an editing admin, just print the regular listing of courses/categories
