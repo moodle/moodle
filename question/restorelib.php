@@ -200,17 +200,6 @@
                 $question->qtype = $qtypenames[$question->qtype];
             }
 
-            ////We have to recode the parent field
-            // This should work alright because we ordered the questions appropriately during backup so that
-            // questions that can be parents are restored first
-            if ($question->parent) {
-                if ($parent = backup_getid($restore->backup_unique_code,"question",$question->parent)) {
-                    $question->parent = $parent->new_id;
-                } else {
-                    echo 'Could not recode parent '.$question->parent.' for question '.$question->id.'<br />';
-                }
-            }
-
             //Check if the question exists
             //by category, stamp, and version
             $question_exists = get_record ("question","category",$question->category,
@@ -238,6 +227,7 @@
             $restored_questions[$i]->newid  = $newid;
             $restored_questions[$i]->oldid  = $oldid;
             $restored_questions[$i]->qtype  = $question->qtype;
+            $restored_questions[$i]->parent  = $question->parent;
             $restored_questions[$i]->is_new = $creatingnewquestion;
         }
 
@@ -249,10 +239,23 @@
             $newid = $restored_questions[$i]->newid;
             $oldid = $restored_questions[$i]->oldid;
             $question->qtype = $restored_questions[$i]->qtype;
+            $question->parent = $restored_questions[$i]->parent;
 
 
             //If it's a new question in the DB, restore it
             if ($restored_questions[$i]->is_new) {
+
+                ////We have to recode the parent field
+                if ($question->parent) {
+                    if ($parent = backup_getid($restore->backup_unique_code,"question",$question->parent)) {
+                        $question->parent = $parent->new_id;
+                    } elseif ($question->parent = $oldid) {
+                        $question->parent = $newid;
+                    } else {
+                        echo 'Could not recode parent '.$question->parent.' for question '.$question->id.'<br />';
+                    }
+                }
+    
                 //Now, restore every question_answers in this question
                 $status = question_restore_answers($oldid,$newid,$que_info,$restore);
                 // Restore questiontype specific data
