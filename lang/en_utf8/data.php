@@ -19,6 +19,7 @@ $string['bynameondate'] = 'by $a->name - $a->date';
 $string['cancel'] = 'Cancel';
 $string['checkbox'] = 'Checkbox';
 $string['commentdeleted'] = 'Comment deleted';
+$string['commentempty'] = 'Comment was empty';
 $string['comments'] = 'Comments';
 $string['commentsaved'] = 'Comment saved';
 $string['commentsn'] = '$a comments';
