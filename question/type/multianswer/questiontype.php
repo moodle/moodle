@@ -59,7 +59,7 @@ class embedded_cloze_qtype extends default_questiontype {
         // will also create difficulties if questiontype specific tables reference the id.
         
         // First we get all the existing wrapped questions
-        if (!$oldwrappedids = get_field('question_multianswers', 'sequence', 'question', $question->id)) {
+        if (!$oldwrappedids = get_field('question_multianswer', 'sequence', 'question', $question->id)) {
             $oldwrappedids = array();
         } else {
             $oldwrappedids = explode(',', $oldwrappedids);
