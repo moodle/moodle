@@ -39,6 +39,11 @@
         }
     }
 
+    $commentcontent = trim($commentcontent);
+    if (empty($commentcontent)) {
+        redirect('view.php?rid='.$record->id.'&amp;page='.$page, get_string('commentempty', 'data'));
+    }
+
     switch ($mode) {
         case 'add':
             $newcomment = new object;
