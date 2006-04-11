@@ -538,6 +538,10 @@
 
 
     $secondsleft = ($quiz->timeclose ? $quiz->timeclose : 999999999999) - time();
+    if ($isteacher) {
+        // For teachers ignore the quiz closing time
+        $secondsleft = 999999999999;
+    }
     // If time limit is set include floating timer.
     if ($quiz->timelimit > 0) {
 
