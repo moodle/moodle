@@ -47,9 +47,9 @@ rem
 drop TABLE prefix_backup_config;
 
 CREATE TABLE prefix_backup_config (
-  id number(10) not null,
-  name varchar2(255) not null,
-  value varchar2(255) not null,
+  id number(10) default '0' not null,
+  name varchar2(255) default '' not null,
+  value varchar2(255) default '' not null,
   constraint pk_baco primary key (id),
   constraint uk_baco_name unique (name)
 );
