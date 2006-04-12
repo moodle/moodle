@@ -860,7 +860,7 @@ span.current {
   vertical-align:top;
 }
 
-#course-view .weeks .section .content {
+#course-view .section .content {
   padding:5px;
   border-style:solid;
   border-width:1px;
@@ -872,19 +872,19 @@ span.current {
   clear: both;
 }
 
-#course-view .weeks .section .side {
+#course-view .section .side {
   padding:5px;
   border-style:solid;
   border-width:1px;
 }
 
-#course-view .weeks .section .left {
+#course-view .section .left {
   border-right:0px;
   text-align:center;
   width: 1.5em;
 }
 
-#course-view .weeks .section .right {
+#course-view .section .right {
   border-left:0px;
   text-align:center;
   width: 1.5em;
@@ -915,7 +915,8 @@ span.current {
   border-style:solid;
   border-width:1px;
 }
-.weekscss .content, .weekscss .side {
+.weekscss .content, 
+.weekscss .side {
   padding: 5px;
 }
 .weekscss .content {

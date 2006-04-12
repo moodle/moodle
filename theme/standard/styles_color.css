@@ -447,6 +447,11 @@ table.minicalendar {
   border-color:#DDDDDD;
 }
 
+#course-view .section .content,
+#course-view .section td.side {
+  background: #FFFFFF;
+}
+
 #course-view .section .side {
 }
 
@@ -457,13 +462,14 @@ table.minicalendar {
 }
 
 #course-view .weekscss .current,
-#course-view .weeks .current .side{
+#course-view .current td.side {
   background: #FFD991;
 }
 
-#course-view .current .content {
-  background: white;
+#course-view .hidden td.side {
+  background: #DDDDDD;
 }
+
 
 #course-view .topics {
 }
@@ -477,6 +483,7 @@ table.minicalendar {
 #course-view .section .weekdates {
   color: #777777;
 }
+
 #course-view .weekscss .weekdates {
   color: #333333;
 }
