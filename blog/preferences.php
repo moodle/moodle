@@ -22,7 +22,7 @@
         error(get_string('noguestpost', 'blog'), $referrer);
     }
     
-    if (!blog_isLoggedIn() ) {
+    if (!(isloggedin() && !isguest())) {
         error(get_string('noguestpost', 'blog'), $referrer);
     }
     $userid = $USER->id;
@@ -30,7 +30,6 @@
 /// If data submitted, then process and store.
 
 	if ($post = data_submitted()) {
-        print_header();
 
         $pagesize = optional_param('pagesize', 10, PARAM_INT);
         if ($pagesize < 1 ) {
