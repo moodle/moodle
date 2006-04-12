@@ -51,7 +51,7 @@ class block_blog_menu extends block_base {
             $addentrylink = '';
                             
             $coursearg = '';
-            if(blog_isLoggedIn() && isset($course) && isset($course->id) && $course->id !=0 && $course->id!=SITEID && $CFG->bloglevel >=3 ) {
+            if((isloggedin() && !isguest()) && isset($course) && isset($course->id) && $course->id !=0 && $course->id!=SITEID && $CFG->bloglevel >=3 ) {
                 $coursearg = '&amp;courseid='. $course->id;
                 // a course is specified
                 
@@ -61,7 +61,7 @@ class block_blog_menu extends block_base {
                 
             $blogmodon = false;
 
-                if (blog_isLoggedIn() && (isadmin() || !$blogmodon || ($blogmodon && $coursearg != '')) && $CFG->bloglevel >= 1) {
+                if ((isloggedin() && !isguest()) && (isadmin() || !$blogmodon || ($blogmodon && $coursearg != '')) && $CFG->bloglevel >= 1) {
 
                     // show Add entry link - user is not admin, moderation is off, or moderation is on and the user is viewing the block within the context of a course
                         $addentrylink = '<a href="'. $CFG->wwwroot. '/blog/edit.php?userid='. $userBlog->userid . $coursearg .'">'. get_string('addnewentry', 'blog') .'</a><br />';
