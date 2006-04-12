@@ -174,7 +174,7 @@
             }
 
             echo '<tr id="section-'.$section.'" class="section main'.$sectionstyle.'">';
-            echo '<td class="left side">&nbsp;</td>';
+            echo '<td class="left side">'.$section.'</td>';
 
             echo '<td class="content">';
             if (!isteacher($course->id) and !$thissection->visible) {   // Hidden for students
