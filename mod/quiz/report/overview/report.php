@@ -46,8 +46,7 @@ class quiz_report extends quiz_default_report {
                     if ($todelete = get_record('quiz_attempts', 'id', $attemptid)) {
                         // TODO: use function from questionlib.php to delete attempt
                         delete_records('quiz_attempts', 'id', $attemptid);
-                        delete_records('question_states', 'attempt', $todelete->uniqueid);
-                        delete_records('question_sessions', 'attemptid', $todelete->uniqueid);
+                        delete_attempt($todelete->uniqueid);
 
                         // Search quiz_attempts for other instances by this user.
                         // If none, then delete record for this quiz, this user from quiz_grades
