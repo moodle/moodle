@@ -3479,7 +3479,7 @@ function update_categories_button() {
     global $CFG, $USER;
 
     if (isadmin()) {
-        if (!empty($USER->categoriesediting)) {
+        if (!empty($USER->categoryediting)) {
             $string = get_string('turneditingoff');
             $edit = 'off';
         } else {
