@@ -52,10 +52,10 @@ class block_blog_menu extends block_base {
                             
             $coursearg = '';
             if(blog_isLoggedIn() && isset($course) && isset($course->id) && $course->id !=0 && $course->id!=SITEID && $CFG->bloglevel >=3 ) {
-                $coursearg = '&courseid='. $course->id;
+                $coursearg = '&amp;courseid='. $course->id;
                 // a course is specified
                 
-                $courseviewlink = '<a href="'. $CFG->wwwroot .'/blog/index.php?filtertype=course&filterselect='. $course->id .'">';
+                $courseviewlink = '<a href="'. $CFG->wwwroot .'/blog/index.php?filtertype=course&amp;filterselect='. $course->id .'">';
                 $courseviewlink .= get_string('viewcourseentries', 'blog') .'</a><br />';
             }
                 
@@ -79,7 +79,7 @@ class block_blog_menu extends block_base {
 
             // show View site entries link
             if ($CFG->bloglevel >= 4) {
-                $output .= '<a href="'. $CFG->wwwroot .'/blog/index.php?filtertype=site&">';
+                $output .= '<a href="'. $CFG->wwwroot .'/blog/index.php?filtertype=site&amp;">';
                 $output .= get_string('viewsiteentries', 'blog') .'</a><br />';
             }
             
