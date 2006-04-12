@@ -751,7 +751,7 @@ function set_section_visible($courseid, $sectionnumber, $visibility) {
         if (!empty($section->sequence)) {
             $modules = explode(",", $section->sequence);
             foreach ($modules as $moduleid) {
-                set_coursemodule_visible($moduleid, $visibility);
+                set_coursemodule_visible($moduleid, $visibility, true);
             }
         }
         rebuild_course_cache($courseid);
@@ -1400,7 +1400,14 @@ function set_coursemodule_groupmode($id, $groupmode) {
     return set_field("course_modules", "groupmode", $groupmode, "id", $id);
 }
 
-function set_coursemodule_visible($id, $visible) {
+/**
+* $prevstateoverrides = true will set the visibility of the course module
+* to what is defined in visibleold. This enables us to remember the current
+* visibility when making a whole section hidden, so that when we toggle
+* that section back to visible, we are able to return the visibility of
+* the course module back to what it was originally.
+*/
+function set_coursemodule_visible($id, $visible, $prevstateoverrides=false) {
     $cm = get_record('course_modules', 'id', $id);
     $modulename = get_field('modules', 'name', 'id', $cm->module);
     if ($events = get_records_select('event', "instance = '$cm->instance' AND modulename = '$modulename'")) {
@@ -1410,6 +1417,15 @@ function set_coursemodule_visible($id, $visible) {
             } else {
                 hide_event($event);
             }
+        }
+    }
+    if ($prevstateoverrides) {
+        if ($visible == '0') {
+            // Remember the current visible state so we can toggle this back.
+            set_field('course_modules', 'visibleold', $cm->visible, 'id', $id);
+        } else {
+            // Get the previous saved visible states.
+            return set_field('course_modules', 'visible', $cm->visibleold, 'id', $id);
         }
     }
     return set_field("course_modules", "visible", $visible, "id", $id);
