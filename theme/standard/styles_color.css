@@ -193,13 +193,21 @@ table.formtable tbody th {
  *** Header
  ***/
 
-.headerskip a {
+.headerskip a:link,
+.headerskip a:visited,
+.headerskip a:hover {
   color: #FFF;
 }
 
 /***
  *** Footer
  ***/
+
+/*Accessibility: .debugwarn */
+.debugwarn {
+  text-align: center;
+  background: #FDD;
+}
 
 .homelink a:link,
 .homelink a:visited,
@@ -882,3 +890,4 @@ body#mod-quiz-report table#attempts .r1 {
 .error {
   color:#ff0000;
 }
+
