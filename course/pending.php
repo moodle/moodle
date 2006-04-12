@@ -1,10 +1,10 @@
-<?php
+<?php  // $Id$
+       // allow the administrators to look through a list of course requests and either approve them or reject them.
 
-    // allow the administrators to look through a list of course requests and either approve them or reject them.
-    require_once(dirname(dirname(__FILE__)).'/config.php');
-    require_once(dirname(dirname(__FILE__)).'/lib/pagelib.php');
-    require_once(dirname(dirname(__FILE__)).'/lib/blocklib.php'); 
-    require_once(dirname(__FILE__).'/lib.php');
+    require_once('../config.php');
+    require_once($CFG->libdir.'/pagelib.php');
+    require_once($CFG->libdir.'/blocklib.php'); 
+    require_once('/lib.php');
 
     require_login();
 
@@ -12,10 +12,11 @@
         error("Only the admin can use this page");
     }
 
-    $approve = optional_param('approve',NULL,PARAM_INT);
-    $reject = optional_param('reject',NULL,PARAM_INT);
+    $approve      = optional_param('approve', 0, PARAM_INT);
+    $reject       = optional_param('reject', 0, PARAM_INT);
+    $rejectnotice = optional_param('rejectnotice', '', PARAM_CLEANHTML);
 
-    if (!empty($approve)) {
+    if (!empty($approve) and confirm_sesskey()) {
         if ($course = get_record("course_request","id",$approve)) {
             foreach (array_keys((array)$course) as $key) {
                 $course->$key = addslashes($course->$key);
@@ -88,9 +89,8 @@
 
     print_header($strtitle,$strheading,$strheading);
  
-    if (!empty($reject)) {
+    if (!empty($reject) and confirm_sesskey()) {
         if ($reject = get_record("course_request","id",$reject)) {
-            $rejectnotice = stripslashes(optional_param('rejectnotice',NULL,PARAM_CLEAN));
             if (empty($rejectnotice)) {
                 //  display a form for writing a reason
                 print_simple_box_start('center');
