@@ -232,7 +232,7 @@
                                         $element = $datamodel[strtolower(trim($datarow))];
                                         $value = '';
                                         while ((($datarow = current($datarows)) !== false) && (substr($datarow,0,1) != '[')) {
-                                            $value .= $datarow;
+                                            $value .= scorm_utf8_to_entities(datarow);
                                             next($datarows);
                                         }
                                         $id = scorm_insert_track($USER->id, $scorm->id, $sco->id, $attempt, $element, $value);
