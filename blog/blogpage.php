@@ -9,7 +9,6 @@ define('PAGE_BLOG_VIEW', 'blog-view');
 class page_blog extends page_base {
 
     var $editing = false;
-    var $bloginfo = NULL;
     var $courserecord = NULL;
     var $courseid = NULL;
     
@@ -49,7 +48,7 @@ class page_blog extends page_base {
         }
         // I need to determine how best to utilize this function. Most init
         // is already done before we get here in blogFilter and blogInfo
-        //$this->bloginfo =& new BlogInfo($this->id);
+
         if ($this->courseid == 0 || $this->courseid == 1 || !is_numeric($this->courseid) ) {
             $this->courseid = '';
             $courserecord = NULL;
@@ -64,8 +63,6 @@ class page_blog extends page_base {
     // For this test page, only admins are going to be allowed editing (for simplicity).
     function user_allowed_editing() {
         if (isloggedin() && !isguest()) {
-
-        //if (isadmin() || ((isset($this->bloginfo) && blog_user_has_rights($this->bloginfo))) || ($this->courseid != '' && isteacher($this->courseid)) ) {
             return true;
         }
         return false;
@@ -76,7 +73,6 @@ class page_blog extends page_base {
     function user_is_editing() {
          if (isloggedin() && !isguest()) {
 
-        //if (isadmin() || ((isset($this->bloginfo) && blog_user_has_rights($this->bloginfo))) || ($this->courseid != '' && isteacher($this->courseid)) ) {
             global $SESSION;
             if (empty($SESSION->blog_editing_enabled)) {
                 $SESSION->blog_editing_enabled = false;
@@ -168,7 +164,7 @@ class page_blog extends page_base {
         global $SESSION, $CFG, $USER;
 
         $editformstring = '';        
-        if (blog_isLoggedin()) {
+        if (isloggedin() && !isguest()) {
             if (!empty($SESSION->blog_editing_enabled) && ($SESSION->blog_editing_enabled)) {
                 $editingString = get_string('turneditingoff');
             } else {

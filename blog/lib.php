@@ -33,59 +33,6 @@
     }
 
     /**
-     * blog_user_has_rights - returns true if user is the blog's owner or a moodle admin.
-     *
-     * @param BlogInfo blogInfo - a BlogInfo object passed by reference. This object represents the blog being accessed.
-     * @param int uid - numeric user id of the user whose rights are being tested against this blogInfo. If no uid is specified then the uid of the currently logged in user will be used.
-     */
-    function blog_user_has_rights($entryID, $uid='') {
-        global $USER;
-
-        if ($uid == '') {
-            if ( isset($USER) && isset($USER->id) ) {
-                $uid = $USER->id;
-            }
-        }
-        if ($uid == '') {
-            //if uid is still empty then the user is not logged in
-            return false;
-        }
-        if (blog_is_blog_admin($uid) || isadmin()) {
-            return true;
-        }
-        $blogEntry = get_record('post','id',$entryID);
-
-        return ($blogEntry->userid == $uid);
-
-    }
-
-    /**
-     * Determines whether a user is an admin for a blog
-     * @param int $blog_userid The id of the blog being checked
-     */
-    function blog_is_blog_admin($blog_userid) {
-        global $USER;
-
-        //moodle admins are admins
-        if (isadmin()) {
-            return true;
-        }
-        if ( empty($USER) || !isset($USER->id) ) {
-            return false;
-        }
-        if ( empty($blog_userid)) {
-            return true;
-        }
-
-        // Return true if the user is an admin for this blog
-        if ($blog_userid == $USER->id) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    /**
      * Adaptation of isediting in moodlelib.php for blog module
      * @return bool
      */
@@ -101,9 +48,10 @@
      *  This function is in lib and not in BlogInfo because entries being searched
      *   might be found in any number of blogs rather than just one.
      *
-     *   $@param BlogFilter blogFilter - a BlogFilter object containing the settings for finding appropriate entries for display
+     *   $@param ...
      */
     function blog_print_html_formatted_entries($userid, $postid, $limit, $start, $filtertype, $filterselect, $tagid, $tag, $filtertype, $filterselect) {
+
         global $CFG, $USER;
 
         $blogpage = optional_param('blogpage', 0, PARAM_INT);
@@ -115,13 +63,10 @@
         $morelink = '<br />&nbsp;&nbsp;';
         // show personal or general heading block as applicable
         echo '<div class="headingblock header blog">';
-        //show blog title - blog tagline
+
         print "<br />";    //don't print title. blog_get_title_text();
 
         $blogEntries = fetch_entries($userid, $postid, $limit, $start, $filtertype, $filterselect, $tagid, $tag, $sort='lastmodified DESC', $limit=true);
-
-        //$blogFilter->get_filtered_entries();
-        // show page next/previous links if applicable
 
         print_paging_bar(get_viewable_entry_count($userid, $postid, $limit, $start,$filtertype, $filterselect, $tagid, $tag, $sort='lastmodified DESC'), $blogpage, $bloglimit, get_baseurl($filtertype, $filterselect), 'blogpage');
 
@@ -151,7 +96,6 @@
             }
 
             print $morelink.'<br />'."\n";
-
             return;
         }
 
@@ -190,9 +134,12 @@
         $template['publishstate'] = $blogEntry->publishstate;
 
         /// preventing user to browse blogs that they aren't supposed to see
+        /// This might not be too good since there are multiple calls per page
+
+        /*
         if (!blog_user_can_view_user_post($template['userid'])) {
             error ('you can not view this post');
-        }
+        }*/
 
         $stredit = get_string('edit');
         $strdelete = get_string('delete');
@@ -266,6 +213,7 @@
      *                choose_from_menu function.
      */
     function blog_applicable_publish_states($courseid='') {
+
         global $CFG;
 
         // everyone gets draft access
@@ -276,17 +224,33 @@
         return $options;
     }
 
+    // user can edit if he's an admin, or blog owner
+    function blog_user_can_edit_post($blogEntry) {
+
+        global $CFG, $USER;
+        
+        return (isadmin() || ($blogEntry->userid == $USER->id));
+
+    }
     /// Checks to see if a user can view the blogs of another user.
     /// He can do so, if he is admin, in any same non-spg course,
     /// or spg group, but same group member
-    function blog_user_can_view_user_post($targetuserid) {
+    function blog_user_can_view_user_post($targetuserid, $blogEntry=null) {
 
-        global $CFG;
+        global $CFG, $USER;
 
         $canview = 0;    //bad start
 
         if (isadmin()) {
             return true;
+        }
+        
+        if ($USER->id == $targetuserid) {
+            return true;
+        }
+
+        if ($blogEntry and $blogEntry->publishstate == 'draft') {  // can not view draft
+            return false;
         }
 
         $usercourses = get_my_courses($targetuserid);
@@ -328,51 +292,7 @@
         return stripslashes_safe($body);
     }
 
-
-    /// moved from BlogEntry class
-    function get_publish_to_menu($blogEntry, $return=true, $includehelp=true) {
-        $menu = '';
-        if (user_can_change_publish_state($blogEntry) && blog_isediting() ) {
-            $menu .= '<div class="publishto">'. get_string('publishto', 'blog').': ';
-            $options = blog_applicable_publish_states();
-            $menu .= choose_from_menu($options, $blogEntry->userid .'-'. $blogEntry->id, $blogEntry->publishstate, '', '', '0', true);
-            $menu .= "\n".'</div>'."\n";
-            /// batch publish might not be needed
-            if ($includehelp) {
-                $menu .= helpbutton('batch_publish', get_string('batchpublish', 'blog'), 'blog', true, false, '', true);
-            }
-        }
-
-        if ($return) {
-            return $menu;
-        }
-        print $menu;
-    }
-
-
-    /**
-    * This function will determine if the user is logged in and
-    * able to make changes to the publish state of this entry
-    *
-    * @return bool True if user is allowed to change publish state
-    */
-    function user_can_change_publish_state($blogEntry) {
-    // figure out who the currently logged in user is.
-    // to change any publish state one must be logged in
-        global $USER;
-        if ( !isset($USER) || empty($USER) || !isset($USER->id) ) {
-                // only site members are allowed to edit entries
-            return 'Only site members are allowed to edit entries';
-        } else {
-            $uid = $USER->id;
-        }
-        if ( ($uid == $blogEntry->userid) || (blog_is_blog_admin($blogEntry->userid)) || (isadmin())) {
-            return true;
-        }
-        return false;
-    }
-
-/// Filter Class functions
+/// Main filter function
 
     function fetch_entries($userid, $postid='', $fetchlimit=10, $fetchstart='', $filtertype='', $filterselect='', $tagid='', $tag ='', $sort='lastmodified DESC', $limit=true) {
 
@@ -522,7 +442,6 @@
         $orderby = ' ORDER BY '. $sort .' ';
 
         //echo 'Debug: BlogFilter fetch_entries() sql="'. $SQL . $orderby . $limit .'"<br />'. $this->categoryid; //debug
-
         $records = get_records_sql($SQL . $orderby . $limit);
 
 //        print_object($records); //debug
@@ -537,6 +456,8 @@
     /**
      * get the count of viewable entries, easiest way is to count fetch_entries
      * this is used for print_paging_bar
+     * this is not ideal, but because of the UNION in the sql in fetch_entries,
+     * it is hard to use count_records_sql
      */
     function get_viewable_entry_count($userid, $postid='', $fetchlimit=10, $fetchstart='', $filtertype='', $filterselect='', $tagid='', $tag ='', $sort='lastmodified DESC') {
 
@@ -544,7 +465,7 @@
         return count($blogEntries);
     }
     
-    /// Find the base url from $_GET variables
+    /// Find the base url from $_GET variables, for print_paging_bar
     function get_baseurl($filtertype, $filterselect) {
 
         $getcopy  = $_GET;

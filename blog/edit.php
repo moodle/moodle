@@ -23,38 +23,30 @@ if (isguest()) {
 }
 
 $userid = optional_param('userid', 0, PARAM_INT);
-$editid = optional_param('editid', 0, PARAM_INT);
+
+// make sure that the person trying to edit have access right
+if ($editid = optional_param('editid', 0, PARAM_INT)) {
+
+    $blogEntry = get_record('post', 'id', $editid);
+
+    if (!blog_user_can_edit_post($blogEntry)) {
+         error( get_string('notallowedtoedit', 'blog'), $CFG->wwwroot .'/login/index.php');
+    }
+
+}
 
 //check to see if there is a requested blog to edit
-if (!empty($userid) && $userid != 0) {
-    if (blog_isLoggedIn() && $userid == $USER->id ) {
-        ; // Daryl Hawes note: is this a placeholder for missing functionality?
-    }
-} else if ( blog_isLoggedIn() ) {
+if (isloggedin() && !isguest()) {
     //the user is logged in and have not specified a blog - so they will be editing their own
     //$tempBlogInfo = blog_user_bloginfo();
-    $userid = $USER->id;//$tempBlogInfo->userid;
+    $userid = $USER->id; //$tempBlogInfo->userid;
     //unset($tempBlogInfo); //free memory from temp object - bloginfo will be created again in the included header
 } else {
     error(get_string('noblogspecified', 'blog') .'<a href="'. $CFG->blog_blogurl .'">' .get_string('viewentries', 'blog') .'</a>');
 }
 
 $pageNavigation = 'edit';
-
 include($CFG->dirroot .'/blog/header.php');
-
-//check if user is in blog's acl
-if ( !blog_user_has_rights($editid) ) {
-    if ($editid != '') {
-        $blogEntry = get_record('post','id',$editid);
-        if (! (isteacher($blogEntry->$entryCourseId)) ) {
-//            error( get_string('notallowedtoedit'.' You do not teach in this course.', 'blog'), $CFG->wwwroot .'/login/index.php');
-            error( get_string('notallowedtoedit', 'blog'), $CFG->wwwroot .'/login/index.php');
-        }
-    } else {
-        error( get_string('notallowedtoedit', 'blog'), $CFG->wwwroot .'/login/index.php');
-    }
-}
 
 //////////// SECURITY AND SETUP COMPLETE - NOW PAGE LOGIC ///////////////////
 
@@ -64,16 +56,17 @@ if (isset($act) && ($act == 'del') && confirm_sesskey())
     if (optional_param('confirm',0,PARAM_INT)) {
         do_delete($postid);
     } else {
+
     /// prints blog entry and what confirmation form
         echo '<div align="center"><form method="GET" action="edit.php">';
         echo '<input type="hidden" name="act" value="del" />';
         echo '<input type="hidden" name="confirm" value="1" />';
         echo '<input type="hidden" name="editid" value="'.$postid.'" />';
         echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
+
         print_string('blogdeleteconfirm', 'blog');
-        
-        $post = get_record('post', 'id', $postid);
-        blog_print_entry($post);
+        blog_print_entry($blogEntry);
+
         echo '<br />';
         echo '<input type="submit" value="'.get_string('delete').'" /> ';
         echo ' <input type="button" value="'.get_string('cancel').'" onclick="javascript:history.go(-1)" />';
@@ -172,9 +165,9 @@ function do_delete($postid) {
     // make sure this user is authorized to delete this entry.
     // cannot use $post->pid because it may not have been initialized yet. Also the pid may be in get format rather than post.
     // check ownership
-    $post = get_record('post','id',$postid);
+    $blogEntry = get_record('post','id',$postid);
 
-    if (($USER->id == $post->userid) || (blog_is_blog_admin($post->userid)) || (isadmin())) {
+    if (blog_user_can_edit($blogEntry)) {
         
         if (delete_records('post','id',$postid)) {
             //echo "bloginfo_arg:"; //debug
