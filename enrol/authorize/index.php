@@ -2,7 +2,7 @@
 
 /// Load libraries
     require_once '../../config.php';
-    require_once 'lib.php';
+    require_once 'locallib.php';
 
 /// Get site
     if (! $site = get_site()) {
