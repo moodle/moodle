@@ -19,7 +19,7 @@ CREATE TABLE prefix_scorm (
   auto tinyint(1) unsigned NOT NULL default '0',
   popup tinyint(1) unsigned NOT NULL default '0',
   options varchar(255) NOT NULL default '',
-  width int(10) unsigned NOT NULL default '800',
+  width int(10) unsigned NOT NULL default '100',
   height int(10) unsigned NOT NULL default '600',
   timemodified int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (id),
