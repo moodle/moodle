@@ -900,8 +900,23 @@ span.current {
 #course-view .section .weekdates {
 }
 
+#course-view ul.section, 
+#site-index ul.section, 
+#course-view ul.section li, 
+#site-index ul.section li { 
+  margin: 0;
+  padding: 0;
+  text-indent: 0;
+  list-style: none;
+}
 
 /*Accessibility: No-tables course format. */
+#course-view ul.weekscss, .weekscss li { 
+  margin: 0;
+  padding: 0;
+  text-indent: 0;
+  list-style: none;
+}
 .weekscss-format {
   min-width:763px; /* Doesn't work for IE. */
 }
@@ -911,14 +926,6 @@ span.current {
 .weekscss-format #middle-column {
   padding-left:12px;
   padding-right:12px;
-}
-
-#course-view ul.weekscss, .weekscss li,
-#course-view ul.section, .section li {
-  margin: 0;
-  padding: 0;
-  text-indent: 0;
-  list-style: none;
 }
 .weekscss li.section {
   margin-bottom: 0.5em;
