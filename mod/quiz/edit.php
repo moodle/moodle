@@ -322,17 +322,14 @@ if (self.name == 'editquestion') {
 
         print_simple_box_start("center");
 
-        $attemptcount = count_records('quiz_attempts', 'quiz', $modform->instance, 'preview', 0);
-
-        $strviewallanswers  = get_string("viewallanswers","quiz",$attemptcount);
-        $strattemptsexist  = get_string("attemptsexist","quiz");
-        $usercount = count_records_select('quiz_attempts', "quiz = '$modform->id' AND preview = '0'", 'COUNT(DISTINCT userid)');
-        $strusers  = $course->students;
+        $a->attemptnum = count_records('quiz_attempts', 'quiz', $quiz->id, 'preview', 0);
+        $a->studentnum = count_records_select('quiz_attempts', "quiz = '$quiz->id' AND preview = '0'", 'COUNT(DISTINCT userid)');
+        $a->studentstring  = $course->students;
         if (! $cm = get_coursemodule_from_instance("quiz", $modform->instance, $course->id)) {
             error("Course Module ID was incorrect");
         }
         echo "<center>\n";
-        echo "$strattemptsexist<br /><a href=\"report.php?mode=overview&amp;id=$cm->id\">$strviewallanswers ($usercount $strusers)</a>";
+        echo "<a href=\"report.php?mode=overview&amp;id=$cm->id\">".get_string('numattempts', 'quiz', $a)."</a><br />".get_string("attemptsexist","quiz");
         echo "</center><br/ >\n";
 
         $sumgrades = quiz_print_question_list($modform, false, $SESSION->quiz_showbreaks, $SESSION->quiz_reordertool);

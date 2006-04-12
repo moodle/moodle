@@ -104,12 +104,11 @@
         $closequiz = $quiz->timeclose ? userdate($quiz->timeclose) : '';
 
         if (isteacher($course->id)) {
-            if ($usercount = count_records_select('quiz_attempts', "quiz = '$quiz->id' AND preview = '0'", 'COUNT(DISTINCT userid)')) {
-                $attemptcount = count_records('quiz_attempts', 'quiz', $quiz->id, 'preview', 0);
-                $strviewallreports  = get_string('viewallreports', 'quiz', $attemptcount);
-                $gradecol = "<a href=\"report.php?mode=overview&amp;q=$quiz->id\">$strviewallreports ($usercount $strusers)</a>";
+            if ($a->attemptnum = count_records('quiz_attempts', 'quiz', $quiz->id, 'preview', 0)) {
+                $a->studentnum = count_records_select('quiz_attempts', "quiz = '$quiz->id' AND preview = '0'", 'COUNT(DISTINCT userid)');
+                $a->studentstring  = $course->students;
+                $gradecol = "<a href=\"report.php?mode=overview&amp;q=$quiz->id\">".get_string('numattempts', 'quiz', $a).'</a>';
             } else {
-                $answercount = 0;
                 $gradecol = "";
             }
         } else {

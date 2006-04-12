@@ -115,14 +115,11 @@
 
     // This is all the teacher will get
     if ($isteacher) {
-        
-        if ($attemptcount = count_records('quiz_attempts', 'quiz', $quiz->id, 'preview', 0)) {
-
-            $strviewallanswers  = get_string("viewallanswers", "quiz", $attemptcount);
-            $usercount = count_records_select('quiz_attempts', "quiz = '$quiz->id' AND preview = '0'", 'COUNT(DISTINCT userid)');
-            $strusers  = $course->students;
+        if ($a->attemptnum = count_records('quiz_attempts', 'quiz', $quiz->id, 'preview', 0)) {
+            $a->studentnum = count_records_select('quiz_attempts', "quiz = '$quiz->id' AND preview = '0'", 'COUNT(DISTINCT userid)');
+            $a->studentstring  = $course->students;
     
-            notify("<a href=\"report.php?mode=overview&amp;id=$cm->id\">$strviewallanswers ($usercount $strusers)</a>");
+            notify("<a href=\"report.php?mode=overview&amp;id=$cm->id\">".get_string('numattempts', 'quiz', $a).'</a>');
         }
         
         echo '</td></tr></table>';
