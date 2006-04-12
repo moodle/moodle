@@ -4033,13 +4033,14 @@ function error ($message, $link='') {
  *
  * @uses $SESSION
  * @uses $CFG
- * @param string $string The name of the string from error.php to print
+ * @param string $errorcode The name of the string from error.php to print
  * @param string $link The url where the user will be prompted to continue. If no url is provided the user will be directed to the site index page.
  */
-function print_error ($string, $link='') {
+function print_error ($errorcode, $link='') {
 
-    $string = get_string($string, 'error');
-    error($string, $link);
+    $message = get_string($errorcode, 'error').
+               '<p class="code">(<a href="http://docs.moodle.org/en/error/'.$errorcode.'">'.$errorcode.'</a>)</p>';
+    error($message, $link);
 }
 
 
