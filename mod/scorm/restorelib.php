@@ -56,6 +56,10 @@
             if (!is_int($scorm->grademethod)) {
                 $scorm->grademethod = 0;
             }
+            $scorm->maxattempt = backup_todb($info['MOD']['#']['MAXATTEMPT']['0']['#']);
+            if (!is_int($scorm->maxattempt)) {
+                $scorm->maxattempt = 1;
+            }
             if ($restore->backup_version < 2005041500) {
                 $scorm->datadir = substr(backup_todb($info['MOD']['#']['DATADIR']['0']['#']),1);
             } else {
@@ -230,6 +234,10 @@
             $scotrack->scormid = $scorm_id;
             $scotrack->userid = backup_todb($sub_info['#']['USERID']['0']['#']);
             $scotrack->scoid = backup_todb($sub_info['#']['SCOID']['0']['#']);
+            $scotrack->attempt = backup_todb($sub_info['#']['ATTEMPT']['0']['#']);
+            if (!is_int($scotrack->attempt)) {
+                $scotrack->attempt = 1;
+            }
             $scotrack->element = backup_todb($sub_info['#']['ELEMENT']['0']['#']);
             $scotrack->value = backup_todb($sub_info['#']['VALUE']['0']['#']);
 

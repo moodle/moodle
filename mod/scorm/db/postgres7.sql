@@ -18,8 +18,8 @@ CREATE TABLE prefix_scorm (
   auto integer NOT NULL default '0',
   popup integer NOT NULL default '0',
   options varchar(255) NOT NULL default '',
-  width integer NOT NULL default '800',
-  height integer NOT NULL default '600',
+  width integer NOT NULL default '100',
+  height integer NOT NULL default '500',
   timemodified integer NOT NULL default '0'
 );
 
@@ -52,10 +52,11 @@ CREATE TABLE prefix_scorm_scoes_track (
   userid integer NOT NULL default '0',
   scormid integer NOT NULL default '0',
   scoid integer NOT NULL default '0',
+  attempt integer NOT NULL default '1',
   element varchar(255) NOT NULL default '',
   value text NOT NULL default '',
   timemodified integer NOT NULL default '0',
-  UNIQUE (userid, scormid, scoid, element)
+  UNIQUE (userid, scormid, scoid, attempt, element)
 );
 
 CREATE INDEX prefix_scorm_scoes_track_user_idx ON prefix_scorm_scoes_track (userid);
