@@ -69,19 +69,20 @@
 
     /// Get all the posts from the database
 
-        $blogFilter =& new BlogFilter(0, 0, 20, 0, $type, $id, $tagid);
-        $blogposts = $blogFilter->fetch_entries();
+        //$blogFilter =& new BlogFilter(0, 0, 20, 0, $type, $id, $tagid);
+
+        $blogposts = fetch_entries(0, 0, 20, 0, $type, $id, $tagid); //$blogFilter->fetch_entries();
 
     /// Now generate an array of RSS items
         if ($blogposts) {
             $items = array();
             foreach ($blogposts as $blogpost) {
                 $item = NULL;
-                $item->author = $blogpost->entryAuthorName;
-                $item->title = $blogpost->entryTitle;
-                $item->pubdate = $blogpost->entryLastModified;
-                $item->link = $CFG->wwwroot.'/blog/index.php?postid='.$blogpost->entryId;
-                $item->description = format_text($blogpost->entryBody, $blogpost->entryFormat);
+                $item->author = fullname(get_record('user','id',$blogpost->userid));
+                $item->title = $blogpost->subject;
+                $item->pubdate = $blogpost->lastmodified;
+                $item->link = $CFG->wwwroot.'/blog/index.php?postid='.$blogpost->id;
+                $item->description = format_text($blogpost->summary, $blogpost->format);
                 $items[] = $item;
             }
             $articles = rss_add_items($items);   /// Change structure to XML

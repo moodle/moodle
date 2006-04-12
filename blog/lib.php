@@ -33,18 +33,6 @@
     }
 
     /**
-     * Verify that a user is logged in based on the session
-     * @return bool True if user has a valid login session
-     */
-    function blog_isLoggedIn() {
-        global $USER;
-        if (!isguest() && isset($USER) and isset($USER->id) and $USER->id) {
-            return 1;
-        }
-        return 0;
-    }
-
-    /**
      * blog_user_has_rights - returns true if user is the blog's owner or a moodle admin.
      *
      * @param BlogInfo blogInfo - a BlogInfo object passed by reference. This object represents the blog being accessed.
@@ -137,10 +125,12 @@
 
         print_paging_bar(get_viewable_entry_count($userid, $postid, $limit, $start,$filtertype, $filterselect, $tagid, $tag, $sort='lastmodified DESC'), $blogpage, $bloglimit, get_baseurl($filtertype, $filterselect), 'blogpage');
 
-        blog_rss_print_link($filtertype, $filterselect, $tag);
+        if ($CFG->enablerssfeeds) {
+            blog_rss_print_link($filtertype, $filterselect, $tag);
+        }
         print '</div>';
 
-        if (blog_isLoggedIn()) {
+        if (isloggedin() && !isguest()) {
             //the user's blog is enabled and they are viewing their own blog
             $addlink = '<div align="center">';
             $addlink .= '<a href="'.$CFG->wwwroot .'/blog/edit.php'.'">'. get_string('addnewentry', 'blog').'</a>';
@@ -185,40 +175,33 @@
      *     display the entry in its abbreviated format (eg. index page)
      */
     function blog_print_entry($blogEntry, $viewtype='full', $filtertype='', $filterselect='', $mode='loud') {
-        global $CFG, $THEME, $USER;
+
+        global $USER, $CFG, $course, $ME;
 
         $template['body'] = get_formatted_entry_body($blogEntry->summary, $blogEntry->format);
-        $template['countofextendedbody'] = 0;
-
         $template['title'] = '<a name="'. $blogEntry->subject .'"></a>';
         //enclose the title in nolink tags so that moodle formatting doesn't autolink the text
         $template['title'] .= '<span class="nolink">'. stripslashes_safe($blogEntry->subject);
         $template['title'] .= '</span>';
-
-        // add editing controls if allowed
         $template['userid'] = $blogEntry->userid;
         $template['author'] = fullname(get_record('user','id',$blogEntry->userid));
         $template['lastmod'] = userdate($blogEntry->lastmodified);
         $template['created'] = userdate($blogEntry->created);
+        $template['publishstate'] = $blogEntry->publishstate;
 
         /// preventing user to browse blogs that they aren't supposed to see
         if (!blog_user_can_view_user_post($template['userid'])) {
             error ('you can not view this post');
         }
-        blog_print_entry_content ($template, $blogEntry->id, $filtertype, $filterselect, $mode);
-
-    }
-
-    //forum style printing of blogs
-    function blog_print_entry_content ($template, $entryid, $filtertype='', $filterselect='', $mode='loud') {
-        global $USER, $CFG, $course, $ME;
 
         $stredit = get_string('edit');
         $strdelete = get_string('delete');
 
         $user = get_record('user','id',$template['userid']);
 
-        echo '<div align="center"><table cellspacing="0" class="forumpost" width="100%">';
+        /// Start printing of the blog
+
+        echo '<div align="center"><table cellspacing="0" class="forumpost blogpost blog_'.$template['publishstate'].'" width="100%">';
 
         echo '<tr class="header"><td class="picture left">';
         print_user_picture($template['userid'], SITEID, $user->picture);
@@ -245,7 +228,7 @@
 
         if ($blogtags = get_records_sql('SELECT t.* FROM '.$CFG->prefix.'tags t, '.$CFG->prefix.'blog_tag_instance ti
                                      WHERE t.id = ti.tagid
-                                     AND ti.entryid = '.$entryid)) {
+                                     AND ti.entryid = '.$blogEntry->id)) {
             echo '<p />';
             print_string('tags');
             echo ': ';
@@ -261,17 +244,18 @@
 
         if (isset($USER->id)) {
             if (($template['userid'] == $USER->id) or isadmin()) {
-                    echo '<a href="'.$CFG->wwwroot.'/blog/edit.php?editid='.$entryid.'&amp;sesskey='.sesskey().'">'.$stredit.'</a>';
+                    echo '<a href="'.$CFG->wwwroot.'/blog/edit.php?editid='.$blogEntry->id.'&amp;sesskey='.sesskey().'">'.$stredit.'</a>';
             }
 
             if (($template['userid'] == $USER->id) or isadmin()) {
-                echo '| <a href="'.$CFG->wwwroot.'/blog/edit.php?act=del&amp;editid='.$entryid.'&amp;sesskey='.sesskey().'">'.$strdelete.'</a>';
+                echo '| <a href="'.$CFG->wwwroot.'/blog/edit.php?act=del&amp;editid='.$blogEntry->id.'&amp;sesskey='.sesskey().'">'.$strdelete.'</a>';
             }
         }
 
         echo '</div>';
 
         echo '</td></tr></table></div>'."\n\n";
+
     }
 
     /**
