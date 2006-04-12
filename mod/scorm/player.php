@@ -45,9 +45,15 @@
     $strscorm  = get_string('modulename', 'scorm');
     $strpopup = get_string('popup','scorm');
 
-    if ($course->category) {
-        $navigation = "<a target=\"{$CFG->framename}\" href=\"../../course/view.php?id=$course->id\">$course->shortname</a> ->
-                       <a target=\"{$CFG->framename}\" href=\"index.php?id=$course->id\">$strscorms</a> ->";
+    if ($course->category != 0) {
+        $navigation = "<a target=\"{$CFG->framename}\" href=\"../../course/view.php?id=$course->id\">$course->shortname</a> ->";
+        if ($scorms = get_all_instances_in_course('scorm', $course)) {
+            // The module SCORM activity with the least id is the course  
+            $firstscorm = current($scorms);
+            if (!(($course->format == 'scorm') && ($firstscorm->id == $scorm->id))) {
+                $navigation .= "<a target=\"{$CFG->framename}\" href=\"index.php?id=$course->id\">$strscorms</a> ->";
+            }
+        }
     } else {
         $navigation = "<a target=\"{$CFG->framename}\" href=\"index.php?id=$course->id\">$strscorms</a> ->";
     }
