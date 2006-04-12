@@ -69,7 +69,7 @@ global $CFG;
                         `blockid` int(10) not null default '0',
                         `pageid` int(10) not null default '0',
                         `pagetype` varchar(12) not null default '',
-                        `position` enum('l', 'r') not null,
+                        `position` enum('l', 'r') not null default 'l',
                         `weight` tinyint(3) not null default '0',
                         `visible` tinyint(1) not null default '0',
                         `configdata` text not null default '',
