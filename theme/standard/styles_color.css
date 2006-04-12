@@ -450,7 +450,7 @@ table.minicalendar {
   border-color:#DDDDDD;
 }
 
-#course-view li.section,
+#course-view .weekscss .section,
 #course-view .section td {
   border-color:#DDDDDD;
 }

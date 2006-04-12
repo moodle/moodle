@@ -860,7 +860,7 @@ span.current {
   vertical-align:top;
 }
 
-#course-view .section .content {
+#course-view .section td.content {
   padding:5px;
   border-style:solid;
   border-width:1px;
@@ -872,19 +872,19 @@ span.current {
   clear: both;
 }
 
-#course-view .section .side {
+#course-view .section td.side {
   padding:5px;
   border-style:solid;
   border-width:1px;
 }
 
-#course-view .section .left {
+#course-view .section td.left {
   border-right:0px;
   text-align:center;
   width: 1.5em;
 }
 
-#course-view .section .right {
+#course-view .section td.right {
   border-left:0px;
   text-align:center;
   width: 1.5em;
@@ -902,6 +902,17 @@ span.current {
 
 
 /*Accessibility: No-tables course format. */
+.weekscss-format {
+  min-width:763px; /* Doesn't work for IE. */
+}
+.weekscss-format .block_adminblock select {
+  width:100%;
+}
+.weekscss-format #middle-column {
+  padding-left:12px;
+  padding-right:12px;
+}
+
 #course-view ul.weekscss, .weekscss li,
 #course-view ul.section, .section li {
   margin: 0;
