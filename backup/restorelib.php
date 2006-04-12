@@ -463,7 +463,7 @@
         //Iteratere while the name exists
         do {
             if ($counter) {
-                $suffixfull = " ".get_string("copy")." ".$counter;
+                $suffixfull = " ".get_string("copyasnoun")." ".$counter;
                 $suffixshort = "_".$counter;
             } else {
                 $suffixfull = "";
