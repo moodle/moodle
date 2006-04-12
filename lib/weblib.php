@@ -98,13 +98,21 @@ $ALLOWED_PROTOCOLS = array('http', 'https', 'ftp', 'news', 'mailto', 'rtsp', 'te
  * This function is very similar to {@link p()}
  *
  * @param string $var the string potentially containing HTML characters
+ * @param boolean $strip to decide if we want to strip slashes or no. Default to false.
+ *                true should be used to print data from forms and false for data from DB.
  * @return string
  */
-function s($var) {
+function s($var, $strip=false) {
+
     if ($var == '0') {  // for integer 0, boolean false, string '0'
         return '0';
     }
-    return preg_replace("/&amp;(#\d+);/i", "&$1;", htmlspecialchars(stripslashes_safe($var)));
+
+    if ($strip) {
+        return preg_replace("/&amp;(#\d+);/i", "&$1;", htmlspecialchars(stripslashes_safe($var)));
+    } else {
+        return preg_replace("/&amp;(#\d+);/i", "&$1;", htmlspecialchars($var));
+    }
 }
 
 /**
@@ -114,10 +122,12 @@ function s($var) {
  * This function is very similar to {@link s()}
  *
  * @param string $var the string potentially containing HTML characters
+ * @param boolean $strip to decide if we want to strip slashes or no. Default to false.
+ *                true should be used to print data from forms and false for data from DB.
  * @return string
  */
-function p($var) {
-    echo s($var);
+function p($var, $strip=false) {
+    echo s($var, $strip);
 }
 
 
