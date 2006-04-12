@@ -256,17 +256,14 @@ class quiz_report extends quiz_default_report {
                     // noattempts = 1 means only no attempts, so make the left join ask for only records where the right is null (no attempts)
                     $where .= ' AND qa.userid IS NULL'; // show ONLY no attempts;
                 } // no else, the left join is not filtered, which means we get both back.
-            } else if (empty($currentgroup) && empty($noattempts)) {
-                // We don't care about group, and we only want to see students WITH attempts.
-                // So just do a striaght inner join on attempts, don't worry about the groups_members table
-                $from  = 'FROM '.$CFG->prefix.'user u JOIN '.$CFG->prefix.'quiz_attempts qa ON u.id = qa.userid ';
-                $where = ' WHERE qa.quiz = '.$quiz->id.' AND qa.preview = 0';
-            } else if (empty($currentgroup) && !empty($noattempts)) {
+            } else if (empty($currentgroup)) {
                 // We don't care about group, and we to do something funky with attempts
                 // So do a left join on attempts
                 $from  = 'FROM '.$CFG->prefix.'user u JOIN '.$CFG->prefix.'user_students us ON us.userid = u.id LEFT JOIN '.$CFG->prefix.'quiz_attempts qa ON u.id = qa.userid AND qa.quiz = '.$quiz->id;
-                $where = ' WHERE us.course = '.$course->id;
-                if ($noattempts == 1) {
+                $where = " WHERE us.course = '$course->id'";
+                if (empty($noattempts)) {
+                    $where .= ' AND qa.userid IS NOT NULL'; // show ONLY attempts;
+                } elseif ($noattempts == 1) {
                     // noattempts = 1 means only no attempts, so make the left join ask for only records where the right is null (no attempts)
                     $where .= ' AND qa.userid IS NULL'; // show ONLY no attempts;
                 } // no else, the left join is not filtered, which means we get both back.
@@ -462,38 +459,6 @@ class quiz_report extends quiz_default_report {
                 }
     /// Close form
                 echo '</form></div>';
-    /// Print display options
-                echo '<div class="controls">';
-                echo '<form id="options" name="options" action="report.php" method="post">';
-                echo '<p>'.get_string('displayoptions', 'quiz').': </p>';
-                echo '<input type="hidden" name="id" value="'.$cm->id.'" />';
-                echo '<input type="hidden" name="q" value="'.$quiz->id.'" />';
-                echo '<input type="hidden" name="mode" value="overview" />';
-                echo '<input type="hidden" name="noattempts" value="0" />';
-                echo '<input type="hidden" name="detailedmarks" value="0" />';
-                echo '<table id="overview-options" align="center">';
-                echo '<tr align="left">';
-                echo '<td><label for="pagesize">'.get_string('pagesize', 'quiz').'</label></td>';
-                echo '<td><input type="text" id="pagesize" name="pagesize" size="1" value="'.$pagesize.'" /></td>';
-                echo '</tr>';
-	            echo '<tr align="left">';
-                echo '<td colspan="2">';
-                $options = array(0 => $strattemptsonly);
-                if ($course->id != SITEID) {
-                    $options[1] = $strnoattemptsonly;
-                    $options[2] = $strbothattempts;
-                }
-                choose_from_menu($options,'noattempts',$noattempts,'');
-	            echo '</td></tr>';
-	            echo '<tr align="left">';
-                echo '<td colspan="2"><input type="checkbox" id="checkdetailedmarks" name="detailedmarks" '.($detailedmarks?'checked="checked" ':'').'value="1" /> <label for="checkdetailedmarks">'.get_string('showdetailedmarks', 'quiz').'</label> ';
-	            echo '</td></tr>';
-                echo '<tr><td colspan="2" align="center">';
-                echo '<input type="submit" value="'.get_string('go').'" />';
-                echo '</td></tr></table>';
-                echo '</form>';
-                echo '</div>';
-                echo "\n";
                 
                 if (!empty($attempts)) {
                     echo '<table align="center"><tr>';
@@ -530,6 +495,39 @@ class quiz_report extends quiz_default_report {
                 $table->print_html();
             }
         }
+    /// Print display options
+        echo '<div class="controls">';
+        echo '<form id="options" name="options" action="report.php" method="post">';
+        echo '<p>'.get_string('displayoptions', 'quiz').': </p>';
+        echo '<input type="hidden" name="id" value="'.$cm->id.'" />';
+        echo '<input type="hidden" name="q" value="'.$quiz->id.'" />';
+        echo '<input type="hidden" name="mode" value="overview" />';
+        echo '<input type="hidden" name="noattempts" value="0" />';
+        echo '<input type="hidden" name="detailedmarks" value="0" />';
+        echo '<table id="overview-options" align="center">';
+        echo '<tr align="left">';
+        echo '<td><label for="pagesize">'.get_string('pagesize', 'quiz').'</label></td>';
+        echo '<td><input type="text" id="pagesize" name="pagesize" size="1" value="'.$pagesize.'" /></td>';
+        echo '</tr>';
+        echo '<tr align="left">';
+        echo '<td colspan="2">';
+        $options = array(0 => $strattemptsonly);
+        if ($course->id != SITEID) {
+            $options[1] = $strnoattemptsonly;
+            $options[2] = $strbothattempts;
+        }
+        choose_from_menu($options,'noattempts',$noattempts,'');
+        echo '</td></tr>';
+        echo '<tr align="left">';
+        echo '<td colspan="2"><input type="checkbox" id="checkdetailedmarks" name="detailedmarks" '.($detailedmarks?'checked="checked" ':'').'value="1" /> <label for="checkdetailedmarks">'.get_string('showdetailedmarks', 'quiz').'</label> ';
+        echo '</td></tr>';
+        echo '<tr><td colspan="2" align="center">';
+        echo '<input type="submit" value="'.get_string('go').'" />';
+        echo '</td></tr></table>';
+        echo '</form>';
+        echo '</div>';
+        echo "\n";
+
         return true;
     }
 }
