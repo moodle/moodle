@@ -910,6 +910,11 @@ span.current {
   list-style: none;
 }
 
+#course-view ul.section li.activity ul li, 
+#site-index ul.section li.activity ul li { 
+  list-style: disc; 
+}
+
 /*Accessibility: No-tables course format. */
 #course-view ul.weekscss, .weekscss li { 
   margin: 0;
