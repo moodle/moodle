@@ -259,7 +259,8 @@ form.popupform {
   position:absolute;
   left:-10000px;
 }
-.hide {
+span.hide,
+div.hide {
   display:none;
 }
 
