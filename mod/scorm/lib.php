@@ -433,7 +433,7 @@ function scorm_grades($scormid) {
         return NULL;
     }
 
-    if ($scorm->grademethod == VALUESCOES) {
+    if ($scorm->grademethod == GRADESCOES) {
         if (!$return->maxgrade = count_records_select('scorm_scoes',"scorm='$scormid' AND launch<>''")) {
             return NULL;
         }
