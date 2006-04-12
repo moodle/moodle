@@ -81,8 +81,8 @@
     }
 
 
-/// Layout the whole page as three big columns.
-    echo '<div id="layout-table">';
+/// Layout the whole page as three big columns (was, id="layout-table")
+    echo '<div class="weekscss-format">';
 
 /// The left column ...
 
