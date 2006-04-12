@@ -65,5 +65,5 @@ if (empty($form->password)) {
     <td><input type="submit" value="<?php  print_string("savechanges") ?>" /></td>
 </tr>
 </table>
-<input type="hidden" name="sesskey" value="<?php echo $form->sesskey ?>" />
+<input type="hidden" name="sesskey" value="<?php echo sesskey() ?>" />
 </form>

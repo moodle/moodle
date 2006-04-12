@@ -1,10 +1,14 @@
-<?php
+<?php  // $Id$
  
     /// this allows a student to request a course be created for them.
 
-    require_once(dirname(dirname(__FILE__)).'/config.php');
+    require_once('../config.php');
   
     require_login();
+
+    if (isguest()) {
+        error("No guests here!");
+    }
 
     if (empty($CFG->enablecourserequests)) {
         error(get_string('courserequestdisabled'));
@@ -14,8 +18,7 @@
 
     print_header($strtitle,$strtitle,$strtitle);
 
-    $form = data_submitted();
-    if (!empty($form) && confirm_sesskey()) {
+    if (($form = data_submitted()) and confirm_sesskey()) {
         validate_form($form,$err) ;
 
         if (empty($err)) {
@@ -31,8 +34,6 @@
             exit;
         }
     }
-
-    $form->sesskey = !empty($USER->id) ? $USER->sesskey : '';
 
 //    print_simple_box(get_string('courserequestintro'),'center');
     print_simple_box_start("center");
@@ -68,10 +69,19 @@ function validate_form(&$form,&$err) {
         $err["reason"] = get_string("missingreqreason");
     }
     
-    $foundcourses = get_records("course", "shortname", $form->shortname);
-    $foundreqcourses = get_records("course_request", "shortname", $form->shortname);
+    $foundcourses = null;
+    $foundreqcourses = null;
+
+    if (!empty($form->shortname)) {
+        $foundcourses = get_records("course", "shortname", $form->shortname);
+        $foundreqcourses = get_records("course_request", "shortname", $form->shortname);
+    }
     if (!empty($foundreqcourses)) {
-        $foundcourses = array_merge($foundcourses,$foundreqcourses);
+        if (!empty($foundcourses)) {
+            $foundcourses = array_merge($foundcourses,$foundreqcourses);
+        } else {
+            $foundcourses = $foundreqcourses;
+        }
     }
 
     if (!empty($foundcourses)) {

@@ -5,17 +5,16 @@
     require_once("../config.php");
     require_once("lib.php");
 
-    $id = required_param('id',PARAM_INT);
-
-    $user = optional_param('user', '0', PARAM_INT);
-    $sortby = optional_param('sortby', 'default');
-    $selectedgroup = optional_param('selectedgroup', '');
-    $date = optional_param('date','',PARAM_CLEAN);
-    $advancedfilter = optional_param('advancedfilter',0,PARAM_INT);
-    $modname = optional_param('modname','' );
-    $modid = optional_param('modid','' );
-    $modaction = optional_param('modaction','' );
-    $chooserecent = optional_param('chooserecent',0,PARAM_INT);
+    $id             = required_param('id', PARAM_INT);
+    $user           = optional_param('user', '0', PARAM_INT);
+    $sortby         = optional_param('sortby', 'default', PARAM_ALPHA);
+    $selectedgroup  = optional_param('selectedgroup', 0, PARAM_INT);
+    $date           = optional_param('date', '', PARAM_INT);
+    $advancedfilter = optional_param('advancedfilter', 0, PARAM_INT);
+    $modname        = optional_param('modname', '', PARAM_ALPHA);          // not used??
+    $modid          = optional_param('modid', 'activity/All', PARAM_FILE); // not a file, but looks like it anyway
+    $modaction      = optional_param('modaction', '', PARAM_ALPHA);        // not used??
+    $chooserecent   = optional_param('chooserecent', 0, PARAM_INT);
 
     if (! $course = get_record("course", "id", $id) ) {
         error("That's an invalid course id");
@@ -82,9 +81,6 @@
 
     }
 
-    if (!isset($modid)) {
-        $modid="activity/All";
-    }
     $tmpmodid = $modid;
 
     switch ($tmpmodid) {
@@ -180,15 +176,9 @@
                 $groupmode = groupmode($course, $coursemod);
                 switch ($groupmode) {
                     case SEPARATEGROUPS :  $groupid = mygroupid($course->id); break;
-                    case VISIBLEGROUPS  :
-                                           if ($selectedgroup == "allgroups") {
-                                               $groupid = "";
-                                           } else {
-                                               $groupid = $selectedgroup;
-                                           }
-                                           break;
+                    case VISIBLEGROUPS  :  $groupid = $selectedgroup; break;
                     case NOGROUPS       :
-                    default             :  $groupid = "";
+                    default             :  $groupid = 0;
                 }
 
                 $libfile = "$CFG->dirroot/mod/$coursemod->name/lib.php";

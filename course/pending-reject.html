@@ -3,4 +3,5 @@
 <textarea name="rejectnotice" rows="10" cols="50"></textarea><br />
 <input type="submit" value="<?php print_string("savechanges");?>" />
 <input type="button" value="<?php print_string("cancel"); ?>"  onClick="window.location='pending.php';" />
+<input type="hidden" name="sesskey" value="<?php echo sesskey();?>" />
 </form>

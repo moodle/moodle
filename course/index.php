@@ -60,7 +60,7 @@
             print_single_button("edit.php", NULL, get_string("addnewcourse"), "get");
         }
         if (!empty($CFG->enablecourserequests)) {
-            print_single_button('request.php',NULL, get_string('requestcourse'),"get");
+            print_single_button('pending.php',NULL, get_string('coursespending'),"get");
         }
         echo "</center>";
         print_footer();
