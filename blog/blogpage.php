@@ -63,7 +63,9 @@ class page_blog extends page_base {
 
     // For this test page, only admins are going to be allowed editing (for simplicity).
     function user_allowed_editing() {
-        if (isadmin() || ((isset($this->bloginfo) && blog_user_has_rights($this->bloginfo))) || ($this->courseid != '' && isteacher($this->courseid)) ) {
+        if (isloggedin() && !isguest()) {
+
+        //if (isadmin() || ((isset($this->bloginfo) && blog_user_has_rights($this->bloginfo))) || ($this->courseid != '' && isteacher($this->courseid)) ) {
             return true;
         }
         return false;
@@ -72,7 +74,9 @@ class page_blog extends page_base {
     // Also, admins are considered to have "always on" editing (I wanted to avoid duplicating
     // the code that turns editing on/off here; you can roll your own or copy course/view.php).
     function user_is_editing() {
-        if (isadmin() || ((isset($this->bloginfo) && blog_user_has_rights($this->bloginfo))) || ($this->courseid != '' && isteacher($this->courseid)) ) {
+         if (isloggedin() && !isguest()) {
+
+        //if (isadmin() || ((isset($this->bloginfo) && blog_user_has_rights($this->bloginfo))) || ($this->courseid != '' && isteacher($this->courseid)) ) {
             global $SESSION;
             if (empty($SESSION->blog_editing_enabled)) {
                 $SESSION->blog_editing_enabled = false;

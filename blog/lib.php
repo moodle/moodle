@@ -348,7 +348,7 @@
         if (user_can_change_publish_state($blogEntry) && blog_isediting() ) {
             $menu .= '<div class="publishto">'. get_string('publishto', 'blog').': ';
             $options = blog_applicable_publish_states();
-            $menu .= choose_from_menu($options, $this->entryuserid .'-'. $this->entryId, $this->entryPublishState, '', '', '0', true);
+            $menu .= choose_from_menu($options, $blogEntry->userid .'-'. $blogEntry->id, $blogEntry->publishstate, '', '', '0', true);
             $menu .= "\n".'</div>'."\n";
             /// batch publish might not be needed
             if ($includehelp) {
