@@ -347,9 +347,9 @@ function clean_param($param, $type) {
 
         case PARAM_BOOL:         // Convert to 1 or 0
             $tempstr = strtolower($param);
-            if ($tempstr == 'on') {
+            if ($tempstr == 'on' or $tempstr == 'yes' ) {
                 $param = 1;
-            } else if ($tempstr == 'off') {
+            } else if ($tempstr == 'off' or $tempstr == 'no') {
                 $param = 0;
             } else {
                 $param = empty($param) ? 0 : 1;
