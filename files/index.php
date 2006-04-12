@@ -204,10 +204,12 @@
         case "delete":
             if (!empty($confirm) and confirm_sesskey()) {
                 html_header($course, $wdir);
-                foreach ($USER->filelist as $file) {
-                    $fullfile = $basedir.$file;
-                    if (! fulldelete($fullfile)) {
-                        echo "<br />Error: Could not delete: $fullfile";
+                if (!empty($USER->filelist)) {
+                    foreach ($USER->filelist as $file) {
+                        $fullfile = $basedir.$file;
+                        if (! fulldelete($fullfile)) {
+                            echo "<br />Error: Could not delete: $fullfile";
+                        }
                     }
                 }
                 clearfilelist();
@@ -217,26 +219,30 @@
             } else {
                 html_header($course, $wdir);
 
-                echo '<p align=\"center\">'.get_string('deletecheckwarning').':</p>';
-
-                print_simple_box_start("center");
-                printfilelist($USER->filelist);
-                print_simple_box_end();
-                echo "<br />";
-                print_simple_box_start("center");
-
                 if (setfilelist($_POST)) {
-                    foreach ($USER->filelist as $file) {
-                        //if file is part of resource then update resource table as well
-                        $clean_name = substr($file, 1);
-                        if (record_exists('resource', 'reference', $clean_name)) {
-                            $resource_id = files_get_cm_from_resource_name($clean_name);
-                            echo '<p align=\"center\"><b>'.get_string('warningdeleteresource', '', $file)."</align><a href='$CFG->wwwroot/course/mod.php?update=$resource_id&sesskey=$USER->sesskey'> Update</a></b>";
-                        }
-                    }
-
+                    notify(get_string('deletecheckwarning').':');
+                    print_simple_box_start("center");
+                    printfilelist($USER->filelist);
                     print_simple_box_end();
                     echo "<br />";
+
+                    $resourcelist = false;
+                    foreach ($USER->filelist as $file) {
+                        // If file is specified in a resource, then delete that too.
+                        $clean_name = substr($file, 1);
+                        if (record_exists('resource', 'reference', $clean_name)) {
+                            if (!$resourcelist) {
+                                print_simple_box_start("center");
+                                $resourcelist = true;
+                            }
+                            $resource_id = files_get_cm_from_resource_name($clean_name);
+                            echo '<p>'.get_string('warningdeleteresource', '', $file)." <a href='$CFG->wwwroot/course/mod.php?update=$resource_id&sesskey=$USER->sesskey'>".get_string('update')."</a></p>";
+                        }
+                    }
+                    if ($resourcelist) {
+                        print_simple_box_end();
+                        echo "<br />";
+                    }
 
                     notice_yesno (get_string("deletecheckfiles"), 
                                 "index.php?id=$id&amp;wdir=$wdir&amp;action=delete&amp;confirm=1&amp;sesskey=$USER->sesskey&amp;choose=$choose",
