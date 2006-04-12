@@ -204,9 +204,19 @@
                                                 echo "<h4>$image $mod->modfullname: ".
                                                      "<a href=\"$CFG->wwwroot/mod/$mod->modname/view.php?id=$mod->id\">".
                                                      format_string($instance->name,true)."</a></h4>";
+                                                
+                                                ob_start();
+
                                                 echo "<ul>";
                                                 $user_complete($course, $user, $mod, $instance);
                                                 echo "</ul>";
+
+                                                ob_end_clean();
+                                                $output = ob_get_contents();
+                                                
+                                                if (str_replace(' ', '', $output) != '<ul></ul>') {
+                                                    echo $output;
+                                                }
                                             }
                                             break;
                                         }
@@ -215,7 +225,6 @@
     
                             if ($mode == "outline") {
                                 echo "</table>";
-                                print_simple_box_end();
                             }
                             echo '</div>';  // content
                             echo '</div>';  // section
