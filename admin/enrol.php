@@ -2,7 +2,7 @@
        // enrol.php - allows admin to edit all enrollment variables
        //             Yes, enrol is correct English spelling.
 
-    include('../config.php');
+    require_once('../config.php');
 
     $enrol = optional_param('enrol', $CFG->enrol, PARAM_SAFEDIR);
     $CFG->pagepath = 'enrol';

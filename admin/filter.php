@@ -2,8 +2,8 @@
     // filter.php
     // Edit text filter settings
 
-    require_once '../config.php';
-    require_once $CFG->libdir.'/tablelib.php';
+    require_once('../config.php');
+    require_once($CFG->libdir.'/tablelib.php');
 
     // check for allowed access
     require_login();

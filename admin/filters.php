@@ -2,8 +2,8 @@
     // filters.php
     // Edit list of available text filters
 
-    require_once '../config.php';
-    require_once $CFG->libdir.'/tablelib.php';
+    require_once('../config.php');
+    require_once($CFG->libdir.'/tablelib.php');
 
     // defines
     define('FILTER_TABLE','filter_administration_table');
