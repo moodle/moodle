@@ -8,9 +8,9 @@
     require_once("../config.php");
     require_once("lib.php");
 
-    $id = required_param('id',PARAM_INT);               //course
-    $user = optional_param('user', $USER->id, PARAM_INT); //user
-    $confirm = optional_param('confirm','',PARAM_ALPHA);
+    $id      = required_param('id', PARAM_INT);               //course
+    $user    = optional_param('user', $USER->id, PARAM_INT);  //user
+    $confirm = optional_param('confirm', 0, PARAM_BOOL);
 
     if (! $course = get_record("course", "id", $id) ) {
         error("That's an invalid course id");
@@ -29,7 +29,7 @@
         error("You are not allowed to unenroll");
     }
 
-    if (!empty($confirm) and confirm_sesskey()) {
+    if ($confirm and confirm_sesskey()) {
 
         if (! unenrol_student($user->id, $course->id)) {
             error("An error occurred while trying to unenrol you.");

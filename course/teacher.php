@@ -5,10 +5,10 @@
 
     define("MAX_USERS_PER_PAGE", 50);
 
-    $id = required_param('id',PARAM_INT);         // course id
-    $add = optional_param('add', '', PARAM_INT);
-    $remove = optional_param('remove', '', PARAM_INT);
-    $search = optional_param('search', '', PARAM_CLEAN); // search string
+    $id     = required_param('id', PARAM_INT);         // course id
+    $add    = optional_param('add', 0, PARAM_INT);
+    $remove = optional_param('remove', 0, PARAM_INT);
+    $search = optional_param('search', '', PARAM_RAW); // search string
 
     require_login();
 
@@ -187,8 +187,8 @@
 
     } else {
 
-        if ($search) {
-            echo "<p align=\"center\">($strsearchresults : $search)</p>";
+        if ($search != '') {
+            echo "<p align=\"center\">($strsearchresults : ".s($search).")</p>";
         }
 
         if (!$users = get_users(true, $search, true, $teacherlist)) {
@@ -209,7 +209,7 @@
         print_table($table);
     }
 
-    if ($search or $usercount > MAX_USERS_PER_PAGE) {
+    if (($search != '') or $usercount > MAX_USERS_PER_PAGE) {
         echo "<center>";
         echo "<form action=\"teacher.php\" method=\"get\">";
         echo "<input type=\"hidden\" name=\"id\" value=\"$course->id\" />";
