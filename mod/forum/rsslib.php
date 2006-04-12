@@ -124,7 +124,7 @@
                 //Now, if items, we begin building the structure
                 if (!empty($items)) {
                     //First all rss feeds common headers
-                    $header = rss_standard_header(format_string($forum->name,true),
+                    $header = rss_standard_header(strip_tags(format_string($forum->name,true)),
                                                   $CFG->wwwroot."/mod/forum/view.php?f=".$forum->id,
                                                   format_string($forum->intro,true));
                     //Now all the rss items
