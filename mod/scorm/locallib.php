@@ -905,7 +905,7 @@ function scorm_get_manifest($blocks,$scoes) {
                         foreach ($block['children'] as $metadata) {
                             if ($metadata['name'] == 'SCHEMAVERSION') {
                                 if (empty($scoes->version)) {
-                                    if (preg_match("/^(1\.2)$|^(CAM )?(1\.3)$/",$metadata['tagData'],$matches)) {
+                                    if (isset($metadata['tagData']) && (preg_match("/^(1\.2)$|^(CAM )?(1\.3)$/",$metadata['tagData'],$matches))) {
                                         $scoes->version = 'SCORM_'.$matches[count($matches)-1];
                                     } else {
                                         $scoes->version = 'SCORM_1.2';
@@ -1003,33 +1003,51 @@ function scorm_get_manifest($blocks,$scoes) {
                 case 'TITLE':
                     $parent = array_pop($parents);
                     array_push($parents, $parent);
+                    if (!isset($block['tagData'])) {
+                        $block['tagData'] = '';
+                    }
                     $scoes->elements[$manifest][$parent->organization][$parent->identifier]->title = addslashes($block['tagData']);
                 break;
                 case 'ADLCP:PREREQUISITES':
                     if ($block['attrs']['TYPE'] == 'aicc_script') {
                         $parent = array_pop($parents);
                         array_push($parents, $parent);
+                        if (!isset($block['tagData'])) {
+                            $block['tagData'] = '';
+                        }
                         $scoes->elements[$manifest][$parent->organization][$parent->identifier]->prerequisites = addslashes($block['tagData']);
                     }
                 break;
                 case 'ADLCP:MAXTIMEALLOWED':
                     $parent = array_pop($parents);
                     array_push($parents, $parent);
+                    if (!isset($block['tagData'])) {
+                        $block['tagData'] = '';
+                    }
                     $scoes->elements[$manifest][$parent->organization][$parent->identifier]->maxtimeallowed = addslashes($block['tagData']);
                 break;
                 case 'ADLCP:TIMELIMITACTION':
                     $parent = array_pop($parents);
                     array_push($parents, $parent);
+                    if (!isset($block['tagData'])) {
+                        $block['tagData'] = '';
+                    }
                     $scoes->elements[$manifest][$parent->organization][$parent->identifier]->timelimitaction = addslashes($block['tagData']);
                 break;
                 case 'ADLCP:DATAFROMLMS':
                     $parent = array_pop($parents);
                     array_push($parents, $parent);
+                    if (!isset($block['tagData'])) {
+                        $block['tagData'] = '';
+                    }
                     $scoes->elements[$manifest][$parent->organization][$parent->identifier]->datafromlms = addslashes($block['tagData']);
                 break;
                 case 'ADLCP:MASTERYSCORE':
                     $parent = array_pop($parents);
                     array_push($parents, $parent);
+                    if (!isset($block['tagData'])) {
+                        $block['tagData'] = '';
+                    }
                     $scoes->elements[$manifest][$parent->organization][$parent->identifier]->masteryscore = addslashes($block['tagData']);
                 break;
             }
