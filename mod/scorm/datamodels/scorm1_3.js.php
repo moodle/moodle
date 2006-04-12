@@ -185,6 +185,11 @@ function SCORMapi1_3() {
         errorCode = "0";
         if (param == "") {
             if ((!Initialized) && (!Terminated)) {
+                <?php 
+                    if (($CFG->debug > 7) && (isadmin())) {
+                        echo 'alert("Initialized SCORM 1.3");';
+                    }
+                ?>
                 Initialized = true;
                 errorCode = "0";
                 return "true";
@@ -205,6 +210,11 @@ function SCORMapi1_3() {
         errorCode = "0";
         if (param == "") {
             if ((Initialized) && (!Terminated)) {
+                <?php 
+                    if (($CFG->debug > 7) && (isadmin())) {
+                        echo 'alert("Terminated SCORM 1.3");';
+                    }
+                ?>
                 Initialized = false;
                 Terminated = true;
                 result = StoreData(cmi,true);
@@ -251,6 +261,11 @@ function SCORMapi1_3() {
                         }
                         if (subelement == element) {
                             errorCode = "0";
+                            <?php 
+                                if (($CFG->debug > 7) && (isadmin())) {
+                                    echo 'alert(element+": "+eval(element));';
+                                }
+                            ?>
                             return eval(element);
                         } else {
                             errorCode = "0"; // Need to check if it is the right errorCode
@@ -361,6 +376,11 @@ function SCORMapi1_3() {
                                         if ((ranges[1] == '*') || (value <= ranges[1])) {
                                             eval(element+'="'+value+'";');
                                             errorCode = "0";
+                                            <?php 
+                                                if (($CFG->debug > 7) && (isadmin())) {
+                                                    echo 'alert(element+":= "+value);';
+                                                }
+                                            ?>
                                             return "true";
                                         } else {
                                             errorCode = '407';
@@ -371,6 +391,11 @@ function SCORMapi1_3() {
                                 } else {
                                     eval(element+'="'+value+'";');
                                     errorCode = "0";
+                                    <?php 
+                                        if (($CFG->debug > 7) && (isadmin())) {
+                                            echo 'alert(element+":= "+value);';
+                                        }
+                                    ?>
                                     return "true";
                                 }
                             }
@@ -403,6 +428,11 @@ function SCORMapi1_3() {
         if (param == "") {
             if ((Initialized) && (!Terminated)) {
                 result = StoreData(cmi,false);
+                <?php 
+                    if (($CFG->debug > 7) && (isadmin())) {
+                        echo 'alert("Data Commited");';
+                    }
+                ?>
                 return "true";
             } else {
                 if (Terminated) {

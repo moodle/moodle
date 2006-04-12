@@ -54,7 +54,7 @@ function SCORMapi1_2() {
         'cmi._version':{'defaultvalue':'3.4', 'mod':'r', 'writeerror':'402'},
         'cmi.core._children':{'defaultvalue':core_children, 'mod':'r', 'writeerror':'402'},
         'cmi.core.student_id':{'defaultvalue':'<?php echo $userdata->student_id ?>', 'mod':'r', 'writeerror':'403'},
-        'cmi.core.student_name':{'defaultvalue':'<?php echo $userdata->student_name ?>', 'mod':'r', 'writeerror':'403'},
+        'cmi.core.student_name':{'defaultvalue':'<?php echo addslashes($userdata->student_name) ?>', 'mod':'r', 'writeerror':'403'},
         'cmi.core.lesson_location':{'defaultvalue':'<?php echo isset($userdata->{'cmi.core.lesson_location'})?$userdata->{'cmi.core.lesson_location'}:'' ?>', 'format':CMIString256, 'mod':'rw', 'writeerror':'405'},
         'cmi.core.credit':{'defaultvalue':'<?php echo $userdata->credit ?>', 'mod':'r', 'writeerror':'403'},
         'cmi.core.lesson_status':{'defaultvalue':'<?php echo isset($userdata->{'cmi.core.lesson_status'})?$userdata->{'cmi.core.lesson_status'}:'' ?>', 'format':CMIStatus, 'mod':'rw', 'writeerror':'405'},
@@ -168,7 +168,7 @@ function SCORMapi1_2() {
             if (!Initialized) {
                 <?php 
                     if (($CFG->debug > 7) && (isadmin())) {
-                        echo 'alert("Initialized");';
+                        echo 'alert("Initialized SCORM 1.2");';
                     }
                 ?>
                 Initialized = true;
@@ -189,7 +189,7 @@ function SCORMapi1_2() {
             if (Initialized) {
                 <?php 
                     if (($CFG->debug > 7) && (isadmin())) {
-                        echo 'alert("Finished");';
+                        echo 'alert("Finished SCORM 1.2");';
                     }
                 ?>
                 Initialized = false;
@@ -336,6 +336,11 @@ function SCORMapi1_2() {
                                     if ((value >= ranges[0]) && (value <= ranges[1])) {
                                         eval(element+'="'+value+'";');
                                         errorCode = "0";
+                                        <?php 
+                                            if (($CFG->debug > 7) && (isadmin())) {
+                                                echo 'alert(element+":= "+value);';
+                                            }
+                                        ?>
                                         return "true";
                                     } else {
                                         errorCode = eval('datamodel["'+elementmodel+'"].writeerror');
@@ -378,6 +383,11 @@ function SCORMapi1_2() {
         if (param == "") {
             if (Initialized) {
                 result = StoreData(cmi,false);
+                <?php 
+                    if (($CFG->debug > 7) && (isadmin())) {
+                        echo 'alert("Data Commited");';
+                    }
+                ?>
                 return "true";
             } else {
                 errorCode = "301";
