@@ -9,10 +9,12 @@ $courseid = optional_param('courseid', SITEID, PARAM_INT);
 $act = optional_param('act','',PARAM_ALPHA);
 
 // detemine where the user is coming from in case we need to send them back there
-if (isset($_SERVER['HTTP_REFERER'])) {
-    $referrer = $_SERVER['HTTP_REFERER'];
-} else {
-    $referrer = $CFG->wwwroot;
+if (!$referrer = optional_param('referrer','', PARAM_URL)) {
+    if (isset($_SERVER['HTTP_REFERER'])) {
+        $referrer = $_SERVER['HTTP_REFERER'];
+    } else {
+        $referrer = $CFG->wwwroot;
+    }
 }
 
 //first verify that user is not a guest
@@ -166,7 +168,7 @@ include($CFG->dirroot .'/blog/footer.php');
 * also takes the postid - the id of the entry to be removed
 */
 function do_delete($postid) {
-    global $CFG, $USER;
+    global $CFG, $USER, $referrer;
     // make sure this user is authorized to delete this entry.
     // cannot use $post->pid because it may not have been initialized yet. Also the pid may be in get format rather than post.
     // check ownership
@@ -192,6 +194,7 @@ function do_delete($postid) {
     }
 
     //comment out this redirect to debug the deletion of entries
+
     redirect($CFG->wwwroot .'/blog/index.php?userid='. $post->userid);
 }
 
@@ -202,7 +205,7 @@ function do_delete($postid) {
 * @param object $bloginfo_arg argument is reference to a blogInfo object.
 */
 function do_save($post) {
-    global $USER, $CFG;
+    global $USER, $CFG, $referrer;
 //    echo 'Debug: Post object in do_save function of edit.php<br />'; //debug
 //    print_object($post); //debug
 
@@ -259,12 +262,15 @@ function do_save($post) {
         if ($site = get_site()) {
             add_to_log($site->id, 'blog', 'add', 'archive.php?userid='. $bloginfo_arg->userid .'&postid='. $entryID, 'created new blog entry with entry id# '. $entryID);
         }
+        
+        redirect($referrer);
+        /*
         //to debug this save function comment out the following redirect code
         if ($courseid == SITEID || $courseid == 0 || $courseid == '') {
             redirect($CFG->wwwroot .'/blog/index.php?userid='. $blogEntry->userid);
         } else {
             redirect($CFG->wwwroot .'/course/view.php?id='. $courseid);
-        }
+        }*/
     }
 }
 
@@ -275,7 +281,7 @@ function do_save($post) {
  */
 function do_update($post) {
     // here post = data_submitted();
-    global $CFG, $USER;
+    global $CFG, $USER, $referrer;
     $blogEntry = get_record('post','id',$post->postid);
 //  echo "id id ".$post->postid;
 //  print_object($blogentry);  //debug
@@ -319,8 +325,15 @@ function do_update($post) {
         if ($site = get_site()) {
             add_to_log($site->id, 'blog', 'update', 'archive.php?userid='. $bloginfo->userid .'&postid='. $post->postid, 'updated existing blog entry with entry id# '. $post->postid);
         }
-
-        redirect($CFG->wwwroot .'/blog/index.php?userid='. $blogEntry->userid);
+        
+        redirect($referrer);
+        //to debug this save function comment out the following redirect code
+/*
+        if ($courseid == SITEID || $courseid == 0 || $courseid == '') {
+            redirect($CFG->wwwroot .'/blog/index.php?userid='. $blogEntry->userid);
+        } else {
+            redirect($CFG->wwwroot .'/course/view.php?id='. $courseid);
+        }*/
     } else {
 //        get_string('', 'blog') //Daryl Hawes note: localize this line
         $post->error =  'There was an error updating this post in the database: '. $error;

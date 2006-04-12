@@ -200,8 +200,11 @@
         $template['author'] = fullname(get_record('user','id',$blogEntry->userid));
         $template['lastmod'] = userdate($blogEntry->lastmodified);
         $template['created'] = userdate($blogEntry->created);
-        $template['publishtomenu'] = get_publish_to_menu($blogEntry, true, true);
-        //forum style printing of blogs
+
+        /// preventing user to browse blogs that they aren't supposed to see
+        if (!blog_user_can_view_user_post($template['userid'])) {
+            error ('you can not view this post');
+        }
         blog_print_entry_content ($template, $blogEntry->id, $filtertype, $filterselect, $mode);
 
     }
@@ -257,11 +260,11 @@
         echo '<div class="commands">';
 
         if (isset($USER->id)) {
-            if (($template['userid'] == $USER->id) or isteacher($course->id)) {
+            if (($template['userid'] == $USER->id) or isadmin()) {
                     echo '<a href="'.$CFG->wwwroot.'/blog/edit.php?editid='.$entryid.'&amp;sesskey='.sesskey().'">'.$stredit.'</a>';
             }
 
-            if (($template['userid'] == $USER->id) or isteacher($course->id)) {
+            if (($template['userid'] == $USER->id) or isadmin()) {
                 echo '| <a href="'.$CFG->wwwroot.'/blog/edit.php?act=del&amp;editid='.$entryid.'&amp;sesskey='.sesskey().'">'.$strdelete.'</a>';
             }
         }

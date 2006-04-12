@@ -19,8 +19,8 @@
 
 <form name="entry" method="post" action="<?php echo $CFG->wwwroot;?>/blog/edit.php" id="entry" <?php echo $onsubmit; ?> enctype="multipart/form-data">
 <input type="hidden" name="sesskey" value="<?php echo sesskey(); ?>" />
-<input type="hidden" name="realcourse" value="0" />
-<input type="hidden" name="realgroup" value="0" />
+<input type="hidden" name="referrer" value="<?php echo $referrer; ?>" />
+
 
 <table border="0" cellpadding="5" id="edittable">
 <tr valign="top">
