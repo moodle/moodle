@@ -26,7 +26,6 @@
         error(get_string('noguestpost', 'blog'), $referrer);
     }
     $userid = $USER->id;
-    $bloginfo =& new BlogInfo($userid);
 
 /// If data submitted, then process and store.
 

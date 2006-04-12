@@ -1,6 +1,5 @@
 <?php //$Id$
-    // get the category drop down form element
-    $blogFilter =& new BlogFilter($userid, '', '', $post->courseid);
+
     if (!isset($post->groupid)) {
         $post->groupid = 0;
     }
@@ -130,7 +129,7 @@
     </small></small>              
     </td>
     <td align="left" colspan="2">
-    <?php print_textarea($usehtmleditor, 25, 62, 500, 600, 'body', $post->body, $post->courseid); ?>
+    <?php print_textarea($usehtmleditor, 25, 62, 500, 600, 'body', $post->body); ?>
     </td>
 </tr>
 <tr valign="top">

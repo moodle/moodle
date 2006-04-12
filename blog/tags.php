@@ -1,11 +1,15 @@
 <?php
 require_once('../config.php');
+require_login();
 
+if (isguest()) {
+    error ('Guests can not modify tags!');
+}
 //form process
 $mode = optional_param('mode','',PARAM_ALPHA);
 
 switch ($mode) {
-    case 'addofficial':
+    case 'addofficial':    /// adding official tags
     
         if (!isadmin() || !confirm_sesskey()) {
             die('you can not add official tags');
@@ -16,19 +20,21 @@ switch ($mode) {
             $tag->text = $otag;
             $tag->type = 'official';
             $tagid = insert_record('tags', $tag);
+            
+            /// write newly added tags back into window opener
             echo '<script language="JavaScript" type="text/javascript">
             var o = opener.document.createElement("option");
             o.innerHTML = "<option>'.$tag->text.'</option>";
             o.value = '.$tagid.';
             opener.document.entry[\'otags[]\'].insertBefore(o, null);
             </script>';
-        } else {
+        } else {  // tag already exist
             notify(get_string('tagalready'));
         }
 
     break;
     
-    case 'addpersonal':    /// everyone can add
+    case 'addpersonal':    /// everyone can add personal tags
         if (!confirm_sesskey() || isguest() || !isset($USER->id)) {
             error ('you can not add tags');
         }
@@ -38,19 +44,21 @@ switch ($mode) {
             $tag->text = $ptag;
             $tag->type = 'personal';
             $tagid = insert_record('tags', $tag);
+
+            /// write newly added tags back into window opener
             echo '<script language="JavaScript" type="text/javascript">
             var o = opener.document.createElement("option");
             o.innerHTML = "<option>'.$tag->text.'</option>";
             o.value = '.$tagid.';
             opener.document.entry[\'ptags[]\'].insertBefore(o, null);
             </script>';
-        } else {
+        } else {  //tag already exist
             notify(get_string('tagalready'));
         }
-        //write back to window.opener
+        
     break;
     
-    case 'delete':
+    case 'delete':  /// delete a tag
         if (!confirm_sesskey()) {
             error('you can not delete tags');
         }
@@ -61,6 +69,7 @@ switch ($mode) {
 
                 $blogtag = get_record('tags','id',$tag);
 
+                // you can only delete your own tags, or you have to be an admin
                 if (!isadmin() and $USER->id != $blogtag->userid) {
                     notify('no right to delete');
                     continue;
@@ -96,10 +105,9 @@ switch ($mode) {
                 </script>';
             }
         }
-        //write back to window.opener
     break;
     
-    default:
+    default:  // just displaying tags form
     break;
 }
 

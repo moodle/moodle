@@ -2,7 +2,6 @@
 
 require_once('../config.php');
 include_once('lib.php');
-include_once('class.BlogInfo.php');
 require_login();
 
 $userid = optional_param('userid',     0, PARAM_INT);
@@ -31,9 +30,9 @@ if (!empty($userid) && $userid != 0) {
     }
 } else if ( blog_isLoggedIn() ) {
     //the user is logged in and have not specified a blog - so they will be editing their own
-    $tempBlogInfo = blog_user_bloginfo();
-    $userid = $tempBlogInfo->userid;
-    unset($tempBlogInfo); //free memory from temp object - bloginfo will be created again in the included header
+    //$tempBlogInfo = blog_user_bloginfo();
+    $userid = $USER->id;//$tempBlogInfo->userid;
+    //unset($tempBlogInfo); //free memory from temp object - bloginfo will be created again in the included header
 } else {
     error(get_string('noblogspecified', 'blog') .'<a href="'. $CFG->blog_blogurl .'">' .get_string('viewentries', 'blog') .'</a>');
 }
@@ -42,12 +41,10 @@ $pageNavigation = 'edit';
 
 include($CFG->dirroot .'/blog/header.php');
 
-//print_object($PAGE->bloginfo); //debug
-
 //check if user is in blog's acl
-if ( !blog_user_has_rights($PAGE->bloginfo) ) {
+if ( !blog_user_has_rights($editid) ) {
     if ($editid != '') {
-        $blogEntry = $PAGE->bloginfo->get_blog_entry_by_id($editid);
+        $blogEntry = get_record('post','id',$editid);
         if (! (isteacher($blogEntry->$entryCourseId)) ) {
 //            error( get_string('notallowedtoedit'.' You do not teach in this course.', 'blog'), $CFG->wwwroot .'/login/index.php');
             error( get_string('notallowedtoedit', 'blog'), $CFG->wwwroot .'/login/index.php');
@@ -61,21 +58,20 @@ if ( !blog_user_has_rights($PAGE->bloginfo) ) {
 
 if (isset($act) && ($act == 'del') && confirm_sesskey())
 {
-    $postid = required_param('postid', PARAM_INT);
+    $postid = required_param('editid', PARAM_INT);
     if (optional_param('confirm',0,PARAM_INT)) {
-        do_delete($PAGE->bloginfo, $postid);
+        do_delete($postid);
     } else {
     /// prints blog entry and what confirmation form
         echo '<div align="center"><form method="GET" action="edit.php">';
         echo '<input type="hidden" name="act" value="del" />';
         echo '<input type="hidden" name="confirm" value="1" />';
-        echo '<input type="hidden" name="postid" value="'.$postid.'" />';
+        echo '<input type="hidden" name="editid" value="'.$postid.'" />';
         echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
         print_string('blogdeleteconfirm', 'blog');
         
         $post = get_record('post', 'id', $postid);
-        $entry = new BlogEntry($post);
-        blog_print_entry($entry);
+        blog_print_entry($post);
         echo '<br />';
         echo '<input type="submit" value="'.get_string('delete').'" /> ';
         echo ' <input type="button" value="'.get_string('cancel').'" onclick="javascript:history.go(-1)" />';
@@ -96,24 +92,16 @@ if (($post = data_submitted( get_referer() )) && confirm_sesskey()) {
     if (!empty($post->editform)) { //make sure we're processing the edit form here
         //print_object($post); //debug
 
-        ///these varaibles needs to be changed because of the javascript hack
-        ///post->courseid
-        ///post->groupid
-        $post->courseid = $post->realcourse;   //might not need either, if javascript re-written
-        $post->groupid = $post->realgroup;   //might not need
-        $courseid = $post->realcourse;
-        //end of yu's code
-        
         if (!$post->etitle or !$post->body) {
             $post->error = get_string('emptymessage', 'forum');
         }
         if ($post->act == 'save') {
-            do_save($post, $PAGE->bloginfo);
+            do_save($post);
         } else if ($post->act == 'update') {
-            do_update($post, $PAGE->bloginfo);
+            do_update($post);
         } else if ($post->act == 'del') {
             $postid = required_param('postid', PARAM_INT);
-            do_delete($PAGE->bloginfo, $postid);
+            do_delete($postid);
         }
     }
 } else {
@@ -123,7 +111,6 @@ if (($post = data_submitted( get_referer() )) && confirm_sesskey()) {
     $post->userid = $USER->id;
     $post->body = '';
     $post->format = $defaultformat;
-    $post->categoryid = array(1);
     $post->publishstate = 'draft';
     $post->courseid  = $courseid;
 
@@ -132,16 +119,15 @@ if (($post = data_submitted( get_referer() )) && confirm_sesskey()) {
 if ($editid != '') {  // User is editing a post
     // ensure that editing is allowed first - admin users can edit any posts
 
-    $blogEntry = $PAGE->bloginfo->get_blog_entry_by_id($editid);
+    $blogEntry = get_record('post','id',$editid);
 
     //using an unformatted entry body here so that extra formatting information is not stored in the db
-    $post->body = $blogEntry->get_unformatted_entry_body();
-    $post->etitle = $blogEntry->entryTitle;    
+    $post->body = $blogEntry->summary;
+    $post->etitle = $blogEntry->subject;
     $post->postid = $editid;
-    $post->userid = $PAGE->bloginfo->userid;
-    $post->categoryid = $blogEntry->entryCategoryIds;
-    $post->format = $blogEntry->entryFormat;
-    $post->publishstate = $blogEntry->entryPublishState;
+    $post->userid = $blogEntry->userid;
+    $post->format = $blogEntry->format;
+    $post->publishstate = $blogEntry->publishstate;
 }
 
 if (isset($post->postid) && ($post->postid != -1) ) {
@@ -179,27 +165,34 @@ include($CFG->dirroot .'/blog/footer.php');
 * takes $bloginfo_arg argument as reference to a blogInfo object.
 * also takes the postid - the id of the entry to be removed
 */
-function do_delete(&$bloginfo_arg, $postid) {
-    global $CFG;
+function do_delete($postid) {
+    global $CFG, $USER;
     // make sure this user is authorized to delete this entry.
     // cannot use $post->pid because it may not have been initialized yet. Also the pid may be in get format rather than post.
-    if ($bloginfo_arg->delete_blog_entry_by_id($postid)) {
-        //echo "bloginfo_arg:"; //debug
-        print_object($bloginfo_arg); //debug
-        //echo "pid to delete:".$postid; //debug
-        delete_records('blog_tag_instance', 'entryid', $postid);
-        print '<strong>'. get_string('entrydeleted', 'blog') .'</strong><p>';
+    // check ownership
+    $post = get_record('post','id',$postid);
 
-        //record a log message of this entry deletion
-        if ($site = get_site()) {
-            add_to_log($site->id, 'blog', 'delete', 'index.php?userid='. $bloginfo_arg->userid, 'deleted blog entry with entry id# '. $postid);
+    if (($USER->id == $post->userid) || (blog_is_blog_admin($post->userid)) || (isadmin())) {
+        
+        if (delete_records('post','id',$postid)) {
+            //echo "bloginfo_arg:"; //debug
+            //print_object($bloginfo_arg); //debug
+            //echo "pid to delete:".$postid; //debug
+            delete_records('blog_tag_instance', 'entryid', $postid);
+            print '<strong>'. get_string('entrydeleted', 'blog') .'</strong><p>';
+
+            //record a log message of this entry deletion
+            if ($site = get_site()) {
+                add_to_log($site->id, 'blog', 'delete', 'index.php?userid='. $bloginfo_arg->userid, 'deleted blog entry with entry id# '. $postid);
+            }
         }
-    } else {
+    }
+    else {
         error(get_string('entryerrornotyours', 'blog'));
     }
 
     //comment out this redirect to debug the deletion of entries
-    redirect($CFG->wwwroot .'/blog/index.php?userid='. $bloginfo_arg->userid);
+    redirect($CFG->wwwroot .'/blog/index.php?userid='. $post->userid);
 }
 
 /**
@@ -208,7 +201,7 @@ function do_delete(&$bloginfo_arg, $postid) {
 * @param object $post argument is a reference to the post object which is used to store information for the form
 * @param object $bloginfo_arg argument is reference to a blogInfo object.
 */
-function do_save(&$post, &$bloginfo_arg) {
+function do_save($post) {
     global $USER, $CFG;
 //    echo 'Debug: Post object in do_save function of edit.php<br />'; //debug
 //    print_object($post); //debug
@@ -217,42 +210,58 @@ function do_save(&$post, &$bloginfo_arg) {
         $post->error =  get_string('nomessagebodyerror', 'blog');
     } else {
 
+        /// Write a blog entry into database
+        $blogEntry = new object;
+        $blogEntry->subject = addslashes($post->etitle);
+        $blogEntry->summary = addslashes($post->body);
+        $blogEntry->module = 'blog';
+        $blogEntry->userid = $USER->id;
+        $blogEntry->format = $post->format;
+        $blogEntry->publishstate = $post->publishstate;
+        $blogEntry->lastmodified = time();
+        $blogEntry->created = time();
+
         // Insert the new blog entry.
-        $entryID = $bloginfo_arg->insert_blog_entry($post->etitle, $post->body, $USER->id, $post->format, $post->publishstate, $courseid, $groupid);
+        $entryID = insert_record('post',$blogEntry);
 
 //        print 'Debug: created a new entry - entryId = '.$entryID.'<br />'; //debug
 //        echo 'Debug: do_save() in edit.php calling blog_do_*back_pings<br />'."\n"; //debug
+        if ($entryID) {
 
-        $otags = optional_param('otags','', PARAM_INT);
-        $ptags = optional_param('ptags','', PARAM_INT);
+            /// Creates a unique hash. I don't know what this is for (Yu)
+            $dataobject = new object;
+            $dataobject->uniquehash = md5($blogEntry->userid.$CFG->wwwroot.$entryID);
+            update_record('post', $dataobject);
 
+            /// Associate tags with entries
+            $otags = optional_param('otags','', PARAM_INT);
+            $ptags = optional_param('ptags','', PARAM_INT);
 
-        $tag = NULL;
-        $tag->entryid = $entryID;
-        $tag->groupid = $post->groupid;
-        $tag->courseid = $post->courseid;
-        $tag->userid = $USER->id;
-        $tag->timemodified = time();
+            $tag = NULL;
+            $tag->entryid = $entryID;
+            $tag->userid = $USER->id;
+            $tag->timemodified = time();
 
-        /// Add tags information
-        foreach ($otags as $otag) {
-            $tag->tagid = $otag;
-            insert_record('blog_tag_instance',$tag);
+            /// Add tags information
+            foreach ($otags as $otag) {
+                $tag->tagid = $otag;
+                insert_record('blog_tag_instance',$tag);
+            }
+
+            foreach ($ptags as $ptag) {
+                $tag->tagid = $ptag;
+                insert_record('blog_tag_instance',$tag);
+            }
+
+            print '<strong>'. get_string('entrysaved', 'blog') .'</strong><br />';
         }
-        
-        foreach ($ptags as $ptag) {
-            $tag->tagid = $ptag;
-            insert_record('blog_tag_instance',$tag);
-        }
-
-        print '<strong>'. get_string('entrysaved', 'blog') .'</strong><br />';
         //record a log message of this entry addition
         if ($site = get_site()) {
             add_to_log($site->id, 'blog', 'add', 'archive.php?userid='. $bloginfo_arg->userid .'&postid='. $entryID, 'created new blog entry with entry id# '. $entryID);
         }
         //to debug this save function comment out the following redirect code
         if ($courseid == SITEID || $courseid == 0 || $courseid == '') {
-            redirect($CFG->wwwroot .'/blog/index.php?userid='. $bloginfo_arg->userid);
+            redirect($CFG->wwwroot .'/blog/index.php?userid='. $blogEntry->userid);
         } else {
             redirect($CFG->wwwroot .'/course/view.php?id='. $courseid);
         }
@@ -264,28 +273,29 @@ function do_save(&$post, &$bloginfo_arg) {
  * @param . $bloginfo_arg argument is reference to a blogInfo object.
  * @todo complete documenting this function. enable trackback and pingback between entries on the same server
  */
-function do_update(&$post, &$bloginfo) {
-
+function do_update($post) {
+    // here post = data_submitted();
     global $CFG, $USER;
-    
-    $blogentry = $bloginfo->get_blog_entry_by_id($post->postid);
-    echo "id id ".$post->postid;
+    $blogEntry = get_record('post','id',$post->postid);
+//  echo "id id ".$post->postid;
 //  print_object($blogentry);  //debug
 
-    $blogentry->set_body($post->body);
-    $blogentry->set_format($post->format);
-    $blogentry->set_publishstate($post->publishstate); //we don't care about the return value here
+    $blogEntry->subject = addslashes($post->etitle);
+    $blogEntry->summary = addslashes($post->body);
+    if ($blogEntry->summary == '<br />') {
+        $blogEntry->summary = '';
+    }
+    $blogEntry->format = $post->format;
+    $blogEntry->publishstate = $post->publishstate; //we don't care about the return value here
 
-    if ( !$error = $blogentry->save() ) {
-        delete_records('blog_tag_instance', 'entryid', $blogentry->entryId);
+    if ( update_record('post',$blogEntry)) {
+        delete_records('blog_tag_instance', 'entryid', $blogEntry->id);
 
         $otags = optional_param('otags','', PARAM_INT);
         $ptags = optional_param('ptags','', PARAM_INT);
 
         $tag = NULL;
-        $tag->entryid = $blogentry->entryId;
-        $tag->groupid = $post->groupid;
-        $tag->courseid = $post->courseid;
+        $tag->entryid = $blogEntry->id;
         $tag->userid = $USER->id;
         $tag->timemodified = time();
         
@@ -310,7 +320,7 @@ function do_update(&$post, &$bloginfo) {
             add_to_log($site->id, 'blog', 'update', 'archive.php?userid='. $bloginfo->userid .'&postid='. $post->postid, 'updated existing blog entry with entry id# '. $post->postid);
         }
 
-        redirect($CFG->wwwroot .'/blog/index.php?userid='. $bloginfo->userid);
+        redirect($CFG->wwwroot .'/blog/index.php?userid='. $blogEntry->userid);
     } else {
 //        get_string('', 'blog') //Daryl Hawes note: localize this line
         $post->error =  'There was an error updating this post in the database: '. $error;

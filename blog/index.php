@@ -27,7 +27,6 @@ $filtertype = optional_param('filtertype', '', PARAM_ALPHA);
 $filterselect = optional_param('filterselect', 0, PARAM_INT);
 
 /// overwrite filter code here
-/// the the following code does the rights checkings?
 
 if ($filtertype) {
     switch ($filtertype) {
@@ -84,7 +83,6 @@ if ($filtertype) {
     $filterselect = '';
 }
 
-
 /// rights checking
 
 switch ($filtertype) {
@@ -135,7 +133,7 @@ if ($limit == 'none') {
     $limit = get_user_preferences('blogpagesize',10);
 }
 
-$blogFilter =& new BlogFilter($userid, $postid, $limit, $start,$filtertype, $filterselect, $tagid, $tag);
+//$blogFilter =& new BlogFilter($userid, $postid, $limit, $start,$filtertype, $filterselect, $tagid, $tag);
 
 include($CFG->dirroot .'/blog/header.php');
 
@@ -147,7 +145,9 @@ if (!$course) {
 }
 require_once($CFG->dirroot .'/user/tabs.php');
 
-blog_print_html_formatted_entries($blogFilter, $filtertype, $filterselect);
+$blogpage = optional_param('blogpage',0,PARAM_INT);
+
+blog_print_html_formatted_entries($userid, $postid, $limit, ($blogpage * $limit) ,$filtertype, $filterselect, $tagid, $tag, $filtertype, $filterselect);
 
 include($CFG->dirroot .'/blog/footer.php');
 

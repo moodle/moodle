@@ -49,7 +49,7 @@ class page_blog extends page_base {
         }
         // I need to determine how best to utilize this function. Most init
         // is already done before we get here in blogFilter and blogInfo
-        $this->bloginfo =& new BlogInfo($this->id);
+        //$this->bloginfo =& new BlogInfo($this->id);
         if ($this->courseid == 0 || $this->courseid == 1 || !is_numeric($this->courseid) ) {
             $this->courseid = '';
             $courserecord = NULL;
