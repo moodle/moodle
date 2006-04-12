@@ -4,7 +4,7 @@
     require_once('../config.php');
     require_once($CFG->libdir.'/pagelib.php');
     require_once($CFG->libdir.'/blocklib.php'); 
-    require_once('/lib.php');
+    require_once('lib.php');
 
     require_login();
 
