@@ -134,43 +134,43 @@ CREATE TABLE prefix_lesson_default
 
 CREATE TABLE prefix_lesson_timer
     ( id SERIAL8 PRIMARY KEY,
-        lessonid INT8  not null,
-      userid INT8  not null,
-      starttime INT8  not null,
-        lessontime INT8  not null
+        lessonid INT8  not null default '0',
+      userid INT8  not null default '0',
+      starttime INT8  not null default '0',
+        lessontime INT8  not null default '0'
     );
 
 CREATE TABLE prefix_lesson_branch
     ( id SERIAL8 PRIMARY KEY,
-      lessonid INT8  not null,
-      userid INT8  not null,
-      pageid INT8  not null,
-      retry INT8  not null,
-      flag  INT  not null,
-      timeseen INT8  not null
+      lessonid INT8  not null default '0',
+      userid INT8  not null default '0',
+      pageid INT8  not null default '0',
+      retry INT8  not null default '0',
+      flag  INT  not null default '0',
+      timeseen INT8  not null default '0'
     );
 
 CREATE TABLE prefix_lesson_essay
     ( id SERIAL8 PRIMARY KEY,
-      lessonid INT8  not null,
-      userid INT8  not null,
-      pageid INT8  not null,
-      answerid INT8  not null,
-      try INT8  not null,
-      answer text not null,
+      lessonid INT8  not null default '0',
+      userid INT8  not null default '0',
+      pageid INT8  not null default '0',
+      answerid INT8  not null default '0',
+      try INT8  not null default '0',
+      answer text not null default '',
       graded INT  not null default 0,
       score INT8  not null default 0,
-      response text not null,
+      response text not null default '',
       sent INT  not null default 0,
-      timesubmitted INT8  not null
+      timesubmitted INT8  not null default '0'
     );
 
 CREATE TABLE prefix_lesson_high_scores
     ( id SERIAL8 PRIMARY KEY,
-      lessonid INT8  not null,
-      userid INT8  not null,
-      gradeid INT8  not null,
-      nickname varchar(5) not null
+      lessonid INT8  not null default '0',
+      userid INT8  not null default '0',
+      gradeid INT8  not null default '0',
+      nickname varchar(5) not null default ''
     );
 
 
