@@ -216,6 +216,7 @@ $string['import'] = 'Import';
 $string['importerror'] = 'An error occurred during import processing';
 $string['importfilearea'] = 'Import from file already in course files...';
 $string['importfileupload'] = 'Import from file upload...';
+$string['importfromthisfile'] = 'Import from this file';
 $string['importingquestions'] = 'Importing $a questions from file';
 $string['importmax10error'] = 'There is an error in the question. You may not have more than ten answers';
 $string['importmaxerror'] = 'There is an error in the question. There are too many answers.';
