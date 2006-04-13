@@ -71,44 +71,44 @@ function lesson_upgrade($oldversion) {
     if ($oldversion < 2004072100) {
         execute_sql(" create table ".$CFG->prefix."lesson_high_scores
                     ( id serial8 primary key,
-                      lessonid int8 not null,
-                      userid int8 not null,
-                      gradeid int8 not null,
-                      nickname varchar(5) not null
+                      lessonid int8 not null default '0',
+                      userid int8 not null default '0',
+                      gradeid int8 not null default '0',
+                      nickname varchar(5) not null default ''
                     )");
 
         execute_sql(" create table ".$CFG->prefix."lesson_essay
                     ( id serial8 primary key,
-                      lessonid int8 not null,
-                      userid int8 not null,
-                      pageid int8 not null,
-                      answerid int8 not null,
-                      try int8 not null,
-                      answer text not null,
+                      lessonid int8 not null default '0',
+                      userid int8 not null default '0',
+                      pageid int8 not null default '0',
+                      answerid int8 not null default '0',
+                      try int8 not null default '0',
+                      answer text not null default '',
                       graded int4 not null default 0,
                       score int8 not null default 0,
-                      response text not null,
+                      response text not null default '',
                       sent int4 not null default 0,
-                      timesubmitted int8 not null
+                      timesubmitted int8 not null default '0'
                     )");
 
         execute_sql(" create table ".$CFG->prefix."lesson_branch
                     ( id serial8 primary key,
-                      lessonid int8 not null,
-                      userid int8 not null,
-                      pageid int8 not null,
-                      retry int8 not null,
-                      flag  int4 not null,
-                      timeseen int8 not null
+                      lessonid int8 not null default '0',
+                      userid int8 not null default '0',
+                      pageid int8 not null default '0',
+                      retry int8 not null default '0',
+                      flag  int4 not null default '0',
+                      timeseen int8 not null default '0'
                     )");
 
         
         execute_sql(" create table ".$CFG->prefix."lesson_timer
                     ( id serial8 primary key,
-                      lessonid int8 not null,
-                    userid int8 not null,
-                    starttime int8 not null,
-                      lessontime int8 not null
+                      lessonid int8 not null default '0',
+                    userid int8 not null default '0',
+                    starttime int8 not null default '0',
+                      lessontime int8 not nul default '0'l
                     )");
 
     
