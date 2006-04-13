@@ -105,7 +105,8 @@ class default_questiontype {
         }
 
         if (!empty($result->noticeyesno)) {
-            notice_yesno($result->noticeyesno, "question.php?id=$question->id", "edit.php");
+            notice_yesno($result->noticeyesno, "question.php?id=$question->id&amp;courseid={$course->id}",
+                "edit.php?courseid={$course->id}");
             print_footer($course);
             exit;
         }
