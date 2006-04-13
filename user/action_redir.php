@@ -1,26 +1,26 @@
 <?php
-/*
- * Wrapper script redirecting user operations to correct destination
- */
+/**
+* Wrapper script redirecting user operations to correct destination.
+*/
+
 require_once("../config.php");
 
-if (empty($_POST) || empty($_POST['formaction']) || empty($_POST['id'])) {
-    die();
-}
+$formaction = required_param('formaction', PARAM_FILE);
+$id = required_param('id', PARAM_INT);
 
 // Add every page will be redirected by this script
 $actions = array(
         'messageselect.php',
         'extendenrol.php'
-    );
+        );
 
-if (array_search($_POST['formaction'], $actions) === false) {
-    die();
+if (array_search($formaction, $actions) === false) {
+    print_error('unknownuseraction');
 }
 
 if (!confirm_sesskey()) {
-    die();
+    print_error('confirmsesskeybad');
 }
 
-require_once($_POST['formaction']);
+require_once($formaction);
 ?>
