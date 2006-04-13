@@ -89,7 +89,7 @@ function set_parameters() {
                                        'value'   => $this->course->fullname),
             'courseshortname' => array('langstr' => get_string('shortname'),
                                        'value'   => $this->course->shortname),
-            'courseidnumber'  => array('langstr' => get_string('idnumber'),
+            'courseidnumber'  => array('langstr' => get_string('idnumbercourse'),
                                        'value'   => $this->course->idnumber),
             'coursesummary'   => array('langstr' => get_string('summary'),
                                        'value'   => $this->course->summary),

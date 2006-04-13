@@ -651,6 +651,7 @@ $string['htmlfilesonly'] = 'HTML files only';
 $string['htmlformat'] = 'Pretty HTML format';
 $string['icqnumber'] = 'ICQ number';
 $string['idnumber'] = 'ID number';
+$string['idnumbercourse'] = 'Course ID number';
 $string['import'] = 'Import';
 $string['importdata'] = 'Import course data';
 $string['importdatafrom'] = 'Find a course to import data from:';
