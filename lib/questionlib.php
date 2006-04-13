@@ -260,7 +260,8 @@ function match_grade_options($gradeoptionsfull, $grade, $matchgrades='error') {
     // if we just need an error...
     if ($matchgrades=='error') {
         foreach($gradeoptionsfull as $value => $option) {
-            if ($grade==$value) {
+            // slightly fuzzy test, never check floats for equality :-)
+            if (abs($grade-$value)<0.00001) {
                 return $grade;
             }
         }
