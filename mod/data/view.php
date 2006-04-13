@@ -306,7 +306,7 @@
                      AND r.dataid = '.$data->id.' 
                      AND r.userid = u.id 
                      AND c1.recordid = r.id ';
-        $sortorder = ' ORDER BY '.$sortcontentfull.' '.$order.' ';
+        $sortorder = ' ORDER BY '.$sortcontentfull.' '.$order.' , r.id ASC';
         if ($search) {
             $searchselect = ' AND (c1.content LIKE "%'.$search.'%") ';
         } else {
@@ -320,7 +320,7 @@
         $where =  'WHERE c.recordid = r.id 
                      AND r.userid = u.id 
                      AND r.dataid = '.$data->id;
-        $sortorder = ' ORDER BY r.id ';
+        $sortorder = ' ORDER BY r.id ASC';
         $searchselect = ' AND (c.content LIKE "%'.$search.'%") ';
 
     } else {
@@ -348,13 +348,17 @@
     if ($record) {     // We need to just show one, so where is it in context?
         $nowperpage = 1;
         $mode = 'single';
+
+#  Following code needs testing to make it work
 #        if ($sort) {   // We need to search by that field
 #            if ($content = get_field('data_content', 'content', 'recordid', $record->id, 'fieldid', $sort)) {
 #                $content = addslashes($content);
 #                if ($order == 'ASC') {
-#                    $lessthan = " AND $sortcontentfull < '$content' ";
+#                    $lessthan = " AND $sortcontentfull < '$content' 
+#                                   OR ($sortcontentfull = '$content' AND r.id < '$record->id') ";
 #                } else {
-#                    $lessthan = " AND $sortcontentfull > '$content' ";
+#                    $lessthan = " AND $sortcontentfull > '$content' 
+#                                   OR ($sortcontentfull = '$content' AND r.id < '$record->id') ";
 #                }
 #            } else {   // Failed to find data (shouldn't happen), so fall back to something easy
 #                $lessthan = " r.id < '$record->id' ";
