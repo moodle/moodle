@@ -71,31 +71,31 @@ function lesson_upgrade($oldversion) {
     if ($oldversion < 2004072100) {
         execute_sql(" create table ".$CFG->prefix."lesson_high_scores
                     ( id int(10) unsigned not null auto_increment,
-                      lessonid int(10) unsigned not null,
-                      userid int(10) unsigned not null,
-                      gradeid int(10) unsigned not null,
-                      nickname varchar(5) not null,
+                      lessonid int(10) unsigned not null default '0',
+                      userid int(10) unsigned not null default '0',
+                      gradeid int(10) unsigned not null default '0',
+                      nickname varchar(5) not null default '',
                       PRIMARY KEY  (`id`)
                     )");
 
         execute_sql(" create table ".$CFG->prefix."lesson_branch
                     ( id int(10) unsigned not null auto_increment,
-                      lessonid int(10) unsigned not null,
-                      userid int(10) unsigned not null,
-                      pageid int(10) unsigned not null,
-                      retry int(10) unsigned not null,
-                      flag  tinyint(3) unsigned not null,
-                      timeseen int(10) unsigned not null,
+                      lessonid int(10) unsigned not null default '0',
+                      userid int(10) unsigned not null default '0',
+                      pageid int(10) unsigned not null default '0',
+                      retry int(10) unsigned not null default '0',
+                      flag  tinyint(3) unsigned not null default '0',
+                      timeseen int(10) unsigned not null default '0',
                       PRIMARY KEY  (`id`)
                     )");
 
         
         execute_sql(" create table ".$CFG->prefix."lesson_timer
                     ( id int(10) unsigned not null auto_increment,
-                      lessonid int(10) unsigned not null,
-                    userid int(10) unsigned not null,
-                    starttime int(10) unsigned not null,
-                      lessontime int(10) unsigned not null,
+                      lessonid int(10) unsigned not null default '0',
+                    userid int(10) unsigned not null default '0',
+                    starttime int(10) unsigned not null default '0',
+                      lessontime int(10) unsigned not null default '0',
                       PRIMARY KEY  (`id`)
                     )");
 
