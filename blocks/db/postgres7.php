@@ -71,7 +71,7 @@ global $CFG;
                         blockid INT8 not null default '0',
                         pageid INT8 not null default '0',
                         pagetype varchar(12) not null default '',
-                        position char not null check (position in ('l', 'r')) ,
+                        position char not null default 'l' check (position in ('l', 'r')) ,
                         weight int not null default '0',
                         visible int not null default '0',
                         configdata text not null default ''
