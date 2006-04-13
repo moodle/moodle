@@ -475,7 +475,7 @@ class default_questiontype {
             $grade .= $question->maxgrade;
         }
         
-        $comment = $state->comment;
+        $comment = stripslashes($state->comment);
         $commentlink = '';
         if (isset($options->questioncommentlink)) {
             $strcomment = get_string('commentorgrade', 'quiz');

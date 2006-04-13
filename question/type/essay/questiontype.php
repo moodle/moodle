@@ -110,7 +110,7 @@ class question_essay_qtype extends default_questiontype {
         // get response value
         if (isset($state->responses[''])) { 
             // security problem. responses[''] is never cleaned before it is sent to the db (I think)
-            $value = $state->responses[''];            
+            $value = stripslashes_safe($state->responses['']);            
         } else {
             $value = "";
         }
