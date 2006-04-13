@@ -26,9 +26,10 @@ print_heading(get_string('tagmanagement'));
             <input type="submit" value="<?php print_string('delete');?>" />
             <?php }
                 else {
-                    $otags = get_records_sql('SELECT * from '.$CFG->prefix.'tags WHERE type=\'official\' ORDER by text ASC');
-                    foreach ($otags as $otag) {
-                        echo '<br />'.$otag->text;
+                    if ($otags = get_records_sql('SELECT * from '.$CFG->prefix.'tags WHERE type=\'official\' ORDER by text ASC')) {
+                        foreach ($otags as $otag) {
+                            echo '<br />'.$otag->text;
+                        }
                     }
                 }
             ?>
