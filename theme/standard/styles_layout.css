@@ -868,10 +868,6 @@ span.current {
   border-right:0px;
 }
 
-* html #course-view .section .content .commands {
-  clear: both;
-}
-
 #course-view .section td.side {
   padding:5px;
   border-style:solid;
@@ -922,19 +918,27 @@ span.current {
   text-indent: 0;
   list-style: none;
 }
+/* Window-width: 800 pixels.
+   IE doesn't support, see inline IE conditional comment. */
 .weekscss-format {
-  min-width:763px; /* Doesn't work for IE. */
+  min-width: 763px;
 }
 .weekscss-format .block_adminblock select {
   width:100%;
 }
 .weekscss-format #middle-column {
-  padding-left:12px;
-  padding-right:12px;
+  margin: 0 12.5em 0 12.5em;
+}
+.weekscss-format #left-column {
+  float: left;
+  width: 11.5em;
+}
+.weekscss-format #right-column {
+  float: right;
+  width: 11.5em;
 }
 .weekscss li.section {
   margin-bottom: 0.5em;
-  width: 100%;
   border-style:solid;
   border-width:1px;
 }
@@ -943,16 +947,12 @@ span.current {
   padding: 5px;
 }
 .weekscss .content {
-  margin-left: 4%;  /* Why? Firefox 8%; IE 4% */
-  width: 80%;
-  float: left;
+  margin: 0 1.7em 0 1.7em;
 }
-.weekscss .side {
-  width: 8%;
-  float: left;
-}
-.weekscss .clearer {
-  height: 0;
+.weekscss .right {
+  width: 1.6em;
+  float: right;
+  text-align:center;
 }
 
 .section .activity img.activityicon {

@@ -28,7 +28,7 @@
     require_once("$CFG->dirroot/mod/forum/lib.php");
 
     $week = optional_param('week', -1, PARAM_INT);
-
+/*
     // Bounds for block widths; in PIXELS.
     define('BLOCK_L_MIN_WIDTH', 100);
     define('BLOCK_L_MAX_WIDTH', 210);
@@ -48,7 +48,7 @@
     $width_center = '60%; ';
     $min_max_block= 'min-width:100px; max-width:210px; ';
     $min_max_main = 'min-width:25em; max-width:37em; '; //33em
-
+*/
     if ($week != -1) {
         $displaysection = course_set_display($course->id, $week);
     } else {
@@ -81,20 +81,40 @@
     }
 
 
+/* Internet Explorer min-width fix. (See theme/standard/styles_layout.css: min-width for Firefox.)
+   Window width: 800px, Firefox 763px, IE 752px. (Window width: 640px, Firefox 602px, IE 588px.)    
+*/
+?>
+
+<!--[if IE]>
+  <style type="text/css">
+  .weekscss-format { width: expression(document.body.clientWidth < 800 ? "752px" : "auto"); }
+  </style>
+<![endif]-->
+<?php
 /// Layout the whole page as three big columns (was, id="layout-table")
     echo '<div class="weekscss-format">';
 
 /// The left column ...
 
     if (blocks_have_content($pageblocks, BLOCK_POS_LEFT) || $editing) {
-        echo '<div style="width:'.$preferred_width_left.$min_max_block.'float:left;" id="left-column">';
+        //echo '<div style="width:'.$preferred_width_left.$min_max_block.'float:left;" id="left-column">';
+        echo '<div id="left-column">';
         blocks_print_group($PAGE, $pageblocks, BLOCK_POS_LEFT);
+        echo '</div>';
+    }
+    
+/// The right column, BEFORE the middle-column.
+    if (blocks_have_content($pageblocks, BLOCK_POS_RIGHT) || $editing) {
+        //echo '<div style="width:'.$preferred_width_right.$min_max_block.' float:right;" id="right-column">';
+        echo '<div id="right-column">';
+        blocks_print_group($PAGE, $pageblocks, BLOCK_POS_RIGHT);
         echo '</div>';
     }
 
 /// Start main column
-    echo '<div id="middle-column" style="width:'.$width_center.$min_max_main.'float:left;">';
-
+    //echo '<div id="middle-column" style="width:'.$width_center.$min_max_main.'float:left;">';
+    echo '<div id="middle-column">';
 
     print_heading_block(get_string('weeklyoutline'), 'outline');
 
@@ -118,7 +138,9 @@
     if ($thissection->summary or $thissection->sequence or isediting($course->id)) {
 
         // Note, no need for a 'left side' cell or DIV.
+        // Note, 'right side' is BEFORE content.
         echo '<li id="section-0" class="section main" >';
+        echo '<div class="right side" >&nbsp;</div>';        
         echo '<div class="content">';
         
         echo '<div class="summary">';
@@ -138,7 +160,7 @@
             print_section_add_menus($course, $section, $modnames);
         }
 
-        echo '</div><div class="right side" >&nbsp;</div><div class="clearer"></div>';
+        echo '</div>'; //'<div class="right side" >&nbsp;</div><div class="clearer"></div>';
         echo "</li>\n";
     }
 
@@ -201,6 +223,38 @@
 
             echo '<li id="section-'.$section.'" class="section main'.$sectionstyle.'" >'; //'<div class="left side">&nbsp;</div>';
 
+            // Note, 'right side' is BEFORE content.
+            echo '<div class="right side">';
+            
+            if ($displaysection == $section) {
+                echo '<a href="view.php?id='.$course->id.'&amp;week=0#section-'.$section.'" title="'.$strshowallweeks.'">'.
+                     '<img src="'.$CFG->pixpath.'/i/all.gif" class="icon wkall" alt="'.$strshowallweeks.'" /></a><br />';
+            } else {
+                $strshowonlyweek = get_string("showonlyweek", "", $section);
+                echo '<a href="view.php?id='.$course->id.'&amp;week='.$section.'" title="'.$strshowonlyweek.'">'.
+                     '<img src="'.$CFG->pixpath.'/i/one.gif" class="icon wkone" alt="'.$strshowonlyweek.'" /></a><br />';
+            }
+
+            if (isediting($course->id)) {
+                if ($thissection->visible) {        // Show the hide/show eye
+                    echo '<a href="view.php?id='.$course->id.'&amp;hide='.$section.'&amp;sesskey='.$USER->sesskey.'#section-'.$section.'" title="'.$strweekhide.'">'.
+                         '<img src="'.$CFG->pixpath.'/i/hide.gif" class="icon hide" alt="'.$strweekhide.'" /></a><br />';
+                } else {
+                    echo '<a href="view.php?id='.$course->id.'&amp;show='.$section.'&amp;sesskey='.$USER->sesskey.'#section-'.$section.'" title="'.$strweekhide.'">'.
+                         '<img src="'.$CFG->pixpath.'/i/show.gif" class="icon hide" alt="'.$strweekhide.'" /></a><br />';
+                }
+                if ($section > 1) {                       // Add a arrow to move section up
+                    echo '<a href="view.php?id='.$course->id.'&amp;section='.$section.'&amp;move=-1&amp;sesskey='.$USER->sesskey.'#section-'.($section-1).'" title="'.$strmoveup.'">'.
+                         '<img src="'.$CFG->pixpath.'/t/up.gif" class="icon up" alt="'.$strmoveup.'" /></a><br />';
+                }
+
+                if ($section < $course->numsections) {    // Add a arrow to move section down
+                    echo '<a href="view.php?id='.$course->id.'&amp;section='.$section.'&amp;move=1&amp;sesskey='.$USER->sesskey.'#section-'.($section+1).'" title="'.$strmovedown.'">'.
+                         '<img src="'.$CFG->pixpath.'/t/down.gif" class="icon down" alt="'.$strmovedown.'" /></a><br />';
+                }
+            }
+            echo '</div>';
+
             echo '<div class="content">';
             if (!isteacher($course->id) and !$thissection->visible) {   // Hidden for students
                 echo '<div class="weekdates">'.$weekday.' - '.$endweekday.' ('.get_string('notavailable').')</div>';
@@ -225,7 +279,7 @@
                 }
             }
 
-            echo '</div><div class="right side">';
+            echo '</div>'; /*'<div class="right side">';
             
             if ($displaysection == $section) {
                 echo '<a href="view.php?id='.$course->id.'&amp;week=0#section-'.$section.'" title="'.$strshowallweeks.'">'.
@@ -255,7 +309,8 @@
                 }
             }
 
-            echo '</div><div class="clearer"></div>';
+            ///echo '</div><div class="clearer"></div>';
+            */
             echo "</li>\n";
         }
 
@@ -273,7 +328,7 @@
 
     echo '</div>';
 
-    // The right column
+/*    // The right column
     if (blocks_have_content($pageblocks, BLOCK_POS_RIGHT) || $editing) {
         echo '<div style="width:'.$preferred_width_right.$min_max_block.' float:right;" id="right-column">';
         blocks_print_group($PAGE, $pageblocks, BLOCK_POS_RIGHT);
@@ -281,6 +336,17 @@
     }
 
     echo '<div class="clearer"></div>';
+*/
     echo '</div>';
+    echo '<div class="clearer"></div>';
 
+if ($CFG->debug > 7) {
+?>
+<p class="debugwarn">Debug, document.body.clientWidth:
+  <script type="text/javascript">
+  document.writeln(document.body.clientWidth +" pixels [Refresh after resize.]");
+  </script><noscript>[Unknown] Javascript disabled.</noscript>
+</p>
+<?php
+}
 ?>
