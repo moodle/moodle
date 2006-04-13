@@ -438,6 +438,9 @@
             print_paging_bar($totalcount, $page, $nowperpage, $baseurl, $pagevar='page');
         }
 
+    }
+
+    if ($records || $search || $page) {
         data_print_preference_form($data, $perpage, $search, $sort, $order);
     }
 
