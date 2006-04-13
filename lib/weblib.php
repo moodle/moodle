@@ -328,22 +328,37 @@ function data_submitted($url='') {
 }
 
 /**
- * Moodle replacement for php stripslashes() function
+ * Moodle replacement for php stripslashes() function,
+ * works also for objects and arrays.
  *
  * The standard php stripslashes() removes ALL backslashes
  * even from strings - so  C:\temp becomes C:temp - this isn't good.
  * This function should work as a fairly safe replacement
  * to be called on quoted AND unquoted strings (to be sure)
  *
- * @param string the string to remove unsafe slashes from
- * @return string
+ * @param mixed something to remove unsafe slashes from
+ * @return mixed
  */
-function stripslashes_safe($string) {
+function stripslashes_safe($mixed) {
+    // there is no need to remove slashes from int, float and bool types
+    if (empty($mixed)) {
+        //nothing to do...
+    } else if (is_string($mixed)) {
+        $mixed = str_replace("\\'", "'", $mixed);
+        $mixed = str_replace('\\"', '"', $mixed);
+        $mixed = str_replace('\\\\', '\\', $mixed);
+    } else if (is_array($mixed)) {
+        foreach ($mixed as $key => $value) {
+            $mixed[$key] = stripslashes_safe($value);
+        }
+    } else if (is_object($mixed)) {
+        $vars = get_object_vars($mixed);
+        foreach ($vars as $key => $value) {
+            $mixed->$key = stripslashes_safe($value);
+        }
+    }
 
-    $string = str_replace("\\'", "'", $string);
-    $string = str_replace('\\"', '"', $string);
-    $string = str_replace('\\\\', '\\', $string);
-    return $string;
+    return $mixed;
 }
 
 /**
