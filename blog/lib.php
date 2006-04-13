@@ -245,7 +245,7 @@
             return true;
         }
         
-        if ($USER->id == $targetuserid) {
+        if ($USER->id && ($USER->id == $targetuserid)) {
             return true;
         }
 
