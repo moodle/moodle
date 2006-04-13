@@ -312,13 +312,23 @@ table.flexible .r1 {
   border-color:#AAAAAA;
 }
 
+
+/***
+ *** Blogs
+ ***/
+
+.blogpost.blogdraft .content {
+  background-color:#EEEEEE;
+}
+
 .block_blog_tags .official {
-    color: #0000cc;
+  color: #0000cc;
 }
 
 .block_blog_tags .personal {
-    color: #666699;
+  color: #666699;
 }
+
 
 /***
  *** Calendar
