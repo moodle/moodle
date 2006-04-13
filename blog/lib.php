@@ -148,7 +148,7 @@
 
         /// Start printing of the blog
 
-        echo '<div align="center"><table cellspacing="0" class="forumpost blogpost blog_'.$template['publishstate'].'" width="100%">';
+        echo '<div align="center"><table cellspacing="0" class="forumpost blogpost blog'.$template['publishstate'].'" width="100%">';
 
         echo '<tr class="header"><td class="picture left">';
         print_user_picture($template['userid'], SITEID, $user->picture);
