@@ -306,7 +306,7 @@
                      AND r.dataid = '.$data->id.' 
                      AND r.userid = u.id 
                      AND c1.recordid = r.id ';
-        $sortorder = ' ORDER BY '.$sortcontentfull.' '.$order.' , r.id ASC';
+        $sortorder = ' ORDER BY '.$sortcontentfull.' '.$order.' , r.id ASC ';
         if ($search) {
             $searchselect = ' AND (c1.content LIKE "%'.$search.'%") ';
         } else {
@@ -320,7 +320,7 @@
         $where =  'WHERE c.recordid = r.id 
                      AND r.userid = u.id 
                      AND r.dataid = '.$data->id;
-        $sortorder = ' ORDER BY r.id ASC';
+        $sortorder = ' ORDER BY r.id ASC ';
         $searchselect = ' AND (c.content LIKE "%'.$search.'%") ';
 
     } else {
@@ -368,6 +368,7 @@
 #        }
 #        $sqlindex = 'SELECT COUNT(DISTINCT c.recordid) '.$fromsql.$lessthan.$sortorder;
 #        $page = count_records_sql($sqlindex);
+
 
         $allrecords = get_records_sql($sqlselect);      // Kludgey but accurate at least!
         $page = 0;
