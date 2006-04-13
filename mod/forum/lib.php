@@ -418,6 +418,8 @@ function forum_cron () {
         $digestposts = get_records('forum_queue');
         if(!empty($digestposts)) {
 
+            @set_time_limit(0);   /// so that script does not get timed out when posting to many users
+
             // We have work to do
             $usermailcount = 0;
             $site = get_site();
@@ -605,18 +607,14 @@ function forum_cron () {
         $USER = $realuser;
     }
 
-    if (($lastreadclean = get_record("config", "name", "forum_lastreadclean"))) {
-        $cleantime = mktime($CFG->forum_cleanreadtime, 0);
+    if (!empty($CFG->forum_lastreadclean)) {
         $timenow = time();
-        if (($timenow > $cleantime) && ($lastreadclean->value+(24*3600) < $timenow)) {
-            $lastreadclean->value = $timenow;
-            update_record("config", $lastreadclean);
+        if ($CFG->forum_lastreadclean + (24*3600) < $timenow) {
+            set_config('forum_lastreadclean', $timenow);
             forum_tp_clean_read_records();
         }
     } else {
-        $lastreadclean->name = 'forum_lastreadclean';
-        $lastreadclean->value = time();
-        insert_record("config", $lastreadclean);
+        set_config('forum_lastreadclean', time());
     }
 
 
