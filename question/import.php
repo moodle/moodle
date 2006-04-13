@@ -31,6 +31,7 @@
     $txt->importerror = get_string('importerror','quiz');
     $txt->importfilearea = get_string('importfilearea','quiz');
     $txt->importfileupload = get_string('importfileupload','quiz');
+    $txt->importfromthisfile = get_string('importfromthisfile','quiz');
     $txt->importquestions = get_string("importquestions", "quiz");
     $txt->matchgrades = get_string('matchgrades','quiz');
     $txt->matchgradeserror = get_string('matchgradeserror','quiz');
@@ -266,7 +267,7 @@
                 <td>&nbsp;</td>
                 <td><?php  button_to_popup_window ("/files/index.php?id={$course->id}&amp;choose=form.choosefile", 
                     "coursefiles", $txt->choosefile, 500, 750, $txt->choosefile); ?>
-                    <input type="submit" name="save" value="<?php echo $txt->uploadthisfile; ?>" /></td>
+                    <input type="submit" name="save" value="<?php echo $txt->importfromthisfile; ?>" /></td>
             </tr>
         </table>
         <?php 
