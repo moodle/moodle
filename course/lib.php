@@ -800,7 +800,8 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
     //Acccessibility: replace table with list <ul>, but don't output empty list.
     if (!empty($section->sequence)) {
 
-        echo "<ul class=\"section\" style=\"width:$width\">\n";
+        // Fix bug #5027, don't want style=\"width:$width\".
+        echo "<ul class=\"section\">\n";
         $sectionmods = explode(",", $section->sequence);
 
         foreach ($sectionmods as $modnumber) {
@@ -891,7 +892,9 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                 echo "</li>\n";
             }
         }
-    }
+    } elseif ($ismoving) {
+        echo "<ul class=\"section\">\n";
+    }    
     if ($ismoving) {
         echo '<li><a title="'.$strmovefull.'"'.
              ' href="'.$CFG->wwwroot.'/course/mod.php?movetosection='.$section->id.'&amp;sesskey='.$USER->sesskey.'">'.
