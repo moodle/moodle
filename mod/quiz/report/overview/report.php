@@ -11,10 +11,6 @@ class quiz_report extends quiz_default_report {
 
     /// Define some strings
         $strreallydel  = addslashes(get_string('deleteattemptcheck','quiz'));
-        $strnoattempts = get_string('noattempts','quiz');
-        $strnoattemptsonly = get_string('shownoattemptsonly', 'quiz');
-        $strattemptsonly = get_string('attemptsonly','quiz');
-        $strbothattempts = get_string('bothattempts','quiz');
         $strtimeformat = get_string('strftimedatetime');
         $strreviewquestion = get_string('reviewresponse', 'quiz');
 
@@ -267,11 +263,15 @@ class quiz_report extends quiz_default_report {
                 $from  = 'FROM '.$CFG->prefix.'user u JOIN '.$CFG->prefix.'user_students us ON us.userid = u.id LEFT JOIN '.$CFG->prefix.'quiz_attempts qa ON u.id = qa.userid AND qa.quiz = '.$quiz->id;
                 $where = " WHERE us.course = '$course->id'";
                 if (empty($noattempts)) {
-                    $where .= ' AND qa.userid IS NOT NULL'; // show ONLY attempts;
+                    $where .= ' AND qa.userid IS NOT NULL'; // show ONLY students with attempts;
                 } elseif ($noattempts == 1) {
                     // noattempts = 1 means only no attempts, so make the left join ask for only records where the right is null (no attempts)
-                    $where .= ' AND qa.userid IS NULL'; // show ONLY no attempts;
-                } // no else, the left join is not filtered, which means we get both back.
+                    $where .= ' AND qa.userid IS NULL'; // show ONLY students without attempts;
+                } elseif ($noattempts == 3) {
+                    // we want all attempts
+                    $from  = 'FROM '.$CFG->prefix.'user u JOIN '.$CFG->prefix.'quiz_attempts qa ON u.id = qa.userid ';
+                    $where = ' WHERE qa.quiz = '.$quiz->id.' AND qa.preview = 0';
+                } // noattempts = 2 means we want all students, with or without attempts
             }
             $countsql = 'SELECT COUNT(DISTINCT('.$db->Concat('u.id', '\'#\'', $db->IfNull('qa.attempt', '0')).')) '.$from.$where;
         } else {
@@ -516,10 +516,11 @@ class quiz_report extends quiz_default_report {
         echo '</tr>';
         echo '<tr align="left">';
         echo '<td colspan="2">';
-        $options = array(0 => $strattemptsonly);
+        $options = array(0 => get_string('attemptsonly','quiz_overview', $course->students));
         if ($course->id != SITEID) {
-            $options[1] = $strnoattemptsonly;
-            $options[2] = $strbothattempts;
+            $options[1] = get_string('noattemptsonly', 'quiz_overview', $course->students);
+            $options[2] = get_string('allstudents','quiz_overview', $course->students);
+            $options[3] = get_string('allattempts','quiz_overview');
         }
         choose_from_menu($options,'noattempts',$noattempts,'');
         echo '</td></tr>';
