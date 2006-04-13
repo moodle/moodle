@@ -237,7 +237,7 @@
         set_moodle_cookie('nobody');   // To help search for cookies
     }
     
-    if (empty($frm->username)) {
+    if (empty($frm->username) && $CFG->auth != 'shibboleth') {  // See bug 5184
         $frm->username = get_moodle_cookie() === 'nobody' ? '' : get_moodle_cookie();
         $frm->password = "";
     }
