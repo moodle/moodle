@@ -4046,10 +4046,29 @@ function error ($message, $link='') {
  * @param string $errorcode The name of the string from error.php to print
  * @param string $link The url where the user will be prompted to continue. If no url is provided the user will be directed to the site index page.
  */
-function print_error ($errorcode, $link='') {
+function print_error ($errorcode, $module='', $link='') {
 
-    $message = get_string($errorcode, 'error').
-               '<p class="code">(<a href="http://docs.moodle.org/en/error/'.$errorcode.'">'.$errorcode.'</a>)</p>';
+    global $CFG;
+
+    if (empty($module) || $module == 'moodle' || $module == 'core') {
+        $module = 'error';
+        $modulelink = 'moodle';
+    } else {
+        $modulelink = $module;
+    }
+
+    if (!empty($CFG->errordocroot)) {
+        $errordocroot = $CFG->errordocroot;
+    } else if (!empty($CFG->docroot)) {
+        $errordocroot = $CFG->docroot;
+    } else {
+        $errordocroot = 'http://docs.moodle.org';
+    }
+
+    $message = '<p class="errormessage">'.get_string($errorcode, $module).'</p>'.
+               '<p class="errorcode">'.
+               '<a href="'.$errordocroot.'/en/error/'.$modulelink.'/'.$errorcode.'">'.
+                 get_string('moreinformation').'</a></p>';
     error($message, $link);
 }
 

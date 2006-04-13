@@ -807,6 +807,7 @@ $string['modulesuccess'] = '$a tables have been set up correctly';
 $string['moodledocslink'] = 'Moodle Docs for this page';
 $string['moodleversion'] = 'Moodle Version';
 $string['more'] = 'more';
+$string['moreinformation'] = 'More information about this error';
 $string['mostrecently'] = 'most recently';
 $string['move'] = 'Move';
 $string['movecategoryto'] = 'Move category to:';

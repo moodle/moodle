@@ -30,7 +30,7 @@
     require_login($course->id);
 
     if (!isteacher($course->id)) {
-        print_error('mustbeteacher',$CFG->wwwroot.'/course/view.php?id='.$course->id);
+        print_error('mustbeteacher', '', $CFG->wwwroot.'/course/view.php?id='.$course->id);
     }
         
     $strparticipation = get_string('participationreport');
@@ -52,7 +52,7 @@
 
     if (!$modules = get_records_sql('SELECT DISTINCT module,name FROM '.$CFG->prefix.'course_modules cm JOIN '.
                                     $CFG->prefix.'modules m ON cm.module = m.id WHERE course = '.$course->id)) {
-        print_error('noparticipatorycms',$CFG->wwwroot.'/course/view.php?id='.$course->id);
+        print_error('noparticipatorycms', '', $CFG->wwwroot.'/course/view.php?id='.$course->id);
     }
 
 
