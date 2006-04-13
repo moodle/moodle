@@ -810,7 +810,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
             $mod = $mods[$modnumber];
 
             if ($mod->visible or $isteacher) {
-                echo '<li class="activity '.$mod->modname.'">'; //'<tr><td class="activity '.$mod->modname.'">';
+                echo '<li class="activity '.$mod->modname.'">';
                 if ($ismoving) {
                     if ($mod->id == $USER->activitycopy) {
                         continue;
@@ -893,7 +893,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
         }
     }
     if ($ismoving) {
-        echo '<li><a title="'.$strmovefull.'"'. //'<tr><td><a title="'.$strmovefull.'"'.
+        echo '<li><a title="'.$strmovefull.'"'.
              ' href="'.$CFG->wwwroot.'/course/mod.php?movetosection='.$section->id.'&amp;sesskey='.$USER->sesskey.'">'.
              '<img class="movetarget" src="'.$CFG->pixpath.'/movehere.gif" '.
              ' alt="'.$strmovehere.'" /></a></li>
