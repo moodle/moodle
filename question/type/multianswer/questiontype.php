@@ -73,7 +73,6 @@ class embedded_cloze_qtype extends default_questiontype {
             $wrapped->name     = $question->name;
             $wrapped->parent   = $question->id;
             $wrapped->category = $question->category;
-            $wrapped->version  = $question->version;
             $wrapped = $QTYPES[$wrapped->qtype]->save_question($wrapped,
              $wrapped, $question->course);
             $sequence[] = $wrapped->id;
