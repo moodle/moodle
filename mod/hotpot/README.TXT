@@ -11,6 +11,7 @@ This is v2.1.15 of the HotPot module
    (see http://www.gnu.org/licenses/gpl.txt for details)
 
    This software is provided "AS IS" without a warranty of any kind.
+
    Sponsors who have generously contributed to the development of this software:
       - Agencia de Gestio d'Ajuts Universitaris i de Recerca (AGAUR), 
         Autonomous Government of Catalonia, Spain
@@ -42,9 +43,11 @@ TO INSTALL OR UPDATE THE HOTPOT MODULE
        into "lang/en/help/hotpot/" on your Moodle site
 
    On Moodle 1.6 and later:
-   (a) download http://cvs.sourceforge.net/viewcvs.py/moodle/moodle/lang/en_utf8/hotpot.php
+   (a) locate the "lang" folder on your Moodle site. 
+       Note: the default location for the "lang" folder is in the "$CFG->dataroot" directory defined in the config.php file for your Moodle site
+   (b) download http://cvs.sourceforge.net/viewcvs.py/moodle/moodle/lang/en_utf8/hotpot.php
        to "lang/en_utf8/hotpot.php" on your Moodle site
-   (b) download the files in http://cvs.sourceforge.net/viewcvs.py/moodle/moodle/lang/en_utf8/help/hotpot/
+   (c) download the files in http://cvs.sourceforge.net/viewcvs.py/moodle/moodle/lang/en_utf8/help/hotpot/
        into "lang/en_utf8/help/hotpot/" on your Moodle site
 
 3. copy and set up the file icons
