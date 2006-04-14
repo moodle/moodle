@@ -99,7 +99,7 @@
             print_header($strlicense, $strlicense, $strlicense, "", "", false, "&nbsp;", "&nbsp;");
             print_heading("<a href=\"http://moodle.org\">Moodle</a> - Modular Object-Oriented Dynamic Learning Environment");
             print_heading(get_string("copyrightnotice"));
-            print_simple_box_start("center", '80%');
+            print_simple_box_start('center');
             echo text_to_html(get_string("gpl"));
             print_simple_box_end();
             echo "<br />";
