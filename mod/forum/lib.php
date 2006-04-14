@@ -1140,7 +1140,7 @@ function forum_search_posts($searchterms, $courseid, $page=0, $recordsperpage=50
     }
 
     $timelimit = '';
-    if (!((isadmin() and !empty($CFG->admineditalways)) || isteacher($courseid))) {
+    if (!empty($CFG->forum_enabletimedposts) && (!((isadmin() and !empty($CFG->admineditalways)) || isteacher($courseid)))) {
         $now = time();
         $timelimit = " AND (d.userid = $USER->id OR ((d.timestart = 0 OR d.timestart <= $now) AND (d.timeend = 0 OR d.timeend > $now)))";
     }

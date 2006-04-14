@@ -113,8 +113,10 @@ if (!isset($discussion->timeend)) {
 <?php } ?>
 
 
-<?php if ($forum->type == 'news' && !$post->parent) {  //  This is the first post of a discussion in news forum  ?>
-
+<?php if (!empty($CFG->forum_enabletimedposts) && 
+    isteacher($course->id) && $forum->type == 'news' && !$post->parent) {  
+   //  This is the first post of a discussion in news forum 
+ ?>
 <tr valign="top">
     <td align="right"><b><?php print_string("displayperiod", "forum") ?>:<br />(<?php print_string("optional") ?>)&nbsp;</b></td>
     <td>
@@ -145,9 +147,10 @@ if (!isset($discussion->timeend)) {
     </td>
 </tr>
 
-<?php } ?>
-
-
+<?php } else { ?>
+<input type="hidden" name="timestartdisabled" value="1" />
+<input type="hidden" name="timeenddisabled" value="1" />
+<? } ?>
 <tr>
     <td align="center" colspan="2">
     <input type="hidden" name="course"     value="<?php p($post->course) ?>" />
