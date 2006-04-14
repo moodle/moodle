@@ -77,6 +77,10 @@ if (empty($USER->id) or isguest()) {
     $CFG->forum_trackreadposts = false;  // This feature never works when a user isn't logged in
 }
 
+if (!isset($CFG->forum_enabletimedposts)) {   // Newish feature that is not quite ready for production in 1.6
+    $CFG->forum_enabletimedposts = false;
+}
+
 
 /// STANDARD FUNCTIONS ///////////////////////////////////////////////////////////
 
@@ -1379,15 +1383,17 @@ function forum_get_discussions($forum="0", $forumsort="d.timemodified DESC",
 /// Get all discussions in a forum
     global $CFG, $USER;
 
-    if ((isadmin() and !empty($CFG->admineditalways)) || isteacher(get_field('forum', 'course', 'id', $forum))) {
-        $timelimit = '';
-    } else {
-        $now = time();
-        $timelimit = " AND ((d.timestart = 0 OR d.timestart <= '$now') AND (d.timeend = 0 OR d.timeend > '$now')";
-        if (!empty($USER->id)) {
-            $timelimit .= " OR d.userid = '$USER->id'";
+    $timelimit = '';
+
+    if (!empty($CFG->forum_enabletimedposts)) {
+        if (!((isadmin() and !empty($CFG->admineditalways)) || isteacher(get_field('forum', 'course', 'id', $forum)))) {
+            $now = time();
+            $timelimit = " AND ((d.timestart = 0 OR d.timestart <= '$now') AND (d.timeend = 0 OR d.timeend > '$now')";
+            if (!empty($USER->id)) {
+                $timelimit .= " OR d.userid = '$USER->id'";
+            }
+            $timelimit .= ')';
         }
-        $timelimit .= ')';
     }
 
     if ($user) {
