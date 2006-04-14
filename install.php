@@ -294,13 +294,29 @@ if ($INSTALL['stage'] == DATABASE) {
                         if ($rs && $rs->RecordCount() > 0) {
                             $records = $rs->GetAssoc(true);
                             $encoding = $records['character_set_database']['Value'];
-                            if (strtoupper($encoding) != 'UTF8') {
-                                $errormsg = get_string('dbwrongencoding', 'install', $encoding);
-                                $nextstage = DATABASE;
-                                $INSTALL['showskipdbencodingtest'] = true;
-                                $INSTALL['dbencodingtestresults'] = false;
-                            } else {
+                            if (strtoupper($encoding) == 'UTF8') {
                                 $INSTALL['dbencodingtestresults'] = true;
+                            } else {
+                                // Try to set the encoding now!
+                                if (! $db->Metatables()) {  // We have no tables so go ahead
+                                    $db->Execute("ALTER DATABASE `".$INSTALL['dbname']."` DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci");
+                                    $rs = $db->Execute("SHOW VARIABLES LIKE 'character_set_database'");  // this works
+
+                                    $records = $rs->GetAssoc(true);
+                                    $encoding = $records['character_set_database']['Value'];
+
+                                    if (strtoupper($encoding) == 'UTF8') {
+                                        $INSTALL['dbencodingtestresults'] = true;
+                                    } else {
+                                        $errormsg = get_string('dbwrongencoding', 'install', $encoding);
+                                        $nextstage = DATABASE;
+                                        $INSTALL['showskipdbencodingtest'] = true;
+                                        $INSTALL['dbencodingtestresults'] = false;
+                                    } 
+                                } else {
+                                    $INSTALL['showskipdbencodingtest'] = true;
+                                    $INSTALL['dbencodingtestresults'] = false;
+                                }
                             }
                         }
                         break;
