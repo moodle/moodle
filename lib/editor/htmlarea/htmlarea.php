@@ -1470,15 +1470,26 @@ HTMLArea.prototype._createLink = function(link) {
                     a = range.startContainer;
                     if (!/^a$/i.test(a.tagName)) {
                         a = a.nextSibling;
+                        if ( a == null ) {
+                            a = range.startContainer.parentNode;
+                        }
                     }
                 } catch (e) {
                         alert("Send this message to bug tracker: " + e);
                 }
             }
         } else {
-            a.href = param.f_href.trim();
+            var href = param.f_href.trim();
+            editor.selectNodeContents(a);
+            if (href == "") {
+                editor._doc.execCommand("unlink", false, null);
+                editor.updateToolbar();
+                return false;
+            } else {
+                a.href = href;
+            }
         }
-        if (!/^a$/i.test(a.tagName)) {
+        if (!(a && /^a$/i.test(a.tagName))) {
             return false;
         }
         a.target = param.f_target.trim();
