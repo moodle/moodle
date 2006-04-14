@@ -158,7 +158,7 @@
         $items = array();
 
         if ($newsince) {
-            $newsince = " AND p.created > '$newsince'";
+            $newsince = " AND p.modified > '$newsince'";
         } else {
             $newsince = "";
         }
@@ -218,7 +218,7 @@
         $items = array();
 
         if ($newsince) {
-            $newsince = " AND p.created > '$newsince'";
+            $newsince = " AND p.modified > '$newsince'";
         } else {
             $newsince = "";
         }
