@@ -188,7 +188,7 @@
     } else {
 
         if ($search != '') {
-            echo "<p align=\"center\">($strsearchresults : ".s($search).")</p>";
+            echo "<p align=\"center\">($strsearchresults : ".s($search, true).")</p>";
         }
 
         if (!$users = get_users(true, $search, true, $teacherlist)) {

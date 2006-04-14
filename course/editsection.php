@@ -41,9 +41,11 @@
 
     if (empty($form)) {
         $form = $section;
+    } else {
+        $form = stripslashes_safe($form);
     }
 
-    $form->sesskey = !empty($USER->id) ? $USER->sesskey : '';
+    // !! no db access using data from $form beyond this point !!
 
     $usehtmleditor = can_use_html_editor();
 

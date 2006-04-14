@@ -130,7 +130,7 @@
  
 
     print_header("$site->fullname : $strsearchresults", $site->fullname, 
-                 "<a href=\"index.php\">$strcourses</a> -> <a href=\"search.php\">$strsearch</a> -> '".s($search)."'", "", "", "", $searchform);
+                 "<a href=\"index.php\">$strcourses</a> -> <a href=\"search.php\">$strsearch</a> -> '".s($search, true)."'", "", "", "", $searchform);
 
 
     $lastcategory = -1;

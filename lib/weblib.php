@@ -3538,10 +3538,10 @@ function update_categories_search_button($search,$page,$perpage) {
         return "<form target=\"$CFG->framename\" method=\"get\" action=\"$CFG->wwwroot/course/search.php\">".
                "<input type=\"hidden\" name=\"edit\" value=\"$edit\" />".
                "<input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\" />".
-               "<input type=\"hidden\" name=\"search\" value=\"$search\" />".
+               "<input type=\"hidden\" name=\"search\" value=\"".s($search, true)."\" />".
                "<input type=\"hidden\" name=\"page\" value=\"$page\" />".
                "<input type=\"hidden\" name=\"perpage\" value=\"$perpage\" />".
-               "<input type=\"submit\" value=\"$string\" /></form>";
+               "<input type=\"submit\" value=\"".s($string)."\" /></form>";
     }
 }
 

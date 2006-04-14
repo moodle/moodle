@@ -75,8 +75,6 @@
 
     $usehtmleditor = false;
 
-    $sesskey = !empty($USER->id) ? $USER->sesskey : '';
-
     include('group-edit.html');
 
     echo "</body></html>";

@@ -208,7 +208,11 @@
                 $form->students = get_string("defaultcoursestudents");
             }
         }
+    } else {
+        $form = stripslashes_safe($form);
     }
+
+    // !! no db access using data from $form beyond this point !!
 
     $form->categories = get_records_select_menu("course_categories", "", "name", "id,name");
 
