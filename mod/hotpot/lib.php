@@ -2165,45 +2165,6 @@ if (!isset($CFG->pixpath)) {
 	$CFG->pixpath = "$CFG->wwwroot/pix";
 }
 
-if (!defined('PARAM_RAW')) define('PARAM_RAW', 0x0000);
-if (!defined('PARAM_INT'))  define('PARAM_INT', 0x0002);
-if (!defined('PARAM_CLEAN')) define('PARAM_CLEAN', 0x0001);
-if (!defined('PARAM_ALPHA')) define('PARAM_ALPHA', 0x0004);
-if (!defined('PARAM_ALPHANUM')) define('PARAM_ALPHANUM', 0x0400);
-if (!defined('PARAM_SAFEDIR')) define('PARAM_SAFEDIR', 0x4000);
-
-if (!function_exists('required_param')) {
-	// add this function for Moodle version<1.4.2
-	function required_param($varname, $options=PARAM_RAW) {
-		if (isset($_POST[$varname])) {
-			$param = $_POST[$varname];
-		} else if (isset($_GET[$varname])) {
-			$param = $_GET[$varname];
-		} else { // missing
-			error('A required parameter ('.$varname.') was missing');
-		}
-		return $param;
-	}
-}
-if (!function_exists('optional_param')) {
-	// add this function for Moodle version<1.4.2
-	function optional_param($varname, $default=NULL, $options=PARAM_RAW) {
-		if (isset($_POST[$varname])) {
-			$param = $_POST[$varname];
-		} else if (isset($_GET[$varname])) {
-			$param = $_GET[$varname];
-		} else {
-			$param = $default;
-		}
-		return $param;
-	}
-}
-if (!function_exists('clean_param')) {
-	// add this function for Moodle 1.3 and less
-	function clean_param($param, $type) {
-		return $param;
-	}
-}
 if (!function_exists('fullname')) {
 	// add this function for Moodle 1.x
 	function fullname($user) {
