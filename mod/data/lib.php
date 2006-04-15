@@ -1106,6 +1106,8 @@ function data_get_ratings($recordid, $sort="u.firstname ASC") {
 //prints all comments + a text box for adding additional comment
 function data_print_comments($data, $record, $page=0) {
 
+    global $CFG;
+
     echo '<a name="comments"></a>';
 
     if ($comments = get_records('data_comments','recordid',$record->id)) {

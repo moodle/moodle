@@ -229,7 +229,7 @@
                             'view.php?d='.$data->id);
 
                     $records[] = $deleterecord;
-                    data_print_template('singletemplate', $records, $data);
+                    echo data_print_template('singletemplate', $records, $data, '', 0, true);
 
                     print_footer($course);
                     exit;
@@ -417,6 +417,7 @@
 
             if (empty($data->singletemplate)){
                 notify(get_string('nosingletemplate','data'));
+                data_generate_default_template($data, 'singletemplate', 0, false, false);
             }
 
             data_print_template('singletemplate', $records, $data, $search, $page);
@@ -430,6 +431,7 @@
 
             if (empty($data->listtemplate)){
                 notify(get_string('nolisttemplate','data'));
+                data_generate_default_template($data, 'listtemplate', 0, false, false);
             }
             echo $data->listtemplateheader;
             data_print_template('listtemplate', $records, $data, $search, $page);
