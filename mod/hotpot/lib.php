@@ -1638,42 +1638,42 @@ class hotpot_xml_quiz extends hotpot_xml_tree {
 			include_once "$CFG->dirroot/filter/mediaplugin/filter.php";
 
 			// exclude swf files from the filter
-			$CFG->filter_mediaplugin_ignore_swf = true;
+			//$CFG->filter_mediaplugin_ignore_swf = true;
 
-			$s = '\s+'; // at least one space
-			$n = '[^>]*'; // any character inside a tag
 			$q = '["'."']?"; // single, double, or no quote
-			$Q = '[^"'."' >]*"; // any charater inside a quoted string
 
 			// patterns to media files types and paths
-			$filetype = "avi|mpeg|mpg|mp3|mov|wmv";
-			$filepath = "$Q\.($filetype)";
+			$filetype = "avi|mpeg|mpg|mp3|mov|swf|wmv";
+			$filepath = ".*?\.($filetype)";
 
-			// pattern to match <param> tags which contain the file path
-			//	wmp		: url
+			$tagopen = '(?:(<)|(\\\\u003C))'; // left angle-bracket (uses two parenthese)
+			$tagclose = '(?(1)>|(?(2)\\\\u003E))'; // right angle-bracket (to match the left one)
+			$tagreopen = '(?(1)<|(?(2)\\\\u003C))'; // another left angle-bracket (to match the first one)
+
+			// pattern to match <PARAM> tags which contain the file path
+			//	wmp	     : url
 			//	quicktime  : src
 			//	realplayer : src
-			//	flash	  : movie (doesn't need replacing)
-			$param_url = "/<param$s{$n}name=$q(src|url)$q$s{$n}value=$q($filepath)$q$n>/is";
+			//	flash      : movie (doesn't need replacing)
+			$param_url = "/{$tagopen}PARAM\s+.*?NAME=$q(?:movie|src|url)$q\s+.*?VALUE=$q($filepath)$q.*?$tagclose/is";
 
-			// pattern to match <a> tags which link to multimedia files (not swf)
-			$link_url = "/<a$s{$n}href=$q($filepath)$q$n>(.*?)<\/a>/is";
+			// pattern to match <a> tags which link to multimedia files
+			$link_url = "/{$tagopen}A\s.*?HREF=$q($filepath)$q.*?$tagclose.*?$tagreopen\/A$tagclose/is";
 
-			// extract <object> tags
-			preg_match_all("|<object$n>(.*?)</object>|is", $this->html, $objects);
+			// extract <OBJECT> tags
+			preg_match_all("/{$tagopen}OBJECT\s+.*?{$tagclose}(.*?){$tagreopen}\/OBJECT{$tagclose}/is", $this->html, $objects);
 
 			$i_max = count($objects[0]);
 			for ($i=0; $i<$i_max; $i++) {
 
+				// extract URL from <PARAM> or <A> 
 				$url = '';
-				if (preg_match($param_url, $objects[1][$i], $matches)) {
-					$url = $matches[2];
-				} else if (preg_match($link_url, $objects[1][$i], $matches)) {
-					$url = $matches[1];
+				if (preg_match($param_url, $objects[3][$i], $matches) || preg_match($link_url, $objects[3][$i], $matches)) {
+					$url = $matches[3];
 				}
 
 				if ($url) {
-					$txt = trim(strip_tags($objects[1][$i]));
+					$txt = preg_replace("/$tagopen.*?$tagclose/", '', $objects[3][$i]);
 
 					// if url is in the query string, remove the leading characters
 					$url = preg_replace('/^[^?]*\?([^=]+=[^&]*&)*[^=]+=([^&]*)$/', '$2', $url, 1);
