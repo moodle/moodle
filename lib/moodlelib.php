@@ -4932,7 +4932,7 @@ function get_list_of_languages() {
         $langlist = explode(',', $CFG->langlist);
         foreach ($langlist as $lang) {
             $lang = trim($lang);   //Just trim spaces to be a bit more permissive
-            if (strstr('_local',$lang)!==false) {
+            if (strstr($lang, '_local')!==false) {
                 continue;
             }
             if (substr($lang, -5) == '_utf8') {   //Remove the _utf8 suffix from the lang to show
@@ -4980,7 +4980,7 @@ function get_list_of_languages() {
         asort($langdirs);
     /// Get some info from each lang (first from moodledata, then from moodle)
         foreach ($langdirs as $lang) {
-            if (strstr('_local',$lang)!==false) {
+            if (strstr($lang, '_local')!==false) {
                 continue;
             }
             if (substr($lang, -5) == '_utf8') {   //Remove the _utf8 suffix from the lang to show
