@@ -57,7 +57,7 @@
         if ( !$confirm ) {
             echo '<center>';
             $areyousure = get_string('areyousureexport','glossary');
-            notice_yesno ('<center><h2>'.$entry->concept.'</h2><p align="center">'.$areyousure.'<br /><b>'.format_string($mainglossary->name).'</b>?',
+            notice_yesno ('<center><h2>'.format_string($entry->concept).'</h2><p align="center">'.$areyousure.'<br /><b>'.format_string($mainglossary->name).'</b>?',
                 'exportentry.php?id='.$id.'&amp;mode='.$mode.'&amp;hook='.$hook.'&amp;entry='.$entry->id.'&amp;confirm=1',
                 'view.php?id='.$cm->id.'&amp;mode='.$mode.'&amp;hook='.$hook);
 
