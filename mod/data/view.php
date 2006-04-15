@@ -186,7 +186,7 @@
         echo '<div style="clear:both;"></div>';
     }
     
-    if ($data->intro and empty($page) and empty($record)) {
+    if ($data->intro and empty($page) and empty($record) and $mode != 'single') {
         print_simple_box(format_text($data->intro), 'center', '70%', '', 5, 'generalbox', 'intro');
     }
 
