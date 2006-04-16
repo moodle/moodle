@@ -67,7 +67,7 @@
     header('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT');
     header('Cache-Control: no-cache, must-revalidate');
     header('Pragma: no-cache');
-    header('Content-Type: text/html');
+    header('Content-Type: text/html; charset='.current_charset());
     header("Refresh: $CFG->chat_refresh_room; url=$refreshurl");
 
     /// required stylesheets
