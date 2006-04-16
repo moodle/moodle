@@ -4859,6 +4859,11 @@ function page_doc_link($text='', $iconpath='') {
 
     $path = str_replace($CFG->httpswwwroot.'/','', $CFG->pagepath);  // Because the page could be HTTPSPAGEREQUIRED
     $path = str_replace('.php', '', $path);
+
+    if (empty($path)) {   // Not for home page
+        return '';
+    }
+
     $lang = str_replace('_utf8', '', current_language());
 
     $str = '<a href="' .$CFG->docroot. '/' .$lang. '/' .$path. '">';
