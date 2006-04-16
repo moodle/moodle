@@ -1640,10 +1640,11 @@ class hotpot_xml_quiz extends hotpot_xml_tree {
 			// exclude swf files from the filter
 			//$CFG->filter_mediaplugin_ignore_swf = true;
 
-			$q = '["'."']?"; // single, double, or no quote
+			$space = '\s(?:.+\s)?';
+			$quote = '["'."']?"; // single, double, or no quote
 
 			// patterns to media files types and paths
-			$filetype = "avi|mpeg|mpg|mp3|mov|swf|wmv";
+			$filetype = "avi|mpeg|mpg|mp3|mov|wmv";
 			$filepath = ".*?\.($filetype)";
 
 			$tagopen = '(?:(<)|(\\\\u003C))'; // left angle-bracket (uses two parenthese)
@@ -1651,17 +1652,17 @@ class hotpot_xml_quiz extends hotpot_xml_tree {
 			$tagreopen = '(?(1)<|(?(2)\\\\u003C))'; // another left angle-bracket (to match the first one)
 
 			// pattern to match <PARAM> tags which contain the file path
-			//	wmp	     : url
+			//	wmp        : url
 			//	quicktime  : src
 			//	realplayer : src
 			//	flash      : movie (doesn't need replacing)
-			$param_url = "/{$tagopen}PARAM\s+.*?NAME=$q(?:movie|src|url)$q\s+.*?VALUE=$q($filepath)$q.*?$tagclose/is";
+			$param_url = "/{$tagopen}param{$space}name=$quote(?:movie|src|url)$quote{$space}value=$quote($filepath)$quote.*?$tagclose/is";
 
 			// pattern to match <a> tags which link to multimedia files
-			$link_url = "/{$tagopen}A\s.*?HREF=$q($filepath)$q.*?$tagclose.*?$tagreopen\/A$tagclose/is";
+			$link_url = "/{$tagopen}a{$space}href=$quote($filepath)$quote.*?$tagclose.*?$tagreopen\/A$tagclose/is";
 
-			// extract <OBJECT> tags
-			preg_match_all("/{$tagopen}OBJECT\s+.*?{$tagclose}(.*?){$tagreopen}\/OBJECT{$tagclose}/is", $this->html, $objects);
+			// extract <object> tags
+			preg_match_all("/{$tagopen}object\s.*?{$tagclose}(.*?){$tagreopen}\/object{$tagclose}/is", $this->html, $objects);
 
 			$i_max = count($objects[0]);
 			for ($i=0; $i<$i_max; $i++) {
@@ -1673,6 +1674,7 @@ class hotpot_xml_quiz extends hotpot_xml_tree {
 				}
 
 				if ($url) {
+					// strip inner tags (e.g. <embed>)
 					$txt = preg_replace("/$tagopen.*?$tagclose/", '', $objects[3][$i]);
 
 					// if url is in the query string, remove the leading characters
