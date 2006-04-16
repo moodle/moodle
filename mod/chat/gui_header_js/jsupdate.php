@@ -67,7 +67,7 @@
     header('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT');
     header('Cache-Control: no-cache, must-revalidate');
     header('Pragma: no-cache');
-    header('Content-Type: text/html');
+    header('Content-Type: text/html; charset='.current_charset());
     header("Refresh: $CFG->chat_refresh_room; url=$refreshurl");
 
     /// required stylesheets
@@ -80,7 +80,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
     <head>
-        <meta http-equiv="content-type" content="text/html; charset=<?php echo get_string('thischarset'); ?>" />
+        <meta http-equiv="content-type" content="text/html; charset=<?php echo current_charset(); ?>" />
         <script type="text/javascript">
         <!--
         if (parent.msg.document.getElementById("msgStarted") == null) {
