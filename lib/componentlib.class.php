@@ -520,4 +520,3 @@ class component_installer {
 } /// End of component_installer class
 
 ?>
-
