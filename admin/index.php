@@ -104,7 +104,7 @@
             print_simple_box_end();
             echo "<br />";
             notice_yesno(get_string("doyouagree"), "index.php?agreelicence=true",
-                                                   "http://moodle.org/doc/?frame=licence.html");
+                                                   "http://docs.moodle.org/en/License");
             exit;
         }
 
