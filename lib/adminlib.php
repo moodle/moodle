@@ -76,21 +76,41 @@ function upgrade_plugins($type, $dir, $return) {
                 print_header($strpluginsetup, $strpluginsetup, $strpluginsetup, '', '', false, '&nbsp;', '&nbsp;');
             }
             print_heading($plugin->name .' plugin needs upgrading');
-            $upgrade_function = $type.'_'.$plugin->name .'_upgrade';
-            if (function_exists($upgrade_function)) {
-                $db->debug=true;
-                if ($upgrade_function($CFG->$pluginversion)) {
-                    $db->debug=false;
-                    // OK so far, now update the plugins record
+
+            if ($CFG->$pluginversion == 0) {    // It's a new install of this plugin
+                if (file_exists($fullplug .'/db/'. $CFG->dbtype .'.sql')) {
+                    $db->debug = true;
+                    @set_time_limit(0);  // To allow slow databases to complete the long SQL
+                    if (modify_database($fullplug .'/db/'. $CFG->dbtype .'.sql')) {
+                        // OK so far, now update the plugins record
+                        set_config($pluginversion, $plugin->version);
+                        notify(get_string('modulesuccess', '', $plugin->name), 'notifysuccess');
+                    } else {
+                        notify('Installing '. $plugin->name .' FAILED!');
+                    }
+                    $db->debug = false;
+                } else {    // We'll assume no tables are necessary
                     set_config($pluginversion, $plugin->version);
                     notify(get_string('modulesuccess', '', $plugin->name), 'notifysuccess');
-                    echo '<hr />';
-                } else {
-                    $db->debug=false;
-                    notify('Upgrading '. $plugin->name .' from '. $CFG->$pluginversion .' to '. $plugin->version .' FAILED!');
+                }
+            } else {                            // Upgrade existing install
+                $upgrade_function = $type.'_'.$plugin->name .'_upgrade';
+                if (function_exists($upgrade_function)) {
+                    $db->debug=true;
+                    if ($upgrade_function($CFG->$pluginversion)) {
+                        $db->debug=false;
+                        // OK so far, now update the plugins record
+                        set_config($pluginversion, $plugin->version);
+                        notify(get_string('modulesuccess', '', $plugin->name), 'notifysuccess');
+                    } else {
+                        $db->debug=false;
+                        notify('Upgrading '. $plugin->name .' from '. $CFG->$pluginversion .' to '. $plugin->version .' FAILED!');
+                    }
                 }
             }
+            echo '<hr />';
             $updated_plugins = true;
+
         } else {
             error('Version mismatch: '. $plugin->name .' can\'t downgrade '. $CFG->$pluginversion .' -> '. $plugin->version .' !');
         }

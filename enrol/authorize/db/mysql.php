@@ -8,17 +8,6 @@ function enrol_authorize_upgrade($oldversion=0) {
 
     $result = true;
 
-    if (!$tables = $db->MetaColumns($CFG->prefix . 'enrol_authorize')) {
-        $installfirst = true;
-    }
-
-    if ($oldversion == 0 || !empty($installfirst)) { // First time install
-        $result = modify_database("$CFG->dirroot/enrol/authorize/db/mysql.sql");
-        return $result; // RETURN, sql file contains last upgrades.
-    }
-
-    // Authorize module was installed before. Upgrades must be applied to SQL file.
-
     if ($oldversion < 2005071600) {
         // Be sure, only last 4 digit is inserted.
         table_column('enrol_authorize', 'cclastfour', 'cclastfour', 'integer', '4', 'unsigned', '0', 'not null');

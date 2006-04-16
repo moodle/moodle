@@ -8,10 +8,6 @@ function enrol_paypal_upgrade($oldversion=0) {
 
     $result = true;
 
-    if ($oldversion == 0) {
-        modify_database("$CFG->dirroot/enrol/paypal/db/mysql.sql");
-    }
-
     return $result;
 
 }

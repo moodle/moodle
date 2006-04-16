@@ -179,11 +179,7 @@
         print_header($strcurrentversion, $stradministration, $strcurrentversion,
                      "", "", false, "&nbsp;", "&nbsp;");
 
-        if (set_config("version", $version)) {
-            print_heading("Moodle $release ($version)");
-            print_continue("index.php");
-            die;
-        } else {
+        if (!set_config("version", $version)) {
             $db->debug=true;
             if (main_upgrade(0)) {
                 print_continue("index.php");
