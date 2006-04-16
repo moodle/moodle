@@ -76,6 +76,10 @@ if ( empty($INSTALL['language']) and empty($_POST['language']) ) {
 
 //==========================================================================//
 
+/// Set the page to Unicode always
+
+header('Content-Type: text/html; charset=UTF-8');
+
 /// Was data submitted?
 
 if (isset($_POST['stage'])) {
@@ -509,14 +513,11 @@ if ($nextstage == SAVE) {
 //==========================================================================//
 
 ?>
-
-
-
 <html dir="<?php echo (get_string('this_direction') == 'rtl') ? 'rtl' : 'ltr' ?>">
 <head>
 <link rel="shortcut icon" href="theme/standard/favicon.ico" />
 <title>Moodle Install</title>
-<meta http-equiv="content-type" content="text/html; charset=<?php p(current_charset()) ?>" />
+<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 <?php css_styles() ?>
 
 </head>
