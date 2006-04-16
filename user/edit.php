@@ -314,26 +314,17 @@
     }
 
 
-/// Print tabs at top
-/// This same call is made in:
-///     /user/view.php
-///     /user/edit.php
-///     /course/user.php
-    $currenttab = 'editprofile';
-    include('tabs.php');
-
-    
-
-    $teacher = strtolower($course->teacher);
-    if (!isadmin()) {
-        $teacheronly = "(".get_string("teacheronly", "", $teacher).")";
-    } else {
-        $teacheronly = "";
-    }
-
     if (isset($USER->newadminuser)) {
-        print_simple_box(get_string("configintroadmin", 'admin'), "center", "50%");
-        echo "<br />";
+        print_simple_box(get_string('configintroadmin', 'admin'), 'center', '50%');
+        echo '<br />';
+    } else {
+        /// Print tabs at top
+        /// This same call is made in:
+        ///     /user/view.php
+        ///     /user/edit.php
+        ///     /course/user.php
+        $currenttab = 'editprofile';
+        include('tabs.php');
     }
 
     print_simple_box_start("center");
@@ -342,6 +333,13 @@
         echo "<center>";
         notify(get_string("someerrorswerefound"));
         echo "</center>";
+    }
+
+    $teacher = strtolower($course->teacher);
+    if (!isadmin()) {
+        $teacheronly = '('.get_string('teacheronly', '', $teacher).')';
+    } else {
+        $teacheronly = '';
     }
 
     include("edit.html");
