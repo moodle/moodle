@@ -21,8 +21,13 @@
             $CFG->coursetheme = $course->theme;
         }
     }
-    //Get the user theme
-    $USER = get_record('user','id',$chatuser->userid,'','','','','id, theme');
+
+    //Get the user theme and enough info to be used in chat_format_message() which passes it along to
+    // chat_format_message_manually() -- and only id and timezone are used.
+    if (!$USER = get_record('user','id',$chatuser->userid,'','','','','id, theme, username, timezone')) {
+        error('User does not exist!');
+    }
+    $USER->description = '';
 
     //Adjust the prefered theme (main, course, user)
     theme_setup();
@@ -104,16 +109,9 @@
         $us = array ();
         if (($chat_lasttime != $chat_newlasttime) and $messages) {
 
-            // $currentuser is only used in chat_format_message() which passes it along to
-            // chat_format_message_manually() -- and only id and timezone are used.
-            if (!$currentuser = get_record('user', 'id', $chatuser->userid, '','', '','', 'id, username, timezone')) {
-                error('User does not exist!');
-            }
-            $currentuser->description = '';
-
             foreach ($messages as $message) {
                 $chat_lastrow = ($chat_lastrow + 1) % 2;
-                $formatmessage = chat_format_message($message, $chatuser->course, $currentuser, $chat_lastrow);
+                $formatmessage = chat_format_message($message, $chatuser->course, $USER, $chat_lastrow);
                 if ($formatmessage->beep) {
                      $beep = true;
                 }
