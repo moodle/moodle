@@ -14,7 +14,7 @@
         error('No chat found');
     }
 
-    if (!$course = get_record('course', 'id', $chat->course)) {
+    if (!$course = get_record('course', 'id', $chat->course, '', '', '','', 'id, shortname')) {
         error('Could not find the course this belongs to!');
     }
 

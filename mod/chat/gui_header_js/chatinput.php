@@ -44,13 +44,13 @@
     print_header('', '', '', 'inputForm.chat_message', $meta, false);
 
 ?>
-    <form action="../empty.php" method="GET" target="empty" name="inputForm"
+    <form action="../empty.php" method="POST" target="empty" name="inputForm"
           OnSubmit="return empty_field_and_submit()">
         &gt;&gt;<input type="text" name="chat_message" size="60" value="" />
         <?php helpbutton('chatting', get_string('helpchatting', 'chat'), 'chat', true, false); ?>
     </form>
 
-    <form action="insert.php" method="GET" target="empty" name="sendForm">
+    <form action="insert.php" method="POST" target="empty" name="sendForm">
         <input type="hidden" name="chat_sid" value="<?php echo $chat_sid ?>" />
         <input type="hidden" name="chat_message" />
     </form>

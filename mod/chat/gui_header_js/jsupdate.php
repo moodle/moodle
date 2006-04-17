@@ -99,7 +99,9 @@
         $us = array ();
         if (($chat_lasttime != $chat_newlasttime) and $messages) {
 
-            if (!$currentuser = get_record('user', 'id', $chatuser->userid)) {
+            // $currentuser is only used in chat_format_message() which passes it along to
+            // chat_format_message_manually() -- and only id and timezone are used.
+            if (!$currentuser = get_record('user', 'id', $chatuser->userid, '','', '','', 'id, username, timezone')) {
                 error('User does not exist!');
             }
             $currentuser->description = '';
@@ -119,7 +121,7 @@
         }
 
         $chatuser->lastping = time();
-        update_record('chat_users', $chatuser);
+        set_field('chat_users', 'lastping', $chatuser->lastping, 'sid', $chatuser->sid );
 
         if ($refreshusers) {
             echo "if (parent.users.document.anchors[0] != null) {" .
