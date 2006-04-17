@@ -99,6 +99,10 @@
 
     /// Print headers
     $meta = ob_get_clean();
+
+
+    // Use ob to support Keep-Alive
+    ob_start();
     print_header('', '', '', '', $meta, false, '', '', false, 'onload="start()" onunload="stop()"');
 
 
@@ -129,4 +133,11 @@
         echo '<td></tr>';
     }
     echo '</table></body></html>';
+
+    // support HTTP Keep-Alive
+    header("Content-Length: " . ob_get_length() );
+    ob_end_flush();
+    exit; // no further output
+
+
 ?>
