@@ -61,7 +61,8 @@
 
     $chat_newrow = ($chat_lastrow + $num) % 2;
 
-    $refreshurl = "jsupdate.php?chat_sid=$chat_sid&chat_lasttime=$chat_newlasttime&chat_lastrow=$chat_newrow"; // no &amp; in url, does not work in header!
+    // no &amp; in url, does not work in header!
+    $refreshurl = "{$CFG->wwwroot}/mod/chat/gui_header_js/jsupdate.php?chat_sid=$chat_sid&chat_lasttime=$chat_newlasttime&chat_lastrow=$chat_newrow"; 
 
     header('Expires: Sun, 28 Dec 1997 09:32:45 GMT');
     header('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT');
@@ -75,6 +76,10 @@
     foreach ($CFG->stylesheets as $stylesheet) {
         $stylesheetshtml .= '<link rel=\\"stylesheet\\" type=\\"text/css\\" href=\\"'.$stylesheet.'\\" />';
     }
+
+    // use ob to be able to send Content-Length headers
+    // needed for Keep-Alive to work
+    ob_start();
 
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -151,3 +156,12 @@
        <a href="<?php echo $refreshurl ?>" name="refreshLink">Refresh link</a>
     </body>
 </html>
+<?php
+
+// support HTTP Keep-Alive
+header("Content-Length: " . ob_get_length() );
+ob_end_flush(); 
+exit;
+
+
+?>
