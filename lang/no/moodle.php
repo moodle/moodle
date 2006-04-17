@@ -806,7 +806,6 @@ $string['pageheaderconfigablock'] = 'Setter opp en boks på %%fullname%%';
 $string['parentcoursenotfound'] = 'Overordnet klasse ble ikke funnet.';
 $string['parentcoursenotmetacourse'] = 'Ovrordnet klasse er ikke en metaklasse.';
 $string['parentfolder'] = 'Overordnet mappe';
-$string['parentlanguage'] = 'Overordnet reservespråk';
 $string['participants'] = 'Deltagere';
 $string['password'] = 'Passord';
 $string['passwordchanged'] = 'Passordet er endret';

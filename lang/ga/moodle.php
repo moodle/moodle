@@ -655,7 +655,6 @@ $string['order'] = 'Ord';
 $string['other'] = 'Eile';
 $string['outline'] = 'Imlíne';
 $string['page'] = 'Leathanach';
-$string['parentlanguage'] = '';
 $string['participants'] = 'Rannpháirtithe';
 $string['password'] = 'Pasfhocal';
 $string['passwordchanged'] = 'Athraíodh an pasfhocal';
