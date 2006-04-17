@@ -170,7 +170,7 @@ if ($param->action=='find' and confirm_sesskey()) {
 if (!empty($param->p) and !empty($param->s)) {
 
     update_login_count();
-    $user = get_complete_user_data('username',$s);
+    $user = get_complete_user_data('username',$param->s);
 
     // make sure that url relates to a valid user
     if (!empty($user)) {
