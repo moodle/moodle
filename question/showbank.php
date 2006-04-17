@@ -44,7 +44,7 @@
             error('Invalid category');
         }
         if (!isteacheredit($tocategory->course)) {
-            error(get_string('categorynoedit', 'quiz', $tocategory->name), 'edit.php');
+            error(get_string('categorynoedit', 'quiz', $tocategory->name), 'edit.php?courseid=$course->id');
         }
         foreach ($_POST as $key => $value) {    // Parse input for question ids
             if (substr($key, 0, 1) == "q") {
@@ -81,7 +81,7 @@
 
         } else { // teacher still has to confirm
             // make a list of all the questions that are selected
-            $rawquestions = $_POST;
+            $rawquestions = $_REQUEST;
             $questionlist = '';  // comma separated list of ids of questions to be deleted
             $questionnames = ''; // string with names of questions separated by <br /> with
                                  // an asterix in front of those that are in use
@@ -107,13 +107,20 @@
             if ($inuse) {
                 $questionnames .= get_string('questionsinuse', 'quiz');
             }
-            print_header_simple($streditingquestions, '',
-                 "$streditingquestions");
             notice_yesno(get_string("deletequestionscheck", "quiz", $questionnames),
-                        "edit.php?courseid=$course->id&amp;sesskey=$USER->sesskey&amp;deleteselected=$questionlist&amp;confirm=".md5($questionlist), "edit.php");
+                        "edit.php?courseid=$course->id&amp;sesskey=$USER->sesskey&amp;deleteselected=$questionlist&amp;confirm=".md5($questionlist), "edit.php?courseid=$course->id");
             print_footer($course);
             exit;
         }
+    }
+
+    // Unhide a question
+    if(isset($_REQUEST['unhide']) && confirm_sesskey()) {
+        $unhide = required_param('unhide', PARAM_INT);
+        if(!set_field('question', 'hidden', 0, 'id', $unhide)) {
+            error("Failed to unhide the question.");
+        }
+        redirect("edit.php?courseid=$course->id");
     }
 
     if (isset($_REQUEST['cat'])) { /// coming from category selection drop-down menu

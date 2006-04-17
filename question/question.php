@@ -5,14 +5,10 @@
 * This page shows the question editing form or processes the following actions:
 * - create new question (category, qtype)
 * - edit question (id, contextquiz (optional))
-* - delete question from quiz (delete, sesskey)
-* - delete question (in two steps)
-*   - if question is in use: display this conflict (allow to hide the question?)
-*   - else: confirm deletion and delete from database (sesskey, id, delete, confirm)
 * - cancel (cancel)
 *
-* TODO: currently this still treats the quiz as special, for example it sometimes redirects
-*       to mod/quiz/edit.php.
+* TODO: currently this still treats the quiz as special
+* TODO: question versioning is not currently enabled
 *
 * @version $Id$
 * @author Martin Dougiamas and many others. This has recently been extensively
@@ -30,9 +26,6 @@
 
     $qtype = optional_param('qtype', '', PARAM_FILE);
     $category = optional_param('category', 0, PARAM_INT);
-    
-    $delete = optional_param('delete',  0, PARAM_INT);
-    $confirm = optional_param('confirm',  0, PARAM_ALPHANUM);
 
     // rqp questions set the type to rqp_nn where nn is the rqp_type id
     if (substr($qtype, 0, 4) == 'rqp_') {
@@ -85,14 +78,6 @@
         redirect($SESSION->returnurl);
     }
 
-    if(!empty($id) && isset($_REQUEST['hide']) && confirm_sesskey()) {
-        $hide = required_param('hide', PARAM_INT);
-        if(!set_field('question', 'hidden', $hide, 'id', $id)) {
-            error("Faild to hide the question.");
-        }
-        redirect($SESSION->returnurl);
-    }
-
     if (empty($qtype)) {
         error("No question type was specified!");
     } else if (!isset($QTYPES[$qtype])) {
@@ -116,42 +101,6 @@
     }
 
     print_header_simple("$streditingquestion", "", $strediting);
-
-    if ($delete) {
-        if ($confirm and confirm_sesskey()) {
-            if ($confirm == md5($delete)) {
-                if (record_exists('quiz_question_instances', 'question', $question->id) or
-                    record_exists('question_states', 'originalquestion', $question->id)) {
-                    if (!set_field('question', 'hidden', 1, 'id', $delete)) {
-                        error('Was not able to hide question');
-                    }
-                } else {
-                    if (!delete_records("question", "id", $question->id)) {
-                        error("An error occurred trying to delete question (id $question->id)");
-                    }
-                    if (!delete_records("question", "parent", $question->id)) {
-                        error("An error occurred trying to delete question (id $question->id)");
-                    }
-                }
-                redirect($SESSION->returnurl);
-            } else {
-                error("Confirmation string was incorrect");
-            }
-
-        } else {
-            // TODO: check for other modules using this question
-            if ($quiznames = question_list_instances($id)) {
-                $a->questionname = $question->name;
-                $a->quiznames = implode(', ', $quiznames);
-                notify(get_string('questioninuse', 'quiz', $a));
-            }
-
-            notice_yesno(get_string("deletequestioncheck", "quiz", $question->name),
-                        "question.php?sesskey=$USER->sesskey&amp;id=$question->id&amp;delete=$delete&amp;confirm=".md5($delete), $SESSION->returnurl);
-        }
-        print_footer($course);
-        exit;
-    }
 
     if ($form = data_submitted() and confirm_sesskey()) {
 

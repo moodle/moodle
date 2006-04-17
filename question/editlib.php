@@ -227,10 +227,10 @@ function question_list($course, $categoryid, $quizid=0,
                  src=\"$CFG->pixpath/t/edit.gif\" border=\"0\" alt=\"$stredit\" /></a>&nbsp;";
             // hide-feature
             if($question->hidden) {
-                echo "<a title=\"$strrestore\" href=\"$CFG->wwwroot/question/question.php?id=$question->id&amp;hide=0&amp;sesskey=$USER->sesskey\"><img
+                echo "<a title=\"$strrestore\" href=\"edit.php?courseid=$course->id&amp;unhide=$question->id&amp;sesskey=$USER->sesskey\"><img
                      src=\"$CFG->pixpath/t/restore.gif\" border=\"0\" alt=\"$strrestore\" /></a>";
             } else {
-                echo "<a title=\"$strdelete\" href=\"$CFG->wwwroot/question/question.php?id=$question->id&amp;delete=$question->id\"><img
+                echo "<a title=\"$strdelete\" href=\"edit.php?courseid=$course->id&amp;deleteselected=$question->id&amp;q$question->id=1\"><img
                      src=\"$CFG->pixpath/t/delete.gif\" border=\"0\" alt=\"$strdelete\" /></a>";
             }
         }
