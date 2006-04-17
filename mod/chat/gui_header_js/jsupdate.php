@@ -126,7 +126,7 @@
         }
 
         $chatuser->lastping = time();
-        set_field('chat_users', 'lastping', $chatuser->lastping, 'sid', $chatuser->sid );
+        set_field('chat_users', 'lastping', $chatuser->lastping, 'id', $chatuser->id  );
 
         if ($refreshusers) {
             echo "if (parent.users.document.anchors[0] != null) {" .

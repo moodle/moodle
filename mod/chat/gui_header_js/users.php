@@ -46,7 +46,7 @@
     }
 
     $chatuser->lastping = time();
-    update_record('chat_users', $chatuser);
+    set_field('chat_users', 'lastping', $chatuser->lastping, 'id', $chatuser->id  );
 
     $refreshurl = "users.php?chat_sid=$chat_sid";
 
