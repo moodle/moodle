@@ -134,9 +134,24 @@
     }
     echo '</table></body></html>';
 
-    // support HTTP Keep-Alive
-    header("Content-Length: " . ob_get_length() );
-    ob_end_flush();
+    //
+    // Support HTTP Keep-Alive by printing Content-Length
+    //
+    // If the user pane is refreshing often, using keepalives 
+    // is lighter on the server and faster for most clients. 
+    //
+    // Apache is normally configured to have a 15s timeout on 
+    // keepalives, so let's observe that. Unfortunately, we cannot
+    // autodetect the keepalive timeout. 
+    //
+    // Using keepalives when the refresh is longer than the timeout
+    // wastes server resources keeping an apache child around on a  
+    // connection that will timeout. So we don't. 
+    if ($CFG->chat_refresh_userlist < 15) {    
+        header("Content-Length: " . ob_get_length() );
+        ob_end_flush(); 
+    }
+
     exit; // no further output
 
 
