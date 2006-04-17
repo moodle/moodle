@@ -1608,9 +1608,11 @@ function exercise_print_assessment_form($exercise, $assessment = false, $allowch
         }
 
     if ($assessment) {
+        $assessment->generalcomment = clean_text($assessment->generalcomment); //clean html first
         // get any previous grades...
         if ($gradesraw = get_records_select("exercise_grades", "assessmentid = $assessment->id", "elementno")) {
             foreach ($gradesraw as $grade) {
+                $grade->feedback = clean_text($grade->feedback); //clean the html first
                 $grades[] = $grade;   // to renumber index 0,1,2...
                 }
             }
@@ -1622,7 +1624,7 @@ function exercise_print_assessment_form($exercise, $assessment = false, $allowch
             $grades[$i]->grade = 0;
             }
         }
-                
+
     // determine what sort of grading
     switch ($exercise->gradingstrategy) {
         case 0:  // no grading
@@ -2862,13 +2864,13 @@ function exercise_print_upload_form($exercise) {
 
     if (! $course = get_record("course", "id", $exercise->course)) {
         error("Course is misconfigured");
-        }
+    }
     if (! $cm = get_coursemodule_from_instance("exercise", $exercise->id, $course->id)) {
         error("Course Module ID was incorrect");
-        }
+    }
 
     echo "<div align=\"center\">";
-    echo "<form enctype=\"multipart/form-data\" method=\"POST\" action=\"upload.php\">";
+    echo "<form enctype=\"multipart/form-data\" method=\"post\" action=\"upload.php\">";
     echo " <input type=\"hidden\" name=\"id\" value=\"$cm->id\" />";
     require_once($CFG->dirroot.'/lib/uploadlib.php');
     upload_print_form_fragment(1,array('newfile'),null,true,array('title'),$course->maxbytes,$exercise->maxbytes,false);

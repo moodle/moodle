@@ -1,4 +1,4 @@
-<?php  // $Id: view.php, v1.1 23 Aug 2003
+<?php  // $Id$
 
 /*************************************************
     ACTIONS handled are:
@@ -19,7 +19,9 @@
     require_once("lib.php");
     require_once("locallib.php");
 
-    $id = required_param('id', PARAM_INT);    // Course Module ID
+    $id          = required_param('id', PARAM_INT);    // Course Module ID
+    $action      = optional_param('action', '', PARAM_ALPHA);
+    $changegroup = optional_param('group', -1, PARAM_INT);
 
     // get some esential stuff...
     if (! $cm = get_record("course_modules", "id", $id)) {
@@ -47,9 +49,6 @@
                  "<a href=\"index.php?id=$course->id\">$strexercises</a> -> ".format_string($exercise->name),
                   "", "", true, update_module_button($cm->id, $course->id, $strexercise), navmenu($course, $cm));
 
-    // ...and if necessary set default action
-
-    $action = optional_param('action', '', PARAM_ALPHA);
     if (isteacher($course->id)) {
         if (empty($action)) { // no action specified, either go straight to elements page else the admin page
             // has the assignment any elements
@@ -335,7 +334,6 @@
 
         /// Check to see if groups are being used in this exercise
         /// and if so, set $currentgroup to reflect the current group
-        $changegroup = isset($_GET['group']) ? $_GET['group'] : -1;  // Group change requested?
         $groupmode = groupmode($course, $cm);   // Groups are being used?
         $currentgroup = get_and_set_current_group($course, $groupmode, $changegroup);
 

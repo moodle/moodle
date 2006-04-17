@@ -1,4 +1,4 @@
-<?php  // $Id: submissions.php,v 1.0 22 Aug 2003
+<?php  // $Id$
 
 /*************************************************
     ACTIONS handled are:
@@ -24,7 +24,11 @@
     require_once("locallib.php");
     require_once("version.php");
 
-    $id = required_param('id', PARAM_INT); // Course Module ID
+    $id     = required_param('id', PARAM_INT); // Course Module ID
+    $action = required_param('action', PARAM_ALPHA);
+    $aid    = optional_param('aid', 0, PARAM_INT);
+    $sid    = optional_param('sid', 0, PARAM_INT);
+    $title  = optional_param('title', '', PARAM_CLEAN);
 
     // get some essential stuff...
     if (! $cm = get_record("course_modules", "id", $id)) {
@@ -51,27 +55,24 @@
                   <a href=\"view.php?id=$cm->id\">".format_string($exercise->name,true)."</a> -> $strsubmissions",
                   "", "", true);
 
-    //...get the action!
-    $action = required_param('action');
-
 
     /******************* admin amend title ************************************/
     if ($action == 'adminamendtitle' ) {
 
         if (!isteacher($course->id)) {
             error("Only teachers can look at this page");
-            }
-        if (empty($_GET['sid'])) {
+        }
+        if (empty($sid)) {
             error("Admin Amend Title: submission id missing");
-            }
+        }
 
-        $submission = get_record("exercise_submissions", "id", $_GET['sid']);
+        $submission = get_record("exercise_submissions", "id", $sid);
         print_heading(get_string("amendtitle", "exercise"));
         ?>
         <form name="amendtitleform" action="submissions.php" method="post">
         <input type="hidden" name="action" value="adminupdatetitle" />
         <input type="hidden" name="id" value="<?php echo $cm->id ?>" />
-        <input type="hidden" name="sid" value="<?php echo $_REQUEST['sid'] ?>" />
+        <input type="hidden" name="sid" value="<?php echo $sid ?>" />
         <center>
         <table celpadding="5" border="1">
         <?php
@@ -94,14 +95,14 @@
         if (!isteacher($course->id)) {
             error("Only teachers can look at this page");
         }
-        if (empty($_GET['sid'])) {
+        if (empty($sid)) {
             error("Admin clear late flag: submission id missing");
         }
 
-        if (!$submission = get_record("exercise_submissions", "id", $_GET['sid'])) {
+        if (!$submission = get_record("exercise_submissions", "id", $sid)) {
             error("Admin clear late flag: can not get submission record");
         }
-        if (set_field("exercise_submissions", "late", 0, "id", $_GET['sid'])) {
+        if (set_field("exercise_submissions", "late", 0, "id", $sid)) {
             print_heading(get_string("clearlateflag", "exercise")." ".get_string("ok"));
         }
 
@@ -116,13 +117,13 @@
 
         if (!isteacher($course->id)) {
             error("Only teachers can look at this page");
-            }
-        if (empty($_GET['sid'])) {
+        }
+        if (empty($sid)) {
             error("Admin confirm delete: submission id missing");
-            }
-        if (!$submission = get_record("exercise_submissions", "id", $_GET['sid'])) {
+        }
+        if (!$submission = get_record("exercise_submissions", "id", $sid)) {
             error("Admin delete: can not get submission record");
-            }
+        }
 
         if (isteacher($course->id, $submission->userid)) {
             if (!isteacheredit($course->id)) {
@@ -134,7 +135,7 @@
             }
         }
         notice_yesno(get_string("confirmdeletionofthisitem","exercise", get_string("submission", "exercise")),
-             "submissions.php?action=admindelete&amp;id=$cm->id&amp;sid=$_GET[sid]", "submissions.php?id=$cm->id&amp;action=adminlist");
+             "submissions.php?action=admindelete&amp;id=$cm->id&amp;sid=$sid", "submissions.php?id=$cm->id&amp;action=adminlist");
         }
 
 
@@ -144,11 +145,11 @@
         if (!isteacher($course->id)) {
             error("Only teachers can look at this page");
             }
-        if (empty($_GET['sid'])) {
+        if (empty($sid)) {
             error("Admin delete: submission id missing");
             }
 
-        if (!$submission = get_record("exercise_submissions", "id", $_GET['sid'])) {
+        if (!$submission = get_record("exercise_submissions", "id", $sid)) {
             error("Admin delete: can not get submission record");
             }
         print_string("deleting", "exercise");
@@ -178,15 +179,15 @@
         if (!isteacher($course->id)) {
             error("Only teachers can look at this page");
             }
-        if (empty($_GET['sid'])) {
+        if (empty($sid)) {
             error("Admin confirm late flag: submission id missing");
             }
-        if (!$submission = get_record("exercise_submissions", "id", $_GET['sid'])) {
+        if (!$submission = get_record("exercise_submissions", "id", $sid)) {
             error("Admin confirm late flag: can not get submission record");
             }
 
         notice_yesno(get_string("clearlateflag","exercise")."?",
-             "submissions.php?action=adminclearlate&amp;id=$cm->id&amp;sid=$_GET[sid]",
+             "submissions.php?action=adminclearlate&amp;id=$cm->id&amp;sid=$sid",
              "submissions.php?id=$cm->id&amp;action=adminlist");
         }
 
@@ -211,11 +212,11 @@
         if (!isteacher($course->id)) {
             error("Only teachers can look at this page");
             }
-        if (empty($_POST['sid'])) {
+        if (empty($sid)) {
             error("Admin Update Title: submission id missing");
             }
 
-        if (set_field("exercise_submissions", "title", $_POST['title'], "id", $_POST['sid'])) {
+        if (set_field("exercise_submissions", "title", $title, "id", $sid)) {
             print_heading(get_string("amendtitle", "exercise")." ".get_string("ok"));
             }
         redirect("submissions.php?id=$cm->id&amp;action=adminlist");
@@ -378,23 +379,23 @@
     /******************* user confirm delete ************************************/
     elseif ($action == 'userconfirmdelete' ) {
 
-        if (empty($_GET['sid'])) {
+        if (empty($sid)) {
             error("User Confirm Delete: submission id missing");
             }
 
         notice_yesno(get_string("confirmdeletionofthisitem","exercise", get_string("submission", "exercise")),
-             "submissions.php?action=userdelete&amp;id=$cm->id&amp;sid=$_GET[sid]", "view.php?id=$cm->id");
+             "submissions.php?action=userdelete&amp;id=$cm->id&amp;sid=$sid", "view.php?id=$cm->id");
         }
 
 
     /******************* user delete ************************************/
     elseif ($action == 'userdelete' ) {
 
-        if (empty($_GET['sid'])) {
+        if (empty($sid)) {
             error("User Delete: submission id missing");
             }
 
-        if (!$submission = get_record("exercise_submissions", "id", $_GET['sid'])) {
+        if (!$submission = get_record("exercise_submissions", "id", $sid)) {
             error("User Delete: can not get submission record");
             }
         print_string("deleting", "exercise");

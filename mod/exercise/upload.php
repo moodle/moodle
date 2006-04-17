@@ -1,10 +1,11 @@
-<?php  // $Id: upload.php, v1.0 30th April 2003
+<?php  // $Id$
 
     require_once("../../config.php");
     require_once("lib.php");
     require_once("locallib.php");
+    $id    = required_param('id', PARAM_INT);           // course module ID
+    $title = optional_param('title', '', PARAM_CLEAN);
 
-    $id = required_param('id', PARAM_INT);           // course module ID
     $timenow = time();
 
     // get some esential stuff...
@@ -48,7 +49,7 @@
     }
 
     // check existence of title
-    if (!$title = $_POST['title']) {
+    if ($title == '') {
         notify(get_string("notitlegiven", "exercise") );
     }
     else {
