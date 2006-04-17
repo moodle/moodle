@@ -4264,7 +4264,9 @@ function redirect($url, $message='', $delay='0') {
         if (empty($delay)) {
             $delay = 3;  // There's no point having a message with no delay
         }
-        print_header('', '', '', '', '<meta http-equiv="refresh" content="'. $delay .'; url='. $encodedurl .'" />');
+        if (!headers_sent()) {
+            print_header('', '', '', '', '<meta http-equiv="refresh" content="'. $delay .'; url='. $encodedurl .'" />');
+        }
         echo '<center>';
         echo '<p>'. $message .'</p>';
         echo '<p>( <a href="'. $encodedurl .'">'. get_string('continue') .'</a> )</p>';
