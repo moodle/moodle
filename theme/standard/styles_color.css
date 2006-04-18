@@ -484,6 +484,7 @@ table.minicalendar {
   background: #FFD991;
 }
 
+#course-view .weekscss .hidden,
 #course-view .hidden td.side {
   background: #DDDDDD;
 }
