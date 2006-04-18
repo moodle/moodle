@@ -342,6 +342,8 @@
     <TABLE name="user_coursecreators" />
     <TABLE name="course">
       <FIELDS>
+        <FIELD name="currency" method="NO_CONV" type="char" length="3" />
+        <FIELD name="enrol" method="NO_CONV" type="varchar" length="20" />
         <FIELD name="password" method="PHP_FUNCTION" type="varchar" length="50">
           <PHP_FUNCTION>
             migrate2utf8_course_password(RECORDID)

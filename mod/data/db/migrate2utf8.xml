@@ -148,6 +148,11 @@
            migrate2utf_data_listtemplate(RECORDID)
           </PHP_FUNCTION>
         </FIELD>
+        <FIELD name="csstemplate" method="PHP_FUNCTION" type="text" length="0">
+          <PHP_FUNCTION>
+           migrate2utf_data_csstemplate(RECORDID)
+          </PHP_FUNCTION>
+        </FIELD>
         <FIELD name="addtemplate" method="PHP_FUNCTION" type="text" length="0">
           <PHP_FUNCTION>
            migrate2utf_data_addtemplate(RECORDID)

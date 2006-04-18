@@ -39,7 +39,28 @@
         <FIELD name="tolerance" method="NO_CONV" type="varchar" length="255" default="0.0" />
       </FIELDS>
     </TABLE>
-    <TABLE name="question_sessions" />
+    <TABLE name="question_sessions">
+      <FIELDS>
+        <FIELD name="comment" method="PLAIN_SQL_UPDATE" type="text" length="0">
+          <SQL_DETECT_USER>
+           SELECT qa.userid
+           FROM {$CFG->prefix}question_sessions qs,
+                {$CFG->prefix}quiz_attempts qa
+           WHERE qa.id = qs.attemptid
+                 AND qs.id = RECORDID
+          </SQL_DETECT_USER>
+          <SQL_DETECT_COURSE>
+           SELECT q.course
+           FROM {$CFG->prefix}quiz q,
+                {$CFG->prefix}question_sessions qs,
+                {$CFG->prefix}quiz_attempts qa
+           WHERE q.id = qa.quiz
+                 AND qa.id = qs.attemptid
+                 AND qs.id = RECORDID
+          </SQL_DETECT_COURSE>
+        </FIELD>
+      </FIELDS>
+    </TABLE>
     <TABLE name="question_multichoice">
       <FIELDS>
         <FIELD name="answers" method="NO_CONV" type="varchar" length="255" />
@@ -109,6 +130,7 @@
             migrate2utf8_question_qtype(RECORDID)
           </PHP_FUNCTION>
         </FIELD>
+        <FIELD name="version" method="NO_CONV" type="varchar" length="255" />
         <FIELD name="questiontext" method="PHP_FUNCTION" type="text" length="0">
           <PHP_FUNCTION>
             migrate2utf8_question_questiontext(RECORDID)
