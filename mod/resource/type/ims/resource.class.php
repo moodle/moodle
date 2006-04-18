@@ -37,6 +37,7 @@
 
 
 include_once ($CFG->libdir.'/filelib.php');
+require_once($CFG->dirroot.'/mod/resource/type/ims/repository_config.php');
 
 /**
 * Extend the base resource class for ims resources 
@@ -62,6 +63,17 @@ class resource_ims extends resource_base {
             unset($this->parameters->navigationuparrow);
             $this->parameters->skipsubmenus = 1;
         }
+        
+    /// Is it in the repository material or not?
+        $file = $this->resource->reference;
+        if ($file[0] == '#') {
+            $this->isrepository = true;
+            $file = ltrim($file, '#');
+            $this->resource->reference = $file;
+        }
+        else {
+            $this->isrepository = false;
+        }
     }
 
     /***
@@ -72,7 +84,7 @@ class resource_ims extends resource_base {
         /// set parameter defaults
         $alltextfield = new stdClass();
         $alltextfield->tableofcontents=0;
-        $alltextfield->navigationbuttons=1;
+        $alltextfield->navigationbuttons=0;
         $alltextfield->navigationmenu=1;
         $alltextfield->skipsubmenus=1;
         $alltextfield->navigationupbutton=1;
@@ -127,36 +139,52 @@ class resource_ims extends resource_base {
     * 2 = Zip file doesn't exist
     * 3 = Package not deployed.
     * 4 = Package has changed since deployed.
+    * If the IMS CP is one from the central repository, then we instead check 
+    * with the following codes:
+    * 5 = Not deployed. Since repository is central must be admin to deploy so terminate
     */
     function check4errors($file, $course, $resource) {
-
         global $CFG;
 
-        $mimetype = mimeinfo("type", $file);
-        if ($mimetype != "application/zip") {
-            return 1;    //Error
+        if ($this->isrepository) {
+        /// Calculate the path were the IMS package must be deployed
+            $deploydir = $CFG->repository . $file;
+    
+        /// Confirm that the IMS package has been deployed. These files must exist if
+        /// the package is deployed: moodle_index.ser and moodle_hash.ser
+            if (!file_exists($deploydir.'/moodle_inx.ser')) {
+                return 5;    //Error
+            }               
         }
-
-    /// Check if the uploaded file exists
-        if (!file_exists($CFG->dataroot.'/'.$course->id.'/'.$file)) {
-            return 2;    //Error
-        }
-
-    /// Calculate the path were the IMS package must be deployed
-        $deploydir = $CFG->dataroot.'/'.$course->id.'/'.$CFG->moddata.'/resource/'.$resource->id;
-
-    /// Confirm that the IMS package has been deployed. These files must exist if
-    /// the package is deployed: moodle_index.ser and moodle_hash.ser
-        if (!file_exists($deploydir.'/moodle_inx.ser') ||
-            !file_exists($deploydir.'/moodle_hash.ser')) {
-            return 3;    //Error
-        }
-
-    /// If teacheredit, make, hash check. It's the md5 of the name of the file 
-    /// plus its size and modification date
-        if (isteacheredit($course->id)) {
-            if (!$this->checkpackagehash($file, $course, $resource)) {
-                return 4;
+        else {
+        /// Check for zip file type
+            $mimetype = mimeinfo("type", $file);
+            if ($mimetype != "application/zip") {
+                return 1;    //Error
+            }
+    
+        /// Check if the uploaded file exists
+            if (!file_exists($CFG->dataroot.'/'.$course->id.'/'.$file)) {
+                return 2;    //Error
+            }
+                        
+        /// Calculate the path were the IMS package must be deployed
+            $deploydir = $CFG->dataroot.'/'.$course->id.'/'.$CFG->moddata.'/resource/'.$resource->id;
+    
+    
+        /// Confirm that the IMS package has been deployed. These files must exist if
+        /// the package is deployed: moodle_index.ser and moodle_hash.ser
+            if (!file_exists($deploydir.'/moodle_inx.ser') ||
+                !file_exists($deploydir.'/moodle_hash.ser')) {
+                return 3;    //Error
+            }           
+        
+        /// If teacheredit, make, hash check. It's the md5 of the name of the file 
+        /// plus its size and modification date
+            if (isteacheredit($course->id)) {
+                if (!$this->checkpackagehash($file, $course, $resource)) {
+                    return 4;
+                }
             }
         }
 
@@ -243,20 +271,22 @@ class resource_ims extends resource_base {
      * Delete all the moddata files for the resource
      * @param    resource object
      */
-     function delete_instance($resource) {
-
+    function delete_instance($resource) {
+        
          global $CFG;
+        
+    /// Delete moddata resource dir completely unless repository.
+        if (!$this->isrepository) {
+            $resource_dir = $CFG->dataroot.'/'.$resource->course.'/'.$CFG->moddata.'/resource/'.$resource->id;
+            if (file_exists($resource_dir)) {
+                if (!$status = fulldelete($resource_dir)) {
+                    return false;
+                }
+            }
+        }
 
-     /// Delete moddata resource dir completely
-         $resource_dir = $CFG->dataroot.'/'.$resource->course.'/'.$CFG->moddata.'/resource/'.$resource->id;
-         if (file_exists($resource_dir)) {
-             if (!$status = fulldelete($resource_dir)) {
-                 return false;
-             }
-         }
-
-         return parent::delete_instance($resource);
-     }
+        return parent::delete_instance($resource);
+    }
 
 
     /**
@@ -314,6 +344,8 @@ class resource_ims extends resource_base {
                     $errortext = get_string('packagenotdeplyed','resource');
                 } else if ($errorcode == 4) {
                     $errortext = get_string('packagechanged','resource');
+                } else if ($errorcode == 5) {
+                    $errortext = get_string('packagenotdeplyed','resource'); // no button though since from repository.
                 }
             }
         /// Display the error and exit
@@ -355,7 +387,12 @@ class resource_ims extends resource_base {
 
     /// Load serialized IMS CP index to memory only once.
         if (empty($items)) {
-            $resourcedir = $CFG->dataroot.'/'.$course->id.'/'.$CFG->moddata.'/resource/'.$resource->id;
+            if (!$this->isrepository) {
+                $resourcedir = $CFG->dataroot.'/'.$course->id.'/'.$CFG->moddata.'/resource/'.$resource->id;
+            }
+            else {
+                $resourcedir = $CFG->repository . $resource->reference;
+            }
             if (!$items = ims_load_serialized_file($resourcedir.'/moodle_inx.ser')) {
                 error (get_string('errorreadingfile', 'error', 'moodle_inx.ser'));
             }
@@ -414,19 +451,76 @@ class resource_ims extends resource_base {
             echo "<html$direction>\n";
             echo '<head>';
             echo '<meta http-equiv="content-type" content="text/html; charset='.$encoding.'" />';
+            if (!empty($this->parameters->navigationmenu)) {
+                $jsarg = 'true';
+            }
+            else {
+                $jsarg = 'false';
+            }
+            
+        /// The dummy LMS API hack to stop some SCORM packages giving errors.
+            echo "<script type=\"text/javascript\" language=\"javascript\" src=\"$CFG->wwwroot/mod/resource/type/ims/dummy.js\"></script>";            
+        
+        /// All this sets up script and style stuff to position and 
+        /// resize the menus and stuff. The CSS is here because it
+        /// differs depending on some php variables. The javascript
+        /// uses resize.js.
+            echo "
+            <script type=\"text/javascript\" language=\"javascript\" src=\"$CFG->wwwroot/mod/resource/type/ims/resize.js\"></script>
+            <script language=\"javascript\" type=\"text/javascript\">
+                window.onresize = function(){
+                    resizeiframe($jsarg);
+                };
+                window.onload = function(){
+                    resizeiframe($jsarg);
+                };
+            </script>
+            <style type='text/css'>
+                #ims-menudiv {
+                    position:absolute;
+                    left:5px;
+                    width:300px;
+                    overflow:auto;
+                    float:left;
+                }
+                
+                #ims-containerdiv {
+                    width:100%;
+                    
+                }
+                
+                #ims-contentframe {
+                    position:absolute;
+                    
+                   ";
+            if (!empty($this->parameters->navigationmenu)) {
+                echo "left:310px;";
+            }
+            echo "
+                    border:0px;
+                }
+                
+            </style>
+            ";
             echo "<title>{$course->shortname}: ".strip_tags(format_string($resource->name,true))."</title></head>\n";
         /// moodle header
             if ($resource->popup) {
-                print_header($pagetitle, $course->fullname.' : '.$resource->name);
+                //print_header($pagetitle, $course->fullname.' : '.$resource->name);
+                print_header();
             } else {
                 print_header($pagetitle, $course->fullname, "$this->navigation ".format_string($resource->name), "", "", true, update_module_button($cm->id, $course->id, $this->strresource), navmenu($course, $cm, "parent"));
             }
         /// content - this produces everything else
             $this->print_ims($cm, $course, $items, $resource, $page);
-        /// moodle footer
-            print_footer();
+        /// moodle footer. no footer if it's in a popup - save space.
+            if ($resource->popup) {
+            	echo "</div></div></body></html>";
+            }
+            else {
+            	print_footer();
+            }
 
-        /// log it. clearly only run once.
+        /// log it.
             add_to_log($course->id, "resource", "view", "view.php?id={$cm->id}", $resource->id, $cm->id);
             exit;
         }
@@ -444,11 +538,17 @@ class resource_ims extends resource_base {
         global $CFG;
         
     /// Calculate the file.php correct url
-        if ($CFG->slasharguments) {
-            $fileurl = "{$CFG->wwwroot}/file.php/{$course->id}/{$CFG->moddata}/resource/{$resource->id}";
-        } else {
-            $fileurl = "{$CFG->wwwroot}/file.php?file=/{$course->id}/{$CFG->moddata}/resource/{$resource->id}";
+        if (!$this->isrepository) {
+            if ($CFG->slasharguments) {
+                $fileurl = "{$CFG->wwwroot}/file.php/{$course->id}/{$CFG->moddata}/resource/{$resource->id}";
+            } else {
+                $fileurl = "{$CFG->wwwroot}/file.php?file=/{$course->id}/{$CFG->moddata}/resource/{$resource->id}";
+            }
         }
+        else {
+            $fileurl = $CFG->repositorywebroot . $resource->reference;
+        }
+
 
     /// Calculate the view.php correct url
         $viewurl = "view.php?id={$cm->id}&amp;type={$resource->type}&amp;frameset=toc&amp;page=";
@@ -493,17 +593,15 @@ class resource_ims extends resource_base {
             $this->print_nav($items, $resource, $page);
         }
         
-    /// adds side navigation bar if needed. must also adjust width of iframe to accomodate
+        echo '<div id="ims-containerdiv">';
+    /// adds side navigation bar if needed. must also adjust width of iframe to accomodate 
         if (!empty($this->parameters->navigationmenu)) {
-            echo "<div style=\"float:left;width:300px;height:420px;overflow:scroll\">"; $this->print_navmenu($items, $resource, $page); echo "</div>";
-            $iframewidth = "700px";
-        }
-        else {
-            $iframewidth = "100%";
+            echo "<div id=\"ims-menudiv\">"; $this->print_navmenu($items, $resource, $page); echo "</div>";
         }
         
     /// prints iframe filled with $fullurl
-        echo "<iframe src=\"{$fullurl}\" style=\"border:0;width:".$iframewidth."\" height=\"420px\"></iframe>"; //Content frame
+        echo "<iframe id=\"ims-contentframe\" name=\"ims-contentframe\" src=\"{$fullurl}\"></iframe>"; //Content frame
+        echo '</div>';
     }
 
 /// Prints TOC    
@@ -521,12 +619,12 @@ class resource_ims extends resource_base {
 
 /// Prints side navigation menu. This is just the full TOC with no surround.    
     function print_navmenu($items, $resource, $page=0) {
-        echo ims_generate_toc ($items, $resource, 0);
+        echo ims_generate_toc ($items, $resource, 0, $page);
     }
     
 /// Prints navigation bar at the top of the page.
     function print_nav($items, $resource, $page) {
-        echo '<div class="ims-nav-bar">';
+        echo '<div class="ims-nav-bar" id="ims-nav-bar">';
     /// Prev button
         echo ims_get_prev_nav_button ($items, $this, $page);
     /// Up button
@@ -536,7 +634,7 @@ class resource_ims extends resource_base {
     /// Main TOC button
         echo ims_get_toc_nav_button ($items, $this, $page);
     /// Footer
-        echo '</div>';      
+        echo '</div>';
     }        
         
 
@@ -690,8 +788,9 @@ class resource_ims extends resource_base {
 
     /*** This function will generate the TOC file for the package
      *   from an specified parent to be used in the view of the IMS
+     *   Now hilights 'selected page' also.
      */
-    function ims_generate_toc($items, $resource, $page=0) {
+    function ims_generate_toc($items, $resource, $page=0, $selected_page = -1) {
         global $CFG,$SESSION;
 
         $contents = '';
@@ -706,8 +805,8 @@ class resource_ims extends resource_base {
         foreach ($items as $item) {
         /// Convert text from UTF-8 to current charset if needed
             if (empty($CFG->unicodedb)) {
-                $textlib = textlib_get_instance();
-                $item->title = $textlib->convert($item->title, 'UTF-8', current_charset());
+////                $textlib = textlib_get_instance();
+////                $item->title = $textlib->convert($item->title, 'UTF-8', current_charset());
             }
         /// Skip pages until we arrive to $page
             if ($item->id < $page) {
@@ -731,7 +830,9 @@ class resource_ims extends resource_base {
             /// Add item
                 $contents .= '<li>';
                 if (!empty($item->href)) {
+                	if ($item->id == $selected_page) $contents .= '<div id="ims-toc-selected">';
                     $contents .= '<a href="'.$fullurl.$item->id.'" target="_parent">'.$item->title.'</a>';
+                    if ($item->id == $selected_page) $contents .= '</div>';
                 } else {
                     $contents .= $item->title;
                 }
@@ -753,6 +854,7 @@ class resource_ims extends resource_base {
      *   to show the previous button in the nav frame
      **/
     function ims_get_prev_nav_button ($items, $resource_obj, $page) {
+        $strprevious        = get_string("previous", "resource");
 
         $cm = $resource_obj->cm;
         $resource = $resource_obj->resource;
@@ -767,10 +869,10 @@ class resource_ims extends resource_base {
             }
         }
 
-        if ($page >= 0 ) {  //0 and 1 pages haven't previous
-            $contents .= "<span class=\"ims-nav-button\"><a href=\"view.php?id={$cm->id}&amp;type={$resource->type}&amp;page={$page}&amp;frameset=ims\" target=\"_parent\">&lt;&lt;</a></span>"; 
+        if ($page >= 1 ) {  //0 and 1 pages haven't previous
+            $contents .= "<span class=\"ims-nav-button\"><a href=\"view.php?id={$cm->id}&amp;type={$resource->type}&amp;page={$page}&amp;frameset=ims\" target=\"_parent\">$strprevious</a></span>"; 
         } else {
-            $contents .= '<span class="ims-nav-dimmed">&lt;&lt;</span>';
+            $contents .= '<span class="ims-nav-dimmed">'.$strprevious.'</span>';
         }
 
         return $contents;
@@ -780,6 +882,7 @@ class resource_ims extends resource_base {
      *   to show the next button in the nav frame
      **/
     function ims_get_next_nav_button ($items, $resource_obj, $page) {
+        $strnext        = get_string("next", "resource");
 
         $cm = $resource_obj->cm;
         $resource = $resource_obj->resource;
@@ -795,9 +898,9 @@ class resource_ims extends resource_base {
         }
         
         if (!empty($items[$page])) {  //If the next page exists
-            $contents .= "<span class=\"ims-nav-button\"><a href=\"view.php?id={$cm->id}&amp;type={$resource->type}&amp;page={$page}&amp;frameset=ims\" target=\"_parent\">&gt;&gt;</a></span>";
+            $contents .= "<span class=\"ims-nav-button\"><a href=\"view.php?id={$cm->id}&amp;type={$resource->type}&amp;page={$page}&amp;frameset=ims\" target=\"_parent\">$strnext</a></span>";
         } else {
-            $contents .= '<span class="ims-nav-dimmed">&gt;&gt;</span>';
+            $contents .= '<span class="ims-nav-dimmed">'.$strnext.'</span>';
         }
 
 
@@ -808,6 +911,7 @@ class resource_ims extends resource_base {
      *   to show the up button in the nav frame
      **/
     function ims_get_up_nav_button ($items, $resource_obj, $page) {
+        $strup        = get_string("upbutton", "resource");
 
         $cm = $resource_obj->cm;
         $resource = $resource_obj->resource;
@@ -817,9 +921,9 @@ class resource_ims extends resource_base {
         if (!empty($resource_obj->parameters->navigationupbutton)) {
             if ($page > 1 && $items[$page]->parent > 0) {  //If the page has parent
                 $page = $items[$page]->parent;
-                $contents .= "<span class=\"ims-nav-button\"><a href=\"view.php?id={$cm->id}&amp;type={$resource->type}&amp;page={$page}&amp;frameset=ims\" target=\"_parent\">&and;</a></span>";
+                $contents .= "<span class=\"ims-nav-button\"><a href=\"view.php?id={$cm->id}&amp;type={$resource->type}&amp;page={$page}&amp;frameset=ims\" target=\"_parent\">$strup</a></span>";
             } else {
-                $contents .= '<span class="ims-nav-dimmed">&and;</span>';
+                $contents .= "<span class=\"ims-nav-dimmed\">$strup</span>";
             }
         }
         return $contents;

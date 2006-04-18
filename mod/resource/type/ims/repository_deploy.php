@@ -25,9 +25,14 @@
 ///////////////////////////////////////////////////////////////////////////
 
     /***
-     * This page will deploy an IMS Content Package zip file, 
-     * building all the structures and auxiliary files to
-     * work inside a Moodle resource.
+     * This page will deploy an IMS Content Package from repository.
+     * Just adds hash file.
+     * Arguments:
+     *   - file   directory containing CP to deploy
+     *   - all    if not set, will deploy 1 package
+     *            if = true, will recursively deploy all packages
+     *             found in directory file.
+     *            if = force, same as above but will redeploy too.
      */
 
 /// Required stuff
@@ -37,180 +42,163 @@
     require_once('../../../../backup/lib.php');
     require_once('../../../../lib/filelib.php');
     require_once('../../../../lib/xmlize.php');
-
-/// Load request parameters
-    $courseid   = required_param ('courseid', PARAM_INT);
-    $cmid       = required_param ('cmid', PARAM_INT);
-    $file       = required_param ('file', PARAM_PATH);
-    $inpopup    = optional_param ('inpopup', 0, PARAM_BOOL);
-
-/// Fetch some records from DB
-    $course   = get_record ('course', 'id', $courseid);
-    $cm       = get_record ('course_modules', 'id', $cmid);
-    $resource = get_record ('resource', 'id', $cm->instance);
-
-/// Get some needed strings
-    $strdeploy = get_string('deploy','resource');
-
-/// Instantiate a resource_ims object and modify its navigation
-    $resource_obj = new resource_ims ($cmid);
-    if ($resource_obj->course->category) {
-        $resource_obj->navigation = "<a target=\"{$CFG->framename}\" href=\"$CFG->wwwroot/course/view.php?id={$course->id}\">{$course->shortname}</a> -> ".
-                            "<a target=\"{$CFG->framename}\" href=\"$CFG->wwwroot/mod/resource/index.php?id={$course->id}\">$resource_obj->strresources</a> -> ";
-    } else {
-        $resource_obj->navigation = "<a target=\"{$CFG->framename}\" href=\"$CFG->wwwroot/mod/resource/index.php?id={$course->id}\">$resource_obj->strresources</a> -> ";
-    }
-
-/// Print the header of the page
-    $pagetitle = strip_tags($course->shortname.': '.
-                     format_string($resource->name)).': '.
-                     $strdeploy;
-
-    if ($inpopup) {
-        print_header($pagetitle, $course->fullname);
-    } else {
-        print_header($pagetitle, $course->fullname, 
-                     $resource_obj->navigation.format_string($resource->name).' -> '.$strdeploy,
-                     '', '', true, 
-                     update_module_button($cm->id, $course->id, $resource_obj->strresource));
-    }
-
-/// Security Constraints (sesskey and isteacheredit)
-    if (!confirm_sesskey()) {
-        error(get_string('confirmsesskeybad', 'error'));
-    } else if (!isteacheredit($courseid)) {
-        error(get_string('onlyeditingteachers', 'error'));
-    }
-
-///
-/// Main process, where everything is deployed
-///
-
-/// Set some variables
-
-/// Create directories
-    if (!$resourcedir = make_upload_directory($courseid.'/'.$CFG->moddata.'/resource/'.$resource->id)) {
-        error (get_string('errorcreatingdirectory', 'error', $CFG->moddata.'/resource/'.$resource->id));
-    }
-
-/// Ensure it's empty
-    if (!delete_dir_contents($resourcedir)) {
-        error (get_string('errorcleaningdirectory', 'error', $resourcedir));
-    }
     
-/// Copy files
-    $origin = $CFG->dataroot.'/'.$courseid.'/'.$file;
-
-    if (!is_file($origin)) {
-        error (get_string('filenotfound' , 'error', $file));
+    require_once('repository_config.php');
+    
+    /// Security - Admin Only  
+    if (!isadmin()) {
+        error("Not admin!");    
     }
-    $mimetype = mimeinfo("type", $file);
-    if ($mimetype != "application/zip") {
-        error (get_string('invalidfiletype', 'error', $file));
+        
+    $file       = required_param ('file', PARAM_PATH);
+    $all        = optional_param ('all', '', PARAM_STR);
+    
+    if ($all == '') {
+        print_header();
+        ims_deploy_file($file);
+        print_footer();
     }
-    $resourcefile = $resourcedir.'/'.basename($origin);
-    if (!backup_copy_file($origin, $resourcefile)) {
-        error (get_string('errorcopyingfiles', 'error'));
-    }
-
-/// Unzip files
-    if (!unzip_file($resourcefile, '', false)) {
-        error (get_string('errorunzippingfiles', 'error'));
-    }
-
-/// Check for imsmanifest
-    if (!file_exists($resourcedir.'/imsmanifest.xml')) {
-        error (get_string('filenotfound', 'error', 'imsmanifest.xml'));
+    else {
+        print_header();
+        ims_deploy_folder($file, $all);
+        print_footer();
     }
 
-/// Load imsmanifest to memory (instead of using a full parser,
-/// we are going to use xmlize intensively (because files aren't too big)
-    if (!$imsmanifest = ims_file2var ($resourcedir.'/imsmanifest.xml')) {
-        error (get_string ('errorreadingfile', 'error', 'imsmanifest.xml'));
-    }
-
-/// Check if the first line is a proper one, because I've seen some
-/// packages with some control characters at the beginning.
-    $inixml = strpos($imsmanifest, '<?xml ');
-    if ($inixml !== false) {
-        if ($inixml !== 0) {
-            //Strip strange chars before "<?xml "
-            $imsmanifest = substr($imsmanifest, $inixml);
+/// Deploys all packages found in the folder recursively.
+    function ims_deploy_folder($file, $all='') {
+        global $CFG;
+        
+        $dirpath = "$CFG->repository/$file";
+        $dir = opendir($dirpath);
+        while (false != ($filename = readdir($dir))) {
+            if ($filename != '.' && $filename != '..') {
+                $path = $dirpath.'/'.$filename;
+                if (is_dir($path) && file_exists("$path/imsmanifest.xml")) {
+                    if ($all == 'force' || !file_exists("$path/moodle_inx.ser")) {
+                        echo "DEPLOYING $path<br>";
+                        ims_deploy_file($file.'/'.$filename, $all);
+                    }
+                }
+                else if (is_dir($path)) {
+                    echo "DEPLOYING $path<br>";
+                    ims_deploy_folder($file.'/'.$filename, $all); 
+                }
+                else {
+                    echo "WONT DEPLOY $path<br>";
+                }
+            }
         }
-    } else {
-        error (get_string ('invalidxmlfile', 'error', 'imsmanifest.xml'));
+        closedir($dir);     
     }
 
-/// xmlize the variable
-    $data = xmlize($imsmanifest, 0);
+    function ims_deploy_file($file, $all='') {   
+        global $CFG;
+    
+    /// Load request parameters 
+        $resourcedir = "$CFG->repository/$file";
+        
+    /// Get some needed strings
+        $strdeploy = get_string('deploy','resource');
+    
+    ///
+    /// Main process, where everything is deployed
+    ///
 
-/// Extract every manifest present in the imsmanifest file.
-/// Returns a tree structure.
-    if (!$manifests = ims_extract_manifests($data)) {
-        error (get_string('nonmeaningfulcontent', 'error'));
-    }
-
-/// Process every manifest found in inverse order so every one 
-/// will be able to use its own submanifests. Not perfect because
-/// teorically this will allow some manifests to use other non-childs
-/// but this is supposed to be
-
-/// Detect if all the manifest share a common xml:base tag
-    $manifest_base = $data['manifest']['@']['xml:base'];
-
-/// Parse XML-metadata
-    /// Skip this for now (until a proper METADATA container was created in Moodle).
-
-/// Parse XML-content package data
-/// First we select an organization an load all the items
-    if (!$items = ims_process_organizations($data['manifest']['#']['organizations']['0'])) {
-        error (get_string('nonmeaningfulcontent', 'error'));
-    }
-
-/// Detect if all the resources share a common xml:base tag
-    $resources_base = $data['manifest']['#']['resources']['0']['@']['xml:base'];
-  
-/// Now, we load all the resources available (keys are identifiers)
-    if (!$resources = ims_load_resources($data['manifest']['#']['resources']['0']['#']['resource'], $manifest_base, $resources_base)) {
-        error (get_string('nonmeaningfulcontent', 'error'));
-    }
-///Now we assign to each item, its resource (by identifier)
-    foreach ($items as $key=>$item) {
-        if (!empty($resources[$item->identifierref])) {
-            $items[$key]->href = $resources[$item->identifierref];
+    /// Load imsmanifest to memory (instead of using a full parser,
+    /// we are going to use xmlize intensively (because files aren't too big)
+        if (!$imsmanifest = ims_file2var ($resourcedir.'/imsmanifest.xml')) {
+            error (get_string ('errorreadingfile', 'error', 'imsmanifest.xml'));
+        }
+            
+    /// Check if the first line is a proper one, because I've seen some
+    /// packages with some control characters at the beginning.
+        $inixml = strpos($imsmanifest, '<?xml ');
+        if ($inixml !== false) {
+            if ($inixml !== 0) {
+                //Strip strange chars before "<?xml "
+                $imsmanifest = substr($imsmanifest, $inixml);
+            }
         } else {
-            $items[$key]->href = '';
+            if (
+                (ord($imsmanifest[0]) == 0xFF && ord($imsmanifest[1]) == 0xFE) || 
+                (ord($imsmanifest[0]) == 0xFE && ord($imsmanifest[1]) == 0xFF)) {
+                echo " UTF-16 - CAN'T DEPLOY.";
+                return;
+            }
+            else {
+                error (get_string ('invalidxmlfile', 'error', 'imsmanifest.xml'));
+            }
         }
+    
+    /// xmlize the variable
+        $data = xmlize($imsmanifest, 0);
+
+    ///    traverse_xmlize($data);
+        $title = ims_get_cp_title($data);
+    ///    foreach ($GLOBALS['traverse_array'] as $line) echo $line;
+    
+    /// Extract every manifest present in the imsmanifest file.
+    /// Returns a tree structure.
+        if (!$manifests = ims_extract_manifests($data)) {
+            error (get_string('nonmeaningfulcontent', 'error'));
+        }
+    
+    /// Process every manifest found in inverse order so every one 
+    /// will be able to use its own submanifests. Not perfect because
+    /// teorically this will allow some manifests to use other non-childs
+    /// but this is supposed to be
+    
+    /// Detect if all the manifest share a common xml:base tag
+        $manifest_base = $data['manifest']['@']['xml:base'];
+
+    /// Parse XML-metadata
+        /// Skip this for now (until a proper METADATA container was created in Moodle).
+    
+    /// Parse XML-content package data
+    /// First we select an organization an load all the items
+
+        if (!$items = ims_process_organizations($data['manifest']['#']['organizations']['0'])) {
+            if ($all == 'force') return; else error (get_string('nonmeaningfulcontent', 'error'));
+        }
+    
+    /// Detect if all the resources share a common xml:base tag
+        $resources_base = $data['manifest']['#']['resources']['0']['@']['xml:base'];
+      
+    /// Now, we load all the resources available (keys are identifiers)
+        if (!$resources = ims_load_resources($data['manifest']['#']['resources']['0']['#']['resource'], $manifest_base, $resources_base)) {
+            error (get_string('nonmeaningfulcontent', 'error'));
+        }
+    ///Now we assign to each item, its resource (by identifier)
+        foreach ($items as $key=>$item) {
+            if (!empty($resources[$item->identifierref])) {
+                $items[$key]->href = $resources[$item->identifierref];
+            } else {
+                $items[$key]->href = '';
+            }
+        }
+    
+    /// Create the INDEX (moodle_inx.ser - where the order of the pages are stored serialized) file
+        $items['title'] = $title;
+        if (!ims_save_serialized_file($resourcedir.'/moodle_inx.ser', $items)) {
+            error (get_string('errorcreatingfile', 'error', 'moodle_inx.ser'));
+        }
+    
+    /// No zip so no HASH
+    
+    /// End button (go to view mode)
+        echo '<center>';
+        print_simple_box(get_string('imspackageloaded', 'resource'), 'center');
+        $link = $CFG->wwwroot.'/mod/resource/type/ims/preview.php';
+        $options['directory'] = $file;
+        $label = get_string('viewims', 'resource');
+        $method = 'get';
+        print_single_button($link, $options, $label, $method);
+        echo '</center>';
+    
+    ///
+    /// End of main process, where everything is deployed
+    ///
     }
-
-/// Create the INDEX (moodle_inx.ser - where the order of the pages are stored serialized) file
-    if (!ims_save_serialized_file($resourcedir.'/moodle_inx.ser', $items)) {
-        error (get_string('errorcreatingfile', 'error', 'moodle_inx.ser'));
-    }
-
-/// Create the HASH file (moodle_hash.ser - where the hash of the ims is stored serialized) file
-    $hash = $resource_obj->calculatefilehash($resourcefile);
-    if (!ims_save_serialized_file($resourcedir.'/moodle_hash.ser', $hash)) {
-        error (get_string('errorcreatingfile', 'error', 'moodle_hash.ser'));
-    }
-
-/// End button (go to view mode)
-    echo '<center>';
-    print_simple_box(get_string('imspackageloaded', 'resource'), 'center');
-    $link = $CFG->wwwroot.'/mod/resource/view.php';
-    $options['r'] = $resource->id;
-    $label = get_string('viewims', 'resource');
-    $method = 'post';
-    print_single_button($link, $options, $label, $method);
-    echo '</center>';
-
-///
-/// End of main process, where everything is deployed
-///
-
-/// Print the footer of the page
-    print_footer();
-
 ///
 /// Common and useful functions used by the body of the script
 ///
@@ -274,7 +262,7 @@
     function ims_process_organizations($data) {
 
         global $CFG;
-
+        
     /// Get the default organization
         $default_organization = $data['@']['default'];
         if ($CFG->debug) print_object('default_organization: '.$default_organization);
@@ -396,9 +384,9 @@
         /// Some packages are poorly done and use \ in roots. This makes them 
         /// not display since the URLs are not valid.
             if (!empty($obj_resource->href)) {
-            	$obj_resource->href = strtr($obj_resource->href, "\\", '/');	
+                $obj_resource->href = strtr($obj_resource->href, "\\", '/');    
             }
-            
+
         /// Only if the resource has everything
             if (!empty($obj_resource->identifier) &&
                 !empty($obj_resource->href)) {
@@ -422,5 +410,25 @@
         }
         return $resources;
     }
-
+    
+    /*** This function finds out the title of the resource from the XML.
+     *   First 2 conditions cover nearly all cases. The third is a fair guess
+     *   if no metadata is supplied. This is eventually saved in the serialized
+     *   hash as $items['title'].
+     */    
+    function ims_get_cp_title($xmlobj) {
+        $md = $xmlobj['manifest']['#']['metadata']['0']['#'];
+        if (isset($md['imsmd:lom'])) {
+            return $md['imsmd:lom']['0']['#']['imsmd:general']['0']['#']['imsmd:title']['0']['#']['imsmd:langstring']['0']['#'];
+        }
+        else if (isset($md['imsmd:record'])) {
+            return $md['imsmd:record']['0']['#']['imsmd:general']['0']['#']['imsmd:title']['0']['#']['imsmd:langstring']['0']['#'];
+        }
+        else if ($title = $xmlobj['manifest']['#']['organizations']['0']['#']['organization']['0']['#']['title']['0']['#']) {
+            return $title;  
+        }
+        else {
+            return "NO TITLE FOUND";
+        }
+    }
 ?>

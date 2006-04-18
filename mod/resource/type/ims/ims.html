@@ -56,20 +56,24 @@
     }
     
     function optiondeselector () {
-    	currentstate = document.getElementById('menuparam_navigationmenu').value;
-    	if (currentstate == 1) {
-    		document.getElementById('menuparam_tableofcontents').value = 0;
-    		document.getElementById('menuparam_skipsubmenus').value = 1;
-    		document.getElementById('menuparam_navigationupbutton').value = 0;
-    		document.getElementById('menuparam_tableofcontents').disabled = true;
-    		document.getElementById('menuparam_skipsubmenus').disabled = true;
-    		document.getElementById('menuparam_navigationupbutton').disabled = true;
-    	}
-    	else {
-    		document.getElementById('menuparam_tableofcontents').disabled = false;
-    		document.getElementById('menuparam_skipsubmenus').disabled = false;
-    		document.getElementById('menuparam_navigationupbutton').disabled = false;    		
-    	}
+        document.getElementById('menuparam_tableofcontents').disabled = false;
+        document.getElementById('menuparam_skipsubmenus').disabled = false;
+        document.getElementById('menuparam_navigationupbutton').disabled = false; 
+        
+        if (document.getElementById('menuparam_navigationmenu').value == 1) {
+            document.getElementById('menuparam_tableofcontents').value = 0;
+            document.getElementById('menuparam_skipsubmenus').value = 1;
+            document.getElementById('menuparam_navigationupbutton').value = 0;
+            document.getElementById('menuparam_tableofcontents').disabled = true;
+            document.getElementById('menuparam_skipsubmenus').disabled = true;
+            document.getElementById('menuparam_navigationupbutton').disabled = true;
+        }
+        
+        if (document.getElementById('menuparam_navigationbuttons').value == 0) {
+            document.getElementById('menuparam_navigationupbutton').value = 0;
+            document.getElementById('menuparam_navigationupbutton').disabled = true;
+        }
+
     }
 </script>
 
@@ -78,8 +82,11 @@
     </td>
     <td>
     <?php
+        $strbrowserepository = get_string('browserepository', 'resource');
         echo "<input type=\"text\" name=\"reference\" size=\"90\" value=\"$form->reference\" alt=\"reference\" /><br />";
         button_to_popup_window ("/files/index.php?id=$form->course&amp;choose=form.reference", "coursefiles", $strchooseafile, 500, 750, $strchooseafile);
+        if ($CFG->repositoryactivate) button_to_popup_window ("/mod/resource/type/ims/finder.php?directory=", "", $strbrowserepository, 500, 750, "Browse repository");
+    
     ?>
     </td>
 </tr>
@@ -188,7 +195,7 @@
     
     echo "<tr>\n";
     echo "<td valign=\"top\" align=\"right\">\n";
-    echo 'Navigation Menu: ';
+    echo get_string('navigationmenu','resource').': ';
     echo "</td>\n";
     echo "<td valign=\"top\">\n";
     choose_from_menu($yesno, "param_navigationmenu", $form->param_navigationmenu, "", "optiondeselector();");
@@ -209,13 +216,13 @@
     echo get_string('navigationbuttons','resource').': ';
     echo "</td>\n";
     echo "<td valign=\"top\">\n";
-    choose_from_menu($yesno, "param_navigationbuttons", $form->param_navigationbuttons, "");
+    choose_from_menu($yesno, "param_navigationbuttons", $form->param_navigationbuttons, "", "optiondeselector();");
     echo "</td>\n";
     echo "</tr>\n";
     
     echo "<tr>\n";
     echo "<td valign=\"top\" align=\"right\">\n";
-    echo 'Skip Submenu Entries: ';
+    echo get_string('skipsubmenus','resource').': ';
     echo "</td>\n";
     echo "<td valign=\"top\">\n";
     choose_from_menu($yesno, "param_skipsubmenus", $form->param_skipsubmenus, "");
@@ -224,7 +231,7 @@
     
     echo "<tr>\n";
     echo "<td valign=\"top\" align=\"right\">\n";
-    echo 'Navigation \'Up\' Button: ';
+    echo get_string('navigationup','resource').': ';
     echo "</td>\n";
     echo "<td valign=\"top\">\n";
     choose_from_menu($yesno, "param_navigationupbutton", $form->param_navigationupbutton, "");
