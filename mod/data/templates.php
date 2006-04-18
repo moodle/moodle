@@ -91,39 +91,31 @@
     include('tabs.php'); 
 
 /// Processing submitted data, i.e updating form.
-    if (($mytemplate = data_submitted($CFG->wwwroot.'/mod/data/templates.php')) && confirm_sesskey()){
+    if (($mytemplate = data_submitted($CFG->wwwroot.'/mod/data/templates.php')) && confirm_sesskey()) {
+        $newtemplate->id = $data->id;
+        $newtemplate->{$mode} = $mytemplate->template;
 
-        // Generate default template.
-        if (!empty($mytemplate->defaultform)) {
-            data_generate_default_template($data, $mode);
-            add_to_log($course->id, 'data', 'templates def', "templates.php?id=$cm->id&amp;mode=$mode", $data->id, $cm->id);
-        } else {
-
-            $newtemplate->id = $data->id;
-            $newtemplate->{$mode} = $mytemplate->template;
-
-            if (isset($mytemplate->listtemplateheader)){
-                $newtemplate->listtemplateheader = $mytemplate->listtemplateheader;
-            }
-            if (isset($mytemplate->listtemplatefooter)){
-                $newtemplate->listtemplatefooter = $mytemplate->listtemplatefooter;
-            }
-
-            // Check for multiple tags, only need to check for add template.
-            if ($mode != 'addtemplate' or data_tags_check($data->id, $newtemplate->{$mode})){
-                if (update_record('data',$newtemplate)) {
-                    notify(get_string('templatesaved','data'), 'notifysuccess');
-                }
-            }
-            add_to_log($course->id, 'data', 'templates saved', "templates.php?id=$cm->id&amp;d=$data->id", $data->id, $cm->id);
+        if (isset($mytemplate->listtemplateheader)){
+            $newtemplate->listtemplateheader = $mytemplate->listtemplateheader;
         }
+        if (isset($mytemplate->listtemplatefooter)){
+            $newtemplate->listtemplatefooter = $mytemplate->listtemplatefooter;
+        }
+        
+        // Check for multiple tags, only need to check for add template.
+        if ($mode != 'addtemplate' or data_tags_check($data->id, $newtemplate->{$mode})) {
+            if (update_record('data', $newtemplate)) {
+                notify(get_string('templatesaved', 'data'), 'notifysuccess');
+            }
+        }
+        add_to_log($course->id, 'data', 'templates saved', "templates.php?id=$cm->id&amp;d=$data->id", $data->id, $cm->id);
     } else {
         echo '<div class="littleintro" align="center">'.get_string('header'.$mode,'data').'</div>';
     }
 
 /// If everything is empty then generate some defaults
     if (empty($data->addtemplate) and empty($data->singletemplate) and 
-        empty($data->listtemplate) and empty($data->rsstemplate)){
+        empty($data->listtemplate) and empty($data->rsstemplate)) {
         data_generate_default_template($data, 'singletemplate');
         data_generate_default_template($data, 'listtemplate');
         data_generate_default_template($data, 'addtemplate');
@@ -187,7 +179,7 @@
     echo '<option value="##comments##">##' .get_string('comments', 'data'). '##</option>';
     echo '<option value="##user##">##' .get_string('user'). '##</option>';
     echo '</select>';
-    echo '<br /><br /><br /><br /><input type="submit" name="defaultform" value="'.get_string('resettemplate','data').'" />';
+    echo '<br /><br /><br /><br /><input type="button" name="defaultform" value="'.get_string('resettemplate','data').'" onclick="resetTemplate(document.tempform.template);" />';
     echo '</td>';
     
     echo '<td>';
@@ -212,6 +204,23 @@
     echo '<input type="submit" value="'.get_string('savetemplate','data').'" />&nbsp;';
     
     echo '</td></tr></table>';
+    
+    
+    /// Javascript for resetting to default templates.
+    $dataclone = clone($data);  // Ugly Hack - We need to clone it because
+                                // data_generate_default_template() is modifying
+                                // $dataclone directly.
+    $tplreset = data_generate_default_template($dataclone, $mode, 0, false, false);
+    ?>
+    <script>
+    <!--
+    function resetTemplate(mytextarea) {
+        //mytextarea.value = 'test';
+        mytextarea.value = '<?php echo $tplreset; ?>';
+    }
+    -->
+    </script>
+    <?php
     
     
     print_simple_box_end();
