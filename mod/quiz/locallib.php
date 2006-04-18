@@ -565,13 +565,14 @@ function all_attempt_results_visible($quiz, $user) {
     $sql = 'SELECT timefinish, preview FROM '.$CFG->prefix.'quiz_attempts qa'.
         ' WHERE qa.quiz='.$quiz->id.' AND qa.userid='.$user->id.
         ' ORDER BY id DESC';
-    $attempts = get_records_sql($sql);
-    foreach ($attempts as $attempt) {            
-        $attemptoptions = quiz_get_reviewoptions($quiz, $attempt);
-        //if any attempt has scores option not set, not all attempt results are
-        //visible
-        if (!$attemptoptions->scores) {
-           return false;
+    if ($attempts = get_records_sql($sql)) {
+        foreach ($attempts as $attempt) {            
+            $attemptoptions = quiz_get_reviewoptions($quiz, $attempt);
+            //if any attempt has scores option not set, not all attempt results are
+            //visible
+            if (!$attemptoptions->scores) {
+                return false;
+            }
         }
     }
     return true;
