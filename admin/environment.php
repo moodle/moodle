@@ -128,7 +128,7 @@
     }
 
 /// Print form and popup menu
-    echo '<center><form method="post" action="'.$CFG->wwwroot.'/admin/environment.php">';
+    echo '<center><form method="post" action="environment.php">';
     echo $strmoodleversion.' ';
     choose_from_menu ($versions, 'version', $version, null, 'this.form.submit();' );
     echo '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
