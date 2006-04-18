@@ -112,10 +112,17 @@
                 $gradecol = "";
             }
         } else {
+            // If student has no grade for this quiz, 
+            // or the quiz has no grade, display nothing in grade col
             if ($bestgrade === NULL || $quiz->grade == 0) {
                 $gradecol = "";
             } else {
-                $gradecol = "$bestgrade / $quiz->grade";
+                //If all quiz's attempts have visible results, show bestgrade
+                if(all_attempt_results_visible($quiz, $USER)) {
+                    $gradecol = "$bestgrade / $quiz->grade";
+                } else {
+                    $gradecol = "";
+                }
             }
         }
 

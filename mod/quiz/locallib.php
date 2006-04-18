@@ -550,5 +550,31 @@ function quiz_get_reviewoptions($quiz, $attempt, $isteacher=false) {
 
     return $options;
 }
+////////////////////////////////////////////////////////////////////////////////
+/**
+* Return boolean indicating if the quiz has attempts with hidden grades
+*
+* Selects all attempts matching specified quiz & user, and examines each to
+* check they all have visible results.
+* @return boolean        If the quiz has attempts without visible results
+* @param object $quiz    The quiz being examined
+* @param object $user    The user concerned
+*/
+function all_attempt_results_visible($quiz, $user) {
+    global $CFG;
+    $sql = 'SELECT timefinish, preview FROM '.$CFG->prefix.'quiz_attempts qa'.
+        ' WHERE qa.quiz='.$quiz->id.' AND qa.userid='.$user->id.
+        ' ORDER BY id DESC';
+    $attempts = get_records_sql($sql);
+    foreach ($attempts as $attempt) {            
+        $attemptoptions = quiz_get_reviewoptions($quiz, $attempt);
+        //if any attempt has scores option not set, not all attempt results are
+        //visible
+        if (!$attemptoptions->scores) {
+           return false;
+        }
+    }
+    return true;
+}
 
 ?>
