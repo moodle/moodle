@@ -181,17 +181,20 @@
     if (!empty($overtime)) {
         $table->data[] = array("$stroverdue:", $overtime);
     }
-    if ($quiz->grade and $quiz->sumgrades) {
-        if($overtime) {
-            $result->sumgrades = "0";
-            $result->grade = "0.0";
+    //if the student is allowed to see their score
+    if ($options->scores) {
+        if ($quiz->grade and $quiz->sumgrades) {
+            if($overtime) {
+                $result->sumgrades = "0";
+                $result->grade = "0.0";
+            }
+            
+            $percentage = round(($attempt->sumgrades/$quiz->sumgrades)*100, 0);
+            $grade = round(($attempt->sumgrades/$quiz->sumgrades)*$quiz->grade, $CFG->quiz_decimalpoints);
+            $rawscore = round($attempt->sumgrades, $CFG->quiz_decimalpoints);
+            $table->data[] = array("$strscore:", "$rawscore/$quiz->sumgrades ($percentage %)");
+            $table->data[] = array("$strgrade:", $grade.get_string('outof', 'quiz').$quiz->grade);
         }
-        
-        $percentage = round(($attempt->sumgrades/$quiz->sumgrades)*100, 0);
-        $grade = round(($attempt->sumgrades/$quiz->sumgrades)*$quiz->grade, $CFG->quiz_decimalpoints);
-        $rawscore = round($attempt->sumgrades, $CFG->quiz_decimalpoints);
-        $table->data[] = array("$strscore:", "$rawscore/$quiz->sumgrades ($percentage %)");
-        $table->data[] = array("$strgrade:", $grade.get_string('outof', 'quiz').$quiz->grade);
     }
     if ($isteacher and $attempt->userid == $USER->id) {
         // the teacher is at the end of a preview. Print button to start new preview
