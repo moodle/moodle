@@ -208,7 +208,7 @@ function modify_database($sqlfile='', $sqlstring='') {
 
 /**
  * Add a new field to a table, or modify an existing one (if oldfield is defined).
- *
+ * Warning: Please be careful on primary keys, as this function will eat auto_increments
  * @uses $CFG
  * @uses $db
  * @param string $table ?
