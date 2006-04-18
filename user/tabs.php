@@ -70,15 +70,6 @@
             $toprow[] = new tabobject('blogs', $CFG->wwwroot.'/blog/index.php?filtertype=group&amp;filterselect='.$filterselect, get_string('blogs','blog'));
         }
 
-    /*********************************************************************
-     * if selection in progress, only print blogs tab, in blog interface *
-     *********************************************************************/
-    } else if ($filtertype == 'course' || $filtertype == 'group') {
-
-        print_heading('');
-        $toprow[] = new tabobject('blogs', $CFG->wwwroot.'/blog/index.php?filtertype=site&amp;',
-                get_string('blogs','blog'));
-
     /**************************************
      * User Level participation or Blogs  *
      **************************************/
@@ -87,8 +78,8 @@
             $user = get_record('user','id', $userid);
         }
         print_heading(fullname($user, isteacher($course->id)));
-        $toprow[] = new tabobject('profile', $CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.$course->id,
-                    get_string('profile'));
+
+        $toprow[] = new tabobject('profile', $CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.$course->id, get_string('profile'));
 
 
     /// Can only edit profile if it belongs to user or current user is admin and not editing primary admin
@@ -104,8 +95,8 @@
             } else {
                 $wwwroot = str_replace('http','https',$CFG->wwwroot);
             }
-            $toprow[] = new tabobject('editprofile', $wwwroot.'/user/edit.php?id='.$user->id.'&amp;course='.$course->id,
-                        get_string('editmyprofile'));
+
+            $toprow[] = new tabobject('editprofile', $wwwroot.'/user/edit.php?id='.$user->id.'&amp;course='.$course->id, get_string('editmyprofile'));
         }
 
 
@@ -127,7 +118,7 @@
 
 
     /// Blog entry, everyone can view
-        if ($CFG->bloglevel >= 1) {
+        if ($CFG->bloglevel > 1 or $USER->id == $user->id) {  // this is weird
             $toprow[] = new tabobject('blogs', $CFG->wwwroot.'/blog/index.php?userid='.$user->id.'&amp;courseid='.$course->id, get_string('blogs', 'blog'));
         }
         
