@@ -38,6 +38,7 @@
 
     require_login($course->id, false, $cm);
     $isteacher = isteacher($course->id);
+    $options = quiz_get_reviewoptions($quiz, $attempt, $isteacher);
     $popup = $isteacher ? 0 : $quiz->popup; // Controls whether this is shown in a javascript-protected window.
 
     if (!$isteacher) {
@@ -232,7 +233,6 @@
             $number++; // Just guessing that the missing question would have lenght 1
             continue;
         }
-        $options = quiz_get_reviewoptions($quiz, $attempt, $isteacher);
         $options->validation = QUESTION_EVENTVALIDATE === $states[$i]->event;
         $options->history = ($isteacher and !$attempt->preview) ? 'all' : 'graded';
         // Print the question
