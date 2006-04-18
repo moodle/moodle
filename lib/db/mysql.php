@@ -1780,10 +1780,10 @@ function main_upgrade($oldversion=0) {
         table_column('course_modules','','visibleold','integer','1','unsigned','1','not null', 'visible');
     }
     
-    if ($oldversion < 2006041800) { // forgot auto_increments for ids
-        modify_database('',"ALTER TABLE post CHANGE id id INT UNSIGNED NOT NULL AUTO_INCREMENT");
-        modify_database('',"ALTER TABLE tags CHANGE id id INT UNSIGNED NOT NULL AUTO_INCREMENT");
-        modify_database('',"ALTER TABLE blog_tag_instance CHANGE id id INT UNSIGNED NOT NULL AUTO_INCREMENT");
+    if ($oldversion < 2006041801) { // forgot auto_increments for ids
+        modify_database('',"ALTER TABLE prefix_post CHANGE id id INT UNSIGNED NOT NULL AUTO_INCREMENT");
+        modify_database('',"ALTER TABLE prefix_tags CHANGE id id INT UNSIGNED NOT NULL AUTO_INCREMENT");
+        modify_database('',"ALTER TABLE prefix_blog_tag_instance CHANGE id id INT UNSIGNED NOT NULL AUTO_INCREMENT");
     }
     
     return $result;
