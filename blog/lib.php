@@ -168,6 +168,23 @@
 
         echo '</td><td class="content">'."\n";
 
+        switch ($template['publishstate']) {
+            case 'draft':
+                $blogtype = get_string('publishtonoone', 'blog');
+            break;
+            case 'site':
+                $blogtype = get_string('publishtosite', 'blog');
+            break;
+            case 'public':
+                $blogtype = get_string('publishtoworld', 'blog');
+            break;
+            default:
+            break;
+
+        } 
+
+        echo '<div class="">'.$blogtype.'</div>';  /// martin please fill in the class and css
+
         // Print whole message
         echo format_text($template['body']);
 

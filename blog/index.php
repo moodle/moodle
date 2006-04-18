@@ -118,11 +118,15 @@ switch ($filtertype) {
         if ($CFG->bloglevel < BLOG_USER_LEVEL) {
             error ('Blogs is not enabled');
         }
-
-        blog_user_can_view_user_post($filterselect);
+        
+        if ($CFG->bloglevel == BLOG_USER_LEVEL and $USER->id != $filterselect and !isadmin()) {
+            error ('Under this setting, you can only view your own blogs');
+        }
 
         /// check to see if the viewer is sharing no_group, visible group course.
         /// if not , check if the viewer is in any spg group as the user
+        blog_user_can_view_user_post($filterselect);
+
     break;
     default:
     break;
@@ -132,8 +136,6 @@ switch ($filtertype) {
 if ($limit == 'none') {
     $limit = get_user_preferences('blogpagesize',10);
 }
-
-//$blogFilter =& new BlogFilter($userid, $postid, $limit, $start,$filtertype, $filterselect, $tagid, $tag);
 
 include($CFG->dirroot .'/blog/header.php');
 

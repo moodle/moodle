@@ -167,7 +167,7 @@ function do_delete($postid) {
     // check ownership
     $blogEntry = get_record('post','id',$postid);
 
-    if (blog_user_can_edit($blogEntry)) {
+    if (blog_user_can_edit_post($blogEntry)) {
         
         if (delete_records('post','id',$postid)) {
             //echo "bloginfo_arg:"; //debug
@@ -188,7 +188,7 @@ function do_delete($postid) {
 
     //comment out this redirect to debug the deletion of entries
 
-    redirect($CFG->wwwroot .'/blog/index.php?userid='. $post->userid);
+    redirect($CFG->wwwroot .'/blog/index.php?userid='. $blogEntry->userid);
 }
 
 /**

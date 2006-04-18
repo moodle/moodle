@@ -72,97 +72,123 @@ if (!isset($filtertype)) {
 /// course blogs - sitefullname -> course fullname ->blogs ->(?tag)
 /// group blogs - sitefullname -> course fullname ->group ->(?tag)
 /// user blogs - sitefullname -> (?coursefullname) -> participants -> blogs -> (?tag)
+
 $blogstring = get_string('blogs','blog');
 $tagstring = get_string('tag');
 
-switch ($filtertype) {
-    case 'site':
-        if ($tagid || !empty($tag)) {
-            print_header("$site->shortname: $blogstring", "$site->fullname",
-                        '<a href="index.php?filtertype=site">'. "$blogstring</a> -> $tagstring: $taginstance->text",'','',true,$PAGE->get_extra_header_string());
-        } else {
-            print_header("$site->shortname: $blogstring", "$site->fullname",
-                        "$blogstring",'','',true,$PAGE->get_extra_header_string());
-        }
-    break;
+if ($ME == 'http://yu.moodle.com/dev/blog/edit.php') {  ///we are in edit mode, print editting header
 
-    case 'course':
-        if ($tagid || !empty($tag)) {
-            print_header("$course->shortname: $blogstring", "$course->fullname",
-                        '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$filterselect.'">'.$course->shortname.'</a> ->
-                        <a href="index.php?filtertype=course&amp;filterselect='.$filterselect.'">'. "$blogstring</a> -> $tagstring: $taginstance->text",'','',true,$PAGE->get_extra_header_string());
-        } else {
-            print_header("$site->shortname: $blogstring", "$site->fullname",
-                        '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$filterselect.'">'.$course->shortname."</a> ->
-                        $blogstring",'','',true,$PAGE->get_extra_header_string());
-        }
-    break;
+    // first we need to identify the user
+    if ($editid) {  // if we are editting a post
+        $blogEntry = get_record('post','id',$editid);
+        $user = get_record('user','id',$blogEntry->userid);
+    } else {
+        $user = get_record('user','id',$filterselect);
+    }
 
-    case 'group':
-
-        $thisgroup = get_record('groups', 'id', $filterselect);
-
-        if ($tagid || !empty($tag)) {
-            print_header("$course->shortname: $blogstring", "$course->fullname",
-                        '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">'.$course->shortname.'</a> ->
-                        <a href="'.$CFG->wwwroot.'/user/index.php?id='.$course->id.'&amp;group='.$filterselect.'">'.$thisgroup->name.'</a> ->
-                        <a href="index.php?filtertype=group&amp;filterselect='.$filterselect.'">'. "$blogstring</a> -> $tagstring: $taginstance->text",'','',true,$PAGE->get_extra_header_string());
-        } else {
-            print_header("$course->shortname: $blogstring", "$course->fullname",
-                        '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">'.$course->shortname.'</a> ->
-                        <a href="'.$CFG->wwwroot.'/user/index.php?id='.$course->id.'&amp;group='.$filterselect.'">'.$thisgroup->name."</a> ->
-                        $blogstring",'','',true,$PAGE->get_extra_header_string());
-
-        }
+    if ($editid) {
+        $formHeading = get_string('updateentrywithid', 'blog');
+    } else {
+        $formHeading = get_string('addnewentry', 'blog');
+    }
     
-    break;
+    print_header("$site->shortname: $blogstring", "$site->fullname",
+                        '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$filterselect.'">'.fullname($user).'</a> ->
+                        <a href="'.$CFG->wwwroot.'/blog/index.php?userid='.$user->id.'">'.$blogstring.'</a> -> '.               $formHeading,'','',true,$PAGE->get_extra_header_string());
 
-    case 'user':
-        $user = get_record('user', 'id', $filterselect);
-        $participants = get_string('participants');
+} else {  // else, we are in view mode
 
-        if (isset($course->id) && $course->id && $course->id != SITEID) {
+/// This is very messy atm.
+
+    switch ($filtertype) {
+        case 'site':
+            if ($tagid || !empty($tag)) {
+                print_header("$site->shortname: $blogstring", "$site->fullname",
+                            '<a href="index.php?filtertype=site">'. "$blogstring</a> -> $tagstring: $taginstance->text",'','',true,$PAGE->get_extra_header_string());
+            } else {
+                print_header("$site->shortname: $blogstring", "$site->fullname",
+                            "$blogstring",'','',true,$PAGE->get_extra_header_string());
+            }
+        break;
+
+        case 'course':
             if ($tagid || !empty($tag)) {
                 print_header("$course->shortname: $blogstring", "$course->fullname",
-                        '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">'.$course->shortname.'</a> ->
-                        <a href="'.$CFG->wwwroot.'/user/index.php?id='.$course->id.'">'.$participants.'</a> ->
-                        <a href="'.$CFG->wwwroot.'/user/view.php?id='.$filterselect.'&amp;course='.$course->id.'">'.fullname($user).'</a> ->
-                        <a href="index.php?courseid='.optional_param('courseid', 0, PARAM_INT).'&amp;filtertype=user&amp;filterselect='.$filterselect.'">'. "$blogstring</a> -> $tagstring: $taginstance->text",'','',true,$PAGE->get_extra_header_string());
+                            '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$filterselect.'">'.$course->shortname.'</a> ->
+                            <a href="index.php?filtertype=course&amp;filterselect='.$filterselect.'">'. "$blogstring</a> -> $tagstring: $taginstance->text",'','',true,$PAGE->get_extra_header_string());
+            } else {
+                print_header("$site->shortname: $blogstring", "$site->fullname",
+                            '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$filterselect.'">'.$course->shortname."</a> ->
+                            $blogstring",'','',true,$PAGE->get_extra_header_string());
+            }
+        break;
 
+        case 'group':
+
+            $thisgroup = get_record('groups', 'id', $filterselect);
+
+            if ($tagid || !empty($tag)) {
+                print_header("$course->shortname: $blogstring", "$course->fullname",
+                            '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">'.$course->shortname.'</a> ->
+                            <a href="'.$CFG->wwwroot.'/user/index.php?id='.$course->id.'&amp;group='.$filterselect.'">'.$thisgroup->name.'</a> ->
+                            <a href="index.php?filtertype=group&amp;filterselect='.$filterselect.'">'. "$blogstring</a> -> $tagstring: $taginstance->text",'','',true,$PAGE->get_extra_header_string());
             } else {
                 print_header("$course->shortname: $blogstring", "$course->fullname",
-                        '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">'.$course->shortname.'</a> ->
-                        <a href="'.$CFG->wwwroot.'/user/index.php?id='.$course->id.'">'.$participants.'</a> ->
-                        <a href="'.$CFG->wwwroot.'/user/view.php?id='.$filterselect.'&amp;course='.$course->id.'">'.fullname($user).'</a> ->
-                        '.$blogstring,'','',true,$PAGE->get_extra_header_string());
+                            '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">'.$course->shortname.'</a> ->
+                            <a href="'.$CFG->wwwroot.'/user/index.php?id='.$course->id.'&amp;group='.$filterselect.'">'.$thisgroup->name."</a> ->
+                            $blogstring",'','',true,$PAGE->get_extra_header_string());
 
             }
 
-        }
-        //in top view
-        else {
+        break;
 
-            if ($tagid || !empty($tag)) {
-                print_header("$site->shortname: $blogstring", "$site->fullname",
-                        '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$filterselect.'">'.fullname($user).'</a> ->
-                        <a href="index.php?filtertype=user&amp;filterselect='.$filterselect.'">'. "$blogstring</a> -> $tagstring: $taginstance->text",'','',true,$PAGE->get_extra_header_string());
+        case 'user':
+            $user = get_record('user', 'id', $filterselect);
+            $participants = get_string('participants');
 
-            } else {
-                print_header("$site->shortname: $blogstring", "$site->fullname",
-                        '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$filterselect.'">'.fullname($user).'</a> ->
-                        '.$blogstring,'','',true,$PAGE->get_extra_header_string());
+            if (isset($course->id) && $course->id && $course->id != SITEID) {
+                if ($tagid || !empty($tag)) {
+                    print_header("$course->shortname: $blogstring", "$course->fullname",
+                            '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">'.$course->shortname.'</a> ->
+                            <a href="'.$CFG->wwwroot.'/user/index.php?id='.$course->id.'">'.$participants.'</a> ->
+                            <a href="'.$CFG->wwwroot.'/user/view.php?id='.$filterselect.'&amp;course='.$course->id.'">'.fullname($user).'</a> ->
+                            <a href="index.php?courseid='.optional_param('courseid', 0, PARAM_INT).'&amp;filtertype=user&amp;filterselect='.$filterselect.'">'. "$blogstring</a> -> $tagstring: $taginstance->text",'','',true,$PAGE->get_extra_header_string());
+
+                } else {
+                    print_header("$course->shortname: $blogstring", "$course->fullname",
+                            '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">'.$course->shortname.'</a> ->
+                            <a href="'.$CFG->wwwroot.'/user/index.php?id='.$course->id.'">'.$participants.'</a> ->
+                            <a href="'.$CFG->wwwroot.'/user/view.php?id='.$filterselect.'&amp;course='.$course->id.'">'.fullname($user).'</a> ->
+                            '.$blogstring,'','',true,$PAGE->get_extra_header_string());
+                }
 
             }
-           
-        }
-    break;
+            //in top view
+            else {
 
-    default:    //user click on add from block
-        print_header("$site->shortname: $blogstring", "$site->fullname",
-                        '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$filterselect.'&amp;course='.$course->id.'">'.fullname($user).'</a> ->
-                        '.$blogstring,'','',true,$PAGE->get_extra_header_string());
-    break;
-}
+                if ($tagid || !empty($tag)) {
+                    print_header("$site->shortname: $blogstring", "$site->fullname",
+                            '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$filterselect.'">'.fullname($user).'</a> ->
+                            <a href="index.php?filtertype=user&amp;filterselect='.$filterselect.'">'. "$blogstring</a> -> $tagstring: $taginstance->text",'','',true,$PAGE->get_extra_header_string());
+
+                } else {
+                    print_header("$site->shortname: $blogstring", "$site->fullname",
+                            '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$filterselect.'">'.fullname($user).'</a> ->
+                            '.$blogstring,'','',true,$PAGE->get_extra_header_string());
+
+                }
+
+            }
+        break;
+
+        default:    //user click on add from block
+            print_header("$site->shortname: $blogstring", "$site->fullname",
+                            '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$filterselect.'">'.fullname($user).'</a> ->
+                            <a href="'.$CFG->wwwroot.'/blog/index.php?userid='.$user->id.'">'.$blogstring.'</a> -> '.get_string('addentry','blog'),'','',true,$PAGE->get_extra_header_string());
+        break;
+    }
+
+} /// close switch
 
 $editing = false;
 if ($PAGE->user_allowed_editing()) {
