@@ -490,6 +490,7 @@ $string['validate'] = 'Validate';
 $string['viewallanswers'] = 'View $a quiz attempts';
 $string['viewallreports'] = 'View reports for $a attempts';
 $string['warningsdetected'] = '$a warning(s) detected';
+$string['wheregrade'] = 'Where\'s my grade?';
 $string['webct'] = 'WebCT format';
 $string['wildcard'] = 'Wild card';
 $string['withselected'] = 'With selected';

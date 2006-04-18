@@ -168,11 +168,21 @@
 
     if ($attempts) {
                     
+        $gradecolumn=0;
+        $overallstats=1;
+        //step thru each attempt, checking there are any attempts
+        //for which the score can be displayed (need grade columns),
+        //and checking if overall grades can be displayed - no attempts for 
+        //which the score cannot be displayed
+        foreach ($attempts as $attempt) {            
+            $attemptoptions = quiz_get_reviewoptions($quiz, $attempt, $isteacher);
+            $attemptoptions->scores ? $gradecolumn=1 : $overallstats=0;                    
+        }
     /// prepare table header
         $table->head = array($strattempt, $strtimecompleted);
         $table->align = array("center", "left");
         $table->size = array("", "");
-        if ($quiz->grade and $quiz->sumgrades) { // Grades used so have more columns in table
+        if ($gradecolumn && $quiz->grade and $quiz->sumgrades) { // Grades used so have more columns in table
             if ($quiz->grade <> $quiz->sumgrades) {
                 $table->head[] = "$strmarks / $quiz->sumgrades";
                 $table->align[] = 'right';
@@ -239,13 +249,15 @@
                 $datecompleted = $quiz->timeclose ? userdate($quiz->timeclose) : '';
             }
 
+            $attemptoptions = quiz_get_reviewoptions($quiz, $attempt, $isteacher);
         /// prepare strings for attempt number, mark and grade
-            if ($quiz->grade and $quiz->sumgrades) {
+            //if attempt's score is allowed to be viewed, & qz->sumgrades and qz->sumgrades defined:
+            if ($attemptoptions->scores && $quiz->grade and $quiz->sumgrades) {
                 $attemptmark  = round($attempt->sumgrades,$quiz->decimalpoints);
                 $attemptgrade = round(($attempt->sumgrades/$quiz->sumgrades)*$quiz->grade,$quiz->decimalpoints);
 
                 // highlight the highest grade if appropriate
-                if ($attemptgrade == $mygrade and ($quiz->grademethod == QUIZ_GRADEHIGHEST)) {
+                if ($overallstats && $attemptgrade == $mygrade and ($quiz->grademethod == QUIZ_GRADEHIGHEST)) {
                     $attemptgrade = "<span class=\"highlight\">$attemptgrade</span>";
                 }
 
@@ -280,8 +292,17 @@
                         $attempt->attempt = "<a href=\"attempt.php?id=$id\">#$attempt->attempt</a>";
                     }
                 }
-                $table->data[] = array( $attempt->attempt,
-                                        $datecompleted);
+
+                $helpbutton=helpbutton('missing\ grade', get_string('wheregrade', 'quiz'), 'quiz', true, false, '',true);
+                if($gradecolumn) {
+                    $table->data[] = array( $attempt->attempt,
+                                            $datecompleted,
+                                            $helpbutton);
+                     
+                } else {
+                    $table->data[] = array( $attempt->attempt,
+                                            $datecompleted);
+                }
             }
             if (isset($quiz->showtimetaken)) {
                 $table->data[] = $timetaken;
@@ -297,7 +318,9 @@
           
             if ($available) {
                 $options["id"] = $cm->id;
-                if ($numattempts and $quiz->grade) {
+                //if overall stats are allowed (no attemps' grade not visible),
+                //and there is at least one attempt, and quiz->grade:
+                if ($overallstats and $numattempts and $quiz->grade) {
                     print_heading("$strbestgrade: $mygrade / $quiz->grade.");
                 }
                 if ($quiz->timelimit && !$quiz->attempts) {
