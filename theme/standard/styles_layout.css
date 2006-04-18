@@ -929,13 +929,15 @@ span.current {
 .weekscss-format #middle-column {
   margin: 0 12.5em 0 12.5em;
 }
+.weekscss-format #left-column,
+.weekscss-format #right-column {
+  width: 11.5em;
+}
 .weekscss-format #left-column {
   float: left;
-  width: 11.5em;
 }
 .weekscss-format #right-column {
   float: right;
-  width: 11.5em;
 }
 .weekscss li.section {
   margin-bottom: 0.5em;
