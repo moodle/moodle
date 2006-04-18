@@ -1408,8 +1408,9 @@ body#course-participation #showall {
   padding:0;
   margin-top:7px
 }
-#mod-chat-gui_header_js-jsupdate .picture {
+.chat-message .picture {
   width:40px
+  vertical-align:top;
 }
 
 /***
