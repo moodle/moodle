@@ -316,27 +316,34 @@ class assignment_base {
                 error("Course is misconfigured");
             }
         }
+
         if (empty($action)) {   // Default destination for this form
             $action = $CFG->wwwroot.'/course/mod.php';
         }
 
-        if (empty($form->name)) {
-            $form->name = "";
-        }
         if (empty($form->assignmenttype)) {
-            $form->assignmenttype = "";
+            $form->assignmenttype = '';
         } else {
             $form->assignmenttype = clean_param($form->assignmenttype, PARAM_SAFEDIR);
         }
+
+        if (empty($form->name)) {
+            $form->name = '';
+        } else {
+            $form->name = stripslashes($form->name);
+        }
+
         if (empty($form->description)) {
-            $form->description = "";
+            $form->description = '';
+        } else {
+            $form->description = stripslashes($form->description);
         }
 
         $strname    = get_string('name');
         $strassignments = get_string('modulenameplural', 'assignment');
         $strheading = empty($form->name) ? get_string("type$form->assignmenttype",'assignment') : s(format_string(stripslashes($form->name),true));
 
-        print_header($this->course->shortname.': '.$strheading, "$strheading",
+        print_header($this->course->shortname.': '.$strheading, $this->course->fullname,
                 "<a href=\"$CFG->wwwroot/course/view.php?id={$this->course->id}\">{$this->course->shortname} </a> -> ".
                 "<a href=\"$CFG->wwwroot/mod/assignment/index.php?id={$this->course->id}\">$strassignments</a> -> $strheading");
 
