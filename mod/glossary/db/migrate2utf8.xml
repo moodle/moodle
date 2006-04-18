@@ -72,7 +72,7 @@
            FROM {$CFG->prefix}glossary_entries ge,
                 {$CFG->prefix}glossary_alias ga
            WHERE ga.entryid = ge.id
-                 AND ge.id=RECORDID
+                 AND ga.id = RECORDID
           </SQL_DETECT_USER>
           <SQL_DETECT_COURSE>
            SELECT g.course
