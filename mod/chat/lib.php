@@ -589,7 +589,7 @@ function chat_format_message_manually($message, $courseid, $sender, $currentuser
 
     $output->text  = strip_tags($outinfo.': '.$outmain);
 
-    $output->html  = "<table class=\"chat-message\"><tr$rowclass><td class=\"picture\">$message->picture</td><td class=\"text\">";
+    $output->html  = "<table class=\"chat-message\"><tr$rowclass><td class=\"picture\" valign=\"top\">$message->picture</td><td class=\"text\">";
     $output->html .= "<span class=\"title\">$outinfo</span>";
     if ($outmain) {
         $output->html .= ": $outmain";
