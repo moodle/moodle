@@ -794,10 +794,12 @@ function log_the_problem_somewhere() {  //Eloy: Nice function, perhaps we could 
 }
 
 //only this function should be used during db migraton, because of addslashes at the end of the convertion
-function utfconvert($string, $enc) {
+function utfconvert($string, $enc, $slash=true) {
     global $textlib;
     if ($result = $textlib->convert($string, $enc)) {
-        $result = addslashes($result);
+        if ($slash) {
+            $result = addslashes($result);
+        }
     }
     return $result;
 }

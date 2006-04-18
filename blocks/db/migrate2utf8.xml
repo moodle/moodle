@@ -22,7 +22,7 @@
         <FIELD name="position" method="NO_CONV" type="varchar" length="10" />
         <FIELD name="configdata" method="PHP_FUNCTION" type="text" length="0">
           <PHP_FUNCTION>
-            migrate2utf8_block_instance_configdata(RECORDID)
+            migrate2utf8_block_pinned_configdata(RECORDID)
           </PHP_FUNCTION>
         </FIELD>
       </FIELDS>
