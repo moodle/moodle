@@ -15,7 +15,7 @@ class block_blog_tags extends block_base {
     }
 
     function has_config() {
-        return true;
+        return false;
     }
 
     function applicable_formats() {
