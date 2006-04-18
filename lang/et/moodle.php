@@ -632,7 +632,7 @@ $string['loginguest'] = 'Logi kui külaline';
 $string['loginsite'] = 'Logi saidile';
 $string['loginsteps'] = 'Tere! Et kursustele pääseda, võta minut aega,et tekitada omale konto sellele veebilehele. Igal eraldi kursusel võib samuti olla ühekordne \", osalejaks registreerimise võti key\", mida läheb vaja alles hiljem. Tee järgmised sammud:
    <ol>
-   <li>Täida lüngad <a href="$a">Uue Konto</a> blanketil oma isikuandmetega.</li>
+   <li>Täida lüngad <a href=\"$a\">Uue Konto</a> blanketil oma isikuandmetega.</li>
    <li>Sinu aadressile saadetakse kohe email.</li>
    <li>Loe email läbi ja kliki selles sisalduvale lingile.</li>
    <li>Sinu konto kinnitatakse ja sind logitakse sisse.</li>
