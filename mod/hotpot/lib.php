@@ -1287,7 +1287,9 @@ class hotpot_xml_tree {
 			//.	'|FRAMESET|/?FRAME'
 			.	')'
 			;
-			$search = '#(<'.$htmltags.'[^>]*'.'>)\s+'.'(?='.'<'.')#is';
+
+			$space = '(\s|(<br[^>]*>))+';
+			$search = '#(<'.$htmltags.'[^>]*'.'>)'.$space.'(?='.'<)#is';
 			$value = preg_replace($search, '\\1', $value);
 
 			// replace remaining newlines with <br />
