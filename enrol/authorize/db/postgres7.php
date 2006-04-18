@@ -8,6 +8,17 @@ function enrol_authorize_upgrade($oldversion=0) {
 
     $result = true;
 
+    if (!$tables = $db->MetaColumns($CFG->prefix . 'enrol_authorize')) {
+        $installfirst = true;
+    }
+
+    if ($oldversion == 0 || !empty($installfirst)) { // First time install
+        $result = modify_database("$CFG->dirroot/enrol/authorize/db/postgres7.sql");
+        return $result; // RETURN, sql file contains last upgrades.
+    }
+
+    // Authorize module was installed before. Upgrades must be applied to SQL file.
+
     if ($oldversion < 2005071602) {
         notify("If you are using the authorize.net enrolment plugin for credit card 
                 handling, please ensure that you have turned loginhttps ON in Admin >> Variables >> Security.");
