@@ -25,7 +25,7 @@
     $param->move = optional_param('move',0,PARAM_INT);
     $param->moveto = optional_param('moveto',0,PARAM_INT);
     $param->publish = optional_param('publish',0,PARAM_INT);
-    $param->addcategory = optional_param('addcategory','',PARAM_ALPHA);
+    $param->addcategory = optional_param('addcategory','',PARAM_NOTAGS);
     $param->edit = optional_param('edit',0,PARAM_INT);
     $param->updateid = optional_param('updateid',0,PARAM_INT);
     $param->page = optional_param('page',1,PARAM_INT);
