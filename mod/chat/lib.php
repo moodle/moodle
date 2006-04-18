@@ -385,6 +385,16 @@ function chat_login_user($chatid, $version, $groupid, $course) {
         $chatuser->lastping = time();
         $chatuser->lang     = current_language();
 
+        // Sometimes $USER->lastIP is not setup properly
+        // during login. Update with current value if possible
+        // or error out clearly. 
+        if (empty($chatuser->ip)) {
+            $chatuser->ip = getremoteaddr();
+            if (empty($chatuser->ip)) {
+                error("Cannot determine the IP address of the user!");
+            }
+        }
+
         if (($chatuser->course != $course->id)
          or ($chatuser->userid != $USER->id)) {
             return false;
