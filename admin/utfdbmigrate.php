@@ -686,11 +686,18 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
     //remove the cache file!
     @unlink($CFG->dataroot.'/cache/languages');
 
+    // Regenerate some cached data
+    
+    if ($db->dbtype == 'mysql') {
+        $db->Execute("SET NAMES 'utf8'");
+    } else if ($db->dbtype == 'postgres7') {
+        $db->Execute("SET NAMES 'utf8'");
+    }
+    
+    rebuild_course_cache();
+
     //set the final flag
     migrate2utf8_set_config('unicodedb','true');    //this is the main flag for unicode db
-
-    // Regenerate some cached data
-    rebuild_course_cache();       
     
 }
 
