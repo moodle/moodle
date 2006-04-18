@@ -1682,21 +1682,21 @@ function main_upgrade($oldversion=0) {
     if ($oldversion < 2006031000) {
 
         modify_database("","CREATE TABLE prefix_post (
-          `id` int(10) NOT NULL auto_increment,
-          `userid` int(10) NOT NULL default '0',
-          `courseid` int(10) NOT NULL default'0',
-          `groupid` int(10) NOT NULL default'0',
-          `moduleid` int(10) NOT NULL default'0',
-          `coursemoduleid` int(10) NOT NULL default'0',
+          `id` int(10) unsigned NOT NULL auto_increment,
+          `userid` int(10) unsigned NOT NULL default '0',
+          `courseid` int(10) unsigned NOT NULL default'0',
+          `groupid` int(10) unsigned NOT NULL default'0',
+          `moduleid` int(10) unsigned NOT NULL default'0',
+          `coursemoduleid` int(10) unsigned NOT NULL default'0',
           `subject` varchar(128) NOT NULL default '',
           `summary` longtext,
           `content` longtext,
           `uniquehash` varchar(128) NOT NULL default '',
-          `rating` int(10) NOT NULL default'0',
-          `format` int(10) NOT NULL default'0',
+          `rating` int(10) unsigned NOT NULL default'0',
+          `format` int(10) unsigned NOT NULL default'0',
           `publishstate` enum('draft','site','public') NOT NULL default 'draft',
-          `lastmodified` int(10) NOT NULL default '0',
-          `created` int(10) NOT NULL default '0',
+          `lastmodified` int(10) unsigned NOT NULL default '0',
+          `created` int(10) unsigned NOT NULL default '0',
           PRIMARY KEY  (`id`),
           UNIQUE KEY `id_user_idx` (`id`, `userid`),
           KEY `post_lastmodified_idx` (`lastmodified`),
@@ -1704,20 +1704,20 @@ function main_upgrade($oldversion=0) {
         ) TYPE=MyISAM  COMMENT='New moodle post table. Holds data posts such as forum entries or blog entries.';");
 
         modify_database("","CREATE TABLE prefix_tags (
-          `id` int(10) NOT NULL auto_increment,
+          `id` int(10) unsigned NOT NULL auto_increment,
           `type` varchar(255) NOT NULL default 'official',
-          `userid` int(10) NOT NULL default'0',
+          `userid` int(10) unsigned NOT NULL default'0',
           `text` varchar(255) NOT NULL default '',
           PRIMARY KEY  (`id`)
         ) TYPE=MyISAM COMMENT ='tags structure for moodle.';");
 
         modify_database("","CREATE TABLE prefix_blog_tag_instance (
-          `id` int(10) NOT NULL auto_increment,
-          `entryid` int(10) NOT NULL default'0',
-          `tagid` int(10) NOT NULL default'0',
-          `groupid` int(10) NOT NULL default'0',
-          `courseid` int(10) NOT NULL default'0',
-          `userid` int(10) NOT NULL default'0',
+          `id` int(10) unsigned NOT NULL auto_increment,
+          `entryid` int(10) unsigned NOT NULL default'0',
+          `tagid` int(10) unsigned NOT NULL default'0',
+          `groupid` int(10) unsigned NOT NULL default'0',
+          `courseid` int(10) unsigned NOT NULL default'0',
+          `userid` int(10) unsigned NOT NULL default'0',
           PRIMARY KEY  (`id`)
           ) TYPE=MyISAM COMMENT ='tag instance for blogs.';");
     }
@@ -1778,6 +1778,12 @@ function main_upgrade($oldversion=0) {
     
     if ($oldversion < 2006041100) {
         table_column('course_modules','','visibleold','integer','1','unsigned','1','not null', 'visible');
+    }
+    
+    if ($oldversion < 2006041800) { // forgot auto_increments for ids
+        modify_database('',"ALTER TABLE post CHANGE id id INT UNSIGNED NOT NULL AUTO_INCREMENT");
+        modify_database('',"ALTER TABLE tags CHANGE id id INT UNSIGNED NOT NULL AUTO_INCREMENT");
+        modify_database('',"ALTER TABLE blog_tag_instance CHANGE id id INT UNSIGNED NOT NULL AUTO_INCREMENT");
     }
     
     return $result;
