@@ -1777,9 +1777,10 @@ body#mod-quiz-report .controls {
  ***/
 
 .ims-nav-bar {
-  position: absolute; 
+  position: relative; 
+  /* position: absolute;
   top: 2px; 
-  left: 2px;
+  left: 2px;*/
 }
 
 .ims-nav-button a,

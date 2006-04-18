@@ -766,6 +766,13 @@ body#mod-forum-index .generalbox .cell {
   font-size:0.8em;
 }
 
+#ims-toc-selected {
+  font-weight: bold;
+}
+
+#ims-menudiv {
+  font-size:0.8em;
+}
 
 /***
  *** Modules: Scorm
