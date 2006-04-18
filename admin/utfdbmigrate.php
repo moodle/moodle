@@ -688,9 +688,9 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
 
     // Regenerate some cached data
     
-    if ($db->dbtype == 'mysql') {
+    if ($CFG->dbtype == 'mysql') {
         $db->Execute("SET NAMES 'utf8'");
-    } else if ($db->dbtype == 'postgres7') {
+    } else if ($CFG->dbtype == 'postgres7') {
         $db->Execute("SET NAMES 'utf8'");
     }
     
