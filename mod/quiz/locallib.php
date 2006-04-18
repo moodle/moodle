@@ -528,7 +528,7 @@ function quiz_get_reviewoptions($quiz, $attempt, $isteacher=false) {
         }
         return $options;
     }
-    if ((time() - $attempt->timefinish) < 120) {
+    if (((time() - $attempt->timefinish) < 120) || $attempt->timefinish==0) {
         $options->responses = ($quiz->review & QUIZ_REVIEW_IMMEDIATELY & QUIZ_REVIEW_RESPONSES) ? 1 : 0;
         $options->scores = ($quiz->review & QUIZ_REVIEW_IMMEDIATELY & QUIZ_REVIEW_SCORES) ? 1 : 0;
         $options->feedback = ($quiz->review & QUIZ_REVIEW_IMMEDIATELY & QUIZ_REVIEW_FEEDBACK) ? 1 : 0;
