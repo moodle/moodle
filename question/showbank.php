@@ -139,7 +139,7 @@
 
 /// all commands have been dealt with, now print the page
 
-    if (empty($SESSION->questioncat) or !record_exists('question_categories', 'id', $SESSION->questioncat)) {
+if (empty($SESSION->questioncat) or !count_records_select("question_categories", "id = '{$SESSION->questioncat}' AND (course = '{$course->id}' OR publish = '1')")) {
         $category = get_default_question_category($course->id);
         $SESSION->questioncat = $category->id;
     }
