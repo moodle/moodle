@@ -79,7 +79,9 @@
             print_simple_box_start('center');
             foreach ($messages as $message) {  // We are walking FORWARDS through messages
                 $formatmessage = chat_format_message($message, $course->id, $USER);
-                echo $formatmessage->html;
+                if (isset($formatmessage->html)) {
+                    echo $formatmessage->html;
+                }
             }
             print_simple_box_end('center');
         }

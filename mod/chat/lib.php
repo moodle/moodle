@@ -603,11 +603,16 @@ function chat_format_message($message, $courseid, $currentuser, $chat_lastrow=NU
 /// formats it appropriately into text and html, then
 /// returns the formatted data.
 
-    if (!$user = get_record("user", "id", $message->userid)) {
-        return "Error finding user id = $message->userid";
+    static $users;     // Cache user lookups
+
+    if (isset($users[$message->userid])) {
+        $user = $users[$message->userid];
+    } else if ($user = get_record('user', 'id', $message->userid, '','','','','id,picture,firstname,lastname')) {
+        $users[$message->userid] = $user;
+    } else {
+        return NULL;
     }
     return chat_format_message_manually($message, $courseid, $user, $currentuser, $chat_lastrow);
-
 }
 
 if (!function_exists('ob_get_clean')) {
