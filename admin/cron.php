@@ -228,7 +228,7 @@
             mtrace("Running backups if required...");
     
             if (! schedule_backup_cron()) {
-                mtrace("ERORR: Something went wrong while performing backup tasks!!!");
+                mtrace("ERROR: Something went wrong while performing backup tasks!!!");
             } else {
                 mtrace("Backup tasks finished.");
             }
