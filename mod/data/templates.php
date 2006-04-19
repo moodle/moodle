@@ -102,6 +102,10 @@
             // Reset the template to default, but don't save yet.
             $resettemplate = true;
             $data->{$mode} = data_generate_default_template($data, $mode, 0, false, false);
+            if ($mode == 'listtemplate') {
+                $data->listtemplateheader = '';
+                $data->listtemplatefooter = '';
+            }
         } else {
             if (isset($mytemplate->listtemplateheader)){
                 $newtemplate->listtemplateheader = $mytemplate->listtemplateheader;
