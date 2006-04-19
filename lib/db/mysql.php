@@ -1786,6 +1786,14 @@ function main_upgrade($oldversion=0) {
         modify_database('',"ALTER TABLE prefix_blog_tag_instance CHANGE id id INT UNSIGNED NOT NULL AUTO_INCREMENT");
     }
     
+    // changed user->firstname, user->lastname, course->shortname to varchar(100)
+    
+    if ($oldversion < 2006041900) {
+        table_column('course','shortname','shortname','varchar','100','','','not null');
+        table_column('user','firstname','firstname','varchar','100','','','not null');
+        table_column('user','lastname','lastname','varchar','100','','','not null');
+    }
+    
     return $result;
 }
 

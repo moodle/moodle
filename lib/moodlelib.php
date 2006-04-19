@@ -2480,8 +2480,8 @@ function truncate_userinfo($info) {
     $limit = array(
                     'username'    => 100,
                     'idnumber'    =>  64,
-                    'firstname'   =>  20,
-                    'lastname'    =>  20,
+                    'firstname'   => 100,
+                    'lastname'    => 100,
                     'email'       => 100,
                     'icq'         =>  15,
                     'phone1'      =>  20,

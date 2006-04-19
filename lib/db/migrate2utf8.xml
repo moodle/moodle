@@ -362,7 +362,7 @@
             migrate2utf8_course_fullname(RECORDID)
           </PHP_FUNCTION>
         </FIELD>
-        <FIELD name="shortname" method="PHP_FUNCTION" type="varchar" length="15" dropindex="shortname" addindex="shortname(shortname(15))">
+        <FIELD name="shortname" method="PHP_FUNCTION" type="varchar" length="100" dropindex="shortname" addindex="shortname(shortname(15))">
           <PHP_FUNCTION>
             migrate2utf8_course_shortname(RECORDID)
           </PHP_FUNCTION>
@@ -426,12 +426,12 @@
             migrate2utf8_user_idnumber(RECORDID)
           </PHP_FUNCTION>
         </FIELD>
-        <FIELD name="firstname" method="PHP_FUNCTION" type="varchar" length="20" dropindex="user_firstname" addindex="user_firstname(firstname(20))">
+        <FIELD name="firstname" method="PHP_FUNCTION" type="varchar" length="100" dropindex="user_firstname" addindex="user_firstname(firstname(20))">
           <PHP_FUNCTION>
             migrate2utf8_user_firstname(RECORDID)
           </PHP_FUNCTION>
         </FIELD>
-        <FIELD name="lastname" method="PHP_FUNCTION" type="varchar" length="20" dropindex="user_lastname" addindex="user_lastname(lastname(20))">
+        <FIELD name="lastname" method="PHP_FUNCTION" type="varchar" length="100" dropindex="user_lastname" addindex="user_lastname(lastname(20))">
           <PHP_FUNCTION>
             migrate2utf8_user_lastname(RECORDID)
           </PHP_FUNCTION>
