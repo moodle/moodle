@@ -4,10 +4,10 @@
     require("lib.php");
     require("locallib.php");
 
-    $aid = required_param('aid',PARAM_INT);   // Assessment ID
-    $allowcomments = optional_param('allowcomments', false);
-    $redirect = optional_param('redirect', '');
-    $frameset = optional_param('frameset','',PARAM_ALPHA);
+    $aid           = required_param('aid', PARAM_INT);   // Assessment ID
+    $allowcomments = optional_param('allowcomments', false, PARAM_BOOL);
+    $redirect      = optional_param('redirect', '', PARAM_URL);
+    $frameset      = optional_param('frameset', '', PARAM_ALPHA);
 
     if (! $assessment = get_record("workshop_assessments", "id", $aid)) {
         error("Assessment id is incorrect");

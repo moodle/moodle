@@ -17,11 +17,11 @@
     require("lib.php");
     require("locallib.php");
 
-    $id = required_param('id',PARAM_INT);    // Course Module ID
-    $action = optional_param('action', '',PARAM_ALPHA);
-    $sort = optional_param('sort', 'lastname');
-    $dir = optional_param('dir', 'ASC');
-    $group = optional_param('group',-1,PARAM_INT);
+    $id     = required_param('id', PARAM_INT);    // Course Module ID
+    $action = optional_param('action', '', PARAM_ALPHA);
+    $sort   = optional_param('sort', 'lastname', PARAM_ALPHA);
+    $dir    = optional_param('dir', 'ASC', PARAM_ALPHA);
+    $group  = optional_param('group', -1, PARAM_INT);
 
     $timenow = time();
 

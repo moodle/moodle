@@ -4,7 +4,7 @@
     require("lib.php");
     require("locallib.php");
 
-    $id = required_param('id',PARAM_INT);          // CM ID
+    $id = required_param('id', PARAM_INT);          // CM ID
 
 
     if (! $cm = get_record("course_modules", "id", $id)) {
@@ -55,11 +55,11 @@
     // get the current set of submissions
     $submissions = workshop_get_user_submissions($workshop, $USER);
     // add new submission record
-    $newsubmission->workshopid   = $workshop->id;
-    $newsubmission->userid         = $USER->id;
-    $newsubmission->title  = $title;
-    $newsubmission->description = trim($form->description);
-    $newsubmission->timecreated  = $timenow;
+    $newsubmission->workshopid  = $workshop->id;
+    $newsubmission->userid      = $USER->id;
+    $newsubmission->title       = clean_param($title, PARAM_CLEAN);
+    $newsubmission->description = trim(clean_param($form->description, PARAM_CLEAN));
+    $newsubmission->timecreated = $timenow;
     if ($timenow > $workshop->submissionend) {
         $newsubmission->late = 1;
     }

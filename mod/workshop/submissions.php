@@ -21,14 +21,14 @@
     require("lib.php");
     require("locallib.php");
 
-    $id = required_param('id',PARAM_INT);    // Course Module ID
-    $action = optional_param('action','',PARAM_ALPHA);
-    $sid = optional_param('sid',0,PARAM_INT); //submission id
-    $order = optional_param('order','name',PARAM_ALPHA);
-    $title = optional_param('title','',PARAM_CLEAN);
-    $nentries = optional_param('nentries','',PARAM_ALPHANUM);
-    $anonymous = optional_param('anonymous','',PARAM_CLEAN);
-    $description = optional_param('description','',PARAM_CLEAN);
+    $id          = required_param('id', PARAM_INT);    // Course Module ID
+    $action      = optional_param('action', '', PARAM_ALPHA);
+    $sid         = optional_param('sid', 0, PARAM_INT); //submission id
+    $order       = optional_param('order', 'name', PARAM_ALPHA);
+    $title       = optional_param('title', '', PARAM_CLEAN);
+    $nentries    = optional_param('nentries', '', PARAM_ALPHANUM);
+    $anonymous   = optional_param('anonymous', '', PARAM_CLEAN);
+    $description = optional_param('description', '', PARAM_CLEAN);
 
     $timenow = time();
 

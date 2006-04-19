@@ -30,15 +30,15 @@
     require("lib.php");
     require("locallib.php");
 
-    $id = optional_param('id', 0, PARAM_INT);    // Course Module ID
-    $wid = optional_param('wid', 0, PARAM_INT);    // Workshop ID
-    $aid = optional_param('aid',0,PARAM_INT); 
-    $userid = optional_param('userid',0,PARAM_INT);
-    $cid = optional_param('cid',0,PARAM_INT ); // comment id
-    $sid = optional_param('sid',0,PARAM_INT); // submission id
-    $action = required_param( 'action',PARAM_ALPHA );
-    $elementno = optional_param( 'elementno',-1,PARAM_INT );
-    $stockcommentid = optional_param( 'stockcommentid',0,PARAM_INT );
+    $action         = required_param('action', PARAM_ALPHA);
+    $id             = optional_param('id', 0, PARAM_INT);    // Course Module ID
+    $wid            = optional_param('wid', 0, PARAM_INT);    // Workshop ID
+    $aid            = optional_param('aid', 0, PARAM_INT); 
+    $userid         = optional_param('userid', 0, PARAM_INT);
+    $cid            = optional_param('cid', 0, PARAM_INT ); // comment id
+    $sid            = optional_param('sid', 0, PARAM_INT); // submission id
+    $elementno      = optional_param('elementno', -1, PARAM_INT);
+    $stockcommentid = optional_param('stockcommentid', 0, PARAM_INT);
 
     // get some useful stuff...
     if ($id) {
@@ -84,7 +84,7 @@
 
         print_heading_with_help(get_string("addacomment", "workshop"), "addingacomment", "workshop");
         // get assessment record
-        if (!$assessmentid = $_REQUEST['aid']) { // comes from link or hidden form variable
+        if (!$assessmentid = $aid) { // comes from link or hidden form variable
             error("Assessment id not given");
         }
         $assessment = get_record("workshop_assessments", "id", $assessmentid);
@@ -95,7 +95,7 @@
         <form name="commentform" action="assessments.php" method="post">
         <input type="hidden" name="action" value="insertcomment" />
         <input type="hidden" name="id" value="<?php echo $cm->id ?>" />
-        <input type="hidden" name="aid" value="<?php echo $_REQUEST['aid'] ?>" />
+        <input type="hidden" name="aid" value="<?php echo $aid ?>" />
         <center>
         <table cellpadding="5" border="1">
         <?php
@@ -195,7 +195,7 @@
                     unset($element);
                     $element->workshopid = $workshop->id;
                     $element->assessmentid = $assessment->id;
-                    $element->elementno = $key;
+                    $element->elementno = clean_param($key, PARAM_INT);
                     $element->feedback   = $form->{"feedback_$key"};
                     $element->grade = $thegrade;
                     if (!$element->id = insert_record("workshop_grades", $element)) {
@@ -282,7 +282,7 @@
                     unset($element);
                     $element->workshopid = $workshop->id;
                     $element->assessmentid = $assessment->id;
-                    $element->elementno = $key;
+                    $element->elementno = clean_param($key, PARAM_INT);
                     $element->feedback   = $form->{"feedback_$key"};
                     $element->grade = $thegrade;
                     if (!$element->id = insert_record("workshop_grades", $element)) {
@@ -737,7 +737,7 @@
                         unset($element);
                         $element->description   = $description;
                         $element->workshopid = $workshop->id;
-                        $element->elementno = $key;
+                        $element->elementno = clean_param($key, PARAM_INT);
                         if (isset($form->scale[$key])) {
                             $element->scale = $form->scale[$key];
                             switch ($WORKSHOP_SCALES[$form->scale[$key]]['type']) {
@@ -763,7 +763,7 @@
                 foreach ($form->maxscore as $key => $themaxscore) {
                     unset($element);
                     $element->workshopid = $workshop->id;
-                    $element->elementno = $key;
+                    $element->elementno = clean_param($key, PARAM_INT);
                     $element->maxscore = $themaxscore;
                     if (isset($form->description[$key])) {
                         $element->description   = $form->description[$key];
@@ -782,7 +782,7 @@
                 foreach ($form->description as $key => $description) {
                     unset($element);
                     $element->workshopid = $workshop->id;
-                    $element->elementno = $key;
+                    $element->elementno = clean_param($key, PARAM_INT);
                     $element->description   = $description;
                     $element->weight = $form->weight[$key];
                     for ($j=0;$j<5;$j++) {
@@ -936,7 +936,7 @@
                     unset($element);
                     $element->workshopid = $workshop->id;
                     $element->assessmentid = $assessment->id;
-                    $element->elementno = $key;
+                    $element->elementno = clean_param($key, PARAM_INT);
                     $element->feedback   = $form->{"feedback_$key"};
                     $element->grade = $thegrade;
                     if (!$element->id = insert_record("workshop_grades", $element)) {
@@ -1023,7 +1023,7 @@
                     unset($element);
                     $element->workshopid = $workshop->id;
                     $element->assessmentid = $assessment->id;
-                    $element->elementno = $key;
+                    $element->elementno = clean_param($key, PARAM_INT);
                     $element->feedback   = $form->{"feedback_$key"};
                     $element->grade = $thegrade;
                     if (!$element->id = insert_record("workshop_grades", $element)) {
@@ -1200,7 +1200,7 @@
                     unset($element);
                     $element->workshopid = $workshop->id;
                     $element->assessmentid = $assessment->id;
-                    $element->elementno = $key;
+                    $element->elementno = clean_param($key, PARAM_INT);
                     $element->feedback = $form->{"feedback_$key"};
                     $element->grade = $thegrade;
                     if (!$element->id = insert_record("workshop_grades", $element)) {

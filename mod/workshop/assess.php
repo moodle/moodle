@@ -4,11 +4,11 @@
     require("lib.php");
     require("locallib.php");
 
-    $id = required_param('id',PARAM_INT);   // Submission ID
-    $allowcomments = optional_param('allowcomments', false);
-    $redirect = optional_param('redirect', '');
-    $frameset = optional_param('frameset','',PARAM_ALPHA);
-    $sid = optional_param('sid',0,PARAM_INT);
+    $id            = required_param('id', PARAM_INT);   // Submission ID
+    $allowcomments = optional_param('allowcomments', 0, PARAM_BOOL);
+    $redirect      = optional_param('redirect', '', PARAM_URL);
+    $frameset      = optional_param('frameset', '', PARAM_ALPHA);
+    $sid           = optional_param('sid', 0, PARAM_INT);
 
     if (! $submission = get_record('workshop_submissions', 'id', $sid)) {
         error("Incorrect submission id");
