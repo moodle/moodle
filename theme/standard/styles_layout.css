@@ -1414,6 +1414,9 @@ body#course-participation #showall {
   width:40px
   vertical-align:top;
 }
+.chat-message .text {
+  text-align: left;
+}
 
 /***
  *** Modules: Choice
