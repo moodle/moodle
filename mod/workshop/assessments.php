@@ -140,7 +140,7 @@
         }
         $comment->workshopid = $workshop->id;
         $comment->elementno = $elementno;
-        $comment->comments = $form->{"feedback_$elementno"};
+        $comment->comments = clean_param($form->{"feedback_$elementno"}, PARAM_CLEAN);
         if (!(trim($comment->comments))) {
             // no comment given - just redisplay assessment form
             workshop_print_assessment($workshop, $assessment, true, true, $form->returnto);
@@ -181,7 +181,7 @@
                     $element->workshopid = $workshop->id;
                     $element->assessmentid = $assessment->id;
                     $element->elementno = $i;
-                    $element->feedback   = $form->{"feedback_$i"};
+                    $element->feedback   = clean_param($form->{"feedback_$i"}, PARAM_CLEAN);
                     if (!$element->id = insert_record("workshop_grades", $element)) {
                         error("Could not insert workshop grade!");
                     }
@@ -196,7 +196,7 @@
                     $element->workshopid = $workshop->id;
                     $element->assessmentid = $assessment->id;
                     $element->elementno = clean_param($key, PARAM_INT);
-                    $element->feedback   = $form->{"feedback_$key"};
+                    $element->feedback   = clean_param($form->{"feedback_$key"}, PARAM_CLEAN);
                     $element->grade = $thegrade;
                     if (!$element->id = insert_record("workshop_grades", $element)) {
                         error("Could not insert workshop grade!");
@@ -225,7 +225,7 @@
                     $element->workshopid = $workshop->id;
                     $element->assessmentid = $assessment->id;
                     $element->elementno = $i;
-                    $element->feedback   = $form->{"feedback_$i"};
+                    $element->feedback   = clean_param($form->{"feedback_$i"}, PARAM_CLEAN);
                     $element->grade = $form->grade[$i];
                     if (!$element->id = insert_record("workshop_grades", $element)) {
                         error("Could not insert workshop grade!");
@@ -283,7 +283,7 @@
                     $element->workshopid = $workshop->id;
                     $element->assessmentid = $assessment->id;
                     $element->elementno = clean_param($key, PARAM_INT);
-                    $element->feedback   = $form->{"feedback_$key"};
+                    $element->feedback   = clean_param($form->{"feedback_$key"}, PARAM_CLEAN);
                     $element->grade = $thegrade;
                     if (!$element->id = insert_record("workshop_grades", $element)) {
                         error("Could not insert workshop grade!");
@@ -308,7 +308,7 @@
 
         // any comment?
         if (!empty($form->generalcomment)) { // update the object (no need to update the db record)
-            $assessment->generalcomment = $form->generalcomment;
+            $assessment->generalcomment = clean_param($form->generalcomment, PARAM_CLEAN);
         }
 
         // redisplay form, going back to original returnto address
@@ -922,7 +922,7 @@
                     $element->workshopid = $workshop->id;
                     $element->assessmentid = $assessment->id;
                     $element->elementno = $i;
-                    $element->feedback   = $form->{"feedback_$i"};
+                    $element->feedback   = clean_param($form->{"feedback_$i"}, PARAM_CLEAN);
                     if (!$element->id = insert_record("workshop_grades", $element)) {
                         error("Could not insert workshop grade!");
                     }
@@ -937,7 +937,7 @@
                     $element->workshopid = $workshop->id;
                     $element->assessmentid = $assessment->id;
                     $element->elementno = clean_param($key, PARAM_INT);
-                    $element->feedback   = $form->{"feedback_$key"};
+                    $element->feedback   = clean_param($form->{"feedback_$key"}, PARAM_CLEAN);
                     $element->grade = $thegrade;
                     if (!$element->id = insert_record("workshop_grades", $element)) {
                         error("Could not insert workshop grade!");
@@ -966,7 +966,7 @@
                     $element->workshopid = $workshop->id;
                     $element->assessmentid = $assessment->id;
                     $element->elementno = $i;
-                    $element->feedback   = $form->{"feedback_$i"};
+                    $element->feedback   = clean_param($form->{"feedback_$i"}, PARAM_CLEAN);
                     $element->grade = $form->grade[$i];
                     if (!$element->id = insert_record("workshop_grades", $element)) {
                         error("Could not insert workshop grade!");
@@ -1024,7 +1024,7 @@
                     $element->workshopid = $workshop->id;
                     $element->assessmentid = $assessment->id;
                     $element->elementno = clean_param($key, PARAM_INT);
-                    $element->feedback   = $form->{"feedback_$key"};
+                    $element->feedback   = clean_param($form->{"feedback_$key"}, PARAM_CLEAN);
                     $element->grade = $thegrade;
                     if (!$element->id = insert_record("workshop_grades", $element)) {
                         error("Could not insert workshop grade!");
@@ -1049,7 +1049,7 @@
 
         // any comment?
         if (!empty($form->generalcomment)) { // update the object (no need to update the db record)
-            $assessment->generalcomment = $form->generalcomment;
+            $assessment->generalcomment = clean_param($form->generalcomment, PARAM_CLEAN);
         }
 
         // redisplay form, going back to original returnto address
@@ -1099,7 +1099,7 @@
                     $element->workshopid = $workshop->id;
                     $element->assessmentid = $assessment->id;
                     $element->elementno = $i;
-                    $element->feedback = $form->{"feedback_$i"};
+                    $element->feedback = clean_param($form->{"feedback_$i"}, PARAM_CLEAN);
                     if (!$element->id = insert_record("workshop_grades", $element)) {
                         error("Could not insert workshop grade!");
                     }
@@ -1114,7 +1114,7 @@
                     $element->workshopid = $workshop->id;
                     $element->assessmentid = $assessment->id;
                     $element->elementno = $key;
-                    $element->feedback   = $form->{"feedback_$key"};
+                    $element->feedback   = clean_param($form->{"feedback_$key"}, PARAM_CLEAN);
                     $element->grade = $thegrade;
                     if (!$element->id = insert_record("workshop_grades", $element)) {
                         error("Could not insert workshop grade!");
@@ -1144,7 +1144,7 @@
                     $element->assessmentid = $assessment->id;
                     $element->elementno = $i;
                     $element->feedback   = $form->{"feedback_$i"};
-                    $element->grade = $form->grade[$i];
+                    $element->grade = clean_param($form->grade[$i], PARAM_CLEAN);
                     if (!$element->id = insert_record("workshop_grades", $element)) {
                         error("Could not insert workshop grade!");
                     }
@@ -1201,7 +1201,7 @@
                     $element->workshopid = $workshop->id;
                     $element->assessmentid = $assessment->id;
                     $element->elementno = clean_param($key, PARAM_INT);
-                    $element->feedback = $form->{"feedback_$key"};
+                    $element->feedback = clean_param($form->{"feedback_$key"}, PARAM_CLEAN);
                     $element->grade = $thegrade;
                     if (!$element->id = insert_record("workshop_grades", $element)) {
                         error("Could not insert workshop grade!");
@@ -1279,7 +1279,7 @@
 
         // any comment?
         if (!empty($form->generalcomment)) {
-            set_field("workshop_assessments", "generalcomment", $form->generalcomment, "id", $assessment->id);
+            set_field("workshop_assessments", "generalcomment", clean_param($form->generalcomment, PARAM_CLEAN), "id", $assessment->id);
         }
 
         add_to_log($course->id, "workshop", "assess",
