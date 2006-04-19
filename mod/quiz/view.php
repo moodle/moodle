@@ -165,11 +165,11 @@
     $mygrade = quiz_get_best_grade($quiz, $USER->id);
 
 /// Now print table with existing attempts
+    $gradecolumn=0;
+    $overallstats=1;
 
     if ($attempts) {
                     
-        $gradecolumn=0;
-        $overallstats=1;
         //step thru each attempt, checking there are any attempts
         //for which the score can be displayed (need grade columns),
         //and checking if overall grades can be displayed - no attempts for 
