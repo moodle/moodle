@@ -90,25 +90,34 @@
     $currenttab = 'templates';
     include('tabs.php'); 
 
+
 /// Processing submitted data, i.e updating form.
+    $resettemplate = false;
+
     if (($mytemplate = data_submitted($CFG->wwwroot.'/mod/data/templates.php')) && confirm_sesskey()) {
         $newtemplate->id = $data->id;
         $newtemplate->{$mode} = $mytemplate->template;
-
-        if (isset($mytemplate->listtemplateheader)){
-            $newtemplate->listtemplateheader = $mytemplate->listtemplateheader;
-        }
-        if (isset($mytemplate->listtemplatefooter)){
-            $newtemplate->listtemplatefooter = $mytemplate->listtemplatefooter;
-        }
         
-        // Check for multiple tags, only need to check for add template.
-        if ($mode != 'addtemplate' or data_tags_check($data->id, $newtemplate->{$mode})) {
-            if (update_record('data', $newtemplate)) {
-                notify(get_string('templatesaved', 'data'), 'notifysuccess');
+        if (!empty($mytemplate->defaultform)) {
+            // Reset the template to default, but don't save yet.
+            $resettemplate = true;
+            $data->{$mode} = data_generate_default_template($data, $mode, 0, false, false);
+        } else {
+            if (isset($mytemplate->listtemplateheader)){
+                $newtemplate->listtemplateheader = $mytemplate->listtemplateheader;
             }
+            if (isset($mytemplate->listtemplatefooter)){
+                $newtemplate->listtemplatefooter = $mytemplate->listtemplatefooter;
+            }
+        
+            // Check for multiple tags, only need to check for add template.
+            if ($mode != 'addtemplate' or data_tags_check($data->id, $newtemplate->{$mode})) {
+                if (update_record('data', $newtemplate)) {
+                    notify(get_string('templatesaved', 'data'), 'notifysuccess');
+                }
+            }
+            add_to_log($course->id, 'data', 'templates saved', "templates.php?id=$cm->id&amp;d=$data->id", $data->id, $cm->id);
         }
-        add_to_log($course->id, 'data', 'templates saved', "templates.php?id=$cm->id&amp;d=$data->id", $data->id, $cm->id);
     } else {
         echo '<div class="littleintro" align="center">'.get_string('header'.$mode,'data').'</div>';
     }
@@ -128,8 +137,10 @@
     echo '<input name="sesskey" value="'.sesskey().'" type="hidden" />';
     // Print button to autogen all forms, if all templates are empty
 
-    $data = get_record('data', 'id', $d);    //reload because of possible updates so far!
-
+    if (!$resettemplate) {
+        // Only reload if we are not resetting the template to default.
+        $data = get_record('data', 'id', $d);
+    }
     print_simple_box_start('center','80%');
     echo '<table cellpadding="4" cellspacing="0" border="0">';
 
@@ -179,7 +190,7 @@
     echo '<option value="##comments##">##' .get_string('comments', 'data'). '##</option>';
     echo '<option value="##user##">##' .get_string('user'). '##</option>';
     echo '</select>';
-    echo '<br /><br /><br /><br /><input type="button" name="defaultform" value="'.get_string('resettemplate','data').'" onclick="resetTemplate(document.tempform.template);" />';
+    echo '<br /><br /><br /><br /><input type="submit" name="defaultform" value="'.get_string('resettemplate','data').'" />';
     echo '</td>';
     
     echo '<td>';
@@ -204,23 +215,6 @@
     echo '<input type="submit" value="'.get_string('savetemplate','data').'" />&nbsp;';
     
     echo '</td></tr></table>';
-    
-    
-    /// Javascript for resetting to default templates.
-    $dataclone = clone($data);  // Ugly Hack - We need to clone it because
-                                // data_generate_default_template() is modifying
-                                // $dataclone directly.
-    $tplreset = data_generate_default_template($dataclone, $mode, 0, false, false);
-    ?>
-    <script>
-    <!--
-    function resetTemplate(mytextarea) {
-        //mytextarea.value = 'test';
-        mytextarea.value = '<?php echo $tplreset; ?>';
-    }
-    -->
-    </script>
-    <?php
     
     
     print_simple_box_end();
