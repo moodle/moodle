@@ -61,6 +61,21 @@
     </td>
 </tr>
 
+<tr valign="top">
+  <td align="right">chat_normal_updatemode:</td>
+  <td>
+<?php
+       unset($options);
+       $options['jsupdate']     = get_string('normalkeepalive', 'chat');
+       $options['jsupdated']    = get_string('normalstream', 'chat');
+       choose_from_menu ($options, "chat_normal_updatemode", $CFG->chat_normal_updatemode, "", "", "");
+?>
+    </td>
+    <td>
+    <?php print_string("confignormalupdatemode", "chat") ?>
+    </td>
+</tr>
+
 <tr>
   <td colspan="3" align="center"><hr />
      <div><b><?php print_string('methoddaemon', 'chat')?></b></div>

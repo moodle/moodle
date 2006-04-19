@@ -16,6 +16,9 @@ if (!isset($CFG->chat_old_ping)) {
 if (!isset($CFG->chat_method)) {
     set_config("chat_method", "header_js");
 }
+if (!isset($CFG->chat_normal_updatemode)) {
+    set_config("chat_normal_updatemode", 'jsupdate');
+}
 if (!isset($CFG->chat_serverhost)) {
     set_config("chat_serverhost", $_SERVER['HTTP_HOST']);
 }

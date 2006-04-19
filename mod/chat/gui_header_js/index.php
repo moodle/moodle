@@ -52,6 +52,11 @@
 
     $params = "chat_sid=$chat_sid";
 
+    // fallback to the old jsupdate, but allow other update modes
+    $updatemode = 'jsupdate';
+    if (!empty($CFG->chat_normal_updatemode)) {
+        $updatemode = $CFG->chat_normal_updatemode;
+    }
 ?>
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
@@ -65,7 +70,7 @@
  <frameset cols="*,200" border="5" framespacing="no" frameborder="yes" marginwidth="2" marginheight="1">
   <frameset rows="0,0,*,50" border="0" framespacing="no" frameborder="no" marginwidth="2" marginheight="1">
    <frame src="../empty.php" name="empty" scrolling="no" marginwidth="0" marginheight="0">
-   <frame src="jsupdate.php?<?php echo $params ?>" name="jsupdate" scrolling="no" marginwidth="0" marginheight="0">
+   <frame src="<?php echo $updatemode ?>.php?<?php echo $params ?>" name="jsupdate" scrolling="no" marginwidth="0" marginheight="0">
    <frame src="chatmsg.php?<?php echo $params ?>" name="msg" scrolling="auto" marginwidth="2" marginheight="1">
    <frame src="chatinput.php?<?php echo $params ?>" name="input" scrolling="no" marginwidth="2" marginheight="1">
   </frameset>
