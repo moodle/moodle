@@ -418,7 +418,7 @@ function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $per
         echo "</td>\n";
         $fullname = fullname($log, $isteacher);
         echo "<td class=\"r$row c3\" nowrap=\"nowrap\">\n";
-        echo "    <a href=\"../user/view.php?id={$log->userid}&amp;course={$log->course}\">$fullname</a>\n";
+        echo "    <a href=\"$CFG->wwwroot/user/view.php?id={$log->userid}&amp;course={$log->course}\">$fullname</a>\n";
         echo "</td>\n";
         echo "<td class=\"r$row c4\" nowrap=\"nowrap\">\n";
         link_to_popup_window( make_log_url($log->module,$log->url), 'fromloglive',"$log->module $log->action", 400, 600);
