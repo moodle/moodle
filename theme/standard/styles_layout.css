@@ -1137,87 +1137,91 @@ body#message-messages {
  ***/
 
 .que {
-	width: 90%;
-	text-align: left;
-	margin: 10px auto 15px auto;
-	border: 1px solid;
-	clear: both;
+  width: 90%;
+  text-align: left;
+  margin: 10px auto 15px auto;
+  border: 1px solid;
+  clear: both;
 }
 .que .info {
-	float: left;
-	margin: 5px;
-	width: 8%;
+  float: left;
+  margin: 5px;
+  width: 8%;
 }
 .que .grade {
-	margin-top: 0.5em;
+  margin-top: 0.5em;
 }
 .que .content {
-	float: right;
-	margin: 5px;
-	width: 88%;
+  float: right;
+  margin: 5px;
+  width: 88%;
 }
 .que .qtext {
-	margin-bottom: 1.5em;
+  margin-bottom: 1.5em;
 }
 .que .ablock {
-	margin: 0.7em 0 0.3em 0;
+  margin: 0.7em 0 0.3em 0;
 }
 .que .prompt {
-	float: left;
-	width: 15%;
-	height: 2em;
-	padding-top: 0.3em;
+  float: left;
+  width: 15%;
+  height: 2em;
+  padding-top: 0.3em;
 }
 .que .answer {
-	float: right;
-	width: 83%;
-	margin-bottom: 0.5em;
+  float: right;
+  width: 83%;
+  margin-bottom: 0.5em;
 }
 .que .submit {
-	position: relative;
-	clear: both;
-	float: left;
+  position: relative;
+  clear: both;
+  float: left;
 }
 /* MSIE Hack */
 * html .que .submit {
-	float: none;
+  float: none;
 }
 .que .c0,
 .que .c1 {
-	padding: 0.3em 0 0.3em 0.3em;
-	vertical-align: top;
+  padding: 0.3em 0 0.3em 0.3em;
+  vertical-align: top;
 }
 .multichoice .c0 {
   width: 5%;
-	vertical-align: top;
-	padding-top: 0.4em;
+  vertical-align: top;
+  padding-top: 0.4em;
 }
 .calculated .answer,
 .numerical .answer,
 .shortanswer .answer,
 .truefalse .answer {
-	padding: 0.3em 0 0.3em 0.3em;
+  padding: 0.3em 0 0.3em 0.3em;
 }
 .shortanswer .answer input {
-	width: 85%;
+  width: 85%;
 }
 .calculated .feedback,
 .numerical .feedback,
 .shortanswer .feedback,
 .truefalse .feedback {
   clear: both;
-	float: right;
-	width: 83%;
-	padding: 0 0 0.3em 0.3em;
+  float: right;
+  width: 83%;
+  padding: 0 0 0.3em 0.3em;
   border: 1px solid;
 }	
+.multichoice .text,
+.multichoice .feedback {
+  width: auto;
+}
 .que .grading,
 .que .comment,
 .que .commentlink,
 .que .history {
-	float: right;
-	margin: 5px;
-	width: 88%;
+  float: right;
+  margin: 5px;
+  width: 88%;
 }
 
 /***
