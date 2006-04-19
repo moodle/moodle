@@ -1410,10 +1410,12 @@ body#course-participation #showall {
   padding:0;
   margin-top:7px
 }
+.chat-event .picture,
 .chat-message .picture {
-  width:40px
+  width:40px;
   vertical-align:top;
 }
+.chat-event .text,
 .chat-message .text {
   text-align: left;
 }
