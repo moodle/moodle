@@ -812,10 +812,6 @@ table.minicalendar th {
 }
 
 /*Accessibility: controls now div and span, 20:58:20% or 12:74:12% */
-.calendar-controls {
-  width: 100%;
-}
-
 .calendar-controls .previous,
 .calendar-controls .next
 {
@@ -842,6 +838,9 @@ span.current {
 #calendar .maincalendar .calendar-controls .next
 {
   width: 30%;
+}
+#calendar .maincalendar .calendar-controls .current {
+  width: 40%;
 }
 
 #calendar .indent {
