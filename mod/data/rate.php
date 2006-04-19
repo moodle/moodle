@@ -1,10 +1,6 @@
-<?php
+<?php  // $Id$
     require_once("../../config.php");
     require_once("lib.php");
-
-    if (isguest()) {
-        error("Guests are not allowed to rate posts.", $_SERVER["HTTP_REFERER"]);
-    }
 
     $id = required_param('id',PARAM_INT);  // The course these ratings are part of
 
@@ -13,6 +9,10 @@
     }
 
     require_login($course->id);
+
+    if (isguest()) {
+        error("Guests are not allowed to rate posts.", $_SERVER["HTTP_REFERER"]);
+    }
 
     $CFG->debug = 0;    /// Temporarily
 
