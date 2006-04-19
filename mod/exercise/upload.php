@@ -3,6 +3,7 @@
     require_once("../../config.php");
     require_once("lib.php");
     require_once("locallib.php");
+
     $id    = required_param('id', PARAM_INT);           // course module ID
     $title = optional_param('title', '', PARAM_CLEAN);
 

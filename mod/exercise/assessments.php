@@ -703,7 +703,7 @@
                     $element->exerciseid = $exercise->id;
                     $element->assessmentid = $assessment->id;
                     $element->elementno = clean_param($key, PARAM_INT);
-                    $element->feedback   = $thefeedback;
+                    $element->feedback   = clean_param($thefeedback, PARAM_CLEAN);
                     if (!$element->id = insert_record("exercise_grades", $element)) {
                         error("Could not insert exercise element!");
                         }
@@ -718,7 +718,7 @@
                     $element->exerciseid = $exercise->id;
                     $element->assessmentid = $assessment->id;
                     $element->elementno = clean_param($key, PARAM_INT);
-                    $element->feedback   = $form->feedback[$key];
+                    $element->feedback   = clean_param($form->feedback[$key]);
                     $element->grade = $thegrade;
                     if (!$element->id = insert_record("exercise_grades", $element)) {
                         error("Could not insert exercise element!");
@@ -747,7 +747,7 @@
                     $element->exerciseid = $exercise->id;
                     $element->assessmentid = $assessment->id;
                     $element->elementno = $i;
-                    $element->feedback   = $form->feedback[$i];
+                    $element->feedback   = clean_param($form->feedback[$i], PARAM_CLEAN);
                     $element->grade = $form->grade[$i];
                     if (!$element->id = insert_record("exercise_grades", $element)) {
                         error("Could not insert exercise element!");
@@ -815,7 +815,7 @@
                     $element->exerciseid = $exercise->id;
                     $element->assessmentid = $assessment->id;
                     $element->elementno = clean_param($key, PARAM_INT);
-                    $element->feedback   = $form->feedback[$key];
+                    $element->feedback   = clean_param($form->feedback[$key], PARAM_CLEAN);
                     $element->grade = $thegrade;
                     if (!$element->id = insert_record("exercise_grades", $element)) {
                         error("Could not insert exercise element!");
@@ -846,7 +846,7 @@
 
         // any comment?
         if (!empty($form->generalcomment)) {
-            set_field("exercise_assessments", "generalcomment", $form->generalcomment, "id", $assessment->id);
+            set_field("exercise_assessments", "generalcomment", clean_param($form->generalcomment, PARAM_CLEAN), "id", $assessment->id);
         }
 
         // is user allowed to resubmit?
@@ -922,7 +922,7 @@
                     $element->exerciseid = $exercise->id;
                     $element->assessmentid = $assessment->id;
                     $element->elementno = clean_param($key, PARAM_INT);
-                    $element->feedback   = $thefeedback;
+                    $element->feedback   = clean_param($thefeedback, PARAM_CLEAN);
                     if (!$element->id = insert_record("exercise_grades", $element)) {
                         error("Could not insert exercise element!");
                     }
@@ -937,7 +937,7 @@
                     $element->exerciseid = $exercise->id;
                     $element->assessmentid = $assessment->id;
                     $element->elementno = clean_param($key, PARAM_INT);
-                    $element->feedback   = $form->feedback[$key];
+                    $element->feedback   = clean_param($form->feedback[$key], PARAM_CLEAN);
                     $element->grade = $thegrade;
                     if (!$element->id = insert_record("exercise_grades", $element)) {
                         error("Could not insert exercise element!");
@@ -966,7 +966,7 @@
                     $element->exerciseid = $exercise->id;
                     $element->assessmentid = $assessment->id;
                     $element->elementno = $i;
-                    $element->feedback   = $form->feedback[$i];
+                    $element->feedback   = clean_param($form->feedback[$i], PARAM_CLEAN);
                     $element->grade = $form->grade[$i];
                     if (!$element->id = insert_record("exercise_grades", $element)) {
                         error("Could not insert exercise element!");
@@ -1018,7 +1018,7 @@
                     $element->exerciseid = $exercise->id;
                     $element->assessmentid = $assessment->id;
                     $element->elementno = clean_param($key, PARAM_INT);
-                    $element->feedback   = $form->feedback[$key];
+                    $element->feedback   = clean_param($form->feedback[$key], PARAM_CLEAN);
                     $element->grade = $thegrade;
                     if (!$element->id = insert_record("exercise_grades", $element)) {
                         error("Could not insert exercise element!");
@@ -1049,7 +1049,7 @@
 
         // any comment?
         if (!empty($form->generalcomment)) {
-            set_field("exercise_assessments", "generalcomment", $form->generalcomment, "id", $assessment->id);
+            set_field("exercise_assessments", "generalcomment", clean_param($form->generalcomment, PARAM_CLEAN), "id", $assessment->id);
         }
 
         // now calculate the (grading) grade of the student's assessment...
