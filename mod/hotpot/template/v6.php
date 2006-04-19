@@ -1059,7 +1059,11 @@ class hotpot_xml_quiz_template extends hotpot_xml_template_default {
 	}
 	function v6_expand_jcross_clues($direction) {
 		// $direction: A(cross) or D(own)
-		$this->v6_get_jcross_grid($row=NULL, $r_max=0, $c_max=0);
+		$row = NULL;
+		$r_max = 0;
+		$c_max = 0;
+		$this->v6_get_jcross_grid($row, $r_max, $c_max);
+
 		$i = 0; // clue index;
 		$str = '';
 		for($r=0; $r<=$r_max; $r++) {
@@ -1093,9 +1097,9 @@ class hotpot_xml_quiz_template extends hotpot_xml_template_default {
 	// jcross6.js_
 
 	function v6_expand_LetterArray() {
-		$row=NULL;
-		$r_max=0;
-		$c_max=0;
+		$row = NULL;
+		$r_max = 0;
+		$c_max = 0;
 		$this->v6_get_jcross_grid($row, $r_max, $c_max);
 
 		$str = '';
@@ -1109,9 +1113,9 @@ class hotpot_xml_quiz_template extends hotpot_xml_template_default {
 		return $str;
 	}
 	function v6_expand_GuessArray() {
-		$row=NULL;
-		$r_max=0;
-		$c_max=0;
+		$row = NULL;
+		$r_max = 0;
+		$c_max = 0;
 		$this->v6_get_jcross_grid($row, $r_max, $c_max);
 
 		$str = '';
@@ -1121,9 +1125,9 @@ class hotpot_xml_quiz_template extends hotpot_xml_template_default {
 		return $str;
 	}
 	function v6_expand_ClueNumArray() {
-		$row=NULL;
-		$r_max=0;
-		$c_max=0;
+		$row = NULL;
+		$r_max = 0;
+		$c_max = 0;
 		$this->v6_get_jcross_grid($row, $r_max, $c_max);
 
 		$i = 0; // clue index
@@ -1148,9 +1152,9 @@ class hotpot_xml_quiz_template extends hotpot_xml_template_default {
 		return $str;
 	}
 	function v6_expand_GridBody() {
-		$row=NULL;
-		$r_max=0;
-		$c_max=0;
+		$row = NULL;
+		$r_max = 0;
+		$c_max = 0;
 		$this->v6_get_jcross_grid($row, $r_max, $c_max);
 
 		$i = 0; // clue index;
