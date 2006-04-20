@@ -104,7 +104,7 @@
                     'data_records r WHERE r.dataid ='.$data->id.
                     ' AND r.approved <> 1');
         } else {
-            $numunapprovedrecords = get_string('noapprovalrequired', 'data');
+            $numunapprovedrecords = '-';
         }
         
         $rsslink = '';
