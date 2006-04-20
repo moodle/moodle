@@ -147,7 +147,7 @@ body#mod-quiz-grading table#grading td
 	background-color: #EEE;
 }
 #mod-quiz-attempt .multichoice .c0 {
-  width: 5%;
+  /* width: 5%; */
 	vertical-align: top;
 	padding-top: 0.4em;
 }
