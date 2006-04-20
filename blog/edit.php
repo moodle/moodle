@@ -4,7 +4,6 @@ require_once('../config.php');
 include_once('lib.php');
 require_login();
 
-$userid = optional_param('userid',     0, PARAM_INT);
 $courseid = optional_param('courseid', SITEID, PARAM_INT);
 $act = optional_param('act','',PARAM_ALPHA);
 
@@ -108,8 +107,6 @@ if (($post = data_submitted( get_referer() )) && confirm_sesskey()) {
     $post->body = '';
     $post->format = $defaultformat;
     $post->publishstate = 'draft';
-    $post->courseid  = $courseid;
-
 }
 
 if ($editid) {  // User is editing a post

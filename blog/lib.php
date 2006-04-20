@@ -122,7 +122,7 @@
 
         global $USER, $CFG, $course, $ME;
 
-        $template['body'] = get_formatted_entry_body($blogEntry->summary, $blogEntry->format);
+        $template['body'] = get_formatted_entry_body(stripslashes_safe($blogEntry->summary), $blogEntry->format);
         $template['title'] = '<a name="'. $blogEntry->subject .'"></a>';
         //enclose the title in nolink tags so that moodle formatting doesn't autolink the text
         $template['title'] .= '<span class="nolink">'. stripslashes_safe($blogEntry->subject);
