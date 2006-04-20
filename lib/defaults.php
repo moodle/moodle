@@ -91,7 +91,7 @@
        'sessiontimeout'           =>  7200,
        'showsiteparticipantslist' =>  0,
        'showblocksonmodpages'     =>  0,
-       'sitemailcharset'          =>  0,
+       'sitemailcharset'          => '',
        'sitepolicy'               => '',
        'slasharguments'           =>  1,
        'smtphosts'                => '',
