@@ -282,7 +282,7 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
     require_once($CFG->dirroot.'/lib/xmlize.php');
 
     //one gigantic array to hold all db table information read from all the migrate2utf8.xml file.
-    $xmls = utf_get_xml();
+    $xmls = utf_get_xml(1);
 
     /************************************************************************
      * Now we got all our tables in order                                   *
@@ -935,10 +935,12 @@ function migrate2utf8_set_config($name, $value, $plugin=NULL) {
     }
 }
 
-function utf_get_xml () {
+// this needs to print an error when a mod does not have a migrate2utf8.xml
+function utf_get_xml ($mode=0) { // if mode is 1, do not perform check for script validity
     global $CFG;
 
     $xmls = array();
+    $noscript = 0; // we assume all mod and all blocks have migration scripts
 
     /*****************************************************************************
      * traverse order is mod->backup->block->block_plugin->enroll_plugin->global *
@@ -952,6 +954,9 @@ function utf_get_xml () {
     foreach ($mods as $mod){
         if (file_exists($CFG->dirroot.'/mod/'.$mod.'/db/migrate2utf8.xml')) {
             $xmls[] = xmlize(file_get_contents($CFG->dirroot.'/mod/'.$mod.'/db/migrate2utf8.xml'));
+        } else if (!$mode) {
+            $noscript = 1;
+            notify('warning, there is no migration script detected for this module - '.$mod);
         }
     }
 
@@ -969,6 +974,11 @@ function utf_get_xml () {
     foreach ($blocks as $block){
         if (file_exists($CFG->dirroot.'/blocks/'.$block.'/db/migrate2utf8.xml')) {
             $xmls[] = xmlize(file_get_contents($CFG->dirroot.'/blocks/'.$block.'/db/migrate2utf8.xml'));
+        } else if (!$mode) {
+            if (file_exists($CFG->dirroot.'/blocks/'.$block.'/db/mysql.sql') && filesize($CFG->dirroot.'/blocks/'.$block.'/db/mysql.sql')) { // if no migration script, and have db script, we are in trouble
+                notify('warning, there is no migration script detected for this block - '.$block);
+                $noscript = 1;
+            }
         }
     }
 
@@ -987,6 +997,10 @@ function utf_get_xml () {
     ///Lastly, globals
 
     $xmls[] = xmlize(file_get_contents($CFG->dirroot.'/lib/db/migrate2utf8.xml'));
+    
+    if ($noscript) {
+        notify ('Some of your modules or Blocks do not have a migration script. It is very likely that these are contrib modules. If your Moodle site uses non-UTF8 language packs and non-en language packs, data inside these moduels or blocks will not be displayed correctly after the migration. Please proceed with caution.');
+    }
     
     return $xmls;
 
