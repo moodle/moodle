@@ -17,6 +17,8 @@
         error("Only teachers can view logs");
     }
 
+    add_to_log($course->id, "course", "report live", "report/log/live.php?id=$course->id", $course->fullname); 
+
     session_write_close();
 
     // we override the default framename so header/footer

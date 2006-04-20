@@ -5,10 +5,10 @@
     require_once("../../lib.php");
     require_once("$CFG->libdir/graphlib.php");
 
-    $id = required_param('id',PARAM_INT);    // Course ID
-    $type = required_param('type');  // Graph Type
-    $user = optional_param('user',0,PARAM_INT);  // Student ID
-    $date = optional_param('date');  // A time of a day (in GMT)
+    $id   = required_param('id', PARAM_INT);    // Course ID
+    $type = required_param('type', PARAM_FILE);  // Graph Type
+    $user = optional_param('user', 0, PARAM_INT);  // Student ID
+    $date = optional_param('date', 0, PARAM_INT);  // A time of a day (in GMT)
 
     if (! $course = get_record("course", "id", $id)) {
         error("Course is misconfigured");

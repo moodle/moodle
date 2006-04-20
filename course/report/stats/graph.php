@@ -1,14 +1,14 @@
-<?php
+<?php  //$Id$
 
-    require_once(dirname(dirname(__FILE__)).'/config.php');
+    require_once('../../../config.php');
     require_once($CFG->dirroot.'/lib/statslib.php');
     require_once($CFG->dirroot.'/lib/graphlib.php');
 
-    $courseid = required_param('course',PARAM_INT);
-    $report = required_param('report',PARAM_INT);
-    $time = required_param('time',PARAM_INT);
-    $userid = optional_param('userid', 0, PARAM_INT);
-    $mode = required_param('mode',PARAM_INT);
+    $courseid = required_param('course', PARAM_INT);
+    $report   = required_param('report', PARAM_INT);
+    $time     = required_param('time', PARAM_INT);
+    $mode     = required_param('mode', PARAM_INT);
+    $userid   = optional_param('userid', 0, PARAM_INT);
 
     if (!$course = get_record("course","id",$courseid)) {
         error("That's an invalid course id");
@@ -52,6 +52,7 @@
     $graph->parameter['legend_size'] = 10;
     $graph->parameter['x_axis_angle'] = 90;
     $graph->parameter['title'] = false; // moodle will do a nicer job.
+    $graph->y_tick_labels = null;
 
     foreach ($stats as $stat) {
         $graph->x_data[] = userdate($stat->timeend,get_string('strftimedate'),$CFG->timezone);

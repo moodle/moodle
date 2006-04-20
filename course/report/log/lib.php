@@ -1,4 +1,4 @@
-<?php
+<?php  // $Id$
 
 function print_log_selector_form($course, $selecteduser=0, $selecteddate="today",
                                  $modname="", $modid=0, $modaction="", $selectedgroup=-1,$showcourses=0,$showusers=0) {

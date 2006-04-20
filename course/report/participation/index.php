@@ -1,16 +1,16 @@
-<?php
+<?php  // $Id$
 
     require_once('../../../config.php');
 
     define('DEFAULT_PAGE_SIZE', 20);
     
-    $id         = required_param('id',PARAM_INT); // course id.
-    $moduleid   = optional_param('moduleid',0,PARAM_INT); // module id.
-    $oldmod     = optional_param('oldmod',0,PARAM_INT);
-    $teachers   = optional_param('teachers',0,PARAM_BOOL); // show teachers? off = students.
-    $instanceid = optional_param('instanceid',0,PARAM_INT); // instance we're looking at.
-    $timefrom   = optional_param('timefrom',0,PARAM_INT); // how far back to look...
-    $action     = optional_param('action','',PARAM_CLEAN);
+    $id         = required_param('id', PARAM_INT); // course id.
+    $moduleid   = optional_param('moduleid', 0, PARAM_INT); // module id.
+    $oldmod     = optional_param('oldmod', 0, PARAM_INT);
+    $teachers   = optional_param('teachers', 0, PARAM_BOOL); // show teachers? off = students.
+    $instanceid = optional_param('instanceid', 0, PARAM_INT); // instance we're looking at.
+    $timefrom   = optional_param('timefrom', 0, PARAM_INT); // how far back to look...
+    $action     = optional_param('action', '', PARAM_ALPHA);
     $page       = optional_param('page', 0, PARAM_INT);                     // which page to show
     $perpage    = optional_param('perpage', DEFAULT_PAGE_SIZE, PARAM_INT);  // how many per page
 
@@ -32,6 +32,8 @@
     if (!isteacher($course->id)) {
         print_error('mustbeteacher', '', $CFG->wwwroot.'/course/view.php?id='.$course->id);
     }
+
+    add_to_log($course->id, "course", "report participation", "report/participation/index.php?id=$course->id", $course->fullname); 
         
     $strparticipation = get_string('participationreport');
     $strviews         = get_string('views');
@@ -44,7 +46,12 @@
     $strnav = "<a href=\"../../view.php?id=$course->id\">$course->shortname</a> -> 
                <a href=\"../../report.php?id=$course->id\">$strreports</a> -> ". $strparticipation;
     
-    print_header($course->fullname.' '.$strparticipation,$strparticipation,$strnav);
+    print_header("$course->shortname: $strparticipation", "$course->fullname",
+                 "<a href=\"../../view.php?id=$course->id\">$course->shortname</a> ->
+                  <a href=\"../../report.php?id=$course->id\">$strreports</a> ->
+                  $strparticipation");
+
+//    print_header($course->fullname.' '.$strparticipation,$strparticipation,$strnav);
 
     $allowedmodules = array('assignment','book','chat','choice','exercise','forum','glossary','hotpot',
                             'journal','lesson','questionnaire','quiz','resource','scorm',
@@ -133,7 +140,7 @@
         exit;
     }
     
-    $baseurl =  $CFG->wwwroot.'/course/participation.php?id='.$course->id.'&amp;teachers='
+    $baseurl =  $CFG->wwwroot.'/course/report/participation/index.php?id='.$course->id.'&amp;teachers='
         .$teachers.'&amp;instanceid='.$instanceid.'&amp;timefrom='.$timefrom.'&amp;moduleid='
         .$moduleid.'&action='.$action.'&amp;perpage='.$perpage;
 
@@ -169,7 +176,7 @@
         $instanceid = array_pop(array_keys($instanceoptions));
     }
 
-    echo '<form action="'.$CFG->wwwroot.'/course/participation.php" method="post">'.
+    echo '<form action="'.$CFG->wwwroot.'/course/report/participation/index.php" method="post">'.
         '<input type="hidden" name="id" value="'.$course->id.'" />'."\n".
         '<input type="hidden" name="oldmod" value="'.$moduleid.'" />'."\n".
         '<input type="hidden" name="timefrom" value="'.$timefrom.'" />'."\n".
@@ -211,7 +218,7 @@
         
       
 
-        $sql = 'SELECT DISTINCT e.userid, u.firstname,u.lastname,u.idnumber,u.nickname,count(l.action) as count FROM '
+        $sql = 'SELECT DISTINCT e.userid, u.firstname,u.lastname,u.idnumber,count(l.action) as count FROM '
             . $CFG->prefix.'user_'.((!empty($teachers)) ? 'teachers' : 'students').' e '
             .' JOIN '.$CFG->prefix.'user u ON u.id = e.userid LEFT JOIN '.$CFG->prefix.'log l ON e.userid = l.userid '
             .' AND e.course = l.course AND l.time > '.$timefrom.' AND l.course = '.$course->id.' AND l.module = \''.$module->name.'\' '
@@ -235,7 +242,7 @@
             $sql .= ' AND '.$table->get_sql_where(); //initial bar 
         }
 
-        $sql .= ' GROUP BY e.userid,u.firstname,u.lastname,u.idnumber,u.nickname,l.userid';
+        $sql .= ' GROUP BY e.userid,u.firstname,u.lastname,u.idnumber,l.userid';
 
         if ($table->get_sql_sort()) {
             $sql .= ' ORDER BY '.$table->get_sql_sort();

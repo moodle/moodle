@@ -1,4 +1,4 @@
-<?php
+<?php  // $Id$
 
     require_once('../../../config.php');
     require_once($CFG->dirroot.'/lib/statslib.php');
@@ -7,18 +7,18 @@
         error("Stats is not enabled.");
     }
 
-    $courseid = required_param('course',PARAM_INT);
-    $report = optional_param('report',0,PARAM_INT);
-    $time = optional_param('time',0,PARAM_INT);
-    $mode = optional_param('mode',STATS_MODE_GENERAL,PARAM_INT);
-    $userid = optional_param('userid',0,PARAM_INT);
+    $courseid = required_param('course', PARAM_INT);
+    $report   = optional_param('report', 0, PARAM_INT);
+    $time     = optional_param('time', 0, PARAM_INT);
+    $mode     = optional_param('mode', STATS_MODE_GENERAL, PARAM_INT);
+    $userid   = optional_param('userid', 0, PARAM_INT);
 
     if ($report == STATS_REPORT_USER_LOGINS) {
         $courseid = SITEID; //override
     }
 
     if ($mode == STATS_MODE_RANKED) {
-        redirect($CFG->wwwroot.'/admin/reports.php?time='.$time);
+        redirect($CFG->wwwroot.'/'.$CFG->admin.'/report.php?time='.$time);
     }
 
     if (!$course = get_record("course","id",$courseid)) {
@@ -36,10 +36,12 @@
         error("You need to be a teacher to use this page");
     }
 
+    add_to_log($course->id, "course", "report stats", "report/stats/index.php?course=$course->id", $course->fullname); 
+
     stats_check_uptodate($course->id);
 
-    $strheader = get_string('stats');
-    $strnav = (($course->id != SITEID) ?  '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$courseid.'">'.$course->shortname.'</a> -> ' : '').$strheader;
+    $strreports = get_string("reports");
+    $strstats = get_string('stats');
     
     $reportoptions = stats_get_report_options($courseid,$mode);
 
@@ -85,13 +87,17 @@
 
     $menu = choose_from_menu($options,'mode',$mode,'','this.form.submit();',0,true);
 
-    $menu = '<form action="stats.php" method="post">'."\n"
+    $menu = '<form action="index.php" method="post">'."\n"
         .'<input type="hidden" name="course" value="'.$course->id.'" />'."\n"
         .'<input type="hidden" name="time" value="'.$time.'" />'."\n"
         .$menu."\n".'</form>';
-    print_header($strheader,$strheader,$strnav,'','',true,'&nbsp',$menu);
 
-    echo '<form action="stats.php" method="post">'."\n"
+    print_header("$course->shortname: $strstats", "$course->fullname",
+                 "<a href=\"../../view.php?id=$course->id\">$course->shortname</a> ->
+                  <a href=\"../../report.php?id=$course->id\">$strreports</a> ->
+                  $strstats", '','',true,'&nbsp',$menu);
+
+    echo '<form action="index.php" method="post">'."\n"
         .'<input type="hidden" name="mode" value="'.$mode.'" />'."\n";
 
     $table->width = '*';
@@ -188,9 +194,9 @@
             echo "(".get_string("gdneed").")";
         } else {
             if ($mode == STATS_MODE_DETAILED) {
-                echo '<center><img src="'.$CFG->wwwroot.'/course/graph.php?mode='.$mode.'&course='.$course->id.'&time='.$time.'&report='.$report.'&userid='.$userid.'" /></center>';
+                echo '<center><img src="'.$CFG->wwwroot.'/course/report/stats/graph.php?mode='.$mode.'&course='.$course->id.'&time='.$time.'&report='.$report.'&userid='.$userid.'" /></center>';
             } else {
-                echo '<center><img src="'.$CFG->wwwroot.'/course/graph.php?mode='.$mode.'&course='.$course->id.'&time='.$time.'&report='.$report.'" /></center>';
+                echo '<center><img src="'.$CFG->wwwroot.'/course/report/stats/graph.php?mode='.$mode.'&course='.$course->id.'&time='.$time.'&report='.$report.'" /></center>';
             }
         }
 
@@ -204,12 +210,12 @@
         $table->head[] = get_string('logs');
         
         foreach  ($stats as $stat) {
-            $a = array(userdate($stat->timeend,get_string('strftimedate'),$CFG->timezone),$stat->line1);
+            $a = array(userdate($stat->timeend-(60*60*24),get_string('strftimedate'),$CFG->timezone),$stat->line1);
             if (isset($stat->line2)) {
                 $a[] = $stat->line2;
             }
             if (empty($CFG->loglifetime) || ($stat->timeend-(60*60*24)) >= (time()-60*60*24*$CFG->loglifetime)) {
-                $a[] = '<a href="'.$CFG->wwwroot.'/course/log.php?id='.$course->id.'&chooselog=1&showusers=1&showcourses=1&user='.$userid.'&date='.usergetmidnight($stat->timeend-(60*60*24)).'">'.get_string('course').' ' .get_string('logs').'</a>&nbsp;';
+                $a[] = '<a href="'.$CFG->wwwroot.'/course/report/log/index.php?id='.$course->id.'&chooselog=1&showusers=1&showcourses=1&user='.$userid.'&date='.usergetmidnight($stat->timeend-(60*60*24)).'">'.get_string('course').' ' .get_string('logs').'</a>&nbsp;';
             }
             $table->data[] = $a;
         }

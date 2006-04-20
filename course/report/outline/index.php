@@ -7,8 +7,8 @@
 
     $modes = array("outline", "complete", "todaylogs", "alllogs");
 
-    $id = required_param('id',PARAM_INT);       // course id
-    $page = optional_param('page', 0, PARAM_INT);
+    $id      = required_param('id',PARAM_INT);       // course id
+    $page    = optional_param('page', 0, PARAM_INT);
     $perpage = optional_param('perpage', 100, PARAM_INT);
 
     require_login();
@@ -21,7 +21,7 @@
         error("You are not allowed to look at this page");
     }
 
-    add_to_log($course->id, "course", "report outline", "course.php?id=$course->id",$course->id); 
+    add_to_log($course->id, "course", "report outline", "report/outline/index.php?id=$course->id", $course->fullname); 
 
     $stractivityreport = get_string("activityreport");
     $strparticipants   = get_string("participants");

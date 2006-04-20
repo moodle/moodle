@@ -5,18 +5,18 @@
     require_once('../../lib.php');
     require_once('lib.php');
 
-    $id = required_param('id',PARAM_INT);// Course ID
-    $group = optional_param('group', -1, PARAM_INT); // Group to display
-    $user = optional_param('user', 0, PARAM_INT); // User to display
-    $date = optional_param('date', 0, PARAM_CLEAN); // Date to display
-    $modname = optional_param('modname', ''); // course_module->id
-    $modid = optional_param('modid', ''); // course_module->id
-    $modaction = optional_param('modaction', '', PARAM_ALPHAEXT); // an action as recorded in the logs
-    $page = optional_param('page', '0', PARAM_INT);     // which page to show
-    $perpage = optional_param('perpage', '100', PARAM_INT); // how many per page 
+    $id          = required_param('id', PARAM_INT);// Course ID
+    $group       = optional_param('group', -1, PARAM_INT); // Group to display
+    $user        = optional_param('user', 0, PARAM_INT); // User to display
+    $date        = optional_param('date', 0, PARAM_FILE); // Date to display - number or some string
+    $modname     = optional_param('modname', '', PARAM_CLEAN); // course_module->id
+    $modid       = optional_param('modid', 0, PARAM_FILE); // number or 'site_errors'
+    $modaction   = optional_param('modaction', '', PARAM_PATH); // an action as recorded in the logs
+    $page        = optional_param('page', '0', PARAM_INT);     // which page to show
+    $perpage     = optional_param('perpage', '100', PARAM_INT); // how many per page 
     $showcourses = optional_param('showcourses',0,PARAM_INT); // whether to show courses if we're over our limit.
-    $showusers = optional_param('showusers',0,PARAM_INT); // whether to show users if we're over our limit.
-    $chooselog = optional_param('chooselog',0,PARAM_INT);
+    $showusers   = optional_param('showusers',0,PARAM_INT); // whether to show users if we're over our limit.
+    $chooselog   = optional_param('chooselog',0,PARAM_INT);
 
     require_login();
 
@@ -33,6 +33,8 @@
             error('Only administrators can look at the site logs');
         }
     }
+
+    add_to_log($course->id, "course", "report log", "report/log/index.php?id=$course->id", $course->fullname); 
 
     $strlogs = get_string('logs');
     $stradministration = get_string('administration');

@@ -1,5 +1,9 @@
 <?php // $Id$
 
+    if (!defined('MOODLE_INTERNAL')) {
+        die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
+    }
+
     $strparticipation = get_string('participationreport');
     $strviews         = get_string('views');
     $strposts         = get_string('posts');
