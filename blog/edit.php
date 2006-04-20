@@ -115,7 +115,7 @@ if ($editid) {  // User is editing a post
     $blogEntry = get_record('post','id',$editid);
 
     //using an unformatted entry body here so that extra formatting information is not stored in the db
-    $post->body = $blogEntry->summary;
+    $post->body = stripslashes_safe($blogEntry->summary);
     $post->etitle = stripslashes_safe($blogEntry->subject);
     $post->postid = $editid;
     $post->userid = $blogEntry->userid;
