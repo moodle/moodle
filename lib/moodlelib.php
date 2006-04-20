@@ -5044,6 +5044,8 @@ function get_list_of_charsets() {
         'ISO-2022-JP'=> 'ISO-2022-JP',
         'ISO-8859-1' => 'ISO-8859-1',
         'SHIFT-JIS'  => 'SHIFT-JIS',
+        'GB2312'     => 'GB2312',
+        'GB18030'    => 'GB18030',
         'UTF-8'      => 'UTF-8');
 
     asort($charsets);
