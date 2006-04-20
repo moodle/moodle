@@ -1188,9 +1188,13 @@ body#message-messages {
   vertical-align: top;
 }
 .multichoice .c0 {
-  width: 5%;
+  /* width: 5%; */
   vertical-align: top;
   padding-top: 0.4em;
+}
+.multichoice .text,
+.multichoice .feedback {
+  width: auto;
 }
 .calculated .answer,
 .numerical .answer,
@@ -1211,10 +1215,6 @@ body#message-messages {
   padding: 0 0 0.3em 0.3em;
   border: 1px solid;
 }	
-.multichoice .text,
-.multichoice .feedback {
-  width: auto;
-}
 .que .grading,
 .que .comment,
 .que .commentlink,
