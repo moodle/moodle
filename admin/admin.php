@@ -101,11 +101,18 @@
 
 /// If no search results then get potential users excluding current admins
     if (empty($searchusers)) {
-        if (!$users = get_users(true, '', true, $adminlist, 'firstname ASC, lastname ASC', '', '',
-                                0, 99999, 'id, firstname, lastname, email') ) {
-            $users = array();
+
+        $usercount =  get_users(false, '', true, $adminlist, 'firstname ASC, lastname ASC', '', '',
+                                0, 99999, 'id, firstname, lastname, email');
+
+        $users = array();
+
+        if ($usercount <= MAX_USERS_PER_PAGE) {
+            if (!$users = get_users(true, '', true, $adminlist, 'firstname ASC, lastname ASC', '', '',
+                               0, 99999, 'id, firstname, lastname, email') ) {
+                $users = array();
+            }
         }
-        $usercount = count($users);
     }
 
     $searchtext = (isset($frm->searchtext)) ? $frm->searchtext : "";
