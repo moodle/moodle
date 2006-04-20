@@ -48,11 +48,11 @@
     }
 
     if (isguest()) {
-        error("The guest user cannot edit their profile.");
+        print_error('guestnoeditprofile');
     }
 
     if (isguest($user->id)) {
-        error("Sorry, the guest user cannot be edited.");
+        print_error('guestnoeditprofileother');
     }
 
 
@@ -72,7 +72,7 @@
     if ($usernew = data_submitted()) {
 
         if (($USER->id <> $usernew->id) && !isadmin()) {
-            error("You can only edit your own information");
+            print_error('onlyeditown');
         }
 
         if (isset($USER->username)) {
