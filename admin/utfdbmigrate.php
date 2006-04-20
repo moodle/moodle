@@ -347,6 +347,56 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
                         echo "<br>---><b>method ".$method.'</b>';
                     }
 
+
+                    if ($CFG->dbtype == 'mysql') {
+                        if ($dropindex){    //drop index if index is varchar, text etc type
+                            $SQL = 'ALTER TABLE '.$CFG->prefix.$dbtablename.' DROP INDEX '.$dropindex.';';
+                            if ($debug) {
+                                $db->debug=999;
+                            }
+                            execute_sql($SQL, $debug);
+                            if ($debug) {
+                                $db->debug=0;
+                            }
+                        } else if ($dropprimary) {    //drop primary key
+                            $SQL = 'ALTER TABLE '.$CFG->prefix.$dbtablename.' DROP PRIMARY KEY;';
+                            if ($debug) {
+                                $db->debug=999;
+                            }
+                            execute_sql($SQL, $debug);
+                            if ($debug) {
+                                $db->debug=0;
+                            }
+                        }
+
+                        /*********************************
+                         * Change column encoding 2 phase*
+                         *********************************/
+                        $SQL = 'ALTER TABLE '.$CFG->prefix.$dbtablename;
+                        $SQL.= ' CHANGE '.$fieldname.' '.$fieldname.' LONGBLOB';
+
+                        /*
+                        if ($length > 0) {
+                            $SQL.='('.$length.') ';
+                        }
+                        $SQL .= ' CHARACTER SET binary NOT NULL DEFAULT '.$default.';';
+                        */
+                        if ($debug) {
+                            $db->debug=999;
+                        }
+                        if ($fieldname != 'dummy') {
+                            execute_sql($SQL, $debug);
+                        }
+                        if ($debug) {
+                            $db->debug=0;
+                        }
+                        
+                    }
+
+
+
+
+
                     $patterns[]='/RECORDID/';    //for preg_replace
                     $patterns[]='/\{\$CFG\-\>prefix\}/i';    //same here
 
@@ -483,34 +533,17 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
                      ********************/
 
                     if ($CFG->dbtype == 'mysql') {
-                        if ($dropindex){    //drop index if index is varchar, text etc type
-                            $SQL = 'ALTER TABLE '.$CFG->prefix.$dbtablename.' DROP INDEX '.$dropindex.';';
-                            if ($debug) {
-                                $db->debug=999;
-                            }
-                            execute_sql($SQL, $debug);
-                            if ($debug) {
-                                $db->debug=0;
-                            }
-                        } else if ($dropprimary) {    //drop primary key
-                            $SQL = 'ALTER TABLE '.$CFG->prefix.$dbtablename.' DROP PRIMARY KEY;';
-                            if ($debug) {
-                                $db->debug=999;
-                            }
-                            execute_sql($SQL, $debug);
-                            if ($debug) {
-                                $db->debug=0;
-                            }
-                        }
 
                         /*********************************
                          * Change column encoding 2 phase*
                          *********************************/
+                         
+                        /*
                         $SQL = 'ALTER TABLE '.$CFG->prefix.$dbtablename;
-                        $SQL.= ' CHANGE '.$fieldname.' '.$fieldname.' '.$type;
-                        if ($length > 0) {
-                            $SQL.='('.$length.') ';
-                        }
+                        $SQL.= ' CHANGE '.$fieldname.' '.$fieldname.' LONGTEXT';
+                       // if ($length > 0) {
+                       //     $SQL.='('.$length.') ';
+                       // }
                         $SQL .= ' CHARACTER SET binary NOT NULL DEFAULT '.$default.';';
                         if ($debug) {
                             $db->debug=999;
@@ -520,7 +553,7 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
                         }
                         if ($debug) {
                             $db->debug=0;
-                        }
+                        }*/
                         //phase 2
                         $SQL = 'ALTER TABLE '.$CFG->prefix.$dbtablename;
                         $SQL.= ' CHANGE '.$fieldname.' '.$fieldname.' '.$type;
