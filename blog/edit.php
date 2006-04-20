@@ -22,8 +22,6 @@ if (isguest()) {
     error(get_string('noguestpost', 'blog'), $referrer);
 }
 
-$userid = optional_param('userid', 0, PARAM_INT);
-
 // make sure that the person trying to edit have access right
 if ($editid = optional_param('editid', 0, PARAM_INT)) {
 
@@ -32,18 +30,20 @@ if ($editid = optional_param('editid', 0, PARAM_INT)) {
     if (!blog_user_can_edit_post($blogEntry)) {
          error( get_string('notallowedtoedit', 'blog'), $CFG->wwwroot .'/login/index.php');
     }
-
 }
 
 //check to see if there is a requested blog to edit
 if (isloggedin() && !isguest()) {
-    //the user is logged in and have not specified a blog - so they will be editing their own
-    //$tempBlogInfo = blog_user_bloginfo();
-    $userid = $USER->id; //$tempBlogInfo->userid;
-    //unset($tempBlogInfo); //free memory from temp object - bloginfo will be created again in the included header
+    $userid = $USER->id;
 } else {
     error(get_string('noblogspecified', 'blog') .'<a href="'. $CFG->blog_blogurl .'">' .get_string('viewentries', 'blog') .'</a>');
 }
+
+// if we are trying to delete an non-existing blog entry
+if (isset($act) && ($act == 'del') && (empty($blogEntry))) {
+    error ('the entry you are trying to delete does not exist');
+}
+
 
 $pageNavigation = 'edit';
 include($CFG->dirroot .'/blog/header.php');
@@ -72,9 +72,10 @@ if (isset($act) && ($act == 'del') && confirm_sesskey())
         echo ' <input type="button" value="'.get_string('cancel').'" onclick="javascript:history.go(-1)" />';
         echo '</form></div>';
         print_footer($course);
-        die;
+        exit;
     }
 }
+
 if ($usehtmleditor = can_use_richtext_editor()) {
     $defaultformat = FORMAT_HTML;
     $onsubmit = '';
@@ -111,7 +112,7 @@ if (($post = data_submitted( get_referer() )) && confirm_sesskey()) {
 
 }
 
-if ($editid != '') {  // User is editing a post
+if ($editid) {  // User is editing a post
     // ensure that editing is allowed first - admin users can edit any posts
 
     $blogEntry = get_record('post','id',$editid);
@@ -126,9 +127,7 @@ if ($editid != '') {  // User is editing a post
 }
 
 if (isset($post->postid) && ($post->postid != -1) ) {
-
     $formHeading = get_string('updateentrywithid', 'blog');
-
 } else {
     $formHeading = get_string('addnewentry', 'blog');
 }
@@ -178,7 +177,7 @@ function do_delete($postid) {
 
             //record a log message of this entry deletion
             if ($site = get_site()) {
-                add_to_log($site->id, 'blog', 'delete', 'index.php?userid='. $bloginfo_arg->userid, 'deleted blog entry with entry id# '. $postid);
+                add_to_log($site->id, 'blog', 'delete', 'index.php?userid='. $blogEntry->userid, 'deleted blog entry with entry id# '. $postid);
             }
         }
     }
@@ -253,7 +252,7 @@ function do_save($post) {
         }
         //record a log message of this entry addition
         if ($site = get_site()) {
-            add_to_log($site->id, 'blog', 'add', 'archive.php?userid='. $bloginfo_arg->userid .'&postid='. $entryID, 'created new blog entry with entry id# '. $entryID);
+            add_to_log($site->id, 'blog', 'add', 'index.php?userid='. $blogEntry->userid .'&postid='. $entryID, 'created new blog entry with entry id# '. $entryID);
         }
         
         redirect($referrer);
@@ -316,7 +315,7 @@ function do_update($post) {
 
         //record a log message of this entry update action
         if ($site = get_site()) {
-            add_to_log($site->id, 'blog', 'update', 'archive.php?userid='. $bloginfo->userid .'&postid='. $post->postid, 'updated existing blog entry with entry id# '. $post->postid);
+            add_to_log($site->id, 'blog', 'update', 'index.php?userid='. $blogEntry->userid .'&postid='. $post->postid, 'updated existing blog entry with entry id# '. $post->postid);
         }
         
         redirect($referrer);

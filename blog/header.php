@@ -94,7 +94,7 @@ if ($ME == 'http://yu.moodle.com/dev/blog/edit.php') {  ///we are in edit mode, 
     
     print_header("$site->shortname: $blogstring", "$site->fullname",
                         '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$filterselect.'">'.fullname($user).'</a> ->
-                        <a href="'.$CFG->wwwroot.'/blog/index.php?userid='.$user->id.'">'.$blogstring.'</a> -> '.               $formHeading,'','',true,$PAGE->get_extra_header_string());
+                        <a href="'.$CFG->wwwroot.'/blog/index.php?userid='.$user->id.'">'.$blogstring.'</a> -> '.               $formHeading,'','',true);
 
 } else {  // else, we are in view mode
 
