@@ -132,14 +132,14 @@ switch ($filtertype) {
     break;
 }
 
-//first set the start and end day equal to the day argument passed in from the get vars
+// first set the start and end day equal to the day argument passed in from the get vars
 if ($limit == 'none') {
     $limit = get_user_preferences('blogpagesize',10);
 }
 
 include($CFG->dirroot .'/blog/header.php');
 
-//prints the tabs
+// prints the tabs
 $currenttab = 'blogs';
 $user = $USER;
 if (!$course) {

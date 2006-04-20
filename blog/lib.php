@@ -32,6 +32,40 @@
         $SESSION->blog_editing_enabled = false;
     }
 
+    // checks to see if user has visited blogpages before, if not, install 2 default blocks
+    // (blog_menu and blog_tags)
+    function blog_check_and_install_blocks() {
+        global $USER;
+        if (isloggedin() && !isguest()) {
+            // if this user has not visited this page before
+            if (!get_user_preferences('blogpagesize')) {
+                // find the correct ids for blog_menu and blog_from blocks
+                $menublock = get_record('block','name','blog_menu');
+                $tagsblock = get_record('block','name','blog_tags');
+                // add those 2 into block_instance page
+
+                // add blog_menu block
+                $newblock = new object;
+                $newblock -> blockid = $menublock->id;
+                $newblock -> pageid = $USER->id;
+                $newblock -> pagetype = 'blog-view';
+                $newblock -> position = 'r';
+                $newblock -> weight = 0;
+                $newblock -> visible = 1;
+                insert_record('block_instance', $newblock);
+
+                // add blog_tags menu
+                $newblock -> blockid = $tagsblock->id;
+                $newblock -> weight = 1;
+                insert_record('block_instance', $newblock);
+
+                // finally we set the page size pref
+                set_user_preference('blogpagesize',8);
+            }
+        }
+    }
+
+
     /**
      * Adaptation of isediting in moodlelib.php for blog module
      * @return bool

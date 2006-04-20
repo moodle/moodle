@@ -12,6 +12,9 @@ $blockaction = optional_param('blockaction','', PARAM_ALPHA);
 $instanceid = optional_param('instanceid', 0, PARAM_INT);
 $blockid = optional_param('blockid',    0, PARAM_INT);
 
+/// If user has never visited this page before, install 2 blocks for him
+blog_check_and_install_blocks();
+
 if (!$site = get_site()) {
     redirect($CFG->wwwroot.'/index.php');
 }
