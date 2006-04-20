@@ -64,14 +64,19 @@ class resource_ims extends resource_base {
             $this->parameters->skipsubmenus = 1;
         }
         
+        //echo "<pre>"; print_r($this->resource); echo "</pre>";
+        
     /// Is it in the repository material or not?
-        $file = $this->resource->reference;
-        if ($file[0] == '#') {
-            $this->isrepository = true;
-            $file = ltrim($file, '#');
-            $this->resource->reference = $file;
-        }
-        else {
+        if (isset($this->resource->reference)) {
+            $file = $this->resource->reference;
+            if ($file[0] == '#') {
+                $this->isrepository = true;
+                $file = ltrim($file, '#');
+                $this->resource->reference = $file;
+            } else {
+                $this->isrepository = false;
+            }
+        } else {
             $this->isrepository = false;
         }
     }
@@ -803,10 +808,13 @@ class resource_ims extends resource_base {
         $currorder = 0;
         $endlevel  = 0;
         foreach ($items as $item) {
+            if (!is_object($item)) {
+                continue;
+            }
         /// Convert text from UTF-8 to current charset if needed
             if (empty($CFG->unicodedb)) {
-////                $textlib = textlib_get_instance();
-////                $item->title = $textlib->convert($item->title, 'UTF-8', current_charset());
+                $textlib = textlib_get_instance();
+                $item->title = $textlib->convert($item->title, 'UTF-8', current_charset());
             }
         /// Skip pages until we arrive to $page
             if ($item->id < $page) {
