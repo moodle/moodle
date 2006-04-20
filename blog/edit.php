@@ -116,7 +116,7 @@ if ($editid) {  // User is editing a post
 
     //using an unformatted entry body here so that extra formatting information is not stored in the db
     $post->body = $blogEntry->summary;
-    $post->etitle = $blogEntry->subject;
+    $post->etitle = stripslashes_safe($blogEntry->subject);
     $post->postid = $editid;
     $post->userid = $blogEntry->userid;
     $post->format = $blogEntry->format;
