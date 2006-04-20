@@ -38,7 +38,7 @@
 
     require_login();
 
-    $quizid    = optional_param('quizid');
+    $quizid    = optional_param('quizid', 0, PARAM_INT);
 
     $strquizzes = get_string('modulenameplural', 'quiz');
     $strquiz = get_string('modulename', 'quiz');
@@ -120,6 +120,7 @@ if (self.name == 'editquestion') {
 /// Now, check for commands on this page and modify variables as necessary
 
     if (isset($_REQUEST['up']) and confirm_sesskey()) { /// Move the given question up a slot
+        $up = optional_param('up', 0, PARAM_INT);
         $questions = explode(",", $modform->questions);
         if ($up > 0 and isset($questions[$up])) {
             $prevkey = ($questions[$up-1] == 0) ? $up-2 : $up-1;
@@ -138,6 +139,7 @@ if (self.name == 'editquestion') {
     }
 
     if (isset($_REQUEST['down']) and confirm_sesskey()) { /// Move the given question down a slot
+        $down = optional_param('down', 0, PARAM_INT);
         $questions = explode(",", $modform->questions);
         if ($down < count($questions)) {
             $nextkey = ($questions[$down+1] == 0) ? $down+2 : $down+1;
