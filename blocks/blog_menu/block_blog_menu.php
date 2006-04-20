@@ -10,7 +10,11 @@ class block_blog_menu extends block_base {
     
     function get_content() {
         global $CFG, $course;
-        
+
+        if (!isset($course)) {
+            $course = SITEID;
+        }
+
         if ($CFG->bloglevel < 1) {
             $this->content->text = '';
             return $this->content;
