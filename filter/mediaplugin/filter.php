@@ -30,7 +30,7 @@ function mediaplugin_filter($courseid, $text) {
                 $c = 'bgColour=000000&btnColour=ffffff&btnBorderColour=cccccc&iconColour=000000&iconOverColour=00cc00&trackColour=cccccc&handleColour=ffffff&loaderColour=ffffff&waitForPlay=yes&';
             }
         }
-        $c = htmlentities($c);
+        // $c = htmlentities($c);  // Commented out pending bug 5223
         $search = '/<a(.*?)href=\"([^<]+)\.mp3\"([^>]*)>(.*?)<\/a>/is';
 
         $replace  = '\\0&nbsp;<object class="mediaplugin mp3" classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000"';
