@@ -130,10 +130,13 @@
         $currorder = 0;
         $endlevel  = 0;
         foreach ($items as $item) {
+            if (!is_object($item)) {
+                continue;
+            }
         /// Convert text from UTF-8 to current charset if needed
             if (empty($CFG->unicodedb)) {
-////                $textlib = textlib_get_instance();
-////                $item->title = $textlib->convert($item->title, 'UTF-8', current_charset());
+                $textlib = textlib_get_instance();
+                $item->title = $textlib->convert($item->title, 'UTF-8', current_charset());
             }
         /// Skip pages until we arrive to $page
             if ($item->id < $page) {
