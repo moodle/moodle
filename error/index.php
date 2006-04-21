@@ -19,18 +19,17 @@
     $requesturi  = empty($_SERVER['REQUEST_URI'])  ? '' : $_SERVER['REQUEST_URI'];
     
     print_header($site->fullname .':Error', $site->fullname .': Error 404', '', 'form.text');
-    print_simple_box('<p align="center">An unusual error occurred (tried to reach a page that doesn\'t exist).<br />'.s($requesturi).'</p>', 'center');
+    print_simple_box('<p align="center">'. get_string('pagenotexist', 'error'). '<br />'.s($requesturi).'</p>', 'center');
   
 ?>
   
   <center>
-  <p>If you have time, please let us know what you were trying 
-     to do when the error occurred:
+  <p><? get_string('pleasereport', 'error'); ?>
   <p><form action="<?php echo $CFG->wwwroot ?>/error/index.php" name="form" method="post">
      <textarea rows="3" cols="50" name="text"></textarea><br />
      <input type="hidden" name="referer" value="<?php p($httpreferer) ?>">
      <input type="hidden" name="requested" value="<?php p($requesturi) ?>">
-     <input type="submit" value="Send this off">
+     <input type="submit" value="<?php get_string('sendmessage', 'error'); ?>">
      </form>
 <?php
 
