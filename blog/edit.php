@@ -44,6 +44,7 @@ if (isset($act) && ($act == 'del') && (empty($blogEntry))) {
 }
 
 
+
 $pageNavigation = 'edit';
 include($CFG->dirroot .'/blog/header.php');
 
