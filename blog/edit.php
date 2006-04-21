@@ -226,23 +226,25 @@ function do_save($post) {
             update_record('post', $dataobject);
 
             /// Associate tags with entries
-            $otags = optional_param('otags','', PARAM_INT);
-            $ptags = optional_param('ptags','', PARAM_INT);
-
+            
             $tag = NULL;
             $tag->entryid = $entryID;
             $tag->userid = $USER->id;
             $tag->timemodified = time();
 
             /// Add tags information
-            foreach ($otags as $otag) {
-                $tag->tagid = $otag;
-                insert_record('blog_tag_instance',$tag);
+            if ($otags = optional_param('otags','', PARAM_INT)) {
+                foreach ($otags as $otag) {
+                    $tag->tagid = $otag;
+                    insert_record('blog_tag_instance',$tag);
+                }
             }
 
-            foreach ($ptags as $ptag) {
-                $tag->tagid = $ptag;
-                insert_record('blog_tag_instance',$tag);
+            if ($ptags = optional_param('ptags','', PARAM_INT)) {
+                foreach ($ptags as $ptag) {
+                    $tag->tagid = $ptag;
+                    insert_record('blog_tag_instance',$tag);
+                }
             }
 
             print '<strong>'. get_string('entrysaved', 'blog') .'</strong><br />';
