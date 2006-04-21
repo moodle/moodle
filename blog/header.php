@@ -48,8 +48,7 @@ page_map_class($pagetype, $pageclass);
 // Now, create our page object.
 if (!isset($USER->id)) {
     $PAGE = page_create_object($pagetype);
-}
-else {
+} else {
     $PAGE = page_create_object($pagetype, $USER->id);
 }
 $PAGE->courseid = $courseid;
