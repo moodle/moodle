@@ -70,7 +70,7 @@
                                error('Was not able to hide question');
                             }
                         } else {
-                            delete_records("question", "id", $questionid);
+                            delete_question($questionid);
                         }
                     }
                 }
