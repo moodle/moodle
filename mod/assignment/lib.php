@@ -1159,6 +1159,7 @@ class assignment_base {
             echo '<input type="hidden" name="id" value="'.$this->cm->id.'">';
             echo '<input type="hidden" name="mode" value="fastgrade">';
             echo '<input type="hidden" name="page" value="'.$page.'">';
+            echo '<p align="center"><input type="submit" name="fastg" value="'.get_string('saveallfeedback', 'assignment').'" /></p>';
         }
 
         $table->print_html();  /// Print the whole table
