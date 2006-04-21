@@ -71,7 +71,7 @@ switch ($mode) {
 
                 // you can only delete your own tags, or you have to be an admin
                 if (!isadmin() and $USER->id != $blogtag->userid) {
-                    notify('no right to delete');
+                    notify(get_string('norighttodeletetag','blog', $blogtag->text));
                     continue;
                 }
 
