@@ -205,6 +205,39 @@ class qformat_default {
         return true;
     }
 
+    function importimagefile( $path, $base64 ) {
+    /// imports an image file encoded in base64 format
+    /// This should not be overridden.
+        global $CFG;
+
+        // all this to get the destination directory
+        // and filename!
+        $fullpath = "{$CFG->dataroot}/{$this->course->id}/$path";
+        $path_parts = pathinfo( $fullpath );
+        $destination = $path_parts['dirname'];
+        $file = clean_filename( $path_parts['basename'] );
+
+        // detect and fix any filename collision - get unique filename
+        $newfiles = resolve_filename_collisions( $destination, array($file) );        
+        $newfile = $newfiles[0];
+
+        // convert and save file contents
+        if (!$content = base64_decode( $base64 )) {
+            return false;
+        }
+        $newfullpath = "$destination/$newfile";
+        if (!$fh = fopen( $newfullpath, 'w' )) {
+            return false;
+        }
+        if (!fwrite( $fh, $content )) {
+            return false;
+        }
+        fclose( $fh );
+
+        // return the (possibly) new filename
+        return $newfile;
+    }
+
 // Export functions
 
 

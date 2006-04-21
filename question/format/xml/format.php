@@ -79,6 +79,10 @@ class qformat_xml extends qformat_default {
         $qtext = $this->import_text( $question['#']['questiontext'][0]['#']['text'] );
         $qformat = $question['#']['questiontext'][0]['@']['format'];
         $image = $question['#']['image'][0]['#'];
+        if (!empty($question['#']['image_base64'][0]['#'])) {
+            $image_base64 = stripslashes( trim( $question['#']['image_base64'][0]['#'] ) );
+            $image = $this->importimagefile( $image, $image_base64 );
+        }
         $penalty = $question['#']['penalty'][0]['#'];
 
         $qo = $this->defaultquestion();
@@ -498,6 +502,24 @@ class qformat_xml extends qformat_default {
         return $content;
     }
 
+    function writeimage( $imagepath ) {
+    // includes image in base64
+        global $CFG;
+   
+        if (empty($imagepath)) {
+            return '';
+        }
+
+        $courseid = $this->course->id;
+        if (!$binary = file_get_contents( "{$CFG->dataroot}/$courseid/$imagepath" )) {
+            return '';
+        }
+
+        $content = "    <image_base64>\n".addslashes(base64_encode( $binary ))."\n".
+            "\n    </image_base64>\n";
+        return $content;
+    }
+
     function writequestion( $question ) {
     // turns question into string
     // question reflects database fields for general question and specific to type
@@ -518,10 +540,16 @@ class qformat_xml extends qformat_default {
         $expout .= "    <questiontext format=\"$qtformat\">\n";
         $expout .= $question_text;
         $expout .= "    </questiontext>\n";   
-        $expout .= "    <image>".$question->image."</image>\n";
+        $expout .= "    <image>{$question->image}</image>\n";
+        $expout .= $this->writeimage($question->image);
         $expout .= "    <penalty>{$question->penalty}</penalty>\n";
         $expout .= "    <hidden>{$question->hidden}</hidden>\n";
-        $expout .= "    <shuffleanswers>{$question->options->shuffleanswers}</shuffleanswers>\n";
+        if (!empty($question->options->shuffleanswers)) {
+            $expout .= "    <shuffleanswers>{$question->options->shuffleanswers}</shuffleanswers>\n";
+        }
+        else {
+            $expout .= "    <shuffleanswers>0</shuffleanswers>\n";
+        }
 
         // output depends on question type
         switch($question->qtype) {
