@@ -33,7 +33,7 @@
             asort($form->frontpage);
             $form->frontpage = implode(',',array_flip($form->frontpage));
             set_config("frontpage", $form->frontpage);
-            if (!$form->frontpage) {
+            if ($form->frontpage == '') {
                 $form->numsections = 1;    // Force the topic display for this format
             }
 
