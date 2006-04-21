@@ -21,6 +21,7 @@ $string['groupblog'] = 'Group blog: $a';
 $string['intro'] = 'This RSS feed was automatically generated from one or more blogs.';
 $string['noentriesyet'] = 'No visible entries here';
 $string['noguestpost'] = 'Guest can not post blogs!';
+$string['norighttodeletetag'] = 'You have no rights to delete this tag - $a';
 $string['notallowedtoedit'] = 'You are not allowed to edit this entry';
 $string['numberofentries'] = 'Entries: $a';
 $string['numberoftags'] = 'Number of tags to display';
