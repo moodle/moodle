@@ -37,7 +37,7 @@ function check_language($cmd) {
     $current_lang = current_language();
     $output = '';
 
-    if(!($handle = popen(escapeshellarg($cmd) .' dump dicts', 'r'))) {
+    if(!($handle = popen($cmd .' dump dicts', 'r'))) {
         error_handler("Couldn't create handle!");
         exit;
     }
