@@ -67,7 +67,7 @@ CREATE TABLE prefix_hotpot_questions (
     text int(10) unsigned default NULL,
     hotpot int(10) unsigned NOT NULL default '0',
     PRIMARY KEY (id),
-    KEY prefix_hotpot_questions_name_idx (name(20)),
+    KEY hotpot_questions_name_idx (name(20)),
     KEY prefix_hotpot_questions_hotpot_idx (hotpot)
 ) TYPE=MyISAM COMMENT='details about questions in Hot Potatoes quiz attempts';
 #
