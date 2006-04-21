@@ -8,7 +8,7 @@
     require_variable($id);
 
     $user          = optional_param('user', '0', PARAM_INT);
-    $sortby        = optional_param('user', 'default');
+    $sortby        = optional_param('sortby', 'default', PARAM_ALPHA);
     $selectedgroup = optional_param('selectedgroup', '');
 
     if (! $course = get_record("course", "id", $id) ) {
