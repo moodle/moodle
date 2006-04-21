@@ -117,7 +117,7 @@
             echo $addlink;
         }
 
-        if (isset($blogEntries) ) {
+        if ($blogEntries) {
 
             $count = 0;
             foreach ($blogEntries as $blogEntry) {
