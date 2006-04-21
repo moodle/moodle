@@ -48,6 +48,8 @@ class assignment_uploadsingle extends assignment_base {
 
         global $USER;
 
+        add_to_log($this->course->id, "assignment", "view", "view.php?id={$this->cm->id}", $this->assignment->id, $this->cm->id);
+
         $this->view_header();
 
         $this->view_intro();
