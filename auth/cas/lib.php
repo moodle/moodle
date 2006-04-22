@@ -98,6 +98,7 @@ function cas_ldap_auth_user_login ($username, $password) {
 function cas_authenticate_user_login ($username, $password) {
 
    global $CFG;
+   // FIX ME: $cas_validate is not global
    $cas_validate=true;
    phpCAS::client($CFG->cas_version,$CFG->cas_hostname,(int)$CFG->cas_port,$CFG->cas_baseuri);
    phpCAS::setLang($CFG->cas_language);
@@ -131,6 +132,7 @@ function cas_authenticate_user_login ($username, $password) {
 */
 function cas_automatic_authenticate ($user="") {
    global $CFG;
+   // FIX ME: $cas_validate is not global, but it works anyway ;-)
    if (!$cas_validate){
         $cas_validate=true;
         phpCAS::client($CFG->cas_version,$CFG->cas_hostname,(int)$CFG->cas_port,$CFG->cas_baseuri);
