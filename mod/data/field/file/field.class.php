@@ -139,7 +139,8 @@ class data_field_file extends data_field_base {
                 //only use the manager if file is present, to avoid "are you sure you selected a file to upload" msg
                 if ($filename){
                     require_once($CFG->libdir.'/uploadlib.php');
-                    $um = new upload_manager($names[0].'_'.$names[1],true,false,$course,false,$this->field->param3);
+                    //FIX ME: $course not defined heer!!
+                    $um = new upload_manager($names[0].'_'.$names[1],true,false,$this->data->course,false,$this->field->param3);
                     if ($um->process_file_uploads($dir)) {
                         $newfile_name = $um->get_new_filename();
                         $content->content = $newfile_name;

@@ -114,7 +114,7 @@ class assignment_uploadsingle extends assignment_base {
             $dir = $this->file_area_name($USER->id);
 
             require_once($CFG->dirroot.'/lib/uploadlib.php');
-            $um = new upload_manager('newfile',true,false,$course,false,$this->assignment->maxbytes);
+            $um = new upload_manager('newfile',true,false,$this->course,false,$this->assignment->maxbytes);
             if ($um->process_file_uploads($dir)) {
                 $newfile_name = $um->get_new_filename();
                 if ($submission) {
