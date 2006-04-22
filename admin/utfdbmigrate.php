@@ -772,6 +772,10 @@ function get_main_teacher_lang($courseid) {
         if ($teacher = get_record_sql($SQL, true)) {
             $mainteachercache[$courseid] = $teacher->lang;
             return $teacher->lang;
+        } else {
+            $admin = get_admin();
+            $mainteachercache[$courseid] = $admin->lang;
+            return $admin->lang;
         }
     } else {
         return $mainteachercache[$courseid];
@@ -857,6 +861,7 @@ function validate_form(&$form, &$err) {
     }
 
     if (!is_postgres_utf8($newdb)) {
+        $encoding = $newdb->GetOne('SHOW server_encoding');
         $err['dbconnect'] = get_string('dbmigrateencodingerror', 'admin', $encoding);
         return;
     }
