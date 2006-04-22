@@ -304,9 +304,11 @@ function auth_user_exists ($username) {
     if ( $rs->RecordCount() ) {
         // user exists exterally
         // check username/password internally
-        if ($user = get_record('user', 'username', $username)) {
+        // ?? there is no $password variable, so why??
+        /*if ($user = get_record('user', 'username', $username)) {
             return ($user->password == md5($password));
-        }
+        }*/
+        return $rs->RecordCount();
     } else {
         // user does not exist externally
         return false;
