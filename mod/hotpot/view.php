@@ -390,7 +390,7 @@
 		break;
 		case HOTPOT_NAVIGATION_IFRAME:
 			switch ($framename) {
-				case 'main';
+				case 'main':
 					print $hp->html;
 				break;
 				default:

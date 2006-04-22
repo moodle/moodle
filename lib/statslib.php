@@ -419,7 +419,7 @@ function stats_get_start_from($str) {
         case 'all': 
             return $function(get_field_sql('SELECT time FROM '.$CFG->prefix.'log ORDER BY time LIMIT 1'));
             break;
-        case 'none'; 
+        case 'none': 
             return $function(strtotime('-1 day',time()));
             break;
         default:
