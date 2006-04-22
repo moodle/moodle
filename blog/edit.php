@@ -329,7 +329,7 @@ function do_update($post) {
         }*/
     } else {
 //        get_string('', 'blog') //Daryl Hawes note: localize this line
-        $post->error =  'There was an error updating this post in the database: '. $error;
+        $post->error =  'There was an error updating this post in the database';
     }
 }
 ?>
