@@ -1638,7 +1638,7 @@ function forum_make_mail_post(&$post, $user, $touser, $course,
 
     $output .= '<tr><td class="left side" valign="top">';
     if ($group = user_group($course->id, $user->id)) {
-        $output .= print_group_picture($group, $courseid, false, true, true);
+        $output .= print_group_picture($group, $course->id, false, true, true);
     } else {
         $output .= '&nbsp;';
     }
