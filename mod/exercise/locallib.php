@@ -997,10 +997,11 @@ function exercise_list_submissions_for_admin($exercise) {
 ///////////////////////////////////////////////////////////////////////////////////////////////
 function exercise_list_teacher_assessments($exercise, $user) {
     global $CFG;
+    $timenow = time();
     
     if (! $course = get_record("course", "id", $exercise->course)) {
         error("Course is misconfigured");
-        }
+    }
     $table->head = array (get_string("title", "exercise"), get_string("action", "exercise"), get_string("comment", "exercise"));
     $table->align = array ("left", "left", "left");
     $table->size = array ("*", "*", "*");
