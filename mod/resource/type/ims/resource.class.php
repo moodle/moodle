@@ -36,7 +36,7 @@
 /// (3) false => (5) false. Add graying out on setup.
 
 
-include_once ($CFG->libdir.'/filelib.php');
+require_once($CFG->libdir.'/filelib.php');
 require_once($CFG->dirroot.'/mod/resource/type/ims/repository_config.php');
 
 /**
@@ -59,12 +59,10 @@ class resource_ims extends resource_base {
         
     /// navigation menu forces other settings
         if ($this->parameters->navigationmenu) {
-            unset($this->parameters->tableofcontents);
-            unset($this->parameters->navigationuparrow);
+            $this->parameters->tableofcontents = 0;
+            $this->parameters->navigationuparrow = 0;
             $this->parameters->skipsubmenus = 1;
         }
-        
-        //echo "<pre>"; print_r($this->resource); echo "</pre>";
         
     /// Is it in the repository material or not?
         if (isset($this->resource->reference)) {
@@ -129,11 +127,11 @@ class resource_ims extends resource_base {
     */
     function form2parameters($resource) {
         $parameters = new stdClass;
-        $parameters->tableofcontents = $resource->param_tableofcontents;
+        $parameters->tableofcontents = isset($resource->param_tableofcontents) ? $resource->param_tableofcontents : 0;
         $parameters->navigationbuttons = $resource->param_navigationbuttons;
-        $parameters->skipsubmenus = $resource->param_skipsubmenus;
+        $parameters->skipsubmenus = isset($resource->param_skipsubmenus) ? $resource->param_skipsubmenus : 0;
         $parameters->navigationmenu = $resource->param_navigationmenu;
-        $parameters->navigationupbutton = $resource->param_navigationupbutton;
+        $parameters->navigationupbutton = isset($resource->param_navigationupbutton) ? $resource->param_navigationupbutton : 0;
 
         return $parameters;
     }
