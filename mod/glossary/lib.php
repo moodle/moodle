@@ -894,7 +894,7 @@ function glossary_search($course, $searchterms, $extended = 0, $glossary = NULL)
             foreach ( $glossaries as $glossary ) {
                 $glos .= "$glossary->id,";
             }
-            $glos = substr($ents,0,-1);
+            $glos = substr($glos,0,-1);
         }
     } else {
         $glos = $glossary->id;
