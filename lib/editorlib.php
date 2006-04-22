@@ -116,10 +116,10 @@ class editorObject {
     *
     * @param string $message
     */
-    function error($messsage) {
+    function error($message) {
         echo '<div style="text-align: center; font-weight: bold; color: red;">';
         echo '<span style="color: black;">editorObject error:</span> ';
-        echo stripslashes(htmlentities($message));
+        echo s($message, true);
         echo '</div>';
         exit;
     }
