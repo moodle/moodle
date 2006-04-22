@@ -115,6 +115,7 @@ function grade_get_users_by_group($course, $group) {
     $members = get_records_sql($sql);
     if ($members) {
         foreach($members as $member) {
+            // FIX ME: there is no $userid defined!!! - from where is this function used anyway??
             $group->$userid = true;
         }
         return $group;
