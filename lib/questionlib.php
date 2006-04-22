@@ -1602,6 +1602,7 @@ function get_import_export_formats( $type ) {
     $fileformats = get_list_of_plugins("question/format");
 
     $fileformatname=array();
+    //FIX ME: this is confusing and may not always work, better use absolute path instead
     require_once( "format.php" );
     foreach ($fileformats as $key => $fileformat) {
         $format_file = $CFG->dirroot . "/question/format/$fileformat/format.php";
