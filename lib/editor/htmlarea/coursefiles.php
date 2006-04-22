@@ -21,6 +21,8 @@
     $name    = optional_param('name', '', PARAM_FILE);
     $oldname = optional_param('oldname', '', PARAM_FILE);
     $usecheckboxes  = optional_param('usecheckboxes', 1, PARAM_INT);
+    $save    = optional_param('save', 0, PARAM_BOOL);
+    $confirm = optional_param('confirm', 0, PARAM_BOOL);
 
 
     if (! $course = get_record("course", "id", $id) ) {
@@ -207,7 +209,7 @@
             html_header($course, $wdir);
             require_once($CFG->dirroot.'/lib/uploadlib.php');
 
-            if (!empty($save) and confirm_sesskey()) {
+            if ($save and confirm_sesskey()) {
                 $um = new upload_manager('userfile',false,false,$course,false,0);
                 $dir = "$basedir$wdir";
                 if ($um->process_file_uploads($dir)) {
@@ -248,7 +250,7 @@
             break;
 
         case "delete":
-            if (!empty($confirm) and confirm_sesskey()) {
+            if ($confirm and confirm_sesskey()) {
                 html_header($course, $wdir);
                 foreach ($USER->filelist as $file) {
                     $fullfile = $basedir.$file;
@@ -525,7 +527,7 @@
                 echo "<p align=\"center\">$strlistfiles:</p>";
                 $file = basename($file);
 
-                include_once('../pclzip/pclzip.lib.php');
+                require_once($CFG->libdir.'/pclzip/pclzip.lib.php');
                 $archive = new PclZip("$basedir/$wdir/$file");
                 if (!$list = $archive->listContent("$basedir/$wdir")) {
                     notify($archive->errorInfo(true));

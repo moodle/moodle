@@ -18,7 +18,8 @@
     $oldname = optional_param('oldname', '', PARAM_FILE);
     $choose  = optional_param('choose', '', PARAM_CLEAN);
     $userfile= optional_param('userfile','',PARAM_FILE);
-    $save = optional_param( 'save','' );
+    $save    = optional_param('save', 0, PARAM_BOOL);
+    $confirm = optional_param('confirm', 0, PARAM_BOOL);
 
     if ($choose) {
         if (count(explode('.', $choose)) != 2) {
@@ -158,7 +159,7 @@
             html_header($course, $wdir);
             require_once($CFG->dirroot.'/lib/uploadlib.php');
                 
-            if (!empty($save) and confirm_sesskey()) {
+            if ($save and confirm_sesskey()) {
                 $course->maxbytes = 0;  // We are ignoring course limits
                 $um = new upload_manager('userfile',false,false,$course,false,0);
                 $dir = "$basedir$wdir";
@@ -202,7 +203,7 @@
             break;
 
         case "delete":
-            if (!empty($confirm) and confirm_sesskey()) {
+            if ($confirm and confirm_sesskey()) {
                 html_header($course, $wdir);
                 if (!empty($USER->filelist)) {
                     foreach ($USER->filelist as $file) {
