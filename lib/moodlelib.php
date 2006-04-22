@@ -3425,7 +3425,7 @@ function ismember($groupid, $userid=0) {
                         return true;
                     }
                 }
-            } else if ($mygroupid == $groupid) {
+            } else if ($mgroupid == $groupid) {
                 return true;
             }
         }
@@ -4402,15 +4402,15 @@ function get_directory_size($rootdir, $excludefile='') {
         }
     }
 
-    $size = 0;
-
     if (!is_dir($rootdir)) {          // Must be a directory
-        return $dirs;
+        return 0;
     }
 
     if (!$dir = @opendir($rootdir)) {  // Can't open it for some reason
-        return $dirs;
+        return 0;
     }
+
+    $size = 0;
 
     while (false !== ($file = readdir($dir))) {
         $firstchar = substr($file, 0, 1);
