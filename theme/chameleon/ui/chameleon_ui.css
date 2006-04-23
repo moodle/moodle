@@ -52,7 +52,7 @@ inherited by the user interface */
 #chameleon-color-box #chameleon-color-box-handle,
 #chameleon-file-box #chameleon-file-box-handle,
 #chameleon-export-box #chameleon-export-box-handle {
-  width: 100% !important; min-height: 20px !important; _height: 20px !important;
+  width: 100% !important; min-height: 20px !important; height: 20px !important;
   background: #ddd !important;
 }
 
