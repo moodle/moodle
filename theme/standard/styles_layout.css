@@ -1811,6 +1811,18 @@ body#mod-quiz-report .controls {
   padding-left:1em;
 }
 
+#ims-contentframe {
+  position:absolute;
+  left:260px;
+  border:0px;
+}
+
+#ims-contentframe-no-nav {
+  position:absolute;
+  left:0px;
+  border:0px;
+}
+
 /***
  *** Modules: Scorm
  ***/
