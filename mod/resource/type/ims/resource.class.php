@@ -449,26 +449,6 @@ class resource_ims extends resource_base {
             $standard_javascript = $CFG->javascript;  // Save original javascript file
             $CFG->javascript = $CFG->dirroot.'/mod/resource/type/ims/javascript.php';  //Use our custom IMS javascript code
             
-        /// All this sets up style stuff to position and 
-        /// resize the menus and stuff. The CSS is here because it
-        /// differs depending on some php variables. 
-            echo "
-            <style type='text/css'>
-                
-                #ims-contentframe {
-                    position:absolute;
-                    
-                   ";
-            if (!empty($this->parameters->navigationmenu)) {
-                echo "left:260px;";
-            }
-            echo "
-                    border:0px;
-                }
-                
-            </style>
-            ";
-            echo "<title>{$course->shortname}: ".strip_tags(format_string($resource->name,true))."</title></head>\n";
         /// moodle header
             if ($resource->popup) {
                 //print_header($pagetitle, $course->fullname.' : '.$resource->name);
@@ -504,6 +484,13 @@ class resource_ims extends resource_base {
     function print_ims($cm, $course, $items, $resource, $page) {
         global $CFG;
         
+    /// Set the correct contentframe id based on $this->parameters->navigationmenu
+        if (!empty($this->parameters->navigationmenu)) {
+            $contentframe = 'ims-contentframe';
+        } else {
+            $contentframe = 'ims-contentframe-no-nav';
+        }
+
     /// Calculate the file.php correct url
         if (!$this->isrepository) {
             if ($CFG->slasharguments) {
@@ -567,7 +554,7 @@ class resource_ims extends resource_base {
         }
         
     /// prints iframe filled with $fullurl
-        echo "<iframe id=\"ims-contentframe\" name=\"ims-contentframe\" src=\"{$fullurl}\"></iframe>"; //Content frame
+        echo "<iframe id=\"".$contentframe."\" name=\"ims-contentframe\" src=\"{$fullurl}\"></iframe>"; //Content frame
         echo '</div>';
     }
 
