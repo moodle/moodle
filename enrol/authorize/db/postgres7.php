@@ -8,9 +8,9 @@ function authorize_upgrade($oldversion=0) {
     $result = true;
 
     if ($oldversion == 0) {
-        modify_database("$CFG->dirroot/enrol/authorize/db/mysql.sql");
+        modify_database("$CFG->dirroot/enrol/authorize/db/postgres7.sql");
     } else if (!in_array($CFG->prefix . 'enrol_authorize', $db->MetaTables('TABLES'))) {
-        modify_database("$CFG->dirroot/enrol/authorize/db/mysql.sql");
+        modify_database("$CFG->dirroot/enrol/authorize/db/postgres7.sql");
     }
 
     if ($oldversion < 2005071601) {
