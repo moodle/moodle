@@ -7,12 +7,10 @@ function authorize_upgrade($oldversion=0) {
 
     $result = true;
 
-    if (!$tables = $db->MetaColumns($CFG->prefix . 'enrol_authorize')) {
-        $installfirst = true;
-    }
-
-    if ($oldversion == 0 || !empty($installfirst)) {
-        modify_database("$CFG->dirroot/enrol/authorize/db/postgres7.sql");
+    if ($oldversion == 0) {
+        modify_database("$CFG->dirroot/enrol/authorize/db/mysql.sql");
+    } else if (!in_array($CFG->prefix . 'enrol_authorize', $db->MetaTables('TABLES'))) {
+        modify_database("$CFG->dirroot/enrol/authorize/db/mysql.sql");
     }
 
     if ($oldversion < 2005071601) {
