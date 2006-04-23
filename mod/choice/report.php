@@ -3,11 +3,10 @@
     require_once("../../config.php");
     require_once("lib.php");
 
-    $id = required_param('id');   //moduleid
-
+    $id       = required_param('id', PARAM_INT);   //moduleid
     $format   = optional_param('format', CHOICE_PUBLISH_NAMES, PARAM_INT);
     $download = optional_param('download', '', PARAM_ALPHA);
-    $action = optional_param('action', '');
+    $action   = optional_param('action', '', PARAM_ALPHA);
 
     if (! $cm = get_record("course_modules", "id", $id)) {
         error("Course Module ID was incorrect");

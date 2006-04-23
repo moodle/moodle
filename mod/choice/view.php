@@ -3,8 +3,9 @@
     require_once("../../config.php");
     require_once("lib.php");
 
-    $id = required_param('id', PARAM_INT);    // Course Module ID
-    $action = optional_param('action', '');
+    $id         = required_param('id', PARAM_INT);                 // Course Module ID
+    $action     = optional_param('action', '', PARAM_ALPHA);
+    $attemptids = optional_param('attemptid', array(), PARAM_INT); // array of attempt ids for delete action
     
     if (! $cm = get_record("course_modules", "id", $id)) {
         error("Course Module ID was incorrect");
@@ -32,7 +33,6 @@
 
         if (isteacher($course->id, $USER->id)) {
             if ($action == 'delete') { //some responses need to be deleted     
-                $attemptids = isset($_POST['attemptid']) ? $_POST['attemptid'] : array(); //get array of repsonses to delete.
                 choice_delete_responses($attemptids); //delete responses.
                 redirect("view.php?id=$cm->id");
             }
