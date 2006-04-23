@@ -3,9 +3,9 @@
     require_once("../../config.php");
     require_once("lib.php");
 
-    $id      = optional_param('id');            // Course module ID
-    $a       = optional_param('a');             // Assignment ID
-    $mode    = optional_param('mode', 'all');   // What mode are we in?
+    $id   = optional_param('id', 0, PARAM_INT);          // Course module ID
+    $a    = optional_param('a', 0, PARAM_INT);           // Assignment ID
+    $mode = optional_param('mode', 'all', PARAM_ALPHA);  // What mode are we in?
 
     if ($id) {
         if (! $cm = get_record("course_modules", "id", $id)) {

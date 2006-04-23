@@ -3,9 +3,8 @@
     require_once("../../config.php");
     require_once("lib.php");
  
-    $id = optional_param('id');    // Course Module ID
-    $a  = optional_param('a');
-
+    $id = optional_param('id', 0, PARAM_INT);  // Course Module ID
+    $a  = optional_param('a', 0, PARAM_INT);   // Assignment ID
 
     if ($id) {
         if (! $cm = get_record("course_modules", "id", $id)) {
