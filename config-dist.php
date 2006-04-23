@@ -200,7 +200,7 @@ $CFG->admin = 'admin';
 // mailprefix must be EXACTLY four characters.
 // Uncomment and customise this block for Postfix 
 //      $CFG->mailprefix = 'mdl+'; // + is the separator for Exim and Postfix.
-//      $CFG->mailprefix = 'mdl-'l // - is the separator for qmail 
+//      $CFG->mailprefix = 'mdl-'; // - is the separator for qmail 
 //      $CFG->maildomain = 'youremaildomain.com';
 //
 // The following setting will tell Moodle to respect your PHP session 
