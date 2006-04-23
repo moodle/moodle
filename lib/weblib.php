@@ -3372,10 +3372,10 @@ function update_course_icon($courseid) {
     if (isteacheredit($courseid)) {
         if (!empty($USER->editing)) {
             $string = get_string('turneditingoff');
-            $edit = 'off';
+            $edit = '0';
         } else {
             $string = get_string('turneditingon');
-            $edit = 'on';
+            $edit = '1';
         }
         return "<form target=\"$CFG->framename\" method=\"get\" action=\"$CFG->wwwroot/course/view.php\">".
             "<input type=\"hidden\" name=\"id\" value=\"$courseid\" />".
@@ -3429,10 +3429,10 @@ function update_mymoodle_icon() {
 
     if (!empty($USER->editing)) {
         $string = get_string('updatemymoodleoff');
-        $edit = 'off';
+        $edit = '0';
     } else {
         $string = get_string('updatemymoodleon');
-        $edit = 'on';
+        $edit = '1';
     }
     return "<form target=\"$CFG->framename\" method=\"get\" action=\"$CFG->wwwroot/my/index.php\">".
         "<input type=\"hidden\" name=\"edit\" value=\"$edit\" />".

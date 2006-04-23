@@ -148,13 +148,12 @@ function display_course_blocks_start() {
 
 /// Print the page header
 
-    if (!empty($edit) && $PAGE->user_allowed_editing()) {
-        if ($edit == 'on') {
-            $USER->editing = true;
-        } else if ($edit == 'off') {
-            $USER->editing = false;
-        }
+    $edit = optional_param('edit', -1, PARAM_BOOL);
+
+    if (($edit != -1) and $PAGE->user_allowed_editing()) {
+        $USER->editing = $edit;
     }
+
     $morebreadcrumbs = array($this->strresources   => 'index.php?id='.$this->course->id,
                              $this->resource->name => '');
 

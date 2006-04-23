@@ -37,6 +37,7 @@
 
     $mode  = optional_param('mode', '', PARAM_ALPHA);    // Force the browse mode  ('single')
 
+    $edit = optional_param('edit', -1, PARAM_BOOL);
 
 /// These can be added to perform an action on a record
     $approve = optional_param('approve', 0, PARAM_INT);    //approval recordid
@@ -142,12 +143,8 @@
     $pageblocks = blocks_setup($PAGE);
     $blocks_preferred_width = bounded_number(180, blocks_preferred_width($pageblocks[BLOCK_POS_LEFT]), 210);
 
-    if (!empty($edit) && $PAGE->user_allowed_editing()) {
-        if ($edit == 'on') {
-            $USER->editing = true;
-        } else if ($edit == 'off') {
-            $USER->editing = false;
-        }
+    if (($edit != -1) and $PAGE->user_allowed_editing()) {
+        $USER->editing = $edit;
     }
 
 /// RSS and CSS meta

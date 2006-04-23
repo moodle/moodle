@@ -62,7 +62,7 @@
     $pageblocks = blocks_setup($PAGE,BLOCKS_PINNED_BOTH);
 
     if (!isset($USER->editing)) {
-        $USER->editing = false;
+        $USER->editing = 0;
     }
 
     if (!isset($USER->studentview)) {
@@ -76,9 +76,9 @@
 
     if ($PAGE->user_allowed_editing()) {
         if (($edit == 1) and confirm_sesskey()) {
-            $USER->editing = true;
+            $USER->editing = 1;
         } else if (($edit == 0) and confirm_sesskey()) {
-            $USER->editing = false;
+            $USER->editing = 0;
             if(!empty($USER->activitycopy) && $USER->activitycopycourse == $course->id) {
                 $USER->activitycopy       = false;
                 $USER->activitycopycourse = NULL;
@@ -87,7 +87,7 @@
 
         if (($studentview == 1) and confirm_sesskey()) {
             $USER->studentview = true;
-            $USER->editing = false;
+            $USER->editing = 0;
         }
 
         if ($hide && confirm_sesskey()) {
@@ -106,7 +106,7 @@
             }
         }
     } else {
-        $USER->editing = false;
+        $USER->editing = 0;
     }
 
     $SESSION->fromdiscussion = $CFG->wwwroot .'/course/view.php?id='. $course->id;

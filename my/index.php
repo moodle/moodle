@@ -24,19 +24,15 @@
     }
 
 
-    $edit        = optional_param('edit', '');
-    $blockaction = optional_param('blockaction');
+    $edit        = optional_param('edit', -1, PARAM_BOOL);
+    $blockaction = optional_param('blockaction', '', PARAM_ALPHA);
 
     $PAGE = page_create_instance($USER->id);
 
     $pageblocks = blocks_setup($PAGE,BLOCKS_PINNED_BOTH);
 
-    if (!empty($edit) && $PAGE->user_allowed_editing()) {
-        if ($edit == 'on') {
-            $USER->editing = true;
-        } else if ($edit == 'off') {
-            $USER->editing = false;
-        }
+    if (($edit != -1) and $PAGE->user_allowed_editing()) {
+        $USER->editing = $edit;
     }
 
     $PAGE->print_header($mymoodlestr);

@@ -7,9 +7,9 @@
     require_once($CFG->libdir.'/blocklib.php');
     require_once('pagelib.php');
 
-    $id          = optional_param('id', 0, PARAM_INT);
-    $c           = optional_param('c', 0, PARAM_INT);
-    $edit        = optional_param('edit', '');
+    $id   = optional_param('id', 0, PARAM_INT);
+    $c    = optional_param('c', 0, PARAM_INT);
+    $edit = optional_param('edit', -1, PARAM_BOOL);
 
     if ($id) {
         if (! $cm = get_record('course_modules', 'id', $id)) {
@@ -57,12 +57,8 @@
     $strcurrentusers = get_string('currentusers', 'chat');
     $strnextsession  = get_string('nextsession', 'chat');
 
-    if (!empty($edit) && $PAGE->user_allowed_editing()) {
-        if ($edit == 'on') {
-            $USER->editing = true;
-        } else if ($edit == 'off') {
-            $USER->editing = false;
-        }
+    if (($edit != -1) and $PAGE->user_allowed_editing()) {
+        $USER->editing = $edit;
     }
 
     $PAGE->print_header($course->shortname.': %fullname%');
