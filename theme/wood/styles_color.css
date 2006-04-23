@@ -42,6 +42,10 @@ hr {
     border-top-color:#330000;
 }
 
+div#footer {
+    margin-top: 5px;
+}
+
 /** Links defined here **/
 
 .tablink a:link,
@@ -119,7 +123,8 @@ div.header,
 h2.header,
 .sideblock .header,
 .forumpost,
-.navbar {
+.navbar,
+#footer-bar {
     border-top:1px solid #FFCC99;
     border-left:1px solid #FFCC99;
     border-bottom:1px solid #330000;
