@@ -108,7 +108,7 @@ function setup_is_unicodedb() {
             $rs = $db->Execute("SHOW server_encoding");
             if ($rs && $rs->RecordCount() > 0) {
                 $encoding = $rs->fields['server_encoding'];
-                if (strtoupper($encoding) == 'UNICODE') {
+                if (strtoupper($encoding) == 'UNICODE' || strtoupper($encoding) == 'UTF8') {
                     $unicodedb = true;
                 }
             }

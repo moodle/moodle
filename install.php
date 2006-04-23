@@ -329,7 +329,7 @@ if ($INSTALL['stage'] == DATABASE) {
                         $rs = $db->Execute("SHOW server_encoding");
                         if ($rs && $rs->RecordCount() > 0) {
                             $encoding = $rs->fields['server_encoding'];
-                            if (strtoupper($encoding) != 'UNICODE') {
+                            if (strtoupper($encoding) != 'UNICODE' || strtoupper($encoding) != 'UTF8') {
                                 $errormsg = get_string('dbwrongencoding', 'install', $encoding);
                                 $nextstage = DATABASE;
                                 $INSTALL['showskipdbencodingtest'] = true;
