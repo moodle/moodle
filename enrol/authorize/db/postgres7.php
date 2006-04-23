@@ -30,8 +30,8 @@ function enrol_authorize_upgrade($oldversion=0) {
         table_column('enrol_authorize', 'courseid', 'courseid', 'integer', '10', 'unsigned', '0', 'not null');
         table_column('enrol_authorize', 'userid', 'userid', 'integer', '10', 'unsigned', '0', 'not null');
         // Add some indexes for speed.
-        modify_database('',"CREATE INDEX prefix_enrol_authorize_courseid_idx ON prefix_enrol_authorize (courseid);");
-        modify_database('',"CREATE INDEX prefix_enrol_authorize_userid_idx ON prefix_enrol_authorize (userid);");
+        execute_sql("CREATE INDEX {$CFG->prefix}enrol_authorize_courseid_idx ON {$CFG->prefix}enrol_authorize (courseid);", false);
+        execute_sql("CREATE INDEX {$CFG->prefix}enrol_authorize_userid_idx ON {$CFG->prefix}enrol_authorize (userid);", false);
     }
 
     if ($oldversion < 2005112100) {
@@ -44,7 +44,7 @@ function enrol_authorize_upgrade($oldversion=0) {
         // defaults.
         $timenow = time();
         $status = AN_STATUS_AUTH | AN_STATUS_CAPTURE;
-        execute_sql(" UPDATE {$CFG->prefix}enrol_authorize SET timecreated='$timenow', timeupdated='$timenow', status='$status' ", false);
+        execute_sql("UPDATE {$CFG->prefix}enrol_authorize SET timecreated='$timenow', timeupdated='$timenow', status='$status'", false);
     }
 
     if ($oldversion < 2005121200) {
