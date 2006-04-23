@@ -438,46 +438,21 @@ class resource_ims extends resource_base {
     /// iframe.
         if (empty($frameset) || $frameset=='ims') {
 
-        /// Select encoding
-            $encoding = current_charset();
-
-        /// Select direction
-            if (get_string('thisdirection') == 'rtl') {
-                $direction = ' dir="rtl"';
-            } else {
-                $direction = ' dir="ltr"';
-            }
-
-        /// The output here
-
-            echo "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Frameset//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd\">\n";
-            echo "<html$direction>\n";
-            echo '<head>';
-            echo '<meta http-equiv="content-type" content="text/html; charset='.$encoding.'" />';
+        /// Conditional argument to pass to IMS JavaScript. Need to be global to retrieve it from our custom javascript! :-(
+            global $jsarg;
+            $jsarg = 'false';
             if (!empty($this->parameters->navigationmenu)) {
                 $jsarg = 'true';
             }
-            else {
-                $jsarg = 'false';
-            }
+        /// Define $CFG->javascript to use our custom javascript. Save the original one to add it from ours. Global too! :-(
+            global $standard_javascript;
+            $standard_javascript = $CFG->javascript;  // Save original javascript file
+            $CFG->javascript = $CFG->dirroot.'/mod/resource/type/ims/javascript.php';  //Use our custom IMS javascript code
             
-        /// The dummy LMS API hack to stop some SCORM packages giving errors.
-            echo "<script type=\"text/javascript\" language=\"javascript\" src=\"$CFG->wwwroot/mod/resource/type/ims/dummy.js\"></script>";            
-        
-        /// All this sets up script and style stuff to position and 
+        /// All this sets up style stuff to position and 
         /// resize the menus and stuff. The CSS is here because it
-        /// differs depending on some php variables. The javascript
-        /// uses resize.js.
+        /// differs depending on some php variables. 
             echo "
-            <script type=\"text/javascript\" language=\"javascript\" src=\"$CFG->wwwroot/mod/resource/type/ims/resize.js\"></script>
-            <script language=\"javascript\" type=\"text/javascript\">
-                window.onresize = function(){
-                    resizeiframe($jsarg);
-                };
-                window.onload = function(){
-                    resizeiframe($jsarg);
-                };
-            </script>
             <style type='text/css'>
                 #ims-menudiv {
                     position:absolute;
@@ -837,7 +812,7 @@ class resource_ims extends resource_base {
                 $contents .= '<li>';
                 if (!empty($item->href)) {
                 	if ($item->id == $selected_page) $contents .= '<div id="ims-toc-selected">';
-                    $contents .= '<a href="'.$fullurl.$item->id.'" target="_parent">'.$item->title.'</a>';
+                    $contents .= '<a href="'.$fullurl.$item->id.'">'.$item->title.'</a>';
                     if ($item->id == $selected_page) $contents .= '</div>';
                 } else {
                     $contents .= $item->title;
@@ -876,7 +851,7 @@ class resource_ims extends resource_base {
         }
 
         if ($page >= 1 ) {  //0 and 1 pages haven't previous
-            $contents .= "<span class=\"ims-nav-button\"><a href=\"view.php?id={$cm->id}&amp;type={$resource->type}&amp;page={$page}&amp;frameset=ims\" target=\"_parent\">$strprevious</a></span>"; 
+            $contents .= "<span class=\"ims-nav-button\"><a href=\"view.php?id={$cm->id}&amp;type={$resource->type}&amp;page={$page}&amp;frameset=ims\">$strprevious</a></span>"; 
         } else {
             $contents .= '<span class="ims-nav-dimmed">'.$strprevious.'</span>';
         }
@@ -904,7 +879,7 @@ class resource_ims extends resource_base {
         }
         
         if (!empty($items[$page])) {  //If the next page exists
-            $contents .= "<span class=\"ims-nav-button\"><a href=\"view.php?id={$cm->id}&amp;type={$resource->type}&amp;page={$page}&amp;frameset=ims\" target=\"_parent\">$strnext</a></span>";
+            $contents .= "<span class=\"ims-nav-button\"><a href=\"view.php?id={$cm->id}&amp;type={$resource->type}&amp;page={$page}&amp;frameset=ims\">$strnext</a></span>";
         } else {
             $contents .= '<span class="ims-nav-dimmed">'.$strnext.'</span>';
         }
@@ -927,7 +902,7 @@ class resource_ims extends resource_base {
         if (!empty($resource_obj->parameters->navigationupbutton)) {
             if ($page > 1 && $items[$page]->parent > 0) {  //If the page has parent
                 $page = $items[$page]->parent;
-                $contents .= "<span class=\"ims-nav-button\"><a href=\"view.php?id={$cm->id}&amp;type={$resource->type}&amp;page={$page}&amp;frameset=ims\" target=\"_parent\">$strup</a></span>";
+                $contents .= "<span class=\"ims-nav-button\"><a href=\"view.php?id={$cm->id}&amp;type={$resource->type}&amp;page={$page}&amp;frameset=ims\">$strup</a></span>";
             } else {
                 $contents .= "<span class=\"ims-nav-dimmed\">$strup</span>";
             }
@@ -949,7 +924,7 @@ class resource_ims extends resource_base {
 
         if (!empty($resource_obj->parameters->tableofcontents)) {  //The toc is enabled
             $page = 0;
-            $contents .= "<span class=\"ims-nav-button\"><a href=\"view.php?id={$cm->id}&amp;type={$resource->type}&amp;page={$page}&amp;frameset=ims\" target=\"_parent\">TOC</a></span>";
+            $contents .= "<span class=\"ims-nav-button\"><a href=\"view.php?id={$cm->id}&amp;type={$resource->type}&amp;page={$page}&amp;frameset=ims\">TOC</a></span>";
         }
 
         return $contents;
