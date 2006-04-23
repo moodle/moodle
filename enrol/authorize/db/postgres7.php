@@ -19,8 +19,8 @@ function authorize_upgrade($oldversion=0) {
         table_column('enrol_authorize', 'courseid', 'courseid', 'integer', '10', 'unsigned', '0', 'not null');
         table_column('enrol_authorize', 'userid', 'userid', 'integer', '10', 'unsigned', '0', 'not null');
         // Add some indexes for speed.
-        modify_database('',"CREATE INDEX prefix_enrol_authorize_courseid_idx ON prefix_enrol_authorize (courseid);");
-        modify_database('',"CREATE INDEX prefix_enrol_authorize_userid_idx ON prefix_enrol_authorize (userid);");
+        execute_sql("CREATE INDEX {$CFG->prefix}enrol_authorize_courseid_idx ON {$CFG->prefix}enrol_authorize (courseid);", false);
+        execute_sql("CREATE INDEX {$CFG->prefix}enrol_authorize_userid_idx ON {$CFG->prefix}enrol_authorize (userid);", false);
     }
 
     if ($oldversion && $oldversion < 2005071602) {
