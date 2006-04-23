@@ -21,17 +21,15 @@ function hotpot_upgrade($oldversion) {
 		$ok = $ok && hotpot_get_update_to_v2();
 		$ok = $ok && hotpot_update_to_v2_1_2();
 	}
-	
-    if ($oldversion < 2006042100) {
-        $result = execute_sql("ALTER TABLE {$CFG->prefix}hotpot_questions DROP INDEX {$CFG->prefix}hotpot_questions_name_idx");
-        $result = execute_sql("ALTER TABLE {$CFG->prefix}hotpot_questions ADD INDEX hotpot_questions_name_idx (name(20))");
-        
-    }
-	
-	
+	// update to HotPot v2.1.16
+	if ($oldversion < 2006042101) {
+		$ok = $ok && hotpot_get_update_to_v2();
+		$ok = $ok && hotpot_update_to_v2_1_16();
+	}
 	
 	return $ok;
 }
+
 function hotpot_get_update_to_v2() {
 	global $CFG;
 	$filepath = "$CFG->dirroot/mod/hotpot/db/update_to_v2.php";
@@ -43,4 +41,5 @@ function hotpot_get_update_to_v2() {
 	}
 	return $ok;
 }
+
 ?>

@@ -1,4 +1,31 @@
 <?PHP
+function hotpot_update_to_v2_1_16() {
+	global $CFG;
+	$ok = true;
+
+	// make sure type of 'name' is a text field (not varchar 255)
+	$ok = $ok && hotpot_db_update_field_type('hotpot_questions', 'name', 'name', 'TEXT',   '',  '', 'NOT NULL', '');
+
+	if (strtolower($CFG->dbtype)=='mysql') {
+		$ok = $ok && hotpot_index_remove_prefix('hotpot_attempts', 'hotpot');
+		$ok = $ok && hotpot_index_remove_prefix('hotpot_attempts', 'userid');
+		$ok = $ok && hotpot_index_remove_prefix('hotpot_details', 'attempt');
+		$ok = $ok && hotpot_index_remove_prefix('hotpot_questions', 'hotpot');
+		$ok = $ok && hotpot_index_remove_prefix('hotpot_questions', 'name', 20);
+		$ok = $ok && hotpot_index_remove_prefix('hotpot_responses', 'attempt');
+		$ok = $ok && hotpot_index_remove_prefix('hotpot_responses', 'question');
+		$ok = $ok && hotpot_index_remove_prefix('hotpot_strings', 'string', 20);
+	}
+	return $ok;
+}
+function hotpot_index_remove_prefix($table, $field, $length=0) {
+	global $CFG;
+	$index = "{$table}_{$field}_idx";
+	hotpot_db_delete_index("{$CFG->prefix}$table", "{$CFG->prefix}$index");
+	hotpot_db_delete_index("{$CFG->prefix}$table", $index);
+	return hotpot_db_add_index($table, $field, $length);
+}
+
 function hotpot_update_to_v2_1_8() {
 	global $CFG;
 	$ok = true;
@@ -776,13 +803,20 @@ function hotpot_db_delete_index($table, $index, $feedback=false) {
 }
 function hotpot_db_add_index($table, $field, $length='') {
 	global $CFG, $db;
-	// expand $table and $index names
+
+	if (strtolower($CFG->dbtype)=='postgres7') {
+		$index = "{$CFG->prefix}{$table}_{$field}_idx";
+	} else {
+		// mysql (and others)
+		$index = "{$table}_{$field}_idx";
+	}
 	$table = "{$CFG->prefix}$table";
-	$index = "{$table}_{$field}_idx";
+
 	// delete $index if it already exists
 	$ok = hotpot_db_delete_index($table, $index);
+
 	switch (strtolower($CFG->dbtype)) {
-		case 'mysql' : 
+		case 'mysql' :
 			$length = empty($length) ? '' : " ($length)";
 			$ok = $ok && $db->Execute("ALTER TABLE `$table` ADD INDEX `$index` (`$field`$length)");
 		break;
