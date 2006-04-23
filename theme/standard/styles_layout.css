@@ -1796,6 +1796,7 @@ body#mod-quiz-report .controls {
 }
 
 #ims-containerdiv {
+  margin-top:0.2em;
   width:100%;
 }
 
@@ -1814,13 +1815,12 @@ body#mod-quiz-report .controls {
 #ims-contentframe {
   position:absolute;
   left:260px;
-  border:0px;
+  border:1px solid;
 }
 
 #ims-contentframe-no-nav {
   position:absolute;
-  left:0px;
-  border:0px;
+  border:1px solid;
 }
 
 /***
