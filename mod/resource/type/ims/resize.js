@@ -73,7 +73,12 @@ function resizeiframe (hasNav) {
         var iframeWidth = '99%';
     }
 
-    document.getElementById('ims-contentframe').style.height = (winHeight - totalHeight)+'px';
+    if (hasNav == true) {
+        document.getElementById('ims-contentframe').style.height = (winHeight - totalHeight)+'px';
+        document.getElementById('ims-contentframe').style.width = iframeWidth;
+    } else {
+        document.getElementById('ims-contentframe-no-nav').style.height = (winHeight - totalHeight)+'px';
+        document.getElementById('ims-contentframe-no-nav').style.width = iframeWidth;
+    }
     document.getElementById('ims-containerdiv').style.height = (winHeight - totalHeight)+'px';
-    document.getElementById('ims-contentframe').style.width = iframeWidth;
 }
