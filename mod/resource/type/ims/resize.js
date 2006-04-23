@@ -65,7 +65,8 @@ function resizeiframe (hasNav) {
                         bottomMargin;
 
     if (hasNav == true) {
-        var iframeWidth = (winWidth - 325)+'px';
+        var navBarWidth = document.getElementById('ims-menudiv').offsetWidth;
+        var iframeWidth = (winWidth - navBarWidth - 25)+'px';
         document.getElementById('ims-menudiv').style.height = (winHeight - totalHeight)+'px';
     }
     else {
