@@ -1786,15 +1786,29 @@ body#mod-quiz-report .controls {
 
 .ims-nav-bar {
   position: relative; 
-  /* position: absolute;
-  top: 2px; 
-  left: 2px;*/
+  width:100%;
 }
 
 .ims-nav-button a,
 .ims-nav-dimmed {
   padding-left:1em;
   padding-right:1em;
+}
+
+#ims-containerdiv {
+  width:100%;
+}
+
+#ims-menudiv {
+  position:absolute;
+  width:250px;
+  overflow-y:auto;
+  overflow-x:hidden;
+}
+
+#ims-menudiv ol {
+  margin-left:0.5em;
+  padding-left:1em;
 }
 
 /***
