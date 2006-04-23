@@ -454,25 +454,13 @@ class resource_ims extends resource_base {
         /// differs depending on some php variables. 
             echo "
             <style type='text/css'>
-                #ims-menudiv {
-                    position:absolute;
-                    left:5px;
-                    width:300px;
-                    overflow:auto;
-                    float:left;
-                }
-                
-                #ims-containerdiv {
-                    width:100%;
-                    
-                }
                 
                 #ims-contentframe {
                     position:absolute;
                     
                    ";
             if (!empty($this->parameters->navigationmenu)) {
-                echo "left:310px;";
+                echo "left:260px;";
             }
             echo "
                     border:0px;
@@ -495,6 +483,7 @@ class resource_ims extends resource_base {
             	echo "</div></div></body></html>";
             }
             else {
+            /// Putting the footer inside one div to be able to handle it
             	print_footer();
             }
 
