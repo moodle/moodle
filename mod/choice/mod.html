@@ -165,7 +165,8 @@ $limitfieldlist = trim($limitfieldlist, ",");
     </td>
 </tr>
 
-<?php if ($form->limitanswers == 0) { ?> //lock the limit fields if limit isn't used.
+<?php if ($form->limitanswers == 0) { //lock the limit fields if limit isn't used.
+?>
 <script type="text/javascript">
     lockoptions('form','limitanswers', limititems);
 </script>
