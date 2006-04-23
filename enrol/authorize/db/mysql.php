@@ -18,7 +18,7 @@ function enrol_authorize_upgrade($oldversion=0) {
         execute_sql("ALTER TABLE `{$CFG->prefix}enrol_authorize` ADD INDEX userid(userid)", false);
     }
 
-    if ($oldversion < 2005071602) {
+    if ($oldversion && $oldversion < 2005071602) {
         notify("If you are using the authorize.net enrolment plugin for credit card 
                 handling, please ensure that you have turned loginhttps ON in Admin >> Variables >> Security.");
     }
