@@ -140,6 +140,10 @@
 
     foreach ($modules as $module) {
         $strmodulename = get_string("modulename", "$module->name");
+	// Deal with modules which are lacking the language string
+	if ($strmodulename == '[[modulename]]') {
+	    $strmodulename = $module->name;
+	}
         $modulebyname[$strmodulename] = $module;
     }
     ksort($modulebyname);
