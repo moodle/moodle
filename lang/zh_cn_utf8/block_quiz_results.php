@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // block_quiz_results.php - created with Moodle 1.5 ALPHA (2005050600)
+      // block_quiz_results.php - created with Moodle 1.5.3+ (2005060230)
 
 
 $string['bestgrade'] = '最高分';
@@ -10,6 +10,10 @@ $string['config_format_absolute'] = '绝对分数';
 $string['config_format_fraction'] = '得分/满分';
 $string['config_format_percentage'] = '百分比';
 $string['config_grade_format'] = '将成绩显示为：';
+$string['config_name_format'] = '显示结果的隐秘程度：';
+$string['config_names_anon'] = '匿名结果';
+$string['config_names_full'] = '显示完整名字';
+$string['config_names_id'] = '只显示ID号码';
 $string['config_no_quizzes_in_course'] = '这个课程并未包含任何测验活动。在您可以正确使用此版块前必须首先添加至少一个测验。';
 $string['config_select_quiz'] = '这个版块显示哪次测验的成绩？';
 $string['config_show_best'] = '应当显示多少个最高分(0关闭)？';

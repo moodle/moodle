@@ -1,0 +1,214 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Moodle文档：如何使用CVS</title>
+<link rel="stylesheet" href="docstyles.css" type="TEXT/CSS" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<style type="text/css">
+<!--
+style ol {margin-left:40px;}
+.style1 {color: #990000}
+.style3 {color: #990000; font-weight: bold; }
+.style4 {
+	color: #0000CC;
+	font-weight: bold;
+}
+-->
+    </style>
+</head>
+<body>
+<h1>Moodle开发人员的CVS指南</h1>
+<blockquote>
+  <p>CVS的全称是 <strong>Concurrent Versioning System</strong>, 人们通常运用它在大型软件工程项目中管理源代码。CVS保存着所有文件的全部版本以确保任何数据都不会丢失，并且它对每个人的使用都做了跟踪记录。它还提供多种合并代码的方法以便两个或更多的人对同一份文件的操作。所有版本的代码存储到一个中央服务器中(Moodle的服务器位于<a target="_top" href="http://www.sf.net/">Sourceforge</a>)。</p>
+  <p>如果您仅仅是要用CVS下载Moodle来部署一个站点，那么也许您不需要阅读这个页面——只需遵循一个简单的CVS操作指导，它位于<a target="_top" href="http://moodle.org/download">Moodle download page</a>。</p>
+  <p>&nbsp;</p>
+  <ol>
+    <li><a href="#n1">以开发人员身份加入项目</a></li>
+    <li><a href="#n2">CVS模块</a> </li>
+    <li><a href="#n3">基本的CVS命令</a> <br />
+      3.1. <a href="#n3.1">Unix上的CVS</a> <br />
+      3.2. <a href="#n3.2">Windows上的CVS</a></li>
+    <li> <a href="#n4">在分支上工作</a><br />
+      4.1. <a href="#n4.1">主干开发</a><br />
+      4.2. <a href="#n4.2">发行版的稳定分支</a><br />
+      4.3. <a href="#n4.3">大幅修改的特性分支</a> </li>
+  </ol>
+</blockquote>
+<br />
+  <h2><a name="n1" id="n1"></a>1. 以开发人员身份加入项目</h2>
+  <blockquote>
+    <p>假设您已经获得CVS的写入权限权并通过它来帮助我们开发和维护Moodle！<a href="http://sourceforge.net/project/memberlist.php?group_id=30935">欢迎登陆</a>!</p>
+    <p>为了能把变动写入<a target="_top" href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/moodle/moodle/">Moodle 的 CVS 档案库</a>，首先你需要拥有一个 Sourceforge的帐户(<a href="http://sourceforge.net/account/register.php">注册是免费和简单的</a>)。在这一页面的例子里, 让我们假设您的用户名为<strong><font color="#990000">myusername</font></strong>，而您的密码是 <strong><font color="#990000">mypassword</font></strong>。您需要阅读一下sourceforge关于<a target="_top" href="http://sourceforge.net/docman/display_doc.php?docid=768&amp;group_id=1#develhomedir">创建您的CVS本地目录</a>的特别指导——要激活任何一个新帐号的CVS功能，都必须这么做。简单地说，您需要使用ssh交互式地连接到cvs.sourceforge.net。</p>
+    <p>一旦您有了Sourceforge的帐户，联系<a target="_top" href="http://moodle.org/user/view.php?id=1&amp;course=1">Martin Dougiamas</a>他可以设定你的帐户使你拥有写入特殊Moodle目录的权限。</p>
+    <p>为了避免每次运行CVS命令时都提示输入<strong><font color="#990000">mypassword</font></strong>，可以参考<a target="_top" href="http://sourceforge.net/account/editsshkeys.php">Sourceforge 使用授权密钥的指导</a>。这一步是可选的，但它可以使您使用CVS时感觉更好些。</p>
+    <p>做完这些后，您应该拥有了你所需要的权限，您只需要设置好你的机器和正确的下载源，然后您就可以开始工作了。</p>
+    <p>&nbsp;</p>
+  </blockquote>
+  <h2><a name="n2" id="n2"></a>2. CVS模块</h2>
+  <blockquote>
+    <p>Within CVS, the word &quot;modules&quot; refers to separate collections of code. In Moodle we have the following modules within our repository:</p>
+    <p>在CVS中，&quot;模块&quot;一词指的是不同的代码集。在Moodle中我们的代码库拥有下列模块：</p>
+    <blockquote>
+      <p><strong>moodle</strong> - 主要的Moodle源代码</p>
+      <p><strong>contrib</strong> - 正在开发中的用户贡献的代码和其它配套代码</p>
+      <p><strong>mysql</strong> - 一份定制过的phpMyAdmin，通过它可以让管理员直接管理Moolde的数据库</p>
+      <p><strong>windows-cron</strong> - 使cron能运行在Windows系统上的小软件包</p>
+      <p><strong>docs</strong> - 其它各种用户贡献的文档</p>
+    </blockquote>
+    <p>很多人在为已有的<strong>moodle</strong>功能模块工作，但也有很多人在贡献新的想法，它们在<strong>contrib</strong>模块中。一旦<strong>contrib</strong>区域中的代码比较成熟了，它将被转移到<strong>moodle</strong>的主分支上。</p>
+    <p>&nbsp;</p>
+  </blockquote>
+  <h2><a name="n3" id="n3"></a>3. 基本的CVS命令</h2>
+  <blockquote>
+    <h3><a name="n3.1" id="n3.1"></a>3.1 Unix上的CVS</h3>
+    <blockquote>
+      <p>Sourceforge CVS使用ssh作为传送层来确保安全性，所以你必须在你的Unix Shell中设置一个CVS_RSH环境变量。最好把这些命令输入您的.bashrc或者.cshrc那么您将不需要每次使用的时候都输入它们<strong>：</strong></p>
+       <div class="commandline">setenv CVS_RSH ssh <em>(用于csh、tcsh等)</em><br /> 
+	    export CVS_RSH=ssh <em>(用于sh、bash等)</em></div>  
+      <p>接下来, 您可以通过以下命令(整个一行)来获取最新的Moodle开发版本: </p>
+       <div class="commandline">cvs -z3 -d:ext:<span class="style1">myusername</span>@cvs.sourceforge.net:/cvsroot/moodle co moodle</div>      
+      <p>这个命令也可以用用于其它CVS模块：</p>
+       <div class="commandline">cvs -z3 -d:ext:myusername@cvs.sourceforge.net:/cvsroot/moodle co contrib</div>      
+      <p>不要尝试在一个已安装的moodle目录中运行前一个CVS命令：在一个新建的目录使用它。</p>
+      <p>注意在运行每个命令的时候，系统都将提示您输入<strong><font color="#990000">mypassword</font></strong>，除非您设置好了<a target="_top" href="http://sourceforge.net/account/editsshkeys.php">授权密钥</a>。</p>
+      <p>现在您应该有了一个新的'moodle'目录。您可以按您的喜好来重命名或者移动它。进入这个目录：</p> 
+       <div class="commandline">cd moodle </div>
+      <p>所有最新的Moodle文件都在这儿，您可以在这修改这些属于您的文件拷贝。比较您的文件和目录和服务器上的主要CVS拷贝请用cvs diff，即：</p>
+       <div class="commandline">cvs diff -c config-dist.php<br />
+       cvs diff -c lang </div>
+      <p>从服务器获取最新的更新可以用: </p>
+      <div class="commandline">cvs update -dP</div>
+      <p>想把您的新编写的文件传回服务器您可以这么做: </p>
+      <div class="commandline">cd lang/ca <br />
+cvs commit</div>
+      <p>系统会提示您加入一些注释(使用您的文本编辑器)……加入一些有意义的注释然后关闭编辑器……这些文件将被送到Sourceforge保存起来。搞定！</p>
+      <p>To save more time you can put default arguments into a file called .cvsrc in your home directory. For example, mine contains: </p>
+      <p>为了节省时间您可以把一些默认参数加入到一个叫做.cvsrc的文件，它位于您的主目录。比如，我的包含以下内容：</p>
+      <div class="commandline">diff -c <br />
+update -dP</div>
+      <p>试试用“cvs help”来获得更多细节信息……</p>
+      <p>&nbsp;</p>
+    </blockquote>
+    <h3><a name="n3.2" id="n3.2"></a>3.2 Windows 上的 CVS </h3>
+    <blockquote>
+      <p>首先, 您需要使用您的开发人员帐户下载一个最新的Moodle的完整拷贝.</p>
+    </blockquote>
+        <ol>
+          <li>从<a target="_top" href="http://www.tortoisecvs.org/">tortoisecvs.org</a>下载TortoiseCVS并且安装它，然后重启您的电脑。</li>
+          <li>新建或者找一个新的目录来把 Moodle 下载到此处.</li>
+          <li>右建单击这个目录然后从弹出的菜单中选择“<strong>CVS Checkout</strong>”您将看到一个对话框</li>
+          <li>拷贝下列文字到CVSROOT栏区(使用您自己的用户名！)：
+            <pre> :ext:<font color="#990000">myusername</font>@cvs.sourceforge.net:/cvsroot/moodle</pre>
+          </li>
+          <li>在“Module”栏区下输入“<strong>moodle</strong>”来获得最新的Moodle开发版本，“<strong>contrib</strong>”来获得贡献目录，或者“<strong>mysql</strong>”来获得MySQL管理员模块。</li>
+          <li>按下“<strong>OK</strong>”键然后所有这一切将被下载下来。</li>
+        </ol>
+    <blockquote>
+      <p>这时会有一个对话框提示您所有文件正在被下载，过一会儿您将拥有一个完整的Moodle拷贝。在首次检出代码后，您可以从CVS服务器获取最新的更新：</p>
+    </blockquote>
+        <ol>
+          <li>右键单击您的Moodle目录(或者任意一个文件)然后选择“<strong>CVS Update</strong>”。</li>
+          <li>坐下来看看那些滚动的日志，记下本地代码与新版本之间的冲突——您需要编辑这些文件和手工解决这些冲突。</li>
+        </ol>
+    <blockquote>
+      <p>在修改完文件后(您可以注意到它们的图标从绿色变成红色！)，您可以把它们提交回CVS服务器就象这样：</p>
+    </blockquote>
+        <ol>
+          <li>右键单击您的Moodle目录(或者任意文件)然后选择“<strong>CVS Commit...</strong>”。</li>
+          <li>在对话框里输入一个您对这次提交的一个清晰的描述。</li>
+          <li>点“OK”，您的提交将被发送到服务器。</li>
+        </ol>
+<br />
+  </blockquote>
+  <h2><a name="n4" id="n4"></a>4. 在分支上工作</h2>
+  <blockquote>
+    <p>这张图表展示了<strong>moodle</strong>主模块分支随时间演变为不同的版本。</p>
+    <p align="center"><img src="pix/cvstree.png" width="500" height="200" /></p>
+    <p align="left">为了看到现有的标签和有用的分支，在任意出现比较早的文件上使用这个命令(譬如在moodle目录顶层的index.php)：</p>
+    <div class="commandline">cvs status -v index.php</div>
+    <p>一些标签的准则：</p>
+    <ul>
+      <li>标签和分支的名字总是应该全部大写。</li>
+      <li>标签和分支应该始终适用于<strong>整个模块</strong>(所有的模块)，不要只标记个别的文件和目录。</li>
+      <li>我们不允许对标签进行重命名因为人们也许依赖于它们, 所以在第一时间就命好一个恰当的名字! </li>
+    </ul>
+</blockquote>
+<br />
+    <h3><a name="n4.1" id="n4.1"></a>4.1 主干开发</h3>
+    <blockquote>
+      <p>CVS主干是Moodle的主要开发版本，在CVS里它被称为<span class="style4">HEAD</span>，或者缺省分支。</p>
+      <p>Moodle的开发者尽可能的保持它工作得稳定，但它通常包含一些新的代码所以可能有些bug和些小的不稳定的地方。</p>
+      <p>常常当我们认为这个产品有足够的特性去发行的时候，这个主干就加上名为<strong>MOODLE_XX_BETA</strong>的标签(如果我们想回溯当那一点)然后一个新的分支作为发行版而形成，称为<span class="style1">MOODLE_XX_STABLE</span>。</p>
+      <p>同时发布一个β测试包——一般是为了那些不使用CVS而希望测试最新的特性和报告bug的人。</p>
+    </blockquote>
+    <p>&nbsp;</p>
+    <h3><a name="n4.2" id="n4.2"></a>4.2 发行版的稳定分支</h3>
+    <blockquote>
+      <p>当创建了稳定版的分支<span class="style3">MOODLE_XX_STABLE</span>后，开发将在两个方向上努力。一部分人将继续为下个版本在主干上开发新的特性，而大部分开发人员将专注于修正目前使用的<span class="style1"><strong>稳定</strong></span>分支上所发现的bug。</p>
+      <p>您可以将您本地的Moodle拷贝转换为稳定版本，在Unix上于Moodle的根目录下执行下列命令：</p>
+      <div class="commandline">cvs update -dP -r <span class="style1">MOODLE_XX_STABLE</span></div>
+      <p>在这之后，所有上述的命令都将在这个稳定版本上操作。要返回到主干版本请用：</p>
+      <div class="commandline">cvs update -dPA</div>
+      <p>Windows的客户端会有一个能选择分支的菜单。</p>
+      <p>一旦新的稳定分支足够稳定了，就可以宣布发行。我们将会创建一个用于发布的软件包，并在此分支上做标记(通过Martin)，标记的名称为：<strong>MOODLE_XXX</strong></p>
+      <p>周期性的，在稳定分支上修正的bug将被合并到主干中以使它们在未来的Moodle发行版中可用。一个叫做MOODLE_XX_MERGED的移动标签将被维持来记录最后的合并。合并的过程如下：</p>
+        <ol>
+          <li>获得最新的主干版本<br />
+            <br />
+            <div class="commandline">cvs update -dPA</div>
+          </li>
+          <li>合并所有上次合并后的分支进您的主干版本<br /><br />
+            <div class="commandline">cvs update -kk -j MOODLE_13_MERGED -j MOODLE_13_STABLE</div>
+	      </li>
+          <li>仔细观察所有的冲突日志, 并修复所有的冲突文件</li>
+          <li>提交这个合并后的拷贝到 CVS 主干版本<br />
+            <br />
+            <div class="commandline">cvs commit</div>
+          </li>
+          <li>返回到分支版本<br /><br />
+            <div class="commandline">cvs update -dPr MOODLE_13_STABLE</div>
+			</li>
+          <li>更新合并的移动标签以便下次重复这个过程<br /><br />
+            <div class="commandline">cvs tag -RF MOODLE_13_MERGED</div>
+          </li>
+        </ol>
+      <p><br />
+        最后，并非Moodle所有稳定分支的version.php文件中<em>$version</em>值都应当进行彻底更新(除了最后一位数也许需要)。原因在于如果某人从一个非常稳定的版本更新到另一个非常稳定的版本可能会错过在主干上的数据库升级。</p>    
+    </blockquote>
+<br />
+    <h3><a name="n4.3" id="n4.3"></a>4.3 大幅修改的特性分支</h3>
+    <blockquote>
+      <p>偶尔会有个非常大的的特性需要提交到服务器，且一些人从事与它相关的工作， 但它实在是太不稳定以至不能包括在主开发主干上。</p>
+      <p>在这种情况一个短期的分支将被建立用于实现这个特性，然后尽可能快的合并到主线上。<span class="style1"><strong>MOODLE_14_WIDGET</strong></span>就是一个例子，在上面的图表上找到它的分支。</p>
+      <p>如果你需要做一些关于WIDGET的新特性，那么按照以下步骤：</p>
+        <ol>
+          <li>与其他开发人员进行讨论以确定它的比较性！</li>
+          <li>在<strong>主干</strong>上(为所有的moodle)做一个名为<strong>MOODLE_XX_WIDGET_PRE</strong>的标记
+		  <br /><br />
+            <div class="commandline">cvs tag -R MOODLE_XX_WIDGET_PRE</div></li>
+          <li>建一个名为<span class="style1"><strong>MOODLE_XX_WIDGET</strong></span>的分支
+		  <br /><br />
+            <div class="commandline">cvs tag -Rb <span class="style1">MOODLE_XX_WIDGET</span></div></li>
+          <li>在那个分支上一直工作到新特性已经相当的稳定，如果需要就提交。
+		  <br /><br />
+            <div class="commandline">cvs commit</div></li>
+          <li>当准备好后，合并所有分支入主干，修正冲突，提交到主干然后放弃这个分支。
+		  <br />
+		  <br />
+            <div class="commandline">
+            <strong>cvs update -dPA</strong><br />
+            <strong>cvs update -kk -j <span class="style1">MOODLE_XX_WIDGET</span></strong><br />
+            <strong>cvs commit </strong></div>
+          </li>
+      </ol>
+</blockquote>
+<br />
+<blockquote>
+  <p align="center">祝顺利，小心操作并享受它的乐趣吧！</p>
+</blockquote>
+<br />
+<p align="center"><font size="1"><a href="." target="_top">Moodle文档</a></font></p>
+<p align="center"><font size="1">版本：$Id$</font></p>
+</body>
+</html>

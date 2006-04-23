@@ -1,0 +1,407 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Moodle文档: 常见问题解答(FAQ)</title>
+<link rel="stylesheet" href="docstyles.css" type="TEXT/CSS" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+
+<body>
+<h1>常见问题解答(FAQ)</h1>
+<p class="normaltext">这个文档包括了一些安装Moodle的人经常会遇到的问题。如果你跟随 
+  <a href="./?file=install.html">安装指导 </a>的说明进行安装但是仍然遇到了问题，
+  那么或许这份文档能够提供帮助。 </p>
+
+<p class="normaltext">如果你在这里没有找到你期望的答案，尝试moodle.org上的 <a href="http://moodle.org/mod/forum/index.php?id=5" target="_top">Using 
+  Moodle</a> 课程。首先在论坛中使用关键字检索一下，或许你的问题已经有人讨论过了。 
+  如果你不能找到相关问题，你可以将你的问题发布到合适的论坛中 --通常会有人能帮助你。</p>
+
+<p class="normaltext">如果你尝试了很多的方法也没有解决你的问题，同时你的系统运行在防火墙保护下，
+较明智的做法是尝试重新配置你的防火墙，确保它没有阻止Moodle需要的功能和通讯端口。
+防火墙很少引发Moodle的问题，但偶尔由于防火墙设置不当也会引发功能缺失的问题。
+
+<p class="normaltext">点击下面的链接定位到你需要的问题答案:</p>
+
+<p class="questionlink"><a href="#filenotfound">只要我试图访问或查看一个上传文件，我得到一个 &quot;File not Found&quot; 的错误</a></p>
+
+<p class="questionlink"><a href="#php">PHP - 是否已经安装？我安装了那个版本?</a></p>
+
+<p class="questionlink"><a href="#blankpages">为什么所有的页面都是空白的?</a></p>
+
+<p class="questionlink"><a href="#errorgetstring">页面上显示致命的错误，例如： call to undefined function: get_string()</a></p>
+
+<p class="questionlink"><a href="#headerssent">为何我一直获得  &quot;头部已经发送 (headers already sent)&quot;的错误?</a></p>
+
+<p class="questionlink"><a href="#failedopen">我一直获得这个错误: Failed opening required '/web/moodle/lib/setup.php'</a></p>
+
+<p class="questionlink"><a href="#quotes">我添加的任何文本只要包含单引号(') 或双引号 (&quot;) 就会引发错误或被转换为包含斜线(/)</a></p>
+
+<p class="questionlink"><a href="#sessiontmp">我一直获得关于session_start的错误信息</a></p>
+
+<p class="questionlink"><a href="#fixdirroot">当我进入管理页面时，我被告知要保持 "dirroot" 空白！</a></p>
+
+<p class="questionlink"><a href="#loginsetting">我已经登录但显示不正确（我能登录系统并且可以浏览）</a></p>
+
+<p class="questionlink"><a href="#resource1">当尝试添加资源时我收到了错误信息</a></p>
+
+<p class="questionlink"><a href="#noadmin">在初始的设置过程中，我未被要求创建一个管理员账号！</a></p>
+
+<p class="questionlink"><a href="#nologin">我根本不能登录 - 总是被停留在登录页面。</a></p>
+
+<p class="questionlink"><a href="#backup">我如何才能备份我的Moodle站点?</a></p>
+
+<p class="questionlink"><a href="#locale">为何我的Moodle站点不能正确地显示 时间 &amp; 日期?</a></p>
+
+<p class="questionlink"><a href="#cron">论坛中不能发出主题邮件拷贝</a></p>
+
+<p class="questionlink">&nbsp;</p>
+
+<h3><a name="filenotfound"></a>只要我试图访问或查看一个上传文件，我得到一个 &quot;File not Found&quot; 的错误</h3>
+
+<p class="answer">例如: Not Found: The requested URL /moodle/file.php/2/myfile.jpg 
+
+  was not found on this server. </p>
+
+<p class="answer">你的web服务器需要被配置为允许URL作为脚本名称的一部分传递为脚本。 
+
+  这在Apache 1中通常默认是允许的，但在Apache 2中通常默认是不允许的。
+
+  要设置该项为允许，添加这一行到你的httpd.conf或本地目录中的.htaccess文件里(详情请浏览<a href="./?file=install.html#webserver"> 安装文档 </a>) : </p>
+
+<p class="answercode"><b>AcceptPathInfo</b> on</p>
+
+<p class="answer">注意, 这个配置仅对 Apache 版本 2.x 有效. </p>
+
+<p class="answer">如果你没有使用 Apache 2 并且你还是遇到了这个问题，你可以配置 Moodle 使用一个选择性的方法。
+
+  缺点是会稍有些性能损失，并且你不能在HTML资源中使用相对链接。</p>
+
+<p class="answer">要配置这个可选的方法: 
+
+  作为管理员登录，进入到“设置 - 变量”，更改 "<b>slasharguments</b>" 参数，使用第一项。 
+
+  你现在应该可以访问你的上传文档了。</p>
+
+<p class="answer">&nbsp;</p>
+
+  
+
+  <h3><a name="php"></a>PHP - 是否已经安装？我安装了那个版本？</h3>
+
+  <p class="answer">在一个web站点目录下，创建一个叫"info.php"的文件,在其中包含下面的文本，在浏览器访问该文件:</p>
+    
+
+  <p class="answercode">&lt;?PHP phpinfo() ?&gt;</p>
+
+<p class="answer">如果返回一个空白页，那么说明PHP没有安装。请查看安装文档，其中包含了那里可以下载PHP的信息。</p>
+
+<p class="answer">&nbsp;</p>
+
+<h3><a name="blankpages"></a>为何所有的页面都是空的? </h3> 
+
+<p class="answer">检查 "config.php"中的"dirroot"变量。你必须使用完全的绝对路径， 
+
+  例如：</p>
+
+<p class="answercode"> $CFG->dirroot = "d:\inetpub\sites\www.yoursite.com\web\moodle";</p>
+
+<p>&nbsp; </p>
+
+<p class="answer">Redhat Linux 平台请参照: <a href="http://moodle.org/doc/?file=installamp.html">Redhat Linux</a></p>
+
+<p>&nbsp; </p>
+
+<h3><a name="errorgetstring"></a>我的页面显示致命错误， 
+
+  例如：call to undefined function: get_string()</h3>
+
+<p class="answer">如果你看到这样的错误信息:</p>
+
+<p class="answercode">Parse error: parse error, unexpected T_VARIABLE in c:\program 
+
+  files\easyphp\www\moodle\config.php on line 94 <br />
+
+  Fatal error: Call to undefined function: get_string() in c:\program files\easyphp\www\moodle\mod\resource\lib.php 
+
+  on line 11</p>
+
+<p class="answer">请检查你是否在config.php中保留了一个半括号或引号 
+
+  (在94行之前)。</p>
+
+<p class="answer">另一个可能的原因是你使用了像Word这样的文本编辑程序打开"config.php"，  
+
+  并将它保存为一个HTML文件，而不是一个适当的文本文件。 
+
+  </p>
+
+<p>&nbsp;</p>
+
+<h3><a name="headerssent"></a>为何我一直获得错误信息 
+
+   &quot;HTTP头部已经被设置&quot;?</h3>
+
+<p class="answer">如果你看到这样的错误信息：</p>
+
+<p class="answercode">Warning: Cannot add header information - headers already 
+
+  sent by (output started at /webs/moodle/config.php:87) in /webs/moodle/lib/moodlelib.php 
+
+  on line 1322 </p>
+
+<p class="answercode"> Warning: Cannot add header information - headers already 
+
+  sent by (output started at /webs/moodle/config.php:87) in /webs/moodle/lib/moodlelib.php 
+
+  on line 1323 </p>
+
+<p class="answercode"> Warning: Cannot add header information - headers already 
+
+  sent by (output started at /webs/moodle/config.php:87) in /webs/moodle/login/index.php 
+
+  on line 54 </p>
+
+<p class="answer">在你的"config.php"中，在最后的?>之外还有空行或空格。 
+
+  一些文本编辑器会添加这些空格或空行 - 例如：Windows的写字板 -  
+
+  所以你必须使用一个其他的编辑工具来完全移除这些空格和空行。</p>
+
+<p class="answer">&nbsp;</p>
+
+<h3><a name="failedopen"></a>为何我一直获得错误信息: Failed 
+
+  opening required '/web/moodle/lib/setup.php'</h3>
+
+<p class="answer">在你的"config.php"中，你配置用于"dirroot"变量的值 
+
+   <strong>必须是从你的服务器硬盘根目录开始的完全路径
+
+  </strong>。</p>
+
+<p class="answer">有时候是由于人们不恰当的使用了从他们主目录开始的路径， 
+
+  或者使用了从Web服务器根目录开始的相对路径。</p>
+
+<p class="answer">&nbsp;</p>
+
+<h3><a name="quotes" id="quotes"></a>我添加的任何文本只要包含单引号(') 或双引号 (&quot;) 
+
+  就会引发错误或被转换为包含斜线(/)</h3>
+
+<p class="answer">这个单引号(')问题是由于不恰当的 &quot;magic 
+
+  quotes&quot; 设置。 Moodle 需要下面的设置 ( 
+
+  这通常是默认设置):</p>
+
+<p class="answercode">magic_quotes_gpc = On<br />
+
+  magic_quotes_runtime = Off</p>
+
+<p class="answer">请检查安装文档中的 <a href="./?file=install.html#webserver">Web服务器配置 
+
+  </a> 部分了解详情。</p>
+
+<p class="answer">&nbsp;</p>
+
+<h3><a name="sessiontmp"></a>为何我一直获得关于session_start的错误?</h3>
+
+<p class="answer">如果你:</p>
+
+<p class="answercode">Warning: session_start() [function.session-start]: open(/tmp\sess_d40f380d37d431fc1516e9a895ad9ce0, O_RDWR) failed: No such file or directory (2) in G:\web\moodle\lib\setup.php on line 123</p>
+
+<p class="answercode">Warning: session_start() [function.session-start]: open(/tmp\sess_d40f380d37d431fc1516e9a895ad9ce0, O_RDWR) failed: No such file or directory (2) in G:\web\moodle\lib\setup.php on line 123</p>
+
+<p class="answercode">Warning: session_start() [function.session-start]: Cannot send session cache limiter - headers already sent (output started at G:\web\moodle\lib\setup.php:1) in G:\web\moodle\lib\setup.php on line 123</p>
+
+<p class="answer">... 这些都是由于PHP不能保存 "session" 文件到你的硬盘上 
+
+  (在一个叫"/tmp"的目录中)。 通常是由于你没有一个叫做"/tmp"的目录在你的计算机上。
+
+  经常是由于Windows安装所引起的问题。
+
+<p class="answer">解决的方法是在PHP的设置中，将这个路径指向一个真实的路径。  编辑你的"php.ini"文件，修改变量:</p>
+
+<p class="answercode">session.save_path = C:\temp</p>
+
+<p class="answer">或者修改 moodle 主目录下的 ".htaccess" 文件:</p>
+
+<p class="answercode">php_value session.save_path "/home/moodle/sessions"</p>
+
+<p class="answercode">&nbsp;</p>
+
+<h3><a name="fixdirroot"></a>当我进入管理页面时，我被告知要保持 "dirroot" 空白！</h3>
+
+<p class="answer">如果你能看到这样像 Moodle 1.0.9 的错误信息:</p>
+
+<table class="generalbox" cellspacing="0" cellpadding="5" align="center" border="0">
+
+<tbody>
+
+<tr>
+
+<td bgcolor=#ffbbbb>请修正 "config.php" 的设置: 
+
+<p>现在是: 
+
+<p>$CFG-&gt;dirroot = "/home/users/fred/public_html/moodle"; 
+
+<p>但应该更改为: 
+
+<p>$CFG-&gt;dirroot = "";</p></td></tr></tbody></table>
+
+<p class="answer">那么你可能遇到了一个在一些服务器上发生的小缺陷。这个问题是由于错误检测机制引起的，而不是由于你的路径设置。
+
+  要修正这个问题，查找 "admin/index.php" 中的 (66行): </p>
+
+<p class="answercode">if ($dirroot != $CFG->dirroot) {</p>
+
+<p class="answer">把它修改为:</p>
+
+<p class="answercode">if (!empty($dirroot) and $dirroot != $CFG->dirroot) {</p>
+
+<p class="answercode">&nbsp;</p>
+
+<h3><a name="loginsetting"></a>我已经登录但不正确（我能登录系统并且可以浏览）。</h3>
+
+<p class="answer">确保配置文件中 "$CFG->wwwroot" 的链接地址设置跟你用来访问站点的URL一致。</p>
+
+<p class="answer">&nbsp;</p>
+
+<h3><a name="resource1"></a>当尝试添加资源时我接受到错误信息。</h3>
+
+<p class="answer">假设你使用 Apache，那么你可能在 "config.php" 中设置 
+
+  "$CFG->wwwroot" 使用了不同于你访问该站点的URL。 
+
+  同时也请关闭管理设置中的 "<b>secureforms</b>" 选项。</p>
+
+<p class="answer">&nbsp;</p>
+
+<h3><a name="noadmin"></a>在初始化设置过程中，我从未被告知创建一个管理员账号！</h3>
+
+<p class="answer">这是一个在Moodle 1.0.9之前一直存在的缺陷，现在已经在主要的代码和版本1.1中得到修复。</p>
+
+<p class="answer">这个缺陷不会影响到所有人，它只影响那些安装 Moodle 并且在浏览器中有来自相同站点的
+
+  其他程序设置的cookie，叫做 "user", "admin", 或 "teacher"。</p>
+
+<p class="answer">快速修复的方法包括在安装前清除浏览器的所有cookie，使用一个不同的浏览器，或修改 "moodle/admin/user.php" 文件，在靠近顶部的位置插入这些行:</p>
+
+<p class="answercode">unset($user);<br />unset($admin);<br />unset($teacher);</p>
+
+<p class="answer">做完这些操作后，最好删除你数据库中的所有表格， 
+
+  并且从零开始重新安装。</p>
+
+<p class="answer">&nbsp;</p>
+
+<h3><a name="nologin"></a>我不能登录 - 我总是停留在登录页面。</h3>
+
+<p class="answer">通常引起这个问题的原因是你自己的计算机 (而不是你的 Moodle 服务器) 
+
+                    的防火墙从你的浏览器中剥离了HTTP Referrer信息。 这里有 
+                  
+                    一些修正这个问题的指导 <a href="http://service1.symantec.com/SUPPORT/nip.nsf/46f26a2d6dafb0a788256bc7005c3fa3/b9b47ad7eddd343b88256c6b006a85a8?OpenDocument&amp;src=bar_sch_nam">Norton firewall products</a>。</p>
+
+<p class="answer">服务器的管理员也可以为所有用户修正这个问题， 
+
+                    修改 Moodle 配置页面，更改变量 "<b>secureforms</b>" 为 "No"。</p>
+
+<p class="answer">另一个可能导致这个问题的原因是服务器上的session没有被正确的配置。 
+
+  你可以调用脚本：  
+
+  http://yourserver/moodle/lib/session-test.php 测试服务器上的session配置。</p>
+
+<p class="answer">&nbsp;</p>
+
+<h3><a name="backup"></a>我该如何备份整个 Moodle 站点？</h3>
+
+<p class="answer">有两个主要的部分需要你进行备份：数据库和上传的文件。 Moodle自己的脚本反而不重要，因为你总是可以下载最新的拷贝。</p>
+
+<p class="answer">有很多备份的途径。这里给出一个在Unix系统在备份数据库的范例代码 (你也可以利用cron 任务来让它每天都运行)</p>
+
+<p class="answercode">cd /my/backup/directory</p>
+
+<p class="answercode">mv moodle-database.sql.gz moodle-database-old.sql.gz</p>
+
+<p class="answercode">mysqldump -h example.com -u myusername --password=mypassword -C -Q -e -a mydatabasename > moodle-database.sql</p>
+
+<p class="answercode">gzip moodle-database.sql</p>
+
+<p class="answer">对于这些文件，你也可以使用 rsync 有规律的拷贝改变的文件到另一台主机：</p>
+
+<p class="answercode">rsync -auvtz --delete -e ssh mysshusername@example.com:/my/server/directory 
+
+  /my/backup/directory/</p>
+
+<p class="answercode">&nbsp;</p>
+
+<h3><a name="locale"></a>为何我的 Moodle 站点不能正确地显示 日期 &amp; 时间 ?</h3>
+
+<p class="answer">每个语言都需要一个指定的语言代码 (叫做 <strong>本地代码</strong> 
+
+  ) ，才能允许日期被正确地显示。语言包中包含了缺省的标准语言代码， 
+
+  但有时它们不能在 Windows 服务器上工作。 </p>
+
+<p class="answer">你可以在这两个页面中找到Windows所用的正确的本地代码
+
+  : <a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/vclib/html/_crt_language_strings.asp" target="_blank">Language 
+
+  codes</a> 和 <a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/vclib/html/_crt_country_strings.asp" target="_blank">Country/region 
+
+  codes</a>.(举例来说：西班牙语是 &quot;esp_esp&quot; )</p>
+
+<p class="answer">新的本地代码能被输入从 管理 -&gt; 配置 
+
+  -&gt; 变量 页, 他们将覆盖当前选择的语言包。</p>
+
+<p class="answer">&nbsp;</p>
+
+<h3><a name="cron"></a>论坛中不能发出电子邮件拷贝 
+
+   </h3>
+
+<p class="answer">你 <strong>必须</strong> 适当地设置 cron 任务如果你想让 Moodle 
+
+  自动的从论坛、作业等中发送出邮件。 This same 
+
+  这个任务同时也运行一系列的清除任务，例如：删除过期未确认的用户， 
+
+  未登入的旧学生等等。</p>
+
+<p class="answer">基本上，你需要设置一个进程来有规律的调用脚本 
+
+  http://yoursite/admin/cron.php。 请参照 <a href="./?file=install.html#cron"> 
+
+  安装文档中关于 cron 的章节</a>.</p>
+
+<p class="answer">提示： 尝试使用 Moodle 变量页面的缺省设置。 保持 "smtphost" 为空。
+
+这对于大多数用户来说都是可接受的。
+<p class="answer">&nbsp;
+<p class="answer">&nbsp;
+
+<hr />
+
+<p align="center" class="normaltext"><a href='ma&#105&#108t&#111:ma%72%74in@%6d%6fo%64%6c%65.o%72g' title='mar&#116&#105n@&#109oo&#100&#108&#101&#46&#111&#114g'> 
+
+  提交一个新的常见问题 (FAQ)</a> (请包括问题答案!)</p>
+
+<hr />
+
+<p align="right"><strong><em>感谢 John Eyre 帮助维护这份 
+
+  常见问题列表。</em></strong></p>
+
+<p align="center"><font size="1"><a href="." target="_top">Moodle文档</a></font></p>
+
+<p align="center"><font size="1">Version: $Id$</font></p>
+
+</body>
+
+</html>

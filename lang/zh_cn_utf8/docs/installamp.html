@@ -1,0 +1,147 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Moodle 文档: 安装 PHP 和 MySQL</title>
+	<link rel="stylesheet" href="docstyles.css" type="TEXT/CSS" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+
+<body>
+<h1>安装 Apache, MySQL 和 PHP</h1>
+<blockquote>
+  <p>Moodle 使用一种叫做PHP的脚本语言编写， 它所使用的大部分数据保存在一个数据库中。
+  我们推荐使用 MySQL 数据库。 在安装 Moodle 之前，
+  你必须有一个可工作的 PHP 安装和一个可工作的数据库来使你的计算机
+  变成一个web服务器的功能平台。 这些包对于具有平均水平的计算机用户来说有一定的难度，
+  所以这个页面编写用来使在不同的平台上安装过程尽可能地简洁:</p>
+  <ul>
+    <li><a href="#host" class="questionlink">主机托管服务</a></li>
+    <li><a href="#mac" class="questionlink">Mac OS X</a></li>
+    <li><a href="#redhat" class="questionlink">Redhat Linux</a></li>
+    <li><a href="#windows" class="questionlink">Windows</a></li>
+  </ul>
+  <p class="questionlink">&nbsp;</p>
+  <h3 class="sectionheading"><a name="host" id="host"></a>主机托管服务</h3>
+  <blockquote>
+    <p>不幸的是，主机托管服务的工作机制大不相同。一些主机托管商甚至已经为你安装好 Moodle 。</p>
+    <p>大多数的托管服务商会提供一个基于web的控制界面来管理你的站点， 
+    创建数据库和设置守护进程。 一些可能通过ssh提供终端访问服务，因而你可以 so that you 
+    使用命令行脚本来做事。</p>
+    <p>你需要跟随 <a href="./?file=install.html">安装指导</a> 的指引完成你的工作，每次尝试一个步骤。 
+    如果你遇到任何问题，询问你的托管服务商。 </p>
+    <p>&nbsp;</p>
+  </blockquote>
+  <h3 class="sectionheading"><a name="mac" id="mac"></a>Mac OS X</h3>
+  <blockquote>
+    <p>最简单的办法是使用Apple提供的 Apache 服务器， 
+    然后用 Marc Liyanage's 制作的包来安装 PHP 和 MySQL。 下面的页面上
+    都提供了很好的指导信息，我们在这里就不再重复了:</p>
+    <blockquote>
+      <p><strong>PHP</strong>: 从这里下载: <a href="http://www.entropy.ch/software/macosx/php/" target="_top">http://www.entropy.ch/software/macosx/php/</a></p>
+      <p><strong>MySQL</strong>: 从这里下载: <a href="http://www.entropy.ch/software/macosx/mysql/" target="_top">http://www.entropy.ch/software/macosx/mysql/</a></p>
+    </blockquote>
+    <p>一旦它们被安装，标准的 <a href="./?file=install.html">安装指导</a> 应该是清楚而简单的。</p>
+    <p>这里有一个更详细的安装过程: <a href="http://moodle.org/wiki/index.php/InstallingMoodle">http://moodle.org/wiki/index.php/InstallingMoodle</a></p>
+    <p>&nbsp;</p>
+  </blockquote>
+  <h3 class="sectionheading"><a name="redhat"></a>Redhat Linux</h3>
+  <blockquote>
+    <p>你应该安装所有有效的 Apache, PHP 和 MySQL 的RPM 包。 
+    人们经常会忘记的是需要 php-mysql 包来让 PHP 能够访问 MySQL 数据库。</p>
+    <p>一旦它们被安装，标准的 <a href="./?file=install.html">安装指导</a> 应该是清楚而简单的。</p>
+    <p>这里有一个更详细的安装过程: <a href="http://moodle.org/wiki/index.php/InstallingMoodle">http://moodle.org/wiki/index.php/InstallingMoodle</a></p>
+  </blockquote>
+  <p>&nbsp;</p>
+  <h3 class="sectionheading"><a name="windows" id="windows"></a>Windows</h3>
+  <blockquote>
+    <p>最简单的办法是使用 <a href="http://www.easyphp.org/" target="_blank">EasyPHP</a>， 
+    一个包含了所有你需要的软件的 Windows 程序包。 
+    这里包含了从开始到结束的安装指导:</p>
+    <ol>
+      <li> 首先, 如果你以前安装过 MySQL (甚至是做为其他包的一部分),
+      卸载它，删除所有的 MySQL 文件并且确认你 
+      删除了 <strong>c:\my.cnf</strong> 和 <strong>c:\windows\my.ini</strong>。 
+      你或许需要查找和删除任何叫做  <strong>my.cnf</strong> 
+      或 <strong>my.ini</strong>的文件。</li>
+      <li> 如果你曾经安装过 PHP ，从你的 Windows 系统目录下删除任何叫做 <strong>php4ts.dll</strong>，
+      也需要删除任何叫做 <strong>php.ini</strong> 的文件。</li>
+      <li> 从这里下载 EasyPHP : <a href="http://www.easyphp.org/telechargements/dn.php?F=easyphp1-7">http://www.easyphp.org/telechargements/dn.php?F=easyphp1-7</a> 
+      (大致是 10 Mb)</li>
+      <li> 运行下载后的文件: <strong>easyphp1-7_setup.exe</strong>。 安装程序 
+      使用法语界面，但是跟安装任何一个其他的 Windows 程序是一样的
+      - 我推荐接受默认设置并让所有的组件都安装。 
+      注意 &quot;Suivant&quot; 是 &quot;下一步&quot; 的意思， &quot;Oui&quot;是&quot;是&quot;的意思。</li>
+      <li>在安装的最后，选中 &quot;Lancer EasyPHP&quot; (启动 EasyPHP) 复选框，
+      点击 &quot;Terminer&quot; 按钮。 你将被带到一个信息页面，你可以放心的忽略它。 </li>
+      <li>如果所有的事情都正常 - 祝贺你! Apache, PHP 和 MySQL 都已经安装并且运行中！ 
+       你应该能看到一个黑色的 E 在你的任务栏托盘上。你可以用鼠标右键点击它， 
+       从中弹出的一个菜单可以允许你控制运行中的程序。</li>
+      <li>一些提示都使用法语，如果你首选英语。 你可以下载这个文件 <a href="http://www.easyphp.org/telechargements/dn.php?F=indexUS_1.7">http://www.easyphp.org/telechargements/dn.php?F=indexUS_1.7</a> ，它包含了英语版本的EasyPHP1-7目录下的 www 和 home 目录。 这些能用来拷贝和覆盖缺省的文件。</li>
+      <li> 下一个要做的事情是设置一个给 Moodle 使用的数据库。 
+      右键点击任务栏托盘上的黑色的 E 图标，并且选择管理 （Administration），然后点击数据库管理（DB Management） (在 PHPMyAdmin)。</li>
+      <li>如果要求输入用户名， 使用 &quot;<strong>root</strong>&quot; 作为用户名，密码是<strong>空白</strong>。你 
+       应该看到phpMyAdmin的网页界面，它允许你创建新的数据库和用户账号。 
+       </li>
+      <li>创建一个新的数据库，输入 &quot;moodle&quot; 在字段中作为数据库名， 
+      然后点击 &quot;创建&quot; 按钮。 这很容易!</li>
+      <li>你也可以创建一个新的用户来访问你的数据库如果你需要。 对于 
+       第一次使用的用户来说，这可能会有一定困难， 所以现在你也许最好只使用 
+       已经存在的用户 &quot;root&quot; 和空白的密码在你的 Moodle 配置，
+       稍后可以修正这个问题。</li>
+      <li> 你已经准备好安装 Moodle! 下载最近的 Moodle 发布版本从
+      <a href="http://moodle.org/download" target="_blank">http://moodle.org/download</a>， 
+       然后解压下载的压载包。</li>
+      <li>复制你的moodle 文件到 <strong>C:\Program Files\EasyPHP\www。 </strong> 
+       你也可以复制整个 moodle 目录 (ie C:\Program Files\EasyPHP\www\moodle) 
+       或复制目录下所有的 <em>内容</em> 到上述目录。 如果你选择第二种方法，你访问你的 Moodle 主页需要使用 
+       http://localhost/ 来代替 http://localhost/moodle/。</li>
+      <li> 在别的地方创建一个新的空白目录给 Moodle 存放上载文件， 
+      例如: <strong>C:\moodledata</strong></li>
+      <li> 转到你的 Moodle 目录，创建一个 config-dist.php 的副本，改名为 
+      config.php</li>
+      <li> 使用一个文本编辑器修改 config.php  (Notepad 可以用，
+       只需要小心它不会在行后添加不需要的空白)。 </li>
+      <li>填写所有你的数据库信息:<br />
+      $CFG-&gt;dbtype = 'mysql';<br />
+      $CFG-&gt;dbhost = 'localhost';<br />
+      $CFG-&gt;dbname = 'moodle';<br />
+      $CFG-&gt;dbuser = 'root'; <br />
+      $CFG-&gt;dbpass = '';<br />
+      $CFG-&gt;dbpersist = true;<br />
+      $CFG-&gt;prefix = 'mdl_';</li>
+      <li>并输入所有你的文件路径:<br />
+      $CFG-&gt;wwwroot = 'http://localhost/moodle'; // 如果你知道，使用一个外部的主机地址。 <br />
+      $CFG-&gt;dirroot = 'C:\Program Files\EasyPHP\www\moodle'; <br />
+      $CFG-&gt;dataroot = 'C:\moodledata';</li>
+      <li>保存 config.php - 你可以忽略所有的其他设置。</li>
+      <li>你已经接近完成了! 剩下的设置都是基于网页的。 使用你的浏览器访问 
+      <a href="http://localhost/moodle/admin/" target="_blank">http://localhost/moodle/admin/</a> 
+       来继续完成设置。</li>
+      <li>为了使 Moodle 使用zip格式(例如使用zip来备份) 你需要 
+       启用 &quot;zlib&quot;。你可以完成这个配置通过转入你的EasyPHP 
+       目录 (<strong>C:\Program Files\EasyPHP</strong>)，然后运行目录中的
+      phpini.exe 程序。 选中 &quot;zlib.dll&quot; 后的复选框。 
+       关闭窗口，然后转到任务栏上的黑色E图标，右击它获得一个菜单 - 从菜单中选择 &quot;重启动&quot;。</li>
+      <li>最后，你需要设置守护进程。 查看 <a href="./?file=install.html">安装指导 
+      </a> 浏览设置守护进程的详细信息。</li>
+    </ol>
+    <p>如果你不想或不能使用 EasyPHP，这里有一些提示来确保 
+     你的PHP设置正确并且解决常见的问题:</p>
+    <ul>
+      <li>确认你启用了GD模块，这样Moodle能处理图像 - 你
+      也许必须修改php.ini 并从这一行: 'extension=php_gd2.dll'删除注释标识 (;). 
+    </li>
+      <li>确认你启用了 Zlib 模块，这样你能在使用Moodle时创建和解压zip文件。</li>
+      <li>确认sessions打开了 - 你也许必须修改 php.ini 并为参数修正 
+      目录值 <strong>session.save_path</strong> - 替换缺省的 
+      "/tmp"，使用一个Windows 目录像 "c:/temp"。</li>
+    </ul>
+    <p>&nbsp;</p>
+  </blockquote>
+</blockquote>
+<p align="center"><font size="1"><a href="." target="_top">Moodle 文档</a></font></p>
+<p align="center"><font size="1">版本: $Id$</font></p>
+
+</body>
+</html>
