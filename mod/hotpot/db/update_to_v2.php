@@ -3,8 +3,21 @@ function hotpot_update_to_v2_1_16() {
 	global $CFG;
 	$ok = true;
 
+	// settings for the "hotpot_questions_name_idx" index
+	$length = 20;
+	$field = 'name';
+	$table = 'hotpot_questions';
+	$index = '{$table}_{$name}_idx';
+
+	// remove the index
+	hotpot_db_delete_index("{$CFG->prefix}$table", $index);
+	hotpot_db_delete_index("{$CFG->prefix}$table", "{$CFG->prefix}$index");
+
 	// make sure type of 'name' is a text field (not varchar 255)
-	$ok = $ok && hotpot_db_update_field_type('hotpot_questions', 'name', 'name', 'TEXT',   '',  '', 'NOT NULL', '');
+	$ok = $ok && hotpot_db_update_field_type($table, $field, $field, 'TEXT',   '',  '', 'NOT NULL', '');
+
+	// restore the index
+	$ok = $ok && hotpot_db_add_index($table, $field, $length);
 
 	if (strtolower($CFG->dbtype)=='mysql') {
 
@@ -26,7 +39,7 @@ function hotpot_update_to_v2_1_16() {
 		$ok = $ok && hotpot_index_remove_prefix('hotpot_attempts', 'userid');
 		$ok = $ok && hotpot_index_remove_prefix('hotpot_details', 'attempt');
 		$ok = $ok && hotpot_index_remove_prefix('hotpot_questions', 'hotpot');
-		$ok = $ok && hotpot_index_remove_prefix('hotpot_questions', 'name', 20);
+		//$ok = $ok && hotpot_index_remove_prefix('hotpot_questions', 'name', 20);
 		$ok = $ok && hotpot_index_remove_prefix('hotpot_responses', 'attempt');
 		$ok = $ok && hotpot_index_remove_prefix('hotpot_responses', 'question');
 		$ok = $ok && hotpot_index_remove_prefix('hotpot_strings', 'string', 20);
