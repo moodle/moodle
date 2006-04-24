@@ -460,7 +460,11 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
                         $i--;
                     }
                     if (($i == 0) && ($sco->parent != $currentorg)) {
-                        $result->toc .= "\t\t<li><ul id='$sublist' class='$liststyle'>\n";
+                        $style = '';
+                        if (isset($_COOKIE['hide:SCORMitem'.$sco->id])) {
+                            $style = ' style="display: none;"';
+                        }
+                        $result->toc .= "\t\t<li><ul id='$sublist' class='$liststyle'$style>\n";
                         $level++;
                     } else {
                         $result->toc .= $closelist;
@@ -473,7 +477,11 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
             $nextsco = next($scoes);
             if (($nextsco !== false) && ($sco->parent != $nextsco->parent) && (($level==0) || (($level>0) && ($nextsco->parent == $sco->identifier)))) {
                 $sublist++;
-                $result->toc .= '<a href="javascript:expandCollide(img'.$sublist.','.$sublist.');"><img id="img'.$sublist.'" src="'.$scormpixdir.'/minus.gif" alt="'.$strexpand.'" title="'.$strexpand.'"/></a>';
+                $icon = 'minus';
+                if (isset($_COOKIE['hide:SCORMitem'.$nextsco->id])) {
+                    $icon = 'plus';
+                }
+                $result->toc .= '<a href="javascript:expandCollide(img'.$sublist.','.$sublist.','.$nextsco->id.');"><img id="img'.$sublist.'" src="'.$scormpixdir.'/'.$icon.'.gif" alt="'.$strexpand.'" title="'.$strexpand.'"/></a>';
             } else {
                 $result->toc .= '<img src="'.$scormpixdir.'/spacer.gif" />';
             }
@@ -565,7 +573,7 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
         $result->toc .= '
           <script language="javascript" type="text/javascript">
           <!--
-              function expandCollide(which,list) {
+              function expandCollide(which,list,item) {
                   var nn=document.ids?true:false
                   var w3c=document.getElementById?true:false
                   var beg=nn?"document.ids.":w3c?"document.getElementById(":"document.all.";
@@ -574,9 +582,11 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
                   if (eval(beg+list+mid+".display") != "none") {
                       which.src = "'.$scormpixdir.'/plus.gif";
                       eval(beg+list+mid+".display=\'none\';");
+                      new cookie("hide:SCORMitem" + item, 1, 356, "/").set();
                   } else {
                       which.src = "'.$scormpixdir.'/minus.gif";
                       eval(beg+list+mid+".display=\'block\';");
+                      new cookie("hide:SCORMitem" + item, 1, -1, "/").set();
                   }
               }
           -->
