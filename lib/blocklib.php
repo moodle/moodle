@@ -264,6 +264,12 @@ function blocks_print_group(&$page, &$pageblocks, $position) {
 
     foreach($pageblocks[$position] as $instance) {
         $block = blocks_get_record($instance->blockid);
+
+        if (empty($block)) {
+            // Block doesn't exist! We should delete this instance!
+            continue;
+        }
+
         if(!$block->visible) {
             // Disabled by the admin
             continue;
@@ -322,6 +328,11 @@ function blocks_preferred_width(&$instances) {
 
     foreach($instances as $instance) {
         if(!$instance->visible) {
+            continue;
+        }
+
+        if (!array_key_exists($instance->blockid, $blocks)) {
+            // Block doesn't exist! We should delete this instance!
             continue;
         }
 
