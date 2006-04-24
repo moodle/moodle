@@ -7,7 +7,7 @@ function forum_upgrade($oldversion) {
   global $CFG;
 
   if ($oldversion < 2003042402) {
-      execute_sql("INSERT INTO {$CFG->prefix}log_display VALUES ('forum', 'move discussion', 'forum_discussions', 'name')");
+      execute_sql("INSERT INTO {$CFG->prefix}log_display (module, action, mtable, field) VALUES ('forum', 'move discussion', 'forum_discussions', 'name')");
   }
 
   if ($oldversion < 2003082500) {

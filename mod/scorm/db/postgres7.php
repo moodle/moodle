@@ -97,7 +97,7 @@ function scorm_upgrade($oldversion) {
         }
 
         modify_database('',"DROP TABLE prefix_scorm_sco_users");
-        modify_database('',"INSERT INTO prefix_log_display VALUES ('resource', 'review', 'resource', 'name')");
+        modify_database('',"INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('resource', 'review', 'resource', 'name')");
     }
 
     if ($oldversion < 2005040200) {

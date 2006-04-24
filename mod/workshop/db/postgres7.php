@@ -53,14 +53,14 @@ function workshop_upgrade($oldversion) {
     if ($oldversion < 2003100800) {
         // tidy up log_display entries
         execute_sql("DELETE FROM {$CFG->prefix}log_display WHERE module = 'workshop'");
-        execute_sql("INSERT INTO {$CFG->prefix}log_display VALUES('workshop', 'assessments', 'workshop', 'name')");
-        execute_sql("INSERT INTO {$CFG->prefix}log_display VALUES ('workshop', 'close', 'workshop', 'name')");
-        execute_sql("INSERT INTO {$CFG->prefix}log_display VALUES ('workshop', 'display', 'workshop', 'name')");
-        execute_sql("INSERT INTO {$CFG->prefix}log_display VALUES ('workshop', 'resubmit', 'workshop', 'name')");
-        execute_sql("INSERT INTO {$CFG->prefix}log_display VALUES ('workshop', 'set up', 'workshop', 'name')");
-        execute_sql("INSERT INTO {$CFG->prefix}log_display VALUES ('workshop', 'submissions', 'workshop', 'name')");
-        execute_sql("INSERT INTO {$CFG->prefix}log_display VALUES ('workshop', 'view', 'workshop', 'name')");
-        execute_sql("INSERT INTO {$CFG->prefix}log_display VALUES ('workshop', 'update', 'workshop', 'name')");
+        execute_sql("INSERT INTO {$CFG->prefix}log_display (module, action, mtable, field) VALUES('workshop', 'assessments', 'workshop', 'name')");
+        execute_sql("INSERT INTO {$CFG->prefix}log_display (module, action, mtable, field) VALUES ('workshop', 'close', 'workshop', 'name')");
+        execute_sql("INSERT INTO {$CFG->prefix}log_display (module, action, mtable, field) VALUES ('workshop', 'display', 'workshop', 'name')");
+        execute_sql("INSERT INTO {$CFG->prefix}log_display (module, action, mtable, field) VALUES ('workshop', 'resubmit', 'workshop', 'name')");
+        execute_sql("INSERT INTO {$CFG->prefix}log_display (module, action, mtable, field) VALUES ('workshop', 'set up', 'workshop', 'name')");
+        execute_sql("INSERT INTO {$CFG->prefix}log_display (module, action, mtable, field) VALUES ('workshop', 'submissions', 'workshop', 'name')");
+        execute_sql("INSERT INTO {$CFG->prefix}log_display (module, action, mtable, field) VALUES ('workshop', 'view', 'workshop', 'name')");
+        execute_sql("INSERT INTO {$CFG->prefix}log_display (module, action, mtable, field) VALUES ('workshop', 'update', 'workshop', 'name')");
     }
 
     if ($oldversion < 2003113000) {

@@ -16,11 +16,11 @@ function forum_upgrade($oldversion) {
     execute_sql("ALTER TABLE `forum` CHANGE `type` `type` ENUM( 'single', 'news', 'social', 'general', 
                              'eachuser', 'teacher' ) DEFAULT 'general' NOT NULL ");
     execute_sql("ALTER TABLE `forum_posts` CHANGE `discuss` `discussion` INT( 10 ) UNSIGNED DEFAULT '0' NOT NULL ");
-    execute_sql("INSERT INTO log_display VALUES ('forum', 'add', 'forum', 'name') ");
-    execute_sql("INSERT INTO log_display VALUES ('forum', 'add discussion', 'forum_discussions', 'name') ");
-    execute_sql("INSERT INTO log_display VALUES ('forum', 'add post', 'forum_posts', 'subject') ");
-    execute_sql("INSERT INTO log_display VALUES ('forum', 'update post', 'forum_posts', 'subject') ");
-    execute_sql("INSERT INTO log_display VALUES ('forum', 'view discussion', 'forum_discussions', 'name') ");
+    execute_sql("INSERT INTO log_display (module, action, mtable, field) VALUES ('forum', 'add', 'forum', 'name') ");
+    execute_sql("INSERT INTO log_display (module, action, mtable, field) VALUES ('forum', 'add discussion', 'forum_discussions', 'name') ");
+    execute_sql("INSERT INTO log_display (module, action, mtable, field) VALUES ('forum', 'add post', 'forum_posts', 'subject') ");
+    execute_sql("INSERT INTO log_display (module, action, mtable, field) VALUES ('forum', 'update post', 'forum_posts', 'subject') ");
+    execute_sql("INSERT INTO log_display (module, action, mtable, field) VALUES ('forum', 'view discussion', 'forum_discussions', 'name') ");
     execute_sql("DELETE FROM log_display WHERE module = 'discuss' ");
     execute_sql("UPDATE log SET action = 'view discussion' WHERE module = 'discuss' AND action = 'view' ");
     execute_sql("UPDATE log SET action = 'add discussion' WHERE module = 'discuss' AND action = 'add' ");
@@ -29,8 +29,8 @@ function forum_upgrade($oldversion) {
   }
 
   if ($oldversion < 2002080100) {
-    execute_sql("INSERT INTO log_display VALUES ('forum', 'view subscribers', 'forum', 'name') ");
-    execute_sql("INSERT INTO log_display VALUES ('forum', 'update', 'forum', 'name') ");
+    execute_sql("INSERT INTO log_display (module, action, mtable, field) VALUES ('forum', 'view subscribers', 'forum', 'name') ");
+    execute_sql("INSERT INTO log_display (module, action, mtable, field) VALUES ('forum', 'update', 'forum', 'name') ");
   }
 
   if ($oldversion < 2002082900) {
@@ -59,7 +59,7 @@ function forum_upgrade($oldversion) {
   }
 
   if ($oldversion < 2003042402) {
-      execute_sql("INSERT INTO {$CFG->prefix}log_display VALUES ('forum', 'move discussion', 'forum_discussions', 'name')");
+      execute_sql("INSERT INTO {$CFG->prefix}log_display (module, action, mtable, field) VALUES ('forum', 'move discussion', 'forum_discussions', 'name')");
   }
 
   if ($oldversion < 2003081403) {

@@ -16,10 +16,10 @@ function quiz_upgrade($oldversion) {
     }
     if ($oldversion < 2002102101) {
         execute_sql(" DELETE FROM log_display WHERE module = 'quiz' ");
-        execute_sql(" INSERT INTO log_display VALUES ('quiz', 'view', 'quiz', 'name') ");
-        execute_sql(" INSERT INTO log_display VALUES ('quiz', 'report', 'quiz', 'name') ");
-        execute_sql(" INSERT INTO log_display VALUES ('quiz', 'attempt', 'quiz', 'name') ");
-        execute_sql(" INSERT INTO log_display VALUES ('quiz', 'submit', 'quiz', 'name') ");
+        execute_sql(" INSERT INTO log_display (module, action, mtable, field) VALUES ('quiz', 'view', 'quiz', 'name') ");
+        execute_sql(" INSERT INTO log_display (module, action, mtable, field) VALUES ('quiz', 'report', 'quiz', 'name') ");
+        execute_sql(" INSERT INTO log_display (module, action, mtable, field) VALUES ('quiz', 'attempt', 'quiz', 'name') ");
+        execute_sql(" INSERT INTO log_display (module, action, mtable, field) VALUES ('quiz', 'submit', 'quiz', 'name') ");
     }
     if ($oldversion < 2002102600) {
         execute_sql(" ALTER TABLE `quiz_answers` CHANGE `feedback` `feedback` TEXT NOT NULL ");
@@ -107,7 +107,7 @@ function quiz_upgrade($oldversion) {
     }
 
     if ($oldversion < 2003072400) {
-        execute_sql(" INSERT INTO {$CFG->prefix}log_display VALUES ('quiz', 'review', 'quiz', 'name') ");
+        execute_sql(" INSERT INTO {$CFG->prefix}log_display (module, action, mtable, field) VALUES ('quiz', 'review', 'quiz', 'name') ");
     }
 
     if ($oldversion < 2003072901) {
@@ -187,8 +187,8 @@ function quiz_upgrade($oldversion) {
     }
 
     if ($oldversion < 2004021900) {
-        modify_database("","INSERT INTO prefix_log_display VALUES ('quiz', 'add', 'quiz', 'name');");
-        modify_database("","INSERT INTO prefix_log_display VALUES ('quiz', 'update', 'quiz', 'name');");
+        modify_database("","INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('quiz', 'add', 'quiz', 'name');");
+        modify_database("","INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('quiz', 'update', 'quiz', 'name');");
     }
 
     if ($oldversion < 2004051700) {
@@ -328,7 +328,7 @@ function quiz_upgrade($oldversion) {
     }
 
     if ($oldversion < 2005032000) {
-        execute_sql(" INSERT INTO {$CFG->prefix}log_display VALUES ('quiz', 'editquestions', 'quiz', 'name') ");
+        execute_sql(" INSERT INTO {$CFG->prefix}log_display (module, action, mtable, field) VALUES ('quiz', 'editquestions', 'quiz', 'name') ");
     }
 
     if ($oldversion < 2005032300) {
@@ -479,9 +479,9 @@ function quiz_upgrade($oldversion) {
 
     /// Entries for the log_display table
 
-        modify_database('', " INSERT INTO prefix_log_display VALUES ('quiz', 'preview', 'quiz', 'name');");
-        modify_database('', " INSERT INTO prefix_log_display VALUES ('quiz', 'start attempt', 'quiz', 'name');");
-        modify_database('', " INSERT INTO prefix_log_display VALUES ('quiz', 'close attempt', 'quiz', 'name');");
+        modify_database('', " INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('quiz', 'preview', 'quiz', 'name');");
+        modify_database('', " INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('quiz', 'start attempt', 'quiz', 'name');");
+        modify_database('', " INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('quiz', 'close attempt', 'quiz', 'name');");
 
     /// update the default settings in $CFG
         $review = (QUIZ_REVIEW_IMMEDIATELY & (QUIZ_REVIEW_RESPONSES + QUIZ_REVIEW_SCORES));
@@ -1012,7 +1012,7 @@ function quiz_upgrade($oldversion) {
     }
 
     if ($oldversion < 2006041000) {
-        modify_database('', " INSERT INTO prefix_log_display VALUES ('quiz', 'continue attempt', 'quiz', 'name');");
+        modify_database('', " INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('quiz', 'continue attempt', 'quiz', 'name');");
     }
 
     if ($oldversion < 2006041001) {

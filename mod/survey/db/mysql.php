@@ -173,8 +173,8 @@ function survey_upgrade($oldversion) {
     }
 
     if ($oldversion < 2004021900) {
-        modify_database("", "INSERT INTO prefix_log_display VALUES ('survey', 'add', 'survey', 'name');");
-        modify_database("", "INSERT INTO prefix_log_display VALUES ('survey', 'update', 'survey', 'name');");
+        modify_database("", "INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('survey', 'add', 'survey', 'name');");
+        modify_database("", "INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('survey', 'update', 'survey', 'name');");
     }
 
     if ($oldversion < 2004111200) {

@@ -19,8 +19,8 @@ function glossary_upgrade($oldversion) {
                     " ADD timemodified INT(10) UNSIGNED NOT NULL default '0' AFTER `timecreated` , ".
                     " ADD teacherentry TINYINT(2) UNSIGNED NOT NULL default '0' AFTER `timemodified` ");
 
-        execute_sql(" INSERT INTO {$CFG->prefix}log_display VALUES ('glossary', 'delete', 'glossary', 'name') ");
-        execute_sql(" INSERT INTO {$CFG->prefix}log_display VALUES ('glossary', 'delete entry', 'glossary', 'name') ");
+        execute_sql(" INSERT INTO {$CFG->prefix}log_display (module, action, mtable, field) VALUES ('glossary', 'delete', 'glossary', 'name') ");
+        execute_sql(" INSERT INTO {$CFG->prefix}log_display (module, action, mtable, field) VALUES ('glossary', 'delete entry', 'glossary', 'name') ");
     }
     
     if ( $oldversion < 2003091500 ) {
@@ -86,9 +86,9 @@ function glossary_upgrade($oldversion) {
                     PRIMARY KEY  (`id`)
                     ) TYPE=MyISAM COMMENT='comments on glossary entries'");
 
-        execute_sql(" INSERT INTO {$CFG->prefix}log_display VALUES ('glossary', 'add comment', 'glossary', 'name') ");
-        execute_sql(" INSERT INTO {$CFG->prefix}log_display VALUES ('glossary', 'update comment', 'glossary', 'name') ");
-        execute_sql(" INSERT INTO {$CFG->prefix}log_display VALUES ('glossary', 'delete comment', 'glossary', 'name') ");
+        execute_sql(" INSERT INTO {$CFG->prefix}log_display (module, action, mtable, field) VALUES ('glossary', 'add comment', 'glossary', 'name') ");
+        execute_sql(" INSERT INTO {$CFG->prefix}log_display (module, action, mtable, field) VALUES ('glossary', 'update comment', 'glossary', 'name') ");
+        execute_sql(" INSERT INTO {$CFG->prefix}log_display (module, action, mtable, field) VALUES ('glossary', 'delete comment', 'glossary', 'name') ");
     }
 
     if ( $oldversion < 2003101600 ) {
@@ -116,7 +116,7 @@ function glossary_upgrade($oldversion) {
         execute_sql( "ALTER TABLE `{$CFG->prefix}glossary_entries`" .
                     " ADD `approved` TINYINT(2) UNSIGNED NOT NULL default '1' AFTER `fullmatch`");
 
-        execute_sql(" INSERT INTO {$CFG->prefix}log_display VALUES ('glossary', 'approve entry', 'glossary', 'name') ");
+        execute_sql(" INSERT INTO {$CFG->prefix}log_display (module, action, mtable, field) VALUES ('glossary', 'approve entry', 'glossary', 'name') ");
     }
 
     if ( $oldversion < 2003102800 ) {
