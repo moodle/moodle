@@ -29,8 +29,8 @@ function choice_upgrade($oldversion) {
         table_column("choice", "", "showunanswered", "integer", "4", "unsigned", "0", "", "publish");
     }
     if ($oldversion < 2004021700) {
-        modify_database("", "INSERT INTO prefix_log_display VALUES ('choice', 'choose', 'choice', 'name');");
-        modify_database("", "INSERT INTO prefix_log_display VALUES ('choice', 'choose again', 'choice', 'name');");
+        modify_database("", "INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('choice', 'choose', 'choice', 'name');");
+        modify_database("", "INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('choice', 'choose again', 'choice', 'name');");
     }
     if ($oldversion < 2004070100) {
         table_column("choice", "", "timeclose", "integer", "10", "unsigned", "0", "", "showunanswered");

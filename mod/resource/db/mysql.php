@@ -11,8 +11,8 @@ function resource_upgrade($oldversion) {
     }
 
     if ($oldversion < 2004013101) {
-        modify_database("", "INSERT INTO prefix_log_display VALUES ('resource', 'update', 'resource', 'name');");
-        modify_database("", "INSERT INTO prefix_log_display VALUES ('resource', 'add', 'resource', 'name');");
+        modify_database("", "INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('resource', 'update', 'resource', 'name');");
+        modify_database("", "INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('resource', 'add', 'resource', 'name');");
     }
 
     if ($oldversion < 2004071000) {

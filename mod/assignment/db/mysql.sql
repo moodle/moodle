@@ -55,9 +55,9 @@ CREATE TABLE `prefix_assignment_submissions` (
 # --------------------------------------------------------
 
 
-INSERT INTO prefix_log_display VALUES ('assignment', 'view', 'assignment', 'name');
-INSERT INTO prefix_log_display VALUES ('assignment', 'add', 'assignment', 'name');
-INSERT INTO prefix_log_display VALUES ('assignment', 'update', 'assignment', 'name');
-INSERT INTO prefix_log_display VALUES ('assignment', 'view submission', 'assignment', 'name');
-INSERT INTO prefix_log_display VALUES ('assignment', 'upload', 'assignment', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('assignment', 'view', 'assignment', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('assignment', 'add', 'assignment', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('assignment', 'update', 'assignment', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('assignment', 'view submission', 'assignment', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('assignment', 'upload', 'assignment', 'name');
 

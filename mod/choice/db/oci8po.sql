@@ -83,10 +83,10 @@ rem Dumping data for table log_display
 rem
 
 delete from prefix_log_display where module = 'choice';
-INSERT INTO prefix_log_display VALUES ('choice', 'view', 'choice', 'name');
-INSERT INTO prefix_log_display VALUES ('choice', 'update', 'choice', 'name');
-INSERT INTO prefix_log_display VALUES ('choice', 'add', 'choice', 'name');
-INSERT INTO prefix_log_display VALUES ('choice', 'report', 'choice', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('choice', 'view', 'choice', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('choice', 'update', 'choice', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('choice', 'add', 'choice', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('choice', 'report', 'choice', 'name');
 
     
 
