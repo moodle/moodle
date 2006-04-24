@@ -854,7 +854,7 @@ function calendar_get_sideblock_upcoming($events, $linkhref = NULL) {
             continue;
         }
         $events[$i] = calendar_add_event_metadata($events[$i]);
-        $content .= '<div class="event">'.$events[$i]->icon.' ';
+        $content .= '<div class="event"><span class="icon c0">'.$events[$i]->icon.'</span> ';
         if (!empty($events[$i]->referer)) {
             // That's an activity event, so let's provide the hyperlink
             $content .= $events[$i]->referer;
