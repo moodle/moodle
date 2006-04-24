@@ -80,10 +80,10 @@ rem
 rem Dumping data for table log_display
 rem
 delete from prefix_log_display where module = 'journal';
-INSERT INTO prefix_log_display VALUES ('journal', 'view', 'journal', 'name');
-INSERT INTO prefix_log_display VALUES ('journal', 'add entry', 'journal', 'name');
-INSERT INTO prefix_log_display VALUES ('journal', 'update entry', 'journal', 'name');
-INSERT INTO prefix_log_display VALUES ('journal', 'view responses', 'journal', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('journal', 'view', 'journal', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('journal', 'add entry', 'journal', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('journal', 'update entry', 'journal', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('journal', 'view responses', 'journal', 'name');
 
 col module format a10
 select * from prefix_log_display where module = 'journal';

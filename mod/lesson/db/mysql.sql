@@ -179,6 +179,6 @@ CREATE TABLE `prefix_lesson_high_scores`
 # --------------------------------------------------------
 
 
-INSERT INTO prefix_log_display VALUES ('lesson', 'start', 'lesson', 'name');
-INSERT INTO prefix_log_display VALUES ('lesson', 'end', 'lesson', 'name');
-INSERT INTO prefix_log_display VALUES ('lesson', 'view', 'lesson_pages', 'title');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('lesson', 'start', 'lesson', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('lesson', 'end', 'lesson', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('lesson', 'view', 'lesson_pages', 'title');

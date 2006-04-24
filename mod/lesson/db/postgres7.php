@@ -10,9 +10,9 @@ function lesson_upgrade($oldversion) {
 
        delete_records("log_display", "module", "lesson");
 
-       modify_database ("", "INSERT INTO prefix_log_display VALUES ('lesson', 'start', 'lesson', 'name');");
-       modify_database ("", "INSERT INTO prefix_log_display VALUES ('lesson', 'end', 'lesson', 'name');");
-       modify_database ("", "INSERT INTO prefix_log_display VALUES ('lesson', 'view', 'lesson_pages', 'title');");
+       modify_database ("", "INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('lesson', 'start', 'lesson', 'name');");
+       modify_database ("", "INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('lesson', 'end', 'lesson', 'name');");
+       modify_database ("", "INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('lesson', 'view', 'lesson_pages', 'title');");
 
     }
 

@@ -53,7 +53,7 @@ CREATE TABLE prefix_journal_entries (
 # Dumping data for table `log_display`
 #
 
-INSERT INTO prefix_log_display VALUES ('journal', 'view', 'journal', 'name');
-INSERT INTO prefix_log_display VALUES ('journal', 'add entry', 'journal', 'name');
-INSERT INTO prefix_log_display VALUES ('journal', 'update entry', 'journal', 'name');
-INSERT INTO prefix_log_display VALUES ('journal', 'view responses', 'journal', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('journal', 'view', 'journal', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('journal', 'add entry', 'journal', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('journal', 'update entry', 'journal', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('journal', 'view responses', 'journal', 'name');
