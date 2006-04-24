@@ -7,6 +7,21 @@ function hotpot_update_to_v2_1_16() {
 	$ok = $ok && hotpot_db_update_field_type('hotpot_questions', 'name', 'name', 'TEXT',   '',  '', 'NOT NULL', '');
 
 	if (strtolower($CFG->dbtype)=='mysql') {
+
+		// set default values on certain VARCHAR(255) fields
+		$varchar_fields = array(
+			'hotpot.studentfeedbackurl',
+			'hotpot_responses.correct',
+			'hotpot_responses.wrong',
+			'hotpot_responses.ignored'
+		);
+		foreach ($varchar_fields as $varchar_field) {
+			list ($table, $field) = explode('.', $varchar_field);
+			execute_sql("UPDATE {$CFG->prefix}$table SET $field='' WHERE $field IS NULL");
+			$ok = $ok && hotpot_db_update_field_type($table, $field, $field, 'VARCHAR', 255, '', 'NOT NULL', '');
+		}
+
+		// remove $CFG->prefix from all index names
 		$ok = $ok && hotpot_index_remove_prefix('hotpot_attempts', 'hotpot');
 		$ok = $ok && hotpot_index_remove_prefix('hotpot_attempts', 'userid');
 		$ok = $ok && hotpot_index_remove_prefix('hotpot_details', 'attempt');

@@ -91,9 +91,9 @@ CREATE TABLE prefix_hotpot_responses (
     question  INT4 NOT NULL default '0',
     score     INT2,
     weighting INT2,
-    correct   VARCHAR(255),
-    wrong     VARCHAR(255),
-    ignored   VARCHAR(255),
+    correct   VARCHAR(255) NOT NULL default '',
+    wrong     VARCHAR(255) NOT NULL default '',
+    ignored   VARCHAR(255) NOT NULL default '',
     hints     INT2,
     clues     INT2,
     checks    INT2
