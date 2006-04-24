@@ -38,11 +38,11 @@ function assignment_upgrade($oldversion) {
         )
         ");
         
-        execute_sql(" INSERT INTO log_display VALUES ('assignment', 'view', 'assignment', 'name') ");
-        execute_sql(" INSERT INTO log_display VALUES ('assignment', 'add', 'assignment', 'name') ");
-        execute_sql(" INSERT INTO log_display VALUES ('assignment', 'update', 'assignment', 'name') ");
-        execute_sql(" INSERT INTO log_display VALUES ('assignment', 'view submissions', 'assignment', 'name') ");
-        execute_sql(" INSERT INTO log_display VALUES ('assignment', 'upload', 'assignment', 'name') ");
+        execute_sql(" INSERT INTO log_display (module, action, mtable, field) VALUES ('assignment', 'view', 'assignment', 'name') ");
+        execute_sql(" INSERT INTO log_display (module, action, mtable, field) VALUES ('assignment', 'add', 'assignment', 'name') ");
+        execute_sql(" INSERT INTO log_display (module, action, mtable, field) VALUES ('assignment', 'update', 'assignment', 'name') ");
+        execute_sql(" INSERT INTO log_display (module, action, mtable, field) VALUES ('assignment', 'view submissions', 'assignment', 'name') ");
+        execute_sql(" INSERT INTO log_display (module, action, mtable, field) VALUES ('assignment', 'upload', 'assignment', 'name') ");
     }
 
     if ($oldversion < 2002080701) {
