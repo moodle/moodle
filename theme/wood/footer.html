@@ -11,7 +11,7 @@
     echo "</div>";
 ?>
 
-<?php if ($CFG->perfdebug && !empty($performanceinfo)) {
+<?php if ($CFG->perfdebug > 7 && !empty($performanceinfo)) {
     echo $performanceinfo;
 }
 ?>
