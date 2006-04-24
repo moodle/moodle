@@ -138,8 +138,11 @@ function backup_upgrade($oldversion=0) {
 
     // code to drop the prefix in tables
     if ($oldversion < 2006042100) {
-        $result = execute_sql("ALTER TABLE {$CFG->prefix}backup_files DROP INDEX backup_files_uk");
-        $result = execute_sql("ALTER TABLE {$CFG->prefix}backup_ids DROP INDEX backup_ids_uk");
+        // see bug 5205, silent drops, so should not panic anyone
+        $result = execute_sql("ALTER TABLE {$CFG->prefix}backup_files DROP INDEX backup_files_uk", false);
+        $result = execute_sql("ALTER TABLE {$CFG->prefix}backup_files DROP INDEX {$CFG->prefix}backup_files_uk", false);
+        $result = execute_sql("ALTER TABLE {$CFG->prefix}backup_ids DROP INDEX backup_ids_uk", false);
+        $result = execute_sql("ALTER TABLE {$CFG->prefix}backup_ids DROP INDEX {$CFG->prefix}backup_ids_uk", false);
         $result = execute_sql("ALTER TABLE {$CFG->prefix}backup_files ADD UNIQUE INDEX backup_files_uk(backup_code,file_type(10),path(255))");
         $result = execute_sql("ALTER TABLE {$CFG->prefix}backup_ids ADD UNIQUE INDEX backup_ids_uk(backup_code,table_name(30),old_id)");
     }

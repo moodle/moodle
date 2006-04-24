@@ -349,16 +349,22 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
 
 
                     if ($CFG->dbtype == 'mysql') {
+
+                        /* Drop the index, because with index on, you can't change it to longblob */
+
                         if ($dropindex){    //drop index if index is varchar, text etc type
                             $SQL = 'ALTER TABLE '.$CFG->prefix.$dbtablename.' DROP INDEX '.$dropindex.';';
+                            $SQL1 = 'ALTER TABLE '.$CFG->prefix.$dbtablename.' DROP INDEX '.$CFG->prefix.$dropindex.';'; // see bug 5205
                             if ($debug) {
                                 $db->debug=999;
                             }
-                            execute_sql($SQL, $debug);
+                            execute_sql($SQL, false); // see bug 5205
+                            execute_sql($SQL1, false); // see bug 5205
+
                             if ($debug) {
                                 $db->debug=0;
                             }
-                        } else if ($dropprimary) {    //drop primary key
+                        } else if ($dropprimary) {    // drop primary key
                             $SQL = 'ALTER TABLE '.$CFG->prefix.$dbtablename.' DROP PRIMARY KEY;';
                             if ($debug) {
                                 $db->debug=999;
@@ -369,9 +375,13 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
                             }
                         }
 
-                        /*********************************
-                         * Change column encoding 2 phase*
-                         *********************************/
+                        /* Change to longblob, serves 2 purposes:
+                           1. column loses encoding, so when we finally change it to unicode,
+                              mysql does not do a double convertion
+                           2. longblobs puts no limit (ok, not really but it's large enough)
+                              to handle most of the problems such as in bug 5194
+                        */
+                           
                         $SQL = 'ALTER TABLE '.$CFG->prefix.$dbtablename;
                         $SQL.= ' CHANGE '.$fieldname.' '.$fieldname.' LONGBLOB';
 
@@ -392,10 +402,6 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
                         }
                         
                     }
-
-
-
-
 
                     $patterns[]='/RECORDID/';    //for preg_replace
                     $patterns[]='/\{\$CFG\-\>prefix\}/i';    //same here
