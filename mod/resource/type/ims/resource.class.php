@@ -548,7 +548,7 @@ class resource_ims extends resource_base {
         }
         
     /// prints iframe filled with $fullurl
-        echo "<iframe id=\"".$contentframe."\" name=\"".$contentframe."\" src=\"{$fullurl}\"></iframe>"; //Content frame
+        echo "<iframe id=\"".$contentframe."\" name=\"".$contentframe."\" src=\"{$fullurl}\">Your browser does not support inline frames or is currently configured not to display inline frames. Content can be viewed at {$fullurl}</iframe>"; //Content frame
         echo '</div>';
     }
 
@@ -750,6 +750,7 @@ class resource_ims extends resource_base {
         $currlevel = 0;
         $currorder = 0;
         $endlevel  = 0;
+        $openlielement = false;
         foreach ($items as $item) {
             if (!is_object($item)) {
                 continue;
@@ -773,10 +774,16 @@ class resource_ims extends resource_base {
             /// Start Level 
                 if ($item->level > $currlevel) {
                     $contents .= '<ol class="listlevel_'.$item->level.'">';
+                    $openlielement = false;
                 }
             /// End Level
                 if ($item->level < $currlevel) {
+                    $contents .= '</li>';
                     $contents .= '</ol>';
+                }
+            /// If we have some openlielement, just close it
+                if ($openlielement) {
+                    $contents .= '</li>';
                 }
             /// Add item
                 $contents .= '<li>';
@@ -787,8 +794,8 @@ class resource_ims extends resource_base {
                 } else {
                     $contents .= $item->title;
                 }
-                $contents .= '</li>';
                 $currlevel = $item->level;
+                $openlielement = true;
                 continue;
             }
         /// We have reached endlevel, exit
@@ -796,7 +803,11 @@ class resource_ims extends resource_base {
                 break;
             }
         }
-        $contents .= '</ol>';
+    /// Close up to $endlevel
+        for ($i=$currlevel;$i>$endlevel;$i--) {
+            $contents .= '</li>';
+            $contents .= '</ol>';
+        }
 
         return $contents;
     }
