@@ -287,15 +287,15 @@ CREATE TABLE prefix_question_states (
 -- --------------------------------------------------------
 
 
-INSERT INTO prefix_log_display VALUES ('quiz', 'add', 'quiz', 'name');
-INSERT INTO prefix_log_display VALUES ('quiz', 'update', 'quiz', 'name');
-INSERT INTO prefix_log_display VALUES ('quiz', 'view', 'quiz', 'name');
-INSERT INTO prefix_log_display VALUES ('quiz', 'report', 'quiz', 'name');
-INSERT INTO prefix_log_display VALUES ('quiz', 'attempt', 'quiz', 'name');
-INSERT INTO prefix_log_display VALUES ('quiz', 'submit', 'quiz', 'name');
-INSERT INTO prefix_log_display VALUES ('quiz', 'review', 'quiz', 'name');
-INSERT INTO prefix_log_display VALUES ('quiz', 'editquestions', 'quiz', 'name');
-INSERT INTO prefix_log_display VALUES ('quiz', 'preview', 'quiz', 'name');
-INSERT INTO prefix_log_display VALUES ('quiz', 'start attempt', 'quiz', 'name');
-INSERT INTO prefix_log_display VALUES ('quiz', 'close attempt', 'quiz', 'name');
-INSERT INTO prefix_log_display VALUES ('quiz', 'continue attempt', 'quiz', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('quiz', 'add', 'quiz', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('quiz', 'update', 'quiz', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('quiz', 'view', 'quiz', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('quiz', 'report', 'quiz', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('quiz', 'attempt', 'quiz', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('quiz', 'submit', 'quiz', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('quiz', 'review', 'quiz', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('quiz', 'editquestions', 'quiz', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('quiz', 'preview', 'quiz', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('quiz', 'start attempt', 'quiz', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('quiz', 'close attempt', 'quiz', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('quiz', 'continue attempt', 'quiz', 'name');

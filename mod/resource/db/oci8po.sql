@@ -41,5 +41,5 @@ rem Dumping data for table log_display
 rem
 
 delete from prefix_log_display where module = 'resource';
-INSERT INTO prefix_log_display VALUES ('resource', 'view', 'resource', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('resource', 'view', 'resource', 'name');
 select * from prefix_log_display where module = 'resource';

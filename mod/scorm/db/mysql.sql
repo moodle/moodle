@@ -71,7 +71,7 @@ CREATE TABLE prefix_scorm_scoes_track (
 # Dumping data for table log_display
 #
 
-INSERT INTO prefix_log_display VALUES ('scorm', 'view', 'scorm', 'name');
-INSERT INTO prefix_log_display VALUES ('scorm', 'review', 'scorm', 'name');
-INSERT INTO prefix_log_display VALUES ('scorm', 'update', 'scorm', 'name');
-INSERT INTO prefix_log_display VALUES ('scorm', 'add', 'scorm', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('scorm', 'view', 'scorm', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('scorm', 'review', 'scorm', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('scorm', 'update', 'scorm', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('scorm', 'add', 'scorm', 'name');

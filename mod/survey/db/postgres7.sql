@@ -193,10 +193,10 @@ SELECT setval('prefix_survey_questions_id_seq', (select max(id) from prefix_surv
 # Dumping data for table log_display
 #
 
-INSERT INTO prefix_log_display VALUES ('survey', 'add', 'survey', 'name');
-INSERT INTO prefix_log_display VALUES ('survey', 'update', 'survey', 'name');
-INSERT INTO prefix_log_display VALUES ('survey', 'download', 'survey', 'name');
-INSERT INTO prefix_log_display VALUES ('survey', 'view form', 'survey', 'name');
-INSERT INTO prefix_log_display VALUES ('survey', 'view graph', 'survey', 'name');
-INSERT INTO prefix_log_display VALUES ('survey', 'view report', 'survey', 'name');
-INSERT INTO prefix_log_display VALUES ('survey', 'submit', 'survey', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('survey', 'add', 'survey', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('survey', 'update', 'survey', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('survey', 'download', 'survey', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('survey', 'view form', 'survey', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('survey', 'view graph', 'survey', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('survey', 'view report', 'survey', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('survey', 'submit', 'survey', 'name');

@@ -177,11 +177,11 @@ CREATE TABLE `prefix_workshop_comments` (
         
         
 
-INSERT INTO `prefix_log_display` VALUES ('workshop', 'assessments', 'workshop', 'name');
-INSERT INTO `prefix_log_display` VALUES ('workshop', 'close', 'workshop', 'name');
-INSERT INTO `prefix_log_display` VALUES ('workshop', 'display', 'workshop', 'name');
-INSERT INTO `prefix_log_display` VALUES ('workshop', 'resubmit', 'workshop', 'name');
-INSERT INTO `prefix_log_display` VALUES ('workshop', 'set up', 'workshop', 'name');
-INSERT INTO `prefix_log_display` VALUES ('workshop', 'submissions', 'workshop', 'name');
-INSERT INTO `prefix_log_display` VALUES ('workshop', 'view', 'workshop', 'name');
-INSERT INTO `prefix_log_display` VALUES ('workshop', 'update', 'workshop', 'name');
+INSERT INTO `prefix_log_display` (module, action, mtable, field) VALUES ('workshop', 'assessments', 'workshop', 'name');
+INSERT INTO `prefix_log_display` (module, action, mtable, field) VALUES ('workshop', 'close', 'workshop', 'name');
+INSERT INTO `prefix_log_display` (module, action, mtable, field) VALUES ('workshop', 'display', 'workshop', 'name');
+INSERT INTO `prefix_log_display` (module, action, mtable, field) VALUES ('workshop', 'resubmit', 'workshop', 'name');
+INSERT INTO `prefix_log_display` (module, action, mtable, field) VALUES ('workshop', 'set up', 'workshop', 'name');
+INSERT INTO `prefix_log_display` (module, action, mtable, field) VALUES ('workshop', 'submissions', 'workshop', 'name');
+INSERT INTO `prefix_log_display` (module, action, mtable, field) VALUES ('workshop', 'view', 'workshop', 'name');
+INSERT INTO `prefix_log_display` (module, action, mtable, field) VALUES ('workshop', 'update', 'workshop', 'name');
