@@ -29,7 +29,7 @@ function authorize_print_orders()
     }
 
     $baseurl = $CFG->wwwroot."/enrol/authorize/index.php?user=$userid";
-    $statusmenu = array(AN_STATUS_NONE => get_string('all'),
+    $statusmenu = array(AN_STATUS_NONE => $strs->all,
                         AN_STATUS_AUTH => $authstrs->authorizedpendingcapture,
                         AN_STATUS_AUTHCAPTURE => $authstrs->authcaptured,
                         AN_STATUS_CREDIT => $authstrs->refunded,

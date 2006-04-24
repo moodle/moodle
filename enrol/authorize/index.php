@@ -15,8 +15,8 @@
         error("Guests cannot use this page.");
     }
 
-/// Load strings. All strings should be defined here. lib.php uses these strings.
-    $strs = get_strings(array('user','status','action','delete','time','course','confirm','yes','no','none','error'));
+/// Load strings. All strings should be defined here. locallib.php uses these strings.
+    $strs = get_strings(array('user','status','action','delete','time','course','confirm','yes','no','all','none','error'));
     $authstrs = get_strings(array('paymentmanagement','orderid','void','capture','refund','delete',
                 'authcaptured','authorizedpendingcapture','capturedpendingsettle','capturedsettled',
                 'settled','refunded','cancelled','expired','tested',
