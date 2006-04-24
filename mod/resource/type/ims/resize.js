@@ -62,7 +62,7 @@ function resizeiframe (hasNav) {
                         footerHeight + 
                         imsnavHeight +
                         topMargin +
-                        bottomMargin;
+                        bottomMargin + 20; // +20 to save a minor vertical scroll always present!
 
     if (hasNav == true) {
         var navBarWidth = document.getElementById('ims-menudiv').offsetWidth;
@@ -70,7 +70,7 @@ function resizeiframe (hasNav) {
         document.getElementById('ims-menudiv').style.height = (winHeight - totalHeight)+'px';
     }
     else {
-        var iframeWidth = '99%';
+        var iframeWidth = (winWidth - 25)+'px';
     }
 
     if (hasNav == true) {

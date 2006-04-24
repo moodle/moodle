@@ -458,14 +458,8 @@ class resource_ims extends resource_base {
             }
         /// content - this produces everything else
             $this->print_ims($cm, $course, $items, $resource, $page);
-        /// moodle footer. no footer if it's in a popup - save space.
-            if ($resource->popup) {
-            	echo "</div></div></body></html>";
-            }
-            else {
-            /// Putting the footer inside one div to be able to handle it
-            	print_footer();
-            }
+        /// no Moodle footer (because we cannot insert there the resize script).
+          	echo "</div></div><script type=\"text/javascript\">resizeiframe($jsarg);</script></body></html>";
 
         /// log it.
             add_to_log($course->id, "resource", "view", "view.php?id={$cm->id}", $resource->id, $cm->id);
@@ -554,7 +548,7 @@ class resource_ims extends resource_base {
         }
         
     /// prints iframe filled with $fullurl
-        echo "<iframe id=\"".$contentframe."\" name=\"ims-contentframe\" src=\"{$fullurl}\"></iframe>"; //Content frame
+        echo "<iframe id=\"".$contentframe."\" name=\"".$contentframe."\" src=\"{$fullurl}\"></iframe>"; //Content frame
         echo '</div>';
     }
 
