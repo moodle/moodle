@@ -1492,7 +1492,7 @@ function main_upgrade($oldversion=0) {
         table_column('course_modules','','visibleold','integer','1','unsigned','1','not null', 'visible');
     }
 
-    if ($oldversion < 2006042000) {
+    if ($oldversion < 2006042400) {
         // Look through table log_display and get rid of duplicates.
         $rs = get_recordset_sql('SELECT DISTINCT * FROM '.$CFG->prefix.'log_display');
         
