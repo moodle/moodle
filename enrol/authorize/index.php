@@ -2,6 +2,7 @@
 
 /// Load libraries
     require_once '../../config.php';
+    define('USE_AN_LOCALLIB', true);
     require_once 'locallib.php';
 
 /// Get site

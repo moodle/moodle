@@ -1,5 +1,7 @@
 <?PHP // $Id$
 
+defined('USE_AN_LOCALLIB') or die('Locallib.php can be only used by index.php');
+
 require_once '../../config.php';
 require_once $CFG->dirroot.'/enrol/authorize/const.php';
 require_once $CFG->dirroot.'/enrol/authorize/action.php';
