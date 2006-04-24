@@ -29,7 +29,7 @@
     }
 
     // Handle generator options...
-    $olddatasetdefs = $datasetdefs;
+    $olddatasetdefs = clone($datasetdefs);
     $datasetdefs = $this->update_dataset_options($olddatasetdefs, $form);
     $maxnumber = -1;
     $datasets = empty($form->dataset) ? $form->definition : $form->dataset;
