@@ -837,7 +837,7 @@ function get_user_lang($userid) {
 
 // a placeholder for now
 function log_the_problem_somewhere() {  //Eloy: Nice function, perhaps we could use it, perhpas no. :-)
-    global $CFG;
+    global $CFG, $dbtablename, $fieldname, $recordid;
     if ($CFG->debug>7) {
         echo "<br />Problem converting: $dbtablename -> $fieldname -> $recordid!";
     }
