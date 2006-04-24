@@ -84,7 +84,7 @@ function main_upgrade($oldversion=0) {
     if ($oldversion < 2002101701) {
         execute_sql(" ALTER TABLE `reading` RENAME `resource` ");  // Small line with big consequences!
         execute_sql(" DELETE FROM `log_display` WHERE module = 'reading'");
-        execute_sql(" INSERT INTO log_display VALUES ('resource', 'view', 'resource', 'name') ");
+        execute_sql(" INSERT INTO log_display (module, action, mtable, field) VALUES ('resource', 'view', 'resource', 'name') ");
         execute_sql(" UPDATE log SET module = 'resource' WHERE module = 'reading' ");
         execute_sql(" UPDATE modules SET name = 'resource' WHERE name = 'reading' ");
     }
@@ -230,7 +230,7 @@ function main_upgrade($oldversion=0) {
 
     if ($oldversion < 2002122700) {
         if (! record_exists("log_display", "module", "user", "action", "view")) {
-            execute_sql("INSERT INTO {$CFG->prefix}log_display VALUES ('user', 'view', 'user', 'CONCAT(firstname,' ',lastname)') ");
+            execute_sql("INSERT INTO {$CFG->prefix}log_display (module, action, mtable, field) VALUES ('user', 'view', 'user', 'CONCAT(firstname,' ',lastname)') ");
         }
     }
     if ($oldversion < 2003010101) {
@@ -1077,8 +1077,8 @@ function main_upgrade($oldversion=0) {
                                UNIQUE KEY `usercontact` (`userid`,`contactid`)
                              ) TYPE=MyISAM COMMENT='Maintains lists of relationships between users';");
 
-        modify_database('', "INSERT INTO prefix_log_display VALUES ('message', 'write', 'user', 'CONCAT(firstname,\" \",lastname)'); ");
-        modify_database('', "INSERT INTO prefix_log_display VALUES ('message', 'read', 'user', 'CONCAT(firstname,\" \",lastname)'); ");
+        modify_database('', "INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('message', 'write', 'user', 'CONCAT(firstname,\" \",lastname)'); ");
+        modify_database('', "INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('message', 'read', 'user', 'CONCAT(firstname,\" \",lastname)'); ");
     }
 
     if ($oldversion < 2004122801) {
@@ -1087,10 +1087,10 @@ function main_upgrade($oldversion=0) {
     }
 
     if ($oldversion < 2005010100) {
-        modify_database('', "INSERT INTO prefix_log_display VALUES ('message', 'add contact', 'user', 'CONCAT(firstname,\" \",lastname)'); ");
-        modify_database('', "INSERT INTO prefix_log_display VALUES ('message', 'remove contact', 'user', 'CONCAT(firstname,\" \",lastname)'); ");
-        modify_database('', "INSERT INTO prefix_log_display VALUES ('message', 'block contact', 'user', 'CONCAT(firstname,\" \",lastname)'); ");
-        modify_database('', "INSERT INTO prefix_log_display VALUES ('message', 'unblock contact', 'user', 'CONCAT(firstname,\" \",lastname)'); ");
+        modify_database('', "INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('message', 'add contact', 'user', 'CONCAT(firstname,\" \",lastname)'); ");
+        modify_database('', "INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('message', 'remove contact', 'user', 'CONCAT(firstname,\" \",lastname)'); ");
+        modify_database('', "INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('message', 'block contact', 'user', 'CONCAT(firstname,\" \",lastname)'); ");
+        modify_database('', "INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('message', 'unblock contact', 'user', 'CONCAT(firstname,\" \",lastname)'); ");
     }
 
     if ($oldversion < 2005011000) {     // Create a .htaccess file in dataroot, just in case

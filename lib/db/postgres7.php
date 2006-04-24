@@ -849,8 +849,8 @@ function main_upgrade($oldversion=0) {
                             CREATE INDEX prefix_message_contacts_useridcontactid_idx ON prefix_message_contacts (userid,contactid);
                             ");
 
-        modify_database('',"INSERT INTO prefix_log_display VALUES ('message', 'write', 'user', 'firstname||\' \'||lastname');
-                            INSERT INTO prefix_log_display VALUES ('message', 'read', 'user', 'firstname||\' \'||lastname');
+        modify_database('',"INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('message', 'write', 'user', 'firstname||\' \'||lastname');
+                            INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('message', 'read', 'user', 'firstname||\' \'||lastname');
                             ");
     }
 
@@ -861,10 +861,10 @@ function main_upgrade($oldversion=0) {
        
                                 
     if ($oldversion < 2005010100) {
-        modify_database('',"INSERT INTO prefix_log_display VALUES ('message', 'add contact', 'user', 'firstname||\' \'||lastname');
-                            INSERT INTO prefix_log_display VALUES ('message', 'remove contact', 'user', 'firstname||\' \'||lastname');
-                            INSERT INTO prefix_log_display VALUES ('message', 'block contact', 'user', 'firstname||\' \'||lastname');
-                            INSERT INTO prefix_log_display VALUES ('message', 'unblock contact', 'user', 'firstname||\' \'||lastname');
+        modify_database('',"INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('message', 'add contact', 'user', 'firstname||\' \'||lastname');
+                            INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('message', 'remove contact', 'user', 'firstname||\' \'||lastname');
+                            INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('message', 'block contact', 'user', 'firstname||\' \'||lastname');
+                            INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('message', 'unblock contact', 'user', 'firstname||\' \'||lastname');
                             ");
     }
 
