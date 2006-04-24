@@ -20,7 +20,7 @@
     $authstrs = get_strings(array('paymentmanagement','orderid','void','capture','refund','delete',
                 'authcaptured','authorizedpendingcapture','capturedpendingsettle','capturedsettled',
                 'settled','refunded','cancelled','expired','tested',
-                'transid','settlementdate','notsettled','amount','returns','noreturns',
+                'transid','settlementdate','notsettled','amount',
                 'howmuch','captureyes','unenrolstudent'), 'enrol_authorize');
 
 /// Print header
