@@ -1492,6 +1492,38 @@ function main_upgrade($oldversion=0) {
         table_column('course_modules','','visibleold','integer','1','unsigned','1','not null', 'visible');
     }
 
+    if ($oldversion < 2006042000) {
+        // Look through table log_display and get rid of duplicates.
+        $rs = get_recordset_sql('SELECT DISTINCT * FROM '.$CFG->prefix.'log_display');
+        
+        // Drop the log_display table and create it back with an id field.
+        execute_sql("DROP TABLE {$CFG->prefix}log_display", false);
+        
+        modify_database('', "CREATE TABLE prefix_log_display (
+                               id SERIAL PRIMARY KEY,
+                               module varchar(30) NOT NULL default '',
+                               action varchar(40) NOT NULL default '',
+                               mtable varchar(30) NOT NULL default '',
+                               field varchar(50) NOT NULL default '')");
+        
+        // Add index to ensure that module and action combination is unique.
+        modify_database('', 'CREATE INDEX prefix_log_display_moduleaction ON prefix_log_display (module,action)');
+        
+        // Insert the records back in, sans duplicates.
+        if ($rs && $rs->RecordCount() > 0) {
+            while (!$rs->EOF) {
+                $sql = "INSERT INTO {$CFG->prefix}log_display ".
+                            "VALUES('', '".$rs->fields['module']."', ".
+                            "'".$rs->fields['action']."', ".
+                            "'".$rs->fields['mtable']."', ".
+                            "'".$rs->fields['field']."')";
+                
+                execute_sql($sql, false);
+                $rs->MoveNext();
+            }
+        }
+    }
+
     return $result;
 }
 

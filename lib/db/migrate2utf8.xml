@@ -208,10 +208,10 @@
     </TABLE>
     <TABLE name="log_display">
       <FIELDS>
-        <FIELD name="module" method="NO_CONV" type="varchar" length="20" />
-        <FIELD name="action" method="NO_CONV" type="varchar" length="20" />
-        <FIELD name="mtable" method="NO_CONV" type="varchar" length="20" />
-        <FIELD name="field" method="NO_CONV" type="varchar" length="40" />
+        <FIELD name="mtable" method="NO_CONV" type="varchar" length="30" dropindex="moduleaction"/>
+        <FIELD name="field" method="NO_CONV" type="varchar" length="50" />
+        <FIELD name="module" method="NO_CONV" type="varchar" length="30" />
+        <FIELD name="action" method="NO_CONV" type="varchar" length="40" addindex="moduleaction(module(30), action(40))"/>
       </FIELDS>
     </TABLE>
     <TABLE name="message_contacts" />

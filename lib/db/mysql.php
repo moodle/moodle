@@ -1794,6 +1794,40 @@ function main_upgrade($oldversion=0) {
         table_column('user','lastname','lastname','varchar','100','','','not null');
     }
     
+    if ($oldversion < 2006042000) {
+        // Look through table log_display and get rid of duplicates.
+        $rs = get_recordset_sql('SELECT DISTINCT * FROM '.$CFG->prefix.'log_display');
+        
+        // Drop the log_display table and create it back with an id field.
+        execute_sql("DROP TABLE {$CFG->prefix}log_display", false);
+        
+        modify_database('', "CREATE TABLE prefix_log_display (
+                               `id` int(10) unsigned NOT NULL auto_increment,
+                               `module` varchar(30),
+                               `action` varchar(40),
+                               `mtable` varchar(30),
+                               `field` varchar(50),
+                               PRIMARY KEY (`id`)
+                               ) TYPE=MyISAM");
+        
+        // Add index to ensure that module and action combination is unique.
+        modify_database('', "ALTER TABLE prefix_log_display ADD UNIQUE `moduleaction`(`module` , `action`)");
+        
+        // Insert the records back in, sans duplicates.
+        if ($rs && $rs->RecordCount() > 0) {
+            while (!$rs->EOF) {
+                $sql = "INSERT INTO {$CFG->prefix}log_display ".
+                            "VALUES('', '".$rs->fields['module']."', ".
+                            "'".$rs->fields['action']."', ".
+                            "'".$rs->fields['mtable']."', ".
+                            "'".$rs->fields['field']."')";
+                
+                execute_sql($sql, false);
+                $rs->MoveNext();
+            }
+        }
+    }
+    
     return $result;
 }
 

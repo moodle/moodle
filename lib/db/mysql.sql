@@ -432,11 +432,13 @@ CREATE TABLE `prefix_log` (
 #
 
 CREATE TABLE `prefix_log_display` (
+  `id` int(10) unsigned NOT NULL auto_increment,
   `module` varchar(20) NOT NULL default '',
   `action` varchar(20) NOT NULL default '',
   `mtable` varchar(20) NOT NULL default '',
   `field` varchar(40) NOT NULL default ''
 ) TYPE=MyISAM COMMENT='For a particular module/action, specifies a moodle table/field.';
+ALTER TABLE prefix_log_display ADD UNIQUE `moduleaction`(`module` , `action`);
 # --------------------------------------------------------
 
 #

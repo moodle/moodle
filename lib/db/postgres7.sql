@@ -271,11 +271,13 @@ CREATE INDEX prefix_log_userid_idx ON prefix_log (userid);
 CREATE INDEX prefix_log_info_idx ON prefix_log (info);
 
 CREATE TABLE prefix_log_display (
-   module varchar(20) NOT NULL default '',
-   action varchar(20) NOT NULL default '',
-   mtable varchar(20) NOT NULL default '',
-   field varchar(40) NOT NULL default ''
+   id SERIAL PRIMARY KEY,
+   module varchar(30) NOT NULL default '',
+   action varchar(40) NOT NULL default '',
+   mtable varchar(30) NOT NULL default '',
+   field varchar(50) NOT NULL default ''
 );
+CREATE INDEX prefix_log_display_moduleaction ON prefix_log_display (module,action);
 
 CREATE TABLE prefix_message (
    id SERIAL PRIMARY KEY,
