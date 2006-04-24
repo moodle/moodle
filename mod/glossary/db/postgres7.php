@@ -159,7 +159,7 @@ function glossary_upgrade($oldversion) {
   }
 
   if ($oldversion < 2005031001) {
-      modify_database('',"INSERT INTO prefix_log_display VALUES ('glossary', 'view entry', 'glossary_entries', 'concept');");
+      modify_database('',"INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('glossary', 'view entry', 'glossary_entries', 'concept');");
   }
 
     if ($oldversion < 2005041100) { // replace wiki-like with markdown

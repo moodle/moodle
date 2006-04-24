@@ -148,18 +148,18 @@ CREATE TABLE prefix_glossary_ratings (
 # Dumping data for table `log_display`
 #
 
-INSERT INTO prefix_log_display VALUES ('glossary', 'add', 'glossary', 'name');
-INSERT INTO prefix_log_display VALUES ('glossary', 'update', 'glossary', 'name');
-INSERT INTO prefix_log_display VALUES ('glossary', 'view', 'glossary', 'name');
-INSERT INTO prefix_log_display VALUES ('glossary', 'view all', 'glossary', 'name');
-INSERT INTO prefix_log_display VALUES ('glossary', 'add entry', 'glossary', 'name');
-INSERT INTO prefix_log_display VALUES ('glossary', 'update entry', 'glossary', 'name');
-INSERT INTO prefix_log_display VALUES ('glossary', 'add category', 'glossary', 'name');
-INSERT INTO prefix_log_display VALUES ('glossary', 'update category', 'glossary', 'name');
-INSERT INTO prefix_log_display VALUES ('glossary', 'delete category', 'glossary', 'name');
-INSERT INTO prefix_log_display VALUES ('glossary', 'add comment', 'glossary', 'name');
-INSERT INTO prefix_log_display VALUES ('glossary', 'update comment', 'glossary', 'name');
-INSERT INTO prefix_log_display VALUES ('glossary', 'delete comment', 'glossary', 'name');
-INSERT INTO prefix_log_display VALUES ('glossary', 'approve entry', 'glossary', 'name');
-INSERT INTO prefix_log_display VALUES ('glossary', 'view entry', 'glossary_entries', 'concept');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('glossary', 'add', 'glossary', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('glossary', 'update', 'glossary', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('glossary', 'view', 'glossary', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('glossary', 'view all', 'glossary', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('glossary', 'add entry', 'glossary', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('glossary', 'update entry', 'glossary', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('glossary', 'add category', 'glossary', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('glossary', 'update category', 'glossary', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('glossary', 'delete category', 'glossary', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('glossary', 'add comment', 'glossary', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('glossary', 'update comment', 'glossary', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('glossary', 'delete comment', 'glossary', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('glossary', 'approve entry', 'glossary', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('glossary', 'view entry', 'glossary_entries', 'concept');
 
