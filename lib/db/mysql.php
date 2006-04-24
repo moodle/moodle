@@ -1832,7 +1832,7 @@ function main_upgrade($oldversion=0) {
     if ($oldversion < 2006042401) {
         table_column('tags','type','type','varchar','20','','','not null');
         modify_database('',"ALTER TABLE prefix_tags ADD INDEX tags_typeuserid_idx (type(20), userid)");
-        modify_database('',"ALTER TABLE prefix_tags ADD INDEX tags_text(text(255))");
+        modify_database('',"ALTER TABLE prefix_tags ADD INDEX tags_text_idx(text(255))");
     }
 
     return $result;

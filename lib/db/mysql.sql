@@ -880,7 +880,7 @@ CREATE TABLE prefix_tags (
   `userid` int(10) NOT NULL default '0',
   `text` varchar(20) NOT NULL default '',
   KEY `tags_typeuserid_idx` (`type`, `userid`),
-  KEY `tags_text` (`text`);
+  KEY `tags_text_idx` (`text`);
   PRIMARY KEY  (`id`)
 ) TYPE=MyISAM COMMENT ='tags structure for moodle.';
 
