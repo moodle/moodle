@@ -425,7 +425,7 @@ function authorize_print_order_details($orderno)
         $table->data[] = array("<b>$strs->action</b>", $actions);
         print_table($table);
         if ($settled) { // show refunds.
-            echo "<h4>" . get_string('returns', 'enrol_authorize') . "</h4>\n";
+            echo "<h4>" . $authstrs->returns . "</h4>\n";
             $t2->size = array('15%', '15%', '20%', '35%', '15%');
             $t2->align = array('right', 'right', 'right', 'left', 'right');
             $t2->head = array($authstrs->transid,
@@ -455,7 +455,7 @@ function authorize_print_order_details($orderno)
                 }
             }
             else {
-                $t2->data[] = array(get_string('noreturns', 'enrol_authorize'));
+                $t2->data[] = $authstrs->noreturns;
             }
             print_table($t2);
         }
