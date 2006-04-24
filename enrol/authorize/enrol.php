@@ -413,7 +413,7 @@ class enrolment_plugin_authorize
         }
 
         if (empty($CFG->loginhttps)) {
-            notify('$CFG->loginhttps must be ON');
+            notify('loginhttps must be ON');
         }
 
         if (!empty($frm->an_review)) {
