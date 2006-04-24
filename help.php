@@ -150,5 +150,8 @@
     close_window_button();
 
     echo '<p align="center"><a href="help.php?file=index.html">'. get_string('helpindex') .'</a></p>';
+
+    $CFG->docroot = '';   // We don't want a doc link here
+
     print_footer('none');
 ?>
