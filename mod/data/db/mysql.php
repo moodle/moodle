@@ -30,13 +30,13 @@ function data_upgrade($oldversion) {
     }
     
     if ($oldversion < 2006030700) {
-        modify_database('', "INSERT INTO prefix_log_display VALUES ('data', 'add', 'data', 'name')");
-        modify_database('', "INSERT INTO prefix_log_display VALUES ('data', 'update', 'data', 'name')");
-        modify_database('', "INSERT INTO prefix_log_display VALUES ('data', 'record delete', 'data', 'name')");
-        modify_database('', "INSERT INTO prefix_log_display VALUES ('data', 'fields add', 'data_fields', 'name')");
-        modify_database('', "INSERT INTO prefix_log_display VALUES ('data', 'fields update', 'data_fields', 'name')");
-        modify_database('', "INSERT INTO prefix_log_display VALUES ('data', 'templates saved', 'data', 'name')");
-        modify_database('', "INSERT INTO prefix_log_display VALUES ('data', 'templates def', 'data', 'name')");
+        modify_database('', "INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('data', 'add', 'data', 'name')");
+        modify_database('', "INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('data', 'update', 'data', 'name')");
+        modify_database('', "INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('data', 'record delete', 'data', 'name')");
+        modify_database('', "INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('data', 'fields add', 'data_fields', 'name')");
+        modify_database('', "INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('data', 'fields update', 'data_fields', 'name')");
+        modify_database('', "INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('data', 'templates saved', 'data', 'name')");
+        modify_database('', "INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('data', 'templates def', 'data', 'name')");
     }
     
     if ($oldversion < 2006032700) {

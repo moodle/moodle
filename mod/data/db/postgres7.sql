@@ -89,11 +89,11 @@ CREATE TABLE prefix_data_ratings (
   rating int4 NOT NULL default '0'
 );
 
-INSERT INTO prefix_log_display VALUES ('data', 'view', 'data', 'name');
-INSERT INTO prefix_log_display VALUES ('data', 'add', 'data', 'name');
-INSERT INTO prefix_log_display VALUES ('data', 'update', 'data', 'name');
-INSERT INTO prefix_log_display VALUES ('data', 'record delete', 'data', 'name');
-INSERT INTO prefix_log_display VALUES ('data', 'fields add', 'data_fields', 'name');
-INSERT INTO prefix_log_display VALUES ('data', 'fields update', 'data_fields', 'name');
-INSERT INTO prefix_log_display VALUES ('data', 'templates saved', 'data', 'name');
-INSERT INTO prefix_log_display VALUES ('data', 'templates def', 'data', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('data', 'view', 'data', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('data', 'add', 'data', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('data', 'update', 'data', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('data', 'record delete', 'data', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('data', 'fields add', 'data_fields', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('data', 'fields update', 'data_fields', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('data', 'templates saved', 'data', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('data', 'templates def', 'data', 'name');
