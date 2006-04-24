@@ -74,7 +74,7 @@
         
         foreach ($items as $item) {
             if ($item->type == 'deployed') {
-                echo "<li><img src='images/ims.gif' /> $item->name (<a href=\"javascript:
+                echo "<li><img src=\"images/ims.gif\" alt=\"IMS CP Package\" /> $item->name (<a href=\"javascript:
                         opener.document.forms['form'].reference.value = '#$item->path'; 
                         opener.document.forms['form'].name.value = '$item->name'; 
                         window.close();
@@ -83,11 +83,11 @@
             else if ($item->type == 'not deployed') {
             /// Only displays non-deployed IMS CP's if admin user.
                 if (isadmin()) {
-                    echo "<li><img src='images/ims.gif' /> <em>$item->path - $strnotdeployed</em> (<a href=\"repository_deploy.php?file=$item->path\">$strdeploy</a>)</li>\n";
+                    echo "<li><img src=\"images/ims.gif\" alt=\"IMS CP Package\" /> <em>$item->path - $strnotdeployed</em> (<a href=\"repository_deploy.php?file=$item->path\">$strdeploy</a>)</li>\n";
                 }
             }
             else if ($item->type == 'directory') {
-                echo "<li><img src='images/dir.gif' /> <a href=\"?directory=$item->path\">$item->name</a></li>\n";
+                echo "<li><img src=\"images/dir.gif\" alt=\"IMS CP Package\" /> <a href=\"?directory=$item->path\">$item->name</a></li>\n";
             }
         }
     }
@@ -111,13 +111,13 @@
             return;
         }
         else {
-            $output = "<a href=\"?directory=\">$strrepository</a> » ";
+            $output = "<a href=\"?directory=\">$strrepository</a> &#187; ";
         }
         $itemdir = '';
         foreach ($arr as $item) {
             if ($item == '') continue;
             $itemdir .= '/'.$item;
-            $output .= "<a href=\"?directory=$itemdir\">$item</a> » ";
+            $output .= "<a href=\"?directory=$itemdir\">$item</a> &#187; ";
         }
         $output .= $last;
         echo $output;

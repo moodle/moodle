@@ -45,90 +45,46 @@
         $direction = ' dir="ltr"';
     }
 
+/// Conditional argument to pass to IMS JavaScript. Need to be global to retrieve it from our custom javascript! :-(
+    global $jsarg;
+    $jsarg = 'true';
+/// Define $CFG->javascript to use our custom javascript. Save the original one to add it from ours. Global too! :-(
+    global $standard_javascript;
+    $standard_javascript = $CFG->javascript;  // Save original javascript file
+    $CFG->javascript = $CFG->dirroot.'/mod/resource/type/ims/javascript.php';  //Use our custom IMS javascript code
+
 /// The output here
 
-    echo "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Frameset//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd\">\n";
-    echo "<html$direction>\n";
-    echo '<head>';
-    echo '<meta http-equiv="content-type" content="text/html; charset='.$encoding.'" />';
-    echo "
-    <script type=\"text/javascript\" language=\"javascript\" src=\"dummy.js\"></script>
-    <script language=\"javascript\" type=\"text/javascript\">
-        function resizeiframe () {
-              var winWidth = 0, winHeight = 0;
-              if( typeof( window.innerWidth ) == 'number' ) {
-                //Non-IE
-                winWidth = window.innerWidth;
-                winHeight = window.innerHeight;
-              } else if( document.documentElement && ( document.documentElement.clientWidth || document.documentElement.clientHeight ) ) {
-                //IE 6+ in 'standards compliant mode'
-                winWidth = document.documentElement.clientWidth;
-                winHeight = document.documentElement.clientHeight;
-              } else if( document.body && ( document.body.clientWidth || document.body.clientHeight ) ) {
-                //IE 4 compatible
-                winWidth = document.body.clientWidth;
-                winHeight = document.body.clientHeight;
-              }
-
-            document.getElementById('ims-preview-contentframe').style.width = (winWidth - 300)+'px';
-            document.getElementById('ims-preview-contentframe').style.height = (winHeight)+'px';
-            document.getElementById('ims-preview-menudiv').style.height = (winHeight)+'px';
-            
-        }
-        
-        window.onresize = resizeiframe;
-        window.onload = resizeiframe;
-
-    </script>
-    <style type='text/css'>
-        #ims-preview-menudiv {
-            position:absolute;
-            top:0px;
-            left:0px;
-            width:300px;
-            height:100%;
-            overflow:auto;
-        }
-        
-        #ims-preview-contentframe {
-            position:absolute;
-            top:0px;
-            left:300px;
-            height:100%;
-            border:0;
-        }
-    </style>
-    ";
-    echo "<title>Preview</title></head>\n";
 /// moodle header
     print_header();
 /// content - this produces everything else
 
 /// adds side navigation bar if needed. must also adjust width of iframe to accomodate 
-    echo "<div id=\"ims-preview-menudiv\">";  preview_buttons($directory, $items['title']); echo preview_ims_generate_toc($items, $directory); echo "</div>";
+    echo "<div id=\"ims-menudiv\">";  preview_buttons($directory, $items['title']); echo preview_ims_generate_toc($items, $directory, 0, $page); echo "</div>";
     
     $fullurl = "$CFG->repositorywebroot/$directory/".$items[$page]->href;
 /// prints iframe filled with $fullurl ;width:".$iframewidth." missing also height=\"420px\"
-    echo "<iframe id=\"ims-preview-contentframe\" name=\"ims-preview-contentframe\" src=\"{$fullurl}\"></iframe>"; //Content frame 
+    echo "<iframe id=\"ims-contentframe\" name=\"ims-contentframe\" src=\"{$fullurl}\"></iframe>"; //Content frame 
 /// moodle footer
-    echo "</div></div></body></html>";
+    echo "</div></div><script type=\"text/javascript\">resizeiframe($jsarg);</script></body></html>";
     
     
     /*** This function will generate the TOC file for the package
      *   from an specified parent to be used in the view of the IMS
      */
-    function preview_ims_generate_toc($items, $directory, $page=0) {
+    function preview_ims_generate_toc($items, $directory, $page=0, $selected_page) {
         global $CFG;
 
         $contents = '';
 
     /// Configure links behaviour
-        $fullurl = '?directory='.$directory.'&page=';
+        $fullurl = '?directory='.$directory.'&amp;page=';
 
     /// Iterate over items to build the menu
         $currlevel = 0;
         $currorder = 0;
         $endlevel  = 0;
+        $openlielement = false;
         foreach ($items as $item) {
             if (!is_object($item)) {
                 continue;
@@ -152,20 +108,28 @@
             /// Start Level 
                 if ($item->level > $currlevel) {
                     $contents .= '<ol class="listlevel_'.$item->level.'">';
+                    $openlielement = false;
                 }
             /// End Level
                 if ($item->level < $currlevel) {
+                    $contents .= '</li>';
                     $contents .= '</ol>';
+                }
+            /// If we have some openlielement, just close it
+                if ($openlielement) {
+                    $contents .= '</li>';
                 }
             /// Add item
                 $contents .= '<li>';
                 if (!empty($item->href)) {
+                    if ($item->id == $selected_page) $contents .= '<div id="ims-toc-selected">';
                     $contents .= '<a href="'.$fullurl.$item->id.'" target="_parent">'.$item->title.'</a>';
+                    if ($item->id == $selected_page) $contents .= '</div>';
                 } else {
                     $contents .= $item->title;
                 }
-                $contents .= '</li>';
                 $currlevel = $item->level;
+                $openlielement = true;
                 continue;
             }
         /// We have reached endlevel, exit
@@ -173,7 +137,11 @@
                 break;
             }
         }
-        $contents .= '</ol>';
+    /// Close up to $endlevel
+        for ($i=$currlevel;$i>$endlevel;$i--) {
+            $contents .= '</li>';
+            $contents .= '</ol>';
+        }
 
         return $contents;
     }
