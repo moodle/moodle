@@ -214,6 +214,7 @@ function scorm_upgrade($oldversion) {
 
     if ($oldversion < 2006021400) {    //some people have this werid key - see bug 4742
         execute_sql("ALTER TABLE {$CFG->prefix}scorm_scoes_track DROP INDEX elemeny;",false);  // do it silently
+        execute_sql("ALTER TABLE {$CFG->prefix}scorm_scoes_track ADD INDEX element(element(255));",false);
     }
 
     return true;
