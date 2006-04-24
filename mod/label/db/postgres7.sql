@@ -8,5 +8,5 @@ CREATE TABLE prefix_label (
 
 CREATE INDEX prefix_label_course_idx ON prefix_label (course);
 
-INSERT INTO prefix_log_display VALUES ('label', 'add', 'quiz', 'name');
-INSERT INTO prefix_log_display VALUES ('label', 'update', 'quiz', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('label', 'add', 'quiz', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('label', 'update', 'quiz', 'name');

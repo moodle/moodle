@@ -22,9 +22,9 @@ function label_upgrade($oldversion) {
 
     if ($oldversion < 2004021900) {
 
-        modify_database("", "INSERT INTO prefix_log_display VALUES ('label', 'add', 'quiz', 'name');");
+        modify_database("", "INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('label', 'add', 'quiz', 'name');");
 
-        modify_database("", "INSERT INTO prefix_log_display VALUES ('label', 'update', 'quiz', 'name');");
+        modify_database("", "INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('label', 'update', 'quiz', 'name');");
 
     }
 

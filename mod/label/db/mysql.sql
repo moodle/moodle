@@ -8,5 +8,5 @@ CREATE TABLE `prefix_label` (
   KEY course (course)
 ) COMMENT='Defines labels';
 
-INSERT INTO prefix_log_display VALUES ('label', 'add', 'quiz', 'name');
-INSERT INTO prefix_log_display VALUES ('label', 'update', 'quiz', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('label', 'add', 'quiz', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('label', 'update', 'quiz', 'name');
