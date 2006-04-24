@@ -33,8 +33,8 @@
     </TABLE>
     <TABLE name="tags">
       <FIELDS>
-        <FIELD name="type" method="NO_CONV" type="varchar" length="255" />
-        <FIELD name="text" method="PHP_FUNCTION" type="varchar" length="255">
+        <FIELD name="type" method="NO_CONV" type="varchar" length="20" dropindex="tags_typeuserid_idx" addindex="tags_typeuserid_idx(type(20), userid)" />
+        <FIELD name="text" method="PHP_FUNCTION" type="varchar" length="255" dropindex="tags_text_idx" addindex="tags_text_idx(text(255))">
           <PHP_FUNCTION>
             migrate2utf8_tags_text(RECORDID)
           </PHP_FUNCTION>
