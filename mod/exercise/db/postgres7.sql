@@ -119,9 +119,9 @@ CREATE INDEX prefix_exercise_grades_exerciseid_idx ON prefix_exercise_grades (ex
 
         
 
-INSERT INTO prefix_log_display VALUES ('exercise', 'close', 'exercise', 'name');
-INSERT INTO prefix_log_display VALUES ('exercise', 'open', 'exercise', 'name');
-INSERT INTO prefix_log_display VALUES ('exercise', 'submit', 'exercise', 'name');
-INSERT INTO prefix_log_display VALUES ('exercise', 'view', 'exercise', 'name');
-INSERT INTO prefix_log_display VALUES ('exercise', 'update', 'exercise', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('exercise', 'close', 'exercise', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('exercise', 'open', 'exercise', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('exercise', 'submit', 'exercise', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('exercise', 'view', 'exercise', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('exercise', 'update', 'exercise', 'name');
 

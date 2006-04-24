@@ -211,9 +211,9 @@ create INDEX ega_idx on prefix_exercise_grades (assessmentid);
 
 rem --------------------------------------------------------
 
-INSERT INTO prefix_log_display VALUES ('exercise', 'close', 'exercise', 'name');
-INSERT INTO prefix_log_display VALUES ('exercise', 'open', 'exercise', 'name');
-INSERT INTO prefix_log_display VALUES ('exercise', 'submit', 'exercise', 'name');
-INSERT INTO prefix_log_display VALUES ('exercise', 'view', 'exercise', 'name');
-INSERT INTO prefix_log_display VALUES ('exercise', 'update', 'exercise', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('exercise', 'close', 'exercise', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('exercise', 'open', 'exercise', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('exercise', 'submit', 'exercise', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('exercise', 'view', 'exercise', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('exercise', 'update', 'exercise', 'name');
 

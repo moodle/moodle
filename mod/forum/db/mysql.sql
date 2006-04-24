@@ -158,14 +158,14 @@ CREATE TABLE prefix_forum_track_prefs (
 # Dumping data for table `log_display`
 #
 
-INSERT INTO prefix_log_display VALUES ('forum', 'add', 'forum', 'name');
-INSERT INTO prefix_log_display VALUES ('forum', 'update', 'forum', 'name');
-INSERT INTO prefix_log_display VALUES ('forum', 'add discussion', 'forum_discussions', 'name');
-INSERT INTO prefix_log_display VALUES ('forum', 'add post', 'forum_posts', 'subject');
-INSERT INTO prefix_log_display VALUES ('forum', 'update post', 'forum_posts', 'subject');
-INSERT INTO prefix_log_display VALUES ('forum', 'move discussion', 'forum_discussions', 'name');
-INSERT INTO prefix_log_display VALUES ('forum', 'view subscribers', 'forum', 'name');
-INSERT INTO prefix_log_display VALUES ('forum', 'view discussion', 'forum_discussions', 'name');
-INSERT INTO prefix_log_display VALUES ('forum', 'view forum', 'forum', 'name');
-INSERT INTO prefix_log_display VALUES ('forum', 'subscribe', 'forum', 'name');
-INSERT INTO prefix_log_display VALUES ('forum', 'unsubscribe', 'forum', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('forum', 'add', 'forum', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('forum', 'update', 'forum', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('forum', 'add discussion', 'forum_discussions', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('forum', 'add post', 'forum_posts', 'subject');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('forum', 'update post', 'forum_posts', 'subject');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('forum', 'move discussion', 'forum_discussions', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('forum', 'view subscribers', 'forum', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('forum', 'view discussion', 'forum_discussions', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('forum', 'view forum', 'forum', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('forum', 'subscribe', 'forum', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('forum', 'unsubscribe', 'forum', 'name');
