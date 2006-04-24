@@ -17,7 +17,7 @@ function chat_upgrade($oldversion) {
     }
 
     if ($oldversion < 2004043000) {
-        modify_database("", "INSERT INTO prefix_log_display VALUES ('chat', 'talk', 'chat', 'name');");
+        modify_database("", "INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('chat', 'talk', 'chat', 'name');");
     }
 
     if ($oldversion < 2004111200) { //drop them first to avoid collisions with upgrades from 1.4.2+
