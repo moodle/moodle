@@ -19,8 +19,9 @@ class block_blog_menu extends block_base {
             $this->content->text = '';
             return $this->content;
         }
-        
-        if ($CFG->bloglevel < 5 && !isstudent($course->id) && !isteacher($course->id)) {
+
+        // don't display menu block if block is set at site level, and user is not logged in
+        if ($CFG->bloglevel < 5 && !(isloggedin() && !isguest())) {
             $this->content->text = '';
             return $this->content;
         }

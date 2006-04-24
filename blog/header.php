@@ -19,16 +19,14 @@ if (!$site = get_site()) {
     redirect($CFG->wwwroot.'/index.php');
 }
 
-if ($courseid == 0 ) {
-    $courseid = SITEID;
-}
-
 // now check that they are logged in and allowed into the course (if specified)
 if ($courseid != SITEID) {
-    if (! $course = get_record('course', 'id', $courseid)) {
+    if (!$course = get_record('course', 'id', $courseid)) {
         error('The course number was incorrect ('. $courseid .')');
     }
     require_login($course->id);
+} else {
+    $course = get_site();
 }
 
 // Bounds for block widths within this page

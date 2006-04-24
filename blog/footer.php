@@ -20,7 +20,8 @@ if (blocks_have_content($pageblocks, BLOCK_POS_RIGHT) || $editing) {
 </table>
 
 <?php
-if (isset($course)) {
+
+if (isset($course) && ($course->id)) {
     print_footer($course);
 } else {
     print_footer();

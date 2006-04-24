@@ -44,8 +44,6 @@ if (isset($act) && ($act == 'del') && (empty($blogEntry))) {
 }
 
 
-
-
 $pageNavigation = 'edit';
 include($CFG->dirroot .'/blog/header.php');
 
@@ -290,23 +288,24 @@ function do_update($post) {
     if ( update_record('post',$blogEntry)) {
         delete_records('blog_tag_instance', 'entryid', $blogEntry->id);
 
-        $otags = optional_param('otags','', PARAM_INT);
-        $ptags = optional_param('ptags','', PARAM_INT);
-
         $tag = NULL;
         $tag->entryid = $blogEntry->id;
         $tag->userid = $USER->id;
         $tag->timemodified = time();
         
         /// Add tags information
-        foreach ($otags as $otag) {
-            $tag->tagid = $otag;
-            insert_record('blog_tag_instance',$tag);
+        if ($otags = optional_param('otags','', PARAM_INT)) {
+            foreach ($otags as $otag) {
+                $tag->tagid = $otag;
+                insert_record('blog_tag_instance',$tag);
+            }
         }
 
-        foreach ($ptags as $ptag) {
-            $tag->tagid = $ptag;
-            insert_record('blog_tag_instance',$tag);
+        if ($ptags = optional_param('ptags','', PARAM_INT)) {
+            foreach ($ptags as $ptag) {
+                $tag->tagid = $ptag;
+                insert_record('blog_tag_instance',$tag);
+            }
         }
         
         // only do pings if the entry is published to the world
