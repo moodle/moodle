@@ -670,14 +670,14 @@ CREATE TABLE prefix_blog_tag_instance (
 CREATE INDEX bti_entryid_idx ON prefix_blog_tag_instance (entryid);
 CREATE INDEX bti_tagid_idx ON prefix_blog_tag_instance (tagid);
 
-INSERT INTO prefix_log_display VALUES ('user', 'view', 'user', 'firstname||\' \'||lastname');
-INSERT INTO prefix_log_display VALUES ('course', 'user report', 'user', 'firstname||\' \'||lastname');
-INSERT INTO prefix_log_display VALUES ('course', 'view', 'course', 'fullname');
-INSERT INTO prefix_log_display VALUES ('course', 'update', 'course', 'fullname');
-INSERT INTO prefix_log_display VALUES ('course', 'enrol', 'course', 'fullname');
-INSERT INTO prefix_log_display VALUES ('message', 'write', 'user', 'firstname||\' \'||lastname');
-INSERT INTO prefix_log_display VALUES ('message', 'read', 'user', 'firstname||\' \'||lastname');
-INSERT INTO prefix_log_display VALUES ('message', 'add contact', 'user', 'firstname||\' \'||lastname');
-INSERT INTO prefix_log_display VALUES ('message', 'remove contact', 'user', 'firstname||\' \'||lastname');
-INSERT INTO prefix_log_display VALUES ('message', 'block contact', 'user', 'firstname||\' \'||lastname');
-INSERT INTO prefix_log_display VALUES ('message', 'unblock contact', 'user', 'firstname||\' \'||lastname');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('user', 'view', 'user', 'firstname||\' \'||lastname');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('course', 'user report', 'user', 'firstname||\' \'||lastname');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('course', 'view', 'course', 'fullname');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('course', 'update', 'course', 'fullname');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('course', 'enrol', 'course', 'fullname');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('message', 'write', 'user', 'firstname||\' \'||lastname');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('message', 'read', 'user', 'firstname||\' \'||lastname');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('message', 'add contact', 'user', 'firstname||\' \'||lastname');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('message', 'remove contact', 'user', 'firstname||\' \'||lastname');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('message', 'block contact', 'user', 'firstname||\' \'||lastname');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('message', 'unblock contact', 'user', 'firstname||\' \'||lastname');
