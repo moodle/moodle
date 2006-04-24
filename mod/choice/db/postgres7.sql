@@ -70,10 +70,10 @@ CREATE INDEX prefix_choice_options_choice_idx ON prefix_choice_options (choiceid
 # Dumping data for table `log_display`
 #
 
-INSERT INTO prefix_log_display VALUES ('choice', 'view', 'choice', 'name');
-INSERT INTO prefix_log_display VALUES ('choice', 'update', 'choice', 'name');
-INSERT INTO prefix_log_display VALUES ('choice', 'add', 'choice', 'name');
-INSERT INTO prefix_log_display VALUES ('choice', 'report', 'choice', 'name');
-INSERT INTO prefix_log_display VALUES ('choice', 'choose', 'choice', 'name');
-INSERT INTO prefix_log_display VALUES ('choice', 'choose again', 'choice', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('choice', 'view', 'choice', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('choice', 'update', 'choice', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('choice', 'add', 'choice', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('choice', 'report', 'choice', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('choice', 'choose', 'choice', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('choice', 'choose again', 'choice', 'name');
 

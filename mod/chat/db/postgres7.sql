@@ -66,8 +66,8 @@ CREATE INDEX prefix_chat_users_userid_idx ON prefix_chat_users (userid);
 CREATE INDEX prefix_chat_users_groupid_idx ON prefix_chat_users (groupid);
 CREATE INDEX prefix_chat_users_lastping_idx ON prefix_chat_users (lastping);
 
-INSERT INTO prefix_log_display VALUES ('chat', 'view', 'chat', 'name');
-INSERT INTO prefix_log_display VALUES ('chat', 'add', 'chat', 'name');
-INSERT INTO prefix_log_display VALUES ('chat', 'update', 'chat', 'name');
-INSERT INTO prefix_log_display VALUES ('chat', 'report', 'chat', 'name');
-INSERT INTO prefix_log_display VALUES ('chat', 'talk', 'chat', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('chat', 'view', 'chat', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('chat', 'add', 'chat', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('chat', 'update', 'chat', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('chat', 'report', 'chat', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('chat', 'talk', 'chat', 'name');
