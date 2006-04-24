@@ -62,9 +62,9 @@ CREATE TABLE `prefix_chat_users` (
 ) TYPE=MyISAM COMMENT='Keeps track of which users are in which chat rooms';
 
 
-INSERT INTO prefix_log_display VALUES ('chat', 'view', 'chat', 'name');
-INSERT INTO prefix_log_display VALUES ('chat', 'add', 'chat', 'name');
-INSERT INTO prefix_log_display VALUES ('chat', 'update', 'chat', 'name');
-INSERT INTO prefix_log_display VALUES ('chat', 'report', 'chat', 'name');
-INSERT INTO prefix_log_display VALUES ('chat', 'talk', 'chat', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('chat', 'view', 'chat', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('chat', 'add', 'chat', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('chat', 'update', 'chat', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('chat', 'report', 'chat', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('chat', 'talk', 'chat', 'name');
 
