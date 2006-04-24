@@ -1,4 +1,4 @@
-# $Id: postgres7.sql,v 1.1 2006/03/12 18:40:01 skodak Exp $
+# $Id: postgres7.sql,v 1.2 2006/04/24 19:35:48 skodak Exp $
 
 # This file contains a complete database schema for all the
 # tables used by the book module, written in SQL
@@ -33,7 +33,7 @@ CREATE TABLE prefix_book_chapters (
 );
 # --------------------------------------------------------
 
-INSERT INTO prefix_log_display VALUES ('book', 'update',   'book', 'name');
-INSERT INTO prefix_log_display VALUES ('book', 'view',     'book', 'name');
-INSERT INTO prefix_log_display VALUES ('book', 'view all', 'book', 'name');
-INSERT INTO prefix_log_display VALUES ('book', 'print',    'book', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('book', 'update',   'book', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('book', 'view',     'book', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('book', 'view all', 'book', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('book', 'print',    'book', 'name');
