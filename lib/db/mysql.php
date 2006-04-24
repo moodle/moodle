@@ -1828,6 +1828,13 @@ function main_upgrade($oldversion=0) {
         }
     }
     
+    // change tags->type to varchar(20), adding 2 indexes for tags table.
+    if ($oldversion < 2006042401) {
+        table_column('tags','type','type','varchar','20','','','not null');
+        modify_database('',"ALTER TABLE prefix_tags ADD INDEX tags_typeuserid_idx (type(20), userid)");
+        modify_database('',"ALTER TABLE prefix_tags ADD INDEX tags_text(text(255))");
+    }
+
     return $result;
 }
 

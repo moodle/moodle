@@ -655,6 +655,8 @@ CREATE TABLE prefix_tags (
   userid INTEGER NOT NULL default 0,
   text varchar(255) NOT NULL default ''
 );
+CREATE INDEX tags_typeuserid_idx ON prefix_tags (type, userid);
+CREATE INDEX tags_text_idx ON prefix_tags (text);
 
 CREATE TABLE prefix_blog_tag_instance (
   id SERIAL PRIMARY KEY,

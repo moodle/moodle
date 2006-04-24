@@ -1523,6 +1523,12 @@ function main_upgrade($oldversion=0) {
             }
         }
     }
+    
+    // add 2 indexes to tags table
+    if ($oldversion < 2006042401) {
+        modify_database('',"CREATE INDEX tags_typeuserid_idx ON prefix_tags (type, userid);");
+        modify_database('',"CREATE INDEX tags_text_idx ON prefix_tags (text);");
+    }
 
     return $result;
 }
