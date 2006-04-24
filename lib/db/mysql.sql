@@ -881,7 +881,7 @@ CREATE TABLE prefix_tags (
   `userid` int(10) NOT NULL default '0',
   `text` varchar(20) NOT NULL default '',
   KEY `tags_typeuserid_idx` (`type`, `userid`),
-  KEY `tags_text_idx` (`text`);
+  KEY `tags_text_idx` (`text`),
   PRIMARY KEY  (`id`)
 ) TYPE=MyISAM COMMENT ='tags structure for moodle.';
 
@@ -900,14 +900,14 @@ CREATE TABLE prefix_blog_tag_instance (
 ) TYPE=MyISAM COMMENT ='tag instance for blogs.';
 
 
-INSERT INTO prefix_log_display VALUES ('user', 'view', 'user', 'CONCAT(firstname," ",lastname)');
-INSERT INTO prefix_log_display VALUES ('course', 'user report', 'user', 'CONCAT(firstname," ",lastname)');
-INSERT INTO prefix_log_display VALUES ('course', 'view', 'course', 'fullname');
-INSERT INTO prefix_log_display VALUES ('course', 'update', 'course', 'fullname');
-INSERT INTO prefix_log_display VALUES ('course', 'enrol', 'course', 'fullname');
-INSERT INTO prefix_log_display VALUES ('message', 'write', 'user', 'CONCAT(firstname," ",lastname)');
-INSERT INTO prefix_log_display VALUES ('message', 'read', 'user', 'CONCAT(firstname," ",lastname)');
-INSERT INTO prefix_log_display VALUES ('message', 'add contact', 'user', 'CONCAT(firstname," ",lastname)');
-INSERT INTO prefix_log_display VALUES ('message', 'remove contact', 'user', 'CONCAT(firstname," ",lastname)');
-INSERT INTO prefix_log_display VALUES ('message', 'block contact', 'user', 'CONCAT(firstname," ",lastname)');
-INSERT INTO prefix_log_display VALUES ('message', 'unblock contact', 'user', 'CONCAT(firstname," ",lastname)');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('user', 'view', 'user', 'CONCAT(firstname," ",lastname)');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('course', 'user report', 'user', 'CONCAT(firstname," ",lastname)');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('course', 'view', 'course', 'fullname');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('course', 'update', 'course', 'fullname');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('course', 'enrol', 'course', 'fullname');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('message', 'write', 'user', 'CONCAT(firstname," ",lastname)');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('message', 'read', 'user', 'CONCAT(firstname," ",lastname)');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('message', 'add contact', 'user', 'CONCAT(firstname," ",lastname)');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('message', 'remove contact', 'user', 'CONCAT(firstname," ",lastname)');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('message', 'block contact', 'user', 'CONCAT(firstname," ",lastname)');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('message', 'unblock contact', 'user', 'CONCAT(firstname," ",lastname)');
