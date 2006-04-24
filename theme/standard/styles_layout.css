@@ -1786,7 +1786,7 @@ body#mod-quiz-report .controls {
 
 .ims-nav-bar {
   position: relative; 
-  width:100%;
+  padding:0.1em;
 }
 
 .ims-nav-button a,
@@ -1797,29 +1797,30 @@ body#mod-quiz-report .controls {
 
 #ims-containerdiv {
   margin-top:0.2em;
-  width:100%;
 }
 
 #ims-menudiv {
   position:absolute;
   width:250px;
-  overflow-y:auto;
-  overflow-x:hidden;
+  overflow:auto;
 }
 
 #ims-menudiv ol {
-  margin-left:0.5em;
+  list-style-type:none;
+  margin:0px;
   padding-left:1em;
 }
 
 #ims-contentframe {
   position:absolute;
+  overflow:auto;
   left:260px;
   border:1px solid;
 }
 
 #ims-contentframe-no-nav {
   position:absolute;
+  overflow:auto;
   border:1px solid;
 }
 
