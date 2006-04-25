@@ -51,7 +51,7 @@
     }
         
     $file       = required_param ('file', PARAM_PATH);
-    $all        = optional_param ('all', '', PARAM_STR);
+    $all        = optional_param ('all', '', PARAM_ALPHA);
     
     if ($all == '') {
         print_header();
@@ -265,14 +265,14 @@
         
     /// Get the default organization
         $default_organization = $data['@']['default'];
-        if ($CFG->debug) print_object('default_organization: '.$default_organization);
+        if ($CFG->debug > 7) print_object('default_organization: '.$default_organization);
 
     /// Iterate (reverse) over organizations until we find the default one
         if (empty($data['#']['organization'])) {  /// Verify <organization> exists
             return false;
         }
         $count_organizations = count($data['#']['organization']);
-        if ($CFG->debug) print_object('count_organizations: '.$count_organizations);
+        if ($CFG->debug > 7) print_object('count_organizations: '.$count_organizations);
 
         $current_organization = $count_organizations - 1;
         while ($current_organization >= 0) {
@@ -285,7 +285,7 @@
         }
 
     /// At this point we MUST have the final organization
-        if ($CFG->debug) print_object('final organization: '.$organization['#']['title'][0]['#']);
+        if ($CFG->debug > 7) print_object('final organization: '.$organization['#']['title'][0]['#']);
         if (empty($organization)) {
             return false;    //Error, no organization found
         }
@@ -311,7 +311,7 @@
 
     /// Iterate over items from start to end
         $count_items = count($items);
-        if ($CFG->debug) print_object('level '.$level.'-count_items: '.$count_items);
+        if ($CFG->debug > 7) print_object('level '.$level.'-count_items: '.$count_items);
 
         $current_item = 0;
         while ($current_item < $count_items) {
@@ -329,7 +329,7 @@
                 !empty($obj_item->identifier)) {
             /// Add to itemmap
                 $itemmap[$id] = $obj_item;
-                if ($CFG->debug) print_object('level '.$level.'-id '.$id.'-parent '.$parent.'-'.$obj_item->title);
+                if ($CFG->debug > 7) print_object('level '.$level.'-id '.$id.'-parent '.$parent.'-'.$obj_item->title);
             /// Counters go up
                 $id++;
             /// Check for subitems recursively
@@ -365,7 +365,7 @@
             return false;
         }
         $count_resources = count($data);
-        if ($CFG->debug) print_object('count_resources: '.$count_resources);
+        if ($CFG->debug > 7) print_object('count_resources: '.$count_resources);
 
         $current_resource = 0;
         while ($current_resource < $count_resources) {
