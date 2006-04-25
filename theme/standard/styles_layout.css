@@ -1824,6 +1824,10 @@ body#mod-quiz-report .controls {
   border:1px solid;
 }
 
+#mod-resource-view div#footer {
+        margin-top: 5px;
+}
+
 /***
  *** Modules: Scorm
  ***/
