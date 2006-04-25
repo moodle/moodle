@@ -4659,10 +4659,14 @@
                 echo "<li>".get_string("checkingbackup").'</li>';
             }
             if (! $status = restore_check_moodle_file ($xml_file)) {
-                if (!defined('RESTORE_SILENTLY')) {
-                    notify("Error checking backup file. Invalid or corrupted.");
+                if (!is_file($xml_file)) {
+                    $errorstr = 'Error checking backup file. moodle.xml not found at root level of zip file.';
                 } else {
-                    $errorstr = "Error checking backup file. Invalid or corrupted.";
+                    $errorstr = 'Error checking backup file. moodle.xml is incorrect or corrupted.';
+                }
+                if (!defined('RESTORE_SILENTLY')) {
+                    notify($errorstr);
+                } else {
                     return false;
                 }
             }
