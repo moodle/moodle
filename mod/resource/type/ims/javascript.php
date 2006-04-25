@@ -18,6 +18,9 @@
         window.onresize = function() {
             resizeiframe($jsarg);
         };
+        addDOMLoadEvent(function() {
+            resizeiframe($jsarg);
+        });
         window.name='ims-cp-page';
     </script>\n";
 

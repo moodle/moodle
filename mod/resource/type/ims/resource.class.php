@@ -458,8 +458,10 @@ class resource_ims extends resource_base {
             }
         /// content - this produces everything else
             $this->print_ims($cm, $course, $items, $resource, $page);
+        /// Moodle footer is back! Now using the DOMContentLoaded event (see resize.js) to trigger the resize
         /// no Moodle footer (because we cannot insert there the resize script).
-          	echo "</div></div><script type=\"text/javascript\">resizeiframe($jsarg);</script></body></html>";
+        /// echo "</div></div><script type=\"text/javascript\">resizeiframe($jsarg);</script></body></html>";
+            print_footer();
 
         /// log it.
             add_to_log($course->id, "resource", "view", "view.php?id={$cm->id}", $resource->id, $cm->id);
@@ -739,7 +741,7 @@ class resource_ims extends resource_base {
      *   Now hilights 'selected page' also.
      */
     function ims_generate_toc($items, $resource, $page=0, $selected_page = -1) {
-        global $CFG,$SESSION;
+        global $CFG;
 
         $contents = '';
 
