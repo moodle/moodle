@@ -82,6 +82,9 @@ function filter_phrases ($text, &$link_array, $ignoretagsopen=NULL, $ignoretagsc
         foreach ($ignoretagsclose as $close) $filterignoretagsclose[] = $close;
     }
 
+    //// Double up some magic chars to avoid "accidental matches"
+    $text = preg_replace('/([#*%])/','\1\1',$text);
+
 
 ////Remove everything enclosed by the ignore tags from $text    
     filter_save_ignore_tags($text,$filterignoretagsopen,$filterignoretagsclose,$ignoretags);
@@ -115,6 +118,11 @@ function filter_phrases ($text, &$link_array, $ignoretagsopen=NULL, $ignoretagsc
                 $linkobject->work_hreftagbegin = $linkobject->hreftagbegin;
                 $linkobject->work_hreftagend   = $linkobject->hreftagend;
             }
+
+        /// Double up chars to protect true duplicates
+        /// be cleared up before returning to the user.
+            $linkobject->work_hreftagbegin = preg_replace('/([#*%])/','\1\1',$linkobject->work_hreftagbegin);
+
             if (empty($linkobject->casesensitive)) {
                 $linkobject->work_casesensitive = false;
             } else {
@@ -129,6 +137,9 @@ function filter_phrases ($text, &$link_array, $ignoretagsopen=NULL, $ignoretagsc
         /// Strip tags out of the phrase
             $linkobject->work_phrase = strip_tags($linkobject->phrase);
 
+        /// Double up chars that might cause a false match -- the duplicates will
+        /// be cleared up before returning to the user.
+            $linkobject->work_phrase = preg_replace('/([#*%])/','\1\1',$linkobject->work_phrase);
 
         /// Set the replacement phrase properly
             if ($linkobject->replacementphrase) {    //We have specified a replacement phrase
@@ -219,6 +230,9 @@ function filter_phrases ($text, &$link_array, $ignoretagsopen=NULL, $ignoretagsc
     if (!empty($ignoretags)) {
         $text = str_replace(array_keys($ignoretags),$ignoretags,$text);
     }
+
+    //// Remove the protective doubleups 
+    $text =  preg_replace('/([#*%])(\1)/','\1',$text);
 
 /// Add missing javascript for popus
     $text = filter_add_javascript($text);
