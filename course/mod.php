@@ -131,7 +131,7 @@
                     error("This module ($mod->modulename) has been disabled for this particular course");
                 }
 
-                if (trim($mod->name) == '') {
+                if (!isset($mod->name) || trim($mod->name) == '') {
                     $mod->name = get_string("modulename", $mod->modulename);
                 }
 
