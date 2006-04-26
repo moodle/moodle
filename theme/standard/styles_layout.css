@@ -922,8 +922,14 @@ span.current {
 .weekscss-format {
   min-width: 763px;
 }
-.weekscss-format .block_adminblock select {
-  width:100%;
+.weekscss-format .block_adminblock select,
+.weekscss-format .block_calendar_month .minicalendar {
+  width: 100%;
+  padding: 0;
+}
+.weekscss-format .block_calendar_month .minicalendar th,
+.weekscss-format .block_calendar_month .minicalendar td {
+  padding: 0.1em 0 0.1em 1px;
 }
 .weekscss-format #middle-column {
   margin: 0 12.5em 0 12.5em;
