@@ -8,13 +8,12 @@ function enrol_authorize_upgrade($oldversion=0) {
 
     $result = true;
 
-    if (!$tables = $db->MetaColumns($CFG->prefix . 'enrol_authorize')) {
-        $installfirst = true;
-    }
-
-    if ($oldversion == 0 || !empty($installfirst)) { // First time install
+    if ($oldversion == 0) {
         $result = modify_database("$CFG->dirroot/enrol/authorize/db/postgres7.sql");
-        return $result; // RETURN, sql file contains last upgrades.
+        return $result; // SQL file contains all upgrades.
+    } else if (!in_array($CFG->prefix . 'enrol_authorize', $db->MetaTables('TABLES'))) {
+        $result = modify_database("$CFG->dirroot/enrol/authorize/db/postgres7.sql");
+        return $result; // SQL file contains all upgrades.
     }
 
     // Authorize module was installed before. Upgrades must be applied to SQL file.
