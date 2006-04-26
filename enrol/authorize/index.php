@@ -10,7 +10,7 @@
     $userid   = optional_param('user', 0, PARAM_INT);
 
 /// Only site users can access to this page
-    require_login($courseid);
+    require_login(); // Don't use $courseid! User may want to see old orders.
 
     if (isguest()) {
         error("Guests cannot use this page.");
