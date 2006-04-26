@@ -80,6 +80,7 @@ $string['aimid'] = 'AIM ID';
 $string['all'] = 'All';
 $string['allactivities'] = 'All activities';
 $string['allactions'] = 'All actions';
+$string['allchanges'] = 'All changes';
 $string['alldays'] = 'All days';
 $string['allfieldsrequired'] = 'All fields are required';
 $string['allfiles'] = 'All files';
