@@ -91,7 +91,7 @@
 
         //Hook to call Moodle < 1.5 Quiz Restore
         if ($restore->backup_version < 2005043000) {
-            include_once("restorelibpre15.php");
+            include_once($CFG->dirroot.'/mod/quiz/restorelibpre15.php');
             return quiz_restore_pre15_question_categories($category,$restore);
         }
 
