@@ -96,6 +96,13 @@ function question_list($course, $categoryid, $quizid=0,
  $recurse=1, $page=0, $perpage=100, $showhidden=false, $sortorder='qtype, name ASC') {
     global $QTYPE_MENU, $USER, $CFG;
 
+    $qtypemenu = $QTYPE_MENU;
+    if ($rqp_types = get_records('question_rqp_types')) {
+        foreach($rqp_types as $type) {
+            $qtypemenu['rqp_'.$type->id] = $type->name;
+        }
+    }
+
     $strcategory = get_string("category", "quiz");
     $strquestion = get_string("question", "quiz");
     $straddquestions = get_string("addquestions", "quiz");
@@ -143,7 +150,7 @@ function question_list($course, $categoryid, $quizid=0,
     if (isteacheredit($category->course)) {
         echo "<td valign=\"top\"><b>$strcreatenewquestion:</b></td>";
         echo '<td valign="top" align="right">';
-        popup_form ("$CFG->wwwroot/question/question.php?category=$category->id&amp;qtype=", $QTYPE_MENU, "addquestion",
+        popup_form ("$CFG->wwwroot/question/question.php?category=$category->id&amp;qtype=", $qtypemenu, "addquestion",
                     "", "choose", "", "", false, "self");
         echo '</td><td width="10" valign="top" align="right">';
         helpbutton("questiontypes", $strcreatenewquestion, "quiz");

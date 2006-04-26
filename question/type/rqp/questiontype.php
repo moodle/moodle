@@ -547,13 +547,6 @@ class question_rqp_qtype extends default_questiontype {
 //////////////////////////////////////////////////////////////////////////
 //// INITIATION - Without this line the question type is not in use... ///
 //////////////////////////////////////////////////////////////////////////
-// define("RQP",          "11"); // already defined in questionlib.php
 $QTYPES[RQP]= new question_rqp_qtype();
-// The following adds the questiontype to the menu of types shown to teachers
-if ($rqp_types = get_records('question_rqp_types')) {
-    foreach($rqp_types as $type) {
-        $QTYPE_MENU[100+$type->id] = $type->name;
-    }
-}
 
 ?>
