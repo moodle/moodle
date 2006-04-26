@@ -750,6 +750,8 @@ function stats_get_time_options($now,$lastweekend,$lastmonthend,$earliestday,$ea
     // so we need to take a day off here (essentially add a day to $now
     $now += 60*60*24;
 
+    $timeoptions = array();
+
     if ($now - (60*60*24*7) >= $earliestday) {
         $timeoptions[STATS_TIME_LASTWEEK] = get_string('numweeks','moodle',1);
     }
