@@ -333,7 +333,7 @@
 
         echo "<table class=\"searchbox\" align=\"center\" cellpadding=\"10\"><tr><td>";
         echo "<form action=\"user.php\" method=\"get\">";
-        echo "<input type=\"text\" name=\"search\" value=\"".s($search)."\" size=\"20\" />";
+        echo "<input type=\"text\" name=\"search\" value=\"".s($search, true)."\" size=\"20\" />";
         echo "<input type=\"submit\" value=\"$strsearch\" />";
         if ($search) {
             echo "<input type=\"button\" onclick=\"document.location='user.php';\" value=\"$strshowallusers\" />";

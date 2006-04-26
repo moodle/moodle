@@ -78,7 +78,7 @@
           ?>
          </select>
          <br />
-         <input type="text" name="searchtext" size="30" value="<?php echo $searchtext ?>" 
+         <input type="text" name="searchtext" size="30" value="<?php p($searchtext, true) ?>" 
                   onFocus ="document.adminform.add.disabled=true;
                             document.adminform.remove.disabled=true;
                             document.adminform.removeselect.selectedIndex=-1;
