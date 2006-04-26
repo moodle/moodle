@@ -991,6 +991,9 @@ function message_post_message($userfrom, $userto, $message, $format, $messagetyp
         if (!isset($preference->message_emailtimenosee)) {
             $preference->message_emailtimenosee = 10;
         }
+        if (!isset($preference->message_emailformat)) {
+            $preference->message_emailformat = FORMAT_HTML;
+        }
         if ((time() - $userto->lastaccess) > ((int)$preference->message_emailtimenosee * 60)) { // Long enough
 
             $message = stripslashes_safe($message);
