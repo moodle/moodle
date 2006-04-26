@@ -506,7 +506,7 @@ function quiz_upgrade($oldversion) {
         modify_database('', 'ALTER TABLE `prefix_quiz_numerical` DROP `max`'); // Replaced by tolerance
 
     /// Tables for Remote Questions
-        modify_database ('', "CREATE TABLE `prefix_question_rqp` (
+        modify_database ('', "CREATE TABLE `prefix_quiz_rqp` (
                               `id` int(10) unsigned NOT NULL auto_increment,
                               `question` int(10) unsigned NOT NULL default '0',
                               `type` int(10) unsigned NOT NULL default '0',
@@ -518,7 +518,7 @@ function quiz_upgrade($oldversion) {
                               KEY `question` (`question`)
                               ) TYPE=MyISAM COMMENT='Options for RQP questions';");
 
-        modify_database ('', "CREATE TABLE `prefix_question_rqp_type` (
+        modify_database ('', "CREATE TABLE `prefix_quiz_rqp_type` (
                               `id` int(10) unsigned NOT NULL auto_increment,
                               `name` varchar(255) NOT NULL default '',
                               `rendering_server` varchar(255) NOT NULL default '',
@@ -528,7 +528,7 @@ function quiz_upgrade($oldversion) {
                               UNIQUE KEY `name` (`name`)
                               ) TYPE=MyISAM COMMENT='RQP question types and the servers to be used to process them';");
 
-        modify_database ('', "CREATE TABLE `prefix_question_rqp_states` (
+        modify_database ('', "CREATE TABLE `prefix_quiz_rqp_states` (
                               `id` int(10) unsigned NOT NULL auto_increment,
                               `stateid` int(10) unsigned NOT NULL default '0',
                               `responses` text NOT NULL default '',
@@ -551,8 +551,8 @@ function quiz_upgrade($oldversion) {
     }
 
     if ($oldversion < 2005051400) {
-        modify_database('', 'ALTER TABLE prefix_question_rqp_type RENAME prefix_question_rqp_types;');
-    	modify_database('', "CREATE TABLE `prefix_question_rqp_servers` (
+        modify_database('', 'ALTER TABLE prefix_quiz_rqp_type RENAME prefix_quiz_rqp_types;');
+    	modify_database('', "CREATE TABLE `prefix_quiz_rqp_servers` (
     			      id int(10) unsigned NOT NULL auto_increment,
     			      typeid int(10) unsigned NOT NULL default '0',
     			      url varchar(255) NOT NULL default '',
@@ -560,17 +560,17 @@ function quiz_upgrade($oldversion) {
     			      can_author tinyint(2) unsigned NOT NULL default '0',
     			      PRIMARY KEY  (id)
     			    ) TYPE=MyISAM COMMENT='Information about RQP servers';");
-    	if ($types = get_records('question_rqp_types')) {
+    	if ($types = get_records('quiz_rqp_types')) {
     	    foreach($types as $type) {
         		$server->typeid = $type->id;
         		$server->url = $type->rendering_server;
         		$server->can_render = 1;
-        		insert_record('question_rqp_servers', $server);
+        		insert_record('quiz_rqp_servers', $server);
     	    }
     	}
-        modify_database('', 'ALTER TABLE prefix_question_rqp_types DROP rendering_server');
-        modify_database('', 'ALTER TABLE prefix_question_rqp_types DROP cloning_server');
-        modify_database('', 'ALTER TABLE prefix_question_rqp_types DROP flags');
+        modify_database('', 'ALTER TABLE prefix_quiz_rqp_types DROP rendering_server');
+        modify_database('', 'ALTER TABLE prefix_quiz_rqp_types DROP cloning_server');
+        modify_database('', 'ALTER TABLE prefix_quiz_rqp_types DROP flags');
     }
 
     if ($oldversion < 2005051401) {
