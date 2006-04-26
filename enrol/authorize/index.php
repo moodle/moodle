@@ -1,17 +1,17 @@
 <?PHP // $Id$
 
 /// Load libraries
-    require_once '../../config.php';
-    define('USE_AN_LOCALLIB', true);
-    require_once 'locallib.php';
+    require_once('../../config.php');
+    require_once('locallib.php');
 
-/// Get site
-    if (! $site = get_site()) {
-        error("Could not find a site!");
-    }
+/// Parameters
+    $orderid  = optional_param('order', 0, PARAM_INT);
+    $courseid = optional_param('course', SITEID, PARAM_INT);
+    $userid   = optional_param('user', 0, PARAM_INT);
 
 /// Only site users can access to this page
-    require_login();
+    require_login($courseid);
+
     if (isguest()) {
         error("Guests cannot use this page.");
     }
@@ -25,18 +25,17 @@
                 'howmuch','captureyes','unenrolstudent'), 'enrol_authorize');
 
 /// Print header
-    print_header("$site->shortname: $authstrs->paymentmanagement",
-                 "$site->fullname",
-                 "<a href=\"index.php\">$authstrs->paymentmanagement</a>", "");
+    if (!$course = get_record('course', 'id', $courseid)) {
+        error('Could not find that course');
+    }
+    print_header_simple("$course->shortname: $authstrs->paymentmanagement", $course->fullname,
+                        "<a href=\"index.php\">$authstrs->paymentmanagement</a>", "");
 
-/// Get order id
-    $orderid = optional_param('order', 0, PARAM_INT);
 
 /// If orderid is empty, user wants to see all orders
     if (empty($orderid)) {
         authorize_print_orders();
-    }
-    else {
+    } else {
         authorize_print_order_details($orderid);
     }
 

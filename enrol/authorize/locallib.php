@@ -1,10 +1,11 @@
 <?PHP // $Id$
 
-defined('USE_AN_LOCALLIB') or die('Locallib.php can be only used by index.php');
+if (!defined('MOODLE_INTERNAL')) {
+    die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
+}
 
-require_once '../../config.php';
-require_once $CFG->dirroot.'/enrol/authorize/const.php';
-require_once $CFG->dirroot.'/enrol/authorize/action.php';
+require_once('const.php');
+require_once('action.php');
 
 define('ORDER_CAPTURE', 'capture');
 define('ORDER_DELETE',  'delete');
