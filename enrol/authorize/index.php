@@ -28,8 +28,7 @@
     if (!$course = get_record('course', 'id', $courseid)) {
         error('Could not find that course');
     }
-    print_header_simple("$course->shortname: $authstrs->paymentmanagement", $course->fullname,
-                        "<a href=\"index.php\">$authstrs->paymentmanagement</a>", "");
+    print_header_simple("$authstrs->paymentmanagement", "", "<a href=\"index.php\">$authstrs->paymentmanagement</a>");
 
 
 /// If orderid is empty, user wants to see all orders
