@@ -212,12 +212,12 @@
     print_simple_box_start("center");
     include("edit.html");
     print_simple_box_end();
-
-    print_footer($course);
-
+    
     if ($usehtmleditor) {
         use_html_editor("summary");
     }
+
+    print_footer($course);
 
     exit;
 
