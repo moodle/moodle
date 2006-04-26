@@ -70,7 +70,7 @@ class block_admin extends block_list {
             }
 
             if ($CFG->enrol == 'authorize') {
-                require_once $CFG->dirroot.'/enrol/authorize/const.php';
+                require_once($CFG->dirroot.'/enrol/authorize/const.php');
                 $paymenturl = '<a href="'.$CFG->wwwroot.'/enrol/authorize/index.php">'.get_string('payments').'</a> ';
                 if ($cnt = count_records('enrol_authorize', 'status', AN_STATUS_AUTH)) {
                     $paymenturl .= '<a href="'.$CFG->wwwroot.'/enrol/authorize/index.php?status='.AN_STATUS_AUTH.'">'.get_string('paymentpending', 'moodle', $cnt).'</a>';
@@ -171,16 +171,13 @@ class block_admin extends block_list {
             $this->content->items[]='<a href="'.$CFG->wwwroot.'/grade/index.php?id='.$this->instance->pageid.'">'.get_string('grades').'</a>';
             $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/grades.gif" alt="" />';
 
-            $this->content->items[]='<a href="report/log/index.php?id='.$this->instance->pageid.'">'.get_string('logs').'</a>';
-            $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/log.gif" alt="" />';
-
             if ($isteacheredit) {
                 $this->content->items[]='<a href="'.$CFG->wwwroot.'/files/index.php?id='.$this->instance->pageid.'">'.get_string('files').'</a>';
                 $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/files.gif" alt="" />';
             }
 
             if ($course->enrol == 'authorize' || (empty($course->enrol) && $CFG->enrol == 'authorize')) {
-                require_once $CFG->dirroot.'/enrol/authorize/const.php';
+                require_once($CFG->dirroot.'/enrol/authorize/const.php');
                 $paymenturl = '<a href="'.$CFG->wwwroot.'/enrol/authorize/index.php?course='.$course->id.'">'.get_string('payments').'</a> ';
                 if ($cnt = count_records('enrol_authorize', 'status', AN_STATUS_AUTH, 'courseid', $course->id)) {
                     $paymenturl .= '<a href="'.$CFG->wwwroot.'/enrol/authorize/index.php?status='.AN_STATUS_AUTH.'&amp;course='.$course->id.'">'.get_string('paymentpending', 'moodle', $cnt).'</a>';
