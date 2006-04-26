@@ -7,11 +7,12 @@ function authorize_upgrade($oldversion=0) {
 
     $result = true;
 
-
     if ($oldversion == 0) {
-        modify_database("$CFG->dirroot/enrol/authorize/db/mysql.sql");
+        $result = modify_database("$CFG->dirroot/enrol/authorize/db/mysql.sql");
+        return $result; // SQL file contains all upgrades.
     } else if (!in_array($CFG->prefix . 'enrol_authorize', $db->MetaTables('TABLES'))) {
-        modify_database("$CFG->dirroot/enrol/authorize/db/mysql.sql");
+        $result = modify_database("$CFG->dirroot/enrol/authorize/db/mysql.sql");
+        return $result; // SQL file contains all upgrades.
     }
 
     if ($oldversion < 2005071601) {
