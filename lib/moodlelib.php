@@ -6801,6 +6801,18 @@ eval('
 ');
 }
 
+
+/**
+ * This function will make a complete copy of anything it's given, 
+ * regardless of whether it's an object or not.
+ * @param mixed $thing
+ * @return mixed
+ */
+function fullclone($thing) {
+    return unserialize(serialize($thing));
+}
+
+
 /**
  * If new messages are waiting for the current user, then return
  * Javascript code to create a popup window
