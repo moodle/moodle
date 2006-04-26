@@ -29,7 +29,7 @@
     }
 
     // Handle generator options...
-    $olddatasetdefs = clone($datasetdefs);
+    $olddatasetdefs = fullclone($datasetdefs);   // Completely deep copy the array of objects
     $datasetdefs = $this->update_dataset_options($olddatasetdefs, $form);
     $maxnumber = -1;
     $datasets = empty($form->dataset) ? $form->definition : $form->dataset;
