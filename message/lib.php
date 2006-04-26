@@ -1001,7 +1001,7 @@ function message_post_message($userfrom, $userto, $message, $format, $messagetyp
             $messagetext = format_text_email($message, $format).
                            "\n\n--\n".$tagline."\n"."$CFG->wwwroot/message/index.php?popup=1";
 
-            if ($preference->message_emailformat == FORMAT_HTML) {
+            if (isset($preference->message_emailformat) and $preference->message_emailformat == FORMAT_HTML) {
                 $messagehtml  = format_text($message, $format);
                 $messagehtml .= '<hr /><p><a href="'.$CFG->wwwroot.'/message/index.php?popup=1">'.$tagline.'</a></p>';
             } else {
