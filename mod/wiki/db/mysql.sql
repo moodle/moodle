@@ -10,7 +10,7 @@ CREATE TABLE `prefix_wiki` (
   `course` int(10) unsigned NOT NULL default '0',
   `name` varchar(255) NOT NULL default '',
   `summary` text NOT NULL default '',
-  `pagename` varchar(255) default NULL,
+  `pagename` varchar(255) NOT NULL default '',
   `wtype` enum('teacher','group','student') NOT NULL default 'group',
   `ewikiprinttitle` tinyint(4) NOT NULL default '1',
   `htmlmode` tinyint(4) NOT NULL default '0',
@@ -20,7 +20,7 @@ CREATE TABLE `prefix_wiki` (
   `strippages` tinyint(4) NOT NULL default '1',
   `removepages` tinyint(4) NOT NULL default '1',
   `revertchanges` tinyint(4) NOT NULL default '1',
-  `initialcontent` varchar(255) default NULL,
+  `initialcontent` varchar(255) NOT NULL default '',
   `timemodified` int(10) NOT NULL default '0',
   PRIMARY KEY  (`id`),
   KEY `course` (`course`)

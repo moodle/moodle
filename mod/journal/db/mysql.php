@@ -69,6 +69,10 @@ function journal_upgrade($oldversion) {
         $wtm->update( 'journal_entries', 'text', 'format', $sql );
     }
 
+    if ($oldversion < 2006042600) {
+        table_column('journal','name','name','varchar','255','','','not null');
+        table_column('journal','intro','intro','text','','','','not null');
+    }
     return $result;
 }
 

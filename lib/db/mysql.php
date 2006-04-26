@@ -63,7 +63,7 @@ function main_upgrade($oldversion=0) {
         execute_sql(" ALTER TABLE `course` ADD `students` VARCHAR( 100 ) DEFAULT 'Students' NOT NULL AFTER `student` ");
     }
     if ($oldversion < 2002091000) {
-        execute_sql(" ALTER TABLE `user` CHANGE `personality` `secret` VARCHAR( 15 ) DEFAULT NULL  ");
+        execute_sql(" ALTER TABLE `user` CHANGE `personality` `secret` VARCHAR( 15 ) NOT NULL DEFAULT ''  ");
     }
     if ($oldversion < 2002091400) {
         execute_sql(" ALTER TABLE `user` ADD `lang` VARCHAR( 3 ) DEFAULT 'en' NOT NULL AFTER `country`  ");
@@ -1258,12 +1258,12 @@ function main_upgrade($oldversion=0) {
     if ($oldversion < 2005032800) {
         execute_sql("CREATE TABLE `{$CFG->prefix}grade_category` (
             `id` int(10) unsigned NOT NULL auto_increment,
-            `name` varchar(64) default NULL,
+            `name` varchar(64) NOT NULL default '',
             `courseid` int(10) unsigned NOT NULL default '0',
             `drop_x_lowest` int(10) unsigned NOT NULL default '0',
             `bonus_points` int(10) unsigned NOT NULL default '0',
             `hidden` int(10) unsigned NOT NULL default '0',
-            `weight` decimal(4,2) default '0.00',
+            `weight` decimal(4,2) NOT NULL default '0.00',
             PRIMARY KEY  (`id`),
             KEY `courseid` (`courseid`)
           ) TYPE=MyISAM ;");
@@ -1280,10 +1280,10 @@ function main_upgrade($oldversion=0) {
 
         execute_sql("CREATE TABLE `{$CFG->prefix}grade_item` (
             `id` int(10) unsigned NOT NULL auto_increment,
-            `courseid` int(10) unsigned default NULL,
-            `category` int(10) unsigned default NULL,
-            `modid` int(10) unsigned default NULL,
-            `cminstance` int(10) unsigned default NULL,
+            `courseid` int(10) unsigned NOT NULL default '0',
+            `category` int(10) unsigned NOT NULL default '0',
+            `modid` int(10) unsigned NOT NULL default '0',
+            `cminstance` int(10) unsigned NOT NULL default '0',
             `scale_grade` float(11,10) default '1.0000000000',
             `extra_credit` int(10) unsigned NOT NULL default '0',
             `sort_order` int(10) unsigned NOT NULL default '0',
@@ -1305,7 +1305,7 @@ function main_upgrade($oldversion=0) {
 
         execute_sql("CREATE TABLE `{$CFG->prefix}grade_preferences` (
             `id` int(10) unsigned NOT NULL auto_increment,
-            `courseid` int(10) unsigned default NULL,
+            `courseid` int(10) unsigned NOT NULL default '0',
             `preference` int(10) NOT NULL default '0',
             `value` int(10) NOT NULL default '0',
             PRIMARY KEY  (`id`),
@@ -1834,7 +1834,43 @@ function main_upgrade($oldversion=0) {
         modify_database('',"ALTER TABLE prefix_tags ADD INDEX tags_typeuserid_idx (type(20), userid)");
         modify_database('',"ALTER TABLE prefix_tags ADD INDEX tags_text_idx(text(255))");
     }
+    
+    /***************************************************
+     * The following is an effort to change all the    *
+     * default NULLs to NOT NULL defaut '' in all      *
+     * mysql tables, to prevent 5303 and be consistent *
+     ***************************************************/
 
+    if ($oldversion < 2006042600) {
+
+        table_column('grade_category','name','name','varchar','64','','','not null');
+        execute_sql("ALTER TABLE {$CFG->prefix}grade_category change weight weight decimal(5,2) NOT NULL default 0.00");
+        table_column('grade_item','courseid','courseid','int','10','unsigned','0','not null');
+        table_column('grade_item','category','category','int','10','unsigned','0','not null');
+        table_column('grade_item','modid','modid','int','10','unsigned','0','not null');
+        table_column('grade_item','cminstance','cminstance','int','10','unsigned','0','not null');
+        execute_sql("ALTER TABLE {$CFG->prefix}grade_item change scale_grade scale_grade float(11,10) NOT NULL default 1.0000000000");
+        table_column('grade_preferences','courseid','courseid','int','10','unsigned','0','not null');
+        table_column('user','idnumber','idnumber','varchar','64','','','not null');
+        table_column('user','icq','icq','varchar','15','','','not null');
+        table_column('user','skype','skype','varchar','50','','','not null');
+        table_column('user','yahoo','yahoo','varchar','50','','','not null');
+        table_column('user','aim','aim','varchar','50','','','not null');
+        table_column('user','msn','msn','varchar','50','','','not null');
+        table_column('user','phone1','phone1','varchar','20','','','not null');
+        table_column('user','phone2','phone2','varchar','20','','','not null');
+        table_column('user','institution','institution','varchar','40','','','not null');
+        table_column('user','department','department','varchar','30','','','not null');
+        table_column('user','address','address','varchar','70','','','not null');
+        table_column('user','city','city','varchar','20','','','not null');
+        table_column('user','country','country','char','2','','','not null');
+        table_column('user','lang','lang','varchar','10','','en','not null');
+        table_column('user','lastIP','lastIP','varchar','15','','','not null');
+        table_column('user','secret','secret','varchar','15','','','not null');
+        table_column('user','picture','picture','tinyint','1','','0','not null');
+        table_column('user','url','url','varchar','255','','','not null');
+    }
+    
     return $result;
 }
 

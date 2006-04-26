@@ -64,6 +64,10 @@ function resource_upgrade($oldversion) {
         $wtm = new WikiToMarkdown();
         $wtm->update( 'resource','alltext','options' );
     }
+    
+    if ($oldversion < 2006042600) {
+        table_column('resource','reference','reference','varchar','255','','','not null');
+    }
 
     return true;
 }

@@ -27,7 +27,7 @@ function wiki_upgrade($oldversion) {
     }
 
     if ($oldversion < 2004053100) {
-        execute_sql('ALTER TABLE `'.$CFG->prefix.'wiki` CHANGE `initialcontent` `initialcontent` VARCHAR( 255 ) DEFAULT NULL');
+        execute_sql('ALTER TABLE `'.$CFG->prefix.'wiki` CHANGE `initialcontent` `initialcontent` VARCHAR( 255 ) NOT NULL DEFAULT \'\'');
 //      Remove obsolete 'initialcontent' values.
         if ($wikis = get_records('wiki')) {
             foreach ($wikis as $wiki) {
@@ -147,6 +147,13 @@ function wiki_upgrade($oldversion) {
 
             execute_sql("DROP TABLE {$CFG->prefix}wiki_pages_tmp");
         }
+    }
+
+    if ($oldversion < 2006042600) {
+
+        table_column('wiki','summary','summary','text','','','','not null');
+        table_column('wiki','pagename','pagename','varchar','255','','','not null');
+        table_column('wiki','initialcontent','initialcontent','varchar','255','','','not null');
     }
 
     return true;

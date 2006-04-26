@@ -19,7 +19,7 @@ CREATE TABLE prefix_resource (
   course int(10) unsigned NOT NULL default '0',
   name varchar(255) NOT NULL default '',
   type varchar(30) NOT NULL default '',
-  reference varchar(255) default NULL,
+  reference varchar(255) NOT NULL default '',
   summary text NOT NULL default '',
   alltext text NOT NULL default '',
   popup text NOT NULL default '',

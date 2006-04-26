@@ -192,6 +192,16 @@ function survey_upgrade($oldversion) {
         modify_database('','ALTER TABLE prefix_survey_answers ADD INDEX survey (survey);');
         modify_database('','ALTER TABLE prefix_survey_answers ADD INDEX question (question);');
     }
+    
+    if ($oldversion < 2006042600) {
+
+        table_column('survey','questions','questions','varchar','255','','','not null');
+        table_column('survey','intro','intro','text','','','','not null');
+        table_column('survey_answers','time','time','int','10','unsigned','0','not null');
+        table_column('survey_answers','answer1','answer1','text','','','','not null');
+        table_column('survey_answers','answer2','answer2','text','','','','not null');
+        table_column('survey_questions','intro','intro','varchar','50','','','not null');
+    }
 
     return true;
 }

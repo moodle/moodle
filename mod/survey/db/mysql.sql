@@ -22,8 +22,8 @@ CREATE TABLE prefix_survey (
   timecreated int(10) unsigned NOT NULL default '0',
   timemodified int(10) unsigned NOT NULL default '0',
   name varchar(255) NOT NULL default '',
-  intro text default '',
-  questions varchar(255) default NULL,
+  intro text NOT NULL default '',
+  questions varchar(255) NOT NULL default '',
   PRIMARY KEY  (id), 
   KEY `course` (`course`)
 ) TYPE=MyISAM COMMENT='all surveys';
@@ -70,9 +70,9 @@ CREATE TABLE prefix_survey_answers (
   userid int(10) unsigned NOT NULL default '0',
   survey int(10) unsigned NOT NULL default '0',
   question int(10) unsigned NOT NULL default '0',
-  time int(10) unsigned default NULL,
-  answer1 text default NULL,
-  answer2 text default NULL,
+  time int(10) unsigned NOT NULL default '0',
+  answer1 text NOT NULL default '',
+  answer2 text NOT NULL default '',
   PRIMARY KEY  (id),
   UNIQUE KEY id (id),
   KEY userid (userid),
@@ -95,7 +95,7 @@ CREATE TABLE `prefix_survey_questions` (
   `text` varchar(255) NOT NULL default '',
   `shorttext` varchar(30) NOT NULL default '',
   `multi` varchar(100) NOT NULL default '',
-  `intro` varchar(50) default NULL,
+  `intro` varchar(50) NOT NULL default '',
   `type` tinyint(3) NOT NULL default '0',
   `options` text,
   PRIMARY KEY  (`id`)

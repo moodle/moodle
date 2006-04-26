@@ -112,8 +112,8 @@ function backup_upgrade($oldversion=0) {
                           `backup_code` int(10) unsigned NOT NULL default '0',
                           `file_type` varchar(10) NOT NULL default '',
                           `path` varchar(255) NOT NULL default '',
-                          `old_id` int(10) unsigned default NULL,
-                          `new_id` int(10) unsigned default NULL,
+                          `old_id` int(10) unsigned NOT NULL default '0',
+                          `new_id` int(10) unsigned NOT NULL default '0',
                           PRIMARY KEY  (`id`),
                           UNIQUE KEY `{$CFG->prefix}backup_files_uk` (`backup_code`,`file_type`,`path`)
                       ) TYPE=MyISAM COMMENT='To store and recode ids to user and course files.'");
@@ -127,7 +127,7 @@ function backup_upgrade($oldversion=0) {
                           `backup_code` int(12) unsigned NOT NULL default '0',
                           `table_name` varchar(30) NOT NULL default '',
                           `old_id` int(10) unsigned NOT NULL default '0',
-                          `new_id` int(10) unsigned default NULL,
+                          `new_id` int(10) unsigned NOT NULL default '0',
                           `info` mediumtext,
                           PRIMARY KEY  (`id`),
                           UNIQUE KEY `{$CFG->prefix}backup_ids_uk` (`backup_code` ,`table_name`,`old_id`)
@@ -145,6 +145,16 @@ function backup_upgrade($oldversion=0) {
         $result = execute_sql("ALTER TABLE {$CFG->prefix}backup_ids DROP INDEX {$CFG->prefix}backup_ids_uk", false);
         $result = execute_sql("ALTER TABLE {$CFG->prefix}backup_files ADD UNIQUE INDEX backup_files_uk(backup_code,file_type(10),path(255))");
         $result = execute_sql("ALTER TABLE {$CFG->prefix}backup_ids ADD UNIQUE INDEX backup_ids_uk(backup_code,table_name(30),old_id)");
+    }
+
+    // chaing default nulls to not null default 0
+    
+    if ($oldversion < 2006042600) {
+
+        table_column('backup_files','old_id','old_id','int','10','unsigned','0','not null');
+        table_column('backup_files','new_id','new_id','int','10','unsigned','0','not null');
+        table_column('backup_ids','new_id','new_id','int','10','unsigned','0','not null');
+        table_column('backup_ids','info','info','mediumtext','','','','not null');
     }
 
 
