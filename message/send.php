@@ -104,7 +104,7 @@
         echo '<table align="center"><tr><td align="center">';
         print_textarea($usehtmleditor, 8, 34, 0, 0, 'message', '');
         echo '</td></tr></table>';
-        use_html_editor('message', 'formatblock subscript superscript copy cut paste clean undo redo justifyleft justifycenter justifyright justifyfull lefttoright righttoleft insertorderedlist insertunorderedlist outdent indent forecolor hilitecolor inserthorizontalrule createanchor nolink inserttable');
+        use_html_editor('message', 'formatblock subscript superscript copy cut paste clean undo redo justifyleft justifycenter justifyright justifyfull lefttoright righttoleft insertorderedlist insertunorderedlist outdent indent inserthorizontalrule createanchor nolink inserttable');
         echo '<input type="hidden" name="format" value="'.FORMAT_HTML.'" />';
     } else {
         print_textarea(false, 5, 34, 0, 0, 'message', '');
