@@ -20,11 +20,10 @@ function authorize_print_orders()
 {
     global $CFG, $USER;
     global $strs, $authstrs;
+    global $courseid, $userid;
     require_once $CFG->libdir.'/tablelib.php';
 
     $perpage = 10;
-    $userid = optional_param('user', 0, PARAM_INT);
-    $courseid = optional_param('course', SITEID, PARAM_INT);
     $status = optional_param('status', AN_STATUS_NONE, PARAM_INT);
 
     if (!isteacher($courseid)) {
