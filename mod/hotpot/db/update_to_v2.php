@@ -7,7 +7,7 @@ function hotpot_update_to_v2_1_16() {
 	$length = 20;
 	$field = 'name';
 	$table = 'hotpot_questions';
-	$index = "{$table}_{$name}_idx";
+	$index = "{$table}_{$field}_idx";
 
 	// remove the index
 	hotpot_db_delete_index("{$CFG->prefix}$table", $index);
