@@ -450,6 +450,16 @@ class assignment_base {
         if (! delete_records('event', 'modulename', 'assignment', 'instance', $assignment->id)) {
             $result = false;
         }
+        
+        // Get the cm id to properly clean up the grade_items for this assignment
+        // bug 4976
+        if (! $cm = get_record('modules', 'name', 'assignment')) {
+            $result = false;
+        } else {
+            if (! delete_records('grade_item', 'modid', $cm->id, 'cminstance', $assignment->id)) {
+                $result = false;
+            }
+        }
 
         return $result;
     }
@@ -545,9 +555,9 @@ class assignment_base {
                     //IE needs proper header with encoding
                     print_header(get_string('feedback', 'assignment').':'.format_string($this->assignment->name));
                     print_heading(get_string('changessaved'));
-                    $this->update_main_listing($submission);
+                    print $this->update_main_listing($submission);
                 }
-                close_window();
+                //close_window();
                 break;
 
             case 'single':                        // We are in a popup window displaying submission
@@ -650,11 +660,11 @@ class assignment_base {
                 //first we save the current changes
                 if ($submission = $this->process_feedback()) {
                     //print_heading(get_string('changessaved'));
-                    $this->update_main_listing($submission);
+                    $extra_javascript = $this->update_main_listing($submission);
                 }
                 
                 //then we display the next submission
-                $this->display_submission();
+                $this->display_submission($extra_javascript);
                 break;
             
             default:
@@ -671,18 +681,20 @@ class assignment_base {
     function update_main_listing($submission) {
         global $SESSION;
         
+        $output = '';
+
         $perpage = get_user_preferences('assignment_perpage', 10);
 
         $quickgrade = get_user_preferences('assignment_quickgrade', 0);
         
         /// Run some Javascript to try and update the parent page
-        echo '<script type="text/javascript">'."\n<!--\n";
+        $output .= '<script type="text/javascript">'."\n<!--\n";
         if (empty($SESSION->flextable['mod-assignment-submissions']->collapse['comment'])) {
             if ($quickgrade){
-                echo 'opener.document.getElementById("comment['.$submission->userid.']").value="'
+                $output.= 'opener.document.getElementById("comment['.$submission->userid.']").value="'
                 .trim($submission->comment).'";'."\n";
              } else {
-                echo 'opener.document.getElementById("com'.$submission->userid.
+                $output.= 'opener.document.getElementById("com'.$submission->userid.
                 '").innerHTML="'.shorten_text(trim(strip_tags($submission->comment)), 15)."\";\n";
             }
         }
@@ -690,35 +702,35 @@ class assignment_base {
         if (empty($SESSION->flextable['mod-assignment-submissions']->collapse['grade'])) {
             //echo optional_param('menuindex');
             if ($quickgrade){
-                echo 'opener.document.getElementById("menumenu['.$submission->userid.
+                $output.= 'opener.document.getElementById("menumenu['.$submission->userid.
                 ']").selectedIndex="'.optional_param('menuindex', 0, PARAM_INT).'";'."\n";
             } else {
-                echo 'opener.document.getElementById("g'.$submission->userid.'").innerHTML="'.
+                $output.= 'opener.document.getElementById("g'.$submission->userid.'").innerHTML="'.
                 $this->display_grade($submission->grade)."\";\n";
             }            
         }    
         //need to add student's assignments in there too.
         if (empty($SESSION->flextable['mod-assignment-submissions']->collapse['timemodified']) &&
             $submission->timemodified) {
-            echo 'opener.document.getElementById("ts'.$submission->userid.
+            $output.= 'opener.document.getElementById("ts'.$submission->userid.
                  '").innerHTML="'.addslashes($this->print_student_answer($submission->userid)).userdate($submission->timemodified)."\";\n";
         }
         
         if (empty($SESSION->flextable['mod-assignment-submissions']->collapse['timemarked']) &&
             $submission->timemarked) {
-            echo 'opener.document.getElementById("tt'.$submission->userid.
+            $output.= 'opener.document.getElementById("tt'.$submission->userid.
                  '").innerHTML="'.userdate($submission->timemarked)."\";\n";
         }
         
         if (empty($SESSION->flextable['mod-assignment-submissions']->collapse['status'])) {
-           echo 'opener.document.getElementById("up'.$submission->userid.'").className="s1";';
+            $output.= 'opener.document.getElementById("up'.$submission->userid.'").className="s1";';
             $buttontext = get_string('update');
             $button = link_to_popup_window ('/mod/assignment/submissions.php?id='.$this->cm->id.'&amp;userid='.$submission->userid.'&amp;mode=single'.'&amp;offset='.optional_param('offset', '', PARAM_INT), 
                       'grade'.$submission->userid, $buttontext, 450, 700, $buttontext, 'none', true, 'button'.$submission->userid);
-               echo 'opener.document.getElementById("up'.$submission->userid.'").innerHTML="'.addslashes($button).'";';               
+            $output.= 'opener.document.getElementById("up'.$submission->userid.'").innerHTML="'.addslashes($button).'";';
         }        
-        echo "\n-->\n</script>";
-        flush();
+        $output .= "\n-->\n</script>";
+        return $output;
     }
 
     /**
@@ -764,7 +776,7 @@ class assignment_base {
      * to process submissions before they are graded
      * This method gets its arguments from the page parameters userid and offset
      */
-    function display_submission() {
+    function display_submission($extra_javascript = '') {
     
         global $CFG;
         
@@ -822,6 +834,9 @@ class assignment_base {
         }
 
         print_header(get_string('feedback', 'assignment').':'.fullname($user, true).':'.format_string($this->assignment->name));
+
+        /// Print any extra javascript needed for saveandnext
+        echo $extra_javascript;
 
         ///SOme javascript to help with setting up >.>
         
@@ -1387,7 +1402,7 @@ class assignment_base {
                      format_string($this->assignment->name, true)."\n";
         $posttext .= '---------------------------------------------------------------------'."\n";
         $posttext .= get_string("emailteachermail", "assignment", $info)."\n";
-        $posttext .= '---------------------------------------------------------------------'."\n";
+        $posttext .= "\n---------------------------------------------------------------------\n";
         return $posttext;
     }
 
