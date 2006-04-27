@@ -508,7 +508,11 @@
                         case LESSON_MULTICHOICE:
                         case LESSON_TRUEFALSE:
                             if ($page->qoption) {
-                                $userresponse = explode(",", $useranswer->useranswer);
+                                if ($useranswer == NULL) {
+                                    $userresponse = array();
+                                } else {
+                                    $userresponse = explode(",", $useranswer->useranswer);
+                                }
                                 if (in_array($answer->id, $userresponse)) {
                                     // make checked
                                     $data = "<input  readonly=\"readonly\" disabled=\"disabled\" name=\"answer[$i]\" checked=\"checked\" type=\"checkbox\" value=\"1\" />";
@@ -542,7 +546,7 @@
                                     $data .= format_text($answer->answer,FORMAT_MOODLE,$formattextdefoptions);
                                 }
                             } else {
-                                if ($answer->id == $useranswer->answerid) {
+                                if ($useranswer != NULL and $answer->id == $useranswer->answerid) {
                                     // make checked
                                     $data = "<input  readonly=\"readonly\" disabled=\"disabled\" name=\"answer[$i]\" checked=\"checked\" type=\"checkbox\" value=\"1\" />";
                                     if ($answer->response == NULL) {
