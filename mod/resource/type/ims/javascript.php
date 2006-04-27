@@ -18,10 +18,24 @@
         window.onresize = function() {
             resizeiframe($jsarg);
         };
-        addDOMLoadEvent(function() {
-            resizeiframe($jsarg);
-        });
         window.name='ims-cp-page';
+
+        // Set Interval until ims-contentframe or ims-contentframe-no-nav is available
+        function waiting() {
+            var cf   = document.getElementById('ims-contentframe');
+            var cfnv = document.getElementById('ims-contentframe-no-nav');
+
+            if (cf || cfnv) {
+                if (cf) cf.style.display = 'block';
+                if (cfnv) cf.style.display = 'block';
+                resizeiframe($jsarg);
+                clearInterval(ourInterval);
+                return true;
+            }
+            return false;
+        }
+
+        var ourInterval = setInterval('waiting()', 100);
     </script>\n";
 
 /// Load standard JavaScript
