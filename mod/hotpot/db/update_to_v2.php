@@ -1,4 +1,36 @@
 <?PHP
+function hotpot_update_to_v2_1_17() {
+	global $CFG;
+	$ok = true;
+
+	$ok = $ok && hotpot_denull_int_field('hotpot_attempts', 'starttime', '10');
+	$ok = $ok && hotpot_denull_int_field('hotpot_attempts', 'endtime', '10');
+	$ok = $ok && hotpot_denull_int_field('hotpot_attempts', 'score', '6');
+	$ok = $ok && hotpot_denull_int_field('hotpot_attempts', 'penalties',  '6');
+	$ok = $ok && hotpot_denull_int_field('hotpot_attempts', 'timestart', '10');
+	$ok = $ok && hotpot_denull_int_field('hotpot_attempts', 'timefinish', '10');
+	$ok = $ok && hotpot_denull_int_field('hotpot_attempts', 'clickreportid', '10');
+
+	$ok = $ok && hotpot_denull_int_field('hotpot_questions', 'type', '4');
+	$ok = $ok && hotpot_denull_int_field('hotpot_questions', 'text', '10');
+
+	$ok = $ok && hotpot_denull_int_field('hotpot_responses', 'weighting', '8');
+	$ok = $ok && hotpot_denull_int_field('hotpot_responses', 'score', '8');
+	$ok = $ok && hotpot_denull_int_field('hotpot_responses', 'hints', '6');
+	$ok = $ok && hotpot_denull_int_field('hotpot_responses', 'clues', '6');
+	$ok = $ok && hotpot_denull_int_field('hotpot_responses', 'checks', '6');
+
+	return $ok;
+}
+function hotpot_denull_int_field($table, $field, $size) {
+	global $CFG;
+	$ok = true;
+
+	$ok = $ok && execute_sql("UPDATE {$CFG->prefix}$table SET $field=0 WHERE $field IS NULL");
+	$ok = $ok && hotpot_db_update_field_type($table, $field, $field, 'INTEGER', $size, 'UNSIGNED', 'NOT NULL', 0);
+
+	return $ok;
+}
 function hotpot_update_to_v2_1_16() {
 	global $CFG;
 	$ok = true;
