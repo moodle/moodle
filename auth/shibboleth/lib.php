@@ -26,7 +26,6 @@ function auth_get_userinfo($username) {
 // reads user information from shibboleth attributes and return it in array()
     global $CFG;
 
-    $config = (array)$CFG;
     $pluginconfig   = get_config('auth/shibboleth');
 
     // Check whether we have got all the essential attributes
@@ -47,20 +46,20 @@ function auth_get_userinfo($username) {
     foreach ($attrmap as $key=>$value) {
         $result[$key]=utf8_decode($_SERVER[$value]);
     }
-    
-     // Provide an API to modify the information to fit the Moodle internal
+
+    // Provide an API to modify the information to fit the Moodle internal
     // data representation
     if (   
-          $config["shib_convert_data"] 
-          && $config["shib_convert_data"] != ''
-          && is_readable($config["shib_convert_data"])
+          $pluginconfig->convert_data 
+          && $pluginconfig->convert_data != ''
+          && is_readable($pluginconfig->convert_data)
         ){
         
         // Include a custom file outside the Moodle dir to
         // modify the variable $moodleattributes
-        include($config["shib_convert_data"]);
+        include($pluginconfig->convert_data);
     }
-    
+
     return $result;
 }
 
