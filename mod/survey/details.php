@@ -68,6 +68,7 @@
         <input type="hidden" name="modulename" value="<?php p($form->modulename) ?>" />
         <input type="hidden" name="instance"   value="<?php p($form->instance) ?>" />
         <input type="hidden" name="mode"       value="<?php p($form->mode) ?>" />
+        <input type="hidden" name="visible"    value="<?php p($form->visible) ?>" />
         <input type="hidden" name="groupmode"  value="<?php p($form->groupmode) ?>" />
         <center>
         <input type="submit" value="<?php print_string("savechanges") ?>" />
