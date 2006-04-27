@@ -465,7 +465,12 @@ table.minicalendar {
   border-color:#DDDDDD;
 }
 
-#course-view .section .content,
+/* .content should match the body background, sides are white. */
+#course-view .weekscss .content {
+  background: #FAFAFA;
+}
+
+#course-view .weekscss .section,
 #course-view .section td.side {
   background: #FFFFFF;
 }
