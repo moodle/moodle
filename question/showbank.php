@@ -25,7 +25,7 @@
 
     $page      = optional_param('page', -1, PARAM_INT);
     $perpage   = optional_param('perpage', 20, PARAM_INT);
-    $sortorder = optional_param('sortorder', 'qtype, name ASC');
+    $sortorder = optional_param('sortorder', '');
     if (preg_match("/[';]/", $sortorder)) {
         error("Incorrect use of the parameter 'sortorder'");
     }
@@ -34,6 +34,12 @@
         $SESSION->questionpage = $page;
     } else {
         $page = isset($SESSION->questionpage) ? $SESSION->questionpage : 0;
+    }
+
+    if ($sortorder) {
+        $SESSION->questionsortorder = $sortorder;
+    } else {
+        $sortorder = isset($SESSION->questionsortorder) ? $SESSION->questionsortorder : 'qtype, name ASC';
     }
 
 /// Now, check for commands on this page and modify variables as necessary
