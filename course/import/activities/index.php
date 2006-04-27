@@ -10,7 +10,7 @@
     $page             = optional_param('page', 0, PARAM_INT);
     $filename         = optional_param('filename', 0, PARAM_PATH);
 
-    $strimportothercourses = get_string('importfromothercourses');
+    $strimportactivities = get_string('importactivities');
 
     if (! ($course = get_record("course", "id", $id)) ) {
         error("That's an invalid course id");
@@ -49,10 +49,10 @@
         }
     }
     
-    print_header("$course->shortname: $strimportothercourses", "$course->fullname", 
+    print_header("$course->shortname: $strimportactivities", "$course->fullname", 
                  "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> ".
                  "-> <a href=\"$CFG->wwwroot/course/import.php?id=$course->id\">".get_string('import')."</a> ".
-                 "-> $strimportothercourses");
+                 "-> $strimportactivities");
     require_once('mod.php');    
 
     print_footer();
