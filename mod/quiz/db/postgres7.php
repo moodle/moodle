@@ -4,7 +4,7 @@ function quiz_upgrade($oldversion) {
 // This function does anything necessary to upgrade
 // older versions to match current functionality
 
-    global $CFG;
+    global $CFG, $db;
     include_once("$CFG->dirroot/mod/quiz/locallib.php");
 
     if ($oldversion < 2003010100) {
