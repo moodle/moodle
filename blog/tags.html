@@ -44,14 +44,22 @@ print_heading(get_string('tagmanagement'));
                 $ptags1 = get_records_sql('SELECT * from '.$CFG->prefix.'tags WHERE type=\'personal\' AND userid = '.$USER->id.' ORDER by text ASC');
                 $ptags2 = get_records_sql('SELECT * from '.$CFG->prefix.'tags WHERE type=\'personal\' AND userid <> '.$USER->id.' ORDER by text ASC');
                 
-                if (!empty($ptags1)) {
-                    $ptags = array_merge($ptags1, $ptags2);
-                } else {
+                $ptags = array();
+                
+                if (!empty($ptags1)) { // user's own tag exists
+                    if (!empty($ptags2)) { // user's own tags, and other users tags exist, we merge
+                        $ptags = array_merge($ptags1, $ptags2);
+                    } else { // user's own tags exist, no other personal tags, just use that
+                        $ptags = $ptags1;
+                    }
+                } else if (!empty($ptags2)) {
                     $ptags = $ptags2;
-                }
+                } 
 
-                foreach ($ptags as $ptag) {
-                    echo '<option value="'.$ptag->id.'">'.$ptag->text.'</option>';
+                if (!empty($ptags)) {
+                    foreach ($ptags as $ptag) {
+                        echo '<option value="'.$ptag->id.'">'.$ptag->text.'</option>';
+                    }
                 }
             ?>
             </select>
