@@ -23,8 +23,8 @@
     
     if (!$categoryid) { // need to get category from modform
         $showcatmenu = true; // will ensure that user can choose category
-        if (isset($SESSION->modform)) {
-            $categoryid = $SESSION->modform->category;
+        if (isset($SESSION->questioncat)) {
+            $categoryid = $SESSION->questioncat;
         }
     }
 
