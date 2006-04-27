@@ -92,8 +92,8 @@
             $qcobject->publish_category(true, $param->publish);
         } else if (!empty($param->addcategory)) {
             $param->newparent   = required_param('newparent',PARAM_INT);
-            $param->newcategory = required_param('newcategory',PARAM_ALPHANUM);
-            $param->newinfo     = required_param('newinfo',PARAM_CLEAN);
+            $param->newcategory = required_param('newcategory',PARAM_NOTAGS);
+            $param->newinfo     = required_param('newinfo',PARAM_NOTAGS);
             $param->newpublish  = required_param('newpublish',PARAM_INT);
             $qcobject->add_category($param->newparent, $param->newcategory, $param->newinfo,
                 $param->newpublish, $course->id);
@@ -101,8 +101,8 @@
             $qcobject->edit_single_category($param->edit, $param->page);
         } else if (!empty($param->updateid)) {
             $param->updateparent  = required_param('updateparent',PARAM_INT);
-            $param->updatename    = required_param('updatename',PARAM_ALPHANUM);
-            $param->updateinfo    = required_param('updateinfo',PARAM_CLEAN);
+            $param->updatename    = required_param('updatename',PARAM_NOTAGS);
+            $param->updateinfo    = required_param('updateinfo',PARAM_NOTAGS);
             $param->updatepublish = required_param('updatepublish',PARAM_INT);
             $qcobject->update_category($param->updateid, $param->updateparent, $param->updatename,
                 $param->updateinfo, $param->updatepublish, $course->id);
