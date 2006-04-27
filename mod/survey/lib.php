@@ -441,11 +441,11 @@ function survey_print_single($question) {
 
 
     if ($question->type == 0) {           // Plain text field
-        echo "<textarea rows=\"3\" cols=\"30\" name=\"$question->id\">$question->options</textarea>";
+        echo "<textarea rows=\"3\" cols=\"30\" name=\"q$question->id\">$question->options</textarea>";
 
     } else if ($question->type > 0) {     // Choose one of a number
         $strchoose = get_string("choose");
-        echo "<select name=\"$question->id\">";
+        echo "<select name=\"q$question->id\">";
         echo "<option value=\"0\" selected=\"selected\">$strchoose...</option>";
         $options = explode( ",", $question->options);
         foreach ($options as $key => $val) {

@@ -47,10 +47,10 @@
     foreach ($formdata as $key => $val) {
         if ($key <> "userid" && $key <> "id") {
             if ( substr($key,0,1) == "q") {
-                $key = substr($key,1);   // keep everything but the 'q'
+                $key = clean_param(substr($key,1), PARAM_ALPHANUM);   // keep everything but the 'q', number or Pnumber
             }
             if ( substr($key,0,1) == "P") {
-                $realkey = substr($key,1);
+                $realkey = (int) substr($key,1);
                 $answers[$realkey][1] = $val;
             } else {
                 $answers[$key][0] = $val;

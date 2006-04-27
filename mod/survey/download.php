@@ -44,6 +44,7 @@
     $questions = get_records_list("survey_questions", "id", $survey->questions);
     $order = explode(",", $survey->questions);
 
+    $virtualscales = false;
     foreach ($order as $key => $qid) {  // Do we have virtual scales?
         $question = $questions[$qid];
         if ($question->type < 0) {

@@ -5,10 +5,11 @@
 
 // Check that all the parameters have been provided.
 
-    $id      = required_param('id', PARAM_INT);    // Course Module ID
-    $action  = optional_param('action', '', PARAM_ALPHA);  // What to look at
-    $qid     = optional_param('qid', 0, PARAM_INT);  // Group ID
-    $student = optional_param('student', 0, PARAM_INT);  // Student ID
+    $id      = required_param('id', PARAM_INT);           // Course Module ID
+    $action  = optional_param('action', '', PARAM_ALPHA); // What to look at
+    $qid     = optional_param('qid', 0, PARAM_INT);       // Question ID
+    $student = optional_param('student', 0, PARAM_INT);   // Student ID
+    $notes   = optional_param('notes', '', PARAM_RAW);    // Save teachers notes
 
     if (! $cm = get_record("course_modules", "id", $id)) {
         error("Course Module ID was incorrect");
@@ -103,6 +104,8 @@
 
 
 /// Print the menu across the top
+
+    $virtualscales = false;
 
     switch ($action) {
 
@@ -307,7 +310,7 @@
 
          print_heading(get_string("analysisof", "survey", fullname($user)));
 
-         if (isset($notes)) {
+         if ($notes != '' and confirm_sesskey()) {
              if (survey_get_analysis($survey->id, $user->id)) {
                  if (! survey_update_analysis($survey->id, $user->id, $notes)) {
                      notify("An error occurred while saving your notes.  Sorry.");
@@ -369,7 +372,7 @@
                      $table = NULL;
                      $table->head = array(get_string($question->text, "survey"));
                      $table->align = array ("left");
-                     $table->data[] = array("$answer->answer1");
+                     $table->data[] = array(s($answer->answer1)); // no html here, just plain text
                      print_table($table);
                      print_spacer(30);
                  }
@@ -390,6 +393,7 @@
          p($notes);
          echo "</textarea><br />";
          echo "<input type=\"hidden\" name=\"action\" value=\"student\" />";
+         echo "<input type=\"hidden\" name=\"sesskey\" value=\"".sesskey()."\" />";
          echo "<input type=\"hidden\" name=\"student\" value=\"$student\" />";
          echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\" />";
          echo "<input type=\"submit\" value=\"".get_string("savechanges")."\" />";

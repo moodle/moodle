@@ -2,7 +2,7 @@
 
     require_once("../../config.php");
 
-    if ($form = data_submitted($destination)) {
+    if ($form = data_submitted($CFG->wwwroot.'/course/mod.php')) {
 
         if (! $course = get_record("course", "id", $form->course)) {
             error("This course doesn't exist");
@@ -19,7 +19,7 @@
 
         print_header_simple("$streditingasurvey", "",
                       "<a href=\"index.php?id=$course->id\">$strsurveys</a>".
-                      " -> $form->name ($streditingasurvey)");
+                      " -> ".stripslashes_safe($form->name)." ($streditingasurvey)");
 
         if (!$form->name or !$form->template) {
             error(get_string("filloutallfields"), $_SERVER["HTTP_REFERER"]);
@@ -27,10 +27,10 @@
 
         print_simple_box_start('center');
         ?>
-        <form name="form" method="post" action="<?php p($form->destination)?>">
+        <form name="form" method="post" action="<?php echo $CFG->wwwroot.'/course/mod.php'?>">
         <table cellpadding="5" align="center">
         <tr><td align="right" nowrap="nowrap"><b><?php print_string("name") ?>:</b></td>
-            <td><?php p($form->name) ?></a></td></tr>
+            <td><?php p($form->name, true) ?></a></td></tr>
 
         <tr valign="top">
             <td align="right" nowrap="nowrap">
@@ -44,16 +44,19 @@
             <td>
                 <textarea name="intro" rows="20" cols="50" wrap="virtual"><?php
                 if ($form->intro) {
-                    p($form->intro);
+                    p($form->intro, true);
                 } else {
                     $form->intro = get_field("survey", "intro", "id", $form->template);
                     $form->intro = get_string($form->intro, "survey");
-                    p($form->intro);
+                    p($form->intro, true);
                 }
                 ?></textarea>
             </td>
         </tr>
         </table>
+        <?php $form = stripslashes_safe($form);
+        // no db access using $form beyond this point!
+        ?>
         <input type="hidden" name="name"       value="<?php p($form->name) ?>" />
         <input type="hidden" name="template"   value="<?php p($form->template) ?>" />
 

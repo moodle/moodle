@@ -84,7 +84,7 @@
                         $table = NULL;
                         $table->head = array(get_string($question->text, "survey"));
                         $table->align = array ("left");
-                        $table->data[] = array("$answer->answer1");
+                        $table->data[] = array(s($answer->answer1));//no html here, just plain text
                         print_table($table);
                         print_spacer(30);
                     }
