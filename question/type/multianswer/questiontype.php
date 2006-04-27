@@ -315,7 +315,7 @@ class embedded_cloze_qtype extends default_questiontype {
                                 ? ' selected="selected" ' : '';
                         $outputoptions .= "<option value=\"$mcanswer->id\" $selected>$mcanswer->answer</option>";
                     }
-                   echo "<select $popup $disabled $style name=\"$inputname\">";
+                   echo "<select $popup $readonly $style name=\"$inputname\">";
                    echo $outputoptions;
                    echo '</select>';
                    break;
