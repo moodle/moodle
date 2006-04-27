@@ -39,6 +39,8 @@
 
     print_heading($strmanagemodules);
    
+    $courseaffected = false;
+    
 
 /// If data submitted, then process and store.
 
@@ -50,6 +52,7 @@
         set_field('course_modules', 'visibleold', '1', 'visible' ,'1', 'module', $module->id); // Remember the previous visible state so we can toggle this back if the module is unhidden.
         set_field('course_modules', 'visibleold', '0', 'visible' ,'0', 'module', $module->id);
         set_field("course_modules", "visible", "0", "module", $module->id);                    // Hide all related activity modules
+        $coursesaffected = true;
     }
 
     if (!empty($show) and confirm_sesskey()) {
@@ -58,6 +61,7 @@
         }
         set_field("modules", "visible", "1", "id", $module->id);                               // Show main module
         set_field('course_modules', 'visible', '1', 'visibleold', '1', 'module', $module->id); // Get the previous saved visible state for the course module.
+        $coursesaffected = true;
     }
 
     if (!empty($delete) and confirm_sesskey()) {
@@ -123,14 +127,19 @@
                 }
             }  
 
-            rebuild_course_cache();  // Because things have changed
-
+            //rebuild_course_cache();  // Because things have changed
+            $coursesaffected = true;
 
             $a->module = $strmodulename;
             $a->directory = "$CFG->dirroot/mod/$delete";
             notice(get_string("moduledeletefiles", "", $a), "modules.php");
         }
     }
+    
+    if ($coursesaffected) {
+        rebuild_course_cache();  // Because things have changed
+    }
+    
 
 /// Get and sort the existing modules
 
