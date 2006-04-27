@@ -60,16 +60,17 @@ function lesson_add_instance($lesson) {
     }
 
     if ($lesson->lessondefault) {
-        $lessondefault = $lesson;
-        unset($lessondefault->lessondefault);
-        unset($lessondefault->name);
-        unset($lessondefault->timemodified);
-        unset($lessondefault->available);
-        unset($lessondefault->deadline);
-        if ($lessondefault->id = get_field("lesson_default", "id", "course", $lessondefault->course)) {
-            update_record("lesson_default", $lessondefault);
+        $default = new stdClass;
+        $default = clone($lesson);
+        unset($default->lessondefault);
+        unset($default->name);
+        unset($default->timemodified);
+        unset($default->available);
+        unset($default->deadline);
+        if ($default->id = get_field("lesson_default", "id", "course", $default->course)) {
+            update_record("lesson_default", $default);
         } else {
-            insert_record("lesson_default", $lessondefault);
+            insert_record("lesson_default", $default);
         }
     } else {
         unset($lesson->lessondefault);
@@ -154,16 +155,18 @@ function lesson_update_instance($lesson) {
     }
 
     if ($lesson->lessondefault) {
-        $lessondefault = $lesson;
-        unset($lessondefault->lessondefault);
-        unset($lessondefault->name);
-        unset($lessondefault->timemodified);
-        unset($lessondefault->available);
-        unset($lessondefault->deadline);
-        if ($lessondefault->id = get_field("lesson_default", "id", "course", $lessondefault->course)) {
-            update_record("lesson_default", $lessondefault);
+        $default = new stdClass;
+        $default = clone($lesson);
+        $default = $lesson;
+        unset($default->lessondefault);
+        unset($default->name);
+        unset($default->timemodified);
+        unset($default->available);
+        unset($default->deadline);
+        if ($default->id = get_field("lesson_default", "id", "course", $default->course)) {
+            update_record("lesson_default", $default);
         } else {
-            insert_record("lesson_default", $lessondefault);
+            insert_record("lesson_default", $default);
         }
     } else {
         unset($lesson->lessondefault);
