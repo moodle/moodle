@@ -1019,6 +1019,22 @@ function quiz_upgrade($oldversion) {
         table_column('question', 'version', 'version', 'varchar', 255);
     }
 
+    if ($oldversion < 2006042800) {
+        // Check we have some un-renamed tables (verified in some servers)
+        if ($tables = $db->MetaTables('TABLES')) {
+            if (in_array($CFG->prefix.'quiz_randommatch', $tables) &&
+                !in_array($CFG->prefix.'question_randomsamatch', $tables)) {
+                modify_database ("", "ALTER TABLE prefix_quiz_randommatch RENAME prefix_question_randomsamatch ");
+            }
+            // Check for one possible missing field in one table
+            if ($columns = $db->MetaColumnNames($CFG->prefix.'question_randomsamatch')) {
+                if (!in_array('shuffleanswers', $columns)) {
+                    table_column('question_randomsamatch', '', 'shuffleanswers', 'tinyint', '4', 'unsigned', '1', 'not null', 'choose');
+                }
+            }
+        }
+    }
+
     return true;
 }
 
