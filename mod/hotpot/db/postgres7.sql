@@ -37,15 +37,15 @@ CREATE TABLE prefix_hotpot_attempts (
     id  SERIAL PRIMARY KEY,
     hotpot        INT4 NOT NULL default '0',
     userid        INT4 NOT NULL default '0',
-    starttime     INT4,
-    endtime       INT4,
-    score         INT2,
-    penalties     INT2,
+    starttime     INT4 NOT NULL default '0',
+    endtime       INT4 NOT NULL default '0',
+    score         INT2 NOT NULL default '0',
+    penalties     INT2 NOT NULL default '0',
     attempt       INT2 NOT NULL default '0',
     timestart     INT4 NOT NULL default '0',
     timefinish    INT4 NOT NULL default '0',
     status        INT2 NOT NULL default '1',
-    clickreportid INT4 default NULL
+    clickreportid INT4 NOT NULL default '0'
 );
 COMMENT ON TABLE prefix_hotpot IS 'details about Hot Potatoes quiz attempts';
 
@@ -59,7 +59,7 @@ CREATE INDEX prefix_hotpot_attempts_userid_idx ON prefix_hotpot_attempts (userid
 CREATE TABLE prefix_hotpot_details (
     id  SERIAL PRIMARY KEY,
     attempt  INT4 NOT NULL default '0',
-    details  TEXT
+    details  TEXT NOT NULL default ''
 );
 COMMENT ON TABLE prefix_hotpot_details IS 'raw details (as XML) of Hot Potatoes quiz attempts';
 
@@ -71,9 +71,9 @@ CREATE INDEX prefix_hotpot_details_attempt_idx ON prefix_hotpot_details (attempt
 
 CREATE TABLE prefix_hotpot_questions (
     id  SERIAL PRIMARY KEY,
-    name   TEXT,
+    name   TEXT NOT NULL default '',
     type   INT2 NOT NULL default '0',
-    text   INT4 NULL,
+    text   INT4 NOT NULL default '0',
     hotpot INT4 NOT NULL default '0'
 );
 COMMENT ON TABLE prefix_hotpot_questions IS 'details about questions in Hot Potatoes quiz attempts';
@@ -89,14 +89,14 @@ CREATE TABLE prefix_hotpot_responses (
     id  SERIAL PRIMARY KEY,
     attempt   INT4 NOT NULL default '0',
     question  INT4 NOT NULL default '0',
-    score     INT2,
-    weighting INT2,
+    score     INT2 NOT NULL default '0',
+    weighting INT2 NOT NULL default '0',
     correct   VARCHAR(255) NOT NULL default '',
     wrong     VARCHAR(255) NOT NULL default '',
     ignored   VARCHAR(255) NOT NULL default '',
-    hints     INT2,
-    clues     INT2,
-    checks    INT2
+    hints     INT2 NOT NULL default '0',
+    clues     INT2 NOT NULL default '0',
+    checks    INT2 NOT NULL default '0'
 );
 COMMENT ON TABLE prefix_hotpot_responses IS 'details about responses in Hot Potatoes quiz attempts';
 
@@ -109,7 +109,7 @@ CREATE INDEX prefix_hotpot_responses_question_idx ON prefix_hotpot_responses (qu
 
 CREATE TABLE prefix_hotpot_strings (
   id  SERIAL PRIMARY KEY,
-  string TEXT NOT NULL
+  string TEXT NOT NULL default ''
 );
 COMMENT ON TABLE prefix_hotpot_strings IS 'strings used in Hot Potatoes questions and responses';
 

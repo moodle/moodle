@@ -32,6 +32,11 @@ function hotpot_upgrade($oldversion) {
 		$ok = $ok && hotpot_get_update_to_v2();
 		$ok = $ok && hotpot_update_to_v2_1_16();
 	}
+	// update to HotPot v2.1.17
+	if ($oldversion < 2006042602) {
+		$ok = $ok && hotpot_get_update_to_v2();
+		$ok = $ok && hotpot_update_to_v2_1_17();
+	}
 	return $ok;
 }
 function hotpot_get_update_to_v2() {
