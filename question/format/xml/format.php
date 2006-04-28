@@ -249,7 +249,6 @@ class qformat_xml extends qformat_default {
             $qo->subquestions[] = $qtext;
             $qo->subanswers[] = $atext;
         }
-//echo "<pre>"; print_r( $qo ); die;
         return $qo;
     }
 
@@ -274,7 +273,7 @@ class qformat_xml extends qformat_default {
         foreach ($xml['quiz']['#']['question'] as $question) {
             $question_type = $question['@']['type'];
             $questiontype = get_string( 'questiontype','quiz',$question_type );
-            echo "<p>$questiontype</p>"; 
+            // echo "<p>$questiontype</p>"; 
 
             if ($question_type=='multichoice') {
                 $qo = $this->import_multichoice( $question );
