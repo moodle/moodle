@@ -409,7 +409,7 @@
             $rec->backup_code = $backup_unique_code;
             $rec->table_name = $table;
             $rec->old_id = $old_id;
-            $rec->new_id =$new_id;
+            $rec->new_id = ($new_id === null? 0 : $new_id);
             $rec->info = $info_to_save;
             
             $status = insert_record('backup_ids', $rec, false);
