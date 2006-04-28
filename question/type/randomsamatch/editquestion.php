@@ -3,7 +3,6 @@
         $options = get_record("question_randomsamatch", "question", $question->id);
     } else {
         $options->choose = "";
-        $options->shuffleanswers = 1;
     }
     $saquestions = $QTYPES['randomsamatch']->get_sa_candidates($category->id);
     $numberavailable = count($saquestions);

@@ -32,7 +32,6 @@ class question_randomsamatch_qtype extends question_match_qtype {
     function save_question_options($question) {
         $options->question = $question->id;
         $options->choose = $question->choose;
-        $options->shuffleanswers = $question->shuffleanswers;
 
         if (2 > $question->choose) {
             $result->error = "At least two shortanswer questions need to be chosen!";
@@ -150,12 +149,10 @@ class question_randomsamatch_qtype extends question_match_qtype {
             $state->options->subquestions[$key] = clone($wrappedquestion);
         }
 
-        // Shuffle the answers if required
+        // Shuffle the answers (Do this always because this is a random question type)
         $subquestionids = array_values(array_map(create_function('$val',
          'return $val->id;'), $state->options->subquestions));
-        if ($cmoptions->shuffleanswers and $question->options->shuffleanswers) {
-           $subquestionids = swapshuffle($subquestionids);
-        }
+        $subquestionids = swapshuffle($subquestionids);
 
         // Create empty responses
         foreach ($subquestionids as $val) {
@@ -261,7 +258,6 @@ class question_randomsamatch_qtype extends question_match_qtype {
                 $status = fwrite ($bf,start_tag("RANDOMSAMATCH",6,true));
                 //Print randomsamatch contents
                 fwrite ($bf,full_tag("CHOOSE",7,false,$randomsamatch->choose));
-                fwrite ($bf,full_tag("SHUFFLEANSWERS",7,false,$randomsamatch->shuffleanswers));
                 $status = fwrite ($bf,end_tag("RANDOMSAMATCH",6,true));
             }
         }
@@ -289,7 +285,6 @@ class question_randomsamatch_qtype extends question_match_qtype {
             //Now, build the question_randomsamatch record structure
             $randomsamatch->question = $new_question_id;
             $randomsamatch->choose = backup_todb($ran_info['#']['CHOOSE']['0']['#']);
-            $randomsamatch->shuffleanswers = backup_todb($ran_info['#']['SHUFFLEANSWERS']['0']['#']);
 
             //The structure is equal to the db, so insert the question_randomsamatch
             $newid = insert_record ("question_randomsamatch",$randomsamatch);

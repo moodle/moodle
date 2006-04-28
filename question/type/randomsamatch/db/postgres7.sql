@@ -9,7 +9,6 @@ CREATE TABLE prefix_question_randomsamatch (
   id SERIAL PRIMARY KEY,
   question integer NOT NULL default '0',
   choose integer NOT NULL default '4',
-  shuffleanswers integer NOT NULL default '1'
 );
 
 CREATE INDEX prefix_question_randomsamatch_question_idx ON prefix_question_randomsamatch (question);

@@ -94,15 +94,6 @@
      ?>
     </td>
 </tr>
-<tr valign="top">
-    <td align="right"><b><?php print_string("shuffle", "quiz") ?>:</b></td>
-     <td align="left">
-    <?php
-        choose_from_menu($yesnooptions, "shuffleanswers", "$options->shuffleanswers", "");
-        helpbutton("matchshuffle", get_string("shuffle","quiz"), "quiz");
-     ?>
-    </td>
-</tr>
 <?php
     $QTYPES[$question->qtype]->print_replacement_options($question, $course, $contextquiz);
     $QTYPES[$question->qtype]->print_question_form_end($question);
