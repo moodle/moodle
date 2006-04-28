@@ -13,7 +13,7 @@ function hotpot_update_to_v2_1_18() {
 	return $ok;
 }
 function hotpot_remove_orphans($secondarytable, $secondarykeyfield, $primarytable, $primarykeyfield='id') {
-	global $CFG;
+	global $CFG,$db;
 	$ok = true;
 
 	// save and switch off SQL message echo
