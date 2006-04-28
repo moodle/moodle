@@ -1,11 +1,16 @@
 <?php //  $Id$
 
+if (!defined('MOODLE_INTERNAL')) {
+    die('Direct access to this script is forbidden.'); /// It must be included from a Moodle page
+}
+
 define('AN_APPROVED', '1');
 define('AN_DECLINED', '2');
-define('AN_ERROR', '3');
-define('AN_DELIM', '|');
-define('AN_ENCAP', '"');
-require_once $CFG->dirroot.'/enrol/authorize/const.php';
+define('AN_ERROR',    '3');
+define('AN_DELIM',    '|');
+define('AN_ENCAP',    '"');
+
+require_once('const.php');
 
 /**
  * Gets settlement date and time
