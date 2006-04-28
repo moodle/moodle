@@ -1841,33 +1841,83 @@ function main_upgrade($oldversion=0) {
      * mysql tables, to prevent 5303 and be consistent *
      ***************************************************/
 
-    if ($oldversion < 2006042600) {
+    if ($oldversion < 2006042800) {
 
+        execute_sql("UPDATE {$CFG->prefix}grade_category SET name='' WHERE name IS NULL");
         table_column('grade_category','name','name','varchar','64','','','not null');
+
+        execute_sql("UPDATE {$CFG->prefix}grade_category SET weight='0' WHERE weight IS NULL");
         execute_sql("ALTER TABLE {$CFG->prefix}grade_category change weight weight decimal(5,2) NOT NULL default 0.00");
+        execute_sql("UPDATE {$CFG->prefix}grade_item SET courseid='0' WHERE courseid IS NULL");
         table_column('grade_item','courseid','courseid','int','10','unsigned','0','not null');
+
+        execute_sql("UPDATE {$CFG->prefix}grade_item SET category='0' WHERE category IS NULL");
         table_column('grade_item','category','category','int','10','unsigned','0','not null');
+
+        execute_sql("UPDATE {$CFG->prefix}grade_item SET modid='0' WHERE modid IS NULL");
         table_column('grade_item','modid','modid','int','10','unsigned','0','not null');
+
+        execute_sql("UPDATE {$CFG->prefix}grade_item SET cminstance='0' WHERE cminstance IS NULL");
         table_column('grade_item','cminstance','cminstance','int','10','unsigned','0','not null');
+
+        execute_sql("UPDATE {$CFG->prefix}grade_item SET scale_grade='0' WHERE scale_grade IS NULL");
         execute_sql("ALTER TABLE {$CFG->prefix}grade_item change scale_grade scale_grade float(11,10) NOT NULL default 1.0000000000");
+        
+        execute_sql("UPDATE {$CFG->prefix}grade_preferences SET courseid='0' WHERE courseid IS NULL");
         table_column('grade_preferences','courseid','courseid','int','10','unsigned','0','not null');
+
+        execute_sql("UPDATE {$CFG->prefix}user SET idnumber='' WHERE idnumber IS NULL");
         table_column('user','idnumber','idnumber','varchar','64','','','not null');
+
+        execute_sql("UPDATE {$CFG->prefix}user SET icq='' WHERE icq IS NULL");
         table_column('user','icq','icq','varchar','15','','','not null');
+        
+        execute_sql("UPDATE {$CFG->prefix}user SET skype='' WHERE skype IS NULL");
         table_column('user','skype','skype','varchar','50','','','not null');
+        
+        execute_sql("UPDATE {$CFG->prefix}user SET yahoo='' WHERE yahoo IS NULL");
         table_column('user','yahoo','yahoo','varchar','50','','','not null');
+
+        execute_sql("UPDATE {$CFG->prefix}user SET aim='' WHERE aim IS NULL");
         table_column('user','aim','aim','varchar','50','','','not null');
+
+        execute_sql("UPDATE {$CFG->prefix}user SET msn='' WHERE msn IS NULL");
         table_column('user','msn','msn','varchar','50','','','not null');
+
+        execute_sql("UPDATE {$CFG->prefix}user SET phone1='' WHERE phone1 IS NULL");
         table_column('user','phone1','phone1','varchar','20','','','not null');
+
+        execute_sql("UPDATE {$CFG->prefix}user SET phone2='' WHERE phone2 IS NULL");
         table_column('user','phone2','phone2','varchar','20','','','not null');
+
+        execute_sql("UPDATE {$CFG->prefix}user SET institution='' WHERE institution IS NULL");
         table_column('user','institution','institution','varchar','40','','','not null');
+
+        execute_sql("UPDATE {$CFG->prefix}user SET department='' WHERE department IS NULL");
         table_column('user','department','department','varchar','30','','','not null');
+
+        execute_sql("UPDATE {$CFG->prefix}user SET address='' WHERE address IS NULL");
         table_column('user','address','address','varchar','70','','','not null');
+        
+        execute_sql("UPDATE {$CFG->prefix}user SET city='' WHERE city IS NULL");
         table_column('user','city','city','varchar','20','','','not null');
+
+        execute_sql("UPDATE {$CFG->prefix}user SET country='' WHERE country IS NULL");
         table_column('user','country','country','char','2','','','not null');
+
+        execute_sql("UPDATE {$CFG->prefix}user SET lang='' WHERE lang IS NULL");
         table_column('user','lang','lang','varchar','10','','en','not null');
+
+        execute_sql("UPDATE {$CFG->prefix}user SET lastIP='' WHERE lastIP IS NULL");
         table_column('user','lastIP','lastIP','varchar','15','','','not null');
+
+        execute_sql("UPDATE {$CFG->prefix}user SET secret='' WHERE secret IS NULL");
         table_column('user','secret','secret','varchar','15','','','not null');
+
+        execute_sql("UPDATE {$CFG->prefix}user SET picture='0' WHERE picture IS NULL");
         table_column('user','picture','picture','tinyint','1','','0','not null');
+
+        execute_sql("UPDATE {$CFG->prefix}user SET url='' WHERE url IS NULL");
         table_column('user','url','url','varchar','255','','','not null');
     }
     

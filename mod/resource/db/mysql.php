@@ -65,7 +65,8 @@ function resource_upgrade($oldversion) {
         $wtm->update( 'resource','alltext','options' );
     }
     
-    if ($oldversion < 2006042600) {
+    if ($oldversion < 2006042800) {
+        execute_sql("UPDATE {$CFG->prefix}resource SET reference='' WHERE reference IS NULL");
         table_column('resource','reference','reference','varchar','255','','','not null');
     }
 

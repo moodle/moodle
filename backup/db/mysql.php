@@ -149,11 +149,18 @@ function backup_upgrade($oldversion=0) {
 
     // chaing default nulls to not null default 0
     
-    if ($oldversion < 2006042600) {
+    if ($oldversion < 2006042800) {
 
+        execute_sql("UPDATE {$CFG->prefix}backup_files SET old_id='0' WHERE old_id IS NULL");
         table_column('backup_files','old_id','old_id','int','10','unsigned','0','not null');
+
+        execute_sql("UPDATE {$CFG->prefix}backup_files SET new_id='0' WHERE new_id IS NULL");
         table_column('backup_files','new_id','new_id','int','10','unsigned','0','not null');
+
+        execute_sql("UPDATE {$CFG->prefix}backup_ids SET new_id='0' WHERE new_id IS NULL");
         table_column('backup_ids','new_id','new_id','int','10','unsigned','0','not null');
+
+        execute_sql("UPDATE {$CFG->prefix}backup_ids SET info='' WHERE info IS NULL");
         table_column('backup_ids','info','info','mediumtext','','','','not null');
     }
 

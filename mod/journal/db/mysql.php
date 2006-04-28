@@ -69,8 +69,11 @@ function journal_upgrade($oldversion) {
         $wtm->update( 'journal_entries', 'text', 'format', $sql );
     }
 
-    if ($oldversion < 2006042600) {
+    if ($oldversion < 2006042800) {
+        execute_sql("UPDATE {$CFG->prefix}journal SET name='' WHERE name IS NULL");
         table_column('journal','name','name','varchar','255','','','not null');
+
+        execute_sql("UPDATE {$CFG->prefix}journal SET intro='' WHERE intro IS NULL");
         table_column('journal','intro','intro','text','','','','not null');
     }
     return $result;

@@ -149,10 +149,15 @@ function wiki_upgrade($oldversion) {
         }
     }
 
-    if ($oldversion < 2006042600) {
+    if ($oldversion < 2006042800) {
 
+        execute_sql("UPDATE {$CFG->prefix}wiki SET summary='' WHERE summary IS NULL");
         table_column('wiki','summary','summary','text','','','','not null');
+
+        execute_sql("UPDATE {$CFG->prefix}wiki SET pagename='' WHERE pagename IS NULL");
         table_column('wiki','pagename','pagename','varchar','255','','','not null');
+        
+        execute_sql("UPDATE {$CFG->prefix}wiki SET initialcontent='' WHERE initialcontent IS NULL");
         table_column('wiki','initialcontent','initialcontent','varchar','255','','','not null');
     }
 

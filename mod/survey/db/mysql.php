@@ -193,13 +193,24 @@ function survey_upgrade($oldversion) {
         modify_database('','ALTER TABLE prefix_survey_answers ADD INDEX question (question);');
     }
     
-    if ($oldversion < 2006042600) {
+    if ($oldversion < 2006042800) {
 
+        execute_sql("UPDATE {$CFG->prefix}survey SET questions='' WHERE questions IS NULL");
         table_column('survey','questions','questions','varchar','255','','','not null');
+
+        execute_sql("UPDATE {$CFG->prefix}survey SET intro='' WHERE intro IS NULL");
         table_column('survey','intro','intro','text','','','','not null');
+
+        execute_sql("UPDATE {$CFG->prefix}survey_answers SET time='0' WHERE time IS NULL");
         table_column('survey_answers','time','time','int','10','unsigned','0','not null');
+
+        execute_sql("UPDATE {$CFG->prefix}survey_answers SET answer1='' WHERE answer1 IS NULL");
         table_column('survey_answers','answer1','answer1','text','','','','not null');
+
+        execute_sql("UPDATE {$CFG->prefix}survey_answers SET answer2='' WHERE answer2 IS NULL");
         table_column('survey_answers','answer2','answer2','text','','','','not null');
+
+        execute_sql("UPDATE {$CFG->prefix}survey_questions SET intro='' WHERE intro IS NULL");
         table_column('survey_questions','intro','intro','varchar','50','','','not null');
     }
 
