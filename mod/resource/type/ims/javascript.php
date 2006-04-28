@@ -26,8 +26,6 @@
             var cfnv = document.getElementById('ims-contentframe-no-nav');
 
             if (cf || cfnv) {
-                if (cf) cf.style.display = 'block';
-                if (cfnv) cf.style.display = 'block';
                 resizeiframe($jsarg);
                 clearInterval(ourInterval);
                 return true;
