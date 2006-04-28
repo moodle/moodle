@@ -134,6 +134,7 @@
             $source = 'http://download.moodle.org/lang16/languages.md5';
             $md5array = array();
             $updated = 0;    //any packs updated?
+            unset($CFG->langlist);   // ignore admin's langlist
             $alllangs = array_keys(get_list_of_languages());
             $lang16 = array();   //all the Moodle 1.6 unicode lang packs (updated and not updated)
             $packs = array();    //all the packs that needs updating
@@ -265,6 +266,7 @@
             echo '<tr><td align="center" valign="top">';
             echo '<form name="uninstallform" action="langimport.php?mode=4" method="POST">';
             echo '<input name="sesskey" type="hidden" value="'.sesskey().'" />';
+            unset($CFG->langlist);   // ignore admin's langlist
             $installedlangs = get_list_of_languages();
 
             /// display installed langs here
