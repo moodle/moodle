@@ -1,7 +1,53 @@
 <?PHP
+function hotpot_update_to_v2_1_18() {
+	$ok = true;
+
+	// remove all orphan records (there shouldn't be any, but if there are they can mess up the utfdbmigrate)
+
+	$ok = $ok && hotpot_remove_orphans('hotpot_attempts', 'hotpot', 'hotpot');
+	$ok = $ok && hotpot_remove_orphans('hotpot_questions', 'hotpot', 'hotpot');
+	$ok = $ok && hotpot_remove_orphans('hotpot_responses', 'attempt', 'hotpot_attempts');
+	$ok = $ok && hotpot_remove_orphans('hotpot_responses', 'question', 'hotpot_questions');
+	$ok = $ok && hotpot_remove_orphans('hotpot_details', 'attempt', 'hotpot_attempts');
+
+	return $ok;
+}
+function hotpot_remove_orphans($secondarytable, $secondarykeyfield, $primarytable, $primarykeyfield='id') {
+	global $CFG;
+	$ok = true;
+
+	// save and switch off SQL message echo
+	$debug = $db->debug;
+	$db->debug = false;
+
+	$records = get_records_sql("
+		SELECT 
+			t2.$secondarykeyfield, t2.$secondarykeyfield
+		FROM 
+			{$CFG->prefix}$secondarytable AS t2 LEFT JOIN {$CFG->prefix}$primarytable AS t1 
+			ON (t2.$secondarykeyfield = t1.$primarykeyfield)
+		WHERE 
+			t1.$primarykeyfield IS NULL
+		ORDER BY 
+			t2.$secondarykeyfield
+	");
+
+	// restore SQL message echo setting
+	$db->debug = $debug;
+
+	if ($records) {
+		$ids = implode(',', array_keys($records));
+		print 'removing '.count($ids).' orphan record(s) from {$CFG->prefix}$secondarytable (key=$secondarykeyfield) ...<br>';
+		$ok = $ok && execute_sql("DELETE FROM {$CFG->prefix}$secondarytable WHERE $secondarykeyfield IN ($ids)");
+	}
+
+	return $ok;
+}
 function hotpot_update_to_v2_1_17() {
 	global $CFG;
 	$ok = true;
+
+	// convert and disable null values on certain numeric fields
 
 	$ok = $ok && hotpot_denull_int_field('hotpot_attempts', 'starttime', '10');
 	$ok = $ok && hotpot_denull_int_field('hotpot_attempts', 'endtime', '10');
@@ -14,12 +60,11 @@ function hotpot_update_to_v2_1_17() {
 	$ok = $ok && hotpot_denull_int_field('hotpot_questions', 'type', '4');
 	$ok = $ok && hotpot_denull_int_field('hotpot_questions', 'text', '10');
 
-	$ok = $ok && hotpot_denull_int_field('hotpot_responses', 'weighting', '8');
-	$ok = $ok && hotpot_denull_int_field('hotpot_responses', 'score', '8');
+	$ok = $ok && hotpot_denull_int_field('hotpot_responses', 'weighting', '6');
+	$ok = $ok && hotpot_denull_int_field('hotpot_responses', 'score', '6');
 	$ok = $ok && hotpot_denull_int_field('hotpot_responses', 'hints', '6');
 	$ok = $ok && hotpot_denull_int_field('hotpot_responses', 'clues', '6');
 	$ok = $ok && hotpot_denull_int_field('hotpot_responses', 'checks', '6');
-
 	return $ok;
 }
 function hotpot_denull_int_field($table, $field, $size) {
