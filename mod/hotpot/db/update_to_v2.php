@@ -12,7 +12,7 @@ function hotpot_update_to_v2_1_18() {
 
 	return $ok;
 }
-function hotpot_remove_orphans($secondarytable, $secondarykeyfield, $primarytable, $primarykeyfield='id') {
+function hotpot_remove_orphans($secondarytable, $secondarykeyfield, $primarytable) {
 	global $CFG,$db;
 	$ok = true;
 
@@ -22,14 +22,14 @@ function hotpot_remove_orphans($secondarytable, $secondarykeyfield, $primarytabl
 
 	$records = get_records_sql("
 		SELECT 
-			t2.$secondarykeyfield, t2.$secondarykeyfield
+			t2.id, t2.id
 		FROM 
 			{$CFG->prefix}$secondarytable AS t2 LEFT JOIN {$CFG->prefix}$primarytable AS t1 
-			ON (t2.$secondarykeyfield = t1.$primarykeyfield)
+			ON (t2.$secondarykeyfield = t1.id)
 		WHERE 
-			t1.$primarykeyfield IS NULL
+			t1.id IS NULL
 		ORDER BY 
-			t2.$secondarykeyfield
+			t2.id
 	");
 
 	// restore SQL message echo setting
@@ -37,7 +37,7 @@ function hotpot_remove_orphans($secondarytable, $secondarykeyfield, $primarytabl
 
 	if ($records) {
 		$ids = implode(',', array_keys($records));
-		print 'removing '.count($ids).' orphan record(s) from {$CFG->prefix}$secondarytable (key=$secondarykeyfield) ...<br>';
+		print 'removing '.count($records)." orphan record(s) from {$CFG->prefix}$secondarytable<br>";
 		$ok = $ok && execute_sql("DELETE FROM {$CFG->prefix}$secondarytable WHERE $secondarykeyfield IN ($ids)");
 	}
 
@@ -71,7 +71,7 @@ function hotpot_denull_int_field($table, $field, $size) {
 	global $CFG;
 	$ok = true;
 
-	$ok = $ok && execute_sql("UPDATE {$CFG->prefix}$table SET $field=0 WHERE $field IS NULL");
+	$ok = $ok && execute_sql("UPDATE {$CFG->prefix}$table SET $field=0 WHERE $field IS NULL", false);
 	$ok = $ok && hotpot_db_update_field_type($table, $field, $field, 'INTEGER', $size, 'UNSIGNED', 'NOT NULL', 0);
 
 	return $ok;
