@@ -12,7 +12,7 @@ function hotpot_update_to_v2_1_18() {
 
 	return $ok;
 }
-function hotpot_remove_orphans($secondarytable, $secondarykeyfield, $primarytable) {
+function hotpot_remove_orphans($secondarytable, $secondarykeyfield, $primarytable, $primarykeyfield='id') {
 	global $CFG,$db;
 	$ok = true;
 
@@ -22,23 +22,21 @@ function hotpot_remove_orphans($secondarytable, $secondarykeyfield, $primarytabl
 
 	$records = get_records_sql("
 		SELECT 
-			t2.id, t2.id
+			t2.$secondarykeyfield, t2.$secondarykeyfield
 		FROM 
 			{$CFG->prefix}$secondarytable AS t2 LEFT JOIN {$CFG->prefix}$primarytable AS t1 
 			ON (t2.$secondarykeyfield = t1.id)
 		WHERE 
-			t1.id IS NULL
-		ORDER BY 
-			t2.id
+			t1.$primarykeyfield IS NULL
 	");
 
 	// restore SQL message echo setting
 	$db->debug = $debug;
 
 	if ($records) {
-		$ids = implode(',', array_keys($records));
-		print 'removing '.count($records)." orphan record(s) from {$CFG->prefix}$secondarytable<br>";
-		$ok = $ok && execute_sql("DELETE FROM {$CFG->prefix}$secondarytable WHERE $secondarykeyfield IN ($ids)");
+		$keys = implode(',', array_keys($records));
+		print "removing orphan record(s) from {$CFG->prefix}$secondarytable<br>";
+		$ok = $ok && execute_sql("DELETE FROM {$CFG->prefix}$secondarytable WHERE $secondarykeyfield IN ($keys)");
 	}
 
 	return $ok;

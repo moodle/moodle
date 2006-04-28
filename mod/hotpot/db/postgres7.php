@@ -37,7 +37,7 @@ function hotpot_upgrade($oldversion) {
 		require_once $update_to_v2;
 		$ok = $ok && hotpot_update_to_v2_1_17();
 	}
-	if ($oldversion < 2006042801) {
+	if ($oldversion < 2006042802) {
 		require_once $update_to_v2;
 		$ok = $ok && hotpot_update_to_v2_1_18();
 	}
