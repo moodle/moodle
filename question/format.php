@@ -297,14 +297,21 @@ class qformat_default {
 
         // iterate through questions
         foreach($questions as $question) {
-          $count++;
-          $qtype = $question->qtype;
-          // ignore random questiond
-          if ($qtype!=RANDOM) {
-              echo "<hr /><p><b>$count</b>. ".stripslashes($question->questiontext)."</p>";
-              $expout .= $this->writequestion( $question ) . "\n";
-              }
-          }
+            // do not export hidden questions
+            if (!empty($question->hidden)) {
+                continue;
+            }
+
+            // do not export random questions
+            if ($question->qtype==RANDOM) {
+                continue;
+            }
+
+        // export the question displaying message
+        $count++;
+        echo "<hr /><p><b>$count</b>. ".stripslashes($question->questiontext)."</p>";
+        $expout .= $this->writequestion( $question ) . "\n";
+        }
 
         // final pre-process on exported data
         $expout = $this->presave_process( $expout );
