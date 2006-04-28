@@ -171,7 +171,8 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
 							  //Then, all those errors, should be converted to
 							  //mtrace() and return 0. (showing the current 
 							  //table/field/recordid)
-    global $db, $CFG;
+
+    global $db, $CFG, $dbtablename, $fieldname, $record;
     $debug = ($CFG->debug > 7);
     
     @set_time_limit(0);
@@ -837,9 +838,9 @@ function get_user_lang($userid) {
 
 // a placeholder for now
 function log_the_problem_somewhere() {  //Eloy: Nice function, perhaps we could use it, perhpas no. :-)
-    global $CFG, $dbtablename, $fieldname, $recordid;
+    global $CFG, $dbtablename, $fieldname, $record;
     if ($CFG->debug>7) {
-        echo "<br />Problem converting: $dbtablename -> $fieldname -> $recordid!";
+        echo "<br />Problem converting: $dbtablename -> $fieldname -> {$record->id}!";
     }
 }
 
