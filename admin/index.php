@@ -228,6 +228,7 @@
     upgrade_activity_modules("$CFG->wwwroot/$CFG->admin/index.php");  // Return here afterwards
 
 /// Check all questiontype plugins and upgrade if necessary
+    // It is important that this is done AFTER the quiz module has been upgraded
     upgrade_plugins('qtype', 'question/type', "$CFG->wwwroot/$CFG->admin/index.php");  // Return here afterwards
 
 /// Upgrade backup/restore system if necessary
