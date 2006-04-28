@@ -75,6 +75,9 @@ function hotpot_denull_int_field($table, $field, $size, $unsigned=true) {
 	$ok = true;
 
 	$ok = $ok && execute_sql("UPDATE {$CFG->prefix}$table SET $field=0 WHERE $field IS NULL", false);
+	if ($unsigned) {
+		$ok = $ok && execute_sql("UPDATE {$CFG->prefix}$table SET $field=0 WHERE $field<0", false);
+	}
 	$ok = $ok && hotpot_db_update_field_type($table, $field, $field, 'INTEGER', $size, $unsigned, 'NOT NULL', 0);
 
 	return $ok;
