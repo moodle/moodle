@@ -10,6 +10,11 @@ function hotpot_update_to_v2_1_18() {
 	$ok = $ok && hotpot_remove_orphans('hotpot_responses', 'question', 'hotpot_questions');
 	$ok = $ok && hotpot_remove_orphans('hotpot_details', 'attempt', 'hotpot_attempts');
 
+	// allow negative weighting and scores
+
+	$ok = $ok && hotpot_denull_int_field('hotpot_responses', 'weighting', '6', false);
+	$ok = $ok && hotpot_denull_int_field('hotpot_responses', 'score', '6', false);
+
 	return $ok;
 }
 function hotpot_remove_orphans($secondarytable, $secondarykeyfield, $primarytable, $primarykeyfield='id') {
@@ -58,19 +63,19 @@ function hotpot_update_to_v2_1_17() {
 	$ok = $ok && hotpot_denull_int_field('hotpot_questions', 'type', '4');
 	$ok = $ok && hotpot_denull_int_field('hotpot_questions', 'text', '10');
 
-	$ok = $ok && hotpot_denull_int_field('hotpot_responses', 'weighting', '6');
-	$ok = $ok && hotpot_denull_int_field('hotpot_responses', 'score', '6');
+	$ok = $ok && hotpot_denull_int_field('hotpot_responses', 'weighting', '6', false);
+	$ok = $ok && hotpot_denull_int_field('hotpot_responses', 'score', '6', false);
 	$ok = $ok && hotpot_denull_int_field('hotpot_responses', 'hints', '6');
 	$ok = $ok && hotpot_denull_int_field('hotpot_responses', 'clues', '6');
 	$ok = $ok && hotpot_denull_int_field('hotpot_responses', 'checks', '6');
 	return $ok;
 }
-function hotpot_denull_int_field($table, $field, $size) {
+function hotpot_denull_int_field($table, $field, $size, $unsigned=true) {
 	global $CFG;
 	$ok = true;
 
 	$ok = $ok && execute_sql("UPDATE {$CFG->prefix}$table SET $field=0 WHERE $field IS NULL", false);
-	$ok = $ok && hotpot_db_update_field_type($table, $field, $field, 'INTEGER', $size, 'UNSIGNED', 'NOT NULL', 0);
+	$ok = $ok && hotpot_db_update_field_type($table, $field, $field, 'INTEGER', $size, $unsigned, 'NOT NULL', 0);
 
 	return $ok;
 }
