@@ -41,6 +41,8 @@
     function html_footer() {
         global $course, $choose;
 
+        echo '</td></tr></table>';
+
         print_footer($course);
     }
     
@@ -171,7 +173,7 @@
                 $strmaxsize = get_string("maxsize", "", $filesize);
                 $strcancel = get_string("cancel");
 
-                echo "<p>$struploadafile ($strmaxsize) --> <b>$wdir</b>";
+                echo "<p>$struploadafile ($strmaxsize) --> <b>$wdir</b></p>";
                 echo "<table><tr><td colspan=\"2\">";
                 echo "<form enctype=\"multipart/form-data\" method=\"post\" action=\"index.php\">";
                 echo ' <input type="hidden" name="choose" value="'.$choose.'" />';
@@ -180,7 +182,7 @@
                 echo " <input type=\"hidden\" name=\"action\" value=\"upload\" />";
                 echo " <input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\" />";
                 upload_print_form_fragment(1,array('userfile'),null,false,null,$upload_max_filesize,0,false);
-                echo " </td><tr><td width=\"10\">";
+                echo " </td></tr><tr><td width=\"10\">";
                 echo " <input type=\"submit\" name=\"save\" value=\"$struploadthisfile\" />";
                 echo "</form>";
                 echo "</td><td width=\"100%\">";
@@ -353,7 +355,7 @@
                 $strcancel = get_string("cancel");
                 $strcreatefolder = get_string("createfolder", "moodle", $wdir);
                 html_header($course, $wdir, "form.name");
-                echo "<p>$strcreatefolder:";
+                echo "<p>$strcreatefolder:</p>";
                 echo "<table><tr><td>";
                 echo "<form action=\"index.php\" method=\"post\" name=\"form\">";
                 echo ' <input type="hidden" name="choose" value="'.$choose.'" />';
@@ -457,7 +459,7 @@
                     printfilelist($USER->filelist);
                     print_simple_box_end();
                     echo "<br />";
-                    echo "<p align=\"center\">".get_string("whattocallzip");
+                    echo "<p align=\"center\">".get_string("whattocallzip")."</p>";
                     echo "<table><tr><td>";
                     echo "<form action=\"index.php\" method=\"post\" name=\"form\">";
                     echo ' <input type="hidden" name="choose" value="'.$choose.'" />';
@@ -857,8 +859,8 @@ function displaydir ($wdir) {
         echo "</form>";
     echo "</td>";
     echo "<td align=\"right\">";
-        echo " <input type=\"button\" value=\"$strselectall\" onClick=\"checkall();\" />";
-        echo " <input type=\"button\" value=\"$strselectnone\" onClick=\"uncheckall();\" />";
+        echo " <input type=\"button\" value=\"$strselectall\" onclick=\"checkall();\" />";
+        echo " <input type=\"button\" value=\"$strselectnone\" onclick=\"uncheckall();\" />";
     echo "</td>";
     echo "<td align=\"right\">";
         echo "<form action=\"index.php\" method=\"get\">";
