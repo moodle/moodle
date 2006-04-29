@@ -32,6 +32,13 @@
                                  ORDER BY u.lastname")) {
         $nothingtodisplay = true;
     }
+    
+// make sure people are where they should be
+    require_login($course->id, false);
+
+    if (!isteacher($course->id)) {
+        error("Must be teacher to view Reports");
+    }
 
 /// Process any form data before fetching attempts, grades and times
     if ($form = data_submitted()) {
@@ -88,13 +95,6 @@
     
     if (! $times = get_records('lesson_timer', 'lessonid', $lesson->id, 'starttime')) {
         $times = array();
-    }
-
-// make sure people are where they should be
-    require_login($course->id, false);
-
-    if (!isteacher($course->id)) {
-        error("Must be teacher to view Reports");
     }
 
 /// Print the page header
