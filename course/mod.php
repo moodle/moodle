@@ -505,7 +505,7 @@
         $sectionname    = get_string("name$course->format");
         $fullmodulename = strtolower(get_string("modulename", $module->name));
 
-        if ($form->section) {
+        if ($form->section && $course->format != 'site') {
             $heading->what = $fullmodulename;
             $heading->in   = "$sectionname $cw->section";
             $pageheading = get_string("updatingain", "moodle", $heading);
