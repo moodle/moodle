@@ -39,15 +39,9 @@
     }
 
     function html_footer() {
-
         global $course, $choose;
 
-        if ($choose) {
-            echo "</td></tr></table></body></html>";
-        } else {
-            echo "</td></tr></table></body></html>";
-            print_footer($course);
-        }
+        print_footer($course);
     }
     
     function html_header($course, $wdir, $formfield=""){
@@ -852,6 +846,7 @@ function displaydir ($wdir) {
         echo " <input type=\"submit\" value=\"$strmovefilestohere\" />";
         echo "</form>";
     }
+    echo "</td>";
     echo "<td align=\"right\">";
         echo "<form action=\"index.php\" method=\"get\">";
         echo ' <input type="hidden" name="choose" value="'.$choose.'" />';
