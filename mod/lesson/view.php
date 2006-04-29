@@ -1927,7 +1927,7 @@
         print_heading(get_string("topscorestitle", "lesson", $lesson->maxhighscores), 'center', 4);
 
         if (!$highscores = get_records_select("lesson_high_scores", "lessonid = $lesson->id")) {
-            echo get_string("nohighscores", "lesson")."<br>";
+            print_heading(get_string("nohighscores", "lesson"), 'center', 3);
         } else {
             foreach ($highscores as $highscore) {
                 $grade = $grades[$highscore->gradeid]->grade;

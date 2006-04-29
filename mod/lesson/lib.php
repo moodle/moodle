@@ -207,49 +207,6 @@ function lesson_update_instance($lesson) {
     }
 
     add_event($event);
-
-    if (!empty($lesson->deleteattempts)) {
-        $subject = "Delete User Attempts";
-        $message = "";
-
-        if ($userid = get_field("user", "id", "username", $lesson->deleteattempts)) {
-            if (delete_records("lesson_attempts", "lessonid", $lesson->id, "userid", $userid)) {
-                // email good
-                $message .= "Successfully deleted attempts from \"".format_string($lesson->name)."\" lesson!<br />";
-            } else {
-                // email couldnt delete
-                $message .= "Failed to delete attempts from \"".format_string($lesson->name)."\" lesson!<br />";
-            }
-            if (delete_records("lesson_grades", "lessonid", $lesson->id, "userid", $userid)) {
-                // email good
-                $message .= "Successfully deleted grades from \"".format_string($lesson->name)."\" lesson!<br />";
-            } else {
-                // email couldnt delete
-                $message .= "Failed to delete grades from \"".format_string($lesson->name)."\" lesson!<br />";
-            }
-            if (delete_records("lesson_timer", "lessonid", $lesson->id, "userid", $userid)) {
-                // email good
-                $message .= "Successfully deleted time records from \"".format_string($lesson->name)."\" lesson!<br />";
-            } else {
-                // email couldnt delete
-                $message .= "Failed to delete time records from \"".format_string($lesson->name)."\" lesson!<br />";
-            }
-
-        } else {
-            // email couldnt find user
-            $message .= "Could not find user in database.<br />";
-        }
-        $message .= "<br /> User ID used: $lesson->deleteattempts <br />";
-        
-        $txt = format_text_email($message, FORMAT_HTML);
-        
-        if ($currentuser = get_record("user", "id", $lesson->deleteattemptsid)) {
-            email_to_user($currentuser, $currentuser, $subject, $txt, $message);
-        }
-        // unset lessondefault
-    }
-    unset($lesson->deleteattempts);
-    unset($lesson->deleteattemptsid);
     
     return update_record("lesson", $lesson);
 }

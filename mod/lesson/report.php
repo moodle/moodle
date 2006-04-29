@@ -24,10 +24,6 @@
         error('Course module is incorrect');
     }
 
-    if (! $attempts = get_records('lesson_attempts', 'lessonid', $lesson->id, 'timeseen')) {
-        $nothingtodisplay = true;
-    }
-
     if (! $students = get_records_sql("SELECT DISTINCT u.*
                                  FROM {$CFG->prefix}user u,
                                       {$CFG->prefix}lesson_attempts a
@@ -37,6 +33,54 @@
         $nothingtodisplay = true;
     }
 
+/// Process any form data before fetching attempts, grades and times
+    if ($form = data_submitted()) {
+        confirm_sesskey();
+                
+    /// Cycle through array of userids with nested arrays of tries
+        foreach ($form->attempts as $userid => $tries) {
+            // Modifier IS VERY IMPORTANT!  What does it do?
+            //      Well, it is for when you delete multiple attempts for the same user.
+            //      If you delete try 1 and 3 for a user, then after deleting try 1, try 3 then
+            //      becomes try 2 (because try 1 is gone and all tries after try 1 get decremented).
+            //      So, the modifier makes sure that the submitted try refers to the current try in the
+            //      database - hope this all makes sense :)
+            $modifier = 0;
+            
+            foreach ($tries as $try => $junk) {
+                $try -= $modifier;
+                
+            /// Clean up the timer table
+                $timeid = get_field_sql("SELECT id FROM {$CFG->prefix}lesson_timer 
+                                         WHERE userid = $userid AND lessonid = $lesson->id 
+                                         ORDER BY starttime ".sql_paging_limit($try, 1));
+                
+                delete_records('lesson_timer', 'id', $timeid);
+            
+            /// Remove the grade from the grades and high_scores tables
+                $gradeid = get_field_sql("SELECT id FROM {$CFG->prefix}lesson_grades 
+                                          WHERE userid = $userid AND lessonid = $lesson->id 
+                                          ORDER BY completed ".sql_paging_limit($try, 1));
+                
+                delete_records('lesson_grades', 'id', $gradeid);
+                delete_records('lesson_high_scores', 'gradeid', $gradeid, 'lessonid', $lesson->id, 'userid', $userid);
+            
+            /// Remove attempts and update the retry number
+                delete_records('lesson_attempts', 'userid', $userid, 'lessonid', $lesson->id, 'retry', $try);
+                execute_sql("UPDATE {$CFG->prefix}lesson_attempts SET retry = retry - 1 WHERE userid = $userid AND lessonid = $lesson->id AND retry > $try", false);
+            
+            /// Remove seen branches and update the retry number    
+                delete_records('lesson_branch', 'userid', $userid, 'lessonid', $lesson->id, 'retry', $try);
+                execute_sql("UPDATE {$CFG->prefix}lesson_branch SET retry = retry - 1 WHERE userid = $userid AND lessonid = $lesson->id AND retry > $try", false);
+                
+                $modifier++;
+            }
+        }
+    }
+
+    if (! $attempts = get_records('lesson_attempts', 'lessonid', $lesson->id, 'timeseen')) {
+        $nothingtodisplay = true;
+    }
 
     if (! $grades = get_records('lesson_grades', 'lessonid', $lesson->id, 'completed')) {
         $grades = array();
@@ -177,8 +221,9 @@
                 $tries = $studentdata[$student->id];
                 $studentname = "{$student->lastname},&nbsp;$student->firstname";
                 foreach ($tries as $try) {
-                // start to build up the link
-                    $temp = "<a href=\"report.php?id=$cm->id&amp;action=detail&amp;userid=".$try["userid"]."&amp;try=".$try["try"]."\">";
+                // start to build up the checkbox and link
+                    $temp = '<input type="checkbox" id="attempts" name="attempts['.$try['userid'].']['.$try['try'].']" /> '.
+                            "<a href=\"report.php?id=$cm->id&amp;action=detail&amp;userid=".$try['userid'].'&amp;try='.$try['try'].'">';
                     if ($try["grade"] !== NULL) { // if NULL then not done yet
                         // this is what the link does when the user has completed the try
                         $timetotake = $try["timeend"] - $try["timestart"];
@@ -225,7 +270,22 @@
             }
         }
         // print it all out !
+        echo  "<form id=\"theform\" name=\"theform\" method=\"post\" action=\"report.php\">\n
+               <input type=\"hidden\" name=\"sesskey\" value=\"".sesskey()."\" />\n
+               <input type=\"hidden\" name=\"id\" value=\"$cm->id\" />\n
+               <input type=\"hidden\" name=\"id\" value=\"$cm->id\" />\n";
+        
         print_table($table);
+        
+        echo '<br /><table width="90%" align="center"><tr><td>'.
+             '<a href="javascript: checkall();">'.get_string('selectall').'</a> / '.
+             '<a href="javascript: checknone();">'.get_string('deselectall').'</a> ';
+             
+        $options = array();
+        $options['delete'] = get_string('deleteselected');
+        choose_from_menu($options, 'attemptaction', 0, 'choose', 'submitFormById(\'theform\')');
+        
+        echo '</td></tr></table></form>';
 
         // some stat calculations
         if ($numofattempts == 0) {
