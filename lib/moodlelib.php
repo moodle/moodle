@@ -2631,7 +2631,7 @@ function authenticate_user_login($username, $password) {
 }
 
 /**
- * Compare password against hash stored in local user table.
+ * Compare password against hash stored in internal user table.
  * If necessary it also updates the stored hash to new format.
  * 
  * @param object user
@@ -2641,22 +2641,36 @@ function authenticate_user_login($username, $password) {
 function validate_internal_user_password(&$user, $password) {
     global $CFG;
 
+    if (!isset($CFG->passwordsaltmain)) {
+        $CFG->passwordsaltmain = '';
+    }
+
     $validated = false;
 
     if (!empty($CFG->unicodedb)) {
         $textlib = textlib_get_instance();
         $convpassword = $textlib->convert($password, 'UTF-8', get_string('oldcharset'));
     } else {
-        $convpassword = false;
+        $convpassword = $password; //no conversion yet
     }
 
-    if ($user->password == md5($password)) {
+    if ($user->password == md5($password.$CFG->passwordsaltmain) or $user->password == md5($password)
+        or $user->password == md5($convpassword.$CFG->passwordsaltmain) or $user->password == md5($convpassword)) {
         $validated = true;
-    } elseif ($convpassword !== false && $user->password == md5($convpassword)) {
-        $validated = true;
+    } else {
+        for ($i=0; $i<20; $i++) { //20 alternative salts should be enough, right?
+            $alt = 'passwordsaltalt'.$i;
+            if (!empty($CFG->$alt)) {
+                if ($user->password == md5($password.$CFG->$alt) or $user->password == md5($convpassword.$CFG->$alt)) {
+                    $validated = true;
+                    break;
+                }
+            }
+        }
     }
 
     if ($validated) {
+        // force update of password hash using latest main password salt and encoding if needed
         update_internal_user_password($user, $password);
     }
 
@@ -2665,13 +2679,18 @@ function validate_internal_user_password(&$user, $password) {
 
 /**
  * Calculate hashed value from password using current hash mechanism.
- * This mechanism might change in future, older methodes are handled in validate_internal_user_password()
  * 
  * @param string password
  * @return string password hash
  */
 function hash_internal_user_password($password) {
-    return md5($password);
+    global $CFG;
+
+    if (isset($CFG->passwordsaltmain)) {
+        return md5($password.$CFG->passwordsaltmain);
+    } else {
+        return md5($password);
+    }
 }
 
 /**
