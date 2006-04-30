@@ -1174,6 +1174,9 @@ body#message-messages {
   height: 2em;
   padding-top: 0.3em;
 }
+.que .control {
+  width: 5%;
+}
 .que .answer {
   float: right;
   width: 83%;
@@ -1188,18 +1191,31 @@ body#message-messages {
 * html .que .submit {
   float: none;
 }
+.multianswer .submit {
+  margin-top: 1em;
+}
 .que .c0,
 .que .c1 {
   padding: 0.3em 0 0.3em 0.3em;
   vertical-align: top;
 }
-.multichoice .c0 {
-  /* width: 5%; */
-  vertical-align: top;
-  padding-top: 0.4em;
+.que .feedback {
+  clear: both;
+  float: right;
+  width: 83%;
+  padding: 0 0 0.3em 0.3em;
+  border: 1px solid;
 }
-.multichoice .text,
 .multichoice .feedback {
+  width: auto;
+  vertical-align: top;
+  padding-top: 0.3em;
+  border-style: none;
+}
+.essay .feedback {
+  border-style: none;
+}
+.multichoice .text {
   width: auto;
 }
 .calculated .answer,
@@ -1211,16 +1227,11 @@ body#message-messages {
 .shortanswer .answer input {
   width: 85%;
 }
-.calculated .feedback,
-.numerical .feedback,
-.shortanswer .feedback,
-.truefalse .feedback {
-  clear: both;
-  float: right;
-  width: 83%;
-  padding: 0 0 0.3em 0.3em;
-  border: 1px solid;
-}	
+.truefalse .answer span {
+  float: left;
+  clear: left;
+  padding: 0.2em 0;
+}
 .que .grading,
 .que .comment,
 .que .commentlink,
