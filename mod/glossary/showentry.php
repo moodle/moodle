@@ -60,8 +60,6 @@
         print_header();    // Needs to be something here to allow linking back to the whole glossary
     }
 
-    print_object($entries);
-
     if ($entries) {
         glossary_print_dynaentry($courseid, $entries, $displayformat);
     }
