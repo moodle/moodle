@@ -168,11 +168,8 @@ class default_questiontype {
             $question->options = new object;
         }
         // The default implementation attaches all answers for this question
-        if (!$question->options->answers = get_records('question_answers', 'question',
-         $question->id)) {
-           //notify('Error: Missing question answers!');
-           return false;
-        }
+        $question->options->answers = get_records('question_answers', 'question',
+         $question->id);
         return true;
     }
 
