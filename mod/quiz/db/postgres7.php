@@ -1206,6 +1206,11 @@ function quiz_upgrade($oldversion) {
         }
     }
 
+    if ($oldversion < 2006043000) {
+        // The newgraded field must always point to a valid state
+        modify_database("","UPDATE prefix_question_sessions SET newgraded = newest where newgraded = '0'");
+    }
+
     return true;
 }
 
