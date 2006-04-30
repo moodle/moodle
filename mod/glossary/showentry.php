@@ -5,7 +5,7 @@
     $concept  = optional_param('concept', '', PARAM_CLEAN);
     $courseid = optional_param('courseid', 0, PARAM_INT);
     $eid      = optional_param('eid', 0, PARAM_INT); // glossary entry id
-    $displayformat = optional_param('displayformat',-1, PARAM_INT);
+    $displayformat = optional_param('displayformat',-1, PARAM_SAFEDIR);
 
     if ($CFG->forcelogin) {
         require_login();
@@ -59,6 +59,8 @@
     } else {
         print_header();    // Needs to be something here to allow linking back to the whole glossary
     }
+
+    print_object($entries);
 
     if ($entries) {
         glossary_print_dynaentry($courseid, $entries, $displayformat);
