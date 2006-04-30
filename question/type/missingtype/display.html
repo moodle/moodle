@@ -1,4 +1,3 @@
-<?php notify('This question is of a type that has not been installed on your Moodle yet.<br />Please alert your Moodle administrator.'); ?>
 <div class="qtext">
   <?php echo $questiontext; ?>
 </div>
@@ -7,18 +6,19 @@
   <img class="qimage" src="<?php echo $image; ?>" alt="" />
 <?php } ?>
 
-<div class="ablock clearfix">
-  <div class="prompt">
-    <?php print_string('answers', 'quiz'); ?>
+<?php if ($anss) { ?>
+  <div class="ablock clearfix">
+    <div class="prompt">
+      <?php print_string('answers', 'quiz'); ?>
+    </div>
+    <table class="answer">
+      <?php $row = 1; foreach ($anss as $answer) { ?>
+        <tr class="<?php echo 'r'.$row = $row ? 0 : 1; ?>">
+          <td class="c1 text">
+            <?php echo $answer->text; ?>
+          </td>
+        </tr>
+      <?php } ?>
+    </table>
   </div>
-
-  <table class="answer">
-    <?php $row = 1; foreach ($anss as $answer) { ?>
-      <tr class="<?php echo 'r'.$row = $row ? 0 : 1; ?>">
-        <td class="c1 text">
-          <?php echo $answer->text; ?>
-        </td>
-      </tr>
-    <?php } ?>
-  </table>
-</div>
+<?php } ?>

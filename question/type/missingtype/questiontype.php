@@ -34,11 +34,14 @@ class question_missingtype_qtype extends default_questiontype {
                          $formatoptions, $cmoptions->course);
         $image = get_question_image($question, $cmoptions->course);
 
-        // Print each answer in a separate row
-        foreach ($answers as $answer) {
-            $a->text = format_text("$answer->answer", FORMAT_MOODLE, $formatoptions, $cmoptions->course);
-
-            $anss[] = clone($a);
+        // Print each answer in a separate row if there are any
+        $anss = array();
+        if ($answers) {
+            foreach ($answers as $answer) {
+                $a->text = format_text("$answer->answer", FORMAT_MOODLE, $formatoptions, $cmoptions->course);
+    
+                $anss[] = clone($a);
+            }
         }
         include("$CFG->dirroot/question/type/missingtype/display.html");
     }
