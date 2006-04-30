@@ -165,7 +165,7 @@ class cmoptions {
     * Whether the answers in a multiple choice question should be randomly
     * shuffled when a new attempt is started.
     */
-    var $shuffleanswers = false;
+    var $shuffleanswers = true;
 
     /**
     * The number of decimals to be shown when scores are printed
