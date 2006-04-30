@@ -102,7 +102,7 @@
     $attempt->timestart = $timenow;
     $attempt->timefinish = 0;
     $attempt->timemodified = $timenow;
-    $attempt->uniqueid = question_new_attempt_uniqueid();
+    $attempt->uniqueid = 0;
     $attempt->id = 0;
 
     // Restore the history of question sessions from the moodle session or create
@@ -140,6 +140,7 @@
         $states[$historylength + 1][$id] = clone($states[$historylength][$id]);
         $historylength++;
         $curstate =& $states[$historylength][$id];
+        $curstate->changed = false;
 
         // Process the responses
         unset($form['id']);
@@ -150,11 +151,11 @@
         unset($form['back']);
         unset($form['startagain']);
 
-        $event = $finishattempt ? QUESTION_EVENTCLOSE : ($markall ? QUESTION_EVENTGRADE : QUESTION_EVENTSAVE);
+        $event = $finishattempt ? QUESTION_EVENTCLOSE : QUESTION_EVENTSUBMIT;
         if ($actions = question_extract_responses($questions, $form, $event)) {
             $actions[$id]->timestamp = 0; // We do not care about timelimits here
-            question_process_responses($questions[$id], $states[$historylength][$id], $actions[$id], $quiz, $attempt);
-            if (QUESTION_EVENTGRADE != $curstate->event && QUESTION_EVENTCLOSE != $curstate->event) {
+            question_process_responses($questions[$id], $curstate, $actions[$id], $quiz, $attempt);
+            if (!$curstate->changed) {
                 // Update the current state rather than creating a new one
                 $historylength--;
                 unset($states[$historylength]);
