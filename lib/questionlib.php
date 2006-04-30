@@ -690,28 +690,28 @@ function save_question_session(&$question, &$state) {
     }
 
     // create or update the session
-    if (!record_exists('question_sessions', 'attemptid',
+    if (!$session = get_record('question_sessions', 'attemptid',
      $state->attempt, 'questionid', $question->id)) {
-        $new->attemptid = $state->attempt;
-        $new->questionid = $question->id;
-        $new->newest = $state->id;
-        $new->sumpenalty = $state->sumpenalty;
-        if (!insert_record('question_sessions', $new)) {
+        $session->attemptid = $state->attempt;
+        $session->questionid = $question->id;
+        $session->newest = $state->id;
+        // The following may seem weird, but the newgraded field needs to be set
+        // already even if there is no graded state yet.
+        $session->newgraded = $state->id;
+        $session->sumpenalty = $state->sumpenalty;
+        $session->comment = $state->comment;
+        if (!insert_record('question_sessions', $session)) {
             error('Could not insert entry in question_sessions');
         }
     } else {
-        set_field('question_sessions', 'newest', $state->id, 'attemptid',
-         $state->attempt, 'questionid', $question->id);
-    }
-    if (question_state_is_graded($state) or $state->event == QUESTION_EVENTOPEN) {
-        // this state is graded or newly opened, so it goes into the lastgraded field as well
-        if ($newest = get_record('question_sessions', 'attemptid',
-         $state->attempt, 'questionid', $question->id)) {
-            $newest->newgraded = $state->id;
-            $newest->sumpenalty = $state->sumpenalty;
-            $newest->comment = $state->comment;
-            update_record('question_sessions', $newest);
+        $session->newest = $state->id;
+        if (question_state_is_graded($state) or $state->event == QUESTION_EVENTOPEN) {
+            // this state is graded or newly opened, so it goes into the lastgraded field as well
+            $session->newgraded = $state->id;
+            $session->sumpenalty = $state->sumpenalty;
+            $session->comment = $state->comment;
         }
+        update_record('question_sessions', $session);
     }
 
     unset($state->answer);
