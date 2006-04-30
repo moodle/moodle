@@ -134,7 +134,7 @@ class random_qtype extends default_questiontype {
                 $wrappedquestion = clone($question);
                 $wrappedquestion->id = $answerregs[1];
                 $wrappedquestion->questiontext = get_string('questiondeleted', 'quiz');
-                $wrappedquestion->qtype = 'description';
+                $wrappedquestion->qtype = 'missingtype';
             }
             $state->responses[''] = (false === $answerregs[2]) ? '' : $answerregs[2];
         }
