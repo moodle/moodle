@@ -517,6 +517,7 @@ function get_question_options(&$questions) {
         foreach ($keys as $i) {
             if (!array_key_exists($questions[$i]->qtype, $QTYPES)) {
                 $questions[$i]->qtype = 'missingtype';
+                $questions[$i]->questiontext = get_string('warningmissingtype').$questions[$i]->questiontext;
             }
             
             // set name prefix
@@ -529,6 +530,7 @@ function get_question_options(&$questions) {
     } else { // deal with single question
         if (!array_key_exists($questions->qtype, $QTYPES)) {
             $questions->qtype = 'missingtype';
+            $questions[$i]->questiontext = get_string('warningmissingtype').$questions[$i]->questiontext;
         }
         $questions->name_prefix = question_make_name_prefix($questions->id);
         return $QTYPES[$questions->qtype]->get_question_options($questions);
