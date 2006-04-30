@@ -120,7 +120,6 @@ class question_shortanswer_qtype extends default_questiontype {
     function print_question_formulation_and_controls(&$question, &$state, $cmoptions, $options) {
         global $CFG;
     /// This implementation is also used by question type 'numerical'
-        $answers = &$question->options->answers;
         $correctanswers = $this->get_correct_responses($question, $state);
         $readonly = empty($options->readonly) ? '' : 'readonly="readonly"';
         $formatoptions->noclean = true;
@@ -145,9 +144,11 @@ class question_shortanswer_qtype extends default_questiontype {
 
         $feedback = '';
         if ($options->feedback) {
-            foreach($answers as $answer) {
-                if($answer->feedback and $this->test_response($question, $state, $answer)) {
-                    $feedback = format_text($answer->feedback, true, $formatoptions, $cmoptions->course);
+            foreach($question->options->answers as $answer) {
+                if($this->test_response($question, $state, $answer)) {
+                    if ($answer->feedback) {
+                        $feedback = format_text($answer->feedback, true, $formatoptions, $cmoptions->course);
+                    }
                     break;
                 }
             }
@@ -181,14 +182,16 @@ class question_shortanswer_qtype extends default_questiontype {
     }
 
     function grade_responses(&$question, &$state, $cmoptions) {
-        $answers = &$question->options->answers;
-        $testedstate = clone($state);
-        $teststate   = clone($state);
+        
+        $teststate = clone($state);
         $state->raw_grade = 0;
-
-        foreach($answers as $answer) {
+        // Compare the response with every teacher answer in turn
+        // and return the first one that matches.
+        foreach($question->options->answers as $answer) {
+            // Now we use a bit of a hack: we put the answer into the response
+            // of a teststate so that we can use the function compare_responses()
             $teststate->responses[''] = trim($answer->answer);
-            if($this->compare_responses($question, $testedstate, $teststate)) {
+            if($this->compare_responses($question, $state, $teststate)) {
                 $state->raw_grade = $answer->fraction;
                 break;
             }
@@ -206,6 +209,9 @@ class question_shortanswer_qtype extends default_questiontype {
     }
 
     function compare_responses(&$question, &$state, &$teststate) {
+        // In this questiontype this function is not only used to compare responses
+        // between two different states but it is also used by grade_responses() and
+        // by test_responses() to compare responses with answers.
         if (isset($state->responses[''])) {
             $response0 = trim(stripslashes($state->responses['']));
         } else {
@@ -243,8 +249,17 @@ class question_shortanswer_qtype extends default_questiontype {
 
         return false;
     }
-    
-/// BACKUP FUNCTIONS ////////////////////////////
+
+    function test_response(&$question, &$state, &$answer) {
+        $teststate   = clone($state);
+        $teststate->responses[''] = trim($answer->answer);
+            if($this->compare_responses($question, $state, $teststate)) {
+                return true;
+            }
+        return false;
+    }
+
+    /// BACKUP FUNCTIONS ////////////////////////////
 
     /*
      * Backup the data in the question
