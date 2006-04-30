@@ -129,7 +129,12 @@ class random_qtype extends default_questiontype {
             }
         } else {
             if (!$wrappedquestion = get_record('question', 'id', $answerregs[1])) {
-                return false;
+                // The teacher must have deleted this question by mistake
+                // Convert it into a description type question with an explanation to the student
+                $wrappedquestion = clone($question);
+                $wrappedquestion->id = $answerregs[1];
+                $wrappedquestion->questiontext = get_string('questiondeleted', 'quiz');
+                $wrappedquestion->qtype = 'description';
             }
             $state->responses[''] = (false === $answerregs[2]) ? '' : $answerregs[2];
         }
