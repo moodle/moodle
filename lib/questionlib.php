@@ -71,15 +71,6 @@ define("QUESTION_NUMANS", "10");
  */
 define('QUESTION_ADAPTIVE', 1);
 
-/** When processing responses the code checks that the new responses at
- * a question differ from those given on the previous submission. If
- * furthermore this flag is set to true
- * then the code goes through the whole history of responses and checks if
- * ANY of them are identical to the current response in which case the 
- * current response is ignored.
- */
-define('QUESTION_IGNORE_DUPRESP', 2);
-
 /**#@-*/
 
 /// QTYPES INITIATION //////////////////
@@ -950,7 +941,7 @@ function question_process_responses(&$question, &$state, $action, $cmoptions, &$
     $newstate->responses = $action->responses;
     $newstate->seq_number = $state->seq_number + 1;
     $newstate->changed = true; // will assure that it gets saved to the database
-    $newstate->last_graded = $state->last_graded;
+    $newstate->last_graded = clone($state->last_graded);
     $newstate->timestamp = $action->timestamp;
     $state = $newstate;
 
@@ -966,28 +957,17 @@ function question_process_responses(&$question, &$state, $action, $cmoptions, &$
         // Don't allow the processing to change the event type
         $state->event = $action->event;
 
-    } else if (QUESTION_EVENTSUBMIT == $action->event) {
+    } else { // grading event
 
-        // Work out if the current responses (or equivalent responses) were
-        // already given in
-        // a. the last graded attempt
-        // b. any other graded attempt
-        if($QTYPES[$question->qtype]->compare_responses(
+        // Unless the attempt is closing, we want to work out if the current responses 
+        // (or equivalent responses) were already given in the last graded attempt. 
+        if((QUESTION_EVENTCLOSE != $action->event) and $QTYPES[$question->qtype]->compare_responses(
          $question, $state, $state->last_graded)) {
             $state->event = QUESTION_EVENTDUPLICATE;
-        } else {
-            if ($cmoptions->optionflags & QUESTION_IGNORE_DUPRESP) {
-                /* Walk back through the previous graded states looking for
-                one where the responses are equivalent to the current
-                responses. If such a state is found, set the current grading
-                details to those of that state and set the event to
-                QUESTION_EVENTDUPLICATE */
-                question_search_for_duplicate_responses($question, $state);
-            }
         }
 
-        // If we did not find a duplicate, perform grading
-        if (QUESTION_EVENTDUPLICATE != $state->event) {
+        // If we did not find a duplicate or if the attempt is closing, perform grading
+        if ((!$sameresponses and (QUESTION_EVENTDUPLICATE != $state->event)) or (QUESTION_EVENTCLOSE == $action->event)) {
             // Decrease sumgrades by previous grade and then later add new grade
             $attempt->sumgrades -= (float)$state->last_graded->grade;
 
@@ -995,32 +975,16 @@ function question_process_responses(&$question, &$state, $action, $cmoptions, &$
              $question, $state, $cmoptions);
             // Calculate overall grade using correct penalty method
             question_apply_penalty_and_timelimit($question, $state, $attempt, $cmoptions);
-            // Update the last graded state (don't simplify!)
+
+            $attempt->sumgrades += (float)$state->grade;
+        }
+
+        // If the state was graded we need to update the last_graded field.
+        if (question_state_is_graded($state)) {
             unset($state->last_graded);
             $state->last_graded = clone($state);
             unset($state->last_graded->changed);
-
-            $attempt->sumgrades += (float)$state->last_graded->grade;
         }
-
-    } else if (QUESTION_EVENTCLOSE == $action->event) {
-
-        // Only mark if they haven't been marked already
-        if (!$sameresponses) {
-            // decrease sumgrades by previous grade and then later add new grade
-            $attempt->sumgrades -= (float)$state->last_graded->grade;
-            $QTYPES[$question->qtype]->grade_responses(
-             $question, $state, $cmoptions);
-            // Calculate overall grade using correct penalty method
-            question_apply_penalty_and_timelimit($question, $state, $attempt, $cmoptions);
-            $attempt->sumgrades += (float)$state->grade;
-        }
-        
-        // Update the last graded state (don't simplify!)
-        unset($state->last_graded);
-        $state->last_graded = clone($state);
-        unset($state->last_graded->changed);
-
     }
     $attempt->timemodified = $action->timestamp;
 
@@ -1032,41 +996,6 @@ function question_process_responses(&$question, &$state, $action, $cmoptions, &$
 */
 function question_isgradingevent($event) {
     return (QUESTION_EVENTSUBMIT == $event || QUESTION_EVENTCLOSE == $event);
-}
-
-/**
-* Compare current responses to all previous graded responses
-*
-* This is used by {@link question_process_responses()} to determine whether
-* to ignore the marking request for the current response. However this
-* check against all previous graded responses is only performed if
-* the QUESTION_IGNORE_DUPRESP bit in $cmoptions->optionflags is set
-* If the current response is a duplicate of a previously graded response then
-* $STATE->event is set to QUESTION_EVENTDUPLICATE.
-* @return boolean         Indicates if a state with duplicate responses was
-*                         found.
-* @param object $question
-* @param object $state
-*/
-function question_search_for_duplicate_responses(&$question, &$state) {
-    // get all previously graded question states
-    global $QTYPES;
-    if (!$oldstates = get_records('question_states', "event = '" .
-     QUESTION_EVENTGRADE . "' AND " . "question = '" . $question->id .
-     "'", 'seq_number DESC')) {
-        return false;
-    }
-    foreach ($oldstates as $oldstate) {
-        if ($QTYPES[$question->qtype]->restore_session_and_responses(
-         $question, $oldstate)) {
-            if(!$QTYPES[$question->qtype]->compare_responses(
-             $question, $state, $oldstate)) {
-                $state->event = QUESTION_EVENTDUPLICATE;
-                break;
-            }
-        }
-    }
-    return (QUESTION_EVENTDUPLICATE == $state->event);
 }
 
 /**
