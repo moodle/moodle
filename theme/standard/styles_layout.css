@@ -601,6 +601,10 @@ ul.list, ul.list li {
   text-align: right;
 }
 
+.blogpost .tags {
+  margin-top: 15px;
+}
+
 
 /***
  *** Calendar
