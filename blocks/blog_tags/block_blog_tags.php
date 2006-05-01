@@ -4,6 +4,14 @@ define('BLOGDEFAULTTIMEWITHIN', 90);
 define('BLOGDEFAULTNUMBEROFTAGS', 20);
 define('BLOGDEFAULTSORT', 'text');
 
+if (!defined('BLOG_USER_LEVEL')) {
+    define ('BLOG_USER_LEVEL', 1);
+    define ('BLOG_GROUP_LEVEL', 2);
+    define ('BLOG_COURSE_LEVEL', 3);
+    define ('BLOG_SITE_LEVEL', 4);
+    define ('BLOG_GLOBAL_LEVEL', 5);
+}
+
 class block_blog_tags extends block_base {
     function init() {
         $this->version = 2006032000;
@@ -116,8 +124,29 @@ class block_blog_tags extends block_base {
             
         /// Finally we create the output
             foreach ($etags as $tag) {
-                $link = $CFG->wwwroot.'/blog/index.php?courseid='.
-                        $this->instance->pageid.'&amp;filtertype=site&amp;tagid='.$tag->id;
+                switch ($CFG->bloglevel) {
+                    case BLOG_USER_LEVEL:
+                        $filtertype = 'user';
+                        $filterselect = $USER->id;
+                    break;
+
+                    case BLOG_GROUP_LEVEL: 
+                        $filtertype = 'group';
+                        $filterselect = get_current_group($this->instance->pageid);
+                    break;
+
+                    case BLOG_COURSE_LEVEL:
+                        $filtertype = 'course';
+                        $filterselect = $this->instance->pageid;
+                    break;
+
+                    default:
+                        $filtertype = 'site';
+                        $filterselect = SITEID;
+                    break;
+                }
+
+                $link = $CFG->wwwroot.'/blog/index.php?filtertype='.$filtertype.'&amp;filterselect='.$filterselect.'&amp;tagid='.$tag->id;
                 $this->content->text .= '<a href="'.$link.'" '.
                                         'class="'.$tag->class.'" '.
                                         'title="'.get_string('numberofentries','blog',$tag->ct).'">'.
