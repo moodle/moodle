@@ -370,14 +370,19 @@
 
             if ($post = get_record('post', 'id', $postid)) {
 
-                if ($user = get_record('user', 'id', $post->userid)) {
-                    $post->email = $user->email;
-                    $post->firstname = $user->firstname;
-                    $post->lastname = $user->lastname;
-                }
-                $retarray[] = $post;
-                return $retarray;
+                if (blog_user_can_view_user_post($post->userid)) {
 
+                    if ($user = get_record('user', 'id', $post->userid)) {
+                        $post->email = $user->email;
+                        $post->firstname = $user->firstname;
+                        $post->lastname = $user->lastname;
+                    }
+                    $retarray[] = $post;
+                    return $retarray;
+                } else {
+                    return null;
+                }
+                
             } else { // bad postid
                 return null;
             }

@@ -251,7 +251,7 @@ function do_save($post) {
         }
         //record a log message of this entry addition
         if ($site = get_site()) {
-            add_to_log($site->id, 'blog', 'add', 'index.php?userid='. $blogEntry->userid .'&postid='. $entryID, 'created new blog entry with entry id# '. $entryID);
+            add_to_log($site->id, 'blog', 'add', 'index.php?userid='. $blogEntry->userid .'&postid='. $entryID, $blogEntry->subject);
         }
         
         redirect($referrer);
@@ -315,7 +315,7 @@ function do_update($post) {
 
         //record a log message of this entry update action
         if ($site = get_site()) {
-            add_to_log($site->id, 'blog', 'update', 'index.php?userid='. $blogEntry->userid .'&postid='. $post->postid, 'updated existing blog entry with entry id# '. $post->postid);
+            add_to_log($site->id, 'blog', 'update', 'index.php?userid='. $blogEntry->userid .'&postid='. $post->postid, $blogEntry->subject);
         }
         
         redirect($referrer);

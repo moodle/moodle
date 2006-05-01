@@ -87,14 +87,14 @@ if ($filtertype) {
 
 switch ($filtertype) {
     case 'site':
-        if ($CFG->bloglevel < BLOG_SITE_LEVEL) {
+        if ($CFG->bloglevel < BLOG_SITE_LEVEL && (!isadmin())) {
             error ('site blogs is not enabled');
         } else if ($CFG->bloglevel < BLOG_GLOBAL_LEVEL) {
             require_login();
         }
     break;
     case 'course':
-        if ($CFG->bloglevel < BLOG_COURSE_LEVEL) {
+        if ($CFG->bloglevel < BLOG_COURSE_LEVEL && (!isadmin())) {
             error ('course blogs is not enabled');
         }
 
@@ -104,7 +104,7 @@ switch ($filtertype) {
         /// check if viewer is student
     break;
     case 'group':
-        if ($CFG->bloglevel < BLOG_GROUP_LEVEL) {
+        if ($CFG->bloglevel < BLOG_GROUP_LEVEL && (!isadmin())) {
             error ('group blogs is not enabled');
         }
         if (!isteacheredit($course) and (groupmode($course) == SEPARATEGROUPS)) {
@@ -115,7 +115,7 @@ switch ($filtertype) {
         /// check if user is editting teacher, or if spg, is member
     break;
     case 'user':
-        if ($CFG->bloglevel < BLOG_USER_LEVEL) {
+        if ($CFG->bloglevel < BLOG_USER_LEVEL && (!isadmin())) {
             error ('Blogs is not enabled');
         }
         
