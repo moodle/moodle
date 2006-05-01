@@ -203,7 +203,7 @@
         <FIELD name="module" method="NO_CONV" type="varchar" length="20" dropindex="coursemoduleaction"/>
         <FIELD name="action" method="NO_CONV" type="varchar" length="15"  addindex="timecoursemoduleaction(time, course, module(20), action(15))" />
         <FIELD name="url" method="NO_CONV" type="varchar" length="100" addindex="coursemoduleaction(course, module(20), action(15))" />
-        <FIELD name="info" method="NO_CONV" type="varchar" length="255" />
+        <FIELD name="info" method="NO_CONV" type="varchar" length="255" dropindex="info" addindex="info(info(255))" />
       </FIELDS>
     </TABLE>
     <TABLE name="log_display">
