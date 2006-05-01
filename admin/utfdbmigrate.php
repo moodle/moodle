@@ -294,9 +294,20 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
         $dbtables = $xml['DBMIGRATION']['#']['TABLES'][0]['#']['TABLE'];    //real db tables
         
         foreach ($dbtables as $dbtable) {
+
             $done++;
             print_progress($done, 158, 5, 1);
+            
             $dbtablename = $dbtable['@']['name'];
+
+            // exception handling for adodb_logsql
+            // see bug 5003
+            if ($dbtablename == 'adodb_logsql') {
+                $prefix = '';
+            } else {
+                $prefix = $CFG->prefix;
+            }
+
             if ($crash && ($dbtablename != $crash->table)) {  //resuming from crash
                 continue;
             }
@@ -354,8 +365,8 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
                         /* Drop the index, because with index on, you can't change it to longblob */
 
                         if ($dropindex){    //drop index if index is varchar, text etc type
-                            $SQL = 'ALTER TABLE '.$CFG->prefix.$dbtablename.' DROP INDEX '.$dropindex.';';
-                            $SQL1 = 'ALTER TABLE '.$CFG->prefix.$dbtablename.' DROP INDEX '.$CFG->prefix.$dropindex.';'; // see bug 5205
+                            $SQL = 'ALTER TABLE '.$prefix.$dbtablename.' DROP INDEX '.$dropindex.';';
+                            $SQL1 = 'ALTER TABLE '.$prefix.$dbtablename.' DROP INDEX '.$CFG->prefix.$dropindex.';'; // see bug 5205
                             if ($debug) {
                                 $db->debug=999;
                             }
@@ -366,7 +377,7 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
                                 $db->debug=0;
                             }
                         } else if ($dropprimary) {    // drop primary key
-                            $SQL = 'ALTER TABLE '.$CFG->prefix.$dbtablename.' DROP PRIMARY KEY;';
+                            $SQL = 'ALTER TABLE '.$prefix.$dbtablename.' DROP PRIMARY KEY;';
                             if ($debug) {
                                 $db->debug=999;
                             }
@@ -383,7 +394,7 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
                               to handle most of the problems such as in bug 5194
                         */
                            
-                        $SQL = 'ALTER TABLE '.$CFG->prefix.$dbtablename;
+                        $SQL = 'ALTER TABLE '.$prefix.$dbtablename;
                         $SQL.= ' CHANGE '.$fieldname.' '.$fieldname.' LONGBLOB';
 
                         /*
@@ -417,13 +428,14 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
                     
                     ///get the total number of records for this field
                     
-                    $totalrecords = count_records($dbtablename);
+                    // could not use count_records because it addes prefix to adodb_logsql
+                    $totalrecords = count_records_sql("select count(*) from {$prefix}$dbtablename");
                     $counter = 0;
                     $recordsetsize = 4;
 
                     if ($crash) {    //if resuming from crash
                         //find the number of records with id smaller than the crash id
-                        $indexSQL = 'SELECT COUNT(*) FROM '.$CFG->prefix.$dbtablename.' WHERE id < '.$crash->record;
+                        $indexSQL = 'SELECT COUNT(*) FROM '.$prefix.$dbtablename.' WHERE id < '.$crash->record;
                         $counter = count_records_sql($indexSQL);
                     }
 
@@ -437,7 +449,7 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
                      * converting each record *
                      **************************/
                     while(($counter < $totalrecords) and ($fieldname !='dummy') and ($method!='NO_CONV')) {    //while there is still something
-                        $SQL = 'SELECT * FROM '.$CFG->prefix.$dbtablename.' ORDER BY id ASC '.sql_paging_limit($counter, $recordsetsize);
+                        $SQL = 'SELECT * FROM '.$prefix.$dbtablename.' ORDER BY id ASC '.sql_paging_limit($counter, $recordsetsize);
                         if ($records = get_records_sql($SQL)) {
                             foreach ($records as $record) {
 
@@ -458,7 +470,7 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
 
                                 $replacements = array();    //manual refresh
                                 $replacements[] = $record->id;
-                                $replacements[] = $CFG->prefix;
+                                $replacements[] = $prefix;
 
                                 switch ($method){
                                     case 'PLAIN_SQL_UPDATE':    //use the 2 statements to update
@@ -525,7 +537,7 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
                                 $processedrecords++;
                                 //print some output once in a while
                                 if (($processedrecords) % 5000 == 0) {
-                                    echo '...'.$dbtablename.'...'.$fieldname.'...'.$record->id;
+                                    echo 'Processing...'.$dbtablename.'...'.$fieldname.'...'.$record->id;
                                 }
                             }
                         }else {
@@ -562,7 +574,7 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
                             $db->debug=0;
                         }*/
                         //phase 2
-                        $SQL = 'ALTER TABLE '.$CFG->prefix.$dbtablename;
+                        $SQL = 'ALTER TABLE '.$prefix.$dbtablename;
                         $SQL.= ' CHANGE '.$fieldname.' '.$fieldname.' '.$type;
                         if ($length > 0) {
                             $SQL.='('.$length.') ';
@@ -603,7 +615,7 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
                 $alter = 0;
 
                 if ($CFG->dbtype=='mysql'){
-                    $SQL = 'ALTER TABLE '.$CFG->prefix.$dbtablename;
+                    $SQL = 'ALTER TABLE '.$prefix.$dbtablename;
 
                     if (!empty($addindexarray)) {
                         foreach ($addindexarray as $aidx){
@@ -650,7 +662,7 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
              * now we modify the table encoding *
              ************************************/
             if ($CFG->dbtype=='mysql'){
-                $SQL = 'ALTER TABLE '.$CFG->prefix.$dbtablename.' CHARACTER SET utf8';
+                $SQL = 'ALTER TABLE '.$prefix.$dbtablename.' CHARACTER SET utf8';
                 if ($debug) {
                     $db->debug=999;
                 }
