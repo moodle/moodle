@@ -11,6 +11,7 @@
 
   admin
   blocks
+  blog
   calendar
   course
   doc
@@ -590,6 +591,16 @@ ul.list, ul.list li {
 .block_online_users .listentry {
   padding-top:5px;
 }
+
+
+/***
+ *** Blogs
+ ***/
+
+.blogpost .audience {
+  text-align: right;
+}
+
 
 /***
  *** Calendar
