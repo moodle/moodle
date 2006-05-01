@@ -88,6 +88,10 @@ class block_blog_menu extends block_base {
                 $output .= get_string('viewsiteentries', 'blog') .'</a><br />';
             }
             
+            if (isloggedin() && (!isguest())) {
+                $output .= link_to_popup_window("/blog/tags.php",'popup',get_string('tagmanagement'), 400, 500, 'Popup window', 'none', true);
+            }
+            
             // show Help with blogging link
             //$output .= '<a href="'. $CFG->wwwroot .'/help.php?module=blog&amp;file=user.html">';
             //$output .= get_string('helpblogging', 'blog') .'</a>';
