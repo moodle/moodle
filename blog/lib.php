@@ -365,6 +365,7 @@
 
         // If we have specified an ID
         // Just return 1 entry
+
         if ($postid) {
 
             if ($post = get_record('post', 'id', $postid)) {
@@ -374,9 +375,11 @@
                     $post->firstname = $user->firstname;
                     $post->lastname = $user->lastname;
                 }
+                $retarray[] = $post;
+                return $retarray;
 
-                $this->filtered_entries = $post;
-                return $this->filtered_entries;
+            } else { // bad postid
+                return null;
             }
         }
 
