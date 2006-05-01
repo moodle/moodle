@@ -15,7 +15,7 @@ if (!defined('BLOG_USER_LEVEL')) {
 class block_blog_tags extends block_base {
     function init() {
         $this->version = 2006032000;
-        $this->title = get_string('blogtags', 'blog');
+        $this->title = get_string('blocktagstitle', 'blog');
     }
 
     function instance_allow_multiple() {

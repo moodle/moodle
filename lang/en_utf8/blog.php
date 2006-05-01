@@ -3,13 +3,13 @@
 $string['addnewentry'] = 'Add a new entry';
 $string['addotags'] = 'Add official tags';
 $string['addptags'] = 'Add user-defined tags';
-$string['blockmenutitle'] = 'Blog menu';
-$string['blocktagstitle'] = 'Blog tags';
+$string['blockmenutitle'] = 'Blog Menu';
+$string['blocktagstitle'] = 'Blog Tags';
 $string['blocktitle'] = 'Blog tags block title';
 $string['blog'] = 'Blog';
 $string['blogdeleteconfirm'] = 'Delete this blog?';
 $string['blogs'] = 'Blogs';
-$string['blogtags'] = 'Blog tags';
+$string['blogtags'] = 'Blog Tags';
 $string['blogpreferences'] = 'Blog preferences';
 $string['courseblog'] = 'Course blog: $a';
 $string['entrybody'] = 'Blog entry body';
