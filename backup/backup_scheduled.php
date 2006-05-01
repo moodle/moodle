@@ -103,6 +103,13 @@ function schedule_backup_cron() {
                 if ($backup_course->nextstarttime > 0 && $backup_course->nextstarttime < $now) {
                     //We have to send a email because we have included at least one backup
                     $emailpending = true;
+                    // Skip backup of unavailable courses that have remained unmodified in a month
+                    if (!$course->visible && ($now - $course->timemodified) > 31) {  //Hidden + unmodified last month
+                    //if (!$course->visible && ($now - $course->timemodified) > 31*24*60*60) {  //Hidden + unmodified last month
+                         mtrace("            SKIPPING - hidden+unmodified");
+                         set_field("backup_courses","laststatus","3","courseid",$backup_course->courseid);
+                         continue;
+                    }
                     //Only make the backup if laststatus isn't 2-UNFINISHED (uncontrolled error)
                     if ($backup_course->laststatus != 2) {
                         //Set laststarttime
@@ -154,6 +161,7 @@ function schedule_backup_cron() {
         $count_ok = count_records('backup_courses','laststatus','1');
         $count_error = count_records('backup_courses','laststatus','0');
         $count_unfinished = count_records('backup_courses','laststatus','2');
+        $count_skipped = count_records('backup_courses','laststatus','3');
 
         //Build the message text
         //Summary
@@ -161,6 +169,7 @@ function schedule_backup_cron() {
         $message .= "==================================================\n";
         $message .= "  ".get_string('courses').": ".$count_all."\n";
         $message .= "  ".get_string('ok').": ".$count_ok."\n";
+        $message .= "  ".get_string('skipped').": ".$count_skipped."\n";
         $message .= "  ".get_string('error').": ".$count_error."\n";
         $message .= "  ".get_string('unfinished').": ".$count_unfinished."\n\n";
 

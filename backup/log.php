@@ -29,6 +29,7 @@
     $strerror = get_string("error");
     $strok = get_string("ok");
     $strunfinished = get_string("unfinished");
+    $strskipped = get_string("skipped");
     $strcourse = get_string("course");
     $strtimetaken = get_string("timetaken","quiz");
     $strstatus = get_string("status");
@@ -71,6 +72,8 @@
                         echo "<td nowrap=\"nowrap\" align=\"center\"><font size=\"2\" color=\"green\">".$strok."</font></td>";
                     } else if ($course->laststatus == 2) {
                         echo "<td nowrap=\"nowrap\" align=\"center\"><font size=\"2\" color=\"red\">".$strunfinished."</font></td>";
+                    } else if ($course->laststatus == 3) {
+                        echo "<td nowrap=\"nowrap\" align=\"center\"><font size=\"2\" color=\"green\">".$strskipped."</font></td>";
                     } else {
                         echo "<td nowrap=\"nowrap\" align=\"center\"><font size=\"2\" color=\"red\">".$strerror."</font></td>";
                     }
