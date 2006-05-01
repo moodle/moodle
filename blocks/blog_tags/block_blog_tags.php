@@ -137,7 +137,12 @@ class block_blog_tags extends block_base {
 
                     case BLOG_COURSE_LEVEL:
                         $filtertype = 'course';
-                        $filterselect = $this->instance->pageid;
+                        global $course;           // Need to do this unfortunately for pages like blog pages
+                        if (isset($course->id)) {     
+                            $filterselect = $course->id;
+                        } else {
+                            $filterselect = $this->instance->pageid;
+                        }
                     break;
 
                     default:
