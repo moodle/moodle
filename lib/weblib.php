@@ -2156,7 +2156,7 @@ function print_footer($course=NULL, $usercourse=NULL) {
 
 /// Provide some performance info if required
     $performanceinfo = '';
-    if (defined('MDL_PERF') || $CFG->debug > 7 || $CFG->perfdebug > 7) {
+    if (defined('MDL_PERF') || $CFG->perfdebug > 7) {
         $perf = get_performance_info();
         if (defined('MDL_PERFTOLOG')) {
             error_log("PERF: " . $perf['txt']);
