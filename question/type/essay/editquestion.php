@@ -1,13 +1,9 @@
 <?php // $Id$
 
     if (!empty($question->id)) {
-        $options = get_record("question_essay", "question", "$question->id");
-    }
-
-    if (!empty($options->answer)) {
-        $essayfeedback   = get_record("question_answers", "id", $options->answer);
+        $options->answer = get_record("question_answers", "question", $question->id);
     } else {
-        $essayfeedback->feedback = "";
+        $options->answer->feedback = '';
     }
 
     print_heading_with_help(get_string("editingessay", "quiz"), "essay", "quiz");

@@ -318,7 +318,6 @@
                 fwrite ($bf,full_tag("PENALTY",8,false,$state->penalty));
                 // now back up question type specific state information
                 $status = backup_question_rqp_state ($bf,$preferences,$state->id);
-                $status = backup_question_essay_state ($bf,$preferences,$state->id);
                 //End state
                 $status = fwrite ($bf,end_tag("STATE",7,true));
             }
@@ -375,28 +374,6 @@
             fwrite ($bf,full_tag("TEMPLATE_VARS",9,false,$rqp_state->template_vars));
             //Write end tag
             $status = fwrite ($bf,end_tag("RQP_STATE",8,true));
-        }
-        return $status;
-    }
-    
-    //Backup question_essay_state contents (executed from backup_question_states)
-    function backup_question_essay_state ($bf,$preferences,$state) {
-
-        global $CFG;
-
-        $status = true;
-
-        $essay_state = get_record("question_essay_states", "stateid", $state);
-        //If there is a state
-        if ($essay_state) {
-            //Write start tag
-            $status = fwrite ($bf,start_tag("ESSAY_STATE",8,true));
-            //Print state contents
-            fwrite ($bf,full_tag("GRADED",9,false,$essay_state->graded));
-            fwrite ($bf,full_tag("FRACTION",9,false,$essay_state->fraction));
-            fwrite ($bf,full_tag("RESPONSE",9,false,$essay_state->response));
-            //Write end tag
-            $status = fwrite ($bf,end_tag("ESSAY_STATE",8,true));
         }
         return $status;
     }
