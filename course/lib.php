@@ -234,22 +234,23 @@ function print_recent_selector_form($course, $advancedfilter=0, $selecteduser=0,
 
 function make_log_url($module, $url) {
     switch ($module) {
-        case "user":
-        case "course":
-        case "file":
-        case "login":
-        case "lib":
-        case "admin":
-        case "message":
-        case "calendar":
+        case 'user':
+        case 'course':
+        case 'file':
+        case 'login':
+        case 'lib':
+        case 'admin':
+        case 'message':
+        case 'calendar':
+        case 'blog':
             return "/$module/$url";
             break;
-        case "upload":
-            return "$url";
+        case 'upload':
+            return $url;
             break;
-        case "library":
-        case "":
-            return "/";
+        case 'library':
+        case '':
+            return '/';
             break;
         default:
             return "/mod/$module/$url";
