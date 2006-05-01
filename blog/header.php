@@ -103,20 +103,20 @@ if ($ME == $CFG->wwwroot.'/blog/edit.php') {  /// We are in edit mode, print the
     switch ($filtertype) {
         case 'site':
             if ($tagid || !empty($tag)) {
-                print_header("$site->shortname: $blogstring", "$site->fullname",
+                print_header("$site->shortname: $blogstring", "",
                             '<a href="index.php?filtertype=site">'. "$blogstring</a> -> $tagstring: $taginstance->text",'','',true,$PAGE->get_extra_header_string());
             } else {
-                print_header("$site->shortname: $blogstring", "$site->fullname",
+                print_header("$site->shortname: $blogstring", "",
                             $blogstring,'','',true,$PAGE->get_extra_header_string());
             }
         break;
 
         case 'course':
             if ($tagid || !empty($tag)) {
-                print_header_simple("$course->shortname: $blogstring", "$course->fullname",
+                print_header_simple("$course->shortname: $blogstring", "",
                             '<a href="index.php?filtertype=course&amp;filterselect='.$filterselect.'">'. "$blogstring</a> -> $tagstring: $taginstance->text",'','',true,$PAGE->get_extra_header_string());
             } else {
-                print_header_simple("$site->shortname: $blogstring", "$site->fullname",
+                print_header_simple("$course->shortname: $blogstring", "",
                             $blogstring,'','',true,$PAGE->get_extra_header_string());
             }
         break;
