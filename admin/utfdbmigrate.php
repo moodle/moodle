@@ -92,7 +92,13 @@
             
                 foreach ($dbtables as $dbtable) {
                     $dbtablename = $dbtable['@']['name'];
-                    $sumrecords += count_records($dbtablename);
+                    
+                    if ($dbtablename=='adodb_logsql') {
+                        $prefix = '';
+                    } else {
+                        $prefix = $CFG->prefix;
+                    }
+                    $sumrecords += count_records_sql("SELECT COUNT(*) FROM {$prefix}$dbtablename");
                 }
             }
             echo 'Total number of records in your database is <b>'.$sumrecords.'</b>';
