@@ -70,7 +70,7 @@ class qformat_aiken extends qformat_default {
                     $question->fraction[$rightans] = 1;
                     $questions[] = $question;
                     //clear array for next question set
-                    $question = NULL;
+                    $question = $this->defaultquestion();
                     continue;
                 } else {
                     //Must be the first line since no leader
