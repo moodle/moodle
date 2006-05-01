@@ -213,15 +213,24 @@ function lesson_upgrade($oldversion) {
         table_column('lesson', '', 'mediawidth', 'int', '10', 'unsigned', '650', 'not null', 'mediafile');
     }
 
-	if ($oldversion < 2005110200) {
+    if ($oldversion < 2005110200) {
         table_column('lesson', '', 'activitylink', 'int', '10', 'unsigned', '0', 'not null', 'tree');
-	}
-	
-	if ($oldversion < 2006031900) {
-	    execute_sql('ALTER TABLE  '. $CFG->prefix . 'lesson DROP COLUMN tree');
-	    execute_sql('ALTER TABLE  '. $CFG->prefix . 'lesson_default DROP COLUMN tree');
-	}
-         
+    }
+    
+    if ($oldversion < 2006031900) {
+        execute_sql('ALTER TABLE  '. $CFG->prefix . 'lesson DROP COLUMN tree');
+        execute_sql('ALTER TABLE  '. $CFG->prefix . 'lesson_default DROP COLUMN tree');
+    }
+    
+    if ($oldversion < 2006050100) {   
+        table_column('lesson_default', '', 'conditions', 'text', '', '', '', 'not null', 'password');
+        table_column('lesson_default', '', 'progressbar', 'tinyint', '3', 'unsigned', '0', 'not null', 'displayleft');
+        table_column('lesson_default', '', 'displayleftif', 'int', '3', 'unsigned', '0', 'not null', 'displayleft'); 
+        table_column('lesson_default', '', 'mediaclose', 'tinyint', '3', 'unsigned', '0', 'not null', 'retake');
+        table_column('lesson_default', '', 'mediaheight', 'int', '10', 'unsigned', '100', 'not null', 'retake');
+        table_column('lesson_default', '', 'mediawidth', 'int', '10', 'unsigned', '650', 'not null', 'retake');
+    }
+    
     return true;
 }
 

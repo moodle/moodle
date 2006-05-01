@@ -71,8 +71,8 @@
         fwrite ($bf,full_tag("NAME",4,false,$lesson->name));
         fwrite ($bf,full_tag("PRACTICE",4,false,$lesson->practice));
         fwrite ($bf,full_tag("MODATTEMPTS",4,false,$lesson->modattempts));
-        fwrite ($bf,full_tag("PASSWORD",4,false,$lesson->password));
         fwrite ($bf,full_tag("USEPASSWORD",4,false,$lesson->usepassword));
+        fwrite ($bf,full_tag("PASSWORD",4,false,$lesson->password));
         fwrite ($bf,full_tag("DEPENDENCY",4,false,$lesson->dependency));
         fwrite ($bf,full_tag("CONDITIONS",4,false,$lesson->conditions));
         fwrite ($bf,full_tag("GRADE",4,false,$lesson->grade));
@@ -88,12 +88,18 @@
         fwrite ($bf,full_tag("TIMED",4,false,$lesson->timed));
         fwrite ($bf,full_tag("MAXTIME",4,false,$lesson->maxtime));
         fwrite ($bf,full_tag("RETAKE",4,false,$lesson->retake));
+        fwrite ($bf,full_tag("ACTIVITYLINK",4,false,$lesson->activitylink));
         fwrite ($bf,full_tag("MEDIAFILE",4,false,$lesson->mediafile));
+        fwrite ($bf,full_tag("MEDIAHEIGHT",4,false,$lesson->mediaheight));
+        fwrite ($bf,full_tag("MEDIAWIDTH",4,false,$lesson->mediawidth));
+        fwrite ($bf,full_tag("MEDIACLOSE",4,false,$lesson->mediaclose));
         fwrite ($bf,full_tag("SLIDESHOW",4,false,$lesson->slideshow));
         fwrite ($bf,full_tag("WIDTH",4,false,$lesson->width));
         fwrite ($bf,full_tag("HEIGHT",4,false,$lesson->height));
         fwrite ($bf,full_tag("BGCOLOR",4,false,$lesson->bgcolor));
         fwrite ($bf,full_tag("DISPLAYLEFT",4,false,$lesson->displayleft));
+        fwrite ($bf,full_tag("DISPLAYLEFTIF",4,false,$lesson->displayleftif));
+        fwrite ($bf,full_tag("PROGRESSBAR",4,false,$lesson->progressbar));
         fwrite ($bf,full_tag("SHOWHIGHSCORES",4,false,$lesson->highscores));
         fwrite ($bf,full_tag("MAXHIGHSCORES",4,false,$lesson->maxhighscores));
         fwrite ($bf,full_tag("AVAILABLE",4,false,$lesson->available));
@@ -388,8 +394,9 @@
             //Print default data
             fwrite ($bf,full_tag("PRACTICE",5,false,$default->practice));
             fwrite ($bf,full_tag("MODATTEMPTS",5,false,$default->modattempts));
-            fwrite ($bf,full_tag("PASSWORD",5,false,$default->password));
             fwrite ($bf,full_tag("USEPASSWORD",5,false,$default->usepassword));
+            fwrite ($bf,full_tag("PASSWORD",5,false,$default->password));
+            fwrite ($bf,full_tag("CONDITIONS",5,false,$default->conditions));
             fwrite ($bf,full_tag("GRADE",5,false,$default->grade));
             fwrite ($bf,full_tag("CUSTOM",5,false,$default->custom));
             fwrite ($bf,full_tag("ONGOING",5,false,$default->ongoing));
@@ -403,11 +410,16 @@
             fwrite ($bf,full_tag("TIMED",5,false,$default->timed));
             fwrite ($bf,full_tag("MAXTIME",5,false,$default->maxtime));
             fwrite ($bf,full_tag("RETAKE",5,false,$default->retake));
+            fwrite ($bf,full_tag("MEDIAHEIGHT",5,false,$default->mediaheight));
+            fwrite ($bf,full_tag("MEDIAWIDTH",5,false,$default->mediawidth));
+            fwrite ($bf,full_tag("MEDIACLOSE",5,false,$default->mediaclose));
             fwrite ($bf,full_tag("SLIDESHOW",5,false,$default->slideshow));
             fwrite ($bf,full_tag("WIDTH",5,false,$default->width));
             fwrite ($bf,full_tag("HEIGHT",5,false,$default->height));
             fwrite ($bf,full_tag("BGCOLOR",5,false,$default->bgcolor));
             fwrite ($bf,full_tag("DISPLAYLEFT",5,false,$default->displayleft));
+            fwrite ($bf,full_tag("DISPLAYLEFTIF",5,false,$default->displayleftif));
+            fwrite ($bf,full_tag("PROGRESSBAR",5,false,$default->progressbar));
             fwrite ($bf,full_tag("HIGHSCORES",5,false,$default->highscores));
             fwrite ($bf,full_tag("MAXHIGHSCORES",5,false,$default->maxhighscores));
             $status =fwrite ($bf,end_tag("DEFAULTS",4,true));

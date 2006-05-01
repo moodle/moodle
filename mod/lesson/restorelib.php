@@ -56,8 +56,8 @@
             $lesson->name = backup_todb($info['MOD']['#']['NAME']['0']['#']);
             $lesson->practice = backup_todb($info['MOD']['#']['PRACTICE']['0']['#']);
             $lesson->modattempts = backup_todb($info['MOD']['#']['MODATTEMPTS']['0']['#']);
-            $lesson->password = backup_todb($info['MOD']['#']['PASSWORD']['0']['#']);
             $lesson->usepassword = backup_todb($info['MOD']['#']['USEPASSWORD']['0']['#']);
+            $lesson->password = backup_todb($info['MOD']['#']['PASSWORD']['0']['#']);            
             $lesson->dependency = backup_todb($info['MOD']['#']['DEPENDENCY']['0']['#']);
             $lesson->conditions = backup_todb($info['MOD']['#']['CONDITIONS']['0']['#']);
             $lesson->grade = backup_todb($info['MOD']['#']['GRADE']['0']['#']);
@@ -73,12 +73,18 @@
             $lesson->timed = backup_todb($info['MOD']['#']['TIMED']['0']['#']);
             $lesson->maxtime = backup_todb($info['MOD']['#']['MAXTIME']['0']['#']);
             $lesson->retake = backup_todb($info['MOD']['#']['RETAKE']['0']['#']);
+            $lesson->activitylink = backup_todb($info['MOD']['#']['ACTIVITYLINK']['0']['#']);
             $lesson->mediafile = backup_todb($info['MOD']['#']['MEDIAFILE']['0']['#']);
+            $lesson->mediaheight = backup_todb($info['MOD']['#']['MEDIAHEIGHT']['0']['#']);
+            $lesson->mediawidth = backup_todb($info['MOD']['#']['MEDIAWIDTH']['0']['#']);
+            $lesson->mediaclose = backup_todb($info['MOD']['#']['MEDIACLOSE']['0']['#']);
             $lesson->slideshow = backup_todb($info['MOD']['#']['SLIDESHOW']['0']['#']);
             $lesson->width = backup_todb($info['MOD']['#']['WIDTH']['0']['#']);
             $lesson->height = backup_todb($info['MOD']['#']['HEIGHT']['0']['#']);
             $lesson->bgcolor = backup_todb($info['MOD']['#']['BGCOLOR']['0']['#']);
             $lesson->displayleft = backup_todb($info['MOD']['#']['DISPLAYLEFT']['0']['#']);
+            $lesson->displayleftif = backup_todb($info['MOD']['#']['DISPLAYLEFTIF']['0']['#']);
+            $lesson->progressbar = backup_todb($info['MOD']['#']['PROGRESSBAR']['0']['#']);
             $lesson->highscores = backup_todb($info['MOD']['#']['SHOWHIGHSCORES']['0']['#']);
             $lesson->maxhighscores = backup_todb($info['MOD']['#']['MAXHIGHSCORES']['0']['#']);
             $lesson->available = backup_todb($info['MOD']['#']['AVAILABLE']['0']['#']);
@@ -114,9 +120,12 @@
                             return false;
                         }
                     }
-                    // restore the default for the course.  There might not be one, but if there
-                    //  is, there will only be one.
-                    $status = lesson_default_restore_mods($info,$restore);
+                    // restore the default for the course.  Only do this once by checking for an id for lesson_default
+                    $lessondefault = backup_getid($restore->backup_unique_code,'lesson_default',$restore->course_id);
+                    if (!$lessondefault) {
+                        $status = lesson_default_restore_mods($info,$restore);
+                    }
+                    
                 }
             } else {
                 $status = false;
@@ -628,8 +637,9 @@
                 $default->course = $restore->course_id;
                 $default->practice = backup_todb($default_info['#']['PRACTICE']['0']['#']);
                 $default->modattempts = backup_todb($default_info['#']['MODATTEMPTS']['0']['#']);
-                $default->password = backup_todb($default_info['#']['PASSWORD']['0']['#']);
                 $default->usepassword = backup_todb($default_info['#']['USEPASSWORD']['0']['#']);
+                $default->password = backup_todb($default_info['#']['PASSWORD']['0']['#']);
+                $default->conditions = backup_todb($default_info['#']['CONDITIONS']['0']['#']);
                 $default->grade = backup_todb($default_info['#']['GRADE']['0']['#']);
                 $default->custom = backup_todb($default_info['#']['CUSTOM']['0']['#']);
                 $default->ongoing = backup_todb($default_info['#']['ONGOING']['0']['#']);
@@ -643,17 +653,27 @@
                 $default->timed = backup_todb($default_info['#']['TIMED']['0']['#']);
                 $default->maxtime = backup_todb($default_info['#']['MAXTIME']['0']['#']);
                 $default->retake = backup_todb($default_info['#']['RETAKE']['0']['#']);
+                $default->mediaheight = backup_todb($default_info['#']['MEDIAHEIGHT']['0']['#']);
+                $default->mediawidth = backup_todb($default_info['#']['MEDIAWIDTH']['0']['#']);
+                $default->mediaclose = backup_todb($default_info['#']['MEDIACLOSE']['0']['#']);
                 $default->slideshow = backup_todb($default_info['#']['SLIDESHOW']['0']['#']);
                 $default->width = backup_todb($default_info['#']['WIDTH']['0']['#']);
                 $default->height = backup_todb($default_info['#']['HEIGHT']['0']['#']);
                 $default->bgcolor = backup_todb($default_info['#']['BGCOLOR']['0']['#']);
                 $default->displayleft = backup_todb($default_info['#']['DISPLAYLEFT']['0']['#']);
+                $default->displayleftif = backup_todb($default_info['#']['DISPLAYLEFTIF']['0']['#']);
+                $default->progressbar = backup_todb($default_info['#']['PROGRESSBAR']['0']['#']);
                 $default->highscores = backup_todb($default_info['#']['HIGHSCORES']['0']['#']);
                 $default->maxhighscores = backup_todb($default_info['#']['MAXHIGHSCORES']['0']['#']);
 
                 //The structure is equal to the db, so insert the lesson_grade
                 $newid = insert_record ("lesson_default",$default);
-
+                
+                if ($newid) {
+                    backup_putid($restore->backup_unique_code,'lesson_default',
+                                 $restore->course_id, $newid);
+                }
+                
                 //Do some output
                 if (($i+1) % 50 == 0) {
                     if (!defined('RESTORE_SILENTLY')) {
