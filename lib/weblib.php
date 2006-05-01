@@ -4029,9 +4029,12 @@ function print_scale_menu_helpbutton($courseid, $scale) {
 function error ($message, $link='') {
     global $CFG, $SESSION;
 
-    @header('HTTP/1.0 404 Not Found');
+    if (!headers_sent()) {
+        //header not yet printed
+        @header('HTTP/1.0 404 Not Found');
+        print_header(get_string('error'));
+    }
 
-    print_header(get_string('error'));
     echo '<br />';
 
     $message = clean_text($message);   // In case nasties are in here
