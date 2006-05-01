@@ -89,16 +89,12 @@
         global $CFG, $USER;
 
         $blogpage = optional_param('blogpage', 0, PARAM_INT);
-        $bloglimit = get_user_preferences('blogpagesize',10); // expose as user pref when MyMoodle comes around
+        $bloglimit = get_user_preferences('blogpagesize',10);
 
         // First let's see if the batchpublish form has submitted data
         $post = data_submitted();
 
         $morelink = '<br />&nbsp;&nbsp;';
-        // show personal or general heading block as applicable
-        echo '<div class="headingblock header blog">';
-
-        print "<br />";    //don't print title. blog_get_title_text();
 
         $blogEntries = fetch_entries($userid, $postid, $limit, $start, $filtertype, $filterselect, $tagid, $tag, $sort='lastmodified DESC', $limit=true);
 
@@ -107,7 +103,6 @@
         if ($CFG->enablerssfeeds) {
             blog_rss_print_link($filtertype, $filterselect, $tag);
         }
-        print '</div>';
 
         if (isloggedin() && !isguest()) {
             //the user's blog is enabled and they are viewing their own blog
@@ -213,6 +208,7 @@
                 $blogtype = get_string('publishtoworld', 'blog');
             break;
             default:
+                $blogtype = '';
             break;
 
         } 
@@ -227,13 +223,16 @@
         if ($blogtags = get_records_sql('SELECT t.* FROM '.$CFG->prefix.'tags t, '.$CFG->prefix.'blog_tag_instance ti
                                      WHERE t.id = ti.tagid
                                      AND ti.entryid = '.$blogEntry->id)) {
-            echo '<p />';
-            print_string('tags');
-            echo ': ';
-            foreach ($blogtags as $key => $blogtag) {
-                $taglist[] = '<a href="index.php?courseid='.$course->id.'&amp;filtertype='.$filtertype.'&amp;filterselect='.$filterselect.'&amp;tagid='.$blogtag->id.'">'.$blogtag->text.'</a>';
+            echo '<div class="tags">';
+            if ($blogtags) {
+                print_string('tags');
+                echo ': ';
+                foreach ($blogtags as $key => $blogtag) {
+                    $taglist[] = '<a href="index.php?courseid='.$course->id.'&amp;filtertype='.$filtertype.'&amp;filterselect='.$filterselect.'&amp;tagid='.$blogtag->id.'">'.$blogtag->text.'</a>';
+                }
+                echo implode(', ', $taglist);
             }
-            echo implode(', ', $taglist);
+            echo '</div>';
         }
 
     /// Commands
