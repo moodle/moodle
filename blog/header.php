@@ -76,7 +76,7 @@ if (!isset($filtertype)) {
 $blogstring = get_string('blogs','blog');
 $tagstring = get_string('tag');
 
-if ($ME == 'http://yu.moodle.com/dev/blog/edit.php') {  ///we are in edit mode, print editting header
+if ($ME == $CFG->wwwroot.'/blog/edit.php') {  ///we are in edit mode, print editting header
 
     // first we need to identify the user
     if ($editid) {  // if we are editting a post
