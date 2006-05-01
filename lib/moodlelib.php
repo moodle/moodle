@@ -2658,7 +2658,7 @@ function validate_internal_user_password(&$user, $password) {
         or $user->password == md5($convpassword.$CFG->passwordsaltmain) or $user->password == md5($convpassword)) {
         $validated = true;
     } else {
-        for ($i=0; $i<20; $i++) { //20 alternative salts should be enough, right?
+        for ($i=1; $i<=20; $i++) { //20 alternative salts should be enough, right?
             $alt = 'passwordsaltalt'.$i;
             if (!empty($CFG->$alt)) {
                 if ($user->password == md5($password.$CFG->$alt) or $user->password == md5($convpassword.$CFG->$alt)) {
