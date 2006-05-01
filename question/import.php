@@ -51,7 +51,9 @@
     $matchgrades['error'] = $txt->matchgradeserror;
     $matchgrades['nearest'] = $txt->matchgradesnearest;
 
-    if (!$categoryid) { // try to get category from modform
+    if ($categoryid) { // update category in session variable
+        $SESSION->questioncat = $categoryid;
+    } else { // try to get category from modform
         $showcatmenu = true; // will ensure that user can choose category
         if (isset($SESSION->questioncat)) {
             $categoryid = $SESSION->questioncat;
