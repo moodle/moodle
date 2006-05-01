@@ -217,7 +217,7 @@
 
         } 
 
-        echo '<div class="">'.$blogtype.'</div>';  /// martin please fill in the class and css
+        echo '<div class="audience">'.$blogtype.'</div>'; 
 
         // Print whole message
         echo format_text($template['body']);
