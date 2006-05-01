@@ -76,10 +76,10 @@ if (!isset($filtertype)) {
 $blogstring = get_string('blogs','blog');
 $tagstring = get_string('tag');
 
-if ($ME == $CFG->wwwroot.'/blog/edit.php') {  ///we are in edit mode, print editting header
+if ($ME == $CFG->wwwroot.'/blog/edit.php') {  /// We are in edit mode, print the editing header
 
     // first we need to identify the user
-    if ($editid) {  // if we are editting a post
+    if ($editid) {  // if we are editing a post
         $blogEntry = get_record('post','id',$editid);
         $user = get_record('user','id',$blogEntry->userid);
     } else {
