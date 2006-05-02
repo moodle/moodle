@@ -43,11 +43,13 @@ h6.main {
 #layout-table {
   width:100%;
   border-collapse:separate;
+  margin-top: 8px;
 }
 
 #layout-table #left-column,
 #layout-table #middle-column,
-#layout-table #right-column {
+#layout-table #right-column 
+{
   vertical-align:top;
 }
 
@@ -105,7 +107,7 @@ a img {
 img.userpicture,
 img.grouppicture,
 .block_online_users .listentry img {
-  border: 0px none
+  border: 0px solid
 }
 
 .notifyproblem {
@@ -140,10 +142,6 @@ img.grouppicture,
 }
 
 .errorbox .title {
-  padding: 5px;
-}
-
-.errorboxcontent {
   padding: 5px;
 }
 
@@ -371,19 +369,6 @@ table.navbar {
   display: block;
 }
 
-
-/***
- *** Content
- ***/
-
-#content {
-  margin-top:8px;
-}
-
-#admin-index #content {
-  margin-top:0;
-}
-
 /***
  *** Admin
  ***/
@@ -429,29 +414,6 @@ body#admin-config .confighelp {
   display: block;
   padding-bottom: 20px;
 }
-
-table.flexible td.cell {
-  padding-top: 2px;
-  padding-bottom: 2px;
-} 
-
-table.flexible {
-  width: 70%;
-  margin: auto;
-}
-
-table.flexible thi, 
-table.flexible td.cell {
-  padding: 4px;
-  text-align: center;
-  vertical-align: middle;
-} 
-
-table.flexible td.c0,
-table.flexible th.c0 {
-  text-align: left;
-}
-
 
 /***
  *** Blocks
@@ -560,10 +522,6 @@ ul.list, ul.list li {
 
 .sideblock .list .c0{
   padding: 2px;
-}
-
-.sideblock .content .message {
-  text-align:center  
 }
 
 .sideblock .footer {
@@ -1107,7 +1065,7 @@ body#grade-index .grades .weighted {
  ***/
 
 .loginbox {
-  margin-top:7px;
+  margin-top:15px;
 }
 
 .loginbox .content {
@@ -1819,12 +1777,6 @@ body#mod-quiz-report .controls {
 .ims-nav-bar {
   position: relative; 
   padding:0.1em;
-}
-
-.ims-nav-button a,
-.ims-nav-dimmed {
-  padding-left:1em;
-  padding-right:1em;
 }
 
 #ims-containerdiv {
