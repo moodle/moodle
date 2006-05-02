@@ -231,7 +231,7 @@ class quiz_report extends quiz_default_report {
         
     /// Construct the table for this particular report
 
-        $tablecolumns = array('id', 'qname',    'answers', 'credits', 'rcounts', 'rpercent', 'facility', 'sd','discrimination_index', 'discrimination_coeff');
+        $tablecolumns = array('id', 'qname',    'responses', 'credits', 'rcounts', 'rpercent', 'facility', 'qsd','disc_index', 'disc_coeff');
         $tableheaders = array(get_string('qidtitle','quiz_analysis'), get_string('qtexttitle','quiz_analysis'), 
                         get_string('responsestitle','quiz_analysis'), get_string('rfractiontitle','quiz_analysis'), 
                         get_string('rcounttitle','quiz_analysis'), get_string('rpercenttitle','quiz_analysis'), 
@@ -253,16 +253,16 @@ class quiz_report extends quiz_default_report {
         $table->column_class('rcounts', 'numcol');
         $table->column_class('rpercent', 'numcol');
         $table->column_class('facility', 'numcol');
-        $table->column_class('sd', 'numcol'); 
-        $table->column_class('discrimination_index', 'numcol');
-        $table->column_class('discrimination_coeff', 'numcol');
+        $table->column_class('qsd', 'numcol'); 
+        $table->column_class('disc_index', 'numcol');
+        $table->column_class('disc_coeff', 'numcol');
    
         $table->column_suppress('id');
         $table->column_suppress('qname');
         $table->column_suppress('facility');
-        $table->column_suppress('sd');
-        $table->column_suppress('discrimination_index');
-        $table->column_suppress('discrimination_coeff');
+        $table->column_suppress('qsd');
+        $table->column_suppress('disc_index');
+        $table->column_suppress('disc_coeff');
 
         $table->set_attribute('cellspacing', '0');
         $table->set_attribute('id', 'itemanalysis');
