@@ -859,15 +859,14 @@
                     /// seperate out next and previous jumps from the other jumps 
                         foreach ($answers as $answer) {
                             if ($answer->jumpto == LESSON_NEXTPAGE) {
-                                $buttons['next'][] = '<a href="javascript:document.answerform.jumpto.value='.$answer->jumpto.';document.answerform.submit();">'.
-                                        strip_tags(format_text($answer->answer, FORMAT_MOODLE, $options)).'</a>';
+                                $type = 'next';
                             } else if ($answer->jumpto == LESSON_PREVIOUSPAGE) {
-                                $buttons['prev'][] = '<a href="javascript:document.answerform.jumpto.value='.$answer->jumpto.';document.answerform.submit();">'.
-                                        strip_tags(format_text($answer->answer, FORMAT_MOODLE, $options)).'</a>';
+                                $type = 'prev';
                             } else {
-                                $buttons['other'][] = '<a href="javascript:document.answerform.jumpto.value='.$answer->jumpto.';document.answerform.submit();">'.
-                                        strip_tags(format_text($answer->answer, FORMAT_MOODLE, $options)).'</a>';
+                                $type = 'other';
                             }
+                            $buttons[$type][] = '<a href="javascript:document.answerform.jumpto.value='.$answer->jumpto.';document.answerform.submit();">'.
+                                    strip_tags(format_text($answer->answer, FORMAT_MOODLE, $options)).'</a>';
                         }
                     
                     /// set the order and orientation (order is very important for the divs to work for horizontal!)
@@ -889,12 +888,12 @@
                             $b = 'a';
                             $c = 'b';
                             $implode = '<br /><br />';
-                            $implode2 = "<br />\n    ";
+                            $implode2 = "<br /><br />\n    ";
                         }
                         $buttonsarranged = array();
-                        $buttonsarranged[$a] = '<div class="lessonbutton prevbutton prev'.$orientation.'">'.implode($implode, $buttons['prev']).'</div>';
-                        $buttonsarranged[$b] = '<div class="lessonbutton nextbutton next'.$orientation.'">'.implode($implode, $buttons['next']).'</div>';
-                        $buttonsarranged[$c] = '<div class="lessonbutton standardbutton standard'.$orientation.'">'.implode($implode, $buttons['other']).'</div>';
+                        $buttonsarranged[$a] = '<span class="lessonbutton prevbutton prev'.$orientation.'">'.implode($implode, $buttons['prev']).'</span>';
+                        $buttonsarranged[$b] = '<span class="lessonbutton nextbutton next'.$orientation.'">'.implode($implode, $buttons['next']).'</span>';
+                        $buttonsarranged[$c] = '<span class="lessonbutton standardbutton standard'.$orientation.'">'.implode($implode, $buttons['other']).'</span>';
                         ksort($buttonsarranged); // sort by key
                         
                         $fullbuttonhtml = "\n<div class=\"branchbuttoncontainer\">\n    " . implode($implode2, $buttonsarranged). "\n</div>\n";

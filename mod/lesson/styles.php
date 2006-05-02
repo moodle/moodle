@@ -145,27 +145,22 @@
 
 /* Next three classes are for branch table buttons when displayed horizontally */
 .mod-lesson .prevhorizontal {
-    display: inline;
-    float: left;
 }
 
 .mod-lesson .nexthorizontal {
-    display: inline;
-    float: right;
 }
 
 .mod-lesson .standardhorizontal {
-    display: inline;
 }
 
 /* Next three classes are for branch table buttons when displayed vertically */
 .mod-lesson .prevvertical {
 }
 
-.mod-lesson .nextvertical a {
+.mod-lesson .nextvertical {
 }
 
-.mod-lesson .standardvertical a {
+.mod-lesson .standardvertical {
 }
 
 /*  branchbuttoncontainer wraps around branch table buttons */
