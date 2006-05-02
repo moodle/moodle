@@ -10,7 +10,7 @@
 */
 
     require_once("../config.php");
-    require_once($CFG->libdir.'/questionlib.php');
+    require_once("editlib.php");
     require_once("category_class.php");
 
     // get values from form

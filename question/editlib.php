@@ -13,12 +13,204 @@
 * @package question
 */
 
-    require_once($CFG->libdir.'/questionlib.php');
+require_once($CFG->libdir.'/questionlib.php');
 
+/**
+* Function to read all questions for category into big array
+*
+* @param int $category category number
+* @param bool @noparent if true only questions with NO parent will be selected
+* @author added by Howard Miller June 2004
+*/
+function get_questions_category( $category, $noparent=false ) {
 
+    global $QTYPES;
+
+    // questions will be added to an array
+    $qresults = array();
+
+    // build sql bit for $noparent
+    $npsql = '';
+    if ($noparent) {
+      $npsql = " and parent='0' ";
+    }
+
+    // get the list of questions for the category
+    if ($questions = get_records_select("question","category={$category->id} $npsql", "qtype, name ASC")) {
+
+        // iterate through questions, getting stuff we need
+        foreach($questions as $question) {
+            $questiontype = $QTYPES[$question->qtype];
+            $questiontype->get_question_options( $question );
+            $qresults[] = $question;
+        }
+    }
+
+    return $qresults;
+}
+
+/**
+* Gets the default category in a course
+*
+* It returns the first category with no parent category. If no categories
+* exist yet then one is created.
+* @return object The default category
+* @param integer $courseid  The id of the course whose default category is wanted
+*/
+function get_default_question_category($courseid) {
+
+    if ($categories = get_records_select("question_categories", "course = '$courseid' AND parent = '0'", "id")) {
+        foreach ($categories as $category) {
+            return $category;   // Return the first one (lowest id)
+        }
+    }
+
+    // Otherwise, we need to make one
+    $category->name = get_string("default", "quiz");
+    $category->info = get_string("defaultinfo", "quiz");
+    $category->course = $courseid;
+    $category->parent = 0;
+    // TODO: Figure out why we use 999 below
+    $category->sortorder = 999;
+    $category->publish = 0;
+    $category->stamp = make_unique_id_code();
+
+    if (!$category->id = insert_record("question_categories", $category)) {
+        notify("Error creating a default category!");
+        return false;
+    }
+    return $category;
+}
+
+/**
+ * Return a list of categories nicely formatted
+ * @param int courseid id of course 
+ * @param bool published true=include all published categories
+ * @return array formatted category names
+ */
+function question_category_menu($courseid, $published=false) {
+/// Returns the list of categories
+    $publish = "";
+    if ($published) {
+        $publish = "OR publish = '1'";
+    }
+
+    if (!isadmin()) {
+        $categories = get_records_select("question_categories", "course = '$courseid' $publish", 'parent, sortorder, name ASC');
+    } else {
+        $categories = get_records_select("question_categories", '', 'parent, sortorder, name ASC');
+    }
+    if (!$categories) {
+        return false;
+    }
+    $categories = add_indented_names($categories);
+
+    foreach ($categories as $category) {
+       if ($catcourse = get_record("course", "id", $category->course)) {
+           if ($category->publish && ($category->course != $courseid)) {
+               $category->indentedname .= " ($catcourse->shortname)";
+           }
+           $catmenu[$category->id] = $category->indentedname;
+       }
+    }
+    return $catmenu;
+}
+/**
+ * returns the categories with their names ordered following parent-child relationships
+ * finally it tries to return pending categories (those being orphaned, whose parent is
+ * incorrect) to avoid missing any category from original array.
+ */
+function sort_categories_by_tree(&$categories, $id = 0, $level = 1) {
+    $children = array();
+    $keys = array_keys($categories);
+
+    foreach ($keys as $key) {
+        if (!isset($categories[$key]->processed) && $categories[$key]->parent == $id) {
+            $children[$key] = $categories[$key];
+            $categories[$key]->processed = true;
+            $children = $children + sort_categories_by_tree($categories, $children[$key]->id, $level+1);
+        }
+    }
+    //If level = 1, we have finished, try to look for non processed categories (bad parent) and sort them too
+    if ($level == 1) {
+        foreach ($keys as $key) {
+            //If not processed and it's a good candidate to start (because its parent doesn't exist in the course)
+            if (!isset($categories[$key]->processed) && !record_exists('question_categories', 'course', $categories[$key]->course, 'id', $categories[$key]->parent)) {
+                $children[$key] = $categories[$key];
+                $categories[$key]->processed = true;
+                $children = $children + sort_categories_by_tree($categories, $children[$key]->id, $level+1);
+            }
+        }
+    }
+    return $children;
+}
+
+/**
+ * flattens tree structure created by add_indented_named 
+ * (adding the names)
+ * @param array cats tree structure of categories
+ * @param int depth tree depth tracker (for indenting)
+ * @return array flattened, formatted list
+ */
+function flatten_category_tree( $cats, $depth=0 ) {
+    $newcats = array();
+    $fillstr = '&nbsp;&nbsp;&nbsp;';
+
+    foreach ($cats as $key => $cat) {
+        $newcats[$key] = $cat;
+        $newcats[$key]->indentedname = str_repeat($fillstr,$depth) . $cat->name;
+        // recurse if the category has children
+        if (!empty($cat->children)) {
+            $newcats += flatten_category_tree( $cat->children, $depth+1 ); 
+        }
+    }
+
+    return $newcats;
+}
+
+/**
+ * format categories into indented list
+ * @param array categories categories array (from db)
+ * @return array formatted list of categories
+ */
+function add_indented_names( $categories ) {
+
+    // iterate through categories adding new fields
+    // and creating references
+    foreach ($categories as $key => $category) {
+        $categories[$key]->children = array();
+        $categories[$key]->link = &$categories[$key];
+    }
+
+    // create tree structure of children
+    // link field is used to track 'new' place of category in tree
+    foreach ($categories as $key => $category) {
+        if (!empty($category->parent)) {
+            $categories[$category->parent]->link->children[$key] = $categories[$key];
+            $categories[$key]->link = &$categories[$category->parent]->link->children[$key];
+        }
+    }
+
+    // remove top level categories with parents
+    $newcats = array();
+    foreach ($categories as $key => $category) {
+        unset( $category->link );
+        if (empty($category->parent)) {
+            $newcats[$key] = $category;
+        }
+    }
+
+    // walk the tree to flatten revised structure
+    $categories = flatten_category_tree( $newcats );
+
+    return $categories;
+}
+
+/**
+ * prints a form to choose categories
+ */
 function question_category_form($course, $current, $recurse=1, $showhidden=false) {
     global $CFG;
-/// Prints a form to choose categories
 
 /// Make sure the default category exists for this course
     if (!$categories = get_records("question_categories", "course", $course->id, "id ASC")) {

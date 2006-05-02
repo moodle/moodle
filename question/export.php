@@ -10,7 +10,7 @@
 */
 
     require_once("../config.php");
-    require_once($CFG->libdir.'/questionlib.php');
+    require_once( "editlib.php" );
 
     $categoryid = optional_param('category',0, PARAM_INT);
     $courseid = required_param('courseid',PARAM_INT);

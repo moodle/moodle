@@ -10,7 +10,7 @@
 */
 
     require_once("../config.php");
-    require_once($CFG->libdir.'/questionlib.php');
+    require_once( "editlib.php" );
     require_once($CFG->dirroot.'/lib/uploadlib.php');
 
     // get parameters
