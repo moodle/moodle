@@ -1333,9 +1333,11 @@ class hotpot_xml_tree {
 			'&amp;'  => '&',
 		);
 		static $ILLEGAL_STRINGS = array(
-			"\r"  => '',
-			"\n"  => '&lt;br /&gt;',
-			']]>' => '&#93;&#93;&#62;',
+			"\r\n"  => '&lt;br /&gt;',
+			"\r"    => '&lt;br /&gt;',
+			"\n"    => '&lt;br /&gt;',
+			'['     => '&#91;',
+			']'     => '&#93;'
 		);
 
 		// extract the $tag from the $str(ing), if possible
