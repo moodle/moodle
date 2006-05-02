@@ -214,6 +214,35 @@ class MoodleExcelWorksheet {
         }
     }
 
+    /* Sets the height (and other settings) of one row
+     * @param integer $row    The row to set
+     * @param integer $height Height we are giving to the row (null to set just format withouth setting the height)
+     * @param mixed   $format The optional XF format we are giving to the row
+     * @param bool    $hidden The optional hidden attribute
+     * @param integer $level  The optional outline level (0-7)
+     */
+    function set_row ($row, $height, $format = 0, $hidden = false, $level = 0) {
+    /// Calculate the internal PEAR format
+        $format = $this->MoodleExcelFormat2PearExcelFormat($format);
+    /// Set the row safely to the PEAR Worksheet
+        $this->pear_excel_worksheet->setRow($row, $height, $format, $hidden, $level);
+    }
+
+    /* Sets the width (and other settings) of one column
+     * @param integer $firstcol first column on the range
+     * @param integer $lastcol  last column on the range
+     * @param integer $width    width to set
+     * @param mixed   $format   The optional XF format to apply to the columns
+     * @param integer $hidden   The optional hidden atribute
+     * @param integer $level    The optional outline level (0-7)
+     */
+    function set_column ($firstcol, $lastcol, $width, $format = 0, $hidden = false, $level = 0) {
+    /// Calculate the internal PEAR format
+        $format = $this->MoodleExcelFormat2PearExcelFormat($format);
+    /// Set the column safely to the PEAR Worksheet
+        $this->pear_excel_worksheet->setColumn($firstcol, $lastcol, $width, $format, $hidden, $level);
+    }
+
     /* Returns the PEAR Excel Format for one Moodle Excel Format
      * @param mixed MoodleExcelFormat object
      * @return mixed PEAR Excel Format object
