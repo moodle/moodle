@@ -416,6 +416,17 @@ function chat_login_user($chatid, $version, $groupid, $course) {
         $chatuser->course   = $course->id; //caching - needed for current_language too
         $chatuser->lang     = current_language(); //caching - to resource intensive to find out later
 
+        // Sometimes $USER->lastIP is not setup properly
+        // during login. Update with current value if possible
+        // or provide a dummy value for the db
+        if (empty($chatuser->ip)) {
+            $chatuser->ip = getremoteaddr();
+            if (empty($chatuser->ip)) {
+                $chatuser->ip = '';
+            }
+        }
+
+
         if (!insert_record('chat_users', $chatuser)) {
             return false;
         }
