@@ -19,7 +19,8 @@
 */
 
     require_once("../config.php");
-    require_once($CFG->libdir.'/questionlib.php');
+    // NOTE - is this correct? This is just about editing screens?
+    require_once( "editlib.php" );
     require_once($CFG->libdir.'/filelib.php');
 
     $id = optional_param('id', 0, PARAM_INT);        // question id
