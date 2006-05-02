@@ -1522,6 +1522,11 @@ function get_questions_category( $category, $noparent=false ) {
     return $qresults;
 }
 
+
+//===========================
+// Import/Export Functions
+//===========================
+
 /**
  * Get list of available import or export formats
  * @param string $type 'import' if import list, otherwise export list assumed
@@ -1533,8 +1538,7 @@ function get_import_export_formats( $type ) {
     $fileformats = get_list_of_plugins("question/format");
 
     $fileformatname=array();
-    //FIX ME: this is confusing and may not always work, better use absolute path instead
-    require_once( "format.php" );
+    require_once( "{$CFG->dirroot}/question/format.php" );
     foreach ($fileformats as $key => $fileformat) {
         $format_file = $CFG->dirroot . "/question/format/$fileformat/format.php";
         if (file_exists( $format_file ) ) {
