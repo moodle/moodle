@@ -10,18 +10,7 @@ $string['adminavs'] = 'Check this if you have activated Address Verification Sys
 $string['admincronsetup'] = 'The cron.php maintenance script has not been run for at least 24 hours. <br />Cron must be enabled if you want to use scheduled-capture feature.<br />Setup cron properly or uncheck an_review again.<br />If you disable scheduled-capture, transactions will be cancelled unless you review them within 30 days.<br />Check an_review and enter \'0\' to an_capture_day field<br />if you want to manually accept/deny payments within 30 days.';
 $string['adminemailexpired'] = 'Send warning email to admins <b>$a</b> days ago how many status of \'authorized/pending capture\' transaction is there, before transactions have expired. (0=disable sending email, default=2, max=5)<br />This is useful if you enabled capturing manually (an_review=checked, an_capture_day=0).';
 $string['adminhelpcapturetitle'] = 'Scheduled-Capture Day';
-$string['adminhelpcapture'] = 'Not only I want to manually accept/deny payments. But also, use scheduled-capture to prevent cancelling payment. What will I do?
-
- - Setup cron.
- - Check an_review.
- - Enter a number between 1 and 29 to an_capture_day field. Card will be captured and user will be enrolled to course unless you capture it within an_capture_day.';
 $string['adminhelpreviewtitle'] = 'Order Review';
-$string['adminhelpreview'] = 'How will I manually accept/deny payments?
-- Check an_review.
-- Enter \'0\' to an_capture_day field.
-
-How students will be enrolled to courses immediately when they entered their card number?
-- Uncheck an_review.';
 $string['adminneworder'] = ' Dear Admin,
                 
   You have received a new pending order:

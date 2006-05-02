@@ -112,16 +112,14 @@ if (!isset($frm->an_cutoff_min)) $frm->an_cutoff_min = '5';
 <tr valign="top">
     <td align="right">an_review:</td>
     <td><input type="checkbox" value="1" name="an_review" <?php if (!empty($frm->an_review)) echo "checked=\"true\"" ?> />
-        <?php helpbutton('', get_string('adminhelpreviewtitle', 'enrol_authorize'), 'enrol_authorize',
-              false, false, get_string('adminhelpreview', 'enrol_authorize')); ?></td>
+        <?php helpbutton('review', get_string('adminhelpreviewtitle', 'enrol_authorize'), 'enrol/authorize'); ?></td>
     <td><?php print_string("adminreview", "enrol_authorize") ?></td>
 </tr>
 
 <tr valign="top">
     <td align="right">an_capture_day:</td>
     <td><input type="text" name="an_capture_day" size="2" maxlength="2" value="<?php p($frm->an_capture_day) ?>" />
-        <?php helpbutton('', get_string('adminhelpcapturetitle', 'enrol_authorize'), 'enrol_authorize',
-              false, false, get_string('adminhelpcapture', 'enrol_authorize')); ?></td>
+        <?php helpbutton('captureday', get_string('adminhelpcapturetitle', 'enrol_authorize'), 'enrol/authorize'); ?></td>
     <td><?php print_string("reviewday", "enrol_authorize", $frm->an_capture_day) ?></td>
 </tr>
 
