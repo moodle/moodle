@@ -1779,6 +1779,12 @@ body#mod-quiz-report .controls {
   padding:0.1em;
 }
 
+.ims-nav-button a,
+.ims-nav-dimmed {
+  padding-left:1em;
+  padding-right:1em;
+}
+
 #ims-containerdiv {
   margin-top:0.2em;
 }
