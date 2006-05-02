@@ -151,6 +151,8 @@ $blogpage = optional_param('blogpage',0,PARAM_INT);
 
 blog_print_html_formatted_entries($userid, $postid, $limit, ($blogpage * $limit) ,$filtertype, $filterselect, $tagid, $tag, $filtertype, $filterselect);
 
+add_to_log($site->id, 'blog', 'view', 'index.php?filtertype='.$filtertype.'&amp;filterselect='.$filterselect.'&amp;postid='.$postid.'&amp;tagid='.$tagid.'&amp;tag='.$tag, 'view blog entry');
+
 include($CFG->dirroot .'/blog/footer.php');
 
 ?>
