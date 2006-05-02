@@ -1,5 +1,4 @@
-<?PHP 
-	// $Id$
+<?PHP // $Id$
 
 	/// This page prints a hotpot quiz
 
