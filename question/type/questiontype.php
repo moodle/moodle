@@ -522,7 +522,8 @@ class default_questiontype {
                                            get_string('response', 'quiz'),
                                            get_string('time'),
                                            );
-
+                }
+                
                 foreach ($states as $st) {
                     $st->responses[''] = $st->answer;
                     $this->restore_session_and_responses($question, $st);
