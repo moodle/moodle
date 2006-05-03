@@ -307,6 +307,8 @@
     //This function prints the contents from the info parammeter passed
     function restore_print_info ($info) {
 
+        global $CFG;
+
         $status = true;
         if ($info) {
             //This is tha align to every ingo table      
@@ -333,6 +335,11 @@
             $table->data = $tab;
             //Print backup general info
             print_table($table);
+
+            if ($info->backup_backup_version <= 2005070500 && !empty($CFG->unicodedb)) {
+                 notify(get_string('backupnonisowarning'));  // Message informing that this backup may not work!
+            }
+
             //Now backup contents in another table
             $tab = array();
             //First mods info
