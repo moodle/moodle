@@ -13,11 +13,7 @@
 #grade-exceptions table .generalboxcontent,
 #mod-forum-view table.forumheaderlist td,
 #mod-assignment-submissions table.submissions th,
-#mod-assignment-submissions table.submissions td,
-#course-view .section td,
-#course-view .section .side,
-#course-view .section .left,
-#course-view .section .content {
+#mod-assignment-submissions table.submissions td {
     border:none;
     background:none;
 }
@@ -177,7 +173,8 @@ h2.header,
 .generalbox,
 .courseboxcontent,
 .categoryboxcontent,
-.cal_popup_fg {
+.cal_popup_fg,
+#course-view .section td.content {
     border-top:1px solid #FFCC99;
     border-left:1px solid #FFCC99;
     border-bottom:1px solid #330000;
@@ -192,7 +189,6 @@ h2.header,
 #mod-chat-gui_header_js-users,
 #admin-index .c1,
 #admin-config .c1,
-#course-view .section .content,
 #grade-index .generaltableheader,
 #grade-index .generalboxcontent,
 #grade-exceptions .generaltableheader,
@@ -209,7 +205,8 @@ h2.header,
 
 /** Places using the vertical medium wood texture with borders **/
 
-#notused {
+#notused,
+#course-view .section td.side {
     border-top:1px solid #FFCC99;
     border-left:1px solid #FFCC99;
     border-bottom:1px solid #330000;
@@ -221,7 +218,6 @@ h2.header,
 
 /** Places using the vertical medium wood texture without borders **/
 
-#course-view .section .side,
 .glossarypost .left,
 .glossarycomment .left,
 #calendar .maincalendar .eventlist .event .picture,
@@ -277,15 +273,14 @@ h2.header,
     border-collapse: separate;
 }
 
-/** Places using an standard border **/
+/** Places using just standard borders **/
 
 .read,
 .forumheaderlist,
 .glossarypost,
 .glossarycomment,
 #mod-assignment-submissions .submissions,
-#mod-forum-view .forumheaderlist,
-#course-view .section.main {
+#mod-forum-view .forumheaderlist {
     border-top:1px solid #FFCC99;
     border-left:1px solid #FFCC99;
     border-bottom:1px solid #330000;
