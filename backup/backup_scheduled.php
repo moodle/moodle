@@ -98,14 +98,14 @@ function schedule_backup_cron() {
                 if (!$backup_course) {
                     mtrace("            ERROR (in backup_courses detection)");
                     $status = false;
+                    continue;
                 }
                 //Now we backup every course with nextstarttime < now
                 if ($backup_course->nextstarttime > 0 && $backup_course->nextstarttime < $now) {
                     //We have to send a email because we have included at least one backup
                     $emailpending = true;
                     // Skip backup of unavailable courses that have remained unmodified in a month
-                    if (!$course->visible && ($now - $course->timemodified) > 31) {  //Hidden + unmodified last month
-                    //if (!$course->visible && ($now - $course->timemodified) > 31*24*60*60) {  //Hidden + unmodified last month
+                    if (!$course->visible && ($now - $course->timemodified) > 31*24*60*60) {  //Hidden + unmodified last month
                          mtrace("            SKIPPING - hidden+unmodified");
                          set_field("backup_courses","laststatus","3","courseid",$backup_course->courseid);
                          continue;
