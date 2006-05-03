@@ -68,7 +68,9 @@ div.header,
     font-weight: bold;
 }
 
-
+.generaltable td.cell.c0 {
+  font-weight: bold;
+}
 /***
  *** Header
  ***/

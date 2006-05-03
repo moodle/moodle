@@ -60,6 +60,16 @@ div.header {
   background-color:#FFFFFF;
 }
 
+.generaltable,
+.generaltable td {
+  border-color:#C6BDA8;
+  /* background-color:#FFFFFF; */
+}
+
+.generaltable td.cell.c0 {
+background-color:#C6BDA8; 
+}
+
 .navbar {
   background-color:#C6BDA8;
   border-color:#666666;
@@ -120,6 +130,11 @@ div.header {
 .sideblock .content {
   border-color:#C6BDA8;
   background-color:#FEF9F6;
+}
+
+.sideblock hr {
+  color:#C6BDA8;
+  /*background-color:#FEF9F6;*/
 }
 
 .sideblock .footer {

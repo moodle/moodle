@@ -62,6 +62,10 @@ input {
   border-style:solid;
 }
 
+.headermain {
+ border-width: 0px;
+}
+
 .headermenu {
   float:right;
   text-align:right;
@@ -92,7 +96,7 @@ input {
  ***/
 
 TABLE.loginbox {
-  margin-top: 20px;
+  margin-top: 40px;
   }
 
 .loginbox .header {
@@ -102,7 +106,7 @@ TABLE.loginbox {
 }
 
 .loginbox .content {
-  border-top-width: 0px;
+  border-top-width: 1px;
 }
 
 
@@ -119,8 +123,11 @@ TABLE.loginbox {
 /***
  *** Blocks
  ***/
-
-
+ 
+ .sideblock .header h2 {
+  border-width: 0px;
+ }
+ 
 .sideblock .footer {
   border-top-width:1px;
   border-top-style:dashed;
@@ -154,6 +161,11 @@ table.minicalendar tr td.day {
   border-style: solid;
   border-width: 1px;
 }
+
+table.minicalendar tr.weekdays th abbr {
+  border-style: none;
+
+  }
 
 table.calendarmonth {
   border-collapse:separate;
