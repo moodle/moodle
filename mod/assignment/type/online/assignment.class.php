@@ -41,6 +41,7 @@ class assignment_online extends assignment_base {
         if ($data = data_submitted()) {      // No incoming data?
             if ($editable && $this->update_submission($data)) {
                 //TODO fix log actions - needs db upgrade
+                $submission = $this->get_submission();
                 add_to_log($this->course->id, 'assignment', 'upload', 
                         'view.php?a='.$this->assignment->id, $this->assignment->id, $this->cm->id);
                 $this->email_teachers($submission);
@@ -55,7 +56,6 @@ class assignment_online extends assignment_base {
         }
 
         print_simple_box_start('center', '70%', '', '', 'generalbox', 'online');
-        $submission = $this->get_submission();
         if ($editmode) {
             $this->view_edit_form($submission);
         } else {
