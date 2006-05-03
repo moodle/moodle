@@ -526,6 +526,7 @@ HTMLArea.prototype._createToolbar = function () {
 
     var first = true;
     for (var i in this.config.toolbar) {
+        if (this.config.toolbar.propertyIsEnumerable(i)) { // fix for prototype.js compatibility
         if (!first) {
             createButton("linebreak");
         } else {
@@ -533,6 +534,7 @@ HTMLArea.prototype._createToolbar = function () {
         }
         var group = this.config.toolbar[i];
         for (var j in group) {
+                if (group.propertyIsEnumerable(j)) { // fix for prototype.js compatibility
             var code = group[j];
             if (/^([IT])\[(.*?)\]/.test(code)) {
                 // special case, create text label
@@ -547,6 +549,8 @@ HTMLArea.prototype._createToolbar = function () {
                 tb_cell.innerHTML = label;
             } else {
                 createButton(code);
+                    }
+                }
             }
         }
     }
