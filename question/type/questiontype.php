@@ -504,16 +504,25 @@ class default_questiontype {
             if (count($states) > 1) {
                 $strreviewquestion = get_string('reviewresponse', 'quiz');
                 unset($table);
-                $table->head  = array (
-                    get_string('numberabbr', 'quiz'),
-                    get_string('action', 'quiz'),
-                    get_string('response', 'quiz'),
-                    get_string('time'),
-                    get_string('score', 'quiz'),
-                    //get_string('penalty', 'quiz'),
-                    get_string('grade', 'quiz'),
-                );
                 $table->width = '100%';
+                if ($options->scores) {
+                    $table->head  = array (
+                                           get_string('numberabbr', 'quiz'),
+                                           get_string('action', 'quiz'),
+                                           get_string('response', 'quiz'),
+                                           get_string('time'),
+                                           get_string('score', 'quiz'),
+                                           //get_string('penalty', 'quiz'),
+                                           get_string('grade', 'quiz'),
+                                           );
+                } else {
+                    $table->head  = array (
+                                           get_string('numberabbr', 'quiz'),
+                                           get_string('action', 'quiz'),
+                                           get_string('response', 'quiz'),
+                                           get_string('time'),
+                                           );
+
                 foreach ($states as $st) {
                     $st->responses[''] = $st->answer;
                     $this->restore_session_and_responses($question, $st);
@@ -529,15 +538,24 @@ class default_questiontype {
                             $link = $st->seq_number;
                         }
                     }
-                    $table->data[] = array (
-                        $link,
-                        $b.get_string('event'.$st->event, 'quiz').$be,
-                        $b.$this->response_summary($question, $st).$be,
-                        $b.userdate($st->timestamp, get_string('timestr', 'quiz')).$be,
-                        $b.round($st->raw_grade, $cmoptions->decimalpoints).$be,
-                        //$b.round($st->penalty, $cmoptions->decimalpoints).$be,
-                        $b.round($st->grade, $cmoptions->decimalpoints).$be
-                    );
+                    if ($options->scores) {
+                        $table->data[] = array (
+                                                $link,
+                                                $b.get_string('event'.$st->event, 'quiz').$be,
+                                                $b.$this->response_summary($question, $st).$be,
+                                                $b.userdate($st->timestamp, get_string('timestr', 'quiz')).$be,
+                                                $b.round($st->raw_grade, $cmoptions->decimalpoints).$be,
+                                                //$b.round($st->penalty, $cmoptions->decimalpoints).$be,
+                                                $b.round($st->grade, $cmoptions->decimalpoints).$be
+                                                );
+                    } else {
+                        $table->data[] = array (
+                                                $link,
+                                                $b.get_string('event'.$st->event, 'quiz').$be,
+                                                $b.$this->response_summary($question, $st).$be,
+                                                $b.userdate($st->timestamp, get_string('timestr', 'quiz')).$be,
+                                                );
+                    }
                 }
                 $history = make_table($table);
             }
