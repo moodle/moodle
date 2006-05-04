@@ -1747,7 +1747,7 @@ class CASClient
       if ( !($dom = domxml_open_mem($text_response))) {
     // read failed
     $this->authError('PT not validated',
-             $alidate_url,
+             $validate_url,
              FALSE/*$no_response*/,
              TRUE/*$bad_response*/,
              $text_response);
