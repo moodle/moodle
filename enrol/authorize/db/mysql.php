@@ -103,6 +103,11 @@ function enrol_authorize_upgrade($oldversion=0) {
         table_column('enrol_authorize', 'transid', 'transid', 'integer', '10', 'unsigned', '0', 'not null');
     }
 
+    if ($oldversion < 2006050400) { // Create transid indexes for backup & restore speed.
+        execute_sql("ALTER TABLE `{$CFG->prefix}enrol_authorize` ADD INDEX transid(transid)", false);
+        execute_sql("ALTER TABLE `{$CFG->prefix}enrol_authorize_refunds` ADD INDEX transid(transid)", false);
+    }
+
     return $result;
 }
 

@@ -13,7 +13,8 @@ CREATE TABLE `prefix_enrol_authorize` (
   PRIMARY KEY  (`id`),
   KEY `courseid` (`courseid`),
   KEY `userid` (`userid`),
-  KEY `status` (`status`)
+  KEY `status` (`status`),
+  KEY `transid` (`transid`)
 ) TYPE=MyISAM COMMENT='Holds all known information about authorize.net transactions';
 
 CREATE TABLE `prefix_enrol_authorize_refunds` (
@@ -24,5 +25,6 @@ CREATE TABLE `prefix_enrol_authorize_refunds` (
   `transid` int(10) unsigned default '0',
   `settletime` int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (`id`),
-  KEY `orderid` (`orderid`)
+  KEY `orderid` (`orderid`),
+  KEY `transid` (`transid`)
 ) TYPE=MyISAM COMMENT='Authorize.net refunds';

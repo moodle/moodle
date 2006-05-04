@@ -15,6 +15,7 @@ CREATE TABLE prefix_enrol_authorize (
 CREATE INDEX prefix_enrol_authorize_courseid_idx ON prefix_enrol_authorize(courseid);
 CREATE INDEX prefix_enrol_authorize_userid_idx ON prefix_enrol_authorize(userid);
 CREATE INDEX prefix_enrol_authorize_status_idx ON prefix_enrol_authorize(status);
+CREATE INDEX prefix_enrol_authorize_transid_idx ON prefix_enrol_authorize(transid);
 
 CREATE TABLE prefix_enrol_authorize_refunds (
     id SERIAL PRIMARY KEY,
@@ -26,3 +27,4 @@ CREATE TABLE prefix_enrol_authorize_refunds (
 );
 
 CREATE INDEX prefix_enrol_authorize_refunds_orderid_idx ON prefix_enrol_authorize_refunds(orderid);
+CREATE INDEX prefix_enrol_authorize_refunds_transid_idx ON prefix_enrol_authorize_refunds(transid);
