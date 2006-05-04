@@ -131,7 +131,7 @@ $string['backuplogshelp'] = 'If enabled, then course logs will be included in au
 $string['backupmetacoursehelp'] = 'If enabled, then metacourse info (inherited enrolments) will be included in automated backups';
 $string['backupnameformat'] = '%%Y%%m%%d-%%H%%M';
 $string['backupnoneusersinfo'] = 'Notice: You have selected to backup no users (\"none\"), so all the modules backup have been switched to \"without user data\" mode. Please note that the \"exercise\" and \"workshop\" modules aren\'t compatible with this type of backup, so they have been deactivated completely.';
-$string['backupnonisowarning'] = 'Warning: this backup is from a non-Unicode version of Moodle (pre 1.6).  If this backup contains any non-ASCII texts then they may be CORRUPTED if you try to restore them to this Unicode version of Moodle.  See the <a href=\"http://docs.moodle.org/en/Backup_FAQ\">Backup FAQ</a> for more information about how to recover this backup correctly.</a>';
+$string['backupnonisowarning'] = 'Warning: this backup is from a non-Unicode version of Moodle (pre 1.6).  If this backup contains any non-ASCII texts then they may be CORRUPTED if you try to restore them to this Unicode version of Moodle.  See the <a href=\"http://docs.moodle.org/en/Backup_FAQ\">Backup FAQ</a> for more information about how to recover this backup correctly.';
 $string['backuporiginalname'] = 'Backup Name';
 $string['backupsavetohelp'] = 'Full path to the directory where you want to save the backup files<br />(leave blank to save in its course default dir)';
 $string['backuptakealook'] = 'Please take a look at your backup logs in:
