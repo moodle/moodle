@@ -11,6 +11,12 @@
 **   Support of rejoinders
 **
 ** $Log$
+** Revision 1.3  2006/05/04 11:17:50  thepurpleblob
+** Merging from STABLE
+**
+** Revision 1.2.2.1  2006/05/04 11:15:11  thepurpleblob
+** htmlentities() replaced by s()
+**
 ** Revision 1.2  2006/03/01 07:36:08  gustav_delius
 ** Removing some more references to quiz from import/export code
 **
@@ -198,7 +204,7 @@ class qformat_examview extends qformat_default {
     function htmlPrepare($htmltext)
     {
         $text = trim($text);
-        $text = htmlentities($htmltext, ENT_QUOTES);
+        $text = s($htmltext);
         //$htmltext = nl2br($text);
         return $text;
     }
