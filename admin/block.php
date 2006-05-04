@@ -60,7 +60,7 @@
     
     // $CFG->pagepath is used to generate the body and id attributes for the body tag
     // of the page. It is also used to generate the link to the Moodle Docs for this view.
-    $CFG->pagepath = 'block/' . $strblockname . '/config';
+    $CFG->pagepath = 'block/' . $block->name() . '/config';
     
     print_header($site->shortname.': '.$strblockname.": $strconfiguration", $site->fullname,
                   "<a href=\"index.php\">$stradmin</a> -> ".
