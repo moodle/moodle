@@ -21,10 +21,6 @@ a.dimmed:visited {
   color:#AAAAAA;
 }
 
-a.dimmed_text {
-  color:#AAAAAA;
-}
-
 h1 {
   background-color: #C6BDA8;
   border-color: #333333;
@@ -64,6 +60,16 @@ div.header {
   background-color:#FFFFFF;
 }
 
+.generaltable,
+.generaltable td {
+  border-color:#C6BDA8;
+  /* background-color:#FFFFFF; */
+}
+
+.generaltable td.cell.c0 {
+background-color:#C6BDA8; 
+}
+
 .navbar {
   background-color:#C6BDA8;
   border-color:#666666;
@@ -75,6 +81,15 @@ div.header {
   border-color:#C6BDA8;
   background-color:#FFFFFF;
 }
+
+.highlight {
+  background-color:#C6BDA8;
+}
+
+.highlight2 {
+  color:#C6BDA8; /* highlight missing terms in forum search */
+}
+
 
 
 /***
@@ -115,6 +130,11 @@ div.header {
 .sideblock .content {
   border-color:#C6BDA8;
   background-color:#FEF9F6;
+}
+
+.sideblock hr {
+  color:#C6BDA8;
+  /*background-color:#FEF9F6;*/
 }
 
 .sideblock .footer {
@@ -251,11 +271,9 @@ table.minicalendar tr td.weekend {
 #course-view .section.hidden .content,
 #course-view .section.hidden .side {
   border-color:#C6BDA8;
-}
+ }
 
-#course-view .current .side{
-  background-color: #E3DFD4;
-}
+
 
 
 /***
@@ -291,9 +309,6 @@ table.minicalendar tr td.weekend {
 }
 .tabrow td.selected:hover .tablink {
   background-image:url(pix/tab/right_active_hover.gif);
-}
-.highlight {
-  background-color: #aaffaa;
 }
 
 /***
