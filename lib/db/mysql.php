@@ -1921,6 +1921,28 @@ function main_upgrade($oldversion=0) {
         table_column('user','url','url','varchar','255','','','not null');
     }
     
+    
+    if ($oldversion < 2006050400) {
+
+        execute_sql("ALTER TABLE `{$CFG->prefix}user` DROP INDEX {$CFG->prefix}user_deleted_idx;",false);
+        execute_sql("ALTER TABLE `{$CFG->prefix}user` DROP INDEX {$CFG->prefix}user_confirmed_idx;",false);
+        execute_sql("ALTER TABLE `{$CFG->prefix}user` DROP INDEX {$CFG->prefix}user_firstname_idx;",false);
+        execute_sql("ALTER TABLE `{$CFG->prefix}user` DROP INDEX {$CFG->prefix}user_lastname_idx;",false);
+        execute_sql("ALTER TABLE `{$CFG->prefix}user` DROP INDEX {$CFG->prefix}user_city_idx;",false);
+        execute_sql("ALTER TABLE `{$CFG->prefix}user` DROP INDEX {$CFG->prefix}user_country_idx;",false);
+        execute_sql("ALTER TABLE `{$CFG->prefix}user` DROP INDEX {$CFG->prefix}user_lastaccess_idx;",false);
+        execute_sql("ALTER TABLE `{$CFG->prefix}user` DROP INDEX {$CFG->prefix}user_email_idx;",false);
+
+        execute_sql("ALTER TABLE `{$CFG->prefix}user` ADD INDEX user_deleted (deleted)",false);
+        execute_sql("ALTER TABLE `{$CFG->prefix}user` ADD INDEX user_confirmed (confirmed)",false);
+        execute_sql("ALTER TABLE `{$CFG->prefix}user` ADD INDEX user_firstname (firstname)",false);
+        execute_sql("ALTER TABLE `{$CFG->prefix}user` ADD INDEX user_lastname (lastname)",false);
+        execute_sql("ALTER TABLE `{$CFG->prefix}user` ADD INDEX user_city (city)",false);
+        execute_sql("ALTER TABLE `{$CFG->prefix}user` ADD INDEX user_country (country)",false);
+        execute_sql("ALTER TABLE `{$CFG->prefix}user` ADD INDEX user_lastaccess (lastaccess)",false);
+        execute_sql("ALTER TABLE `{$CFG->prefix}user` ADD INDEX user_email (email)",false);
+    }
+    
     return $result;
 }
 
