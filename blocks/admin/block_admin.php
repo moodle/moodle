@@ -186,7 +186,9 @@ class block_admin extends block_list {
                 $this->content->icons[] = '<img src="'.$CFG->pixpath.'/i/payment.gif" alt="" />';
             }
 
-            $this->content->items[]='<a href="'.$CFG->wwwroot.'/doc/view.php?id='.$this->instance->pageid.'&amp;file=teacher.html">'.get_string('help').'</a>';
+            $lang = str_replace('_utf8', '', current_language());
+
+            $this->content->items[]='<a href="http://docs.moodle.org/'.$lang.'/Teacher_documentation">'.get_string('help').'</a>';
             $this->content->icons[]='<img src="'.$CFG->modpixpath.'/resource/icon.gif" alt="" />';
 
             if ($teacherforum = forum_get_course_forum($this->instance->pageid, 'teacher')) {
