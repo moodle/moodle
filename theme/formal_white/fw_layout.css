@@ -34,9 +34,13 @@ input {
   
 }
 
+.generaltable {
+  border-width:0px; 
+}
+
 .generalbox {
   border-width:1px; 
-  border-style:solid;
+  border-style:solid;  
 }
 
 .sitetopiccontent {
@@ -113,11 +117,18 @@ TABLE.loginbox {
 /***
  *** Footer
  ***/
-
+ 
 #footer {
   text-align:left;
   margin-top: 5px;
+  margin-bottom: 0px;
 }
+
+ 
+#footer p.helplink {
+ margin-bottom: -25px;
+}
+
 
 
 /***

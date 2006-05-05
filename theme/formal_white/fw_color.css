@@ -66,9 +66,15 @@ div.header {
   /* background-color:#FFFFFF; */
 }
 
-.generaltable td.cell.c0 {
-background-color:#C6BDA8; 
+.generaltable .r0 td.cell.c0 {
+ background-color:#C6BDA8; 
 }
+
+.generaltable .r1 td.cell.c0 {
+border-color:#C6BDA8; 
+background-color:#E3DFD4; 
+}
+
 
 .navbar {
   background-color:#C6BDA8;
@@ -159,7 +165,8 @@ background-color:#C6BDA8;
 ***/
  
 #calendar .maincalendar,
-#calendar .sidecalendar {
+#calendar .sidecalendar,
+#calendar .maincalendar .event {
   border-color: #C6BDA8;
 }
 
