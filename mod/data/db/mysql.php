@@ -49,6 +49,21 @@ function data_upgrade($oldversion) {
         table_column('data', '', 'csstemplate', 'text', '', '', '', 'not null', 'rsstemplate');
     }
     
+    if ($oldversion < 2006050500) { // 2 fields have got no default null values
+        table_column('data_comments','content','content','text','','','','not null');
+        table_column('data_fields','description','description','text','','','','not null');
+        table_column('data_fields','param1','param1','text','','','','not null');
+        table_column('data_fields','param2','param2','text','','','','not null');
+        table_column('data_fields','param3','param3','text','','','','not null');
+        table_column('data_fields','param4','param4','text','','','','not null');
+        table_column('data_fields','param5','param5','text','','','','not null');
+        table_column('data_fields','param6','param6','text','','','','not null');
+        table_column('data_fields','param7','param7','text','','','','not null');
+        table_column('data_fields','param8','param8','text','','','','not null');
+        table_column('data_fields','param9','param9','text','','','','not null');
+        table_column('data_fields','param10','param10','text','','','','not null');
+    }
+    
     return true;
 }
 
