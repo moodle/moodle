@@ -1529,7 +1529,11 @@ function main_upgrade($oldversion=0) {
         modify_database('',"CREATE INDEX tags_typeuserid_idx ON prefix_tags (type, userid);");
         modify_database('',"CREATE INDEX tags_text_idx ON prefix_tags (text);");
     }
-
+    
+    if ($oldversion < 2006050500) {
+        table_column('log', 'action', 'action', 'varchar', '40', '', '', 'not null');
+    }
+    
     return $result;
 }
 

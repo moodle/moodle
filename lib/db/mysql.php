@@ -1921,7 +1921,6 @@ function main_upgrade($oldversion=0) {
         table_column('user','url','url','varchar','255','','','not null');
     }
     
-    
     if ($oldversion < 2006050400) {
 
         execute_sql("ALTER TABLE `{$CFG->prefix}user` DROP INDEX {$CFG->prefix}user_deleted_idx;",false);
@@ -1941,6 +1940,10 @@ function main_upgrade($oldversion=0) {
         execute_sql("ALTER TABLE `{$CFG->prefix}user` ADD INDEX user_country (country)",false);
         execute_sql("ALTER TABLE `{$CFG->prefix}user` ADD INDEX user_lastaccess (lastaccess)",false);
         execute_sql("ALTER TABLE `{$CFG->prefix}user` ADD INDEX user_email (email)",false);
+    }
+    
+    if ($oldversion < 2006050500) {
+        table_column('log', 'action', 'action', 'varchar', '40', '', '', 'not null');
     }
     
     return $result;

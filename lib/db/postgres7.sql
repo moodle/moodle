@@ -259,7 +259,7 @@ CREATE TABLE prefix_log (
    course integer NOT NULL default '0',
    module varchar(20) NOT NULL default '',
    cmid integer NOT NULL default '0',
-   action varchar(20) NOT NULL default '',
+   action varchar(40) NOT NULL default '',
    url varchar(100) NOT NULL default '',
    info varchar(255) NOT NULL default ''
 );
