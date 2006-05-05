@@ -59,12 +59,7 @@ $usercountry = empty($form->cccountry) ? $USER->country : $form->cccountry;
 <tr>
   <td align="right"><?php print_string("cctype", "enrol_authorize") ?>: </td>
   <td align="left"><?php
-  $CCTYPES = array(
-    'mcd' => 'Master Card', 'vis' => 'Visa',        'amx' => 'American Express',
-    'dsc' => 'Discover',    'dnc' => 'Diners Club', 'jcb' => 'JCB',
-    'swi' => 'Switch',      'dlt' => 'Delta',       'enr' => 'EnRoute'
-  );
-  choose_from_menu($CCTYPES, 'cctype', $form->cctype);
+  choose_from_menu(get_list_of_creditcards(), 'cctype', $form->cctype);
   if (!empty($this->ccerrors['cctype'])) { formerr($this->ccerrors['cctype']); }
   ?>
 </td>

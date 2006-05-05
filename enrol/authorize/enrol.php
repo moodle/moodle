@@ -4,6 +4,46 @@ require_once $CFG->dirroot.'/enrol/enrol.class.php';
 require_once $CFG->dirroot.'/enrol/authorize/const.php';
 
 /**
+ * get_list_of_creditcards
+ *
+ * @param bool $getall
+ * @return array
+ */
+function get_list_of_creditcards($getall = false)
+{
+    global $CFG;
+    static $alltypes = array();
+
+    if (empty($alltypes)) {
+        $alltypes = array(
+        'mcd' => 'Master Card',
+        'vis' => 'Visa',
+        'amx' => 'American Express',
+        'dsc' => 'Discover',
+        'dnc' => 'Diners Club',
+        'jcb' => 'JCB',
+        'swi' => 'Switch',
+        'dlt' => 'Delta',
+        'enr' => 'EnRoute'
+        );
+    }
+
+    if ($getall || empty($CFG->an_acceptccs)) {
+        return $alltypes;
+    }
+
+    $ret = array();
+    $ccs = explode(',', $CFG->an_acceptccs);
+    $intersects = array_intersect(array_keys($alltypes), $ccs);
+
+    foreach ($intersects as $key) {
+        $ret[$key] = $alltypes[$key];
+    }
+
+    return $ret;
+}
+
+/**
  * enrolment_plugin_authorize
  *
  */
@@ -463,6 +503,9 @@ class enrolment_plugin_authorize
         set_config('enrol_mailstudents', optional_param('enrol_mailstudents', ''));
         set_config('enrol_mailteachers', optional_param('enrol_mailteachers', ''));
         set_config('enrol_mailadmins', optional_param('enrol_mailadmins', ''));
+
+        $acceptccs = optional_param('acceptccs', array_keys(get_list_of_creditcards()));
+        set_config('an_acceptccs', implode(',', $acceptccs));
 
         // optional authorize.net settings
         set_config('an_avs', optional_param('an_avs', ''));
