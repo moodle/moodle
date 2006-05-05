@@ -16,6 +16,7 @@ function countdown_clock(theTimer) {
     if(quizTimerValue == 0) {
         clearTimeout(timeout_id);
         document.forms['responseform'].timeup.value = 1;
+        document.forms['responseform'].onsubmit();
         document.forms['responseform'].submit();
     }
 
