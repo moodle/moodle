@@ -117,6 +117,36 @@
                         $status = forum_read_restore_mods ($newid,$info,$restore);
                     }
                 }
+
+                // If forum type is single, just recreate the initial discussion/post automatically
+                // if it hasn't been created still (because no user data was selected on backup or
+                // restore.
+                if ($forum->type == 'single' && !record_exists('forum_discussions', 'forum', $newid)) {
+                    //Load forum/lib.php
+                    require_once ($CFG->dirroot.'/mod/forum/lib.php');
+                    // Calculate the default format
+                    if (can_use_html_editor()) {
+                        $defaultformat = FORMAT_HTML;
+                    } else {
+                        $defaultformat = FORMAT_MOODLE;
+                    }
+                    //Create discussion/post data
+                    $sd = new stdClass;
+                    $sd->course   = $forum->course;
+                    $sd->forum    = $newid;
+                    $sd->name     = $forum->name;
+                    $sd->intro    = $forum->intro;
+                    $sd->assessed = $forum->assessed;
+                    $sd->format   = $defaultformat;
+                    $sd->mailnow  = false;
+                    //Insert dicussion/post data
+                    $sdid = forum_add_discussion($sd, $sd->intro);
+                    //Now, mark the initial post of the discussion as mailed!
+                    if ($sdid) {
+                        set_field ('forum_posts','mailed', '1', 'discussion', $sdid);
+                    }
+                }
+
             } else {
                 $status = false;
             }
