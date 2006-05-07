@@ -146,7 +146,7 @@
     echo '<p align="right"><font size="-1">' . userdate(time()) . '</font></p>';
     echo get_string("site") . ': <strong>' . $site->fullname . '</strong><br />';
     echo get_string("course") . ': <strong>' . $course->fullname . ' ('. $course->shortname . ')</strong><br />';
-    echo get_string("modulename","glossary") . ': <strong>' . format_string($glossary->name, true) . '</strong><p>';
+    echo get_string("modulename","glossary") . ': <strong>' . format_string($glossary->name, true) . '</strong>';
     if ( $allentries ) {
         foreach ($allentries as $entry) {
 
@@ -172,7 +172,7 @@
                         $pivottoshow = fullname($user, isteacher($course->id));
                     }
 
-                    echo "<p align=\"center\"><strong><i>".clean_text($pivottoshow)."</i></strong></p>" ;
+                    echo "<p align=\"center\"><strong>".clean_text($pivottoshow)."</strong></p>" ;
                 }
             }
 
@@ -180,5 +180,5 @@
         }
     }
 
-    echo '</body></html>';
+    echo '</div></div></body></html>';
 ?>
