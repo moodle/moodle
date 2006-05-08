@@ -1945,6 +1945,10 @@ function main_upgrade($oldversion=0) {
     if ($oldversion < 2006050500) {
         table_column('log', 'action', 'action', 'varchar', '40', '', '', 'not null');
     }
+
+    if ($oldversion < 2006050501) {
+        table_column('sessions', 'data', 'data', 'mediumtext', '', '', '', 'not null');
+    }
     
     return $result;
 }

@@ -539,7 +539,7 @@ CREATE TABLE `prefix_sessions` (
   `sesskey` char(32) NOT null default '',
   `expiry` int(11) unsigned NOT null default '0',
   `expireref` varchar(64) default '',
-  `data` text NOT null default '',
+  `data` mediumtext NOT null default '',
   PRIMARY KEY (`sesskey`), 
   KEY (`expiry`) 
 ) TYPE=MyISAM COMMENT='Optional database session storage, not used by default';
