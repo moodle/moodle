@@ -505,7 +505,7 @@ function print_recent_activity($course) {
 
     echo '<a href="'.$CFG->wwwroot.'/course/recent.php?id='.$course->id.'">'.get_string('recentactivityreport').'</a>';
 
-    echo '</div>';
+    echo "</div>\n";
 
 
     // Firstly, have there been any new enrolments?
@@ -515,18 +515,21 @@ function print_recent_activity($course) {
 
     $users = get_recent_enrolments($course->id, $timestart);
 
+    //Accessibility: new users now appear in an <OL> list.
     if ($users) {
         echo '<div class="newusers">';
-        foreach ($users as $user) {
-            if (! $heading) {
-                print_headline(get_string("newusers").':', 3);
-                $heading = true;
-                $content = true;
-            }
-            $fullname = fullname($user, $isteacher);
-            echo '<span class="name"><a href="'.$CFG->wwwroot."/user/view.php?id=$user->id&amp;course=$course->id\">$fullname</a></span><br />";
+        if (! $heading) {
+            print_headline(get_string("newusers").':', 3);      
+            $heading = true;
+            $content = true;
         }
-        echo '</div>';
+        echo "<ol class=\"list\">\n";
+        foreach ($users as $user) {
+            
+            $fullname = fullname($user, $isteacher);
+            echo '<li class="name"><a href="'.$CFG->wwwroot."/user/view.php?id=$user->id&amp;course=$course->id\">$fullname</a></li>\n";
+        }
+        echo "</ol>\n</div>\n";
     }
 
     // Next, have there been any modifications to the course structure?
