@@ -289,7 +289,7 @@
       <FIELDS>
         <FIELD name="sesskey" method="NO_CONV" type="varchar" length="32" dropprimary="true" addprimary="(sesskey(32))"/>
         <FIELD name="expireref" method="NO_CONV" type="varchar" length="64" />
-        <FIELD name="data" method="NO_CONV" type="text" length="0" />
+        <FIELD name="data" method="NO_CONV" type="mediumtext" length="0" />
       </FIELDS>
     </TABLE>
     <TABLE name="timezone">
