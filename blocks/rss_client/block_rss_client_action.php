@@ -27,6 +27,7 @@ if (isguest()) {
     error(get_string('noguestpost', 'forum'), $referrer);
 }
 
+$url = optional_param('url','',PARAM_URL);
 
 if (!empty($url)) {
     // attempting to replace feed and rss url types with http
@@ -41,7 +42,7 @@ if (!empty($url)) {
 $act            = optional_param('act', NULL, PARAM_ALPHA);
 $rssid          = optional_param('rssid', NULL, PARAM_INT);
 $id             = optional_param('id', SITEID, PARAM_INT);
-$url            = clean_param($url, PARAM_URL);
+//$url            = clean_param($url, PARAM_URL);
 $preferredtitle = optional_param('preferredtitle', '', PARAM_ALPHA);
 
 if (!defined('MAGPIE_OUTPUT_ENCODING')) {
