@@ -272,7 +272,7 @@ CREATE INDEX prefix_log_info_idx ON prefix_log (info);
 
 CREATE TABLE prefix_log_display (
    id SERIAL PRIMARY KEY,
-   module varchar(30) NOT NULL default '',
+   module varchar(20) NOT NULL default '',
    action varchar(40) NOT NULL default '',
    mtable varchar(30) NOT NULL default '',
    field varchar(50) NOT NULL default ''
