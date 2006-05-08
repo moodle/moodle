@@ -1285,6 +1285,96 @@ function get_question_fraction_grade($question, $state) {
 
 /// CATEGORY FUNCTIONS /////////////////////////////////////////////////////////////////
 
+/**
+ * returns the categories with their names ordered following parent-child relationships
+ * finally it tries to return pending categories (those being orphaned, whose parent is
+ * incorrect) to avoid missing any category from original array.
+ */
+function sort_categories_by_tree(&$categories, $id = 0, $level = 1) {
+    $children = array();
+    $keys = array_keys($categories);
+
+    foreach ($keys as $key) {
+        if (!isset($categories[$key]->processed) && $categories[$key]->parent == $id) {
+            $children[$key] = $categories[$key];
+            $categories[$key]->processed = true;
+            $children = $children + sort_categories_by_tree($categories, $children[$key]->id, $level+1);
+        }
+    }
+    //If level = 1, we have finished, try to look for non processed categories (bad parent) and sort them too
+    if ($level == 1) {
+        foreach ($keys as $key) {
+            //If not processed and it's a good candidate to start (because its parent doesn't exist in the course)
+            if (!isset($categories[$key]->processed) && !record_exists('question_categories', 'course', $categories[$key]->course, 'id', $categories[$key]->parent)) {
+                $children[$key] = $categories[$key];
+                $categories[$key]->processed = true;
+                $children = $children + sort_categories_by_tree($categories, $children[$key]->id, $level+1);
+            }
+        }
+    }
+    return $children;
+}
+
+/**
+ * flattens tree structure created by add_indented_named 
+ * (adding the names)
+ * @param array cats tree structure of categories
+ * @param int depth tree depth tracker (for indenting)
+ * @return array flattened, formatted list
+ */
+function flatten_category_tree( $cats, $depth=0 ) {
+    $newcats = array();
+    $fillstr = '&nbsp;&nbsp;&nbsp;';
+
+    foreach ($cats as $key => $cat) {
+        $newcats[$key] = $cat;
+        $newcats[$key]->indentedname = str_repeat($fillstr,$depth) . $cat->name;
+        // recurse if the category has children
+        if (!empty($cat->children)) {
+            $newcats += flatten_category_tree( $cat->children, $depth+1 ); 
+        }
+    }
+
+    return $newcats;
+}
+
+/**
+ * format categories into indented list
+ * @param array categories categories array (from db)
+ * @return array formatted list of categories
+ */
+function add_indented_names( $categories ) {
+
+    // iterate through categories adding new fields
+    // and creating references
+    foreach ($categories as $key => $category) {
+        $categories[$key]->children = array();
+        $categories[$key]->link = &$categories[$key];
+    }
+
+    // create tree structure of children
+    // link field is used to track 'new' place of category in tree
+    foreach ($categories as $key => $category) {
+        if (!empty($category->parent)) {
+            $categories[$category->parent]->link->children[$key] = $categories[$key];
+            $categories[$key]->link = &$categories[$category->parent]->link->children[$key];
+        }
+    }
+
+    // remove top level categories with parents
+    $newcats = array();
+    foreach ($categories as $key => $category) {
+        unset( $category->link );
+        if (empty($category->parent)) {
+            $newcats[$key] = $category;
+        }
+    }
+
+    // walk the tree to flatten revised structure
+    $categories = flatten_category_tree( $newcats );
+
+    return $categories;
+}
 
 /**
 * Displays a select menu of categories with appended course names
