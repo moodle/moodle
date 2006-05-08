@@ -39,7 +39,7 @@
 
     print_heading($strmanagemodules);
    
-    $courseaffected = false;
+    $coursesaffected = false;
     
 
 /// If data submitted, then process and store.
