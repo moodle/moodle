@@ -433,7 +433,7 @@ CREATE TABLE `prefix_log` (
 
 CREATE TABLE `prefix_log_display` (
   `id` int(10) unsigned NOT NULL auto_increment,
-  `module` varchar(30) NOT NULL default '',
+  `module` varchar(20) NOT NULL default '',
   `action` varchar(40) NOT NULL default '',
   `mtable` varchar(30) NOT NULL default '',
   `field` varchar(50) NOT NULL default '',
