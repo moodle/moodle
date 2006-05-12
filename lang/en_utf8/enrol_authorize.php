@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // enrol_authorize.php - created with Moodle 1.6 development (2005101200)
+      // enrol_authorize.php - created with Moodle 1.7 dev (2006050501)
 
 
 $string['adminacceptccs'] = 'Which credit card types will be accepted?';
@@ -12,7 +12,7 @@ $string['admincronsetup'] = 'The cron.php maintenance script has not been run fo
 $string['adminemailexpired'] = 'Send warning email to admins <b>$a</b> days ago how many status of \'authorized/pending capture\' transaction is there, before transactions have expired. (0=disable sending email, default=2, max=5)<br />This is useful if you enabled capturing manually (an_review=checked, an_capture_day=0).';
 $string['adminhelpcapturetitle'] = 'Scheduled-Capture Day';
 $string['adminhelpreviewtitle'] = 'Order Review';
-$string['adminneworder'] = ' Dear Admin,
+$string['adminneworder'] = 'Dear Admin,
                 
   You have received a new pending order:
 
@@ -31,7 +31,7 @@ $string['adminneworder'] = ' Dear Admin,
   Also you can accept/deny the payment to enrol the student immediately following this link:
   $a->url';
 $string['adminnewordersubject'] = '$a->course: New Pending Order($a->orderid)';
-$string['adminpendingorders'] = 'You have disabled scheduled-capture feature.<br />Total $a->count transactions with a status of AN_STATUS_AUTH will be cancelled unless you check it.<br />To accept/deny payments go to <a href=\'$a->url\'>Payment Management</a> page.';
+$string['adminpendingorders'] = 'You have disabled scheduled-capture feature.<br />Total $a->count transactions with a status of \'Authorized/Pending Capture\' will be cancelled unless you check it.<br />To accept/deny payments go to <a href=\'$a->url\'>Payment Management</a> page.';
 $string['adminreview'] = 'Review order before processing the credit card.';
 $string['adminteachermanagepay'] = 'Teachers can manage the payments of the course.';
 $string['amount'] = 'Amount';
@@ -90,6 +90,7 @@ $string['missingcctype'] = 'Missing card type';
 $string['missingcvv'] = 'Missing verification number';
 $string['missingzip'] = 'Missing postal code';
 $string['nameoncard'] = 'Name on Card';
+$string['new'] = 'New';
 $string['noreturns'] = 'No returns!';
 $string['notsettled'] = 'Not settled';
 $string['orderid'] = 'Order ID';
@@ -105,6 +106,7 @@ To accept/deny pending payments go to:
 $a->url
 
 To enable scheduled-capture, it means you will not receive any warning emails anymore, go to:
+
 $a->enrolurl';
 $string['reason11'] = 'A duplicate transaction has been submitted.';
 $string['reason13'] = 'The merchant Login ID is invalid or the account is inactive.';
