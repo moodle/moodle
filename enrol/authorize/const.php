@@ -36,6 +36,11 @@ define('AN_STATUS_VOID', 0x08);
 define('AN_STATUS_EXPIRE', 0x10);
 
 /**
+ * Tested.
+ */
+define('AN_STATUS_TEST', 0x80);
+
+/**
  * No action.
  */
 define('AN_ACTION_NONE', 0x00);

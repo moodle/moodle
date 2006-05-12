@@ -12,10 +12,8 @@ require_once $CFG->dirroot.'/enrol/authorize/const.php';
 function get_list_of_creditcards($getall = false)
 {
     global $CFG;
-    static $alltypes = array();
 
-    if (empty($alltypes)) {
-        $alltypes = array(
+    $alltypes = array(
         'mcd' => 'Master Card',
         'vis' => 'Visa',
         'amx' => 'American Express',
@@ -25,8 +23,7 @@ function get_list_of_creditcards($getall = false)
         'swi' => 'Switch',
         'dlt' => 'Delta',
         'enr' => 'EnRoute'
-        );
-    }
+    );
 
     if ($getall || empty($CFG->an_acceptccs)) {
         return $alltypes;
@@ -34,9 +31,8 @@ function get_list_of_creditcards($getall = false)
 
     $ret = array();
     $ccs = explode(',', $CFG->an_acceptccs);
-    $intersects = array_intersect(array_keys($alltypes), $ccs);
 
-    foreach ($intersects as $key) {
+    foreach ($ccs as $key) {
         $ret[$key] = $alltypes[$key];
     }
 
@@ -311,36 +307,39 @@ class enrolment_plugin_authorize
     function validate_enrol_form($form)
     {
         global $CFG;
-        require_once $CFG->dirroot.'/enrol/authorize/ccval.php';
+        require_once('ccval.php');
 
-        $ccexpiremm = intval($form->ccexpiremm);
-        $ccexpireyyyy = intval($form->ccexpireyyyy);
-
-        if (empty($ccexpiremm) || empty($ccexpireyyyy)) {
-            $this->ccerrors['ccexpire'] = get_string('missingccexpire', 'enrol_authorize');
-        }
-        $expdate = sprintf("%02d", $ccexpiremm) . strval($ccexpireyyyy);
-        $validcc = CCVal($form->cc, $form->cctype, $expdate);
-        if (!$validcc) {
-            if ($validcc === 0) {
-                $this->ccerrors['ccexpire'] = get_string('ccexpired', 'enrol_authorize');
-            }
-            else {
-                $this->ccerrors['cc'] = get_string('ccinvalid', 'enrol_authorize');
-            }
-        }
-        if (empty($form->ccfirstname) || empty($form->cclastname)) {
-            $this->ccerrors['ccfirstlast'] = get_string('missingfullname');
-        }
         if (empty($form->cc)) {
             $this->ccerrors['cc'] = get_string('missingcc', 'enrol_authorize');
         }
+        if (empty($form->ccexpiremm) || empty($form->ccexpireyyyy)) {
+            $this->ccerrors['ccexpire'] = get_string('missingccexpire', 'enrol_authorize');
+        }
+        else {
+            $expdate = sprintf("%02d", intval($form->ccexpiremm)) . $form->ccexpireyyyy;
+            $validcc = CCVal($form->cc, $form->cctype, $expdate);
+            if (!$validcc) {
+                if ($validcc === 0) {
+                    $this->ccerrors['ccexpire'] = get_string('ccexpired', 'enrol_authorize');
+                }
+                else {
+                    $this->ccerrors['cc'] = get_string('ccinvalid', 'enrol_authorize');
+                }
+            }
+        }
+
+        if (empty($form->ccfirstname) || empty($form->cclastname)) {
+            $this->ccerrors['ccfirstlast'] = get_string('missingfullname');
+        }
+
         if (empty($form->cvv) || !is_numeric($form->cvv)) {
             $this->ccerrors['cvv'] = get_string('missingcvv', 'enrol_authorize');
         }
-        if (empty($form->cctype)) {
+
+        if (empty($form->cctype) || !in_array($form->cctype, array_keys(get_list_of_creditcards()))) {
             $this->ccerrors['cctype'] = get_string('missingcctype', 'enrol_authorize');
         }
+
         if (!empty($CFG->an_avs)) {
             if (empty($form->ccaddress)) {
                 $this->ccerrors['ccaddress'] = get_string('missingaddress', 'enrol_authorize');
