@@ -20,7 +20,7 @@
     $strs = get_strings(array('user','status','action','delete','time','course','confirm','yes','no','all','none','error'));
     $authstrs = get_strings(array('paymentmanagement','orderid','void','capture','refund','delete',
                 'authcaptured','authorizedpendingcapture','capturedpendingsettle','capturedsettled',
-                'settled','refunded','cancelled','expired','tested',
+                'settled','refunded','cancelled','expired','tested','new',
                 'transid','settlementdate','notsettled','amount',
                 'howmuch','captureyes','unenrolstudent'), 'enrol_authorize');
 

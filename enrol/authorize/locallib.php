@@ -1,7 +1,7 @@
 <?PHP // $Id$
 
 if (!defined('MOODLE_INTERNAL')) {
-    die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
+    die('Direct access to this script is forbidden.');
 }
 
 require_once('const.php');
@@ -36,23 +36,26 @@ function authorize_print_orders()
                         AN_STATUS_AUTHCAPTURE => $authstrs->authcaptured,
                         AN_STATUS_CREDIT => $authstrs->refunded,
                         AN_STATUS_VOID => $authstrs->cancelled,
-                        AN_STATUS_EXPIRE => $authstrs->expired
+                        AN_STATUS_EXPIRE => $authstrs->expired,
+                        AN_STATUS_TEST => $authstrs->tested
     );
 
-    print_simple_box_start('center', '80%');
-    echo "$strs->status: ";
-    echo popup_form($baseurl.'&amp;course='.$courseid.'&amp;status=', $statusmenu, 'statusmenu', $status, '', '', '', true);
     if ($courses = get_courses('all', 'c.sortorder ASC', 'c.id,c.fullname,c.enrol')) {
         $popupcrs = array();
         foreach ($courses as $crs) {
             if ($crs->enrol == 'authorize' || (empty($crs->enrol) && $CFG->enrol == 'authorize')) {
-                $popupcrs[(int)$crs->id] = $crs->fullname;
+                $popupcrs[intval($crs->id)] = $crs->fullname;
             }
         }
-        echo " &nbsp; $strs->course: ";
-        echo popup_form($baseurl.'&amp;status='.$status.'&amp;course=', $popupcrs, 'coursesmenu', $courseid, '', '', '', true);
+        if (!empty($popupcrs)) {
+            print_simple_box_start('center', '100%');
+            echo "$strs->status: ";
+            echo popup_form($baseurl.'&amp;course='.$courseid.'&amp;status=',$statusmenu,'statusmenu',$status,'', '', '',true);
+            echo " &nbsp; $strs->course: ";
+            echo popup_form($baseurl.'&amp;status='.$status.'&amp;course=',$popupcrs,'coursesmenu',$courseid,'','','',true);
+            print_simple_box_end();
+        }
     }
-    print_simple_box_end();
 
     $table = new flexible_table('enrol-authorize');
     $table->set_attribute('width', '100%');
@@ -65,7 +68,7 @@ function authorize_print_orders()
     $table->define_headers(array($authstrs->orderid, $strs->time, $strs->user, $strs->status, $strs->action));
     $table->define_baseurl($baseurl."&amp;status=$status");
 
-    $table->sortable(true);
+    $table->sortable(true, 'id', SORT_DESC);
     $table->pageable(true);
     $table->setup();
 
@@ -77,11 +80,15 @@ function authorize_print_orders()
             $from .= "INNER JOIN {$CFG->prefix}enrol_authorize_refunds R ON E.id = R.orderid ";
             $where = "WHERE (E.status = '" . AN_STATUS_AUTHCAPTURE . "') ";
         }
+        elseif ($status == AN_STATUS_TEST) {
+            $newordertime = time() - 120; // -2 minutes. Order may be still in process.
+            $where = "WHERE (E.status = '" . AN_STATUS_NONE . "') AND (E.transid='0') AND (E.timecreated<$newordertime) ";
+        }
         else {
             $where = "WHERE (E.status = '$status') ";
         }
     }
-    else {
+    else { // No filter
         if (empty($CFG->an_test)) {
             $where = "WHERE (E.status != '" . AN_STATUS_NONE . "') ";
         }
@@ -99,9 +106,6 @@ function authorize_print_orders()
 
     if ($sort = $table->get_sql_sort()) {
         $sort = ' ORDER BY ' . $sort;
-    }
-    else {
-        $sort = ' ORDER BY id DESC ';
     }
 
     $totalcount = count_records_sql('SELECT COUNT(*) ' . $from . $where);
@@ -285,12 +289,23 @@ function authorize_print_order_details($orderno)
                 $success = authorizenet_action($order, $message, $extra, AN_ACTION_CREDIT);
                 if ($success) {
                     if (empty($CFG->an_test)) {
+                        unset($extra->sum); // this is not used in refunds table.
                         $extra->id = insert_record("enrol_authorize_refunds", $extra);
-                        if (!$extra->id) {
-                            // to do: email admin
+                        if (empty($extra->id)) {
+                            $emailsubject = "Authorize.net: insert record error";
+                            $emailmessage = "Error while trying to insert new data to enrol_authorize_refunds table:\n";
+                            $data = (array)$extra;
+                            foreach ($data as $key => $value) {
+                                $emailmessage .= "$key => $value\n";
+                            }
+                            $adminuser = get_admin();
+                            email_to_user($adminuser, $adminuser, $emailsubject, $emailmessage);
+                            $table->data[] = array("<b><font color=red>$strs->error:</font></b>", $emailmessage);
                         }
-                        if (!empty($unenrol)) {
-                            unenrol_student($order->userid, $order->courseid);
+                        else {
+                            if (!empty($unenrol)) {
+                                unenrol_student($order->userid, $order->courseid);
+                            }
                         }
                         redirect("index.php?order=$orderno");
                     }
@@ -429,12 +444,12 @@ function authorize_print_order_details($orderno)
         if ($settled) { // show refunds.
             echo "<h4>" . get_string('returns', 'enrol_authorize') . "</h4>\n";
             $t2->size = array('15%', '15%', '20%', '35%', '15%');
-            $t2->align = array('right', 'right', 'right', 'left', 'right');
+            $t2->align = array('right', 'right', 'right', 'right', 'right');
             $t2->head = array($authstrs->transid,
-                                  $authstrs->amount,
-                                  $strs->status,
-                                  $authstrs->settlementdate,
-                                  $strs->action);
+                              $authstrs->amount,
+                              $strs->status,
+                              $authstrs->settlementdate,
+                              $strs->action);
             $refunds = get_records('enrol_authorize_refunds', 'orderid', $orderno);
             if ($refunds) {
                 foreach ($refunds as $rf) {
@@ -450,14 +465,14 @@ function authorize_print_order_details($orderno)
                         }
                     }
                     $t2->data[] = array($rf->transid,
-                    $rf->amount,
-                    $authstrs->{$substatus->status},
-                    userdate($rf->settletime),
-                    $subactions);
+                                        $rf->amount,
+                                        $authstrs->{$substatus->status},
+                                        userdate($rf->settletime),
+                                        $subactions);
                 }
             }
             else {
-                $t2->data[] = array(get_string('noreturns', 'enrol_authorize'));
+                $t2->data[] = array('','',get_string('noreturns', 'enrol_authorize'),'','');
             }
             print_table($t2);
         }
@@ -473,21 +488,28 @@ function authorize_print_order_details($orderno)
  */
 function authorize_get_status_action($order)
 {
-    global $CFG, $USER;
-    static $timediff30;
+    global $CFG;
+    static $timediff30, $newordertime;
 
     if (empty($timediff30)) {
-        $timediff30 = getsettletime(time()) - (30 * 3600 * 24);
+        $timenow = time();
+        $timediff30 = getsettletime($timenow) - (30 * 3600 * 24);
+        $newordertime = $timenow - 120; // -2 minutes. Order may be still in process.
     }
 
     $ret = new stdClass();
     $ret->actions = array();
 
-    if (intval($order->transid) == 0) { // test transaction
-        if (isadmin() || (!empty($CFG->an_teachermanagepay) && isteacher($order->courseid))) {
-            $ret->actions = array(ORDER_DELETE);
+    if (intval($order->transid) == 0) { // test transaction or new order
+        if ($order->timecreated < $newordertime) {
+            if (isadmin() || (!empty($CFG->an_teachermanagepay) && isteacher($order->courseid))) {
+                $ret->actions = array(ORDER_DELETE);
+            }
+            $ret->status = 'tested';
         }
-        $ret->status = 'tested';
+        else {
+            $ret->status = 'new';
+        }
         return $ret;
     }
 
