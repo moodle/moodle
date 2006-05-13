@@ -7,7 +7,6 @@
 * allows them to be edited or more to be added. This column is only there if
 * the quiz does not already have student attempts
 * The left column lists all questions that have been added to the current quiz.
-* This column is only there if this page has been called in the context of a quiz.
 * The lecturer can add questions from the right hand list to the quiz or remove them
 *
 * The script also processes a number of actions:
@@ -16,15 +15,9 @@
 * addquestion  Adds a single question to the quiz
 * add          Adds several selected questions to the quiz
 * addrandom    Adds a certain number of random questions to the quiz
+* repaginate   Re-paginates the quiz
 * delete       Removes a question from the quiz
 * savechanges  Saves the order and grades for questions in the quiz
-* repaginate   Re-paginates the quiz
-* Actions affecting the question pool:
-* move         Moves a question to a different category
-* deleteselected Deletes the selected questions from the category
-* Other actions:
-* cat          Chooses the category
-* displayoptions Sets display options
 *
 * @version $Id$
 * @author Martin Dougiamas and many others. This has recently been extensively
@@ -285,7 +278,7 @@ if (self.name == 'editquestion') {
     }
 
 /// Delete any teacher preview attempts if the quiz has been modified
-    if (isset($_REQUEST['setgrades']) or isset($_REQUEST['delete']) or isset($_REQUEST['repaginate']) or isset($_REQUEST['addrandom']) or isset($_REQUEST['addquestion']) or isset($_REQUEST['up']) or isset($_REQUEST['down']) or isset($_REQUEST['add'])) {
+    if (isset($_REQUEST['savechanges']) or isset($_REQUEST['delete']) or isset($_REQUEST['repaginate']) or isset($_REQUEST['addrandom']) or isset($_REQUEST['addquestion']) or isset($_REQUEST['up']) or isset($_REQUEST['down']) or isset($_REQUEST['add'])) {
         delete_records('quiz_attempts', 'preview', '1', 'quiz', $modform->id);
     }
 
