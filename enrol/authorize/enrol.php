@@ -588,7 +588,7 @@ class enrolment_plugin_authorize
         if ($rec=get_record('enrol_authorize','userid',$USER->id,'courseid',$course->id,'status',$status,'id')) {
             $a->orderid = $rec->id;
             $a->url = "$CFG->wwwroot/enrol/authorize/index.php?order=$a->orderid";
-            redirect($CFG->wwwroot, get_string("paymentpending", "enrol_authorize", $a), '20');
+            redirect($a->url, get_string("paymentpending", "enrol_authorize", $a), '10');
             return;
         }
         if (isset($SESSION->ccpaid)) {
