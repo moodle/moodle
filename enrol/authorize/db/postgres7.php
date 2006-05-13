@@ -41,12 +41,11 @@ function enrol_authorize_upgrade($oldversion=0) {
         table_column('enrol_authorize', '', 'timeupdated', 'integer', '10', 'unsigned', '0', 'not null', 'timecreated');
         // status index for speed.
         modify_database('',"CREATE INDEX prefix_enrol_authorize_status_idx ON prefix_enrol_authorize (status);");
-        // Delete test transactions before update status as AN_STATUS_AUTHCAPTURE.
-        execute_sql("DELETE FROM {$CFG->prefix}enrol_authorize WHERE transid='0'", false);
         // defaults.
-        $timenow = time();
         $status = AN_STATUS_AUTH | AN_STATUS_CAPTURE;
-        execute_sql("UPDATE {$CFG->prefix}enrol_authorize SET timecreated='$timenow', timeupdated='$timenow', status='$status'", false);
+        execute_sql("UPDATE {$CFG->prefix}enrol_authorize SET status='$status' WHERE transid<>'0'", false);
+        $timenow = time();
+        execute_sql("UPDATE {$CFG->prefix}enrol_authorize SET timecreated='$timenow', timeupdated='$timenow'", false);
     }
 
     if ($oldversion < 2005121200) {
