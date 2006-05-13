@@ -255,6 +255,16 @@ CREATE TABLE prefix_question (
 
 CREATE INDEX prefix_question_category_idx ON prefix_question (category);
 
+# --------------------------------------------------------
+
+#
+# Table structure for table prefix_question_attempts
+#
+
+CREATE TABLE prefix_question_attempts (
+  id SERIAL PRIMARY KEY,
+  modulename varchar(20) NOT NULL default 'quiz'
+);
 
 # --------------------------------------------------------
 

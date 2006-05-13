@@ -330,6 +330,7 @@ function delete_attempt($attemptid) {
     // It is important that this is done only after calling the questiontype functions
     delete_records("question_states", "attempt", $attemptid);
     delete_records("question_sessions", "attemptid", $attemptid);
+    delete_records("question_attempts", "id", $attemptid);
 
     return;
 }
@@ -681,7 +682,7 @@ function save_question_session(&$question, &$state) {
     $state->answer = isset($state->responses['']) ? $state->responses[''] : '';
 
     // Save the state
-    if (isset($state->update)) { // this forces the old state record to be overwritten
+    if (!empty($state->update)) { // this forces the old state record to be overwritten
         update_record('question_states', $state);
     } else {
         if (!$state->id = insert_record('question_states', $state)) {
@@ -858,10 +859,16 @@ function regrade_question_in_attempt($question, $attempt, $cmoptions, $verbose=f
             } else {
                 $action->event = $states[$j]->event;
             }
-            // Reprocess (regrade) responses
-            if (!question_process_responses($question, $replaystate, $action, $cmoptions,
-             $attempt)) {
-                $verbose && notify("Couldn't regrade state #{$state->id}!");
+
+            if ($action->event = QUESTION_EVENTMANUALGRADE) {
+                question_process_comment($question, $replaystate, $attempt, $states[$j]->comment, $states[$j]->grade);
+            } else {
+
+                // Reprocess (regrade) responses
+                if (!question_process_responses($question, $replaystate, $action, $cmoptions,
+                 $attempt)) {
+                    $verbose && notify("Couldn't regrade state #{$state->id}!");
+                }
             }
 
             // We need rounding here because grades in the DB get truncated
@@ -873,6 +880,7 @@ function regrade_question_in_attempt($question, $attempt, $cmoptions, $verbose=f
             }
 
             $replaystate->id = $states[$j]->id;
+            $replaystate->changed = true; 
             $replaystate->update = true; // This will ensure that the existing database entry is updated rather than a new one created
             save_question_session($question, $replaystate);
         }
@@ -1144,6 +1152,7 @@ function question_process_comment($question, &$state, &$attempt, $comment, $grad
         $state->grade = $grade;
         $state->penalty = 0;
         $state->timestamp = time();
+        $state->seq_number++;
         // We need to indicate that the state has changed in order for it to be saved
         $state->changed = 1;
         // We want to update existing state (rather than creating new one) if it
@@ -1197,13 +1206,21 @@ function question_get_id_from_name_prefix($name) {
  * attempts. Hence a module, when creating a new attempt, calls this function and
  * stores the return value in the 'uniqueid' field of its attempts table.
  */
-function question_new_attempt_uniqueid() {
+function question_new_attempt_uniqueid($modulename='quiz') {
     global $CFG;
-    set_config('attemptuniqueid', $CFG->attemptuniqueid + 1);
-    return $CFG->attemptuniqueid;
+    $attempt->modulename = $modulename;
+    if (!$id = insert_record('question_attempts', $attempt)) {
+        error('Could not create new entry in question_attempts table');
+    }
+
+    // The following is really not needed any more and will be removed in 1.7
+    set_config('attemptuniqueid', $id);
+
+    return $id;
 }
 
-/* Creates a stamp that uniquely identifies this version of the question
+/**
+ * Creates a stamp that uniquely identifies this version of the question
  *
  * In future we want this to use a hash of the question data to guarantee that
  * identical versions have the same version stamp.
