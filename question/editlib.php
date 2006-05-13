@@ -19,10 +19,11 @@ require_once($CFG->libdir.'/questionlib.php');
 * Function to read all questions for category into big array
 *
 * @param int $category category number
-* @param bool @noparent if true only questions with NO parent will be selected
+* @param bool $noparent if true only questions with NO parent will be selected
+* @param bool $recurse include subdirectories
 * @author added by Howard Miller June 2004
 */
-function get_questions_category( $category, $noparent=false ) {
+function get_questions_category( $category, $noparent=false, $recurse=true ) {
 
     global $QTYPES;
 
@@ -35,8 +36,16 @@ function get_questions_category( $category, $noparent=false ) {
       $npsql = " and parent='0' ";
     }
 
+    // get (list) of categories
+    if ($recurse) {
+        $categorylist = question_categorylist( $category->id );
+    }
+    else {
+        $categorylist = $category->id;
+    }
+
     // get the list of questions for the category
-    if ($questions = get_records_select("question","category={$category->id} $npsql", "qtype, name ASC")) {
+    if ($questions = get_records_select("question","category IN ($categorylist) $npsql", "qtype, name ASC")) {
 
         // iterate through questions, getting stuff we need
         foreach($questions as $question) {

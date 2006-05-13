@@ -553,24 +553,15 @@ class qformat_xml extends qformat_default {
         // output depends on question type
         switch($question->qtype) {
         case TRUEFALSE:
-            $answer = $question->options->answers;
-            $true_percent = round( $answer['true']->fraction * 100 );
-            $false_percent = round( $answer['false']->fraction * 100 );
-            // true answer
-            $expout .= "    <answer fraction=\"$true_percent\">\n";
-            $expout .= $this->writetext("true",3)."\n";
-            $expout .= "      <feedback>\n";
-            $expout .= $this->writetext( $answer['true']->feedback,4,false );
-            $expout .= "      </feedback>\n";
-            $expout .= "    </answer>\n";
-
-            // false answer
-            $expout .= "    <answer fraction=\"$false_percent\">\n";
-            $expout .= $this->writetext("false")."\n";
-            $expout .= "      <feedback>\n";
-            $expout .= $this->writetext( $answer['false']->feedback,4,false );
-            $expout .= "      </feedback>\n";
-            $expout .= "    </answer>\n";
+            foreach ($question->options->answers as $answer) {
+                $fraction_pc = round( $answer->fraction * 100 );
+                $expout .= "    <answer fraction=\"$fraction_pc\">\n";
+                $expout .= $this->writetext(strtolower($answer->answer),3)."\n";
+                $expout .= "      <feedback>\n";
+                $expout .= $this->writetext( $answer->feedback,4,false );
+                $expout .= "      </feedback>\n";
+                $expout .= "    </answer>\n";
+            }
             break;
         case MULTICHOICE:
             $expout .= "    <single>".$this->get_single($question->options->single)."</single>\n";

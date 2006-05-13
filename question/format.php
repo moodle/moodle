@@ -238,8 +238,9 @@ class qformat_default {
         return $newfile;
     }
 
+//=================
 // Export functions
-
+//=================
 
     function export_file_extension() {
     /// return the files extension appropriate for this type

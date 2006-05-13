@@ -507,16 +507,31 @@ function writequestion( $question ) {
     switch($question->qtype) {
     case TRUEFALSE:
         $answers = $question->options->answers;
-        if ($answers['true']->fraction==1) {
-            $answertext = 'TRUE';
-            $wrong_feedback = $this->repchar( $answers['false']->feedback );
-            $right_feedback = $this->repchar( $answers['true']->feedback );
+        foreach ($answers as $answer) {
+            if (trim($answer->answer)=='True') {
+                if ($answer->fraction==1) {
+                    $answertext = 'TRUE';
+                    $right_feedback = $answer->feedback;
+                }
+                else {
+                    $answertext = 'FALSE';
+                    $wrong_feedback = $answer->feedback;
+                }
+            }
+            else {
+                if ($answer->fraction==1) {
+                    $answertext = 'FALSE';
+                    $right_feedback = $answer->feedback;
+                }
+                else {
+                    $answertext = 'TRUE';
+                    $wrong_feedback = $answer->feedback;
+                }
+            }
         }
-        else {
-            $answertext = 'FALSE';
-            $wrong_feedback = $this->repchar( $answers['true']->feedback );
-            $right_feedback = $this->repchar( $answers['false']->feedback );
-        }
+
+        $wrong_feedback = $this->repchar( $wrong_feedback );
+        $right_feedback = $this->repchar( $right_feedback );
         $expout .= "::".$question->name."::".$tfname.$this->repchar( $question->questiontext,$textformat )."{".$this->repchar( $answertext );
         if ($wrong_feedback!="") {
             $expout .= "#".$wrong_feedback;
