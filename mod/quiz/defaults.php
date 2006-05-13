@@ -19,7 +19,6 @@
        'quiz_timelimit' => 0,
        'quiz_optionflags' => 1,
        'quiz_penaltyscheme' => 1,
-       'QUESTION_ADAPTIVE' => QUESTION_ADAPTIVE,
        'quiz_delay1' => 0,
        'quiz_delay2' => 0,
 
@@ -40,7 +39,6 @@
 	   'quiz_fix_delay1' => 0,
        'quiz_fix_delay2' => 0,
 
-	   'attemptuniqueid' => 0
     );
 
 ?>
