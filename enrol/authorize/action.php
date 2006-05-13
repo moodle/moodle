@@ -1,7 +1,7 @@
 <?php //  $Id$
 
 if (!defined('MOODLE_INTERNAL')) {
-    die('Direct access to this script is forbidden.'); /// It must be included from a Moodle page
+    die('Direct access to this script is forbidden.');
 }
 
 define('AN_APPROVED', '1');
@@ -294,7 +294,7 @@ function authorizenet_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE
         if (!empty($CFG->an_avs)) {
             $avs = "avs" . strtolower($response[5]);
             $stravs = get_string($avs, "enrol_authorize");
-            $message .= "<br />" . get_string("avsresult", "enrol_authorize") . $stravs;
+            $message .= "<br />" . get_string("avsresult", "enrol_authorize", $stravs);
         }
         return false;
     }
