@@ -3,10 +3,6 @@
 * This page prints a review of a particular question attempt
 *
 * @version $Id$
-* @author Martin Dougiamas and many others. This has recently been completely
-*         rewritten by Alex Smith, Julian Sedding and Gustav Delius as part of
-*         the Serving Mathematics project
-*         {@link http://maths.york.ac.uk/serving_maths}
 * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
 * @package quiz
 */
@@ -69,7 +65,7 @@
         // If the state has changed save it and update the quiz grade
         if ($state->changed) {
             save_question_session($question, $state);
-            quiz_save_best_grade($quiz);
+            quiz_save_best_grade($quiz, $attempt->userid);
         }
 
         notify(get_string('changessaved'));

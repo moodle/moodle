@@ -286,6 +286,18 @@ CREATE TABLE prefix_question_states (
 
 -- --------------------------------------------------------
 
+-- 
+-- Table structure for table `prefix_question_attempts`
+-- 
+
+CREATE TABLE prefix_question_attempts (
+  id int(10) unsigned NOT NULL auto_increment,
+  modulename varchar(20) NOT NULL default 'quiz',
+  PRIMARY KEY  (id)
+) TYPE=MyISAM COMMENT='Student attempts. This table gets extended by the modules';
+
+-- --------------------------------------------------------
+
 
 INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('quiz', 'add', 'quiz', 'name');
 INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('quiz', 'update', 'quiz', 'name');
