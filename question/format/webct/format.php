@@ -660,7 +660,6 @@ class qformat_webct extends qformat_default {
             }
             echo "</ul>";
         }
-        echo "<pre>"; print_r( $questions ); die;
         return $questions;
     }
 }

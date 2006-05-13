@@ -114,7 +114,7 @@ function presave_process( $content ) {
   global $CFG;
 
   // get css bit
-  $css_lines = file( "$CFG->dirroot/mod/quiz/format/xhtml/xhtml.css" );
+  $css_lines = file( "$CFG->dirroot/question/format/xhtml/xhtml.css" );
   $css = implode( ' ',$css_lines ); 
 
   $xp =  "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\"\n";
