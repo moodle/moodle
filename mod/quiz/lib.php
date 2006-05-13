@@ -90,7 +90,7 @@ function quiz_add_instance($quiz) {
         }
     }
     $quiz->name = trim($quiz->name);
-
+    $quiz->timelimit = round($quiz->timelimit);
     if (!$quiz->id = insert_record("quiz", $quiz)) {
         return false;  // some error occurred
     }
@@ -149,7 +149,7 @@ function quiz_update_instance($quiz) {
                                           $quiz->closehour, $quiz->closeminute, 0);
     }
     $quiz->id = $quiz->instance;
-
+    $quiz->timelimit = round($quiz->timelimit);
     if (!update_record("quiz", $quiz)) {
         return false;  // some error occurred
     }
