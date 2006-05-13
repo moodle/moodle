@@ -50,7 +50,7 @@ function authorize_print_orders()
         if (!empty($popupcrs)) {
             print_simple_box_start('center', '100%');
             echo "$strs->status: ";
-            echo popup_form($baseurl.'&amp;course='.$courseid.'&amp;status=',$statusmenu,'statusmenu',$status,'', '', '',true);
+            echo popup_form($baseurl.'&amp;course='.$courseid.'&amp;status=',$statusmenu,'statusmenu',$status,'','','',true);
             echo " &nbsp; $strs->course: ";
             echo popup_form($baseurl.'&amp;status='.$status.'&amp;course=',$popupcrs,'coursesmenu',$courseid,'','','',true);
             print_simple_box_end();
@@ -72,28 +72,31 @@ function authorize_print_orders()
     $table->pageable(true);
     $table->setup();
 
-    $select = "SELECT E.id, E.transid, E.courseid, E.userid, E.status, E.ccname, E.timecreated, E.settletime";
-    $from = " FROM {$CFG->prefix}enrol_authorize E ";
+    $select = "SELECT E.id, E.transid, E.courseid, E.userid, E.status, E.ccname, E.timecreated, E.settletime ";
+    $from = "FROM {$CFG->prefix}enrol_authorize E ";
+    $where = "WHERE (1=1) ";
 
     if ($status > AN_STATUS_NONE) {
-        if ($status == AN_STATUS_CREDIT) {
+        switch ($status)
+        {
+            case AN_STATUS_CREDIT:
             $from .= "INNER JOIN {$CFG->prefix}enrol_authorize_refunds R ON E.id = R.orderid ";
-            $where = "WHERE (E.status = '" . AN_STATUS_AUTHCAPTURE . "') ";
-        }
-        elseif ($status == AN_STATUS_TEST) {
+            $where .= "AND (E.status = '" . AN_STATUS_AUTHCAPTURE . "') ";
+            break;
+
+            case AN_STATUS_TEST:
             $newordertime = time() - 120; // -2 minutes. Order may be still in process.
-            $where = "WHERE (E.status = '" . AN_STATUS_NONE . "') AND (E.transid='0') AND (E.timecreated<$newordertime) ";
-        }
-        else {
-            $where = "WHERE (E.status = '$status') ";
+            $where .= "AND (E.status = '" . AN_STATUS_NONE . "') AND (E.transid = '0') AND (E.timecreated<$newordertime) ";
+            break;
+
+            default:
+            $where .= "AND (E.status = '$status') ";
+            break;
         }
     }
     else { // No filter
         if (empty($CFG->an_test)) {
-            $where = "WHERE (E.status != '" . AN_STATUS_NONE . "') ";
-        }
-        else {
-            $where = "WHERE (1=1) ";
+            $where .= "AND (E.status != '" . AN_STATUS_NONE . "') ";
         }
     }
 
