@@ -284,6 +284,11 @@ function match_referer($goodreferer = '') {
 
     if (empty($goodreferer)) {
         $goodreferer = qualified_me();
+        // try to remove everything after ? because POST url may contain GET parameters (SID rewrite, etc.)
+	    $pos = strpos($goodreferer, '?');
+        if ($pos !== FALSE) {
+            $goodreferer = substr($goodreferer, 0, $pos);
+        }
     }
 
     $referer = get_referer();
