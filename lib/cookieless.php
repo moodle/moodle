@@ -116,7 +116,7 @@ function sid_start_ob(){
             }
         }
     }
-    ini_set("session.use_trans_sid", "true"); // try and turn on trans_sid
+    @ini_set("session.use_trans_sid", "true"); // try and turn on trans_sid
     if (ini_get("session.use_trans_sid")!=0 ){ 
         // use trans sid as its available
         ini_set("url_rewriter.tags", "a=href,area=href,script=src,link=href," 
