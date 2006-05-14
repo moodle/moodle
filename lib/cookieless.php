@@ -1,4 +1,4 @@
-<?php
+<?php  // $Id$
 /**
 * Enable cookieless sessions by including $CFG->usesid=true;
 * in config.php.

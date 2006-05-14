@@ -4055,7 +4055,6 @@ function error ($message, $link='') {
             $link = $CFG->wwwroot .'/';
         }
     }
-    
     print_continue($link);
     print_footer();
     for ($i=0;$i<512;$i++) {  // Padding to help IE work with 404
