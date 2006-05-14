@@ -4029,6 +4029,12 @@ function print_scale_menu_helpbutton($courseid, $scale) {
 function error ($message, $link='') {
     global $CFG, $SESSION;
 
+    // flush all buffers so that we know if headers were already sent
+    while (@ob_end_flush());
+    // reenable SID rewrite if needed
+    if (!empty($CFG->usesid) and empty($_COOKIE['MoodleSession'.$CFG->sessioncookie])) {
+        sid_start_ob();
+    }
     if (!headers_sent()) {
         //header not yet printed
         @header('HTTP/1.0 404 Not Found');
