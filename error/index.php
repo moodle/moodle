@@ -24,7 +24,7 @@
 ?>
   
   <center>
-  <p><? get_string('pleasereport', 'error'); ?>
+  <p><?php get_string('pleasereport', 'error'); ?>
   <p><form action="<?php echo $CFG->wwwroot ?>/error/index.php" name="form" method="post">
      <textarea rows="3" cols="50" name="text"></textarea><br />
      <input type="hidden" name="referer" value="<?php p($httpreferer) ?>">
