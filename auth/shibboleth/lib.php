@@ -1,7 +1,11 @@
 <?PHP  // $Id$
 //CHANGELOG:
-//28.10.2004 SHIBBOLETH Authentication functions v.0.1
-//Distributed under GPL (c)Markus Hagman 2004-
+//10.2004 SHIBBOLETH Authentication functions v.0.1
+//05.2005 Various extensions and fixes by Lukas Haemmerle
+//10.2005 Added better error messags
+//05.2006 Added better handling of mutli-valued attributes
+//
+//Distributed under GPL (c)Markus Hagman 2004-2006
 
 function auth_user_login($username, $password) {
     global $CFG;
@@ -41,9 +45,9 @@ function auth_get_userinfo($username) {
   
     foreach ($attrmap as $key=>$value) {
         if (!empty($CFG->unicodedb)) {
-            $result[$key]=$_SERVER[$value];
+            $result[$key]= get_first_string($_SERVER[$value]);
         } else {
-            $result[$key]=utf8_decode($_SERVER[$value]);
+            $result[$key]=get_first_string(utf8_decode($_SERVER[$value]));
         }
     }
 
@@ -83,5 +87,15 @@ function auth_shib_attributes(){
     $moodleattributes['username']=$pluginconfig["shib_user_attribute"];
 
 	return $moodleattributes;
+}
+
+function get_first_string($string){
+// Cleans and returns first of potential many values (multi-valued attributes)
+	
+	$list = split( ';', $string);
+	$clean_string = rtrim($list[0]);
+	
+	return $clean_string;
+	
 }
 ?>
