@@ -116,7 +116,7 @@
 
             if($form = data_submitted()) {
 
-                $form->name = clean_text(strip_tags($form->name,'<lang><span>'));
+                $form->name = clean_param(strip_tags($form->name,'<lang><span>'), PARAM_CLEAN);
 
                 $form->timestart = make_timestamp($form->startyr, $form->startmon, $form->startday, $form->starthr, $form->startmin);
                 if($form->duration == 1) {
