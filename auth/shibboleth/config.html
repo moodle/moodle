@@ -3,7 +3,7 @@
     $pluginconfig   = get_config('auth/shibboleth');
 
     if (!isset($config->auth_instructions) or empty($pluginconfig->shib_user_attribute)) {
-        $config->auth_instructions = get_string('auth_shib_instructions', 'auth', $CFG->wwwroot.'/auth/shibboleth/shib-protected.php');
+        $config->auth_instructions = get_string('auth_shib_instructions', 'auth', $CFG->wwwroot.'/auth/shibboleth/index.php');
     }
 
     if (!isset ($pluginconfig->user_attribute)) {
