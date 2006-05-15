@@ -79,7 +79,7 @@
             $errordestination = $SESSION->fromurl;
         }
 
-        $post->subject = clean_text(strip_tags($post->subject, '<lang><span>'));        // Strip all tags except lang
+        $post->subject = clean_param(strip_tags($post->subject, '<lang><span>'), PARAM_CLEAN);        // Strip all tags except lang
 
         //$post->message = clean_text($post->message, $post->format);   // Clean up any bad tags
 
