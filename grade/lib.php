@@ -987,6 +987,8 @@ function grade_preferences_menu($action, $course, $group=0) {
             break;
         case 'cats':
         case 'vcats':
+            $curraction = '';
+            break;
         case 'insert_category':
         case 'assign_categories':
         case 'delete_category':
