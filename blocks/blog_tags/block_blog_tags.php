@@ -4,13 +4,7 @@ define('BLOGDEFAULTTIMEWITHIN', 90);
 define('BLOGDEFAULTNUMBEROFTAGS', 20);
 define('BLOGDEFAULTSORT', 'text');
 
-if (!defined('BLOG_USER_LEVEL')) {
-    define ('BLOG_USER_LEVEL', 1);
-    define ('BLOG_GROUP_LEVEL', 2);
-    define ('BLOG_COURSE_LEVEL', 3);
-    define ('BLOG_SITE_LEVEL', 4);
-    define ('BLOG_GLOBAL_LEVEL', 5);
-}
+require_once($CFG->dirroot .'/blog/lib.php');
 
 class block_blog_tags extends block_base {
     function init() {
