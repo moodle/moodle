@@ -367,7 +367,10 @@
             }
         } else {
             print_heading(get_string("nomoreattempts", "quiz"));
-            if ($quiz->grade and $quiz->sumgrades) {
+            //if $quiz->grade and $quiz->sumgrades, and student is allowed to 
+            //see summary statistics (no attempt's grade is concealed),
+            //show the student their final grade
+            if ($quiz->grade and $quiz->sumgrades and $overallstats) {
                 print_heading(get_string("yourfinalgradeis", "quiz", "$mygrade / $quiz->grade"));
             }
             print_continue('../../course/view.php?id='.$course->id);
