@@ -1,5 +1,7 @@
 <?php //$Id$
 
+require_once($CFG->dirroot .'/blog/lib.php');
+
 class block_blog_menu extends block_base {
     
     function init() {
@@ -15,13 +17,13 @@ class block_blog_menu extends block_base {
             $course = SITEID;
         }
 
-        if ($CFG->bloglevel < 1) {
+        if ($CFG->bloglevel < BLOG_USER_LEVEL) {
             $this->content->text = '';
             return $this->content;
         }
 
         // don't display menu block if block is set at site level, and user is not logged in
-        if ($CFG->bloglevel < 5 && !(isloggedin() && !isguest())) {
+        if ($CFG->bloglevel < BLOG_GLOBAL_LEVEL && !(isloggedin() && !isguest())) {
             $this->content->text = '';
             return $this->content;
         }
@@ -48,15 +50,13 @@ class block_blog_menu extends block_base {
             $this->content->text = $output;
             return $this->content;
         }
-        
-        require_once($CFG->dirroot .'/blog/lib.php');
 
         //if ( blog_isLoggedIn() && !isguest() ) {
             $courseviewlink = '';
             $addentrylink = '';
                             
             $coursearg = '';
-            if((isloggedin() && !isguest()) && isset($course) && isset($course->id) && $course->id !=0 && $course->id!=SITEID && $CFG->bloglevel >=3 ) {
+            if((isloggedin() && !isguest()) && isset($course) && isset($course->id) && $course->id !=0 && $course->id!=SITEID && $CFG->bloglevel >= BLOG_COURSE_LEVEL) {
                 $coursearg = '&amp;courseid='. $course->id;
                 // a course is specified
                 
@@ -66,10 +66,10 @@ class block_blog_menu extends block_base {
                 
             $blogmodon = false;
 
-                if ((isloggedin() && !isguest()) && (isadmin() || !$blogmodon || ($blogmodon && $coursearg != '')) && $CFG->bloglevel >= 1) {
+                if ((isloggedin() && !isguest()) && (isadmin() || !$blogmodon || ($blogmodon && $coursearg != '')) && $CFG->bloglevel >= BLOG_USER_LEVEL) {
 
                     // show Add entry link - user is not admin, moderation is off, or moderation is on and the user is viewing the block within the context of a course
-                        $addentrylink = '<a href="'. $CFG->wwwroot. '/blog/edit.php?userid='. $userBlog->userid . $coursearg .'">'. get_string('addnewentry', 'blog') .'</a><br />';
+                    $addentrylink = '<a href="'. $CFG->wwwroot. '/blog/edit.php?userid='. $userBlog->userid . $coursearg .'">'. get_string('addnewentry', 'blog') .'</a><br />';
 
                     // show View my entries link
                     $addentrylink .= '<a href="'. $CFG->wwwroot .'/blog/index.php?userid='. $userBlog->userid.'">';
@@ -83,7 +83,7 @@ class block_blog_menu extends block_base {
             }
 
             // show View site entries link
-            if ($CFG->bloglevel >= 4) {
+            if ($CFG->bloglevel >= BLOG_SITE_LEVEL) {
                 $output .= '<a href="'. $CFG->wwwroot .'/blog/index.php?filtertype=site&amp;">';
                 $output .= get_string('viewsiteentries', 'blog') .'</a><br />';
             }
