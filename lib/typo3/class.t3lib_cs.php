@@ -2,7 +2,7 @@
 /***************************************************************
 *  Copyright notice
 *
-*  (c) 2003-2005 Kasper Skaarhoj (kasperYYYY@typo3.com)
+*  (c) 2003-2006 Kasper Skaarhoj (kasperYYYY@typo3.com)
 *  All rights reserved
 *
 *  This script is part of the Typo3 project. The Typo3 project is
@@ -24,7 +24,7 @@
 /**
  * Class for conversion between charsets.
  *
- *    Typo Id: class.t3lib_cs.php,v 1.54.2.2 2006/02/22 00:44:07 typo3 Exp $
+ *    Typo Id: class.t3lib_cs.php,v 1.56 2006/05/03 08:47:30 masi Exp $
  * Moodle $Id$
  *
  * @author	Kasper Skaarhoj <kasperYYYY@typo3.com>
@@ -36,53 +36,53 @@
  *
  *
  *  136: class t3lib_cs
- *  503:     function parse_charset($charset)
- *  522:     function get_locale_charset($locale)
+ *  488:     function parse_charset($charset)
+ *  507:     function get_locale_charset($locale)
  *
  *              SECTION: Charset Conversion functions
- *  575:     function conv($str,$fromCS,$toCS,$useEntityForNoChar=0)
- *  615:     function convArray(&$array,$fromCS,$toCS,$useEntityForNoChar=0)
- *  632:     function utf8_encode($str,$charset)
- *  678:     function utf8_decode($str,$charset,$useEntityForNoChar=0)
- *  721:     function utf8_to_entities($str)
- *  754:     function entities_to_utf8($str,$alsoStdHtmlEnt=0)
- *  788:     function utf8_to_numberarray($str,$convEntities=0,$retChar=0)
- *  838:     function UnumberToChar($cbyte)
- *  883:     function utf8CharToUnumber($str,$hex=0)
+ *  560:     function conv($str,$fromCS,$toCS,$useEntityForNoChar=0)
+ *  600:     function convArray(&$array,$fromCS,$toCS,$useEntityForNoChar=0)
+ *  617:     function utf8_encode($str,$charset)
+ *  663:     function utf8_decode($str,$charset,$useEntityForNoChar=0)
+ *  706:     function utf8_to_entities($str)
+ *  739:     function entities_to_utf8($str,$alsoStdHtmlEnt=0)
+ *  773:     function utf8_to_numberarray($str,$convEntities=0,$retChar=0)
+ *  823:     function UnumberToChar($cbyte)
+ *  868:     function utf8CharToUnumber($str,$hex=0)
  *
  *              SECTION: Init functions
- *  926:     function initCharset($charset)
- *  988:     function initUnicodeData($mode=null)
- * 1213:     function initCaseFolding($charset)
- * 1275:     function initToASCII($charset)
+ *  911:     function initCharset($charset)
+ *  973:     function initUnicodeData($mode=null)
+ * 1198:     function initCaseFolding($charset)
+ * 1260:     function initToASCII($charset)
  *
  *              SECTION: String operation functions
- * 1346:     function substr($charset,$string,$start,$len=null)
+ * 1331:     function substr($charset,$string,$start,$len=null)
  * 1384:     function strlen($charset,$string)
- * 1412:     function crop($charset,$string,$len,$crop='')
- * 1465:     function strtrunc($charset,$string,$len)
- * 1499:     function conv_case($charset,$string,$case)
- * 1525:     function specCharsToASCII($charset,$string)
+ * 1414:     function crop($charset,$string,$len,$crop='')
+ * 1467:     function strtrunc($charset,$string,$len)
+ * 1501:     function conv_case($charset,$string,$case)
+ * 1527:     function specCharsToASCII($charset,$string)
  *
  *              SECTION: Internal string operation functions
- * 1565:     function sb_char_mapping($str,$charset,$mode,$opt='')
+ * 1567:     function sb_char_mapping($str,$charset,$mode,$opt='')
  *
  *              SECTION: Internal UTF-8 string operation functions
- * 1620:     function utf8_substr($str,$start,$len=null)
- * 1653:     function utf8_strlen($str)
- * 1674:     function utf8_strtrunc($str,$len)
- * 1696:     function utf8_strpos($haystack,$needle,$offset=0)
- * 1719:     function utf8_strrpos($haystack,$needle)
- * 1739:     function utf8_char2byte_pos($str,$pos)
- * 1780:     function utf8_byte2char_pos($str,$pos)
- * 1803:     function utf8_char_mapping($str,$mode,$opt='')
+ * 1622:     function utf8_substr($str,$start,$len=null)
+ * 1655:     function utf8_strlen($str)
+ * 1676:     function utf8_strtrunc($str,$len)
+ * 1698:     function utf8_strpos($haystack,$needle,$offset=0)
+ * 1723:     function utf8_strrpos($haystack,$needle)
+ * 1745:     function utf8_char2byte_pos($str,$pos)
+ * 1786:     function utf8_byte2char_pos($str,$pos)
+ * 1809:     function utf8_char_mapping($str,$mode,$opt='')
  *
  *              SECTION: Internal EUC string operation functions
- * 1879:     function euc_strtrunc($str,$len,$charset)
- * 1908:     function euc_substr($str,$start,$charset,$len=null)
- * 1933:     function euc_strlen($str,$charset)
- * 1960:     function euc_char2byte_pos($str,$pos,$charset)
- * 2001:     function euc_char_mapping($str,$charset,$mode,$opt='')
+ * 1885:     function euc_strtrunc($str,$len,$charset)
+ * 1914:     function euc_substr($str,$start,$charset,$len=null)
+ * 1939:     function euc_strlen($str,$charset)
+ * 1966:     function euc_char2byte_pos($str,$pos,$charset)
+ * 2007:     function euc_char_mapping($str,$charset,$mode,$opt='')
  *
  * TOTAL FUNCTIONS: 35
  * (This index is automatically created/updated by the extension "extdeveval")
@@ -245,85 +245,114 @@ class t3lib_cs {
 		'ucs4' => 'ucs-4',
 	);
 
-		// mapping of iso-639:2 language codes to language (family) names
-	var $lang_to_langfamily=array(
+		// mapping of iso-639:2 language codes to script names
+	var $lang_to_script=array(
 			// iso-639:2 language codes, see:
 			//  http://www.w3.org/WAI/ER/IG/ert/iso639.htm
+			//  http://www.loc.gov/standards/iso639-2/langcodes.html
 			//  http://www.unicode.org/onlinedat/languages.html
 		'ar' => 'arabic',
-		'bg' => 'cyrillic',
-		'cs' => 'east_european',
-		'da' => 'west_european',
-		'de' => 'west_european',
-		'es' => 'west_european',
+		'bg' => 'cyrillic',		// Bulgarian
+		'bs' => 'east_european',	// Bosnian
+		'cs' => 'east_european',	// Czech
+		'da' => 'west_european',	// Danish
+		'de' => 'west_european',	// German
+		'es' => 'west_european',	// Spanish
 		'et' => 'estonian',
-		'eu' => 'west_european',
-		'fi' => 'west_european',
-		'fr' => 'west_european',
+		'eo' => 'unicode',		// Esperanto
+		'eu' => 'west_european',	// Basque
+		'fa' => 'arabic',	// Persian
+		'fi' => 'west_european',	// Finish
+		'fo' => 'west_european',	// Faroese
+		'fr' => 'west_european',	// French
 		'gr' => 'greek',
-		'hr' => 'east_european',
-		'hu' => 'east_european',
-		'iw' => 'hebrew',
-		'is' => 'west_european',
-		'it' => 'west_european',
+		'he' => 'hebrew',		// Hebrew (since 1998)
+		'hi' => 'unicode',		// Hindi
+		'hr' => 'east_european',	// Croatian
+		'hu' => 'east_european',	// Hungarian
+		'iw' => 'hebrew',		// Hebrew (til 1998)
+		'is' => 'west_european',	// Icelandic
+		'it' => 'west_european',	// Italian
 		'ja' => 'japanese',
-		'kl' => 'west_european',
+		'kl' => 'west_european',	// Greenlandic
 		'ko' => 'korean',
 		'lt' => 'lithuanian',
-		'lv' => 'west_european', // Latvian/Lettish
-		'nl' => 'west_european',
-		'no' => 'west_european',
-		'pl' => 'east_european',
-		'pt' => 'west_european',
-		'ro' => 'east_european',
-		'ru' => 'cyrillic',
-		'sk' => 'east_european',
-		'sl' => 'east_european',
-		'sv' => 'west_european',
+		'lv' => 'west_european',	// Latvian/Lettish
+		'nl' => 'west_european',	// Dutch
+		'no' => 'west_european',	// Norwegian
+		'pl' => 'east_european',	// Polish
+		'pt' => 'west_european',	// Portuguese
+		'ro' => 'east_european',	// Romanian
+		'ru' => 'cyrillic',		// Russian
+		'sk' => 'east_european',	// Slovak
+		'sl' => 'east_european',	// Slovenian
+		'sr' => 'cyrillic',		// Serbian
+		'sv' => 'west_european',	// Swedish
 		'th' => 'thai',
-		'uk' => 'cyrillic',
+		'uk' => 'cyrillic',		// Ukranian
 		'vi' => 'vietnamese',
 		'zh' => 'chinese',
 			// MS language codes, see http://msdn.microsoft.com/library/default.asp?url=/library/en-us/vclib/html/_crt_language_strings.asp
+			// http://msdn.microsoft.com/library/default.asp?url=/library/en-us/wceinternational5/html/wce50conLanguageIdentifiersandLocales.asp
+		'ara' => 'arabic',
+		'bgr' => 'cyrillic',		// Bulgarian
+		'cat' => 'west_european',	// Catalan
 		'chs' => 'simpl_chinese',
 		'cht' => 'trad_chinese',
-		'csy' => 'east_european',
-		'dan' => 'west_european',
-		'deu' => 'west_european',
-		'dea' => 'west_european',
-		'des' => 'west_european',
-		'ena' => 'west_european',
-		'enc' => 'west_european',
-		'eng' => 'west_european',
-		'enz' => 'west_european',
-		'enu' => 'west_european',
-		'nld' => 'west_european',
-		'nlb' => 'west_european',
-		'fin' => 'west_european',
-		'fra' => 'west_european',
-		'frb' => 'west_european',
-		'frc' => 'west_european',
-		'frs' => 'west_european',
+		'csy' => 'east_european',	// Czech
+		'dan' => 'west_european',	// Danisch
+		'deu' => 'west_european',	// German
+		'dea' => 'west_european',	// German (Austrian)
+		'des' => 'west_european',	// German (Swiss)
+		'ena' => 'west_european',	// English (Australian)
+		'enc' => 'west_european',	// English (Canadian)
+		'eng' => 'west_european',	// English
+		'enz' => 'west_european',	// English (New Zealand)
+		'enu' => 'west_european',	// English (United States)
+		'euq' => 'west_european',	// Basque
+		'fos' => 'west_european',	// Faroese
+		'far' => 'arabic',	// Persian
+		'fin' => 'west_european',	// Finish
+		'fra' => 'west_european',	// French
+		'frb' => 'west_european',	// French (Belgian)
+		'frc' => 'west_european',	// French (Canadian)
+		'frs' => 'west_european',	// French (Swiss)
 		'ell' => 'greek',
-		'hun' => 'east_european',
-		'isl' => 'west_euorpean',
-		'ita' => 'west_european',
-		'its' => 'west_european',
+		'heb' => 'hebrew',
+		'hin' => 'unicode',	// Hindi
+		'hun' => 'east_european',	// Hungarian
+		'isl' => 'west_euorpean',	// Icelandic
+		'ita' => 'west_european',	// Italian
+		'its' => 'west_european',	// Italian (Swiss)
 		'jpn' => 'japanese',
 		'kor' => 'korean',
-		'nor' => 'west_european',
-		'non' => 'west_european',
-		'plk' => 'east_european',
-		'ptg' => 'west_european',
-		'ptb' => 'west_european',
-		'rus' => 'east_european',
-		'sky' => 'east_european',
-		'esp' => 'west_european',
-		'esm' => 'west_european',
-		'esn' => 'west_european',
-		'sve' => 'west_european',
+		'lth' => 'lithuanian',
+		'lvi' => 'west_european',	// Latvian/Lettish
+		'msl' => 'west_european',	// Malay
+		'nlb' => 'west_european',	// Dutch (Belgian)
+		'nld' => 'west_european',	// Dutch
+		'nor' => 'west_european',	// Norwegian (bokmal)
+		'non' => 'west_european',	// Norwegian (nynorsk)
+		'plk' => 'east_european',	// Polish
+		'ptg' => 'west_european',	// Portuguese
+		'ptb' => 'west_european',	// Portuguese (Brazil)
+		'rom' => 'east_european',	// Romanian
+		'rus' => 'cyrillic',		// Russian
+		'slv' => 'east_european',	// Slovenian
+		'sky' => 'east_european',	// Slovak
+		'srl' => 'east_european',	// Serbian (Latin)
+		'srb' => 'cyrillic',		// Serbian (Cyrillic)
+		'esp' => 'west_european',	// Spanish (trad. sort)
+		'esm' => 'west_european',	// Spanish (Mexican)
+		'esn' => 'west_european',	// Spanish (internat. sort)
+		'sve' => 'west_european',	// Swedish
+		'tha' => 'thai',
 		'trk' => 'turkish',
+		'ukr' => 'cyrillic',	// Ukrainian
 			// English language names
+		'arabic' => 'arabic',
+		'basque' => 'west_european',
+		'bosnian' => 'east_european',
 		'bulgarian' => 'east_european',
 		'catalan' => 'west_european',
 		'croatian' => 'east_european',
@@ -331,30 +360,43 @@ class t3lib_cs {
 		'danish' => 'west_european',
 		'dutch' => 'west_european',
 		'english' => 'west_european',
+		'esperanto' => 'unicode',
+		'estonian' => 'estonian',
+		'faroese' => 'west_european',
+		'farsi' => 'arabic',
 		'finnish' => 'west_european',
 		'french' => 'west_european',
 		'galician' => 'west_european',
 		'german' => 'west_european',
+		'greek' => 'greek',
+		'greenlandic' => 'west_european',
+		'hebrew' => 'hebrew',
+		'hindi' => 'unicode',
 		'hungarian' => 'east_european',
 		'icelandic' => 'west_european',
 		'italian' => 'west_european',
 		'latvian' => 'west_european',
 		'lettish' => 'west_european',
+		'lithuanian' => 'lithuanian',
+		'malay' => 'west_european',
 		'norwegian' => 'west_european',
+		'persian' => 'arabic',
 		'polish' => 'east_european',
 		'portuguese' => 'west_european',
 		'russian' => 'cyrillic',
 		'romanian' => 'east_european',
+		'serbian' => 'cyrillic',
 		'slovak' => 'east_european',
 		'slovenian' => 'east_european',
 		'spanish' => 'west_european',
 		'svedish' => 'west_european',
-		'turkish' => 'east_european',
+		'that' => 'thai',
+		'turkish' => 'turkish',
 		'ukrainian' => 'cyrillic',
 	);
 
 		// mapping of language (family) names to charsets on Unix
-	var $lang_to_charset_unix=array(
+	var $script_to_charset_unix=array(
 		'west_european' => 'iso-8859-1',
 		'estonian' => 'iso-8859-1',
 		'east_european' => 'iso-8859-2',
@@ -372,10 +414,11 @@ class t3lib_cs {
 		'simpl_chinese' => 'gb2312',
 		'trad_chinese' => 'big5',
 		'vietnamese' => '',
+		'unicode' => 'utf-8',
 	);
 
 		// mapping of language (family) names to charsets on Windows
-	var $lang_to_charset_windows=array(
+	var $script_to_charset_windows=array(
 		'east_european' => 'windows-1250',
 		'cyrillic' => 'windows-1251',
 		'west_european' => 'windows-1252',
@@ -400,6 +443,7 @@ class t3lib_cs {
 		'japanese.euc' => 'euc-jp',
 		'ja_jp.ujis' => 'euc-jp',
 		'korean.euc' => 'euc-kr',
+		'sr@Latn' => 'iso-8859-2',
 		'zh_cn' => 'gb2312',
 		'zh_hk' => 'big5',
 		'zh_tw' => 'big5',
@@ -456,47 +500,22 @@ class t3lib_cs {
 	);
 
 		// TYPO3 specific: Array with the iso names used for each system language in TYPO3:
-		// Empty values means sames as Typo3
+		// Missing keys means: same as Typo3
 	var $isoArray = array(
-		'dk' => 'da',
-		'de' => '',
-		'no' => '',
-		'it' => '',
-		'fr' => '',
-		'es' => '',
-		'nl' => '',
-		'cz' => 'cs',
-		'pl' => '',
-		'si' => 'sl',
-		'fi' => '',
-		'tr' => '',
-		'se' => 'sv',
-		'pt' => '',
-		'ru' => '',
-		'ro' => '',
+		'ba' => 'bs',
+		'br' => 'pt_BR',
 		'ch' => 'zh_CN',
-		'sk' => '',
-		'lt' => '',
-		'is' => '',
-		'hr' => '',
-		'hu' => '',
-		'gl' => '', // Greenlandic
-		'th' => '',
+		'cz' => 'cs',
+		'dk' => 'da',
+		'si' => 'sl',
+		'se' => 'sv',
+		'gl' => 'kl',
 		'gr' => 'el',
 		'hk' => 'zh_HK',
-		'eu' => '',
-		'bg' => '',
-		'br' => 'pt_BR',
-		'et' => '',
-		'ar' => '',
-		'he' => 'iw',
+		'kr' => 'ko',
 		'ua' => 'uk',
 		'jp' => 'ja',
-		'lv' => '',
 		'vn' => 'vi',
-		'ca' => '',
-		'ba' => '', // Bosnian
-		'kr' => '',
 	);
 
 	/**
@@ -543,15 +562,15 @@ class t3lib_cs {
 
 			// get language
 		list($language,$country) = explode('_',$locale);
-		if (isset($this->lang_to_langfamily[$language]))	$language = $this->lang_to_langfamily[$language];
+		if (isset($this->lang_to_script[$language]))	$script = $this->lang_to_script[$language];
 
 		if (TYPO3_OS == 'WIN')	{
-			$cs = $this->lang_to_charset_windows[$language];
+			$cs = $this->script_to_charset_windows[$script] ? $this->script_to_charset_windows[$script] : 'window-1252';
 		} else {
-			$cs = $this->lang_to_charset_unix[$language];
+			$cs = $this->script_to_charset_unix[$script] ? $this->script_to_charset_unix[$script] : 'iso-8859-1';
 		}
 
-		return $cs ? $cs : 'iso-8859-1';
+		return $cs;
 	}
 
 
@@ -649,7 +668,7 @@ class t3lib_cs {
 				$ord=ord($chr);
 				if (isset($this->twoByteSets[$charset]))	{	// If the charset has two bytes per char
 					$ord2 = ord($str{$a+1});
-					$ord = $ord<<8 & $ord2; // assume big endian
+					$ord = $ord<<8 | $ord2; // assume big endian
 
 					if (isset($this->parsedCharsets[$charset]['local'][$ord]))	{	// If the local char-number was found in parsed conv. table then we use that, otherwise 127 (no char?)
 						$outStr.=$this->parsedCharsets[$charset]['local'][$ord];
