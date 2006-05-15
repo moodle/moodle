@@ -1288,7 +1288,7 @@
             if($collapsed and !$display) {  
                 echo "<div align=\"center\">\n";
                     echo "<table><tr><td>\n";
-                    lesson_print_tree($page->id, $lesson->id, $cm->id, $CFG->pixpath);
+                    lesson_print_tree($page->id, $lesson, $cm->id);
                     echo "</td></tr></table>\n";
                 echo "</div>\n";
             } else {
