@@ -609,7 +609,7 @@
         $sectionname    = get_string("name$course->format");
         $fullmodulename = get_string("modulename", $module->name);
 
-        if ($form->section) {
+        if ($form->section && $course->format != 'site') {
             $heading->what = $fullmodulename;
             $heading->to   = "$sectionname $form->section";
             $pageheading = get_string("addinganewto", "moodle", $heading);
