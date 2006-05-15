@@ -1132,18 +1132,18 @@ function lesson_print_tree_link_menu($page, $id, $showpages=false) {
  * next to the links.
  * 
  * @uses $USER
+ * @uses $CFG
  * @param int $pageid Page id of the first page of the lesson.
- * @param int $lessonid Id of the lesson.
+ * @param object $lesson Object of the current lesson.
  * @param int $cmid The course module id of the lesson.
  * @param string $pixpath Path to the pictures.
- * @todo $pageid does not need to be passed.  Can be found in the function.  $pixpath is just
- *       $CFG->pixpath.  So $CFG should be declaired globally and be used instead of passed.
+ * @todo $pageid does not need to be passed.  Can be found in the function.
  *       This function is only called once.  It should be removed and the code inside it moved to view.php
  */
-function lesson_print_tree($pageid, $lessonid, $cmid, $pixpath) {
-    global $USER;
+function lesson_print_tree($pageid, $lesson, $cmid) {
+    global $USER, $CFG;
 
-    if(!$pages = get_records_select("lesson_pages", "lessonid = $lessonid")) {
+    if(!$pages = get_records_select("lesson_pages", "lessonid = $lesson->id")) {
         error("Error: could not find lesson pages");
     }
     echo "<table>";
@@ -1154,7 +1154,7 @@ function lesson_print_tree($pageid, $lessonid, $cmid, $pixpath) {
         } else {
             $output = "<a href=\"view.php?id=$cmid&display=".$pages[$pageid]->id."\">".format_string($pages[$pageid]->title,true)."</a>\n";
             
-            if($answers = get_records_select("lesson_answers", "lessonid = $lessonid and pageid = $pageid")) {
+            if($answers = get_records_select("lesson_answers", "lessonid = $lesson->id and pageid = $pageid")) {
                 $output .= "Jumps to: ";
                 $end = end($answers);
                 foreach ($answers as $answer) {
@@ -1185,15 +1185,16 @@ function lesson_print_tree($pageid, $lessonid, $cmid, $pixpath) {
         }
         
         echo $output;        
-        if (count($pages) > 1) {
-            echo "<a title=\"move\" href=\"lesson.php?id=$cmid&action=move&pageid=".$pages[$pageid]->id."\">\n".
-                "<img src=\"$pixpath/t/move.gif\" hspace=\"2\" height=11 width=11 alt=\"move\" border=0></a>\n";
+        if (isteacheredit($lesson->course)) {
+          if (count($pages) > 1) {
+              echo "<a title=\"move\" href=\"lesson.php?id=$cmid&action=move&pageid=".$pages[$pageid]->id."\">\n".
+                  "<img src=\"$CFG->pixpath/t/move.gif\" hspace=\"2\" height=11 width=11 alt=\"move\" border=0></a>\n";
+          }
+          echo "<a title=\"update\" href=\"lesson.php?id=$cmid&amp;action=editpage&amp;pageid=".$pages[$pageid]->id."\">\n".
+              "<img src=\"$CFG->pixpath/t/edit.gif\" hspace=\"2\" height=11 width=11 alt=\"edit\" border=0></a>\n".
+              "<a title=\"delete\" href=\"lesson.php?id=$cmid&amp;sesskey=".$USER->sesskey."&amp;action=confirmdelete&amp;pageid=".$pages[$pageid]->id."\">\n".
+              "<img src=\"$CFG->pixpath/t/delete.gif\" hspace=\"2\" height=11 width=11 alt=\"delete\" border=0></a>\n";
         }
-        echo "<a title=\"update\" href=\"lesson.php?id=$cmid&amp;action=editpage&amp;pageid=".$pages[$pageid]->id."\">\n".
-            "<img src=\"$pixpath/t/edit.gif\" hspace=\"2\" height=11 width=11 alt=\"edit\" border=0></a>\n".
-            "<a title=\"delete\" href=\"lesson.php?id=$cmid&amp;sesskey=".$USER->sesskey."&amp;action=confirmdelete&amp;pageid=".$pages[$pageid]->id."\">\n".
-            "<img src=\"$pixpath/t/delete.gif\" hspace=\"2\" height=11 width=11 alt=\"delete\" border=0></a>\n";
-
         echo "</tr></td>";
         $pageid = $pages[$pageid]->nextpageid;
     }

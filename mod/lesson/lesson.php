@@ -40,6 +40,13 @@
 
     require_login($course->id);
     
+    if ($action != 'continue') {
+        // All pages except for continue.php require teacher editing privs
+        if (!isteacheredit($lesson->course)) {
+            error('You must be a teacher with editing privileges to access this page.');
+        }
+    }
+    
     // set up some general variables
     $usehtmleditor = can_use_html_editor();
     
