@@ -289,7 +289,7 @@
         if (empty($CFG->loginhttps)) {
             $internalpassword = "$CFG->wwwroot/login/change_password.php";
         } else {
-            $internalpassword = str_replace('http','https',$CFG->wwwroot.'/login/change_password.php');
+            $internalpassword = str_replace('http:','https:',$CFG->wwwroot.'/login/change_password.php');
         }
     }
 

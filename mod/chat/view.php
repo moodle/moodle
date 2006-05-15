@@ -108,7 +108,7 @@
 
         $wwwroot = $CFG->wwwroot.'/login/index.php';
         if (!empty($CFG->loginhttps)) {
-            $wwwroot = str_replace('http','https', $wwwroot);
+            $wwwroot = str_replace('http:','https:', $wwwroot);
         }
 
         notice_yesno(get_string('noguests', 'chat').'<br /><br />'.get_string('liketologin'),
