@@ -166,7 +166,16 @@
 
             redirect($CFG->wwwroot.'/mod/data/view.php?d='.$data->id.'&amp;rid='.$rid);
 
-        } else {                                             /// Add some new records
+        } else { /// Add some new records
+        
+        /// Check if maximum number of entry as specified by this database is reached
+        /// Of course, you can't be stopped if you are an editting teacher! =)
+
+            if (data_atmaxentries($data) and !isteacheredit($course->id)){
+                notify (get_string('atmaxentry','data'));
+                print_footer($course);
+                exit;
+            }
 
             ///Empty form checking - you can't submit an empty form!
 
@@ -222,16 +231,6 @@
             }
         }
     }  // End of form processing
-   
-
-/// Check if maximum number of entry as specified by this database is reached
-/// Of course, you can't be stopped if you are an editting teacher! =)
-
-    if (data_atmaxentries($data) and !isteacheredit($course->id)){
-        notify (get_string('atmaxentry','data'));
-        print_footer($course);
-        exit;
-    }
 
     /// Print the browsing interface
 
