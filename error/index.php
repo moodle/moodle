@@ -2,12 +2,17 @@
 
     require('../config.php');
 
-    if (!empty($text)) {    // form submitted
+    if ($form = data_submitted('nomatch')) { // form submitted, do not check referer (origal page unknown)!
         if (!$admin = get_admin() ) {
             error('Could not find the admin user to mail to!');
         }
 
-        email_to_user($admin, $USER, 'Error: '. $referer .' -> '. $requested, $text);
+        if (empty($USER->id)) {
+            $user = getremoteaddr(); // user not logged in, use IP address as name
+        } else {
+            $user = $USER;
+        }
+        email_to_user($admin, $user, 'Error: '. $form->referer .' -> '. $form->requested, $form->text);
 
         redirect($CFG->wwwroot .'/course/', 'Message sent, thanks', 3);
         die;
@@ -24,12 +29,12 @@
 ?>
   
   <center>
-  <p><?php get_string('pleasereport', 'error'); ?>
+  <p><?php echo get_string('pleasereport', 'error'); ?>
   <p><form action="<?php echo $CFG->wwwroot ?>/error/index.php" name="form" method="post">
      <textarea rows="3" cols="50" name="text"></textarea><br />
      <input type="hidden" name="referer" value="<?php p($httpreferer) ?>">
      <input type="hidden" name="requested" value="<?php p($requesturi) ?>">
-     <input type="submit" value="<?php get_string('sendmessage', 'error'); ?>">
+     <input type="submit" value="<?php echo get_string('sendmessage', 'error'); ?>">
      </form>
 <?php
 
