@@ -14,9 +14,10 @@
     $modaction   = optional_param('modaction', '', PARAM_PATH); // an action as recorded in the logs
     $page        = optional_param('page', '0', PARAM_INT);     // which page to show
     $perpage     = optional_param('perpage', '100', PARAM_INT); // how many per page 
-    $showcourses = optional_param('showcourses',0,PARAM_INT); // whether to show courses if we're over our limit.
-    $showusers   = optional_param('showusers',0,PARAM_INT); // whether to show users if we're over our limit.
-    $chooselog   = optional_param('chooselog',0,PARAM_INT);
+    $showcourses = optional_param('showcourses', 0, PARAM_INT); // whether to show courses if we're over our limit.
+    $showusers   = optional_param('showusers', 0, PARAM_INT); // whether to show users if we're over our limit.
+    $chooselog   = optional_param('chooselog', 0, PARAM_INT);
+    $logformat   = optional_param('logformat', 'showashtml', PARAM_ALPHA);
 
     require_login();
 
@@ -55,26 +56,51 @@
         if ($date) {
             $dateinfo = userdate($date, get_string('strftimedaydate'));
         }
+        
+        switch ($logformat) {
+            case 'showashtml':
+                if ($course->category) {
+                    print_header($course->shortname .': '. $strlogs, $course->fullname, 
+                                 "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> ->
+                                  <a href=\"$CFG->wwwroot/course/report.php?id=$course->id\">$strreports</a> ->
+                                  <a href=\"index.php?id=$course->id\">$strlogs</a> -> $userinfo, $dateinfo", '');
+                } else {
+                    print_header($course->shortname .': '. $strlogs, $course->fullname, 
+                                 "<a href=\"$CFG->wwwroot/$CFG->admin/index.php\">$stradministration</a> ->
+                                  <a href=\"$CFG->wwwroot/$CFG->admin/report.php\">$strreports</a> ->
+                                  <a href=\"index.php?id=$course->id\">$strlogs</a> -> $userinfo, $dateinfo", '');
+                }
 
-        if ($course->category) {
-            print_header($course->shortname .': '. $strlogs, $course->fullname, 
-                         "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> ->
-                          <a href=\"$CFG->wwwroot/course/report.php?id=$course->id\">$strreports</a> ->
-                          <a href=\"index.php?id=$course->id\">$strlogs</a> -> $userinfo, $dateinfo", '');
-        } else {
-            print_header($course->shortname .': '. $strlogs, $course->fullname, 
-                         "<a href=\"$CFG->wwwroot/$CFG->admin/index.php\">$stradministration</a> ->
-                          <a href=\"$CFG->wwwroot/$CFG->admin/report.php\">$strreports</a> ->
-                          <a href=\"index.php?id=$course->id\">$strlogs</a> -> $userinfo, $dateinfo", '');
+                print_heading("$course->fullname: $userinfo, $dateinfo (".usertimezone().")");
+                print_log_selector_form($course, $user, $date, $modname, $modid, $modaction, $group, $showcourses, $showusers, $logformat);
+                
+                print_log($course, $user, $date, 'l.time DESC', $page, $perpage, 
+                        "index.php?id=$course->id&amp;chooselog=1&amp;user=$user&amp;date=$date&amp;modid=$modid&amp;modaction=$modaction&amp;group=$group", 
+                        $modname, $modid, $modaction, $group);
+                break;
+            case 'downloadascsv':
+                if (!print_log_csv($course, $user, $date, 'l.time DESC', $modname,
+                        $modid, $modaction, $group)) {
+                    notify("No logs found!");
+                    print_footer($course);
+                }
+                exit;
+            case 'downloadasexcel':
+                if (!print_log_xls($course, $user, $date, 'l.time DESC', $modname,
+                        $modid, $modaction, $group)) {
+                    notify("No logs found!");
+                    print_footer($course);
+                }
+                exit;
+            case 'downloadasooo':
+                if (!print_log_ooo($course, $user, $date, 'l.time DESC', $modname,
+                        $modid, $modaction, $group)) {
+                    notify("No logs found!");
+                    print_footer($course);
+                }
+                exit;
         }
-        
-        print_heading("$course->fullname: $userinfo, $dateinfo (".usertimezone().")");
 
-        print_log_selector_form($course, $user, $date, $modname, $modid, $modaction, $group, $showcourses, $showusers);
-        
-        print_log($course, $user, $date, 'l.time DESC', $page, $perpage, 
-                  "index.php?id=$course->id&amp;chooselog=1&amp;user=$user&amp;date=$date&amp;modid=$modid&amp;modaction=$modaction&amp;group=$group", 
-                  $modname, $modid, $modaction, $group);
 
     } else {
         if ($course->category) {
@@ -91,7 +117,7 @@
 
         print_heading(get_string('chooselogs') .':');
 
-        print_log_selector_form($course, $user, $date, $modname, $modid, $modaction, $group, $showcourses, $showusers);
+        print_log_selector_form($course, $user, $date, $modname, $modid, $modaction, $group, $showcourses, $showusers, $logformat);
 
         echo '<br />';
         print_heading(get_string('chooselivelogs') .':');
@@ -105,5 +131,4 @@
     print_footer($course);
 
     exit;
-
 ?>

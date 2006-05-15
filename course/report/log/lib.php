@@ -1,7 +1,7 @@
 <?php  // $Id$
 
-function print_log_selector_form($course, $selecteduser=0, $selecteddate="today",
-                                 $modname="", $modid=0, $modaction="", $selectedgroup=-1,$showcourses=0,$showusers=0) {
+function print_log_selector_form($course, $selecteduser=0, $selecteddate='today',
+                                 $modname="", $modid=0, $modaction='', $selectedgroup=-1, $showcourses=0, $showusers=0, $logformat='showashtml') {
 
     global $USER, $CFG;
 
@@ -193,7 +193,7 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate="today"
         else {
             $users[0] = get_string('allparticipants');
         }
-        choose_from_menu($users,'user',$selecteduser,false);
+        choose_from_menu($users, 'user', $selecteduser, false);
         $a->url = "$CFG->wwwroot/course/report/log/index.php?chooselog=0&group=$selectedgroup&user=$selecteduser"
             ."&id=$course->id&date=$selecteddate&modid=$selectedactivity&showusers=1&showcourses=$showcourses";
         print_string('logtoomanyusers','moodle',$a);
@@ -201,7 +201,18 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate="today"
     choose_from_menu ($dates, "date", $selecteddate, get_string("alldays"));
     choose_from_menu ($activities, "modid", $selectedactivity, get_string("allactivities"), "", "");
     choose_from_menu ($actions, 'modaction', $modaction, get_string("allactions"));
-    echo '<input type="submit" value="'.get_string('showtheselogs').'" />';
+    
+    $logformats = array('showashtml' => get_string('displayonpage'),
+                        'downloadascsv' => get_string('downloadtext'),
+                        'downloadasexcel' => get_string('downloadexcel'));
+    /*
+    $logformats = array('showashtml' => get_string('displayonpage'),
+                        'downloadascsv' => get_string('downloadtext'),
+                        'downloadasexcel' => get_string('downloadexcel'),
+                        'downloadasooo' => get_string('downloadasooo'));
+    */
+    choose_from_menu ($logformats, 'logformat', $logformat, false);
+    echo '<input type="submit" value="'.get_string('gettheselogs').'" />';
     echo "</form>";
     echo "</center>";
 }
