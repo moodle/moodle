@@ -1906,11 +1906,11 @@ function print_header ($title='', $heading='', $navigation='', $focus='', $meta=
 
 /// We have to change some URLs in styles if we are in a $HTTPSPAGEREQUIRED page
     if (!empty($HTTPSPAGEREQUIRED)) {
-        $CFG->themewww = str_replace('http', 'https', $CFG->themewww);
-        $CFG->pixpath = str_replace('http', 'https', $CFG->pixpath);
-        $CFG->modpixpath = str_replace('http', 'https', $CFG->modpixpath);
+        $CFG->themewww = str_replace('http:', 'https:', $CFG->themewww);
+        $CFG->pixpath = str_replace('http:', 'https:', $CFG->pixpath);
+        $CFG->modpixpath = str_replace('http:', 'https:', $CFG->modpixpath);
         foreach ($CFG->stylesheets as $key => $stylesheet) {
-            $CFG->stylesheets[$key] = str_replace('http', 'https', $stylesheet);
+            $CFG->stylesheets[$key] = str_replace('http:', 'https:', $stylesheet);
         }
     }
 
@@ -1945,7 +1945,7 @@ function print_header ($title='', $heading='', $navigation='', $focus='', $meta=
         if (empty($CFG->loginhttps)) {
             $wwwroot = $CFG->wwwroot;
         } else {
-            $wwwroot = str_replace('http','https',$CFG->wwwroot);
+            $wwwroot = str_replace('http:','https:',$CFG->wwwroot);
         }
         if (isset($course->id)) {
             $menu = user_login_string($course);
@@ -2430,7 +2430,7 @@ function user_login_string($course=NULL, $user=NULL) {
     if (empty($CFG->loginhttps)) {
         $wwwroot = $CFG->wwwroot;
     } else {
-        $wwwroot = str_replace('http','https',$CFG->wwwroot);
+        $wwwroot = str_replace('http:','https:',$CFG->wwwroot);
     }
 
     if (isset($user->id) and $user->id) {

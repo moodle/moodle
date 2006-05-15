@@ -18,7 +18,7 @@ defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
         if (empty($CFG->loginhttps)) {
             $wwwroot = $CFG->wwwroot;
         } else {
-            $wwwroot = str_replace('http','https',$CFG->wwwroot);
+            $wwwroot = str_replace('http:','https:',$CFG->wwwroot);
         }
         $langmenu = popup_form ("$wwwroot/login/index.php?lang=", $langs, "chooselang", $currlang, "", "", "", true);
     }

@@ -93,7 +93,7 @@
             if(empty($CFG->loginhttps)) {
                 $wwwroot = $CFG->wwwroot;
             } else {
-                $wwwroot = str_replace('http','https',$CFG->wwwroot);
+                $wwwroot = str_replace('http:','https:',$CFG->wwwroot);
             }
 
             $toprow[] = new tabobject('editprofile', $wwwroot.'/user/edit.php?id='.$user->id.'&amp;course='.$course->id, get_string('editmyprofile'));
