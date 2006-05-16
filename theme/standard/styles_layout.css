@@ -437,7 +437,7 @@ a.skip-block, .skip-block {
   height:16px;
 }
 
-ul.list, ul.list li {
+ul.list, ul.list li, ol.list, ol.list li {
   list-style-type:none;
   padding:0%;
   margin:0%;
@@ -447,6 +447,9 @@ ul.list, ul.list li {
 .sideblock .content h3,
 .sideblock .content h2 {
   text-align: left;
+}
+/*.sideblock .content h3, ??*/
+.sideblock .content h2 {
   margin:0%;
   padding:0%;
 }
