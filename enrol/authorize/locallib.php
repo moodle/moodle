@@ -131,7 +131,7 @@ function authorize_print_orders()
             }
             else {
                 foreach ($actionstatus->actions as $value) {
-                    $actions .= "&nbsp;&nbsp;<a href='index.php?$value=y&amp;order=$record->id'>{$authstrs->$value}</a> ";
+                    $actions .= "&nbsp;&nbsp;<a href='index.php?$value=y&amp;sesskey=$USER->sesskey&amp;order=$record->id'>{$authstrs->$value}</a> ";
                 }
             }
 
@@ -186,8 +186,9 @@ function authorize_print_order_details($orderno)
         }
     }
 
-    echo "<form action='index.php' method='post'>\n";
-    echo "<input type='hidden' name='order' value='$orderno'>\n";
+    echo "<form action=\"index.php\" method=\"post\">\n";
+    echo "<input type=\"hidden\" name=\"order\" value=\"$orderno\">\n";
+    echo "<input type=\"hidden\" name=\"sesskey\" value=\"" . sesskey() . "\" />"; 
 
     $settled = settled($order);
     $status = authorize_get_status_action($order);
@@ -205,7 +206,7 @@ function authorize_print_order_details($orderno)
     }
     $table->data[] = array("&nbsp;", "<hr size='1' noshade>\n");
 
-    if (!empty($cmdcapture)) { // CAPTURE
+    if (!empty($cmdcapture) and confirm_sesskey()) { // CAPTURE
         if (!in_array(ORDER_CAPTURE, $status->actions)) {
             $a->action = $authstrs->capture;
             error(get_string('youcantdo', 'enrol_authorize', $a));
@@ -213,7 +214,7 @@ function authorize_print_order_details($orderno)
 
         if (empty($confirm)) {
             $table->data[] = array("<b>$strs->confirm:</b>",
-            "$authstrs->captureyes<br /><a href='index.php?order=$orderno&amp;".ORDER_CAPTURE."=y&amp;confirm=y'>$strs->yes</a>
+            "$authstrs->captureyes<br /><a href='index.php?order=$orderno&amp;sesskey=$USER->sesskey&amp;".ORDER_CAPTURE."=y&amp;confirm=y'>$strs->yes</a>
             &nbsp;&nbsp;&nbsp;&nbsp;<a href='index.php?order=$orderno'>$strs->no</a>");
         }
         else {
@@ -254,7 +255,7 @@ function authorize_print_order_details($orderno)
         }
         print_table($table);
     }
-    elseif (!empty($cmdrefund)) { // REFUND
+    elseif (!empty($cmdrefund) and confirm_sesskey()) { // REFUND
         if (!in_array(ORDER_REFUND, $status->actions)) {
             $a->action = $authstrs->refund;
             error(get_string('youcantdo', 'enrol_authorize', $a));
@@ -324,7 +325,7 @@ function authorize_print_order_details($orderno)
         }
         print_table($table);
     }
-    elseif (!empty($cmdvoid)) { // VOID
+    elseif (!empty($cmdvoid) and confirm_sesskey()) { // VOID
         if (!in_array(ORDER_VOID, $status->actions)) {
             $a->action = $authstrs->void;
             error(get_string('youcantdo', 'enrol_authorize', $a));
@@ -408,7 +409,7 @@ function authorize_print_order_details($orderno)
         }
         print_table($table);
     }
-    elseif (!empty($cmddelete)) { // DELETE
+    elseif (!empty($cmddelete) and confirm_sesskey()) { // DELETE
         if (!in_array(ORDER_DELETE, $status->actions)) {
             $a->action = $authstrs->delete;
             error(get_string('youcantdo', 'enrol_authorize', $a));
@@ -464,7 +465,7 @@ function authorize_print_order_details($orderno)
                     else {
                         foreach ($substatus->actions as $vl) {
                             $subactions .=
-                            "<a href='index.php?$vl=y&amp;order=$orderno&amp;suborder=$rf->id'>{$authstrs->$vl}</a> ";
+                            "<a href='index.php?$vl=y&amp;sesskey=$USER->sesskey&amp;order=$orderno&amp;suborder=$rf->id'>{$authstrs->$vl}</a> ";
                         }
                     }
                     $t2->data[] = array($rf->transid,
