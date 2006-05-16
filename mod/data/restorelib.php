@@ -202,7 +202,7 @@ function data_records_restore_mods ($old_data_id, $new_data_id, $info, $restore)
 
             $status = data_content_restore_mods ($oldid, $newid, $old_data_id, $new_data_id, $rec_info, $restore);
             $status = data_ratings_restore_mods ($oldid, $newid, $info, $rec_info);
-            //$status = data_comments_restore_mods ($oldid, $newid, $info, $rec_info);
+            $status = data_comments_restore_mods ($oldid, $newid, $info, $rec_info);
             
         } else {
             $status = false;
