@@ -202,7 +202,7 @@ function data_records_restore_mods ($old_data_id, $new_data_id, $info, $restore)
 
             $status = data_content_restore_mods ($oldid, $newid, $old_data_id, $new_data_id, $rec_info, $restore);
             $status = data_ratings_restore_mods ($oldid, $newid, $info, $rec_info);
-            $status = data_comments_restore_mods ($oldid, $newid, $info, $rec_info);
+            //$status = data_comments_restore_mods ($oldid, $newid, $info, $rec_info);
             
         } else {
             $status = false;
@@ -290,7 +290,7 @@ function data_restore_files ($old_data_id, $new_data_id, $old_field_id, $new_fie
     if ($status) {
         $temp_path = $CFG->dataroot."/temp/backup/".$restore->backup_unique_code.
                     "/moddata/data/".$old_data_id."/".$old_field_id."/".$old_record_id;
-        $todo = check_dir_exists($temp_path,true);
+        $todo = check_dir_exists($temp_path);
     }
 
     //If todo, we create the neccesary dirs in course moddata/assignment
@@ -318,6 +318,9 @@ function data_ratings_restore_mods ($oldid, $newid, $info, $rec_info) {
 
     $ratings= $rec_info['#']['RATINGS']['0']['#']['RATING'];
 
+    if (empty($ratings)) { // no ratings to restore
+        return true;
+    }
     for ($i = 0; $i < sizeof($ratings); $i++) {
 
         $rat_info = $ratings[$i];
@@ -327,7 +330,6 @@ function data_ratings_restore_mods ($oldid, $newid, $info, $rec_info) {
         $rating -> rating = backup_todb($rat_info['#']['RATING']['0']['#']);
 
         $status = insert_record ("data_ratings",$rating);
-
     }
     return $status;
 }
@@ -337,6 +339,10 @@ function data_comments_restore_mods ($oldid, $newid, $info, $rec_info) {
     global $CFG;
 
     $comments= $rec_info['#']['COMMENTS']['0']['#']['COMMENT'];
+
+    if (empty($comments)) { // no comments to restore
+        return true;
+    }
 
     for ($i = 0; $i < sizeof($comments); $i++) {
 
