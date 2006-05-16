@@ -97,6 +97,25 @@ function grade_get_exceptions($course) {
     return $temp;
 }
 
+function grade_get_exceptions_user($course, $userid) {
+    global $CFG;
+    $sql = "SELECT e.id, e.userid, gi.cminstance, gi.modid, c.name as catname, mm.name as modname
+            FROM {$CFG->prefix}grade_exceptions e, 
+                {$CFG->prefix}grade_item gi, 
+                {$CFG->prefix}grade_category c,
+                {$CFG->prefix}course_modules cm, 
+                {$CFG->prefix}modules mm
+            WHERE e.courseid=$course
+	        AND e.userid=$userid 
+                AND gi.id = e.grade_itemid 
+                AND c.id = gi.category
+                AND cm.course=c.courseid 
+                AND cm.module=mm.id
+                AND gi.modid=mm.id";
+    
+    $temp = get_records_sql($sql);
+    return $temp;
+}
 function grade_letters_set($course) {
     global $CFG;
     $sql = "SELECT * FROM {$CFG->prefix}grade_letter WHERE courseid=$course";
@@ -183,7 +202,11 @@ function grade_get_formatted_grades() {
                                             $grades_by_student["$student"]["$cur_category"]['stats']['allgrades'] = $grade;
                                         }
                                     }
+				    	$currentgrades = $grades_by_student["$student"]["$cur_category"]['stats']['allgrades'];
                                 }
+
+				            
+                        
                                 // set up a list of all categories and assignments (adjusting things for extra credit where necessary)
                                 $all_categories["$cur_category"]["$instance->name"]['hidden'] = $students_grade->hidden;
                                 $all_categories["$cur_category"]["$instance->name"]['sort_order'] = $students_grade->sort_order;
@@ -279,6 +302,7 @@ function grade_get_formatted_grades() {
                 }
             }
         }
+	
 
         if (isset($_REQUEST['group'])) {
             $group = clean_param($_REQUEST['group'], PARAM_INT);
@@ -294,15 +318,52 @@ function grade_get_formatted_grades() {
             if (isset($grades_by_student)) {
                 foreach($grades_by_student as $student=>$categories) {
                     if ( (isset($groupmembers) && isset($groupmembers[$student])) || !isset($groupmembers)) {
+			    
                         $grades_by_student["$student"]["$category"]['stats']['totalpoints'] = $main_category['stats']['totalpoints'];
                         $grades_by_student["$student"]["$category"]['stats']['weight'] = $main_category['stats']['weight'];
                         $grades_by_student["$student"]["$category"]['stats']['grade_items'] = $main_category['stats']['grade_items'];
-                        if (!isset($grades_by_student["$student"]["$category"]['stats']['points'])) {
-                            $grades_by_student["$student"]["$category"]['stats']['points'] = '-';
+
+                        foreach($main_category as $assignment => $items) {
+                            if ($assignment != 'stats') {
+                                if(!isset($grades_by_student["$student"]["$category"]["$assignment"]['grade'])) {
+                                    $grades_by_student["$student"]["$category"]['stats']['allgrades'] .= ',0';
+                                }
+                            }            
                         }
+			
+                        if (!isset($grades_by_student["$student"]["$category"]['stats']['points'])) {
+                           $grades_by_student["$student"]["$category"]['stats']['points'] = '-';
+			   
+                        }
+		
                         else {
                             // points are set... see if the current category is using drop the x lowest and do so
+                            // also drop exceptions first, so then this grades(s) won't be recoqnized as the x lowest
+			    // Get exception scores and assign them in the array
                             if ($main_category['stats']['drop'] != 0) {
+                                $exceptions = grade_get_exceptions_user($course->id, $student);
+                                if (isset($exceptions) && $exceptions) {
+                                    foreach($exceptions as $exception) {
+                                        if (isset($grades_by_student["$exception->userid"])) {
+                                            if ($grades_by_student["$exception->userid"]["$exception->catname"]) {
+                                                $assgn = get_record($exception->modname, 'id', $exception->cminstance, 'course', $course->id);
+                                                $grade = $grades_by_student["$exception->userid"]["$exception->catname"]["$assgn->name"]['grade'];
+						if (isset($grade)) {
+						    if (!isset($grades_by_student["$exception->userid"]["$exception->catname"]['stats']['exceptions'])) {
+                                                             $grades_by_student["$exception->userid"]["$exception->catname"]['stats']['exceptions'] = $grade;
+                                                    }
+                                                    elseif (isset($grades_by_student["$exception->userid"]["$exception->catname"]['stats']['exceptions'])) {
+                                                             $grades_by_student["$exception->userid"]["$exception->catname"]['stats']['exceptions'] .= ','. $grade;
+						    }
+						}
+                                            }
+                                        }
+                                    }
+				}
+                                if (isset($grades_by_student["$student"]["$category"]['stats']['exceptions'])) {
+                                    $grades_by_student["$student"]["$category"]['stats']['allgrades'] = grade_drop_exceptions($grades_by_student["$student"]["$category"]['stats']['allgrades'], $grades_by_student["$student"]["$category"]['stats']['exceptions']);
+                                }
+				
                                 $grades_by_student["$student"]["$category"]['stats']['allgrades'] = grade_drop_lowest($grades_by_student["$student"]["$category"]['stats']['allgrades'], $main_category['stats']['drop'], $main_category['stats']['grade_items']);
                                 if ($grades_by_student["$student"]["$category"]['stats']['points'] != '-') {
                                     $cat_points = 0;
@@ -314,7 +375,7 @@ function grade_get_formatted_grades() {
                                 }
                             }
                         }
-        
+       
                         // add any bonus points for the category
                         if ($all_categories["$category"]['stats']['bonus_points'] != 0) {
                             $grades_by_student["$student"]["$category"]['stats']['points'] = $grades_by_student["$student"]["$category"]['stats']['points'] + $all_categories["$category"]['stats']['bonus_points'];
@@ -339,7 +400,6 @@ function grade_get_formatted_grades() {
                 }
             }
         }
-
         // set the total coursepoints
         $all_categories['stats']['weight'] = 0;
         $all_categories['stats']['totalpoints'] = 0;
@@ -361,7 +421,7 @@ function grade_get_formatted_grades() {
                 $grades_by_student["$student"]['student_data']['totalpoints'] = $all_categories['stats']['totalpoints'];
             }
         }
-
+        
         // take into account any excluded grade_items
         $strexcluded = get_string('excluded', 'grades');
         $exceptions = grade_get_exceptions($course->id);
@@ -371,12 +431,17 @@ function grade_get_formatted_grades() {
                     if ($grades_by_student["$exception->userid"]["$exception->catname"]) {
                         $assgn = get_record($exception->modname, 'id', $exception->cminstance, 'course', $course->id);
                         $grades_by_student["$exception->userid"]['student_data']['totalpoints'] = $grades_by_student["$exception->userid"]['student_data']['totalpoints'] - $all_categories["$exception->catname"]["$assgn->name"]['maxgrade'];
-                        $grades_by_student["$exception->userid"]["$exception->catname"]['stats']['totalpoints'] = $grades_by_student["$exception->userid"]["$exception->catname"]['stats']['totalpoints'] - $all_categories["$exception->catname"]["$assgn->name"]['grade_against'];
+			//total point should not be smaller than grade against
+			if ($grades_by_student["$exception->userid"]["$exception->catname"]['stats']['totalpoints'] - $all_categories["$exception->catname"]["$assgn->name"]['grade_against'] != 0 ) {
+                            $grades_by_student["$exception->userid"]["$exception->catname"]['stats']['totalpoints'] = $grades_by_student["$exception->userid"]["$exception->catname"]['stats']['totalpoints'] - $all_categories["$exception->catname"]["$assgn->name"]['grade_against'];
+			}
                         $grades_by_student["$exception->userid"]["$exception->catname"]['stats']['grade_items'] = $grades_by_student["$exception->userid"]["$exception->catname"]['stats']['grade_items'] - 1;
                         if ($grades_by_student["$exception->userid"]["$exception->catname"]['stats']['grade_items'] < 0) {
                             $grades_by_student["$exception->userid"]["$exception->catname"]['stats']['grade_items'] = 0;
+			}
+                        if ($all_categories["$exception->catname"]['stats']['drop'] == 0) {
+                            $grades_by_student["$exception->userid"]["$exception->catname"]['stats']['points'] = $grades_by_student["$exception->userid"]["$exception->catname"]['stats']['points'] - $grades_by_student["$exception->userid"]["$exception->catname"]["$assgn->name"]['grade'];
                         }
-                        $grades_by_student["$exception->userid"]["$exception->catname"]['stats']['points'] = $grades_by_student["$exception->userid"]["$exception->catname"]['stats']['points'] - $grades_by_student["$exception->userid"]["$exception->catname"]["$assgn->name"]['grade'];
                         $grades_by_student["$exception->userid"]["$exception->catname"]["$assgn->name"]['maxgrade'] = $strexcluded;
                         $grades_by_student["$exception->userid"]["$exception->catname"]["$assgn->name"]['grade'] = $strexcluded;
                         // see if they are excluded entirely from a category
@@ -394,7 +459,7 @@ function grade_get_formatted_grades() {
                 }
             }
         }
-
+                        
         if (isset($grades_by_student)) {
             foreach($grades_by_student as $student => $categories) {
                 $grades_by_student["$student"]['student_data']['points'] = '-';
@@ -408,7 +473,7 @@ function grade_get_formatted_grades() {
                             if ($grades_by_student["$student"]["$category"]['stats']['points'] != '-') {
                                 $grades_by_student["$student"]['student_data']['points'] = $grades_by_student["$student"]['student_data']['points'] + $grades_by_student["$student"]["$category"]['stats']['points'];
                             }
-                            $grades_by_student["$student"]['student_data']['totalpoints'] = $grades_by_student["$student"]['student_data']['totalpoints'] + $grades_by_student["$student"]["$category"]['stats']['totalpoints'];
+                        $grades_by_student["$student"]['student_data']['totalpoints'] = $grades_by_student["$student"]['student_data']['totalpoints'] + $grades_by_student["$student"]["$category"]['stats']['totalpoints'];
                         }
                 
                         // set percents and weights for each assignment
@@ -453,7 +518,7 @@ function grade_get_formatted_grades() {
                                 $grades_by_student["$student"]["$category"]['stats']['weighted'] = 0.00;
                             }
                         }
-                        
+                        		
                         // set students overall weight (this is what percent they will be graded against)
                         if ($grades_by_student["$student"]["$category"]['stats']['weight'] != $strexcluded) {
                             $grades_by_student["$student"]['student_data']['weight'] = $grades_by_student["$student"]['student_data']['weight'] + $grades_by_student["$student"]["$category"]['stats']['weight'];
@@ -468,7 +533,7 @@ function grade_get_formatted_grades() {
                     
     
                 }
-    
+                
                 // set the percent and weight overall
                 if ($grades_by_student["$student"]['student_data']['totalpoints'] != 0 && $grades_by_student["$student"]['student_data']['totalpoints'] != $strexcluded) {
                     $grades_by_student["$student"]['student_data']['percent'] = round($grades_by_student["$student"]['student_data']['points']/$grades_by_student["$student"]['student_data']['totalpoints']*100,2);
@@ -544,8 +609,6 @@ function grade_get_formatted_grades() {
         else {
             $grades_by_student = 0;
         }        
-        //print_object($grades_by_student);
-        //print_object($all_categories);
         $retval = array($grades_by_student, $all_categories);
     }
     else {
@@ -553,6 +616,23 @@ function grade_get_formatted_grades() {
         // echo "<center><font color=red>Could not find any graded items for this course.</font></center>";
     }
     return $retval;
+}
+
+function grade_drop_exceptions($grades, $grades_exceptions) {
+    $grade_array = explode(',',$grades);
+    $grade_exception_array = explode(',',$grades_exceptions);
+    $ret_grades = Array(); 
+    foreach ($grade_array as $key => $val) {
+        $posb = array_search($val,$grade_exception_array);
+        if (is_integer($posb)) {
+            unset($grade_exception_array[$posb]);
+        } else {
+        
+            $ret_grades[] = $val;
+        }
+    }
+    $grades = implode(',', $ret_grades);
+    return $grades;
 }
 
 function grade_drop_lowest($grades, $drop, $total) {
