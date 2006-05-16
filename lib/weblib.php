@@ -1881,16 +1881,14 @@ function print_header ($title='', $heading='', $navigation='', $focus='', $meta=
     global $USER, $CFG, $THEME, $SESSION, $ME, $SITE, $HTTPSPAGEREQUIRED;
 
 /// This makes sure that the header is never repeated twice on a page
-    static $headerprinted = false;
-
-    if ($headerprinted) {
+    if (defined('HEADER_PRINTED')) {
         if ($CFG->debug > 7) {
-            notify('print_header() was called more than once - this should not happen.  Please check the code for this page closely, a common culprit is a call to error() after print_header().');
+            notify('print_header() was called more than once - this should not happen.  Please check the code for this page closely. Note: error() and redirect() are now safe to call after print_header().');
         }
         return;
-    } else {
-        $headerprinted = true;
     }
+    define('HEADER_PRINTED', 'true');
+
 
 /// This is an ugly hack to be replaced later by a proper global $COURSE
     global $course;
@@ -4034,13 +4032,7 @@ function print_scale_menu_helpbutton($courseid, $scale) {
 function error ($message, $link='') {
     global $CFG, $SESSION;
 
-    // flush all buffers so that we know if headers were already sent
-    while (@ob_end_flush());
-    // reenable SID rewrite if needed
-    if (!empty($CFG->usesid) and empty($_COOKIE['MoodleSession'.$CFG->sessioncookie])) {
-        sid_start_ob();
-    }
-    if (!headers_sent()) {
+    if (! defined('HEADER_PRINTED')) {
         //header not yet printed
         @header('HTTP/1.0 404 Not Found');
         print_header(get_string('error'));
@@ -4271,21 +4263,23 @@ function redirect($url, $message='', $delay='0') {
     $encodedurl = substr($tmpstr, 9, strlen($tmpstr)-13);
     $url = addslashes(html_entity_decode($encodedurl));
 
-    if (empty($message)) {
+/// when no message and header printed yet, try to redirect
+    if (empty($message) and !defined('HEADER_PRINTED')) {
         echo '<meta http-equiv="refresh" content="'. $delay .'; url='. $encodedurl .'" />';
         echo '<script type="text/javascript">'. "\n" .'<!--'. "\n". "location.replace('$url');". "\n". '//-->'. "\n". '</script>';   // To cope with Mozilla bug
-    } else {
+        die;
+    }
 
-        if (empty($delay)) {
-            $delay = 3;  // There's no point having a message with no delay
-        }
-        if (!headers_sent()) {
-            print_header('', '', '', '', '<meta http-equiv="refresh" content="'. $delay .'; url='. $encodedurl .'" />');
-        }
-        echo '<center>';
-        echo '<p>'. $message .'</p>';
-        echo '<p>( <a href="'. $encodedurl .'">'. get_string('continue') .'</a> )</p>';
-        echo '</center>';
+    if (empty($delay)) {
+        $delay = 3;  // if there is something already printed or message to display wait min 3 seconds
+    }
+    if (! defined('HEADER_PRINTED')) {
+        print_header('', '', '', '', '<meta http-equiv="refresh" content="'. $delay .'; url='. $encodedurl .'" />');
+    }
+    echo '<center>';
+    echo '<p>'. $message .'</p>';
+    echo '<p>( <a href="'. $encodedurl .'">'. get_string('continue') .'</a> )</p>';
+    echo '</center>';
 
 ?>
 <script type="text/javascript">
@@ -4298,8 +4292,6 @@ function redirect($url, $message='', $delay='0') {
 -->
 </script>
 <?php
-
-    }
     die;
 }
 
