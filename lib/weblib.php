@@ -2463,7 +2463,7 @@ function print_navigation ($navigation) {
    if ($navigation) {
        //Accessibility: breadcrumb links now in a list, &raquo; replaced with image.
    	   $nav_text = get_string('youarehere','access');
-   	   echo '<span class="accesshide">'.$nav_text.':</span><ul>';
+   	   echo '<h2 class="accesshide">'.$nav_text.",</h2><ul>\n";
        if (! $site = get_site()) {
            $site->shortname = get_string('home');
        }
