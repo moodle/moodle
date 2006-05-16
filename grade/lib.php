@@ -639,21 +639,21 @@ function grade_drop_lowest($grades, $drop, $total) {
     // drops the lowest $drop numbers from the comma seperated $grades making sure that if $grades has 
     // fewer items than $total that we don't drop too many
     $grade_array = explode(',',$grades);
-
-    $actually_drop = (count($grade_array) - $total);
-    if ($actually_drop > 0) {
+    if (count($grade_array) == 1) {
+	$grades = implode('', $grade_array);
+    }
+    else if ($drop > 0 AND (count($grade_array) > $drop)) {
         rsort($grade_array);
 
-        for($i=0; $i < (count($grade_array) - $actually_drop); $i++) {
+        for($i=0; $i < (count($grade_array) - $drop); $i++) {
             $ret_grades["$i"] = $grade_array["$i"];
         }
-        if ($ret_grades) {
+        if (isset($ret_grades)) {
             $grades = implode(',',$ret_grades);
         }
-        else {
-            // set grades to 0... they decided to drop too many
-            $grades = 0;
-        }
+    }
+    else {
+        $grades = 0;
     }
     return $grades;    
 }
