@@ -309,8 +309,8 @@ function authorize_print_order_details($orderno)
                             if (!empty($unenrol)) {
                                 unenrol_student($order->userid, $order->courseid);
                             }
+                            redirect("index.php?order=$orderno");
                         }
-                        redirect("index.php?order=$orderno");
                     }
                     else {
                         $table->data[] = array(get_string('testmode', 'enrol_authorize'),
