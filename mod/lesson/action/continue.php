@@ -156,10 +156,10 @@
                         $expectedanswer = substr($expectedanswer,0,strlen($expectedanswer) - 2);
                         $ignorecase = 'i';
                     }
-                }
-                // prevent the potential apostrophe problem!
-                if (preg_match_all("/'/",$expectedanswer, $matches)) {
-                    $expectedanswer = ereg_replace("'", "\\\'", $expectedanswer);
+                } else {
+                    $expectedanswer = str_replace('*', '#####', $expectedanswer);
+                    $expectedanswer = preg_quote($expectedanswer, '/');
+                    $expectedanswer = str_replace('#####', '.*', $expectedanswer);
                 }
                 // see if user typed in any of the correct answers
                 if (lesson_iscorrect($pageid, $answer->jumpto) or ($lesson->custom && $answer->score > 0) ) {
