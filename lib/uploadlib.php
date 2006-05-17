@@ -4,7 +4,7 @@
  * uploadlib.php - This class handles all aspects of fileuploading
  *
  * @author ?
- * @version 1.5
+ * @version $Id$
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package moodlecore
  */
