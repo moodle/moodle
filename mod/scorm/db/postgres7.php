@@ -187,6 +187,7 @@ function scorm_upgrade($oldversion) {
         modify_database('','ALTER TABLE ONLY prefix_scorm_scoes_track ADD UNIQUE (userid, scormid, scoid, element)');
         modify_database('','ALTER TABLE prefix_scorm ALTER browsemode SET DEFAULT 0');
         modify_database('','ALTER TABLE prefix_scorm DROP version');
+        notify('You can ignore the error above as version column does not exists, this will be properly upgraded later');
         table_column('scorm_scoes','datafromlms','datafromlms','VARCHAR','255','','');
         table_column('scorm_scoes','maxtimeallowed','maxtimeallowed','VARCHAR','19','','');
     }
@@ -225,6 +226,12 @@ function scorm_upgrade($oldversion) {
     if ($oldversion < 2005102800) {
         table_column("scorm", "", "maxattempt", "integer", "", "UNSIGNED", "1", "NOT NULL", "maxgrade"); 
     }
+
+
+    if ($oldversion < 2006021401) {
+       table_column("scorm", "", "version", "VARCHAR", "9", "", "", "NOT NULL", "reference");
+    }
+
     return true;
 }
 ?>
