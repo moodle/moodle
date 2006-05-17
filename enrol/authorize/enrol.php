@@ -139,7 +139,7 @@ class enrolment_plugin_authorize
     function cc_submit($form, $course)
     {
         global $CFG, $USER, $SESSION;
-        require_once $CFG->dirroot.'/enrol/authorize/action.php';
+        require_once $CFG->dirroot.'/enrol/authorize/authorizenetlib.php';
 
         $this->prevent_double_paid($course);
 
@@ -617,7 +617,7 @@ class enrolment_plugin_authorize
     function cron()
     {
         global $CFG;
-        require_once $CFG->dirroot.'/enrol/authorize/action.php';
+        require_once $CFG->dirroot.'/enrol/authorize/authorizenetlib.php';
 
         $oneday = 86400;
         $timenow = time();

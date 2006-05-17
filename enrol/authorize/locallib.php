@@ -5,7 +5,7 @@ if (!defined('MOODLE_INTERNAL')) {
 }
 
 require_once('const.php');
-require_once('action.php');
+require_once('authorizenetlib.php');
 
 define('ORDER_CAPTURE', 'capture');
 define('ORDER_DELETE',  'delete');
