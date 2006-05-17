@@ -65,7 +65,7 @@ function auth_get_userinfo($username) {
 
 function auth_shib_attributes(){
 //returns array containg attribute mappings between Moodle and shibboleth
-	global $CFG;
+    global $CFG;
 
     $pluginconfig   = get_config('auth/shibboleth');
     $pluginconfig   = (array) $pluginconfig;
@@ -82,6 +82,6 @@ function auth_shib_attributes(){
     }
     $moodleattributes['username']=$pluginconfig["shib_user_attribute"];
 
-	return $moodleattributes;
+    return $moodleattributes;
 }
 ?>
