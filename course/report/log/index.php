@@ -92,6 +92,7 @@
                     print_footer($course);
                 }
                 exit;
+            /*
             case 'downloadasooo':
                 if (!print_log_ooo($course, $user, $date, 'l.time DESC', $modname,
                         $modid, $modaction, $group)) {
@@ -99,6 +100,7 @@
                     print_footer($course);
                 }
                 exit;
+            */
         }
 
 

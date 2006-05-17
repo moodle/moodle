@@ -626,8 +626,9 @@ function print_log_xls($course, $user, $date, $order='l.time DESC', $modname,
 // included in the default Moodle distribution.
 
 function print_log_ooo($course, $user, $date, $order='l.time DESC', $modname,
-                        $modid, $modaction, $groupid) {    global $CFG;
-
+                        $modid, $modaction, $groupid) {
+    
+    global $CFG;
 	require_once($CFG->libdir.'/phpdocwriter/lib/include.php');
     
     if (!$logs = build_logs_array($course, $user, $date, $order, '', '',
