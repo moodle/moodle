@@ -644,10 +644,10 @@ CREATE TABLE prefix_post (
   created INTEGER NOT NULL default '0'
 );
 
-CREATE INDEX id_user_idx ON prefix_post  (id, courseid);
-CREATE INDEX post_lastmodified_idx ON prefix_post (lastmodified);
-CREATE INDEX post_module_idx ON prefix_post (module);
-CREATE INDEX post_subject_idx ON prefix_post (subject);
+CREATE INDEX prefix_id_user_idx ON prefix_post  (id, courseid);
+CREATE INDEX prefix_post_lastmodified_idx ON prefix_post (lastmodified);
+CREATE INDEX prefix_post_module_idx ON prefix_post (moduleid);
+CREATE INDEX prefix_post_subject_idx ON prefix_post (subject);
 
 CREATE TABLE prefix_tags (
   id SERIAL PRIMARY KEY,
@@ -655,8 +655,8 @@ CREATE TABLE prefix_tags (
   userid INTEGER NOT NULL default 0,
   text varchar(255) NOT NULL default ''
 );
-CREATE INDEX tags_typeuserid_idx ON prefix_tags (type, userid);
-CREATE INDEX tags_text_idx ON prefix_tags (text);
+CREATE INDEX prefix_tags_typeuserid_idx ON prefix_tags (type, userid);
+CREATE INDEX prefix_tags_text_idx ON prefix_tags (text);
 
 CREATE TABLE prefix_blog_tag_instance (
   id SERIAL PRIMARY KEY,
@@ -667,8 +667,8 @@ CREATE TABLE prefix_blog_tag_instance (
   userid integer NOT NULL default 0,
   timemodified integer NOT NULL default 0
 );
-CREATE INDEX bti_entryid_idx ON prefix_blog_tag_instance (entryid);
-CREATE INDEX bti_tagid_idx ON prefix_blog_tag_instance (tagid);
+CREATE INDEX prefix_bti_entryid_idx ON prefix_blog_tag_instance (entryid);
+CREATE INDEX prefix_bti_tagid_idx ON prefix_blog_tag_instance (tagid);
 
 INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('user', 'view', 'user', 'firstname||\' \'||lastname');
 INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('course', 'user report', 'user', 'firstname||\' \'||lastname');
