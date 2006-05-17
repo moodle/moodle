@@ -1543,6 +1543,20 @@ function main_upgrade($oldversion=0) {
                         You weren't using it anyway.  ;-)");
             }
         }
+
+        modify_database('', 'ALTER TABLE prefix_course_request
+            ALTER COLUMN "password" TYPE varchar(50),
+            ALTER COLUMN "password" SET DEFAULT \'\'');
+
+        modify_database('', 'ALTER TABLE prefix_course
+            ALTER COLUMN currency TYPE varchar(3)');
+
+        modify_database('', 'ALTER TABLE prefix_course_categories
+            ALTER COLUMN path SET DEFAULT \'\'');
+
+        modify_database('', 'ALTER TABLE prefix_log_display
+            ALTER COLUMN module TYPE varchar(20)');
+
     }
 
     
