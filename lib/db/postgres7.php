@@ -1557,6 +1557,24 @@ function main_upgrade($oldversion=0) {
         modify_database('', 'ALTER TABLE prefix_log_display
             ALTER COLUMN module TYPE varchar(20)');
 
+        modify_database("","DROP INDEX id_user_idx");
+        modify_database("","DROP INDEX post_lastmodified_idx");
+        modify_database("","DROP INDEX post_subject_idx");
+        modify_database('',"DROP INDEX bti_entryid_idx");
+        modify_database('',"DROP INDEX bti_tagid_idx");
+        modify_database('',"DROP INDEX post_module_idx");
+        modify_database('',"DROP INDEX tags_typeuserid_idx");
+        modify_database('',"DROP INDEX tags_text_idx");
+
+        modify_database("","CREATE INDEX {$CFG->prefix}id_user_idx           ON prefix_post (id, courseid);");
+        modify_database("","CREATE INDEX {$CFG->prefix}post_lastmodified_idx ON prefix_post (lastmodified);");
+        modify_database("","CREATE INDEX {$CFG->prefix}post_subject_idx      ON prefix_post (subject);");
+        modify_database('',"CREATE INDEX {$CFG->prefix}bti_entryid_idx       ON prefix_blog_tag_instance (entryid);");
+        modify_database('',"CREATE INDEX {$CFG->prefix}bti_tagid_idx         ON prefix_blog_tag_instance (tagid);");
+        modify_database('',"CREATE INDEX {$CFG->prefix}post_module_idx       ON prefix_post (moduleid);");
+        modify_database('',"CREATE INDEX {$CFG->prefix}tags_typeuserid_idx   ON prefix_tags (type, userid);");
+        modify_database('',"CREATE INDEX {$CFG->prefix}tags_text_idx         ON prefix_tags (text);");
+
     }
 
     
