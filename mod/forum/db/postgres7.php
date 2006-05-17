@@ -171,6 +171,11 @@ function forum_upgrade($oldversion) {
       table_column('forum_posts','','mailnow','integer');
   }
 
+  if ($oldversion < 2006011701) {
+      execute_sql("ALTER TABLE {$CFG->prefix}forum DROP CONSTRAINT {$CFG->prefix}forum_type_check");
+  }
+
+
   return true;
 
 }
