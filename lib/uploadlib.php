@@ -9,7 +9,7 @@
  * @package moodlecore
  */
 
-error_reporting(E_ALL ^ E_NOTICE);
+//error_reporting(E_ALL ^ E_NOTICE);
 /**
  * This class handles all aspects of fileuploading
  */
@@ -68,7 +68,11 @@ class upload_manager {
      */
     function upload_manager($inputname='', $deleteothers=false, $handlecollisions=false, $course=null, $recoverifmultiple=false, $modbytes=0, $silent=false, $allownull=false, $allownullmultiple=true) {
         
-        global $CFG;
+        global $CFG, $SITE;
+
+        if (empty($course->id)) {
+            $course = $SITE;
+        }
         
         $this->config->deleteothers = $deleteothers;
         $this->config->handlecollisions = $handlecollisions;
@@ -101,6 +105,7 @@ class upload_manager {
             if (empty($this->inputname) || $name == $this->inputname) { // if we have input name, only process if it matches.
                 $file['originalname'] = $file['name']; // do this first for the log.
                 $this->files[$name] = $file; // put it in first so we can get uploadlog out in print_upload_log.
+                $this->files[$name]['uploadlog'] = ''; // initialize error log
                 $this->status = $this->validate_file($this->files[$name]); // default to only allowing empty on multiple uploads.
                 if (!$this->status && ($this->files[$name]['error'] == 0 || $this->files[$name]['error'] == 4) && ($this->config->allownull || empty($this->inputname))) {
                     // this shouldn't cause everything to stop.. modules should be responsible for knowing which if any are compulsory.
@@ -268,6 +273,7 @@ class upload_manager {
      * @param array $exceptions Full paths of files to KEEP.
      */
     function delete_other_files($destination, $exceptions=null) {
+        $deletedsomething = false;
         if ($filestodel = get_directory_list($destination)) {
             foreach ($filestodel as $file) {
                 if (!is_array($exceptions) || !in_array($file, $exceptions)) {
@@ -400,7 +406,7 @@ class upload_manager {
      @return boolean
      */
     function get_new_filename() {
-        if (!empty($this->inputname) && count($this->files) == 1) {
+        if (!empty($this->inputname) and count($this->files) == 1 and $this->files[$this->inputname]['error'] != 4) {
             return $this->files[$this->inputname]['name'];
         }
         return false;
@@ -411,7 +417,7 @@ class upload_manager {
      * @return boolean
      */
     function get_new_filepath() {
-        if (!empty($this->inputname) && count($this->files) == 1) {
+        if (!empty($this->inputname) and count($this->files) == 1 and $this->files[$this->inputname]['error'] != 4) {
             return $this->files[$this->inputname]['fullpath'];
         }
         return false;
@@ -422,7 +428,7 @@ class upload_manager {
      * @return boolean
      */
     function get_original_filename() {
-        if (!empty($this->inputname) && count($this->files) == 1) {
+        if (!empty($this->inputname) and count($this->files) == 1 and $this->files[$this->inputname]['error'] != 4) {
             return $this->files[$this->inputname]['originalname'];
         }
         return false;
