@@ -275,7 +275,7 @@ if (isadmin()) {
 
 <?php
     $maxbytes = get_max_upload_file_size($CFG->maxbytes, $course->maxbytes);
-    if (!empty($CFG->gdversion) and $maxbytes and empty($CFG->disableuserimages)) {
+    if (!empty($CFG->gdversion) and $maxbytes and (empty($CFG->disableuserimages) or isadmin())) {
 ?>
 <tr>
     <th><?php print_string("currentpicture") ?>:</th>
