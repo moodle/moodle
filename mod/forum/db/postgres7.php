@@ -156,6 +156,7 @@ function forum_upgrade($oldversion) {
   }
 
   if ($oldversion < 2006011600) {
+      notify('forum_type does not exists, you can ignore and this will properly removed');
       execute_sql("ALTER TABLE {$CFG->prefix}forum DROP CONSTRAINT {$CFG->prefix}forum_type");
       execute_sql("ALTER TABLE {$CFG->prefix}forum ADD CONSTRAINT {$CFG->prefix}forum_type CHECK (type IN ('single','news','general','social','eachuser','teacher','qanda')) ");
   }
