@@ -8,7 +8,7 @@ CREATE TABLE prefix_enrol_authorize (
     status integer DEFAULT 0 NOT NULL,
     timecreated integer DEFAULT 0 NOT NULL,
     settletime integer DEFAULT 0 NOT NULL,
-    amount varchar(10) DEFAULT '0',
+    amount varchar(10) DEFAULT '0' NOT NULL,
     currency varchar(3) DEFAULT 'USD' NOT NULL
 );
 
