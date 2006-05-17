@@ -12,6 +12,12 @@ function rss_client_upgrade($oldversion) {
         table_column('block_rss_client','description','description','text');
     }
 
+    if ($oldversion < 2005090201) {
+        modify_database('', 'ALTER TABLE prefix_block_rss_client
+            ALTER COLUMN title SET DEFAULT \'\',
+            ALTER COLUMN description SET DEFAULT \'\'');
+    }
+
     return true;
 }
 
