@@ -312,6 +312,38 @@ function lesson_upgrade($oldversion) {
         table_column('lesson_default', '', 'mediawidth', 'int', '10', 'unsigned', '650', 'not null', 'retake');
     }
 
+    if ($oldversion < 2006050101) {
+        // drop the unused table
+        execute_sql('DROP TABLE '.$CFG->prefix.'lesson_essay', false);
+
+        // properly set the correct default values
+        modify_database('', 'ALTER TABLE prefix_lesson
+            ALTER COLUMN activitylink TYPE int8,
+            ALTER COLUMN activitylink SET DEFAULT 0,
+            ALTER COLUMN dependency TYPE int8,
+            ALTER COLUMN dependency SET DEFAULT 0');
+
+        modify_database('', 'ALTER TABLE prefix_lesson_timer
+            ALTER COLUMN lessontime SET DEFAULT 0,
+            ALTER COLUMN lessonid SET DEFAULT 0,
+            ALTER COLUMN userid SET DEFAULT 0,
+            ALTER COLUMN starttime SET DEFAULT 0');
+
+        modify_database('', 'ALTER TABLE prefix_lesson_branch
+            ALTER COLUMN lessonid SET DEFAULT 0,
+            ALTER COLUMN timeseen SET DEFAULT 0,
+            ALTER COLUMN userid SET DEFAULT 0,
+            ALTER COLUMN retry SET DEFAULT 0,
+            ALTER COLUMN pageid SET DEFAULT 0,
+            ALTER COLUMN flag SET DEFAULT 0');
+
+        modify_database('', 'ALTER TABLE prefix_lesson_high_scores
+            ALTER COLUMN nickname SET DEFAULT \'\',
+            ALTER COLUMN lessonid SET DEFAULT 0,
+            ALTER COLUMN gradeid SET DEFAULT 0,
+            ALTER COLUMN userid SET DEFAULT 0');
+    }
+
    return true;
 }
 
