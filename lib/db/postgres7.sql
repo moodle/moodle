@@ -86,9 +86,9 @@ CREATE TABLE prefix_course_display (
 CREATE INDEX prefix_course_display_courseuserid_idx ON prefix_course_display (course,userid);
 
 CREATE TABLE prefix_course_meta (
-	id SERIAL primary key,
-	parent_course integer NOT NULL,
-	child_course integer NOT NULL
+    id SERIAL primary key,
+    parent_course integer NOT NULL,
+    child_course integer NOT NULL
 );
 
 CREATE INDEX prefix_course_meta_parent_idx ON prefix_course_meta (parent_course);

@@ -1542,7 +1542,7 @@ function main_upgrade($oldversion=0) {
           `uniquelogins` int(10) unsigned NOT NULL default 0,
           PRIMARY KEY (`id`),
           KEY `courseid` (`courseid`),
-          KEY `timeend` (`timeend`)	 
+          KEY `timeend` (`timeend`)
        );");
 
         modify_database("","CREATE TABLE prefix_stats_weekly (
@@ -1561,7 +1561,7 @@ function main_upgrade($oldversion=0) {
           `uniquelogins` int(10) unsigned NOT NULL default 0,
           PRIMARY KEY (`id`),
           KEY `courseid` (`courseid`),
-          KEY `timeend` (`timeend`)	 
+          KEY `timeend` (`timeend`)
        );");
 
         modify_database("","CREATE TABLE prefix_stats_monthly (
@@ -1580,7 +1580,7 @@ function main_upgrade($oldversion=0) {
           `uniquelogins` int(10) unsigned NOT NULL default 0,
           PRIMARY KEY (`id`),
           KEY `courseid` (`courseid`),
-          KEY `timeend` (`timeend`)	 
+          KEY `timeend` (`timeend`)
        );");
 
         modify_database("","CREATE TABLE prefix_stats_user_daily (
@@ -1596,7 +1596,7 @@ function main_upgrade($oldversion=0) {
           KEY `courseid` (`courseid`),
           KEY `userid` (`userid`),
           KEY `roleid` (`roleid`),
-          KEY `timeend` (`timeend`)	
+          KEY `timeend` (`timeend`)
        );");
 
         modify_database("","CREATE TABLE prefix_stats_user_weekly (
@@ -1612,7 +1612,7 @@ function main_upgrade($oldversion=0) {
           KEY `courseid` (`courseid`),
           KEY `userid` (`userid`),
           KEY `roleid` (`roleid`),
-          KEY `timeend` (`timeend`)	
+          KEY `timeend` (`timeend`)
        );");
 
         modify_database("","CREATE TABLE prefix_stats_user_monthly (
@@ -1628,7 +1628,7 @@ function main_upgrade($oldversion=0) {
           KEY `courseid` (`courseid`),
           KEY `userid` (`userid`),
           KEY `roleid` (`roleid`),
-          KEY `timeend` (`timeend`)	
+          KEY `timeend` (`timeend`)
        );");
          
     }

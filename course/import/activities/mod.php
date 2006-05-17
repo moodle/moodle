@@ -15,7 +15,7 @@
     $strimport = get_string("importdata");
  
     $tcourseids = '';
-  	 
+ 
     if ($teachers = get_records_select('user_teachers', "userid = $USER->id AND editall = 1",'','id,course')) {
         foreach ($teachers as $teacher) {
             if ($teacher->course != $course->id && $teacher->course != SITEID){
@@ -25,7 +25,7 @@
     }
 
     $taught_courses = array();
-  	if (!empty($tcourseids)) {
+    if (!empty($tcourseids)) {
         $tcourseids = substr($tcourseids,0,-1);
         $taught_courses = get_records_list('course', 'id', $tcourseids);
     }

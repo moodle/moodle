@@ -29,7 +29,7 @@
 
 /// If data submitted, then process and store.
 
-	if ($post = data_submitted()) {
+    if ($post = data_submitted()) {
 
         $pagesize = optional_param('pagesize', 10, PARAM_INT);
         if ($pagesize < 1 ) {
@@ -54,7 +54,7 @@
 
     print_simple_box_start('center', '', '');
 
-	include('./preferences.html');
+    include('./preferences.html');
     print_simple_box_end();
 
     print_footer();

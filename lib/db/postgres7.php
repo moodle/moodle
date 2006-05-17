@@ -881,9 +881,9 @@ function main_upgrade($oldversion=0) {
     if ($oldversion < 2005012500) { // add new table for meta courses.
         /*
         modify_database("","CREATE TABLE prefix_meta_course (
-	         id SERIAL primary key,
-	         parent_course integer NOT NULL,
-	         child_course integer NOT NULL
+             id SERIAL primary key,
+             parent_course integer NOT NULL,
+             child_course integer NOT NULL
              );");
 
         modify_database("","CREATE INDEX prefix_meta_course_parent_idx ON prefix_meta_course (parent_course);");
@@ -897,9 +897,9 @@ function main_upgrade($oldversion=0) {
         execute_sql("ALTER TABLE {$CFG->prefix}course DROP COLUMN meta_course",false); // drop silently
         
         modify_database("","CREATE TABLE prefix_course_meta (
-	         id SERIAL primary key,
-	         parent_course integer NOT NULL,
-	         child_course integer NOT NULL
+             id SERIAL primary key,
+             parent_course integer NOT NULL,
+             child_course integer NOT NULL
              );");
 
         modify_database("","CREATE INDEX prefix_course_meta_parent_idx ON prefix_course_meta (parent_course);");

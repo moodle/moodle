@@ -186,7 +186,7 @@ $langdir/$currentfile")."</font></p>";
 
         echo "<textarea rows=\"$fileeditorrows\" cols=\"$fileeditorcols\" name=\"filedata\">\n";
         if (file_exists("$langdir/$currentfile")) {
-	    echo htmlspecialchars(file_get_contents("$langdir/$currentfile"));
+            echo htmlspecialchars(file_get_contents("$langdir/$currentfile"));
         } else {
             echo ($filetemplate);
         }

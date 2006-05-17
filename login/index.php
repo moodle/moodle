@@ -79,10 +79,10 @@
         // Handles the case of another Moodle site linking into a page on this site
         include($CFG->dirroot.'/login/weblinkauth.php');
         if (function_exists(weblink_auth)) {
-        	$user = weblink_auth($SESSION->wantsurl);
+            $user = weblink_auth($SESSION->wantsurl);
         }
         if ($user) {
-        	$frm->username = $user->username;
+            $frm->username = $user->username;
         } else {
             $frm = data_submitted($loginurl);
         }

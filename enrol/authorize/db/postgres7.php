@@ -93,10 +93,10 @@ function enrol_authorize_upgrade($oldversion=0) {
     }
 
     if ($oldversion < 2006010200) { // rename an_review_day
-    	if (isset($CFG->an_review_day)) {
-    	    set_config('an_capture_day', $CFG->an_review_day);
-    	    delete_records('config', 'name', 'an_review_day');
-    	}
+        if (isset($CFG->an_review_day)) {
+            set_config('an_capture_day', $CFG->an_review_day);
+            delete_records('config', 'name', 'an_review_day');
+        }
     }
 
     if ($oldversion < 2006020100) { // rename an_cutoff_hour and an_cutoff_min to an_cutoff

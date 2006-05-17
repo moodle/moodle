@@ -89,7 +89,7 @@ CREATE TABLE `prefix_course` (
   PRIMARY KEY  (`id`),
   KEY `category` (`category`),
   KEY `idnumber` (`idnumber`),
-  KEY `shortname` (`shortname`)	 
+  KEY `shortname` (`shortname`)
 ) TYPE=MyISAM;
 # --------------------------------------------------------
 
@@ -776,7 +776,7 @@ CREATE TABLE prefix_stats_weekly (
    `uniquelogins` int(10) unsigned NOT NULL default 0,
    PRIMARY KEY (`id`),
    KEY `courseid` (`courseid`),
-   KEY `timeend` (`timeend`)	 
+   KEY `timeend` (`timeend`)
 );
 
 CREATE TABLE prefix_stats_monthly (
@@ -795,7 +795,7 @@ CREATE TABLE prefix_stats_monthly (
    `uniquelogins` int(10) unsigned NOT NULL default 0,
    PRIMARY KEY (`id`),
    KEY `courseid` (`courseid`),
-   KEY `timeend` (`timeend`)	 
+   KEY `timeend` (`timeend`)
 );
 
 CREATE TABLE prefix_stats_user_daily (
@@ -811,7 +811,7 @@ CREATE TABLE prefix_stats_user_daily (
    KEY `courseid` (`courseid`),
    KEY `userid` (`userid`),
    KEY `roleid` (`roleid`),
-   KEY `timeend` (`timeend`)	
+   KEY `timeend` (`timeend`)
 );
 
 CREATE TABLE prefix_stats_user_weekly (
@@ -827,7 +827,7 @@ CREATE TABLE prefix_stats_user_weekly (
    KEY `courseid` (`courseid`),
    KEY `userid` (`userid`),
    KEY `roleid` (`roleid`),
-   KEY `timeend` (`timeend`)	
+   KEY `timeend` (`timeend`)
 );
 
 CREATE TABLE prefix_stats_user_monthly (
@@ -843,7 +843,7 @@ CREATE TABLE prefix_stats_user_monthly (
    KEY `courseid` (`courseid`),
    KEY `userid` (`userid`),
    KEY `roleid` (`roleid`),
-   KEY `timeend` (`timeend`)	
+   KEY `timeend` (`timeend`)
 );
 
 #

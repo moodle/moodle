@@ -36,7 +36,7 @@
             $form = stripslashes_safe($form);
         }
 
-    	// !! no db access using data from $form beyond this point !!
+        // !! no db access using data from $form beyond this point !!
     }
 
 //    print_simple_box(get_string('courserequestintro'),'center');

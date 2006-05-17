@@ -285,7 +285,7 @@ function match_referer($goodreferer = '') {
     if (empty($goodreferer)) {
         $goodreferer = qualified_me();
         // try to remove everything after ? because POST url may contain GET parameters (SID rewrite, etc.)
-	    $pos = strpos($goodreferer, '?');
+        $pos = strpos($goodreferer, '?');
         if ($pos !== FALSE) {
             $goodreferer = substr($goodreferer, 0, $pos);
         }
@@ -2460,8 +2460,8 @@ function print_navigation ($navigation) {
 
    if ($navigation) {
        //Accessibility: breadcrumb links now in a list, &raquo; replaced with image.
-   	   $nav_text = get_string('youarehere','access');
-   	   echo '<h2 class="accesshide">'.$nav_text.",</h2><ul>\n";
+       $nav_text = get_string('youarehere','access');
+       echo '<h2 class="accesshide">'.$nav_text.",</h2><ul>\n";
        if (! $site = get_site()) {
            $site->shortname = get_string('home');
        }
