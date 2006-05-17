@@ -77,7 +77,7 @@ function enrol_authorize_upgrade($oldversion=0) {
         table_column('enrol_authorize', 'timeupdated', 'settletime', 'integer', '10', 'unsigned', '0', 'not null');
         $status = AN_STATUS_AUTH | AN_STATUS_CAPTURE;
         if ($settlements = get_records_select('enrol_authorize', "status='$status'", '', 'id, settletime')) {
-            include_once("$CFG->dirroot/enrol/authorize/action.php");
+            include_once("$CFG->dirroot/enrol/authorize/authorizenetlib.php");
             foreach ($settlements as $settlement) {
                 execute_sql("UPDATE {$CFG->prefix}enrol_authorize SET settletime = '" .
                 getsettletime($settlement->settletime) . "' WHERE id = '$settlement->id'", false);
