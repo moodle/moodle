@@ -241,9 +241,9 @@ function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_y
             
             //Accessibility: functionality moved to calendar_get_popup.
             if($display->thismonth && $day == $d) {
-            	$popup = calendar_get_popup(true, $events[$eventid]->timestart, $popupcontent);
+                $popup = calendar_get_popup(true, $events[$eventid]->timestart, $popupcontent);
             } else {
-            	$popup = calendar_get_popup(false, $events[$eventid]->timestart, $popupcontent);
+                $popup = calendar_get_popup(false, $events[$eventid]->timestart, $popupcontent);
             } 
 
             // Class and cell content
@@ -279,15 +279,15 @@ function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_y
         }
 
         // Special visual fx for today
-        //Accessibility: hidden text for today, and popup.	
+        //Accessibility: hidden text for today, and popup.
         if($display->thismonth && $day == $d) {
             $class .= ' today';
             $today = get_string('today', 'calendar').' '.userdate(time(), get_string('strftimedayshort'));
                         
             if(! isset($eventsbyday[$day])) {
-                $class .= ' eventnone';            	
-            	$popup = calendar_get_popup(true, false);
-            	$cell = '<a href="#" '.$popup.'>'.$day.'</a>';
+                $class .= ' eventnone';
+                $popup = calendar_get_popup(true, false);
+                $cell = '<a href="#" '.$popup.'>'.$day.'</a>';
             }
             $cell = '<span class="accesshide">'.$today.' </span>'.$cell;
         }
@@ -327,13 +327,13 @@ function calendar_get_popup($is_today, $event_timestart, $popupcontent='') {
     if (false === $event_timestart) {
         $popupcaption .= userdate(time(), get_string('strftimedayshort'));
         $popupcontent = get_string('eventnone', 'calendar');
-          	
+
     } else {
         $popupcaption .= get_string('eventsfor', 'calendar', userdate($event_timestart, get_string('strftimedayshort')));
     }
     $popupcontent = str_replace("'", "\'", htmlspecialchars($popupcontent));
     $popup = 'onmouseover="return overlib(\''.$popupcontent.'\', CAPTION, \''.$popupcaption.'\');" onmouseout="return nd();"';
-    return $popup;	
+    return $popup;
 }
 
 function calendar_get_upcoming($courses, $groups, $users, $daysinfuture, $maxevents, $fromtime=0) {

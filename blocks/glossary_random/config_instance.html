@@ -12,26 +12,26 @@
 <td><input type="text" name="title" size="50" value="<?php p($this->config->title) ?>" /></td>
 </tr>
 
-<tr valign=top>	
+<tr valign=top>
 <td align=right><?php print_string("select_glossary","block_glossary_random") ?>:</td>
 <td><?php choose_from_menu($glossaries,"glossary",$this->config->glossary) ?></td>
 </tr>
 
-<tr valign=top>	
+<tr valign=top>
 <td align=right><?php print_string("refresh","block_glossary_random") ?>:</td>
 <td><input type="text" name="refresh" size="5" value="<?php p($this->config->refresh) ?>" /></td>
 </tr>
 
-<tr valign=top>	
-<td align=right><?php print_string("type","block_glossary_random") ?>:</td>	
+<tr valign=top>
+<td align=right><?php print_string("type","block_glossary_random") ?>:</td>
 <td><?php
      choose_from_menu($type, "type", $this->config->type, "");
      helpbutton("",get_string("type","block_glossary_random"),"moodle",true,false,get_string("typehelp","block_glossary_random"));
      ?></td>
 </tr> 
 
-<tr valign=top>	
-<td align=right><?php print_string("showconcept","block_glossary_random") ?>:</td>	
+<tr valign=top>
+<td align=right><?php print_string("showconcept","block_glossary_random") ?>:</td>
 <td>
 <input type="hidden" name="showconcept" value="0" />
 <input type="checkbox" name="showconcept" value="1" <?php if(!empty($this->config->showconcept)) echo 'checked="checked"'; ?> /></td>

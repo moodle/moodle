@@ -110,11 +110,11 @@ class block_online_users extends block_base {
         //Now, we have in users, the list of users to show
         //Because they are online
         if (!empty($users)) {
-        	//Accessibility: Don't want 'Alt' text for the user picture; DO want it for the envelope/message link (existing lang string).
-        	//Accessibility: Converted <div> to <ul>, inherit existing classes & styles.
-        	$this->content->text .= "<ul class='list'>\n";
+            //Accessibility: Don't want 'Alt' text for the user picture; DO want it for the envelope/message link (existing lang string).
+            //Accessibility: Converted <div> to <ul>, inherit existing classes & styles.
+            $this->content->text .= "<ul class='list'>\n";
             foreach ($users as $user) {
-            	$this->content->text .= '<li class="listentry">';
+                $this->content->text .= '<li class="listentry">';
                 $timeago = format_time(time() - max($user->timeaccess, $user->lastaccess)); //bruno to calculate correctly on frontpage 
                 $this->content->text .= print_user_picture($user->id, $this->instance->pageid, $user->picture, 16, true).' ';
                 $this->content->text .= '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.$this->instance->pageid.'" title="'.$timeago.'">'.$user->fullname.'</a>';

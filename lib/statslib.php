@@ -846,7 +846,7 @@ function stats_fix_zeros($stats,$timeafter,$timestr,$line2=true,$line3=false) {
 
     $timestr = str_replace('user_','',$timestr); // just in case.
     $fun = 'stats_get_base_'.$timestr;
-	
+    
     $now = $fun();
 
     $times = array();
@@ -907,7 +907,7 @@ function stats_check_uptodate($courseid=0) {
     global $CFG;
 
     if (empty($courseid)) {
-	$courseid = SITEID;
+        $courseid = SITEID;
     }
 
     $latestday = stats_get_start_from('daily');

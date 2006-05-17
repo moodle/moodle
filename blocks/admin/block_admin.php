@@ -113,7 +113,7 @@ class block_admin extends block_list {
             $fullname = fullname($USER, true);
             $editmyprofile = '<a title="'.$fullname.'" href="'.$CFG->wwwroot.'/user/edit.php?id='.$USER->id.'&amp;course='.$this->instance->pageid.'">'.get_string('editmyprofile').'</a>';
             if (empty($USER->description)) {
-            	//Accessibility: replace non-standard <blink> with CSS (<a> makes title visible in IE).
+                //Accessibility: replace non-standard <blink> with CSS (<a> makes title visible in IE).
                 $text = get_string('profile').' '.get_string('missingdescription');
                 $this->content->items[]= $editmyprofile.' <a title="'.$text.'" class="useredit blink">*<span class="accesshide">'.$text.'</span></a>';
             } else {
@@ -211,7 +211,7 @@ class block_admin extends block_list {
             $editmyprofile = '<a title="'.$fullname.'" href="'.$CFG->wwwroot.'/user/edit.php?id='.
                              $USER->id.'&amp;course='.$this->instance->pageid.'">'.get_string('editmyprofile').'</a>';
             if (empty($USER->description)) {
-            	//Accessibility: replace non-standard <blink> with CSS (<a> makes title visible in IE).
+                //Accessibility: replace non-standard <blink> with CSS (<a> makes title visible in IE).
                 $text = get_string('profile').' '.get_string('missingdescription');
                 $this->content->items[]= $editmyprofile.' <a title="'.$text.'" class="useredit blink">*<span class="accesshide">'.$text.'</span></a>';
             } else {

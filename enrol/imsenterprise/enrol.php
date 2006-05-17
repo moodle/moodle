@@ -529,7 +529,7 @@ function process_person_tag($tagcontents){
     }
     if($CFG->enrol_imssourcedidfallback && trim($person->username)==''){
       // This is the point where we can fall back to useing the "sourcedid" if "userid" is not supplied
-	 // NB We don't use an "elseif" because the tag may be supplied-but-empty
+      // NB We don't use an "elseif" because the tag may be supplied-but-empty
         $person->username = $person->idnumber;
     }
     if(preg_match('{<email>(.*?)</email>}is', $tagcontents, $matches)){

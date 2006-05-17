@@ -150,7 +150,7 @@
             unlink( "{$this->temp_dir}/$filename.gif" );
             unlink( "{$this->temp_dir}/$filename.aux" );
             unlink( "{$this->temp_dir}/$filename.log" );
-	        return;
+            return;
         }
 
     }

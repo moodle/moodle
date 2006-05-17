@@ -110,7 +110,7 @@ function filter_phrases ($text, &$link_array, $ignoretagsopen=NULL, $ignoretagsc
         }
 
     /// All this work has to be done ONLY it it hasn't been done before
-	if (!$linkobject->work_calculated) {
+    if (!$linkobject->work_calculated) {
             if (!isset($linkobject->hreftagbegin) or !isset($linkobject->hreftagend)) {
                 $linkobject->work_hreftagbegin = '<span class="highlight"';
                 $linkobject->work_hreftagend   = '</span>';
