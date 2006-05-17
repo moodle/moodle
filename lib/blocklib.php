@@ -240,7 +240,7 @@ function blocks_have_content(&$pageblocks, $position) {
         if(!$obj->is_empty()) {
             // cache rec and obj 
             // for blocks_print_group()
-            $instance->rec = $rec;
+            $instance->rec = $record;
             $instance->obj = $obj; 
             return true;
         }
