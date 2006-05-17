@@ -156,21 +156,6 @@ CREATE TABLE prefix_lesson_branch
       timeseen INT8  not null default '0'
     );
 
-CREATE TABLE prefix_lesson_essay
-    ( id SERIAL8 PRIMARY KEY,
-      lessonid INT8  not null default '0',
-      userid INT8  not null default '0',
-      pageid INT8  not null default '0',
-      answerid INT8  not null default '0',
-      try INT8  not null default '0',
-      answer text not null default '',
-      graded INT  not null default 0,
-      score INT8  not null default 0,
-      response text not null default '',
-      sent INT  not null default 0,
-      timesubmitted INT8  not null default '0'
-    );
-
 CREATE TABLE prefix_lesson_high_scores
     ( id SERIAL8 PRIMARY KEY,
       lessonid INT8  not null default '0',
