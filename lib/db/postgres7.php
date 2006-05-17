@@ -1533,6 +1533,18 @@ function main_upgrade($oldversion=0) {
     if ($oldversion < 2006050500) {
         table_column('log', 'action', 'action', 'varchar', '40', '', '', 'not null');
     }
+
+    if ($oldversion < 2006050502) {  // Close down the Dialogue module, we are removing it from CVS.
+        if (!file_exists($CFG->dirroot.'/mod/dialogue/lib.php')) {
+            if (!count_records('dialogue_conversations')) {   // no data, drop the extra tables
+                execute_sql('DROP TABLE '.$CFG->prefix.'dialogue_conversations', false);
+                execute_sql('DROP TABLE '.$CFG->prefix.'dialogue_entries', false);
+                notify("The Dialogue module has been discontinued and removed from your site.  
+                        You weren't using it anyway.  ;-)");
+            }
+        }
+    }
+
     
     return $result;
 }
