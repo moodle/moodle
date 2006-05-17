@@ -138,6 +138,9 @@
             $usernew->username = moodle_strtolower($usernew->username);
         }
 
+        if (!empty($_FILES) and !(empty($CFG->disableuserimages) or isadmin())) {
+            error('Users can not update profile images!');
+        }
 
         require_once($CFG->dirroot.'/lib/uploadlib.php');
         $um = new upload_manager('imagefile',false,false,null,false,0,true,true);
