@@ -145,6 +145,14 @@ function wiki_upgrade($oldversion) {
         execute_sql("ALTER TABLE {$CFG->prefix}wiki_pages DROP COLUMN refs_base64");
     }
 
+    if ($oldversion < 2006042801) {
+        modify_database('', 'ALTER TABLE prefix_wiki_pages 
+            ALTER COLUMN content SET DEFAULT \'\', 
+            ALTER COLUMN refs SET DEFAULT \'\', 
+            ALTER COLUMN content DROP NOT NULL,
+            ALTER COLUMN refs DROP NOT NULL');
+    }
+
     return true;
 }
 
