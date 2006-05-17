@@ -1002,7 +1002,8 @@ function quiz_upgrade($oldversion) {
     }
 
     if ($oldversion < 2006021400) {
-        modify_database('','CREATE UNIQUE INDEX prefix_quiz_attempts_uniqueid_uk ON prefix_quiz_attempts (uniqueid);');
+        // modify_database('','CREATE UNIQUE INDEX prefix_quiz_attempts_uniqueid_uk ON prefix_quiz_attempts (uniqueid);');
+        // this index will not be created since uniqueid was not added, proper upgrade will be on 2006042801
     }
 
     if ($oldversion < 2006021501) {
@@ -1206,7 +1207,7 @@ function quiz_upgrade($oldversion) {
         }
     }
 
-    if ($oldversion < 2006051300) {
+    if ($oldversion < 2006051300) {  // this block also exec'ed by 2006042801 on MOODLE_16_STABLE
         // The newgraded field must always point to a valid state
         modify_database("","UPDATE prefix_question_sessions SET newgraded = newest where newgraded = '0'");
 
@@ -1219,6 +1220,28 @@ function quiz_upgrade($oldversion) {
         modify_database ("", "INSERT INTO prefix_question_attempts (id)
                                    SELECT uniqueid
                                    FROM prefix_quiz_attempts;");
+    }
+
+    if ($oldversion < 2006051700) { // this block also exec'd by 2006042802 on MOODLE_16_STABLE
+
+        notice("The next set of upgrade operations may report an 
+                error if you are upgrading from v1.6. 
+                This error mesage is normal, and can be ignored.");
+        // this block is taken from mysql.php 2005070202
+        // add new unique id to prepare the way for lesson module to have its own attempts table
+        table_column('quiz_attempts', '', 'uniqueid', 'integer', '10', 'unsigned', '0', 'not null', 'id');
+        // initially we can use the id as the unique id because no other modules use attempts yet.
+        execute_sql("UPDATE {$CFG->prefix}quiz_attempts SET uniqueid = id", false);
+        // we set $CFG->attemptuniqueid to the next available id
+        $record = get_record_sql("SELECT nextval('{$CFG->prefix}quiz_attempts_id_seq')");
+        set_config('attemptuniqueid', empty($record->nextid) ? 1 : $record->nextid);
+        // the above will be a race condition, see bug 5468
+        modify_database('','CREATE UNIQUE INDEX prefix_quiz_attempts_uniqueid_uk ON prefix_quiz_attempts (uniqueid);');
+
+        // dropping unused tables
+        execute_sql('DROP TABLE '.$CFG->prefix.'question_essay_states');
+        execute_sql('DROP TABLE '.$CFG->prefix.'question_essay');
+        execute_sql('DROP TABLE '.$CFG->prefix.'quiz_attemptonlast_datasets');
     }
 
     return true;
