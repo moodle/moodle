@@ -1239,6 +1239,142 @@ function quiz_upgrade($oldversion) {
         execute_sql('DROP TABLE '.$CFG->prefix.'question_essay_states');
         execute_sql('DROP TABLE '.$CFG->prefix.'question_essay');
         execute_sql('DROP TABLE '.$CFG->prefix.'quiz_attemptonlast_datasets');
+
+        modify_database('', 'ALTER TABLE prefix_question
+            ALTER COLUMN qtype SET DEFAULT \'0\',
+            ALTER COLUMN version SET DEFAULT \'\'');
+
+        // recreate the indexes that was not moved while quiz was transitioning to question lib
+        notify('Errors on indexes not being able to drop or already exists can be ignored as they may have been properly upgraded previously');
+        modify_database('','DROP INDEX prefix_quiz_numerical_answer_idx');
+        modify_database('','DROP INDEX prefix_quiz_numerical_question_idx');
+        modify_database('','CREATE INDEX prefix_question_numerical_question_idx ON prefix_question_numerical (question)');
+        modify_database('','CREATE INDEX prefix_question_numerical_answer_idx ON prefix_question_numerical (answer)');
+        modify_database('','DROP INDEX prefix_quiz_question_datasets_question_datasetdefinition_idx');
+        modify_database('','CREATE INDEX prefix_question_datasets_question_datasetdefinition_idx ON prefix_question_datasets (question, datasetdefinition)');
+
+        modify_database('','DROP INDEX prefix_quiz_multichoice_question_idx');
+        modify_database('','CREATE INDEX prefix_question_multichoice_question_idx ON prefix_question_multichoice (question)');
+
+        modify_database('','DROP INDEX prefix_quiz_categories_course_idx');
+        modify_database('','CREATE INDEX prefix_question_categories_course_idx ON prefix_question_categories (course)');
+
+        modify_database('','DROP INDEX prefix_quiz_shortanswer_question_idx');
+        modify_database('','CREATE INDEX prefix_question_shortanswer_question_idx ON prefix_question_shortanswer (question)');
+
+        modify_database('','DROP INDEX prefix_quiz_questions_category_idx');
+        modify_database('','CREATE INDEX prefix_question_category_idx ON prefix_question (category)');
+
+        modify_database('','DROP INDEX prefix_quiz_calculated_answer_idx');
+        modify_database('','DROP INDEX prefix_quiz_calculated_question_idx');
+        modify_database('','CREATE INDEX prefix_question_calculated_question_idx ON prefix_question_calculated (question)');
+        modify_database('','CREATE INDEX prefix_question_calculated_answer_idx ON prefix_question_calculated (answer)');
+
+        modify_database('','DROP INDEX prefix_quiz_answers_question_idx');
+        modify_database('','CREATE INDEX prefix_question_answers_question_idx ON prefix_question_answers (question)');
+
+        modify_database('','DROP INDEX prefix_quiz_dataset_items_definition_idx');
+        modify_database('','CREATE INDEX prefix_question_dataset_items_definition_idx ON prefix_question_dataset_items (definition)');
+
+        modify_database('','DROP INDEX prefix_quiz_numerical_units_question_idx');
+        modify_database('','CREATE INDEX prefix_question_numerical_units_question_idx ON prefix_question_numerical_units (question)');
+
+        modify_database('','DROP INDEX prefix_quiz_randomsamatch_question_idx');
+        modify_database('','CREATE INDEX prefix_question_randomsamatch_question_idx ON prefix_question_randomsamatch (question)');
+
+        modify_database('','DROP INDEX prefix_quiz_states_question_idx');
+        modify_database('','DROP INDEX prefix_quiz_states_attempt_idx');
+        modify_database('','CREATE INDEX prefix_question_states_question_idx ON prefix_question_states (question)');
+        modify_database('','CREATE INDEX prefix_question_states_attempt_idx ON prefix_question_states (attempt)');
+
+        modify_database('','DROP INDEX prefix_quiz_match_question_idx');
+        modify_database('','CREATE INDEX prefix_question_match_question_idx ON prefix_question_match (question)');
+
+        modify_database('','DROP INDEX prefix_quiz_match_sub_question_idx');
+        modify_database('','CREATE INDEX prefix_question_match_sub_question_idx ON prefix_question_match_sub (question)');
+
+        modify_database('','DROP INDEX prefix_quiz_multianswers_question_idx');
+        modify_database('','CREATE INDEX prefix_question_multianswer_question_idx ON prefix_question_multianswer (question)');
+
+        modify_database('','DROP INDEX prefix_quiz_dataset_definitions_category_idx');
+        modify_database('','CREATE INDEX prefix_question_dataset_definitions_category_idx ON prefix_question_dataset_definitions (category)');
+
+        modify_database('','CREATE INDEX prefix_log_timecoursemoduleaction_idx ON prefix_log ("time", course, module, "action")');
+        modify_database('','CREATE INDEX prefix_log_coursemoduleaction_idx ON prefix_log (course, module, "action")');
+
+        modify_database('','DROP INDEX prefix_quiz_rqp_question_idx');
+        modify_database('','CREATE INDEX prefix_question_rqp_question_idx ON prefix_question_rqp (question)');
+
+        modify_database('','DROP INDEX prefix_quiz_truefalse_question_idx');
+        modify_database('','CREATE INDEX prefix_question_truefalse_question_idx ON prefix_question_truefalse (question)');
+        notify('End of upgrading of indexes');
+
+
+        notify('Renaming primary key names');
+        modify_database('', 'ALTER TABLE prefix_question_numerical DROP CONSTRAINT prefix_quiz_numerical_pkey');
+        modify_database('', 'ALTER TABLE prefix_question_numerical ADD CONSTRAINT prefix_question_numerical_pkey PRIMARY KEY (id)');
+
+        modify_database('', 'ALTER TABLE prefix_question_datasets DROP CONSTRAINT prefix_quiz_question_datasets_pkey');
+        modify_database('', 'ALTER TABLE prefix_question_datasets ADD CONSTRAINT prefix_question_datasets_pkey PRIMARY KEY (id)');
+
+        modify_database('', 'ALTER TABLE prefix_question_multichoice DROP CONSTRAINT prefix_quiz_multichoice_pkey');
+        modify_database('', 'ALTER TABLE prefix_question_multichoice ADD CONSTRAINT prefix_question_multichoice_pkey PRIMARY KEY (id)');
+
+        modify_database('', 'ALTER TABLE prefix_question_rqp_states	DROP CONSTRAINT prefix_quiz_rqp_states_pkey');
+        modify_database('', 'ALTER TABLE prefix_question_rqp_states	ADD CONSTRAINT prefix_question_rqp_states_pkey PRIMARY KEY (id)');
+
+        modify_database('', 'ALTER TABLE prefix_question_categories	DROP CONSTRAINT prefix_quiz_categories_pkey');
+        modify_database('', 'ALTER TABLE prefix_question_categories	ADD CONSTRAINT prefix_question_categories_pkey PRIMARY KEY (id)');
+
+        modify_database('', 'ALTER TABLE prefix_question_shortanswer DROP CONSTRAINT prefix_quiz_shortanswer_pkey');
+        modify_database('', 'ALTER TABLE prefix_question_shortanswer ADD CONSTRAINT prefix_question_shortanswer_pkey PRIMARY KEY (id)');
+
+        modify_database('', 'ALTER TABLE prefix_question DROP CONSTRAINT prefix_quiz_questions_pkey');
+        modify_database('', 'ALTER TABLE prefix_question ADD CONSTRAINT prefix_question_pkey PRIMARY KEY (id)');
+
+        modify_database('', 'ALTER TABLE prefix_question_sessions DROP CONSTRAINT prefix_quiz_newest_states_pkey');
+        modify_database('', 'ALTER TABLE prefix_question_sessions ADD CONSTRAINT prefix_question_sessions_pkey PRIMARY KEY (id)');
+
+        modify_database('', 'ALTER TABLE prefix_question_calculated	DROP CONSTRAINT prefix_quiz_calculated_pkey');
+        modify_database('', 'ALTER TABLE prefix_question_calculated	ADD CONSTRAINT prefix_question_calculated_pkey PRIMARY KEY (id)');
+
+        modify_database('', 'ALTER TABLE prefix_question_answers DROP CONSTRAINT prefix_quiz_answers_pkey');
+        modify_database('', 'ALTER TABLE prefix_question_answers ADD CONSTRAINT prefix_question_answers_pkey PRIMARY KEY (id)');
+
+        modify_database('', 'ALTER TABLE prefix_question_dataset_items DROP CONSTRAINT prefix_quiz_dataset_items_pkey');
+        modify_database('', 'ALTER TABLE prefix_question_dataset_items ADD CONSTRAINT prefix_question_dataset_items_pkey PRIMARY KEY (id)');
+
+        modify_database('', 'ALTER TABLE prefix_question_numerical_units DROP CONSTRAINT prefix_quiz_numerical_units_pkey');
+        modify_database('', 'ALTER TABLE prefix_question_numerical_units ADD CONSTRAINT prefix_question_numerical_units_pkey PRIMARY KEY (id)');
+
+        modify_database('', 'ALTER TABLE prefix_question_randomsamatch DROP CONSTRAINT prefix_quiz_randomsamatch_pkey');
+        modify_database('', 'ALTER TABLE prefix_question_randomsamatch ADD CONSTRAINT prefix_question_randomsamatch_pkey PRIMARY KEY (id)');
+
+        modify_database('', 'ALTER TABLE prefix_question_rqp_types DROP CONSTRAINT prefix_quiz_rqp_types_pkey');
+        modify_database('', 'ALTER TABLE prefix_question_rqp_types ADD CONSTRAINT prefix_question_rqp_types_pkey PRIMARY KEY (id)');
+
+        modify_database('', 'ALTER TABLE prefix_question_states DROP CONSTRAINT prefix_quiz_states_pkey');
+        modify_database('', 'ALTER TABLE prefix_question_states ADD CONSTRAINT prefix_question_states_pkey PRIMARY KEY (id)');
+
+        modify_database('', 'ALTER TABLE prefix_question_match DROP CONSTRAINT prefix_quiz_match_pkey');
+        modify_database('', 'ALTER TABLE prefix_question_match ADD CONSTRAINT prefix_question_match_pkey PRIMARY KEY (id)');
+
+        modify_database('', 'ALTER TABLE prefix_question_match_sub DROP CONSTRAINT prefix_quiz_match_sub_pkey');
+        modify_database('', 'ALTER TABLE prefix_question_match_sub ADD CONSTRAINT prefix_question_match_sub_pkey PRIMARY KEY (id)');
+
+        modify_database('', 'ALTER TABLE prefix_question_multianswer DROP CONSTRAINT prefix_quiz_multianswers_pkey');
+        modify_database('', 'ALTER TABLE prefix_question_multianswer ADD CONSTRAINT prefix_question_multianswer_pkey PRIMARY KEY (id)');
+
+        modify_database('', 'ALTER TABLE prefix_question_dataset_definitions DROP CONSTRAINT prefix_quiz_dataset_definitions_pkey');
+        modify_database('', 'ALTER TABLE prefix_question_dataset_definitions ADD CONSTRAINT prefix_question_dataset_definitions_pkey PRIMARY KEY (id)');
+
+        modify_database('', 'ALTER TABLE prefix_question_rqp DROP CONSTRAINT prefix_quiz_rqp_pkey');
+        modify_database('', 'ALTER TABLE prefix_question_rqp ADD CONSTRAINT prefix_question_rqp_pkey PRIMARY KEY (id)');
+
+        modify_database('', 'ALTER TABLE prefix_question_truefalse DROP CONSTRAINT prefix_quiz_truefalse_pkey');
+        modify_database('', 'ALTER TABLE prefix_question_truefalse ADD CONSTRAINT prefix_question_truefalse_pkey PRIMARY KEY (id)');
+        notify('End of renaming primary keys');
+
     }
 
 
