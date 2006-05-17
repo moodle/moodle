@@ -181,6 +181,7 @@ function scorm_upgrade($oldversion) {
         modify_database('','CREATE INDEX prefix_scorm_scoes_track_scorm_idx ON  prefix_scorm_scoes_track (scormid);');
         modify_database('','CREATE INDEX prefix_scorm_scoes_track_user_idx ON  prefix_scorm_scoes_track (userid);');
         modify_database('','CREATE INDEX prefix_scorm_scoes_track_sco_idx ON  prefix_scorm_scoes_track (scoid);');
+        notify('The above errors can be ignored if the indexes already exists, its possible that it was cleaned up already before running this upgrade');
         execute_sql("DROP INDEX {$CFG->prefix}scorm_scoes_track_track_idx", false);
         modify_database('','ALTER TABLE ONLY prefix_scorm_scoes_track DROP CONSTRAINT prefix_scorm_scoes_track_pkey');
         modify_database('','ALTER TABLE ONLY prefix_scorm_scoes_track ADD CONSTRAINT prefix_scorm_scoes_track_pkey PRIMARY KEY (id)');

@@ -93,6 +93,7 @@ function choice_upgrade($oldversion) {
 
     if ($oldversion < 2005041501) { // Mass cleanup of bad upgrade scripts
         modify_database('','CREATE INDEX prefix_choice_answers_choice_idx ON prefix_choice_answers (choiceid)');
+        notify('The above error can be ignored if the index already exists, its possible that it was cleaned up already before running this upgrade');
         modify_database('','ALTER TABLE prefix_choice ALTER display SET NOT NULL');
         modify_database('','ALTER TABLE prefix_choice ALTER limitanswers SET NOT NULL');
         modify_database('','ALTER TABLE prefix_choice_answers ALTER choiceid SET NOT NULL');

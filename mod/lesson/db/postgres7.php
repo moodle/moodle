@@ -253,6 +253,7 @@ function lesson_upgrade($oldversion) {
         table_column('lesson','maxhighscores','maxhighscores','integer','16');
         modify_database('','ALTER TABLE prefix_lesson ALTER displayleft SET NOT NULL');
         table_column('lesson','','minquestions','integer','8');
+        notify('The above error can be ignored if the column already exists, its possible that it was cleaned up already before running this upgrade');
         table_column('lesson','maxtime','maxtime','integer','16');
         modify_database('','ALTER TABLE prefix_lesson ALTER ongoing SET NOT NULL');
         modify_database('','ALTER TABLE prefix_lesson ALTER password SET NOT NULL');
