@@ -224,7 +224,10 @@ function blocks_have_content(&$pageblocks, $position) {
     if (empty($pageblocks) || !is_array($pageblocks) || !array_key_exists($position,$pageblocks)) {
         return false;
     }
-    foreach($pageblocks[$position] as $instance) {
+    // use a for() loop to get references to the array elements
+    // foreach() cannot fetch references in PHP v4.x
+    for ($n=0; $n<count($pageblocks[$position]);$n++) {
+        $instance = &$pageblocks[$position][$n];
         if(!$instance->visible) {
             continue;
         }
@@ -235,6 +238,10 @@ function blocks_have_content(&$pageblocks, $position) {
             continue;
         }
         if(!$obj->is_empty()) {
+            // cache rec and obj 
+            // for blocks_print_group()
+            $instance->rec = $rec;
+            $instance->obj = $obj; 
             return true;
         }
     }
@@ -263,7 +270,15 @@ function blocks_print_group(&$page, &$pageblocks, $position) {
     $isediting = $page->user_is_editing();
 
     foreach($pageblocks[$position] as $instance) {
-        $block = blocks_get_record($instance->blockid);
+
+        // $instance may have ->rec and ->obj
+        // cached from when we walked $pageblocks
+        // in blocks_have_content()
+        if (empty($instance->rec)) {
+            $block = blocks_get_record($instance->blockid);
+        } else {
+            $block = $instance->rec;
+        }
 
         if (empty($block)) {
             // Block doesn't exist! We should delete this instance!
@@ -274,10 +289,14 @@ function blocks_print_group(&$page, &$pageblocks, $position) {
             // Disabled by the admin
             continue;
         }
-
-        if (!$obj = block_instance($block->name, $instance)) {
-            // Invalid block
-            continue;
+            
+        if (empty($instance->obj)) {
+            if (!$obj = block_instance($block->name, $instance)) {
+                // Invalid block
+                continue;
+            }
+        } else {
+            $obj = $instance->obj;
         }
 
         $editalways = $page->edit_always();
