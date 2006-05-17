@@ -114,12 +114,11 @@
         $quizexportdir = get_string( 'exportfilename', 'quiz' );
         $downloadextra_str = get_string( 'downloadextra','quiz' );
         if ($CFG->slasharguments) {
-          $efile = "{$CFG->wwwroot}/file.php/$course->id/$quizexportdir/$exportfilename".$file_ext;
+          $efile = "{$CFG->wwwroot}/file.php/$course->id/$quizexportdir/$exportfilename".$file_ext."?forcedownload=1";
         }
         else {
-          $efile = "{$CFG->wwwroot}/file.php?file=/$course->id/$quizexportdir/$exportfilename".$file_ext;
+          $efile = "{$CFG->wwwroot}/file.php?file=/$course->id/$quizexportdir/$exportfilename".$file_ext."&forcedownload=1";
         }
-	$efile .= "?forcedownload=1";
         echo "</p><center><a href=\"$efile\">$download_str</a></center></p>";
         echo "</p><center><font size=\"-1\">$downloadextra_str</font></center></p>";
 
