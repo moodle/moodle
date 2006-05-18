@@ -188,7 +188,7 @@ function authorize_print_order_details($orderno)
 
     echo "<form action=\"index.php\" method=\"post\">\n";
     echo "<input type=\"hidden\" name=\"order\" value=\"$orderno\">\n";
-    echo "<input type=\"hidden\" name=\"sesskey\" value=\"" . sesskey() . "\" />"; 
+    echo "<input type=\"hidden\" name=\"sesskey\" value=\"" . sesskey() . "\" />";
 
     $settled = settled($order);
     $status = authorize_get_status_action($order);
@@ -280,8 +280,8 @@ function authorize_print_order_details($orderno)
             if (($amount > $upto) || empty($confirm)) {
                 $a->upto = $upto;
                 $strcanbecredit = get_string('canbecredit', 'enrol_authorize', $a);
-                $table->data[] = array("<b>$authstrs->unenrolstudent</b>",
-                    "<input type='checkbox' name='unenrol' value='y'" . (!empty($unenrol) ? " checked" : "") . ">");
+                $cbunenrol = print_checkbox('unenrol', 'y', !empty($unenrol), '', '', '', true);
+                $table->data[] = array("<b>$authstrs->unenrolstudent</b>", $cbunenrol);
                 $table->data[] = array("<b>$authstrs->howmuch</b>",
                     "<input type='hidden' name='confirm' value='y'>
                      <input type='text' size='5' name='amount' value='$amount'>
@@ -373,10 +373,8 @@ function authorize_print_order_details($orderno)
                     $a->transid = $suborder->transid;
                     $a->amount = $suborder->amount;
                     $strsubvoidyes = get_string('subvoidyes', 'enrol_authorize', $a);
-
-                    $table->data[] = array("<b>$authstrs->unenrolstudent</b>",
-                        "<input type='checkbox' name='unenrol' value='y'" . (!empty($unenrol) ? " checked" : "") . ">");
-
+                    $cbunenrol = print_checkbox('unenrol', 'y', !empty($unenrol), '', '', '', true);
+                    $table->data[] = array("<b>$authstrs->unenrolstudent</b>", $cbunenrol);
                     $table->data[] = array("<b>$strs->confirm:</b>",
                         "$strsubvoidyes<br /><input type='hidden' name='".ORDER_VOID."' value='y'>
                          <input type='hidden' name='confirm' value='y'>
@@ -415,9 +413,8 @@ function authorize_print_order_details($orderno)
             error(get_string('youcantdo', 'enrol_authorize', $a));
         }
         if (empty($confirm)) {
-            $table->data[] = array("<b>$authstrs->unenrolstudent</b>",
-                "<input type='checkbox' name='unenrol' value='y'" . (!empty($unenrol) ? " checked" : "") . ">");
-
+            $cbunenrol = print_checkbox('unenrol', 'y', !empty($unenrol), '', '', '', true);
+            $table->data[] = array("<b>$authstrs->unenrolstudent</b>", $cbunenrol);
             $table->data[] = array("<b>$strs->confirm:</b>",
                 "<input type='hidden' name='".ORDER_DELETE."' value='y'>
                  <input type='hidden' name='confirm' value='y'>
