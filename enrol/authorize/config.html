@@ -21,9 +21,9 @@ if (isset($CFG->an_cutoff)) {
     $frm->an_cutoff_hour = intval($CFG->an_cutoff) / 60;
     $frm->an_cutoff_min = intval($CFG->an_cutoff) % 60;
 }
-
 if (!isset($frm->an_cutoff_hour)) $frm->an_cutoff_hour = '0';
 if (!isset($frm->an_cutoff_min)) $frm->an_cutoff_min = '5';
+
 if (!isset($frm->acceptccs)) {
     $frm->acceptccs = array_keys(get_list_of_creditcards());
     $CFG->an_acceptccs = implode(',', $frm->acceptccs);
@@ -90,25 +90,22 @@ if (!isset($frm->acceptccs)) {
 
 <tr valign="top">
     <td align="right">an_avs:</td>
-    <td><input type="checkbox" value="1" name="an_avs" <?php if (!empty($frm->an_avs)) echo "checked=\"true\"" ?> /></td>
+    <td><?php print_checkbox('an_avs', '1', !empty($frm->an_avs)) ?></td>
     <td><?php print_string("adminavs", "enrol_authorize") ?></td>
 </tr>
 
 <tr valign="top">
     <td align="right">an_test:</td>
-    <td><input type="checkbox" value="1" name="an_test" <?php if (!empty($frm->an_test)) echo "checked=\"true\"" ?> /></td>
+    <td><?php print_checkbox('an_test', '1', !empty($frm->an_test)) ?></td>
     <td><?php print_string("antestmode", "enrol_authorize") ?></td>
 </tr>
 
 <tr valign="top">
     <td align="right">an_acceptccs:</td>
     <td><?php
-    foreach (get_list_of_creditcards(true) as $key => $val) {
-        echo '<input type="checkbox" name="acceptccs[]" value="'.$key.'"';
-        if (stristr($CFG->an_acceptccs, $key) !== false) {
-            echo ' checked="checked"';
-        }
-        echo " /> $val<br />\n";
+    $allccs = get_list_of_creditcards(true);
+    foreach ($allccs as $key => $val) {
+        print_checkbox('acceptccs[]', $key, stristr($CFG->an_acceptccs, $key) !== false, $val); echo "<br />\n";
     }
     ?></td>
     <td><?php print_string("adminacceptccs", "enrol_authorize") ?></td>
@@ -124,13 +121,13 @@ if (!isset($frm->acceptccs)) {
 
 <tr valign="top">
     <td align="right">an_teachermanagepay:</td>
-    <td><input type="checkbox" value="1" name="an_teachermanagepay" <?php if (!empty($frm->an_teachermanagepay)) echo "checked=\"true\"" ?> /></td>
+    <td><?php print_checkbox('an_teachermanagepay', '1', !empty($frm->an_teachermanagepay)) ?></td>
     <td><?php print_string("adminteachermanagepay", "enrol_authorize") ?></td>
 </tr>
 
 <tr valign="top">
     <td align="right">an_review:</td>
-    <td><input type="checkbox" value="1" name="an_review" <?php if (!empty($frm->an_review)) echo "checked=\"true\"" ?> />
+    <td><?php print_checkbox('an_review', '1', !empty($frm->an_review)) ?></td>
         <?php helpbutton('review', get_string('adminhelpreviewtitle', 'enrol_authorize'), 'enrol/authorize'); ?></td>
     <td><?php print_string("adminreview", "enrol_authorize") ?></td>
 </tr>
@@ -152,19 +149,19 @@ if (!isset($frm->acceptccs)) {
 
 <tr valign="top">
     <td align="right">enrol_mailstudents:</td>
-    <td><input type="checkbox" value=1 name="enrol_mailstudents" <?php if (!empty($frm->enrol_mailstudents)) echo "checked=\"true\"" ?> /></td>
+    <td><?php print_checkbox('enrol_mailstudents', '1', !empty($frm->enrol_mailstudents)) ?></td>
     <td><?php print_string("mailstudents") ?></td>
 </tr>
 
 <tr valign="top">
     <td align="right">enrol_mailteachers:</td>
-    <td><input type="checkbox" value=1 name="enrol_mailteachers" <?php if (!empty($frm->enrol_mailteachers)) echo "checked=\"true\"" ?> /></td>
+    <td><?php print_checkbox('enrol_mailteachers', '1', !empty($frm->enrol_mailteachers)) ?></td>
     <td><?php print_string("mailteachers") ?></td>
 </tr>
 
 <tr valign="top">
     <td align="right">enrol_mailadmins:</td>
-    <td><input type="checkbox" value=1 name="enrol_mailadmins" <?php if (!empty($frm->enrol_mailadmins)) echo "checked=\"true\"" ?> /></td>
+    <td><?php print_checkbox('enrol_mailadmins', '1', !empty($frm->enrol_mailadmins)) ?></td>
     <td><?php print_string("mailadmins") ?></td>
 </tr>
 
