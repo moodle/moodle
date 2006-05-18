@@ -757,16 +757,12 @@ function displaydir ($wdir) {
 
             $count++;
             $filename    = $fullpath."/".$file;
-            $fileurl     = "$wdir/$file";
+            $fileurl     = trim($wdir, "/")."/$file";
             $filesafe    = rawurlencode($file);
             $fileurlsafe = rawurlencode($fileurl);
             $filedate    = userdate(filemtime($filename), "%d %b %Y, %I:%M %p");
 
-            if (substr($fileurl,0,1) == '/') {
-                $selectfile = substr($fileurl,1);
-            } else {
-                $selectfile = $fileurl;
-            }
+            $selectfile = trim($fileurl, "/");
 
             echo "<tr class=\"file\">";
 
