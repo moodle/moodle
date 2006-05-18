@@ -142,7 +142,11 @@ function p($var, $strip=false) {
  * @return   mixed
  */
 function nvl(&$var, $default='') {
+    global $CFG;
 
+    if (!empty($CFG->disableglobalshack)) {
+      error( "The nvl() function is deprecated ($var, $default)." );
+    }
     return isset($var) ? $var : $default;
 }
 
