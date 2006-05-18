@@ -99,7 +99,7 @@
     // We NEED to set this, because the form assumes it has a value!
     $frm->id = empty($course->id) ? 0 : $course->id;
 
-    if (empty($frm->username)) {
+    if (empty($frm->username) && !isguest()) {
         $frm->username = $USER->username;
     }
 
