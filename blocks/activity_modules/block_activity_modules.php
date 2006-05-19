@@ -8,13 +8,15 @@ class block_activity_modules extends block_list {
 
     function get_content() {
         global $USER, $CFG;
-
+        
         // TODO: FIX: HACK: (any other tags I should add? :P)
         // Hacker's improvised caching scheme: avoid fetching the mod
         // data from db if the course format has already fetched them
         if(!isset($GLOBALS['modnamesplural']) || !isset($GLOBALS['modnamesused'])) {
             require_once($CFG->dirroot.'/course/lib.php');
-            get_all_mods($this->instance->pageid, $mods, $modnames, $modnamesplural, $modnamesused);
+            if (!empty($this->instance)) {
+                get_all_mods($this->instance->pageid, $mods, $modnames, $modnamesplural, $modnamesused);
+            }
         }
         else {
             $modnamesplural = $GLOBALS['modnamesplural'];
@@ -30,7 +32,7 @@ class block_activity_modules extends block_list {
         $this->content->icons = array();
         $this->content->footer = '';
 
-        if ($modnamesused) {
+        if (isset($modnamesused) && $modnamesused) {
             foreach ($modnamesused as $modname => $modfullname) {
                 if ($modname != 'label') {
                     $this->content->items[] = '<a href="'.$CFG->wwwroot.'/mod/'.$modname.'/index.php?id='.$this->instance->pageid.'">'.$modnamesplural[$modname].'</a>';
