@@ -11,6 +11,7 @@
     <td align="center" colspan="2">
     <input type="hidden" name="prune"   value="<?php p($prune) ?>" />
     <input type="hidden" name="confirm" value="<?php p($prune) ?>" />
+    <input type="hidden" name="sesskey" value="<?php echo sesskey() ?>" />
     <input type="submit" value="<?php print_string('prune', 'forum'); ?>" />
     </td>
 </tr>

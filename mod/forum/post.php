@@ -19,7 +19,7 @@
             $wwwroot = str_replace('http:','https:', $wwwroot);
         }
 
-        if (isset($forum)) {      // User is starting a new discussion in a forum
+        if (!empty($forum)) {      // User is starting a new discussion in a forum
             if (! $forum = get_record('forum', 'id', $forum)) {
                 error('The forum number was incorrect');
             }
@@ -61,53 +61,84 @@
     require_login(0, false);   // Script is useless unless they're logged in
 
     if ($post = data_submitted()) {
-        if (empty($post->course)) {
-            error('No course was defined!');
+        if (! $forum = get_record('forum', 'id', $forum)) {
+            error('The forum number was incorrect');
         }
 
-        if (!$course = get_record('course', 'id', $post->course)) {
+        if (!$course = get_record('course', 'id', $forum->course)) {
             error('Could not find specified course!');
         }
+
+        require_login($course->id, false);
+        $adminedit = (isadmin() and !empty($CFG->admineditalways));
 
         if (!empty($course->lang)) {           // Override current language
             $CFG->courselang = $course->lang;
         }
 
         if (empty($SESSION->fromurl)) {
-            $errordestination = "$CFG->wwwroot/mod/forum/view.php?f=$post->forum";
+            $errordestination = "$CFG->wwwroot/mod/forum/view.php?f=$forum->id";
         } else {
             $errordestination = $SESSION->fromurl;
         }
 
-        $post->subject = clean_param(strip_tags($post->subject, '<lang><span>'), PARAM_CLEAN);        // Strip all tags except lang
+        $post->subject = clean_param(strip_tags($post->subject, '<lang><span>'), PARAM_CLEAN); // Strip all tags except multilang
 
-        //$post->message = clean_text($post->message, $post->format);   // Clean up any bad tags
+        //$post->message will be cleaned later before display
 
         $post->attachment = isset($_FILES['attachment']) ? $_FILES['attachment'] : NULL;
 
-        if (!$cm = get_coursemodule_from_instance("forum", $post->forum, $course->id)) { // For the logs
+        if (!$cm = get_coursemodule_from_instance("forum", $forum->id, $course->id)) { // For the logs
             $cm->id = 0;
         }
 
-        if (!$post->subject or !$post->message) {
+        if (($post->subject == '') or ($post->message == '')) {
             $post->error = get_string("emptymessage", "forum");
 
-        } else if ($post->edit) {           // Updating a post
-            $post->id = $post->edit;
+        } else if ($post->edit) {
+/// Updating a post
+           if (! $oldpost = forum_get_post_full($post->edit)) {
+	            error("Post ID was incorrect");
+	        }
+	        if (($oldpost->userid <> $USER->id) and !$adminedit) {
+	            error("You can't edit other people's posts!");
+	        }
+	        if (! $discussion = get_record("forum_discussions", "id", $oldpost->discussion)) {
+	            error("This post is not part of a discussion!");
+	        }
+	        if ($discussion->forum != $forum->id) {
+	            error("The forum number is incorrect");
+	        }
+	        if ($discussion->course != $course->id) {
+	            error("The course number is incorrect");
+	        }
+	        if (!($forum->type == 'news' && !$oldpost->parent && $discussion->timestart > time())) {
+	            if (((time() - $oldpost->created) > $CFG->maxeditingtime) and !$adminedit) {
+	                error( get_string("maxtimehaspassed", "forum", format_time($CFG->maxeditingtime)) );
+	            }
+	        }
+
+            $updatepost = new object;
+            $updatepost->id = $oldpost->id;
+            $updatepost->parent = $oldpost->parent;
+            $updatepost->forum = $oldpost->forum;
+            $updatepost->discussion = $oldpost->discussion;
+            $updatepost->userid = $oldpost->userid;
+
+            $updatepost->subject = $post->subject; //already cleaned
+            $updatepost->message = $post->message; //cleaning only before display
+            $updatepost->format = $post->format;
+            $updatepost->attachment = $post->attachment;
+
+            $updatepost->course = $course->id;
+            $updatepost->subscribe = optional_param('subscribe', 0, PARAM_BOOL);
+            $updatepost->unsubscribe = optional_param('unsubscribe', 0, PARAM_BOOL);
+
             $message = '';
 
-            //fix for bug #4314
-            if (!$realpost = get_record('forum_posts','id',$post->id)){
-                $realpost = new object;
-                $realpost->userid = -1;
-            }
-
-            if ($realpost->userid <> $USER->id && !isadmin()){
-                error("You can not update this post");
-            }
-
-            if (get_field('forum', 'type', 'id', $forum) == 'news' && !$post->parent) {
-                $updatediscussion->id = $post->discussion;
+            if (get_field('forum', 'type', 'id', $forum) == 'news' && !$oldpost->parent) {
+                $updatediscussion = new object;
+                $updatediscussion->id = $oldpost->discussion;
                 if (empty($post->timestartdisabled)) {
                     $updatediscussion->timestart = make_timestamp($post->timestartyear, $post->timestartmonth, $post->timestartday);
                 } else {
@@ -127,10 +158,10 @@
 
             if (!isset($post->error)) {
 
-                if (forum_update_post($post,$message)) {
+                if (forum_update_post($updatepost,$message)) {
 
                     add_to_log($course->id, "forum", "update post",
-                            "discuss.php?d=$post->discussion&amp;parent=$post->id", "$post->id", $cm->id);
+                            "discuss.php?d=$updatepost->discussion&amp;parent=$updatepost->id", "$updatepost->id", $cm->id);
 
                     $timemessage = 2;
                     if (!empty($message)) { // if we're printing stuff about the file upload
@@ -138,10 +169,10 @@
                     }
                     $message .= '<br />'.get_string("postupdated", "forum");
 
-                    if ($subscribemessage = forum_post_subscription($post)) {
+                    if ($subscribemessage = forum_post_subscription($updatepost)) {
                         $timemessage = 4;
                     }
-                    redirect(forum_go_back_to("discuss.php?d=$post->discussion#$post->id"), $message.$subscribemessage, $timemessage);
+                    redirect(forum_go_back_to("discuss.php?d=$updatepost->discussion#$updatepost->id"), $message.$subscribemessage, $timemessage);
 
                 } else {
                     error(get_string("couldnotupdate", "forum"), $errordestination);
@@ -149,12 +180,49 @@
                 exit;
 
             }
-        } else if ($post->discussion) { // Adding a new post to an existing discussion
+         } else if ($post->discussion) {
+/// Adding a new post to an existing discussion
+	        if (! $discussion = get_record("forum_discussions", "id", $post->discussion)) {
+	            error("This post is not part of a discussion!");
+	        }
+	        if ($discussion->forum != $forum->id) {
+	            error("The forum number is incorrect");
+	        }
+	        if ($discussion->course != $course->id) {
+	            error("The course number is incorrect");
+	        }
+	        if (! $parent = forum_get_post_full($post->parent)) {
+	            error("Parent post does not exist");
+	        }
+            if ($parent->discussion != $discussion->id) {
+	            error("Parent not in this discussion");
+            }
+            if (! forum_user_can_post($forum)) {
+                error("Sorry, but you can not post in this forum.");
+            }
+
+
+            $newpost = new object;
+            $newpost->parent = $post->parent;
+            $newpost->forum = $forum->id;
+            $newpost->discussion = $discussion->id;
+            $newpost->parent = $parent->id;
+
+            $newpost->subject = $post->subject; //already cleaned
+            $newpost->message = $post->message; //cleaning only before display
+            $newpost->format = $post->format;
+            $newpost->mailnow = optional_param('mailnow', 0, PARAM_BOOL);
+
+            $newpost->course = $course->id;
+            $newpost->subscribe = optional_param('subscribe', 0, PARAM_BOOL);
+            $newpost->unsubscribe = optional_param('unsubscribe', 0, PARAM_BOOL);
+
             $message = '';
-            if ($post->id = forum_add_new_post($post,$message)) {
+
+            if ($newpost->id = forum_add_new_post($newpost,$message)) {
 
                 add_to_log($course->id, "forum", "add post",
-                          "discuss.php?d=$post->discussion&amp;parent=$post->id", "$post->id", $cm->id);
+                          "discuss.php?d=$newpost->discussion&amp;parent=$newpost->id", "$newpost->id", $cm->id);
 
                 $timemessage = 2;
                 if (!empty($message)) { // if we're printing stuff about the file upload
@@ -162,29 +230,51 @@
                 }
                 $message .= '<br />'.get_string("postadded", "forum", format_time($CFG->maxeditingtime));
 
-                if ($subscribemessage = forum_post_subscription($post)) {
+                if ($subscribemessage = forum_post_subscription($newpost)) {
                     $timemessage = 4;
                 }
 
-                if ($post->mailnow) {
+                if ($newpost->mailnow) {
                     $message .= get_string("postmailnow", "forum");
                     $timemessage = 4;
                 }
 
-                redirect(forum_go_back_to("discuss.php?d=$post->discussion#$post->id"), $message.$subscribemessage, $timemessage);
+                redirect(forum_go_back_to("discuss.php?d=$newpost->discussion#$newpost->id"), $message.$subscribemessage, $timemessage);
 
             } else {
                 error(get_string("couldnotadd", "forum"), $errordestination);
             }
             exit;
 
-        } else {                     // Adding a new discussion
-            $post->mailnow = empty($post->mailnow) ? 0 : 1;
-            $discussion = $post;
-            $discussion->name  = $post->subject;
+        } else {
+/// Adding a new discussion
+            if (! forum_user_can_post_discussion($forum)) {
+                error("Sorry, but you can not post a new discussion in this forum.");
+            }
+
+            $discussion = new object;
+            $discussion->forum = $forum->id;
+            $discussion->course = $course->id;
+
+            $discussion->mailnow = optional_param('mailnow', 0, PARAM_BOOL);
+            $discussion->name = $post->subject;
             $discussion->intro = $post->message;
+            $discussion->format = $post->format;
+            $discussion->groupid = get_current_group($course->id);
+            if (isteacheredit($course->id) and $discussion->groupid == 0) {
+                $discussion->groupid = -1;
+            }
+
+            $discussion->course = $course->id;
+            $discussion->subscribe = optional_param('subscribe', 0, PARAM_BOOL);
+            $discussion->unsubscribe = optional_param('unsubscribe', 0, PARAM_BOOL);
+
+            if (! forum_user_can_post_discussion($forum)) {
+                error("Sorry, but you can not post a new discussion in this forum.");
+            }
+
             $newstopic = false;
-            if (get_field('forum', 'type', 'id', $forum) == 'news' && !$post->parent) {
+            if (get_field('forum', 'type', 'id', $forum) == 'news') {
                 $newstopic = true;
             }
             if ($newstopic && empty($post->timestartdisabled)) {
@@ -212,7 +302,7 @@
                     }
                     $message .= '<br />'.get_string("postadded", "forum", format_time($CFG->maxeditingtime));
 
-                    if ($post->mailnow) {
+                    if ($discussion->mailnow) {
                         $message .= get_string("postmailnow", "forum");
                         $timemessage = 4;
                     }
@@ -221,7 +311,7 @@
                         $timemessage = 4;
                     }
 
-                    redirect(forum_go_back_to("view.php?f=$post->forum"), $message.$subscribemessage, $timemessage);
+                    redirect(forum_go_back_to("view.php?f=$discussion->forum"), $message.$subscribemessage, $timemessage);
 
                 } else {
                     error(get_string("couldnotadd", "forum"), $errordestination);
@@ -238,7 +328,8 @@
         $defaultformat = FORMAT_MOODLE;
     }
 
-    if (isset($post->error)) {     // User is re-editing a failed posting
+    if (!empty($post->error)) {
+/// User is re-editing a failed posting
 
         // Set up all the required objects again, and reuse the same $post
 
@@ -278,7 +369,8 @@
             }
         }
 
-    } else if (!empty($forum)) {      // User is starting a new discussion in a forum
+    } else if (!empty($forum)) {
+/// User is starting a new discussion in a forum
 
         $SESSION->fromurl = $_SERVER["HTTP_REFERER"];
 
@@ -310,14 +402,10 @@
         $post->message = "";
         $post->format = $defaultformat;
 
-        $post->groupid = get_current_group($course->id);
-        if (isteacheredit($course->id) and $post->groupid == 0) {
-            $post->groupid = -1;
-        }
-
         forum_set_return();
 
-    } else if (!empty($reply)) {      // User is writing a new reply
+    } else if (!empty($reply)) {
+/// User is writing a new reply
 
         if (! $parent = forum_get_post_full($reply)) {
             error("Parent post ID was incorrect");
@@ -366,7 +454,8 @@
 
         unset($SESSION->fromdiscussion);
 
-    } else if (!empty($edit)) {  // User is editing their own post
+    } else if (!empty($edit)) {
+/// User is editing their own post
 
         $adminedit = (isadmin() and !empty($CFG->admineditalways));
 
@@ -389,7 +478,8 @@
         }
         if (!($forum->type == 'news' && !$post->parent && $discussion->timestart > time())) {
             if (((time() - $post->created) > $CFG->maxeditingtime) and !$adminedit) {
-                error( get_string("maxtimehaspassed", "forum", format_time($CFG->maxeditingtime)) );
+                error( get_string("maxtimehaspassed", "forum", format_time($CFG->maxeditingtime)),
+                       "$CFG->wwwroot/mod/forum/discuss.php?d=$discussion->id#$post->id" );
             }
         }
         if (! $course = get_record("course", "id", $discussion->course)) {
@@ -406,7 +496,8 @@
         unset($SESSION->fromdiscussion);
 
 
-    } else if (!empty($delete)) {  // User is deleting a post
+    } else if (!empty($delete)) {
+/// User is deleting a post
 
         if (! $post = forum_get_post_full($delete)) {
             error("Post ID was incorrect");
@@ -430,7 +521,7 @@
 
         $replycount = forum_count_replies($post);
 
-        if (!empty($confirm)) {    // User has confirmed the delete
+        if (!empty($confirm) and confirm_sesskey()) {    // User has confirmed the delete
 
             if ($post->totalscore) {
                 notice(get_string("couldnotdeleteratings", "forum"),
@@ -470,7 +561,8 @@
             }
 
 
-        } else { // User just asked to delete something
+        } else {
+// User just asked to delete something
 
             forum_set_return();
 
@@ -481,7 +573,7 @@
                 }
                 print_header();
                 notice_yesno(get_string("deletesureplural", "forum", $replycount+1),
-                             "post.php?delete=$delete&amp;confirm=$delete",
+                             "post.php?delete=$delete&amp;confirm=$delete&amp;sesskey=".sesskey(),
                              $_SERVER["HTTP_REFERER"]);
 
                 forum_print_post($post, $course->id, $ownpost=false, $reply=false, $link=false);
@@ -496,7 +588,7 @@
             } else {
                 print_header();
                 notice_yesno(get_string("deletesure", "forum", $replycount),
-                             "post.php?delete=$delete&amp;confirm=$delete",
+                             "post.php?delete=$delete&amp;confirm=$delete&amp;sesskey=".sesskey(),
                              $_SERVER["HTTP_REFERER"]);
                 forum_print_post($post, $forum->course, $ownpost=false, $reply=false, $link=false);
             }
@@ -506,7 +598,8 @@
         die;
 
 
-    } else if (!empty($prune)) {  // Teacher is pruning
+    } else if (!empty($prune)) {
+// Teacher is pruning
 
         if (!$post = forum_get_post_full($prune)) {
             error("Post ID was incorrect");
@@ -527,11 +620,12 @@
             $cm->id = 0;
         }
 
-        if (!empty($name)) {    // User has confirmed the prune
+        if (!empty($name) and confirm_sesskey()) {    // User has confirmed the prune
 
+            $newdiscussion = new object;
             $newdiscussion->course = $discussion->course;
             $newdiscussion->forum = $discussion->forum;
-            $newdiscussion->name = $name;
+            $newdiscussion->name = strip_tags($name, '<lang><span>'); // Strip all tags except multilang
             $newdiscussion->firstpost = $post->id;
             $newdiscussion->userid = $discussion->userid;
             $newdiscussion->groupid = $discussion->groupid;
@@ -546,7 +640,7 @@
 
             $newpost->id = $post->id;
             $newpost->parent = 0;
-            $newpost->subject = $name;
+            $newpost->subject = $newdiscussion->name;
 
             if (!update_record("forum_posts", $newpost)) {
                 error('Could not update the original post');
