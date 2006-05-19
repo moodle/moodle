@@ -630,45 +630,28 @@
                 }
             }
             
-            /// this calculates the ongoing score
-            if ($lesson->ongoing && !empty($pageid)) {
-                if (isteacher($course->id)) {
-                    echo "<p align=\"center\">".get_string('teacherongoingwarning', 'lesson').'</p>';
-                } else {
-                    $ntries = count_records("lesson_grades", "lessonid", $lesson->id, "userid", $USER->id);
-                    if (isset($USER->modattempts[$lesson->id])) {
-                        $ntries--;
-                    }
-                    lesson_calculate_ongoing_score($lesson, $USER->id, $ntries);                
-                }
+            /// This calculates and prints the ongoing score
+            if ($lesson->ongoing and !empty($pageid)) {
+                lesson_print_ongoing_score($lesson);
             }
             
             if ($page->qtype == LESSON_BRANCHTABLE) {
                 if ($lesson->minquestions and isstudent($course->id)) {
                     // tell student how many questions they have seen, how many are required and their grade
                     $ntries = count_records("lesson_grades", "lessonid", $lesson->id, "userid", $USER->id);
-                    $nviewed = count_records("lesson_attempts", "lessonid", $lesson->id, "userid", 
-                            $USER->id, "retry", $ntries);
-                    if ($nviewed) {
-                        echo "<p align=\"center\">".get_string("numberofpagesviewed", "lesson", $nviewed).
+                    
+                    $gradeinfo = lesson_grade($lesson, $ntries);
+                    
+                    if ($gradeinfo->attempts) {
+                        echo "<p align=\"center\">".get_string("numberofpagesviewed", "lesson", $gradeinfo->nquestions).
                                 "; (".get_string("youshouldview", "lesson", $lesson->minquestions).")<br />";
                         // count the number of distinct correct pages
-                        if ($correctpages = get_records_select("lesson_attempts",  "lessonid = $lesson->id
-                                AND userid = $USER->id AND retry = $ntries AND correct = 1")) {
-                            foreach ($correctpages as $correctpage) {
-                                $temp[$correctpage->pageid] = 1;
-                            }
-                            $ncorrect = count($temp);
-                        } else {
-                            $nccorrect = 0;
+                        if ($gradeinfo->nquestions < $lesson->minquestions) {
+                            $gradeinfo->nquestions = $lesson->minquestions;
                         }
-                        if ($nviewed < $lesson->minquestions) {
-                            $nviewed = $lesson->minquestions;
-                        }
-                        echo get_string("numberofcorrectanswers", "lesson", $ncorrect)."<br />\n";
-                        $thegrade = intval(100 * $ncorrect / $nviewed);
+                        echo get_string("numberofcorrectanswers", "lesson", $gradeinfo->earned)."<br />\n";
                         echo get_string("yourcurrentgradeis", "lesson", 
-                                number_format($thegrade * $lesson->grade / 100, 1)).
+                                number_format($gradeinfo->grade * $lesson->grade / 100, 1)).
                             " (".get_string("outof", "lesson", $lesson->grade).")</p>\n";
                     }
                 }
@@ -1019,110 +1002,40 @@
                 $ntries--;  // need to look at the old attempts :)
             }
             if (isstudent($course->id)) {
-                if ($nviewed = count_records("lesson_attempts", "lessonid", $lesson->id, "userid", 
-                        $USER->id, "retry", $ntries)) {
+                
+                $gradeinfo = lesson_grade($lesson, $ntries);
+                
+                if ($gradeinfo->attempts) {
                     if (!$lesson->custom) {
-                        $ncorrect = 0;                        
-                        $temp = array();
-                        // count the number of distinct correct pages
-                        if ($correctpages = get_records_select("lesson_attempts",  "lessonid = $lesson->id AND
-                                userid = $USER->id AND retry = $ntries AND correct = 1")) {
-                            foreach ($correctpages as $correctpage) {
-                                $temp[$correctpage->pageid] = 1;
-                            }
-                            $ncorrect = count($temp);
-                        }
-                        echo "<p align=\"center\">".get_string("numberofpagesviewed", "lesson", $nviewed).
+                        echo "<p align=\"center\">".get_string("numberofpagesviewed", "lesson", $gradeinfo->nquestions).
                             "</p>\n";
                         if ($lesson->minquestions) {
-                            if ($nviewed < $lesson->minquestions) {
+                            if ($gradeinfo->nquestions < $lesson->minquestions) {
                                 // print a warning and set nviewed to minquestions
                                 echo "<p align=\"center\">".get_string("youshouldview", "lesson", 
-                                        $lesson->minquestions)." ".get_string("pages", "lesson")."</p>\n";
-                                $nviewed = $lesson->minquestions;
+                                        $lesson->minquestions)."</p>\n";
                             }
                         }
-                        echo "<p align=\"center\">".get_string("numberofcorrectanswers", "lesson", $ncorrect).
+                        echo "<p align=\"center\">".get_string("numberofcorrectanswers", "lesson", $gradeinfo->earned).
                             "</p>\n";
-                        $thegrade = round(100 * $ncorrect / $nviewed, 5);
-                        echo "<p align=\"center\">".get_string("gradeis", "lesson", 
-                                number_format($thegrade * $lesson->grade / 100, 1)).
-                            " (".get_string("outof", "lesson", $lesson->grade).")</p>\n";
-                        
-                    } else {
-                        $score = 0;
-                        $essayquestions = 0;
-                        $essayquestionpoints = 0;
-
-                        if ($useranswers = get_records_select("lesson_attempts",  "lessonid = $lesson->id AND 
-                                userid = $USER->id AND retry = $ntries", "timeseen")) {
-                            // group each try with its page
-                            foreach ($useranswers as $useranswer) {
-                                $attemptset[$useranswer->pageid][] = $useranswer;                                
-                            }
-                            
-                            $pageids = array_keys($attemptset);
-                            $pageids = implode(",", $pageids);
-                            
-                            // get only the pages and their answers that the user answered
-                            $answeredpages = get_records_select("lesson_pages", "lessonid = $lesson->id AND id IN($pageids)");
-                            $pageanswers = get_records_select("lesson_answers", "lessonid = $lesson->id AND pageid IN($pageids)");
-
-                            foreach ($attemptset as $attempts) {
-                                if(count($attempts) > $lesson->maxattempts) { // if there are more tries than the max that is allowed, grab the last "legal" attempt
-                                    $attempt = $attempts[$lesson->maxattempts - 1];
-                                } else {
-                                    // else, user attempted the question less than the max, so grab the last one
-                                    $attempt = end($attempts);
-                                }
-                                // if essay question, handle it, otherwise add to score
-                                if ($answeredpages[$attempt->pageid]->qtype == LESSON_ESSAY) {
-                                    $essayinfo = unserialize($attempt->useranswer);
-                                    $score += $essayinfo->score;
-                                    $essayquestions++;
-                                    $essayquestionpoints += $pageanswers[$attempt->answerid]->score;
-                                } else {
-                                    if (array_key_exists($attempt->answerid, $pageanswers)) {
-                                        $score += $pageanswers[$attempt->answerid]->score;
-                                    }
-                                }
-                            }
-                            $bestscores = array();
-                            // find the highest possible score per page
-                            foreach ($pageanswers as $pageanswer) {
-                                if(isset($bestscores[$pageanswer->pageid])) {
-                                    if ($bestscores[$pageanswer->pageid] < $pageanswer->score) {
-                                        $bestscores[$pageanswer->pageid] = $pageanswer->score;
-                                    }
-                                } else {
-                                    $bestscores[$pageanswer->pageid] = $pageanswer->score;
-                                }
-                            }
-                            
-                            $bestscore = array_sum($bestscores);
-                        }
-                            
-                        $thegrade = round(100 * $score / $bestscore, 5);
-                        $a = new stdClass;
-                        if ($essayquestions > 0) {
-                            $a->score = $score;
-                            $a->tempmaxgrade = $bestscore - $essayquestionpoints;
-                            $a->essayquestions = $essayquestions;
-                            $a->grade = $bestscore;
-                            echo "<div align=\"center\">".get_string("displayscorewithessays", "lesson", $a)."</div>";
-                        } else {
-                            $a->score = $score;
-                            $a->grade = $bestscore;
-                            echo "<div align=\"center\">".get_string("displayscorewithoutessays", "lesson", $a)."</div>";                        
-                        }
-                        echo "<p align=\"center\">".get_string("gradeis", "lesson", 
-                                number_format($thegrade * $lesson->grade / 100, 1)).
-                            " (".get_string("outof", "lesson", $lesson->grade).")</p>\n";
-
                     }
+                    $a = new stdClass;
+                    $a->score = $gradeinfo->earned;
+                    $a->grade = $gradeinfo->total;
+                    if ($gradeinfo->nmanual) {
+                        $a->tempmaxgrade = $gradeinfo->total - $gradeinfo->manualpoints;
+                        $a->essayquestions = $gradeinfo->nmanual;
+                        echo "<div align=\"center\">".get_string("displayscorewithessays", "lesson", $a)."</div>";
+                    } else {
+                        echo "<div align=\"center\">".get_string("displayscorewithoutessays", "lesson", $a)."</div>";                        
+                    }
+                    echo "<p align=\"center\">".get_string("gradeis", "lesson", 
+                            number_format($gradeinfo->grade * $lesson->grade / 100, 1)).
+                        " (".get_string("outof", "lesson", $lesson->grade).")</p>\n";
+                        
                     $grade->lessonid = $lesson->id;
                     $grade->userid = $USER->id;
-                    $grade->grade = $thegrade;
+                    $grade->grade = $gradeinfo->grade;
                     $grade->completed = time();
                     if (!$lesson->practice) {
                         if (isset($USER->modattempts[$lesson->id])) { // if reviewing, make sure update old grade record
@@ -1821,10 +1734,9 @@
 
         $grade = current($grades);
 
-        // I modded this function a bit so it would work here...  :) ;) :P
-        $updategrade->grade = lesson_calculate_ongoing_score($lesson, $essay->userid, $essay->retry, true);    
+        $gradeinfo = lesson_grade($lesson, $essay->retry, $essay->userid);    
         $updategrade->id = $grade->id;
-        
+        $updategrade->grade = $gradeinfo->grade;
         if(update_record("lesson_grades", $updategrade)) {
             redirect("view.php?id=$cm->id&amp;action=essayview", get_string("updatesuccess", "lesson"));
         } else {

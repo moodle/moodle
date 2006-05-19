@@ -179,10 +179,10 @@ $string['notitle'] = 'No title';
 $string['numberofcorrectanswers'] = 'Number of correct answers: $a';
 $string['numberofcorrectmatches'] = 'Number of correct matches: $a';
 $string['numberofpagestoshow'] = 'Number of pages (cards) to show';
-$string['numberofpagesviewed'] = 'Number of pages viewed: $a';
+$string['numberofpagesviewed'] = 'Number of questions answered: $a';
 $string['ongoing'] = 'Display ongoing score';
 $string['ongoingcustom'] = 'You have earned $a->score point(s) out of $a->currenthigh point(s) thus far.';
-$string['ongoingnormal'] = 'You have answered $a->correct question(s) correctly out of $a->viewed question(s).';
+$string['ongoingnormal'] = 'You have answered $a->correct correctly out of $a->viewed attempts.';
 $string['or'] = 'OR';
 $string['ordered'] = 'Ordered';
 $string['other'] = 'Other';
@@ -284,7 +284,7 @@ $string['youranswer'] = 'Your answer';
 $string['yourcurrentgradeis'] = 'Your current grade is $a';
 $string['yourgradeisnow'] = 'Your grade for the lesson has been changed to $a';
 $string['yourresponse'] = 'Your response';
-$string['youshouldview'] = 'You should view at least: $a';
+$string['youshouldview'] = 'You should answer at least: $a';
 
 
 
