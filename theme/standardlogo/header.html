@@ -37,9 +37,11 @@
       } else {
           $standardlogo = $CFG->wwwroot.'/theme/'.current_theme().'/logo.gif';
       }
+      
+      //Accessibility: warning: ALT text will need editing if logo changes.
 ?>
     <div id="header-home">
-        <div class="headermain"><img src="<?php echo $standardlogo ?>" border="0" alt="" /></div>
+        <div class="headermain"><img alt="Moodle" src="<?php echo $standardlogo ?>" /></div>
         <div class="headermenu"><?php echo $menu ?></div>
     </div>
 <?php } else if ($heading) {  // This is what gets printed on any other page with a heading 
