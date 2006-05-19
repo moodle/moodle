@@ -704,17 +704,9 @@
             }
         }
     
-        // this calculates the ongoing score
+        // This calculates and prints the ongoing score message
         if ($lesson->ongoing) {
-            if (isteacher($course->id)) {
-                echo "<div align=\"center\">".get_string("teacherongoingwarning", "lesson")."</div><br>";
-            } else {
-                $ntries = count_records("lesson_grades", "lessonid", $lesson->id, "userid", $USER->id);
-                if (isset($USER->modattempts[$lesson->id])) {
-                    $ntries--;
-                }
-                lesson_calculate_ongoing_score($lesson, $USER->id, $ntries);
-            }
+            lesson_print_ongoing_score($lesson);
         }
 
         // display response (if there is one - there should be!)
