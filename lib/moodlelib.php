@@ -1621,9 +1621,10 @@ function require_login($courseid=0, $autologinguest=true, $cm=null) {
         }
 
         //User is not enrolled in the course, wants to access course content
-        //as a guest, and course setting allow unlimited guest access
+        //as a guest, and course setting allow unlimited guest access;
+        //do not autologin as guest when $autologinguest is false
         //Code cribbed from course/loginas.php
-        if (strstr($FULLME,"username=guest") && ($course->guest==1)) {
+        if (strstr($FULLME,"username=guest") and ($course->guest==1) and $autologinguest) {
             $realuser = $USER->id;
             $realname = fullname($USER, true);
             $USER = guest_user();
