@@ -192,12 +192,10 @@ if ($PAGE->user_allowed_editing()) {
 }
 
 // Calculate the preferred width for left, right and center (both center positions will use the same)
-$preferred_width_left = optional_param('preferred_width_left',  blocks_preferred_width($pageblocks[BLOCK_POS_LEFT]), PARAM_INT);
-$preferred_width_right = optional_param('preferred_width_right', blocks_preferred_width($pageblocks[BLOCK_POS_RIGHT]), PARAM_INT);
-$preferred_width_left = min($preferred_width_left, BLOCK_L_MAX_WIDTH);
-$preferred_width_left = max($preferred_width_left, BLOCK_L_MIN_WIDTH);
-$preferred_width_right = min($preferred_width_right, BLOCK_R_MAX_WIDTH);
-$preferred_width_right = max($preferred_width_right, BLOCK_R_MIN_WIDTH);
+$preferred_width_left  = bounded_number(BLOCK_L_MIN_WIDTH, blocks_preferred_width($pageblocks[BLOCK_POS_LEFT]),
+                                        BLOCK_L_MAX_WIDTH);
+$preferred_width_right = bounded_number(BLOCK_R_MIN_WIDTH, blocks_preferred_width($pageblocks[BLOCK_POS_RIGHT]),
+                                        BLOCK_R_MAX_WIDTH);
 
 // Display the blocks and allow blocklib to handle any block action requested
 $pageblocks = blocks_get_by_page($PAGE);
