@@ -41,13 +41,13 @@
       //Accessibility: warning: ALT text will need editing if logo changes.
 ?>
     <div id="header-home">
-        <div class="headermain"><img alt="Moodle" src="<?php echo $standardlogo ?>" /></div>
+        <h1 class="headermain"><img alt="Moodle" src="<?php echo $standardlogo ?>" /></h1>
         <div class="headermenu"><?php echo $menu ?></div>
     </div>
 <?php } else if ($heading) {  // This is what gets printed on any other page with a heading 
 ?>
     <div id="header">
-        <div class="headermain"><?php echo $heading ?></div>
+        <h1 class="headermain"><?php echo $heading ?></h1>
         <div class="headermenu"><?php echo $menu ?></div>
     </div>
 <?php } ?>
