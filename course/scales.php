@@ -43,7 +43,7 @@
     $courses = array();
 
     /// If scale data is being submitted, then save it and continue
-
+    $focus = "";
     $errors = NULL;
 
     if ($action == 'sendform' and confirm_sesskey()) {
@@ -166,9 +166,6 @@
         }
 
         //Print out the headers
-        if (!isset($focus)) {
-            $focus = "";
-        }
         print_header("$course->shortname: $strscales", "$course->fullname",
                  "<a href=\"view.php?id=$course->id\">$course->shortname</a>".
                  " -> <a href=\"scales.php?id=$course->id\">$strscales</a>".
