@@ -7061,16 +7061,13 @@ function custom_script_path($urlpath='') {
         $urlpath = qualified_me(); // e.g. http://www.this-server.com/moodle/this-script.php
     }
 
-    // clean the $urlpath
-    $urlpath = clean_param($urlpath, PARAM_URL);
-
     // $urlpath is invalid if it is empty or does not start with the Moodle wwwroot
     if (empty($urlpath) or (strpos($urlpath, $CFG->wwwroot) === false )) {
         return false;
     }
 
-    // replace wwwroot with the path to the customscripts folder
-    $scriptpath = $CFG->customscripts . substr($urlpath, strlen($CFG->wwwroot));
+    // replace wwwroot with the path to the customscripts folder and clean path
+    $scriptpath = $CFG->customscripts . clean_param(substr($urlpath, strlen($CFG->wwwroot)), PARAM_PATH);
 
     // remove the query string, if any
     if (($strpos = strpos($scriptpath, '?')) !== false) {
