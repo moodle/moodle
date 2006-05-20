@@ -9,6 +9,9 @@
     $page    = optional_param('page', 0, PARAM_INT);     // which page to show
     $perpage = optional_param('perpage', 10, PARAM_INT); // how many per page
     $moveto  = optional_param('moveto', 0, PARAM_INT);   // move to category
+    $edit    = optional_param('edit', -1, PARAM_BOOL);
+    $hide    = optional_param('hide', 0, PARAM_INT);
+    $show    = optional_param('show', 0, PARAM_INT);
 
     $search = trim(strip_tags($search)); // trim & clean raw searched string
 
@@ -29,23 +32,22 @@
     }
 
     if (iscreator()) {
-        if (isset($_GET['edit']) and confirm_sesskey()) {
-            if ($edit == "on") {
-                $USER->categoriessearchediting = true;
-            } else if ($edit == "off") {
-                $USER->categoriessearchediting = false;
-            }
+        if ($edit !== -1) {
+            $USER->categoryediting = $edit;
             // If the edit mode we are leaving has higher per page than the one we are entering,
             // with pages, chances are you will get a no courses found error. So when we are switching
             // modes, set page to 0.
             $page = 0;
         }
-
-        $creatorediting = !empty($USER->categoriessearchediting);
+        $creatorediting = !empty($USER->categoryediting);
         $adminediting = (isadmin() and $creatorediting);
+
     } else {
-        $creatorediting = false;
+        if (!$category->visible) {
+            error(get_string('notavailable', 'error'));
+        }
         $adminediting = false;
+        $creatorediting = false;
     }
 
 /// Editing functions
@@ -54,8 +56,8 @@
 
     /// Hide or show a course
 
-        if ((isset($hide) or isset($show)) and confirm_sesskey()) {
-            if (isset($hide)) {
+        if ($hide or $show and confirm_sesskey()) {
+            if ($hide) {
                 $course = get_record("course", "id", $hide);
                 $visible = 0;
             } else {
@@ -162,7 +164,7 @@
 
             echo "<form name=\"movecourses\" action=\"search.php\" method=\"post\">";
             echo "<input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\">";
-            echo "<input type=\"hidden\" name=\"search\" value=\"".s($search)."\">";
+            echo "<input type=\"hidden\" name=\"search\" value=\"".s($search, true)."\">";
             echo "<input type=\"hidden\" name=\"page\" value=\"$page\">";
             echo "<input type=\"hidden\" name=\"perpage\" value=\"$perpage\">";
             echo "<table align=\"center\" border=0 cellspacing=2 cellpadding=4 class=\"generalbox\"><tr>";
@@ -225,7 +227,7 @@
         }
 
     } else {
-        print_heading(get_string("nocoursesfound", "", s($search)));
+        print_heading(get_string("nocoursesfound", "", s($search, true)));
     }
 
     echo "<br /><br />";
