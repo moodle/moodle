@@ -3535,7 +3535,7 @@ function update_categories_search_button($search,$page,$perpage) {
     global $CFG, $USER;
 
     if (isadmin()) {
-        if (!empty($USER->categoriessearchediting)) {
+        if (!empty($USER->categoryediting)) {
             $string = get_string("turneditingoff");
             $edit = "off";
             $perpage = 30;
