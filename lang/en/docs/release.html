@@ -30,6 +30,17 @@
 
 <h3>Various fixes</h3>
 
+<h4>Security</h4>
+
+<ul type="circle">
+<li>improved kses cleaning of html SC#204 <!-- skodak &lt;skodak&gt; --> </li>
+<li>prevent unwanted password change here SC#225 <!-- skodak &lt;skodak&gt; --> </li>
+<li>Fix for Secunia Advisory SA<a href="http://moodle.org/bugs/bug.php?op=show&amp;bugid=18267" target="_blank">18267</a>, plus some logging of suspicious activity. <!-- martinlanghoff &lt;martinlanghoff&gt; --> </li>
+<li>AdoDB tests cleanup after Secunia Advisory SA<a href="http://moodle.org/bugs/bug.php?op=show&amp;bugid=18267" target="_blank">18267</a> <!-- martinlanghoff &lt;martinlanghoff&gt; --> </li>
+<li>fixed $cfg-&gt;forceloginforprofiles logic SC#207. Backported from HEAD <!-- patrickslee &lt;patrickslee&gt; --> </li>
+</ul>
+
+
 <h4>General</h4>
 
 <ul type="circle">
@@ -42,12 +53,83 @@
 <li>Bug 3853. Some important improvements in the restore of log actions.</li>
 <li>Bug 4328. Prevent some warnings in the blocks system.</li>
 <li>Bug 4341. Extending multi-lang support to the "jumpto" menu (showed in collapsed mode). </li>
+<li>Added rss_get_url() to 1.5 to help support data module <!-- moodler &lt;moodler&gt; --> </li>
+<li>Added support for having a linked tab even if it is currently selected. <!-- moodler &lt;moodler&gt; --> </li>
+<li>RSS Client block: Removed secondary cache. Bug <a href="http://moodle.org/bugs/bug.php?op=show&amp;bugid=4625" target="_blank">4625</a> <!-- dhawes &lt;dhawes&gt; --> </li>
+<li>Email confirmation now includes lastname.  Bug <a href="http://moodle.org/bugs/bug.php?op=show&amp;bugid=4869" target="_blank">4869</a> <!-- koenr &lt;koenr&gt; --> </li>
+<li>Database connection errors can now be reported to an admin. See $CFG-&gt;emailconnectionerrors in config-dist.php.<!-- moodler &lt;moodler&gt; --> </li>
+<li>Metacourses: <a href="http://moodle.org/mod/forum/post.php?reply=185699" target="_blank">Fixed a problem with self enrolment in child courses.</a> <!-- mjollnir_ &lt;mjollnir_&gt; --> </li>
+<li>Several MySQL v5 compatibility fixes</li>
+<li>Avoid listing more than 200 courses in my courses block, and course listing pages.</li>
+
+<li>SCORM: Fixed lesson status skin support <!-- bobopinna &lt;bobopinna&gt; --> </li>
+<li>Skype: Added webstatus icon<!-- moodler &lt;moodler&gt; --> </li>
+<li>File uploads: Only create a directory if needed, bug#<a href="http://moodle.org/bugs/bug.php?op=show&amp;bugid=4659" target="_blank">4659</a></li>
+<li>Admin Block. Fixed bug <a href="http://moodle.org/bugs/bug.php?op=show&amp;bugid=4627" target="_blank">4627</a>:Hide &quot;change password&quot; link in admin block if the user is restricted. Credits for report &amp; patch go to Joseph Rezeau. <!-- defacer &lt;defacer&gt; --> </li>
+<li>HTMLArea: Fixed bug <a href="http://moodle.org/bugs/bug.php?op=show&amp;bugid=4562" target="_blank">4562</a>. Fix posted by sgarcia. <!-- julmis &lt;julmis&gt; --> </li>
+<li>Fixed bug #<a href="http://moodle.org/bugs/bug.php?op=show&amp;bugid=4626" target="_blank">4626</a> - weblib.php: $course object conversion error in &amp;quot;print_footer &amp;quot; function <!-- moodler &lt;moodler&gt; --> </li>
+<li>Messaging: Fixed bug <a href="http://moodle.org/bugs/bug.php?op=show&amp;bugid=4621" target="_blank">4621</a> errors in MySQL v3.23 with message backup. <!-- mjollnir_ &lt;mjollnir_&gt; --> </li>
+<li>Introducing Admin-&gt;Environment to help users assess installed software prior to the 1.6 upgrade</li>
+<li>Course Restore: Now we avoid  duplicates.Bug <a href="http://moodle.org/bugs/bug.php?op=show&amp;bugid=4607" target="_blank">4607</a></li>
+<li>Assignment: Guests can no longer submit an online assignment. Bug <a href="http://moodle.org/bugs/bug.php?op=show&amp;bugid=4604" target="_blank">4604</a></li>
+<li>File Downloads: Fixed problems for slow (dial up) clients, and avoid hogging memory when PHP's output compression is on.</li>
+<li>Wiki: Supports initial load of contents from course file area. Bug <a href="http://moodle.org/bugs/bug.php?op=show&amp;bugid=3830" target="_blank">3830</a>.</li>
+<li>Lesson: Now when a teacher edits a page with the &quot;Edit page contents&quot; button and then saves or cancels, s/he gets redirected back to the lesson navigation.  This will help to streamline the editing.</li>
+<li>Activity Modules Block: Fixed bug <a href="http://moodle.org/bugs/bug.php?op=show&amp;bugid=4586" target="_blank">4586</a> in the moodle bug tracker <!-- michaelpenne &lt;michaelpenne&gt; --> </li>
+<li>Metacourse: Fixes unenrolling bug <a href="http://moodle.org/bugs/bug.php?op=show&amp;bugid=4541" target="_blank">4541</a> <!-- mjollnir_ &lt;mjollnir_&gt; --> </li>
+<li>File uploads: Fixed Bug <a href="http://moodle.org/bugs/bug.php?op=show&amp;bugid=4533" target="_blank">4533</a> - Max upload size at course level ignored.</li>
+<li>Enrol/Authorize.net: Added Address Verification System (AVS) support. <!-- ethem &lt;ethem&gt; --> </li>
+<li>Online Users Block: Limit the number of students displayed. <!-- toyomoyo &lt;toyomoyo&gt; --> </li>
+<li>Unicode Support: Typo3 Library updated to newest version. Solves <a href="http://bugs.typo3.org/view.php?id=2020" target="_blank">one important bug</a>) <!-- stronk7 &lt;stronk7&gt; --> </li>
+<li>Course Categories: Fixed courses and subcategories in an invisible category being visible. Bug <a href="http://moodle.org/bugs/bug.php?op=show&amp;bugid=4074" target="_blank">4074</a>) <!-- patrickslee &lt;patrickslee&gt; --> </li>
+<li>Wiki: Fixed a fatal error updating wiki pages.</li>
+<li>Added autocomplete=off in form tag to avoid browser autocomplete (bug:<a href="http://moodle.org/bugs/bug.php?op=show&amp;bugid=4423" target="_blank">4423</a>) <!-- moodler &lt;moodler&gt; --> </li>
+<li>Password change: Primary administrator password can only be changed by the administraror him/herself.</li>
+<li>Enrol/Authorize.net: Some changes:- allow_internal is not need anymore. Shows two option if enrolment key of course is set.- login_https is required for payment pages. My credit card is important. If you haven&#39;t a certificate forgot this module. (security)- Expiry date of credit card is more friendly :). <!-- ethem &lt;ethem&gt; --> </li>
+<li>User profile: Fixed bug <a href="http://moodle.org/bugs/bug.php?op=show&amp;bugid=4400" target="_blank">4400</a> <!-- toyomoyo &lt;toyomoyo&gt; --> </li>
+<li>Removed old THEME variable. <!-- ikawhero &lt;ikawhero&gt; --> </li>
+<li>Added some more CSS hooks for the correctness feedback <!-- moodler &lt;moodler&gt; --> </li>
+<li>fix bug #<a href="http://moodle.org/bugs/bug.php?op=show&amp;bugid=4366" target="_blank">4366</a> <!-- toyomoyo &lt;toyomoyo&gt; --> </li>
+<li>makes autologinguest possible at site level <!-- toyomoyo &lt;toyomoyo&gt; --> </li>
+<li>micro-increment version number to 2.0.10 <!-- gbateson &lt;gbateson&gt; --> </li>
+<li>corrected adjustment of relative URLs in &lt;EMBED&gt; tag <!-- gbateson &lt;gbateson&gt; --> </li>
+<li>Merging from HEAD:Fix for bug <a href="http://moodle.org/bugs/bug.php?op=show&amp;bugid=4371" target="_blank">4371</a> (also SC#199):Now manually created users with admin privileges and force change passwordcannot change their username with impunity. <!-- defacer &lt;defacer&gt; --> </li>
+<li>fix for bug <a href="http://moodle.org/bugs/bug.php?op=show&amp;bugid=4067" target="_blank">4067</a> <!-- toyomoyo &lt;toyomoyo&gt; --> </li>
+<li>fix for bug <a href="http://moodle.org/bugs/bug.php?op=show&amp;bugid=4067" target="_blank">4067</a> - allow user to update assignment when not yet marked <!-- toyomoyo &lt;toyomoyo&gt; --> </li>
+<li>fix for bug #<a href="http://moodle.org/bugs/bug.php?op=show&amp;bugid=4314" target="_blank">4314</a> <!-- moodler &lt;moodler&gt; --> </li>
+<li>fix for bug #<a href="http://moodle.org/bugs/bug.php?op=show&amp;bugid=4206" target="_blank">4206</a> <!-- moodler &lt;moodler&gt; --> </li>
+<li>Delayed merge from HEAD - If tablelib is going to do fullname voodoo, allow default sort field to be firstname/lastname <!-- mjollnir_ &lt;mjollnir_&gt; --> </li>
+<li>Log actions must be strored to DB without &amp;amp;print_log() takes care of it! Bug <a href="http://moodle.org/bugs/bug.php?op=show&amp;bugid=3853" target="_blank">3853</a>.(http://moodle.org/bugs/bug.php?op=show&amp;bugid=<a href="http://moodle.org/bugs/bug.php?op=show&amp;bugid=3853" target="_blank">3853</a>) <!-- stronk7 &lt;stronk7&gt; --> </li>
+<li>fixes bug #<a href="http://moodle.org/bugs/bug.php?op=show&amp;bugid=4354" target="_blank">4354</a> <!-- moodler &lt;moodler&gt; --> </li>
+<li>shorten_text() AFTER format properly. See bug <a href="http://moodle.org/bugs/bug.php?op=show&amp;bugid=4355" target="_blank">4355</a>.(http://moodle.org/bugs/bug.php?op=show&amp;bugid=<a href="http://moodle.org/bugs/bug.php?op=show&amp;bugid=4355" target="_blank">4355</a>) <!-- stronk7 &lt;stronk7&gt; --> </li>
+<li>Prevent a warning when params is empty. Bug <a href="http://moodle.org/bugs/bug.php?op=show&amp;bugid=4328" target="_blank">4328</a>.(http://moodle.org/bugs/bug.php?op=show&amp;bugid=<a href="http://moodle.org/bugs/bug.php?op=show&amp;bugid=4328" target="_blank">4328</a>)Merged from MOODLE_HEAD <!-- stronk7 &lt;stronk7&gt; --> </li>
+<li>Now the section &quot;jumpto&quot; menu (showed in collapse mode), supportsthe multilang filter. Bug <a href="http://moodle.org/bugs/bug.php?op=show&amp;bugid=4341" target="_blank">4341</a>.(http://moodle.org/bugs/bug.php?op=show&amp;bugid=<a href="http://moodle.org/bugs/bug.php?op=show&amp;bugid=4341" target="_blank">4341</a>) <!-- stronk7 &lt;stronk7&gt; --> </li>
+<li>Print performance info if exists and $CFG-&gt;perfdebug is enabled. <!-- stronk7 &lt;stronk7&gt; --> </li>
+<li>Fix for bug <a href="http://moodle.org/bugs/bug.php?op=show&amp;bugid=4351" target="_blank">4351</a>.  New parasmeter for get_record_sql to disableauto-added LIMIT (in case we are using our own) <!-- moodler &lt;moodler&gt; --> </li>
+
+<li>Solved bug found when trying to backup all users!(http://moodle.org/mod/forum/discuss.php?d=<a href="http://moodle.org/bugs/bug.php?op=show&amp;bugid=27105" target="_blank">27105</a>) <!-- stronk7 &lt;stronk7&gt; --> </li>
+<li>Fixing bug <a href="http://moodle.org/bugs/bug.php?op=show&amp;bugid=4345" target="_blank">4345</a>: merging problem when fixing bug <a href="http://moodle.org/bugs/bug.php?op=show&amp;bugid=4303" target="_blank">4303</a> <!-- mjollnir_ &lt;mjollnir_&gt; --> </li>
+<li>Mimic changes from &quot;Ought to mention the improved assignment grading!&quot;Merged from HEAD <!-- stronk7 &lt;stronk7&gt; --> </li>
+<li>Ought to mention the improved assignment grading! <!-- moodler &lt;moodler&gt; --> </li>
+
+<li>fixes bug#<a href="http://moodle.org/bugs/bug.php?op=show&amp;bugid=4086" target="_blank">4086</a>, spelling mistake <!-- moodler &lt;moodler&gt; --> </li>
+<li>Commenting out gz_handler since it seem to cause problemsmore on http://moodle.org/mod/forum/discuss.php?d=<a href="http://moodle.org/bugs/bug.php?op=show&amp;bugid=34376" target="_blank">34376</a> <!-- julmis &lt;julmis&gt; --> </li>
 </ul>
+
+
+<h4>Assignment</h4>
+
+<ul type="circle">
+<li>Assignment: Fixed bug in &quot;Prevent late submissions&quot;, thanks to Samuli, see bug <a href="http://moodle.org/bugs/bug.php?op=show&amp;bugid=4780" target="_blank">4780</a> <!-- gustav_delius &lt;gustav_delius&gt; --> </li>
+</ul>
+
 
 <h4>Enrolment</h4>
 
 <ul type="circle">
-<li>Authorize.net: Postgres support added.</li>
+<li>Enrolment: Better explanation of flat file enrolment format. Re-formatted the imporved flat file enorlment description <!-- patrickslee &lt;patrickslee&gt; --> </li>
+<li>Auth/LDAP: Better support for ActiveDirectory</li>
+<li>Enrol/Authorize.net: PostgreSQL support and some indexes for speed. <!-- ethem &lt;ethem&gt; --> </li>
 <li>Authorize.net: Address Verification System (AVS) support added.</li>
 <li>Authorize.net: $CGF->login_https must be ON for payment pages.</li>
 <li>Authorize.net: Shows two forms if the enrolment key of the course is set (internal and authorize forms).</li>
@@ -58,6 +140,29 @@
 
 <ul type="circle">
 <li>Bug 4355. Solved one visualisation problem in the page showing the list of forums. </li>
+<li>Forums: Fixed <a href="http://moodle.org/bugs/bug.php?op=show&amp;bugid=4360" target="_blank">4360</a> <!-- toyomoyo &lt;toyomoyo&gt; --> </li>
+<li>Forums: Fixed bug <a href="http://moodle.org/bugs/bug.php?op=show&amp;bugid=4431" target="_blank">4431</a>, added function forum_user_can_view_post in lib.php <!-- toyomoyo &lt;toyomoyo&gt; --> </li>
+<li>Forums: Fixed bug <a href="http://moodle.org/bugs/bug.php?op=show&amp;bugid=4431" target="_blank">4431</a> affecting site course <!-- toyomoyo &lt;toyomoyo&gt; --> </li>
+</ul>
+
+<h4>Hotpot Module</h4>
+
+<ul type="circle">
+<li>Add support for HP5 quizzes (including JBC and old JQuiz) <!-- gbateson &lt;gbateson&gt; --> </li>
+<li>Removed weighting from questiontext in JCloze import <!-- gbateson &lt;gbateson&gt; --> </li>
+<li>Fixed import of JCloze into quiz module as a MULTIANSWER question <!-- gbateson &lt;gbateson&gt; --> </li>
+<li>Fixed bug in restoring attempts from backup</li>
+</ul>
+
+
+<h4>Lesson Module</h4>
+
+<ul type="circle">
+<li>Lesson: $navigation and $grade_value were undefined when lesson was added to site main page <!-- michaelpenne &lt;michaelpenne&gt; --> </li>
+<li>Lesson: Lesson Essay Question Can&#39;t be Graded when attempt not finished.  Bug <a href="http://moodle.org/bugs/bug.php?op=show&amp;bugid=4174" target="_blank">4174</a> -<!-- michaelpenne &lt;michaelpenne&gt; --> </li>
+<li>Lesson: Added cancel button. Bug <a href="http://moodle.org/bugs/bug.php?op=show&amp;bugid=4216" target="_blank">4216</a> - cancel button <!-- michaelpenne &lt;michaelpenne&gt; --> </li>
+<li>Lesson: Fixed <a href="http://moodle.org/mod/forum/discuss.php?d=37537" target="_blank">problem with storing the answerid for numerical questions.</a> <!-- michaelpenne &lt;michaelpenne&gt; --> </li>
+<li>Lesson: Fixed bug <a href="http://moodle.org/bugs/bug.php?op=show&amp;bugid=1187" target="_blank">1187</a> <!-- michaelpenne &lt;michaelpenne&gt; --> </li>
 </ul>
 
 <h4>Glossary Module</h4>
@@ -78,6 +183,20 @@
 <li>Fixed bug 5070: Students can't see quizzes when they are closed</li>
 <li>Turned off regrading of quizzes that have the attemptonlast option set</li>
 <li>A number of other minor interface fixes </li>
+<li>Quiz: Fixed bug <a href="http://moodle.org/bugs/bug.php?op=show&amp;bugid=4319" target="_blank">4319</a>. Thanks to Jaroslav <!-- gustav_delius &lt;gustav_delius&gt; --> </li>
+<li>Quiz: Backported backup bugfix: <a href="http://moodle.org/bugs/bug.php?op=show&amp;bugid=4217" target="_blank">4217</a>  to STABLE <!-- gustav_delius &lt;gustav_delius&gt; --> </li>
+<li>Quiz: Fixed for bug <a href="http://moodle.org/bugs/bug.php?op=show&amp;bugid=4829" target="_blank">4829</a> <!-- gustav_delius &lt;gustav_delius&gt; --> </li>
+<li>Quiz: Now we avoid checking for latenesswhen teacher previews. Bug <a href="http://moodle.org/bugs/bug.php?op=show&amp;bugid=4495" target="_blank">4495</a> <!-- gustav_delius &lt;gustav_delius&gt; --> </li>
+<li>Quiz: Fixed bug in restore <a href="http://moodle.org/bugs/bug.php?op=show&amp;bugid=4688" target="_blank">4688</a> <!-- gustav_delius &lt;gustav_delius&gt; --> </li>
+<li>Quiz: <a href="http://moodle.org/mod/forum/discuss.php?d=39548" target="_blank">Rounding errors could lead to &quot;Partially correct&quot; for correct answers</a> <!-- gustav_delius &lt;gustav_delius&gt; --> </li>
+<li>Quiz: Added missing percentages to the grade selector, bug <a href="http://moodle.org/bugs/bug.php?op=show&amp;bugid=4250" target="_blank">4250</a> <!-- gustav_delius &lt;gustav_delius&gt; --> </li>
+<li>Quiz: Avoid error messages in case $quiz-&gt;sumgrades is zero, bug <a href="http://moodle.org/bugs/bug.php?op=show&amp;bugid=4454" target="_blank">4454</a> <!-- gustav_delius &lt;gustav_delius&gt; --> </li>
+<li>Quiz: <a href="http://moodle.org/mod/forum/discuss.php?d=27730#181773" target="_blank">get_actual_response() method for cloze question type contributed by Jean-Michel</a>#<./li>
+<li>Quiz: Better PostgreSQL support</li>
+<li>Quiz: Now With Nicer Presentation of Questions <!-- moodler &lt;moodler&gt; --> </li>
+<li>Quiz: Summary text shouldn&#39;t be cleaned as only entered by teacher. <!-- ikawhero &lt;ikawhero&gt; --> </li>
+<li>Quiz: Fixed bug <a href="http://moodle.org/bugs/bug.php?op=show&amp;bugid=4345" target="_blank">4345</a>. Report performance improvements caused regression with MySQLv3</li>
+<li>Quiz: Now we turn off browser-based autocomplete. Fixes  bug <a href="http://moodle.org/bugs/bug.php?op=show&amp;bugid=4423" target="_blank">4423</a> - Short Answer Quiz Q&#39;s Saving Form Entries <!-- moodler &lt;moodler&gt; --> </li>
 </ul>
 
 <h4>Resource Module</h4>
@@ -85,6 +204,7 @@
 <ul type="circle">
 <li>Solved one problem on restore that was causing some links to become corrupted.</li>
 <li>Slightly changes to the delete_instance() function in resources to allow future improvements. </li>
+<li>Resource restore: Solved <a href="http://moodle.org/mod/forum/discuss.php?d=38801" target="_blank">bug when decoding encoded links forresource-&gt;</a> <!-- stronk7 &lt;stronk7&gt; --> </li>
 </ul>
 
 <h4>Wiki Module</h4>
@@ -94,7 +214,10 @@
 <li>Bug 3830. Load of initial content from course file area is now allowed. </li>
 </ul>
 
-<p>For more details, see the <a href="http://docs.moodle.org/en/Release_Notes#Moodle_1.5.4">latest version of these release notes</a>.</p>
+<p>For more details, see the <a href="http://docs.moodle.org/en/Release_Notes#Moodle_1.5.4">documentation wiki version of these release notes</a>.</p>
+
+
+
 
 
 
