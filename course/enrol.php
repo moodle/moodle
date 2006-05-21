@@ -7,7 +7,8 @@
     require_once("lib.php");
     require_once("$CFG->dirroot/enrol/enrol.class.php");
 
-    $id = required_param('id',PARAM_INT);
+    $id           = required_param('id', PARAM_INT);
+    $loginasguest = optional_param('loginasguest', 0, PARAM_BOOL);
 
     require_login();
 
@@ -96,7 +97,7 @@
       //User is not enrolled in the course, wants to access course content
       //as a guest, and course setting allow unlimited guest access
       //Code cribbed from course/loginas.php
-      if (isset($loginasguest) && ($course->guest==1)) {
+      if ($loginasguest and ($course->guest==1)) {
         $realuser = $USER->id;
         $realname = fullname($USER, true);
         $USER = guest_user();
