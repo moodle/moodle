@@ -92,6 +92,12 @@ class block_admin extends block_list {
             return $this->content;
         }
 
+        if(empty($CFG->loginhttps)) {
+            $securewwwroot = $CFG->wwwroot;
+        } else {
+            $securewwwroot = str_replace('http:','https:',$CFG->wwwroot);
+        }
+
         $course = get_record('course', 'id', $this->instance->pageid);
 
         if (isteacher($this->instance->pageid)) {
@@ -111,7 +117,7 @@ class block_admin extends block_list {
 
 
             $fullname = fullname($USER, true);
-            $editmyprofile = '<a title="'.$fullname.'" href="'.$CFG->wwwroot.'/user/edit.php?id='.$USER->id.'&amp;course='.$this->instance->pageid.'">'.get_string('editmyprofile').'</a>';
+            $editmyprofile = '<a title="'.$fullname.'" href="'.$securewwwroot.'/user/edit.php?id='.$USER->id.'&amp;course='.$this->instance->pageid.'">'.get_string('editmyprofile').'</a>';
             if (empty($USER->description)) {
                 //Accessibility: replace non-standard <blink> with CSS (<a> makes title visible in IE).
                 $text = get_string('profile').' '.get_string('missingdescription');
@@ -208,7 +214,7 @@ class block_admin extends block_list {
             }
 
             $fullname = fullname($USER, true);
-            $editmyprofile = '<a title="'.$fullname.'" href="'.$CFG->wwwroot.'/user/edit.php?id='.
+            $editmyprofile = '<a title="'.$fullname.'" href="'.$securewwwroot.'/user/edit.php?id='.
                              $USER->id.'&amp;course='.$this->instance->pageid.'">'.get_string('editmyprofile').'</a>';
             if (empty($USER->description)) {
                 //Accessibility: replace non-standard <blink> with CSS (<a> makes title visible in IE).
@@ -220,7 +226,7 @@ class block_admin extends block_list {
             $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/user.gif" alt="" />';
 
             if (is_internal_auth() && !is_restricted_user($USER->username)) {
-                $this->content->items[]='<a href="'.$CFG->wwwroot.'/login/change_password.php?id='.$this->instance->pageid.'">'.get_string('changepassword').'</a>';
+                $this->content->items[]='<a href="'.$securewwwroot.'/login/change_password.php?id='.$this->instance->pageid.'">'.get_string('changepassword').'</a>';
                 $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/user.gif" alt="" />';
             } else if ($CFG->changepassword && !is_restricted_user($USER->username)) {
                 $this->content->items[]='<a href="'.$CFG->changepassword.'">'.get_string('changepassword').'</a>';
