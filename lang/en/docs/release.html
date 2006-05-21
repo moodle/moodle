@@ -24,6 +24,80 @@
 
 <h1>Latest Release notes</h1>
 
+<h2>Moodle 1.5.4 (21st May, 2006) </h2>
+
+(This release contains important security fixes, we highly advise that sites using any previous version of Moodle upgrade to this version as soon as possible.)
+
+<h3>Various fixes</h3>
+
+<h4>General</h4>
+
+<ul type="circle">
+<li>Various updates/improvements in the the Environmental Check allowing to check if your server suits future Moodle requirements.</li>
+<li>Bug 4619. Fixed one DB query not following coding rules.</li>
+<li>Bug 4607. Avoid duplication of course shortname on restore.</li>
+<li>Fixed one problem with auto-link filters and frames.</li>
+<li>Important fixes to muti-byte text handling routines.</li>
+<li>Small changes to the installer.</li>
+<li>Bug 3853. Some important improvements in the restore of log actions.</li>
+<li>Bug 4328. Prevent some warnings in the blocks system.</li>
+<li>Bug 4341. Extending multi-lang support to the "jumpto" menu (showed in collapsed mode). </li>
+</ul>
+
+<h4>Enrolment</h4>
+
+<ul type="circle">
+<li>Authorize.net: Postgres support added.</li>
+<li>Authorize.net: Address Verification System (AVS) support added.</li>
+<li>Authorize.net: $CGF->login_https must be ON for payment pages.</li>
+<li>Authorize.net: Shows two forms if the enrolment key of the course is set (internal and authorize forms).</li>
+<li>Authorize.net: IIS https fix. It doesn't recognize empty($_SERVER['HTTPS']) but accepts HTTPS=off. </li>
+</ul>
+
+<h4>Forum Module</h4>
+
+<ul type="circle">
+<li>Bug 4355. Solved one visualisation problem in the page showing the list of forums. </li>
+</ul>
+
+<h4>Glossary Module</h4>
+
+<ul type="circle">
+<li>Bug 4543, 4713. Fixed some problems with entries and categories containing more than one word in their title.</li>
+<li>Bug 4858. Fixed one problem with formats, not being detected properly.</li>
+<li>Bug 4915. Entrylist format now displays the "Send Ratings" button. </li>
+</ul>
+
+<h4>Quiz Module</h4>
+
+<ul type="circle">
+<li>Fixed bug 4250: Added missing percentages to the grade selector</li>
+<li>Fixed bug 4495: Don't apply lateness check when teacher previews</li>
+<li>Fixed bug 4544: Incorrect path to exported files in some language packs</li>
+<li>Fixed bug 4780: Bug in "Prevent late submissions" setting fixed</li>
+<li>Fixed bug 5070: Students can't see quizzes when they are closed</li>
+<li>Turned off regrading of quizzes that have the attemptonlast option set</li>
+<li>A number of other minor interface fixes </li>
+</ul>
+
+<h4>Resource Module</h4>
+
+<ul type="circle">
+<li>Solved one problem on restore that was causing some links to become corrupted.</li>
+<li>Slightly changes to the delete_instance() function in resources to allow future improvements. </li>
+</ul>
+
+<h4>Wiki Module</h4>
+
+<ul type="circle">
+<li>Solved one problem sending double-slashed info to DB.</li>
+<li>Bug 3830. Load of initial content from course file area is now allowed. </li>
+</ul>
+
+<p>For more details, see the <a href="http://docs.moodle.org/en/Release_Notes#Moodle_1.5.4">latest version of these release notes</a>.</p>
+
+
+
 <h2>Moodle 1.5.3 (11th November, 2005) </h2>
 
 <p>(Because this release contains important security fixes, we highly advise 
