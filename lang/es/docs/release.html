@@ -24,6 +24,101 @@
 
 <h1>Notas sobre las &uacute;ltima versi&oacute;n </h1>
 
+<h2>Moodle 1.5.4 (21 de Mayo de 2006) </h2>
+
+<p>(Como esta versi&oacute;n contiene importantes soluciones a problemas de seguridad,
+  es altamente recomendable para todo el mundo utilizando versiones anteriores
+  de Moodle, actualizarse tan pronto como sea posible)</p>
+  
+<h3>Problemas solucionados</h3>
+
+<h4>Seguridad</h4>
+
+<ul type="circle"><li> Mejoras en la limpieza de html realizada por kses. SC#204.
+</li><li> Prevención en el cambio de contraseñas no deseadas. SC#225.
+</li><li> Solucionado aviso de Secunia SA18267 e incremento de registro de actividades sospechosas.
+</li><li> Eliminados las tests de ADOdb en relación con el aviso de Secunia SA18267.
+</li><li> Solucionada la lógica de la variable $CFG->forceloginforprofiles. SC#207. Cambios obtenidos desde HEAD.
+</li></ul>
+
+<h4>General</h4>
+
+<ul type="circle"><li> Varias actualizaciones y mejoras en los Chequeos de Entorno permitiendo comprobar si su servidor cumple los requerimientos futuros de Moodle.
+</li><li> Bug 4619. Solucionado un problema con unas consultas a BD que no cumplían las normas de codificación.
+</li><li> Bug 4607. Evitado el duplicado de los nombres cortos de cursos en la restauración de cursos.
+</li><li> Solucionado un problema con los filtros de auto-enlazado y los frames.
+</li><li> Importantes mejoras en las nuevas funciones de manejo de textos multi-byte.
+</li><li> Pequeños cambios al instalador.
+</li><li> Bug 3853. Algunas mejoras importantes en la restauración de acciones de registros.
+</li><li> Bug 4328. Evitados algunos avisos en el código de los bloques.
+</li><li> Bug 4341. Soporte multi-idioma extendido al menú "saltar a" (visualizado en modo compactado).
+</li></ul>
+
+<h4>Matriculación y Metacursos</h4>
+
+<ul type="circle"><li> Auth/LDAP: Mejorado el soporte de ActiveDirectory.
+</li><li> Enrol/Authorize.net: Soporte para PostgreSQL añadido y mejoras en el acceso a la BD (índices).
+</li><li> Authorize.net: Soporte para "Address Verification System" (AVS) añadido.
+</li><li> Authorize.net: Servidor seguro debe estar activado ($CGF->login_https) para las páginas de pago.
+</li><li> Authorize.net: Muestra dos formularios si la clave de matriculación del curso está definida (formulario interno y formulario propio de Authorize.net).
+</li><li> Authorize.net: Solucionado problema con IIS. No se reconoce empty($_SERVER['HTTPS']), pero se acepta HTTPS=off.
+</li></ul>
+
+<h4>Foros</h4>
+
+<ul type="circle"><li> Bug 4355. Solucionado un problema de visualización en la página de la lista de los foros.
+</li><li> Bug 4360. Solucionado un problema con MySQL 5 y la visualización de discusiones.
+</li><li> Bug 4431. Solucionado un problema que afectaba a la visibilidad de los foros del Sitio.
+</li></ul>
+
+<h4>Glosarios</h4>
+
+<ul type="circle"><li> Bug 4543, 4713. Solucionados algunos problemas con entradas y categorías con más de una palabra en sus títulos.
+</li><li> Bug 4858. Solucionado un problema con los formatos que, en algunas ocasiones, no eran detectados correctamente.
+</li><li> Bug 4915. El formato the "Lista de Entradas" ahora visualiza el botón de "Enviar Calificaciones".
+</li></ul>
+
+<h4>Hotpot</h4>
+
+<ul type="circle"><li> Añadido soporte para cuestionatios HotPotatoes 5 (incluyento JBC y el antiguo JQuiz).
+</li><li> Removido el peso de las preguntas en la importación de JCloze.
+</li><li> Solucionada la importación de JCloze en el módulo cuestionario como una pregunta de respuesta múltiple.
+</li><li> Solucionado un problema restaurando intentos.
+</li></ul>
+
+<h4>Lección</h4>
+
+<ul type="circle"><li> $navigation y $grade_value no eran correctamente definidos al utilizar las lecciones en el sitio.
+</li><li> Bug 4174. Las lecciones con preguntas de tipo ensayo no pueden ser evaluadas si no se ha finalizado el intento.
+</li><li> Bug 4216. Añadido botón de cancelar.
+</li><li> Solucionado problema al almacenar preguntas numéricas.
+</li></ul>
+
+<h4>Cuestionario</h4>
+
+<ul type="circle"><li> Fixed bug 4250: Añadidos porcentajes a los selectores de calificaciones.
+</li><li> Fixed bug 4495: Evitadas algunas comprobaciones en la previsualización del profesor.
+</li><li> Fixed bug 4544: Problemas de exportación en algunos idiomas solucionados.
+</li><li> Fixed bug 4780: Problema en el re-envío de respuestas solucionado.
+</li><li> Fixed bug 5070: Los estudiantes no pueden ver los cuestionarios si están cerrados.
+</li><li> Desactivado el recálculo automático de cuestionarios que son contruídos con base en el último intento.
+</li><li> Un buen número de problemas de interfaz han sido corregidos.
+</li></ul>
+
+<h4>Recursos</h4>
+
+<ul type="circle"><li> Solucionado un problema en la restauración de cursos que producía una incorrecta regeneración de enlaces.
+</li><li> Cambios a la función delete_instance() para permitir futuras mejoras/ampliaciones.
+</li></ul>
+
+<h4>Wiki</h4>
+
+<ul type="circle"><li> Solucionado un problema enviando información "double-slashed" a la Base de Datos.
+</li><li> Bug 3830. La carga de contenido inicial desde la zona de ficheros del curso ahora funciona.
+</li></ul>
+
+<hr />
+
 <h2>Moodle 1.5.3 (11 de Noviembre de 2005) </h2>
 
 <p>(Como esta versi&oacute;n contiene importantes soluciones a problemas de seguridad,
@@ -605,7 +700,7 @@
 <br />
 <center>
   <p>
-<a href="./?file=releaseold.html">Old release information</a>
+<a href="./?file=releaseold.html">Informaci&oacute;n de versiones anteriores</a>
 </p>
 </center>
 <br />
