@@ -277,6 +277,12 @@
 
     $usehtmleditor = can_use_html_editor();
 
+    //temporary hack to disable htmleditor in IE when loginhttps on and wwwroot starts with http://
+    //see bug #5534
+    if (!empty($CFG->loginhttps) and check_browser_version('MSIE', 5.5) and (strpos($CFG->wwwroot, 'http://') === 0)) {
+        $usehtmleditor = false;
+    }
+
     $streditmyprofile = get_string("editmyprofile");
     $strparticipants = get_string("participants");
     $strnewuser = get_string("newuser");
