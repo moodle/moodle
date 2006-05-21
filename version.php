@@ -6,10 +6,10 @@
 // This is compared against the values stored in the database to determine
 // whether upgrades should be performed (see lib/db/*.php)
 
-   $version = 2005060231;  // YYYYMMDD   = Moodle 1.5 Date
+   $version = 2005060240;  // YYYYMMDD   = Moodle 1.5 Date
                            //         X  = Moodle 1.5 Point release (0,1,2...)
                            //          Y = Interim incrementer
 
-   $release = '1.5.3+';    // Human-friendly version name
+   $release = '1.5.4';    // Human-friendly version name
 
 ?>
