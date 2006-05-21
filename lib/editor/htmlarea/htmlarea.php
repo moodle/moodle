@@ -1456,7 +1456,7 @@ HTMLArea.prototype._createLink = function(link) {
         outparam = {
         f_anchors:anchors };
     }
-    this._popupDialog("link_std.php?id=<?php print(isset($id) && !empty($id)) ? $id : ''; ?>", function(param) {
+    this._popupDialog("link_std.php?id=<?php echo $id; ?>", function(param) {
         if (!param) {
             return false;
         }
@@ -1527,16 +1527,10 @@ HTMLArea.prototype._insertImage = function(image) {
         f_height : image.height
     };
     this._popupDialog("<?php
-    if(!empty($id)) {
-        if(isteacher($id)) {
-            echo "insert_image.php?id=";
-            print(isset($id) && !empty($id)) ? $id : "0";
-        } else {
-            echo "insert_image_std.php?id=";
-            print(isset($id) && !empty($id)) ? $id : "0";
-        }
+    if(!empty($id) and isteacher($id)) {
+        echo "insert_image.php?id=$id";
     } else {
-        echo "insert_image_std.php?id=0";
+        echo "insert_image_std.php?id=$id";
     }?>", function(param) {
         if (!param) {   // user must have pressed Cancel
             return false;
@@ -1873,12 +1867,12 @@ HTMLArea.prototype.execCommand = function(cmdID, UI, param) {
         HTMLArea._object = this;
         if (HTMLArea.is_ie) {
             {
-                window.open(this.popupURL("fullscreen.php?id=<?php print(isset($id) && !empty($id)) ? $id : '';?>"), "ha_fullscreen",
+                window.open(this.popupURL("fullscreen.php?id=<?php echo $id;?>"), "ha_fullscreen",
                     "toolbar=no,location=no,directories=no,status=no,menubar=no," +
                         "scrollbars=no,resizable=yes,width=800,height=600");
             }
         } else {
-            window.open(this.popupURL("fullscreen.php?id=<?php print(isset($id) && !empty($id)) ? $id : '';?>"), "ha_fullscreen",
+            window.open(this.popupURL("fullscreen.php?id=<?php echo $id;?>"), "ha_fullscreen",
                     "toolbar=no,menubar=no,personalbar=no,width=800,height=600," +
                     "scrollbars=no,resizable=yes");
         }
