@@ -144,11 +144,13 @@
                 $passwordchangeurl=$CFG->wwwroot.'/login/change_password.php';
             } elseif($CFG->changepassword) {
                 $passwordchangeurl=$CFG->changepassword;
-            } 
+            } else {
+                $passwordchangeurl = '';
+            }
             
             // check whether the user should be changing password
             if (get_user_preferences('auth_forcepasswordchange', false) || $frm->password == 'changeme'){
-                if (isset($passwordchangeurl)) {
+                if ($passwordchangeurl != '') {
                     redirect($passwordchangeurl);
                 } else {
                     error("You cannot proceed without changing your password. 
