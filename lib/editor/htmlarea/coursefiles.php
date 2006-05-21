@@ -22,6 +22,7 @@
     $oldname = optional_param('oldname', '', PARAM_FILE);
     $usecheckboxes  = optional_param('usecheckboxes', 1, PARAM_INT);
     $save    = optional_param('save', 0, PARAM_BOOL);
+    $text    = optional_param('text', '', PARAM_RAW);
     $confirm = optional_param('confirm', 0, PARAM_BOOL);
 
 
@@ -393,7 +394,7 @@
 
         case "edit":
             html_header($course, $wdir);
-            if (isset($text) and confirm_sesskey()) {
+            if (($text != '') and confirm_sesskey()) {
                 $fileptr = fopen($basedir.$file,"w");
                 fputs($fileptr, stripslashes($text));
                 fclose($fileptr);
