@@ -316,9 +316,8 @@ function question_list($course, $categoryid, $quizid=0,
 
     $canedit = isteacheredit($category->course);
 
-    echo '<form method="post" action="edit.php">';
+    echo '<form method="post" action="edit.php?courseid='.$course->id.'">';
     echo '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
-    echo "<input type=\"hidden\" name=\"courseid\" value=\"$course->id\" />";
     print_simple_box_start('center', '100%', '#ffffff', 0);
     echo '<table id="categoryquestions" cellspacing="0"><tr>';
     $actionwidth = $canedit ? 95 : 70;
