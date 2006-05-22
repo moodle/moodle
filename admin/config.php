@@ -34,7 +34,7 @@
         if (count($err) == 0) {
             foreach ($config as $name => $value) {
                 if ($name == "sessioncookie") {
-                    $value = eregi_replace("[^a-zA-Z]", "", $value);
+                    $value = eregi_replace("[^a-zA-Z0-9_]", "", $value);
                 }
                 if ($name == "defaultallowedmodules") {
                     $value = implode(',',$value);
