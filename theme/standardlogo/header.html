@@ -38,29 +38,28 @@
           $standardlogo = $CFG->wwwroot.'/theme/'.current_theme().'/logo.gif';
       }
       
-      //Accessibility: warning: ALT text will need editing if logo changes.
+      //Accessibility: warning: ALT text will need editing if logo changes. 'headermain' is now H1.
 ?>
-    <div id="header-home">
+    <div id="header-home" class="clearfix">
         <h1 class="headermain"><img alt="Moodle" src="<?php echo $standardlogo ?>" /></h1>
         <div class="headermenu"><?php echo $menu ?></div>
     </div>
 <?php } else if ($heading) {  // This is what gets printed on any other page with a heading 
 ?>
-    <div id="header">
+    <div id="header" class="clearfix">
         <h1 class="headermain"><?php echo $heading ?></h1>
         <div class="headermenu"><?php echo $menu ?></div>
     </div>
 <?php } ?>
-    <div class="clearer">&nbsp;</div>
-<?php if ($navigation) { // This is the navigation table with breadcrumbs  ?>
-    <table class="navbar"><tr><td>
+<?php //Accessibility: breadcrumb trail/navbar now a DIV, not a table.
+      if ($navigation) { // This is the navigation table with breadcrumbs  ?>
+    <div class="navbar clearfix">
         <div class="breadcrumb"><?php print_navigation($navigation); ?></div>
         <div class="navbutton"><?php echo $button; ?></div>
-    </td></tr></table>
+    </div>
 <?php } else if ($heading) { // If no navigation, but a heading, then print a line  
 ?>
         <hr size="1" noshade="noshade" />
 <?php } ?>
-    <div class="clearer">&nbsp;</div>
     <!-- END OF HEADER -->
     <div id="content">
