@@ -37,24 +37,24 @@ TO INSTALL OR UPDATE THE HOTPOT MODULE
 2. Install the messages and help files of the hotpot module
 
    On Moodle 1.5 and earlier:
-   (a) download http://cvs.sourceforge.net/viewcvs.py/moodle/moodle/lang/en_utf8/hotpot.php
+   (a) download http://moodle.cvs.sourceforge.net/moodle/moodle/lang/en_utf8/hotpot.php
        to "lang/en/hotpot.php" on your Moodle site
-   (b) download the files in http://cvs.sourceforge.net/viewcvs.py/moodle/moodle/lang/en_utf8/help/hotpot/
+   (b) download the files in http://moodle.cvs.sourceforge.net/moodle/moodle/lang/en_utf8/help/hotpot/
        into "lang/en/help/hotpot/" on your Moodle site
 
    On Moodle 1.6 and later:
    (a) locate the "lang" folder on your Moodle site. 
        Note: the default location for the "lang" folder is in the "$CFG->dataroot" directory defined in the config.php file for your Moodle site
-   (b) download http://cvs.sourceforge.net/viewcvs.py/moodle/moodle/lang/en_utf8/hotpot.php
+   (b) download http://moodle.cvs.sourceforge.net/moodle/moodle/lang/en_utf8/hotpot.php
        to "lang/en_utf8/hotpot.php" on your Moodle site
-   (c) download the files in http://cvs.sourceforge.net/viewcvs.py/moodle/moodle/lang/en_utf8/help/hotpot/
+   (c) download the files in http://moodle.cvs.sourceforge.net/moodle/moodle/lang/en_utf8/help/hotpot/
        into "lang/en_utf8/help/hotpot/" on your Moodle site
 
 3. copy and set up the file icons
    [This step is not required for Moodle 1.5 and later, and is optional for Moodle 1.1 to 1.4]
 
    (a) copy the hotpot icons (jcb.gif, jcl.gif, jcw.gif, jmt.gif, jmx.gif, jqz.gif)
-       from http://cvs.sourceforge.net/viewcvs.py/moodle/moodle/pix/f/
+       from http://moodle.cvs.sourceforge.net/moodle/moodle/pix/f/
        to "pix/f" on your Moodle site           
    (b) open the "files/mimetypes.php" file on your Moodle site with a text editor
    (c) insert the following lines just AFTER the line which reads "$mimeinfo = array (":
@@ -73,7 +73,7 @@ TO INSTALL OR UPDATE THE HOTPOT MODULE
    [This step is not required for Moodle 1.5 and later, and is optional for Moodle 1.1 to 1.4]
 
    (a) if necessary, create a folder at "mod/quiz/format/hotpot" on your Moodle site
-   (b) download http://cvs.sourceforge.net/viewcvs.py/moodle/moodle/question/format/hotpot/format.php
+   (b) download http://moodle.cvs.sourceforge.net/moodle/moodle/question/format/hotpot/format.php
        to "mod/hotpot/quiz/format/hotpot/format.php" on your Moodle site
 
    (c) open the "lang/en/quiz.php" file on your Moodle site with a text editor
