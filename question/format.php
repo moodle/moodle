@@ -68,8 +68,8 @@ class qformat_default {
             echo "<hr /><p><b>$count</b>. ".stripslashes($question->questiontext)."</p>";
 
             // check for answer grades validity (must match fixed list of grades)
-            $fractions = $question->fraction;
-            if (!empty($fractions)) {
+            if (!empty($question->fraction)) {
+                $fractions = $question->fraction;
                 $answersvalid = true; // in case they are!
                 foreach ($fractions as $key => $fraction) {
                     $newfraction = match_grade_options($gradeoptionsfull, $fraction, $matchgrades);
