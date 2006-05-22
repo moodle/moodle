@@ -5,7 +5,8 @@
     require_once("../../config.php");
     require_once("lib.php");
 
-    $id = required_param('id',PARAM_INT);
+    $id   = required_param('id',PARAM_INT);
+    $sort = optional_param('sort', '', PARAM_RAW);
 
     if (! $post = get_record("forum_posts", "id", $id)) {
         error("Post ID was incorrect");
@@ -27,8 +28,11 @@
         error("You can only look at results for posts you own");
     }
 
-    if (!isset($sort)) {
-        $sort = "r.time";
+    switch ($sort) {
+        case 'time':      $sqlsort = "r.time ASC"; break;
+        case 'firstname': $sqlsort = "u.firstname ASC"; break;
+        case 'rating':    $sqlsort = "r.rating ASC"; break;
+        default:          $sqlsort = "r.time ASC";
     }
 
     $scalemenu = make_grades_menu($forum->scale);
@@ -40,16 +44,16 @@
 
     print_header("$strratings: ".format_string($post->subject));
 
-    if (!$ratings = forum_get_ratings($post->id, $sort)) {
+    if (!$ratings = forum_get_ratings($post->id, $sqlsort)) {
         error("No ratings for this post: \"".format_string($post->subject)."\"");
 
     } else {
         echo "<table border=\"0\" cellpadding=\"3\" cellspacing=\"3\" class=\"generalbox\" width=\"100%\">";
         echo "<tr>";
         echo "<th>&nbsp;</th>";
-        echo "<th><a href=\"report.php?id=$post->id&amp;sort=u.firstname\">$strname</a>";
-        echo "<th width=\"100%\"><a href=\"report.php?id=$post->id&amp;sort=r.rating\">$strrating</a>";
-        echo "<th><a href=\"report.php?id=$post->id&amp;sort=r.time\">$strtime</a>";
+        echo "<th><a href=\"report.php?id=$post->id&amp;sort=firstname\">$strname</a>";
+        echo "<th width=\"100%\"><a href=\"report.php?id=$post->id&amp;sort=rating\">$strrating</a>";
+        echo "<th><a href=\"report.php?id=$post->id&amp;sort=time\">$strtime</a>";
         foreach ($ratings as $rating) {
             if (isteacher($discussion->course, $rating->id)) {
                 echo '<tr class="forumpostheadertopic">';
