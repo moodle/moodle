@@ -21,6 +21,7 @@
         error("Course does not exist!");
     }
 
+    $showcatmenu = false;
     if ($categoryid) { // update category in session variable
         $SESSION->questioncat = $categoryid;
     } else { // try to get category from modform
