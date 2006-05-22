@@ -11,6 +11,7 @@
 
 /// Initialise some variables
     $sqlorderby = '';
+    $sqlsortkey = NULL;
 
 /// Pivot is the field that set the break by groups (category, initial, author name, etc)
 
@@ -84,10 +85,6 @@
     break;
     case GLOSSARY_AUTHOR_VIEW:
 
-        if (!isset($sqlsortkey)) {
-            $sqlsortkey = NULL;
-        }
-
         $where = '';
         switch ($CFG->dbtype) {
         case 'postgres7':
@@ -123,10 +120,6 @@
     case GLOSSARY_APPROVAL_VIEW:
         $fullpivot = 0;
         $printpivot = 0;
-
-        if (!isset($sqlsortkey)) {
-            $sqlsortkey = NULL;
-        }
 
         $where = '';
         if ($hook != 'ALL' and $hook != 'SPECIAL') {
