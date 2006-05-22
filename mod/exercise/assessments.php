@@ -718,7 +718,7 @@
                     $element->exerciseid = $exercise->id;
                     $element->assessmentid = $assessment->id;
                     $element->elementno = clean_param($key, PARAM_INT);
-                    $element->feedback   = clean_param($form->feedback[$key]);
+                    $element->feedback   = clean_param($form->feedback[$key], PARAM_CLEAN);
                     $element->grade = $thegrade;
                     if (!$element->id = insert_record("exercise_grades", $element)) {
                         error("Could not insert exercise element!");
