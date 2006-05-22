@@ -2706,12 +2706,16 @@ function forum_user_has_posted($forumid,$did,$userid) {
     return record_exists('forum_posts','discussion',$did,'userid',$userid);
 }
 
-function forum_user_can_post_discussion($forum, $currentgroup=false, $groupmode='') {
+function forum_user_can_post_discussion($forum, $currentgroup=false, $groupmode='', $edit=0) {
 // $forum is an object
     global $USER, $SESSION;
-
     if ($forum->type == "eachuser") {
-        return (! forum_user_has_posted_discussion($forum->id, $USER->id));
+        if ($edit) { // fix for 5551, if 1 post per user, should allow edit, if poster is owner
+            $post = get_record('forum_posts','id',$edit);
+            return ($post->userid == $USER->id); // editting your own post?
+        } else {
+            return (! forum_user_has_posted_discussion($forum->id, $USER->id));
+        }
     } else if ($forum->type == 'qanda') {
         return isteacher($forum->course);
     } else if ($forum->type == "teacher") {
