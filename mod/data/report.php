@@ -5,7 +5,8 @@
     require_once("../../config.php");
     require_once("lib.php");
 
-    $id = required_param('id',PARAM_INT);
+    $id   = required_param('id',PARAM_INT);
+    $sort = optional_param('sort', '', PARAM_RAW);
 
     if (!$record = get_record('data_records','id',$id)) {
         error("rating ID was incorrect");
@@ -14,9 +15,11 @@
     if (!$data = get_record('data','id',$record->dataid)) {
         error("rating ID was incorrect");
     }
-    
-    if (!isset($sort)) {
-        $sort = "r.id";
+
+    switch ($sort) {
+        case 'firstname': $sqlsort = "u.firstname ASC"; break;
+        case 'rating':    $sqlsort = "r.rating ASC"; break;
+        default:          $sqlsort = "r.id ASC";
     }
 
     $scalemenu = make_grades_menu($data->scale);
@@ -27,15 +30,15 @@
 
     print_header($strratings);
 
-    if (!$ratings = data_get_ratings($record->id, $sort)) {
+    if (!$ratings = data_get_ratings($record->id, $sqlsort)) {
         error("No ratings for this record!");
 
     } else {
         echo "<table border=\"0\" cellpadding=\"3\" cellspacing=\"3\" class=\"generalbox\" width=\"100%\">";
         echo "<tr>";
         echo "<th>&nbsp;</th>";
-        echo "<th><a href=\"report.php?id=$id&amp;sort=u.firstname\">$strname</a>";
-        echo "<th width=\"100%\"><a href=\"report.php?id=$id&amp;sort=r.rating\">$strrating</a>";
+        echo "<th><a href=\"report.php?id=$id&amp;sort=firstname\">$strname</a>";
+        echo "<th width=\"100%\"><a href=\"report.php?id=$id&amp;sort=rating\">$strrating</a>";
         foreach ($ratings as $rating) {
             if (isteacher($data->course)) {
                 echo '<tr class="forumpostheadertopic">';

@@ -4,9 +4,9 @@
     require_once("../../config.php");
     require_once("lib.php");
 
-    $id = required_param('id', PARAM_INT);
-    global $USER;
-    
+    $id   = required_param('id', PARAM_INT);
+    $sort = optional_param('sort', '', PARAM_RAW);
+
     if (! $entry = get_record("glossary_entries", "id", $id)) {
         error("Entry ID was incorrect");
     }
@@ -23,8 +23,11 @@
         error("You can only look at results for your own entries");
     }
 
-    if (!isset($sort)) {
-        $sort = "r.time";
+    switch ($sort) {
+        case 'time':      $sqlsort = "r.time ASC"; break;
+        case 'firstname': $sqlsort = "u.firstname ASC"; break;
+        case 'rating':    $sqlsort = "r.rating ASC"; break;
+        default:          $sqlsort = "r.time ASC";
     }
 
     $scalemenu = make_grades_menu($glossary->scale);
@@ -36,16 +39,16 @@
 
     print_header("$strratings: $entry->concept");
 
-    if (!$ratings = glossary_get_ratings($entry->id, $sort)) {
+    if (!$ratings = glossary_get_ratings($entry->id, $sqlsort)) {
         error("No ratings for this entry: \"$entry->concept\"");
 
     } else {
         echo "<table border=\"0\" cellpadding=\"3\" cellspacing=\"3\" class=\"generalbox\" width=\"100%\">";
         echo "<tr>";
         echo "<th class=\"header\">&nbsp;</th>";
-        echo "<th class=\"header\"><a href=\"report.php?id=$entry->id&amp;sort=u.firstname\">$strname</a></th>";
-        echo "<th width=\"100%\" class=\"header\"><a href=\"report.php?id=$entry->id&amp;sort=r.rating\">$strrating</a></th>";
-        echo "<th class=\"header\"><a href=\"report.php?id=$entry->id&amp;sort=r.time\">$strtime</a></th>";
+        echo "<th class=\"header\"><a href=\"report.php?id=$entry->id&amp;sort=firstname\">$strname</a></th>";
+        echo "<th width=\"100%\" class=\"header\"><a href=\"report.php?id=$entry->id&amp;sort=rating\">$strrating</a></th>";
+        echo "<th class=\"header\"><a href=\"report.php?id=$entry->id&amp;sort=time\">$strtime</a></th>";
         foreach ($ratings as $rating) {
             if (isteacher($glossary->course, $rating->id)) {
                 echo '<tr class="teacher">';
