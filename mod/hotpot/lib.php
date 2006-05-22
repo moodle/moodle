@@ -1604,11 +1604,13 @@ class hotpot_xml_quiz extends hotpot_xml_tree {
 		$this->insert_form($startblock, $endblock, $form_name, $form_fields, $keep_contents);
 	}
 	function insert_giveup_form($attemptid, $startblock, $endblock, $keep_contents=false) {
-		$form_name = 'giveup';
+		$form_name = ''; // no <form> tag will be generated
 		$form_fields = ''
-		.	'<input type="hidden" name="attemptid" value="'.$attemptid.'" />'
-		.	'<input type="hidden" name="status" value="'.HOTPOT_STATUS_ABANDONED.'" />'
-		.	'<input type="submit" value="'.get_string('giveup', 'hotpot').'" class="FuncButton" onfocus="FuncBtnOver(this)" onblur="FuncBtnOut(this)" onmouseover="FuncBtnOver(this)" onmouseout="FuncBtnOut(this)" onmousedown="FuncBtnDown(this)" onmouseup="FuncBtnOut(this)" />'
+		.	'<button onclick="Finish('.HOTPOT_STATUS_ABANDONED.')" class="FuncButton" '
+		.	'onfocus="FuncBtnOver(this)" onblur="FuncBtnOut(this)" '
+		.	'onmouseover="FuncBtnOver(this)" onmouseout="FuncBtnOut(this)" '
+		.	'onmousedown="FuncBtnDown(this)" onmouseup="FuncBtnOut(this)">'
+		.	get_string('giveup', 'hotpot').'</button>'
 		;
 		$this->insert_form($startblock, $endblock, $form_name, $form_fields, $keep_contents, true);
 	}
