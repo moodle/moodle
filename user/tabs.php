@@ -9,6 +9,10 @@
         $filterselect = '';
     }
 
+    //make sure everything is cleaned properly
+    $filtertype   = clean_param($filtertype, PARAM_ALPHA);
+    $filterselect = clean_param($filterselect, PARAM_INT);
+
     if (empty($currenttab) or empty($user) or empty($course)) {
         //error('You cannot call this script in that way');
     }
