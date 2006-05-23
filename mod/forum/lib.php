@@ -81,6 +81,9 @@ if (!isset($CFG->forum_enabletimedposts)) {   // Newish feature that is not quit
     $CFG->forum_enabletimedposts = false;
 }
 
+if (!isset($CFG->forum_enablerssfeeds)) {   // Disable forum RSS feeds by default
+    $CFG->forum_enablerssfeeds = false;
+}
 
 /// STANDARD FUNCTIONS ///////////////////////////////////////////////////////////
 
