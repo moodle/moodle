@@ -767,8 +767,8 @@ function data_get_participants($dataid) {
                                AND u.id = r.userid');
     
     $comments = get_records_sql('SELECT DISTINCT u.id, u.id from '.$CFG->prefix.
-                                'user u, '.$CFG->prefix.'data_comments c WHERE dataid="'.$dataid.'"
-                                AND u.id = c.userid');
+                                'user u, '.$CFG->prefix.'data_comments c, '.$CFG->prefix.'data_records r'.
+                                ' WHERE r.dataid="'.$dataid.'" AND u.id = c.userid AND r.id = c.recordid');
 
     $participants = array();
     
