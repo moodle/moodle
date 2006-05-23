@@ -758,18 +758,31 @@ function data_user_complete($course, $user, $mod, $data) {
  * returns a list of participants of this database                      *
  ************************************************************************/
 function data_get_participants($dataid) {
-//Returns the users with data in one resource
-//(NONE, byt must exists on EVERY mod !!)
+//Returns the users with data in one data
+//(users with records in data_records, data_comments and data_ratings)
     global $CFG;
-    
-    $records = get_records_sql('SELECT DISTINCT u.id, u.id from '.$CFG->prefix.
-                               'user u, '.$CFG->prefix.'data_records r WHERE r.dataid="'.$dataid.'"
-                               AND u.id = r.userid');
-    
-    $comments = get_records_sql('SELECT DISTINCT u.id, u.id from '.$CFG->prefix.
-                                'user u, '.$CFG->prefix.'data_comments c, '.$CFG->prefix.'data_records r'.
-                                ' WHERE r.dataid="'.$dataid.'" AND u.id = c.userid AND r.id = c.recordid');
 
+    $records = get_records_sql("SELECT DISTINCT u.id, u.id
+                                FROM {$CFG->prefix}user u,
+                                     {$CFG->prefix}data_records r
+                                WHERE r.dataid = '$dataid'
+                                  AND u.id = r.userid");
+
+    $comments = get_records_sql("SELECT DISTINCT u.id, u.id
+                                 FROM {$CFG->prefix}user u,
+                                      {$CFG->prefix}data_records r,
+                                      {$CFG->prefix}data_comments c
+                                 WHERE r.dataid = '$dataid'
+                                   AND u.id = r.userid 
+                                   AND r.id = c.recordid");
+
+    $ratings = get_records_sql("SELECT DISTINCT u.id, u.id
+                                FROM {$CFG->prefix}user u,
+                                     {$CFG->prefix}data_records r,
+                                     {$CFG->prefix}data_ratings a
+                                WHERE r.dataid = '$dataid'
+                                  AND u.id = r.userid 
+                                  AND r.id = a.recordid");
     $participants = array();
     
     if ($records){
@@ -780,6 +793,11 @@ function data_get_participants($dataid) {
     if ($comments){
         foreach ($comments as $comment) {
             $participants[$comment->id] = $comment;
+        }
+    }
+    if ($ratings){
+        foreach ($ratings as $rating) {
+            $participants[$rating->id] = $rating;
         }
     }
                                   
