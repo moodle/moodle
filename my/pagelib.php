@@ -43,7 +43,7 @@ class page_my_moodle extends page_base {
         $header = get_string('mymoodle','my');
         $nav = $header;
         
-        $loggedinas = '<p class="logininfo">'. user_login_string($site) .'</p>';
+        $loggedinas = user_login_string($site);
         print_header($title, $header,$nav,'','',true, $button, $loggedinas);
 
     }
