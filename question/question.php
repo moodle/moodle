@@ -146,6 +146,7 @@
                 $replaceold   = !$hasresponses && $replaceinall;
             }
 
+            $oldquestionid = false;
             if (!$replaceold) { // create a new question
                 $oldquestionid = $question->id;
                 if (!$makecopy) {
@@ -161,7 +162,7 @@
                 error("Failed to save the question!");
             }
 
-            if(isset($oldquestionid)) {
+            if(!empty($oldquestionid)) {
                 // create version entries for different quizzes
                 $version = new object();
                 $version->oldquestion = $oldquestionid;
