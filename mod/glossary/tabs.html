@@ -5,6 +5,10 @@
     if (!isset($sortkey)) {
         $sortkey = '';
     }
+    
+    //make sure variables are properly cleaned
+    $sortkey   = clean_param($sortkey, PARAM_ALPHA);// Sorted view: CREATION | UPDATE | FIRSTNAME | LASTNAME...
+    $sortorder = clean_param($sortorder, PARAM_ALPHA);   // it defines the order of the sorting (ASC or DESC)
 
     echo '<center>';
 
