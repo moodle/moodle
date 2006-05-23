@@ -2857,7 +2857,7 @@ function print_user($user, $course, $messageselect=false) {
 /**
  * Print a specified group's avatar.
  *
- * @param group $group A {@link group} object representing a group
+ * @param group $group A {@link group} object representing a group or array of groups
  * @param int $courseid ?
  * @param boolean $large ?
  * @param boolean $returnstring ?
@@ -2867,6 +2867,19 @@ function print_user($user, $course, $messageselect=false) {
  */
 function print_group_picture($group, $courseid, $large=false, $returnstring=false, $link=true) {
     global $CFG;
+
+    if (is_array($group)) {
+        $output = '';
+        foreach($group as $g) {
+            $output .= print_group_picture($g, $courseid, $large, true, $link);
+        }
+        if ($returnstring) {
+            return $output;
+        } else {
+            echo $output;
+            return;
+        }
+    }
 
     static $isteacheredit;
 
