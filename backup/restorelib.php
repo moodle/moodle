@@ -889,7 +889,6 @@
                                         $course_module->module = $module->id;
                                         $course_module->section = $newid;
                                         $course_module->added = $mod->added;
-                                        $course_module->deleted = $mod->deleted;
                                         $course_module->score = $mod->score;
                                         $course_module->indent = $mod->indent;
                                         $course_module->visible = $mod->visible;
@@ -3591,8 +3590,6 @@
                                 $this->info->tempmod->instance;
                             $this->info->tempsection->mods[$this->info->tempmod->id]->added = 
                                 $this->info->tempmod->added;
-                            $this->info->tempsection->mods[$this->info->tempmod->id]->deleted = 
-                                $this->info->tempmod->deleted;
                             $this->info->tempsection->mods[$this->info->tempmod->id]->score = 
                                 $this->info->tempmod->score;
                             $this->info->tempsection->mods[$this->info->tempmod->id]->indent = 
@@ -3617,9 +3614,6 @@
                             break;
                         case "ADDED":
                             $this->info->tempmod->added = $this->getContents();
-                            break;
-                        case "DELETED":
-                            $this->info->tempmod->deleted = $this->getContents();
                             break;
                         case "SCORE":
                             $this->info->tempmod->score = $this->getContents();
@@ -3846,9 +3840,6 @@
                             break;
                         case "AUTH": 
                             $this->info->tempuser->auth = $this->getContents();
-                            break;
-                        case "GUID": 
-                            $this->info->tempuser->guid = $this->getContents();
                             break;
                         case "CONFIRMED": 
                             $this->info->tempuser->confirmed = $this->getContents();

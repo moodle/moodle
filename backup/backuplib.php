@@ -1001,7 +1001,6 @@
                fwrite ($bf,full_tag("TYPE",6,false,$moduletype));
                fwrite ($bf,full_tag("INSTANCE",6,false,$course_module[$tok]->instance));
                fwrite ($bf,full_tag("ADDED",6,false,$course_module[$tok]->added));
-               fwrite ($bf,full_tag("DELETED",6,false,$course_module[$tok]->deleted));
                fwrite ($bf,full_tag("SCORE",6,false,$course_module[$tok]->score));
                fwrite ($bf,full_tag("INDENT",6,false,$course_module[$tok]->indent));
                fwrite ($bf,full_tag("VISIBLE",6,false,$course_module[$tok]->visible));
@@ -1048,7 +1047,6 @@
                 //Output all user data
                 fwrite ($bf,full_tag("ID",4,false,$user_data->id));
                 fwrite ($bf,full_tag("AUTH",4,false,$user_data->auth));
-                fwrite ($bf,full_tag("GUID",4,false,$user_data->guid));
                 fwrite ($bf,full_tag("CONFIRMED",4,false,$user_data->confirmed));
                 fwrite ($bf,full_tag("POLICYAGREED",4,false,$user_data->policyagreed));
                 fwrite ($bf,full_tag("DELETED",4,false,$user_data->deleted));
