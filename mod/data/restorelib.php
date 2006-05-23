@@ -1,8 +1,7 @@
 <?php
-//This php script contains all the stuff to backup/restore
-    //assignment mods
+//This php script contains all the stuff to backup/restore data mod
 
-    //This is the "graphical" structure of the assignment mod:
+    //This is the "graphical" structure of the data mod:
     //
     //                     data
     //                    (CL,pk->id)
@@ -30,7 +29,7 @@
     //
     //-----------------------------------------------------------
 
-    //Backup assignment files because we've selected to backup user info
+    //Backup data files because we've selected to backup user info
     //and files are user info's level
 
 $fieldids = array();    //array in the format of $fieldids[$oldid]=$newid. This is needed because of double dependencies of multiple tables.
@@ -82,7 +81,7 @@ function data_restore_mods($mod,$restore) {
 
         //Do some output
         if (!defined('RESTORE_SILENTLY')) {
-            echo "<li>".get_string("modulename","data")." \"".format_string(stripslashes($assignment->name),true)."\"</li>";
+            echo "<li>".get_string("modulename","data")." \"".format_string(stripslashes($database->name),true)."\"</li>";
         }
         
         if ($newid) {
@@ -279,7 +278,7 @@ function data_restore_files ($old_data_id, $new_data_id, $old_field_id, $new_fie
     //Check it exists and create it
     $status = check_dir_exists($moddata_path,true);
 
-    //Now, locate assignment directory
+    //Now, locate data directory
     if ($status) {
         $data_path = $moddata_path."/data";
         //Check it exists and create it
@@ -293,9 +292,9 @@ function data_restore_files ($old_data_id, $new_data_id, $old_field_id, $new_fie
         $todo = check_dir_exists($temp_path);
     }
 
-    //If todo, we create the neccesary dirs in course moddata/assignment
+    //If todo, we create the neccesary dirs in course moddata/data
     if ($status and $todo) {
-        //First this assignment id
+        //First this data id
         $this_data_path = $data_path."/".$new_data_id;
 
         $status = check_dir_exists($this_data_path,true);
@@ -304,7 +303,7 @@ function data_restore_files ($old_data_id, $new_data_id, $old_field_id, $new_fie
         $status = check_dir_exists($this_field_path,true);
         $this_record_path = $this_field_path = $this_field_path."/".$new_record_id;
         $status = check_dir_exists($this_record_path,true);
-        //And now, copy temp_path to user_assignment_path
+        //And now, copy temp_path to user_data_path
         
         $status = @backup_copy_file($temp_path, $this_record_path);
     }

@@ -1,9 +1,8 @@
 <?php
 
-//This php script contains all the stuff to backup/restore
-    //assignment mods
+//This php script contains all the stuff to backup/restore data mod
 
-    //This is the "graphical" structure of the assignment mod:
+    //This is the "graphical" structure of the data mod:
     //
     //                     data
     //                    (CL,pk->id)
@@ -31,7 +30,7 @@
     //
     //-----------------------------------------------------------
 
-    //Backup assignment files because we've selected to backup user info
+    //Backup data files because we've selected to backup user info
     //and files are user info's level
 
 
@@ -66,7 +65,7 @@ function data_backup_one_mod($bf,$preferences,$data) {
 
 
     fwrite ($bf,start_tag("MOD",3,true));
-    //Print assignment data
+    //Print data data
     fwrite ($bf,full_tag("ID",4,false,$data->id));
     fwrite ($bf,full_tag("MODTYPE",4,false,"data"));
     fwrite ($bf,full_tag("NAME",4,false,$data->name));
@@ -103,14 +102,13 @@ function data_backup_one_mod($bf,$preferences,$data) {
         $status = backup_data_records($bf,$preferences,$data->id);
         $status = backup_data_fields($bf,$preferences,$data->id);
         if ($status) {
-            $status = backup_data_files_instance($bf,$preferences,$assignment->id);    //recursive copy
+            $status = backup_data_files_instance($bf,$preferences,$data->id);    //recursive copy
         }
     }
     fwrite ($bf,end_tag("MOD",3,true));
     return $status;
     
 }
-    //Backup assignment_submissions contents (executed from assignment_backup_mods)
 
 
 function backup_data_fields($bf,$preferences,$dataid){
@@ -252,7 +250,7 @@ function backup_data_files_instance($bf,$preferences,$instanceid) {
         //in temp/backup/$backup_code  dir
     $status = check_and_create_moddata_dir($preferences->backup_unique_code);
     $status = check_dir_exists($CFG->dataroot."/temp/backup/".$preferences->backup_unique_code."/moddata/data/",true);
-        //Now copy the assignment dir
+        //Now copy the data dir
     if ($status) {
             //Only if it exists !! Thanks to Daniel Miksik.
         if (is_dir($CFG->dataroot."/".$preferences->backup_course."/".$CFG->moddata."/data/".$instanceid)) {
@@ -309,7 +307,7 @@ function backup_data_files($bf,$preferences) {
         //First we check to moddata exists and create it as necessary
         //in temp/backup/$backup_code  dir
     $status = check_and_create_moddata_dir($preferences->backup_unique_code);
-        //Now copy the assignment dir
+        //Now copy the data dir
     if ($status) {
             //Only if it exists !! Thanks to Daniel Miksik.
         if (is_dir($CFG->dataroot."/".$preferences->backup_course."/".$CFG->moddata."/data")) {
@@ -330,7 +328,7 @@ function backup_data_file_instance($bf,$preferences,$instanceid) {
         //in temp/backup/$backup_code  dir
     $status = check_and_create_moddata_dir($preferences->backup_unique_code);
     $status = check_dir_exists($CFG->dataroot."/temp/backup/".$preferences->backup_unique_code."/moddata/data/",true);
-        //Now copy the assignment dir
+        //Now copy the data dir
     if ($status) {
             //Only if it exists !! Thanks to Daniel Miksik.
         if (is_dir($CFG->dataroot."/".$preferences->backup_course."/".$CFG->moddata."/data/".$instanceid)) {
