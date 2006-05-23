@@ -211,8 +211,8 @@
                                                 $user_complete($course, $user, $mod, $instance);
                                                 echo "</ul>";
 
-                                                ob_end_clean();
                                                 $output = ob_get_contents();
+                                                ob_end_clean();
                                                 
                                                 if (str_replace(' ', '', $output) != '<ul></ul>') {
                                                     echo $output;
