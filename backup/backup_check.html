@@ -107,7 +107,7 @@
             if (isset($backupprefs->$var) && $backupprefs->$var) {
                 $var = "backup_".$modname;
                 //Only if selected
-                if ($backupprefs->$var == 1) {
+                if (!empty($backupprefs->$var) and ($backupprefs->$var == 1)) {
                     //Print the full tr
                     echo "<tr>";
                     echo "<td colspan=\"2\">";
