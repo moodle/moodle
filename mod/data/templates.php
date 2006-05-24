@@ -113,7 +113,10 @@
             if (isset($mytemplate->listtemplatefooter)){
                 $newtemplate->listtemplatefooter = $mytemplate->listtemplatefooter;
             }
-        
+            if (isset($mytemplate->rsstitletemplate)){
+                $newtemplate->rsstitletemplate = $mytemplate->rsstitletemplate;
+            }
+
             // Check for multiple tags, only need to check for add template.
             if ($mode != 'addtemplate' or data_tags_check($data->id, $newtemplate->{$mode})) {
                 if (update_record('data', $newtemplate)) {
@@ -213,6 +216,14 @@
         print_textarea($usehtmleditor, 10, 72, 0, 0, 'listtemplatefooter', $data->listtemplatefooter);
         echo '</td>';
         echo '</tr>';
+    } else if ($mode == 'rsstemplate') {
+        echo '<tr>';
+        echo '<td>&nbsp;</td>';
+        echo '<td>';
+        echo '<div align="center">'.get_string('rsstitletemplate','data').'</div>';
+        print_textarea($usehtmleditor, 10, 72, 0, 0, 'rsstitletemplate', $data->rsstitletemplate);
+        echo '</td>';
+        echo '</tr>';
     }
 
     echo '<tr><td align="center" colspan="2">';
@@ -228,6 +239,8 @@
         if ($mode == 'listtemplate'){
             use_html_editor('listtemplateheader');
             use_html_editor('listtemplatefooter');
+        } else if ($mode == 'rsstemplate'){
+            use_html_editor('rsstitletemplate');
         }
     }
 

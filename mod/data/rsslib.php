@@ -73,16 +73,20 @@
                             array_push($recordarray, $record);
 
                             $item = null;
-                            $item->title   = strip_tags(get_field('data_content', 'content', 
+                            
+                            // guess title or not
+                            if ($data->rsstitletemplate) {
+                                $item->title = data_print_template('rsstitletemplate', $recordarray, $data, '', 0, true);
+                            } else { // else we guess
+                                $item->title   = strip_tags(get_field('data_content', 'content',
                                                                   'fieldid', $firstfield->id, 'recordid', $record->id));
-                            $item->description = data_print_template($recordarray, $data, '', 'rsstemplate', false, 
-                                                                     0, 0, 'timecreated DESC', '', true);
+                            }
+                            $item->description = data_print_template('rsstemplate', $recordarray, $data, '', 0, true);
                             $item->pubdate = $record->timecreated;
                             $item->link = $CFG->wwwroot.'/mod/data/view.php?d='.$data->id.'&rid='.$record->id;
                             
                             array_push($items, $item);
                         }
-
                         $course = get_record('course', 'id', $data->course);
                         
                         // First all rss feeds common headers.
