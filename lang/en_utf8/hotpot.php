@@ -181,7 +181,7 @@ $string['noresponses'] = 'No information about individual questions and response
 $string['reporttimerecorded'] = 'Responses recorded';
 
 // config.html
-$string['configshowtimes'] = 'Should the time taken to process records be displayed in listings and reports? This is only really necessary of you are are trying to find out why your server is running slowly.';
+$string['configshowtimes'] = 'Should the time taken to process records be displayed in listings and reports? This is only really necessary if you are trying to find out why your server is running slowly.';
 $string['configexcelencodings'] = 'A list of encodings, separated by commas, that can be used to force report values into a specific encoding for spreadsheet programs. For example, Microsoft Excel requires the &quot;SJIS&quot; encoding for Japanese';
 
 // error messages (lib.php)
