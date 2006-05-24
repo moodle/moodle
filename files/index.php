@@ -769,9 +769,9 @@ function displaydir ($wdir) {
             print_cell("center", "<input type=\"checkbox\" name=\"file$count\" value=\"$fileurl\" />", 'checkbox');
             echo "<td align=\"left\" nowrap=\"nowrap\" class=\"name\">";
             if ($CFG->slasharguments) {
-                $ffurl = "/file.php/$id$fileurl";
+                $ffurl = "/file.php/$id/$fileurl";
             } else {
-                $ffurl = "/file.php?file=/$id$fileurl";
+                $ffurl = "/file.php?file=/$id/$fileurl";
             }
             link_to_popup_window ($ffurl, "display",
                                   "<img src=\"$CFG->pixpath/f/$icon\" height=\"16\" width=\"16\" border=\"0\" alt=\"File\" />",
