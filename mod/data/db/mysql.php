@@ -64,6 +64,9 @@ function data_upgrade($oldversion) {
         table_column('data_fields','param10','param10','text','','','','not null');
     }
     
+    if ($oldversion < 2006052400) {
+        table_column('data','','rsstitletemplate','text','','','','not null','rsstemplate');
+    }
     return true;
 }
 

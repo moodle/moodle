@@ -21,6 +21,7 @@ CREATE TABLE prefix_data (
   listtemplatefooter text NOT NULL default '',
   addtemplate text NOT NULL default '',
   rsstemplate text NOT NULL default '',
+  rsstitletemplate text NOT NULL default '',
   csstemplate text NOT NULL default '',
   approval integer NOT NULL default '0',
   scale integer NOT NULL default '0',
