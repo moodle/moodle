@@ -353,6 +353,10 @@ function cron() {
 
     // Notify teachers/students about students who's enrolment are going to expire
     global $CFG;
+    if (empty($CFG->lastexpirynotify)) {
+        $CFG->lastexpirynotify = 0;
+    }
+    
     if ($CFG->lastexpirynotify < date('Ymd') && ($courses = get_records_select('course', 'enrolperiod > 0 AND expirynotify > 0 AND expirythreshold > 0'))) {
         $site = get_site();
         $admin = get_admin();
