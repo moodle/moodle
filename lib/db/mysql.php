@@ -1589,8 +1589,8 @@ function main_upgrade($oldversion=0) {
           `userid` int(10) unsigned NOT NULL default 0,
           `roleid` int(10) unsigned NOT NULL default 0,
           `timeend` int(10) unsigned NOT NULL default 0,
-          `reads` int(10) unsigned NOT NULL default 0,
-          `writes` int(10) unsigned NOT NULL default 0,
+          `statsreads` int(10) unsigned NOT NULL default 0,
+          `statswrites` int(10) unsigned NOT NULL default 0,
           `stattype` varchar(30) NOT NULL default '',
           PRIMARY KEY (`id`),
           KEY `courseid` (`courseid`),
@@ -1605,8 +1605,8 @@ function main_upgrade($oldversion=0) {
           `userid` int(10) unsigned NOT NULL default 0,
           `roleid` int(10) unsigned NOT NULL default 0,
           `timeend` int(10) unsigned NOT NULL default 0,
-          `reads` int(10) unsigned NOT NULL default 0,
-          `writes` int(10) unsigned NOT NULL default 0,
+          `statsreads` int(10) unsigned NOT NULL default 0,
+          `statswrites` int(10) unsigned NOT NULL default 0,
           `stattype` varchar(30) NOT NULL default '',
           PRIMARY KEY (`id`),
           KEY `courseid` (`courseid`),
@@ -1621,8 +1621,8 @@ function main_upgrade($oldversion=0) {
           `userid` int(10) unsigned NOT NULL default 0,
           `roleid` int(10) unsigned NOT NULL default 0,
           `timeend` int(10) unsigned NOT NULL default 0,
-          `reads` int(10) unsigned NOT NULL default 0,
-          `writes` int(10) unsigned NOT NULL default 0,
+          `statsreads` int(10) unsigned NOT NULL default 0,
+          `statswrites` int(10) unsigned NOT NULL default 0,
           `stattype` varchar(30) NOT NULL default '',
           PRIMARY KEY (`id`),
           KEY `courseid` (`courseid`),
@@ -1948,6 +1948,20 @@ function main_upgrade($oldversion=0) {
 
     if ($oldversion < 2006050501) {
         table_column('sessions', 'data', 'data', 'mediumtext', '', '', '', 'not null');
+    }
+    
+    // renaming of reads and writes for stats_user_xyz
+    if ($oldversion < 2006052400) { // change this later
+
+        // we are using this because we want silent updates
+
+        execute_sql("ALTER TABLE `{$CFG->prefix}stats_user_daily` CHANGE `reads` statsreads int(10) unsigned  NOT NULL default 0", false);
+        execute_sql("ALTER TABLE `{$CFG->prefix}stats_user_daily` CHANGE `writes` statswrites int(10) unsigned  NOT NULL default 0", false);
+        execute_sql("ALTER TABLE `{$CFG->prefix}stats_user_weekly` CHANGE `reads` statsreads int(10) unsigned  NOT NULL default 0", false);
+        execute_sql("ALTER TABLE `{$CFG->prefix}stats_user_weekly` CHANGE `writes` statswrites int(10) unsigned  NOT NULL default 0", false);
+        execute_sql("ALTER TABLE `{$CFG->prefix}stats_user_monthly` CHANGE `reads` statsreads int(10) unsigned  NOT NULL default 0", false);
+        execute_sql("ALTER TABLE `{$CFG->prefix}stats_user_monthly` CHANGE `writes` statswrites int(10) unsigned  NOT NULL default 0", false);
+  
     }
     
     return $result;

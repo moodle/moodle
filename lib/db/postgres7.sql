@@ -583,8 +583,8 @@ CREATE TABLE prefix_stats_user_daily (
    userid INTEGER NOT NULL default 0,
    roleid INTEGER NOT NULL default 0,
    timeend INTEGER NOT NULL default 0,
-   reads INTEGER NOT NULL default 0,
-   writes INTEGER NOT NULL default 0,
+   statsreads INTEGER NOT NULL default 0,
+   statswrites INTEGER NOT NULL default 0,
    stattype varchar(30) NOT NULL default ''
 );
          
@@ -599,8 +599,8 @@ CREATE TABLE prefix_stats_user_weekly (
    userid INTEGER NOT NULL default 0,
    roleid INTEGER NOT NULL default 0,
    timeend INTEGER NOT NULL default 0,
-   reads INTEGER NOT NULL default 0,
-   writes INTEGER NOT NULL default 0,
+   statsreads INTEGER NOT NULL default 0,
+   statswrites INTEGER NOT NULL default 0,
    stattype varchar(30) NOT NULL default ''
 );
          
@@ -615,8 +615,8 @@ CREATE TABLE prefix_stats_user_monthly (
    userid INTEGER NOT NULL default 0,
    roleid INTEGER NOT NULL default 0,
    timeend INTEGER NOT NULL default 0,
-   reads INTEGER NOT NULL default 0,
-   writes INTEGER NOT NULL default 0,
+   statsreads INTEGER NOT NULL default 0,
+   statswrites INTEGER NOT NULL default 0,
    stattype varchar(30) NOT NULL default ''
 );
          

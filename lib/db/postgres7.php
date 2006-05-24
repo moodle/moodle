@@ -1332,8 +1332,8 @@ function main_upgrade($oldversion=0) {
            userid INTEGER NOT NULL default 0,
            roleid INTEGER NOT NULL default 0,
            timeend INTEGER NOT NULL default 0,
-           reads INTEGER NOT NULL default 0,
-           writes INTEGER NOT NULL default 0,
+           statsreads INTEGER NOT NULL default 0,
+           statswrites INTEGER NOT NULL default 0,
            stattype varchar(30) NOT NULL default ''
          );");
          
@@ -1348,8 +1348,8 @@ function main_upgrade($oldversion=0) {
            userid INTEGER NOT NULL default 0,
            roleid INTEGER NOT NULL default 0,
            timeend INTEGER NOT NULL default 0,
-           reads INTEGER NOT NULL default 0,
-           writes INTEGER NOT NULL default 0,
+           statsreads INTEGER NOT NULL default 0,
+           statswrites INTEGER NOT NULL default 0,
            stattype varchar(30) NOT NULL default ''
          );");
          
@@ -1364,8 +1364,8 @@ function main_upgrade($oldversion=0) {
            userid INTEGER NOT NULL default 0,
            roleid INTEGER NOT NULL default 0,
            timeend INTEGER NOT NULL default 0,
-           reads INTEGER NOT NULL default 0,
-           writes INTEGER NOT NULL default 0,
+           statsreads INTEGER NOT NULL default 0,
+           statswrites INTEGER NOT NULL default 0,
            stattype varchar(30) NOT NULL default ''
          );");
          
@@ -1577,6 +1577,19 @@ function main_upgrade($oldversion=0) {
 
     }
 
+    // renaming of reads and writes for stats_user_xyz
+    if ($oldversion < 2006052400) { // change this later
+
+        // we are using this because we want silent updates
+
+        execute_sql("ALTER TABLE `{$CFG->prefix}stats_user_daily` RENAME COLUMN reads TO statsreads", false);
+        execute_sql("ALTER TABLE `{$CFG->prefix}stats_user_daily` RENAME COLUMN writes TO statswrites", false);
+        execute_sql("ALTER TABLE `{$CFG->prefix}stats_user_weekly` RENAME COLUMN reads TO statsreads", false);
+        execute_sql("ALTER TABLE `{$CFG->prefix}stats_user_weekly` RENAME COLUMN writes TO statswrites", false);
+        execute_sql("ALTER TABLE `{$CFG->prefix}stats_user_monthly` RENAME COLUMN reads TO statsreads", false);
+        execute_sql("ALTER TABLE `{$CFG->prefix}stats_user_monthly` RENAME COLUMN writes TO statswrites", false);
+
+    }
     
     return $result;
 }
