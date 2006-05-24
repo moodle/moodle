@@ -838,7 +838,7 @@ function auth_user_update($olduser, $newuser) {
     if ($user_info_result){
 
         $user_entry = auth_ldap_get_entries($ldapconnection, $user_info_result);
-        if (count($user_entry)) {
+        if (count($user_entry) > 1) {
             trigger_error("ldap: Strange! More than one user record found in ldap. Only using the first one.");
         }
         $user_entry = $user_entry[0];
