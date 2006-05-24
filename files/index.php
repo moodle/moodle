@@ -205,7 +205,7 @@
                 html_header($course, $wdir);
                 if (!empty($USER->filelist)) {
                     foreach ($USER->filelist as $file) {
-                        $fullfile = $basedir.$file;
+                        $fullfile = $basedir.'/'.$file;
                         if (! fulldelete($fullfile)) {
                             echo "<br />Error: Could not delete: $fullfile";
                         }
@@ -271,7 +271,7 @@
             if (isset($USER->fileop) and ($USER->fileop == "move") and confirm_sesskey()) {
                 foreach ($USER->filelist as $file) {
                     $shortfile = basename($file);
-                    $oldfile = $basedir.$file;
+                    $oldfile = $basedir.'/'.$file;
                     $newfile = $basedir.$wdir."/".$shortfile;
                     if (!rename($oldfile, $newfile)) {
                         echo "<p>Error: $shortfile not moved";
@@ -384,15 +384,15 @@
         case "edit":
             html_header($course, $wdir);
             if (($text != '') and confirm_sesskey()) {
-                $fileptr = fopen($basedir.$file,"w");
+                $fileptr = fopen($basedir.'/'.$file,"w");
                 fputs($fileptr, stripslashes($text));
                 fclose($fileptr);
                 displaydir($wdir);
 
             } else {
                 $streditfile = get_string("edit", "", "<b>$file</b>");
-                $fileptr  = fopen($basedir.$file, "r");
-                $contents = fread($fileptr, filesize($basedir.$file));
+                $fileptr  = fopen($basedir.'/'.$file, "r");
+                $contents = fread($fileptr, filesize($basedir.'/'.$file));
                 fclose($fileptr);
 
                 if (mimeinfo("type", $file) == "text/html") {
@@ -627,10 +627,10 @@ function printfilelist($filelist) {
     global $CFG, $basedir;
 
     foreach ($filelist as $file) {
-        if (is_dir($basedir.$file)) {
+        if (is_dir($basedir.'/'.$file)) {
             echo "<img src=\"$CFG->pixpath/f/folder.gif\" height=\"16\" width=\"16\" alt=\"\" /> $file<br />";
             $subfilelist = array();
-            $currdir = opendir($basedir.$file);
+            $currdir = opendir($basedir.'/'.$file);
             while (false !== ($subfile = readdir($currdir))) {
                 if ($subfile <> ".." && $subfile <> ".") {
                     $subfilelist[] = $file."/".$subfile;
