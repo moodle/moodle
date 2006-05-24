@@ -150,7 +150,10 @@
             $fields = get_user_fieldnames();
             $authconfig = get_config( 'auth/' . $user->auth );
             foreach ($fields as $field) {
-                $configvariable = 'field_lock_' . $field;  
+                $configvariable = 'field_lock_' . $field;
+                if ( empty($authconfig->{$configvariable}) ) {
+                    continue; //no locking set
+                }
                 if ( $authconfig->{$configvariable} === 'locked'
                      || ($authconfig->{$configvariable} === 'unlockedifempty' && !empty($user->$field)) ) {
                     if (!empty( $user->$field)) {
