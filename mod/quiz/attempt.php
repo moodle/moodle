@@ -484,7 +484,9 @@
         <script language="javascript" type="text/javascript">
         function navigate(page) {
             document.responseform.page.value=page;
-            document.responseform.onsubmit();
+            if (document.responseform.onsubmit) {
+	            document.responseform.onsubmit();
+	        }
             document.responseform.submit();
         }
         </script>
