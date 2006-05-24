@@ -4,6 +4,9 @@
 
     $loginguest = optional_param('loginguest', 0, PARAM_BOOL); // determines whether visitors are logged in as guest automatically
 
+    //initialize variables
+    $errormsg = '';
+
 /// Check for timed out sessions
     if (!empty($SESSION->has_timed_out)) {
         $session_has_timed_out = true;
@@ -216,7 +219,9 @@
     if (empty($SESSION->wantsurl)) {
         $SESSION->wantsurl = (array_key_exists('HTTP_REFERER',$_SERVER) && 
                               $_SERVER["HTTP_REFERER"] != $CFG->wwwroot && 
-                              $_SERVER["HTTP_REFERER"] != $CFG->wwwroot.'/')
+                              $_SERVER["HTTP_REFERER"] != $CFG->wwwroot.'/' &&
+                              $_SERVER["HTTP_REFERER"] != $CFG->httpswwwroot.'/login/' &&
+                              $_SERVER["HTTP_REFERER"] != $CFG->httpswwwroot.'/login/index.php')
             ? $_SERVER["HTTP_REFERER"] : NULL;
     }
 
@@ -227,10 +232,6 @@
 
 /// Generate the login page with forms
 
-    if (empty($errormsg)) {
-        $errormsg = '';
-    }
-    
     if ($session_has_timed_out) {
         $errormsg = get_string('sessionerroruser', 'error');
     }
