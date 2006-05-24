@@ -148,6 +148,10 @@ function data_upgrade($oldversion) {
                             
     }
     
+    if ($oldversion < 2006052400) {
+        table_column('data','','rsstitletemplate','text','','','','not null','rsstemplate');
+    }
+    
     return true;
 }
 
