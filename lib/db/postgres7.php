@@ -1582,12 +1582,12 @@ function main_upgrade($oldversion=0) {
 
         // we are using this because we want silent updates
 
-        execute_sql("ALTER TABLE `{$CFG->prefix}stats_user_daily` RENAME COLUMN reads TO statsreads", false);
-        execute_sql("ALTER TABLE `{$CFG->prefix}stats_user_daily` RENAME COLUMN writes TO statswrites", false);
-        execute_sql("ALTER TABLE `{$CFG->prefix}stats_user_weekly` RENAME COLUMN reads TO statsreads", false);
-        execute_sql("ALTER TABLE `{$CFG->prefix}stats_user_weekly` RENAME COLUMN writes TO statswrites", false);
-        execute_sql("ALTER TABLE `{$CFG->prefix}stats_user_monthly` RENAME COLUMN reads TO statsreads", false);
-        execute_sql("ALTER TABLE `{$CFG->prefix}stats_user_monthly` RENAME COLUMN writes TO statswrites", false);
+        execute_sql("ALTER TABLE {$CFG->prefix}stats_user_daily RENAME COLUMN reads TO statsreads", false);
+        execute_sql("ALTER TABLE {$CFG->prefix}stats_user_daily RENAME COLUMN writes TO statswrites", false);
+        execute_sql("ALTER TABLE {$CFG->prefix}stats_user_weekly RENAME COLUMN reads TO statsreads", false);
+        execute_sql("ALTER TABLE {$CFG->prefix}stats_user_weekly RENAME COLUMN writes TO statswrites", false);
+        execute_sql("ALTER TABLE {$CFG->prefix}stats_user_monthly RENAME COLUMN reads TO statsreads", false);
+        execute_sql("ALTER TABLE {$CFG->prefix}stats_user_monthly RENAME COLUMN writes TO statswrites", false);
 
     }
     
