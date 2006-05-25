@@ -111,11 +111,12 @@ TO USE THE HOTPOT MODULE:
 2. Create any type of Hot Potatoes quiz on your PC using the Hot Potatoes software
 3. Upload the quiz's source file (".jcl", ".jcw", ".jmt", ".jmx", ".jqz") or ".html" file from your PC to the "Files" area of a course on your Moodle site.
 4. Also upload any graphics, sound files, stylesheets or javascripts that the quiz uses
-5. On the main page for the Moodle course, confirm editing is turned on (click the "Turn editing on" button) then select "ADD / Hot Potatoes XML Quiz".
+5. On the main page for the Moodle course, confirm editing is turned on (click the "Turn editing on" button) then select "Hot Potatoes Quiz" on the "Add an activity" menu in the section where you want to add the HotPot activity.
+   Note: If "Hot Potatoes Quiz" does not appear on the "Add an activity", you may need to enable the HotPot module as follows: from the site's front page select "Admin" then "Modules" and click the "closed eye" icon for the "Hot Potatoes Quiz" module
 6, The "Adding a new Hot Potatoes Quiz" page appears. Click the "Choose or Upload a file ..." button and select the desired Hot Potaotes quiz file.
 7. Review the other settings for the quiz and click "Save Changes" when you are ready
 8. You can view reports of the results via the "Hot Potatoes Quizzes" link on the "Activities menu". Students will see links to all the quizzes. Administrators and teachers will additionally see links to the statistical reports for each quiz.
-9. You can also import the questions from the Hot Potatoes source file to the Moodle Quiz database, if you installed "mod/quiz/format/hotpot/format.php"
+9. You can also import the questions from the Hot Potatoes source file to the Moodle Quiz database, if you completed step 4 of the installation procedure (see previous section)
 
 
 ==============================
