@@ -48,8 +48,8 @@ class data_field_number extends data_field_base {
         global $CFG;
 
         switch ($CFG->dbtype) {
-            case 'mysql':      // DECIMAL would be more accurate but only MySQL 5 supports it.
-                return 'CAST('.$fieldname.' AS SIGNED)';  
+            case 'mysql':   // string in an arithmetic operation is converted to a floating-point number
+                return '('.$fieldname.'+0.0)';  
 
             default:
                 return 'CAST('.$fieldname.' AS REAL)';  
