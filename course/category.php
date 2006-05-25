@@ -301,33 +301,33 @@
                     echo "<td>";
                     echo '<a title="'.$strsettings.'" href="'.$CFG->wwwroot.'/course/edit.php?id='.
                          $acourse->id.'">'.
-                         '<img src="'.$CFG->pixpath.'/t/edit.gif" height="11" width="11" border="0" alt="" /></a> ';
+                         '<img src="'.$CFG->pixpath.'/t/edit.gif" height="11" width="11" border="0" alt="'.$stredit.'" /></a> ';
                     echo '<a title="'.$strassignteachers.'" href="'.$CFG->wwwroot.'/course/teacher.php?id='.
                          $acourse->id.'">'.
-                         '<img src="'.$CFG->pixpath.'/t/user.gif" height="11" width="11" border="0" alt="" /></a> ';
+                         '<img src="'.$CFG->pixpath.'/t/user.gif" height="11" width="11" border="0" alt="'.$strassignteachers.'" /></a> ';
                     echo '<a title="'.$strdelete.'" href="delete.php?id='.$acourse->id.'">'.
-                         '<img src="'.$CFG->pixpath.'/t/delete.gif" height="11" width="11" border="0" alt="" /></a> ';
+                         '<img src="'.$CFG->pixpath.'/t/delete.gif" height="11" width="11" border="0" alt="'.$strdelete.'" /></a> ';
                     if (!empty($acourse->visible)) {
                         echo '<a title="'.$strhide.'" href="category.php?id='.$category->id.'&amp;page='.$page.
                              '&amp;perpage='.$perpage.'&amp;hide='.$acourse->id.'&amp;sesskey='.$USER->sesskey.'">'.
-                             '<img src="'.$CFG->pixpath.'/t/hide.gif" height="11" width="11" border="0" alt="" /></a> ';
+                             '<img src="'.$CFG->pixpath.'/t/hide.gif" height="11" width="11" border="0" alt="'.$strhide.'" /></a> ';
                     } else {
                         echo '<a title="'.$strshow.'" href="category.php?id='.$category->id.'&amp;page='.$page.
                              '&amp;perpage='.$perpage.'&amp;show='.$acourse->id.'&amp;sesskey='.$USER->sesskey.'">'.
-                             '<img src="'.$CFG->pixpath.'/t/show.gif" height="11" width="11" border="0" alt="" /></a> ';
+                             '<img src="'.$CFG->pixpath.'/t/show.gif" height="11" width="11" border="0" alt="'.$strshow.'" /></a> ';
                     }
 
                     echo '<a title="'.$strbackup.'" href="../backup/backup.php?id='.$acourse->id.'">'.
-                         '<img src="'.$CFG->pixpath.'/t/backup.gif" height="11" width="11" border="0" alt="" /></a> ';
+                         '<img src="'.$CFG->pixpath.'/t/backup.gif" height="11" width="11" border="0" alt="'.$strbackup.'" /></a> ';
 
                         echo '<a title="'.$strrestore.'" href="../files/index.php?id='.$acourse->id.
                              '&amp;wdir=/backupdata">'.
-                             '<img src="'.$CFG->pixpath.'/t/restore.gif" height="11" width="11" border="0" alt="" /></a> ';
+                             '<img src="'.$CFG->pixpath.'/t/restore.gif" height="11" width="11" border="0" alt="'.$strrestore.'" /></a> ';
 
                     if ($up) {
                         echo '<a title="'.$strmoveup.'" href="category.php?id='.$category->id.'&amp;page='.$page.
                              '&amp;perpage='.$perpage.'&amp;moveup='.$acourse->id.'&amp;sesskey='.$USER->sesskey.'">'.
-                             '<img src="'.$CFG->pixpath.'/t/up.gif" height="11" width="11" border="0" alt="" /></a> ';
+                             '<img src="'.$CFG->pixpath.'/t/up.gif" height="11" width="11" border="0" alt="'.$strmoveup.'" /></a> ';
                     } else {
                         echo '<img src="'.$CFG->wwwroot.'/pix/spacer.gif" height="11" width="11" border="0" alt="" /> ';
                     }
@@ -335,7 +335,7 @@
                     if ($down) {
                         echo '<a title="'.$strmovedown.'" href="category.php?id='.$category->id.'&amp;page='.$page.
                              '&amp;perpage='.$perpage.'&amp;movedown='.$acourse->id.'&amp;sesskey='.$USER->sesskey.'">'.
-                             '<img src="'.$CFG->pixpath.'/t/down.gif" height="11" width="11" border="0" alt="" /></a> ';
+                             '<img src="'.$CFG->pixpath.'/t/down.gif" height="11" width="11" border="0" alt="'.$strmovedown.'" /></a> ';
                     } else {
                         echo '<img src="'.$CFG->wwwroot.'/pix/spacer.gif" height="11" width="11" border="0" alt="" /> ';
                     }
@@ -348,9 +348,9 @@
                 } else if (isteacheredit($acourse->id)) {
                     echo '<td>';
                     echo '<a title="'.$strsettings.'" href="'.$CFG->wwwroot.'/course/edit.php?id='.$acourse->id.'">'.
-                         '<img src="'.$CFG->pixpath.'/t/edit.gif" height="11" width="11" border="0" alt="" /></a> ';
+                         '<img src="'.$CFG->pixpath.'/t/edit.gif" height="11" width="11" border="0" alt="'.$strsettings.'" /></a> ';
                     echo '<a title="'.$strassignteachers.'" href="'.$CFG->wwwroot.'/course/teacher.php?id='.$acourse->id.'">'.
-                         '<img src="'.$CFG->pixpath.'/t/user.gif" height="11" width="11" border="0" alt="" /></a> ';
+                         '<img src="'.$CFG->pixpath.'/t/user.gif" height="11" width="11" border="0" alt="'.$strassignteachers.'" /></a> ';
                 }
                 echo '</td>';
             } else {
