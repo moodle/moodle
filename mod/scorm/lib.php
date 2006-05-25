@@ -105,9 +105,22 @@ function scorm_update_instance($scorm) {
 
     // Check if scorm manifest needs to be reparsed
     if ($scorm->launch == 0) {
+		//$f = "D:\\test.txt";
+		//@$ft = fopen($f,"a");
+		//fwrite($ft,"\n Xu ly trong update trong lib.php \n");
+		//fwrite($ft,"\n Lauch co gia tri \n".($scorm->launch));
+
         // Delete old related records
         delete_records('scorm_scoes','scorm',$scorm->id);
         delete_records('scorm_scoes_track','scormid',$scorm->id);
+        delete_records('scorm_sequencing_controlmode','scormid',$scorm->id);
+        delete_records('scorm_sequencing_rolluprules','scormid',$scorm->id);
+        delete_records('scorm_sequencing_rolluprule','scormid',$scorm->id);
+        delete_records('scorm_sequencing_rollupruleconditions','scormid',$scorm->id);
+        delete_records('scorm_sequencing_rolluprulecondition','scormid',$scorm->id);				
+        delete_records('scorm_sequencing_ruleconditions','scormid',$scorm->id);
+        delete_records('scorm_sequencing_rulecondition','scormid',$scorm->id);				
+
         
         $scorm->dir = $CFG->dataroot.'/'.$scorm->course.'/moddata/scorm';
         if (isset($scorm->datadir) && ($scorm->datadir != $scorm->id) && (basename($scorm->reference) != 'imsmanifest.xml')) {
@@ -153,7 +166,27 @@ function scorm_delete_instance($id) {
     if (! delete_records('scorm', 'id', $scorm->id)) {
         $result = false;
     }
-
+    if (! delete_records('scorm_sequencing_controlmode', 'scormid', $scorm->id)) {
+        $result = false;
+    }
+    if (! delete_records('scorm_sequencing_rolluprules', 'scormid', $scorm->id)) {
+        $result = false;
+    }
+    if (! delete_records('scorm_sequencing_rolluprule', 'scormid', $scorm->id)) {
+        $result = false;
+    }
+    if (! delete_records('scorm_sequencing_rollupruleconditions', 'scormid', $scorm->id)) {
+        $result = false;
+    }
+    if (! delete_records('scorm_sequencing_rolluprulecondition', 'scormid', $scorm->id)) {
+        $result = false;
+    }
+    if (! delete_records('scorm_sequencing_rulecondition', 'scormid', $scorm->id)) {
+        $result = false;
+    }
+    if (! delete_records('scorm_sequencing_ruleconditions', 'scormid', $scorm->id)) {
+        $result = false;
+    }		
     return $result;
 }
 
@@ -433,7 +466,7 @@ function scorm_grades($scormid) {
         return NULL;
     }
 
-    if ($scorm->grademethod == GRADESCOES) {
+    if ($scorm->grademethod == VALUESCOES) {
         if (!$return->maxgrade = count_records_select('scorm_scoes',"scorm='$scormid' AND launch<>''")) {
             return NULL;
         }

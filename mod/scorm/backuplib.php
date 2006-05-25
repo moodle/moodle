@@ -61,7 +61,6 @@
         fwrite ($bf,full_tag("VERSION",4,false,$scorm->version));
         fwrite ($bf,full_tag("MAXGRADE",4,false,$scorm->maxgrade));
         fwrite ($bf,full_tag("GRADEMETHOD",4,false,$scorm->grademethod));
-        fwrite ($bf,full_tag("MAXATTEMPT",4,false,$scorm->maxattempt));
         fwrite ($bf,full_tag("LAUNCH",4,false,$scorm->launch));
         fwrite ($bf,full_tag("SUMMARY",4,false,$scorm->summary));
         fwrite ($bf,full_tag("HIDEBROWSE",4,false,$scorm->hidebrowse));
@@ -150,7 +149,6 @@
                 fwrite ($bf,full_tag("ID",6,false,$sco_track->id));
                 fwrite ($bf,full_tag("USERID",6,false,$sco_track->userid));
                 fwrite ($bf,full_tag("SCOID",6,false,$sco_track->scoid));
-                fwrite ($bf,full_tag("ATTEMPT",6,false,$sco_track->attempt));
                 fwrite ($bf,full_tag("ELEMENT",6,false,$sco_track->element));
                 fwrite ($bf,full_tag("VALUE",6,false,$sco_track->value));
                 //End sco track

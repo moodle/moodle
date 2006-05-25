@@ -1,6 +1,7 @@
 <?php // $Id$
 
     require_once("../../config.php");
+	require_once('sequencinglib.php');
 
     $id = required_param('id', PARAM_INT);   // course id
 
@@ -64,22 +65,23 @@
         if (isteacher($course->id)) {
             $trackedusers = get_record('scorm_scoes_track', 'scormid', $scorm->id, '', '', '', '', 'count(distinct(userid)) as c');
             if ($trackedusers->c > 0) {
-                $report = '<a href="report.php?a='.$scorm->id.'">'.get_string('viewallreports','scorm',$trackedusers->c).'</a></div>';
+                $reportshow = '<a href="report.php?a='.$scorm->id.'">'.get_string('viewallreports','scorm',$trackedusers->c).'</a></div>';
             } else {
-                $report = get_string('noreports','scorm');
+                $reportshow = get_string('noreports','scorm');
             }
         } else if (isstudent($course->id)) {
            require_once('locallib.php');
-           $report = scorm_grade_user(get_records('scorm_scoes','scorm',$scorm->id), $USER->id, $scorm->grademethod);
-        }
+           $report = scorm_grade_user_new(get_records('scorm_scoes','scorm',$scorm->id), $USER->id, $scorm->grademethod);
+		   $sco_count = scorm_get_user_sco_count($scorm->id,$USER->id);
+			$reportshow = get_string('implement','scorm').$sco_count.get_string('lesson','scorm') ."<br><table width=".($report*100)."% bgcolor=#800000><tr><td height=15></td></tr></table>".get_string('scoreRate','scorm').": ".($report*100)."%";        }
         if (!$scorm->visible) {
            //Show dimmed if the mod is hidden
            $table->data[] = array ($tt, "<a class=\"dimmed\" href=\"view.php?id=$scorm->coursemodule\">".format_string($scorm->name,true)."</a>",
-                                   format_text($scorm->summary), $report);
+                                   format_text($scorm->summary),$reportshow);
         } else {
            //Show normal if the mod is visible
            $table->data[] = array ($tt, "<a href=\"view.php?id=$scorm->coursemodule\">".format_string($scorm->name,true)."</a>",
-                                   format_text($scorm->summary), $report);
+                                   format_text($scorm->summary), $reportshow);
         }
     }
 

@@ -4,7 +4,8 @@
 
     require_once("../../config.php");
     require_once('locallib.php');
-
+	require_once('sequencinglib.php');
+	
     $id = optional_param('id', '', PARAM_INT);    // Course Module ID, or
     $a = optional_param('a', '', PARAM_INT);     // SCORM ID
     $b = optional_param('b', '', PARAM_INT);     // SCO ID
@@ -314,6 +315,54 @@
             error('Missing script parameter');
         }
     }
+	
+    print_heading(format_string(get_string('timestatistic','scorm')));
+	$scousers=get_records_select("scorm_scoes_track", "scormid='$scorm->id' GROUP BY userid,scormid", "", "userid,scormid");	
+    $attempt = scorm_get_last_attempt($scorm->id,$USER->id);	
+	
+	foreach($scousers as $scouser){
+		$str = 'scormid ='.($scorm->id).' and userid = '.$scouser->userid.' and attempt = '.$attempt.' ORDER BY timemodified asc';
+		$endtrack	= get_record_select("scorm_scoes_track", $str,'max(timemodified) as maxtimemodified');
+
+	}
+
+//Phan trinh bay thong ke theo thoi gian
+		$table = new stdClass();
+		$table->head = array('&nbsp;', get_string('name','scorm'));
+		$table->align = array('center', 'left');
+		$table->wrap = array('nowrap', 'nowrap');
+		$table->width = '100%';
+		$table->size = array(10, '*');
+
+		$table->head[]=scorm_string_wrap(get_string('beginTime','scorm'));
+		$table->align[] = 'center';
+		$table->wrap[] = 'nowrap';
+		$table->size[] = '*';
+
+		$table->head[]=scorm_string_wrap(get_string('endTime','scorm'));
+		$table->align[] = 'center';
+		$table->wrap[] = 'nowrap';
+		$table->size[] = '*';
+
+		$row = array();
+		$row[] = "";
+		$row[] = "(".get_string('coefficient','scorm').")";
+	foreach($scousers as $scouser){
+		$userdata = scorm_get_user_data($scouser->userid);
+		$row = array();
+		$row[] = print_user_picture($scouser->userid, $course->id, $userdata->picture, false, true);
+		$row[] = "<a href=\"$CFG->wwwroot/user/view.php?id=$scouser->userid&course=$course->id\">".
+						 "$userdata->firstname $userdata->lastname</a>";	
+		$str = 'scormid ='.($scorm->id).' and userid = '.$scouser->userid.' and attempt = '.$attempt.' ORDER BY timemodified asc';
+		$begintrack	= get_record_select("scorm_scoes_track", $str,'min(timemodified) as mintimemodified');		
+		$row[] = strftime( "%H h -%M ' - %S s - %d -%m-%Y", $begintrack->mintimemodified);		
+		$endtrack	= get_record_select("scorm_scoes_track", $str,'max(timemodified) as maxtimemodified');
+		$row[] = strftime( "%H h -%M ' - %S s - %d -%m-%Y", $endtrack->maxtimemodified);
+     	 $table->data[] = $row;
+		}
+		print_table($table);
+	
+	echo "<br><a href='viewScore.php?a=$scorm->id'>".format_string(get_string('viewscore','scorm'))."</a>";
     if (empty($noheader)) {
         print_footer($course);
     }

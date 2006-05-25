@@ -99,7 +99,7 @@
     function validate_scorm(theform,filename) {
         var myRequest = NewHttpReq();
         result = DoRequest(myRequest,"<?php p($CFG->wwwroot) ?>/mod/scorm/validate.php","id=<?php p($form->course) ?>&reference="+filename+"<?php echo $sessionkey.$scormid.$datadir ?>");
-        //alert(result);
+        alert("Scorm validating....");
         results = result.split('\n');
         result = '';
         errorlogs = '';
@@ -145,6 +145,9 @@
                result.concat('<?php print_string('errorlogs','scorm') ?>:\n'+errorlogs);
             }
             alert(result);
+			alert("Khong tuan chuan Scorm");
+			document.form.name.focus();
+
             return false;
         }
     }
@@ -183,7 +186,9 @@
     }
 </script>
 
-<form name="form" method="post" action="mod.php" onsubmit="return validate_scorm(document.form,document.form.reference.value);">
+<form name="form" method="post" action="mod.php?goto=" onsubmit="return validate_scorm(document.form,document.form.reference.value);">
+
+
     <table cellpadding="5">
         <tr valign="top">
             <td align="right"><b><?php print_string('name') ?>:</b></td>
@@ -420,7 +425,7 @@
     <input type="hidden" name="modulename"      value="<?php p($form->modulename) ?>" />
     <input type="hidden" name="instance"        value="<?php p($form->instance) ?>" />
     <center>
-        <input type="submit" value="<?php print_string('savechanges') ?>" />
+        <input type="submit" value="<?php print_string('savechanges') ?>"/>
         <input type="button" name="cancel" value="<?php print_string('cancel') ?>" onclick="document.location='view.php?id=<?php echo $form->course ?>'" />
     </center>
 </form>

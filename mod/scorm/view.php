@@ -5,7 +5,8 @@
 
     require_once("../../config.php");
     require_once('locallib.php');
-
+    require_once('sequencinglib.php');
+    
     $id = optional_param('id', '', PARAM_INT);       // Course Module ID, or
     $a = optional_param('a', '', PARAM_INT);         // scorm ID
     //$organization = optional_param('organization', '', PARAM_INT); // organization ID
@@ -73,17 +74,26 @@
                      '', '', true, update_module_button($cm->id, $course->id, $strscorm), navmenu($course, $cm));
 
         if (isteacher($course->id)) {
+
+        //Phan thiet lap he so diem
+            $examNumber = get_record_select('scorm_scoes', 'scorm ='.($scorm->id).' and minnormalizedmeasure > -1','count(id) as examCount');
+            //fwrite($ft,"\n So bai kiem tra la ".($examNumber->examCount));    
+            if ($examNumber->examCount > 0){
+                echo "<div class=\"reportlink\"><img src='pix\SuaHeSoDiem.png' /><a target=\"{$CFG->framename}\" href=\"coefficientSetting.php?id=$cm->id\"> ".get_string('scorecoefficientsetting','scorm',$examNumber->examCount).'</a></div>';
+            }
+
+        //-----------------------
             $trackedusers = get_record('scorm_scoes_track', 'scormid', $scorm->id, '', '', '', '', 'count(distinct(userid)) as c');
             if ($trackedusers->c > 0) {
-                echo "<div class=\"reportlink\"><a target=\"{$CFG->framename}\" href=\"report.php?id=$cm->id\">".get_string('viewallreports','scorm',$trackedusers->c).'</a></div>';
+                echo "<div class=\"reportlink\"><img src='pix\ThongKe.png' /><a target=\"{$CFG->framename}\" href=\"report.php?id=$cm->id\"> ".get_string('viewallreports','scorm',$trackedusers->c).'</a></div>';
             } else {
                 echo '<div class="reportlink">'.get_string('noreports','scorm').'</div>';
             }
         }
+
+        $USER->setAttempt = 'notset';
         // Print the main part of the page
-
         print_heading(format_string($scorm->name));
-
         print_simple_box(format_text($scorm->summary), 'center', '70%', '', 5, 'generalbox', 'intro');
         scorm_view_display($USER, $scorm, 'view.php?id='.$cm->id, $cm);
         print_footer($course);

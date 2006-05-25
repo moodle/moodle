@@ -1,7 +1,8 @@
 <?php
     require_once("../../config.php");
     require_once('locallib.php');
-
+	require_once('sequencinglib.php');
+	
     $id = optional_param('id', '', PARAM_INT);       // Course Module ID, or
     $a = optional_param('a', '', PARAM_INT);         // scorm ID
     $scoid = required_param('scoid', PARAM_INT); // sco ID
@@ -33,11 +34,11 @@
     require_login($course->id, false, $cm);
     if (!empty($scoid)) {
     //
-    // Direct sco request
+    // Dinh huong yeu cau cua SCO
     //
         if ($sco = get_record("scorm_scoes","id",$scoid)) {
             if ($sco->launch == '') {
-                // Search for the next launchable sco
+                // Tim kiem SCO co the trien khai tiep theo
                 if ($scoes = get_records_select("scorm_scoes","scorm=".$scorm->id." AND launch<>'' AND id>".$sco->id,"id ASC")) {
                     $sco = current($scoes);
                 }

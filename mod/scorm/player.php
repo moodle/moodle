@@ -4,7 +4,8 @@
 
     require_once('../../config.php');
     require_once('locallib.php');
-
+    require_once('sequencinglib.php');
+    
     //
     // Checkin' script parameters
     //
@@ -41,10 +42,104 @@
 
     require_login($course->id, false, $cm);
 
+    //$f = "D:\\test.txt";
+    //@$ft = fopen($f,"a");
+    //fwrite($ft,"\n ++ Thong tin quyen set attempt ".$USER->setAttempt);
     $strscorms = get_string('modulenameplural', 'scorm');
     $strscorm  = get_string('modulename', 'scorm');
     $strpopup = get_string('popup','scorm');
 
+
+    $attempt = scorm_get_last_attempt($scorm->id,$USER->id);    
+    
+    //Kiem tra xem co phai la tiep tuc khong 
+    if ($mode=='continue')
+    {
+        $scoid = scorm_get_suspendscoid($scorm->id,$USER->id);
+        $USER->setAttempt = 'set';
+        $mode = 'normal';
+    }
+    if (($mode == 'normal') && ($USER->setAttempt == 'notset')){
+        $attempt++;
+        $USER->setAttempt = 'set';
+    }
+    //Thuc hien Sequencing
+
+    if ($mode!='review')
+    {
+    $sequencingResult = scorm_sequecingrule_implement($scorm->id,$scoid,$USER->id);
+    //echo "<script language='JavaScript'>";
+    //    echo "alert('Sequencing');";
+    //echo "<script>";
+        if (($sequencingResult->rule == 'pre') && ($sequencingResult->action == 'disabled')){
+            echo "<script language='JavaScript'>";
+            echo "alert('Disabling');";
+            echo "</script>";        
+        }
+        if (($sequencingResult->rule == 'exit') && ($sequencingResult->action == 'exit')){
+            $exitscoid = get_sco_after_exit($scoid,$scorm->id);
+            //fwrite($ft,"\n ++ Thong tin exit sco la ".$exitscoid);
+            $orgstr = '&currentorg='.$currentorg;
+            $modepop = '&mode='.$mode;
+            $scostr = '&scoid='.$exitscoid;
+            echo "<script language='JavaScript'>";
+            echo "alert('Exiting');";
+            echo "location.href='".$CFG->wwwroot.'/mod/scorm/player.php?id='.$cm->id.$orgstr.$modepop.$scostr."';";
+            echo "</script>";                
+            
+        }        
+    }    
+
+    //Thiet lap attempt_status cho scoid
+    scorm_set_attempt($scoid,$USER->id);
+    //Ket thuc thiet lap attemp_status
+    if ($mode!='review')
+    {
+    //Update trang thai
+    scorm_rollup_updatestatus($scorm->id,$scoid,$USER->id);
+    //------------------------------
+    }    
+    //Thiet lap thong tin lien quan truy xuat Scorm
+    $statistic = get_record('scorm_statistic',"scormid",$scorm->id,"userid",$USER->id);
+    if (empty($statistic)){
+        $statisticInput->accesstime = time();
+        $statisticInput->durationtime = 0;
+        $statisticInput->status = 'during';
+        $statisticInput->attemptnumber = $attempt;
+        $statisticInput->scormid = $scorm->id;
+        $statisticInput->userid = $USER->id;
+        $statisticid = scorm_insert_statistic($statisticInput);
+    }
+    else{
+        if ($statistic->status=='suspend'){
+        $statisticInput->accesstime = time();
+        $statisticInput->durationtime = $statistic->durationtime;
+        $statisticInput->status = 'during';
+        $statisticInput->attemptnumber = $attempt;
+        $statisticInput->scormid = $scorm->id;
+        $statisticInput->userid = $USER->id;
+        }
+    }    
+
+    //---------------------Ket thuc thiet lap thoi gian ---------------
+
+    //Lay thoi gian toi da cho phep
+    $absoluteTimeLimit = scorm_get_AbsoluteTimeLimit($scoid);
+    if ($absoluteTimeLimit > 0)
+    {    
+        echo "<script type='text/javascript'>"; 
+        echo "alert('Bai nay co thoi gian lam la: ".$absoluteTimeLimit."');";
+        echo "function remind(msg1) {"; 
+        echo "var msg = 'Da het gio lam bai ' + msg1 +' Secs.Lua chon bai khac de tiep tuc';";
+        echo "alert(msg);"; 
+        echo "window.location.href = 'view.php?id=".$scorm->id."';";
+        echo "}";
+        echo "setTimeout('remind(".$absoluteTimeLimit.")',".$absoluteTimeLimit.");";
+        echo "</script>";
+    }
+    //--------------------------------
+
+    
     if ($course->category != 0) {
         $navigation = "<a target=\"{$CFG->framename}\" href=\"../../course/view.php?id=$course->id\">$course->shortname</a> ->";
         if ($scorms = get_all_instances_in_course('scorm', $course)) {
@@ -70,12 +165,24 @@
     //
     // TOC processing
     //
-    $attempt = scorm_get_last_attempt($scorm->id, $USER->id);
+    //$attempt = scorm_get_last_attempt($scorm->id, $USER->id);
+    //$f = "D:\\test.txt";
+    //@$ft = fopen($f,"a");
+    ////fwrite($ft,"\n ++ ++ + ++ Gia tri $attempt lay duoc la ".$attempt);
+
+    //if ($mode=='normal'){
+    //    $newattempt = 'on';
+    //}
     if (($newattempt=='on') && (($attempt < $scorm->maxattempt) || ($scorm->maxattempt == 0))) {
         $attempt++;
+        $f = "D:\\test.txt";
+        @$ft = fopen($f,"a");
+        //fwrite($ft,"\n ----New attempt------- ".$attempt);
+
     }
     $attemptstr = '&amp;attempt=' . $attempt;
 
+    //fwrite($ft,"\n ----Gia tri attempt bay gio la------- ".$attempt);
     $result = scorm_get_toc($USER,$scorm,'structurelist',$currentorg,$scoid,$mode,$attempt,true);
     $sco = $result->sco;
 
@@ -83,11 +190,15 @@
        $mode = 'normal';
     }
     if ($mode != 'browse') {
+        ////fwrite($ft,"\n ++ ++ + ++ Gia tri $mode khac browser ".$mode);
         if ($trackdata = scorm_get_tracks($sco->id,$USER->id,$attempt)) {
             if (($trackdata->status == 'completed') || ($trackdata->status == 'passed') || ($trackdata->status == 'failed')) {
                 $mode = 'review';
+                ////fwrite($ft,"\n ++ ++ + ++ Gia tri $mode ".$mode);
             } else {
                 $mode = 'normal';
+                ////fwrite($ft,"\n ++ ++ + ++ Gia tri $mode ".$mode);
+
             }
         }
     }
@@ -109,6 +220,11 @@
     $SESSION->scorm_mode = $mode;
     $SESSION->attempt = $attempt;
 
+    //    Doan code them
+    ////fwrite($ft,"\n ++ ++ + ++ Gia tri attempt duoc gan cho user la ".$attempt);
+    $USER->attempt = $attempt;
+    //------------Ket thuc doan them
+
     //
     // Print the page header
     //
@@ -116,10 +232,22 @@
     if ($scorm->popup == 1) {
         $bodyscript = 'onunload="main.close();"';
     }
+
+    // Kiem tra xem co duoc exit khong
+    if (scorm_isChoiceexit($sco->scorm,$sco->id)){
     $exitlink = '(<a href="'.$CFG->wwwroot.'/course/view.php?id='.$cm->course.'">'.get_string('exit','scorm').'</a>)&nbsp;';
+    }
+    else
+    {
+    $exitlink = get_string('exitisnotallowed','scorm');
+    }
+
+    //Luu giu khoa hoc thoat ra
+    $suspend = '(<a href="suspend.php?scorm='.$sco->scorm.'&sco='.$sco->id.'&userid='.$USER->id.'&id='.$cm->course.'">'.get_string('suspend','scorm').'</a>)&nbsp;';
+
     print_header($pagetitle, "$course->fullname",
                  "$navigation <a target='{$CFG->framename}' href='view.php?id=$cm->id'>".format_string($scorm->name,true)."</a>",
-                 '', '', true, $exitlink.update_module_button($cm->id, $course->id, $strscorm), '', false, $bodyscript);
+                 '', '', true, $exitlink.$suspend.update_module_button($cm->id, $course->id, $strscorm), '', false, $bodyscript);
     if ($sco->scormtype == 'sco') {
 ?>
     <script language="JavaScript" type="text/javascript" src="request.js"></script>
@@ -172,7 +300,7 @@
                        ($sco->next == 0)       // Moodle must manage the next link
                    ) 
                )
-           ) || ($scorm->hidetoc == 2)      // Teacher want to display toc in a small popup menu 
+           ) || ($scorm->hidetoc == 2)      // Teacher want to display toc in a small dropdown menu 
        ) {
 ?>
             <div id="scormtop">
@@ -191,7 +319,7 @@
                 echo '<a href="'.$url.'">&lt; '.get_string('prev','scorm').'</a>';
             }
             if ($scorm->hidetoc == 2) {
- 	        echo $result->tocmenu;
+                echo $result->tocmenu;
             }
             if (($scorm->hidenav == 0) && ($sco->nextid != 0) && ($sco->next == 0)) {
                 /// Print the next LO link
@@ -302,6 +430,7 @@
     </div> <!-- SCORM content -->
     </div> <!-- Content -->
     </div> <!-- Page -->
+
 </body>
 </html>
 

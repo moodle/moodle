@@ -1,7 +1,8 @@
 <?php
     require_once('../../config.php');
     require_once('locallib.php');
-
+	require_once('sequencinglib.php');
+	
     $command = required_param('command', PARAM_ALPHA);
     $sessionid = required_param('session_id', PARAM_ALPHANUM);
     $aiccdata = optional_param('aicc_data', '', PARAM_RAW);
@@ -232,7 +233,7 @@
                                         $element = $datamodel[strtolower(trim($datarow))];
                                         $value = '';
                                         while ((($datarow = current($datarows)) !== false) && (substr($datarow,0,1) != '[')) {
-                                            $value .= scorm_utf8_to_entities(datarow);
+                                            $value .= $datarow;
                                             next($datarows);
                                         }
                                         $id = scorm_insert_track($USER->id, $scorm->id, $sco->id, $attempt, $element, $value);
