@@ -152,11 +152,11 @@ function stats_cron_daily () {
                 
                 if ($logins = get_records_sql($sql)) {
                     foreach ($logins as $l) {
-                        $stat->reads = $l->count;
+                        $stat->statsreads = $l->count;
                         $stat->userid = $l->userid;
                         $stat->timeend = $nextmidnight;
                         $stat->courseid = SITEID;
-                        $stat->writes = 0;
+                        $stat->statswrites = 0;
                         $stat->stattype = 'logins';
                         $stat->roleid = 1; 
                         insert_record('stats_user_daily',$stat,false);
@@ -540,23 +540,23 @@ function stats_get_parameters($time,$report,$courseid,$mode) {
         $param->line2 = get_string('statsteacherwrites');
         break;
     case STATS_REPORT_USER_ACTIVITY:
-        $param->fields = 'reads as line1, writes as line2';
+        $param->fields = 'statsreads as line1, statswrites as line2';
         $param->line1 = get_string('statsuserreads');
         $param->line2 = get_string('statsuserwrites');
         $param->stattype = 'activity';
         break;
     case STATS_REPORT_USER_ALLACTIVITY:
-        $param->fields = 'reads+writes as line1';
+        $param->fields = 'statsreads+statswrites as line1';
         $param->line1 = get_string('statsuseractivity');
         $param->stattype = 'activity';
         break;
     case STATS_REPORT_USER_LOGINS:
-        $param->fields = 'reads as line1';
+        $param->fields = 'statsreads as line1';
         $param->line1 = get_string('statsuserlogins');
         $param->stattype = 'logins';
         break;
     case STATS_REPORT_USER_VIEW:
-        $param->fields = 'reads as line1, writes as line2, reads+writes as line3';
+        $param->fields = 'statsreads as line1, statswrites as line2, statsreads+statswrites as line3';
         $param->line1 = get_string('statsuserreads');
         $param->line2 = get_string('statsuserwrites');
         $param->line3 = get_string('statsuseractivity');
@@ -682,13 +682,13 @@ function stats_do_daily_user_cron($course,$user,$roleid,$timesql,$timeend,$mods)
         .' AND  l.course = '.$course->id
         .' AND '.$timesql .' '.stats_get_action_sql_in('view');
 
-    $stat->reads  = count_records_sql($sql);
+    $stat->statsreads  = count_records_sql($sql);
     
     $sql = 'SELECT COUNT(l.id) FROM '.$CFG->prefix.'log l WHERE l.userid = '.$user->userid
         .' AND l.course = '.$course->id
         .' AND '.$timesql.' '.stats_get_action_sql_in('post');
 
-    $stat->writes = count_records_sql($sql);
+    $stat->statswrites = count_records_sql($sql);
                 
     insert_record('stats_user_daily',$stat,false);
 
@@ -710,12 +710,12 @@ function stats_do_aggregate_user_cron($course,$user,$roleid,$timesql,$timeend,$t
     $stat->stattype = 'activity';
     $stat->timeend  = $timeend;
 
-    $sql = 'SELECT sum(reads) as reads, sum(writes) as writes FROM '.$CFG->prefix.'stats_user_daily WHERE courseid = '.$course->id.' AND '.$timesql
+    $sql = 'SELECT sum(statsreads) as statsreads, sum(statswrites) as statswrites FROM '.$CFG->prefix.'stats_user_daily WHERE courseid = '.$course->id.' AND '.$timesql
         ." AND roleid=".$roleid." AND userid = ".$stat->userid." AND stattype='activity'"; // add on roleid in case they have teacher and student records.
     
     $r = get_record_sql($sql);
-    $stat->reads = (empty($r->reads)) ? 0 : $r->reads;
-    $stat->writes = (empty($r->writes)) ? 0 : $r->writes;
+    $stat->statsreads = (empty($r->statsreads)) ? 0 : $r->statsreads;
+    $stat->statswrites = (empty($r->statswrites)) ? 0 : $r->statswrites;
     
     insert_record('stats_user_'.$timestr,$stat,false);
 
@@ -729,7 +729,7 @@ function stats_do_aggregate_user_cron($course,$user,$roleid,$timesql,$timeend,$t
 function stats_do_aggregate_user_login_cron($timesql,$timeend,$timestr) {
     global $CFG;
     
-    $sql = 'SELECT userid,roleid,sum(reads) as reads, sum(writes) as writes FROM '.$CFG->prefix.'stats_user_daily WHERE stattype = \'logins\' AND '.$timesql.' GROUP BY userid,roleid';
+    $sql = 'SELECT userid,roleid,sum(statsreads) as statsreads, sum(statswrites) as writes FROM '.$CFG->prefix.'stats_user_daily WHERE stattype = \'logins\' AND '.$timesql.' GROUP BY userid,roleid';
     
     if ($users = get_records_sql($sql)) {
         foreach ($users as $stat) {
