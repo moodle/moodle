@@ -320,9 +320,11 @@
 
 
 /// Finish the page
-    
+
     // Print the stuff that need to come after the form fields.
-    $fields = get_records('data_fields', 'dataid', $data->id);
+    if (!$fields = get_records('data_fields', 'dataid', $data->id)) {
+        error(get_string('nofieldindatabase'));
+    }
     foreach ($fields as $eachfield) {
         $field = data_get_field($eachfield, $data);
         $field->print_after_form();
