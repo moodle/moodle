@@ -163,6 +163,11 @@
            migrate2utf_data_rsstemplate(RECORDID)
           </PHP_FUNCTION>
         </FIELD>
+        <FIELD name="rsstitletemplate" method="PHP_FUNCTION" type="text" length="0">
+          <PHP_FUNCTION>
+           migrate2utf_data_rsstitletemplate(RECORDID)
+          </PHP_FUNCTION>
+        </FIELD>
         <FIELD name="listtemplateheader" method="PHP_FUNCTION" type="text" length="0">
           <PHP_FUNCTION>
            migrate2utf_data_listtemplateheader(RECORDID)

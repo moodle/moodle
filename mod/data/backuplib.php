@@ -85,6 +85,7 @@ function data_backup_one_mod($bf,$preferences,$data) {
     fwrite ($bf,full_tag("LISTTEMPLATE",4,false,$data->listtemplate));
     fwrite ($bf,full_tag("ADDTEMPLATE",4,false,$data->addtemplate));
     fwrite ($bf,full_tag("RSSTEMPLATE",4,false,$data->rsstemplate));
+    fwrite ($bf,full_tag("RSSTITLETEMPLATE",4,false,$data->rsstitletemplate));
     fwrite ($bf,full_tag("LISTTEMPLATEHEADER",4,false,$data->listtemplateheader));
     fwrite ($bf,full_tag("LISTTEMPLATEFOOTER",4,false,$data->listtemplatefooter));
     fwrite ($bf,full_tag("APPROVAL",4,false,$data->approval));
