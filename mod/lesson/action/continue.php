@@ -446,13 +446,13 @@
             }
             // get he users exact responses for record keeping
             $userresponse = array();
-            foreach ($response as $value) {
+            foreach ($response as $key => $value) {
                 foreach($answers as $answer) {
                     if ($value == $answer->response) {
                         $userresponse[] = $answer->id;
-                        $studentanswer .= '<br />'.$answer->answer.' = '.$answer->response;
                     }
                 }
+                $studentanswer .= '<br />'.$answers[$key]->answer.' = '.$value;
             }
             $userresponse = implode(",", $userresponse);
 
