@@ -3748,7 +3748,7 @@ function moodle_process_email($modargs,$body) {
  * @return bool|string Returns "true" if mail was sent OK, "emailstop" if email
  *          was blocked by user and "false" if there was another sort of error.
  */
-function email_to_user($user, $from, $subject, $messagetext, $messagehtml='', $attachment='', $attachname='', $usetrueaddress=true, $repyto='', $replytoname='') {
+function email_to_user($user, $from, $subject, $messagetext, $messagehtml='', $attachment='', $attachname='', $usetrueaddress=true, $replyto='', $replytoname='') {
 
     global $CFG, $FULLME;
 
