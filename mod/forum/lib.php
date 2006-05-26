@@ -111,6 +111,10 @@ function forum_add_instance($forum) {
         $forum->assesstimefinish = 0;
     }
 
+    //sanitize given values a bit
+    $forum->warnafter = clean_param($forum->warnafter, PARAM_INT);
+    $forum->blockafter = clean_param($forum->blockafter, PARAM_INT);
+
     if (! $forum->id = insert_record('forum', $forum)) {
         return false;
     }
