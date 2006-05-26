@@ -63,7 +63,9 @@ class quiz_report extends quiz_default_report {
             $a->studentnum = count_records_select('quiz_attempts', "quiz = '$quiz->id' AND preview = '0'", 'COUNT(DISTINCT userid)');
             $a->studentstring  = $course->students;
     
-            notify(get_string('numattempts', 'quiz', $a));
+            if (!$download) { //do not print notices when downloading
+                notify(get_string('numattempts', 'quiz', $a));
+            }
         }
     /// Check to see if groups are being used in this quiz
         if ($groupmode = groupmode($course, $cm)) {   // Groups are being used
@@ -489,6 +491,7 @@ class quiz_report extends quiz_default_report {
             }
             elseif ($download == 'Excel') {
                 $workbook->close();
+                exit;
             }
             elseif ($download == 'CSV') {
                 exit;
