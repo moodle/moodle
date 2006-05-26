@@ -81,6 +81,9 @@ function glossary_add_instance($glossary) {
         error("This format doesn't exist!");
     }  
 
+    //sanitize submitted values a bit
+    $glossary->entbypage = clean_param($glossary->entbypage, PARAM_INT);
+
     return insert_record("glossary", $glossary);
 }
 
