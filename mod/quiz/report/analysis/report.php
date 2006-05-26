@@ -156,7 +156,7 @@ class quiz_report extends quiz_default_report {
                 if (!isset($quizquestions[$i]) or !isset($states[$i])) {
                     continue;
                 }
-                $qtype = ($quizquestions[$i]->qtype==4) ? $states[$i]->options->question->qtype : $quizquestions[$i]->qtype;
+                $qtype = ($quizquestions[$i]->qtype=='random') ? $states[$i]->options->question->qtype : $quizquestions[$i]->qtype;
                 if (!in_array ($qtype, $accepted_qtypes)){
                     continue;
                 }                
