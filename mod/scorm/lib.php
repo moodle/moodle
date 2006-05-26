@@ -65,6 +65,10 @@ function scorm_add_instance($scorm) {
     $scorm->width = str_replace('%','',$scorm->width);
     $scorm->height = str_replace('%','',$scorm->height);
 
+    //sanitize submitted values a bit
+    $scorm->width = clean_param($scorm->width, PARAM_INT);
+    $scorm->height = clean_param($scorm->height, PARAM_INT);
+
     $id = insert_record('scorm', $scorm);
 
     if (basename($scorm->reference) != 'imsmanifest.xml') {
