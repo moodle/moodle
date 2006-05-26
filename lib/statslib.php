@@ -67,7 +67,7 @@ function stats_cron_daily () {
     $midnight = stats_getmidnight(time());
     
     // check to make sure we're due to run, at least one day after last run
-    if ((time() - 24*60*60) < $CFG->statslastdaily) {
+    if (isset($CFG->statslastdaily) and ((time() - 24*60*60) < $CFG->statslastdaily)) {
         return STATS_RUN_ABORTED;
     }
 
@@ -207,7 +207,7 @@ function stats_cron_weekly () {
     // check to make sure we're due to run, at least one week after last run
     $sunday = stats_get_base_weekly(); 
 
-    if ((time() - (7*24*60*60)) <= $CFG->statslastweekly) {
+    if (isset($CFG->statslastweekly) and ((time() - (7*24*60*60)) <= $CFG->statslastweekly)) {
         return STATS_RUN_ABORTED;
     }
 
@@ -316,7 +316,7 @@ function stats_cron_monthly () {
     // check to make sure we're due to run, at least one month after last run
     $monthend = stats_get_base_monthly();
     
-    if ((time() - (31*24*60*60)) <= $CFG->statslastmonthly) {
+    if (isset($CFG->statslastmonthly) and ((time() - (31*24*60*60)) <= $CFG->statslastmonthly)) {
         return STATS_RUN_ABORTED;
     }
     
