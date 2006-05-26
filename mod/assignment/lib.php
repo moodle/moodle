@@ -1569,7 +1569,7 @@ function assignment_cron () {
             $postsubject = "$course->shortname: $strassignments: ".format_string($submission->name,true);
             $posttext  = "$course->shortname -> $strassignments -> ".format_string($submission->name,true)."\n";
             $posttext .= "---------------------------------------------------------------------\n";
-            $posttext .= get_string("assignmentmail", "assignment", $assignmentinfo);
+            $posttext .= get_string("assignmentmail", "assignment", $assignmentinfo)."\n";
             $posttext .= "---------------------------------------------------------------------\n";
 
             if ($user->mailformat == 1) {  // HTML
