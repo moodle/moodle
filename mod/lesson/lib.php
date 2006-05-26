@@ -43,12 +43,20 @@ function lesson_add_instance($lesson) {
     $conditions = new stdClass;
     $conditions->timespent = $lesson->timespent;
     $conditions->completed = $lesson->completed;
-    $conditions->gradebetterthan = $lesson->gradebetterthan;
+    $conditions->gradebetterthan = clean_param($lesson->gradebetterthan, PARAM_INT);
     $lesson->conditions = addslashes(serialize($conditions));
     unset($lesson->timespent);
     unset($lesson->completed);
     unset($lesson->gradebetterthan);
-    
+
+    // sanitize given values a bit
+    $lesson->maxtime = clean_param($lesson->maxtime, PARAM_INT);
+    $lesson->width = clean_param($lesson->width, PARAM_INT);
+    $lesson->height = clean_param($lesson->height, PARAM_INT);
+    $lesson->mediawidth = clean_param($lesson->mediawidth, PARAM_INT);
+    $lesson->mediaheight = clean_param($lesson->mediaheight, PARAM_INT);
+    $lesson->maxhighscores = clean_param($lesson->maxhighscores, PARAM_INT);
+
     if (!empty($lesson->password)) {
         $lesson->password = md5($lesson->password);
     } else {
