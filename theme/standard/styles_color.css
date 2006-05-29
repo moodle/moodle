@@ -520,6 +520,7 @@ body#course-user .section {
   border-color:#AAAAAA;
 }
 
+#admin-report .plugin,
 #course-report .plugin,
 #course-import .plugin {
   margin-bottom: 20px;
