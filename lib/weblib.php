@@ -1882,7 +1882,7 @@ function highlightfast($needle, $haystack) {
 function print_header ($title='', $heading='', $navigation='', $focus='', $meta='',
                        $cache=true, $button='&nbsp;', $menu='', $usexml=false, $bodytags='') {
 
-    global $USER, $CFG, $THEME, $SESSION, $ME, $SITE, $HTTPSPAGEREQUIRED;
+    global $USER, $CFG, $THEME, $SESSION, $ME, $SITE, $COURSE, $HTTPSPAGEREQUIRED;
 
 /// This makes sure that the header is never repeated twice on a page
     if (defined('HEADER_PRINTED')) {
@@ -1893,15 +1893,13 @@ function print_header ($title='', $heading='', $navigation='', $focus='', $meta=
     }
     define('HEADER_PRINTED', 'true');
 
-
-/// This is an ugly hack to be replaced later by a proper global $COURSE
-    global $course;
-    if (!empty($course->lang)) {
-        $CFG->courselang = $course->lang;
+/// Set up course-based lang and theme if any
+    if (!empty($COURSE->lang)) {
+        $CFG->courselang = $COURSE->lang;
     }
-    if (!empty($course->theme)) {
+    if (!empty($COURSE->theme)) {
         if (!empty($CFG->allowcoursethemes)) {
-            $CFG->coursetheme = $course->theme;
+            $CFG->coursetheme = $COURSE->theme;
             theme_setup();
         }
     }
