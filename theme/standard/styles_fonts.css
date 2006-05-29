@@ -17,6 +17,7 @@
   grades
   login
   message
+  mymoodle
   question
   tabs
   user
@@ -516,18 +517,26 @@ body#grade-index .grades .header {
 }
 
 /***
+ *** MyMoodle
+ ***/
+
+.my .courseboxcontent .overview .info {
+  font-size:0.7em;
+}
+
+/***
  *** Question
  ***/
 
 .que .no {
-	font-size: 1.2em;
-	font-weight: bold;
+  font-size: 1.2em;
+  font-weight: bold;
 }
 .que .grade {
-	font-size: 0.8em;
+  font-size: 0.8em;
 }
 .que .history {
-    font-size:75%;
+  font-size:75%;
 }
 
 /***
