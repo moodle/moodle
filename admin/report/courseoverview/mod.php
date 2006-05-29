@@ -46,7 +46,7 @@
                 '<input type="text" name="numcourses" size="3" maxlength="2" value="'.$numcourses.'" />',
                 '<input type="submit" value="'.get_string('view').'" />') ;
 
-        echo '<form action="index.php" method="post">'."\n";
+        echo '<form action="report/courseoverview/index.php" method="post">'."\n";
         print_table($table);
         echo '</form>';
     }
