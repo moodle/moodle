@@ -1,18 +1,12 @@
 <?php
     require_once('../../config.php');
     require_once('locallib.php');
-	require_once('sequencinglib.php');
-		
-	//$f = "D:\\test.txt";
-	//@$ft = fopen($f,"a");
-	//fwrite($ft,"Bat dau ghi tron datamodel.php \n");
-
+        
     $id = optional_param('id', '', PARAM_INT);       // Course Module ID, or
     $a = optional_param('a', '', PARAM_INT);         // scorm ID
     $scoid = required_param('scoid', PARAM_INT);  // sco ID
 //    $attempt = required_param('attempt', PARAM_INT);  // attempt number
-	$attempt = $USER->attempt;
-	//fwrite($ft,"\n --------Gia tri attempt thu duoc tu datamodel.php-------- : ".$attempt);
+    $attempt = $USER->attempt;
 
 
     if (!empty($id)) {
@@ -42,7 +36,6 @@
     require_login($course->id, false, $cm);
 
     if (confirm_sesskey() && (!empty($scoid))) {
-		//fwrite($ft," --Ghi du lieu--- \n");
         $result = true;
         if (isstudent($course->id) || (isteacher($course->id) && !isadmin())) {
             foreach ($_POST as $element => $value) {
@@ -50,17 +43,13 @@
                     $element = str_replace('__','.',$element);
                     $element = preg_replace('/_(\d+)/',".\$1",$element);
                     $result = scorm_insert_track($USER->id, $scorm->id, $scoid, $attempt, $element, $value) && $result;
-					//fwrite($ft,"\n Ghi xong mot phan tu tai Datamodel.php-- ".$scoid);
-
                 }
             }
         }
         if ($result) {
             echo "true\n0";
-			//fwrite($ft,"Ghi thanh cong trong  Datamodel.php-");
         } else {
             echo "false\n101";
-			//fwrite($ft,"Ghi that bai trong  Datamodel.php-");
         }
     }
 ?>

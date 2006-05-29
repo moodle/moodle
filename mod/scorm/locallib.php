@@ -337,12 +337,15 @@ function scorm_insert_trackmodel($userid,$scormid,$scoid,$attempt) {
     return $id;
 }
 
-function scorm_get_suspendscoid($scormid,$userid)
-{
-        $sco = get_record("scorm_suspendtrack","scormid",$scormid,"userid",$userid);
+function scorm_get_suspendscoid($scormid,$userid) {
+    if ($sco = get_record("scorm_suspendtrack","scormid",$scormid,"userid",$userid)) {
         $suspendscoid = $sco->suspendscoid;
         return $suspendscoid;
+    } else {
+        return 0;
+    }
 }
+
 function scorm_add_time($a, $b) {
     $aes = explode(':',$a);
     $bes = explode(':',$b);
@@ -744,8 +747,7 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
                 //Neu la sco suspend thi hien thi anh khac
                 if ($suspendscoid == $sco->id){
                     $result->toc .= '<img src="'.$scormpixdir.'/suspend.gif" alt="Dang tam dung o day" title="Dang dung o day" />';                
-                }
-                else{
+                } else {
                 //-----------------------
                     if (isset($usertracks[$sco->identifier])) {
                         $usertrack = $usertracks[$sco->identifier];

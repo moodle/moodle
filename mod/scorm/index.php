@@ -1,7 +1,6 @@
 <?php // $Id$
 
     require_once("../../config.php");
-	require_once('sequencinglib.php');
 
     $id = required_param('id', PARAM_INT);   // course id
 
@@ -90,7 +89,6 @@
     print_table($table);
 
     print_footer($course);
-
 
 ?>
 

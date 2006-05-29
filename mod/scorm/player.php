@@ -49,28 +49,25 @@
     $strscorm  = get_string('modulename', 'scorm');
     $strpopup = get_string('popup','scorm');
 
-
     $attempt = scorm_get_last_attempt($scorm->id,$USER->id);    
     
     //Kiem tra xem co phai la tiep tuc khong 
-    if ($mode=='continue')
-    {
+    if ($mode=='continue') {
         $scoid = scorm_get_suspendscoid($scorm->id,$USER->id);
         $USER->setAttempt = 'set';
         $mode = 'normal';
     }
-    if (($mode == 'normal') && ($USER->setAttempt == 'notset')){
+    if (($mode == 'normal') && ($USER->setAttempt == 'notset')) {
         $attempt++;
         $USER->setAttempt = 'set';
     }
     //Thuc hien Sequencing
 
-    if ($mode!='review')
-    {
-    $sequencingResult = scorm_sequecingrule_implement($scorm->id,$scoid,$USER->id);
-    //echo "<script language='JavaScript'>";
-    //    echo "alert('Sequencing');";
-    //echo "<script>";
+    if ($mode!='review') {
+        $sequencingResult = scorm_sequecingrule_implement($scorm->id,$scoid,$USER->id);
+        //echo "<script language='JavaScript'>";
+        //    echo "alert('Sequencing');";
+        //echo "<script>";
         if (($sequencingResult->rule == 'pre') && ($sequencingResult->action == 'disabled')){
             echo "<script language='JavaScript'>";
             echo "alert('Disabling');";
@@ -86,22 +83,20 @@
             echo "alert('Exiting');";
             echo "location.href='".$CFG->wwwroot.'/mod/scorm/player.php?id='.$cm->id.$orgstr.$modepop.$scostr."';";
             echo "</script>";                
-            
         }        
     }    
 
     //Thiet lap attempt_status cho scoid
     scorm_set_attempt($scoid,$USER->id);
     //Ket thuc thiet lap attemp_status
-    if ($mode!='review')
-    {
-    //Update trang thai
-    scorm_rollup_updatestatus($scorm->id,$scoid,$USER->id);
-    //------------------------------
+    if ($mode!='review') {
+        //Update trang thai
+        scorm_rollup_updatestatus($scorm->id,$scoid,$USER->id);
+        //------------------------------
     }    
     //Thiet lap thong tin lien quan truy xuat Scorm
     $statistic = get_record('scorm_statistic',"scormid",$scorm->id,"userid",$USER->id);
-    if (empty($statistic)){
+    if (empty($statistic)) {
         $statisticInput->accesstime = time();
         $statisticInput->durationtime = 0;
         $statisticInput->status = 'during';
@@ -109,15 +104,14 @@
         $statisticInput->scormid = $scorm->id;
         $statisticInput->userid = $USER->id;
         $statisticid = scorm_insert_statistic($statisticInput);
-    }
-    else{
-        if ($statistic->status=='suspend'){
-        $statisticInput->accesstime = time();
-        $statisticInput->durationtime = $statistic->durationtime;
-        $statisticInput->status = 'during';
-        $statisticInput->attemptnumber = $attempt;
-        $statisticInput->scormid = $scorm->id;
-        $statisticInput->userid = $USER->id;
+    } else {
+        if ($statistic->status=='suspend') {
+            $statisticInput->accesstime = time();
+            $statisticInput->durationtime = $statistic->durationtime;
+            $statisticInput->status = 'during';
+            $statisticInput->attemptnumber = $attempt;
+            $statisticInput->scormid = $scorm->id;
+            $statisticInput->userid = $USER->id;
         }
     }    
 
@@ -125,8 +119,7 @@
 
     //Lay thoi gian toi da cho phep
     $absoluteTimeLimit = scorm_get_AbsoluteTimeLimit($scoid);
-    if ($absoluteTimeLimit > 0)
-    {    
+    if ($absoluteTimeLimit > 0) {    
         echo "<script type='text/javascript'>"; 
         echo "alert('Bai nay co thoi gian lam la: ".$absoluteTimeLimit."');";
         echo "function remind(msg1) {"; 
@@ -175,8 +168,8 @@
     //}
     if (($newattempt=='on') && (($attempt < $scorm->maxattempt) || ($scorm->maxattempt == 0))) {
         $attempt++;
-        $f = "D:\\test.txt";
-        @$ft = fopen($f,"a");
+        //$f = "D:\\test.txt";
+        //@$ft = fopen($f,"a");
         //fwrite($ft,"\n ----New attempt------- ".$attempt);
 
     }
@@ -198,7 +191,6 @@
             } else {
                 $mode = 'normal';
                 ////fwrite($ft,"\n ++ ++ + ++ Gia tri $mode ".$mode);
-
             }
         }
     }
@@ -234,12 +226,10 @@
     }
 
     // Kiem tra xem co duoc exit khong
-    if (scorm_isChoiceexit($sco->scorm,$sco->id)){
-    $exitlink = '(<a href="'.$CFG->wwwroot.'/course/view.php?id='.$cm->course.'">'.get_string('exit','scorm').'</a>)&nbsp;';
-    }
-    else
-    {
-    $exitlink = get_string('exitisnotallowed','scorm');
+    if (scorm_isChoiceexit($sco->scorm,$sco->id)) {
+        $exitlink = '(<a href="'.$CFG->wwwroot.'/course/view.php?id='.$cm->course.'">'.get_string('exit','scorm').'</a>)&nbsp;';
+    } else {
+        $exitlink = get_string('exitisnotallowed','scorm');
     }
 
     //Luu giu khoa hoc thoat ra

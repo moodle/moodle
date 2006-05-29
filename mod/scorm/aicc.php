@@ -1,8 +1,7 @@
-<?php
+<php
     require_once('../../config.php');
     require_once('locallib.php');
-	require_once('sequencinglib.php');
-	
+    
     $command = required_param('command', PARAM_ALPHA);
     $sessionid = required_param('session_id', PARAM_ALPHANUM);
     $aiccdata = optional_param('aicc_data', '', PARAM_RAW);

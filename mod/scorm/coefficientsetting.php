@@ -1,10 +1,7 @@
 <?php  // $Id$
 
-// This script uses installed report plugins to print quiz reports
-
     require_once("../../config.php");
     require_once('locallib.php');
-	require_once('sequencinglib.php');
 	
     $id = optional_param('id', '', PARAM_INT);    // Course Module ID, or
     $a = optional_param('a', '', PARAM_INT);     // SCORM ID
