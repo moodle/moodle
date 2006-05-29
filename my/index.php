@@ -1,4 +1,4 @@
-<?php  // %Id%
+<?php  // $Id$
 
     // this is the 'my moodle' page
 
@@ -55,16 +55,17 @@
 /// The main overview in the middle of the page
     $courses = get_my_courses($USER->id);
     $site = get_site();
+    $course = $site; //just in case we need the old global $course hack
 
     if (array_key_exists($site->id,$courses)) {
         unset($courses[$site->id]);
     }
 
-    foreach ($courses as $course) {
-        if (isset($USER->timeaccess) && array_key_exists($course->id,$USER->timeaccess)) {
-            $courses[$course->id]->lastaccess = $USER->timeaccess[$course->id];
+    foreach ($courses as $c) {
+        if (isset($USER->timeaccess) && array_key_exists($c->id,$USER->timeaccess)) {
+            $courses[$c->id]->lastaccess = $USER->timeaccess[$c->id];
         } else {
-            $courses[$course->id]->lastaccess = 0;
+            $courses[$c->id]->lastaccess = 0;
         }
     }
     
