@@ -2309,12 +2309,14 @@ function assignment_print_overview($courses, &$htmlarray) {
     // Do assignment_base::isopen() here without loading the whole thing for speed
     foreach ($assignments as $key => $assignment) {
         $time = time();
-        if ($assignment->preventlate && $assignment->timedue) {
-            $isopen = ($assignment->timeavailable <= $time && $time <= $assignment->timedue);
-        } else {
-            $isopen = ($assignment->timeavailable <= $time);
+        if ($assignment->timedue) {
+            if ($assignment->preventlate) {
+                $isopen = ($assignment->timeavailable <= $time && $time <= $assignment->timedue);
+            } else {
+                $isopen = ($assignment->timeavailable <= $time);
+            }
         }
-        if (!$isopen) {
+        if (empty($isopen) || empty($assignment->timedue)) {
             unset($assignments[$key]);
         }
     }
