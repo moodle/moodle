@@ -60,6 +60,8 @@ class page_my_moodle extends page_base {
     function url_get_parameters() {
         if (defined('ADMIN_STICKYBLOCKS')) {
             return array('pt' => ADMIN_STICKYBLOCKS);
+        } else {
+            return array();
         }
     }
        
