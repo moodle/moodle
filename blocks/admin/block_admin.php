@@ -56,10 +56,8 @@ class block_admin extends block_list {
             $this->content->icons[] = '<img src="'.$CFG->pixpath.'/i/log.gif" alt="" />';
 
 
-            if (!empty($CFG->enablestats)) {
-                $this->content->items[] = '<a href="'.$CFG->wwwroot.'/course/report/stats/index.php?course='.SITEID.'">'.get_string('stats').'</a>';
-                $this->content->icons[] = '<img src="'.$CFG->pixpath.'/i/stats.gif" alt="" />';
-            }
+            $this->content->items[] = '<a href="'.$CFG->wwwroot.'/admin/report.php">'.get_string('reports').'</a>';
+            $this->content->icons[] = '<img src="'.$CFG->pixpath.'/i/stats.gif" alt="" />';
 
             $this->content->items[] = '<a href="'.$CFG->wwwroot.'/files/index.php?id='.SITEID.'">'.get_string('sitefiles').'</a>';
             $this->content->icons[] = '<img src="'.$CFG->pixpath.'/i/files.gif" alt="" />';
