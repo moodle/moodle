@@ -585,6 +585,9 @@ function environment_check_database($version) {
     if ($current_vendor == 'postgres7') {  //Normalize a bit postgresql
         $current_vendor ='postgres';
     }
+    if ($current_vendor == 'oci8po') {  //Normalize a bit oracle
+        $current_vendor ='oracle';
+    }
     $dbinfo = $db->ServerInfo();
     $current_version = normalize_version($dbinfo['version']);
     $needed_version = $vendors[$current_vendor];
