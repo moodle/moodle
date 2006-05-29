@@ -13,8 +13,8 @@ class block_glossary_random extends block_base {
     }
 
     function specialization() {
-        global $CFG;
-        $this->course = get_record('course', 'id', $this->instance->pageid);
+        global $CFG, $COURSE;
+        $this->course = $COURSE;
 
         // load userdefined title and make sure it's never empty
         if (empty($this->config->title)) {

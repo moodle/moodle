@@ -42,7 +42,7 @@
     }
 
     function get_content() {
-        global $CFG, $editing;
+        global $CFG, $editing, $COURSE;
 
         require_once($CFG->libdir .'/rsslib.php');
 
@@ -89,7 +89,7 @@
         $isteacher = false;
         $this->courseid = SITEID;
         if ($this->instance->pagetype == PAGE_COURSE_VIEW) {
-            $this->courseid = $this->instance->pageid;
+            $this->courseid = $COURSE->id;
             $isteacher = isteacher($this->courseid);
         }
 
