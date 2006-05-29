@@ -93,12 +93,13 @@
         foreach  ($courses as $c) {
             $a = array();
             $a[] = '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$c->courseid.'">'.get_field('course','shortname','id',$c->courseid).'</a>';
-            $a[] = print_numeric_value($c->line1);
+
+            $a[] = $c->line1;
             if (isset($c->line2)) {
-                $a[] = print_numeric_value($c->line2);
+                $a[] = $c->line2;
             }
             if (isset($c->line3)) {
-                $a[] = print_numeric_value($c->line3);
+                $a[] = $c->line3;
             }
             $table->data[] = $a;
         }
@@ -106,13 +107,5 @@
     }
     
     print_footer();
-
-function print_numeric_value($value) {
-    list($whole, $decimals) = split ('[.,]', $value, 2);
-    if (intval($decimals) > 0)
-        return number_format($value,2,".",",");
-    else
-        return $value;
-}
 
 ?>
