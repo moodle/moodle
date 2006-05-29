@@ -225,15 +225,17 @@ global $HTTPSPAGEREQUIRED;
          * If $SITE global from {@link get_site()} is set then SITEID to $SITE->id, otherwise set to 1.
          */
         define('SITEID', $SITE->id);
+        /// And the 'default' course
+        $COURSE = clone($SITE);   // For now.  This will usually get reset later in require_login() etc.
     } else {
         /**
          * @ignore
          */
         define('SITEID', 1);
-        define('COURSEID', 1);
+        /// And the 'default' course
+        $COURSE = new object;  // no site created yet
+        $COURSE->id = 1;
     }
-/// And the 'default' course
-    $COURSE = clone($SITE);   // For now.  This will usually get reset later in require_login() etc.
 
 
 /// Set a default enrolment configuration (see bug 1598)
