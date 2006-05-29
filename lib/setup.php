@@ -230,10 +230,9 @@ global $HTTPSPAGEREQUIRED;
          * @ignore
          */
         define('SITEID', 1);
-        define('COURSEID', 1);
     }
 /// And the 'default' course
-    $COURSE->id = SITEID;   // For now.  This will usually get reset later in require_login() etc.
+    $COURSE = clone($SITE);   // For now.  This will usually get reset later in require_login() etc.
 
 
 /// Set a default enrolment configuration (see bug 1598)
