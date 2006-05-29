@@ -1505,9 +1505,12 @@ function require_login($courseid=0, $autologinguest=true, $cm=null) {
 
     global $CFG, $SESSION, $USER, $COURSE, $FULLME, $MoodleSession;
 
-    // Redefine global $COURSE, this is a new idea in 1.6 Beta and not to be relied on yet
-    if ($courseid) {
-        $COURSE->id = $courseid;
+    // Redefine global $COURSE if we can
+    global $course;  // We use the global hack once here so it doesn't need to be used again
+    if (is_object($course)) {
+        $COURSE = clone($course);
+    } else if ($courseid) {
+        $COURSE = get_record('course', 'id', $courseid);
     }
 
     // First check that the user is logged in to the site.
