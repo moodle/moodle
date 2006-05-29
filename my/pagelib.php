@@ -40,8 +40,8 @@ class page_my_moodle extends page_base {
         $site = get_site();
 
         $button = update_mymoodle_icon($USER->id);
-        $header = get_string('mymoodle','my');
-        $nav = $header;
+        $nav = get_string('mymoodle','my');
+        $header = $site->shortname.': '.$nav;
         
         $loggedinas = user_login_string($site);
         print_header($title, $header,$nav,'','',true, $button, $loggedinas);
