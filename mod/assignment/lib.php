@@ -2320,6 +2320,7 @@ function assignment_print_overview($courses, &$htmlarray) {
     }
 
     $strduedate = get_string('duedate', 'assignment');
+    $strduedateno = get_string('duedateno', 'assignment');
     $strgraded = get_string('graded', 'assignment');
     $strnotgradedyet = get_string('notgradedyet', 'assignment');
     $strnotsubmittedyet = get_string('notsubmittedyet', 'assignment');
@@ -2332,7 +2333,11 @@ function assignment_print_overview($courses, &$htmlarray) {
                'title="'.$strassignment.'" href="'.$CFG->wwwroot.
                '/mod/assignment/view.php?id='.$assignment->coursemodule.'">'.
                $assignment->name.'</a></div>';
-        $str .= '<div class="info">'.$strduedate.': '.userdate($assignment->timedue).'</div>';
+        if ($assignment->timedue) {
+            $str .= '<div class="info">'.$strduedate.': '.userdate($assignment->timedue).'</div>';
+        } else {
+            $str .= '<div class="info">'.$strduedateno.'</div>';
+        }
 
         if (isteacher($assignment->course)) {
             $submissions = count_records_sql("SELECT COUNT(*)
