@@ -9,7 +9,7 @@ class block_online_users extends block_base {
     function has_config() {return true;}
 
     function get_content() {
-        global $USER, $CFG;
+        global $USER, $CFG, $COURSE;
 
         if ($this->content !== NULL) {
             return $this->content;
@@ -23,8 +23,6 @@ class block_online_users extends block_base {
             return $this->content;
         }
     
-        $course = get_record('course', 'id', $this->instance->pageid);
-
         $timetoshowusers = 300; //Seconds default
         if (isset($CFG->block_online_users_timetosee)) {
             $timetoshowusers = $CFG->block_online_users_timetosee * 60;
@@ -32,10 +30,10 @@ class block_online_users extends block_base {
         $timefrom = time()-$timetoshowusers;
 
         //Calculate if we are in separate groups
-        $isseparategroups = ($course->groupmode == SEPARATEGROUPS && $course->groupmodeforce && !isteacheredit($this->instance->pageid));
+        $isseparategroups = ($COURSE->groupmode == SEPARATEGROUPS && $COURSE->groupmodeforce && !isteacheredit($COURSE->id));
 
         //Get the user current group
-        $currentgroup = $isseparategroups ? get_current_group($this->instance->pageid) : NULL;
+        $currentgroup = $isseparategroups ? get_current_group($COURSE->id) : NULL;
 
         $groupmembers = "";
         $groupselect = "";
@@ -46,11 +44,11 @@ class block_online_users extends block_base {
             $groupselect .= " AND u.id = gm.userid AND gm.groupid = '$currentgroup'";
         }
 
-        if ($this->instance->pageid == SITEID) {  // Site-level
+        if ($COURSE->id == SITEID) {  // Site-level
             $courseselect = '';
             $timeselect = "AND (s.timeaccess > $timefrom OR u.lastaccess > $timefrom)";
         } else {
-            $courseselect = "AND s.course = '".$this->instance->pageid."'";
+            $courseselect = "AND s.course = '".$COURSE->id."'";
             $timeselect = "AND s.timeaccess > $timefrom";
         }
 
@@ -69,7 +67,7 @@ class block_online_users extends block_base {
             }
         }
 
-        if ($this->instance->pageid == SITEID && $CFG->allusersaresitestudents) {
+        if ($COURSE->id == SITEID && $CFG->allusersaresitestudents) {
             if ($siteusers = get_records_sql("SELECT u.id, u.username, u.firstname, u.lastname, u.picture, u.lastaccess
                                      FROM {$CFG->prefix}user u
                                      WHERE u.lastaccess > $timefrom AND u.username <> 'guest'
@@ -88,7 +86,7 @@ class block_online_users extends block_base {
                                           $groupmembers
                                      WHERE u.id = s.userid $courseselect $groupselect $timeselect ";
 
-        if (!isteacher($course->id)) {
+        if (!isteacher($COURSE->id)) {
             // Hide hidden teachers from students.
             $findteacherssql .= 'AND s.authority > 0 ';
         }
@@ -116,8 +114,8 @@ class block_online_users extends block_base {
             foreach ($users as $user) {
                 $this->content->text .= '<li class="listentry">';
                 $timeago = format_time(time() - max($user->timeaccess, $user->lastaccess)); //bruno to calculate correctly on frontpage 
-                $this->content->text .= print_user_picture($user->id, $this->instance->pageid, $user->picture, 16, true).' ';
-                $this->content->text .= '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.$this->instance->pageid.'" title="'.$timeago.'">'.$user->fullname.'</a>';
+                $this->content->text .= print_user_picture($user->id, $COURSE->id, $user->picture, 16, true).' ';
+                $this->content->text .= '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.$COURSE->id.'" title="'.$timeago.'">'.$user->fullname.'</a>';
                 if (!empty($USER->id) and ($USER->id != $user->id) and !empty($CFG->messaging) and !isguest()) {  // Only when logged in
                     $this->content->text .= "\n".' <a title="'.get_string('messageselectadd').'" target="message_'.$user->id.'" href="'.$CFG->wwwroot.'/message/discussion.php?id='.$user->id.'" onclick="return openpopup(\'/message/discussion.php?id='.$user->id.'\', \'message_'.$user->id.'\', \'menubar=0,location=0,scrollbars,status,resizable,width=400,height=500\', 0);">'
                         .'<img class="icon message" src="'.$CFG->pixpath.'/t/message.gif" alt="'. get_string('messageselectadd') .'" /></a>';

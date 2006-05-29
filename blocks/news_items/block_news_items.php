@@ -7,7 +7,7 @@ class block_news_items extends block_base {
     }
 
     function get_content() {
-        global $CFG, $USER;
+        global $CFG, $USER, $COURSE;
 
         if ($this->content !== NULL) {
             return $this->content;
@@ -22,44 +22,39 @@ class block_news_items extends block_base {
         }
 
 
-        if ($this->instance->pageid == 0) {
-            $this->instance->pageid = SITEID;
-        }
-        $course = get_record('course', 'id', $this->instance->pageid);
-
-        if ($course->newsitems) {   // Create a nice listing of recent postings
+        if ($COURSE->newsitems) {   // Create a nice listing of recent postings
 
             require_once($CFG->dirroot.'/mod/forum/lib.php');   // We'll need this
            
             $text = '';
 
-            if (!$forum = forum_get_course_forum($course->id, 'news')) {
+            if (!$forum = forum_get_course_forum($COURSE->id, 'news')) {
                 return $this->content;
             }
 
 
         /// First work out whether we can post to this group and if so, include a link
 
-            if (isteacheredit($course->id)) {     /// Teachers can always post
+            if (isteacheredit($COURSE->id)) {     /// Teachers can always post
                 $visiblegroups = -1; 
 
                 $text .= '<div align="center" class="newlink"><a href="'.$CFG->wwwroot.'/mod/forum/post.php?forum='.$forum->id.'">'.
                           get_string('addanewtopic', 'forum').'</a>...</div>';
 
             } else {                              /// Check the group situation
-                $currentgroup = get_current_group($course->id);
+                $currentgroup = get_current_group($COURSE->id);
 
                 if (forum_user_can_post_discussion($forum, $currentgroup)) {
                     $text .= '<div align="center" class="newlink"><a href="'.$CFG->wwwroot.'/mod/forum/post.php?forum='.$forum->id.'">'.
                               get_string('addanewtopic', 'forum').'</a>...</div>';
                 }
 
-                if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $course->id)) {
+                if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $COURSE->id)) {
                     $this->content->text = $text;
                     return $this->content;
                 }
     
-                $groupmode = groupmode($course, $cm);
+                $groupmode = groupmode($COURSE, $cm);
     
                 /// Decides if current user is allowed to see ALL the current discussions or not
     
@@ -73,7 +68,7 @@ class block_news_items extends block_base {
         /// Get all the recent discussions we're allowed to see
 
             if (! $discussions = forum_get_discussions($forum->id, 'p.modified DESC', 0, false, 
-                                                       $visiblegroups, $course->newsitems) ) {
+                                                       $visiblegroups, $COURSE->newsitems) ) {
                 $text .= '('.get_string('nonews', 'forum').')';
                 $this->content->text = $text;
                 return $this->content;
@@ -119,7 +114,7 @@ class block_news_items extends block_base {
                 } else {
                     $userid = $USER->id;
                 }
-                $this->content->footer .= '<br />'.rss_get_link($course->id, $userid, 'forum', $forum->id, $tooltiptext);
+                $this->content->footer .= '<br />'.rss_get_link($COURSE->id, $userid, 'forum', $forum->id, $tooltiptext);
             }
 
         }

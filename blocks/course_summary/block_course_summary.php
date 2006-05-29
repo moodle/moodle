@@ -7,13 +7,14 @@ class block_course_summary extends block_base {
     }
 
     function specialization() {
-        if($this->instance->pagetype == PAGE_COURSE_VIEW && $this->instance->pageid != SITEID) {
+        global $COURSE;
+        if($this->instance->pagetype == PAGE_COURSE_VIEW && $COURSE->id != SITEID) {
             $this->title = get_string('coursesummary', 'block_course_summary');
         }
     }
 
     function get_content() {
-        global $CFG, $THEME;
+        global $CFG, $COURSE;
 
         if($this->content !== NULL) {
             return $this->content;
@@ -23,19 +24,14 @@ class block_course_summary extends block_base {
             return '';
         }
 
-        if (empty($this->instance->pageid)) {
-            $this->instance->pageid = SITEID;
-        }
-        $course  = get_record('course', 'id', $this->instance->pageid);
-        
         $this->content = New stdClass;
         $options->noclean = true;    // Don't clean Javascripts etc
-        $this->content->text = format_text($course->summary, FORMAT_HTML, $options);
-        if(isediting($this->instance->pageid)) {
-            if($this->instance->pageid == SITEID) {
+        $this->content->text = format_text($COURSE->summary, FORMAT_HTML, $options);
+        if(isediting($COURSE->id)) {
+            if($COURSE->id == SITEID) {
                 $editpage = $CFG->wwwroot.'/'.$CFG->admin.'/site.php';
             } else {
-                $editpage = $CFG->wwwroot.'/course/edit.php?id='.$this->instance->pageid;
+                $editpage = $CFG->wwwroot.'/course/edit.php?id='.$COURSE->id;
             }
             $this->content->text .= "<div align=\"right\"><a href=\"$editpage\"><img src=\"$CFG->pixpath/t/edit.gif\" alt=\"\" /></a></div>";
         }

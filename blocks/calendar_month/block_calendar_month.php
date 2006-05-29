@@ -11,7 +11,7 @@ class block_calendar_month extends block_base {
     }
 
     function get_content() {
-        global $USER, $CFG, $SESSION;
+        global $USER, $CFG, $SESSION, $COURSE;
         $cal_m = optional_param( 'cal_m', 0, PARAM_INT );
         $cal_y = optional_param( 'cal_y', 0, PARAM_INT );
 
@@ -28,12 +28,7 @@ class block_calendar_month extends block_base {
         // [pj] To me it looks like this if would never be needed, but Penny added it 
         // when committing the /my/ stuff. Reminder to discuss and learn what it's about.
         // It definitely needs SOME comment here!
-        if (!empty($this->instance->pageid)) {
-            $courseshown = $this->instance->pageid;
-        }
-        else {
-            $courseshown = SITEID;
-        }
+        $courseshown = $COURSE->id;
 
         if($courseshown == SITEID) {
             // Being displayed at site level. This will cause the filter to fall back to auto-detecting
@@ -58,13 +53,12 @@ class block_calendar_month extends block_base {
             $this->content->text .= calendar_get_mini($courses, $group, $user, $cal_m, $cal_y);
             // No filters for now
 
-        } elseif (!empty($courseshown)) {
+        } else {
             // For any other course
             $this->content->text .= calendar_overlib_html();
             $this->content->text .= calendar_top_controls('course', array('id' => $courseshown, 'm' => $cal_m, 'y' => $cal_y));
             $this->content->text .= calendar_get_mini($courses, $group, $user, $cal_m, $cal_y);
-            $course = get_record('course', 'id', $this->instance->pageid);
-            $this->content->text .= '<div class="filters">'.calendar_filter_controls('course', '', $course).'</div>';
+            $this->content->text .= '<div class="filters">'.calendar_filter_controls('course', '', $COURSE).'</div>';
             
         }
 
