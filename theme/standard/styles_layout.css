@@ -253,10 +253,13 @@ form.popupform {
   display: inline;
 }
 
-/*Accessibility: text 'seen' by screen readers but not visual users. */
+/*Accessibility: text 'seen' by screen readers but not visual users. Fixed for RTL languages, example Farsi. */
 .accesshide {
   position:absolute;
-  left:-10000px;
+  top:-1000px;
+  left:10px;
+  font-weight:normal;
+  font-size:1em;
 }
 span.hide,
 div.hide {
