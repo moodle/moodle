@@ -345,8 +345,8 @@ class enrolment_plugin extends enrolment_base {
             if (empty($frm->an_tran_key) && empty($frm->an_password)) {
                 notify("an_tran_key or an_password required");
             }
-            if (empty($CFG->loginhttps)) {
-                notify("\$CFG->loginhttps must be ON");
+            if (empty($CFG->loginhttps) and substr($CFG->wwwroot, 0, 5) !== 'https') {
+                notify("loginhttps must be ON");
             }
 
         }
@@ -360,8 +360,8 @@ class enrolment_plugin extends enrolment_base {
     function process_config($config) {
         global $CFG;
 
-        if (empty($CFG->loginhttps) || !$this->check_openssl_loaded())
-        {
+        if ((empty($CFG->loginhttps) and substr($CFG->wwwroot, 0, 5) !== 'https') ||
+            !$this->check_openssl_loaded()) {
             return false;
         }
 

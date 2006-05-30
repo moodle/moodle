@@ -28,6 +28,7 @@
     </td>
 </tr>
 
+<?php if (substr($CFG->wwwroot, 0, 5) !== 'https') { /* https && loginhttps */ ?>
 <tr valign="top">
     <td align="right">loginhttps:</td>
     <td>
@@ -40,6 +41,7 @@
     ?>
     </td>
 </tr>
+<?php } /* end: https && loginhttps */ ?>
 
 <tr valign="top"><td colspan="3"><hr noshade="noshade" size="1"></td></tr>
 
