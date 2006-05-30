@@ -677,7 +677,7 @@ function form_table($nextstage = WELCOME, $formaction = "install.php") {
             $compatsuccess = true;
             
             /// Check that PHP is of a sufficient version
-            print_compatibility_row(check_php_version("4.1.0"), get_string('phpversion', 'install'), get_string('phpversionerror', 'install'), 'phpversionhelp');
+            print_compatibility_row(inst_check_php_version(), get_string('phpversion', 'install'), get_string('phpversionerror', 'install'), 'phpversionhelp');
             /// Check session auto start
             print_compatibility_row(!ini_get_bool('session.auto_start'), get_string('sessionautostart', 'install'), get_string('sessionautostarterror', 'install'), 'sessionautostarthelp');
             /// Check magic quotes
@@ -965,6 +965,16 @@ function check_memory_limit() {
     return ((int)str_replace('M', '', get_memory_limit()) >= 16);
 }
 
+//==========================================================================//
+
+function inst_check_php_version() {
+    if (!check_php_version("4.3.0")) {
+        return false;
+    } else if (check_php_version("5.0.0")) {
+        return check_php_version("5.1.0"); // 5.0.x is too buggy
+    }
+    return true; // 4.3.x or 4.4.x is fine
+}
 //==========================================================================//
 
 /* This function returns a list of languages and their full names. The
