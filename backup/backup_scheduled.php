@@ -334,7 +334,7 @@ function schedule_backup_course_configure($course,$starttime = 0) {
             $backup_config->backup_sche_coursefiles = 1;
         }
         if (!isset($backup_config->backup_sche_messages)) {
-            $backup_config->backup_sche_messages = 1;
+            $backup_config->backup_sche_messages = 0;
         }
         if (!isset($backup_config->backup_sche_active)) {
             $backup_config->backup_sche_active = 0;
@@ -513,7 +513,13 @@ function schedule_backup_course_configure($course,$starttime = 0) {
     //Now calculate the users
     if ($status) {
         schedule_backup_log($starttime,$course->id,"    calculating users");
-        user_check_backup($course->id,$backup_unique_code,$preferences->backup_users,$preferences->backup_messages);  
+        //Decide about include users with messages, based on SITEID
+        if ($preferences->backup_messages && $preferences->backup_course == SITEID) {
+            $include_message_users = true;
+        } else {
+            $include_message_users = false;
+        }
+        user_check_backup($course->id,$backup_unique_code,$preferences->backup_users,$include_message_users);  
     }
 
     //Now calculate the logs
