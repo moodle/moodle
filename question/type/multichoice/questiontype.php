@@ -391,7 +391,7 @@ class question_multichoice_qtype extends default_questiontype {
                 fwrite ($bf,full_tag("LAYOUT",$level+1,false,$multichoice->layout));
                 fwrite ($bf,full_tag("ANSWERS",$level+1,false,$multichoice->answers));
                 fwrite ($bf,full_tag("SINGLE",$level+1,false,$multichoice->single));
-                fwrite ($bf,full_tag("SHUFFLEANSWERS",$level+1,false,$randomsamatch->shuffleanswers));
+                fwrite ($bf,full_tag("SHUFFLEANSWERS",$level+1,false,$multichoice->shuffleanswers));
                 $status = fwrite ($bf,end_tag("MULTICHOICE",$level,true));
             }
 
