@@ -194,10 +194,11 @@ $string['memorylimithelp'] = '<p>The PHP memory limit for your server is current
 $string['mysqlextensionisnotpresentinphp'] = 'PHP has not been properly configured with the MySQL extension so that it can communicate with MySQL.  Please check your php.ini file or recompile PHP.';
 $string['pass'] = 'Pass';
 $string['phpversion'] = 'PHP version';
-$string['phpversionerror'] = 'PHP version must be at least 4.1.0';
-$string['phpversionhelp'] = '<p>Moodle requires a PHP version of at least 4.1.0.</p>
+$string['phpversionerror'] = 'PHP version must be at least 4.3.0 or 5.1.0 (5.0.x has a number of known problems).';
+$string['phpversionhelp'] = '<p>Moodle requires a PHP version of at least 4.3.0 or 5.1.0 (5.0.x has a number of known problems).</p>
 <p>You are currently running version $a</p>
-<p>You must upgrade PHP or move to a host with a newer version of PHP!</p>';
+<p>You must upgrade PHP or move to a host with a newer version of PHP!<br/>
+(In case of 5.0.x you could also downgrade to 4.4.x version)</p>';
 $string['safemode'] = 'Safe Mode';
 $string['safemodeerror'] = 'Moodle may have trouble with safe mode on';
 $string['safemodehelp'] = '<p>Moodle may have a variety of problems with safe mode on, not least is that 
