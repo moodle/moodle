@@ -47,6 +47,7 @@
            migrate2utf8_lesson_default_password(RECORDID)
           </PHP_FUNCTION>
         </FIELD>
+        <FIELD name="conditions" method="NO_CONV" type="text" length="0" />
         <FIELD name="bgcolor" method="NO_CONV" type="varchar" length="7" default="#FFFFFF" />
       </FIELDS>
     </TABLE>

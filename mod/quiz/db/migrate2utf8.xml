@@ -7,6 +7,11 @@
     <TABLE name="quiz_question_versions" />
     <TABLE name="question_randomsamatch" />
     <TABLE name="question_truefalse" />
+    <TABLE name="question_attempts">
+      <FIELDS>
+        <FIELD name="modulename" method="NO_CONV" type="varchar" length="20" />
+      </FIELDS>
+    </TABLE>
     <TABLE name="question_rqp">
       <FIELDS>
         <FIELD name="format" method="NO_CONV" type="varchar" length="255" />
