@@ -451,7 +451,7 @@ class enrolment_plugin_authorize
             notify('PHP must be compiled with SSL support (--with-openssl)');
         }
 
-        if (empty($CFG->loginhttps)) {
+        if (empty($CFG->loginhttps) and substr($CFG->wwwroot, 0, 5) !== 'https') {
             notify('loginhttps must be ON');
         }
 
@@ -540,8 +540,10 @@ class enrolment_plugin_authorize
         $tranval = optional_param('an_tran_key', '');
         $passwordval = optional_param('an_password', '');
 
-        if (empty($CFG->loginhttps) || (!$this->check_openssl_loaded()) ||
-            empty($loginval) || (empty($tranval) && empty($passwordval))) {
+        if ((empty($CFG->loginhttps) and substr($CFG->wwwroot, 0, 5) !== 'https') ||
+            !$this->check_openssl_loaded() ||
+            empty($loginval) ||
+            (empty($tranval) and empty($passwordval))) {
             return false;
         }
 
