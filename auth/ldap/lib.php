@@ -144,7 +144,9 @@ function auth_get_userinfo($username){
                     $ldapval = $newval;
                 } 
             }
-            $result[$key] = $ldapval;
+            if (!is_null($ldapval)) {
+                $result[$key] = $ldapval;
+            }
         }
     }
 
