@@ -47,7 +47,7 @@ if (!isset($frm->acceptccs)) {
     <td><?php print_string("currency") ?>
     </td>
 </tr>
-
+<?php if (substr($CFG->wwwroot, 0, 5) !== 'https') { /* https && loginhttps */ ?>
 <tr valign="top">
     <td align="right">loginhttps:</td>
     <td><?php echo (empty($CFG->loginhttps) ? "<font color=\"red\"><b>off</b></font>" : "<font color=\"green\">on</font>") ?></td>
@@ -56,7 +56,7 @@ if (!isset($frm->acceptccs)) {
     print_string("logindesc", "enrol_authorize", $a)
     ?></td>
 </tr>
-
+<?php } /* end: https && loginhttps */ ?>
 <tr valign="top"><td colspan="3"><h4><?php print_string("adminauthorizesettings", "enrol_authorize") ?></h4></td></tr>
 
 <tr valign="top">
