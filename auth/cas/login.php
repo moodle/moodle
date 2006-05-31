@@ -109,10 +109,7 @@ defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
             //Select password change url
             if (is_internal_auth() || $CFG->{'auth_'.$USER->auth.'_stdchangepassword'}){
                 $passwordchangeurl=$CFG->wwwroot.'/login/change_password.php';
-            } elseif($CFG->changepassword) {
-                $passwordchangeurl=$CFG->changepassword;
             } 
-            
 
             // check whether the user should be changing password
             if (get_user_preferences('auth_forcepasswordchange', false)){
@@ -219,10 +216,7 @@ defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
         //Select password change url
         if (is_internal_auth() || $CFG->{'auth_'.$USER->auth.'_stdchangepassword'}){
             $passwordchangeurl=$CFG->wwwroot.'/login/change_password.php';
-        } elseif($CFG->changepassword) {
-            $passwordchangeurl=$CFG->changepassword;
-        } 
-        
+        }
 
         // check whether the user should be changing password
         if (get_user_preferences('auth_forcepasswordchange', false)){
