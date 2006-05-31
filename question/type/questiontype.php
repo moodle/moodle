@@ -353,20 +353,21 @@ class default_questiontype {
     */
     // ULPGC ecastro
     function get_all_responses(&$question, &$state) {
-        unset($answers);
-        if (is_array($question->options->answers)) {
+        if (isset($question->options->answers) && is_array($question->options->answers)) {
+            $answers = array();
             foreach ($question->options->answers as $aid=>$answer) {
-                unset ($r);
+                $r = new stdClass;
                 $r->answer = $answer->answer;
                 $r->credit = $answer->fraction;
                 $answers[$aid] = $r;
             }
+            $result = new stdClass;
+            $result->id = $question->id;
+            $result->responses = $answers;
+            return $result;
         } else {
-            $answers[]="error"; // just for debugging, eliminate
+            return null;
         }
-        $result->id = $question->id;
-        $result->responses = $answers;
-        return $result;
     }
 
     /**
