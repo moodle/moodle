@@ -68,7 +68,7 @@ if (isadmin()) {
         }
         echo "</td>";
         echo "</tr>\n";
-        if (!$adminself && (!empty($CFG->{'auth_'.$user->auth.'_stdchangepassword'}) || $CFG->changepassword)){
+        if (!$adminself && (!empty($CFG->{'auth_'.$user->auth.'_stdchangepassword'}) || is_internal_auth())){
              if (get_user_preferences('auth_forcepasswordchange', NULL, $user->id)) {
                  $checked = ' checked="checked" ';
              } else {
