@@ -111,7 +111,6 @@ class quiz_report extends quiz_default_report {
         $questionarray = array_unique(explode(",",$questionlist));
         $questionlist = implode(",", $questionarray);
         unset($questionarray);
-        $accepted_qtypes = array(SHORTANSWER, TRUEFALSE, MULTICHOICE, MATCH, NUMERICAL, CALCULATED);        
 
         foreach ($attempts as $attempt) {
             switch ($attemptselection) {
@@ -157,10 +156,10 @@ class quiz_report extends quiz_default_report {
                     continue;
                 }
                 $qtype = ($quizquestions[$i]->qtype=='random') ? $states[$i]->options->question->qtype : $quizquestions[$i]->qtype;
-                if (!in_array ($qtype, $accepted_qtypes)){
+                $q = get_question_responses($quizquestions[$i], $states[$i]);
+                if (empty($q)){
                     continue;
                 }                
-                $q = get_question_responses($quizquestions[$i], $states[$i]);
                 $qid = $q->id;
                 if (!isset($questions[$qid])) {
                     $questions[$qid]['id'] = $qid;
