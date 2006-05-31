@@ -98,6 +98,9 @@
                     }
                     error("Could not update the $mod->modulename", "view.php?id=$course->id");
                 }
+                if (is_string($return)) {
+                    error($return, "view.php?id=$course->id");
+                }
 
                 if (isset($mod->visible)) {
                     set_coursemodule_visible($mod->coursemodule, $mod->visible);
@@ -105,10 +108,6 @@
 
                 if (isset($mod->groupmode)) {
                     set_coursemodule_groupmode($mod->coursemodule, $mod->groupmode);
-                }
-
-                if (is_string($return)) {
-                    error($return, "view.php?id=$course->id");
                 }
 
                 if (isset($mod->redirect)) {
