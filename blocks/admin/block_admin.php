@@ -226,10 +226,8 @@ class block_admin extends block_list {
             if (is_internal_auth() && !is_restricted_user($USER->username)) {
                 $this->content->items[]='<a href="'.$securewwwroot.'/login/change_password.php?id='.$this->instance->pageid.'">'.get_string('changepassword').'</a>';
                 $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/user.gif" alt="" />';
-            } else if ($CFG->changepassword && !is_restricted_user($USER->username)) {
-                $this->content->items[]='<a href="'.$CFG->changepassword.'">'.get_string('changepassword').'</a>';
-                $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/user.gif" alt="" />';
-            }
+            } 
+            
             if ($CFG->allowunenroll && !$course->metacourse) {
                 $this->content->items[]='<a href="unenrol.php?id='.$this->instance->pageid.'">'.get_string('unenrolme', '', $course->shortname).'</a>';
                 $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/user.gif" alt="" />';
