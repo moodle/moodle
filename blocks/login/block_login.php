@@ -32,13 +32,12 @@ class block_login extends block_base {
             $forgot = $wwwroot . '/login/forgot_password.php';
         } else {
             if (!empty($CFG->{'auth_'.$CFG->auth.'_stdchangepassword'})
-                || $CFG->changepassword
                 || is_internal_auth() ) {
                 if (is_internal_auth() || !empty($CFG->{'auth_'.$CFG->auth.'_stdchangepassword'})) {
                     $forgot =  $wwwroot . '/login/forgot_password.php';
                 }
                 else {
-                    $forgot = $CFG->changepassword;
+                    $forgot = '';
                 }
             }
         }
