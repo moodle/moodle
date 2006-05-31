@@ -60,7 +60,7 @@
 
             //To mantain compatibilty, in 1.4 the publish setting meaning has changed. We
             //have to modify some things it if the release field isn't present in the backup file.
-            if (! isset($info['MOD']['#']['SHOWANSWERS']['0']['#'])) {   //check for previous versions
+            if (! isset($info['MOD']['#']['SHOWRESULTS']['0']['#'])) {   //check for previous versions
                 if (! isset($info['MOD']['#']['RELEASE']['0']['#'])) {  //It's a pre-14 backup filea
                     //Set the allowupdate field
                     if ($choice->publish == 0) { 
