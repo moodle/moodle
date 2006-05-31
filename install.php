@@ -478,10 +478,10 @@ if ($nextstage == SAVE) {
     $str .= '$CFG->prefix    = \''.$INSTALL['prefix']."';\r\n";
     $str .= "\r\n";
 
-    $str .= '$CFG->wwwroot   = \''.$INSTALL['wwwrootform']."';\r\n";
-    $str .= '$CFG->dirroot   = \''.$INSTALL['dirrootform']."';\r\n";
-    $str .= '$CFG->dataroot  = \''.$INSTALL['dataroot']."';\r\n";
-    $str .= '$CFG->admin     = \''.$INSTALL['admindirname']."';\r\n";
+    $str .= '$CFG->wwwroot   = \''.s($INSTALL['wwwrootform'],true)."';\r\n";
+    $str .= '$CFG->dirroot   = \''.s($INSTALL['dirrootform'],true)."';\r\n";
+    $str .= '$CFG->dataroot  = \''.s($INSTALL['dataroot'],true)."';\r\n";
+    $str .= '$CFG->admin     = \''.s($INSTALL['admindirname'],true)."';\r\n";
     $str .= "\r\n";
 
     $str .= '$CFG->directorypermissions = 00777;  // try 02777 on a server in Safe Mode'."\r\n";
@@ -701,19 +701,19 @@ function form_table($nextstage = WELCOME, $formaction = "install.php") {
             <tr>
                 <td class="td_left"><p><?php print_string('wwwroot', 'install') ?></p></td>
                 <td class="td_right">
-                    <input type="text" size="40"name="wwwrootform" value="<?php echo $INSTALL['wwwrootform'] ?>" />
+                    <input type="text" size="40"name="wwwrootform" value="<?php p($INSTALL['wwwrootform'],true) ?>" />
                 </td>
             </tr>
             <tr>
                 <td class="td_left"><p><?php print_string('dirroot', 'install') ?></p></td>
                 <td class="td_right">
-                    <input type="text" size="40" name="dirrootform" value="<?php echo $INSTALL['dirrootform'] ?>" />
+                    <input type="text" size="40" name="dirrootform" value="<?php p($INSTALL['dirrootform'],true) ?>" />
                 </td>
             </tr>
             <tr>
                 <td class="td_left"><p><?php print_string('dataroot', 'install') ?></p></td>
                 <td class="td_right">
-                    <input type="text" size="40" name="dataroot" value="<?php echo $INSTALL['dataroot'] ?>" />
+                    <input type="text" size="40" name="dataroot" value="<?php p($INSTALL['dataroot'],true) ?>" />
                 </td>
             </tr>
 
