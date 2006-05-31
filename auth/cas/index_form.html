@@ -36,14 +36,9 @@
         </form>
 <?php } ?>
 
-<?php if ($CFG->changepassword or is_internal_auth() ) {
-          if (is_internal_auth()) {
-              $changepassword = "forgot_password.php";
-              $changebuttonname = get_string("senddetails");
-          } else {
-              $changepassword = $CFG->changepassword;
-              $changebuttonname = get_string("passwordrecovery");
-          }
+<?php if (is_internal_auth() ) {
+    $changepassword = "forgot_password.php";
+    $changebuttonname = get_string("senddetails");
 ?>
       <hr width="80%" />
       <p><?php print_string("forgotten") ?></p> 
