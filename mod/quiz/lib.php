@@ -99,7 +99,7 @@ function quiz_add_instance($quiz) {
 
     delete_records('event', 'modulename', 'quiz', 'instance', $quiz->id);  // Just in case
 
-    unset($event);
+    $event = new stdClass;
     $event->description = $quiz->intro;
     $event->courseid    = $quiz->course;
     $event->groupid     = 0;
@@ -302,7 +302,8 @@ function quiz_user_outline($course, $user, $mod, $quiz) {
 /// $return->time = the time they did it
 /// $return->info = a short text description
     if ($grade = get_record('quiz_grades', 'userid', $user->id, 'quiz', $quiz->id)) {
-
+        
+        $result = new stdClass;
         if ((float)$grade->grade) {
             $result->info = get_string('grade').':&nbsp;'.round($grade->grade, $quiz->decimalpoints);
         }
@@ -357,6 +358,7 @@ function quiz_grades($quizid) {
         return NULL;
     }
 
+    $return = new stdClass;
     $return->grades = get_records_menu('quiz_grades', 'quiz', $quiz->id, '', 'userid, grade');
     $return->maxgrade = get_field('quiz', 'grade', 'id', $quiz->id);
     return $return;
