@@ -27,7 +27,7 @@
     require_course_login($course);
 
 
-    add_to_log($course->id, "forum", "user report", "user.php?id=$course->id&amp;user=$user->id&amp;mode=$mode", "$user->id"); 
+    add_to_log($course->id, "forum", "user report", "user.php?course=$course->id&amp;id=$user->id&amp;mode=$mode", "$user->id");
 
     $strforumposts   = get_string('forumposts', 'forum');
     $strparticipants = get_string('participants');
