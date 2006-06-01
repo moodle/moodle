@@ -78,6 +78,10 @@ function quiz_add_instance($quiz) {
                                                     $quiz->availableminute);
     }
 
+    if ($quiz->timeopen != 0 && $quiz->timeclose != 0 && $quiz->timeclose < $quiz->timeopen) {
+        return get_string('closebeforeopen', 'quiz');
+    }
+
     $quiz->timelimit = round($quiz->timelimit);
 
     if (empty($quiz->name)) {
@@ -169,6 +173,10 @@ function quiz_update_instance($quiz) {
         $quiz->timeopen = make_timestamp($quiz->availableyear, $quiz->availablemonth, 
                                                     $quiz->availableday, $quiz->availablehour, 
                                                     $quiz->availableminute);
+    }
+
+    if ($quiz->timeopen != 0 && $quiz->timeclose != 0 && $quiz->timeclose < $quiz->timeopen) {
+        return get_string('closebeforeopen', 'quiz');
     }
 
     $quiz->timelimit = round($quiz->timelimit);

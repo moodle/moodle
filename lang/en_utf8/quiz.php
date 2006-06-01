@@ -102,6 +102,7 @@ $string['correctanswerlength'] = 'Significant Figures';
 $string['correctanswers'] = 'Correct answers';
 $string['correctanswershows'] = 'Correct answer shows';
 $string['corrresp'] = 'Correct Response';
+$string['closebeforeopen'] = 'Could not update the quiz. You have specified a close date before the open date.';
 $string['countdown'] = 'Countdown';
 $string['countdownfinished'] = 'The quiz is closing, you should submit your answers now.';
 $string['countdowntenminutes'] = 'The quiz will be closing in ten minutes.';
