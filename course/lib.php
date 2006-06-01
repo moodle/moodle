@@ -1227,9 +1227,9 @@ function print_section_add_menus($course, $section, $modnames, $vertical=false, 
     }
 
     // we need to loop through the forms and check to see if we can add them.
-    foreach ($modnames as $key) {
+    foreach ($modnames as $key=>$value) {
         if (!course_allowed_module($course,$key))
-            unset($modnames[strtolower($key)]);
+            unset($modnames[$key]);
     }
     
     // this is stupid but labels get put into resource, so if resource is hidden and label is not, we're in trouble.
@@ -2096,7 +2096,7 @@ function course_allowed_module($course,$mod) {
     if (is_numeric($mod)) {
         $modid = $mod;
     } else if (is_string($mod)) {
-        if ($mod = get_field("modules","id","name",strtolower($mod)))
+        if ($mod = get_field("modules","id","name",$mod))
             $modid = $mod;
     }
     if (empty($modid)) {
