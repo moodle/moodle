@@ -1,7 +1,7 @@
 <?php  // $Id$
 
-require_once $CFG->dirroot.'/enrol/enrol.class.php';
-require_once $CFG->dirroot.'/enrol/authorize/const.php';
+require_once($CFG->dirroot.'/enrol/enrol.class.php');
+require_once($CFG->dirroot.'/enrol/authorize/const.php');
 
 /**
  * get_list_of_creditcards
@@ -72,7 +72,7 @@ class enrolment_plugin_authorize
     {
         global $CFG, $USER, $form;
 
-        if ($this->zero_cost($course) || isguest()) {
+        if ($this->zero_cost($course) or isguest()) {
             $manual = enrolment_factory::factory('manual');
             $manual->print_entry($course);
             return; // No money for guests ;)
@@ -100,11 +100,11 @@ class enrolment_plugin_authorize
         if ($course->password) {
             print_simple_box(get_string('choosemethod', 'enrol_authorize'), 'center');
             $password = '';
-            include $CFG->dirroot.'/enrol/manual/enrol.html';
+            include($CFG->dirroot.'/enrol/manual/enrol.html');
         }
 
         print_simple_box_start('center');
-        include $CFG->dirroot.'/enrol/authorize/enrol.html';
+        include($CFG->dirroot.'/enrol/authorize/enrol.html');
         print_simple_box_end();
 
         print_footer();
@@ -119,10 +119,10 @@ class enrolment_plugin_authorize
      * @access public
      */
     function check_entry($form, $course) {
-        if ((!empty($form->password)) || isguest() || $this->zero_cost($course)) {
+        if ((!empty($form->password)) or isguest() or $this->zero_cost($course)) {
             $manual = enrolment_factory::factory('manual');
             $manual->check_entry($form, $course);
-        } elseif ((!empty($form->ccsubmit)) && $this->validate_enrol_form($form)) {
+        } elseif ((!empty($form->ccsubmit)) and $this->validate_enrol_form($form)) {
             $this->cc_submit($form, $course);
         }
     }
@@ -139,7 +139,7 @@ class enrolment_plugin_authorize
     function cc_submit($form, $course)
     {
         global $CFG, $USER, $SESSION;
-        require_once $CFG->dirroot.'/enrol/authorize/authorizenetlib.php';
+        require_once('authorizenetlib.php');
 
         $this->prevent_double_paid($course);
 
@@ -217,6 +217,7 @@ class enrolment_plugin_authorize
 
         if ($an_review) { // review enabled, inform admin and redirect to main page.
             if (update_record("enrol_authorize", $order)) {
+                $a = new stdClass;
                 $a->url = "$CFG->wwwroot/enrol/authorize/index.php?order=$order->id";
                 $a->orderid = $order->id;
                 $a->transid = $order->transid;
@@ -227,6 +228,7 @@ class enrolment_plugin_authorize
                 $a->user = fullname($USER);
                 $a->acstatus = ($CFG->an_capture_day > 0) ? get_string('yes') : get_string('no');
                 $emailmessage = get_string('adminneworder', 'enrol_authorize', $a);
+                $a = new stdClass;
                 $a->course = $course->shortname;
                 $a->orderid = $order->id;
                 $emailsubject = get_string('adminnewordersubject', 'enrol_authorize', $a);
@@ -260,6 +262,7 @@ class enrolment_plugin_authorize
         if (enrol_student($USER->id, $course->id, $timestart, $timeend, 'authorize')) {
             $teacher = get_teacher($course->id);
             if (!empty($CFG->enrol_mailstudents)) {
+                $a = new stdClass;
                 $a->coursename = "$course->fullname";
                 $a->profileurl = "$CFG->wwwroot/user/view.php?id=$USER->id";
                 email_to_user($USER,
@@ -268,6 +271,7 @@ class enrolment_plugin_authorize
                               get_string('welcometocoursetext', '', $a));
             }
             if (!empty($CFG->enrol_mailteachers)) {
+                $a = new stdClass;
                 $a->course = "$course->fullname";
                 $a->user = fullname($USER);
                 email_to_user($teacher,
@@ -276,6 +280,7 @@ class enrolment_plugin_authorize
                               get_string('enrolmentnewuser', '', $a));
             }
             if (!empty($CFG->enrol_mailadmins)) {
+                $a = new stdClass;
                 $a->course = "$course->fullname";
                 $a->user = fullname($USER);
                 $admins = get_admins();
@@ -467,6 +472,7 @@ class enrolment_plugin_authorize
         }
 
         if ($count = count_records('enrol_authorize', 'status', AN_STATUS_AUTH)) {
+            $a = new stdClass;
             $a->count = $count;
             $a->url = $CFG->wwwroot."/enrol/authorize/index.php?status=".AN_STATUS_AUTH;
             notify(get_string('adminpendingorders', 'enrol_authorize', $a));
@@ -481,7 +487,7 @@ class enrolment_plugin_authorize
             }
         }
 
-        include $CFG->dirroot.'/enrol/authorize/config.html';
+        include($CFG->dirroot.'/enrol/authorize/config.html');
     }
 
 
@@ -499,25 +505,25 @@ class enrolment_plugin_authorize
         // site settings
         set_config('enrol_cost', optional_param('enrol_cost', 5, PARAM_INT));
         set_config('enrol_currency', optional_param('enrol_currency', 'USD', PARAM_ALPHA));
-        set_config('enrol_mailstudents', optional_param('enrol_mailstudents', ''));
-        set_config('enrol_mailteachers', optional_param('enrol_mailteachers', ''));
-        set_config('enrol_mailadmins', optional_param('enrol_mailadmins', ''));
-
-        $acceptccs = optional_param('acceptccs', array_keys(get_list_of_creditcards()));
-        set_config('an_acceptccs', implode(',', $acceptccs));
+        set_config('enrol_mailstudents', optional_param('enrol_mailstudents', 0, PARAM_BOOL));
+        set_config('enrol_mailteachers', optional_param('enrol_mailteachers', 0, PARAM_BOOL));
+        set_config('enrol_mailadmins', optional_param('enrol_mailadmins', 0, PARAM_BOOL));
 
         // optional authorize.net settings
-        set_config('an_avs', optional_param('an_avs', ''));
-        set_config('an_test', optional_param('an_test', ''));
-        set_config('an_teachermanagepay', optional_param('an_teachermanagepay', ''));
+        set_config('an_avs', optional_param('an_avs', 0, PARAM_BOOL));
+        set_config('an_test', optional_param('an_test', 0, PARAM_BOOL));
+        set_config('an_teachermanagepay', optional_param('an_teachermanagepay', 0, PARAM_BOOL));
         set_config('an_referer', optional_param('an_referer', 'http://', PARAM_URL));
+
+        $acceptccs = optional_param('acceptccs', array_keys(get_list_of_creditcards()), PARAM_ALPHA);
+        set_config('an_acceptccs', implode(',', $acceptccs));
 
         $cutoff_hour = optional_param('an_cutoff_hour', 0, PARAM_INT);
         $cutoff_min = optional_param('an_cutoff_min', 5, PARAM_INT);
         set_config('an_cutoff', $cutoff_hour * 60 + $cutoff_min);
 
         // cron depencies
-        $reviewval = optional_param('an_review', '');
+        $reviewval = optional_param('an_review', 0, PARAM_BOOL);
         $captureday = optional_param('an_capture_day', 5, PARAM_INT);
         $emailexpired = optional_param('an_emailexpired', 2, PARAM_INT);
 
@@ -562,16 +568,17 @@ class enrolment_plugin_authorize
      * @param mixed $data
      * @access private
      */
-    function email_to_admin($subject, $data) {
-        $admin = get_admin();
+    function email_to_admin($subject, $data)
+    {
         $site = get_site();
+        $admin = get_admin();
         $data = (array)$data;
 
         $message = "$site->fullname:  Transaction failed.\n\n$subject\n\n";
         foreach ($data as $key => $value) {
             $message .= "$key => $value\n";
         }
-        email_to_user($admin, $admin, "CC ERROR: ".$subject, $message);
+        email_to_user($admin, $admin, "Authorize.net ERROR: ".$subject, $message);
     }
 
 
@@ -588,6 +595,7 @@ class enrolment_plugin_authorize
         $status = empty($CFG->an_test) ? AN_STATUS_AUTH : AN_STATUS_NONE;
 
         if ($rec=get_record('enrol_authorize','userid',$USER->id,'courseid',$course->id,'status',$status,'id')) {
+            $a = new stdClass;
             $a->orderid = $rec->id;
             $a->url = "$CFG->wwwroot/enrol/authorize/index.php?order=$a->orderid";
             redirect($a->url, get_string("paymentpending", "enrol_authorize", $a), '10');
@@ -619,7 +627,7 @@ class enrolment_plugin_authorize
     function cron()
     {
         global $CFG;
-        require_once $CFG->dirroot.'/enrol/authorize/authorizenetlib.php';
+        require_once($CFG->dirroot.'/enrol/authorize/authorizenetlib.php');
 
         $oneday = 86400;
         $timenow = time();
@@ -649,6 +657,7 @@ class enrolment_plugin_authorize
             $select = "(status = '" . AN_STATUS_AUTH . "') AND " .
             "(timecreated < '$timediffem') AND (timecreated > '$timediff30')";
             if ($count = count_records_select('enrol_authorize', $select)) {
+                $a = new stdClass;
                 $a->pending = $count;
                 $a->days = $CFG->an_emailexpired;
                 $a->enrolurl = "$CFG->wwwroot/$CFG->admin/users.php";
@@ -759,6 +768,7 @@ class enrolment_plugin_authorize
                 $teacher = get_teacher($lastcourse);
             }
             $user = get_record('user', 'id', $order->userid);
+            $a = new stdClass;
             $a->coursename = $order->fullname;
             $a->profileurl = "$CFG->wwwroot/user/view.php?id=$user->id";
             email_to_user($user, $teacher,
