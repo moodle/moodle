@@ -38,11 +38,21 @@
     /// Now check whether we need to display a frameset
 
     if (empty($frameset)) {
-        echo "<head><title>{$course->shortname}: ".format_string($workshop->name,true)."</title></head>\n";
+        $encoding = current_charset();
+        if ( get_string('thisdirection') == 'rtl' ) {
+            $direction = ' dir="rtl"';
+        } else {
+            $direction = ' dir="ltr"';
+        }
+        echo "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Frameset//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd\">\n";
+        echo "<html $direction>\n";
+        echo "<head><meta http-equiv=\"content-type\" content=\"text/html; charset=$encoding\" />\n";
+        echo "<title>{$course->shortname}: ".format_string($workshop->name,true)."</title></head>\n";
         echo "<frameset rows=\"90%,*\" border=\"10\">";
-        echo "<frame src=\"viewassessment.php?id=$id&amp;aid=$aid&amp;allowcomments=$allowcomments&amp;frameset=top&amp;redirect=$redirect\" border=\"10\">";
-        echo "<frame src=\"viewassessment.php?id=$id&amp;aid=$aid&amp;allowcomments=$allowcomments&amp;frameset=bottom&amp;redirect=$redirect\">";
+        echo "  <frame src=\"viewassessment.php?id=$id&amp;aid=$aid&amp;allowcomments=$allowcomments&amp;frameset=top&amp;redirect=$redirect\" border=\"10\" />";
+        echo "  <frame src=\"viewassessment.php?id=$id&amp;aid=$aid&amp;allowcomments=$allowcomments&amp;frameset=bottom&amp;redirect=$redirect\" />";
         echo "</frameset>";
+        echo "</html>";
         exit;
     }
 
