@@ -188,10 +188,15 @@
     // construct the flexible table ready to display
     $table = new flexible_table(FILTER_TABLE);
     $table->define_columns(array('name', 'hideshow', 'order', 'settings'));
+    $table->column_style('hideshow', 'text-align', 'center');
+    $table->column_style('order', 'text-align', 'center');
+    $table->column_style('settings', 'text-align', 'center');
     $table->define_headers(array($txt->name, $txt->hideshow, $txt->updown, $txt->settings));
     $table->define_baseurl("$CFG->wwwroot/admin/filters.php");
     $table->set_attribute('id', 'blocks');
     $table->set_attribute('class', 'flexible generaltable generalbox');
+    $table->set_attribute('style', 'margin:auto;');
+    $table->set_attribute('cellpadding', '5');
     $table->setup();
 
     // iterate through filters adding to display table
@@ -202,13 +207,13 @@
         // get hide/show link
         if (in_array($path, $activefilters)) {
             $hideshow = "<a href=\"$myurl&amp;action=hide&amp;filterpath=$upath\">";
-            $hideshow .= "<img src=\"$img/hide.gif\" alt=\"hide\" /></a>";
+            $hideshow .= "<img src=\"{$CFG->pixpath}/i/hide.gif\" height=\"16\" width=\"16\" alt=\"hide\" /></a>";
             $hidden = false;
             $displayname = "<span>$name</span>";
         }
         else {
             $hideshow = "<a href=\"$myurl&amp;action=show&amp;filterpath=$upath\">";
-            $hideshow .= "<img src=\"$img/show.gif\" alt=\"show\" /></a>";
+            $hideshow .= "<img src=\"{$CFG->pixpath}/i/show.gif\" height=\"16\" width=\"16\" alt=\"show\" /></a>";
             $hidden = true;
             $displayname = "<span class=\"dimmed_text\">$name</span>";
         }
