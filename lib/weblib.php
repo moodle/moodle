@@ -2971,10 +2971,12 @@ function print_png($url, $sizex, $sizey, $returnstring, $parameters='alt=""') {
  *     <li>$table->cellpadding  - Padding on each cell
  *     <li>$table->cellspacing  - Spacing between cells
  * </ul>
- * @return boolean
+ * @param bool $return whether to return an output string or echo now
+ * @return boolean or $string
  * @todo Finish documenting this function
  */
-function print_table($table) {
+function print_table($table, $return=false) {
+    $output = '';
 
     if (isset($table->align)) {
         foreach ($table->align as $key => $aa) {
@@ -3026,14 +3028,14 @@ function print_table($table) {
 
     $tableid = empty($table->id) ? '' : 'id="'.$table->id.'"';
 
-    echo '<table width="'.$table->width.'" border="0" align="'.$table->tablealign.'" ';
-    echo " cellpadding=\"$table->cellpadding\" cellspacing=\"$table->cellspacing\" class=\"$table->class\" $tableid>\n";
+    $output .= '<table width="'.$table->width.'" border="0" align="'.$table->tablealign.'" ';
+    $output .= " cellpadding=\"$table->cellpadding\" cellspacing=\"$table->cellspacing\" class=\"$table->class\" $tableid>\n";
 
     $countcols = 0;
 
     if (!empty($table->head)) {
         $countcols = count($table->head);
-        echo '<tr>';
+        $output .= '<tr>';
         foreach ($table->head as $key => $heading) {
 
             if (!isset($size[$key])) {
@@ -3042,18 +3044,18 @@ function print_table($table) {
             if (!isset($align[$key])) {
                 $align[$key] = '';
             }
-            echo '<th valign="top" '. $align[$key].$size[$key] .' nowrap="nowrap" class="header c'.$key.'">'. $heading .'</th>';
+            $output .= '<th valign="top" '. $align[$key].$size[$key] .' nowrap="nowrap" class="header c'.$key.'">'. $heading .'</th>';
         }
-        echo '</tr>'."\n";
+        $output .= '</tr>'."\n";
     }
 
     if (!empty($table->data)) {
         $oddeven = 1;
         foreach ($table->data as $key => $row) {
             $oddeven = $oddeven ? 0 : 1;
-            echo '<tr class="r'.$oddeven.'">'."\n";
+            $output .= '<tr class="r'.$oddeven.'">'."\n";
             if ($row == 'hr' and $countcols) {
-                echo '<td colspan="'. $countcols .'"><div class="tabledivider"></div></td>';
+                $output .= '<td colspan="'. $countcols .'"><div class="tabledivider"></div></td>';
             } else {  /// it's a normal row of data
                 foreach ($row as $key => $item) {
                     if (!isset($size[$key])) {
@@ -3065,14 +3067,19 @@ function print_table($table) {
                     if (!isset($wrap[$key])) {
                         $wrap[$key] = '';
                     }
-                    echo '<td '. $align[$key].$size[$key].$wrap[$key] .' class="cell c'.$key.'">'. $item .'</td>';
+                    $output .= '<td '. $align[$key].$size[$key].$wrap[$key] .' class="cell c'.$key.'">'. $item .'</td>';
                 }
             }
-            echo '</tr>'."\n";
+            $output .= '</tr>'."\n";
         }
     }
-    echo '</table>'."\n";
+    $output .= '</table>'."\n";
 
+    if ($return) {
+        return $output;
+    }
+
+    echo $output;
     return true;
 }
 
@@ -4416,22 +4423,25 @@ function obfuscate_mailto($email, $label='', $dimmed=false) {
  * @param string $baseurl The url which will be used to create page numbered links. Each page will consist of the base url appended by the page
 var an equal sign, then the page number.
  * @param string $pagevar This is the variable name that you use for the page number in your code (ie. 'tablepage', 'blogpage', etc)
+ * @param bool $nocurr do not display the current page as a link
+ * @param bool $return whether to return an output string or echo now
+ * @return bool or string
  */
-function print_paging_bar($totalcount, $page, $perpage, $baseurl, $pagevar='page',$nocurr=false) {
-
+function print_paging_bar($totalcount, $page, $perpage, $baseurl, $pagevar='page',$nocurr=false, $return=false) {
     $maxdisplay = 18;
+    $output = '';
 
     if ($totalcount > $perpage) {
-        echo '<div class="paging">';
-        echo get_string('page') .':';
+        $output .= '<div class="paging">';
+        $output .= get_string('page') .':';
         if ($page > 0) {
             $pagenum = $page - 1;
-            echo '&nbsp;(<a  href="'. $baseurl . $pagevar .'='. $pagenum .'">'. get_string('previous') .'</a>)&nbsp;';
+            $output .= '&nbsp;(<a  href="'. $baseurl . $pagevar .'='. $pagenum .'">'. get_string('previous') .'</a>)&nbsp;';
         }
         $lastpage = ceil($totalcount / $perpage);
         if ($page > 15) {
             $startpage = $page - 10;
-            echo '&nbsp;<a href="'. $baseurl . $pagevar .'=0">1</a>&nbsp;...';
+            $output .= '&nbsp;<a href="'. $baseurl . $pagevar .'=0">1</a>&nbsp;...';
         } else {
             $startpage = 0;
         }
@@ -4440,23 +4450,30 @@ function print_paging_bar($totalcount, $page, $perpage, $baseurl, $pagevar='page
         while ($displaycount < $maxdisplay and $currpage < $lastpage) {
             $displaypage = $currpage+1;
             if ($page == $currpage && empty($nocurr)) {
-                echo '&nbsp;&nbsp;'. $displaypage;
+                $output .= '&nbsp;&nbsp;'. $displaypage;
             } else {
-                echo '&nbsp;&nbsp;<a href="'. $baseurl . $pagevar .'='. $currpage .'">'. $displaypage .'</a>';
+                $output .= '&nbsp;&nbsp;<a href="'. $baseurl . $pagevar .'='. $currpage .'">'. $displaypage .'</a>';
             }
             $displaycount++;
             $currpage++;
         }
         if ($currpage < $lastpage) {
             $lastpageactual = $lastpage - 1;
-            echo '&nbsp;...<a href="'. $baseurl . $pagevar .'='. $lastpageactual .'">'. $lastpage .'</a>&nbsp;';
+            $output .= '&nbsp;...<a href="'. $baseurl . $pagevar .'='. $lastpageactual .'">'. $lastpage .'</a>&nbsp;';
         }
         $pagenum = $page + 1;
         if ($pagenum != $displaypage) {
-            echo '&nbsp;&nbsp;(<a href="'. $baseurl . $pagevar .'='. $pagenum .'">'. get_string('next') .'</a>)';
+            $output .= '&nbsp;&nbsp;(<a href="'. $baseurl . $pagevar .'='. $pagenum .'">'. get_string('next') .'</a>)';
         }
-        echo '</div>';
+        $output .= '</div>';
     }
+
+    if ($return) {
+        return $output;
+    }
+
+    echo $output;
+    return true;
 }
 
 /**
