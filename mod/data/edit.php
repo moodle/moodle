@@ -323,7 +323,7 @@
 
     // Print the stuff that need to come after the form fields.
     if (!$fields = get_records('data_fields', 'dataid', $data->id)) {
-        error(get_string('nofieldindatabase'));
+        error(get_string('nofieldindatabase', 'data'));
     }
     foreach ($fields as $eachfield) {
         $field = data_get_field($eachfield, $data);
