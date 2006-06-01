@@ -181,6 +181,8 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
     global $db, $CFG, $dbtablename, $fieldname, $record;
     $debug = ($CFG->debug > 7);
     
+    ignore_user_abort(false); // see bug report 5352. This should kill this thread as soon as user aborts.
+    
     @set_time_limit(0);
     @ob_implicit_flush(true);
     @ob_end_flush();
