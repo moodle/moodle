@@ -230,7 +230,7 @@
             ' height="16" width="16" /></a>');
     }
     if ($user->yahoo && !isset($hiddenfields['yahooid'])) {
-        print_row(get_string('yahooid').':', '<a href="http://edit.yahoo.com/config/send_webmesg?.target='.s($user->yahoo).'&amp;.src=pg">'.s($user->yahoo).'</a>');
+        print_row(get_string('yahooid').':', '<a href="http://edit.yahoo.com/config/send_webmesg?.target='.urlencode($user->yahoo).'&amp;.src=pg">'.s($user->yahoo)." <img border=0 src=\"http://opi.yahoo.com/online?u=".urlencode($user->yahoo)."&m=g&t=0\" width=\"12\" height=\"12\" alt=\"\"></a>");
     }
     if ($user->aim && !isset($hiddenfields['aimid'])) {
         print_row(get_string('aimid').':', '<a href="aim:goim?screenname='.s($user->aim).'">'.s($user->aim).'</a>');
