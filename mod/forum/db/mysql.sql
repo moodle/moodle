@@ -163,6 +163,7 @@ INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('forum', 
 INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('forum', 'add discussion', 'forum_discussions', 'name');
 INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('forum', 'add post', 'forum_posts', 'subject');
 INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('forum', 'update post', 'forum_posts', 'subject');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('forum', 'user report', 'user', 'CONCAT(firstname,\' \',lastname)');
 INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('forum', 'move discussion', 'forum_discussions', 'name');
 INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('forum', 'view subscribers', 'forum', 'name');
 INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('forum', 'view discussion', 'forum_discussions', 'name');

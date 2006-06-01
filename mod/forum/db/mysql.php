@@ -224,6 +224,10 @@ function forum_upgrade($oldversion) {
       table_column('forum_posts','','mailnow','integer');
   }
 
+  if ($oldversion < 2006011702) {
+      execute_sql("INSERT INTO {$CFG->prefix}log_display (module, action, mtable, field) VALUES ('forum', 'user report', 'user', 'CONCAT(firstname,\' \',lastname)')");
+  }
+
   return true;
   
 }

@@ -175,6 +175,10 @@ function forum_upgrade($oldversion) {
       execute_sql("ALTER TABLE {$CFG->prefix}forum DROP CONSTRAINT {$CFG->prefix}forum_type_check");
   }
 
+  if ($oldversion < 2006011702) {
+      execute_sql("INSERT INTO {$CFG->prefix}log_display (module, action, mtable, field) VALUES ('forum', 'user report', 'user', 'firstname||\' \'||lastname')");
+  }
+
 
   return true;
 
