@@ -163,6 +163,7 @@
             }
 
 
+          /// Prepare redirection
             if (user_not_fully_set_up($USER)) {
                 $urltogo = $CFG->wwwroot.'/user/edit.php?id='.$USER->id.'&amp;course='.SITEID;
                 // We don't delete $SESSION->wantsurl yet, so we get there later
@@ -172,12 +173,18 @@
                 unset($SESSION->wantsurl);
 
             } else {
-                $urltogo = $CFG->wwwroot.'/my';      /// Go to the standard home page
-                if (isadmin() || empty($CFG->mymoodleredirect) || isguest()) {
-                    $urltogo = $CFG->wwwroot;       /// not needed by admins or guests or when it's turned off
-                }
-                unset($SESSION->wantsurl);         /// Just in case
+                // no wantsurl stored or external - go to homepage
+                $urltogo = $CFG->wwwroot;
+                unset($SESSION->wantsurl);
             }
+
+          /// Go to my-moodle page instead of homepage if mymoodleredirect enabled
+            if (!isadmin() and !empty($CFG->mymoodleredirect) and !isguest()) {
+                if ($urltogo == $CFG->wwwroot or $urltogo == $CFG->wwwroot.'/' or $urltogo == $CFG->wwwroot.'/index.php') {
+                    $urltogo = $CFG->wwwroot.'/my/';
+                }
+            }
+
 
             // check if user password has expired
             // Currently supported only for ldap-authentication module
