@@ -32,6 +32,8 @@ function add_instance($resource) {
 
     if (isset($resource->blockdisplay)) {
         $resource->options = 'showblocks';
+    } else {
+        $resource->options = '';
     }
 
     if (isset($resource->parametersettingspref)) {
@@ -70,6 +72,8 @@ function update_instance($resource) {
 
     if (isset($resource->blockdisplay)) {
         $resource->options = 'showblocks';
+    } else {
+        $resource->options = '';
     }
 
     if (isset($resource->parametersettingspref)) {
