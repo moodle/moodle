@@ -156,6 +156,7 @@ function authorizenet_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE
                 return false;
             }
             $total = floatval($extra->sum) + floatval($extra->amount);
+            unset($extra->sum); // this is not used in refunds table.
             if (($extra->amount == 0) || ($total > $order->amount)) {
                 $message = "Can be credited up to original amount.";
                 return false;

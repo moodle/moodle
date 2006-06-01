@@ -21,12 +21,12 @@ function authorize_print_orders()
     global $CFG, $USER;
     global $strs, $authstrs;
     global $courseid, $userid;
-    require_once $CFG->libdir.'/tablelib.php';
+    require_once($CFG->libdir.'/tablelib.php');
 
     $perpage = 10;
     $status = optional_param('status', AN_STATUS_NONE, PARAM_INT);
 
-    if (!isteacher($courseid)) {
+    if (! isteacher($courseid)) {
         $userid = $USER->id;
     }
 
@@ -73,28 +73,28 @@ function authorize_print_orders()
     $table->setup();
 
     $select = "SELECT E.id, E.transid, E.courseid, E.userid, E.status, E.ccname, E.timecreated, E.settletime ";
-    $from = "FROM {$CFG->prefix}enrol_authorize E ";
-    $where = "WHERE (1=1) ";
+    $from   = "FROM {$CFG->prefix}enrol_authorize E ";
+    $where  = "WHERE (1=1) ";
 
     if ($status > AN_STATUS_NONE) {
         switch ($status)
         {
             case AN_STATUS_CREDIT:
-            $from .= "INNER JOIN {$CFG->prefix}enrol_authorize_refunds R ON E.id = R.orderid ";
-            $where .= "AND (E.status = '" . AN_STATUS_AUTHCAPTURE . "') ";
-            break;
+                $from .= "INNER JOIN {$CFG->prefix}enrol_authorize_refunds R ON E.id = R.orderid ";
+                $where .= "AND (E.status = '" . AN_STATUS_AUTHCAPTURE . "') ";
+                break;
 
             case AN_STATUS_TEST:
-            $newordertime = time() - 120; // -2 minutes. Order may be still in process.
-            $where .= "AND (E.status = '" . AN_STATUS_NONE . "') AND (E.transid = '0') AND (E.timecreated<$newordertime) ";
-            break;
+                $newordertime = time() - 120; // -2 minutes. Order may be still in process.
+                $where .= "AND (E.status = '" . AN_STATUS_NONE . "') AND (E.transid = '0') AND (E.timecreated < $newordertime) ";
+                break;
 
             default:
-            $where .= "AND (E.status = '$status') ";
-            break;
+                $where .= "AND (E.status = '$status') ";
+                break;
         }
     }
-    else { // No filter
+    else {
         if (empty($CFG->an_test)) {
             $where .= "AND (E.status != '" . AN_STATUS_NONE . "') ";
         }
@@ -163,9 +163,10 @@ function authorize_print_order_details($orderno)
     $cmdrefund = optional_param(ORDER_REFUND, '', PARAM_ALPHA);
     $cmdvoid = optional_param(ORDER_VOID, '', PARAM_ALPHA);
 
-    $unenrol = optional_param('unenrol', '', PARAM_ALPHA);
-    $confirm = optional_param('confirm', '', PARAM_ALPHA);
+    $unenrol = optional_param('unenrol', 0, PARAM_BOOL);
+    $confirm = optional_param('confirm', 0, PARAM_BOOL);
 
+    $table = new stdClass;
     $table->width = '100%';
     $table->size = array('30%', '70%');
     $table->align = array('right', 'left');
@@ -181,7 +182,7 @@ function authorize_print_order_details($orderno)
     }
 
     if ($USER->id != $order->userid) { // Current user viewing someone else's order
-        if (!isteacher($order->courseid)) {
+        if (! isteacher($order->courseid)) {
            error("Students can view their order.");
         }
     }
@@ -208,13 +209,14 @@ function authorize_print_order_details($orderno)
 
     if (!empty($cmdcapture) and confirm_sesskey()) { // CAPTURE
         if (!in_array(ORDER_CAPTURE, $status->actions)) {
+            $a = new stdClass;
             $a->action = $authstrs->capture;
             error(get_string('youcantdo', 'enrol_authorize', $a));
         }
 
         if (empty($confirm)) {
             $table->data[] = array("<b>$strs->confirm:</b>",
-            "$authstrs->captureyes<br /><a href='index.php?order=$orderno&amp;sesskey=$USER->sesskey&amp;".ORDER_CAPTURE."=y&amp;confirm=y'>$strs->yes</a>
+            "$authstrs->captureyes<br /><a href='index.php?order=$orderno&amp;sesskey=$USER->sesskey&amp;".ORDER_CAPTURE."=y&amp;confirm=1'>$strs->yes</a>
             &nbsp;&nbsp;&nbsp;&nbsp;<a href='index.php?order=$orderno'>$strs->no</a>");
         }
         else {
@@ -235,9 +237,11 @@ function authorize_print_order_details($orderno)
                     if (enrol_student($order->userid, $order->courseid, $timestart, $timeend, 'authorize')) {
                         $user = get_record('user', 'id', $order->userid);
                         $teacher = get_teacher($order->courseid);
+                        $a = new stdClass;
                         $a->coursename = $order->shortname;
                         $a->profileurl = "$CFG->wwwroot/user/view.php?id=$user->id";
-                        email_to_user($user, $teacher,
+                        email_to_user($user,
+                                      $teacher,
                                       get_string("enrolmentnew", '', $order->shortname),
                                       get_string('welcometocoursetext', '', $a));
                         redirect("index.php?order=$orderno");
@@ -257,11 +261,12 @@ function authorize_print_order_details($orderno)
     }
     elseif (!empty($cmdrefund) and confirm_sesskey()) { // REFUND
         if (!in_array(ORDER_REFUND, $status->actions)) {
+            $a = new stdClass;
             $a->action = $authstrs->refund;
             error(get_string('youcantdo', 'enrol_authorize', $a));
         }
 
-        $extra = new stdClass();
+        $extra = new stdClass;
         $extra->sum = 0.0;
         $extra->orderid = $orderno;
 
@@ -277,13 +282,14 @@ function authorize_print_order_details($orderno)
         }
         else {
             $amount = format_float(optional_param('amount', $upto), 2);
-            if (($amount > $upto) || empty($confirm)) {
+            if (($amount > $upto) or empty($confirm)) {
+                $a = new stdClass;
                 $a->upto = $upto;
                 $strcanbecredit = get_string('canbecredit', 'enrol_authorize', $a);
-                $cbunenrol = print_checkbox('unenrol', 'y', !empty($unenrol), '', '', '', true);
+                $cbunenrol = print_checkbox('unenrol', '1', !empty($unenrol), '', '', '', true);
                 $table->data[] = array("<b>$authstrs->unenrolstudent</b>", $cbunenrol);
                 $table->data[] = array("<b>$authstrs->howmuch</b>",
-                    "<input type='hidden' name='confirm' value='y'>
+                    "<input type='hidden' name='confirm' value='1'>
                      <input type='text' size='5' name='amount' value='$amount'>
                      $strcanbecredit<br /><input type='submit' name='".ORDER_REFUND."' value='$authstrs->refund'>");
             }
@@ -293,7 +299,6 @@ function authorize_print_order_details($orderno)
                 $success = authorizenet_action($order, $message, $extra, AN_ACTION_CREDIT);
                 if ($success) {
                     if (empty($CFG->an_test)) {
-                        unset($extra->sum); // this is not used in refunds table.
                         $extra->id = insert_record("enrol_authorize_refunds", $extra);
                         if (empty($extra->id)) {
                             $emailsubject = "Authorize.net: insert record error";
@@ -327,6 +332,7 @@ function authorize_print_order_details($orderno)
     }
     elseif (!empty($cmdvoid) and confirm_sesskey()) { // VOID
         if (!in_array(ORDER_VOID, $status->actions)) {
+            $a = new stdClass;
             $a->action = $authstrs->void;
             error(get_string('youcantdo', 'enrol_authorize', $a));
         }
@@ -337,7 +343,7 @@ function authorize_print_order_details($orderno)
                 $strvoidyes = get_string('voidyes', 'enrol_authorize');
                 $table->data[] = array("<b>$strs->confirm:</b>",
                     "$strvoidyes<br /><input type='hidden' name='".ORDER_VOID."' value='y'>
-                     <input type='hidden' name='confirm' value='y'>
+                     <input type='hidden' name='confirm' value='1'>
                      <input type='submit' value='$strs->yes'>
                      &nbsp;&nbsp;&nbsp;&nbsp;<a href='index.php?order=$orderno'>$strs->no</a>");
             }
@@ -370,14 +376,15 @@ function authorize_print_order_details($orderno)
             }
             else {
                 if (empty($confirm)) {
+                    $a = new stdClass;
                     $a->transid = $suborder->transid;
                     $a->amount = $suborder->amount;
                     $strsubvoidyes = get_string('subvoidyes', 'enrol_authorize', $a);
-                    $cbunenrol = print_checkbox('unenrol', 'y', !empty($unenrol), '', '', '', true);
+                    $cbunenrol = print_checkbox('unenrol', '1', !empty($unenrol), '', '', '', true);
                     $table->data[] = array("<b>$authstrs->unenrolstudent</b>", $cbunenrol);
                     $table->data[] = array("<b>$strs->confirm:</b>",
                         "$strsubvoidyes<br /><input type='hidden' name='".ORDER_VOID."' value='y'>
-                         <input type='hidden' name='confirm' value='y'>
+                         <input type='hidden' name='confirm' value='1'>
                          <input type='hidden' name='suborder' value='$suborderno'>
                          <input type='submit' value='$strs->yes'>
                          &nbsp;&nbsp;&nbsp;&nbsp;<a href='index.php?order=$orderno'>$strs->no</a>");
@@ -409,15 +416,16 @@ function authorize_print_order_details($orderno)
     }
     elseif (!empty($cmddelete) and confirm_sesskey()) { // DELETE
         if (!in_array(ORDER_DELETE, $status->actions)) {
+            $a = new stdClass;
             $a->action = $authstrs->delete;
             error(get_string('youcantdo', 'enrol_authorize', $a));
         }
         if (empty($confirm)) {
-            $cbunenrol = print_checkbox('unenrol', 'y', !empty($unenrol), '', '', '', true);
+            $cbunenrol = print_checkbox('unenrol', '1', !empty($unenrol), '', '', '', true);
             $table->data[] = array("<b>$authstrs->unenrolstudent</b>", $cbunenrol);
             $table->data[] = array("<b>$strs->confirm:</b>",
                 "<input type='hidden' name='".ORDER_DELETE."' value='y'>
-                 <input type='hidden' name='confirm' value='y'>
+                 <input type='hidden' name='confirm' value='1'>
                  <input type='submit' value='$strs->yes'>
                  &nbsp;&nbsp;&nbsp;&nbsp;<a href='index.php?order=$orderno'>$strs->no</a>");
         }
@@ -443,7 +451,7 @@ function authorize_print_order_details($orderno)
         $table->data[] = array("<b>$strs->action</b>", $actions);
         print_table($table);
         if ($settled) { // show refunds.
-            echo "<h4>" . get_string('returns', 'enrol_authorize') . "</h4>\n";
+            $t2 = new stdClass;
             $t2->size = array('15%', '15%', '20%', '35%', '15%');
             $t2->align = array('right', 'right', 'right', 'right', 'right');
             $t2->head = array($authstrs->transid,
@@ -475,6 +483,7 @@ function authorize_print_order_details($orderno)
             else {
                 $t2->data[] = array('','',get_string('noreturns', 'enrol_authorize'),'','');
             }
+            echo "<h4>" . get_string('returns', 'enrol_authorize') . "</h4>\n";
             print_table($t2);
         }
     }
