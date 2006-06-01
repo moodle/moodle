@@ -210,20 +210,21 @@ class qformat_xml extends qformat_default {
         $qo->tolerance = array();
         foreach ($answers as $answer) {
             $qo->answer[] = $answer['#'][0];
-            $qo->feedback[] = $answer['#']['feedback'][0]['#']['text'][0]['#'];
+            $qo->feedback[] = $this->import_text( $answer['#']['feedback'][0]['#']['text'] );
             $qo->fraction[] = $answer['#']['fraction'][0]['#'];
             $qo->tolerance[] = $answer['#']['tolerance'][0]['#'];
         }
 
         // get units array
-        $units = $question['#']['units'][0]['#']['unit'];
         $qo->unit = array();
-        $qo->multiplier = array();
-        foreach ($units as $unit) {
-            $qo->multiplier[] = $unit['#']['multiplier'][0]['#'];
-            $qo->unit[] = $unit['#']['unit_name'][0]['#'];
+        if (isset($question['#']['units'][0]['#']['unit'])) {
+            $units = $question['#']['units'][0]['#']['unit'];
+            $qo->multiplier = array();
+            foreach ($units as $unit) {
+                $qo->multiplier[] = $unit['#']['multiplier'][0]['#'];
+                $qo->unit[] = $unit['#']['unit_name'][0]['#'];
+            }
         }
-
         return $qo;
     }
 
@@ -244,8 +245,8 @@ class qformat_xml extends qformat_default {
 
         // run through subquestions
         foreach ($subquestions as $subquestion) {
-            $qtext = $subquestion['#']['text'][0]['#'];
-            $atext = $subquestion['#']['answer'][0]['#']['text'][0]['#'];
+            $qtext = $this->import_text( $subquestion['#']['text'] );
+            $atext = $this->import_text( $subquestion['#']['answer'][0]['#']['text'] );
             $qo->subquestions[] = $qtext;
             $qo->subanswers[] = $atext;
         }
