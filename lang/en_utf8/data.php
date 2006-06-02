@@ -143,6 +143,7 @@ $string['resizingimages'] = 'Resizing image thumbnails...';
 $string['rssglobaldisabled'] = 'Disabled. See site configuration variables.';
 $string['rsshowmany'] = '(number of latest entries to show, 0 to disable RSS)';
 $string['rsstemplate'] = 'RSS template';
+$string['rsstitletemplate'] = 'RSS title template';
 $string['save'] = 'Save';
 $string['saveandadd'] = 'Save and add another';
 $string['saveandview'] = 'Save and view';
