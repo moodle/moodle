@@ -115,7 +115,9 @@
             $sql = 'SELECT s.userid,u.firstname,u.lastname,u.idnumber,1 AS roleid FROM '.$CFG->prefix.'user_students s JOIN '.$CFG->prefix.'user u ON u.id = s.userid WHERE course = '.$course->id;
         }
 
-        $us = get_records_sql($sql);
+        if (!$us = get_records_sql($sql)) {
+            error('Cannot enter detailed view: No users found for this course.');
+        }
         $admins = get_admins();
         foreach ($us as $u) {
             $role = $course->student;
