@@ -6,7 +6,6 @@
 //////////////////////////////////////////////////////////////////////////
 // Based on default.php, included by ../import.php
 
-
 require_once( "$CFG->libdir/xmlize.php" );
 
 class qformat_xml extends qformat_default {
@@ -136,6 +135,23 @@ class qformat_xml extends qformat_default {
         return $qo;
     }
 
+    function import_multianswer( $questions ) {
+    // import multianswer (cloze) type questions
+    
+        $qo = qtype_multianswer_extract_question($this->import_text( 
+            $questions['#']['questiontext'][0]['#']['text'] ));
+
+        // 'header' parts particular to multianswer
+        $qo->qtype = MULTIANSWER;
+        $qo->course = $this->course;
+
+        if (!empty($thequestion)) {
+            $qo->name = $this->import_text( $questions['#']['name'][0]['#']['text'] );
+        }
+
+        return $qo;
+    }
+
     function import_truefalse( $question ) {
     // import true/false type question
 
@@ -192,7 +208,40 @@ class qformat_xml extends qformat_default {
 
         return $qo;
     }
+    
+    function import_regexp( $question ) {
+    // import short answer question
 
+        // get common parts
+        $qo = $this->import_headers( $question );
+
+        // header parts particular to shortanswer
+        $qo->qtype = regexp;
+
+        // get usecase
+        $qo->usecase = $question['#']['usecase'][0]['#'];
+
+        // run through the answers
+        $answers = $question['#']['answer'];  
+        $a_count = 0;
+        foreach ($answers as $answer) {
+            $ans = $this->import_answer( $answer );
+            $qo->answer[$a_count] = $ans->answer;
+            $qo->fraction[$a_count] = $ans->fraction;
+            $qo->feedback[$a_count] = $ans->feedback;
+            ++$a_count;
+        }
+
+        return $qo;
+    }
+    
+    function import_description( $question ) {
+        // get common parts
+        $qo = $this->import_headers( $question );
+        // header parts particular to shortanswer
+        $qo->qtype = DESCRIPTION;
+        return $qo;
+    }
     function import_numerical( $question ) {
     // import numerical question
 
@@ -285,11 +334,20 @@ class qformat_xml extends qformat_default {
             elseif ($question_type=='shortanswer') {
                 $qo = $this->import_shortanswer( $question );
             }
+            //elseif ($question_type=='regexp') {
+            //    $qo = $this->import_regexp( $question );
+            //}
             elseif ($question_type=='numerical') {
                 $qo = $this->import_numerical( $question );
             }
+            elseif ($question_type=='description') {
+                $qo = $this->import_description( $question );
+            }
             elseif ($question_type=='matching') {
                 $qo = $this->import_matching( $question );
+            }
+            elseif ($question_type=='cloze') {
+              $qo = $this->import_multianswer( $question );
             }
             else {
                 $notsupported = get_string( 'xmlnotsupported','quiz',$question_type );
@@ -413,6 +471,9 @@ class qformat_xml extends qformat_default {
         case SHORTANSWER:
             $name = 'shortanswer';
             break;
+        //case regexp:
+        //    $name = 'regexp';
+        //    break;
         case NUMERICAL:
             $name = 'numerical';
             break;
@@ -531,19 +592,35 @@ class qformat_xml extends qformat_default {
         $expout .= "\n\n<!-- question: $question->id  -->\n";
 
         // add opening tag
-        $question_type = $this->get_qtype( $question->qtype );
-        $name_text = $this->writetext( $question->name );
-        $qtformat = $this->get_format($question->questiontextformat);
-        $question_text = $this->writetext( $question->questiontext );
-        $expout .= "  <question type=\"$question_type\">\n";   
-        $expout .= "    <name>$name_text</name>\n";
-        $expout .= "    <questiontext format=\"$qtformat\">\n";
-        $expout .= $question_text;
-        $expout .= "    </questiontext>\n";   
-        $expout .= "    <image>{$question->image}</image>\n";
-        $expout .= $this->writeimage($question->image);
-        $expout .= "    <penalty>{$question->penalty}</penalty>\n";
-        $expout .= "    <hidden>{$question->hidden}</hidden>\n";
+        // generates specific header for Cloze type question
+        if ($question->qtype != MULTIANSWER) {
+            // for all question types except Close
+            $question_type = $this->get_qtype( $question->qtype );
+            $name_text = $this->writetext( $question->name );
+            $qtformat = $this->get_format($question->questiontextformat);
+            $question_text = $this->writetext( $question->questiontext );
+            $expout .= "  <question type=\"$question_type\">\n";   
+            $expout .= "    <name>$name_text</name>\n";
+            $expout .= "    <questiontext format=\"$qtformat\">\n";
+            $expout .= $question_text;
+            $expout .= "    </questiontext>\n";   
+            $expout .= "    <image>{$question->image}</image>\n";
+            $expout .= $this->writeimage($question->image);
+            $expout .= "    <penalty>{$question->penalty}</penalty>\n";
+            $expout .= "    <hidden>{$question->hidden}</hidden>\n";
+        }
+        else {
+            // for Cloze type only
+            $question_type = $this->get_qtype( $question->qtype );
+            $name_text = $this->writetext( $question->name );
+            $question_text = $this->writetext( $question->questiontext );
+            $expout .= "  <question type=\"$question_type\">\n";
+            $expout .= "    <name>$name_text</name>\n";
+            $expout .= "    <questiontext>\n";
+            $expout .= $question_text;
+            $expout .= "    </questiontext>\n";
+        }
+
         if (!empty($question->options->shuffleanswers)) {
             $expout .= "    <shuffleanswers>{$question->options->shuffleanswers}</shuffleanswers>\n";
         }
@@ -588,6 +665,18 @@ class qformat_xml extends qformat_default {
                 $expout .= "    </answer>\n";
             }
             break;
+        //case regexp:
+        //$expout .= "    <usecase>{$question->options->usecase}</usecase>\n ";
+        //    foreach($question->options->answers as $answer) {
+        //        $percent = 100 * $answer->fraction;
+        //        $expout .= "    <answer fraction=\"$percent\">\n";
+        //        $expout .= $this->writetext( $answer->answer,3,false );
+        //        $expout .= "      <feedback>\n";
+        //        $expout .= $this->writetext( $answer->feedback,4,false );
+        //        $expout .= "      </feedback>\n";
+        //        $expout .= "    </answer>\n";
+        //    }
+        //    break;
         case NUMERICAL:
             foreach ($question->options->answers as $answer) {
                 $tolerance = $answer->tolerance;
@@ -620,11 +709,17 @@ class qformat_xml extends qformat_default {
             }
             break;
         case DESCRIPTION:
-            // nothing more to do for this type
+            // nothing more to do for theis type
             break;
         case MULTIANSWER:
-            $expout .= "<!-- CLOZE type is not supported -->\n";
-            break;
+            $a_count=1;
+            foreach($question->options->questions as $question) {
+                $thispattern = addslashes("{#".$a_count."}");
+                $thisreplace = $question->questiontext;
+                $expout=ereg_replace($thispattern, $thisreplace, $expout );
+                $a_count++;
+            }
+        break;
         default:
             $expout .= "<!-- Question type is unknown or not supported (Type=$question->qtype) -->\n";
         }
