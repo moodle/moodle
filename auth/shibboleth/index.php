@@ -16,7 +16,7 @@
         
         redirect($urltogo);
     }
-	
+
     $pluginconfig   = get_config('auth/shibboleth');
 
     // Check whether Shibboleth is configured properly
