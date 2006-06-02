@@ -325,6 +325,9 @@ function data_generate_default_template(&$data, $template, $recordid=0, $form=fa
     if (!$data && !$template) {
         return false;
     }
+    if ($template == 'csstemplate') {
+        return '';
+    }
     
     //get all the fields for that database
     if ($fields = get_records('data_fields', 'dataid', $data->id, 'id')) {
