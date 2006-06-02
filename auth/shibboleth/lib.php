@@ -69,7 +69,7 @@ function auth_get_userinfo($username) {
 
 function auth_shib_attributes(){
 //returns array containg attribute mappings between Moodle and shibboleth
-	global $CFG;
+    global $CFG;
 
     $pluginconfig   = get_config('auth/shibboleth');
     $pluginconfig   = (array) $pluginconfig;
@@ -86,16 +86,16 @@ function auth_shib_attributes(){
     }
     $moodleattributes['username']=$pluginconfig["shib_user_attribute"];
 
-	return $moodleattributes;
+    return $moodleattributes;
 }
 
 function get_first_string($string){
 // Cleans and returns first of potential many values (multi-valued attributes)
-	
-	$list = split( ';', $string);
-	$clean_string = rtrim($list[0]);
-	
-	return $clean_string;
-	
+
+    $list = split( ';', $string);
+    $clean_string = rtrim($list[0]);
+
+    return $clean_string;
+
 }
 ?>
