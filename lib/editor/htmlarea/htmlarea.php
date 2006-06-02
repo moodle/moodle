@@ -588,9 +588,17 @@ HTMLArea.prototype.generate = function () {
         // it's not element but ID
         this._textArea = textarea = HTMLArea.getElementById("textarea", textarea);
     }
+    // Fix for IE's sticky bug. Editor doesn't load
+    // editing area.
+    var height;
+    if ( textarea.offsetHeight && textarea.offsetHeight > 0 ) {
+        height = textarea.offsetHeight;
+    } else {
+        height = 300;
+    }
     this._ta_size = {
         w: textarea.offsetWidth,
-        h: textarea.offsetHeight
+        h: height
     };
     textarea.style.display = "none";
 
