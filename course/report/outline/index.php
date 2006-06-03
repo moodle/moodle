@@ -21,7 +21,7 @@
         error("You are not allowed to look at this page");
     }
 
-    add_to_log($course->id, "course", "report outline", "report/outline/index.php?id=$course->id", $course->fullname); 
+    add_to_log($course->id, "course", "report outline", "report/outline/index.php?id=$course->id", $course->id); 
 
     $stractivityreport = get_string("activityreport");
     $strparticipants   = get_string("participants");

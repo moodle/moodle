@@ -36,7 +36,7 @@
         error("You need to be a teacher to use this page");
     }
 
-    add_to_log($course->id, "course", "report stats", "report/stats/index.php?course=$course->id", $course->fullname); 
+    add_to_log($course->id, "course", "report stats", "report/stats/index.php?course=$course->id", $course->id); 
 
     stats_check_uptodate($course->id);
 

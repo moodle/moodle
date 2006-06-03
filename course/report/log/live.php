@@ -17,7 +17,7 @@
         error("Only teachers can view logs");
     }
 
-    add_to_log($course->id, "course", "report live", "report/log/live.php?id=$course->id", $course->fullname); 
+    add_to_log($course->id, "course", "report live", "report/log/live.php?id=$course->id", $course->id); 
 
     session_write_close();
 
