@@ -15,7 +15,7 @@
     $studentview = optional_param('studentview', -1, PARAM_BOOL);
     $section     = optional_param('section', 0, PARAM_INT);
     $move        = optional_param('move', 0, PARAM_INT);
-    $marker      = optional_param('marker',0 , PARAM_INT);
+    $marker      = optional_param('marker',-1 , PARAM_INT);
 
 
     if (empty($id) && empty($name) && empty($idnumber)) {

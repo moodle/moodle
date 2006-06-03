@@ -30,7 +30,7 @@ if ($topic != -1) {
     }
 }
 
-if (isteacher($course->id) and !empty($marker) and confirm_sesskey()) {
+if (($marker >=0) and isteacher($course->id) and confirm_sesskey()) {
     $course->marker = $marker;
     if (! set_field("course", "marker", $marker, "id", $course->id)) {
         error("Could not mark that topic for this course");
