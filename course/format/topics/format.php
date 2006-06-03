@@ -31,7 +31,7 @@
         }
     }
 
-    if ($marker && isteacher($course->id) && confirm_sesskey()) {
+    if (($marker >=0) && isteacher($course->id) && confirm_sesskey()) {
         $course->marker = $marker;
         if (! set_field("course", "marker", $marker, "id", $course->id)) {
             error("Could not mark that topic for this course");
