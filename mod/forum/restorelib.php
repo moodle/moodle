@@ -866,6 +866,17 @@
             $log->url = "search.php?id=".$log->course."&search=".urlencode($log->info);
             $status = true;
             break;
+        case "user report":
+            //recode the info field (it's the user id)
+            $user = backup_getid($restore->backup_unique_code,"user",$log->info);
+            if ($user) {
+                $log->info = $user->new_id;
+                //Now, extract the mode from the url field
+                $mode = substr(strrchr($log->url,"="),1);
+                $log->url = "user.php?course=".$log->course."&id=".$log->info."&mode=".$mode;
+                $status = true;
+            }
+            break;
         default:
             if (!defined('RESTORE_SILENTLY')) {
                 echo "action (".$log->module."-".$log->action.") unknown. Not restored<br />";                 //Debug
