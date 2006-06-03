@@ -33,7 +33,7 @@
         print_error('mustbeteacher', '', $CFG->wwwroot.'/course/view.php?id='.$course->id);
     }
 
-    add_to_log($course->id, "course", "report participation", "report/participation/index.php?id=$course->id", $course->fullname); 
+    add_to_log($course->id, "course", "report participation", "report/participation/index.php?id=$course->id", $course->id); 
         
     $strparticipation = get_string('participationreport');
     $strviews         = get_string('views');

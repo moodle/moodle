@@ -35,7 +35,7 @@
         }
     }
 
-    add_to_log($course->id, "course", "report log", "report/log/index.php?id=$course->id", $course->fullname); 
+    add_to_log($course->id, "course", "report log", "report/log/index.php?id=$course->id", $course->id); 
 
     $strlogs = get_string('logs');
     $stradministration = get_string('administration');
