@@ -140,7 +140,7 @@
     if (!$launch) {
         include_once("restore_precheck.html");
     } else if ($launch == "form") {
-        if ($SESSION->restore->importing) {
+        if (!empty($SESSION->restore->importing)) {
             // set up all the config stuff and skip asking the user about it.
             restore_setup_for_check($SESSION->restore,$backup_unique_code);
             include_once("restore_execute.html");
