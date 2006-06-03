@@ -5209,6 +5209,7 @@
                 if (!defined('RESTORE_SILENTLY')) {
                     echo '<li>'.get_string('creatingblocks').'</li>';
                 }
+                $course_header->blockinfo = !empty($course_header->blockinfo) ? $course_header->blockinfo : NULL;
                 if (!$status = restore_create_blocks($restore, $info->backup_block_format, $course_header->blockinfo, $xml_file)) {
                     if (!defined('RESTORE_SILENTLY')) {
                         notify('Error while creating the course blocks');
