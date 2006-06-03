@@ -117,7 +117,9 @@
     //Call the form, depending the step we are
     if (!$launch) {
         // if we're at the start, clear the cache of prefs
-        unset($SESSION->backupprefs[$course->id]);
+        if (isset($SESSION->backupprefs[$course->id])) {
+            unset($SESSION->backupprefs[$course->id]);
+        }
         include_once("backup_form.html");
     } else if ($launch == "check") {
         include_once("backup_check.html");
