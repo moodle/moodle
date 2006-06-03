@@ -48,8 +48,7 @@
         error ("An error has occurred and the restore could not be completed!");
     }
 
-    if (!$restore->importing) {
-        echo $output;
+    if (empty($restore->importing)) {
         //Print final message
         print_simple_box(get_string("restorefinished"),"center");
     } else {
