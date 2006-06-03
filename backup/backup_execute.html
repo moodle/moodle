@@ -145,7 +145,7 @@
 
         //If we have selected to backup quizzes, backup categories and
         //questions structure (step 1). See notes on mod/quiz/backuplib.php
-        if ($status and $preferences->mods['quiz']->backup) {
+        if ($status and !empty($preferences->mods['quiz']->backup)) {
             echo "<li>".get_string("writingcategoriesandquestions").'</li>';
             require_once($CFG->dirroot.'/mod/quiz/backuplib.php');
             if (!$status = backup_question_categories($backup_file,$preferences)) {
