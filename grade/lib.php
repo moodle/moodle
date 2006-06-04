@@ -202,7 +202,6 @@ function grade_get_formatted_grades() {
                                             $grades_by_student["$student"]["$cur_category"]['stats']['allgrades'] = $grade;
                                         }
                                     }
-				    	$currentgrades = $grades_by_student["$student"]["$cur_category"]['stats']['allgrades'];
                                 }
 
 				            
