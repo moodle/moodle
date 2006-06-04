@@ -1590,7 +1590,27 @@ function main_upgrade($oldversion=0) {
         execute_sql("ALTER TABLE {$CFG->prefix}stats_user_monthly RENAME COLUMN writes TO statswrites", false);
 
     }
-    
+
+    // Adding some missing log actions
+    if ($oldversion < 2006060400) {
+        // But only if they doesn't exist (because this was introduced after branch and we could be duplicating!)
+        if (!record_exists('log_display', 'module', 'course', 'action', 'report log')) {
+            execute_sql("INSERT INTO {$CFG->prefix}log_display (module, action, mtable, field) VALUES ('course', 'report log', 'course', 'fullname')");
+        }
+        if (!record_exists('log_display', 'module', 'course', 'action', 'report live')) {
+            execute_sql("INSERT INTO {$CFG->prefix}log_display (module, action, mtable, field) VALUES ('course', 'report live', 'course', 'fullname')");
+        }
+        if (!record_exists('log_display', 'module', 'course', 'action', 'report outline')) {
+            execute_sql("INSERT INTO {$CFG->prefix}log_display (module, action, mtable, field) VALUES ('course', 'report outline', 'course', 'fullname')");
+        }
+        if (!record_exists('log_display', 'module', 'course', 'action', 'report participation')) {
+            execute_sql("INSERT INTO {$CFG->prefix}log_display (module, action, mtable, field) VALUES ('course', 'report participation', 'course', 'fullname')");
+        }
+        if (!record_exists('log_display', 'module', 'course', 'action', 'report stats')) {
+            execute_sql("INSERT INTO {$CFG->prefix}log_display (module, action, mtable, field) VALUES ('course', 'report stats', 'course', 'fullname')");
+        }
+    }
+
     return $result;
 }
 

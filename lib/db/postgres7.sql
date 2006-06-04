@@ -675,6 +675,11 @@ INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('course',
 INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('course', 'view', 'course', 'fullname');
 INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('course', 'update', 'course', 'fullname');
 INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('course', 'enrol', 'course', 'fullname');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('course', 'report log', 'course', 'fullname');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('course', 'report live', 'course', 'fullname');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('course', 'report outline', 'course', 'fullname');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('course', 'report participation', 'course', 'fullname');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('course', 'report stats', 'course', 'fullname');
 INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('message', 'write', 'user', 'firstname||\' \'||lastname');
 INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('message', 'read', 'user', 'firstname||\' \'||lastname');
 INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('message', 'add contact', 'user', 'firstname||\' \'||lastname');
