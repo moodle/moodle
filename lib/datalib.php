@@ -2501,12 +2501,16 @@ function make_default_scale() {
     /// Read in the big description from the file.  Note this is not
     /// HTML (despite the file extension) but Moodle format text.
     $parentlang = get_string('parentlang');
-    if (is_readable($CFG->dirroot .'/lang/'. $CFG->lang .'/help/forum/ratings.html')) {
+    if (is_readable($CFG->dataroot .'/lang/'. $CFG->lang .'/help/forum/ratings.html')) {
+        $file = file($CFG->dataroot .'/lang/'. $CFG->lang .'/help/forum/ratings.html');
+    } else if (is_readable($CFG->dirroot .'/lang/'. $CFG->lang .'/help/forum/ratings.html')) {
         $file = file($CFG->dirroot .'/lang/'. $CFG->lang .'/help/forum/ratings.html');
+    } else if ($parentlang and is_readable($CFG->dataroot .'/lang/'. $parentlang .'/help/forum/ratings.html')) {
+        $file = file($CFG->dataroot .'/lang/'. $parentlang .'/help/forum/ratings.html');
     } else if ($parentlang and is_readable($CFG->dirroot .'/lang/'. $parentlang .'/help/forum/ratings.html')) {
         $file = file($CFG->dirroot .'/lang/'. $parentlang .'/help/forum/ratings.html');
-    } else if (is_readable($CFG->dirroot .'/lang/en/help/forum/ratings.html')) {
-        $file = file($CFG->dirroot .'/lang/en/help/forum/ratings.html');
+    } else if (is_readable($CFG->dirroot .'/lang/en_utf8/help/forum/ratings.html')) {
+        $file = file($CFG->dirroot .'/lang/en_utf8/help/forum/ratings.html');
     } else {
         $file = '';
     }
