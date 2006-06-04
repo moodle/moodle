@@ -2731,6 +2731,31 @@
             $log->info = "";
             $toinsert = true;
             break;
+        case "report log":
+            $log->url = "report/log/index.php?id=".$log->course;
+            $log->info = $log->course;
+            $toinsert = true;
+            break;
+        case "report live":
+            $log->url = "report/log/live.php?id=".$log->course;
+            $log->info = $log->course;
+            $toinsert = true;
+            break;
+        case "report outline":
+            $log->url = "report/outline/index.php?id=".$log->course;
+            $log->info = $log->course;
+            $toinsert = true;
+            break;
+        case "report participation":
+            $log->url = "report/participation/index.php?id=".$log->course;
+            $log->info = $log->course;
+            $toinsert = true;
+            break;
+        case "report stats":
+            $log->url = "report/stats/index.php?id=".$log->course;
+            $log->info = $log->course;
+            $toinsert = true;
+            break;
         default:
             echo "action (".$log->module."-".$log->action.") unknown. Not restored<br />";                 //Debug
             break;
