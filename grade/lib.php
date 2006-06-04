@@ -116,7 +116,6 @@ function grade_get_exceptions_user($course, $userid) {
     $temp = get_records_sql($sql);
     return $temp;
 }
-
 function grade_letters_set($course) {
     global $CFG;
     $sql = "SELECT * FROM {$CFG->prefix}grade_letter WHERE courseid=$course";
@@ -203,7 +202,6 @@ function grade_get_formatted_grades() {
                                             $grades_by_student["$student"]["$cur_category"]['stats']['allgrades'] = $grade;
                                         }
                                     }
-				    	$currentgrades = $grades_by_student["$student"]["$cur_category"]['stats']['allgrades'];
                                 }
 
 				            
