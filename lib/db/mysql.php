@@ -1963,6 +1963,15 @@ function main_upgrade($oldversion=0) {
         execute_sql("ALTER TABLE `{$CFG->prefix}stats_user_monthly` CHANGE `writes` statswrites int(10) unsigned  NOT NULL default 0", false);
   
     }
+
+    // Adding some missing log actions
+    if ($oldversion < 2006050504) {
+        execute_sql("INSERT INTO {$CFG->prefix}log_display (module, action, mtable, field) VALUES ('course', 'report log', 'course', 'fullname')");
+        execute_sql("INSERT INTO {$CFG->prefix}log_display (module, action, mtable, field) VALUES ('course', 'report live', 'course', 'fullname')");
+        execute_sql("INSERT INTO {$CFG->prefix}log_display (module, action, mtable, field) VALUES ('course', 'report outline', 'course', 'fullname')");
+        execute_sql("INSERT INTO {$CFG->prefix}log_display (module, action, mtable, field) VALUES ('course', 'report participation', 'course', 'fullname')");
+        execute_sql("INSERT INTO {$CFG->prefix}log_display (module, action, mtable, field) VALUES ('course', 'report stats', 'course', 'fullname')");
+    }
     
     return $result;
 }
