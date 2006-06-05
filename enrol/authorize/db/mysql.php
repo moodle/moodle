@@ -19,7 +19,7 @@ function enrol_authorize_upgrade($oldversion=0) {
     }
 
     if ($oldversion && $oldversion < 2005071602) {
-        notify("If you are using the authorize.net enrolment plugin for credit card 
+        notify("If you are using the authorize.net enrolment plugin for credit card
                 handling, please ensure that you have turned loginhttps ON in Admin >> Variables >> Security.");
     }
 
@@ -104,9 +104,17 @@ function enrol_authorize_upgrade($oldversion=0) {
         table_column('enrol_authorize', 'transid', 'transid', 'integer', '10', 'unsigned', '0', 'not null');
     }
 
+    if ($oldversion < 2006021501) { // delete an_nextmail record from config_plugins table
+        delete_records('config_plugins', 'name', 'an_nextmail');
+    }
+
     if ($oldversion < 2006050400) { // Create transid indexes for backup & restore speed.
         execute_sql("ALTER TABLE `{$CFG->prefix}enrol_authorize` ADD INDEX transid(transid)", false);
         execute_sql("ALTER TABLE `{$CFG->prefix}enrol_authorize_refunds` ADD INDEX transid(transid)", false);
+    }
+
+    if ($oldversion < 2006060500) { // delete an_nextmail record from config_plugins table
+        delete_records('config_plugins', 'name', 'an_nextmail'); // run twice.
     }
 
     return $result;

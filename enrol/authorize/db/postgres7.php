@@ -115,9 +115,17 @@ function enrol_authorize_upgrade($oldversion=0) {
         table_column('enrol_authorize', 'transid', 'transid', 'integer', '10', 'unsigned', '0', 'not null');
     }
 
+    if ($oldversion < 2006021501) { // delete an_nextmail record from config_plugins table
+        delete_records('config_plugins', 'name', 'an_nextmail');
+    }
+
     if ($oldversion < 2006050400) { // Create transid indexes for backup & restore speed.
         execute_sql("CREATE INDEX {$CFG->prefix}enrol_authorize_transid_idx ON {$CFG->prefix}enrol_authorize(transid);", false);
         execute_sql("CREATE INDEX {$CFG->prefix}enrol_authorize_refunds_transid_idx ON {$CFG->prefix}enrol_authorize_refunds(transid);", false);
+    }
+
+    if ($oldversion < 2006060500) { // delete an_nextmail record from config_plugins table
+        delete_records('config_plugins', 'name', 'an_nextmail'); // run twice.
     }
 
     return $result;

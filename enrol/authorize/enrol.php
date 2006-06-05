@@ -631,40 +631,35 @@ class enrolment_plugin_authorize
 
         $oneday = 86400;
         $timenow = time();
-        $random100 = mt_rand(0, 100);
         $timenowsettle = getsettletime($timenow);
         $timediff30 = $timenowsettle - (30 * $oneday);
         $mconfig = get_config('enrol/authorize');
         set_config('an_lastcron', $timenow, 'enrol/authorize');
 
-        if ($random100 < 33) {
-            $select = "(status = '" .AN_STATUS_NONE. "') AND (timecreated < '$timediff30')";
+        if (intval($mconfig->an_dailysettlement) <= $timenowsettle) {
+            set_config('an_dailysettlement', $timenowsettle + $oneday, 'enrol/authorize');
+            // Some clean-up and update
+            $select = "(status='".AN_STATUS_NONE."') AND (timecreated<'$timediff30')";
             delete_records_select('enrol_authorize', $select);
-        }
-        elseif ($random100 > 66) {
-            $select = "(status = '" .AN_STATUS_AUTH. "') AND (timecreated < '$timediff30')";
-            execute_sql("UPDATE {$CFG->prefix}enrol_authorize SET status = '" .AN_STATUS_EXPIRE. "' WHERE $select", false);
-        }
-        else {
+            $select = "(status='".AN_STATUS_AUTH."') AND (timecreated<'$timediff30')";
+            execute_sql("UPDATE {$CFG->prefix}enrol_authorize SET status='".AN_STATUS_EXPIRE."' WHERE $select", false);
             $timediff60 = $timenowsettle - (60 * $oneday);
-            $select = "(status = '" .AN_STATUS_EXPIRE. "') AND (timecreated < '$timediff60')";
+            $select = "(status='".AN_STATUS_EXPIRE."') AND (timecreated<'$timediff60')";
             delete_records_select('enrol_authorize', $select);
-        }
-
-        if (!empty($CFG->an_emailexpired) && intval($mconfig->an_nextmail) < $timenowsettle) {
-            set_config('an_nextmail', $timenowsettle + $oneday + 1, 'enrol/authorize');
-            $timediffem = $timenowsettle - ((30 - intval($CFG->an_emailexpired)) * $oneday);
-            $select = "(status = '" . AN_STATUS_AUTH . "') AND " .
-            "(timecreated < '$timediffem') AND (timecreated > '$timediff30')";
-            if ($count = count_records_select('enrol_authorize', $select)) {
-                $a = new stdClass;
-                $a->pending = $count;
-                $a->days = $CFG->an_emailexpired;
-                $a->enrolurl = "$CFG->wwwroot/$CFG->admin/users.php";
-                $a->url = $CFG->wwwroot."/enrol/authorize/index.php?status=".AN_STATUS_AUTH;
-                $message = get_string('pendingordersemail', 'enrol_authorize', $a);
-                $adminuser = get_admin();
-                email_to_user($adminuser, $adminuser, "WARNING: PENDING PAYMENTS", $a);
+            // Daily warning email for expiring pending orders.
+            if (!empty($CFG->an_emailexpired)) {
+                $timediffem = $timenowsettle - ((30 - intval($CFG->an_emailexpired)) * $oneday);
+                $select = "(status='". AN_STATUS_AUTH ."') AND (timecreated<'$timediffem') AND (timecreated>'$timediff30')";
+                if ($count = count_records_select('enrol_authorize', $select)) {
+                    $a = new stdClass;
+                    $a->pending = $count;
+                    $a->days = $CFG->an_emailexpired;
+                    $a->enrolurl = "$CFG->wwwroot/$CFG->admin/users.php";
+                    $a->url = $CFG->wwwroot."/enrol/authorize/index.php?status=".AN_STATUS_AUTH;
+                    $message = get_string('pendingordersemail', 'enrol_authorize', $a);
+                    $adminuser = get_admin();
+                    email_to_user($adminuser, $adminuser, "WARNING: PENDING PAYMENTS", $a);
+                }
             }
         }
 
