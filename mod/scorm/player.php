@@ -340,7 +340,8 @@
             if (strpos('MSIE',$_SERVER['HTTP_USER_AGENT']) === false) { 
                 /// Internet Explorer does not has full support to objects
 ?>
-                <iframe id="main"
+                <iframe id="main" 
+                        class="scoframe"
                         width="<?php echo $scorm->width<=100 ? $scorm->width.'%' : $scorm->width ?>" 
                         height="<?php echo $scorm->height<=100 ? $scorm->height.'%' : $scorm->height ?>" 
                         src="loadSCO.php?id=<?php echo $cm->id.$scoidstr.$modestr ?>">
@@ -390,6 +391,7 @@
                 /// Internet Explorer does not has full support to objects
 ?>
                     <iframe id="main"
+                            class="scoframe"
                             width="<?php echo $scorm->width<=100 ? $scorm->width.'%' : $scorm->width ?>" 
                             height="<?php echo $scorm->height<=100 ? $scorm->height.'%' : $scorm->height ?>" 
                             src="loadSCO.php?id=<?php echo $cm->id.$scoidstr.$modestr ?>">
