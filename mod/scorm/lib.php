@@ -203,25 +203,25 @@ function scorm_user_outline($course, $user, $mod, $scorm) {
             }
         }
         switch ($scorm->grademethod) {
-            case VALUEHIGHEST:
+            case GRADEHIGHEST:
 		if ($scores->values > 0) {
                     $return->info = get_string('score','scorm').':&nbsp;'.$scores->max;
                     $return->time = $scores->lastmodify;
                 }
             break;
-            case VALUEAVERAGE:
+            case GRADEAVERAGE:
                 if ($scores->values > 0) {
                     $return->info = get_string('score','scorm').':&nbsp;'.$scores->sum/$scores->values;
                     $return->time = $scores->lastmodify;
                 }
             break;
-            case VALUESUM:
+            case GRADESUM:
                 if ($scores->values > 0) {
                     $return->info = get_string('score','scorm').':&nbsp;'.$scores->sum;
                     $return->time = $scores->lastmodify;
                 }
             break;
-            case VALUESCOES:
+            case GRADESCOES:
                 $return->info = '';
                 $scores->notattempted = $scores->count;
                 if (isset($scores->completed)) {
