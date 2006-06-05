@@ -557,7 +557,7 @@ class assignment_base {
                     print_heading(get_string('changessaved'));
                     print $this->update_main_listing($submission);
                 }
-                //close_window();
+                close_window();
                 break;
 
             case 'single':                        // We are in a popup window displaying submission
