@@ -19,7 +19,7 @@ function enrol_authorize_upgrade($oldversion=0) {
     }
 
     if ($oldversion && $oldversion < 2005071602) {
-        notify("If you are using the authorize.net enrolment plugin for credit card 
+        notify("If you are using the authorize.net enrolment plugin for credit card
                 handling, please ensure that you have turned loginhttps ON in Admin >> Variables >> Security.");
     }
 
@@ -102,6 +102,10 @@ function enrol_authorize_upgrade($oldversion=0) {
 
     if ($oldversion < 2006021500) { // transid is int
         table_column('enrol_authorize', 'transid', 'transid', 'integer', '10', 'unsigned', '0', 'not null');
+    }
+
+    if ($oldversion < 2006021501) { // delete an_nextmail record from config_plugins table
+        delete_records('config_plugins', 'name', 'an_nextmail');
     }
 
     return $result;

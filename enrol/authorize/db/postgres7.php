@@ -115,6 +115,10 @@ function enrol_authorize_upgrade($oldversion=0) {
         table_column('enrol_authorize', 'transid', 'transid', 'integer', '10', 'unsigned', '0', 'not null');
     }
 
+    if ($oldversion < 2006021501) { // delete an_nextmail record from config_plugins table
+        delete_records('config_plugins', 'name', 'an_nextmail');
+    }
+
     return $result;
 }
 
