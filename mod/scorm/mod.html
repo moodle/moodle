@@ -24,8 +24,8 @@
     if (empty($form->grademethod)) {
         $form->grademethod = "0";
     }
-    if (empty($form->browsemode)) {
-        $form->browsemode = "1";
+    if (empty($form->hidebrowse)) {
+        $form->hidebrowse = "0";
     }
     if (empty($form->width)) {
         $form->width = $CFG->scorm_framewidth;
@@ -190,8 +190,8 @@
                 $options = array();
                 $options[0]=get_string("no");
                 $options[1]=get_string("yes");
-                choose_from_menu ($options, "browsemode", $form->browsemode, '');
-                helpbutton("browsemode", get_string("browsemode", "scorm"), "scorm", true);
+                choose_from_menu ($options, "hidebrowse", $form->hidebrowse, '');
+                helpbutton("hidebrowse", get_string("hidebrowse", "scorm"), "scorm", true);
             ?>
             </td>
         </tr>
