@@ -62,9 +62,21 @@ if(isteacher($course->id,$USER->id)||isteacheredit($course->id,$USER->id)){
     print_simple_box_start('center');
     echo '<a target="LAMS Monitor" title="LAMS Monitor" href="'.$url.'">'.get_string("openmonitor", "lams").'</a>';
     print_simple_box_end();
-}
-
-if(isstudent($course->id,$USER->id)){
+    
+    $plaintext = trim($datetime).trim($USER->username).trim($LAMSCONSTANTS->learner_method).trim($CFG->lams_serverid).trim($CFG->lams_serverkey);
+    $hash = sha1(strtolower($plaintext));
+    $url = $CFG->lams_serverurl.$LAMSCONSTANTS->login_request.
+        '?'.$LAMSCONSTANTS->param_uid.'='.$USER->username.
+        '&'.$LAMSCONSTANTS->param_method.'='.$LAMSCONSTANTS->learner_method.
+        '&'.$LAMSCONSTANTS->param_timestamp.'='.urlencode($datetime).
+        '&'.$LAMSCONSTANTS->param_serverid.'='.$CFG->lams_serverid.
+        '&'.$LAMSCONSTANTS->param_hash.'='.$hash.
+        '&'.$LAMSCONSTANTS->param_lsid.'='.$lams->learning_session_id.
+        '&'.$LAMSCONSTANTS->param_courseid.'='.$lams->course;
+    print_simple_box_start('center');
+    echo '<a target="LAMS Learner" title="LAMS Learner" href="'.$url.'">'.get_string("openlearner", "lams").'</a>';
+    print_simple_box_end();
+}else if(isstudent($course->id,$USER->id)){
     $datetime =    date("F d,Y g:i a");
     $plaintext = trim($datetime).trim($USER->username).trim($LAMSCONSTANTS->learner_method).trim($CFG->lams_serverid).trim($CFG->lams_serverkey);
     $hash = sha1(strtolower($plaintext));
