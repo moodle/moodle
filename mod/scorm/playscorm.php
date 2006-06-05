@@ -101,11 +101,11 @@
 <?php
     $sco = scorm_display_structure($scorm,'structurelist',$currentorg,$scoid,$mode,true);
     if ($mode == 'normal') {
-    if ($trackdata = scorm_get_tracks($USER->id,$sco->id)) {
-        if (($trackdata->status == 'completed') || ($trackdata->status == 'passed') || ($trackdata->status == 'failed')) {
-        $mode = 'review';
+        if ($trackdata = scorm_get_tracks($sco->id, $USER->id)) {
+            if (($trackdata->status == 'completed') || ($trackdata->status == 'passed') || ($trackdata->status == 'failed')) {
+                $mode = 'review';
+            }
         }
-    }
     }
     add_to_log($course->id, 'scorm', 'view', "playscorm.php?id=$cm->id&scoid=$sco->id", "$scorm->id");
     $scoidstring = '&scoid='.$sco->id;
