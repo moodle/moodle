@@ -176,7 +176,7 @@ class quiz_report extends quiz_default_report {
         /// Sending HTTP headers
             $workbook->send($filename);
         /// Creating the first worksheet
-            $sheettitle = get_string('reportresponses','quiz_responses');
+            $sheettitle = get_string('reportoverview','quiz');
             $myxls =& $workbook->add_worksheet($sheettitle);
             /// format types
             $format =& $workbook->add_format();
