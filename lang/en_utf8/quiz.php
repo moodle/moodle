@@ -110,6 +110,7 @@ $string['createfirst'] = 'You must create some short-answer questions first. ';
 $string['createmultiple'] = 'Add several random questions to quiz';
 $string['createnewquestion'] = 'Create new question';
 $string['custom'] = 'Custom format';
+$string['dataitemneed'] = 'You need to add at least one set of data items to get a valid question';
 $string['datasetdefinitions'] = 'Reusable dataset definitions for category $a';
 $string['datasetnumber'] = 'Number';
 $string['daysavailable'] = 'Days available';

@@ -17,6 +17,7 @@
     $streditdatasets = get_string("editdatasets", "quiz");
     $strreuseifpossible = get_string('reuseifpossible', 'quiz');
     $strforceregeneration = get_string('forceregeneration', 'quiz');
+    $strdataitemneed = get_string('dataitemneed', 'quiz');
 
     if (empty($question->id)) {
         $datasetdefs = $this->get_dataset_definitions(
@@ -270,14 +271,17 @@
             <input type=\"hidden\" name=\"wizardpage\" value=\"datasetitems\"/>";
         print_table($table);
         echo '</form>';
+
+        echo "<center><br /><br /><form method=\"post\" action=\"question.php\">
+              <input type=\"hidden\" name=\"id\" value=\"$question->id\"/>
+              <input type=\"hidden\" name=\"category\" value=\"$question->category\"/>
+              <input type=\"hidden\" name=\"qtype\" value=\"$question->qtype\"/>
+              <input type=\"hidden\" name=\"sesskey\" value=\"".sesskey()."\"/>
+              <input type=\"hidden\" name=\"wizardpage\" value=\"datasetitems\"/>
+              <input type=\"submit\" name=\"backtoquiz\" value=\"$strbacktoquiz\">
+              </form></center>\n";
+    } else {
+          notify( $strdataitemneed );
     }
 
-    echo "<center><br /><br /><form method=\"post\" action=\"question.php\">
-          <input type=\"hidden\" name=\"id\" value=\"$question->id\"/>
-          <input type=\"hidden\" name=\"category\" value=\"$question->category\"/>
-          <input type=\"hidden\" name=\"qtype\" value=\"$question->qtype\"/>
-          <input type=\"hidden\" name=\"sesskey\" value=\"".sesskey()."\"/>
-          <input type=\"hidden\" name=\"wizardpage\" value=\"datasetitems\"/>
-          <input type=\"submit\" name=\"backtoquiz\" value=\"$strbacktoquiz\">
-          </form></center>\n";
 ?>
