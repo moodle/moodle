@@ -192,6 +192,7 @@ $string['order3'] = 'Third';
 $string['pathdvips'] = 'Path of <i>dvips</i> binary';
 $string['pathconvert'] = 'Path of <i>convert</i> binary';
 $string['pathlatex'] = 'Path of <i>latex</i> binary';
+$string['php50restricted'] = 'PHP 5.0.x has a number of known problems, please upgrade to 5.1.x or downgrade to 4.3.x or 4.4.x';
 $string['pleaseregister'] = 'Please register your site to remove this button';
 $string['remotelangnotavailable'] = 'Because Moodle can not connect to download.moodle.org, we are unable to do language pack installation automatically. Please download the appropriate zip file(s) from the list below, copy them to your $a directory and unzip them manually.';
 $string['sitelangchanged'] = 'Site language setting changed successfully';
