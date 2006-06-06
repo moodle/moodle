@@ -323,6 +323,13 @@
 
             // Process these responses ...
             question_process_responses($questions[$i], $states[$i], $action, $quiz, $attempt);
+
+            // Fix for Bug #5506: When each attempt is built on the last one,
+            // preserve the options from any previous attempt. 
+            if ( isset($laststate->options) ) {
+                $states[$i]->options = $laststate->options;
+            }
+
             // ... and save the new states
             save_question_session($questions[$i], $states[$i]);
         }
