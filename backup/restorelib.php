@@ -961,7 +961,7 @@
         //Process info about metacourse
         if ($status and $info) {
             //Process child records
-            if ($info->childs) {
+            if (!empty($info->childs)) {
                 foreach ($info->childs as $child) {
                     $dbcourse = false;
                     $dbmetacourse = false;
@@ -993,7 +993,7 @@
                 sync_metacourse($restore->course_id);
             }
             //Process parent records
-            if ($info->parents) {
+            if (!empty($info->parents)) {
                 foreach ($info->parents as $parent) {
                     $dbcourse = false;
                     $dbmetacourse = false;
