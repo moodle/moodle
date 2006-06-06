@@ -1076,7 +1076,7 @@
                 fwrite ($bf,full_tag("LASTACCESS",4,false,$user_data->lastaccess));
                 fwrite ($bf,full_tag("LASTLOGIN",4,false,$user_data->lastlogin));
                 fwrite ($bf,full_tag("CURRENTLOGIN",4,false,$user_data->currentlogin));
-                fwrite ($bf,full_tag("LASTIP",4,false,$user_data->lastIP));
+                fwrite ($bf,full_tag("LASTIP",4,false,$user_data->lastip));
                 fwrite ($bf,full_tag("SECRET",4,false,$user_data->secret));
                 fwrite ($bf,full_tag("PICTURE",4,false,$user_data->picture));
                 fwrite ($bf,full_tag("URL",4,false,$user_data->url));
