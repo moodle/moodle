@@ -79,8 +79,11 @@
         case 'add':    ///add a new field
             if (confirm_sesskey() and $fieldinput = data_submitted($CFG->wwwroot.'/mod/data/field.php')){
 
+                $fieldinput->name = clean_param($fieldinput->name, PARAM_NOTAGS);
+                $fieldinput->name = trim($fieldinput->name);
+                
             /// Only store this new field if it doesn't already exist.
-                if (data_fieldname_exists($fieldinput->name, $data->id)) {
+                if (($fieldinput->name == '') or data_fieldname_exists($fieldinput->name, $data->id)) {
 
                     $displaynoticebad = get_string('invalidfieldname','data');
 
@@ -111,9 +114,11 @@
         case 'update':    ///update a field
             if (confirm_sesskey() and $fieldinput = data_submitted($CFG->wwwroot.'/mod/data/field.php')){
 
-                $fieldinput->name = optional_param('name','',PARAM_NOTAGS);
+                $fieldinput->name = clean_param($fieldinput->name, PARAM_NOTAGS);
+                $fieldinput->name = trim($fieldinput->name);
 
-                if (data_fieldname_exists($fieldinput->name, $data->id, $fid)) {
+                if (($fieldinput->name == '') or data_fieldname_exists($fieldinput->name, $data->id, $fieldinput->fid)) {
+                    
                     $displaynoticebad = get_string('invalidfieldname','data');
 
                 } else {
