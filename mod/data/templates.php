@@ -77,7 +77,7 @@
     // For the javascript for inserting template tags: initialise the default textarea to
     // 'edit_template' - it is always present in all different possible views.
     $bodytag = 'onload="';
-    $bodytag .= 'if (typeof(currEditor) != \'undefined\') { currEditor = edit_template; } ';
+    $bodytag .= 'if (typeof(edit_template) != \'undefined\') { currEditor = edit_template; } ';
     $bodytag .= 'currTextarea = document.tempform.template;';
     $bodytag .= '" ';
     
