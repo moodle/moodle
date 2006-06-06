@@ -86,9 +86,13 @@ function check_moodle_environment($version, &$environment_results, $print_table=
     /// or some error_code
         if ($status) {
             foreach ($environment_results as $environment_result) {
-                if ((!$environment_result->getStatus() &&
-                    $environment_result->getLevel() == 'required') && !$environment_result->getBypassStr() || 
-                    $environment_result->getErrorCode()) {
+                if (!$environment_result->getStatus() && $environment_result->getLevel() == 'required'
+                  && !$environment_result->getBypassStr()) {
+                    $result = false; // required item that is not bypased
+                } else if ($environment_result->getStatus() && $environment_result->getLevel() == 'required'
+                  && $environment_result->getRestrictStr()) {
+                    $result = false; // required item that is restricted
+                } else if ($environment_result->getErrorCode()) {
                     $result = false;
                 }
             }
@@ -123,6 +127,7 @@ function print_moodle_environment($result, $environment_results) {
     $strerror = get_string('error');
     $strcheck = get_string('check');
     $strbypassed = get_string('bypassed');
+    $strrestricted = get_string('restricted');
     $strenvironmenterrortodo = get_string('environmenterrortodo', 'admin');
 
 /// Here we'll store all the feedback found
@@ -134,12 +139,13 @@ function print_moodle_environment($result, $environment_results) {
     $table->wrap  = array ('nowrap', '', '', 'nowrap');
     $table->size  = array ('10', 10, '100%', '10');
     $table->width = '90%';
-    $table->class = 'environmenttable';
+    $table->class = 'environmenttable generaltable';
 
 /// Iterate over each environment_result
     $continue = true;
     foreach ($environment_results as $environment_result) {
-        $errorline = false;
+        $errorline   = false;
+        $warningline = false;
         if ($continue) {
             $type = $environment_result->getPart();
             $info = $environment_result->getInfo();
@@ -174,29 +180,36 @@ function print_moodle_environment($result, $environment_results) {
                     }
                 }
             /// Calculate the status value
-                if ($environment_result->getBypassStr() == '') {
-                    if (!$status and $environment_result->getLevel() == 'required') {
-                        $status = $strerror;
-                        $errorline = true;
-                    } else if (!$status && $environment_result->getLevel() == 'optional') {
-                        $status = $strcheck;
-                    } else {
-                        $status = $strok;
-                    }
-                } else {
+                if ($environment_result->getBypassStr() != '') {            //Handle bypassed result (warning)
                     $status = $strbypassed;
+                    $warningline = true;
+                } else if ($environment_result->getRestrictStr() != '') {   //Handle restricted result (error)
+                    $status = $strrestricted;
                     $errorline = true;
+                } else {
+                    if ($status) {                                          //Handle ok result (ok)
+                        $status = $strok;
+                    } else {
+                        if ($environment_result->getLevel() == 'optional') {//Handle check result (warning)
+                            $status = $strcheck;
+                            $warningline = true;
+                        } else {                                            //Handle error result (error)
+                            $status = $strcheck;                       
+                            $errorline = true;
+                        }
+                    }
                 }
             }
     
         /// Build the text
             $report = get_string($stringtouse, 'admin', $rec);
-        /// Format error line
-            if ($errorline) {
-                $type = '<span class="error">'.$type.'</span>';
-                $info = '<span class="error">'.$info.'</span>';
-                $report = '<span class="error">'.$report.'</span>';
-                $status = '<span class="error">'.$status.'</span>';
+        /// Format error or warning line
+            if ($errorline || $warningline) {
+                $styletoapply = $errorline? 'error':'warn';
+                $type = '<span class="'.$styletoapply.'">'.$type.'</span>';
+                $info = '<span class="'.$styletoapply.'">'.$info.'</span>';
+                $report = '<span class="'.$styletoapply.'">'.$report.'</span>';
+                $status = '<span class="'.$styletoapply.'">'.$status.'</span>';
             }
         /// Add the row to the table
             $table->data[] = array ($type, $info, $report, $status);
@@ -207,6 +220,10 @@ function print_moodle_environment($result, $environment_results) {
         ///Process the bypass if necessary
             if ($bypassstr = $environment_result->getBypassStr()) {
                 $feedbacktext .= '<li class="environmenttable">'.get_string($bypassstr, 'admin').'</li>';
+            }
+        ///Process the restrict if necessary
+            if ($restrictstr = $environment_result->getRestrictStr()) {
+                $feedbacktext .= '<li class="environmenttable">'.get_string($restrictstr, 'admin').'</li>';
             }
         }
     }
@@ -444,6 +461,8 @@ function environment_check_php_extensions($version) {
         process_environment_messages($extension, $result);
     /// Process bypass, modifying $result if needed.
         process_environment_bypass($extension, $result);
+    /// Process restrict, modifying $result if needed.
+        process_environment_restrict($extension, $result);
 
     /// Add the result to the array of results
         $results[] = $result;
@@ -510,6 +529,8 @@ function environment_check_php($version) {
     process_environment_messages($data['#']['PHP'][0], $result);
 /// Process bypass, modifying $result if needed.
     process_environment_bypass($data['#']['PHP'][0], $result);
+/// Process restrict, modifying $result if needed.
+    process_environment_restrict($data['#']['PHP'][0], $result);
 
     return $result;
 }
@@ -585,6 +606,9 @@ function environment_check_database($version) {
     if ($current_vendor == 'postgres7') {  //Normalize a bit postgresql
         $current_vendor ='postgres';
     }
+    if ($current_vendor == 'oci8po') {  //Normalize a bit oracle
+        $current_vendor ='oracle';
+    }
     $dbinfo = $db->ServerInfo();
     $current_version = normalize_version($dbinfo['version']);
     $needed_version = $vendors[$current_vendor];
@@ -611,6 +635,8 @@ function environment_check_database($version) {
     process_environment_messages($vendorsxml[$current_vendor], $result);
 /// Process bypass, modifying $result if needed.
     process_environment_bypass($vendorsxml[$current_vendor], $result);
+/// Process restrict, modifying $result if needed.
+    process_environment_restrict($vendorsxml[$current_vendor], $result);
 
     return $result;
 
@@ -626,7 +652,7 @@ function environment_check_database($version) {
  * although it should be only under exceptional conditions.
  *
  * @param string xmldata containing the bypass data
- * @param object reult object to be updated
+ * @param object result object to be updated
  */
 function process_environment_bypass($xml, &$result) {
 
@@ -646,6 +672,41 @@ function process_environment_bypass($xml, &$result) {
             /// We only set the bypass message if the function itself hasn't defined it before
                 if (empty($result->getBypassStr)) {
                     $result->setBypassStr($message);
+                }
+            }
+        }
+    }
+}
+
+/**
+ * This function will post-process the result record by executing the specified
+ * function, modifying it as necessary, also a custom message will be added
+ * to the result object to be printed by the display layer.
+ * Every restrict function must be defined in this file and it'll return
+ * true/false to decide if the original test is restricted or no. Also
+ * such restrict functions are able to directly handling the result object
+ * although it should be only under exceptional conditions.
+ *
+ * @param string xmldata containing the restrict data
+ * @param object result object to be updated
+ */
+function process_environment_restrict($xml, &$result) {
+
+/// Only try to restrict if we were not in error and it was required
+    if (!$result->getStatus() || $result->getLevel() == 'optional') {
+        return;
+    }
+/// It there is restrict info (function and message)
+    if (is_array($xml['#']) && isset($xml['#']['RESTRICT'][0]['@']['function']) && isset($xml['#']['RESTRICT'][0]['@']['message'])) {
+        $function = $xml['#']['RESTRICT'][0]['@']['function'];
+        $message  = $xml['#']['RESTRICT'][0]['@']['message'];
+    /// Look for the function
+        if (function_exists($function)) {
+        /// Call it, and if restrict = true is returned, apply meesage
+            if ($function($result)) {
+            /// We only set the restrict message if the function itself hasn't defined it before
+                if (empty($result->getRestrictStr)) {
+                    $result->setRestrictStr($message);
                 }
             }
         }
@@ -699,6 +760,7 @@ class environment_results {
     var $info;            //Aux. info (DB vendor, library...)
     var $feedback_str;    //String to show on error|on check|on ok
     var $bypass_str;      //String to show if some bypass has happened
+    var $restrict_str;    //String to show if some restrict has happened
 
     /**
      * Constructor of the environment_result class. Just set default values
@@ -713,6 +775,7 @@ class environment_results {
         $this->info='';
         $this->feedback_str='';
         $this->bypass_str='';
+        $this->restrict_str='';
     }
 
     /**
@@ -780,6 +843,14 @@ class environment_results {
      */
     function setBypassStr($str) {
         $this->bypass_str=$str;
+    }
+
+    /**
+     * Set the restrict string
+     * @param string the restrict string
+     */
+    function setRestrictStr($str) {
+        $this->restrict_str=$str;
     }
 
     /**
@@ -853,6 +924,14 @@ class environment_results {
     function getBypassStr() {
         return $this->bypass_str;
     }
+
+    /**
+     * Get the restrict string
+     * @return string restrict string
+     */
+    function getRestrictStr() {
+        return $this->restrict_str;
+    }
 }
 
 /// Here all the bypass functions are coded to be used by the environment
@@ -864,7 +943,7 @@ class environment_results {
  *   - We are using MySQL > 4.1.12, informing about problems with non latin chars in the future
  *
  * @param object result object to handle
- * @return boolean true/false to the terminate if the bypass has to be performed (true) or no (false)
+ * @return boolean true/false to determinate if the bypass has to be performed (true) or no (false)
  */
 function bypass_mysql416_reqs ($result) {
 /// See if we are running MySQL >= 4.1.12
@@ -875,4 +954,22 @@ function bypass_mysql416_reqs ($result) {
     return false;
 }
 
+/// Here all the restrict functions are coded to be used by the environment
+/// checker. All those functions will receive the result object and will
+/// return it modified as needed (status and bypass string)
+
+/** 
+ * This function will restrict PHP reqs if:
+ *   - We are using PHP 5.0.x, informing about the buggy version
+ *
+ * @param object result object to handle
+ * @return boolean true/false to determinate if the restrict has to be performed (true) or no (false)
+ */
+function restrict_php50_version($result) {
+    if (version_compare($result->getCurrentVersion(), '5.0.0', '>=')
+      and version_compare($result->getCurrentVersion(), '5.0.99', '<')) {
+        return true;
+    }
+    return false;
+}
 ?>
