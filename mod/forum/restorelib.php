@@ -165,7 +165,11 @@
         $status = true;
 
         //Get the discussions array
-        $subscriptions = $info['MOD']['#']['SUBSCRIPTIONS']['0']['#']['SUBSCRIPTION'];
+        if (!empty($info['MOD']['#']['SUBSCRIPTIONS'])) {
+            $subscriptions = $info['MOD']['#']['SUBSCRIPTIONS']['0']['#']['SUBSCRIPTION'];
+        } else {
+            $subscriptions = array();
+        }
 
         //Iterate over subscriptions
         for($i = 0; $i < sizeof($subscriptions); $i++) {
@@ -222,7 +226,11 @@
         $status = true;
 
         //Get the discussions array
-        $discussions = $info['MOD']['#']['DISCUSSIONS']['0']['#']['DISCUSSION'];
+        if (!empty($info['MOD']['#']['DISCUSSIONS'])) {
+            $discussions = $info['MOD']['#']['DISCUSSIONS']['0']['#']['DISCUSSION'];
+        } else {
+            $discussions = array();
+        }
 
         //Iterate over discussions
         for($i = 0; $i < sizeof($discussions); $i++) {
@@ -323,7 +331,11 @@
         $status = true;
 
         //Get the read array
-        $readposts = $info['MOD']['#']['READPOSTS']['0']['#']['READ'];
+        if (!empty($info['MOD']['#']['READPOSTS'])) {
+            $readposts = $info['MOD']['#']['READPOSTS']['0']['#']['READ'];
+        } else {
+            $readposts = array();
+        }
 
         //Iterate over readposts
         for($i = 0; $i < sizeof($readposts); $i++) {
