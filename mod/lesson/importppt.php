@@ -430,12 +430,12 @@ function lesson_create_objects($pageobjects, $lessonid) {
     $answer->answer = "Next";
     $answer->response = "";
 
-    $answers[] = $answer;
+    $answers[] = clone($answer);
 
     $answer->jumpto = LESSON_PREVIOUSPAGE;
     $answer->answer = "Previous";
     
-    $answers[] = $answer;
+    $answers[] = clone($answer);
     
     $branchtable->answers = $answers;
     
@@ -445,8 +445,8 @@ function lesson_create_objects($pageobjects, $lessonid) {
         $temp = prep_page($pageobject, $i);  // makes our title and contents
         $page->title = $temp->title;
         $page->contents = $temp->contents;
-        $branchtable->page = $page;  // add the page
-        $branchtables[] = $branchtable;  // add it all to our array
+        $branchtable->page = clone($page);  // add the page
+        $branchtables[] = clone($branchtable);  // add it all to our array
         $i++;
     }
 
