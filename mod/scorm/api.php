@@ -41,8 +41,8 @@
         $userdata->status = '';
         $userdata->score_raw = '';
     }
-    $userdata->student_id = $USER->username;
-    $userdata->student_name = $USER->lastname .', '. $USER->firstname;
+    $userdata->student_id = addslashes($USER->username);
+    $userdata->student_name = addslashes($USER->lastname .', '. $USER->firstname);
     $userdata->mode = 'normal';
     if (isset($mode)) {
         $userdata->mode = $mode;
