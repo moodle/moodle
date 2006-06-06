@@ -20,12 +20,6 @@
         error("Could not find a site!");
     }
 
-/// Check if the course is a meta course
-    if ($course->metacourse) {
-        print_header_simple();
-        notice(get_string('coursenotaccessible'), $CFG->wwwroot);
-    }
-
     check_for_restricted_user($USER->username);
 
 /// Refreshing enrolment data in the USER session
@@ -48,6 +42,7 @@
 
 /// Double check just in case they are actually enrolled already 
 /// This might occur if they were enrolled during this session
+/// also happens when course is unhidden after student logs in
 
     if ( !empty($USER->student[$course->id]) or !empty($USER->teacher[$course->id]) ) {
 
@@ -59,6 +54,13 @@
         }
 
         redirect($destination);
+    }
+
+/// Check if the course is a meta course
+/// moved here to fix bug 5734
+    if ($course->metacourse) {
+        print_header_simple();
+        notice(get_string('coursenotaccessible'), $CFG->wwwroot);
     }
     
 /// Users can't enroll to site course
