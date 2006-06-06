@@ -20,11 +20,11 @@ function SCORMapi1_3() {
     CMIString250 = '^.{0,250}$';
     CMIString1000 = '^.{0,1000}$';
     CMIString4000 = '^.{0,4000}$';
-    CMITime = '^([0-2]{1}[0-9]{1}):([0-5]{1}[0-9]{1}):([0-5]{1}[0-9]{1})(\.[0-9]{1,2})?$';
-    CMITimespan = '^P(\d+Y)?(\d+M)?(\d+D)?(T(\d+H)?(\d+M)?(\d+(\.\d{1,2})?S)?)?$';
+    CMITime = '^(\\d{4})(-\\d{2})(-\\d{2})(T[0-2]{1}[0-9]{1}):([0-5]{1}[0-9]{1}):([0-5]{1}[0-9]{1})(\\.[0-9]{1,2})?(Z|(-?[0-1]{1}[0-9]{1})(:[0-5]{1}[0-9]{1})?)?$';
+    CMITimespan = '^P(\\d+Y)?(\\d+M)?(\\d+D)?(T(\\d+H)?(\\d+M)?(\\d+(\.\\d{1,2})?S)?)?$';
     CMIInteger = '^\\d+$';
     CMISInteger = '^-?([0-9]+)$';
-    CMIDecimal = '^-?([0-9]{0,3})(\.[0-9]{1,7})?$';
+    CMIDecimal = '^-?([0-9]{0,3})(\\.[0-9]{1,7})?$';
     CMIIdentifier = '^\\w{1,200}$';
     CMILongIdentifier = '^\\w{1,4000}$';
     CMIFeedback = CMIString200; // This must be redefined
@@ -34,10 +34,10 @@ function SCORMapi1_3() {
     CMISStatus = '^passed$|^failed$|^unknown$';
     CMIExit = '^time-out$|^suspend$|^logout$|^$';
     CMIType = '^true-false$|^choice$|^fill-in$|^matching$|^performance$|^sequencing$|^likert$|^numeric$';
-    CMIResult = '^correct$|^wrong$|^unanticipated$|^neutral$|^([0-9]{0,3})?(\.[0-9]{1,2})?$';
+    CMIResult = '^correct$|^wrong$|^unanticipated$|^neutral$|^([0-9]{0,3})?(\\.[0-9]{1,2})?$';
     NAVEvent = '^previous$|^continue$';
     // Children lists
-    cmi_children = 'comments_from_learner, comments_from_lms, completion_status, credit, entry, exit, interactions, launch_data, learner_id, learner_name, learner_preference, location, max_time_allowed, mode, objectives, progress_measure, scaled_passing_score, score, session_time, success_status, suspend_data, time_limit_action, total_time';
+    cmi_children = 'version, comments_from_learner, comments_from_lms, completion_status, credit, entry, exit, interactions, launch_data, learner_id, learner_name, learner_preference, location, max_time_allowed, mode, objectives, progress_measure, scaled_passing_score, score, session_time, success_status, suspend_data, time_limit_action, total_time';
     comments_children = 'comment, location, date_time';
     score_children = 'scaled, raw, min, max';
     objectives_children = 'id, score, success_status, completion_status, description';
@@ -53,7 +53,7 @@ function SCORMapi1_3() {
     // The SCORM 1.3 data model
     var datamodel =  {
         'cmi._children':{'defaultvalue':cmi_children, 'mod':'r'},
-        'cmi._version':{'defaultvalue':'1.0', 'mod':'r'},
+        'cmi.version':{'defaultvalue':'1.0', 'mod':'r'},
         'cmi.comments_from_learner._children':{'defaultvalue':comments_children, 'mod':'r'},
         'cmi.comments_from_learner._count':{'mod':'r', 'defaultvalue':'0'},
         'cmi.comments_from_learner.n.comment':{'format':CMIString4000, 'mod':'rw'},
@@ -85,7 +85,7 @@ function SCORMapi1_3() {
         'cmi.interactions.n.description':{'pattern':CMIIndex, 'format':CMIString250, 'mod':'rw'},
         'cmi.launch_data':{'defaultvalue':<?php echo isset($userdata->datafromlms)?'\''.$userdata->datafromlms.'\'':'null' ?>, 'mod':'r'},
         'cmi.learner_id':{'defaultvalue':'<?php echo $userdata->student_id ?>', 'mod':'r'},
-        'cmi.learner_name':{'defaultvalue':'<?php echo $userdata->student_name ?>', 'mod':'r'},
+        'cmi.learner_name':{'defaultvalue':'<?php echo addslashes($userdata->student_name) ?>', 'mod':'r'},
         'cmi.learner_preference._children':{'defaultvalue':student_preference_children, 'mod':'r'},
         'cmi.learner_preference.audio_level':{'defaultvalue':'0', 'format':CMIDecimal, 'range':audio_range, 'mod':'rw'},
         'cmi.learner_preference.language':{'defaultvalue':'', 'format':CMIString250, 'mod':'rw'},
@@ -185,6 +185,11 @@ function SCORMapi1_3() {
         errorCode = "0";
         if (param == "") {
             if ((!Initialized) && (!Terminated)) {
+                <?php 
+                    if (($CFG->debug > 7) && (isadmin())) {
+                        echo 'alert("Initialized SCORM 1.3");';
+                    }
+                ?>
                 Initialized = true;
                 errorCode = "0";
                 return "true";
@@ -205,6 +210,11 @@ function SCORMapi1_3() {
         errorCode = "0";
         if (param == "") {
             if ((Initialized) && (!Terminated)) {
+                <?php 
+                    if (($CFG->debug > 7) && (isadmin())) {
+                        echo 'alert("Terminated SCORM 1.3");';
+                    }
+                ?>
                 Initialized = false;
                 Terminated = true;
                 result = StoreData(cmi,true);
@@ -251,6 +261,11 @@ function SCORMapi1_3() {
                         }
                         if (subelement == element) {
                             errorCode = "0";
+                            <?php 
+                                if (($CFG->debug > 7) && (isadmin())) {
+                                    echo 'alert(element+": "+eval(element));';
+                                }
+                            ?>
                             return eval(element);
                         } else {
                             errorCode = "0"; // Need to check if it is the right errorCode
@@ -361,6 +376,11 @@ function SCORMapi1_3() {
                                         if ((ranges[1] == '*') || (value <= ranges[1])) {
                                             eval(element+'="'+value+'";');
                                             errorCode = "0";
+                                            <?php 
+                                                if (($CFG->debug > 7) && (isadmin())) {
+                                                    echo 'alert(element+":= "+value);';
+                                                }
+                                            ?>
                                             return "true";
                                         } else {
                                             errorCode = '407';
@@ -371,6 +391,11 @@ function SCORMapi1_3() {
                                 } else {
                                     eval(element+'="'+value+'";');
                                     errorCode = "0";
+                                    <?php 
+                                        if (($CFG->debug > 7) && (isadmin())) {
+                                            echo 'alert(element+":= "+value);';
+                                        }
+                                    ?>
                                     return "true";
                                 }
                             }
@@ -403,6 +428,11 @@ function SCORMapi1_3() {
         if (param == "") {
             if ((Initialized) && (!Terminated)) {
                 result = StoreData(cmi,false);
+                <?php 
+                    if (($CFG->debug > 7) && (isadmin())) {
+                        echo 'alert("Data Commited");';
+                    }
+                ?>
                 return "true";
             } else {
                 if (Terminated) {
@@ -562,6 +592,7 @@ function SCORMapi1_3() {
         } else {
             datastring = CollectData(data,'cmi');
         }
+        datastring += '&attempt=<?php echo $attempt ?>';
         datastring += '&scoid=<?php echo $sco->id ?>';
         //popupwin(datastring);
         var myRequest = NewHttpReq();
