@@ -189,8 +189,12 @@
         $status = true;
 
         //Get the quiz_question_versions array
-        $versions = $info['MOD']['#']['QUESTION_VERSIONS']['0']['#']['QUESTION_VERSION'];
-
+        if (!empty($info['MOD']['#']['QUESTION_VERSIONS'])) {
+            $versions = $info['MOD']['#']['QUESTION_VERSIONS']['0']['#']['QUESTION_VERSION'];
+        } else {
+            $versions = array();
+        }
+        
         //Iterate over question_versions
         for($i = 0; $i < sizeof($versions); $i++) {
             $ver_info = $versions[$i];
