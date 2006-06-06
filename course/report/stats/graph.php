@@ -40,6 +40,7 @@
      .' timeend >= '.$param->timeafter
      .$param->extras
      .' ORDER BY timeend DESC';
+    
     $stats = get_records_sql($sql);
 
     $stats = stats_fix_zeros($stats,$param->timeafter,$param->table,(!empty($param->line2)),(!empty($param->line3)));
