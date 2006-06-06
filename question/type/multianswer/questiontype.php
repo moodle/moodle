@@ -286,15 +286,15 @@ class embedded_cloze_qtype extends default_questiontype {
                     if (!isset($chosenanswer->fraction)
                             || $chosenanswer->fraction <= 0.0) {
                         // The response must have been totally wrong:
-                        $style = 'class="incorrecthighlight"';
+                        $style = 'class="incorrect"';
 
                     } else if ($chosenanswer->fraction >= 1.0) {
                         // The response was correct!!
-                        $style = 'class="correcthighlight"';
+                        $style = 'class="correct"';
 
                     } else {
                         // This response did at least give some credit:
-                        $style = 'class="partialcorrecthighlight"';
+                        $style = 'class="partialcorrect"';
                     }
                 } else {
                     $style = '';

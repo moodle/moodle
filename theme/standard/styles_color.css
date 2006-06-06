@@ -618,6 +618,15 @@ table.message_search_results td {
 .truefalse .feedback {
   border-color: #DDD;
 }	
+.que.multianswer .incorrect {
+    background-color: #faa;
+}
+.que.multianswer .partiallycorrect {
+    background-color: #ff9;
+}
+.que.multianswer .correct {
+    background-color: #afa;
+}
 
 /***
  *** Logs
