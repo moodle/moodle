@@ -114,7 +114,7 @@
             $question_cat->parent = backup_todb($info['QUESTION_CATEGORY']['#']['PARENT']['0']['#']);
             $question_cat->sortorder = backup_todb($info['QUESTION_CATEGORY']['#']['SORTORDER']['0']['#']);
 
-            if ($catfound = restore_get_best_question_category($question_cat, $restore->course)) {
+            if ($catfound = restore_get_best_question_category($question_cat, $restore->course_id)) {
                 $newid = $catfound;
             } else {
                 if (!$question_cat->stamp) {
@@ -165,7 +165,11 @@
         $restored_questions = array();
 
         //Get the questions array
-        $questions = $info['QUESTION_CATEGORY']['#']['QUESTIONS']['0']['#']['QUESTION'];
+        if (!empty($info['QUESTION_CATEGORY']['#']['QUESTIONS'])) {
+            $questions = $info['QUESTION_CATEGORY']['#']['QUESTIONS']['0']['#']['QUESTION'];
+        } else {
+            $questions = array();
+        }
 
         //Iterate over questions
         for($i = 0; $i < sizeof($questions); $i++) {
