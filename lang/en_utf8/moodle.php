@@ -1076,6 +1076,7 @@ $string['restorecancelled'] = 'Restore canceled';
 $string['restorecoursenow'] = 'Restore this course now!';
 $string['restorefinished'] = 'Restore completed successfully';
 $string['restoreto'] = 'Restore to';
+$string['restricted'] = 'Restricted';
 $string['restrictmodules'] = 'Restrict activity modules?';
 $string['returningtosite'] = 'Returning to this web site?';
 $string['revert'] = 'Revert';
