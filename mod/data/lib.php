@@ -1239,5 +1239,13 @@ function data_convert_arrays_to_strings(&$fieldinput) {
     }
 }
 
+function data_clean_field_name($fn) {
+    $fn = trim($fn);
+    //hack from clean_filename - to be replaced by something nicer later
+    $fn = preg_replace("/[\\000-\\x2c\\x2f\\x3a-\\x40\\x5b-\\x5e\\x60\\x7b-\\177]/s", '_', $fn);
+    $fn = preg_replace("/_+/", '_', $fn);
+    $fn = preg_replace("/\.\.+/", '.', $fn);
+    return $fn;
+}
 
 ?>
