@@ -44,7 +44,14 @@ function data_backup_mods($bf,$preferences) {
     // iterate
     if ($datas = get_records('data','course',$preferences->backup_course,"id")) {
         foreach ($datas as $data) {
-            if (backup_mod_selected($preferences,'data',$data->id)) {
+           if (function_exists('backup_mod_selected')) {
+                    // Moodle 1.6
+                    $backup_mod_selected = backup_mod_selected($preferences, 'data', $data->id);
+            } else {
+                    // Moodle 1.5
+                $backup_mod_selected = true;
+            }
+            if ($backup_mod_selected) {
                 $status = data_backup_one_mod($bf,$preferences,$data);
                 // backup files happens in backup_one_mod now too.
             }
