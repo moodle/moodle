@@ -20,11 +20,11 @@ function SCORMapi1_3() {
     CMIString250 = '^.{0,250}$';
     CMIString1000 = '^.{0,1000}$';
     CMIString4000 = '^.{0,4000}$';
-    CMITime = '^([0-2]{1}[0-9]{1}):([0-5]{1}[0-9]{1}):([0-5]{1}[0-9]{1})(\.[0-9]{1,2})?$';
-    CMITimespan = '^P(\d+Y)?(\d+M)?(\d+D)?(T(\d+H)?(\d+M)?(\d+(\.\d{1,2})?S)?)?$';
+    CMITime = '^(\\d{4})(-\\d{2})(-\\d{2})(T[0-2]{1}[0-9]{1}):([0-5]{1}[0-9]{1}):([0-5]{1}[0-9]{1})(\\.[0-9]{1,2})?(Z|(-?[0-1]{1}[0-9]{1})(:[0-5]{1}[0-9]{1})?)?$';
+    CMITimespan = '^P(\\d+Y)?(\\d+M)?(\\d+D)?(T(\\d+H)?(\\d+M)?(\\d+(\.\\d{1,2})?S)?)?$';
     CMIInteger = '^\\d+$';
     CMISInteger = '^-?([0-9]+)$';
-    CMIDecimal = '^-?([0-9]{0,3})(\.[0-9]{1,7})?$';
+    CMIDecimal = '^-?([0-9]{0,3})(\\.[0-9]{1,7})?$';
     CMIIdentifier = '^\\w{1,200}$';
     CMILongIdentifier = '^\\w{1,4000}$';
     CMIFeedback = CMIString200; // This must be redefined
@@ -34,7 +34,7 @@ function SCORMapi1_3() {
     CMISStatus = '^passed$|^failed$|^unknown$';
     CMIExit = '^time-out$|^suspend$|^logout$|^$';
     CMIType = '^true-false$|^choice$|^fill-in$|^matching$|^performance$|^sequencing$|^likert$|^numeric$';
-    CMIResult = '^correct$|^wrong$|^unanticipated$|^neutral$|^([0-9]{0,3})?(\.[0-9]{1,2})?$';
+    CMIResult = '^correct$|^wrong$|^unanticipated$|^neutral$|^([0-9]{0,3})?(\\.[0-9]{1,2})?$';
     NAVEvent = '^previous$|^continue$';
     // Children lists
     cmi_children = 'version, comments_from_learner, comments_from_lms, completion_status, credit, entry, exit, interactions, launch_data, learner_id, learner_name, learner_preference, location, max_time_allowed, mode, objectives, progress_measure, scaled_passing_score, score, session_time, success_status, suspend_data, time_limit_action, total_time';
