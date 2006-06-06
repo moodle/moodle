@@ -100,12 +100,3 @@ body#mod-quiz-grading table#grading td
 #question-preview .essay .answer textarea {
   width: 400px;
 }
-.incorrecthighlight {
-    background-color: #faa;
-}
-.partialcorrecthighlight {
-    background-color: #ff9;
-}
-.correcthighlight {
-    background-color: #afa;
-}
