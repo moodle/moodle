@@ -588,6 +588,7 @@ function process_person_tag($tagcontents){
        
             // If they don't exist and they have a defined username, and $CFG->enrol_createnewusers == true, we create them.
             $person->lang = $CFG->lang;
+            $person->auth = $CFG->auth;
             $person->confirmed = 1;
             $person->timemodified = time();
             if($id = insert_record('user', addslashes_object($person))){
