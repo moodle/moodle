@@ -215,8 +215,9 @@ function authorize_print_order_details($orderno)
         }
 
         if (empty($confirm)) {
+            $strcaptureyes = get_string('captureyes', 'enrol_authorize');
             $table->data[] = array("<b>$strs->confirm:</b>",
-            "$authstrs->captureyes<br /><a href='index.php?order=$orderno&amp;sesskey=$USER->sesskey&amp;".ORDER_CAPTURE."=y&amp;confirm=1'>$strs->yes</a>
+            "$strcaptureyes<br /><a href='index.php?order=$orderno&amp;sesskey=$USER->sesskey&amp;".ORDER_CAPTURE."=y&amp;confirm=1'>$strs->yes</a>
             &nbsp;&nbsp;&nbsp;&nbsp;<a href='index.php?order=$orderno'>$strs->no</a>");
         }
         else {
@@ -286,9 +287,10 @@ function authorize_print_order_details($orderno)
                 $a = new stdClass;
                 $a->upto = $upto;
                 $strcanbecredit = get_string('canbecredit', 'enrol_authorize', $a);
+                $strhowmuch = get_string('howmuch', 'enrol_authorize');
                 $cbunenrol = print_checkbox('unenrol', '1', !empty($unenrol), '', '', '', true);
                 $table->data[] = array("<b>$authstrs->unenrolstudent</b>", $cbunenrol);
-                $table->data[] = array("<b>$authstrs->howmuch</b>",
+                $table->data[] = array("<b>$strhowmuch</b>",
                     "<input type='hidden' name='confirm' value='1'>
                      <input type='text' size='5' name='amount' value='$amount'>
                      $strcanbecredit<br /><input type='submit' name='".ORDER_REFUND."' value='$authstrs->refund'>");
