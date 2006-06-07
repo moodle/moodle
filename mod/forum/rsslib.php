@@ -78,6 +78,16 @@
         }
         return $status;
     }
+    
+    
+    // Given a forum object, deletes the RSS file
+    function forum_rss_delete_file($forum) {
+        global $CFG;
+        //return unlink("{$CFG->dataroot}/rss/{$modname}/{$forum->id}.xml");
+        $rssfile = rss_file_name('forum', $forum);
+        return unlink($rssfile);
+    }
+    
 
     function forum_rss_newstuff($forum, $time) {
     // If there is new stuff in the forum since $time then this returns
@@ -158,7 +168,7 @@
         $items = array();
 
         if ($newsince) {
-            $newsince = " AND p.modified > '$newsince'";
+            $newsince = " AND (p.modified > '$newsince' OR d.timemodified > '$newsince')";
         } else {
             $newsince = "";
         }
@@ -218,7 +228,7 @@
         $items = array();
 
         if ($newsince) {
-            $newsince = " AND p.modified > '$newsince'";
+            $newsince = " AND (p.modified > '$newsince' OR d.timemodified > '$newsince')";
         } else {
             $newsince = "";
         }
