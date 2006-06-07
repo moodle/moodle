@@ -68,6 +68,7 @@
     print_heading($strdeletingcourse);
 
     delete_course($course->id);
+    fix_course_sortorder(); //update course count in catagories
 
     print_heading( get_string("deletedcourse", "", $course->shortname) );
 
