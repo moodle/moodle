@@ -182,6 +182,7 @@
             $oldid = backup_todb($que_info['#']['ID']['0']['#']);
 
             //Now, build the question record structure
+            $question = new object;
             $question->category = $new_category_id;
             $question->parent = backup_todb($que_info['#']['PARENT']['0']['#']);
             $question->name = backup_todb($que_info['#']['NAME']['0']['#']);
@@ -242,6 +243,8 @@
 
             $newid = $restored_questions[$i]->newid;
             $oldid = $restored_questions[$i]->oldid;
+
+            $question = new object;
             $question->qtype = $restored_questions[$i]->qtype;
             $question->parent = $restored_questions[$i]->parent;
 
@@ -256,21 +259,31 @@
                     } elseif ($question->parent = $oldid) {
                         $question->parent = $newid;
                     } else {
-                        echo 'Could not recode parent '.$question->parent.' for question '.$question->id.'<br />';
+                        echo 'Could not recode parent '.$question->parent.' for question '.$oldid.'<br />';
                     }
                 }
     
                 //Now, restore every question_answers in this question
                 $status = question_restore_answers($oldid,$newid,$que_info,$restore);
                 // Restore questiontype specific data
-                $status = $QTYPES[$question->qtype]->restore($oldid,$newid,$que_info,$restore);
+                if (array_key_exists($question->qtype, $QTYPES)) {
+                    $status = $QTYPES[$question->qtype]->restore($oldid,$newid,$que_info,$restore);
+                } else {
+                    echo 'Unknown question type '.$question->qtype.' for question '.$oldid.'<br />';
+                    $status = false;
+                }
             } else {
                 //We are NOT creating the question, but we need to know every question_answers
                 //map between the XML file and the database to be able to restore the states
                 //in each attempt.
                 $status = question_restore_map_answers($oldid,$newid,$que_info,$restore);
                 // Do the questiontype specific mapping
-                $status = $QTYPE[$question->qtype]->restore_map($oldid,$newid,$que_info,$restore);
+                if (array_key_exists($question->qtype, $QTYPES)) {
+                    $status = $QTYPES[$question->qtype]->restore_map($oldid,$newid,$que_info,$restore);
+                } else {
+                    echo 'Unknown question type '.$question->qtype.' for question '.$oldid.'<br />';
+                    $status = false;
+                }
             }
 
             //Do some output
