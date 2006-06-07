@@ -1051,6 +1051,13 @@ function quiz_upgrade($oldversion) {
                                    FROM prefix_quiz_attempts;");
     }
 
+    if ($oldversion < 2006060700) { // fix for 5720
+        execute_sql('DROP TABLE '.$CFG->prefix.'question_essay_states', false);
+        execute_sql('DROP TABLE '.$CFG->prefix.'question_essay', false);
+        execute_sql('DROP TABLE '.$CFG->prefix.'quiz_attemptonlast_datasets', false);
+    }
+
+
     return true;
 }
 
