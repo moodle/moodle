@@ -122,7 +122,6 @@ function scorm_update_instance($scorm) {
         require_once('locallib.php');
         $scorm->launch = scorm_parse($scorm);
     }
-
     return update_record('scorm', $scorm);
 }
 
@@ -515,11 +514,11 @@ function scorm_option2text($scorm) {
     if (isset($scorm->popup)) {
         if ($scorm->popup) {
             $optionlist = array();
-            foreach ($SCORM_POPUP_OPTIONS as $option) {
-                if (isset($scorm->$option)) {
-                    $optionlist[] = $option.'='.$scorm->$option;
+            foreach ($SCORM_POPUP_OPTIONS as $name => $option) {
+                if (isset($scorm->$name)) {
+                    $optionlist[] = $name.'='.$scorm->$name;
                 } else {
-                    $optionlist[] = $option.'=0';
+                    $optionlist[] = $name.'=0';
                 }
             }       
             $scorm->options = implode(',', $optionlist);
