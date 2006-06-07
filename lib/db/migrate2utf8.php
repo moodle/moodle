@@ -1,4 +1,218 @@
 <?php // $Id$
+// This is a one-shot function that converts an entire table on row basis.
+
+function migrate2utf8_user($fields, $crash, $debug, $maxrecords) {
+
+    global $CFG, $db, $processedrecords;
+
+    // convert all columns to blobs
+    foreach ($fields as $field) {
+        $fieldname = isset($field['@']['name'])?$field['@']['name']:"";
+        $type = isset($field['@']['type'])?$field['@']['type']:"";
+        $length = isset($field['@']['length'])?$field['@']['length']:"";
+
+        $dropindex = isset($field['@']['dropindex'])?$field['@']['dropindex']:"";
+        isset($field['@']['addindex'])?$addindexarray[] = $field['@']['addindex']:"";
+        isset($field['@']['adduniqueindex'])?$adduniqueindexarray[] = $field['@']['adduniqueindex']:"";
+
+        /// Drop index here
+
+        if ($dropindex) {
+            $SQL = 'ALTER TABLE '.$CFG->prefix.'user DROP INDEX '.$dropindex.';';
+            $SQL1 = 'ALTER TABLE '.$CFG->prefix.'user DROP INDEX '.$CFG->prefix.$dropindex.';'; // see bug 5205
+            if ($debug) {
+                $db->debug=999;
+            }
+            execute_sql($SQL, false); // see bug 5205
+            execute_sql($SQL1, false); // see bug 5205
+        }
+
+        /// Change column encoding here
+
+        $SQL = 'ALTER TABLE '.$CFG->prefix.'user CHANGE '.$fieldname.' '.$fieldname.' LONGBLOB';
+
+        if ($debug) {
+            $db->debug=999;
+        }
+
+        if ($fieldname != 'dummy') {
+            execute_sql($SQL, $debug);
+        }
+    }
+
+    /// convert all records
+    
+    $totalrecords = count_records_sql("select count(*) from {$CFG->prefix}user");
+    $counter = 0;
+    $recordsetsize = 4;
+    
+    if ($crash) {    //if resuming from crash
+        //find the number of records with id smaller than the crash id
+        $indexSQL = 'SELECT COUNT(*) FROM '.$CFG->prefix.'user WHERE id < '.$crash->record;
+        $counter = count_records_sql($indexSQL);
+    }
+
+    while ($counter < $totalrecords) {    //while there is still something
+        $SQL = 'SELECT * FROM '.$CFG->prefix.'user ORDER BY id ASC '.sql_paging_limit($counter, $recordsetsize);
+        if ($records = get_records_sql($SQL)) {
+            foreach ($records as $record) {
+
+            //if we are up this far, either no crash, or crash with same table, field name.
+                if ($crash){
+                    if ($crash->record != $record->id) {    //might set to < just in case record is deleted
+                        continue;
+                    } else {
+                        $crash = 0;
+                        print_heading('recovering from user'.'--'.$fieldname.'--'.$record->id);
+                    }
+                }
+                
+                // write to config table to keep track of current table
+                $migrationconfig = get_record('config','name','dbmigration');
+                $migrationconfig->name = 'dbmigration';
+                $migrationconfig->value = 'user'.'##'.'NAfield'.'##'.$record->id;
+                update_record('config',$migrationconfig);
+                
+                // this is the only encoding we need for this table
+                $fromenc = get_original_encoding('','',$record->lang);
+
+                if (($fromenc != 'utf-8') && ($fromenc != 'UTF-8')) {
+                    foreach ($fields as $field) {
+
+                        if (isset($field['@']['name'])) {
+                            $fieldname = $field['@']['name'];
+                        }
+
+                        if (isset($field['@']['method'])) {
+                            $method = $field['@']['method'];
+                        }
+                        
+                        if ($method != 'NO_CONV' && !empty($record->{$fieldname})) { // only convert if empty
+                            if ($fieldname != 'lang') {
+                                $record->{$fieldname} = utfconvert($record->{$fieldname}, $fromenc);
+                            } else { // special lang treatment
+                                if (strstr($record->lang, 'utf8') === false) {    //user not using utf8 lang
+                                    $record->lang = $record->lang.'_utf8';
+                                }
+
+                                $langsused = get_record('config','name','langsused');
+                                $langs = explode(',',$langsused->value);
+                                if (!in_array($record->lang, $langs)) {
+                                    $langsused->value .= ','.$record->lang;
+                                    migrate2utf8_update_record('config',$langsused);
+                                }
+                            } // close special treatment for lang
+                        }
+                    }
+                }
+                
+                migrate2utf8_update_record('user', $record);
+
+                $counter++;
+                if ($maxrecords) {
+                    if ($processedrecords == $maxrecords) {
+                        notify($maxrecords.' records processed. Migration Process halted');
+                        print_continue('utfdbmigrate.php?confirm=1&amp;maxrecords='.$maxrecords.'&amp;sesskey='.sesskey());
+                        print_footer();
+                        die();
+                    }
+                }
+
+                $processedrecords++;
+                //print some output once in a while
+                if (($processedrecords) % 5000 == 0) {
+                    echo 'Processing...'.$dbtablename.'...'.$fieldname.'...'.$record->id;
+                }
+            }
+        }
+    }
+
+    // done converting all records!
+
+    // convert all columns back
+    foreach ($fields as $field) {
+        $fieldname = isset($field['@']['name'])?$field['@']['name']:"";
+        $type = isset($field['@']['type'])?$field['@']['type']:"";
+        $length = isset($field['@']['length'])?$field['@']['length']:"";
+        $default = isset($field['@']['default'])?"'".$field['@']['default']."'":"''";
+
+        $SQL = 'ALTER TABLE '.$CFG->prefix.'user CHANGE '.$fieldname.' '.$fieldname.' '.$type;
+        if ($length > 0) {
+            $SQL.='('.$length.') ';
+        }
+        $SQL.=' CHARACTER SET utf8 NOT NULL DEFAULT '.$default.';';
+            if ($debug) {
+            $db->debug=999;
+        }
+        if ($fieldname != 'dummy') {
+            execute_sql($SQL, $debug);
+        }
+    }
+    
+    /// Add index back
+    $alter = 0;
+    $SQL = 'ALTER TABLE '.$CFG->prefix.'user';
+
+    if (!empty($addindexarray)) {
+        foreach ($addindexarray as $aidx){
+            $SQL .= ' ADD INDEX '.$aidx.',';
+            $alter++;
+        }
+    }
+
+    if (!empty($adduniqueindexarray)) {
+        foreach ($adduniqueindexarray as $auidx){
+            $SQL .= ' ADD UNIQUE INDEX '.$auidx.',';
+            $alter++;
+        }
+    }
+
+    $SQL = rtrim($SQL, ', ');
+    $SQL.=';';
+
+    if ($alter) {
+        if ($debug) {
+            $db->debug=999;
+        }
+
+        execute_sql($SQL, $debug);
+        if ($debug) {
+            $db->debug=0;
+        }
+    }
+    /// Done adding index back
+
+}
+
+/*********************************************
+ * Development under progress                *
+ * This space is left intentionally blank    *
+ *********************************************/
+/*********************************************
+ * Development under progress                *
+ * This space is left intentionally blank    *
+ *********************************************/
+ /*********************************************
+ * Development under progress                *
+ * This space is left intentionally blank    *
+ *********************************************/
+ /*********************************************
+ * Development under progress                *
+ * This space is left intentionally blank    *
+ *********************************************/
+ /*********************************************
+ * Development under progress                *
+ * This space is left intentionally blank    *
+ *********************************************/
+ /*********************************************
+ * Development under progress                *
+ * This space is left intentionally blank    *
+ *********************************************/
+ 
+
+
+
+
 
 function migrate2utf8_post_subject($recordid){
     global $CFG, $globallang;

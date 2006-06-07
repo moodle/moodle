@@ -178,7 +178,7 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
 							  //mtrace() and return 0. (showing the current 
 							  //table/field/recordid)
 
-    global $db, $CFG, $dbtablename, $fieldname, $record;
+    global $db, $CFG, $dbtablename, $fieldname, $record, $processedrecords;
     $debug = ($CFG->debug > 7);
     
     ignore_user_abort(false); // see bug report 5352. This should kill this thread as soon as user aborts.
@@ -324,348 +324,373 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
                 print_heading("<br><b>Processsing db table ".$dbtablename.'...</b>');
             }
 
-            if (!empty($dbtable['#']) && ($fields = $dbtable['#']['FIELDS'][0]['#']['FIELD']) and (!in_array($dbtablename, $ignoretables))) {
+            /**********************************************************
+             * This is the by pass structure. It allows us to process *
+             * tables on row basis instead of column/field basis      *
+             * It relies on a single function in migrate2utf8.php     *
+             **********************************************************/
 
-                $colnames = array();
-                $coltypes = array();    //array to hold all column types for the table
-                $collengths = array();    //array to hold all column lengths for the table
-                $defaults = array();    //array to hold defaults, if any
-                //reset holders
-                $addindexarray = array();
-                $adduniqueindexarray = array();
-                $addprimaryarray = array();
+            /// first, check to see if there's a function for the whole table. By pass point (1)
+            if (file_exists($CFG->dirroot.'/'.$dir.'/db/migrate2utf8.php')) {
+                require_once($CFG->dirroot.'/'.$dir.'/db/migrate2utf8.php');
+                // this is a function to process table on role basis, e.g. user table in moodorg
+                $tablefunction = 'migrate2utf8_'.$dbtablename;
+            }
+            if ($CFG->dbtype=='mysql' && function_exists($tablefunction)) {
+                $tablefunction($dbtable['#']['FIELDS'][0]['#']['FIELD'], $crash, $debug, $maxrecords); // execute it.
+            } else {
 
-                foreach ($fields as $field){
+            /******************************************************
+             * No function for converting whole table, we proceed *
+             ******************************************************/
+             
+                if (!empty($dbtable['#']) && ($fields = $dbtable['#']['FIELDS'][0]['#']['FIELD']) and (!in_array($dbtablename, $ignoretables))) {
 
-                    //if in crash state, and field name is not the same as crash field name
+                    $colnames = array();
+                    $coltypes = array();    //array to hold all column types for the table
+                    $collengths = array();    //array to hold all column lengths for the table
+                    $defaults = array();    //array to hold defaults, if any
+                    //reset holders
+                    $addindexarray = array();
+                    $adduniqueindexarray = array();
+                    $addprimaryarray = array();
 
-                    $fieldname = isset($field['@']['name'])?$field['@']['name']:"";
-                    $method = isset($field['@']['method'])?$field['@']['method']:"";
-                    $type = isset($field['@']['type'])?$field['@']['type']:"";
-                    $length = isset($field['@']['length'])?$field['@']['length']:"";
+                    foreach ($fields as $field){
 
-                    if ($crash && ($crash->field != $fieldname)) {
-                        continue;
-                    }
+                        //if in crash state, and field name is not the same as crash field name
 
-                    $dropindex = isset($field['@']['dropindex'])?$field['@']['dropindex']:"";
-                    $addindex = isset($field['@']['addindex'])?$field['@']['addindex']:"";
-                    $adduniqueindex = isset($field['@']['adduniqueindex'])?$field['@']['adduniqueindex']:"";
+                        $fieldname = isset($field['@']['name'])?$field['@']['name']:"";
+                        $method = isset($field['@']['method'])?$field['@']['method']:"";
+                        $type = isset($field['@']['type'])?$field['@']['type']:"";
+                        $length = isset($field['@']['length'])?$field['@']['length']:"";
 
-                    $dropprimary = isset($field['@']['dropprimary'])?$field['@']['dropprimary']:"";
-                    $addprimary = isset($field['@']['addprimary'])?$field['@']['addprimary']:"";
-                    $default = isset($field['@']['default'])?"'".$field['@']['default']."'":"''";
-
-                    if ($fieldname != 'dummy') {
-                        $colnames[] = $fieldname;
-                        $coltypes[] = $type;
-                        $collengths[]= $length;
-                    }
-
-                    if ($debug) {
-                        echo "<br>--><b>processing db field ".$fieldname.'</b>';
-                        echo "<br>---><b>method ".$method.'</b>';
-                    }
-
-
-                    if ($CFG->dbtype == 'mysql') {
-
-                        /* Drop the index, because with index on, you can't change it to longblob */
-
-                        if ($dropindex){    //drop index if index is varchar, text etc type
-                            $SQL = 'ALTER TABLE '.$prefix.$dbtablename.' DROP INDEX '.$dropindex.';';
-                            $SQL1 = 'ALTER TABLE '.$prefix.$dbtablename.' DROP INDEX '.$CFG->prefix.$dropindex.';'; // see bug 5205
-                            if ($debug) {
-                                $db->debug=999;
-                            }
-                            execute_sql($SQL, false); // see bug 5205
-                            execute_sql($SQL1, false); // see bug 5205
-
-                            if ($debug) {
-                                $db->debug=0;
-                            }
-                        } else if ($dropprimary) {    // drop primary key
-                            $SQL = 'ALTER TABLE '.$prefix.$dbtablename.' DROP PRIMARY KEY;';
-                            if ($debug) {
-                                $db->debug=999;
-                            }
-                            execute_sql($SQL, $debug);
-                            if ($debug) {
-                                $db->debug=0;
-                            }
+                        if ($crash && ($crash->field != $fieldname)) {
+                            continue;
                         }
 
-                        /* Change to longblob, serves 2 purposes:
-                           1. column loses encoding, so when we finally change it to unicode,
-                              mysql does not do a double convertion
-                           2. longblobs puts no limit (ok, not really but it's large enough)
-                              to handle most of the problems such as in bug 5194
-                        */
-                           
-                        $SQL = 'ALTER TABLE '.$prefix.$dbtablename;
-                        $SQL.= ' CHANGE '.$fieldname.' '.$fieldname.' LONGBLOB';
+                        $dropindex = isset($field['@']['dropindex'])?$field['@']['dropindex']:"";
+                        $addindex = isset($field['@']['addindex'])?$field['@']['addindex']:"";
+                        $adduniqueindex = isset($field['@']['adduniqueindex'])?$field['@']['adduniqueindex']:"";
 
-                        /*
-                        if ($length > 0) {
-                            $SQL.='('.$length.') ';
-                        }
-                        $SQL .= ' CHARACTER SET binary NOT NULL DEFAULT '.$default.';';
-                        */
-                        if ($debug) {
-                            $db->debug=999;
-                        }
+                        $dropprimary = isset($field['@']['dropprimary'])?$field['@']['dropprimary']:"";
+                        $addprimary = isset($field['@']['addprimary'])?$field['@']['addprimary']:"";
+                        $default = isset($field['@']['default'])?"'".$field['@']['default']."'":"''";
+
                         if ($fieldname != 'dummy') {
-                            execute_sql($SQL, $debug);
+                            $colnames[] = $fieldname;
+                            $coltypes[] = $type;
+                            $collengths[]= $length;
                         }
+
                         if ($debug) {
-                            $db->debug=0;
+                            echo "<br>--><b>processing db field ".$fieldname.'</b>';
+                            echo "<br>---><b>method ".$method.'</b>';
                         }
-                        
-                    }
 
-                    $patterns[]='/RECORDID/';    //for preg_replace
-                    $patterns[]='/\{\$CFG\-\>prefix\}/i';    //same here
 
-                    if ($method == 'PLAIN_SQL_UPDATE') {
-                        $sqldetectuser = $field['#']['SQL_DETECT_USER'][0]['#'];
-                        $sqldetectcourse = $field['#']['SQL_DETECT_COURSE'][0]['#'];
-                    }
-                    else if ($method == 'PHP_FUNCTION') {
-                        $phpfunction = 'migrate2utf8_'.$dbtablename.'_'.$fieldname;
-                    }
-                    
-                    ///get the total number of records for this field
-                    
-                    // could not use count_records because it addes prefix to adodb_logsql
-                    $totalrecords = count_records_sql("select count(*) from {$prefix}$dbtablename");
-                    $counter = 0;
-                    $recordsetsize = 4;
+                        if ($CFG->dbtype == 'mysql') {
 
-                    if ($crash) {    //if resuming from crash
-                        //find the number of records with id smaller than the crash id
-                        $indexSQL = 'SELECT COUNT(*) FROM '.$prefix.$dbtablename.' WHERE id < '.$crash->record;
-                        $counter = count_records_sql($indexSQL);
-                    }
+                            /* Drop the index, because with index on, you can't change it to longblob */
 
-                    if ($debug) {
-                        echo "<br>Total number of records is ..".$totalrecords;
-                        echo "<br/>Counter is $counter";
-                    }
-                    
-
-                    /**************************
-                     * converting each record *
-                     **************************/
-                    while(($counter < $totalrecords) and ($fieldname !='dummy') and ($method!='NO_CONV')) {    //while there is still something
-                        $SQL = 'SELECT * FROM '.$prefix.$dbtablename.' ORDER BY id ASC '.sql_paging_limit($counter, $recordsetsize);
-                        if ($records = get_records_sql($SQL)) {
-                            foreach ($records as $record) {
-
-                                //if we are up this far, either no crash, or crash with same table, field name.
-                                if ($crash){
-                                    if ($crash->record != $record->id) {    //might set to < just in case record is deleted
-                                        continue;
-                                    } else {
-                                        $crash = 0;
-                                        print_heading('recovering from '.$dbtablename.'--'.$fieldname.'--'.$record->id);
-                                    }
+                            if ($dropindex){    //drop index if index is varchar, text etc type
+                                $SQL = 'ALTER TABLE '.$prefix.$dbtablename.' DROP INDEX '.$dropindex.';';
+                                $SQL1 = 'ALTER TABLE '.$prefix.$dbtablename.' DROP INDEX '.$CFG->prefix.$dropindex.';'; // see bug 5205
+                                if ($debug) {
+                                    $db->debug=999;
                                 }
+                                execute_sql($SQL, false); // see bug 5205
+                                execute_sql($SQL1, false); // see bug 5205
 
-                                $migrationconfig = get_record('config','name','dbmigration');
-                                $migrationconfig->name = 'dbmigration';
-                                $migrationconfig->value = $dbtablename.'##'.$fieldname.'##'.$record->id;
-                                update_record('config',$migrationconfig);
+                                if ($debug) {
+                                    $db->debug=0;
+                                }
+                            } else if ($dropprimary) {    // drop primary key
+                                $SQL = 'ALTER TABLE '.$prefix.$dbtablename.' DROP PRIMARY KEY;';
+                                if ($debug) {
+                                    $db->debug=999;
+                                }
+                                execute_sql($SQL, $debug);
+                                if ($debug) {
+                                    $db->debug=0;
+                                }
+                            }
 
-                                $replacements = array();    //manual refresh
-                                $replacements[] = $record->id;
-                                $replacements[] = $prefix;
+                            /* Change to longblob, serves 2 purposes:
+                               1. column loses encoding, so when we finally change it to unicode,
+                                  mysql does not do a double convertion
+                               2. longblobs puts no limit (ok, not really but it's large enough)
+                                  to handle most of the problems such as in bug 5194
+                            */
 
-                                switch ($method){
-                                    case 'PLAIN_SQL_UPDATE':    //use the 2 statements to update
+                            $SQL = 'ALTER TABLE '.$prefix.$dbtablename;
+                            $SQL.= ' CHANGE '.$fieldname.' '.$fieldname.' LONGBLOB';
 
-                                        if (!empty($record->{$fieldname})) {    //only update if not empty
+                            /*
+                            if ($length > 0) {
+                                $SQL.='('.$length.') ';
+                            }
+                            $SQL .= ' CHARACTER SET binary NOT NULL DEFAULT '.$default.';';
+                            */
+                            if ($debug) {
+                                $db->debug=999;
+                            }
+                            if ($fieldname != 'dummy') {
+                                execute_sql($SQL, $debug);
+                            }
+                            if ($debug) {
+                                $db->debug=0;
+                            }
+
+                        }
+
+                        $patterns[]='/RECORDID/';    //for preg_replace
+                        $patterns[]='/\{\$CFG\-\>prefix\}/i';    //same here
+
+                        if ($method == 'PLAIN_SQL_UPDATE') {
+                            $sqldetectuser = $field['#']['SQL_DETECT_USER'][0]['#'];
+                            $sqldetectcourse = $field['#']['SQL_DETECT_COURSE'][0]['#'];
+                        }
+                        else if ($method == 'PHP_FUNCTION') {
+                            $phpfunction = 'migrate2utf8_'.$dbtablename.'_'.$fieldname;
+                        }
+
+                        ///get the total number of records for this field
+
+                        // could not use count_records because it addes prefix to adodb_logsql
+                        $totalrecords = count_records_sql("select count(*) from {$prefix}$dbtablename");
+                        $counter = 0;
+                        $recordsetsize = 4;
+
+                        if ($crash) {    //if resuming from crash
+                            //find the number of records with id smaller than the crash id
+                            $indexSQL = 'SELECT COUNT(*) FROM '.$prefix.$dbtablename.' WHERE id < '.$crash->record;
+                            $counter = count_records_sql($indexSQL);
+                        }
+
+                        if ($debug) {
+                            echo "<br>Total number of records is ..".$totalrecords;
+                            echo "<br/>Counter is $counter";
+                        }
+
+
+                        /**************************
+                         * converting each record *
+                         **************************/
+                        while(($counter < $totalrecords) and ($fieldname !='dummy') and ($method!='NO_CONV')) {    //while there is still something
+                            $SQL = 'SELECT * FROM '.$prefix.$dbtablename.' ORDER BY id ASC '.sql_paging_limit($counter, $recordsetsize);
+                            if ($records = get_records_sql($SQL)) {
+                                foreach ($records as $record) {
+
+                                    //if we are up this far, either no crash, or crash with same table, field name.
+                                    if ($crash){
+                                        if ($crash->record != $record->id) {    //might set to < just in case record is deleted
+                                            continue;
+                                        } else {
+                                            $crash = 0;
+                                            print_heading('recovering from '.$dbtablename.'--'.$fieldname.'--'.$record->id);
+                                        }
+                                    }
+
+                                    $migrationconfig = get_record('config','name','dbmigration');
+                                    $migrationconfig->name = 'dbmigration';
+                                    $migrationconfig->value = $dbtablename.'##'.$fieldname.'##'.$record->id;
+                                    update_record('config',$migrationconfig);
+
+                                    $replacements = array();    //manual refresh
+                                    $replacements[] = $record->id;
+                                    $replacements[] = $prefix;
+
+                                    switch ($method){
+                                        case 'PLAIN_SQL_UPDATE':    //use the 2 statements to update
+
+                                            if (!empty($record->{$fieldname})) {    //only update if not empty
+                                                if ($debug) {
+                                                    $db->debug=999;
+                                                }
+
+                                                //if global lang is set, we just use that
+
+                                                if ($globallang) {
+                                                    $fromenc = $globallang;
+                                                } else {
+                                                    $userid = get_record_sql(preg_replace($patterns, $replacements, $sqldetectuser));
+                                                    $courseid = get_record_sql(preg_replace($patterns, $replacements, $sqldetectcourse));
+
+                                                    $sitelang   = $CFG->lang;
+                                                    $courselang = get_course_lang(isset($courseid->course)?$courseid->course:1);
+                                                    $userlang   = get_user_lang(isset($userid->userid)?$userid->userid:1);
+
+                                                    $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+                                                }
+
+                                                //only update if non utf8
+                                                if (($fromenc != 'utf-8') && ($fromenc != 'UTF-8')) {
+                                                    $result = utfconvert($record->{$fieldname}, $fromenc);
+                                                    $newrecord = new object;
+                                                    $newrecord->id = $record->id;
+                                                    $newrecord->{$fieldname} = $result;
+                                                    migrate2utf8_update_record($dbtablename,$newrecord);
+                                                }
+                                                if ($debug) {
+                                                    $db->debug=0;
+                                                }
+                                            }
+
+                                        break;
+
+                                        case 'PHP_FUNCTION':    //use the default php function to execute
                                             if ($debug) {
                                                 $db->debug=999;
                                             }
-                                            
-                                            //if global lang is set, we just use that
-                                            
-                                            if ($globallang) {
-                                                $fromenc = $globallang;
-                                            } else {
-                                                $userid = get_record_sql(preg_replace($patterns, $replacements, $sqldetectuser));
-                                                $courseid = get_record_sql(preg_replace($patterns, $replacements, $sqldetectcourse));
-
-                                                $sitelang   = $CFG->lang;
-                                                $courselang = get_course_lang(isset($courseid->course)?$courseid->course:1);
-                                                $userlang   = get_user_lang(isset($userid->userid)?$userid->userid:1);
-
-                                                $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
-                                            }
-
-                                            //only update if non utf8
-                                            if (($fromenc != 'utf-8') && ($fromenc != 'UTF-8')) {
-                                                $result = utfconvert($record->{$fieldname}, $fromenc);
-                                                $newrecord = new object;
-                                                $newrecord->id = $record->id;
-                                                $newrecord->{$fieldname} = $result;
-                                                migrate2utf8_update_record($dbtablename,$newrecord);
-                                            }
+                                            require_once($CFG->dirroot.'/'.$dir.'/db/migrate2utf8.php');
+                                            $phpfunction($record->id);
                                             if ($debug) {
                                                 $db->debug=0;
                                             }
-                                        }
-                                          
-                                    break;
+                                        break;
 
-                                    case 'PHP_FUNCTION':    //use the default php function to execute
-                                        if ($debug) {
-                                            $db->debug=999;
+                                        default:    //no_conv, don't do anything ;-)
+                                        break;
+                                    }
+                                    $counter++;
+                                    if ($maxrecords) {
+                                        if ($processedrecords == $maxrecords) {
+                                            notify($maxrecords.' records processed. Migration Process halted');
+                                            print_continue('utfdbmigrate.php?confirm=1&amp;maxrecords='.$maxrecords.'&amp;sesskey='.sesskey());
+                                            print_footer();
+                                            die();
                                         }
-                                        require_once($CFG->dirroot.'/'.$dir.'/db/migrate2utf8.php');
-                                        $phpfunction($record->id);
-                                        if ($debug) {
-                                            $db->debug=0;
-                                        }
-                                    break;
+                                    }
 
-                                    default:    //no_conv, don't do anything ;-)
-                                    break;
+                                    $processedrecords++;
+                                    //print some output once in a while
+                                    if (($processedrecords) % 5000 == 0) {
+                                        echo 'Processing...'.$dbtablename.'...'.$fieldname.'...'.$record->id;
+                                    }
                                 }
-                                $counter++;
-                                if ($maxrecords) {
-                                    if ($processedrecords == $maxrecords) {
-                                        notify($maxrecords.' records processed. Migration Process halted');
-                                        print_continue('utfdbmigrate.php?confirm=1&amp;maxrecords='.$maxrecords.'&amp;sesskey='.sesskey());
-                                        print_footer();
-                                        die();
-                                    } 
-                                }
-                                
-                                $processedrecords++;
-                                //print some output once in a while
-                                if (($processedrecords) % 5000 == 0) {
-                                    echo 'Processing...'.$dbtablename.'...'.$fieldname.'...'.$record->id;
+                            }else {
+                                if ($debug) {
+                                    notify('no records found!');
                                 }
                             }
-                        }else {
+                        }   //close the while loop
+
+                        /********************
+                         * Drop index here **
+                         ********************/
+
+                        if ($CFG->dbtype == 'mysql') {
+
+                            /*********************************
+                             * Change column encoding 2 phase*
+                             *********************************/
+
+                            /*
+                            $SQL = 'ALTER TABLE '.$CFG->prefix.$dbtablename;
+                            $SQL.= ' CHANGE '.$fieldname.' '.$fieldname.' LONGTEXT';
+                           // if ($length > 0) {
+                           //     $SQL.='('.$length.') ';
+                           // }
+                            $SQL .= ' CHARACTER SET binary NOT NULL DEFAULT '.$default.';';
                             if ($debug) {
-                                notify('no records found!');
+                                $db->debug=999;
+                            }
+                            if ($fieldname != 'dummy') {
+                                execute_sql($SQL, $debug);
+                            }
+                            if ($debug) {
+                                $db->debug=0;
+                            }*/
+                            //phase 2
+                            $SQL = 'ALTER TABLE '.$prefix.$dbtablename;
+                            $SQL.= ' CHANGE '.$fieldname.' '.$fieldname.' '.$type;
+                            if ($length > 0) {
+                                $SQL.='('.$length.') ';
+                            }
+                            $SQL.=' CHARACTER SET utf8 NOT NULL DEFAULT '.$default.';';
+                            if ($debug) {
+                                $db->debug=999;
+                            }
+                            if ($fieldname != 'dummy') {
+                                execute_sql($SQL, $debug);
+                            }
+                            if ($debug) {
+                                $db->debug=0;
+                            }
+                            /********************************************
+                             * build an array to add index back together*
+                             ********************************************/
+                            if ($addindex){
+                                $addindexarray[] = $addindex;
+                            } else if ($adduniqueindex) {
+                                $adduniqueindexarray[] = $adduniqueindex;
+                            } else if ($addprimary) {
+                                $addprimaryarray[] = $addprimary;
+                            }
+
+                        } else {
+
+                        //posgresql code here
+                        //No we don't need to do anything here
+
+                        }
+
+                    }
+
+                    /********************************
+                     * Adding the index back        *
+                     ********************************/
+                    $alter = 0;
+
+                    if ($CFG->dbtype=='mysql'){
+                        $SQL = 'ALTER TABLE '.$prefix.$dbtablename;
+
+                        if (!empty($addindexarray)) {
+                            foreach ($addindexarray as $aidx){
+                                $SQL .= ' ADD INDEX '.$aidx.',';
+                                $alter++;
                             }
                         }
-                    }   //close the while loop
 
-                    /********************
-                     * Drop index here **
-                     ********************/
+                        if (!empty($adduniqueindexarray)) {
+                            foreach ($adduniqueindexarray as $auidx){
+                                $SQL .= ' ADD UNIQUE INDEX '.$auidx.',';
+                                $alter++;
+                            }
+                        }
 
-                    if ($CFG->dbtype == 'mysql') {
+                        if (!empty($addprimaryarray)) {
+                            foreach ($addprimaryarray as $apm){
+                                $SQL .= ' ADD PRIMARY KEY '.$apm.',';
+                                $alter++;
+                            }
+                        }
 
-                        /*********************************
-                         * Change column encoding 2 phase*
-                         *********************************/
-                         
-                        /*
-                        $SQL = 'ALTER TABLE '.$CFG->prefix.$dbtablename;
-                        $SQL.= ' CHANGE '.$fieldname.' '.$fieldname.' LONGTEXT';
-                       // if ($length > 0) {
-                       //     $SQL.='('.$length.') ';
-                       // }
-                        $SQL .= ' CHARACTER SET binary NOT NULL DEFAULT '.$default.';';
-                        if ($debug) {
-                            $db->debug=999;
-                        }
-                        if ($fieldname != 'dummy') {
-                            execute_sql($SQL, $debug);
-                        }
-                        if ($debug) {
-                            $db->debug=0;
-                        }*/
-                        //phase 2
-                        $SQL = 'ALTER TABLE '.$prefix.$dbtablename;
-                        $SQL.= ' CHANGE '.$fieldname.' '.$fieldname.' '.$type;
-                        if ($length > 0) {
-                            $SQL.='('.$length.') ';
-                        }
-                        $SQL.=' CHARACTER SET utf8 NOT NULL DEFAULT '.$default.';';
-                        if ($debug) {
-                            $db->debug=999;
-                        }
-                        if ($fieldname != 'dummy') {
-                            execute_sql($SQL, $debug);
-                        }
-                        if ($debug) {
-                            $db->debug=0;
-                        }
-                        /********************************************
-                         * build an array to add index back together*
-                         ********************************************/
-                        if ($addindex){
-                            $addindexarray[] = $addindex;
-                        } else if ($adduniqueindex) {
-                            $adduniqueindexarray[] = $adduniqueindex;
-                        } else if ($addprimary) {
-                            $addprimaryarray[] = $addprimary;
-                        }
+                        $SQL = rtrim($SQL, ', ');
+                        $SQL.=';';
 
                     } else {
+                      ///posgresql code here
+                      ///No we don't need to do anything here
 
-                    //posgresql code here
-                    //No we don't need to do anything here
-                    
                     }
 
-                }
-                
-                /********************************
-                 * Adding the index back        *
-                 ********************************/
-                $alter = 0;
-
-                if ($CFG->dbtype=='mysql'){
-                    $SQL = 'ALTER TABLE '.$prefix.$dbtablename;
-
-                    if (!empty($addindexarray)) {
-                        foreach ($addindexarray as $aidx){
-                            $SQL .= ' ADD INDEX '.$aidx.',';
-                            $alter++;
+                    if ($alter) {
+                        if ($debug) {
+                            $db->debug=999;
+                        }
+                        execute_sql($SQL, $debug);
+                        if ($debug) {
+                            $db->debug=0;
                         }
                     }
 
-                    if (!empty($adduniqueindexarray)) {
-                        foreach ($adduniqueindexarray as $auidx){
-                            $SQL .= ' ADD UNIQUE INDEX '.$auidx.',';
-                            $alter++;
-                        }
-                    }
-
-                    if (!empty($addprimaryarray)) {
-                        foreach ($addprimaryarray as $apm){
-                            $SQL .= ' ADD PRIMARY KEY '.$apm.',';
-                            $alter++;
-                        }
-                    }
-
-                    $SQL = rtrim($SQL, ', ');
-                    $SQL.=';';
-
-                } else {
-                  ///posgresql code here
-                  ///No we don't need to do anything here
-
-                }
-
-                if ($alter) {
-                    if ($debug) {
-                        $db->debug=999;
-                    }
-                    execute_sql($SQL, $debug);
-                    if ($debug) {
-                        $db->debug=0;
-                    }
-                }
-
-            }    //if there are fields
+                } //if there are fields
+            
+            
+            } /// Point 1 - bypass should end here.
+            
+            
             /************************************
              * now we modify the table encoding *
              ************************************/
@@ -1022,7 +1047,7 @@ function utf_get_xml ($mode=0) { // if mode is 1, do not perform check for scrip
 
     foreach ($enrols as $enrol){
         if (file_exists($CFG->dirroot.'/enrol/'.$enrol.'/db/migrate2utf8.xml')) {
-            $xmls[] = xmlize(file_get_contents($CFG->dirroot.'/enrol/'.$enrol.'/db/migrate2utf8.xml'));
+           $xmls[] = xmlize(file_get_contents($CFG->dirroot.'/enrol/'.$enrol.'/db/migrate2utf8.xml'));
         }
     }
 
