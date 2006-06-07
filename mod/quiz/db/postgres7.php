@@ -1211,15 +1211,19 @@ function quiz_upgrade($oldversion) {
         // The newgraded field must always point to a valid state
         modify_database("","UPDATE prefix_question_sessions SET newgraded = newest where newgraded = '0'");
 
-        // The following table is discussed in bug 5468
-        modify_database ("", "CREATE TABLE prefix_question_attempts (
-                                 id SERIAL PRIMARY KEY,
-                                 modulename varchar(20) NOT NULL default 'quiz'
-                              );");
-        // create one entry for all the existing quiz attempts
-        modify_database ("", "INSERT INTO prefix_question_attempts (id)
-                                   SELECT uniqueid
-                                   FROM prefix_quiz_attempts;");
+        // Only perform this if hasn't been performed before (in MOODLE_16_STABLE branch - bug 5717)
+        $tables = $db->MetaTables('TABLES');
+        if (!in_array($CFG->prefix . 'question_attempts', $tables)) {
+            // The following table is discussed in bug 5468
+            modify_database ("", "CREATE TABLE prefix_question_attempts (
+                                     id SERIAL PRIMARY KEY,
+                                     modulename varchar(20) NOT NULL default 'quiz'
+                                  );");
+            // create one entry for all the existing quiz attempts
+            modify_database ("", "INSERT INTO prefix_question_attempts (id)
+                                       SELECT uniqueid
+                                       FROM prefix_quiz_attempts;");
+        }
     }
 
     if ($oldversion < 2006051700) { // this block also exec'd by 2006042802 on MOODLE_16_STABLE

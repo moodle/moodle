@@ -1039,16 +1039,20 @@ function quiz_upgrade($oldversion) {
         // The newgraded field must always point to a valid state
         modify_database("","UPDATE prefix_question_sessions SET newgraded = newest where newgraded = '0'");
 
-        // The following table is discussed in bug 5468
-        modify_database ("", "CREATE TABLE prefix_question_attempts (
-                                  id int(10) unsigned NOT NULL auto_increment,
-                                  modulename varchar(20) NOT NULL default 'quiz',
-                                  PRIMARY KEY  (id)
-                                ) TYPE=MyISAM COMMENT='Student attempts. This table gets extended by the modules';");
-        // create one entry for all the existing quiz attempts
-        modify_database ("", "INSERT INTO prefix_question_attempts (id)
-                                   SELECT uniqueid
-                                   FROM prefix_quiz_attempts;");
+        // Only perform this if hasn't been performed before (in MOODLE_16_STABLE branch - bug 5717)
+        $tables = $db->MetaTables('TABLES');
+        if (!in_array($CFG->prefix . 'question_attempts', $tables)) {
+            // The following table is discussed in bug 5468
+            modify_database ("", "CREATE TABLE prefix_question_attempts (
+                                      id int(10) unsigned NOT NULL auto_increment,
+                                      modulename varchar(20) NOT NULL default 'quiz',
+                                      PRIMARY KEY  (id)
+                                    ) TYPE=MyISAM COMMENT='Student attempts. This table gets extended by the modules';");
+            // create one entry for all the existing quiz attempts
+            modify_database ("", "INSERT INTO prefix_question_attempts (id)
+                                       SELECT uniqueid
+                                       FROM prefix_quiz_attempts;");
+        }
     }
 
     if ($oldversion < 2006060700) { // fix for 5720
