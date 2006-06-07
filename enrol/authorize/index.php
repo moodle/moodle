@@ -17,18 +17,18 @@
     }
 
 /// Load strings. All strings should be defined here. locallib.php uses these strings.
-    $strs = get_strings(array('user','status','action','delete','time','course','confirm','yes','no','all','none','error'));
-    $authstrs = get_strings(array('paymentmanagement','orderid','void','capture','refund','delete',
+    $strs = get_strings(array('user','status','action','time','course','confirm','yes','no','all','none','error'));
+    $authstrs = get_strings(array('orderid','void','capture','refund','delete',
                 'authcaptured','authorizedpendingcapture','capturedpendingsettle','capturedsettled',
                 'settled','refunded','cancelled','expired','tested','new',
-                'transid','settlementdate','notsettled','amount',
-                'howmuch','captureyes','unenrolstudent'), 'enrol_authorize');
+                'transid','settlementdate','notsettled','amount','unenrolstudent'), 'enrol_authorize');
 
 /// Print header
+    $strpaymentmanagement = get_string('paymentmanagement', 'enrol_authorize');
     if (!$course = get_record('course', 'id', $courseid)) {
         error('Could not find that course');
     }
-    print_header_simple("$authstrs->paymentmanagement", "", "<a href=\"index.php\">$authstrs->paymentmanagement</a>");
+    print_header_simple("$strpaymentmanagement", "", "<a href=\"index.php\">$strpaymentmanagement</a>");
 
 
 /// If orderid is empty, user wants to see all orders
