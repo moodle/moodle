@@ -57,8 +57,26 @@
             if (!forum_move_attachments($discussion, $move)) {
                 notify("Errors occurred while moving attachment directories - check your file permissions");
             }
-            set_field("forum_discussions", "forum", $forum->id, "id", $discussion->id);
+            
+            if (!$fromforum = get_record("forum", "id", $discussion->forum)) {
+                notify('Bad forum ID stored in this discussion');
+            }
             $discussion->forum = $forum->id;
+            $discussion->timemodified = time();
+            
+            if (update_record('forum_discussions', $discussion)) {
+                // Update RSS feeds for both from and to forums.
+                require_once('rsslib.php');
+                require_once($CFG->libdir.'/rsslib.php');
+                
+                // Delete the RSS files for the 2 forums because we want to force
+                // the regeneration of the feeds since the discussions have been
+                // moved.
+                if (!forum_rss_delete_file($forum) || !forum_rss_delete_file($fromforum)) {
+                    error('Could not purge the cached RSS feeds for the source and/or destination forums');
+                }
+            }
+            
             if ($cm = get_coursemodule_from_instance("forum", $forum->id, $course->id)) {
                 add_to_log($course->id, "forum", "move discussion", "discuss.php?d=$discussion->id", "$discussion->id",
                            $cm->id);
