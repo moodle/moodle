@@ -1,6 +1,5 @@
 <DBMIGRATION type="mod/quiz" VERSION="2005120100">
   <TABLES>
-    <TABLE name="quiz_attemptonlast_datasets" />
     <TABLE name="quiz_grades" />
     <TABLE name="question_datasets" />
     <TABLE name="quiz_question_instances" />
@@ -79,11 +78,6 @@
     <TABLE name="question_match">
       <FIELDS>
         <FIELD name="subquestions" method="NO_CONV" type="varchar" length="255" />
-      </FIELDS>
-    </TABLE>
-    <TABLE name="question_essay">
-      <FIELDS>
-        <FIELD name="answer" method="NO_CONV" type="varchar" length="255" />
       </FIELDS>
     </TABLE>
     <TABLE name="question_dataset_items">
@@ -190,32 +184,6 @@
           </PHP_FUNCTION>
         </FIELD>
         <FIELD name="options" method="NO_CONV" type="varchar" length="255" />
-      </FIELDS>
-    </TABLE>
-    <TABLE name="question_essay_states">
-      <FIELDS>
-        <FIELD name="response" method="PLAIN_SQL_UPDATE" type="text" length="0">
-          <SQL_DETECT_USER>
-           SELECT qa.userid
-           FROM {$CFG->prefix}question_states qs,
-                {$CFG->prefix}quiz_attempts qa,
-                {$CFG->prefix}question_essay_states qes
-           WHERE qa.id = qs.attempt
-                 AND qs.id = qes.stateid
-                 AND qes.id = RECORDID
-          </SQL_DETECT_USER>
-          <SQL_DETECT_COURSE>
-           SELECT q.course
-           FROM {$CFG->prefix}quiz q,
-                {$CFG->prefix}quiz_attempts qa,
-                {$CFG->prefix}question_states qs,
-                {$CFG->prefix}question_essay_states qes
-           WHERE q.id = qa.quiz
-                 AND qa.id = qs.attempt
-                 AND qs.id = qes.stateid
-                 AND qes.id = RECORDID
-          </SQL_DETECT_COURSE>
-        </FIELD>
       </FIELDS>
     </TABLE>
     <TABLE name="question_categories">
