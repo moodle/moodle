@@ -193,8 +193,22 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
 
     $ignoretables = array();    //list of tables to ignore, optional
     
+    //one gigantic array to hold all db table information read from all the migrate2utf8.xml file.
+    require_once($CFG->dirroot.'/lib/xmlize.php');
+    $xmls = utf_get_xml(1);
+    $tablestoconvert = 0; // total number of tables to convert
+    foreach ($xmls as $xml) {    ///foreach xml file, we must get a list of tables
+        $dbtables = $xml['DBMIGRATION']['#']['TABLES'][0]['#']['TABLE'];    //real db tables
+        foreach ($dbtables as $dbtable) {
+            $tablestoconvert++;
+        }
+    }
+    // progress bar handling
+    // first let's find out how many tables there are
+    
     $done = 0;
-    print_progress($done, 158, 5, 1);
+    print_progress($done, $tablestoconvert, 5, 1);
+    
     
     $textlib = textlib_get_instance();    //only 1 reference
 
@@ -288,11 +302,6 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
         echo '<br>Resuming from @ record : '.$crash->record;
     }
 
-    require_once($CFG->dirroot.'/lib/xmlize.php');
-
-    //one gigantic array to hold all db table information read from all the migrate2utf8.xml file.
-    $xmls = utf_get_xml(1);
-
     /************************************************************************
      * Now we got all our tables in order                                   *
      ************************************************************************/
@@ -304,7 +313,7 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
         foreach ($dbtables as $dbtable) {
 
             $done++;
-            print_progress($done, 158, 5, 1);
+            print_progress($done, $tablestoconvert, 5, 1);
             
             $dbtablename = $dbtable['@']['name'];
 
@@ -317,6 +326,7 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
             }
 
             if ($crash && ($dbtablename != $crash->table)) {  //resuming from crash
+                $done++; // need to update progress bar
                 continue;
             }
 
@@ -750,8 +760,8 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
     }
 
     //finish the javascript bar
-    $done=159;
-    print_progress($done, 158, 5, 1);
+    $done = $tablestoconvert;
+    print_progress($done, $tablestoconvert, 5, 1);
     
     //prints the list of langs used in this site
     print_simple_box_start('center','50%');
