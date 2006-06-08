@@ -325,7 +325,11 @@ function grade_get_formatted_grades() {
                         foreach($main_category as $assignment => $items) {
                             if ($assignment != 'stats') {
                                 if(!isset($grades_by_student["$student"]["$category"]["$assignment"]['grade'])) {
-                                    $grades_by_student["$student"]["$category"]['stats']['allgrades'] .= ',0';
+                                    if (isset($grades_by_student["$student"]["$category"]['stats']['allgrades'])) {
+                                        $grades_by_student["$student"]["$category"]['stats']['allgrades'] .=  ',0';
+                                    } else {
+                                        $grades_by_student["$student"]["$category"]['stats']['allgrades'] = '0';
+                                    }
                                 }
                             }            
                         }
