@@ -61,6 +61,35 @@ function migrate2utf8_block_instance_configdata($recordid){
 
         return $blah;
 
+    } else if ($blocktype -> name == 'glossary_random'){
+
+        ///find course
+        if ($globallang) {
+            $fromenc = $globallang;
+        } else {
+            $sitelang   = $CFG->lang;
+            $courselang = get_course_lang($blockinstance->pageid);  //Non existing!
+            $userlang   = get_main_teacher_lang($blockinstance->pageid); //N.E.!!
+
+            $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+        }
+
+        $blah = unserialize(base64_decode($blockinstance->configdata));
+
+    /// We are going to use textlib facilities
+
+    /// Convert the text
+        $blah->title = utfconvert($blah->title, $fromenc, false);
+        $blah->addentry = utfconvert($blah->addentry, $fromenc, false);
+        $blah->viewglossary = utfconvert($blah->viewglossary, $fromenc, false);
+        $blah->invisible = utfconvert($blah->invisible, $fromenc, false);
+
+        $blockinstance->configdata = base64_encode(serialize($blah));
+
+        migrate2utf8_update_record('block_instance',$blockinstance);
+
+        return $blah;
+
     }
 
 }
@@ -124,6 +153,35 @@ global $CFG, $globallang;
         $blockpinned->configdata = base64_encode(serialize($blah));
 
         migrate2utf8_update_record('blockpinned',$blockblockpinned);
+
+        return $blah;
+
+    } else if ($blocktype -> name == 'glossary_random'){
+
+        ///find course
+        if ($globallang) {
+            $fromenc = $globallang;
+        } else {
+            $sitelang   = $CFG->lang;
+            $courselang = get_course_lang($blockpinned->pageid);  //Non existing!
+            $userlang   = get_main_teacher_lang($blockpinned->pageid); //N.E.!!
+
+            $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+        }
+
+        $blah = unserialize(base64_decode($blockpinned->configdata));
+
+    /// We are going to use textlib facilities
+
+    /// Convert the text
+        $blah->title = utfconvert($blah->title, $fromenc, false);
+        $blah->addentry = utfconvert($blah->addentry, $fromenc, false);
+        $blah->viewglossary = utfconvert($blah->viewglossary, $fromenc, false);
+        $blah->invisible = utfconvert($blah->invisible, $fromenc, false);
+
+        $blockinstance->configdata = base64_encode(serialize($blah));
+
+        migrate2utf8_update_record('block_instance',$blockinstance);
 
         return $blah;
 
