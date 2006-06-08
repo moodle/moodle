@@ -469,7 +469,7 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
                         // could not use count_records because it addes prefix to adodb_logsql
                         $totalrecords = count_records_sql("select count(*) from {$prefix}$dbtablename");
                         $counter = 0;
-                        $recordsetsize = 4;
+                        $recordsetsize = 50;
 
                         if ($crash) {    //if resuming from crash
                             //find the number of records with id smaller than the crash id
