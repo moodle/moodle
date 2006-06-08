@@ -43,9 +43,6 @@
         $adminediting = (isadmin() and $creatorediting);
 
     } else {
-        if (!$category->visible) {
-            error(get_string('notavailable', 'error'));
-        }
         $adminediting = false;
         $creatorediting = false;
     }
