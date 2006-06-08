@@ -542,17 +542,18 @@ function scorm_scandir($directory) {
     }
 }
 
+
 function scorm_option2text($scorm) {
     global $SCORM_POPUP_OPTIONS;
 
     if (isset($scorm->popup)) {
         if ($scorm->popup) {
             $optionlist = array();
-            foreach ($SCORM_POPUP_OPTIONS as $option) {
-                if (isset($scorm->$option)) {
-                    $optionlist[] = $option.'='.$scorm->$option;
+            foreach ($SCORM_POPUP_OPTIONS as $name => $option) {
+                if (isset($scorm->$name)) {
+                    $optionlist[] = $name.'='.$scorm->$name;
                 } else {
-                    $optionlist[] = $option.'=0';
+                    $optionlist[] = $name.'=0';
                 }
             }       
             $scorm->options = implode(',', $optionlist);
