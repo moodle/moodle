@@ -44,7 +44,7 @@ function migrate2utf8_user($fields, $crash, $debug, $maxrecords) {
     
     $totalrecords = count_records_sql("select count(*) from {$CFG->prefix}user");
     $counter = 0;
-    $recordsetsize = 4;
+    $recordsetsize = 50;
     
     if ($crash) {    //if resuming from crash
         //find the number of records with id smaller than the crash id
