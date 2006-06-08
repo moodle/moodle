@@ -913,6 +913,7 @@ $string['nopotentialadmins'] = 'No potential admins';
 $string['nopotentialcreators'] = 'No potential course creators';
 $string['nopotentialstudents'] = 'No potential students';
 $string['nopotentialteachers'] = 'No potential teachers';
+$string['norecentactivity'] = 'No recent activity';
 $string['noreplyname'] = 'Do not reply to this email';
 $string['noreplybouncemessage'] = 'You have replied to a no-reply email address. If you were attempting to reply to a forum post, please instead reply using the $a forums. '."\n\n".'Following is the content of your email:'."\n\n";
 $string['noreplybouncesubject'] = '$a - bounced email.';
