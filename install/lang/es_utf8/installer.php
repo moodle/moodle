@@ -18,6 +18,14 @@ $string['admindirsettingsub'] = 'Muy pocos servidores web usan /admin como URL e
     en su instalación, y poniendo aquí ese nuevo nombre. Por ejemplo: <br /> <br /><b>moodleadmin</b><br /> <br />
     Así se corregirán los enlaces admin en Moodle.';
 $string['bypassed'] = 'Evitado';
+$string['cannotcreatelangdir'] = 'No se puede crear el directorio lang.';
+$string['cannotcreatetempdir'] = 'No se puede crear el directorio temp.';
+$string['cannotdownloadcomponents'] = 'No se puede descargar componentes.';
+$string['cannotdownloadzipfile'] = 'No se puede descargar el archivo ZIP.';
+$string['cannotfindcomponent'] = 'No se puede encontrar el componente.';
+$string['cannotsavemd5file'] = 'No se puede guardar el archivo md5.';
+$string['cannotsavezipfile'] = 'No se puede guardar el archivo ZIP.';
+$string['cannotunzipfile'] = 'No se puede descomprimir el archivo.';
 $string['caution'] = 'Precaución';
 $string['check'] = 'Revisar';
 $string['chooselanguagehead'] = 'Seleccionar idioma';
@@ -25,6 +33,7 @@ $string['chooselanguagesub'] = 'Por favor, seleccione un idioma para el proceso 
 $string['closewindow'] = 'Cerrar esta ventana';
 $string['compatibilitysettingshead'] = 'Comprobando sus ajustes PHP...';
 $string['compatibilitysettingssub'] = 'Su servidor debería pasar todos estas comprobaciones para que Moodle pueda funcionar correctamente.';
+$string['componentisuptodate'] = 'El componente está actualizado.';
 $string['configfilenotwritten'] = 'El script instalador no ha podido crear automáticamente un archivo config.php con las especificaciones elegidas. Por favor, copie el siguiente código en un archivo llamado config.php y coloque ese archivo en el directorio raíz de Moodle.';
 $string['configfilewritten'] = 'config.php se ha creado con éxito';
 $string['configurationcompletehead'] = 'Configuración completa';
@@ -51,6 +60,7 @@ $string['dbcreationerror'] = 'Error al crear la base de datos. No se ha podido c
 $string['dbhost'] = 'Servidor';
 $string['dbprefix'] = 'Prefijo de tablas';
 $string['dbtype'] = 'Tipo';
+$string['dbwrongencoding'] = 'La base de datos seleccionada está ejecutándose bajo una codificación no recomendada ($a). Convendría usar en su lugar una base de datos con codificación Unicode (UTF-8). En cualquier caso, usted puede pasar por alto esta prueba seleccionando \"Pasar por alto la prueba de codificación BD\", si bien tal vez tenga problemas en el futuro.';
 $string['directorysettingshead'] = 'Por favor confirme las siguientes localizaciones de su instalación';
 $string['directorysettingssub'] = '<b>Dirección Web:</b>
 Especifique la dirección web completa en la que se accederá a Moodle.
@@ -68,7 +78,8 @@ directamente accesible desde la red.';
 $string['dirroot'] = 'Directorio Moodle';
 $string['dirrooterror'] = 'El \'Directorio de Moodle\' parece incorrecto. No se pudo encontrar una instalación de Moodle. El valor ha sido cambiado por el original.';
 $string['download'] = 'Descargar';
-$string['downloadlanguagebutton'] = 'Descargar el paquete de idioma &quot;$a&quot;';
+$string['downloadedfilecheckfailed'] = 'Ha fallado la comprobación del archivo descargado.';
+$string['downloadlanguagebutton'] = 'Descargar el paquete de idioma \"$a\"';
 $string['downloadlanguagehead'] = 'Descargar paquete de idioma';
 $string['downloadlanguagenotneeded'] = 'Puede continuar el proceso de instalación con el idioma por defecto, \"$a\".';
 $string['downloadlanguagesub'] = 'Ahora tiene la opción de descargar su paquete de idioma y continuar con el proceso de instalación en ese idioma.<br /><br />Si no es posible la descarga el proceso de instalación continuará en inglés (una vez que la instalación haya finalizado, podrá descargar e instalar otros idiomas).';
@@ -92,6 +103,7 @@ $string['help'] = 'Ayuda';
 $string['iconvrecommended'] = 'La instalación de la librería opcional ICONV es muy recomendable para mejorar el rendimiento del sitio, especialmente si su sitio está soportando idiomas no latinos.';
 $string['info'] = 'Información';
 $string['installation'] = 'Instalación';
+$string['invalidmd5'] = 'md5 no válido';
 $string['langdownloaderror'] = 'El idioma \"$a\" no pudo ser instalado. El proceso de instalación continuará en inglés.';
 $string['langdownloadok'] = 'El idioma \"$a\" ha sido instalado correctamente. El proceso de instalación continuará en este idioma.';
 $string['language'] = 'Idioma';
@@ -116,6 +128,7 @@ a, digamos, 16M. Si no lo tiene, pida a su administrador que lo haga por usted.<
 <p>Sin embargo, en algunos servidores esto hace que <b>todas</b> las páginas PHP dejen de funcionar
 (podrá ver los errores cuando mire las páginas) de modo que tendrá que eliminar el archivo .htaccess.</p></li>
 </ol>';
+$string['missingrequiredfield'] = 'Falta algún campo necesario';
 $string['mysql416bypassed'] = 'En cualquier caso, si su sitio únicamente está utilizando idiomas ISO-8859-1 (latin), puede continuar con su versión de MySQL actual (4.1.12 o superior).';
 $string['mysql416required'] = 'MySQL 4.1.16 es la versión mínima requerida para trabajar con Moodle 1.6 y garantizar que toda la información podrá ser convertida a UTF-8 en el futuro.';
 $string['mysqlextensionisnotpresentinphp'] = 'PHP no ha sido adecuadamente configurado con la extensión MySQL de modo que pueda comunicarse con MySQL. Por favor, compruebe el archivo php.ini o recompile PHP.';
@@ -130,11 +143,13 @@ $string['phpversionhelp'] = '<p>Moodle requiere una versión de PHP 4.1.0 o supe
 <p>Su versión es $a</p>
 <p>Debe actualizar PHP o acudir a otro servidor con una versión más reciente de PHP</p>';
 $string['previous'] = 'Anterior';
+$string['remotedownloadnotallowed'] = 'No está permitido descargar los componentes a su servidor (allow_url_fopen está deshabilitado).<br /><br />Debe descargar el archivo <a href=\"$a->url\">$a->url</a> manualmente, y copiarlo a \"$a->dest\" ';
 $string['report'] = 'Informe';
 $string['safemode'] = 'Safe Mode';
 $string['safemodeerror'] = 'Moodle puede tener problemas con \'safe mode\' activado';
 $string['sessionautostart'] = 'Autocomienzo de sesión';
 $string['sessionautostarterror'] = 'Deb e estar desactivado';
+$string['skipdbencodingtest'] = 'Pasar por alto el test de decodificación de la BD';
 $string['status'] = 'Estado';
 $string['thischarset'] = 'UTF-8';
 $string['thislanguage'] = 'Español - Internacional';
@@ -154,6 +169,9 @@ $string['welcomep60'] = 'Las siguientes páginas le guiarán a traves de algunos
     y ajustar <strong>Moodle</strong> en su ordenador. Puede utilizar los valores por defecto sugeridos o,
     de forma opcional, modificarlos para que se ajusten a sus necesidades.';
 $string['welcomep70'] = 'Pulse en el botón \"Siguiente\" para continuar con la configuración de <strong>Moodle</strong>.';
+$string['wrongdestpath'] = 'Ruta de destino errónea.';
+$string['wrongsourcebase'] = 'Base de fuente de URL errónea.';
+$string['wrongzipfilename'] = 'Nombre de archivo ZIP erróneo.';
 $string['wwwroot'] = 'Dirección Web';
 $string['wwwrooterror'] = 'La \'Dirección Web\' parece incorrecto. No se pudo encontrar una instalación de Moodle. El valor ha sido cambiado por el original.';
 ?>

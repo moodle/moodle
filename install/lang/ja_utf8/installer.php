@@ -127,14 +127,17 @@ $string['next'] = '次へ';
 $string['ok'] = 'OK';
 $string['pass'] = 'パス';
 $string['password'] = 'パスワード';
+$string['php50restricted'] = 'PHP 5.0.x には数多くの既知の問題があります。5.1.x にアップグレードするか、4.3.x または 4.4.x にダウングレードしてください。';
 $string['phpversion'] = 'PHPバージョン';
-$string['phpversionerror'] = 'PHPバージョンは4.1.0以上をお使いください。';
-$string['phpversionhelp'] = '<p>MoodleではPHPバージョン4.1.0以上が必要です。</p>
+$string['phpversionerror'] = 'PHPバージョンは少なくとも 4.3.0 または 5.1.0 をお使いください ( 5.0.x には既知の多数の問題があります )。';
+$string['phpversionhelp'] = '<p>Moodleには、少なくとも 4.3.0 または 5.1.0 のPHPバージョンが必要です ( 5.0.x には既知の多数の問題があります )。</p>
 <p>現在、バージョン $a が動作しています。</p>
-<p>PHPをアップグレードするか、新しいバージョンがインストールされているホストに移動してください!</p>';
+<p>PHPをアップグレードするか、新しいバージョンがインストールされているホストに移動してください!<br/>
+( 5.0.x の場合、バージョン 4.4.x にダウングレードすることもできます。 )</p>';
 $string['previous'] = '前へ';
 $string['remotedownloadnotallowed'] = 'あなたのサーバーにコンポーネントをダウンロードすることができません ( allow_url_fopen が無効 )。<br /><br /><a href=\"$a->url\">$a->url</a> ファイルを手動でダウンロードして、サーバの「 $a->dest 」にコピーした後、解凍してください。';
 $string['report'] = 'レポート';
+$string['restricted'] = '使用禁止';
 $string['safemode'] = 'セーフモード';
 $string['safemodeerror'] = 'セーフモードが有効の場合、Moodleに問題が発生する場合があります。';
 $string['sessionautostart'] = 'セッション自動スタート';

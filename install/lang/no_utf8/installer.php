@@ -11,7 +11,9 @@
 
 $string['admindirerror'] = 'The admin directory specified is incorrect';
 $string['admindirname'] = 'Admin Directory';
+$string['bypassed'] = 'Utelatt';
 $string['caution'] = 'Caution';
+$string['check'] = 'Sjekk';
 $string['closewindow'] = 'Lukk dette vinduet';
 $string['configfilenotwritten'] = 'The installer script was not able to automatically create a config.php file containing your chosen settings, probably because the Moodle directory is not writeable. You can manually copy the following code into a file named config.php within the root directory of Moodle.';
 $string['configfilewritten'] = 'config.php has been successfully created';
@@ -27,6 +29,7 @@ $string['dbtype'] = 'Type';
 $string['dirroot'] = 'Moodle Directory';
 $string['dirrooterror'] = 'The \'Moodle Directory\' setting seems to be incorrect - we can\'t find a Moodle installation there.  The value below has been reset.';
 $string['download'] = 'Download';
+$string['environmentrequireversion'] = 'Du må ha versjon $a->needed. Du kjører $a->current';
 $string['error'] = 'Feil';
 $string['fail'] = 'Fail';
 $string['fileuploads'] = 'File Uploads';
@@ -73,6 +76,7 @@ $string['phpversionhelp'] = '<p>Moodle requires a PHP version of at least 4.1.0.
 <p>You are currently running version $a</p>
 <p>You must upgrade PHP or move to a host with a newer version of PHP!</p>';
 $string['previous'] = 'Forrige';
+$string['report'] = 'Rapport';
 $string['safemode'] = 'Safe Mode';
 $string['safemodeerror'] = 'Moodle may have trouble with safe mode on';
 $string['sessionautostart'] = 'Session Auto Start';

@@ -150,6 +150,7 @@ $string['next'] = 'Next';
 $string['ok'] = 'OK';
 $string['pass'] = 'Pass';
 $string['password'] = 'Password';
+$string['php50restricted'] = 'PHP 5.0.x has a number of known problems, please upgrade to 5.1.x or downgrade to 4.3.x or 4.4.x';
 $string['phpversion'] = 'PHP version';
 $string['phpversionerror'] = 'PHP version must be at least 4.3.0 or 5.1.0 (5.0.x has a number of known problems).';
 $string['phpversionhelp'] = '<p>Moodle requires a PHP version of at least 4.3.0 or 5.1.0 (5.0.x has a number of known problems).</p>
@@ -159,6 +160,7 @@ $string['phpversionhelp'] = '<p>Moodle requires a PHP version of at least 4.3.0 
 $string['previous'] = 'Previous';
 $string['remotedownloadnotallowed'] = 'Download of components to your server isn\'t allowed (allow_url_fopen is disabled).<br /><br />You must download the <a href=\"$a->url\">$a->url</a> file manually, copy it to \"$a->dest\" in your server and unzip it there.';
 $string['report'] = 'Report';
+$string['restricted'] = 'Restricted';
 $string['safemode'] = 'Safe Mode';
 $string['safemodeerror'] = 'Moodle may have trouble with safe mode on';
 $string['sessionautostart'] = 'Session Auto Start';
