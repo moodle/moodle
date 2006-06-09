@@ -2432,7 +2432,7 @@ function create_user_record($username, $password, $auth='') {
     update_internal_user_password($newuser, $password, false);
     $newuser->lang = $CFG->lang;
     $newuser->confirmed = 1;
-    $newuser->lastIP = getremoteaddr();
+    $newuser->lastip = getremoteaddr();
     $newuser->timemodified = time();
 
     if (insert_record('user', $newuser)) {
@@ -2522,7 +2522,7 @@ function guest_user() {
         $newuser->confirmed = 1;
         $newuser->site = $CFG->wwwroot;
         $newuser->lang = $CFG->lang;
-        $newuser->lastIP = getremoteaddr();
+        $newuser->lastip = getremoteaddr();
     }
 
     return $newuser;

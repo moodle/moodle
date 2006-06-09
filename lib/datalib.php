@@ -2832,7 +2832,7 @@ function add_to_log($courseid, $module, $action, $url='', $info='', $cm=0, $user
         echo '<p>Error: Could not insert a new entry to the Moodle log</p>';  // Don't throw an error
     }
     if ( isset($USER) && (empty($user) || $user==$USER->id) ) {
-        $db->Execute('UPDATE '. $CFG->prefix .'user SET lastIP=\''. $REMOTE_ADDR .'\', lastaccess=\''. $timenow .'\'
+        $db->Execute('UPDATE '. $CFG->prefix .'user SET lastip=\''. $REMOTE_ADDR .'\', lastaccess=\''. $timenow .'\'
                      WHERE id = \''. $userid .'\' ');
         if ($courseid != SITEID && !empty($courseid)) { // logins etc dont't have a courseid and isteacher will break without it.
             if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++;};
