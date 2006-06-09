@@ -65,7 +65,7 @@ function authorize_print_orders()
     $table->set_attribute('class', 'generaltable generalbox');
 
     $table->define_columns(array('id', 'timecreated', 'userid', 'status', ''));
-    $table->define_headers(array($authstrs->orderid, $strs->time, $strs->user, $strs->status, $strs->action));
+    $table->define_headers(array($authstrs->orderid, $strs->time, $authstrs->nameoncard, $strs->status, $strs->action));
     $table->define_baseurl($baseurl."&amp;status=$status");
 
     $table->sortable(true, 'id', SORT_DESC);
@@ -200,7 +200,7 @@ function authorize_print_order_details($orderno)
     if (empty($cmdcapture) and empty($cmdrefund) and empty($cmdvoid) and empty($cmddelete)) {
         $table->data[] = array("<b>$strs->course:</b>", $order->shortname);
         $table->data[] = array("<b>$strs->status:</b>", $authstrs->{$status->status});
-        $table->data[] = array("<b>$strs->user:</b>", $order->ccname);
+        $table->data[] = array("<b>$authstrs->nameoncard:</b>", $order->ccname);
         $table->data[] = array("<b>$strs->time:</b>", userdate($order->timecreated));
         $table->data[] = array("<b>$authstrs->settlementdate:</b>", $settled ?
                                userdate($order->settletime) : $authstrs->notsettled);
