@@ -4494,27 +4494,35 @@ function rebuildnolinktag($text) {
  * Prints a nice side block with an optional header.  The content can either
  * be a block of HTML or a list of text with optional icons.
  *
- * @param  string $heading ?
+ * @param  string $heading Block $title embedded in HTML tags, for example <h2>.
  * @param  string $content ?
  * @param  array $list ?
  * @param  array $icons ?
  * @param  string $footer ?
  * @param  array $attributes ?
+ * @param  string $title Plain text title, as embedded in the $heading.
  * @todo Finish documenting this function. Show example of various attributes, etc.
  */
-function print_side_block($heading='', $content='', $list=NULL, $icons=NULL, $footer='', $attributes = array()) {
+function print_side_block($heading='', $content='', $list=NULL, $icons=NULL, $footer='', $attributes = array(), $title='') {
 
-    //Accessibility: skip block link, with $block_id to differentiate links.
+    //Accessibility: skip block link, with title-text (or $block_id) to differentiate links.
     static $block_id = 0;
     $block_id++;
-    $skip_text = get_string('skipblock','access').' '.$block_id;
-    $skip_link = '<a href="#sb-'.$block_id.'" class="skip-block" title="'.$skip_text.'"><span class="accesshide">'.$skip_text.'</span></a>'; 
-    $skip_dest = '<span id="sb-'.$block_id.'" class="skip-block-to"></span>';
-    if (! empty($heading)) {
-        $heading .= $skip_link;
-    } else {
-        echo $skip_link;
+    if (empty($heading)) {
+        $skip_text = get_string('skipblock', 'access').' '.$block_id;
     }
+    else {
+        $skip_text = get_string('skipa', 'access', $title);
+    }
+    $skip_link = '<a href="#sb-'.$block_id.'" class="skip-block" title="'.$skip_text.'"><span class="accesshide">'.$skip_text.'</span></a>';
+    $skip_dest = '<span id="sb-'.$block_id.'" class="skip-block-to"></span>';
+
+    if (! empty($heading)) {
+        $heading = $skip_link . $heading;
+    } 
+    /*else { //ELSE: I think a single link on a page, "Skip block 4" is too confusing - don't print.
+        echo $skip_link;
+    }*/
 
     print_side_block_start($heading, $attributes);
 

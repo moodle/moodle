@@ -218,8 +218,8 @@ class block_base {
                 // Header wants to hide, no edit controls to show, so no header it is
                 print_side_block(NULL, $this->content->text, NULL, NULL, $this->content->footer, $this->html_attributes());
             } else {
-                // The full treatment, please
-                print_side_block($this->_title_html(), $this->content->text, NULL, NULL, $this->content->footer, $this->html_attributes());
+                // The full treatment, please. Include the title text.
+                print_side_block($this->_title_html(), $this->content->text, NULL, NULL, $this->content->footer, $this->html_attributes(), $this->title);
             }
         }
     }
@@ -230,7 +230,7 @@ class block_base {
      * block is in place, even if empty.
      */
     function _print_shadow() {
-        print_side_block($this->_title_html(), '&nbsp;', NULL, NULL, '', array('class' => 'hidden'));
+        print_side_block($this->_title_html(), '&nbsp;', NULL, NULL, '', array('class' => 'hidden'), $this->title);
     }
 
 
@@ -634,8 +634,8 @@ class block_list extends block_base {
                 // Header wants to hide, no edit controls to show, so no header it is
                 print_side_block(NULL, '', $this->content->items, $this->content->icons, $this->content->footer, $this->html_attributes());
             } else {
-                // The full treatment, please
-                print_side_block($this->_title_html(), '', $this->content->items, $this->content->icons, $this->content->footer, $this->html_attributes());
+                // The full treatment, please. Include the title text.
+                print_side_block($this->_title_html(), '', $this->content->items, $this->content->icons, $this->content->footer, $this->html_attributes(), $this->title);
             }
         }
     }

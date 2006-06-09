@@ -466,7 +466,7 @@ ul.list, ul.list li, ol.list, ol.list li {
   text-align: left;
   margin:0%;
   padding:4px;
-  padding-bottom:0%;
+  padding-top:0;
   border-width: 1px;
   border-style: solid;
   border-bottom: none;
