@@ -1972,6 +1972,11 @@ function main_upgrade($oldversion=0) {
         execute_sql("INSERT INTO {$CFG->prefix}log_display (module, action, mtable, field) VALUES ('course', 'report participation', 'course', 'fullname')");
         execute_sql("INSERT INTO {$CFG->prefix}log_display (module, action, mtable, field) VALUES ('course', 'report stats', 'course', 'fullname')");
     }
+
+    //Renaming lastIP to lastip (all fields lowercase)
+    if ($oldversion < 2006050505) {
+        table_column("user", "lastIP", "lastip", "varchar", "15", "", "", "not null", "currentlogin");
+    }
     
     return $result;
 }

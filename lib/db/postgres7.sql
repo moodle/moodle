@@ -428,7 +428,7 @@ CREATE TABLE prefix_user (
    lastaccess integer NOT NULL default '0',
    lastlogin integer NOT NULL default '0',
    currentlogin integer NOT NULL default '0',
-   lastIP varchar(15) default NULL,
+   lastip varchar(15) default NULL,
    secret varchar(15) default NULL,
    picture integer default NULL,
    url varchar(255) default NULL,

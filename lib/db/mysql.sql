@@ -609,7 +609,7 @@ CREATE TABLE `prefix_user` (
   `lastaccess` int(10) unsigned NOT NULL default '0',
   `lastlogin` int(10) unsigned NOT NULL default '0',
   `currentlogin` int(10) unsigned NOT NULL default '0',
-  `lastIP` varchar(15) NOT NULL default '',
+  `lastip` varchar(15) NOT NULL default '',
   `secret` varchar(15) NOT NULL default '',
   `picture` tinyint(1) NOT NULL default '0',
   `url` varchar(255) NOT NULL default '',
