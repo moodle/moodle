@@ -122,7 +122,7 @@
 
 
     /// Blog entry, everyone can view
-        if ($CFG->bloglevel > 1) {
+        if ($CFG->bloglevel > 0) { // only if blog is enabled. Permission check kicks in when display list
             $toprow[] = new tabobject('blogs', $CFG->wwwroot.'/blog/index.php?userid='.$user->id.'&amp;courseid='.$course->id, get_string('blogs', 'blog'));
         }
         
