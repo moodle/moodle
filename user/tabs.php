@@ -122,7 +122,7 @@
 
 
     /// Blog entry, everyone can view
-        if ($CFG->bloglevel > 1 or $USER->id == $user->id) {  // this is weird
+        if ($CFG->bloglevel > 1) {
             $toprow[] = new tabobject('blogs', $CFG->wwwroot.'/blog/index.php?userid='.$user->id.'&amp;courseid='.$course->id, get_string('blogs', 'blog'));
         }
         
