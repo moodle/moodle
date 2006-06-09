@@ -180,6 +180,8 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
 
     global $db, $CFG, $dbtablename, $fieldname, $record, $processedrecords;
     $debug = ($CFG->debug > 7);
+
+     //echo date("H:i:s");
     
     ignore_user_abort(false); // see bug report 5352. This should kill this thread as soon as user aborts.
     
@@ -510,10 +512,10 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
                                     $replacements[] = $record->id;
                                     $replacements[] = $prefix;
 
-                                    switch ($method){
-                                        case 'PLAIN_SQL_UPDATE':    //use the 2 statements to update
+                                    if (!empty($record->{$fieldname})) {    //only update if not empty
+                                        switch ($method){
+                                            case 'PLAIN_SQL_UPDATE':    //use the 2 statements to update
 
-                                            if (!empty($record->{$fieldname})) {    //only update if not empty
                                                 if ($debug) {
                                                     $db->debug=999;
                                                 }
@@ -544,23 +546,22 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
                                                 if ($debug) {
                                                     $db->debug=0;
                                                 }
-                                            }
+                                            break;
 
-                                        break;
+                                            case 'PHP_FUNCTION':    //use the default php function to execute
+                                                if ($debug) {
+                                                    $db->debug=999;
+                                                }
+                                                require_once($CFG->dirroot.'/'.$dir.'/db/migrate2utf8.php');
+                                                $phpfunction($record->id);
+                                                if ($debug) {
+                                                    $db->debug=0;
+                                                }
+                                            break;
 
-                                        case 'PHP_FUNCTION':    //use the default php function to execute
-                                            if ($debug) {
-                                                $db->debug=999;
-                                            }
-                                            require_once($CFG->dirroot.'/'.$dir.'/db/migrate2utf8.php');
-                                            $phpfunction($record->id);
-                                            if ($debug) {
-                                                $db->debug=0;
-                                            }
-                                        break;
-
-                                        default:    //no_conv, don't do anything ;-)
-                                        break;
+                                            default:    //no_conv, don't do anything ;-)
+                                            break;
+                                        }
                                     }
                                     $counter++;
                                     if ($maxrecords) {
@@ -793,7 +794,8 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
 
     //set the final flag
     migrate2utf8_set_config('unicodedb','true');    //this is the main flag for unicode db
-    
+
+     //echo date("H:i:s");
 }
 
 
