@@ -126,6 +126,7 @@ $string['next'] = 'Següent';
 $string['ok'] = 'OK';
 $string['pass'] = 'Correcte';
 $string['password'] = 'Contrasenya';
+$string['php50restricted'] = 'PHP 5.0 té alguns problemes coneguts. Actualitzeu-vos si us plau a 5.1.x o torneu a 4.3.x o 4.4.x';
 $string['phpversion'] = 'Versió PHP';
 $string['phpversionerror'] = 'La versió del PHP ha de ser com a mínim la 4.1.0';
 $string['phpversionhelp'] = '<p>Moodle necessita la versió de PHP 4.1.0 o posterior.</p>
@@ -134,6 +135,7 @@ $string['phpversionhelp'] = '<p>Moodle necessita la versió de PHP 4.1.0 o poste
 $string['previous'] = 'Anterior';
 $string['remotedownloadnotallowed'] = 'El vostre servidor no permet baixar components ((allow_url_fopen inhabilitat).<br /><br />Baixeu manualment el fitxer <a href=\"$a->url\">$a->url</a>, copieu en la ubicació \"$a->dest\" del vostre servidor i descomprimiu-lo allí.';
 $string['report'] = 'Informe';
+$string['restricted'] = 'Restringit';
 $string['safemode'] = 'Mode segur';
 $string['safemodeerror'] = 'Moodle pot tenir problemes amb el mode segur activat';
 $string['sessionautostart'] = 'Autoinici de sessió';
