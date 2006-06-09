@@ -11,12 +11,46 @@
 
 $string['admindirerror'] = '指定的管理目录不正确';
 $string['admindirname'] = '管理目录';
+$string['admindirsettinghead'] = '设定管理目录...';
+$string['admindirsettingsub'] = '有一些服务器的/admin用在了如控制面板之类的特殊功能上，但这与标准的Moodle管理页面冲突了。通过修改管理目录的名称并将新名称填写在这里就可以避免冲突了。例如: <br /> <br /><b>moodleadmin</b><br /> <br />
+这将修正Moodle中的管理链接。';
+$string['bypassed'] = '忽视';
+$string['cannotcreatelangdir'] = '无法创建 lang 目录。';
+$string['cannotcreatetempdir'] = '无法创建 temp 目录。';
+$string['cannotdownloadcomponents'] = '无法下载组件。';
+$string['cannotdownloadzipfile'] = '无法下载ZIP文件。';
+$string['cannotfindcomponent'] = '找不到组件。';
+$string['cannotsavemd5file'] = '无法保存md5文件。';
+$string['cannotsavezipfile'] = '无法保存ZIP文件。';
+$string['cannotunzipfile'] = '无法解压文件。';
 $string['caution'] = '原因';
+$string['check'] = '检查';
+$string['chooselanguagehead'] = '选择一种语言';
+$string['chooselanguagesub'] = '请选择在安装过程中使用的语言。稍后您可以根据需要重新选择用于站点和用户的语言。';
 $string['closewindow'] = '关闭窗口';
+$string['compatibilitysettingshead'] = '检查您的PHP设置...';
+$string['compatibilitysettingssub'] = '要正确地安装Moodle，您的服务器需要通过以下测试';
+$string['componentisuptodate'] = '组件已经是最新的了。';
 $string['configfilenotwritten'] = '安装脚本无法自动创建一个包含您设置的config.php文件，极可能是由于Moodle目录是不能写的。您可以复制如下的代码到Moodle根目录下的config.php文件中。';
 $string['configfilewritten'] = '已经成功创建了config.php文件';
+$string['configurationcompletehead'] = '配置完毕';
+$string['configurationcompletesub'] = 'Moodle会尝试将配置存储在您的Moodle跟目录中。';
 $string['continue'] = '继续';
 $string['database'] = '数据库';
+$string['databasecreationsettingshead'] = '现在您需要配置数据库选项，Moodle的大部分数据都是存储在数据库中的。Moodle的安装程序会根据下面的选项自动为您创建数据库。';
+$string['databasecreationsettingssub'] = '<b>类型：</b>安装程序只允许“mysql”<br />
+<b>主机：</b>安装程序只允许“localhost”<br />
+<b>名称：</b>数据库名称，如moodle<br />
+<b>用户名：</b>安装程序只允许“root”<br />
+<b>密码：</b>您的数据库密码<br />
+<b>表格前缀：</b>用于所有表格名的前缀(可选)';
+$string['databasesettingshead'] = '现在您需要配置数据库，Moodle的大部分数据都会存储在其中。您应当事先创建好这个数据库并设定好用于访问该数据库的用户名和密码。';
+$string['databasesettingssub'] = '<b>类型：</b>mysql或postgres7<br />
+<b>主机：</b>如localhost或db.isp.com<br />
+<b>名称：</b>数据库名称，如moodle<br />
+<b>用户：</b>访问数据库的用户名<br />
+<b>密码：</b>访问数据库的密码<br />
+<b>表格前缀：</b>在所有的表格名称前加上可选的前缀';
 $string['dataroot'] = '数据目录';
 $string['datarooterror'] = '找不到也无法创建您指定的“数据目录”，请更正路径或手工创建它。';
 $string['dbconnectionerror'] = '无法连接到您指定的数据库，请检查您的数据库设置。';
@@ -24,9 +58,32 @@ $string['dbcreationerror'] = '数据库创建错误。无法用设定中的名�
 $string['dbhost'] = '服务器主机';
 $string['dbprefix'] = '表格名称前缀';
 $string['dbtype'] = '类型';
+$string['dbwrongencoding'] = '您选择的数据库使用了字符集{$a}，我们推荐您使用一个Unicode (UTF-8)字符集的数据库。当然，您可以选择“跳过数据库字符集检查”来跳过这个环节，但您将来可能会遇到问题。';
+$string['directorysettingshead'] = '请确认安装Moodle的位置';
+$string['directorysettingssub'] = '<p><b>Web地址:</b>
+指定访问Moodle的完整Web地址。如果您的网站可以通过多个URL访问，那么选择其中最常用的一个。地址的末尾不要有斜线。</p>
+
+<p><b>Moodle目录:</b>
+指定安装的完整路径，要确保大小写正确。</p>
+
+<p><b>数据目录:</b>
+Moodle需要一个位置存放上传的文件。这个目录对于Web服务器用户(通常是“nobody”或“apache”)应当是可读可写的，但应当不能直接通过Web访问它。</p>';
 $string['dirroot'] = 'Moodle目录';
 $string['dirrooterror'] = '“Moodle目录”的设置看上去不对——在那里找不到安装好的Moodle。下面的值已经重置了。';
 $string['download'] = '下载';
+$string['downloadedfilecheckfailed'] = '下载文件检查失败。';
+$string['downloadlanguagebutton'] = '下载“{$a}”语言包';
+$string['downloadlanguagehead'] = '下载语言包';
+$string['downloadlanguagenotneeded'] = '您可以使用缺省的语言包“{$a}”继续安装过程。';
+$string['downloadlanguagesub'] = '您现在可以下载一个语言包并以该种语言继续安装过程。<br /><br />如果您无法下载语言包，安装过程将会以中文继续。(当安装过程结束后，您就有机会下载并安装更多的语言包了。)';
+$string['environmenterrortodo'] = '在您继续安装这个版本的 Moodle 前，您必需受限解决上面所列出的所有环境问题！';
+$string['environmenthead'] = '检测您的运行环境...';
+$string['environmentrecommendinstall'] = '- 推荐安装/激活';
+$string['environmentrecommendversion'] = '推荐 $a->needed 版本，而您的是 $a->current';
+$string['environmentrequireinstall'] = '- 必需安装/激活';
+$string['environmentrequireversion'] = '需要 $a->needed 版本，而您的是 $a->current';
+$string['environmentsub'] = '我们正在检查您系统中的某些组件是否符合需求';
+$string['environmentxmlerror'] = '读取环境数据时错误($a->error_code)';
 $string['error'] = '错误';
 $string['fail'] = '失败';
 $string['fileuploads'] = '上传文件';
@@ -36,11 +93,16 @@ $string['gdversionerror'] = '为了能够处理和创建图片，服务器上必
 $string['globalsquotes'] = '处理全局变量的方式不安全';
 $string['globalsquoteserror'] = '修正您的PHP设置：禁用register_globals和/或启动magic_quotes_gpc。';
 $string['help'] = '帮助';
+$string['iconvrecommended'] = '我们强烈建议您安装时 ICONV 库，特别是您的站点使用非拉丁语系的语言时，它可以大大提升系统性能。';
 $string['info'] = '信息';
 $string['installation'] = '安装';
+$string['invalidmd5'] = '无效的md5';
+$string['langdownloaderror'] = '很不幸，语言“{$a}”并未安装。安装过程将以英文继续。';
+$string['langdownloadok'] = '语言“{$a}”已经成功安装了。安装过程将会以此语言继续。';
 $string['language'] = '语言';
-$string['magicquotesruntime'] = '运行时的Magic Quotes';
+$string['magicquotesruntime'] = '运行时的 Magic Quotes';
 $string['magicquotesruntimeerror'] = '这应该是关闭的';
+$string['mbstringrecommended'] = '我们强烈建议您安装时 MBSTRING 库，特别是您的站点使用非拉丁语系的语言时，它可以大大提升系统性能。';
 $string['memorylimit'] = '内存限制';
 $string['memorylimiterror'] = 'PHP内存限制设置的太低了...以后您会遇到问题的。';
 $string['memorylimithelp'] = '<p>您的服务器的PHP内存限制是${a}。</p>
@@ -55,6 +117,9 @@ $string['memorylimithelp'] = '<p>您的服务器的PHP内存限制是${a}。</p>
 <blockquote>php_value memory_limit 16M</blockquote>
 <p>然而，在一些服务器上这会让<b>所有</b>PHP页面无法正常工作(在访问页面时会有错误)，因此您可能不得不删除.htaccess文件。</p></li>
 </ol>';
+$string['missingrequiredfield'] = '缺少了必需的字段';
+$string['mysql416bypassed'] = '如果您的站点使用只 iso-8859-1 (latin) 语言，您可以使用您当前安装的 MySQL 4.1.12(或更高)。';
+$string['mysql416required'] = 'MySQL 4.1.16 是 Moodle 1.6 所需要的最低版本，否则将无法保证所有数据都能转换到 UTF-8 编码。';
 $string['mysqlextensionisnotpresentinphp'] = 'PHP的MySQL扩展并未安装正确，因此无法与MySQL通信。请检查您的php.ini文件或重新编译PHP。';
 $string['name'] = '名称';
 $string['next'] = '向后';
@@ -67,14 +132,27 @@ $string['phpversionhelp'] = '<p>Moodle需要PHP 4.1.0以上的版本。</p>
 <p>您当前使用的是${a}</p>
 <p>您必须升级PHP或者转移到一个有新版PHP的服务器上!</p>';
 $string['previous'] = '向前';
+$string['remotedownloadnotallowed'] = '不允许为您的服务器下载组件(allow_url_fopen失败)。<br /><br />您应该<a href=\"{$a->url}\">{$a->url}</a> 先手动的把它复制到“{$a->dest}”您的服务器上然后解压.';
+$string['report'] = '报表';
 $string['safemode'] = '安全模式';
 $string['safemodeerror'] = '在安全模式下运行Moodle可能会有麻烦';
 $string['sessionautostart'] = '自动开启会话';
 $string['sessionautostarterror'] = '这应当是关闭的';
+$string['skipdbencodingtest'] = '跳过数据库编码检测';
 $string['status'] = '状态';
 $string['thischarset'] = 'UTF-8';
 $string['thislanguage'] = '简体中文';
 $string['user'] = '用户';
+$string['welcomep10'] = '$a->installername ($a->installerversion)';
+$string['welcomep20'] = '您看到这个页面表明您已经成功地在您的计算机上安装了<strong>$a->packname $a->packversion</strong>。恭喜您！';
+$string['welcomep30'] = '<strong>$a->installername</strong>包含了可以创建<strong>Moodle</strong>运行环境的应用程序：';
+$string['welcomep40'] = '这个软件包还包含了<strong>Moodle $a->moodlerelease ($a->moodleversion)</strong>。';
+$string['welcomep50'] = '使用本软件包中包含的应用程序时应遵循它们各自的授权协议。整个<strong>$a->installername</strong>软件包都是<a href=\"http://www.opensource.org/docs/definition_plain.html\">开源</a>的，并且遵循<a href=\"http://www.gnu.org/copyleft/gpl.html\">GPL</a>授权协议发布。';
+$string['welcomep60'] = '接下来的页面会引导你通过一系列步骤在您的计算机上安装配置好<strong>Moodle</strong>。您可以接受缺省的设置后，或者根据需要修改它们。';
+$string['welcomep70'] = '点击“下一步”按钮以继续<strong>Moodle</strong>的安装过程。';
+$string['wrongdestpath'] = '错误的目标路径。';
+$string['wrongsourcebase'] = '错误的源URL基地址。';
+$string['wrongzipfilename'] = '错误的ZIP文件名。';
 $string['wwwroot'] = '网站地址';
 $string['wwwrooterror'] = '这个网站地址似乎是错的——在那里并没有刚刚装好的Moodle。';
 ?>

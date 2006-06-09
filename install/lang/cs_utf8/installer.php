@@ -11,12 +11,37 @@
 
 $string['admindirerror'] = 'Adresář správy (admin) není určen správně';
 $string['admindirname'] = 'Adresář správy (admin)';
+$string['admindirsettinghead'] = 'Nastavení adresáře \'admin\'';
+$string['admindirsettingsub'] = 'Na některých serverech je URL adresa /admin vyhrazena pro speciální účely (např. pro ovládací panel). Na takových serverech může dojít ke kolizi se standardním umístěním stránek pro správu Moodlu. Máte-li tento problém, přejmenujte adresář \'admin\' ve vaší instalaci Moodlu a do tohoto pole zadejte jeho nový název. Příklad: <br /> <br /><b>moodleadmin</b><br /> <br />
+Všechny generované odkazy na stránky správy Moodlu budou používat tento nový název.';
+$string['bypassed'] = 'Přeskočeno';
 $string['caution'] = 'Varování';
+$string['check'] = 'Prověřit';
+$string['chooselanguagehead'] = 'Vyberte jazyk';
+$string['chooselanguagesub'] = 'Zvolte si jazyk použitý PŘI INSTALACI. Jazykové nastavení stránek budete moci nastavit později. ';
 $string['closewindow'] = 'Zavřít toto okno';
+$string['compatibilitysettingshead'] = 'Kontrola nastavení vašeho PHP...';
+$string['compatibilitysettingssub'] = 'Pro správný běh Moodlu by váš server měl projít ve všech následujících testech';
 $string['configfilenotwritten'] = 'Instalační skript nemohl automaticky vytvořit soubor config.php s vaší konfigurací - pravděpodobně z důvodů nastavení práv k zápisu do adresáře Moodle. Můžete ručně zkopírovat následující kód do souboru s názvem config.php v hlavním adresáři vaší instalace Moodle.';
 $string['configfilewritten'] = 'config.php byl úspěšně vytvořen';
+$string['configurationcompletehead'] = 'Konfigurace dokončena';
+$string['configurationcompletesub'] = 'Moodle se pokusil uložit soubor s konfigurací do kořenového adresáře jeho instalace';
 $string['continue'] = 'Pokračovat';
 $string['database'] = 'Databáze';
+$string['databasecreationsettingshead'] = 'Nyní musíte nakonfigurovat spojení k databázi, kde si bude Moodle ukládat většinu svých dat. Tato databáze může být vytvořena instalátorem automaticky podle následujícího nastavení.<br/>';
+$string['databasecreationsettingssub'] = '<b>Typ:</b>instalátor nastaví na \"mysql\"<br />
+<b>Hostitel:</b>instalátor nastaví na \"localhost\"<br />
+<b>Název:</b> název databáze, např. moodle<br />
+<b>Uživatel:</b>instalátor nastaví na \"root\"<br />
+<b>Heslo:</b> heslo k tomuto účtu<br />
+<b>Předpona tabulek:</b> volitelná předpona, která se vloží před názvy všech tabulek (umožňuje mít jednu databázi pro více instalací Moodlu)';
+$string['databasesettingshead'] = 'Nyní musíte nakonfigurovat spojení k databázi, kde si bude Moodle ukládat většinu svých dat. Tato databáze musí již existovat, stejně jako musí být nastaveno uživatelské jméno a heslo pro přístup k ní.';
+$string['databasesettingssub'] = '<b>Typ:</b> mysql nebo postgres7<br />
+<b>Hostitel:</b> např. localhost nebo db.naseskola.cz<br />
+<b>Název:</b> název databáze, např. moodle<br />
+<b>Uživatel:</b> uživatelské jméno účtu pro přístup k databázi<br />
+<b>Heslo:</b> heslo k tomuto účtu<br />
+<b>Předpona tabulek:</b> volitelná předpona, která se vloží před názvy všech tabulek (umožňuje mít jednu databázi pro více instalací Moodle)';
 $string['dataroot'] = 'Datový adresář';
 $string['datarooterror'] = 'Vámi specifikovaný datový adresář nebyl nalezen a nemohl být vytvořen. Buď opravte vloženou cestu, nebo vytvořte adresář ručně.';
 $string['dbconnectionerror'] = 'Nemůžu se spojit s databází, kterou jste specifikovali. Prosím, zkontrolujte nastavení databáze.';
@@ -24,21 +49,51 @@ $string['dbcreationerror'] = 'Chyba při vytváření databáze. Nelze vytvořit
 $string['dbhost'] = 'Hostitelský server';
 $string['dbprefix'] = 'Předpona tabulek';
 $string['dbtype'] = 'Typ';
+$string['dbwrongencoding'] = 'Podle detekce běží vybraná databáze pod nedoporučeným kódováním $a. Bylo by lepší používat databázi s kodováním Unicode (UTF-8). Tuto kontrolu můžete přeskočit zaškrtnutím pole \"Přeskočit test DB kódování\", ale můžete se v budoucnu dostat do problémů.';
+$string['directorysettingshead'] = 'Prosím, potvrďte umístění této Moodle instalace';
+$string['directorysettingssub'] = '<b>Webová adresa:</b>
+Určete úplnou webovou adresu, na niž bude váš Moodle dostupný. Jsou-li vaše stránky dostupné přes více URL, vyberte z nich tu, kterou budou používat vaši studenti. Na konci adresy nevkládejte lomítko.
+<br />
+<br />
+<b>Moodle adresář:</b>
+Určtete úplnou cestu k adresáři s touto instalací. Ujistěte se, že vám odpovídají malá/VELKÁ písmena.
+<br />
+<br />
+<b>Datový adresář:</b>
+Je třeba mít diskový prostor, kam může Moodle ukládat nahrané (uploadované) soubory. K tomuto adresáři musí mít proces webového serveru právo ke čtení I ZÁPISU (webový server bývá spouštěn pod uživatelem \'nobody\' nebo \'apache\' nebo něco podobného). Tento adresář by neměl být dostupný přímo přes webové rozhraní (může obsahovat neveřejná data).';
 $string['dirroot'] = 'Moodle adresář';
 $string['dirrooterror'] = 'Hodnota \'Moodle adresář\' nevypadá nastavená správně - nemůžu tam najít Moodle instalaci. Následující hodnota byla resetována.';
 $string['download'] = 'Stáhnout';
+$string['downloadlanguagebutton'] = 'Stáhnout jazykový balíček \"$a\"';
+$string['downloadlanguagehead'] = 'Stáhnout jazykový balíček';
+$string['downloadlanguagenotneeded'] = 'V instalaci lze nyní pokračovat v jazyce \"$a\".';
+$string['downloadlanguagesub'] = 'Nyní máte možnost stáhnout si některý z jazykových balíčků Moodlu a pokračovat v tomto jazyce.<br /><br />Pokud si momentálně nemůžete nebo nechcete stáhnout jazykový balíček, bude instalační proces pokračovat v angličtině. Jazykové balíčky si budete moci stáhnout i později po ukončení instalace.';
+$string['environmenterrortodo'] = 'Pro pokračování v instalaci této verze Moodlu je nutné nejdříve vyřešit problémy v programovém prostředí (chyby) serveru uvedené výše!';
+$string['environmenthead'] = 'Kontrola vašeho prostředí...';
+$string['environmentrecommendinstall'] = 'doporučená komponenta';
+$string['environmentrecommendversion'] = 'doporučena je verze $a->needed, nyní používáte verzi $a->current';
+$string['environmentrequireinstall'] = 'vyžadovaná komponenta';
+$string['environmentrequireversion'] = 'vyžadována je verze $a->needed, nyní používáte verzi $a->current';
+$string['environmentsub'] = 'Prověřujeme nyní různé komponenty vašeho systému, zda splňují požadavky instalace';
+$string['environmentxmlerror'] = 'Chyba při zjišťování údajů o programovém prostředí ($a->error_code)';
 $string['error'] = 'Chyba';
 $string['fail'] = 'Selhalo';
 $string['fileuploads'] = 'Nahrané soubory (uploads)';
 $string['fileuploadserror'] = 'Mělo by být zapnuto';
 $string['gdversion'] = 'Verze GD';
 $string['gdversionerror'] = 'Knihovna GD je potřebná ke zpracovávání a tvorbě obrázků (např. fotografie, grafy apod.)';
+$string['globalsquotes'] = 'Nezabezpečené zacházení s globálními proměnnými';
+$string['globalsquoteserror'] = 'Upravte nastavení PHP: zakažte register_globals a/nebo povolte magic_quotes_gpc';
 $string['help'] = 'Nápověda';
+$string['iconvrecommended'] = 'Instalace volitelné knihovny ICONV je silně doporučena, neboť zvyšuje výkon stránek, zejména pokud používáte jazyky nezaložené na latince.';
 $string['info'] = 'Informace';
 $string['installation'] = 'Instalace';
+$string['langdownloaderror'] = 'Bohužel, jazyk \"$a\" se nepodařilo nainstalovat. Instalace bude pokračovat v angličtine.';
+$string['langdownloadok'] = 'Úspěšně se podařilo nainstalovat jazykový balíček \"$a\". Instalace bude pokračovat v tomto jazyce.';
 $string['language'] = 'Jazyk';
 $string['magicquotesruntime'] = 'Magic Quotes Run Time';
 $string['magicquotesruntimeerror'] = 'Mělo by být vypnuto';
+$string['mbstringrecommended'] = 'Instalace volitelné knihovny MBSTRING je silně doporučena, neboť zvyšuje výkon stránek, zejména pokud používáte jazyky nezaložené na latince.';
 $string['memorylimit'] = 'Limit paměti';
 $string['memorylimiterror'] = 'Limit paměti pro PHP skripty je nastaven relativně nízko ... později vás to může stát problémy.';
 $string['memorylimithelp'] = '<p>Limit paměti pro PHP skripty je na vašem serveru momentálně nastaven na hodnotu $a.</p>
@@ -55,6 +110,8 @@ na hodnotu blízkou 16M. Nemáte-li taková práva, požádejte vašeho správce
 <p><blockquote>php_value memory_limit 16M</blockquote></p>
 <p>Bohužel, na některých serverech tímto vyřadíte z provozu <b>všechny</b> PHP stránky (při jejich prohlížení uvidíte chybové zprávy), takže budete muset soubor .htaccess odstranit.</li>
 </ol>';
+$string['mysql416bypassed'] = 'Pokud ovšem ve vaší instalaci Moodlu používáte POUZE jazyky založené na latince (iso-8859-1), můžete nadále používat momentálně nainstalovanou verzi MySQL 4.1.12 (nebo vyšší).';
+$string['mysql416required'] = 'Minimální verzí požadovanou pro Moodle 1.6 -- a pro pozdější bezpečný převod všech dat do UTF-8 -- je MySQL 4.1.16.';
 $string['mysqlextensionisnotpresentinphp'] = 'PHP nebylo korektně nakonfigurováno pro komunikaci v MySQL. Zkontrolujte váš php.ini nebo překompilujte PHP.';
 $string['name'] = 'Název';
 $string['next'] = 'Další';
@@ -67,14 +124,23 @@ $string['phpversionhelp'] = '<p>Moodle vyžaduje verzi PHP alespoň 4.1.0.</p>
 <p>Vaše stávající PHP má verzi $a</p>
 <p>Musíte upgradovat vaše PHP nebo Moodle nainstalovat na hostitele s vyšší verzí!</p>';
 $string['previous'] = 'Předchozí';
+$string['report'] = 'Report';
 $string['safemode'] = 'Bezpečný režim (safe mode)';
 $string['safemodeerror'] = 'Moodle může mít problémy při zapnutém bezpečném režimu (safe mode)';
 $string['sessionautostart'] = 'Session Auto Start';
 $string['sessionautostarterror'] = 'Mělo by být vypnuto';
+$string['skipdbencodingtest'] = 'Přeskočit test DB kódování';
 $string['status'] = 'Stav';
 $string['thischarset'] = 'UTF-8';
-$string['thislanguage'] = 'Cestina';
+$string['thislanguage'] = 'Čeština';
 $string['user'] = 'Uživatel';
+$string['welcomep10'] = '$a->installername ($a->installerversion)';
+$string['welcomep20'] = 'Pakliže vidíte tuto stránku, podařilo se vám úspěšně nainstalovat a spustit balíček <strong>$a->packname $a->packversion</strong>. Gratulujeme!';
+$string['welcomep30'] = '<strong>$a->installername</strong> obsahuje aplikace k vytvoření prostředí, ve kterém bude provozován váš <strong>Moodle</strong>. Jmenovitě se jedná o:';
+$string['welcomep40'] = 'Balíček rovněž obsahuje <strong>Moodle ve verzi $a->moodlerelease ($a->moodleversion)</strong>.';
+$string['welcomep50'] = 'Použití všech aplikací v tomto balíčku je vázáno jejich příslušnými licencemi. Kompletní balíček <strong>$a->installername</strong> je software s <a href=\"http://www.opensource.org/docs/definition_plain.html\"> otevřeným kódem (open source)</a> a je šířen pod licencí <a href=\"http://www.gnu.org/copyleft/gpl.html\">GNU/GPL</a>.';
+$string['welcomep60'] = 'Následující stránky vás provedou skrze několik jednoduchých kroků potřebných k rozběhnutí <strong>Moodle</strong> na vašem počítači. Můžete přijmout výchozí nastavení, nebo si jej případně upravit podle svých potřeb.';
+$string['welcomep70'] = 'Stisknutím následujícího tlačítka \"Další\" pokračujte v nastavení vaší instalace Moodlu.';
 $string['wwwroot'] = 'Webová adresa';
 $string['wwwrooterror'] = 'Toto nevypadá jako platná webová adresa této instalace Moodle.';
 ?>

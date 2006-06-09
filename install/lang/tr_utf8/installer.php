@@ -63,31 +63,27 @@ $string['dbtype'] = 'Tipi';
 $string['dbwrongencoding'] = 'Seçili veritabanı tavsiye edilmeyen dil kodlamasında ($a) çalışıyor. Bunun yerine bir Unicode (UTF-8) kodlamasını kullanmanız daha iyi. Yine de aşağıdaki \'Veritabanı Dil Kodlama Testini Atla\' kutucuğunu seçerek bu kısmı geçebilirsiniz, ancak ilerde sorunlar yaşabilirsiniz.';
 $string['directorysettingshead'] = 'Lütfen, Bu Moodle kurulumu için yolları onaylayın';
 $string['directorysettingssub'] = '<b>Web Adresi:</b>
-Moodle\'a erişilecek olan tam web adresini belirtin.
-Web siteniz bir çok URL\'den erişilebiliyorsa, öğrencilerinizin
+Moodle\'a erişilecek olan tam web adresini belirtin. Web siteniz bir çok URL\'den erişilebiliyorsa, öğrencilerinizin
 en sık kullanacağı bir tanesini seçin.
 Sonuna / (slash) ekleMEyin.
 <br />
 <br />
 <b>Moodle Dizini:</b>
-Bu kurulama ait tam fiziksel klasör yolunu belirtin.
-BÜYÜK/küçük harflerin doğru olduğundan emin olun.
+Bu kurulama ait tam fiziksel klasör yolunu belirtin. BÜYÜK/küçük harflerin doğru olduğundan emin olun.
 <br />
 <br />
 <b>Veri Dizini:</b>
-Siteye yüklenen dosyaların nereye kaydedileceğini belirtin.
-Bu dizin sunucu kullanıcısı tarafından okunabilir ve
-YAZILABİLİR olmalı. (genellikle \'nobody\',\'apache\',\'www\' olur)
+Siteye yüklenen dosyaların nereye kaydedileceğini belirtin. Bu dizin sunucu kullanıcısı tarafından okunabilir ve YAZILABİLİR olmalı. (genellikle \'nobody\',\'apache\',\'www\' olur)
 Ancak, bu dizine direkt olarak webden erişim olMAMAlı.';
 $string['dirroot'] = 'Moodle Dizini';
-$string['dirrooterror'] = '\'Moodle Dizini\' ayarları hatalı görünüyor - Burada bir Moodle kurulumu bulunamadı. Aşağıdaki değer sıfırlandı.';
+$string['dirrooterror'] = '\'Moodle Dizini\' ayarları hatalı görünüyor - Burada bir Moodle kurulumu bulunamadı. Aşağıdaki değer yeniden ayarlandı.';
 $string['download'] = 'İndir';
 $string['downloadedfilecheckfailed'] = 'İndirilmiş dosya kontrol hatası';
 $string['downloadlanguagebutton'] = 'Dil paketini $a indir';
 $string['downloadlanguagehead'] = 'Dil paketi indir';
 $string['downloadlanguagenotneeded'] = 'Varsayılan dil paketini \"$a\" kullanarak kurulum işlemine devam edebilirsiniz.';
 $string['downloadlanguagesub'] = 'Şu anda bir dil paketi indirme ve bu dilde kuruluma devam etme seçeneğiniz var.<br /><br />Dil paketini indiremezseniz kurulum işlemi İngilizce ile devam edecektir. (Kurulum işlemi bittiğinde ek dil paketlerini indirme ve kurma fırsatınız vardır.)';
-$string['environmenterrortodo'] = 'Bu Moodle sürümünü kurmaya başlamadan önce yukarıda bulunan bütün ortam sorunlarını (hatalarını) çözmeniz gerekiyor.';
+$string['environmenterrortodo'] = 'Bu Moodle sürümünü kurmaya başlamadan önce yukarıda bulunan bütün ortam sorunlarını (hatalarını) çözmeniz gerekiyor!';
 $string['environmenthead'] = 'Ortam kontrol ediliyor...';
 $string['environmentrecommendinstall'] = 'yüklenmesi/etkinleştirilmesi tavsiye edilir';
 $string['environmentrecommendversion'] = 'sürüm $a->needed tavsiye edilir ve şu anda $a->current çalışıyor';
@@ -108,7 +104,7 @@ $string['iconvrecommended'] = 'Sitenizde latin olmayan dilleri kullanıyorsanız
 $string['info'] = 'Bilgi';
 $string['installation'] = 'Kurulum';
 $string['invalidmd5'] = 'Geçersiz md5';
-$string['langdownloaderror'] = 'Maalesef dil paketi \"$a\" kurulamadı. Kurulum İngilizce olarak devam edecek.';
+$string['langdownloaderror'] = 'Maalesef \"$a\" dil paketi kurulamadı. Kuruluma İngilizce olarak devam edilecek.';
 $string['langdownloadok'] = 'Dil paketi \"$a\" başarıyla kuruldu. Kurulum bu dilde devam edecek.';
 $string['language'] = 'Dil';
 $string['magicquotesruntime'] = 'Magic Quotes Run Time';
@@ -141,21 +137,23 @@ Böyle bir durumda .htaccess dosyasını silmeniz gerekiyor.</p></li>
 </ol>';
 $string['missingrequiredfield'] = 'Bazı gerekli alanlar eksik';
 $string['mysql416bypassed'] = 'Siteniz SADECE iso-8859-1 (latin) dillerini kullanıyorsa şimdiki kurulu  MySQL 4.1.12 (veya yüksek) veritabanını kullanmaya devam edebilirsiniz.';
-$string['mysql416required'] = 'Moodle 1.6 için ilerde tüm verilerin UTF-8\'e çevrilebilmesinin garantilenmesi için en az MySQL 4.1.16 kurulu olması gerekir. ';
+$string['mysql416required'] = 'Moodle 1.6 için ilerde tüm verilerin UTF-8\'e çevrilebilmesinin garantilenmesi için en az MySQL 4.1.16 kurulu olması gerekir.';
 $string['mysqlextensionisnotpresentinphp'] = 'PHP, büyük ihtimal MySQL uzantısıyla birlikte yapılandırılmamış. Bu yüzden MySQL ile bağlantı kurulamıyor. php.ini dosyasını kontrol edin veya PHP\'yi tekrar derleyin.';
 $string['name'] = 'Ad';
 $string['next'] = 'Sonraki';
 $string['ok'] = 'Tamam';
 $string['pass'] = 'Geçti';
 $string['password'] = 'Şifre';
+$string['php50restricted'] = 'PHP 5.0.x sürümünde çok fazla hata var. Lütfen sürümü, 5.1.x\'e yükseltin ya da 4.3.x veya 4.4.x sürümüne düşürün.';
 $string['phpversion'] = 'PHP sürümü';
-$string['phpversionerror'] = 'PHP sürümü en az 4.1.0 olmalı';
-$string['phpversionhelp'] = '<p>Moodle, PHP sürümünün en az 4.1.0 olmasını gerektirir.</p>
-<p>Şu anda bu sürümü çalışıyor: $a</p>
+$string['phpversionerror'] = 'PHP sürümü en az 4.3.0 veya 5.1.0 olmalı (5.0.x sürümünde çok fazla hata var)';
+$string['phpversionhelp'] = '<p>Moodle, PHP sürümünün en az 4.3.0 veya 5.1.0 olmasını gerektirir (5.0.x sürümünde çok fazla hata var).</p>
+<p>Şu anda çalışan sürüm: $a</p>
 <p>PHP\'yi güncellemeli veya PHP\'nin yeni sürümünü kullananan bir hostinge taşınmalısınız!</p>';
 $string['previous'] = 'Önceki';
 $string['remotedownloadnotallowed'] = 'Sunucunuza bileşen indirmeye izin verilmiyor. (allow_url_fopen pasif).<br /><br />Arşivlenmiş dosyayı elle buraya \"$a->dest\" indirip <a href=\"$a->url\">$a->url</a> arşivi açmalısınız. ';
 $string['report'] = 'Rapor';
+$string['restricted'] = 'Sınırlandırıldı';
 $string['safemode'] = 'Safe Mode';
 $string['safemodeerror'] = 'Moodle, safe mode\'ın açık olması durumunda bazı sorunlar çıkartabilir';
 $string['sessionautostart'] = 'Otomatik Oturum Başlama';

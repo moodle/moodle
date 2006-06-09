@@ -11,7 +11,9 @@
 
 $string['admindirerror'] = 'Ylläpitohakemisto on määritetty väärin';
 $string['admindirname'] = 'Ylläpitohakemisto';
+$string['bypassed'] = 'Ohitettu';
 $string['caution'] = 'Varoitus';
+$string['check'] = 'Tarkista';
 $string['closewindow'] = 'Sulje tämä ikkuna';
 $string['configfilenotwritten'] = 'Asennus ei pystynyt luomaan automaattisesti config.php tiedostoa, joka olisi sisältänyt valitsemasi asetukset, todennäköisesti koska Moodlen hakemisto on kirjoitussuojattu. Voit manuaalisesti kopioida seuraavan koodin tiedostoon nimeltä config.php Moodlen päähakemiston sisällä.';
 $string['configfilewritten'] = 'config.php on luotu.';
