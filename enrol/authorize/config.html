@@ -146,7 +146,8 @@ if (!isset($frm->acceptccs)) {
 <tr valign="top">
     <td align="right">an_emailexpired:</td>
     <td><input type="text" name="an_emailexpired" size="1" maxlength="1" value="<?php p($frm->an_emailexpired) ?>" /></td>
-    <td><?php print_string("adminemailexpired", "enrol_authorize", $frm->an_emailexpired) ?></td>
+    <td><?php print_string("adminemailexpired", "enrol_authorize", $frm->an_emailexpired) ?><br />
+        <?php print_string("adminemailexpsetting", "enrol_authorize") ?></td>
 </tr>
 
 <tr valign="top">
