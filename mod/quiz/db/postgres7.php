@@ -1228,7 +1228,7 @@ function quiz_upgrade($oldversion) {
 
     if ($oldversion < 2006051700) { // this block also exec'd by 2006042802 on MOODLE_16_STABLE
 
-        notice("The next set of upgrade operations may report an 
+        notify("The next set of upgrade operations may report an 
                 error if you are upgrading from v1.6. 
                 This error mesage is normal, and can be ignored.");
         // this block is taken from mysql.php 2005070202
