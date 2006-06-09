@@ -4,6 +4,10 @@
     *
     * CHANGES
     *
+    * 2006/06/08 mudrd8mz
+    * 1) Fixed bug 5745 reported by Harry Smith so now can edit en_utf8_local pack
+    * 2) More notification messages included
+    *
     * 2006/05/30 mudrd8mz
     * Merged with version by Mitsuhiro Yoshida - display icon links instead of text links
     * (I have changed the position of arrow icons to not to be so close each other)
@@ -73,6 +77,9 @@
     $strfilestoredin = get_string('langstorein', 'admin');
     $strfilestoredinhelp = get_string('langstoreinhelp', 'admin');
     $strswitchlangdirbtn = get_string('langstoreswitch', 'admin');
+    $strchoosefiletoedit = get_string('langchoosefile', 'admin');
+    $streditennotallowed = get_string('langnoeditenglish', 'admin');
+    $strfilecreated = get_string('langfilecreated', 'admin');
 
     // FIXME / TODO
     // remove following lines after adding string into proper english lang pack
@@ -80,6 +87,9 @@
     $strfilestoredin = 'Save file into folder :';
     $strfilestoredinhelp = 'Where the file will be stored';
     $strswitchlangdirbtn = 'switch';
+    $strchoosefiletoedit = 'Choose file to edit from the box above';
+    $streditennotallowed = 'Language en_utf8 cannot be edited with this page - switch to local';
+    $strfilecreated = 'New file created';
 
     $currentlang = current_language();
     
@@ -144,9 +154,13 @@
 
     // Get a list of all the root files in the English directory
 
-    $langdir = "$CFG->dataroot/lang/$currentlang";
-    $locallangdir = "$CFG->dataroot/lang/{$currentlang}_local";
     $enlangdir = "$CFG->dirroot/lang/en_utf8";
+    if ($currentlang == 'en_utf8') {
+        $langdir = $enlangdir;
+    } else {
+        $langdir = "$CFG->dataroot/lang/$currentlang";
+    }
+    $locallangdir = "$CFG->dataroot/lang/{$currentlang}_local";
 
     if (! $stringfiles = get_directory_list($enlangdir, "", false)) {
         error("Could not find English language pack!");
@@ -348,31 +362,31 @@
         print_simple_box_end();
        
         if ($currentfile <> '') {
-            print_heading("$currentfile", "center", 4);
-            if (LANG_DISPLAY_MISSING_LINKS) {
-                print_heading('<a href="#missing1">'.$strgotofirst.'</a>', "center", 4);
-            }
-
             $saveto = $uselocal ? $locallangdir : $langdir;
-
+            error_reporting(0);
             if (!file_exists("$saveto/$currentfile")) {
                 if (!@touch("$saveto/$currentfile")) {
-                    echo "<p><font color=\"red\">".get_string("filemissing", "", "$saveto/$currentfile")."</font></p>";
+                    print_heading(get_string("filemissing", "", "$saveto/$currentfile"), "center", 4, "error");
+                } else {
+                    print_heading($strfilecreated, "center", 4, "notifysuccess");
                 }
             }
-
-            error_reporting(0);
-            if ($f = fopen("$saveto/$currentfile","r+") && ($currentlang != "en_utf8")) {
+            if ($currentlang == "en_utf8" && !$uselocal) {
+                $editable = false;
+                print_heading($streditennotallowed, 'center', 4);
+            } elseif ($f = fopen("$saveto/$currentfile","r+")) {
                 $editable = true;
                 fclose($f);
             } else {
                 $editable = false;
                 echo "<p><font size=\"1\">".get_string("makeeditable", "", "$saveto/$currentfile")."</font></p>";
             }
-            ///added code here to prevent en_utf8 being edited
+            error_reporting($CFG->debug);
             
-            error_reporting(7);
-
+            print_heading("$currentfile", "center", 4);
+            if (LANG_DISPLAY_MISSING_LINKS && $editable) {
+                print_heading('<a href="#missing1">'.$strgotofirst.'</a>', "center", 4);
+            }
 
             unset($string);
             include("$enlangdir/$currentfile");
@@ -415,6 +429,8 @@
                 echo '<td dir="ltr" lang="en" width="20%" nowrap="nowrap" valign="top">'.$key.'</td>'."\n";
                 echo '<td dir="ltr" lang="en" width="40%" valign="top">'.$envalue.'</td>'."\n";
 
+                // Missing array keys are not bugs here but missing strings
+                error_reporting(E_ALL ^ E_NOTICE);
                 if ($uselocal) {
                     $value = lang_fix_value_from_file($localstring[$key]);
                     $value2 = lang_fix_value_from_file($string[$key]);
@@ -425,6 +441,7 @@
                     $value = lang_fix_value_from_file($string[$key]);
                     $value2 = lang_fix_value_from_file($localstring[$key]);
                 }
+                error_reporting($CFG->debug);
 
                 // Color highlighting:
                 // red #ef6868 - translation missing in both system and local pack
@@ -496,6 +513,9 @@
             echo '</table>';
             echo '</form>'; 
 
+        } else {
+            // no $currentfile specified
+            print_heading($strchoosefiletoedit, "center", 4);
         }
     }
 
