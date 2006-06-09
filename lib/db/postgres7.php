@@ -1611,6 +1611,16 @@ function main_upgrade($oldversion=0) {
         }
     }
 
+    //Renaming lastIP to lastip (all fields lowercase)
+    if ($oldversion < 2006060900) {
+        //Not needed unded PG because it stores fieldnames lowecase by default
+        //Only if it exists (because MOODLE_16_STABLE could have done this work before. Bug 5763)
+        //$fields = $db->MetaColumnNames($CFG->prefix.'user');
+        //if (in_array('lastIP',$fields)) {
+        //    table_column("user", "lastIP", "lastip", "varchar", "15", "", "", "", "currentlogin");
+        //}
+    }
+
     return $result;
 }
 
