@@ -47,6 +47,13 @@ if (!isset($frm->acceptccs)) {
     <td><?php print_string("currency") ?>
     </td>
 </tr>
+
+<tr valign="top">
+    <td align="right">an_teachermanagepay:</td>
+    <td><?php print_checkbox('an_teachermanagepay', '1', !empty($frm->an_teachermanagepay)) ?></td>
+    <td><?php print_string("adminteachermanagepay", "enrol_authorize") ?></td>
+</tr>
+
 <?php if (substr($CFG->wwwroot, 0, 5) !== 'https') { /* https && loginhttps */ ?>
 <tr valign="top">
     <td align="right">loginhttps:</td>
@@ -57,6 +64,7 @@ if (!isset($frm->acceptccs)) {
     ?></td>
 </tr>
 <?php } /* end: https && loginhttps */ ?>
+
 <tr valign="top"><td colspan="3"><h4><?php print_string("adminauthorizesettings", "enrol_authorize") ?></h4></td></tr>
 
 <tr valign="top">
@@ -89,6 +97,12 @@ if (!isset($frm->acceptccs)) {
 </tr>
 
 <tr valign="top">
+    <td align="right">an_cutoff:</td>
+    <td><?php print_time_selector("an_cutoff_hour","an_cutoff_min",make_timestamp(2000,1,1,$frm->an_cutoff_hour,$frm->an_cutoff_min),5); ?></td>
+    <td><?php print_string("cutofftime", "enrol_authorize") ?></td>
+</tr>
+
+<tr valign="top">
     <td align="right">an_avs:</td>
     <td><?php print_checkbox('an_avs', '1', !empty($frm->an_avs)) ?></td>
     <td><?php print_string("adminavs", "enrol_authorize") ?></td>
@@ -114,18 +128,6 @@ if (!isset($frm->acceptccs)) {
 <tr valign="top"><td colspan="3"><h4><?php print_string("adminauthorizeccapture", "enrol_authorize") ?></h4></td></tr>
 
 <tr valign="top">
-    <td align="right">an_cutoff:</td>
-    <td><?php print_time_selector("an_cutoff_hour","an_cutoff_min",make_timestamp(2000,1,1,$frm->an_cutoff_hour,$frm->an_cutoff_min),5); ?></td>
-    <td><?php print_string("cutofftime", "enrol_authorize") ?></td>
-</tr>
-
-<tr valign="top">
-    <td align="right">an_teachermanagepay:</td>
-    <td><?php print_checkbox('an_teachermanagepay', '1', !empty($frm->an_teachermanagepay)) ?></td>
-    <td><?php print_string("adminteachermanagepay", "enrol_authorize") ?></td>
-</tr>
-
-<tr valign="top">
     <td align="right">an_review:</td>
     <td><?php print_checkbox('an_review', '1', !empty($frm->an_review)) ?>
         <?php helpbutton('review', get_string('adminhelpreviewtitle', 'enrol_authorize'), 'enrol/authorize'); ?></td>
@@ -139,13 +141,13 @@ if (!isset($frm->acceptccs)) {
     <td><?php print_string("reviewday", "enrol_authorize", $frm->an_capture_day) ?></td>
 </tr>
 
+<tr valign="top"><td colspan="3"><h4><?php print_string("adminauthorizeemail", "enrol_authorize") ?></h4></td></tr>
+
 <tr valign="top">
     <td align="right">an_emailexpired:</td>
     <td><input type="text" name="an_emailexpired" size="1" maxlength="1" value="<?php p($frm->an_emailexpired) ?>" /></td>
     <td><?php print_string("adminemailexpired", "enrol_authorize", $frm->an_emailexpired) ?></td>
 </tr>
-
-<tr valign="top"><td colspan="3"><h4><?php print_string("adminauthorizeemail", "enrol_authorize") ?></h4></td></tr>
 
 <tr valign="top">
     <td align="right">enrol_mailstudents:</td>
