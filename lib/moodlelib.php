@@ -5975,17 +5975,18 @@ function moodle_setlocale($locale='') {
  * @param string $encoding The encoding on the string.
  * @return string
  * @todo Add examples of calling this function with/without encoding types
+ * @deprecated Use textlib->strtolower($text, current_charset()) instead.
  */
 function moodle_strtolower ($string, $encoding='') {
-    if (function_exists('mb_strtolower')) {
-        if($encoding===''){
-           return mb_strtolower($string);          //use multibyte support with default encoding
-        } else {
-           return mb_strtolower($string, $encoding); //use given encoding
-        }
-    } else {
-        return strtolower($string);                // use common function what rely on current locale setting
+    
+    //If not specified, get the current encoding
+    if (empty($encoding)) {
+        $encoding = current_charset();
     }
+    //Use text services
+    $textlib = textlib_get_instance();
+
+    return $textlib->strtolower($string, $encoding);
 }
 
 /**
