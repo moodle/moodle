@@ -460,10 +460,11 @@
 
     function xml_tag_safe_content($content) {
         global $CFG;
-        //If enabled, we strip all the control chars from the text but tabs, newlines and returns
+        //If enabled, we strip all the control chars (\x0-\x1f) from the text but tabs (\x9), 
+        //newlines (\xa) and returns (\xd). The delete control char (\x7f) is also included.
         //because they are forbiden in XML 1.0 specs. The expression below seems to be
         //UTF-8 safe too because it simply ignores the rest of characters.
-        $content = preg_replace("/(?(?=[[:cntrl:]])[^\n\r\t])/is","",$content);
+        $content = preg_replace("/[\x-\x8\xb-\xc\xe-\x1f\x7f]/is","",$content);
         if (!empty($CFG->unicodedb)) {
             // Don't perform the conversion. Contents are Unicode.
             $content = preg_replace("/\r\n|\r/", "\n", htmlspecialchars($content));
