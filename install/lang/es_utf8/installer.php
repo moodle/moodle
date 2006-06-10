@@ -137,6 +137,7 @@ $string['next'] = 'Siguiente';
 $string['ok'] = 'OK';
 $string['pass'] = 'Correcto';
 $string['password'] = 'Contraseña';
+$string['php50restricted'] = 'PHP 5.0.x tiene varios problemas conocidos; por favor, actualícese a la versión 5.1.x o utilice las versiones 4.3.x o 4.4.x';
 $string['phpversion'] = 'Versión PHP';
 $string['phpversionerror'] = 'La versión PHP debe ser 4.1.0 o superior';
 $string['phpversionhelp'] = '<p>Moodle requiere una versión de PHP 4.1.0 o superior.</p>
@@ -145,6 +146,7 @@ $string['phpversionhelp'] = '<p>Moodle requiere una versión de PHP 4.1.0 o supe
 $string['previous'] = 'Anterior';
 $string['remotedownloadnotallowed'] = 'No está permitido descargar los componentes a su servidor (allow_url_fopen está deshabilitado).<br /><br />Debe descargar el archivo <a href=\"$a->url\">$a->url</a> manualmente, y copiarlo a \"$a->dest\" ';
 $string['report'] = 'Informe';
+$string['restricted'] = 'Restringido';
 $string['safemode'] = 'Safe Mode';
 $string['safemodeerror'] = 'Moodle puede tener problemas con \'safe mode\' activado';
 $string['sessionautostart'] = 'Autocomienzo de sesión';
