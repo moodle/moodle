@@ -1267,7 +1267,11 @@
                                                         $itemid = insert_record('grade_item',$item);
 
                                                         //Now process grade_exceptions
-                                                        $exceptions = $ite_info['#']['GRADE_EXCEPTIONS']['0']['#']['GRADE_EXCEPTION'];
+                                                        if (!empty($ite_info['#']['GRADE_EXCEPTIONS'])) {
+                                                            $exceptions = $ite_info['#']['GRADE_EXCEPTIONS']['0']['#']['GRADE_EXCEPTION'];
+                                                        } else {
+                                                            $exceptions = array();
+                                                        }
 
                                                         //Iterate over exceptions
                                                         for($j = 0; $j < sizeof($exceptions); $j++) {
