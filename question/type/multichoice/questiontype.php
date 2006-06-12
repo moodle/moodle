@@ -26,7 +26,7 @@ class question_multichoice_qtype extends default_questiontype {
             return false;
         }
 
-        if (!$question->options->answers = get_records_select('question_answers', 'id IN ('.$question->options->answers.')')) {
+        if (!$question->options->answers = get_records_select('question_answers', 'id IN ('.$question->options->answers.')', 'id')) {
            notify('Error: Missing question answers for multichoice question'.$question->id.'!');
            return false;
         }
