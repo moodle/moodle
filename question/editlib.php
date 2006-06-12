@@ -15,6 +15,8 @@
 
 require_once($CFG->libdir.'/questionlib.php');
 
+define('DEFAULT_QUESTIONS_PER_PAGE', 20);
+
 /**
 * Function to read all questions for category into big array
 *
@@ -366,8 +368,12 @@ function question_list($course, $categoryid, $quizid=0,
     }
     echo '<tr><td align="center" colspan="3">';
     print_paging_bar($totalnumber, $page, $perpage, "edit.php?courseid={$course->id}&amp;perpage=$perpage&amp;");
-    if ($totalnumber > $perpage) {
-        echo '<a href="edit.php?courseid='.$course->id.'&amp;perpage=1000">'.get_string('showall', 'moodle', $totalnumber).'</a>';
+    if ($totalnumber > DEFAULT_QUESTIONS_PER_PAGE) {
+        if ($perpage == DEFAULT_QUESTIONS_PER_PAGE) {
+            echo '<a href="edit.php?courseid='.$course->id.'&amp;perpage=1000">'.get_string('showall', 'moodle', $totalnumber).'</a>';
+        } else {
+            echo '<a href="edit.php?courseid='.$course->id.'&amp;perpage=' . DEFAULT_QUESTIONS_PER_PAGE . '">'.get_string('showperpage', 'moodle', DEFAULT_QUESTIONS_PER_PAGE).'</a>';
+        }
     }
     echo "</td></tr></table>\n";
     print_simple_box_end();

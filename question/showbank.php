@@ -24,7 +24,7 @@
     require_once($CFG->dirroot.'/question/editlib.php');
 
     $page      = optional_param('page', -1, PARAM_INT);
-    $perpage   = optional_param('perpage', 20, PARAM_INT);
+    $perpage   = optional_param('perpage', -1, PARAM_INT);
     $sortorder = optional_param('sortorder', '');
     if (preg_match("/[';]/", $sortorder)) {
         error("Incorrect use of the parameter 'sortorder'");
@@ -34,6 +34,12 @@
         $SESSION->questionpage = $page;
     } else {
         $page = isset($SESSION->questionpage) ? $SESSION->questionpage : 0;
+    }
+
+    if ($perpage > -1) {
+        $SESSION->questionperpage = $perpage;
+    } else {
+        $perpage = isset($SESSION->questionperpage) ? $SESSION->questionperpage : DEFAULT_QUESTIONS_PER_PAGE;
     }
 
     if ($sortorder) {
