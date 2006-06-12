@@ -961,7 +961,7 @@
         //Process info about metacourse
         if ($status and $info) {
             //Process child records
-            if ($info->childs) {
+            if (!empty($info->childs)) {
                 foreach ($info->childs as $child) {
                     $dbcourse = false;
                     $dbmetacourse = false;
@@ -993,7 +993,7 @@
                 sync_metacourse($restore->course_id);
             }
             //Process parent records
-            if ($info->parents) {
+            if (!empty($info->parents)) {
                 foreach ($info->parents as $parent) {
                     $dbcourse = false;
                     $dbmetacourse = false;
@@ -1267,7 +1267,11 @@
                                                         $itemid = insert_record('grade_item',$item);
 
                                                         //Now process grade_exceptions
-                                                        $exceptions = $ite_info['#']['GRADE_EXCEPTIONS']['0']['#']['GRADE_EXCEPTION'];
+                                                        if (!empty($ite_info['#']['GRADE_EXCEPTIONS'])) {
+                                                            $exceptions = $ite_info['#']['GRADE_EXCEPTIONS']['0']['#']['GRADE_EXCEPTION'];
+                                                        } else {
+                                                            $exceptions = array();
+                                                        }
 
                                                         //Iterate over exceptions
                                                         for($j = 0; $j < sizeof($exceptions); $j++) {
