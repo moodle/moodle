@@ -88,14 +88,14 @@ if (isadmin()) {
 <tr>
     <th><?php print_string("firstname") ?>:</th>
     <td>
-    <input type="text" name="firstname" size="30" alt="<?php print_string("firstname") ?>" maxlength="20" value="<?php p($user->firstname) ?>" />
+    <input type="text" name="firstname" size="30" alt="<?php print_string("firstname") ?>" maxlength="100" value="<?php p($user->firstname) ?>" />
     <?php if (isset($err["firstname"])) formerr($err["firstname"]); ?>
     </td>
 </tr>
 <tr>
     <th><?php print_string("lastname") ?>:</th>
     <td>
-    <input type="text" name="lastname" size="30" alt="<?php print_string("lastname") ?>" maxlength="20" value="<?php p($user->lastname) ?>" />
+    <input type="text" name="lastname" size="30" alt="<?php print_string("lastname") ?>" maxlength="100" value="<?php p($user->lastname) ?>" />
     <?php if (isset($err["lastname"])) formerr($err["lastname"]); ?>
     </td>
 </tr>
@@ -352,7 +352,7 @@ if (isadmin()) {
 <tr>
     <th><?php print_string("idnumber") ?>:</th>
     <td>
-    <input type="text" name="idnumber" size="25" alt="<?php print_string("idnumber") ?>" maxlength="12" value="<?php p($user->idnumber) ?>" /> <?php p($teacheronly) ?>
+    <input type="text" name="idnumber" size="25" alt="<?php print_string("idnumber") ?>" maxlength="64" value="<?php p($user->idnumber) ?>" /> <?php p($teacheronly) ?>
     <?php if (isset($err["idnumber"])) formerr($err["idnumber"]); ?>
     </td>
 </tr>
