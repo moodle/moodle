@@ -129,7 +129,9 @@ if (!isset($frm->acceptccs)) {
     <td><?php print_string("adminacceptccs", "enrol_authorize") ?></td>
 </tr>
 
-<tr valign="top"><td colspan="3"><h4><?php print_string("adminauthorizeccapture", "enrol_authorize") ?></h4></td></tr>
+<tr valign="top"><td colspan="3"><h4><?php print_string("adminauthorizeccapture", "enrol_authorize") ?>
+                                     <?php helpbutton('orderreview', '', 'enrol/authorize'); ?>
+</h4></td></tr>
 
 <tr valign="top">
     <td align="right">an_review:</td>
