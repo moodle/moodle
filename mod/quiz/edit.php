@@ -67,11 +67,15 @@
         if (isset($SESSION->modform)) {
             $modform = $SESSION->modform;
         } else {
-            exit;
+            error('cmunknown');
         }
     } else {
         // we might get here after editing a question in
         // a popup window. So close window automatically.
+        // 
+        // But we certainly should not be doing this before
+        // print_header, since it throws browsers into quirks mode.
+        // Unfortunately there is no easy fix. Bug #5811 covers this. 
 ?>
 <script type="text/javascript">
 <!--
@@ -88,7 +92,7 @@ if (self.name == 'editquestion') {
         if (isset($SESSION->modform)) {
             $modform = $SESSION->modform;
         } else {
-            exit;
+            print_error('cmunknown');
         }
     }
 
