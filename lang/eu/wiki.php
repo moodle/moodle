@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // wiki.php - created with Moodle 1.4.1 (2004083101)
+      // wiki.php - created with Moodle 1.5 (2005060201)
 
 
 $string['action'] = '-- Ekintza --';
@@ -157,9 +157,11 @@ $string['tabview'] = 'Ikusi';
 $string['thanksforcontribution'] = 'Eskerrik asko zure ekarpenagatik';
 $string['thispageisntlinkedfromanywhereelse'] = 'Orrialde honek ez dauka estekarik.';
 $string['updatedpages'] = 'Eguneratutako orrialdeak';
+$string['updatedwikipages'] = 'Eguneratutako wiki orrialdeak';
 $string['uplerror'] = 'Barkatu, akats bat egon da fitxategia gora kargatu bitartean.';
 $string['uplinsect'] = 'Kargatu hemen:';
 $string['uplnewnam'] = 'Beste izen batez gorde';
+$string['upload0'] = 'Erabili formulario hau fitxategi binarioa wikira igotzeko';
 $string['uploadedon'] = 'Gora kargatua egun honetan:';
 $string['uploadpicturebutton'] = 'Gora kargatu';
 $string['uplok'] = 'Zure fitxategia gora kargatu da.';
@@ -179,6 +181,7 @@ $string['wikiname'] = 'Orrialdearen izena';
 $string['wikistartederror'] = 'Wiki-ak badu sarrerarik: ezin da aldatu.';
 $string['wikitype'] = 'Mota';
 $string['wikiusage'] = 'Wikiren erabilera';
+$string['withbinaries'] = 'Eduki binarioa sartu';
 $string['withvirtualpages'] = 'Wiki estekak sartu';
 $string['wrongversionrange'] = '$a ez da rango zuzena';
 

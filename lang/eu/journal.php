@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // journal.php - created with Moodle 1.4.1 (2004083101)
+      // journal.php - created with Moodle 1.5 (2005060201)
 
 
 $string['alwaysopen'] = 'Beti zabalik';
@@ -9,11 +9,16 @@ $string['editingended'] = 'Edizio epea bukatu da';
 $string['editingends'] = 'Edizio epearen bukaera';
 $string['entries'] = 'Sarrerak';
 $string['feedbackupdated'] = 'Sarreren erantzunak eguneratu dira';
+$string['journalmail'] = '$a->teacher-(e)k erantzun egin dio zure sarrerari ondorengo egunkarian: \'$a->journal\'
+
+Hemen ikus dezakezu: $a->url';
+$string['journalmailhtml'] = '$a->teacher-(e)k erantzun egin dio zure sarrerari ondorengo egunkarian: \'<i>$a->journal</i>\'<br /><br />Ikusteko sakatu <a href=\"$a->url\">hemen</a>.';
 $string['journalname'] = 'Egunkariaren izena';
 $string['journalquestion'] = 'Egunkarirako galdera';
 $string['journalrating1'] = 'Eskas';
 $string['journalrating2'] = 'Nahiko';
 $string['journalrating3'] = 'Oso ondo';
+$string['mailsubject'] = 'Egunkariko erantzuna';
 $string['modulename'] = 'Egunkaria';
 $string['modulenameplural'] = 'Egunkariak';
 $string['newjournalentries'] = 'Egunkari-sarrera berriak';

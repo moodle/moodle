@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.4.1 (2004083101)
+      // glossary.php - created with Moodle 1.5 (2005060201)
 
 
 $string['addcomment'] = 'Gehitu iruzkina';
@@ -10,7 +10,7 @@ $string['allcategories'] = 'Kategoria guztiak';
 $string['allentries'] = 'Denak';
 $string['allowcomments'] = 'Iruzkinak gehitu daitezke';
 $string['allowduplicatedentries'] = 'Sarrerak bikoiztu daitezke';
-$string['allowprintview'] = 'Inprimatzeko berstioa aurkezten utzi';
+$string['allowprintview'] = 'Inprimatzeko bertsioa aurkezten utzi';
 $string['allowratings'] = 'Sarrerak kalifikatzen utzi?';
 $string['answer'] = 'Azalpena';
 $string['approve'] = 'Onartu';
@@ -103,7 +103,7 @@ $string['importentries'] = 'Inportatu sarrerak';
 $string['isglobal'] = 'Glosategi orokorra al da hau?';
 $string['linkcategory'] = 'Automatikoki estekatu nahi kategoria hau?';
 $string['mainglossary'] = 'Glosategi nagusia';
-$string['maxtimehaspassed'] = 'Barkatu, baina iruzkin hau ($a) editatzeko geheienzko denbora agortu egin duzu!';
+$string['maxtimehaspassed'] = 'Barkatu, baina iruzkin hau ($a) editatzeko gehienezko denbora agortu egin duzu!';
 $string['modulename'] = 'Glosategia';
 $string['modulenameplural'] = 'Glosategiak';
 $string['newentries'] = 'Sarrera berriak';
@@ -112,7 +112,7 @@ $string['newglossarycreated'] = 'Glosategi berria sortu da';
 $string['newglossaryentries'] = 'Glosategiko sarrera berriak:';
 $string['nocomment'] = 'Ez dago iruzkinik';
 $string['nocomments'] = '(iruzkinik ez sarrera honetan)';
-$string['noconceptfound'] = 'Ez dago kontzpturik edo azalpenik.';
+$string['noconceptfound'] = 'Ez dago kontzepturik edo azalpenik.';
 $string['noentries'] = 'Sarrerarik ez atal honetan ';
 $string['noentry'] = 'Sarrerarik ez';
 $string['notcategorised'] = 'Kategoriarik gabe';
