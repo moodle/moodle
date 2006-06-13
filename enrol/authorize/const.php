@@ -27,6 +27,7 @@ define('AN_STATUS_TEST',        0x80);
  *
  * NONE: No action. Function always returns false.
  * AUTH_ONLY: Used to authorize only, don't capture.
+ * CAPTURE_ONLY: Authorization code received from a bank over the phone and capture now.
  * PRIOR_AUTH_CAPTURE:  Used to capture, it was authorized before.
  * AUTH_CAPTURE: Used to authorize and capture.
  * CREDIT: Used to return funds to a customer's credit card.
@@ -46,12 +47,13 @@ define('AN_STATUS_TEST',        0x80);
  *  3. These transactions can be voided:
  *     authorized/pending capture, captured/pending settlement, credited/pending settlement
  */
-define('AN_ACTION_NONE',                0x00);
-define('AN_ACTION_AUTH_ONLY',           0x01);
-define('AN_ACTION_PRIOR_AUTH_CAPTURE',  0x02);
-define('AN_ACTION_AUTH_CAPTURE',        0x03);
-define('AN_ACTION_CREDIT',              0x04);
-define('AN_ACTION_VOID',                0x08);
+define('AN_ACTION_NONE',                0);
+define('AN_ACTION_AUTH_ONLY',           1);
+define('AN_ACTION_CAPTURE_ONLY',        2);
+define('AN_ACTION_AUTH_CAPTURE',        3);
+define('AN_ACTION_PRIOR_AUTH_CAPTURE',  4);
+define('AN_ACTION_CREDIT',              5);
+define('AN_ACTION_VOID',                6);
 /**#@-*/
 
 ?>

@@ -100,6 +100,7 @@ function authorizenet_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE
 
     switch ($action) {
         case AN_ACTION_AUTH_ONLY:
+        case AN_ACTION_CAPTURE_ONLY:
         case AN_ACTION_AUTH_CAPTURE:
         {
             if ($order->status != AN_STATUS_NONE) {
@@ -111,8 +112,9 @@ function authorizenet_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE
                 return false;
             }
             $ext = (array)$extra;
-            $poststring .= '&x_type=' . ($action==AN_ACTION_AUTH_ONLY ?
-                                         'AUTH_ONLY' : 'AUTH_CAPTURE');
+            $poststring .= '&x_type=' . (($action==AN_ACTION_AUTH_ONLY)
+                                          ? 'AUTH_ONLY' :( ($action==AN_ACTION_CAPTURE_ONLY)
+                                                            ? 'CAPTURE_ONLY' : 'AUTH_CAPTURE'));
             foreach($ext as $k => $v) {
                 $poststring .= '&' . $k . '=' . urlencode($v);
             }
@@ -253,6 +255,7 @@ function authorizenet_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE
         }
         switch ($action) {
             case AN_ACTION_AUTH_ONLY:
+            case AN_ACTION_CAPTURE_ONLY:
             case AN_ACTION_AUTH_CAPTURE:
             case AN_ACTION_PRIOR_AUTH_CAPTURE:
             {
