@@ -35,7 +35,7 @@
   font-size:1px;
 }
 
-body, td, th, li {
+body, table, td, th, li {
   font-family:Arial, Verdana, Helvetica, sans-serif;
   font-size:100%;
   letter-spacing:0.02em;
