@@ -96,7 +96,7 @@ $string['paymentmanagement'] = 'Payment Management';
 $string['paymentpending'] = 'Your payment is pending for this course with this order number $a->orderid.  See <a href=\'$a->url\'>Order Details</a>.';
 $string['pendingordersemail'] = 'Dear admin/teacher,
 
-$a->pending transactions will be expired unless you accept payment with in $a->days days.
+$a->pending transactions will expire unless you accept payment with in $a->days days.
 
 This is a warning message, because you didn\'t enable scheduled-capture. It means you have to accept or deny payments manually.
 
@@ -106,6 +106,7 @@ $a->url
 To enable scheduled-capture (for admins only), it means you will not receive any warning emails anymore, go to:
 
 $a->enrolurl';
+$string['pendingorderssubject'] = 'WARNING: $a->pending order(s) will expire within $a->days day(s).'
 $string['reason11'] = 'A duplicate transaction has been submitted.';
 $string['reason13'] = 'The merchant Login ID is invalid or the account is inactive.';
 $string['reason16'] = 'The transaction was not found.';
