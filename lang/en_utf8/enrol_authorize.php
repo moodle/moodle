@@ -106,7 +106,7 @@ $a->url
 To enable scheduled-capture (for admins only), it means you will not receive any warning emails anymore, go to:
 
 $a->enrolurl';
-$string['pendingorderssubject'] = 'WARNING: $a->pending order(s) will expire within $a->days day(s).'
+$string['pendingorderssubject'] = 'WARNING: $a->pending order(s) will expire within $a->days day(s).';
 $string['reason11'] = 'A duplicate transaction has been submitted.';
 $string['reason13'] = 'The merchant Login ID is invalid or the account is inactive.';
 $string['reason16'] = 'The transaction was not found.';
