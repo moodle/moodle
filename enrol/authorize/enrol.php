@@ -526,6 +526,7 @@ class enrolment_plugin_authorize
         $reviewval = optional_param('an_review', 0, PARAM_BOOL);
         $captureday = optional_param('an_capture_day', 5, PARAM_INT);
         $emailexpired = optional_param('an_emailexpired', 2, PARAM_INT);
+        $emailexpiredteacher = optional_param('an_emailexpiredteacher', 0, PARAM_BOOL);
 
         $captureday = ($captureday > 29) ? 29 : (($captureday < 0) ? 0 : $captureday);
         $emailexpired = ($emailexpired > 5) ? 5 : (($emailexpired < 0) ? 0 : $emailexpired);
@@ -540,6 +541,7 @@ class enrolment_plugin_authorize
         set_config('an_review', $reviewval);
         set_config('an_capture_day', $captureday);
         set_config('an_emailexpired', $emailexpired);
+        set_config('an_emailexpiredteacher', $emailexpiredteacher);
 
         // required fields
         $loginval = optional_param('an_login', '');
@@ -658,7 +660,32 @@ class enrolment_plugin_authorize
                     $a->url = $CFG->wwwroot."/enrol/authorize/index.php?status=".AN_STATUS_AUTH;
                     $message = get_string('pendingordersemail', 'enrol_authorize', $a);
                     $adminuser = get_admin();
-                    email_to_user($adminuser, $adminuser, "WARNING: PENDING PAYMENTS", $a);
+                    email_to_user($adminuser, $adminuser, "WARNING: PENDING PAYMENTS", $message);
+                    if (!empty($CFG->an_teachermanagepay) and !empty($CFG->an_emailexpiredteacher)) {
+                        $sql = "SELECT DISTINCT E.courseid, COUNT(E.courseid) AS count " .
+                               "FROM {$CFG->prefix}enrol_authorize E " .
+                               "WHERE $select GROUP BY E.courseid";
+                        $message = ''; $lastcourse = 0; $lastcount = 0;
+                        $courseidandcounts = get_records_sql($sql);
+                        foreach($courseidandcounts as $courseidandcount) {
+                            if ($lastcourse != $courseidandcount->courseid) {
+                                $lastcourse = $courseidandcount->courseid;
+                                $lastcount = $courseidandcount->count;
+                                $a = new stdClass;
+                                $a->pending = $lastcount;
+                                $a->days = $CFG->an_emailexpired;
+                                $a->enrolurl = "$CFG->wwwroot/$CFG->admin/users.php";
+                                $a->url = $CFG->wwwroot.'/enrol/authorize/index.php?course='.
+                                          $lastcourse.'&amp;status='.AN_STATUS_AUTH;
+                                $message = get_string('pendingordersemail', 'enrol_authorize', $a);
+                            }
+                            if ($teachers = get_course_teachers($lastcourse)) {
+                                foreach ($teachers as $teacher) {
+                                    email_to_user($teacher, $adminuser, "WARNING: PENDING PAYMENTS", $message);
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
