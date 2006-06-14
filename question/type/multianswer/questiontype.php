@@ -592,6 +592,57 @@ $QTYPE_MENU['multianswer'] = get_string("multianswer", "quiz");
 //// likely to be subject for overriding.
 /////////////////////////////////////////////////////////////
 
+// ANSWER_ALTERNATIVE regexes
+define("ANSWER_ALTERNATIVE_FRACTION_REGEX",
+       '=|%(-?[0-9]+)%');
+// for the syntax '(?<!' see http://www.perl.com/doc/manual/html/pod/perlre.html#item_C
+define("ANSWER_ALTERNATIVE_ANSWER_REGEX",
+        '.+?(?<!\\\\|&)(?=[~#}]|$)');
+        //'[^~#}]+');
+define("ANSWER_ALTERNATIVE_FEEDBACK_REGEX",
+        '.*?(?<!\\\\)(?=[~}]|$)');
+        //'[//^~}]*');
+define("ANSWER_ALTERNATIVE_REGEX",
+       '(' . ANSWER_ALTERNATIVE_FRACTION_REGEX .')?'
+       . '(' . ANSWER_ALTERNATIVE_ANSWER_REGEX . ')'
+       . '(#(' . ANSWER_ALTERNATIVE_FEEDBACK_REGEX .'))?');
+
+// Parenthesis positions for ANSWER_ALTERNATIVE_REGEX
+define("ANSWER_ALTERNATIVE_REGEX_PERCENTILE_FRACTION", 2);
+define("ANSWER_ALTERNATIVE_REGEX_FRACTION", 1);
+define("ANSWER_ALTERNATIVE_REGEX_ANSWER", 3);
+define("ANSWER_ALTERNATIVE_REGEX_FEEDBACK", 5);
+
+// NUMBER_FORMATED_ALTERNATIVE_ANSWER_REGEX is used
+// for identifying numerical answers in ANSWER_ALTERNATIVE_REGEX_ANSWER
+define("NUMBER_REGEX",
+        '-?(([0-9]+[.,]?[0-9]*|[.,][0-9]+)([eE][-+]?[0-9]+)?)');
+define("NUMERICAL_ALTERNATIVE_REGEX",
+        '^(' . NUMBER_REGEX . ')(:' . NUMBER_REGEX . ')?$');
+
+// Parenthesis positions for NUMERICAL_FORMATED_ALTERNATIVE_ANSWER_REGEX
+define("NUMERICAL_CORRECT_ANSWER", 1);
+define("NUMERICAL_ABS_ERROR_MARGIN", 6);
+
+// Remaining ANSWER regexes
+define("ANSWER_TYPE_DEF_REGEX",
+       '(NUMERICAL|NM)|(MULTICHOICE|MC)|(SHORTANSWER|SA|MW)');
+define("ANSWER_START_REGEX",
+       '\{([0-9]*):(' . ANSWER_TYPE_DEF_REGEX . '):');
+
+define("ANSWER_REGEX",
+        ANSWER_START_REGEX
+        . '(' . ANSWER_ALTERNATIVE_REGEX
+        . '(~'
+        . ANSWER_ALTERNATIVE_REGEX
+        . ')*)\}' );
+
+// Parenthesis positions for singulars in ANSWER_REGEX
+define("ANSWER_REGEX_NORM", 1);
+define("ANSWER_REGEX_ANSWER_TYPE_NUMERICAL", 3);
+define("ANSWER_REGEX_ANSWER_TYPE_MULTICHOICE", 4);
+define("ANSWER_REGEX_ANSWER_TYPE_SHORTANSWER", 5);
+define("ANSWER_REGEX_ALTERNATIVES", 6);
 
 function qtype_multianswer_extract_question($text) {
 
@@ -625,58 +676,6 @@ function qtype_multianswer_extract_question($text) {
     // Handle the entity encoded ampersand in entities (e.g. &amp;lt; -> &lt;)
     $text = preg_replace('/&amp;(.{2,9}?;)/', '&${1}', $text);
     $text = stripslashes($text);
-
-    // ANSWER_ALTERNATIVE regexes
-    define("ANSWER_ALTERNATIVE_FRACTION_REGEX",
-           '=|%(-?[0-9]+)%');
-    // for the syntax '(?<!' see http://www.perl.com/doc/manual/html/pod/perlre.html#item_C
-    define("ANSWER_ALTERNATIVE_ANSWER_REGEX",
-            '.+?(?<!\\\\|&)(?=[~#}]|$)');
-            //'[^~#}]+');
-    define("ANSWER_ALTERNATIVE_FEEDBACK_REGEX",
-            '.*?(?<!\\\\)(?=[~}]|$)');
-            //'[//^~}]*');
-    define("ANSWER_ALTERNATIVE_REGEX",
-           '(' . ANSWER_ALTERNATIVE_FRACTION_REGEX .')?'
-           . '(' . ANSWER_ALTERNATIVE_ANSWER_REGEX . ')'
-           . '(#(' . ANSWER_ALTERNATIVE_FEEDBACK_REGEX .'))?');
-
-    // Parenthesis positions for ANSWER_ALTERNATIVE_REGEX
-    define("ANSWER_ALTERNATIVE_REGEX_PERCENTILE_FRACTION", 2);
-    define("ANSWER_ALTERNATIVE_REGEX_FRACTION", 1);
-    define("ANSWER_ALTERNATIVE_REGEX_ANSWER", 3);
-    define("ANSWER_ALTERNATIVE_REGEX_FEEDBACK", 5);
-
-    // NUMBER_FORMATED_ALTERNATIVE_ANSWER_REGEX is used
-    // for identifying numerical answers in ANSWER_ALTERNATIVE_REGEX_ANSWER
-    define("NUMBER_REGEX",
-            '-?(([0-9]+[.,]?[0-9]*|[.,][0-9]+)([eE][-+]?[0-9]+)?)');
-    define("NUMERICAL_ALTERNATIVE_REGEX",
-            '^(' . NUMBER_REGEX . ')(:' . NUMBER_REGEX . ')?$');
-
-    // Parenthesis positions for NUMERICAL_FORMATED_ALTERNATIVE_ANSWER_REGEX
-    define("NUMERICAL_CORRECT_ANSWER", 1);
-    define("NUMERICAL_ABS_ERROR_MARGIN", 6);
-
-    // Remaining ANSWER regexes
-    define("ANSWER_TYPE_DEF_REGEX",
-           '(NUMERICAL|NM)|(MULTICHOICE|MC)|(SHORTANSWER|SA|MW)');
-    define("ANSWER_START_REGEX",
-           '\{([0-9]*):(' . ANSWER_TYPE_DEF_REGEX . '):');
-
-    define("ANSWER_REGEX",
-            ANSWER_START_REGEX
-            . '(' . ANSWER_ALTERNATIVE_REGEX
-            . '(~'
-            . ANSWER_ALTERNATIVE_REGEX
-            . ')*)\}' );
-
-    // Parenthesis positions for singulars in ANSWER_REGEX
-    define("ANSWER_REGEX_NORM", 1);
-    define("ANSWER_REGEX_ANSWER_TYPE_NUMERICAL", 3);
-    define("ANSWER_REGEX_ANSWER_TYPE_MULTICHOICE", 4);
-    define("ANSWER_REGEX_ANSWER_TYPE_SHORTANSWER", 5);
-    define("ANSWER_REGEX_ALTERNATIVES", 6);
 
 ////////////////////////////////////////
 //// Start of the actual function
