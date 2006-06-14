@@ -285,7 +285,11 @@ class qformat_xml extends qformat_default {
 
         // header parts particular to matching
         $qo->qtype = MATCH;
-        $qo->shuffleanswers = $question['#']['shuffleanswers'][0]['#'];
+        if (!empty($question['#']['shuffleanswers'])) {
+            $qo->shuffleanswers = $question['#']['shuffleanswers'][0]['#'];
+        } else {
+            $qo->shuffleanswers = false;
+        }
 
         // get subquestions
         $subquestions = $question['#']['subquestion'];
@@ -350,7 +354,7 @@ class qformat_xml extends qformat_default {
               $qo = $this->import_multianswer( $question );
             }
             else {
-                $notsupported = get_string( 'xmlnotsupported','quiz',$question_type );
+                $notsupported = get_string( 'xmltypeunsupported','quiz',$question_type );
                 echo "<p>$notsupported</p>";
                 $qo = null;
             }
