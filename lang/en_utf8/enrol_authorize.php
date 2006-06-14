@@ -1,4 +1,4 @@
-<?PHP // $Id$ 
+<?PHP // $Id$
       // enrol_authorize.php - created with Moodle 1.7 dev (2006050501)
 
 
@@ -10,11 +10,12 @@ $string['adminauthorizewide'] = 'Site-Wide Settings';
 $string['adminavs'] = 'Check this if you have activated Address Verification System (AVS) in your authorize.net account. This demands address fields like street, state, country and zip when user fills out payment form.';
 $string['admincronsetup'] = 'The cron.php maintenance script has not been run for at least 24 hours. <br />Cron must be enabled if you want to use scheduled-capture feature.<br /><b>Enable</b> \'Authorize.net plugin\' and <b>setup cron</b> properly; or <b>uncheck an_review</b> again.<br />If you disable scheduled-capture, transactions will be cancelled unless you review them within 30 days.<br />Check <b>an_review</b> and enter <b>\'0\' to an_capture_day</b> field<br />if you want to <b>manually</b> accept/deny payments within 30 days.';
 $string['adminemailexpired'] = 'This is useful for \'Manual-Capture\'. Admins are notified <b>$a</b> days prior to pending orders expiring.';
+$string['adminemailexpiredteacher'] = 'If you have enabled manual-capture (see above) and teachers can manage the payments, teacher may also notified about pending orders expiring. This will send an email to each course teachers about how many pending orders expiring.';
 $string['adminemailexpsetting'] = '(0=disable sending email, default=2, max=5)<br />(Manual capture settings for sending email: cron=enabled, an_review=checked, an_capture_day=0, an_emailexpired=1-5)';
 $string['adminhelpcapturetitle'] = 'Scheduled-Capture Day';
 $string['adminhelpreviewtitle'] = 'Order Review';
 $string['adminneworder'] = 'Dear Admin,
-                
+
   You have received a new pending order:
 
    Order ID: $a->orderid
@@ -22,13 +23,13 @@ $string['adminneworder'] = 'Dear Admin,
    User: $a->user
    Course: $a->course
    Amount: $a->amount
-               
+
    SCHEDULED-CAPTURE ENABLED?: $a->acstatus
-                
+
   If scheduled-capture enabled the credit card will be captured on $a->captureon
   and then student will be enrolled to course, otherwise it will be expired
   on $a->expireon and cannot be captured after this day.
-                
+
   Also you can accept/deny the payment to enrol the student immediately following this link:
   $a->url';
 $string['adminnewordersubject'] = '$a->course: New Pending Order($a->orderid)';
@@ -78,12 +79,8 @@ $string['description'] = 'The Authorize.net module allows you to set up paid cou
 $string['enrolname'] = 'Authorize.net Payment Gateway';
 $string['expired'] = 'Expired';
 $string['howmuch'] = 'How much?';
-$string['httpsrequired'] = 'We are sorry to inform you that your request cannot be processed now. This site\'s configuration couldn\'t be set up correctly.
-<br /><br />
-Please don\'t enter your credit card number unless you see a yellow lock at the bottom of the browser. If the symbol appears, it means the page encrypts all data sent between client and server. So the information during the transaction between the two computers is protected, hence your credit card number cannot be captured over the internet.';
-$string['logindesc'] = 'This option must be ON. <br /><br />
-Please ensure that you have turned <a href=\"$a->url\">loginhttps ON</a> in Admin >> Variables >> Security.<br /><br />
-Turning this on will make Moodle use a secure https connection just for the login and payment pages.';
+$string['httpsrequired'] = 'We are sorry to inform you that your request cannot be processed now. This site\'s configuration couldn\'t be set up correctly.<br /><br />Please don\'t enter your credit card number unless you see a yellow lock at the bottom of the browser. If the symbol appears, it means the page encrypts all data sent between client and server. So the information during the transaction between the two computers is protected, hence your credit card number cannot be captured over the internet.';
+$string['logindesc'] = 'This option must be ON. <br /><br />Please ensure that you have turned <a href=\"$a->url\">loginhttps ON</a> in Admin >> Variables >> Security.<br /><br />Turning this on will make Moodle use a secure https connection just for the login and payment pages.';
 $string['missingaddress'] = 'Missing address';
 $string['missingcc'] = 'Missing card number';
 $string['missingccexpire'] = 'Missing expiration date';
@@ -97,7 +94,7 @@ $string['notsettled'] = 'Not settled';
 $string['orderid'] = 'Order ID';
 $string['paymentmanagement'] = 'Payment Management';
 $string['paymentpending'] = 'Your payment is pending for this course with this order number $a->orderid.  See <a href=\'$a->url\'>Order Details</a>.';
-$string['pendingordersemail'] = ' Dear admin,
+$string['pendingordersemail'] = 'Dear admin/teacher,
 
 $a->pending transactions will be expired unless you accept payment with in $a->days days.
 
@@ -106,7 +103,7 @@ This is a warning message, because you didn\'t enable scheduled-capture. It mean
 To accept/deny pending payments go to:
 $a->url
 
-To enable scheduled-capture, it means you will not receive any warning emails anymore, go to:
+To enable scheduled-capture (for admins only), it means you will not receive any warning emails anymore, go to:
 
 $a->enrolurl';
 $string['reason11'] = 'A duplicate transaction has been submitted.';
