@@ -669,27 +669,26 @@ class enrolment_plugin_authorize
                     email_to_user($adminuser, $adminuser, $subject, $message);
                     if (!empty($CFG->an_teachermanagepay) and !empty($CFG->an_emailexpiredteacher)) {
                         $sorttype = empty($CFG->an_sorttype) ? 'ttl' : $CFG->an_sorttype;
-                        $sql = "SELECT E.courseid, COUNT(E.courseid) AS cnt, SUM(E.amount) as ttl " .
+                        $sql = "SELECT E.courseid, E.currency, COUNT(E.courseid) AS cnt, SUM(E.amount) as ttl " .
                                "FROM {$CFG->prefix}enrol_authorize E " .
                                "WHERE $select GROUP BY E.courseid ORDER BY $sorttype DESC";
-                        $message = ''; $subject = '';
-                        $lastcourse = 0; $lastcount = 0;
+                        $message = ''; $subject = ''; $lastcourse = 0;
                         $courseidandcounts = get_records_sql($sql);
                         foreach($courseidandcounts as $courseidandcount) {
                             if ($lastcourse != $courseidandcount->courseid) {
                                 $lastcourse = $courseidandcount->courseid;
-                                $lastcount = $courseidandcount->cnt;
                                 $a = new stdClass;
-                                $a->pending = $lastcount;
+                                $a->pending = $courseidandcount->cnt;
                                 $a->days = $CFG->an_emailexpired;
                                 $subject = get_string('pendingorderssubject', 'enrol_authorize', $a);
                                 $a = new stdClass;
-                                $a->pending = $lastcount;
+                                $a->pending = $courseidandcount->cnt;
+                                $a->currency = $courseidandcount->currency;
+                                $a->sumcost = $courseidandcount->ttl;
                                 $a->days = $CFG->an_emailexpired;
-                                $a->enrolurl = "$CFG->wwwroot/$CFG->admin/users.php";
                                 $a->url = $CFG->wwwroot.'/enrol/authorize/index.php?course='.
                                           $lastcourse.'&amp;status='.AN_STATUS_AUTH;
-                                $message = get_string('pendingordersemail', 'enrol_authorize', $a);
+                                $message = get_string('pendingordersemailteacher', 'enrol_authorize', $a);
                             }
                             if ($teachers = get_course_teachers($lastcourse)) {
                                 foreach ($teachers as $teacher) {
