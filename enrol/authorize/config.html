@@ -16,6 +16,7 @@ if (!isset($frm->an_review)) $frm->an_review = '';
 if (!isset($frm->an_capture_day)) $frm->an_capture_day = '5';
 if (!isset($frm->an_emailexpired)) $frm->an_emailexpired = '2';
 if (!isset($frm->an_emailexpiredteacher)) $frm->an_emailexpiredteacher = '';
+if (!isset($frm->an_sorttype)) $frm->an_sorttype = 'ttl';
 if (!isset($frm->an_teachermanagepay)) $frm->an_teachermanagepay = '';
 
 if (isset($CFG->an_cutoff)) {
@@ -165,6 +166,15 @@ if (!isset($frm->acceptccs)) {
     <td align="right">an_emailexpiredteacher:</td>
     <td><?php print_checkbox('an_emailexpiredteacher', '1', !empty($frm->an_emailexpiredteacher)) ?></td>
     <td><?php print_string("adminemailexpiredteacher", "enrol_authorize") ?></td>
+</tr>
+
+<tr valign="top">
+    <td align="right">an_sorttype:</td>
+    <td><?php
+    $sorts = array('ttl' => get_string('adminemailexpiredsortsum', 'enrol_authorize'),
+                   'cnt' => get_string('adminemailexpiredsortcount', 'enrol_authorize'));
+    choose_from_menu($sorts, "an_sorttype", $frm->an_sorttype, "","", "") ?></td>
+    <td><?php print_string("adminemailexpiredsort", "enrol_authorize") ?></td>
 </tr>
 
 <tr valign="top">
