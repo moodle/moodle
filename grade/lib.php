@@ -1970,6 +1970,7 @@ function grade_view_all_grades($view_by_student) {
     global $course;
     global $preferences;
     global $USER;
+    global $group; // yu: fix for 5814
     
     if (!isteacher($course->id)) {
         $view_by_student = $USER->id;
@@ -2000,8 +2001,8 @@ function grade_view_all_grades($view_by_student) {
         if (isteacher($course->id) ) {
             $student_heading_link = get_string('student','grades');
             if ($view_by_student == -1) {
-                $student_heading_link .='<a href="?id='.$course->id.'&amp;action=grades&amp;sort=lastname"><br /><font size="-2">'.get_string('sortbylastname','grades').'</font></a>';
-                $student_heading_link .= '<a href="?id='.$course->id.'&amp;action=grades&amp;sort=firstname"><br /><font size="-2">'.get_string('sortbyfirstname','grades').'</font></a>';
+                $student_heading_link .='<a href="?id='.$course->id.'&amp;action=grades&amp;sort=lastname&amp;group='.$group.'"><br /><font size="-2">'.get_string('sortbylastname','grades').'</font></a>';
+                $student_heading_link .= '<a href="?id='.$course->id.'&amp;action=grades&amp;sort=firstname&amp;group='.$group.'"><br /><font size="-2">'.get_string('sortbyfirstname','grades').'</font></a>';
             }
             else {
                 $student_heading_link .= '<br /><a href="?id='.$course->id.'&amp;&amp;action=grades"><font size="-2">'.get_string('showallstudents','grades').'</font></a>';
@@ -2103,14 +2104,14 @@ function grade_view_all_grades($view_by_student) {
                 }
                 
                 if (isteacher($course->id) && $view_by_student == -1) {
-                    $grade_sort_link = '<a href="?id='.$course->id.'&amp;action=grades&amp;sort=highgrade"><img src="'.$CFG->wwwroot.'/pix/t/down.gif" alt="'.get_string('highgradedescending','grades').'" /></a>';
-                    $grade_sort_link .= '<a href="?id='.$course->id.'&amp;action=grades&amp;sort=highgrade_asc"><img src="'.$CFG->wwwroot.'/pix/t/up.gif" alt="'.get_string('highgradeascending','grades').'" /></a>';
-                    $points_sort_link = '<a href="?id='.$course->id.'&amp;action=grades&amp;sort=points"><img src="'.$CFG->wwwroot.'/pix/t/down.gif" alt="'.get_string('pointsdescending','grades').'" /></a>';
-                    $points_sort_link .= '<a href="?id='.$course->id.'&amp;action=grades&amp;sort=points_asc"><img src="'.$CFG->wwwroot.'/pix/t/up.gif" alt="'.get_string('pointsascending','grades').'" /></a>';
-                    $weighted_sort_link = '<a href="?id='.$course->id.'&amp;action=grades&amp;sort=weighted"><img src="'.$CFG->wwwroot.'/pix/t/down.gif" alt="'.get_string('weighteddescending','grades').'" /></a>';
-                    $weighted_sort_link .= '<a href="?id='.$course->id.'&amp;action=grades&amp;sort=weighted_asc"><img src="'.$CFG->wwwroot.'/pix/t/up.gif" alt="'.get_string('weightedascending','grades').'" /></a>';
-                    $percent_sort_link = '<a href="?id='.$course->id.'&amp;action=grades&amp;sort=percent"><img src="'.$CFG->wwwroot.'/pix/t/down.gif" alt="'.get_string('percentdescending','grades').'" /></a>';
-                    $percent_sort_link .= '<a href="?id='.$course->id.'&amp;action=grades&amp;sort=percent_asc"><img src="'.$CFG->wwwroot.'/pix/t/up.gif" alt="'.get_string('percentascending','grades').'" /></a>';
+                    $grade_sort_link = '<a href="?id='.$course->id.'&amp;action=grades&amp;sort=highgrade&amp;group='.$group.'"><img src="'.$CFG->wwwroot.'/pix/t/down.gif" alt="'.get_string('highgradedescending','grades').'" /></a>';
+                    $grade_sort_link .= '<a href="?id='.$course->id.'&amp;action=grades&amp;sort=highgrade_asc&amp;group='.$group.'"><img src="'.$CFG->wwwroot.'/pix/t/up.gif" alt="'.get_string('highgradeascending','grades').'" /></a>';
+                    $points_sort_link = '<a href="?id='.$course->id.'&amp;action=grades&amp;sort=points&amp;group='.$group.'"><img src="'.$CFG->wwwroot.'/pix/t/down.gif" alt="'.get_string('pointsdescending','grades').'" /></a>';
+                    $points_sort_link .= '<a href="?id='.$course->id.'&amp;action=grades&amp;sort=points_asc&amp;group='.$group.'"><img src="'.$CFG->wwwroot.'/pix/t/up.gif" alt="'.get_string('pointsascending','grades').'" /></a>';
+                    $weighted_sort_link = '<a href="?id='.$course->id.'&amp;action=grades&amp;sort=weighted&amp;group='.$group.'"><img src="'.$CFG->wwwroot.'/pix/t/down.gif" alt="'.get_string('weighteddescending','grades').'" /></a>';
+                    $weighted_sort_link .= '<a href="?id='.$course->id.'&amp;action=grades&amp;sort=weighted_asc&amp;group='.$group.'"><img src="'.$CFG->wwwroot.'/pix/t/up.gif" alt="'.get_string('weightedascending','grades').'" /></a>';
+                    $percent_sort_link = '<a href="?id='.$course->id.'&amp;action=grades&amp;sort=percent&amp;group='.$group.'"><img src="'.$CFG->wwwroot.'/pix/t/down.gif" alt="'.get_string('percentdescending','grades').'" /></a>';
+                    $percent_sort_link .= '<a href="?id='.$course->id.'&amp;action=grades&amp;sort=percent_asc&amp;group='.$group.'"><img src="'.$CFG->wwwroot.'/pix/t/up.gif" alt="'.get_string('percentascending','grades').'" /></a>';
                 }
                 $stats_link = '<a href="javascript:void(0)"onclick="window.open(\'?id='.$course->id.'&amp;action=stats&amp;category=all\',\''.get_string('statslink','grades').'\',\'height=200,width=300,scrollbars=no\')"><font size=-2>'.get_string('statslink','grades').'</font></a>';
                 $header .= '<th colspan="'.$total_columns.'">'.get_string('total','grades').'&nbsp;'.$stats_link.'</th>';
