@@ -258,7 +258,7 @@ class question_multichoice_qtype extends default_questiontype {
 
         $answers = &$question->options->answers;
         $correctanswers = $this->get_correct_responses($question, $state);
-        $readonly = empty($options->readonly) ? '' : 'readonly="readonly"';
+        $readonly = empty($options->readonly) ? '' : 'disabled="disabled"';
 
         $formatoptions = new stdClass;
         $formatoptions->noclean = true;

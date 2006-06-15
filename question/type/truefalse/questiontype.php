@@ -137,7 +137,7 @@ class question_truefalse_qtype extends default_questiontype {
             $cmoptions, $options) {
         global $CFG;
 
-        $readonly = $options->readonly ? ' readonly="readonly"' : '';
+        $readonly = $options->readonly ? ' disabled="disabled"' : '';
         $formatoptions->noclean = true;
         $formatoptions->para = false;
 
