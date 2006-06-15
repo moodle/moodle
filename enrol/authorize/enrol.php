@@ -527,6 +527,7 @@ class enrolment_plugin_authorize
         $captureday = optional_param('an_capture_day', 5, PARAM_INT);
         $emailexpired = optional_param('an_emailexpired', 2, PARAM_INT);
         $emailexpiredteacher = optional_param('an_emailexpiredteacher', 0, PARAM_BOOL);
+        $sorttype = optional_param('an_sorttype', 'ttl', PARAM_ALPHA);
 
         $captureday = ($captureday > 29) ? 29 : (($captureday < 0) ? 0 : $captureday);
         $emailexpired = ($emailexpired > 5) ? 5 : (($emailexpired < 0) ? 0 : $emailexpired);
@@ -542,6 +543,7 @@ class enrolment_plugin_authorize
         set_config('an_capture_day', $captureday);
         set_config('an_emailexpired', $emailexpired);
         set_config('an_emailexpiredteacher', $emailexpiredteacher);
+        set_config('an_sorttype', $sorttype);
 
         // required fields
         $loginval = optional_param('an_login', '');
@@ -666,9 +668,10 @@ class enrolment_plugin_authorize
                     $adminuser = get_admin();
                     email_to_user($adminuser, $adminuser, $subject, $message);
                     if (!empty($CFG->an_teachermanagepay) and !empty($CFG->an_emailexpiredteacher)) {
-                        $sql = "SELECT E.courseid, COUNT(E.courseid) AS cnt " .
+                        $sorttype = empty($CFG->an_sorttype) ? 'ttl' : $CFG->an_sorttype;
+                        $sql = "SELECT E.courseid, COUNT(E.courseid) AS cnt, SUM(E.amount) as ttl " .
                                "FROM {$CFG->prefix}enrol_authorize E " .
-                               "WHERE $select GROUP BY E.courseid ORDER BY cnt DESC";
+                               "WHERE $select GROUP BY E.courseid ORDER BY $sorttype DESC";
                         $message = ''; $subject = '';
                         $lastcourse = 0; $lastcount = 0;
                         $courseidandcounts = get_records_sql($sql);
