@@ -630,7 +630,7 @@ class enrolment_plugin_authorize
      */
     function cron()
     {
-        global $CFG;
+        global $CFG, $SITE;
         require_once($CFG->dirroot.'/enrol/authorize/authorizenetlib.php');
 
         $oneday = 86400;
@@ -658,10 +658,12 @@ class enrolment_plugin_authorize
                     $a = new stdClass;
                     $a->pending = $count;
                     $a->days = $CFG->an_emailexpired;
+                    $a->course = $SITE->shortname;
                     $subject = get_string('pendingorderssubject', 'enrol_authorize', $a);
                     $a = new stdClass;
                     $a->pending = $count;
                     $a->days = $CFG->an_emailexpired;
+                    $a->course = $SITE->fullname;
                     $a->enrolurl = "$CFG->wwwroot/$CFG->admin/users.php";
                     $a->url = $CFG->wwwroot."/enrol/authorize/index.php?status=".AN_STATUS_AUTH;
                     $message = get_string('pendingordersemail', 'enrol_authorize', $a);
@@ -669,8 +671,10 @@ class enrolment_plugin_authorize
                     email_to_user($adminuser, $adminuser, $subject, $message);
                     if (!empty($CFG->an_teachermanagepay) and !empty($CFG->an_emailexpiredteacher)) {
                         $sorttype = empty($CFG->an_sorttype) ? 'ttl' : $CFG->an_sorttype;
-                        $sql = "SELECT E.courseid, E.currency, COUNT(E.courseid) AS cnt, SUM(E.amount) as ttl " .
+                        $sql = "SELECT E.courseid, E.currency, C.fullname, C.shortname, " .
+                               "COUNT(E.courseid) AS cnt, SUM(E.amount) as ttl " .
                                "FROM {$CFG->prefix}enrol_authorize E " .
+                               "INNER JOIN {$CFG->prefix}course C ON C.id = E.courseid " .
                                "WHERE $select GROUP BY E.courseid ORDER BY $sorttype DESC";
                         $message = ''; $subject = ''; $lastcourse = 0;
                         $courseidandcounts = get_records_sql($sql);
@@ -678,10 +682,12 @@ class enrolment_plugin_authorize
                             if ($lastcourse != $courseidandcount->courseid) {
                                 $lastcourse = $courseidandcount->courseid;
                                 $a = new stdClass;
+                                $a->course = $courseidandcount->shortname;
                                 $a->pending = $courseidandcount->cnt;
                                 $a->days = $CFG->an_emailexpired;
                                 $subject = get_string('pendingorderssubject', 'enrol_authorize', $a);
                                 $a = new stdClass;
+                                $a->course = $courseidandcount->fullname;
                                 $a->pending = $courseidandcount->cnt;
                                 $a->currency = $courseidandcount->currency;
                                 $a->sumcost = $courseidandcount->ttl;
