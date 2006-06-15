@@ -666,16 +666,16 @@ class enrolment_plugin_authorize
                     $adminuser = get_admin();
                     email_to_user($adminuser, $adminuser, $subject, $message);
                     if (!empty($CFG->an_teachermanagepay) and !empty($CFG->an_emailexpiredteacher)) {
-                        $sql = "SELECT DISTINCT E.courseid, COUNT(E.courseid) AS count " .
+                        $sql = "SELECT E.courseid, COUNT(E.courseid) AS cnt " .
                                "FROM {$CFG->prefix}enrol_authorize E " .
-                               "WHERE $select GROUP BY E.courseid";
+                               "WHERE $select GROUP BY E.courseid ORDER BY cnt DESC";
                         $message = ''; $subject = '';
                         $lastcourse = 0; $lastcount = 0;
                         $courseidandcounts = get_records_sql($sql);
                         foreach($courseidandcounts as $courseidandcount) {
                             if ($lastcourse != $courseidandcount->courseid) {
                                 $lastcourse = $courseidandcount->courseid;
-                                $lastcount = $courseidandcount->count;
+                                $lastcount = $courseidandcount->cnt;
                                 $a = new stdClass;
                                 $a->pending = $lastcount;
                                 $a->days = $CFG->an_emailexpired;
