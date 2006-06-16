@@ -31,53 +31,10 @@ function set_parameters() {
         $CFG->courselang = $this->course->lang;
     }
 
-    if (empty($USER->id)) {   // No need to set up parameters
-        $this->parameters = array();
-        return;
-    }
-
     $site = get_site();
 
+
     $this->parameters = array(
-
-            'label1'          => array('langstr' => get_string('user'),
-                                       'value'   => 'optgroup'),
-
-            'userid'          => array('langstr' => 'id',
-                                       'value'   => $USER->id),
-            'userusername'    => array('langstr' => get_string('username'),
-                                       'value'   => $USER->username),
-            'userpassword'    => array('langstr' => get_string('password'),
-                                       'value'   => $USER->password),
-            'useridnumber'    => array('langstr' => get_string('idnumber'),
-                                       'value'   => $USER->idnumber),
-            'userfirstname'   => array('langstr' => get_string('firstname'),
-                                       'value'   => $USER->firstname),
-            'userlastname'    => array('langstr' => get_string('lastname'),
-                                       'value'   => $USER->lastname),
-            'userfullname'    => array('langstr' => get_string('fullname'),
-                                       'value'   => fullname($USER)),
-            'useremail'       => array('langstr' => get_string('email'),
-                                       'value'   => $USER->email),
-            'usericq'         => array('langstr' => get_string('icqnumber'),
-                                       'value'   => $USER->icq),
-            'userphone1'      => array('langstr' => get_string('phone').' 1',
-                                       'value'   => $USER->phone1),
-            'userphone2'      => array('langstr' => get_string('phone').' 2',
-                                       'value'   => $USER->phone2),
-            'userinstitution' => array('langstr' => get_string('institution'),
-                                       'value'   => $USER->institution),
-            'userdepartment'  => array('langstr' => get_string('department'),
-                                       'value'   => $USER->department),
-            'useraddress'     => array('langstr' => get_string('address'),
-                                       'value'   => $USER->address),
-            'usercity'        => array('langstr' => get_string('city'),
-                                       'value'   => $USER->city),
-            'usertimezone'    => array('langstr' => get_string('timezone'),
-                                       'value'   => get_user_timezone_offset()),
-            'userurl'         => array('langstr' => get_string('webpage'),
-                                       'value'   => $USER->url),
-
             'label2'          => array('langstr' => "",
                                        'value'   =>'/optgroup'),
             'label3'          => array('langstr' => get_string('course'),
@@ -122,8 +79,53 @@ function set_parameters() {
 
             'label6'          => array('langstr' => "",
                                        'value'   =>'/optgroup')
-            );
+    );
 
+    if (!empty($USER->id)) {
+    
+        $userparameters = array(
+
+            'label1'          => array('langstr' => get_string('user'),
+                                       'value'   => 'optgroup'),
+
+            'userid'          => array('langstr' => 'id',
+                                       'value'   => $USER->id),
+            'userusername'    => array('langstr' => get_string('username'),
+                                       'value'   => $USER->username),
+            'userpassword'    => array('langstr' => get_string('password'),
+                                       'value'   => $USER->password),
+            'useridnumber'    => array('langstr' => get_string('idnumber'),
+                                       'value'   => $USER->idnumber),
+            'userfirstname'   => array('langstr' => get_string('firstname'),
+                                       'value'   => $USER->firstname),
+            'userlastname'    => array('langstr' => get_string('lastname'),
+                                       'value'   => $USER->lastname),
+            'userfullname'    => array('langstr' => get_string('fullname'),
+                                       'value'   => fullname($USER)),
+            'useremail'       => array('langstr' => get_string('email'),
+                                       'value'   => $USER->email),
+            'usericq'         => array('langstr' => get_string('icqnumber'),
+                                       'value'   => $USER->icq),
+            'userphone1'      => array('langstr' => get_string('phone').' 1',
+                                       'value'   => $USER->phone1),
+            'userphone2'      => array('langstr' => get_string('phone').' 2',
+                                       'value'   => $USER->phone2),
+            'userinstitution' => array('langstr' => get_string('institution'),
+                                       'value'   => $USER->institution),
+            'userdepartment'  => array('langstr' => get_string('department'),
+                                       'value'   => $USER->department),
+            'useraddress'     => array('langstr' => get_string('address'),
+                                       'value'   => $USER->address),
+            'usercity'        => array('langstr' => get_string('city'),
+                                       'value'   => $USER->city),
+            'usertimezone'    => array('langstr' => get_string('timezone'),
+                                       'value'   => get_user_timezone_offset()),
+            'userurl'         => array('langstr' => get_string('webpage'),
+                                       'value'   => $USER->url)
+         );
+ 
+         $this->parameters = array_merge($userparameters, $this->parameters);
+    }
 }
 
 
