@@ -186,6 +186,14 @@ if ($ME == $CFG->wwwroot.'/blog/edit.php') {  /// We are in edit mode, print the
 
 } /// close switch
 
+// prints the tabs
+$currenttab = 'blogs';
+$user = $USER;
+if (!$course) {
+    $course = get_record('course','id',optional_param('courseid', SITEID, PARAM_INT));
+}
+require_once($CFG->dirroot .'/user/tabs.php');
+
 $editing = false;
 if ($PAGE->user_allowed_editing()) {
     $editing = $PAGE->user_is_editing();
