@@ -15,9 +15,6 @@ $blockid = optional_param('blockid',    0, PARAM_INT);
 /// If user has never visited this page before, install 2 blocks for him
 blog_check_and_install_blocks();
 
-if (!$site = get_site()) {
-    redirect($CFG->wwwroot.'/index.php');
-}
 
 // now check that they are logged in and allowed into the course (if specified)
 if ($courseid != SITEID) {
@@ -26,7 +23,7 @@ if ($courseid != SITEID) {
     }
     require_login($course->id);
 } else {
-    $course = get_site();
+    $course = $SITE;
 }
 
 // Bounds for block widths within this page
@@ -92,7 +89,7 @@ if ($ME == $CFG->wwwroot.'/blog/edit.php') {  /// We are in edit mode, print the
         $formHeading = get_string('addnewentry', 'blog');
     }
     
-    print_header("$site->shortname: $blogstring", "$site->fullname",
+    print_header("$SITE->shortname: $blogstring", "$SITE->fullname",
                         '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$filterselect.'">'.fullname($user).'</a> ->
                         <a href="'.$CFG->wwwroot.'/blog/index.php?userid='.$user->id.'">'.$blogstring.'</a> -> '.               $formHeading,'','',true);
 
@@ -103,20 +100,20 @@ if ($ME == $CFG->wwwroot.'/blog/edit.php') {  /// We are in edit mode, print the
     switch ($filtertype) {
         case 'site':
             if ($tagid || !empty($tag)) {
-                print_header("$site->shortname: $blogstring", "",
+                print_header("$SITE->shortname: $blogstring", $SITE->fullname,
                             '<a href="index.php?filtertype=site">'. "$blogstring</a> -> $tagstring: $taginstance->text",'','',true,$PAGE->get_extra_header_string());
             } else {
-                print_header("$site->shortname: $blogstring", "",
+                print_header("$SITE->shortname: $blogstring", $SITE->fullname,
                             $blogstring,'','',true,$PAGE->get_extra_header_string());
             }
         break;
 
         case 'course':
             if ($tagid || !empty($tag)) {
-                print_header_simple("$course->shortname: $blogstring", "",
+                print_header_simple("$course->shortname: $blogstring", $course->fullname,
                             '<a href="index.php?filtertype=course&amp;filterselect='.$filterselect.'">'. "$blogstring</a> -> $tagstring: $taginstance->text",'','',true,$PAGE->get_extra_header_string());
             } else {
-                print_header_simple("$course->shortname: $blogstring", "",
+                print_header_simple("$course->shortname: $blogstring", $course->fullname,
                             $blogstring,'','',true,$PAGE->get_extra_header_string());
             }
         break;
@@ -126,11 +123,11 @@ if ($ME == $CFG->wwwroot.'/blog/edit.php') {  /// We are in edit mode, print the
             $thisgroup = get_record('groups', 'id', $filterselect);
 
             if ($tagid || !empty($tag)) {
-                print_header_simple("$course->shortname: $blogstring", "$course->fullname",
+                print_header_simple("$course->shortname: $blogstring", $course->fullname,
                             '<a href="'.$CFG->wwwroot.'/user/index.php?id='.$course->id.'&amp;group='.$filterselect.'">'.$thisgroup->name.'</a> ->
                             <a href="index.php?filtertype=group&amp;filterselect='.$filterselect.'">'. "$blogstring</a> -> $tagstring: $taginstance->text",'','',true,$PAGE->get_extra_header_string());
             } else {
-                print_header_simple("$course->shortname: $blogstring", "$course->fullname",
+                print_header_simple("$course->shortname: $blogstring", $course->fullname,
                             '<a href="'.$CFG->wwwroot.'/user/index.php?id='.$course->id.'&amp;group='.$filterselect.'">'.$thisgroup->name."</a> ->
                             $blogstring",'','',true,$PAGE->get_extra_header_string());
 
@@ -144,14 +141,14 @@ if ($ME == $CFG->wwwroot.'/blog/edit.php') {  /// We are in edit mode, print the
 
             if (isset($course->id) && $course->id && $course->id != SITEID) {
                 if ($tagid || !empty($tag)) {
-                    print_header("$course->shortname: $blogstring", "$course->fullname",
+                    print_header("$course->shortname: $blogstring", $course->fullname,
                             '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">'.$course->shortname.'</a> ->
                             <a href="'.$CFG->wwwroot.'/user/index.php?id='.$course->id.'">'.$participants.'</a> ->
                             <a href="'.$CFG->wwwroot.'/user/view.php?id='.$filterselect.'&amp;course='.$course->id.'">'.fullname($user).'</a> ->
                             <a href="index.php?courseid='.optional_param('courseid', 0, PARAM_INT).'&amp;filtertype=user&amp;filterselect='.$filterselect.'">'. "$blogstring</a> -> $tagstring: $taginstance->text",'','',true,$PAGE->get_extra_header_string());
 
                 } else {
-                    print_header("$course->shortname: $blogstring", "$course->fullname",
+                    print_header("$course->shortname: $blogstring", $course->fullname,
                             '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">'.$course->shortname.'</a> ->
                             <a href="'.$CFG->wwwroot.'/user/index.php?id='.$course->id.'">'.$participants.'</a> ->
                             <a href="'.$CFG->wwwroot.'/user/view.php?id='.$filterselect.'&amp;course='.$course->id.'">'.fullname($user).'</a> ->
@@ -163,12 +160,12 @@ if ($ME == $CFG->wwwroot.'/blog/edit.php') {  /// We are in edit mode, print the
             else {
 
                 if ($tagid || !empty($tag)) {
-                    print_header("$site->shortname: $blogstring", "$site->fullname",
+                    print_header("$SITE->shortname: $blogstring", $SITE->fullname,
                             '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$filterselect.'">'.fullname($user).'</a> ->
                             <a href="index.php?filtertype=user&amp;filterselect='.$filterselect.'">'. "$blogstring</a> -> $tagstring: $taginstance->text",'','',true,$PAGE->get_extra_header_string());
 
                 } else {
-                    print_header("$site->shortname: $blogstring", "$site->fullname",
+                    print_header("$SITE->shortname: $blogstring", $SITE->fullname,
                             '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$filterselect.'">'.fullname($user).'</a> ->
                             '.$blogstring,'','',true,$PAGE->get_extra_header_string());
 
@@ -178,7 +175,7 @@ if ($ME == $CFG->wwwroot.'/blog/edit.php') {  /// We are in edit mode, print the
         break;
 
         default:    //user click on add from block
-            print_header("$site->shortname: $blogstring", "$site->fullname",
+            print_header("$SITE->shortname: $blogstring", $SITE->fullname,
                             '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$filterselect.'">'.fullname($user).'</a> ->
                             <a href="'.$CFG->wwwroot.'/blog/index.php?userid='.$user->id.'">'.$blogstring.'</a> -> '.get_string('addentry','blog'),'','',true,$PAGE->get_extra_header_string());
         break;
