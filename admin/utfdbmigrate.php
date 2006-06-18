@@ -298,10 +298,7 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
         $crash->field = $crashdata[1];
         $crash->record = $crashdata[2];
 		
-        print_heading('Resume information :');
-        echo '<br>Resuming from @ table : '.$crash->table;
-        echo '<br>Resuming from @ field : '.$crash->field;
-        echo '<br>Resuming from @ record : '.$crash->record;
+        notify("Resuming migration from: $crash->table / .$crash->field, Record: $crash->record");
     }
 
     /************************************************************************
@@ -499,7 +496,6 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
                                             continue;
                                         } else {
                                             $crash = 0;
-                                            print_heading('recovering from '.$dbtablename.'--'.$fieldname.'--'.$record->id);
                                         }
                                     }
 
@@ -576,7 +572,8 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
                                     $processedrecords++;
                                     //print some output once in a while
                                     if (($processedrecords) % 5000 == 0) {
-                                        echo 'Processing...'.$dbtablename.'...'.$fieldname.'...'.$record->id;
+                                        print_progress($done, $tablestoconvert, 5, 1, 
+                                                       'Processing: '.$dbtablename.'/'.$fieldname.' ');
                                     }
                                 }
                             }else {

@@ -310,8 +310,7 @@ function set_cron_lock($name,$value=true,$staleafter=7200,$clobberstale=false) {
     return true;
 }
 
-function print_progress($done, $total, $updatetime=5, $sleeptime=1) {
-    static $count;
+function print_progress($done, $total, $updatetime=5, $sleeptime=1, $donetext='') {
     static $starttime;
     static $lasttime;
 
@@ -327,12 +326,6 @@ function print_progress($done, $total, $updatetime=5, $sleeptime=1) {
         echo '</div>';
     }
 
-    if (!isset($count)) {
-        $count = 0;
-    }
-
-    $count++;
-
     $now = time();
 
     if ($done && (($now - $lasttime) >= $updatetime)) {
@@ -341,8 +334,14 @@ function print_progress($done, $total, $updatetime=5, $sleeptime=1) {
         $percentage = format_float((float)$done / (float)$total, 2);
         $width = (int)(500 * $percentage);
 
+        if ($projectedtime > 10) {
+            $projectedtext = '  Ending: '.format_time($projectedtime);
+        } else {
+            $projectedtext = '';
+        }
+
         echo '<script>';
-        echo 'document.getElementById("text").innerHTML = "'.$count.' done.  Ending: '.format_time($projectedtime).'";'."\n";
+        echo 'document.getElementById("text").innerHTML = "'.addslashes($donetext).' '.$done.' done.'.$projectedtext.'";'."\n";
         echo 'document.getElementById("slider").style.width = \''.$width.'px\';'."\n";
         echo '</script>';
 
