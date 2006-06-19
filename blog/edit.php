@@ -137,16 +137,6 @@ print_simple_box_start("center");
 require('edit.html');
 print_simple_box_end();
 
-    // Janne comment: Let's move this in here
-    // so IE gets more time to load the
-    // Page.
-    if ($usehtmleditor) {
-        // Janne comment: there are two text fields in form
-        // so lets try to replace them both with
-        // HTMLArea editors
-        use_html_editor();
-    }
-
 include($CFG->dirroot .'/blog/footer.php');
 
 
