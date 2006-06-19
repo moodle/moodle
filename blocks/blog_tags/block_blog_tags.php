@@ -41,7 +41,7 @@ class block_blog_tags extends block_base {
 
     function get_content() {
 
-        global $CFG;
+        global $CFG, $SITE, $COURSE;
 
         if (empty($this->config->timewithin)) {
             $this->config->timewithin = BLOGDEFAULTTIMEWITHIN;
@@ -131,17 +131,21 @@ class block_blog_tags extends block_base {
 
                     case BLOG_COURSE_LEVEL:
                         $filtertype = 'course';
-                        global $course;           // Need to do this unfortunately for pages like blog pages
-                        if (isset($course->id)) {     
-                            $filterselect = $course->id;
+                        if (isset($COURSE->id)) {     
+                            $filterselect = $COURSE->id;
                         } else {
                             $filterselect = $this->instance->pageid;
                         }
                     break;
 
                     default:
-                        $filtertype = 'site';
-                        $filterselect = SITEID;
+                        if (isset($COURSE->id) && $COURSE->id != SITEID) {     
+                            $filtertype = 'course';
+                            $filterselect = $COURSE->id;
+                        } else {
+                            $filtertype = 'site';
+                            $filterselect = SITEID;
+                        }
                     break;
                 }
 
