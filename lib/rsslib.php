@@ -170,7 +170,7 @@ function rss_standard_header($title = NULL, $link = NULL, $description = NULL) {
             $result .= rss_full_tag('language', 2, false, substr($USER->lang,0,2));
         }
         $today = getdate();
-        $result .= rss_full_tag('copyright', 2, false, '&copy; '. $today['year'] .' '. $site->fullname);
+        $result .= rss_full_tag('copyright', 2, false, '&#169; '. $today['year'] .' '. $site->fullname);
         /*
        if (!empty($USER->email)) {
             $result .= rss_full_tag('managingEditor', 2, false, fullname($USER));
