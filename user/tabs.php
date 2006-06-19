@@ -34,8 +34,12 @@
         print_heading($site->fullname);
         
         if ($CFG->bloglevel >= 4) {
-            $toprow[] = new tabobject('participants', $CFG->wwwroot.'/user/index.php?id='.SITEID,
-                get_string('participants'));
+            if (isteacher(SITEID) || 
+                ($CFG->showsiteparticipants == 1 && isteacherinanycourse()) || 
+                ($CFG->showsiteparticipantslist == 2)) {
+                $toprow[] = new tabobject('participants', $CFG->wwwroot.'/user/index.php?id='.SITEID,
+                    get_string('participants'));
+            }
 
             $toprow[] = new tabobject('blogs', $CFG->wwwroot.'/blog/index.php?filtertype=site&amp;',
                 get_string('blogs','blog'));
