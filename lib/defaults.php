@@ -30,6 +30,7 @@
        'digestmailtime'           =>  17,
        'displayloginfailures'     => '',
        'docroot'                  => 'http://docs.moodle.org',
+       'doctonewwindow'           =>  0,
        'enablecourserequests'     =>  0,
        'enablerssfeeds'           =>  0,
        'enablestats'              =>  0,
