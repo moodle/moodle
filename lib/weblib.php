@@ -4885,6 +4885,11 @@ function page_doc_link($text='', $iconpath='') {
         $CFG->pagepath = $ME;
     }
 
+    $target = '';
+    if (!empty($CFG->doctonewwindow)) {
+        $target = ' target="_blank"';
+    }
+
     $path = str_replace($CFG->httpswwwroot.'/','', $CFG->pagepath);  // Because the page could be HTTPSPAGEREQUIRED
     $path = str_replace('.php', '', $path);
 
@@ -4894,7 +4899,7 @@ function page_doc_link($text='', $iconpath='') {
 
     $lang = str_replace('_utf8', '', current_language());
 
-    $str = '<a href="' .$CFG->docroot. '/' .$lang. '/' .$path. '">';
+    $str = '<a href="' .$CFG->docroot. '/' .$lang. '/' .$path. '"' .$target. '>';
 
     if (empty($iconpath)) {
         $iconpath = $CFG->wwwroot . '/pix/docs.gif';
