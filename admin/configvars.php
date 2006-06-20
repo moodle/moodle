@@ -321,8 +321,11 @@ class configvarrss extends configvar {
     $interface['docroot'] = new configvar ( get_string('configdocroot', 'admin'),
         '<input name="docroot" type="text" size="60" value="'.s($config->docroot).'" alt="docroot" />' );
 
+/// doctonewwindow
+    $interface['doctonewwindow'] = new configvar ( get_string('configdoctonewwindow', 'admin'),
+        choose_from_menu($noyesoptions, 'doctonewwindow', $config->doctonewwindow, '', '', '', true) );
+
 /// timezone
-    
     $interface['timezone'] = new configvar ( get_string('configtimezone', 'admin'),
         choose_from_menu (get_list_of_timezones(), 'timezone', $config->timezone, get_string('serverlocaltime'), '', '99', true ) );
 
