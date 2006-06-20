@@ -41,6 +41,7 @@ $string['configdenyemailaddresses'] = 'To deny email addresses from particular d
 $string['configdigestmailtime'] = 'People who choose to have emails sent to them in digest form will be emailed the digest daily. This setting controls which time of day the daily mail will be sent (the next cron that runs after this hour will send it).';
 $string['configdisplayloginfailures'] = 'This will display information to selected users about previous failed logins.';
 $string['configdocroot'] = 'Defines the path to the Moodle Docs. You can change this if you wish to have your own custom online documentation. Howerver, if you do that, make sure that the paths in your documentation follow the same format as http://docs.moodle.org.';
+$string['configdoctonewwindow'] = 'If you enable this, then links to Moodle Docs will be showed in a new window.';
 $string['configenablecourserequests'] = 'This will allow any user to request a course be created.';
 $string['configenablerssfeeds'] = 'This switch will enable RSS feeds from across the site.  To actually see any change you will need to enable RSS feeds in the individual modules too - go to the Modules settings under Admin Configuration.';
 $string['configenablerssfeedsdisabled'] = ' It is not available because RSS feeds are disabled in all the Site. To enable them, go to the Variables settings under Admin Configuration.';
