@@ -126,6 +126,7 @@ $string['next'] = 'Volgende';
 $string['ok'] = 'OK';
 $string['pass'] = 'OK';
 $string['password'] = 'Wachtwoord';
+$string['php50restricted'] = 'PHP 5.0.x heeft een heel aantal bekende problemen. Upgrade naar 5.1.x of downgrade naar 4.3.x of 4.4.x';
 $string['phpversion'] = 'PHP-versie';
 $string['phpversionerror'] = 'PHP-versie moet minstens 4.1.0 zijn';
 $string['phpversionhelp'] = '<p>Moodle heeft minstens PHP-versie 4.1.0 nodig.</p> <p>De huidige versie op je server is $a</p>
@@ -133,6 +134,7 @@ $string['phpversionhelp'] = '<p>Moodle heeft minstens PHP-versie 4.1.0 nodig.</p
 $string['previous'] = 'Vorige';
 $string['remotedownloadnotallowed'] = 'Het downloaden van componenten naar je server is niet toegelaten (allow_url_fopen is uitgeschakeld)<br /><br />Je moet het <a href=\"$a->url\">$a->url</a>bestand manueel downloaden en het kopiëren naar \"$a->dest\" op je server en het daar unzippen.';
 $string['report'] = 'Rapport';
+$string['restricted'] = 'Beperkt';
 $string['safemode'] = 'Safe Mode';
 $string['safemodeerror'] = 'Moodle kan bestanden niet juist behandelen met safe mode ingeschakeld';
 $string['sessionautostart'] = 'Session Auto Start';
