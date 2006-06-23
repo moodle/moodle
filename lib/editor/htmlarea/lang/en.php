@@ -3,9 +3,12 @@
     $lastmodified = filemtime("en.php");
     $lifetime = 1800;
 
-    if ( function_exists('ob_gzhandler') ) {
-        ob_start("ob_gzhandler");
-    }
+    // Commenting this out since it's creating problems
+    // where solution seem to be hard to find...
+    // http://moodle.org/mod/forum/discuss.php?d=34376
+    //if ( function_exists('ob_gzhandler') ) {
+    //    ob_start("ob_gzhandler");
+    //}
 
     $charset = get_string('thischarset');
     header("Content-type: application/x-javascript; charset: $charset");  // Correct MIME type
