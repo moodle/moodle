@@ -1,4 +1,5 @@
 <?php //$Id$
+
 ///dummy field names are used to help adding and dropping indexes. There's only 1 case now, in scorm_scoes_track
 
     require_once('../config.php');
