@@ -1,9 +1,13 @@
 <?php // $Id$
 
-require_once('../config.php');
+if (!defined('MOODLE_INTERNAL')) {
+    die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
+}
 require_once($CFG->dirroot.'/course/lib.php');
 
 define('UNCATEGORISED', 'uncategorised');
+
+global $GRADEPREFS, $GRADEPREFSDEFAULTS;    // This variables are going to be global... :-/
 
 $GRADEPREFS = array('use_advanced',                // Only add new preferences to the end of this array!
                     'use_weighted_for_letter',     // as the order counts and will affect backward compatibility
