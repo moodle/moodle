@@ -1,0 +1,14 @@
+@todo
+
+- Improve API: fix ZSearchMultiTermQuery($terms, $signs);
+
+- Analysis and indexing engine
+
+- Additional queries: phrase, wildcard, proximity, and range
+
+- Better class-level docblocks (most functions okay)
+
+- Some Windows issues(?) during indexing
+
+- Finish renaming classes to PEAR-like conventions
+

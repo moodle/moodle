@@ -352,6 +352,126 @@ function wiki_get_entries(&$wiki, $byindex=NULL) {
     }
 }
 
+
+/*==== Global search modifications
+ * Author: Michael Champanis (mchampan)
+ * Last date: 2006 06 25
+ * These modifications allow wiki documents to be indexed in the new
+ * search engine module - they are probably not final, and as such
+ * shouldn't be used by other stuff for the time being
+ **/
+
+//rescued and converted from ewikimoodlelib.php
+//retrieves latest version of a page
+function wiki_get_latest_page(&$entry, $pagename, $version=0) {
+  global $CFG;
+   
+  //need something like this in datalib.php?
+  switch ($CFG->dbtype) {
+    case 'mysql':
+      $f = 'mysql_real_escape_string';
+      break;
+    case 'postgres7':
+      $f = 'pg_escape_string';
+      break;
+    default:
+      $f = 'addslashes';
+  } //switch
+  
+  $pagename = "'".$f($pagename)."'";
+  
+  if ($version > 0 and is_int($version)) {
+    $version = "AND (version=$version)";
+  } else {
+    $version = '';
+  } //else
+
+  $select = "(pagename=$pagename) AND wiki=".$entry->id." $version ";
+  $sort   = 'version DESC';
+  
+  //change this to recordset_select, as per http://docs.moodle.org/en/Datalib_Notes
+  if ($result_arr = get_records_select('wiki_pages', $select, $sort, '*', 0, 1)) {    
+    foreach ($result_arr as $obj) {
+      $result_obj = $obj;                 
+    } //foreach
+  } //if
+    
+  if (isset($result_obj))  {
+    $result_obj->meta = @unserialize($result_obj->meta);
+    return $result_obj;
+  } else {
+    return false;
+  } //else
+} //wiki_get_latest_page
+
+//fetches all pages, including old versions
+function wiki_get_pages(&$entry) {   
+  return get_records('wiki_pages', 'wiki', $entry->id);
+} //wiki_get_pages
+
+//fetches all the latest versions of all the pages
+function wiki_get_latest_pages(&$entry) {
+  //== (My)SQL for this
+  /* select * from wiki_pages
+     inner join
+    (select wiki_pages.pagename, max(wiki_pages.version) as ver
+    from wiki_pages group by pagename) as a
+    on ((wiki_pages.version = a.ver) and
+    (wiki_pages.pagename like a.pagename)) */
+  
+  $pages = array();    
+  
+  //http://moodle.org/bugs/bug.php?op=show&bugid=5877&pos=0
+  //if ($ids = get_records('wiki_pages', 'wiki', $entry->id, '', 'distinct pagename')) { 
+  if ($rs = get_recordset('wiki_pages', 'wiki', $entry->id, '', 'distinct pagename')) {
+    $ids = $rs->GetRows();
+  //--    
+    foreach ($ids as $id) {      
+      $pages[] = wiki_get_latest_page($entry, $id[0]);
+    } //foreach
+  } else {
+    return false;
+  } //else  
+    
+  return $pages;   
+} //wiki_get_latest_pages
+
+function wiki_iterator() {
+  return get_all_instances_in_courses("wiki", get_courses());  
+} //wiki_search_index
+
+function wiki_get_content_for_index(&$wiki) {
+  $documents = array();
+  
+  $entries = wiki_get_entries($wiki);    
+  foreach($entries as $entry) {
+    //all pages
+    //$pages = wiki_get_pages($entry);
+    
+    //latest pages
+    $pages = wiki_get_latest_pages($entry);
+    $i = 0;
+    
+    if (is_array($pages)) {
+      foreach($pages as $page) {
+        if (strlen($page->content) > 0) {
+          $i++;
+          $documents[] = new WikiSearchDocument($page, $entry->wikiid, $entry->course, $entry->userid, $entry->groupid);
+        } //if
+      } //foreach
+      
+      //print "$entry->id : $i"; print "<br>";
+    } else {
+      print $pages;
+    } //else
+  } //foreach
+  
+  return $documents;
+} //wiki_get_content_for_index
+
+/*==== Global search modifications end */
+
+
 function wiki_get_default_entry(&$wiki, &$course, $userid=0, $groupid=0) {
 /// Returns the wiki entry according to the wiki type.
 /// Optionally, will return wiki entry for $userid student wiki, or

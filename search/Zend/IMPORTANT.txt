@@ -1,0 +1,15 @@
+We are running cutting-edge (i.e. HEAD) Zend Framework:
+  URL: http://framework.zend.com/svn/framework/trunk
+  Revision: 696
+  Last Changed Rev: 696
+  Last Changed Date: 2006-06-23 02:14:54 +0200 (Fri, 23 Jun 2006)
+
+This Zend Framework present in this directory only contains the minimum
+to run Zend_Search_Lucene - I don't foresee any problems, since the license
+is new BSD...
+
+To obtain a full Zend Framework package, please visit:
+  http://framework.zend.com/
+
+Or alternatively check it out from SVN:
+  svn checkout http://framework.zend.com/svn/framework/trunk
