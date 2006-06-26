@@ -860,7 +860,7 @@ function regrade_question_in_attempt($question, $attempt, $cmoptions, $verbose=f
                 $action->event = $states[$j]->event;
             }
 
-            if ($action->event = QUESTION_EVENTMANUALGRADE) {
+            if ($action->event == QUESTION_EVENTMANUALGRADE) {
                 question_process_comment($question, $replaystate, $attempt, $states[$j]->comment, $states[$j]->grade);
             } else {
 
