@@ -2358,7 +2358,8 @@ function assignment_print_overview($courses, &$htmlarray) {
         } else {
             $sql = "SELECT *
                       FROM {$CFG->prefix}assignment_submissions
-                     WHERE userid = '$USER->id'";
+                     WHERE userid = '$USER->id'
+                       AND assignment = '{$assignment->id}'";
             if ($submission = get_record_sql($sql)) {
                 if ($submission->teacher == 0 && $submission->timemarked == 0) {
                     $str .= $strsubmitted . ', ' . $strnotgradedyet;
