@@ -5963,7 +5963,7 @@ function moodle_setlocale($locale='') {
     if ($CFG->ostype != 'WINDOWS') {
         setlocale (LC_MESSAGES, $messages);
     }
-    if ($CFG->locale == 'tr_TR') {            // To workaround a well-known PHP bug with Turkish
+    if ($CFG->locale == 'tr_TR' or $CFG->locale == 'tr_TR.UTF-8') {            // To workaround a well-known PHP bug with Turkish
         setlocale (LC_CTYPE, $ctype);
     }
 }
