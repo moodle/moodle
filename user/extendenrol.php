@@ -1,8 +1,8 @@
-<?php
+<?php  // $Id$
 require_once("../config.php");
 
-$id         = required_param('id',     PARAM_INT);   // course id
-$users      = optional_param('userid', PARAM_RAW);   // array of user id
+$id    = required_param('id', PARAM_INT);              // course id
+$users = optional_param('userid', array(), PARAM_INT); // array of user id
 
 if (! $course = get_record('course', 'id', $id)) {
     error("Course ID is incorrect");
@@ -14,7 +14,7 @@ if (!isteacheredit($course->id)) {
     error("You must be an editing teacher in this course, or an admin");
 }
 
-if ($users && ($form = data_submitted() and confirm_sesskey())) {
+if ((count($users) > 0) and ($form = data_submitted()) and confirm_sesskey()) {
     if (count($form->userid) != count($form->extendperiod)) {
         error('Parameters malformation', $CFG->wwwroot.'/user/index.php?id='.$id);
     }
