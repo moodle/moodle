@@ -73,7 +73,8 @@
                 // the regeneration of the feeds since the discussions have been
                 // moved.
                 if (!forum_rss_delete_file($forum) || !forum_rss_delete_file($fromforum)) {
-                    //error('Could not purge the cached RSS feeds for the source and/or destination forums');
+                    notify('Could not purge the cached RSS feeds for the source and/or'.
+                           'destination forum(s) - check your file permissionsforums');
                 }
             }
             
