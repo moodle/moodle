@@ -2825,9 +2825,11 @@ function print_user($user, $course, $messageselect=false) {
     }
     echo '</div></td><td class="links">';
     //link to blogs
+    if ($CFG->bloglevel > 0) {
+    	echo '<a href="'.$CFG->wwwroot.'/blog/index.php?userid='.$user->id.'">'.get_string('blogs','blog').'</a><br />';	
+    }
     
-    echo '<a href="'.$CFG->wwwroot.'/blog/index.php?userid='.$user->id.'">'.get_string('blogs','blog').'</a><br />';
-    if ($isteacher) {
+	if ($isteacher) {
         $timemidnight = usergetmidnight(time());
         echo '<a href="'. $CFG->wwwroot .'/course/user.php?id='. $course->id .'&amp;user='. $user->id .'">'. $string->activity .'</a><br />';
         if (!iscreator($user->id) or ($isadmin and !isadmin($user->id))) {  // Includes admins
