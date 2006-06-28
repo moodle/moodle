@@ -218,14 +218,8 @@
                      'resizeable=no, directories=no, toolbar=no, titlebar=no, location=no, status=no, '+
                      'menubar=no';\n";
                     $jslink  = 'javascript:';
-                    if ($quiz->timelimit && !$quiz->attempts) {
-                        $strconfirmstartattempt = addslashes(get_string("confirmstartattempt","quiz"));
-                        $jslink .=  "if (confirm(\'$strconfirmstartattempt\')) ";
-                    } else if ($quiz->timelimit && $quiz->attempts) {
-                        $strconfirmstartattempt = addslashes(get_string("confirmstartlimit","quiz",$quiz->attempts));
-                        $jslink .=  "if (confirm(\'$strconfirmstartattempt\')) ";
-                    } else if ($quiz->attempts && !$quiz->timelimit) {
-                        $strconfirmstartattempt = addslashes(get_string("confirmstartnolimit","quiz",$quiz->attempts));
+                    $strconfirmstartattempt = confirm_string($quiz->timelimit, $quiz->attempts);
+                    if ($strconfirmstartattempt) {
                         $jslink .=  "if (confirm(\'$strconfirmstartattempt\')) ";
                     }
                     $jslink .= "var popup = window.open(\\'$attempturl\\', \\'quizpopup\\', windowoptions);";
@@ -319,13 +313,8 @@
                 if ($overallstats and $numattempts and $quiz->grade) {
                     print_heading("$strbestgrade: $mygrade / $quiz->grade.");
                 }
-                if ($quiz->timelimit && !$quiz->attempts) {
-                    $strconfirmstartattempt = addslashes(get_string("confirmstartattempt","quiz"));
-                } else if ($quiz->timelimit && $quiz->attempts) {
-                    $strconfirmstartattempt = addslashes(get_string("confirmstartattempttimelimit","quiz",$quiz->attempts));
-                } else if ($quiz->attempts && !$quiz->timelimit) {
-                    $strconfirmstartattempt = addslashes(get_string("confirmstartattemptnotimelimit","quiz",$quiz->attempts));
-                }
+                
+                $strconfirmstartattempt = confirm_string($quiz->timelimit, $quiz->attempts);
 
                 echo "<br />";
                 echo "</p>";
@@ -394,6 +383,17 @@
             return false;
         }
         return true;
+    }
+    
+    function confirm_string($timelimit, $attempts) {
+        if ($timelimit && $attempts) {
+            return addslashes(get_string("confirmstartattempttimelimit","quiz", $attempts));
+        } else if ($timelimit) {
+            return addslashes(get_string("confirmstarttimelimit","quiz"));
+        } else if ($attempts) {
+            return addslashes(get_string("confirmstartattemptlimit","quiz", $attempts));
+        }
+        return "";
     }
 
 ?>
