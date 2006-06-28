@@ -210,6 +210,12 @@ function check_entry($form, $course) {
         $form->password = '';
     }
 
+    if (empty($course->password)) {
+        // do not allow entry when no course password set
+        // automatic login when manual primary, no login when secondary at all!!
+        error("illegal enrolment attempted");
+    }
+
     $groupid = $this->check_group_entry($course->id, $form->password);
     if (($form->password == $course->password) or ($groupid !== false) ) {
 
@@ -240,7 +246,7 @@ function check_entry($form, $course) {
 
             $subject = get_string("welcometocourse", "", $course->fullname);
             $a->coursename = $course->fullname;
-            $a->profileurl = "$CFG->wwwroot/user/view.php?id=$USER->id&amp;course=$course->id";
+            $a->profileurl = "$CFG->wwwroot/user/view.php?id=$USER->id&course=$course->id";
             $message = get_string("welcometocoursetext", "", $a);
             
             if (! $teacher = get_teacher($course->id)) {
@@ -272,8 +278,6 @@ function check_entry($form, $course) {
 /**
 * Check if the given enrolment key matches a group enrolment key for the given course
 *
-* Check if the given enrolment key matches a group enrolment key for the given course
-*
 * @param    courseid  the current course id
 * @param    password  the submitted enrolment key
 */
@@ -302,8 +306,6 @@ function config_form($page) {
 
 
 /**
-* Processes and stored configuration data for the enrolment plugin
-*
 * Processes and stored configuration data for the enrolment plugin
 *
 * @param    config  all the configuration data as entered by the admin
@@ -404,8 +406,6 @@ function cron() {
 
 
 /**
-* Returns the relevant icons for a course
-*
 * Returns the relevant icons for a course
 *
 * @param    course  the current course, as an object

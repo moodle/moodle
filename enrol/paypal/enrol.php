@@ -174,35 +174,38 @@ function process_config($config) {
 
 //To avoid wrong (for PayPal) characters in sent data
 function sanitise_for_paypal($text) {
-    global $CFG;
-
-    if (!empty($CFG->sanitise_for_paypal)) {
-        //Array of characters to replace (not allowed by PayPal)
-        //Can be expanded as necessary to add other diacritics
-        $replace = array('á' => 'a',        //Spanish characters
-                         'é' => 'e',
-                         'í' => 'i',
-                         'ó' => 'o',
-                         'ú' => 'u',
-                         'Á' => 'A',
-                         'É' => 'E',
-                         'Í' => 'I',
-                         'Ó' => 'O',
-                         'Ú' => 'U',
-                         'ñ' => 'n',
-                         'Ñ' => 'N',
-                         'ü' => 'u',
-                         'Ü' => 'U');
-        $text = strtr($text, $replace);
-    
-        //Make here other sanities if necessary
-
-    }
-
+    $textlib = textlib_get_instance();
+    $text  = $textlib->specialtoascii($text, current_charset());
+    // TODO: characters that have no ascii equivalents are not sanitized properly :-(
     return $text;
-
 }
 
+/**
+* This function enables internal enrolment when PayPal is primary and course key is set at the same time.
+*
+* @param    form    the form data submitted, as an object
+* @param    course  the current course, as an object
+*/
+function check_entry($form, $course) {
+    $manual = enrolment_factory::factory('manual');
+    $manual->check_entry($form, $course);
+    if (isset($manual->errormsg)) {
+        $this->errormsg = $manual->errormsg;
+    }
+}
+
+/**
+* Returns information about the courses a student has access to
+*
+* Set the $user->student course array
+* Set the $user->timeaccess course array
+*
+* @param    user  referenced object, must contain $user->id already set
+*/
+function get_student_courses(&$user) {
+    $manual = enrolment_factory::factory('manual');
+    $manual->get_student_courses($user);
+}
 
 } // end of class definition
 
