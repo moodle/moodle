@@ -12,6 +12,7 @@
 $string['admindirerror'] = 'Указанный каталог администратора неверен';
 $string['admindirname'] = 'Каталог администратора';
 $string['caution'] = 'Предупреждение';
+$string['check'] = 'Отметить';
 $string['closewindow'] = 'Закрыть окно';
 $string['configfilewritten'] = 'config.php успешно создан';
 $string['continue'] = 'Продолжить';
