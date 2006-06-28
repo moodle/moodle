@@ -4,9 +4,32 @@
     require_once("../config.php");
     require_once("lib.php");
 
-    $id       = required_param('id', PARAM_INT);           // course id
-    $user     = optional_param('user', 0, PARAM_INT);      // login as this user
+/// Reset user back to their real self if needed
     $return   = optional_param('return', 0, PARAM_BOOL);   // return to the page we came from
+
+    if (!empty($USER->realuser)) {
+        $USER = get_complete_user_data('id', $USER->realuser);
+
+        if (isset($SESSION->oldcurrentgroup)) {      // Restore previous "current group" cache.
+            $SESSION->currentgroup = $SESSION->oldcurrentgroup;
+            unset($SESSION->oldcurrentgroup);
+        }
+        if (isset($SESSION->oldtimeaccess)) {        // Restore previous timeaccess settings
+            $USER->timeaccess = $SESSION->oldtimeaccess;
+            unset($SESSION->oldtimeaccess);
+        }
+
+        if ($return and isset($_SERVER["HTTP_REFERER"])) { // That's all we wanted to do, so let's go back
+            redirect($_SERVER["HTTP_REFERER"]);
+        } else {
+            redirect($CFG->wwwroot);
+        }
+    }
+
+///-------------------------------------
+/// try to login as student if allowed
+    $id       = required_param('id', PARAM_INT);           // course id
+    $user     = required_param('user', PARAM_INT);         // login as this user
     $password = optional_param('password', '', PARAM_RAW); // site wide password
 
     if (!$site = get_site()) {
@@ -19,24 +42,6 @@
 
     if ($course->category) {
         require_login($course->id);
-    }
-
-    if (isset($USER->realuser)) {   /// Reset user back to their real self
-        $USER = get_complete_user_data('id', $USER->realuser);
-
-        if (isset($SESSION->oldcurrentgroup)) {      // Restore previous "current group" cache.
-            $SESSION->currentgroup = $SESSION->oldcurrentgroup;
-            unset($SESSION->oldcurrentgroup);
-        }
-        if (isset($SESSION->oldtimeaccess)) {        // Restore previous timeaccess settings
-            $USER->timeaccess = $SESSION->oldtimeaccess;
-            unset($SESSION->oldtimeaccess);
-        }
-
-        if ($return) {       /// That's all we wanted to do, so let's go back
-            redirect($_SERVER["HTTP_REFERER"]);
-            exit;
-        }
     }
 
     // $user must be defined to go on
