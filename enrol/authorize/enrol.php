@@ -51,7 +51,8 @@ class enrolment_plugin_authorize
      * @var array
      * @access public
      */
-    var $ccerrors = array();
+    var $ccerrors = array(); // for this plugin
+    var $errormsg; // for manual plugin
 
     /**
      * Cron log.
@@ -74,6 +75,9 @@ class enrolment_plugin_authorize
 
         if ($this->zero_cost($course) or isguest()) {
             $manual = enrolment_factory::factory('manual');
+            if (!empty($this->errormsg)) { // move to manual to allow showing error message
+                $manual->errormsg = $this->errormsg;
+            }
             $manual->print_entry($course);
             return; // No money for guests ;)
         }
@@ -122,6 +126,9 @@ class enrolment_plugin_authorize
         if ((!empty($form->password)) or isguest() or $this->zero_cost($course)) {
             $manual = enrolment_factory::factory('manual');
             $manual->check_entry($form, $course);
+            if (!empty($manual->errormsg)) { // to show error message in $this->print_entry()
+               $this->errormsg = $manual->errormsg;
+            }
         } elseif ((!empty($form->ccsubmit)) and $this->validate_enrol_form($form)) {
             $this->cc_submit($form, $course);
         }
