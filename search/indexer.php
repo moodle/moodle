@@ -54,9 +54,15 @@
   $index = new Zend_Search_Lucene($index_path, true);
   
   //create the database tables
-  ob_start(); //turn output buffering on - to hide modify_database() output
-  modify_database($index_db_file, '', false);
-  ob_end_clean(); //chuck the buffer and resume normal operation
+  $tables = $db->MetaTables();
+    
+  if (in_array($CFG->prefix.'search_documents', $tables)) {
+    delete_records('search_documents');
+  } else {        
+    ob_start(); //turn output buffering on - to hide modify_database() output
+    modify_database($index_db_file, '', false);
+    ob_end_clean(); //chuck the buffer and resume normal operation
+  } //else
   
   //empty database table goes here
   // delete * from search_documents;
@@ -117,7 +123,7 @@
               $doc->groupid = $document->groupid;
               
               //insert summary into db
-              $id = insert_record($CFG->prefix.'search_documents', $doc);
+              $id = insert_record('search_documents', $doc);
               
               //synchronise db with index
               $document->addField(Zend_Search_Lucene_Field::Keyword('dbid', $id));

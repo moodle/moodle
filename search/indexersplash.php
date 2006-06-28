@@ -22,8 +22,8 @@
   //check if the table exists in the db
   $tables = $db->MetaTables();
   
-  if (array_search('search_documents', $tables)) {  
-    $db_count = count_records($CFG->prefix.'search_documents');
+  if (in_array($CFG->prefix.'search_documents', $tables)) {  
+    $db_count = count_records('search_documents');
   } else {
     $db_count = 0;
   } //else    

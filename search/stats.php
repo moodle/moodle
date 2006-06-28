@@ -13,15 +13,15 @@
     //indexed documents stats
     $tables = $db->MetaTables();
     
-    if (array_search('search_documents', $tables)) {
+    if (in_array($CFG->prefix.'search_documents', $tables)) {
       $types = search_get_document_types();
       sort($types);
     
       //total documents
-      $type_counts['Total'] = count_records($CFG->prefix.'search_documents');
+      $type_counts['Total'] = count_records('search_documents');
 
       foreach($types as $type) {
-        $c = count_records($CFG->prefix.'search_documents', 'type', $type);
+        $c = count_records('search_documents', 'type', $type);
         $type_counts[$type] = (int)$c;
       } //foreach
     } else {
