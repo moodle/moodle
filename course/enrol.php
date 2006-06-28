@@ -98,21 +98,15 @@
     if ($form = data_submitted()) {
       //User is not enrolled in the course, wants to access course content
       //as a guest, and course setting allow unlimited guest access
-      //Code cribbed from course/loginas.php
-      if ($loginasguest and ($course->guest==1)) {
-        $realuser = $USER->id;
-        $realname = fullname($USER, true);
-        $USER = guest_user();
-        $USER->loggedin = true;
-        $USER->site = $CFG->wwwroot;
-        $USER->realuser = $realuser;
-        $USER->sessionIP = md5(getremoteaddr());   // Store the current IP in the session
-        if (isset($SESSION->currentgroup)) {    // Remember current cache setting for later
-            $SESSION->oldcurrentgroup = $SESSION->currentgroup;
+      //
+      //the original idea was to use "loginas" feature, but require_login() would have to be changed
+      //and we would have to explain it to all users - it is now plain login action
+      if ($loginasguest and !empty($CFG->guestloginbutton) and ($course->guest==1 or $course->guest==2)) {
+        if (isset($SESSION->currentgroup)) {
             unset($SESSION->currentgroup);
         }
-        $guest_name = fullname($USER, true);
-        add_to_log($course->id, "course", "loginas", "../user/view.php?id=$course->id&$USER->id$", "$realname -> $guest_name");
+        $USER = get_complete_user_data('username', 'guest');    // get full guest user data
+        add_to_log(SITEID, 'user', 'login', "view.php?id=$USER->id&course=".SITEID, $USER->id, 0, $USER->id);
         if ($SESSION->wantsurl) {
             $destination = $SESSION->wantsurl;
             unset($SESSION->wantsurl);
