@@ -1052,8 +1052,44 @@ function quiz_upgrade($oldversion) {
     }
 
     if ($oldversion < 2006060700) { // fix for 5720
-        execute_sql('DROP TABLE '.$CFG->prefix.'question_essay_states', false);
-        execute_sql('DROP TABLE '.$CFG->prefix.'question_essay', false);
+
+        // Copy the teacher comments from the question_essay_states table to the new
+        // question_sessions table.
+
+        // Get the attempt unique ID, teacher comment, graded flag, state ID, and question ID
+        // based on the quesiont_essay_states
+        if ($results = get_records_sql("SELECT a.uniqueid, es.response AS essaycomment, es.graded AS isgraded, 
+                                               qs.id AS stateid, qs.question AS questionid 
+                                        FROM {$CFG->prefix}question_states as qs,
+                                             {$CFG->prefix}question_essay_states es, 
+                                             {$CFG->prefix}quiz_attempts a 
+                                        WHERE es.stateid = qs.id AND a.uniqueid = qs.attempt")) {
+            foreach ($results as $result) {
+                // Create a state object to be used for updating
+                $state = new stdClass;
+                $state->id = $result->stateid;
+
+                if ($result->isgraded) {
+                    // Graded - save comment to the sessions and change state event to QUESTION_EVENTMANUALGRADE
+                    if (!set_field('question_sessions', 'comment', $result->essaycomment, 'attemptid', $result->uniqueid, 'questionid', $result->questionid)) {
+                        notify("Essay Table Migration: Cannot save comment");
+                    }
+                    $state->event = 9; //QUESTION_EVENTMANUALGRADE;
+                } else {
+                    // Not graded
+                    $state->event = 7; //QUESTION_EVENTSUBMIT;
+                }
+
+                // Save the event
+                if (!update_record('question_states', $state)) {
+                    notify("Essay Table Migration: Cannot update state");
+                }
+            }
+        }
+        
+        // dropping unused tables
+        execute_sql('DROP TABLE '.$CFG->prefix.'question_essay_states');
+        execute_sql('DROP TABLE '.$CFG->prefix.'question_essay');
         execute_sql('DROP TABLE '.$CFG->prefix.'quiz_attemptonlast_datasets', false);
     }
 
