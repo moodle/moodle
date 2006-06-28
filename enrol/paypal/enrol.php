@@ -39,21 +39,35 @@ function print_entry($course) {
         print_course($course, "80%");
 
         if ($course->password) {  // Presenting two options
-            print_simple_box(get_string('costorkey', 'enrol_paypal'), 'center');
+            print_heading(get_string('costorkey', 'enrol_paypal'), 'center');
         }
 
         print_simple_box_start("center");
 
-        //Sanitise some fields before building the PayPal form
-        $coursefullname  = $this->sanitise_for_paypal($course->fullname);
-        $courseshortname = $this->sanitise_for_paypal($course->shortname);
-        $userfullname    = $this->sanitise_for_paypal(fullname($USER));
-        $userfirstname   = $this->sanitise_for_paypal($USER->firstname);
-        $userlastname    = $this->sanitise_for_paypal($USER->lastname);
-        $useraddress     = $this->sanitise_for_paypal($USER->address);
-        $usercity        = $this->sanitise_for_paypal($USER->city);
+        if (isguest()) {
+            if (empty($CFG->loginhttps)) {
+                $wwwroot = $CFG->wwwroot;
+            } else {
+                // This actually is not so secure ;-), 'cause we're
+                // in unencrypted connection...
+                $wwwroot = str_replace("http://", "https://", $CFG->wwwroot);
+            }
+            echo '<div align="center"><p>'.get_string('paymentrequired').'</p>';
+            echo '<p><b>'.get_string('cost').": $CFG->enrol_currency $cost".'</b></p>';
+            echo '<p><a href="'.$wwwroot.'/login/">'.get_string('loginsite').'</a></p>';
+            echo '</div>';
+        } else {
+            //Sanitise some fields before building the PayPal form
+            $coursefullname  = $this->sanitise_for_paypal($course->fullname);
+            $courseshortname = $this->sanitise_for_paypal($course->shortname);
+            $userfullname    = $this->sanitise_for_paypal(fullname($USER));
+            $userfirstname   = $this->sanitise_for_paypal($USER->firstname);
+            $userlastname    = $this->sanitise_for_paypal($USER->lastname);
+            $useraddress     = $this->sanitise_for_paypal($USER->address);
+            $usercity        = $this->sanitise_for_paypal($USER->city);
 
-        include($CFG->dirroot.'/enrol/paypal/enrol.html');
+            include($CFG->dirroot.'/enrol/paypal/enrol.html');
+        }
 
         print_simple_box_end();
 
