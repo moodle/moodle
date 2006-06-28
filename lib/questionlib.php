@@ -837,6 +837,8 @@ function regrade_question_in_attempt($question, $attempt, $cmoptions, $verbose=f
 
         // Initialise the replaystate
         $state = clone($states[0]);
+        $state->comment = get_field('question_sessions', 'comment', 'attemptid',
+                $attempt->uniqueid, 'questionid', $question->id);
         restore_question_state($question, $state);
         $state->sumpenalty = 0.0;
         $replaystate = clone($state);
@@ -861,7 +863,7 @@ function regrade_question_in_attempt($question, $attempt, $cmoptions, $verbose=f
             }
 
             if ($action->event == QUESTION_EVENTMANUALGRADE) {
-                question_process_comment($question, $replaystate, $attempt, $states[$j]->comment, $states[$j]->grade);
+                question_process_comment($question, $replaystate, $attempt, $replaystate->comment, $states[$j]->grade);
             } else {
 
                 // Reprocess (regrade) responses
