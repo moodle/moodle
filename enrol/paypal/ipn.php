@@ -150,7 +150,14 @@
                 email_paypal_error_to_admin("Error while trying to insert valid transaction", $data);
             }
 
-            if (!enrol_student($user->id, $course->id)) {       // Enrol the student
+            if ($course->enrolperiod) {
+                $timestart = time();
+                $timeend = time() + $course->enrolperiod;
+            } else {
+                $timestart = $timeend = 0;
+            }
+
+            if (!enrol_student($user->id, $course->id, $timestart, $timeend, 'manual')) {
                 email_paypal_error_to_admin("Error while trying to enrol ".fullname($user)." in '$course->fullname'", $data);
                 die;
             } else {
