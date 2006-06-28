@@ -1,14 +1,14 @@
 <?php // $Id$
 
 /**
-This script enables Moodle translators to edit /docs and /help language
-files directly via WWW interface.
-
-Author:     mudrd8mz@uxit.pedf.cuni.cz (http://moodle.cz)
-Based on:   lang.php in 1.4.3+ release
-Thanks:     Jaime Villate for important bug fixing, koen roggemans for his job and all moodlers
-            for intensive testing of this my first contribution
-*/
+ * This script enables Moodle translators to edit /docs and /help language
+ * files directly via WWW interface.
+ *
+ * Author:     mudrd8mz@uxit.pedf.cuni.cz (http://moodle.cz)
+ * Based on:   lang.php in 1.4.3+ release
+ * Thanks:     Jaime Villate for important bug fixing, koen roggemans for his job and all moodlers
+ *             for intensive testing of this my first contribution
+ */
     require_once('../config.php');
 
     //
@@ -171,7 +171,10 @@ $langdir/$currentfile")."</font></p>";
         echo htmlspecialchars(file_get_contents("$enlangdir/$currentfile"));
         echo "</textarea>\n";
         //link_to_popup_window("/lang/en_utf8/$currentfile", "popup", get_string("preview"));
-        link_to_popup_window(help_preview_url($currentfile).'&amp;forcelang=en_utf8', 'popup', get_string('preview'));
+        $preview_url = langdoc_preview_url($currentfile);
+        if ($preview_url) {
+            link_to_popup_window($preview_url.'&amp;forcelang=en_utf8', 'popup', get_string('preview'));
+        }
         echo "</td>\n";
         if ($fileeditorinline == 1) {
             echo "</tr>\n<tr valign=\"center\">\n";
@@ -182,22 +185,24 @@ $langdir/$currentfile")."</font></p>";
             echo "<form name=\"$currentfile\" action=\"langdoc.php\" method=\"post\">";
             echo '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
             echo '<input type="hidden" name="currentfile" value="'.$currentfile.'" />';
-        }
 
-        echo "<textarea rows=\"$fileeditorrows\" cols=\"$fileeditorcols\" name=\"filedata\">\n";
-        if (file_exists("$langdir/$currentfile")) {
-            echo htmlspecialchars(file_get_contents("$langdir/$currentfile"));
-        } else {
-            echo ($filetemplate);
-        }
-        echo "</textarea>\n";
-        link_to_popup_window(help_preview_url($currentfile), 'popup', get_string('preview'));
-        echo "</td>\n</tr>\n</table>";
-
-        if ($editable) {
+            echo "<textarea rows=\"$fileeditorrows\" cols=\"$fileeditorcols\" name=\"filedata\">\n";
+            if (file_exists("$langdir/$currentfile")) {
+                echo htmlspecialchars(file_get_contents("$langdir/$currentfile"));
+            } else {
+                echo ($filetemplate);
+            }
+            echo "</textarea>\n";
+            $preview_url = langdoc_preview_url($currentfile);
+            if ($preview_url) {
+                link_to_popup_window($preview_url, 'popup', get_string('preview'));
+            }
             echo '<div align="center"><input type="submit" value="'.get_string('savechanges').': lang/'.$currentlang.'/'.$currentfile.'" /></div>';
             echo '</form>';
         }
+
+        echo "</td>\n</tr>\n</table>";
+
 
         error_reporting($CFG->debug);
     }
@@ -240,16 +245,24 @@ function langdoc_save_file($path, $file, $content) {
     return true;
 }
 
-
-function help_preview_url($currentfile) {
+/**
+ * Return a preview URL for the file, if available.
+ *
+ * Documentation will be moved into moodle.org wiki and current version 1.6 does not
+ * seem to be able to display local documentation. Thus, return empty URL for doc files.
+ * See lib/moodlelib.php document_file() - it still relies on old pre-UTF8 lang/ location.
+ */
+function langdoc_preview_url($currentfile) {
     if (substr($currentfile, 0, 5) == 'help/') {
         $currentfile = substr($currentfile, 5);
-    }
-    $currentpathexp = explode('/', $currentfile);
-    if (count($currentpathexp) > 1) {
-        $url = '/help.php?module='.$currentpathexp[0].'&amp;file='.$currentpathexp[1];
+        $currentpathexp = explode('/', $currentfile);
+        if (count($currentpathexp) > 1) {
+            $url = '/help.php?module='.$currentpathexp[0].'&amp;file='.$currentpathexp[1];
+        } else {
+            $url = '/help.php?module=moodle&amp;file='.$currentfile;
+        }
     } else {
-        $url = '/help.php?module=moodle&amp;file='.$currentfile;
+        $url = '';
     }
     return $url;
 }
