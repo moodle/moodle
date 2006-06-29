@@ -92,6 +92,7 @@ $string['missingcvv'] = 'Missing verification number';
 $string['missingzip'] = 'Missing postal code';
 $string['nameoncard'] = 'Name on Card';
 $string['new'] = 'New';
+$string['nocostyet'] = 'No cost yet!';
 $string['noreturns'] = 'No returns!';
 $string['notsettled'] = 'Not settled';
 $string['orderid'] = 'Order ID';
