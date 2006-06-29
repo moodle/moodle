@@ -20,14 +20,6 @@ class enrolment_plugin extends enrolment_base {
     function print_entry($course) {
         global $CFG, $USER, $form;
 
-        if ($this->zero_cost($course) || isguest()) {
-            parent::print_entry($course);
-            return;
-        }
-
-        // check paid?
-        $this->check_paid();
-
         // I want to paid on SSL.
         if (empty($_SERVER['HTTPS']) || $_SERVER['HTTPS'] == 'off') {
             if (empty($CFG->loginhttps)) {
@@ -48,35 +40,50 @@ class enrolment_plugin extends enrolment_base {
             }
         }
 
-        $teacher = get_teacher($course->id);
-        $cost = $this->get_course_cost($course);
         $strloginto = get_string("loginto", "", $course->shortname);
         $strcourses = get_string("courses");
-        $userfirstname = empty($form->ccfirstname) ? $USER->firstname : $form->ccfirstname;
-        $userlastname = empty($form->cclastname) ? $USER->lastname : $form->cclastname;
-        $useraddress = empty($form->ccaddress) ? $USER->address : $form->ccaddress;
-        $usercity = empty($form->cccity) ? $USER->city : $form->cccity;
-        $usercountry = empty($form->cccountry) ? $USER->country : $form->cccountry;
 
         print_header($strloginto, $course->fullname, "<a href=\"$CFG->wwwroot/course/\">$strcourses</a> -> $strloginto");
         print_course($course, "80%");
 
-        if ($course->password) {
-            print_simple_box(get_string('choosemethod', 'enrol_authorize'), 'center');
-            $password = '';
-            include($CFG->dirroot . '/enrol/internal/enrol.html');
+        $zerocost = $this->zero_cost($course);
+        if ($course->password && !$zerocost) {
+            print_heading(get_string('choosemethod', 'enrol_authorize'), 'center');
         }
 
-        print_simple_box_start("center");
-        include($CFG->dirroot . '/enrol/authorize/enrol.html');
-        print_simple_box_end();
+        if ($zerocost) {
+            echo '<div align="center"><p>'.get_string('nocostyet', 'enrol_authorize').'</p></div>';
+        }
+        else if (isguest()) {
+            $cost = $this->get_course_cost($course);
+            echo '<div align="center"><p>'.get_string('paymentrequired').'</p>';
+            echo '<p><b>'.get_string('cost').": $CFG->enrol_currency $cost".'</b></p>';
+            echo '<p><a href="'.$CFG->wwwroot.'/login/">'.get_string('loginsite').'</a></p>';
+            echo '</div>';
+        }
+        else {
+            $this->check_paid();
+            $cost = $this->get_course_cost($course);
+            $userfirstname = empty($form->ccfirstname) ? $USER->firstname : $form->ccfirstname;
+            $userlastname = empty($form->cclastname) ? $USER->lastname : $form->cclastname;
+            $useraddress = empty($form->ccaddress) ? $USER->address : $form->ccaddress;
+            $usercity = empty($form->cccity) ? $USER->city : $form->cccity;
+            $usercountry = empty($form->cccountry) ? $USER->country : $form->cccountry;
+            include($CFG->dirroot . '/enrol/authorize/enrol.html');
+        }
+
+        if ($course->password) {
+            $password = '';
+            $teacher = get_teacher($course->id);
+            include($CFG->dirroot . '/enrol/internal/enrol.html');
+        }
 
         print_footer();
     }
 
     /// Override: check_entry()
     function check_entry($form, $course) {
-        if ($this->zero_cost($course) || (!empty($form->password)) || isguest()) {
+        if ((!empty($course->password)) and (!empty($form->password))) {
             parent::check_entry($form, $course);
         } else {
             $this->cc_submit($form, $course);
@@ -103,7 +110,7 @@ class enrolment_plugin extends enrolment_base {
             }
         }
 
-        $exp_date = (($form->ccexpiremm<10) ? strval('0'.$form->ccexpiremm) : strval($form->ccexpiremm)) . ($form->ccexpireyyyy);
+        $exp_date = sprintf("%02d", $form->ccexpiremm) . $form->ccexpireyyyy;
         $valid_cc = CCVal($form->cc, $form->cctype, $exp_date);
         if (!$valid_cc) {
             $this->ccerrormsg = get_string((($valid_cc===0) ? 'ccexpired' : 'ccinvalid'), 'enrol_authorize');
