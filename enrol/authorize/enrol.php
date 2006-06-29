@@ -112,32 +112,34 @@ class enrolment_plugin_authorize
             }
         }
 
+        $zerocost = $this->zero_cost($course);
+        if ($zerocost) {
+            $manual = enrolment_factory::factory('manual');
+            $manual->print_entry($course);
+            return;
+        }
+
         $strcourses = get_string('courses');
         $strloginto = get_string('loginto', '', $course->shortname);
-        $zerocost = $this->zero_cost($course);
 
         print_header($strloginto, $course->fullname, "<a href=\"$CFG->wwwroot/course/\">$strcourses</a> -> $strloginto");
         print_course($course, '80%');
 
-        if ($course->password && !$zerocost) {
+        if ($course->password) {
             print_heading(get_string('choosemethod', 'enrol_authorize'), 'center');
         }
 
-        print_simple_box_start('center');
-        if ($zerocost){
-            echo '<div align="center"><p>'.get_string('nocostyet', 'enrol_authorize').'</p></div>';
-        } else if (isguest()) {
+        if (isguest()) {
             $curcost = $this->get_course_cost($course);
             echo '<div align="center"><p>'.get_string('paymentrequired').'</p>';
             echo '<p><b>'.get_string('cost').": $curcost[currency] $curcost[cost]".'</b></p>';
             echo '<p><a href="'.$CFG->httpswwwroot.'/login/">'.get_string('loginsite').'</a></p>';
             echo '</div>';
         } else {
-            $this->prevent_double_paid($course);
+            print_simple_box_start('center');
             include($CFG->dirroot.'/enrol/authorize/enrol.html');
+            print_simple_box_end();
         }
-
-        print_simple_box_end();
 
         if ($course->password) {
             $password = '';
