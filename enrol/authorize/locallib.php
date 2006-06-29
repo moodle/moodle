@@ -235,7 +235,7 @@ function authorize_print_order_details($orderno)
                         $timestart = time(); // early start
                         $timeend = $order->settletime + $order->enrolperiod; // lately end
                     }
-                    if (enrol_student($order->userid, $order->courseid, $timestart, $timeend, 'authorize')) {
+                    if (enrol_student($order->userid, $order->courseid, $timestart, $timeend, 'manual')) {
                         $user = get_record('user', 'id', $order->userid);
                         $teacher = get_teacher($order->courseid);
                         $a = new stdClass;

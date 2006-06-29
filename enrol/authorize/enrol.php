@@ -220,7 +220,7 @@ class enrolment_plugin_authorize
             else {
                 $timestart = $timenow;
                 $timeend = $timestart + (3600 * 24); // just enrol for 1 days :)
-                enrol_student($USER->id, $course->id, $timestart, $timeend, 'authorize');
+                enrol_student($USER->id, $course->id, $timestart, $timeend, 'manual');
                 redirect("$CFG->wwwroot/course/view.php?id=$course->id");
             }
             return;
@@ -270,7 +270,7 @@ class enrolment_plugin_authorize
             $timestart = $timeend = 0;
         }
 
-        if (enrol_student($USER->id, $course->id, $timestart, $timeend, 'authorize')) {
+        if (enrol_student($USER->id, $course->id, $timestart, $timeend, 'manual')) {
             $teacher = get_teacher($course->id);
             if (!empty($CFG->enrol_mailstudents)) {
                 $a = new stdClass;
@@ -762,7 +762,7 @@ class enrolment_plugin_authorize
                     $timestart = $timenow;
                     $timeend = $order->settletime + $order->enrolperiod;
                 }
-                if (enrol_student($order->userid, $order->courseid, $timestart, $timeend, 'authorize')) {
+                if (enrol_student($order->userid, $order->courseid, $timestart, $timeend, 'manual')) {
                     $this->log .= "User($order->userid) has been enrolled to course($order->courseid).\n";
                     if (!empty($CFG->enrol_mailstudents)) {
                         $sendem[] = $order->id;
