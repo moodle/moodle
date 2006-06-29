@@ -86,17 +86,18 @@ class enrolment_plugin_authorize
         $teacher = get_teacher($course->id);
         $strcourses = get_string('courses');
         $strloginto = get_string('loginto', '', $course->shortname);
+        $zerocost = $this->zero_cost($course);
 
         print_header($strloginto, $course->fullname, "<a href=\"$CFG->wwwroot/course/\">$strcourses</a> -> $strloginto");
         print_course($course, '80%');
 
-        if ($course->password) {
+        if ($course->password && !$zerocost) {
             print_heading(get_string('choosemethod', 'enrol_authorize'), 'center');
         }
 
         print_simple_box_start('center');
-        if ($this->zero_cost($course)){
-            echo '<div align="center"><p>'.get_string('nocostyet', 'enrol_authorize').'</p>';
+        if ($zerocost){
+            echo '<div align="center"><p>'.get_string('nocostyet', 'enrol_authorize').'</p></div>';
         } else if (isguest()) {
             $curcost = $this->get_course_cost($course);
             echo '<div align="center"><p>'.get_string('paymentrequired').'</p>';
