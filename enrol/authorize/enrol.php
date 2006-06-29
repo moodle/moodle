@@ -56,7 +56,9 @@ class enrolment_plugin extends enrolment_base {
             echo '</div>';
         }
         else {
+            print_simple_box_start('center');
             include($CFG->dirroot . '/enrol/authorize/enrol.html');
+            print_simple_box_end();
         }
 
         if (!empty($course->password)) {
