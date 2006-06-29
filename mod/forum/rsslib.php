@@ -85,7 +85,11 @@
         global $CFG;
         //return unlink("{$CFG->dataroot}/rss/{$modname}/{$forum->id}.xml");
         $rssfile = rss_file_name('forum', $forum);
-        return unlink($rssfile);
+        if (file_exists($rssfile)) {
+            return unlink($rssfile);
+        } else {
+            return true;
+        }
     }
     
 
