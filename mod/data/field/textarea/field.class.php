@@ -48,8 +48,8 @@ class data_field_textarea extends data_field_base {
         
         if (can_use_richtext_editor()) {
             // Show a rich text html editor.
-            $str .= helpbutton("richtext", get_string("helprichtext"), 'moodle', true, true, '', true);
             $str .= $this->gen_textarea(true, $text);
+            $str .= helpbutton("richtext", get_string("helprichtext"), 'moodle', true, true, '', true);
             $str .= '<input type="hidden" name="field_' . $this->field->id . '_content1' . '" value="' . FORMAT_HTML . '" />';
 
         } else {
