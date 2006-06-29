@@ -63,6 +63,35 @@ class enrolment_plugin_authorize
 
 
     /**
+     * Returns information about the courses a student has access to
+     *
+     * Set the $user->student course array
+     * Set the $user->timeaccess course array
+     *
+     * @param object &$user must contain $user->id already set
+     */
+    function get_student_courses(&$user) {
+        $manual = enrolment_factory::factory('manual');
+        $manual->get_student_courses($user);
+    }
+
+
+    /**
+     * Returns information about the courses a teacher has access to
+     *
+     * Set the $user->teacher course array
+     * Set the $user->teacheredit course array
+     * Set the $user->timeaccess course array
+     *
+     * @param object &$user must contain $user->id already set
+     */
+    function get_teacher_courses(&$user) {
+        $manual = enrolment_factory::factory('manual');
+        $manual->get_teacher_courses($user);
+    }
+
+
+    /**
      * Shows a credit card form for registration.
      *
      * @param object $course Course info
@@ -586,11 +615,12 @@ class enrolment_plugin_authorize
      */
     function email_to_admin($subject, $data)
     {
-        $site = get_site();
+        global $SITE;
+
         $admin = get_admin();
         $data = (array)$data;
 
-        $message = "$site->fullname:  Transaction failed.\n\n$subject\n\n";
+        $message = "$SITE->fullname:  Transaction failed.\n\n$subject\n\n";
         foreach ($data as $key => $value) {
             $message .= "$key => $value\n";
         }
@@ -637,7 +667,13 @@ class enrolment_plugin_authorize
 
 
     /**
-     * cron
+     * This function is run by admin/cron.php every time if admin has enabled this plugin.
+     *
+     * Everyday at settlement time (default is 00:05), it cleans up some tables
+     * and sends email to admin/teachers about pending orders expiring if manual-capture has enabled.
+     *
+     * If admin set up 'Order review' and 'Capture day', it captures credits cards and enrols students.
+     *
      * @access public
      */
     function cron()
