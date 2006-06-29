@@ -20,6 +20,12 @@ class enrolment_plugin extends enrolment_base {
     function print_entry($course) {
         global $CFG, $USER, $form;
 
+        $zerocost = $this->zero_cost($course);
+        if ($zerocost) {
+            parent::print_entry($course);
+            return;
+        }
+
         // I want to paid on SSL.
         if (empty($_SERVER['HTTPS']) || $_SERVER['HTTPS'] == 'off') {
             if (empty($CFG->loginhttps)) {
@@ -32,29 +38,17 @@ class enrolment_plugin extends enrolment_base {
             }
         }
 
-        $formvars = array('password', 'ccfirstname','cclastname','cc','ccexpiremm','ccexpireyyyy','cctype','cvv',
-                          'ccaddress', 'cccity', 'ccstate', 'cccountry', 'cczip');
-        foreach ($formvars as $var) {
-            if (!isset($form->$var)) {
-                $form->$var = '';
-            }
-        }
-
         $strloginto = get_string("loginto", "", $course->shortname);
         $strcourses = get_string("courses");
 
         print_header($strloginto, $course->fullname, "<a href=\"$CFG->wwwroot/course/\">$strcourses</a> -> $strloginto");
         print_course($course, "80%");
 
-        $zerocost = $this->zero_cost($course);
-        if ($course->password && !$zerocost) {
+        if (!empty($course->password)) {
             print_heading(get_string('choosemethod', 'enrol_authorize'), 'center');
         }
 
-        if ($zerocost) {
-            echo '<div align="center"><p>'.get_string('nocostyet', 'enrol_authorize').'</p></div>';
-        }
-        else if (isguest()) {
+        if (isguest()) {
             $cost = $this->get_course_cost($course);
             echo '<div align="center"><p>'.get_string('paymentrequired').'</p>';
             echo '<p><b>'.get_string('cost').": $CFG->enrol_currency $cost".'</b></p>';
@@ -62,17 +56,10 @@ class enrolment_plugin extends enrolment_base {
             echo '</div>';
         }
         else {
-            $this->check_paid();
-            $cost = $this->get_course_cost($course);
-            $userfirstname = empty($form->ccfirstname) ? $USER->firstname : $form->ccfirstname;
-            $userlastname = empty($form->cclastname) ? $USER->lastname : $form->cclastname;
-            $useraddress = empty($form->ccaddress) ? $USER->address : $form->ccaddress;
-            $usercity = empty($form->cccity) ? $USER->city : $form->cccity;
-            $usercountry = empty($form->cccountry) ? $USER->country : $form->cccountry;
             include($CFG->dirroot . '/enrol/authorize/enrol.html');
         }
 
-        if ($course->password) {
+        if (!empty($course->password)) {
             $password = '';
             $teacher = get_teacher($course->id);
             include($CFG->dirroot . '/enrol/internal/enrol.html');
@@ -83,9 +70,10 @@ class enrolment_plugin extends enrolment_base {
 
     /// Override: check_entry()
     function check_entry($form, $course) {
-        if ((!empty($course->password)) and (!empty($form->password))) {
+        if ($this->zero_cost($course) or ((!empty($course->password)) and (!empty($form->password)))) {
             parent::check_entry($form, $course);
-        } else {
+        }
+        else {
             $this->cc_submit($form, $course);
         }
     }

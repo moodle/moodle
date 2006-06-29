@@ -1,4 +1,25 @@
-<p align="center"><?php if (! empty($this->ccerrormsg)) {formerr($this->ccerrormsg);} ?></p>
+<?php // $Id$
+
+$this->check_paid();
+$formvars = array('password', 'ccfirstname','cclastname','cc','ccexpiremm','ccexpireyyyy','cctype','cvv',
+                  'ccaddress', 'cccity', 'ccstate', 'cccountry', 'cczip');
+
+foreach ($formvars as $var) {
+    if (!isset($form->$var)) {
+        $form->$var = '';
+    }
+}
+
+$cost = $this->get_course_cost($course);
+$userfirstname = empty($form->ccfirstname) ? $USER->firstname : $form->ccfirstname;
+$userlastname = empty($form->cclastname) ? $USER->lastname : $form->cclastname;
+$useraddress = empty($form->ccaddress) ? $USER->address : $form->ccaddress;
+$usercity = empty($form->cccity) ? $USER->city : $form->cccity;
+$usercountry = empty($form->cccountry) ? $USER->country : $form->cccountry;
+
+?>
+
+<p align="center"><?php if (!empty($this->ccerrormsg)) { formerr($this->ccerrormsg); } ?></p>
 
 <div align="center">
 
@@ -8,7 +29,7 @@
 
 <form name="form" method="post" action="enrol.php" autocomplete="off">
 <input type="hidden" name="id" value="<?php p($course->id) ?>" />
-<table align="center" width="100%" border=0>
+<table align="center" width="100%" border="0">
 <tr>
   <td align="right"><?php print_string("nameoncard", "enrol_authorize") ?>: </td>
   <td align="left"><input type="text" name="ccfirstname" size="16" value="<?php p($userfirstname) ?>"  />
@@ -48,8 +69,7 @@
         'enr' => 'EnRoute'
   );
   choose_from_menu($CCTYPES, 'cctype', $form->cctype);
-  ?>
-</td>
+  ?></td>
 </tr>
 <tr>
   <td align="right"><?php print_string("ccvv", "enrol_authorize") ?>: </td>
@@ -75,9 +95,9 @@
   <td align="right"><?php print_string("zipcode", "enrol_authorize") ?>: </td>
   <td align="left"><input type="text" name="cczip" size="5" value="<?php p($form->cczip) ?>" /></td>
 </tr>
-
 </table>
-<input type="submit" value="<?php print_string("sendpaymentbutton", "enrol_authorize") ?>">
+
+<input type="submit" name="ccsubmit" value="<?php print_string("sendpaymentbutton", "enrol_authorize") ?>"  />
 </form>
 
 </div>
