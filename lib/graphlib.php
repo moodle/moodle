@@ -1,4 +1,4 @@
-<?php
+<?php  // $Id$
 
 /*
 Graph Class. PHP Class to draw line, point, bar, and area graphs, including numeric x-axis and double y-axis.
@@ -154,34 +154,26 @@ function init() {
   global $CFG;
 
   /// A default.ttf is searched for in this order:
+  ///      dataroot/lang/xx_local/fonts
   ///      dataroot/lang/xx/fonts
   ///      dirroot/lang/xx/fonts
+  ///      dataroot/lang
   ///      lib/
 
   $currlang = current_language();
-  if (file_exists("$CFG->dataroot/lang/$currlang/fonts/default.ttf")) {
+  if (file_exists("$CFG->dataroot/lang/".$currlang."_local/fonts/default.ttf")) {
+      $fontpath = "$CFG->dataroot/lang/".$currlang."_local/fonts/";
+  } else if (file_exists("$CFG->dataroot/lang/$currlang/fonts/default.ttf")) {
       $fontpath = "$CFG->dataroot/lang/$currlang/fonts/";
   } else if (file_exists("$CFG->dirroot/lang/$currlang/fonts/default.ttf")) {
       $fontpath = "$CFG->dirroot/lang/$currlang/fonts/";
+  } else if (file_exists("$CFG->dataroot/lang/default.ttf")) {
+      $fontpath = "$CFG->dataroot/lang/";
   } else {
       $fontpath = "$CFG->libdir/";
   }
 
   $this->parameter['path_to_fonts'] = $fontpath;
-
-  if (file_exists("$fontpath"."lang_decode.php")) {
-      $this->parameter['lang_decode'] = "$fontpath"."lang_decode.php";
-  } else {
-      $this->parameter['lang_decode'] = "";
-  }
-
-  $this->parameter['lang_transcode'] = '';   /// by default
-
-  $charset = strtolower(current_charset());
-
-  if ($charset != 'iso-8859-1' and $charset != 'utf-8') {
-      $this->parameter['lang_transcode'] = $charset;
-  }
 
   /// End Moodle mods
 
@@ -1245,13 +1237,11 @@ function print_TTF($message) {
       $x = 0;
       break;
   }
-  if ($this->parameter['lang_decode']) {               // Moodle addition
-      include_once($this->parameter['lang_decode']);
-      $text = lang_decode($text);
-
-  } else if ($this->parameter['lang_transcode']) {
-      $text = iconv($this->parameter['lang_transcode'], 'UTF-8', $text);
-  }
+  // start of Moodle addition
+  $textlib = textlib_get_instance();
+  $text = $textlib->convert($text, current_charset(), 'UTF-8');
+  $text = $textlib->utf8_to_entities($text, true, true); //does not work with hex entities!
+  // end of Moodle addition
   ImageTTFText($this->image, $points, $angle, $x, $y, $colour, $font, $text);
 }
 
@@ -1354,13 +1344,11 @@ function get_boundaryBox($message) {
   }
 
   // get boundary box and offsets for printing at an angle
-    if ($this->parameter['lang_decode']) {               // Moodle addition
-        include_once($this->parameter['lang_decode']);
-        $text = lang_decode($text);
-
-    } else if ($this->parameter['lang_transcode']) {
-        $text = iconv($this->parameter['lang_transcode'], 'UTF-8', $text);
-    }
+  // start of Moodle addition
+  $textlib = textlib_get_instance();
+  $text = $textlib->convert($text, current_charset(), 'UTF-8');
+  $text = $textlib->utf8_to_entities($text, true, true); //gd does not work with hex entities!
+  // end of Moodle addition
   $bounds = ImageTTFBBox($points, $angle, $font, $text);
 
   if ($angle < 0) {

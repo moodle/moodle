@@ -1,16 +1,19 @@
 Fonts
 -----
 
-This directory contains fonts that are used when creating 
-images with text.
+GD font operations need unicode capable font to do the server-side
+rendering of text. Default font lib/default.ttf (FreeSans Medium
+revision 1.76 from http://savannah.nongnu.org/projects/freefont/)
+is suitable for most languages.
 
-The only one used currently is default.ttf
+Unsupported languages may add special font
+lang/xx_utf8/fonts/default.ttf, it will be used for that language
+only.
 
-If a language doesn't have the font here then the one in
-/lang/en/fonts/default.ttf is used instead.
+If you want to override the default font dirroot/lib/default.ttf,
+save another one as dataroot/lang/default.ttf - it will
+be used for all site languages without it's font file.
 
-Multibyte strings will need decoding, because the Truetype 
-routines expect ISO fonts or Unicode strings.  If there is a 
-file here called lang_decode.php, containing a function 
-called lang_decode(), then it will be used on each string.
-
+The list of suitable TrueType fonts can be found at:
+* http://en.wikipedia.org/wiki/Unicode_fonts
+* http://www.alanwood.net/unicode/fonts.html#general

@@ -231,5 +231,29 @@ class textlib {
 
         return $encoded;
     }
+
+    /**
+     * Converts all Unicode chars > 127 to numeric entities &#nnnn; or &#xnnn;.
+     *
+     * @param    string         input string
+     * @param    boolean        output decadic only number entities
+     * @param    boolean        remove all nonumeric entities
+     * @return   string         converted string
+     */
+    function utf8_to_entities($str, $dec=false, $nonnum=false) {
+    /// Avoid some notices from Typo3 code
+        $oldlevel = error_reporting(E_PARSE);
+        if ($nonnum) {
+            $str = $this->typo3cs->entities_to_utf8($str, true);
+        }
+        $result = $this->typo3cs->utf8_to_entities($str);
+        if ($dec) {
+            $result = preg_replace('/&#x([0-9a-f]+);/ie', "'&#'.hexdec('$1').';'", $result);
+        }
+    /// Restore original debug level
+        error_reporting($oldlevel);
+        return $result;
+    }
+
 }
 ?>
