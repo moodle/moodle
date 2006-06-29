@@ -1082,8 +1082,8 @@ function auth_ldap_getdefaults(){
                         );
     $default['ldap_memberattribute_isdn'] = array(
                         'edir' => '1',
-                        'rfs2307' => '0',
-                        'rfs2307bis' => '1',
+                        'rfc2307' => '0',
+                        'rfc2307bis' => '1',
                         'samba' => '0', //is this right?
                         'ad' => '1',
                         'default' => '0'
