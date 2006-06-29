@@ -112,7 +112,6 @@ class enrolment_plugin_authorize
             }
         }
 
-        $teacher = get_teacher($course->id);
         $strcourses = get_string('courses');
         $strloginto = get_string('loginto', '', $course->shortname);
         $zerocost = $this->zero_cost($course);
@@ -142,6 +141,7 @@ class enrolment_plugin_authorize
 
         if ($course->password) {
             $password = '';
+            $teacher = get_teacher($course->id);
             include($CFG->dirroot.'/enrol/manual/enrol.html');
         }
 
