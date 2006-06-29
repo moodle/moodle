@@ -100,6 +100,16 @@ class enrolment_plugin_authorize
     function print_entry($course) {
         global $CFG, $USER, $form;
 
+        $zerocost = $this->zero_cost($course);
+        if ($zerocost) {
+            $manual = enrolment_factory::factory('manual');
+            if (!empty($this->errormsg)) {
+                $manual->errormsg = $this->errormsg;
+            }
+            $manual->print_entry($course);
+            return;
+        }
+
         httpsrequired();
 
         if (empty($_SERVER['HTTPS']) || $_SERVER['HTTPS'] == 'off') {
@@ -110,13 +120,6 @@ class enrolment_plugin_authorize
                 redirect("$wwwsroot/course/enrol.php?id=$course->id");
                 exit;
             }
-        }
-
-        $zerocost = $this->zero_cost($course);
-        if ($zerocost) {
-            $manual = enrolment_factory::factory('manual');
-            $manual->print_entry($course);
-            return;
         }
 
         $strcourses = get_string('courses');
@@ -159,10 +162,10 @@ class enrolment_plugin_authorize
      * @access public
      */
     function check_entry($form, $course) {
-        if (!empty($course->password) and !empty($form->password)) {
+        if ($this->zero_cost($course) or (!empty($course->password) and !empty($form->password))) {
             $manual = enrolment_factory::factory('manual');
             $manual->check_entry($form, $course);
-            if (isset($manual->errormsg)) {
+            if (!empty($manual->errormsg)) {
                 $this->errormsg = $manual->errormsg;
             }
         } elseif ((!empty($form->ccsubmit)) and $this->validate_enrol_form($form)) {
