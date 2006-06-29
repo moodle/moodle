@@ -104,7 +104,7 @@ $string['langdownloadok'] = '言語「 $a 」が正常にインストールさ�
 $string['language'] = '言語設定';
 $string['magicquotesruntime'] = 'Magic Quotesランタイム';
 $string['magicquotesruntimeerror'] = 'これは無効にしてください。';
-$string['mbstringrecommended'] = 'より良いパフォーマンスを得るため、MBSTRINGライブラリのインストールおよび稼動を強くお勧めします。あなたのサイトがラテン文字以外をサポートしている場合、特にお勧めします。';
+$string['mbstringrecommended'] = 'より良いパフォーマンスを得るため、mbstringライブラリのインストールおよび稼動を強くお勧めします。あなたのサイトがラテン文字以外をサポートしている場合、特にお勧めします。';
 $string['memorylimit'] = 'Memory Limit';
 $string['memorylimiterror'] = 'PHPのmemory limitが低すぎます ... 後で問題が発生する可能性があります。';
 $string['memorylimithelp'] = '<p>現在、サーバのPHPメモリー制限が $a に設定されています。</p>
@@ -119,7 +119,7 @@ $string['memorylimithelp'] = '<p>現在、サーバのPHPメモリー制限が $
 <p>しかし、この設定が<b>すべての</b>PHPページの動作を妨げる場合もあります。ページ閲覧時にエラーが表示される場合は、.htaccessファイルを削除してください。</p>
 </ol>';
 $string['missingrequiredfield'] = 'いくつかの必須入力フィールドに入力されていません。';
-$string['mysql416bypassed'] = 'あなたのサイトが iso-8859-1 ( ラテン ) 言語のみを使用している場合、現在インストールされている MySQL 4.1.12 ( またはそれ以上 ) を使用することができます。';
+$string['mysql416bypassed'] = 'あなたのサイトが iso-8859-1 ( ラテン ) 言語のみ使用している場合、現在インストールされている MySQL 4.1.12 ( またはそれ以上 ) を使用することができます。';
 $string['mysql416required'] = 'Moodle1.6では、将来すべてのデータをUTF-8に変換するため、MySQL 4.1.16 が要求される最低限のバージョンです。';
 $string['mysqlextensionisnotpresentinphp'] = 'MySQLと通信できるようにPHPのMySQL extension設定が正しく設定されていません。php.iniを確認するか、PHPを再度コンパイルしてください。';
 $string['name'] = '名称';
