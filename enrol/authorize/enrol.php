@@ -100,6 +100,16 @@ class enrolment_plugin_authorize
     function print_entry($course) {
         global $CFG, $USER, $form;
 
+        $zerocost = $this->zero_cost($course);
+        if ($zerocost) {
+            $manual = enrolment_factory::factory('manual');
+            if (!empty($this->errormsg)) {
+                $manual->errormsg = $this->errormsg;
+            }
+            $manual->print_entry($course);
+            return;
+        }
+
         httpsrequired();
 
         if (empty($_SERVER['HTTPS']) || $_SERVER['HTTPS'] == 'off') {
@@ -114,30 +124,25 @@ class enrolment_plugin_authorize
 
         $strcourses = get_string('courses');
         $strloginto = get_string('loginto', '', $course->shortname);
-        $zerocost = $this->zero_cost($course);
 
         print_header($strloginto, $course->fullname, "<a href=\"$CFG->wwwroot/course/\">$strcourses</a> -> $strloginto");
         print_course($course, '80%');
 
-        if ($course->password && !$zerocost) {
+        if ($course->password) {
             print_heading(get_string('choosemethod', 'enrol_authorize'), 'center');
         }
 
-        print_simple_box_start('center');
-        if ($zerocost){
-            echo '<div align="center"><p>'.get_string('nocostyet', 'enrol_authorize').'</p></div>';
-        } else if (isguest()) {
+        if (isguest()) {
             $curcost = $this->get_course_cost($course);
             echo '<div align="center"><p>'.get_string('paymentrequired').'</p>';
             echo '<p><b>'.get_string('cost').": $curcost[currency] $curcost[cost]".'</b></p>';
             echo '<p><a href="'.$CFG->httpswwwroot.'/login/">'.get_string('loginsite').'</a></p>';
             echo '</div>';
         } else {
-            $this->prevent_double_paid($course);
+            print_simple_box_start('center');
             include($CFG->dirroot.'/enrol/authorize/enrol.html');
+            print_simple_box_end();
         }
-
-        print_simple_box_end();
 
         if ($course->password) {
             $password = '';
@@ -157,10 +162,10 @@ class enrolment_plugin_authorize
      * @access public
      */
     function check_entry($form, $course) {
-        if (!empty($course->password) and !empty($form->password)) {
+        if ($this->zero_cost($course) or (!empty($course->password) and !empty($form->password))) {
             $manual = enrolment_factory::factory('manual');
             $manual->check_entry($form, $course);
-            if (isset($manual->errormsg)) {
+            if (!empty($manual->errormsg)) {
                 $this->errormsg = $manual->errormsg;
             }
         } elseif ((!empty($form->ccsubmit)) and $this->validate_enrol_form($form)) {
