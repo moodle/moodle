@@ -1,4 +1,4 @@
-<?php
+<?php  // $Id$
 
     require_once('../../config.php');
     require_once('lib.php');
@@ -11,7 +11,7 @@
     $mode = optional_param('mode','',PARAM_ALPHA);
     $commentid = optional_param('commentid','',PARAM_INT);
     $confirm = optional_param('confirm','',PARAM_INT);
-    $commentcontent = optional_param('commentcontent','',PARAM_NOTAGS);
+    $commentcontent = trim(optional_param('commentcontent','',PARAM_NOTAGS));
     $template = optional_param('template','',PARAM_ALPHA);
 
 
@@ -39,13 +39,12 @@
         }
     }
 
-    $commentcontent = trim($commentcontent);
-    if (empty($commentcontent)) {
-        redirect('view.php?rid='.$record->id.'&amp;page='.$page, get_string('commentempty', 'data'));
-    }
-
     switch ($mode) {
         case 'add':
+            if (empty($commentcontent)) {
+                redirect('view.php?rid='.$record->id.'&amp;page='.$page, get_string('commentempty', 'data'));
+            }
+
             $newcomment = new object;
             $newcomment->userid = $USER->id;
             $newcomment->created = time();
@@ -75,6 +74,10 @@
         break;
         
         case 'editcommit':  //update db
+            if (empty($commentcontent)) {
+                redirect('view.php?rid='.$record->id.'&amp;page='.$page, get_string('commentempty', 'data'));
+            }
+
             if ($comment) {
                 $newcomment = new object;
                 $newcomment->id = $comment->id;
