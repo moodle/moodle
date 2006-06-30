@@ -1,6 +1,7 @@
 <?php // $Id$
 
 $string['analysis'] = 'Item analysis';
+$string['analysisdownload'] = 'Analysis download';
 $string['analysisoptions'] = 'Analysis options';
 $string['attemptselection'] = 'Attempts to analyze per user ';
 $string['lowmarkslimit'] = "Don't analyse if score is less than: ";
