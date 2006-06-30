@@ -57,10 +57,12 @@
     $strmoodleversion = get_string('moodleversion');
     $strupdate = get_string('updatecomponent', 'admin');
     $strupwards = get_string('upwards', 'admin');
+    $strmisc = get_string('miscellaneous');
 
 /// Print the header stuff
     print_header("$SITE->shortname: $strenvironment", $SITE->fullname,
-                 "<a href=\"index.php\">$stradmin</a> -> ".$strenvironment);
+                 "<a href=\"index.php\">$stradmin</a> -> <a href=\"misc.php\">$strmisc</a> -> "
+                 .$strenvironment);
 
 /// Print the component download link
     echo '<div class="reportlink"><a href="environment.php?action=updatecomponent&amp;sesskey='.$USER->sesskey.'">'.$strupdate.'</a></div>';

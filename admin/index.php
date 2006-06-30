@@ -399,37 +399,42 @@
     $userdata .= '<div class="adminlink"><a href="'.$CFG->wwwroot.'/'.$CFG->admin.'/uploaduser.php?sesskey='.$USER->sesskey.'">'.
                  get_string('uploadusers').'</a> - <span class="explanation">'.get_string('adminhelpuploadusers').'</span></div>';
 
-    $userdata .= '<hr /><div class="adminlink"><a href="enrol.php?sesskey='.$USER->sesskey.'">'.get_string('enrolmentplugins').
-                 '</a> - <span class="explanation">'.get_string('adminhelpenrolments').'</span></div>';
-    $userdata .= '<div class="adminlink"><a href="../course/index.php?edit=off&amp;sesskey='.$USER->sesskey.'">'.
-                 get_string('assignstudents').'</a> - <span class="explanation">'.get_string('adminhelpassignstudents').'</span></div>';
-
-    $userdata .= '<div class="adminlink"><a href="../course/index.php?edit=on&amp;sesskey='.$USER->sesskey.'">'.
-                 get_string('assignteachers').'</a> - <span class="explanation">'.get_string('adminhelpassignteachers').
-                 ' <img src="../pix/t/user.gif" height="11" width="11" alt="" /></span></div>';
-    $userdata .= '<div class="adminlink"><a href="creators.php?sesskey='.$USER->sesskey.'">'.get_string('assigncreators').
-                 '</a> - <span class="explanation">'.get_string('adminhelpassigncreators').'</span></div>';
-    $userdata .= '<div class="adminlink"><a href="admin.php?sesskey='.$USER->sesskey.'">'.get_string('assignadmins').
-                 '</a> - <span class="explanation">'.get_string('adminhelpassignadmins').'</span></div>';
-
     $table->data[] = array('<strong><a href="users.php">'.get_string('users').'</a></strong>', $userdata);
 
-    $table->data[] = array('<strong><a href="../course/index.php?edit=on&amp;sesskey='.$USER->sesskey.'">'.get_string('courses').'</a></strong>',
-                           '<div class="explanation">'.get_string('adminhelpcourses').'</div>');
-    $table->data[] = array('<strong><a href="../files/index.php?id='.$site->id.'">'.get_string('sitefiles').'</a></strong>',
-                           '<div class="explanation">'.get_string('adminhelpsitefiles').'</div>');
-    $table->data[] = array('<strong><a href="stickyblocks.php">'.get_string('stickyblocks','admin').'</a></strong>',
-                           '<div class="explanation">'.get_string('adminhelpstickyblocks').'</div>');
-    $table->data[] = array('<strong><a href="report.php">'.get_string('reports').'</a></strong>', 
-                           '<div class="explanation">'.get_string('adminhelpreports').'</div>');
-    $table->data[] = array('<strong><a href="environment.php">'.get_string('environment','admin').'</a></strong>',
-                           '<div class="explanation">'.get_string('adminhelpenvironment').'</div>');
+    $coursedata = '<div class="adminlink"><a href="../course/index.php?edit=on&amp;sesskey='.$USER->sesskey.'">'.get_string('managecourses').
+                 '</a> - <span class="explanation">'.get_string('adminhelpcourses').'</span></div>';
+    $coursedata .= '<div class="adminlink"><a href="enrol.php?sesskey='.$USER->sesskey.'">'.get_string('enrolmentplugins').
+                 '</a> - <span class="explanation">'.get_string('adminhelpenrolments').'</span></div>';
+    $coursedata .= '<div class="adminlink"><a href="../course/index.php?edit=off&amp;sesskey='.$USER->sesskey.'">'.
+                 get_string('assignstudents').'</a> - <span class="explanation">'.get_string('adminhelpassignstudents').'</span></div>';
+    $coursedata .= '<div class="adminlink"><a href="../course/index.php?edit=on&amp;sesskey='.$USER->sesskey.'">'.
+                 get_string('assignteachers').'</a> - <span class="explanation">'.get_string('adminhelpassignteachers').
+                 ' <img src="../pix/t/user.gif" height="11" width="11" alt="" /></span></div>';
+    $coursedata .= '<div class="adminlink"><a href="creators.php?sesskey='.$USER->sesskey.'">'.get_string('assigncreators').
+                 '</a> - <span class="explanation">'.get_string('adminhelpassigncreators').'</span></div>';
+    $coursedata .= '<div class="adminlink"><a href="admin.php?sesskey='.$USER->sesskey.'">'.get_string('assignadmins').
+                 '</a> - <span class="explanation">'.get_string('adminhelpassignadmins').'</span></div>';
 
+    $table->data[] = array('<strong><a href="courses.php">'.get_string('courses').'</a></strong>', $coursedata);
+
+    $miscdata = '<div class="adminlink"><a href="../files/index.php?id='.$site->id.'">'.get_string('sitefiles').
+                 '</a> - <span class="explanation">'.get_string('adminhelpsitefiles').'</span></div>';
+    $miscdata .= '<div class="adminlink"><a href="stickyblocks.php">'.get_string('stickyblocks','admin').
+                 '</a> - <span class="explanation">'.get_string('adminhelpstickyblocks').'</span></div>';
+    $miscdata .= '<div class="adminlink"><a href="report.php">'.get_string('reports').
+                 '</a> - <span class="explanation">'.get_string('adminhelpreports').'</span></div>';
+    $miscdata .= '<div class="adminlink"><a href="health.php">'.get_string('healthcenter').
+                 '</a> - <span class="explanation">'.get_string('adminhelphealthcenter').'</span></div>';
+    $miscdata .= '<div class="adminlink"><a href="environment.php">'.get_string('environment', 'admin').
+                 '</a> - <span class="explanation">'.get_string('adminhelpenvironment').'</span></div>';
 /// Optional stuff
     if (file_exists("$CFG->dirroot/$CFG->admin/$CFG->dbtype")) {
         $table->data[] = array("<strong><a href=\"$CFG->dbtype/frame.php\">".get_string('managedatabase').'</a></strong>',
                                '<div class="explanation">'.get_string('adminhelpmanagedatabase').'</div>');
     }
+
+    $table->data[] = array('<strong><a href="misc.php">'.get_string('miscellaneous').'</a></strong>', $miscdata);
+
 
 /// Hooks for Matt Oquists contrib code for repositories and portfolio.  
 /// The eventual official versions may not look like this

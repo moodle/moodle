@@ -9,9 +9,11 @@
 
     $stradmin = get_string('administration');
     $strreports = get_string('reports');
+    $strmisc = get_string('miscellaneous');
 
     print_header($strreports, $strreports,
-                 '<a href="index.php">'.$stradmin.'</a> -> '.$strreports);
+                 '<a href="index.php">'.$stradmin.'</a> -> <a href="misc.php">'.$strmisc.'</a> ->'.
+                 $strreports);
 
     $directories = get_list_of_plugins('admin/report');
 
