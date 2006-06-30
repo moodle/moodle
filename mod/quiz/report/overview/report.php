@@ -484,7 +484,7 @@ class quiz_report extends quiz_default_report {
                     print_single_button('report.php', $options, get_string("downloadtext"));
                     echo "</td>\n";
                     echo "<td>";
-                    helpbutton("download", get_string("download","quiz"), "quiz");
+                    helpbutton('overviewdownload', get_string('overviewdownload', 'quiz_overview'), 'quiz');
                     echo "</td>\n";
                     echo '</tr></table>';
                 }
