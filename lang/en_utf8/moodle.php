@@ -490,7 +490,7 @@ $string['existingstudents'] = 'Enrolled students';
 $string['existingteachers'] = 'Existing teachers';
 $string['explanation'] = 'Explanation';
 $string['expirynotify'] = 'Enrolment expiry notification';
-$string['expirynotifyemail'] = 'The following students in this course are expiring after exact $a->threshold days:
+$string['expirynotifyemail'] = 'The following students in this course are expiring after exactly $a->threshold days:
 
 $a->current
 
