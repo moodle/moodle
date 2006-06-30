@@ -18,9 +18,11 @@
     $site = get_site();
     $stradmin         = get_string('administration');
     $strhealthcenter  = get_string('healthcenter');
+    $strmisc          = get_string('miscellaneous');
 
     print_header($site->shortname.': '.$strhealthcenter, $site->fullname,
-                  '<a href="index.php">'.$stradmin.'</a> -> '.$strhealthcenter);
+                  '<a href="index.php">'.$stradmin.'</a> -> <a href="misc.php">'.$strmisc.'</a> ->'.
+                  $strhealthcenter);
 
 echo <<<STYLES
 <style type="text/css">
