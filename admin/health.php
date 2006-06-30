@@ -7,8 +7,7 @@
     define('SEVERITY_SIGNIFICANT', 'significant');
     define('SEVERITY_CRITICAL',    'critical');
 
-    $resetsesserrorcounter = optional_param('resetsesserrorcounter', 0, PARAM_BOOL);
-    $solution              = optional_param('solution', 0, PARAM_SAFEDIR); //in fact it is class name alhanumeric and _
+    $solution = optional_param('solution', 0, PARAM_SAFEDIR); //in fact it is class name alhanumeric and _
 
     require_login();
     if (!isadmin()) {
