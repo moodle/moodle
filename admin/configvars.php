@@ -157,8 +157,8 @@ class configvarrss extends configvar {
 
 /// slasharguments
     unset($options);
-    $options[0] = "file.php?file=/pic.jpg";
-    $options[1] = "file.php/pic.jpg";
+    $options[0] = "file.php?file=/1/pic.jpg";
+    $options[1] = "file.php/1/pic.jpg";
 
     $operatingsystem['slasharguments'] = new configvar (get_string('configslasharguments', 'admin'),
         choose_from_menu ($options, 'slasharguments', $config->slasharguments, '', '', '', true) );
