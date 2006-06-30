@@ -1,0 +1,46 @@
+BACKLOG
+This is backed up stuff that defines the 1.0.1 release.
+
+$Id$
+
+Unit tester
+-----------
+Add skip facility (4).
+
+Reporter
+--------
+Add a repeating reporter (2).
+Split and refactor dumpers by type (2).
+
+Mock objects
+------------
+
+Parser
+------
+Add U flag to regexes to allow unicode (3).
+Parse fieldsets correctly with labels (5).
+
+Browser
+-------
+Change getUrls() to return more information (2).
+Add a file() loading command (2).
+Investigate bug, clicking keeps encoding again and again (3).
+Fix bug URL losing spaces (3).
+Setting an option by id attribute should only toggle that option (3).
+Add additional parameters to click() method (1).
+Allow index selection of controls (3).
+
+Web tester
+----------
+Add assertClickable() method (1).
+Add assertSubmit() method (1).
+
+Documentation
+-------------
+Extension docs (1).
+Replace all deprecated methods (3).
+Split mock objects off fromtutorial (4).
+Add page for projects that use or extend SimpleTest (2).
+
+Build
+-----

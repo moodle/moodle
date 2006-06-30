@@ -6822,9 +6822,34 @@ eval('
 
         return $obj;
     }
+
+    // Supply the PHP5 function scandir() to older versions.
+    function scandir($directory) {
+        $files = array();
+        if ($dh = opendir($directory)) {
+            while (($file = readdir($dh)) !== false) {
+               $files[] = $file;
+            }
+            closedir($dh);
+        }
+        return $files;
+    }
+
+    // Supply the PHP5 function array_combine() to older versions.
+    function array_combine($keys, $values) {
+        if (!is_array($keys) || !is_array($values) || count($keys) != count($values)) {
+            return false;
+        }
+        reset($values);
+        $result = array();
+        foreach ($keys as $key) {
+            $result[$key] = current($values);
+            next($values);
+        }
+        return $result;
+    }
 ');
 }
-
 
 /**
  * This function will make a complete copy of anything it's given, 

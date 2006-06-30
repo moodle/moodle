@@ -950,7 +950,7 @@ function get_field($table, $return, $field1, $value1, $field2='', $value2='', $f
     $rs = get_recordset_sql('SELECT ' . $return . ' FROM ' . $CFG->prefix . $table . ' ' . $select);
 
     if ($rs && $rs->RecordCount() == 1) {
-        return $rs->fields[$return];
+        return $rs->fields[0];
     } else {
         return false;
     }
