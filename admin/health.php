@@ -423,7 +423,7 @@ class problem_000010 extends problem_base {
             $desc .= '<li>slasharguments are enabled in Moodle configuration</li>';   
         }
         if ($this->status() == -1) {
-            $desc .= '<li>can not run automatic test, you can verify it <a href="'.$CFG->wwwroot.'/file.php/testslasharguments" target="_blank">here</a></li>';
+            $desc .= '<li>can not run automatic test, you can verify it <a href="'.$CFG->wwwroot.'/file.php/testslasharguments" target="_blank">here</a> manually</li>';
         } else if ($this->status() == 0) {
             $desc .= '<li>slashargument test <strong>failed</strong>, please check server configuration</li>';
         } else {
@@ -501,7 +501,7 @@ class problem_000011 extends problem_base {
     }
     function solution() {
         global $CFG;
-        if (!empty($resetsesserrorcounter)) {
+        if (optional_param('resetsesserrorcounter', 0, PARAM_BOOL)) {
             if (get_field('config', 'name', 'name', 'session_error_counter')) {
                 delete_records('config', 'name', 'session_error_counter');
             }

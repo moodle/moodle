@@ -1096,7 +1096,7 @@ function get_file_argument($scriptname) {
         if (!strpos($path_info, $scriptname)) {
             $relativepath = clean_param(rawurldecode($path_info), PARAM_PATH);
             if ($relativepath === '/testslasharguments') {
-                echo 'test 1: Slasharguments test passed.'; //indicate ok for health center
+                echo 'test 1: Slasharguments test passed. Server confguration is compatible with file.php/1/pic.jpg slashargument setting.'; //indicate ok for health center
                 die;
             }
         }
@@ -1110,7 +1110,7 @@ function get_file_argument($scriptname) {
             $path_info = strip_querystring($arr[1]);
             $relativepath = clean_param(rawurldecode($path_info), PARAM_PATH);
             if ($relativepath === '/testslasharguments') {
-                echo 'test 2:Slasharguments test passed (compatibility hack).'; //indicate ok for health center
+                echo 'test 2:Slasharguments test passed (compatibility hack). Server confguration may be compatible with file.php/1/pic.jpg slashargument setting'; //indicate ok for health center
                 die;
             }
         }

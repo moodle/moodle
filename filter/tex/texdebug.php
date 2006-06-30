@@ -178,9 +178,9 @@
         $image = tex2image($texexp,true);
         echo "<p>If the following image displays correctly, set your ";
         echo "<a href=\"$admin\" target=\"_blank\">Administration->Configuration->Variables</a> ";
-        echo "setting for slasharguments to file.php/pic.jpg: ";
+        echo "setting for slasharguments to file.php/1/pic.jpg: ";
         echo "<img src=\"pix.php/$image\" align=\"absmiddle\"></p>\n";
-        echo "<p>Otherwise set it to file.php?file=pic.jpg ";
+        echo "<p>Otherwise set it to file.php?file=/1/pic.jpg ";
         echo "It should display correctly as ";
         echo "<img src=\"pix.php?file=$image\" align=\"absmiddle\"></p>\n";
         echo "<p>If neither equation image displays correctly, please seek ";
