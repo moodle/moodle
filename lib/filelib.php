@@ -561,9 +561,9 @@ function byteserving_send_file($filename, $mimetype, $ranges) {
     } else { // multiple ranges requested - not tested much
         $totallength = 0;
         foreach($ranges as $range) {
-            $totallength .= strlen($range[0]) + $range[2] - $range[1] + 1;
+            $totallength += strlen($range[0]) + $range[2] - $range[1] + 1;
         }
-        $totallength .= strlen("\r\n--".BYTESERVING_BOUNDARY."--\r\n");
+        $totallength += strlen("\r\n--".BYTESERVING_BOUNDARY."--\r\n");
         @header('HTTP/1.1 206 Partial content');
         @header('Content-Length: '.$totallength);
         @header('Content-Type: multipart/byteranges; boundary='.BYTESERVING_BOUNDARY);
