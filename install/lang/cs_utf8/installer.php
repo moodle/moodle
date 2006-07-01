@@ -118,6 +118,7 @@ $string['next'] = 'Další';
 $string['ok'] = 'OK';
 $string['pass'] = 'Prošlo';
 $string['password'] = 'Heslo';
+$string['php50restricted'] = 'V PHP 5.0.x bylo nalezeno množství chyb; přejděte buď na vyšší verzi 5.1.x, nebo na nižší verzi 4.3.x či 4.4.x.';
 $string['phpversion'] = 'Verze PHP';
 $string['phpversionerror'] = 'Verze PHP musí být alespoň 4.1.0 nebo vyšší';
 $string['phpversionhelp'] = '<p>Moodle vyžaduje verzi PHP alespoň 4.1.0.</p>
