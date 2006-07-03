@@ -913,18 +913,21 @@ function stats_check_uptodate($courseid=0) {
     $latestday = stats_get_start_from('daily');
 
     if ((time() - 60*60*24*2) < $latestday) { // we're ok
-        return true;
+        return NULL;
     }
 
+    $a = new object();
     $a->daysdone = get_field_sql("SELECT count(distinct(timeend)) from {$CFG->prefix}stats_daily");
 
     // how many days between the last day and now?
     $a->dayspending = ceil((stats_get_base_daily() - $latestday)/(60*60*24));
 
     if ($a->dayspending == 0 && $a->daysdone != 0) {
-        return true; // we've only just started...
+        return NULL; // we've only just started...
     }
-    error(get_string('statscatchupmode','error',$a),$CFG->wwwroot.'/course/view.php?id='.$courseid);
+
+    //return error as string
+    return get_string('statscatchupmode','error',$a);
 }
 
 

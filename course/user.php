@@ -86,7 +86,10 @@
 
             require_once($CFG->dirroot.'/lib/statslib.php');
 
-            stats_check_uptodate($course->id);
+            $statsstatus = stats_check_uptodate($course->id);
+            if ($statsstatus !== NULL) {
+                notify ($statsstatus);
+            }
 
             $earliestday = get_field_sql('SELECT timeend FROM '.$CFG->prefix.'stats_user_daily ORDER BY timeend LIMIT 1');
             $earliestweek = get_field_sql('SELECT timeend FROM '.$CFG->prefix.'stats_user_weekly ORDER BY timeend LIMIT 1');

@@ -18,8 +18,7 @@
         $numcourses = optional_param('numcourses', 20, PARAM_INT);
 
         $course = get_site();
-        stats_check_uptodate($course->id);
-
+        $statsstatus = stats_check_uptodate($course->id);
 
         $reportoptions = stats_get_report_options($course->id,STATS_MODE_RANKED);
 
@@ -49,6 +48,10 @@
         echo '<form action="report/courseoverview/index.php" method="post">'."\n";
         print_table($table);
         echo '</form>';
+        if ($statsstatus !== NULL) {
+            notify ($statsstatus);
+        }
+
     }
 ?>
 
