@@ -8,5 +8,9 @@
         echo '<p style="text-align:center;">';
         echo '<a href="'.$CFG->wwwroot.'/admin/report/stats/index.php?course='.$course->id.'">'.get_string('stats').'</a>';
         echo '</p>';
+        $statsstatus = stats_check_uptodate($course->id);
+        if ($statsstatus !== NULL) {
+            notify ($statsstatus);
+        }
     }
 ?>
