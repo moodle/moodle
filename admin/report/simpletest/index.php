@@ -18,6 +18,7 @@ require_once('ex_reporter.php');
 /* The UNITTEST constant can be checked elsewhere if you need to know
  * when your code is being run as part of a unit test. */
 define('UNITTEST', true);
+$langfile = 'simpletest';
 
 require_login();
 if (!isadmin()) {
@@ -42,7 +43,7 @@ $test->addIgnoreFolder($CFG->dirroot . '/_nonproject');
 $reporter = new ExHtmlReporter($showpasses);
 
 // Print the header.
-$strtitle = get_string('unittests', 'unittest');
+$strtitle = get_string('unittests', $langfile);
 $stradmin = get_string('administration');
 print_header("$SITE->shortname: $strtitle", $SITE->fullname,
         '<a href="../../index.php">' . get_string('administration') . '</a> -> ' .
@@ -69,16 +70,16 @@ if (is_file($path)) {
 } else if (is_dir($path)){
     $test->findTestFiles($path);
 } else {
-    print_simple_box(get_string('pathdoesnotexist', 'unittest', $path), '', '', '', '', 'errorbox');
+    print_simple_box(get_string('pathdoesnotexist', $langfile, $path), '', '', '', '', 'errorbox');
     $ok = false;
 }
 
 // If we have something to test, do it.
 if ($ok) {
     if ($path == $CFG->dirroot) {
-        $title = get_string('moodleunittests', 'unittest', get_string('all', 'unittest'));
+        $title = get_string('moodleunittests', $langfile, get_string('all', $langfile));
     } else {
-        $title = get_string('moodleunittests', 'unittest', $displaypath);
+        $title = get_string('moodleunittests', $langfile, $displaypath);
     }
     print_heading($title);
     $test->run($reporter);
@@ -87,15 +88,15 @@ if ($ok) {
 // Print the form for adjusting options.
 print_simple_box_start('center', '70%');
 echo '<form method="GET" action="index.php">';
-print_heading(get_string('retest', 'unittest'));
-echo '<p>'; print_checkbox('showpasses', 1, $showpasses, get_string('showpasses', 'unittest')); echo '</p>';
-echo '<p>'; print_checkbox('showsearch', 1, $showsearch, get_string('showsearch', 'unittest')); echo '</p>';
-echo '<p>'; print_checkbox('thorough', 1, $thorough, get_string('thorough', 'unittest')); echo '</p>';
+print_heading(get_string('retest', $langfile));
+echo '<p>'; print_checkbox('showpasses', 1, $showpasses, get_string('showpasses', $langfile)); echo '</p>';
+echo '<p>'; print_checkbox('showsearch', 1, $showsearch, get_string('showsearch', $langfile)); echo '</p>';
+echo '<p>'; print_checkbox('thorough', 1, $thorough, get_string('thorough', $langfile)); echo '</p>';
 echo '<p>';
-    echo '<label for="path">', get_string('onlytest', 'unittest'), '</label> ';
+    echo '<label for="path">', get_string('onlytest', $langfile), '</label> ';
     echo '<input type="text" id="path" name="path" value="', $displaypath, '" size="60" />';
 echo '</p>';
-echo '<input type="submit" value="' . get_string('runtests', 'unittest') . '" />';
+echo '<input type="submit" value="' . get_string('runtests', $langfile) . '" />';
 echo '</form>';
 print_simple_box_end();
 

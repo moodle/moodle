@@ -13,8 +13,9 @@
 if (!defined('MOODLE_INTERNAL')) {
     die('Direct access to this script is forbidden.'); //  It must be included from a Moodle page
 }
+$langfile = 'simpletest';
 
-print_heading(get_string('unittests', 'unittest'));
+print_heading(get_string('unittests', $langfile));
 print_heading('<a href="'.$CFG->wwwroot.'/admin/report/simpletest/index.php">' . 
-        get_string('rununittests', 'unittest') . '</a>', '', 3);
+        get_string('rununittests', $langfile) . '</a>', '', 3);
 ?>

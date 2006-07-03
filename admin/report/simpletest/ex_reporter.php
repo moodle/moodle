@@ -205,7 +205,7 @@ class ExHtmlReporter extends HtmlReporter {
      * Look up a lang string in the appropriate file.
      */
     function get_string($identifier, $a = NULL) {
-        return get_string($identifier, 'unittest', $a);
+        return get_string($identifier, 'simpletest', $a);
     }
 }
 ?>
