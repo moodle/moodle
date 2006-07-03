@@ -115,9 +115,8 @@
                     $studentid=(!empty($user->idnumber) ? $user->idnumber : " ");
                     $myxls->write_string($row,2,$studentid);
                     $ug2 = '';
-                    $usergrp = user_group($course->id, $user->id);
-                    if (!empty($usergrp)) {
-                        foreach ($usergrp as $ug) {
+                    if ($usergrps = user_group($course->id, $user->id)) {
+                        foreach ($usergrps as $ug) {
 						    $ug2 = $ug2. $ug->name;
 					    }
 			        }
@@ -170,9 +169,8 @@
 		 	  }              
               echo "\t". $studentid."\t";
               $ug2 = '';
-              $usergrp = user_group($course->id, $user->id);
-              if (!empty($usergrp)) {
-                  foreach ($usergrp as $ug) {
+              if ($usergrps = user_group($course->id, $user->id)) {
+                  foreach ($usergrps as $ug) {
 			          $ug2 = $ug2. $ug->name;
 			      }
 			  }

@@ -3646,11 +3646,7 @@ function setup_and_print_groups($course, $groupmode, $urlroot) {
 
     global $USER, $SESSION; //needs his id, need to hack his groups in session
 
-    if (isset($_GET['group'])) {
-        $changegroup = $_GET['group'];  /// 0 or higher
-    } else {
-        $changegroup = -1;              /// This means no group change was specified
-    }
+    $changegroup = optional_param('group', -1, PARAM_INT);
 
     $currentgroup = get_and_set_current_group($course, $groupmode, $changegroup);
     if ($currentgroup === false) {

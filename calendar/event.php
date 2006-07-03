@@ -484,15 +484,17 @@
             echo '<div class="header">'.get_string('newevent', 'calendar').$header.'</div>';
 
             if($eventtype == 'select') {
-                $defaultcourse = $SESSION->cal_course_referer;
-                if(isteacheredit($defaultcourse, $USER->id)) {
-                    $defaultgroup = $groupid = 0;
+                $courseid = optional_param('courseid', $SESSION->cal_course_referer, PARAM_INT);
+                if (!$course = get_record('course', 'id', $courseid)) {
+                    error('Incorrect course ID');
                 }
-                else {
-                    $defaultgroup = user_group($defaultcourse, $USER->id);
-                    $groupid      = optional_param('groupid',  $defaultgroup->id, PARAM_INT);
+                if ($groupmode = groupmode($course)) {   // Groups are being used
+                    $changegroup = optional_param('group', -1, PARAM_INT);
+                    $groupid = get_and_set_current_group($course, $groupmode, $changegroup);
+                } else {
+                    $groupid = 0;
                 }
-                $courseid = optional_param('courseid', $defaultcourse, PARAM_INT);
+
                 echo '<h2>'.get_string('eventkind', 'calendar').':</h2>';
                 echo '<div id="selecteventtype">';
                 include('event_select.html');

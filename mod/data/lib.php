@@ -1175,8 +1175,8 @@ function data_print_comment($data, $comment, $page=0) {
     echo '</div></td></tr>';
 
     echo '<tr><td class="left side">';
-    if ($group = user_group($data->course, $comment->userid)) {
-        print_group_picture($group, $data->course, false, false, true);
+    if ($groups = user_group($data->course, $comment->userid)) {
+        print_group_picture($groups, $data->course, false, false, true);
     } else {
         echo '&nbsp;';
     }
