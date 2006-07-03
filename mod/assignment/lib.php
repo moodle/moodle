@@ -274,7 +274,7 @@ class assignment_base {
         $submitted = '';
 
         if (isteacher($this->course->id)) {
-            if (!isteacheredit($this->course->id) and user_group($this->course->id, $USER->id)) {
+            if (!isteacheredit($this->course->id) and (groupmode($this->course, $this->cm) == SEPARATEGROUPS)) {
                 $count = $this->count_real_submissions($this->currentgroup);  // Only their group
             } else {
                 $count = $this->count_real_submissions();                     // Everyone
@@ -1362,10 +1362,14 @@ class assignment_base {
         $user = get_record('user', 'id', $submission->userid);
 
         if (groupmode($this->course, $this->cm) == SEPARATEGROUPS) {   // Separate groups are being used
-            if (!$group = user_group($this->course->id, $user->id)) {             // Try to find a group
-                $group->id = 0;                                             // Not in a group, never mind
+            if ($groups = user_group($this->course->id, $user->id)) {  // Try to find groups
+                $teachers = array();
+                foreach ($groups as $group) {
+                    $teachers = array_merge($teachers, get_group_teachers($this->course->id, $group->id));
+                }
+            } else {
+                $teachers = get_group_teachers($this->course->id, 0);   // Works even if not in group
             }
-            $teachers = get_group_teachers($this->course->id, $group->id);        // Works even if not in group
         } else {
             $teachers = get_course_teachers($this->course->id);
         }
