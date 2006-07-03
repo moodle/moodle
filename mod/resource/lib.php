@@ -139,6 +139,7 @@ function display_course_blocks_start() {
 
     require_once($CFG->libdir.'/blocklib.php');
     require_once($CFG->libdir.'/pagelib.php');
+    require_once($CFG->dirroot.'/course/lib.php'); //required by some blocks
 
     $PAGE = page_create_object(PAGE_COURSE_VIEW, $this->course->id);
     $this->PAGE = $PAGE;
