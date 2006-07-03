@@ -504,11 +504,11 @@ You may go to the following page to extend their enrolment period:
 $a->extendurl
 ';
 $string['expirynotifystudents'] = 'Notify students';
-$string['expirynotifystudentsemail'] = 'Dear student:
+$string['expirynotifystudentsemail'] = 'Dear $a->studentstr:
 
-This is a notification that your enrolment for course $a->course will be expired in $a->threshold days.
+This is a notification that your enrolment in the course $a->course will expire in $a->threshold days.
 
-Please contact your tutor for any further enqiries.
+Please contact your $a->teacherstr for any further enquiries.
 ';
 $string['expirythreshold'] = 'Threshold';
 $string['extendenrol'] = 'Extend enrolment';

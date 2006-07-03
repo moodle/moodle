@@ -370,6 +370,8 @@ function cron() {
             $a->extendurl = $CFG->wwwroot . '/user/index.php?id=' . $course->id;
             $a->current = array();
             $a->past = array();
+            $a->studentstr = $course->student;
+            $a->teacherstr = $course->teacher;
             $a->current = $a->past = array();
             $expiry = time() + $course->expirythreshold;
             $sql = "SELECT * FROM {$CFG->prefix}user u INNER JOIN {$CFG->prefix}user_students s ON u.id=s.userid WHERE s.course = $course->id AND s.timeend > 0 AND s.timeend <= $expiry";
