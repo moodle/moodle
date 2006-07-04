@@ -28,10 +28,15 @@
                            get_string('adminhelpstickyblocks'));
     $table->data[] = array('<b><a href="report.php">'.get_string('reports')."</a></b>",
                            get_string('adminhelpreports'));
-    $table->data[] = array('<b><a href="health.php">'.get_string('healthcenter')."</a></b>",
-                           get_string('adminhelphealthcenter'));
+// to be enabled later
+/*    $table->data[] = array('<b><a href="health.php">'.get_string('healthcenter')."</a></b>",
+                           get_string('adminhelphealthcenter'));*/
     $table->data[] = array('<b><a href="environment.php">'.get_string('environment', 'admin')."</a></b>",
                            get_string('adminhelpenvironment'));
+    if (file_exists("$CFG->dirroot/$CFG->admin/$CFG->dbtype")) {
+        $table->data[] = array('<b><a href="'.$CFG->dbtype.'/frame.php">'.get_string('managedatabase')."</a></b>",
+                           get_string('adminhelpmanagedatabase'));
+    }
 
     print_table($table);
 
