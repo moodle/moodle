@@ -1104,7 +1104,7 @@ function forum_get_child_posts($parent, $forumid) {
 }
 
 
-function forum_search_posts($searchterms, $courseid, $page=0, $recordsperpage=50, &$totalcount, $groupid=0, $extrasql='') {
+function forum_search_posts($searchterms, $courseid, $page=0, $recordsperpage=50, &$totalcount, $sepgroups=0, $extrasql='') {
 /// Returns a list of posts found using an array of search terms
 /// eg   word  +word -word
 ///
@@ -1116,12 +1116,13 @@ function forum_search_posts($searchterms, $courseid, $page=0, $recordsperpage=50
         $forummodule = get_record("modules", "name", "forum");
         $onlyvisible = "AND d.forum = f.id AND f.id = cm.instance AND cm.visible = 1 AND cm.module = $forummodule->id";
         $onlyvisibletable = ", {$CFG->prefix}course_modules cm, {$CFG->prefix}forum f";
-        if ($groupid) {
+        if (!empty($sepgroups)) {
             $separategroups = SEPARATEGROUPS;
             $selectgroup = " AND ( NOT (cm.groupmode='$separategroups'".
                                       " OR (c.groupmode='$separategroups' AND c.groupmodeforce='1') )";//.
-            foreach ($groupid as $index => $value){
-                $selectgroup .= " OR d.groupid = '$value'";
+            $selectgroup .= " OR d.groupid = '-1'"; //search inside discussions for all groups too
+            foreach ($sepgroups as $sepgroup){
+                $selectgroup .= " OR d.groupid = '$sepgroup->id'";
             }
             $selectgroup .= ")";
 
