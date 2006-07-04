@@ -114,13 +114,13 @@
 
     $searchform = forum_search_form($course, $search);
 
-    if ($group = user_group($course->id, $USER->id)) {
-        $groupid = $group->id;
+    if ((!isteacheredit($course->id)) and forum_get_separate_modules($course->id)) {
+        $sepgroups = user_group($course->id, $USER->id);
     } else {
-        $groupid = 0;
+        $sepgroups = false;
     }
 
-    if (!$posts = forum_search_posts($searchterms, $course->id, $page*$perpage, $perpage, $totalcount, $groupid)) {
+    if (!$posts = forum_search_posts($searchterms, $course->id, $page*$perpage, $perpage, $totalcount, $sepgroups)) {
 
         print_header_simple("$strsearchresults", "",
                 "<a href=\"index.php?id=$course->id\">$strforums</a> ->
