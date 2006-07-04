@@ -18,23 +18,10 @@ class question_match_qtype extends default_questiontype {
     }
 
     function save_question_options($question) {
-
+        $result = new stdClass;
+        
         if (!$oldsubquestions = get_records("question_match_sub", "question", $question->id, "id ASC")) {
             $oldsubquestions = array();
-        }
-
-        // following hack to check at least three answers exist
-        $answercount = 0;
-        foreach ($question->subquestions as $key=>$questiontext) {
-            $answertext = $question->subanswers[$key];
-            if (!empty($questiontext) or !empty($answertext)) {
-                $answercount++;
-            }
-        }
-        $answercount += count($oldsubquestions);
-        if ($answercount < 3) { // check there are at lest 3 answers for matching type questions
-            $result->notice = get_string("notenoughanswers", "quiz", "3");
-            return $result;
         }
 
         // $subquestions will be an array with subquestion ids
@@ -52,7 +39,7 @@ class question_match_qtype extends default_questiontype {
                         return $result;
                     }
                 } else {
-                    unset($subquestion);
+                    $subquestion = new stdClass;
                     // Determine a unique random code
                     $subquestion->code = rand(1,999999999);
                     while (record_exists('question_match_sub', 'code', $subquestion->code, 'question', $question->id)) {
@@ -68,6 +55,9 @@ class question_match_qtype extends default_questiontype {
                 }
                 $subquestions[] = $subquestion->id;
             }
+            if (!empty($questiontext) && empty($answertext)) {
+                $result->notice = get_string('nomatchinganswer', 'quiz', $questiontext);
+            }
         }
 
         // delete old subquestions records
@@ -75,11 +65,6 @@ class question_match_qtype extends default_questiontype {
             foreach($oldsubquestions as $os) {
                 delete_records('question_match_sub', 'id', $os->id);
             }
-        }
-
-        if (count($subquestions) < 3) {
-            $result->noticeyesno = get_string("notenoughsubquestions", "quiz");
-            return $result;
         }
 
         if ($options = get_record("question_match", "question", $question->id)) {
@@ -99,6 +84,16 @@ class question_match_qtype extends default_questiontype {
                 return $result;
             }
         }
+
+        if (!empty($result->notice)) {
+            return $result;
+        }
+
+        if (count($subquestions) < 3) {
+            $result->notice = get_string('notenoughanswers', 'quiz', 3);
+            return $result;
+        }
+
         return true;
     }
 
@@ -202,7 +197,7 @@ class question_match_qtype extends default_questiontype {
         $responses = array();
         foreach ($state->options->subquestions as $sub) {
             foreach ($sub->options->answers as $answer) {
-                if (1 == $answer->fraction) {
+                if (1 == $answer->fraction && $sub->questiontext) {
                     $responses[$sub->id] = $answer->id;
                 }
             }
@@ -218,6 +213,7 @@ class question_match_qtype extends default_questiontype {
         $answers        = array();
         $responses      = &$state->responses;
 
+        $formatoptions = new stdClass;
         $formatoptions->noclean = true;
         $formatoptions->para = false;
 
@@ -239,37 +235,40 @@ class question_match_qtype extends default_questiontype {
         ///// Print the input controls //////
         foreach ($subquestions as $key => $subquestion) {
 
-            /// Subquestion text:
-            $a->text = format_text($subquestion->questiontext,
-                $question->questiontextformat, $formatoptions, $cmoptions->course);
-
-            /// Drop-down list:
-            $menuname = $nameprefix.$subquestion->id;
-            $response = isset($state->responses[$subquestion->id])
-                        ? $state->responses[$subquestion->id] : '0';
-            if ($options->readonly
-                and $options->correct_responses
-                and isset($correctanswers[$subquestion->id])
-                and ($correctanswers[$subquestion->id] == $response)) {
-                $a->class = ' highlight ';
-            } else {
-                $a->class = '';
+            if ($subquestion->questiontext) {
+                /// Subquestion text:
+                $a = new stdClass;
+                $a->text = format_text($subquestion->questiontext,
+                    $question->questiontextformat, $formatoptions, $cmoptions->course);
+    
+                /// Drop-down list:
+                $menuname = $nameprefix.$subquestion->id;
+                $response = isset($state->responses[$subquestion->id])
+                            ? $state->responses[$subquestion->id] : '0';
+                if ($options->readonly
+                    and $options->correct_responses
+                    and isset($correctanswers[$subquestion->id])
+                    and ($correctanswers[$subquestion->id] == $response)) {
+                    $a->class = ' highlight ';
+                } else {
+                    $a->class = '';
+                }
+    
+                $a->control = choose_from_menu($answers, $menuname, $response, 'choose', '', 0,
+                 true, $options->readonly);
+    
+                // Neither the editing interface or the database allow to provide
+                // fedback for this question type.
+                // However (as was pointed out in bug bug 3294) the randomsamatch
+                // type which reuses this method can have feedback defined for
+                // the wrapped shortanswer questions.
+                //if ($options->feedback
+                // && !empty($subquestion->options->answers[$responses[$key]]->feedback)) {
+                //    print_comment($subquestion->options->answers[$responses[$key]]->feedback);
+                //}
+    
+                $anss[] = $a;
             }
-
-            $a->control = choose_from_menu($answers, $menuname, $response, 'choose', '', 0,
-             true, $options->readonly);
-
-            // Neither the editing interface or the database allow to provide
-            // fedback for this question type.
-            // However (as was pointed out in bug bug 3294) the randomsamatch
-            // type which reuses this method can have feedback defined for
-            // the wrapped shortanswer questions.
-            //if ($options->feedback
-            // && !empty($subquestion->options->answers[$responses[$key]]->feedback)) {
-            //    print_comment($subquestion->options->answers[$responses[$key]]->feedback);
-            //}
-
-            $anss[] = clone($a);
         }
         include("$CFG->dirroot/question/type/match/display.html");
     }
@@ -279,13 +278,17 @@ class question_match_qtype extends default_questiontype {
         $responses    = &$state->responses;
 
         $sumgrade = 0;
+        $totalgrade = 0;
         foreach ($subquestions as $key => $sub) {
-            if (isset($sub->options->answers[$responses[$key]])) {
-                $sumgrade += $sub->options->answers[$responses[$key]]->fraction;
+            if ($sub->questiontext) {
+                $totalgrade += 1;
+                if (isset($sub->options->answers[$responses[$key]])) {
+                    $sumgrade += $sub->options->answers[$responses[$key]]->fraction;
+                }
             }
         }
 
-        $state->raw_grade = $sumgrade/count($subquestions);
+        $state->raw_grade = $sumgrade/$totalgrade;
         if (empty($state->raw_grade)) {
             $state->raw_grade = 0;
         }
@@ -303,10 +306,10 @@ class question_match_qtype extends default_questiontype {
 
     // ULPGC ecastro for stats report
     function get_all_responses($question, $state) {
-        unset($answers);
+        $answers = new stdClass;
         if (is_array($question->options->subquestions)) {
             foreach ($question->options->subquestions as $aid=>$answer) {
-                unset ($r);
+                $r = new stdClass;
                 $r->answer = $answer->questiontext." : ".$answer->answertext;
                 $r->credit = 1;
                 $answers[$aid] = $r;
@@ -314,6 +317,7 @@ class question_match_qtype extends default_questiontype {
         } else {
             $answers[]="error"; // just for debugging, eliminate
         }
+        $result = new stdClass;
         $result->id = $question->id;
         $result->responses = $answers;
         return $result;
@@ -395,6 +399,7 @@ class question_match_qtype extends default_questiontype {
             $oldid = backup_todb($mat_info['#']['ID']['0']['#']);
 
             //Now, build the question_match_SUB record structure
+            $match_sub = new stdClass;
             $match_sub->question = $new_question_id;
             $match_sub->code = backup_todb($mat_info['#']['CODE']['0']['#']);
             if (!$match_sub->code) {
