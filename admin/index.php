@@ -423,8 +423,9 @@
                  '</a> - <span class="explanation">'.get_string('adminhelpstickyblocks').'</span></div>';
     $miscdata .= '<div class="adminlink"><a href="report.php">'.get_string('reports').
                  '</a> - <span class="explanation">'.get_string('adminhelpreports').'</span></div>';
-    $miscdata .= '<div class="adminlink"><a href="health.php">'.get_string('healthcenter').
-                 '</a> - <span class="explanation">'.get_string('adminhelphealthcenter').'</span></div>';
+//to be enabled later
+/*    $miscdata .= '<div class="adminlink"><a href="health.php">'.get_string('healthcenter').
+                 '</a> - <span class="explanation">'.get_string('adminhelphealthcenter').'</span></div>';*/
     $miscdata .= '<div class="adminlink"><a href="environment.php">'.get_string('environment', 'admin').
                  '</a> - <span class="explanation">'.get_string('adminhelpenvironment').'</span></div>';
 /// Optional stuff

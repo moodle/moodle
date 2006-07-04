@@ -28,8 +28,9 @@
                            get_string('adminhelpstickyblocks'));
     $table->data[] = array('<b><a href="report.php">'.get_string('reports')."</a></b>",
                            get_string('adminhelpreports'));
-    $table->data[] = array('<b><a href="health.php">'.get_string('healthcenter')."</a></b>",
-                           get_string('adminhelphealthcenter'));
+// to be enabled later
+/*    $table->data[] = array('<b><a href="health.php">'.get_string('healthcenter')."</a></b>",
+                           get_string('adminhelphealthcenter'));*/
     $table->data[] = array('<b><a href="environment.php">'.get_string('environment', 'admin')."</a></b>",
                            get_string('adminhelpenvironment'));
 
