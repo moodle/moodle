@@ -430,8 +430,8 @@
                  '</a> - <span class="explanation">'.get_string('adminhelpenvironment').'</span></div>';
 /// Optional stuff
     if (file_exists("$CFG->dirroot/$CFG->admin/$CFG->dbtype")) {
-        $table->data[] = array("<strong><a href=\"$CFG->dbtype/frame.php\">".get_string('managedatabase').'</a></strong>',
-                               '<div class="explanation">'.get_string('adminhelpmanagedatabase').'</div>');
+        $miscdata .= '<div class="adminlink"><a href="'.$CFG->dbtype.'/frame.php">'.get_string('managedatabase').
+        			 '</a> - <span class="explanation">'.get_string('adminhelpmanagedatabase').'</span></div>';
     }
 
     $table->data[] = array('<strong><a href="misc.php">'.get_string('miscellaneous').'</a></strong>', $miscdata);
