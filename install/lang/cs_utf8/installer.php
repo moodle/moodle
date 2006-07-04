@@ -15,6 +15,14 @@ $string['admindirsettinghead'] = 'Nastavení adresáře \'admin\'';
 $string['admindirsettingsub'] = 'Na některých serverech je URL adresa /admin vyhrazena pro speciální účely (např. pro ovládací panel). Na takových serverech může dojít ke kolizi se standardním umístěním stránek pro správu Moodlu. Máte-li tento problém, přejmenujte adresář \'admin\' ve vaší instalaci Moodlu a do tohoto pole zadejte jeho nový název. Příklad: <br /> <br /><b>moodleadmin</b><br /> <br />
 Všechny generované odkazy na stránky správy Moodlu budou používat tento nový název.';
 $string['bypassed'] = 'Přeskočeno';
+$string['cannotcreatelangdir'] = 'Nelze vytvořit adresář pro jazykové soubory.';
+$string['cannotcreatetempdir'] = 'Nelze vytvořit dočasný adresář.';
+$string['cannotdownloadcomponents'] = 'Nelze stáhnout komponenty.';
+$string['cannotdownloadzipfile'] = 'Nelze stáhnout soubor ZIP.';
+$string['cannotfindcomponent'] = 'Komponenta nenalezena.';
+$string['cannotsavemd5file'] = 'Nelze uložit soubor MD5.';
+$string['cannotsavezipfile'] = 'Nelze uložit soubor ZIP.';
+$string['cannotunzipfile'] = 'Nelze dekomprimovat soubor.';
 $string['caution'] = 'Varování';
 $string['check'] = 'Prověřit';
 $string['chooselanguagehead'] = 'Vyberte jazyk';
@@ -22,6 +30,7 @@ $string['chooselanguagesub'] = 'Zvolte si jazyk použitý PŘI INSTALACI. Jazyko
 $string['closewindow'] = 'Zavřít toto okno';
 $string['compatibilitysettingshead'] = 'Kontrola nastavení vašeho PHP...';
 $string['compatibilitysettingssub'] = 'Pro správný běh Moodlu by váš server měl projít ve všech následujících testech';
+$string['componentisuptodate'] = 'Komponenta je aktuální.';
 $string['configfilenotwritten'] = 'Instalační skript nemohl automaticky vytvořit soubor config.php s vaší konfigurací - pravděpodobně z důvodů nastavení práv k zápisu do adresáře Moodle. Můžete ručně zkopírovat následující kód do souboru s názvem config.php v hlavním adresáři vaší instalace Moodle.';
 $string['configfilewritten'] = 'config.php byl úspěšně vytvořen';
 $string['configurationcompletehead'] = 'Konfigurace dokončena';
@@ -64,6 +73,7 @@ Je třeba mít diskový prostor, kam může Moodle ukládat nahrané (uploadovan
 $string['dirroot'] = 'Moodle adresář';
 $string['dirrooterror'] = 'Hodnota \'Moodle adresář\' nevypadá nastavená správně - nemůžu tam najít Moodle instalaci. Následující hodnota byla resetována.';
 $string['download'] = 'Stáhnout';
+$string['downloadedfilecheckfailed'] = 'Kontrola staženého souboru dopadla negativně';
 $string['downloadlanguagebutton'] = 'Stáhnout jazykový balíček \"$a\"';
 $string['downloadlanguagehead'] = 'Stáhnout jazykový balíček';
 $string['downloadlanguagenotneeded'] = 'V instalaci lze nyní pokračovat v jazyce \"$a\".';
@@ -88,6 +98,7 @@ $string['help'] = 'Nápověda';
 $string['iconvrecommended'] = 'Instalace volitelné knihovny ICONV je silně doporučena, neboť zvyšuje výkon stránek, zejména pokud používáte jazyky nezaložené na latince.';
 $string['info'] = 'Informace';
 $string['installation'] = 'Instalace';
+$string['invalidmd5'] = 'Neplatný MD5 hash';
 $string['langdownloaderror'] = 'Bohužel, jazyk \"$a\" se nepodařilo nainstalovat. Instalace bude pokračovat v angličtine.';
 $string['langdownloadok'] = 'Úspěšně se podařilo nainstalovat jazykový balíček \"$a\". Instalace bude pokračovat v tomto jazyce.';
 $string['language'] = 'Jazyk';
@@ -110,6 +121,7 @@ na hodnotu blízkou 16M. Nemáte-li taková práva, požádejte vašeho správce
 <p><blockquote>php_value memory_limit 16M</blockquote></p>
 <p>Bohužel, na některých serverech tímto vyřadíte z provozu <b>všechny</b> PHP stránky (při jejich prohlížení uvidíte chybové zprávy), takže budete muset soubor .htaccess odstranit.</li>
 </ol>';
+$string['missingrequiredfield'] = 'Chybí některé z povinných polí';
 $string['mysql416bypassed'] = 'Pokud ovšem ve vaší instalaci Moodlu používáte POUZE jazyky založené na latince (iso-8859-1), můžete nadále používat momentálně nainstalovanou verzi MySQL 4.1.12 (nebo vyšší).';
 $string['mysql416required'] = 'Minimální verzí požadovanou pro Moodle 1.6 -- a pro pozdější bezpečný převod všech dat do UTF-8 -- je MySQL 4.1.16.';
 $string['mysqlextensionisnotpresentinphp'] = 'PHP nebylo korektně nakonfigurováno pro komunikaci v MySQL. Zkontrolujte váš php.ini nebo překompilujte PHP.';
@@ -125,6 +137,7 @@ $string['phpversionhelp'] = '<p>Moodle vyžaduje verzi PHP alespoň 4.1.0.</p>
 <p>Vaše stávající PHP má verzi $a</p>
 <p>Musíte upgradovat vaše PHP nebo Moodle nainstalovat na hostitele s vyšší verzí!</p>';
 $string['previous'] = 'Předchozí';
+$string['remotedownloadnotallowed'] = 'Stahování komponent na server není povoleno (direktiva allow_url_fopen je ve stavu \'vypnuto\').<br /><br />Musíte soubor stáhnout <a href=\"$a->url\">$a->url</a> ručně, zkopírovat jej na serveru do umístění \"$a->dest\" a tam jej dekomprimovat.';
 $string['report'] = 'Report';
 $string['safemode'] = 'Bezpečný režim (safe mode)';
 $string['safemodeerror'] = 'Moodle může mít problémy při zapnutém bezpečném režimu (safe mode)';
@@ -142,6 +155,9 @@ $string['welcomep40'] = 'Balíček rovněž obsahuje <strong>Moodle ve verzi $a-
 $string['welcomep50'] = 'Použití všech aplikací v tomto balíčku je vázáno jejich příslušnými licencemi. Kompletní balíček <strong>$a->installername</strong> je software s <a href=\"http://www.opensource.org/docs/definition_plain.html\"> otevřeným kódem (open source)</a> a je šířen pod licencí <a href=\"http://www.gnu.org/copyleft/gpl.html\">GNU/GPL</a>.';
 $string['welcomep60'] = 'Následující stránky vás provedou skrze několik jednoduchých kroků potřebných k rozběhnutí <strong>Moodle</strong> na vašem počítači. Můžete přijmout výchozí nastavení, nebo si jej případně upravit podle svých potřeb.';
 $string['welcomep70'] = 'Stisknutím následujícího tlačítka \"Další\" pokračujte v nastavení vaší instalace Moodlu.';
+$string['wrongdestpath'] = 'Chybné cílové umístění';
+$string['wrongsourcebase'] = 'Chybné URL zdrojového serveru';
+$string['wrongzipfilename'] = 'Chybné jméno souboru ZIP';
 $string['wwwroot'] = 'Webová adresa';
 $string['wwwrooterror'] = 'Toto nevypadá jako platná webová adresa této instalace Moodle.';
 ?>
