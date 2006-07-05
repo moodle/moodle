@@ -62,11 +62,13 @@ class qformat_blackboard extends qformat_default {
 
     $questions = array();
 
-    process_tf($xml, $questions);
-    process_mc($xml, $questions);
-    process_ma($xml, $questions);
-    process_fib($xml, $questions);
-    process_matching($xml, $questions);
+     $defaultq = $this->defaultquestion();
+
+    process_tf($xml, $questions, $defaultq);
+    process_mc($xml, $questions, $defaultq);
+    process_ma($xml, $questions, $defaultq);
+    process_fib($xml, $questions, $defaultq);
+    process_matching($xml, $questions, $defaultq);
 
     return $questions;
   }
@@ -75,13 +77,18 @@ class qformat_blackboard extends qformat_default {
 //----------------------------------------
 // Process True / False Questions
 //----------------------------------------
-function process_tf($xml, &$questions) {
+function process_tf($xml, &$questions, $defaultq) {
 
-    $tfquestions = $xml["POOL"]["#"]["QUESTION_TRUEFALSE"];
+    if (isset($xml["POOL"]["#"]["QUESTION_TRUEFALSE"])) {
+        $tfquestions = $xml["POOL"]["#"]["QUESTION_TRUEFALSE"];
+    }
+    else {
+        return;
+    }
 
     for ($i = 0; $i < sizeof ($tfquestions); $i++) {
       
-        $question = $this->defaultquestion();
+        $question = $defaultq;
 
         $question->qtype = TRUEFALSE;
         $question->single = 1;	// Only one answer is allowed
@@ -115,13 +122,18 @@ function process_tf($xml, &$questions) {
 //----------------------------------------
 // Process Multiple Choice Questions
 //----------------------------------------
-function process_mc($xml, &$questions) {
+function process_mc($xml, &$questions, $defaultq) {
 
-    $mcquestions = $xml["POOL"]["#"]["QUESTION_MULTIPLECHOICE"];
+    if (isset($xml["POOL"]["#"]["QUESTION_MULTIPLECHOICE"])) {
+        $mcquestions = $xml["POOL"]["#"]["QUESTION_MULTIPLECHOICE"];
+    }
+    else {
+        return;
+    }
 
     for ($i = 0; $i < sizeof ($mcquestions); $i++) {
 
-        $question = $this->defaultquestion();
+        $question = $defaultq;
 
         $question->qtype = MULTICHOICE;
         $question->single = 1;	// Only one answer is allowed
@@ -157,13 +169,18 @@ function process_mc($xml, &$questions) {
 //----------------------------------------
 // Process Multiple Choice Questions With Multiple Answers
 //----------------------------------------
-function process_ma($xml, &$questions) {
+function process_ma($xml, &$questions, $defaultq) {
 
-    $maquestions = $xml["POOL"]["#"]["QUESTION_MULTIPLEANSWER"];
+    if (isset($xml["POOL"]["#"]["QUESTION_MULTIPLEANSWER"])) {
+        $maquestions = $xml["POOL"]["#"]["QUESTION_MULTIPLEANSWER"];
+    }
+    else {
+        return;
+    }
 
     for ($i = 0; $i < sizeof ($maquestions); $i++) {
 
-        $question = $this->defaultquestion();
+        $question = $defaultq;
 
         $question->qtype = MULTICHOICE;
         $question->defaultgrade = 1;
@@ -212,12 +229,18 @@ function process_ma($xml, &$questions) {
 //----------------------------------------
 // Process Fill in the Blank Questions
 //----------------------------------------
-function process_fib($xml, &$questions) {
+function process_fib($xml, &$questions, $defaultq) {
 
-    $fibquestions = $xml["POOL"]["#"]["QUESTION_FILLINBLANK"];
+    if (isset($xml["POOL"]["#"]["QUESTION_FILLINBLANK"])) {
+        $fibquestions = $xml["POOL"]["#"]["QUESTION_FILLINBLANK"];
+    }
+    else {
+        return;
+    }
+
     for ($i = 0; $i < sizeof ($fibquestions); $i++) {
 
-        $question = $this->defaultquestion();
+        $question = $defaultq;
 
         $question->qtype = SHORTANSWER;
         $question->usecase = 0;	// Ignore case
@@ -242,12 +265,18 @@ function process_fib($xml, &$questions) {
 //----------------------------------------
 // Process Matching Questions
 //----------------------------------------
-function process_matching($xml, &$questions) {
+function process_matching($xml, &$questions, $defaultq) {
 
-    $matchquestions = $xml["POOL"]["#"]["QUESTION_MATCH"];
+    if (isset($xml["POOL"]["#"]["QUESTION_MATCH"])) {
+        $matchquestions = $xml["POOL"]["#"]["QUESTION_MATCH"];
+    }
+    else {
+        return;
+    }
+
     for ($i = 0; $i < sizeof ($matchquestions); $i++) {
 
-        $question = $this->defaultquestion();
+        $question = $defaultq;
 
         $question->qtype = MATCH;
 
