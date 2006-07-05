@@ -309,14 +309,14 @@ class question_match_qtype extends default_questiontype {
     function get_all_responses($question, $state) {
         $answers = array();
         if (is_array($question->options->subquestions)) {
-            foreach ($question->options->subquestions as $aid=>$answer) {
-                $r = new stdClass;
-                $r->answer = $answer->questiontext." : ".$answer->answertext;
-                $r->credit = 1;
-                $answers[$aid] = $r;
+            foreach ($question->options->subquestions as $aid => $answer) {
+                if ($answer->questiontext) {
+                    $r = new stdClass;
+                    $r->answer = $answer->questiontext . ": " . $answer->answertext;
+                    $r->credit = 1;
+                    $answers[$aid] = $r;
+                }
             }
-        } else {
-            $answers[] = "error"; // just for debugging, eliminate
         }
         $result = new stdClass;
         $result->id = $question->id;
@@ -332,7 +332,7 @@ class question_match_qtype extends default_questiontype {
        foreach ($subquestions as $key => $sub) {
            foreach ($responses as $ind => $code) {
                if (isset($sub->options->answers[$code])) {
-                   $results[$ind] =  $subquestions[$ind]->questiontext . ":" . $sub->options->answers[$code]->answer;
+                   $results[$ind] =  $subquestions[$ind]->questiontext . ": " . $sub->options->answers[$code]->answer;
                }
            }
        }
