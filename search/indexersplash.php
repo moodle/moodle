@@ -1,4 +1,9 @@
 <?php
+  /* This file serves as a splash-screen (entry page) to the indexer script -
+   * it is in place to prevent accidental reindexing which can lead to a loss
+   * of time, amongst other things.
+   * */
+  
   require_once('../config.php');
   require_once("$CFG->dirroot/search/lib.php");  
 
@@ -28,16 +33,18 @@
     $db_count = 0;
   } //else    
   
-  //elaborate on error messages, when db!=0 and index=0 -> corrupt, etc.
+  //TODO: elaborate on error messages, when db!=0 and index=0 -> corrupt, etc.
   if ($index_filecount != 0 or $db_count != 0) {    
-    mtrace("<pre>The data directory ($index_path) contains $index_filecount files, and "
-          ."there are $db_count records in the <em>search_documents</em> table.");    
-    mtrace('');    
-    mtrace("This indicates that you have already indexed this site - click the following "
-          ."link if you're sure you want to continue: <a href='indexer.php?areyousure=yes'>Go!</a>");          
-    mtrace('');          
-    mtrace("<a href='index.php'>Back to query page</a>.");
-    mtrace("</pre>");
+    mtrace("<pre>The data directory ($index_path) contains $index_filecount files, and\n"
+          ."there are $db_count records in the <em>search_documents</em> table.\n"
+          ."\n"
+          ."This indicates that you have already succesfully indexed this site, or at least\n"
+          ."started and cancelled an indexing session. Follow the link if you are sure that\n"
+          ."you want to continue indexing - this will replace any existing index data (no\n"
+          ."Moodle data is affected).\n"
+          ."\n"          
+          ."<a href='indexer.php?areyousure=yes'>Continue indexing</a> or <a href='index.php'>Back to query page</a>."
+          ."</pre>");
   } else {
     header('Location: indexer.php?areyousure=yes');
   } //else    

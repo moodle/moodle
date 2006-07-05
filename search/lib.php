@@ -17,6 +17,23 @@
   function search_shorten_url($url, $length=30) {    
     return substr($url, 0, $length)."...";
   } //search_shorten_url
+  
+  function search_escape_string($str) {
+    global $CFG;
+     
+    switch ($CFG->dbtype) {
+      case 'mysql':
+        $s = mysql_real_escape_string($str);
+        break;
+      case 'postgres7':
+        $s = pg_escape_string($str);
+        break;
+      default:
+        $s = addslashes($str);
+    } //switch
+    
+    return $s;
+  } //search_escape_string
 
   //get a real php 5 version number, using 5.0.0 arbitrarily  
   function search_check_php5($feedback=false) {

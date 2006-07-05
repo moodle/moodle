@@ -363,22 +363,8 @@ function wiki_get_entries(&$wiki, $byindex=NULL) {
 
 //rescued and converted from ewikimoodlelib.php
 //retrieves latest version of a page
-function wiki_get_latest_page(&$entry, $pagename, $version=0) {
-  global $CFG;
-   
-  //need something like this in datalib.php?
-  switch ($CFG->dbtype) {
-    case 'mysql':
-      $f = 'mysql_real_escape_string';
-      break;
-    case 'postgres7':
-      $f = 'pg_escape_string';
-      break;
-    default:
-      $f = 'addslashes';
-  } //switch
-  
-  $pagename = "'".$f($pagename)."'";
+function wiki_get_latest_page(&$entry, $pagename, $version=0) { 
+  $pagename = "'".addslashes($pagename)."'";
   
   if ($version > 0 and is_int($version)) {
     $version = "AND (version=$version)";
@@ -456,7 +442,7 @@ function wiki_get_content_for_index(&$wiki) {
       foreach($pages as $page) {
         if (strlen($page->content) > 0) {
           $i++;
-          $documents[] = new WikiSearchDocument($page, $entry->wikiid, $entry->course, $entry->userid, $entry->groupid);
+          $documents[] = new WikiSearchDocument($page, $entry->wikiid, $entry->course, $entry->groupid);
         } //if
       } //foreach
       

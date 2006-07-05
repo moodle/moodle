@@ -1,3 +1,9 @@
+latest
+------
+Started cleaning and standardising things.
+
+cvs v1.1
+--------
 This is the initial release (prototype) of Moodle's new search module -
 so basically watch out for sharp edges.
 

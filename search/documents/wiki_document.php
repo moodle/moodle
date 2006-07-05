@@ -3,7 +3,7 @@
   require_once("$CFG->dirroot/search/documents/document.php");
   
   class WikiSearchDocument extends SearchDocument {  
-    public function __construct(&$page, $wiki_id, $cid, $uid, $gid) {
+    public function __construct(&$page, $wiki_id, $cid, $gid) {
       $this->addField(Zend_Search_Lucene_Field::Text('title', $page->pagename));
       $this->addField(Zend_Search_Lucene_Field::Text('author', $page->author));
       $this->addField(Zend_Search_Lucene_Field::UnStored('contents', $page->content));
@@ -12,7 +12,7 @@
       $this->addField(Zend_Search_Lucene_Field::Keyword('version', $page->version));
       $this->addField(Zend_Search_Lucene_Field::Keyword('wiki', $wiki_id));
       
-      parent::__construct(SEARCH_WIKI_TYPE, $cid, $uid, $gid);
+      parent::__construct(SEARCH_WIKI_TYPE, $cid, $gid);
     } //constructor    
   } //WikiSearchDocument
   

@@ -1,10 +1,8 @@
 <?php  
-  /*$id = required_param('id', PARAM_INT);   // course
-  if (! $course = get_record("course", "id", $id)) {
-    error("Course ID is incorrect");
-  }
-  require_course_login($course);
-  add_to_log($course->id, "wiki", "view all", "index.php?id=$course->id", "");*/
+  /* Entry page for /search
+   * Redirects to query.php, because that is the most likely place a
+   * user intended to go to when typing moodle.site/search
+   * */
 
   header("Location: query.php");    
 ?>

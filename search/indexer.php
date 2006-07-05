@@ -1,4 +1,14 @@
 <?php
+  /* The indexer logic -
+   * Look through each installed module's lib file for necessary search functions,
+   * and if they're present (and the module search document class file), add the
+   * content to the index. Repeat this for blocks.
+   *
+   * Along with the index data, each document's summary gets stored in the database
+   * and synchronised to the index (flat file) via the primary key ('id') which is mapped
+   * to the 'dbid' field in the index
+   * */
+
   //this'll take some time, set up the environment
   @set_time_limit(0);
   @ob_implicit_flush(true);
@@ -7,16 +17,20 @@
   require_once('../config.php');
   require_once("$CFG->dirroot/search/lib.php");  
 
+  //only administrators can index the moodle installation, because access to all pages is required   
   require_login();
 
   if (!isadmin()) {
     error("You need to be an admin user to use this page.", "$CFG->wwwroot/login/index.php");
   } //if
   
+  //confirmation flag to prevent accidental reindexing (indexersplash.php is the correct entry point)
   $sure = strtolower(optional_param('areyousure', '', PARAM_ALPHA));
   
   if ($sure != 'yes') {
-    mtrace("Sorry, you weren't sure enough (<a href='index.php'>back to query page</a>).");
+    mtrace("<pre>Sorry, you need to confirm indexing via <a href='indexersplash.php'>indexersplash.php</a>"
+          .". (<a href='index.php'>Back to query page</a>).</pre>");
+          
     exit(0);
   } //if  
   
@@ -27,6 +41,7 @@
     exit(0);
   } //if
     
+  //php5 found, continue including php5-only files
   require_once("$CFG->dirroot/search/Zend/Search/Lucene.php");
   
   //begin timer
@@ -37,6 +52,7 @@
   $index_path = $CFG->dataroot.'/search';
   $index_db_file = "$CFG->dirroot/search/db/$CFG->dbtype.sql";  
   
+  //setup directory in data root
   if (!file_exists($index_path)) {
     mtrace("Data directory ($index_path) does not exist, attempting to create.");
     if (!mkdir($index_path)) {
@@ -47,9 +63,6 @@
   } else {
     mtrace("Using $index_path as data directory.");
   } //else
-
-  //stop accidental re-indexing (zzz)
-  //search_pexit("Not indexing at this time.");
 
   $index = new Zend_Search_Lucene($index_path, true);
   
@@ -63,41 +76,32 @@
     modify_database($index_db_file, '', false);
     ob_end_clean(); //chuck the buffer and resume normal operation
   } //else
-  
-  //empty database table goes here
-  // delete * from search_documents;
-  // set auto_increment back to 1
-  
-  //-------- debug stuff
-  /*
-  include_once("$CFG->dirroot/mod/wiki/lib.php");
-  
-  $wikis = get_all_instances_in_courses("wiki", get_courses());
-  #search_pexit($wikis[1]);
-  $entries = wiki_get_entries($wikis[1]);
-  #search_pexit($entries);
-    
-  #$r = wiki_get_pages($entries[134]);
-  $r = wiki_get_latest_pages($entries[95]);
-  
-  search_pexit($r);
-  //ignore me --------*/
     
   mtrace('Starting activity modules');
+  
+  //the presence of the required search functions -
+  // * mod_iterator
+  // * mod_get_content_for_index
+  //are the sole basis for including a module in the index at the moment.
+  
   if ($mods = get_records_select('modules' /*'index this module?' where statement*/)) {
     foreach ($mods as $mod) {
       $libfile = "$CFG->dirroot/mod/$mod->name/lib.php";
+      
       if (file_exists($libfile)) {
         include_once($libfile);
         
         $iter_function = $mod->name.'_iterator';
         $index_function = $mod->name.'_get_content_for_index';
-        $include_file = $CFG->dirroot.'/search/documents/'.$mod->name.'_document.php';        
-        $c = 0;
+        
+        //specific module search document class
+        $class_file = $CFG->dirroot.'/search/documents/'.$mod->name.'_document.php';
+        
+        $counter = 0;
         $doc = new stdClass;
                 
-        if (function_exists($index_function) && function_exists($iter_function)) {
-          include_once($include_file);
+        if (file_exists($class_file) && function_exists($index_function) && function_exists($iter_function)) {
+          include_once($class_file);
           
           mtrace("Processing module function $index_function ...");
                      
@@ -107,19 +111,14 @@
             //begin transaction
             
             foreach($documents as $document) {
-              $c++;
-              
-              //db sync increases indexing time from 55 sec to 73 (64 on Saturday?), so ~30%
-              //therefore, let us make a custom insert function for this search module
-              
+              $counter++;
+                            
               //data object for db
               $doc->type = $document->type;
-              $doc->title = mysql_real_escape_string($document->title); //naughty
-              $doc->update = time();
-              $doc->permissions = 0;
+              $doc->title = search_escape_string($document->title);
+              $doc->update = time();              
               $doc->url = 'none';
-              $doc->courseid = $document->courseid;
-              $doc->userid = $document->userid;
+              $doc->courseid = $document->courseid;              
               $doc->groupid = $document->groupid;
               
               //insert summary into db
@@ -127,12 +126,14 @@
               
               //synchronise db with index
               $document->addField(Zend_Search_Lucene_Field::Keyword('dbid', $id));
+              
+              //add document to index
               $index->addDocument($document);                  
                             
-              //commit every 100 new documents, and print a status message                            
-              if (($c%100) == 0) {
+              //commit every x new documents, and print a status message                            
+              if (($counter%200) == 0) {
                 $index->commit();
-                mtrace(".. $c");                
+                mtrace(".. $counter");                
               } //if
             } //foreach
             
@@ -142,16 +143,21 @@
                   
           //commit left over documents, and finish up  
           $index->commit();
-          mtrace("-- $c documents indexed");
+          
+          mtrace("-- $counter documents indexed");
           mtrace('done.');          
         } //if
       } //if
     } //foreach
   } //if
   
-  //done modules
+  //finished modules
   mtrace('Finished activity modules');
   search_stopwatch();
+  
+  //now blocks...
+  //
+  
   mtrace(".<br><a href='index.php'>Back to query page</a>.");
   mtrace('</pre>');
 

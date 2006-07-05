@@ -41,6 +41,7 @@
   print_heading($strquery);
   
   print_simple_box_start('center', '', '', 20);
+  
 ?>
 
 <form name="query" method="get" action="query.php">
