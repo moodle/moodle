@@ -13,11 +13,14 @@ function countdown_clock(theTimer) {
 	// @EC PF : time left according to client
 	quizTimerValue = Math.floor( (ec_quiz_finish - ec_now_epoch) /1000 );
 
-    if(quizTimerValue == 0) {
+    if(quizTimerValue <= 0) {
         clearTimeout(timeout_id);
-        document.forms['responseform'].timeup.value = 1;
-        document.forms['responseform'].onsubmit();
-        document.forms['responseform'].submit();
+        var ourForm = document.forms['responseform'];
+        ourForm.timeup.value = 1;
+        if (ourForm.onsubmit) { 
+	        ourForm.onsubmit();
+	    }
+        ourForm.submit();
     }
 
     now = quizTimerValue;
