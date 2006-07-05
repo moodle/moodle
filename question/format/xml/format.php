@@ -145,7 +145,7 @@ class qformat_xml extends qformat_default {
         $qo->qtype = MULTIANSWER;
         $qo->course = $this->course;
 
-        if (!empty($thequestion)) {
+        if (!empty($questions)) {
             $qo->name = $this->import_text( $questions['#']['name'][0]['#']['text'] );
         }
 
