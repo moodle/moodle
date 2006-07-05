@@ -181,13 +181,14 @@ class question_match_qtype extends default_questiontype {
         // Serialize responses
         $responses = array();
         foreach ($state->options->subquestions as $key => $subquestion) {
-            $responses[] = $key.'-'.($state->responses[$key] ? $state->responses[$key] : 0);
+            if ($subquestion->questiontext) {
+                $responses[] = $key.'-'.($state->responses[$key] ? $state->responses[$key] : 0);
+            }
         }
         $responses = implode(',', $responses);
 
         // Set the legacy answer field
-        if (!set_field('question_states', 'answer', $responses, 'id',
-         $state->id)) {
+        if (!set_field('question_states', 'answer', $responses, 'id', $state->id)) {
             return false;
         }
         return true;
