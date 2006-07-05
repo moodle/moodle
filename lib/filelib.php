@@ -203,12 +203,23 @@ function get_mimetype_description($mimetype,$capitalise=false) {
 }
 
 /** 
- * @PARAM $filter int 0=no filtering, 1=all files, 2=html files only
+ * Handles the sending of file data to the user's browser, including support for 
+ * byteranges etc. 
+ * @param string $path Path of file on disk (including real filename), or actual content of file as string
+ * @param string $filename Filename to send
+ * @param int $lifetime Number of seconds before the file should expire from caches (default 24 hours)
+ * @param int $filter 0 (default)=no filtering, 1=all files, 2=html files only
+ * @param bool $pathisstring If true (default false), $path is the content to send and not the pathname
+ * @param bool $forcedownload If true (default false), forces download of file rather than view in browser/plugin
+ * @param string $mimetype Include to specify the MIME type; leave blank to have it guess the type from $filename
  */
-function send_file($path, $filename, $lifetime=86400 , $filter=0, $pathisstring=false, $forcedownload=false) {
+function send_file($path, $filename, $lifetime=86400 , $filter=0, $pathisstring=false, $forcedownload=false, $mimetype='') {
     global $CFG;
 
-    $mimetype     = $forcedownload ? 'application/x-forcedownload' : mimeinfo('type', $filename);
+    // Use given MIME type if specified, otherwise guess it using mimeinfo. 
+    // Always use application/x-forcedownload if that's requested.
+    $mimetype     = $forcedownload ? 'application/x-forcedownload' : 
+                        ($mimetype ? $mimetype : mimeinfo('type', $filename));
     $lastmodified = $pathisstring ? time() : filemtime($path);
     $filesize     = $pathisstring ? strlen($path) : filesize($path);
 
