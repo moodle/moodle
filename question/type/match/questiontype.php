@@ -307,7 +307,7 @@ class question_match_qtype extends default_questiontype {
 
     // ULPGC ecastro for stats report
     function get_all_responses($question, $state) {
-        $answers = new stdClass;
+        $answers = array();
         if (is_array($question->options->subquestions)) {
             foreach ($question->options->subquestions as $aid=>$answer) {
                 $r = new stdClass;
@@ -316,7 +316,7 @@ class question_match_qtype extends default_questiontype {
                 $answers[$aid] = $r;
             }
         } else {
-            $answers[]="error"; // just for debugging, eliminate
+            $answers[] = "error"; // just for debugging, eliminate
         }
         $result = new stdClass;
         $result->id = $question->id;
