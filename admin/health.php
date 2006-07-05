@@ -356,24 +356,41 @@ class problem_000008 extends problem_base {
         return 'PHP: memory_limit cannot be controlled by Moodle';
     }
     function exists() {
-        $memlimit = @ini_get('memory_limit');
-        if(empty($memlimit)) {
+        $oldmemlimit = @ini_get('memory_limit');
+        if(empty($oldmemlimit)) {
             // PHP not compiled with memory limits, this means that it's
-            // probably limited to 8M so we have a problem...
-            return true;
+            // probably limited to 8M or in case of Windows not at all.
+            // We can ignore it for now - there is not much to test anyway
+            // TODO: add manual test that fills memory??
+            return false;
         }
-        // Otherwise, raise_memory_limit in setup.php will do the trick
+        $oldmemlimit = get_real_size($oldmemlimit);
+        //now lets change the memory limit to something unique below 128M==134217728
+        @ini_set('memory_limit', 134217720);
+        $testmemlimit = get_real_size(@ini_get('memory_limit'));
+        //verify the change had any effect at all
+        if ($oldmemlimit == $testmemlimit) {
+            //memory limit can not be changed - is it big enough then?
+            if ($oldmemlimit < get_real_size('128M')) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        @ini_set('memory_limit', $oldmemlimit);
         return false;
     }
     function severity() {
-        return SEVERITY_ANNOYANCE;
+        return SEVERITY_NOTICE;
     }
     function description() {
-        return 'The settings for PHP on your server do not allow a script to request more memory during its execution. This means that most likely there is a hard limit of 8MB for each script. It is possible that certain operations within Moodle will require more than this amount in order to complete successfully, especially if there are lots of data to be processed. Therefore, it is recommended that you contact your server administrator to address this issue.';
+        return 'The settings for PHP on your server do not allow a script to request more memory during its execution. '.
+               'This means that there is a hard limit of '.@ini_get('memory_limit').' for each script. '.
+               'It is possible that certain operations within Moodle will require more than this amount in order '.
+               'to complete successfully, especially if there are lots of data to be processed.';
     }
     function solution() {
-        global $CFG;
-        return 'We need a good solution here. Enabling memory limit control means recompiling PHP... maybe this should be SEVERITY_NOTICE instead of SEVERITY_ANNOYANCE?';
+        return 'It is recommended that you contact your web server administrator to address this issue.';
     }
 }
 
