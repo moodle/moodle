@@ -1,6 +1,16 @@
 <?php  // $Id$
 
+    ob_start(); //for whitespace test
     require_once('../config.php');
+
+	// extra whitespace test - intentionally breaks cookieless mode
+	$extraws = '';
+    while (true) {
+        $extraws .= ob_get_contents();
+        if (!@ob_end_clean()) { //
+            break;
+        }
+    }
 
     define('SEVERITY_NOTICE',      'notice');
     define('SEVERITY_ANNOYANCE',   'annoyance');
@@ -217,18 +227,13 @@ class problem_000001 extends problem_base {
 
 class problem_000002 extends problem_base {
     function title() {
-        return 'Extra characters at the end of config.php';
+        return 'Extra characters at the end of config.php or other library function';
     }
     function exists() {
-        // [pj] When the requirements are raised to PHP 4.3.0 this will be file_get_contents()
-        if($fp = @fopen('../config.php', 'r')) {
-            $contents = fread($fp, 16384); // 16K should be enough
-            $ending = substr($contents, -2);
-            unset($contents);
-            if($ending == '?>') {
-                return false;
-            }
-            fclose($fp);
+        global $extraws;
+
+        if($extraws === '') {
+            return false;
         }
         return true;
     }
@@ -236,11 +241,11 @@ class problem_000002 extends problem_base {
         return SEVERITY_SIGNIFICANT;
     }
     function description() {
-        return 'Your Moodle configuration file, config.php, contains some characters after the closing PHP tag (?>). This could cause Moodle to exhibit several kinds of problems and should be fixed.';
+        return 'Your Moodle configuration file config.php or another library file, contains some characters after the closing PHP tag (?>). This causes Moodle to exhibit several kinds of problems (such as broken downloaded files) and must be fixed.';
     }
     function solution() {
         global $CFG;
-        return 'You need to edit <strong>'.$CFG->dirroot.'/config.php</strong> and remove all characters (including spaces and returns) after the ending ?> tag. These two characters should be the very last in that file.';
+        return 'You need to edit <strong>'.$CFG->dirroot.'/config.php</strong> and remove all characters (including spaces and returns) after the ending ?> tag. These two characters should be the very last in that file. The extra trailing whitespace may be also present in other PHP files that are included from lib/setup.php.';
     }
 }
 
@@ -463,13 +468,13 @@ class problem_000010 extends problem_base {
     function status() {
         global $CFG;
         $handle = @fopen($CFG->wwwroot.'/file.php?file=/testslasharguments', "r");
-        $contents = trim(@fread($handle, 7));
+        $contents = @trim(fread($handle, 10));
         @fclose($handle);
         if ($contents != 'test -1') {
             return -1;
         }
         $handle = @fopen($CFG->wwwroot.'/file.php/testslasharguments', "r");
-        $contents = trim(@fread($handle, 6));
+        $contents = trim(@fread($handle, 10));
         @fclose($handle);
         switch ($contents) {
             case 'test 1': return 1;
