@@ -1217,6 +1217,8 @@ body#message-messages {
 .truefalse .answer {
   padding: 0.3em 0 0.3em 0.3em;
 }
+.calculated .answer input,
+.numerical .answer input,
 .shortanswer .answer input {
   width: 85%;
 }
