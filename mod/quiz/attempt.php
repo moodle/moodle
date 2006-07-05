@@ -470,7 +470,7 @@
         ?>
         <script language="javascript" type="text/javascript">
         <!--
-            document.write("<form name=\"responseform\" method=\"post\" action=\"attempt.php\" autocomplete=\"off\">\n");
+            document.write("<form name=\"responseform\" id=\"responseform\" method=\"post\" action=\"attempt.php\" autocomplete=\"off\">\n");
         // -->
         </script>
         <noscript>
@@ -478,7 +478,7 @@
         </noscript>
         <?php
     } else {
-        echo "<form name=\"responseform\" method=\"post\" action=\"attempt.php\" autocomplete=\"off\">\n";
+        echo "<form name=\"responseform\" id=\"responseform\" method=\"post\" action=\"attempt.php\" autocomplete=\"off\">\n";
     }
 
     // Add a hidden field with the quiz id
@@ -490,11 +490,12 @@
         ?>
         <script language="javascript" type="text/javascript">
         function navigate(page) {
-            document.responseform.page.value=page;
-            if (document.responseform.onsubmit) {
-	            document.responseform.onsubmit();
+            var ourForm = document.forms['responseform']; 
+            ourForm.page.value=page;
+            if (ourForm.onsubmit) {
+	            ourForm.onsubmit();
 	        }
-            document.responseform.submit();
+            ourForm.submit();
         }
         </script>
         <?php
