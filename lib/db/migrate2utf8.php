@@ -3,7 +3,7 @@
 
 function migrate2utf8_user($fields, $crash, $debug, $maxrecords) {
 
-    global $CFG, $db, $processedrecords;
+    global $CFG, $db, $processedrecords, $globallang;
 
     // convert all columns to blobs
     foreach ($fields as $field) {
@@ -74,7 +74,11 @@ function migrate2utf8_user($fields, $crash, $debug, $maxrecords) {
                 update_record('config',$migrationconfig);
                 
                 // this is the only encoding we need for this table
-                $fromenc = get_original_encoding('','',$record->lang);
+                if ($globallang) {
+        			$fromenc = $globallang;
+        		} else {
+                	$fromenc = get_original_encoding('','',$record->lang);
+                }
 
                 if (($fromenc != 'utf-8') && ($fromenc != 'UTF-8')) {
                     foreach ($fields as $field) {
