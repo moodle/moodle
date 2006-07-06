@@ -47,7 +47,6 @@ function multilang_filter($courseid, $text) {
 */
 
     // [pj] I don't know about you but I find this new implementation funny :P
-
     $search = '/(<(?:lang|span) lang="[a-zA-Z0-9_-]*".*?>.+?<\/(?:lang|span)>\s*)+/is';
     return preg_replace_callback($search, 'multilang_filter_impl', $text);
 }
@@ -55,7 +54,6 @@ function multilang_filter($courseid, $text) {
 function multilang_filter_impl($langblock) {
 
     global $CFG;
-
     // This callbackis going to get called multiple times, so cache $preflangs
     static $preflangs = NULL;
 
@@ -99,12 +97,10 @@ function multilang_filter_impl($langblock) {
             $preflangs[] = 'en';
         }
     }
-
     // Setup is done, now do multilang replacement on the match we 've been called for
 
     $searchtosplit = '/<(?:lang|span) lang="([a-zA-Z0-9_-]*)".*?>(.+?)<\/(?:lang|span)>/is';
     preg_match_all($searchtosplit, $langblock[0], $langlist);
-
     /// Get the existing sections langs
     $lang      = '';
     $minpref   = count($preflangs);
@@ -124,7 +120,15 @@ function multilang_filter_impl($langblock) {
         }
     }
 
-    return trim($langlist[2][$bestkey]);
+    // return result if we got some sort of match
+    if ($foundkey) {
+        $bestmatch = $langlist[2][$bestkey];
+    }
+    else {
+        $bestmatch = '';
+    }
+
+    return trim($bestmatch);
 }
 
 ?>
