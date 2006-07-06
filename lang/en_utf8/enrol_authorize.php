@@ -152,6 +152,17 @@ $string['transid'] = 'Transaction ID';
 $string['unenrolstudent'] = 'Unenrol student?';
 $string['void'] = 'Void';
 $string['voidyes'] = 'Transaction will be cancelled. Are you sure?';
+$string['welcometocoursesemail'] = 'Dear student,
+
+Thanks for your payments. You have enrolled these courses:
+
+$a->courses
+
+You may edit your profile:
+ $a->profileurl
+
+You may view your payment details:
+ $a->paymenturl';
 $string['youcantdo'] = 'You can\'t do this action: $a->action';
 $string['zipcode'] = 'Zip Code';
 
