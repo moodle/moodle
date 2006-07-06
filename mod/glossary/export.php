@@ -5,6 +5,8 @@
 
     $id = required_param('id', PARAM_INT);      // Course Module ID
 
+    $mode= optional_param('mode', '', PARAM_ALPHA);           // term entry cat date letter search author approval
+    $hook= optional_param('hook', '', PARAM_CLEAN);           // the term, entry, cat, etc... to look for based on mode
     $l   = optional_param('l','', PARAM_ALPHANUM);
     $cat = optional_param('cat',0, PARAM_ALPHANUM);
 
