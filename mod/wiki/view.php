@@ -350,15 +350,16 @@
     print_simple_box_start('center', '100%', '', '20');
 
     /// Don't filter any pages containing wiki actions (except view). A wiki page containing
-    /// actions will have the form [action]/[pagename]. If the '/' isn't there, or the action
-    /// is 'view', filter it. Also, if the page doesn't exist, it will default to 'edit'.
+    /// actions will have the form [action]/[pagename]. If the action is 'view' or the  '/'
+    /// isn't there (so the action defaults to 'view'), filter it.
+    /// If the page does not yet exist, the display will default to 'edit'.
     $actions = explode('/', $page);
-    if ($ewiki_action == "edit" || ($actions !== false && count($actions) > 1 && $actions[0] != 'view') ||
-        (count($actions) == 1 && !record_exists('wiki_pages', 'pagename', addslashes($page), 'wiki', $wiki_entry->id))) {
-        print $content;
+    if((count($actions) < 2 || $actions[0] == "view") &&
+        record_exists('wiki_pages', 'pagename', addslashes($page), 'wiki', $wiki_entry->id)) {
+        print(format_text($content, $moodle_format));
     }
     else {
-        print(format_text($content, $moodle_format));    /// DISABLED UNTIL IT CAN BE FIXED
+        print $content;
     }
     print $content2;
     print_simple_box_end();
