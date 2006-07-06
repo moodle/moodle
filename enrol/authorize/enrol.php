@@ -683,7 +683,7 @@ class enrolment_plugin_authorize
      */
     function cron()
     {
-        global $CFG;
+        global $CFG, $SITE;
         require_once($CFG->dirroot.'/enrol/authorize/authorizenetlib.php');
 
         $oneday = 86400;
@@ -783,30 +783,35 @@ class enrolment_plugin_authorize
         if (!empty($CFG->enrol_mailadmins)) {
             email_to_user($adminuser, $adminuser, "AUTHORIZE.NET CRON LOG", $this->log);
         }
+
+        // Send emails to students about which courses have enrolled.
         if (empty($sendem)) {
             return;
         }
-
-        $lastcourse = 0;
         $select = "SELECT E.id, E.courseid, E.userid, C.fullname " .
                   "FROM {$CFG->prefix}enrol_authorize E " .
                   "INNER JOIN {$CFG->prefix}course C ON C.id = E.courseid " .
                   "WHERE E.id IN(" . implode(',', $sendem) . ") " .
-                  "ORDER BY E.courseid";
-        $orders = get_records_sql($select);
-        foreach ($orders as $order)
-        {
-            if ($lastcourse != $order->courseid) {
-                $lastcourse = $order->courseid;
-                $teacher = get_teacher($lastcourse);
+                  "ORDER BY E.userid";
+        $emailinfo = get_records_sql($select);
+        $emailcount = count($emailinfo);
+        for($i = 0; $i < $emailcount; ) {
+            $usercourses = array();
+            $lastuserid = $emailinfo[$i]->userid;
+            for ($j=$i; $j < $emailcount and $emailinfo[$j]->userid == $lastuserid; $j++) {
+                $usercourses[] = $emailinfo[$j]->fullname;
             }
-            $user = get_record('user', 'id', $order->userid);
             $a = new stdClass;
-            $a->coursename = $order->fullname;
-            $a->profileurl = "$CFG->wwwroot/user/view.php?id=$user->id";
-            email_to_user($user, $teacher,
-                          get_string("enrolmentnew", '', $order->fullname),
-                          get_string('welcometocoursetext', '', $a));
+            $a->courses = implode("\n", $usercourses);
+            $a->profileurl = "$CFG->wwwroot/user/view.php?id=$lastuserid";
+            $a->paymenturl = "$CFG->wwwroot/enrol/authorize/index.php?user=$lastuserid";
+            $emailmessage = get_string('welcometocoursesemail', 'enrol_authorize', $a);
+            $user = get_record('user', 'id', $lastuserid);
+            email_to_user($user,
+                          $adminuser,
+                          get_string("enrolmentnew", '', $SITE->shortname),
+                          $emailmessage);
+            $i = $j;
         }
     }
 
