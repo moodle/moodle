@@ -2,7 +2,8 @@
 
     require_once("../config.php");
 
-    $loginguest = optional_param('loginguest', 0, PARAM_BOOL); // determines whether visitors are logged in as guest automatically
+    $loginguest  = optional_param('loginguest', 0, PARAM_BOOL); // determines whether visitors are logged in as guest automatically
+    $testcookies = optional_param('testcookies', 0, PARAM_BOOL); // request cookie test
 
     //initialize variables
     $errormsg = '';
@@ -95,7 +96,7 @@
 
 /// Check if the user has actually submitted login data to us
 
-    if (empty($CFG->usesid) and $frm and (get_moodle_cookie() == '') and ($frm->username!='guest') and !$user and empty($CFG->alternateloginurl)) {    // Login without cookie
+    if (empty($CFG->usesid) and $testcookies and (get_moodle_cookie() == '')) {    // Login without cookie when test requested
 
         $errormsg = get_string("cookiesnotenabled");
 

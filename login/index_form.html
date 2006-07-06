@@ -47,6 +47,7 @@
           </td>
           <td width="20%">
             <input type="submit" value="<?php print_string("login") ?>" />
+            <input type="hidden" name="testcookies" value="1" />
           </td>
         </tr>
         </table>
@@ -58,6 +59,7 @@
         <form action="index.php" method="post" name="guestlogin">
           <input type="hidden" name="username" value="guest" />
           <input type="hidden" name="password" value="guest" />
+          <input type="hidden" name="testcookies" value="1" />
           <input type="submit" value="<?php print_string("loginguest") ?>" />
         </form>
 <?php } ?>
