@@ -485,6 +485,10 @@ function find_ext_enrolments ($ldap_connection, $memberuid, $type){
 
     global $CFG;
 
+    if(empty($memberuid)) { // No "idnumber" stored for this user, so no LDAP enrolments
+        return array();
+    } 
+
     //default return value
     $courses = array();
     $this->enrol_ldap_bind($ldap_connection);
