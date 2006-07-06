@@ -1,29 +1,28 @@
-<?php // $Id$
-/*
-* Page for editing questions
-*
-* This page shows the question editing form or processes the following actions:
-* - create new question (category, qtype)
-* - edit question (id, contextquiz (optional))
-* - cancel (cancel)
-*
-* TODO: currently this still treats the quiz as special
-* TODO: question versioning is not currently enabled
-*
-* @version $Id$
-* @author Martin Dougiamas and many others. This has recently been extensively
-*         rewritten by members of the Serving Mathematics project
-*         {@link http://maths.york.ac.uk/serving_maths}
-* @license http://www.gnu.org/copyleft/gpl.html GNU Public License
-* @package question
-*/
+<?php
+/**
+ * Page for editing questions
+ *
+ * This page shows the question editing form or processes the following actions:
+ * - create new question (category, qtype)
+ * - edit question (id, contextquiz (optional))
+ * - cancel (cancel)
+ *
+ * TODO: currently this still treats the quiz as special
+ * TODO: question versioning is not currently enabled
+ *
+ * @version $Id$
+ * @author Martin Dougiamas and many others. This has recently been extensively
+ *         rewritten by members of the Serving Mathematics project
+ *         {@link http://maths.york.ac.uk/serving_maths}
+ * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+ * @package question
+ *//** */
+ 
+    require_once(dirname(__FILE__) . '/../config.php');
+    require_once('editlib.php'); // NOTE - is this correct? This is just about editing screens?
+    require_once($CFG->libdir . '/filelib.php');
 
-    require_once("../config.php");
-    // NOTE - is this correct? This is just about editing screens?
-    require_once( "editlib.php" );
-    require_once($CFG->libdir.'/filelib.php');
-
-    $id = optional_param('id', 0, PARAM_INT);        // question id
+    $id = optional_param('id', 0, PARAM_INT); // question id
 
     $qtype = optional_param('qtype', '', PARAM_FILE);
     $category = optional_param('category', 0, PARAM_INT);
