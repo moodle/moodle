@@ -1018,7 +1018,7 @@ class assignment_base {
         $table->define_headers($tableheaders);
         $table->define_baseurl($CFG->wwwroot.'/mod/assignment/submissions.php?id='.$this->cm->id.'&amp;currentgroup='.$currentgroup);
                 
-        $table->sortable(true);
+        $table->sortable(true, 'lastname');//sorted by lastname by default
         $table->collapsible(true);
         $table->initialbars(true);
         
