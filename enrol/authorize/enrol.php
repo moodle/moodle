@@ -690,77 +690,20 @@ class enrolment_plugin_authorize
         $timenow = time();
         $settlementtime = getsettletime($timenow);
         $timediff30 = $settlementtime - (30 * $oneday);
+
         $mconfig = get_config('enrol/authorize');
         set_config('an_lastcron', $timenow, 'enrol/authorize');
 
         if (intval($mconfig->an_dailysettlement) < $settlementtime) {
             set_config('an_dailysettlement', $settlementtime, 'enrol/authorize');
-            // Some clean-up and update
-            $select = "(status='".AN_STATUS_NONE."') AND (timecreated<'$timediff30')";
-            delete_records_select('enrol_authorize', $select);
-            $select = "(status='".AN_STATUS_AUTH."') AND (timecreated<'$timediff30')";
-            execute_sql("UPDATE {$CFG->prefix}enrol_authorize SET status='".AN_STATUS_EXPIRE."' WHERE $select", false);
-            $timediff60 = $settlementtime - (60 * $oneday);
-            $select = "(status='".AN_STATUS_EXPIRE."') AND (timecreated<'$timediff60')";
-            delete_records_select('enrol_authorize', $select);
-            // Daily warning email for expiring pending orders.
-            if (!empty($CFG->an_emailexpired)) {
-                $timediffem = $settlementtime - ((30 - intval($CFG->an_emailexpired)) * $oneday);
-                $select = "(status='". AN_STATUS_AUTH ."') AND (timecreated<'$timediffem') AND (timecreated>'$timediff30')";
-                if ($count = count_records_select('enrol_authorize', $select)) {
-                    $a = new stdClass;
-                    $a->pending = $count;
-                    $a->days = $CFG->an_emailexpired;
-                    $a->course = $SITE->shortname;
-                    $subject = get_string('pendingorderssubject', 'enrol_authorize', $a);
-                    $a = new stdClass;
-                    $a->pending = $count;
-                    $a->days = $CFG->an_emailexpired;
-                    $a->course = $SITE->fullname;
-                    $a->enrolurl = "$CFG->wwwroot/$CFG->admin/users.php";
-                    $a->url = $CFG->wwwroot."/enrol/authorize/index.php?status=".AN_STATUS_AUTH;
-                    $message = get_string('pendingordersemail', 'enrol_authorize', $a);
-                    $adminuser = get_admin();
-                    email_to_user($adminuser, $adminuser, $subject, $message);
-                    if (!empty($CFG->an_teachermanagepay) and !empty($CFG->an_emailexpiredteacher)) {
-                        $sorttype = empty($CFG->an_sorttype) ? 'ttl' : $CFG->an_sorttype;
-                        $sql = "SELECT E.courseid, E.currency, C.fullname, C.shortname, " .
-                               "COUNT(E.courseid) AS cnt, SUM(E.amount) as ttl " .
-                               "FROM {$CFG->prefix}enrol_authorize E " .
-                               "INNER JOIN {$CFG->prefix}course C ON C.id = E.courseid " .
-                               "WHERE $select GROUP BY E.courseid ORDER BY $sorttype DESC";
-                        $message = ''; $subject = ''; $lastcourse = 0;
-                        $coursesandcounts = get_records_sql($sql);
-                        foreach($coursesandcounts as $courseandcount) {
-                            $lastcourse = $courseandcount->courseid;
-                            if ($teachers = get_course_teachers($lastcourse)) {
-                                $a = new stdClass;
-                                $a->course = $courseandcount->shortname;
-                                $a->pending = $courseandcount->cnt;
-                                $a->days = $CFG->an_emailexpired;
-                                $subject = get_string('pendingorderssubject', 'enrol_authorize', $a);
-                                $a = new stdClass;
-                                $a->course = $courseandcount->fullname;
-                                $a->pending = $courseandcount->cnt;
-                                $a->currency = $courseandcount->currency;
-                                $a->sumcost = $courseandcount->ttl;
-                                $a->days = $CFG->an_emailexpired;
-                                $a->url = $CFG->wwwroot.'/enrol/authorize/index.php?course='.
-                                $lastcourse.'&amp;status='.AN_STATUS_AUTH;
-                                $message = get_string('pendingordersemailteacher', 'enrol_authorize', $a);
-                                foreach ($teachers as $teacher) {
-                                    email_to_user($teacher, $adminuser, $subject, $message);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+            $this->cron_daily();
         }
 
-        if (empty($CFG->an_review) || (!empty($CFG->an_test)) ||
-            (intval($CFG->an_capture_day) < 1) || (!$this->check_openssl_loaded())) {
-            return;
+        if (empty($CFG->an_review) or
+           (!empty($CFG->an_test)) or
+           (intval($CFG->an_capture_day) < 1) or
+           (!$this->check_openssl_loaded())) {
+            return; // order review disabled or test mode or manual capture or openssl wasn't loaded.
         }
 
         $timediffcnf = $settlementtime - (intval($CFG->an_capture_day) * $oneday);
@@ -840,30 +783,129 @@ class enrolment_plugin_authorize
         if (!empty($CFG->enrol_mailadmins)) {
             email_to_user($adminuser, $adminuser, "AUTHORIZE.NET CRON LOG", $this->log);
         }
+
+        // Send emails to students about which courses have enrolled.
         if (empty($sendem)) {
             return;
         }
-
-        $lastcourse = 0;
         $select = "SELECT E.id, E.courseid, E.userid, C.fullname " .
                   "FROM {$CFG->prefix}enrol_authorize E " .
                   "INNER JOIN {$CFG->prefix}course C ON C.id = E.courseid " .
                   "WHERE E.id IN(" . implode(',', $sendem) . ") " .
-                  "ORDER BY E.courseid";
-        $orders = get_records_sql($select);
-        foreach ($orders as $order)
-        {
-            if ($lastcourse != $order->courseid) {
-                $lastcourse = $order->courseid;
-                $teacher = get_teacher($lastcourse);
+                  "ORDER BY E.userid";
+        $emailinfo = get_records_sql($select);
+        $emailcount = count($emailinfo);
+        for($i = 0; $i < $emailcount; ) {
+            $usercourses = array();
+            $lastuserid = $emailinfo[$i]->userid;
+            for ($j=$i; $j < $emailcount and $emailinfo[$j]->userid == $lastuserid; $j++) {
+                $usercourses[] = $emailinfo[$j]->fullname;
             }
-            $user = get_record('user', 'id', $order->userid);
             $a = new stdClass;
-            $a->coursename = $order->fullname;
-            $a->profileurl = "$CFG->wwwroot/user/view.php?id=$user->id";
-            email_to_user($user, $teacher,
-                          get_string("enrolmentnew", '', $order->fullname),
-                          get_string('welcometocoursetext', '', $a));
+            $a->courses = implode("\n", $usercourses);
+            $a->profileurl = "$CFG->wwwroot/user/view.php?id=$lastuserid";
+            $a->paymenturl = "$CFG->wwwroot/enrol/authorize/index.php?user=$lastuserid";
+            $emailmessage = get_string('welcometocoursesemail', 'enrol_authorize', $a);
+            $user = get_record('user', 'id', $lastuserid);
+            email_to_user($user,
+                          $adminuser,
+                          get_string("enrolmentnew", '', $SITE->shortname),
+                          $emailmessage);
+            $i = $j;
+        }
+    }
+
+    /**
+     * Daily cron. It executes at settlement time (default is 00:05).
+     *
+     * @access private
+     */
+    function cron_daily()
+    {
+        global $CFG, $SITE;
+        require_once($CFG->dirroot.'/enrol/authorize/authorizenetlib.php');
+
+        $oneday = 86400;
+        $timenow = time();
+        $settlementtime = getsettletime($timenow);
+        $timediff30 = $settlementtime - (30 * $oneday);
+
+        // Delete orders that no transaction was made.
+        $select = "(status='".AN_STATUS_NONE."') AND (timecreated<'$timediff30')";
+        delete_records_select('enrol_authorize', $select);
+
+        // Pending orders are expired with in 30 days.
+        $select = "(status='".AN_STATUS_AUTH."') AND (timecreated<'$timediff30')";
+        execute_sql("UPDATE {$CFG->prefix}enrol_authorize SET status='".AN_STATUS_EXPIRE."' WHERE $select", false);
+
+        // Delete expired orders 60 days later.
+        $timediff60 = $settlementtime - (60 * $oneday);
+        $select = "(status='".AN_STATUS_EXPIRE."') AND (timecreated<'$timediff60')";
+        delete_records_select('enrol_authorize', $select);
+
+        // Daily warning email for pending orders expiring.
+        if (empty($CFG->an_emailexpired)) {
+            return; // not enabled
+        }
+
+        // Pending orders count will be expired.
+        $timediffem = $settlementtime - ((30 - intval($CFG->an_emailexpired)) * $oneday);
+        $select = "(status='". AN_STATUS_AUTH ."') AND (timecreated<'$timediffem') AND (timecreated>'$timediff30')";
+        $count = count_records_select('enrol_authorize', $select);
+        if (!$count) {
+            return;
+        }
+
+        // Email to admin
+        $a = new stdClass;
+        $a->pending = $count;
+        $a->days = $CFG->an_emailexpired;
+        $a->course = $SITE->shortname;
+        $subject = get_string('pendingorderssubject', 'enrol_authorize', $a);
+        $a = new stdClass;
+        $a->pending = $count;
+        $a->days = $CFG->an_emailexpired;
+        $a->course = $SITE->fullname;
+        $a->enrolurl = "$CFG->wwwroot/$CFG->admin/users.php";
+        $a->url = $CFG->wwwroot.'/enrol/authorize/index.php?status='.AN_STATUS_AUTH;
+        $message = get_string('pendingordersemail', 'enrol_authorize', $a);
+        $adminuser = get_admin();
+        email_to_user($adminuser, $adminuser, $subject, $message);
+
+        // Email to teachers
+        if (empty($CFG->an_teachermanagepay) or empty($CFG->an_emailexpiredteacher)) {
+            return; // teachers can't manage payments or email feature disabled for teachers.
+        }
+
+        $sorttype = empty($CFG->an_sorttype) ? 'ttl' : $CFG->an_sorttype;
+        $sql = "SELECT E.courseid, E.currency, C.fullname, C.shortname, " .
+               "COUNT(E.courseid) AS cnt, SUM(E.amount) as ttl " .
+               "FROM {$CFG->prefix}enrol_authorize E " .
+               "INNER JOIN {$CFG->prefix}course C ON C.id = E.courseid " .
+               "WHERE $select GROUP BY E.courseid ORDER BY $sorttype DESC";
+
+        $courseinfos = get_records_sql($sql);
+        foreach($courseinfos as $courseinfo) {
+            $lastcourse = $courseinfo->courseid;
+            if ($teachers = get_course_teachers($lastcourse)) {
+                $a = new stdClass;
+                $a->course = $courseinfo->shortname;
+                $a->pending = $courseinfo->cnt;
+                $a->days = $CFG->an_emailexpired;
+                $subject = get_string('pendingorderssubject', 'enrol_authorize', $a);
+                $a = new stdClass;
+                $a->course = $courseinfo->fullname;
+                $a->pending = $courseinfo->cnt;
+                $a->currency = $courseinfo->currency;
+                $a->sumcost = $courseinfo->ttl;
+                $a->days = $CFG->an_emailexpired;
+                $a->url = $CFG->wwwroot.'/enrol/authorize/index.php?course='.
+                          $lastcourse.'&amp;status='.AN_STATUS_AUTH;
+                $message = get_string('pendingordersemailteacher', 'enrol_authorize', $a);
+                foreach ($teachers as $teacher) {
+                    email_to_user($teacher, $adminuser, $subject, $message);
+                }
+            }
         }
     }
 }
