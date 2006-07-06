@@ -86,7 +86,7 @@
             $qcobject->move_category_up_down('down', $param->movedown);
         } else if (!empty($param->hide)) {
             $qcobject->publish_category(false, $param->hide);
-        } else if (!empty($param->move) and !empty($param->moveto)) {
+        } else if (!empty($param->move)) {
             $qcobject->move_category($param->move, $param->moveto);
         } else if (!empty($param->publish)) {
             $qcobject->publish_category(true, $param->publish);
