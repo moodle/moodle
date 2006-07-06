@@ -694,15 +694,21 @@ class enrolment_plugin_authorize
         $mconfig = get_config('enrol/authorize');
         set_config('an_lastcron', $timenow, 'enrol/authorize');
 
+        mtrace("Processing authorize cron...");
+
         if (intval($mconfig->an_dailysettlement) < $settlementtime) {
             set_config('an_dailysettlement', $settlementtime, 'enrol/authorize');
+            mtrace("    daily cron: some cleanups and sending email to admins the count of pending orders expiring", "...");
             $this->cron_daily();
+            mtrace("done", "\n");
         }
 
+        mtrace("    scheduled capture", ": ");
         if (empty($CFG->an_review) or
            (!empty($CFG->an_test)) or
            (intval($CFG->an_capture_day) < 1) or
            (!$this->check_openssl_loaded())) {
+            mtrace("disabled", "\n");
             return; // order review disabled or test mode or manual capture or openssl wasn't loaded.
         }
 
@@ -714,6 +720,7 @@ class enrolment_plugin_authorize
                "  AND (E.timecreated < '$timediffcnf') AND (E.timecreated > '$timediff30')";
 
         if (!$orders = get_records_sql($sql)) {
+            mtrace("no pending orders", "\n");
             return;
         }
 
@@ -723,8 +730,11 @@ class enrolment_plugin_authorize
 
         $ordercount = count((array)$orders);
         if (($ordercount * $eachconn) + intval($mconfig->an_lastcron) > $timenow) {
+            mtrace("blocked", "\n");
             return;
         }
+
+        mtrace($ordercount ." orders are processing", "\n");
 
         $faults = '';
         $sendem = array();
@@ -788,6 +798,8 @@ class enrolment_plugin_authorize
         if (empty($sendem)) {
             return;
         }
+
+        mtrace("    sending welcome messages to students", ": ");
         $select = "SELECT E.id, E.courseid, E.userid, C.fullname " .
                   "FROM {$CFG->prefix}enrol_authorize E " .
                   "INNER JOIN {$CFG->prefix}course C ON C.id = E.courseid " .
@@ -813,6 +825,7 @@ class enrolment_plugin_authorize
                           $emailmessage);
             $i = $j;
         }
+        mtrace("sent", "\n");
     }
 
     /**
