@@ -8,7 +8,7 @@
     $id = required_param('id', PARAM_INT);    // Course Module ID
 
     $step     = optional_param('step', 0, PARAM_INT);
-    $current  = optional_param('dest', 'current', PARAM_ALPHA);   // current | new
+    $dest     = optional_param('dest', 'current', PARAM_ALPHA);   // current | new
     $file     = optional_param('file', '', PARAM_FILE);         // file to import
     $catsincl = optional_param('catsincl', 0, PARAM_INT);         // Import Categories too?
 
@@ -166,6 +166,7 @@
                     $mod->module = $currmodule->id;
                     $mod->course = $course->id;
                     $mod->modulename = 'glossary';
+                    $mod->section = 0;
 
                     if (! $mod->coursemodule = add_course_module($mod) ) {
                         error("Could not add a new course module");
@@ -263,7 +264,7 @@
                 if ( $newentry->id = insert_record("glossary_entries",$newentry) )  {
                     $importedentries++;
 
-                    $xmlaliases = $xmlentry['#']['ALIASES'][0]['#']['ALIAS'];
+                    $xmlaliases = @$xmlentry['#']['ALIASES'][0]['#']['ALIAS']; // ignore missing ALIASES
                     for($k = 0; $k < sizeof($xmlaliases); $k++) {
                     /// Importing aliases
                         $xmlalias = $xmlaliases[$k];
@@ -279,7 +280,7 @@
 
                     if ( $catsincl ) {
                         // If the categories must be imported...
-                        $xmlcats = $xmlentry['#']['CATEGORIES'][0]['#']['CATEGORY'];
+                        $xmlcats = @$xmlentry['#']['CATEGORIES'][0]['#']['CATEGORY']; // ignore missing CATEGORIES
                         for($k = 0; $k < sizeof($xmlcats); $k++) {
                             $xmlcat = $xmlcats[$k];
                             unset($newcat);
