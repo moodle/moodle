@@ -69,7 +69,7 @@ function enrol_authorize_upgrade($oldversion=0) {
             include_once("$CFG->dirroot/enrol/authorize/authorizenetlib.php");
             foreach ($settlements as $settlement) {
                 execute_sql("UPDATE {$CFG->prefix}enrol_authorize SET settletime = '" .
-                getsettletime($settlement->settletime) . "' WHERE id = '$settlement->id'", false);
+                authorize_getsettletime($settlement->settletime) . "' WHERE id = '$settlement->id'", false);
             }
         }
     }

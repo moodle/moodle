@@ -23,7 +23,7 @@ define('AN_STATUS_TEST',        0x80);
 /**#@-*/
 
 /**#@+
- * Actions used in authorizenet_action function.
+ * Actions used in authorize_action function.
  *
  * NONE: No action. Function always returns false.
  * AUTH_ONLY: Used to authorize only, don't capture.

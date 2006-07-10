@@ -20,7 +20,7 @@ function enrol_authorize_upgrade($oldversion=0) {
     // Authorize module was installed before. Upgrades must be applied to SQL file.
 
     if ($oldversion && $oldversion < 2005071602) {
-        notify("If you are using the authorize.net enrolment plugin for credit card 
+        notify("If you are using the authorize.net enrolment plugin for credit card
                 handling, please ensure that you have turned loginhttps ON in Admin >> Variables >> Security.");
     }
 
@@ -80,7 +80,7 @@ function enrol_authorize_upgrade($oldversion=0) {
             include_once("$CFG->dirroot/enrol/authorize/authorizenetlib.php");
             foreach ($settlements as $settlement) {
                 execute_sql("UPDATE {$CFG->prefix}enrol_authorize SET settletime = '" .
-                getsettletime($settlement->settletime) . "' WHERE id = '$settlement->id'", false);
+                authorize_getsettletime($settlement->settletime) . "' WHERE id = '$settlement->id'", false);
             }
         }
     }

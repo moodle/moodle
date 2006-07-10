@@ -18,7 +18,7 @@ require_once('const.php');
  * @param int $time Processed time, usually now.
  * @return int Settlement date
  */
-function getsettletime($time)
+function authorize_getsettletime($time)
 {
     global $CFG;
 
@@ -38,10 +38,41 @@ function getsettletime($time)
  * @param object $order Order details
  * @return bool true, if settled, false otherwise.
  */
-function settled($order)
+function authorize_settled($order)
 {
     return (($order->status == AN_STATUS_AUTHCAPTURE || $order->status == AN_STATUS_CREDIT) &&
             ($order->settletime > 0) && ($order->settletime < time()));
+}
+
+/**
+ * Is order expired? 'Authorized/Pending Capture' transactions are expired after 30 days.
+ *
+ * @param object &$order Order details.
+ * @return bool true, transaction is expired, false otherwise.
+ */
+function authorize_expired(&$order)
+{
+    static $timediff30;
+
+    if (empty($timediff30)) {
+        $timediff30 = authorize_getsettletime(time()) - (30 * 24 * 3600);
+    }
+
+    if ($order->status == AN_STATUS_EXPIRE) {
+        return true;
+    }
+    elseif ($order->status != AN_STATUS_AUTH) {
+        return false;
+    }
+
+    $exp = (authorize_getsettletime($order->timecreated) < $timediff30);
+
+    if ($exp) {
+        $order->status = AN_STATUS_EXPIRE;
+        update_record('enrol_authorize', $order);
+    }
+
+    return $exp;
 }
 
 /**
@@ -55,7 +86,7 @@ function settled($order)
  * @author Ethem Evlice <ethem a.t evlice d.o.t com>
  * @uses $CFG
  */
-function authorizenet_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE)
+function authorize_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE)
 {
     global $CFG;
     static $conststring;
@@ -96,7 +127,6 @@ function authorizenet_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE
     }
 
     $poststring = $conststring;
-    $timenowsettle = getsettletime(time());
 
     switch ($action) {
         case AN_ACTION_AUTH_ONLY:
@@ -127,10 +157,7 @@ function authorizenet_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE
                 $message = "Order status must be authorized!";
                 return false;
             }
-            $timediff = $timenowsettle - (30 * 3600 * 24);
-            $timecreatedsettle = getsettletime($order->timecreated);
-            if ($timecreatedsettle < $timediff) {
-                $order->status = AN_STATUS_EXPIRE;
+            if (authorize_expired($order)) {
                 $message = "Transaction must be captured within 30 days. EXPIRED!";
                 return false;
             }
@@ -144,10 +171,11 @@ function authorizenet_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE
                 $message = "Order status must be authorized/captured!";
                 return false;
             }
-            if (!settled($order)) {
+            if (!authorize_settled($order)) {
                 $message = "Order must be settled. Try VOID, check Cut-Off time if it fails!";
                 return false;
             }
+            $timenowsettle = authorize_getsettletime(time());
             $timediff = $timenowsettle - (120 * 3600 * 24);
             if ($order->settletime < $timediff) {
                 $message = "Order must be credited within 120 days!";
@@ -173,16 +201,13 @@ function authorizenet_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE
         case AN_ACTION_VOID:
         {
             if ($order->status == AN_STATUS_AUTH) {
-                $timediff = $timenowsettle - (30 * 3600 * 24);
-                $timecreatedsettle = getsettletime($order->timecreated);
-                if ($timecreatedsettle < $timediff) {
+                if (authorize_expired($order)) {
                     $message = "Authorized transaction must be voided within 30 days. EXPIRED!";
-                    $order->status = AN_STATUS_EXPIRE;
                     return false;
                 }
             }
-            elseif ($order->status == AN_STATUS_AUTHCAPTURE || $order->status == AN_STATUS_CREDIT) {
-                if (settled($order)) {
+            elseif ($order->status == AN_STATUS_AUTHCAPTURE or $order->status == AN_STATUS_CREDIT) {
+                if (authorize_settled($order)) {
                     $message = "Settled transaction cannot be voided. Check Cut-Off time!";
                     return false;
                 }
@@ -265,7 +290,7 @@ function authorizenet_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE
                     // dont't update settletime
                 } else {
                     $order->status = AN_STATUS_AUTHCAPTURE;
-                    $order->settletime = getsettletime(time());
+                    $order->settletime = authorize_getsettletime(time());
                 }
                 break;
             }
@@ -275,7 +300,7 @@ function authorizenet_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE
                 // So, $extra must be updated, not $order.
                 $extra->status = AN_STATUS_CREDIT;
                 $extra->transid = $transid;
-                $extra->settletime = getsettletime(time());
+                $extra->settletime = authorize_getsettletime(time());
                 break;
             }
             case AN_ACTION_VOID:

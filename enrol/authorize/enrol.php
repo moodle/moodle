@@ -240,7 +240,7 @@ class enrolment_plugin_authorize
         $message = '';
         $an_review = !empty($CFG->an_review);
         $action = $an_review ? AN_ACTION_AUTH_ONLY : AN_ACTION_AUTH_CAPTURE;
-        $success = authorizenet_action($order, $message, $extra, $action);
+        $success = authorize_action($order, $message, $extra, $action);
         if (!$success) {
             $this->email_to_admin($message, $order);
             $this->ccerrors['header'] = $message;
@@ -268,8 +268,8 @@ class enrolment_plugin_authorize
                 $a->orderid = $order->id;
                 $a->transid = $order->transid;
                 $a->amount = "$order->currency $order->amount";
-                $a->expireon = userdate(getsettletime($timenow + (30 * 3600 * 24)));
-                $a->captureon = userdate(getsettletime($timenow + (intval($CFG->an_capture_day) * 3600 * 24)));
+                $a->expireon = userdate(authorize_getsettletime($timenow + (30 * 3600 * 24)));
+                $a->captureon = userdate(authorize_getsettletime($timenow + (intval($CFG->an_capture_day) * 3600 * 24)));
                 $a->course = $course->fullname;
                 $a->user = fullname($USER);
                 $a->acstatus = ($CFG->an_capture_day > 0) ? get_string('yes') : get_string('no');
@@ -688,7 +688,7 @@ class enrolment_plugin_authorize
 
         $oneday = 86400;
         $timenow = time();
-        $settlementtime = getsettletime($timenow);
+        $settlementtime = authorize_getsettletime($timenow);
         $timediff30 = $settlementtime - (30 * $oneday);
 
         $mconfig = get_config('enrol/authorize');
@@ -745,8 +745,7 @@ class enrolment_plugin_authorize
         foreach ($orders as $order) {
             $message = '';
             $extra = NULL;
-            $oldstatus = $order->status;
-            $success = authorizenet_action($order, $message, $extra, AN_ACTION_PRIOR_AUTH_CAPTURE);
+            $success = authorize_action($order, $message, $extra, AN_ACTION_PRIOR_AUTH_CAPTURE);
             if ($success) {
                 if (!update_record("enrol_authorize", $order)) {
                     $this->email_to_admin("Error while trying to update data. Please edit manually this record: " .
@@ -772,10 +771,7 @@ class enrolment_plugin_authorize
                 }
             }
             else {
-                $this->log .= "Order $order->id: " . $message . "\n";
-                if ($order->status != $oldstatus) { //expired
-                    update_record("enrol_authorize", $order);
-                }
+                $this->log .= "Error, Order# $order->id: " . $message . "\n";
             }
         }
 
@@ -840,7 +836,7 @@ class enrolment_plugin_authorize
 
         $oneday = 86400;
         $timenow = time();
-        $settlementtime = getsettletime($timenow);
+        $settlementtime = authorize_getsettletime($timenow);
         $timediff30 = $settlementtime - (30 * $oneday);
 
         // Delete orders that no transaction was made.

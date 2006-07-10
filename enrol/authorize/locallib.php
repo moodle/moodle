@@ -191,7 +191,7 @@ function authorize_print_order_details($orderno)
     echo "<input type=\"hidden\" name=\"order\" value=\"$orderno\">\n";
     echo "<input type=\"hidden\" name=\"sesskey\" value=\"" . sesskey() . "\" />";
 
-    $settled = settled($order);
+    $settled = authorize_settled($order);
     $status = authorize_get_status_action($order);
 
     $table->data[] = array("<b>$authstrs->orderid:</b>", $orderno);
@@ -223,7 +223,7 @@ function authorize_print_order_details($orderno)
         else {
             $message = '';
             $extra = NULL;
-            $success = authorizenet_action($order, $message, $extra, AN_ACTION_PRIOR_AUTH_CAPTURE);
+            $success = authorize_action($order, $message, $extra, AN_ACTION_PRIOR_AUTH_CAPTURE);
             update_record("enrol_authorize", $order); // May be expired.
             if (!$success) {
                 $table->data[] = array("<b><font color='red'>$strs->error:</font></b>", $message);
@@ -298,7 +298,7 @@ function authorize_print_order_details($orderno)
             else {
                 $extra->amount = $amount;
                 $message = '';
-                $success = authorizenet_action($order, $message, $extra, AN_ACTION_CREDIT);
+                $success = authorize_action($order, $message, $extra, AN_ACTION_CREDIT);
                 if ($success) {
                     if (empty($CFG->an_test)) {
                         $extra->id = insert_record("enrol_authorize_refunds", $extra);
@@ -352,7 +352,7 @@ function authorize_print_order_details($orderno)
             else {
                 $extra = NULL;
                 $message = '';
-                $success = authorizenet_action($order, $message, $extra, AN_ACTION_VOID);
+                $success = authorize_action($order, $message, $extra, AN_ACTION_VOID);
                 update_record("enrol_authorize", $order); // May be expired.
                 if ($success) {
                     if (empty($CFG->an_test)) {
@@ -394,7 +394,7 @@ function authorize_print_order_details($orderno)
                 else {
                     $message = '';
                     $extra = NULL;
-                    $success = authorizenet_action($suborder, $message, $extra, AN_ACTION_VOID);
+                    $success = authorize_action($suborder, $message, $extra, AN_ACTION_VOID);
                     update_record("enrol_authorize_refunds", $suborder); // May be expired.
                     if ($success) {
                         if (empty($CFG->an_test)) {
@@ -501,12 +501,10 @@ function authorize_print_order_details($orderno)
 function authorize_get_status_action($order)
 {
     global $CFG;
-    static $timediff30, $newordertime;
+    static $newordertime;
 
-    if (empty($timediff30)) {
-        $timenow = time();
-        $timediff30 = getsettletime($timenow) - (30 * 3600 * 24);
-        $newordertime = $timenow - 120; // -2 minutes. Order may be still in process.
+    if (empty($newordertime)) {
+        $newordertime = time() - 120; // -2 minutes. Order may be still in process.
     }
 
     $ret = new stdClass();
@@ -527,9 +525,7 @@ function authorize_get_status_action($order)
 
     switch ($order->status) {
     case AN_STATUS_AUTH:
-        if (getsettletime($order->timecreated) < $timediff30) {
-            $order->status = AN_STATUS_EXPIRE;
-            update_record("enrol_authorize", $order);
+        if (authorize_expired($order)) {
             if (isadmin() || (!empty($CFG->an_teachermanagepay) && isteacher($order->courseid))) {
                 $ret->actions = array(ORDER_DELETE);
             }
@@ -544,7 +540,7 @@ function authorize_get_status_action($order)
         return $ret;
 
     case AN_STATUS_AUTHCAPTURE:
-        if (settled($order)) {
+        if (authorize_settled($order)) {
             if (isadmin() || (!empty($CFG->an_teachermanagepay) && isteacher($order->courseid))) {
                 $ret->actions = array(ORDER_REFUND);
             }
@@ -559,7 +555,7 @@ function authorize_get_status_action($order)
         return $ret;
 
     case AN_STATUS_CREDIT:
-        if (settled($order)) {
+        if (authorize_settled($order)) {
             $ret->status = 'settled';
         }
         else {
