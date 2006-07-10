@@ -600,15 +600,15 @@
                                     $answer->jumpto = $page->nextpageid;
                                 }
                             }
-                        } else if ($answer->jumpto = LESSON_NEXTPAGE) {
+                        } else if ($answer->jumpto == LESSON_NEXTPAGE) {
                             if ($page->nextpageid == 0) {  
                                 $answer->jumpto = LESSON_EOL;
                             } else {
                                 $answer->jumpto = $page->nextpageid;
                             }
-                        } else if ($answer->jumpto = 0) {
+                        } else if ($answer->jumpto == 0) {
                             $answer->jumpto = $page->id;
-                        } else if ($answer->jumpto = LESSON_PREVIOUSPAGE) {
+                        } else if ($answer->jumpto == LESSON_PREVIOUSPAGE) {
                             $answer->jumpto = $page->prevpageid;                            
                         }
                         redirect("view.php?id=$cm->id&amp;action=navigation&amp;pageid=$answer->jumpto");// REMOVED: , get_string("endofbranch", "lesson")
