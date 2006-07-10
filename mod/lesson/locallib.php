@@ -1286,9 +1286,9 @@ function lesson_grade($lesson, $ntries, $userid = 0) {
             $bestscores = array();
             // Find the highest possible score per page to get our total
             foreach ($answers as $answer) {
-                if(isset($bestscores[$answer->pageid]) and $bestscores[$answer->pageid] < $answer->score) {
+                if(!isset($bestscores[$answer->pageid])) {
                     $bestscores[$answer->pageid] = $answer->score;
-                } else {
+                } else if ($bestscores[$answer->pageid] < $answer->score) {
                     $bestscores[$answer->pageid] = $answer->score;
                 }
             }
