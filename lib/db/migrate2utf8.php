@@ -1,7 +1,7 @@
 <?php // $Id$
 // This is a one-shot function that converts an entire table on row basis.
 
-function migrate2utf8_user($fields, $crash, $debug, $maxrecords) {
+function migrate2utf8_user($fields, $crash, $debug, $maxrecords, $done, $tablestoconvert) {
 
     global $CFG, $db, $processedrecords, $globallang;
 
@@ -124,9 +124,10 @@ function migrate2utf8_user($fields, $crash, $debug, $maxrecords) {
 
                 $processedrecords++;
                 //print some output once in a while
-                if (($processedrecords) % 5000 == 0) {
-                    echo 'Processing...'.$dbtablename.'...'.$fieldname.'...'.$record->id;
-                }
+                
+                if (($processedrecords) % 1000 == 0) {
+            		print_progress($done, $tablestoconvert, 5, 1, 'Processing: user');
+            	}
             }
         }
     }
