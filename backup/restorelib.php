@@ -63,6 +63,8 @@
     //from backup format to destination site/course in order to mantain inter-activities
     //working in the backup/restore process
     function restore_decode_content_links($restore) {
+        global $CFG;
+
         $status = true;
 
         if (!defined('RESTORE_SILENTLY')) {
@@ -72,6 +74,7 @@
             //If the module is being restored
             if ($info->restore == 1) {
                 //Check if the xxxx_decode_content_links_caller exists
+	            include_once("$CFG->dirroot/mod/$name/restorelib.php");
                 $function_name = $name."_decode_content_links_caller";
                 if (function_exists($function_name)) {
                     if (!defined('RESTORE_SILENTLY')) {
