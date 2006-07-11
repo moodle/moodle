@@ -6767,6 +6767,25 @@ function cleanremoteaddr($addr) {
 }
 
 /**
+ * file_put_contents is only supported by php 5.0 and higher
+ * so if it is not predefined, define it here
+ *
+ * @param $file full path of the file to write
+ * @param $contents contents to be sent
+ * @return number of bytes written (false on error)
+ */
+if(!function_exists('file_put_contents')) {
+    function file_put_contents($file, $contents) {
+        $result = false;
+        if ($f = fopen($file, 'w')) {
+            $result = fwrite($f, $contents);
+            fclose($f);
+        }
+        return $result;
+    }
+}
+
+/**
  * html_entity_decode is only supported by php 4.3.0 and higher
  * so if it is not predefined, define it here
  *
