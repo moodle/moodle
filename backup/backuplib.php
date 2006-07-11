@@ -1718,6 +1718,7 @@
 
         foreach ($mypreferences->mods as $name => $info) {
             //Check if the xxxx_encode_content_links exists
+            include_once("$CFG->dirroot/mod/$name/backuplib.php");
             $function_name = $name."_encode_content_links";
             if (function_exists($function_name)) {
                 $result = $function_name($result,$mypreferences);
