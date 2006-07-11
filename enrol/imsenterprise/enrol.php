@@ -619,7 +619,7 @@ function process_person_tag($tagcontents){
             $this->log_line("User record already exists for user '$person->username' (ID number $person->idnumber).");
             
             // Make sure their "deleted" field is set to zero.
-            set_field('user', 'deleted', 0, 'username', $person->username);
+            set_field('user', 'deleted', 0, 'idnumber', $person->idnumber);
         }else{
             $this->log_line("No user record found for '$person->username' (ID number $person->idnumber).");
         }
@@ -697,6 +697,7 @@ function process_membership_tag($tagcontents){
                         if ((!enrol_student($memberstoreobj->userid, $memberstoreobj->course, $timeframe->begin, $timeframe->end, 'imsenterprise')) && (trim($memberstoreobj->userid)!='')) {
                             $this->log_line("Error enrolling $memberstoreobj->userid ($member->idnumber) in course $memberstoreobj->course");
                         }else{
+                            $this->log_line("Enrolled student $memberstoreobj->userid ($member->idnumber) in course $memberstoreobj->course");
                             $studentstally++;
                             
                             // At this point we can also ensure the group membership is recorded if present
@@ -745,8 +746,9 @@ function process_membership_tag($tagcontents){
                     if(intval($member->status) == 1){
                         // Enrol
                         if (! add_teacher($memberstoreobj->userid, $memberstoreobj->course, 0, '', $timeframe->begin, $timeframe->end, 'imsenterprise')) {
-                            $this->log_line("Error adding teacher $memberstoreobj->userid to course");
+                            $this->log_line("Error adding teacher $memberstoreobj->userid to course $memberstoreobj->course");
                         }else{
+                            $this->log_line("Adding teacher $memberstoreobj->userid to course $memberstoreobj->course");
                             $teacherstally++;
                         }
                     }elseif($CFG->enrol_imsunenrol){
