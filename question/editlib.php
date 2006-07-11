@@ -336,7 +336,7 @@ function question_list($course, $categoryid, $quizid=0,
     foreach ($questions as $question) {
         echo "<tr>\n<td nowrap=\"nowrap\">\n";
         if ($quizid) {
-            echo "<a title=\"$straddtoquiz\" href=\"edit.php?addquestion=$question->id&amp;sesskey=$USER->sesskey\"><img
+            echo "<a title=\"$straddtoquiz\" href=\"edit.php?addquestion=$question->id&amp;quizid=$quizid&amp;sesskey=$USER->sesskey\"><img
                   src=\"$CFG->pixpath/t/moveleft.gif\" border=\"0\" alt=\"$straddtoquiz\" /></a>&nbsp;";
         }
         echo "<a title=\"$strpreview\" href=\"javascript:void();\" onClick=\"openpopup('/question/preview.php?id=$question->id&quizid=$quizid','$strpreview','scrollbars=yes,resizable=yes,width=700,height=480', false)\"><img

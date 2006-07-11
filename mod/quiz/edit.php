@@ -236,6 +236,10 @@ if (self.name == 'editquestion') {
     }
 
     if (isset($_REQUEST['savechanges']) and confirm_sesskey()) {
+        $savequizid = required_param('savequizid', PARAM_INT);
+        if ($modform->id != $savequizid) {
+            error("Error saving quiz settings, please do not change two quizes from the same browser", $CFG->wwwroot.'/mod/quiz/edit.php?quizid='.$savequizid);
+        }
     /// We need to save the new ordering (if given) and the new grades
         $oldquestions = explode(",", $modform->questions); // the questions in the old order
         $questions = array(); // for questions in the new order
