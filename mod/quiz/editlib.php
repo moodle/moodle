@@ -211,15 +211,15 @@ function quiz_print_question_list($quiz, $allowdelete=true, $showbreaks=true, $r
                 echo '<td width="50">Page break</td>';
                 echo '<td><hr noshade="noshade" /></td><td width="45">';
                 if ($count > 1) {
-                    echo "<a title=\"$strmoveup\" href=\"edit.php?up=$count&amp;sesskey=$USER->sesskey\"><img
+                    echo "<a title=\"$strmoveup\" href=\"edit.php?up=$count&amp;quizid=$quiz->id&amp;sesskey=$USER->sesskey\"><img
                          src=\"$CFG->pixpath/t/up.gif\" border=\"0\" alt=\"$strmoveup\" /></a>";
                 }
                 echo '&nbsp;';
                 if ($count < $lastindex) {
-                    echo "<a title=\"$strmovedown\" href=\"edit.php?down=$count&amp;sesskey=$USER->sesskey\"><img
+                    echo "<a title=\"$strmovedown\" href=\"edit.php?down=$count&amp;quizid=$quiz->id&amp;sesskey=$USER->sesskey\"><img
                          src=\"$CFG->pixpath/t/down.gif\" border=\"0\" alt=\"$strmovedown\" /></a>";
 
-                    echo "<a title=\"$strremove\" href=\"edit.php?delete=$count&amp;sesskey=$USER->sesskey\">
+                    echo "<a title=\"$strremove\" href=\"edit.php?delete=$count&amp;quizid=$quiz->id&amp;sesskey=$USER->sesskey\">
                           <img src=\"$CFG->pixpath/t/delete.gif\" border=\"0\" alt=\"$strremove\" /></a>";
                 }
                 echo '</td></tr></table></td>';
@@ -233,13 +233,13 @@ function quiz_print_question_list($quiz, $allowdelete=true, $showbreaks=true, $r
 
         echo "<td>";
         if ($count != 0) {
-            echo "<a title=\"$strmoveup\" href=\"edit.php?up=$count&amp;sesskey=$USER->sesskey\"><img
+            echo "<a title=\"$strmoveup\" href=\"edit.php?up=$count&amp;quizid=$quiz->id&amp;sesskey=$USER->sesskey\"><img
                  src=\"$CFG->pixpath/t/up.gif\" border=\"0\" alt=\"$strmoveup\" /></a>";
         }
         echo "</td>";
         echo "<td>";
         if ($count < $lastindex-1) {
-            echo "<a title=\"$strmovedown\" href=\"edit.php?down=$count&amp;sesskey=$USER->sesskey\"><img
+            echo "<a title=\"$strmovedown\" href=\"edit.php?down=$count&amp;quizid=$quiz->id&amp;sesskey=$USER->sesskey\"><img
                  src=\"$CFG->pixpath/t/down.gif\" border=\"0\" alt=\"$strmovedown\" /></a>";
         }
         echo "</td>";
@@ -274,7 +274,7 @@ function quiz_print_question_list($quiz, $allowdelete=true, $showbreaks=true, $r
                   <img src=\"$CFG->pixpath/t/edit.gif\" border=\"0\" alt=\"$stredit\" /></a>";
         }
         if ($allowdelete) {
-            echo "<a title=\"$strremove\" href=\"edit.php?delete=$count&amp;sesskey=$USER->sesskey\">
+            echo "<a title=\"$strremove\" href=\"edit.php?delete=$count&amp;quizid=$quiz->id&amp;sesskey=$USER->sesskey\">
                   <img src=\"$CFG->pixpath/t/removeright.gif\" border=\"0\" alt=\"$strremove\" /></a>";
         }
 
@@ -300,6 +300,7 @@ function quiz_print_question_list($quiz, $allowdelete=true, $showbreaks=true, $r
 
     echo '<div align="center"><input type="submit" value="'.get_string('savechanges').'" />';
     echo '<input type="hidden" name="savechanges" value="save" /></div>';
+    echo '<input type="hidden" name="savequizid" value="'.$quiz->id.'" /></div>'; // ugly hack to prevent modform session "mistakes"
 
     print_simple_box_end();
     echo "</form>\n";
