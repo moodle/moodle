@@ -16,16 +16,12 @@
 
     require_once('config.php');
 
-    $file   = optional_param('file', '', PARAM_CLEAN);
+    $file   = optional_param('file', '', PARAM_PATH);
     $text   = optional_param('text', 'No text to display', PARAM_CLEAN);
     $module = optional_param('module', 'moodle', PARAM_ALPHAEXT);
     $forcelang = optional_param('forcelang', '', PARAM_ALPHAEXT);
 
     print_header();
-
-    if (detect_munged_arguments($module .'/'. $file)) {
-        error('Filenames contain illegal characters!');
-    }
 
     print_simple_box_start('center', '96%');
 
