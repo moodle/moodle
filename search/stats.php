@@ -27,7 +27,7 @@
       $type_counts['Total'] = count_records('search_documents');
 
       foreach($types as $type) {
-        $c = count_records('search_documents', 'type', $type);
+        $c = count_records('search_documents', 'doctype', $type);
         $type_counts[$type] = (int)$c;
       } //foreach
     } else {

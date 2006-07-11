@@ -1,12 +1,17 @@
 <?php
   /* The indexer logic -
-   * Look through each installed module's lib file for necessary search functions,
-   * and if they're present (and the module search document class file), add the
-   * content to the index. Repeat this for blocks.
+   * Look through each installed module's search document class file (/search/documents)
+   * for necessary search functions, and if they're present add the content to the index.
+   * Repeat this for blocks.
+   *
+   * Because the iterator/retrieval functions are now stored in /search/documents/mod_document.php,
+   * /mod/mod/lib.php doesn't have to be modified - and thus the search module becomes quite
+   * self-sufficient. URL's are now stored in the index, stopping us from needing to require
+   * the class files to generate a results page.
    *
    * Along with the index data, each document's summary gets stored in the database
    * and synchronised to the index (flat file) via the primary key ('id') which is mapped
-   * to the 'dbid' field in the index
+   * to the 'db_id' field in the index
    * */
 
   //this'll take some time, set up the environment
@@ -44,8 +49,11 @@
   //php5 found, continue including php5-only files
   require_once("$CFG->dirroot/search/Zend/Search/Lucene.php");
   
-  //begin timer
-  search_stopwatch();    
+  if (get_config("search_indexer_busy") == 1) {
+  } //if  
+  
+  //turn on busy flag
+  set_config("search_indexer_busy", 1);
   mtrace('<pre>Server Time: '.date('r',time())."\n");
   
   //paths
@@ -63,21 +71,30 @@
   } else {
     mtrace("Using $index_path as data directory.");
   } //else
-
+  
   $index = new Zend_Search_Lucene($index_path, true);
   
   //create the database tables
   $tables = $db->MetaTables();
     
   if (in_array($CFG->prefix.'search_documents', $tables)) {
-    delete_records('search_documents');
+    //delete_records('search_documents');    
+    //temporary measure - db doesn't have update scripts and I realised that cvs 1.1 db
+    //is incompatible with cvs 1.2! Must fix ASAP.    
+    execute_sql('drop table '.$CFG->prefix.'search_documents', false);
+    
+    ob_start(); //turn output buffering on - to hide modify_database() output
+    modify_database($index_db_file, '', false);
+    ob_end_clean(); //chuck the buffer and resume normal operation
   } else {        
     ob_start(); //turn output buffering on - to hide modify_database() output
     modify_database($index_db_file, '', false);
     ob_end_clean(); //chuck the buffer and resume normal operation
   } //else
-    
-  mtrace('Starting activity modules');
+
+  //begin timer
+  search_stopwatch();
+  mtrace("Starting activity modules\n");
   
   //the presence of the required search functions -
   // * mod_iterator
@@ -86,23 +103,18 @@
   
   if ($mods = get_records_select('modules' /*'index this module?' where statement*/)) {
     foreach ($mods as $mod) {
-      $libfile = "$CFG->dirroot/mod/$mod->name/lib.php";
+      $class_file = $CFG->dirroot.'/search/documents/'.$mod->name.'_document.php';              
       
-      if (file_exists($libfile)) {
-        include_once($libfile);
+      if (file_exists($class_file)) {
+        include_once($class_file);
         
         $iter_function = $mod->name.'_iterator';
         $index_function = $mod->name.'_get_content_for_index';
-        
-        //specific module search document class
-        $class_file = $CFG->dirroot.'/search/documents/'.$mod->name.'_document.php';
-        
+                
         $counter = 0;
         $doc = new stdClass;
                 
-        if (file_exists($class_file) && function_exists($index_function) && function_exists($iter_function)) {
-          include_once($class_file);
-          
+        if (function_exists($index_function) && function_exists($iter_function)) {
           mtrace("Processing module function $index_function ...");
                      
           foreach ($iter_function() as $i) {
@@ -113,30 +125,30 @@
             foreach($documents as $document) {
               $counter++;
                             
-              //data object for db
-              $doc->type = $document->type;
-              $doc->title = search_escape_string($document->title);
-              $doc->update = time();              
-              $doc->url = 'none';
-              $doc->courseid = $document->courseid;              
-              $doc->groupid = $document->groupid;
+              //object to insert into db                            
+              $doc->doctype   = $document->doctype;
+              $doc->title     = search_escape_string($document->title);
+              $doc->url       = search_escape_string($document->url);              
+              $doc->update    = time();                            
+              $doc->courseid  = $document->course_id;              
+              $doc->groupid   = $document->group_id;              
               
               //insert summary into db
               $id = insert_record('search_documents', $doc);
               
               //synchronise db with index
-              $document->addField(Zend_Search_Lucene_Field::Keyword('dbid', $id));
+              $document->addField(Zend_Search_Lucene_Field::Keyword('db_id', $id));
               
               //add document to index
               $index->addDocument($document);                  
                             
               //commit every x new documents, and print a status message                            
-              if (($counter%200) == 0) {
+              if (($counter%2000) == 0) {
                 $index->commit();
-                mtrace(".. $counter");                
+                mtrace(".. $counter");
               } //if
             } //foreach
-            
+
             //end transaction
             
           } //foreach
@@ -145,7 +157,7 @@
           $index->commit();
           
           mtrace("-- $counter documents indexed");
-          mtrace('done.');          
+          mtrace("done.\n");          
         } //if
       } //if
     } //foreach
@@ -160,5 +172,8 @@
   
   mtrace(".<br><a href='index.php'>Back to query page</a>.");
   mtrace('</pre>');
+  
+  //finished, turn busy flag off
+  set_config("search_indexer_busy", 0);
 
 ?>

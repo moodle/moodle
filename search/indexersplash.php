@@ -42,7 +42,12 @@
           ."started and cancelled an indexing session. Follow the link if you are sure that\n"
           ."you want to continue indexing - this will replace any existing index data (no\n"
           ."Moodle data is affected).\n"
-          ."\n"          
+          ."\n"
+          ."You are encouraged to use the 'Test indexing' script before continuing onto\n"
+          ."indexing - this will check if the modules are set up correctly. Please correct\n"
+          ."any errors before proceeding.\n"
+          ."\n"
+          ."<a href='tests/index.php'>Test indexing</a> or "
           ."<a href='indexer.php?areyousure=yes'>Continue indexing</a> or <a href='index.php'>Back to query page</a>."
           ."</pre>");
   } else {

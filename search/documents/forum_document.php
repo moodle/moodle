@@ -1,0 +1,155 @@
+<?php
+
+  /* see wiki_document.php for descriptions */
+
+  require_once("$CFG->dirroot/search/documents/document.php");
+  require_once("$CFG->dirroot/mod/forum/lib.php");
+  
+  class ForumSearchDocument extends SearchDocument {  
+    public function __construct(&$post, $forum_id, $course_id, $group_id) {
+      // generic information
+      /*$doc->id        = $post->id;
+      $doc->title     = $post->subject;
+      $doc->author    = $post->firstname." ".$post->lastname;
+      $doc->contents  = $post->message;*/
+      
+      $doc->id        = $post['id'];
+      $doc->title     = $post['subject'];
+      $doc->author    = $post['firstname']." ".$post['lastname'];
+      $doc->contents  = $post['message'];
+      
+      $doc->url       = forum_make_link($post['discussion'], $post['id']);      
+      
+      // module specific information
+      $data->forum      = $forum_id;
+      $data->discussion = $post['discussion'];
+      
+      parent::__construct($doc, $data, SEARCH_FORUM_TYPE, $course_id, $group_id);
+    } //constructor    
+  } //ForumSearchDocument
+  
+  function forum_make_link($discussion_id, $post_id) {
+    global $CFG;
+    return $CFG->wwwroot.'/mod/forum/discuss.php?d='.$discussion_id.'#'.$post_id;
+  } //forum_make_link
+  
+  function forum_iterator() {
+      //no @ = Undefined index:  82 in /home/michael/public_html/moodle/lib/datalib.php on line 2671    
+      return @get_all_instances_in_courses("forum", get_courses());
+  } //forum_iterator
+  
+  function forum_get_content_for_index(&$forum) {
+      $documents = array();  
+      if (!$forum) return $documents;
+    
+      $posts = forum_get_discussions_fast($forum->id);     
+      if (!$posts) return $documents;
+      
+      while (!$posts->EOF) {
+        $post = $posts->fields;
+        
+        if (is_array($post)) {
+          if (strlen($post['message']) > 0 && ($post['deleted'] != 1)) {
+            $documents[] = new ForumSearchDocument($post, $forum->id, $forum->course, $post['groupid']);
+          } //if
+            
+          if ($children = forum_get_child_posts_fast($post['id'], $forum->id)) {
+            while (!$children->EOF) {
+              $child = $children->fields;
+
+              if (strlen($child['message']) > 0 && ($child['deleted'] != 1)) {
+                $documents[] = new ForumSearchDocument($child, $forum->id, $forum->course, $post['groupid']);
+              } //if
+
+              $children->MoveNext();
+            } //foreach
+          } //if
+        } //if
+        
+        $posts->MoveNext();
+      } //foreach
+            
+      return $documents;
+  } //forum_get_content_for_index
+  
+  //old slower version
+  function forum_get_content_for_index_old(&$forum) {
+    $documents = array();  
+    if (!$forum) return $documents;
+  
+    $posts = forum_get_discussions($forum->id);      
+    if (!$posts) return $documents;
+                
+    foreach($posts as $post) {
+      if (is_object($post)) {
+        if (strlen($post->message) > 0 && ($post->deleted != 1)) {
+          $documents[] = new ForumSearchDocument($post, $forum->id, $forum->course, $post->groupid);
+        } //if
+          
+        if ($children = forum_get_child_posts($post->id, $forum->id)) {
+          foreach ($children as $child) {
+            if (strlen($child->message) > 0 && ($child->deleted != 1)) {
+              $documents[] = new ForumSearchDocument($child, $forum->id, $forum->course, $post->groupid);
+            } //if
+          } //foreach
+        } //if
+      } //if                
+    } //foreach      
+    
+    return $documents;
+  } //forum_get_content_for_index_old
+  
+  //reworked faster version from /mod/forum/lib.php
+  function forum_get_discussions_fast($forum) {
+    global $CFG, $USER;
+    
+    $timelimit='';
+  
+    if (!empty($CFG->forum_enabletimedposts)) {
+      if (!((isadmin() and !empty($CFG->admineditalways)) || isteacher(get_field('forum', 'course', 'id', $forum)))) {
+        $now = time();
+        $timelimit = " AND ((d.timestart = 0 OR d.timestart <= '$now') AND (d.timeend = 0 OR d.timeend > '$now')";
+        if (!empty($USER->id)) {
+          $timelimit .= " OR d.userid = '$USER->id'";
+        }
+        $timelimit .= ')';
+      }
+    }
+  
+    if ($CFG->dbtype == 'postgres7') {
+        return get_recordset_sql("SELECT p.id, p.subject, p.discussion, p.message,
+                                  p.deleted, d.groupid, u.firstname, u.lastname 
+                              FROM {$CFG->prefix}forum_discussions d
+                              JOIN {$CFG->prefix}forum_posts p ON p.discussion = d.id
+                              JOIN {$CFG->prefix}user u ON p.userid = u.id
+                             WHERE d.forum = '$forum'
+                               AND p.parent = 0
+                                   $timelimit
+                          ORDER BY d.timemodified DESC");
+    } else {
+        return get_recordset_sql("SELECT p.id, p.subject, p.discussion, p.message, p.deleted,
+                                  d.groupid, u.firstname, u.lastname
+                              FROM ({$CFG->prefix}forum_posts p,
+                                   {$CFG->prefix}user u,
+                                   {$CFG->prefix}forum_discussions d)
+                             WHERE d.forum = '$forum'
+                               AND p.discussion = d.id
+                               AND p.parent = 0
+                               AND p.userid = u.id $timelimit
+                          ORDER BY d.timemodified DESC");
+    } //else
+  } //forum_get_discussions_fast
+  
+  //reworked faster version from /mod/forum/lib.php
+  function forum_get_child_posts_fast($parent, $forumid) {
+    global $CFG;
+  
+    return get_recordset_sql("SELECT p.id, p.subject, p.discussion, p.message, p.deleted,
+                              $forumid AS forum, u.firstname, u.lastname
+                              FROM {$CFG->prefix}forum_posts p
+                         LEFT JOIN {$CFG->prefix}user u ON p.userid = u.id
+                             WHERE p.parent = '$parent'
+                          ORDER BY p.created ASC");
+  } //forum_get_child_posts_fast
+  
+?>

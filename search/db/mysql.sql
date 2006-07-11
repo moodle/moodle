@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS `prefix_search_documents` (
   `id` int(11) NOT NULL auto_increment,
-  `type` varchar(12) NOT NULL default 'none',
+  `doctype` varchar(12) NOT NULL default 'none',
   `title` varchar(100) NOT NULL default '',
   `url` varchar(100) NOT NULL default '',
   `updated` timestamp NOT NULL default CURRENT_TIMESTAMP,

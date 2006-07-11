@@ -1,4 +1,38 @@
-latest
+2006/07/11
+----------
+(Warning: It took me 1900 seconds to index the forum, go make coffee
+whilst you wait.)
+
+Forum search functions changed to use 'get_recordset' instead of
+'get_records', for speed reasons. This provides a significant improvement,
+but indexing is still slow - getting data from the database and Zend's
+tokenising _seem_ to be the prime suspects at the moment.
+
+/search/tests/ added - index.php can be used to see which modules are
+ready to be included in the search index, and it informs you of any
+errors - should be a prerequisite for indexing.
+
+Search result pagination added to query.php, will default to 20 until
+an admin page for the search module is written.
+
+2006/07/07
+----------
+Search-enabling functions moved out've the mod's lib.php files and into
+/search/documents/mod_document.php - this requires the search module to
+operate without requiring modification of lib files.
+
+SearchDocument base class improved, and the way module documents extend
+it. A custom-data field has been added to allow modules to add any custom
+data they wish to be stored in the index - this field is serialised into
+the index as a binary field.
+
+Database field 'type' renamed to 'doctype' to match the renaming in the
+index, 'type' seems to be a reserved word in Lucene. Several index field
+names change to be more descriptive (cid -> course_id). URLs are now
+stored in the index, and don't have to be generated on the fly during
+display of query results.
+
+2006/07/05
 ------
 Started cleaning and standardising things.
 

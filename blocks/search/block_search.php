@@ -6,7 +6,7 @@
      this block, the broadest possible selection of documents is searched.
      
      Author:  Michael Champanis (mchampan)
-     Date:    2006 06 23
+     Date:    2006 06 25
   
      Todo: make strings -> get_string()  
   */
@@ -15,7 +15,7 @@
     
     function init() {
       $this->title = "Global Search"; //get_string()
-      $this->version = 20060625;
+      $this->version = 2006062500;
     } //init  
     
     // only one instance of this block is required
@@ -46,7 +46,7 @@
         
         //basic search form
         $this->content->text =
-            '<form name="query" method="post" action="search/query.php">'
+            '<form name="query" method="get" action="search/query.php">'
           . "<label for=''>$label</label>"
           . '<input type="text" name="query_string" length="50" value=""/>'
           . '<input type="submit" value="'.$button.'"/>'

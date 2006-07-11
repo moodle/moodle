@@ -6,10 +6,11 @@
   //document types that can be searched
   define('SEARCH_NO_TYPE', 'none');
   define('SEARCH_WIKI_TYPE', 'wiki');
+  define('SEARCH_FORUM_TYPE', 'forum');
   
   //returns all the document type constants
   function search_get_document_types() {
-    $r = Array(SEARCH_WIKI_TYPE, SEARCH_NO_TYPE);
+    $r = Array(SEARCH_WIKI_TYPE, SEARCH_NO_TYPE, SEARCH_FORUM_TYPE);
     return $r;
   } //search_get_document_types
   
