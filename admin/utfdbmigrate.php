@@ -386,7 +386,7 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
                 $tablefunction = 'migrate2utf8_'.$dbtablename;
             }
             if ($CFG->dbtype=='mysql' && function_exists($tablefunction)) {
-                $tablefunction($dbtable['#']['FIELDS'][0]['#']['FIELD'], $crash, $debug, $maxrecords); // execute it.
+                $tablefunction($dbtable['#']['FIELDS'][0]['#']['FIELD'], $crash, $debug, $maxrecords, $done, $tablestoconvert); // execute it.
             } else {
 
             /******************************************************
