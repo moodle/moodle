@@ -500,7 +500,7 @@
                     echo "<tr class=\"file\"><th align=\"left\" class=\"header name\">$strname</th><th align=\"right\" class=\"header size\">$strsize</th><th align=\"right\" class=\"header date\">$strmodified</th></tr>";
                     foreach ($list as $item) {
                         echo "<tr>";
-                        print_cell("left", $item['filename'], 'name');
+                        print_cell("left", s($item['filename']), 'name');
                         if (! $item['folder']) {
                             print_cell("right", display_size($item['size']), 'size');
                         } else {
