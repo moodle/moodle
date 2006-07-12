@@ -58,7 +58,7 @@
 
     if ($chatuser->version == 'header_js') {
         /// force msg referesh ASAP
-        echo '<script type="text/javascript">parent.jsupdate.location.href = parent.jsupdate.document.anchors[0].href;</script>';
+        echo '<script type="text/javascript">parent.jsupdate.location.href = parent.jsupdate.document.anchors[0].href;parent.input.enableForm();</script>';
     }
 
     redirect('../empty.php');

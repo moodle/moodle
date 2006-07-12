@@ -29,13 +29,25 @@
     ?>
     <script type="text/javascript">
     <!--
+    var waitFlag = false;
     function empty_field_and_submit() {
-        document.sendForm.chat_message.value = document.inputForm.chat_message.value;
-        document.inputForm.chat_message.value = '';
+        if(waitFlag) return false;
+        waitFlag = true;
+        var input_chat_message = document.getElementById('input_chat_message');
+        document.sendForm.chat_message.value = input_chat_message.value;
+        input_chat_message.value = '';
+        input_chat_message.className = 'wait';
         document.sendForm.submit();
-        document.inputForm.chat_message.focus();
         return false;
     }
+
+    function enableForm() {
+        var input_chat_message = document.getElementById('input_chat_message');
+        waitFlag = false;
+        input_chat_message.className = '';
+        input_chat_message.focus();
+    }
+
     // -->
     </script>
     <?php
@@ -46,7 +58,7 @@
 ?>
     <form action="../empty.php" method="POST" target="empty" name="inputForm"
           OnSubmit="return empty_field_and_submit()">
-        &gt;&gt;<input type="text" name="chat_message" size="60" value="" />
+        &gt;&gt;<input type="text" id="input_chat_message" name="chat_message" size="60" value="" />
         <?php helpbutton('chatting', get_string('helpchatting', 'chat'), 'chat', true, false); ?>
     </form>
 
