@@ -421,7 +421,11 @@
         $status = true;
 
         //Get the numerical array
-        $numerical_units = $info['#']['NUMERICAL_UNITS']['0']['#']['NUMERICAL_UNIT'];
+        if (!empty($info['#']['NUMERICAL_UNITS'])) {
+            $numerical_units = $info['#']['NUMERICAL_UNITS']['0']['#']['NUMERICAL_UNIT'];
+        } else {
+            $numerical_units = array();
+        }
 
         //Iterate over numerical_units
         for($i = 0; $i < sizeof($numerical_units); $i++) {
