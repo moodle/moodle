@@ -589,11 +589,6 @@ function writequestion( $question ) {
     case NUMERICAL:
         $expout .= "::".$question->name."::".$tfname.$this->repchar( $question->questiontext, $textformat )."{#\n";
         foreach ($question->options->answers as $answer) {
-            // DONOTCOMMIT
-            echo '<pre>';
-            var_export($answer);
-            echo '</pre>';
-            
             if ($answer->answer != '') {
                 $expout .= "\t=".$answer->answer.":".(float)$answer->tolerance."#".$this->repchar( $answer->feedback )."\n";
             } else {
