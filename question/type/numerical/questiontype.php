@@ -1,21 +1,22 @@
-<?php  // $Id$
-
-/////////////////
-/// NUMERICAL ///
-/////////////////
-
-/// QUESTION TYPE CLASS //////////////////
-
-///
-/// This class contains some special features in order to make the
-/// question type embeddable within a multianswer (cloze) question
-///
-
-/// This question type behaves like shortanswer in most cases.
-/// Therefore, it extends the shortanswer question type...
+<?php
+/**
+ * @version $Id$
+ * @author Martin Dougiamas and many others. Tim Hunt.
+ * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+ * @package question
+ *//** */
 
 require_once("$CFG->dirroot/question/type/shortanswer/questiontype.php");
 
+/**
+ * NUMERICAL QUESTION TYPE CLASS
+ *
+ * This class contains some special features in order to make the
+ * question type embeddable within a multianswer (cloze) question
+ *
+ * This question type behaves like shortanswer in most cases.
+ * Therefore, it extends the shortanswer question type...
+ */
 class question_numerical_qtype extends question_shortanswer_qtype {
 
     function name() {
@@ -45,9 +46,9 @@ class question_numerical_qtype extends question_shortanswer_qtype {
             foreach($question->options->answers as $key => $val) {
                 $answer = trim($val->answer);
                 $length = strlen($defaultunit->unit);
-                if (substr($answer, -$length) == $defaultunit->unit) {
+                if ($length && substr($answer, -$length) == $defaultunit->unit) {
                     $question->options->answers[$key]->answer =
-                     substr($answer, 0, strlen($answer)-$length);
+                            substr($answer, 0, strlen($answer)-$length);
                 }
             }
         }
@@ -88,11 +89,11 @@ class question_numerical_qtype extends question_shortanswer_qtype {
         return $unit;
     }
 
+    /**
+     * Save the units and the answers associated with this question.
+     */
     function save_question_options($question) {
-        // save_question_options supports the definition of multiple answers
-        // for numerical questions. This is not currently used by the editing
-        // interface, but the GIFT format supports it. The multianswer qtype,
-        // for example can make use of this feature.
+        
         // Get old versions of the objects
         if (!$oldanswers = get_records("question_answers", "question", $question->id)) {
             $oldanswers = array();
@@ -102,6 +103,7 @@ class question_numerical_qtype extends question_shortanswer_qtype {
             $oldoptions = array();
         }
 
+        // Save the units.
         $result = $this->save_numerical_units($question);
         if (isset($result->error)) {
             return $result;
@@ -111,10 +113,17 @@ class question_numerical_qtype extends question_shortanswer_qtype {
 
         // Insert all the new answers
         foreach ($question->answer as $key => $dataanswer) {
-            if ($dataanswer != "") {
+            if ($dataanswer != '' || trim($question->feedback[$key])) {
                 $answer = new stdClass;
                 $answer->question = $question->id;
-                $answer->answer   = trim($dataanswer);
+                if (trim($dataanswer) == '') {
+                    $answer->answer = '';
+                } else {
+                    $answer->answer = $this->apply_unit($dataanswer, $units);
+                    if ($answer->answer === false) {
+                        $result->notice = get_string('invalidnumericanswer', 'quiz');
+                    }
+                }
                 $answer->fraction = $question->fraction[$key];
                 $answer->feedback = trim($question->feedback[$key]);
 
@@ -124,7 +133,7 @@ class question_numerical_qtype extends question_shortanswer_qtype {
                         $result->error = "Could not update quiz answer! (id=$answer->id)";
                         return $result;
                     }
-                } else {    // This is a completely new answer
+                } else { // This is a completely new answer
                     if (! $answer->id = insert_record("question_answers", $answer)) {
                         $result->error = "Could not insert quiz answer!";
                         return $result;
@@ -137,8 +146,15 @@ class question_numerical_qtype extends question_shortanswer_qtype {
                 }
                 $options->question  = $question->id;
                 $options->answer    = $answer->id;
-                $options->tolerance = $this->apply_unit($question->tolerance[$key], $units);
-
+                if (trim($question->tolerance[$key]) == '') {
+                    $options->tolerance = '';
+                } else {
+                    $options->tolerance = $this->apply_unit($question->tolerance[$key], $units);
+                    if ($options->tolerance === false) {
+                        $result->notice = get_string('invalidnumerictolerance', 'quiz');
+                    }
+                }
+                
                 // Save options
                 if (isset($options->id)) { // reusing existing record
                     if (! update_record('question_numerical', $options)) {
@@ -151,23 +167,28 @@ class question_numerical_qtype extends question_shortanswer_qtype {
                         return $result;
                     }
                 }
-
-                // delete old answer records
-                if (!empty($oldanswers)) {
-                    foreach($oldanswers as $oa) {
-                        delete_records('question_answers', 'id', $oa->id);
-                    }
-                }
-
-                // delete old answer records
-                if (!empty($oldoptions)) {
-                    foreach($oldoptions as $oo) {
-                        delete_records('question_numerical', 'id', $oo->id);
-                    }
-                }
-
             }
         }
+        // delete old answer records
+        if (!empty($oldanswers)) {
+            foreach($oldanswers as $oa) {
+                delete_records('question_answers', 'id', $oa->id);
+            }
+        }
+
+        // delete old answer records
+        if (!empty($oldoptions)) {
+            foreach($oldoptions as $oo) {
+                delete_records('question_numerical', 'id', $oo->id);
+            }
+        }
+
+        // Report any problems.
+        if (!empty($result->notice)) {
+            return $result;
+        }
+        
+        return true;
     }
 
     function save_numerical_units($question) {
@@ -180,8 +201,8 @@ class question_numerical_qtype extends question_shortanswer_qtype {
         $keys  = array();
         $oldunits = array_values($oldunits);
         usort($oldunits, create_function('$a, $b', // make sure the default unit is at index 0
-         'if (1.0 === (float)$a->multiplier) { return -1; } else '.
-         'if (1.0 === (float)$b->multiplier) { return 1; } else { return 0; }'));
+                'if (1.0 === (float)$a->multiplier) { return -1; } else '.
+                'if (1.0 === (float)$b->multiplier) { return 1; } else { return 0; }'));
         foreach ($oldunits as $unit) {
             $units[] = clone($unit);
         }
@@ -190,8 +211,7 @@ class question_numerical_qtype extends question_shortanswer_qtype {
             // Discard any unit which doesn't specify the unit or the multiplier
             if (!empty($question->multiplier[$i]) && !empty($question->unit[$i])) {
                 $units[$i]->question = $question->id;
-                $units[$i]->multiplier =
-                 $this->apply_unit($question->multiplier[$i], array());
+                $units[$i]->multiplier = $this->apply_unit($question->multiplier[$i], array());
                 $units[$i]->unit = $question->unit[$i];
             } else {
                 unset($units[$i]);
@@ -200,6 +220,7 @@ class question_numerical_qtype extends question_shortanswer_qtype {
         unset($question->multiplier, $question->unit);
 
         /// Save units
+        $result = new stdClass;
         for ($i = 0; $i < $n; $i++) {
             if (!isset($units[$i]) && isset($oldunits[$i])) { // Delete if it hasn't been resubmitted
                 delete_records('question_numerical_units', 'id', $oldunits[$i]->id);
@@ -223,11 +244,11 @@ class question_numerical_qtype extends question_shortanswer_qtype {
     }
 
     /**
-    * Deletes question from the question-type specific tables
-    *
-    * @return boolean Success/Failure
-    * @param object $question  The question being deleted
-    */
+     * Deletes question from the question-type specific tables
+     *
+     * @return boolean Success/Failure
+     * @param object $question  The question being deleted
+     */
     function delete_question($questionid) {
         delete_records("question_numerical", "question", $questionid);
         delete_records("question_numerical_units", "question", $questionid);
@@ -241,25 +262,25 @@ class question_numerical_qtype extends question_shortanswer_qtype {
         return ($response == $testresponse);
     }
 
-
-
-    // Checks whether a response matches a given answer, taking the tolerance
-    // into account. Returns a true for if a response matches the answer, false
-    // if it doesn't.
+    /**
+     * Checks whether a response matches a given answer, taking the tolerance
+     * and units into account. Returns a true for if a response matches the
+     * answer, false if it doesn't.
+     */
     function test_response(&$question, &$state, $answer) {
-        if (isset($state->responses[''])) {
-            $response = $this->apply_unit(stripslashes($state->responses['']),
-             $question->options->units);
-        } else {
-            $response = '';
+        if ($answer->answer == '') {
+            return true; // Blank answer matches anything.
         }
 
-        if (is_numeric($response) && is_numeric($answer->answer)) {
-            $this->get_tolerance_interval($answer);
-            return ($answer->min <= $response && $answer->max >= $response);
-        } else {
-            return ($response == $answer->answer);
+        $response = $this->apply_unit(stripslashes($state->responses['']), $question->options->units);
+
+        if ($response === false) {
+            return false; // The student did not type a number.
         }
+
+        // The student did type a number, so check it with tolerances.
+        $this->get_tolerance_interval($answer);
+        return ($answer->min <= $response && $response <= $answer->max);
     }
 
     // ULPGC ecastro
@@ -274,17 +295,13 @@ class question_numerical_qtype extends question_shortanswer_qtype {
     }
 
     function grade_responses(&$question, &$state, $cmoptions) {
-        $answers     = &$question->options->answers;
+        $answers = &$question->options->answers;
         $state->raw_grade = 0;
         foreach($answers as $answer) {
             if($this->test_response($question, $state, $answer)) {
-                if ($state->raw_grade < $answer->fraction) {
-                    $state->raw_grade = $answer->fraction;
-                }
+                $state->raw_grade = $answer->fraction;
+                break;
             }
-        }
-        if (empty($state->raw_grade)) {
-            $state->raw_grade = 0;
         }
 
         // Make sure we don't assign negative or too high marks
@@ -308,11 +325,12 @@ class question_numerical_qtype extends question_shortanswer_qtype {
 
     // ULPGC ecastro
     function get_all_responses(&$question, &$state) {
-        unset($answers);
+        $result = new stdClass;
+        $answers = array();
         $unit = $this->get_default_numerical_unit($question);
         if (is_array($question->options->answers)) {
             foreach ($question->options->answers as $aid=>$answer) {
-                unset ($r);
+                $r = new stdClass;
                 $r->answer = $answer->answer;
                 $r->credit = $answer->fraction;
                 $this->get_tolerance_interval($answer);
@@ -326,8 +344,6 @@ class question_numerical_qtype extends question_shortanswer_qtype {
                 }
                 $answers[$aid] = $r;
             }
-        } else {
-            $answers[]="error"; // just for debugging, eliminate
         }
         $result->id = $question->id;
         $result->responses = $answers;
@@ -337,8 +353,7 @@ class question_numerical_qtype extends question_shortanswer_qtype {
     function get_tolerance_interval(&$answer) {
         // No tolerance
         if (empty($answer->tolerance)) {
-            $answer->min = $answer->max = $answer->answer;
-            return true;
+            $answer->tolerance = 0;
         }
 
         // Calculate the interval of correct responses (min/max)
@@ -376,40 +391,51 @@ class question_numerical_qtype extends question_shortanswer_qtype {
     }
 
     /**
-    * Checks if the $rawresponse has a unit and applys it if appropriate.
-    *
-    * @param string $rawresponse  The response string to be converted to a float.
-    * @param array $units         An array with the defined units, where the
-    *                             unit is the key and the multiplier the value.
-    * @return float               The rawresponse with the unit taken into
-    *                             account as a float.
-    */
+     * Checks if the $rawresponse has a unit and applys it if appropriate.
+     *
+     * @param string $rawresponse  The response string to be converted to a float.
+     * @param array $units         An array with the defined units, where the
+     *                             unit is the key and the multiplier the value.
+     * @return float               The rawresponse with the unit taken into
+     *                             account as a float.
+     */
     function apply_unit($rawresponse, $units) {
         // Make units more useful
         $tmpunits = array();
         foreach ($units as $unit) {
             $tmpunits[$unit->unit] = $unit->multiplier;
         }
-
+        // remove spaces and normalise decimal places.
         $search  = array(' ', ',');
         $replace = array('', '.');
-        $rawresponse = str_replace($search, $replace, $rawresponse); // remove spaces
-        if (ereg(
-         '^([+-]?([0-9]+(\\.[0-9]*)?|[.][0-9]+)([eE][-+]?[0-9]+)?)([^0-9].*)?$',
-         $rawresponse, $responseparts)) {
-            $responsenum  = (float)$responseparts[1];
-            if (isset($tmpunits[$responseparts[5]])) {
-                return (float)$responseparts[1] / $tmpunits[$responseparts[5]];
+        $rawresponse = str_replace($search, $replace, trim($rawresponse));
+        
+        // Apply any unit that is present.
+        if (ereg('^([+-]?([0-9]+(\\.[0-9]*)?|\\.[0-9]+)([eE][-+]?[0-9]+)?)([^0-9].*)?$',
+                $rawresponse, $responseparts)) {
+                    
+            if (!empty($responseparts[5])) {
+                
+                if (isset($tmpunits[$responseparts[5]])) {
+                    // Valid number with unit.
+                    return (float)$responseparts[1] / $tmpunits[$responseparts[5]];
+                } else {
+                    // Valid number with invalid unit. Must be wrong.
+                    return false;
+                }
+
             } else {
+                // Valid number without unit.
                 return (float)$responseparts[1];
             }
         }
-        return $rawresponse;
+        // Invalid number. Must be wrong.
+        return false;
     }
     
-/// BACKUP FUNCTIONS ////////////////////////////
+    /// BACKUP FUNCTIONS ////////////////////////////
 
-    /*
+    /**
      * Backup the data in the question
      *
      * This is used in question/backuplib.php
@@ -437,9 +463,9 @@ class question_numerical_qtype extends question_shortanswer_qtype {
         return $status;
     }
 
-/// RESTORE FUNCTIONS /////////////////
+    /// RESTORE FUNCTIONS /////////////////
 
-    /*
+    /**
      * Restores the data in the question
      *
      * This is used in question/restorelib.php
@@ -456,6 +482,7 @@ class question_numerical_qtype extends question_shortanswer_qtype {
             $num_info = $numericals[$i];
 
             //Now, build the question_numerical record structure
+            $numerical = new stdClass;
             $numerical->question = $new_question_id;
             $numerical->answer = backup_todb($num_info['#']['ANSWER']['0']['#']);
             $numerical->tolerance = backup_todb($num_info['#']['TOLERANCE']['0']['#']);
@@ -467,7 +494,7 @@ class question_numerical_qtype extends question_shortanswer_qtype {
             }
 
             //The structure is equal to the db, so insert the question_numerical
-            $newid = insert_record ("question_numerical",$numerical);
+            $newid = insert_record ("question_numerical", $numerical);
 
             //Do some output
             if (($i+1) % 50 == 0) {
@@ -492,11 +519,8 @@ class question_numerical_qtype extends question_shortanswer_qtype {
     }
 
 }
-//// END OF CLASS ////
 
-//////////////////////////////////////////////////////////////////////////
-//// INITIATION - Without this line the question type is not in use... ///
-//////////////////////////////////////////////////////////////////////////
+// INITIATION - Without this line the question type is not in use.
 $QTYPES['numerical']= new question_numerical_qtype();
 // The following adds the questiontype to the menu of types shown to teachers
 $QTYPE_MENU['numerical'] = get_string("numerical", "quiz");

@@ -393,6 +393,14 @@ class qformat_gift extends qformat_default {
                 // Note similarities to ShortAnswer
                 $answertext = substr($answertext, 1); // remove leading "#"
 
+                // If there is feedback for a wrong answer, store it for now.
+                if (($pos = strpos($answertext, '~')) !== false) {
+                    $wrongfeedback = substr($answertext, $pos);
+                    $answertext = substr($answertext, 0, $pos);
+                } else {
+                    $wrongfeedback = '';
+                }
+
                 $answers = explode("=", $answertext);
                 if (isset($answers[0])) {
                     $answers[0] = trim($answers[0]);
@@ -453,6 +461,14 @@ class qformat_gift extends qformat_default {
                     $question->answer[$key] = $ans;
                     $question->tolerance[$key] = $tol;
                 } // end foreach
+
+                if ($wrongfeedback) {
+                    $key += 1;
+                    $question->fraction[$key] = 0;
+                    $question->feedback[$key] = $this->commentparser($wrongfeedback);
+                    $question->answer[$key] = '';
+                    $question->tolerance[$key] = '';
+                }
 
                 //$question->defaultgrade = 1;
                 //$question->image = "";   // No images with this format
@@ -571,12 +587,19 @@ function writequestion( $question ) {
         $expout .= "}\n";
         break;
     case NUMERICAL:
-        $answer = array_pop( $question->options->answers );
-        $tolerance = $answer->tolerance;
-        $min = $answer->answer - $tolerance;
-        $max = $answer->answer + $tolerance;
-        $expout .= "::".$question->name."::".$tfname.$this->repchar( $question->questiontext, $textformat )."{\n";
-        $expout .= "\t#".$min."..".$max."#".$this->repchar( $answer->feedback )."\n";
+        $expout .= "::".$question->name."::".$tfname.$this->repchar( $question->questiontext, $textformat )."{#\n";
+        foreach ($question->options->answers as $answer) {
+            // DONOTCOMMIT
+            echo '<pre>';
+            var_export($answer);
+            echo '</pre>';
+            
+            if ($answer->answer != '') {
+                $expout .= "\t=".$answer->answer.":".(float)$answer->tolerance."#".$this->repchar( $answer->feedback )."\n";
+            } else {
+                $expout .= "\t~#".$this->repchar( $answer->feedback )."\n";
+            }
+        }
         $expout .= "}\n";
         break;
     case MATCH:

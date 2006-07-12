@@ -2,20 +2,20 @@
 <center>
 <table cellpadding="5">
 <tr valign="top">
-    <td align="right"><b><?php  print_string("category", "quiz") ?>:</b></td>
+    <td align="right"><b><?php print_string("category", "quiz") ?>:</b></td>
     <td align="left">
-    <?php   question_category_select_menu($course->id, true, true, $question->category); ?>
+    <?php question_category_select_menu($course->id, true, true, $question->category); ?>
     </td>
 </tr>
 <tr valign="top">
-    <td align="right"><b><?php  print_string("questionname", "quiz") ?>:</b></td>
+    <td align="right"><b><?php print_string("questionname", "quiz") ?>:</b></td>
     <td align="left">
-        <input type="text" name="name" size="50" value="<?php  p($question->name) ?>" alt="<?php  print_string("questionname", "quiz") ?>" />
-        <?php  if (isset($err["name"])) formerr($err["name"]); ?>
+        <input type="text" name="name" size="50" value="<?php p($question->name) ?>" alt="<?php print_string("questionname", "quiz") ?>" />
+        <?php if (isset($err["name"])) formerr($err["name"]); ?>
     </td>
 </tr>
 <tr valign="top">
-    <td align="right"><b><?php  print_string("question", "quiz") ?>:</b>
+    <td align="right"><b><?php print_string("question", "quiz") ?>:</b>
     <br />
     <br />
     <br />
@@ -30,7 +30,7 @@
     </font>
     </td>
     <td align="left">
-        <?php  if (isset($err["questiontext"])) {
+        <?php if (isset($err["questiontext"])) {
                formerr($err["questiontext"]);
                echo "<br />";
            }
@@ -54,9 +54,10 @@
     </td>
 </tr>
 <tr valign="top">
-    <td align="right"><b><?php  print_string("imagedisplay", "quiz") ?>:</b></td>
+    <td align="right"><b><?php print_string("imagedisplay", "quiz") ?>:</b></td>
     <td align="left">
-    <?php   if (empty($images)) {
+    <?php
+        if (empty($images)) {
             print_string("noimagesyet");
         } else {
             choose_from_menu($images, "image", "$question->image", get_string("none"),"","");
@@ -65,42 +66,65 @@
     </td>
 </tr>
 <tr valign="top">
-    <td align="right"><b><?php  print_string("defaultgrade", "quiz") ?>:</b></td>
+    <td align="right"><b><?php print_string("defaultgrade", "quiz") ?>:</b></td>
     <td align="left">
-        <input type="text" name="defaultgrade" size="3" value="<?php  p($question->defaultgrade) ?>" alt="<?php  print_string("defaultgrade", "quiz") ?>" />
+        <input type="text" name="defaultgrade" size="3" value="<?php p($question->defaultgrade) ?>" alt="<?php print_string("defaultgrade", "quiz") ?>" />
 
-        <?php  if (isset($err["defaultgrade"])) formerr($err["defaultgrade"]); ?>
+        <?php if (isset($err["defaultgrade"])) formerr($err["defaultgrade"]); ?>
     </td>
 </tr>
 <tr valign="top">
-    <td align="right"><b><?php  print_string("penaltyfactor", "quiz") ?>:</b></td>
+    <td align="right"><b><?php print_string("penaltyfactor", "quiz") ?>:</b></td>
     <td align="left">
-        <input type="text" name="penalty" size="3" value="<?php  p($question->penalty) ?>" alt="<?php  print_string("penaltyfactor", "quiz") ?>" />
+        <input type="text" name="penalty" size="3" value="<?php p($question->penalty) ?>" alt="<?php print_string("penaltyfactor", "quiz") ?>" />
         <?php helpbutton('penalty', get_string('penalty', 'quiz'), 'quiz'); ?>
-        <?php  if (isset($err["penalty"])) formerr($err["penalty"]); ?>
+        <?php if (isset($err["penalty"])) formerr($err["penalty"]); ?>
     </td>
 </tr>
+<!-- Answers. -->
+<?php
+    for ($i=1; $i<=count($answers); $i++) {
+        $answer = $answers[$i-1];
+?>
 <tr valign="top">
-    <td align="right"><b><?php  print_string("correctanswer", "quiz") ?>:</b></td>
+    <td align="right"><b><?php echo get_string("answer", "quiz")." $i";  ?>:</b></td>
     <td align="left">
-        <input align="left" type="text" id="correct0" name="answer[]" size="10" value="<?php p($answer->answer) ?>" alt="<?php  print_string("correctanswer", "quiz") ?>" />
+        <?php
+            if ($answer->answer === '' && !isset($answer->tolerance) && !isset($answer->fraction)) {
+                $answervalue = '';
+                $answertolerance = '';
+                $fractionval = 0;
+                $feedbacktext = '';
+            } else {
+                $answervalue = $answer->answer;
+                $answertolerance = $answer->tolerance;
+                $fractionval = $answer->fraction;
+                $feedbacktext = $answer->feedback;
+            }
+        ?>
+        <input type="text" name="answer[]" size="25" value="<?php p($answervalue); ?>" />&nbsp;&nbsp;
+        <?php echo get_string("acceptederror", "quiz"); ?>&nbsp;<input type="text" name="tolerance[]" size="15" value="<?php p($answertolerance) ?>" />&plusmn;&nbsp;&nbsp;
+        <?php print_string("grade");
+           echo ":&nbsp;";
+           choose_from_menu($gradeoptions, "fraction[]", $fractionval,""); ?>
+        <br />
     </td>
 </tr>
 <tr valign="top">
-    <td align="right"><b><?php  print_string("acceptederror", "quiz"); ?>:</b></td>
+    <td align="right"><b><?php print_string("feedback", "quiz") ?>:</b></td>
     <td align="left">
-        <input align="left" type="text" id="acceptederror0" name="tolerance[]" size="10" value="<?php p($tolerance); ?>" alt="<?php  print_string("acceptederror", "quiz"); ?>" />&plusmn;
-        <input type="hidden" name="fraction[]" value="1" />
+        <textarea name="feedback[]" rows="2" cols="50"><?php p($feedbacktext) ?></textarea>
     </td>
 </tr>
 <tr valign="top">
-    <td align="right"><b><?php  print_string("feedback", "quiz") ?>:</b></td>
-    <td align="left">
-        <textarea name="feedback[]" rows="2" cols="50"><?php  p($answer->feedback); ?></textarea>
-    </td>
+    <td colspan="2">&nbsp;</td>
 </tr>
+<?php
+    }
+?>
+<!-- Units. -->
 <tr valign="top">
-<td align="right"><b><?php  print_string("unit", "quiz") ?>:</b></td>
+<td align="right"><b><?php print_string("unit", "quiz") ?>:</b></td>
     <td align="left"><?php
     if (isset($units[0]) && 1.0 === (float)$units[0]->multiplier) {
         $unit = $units[0]->unit;
@@ -111,12 +135,12 @@
     ?>
     <input type="hidden" name="multiplier[]" value="<?php p($multiplier) ?>" />
     <input align="left" type="text" id="defaultunit" name="unit[]" size="10" value="<?php p($unit) ?>" alt="<?php print_string("unit", "quiz") ?>" />
-    <b>(<?php  print_string("optional", "quiz") ?>)</b>
+    <b>(<?php print_string("optional", "quiz") ?>)</b>
     </td>
 </tr>
 <tr valign="top">
 <td></td>
-<td align="left"><b><?php  print_string("alternativeunits", "quiz") ?>:</b></td>
+<td align="left"><b><?php print_string("alternativeunits", "quiz") ?>:</b></td>
 <td></td>
 </tr>
 <?php
@@ -132,11 +156,11 @@ for ($i = 1; $i < 6; $i++) {
 <tr valign="top">
 <td></td>
     <td align="left">
-        <b><?php  print_string("multiplier", "quiz") ?>:</b>
-        <input type="text" size="10" name="multiplier[]" value="<?php  p($multiplier) ?>"
+        <b><?php print_string("multiplier", "quiz") ?>:</b>
+        <input type="text" size="10" name="multiplier[]" value="<?php p($multiplier) ?>"
                 alt="<?php print_string("multiplier", "quiz") ?>" />
         <b>&nbsp;&nbsp;&nbsp;<?php print_string("unit", "quiz") ?>:</b>
-        <input type="text" name="unit[]" size="5" value="<?php  p($unit) ?>" />
+        <input type="text" name="unit[]" size="5" value="<?php p($unit) ?>" />
     </td>
 </tr>
 <?php
