@@ -709,6 +709,10 @@ table.message_search_results td {
   color:#888
 }
 
+#mod-chat-gui_header_js-chatinput .wait {
+    background: #dddddd;
+}
+
 /***
  *** Modules: Choice
  ***/
