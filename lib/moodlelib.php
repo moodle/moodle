@@ -6673,7 +6673,7 @@ function unzip_show_status ($list,$removepath) {
         foreach ($list as $item) {
             echo "<tr>";
             $item['filename'] = str_replace(cleardoubleslashes($removepath).'/', "", $item['filename']);
-            print_cell("left", $item['filename']);
+            print_cell("left", s($item['filename']));
             if (! $item['folder']) {
                 print_cell("right", display_size($item['size']));
             } else {
@@ -6690,7 +6690,7 @@ function unzip_show_status ($list,$removepath) {
         print_simple_box_start("center");
         echo "<pre>";
         foreach ($list as $item) {
-            echo str_replace(cleardoubleslashes($removepath.'/'), '', $item).'<br />';
+            echo s(str_replace(cleardoubleslashes($removepath.'/'), '', $item)).'<br />';
         }
         echo "</pre>";
         print_simple_box_end();
