@@ -100,9 +100,9 @@ function data_restore_mods($mod,$restore) {
             }
             if ($restore_userdata_selected) {
                 //Restore data_fields first!!! need to hold an array of [oldid]=>newid due to double dependencies
-                $status = data_fields_restore_mods ($mod->id, $newid, $info, $restore);
-                $status = data_records_restore_mods ($mod->id, $newid, $info, $restore);
-                
+                $status = $status and data_fields_restore_mods ($mod->id, $newid, $info, $restore);
+                $status = $status and data_records_restore_mods ($mod->id, $newid, $info, $restore);
+
             }
         } else {
             $status = false;
@@ -172,6 +172,8 @@ function data_records_restore_mods ($old_data_id, $new_data_id, $info, $restore)
 
     global $CFG, $fieldids;
 
+    $status = true;
+
     $records = $info['MOD']['#']['RECORDS']['0']['#']['RECORD'];
 
     for ($i = 0; $i < sizeof($records); $i++) {
@@ -206,12 +208,12 @@ function data_records_restore_mods ($old_data_id, $new_data_id, $info, $restore)
 
         if ($newid) {
             //We have the newid, update backup_ids
-            $status = backup_putid($restore->backup_unique_code,"data_records",$oldid, $newid);
+            $status = $status and backup_putid($restore->backup_unique_code,"data_records",$oldid, $newid);
 
-            $status = data_content_restore_mods ($oldid, $newid, $old_data_id, $new_data_id, $rec_info, $restore);
-            $status = data_ratings_restore_mods ($oldid, $newid, $info, $rec_info);
-            $status = data_comments_restore_mods ($oldid, $newid, $info, $rec_info);
-            
+            $status = $status and data_content_restore_mods ($oldid, $newid, $old_data_id, $new_data_id, $rec_info, $restore);
+            $status = $status and data_ratings_restore_mods ($oldid, $newid, $info, $rec_info);
+            $status = $status and data_comments_restore_mods ($oldid, $newid, $info, $rec_info);
+
         } else {
             $status = false;
         }
@@ -222,6 +224,8 @@ function data_records_restore_mods ($old_data_id, $new_data_id, $info, $restore)
 function data_content_restore_mods ($old_record_id, $new_record_id, $old_data_id, $new_data_id, $recinfo, $restore) {
 
     global $CFG, $fieldids;
+
+    $status = true;
 
     $contents = $recinfo['#']['CONTENTS']['0']['#']['CONTENT'];
 
@@ -254,10 +258,9 @@ function data_content_restore_mods ($old_record_id, $new_record_id, $old_data_id
 
         if ($newid) {
             //We have the newid, update backup_ids
-            
 
-            $status = data_restore_files ($old_data_id, $new_data_id, $oldfieldid, $content->fieldid, $oldrecordid, $content->recordid, $recinfo, $restore);
-            $status = backup_putid($restore->backup_unique_code,"data_content",$oldid, $newid);
+            $status = $status and data_restore_files ($old_data_id, $new_data_id, $oldfieldid, $content->fieldid, $oldrecordid, $content->recordid, $recinfo, $restore);
+            $status = $status and backup_putid($restore->backup_unique_code,"data_content",$oldid, $newid);
         } else {
             $status = false;
         }
@@ -324,6 +327,8 @@ function data_ratings_restore_mods ($oldid, $newid, $info, $rec_info) {
 
     global $CFG;
 
+    $status = true;
+
     $ratings= $rec_info['#']['RATINGS']['0']['#']['RATING'];
 
     if (empty($ratings)) { // no ratings to restore
@@ -337,7 +342,9 @@ function data_ratings_restore_mods ($oldid, $newid, $info, $rec_info) {
         $rating -> userid = backup_todb($rat_info['#']['USERID']['0']['#']);
         $rating -> rating = backup_todb($rat_info['#']['RATING']['0']['#']);
 
-        $status = insert_record ("data_ratings",$rating);
+        if (! insert_record ("data_ratings",$rating)) {
+            $status = false;
+        }
     }
     return $status;
 }
@@ -345,6 +352,8 @@ function data_ratings_restore_mods ($oldid, $newid, $info, $rec_info) {
 function data_comments_restore_mods ($oldid, $newid, $info, $rec_info) {
 
     global $CFG;
+
+    $status = true;
 
     $comments= $rec_info['#']['COMMENTS']['0']['#']['COMMENT'];
 
@@ -361,7 +370,9 @@ function data_comments_restore_mods ($oldid, $newid, $info, $rec_info) {
         $comment -> content = backup_todb($com_info['#']['CONTENT']['0']['#']);
         $comment -> created = backup_todb($com_info['#']['CREATED']['0']['#']);
         $comment -> modified = backup_todb($com_info['#']['MODIFIED']['0']['#']);
-        $status = insert_record ("data_comments",$comment);
+        if (! insert_record ("data_comments",$comment)) {
+            $status = false;
+        }
 
     }
     return $status;
