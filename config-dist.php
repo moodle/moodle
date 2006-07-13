@@ -281,6 +281,9 @@ $CFG->admin = 'admin';
 //
 //     $CFG->emailconnectionerrorsto = 'your@emailaddress.com';
 // 
+// Restore pre-1.6 behaviour where courses could still be available
+// even if the category they were in was hidden
+//     $CFG->allowvisiblecoursesinhiddencategories = true;
 // 
 // NOTE: if you are using custompix in your theme, see /fixpix.php.
 
