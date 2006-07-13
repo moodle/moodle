@@ -3111,6 +3111,12 @@ function check_db_compat() {
 }
 
 function course_parent_visible($course = null) {
+    if (empty($course)) {
+        return true;
+    }
+    if (!empty($CFG->allowvisiblecoursesinhiddencategories)) {
+        return true;
+    }
     return category_parent_visible($course->category);
 }
 
