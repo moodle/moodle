@@ -2489,7 +2489,7 @@
                         $modrestore = $mod->modtype."_restore_mods";
                         if (function_exists($modrestore)) {
                             //print_object ($mod);                                                //Debug
-                            $status &= $modrestore($mod,$restore);
+                            $status = $status and $modrestore($mod,$restore); //bit operator & not reliable here!
                         } else {
                             //Something was wrong. Function should exist.
                             $status = false;
