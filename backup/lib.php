@@ -323,8 +323,9 @@
 
         if (empty($CFG->backup_version)) {                  // Backup has never been installed.
             $strdatabaseupgrades = get_string("databaseupgrades");
-            print_header($strdatabaseupgrades, $strdatabaseupgrades, $strdatabaseupgrades, 
-                         "", "", false, "&nbsp;", "&nbsp;");
+            print_header($strdatabaseupgrades, $strdatabaseupgrades, $strdatabaseupgrades, "", 
+                    '<script type="text/javascript" src="' . $CFG->wwwroot . '/lib/scroll_to_errors.js"></script>',
+                    false, "&nbsp;", "&nbsp;");
 
             $db->debug=true;
             if (modify_database("$CFG->dirroot/backup/db/$CFG->dbtype.sql")) {
@@ -345,7 +346,8 @@
 
         if ($backup_version > $CFG->backup_version) {       // Upgrade tables
             $strdatabaseupgrades = get_string("databaseupgrades");
-            print_header($strdatabaseupgrades, $strdatabaseupgrades, $strdatabaseupgrades);
+            print_header($strdatabaseupgrades, $strdatabaseupgrades, $strdatabaseupgrades, '',
+                     '<script type="text/javascript" src="' . $CFG->wwwroot . '/lib/scroll_to_errors.js"></script>');
 
             require_once ("$CFG->dirroot/backup/db/$CFG->dbtype.php");
 

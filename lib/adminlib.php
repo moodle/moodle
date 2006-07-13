@@ -73,7 +73,9 @@ function upgrade_plugins($type, $dir, $return) {
         } else if ($CFG->$pluginversion < $plugin->version) {
             if (empty($updated_plugins)) {
                 $strpluginsetup  = get_string('pluginsetup');
-                print_header($strpluginsetup, $strpluginsetup, $strpluginsetup, '', '', false, '&nbsp;', '&nbsp;');
+                print_header($strpluginsetup, $strpluginsetup, $strpluginsetup, '', 
+                        '<script type="text/javascript" src="' . $CFG->wwwroot . '/lib/scroll_to_errors.js"></script>',
+                        false, '&nbsp;', '&nbsp;');
             }
             print_heading($plugin->name .' plugin needs upgrading');
 
@@ -186,7 +188,9 @@ function upgrade_activity_modules($return) {
             } else if ($currmodule->version < $module->version) {
                 if (empty($updated_modules)) {
                     $strmodulesetup  = get_string('modulesetup');
-                    print_header($strmodulesetup, $strmodulesetup, $strmodulesetup, '', '', false, '&nbsp;', '&nbsp;');
+                    print_header($strmodulesetup, $strmodulesetup, $strmodulesetup, '', 
+                            '<script type="text/javascript" src="' . $CFG->wwwroot . '/lib/scroll_to_errors.js"></script>',
+                            false, '&nbsp;', '&nbsp;');
                 }
                 print_heading($module->name .' module needs upgrading');
                 $upgrade_function = $module->name.'_upgrade';
@@ -215,7 +219,9 @@ function upgrade_activity_modules($return) {
         } else {    // module not installed yet, so install it
             if (empty($updated_modules)) {
                 $strmodulesetup    = get_string('modulesetup');
-                print_header($strmodulesetup, $strmodulesetup, $strmodulesetup, '', '', false, '&nbsp;', '&nbsp;');
+                print_header($strmodulesetup, $strmodulesetup, $strmodulesetup, '', 
+                        '<script type="text/javascript" src="' . $CFG->wwwroot . '/lib/scroll_to_errors.js"></script>',
+                        false, '&nbsp;', '&nbsp;');
             }
             print_heading($module->name);
             $updated_modules = true;

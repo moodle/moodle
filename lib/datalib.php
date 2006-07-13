@@ -57,7 +57,7 @@ function execute_sql($command, $feedback=true) {
         return true;
     } else {
         if ($feedback) {
-            echo '<p><font color="red"><strong>'. get_string('error') .'</strong></font></p>';
+            notify('<strong>' . get_string('error') . '</strong>');
         }
         if (!empty($CFG->dblogerror)) {
             $debug=array_shift(debug_backtrace());

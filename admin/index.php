@@ -93,6 +93,7 @@
         }
     }
 
+    $linktoscrolltoerrors = '<script type="text/javascript" src="' . $CFG->wwwroot . '/lib/scroll_to_errors.js"></script>';
     if (! $maintables) {
         if (empty($agreelicence)) {
             $strlicense = get_string("license");
@@ -110,7 +111,8 @@
 
         $strdatabasesetup    = get_string("databasesetup");
         $strdatabasesuccess  = get_string("databasesuccess");
-        print_header($strdatabasesetup, $strdatabasesetup, $strdatabasesetup, "", "", false, "&nbsp;", "&nbsp;");
+        print_header($strdatabasesetup, $strdatabasesetup, $strdatabasesetup,
+                        "", $linktoscrolltoerrors, false, "&nbsp;", "&nbsp;");
         if (file_exists("$CFG->libdir/db/$CFG->dbtype.sql")) {
             $db->debug = true;
             if (modify_database("$CFG->libdir/db/$CFG->dbtype.sql")) {
@@ -152,7 +154,7 @@
             } else {
                 $strdatabasesuccess  = get_string("databasesuccess");
                 print_header($strdatabasechecking, $stradministration, $strdatabasechecking,
-                        "", "", false, "&nbsp;", "&nbsp;");
+                        "", $linktoscrolltoerrors, false, "&nbsp;", "&nbsp;");
                 print_heading($strdatabasechecking);
                 $db->debug=true;
                 if (main_upgrade($CFG->version)) {

@@ -908,8 +908,9 @@ function upgrade_blocks_db($continueto) {
 
     if (empty($CFG->blocks_version)) {                  // Blocks have never been installed.
         $strdatabaseupgrades = get_string('databaseupgrades');
-        print_header($strdatabaseupgrades, $strdatabaseupgrades, $strdatabaseupgrades,
-                     '', '', false, '&nbsp;', '&nbsp;');
+        print_header($strdatabaseupgrades, $strdatabaseupgrades, $strdatabaseupgrades, '', 
+                '<script type="text/javascript" src="' . $CFG->wwwroot . '/lib/scroll_to_errors.js"></script>',
+                false, '&nbsp;', '&nbsp;');
 
         $db->debug=true;
         if (modify_database($CFG->dirroot .'/blocks/db/'. $CFG->dbtype .'.sql')) {
@@ -930,8 +931,8 @@ function upgrade_blocks_db($continueto) {
 
     if ($blocks_version > $CFG->blocks_version) {       // Upgrade tables
         $strdatabaseupgrades = get_string('databaseupgrades');
-        print_header($strdatabaseupgrades, $strdatabaseupgrades, $strdatabaseupgrades);
-
+        print_header($strdatabaseupgrades, $strdatabaseupgrades, $strdatabaseupgrades, '',
+                '<script type="text/javascript" src="' . $CFG->wwwroot . '/lib/scroll_to_errors.js"></script>');
         require_once ($CFG->dirroot .'/blocks/db/'. $CFG->dbtype .'.php');
 
         $db->debug=true;
@@ -1064,7 +1065,9 @@ function upgrade_blocks_plugins($continueto) {
             } else if ($currblock->version < $block->version) {
                 if (empty($updated_blocks)) {
                     $strblocksetup    = get_string('blocksetup');
-                    print_header($strblocksetup, $strblocksetup, $strblocksetup, '', '', false, '&nbsp;', '&nbsp;');
+                    print_header($strblocksetup, $strblocksetup, $strblocksetup, '', 
+                            '<script type="text/javascript" src="' . $CFG->wwwroot . '/lib/scroll_to_errors.js"></script>',
+                            false, '&nbsp;', '&nbsp;');
                 }
                 print_heading('New version of '.$blocktitle.' ('.$block->name.') exists');
                 $upgrade_function = $block->name.'_upgrade';
@@ -1116,7 +1119,9 @@ function upgrade_blocks_plugins($continueto) {
             }
             if (empty($updated_blocks)) {
                 $strblocksetup    = get_string('blocksetup');
-                print_header($strblocksetup, $strblocksetup, $strblocksetup, '', '', false, '&nbsp;', '&nbsp;');
+                print_header($strblocksetup, $strblocksetup, $strblocksetup, '', 
+                        '<script type="text/javascript" src="' . $CFG->wwwroot . '/lib/scroll_to_errors.js"></script>',
+                        false, '&nbsp;', '&nbsp;');
             }
             print_heading($block->name);
             $updated_blocks = true;
