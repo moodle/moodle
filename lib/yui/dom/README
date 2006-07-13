@@ -1,0 +1,37 @@
+Dom Release Notes
+
+*** version 0.11.0 ***
+* Work around Opera 9 broken currentStyle
+* Removed timeout wrapper from setXY retry
+* Tagname tests now case-insensitive
+* Internal "this" references changed to allow for method shorthand
+* get/setStyle now accept both camel and hyphen case
+* Gecko reverted to crawling offsets for getXY
+ 
+
+*** version 0.10.0 ***
+
+* Safari now fails gracefully when querying computedStyle of an unavailable element 
+
+* Class management functions added (hasClass, addClass, removeClass, replaceClass, getElementsByClassName) 
+
+* All methods that accept HTMLElements or IDs now also accept arrays of HTMLElements and/or IDs
+
+* GenerateId method added
+
+* isAncestor method added
+
+* inDocument method added
+
+* getElementsBy method added
+
+* batch method added
+
+* getClientHeight/Width deprecated in favor of getViewportHeight/Width
+
+* getDocumentHeight/Width methods added 
+
+*** version 0.9.0 ***
+
+* Initial release
+

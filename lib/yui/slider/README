@@ -1,0 +1,29 @@
+Slider - Release Notes
+
+0.11.0
+
+   * When the thumb is clicked and dragged, the click position delta is properly
+     applied.
+
+   * The slider background can be disabled by setting backgroundEnabled to false.
+
+   * Added SliderThumb->clearTicks
+
+   * Incorporated updated drag and drop performance improvements
+
+0.10.0
+
+   * Drag and drop's autoscroll feature is now turned off by default
+     in the slider.
+
+   * The slider no longer sets its initial value upon initialization
+
+   * RGB slider example fixed for IE7.
+
+   * Updated to work with the onAvailable feature in Drag and Drop.
+
+   * Updated the basic slider example page to make the control more
+     accessible to non-FF1.5 browsers.
+
+   * Split the examples into separate pages
+

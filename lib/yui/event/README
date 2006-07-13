@@ -1,0 +1,55 @@
+
+YUI Library - Event - Release Notes
+
+0.11.0
+
+   * Added Event.purgeElement which will remove all listeners added via 
+     addListener from the supplied element.  If an optional "type" parameter
+     is supplied, only events of that type will be removed.  Optionally, the
+     purge can be performed recursively on the element's children as well.
+
+   * Added Event.getListeners which will return all listeners attached to 
+     a given element.. either all listeners or listeners of a specific type.
+
+   * getTarget now automatically resolves text nodes.  The optional parameter
+     for this feature is now deprecated.
+
+   * getRelatedTarget now resolves text nodes for the browsers that return the
+     text node rather than its host HTML element.
+
+   * CustomEvent now logs the custom event activity if the logger widget is available
+
+0.10.0
+
+   * Added Safari dblclick to the list of legacy events.
+
+   * When multiple identical event handlers are defined, multiple calls
+     to removeListener can now remove all of them.
+
+   * removeListener works properly for unload events
+
+   * Legacy event bookkeeping is more efficient, improving the performance for
+     adding Safari click events.
+
+   * _unload() is more efficient, improving the page transition experience in 
+     Safari in particular.
+
+   * addListener, removeListener now return false if the function argument is
+     not valid.
+
+   * Fixed an operator precedence issue in getCharCode.
+
+   * Added Event.getXY, which returns [Event.getPageX(e), Event.getPageY(e)]
+
+   * Added Event.onAvailable, which will execute the callback when the element
+     with the supplied id is found.  Currently searches periodically until the
+     window load event or for up to 10 seconds after the onAvailable method 
+     was executed.
+
+   * The lazy listener attachment process now will poll beyond the window load
+     event in order to better handle the case when a listener is defined
+     late in the page but before the element is in the dom.
+
+   * Fixed browser detection for Opera installations reporting as IE.
+
+   * It is now possible to remove and re-add legacy events (Safari click event).

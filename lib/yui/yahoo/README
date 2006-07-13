@@ -1,0 +1,10 @@
+YAHOO Global Namespace - Release Notes
+
+0.11.0
+   * Added YAHOO.extend, which provides an easy way to assign the prototype,
+     constructor, and superclass properties inheritance properties.  It also
+     prevents the constructor of the superclass from being exectuted twice.
+
+0.10.0
+   * Added YAHOO.log that provides a safe way to plumb logging statements in
+     code that will work if the logging component isn't available.

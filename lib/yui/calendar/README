@@ -1,0 +1,24 @@
+Calendar Release Notes
+
+*** version 0.11.0 ***
+
+	- DateMath: DateMath.add now properly adds weeks
+	- DateMath: between() function added
+	- DateMath: getWeekNumber() fixed to take starting day of week into account
+	- All references to Calendar's built in CSS class handlers are removed, replaced with calls to Dom utility (addClass, removeClass)
+	- Several CSS class constants now have clearer names
+	- All CSS classes are now properly namespaced to avoid CSS conflicts
+	- Fixed table:hover bug in CSS
+	- Calendar no longer requires the container ID and variable name to match in order for month navigation to function properly
+	- Calendar month navigation arrows are now represented as background images
+
+*** version 0.10.0 ***
+
+	- Major performance improvements from attaching DOM events to associated table cells only once, when the Calendar shell is built
+	- DOM events for mouseover/mouseout are now fired for all browsers (not just Internet Explorer)
+	- Reset functionality bug fixed for 2-up Calendar view
+
+*** version 0.9.0 ***
+
+* Initial release
+

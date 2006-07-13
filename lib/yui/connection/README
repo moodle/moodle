@@ -1,0 +1,80 @@
+Connection Manager Release Notes
+
+*** version 0.11.0 ***
+
+* Each transactions can be defined with a timeout threshold, in milliseconds,
+through the callback object.  If the threshold is reached, and the transaction
+hasn't completed, the transaction will call abort().
+
+* abort() will now accept a callback object as the second argument.  The
+failure callback will receive a response object to indicate the transaction was
+aborted.
+
+* setForm() will now support file uploads by setting the second argument to
+true (e.g., YAHOO.util.Connect.setForm(formObject, true).  File upload does not
+use the callback success or failure handler.  Instead, it uses a new callback
+object handler: upload.
+
+* HTML form submit will no longer submit form fields without a defined name
+attribute.
+
+* The default POST header of 'Content-Type','application/x-www-form-urlencoded'
+can be overridden by calling setDefaultPostHeader(false).  This
+will remove the default header from non-HTML form, POST submissions.
+
+* setHeader() now enumerates through the _http_header object with
+propertyIsEnumerable to prevent collisions with members added to Object via
+prototype.
+
+*** version 0.10.0 ***
+
+* handleTransactionResponse() now treats the full HTTP 2xx range as a success
+case, instead of just HTTP 200.
+
+* To accommodate multiple field values in Mozilla/Firefox, multiple initHeader
+calls with the same label will now result in the values concatenated to a
+comma- delimited string value.
+Example:
+Setting Content-Type:'application/x-www-form-urlencoded' and Content-
+Type:'text/xml' will result in Content-Type:'application/x-www-form-urlencoded,
+text/xml'.
+
+* Default polling interval lowered to 50ms.
+
+* YAHOO.util.Connect.setPollingInterval() will allow you to set a polling
+interval -- in milliseconds -- to override the default value.
+
+* YAHOO.util.Connect.getResponseHeader[headerLabel] now supported as a response
+object property to provide symmetry with the native XHR object's property.
+Example:
+YAHOO.util.Connect.getResponseHeader['Content-Length'] will return the value
+for the Content-Length header, if the header is available.
+
+* YAHOO.util.Connect.allResponseHeaders property renamed to
+getAllResponseHeaders to provide symmetry with the native XHR object's
+property.
+
+* YAHOO.util.Connect.setForm() now supports HTTP GET as well as HTTP POST.
+
+* YAHOO.util.Connect.setForm() now accepts an HTML form object as well as its
+name attribute value.
+
+* YAHOO.util.Connect.setForm() will not submit HTML form fields that are
+disabled or do not have a name attribute value.
+
+* [FIXED] Response exceptions result in infinite callback loop in
+Mozilla/Firefox.
+
+* [FIXED] YAHOO.util.Connect.abort() now properly clears polling interval.
+
+* [FIXED] isCallInProgress() now verifies whether XHR instance still exists,
+and returns false if the connection object is no longer available.
+
+*** version 0.9.0 ***
+
+* Initial release
+
+
+
+
+

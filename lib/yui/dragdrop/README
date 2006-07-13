@@ -1,0 +1,48 @@
+Drag and Drop Release Notes
+
+0.11.0
+
+   * The Dom.util.setXY calculation for the initial placement of the dragged
+     element is cached during the drag, enhancing the drag performance.
+
+   * DDProxy no longer enforces having a single proxy element for all instances.
+     dragElId can be set in the config object in the constructor.  If the
+     element already exists it will use that element, otherwise a new one will
+     be created with that id.
+
+   * DDProxy->borderWidth has been removed. The value is calculated on the fly
+     instead.
+
+   * Added DragDrop->clearTicks and DragDrop->clearConstraints
+
+   * All drag and drop constructors now have an additional, optional parameter
+     call "config".  It is an object that can contain properties for a
+     number of configuration settings.
+
+   * Drag and drop will not be disabled for elements that cannot have their
+     location determined.
+
+   * isLegalTarget won't return dd objects that are not targetable.
+
+   * Added DragDrop->removeFromGroup.
+
+   * Constraints are now applied properly when determining which drag and drop
+     events should fire.
+
+
+0.10.0
+
+   * Improved the performance in intersect mode
+
+   * It was possible for the drag and drop initialization to be skipped
+     for very slow loading pages.  This was fixed.
+
+   * New methods to exclude regions within your drag and drop element: 
+     addInvalidHandleId(), addInvalidHandleClass()
+
+   * Added an onAvailable handler that is executed after the initial state is set.
+
+   * Drag and drop is more forgiving when the implementer attempts to create the
+     instance prior to the element being in the document, but after the window
+     load event has fired.
+

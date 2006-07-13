@@ -1,0 +1,30 @@
+AutoComplete Release Notes
+
+*** version 0.11.0 ***
+
+* The method getListIds() has been deprecated for getListItems(), which returns
+an array of DOM references.
+
+* All classnames have been prefixed with "yui-ac-".
+
+* Container elements should no longer have CSS property "display" set to "none".
+
+* The useIFrame property can now be set after instantiation.
+
+* On some browsers, the unmatchedItemSelectEvent may not be fired properly when
+delimiter characters are defined.
+
+* On some browsers, defining delimiter characters while enabling forceSelection
+may result in unexpected behavior.
+
+
+
+*** version 0.10.0 ***
+
+* Initial release
+
+* In order to enable the useIFrame property, it should be set in the
+constructor.
+
+* On some browsers, defining delimiter characters while enabling forceSelection
+may result in unexpected behavior.

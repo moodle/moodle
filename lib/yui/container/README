@@ -1,0 +1,30 @@
+Container Release Notes
+
+*** version 0.11.0 ***
+
+	- toString function added to all classes for easy logging
+	- YAHOO.extend is now being used for inheritance on all container classes
+	- Module: monitorresize feature now works on all browsers
+	- Module: Fixed bug with image root and isSecure
+	- Overlay: Fixed bugs related to IFRAME shim positioning
+	- Overlay: center() now works in quirks mode
+	- Overlay: Overlay now has a custom destroy() method that also removes the IFRAME shim
+	- OverlayManager: Fixed bug in the prototype that was preventing multiple Managers on one page
+	- OverlayManager: focusEvent now fires at all appropriate times
+	- Tooltip: context can now be specified as an array, so Tooltips can be reused across multiple context elements
+	- Tooltip: preventoverlap now functions properly for large context elements (i.e, images)
+	- Tooltip: fixed bugs regarding setTimeout
+	- Tooltip: added mousemove event to allow for more accurate Tooltip positioning
+	- Panel: added dragEvent for monitoring all event handlers for drag and drop
+	- Panel: modality mask is now resized on scroll
+	- Panel: KeyListeners are now properly destroyed when the Panel is destroyed
+	- Panel: Header is now sized properly in quirks mode
+	- Dialog: Blinking cursor issue is fixed for Firefox
+	- Dialog: callback object for Connection is now public (this.callback)
+	- Dialog: onsuccess/onfailure properties removed (as a result of the public callback object)
+	- Dialog: Dialog is now invisible by default
+	- Dialog: Buttons are now properly cleaned up on destroy
+
+*** version 0.10.0 ***
+
+* Initial release

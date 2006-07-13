@@ -1,0 +1,10 @@
+CSS Grids Release Notes
+
+*** version 0.11.0 ***
+
+* Removed line #43 because it set an already-set value. 
+  Was: ".yui-t7  #main .yui-b{min-width:750px;}"
+  
+*** version 0.10.0 ***
+
+* Initial release.
