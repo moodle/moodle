@@ -1306,6 +1306,12 @@
                         case LESSON_ENDOFBRANCH :
                             echo get_string("endofbranch", "lesson");
                             break;
+                        case LESSON_CLUSTER :
+                            echo get_string("clustertitle", "lesson");
+                            break;
+                        case LESSON_ENDOFCLUSTER :
+                            echo get_string("endofclustertitle", "lesson");
+                            break;
                     }
                     echo "</b></td></tr>\n";
                     $i = 1;
@@ -1436,7 +1442,11 @@
                                 echo "$jumptitle</td></tr>\n";
                             }
                         } else {
-                            if ($lesson->custom && $page->qtype != LESSON_BRANCHTABLE && $page->qtype != LESSON_ENDOFBRANCH) {                        
+                            if ($lesson->custom and 
+                                $page->qtype != LESSON_BRANCHTABLE and 
+                                $page->qtype != LESSON_ENDOFBRANCH and
+                                $page->qtype != LESSON_CLUSTER and 
+                                $page->qtype != LESSON_ENDOFCLUSTER) {
                                 echo "<tr><td align=\"right\" width=\"20%\"><b>".get_string("score", "lesson")." $i:";
                                 echo "</b></td><td width=\"80%\">\n";
                                 echo "$answer->score</td></tr>\n";
