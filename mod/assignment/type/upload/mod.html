@@ -1,0 +1,82 @@
+<?php
+    if (empty($form->resubmit)) {
+        $form->resubmit = 0;  //upload&rev: =1
+    }
+    if (empty($form->maxbytes)) {
+        $form->maxbytes = $CFG->assignment_maxbytes;
+    }
+    if (empty($form->emailteachers)) {
+        $form->emailteachers = '';
+    }
+    //allow multiple files (from new upload type)
+    if (empty($form->var1)) {
+        $form->var1 = 0; 
+    }
+    //email to students (from upload&review)
+    if (empty($form->var2)) {
+        $form->var2 = '';
+    }
+
+?>
+
+<table align="center" cellpadding="5" cellspacing="0">
+
+<tr valign="top">
+    <td align="right"><b><?php print_string("maximumsize", "assignment") ?>:</b></td>
+    <td>
+    <?php
+        $choices = get_max_upload_sizes($CFG->maxbytes, $this->course->maxbytes);
+        choose_from_menu ($choices, "maxbytes", $form->maxbytes, "");
+    ?>
+  </td>
+</tr>
+<tr>
+    <td align="right"><b><?php print_string("allowmultiple", "assignment") ?>:</b></td>
+    <td>
+    <?php
+        $options[0] = get_string("no"); $options[1] = get_string("yes");
+        choose_from_menu($options, "var1", $form->var1, "");
+    ?>
+    </td>
+</tr>
+
+<tr>
+    <td align="right"><b><?php print_string("allowresubmit", "assignment") ?>:</b></td>
+    <td>
+    <?php 
+        $options[0] = get_string("no"); $options[1] = get_string("yes");
+        choose_from_menu($options, "resubmit", $form->resubmit, ""); //that's how it's un U&R
+    //    choose_from_menu($options, "var2", $form->var2, "");
+        helpbutton("resubmit", get_string("allowresubmit", "assignment"), "assignment");
+    ?>
+    </td>
+</tr>
+
+<tr>
+    <td align="right"><b><?php print_string("emailteachers", "assignment") ?>:</b></td>
+    <td>
+    <?php 
+        $options[0] = get_string("no"); $options[1] = get_string("yes");
+        choose_from_menu($options, "emailteachers", $form->emailteachers, "");
+        helpbutton("emailteachers", get_string("emailteachers", "assignment"), "assignment");
+    ?>
+    </td>
+</tr>
+<tr>
+        <td align="right"><b><?php print_string("emailstudents", "assignment") ?>:</b></td>
+        <td>
+        <?php
+                $options[0] = get_string("no"); $options[1] = get_string("yes");
+                choose_from_menu($options, "var2", $form->var2, "");
+        //        choose_from_menu($options, "emailstudents", $form->emailstudents, "");
+                helpbutton("emailstudents", get_string("emailstudents", "assignment"), "assignment");
+        ?>
+        </td>
+</tr>
+
+</table>
+
+<center>
+<br />
+<input type="submit" value="<?php print_string("continue") ?>" />
+</center>
