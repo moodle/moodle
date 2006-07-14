@@ -558,6 +558,7 @@ class problem_00000x extends problem_base {
 TODO:
 
     session.save_path -- it doesn't really matter because we are already IN a session, right?
+    detect unsupported characters in $CFG->wwwroot - see bug Bug #6091 - relative vs absolute path during backup/restore process
 
 */
 
