@@ -103,7 +103,7 @@ $string['memorylimithelp'] = '<p>La limite de mémoire de PHP sur votre serveur 
 <ol>
 <li>si vous en avez la possibilité, recompilez PHP avec l\'option <em>--enable-memory-limit</em>. Cela permettra à Moodle de fixer lui-même sa limite de mémoire ;</li>
 <li>si vous avez accès à votre fichier «&nbsp;php.ini&nbsp;», vous pouvez attribuer au paramètre <strong>memory_limit</strong> une valeur comme 16M. Si vous n\'y avez pas accès, demandez à l\'administrateur de le faire pour vous ;</li>
-<li>sur certains serveur, vous pouvez créer dans le dossier principal de Moodle un fichier «&nbsp;.htaccess&nbsp;» contenant cette ligne : <p><blockquote>php_value memory_limit 16M</blockquote></p><p>Cependant, sur certains serveur, cela empêchera le fonctionnement correct de <strong>tous</strong> les fichiers PHP (vous verrez s\'afficher des erreurs lors de la consultation de pages). Dans ce cas, vous devrez supprimer le fichier «&nbsp;.htaccess&nbsp;».</li>
+<li>sur certains serveurs, vous pouvez créer dans le dossier principal de Moodle un fichier «&nbsp;.htaccess&nbsp;» contenant cette ligne : <p><blockquote>php_value memory_limit 16M</blockquote></p><p>Cependant, sur certains serveur, cela empêchera le fonctionnement correct de <strong>tous</strong> les fichiers PHP (vous verrez s\'afficher des erreurs lors de la consultation de pages). Dans ce cas, vous devrez supprimer le fichier «&nbsp;.htaccess&nbsp;».</li>
 </ol>';
 $string['missingrequiredfield'] = 'Un champ obligatoire n\'est pas renseigné';
 $string['mysql416bypassed'] = 'Toutefois, si votre site utilise UNIQUEMENT des langues encodées en iso-8859-1 (latin), vous pouvez continuer à utiliser votre version actuelle de MySQL 4.1.12 (ou ultérieure).';
