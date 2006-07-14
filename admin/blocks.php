@@ -89,6 +89,9 @@
             exit;
 
         } else {
+            // Inform block it's about to be deleted
+            block_instance($block->name)->before_delete();
+            
             // Delete block
             if (!delete_records('block', 'id', $block->id)) {
                 notify("Error occurred while deleting the $strblockname record from blocks table");

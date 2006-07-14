@@ -1130,6 +1130,7 @@ function upgrade_blocks_plugins($continueto) {
             if (!is_dir($fullblock .'/db/') || modify_database($fullblock .'/db/'. $CFG->dbtype .'.sql')) {
                 $db->debug = false;
                 if ($block->id = insert_record('block', $block)) {
+                    $blockobj->after_install();
                     notify(get_string('blocksuccess', '', $blocktitle), 'notifysuccess');
                     echo '<hr />';
                 } else {

@@ -108,6 +108,20 @@ class block_base {
     function __construct() {
         $this->block_base();
     }
+    
+    /** 
+     * Function that can be overridden to do extra setup after
+     * the database install. (Called once per block, not per instance!)
+     */
+    function after_install() {
+    }
+    
+    /**
+     * Function that can be overridden to do extra cleanup before
+     * the database tables are deleted. (Called once per block, not per instance!)
+     */
+    function before_delete() {
+    }
 
     /**
      * Returns the block name, as present in the class name,
