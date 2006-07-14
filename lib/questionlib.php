@@ -1335,73 +1335,84 @@ function sort_categories_by_tree(&$categories, $id = 0, $level = 1) {
 }
 
 /**
- * flattens tree structure created by add_indented_named 
- * (adding the names)
- * @param array cats tree structure of categories
- * @param int depth tree depth tracker (for indenting)
- * @return array flattened, formatted list
+ * Private method, only for the use of add_indented_names().
+ * 
+ * Recursively adds an indentedname field to each category, starting with the category
+ * with id $id, and dealing with that category and all its children, and 
+ * return a new array, with those categories in the right order.
+ *
+ * @param array $categories an array of categories which has had childids 
+ *          fields added by flatten_category_tree(). Passed by reference for
+ *          performance only. It is not modfied.
+ * @param int $id the category to start the indenting process from.
+ * @param int $depth the indent depth. Used in recursive calls.
+ * @return array a new array of categories, in the right order for the tree.
  */
-function flatten_category_tree( $cats, $depth=0 ) {
-    $newcats = array();
-    $fillstr = '&nbsp;&nbsp;&nbsp;';
-
-    foreach ($cats as $key => $cat) {
-        $newcats[$key] = $cat;
-        $newcats[$key]->indentedname = str_repeat($fillstr,$depth) . $cat->name;
-        // recurse if the category has children
-        if (!empty($cat->children)) {
-            $newcats += flatten_category_tree( $cat->children, $depth+1 ); 
-        }
+function flatten_category_tree(&$categories, $id, $depth = 0) {
+    
+    // Indent the name of this category.
+    $newcategories = array();
+    $newcategories[$id] = $categories[$id];
+    $newcategories[$id]->indentedname = str_repeat('&nbsp;&nbsp;&nbsp;', $depth) . $categories[$id]->name;
+    
+    // Recursively indent the children.
+    foreach ($categories[$id]->childids as $childid) {
+        $newcategories = $newcategories + flatten_category_tree($categories, $childid, $depth + 1);
     }
-
-    return $newcats;
+    
+    // Remove the childids array that were temporarily added.
+    unset($newcategories[$id]->childids);
+    
+    return $newcategories;
 }
 
 /**
- * format categories into indented list
- * @param array categories categories array (from db)
- * @return array formatted list of categories
+ * Format categories into an indented list reflecting the tree structure.
+ * 
+ * @param array $categories An array of category objects, for example from the.
+ * @return array The formatted list of categories.
  */
-function add_indented_names( $categories ) {
+function add_indented_names($categories) {
 
-    // iterate through categories adding new fields
-    // and creating references
-    foreach ($categories as $key => $category) {
-        $categories[$key]->children = array();
-        $categories[$key]->link = &$categories[$key];
+    // Add an array to each category to hold the child category ids. This array will be removed 
+    // again by flatten_category_tree(). It should not be used outside these two functions.
+    foreach (array_keys($categories) as $id) {
+        $categories[$id]->childids = array();
     }
 
-    // create tree structure of children
-    // link field is used to track 'new' place of category in tree
-    foreach ($categories as $key => $category) {
-        if (!empty($category->parent)) {
-            $categories[$category->parent]->link->children[$key] = $categories[$key];
-            $categories[$key]->link = &$categories[$category->parent]->link->children[$key];
+    // Build the tree structure, and record which categories are top-level.
+    // We have to be careful, because the categories array may include published 
+    // categories from other courses, but not their parents.
+    $toplevelcategoryids = array();
+    foreach (array_keys($categories) as $id) {
+        if (!empty($categories[$id]->parent) && array_key_exists($categories[$id]->parent, $categories)) {
+            $categories[$categories[$id]->parent]->childids[] = $id;
+        } else {
+            $toplevelcategoryids[] = $id;
         }
     }
 
-    // remove top level categories with parents
-    $newcats = array();
-    foreach ($categories as $key => $category) {
-        unset( $category->link );
-        if (empty($category->parent)) {
-            $newcats[$key] = $category;
-        }
+    // Flatten the tree to and add the indents.
+    $newcategories = array();
+    foreach ($toplevelcategoryids as $id) {
+        $newcategories = $newcategories + flatten_category_tree($categories, $id);
     }
 
-    // walk the tree to flatten revised structure
-    $categories = flatten_category_tree( $newcats );
-
-    return $categories;
+    return $newcategories;
 }
 
 /**
-* Displays a select menu of categories with appended course names
-*
-* Optionaly non editable categories may be excluded.
-* @author Howard Miller June '04
-*/
-function question_category_select_menu($courseid,$published=false,$only_editable=false,$selected="") {
+ * Output a select menu of question categories.
+ * 
+ * Categories from this course and (optionally) published categories from other courses
+ * are included. Optionally, only categories the current user may edit can be included. 
+ *
+ * @param integer $courseid the id of the course to get the categories for.
+ * @param integer $published if true, include publised categories from other courses.
+ * @param integer $only_editable if true, exclude categories this user is not allowed to edit.
+ * @param integer $selected optionally, the id of a category to be selected by default in the dropdown.
+ */
+function question_category_select_menu($courseid, $published = false, $only_editable = false, $selected = "") {
 
     // get sql fragment for published
     $publishsql="";
