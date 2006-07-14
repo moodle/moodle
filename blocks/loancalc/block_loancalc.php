@@ -198,6 +198,7 @@ function comp(v) { // general entry point for all cases
 				</tr>
 			</table>
 			</form>';
+        $this->content->footer = '';
 
         return $this->content;
 
