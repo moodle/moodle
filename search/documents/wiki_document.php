@@ -21,7 +21,9 @@
       // generic information; required
       $doc->id        = $page->id;
       $doc->title     = $page->pagename;
-      $doc->author    = $page->author;
+      
+      //remove '(ip.ip.ip.ip)' from wiki author field
+      $doc->author    = preg_replace('/\(.*?\)/', '', $page->author);
       $doc->contents  = $page->content;
       $doc->url       = wiki_make_link($wiki_id, $page->pagename, $page->version);      
       
