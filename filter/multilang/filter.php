@@ -105,6 +105,8 @@ function multilang_filter_impl($langblock) {
     $lang      = '';
     $minpref   = count($preflangs);
     $bestkey   = 0;
+    // Define the preference that will be enough if found
+    $stoppref = empty($CFG->unicodedb) ? 0 : 1;
     //Iterate
     foreach ($langlist[1] as $key => $lang) {
         //Normalize: Moodle's langs are always lowercase and they use the underscore
@@ -114,21 +116,13 @@ function multilang_filter_impl($langblock) {
         if ($foundkey !== false && $foundkey !== NULL && $foundkey < $minpref) {
             $minpref = $foundkey;
             $bestkey = $key;
-            if ($minpref == 0) {
-                continue;        //The best has been found. Leave iteration.
+            if ($minpref <= $stoppref) {
+                break;        //The best has been found. Leave iteration.
             }
         }
     }
 
-    // return result if we got some sort of match
-    if ($foundkey) {
-        $bestmatch = $langlist[2][$bestkey];
-    }
-    else {
-        $bestmatch = '';
-    }
-
-    return trim($bestmatch);
+    return trim($langlist[2][$bestkey]);
 }
 
 ?>
