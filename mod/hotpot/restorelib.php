@@ -203,7 +203,7 @@ function hotpot_restore_details(&$restore, $status, &$xml, &$record) {
     if (empty($record->details)) {
         $status = true;
     } else {
-        unset($details);
+        $details = new stdClass();
         $details->attempt = $record->id;
         $details->details = $record->details;
         if (insert_record('hotpot_details', $details)) {
@@ -226,7 +226,8 @@ function hotpot_restore_records(&$restore, $status, &$xml, $table, $foreign_keys
     // $record_TAG  : (optional) the name of an XML tag which starts a single record
     //    If no $record_TAG is specified, the block of records is assumed to be a single record
     // other parameters are explained in "hotpot_restore_record" below
-    $i = 0;
+    
+    $i = 0; // index for $records_TAG
     do {
         unset($xml_records);
         if ($records_TAG) {
@@ -238,10 +239,8 @@ function hotpot_restore_records(&$restore, $status, &$xml, $table, $foreign_keys
                 $xml_records = &$xml;
             }
         }
-        if (empty($xml_records)) {
-            // do nothing
-        } else {
-            $ii = 0;
+        if (isset($xml_records)) {
+            $ii = 0; // index for $record_TAG
             do {
                 unset($xml_record);
                 if ($record_TAG) {
@@ -253,9 +252,7 @@ function hotpot_restore_records(&$restore, $status, &$xml, $table, $foreign_keys
                         $xml_record = &$xml_records;
                     }
                 }
-                if (empty($xml_record)) {
-                    // do nothing
-                } else {
+                if (isset($xml_record)) {
                     $status = hotpot_restore_record(
                         $restore, $status, $xml_record, $table, $foreign_keys, $more_restore, $secondary_key
                     );
@@ -292,7 +289,7 @@ function hotpot_restore_record(&$restore, $status, &$xml, $table, $foreign_keys,
     }
 
     // get values for fields in this record
-    unset($record);
+    $record = new stdClass();
     $TAGS = array_keys($xml);
     foreach ($TAGS as $TAG) {
         $value = $xml[$TAG][0]['#'];
@@ -359,7 +356,7 @@ function hotpot_restore_record(&$restore, $status, &$xml, $table, $foreign_keys,
     }
 
     // check everything is OK so far
-    if ($ok && isset($record)) {
+    if ($ok) {
         // store old record id, if necessary
         if (isset($record->id)) {
             $record->old_id = $record->id;
