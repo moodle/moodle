@@ -79,7 +79,7 @@ CREATE TABLE prefix_hotpot_questions (
 COMMENT ON TABLE prefix_hotpot_questions IS 'details about questions in Hot Potatoes quiz attempts';
 
 CREATE INDEX prefix_hotpot_questions_hotpot_idx ON prefix_hotpot_questions (hotpot);
-CREATE INDEX prefix_hotpot_questions_name_idx ON prefix_hotpot_questions (SUBSTR(name,20));
+CREATE INDEX prefix_hotpot_questions_name_idx ON prefix_hotpot_questions (SUBSTR("name",20));
 
 #
 # Table structure for table `hotpot_responses`
@@ -113,4 +113,4 @@ CREATE TABLE prefix_hotpot_strings (
 );
 COMMENT ON TABLE prefix_hotpot_strings IS 'strings used in Hot Potatoes questions and responses';
 
-CREATE INDEX prefix_hotpot_strings_string_idx ON prefix_hotpot_strings (SUBSTR(string,20));
+CREATE INDEX prefix_hotpot_strings_string_idx ON prefix_hotpot_strings (SUBSTR("string",20));
