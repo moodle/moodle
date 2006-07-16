@@ -66,4 +66,7 @@
 
     close_window_button();
 
+/// Show one reduced footer
+    print_footer('none');
+
 ?>
