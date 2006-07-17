@@ -8,7 +8,7 @@
        upload_print_form_fragment(1,array('file'),null,false,null,0,0);
        helpbutton("filetoimport", get_string("filetoimport", "glossary"), "glossary"); 
        echo '&nbsp;';
-       print_string("maxsize", "", display_size(get_max_upload_file_size())); 
+       print_string("maxsize", "", display_size(get_max_upload_file_size($CFG->maxbytes, $course->maxbytes))); 
     ?>
     </td>
 </tr>
