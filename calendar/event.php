@@ -485,7 +485,7 @@
 
             if($eventtype == 'select') {
                 $courseid = optional_param('courseid', $SESSION->cal_course_referer, PARAM_INT);
-                if ($courseid == 0) { // workaround by Dan for bug #3130
+                if ($courseid == 0) { // workaround by Dan for bug #6130
                     $courseid = SITEID;
                 }
                 if (!$course = get_record('course', 'id', $courseid)) {
