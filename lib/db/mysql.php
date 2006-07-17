@@ -1978,6 +1978,12 @@ function main_upgrade($oldversion=0) {
         table_column("user", "lastIP", "lastip", "varchar", "15", "", "", "not null", "currentlogin");
     }
     
+    // Change in MySQL 5.0.3 concerning how decimals are stored
+    if ($oldversion < 2006070300) {
+        execute_sql("ALTER TABLE `{$CFG->prefix}grade_letter MODIFY `grade_high` DECIMAL(5,2)", FALSE);
+        execute_sql("ALTER TABLE `{$CFG->prefix}grade_letter MODIFY `grade_low` DECIMAL(5,2)", FALSE);
+    }
+    
     return $result;
 }
 
