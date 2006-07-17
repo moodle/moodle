@@ -54,6 +54,10 @@
         redirect($CFG->wwwroot.'/'.$CFG->admin.'/index.php');
     }
 
+    if ($CFG->forcelogin) {
+        require_login();
+    }
+
     //add_to_log($course->id, "course", "view", "view.php?id=$course->id", "$course->id");
     $now = usergetdate(time());
     $pagetitle = '';
