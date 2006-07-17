@@ -29,9 +29,9 @@
       <?php print_string('eventdate', 'calendar'); ?>:
     </td>
     <td>
-      <?php print_date_selector('startday', 'startmon', 'startyr', $form->timestart);?>
+      <?php print_date_selector('startday', 'startmon', 'startyr', (int)$form->timestart);?>
       <?php print_string('eventtime', 'calendar');?>
-      <?php print_time_selector('starthr', 'startmin', $form->timestart) ?>
+      <?php print_time_selector('starthr', 'startmin', (int)$form->timestart) ?>
       <?php if (isset($err['timestart'])) formerr($err['timestart']); ?>
     </td>
   </tr>
