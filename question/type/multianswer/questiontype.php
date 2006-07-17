@@ -50,6 +50,7 @@ class embedded_cloze_qtype extends default_questiontype {
 
     function save_question_options($question) {
         global $QTYPES;
+        $result = new stdClass;
         
         // This function needs to be able to handle the case where the existing set of wrapped
         // questions does not match the new set of wrapped questions so that some need to be
@@ -191,12 +192,15 @@ class embedded_cloze_qtype extends default_questiontype {
         global $QTYPES;
         $readonly = empty($options->readonly) ? '' : 'readonly="readonly"';
         $disabled = empty($options->readonly) ? '' : 'disabled="disabled"';
+        $formatoptions = new stdClass;
         $formatoptions->noclean = true;
         $formatoptions->para = false;
         $nameprefix = $question->name_prefix;
 
         // For this question type, we better print the image on top:
-        echo get_question_image($question, $cmoptions->course);
+        if ($image = get_question_image($question, $cmoptions->course)) {
+            echo('<img class="qimage" src="' . $image . '" alt="" /><br />');
+        }
 
         $qtextremaining = format_text($question->questiontext,
                                       $question->questiontextformat,
@@ -429,6 +433,7 @@ class embedded_cloze_qtype extends default_questiontype {
             $oldid = backup_todb($mul_info['#']['ID']['0']['#']);
 
             //Now, build the question_multianswer record structure
+            $multianswer = new stdClass;
             $multianswer->question = $new_question_id;
             $multianswer->sequence = backup_todb($mul_info['#']['SEQUENCE']['0']['#']);
 
@@ -454,7 +459,7 @@ class embedded_cloze_qtype extends default_questiontype {
             //We have the answers field recoded to its new ids
             $multianswer->sequence = $sequence_field;
             //The structure is equal to the db, so insert the question_multianswer
-            $newid = insert_record ("question_multianswer",$multianswer);
+            $newid = insert_record("question_multianswer", $multianswer);
 
             //Save ids in backup_ids
             if ($newid) {
