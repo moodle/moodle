@@ -145,6 +145,7 @@
                         $newteacher->course = $newcourseid;
                         $newteacher->authority = 1;   // First teacher is the main teacher
                         $newteacher->editall = 1;     // Course creator can edit their own course
+                        $newteacher->enrol = 'manual';// enrol the teacher too - bug #6120
 
                         if (!$newteacher->id = insert_record("user_teachers", $newteacher)) {
                             error("Could not add you to this new course!");
