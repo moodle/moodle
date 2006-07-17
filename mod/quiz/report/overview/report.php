@@ -107,8 +107,8 @@ class quiz_report extends quiz_default_report {
         }
 
     /// Define table columns
-        $tablecolumns = array('checkbox', 'picture', 'fullname', 'timestart', 'duration');
-        $tableheaders = array(NULL, '', get_string('fullname'), get_string('startedon', 'quiz'), get_string('attemptduration', 'quiz'));
+        $tablecolumns = array('checkbox', 'picture', 'fullname', 'timestart', 'timefinish', 'duration');
+        $tableheaders = array(NULL, '', get_string('fullname'), get_string('startedon', 'quiz'), get_string('timecompleted','quiz'), get_string('attemptduration', 'quiz'));
 
         if ($quiz->grade and $quiz->sumgrades) {
             $tablecolumns[] = 'sumgrades';
@@ -200,7 +200,7 @@ class quiz_report extends quiz_default_report {
             $formatg->set_align('center');
             // Here starts workshhet headers
 
-            $headers = array(get_string('fullname'), get_string('startedon', 'quiz'), get_string('attemptduration', 'quiz'));
+            $headers = array(get_string('fullname'), get_string('startedon', 'quiz'), get_string('timecompleted', 'quiz'), get_string('attemptduration', 'quiz'));
 
             if ($quiz->grade and $quiz->sumgrades) {
                 $headers[] = get_string('grade', 'quiz').'/'.$quiz->grade;
@@ -225,7 +225,7 @@ class quiz_report extends quiz_default_report {
             header("Cache-Control: must-revalidate,post-check=0,pre-check=0");
             header("Pragma: public");
 
-            $headers = get_string('fullname')."\t".get_string('startedon', 'quiz')."\t".get_string('attemptduration', 'quiz');
+            $headers = get_string('fullname')."\t".get_string('startedon', 'quiz')."\t".get_string('timecompleted', 'quiz')."\t".get_string('attemptduration', 'quiz');
 
             if ($quiz->grade and $quiz->sumgrades) {
                 $headers .= "\t".get_string('grade', 'quiz')."/".$quiz->grade;
@@ -377,6 +377,7 @@ class quiz_report extends quiz_default_report {
                                   $picture,
                                   $userlink,
                                   empty($attempt->attempt) ? '-' : '<a href="review.php?q='.$quiz->id.'&amp;attempt='.$attempt->attempt.'">'.userdate($attempt->timestart, $strtimeformat).'</a>',
+                                  empty($attempt->timefinish) ? '-' : '<a href="review.php?q='.$quiz->id.'&amp;attempt='.$attempt->attempt.'">'.userdate($attempt->timefinish, $strtimeformat).'</a>',
                                   empty($attempt->attempt) ? '-' :
                                    (empty($attempt->timefinish) ? get_string('unfinished', 'quiz') :
                                     format_time($attempt->duration))
@@ -385,6 +386,7 @@ class quiz_report extends quiz_default_report {
                     else {
                         $row = array(fullname($attempt),
                                    empty($attempt->attempt) ? '-' : userdate($attempt->timestart, $strtimeformat),
+                                   empty($attempt->timefinish) ? '-' : userdate($attempt->timefinish, $strtimeformat),
                                    empty($attempt->attempt) ? '-' :
                                    (empty($attempt->timefinish) ? get_string('unfinished', 'quiz') :
                                    format_time($attempt->duration))
