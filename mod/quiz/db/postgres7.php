@@ -901,10 +901,10 @@ function quiz_upgrade($oldversion) {
             //Iterate over courses
             foreach ($courses as $course) {
                 //If the course doesn't exist, orphan category found!
-                //Process it with quiz_delete_course(). It will do all the hard work.
+                //Process it with question_delete_course(). It will do all the hard work.
                 if (!record_exists('course', 'id', $course->id)) {
-                    require_once("$CFG->dirroot/mod/quiz/lib.php");
-                    quiz_delete_course($course);
+                    require_once("$CFG->libdir/questionlib.php ");
+                    question_delete_course($course);
                 }
             }
         }
