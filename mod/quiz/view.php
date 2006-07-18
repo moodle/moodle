@@ -214,15 +214,10 @@
                 };
                 if (!empty($quiz->popup)) {
                     $datecompleted .= "var windowoptions = 'left=0, top=0, height='+window.screen.height+
-                     ', width='+window.screen.width+', channelmode=yes, fullscreen=yes, scrollbars=yes, '+
-                     'resizeable=no, directories=no, toolbar=no, titlebar=no, location=no, status=no, '+
-                     'menubar=no';\n";
-                    $jslink  = 'javascript:';
-                    $strconfirmstartattempt = confirm_string($quiz->timelimit, $quiz->attempts);
-                    if ($strconfirmstartattempt) {
-                        $jslink .=  "if (confirm(\'$strconfirmstartattempt\')) ";
-                    }
-                    $jslink .= "var popup = window.open(\\'$attempturl\\', \\'quizpopup\\', windowoptions);";
+                            ', width='+window.screen.width+', channelmode=yes, fullscreen=yes, scrollbars=yes, '+
+                            'resizeable=no, directories=no, toolbar=no, titlebar=no, location=no, status=no, '+
+                            'menubar=no';\n";
+                    $jslink  = "javascript:var popup = window.open(\\'$attempturl\\', \\'quizpopup\\', windowoptions);";
                 } else {
                     $jslink = $attempturl;
                 }
@@ -314,45 +309,36 @@
                     print_heading("$strbestgrade: $mygrade / $quiz->grade.");
                 }
                 
-                $strconfirmstartattempt = confirm_string($quiz->timelimit, $quiz->attempts);
-
                 echo "<br />";
                 echo "</p>";
+                echo "<div align=\"center\">";
                 if ($quiz->delay1 or $quiz->delay2) {
                      //quiz enforced time delay
                      $lastattempt_obj = get_record_select('quiz_attempts', "quiz = $quiz->id AND attempt = $numattempts AND userid = $USER->id", 'timefinish');
                      if ($lastattempt_obj) {
                          $lastattempt = $lastattempt_obj->timefinish;
                      }
-                     echo "<div align=\"center\">";
                      if($numattempts == 1 && $quiz->delay1) {
                          if ($timenow - $quiz->delay1 > $lastattempt) {
-                              include("view_js.php");
-                         }
-                         else {
+                              print_start_quiz_button($quiz, $attempts, $numattempts, $unfinished, $cm);
+                         } else {
                              $notify_msg = get_string('temporaryblocked', 'quiz') . '<b>'. userdate($lastattempt + $quiz->delay1). '<b>';
                              print_simple_box($notify_msg, "center");
                          }
-                     }
-                     else if($numattempts > 1 && $quiz->delay2) {
+                     } else if($numattempts > 1 && $quiz->delay2) {
                          if ($timenow - $quiz->delay2 > $lastattempt) {
-                              include("view_js.php");
-                         }
-                         else {
+                              print_start_quiz_button($quiz, $attempts, $numattempts, $unfinished, $cm);
+                         } else {
                               $notify_msg = get_string('temporaryblocked', 'quiz') . '<b>'. userdate($lastattempt + $quiz->delay2). '<b>';
                               print_simple_box($notify_msg, "center");
                          }
+                     } else {
+                         print_start_quiz_button($quiz, $attempts, $numattempts, $unfinished, $cm);
                      }
-                     else {
-                         include("view_js.php");
-                     }
-                     echo "</div>\n";
-                }
-                else {
-                     echo "<div align=\"center\">"; 
-                     include("view_js.php");
-                     echo "</div>\n";
+                } else {
+                     print_start_quiz_button($quiz, $attempts, $numattempts, $unfinished, $cm);
                 }     
+                echo "</div>\n";
             }
         } else {
             print_heading(get_string("nomoreattempts", "quiz"));
@@ -385,15 +371,57 @@
         return true;
     }
     
-    function confirm_string($timelimit, $attempts) {
-        if ($timelimit && $attempts) {
-            return addslashes(get_string("confirmstartattempttimelimit","quiz", $attempts));
-        } else if ($timelimit) {
-            return addslashes(get_string("confirmstarttimelimit","quiz"));
-        } else if ($attempts) {
-            return addslashes(get_string("confirmstartattemptlimit","quiz", $attempts));
+    
+    function print_start_quiz_button($quiz, $attempts, $numattempts, $unfinished, $cm) {
+        $strconfirmstartattempt =  '';
+        
+        if ($unfinished) {
+            $buttontext = get_string('continueattemptquiz', 'quiz');
+        } else {
+            if ($numattempts) {
+                $buttontext = get_string('reattemptquiz', 'quiz');
+            } else {
+                $buttontext = get_string('attemptquiznow', 'quiz');
+            }
+            if ($quiz->timelimit && $quiz->attempts) {
+                $strconfirmstartattempt = addslashes(get_string('confirmstartattempttimelimit','quiz', $quiz->attempts));
+            } else if ($quiz->timelimit) {
+                $strconfirmstartattempt = addslashes(get_string('confirmstarttimelimit','quiz'));
+            } else if ($quiz->attempts) {
+                $strconfirmstartattempt = addslashes(get_string('confirmstartattemptlimit','quiz', $quiz->attempts));
+            }
         }
-        return "";
+        $buttontext = htmlspecialchars($buttontext, ENT_QUOTES);
+
+        if (!empty($quiz->popup)) {
+            $window = 'quizpopup';
+            $windowoptions = "left=0, top=0, height='+window.screen.height+', " .
+                    "width='+window.screen.width+', channelmode=yes, fullscreen=yes, " .
+                    "scrollbars=yes, resizeable=no, directories=no, toolbar=no, " .
+                    "titlebar=no, location=no, status=no, menubar=no";
+        } else {
+            $window = '_self';
+            $windowoptions = '';
+        }
+
+        $attempturl = "attempt.php?id=$cm->id";
+        if (!empty($CFG->usesid) && !isset($_COOKIE[session_name()])) {
+            $attempturl = sid_process_url($attempturl);
+        }
+?>
+<script language="javascript" type="text/javascript">
+<!--
+document.write('<input type="button" value="<?php echo $buttontext ?>" onclick="javascript: <?php 
+        if ($strconfirmstartattempt) {
+            echo "if (confirm(\\'".addslashes($strconfirmstartattempt)."\\'))"; 
+        } 
+?> window.open(\'<?php echo $attempturl ?>\', \'<?php echo $window ?>\', \'<?php echo $windowoptions ?>\'); " />');
+// -->
+</script>
+<noscript>
+    <strong><?php print_string('noscript', 'quiz'); ?></strong>
+</noscript>
+<?php
     }
 
 ?>
