@@ -26,7 +26,6 @@
     if ($config = data_submitted()) {
 
         $config = (array)$config;
-        validate_form($config, $err);
 
         // extract and sanitize the auth key explicitly
         $modules = get_list_of_plugins("auth");
@@ -34,6 +33,14 @@
             $auth = $config['auth'];            
         } else {
             notify("Error defining the authentication method");
+        }
+
+        // load the auth plugin library
+        require_once("{$CFG->dirroot}/auth/$auth/lib.php");
+
+        $err = array();
+        if (function_exists('auth_validate_form')) {
+            auth_validate_form($config, $err);
         }
 
         if (count($err) == 0) {
@@ -232,14 +239,6 @@
     exit;
 
 /// Functions /////////////////////////////////////////////////////////////////
-
-function validate_form(&$form, &$err) {
-
-   // if (empty($form->fullname))
-   //     $err["fullname"] = get_string("missingsitename");
-
-    return;
-}
 
 //
 // Good enough for most auth plugins
