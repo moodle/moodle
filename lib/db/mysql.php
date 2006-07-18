@@ -1979,9 +1979,9 @@ function main_upgrade($oldversion=0) {
     }
     
     // Change in MySQL 5.0.3 concerning how decimals are stored
-    if ($oldversion < 2006070300) {
-        execute_sql("ALTER TABLE `{$CFG->prefix}grade_letter MODIFY `grade_high` DECIMAL(5,2)", FALSE);
-        execute_sql("ALTER TABLE `{$CFG->prefix}grade_letter MODIFY `grade_low` DECIMAL(5,2)", FALSE);
+    if ($oldversion < 2006050507) {
+        table_column('grade_letter', 'grade_high', 'grade_high', 'decimal(5,2)', '', '', '100.00', 'not null', '');
+        table_column('grade_letter', 'grade_low', 'grade_low', 'decimal(5,2)', '', '', '0.00', 'not null', '');
     }
     
     return $result;
