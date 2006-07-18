@@ -38,6 +38,7 @@ class question_missingtype_qtype extends default_questiontype {
         $anss = array();
         if ($answers) {
             foreach ($answers as $answer) {
+                $a = new stdClass;
                 $a->text = format_text("$answer->answer", FORMAT_MOODLE, $formatoptions, $cmoptions->course);
     
                 $anss[] = clone($a);
