@@ -2877,7 +2877,7 @@ function grade_set_letter_grades() {
 
 function grade_download_form($type='both') {
     global $course,$USER, $action, $cview;
-    if ($type != 'both' || $type != 'excel' || $type != 'text') {
+    if ($type != 'both' and $type != 'excel' and $type != 'text') {
         $type = 'both';
     }
     
@@ -2886,13 +2886,13 @@ function grade_download_form($type='both') {
         $options['id'] = $course->id;
         $options['sesskey'] = $USER->sesskey;
         
-        if ($type = 'both' || $type == 'excel') {
+        if ($type == 'both' || $type == 'excel') {
             $options['action'] = 'excel';
             echo '<td align="center">';
             print_single_button("index.php", $options, get_string("downloadexcel"));
             echo '</td>';
         }
-        if ($type = 'both' || $type == 'text') {
+        if ($type == 'both' || $type == 'text') {
             $options['action'] = 'text';
             echo '<td align="center">';
             print_single_button("index.php", $options, get_string("downloadtext"));
