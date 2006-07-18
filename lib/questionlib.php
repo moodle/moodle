@@ -430,6 +430,7 @@ function question_delete_course($course, $feedback=true) {
                 //It's being used. Cannot delete it, so:
                 //Create a container category in SITEID course if it doesn't exist
                 if (!$concatid) {
+                    $concat = new stdClass;
                     $concat->course = SITEID;
                     if (!isset($course->shortname)) {
                         $course->shortname = 'id=' . $course->id;
@@ -489,6 +490,7 @@ function question_delete_course($course, $feedback=true) {
         }
         //Inform about changes performed if feedback is enabled
         if ($feedback) {
+            $table = new stdClass;
             $table->head = array(get_string('category','quiz'), get_string('action'));
             $table->data = $feedbackdata;
             print_table($table);
@@ -497,44 +499,43 @@ function question_delete_course($course, $feedback=true) {
     return true;
 }
 
+/**
+ * Private function to factor common code out of get_question_options().
+ * 
+ * @param object $question the question to tidy.
+ * @return boolean true if successful, else false. 
+ */
+function _tidy_question(&$question) {
+    global $QTYPES;
+    if (!array_key_exists($question->qtype, $QTYPES)) {
+        $question->qtype = 'missingtype';
+        $question->questiontext = '<p>' . get_string('warningmissingtype', 'quiz') . '</p>' . $question->questiontext;
+    }
+    $question->name_prefix = question_make_name_prefix($question->id);
+    return $QTYPES[$question->qtype]->get_question_options($question);
+}
 
 /**
-* Updates the question objects with question type specific
-* information by calling {@link get_question_options()}
-*
-* Can be called either with an array of question objects or with a single
-* question object.
-* @return bool            Indicates success or failure.
-* @param mixed $questions Either an array of question objects to be updated
-*                         or just a single question object
-*/
+ * Updates the question objects with question type specific
+ * information by calling {@link get_question_options()}
+ *
+ * Can be called either with an array of question objects or with a single
+ * question object.
+ * 
+ * @param mixed $questions Either an array of question objects to be updated
+ *         or just a single question object
+ * @return bool Indicates success or failure.
+ */
 function get_question_options(&$questions) {
-    global $QTYPES;
-
     if (is_array($questions)) { // deal with an array of questions
-        // get the keys of the input array
-        $keys = array_keys($questions);
-        // update each question object
-        foreach ($keys as $i) {
-            if (!array_key_exists($questions[$i]->qtype, $QTYPES)) {
-                $questions[$i]->qtype = 'missingtype';
-                $questions[$i]->questiontext = get_string('warningmissingtype', 'quiz').$questions[$i]->questiontext;
-            }
-            
-            // set name prefix
-            $questions[$i]->name_prefix = question_make_name_prefix($i);
-
-            if (!$QTYPES[$questions[$i]->qtype]->get_question_options($questions[$i]))
+        foreach ($questions as $i => $notused) {
+            if (!_tidy_question($questions[$i])) {
                 return false;
+            }
         }
         return true;
     } else { // deal with single question
-        if (!array_key_exists($questions->qtype, $QTYPES)) {
-            $questions->qtype = 'missingtype';
-            $questions[$i]->questiontext = get_string('warningmissingtype', 'quiz').$questions[$i]->questiontext;
-        }
-        $questions->name_prefix = question_make_name_prefix($questions->id);
-        return $QTYPES[$questions->qtype]->get_question_options($questions);
+        return _tidy_question($questions);
     }
 }
 
@@ -1210,6 +1211,7 @@ function question_get_id_from_name_prefix($name) {
  */
 function question_new_attempt_uniqueid($modulename='quiz') {
     global $CFG;
+    $attempt = new stdClass;
     $attempt->modulename = $modulename;
     if (!$id = insert_record('question_attempts', $attempt)) {
         error('Could not create new entry in question_attempts table');
