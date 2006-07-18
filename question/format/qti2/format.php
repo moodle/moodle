@@ -235,24 +235,14 @@ function handle_questions_media(&$questions, $path, $courseid) {
     function exportprocess($filename) {
 
         global $CFG;
+        $courseid = $this->course->id;
 
         // create a directory for the exports (if not already existing)
-        $dirname = get_string("exportfilename","quiz");
-        $courseid = $this->course->id;
-        $path = $CFG->dataroot.'/'.$courseid.'/'.$dirname;
-        if (!is_dir($path)) {
-            if (!mkdir($path, $CFG->directorypermissions)) {
-              error("Cannot create path: $path");
-            }
+        if (!$export_dir = make_upload_directory($this->question_get_export_dir().'/'.$filename)) {
+              error( get_string('cannotcreatepath','quiz',$export_dir) );
         }
-        // create directory for this particular IMS export, if not already existing
-        $path = $path."/".$filename;
-        if (!is_dir($path)) {
-            if (!mkdir($path, $CFG->directorypermissions)) {
-              error("Cannot create path: $path");
-            }
-        }
-  
+        $path = $CFG->dataroot.'/'.$this->question_get_export_dir().'/'.$filename;
+
         // get the questions (from database) in this category
         // $questions = get_records("question","category",$this->category->id);
         $questions = get_questions_category( $this->category );
@@ -281,6 +271,9 @@ function handle_questions_media(&$questions, $path, $courseid) {
         $smarty->error_reporting = 99;
         $expout = $smarty->fetch('imsmanifest.tpl');
         $filepath = $path.'/imsmanifest.xml';
+        if (empty($expout)) {
+            error("Unkown error - empty imsmanifest.xml");
+        }
         if (!$fh=fopen($filepath,"w")) {
             error("Cannot open for writing: $filepath");
         }
@@ -313,7 +306,7 @@ function handle_questions_media(&$questions, $path, $courseid) {
         zip_files( array($path), "$path.zip" );
 
      	// remove the temporary directory
-	delDirContents( $path );
+		remove_dir( $path );
  
         return true;
     }
@@ -688,7 +681,7 @@ function xml_entitize(&$collection) {
             }
         }
         $smarty = new Smarty;
-        $smarty->template_dir = "{$CFG->dirroot}/mod/quiz/format/qti2/templates";
+        $smarty->template_dir = "{$CFG->dirroot}/question/format/qti2/templates";
         $smarty->compile_dir  = "$path";
         return $smarty;
     }
