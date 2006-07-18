@@ -118,6 +118,16 @@ function auth_get_userinfo($username){
 }
 
 
+function auth_user_update_password($username, $newpassword) {
+    global $CFG;
+    if ($CFG->auth_dbpasstype === 'internal') {
+        return set_field('user', 'password', md5($newpassword), 'username', $username);
+    } else {
+        // we should have never been called!
+        return false;
+    }
+}
+
 /**
  * syncronizes user fron external db to moodle user table
  *
