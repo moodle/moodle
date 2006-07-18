@@ -2185,7 +2185,7 @@ function get_courses_page($categoryid="all", $sort="c.sortorder ASC", $fields="c
 
     $totalcount = count_records_sql("SELECT COUNT(DISTINCT c.id) FROM $selectsql");
 
-    return get_records_sql("SELECT DISTINCT $fields FROM $selectsql ".((!empty($sort)) ? "ORDER BY $sort" : "")." $limit");
+    return get_records_sql("SELECT $fields FROM $selectsql ".((!empty($sort)) ? "ORDER BY $sort" : "")." $limit");
 }
 
 
