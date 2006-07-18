@@ -408,8 +408,8 @@
 
             case 'site':
 
-                if (!isguest() && isloggedin()) {
-
+                if (isloggedin()) {
+					
                     $SQL = 'SELECT '.$requiredfields.' FROM '.$CFG->prefix.'post p, '.$tagtablesql
                             .$CFG->prefix.'user u
                             WHERE p.userid = u.id '.$tagquerysql.'
@@ -469,22 +469,33 @@
 
             case 'group':
 
-                $SQL = 'SELECT '.$requiredfields.' FROM '.$CFG->prefix.'post p, '.$tagtablesql
-                        .$CFG->prefix.'groups_members m, '.$CFG->prefix.'user u
-                        WHERE p.userid = m.userid '.$tagquerysql.'
-                        AND u.id = p.userid
-                        AND m.groupid = '.$filterselect.'
-                        AND (p.publishstate = \'site\' OR p.publishstate = \'public\' OR p.userid = '.$USER->id.')';
+				$SQL = 'SELECT '.$requiredfields.' FROM '.$CFG->prefix.'post p, '.$tagtablesql
+	                    .$CFG->prefix.'groups_members m, '.$CFG->prefix.'user u
+	                    WHERE p.userid = m.userid '.$tagquerysql.'
+	                    AND u.id = p.userid
+	                    AND m.groupid = '.$filterselect.'
+	                    AND (p.publishstate = \'site\' OR p.publishstate = \'public\' OR p.userid = '.$USER->id.')';
 
             break;
 
             case 'user':
-
-                $SQL = 'SELECT '.$requiredfields.' FROM '.$CFG->prefix.'post p, '.$tagtablesql
-                        .$CFG->prefix.'user u
-                        WHERE p.userid = u.id '.$tagquerysql.'
-                        AND u.id = '.$filterselect.'
-                        AND (p.publishstate = \'site\' OR p.publishstate = \'public\' OR p.userid = '.$USER->id.')';
+				
+				if (isloggedin()) {
+				  
+	                $SQL = 'SELECT '.$requiredfields.' FROM '.$CFG->prefix.'post p, '.$tagtablesql
+	                        .$CFG->prefix.'user u
+	                        WHERE p.userid = u.id '.$tagquerysql.'
+	                        AND u.id = '.$filterselect.'
+	                        AND (p.publishstate = \'site\' OR p.publishstate = \'public\' OR p.userid = '.$USER->id.')';
+	            } else {
+	                
+					$SQL = 'SELECT '.$requiredfields.' FROM '.$CFG->prefix.'post p, '.$tagtablesql
+	                        .$CFG->prefix.'user u
+	                        WHERE p.userid = u.id '.$tagquerysql.'
+	                        AND u.id = '.$filterselect.'
+	                        AND p.publishstate = \'public\'';	              
+	              
+	            }
 
             break;
 
