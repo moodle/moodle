@@ -14,6 +14,11 @@ class ChameleonCSS {
     }
     
     function update($file, $content = '') {
+        if (!is_writable($this->base . $this->$file)) {
+            $this->error = $this->$file . ' is not writeable, the file permissions are currently ' . $this->getfilepermissions($this->$file);
+            return false;
+        }
+        
         if (!$fp = fopen($this->base . $this->$file, 'w')) {
             $this->error = 'couldn\'t open file';
             return false;
@@ -22,15 +27,22 @@ class ChameleonCSS {
         fclose($fp);
         return true;
     }
+    
+    function getfilepermissions($file) {
+        return substr(sprintf('%o', fileperms($this->base . $file)), -4);
+    }
 
     function read() {
-        $permcss = trim(file_get_contents($this->base . $this->perm));
-        $tempcss = trim(file_get_contents($this->base . $this->temp));
+        $permcss = file_get_contents($this->base . $this->perm);
+        $tempcss = file_get_contents($this->base . $this->temp);
            
         if ($permcss === false || $tempcss === false) {
-            $this->error = 'couldn\'t read file';
+            $this->error = 'Couldn\'t read file';
             return false;
         }
+        
+        $permcss = trim($permcss);
+        $tempcss = trim($tempcss);
         
         if ($tempcss == '') {
             return $permcss;

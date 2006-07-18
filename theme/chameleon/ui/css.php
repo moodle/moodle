@@ -30,12 +30,19 @@ if (isset($_GET['path'])) {
 }
 
 $chameleon = new ChameleonCSS('../', 'user_styles.css', 'temp_user_styles.css');
+
 if (isset($_POST['css'])) {
     if (!isset($_GET['temp'])) {
-        $chameleon->update('perm', $_POST['css']);
-        $chameleon->update('temp');
+        if (!$chameleon->update('perm', $_POST['css'])) {
+            die('CHAMELEON_ERROR ' . $chameleon->error);
+        }
+        if (!$chameleon->update('temp')) {
+            die('CHAMELEON_ERROR ' . $chameleon->error);
+        }
     } else {
-        $chameleon->update('temp', $_POST['css']);
+        if (!$chameleon->update('temp', $_POST['css'])) {
+            die('CHAMELEON_ERROR ' . $chameleon->error);
+        }
     }
     
 } else {

@@ -1,21 +1,28 @@
 <?php
-header("Content-type: text/javascript");
+
+header("Content-type: text/plain; charset=utf-8");
+
+$chameleon_theme_root = explode('/', $_SERVER['PHP_SELF']);
+array_pop($chameleon_theme_root);
+array_pop($chameleon_theme_root);
+$chameleon_theme_root = implode('/', $chameleon_theme_root);
+
 ?>
 
 if (!window.Node) {
      var Node = {
-         ELEMENT_NODE : 1,
-         ATTRIBUTE_NODE : 2,
-         TEXT_NODE : 3,
-         CDATA_SECTION_NODE : 4,
-         ENTITY_REFERENCE_NODE : 5,
-         ENTITY_NODE : 6,
-         PROCESSING_INSTRUCTIONS_NODE : 7,
-         COMMENT_NODE : 8,
-         DOCUMENT_NODE : 9,
-         DOCUMENT_TYPE_NODE : 10,
-         DOCUMENT_FRAGMENT_NODE : 11,
-         NOTATION_NODE : 12
+         ELEMENT_NODE: 1,
+         ATTRIBUTE_NODE: 2,
+         TEXT_NODE: 3,
+         CDATA_SECTION_NODE: 4,
+         ENTITY_REFERENCE_NODE: 5,
+         ENTITY_NODE: 6,
+         PROCESSING_INSTRUCTIONS_NODE: 7,
+         COMMENT_NODE: 8,
+         DOCUMENT_NODE: 9,
+         DOCUMENT_TYPE_NODE: 10,
+         DOCUMENT_FRAGMENT_NODE: 11,
+         NOTATION_NODE: 12
     };
 }
 
@@ -25,20 +32,12 @@ String.prototype.trim = function() {
     return this.replace(/^\s+|\s+$/g, '');
 };
 
-<?php
-
-$chameleon_theme_root = explode('/', $_SERVER['PHP_SELF']);
-array_pop($chameleon_theme_root);
-array_pop($chameleon_theme_root);
-$chameleon_theme_root = implode('/', $chameleon_theme_root);
-
-?>
 
 (function() {
-    
+
     var struct = [];
     var hotspotMode = null;
-    
+        
     var Config = {
         THEME_ROOT: '<?php echo $chameleon_theme_root; ?>',
         REMOTE_URI: '<?php echo substr($_SERVER['PHP_SELF'], 0, strrpos($_SERVER['PHP_SELF'], '/')); ?>/css.php?id=<?php echo (isset($_GET['id'])) ? (int) $_GET['id'] : 0; ?>',
@@ -53,7 +52,7 @@ $chameleon_theme_root = implode('/', $chameleon_theme_root);
         UNITS: ['px', 'pt', 'em', '%'],
         PROPS_LIST: ['color', 'background-color', 'background-image', 'background-attachment', 'background-position', 'font-family', 'font-size', 'font-weight', 'font-style', 'line-height', 'margin', 'padding', 'border-top-width', 'border-right-width', 'border-bottom-width', 'border-left-width', 'border-top-style', 'border-right-style', 'border-bottom-style', 'border-left-style', 'border-top-color', 'border-right-color', 'border-bottom-color', 'border-left-color']
     };
-    
+      
 
 
     var Util = {
@@ -66,6 +65,7 @@ $chameleon_theme_root = implode('/', $chameleon_theme_root);
             obj.setAttribute('id', id);
             return obj;
         },
+    
         removeElement: function(obj) {
             if (!obj || !obj.parentNode) return false;
 
@@ -85,6 +85,12 @@ $chameleon_theme_root = implode('/', $chameleon_theme_root);
             }
             obj.parentNode.removeChild(obj); 
         },
+        
+        clearElement: function(obj) {
+            while (obj.hasChildNodes()) {
+                obj.removeChild(obj.firstChild);
+            }
+        }, 
 
         addEvent: function(obj, ev, fn) {
             if (!Util.__addToRegistry(obj, ev, fn)) return;
@@ -217,6 +223,17 @@ $chameleon_theme_root = implode('/', $chameleon_theme_root);
             CSS.__remoteSaveRequired = true;            
         },
         
+        clearTheme: function() {
+            /*var links = document.getElementsByTagName('link');
+            var n = links.length;
+            while (n--) {
+                if (links[n].href && links[n].href.indexOf('<?php echo $chameleon_theme_root . "/styles.php"; ?>') != -1) {
+                    links[n].parentNode.removeChild(links[n]);
+                    break;
+                }
+            }*/
+        },
+        
 
         loadRemote: function(doSetup) {
             if (!Sarissa.IS_ENABLED_XMLHTTP) {
@@ -229,7 +246,7 @@ $chameleon_theme_root = implode('/', $chameleon_theme_root);
                         alert('There was an error loading from the server:\n' + xmlhttp.responseText.replace(/CHAMELEON_ERROR /, '') + '.');
                         return;
                     }
-                    // testing where IE 5.5 dies... (it's in preview!)
+
                     CSS.__remoteCSS = CSS.toObject(xmlhttp.responseText);
                     CSS.__localCSS = CSS.__clone(CSS.__remoteCSS);
                     CSS.preview();
@@ -325,8 +342,6 @@ $chameleon_theme_root = implode('/', $chameleon_theme_root);
                 CSS.preview();
             }
         },
-        
-        
         
         
         
@@ -452,17 +467,13 @@ $chameleon_theme_root = implode('/', $chameleon_theme_root);
                 h.appendChild(s);
             }
             
-            
             if (navigator.userAgent.toLowerCase().indexOf('msie') != -1  && !window.opera && document.styleSheets && document.styleSheets.length > 0) {
                 var lastStyle = document.styleSheets[document.styleSheets.length - 1];
                 
-                var ieCrashProtector = /[^a-z0-9 #_:\.\-\*]/i; // some characters appearing in a selector can cause IE to crash in spectacular style - create a "whitelist" of allowed characters
+                var ieCrashProtector = /[^a-z0-9 #_:\.\-\*]/i; // some characters appearing in a selector can cause addRule to crash IE in spectacular style - if the selector contains any character outside this list don't try to add to the preview
+                var ieWarning = false;
                 
                 if (sel) {
-                    if (sel.match(ieCrashProtector)) {
-                        return;
-                    }
-                    
                     var matchedSelectors = [];
                     if (typeof sel == 'string') {
                         sel = [sel];
@@ -474,6 +485,12 @@ $chameleon_theme_root = implode('/', $chameleon_theme_root);
                             break;
                         }
                         while (ns--) {
+                            if (sel[ns].match(ieCrashProtector)) {
+                                ieWarning = true;
+                                sel.splice(ns, 1);
+                                break;
+                            }
+                            
                             if (lastStyle.rules[n].selectorText.toLowerCase() == sel[ns].toLowerCase()) {
                                 matchedSelectors.push(sel[ns]);
                                 sel.splice(ns, 1);
@@ -481,7 +498,6 @@ $chameleon_theme_root = implode('/', $chameleon_theme_root);
                                 break;
                             }
                         }
-
                     }
                     matchedSelectors = matchedSelectors.concat(sel);
                     var sl = matchedSelectors.length;
@@ -489,19 +505,28 @@ $chameleon_theme_root = implode('/', $chameleon_theme_root);
                         lastStyle.addRule(matchedSelectors[sl], CSS.__propsToString(CSS.__localCSS[matchedSelectors[sl]], true));
                     }
                 } else {
+                    var n = lastStyle.rules.length;
+                    while (n--) {
+                        lastStyle.removeRule(n);
+                    }
                    
                     for (var sel in CSS.__localCSS) {
                         if (sel.match(ieCrashProtector)) {
+                            ieWarning = true;
                             continue;
                         }
                         var dec = CSS.__propsToString(CSS.__localCSS[sel], true);
-
                         lastStyle.addRule(sel, dec);
                     }
                 }
                 
+                if (ieWarning) {
+                    UI.statusMsg('The edited CSS contains content that can not be previewed by Internet Explorer', 'chameleon-notice');
+                }
+                
             } else {
-                s.innerHTML = CSS.toString(CSS.__localCSS, true);
+                Util.clearElement(s);
+                s.appendChild(document.createTextNode(CSS.toString(CSS.__localCSS, true))); // I think innerHTML would be faster here, but it doesn't work in KHTML browsers (Safari etc)
             }
         },
         
@@ -570,6 +595,7 @@ $chameleon_theme_root = implode('/', $chameleon_theme_root);
             
             var hasBorder = false;
             var col = false;
+            var importantBorders = [];
         	  
             var dec = '{\n';
             for (var prop in css) {
@@ -577,7 +603,11 @@ $chameleon_theme_root = implode('/', $chameleon_theme_root);
                 var includeProp = true;
                 
                 if (prop.indexOf('border') != -1 && prop.indexOf('spacing') == -1 && prop.indexOf('collapse') == -1) {
-                    CSS.__Shorthand.recordBorder(prop, css[prop]);
+                    if (css[prop].indexOf('!important') == -1) {
+                        CSS.__Shorthand.recordBorder(prop, css[prop]);
+                    } else {
+                        importantBorders.push({prop: prop, css: css[prop]});
+                    }
                     includeProp = false;
                     hasBorder = true;
                 }
@@ -598,7 +628,13 @@ $chameleon_theme_root = implode('/', $chameleon_theme_root);
             if (hasBorder) {
                 dec += CSS.__Shorthand.getBorderString(col);
             }
-
+            var n;
+            if (n = importantBorders.length) {
+                while (n--) {
+                    dec += '  ' + importantBorders[n].prop + ': ' + importantBorders[n].css + ';\n';
+                }
+            }
+            
             dec += '}\n';
             return dec;
         },
@@ -726,14 +762,14 @@ $chameleon_theme_root = implode('/', $chameleon_theme_root);
             if (similar.length) {
                 UI.Selector.__displayOverview(null, similar, selector);
             } else {
-                UI.statusMsg('You file currently contains no selectors that appear similar to "' + selector + '"', 'chameleon-notice');
+                UI.statusMsg('Your file currently contains no selectors that appear similar to "' + selector + '"', 'chameleon-notice');
             }  
         },
         
         
         unloadPrompt: function() {
             if (CSS.__localSaveRequired) {
-                if (confirm('You have made changes to the CSS on this page since the last time it was saved, these changes will be lost unless you save them now.\nSelect OK to save a temporary copy or Cancel to continue and discard the unsaved CSS.')) {
+                if (confirm('You have made changes to the CSS on this page since the last time it was saved, these changes will be lost unless you save them now. Select OK to save a temporary copy or Cancel to continue and discard the unsaved CSS.')) {
                     CSS.updateTemp();
                 }
             }
@@ -901,7 +937,7 @@ $chameleon_theme_root = implode('/', $chameleon_theme_root);
             var widthEqual = (cb['width']) ? CSS.__Shorthand.__allPropsEqual(cb['width']) : false;
             var styleEqual = (cb['style']) ? CSS.__Shorthand.__allPropsEqual(cb['style']) : false;
             var colorEqual = (cb['color']) ? CSS.__Shorthand.__allPropsEqual(cb['color']) : false;
-            
+                        
             if (widthEqual && styleEqual && colorEqual) {
                 var propStr = setImportant(cb['width'][0].value + ' ' + cb['style'][0].value + ' ' + inheritColor(cb['color'][0].value) + ';\n');              
                 if (cb['left'] && cb['top'] && cb['right'] && cb['bottom']) {
@@ -923,7 +959,7 @@ $chameleon_theme_root = implode('/', $chameleon_theme_root);
                 }
                 return sideShorthand;
             }
-
+            
             var widthProps = getPropShorthand('width');
             if (!widthProps) {
                 widthProps = (cb['width']) ? propsStr(cb['width']) : '';
@@ -947,6 +983,8 @@ $chameleon_theme_root = implode('/', $chameleon_theme_root);
         
         setBorder: function(css, selector, value, prop) {
             var props = {};
+            var p = '';
+
             props['width'] = {
                 regexp: /^(thin|medium|thick|0|(\d+(([^%\d]+)|%)))$/,
                 def: 'medium'
@@ -987,12 +1025,14 @@ $chameleon_theme_root = implode('/', $chameleon_theme_root);
                     var j = bits.length;
                     while (j--) {
                         if (bits[j].match(props[i].regexp)) {
-                            css[selector][prop + '-' + i] = bits[j];
+                            css[selector][prop + '-' + i] = bits[j] + imp;
                             bits.splice(j, 1);
                             break;
                         }
-                    }
+                    }   
                 }
+                imp = '';
+
             } else if (prop == 'border-width' || prop == 'border-style' || prop == 'border-color') {
                 var p = prop.split('-').pop();
                 var num = bits.length;
@@ -1018,11 +1058,15 @@ $chameleon_theme_root = implode('/', $chameleon_theme_root);
                     css[selector]['border-left-' + p] = bits[3];
                 }
             }
-            
+
             if (imp != '') {
                 var sides = ['top', 'right', 'bottom', 'left'];
                 for (var i = 0; i < 4; ++i) {
                     for (var j in props) {
+                        if (p != '' && p != j) {
+                            continue;
+                        }
+
                         if (css[selector]['border-' + sides[i] + '-' + j]) {
                             css[selector]['border-' + sides[i] + '-' + j] += imp;
                         }
@@ -1040,7 +1084,6 @@ $chameleon_theme_root = implode('/', $chameleon_theme_root);
             if (imp != '') {
                 value = value.replace(/ *\!important */g, '');
             }
-            //value = value.replace(/[ ]{2, }/, ' ');
             
             var urlPos = value.indexOf('url(');
             if (urlPos == -1 && value.indexOf('none') == -1) {
@@ -1158,7 +1201,7 @@ $chameleon_theme_root = implode('/', $chameleon_theme_root);
 
         __allPropsEqual: function(props) {
             var num = props.length - 1;
-            if (num < 4) return false;
+            if (num < 3) return false;
             
             for (var i = 0; i < num; ++i) {
                 if (props[i].value != props[i + 1].value) {
@@ -1167,7 +1210,6 @@ $chameleon_theme_root = implode('/', $chameleon_theme_root);
             }
             return true;
         }
-        
     };
     
     
@@ -1197,14 +1239,8 @@ $chameleon_theme_root = implode('/', $chameleon_theme_root);
         saveSelector: function(e) {
             var target = e.target || e.srcElement;
             target.value = CSS.FreeEdit.__stripComments(target.value);
-                        
-            if (target.value.indexOf('{') != target.value.lastIndexOf('{')) {
-               UI.statusMsg('Please note: when you return to this window only the styles for "' + CSS.Selector.get() + '" will be displayed here. Don\'t worry, your other styles aren\'t lost - they can be edited from the overview option.', 'chameleon-notice'); 
-            }
             
             var changedSelectors = [];
-            
-
             var css = CSS.toObject(target.value);
             for (var sel in css) {
                 changedSelectors.push(sel);
@@ -1367,6 +1403,7 @@ $chameleon_theme_root = implode('/', $chameleon_theme_root);
                 var target = e.target || e.srcElement;
                 var box = target.parentNode.parentNode;
             }
+                        
             var n = UI.boxes.length;
             while (n--) {
                 if (UI.boxes[n] == box.id) {
@@ -1402,6 +1439,12 @@ $chameleon_theme_root = implode('/', $chameleon_theme_root);
             var mouseCoords = Pos.getMouse(e);
             target.parentNode.style.left = (mouseCoords.x - target.mouseX) + 'px';
             target.parentNode.style.top = (mouseCoords.y - target.mouseY) + 'px';
+            
+            if (e.preventDefault) {
+                e.preventDefault();
+            } else if (window.event) {
+                window.event.returnValue = false;
+            }
         },
 
         __bringToFront: function(e) {
@@ -1516,9 +1559,9 @@ $chameleon_theme_root = implode('/', $chameleon_theme_root);
             var tabsBody = Util.createElement('tbody');
             var tabs = Util.createElement('tr');
  
-            tabs.appendChild(UI.Selector.__createTab('Choose', UI.Selector.__editSelector, true));
-            tabs.appendChild(UI.Selector.__createTab('Overview', UI.Selector.__displayOverview));
-            tabs.appendChild(UI.Selector.__createTab('Free Edit', UI.Selector.__editCode));
+            tabs.appendChild(UI.Selector.__createTab('Choose', UI.Selector.__editSelector, true, 'Choose'));
+            tabs.appendChild(UI.Selector.__createTab('Overview', UI.Selector.__displayOverview, false, 'Overview'));
+            tabs.appendChild(UI.Selector.__createTab('Free Edit', UI.Selector.__editCode, false, 'Free Edit'));
 
             tabsBody.appendChild(tabs);
             tabsContainer.appendChild(tabsBody);
@@ -1591,7 +1634,7 @@ $chameleon_theme_root = implode('/', $chameleon_theme_root);
             
             var togglePropWatch = Util.createElement('a');
             togglePropWatch.setAttribute('title', 'The property inspector allows you to check the current value of a range of CSS properties for these elements');
-            togglePropWatch.appendChild(document.createTextNode((UI.Selector.__displayPropWatch ? ' (Hide' : '(Show') + ' property inspector)'));
+            togglePropWatch.appendChild(document.createTextNode(' (' + (UI.Selector.__displayPropWatch ? 'Hide property inspector' : 'Show property inspector') + ')'));
             Util.addEvent(togglePropWatch, 'click', UI.Selector.__togglePropWatch);
             options.appendChild(togglePropWatch);
             
@@ -1615,7 +1658,7 @@ $chameleon_theme_root = implode('/', $chameleon_theme_root);
             UI.setupButtons('chameleon-selector-buttons');
             
             var container = Util.createElement('div', 'chameleon-style-overview-container');
-            parent.appendChild(container); // much faster to insert the container and apply the overflow before creating the table
+            parent.appendChild(container); // doing it this way is much faster than creating the table then applying the overflow
             UI.setOverflow(container, 350, true);
             
             var overviewTable = Util.createElement('table', 'chameleon-style-overview');
@@ -1698,6 +1741,7 @@ $chameleon_theme_root = implode('/', $chameleon_theme_root);
 
                     overviewTableRow.appendChild(overviewTableCell);
                     overviewTableBody.appendChild(overviewTableRow);
+                    
                     for (var prop in CSS.__localCSS[sel]) {
                         overviewTableRow = Util.createElement('tr');
                         overviewTableCell = Util.createElement('td');
@@ -1731,7 +1775,10 @@ $chameleon_theme_root = implode('/', $chameleon_theme_root);
             var pseudoClasses = ['link', 'active', 'visited', 'hover', 'focus'];
 
             while (n--) {
+            	  var row = n % 2;
+            	
                 var item = Util.createElement('li');
+                item.className = 'row' + row;
                 var tag = Util.createElement('span', 'chameleon-tag-name-' + n);
                 tag.appendChild(document.createTextNode(struct[n].tagname));
                 tag.selectorValue = struct[n].tagname;
@@ -1786,7 +1833,6 @@ $chameleon_theme_root = implode('/', $chameleon_theme_root);
                 
                 if (showComputedStyle) {
                     var sides = ['top', 'right', 'bottom', 'left'];
-
                     
                     if (document.defaultView && document.defaultView.getComputedStyle) {
                         if (showComputedStyle == 'margin' || showComputedStyle == 'padding') {
@@ -1821,7 +1867,11 @@ $chameleon_theme_root = implode('/', $chameleon_theme_root);
                         var styleVal = struct[n].el.currentStyle[propBits.join('')];                       
                     }
                     
-                    item.appendChild(document.createTextNode(' --- ' + styleVal));
+                    var sp = Util.createElement('span');
+                    sp.className = 'prop-value';
+                    sp.appendChild(document.createTextNode(styleVal));
+                    
+                    item.appendChild(sp);
                 }
 
                 
@@ -1849,7 +1899,7 @@ $chameleon_theme_root = implode('/', $chameleon_theme_root);
 
             var container = Util.createElement('div');
             var textarea = Util.createElement('textarea', 'chameleon-free-edit-all-field');
-            textarea.value = CSS.toString();
+            
             textarea.style.width = '100%';
             textarea.style.height = '350px';
             Util.addEvent(textarea, 'blur', CSS.FreeEdit.saveComplete);
@@ -1857,7 +1907,7 @@ $chameleon_theme_root = implode('/', $chameleon_theme_root);
             container.appendChild(textarea);
 
             parent.appendChild(container);
-
+            textarea.value = CSS.toString(); // avoid Konqueror bug
         },
         
         
@@ -1870,10 +1920,10 @@ $chameleon_theme_root = implode('/', $chameleon_theme_root);
         
         
         
-        __createTab: function(str, fn, active) {
+        __createTab: function(str, fn, active, title) {
             var id = 'chameleon-selector-tab-' + str.replace(/ +/, '-').toLowerCase();
             var tab = Util.createElement('td', id);
-            tab.appendChild(document.createTextNode(str));
+            tab.appendChild(document.createTextNode(((title) ? title : str)));
             tab.className = (active) ? 'chameleon-selector-tab-active' : 'chameleon-selector-tab';
             Util.addEvent(tab, 'click', fn);
             return tab;
@@ -2003,11 +2053,11 @@ $chameleon_theme_root = implode('/', $chameleon_theme_root);
             var tabsBody = Util.createElement('tbody');
             var tabs = Util.createElement('tr');
  
-            tabs.appendChild(UI.CSS.__createTab('Text', UI.CSS.__editText, true));
-            tabs.appendChild(UI.CSS.__createTab('Backgrounds', UI.CSS.__editBackgrounds));
-            tabs.appendChild(UI.CSS.__createTab('Borders (All)', UI.CSS.__editBordersAll));
-            tabs.appendChild(UI.CSS.__createTab('Borders (Separate)', UI.CSS.__editBordersSeparate));
-            tabs.appendChild(UI.CSS.__createTab('Free Edit', UI.CSS.__editCode));
+            tabs.appendChild(UI.CSS.__createTab('Text', UI.CSS.__editText, true, 'Text'));
+            tabs.appendChild(UI.CSS.__createTab('Backgrounds', UI.CSS.__editBackgrounds, false, 'Backgrounds'));
+            tabs.appendChild(UI.CSS.__createTab('Borders (All)', UI.CSS.__editBordersAll, false, 'Borders (All)'));
+            tabs.appendChild(UI.CSS.__createTab('Borders (Separate)', UI.CSS.__editBordersSeparate, false, 'Borders (Separate)'));
+            tabs.appendChild(UI.CSS.__createTab('Free Edit', UI.CSS.__editCode, false, 'Free Edit'));
 
             tabsBody.appendChild(tabs);
             tabsContainer.appendChild(tabsBody);
@@ -2224,7 +2274,7 @@ $chameleon_theme_root = implode('/', $chameleon_theme_root);
 
             var container = Util.createElement('div');
             var textarea = Util.createElement('textarea', 'chameleon-free-edit-field');
-            textarea.value = CSS.getSelectorCSS();
+            
             textarea.style.width = '100%';
             textarea.style.height = '350px';
 
@@ -2232,7 +2282,8 @@ $chameleon_theme_root = implode('/', $chameleon_theme_root);
             Util.addEvent(textarea, 'blur', CSS.FreeEdit.saveSelector);
 
             container.appendChild(textarea);
-            parent.appendChild(container);  
+            parent.appendChild(container);
+            textarea.value = CSS.getSelectorCSS(); // avoid Konqueror bug
         },
         
         
@@ -2311,7 +2362,7 @@ $chameleon_theme_root = implode('/', $chameleon_theme_root);
              var img = Util.createElement('img');
              img.setAttribute('src', CSS.fixPath('ui/images/notice.gif'));
              img.style.margin = '0 2px -5px 0';
-             img.setAttribute('title', 'You currently have set values of this property for one or more individual sides. Updating the value here will set the property for all sides, overwriting the individual values.');  
+             img.setAttribute('title', 'Currently this property has specific values set for one or more individual sides. Updating the value here will set this property for all sides, overwriting these individual values.');  
              return img;
         },
         
@@ -2436,10 +2487,10 @@ $chameleon_theme_root = implode('/', $chameleon_theme_root);
         
         
         
-        __createTab: function(str, fn, active) {
+        __createTab: function(str, fn, active, title) {
             var id = 'chameleon-style-tab-' + str.replace(/[\( ]+/, '-').replace(/[\)]+/, '').toLowerCase();
             var tab = Util.createElement('td', id);
-            tab.appendChild(document.createTextNode(str));
+            tab.appendChild(document.createTextNode((title) ? title : str));
             tab.className = (active) ? 'chameleon-style-tab-active' : 'chameleon-style-tab';
             Util.addEvent(tab, 'click', fn);
             return tab;
@@ -2678,11 +2729,13 @@ $chameleon_theme_root = implode('/', $chameleon_theme_root);
     UI.HotSpots = {
         __selectors: null,
         __counter: 0,
+        __lookup: {},
         
         init: function() {
             var box = Util.createElement('div', 'chameleon-launch-hotspots');
             box.appendChild(document.createTextNode('Load hotspots'));
             box.style.zIndex = ++UI.zIndex;
+            
             box.hotSpotsOn = false;
             Util.addEvent(box, 'click', UI.HotSpots.__load);
             
@@ -2702,6 +2755,7 @@ $chameleon_theme_root = implode('/', $chameleon_theme_root);
             target.hotSpotsOn = !target.hotSpotsOn;
             
             UI.HotSpots.__counter = 0;
+            UI.HotSpots.__lookup = {};
             
             if (!target.hotSpotsOn) {
                 target.firstChild.nodeValue = 'Show hotspots';
@@ -2712,18 +2766,45 @@ $chameleon_theme_root = implode('/', $chameleon_theme_root);
           
             if (!UI.HotSpots.__selectors) {
                 UI.HotSpots.__selectors = {};
-                UI.HotSpots.__selectors['div#header'] = 'Header bar';
-                UI.HotSpots.__selectors['div#header-home'] = 'Header bar on the homepage';
-                UI.HotSpots.__selectors['div#header-home div.headermain'] = 'The header text on the homepage';
-                UI.HotSpots.__selectors['div#header div.headermain'] = 'The header text';
+                UI.HotSpots.__selectors['body'] = 'The body of the page (all pages)';
+                UI.HotSpots.__selectors['body#site-index'] = 'The body of the homepage';
+                UI.HotSpots.__selectors['body#course-view'] = 'The body of the course index page';
+                UI.HotSpots.__selectors['div#header'] = 'The page header';
+                UI.HotSpots.__selectors['div#header-home'] = 'The page header on the homepage';
+                UI.HotSpots.__selectors['div#header-home h1.headermain'] = 'The header text on the homepage';
+                UI.HotSpots.__selectors['div#header h1.headermain'] = 'The header text';
+                UI.HotSpots.__selectors['div.sideblock'] = 'Blocks';
+                UI.HotSpots.__selectors['td#right-column div.sideblock'] = 'Blocks in the right hand column';
+                UI.HotSpots.__selectors['td#left-column div.sideblock'] = 'Blocks in the left hand column';
+                UI.HotSpots.__selectors['div.sideblock div.header'] = 'The block headings';
                 UI.HotSpots.__selectors['td#right-column div.sideblock div.header'] = 'The block headings in the right hand column';
+                UI.HotSpots.__selectors['td#left-column div.sideblock div.header'] = 'The block headings in the left hand column';
                 UI.HotSpots.__selectors['div.sideblock div.title'] = 'The text in the block headings';
+                UI.HotSpots.__selectors['td#right-column div.sideblock div.title'] = 'The text in the block headings in the right hand column';
+                UI.HotSpots.__selectors['td#left-column div.sideblock div.title'] = 'The text in the block headings in the left hand column';
+                UI.HotSpots.__selectors['div.headingblock'] = 'The heading at the top of the middle column';
+                UI.HotSpots.__selectors['table.topics'] = 'The topic sections in a course';
+                UI.HotSpots.__selectors['table.topics td.side'] = 'The sides of the topic sections';
+                UI.HotSpots.__selectors['table.topics td.left'] = 'The left side of the topic sections';
+                UI.HotSpots.__selectors['table.topics td.right'] = 'The right side of the topic sections';
+                UI.HotSpots.__selectors['table.topics tr.current div.summary'] = 'The summary of the highlighted topic';
+                UI.HotSpots.__selectors['table.topics tr.current td.content'] = 'The content of the highlighted topic';
+                UI.HotSpots.__selectors['a'] = 'Links';
+                UI.HotSpots.__selectors['a.dimmed'] = 'Greyed out links';
+                UI.HotSpots.__selectors['div#footer'] = 'The footer of the page';
+                UI.HotSpots.__selectors['div.logininfo'] = 'The "You are logged in as..." text';
+                UI.HotSpots.__selectors['div.navbar'] = 'The navigation bar';
+                UI.HotSpots.__selectors['div.breadcrumb'] = 'The navigation trail';
+                UI.HotSpots.__selectors['table.generaltable tr.r0'] = 'Odd numbered table rows';
+                UI.HotSpots.__selectors['table.generaltable tr.r1'] = 'Even numbered table rows';
             }
             
             UI.HotSpots.__parse();
         },
         
         __parse: function() {
+            var pos = {};
+            
             for (var sel in UI.HotSpots.__selectors) {
                 var matches = cssQuery(sel);
                 var nm = matches.length;
@@ -2735,30 +2816,65 @@ $chameleon_theme_root = implode('/', $chameleon_theme_root);
                     if (matches[j].hasAttribute && matches[j].hasAttribute('id') && matches[j].getAttribute('id').indexOf('chameleon') != -1) {
                         continue;
                     }
-                    if (!matches[j].mySelectors) {
-                        matches[j].appendChild(UI.HotSpots.__makeButton(UI.HotSpots.__selectors[sel]));
-                        matches[j].mySelectors = sel;
+                    
+                    if (!matches[j].chameleonHotspotId) {
+                        var coords = Pos.getElement(matches[j]);
+                        coords.x = 20 * Math.round(coords.x / 20);
+                        coords.y = 20 * Math.round(coords.y / 20);
+                        
+                        while (pos[coords.x + '-' + coords.y]) {
+                            coords.x += 20;
+                        }
+                        pos[coords.x + '-' + coords.y] = true;
+                        
+                        var button = UI.HotSpots.__makeButton(UI.HotSpots.__selectors[sel], coords.x, coords.y);
+                        UI.addToDoc(button);
+                        
+                        matches[j].chameleonHotspotId = button.id;
+                        UI.HotSpots.__lookup[button.id] = sel;
+                        break;
                     } else {
-                        matches[j].mySelectors += '|' + sel;
+                        UI.HotSpots.__lookup[matches[j].chameleonHotspotId] += '|' + sel;
+                        document.getElementById(matches[j].chameleonHotspotId).title += ", " + UI.HotSpots.__selectors[sel];
+                        
+                        break;
                     }
                 }
             }
+            
+            pos = null;
+            matches = null;
         },
         
         
         __clear: function() {
-            var i = 0;
-            var obj;
-            while (obj = document.getElementById('chameleon-hotspot-' + ++i)) {
-                obj.parentNode.mySelectors = null;
-                Util.removeElement(obj);
-            }            
+            for (var sel in UI.HotSpots.__selectors) {
+                var matches = cssQuery(sel);
+                var nm = matches.length;
+                if (!nm) {
+                    continue;
+                }
+                
+                for (var j = 0; j < nm; ++j) {
+                    if (matches[j].chameleonHotspotId) {
+                        UI.HotSpots.__lookup[matches[j].chameleonHotspotId] = null;
+                        Util.removeElement(document.getElementById(matches[j].chameleonHotspotId));
+                        matches[j].chameleonHotspotId = null;
+                        break;
+                    }
+                }
+            }          
         },
      
         
-        __makeButton: function(title) {
+        __makeButton: function(title, x, y) {
             var d = Util.createElement('img', 'chameleon-hotspot-' + ++UI.HotSpots.__counter);
-            d.style.width = d.style.height = '20px'; d.style.cssFloat = 'left'; d.style.cursor = 'pointer';
+            d.style.width = d.style.height = '20px';
+            d.style.position = 'absolute';
+            d.style.left = (x - 5) + 'px';
+            d.style.top = (y + 15) + 'px';
+            d.style.cursor = 'pointer';
+            
             d.setAttribute('src', CSS.fixPath('ui/images/hotspot.gif'));
             d.setAttribute('title', title);
             Util.addEvent(d, 'click', UI.HotSpots.__launch);
@@ -2766,9 +2882,9 @@ $chameleon_theme_root = implode('/', $chameleon_theme_root);
         },
         
         __launch: function(e) {
-            var target = (e.target || e.srcElement).parentNode;
-            var selectors = target.mySelectors.split('|');
-            
+            var target = e.target || e.srcElement;
+            var selectors = UI.HotSpots.__lookup[target.id].split('|');
+                       
             var coords = Pos.getMouse(e);
             
             hotspotMode = true;
@@ -2968,11 +3084,11 @@ $chameleon_theme_root = implode('/', $chameleon_theme_root);
         var struct = [];
         while (src.parentNode) {
             if (src.nodeType == Node.ELEMENT_NODE) {
-                if (src.hasAttribute && src.hasAttribute('id') && src.getAttribute('id').indexOf('chameleon-') != -1) {
+                if (src.getAttribute && src.getAttribute('id') && src.getAttribute('id').indexOf('chameleon-') != -1) {
                     return src.getAttribute('id');
                 }
                 var elementObj = {tagname: src.nodeName.toLowerCase()};
-                if (src.hasAttribute && src.hasAttribute('id')) {
+                if (src.getAttribute && src.getAttribute('id')) {
                     elementObj.id = src.getAttribute('id');
                 }
                 if (src.className) {
@@ -3001,13 +3117,15 @@ $chameleon_theme_root = implode('/', $chameleon_theme_root);
         Util.addEvent(window, 'unload', CSS.unloadPrompt);
         Util.addEvent(window, 'unload', Util.cleanUp);
         Util.addEvent(document, 'mousedown', UI.Selector.editWindow);
+        
+        //CSS.clearTheme();
     };
 
     var startSetup = function() {
         UI.statusMsg('Chameleon is loading...');
 
-        if (!CSS.loadRemote(true)) { // || !document.getElementsByTagName('*').length - keep IE 5.5 from killing itself
-            alert('Your browser must support XMLHttpRequest! Supported browsers include Internet Explorer 6, Mozilla Firefox and Opera 8.01+');
+        if (!CSS.loadRemote(true)) {
+            alert('Your browser must support XMLHttpRequest! Supported browsers include Internet Explorer, Mozilla Firefox, Safari and Opera');
         }
     };
 
