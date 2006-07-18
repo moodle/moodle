@@ -1107,7 +1107,7 @@ function get_question_image($question, $courseid) {
             $img .= "$CFG->wwwroot/file.php/$courseid/$question->image";
 
         } else {
-            $img .= "$CFG->wwwroot/file.php?file=$courseid/$question->image";
+            $img .= "$CFG->wwwroot/file.php?file=/$courseid/$question->image";
         }
     }
     return $img;
