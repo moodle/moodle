@@ -272,14 +272,10 @@ class qformat_default {
         global $CFG;
 
         // create a directory for the exports (if not already existing)
-        $dirname = get_string("exportfilename","quiz");
-        $courseid = $this->course->id;
-        $path = $CFG->dataroot.'/'.$courseid.'/'.$dirname;
-        if (!is_dir($path)) {
-            if (!mkdir($path, $CFG->directorypermissions)) {
-              error( get_string('cannotcreatepath','quiz',$path) );
-            }
+        if (! $export_dir = make_upload_directory($this->question_get_export_dir())) {
+              error( get_string('cannotcreatepath','quiz',$export_dir) );
         }
+        $path = $CFG->dataroot.'/'.$this->question_get_export_dir();
 
         // get the questions (from database) in this category
         // only get q's with no parents (no cloze subquestions specifically)
@@ -345,6 +341,12 @@ class qformat_default {
         echo "<p>$formatnotimplemented</p>";
 
         return NULL;
+    }
+
+    function question_get_export_dir() {
+        $dirname = get_string("exportfilename","quiz");
+        $path = $this->course->id.'/backupdata/'.$dirname; // backupdata is protected directory
+        return $path;
     }
 
 }
