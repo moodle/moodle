@@ -480,7 +480,8 @@
                 $suffixshort = "";
             }
             $currentfullname = $fullname.$suffixfull;
-            $currentshortname = $shortname.$suffixshort;
+            // Limit the size of shortname - database column accepts <= 15 chars
+            $currentshortname = substr($shortname, 0, 15 - strlen($suffixshort)).$suffixshort;
             $coursefull  = get_record("course","fullname",addslashes($currentfullname));
             $courseshort = get_record("course","shortname",addslashes($currentshortname));
             $counter++;
