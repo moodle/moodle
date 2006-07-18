@@ -89,6 +89,9 @@ pre code {
   font-weight:normal;
   white-space:normal !important
 }
+.generaltable .cell {
+  font-size: 0.8em;
+}
 .warning {
   font-weight:bold;
   font-style:italic
@@ -188,6 +191,9 @@ table.formtable tbody th {
 }
 #admin-config #content > center {
   font-size:0.8em
+}
+#admin-index .generaltable .cell {
+  line-height: 1.9em;
 }
 
 /***

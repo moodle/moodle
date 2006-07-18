@@ -141,6 +141,9 @@ table.formtable tbody th {
 .generaltable .r1 {
   background-color:#D7D7D7
 }
+.generaltable {
+  border-color: #bbbbbb;
+}
 
 /* kept for backward compatibility with some non-standard modules
    which use these classes for various things */

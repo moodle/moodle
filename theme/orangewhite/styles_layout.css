@@ -64,9 +64,9 @@ h6.main {
   width:22%;
   padding:5px
 }
-#middle-column .section .content,
-#middle-column .section .side {
-  border:0 none
+td#middle-column tr.section td.content,
+td#middle-column tr.section td.side {
+  border-style: none;
 }
 .generalbox {
   width:90%
@@ -78,8 +78,15 @@ h6.main {
 .generaltable .smallinfo p {
   margin-top:0
 }
+.generaltable .cell {
+  border-style: none;
+}
 .sitetopiccontent {
   border:0 none
+}
+img.resize {
+  width: 1em;
+  height: 1em;
 }
 
 /***
@@ -155,6 +162,19 @@ h6.main {
 }
 
 /***
+ *** Admin
+ ***/
+
+#admin-index #content,
+#admin-lang #content {
+  padding-top: 10px;
+  margin-top: 13px;
+}
+#admin-maintenance #content {
+  padding-bottom: 15px;
+}
+
+/***
  *** Content
  ***/
 
@@ -215,7 +235,8 @@ h6.main {
 }
 #left-column .sideblock .list .r0,
 #left-column .sideblock .list .r1 {
-  height:2em
+  /* height:2em */
+  min-height:2em
 }
 #left-column .sideblock .list td {
   vertical-align:middle;
