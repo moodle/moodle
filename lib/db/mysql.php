@@ -1992,6 +1992,14 @@ function main_upgrade($oldversion=0) {
             table_column("user", "lastIP", "lastip", "varchar", "15", "", "", "not null", "currentlogin");
         }
     }
+
+    // Change in MySQL 5.0.3 concerning how decimals are stored. Mimic from 16_STABLE
+    // this isn't dangerous because it's a simple type change, but be careful with
+    // versions and duplicate work in order to provide smooth upgrade paths.
+    if ($oldversion < 2006071800) {
+        table_column('grade_letter', 'grade_high', 'grade_high', 'decimal(5,2)', '', '', '100.00', 'not null', '');
+        table_column('grade_letter', 'grade_low', 'grade_low', 'decimal(5,2)', '', '', '0.00', 'not null', '');
+    }
     
     return $result;
 }

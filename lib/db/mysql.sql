@@ -341,8 +341,8 @@ CREATE TABLE `prefix_grade_letter` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `courseid` int(10) unsigned NOT NULL default '0',
   `letter` varchar(8) NOT NULL default 'NA',
-  `grade_high` decimal(4,2) NOT NULL default '100.00',
-  `grade_low` decimal(4,2) NOT NULL default '0.00',
+  `grade_high` decimal(5,2) NOT NULL default '100.00',
+  `grade_low` decimal(5,2) NOT NULL default '0.00',
   PRIMARY KEY  (`id`),
   KEY `courseid` (`courseid`)
 ) TYPE=MyISAM ;
