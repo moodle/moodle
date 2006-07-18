@@ -121,6 +121,14 @@ Optional:
     Userinformation in array ( name => value, .... 
     or false in case of error
 
+    auth_validate_form(&$form, &$err)
+    
+    Validate form data.
+
+    Returns:
+    Bool. Manipulates $form and $err arrays in place
+
+
 COURSE CREATING
 
     auth_iscreator($username)
