@@ -409,4 +409,43 @@ function auth_db_update_user_record($username, $updatekeys=false) {
     return get_record_select("user", "username = '$username' AND deleted <> '1'");
 }
 
+// A chance to validate form data, and last chance to 
+// do stuff before it is inserted in config_plugin
+function auth_validate_form(&$form, &$err) {
+    
+    // compat until we rework auth a bit
+    if ($form['auth_dbpasstype'] === 'internal') {
+        $CFG->auth_db_stdchangepassword = true;
+        if ($conf = get_record('config', 'name', 'auth_db_stdchangepassword')) {
+            $conf->value = 1;
+            if (! update_record('config', $conf)) {
+                notify("Could not update $name to $value");
+            }
+        } else {
+            $conf = new StdClass;
+            $conf->name = 'auth_db_stdchangepassword';
+            $conf->value = 1;
+            if (! insert_record('config', $conf)) {
+                notify("Error: could not add new variable $name !");
+            }
+        }
+    } else {
+        $CFG->auth_db_stdchangepassword = false;
+        if ($conf = get_record('config', 'name', 'auth_db_stdchangepassword')) {
+            $conf->value = 0;
+            if (! update_record('config', $conf)) {
+                notify("Could not update $name to $value");
+            }
+        } else {
+            $conf = new StdClass;
+            $conf->name = 'auth_db_stdchangepassword';
+            $conf->value = 0;
+            if (! insert_record('config', $conf)) {
+                notify("Error: could not add new variable $name !");
+            }
+        }
+    }
+    return true;
+}
+
 ?>
