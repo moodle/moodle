@@ -3111,6 +3111,8 @@ function check_db_compat() {
 }
 
 function course_parent_visible($course = null) {
+    global $CFG;
+
     if (empty($course)) {
         return true;
     }
