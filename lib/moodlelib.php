@@ -1591,7 +1591,7 @@ function require_login($courseid=0, $autologinguest=true, $cm=null) {
         if (! $course = get_record('course', 'id', $courseid)) {
             error('That course doesn\'t exist');
         }
-        if (!(isteacher($courseid) || !empty($USER->admin)) && (!$course->visible || !course_parent_visible($course))) {
+        if (!isteacher($courseid) && !($course->visible && course_parent_visible($course))) {
             print_header();
             notice(get_string('coursehidden'), $CFG->wwwroot .'/');
         }
