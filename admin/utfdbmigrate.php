@@ -1,4 +1,5 @@
 <?php //$Id$
+
 ///dummy field names are used to help adding and dropping indexes. There's only 1 case now, in scorm_scoes_track
 
     require_once('../config.php');
@@ -88,7 +89,7 @@
         print_heading('db unicode migration has been completed!');
         unlink($filename);    //no longer in maintenance mode
         @require_logout();
-        print_continue($CFG->wwwroot.'/admin/langimport.php');
+        print_continue($CFG->wwwroot.'/'.$CFG->admin.'/langimport.php');
     }
 
     //else if $migrate
@@ -812,7 +813,7 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
             echo $lang.', ';
         }
     }
-    echo '</b><br/><a href="'.$CFG->wwwroot.'/admin/langimport.php">Language Import Utility</a></div>';
+    echo '</b><br/><a href="'.$CFG->wwwroot.'/'.$CFG->admin.'/langimport.php">Language Import Utility</a></div>';
     print_simple_box_end();
     delete_records('config','name','langsused');
 

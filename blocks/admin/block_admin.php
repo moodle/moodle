@@ -56,7 +56,7 @@ class block_admin extends block_list {
             $this->content->icons[] = '<img src="'.$CFG->pixpath.'/i/log.gif" alt="" />';
 
 
-            $this->content->items[] = '<a href="'.$CFG->wwwroot.'/admin/report.php">'.get_string('reports').'</a>';
+            $this->content->items[] = '<a href="'.$CFG->wwwroot.'/'.$CFG->admin.'/report.php">'.get_string('reports').'</a>';
             $this->content->icons[] = '<img src="'.$CFG->pixpath.'/i/stats.gif" alt="" />';
 
             $this->content->items[] = '<a href="'.$CFG->wwwroot.'/files/index.php?id='.SITEID.'">'.get_string('sitefiles').'</a>';

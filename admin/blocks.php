@@ -159,7 +159,7 @@
 
     $table->define_columns(array('name', 'instances', 'version', 'hideshow', 'multiple', 'delete', 'settings'));
     $table->define_headers(array($strname, $strcourses, $strversion, $strhide.'/'.$strshow, $strmultiple, $strdelete, $strsettings));
-    $table->define_baseurl($CFG->wwwroot.'/admin/blocks.php');
+    $table->define_baseurl($CFG->wwwroot.'/'.$CFG->admin.'/blocks.php');
 
     $table->set_attribute('cellspacing', '0');
     $table->set_attribute('id', 'blocks');
@@ -221,7 +221,7 @@
         
         $table->define_columns(array('block', 'delete'));
         $table->define_headers(array($strname, $strdelete));
-        $table->define_baseurl($CFG->wwwroot.'/admin/blocks.php');
+        $table->define_baseurl($CFG->wwwroot.'/'.$CFG->admin.'/blocks.php');
     
         $table->set_attribute('cellspacing', '0');
         $table->set_attribute('id', 'incompatible');

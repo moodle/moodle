@@ -449,7 +449,7 @@ function hotpot_update_to_v2_from_hotpotatoes() {
 			set_field("modules", "visible", "0", "id", $module->id);
 			print '<p>All HotPotatoes activities have been imported to the HotPot module.<br />'."\n";
 			print 'The HotPotatoes module has been hidden and can safely be deleted from this Moodle site.<br />'."\n";
-			print ' &nbsp; &nbsp; <a href="'.$CFG->wwwroot.'/admin/modules.php">Configuration -> Modules</A>, then click &quot;Delete&quot; for &quot;Hot Potatoes XML Quiz&quot;</p>'."\n";
+			print ' &nbsp; &nbsp; <a href="'.$CFG->wwwroot.'/'.$CFG->admin.'/modules.php">Configuration -> Modules</A>, then click &quot;Delete&quot; for &quot;Hot Potatoes XML Quiz&quot;</p>'."\n";
 		}
 	}
 	if ($ok) {
