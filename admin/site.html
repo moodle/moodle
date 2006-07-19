@@ -33,26 +33,46 @@
           <table width="100%" cellpadding="0" cellspacing="0" border="0">
             <tr>
         <?php
+           $coursecount = (count_records('course') <= FRONTPAGECOURSELIMIT);
            $options = array(FRONTPAGENEWS           =>  get_string("frontpagenews"),
                             FRONTPAGECOURSELIST     =>  get_string("frontpagecourselist"),
                             FRONTPAGECATEGORYNAMES  =>  get_string("frontpagecategorynames"),
+                            FRONTPAGECATEGORYCOMBO  =>  get_string("frontpagecategorycombo"),
                             );
-           $values = array(get_string('hide'), get_string('order1', 'admin'), get_string('order2', 'admin'));
+           $values = array(get_string('hide'), get_string('order1', 'admin'), get_string('order2', 'admin'), get_string('order3', 'admin'), get_string('order4', 'admin'));
            $seq = array_flip(explode(',',$form->frontpage));
            foreach ($seq as $k => $s) {
                $seq[$k]++;
            }
-           if (count_records("course") > 200) {
-               unset($options[FRONTPAGECOURSELIST]);
-               if (isset($seq[FRONTPAGECOURSELIST])) {
-                   $form->frontpage = 2;
-               }
-           } else {
-               $values[] = get_string('order3', 'admin');
+           if (!$coursecount and isset($seq[FRONTPAGECOURSELIST])) {
+               unset($seq[FRONTPAGECOURSELIST]); //disable course list option when too many course present
            }
+
+           foreach ($options as $key => $option) {
+               $disabled = (!$coursecount and ($key == FRONTPAGECOURSELIST));
+               echo "<td>$option<br />";
+               choose_from_menu ($values, "frontpage[$key]", isset($seq[$key])?$seq[$key]:0, '', '', 0, false, $disabled);
+               echo '</td>';
+           }
+        ?>
+            </tr>
+          </table>
+        </td>
+</tr>
+<tr valign="top">
+        <td align="right"><?php print_string("frontpageformatloggedin") ?>:</td>
+        <td>
+          <table width="100%" cellpadding="0" cellspacing="0" border="0">
+            <tr>
+        <?php
+           $seq = array_flip(explode(',',$form->frontpageloggedin));
+           foreach ($seq as $k => $s) {
+               $seq[$k]++;
+           }
+
            foreach ($options as $key => $option) {
                echo "<td>$option<br />";
-               choose_from_menu ($values, "frontpage[$key]", isset($seq[$key])?$seq[$key]:0, "");
+               choose_from_menu ($values, "frontpageloggedin[$key]", isset($seq[$key])?$seq[$key]:0, '');
                echo '</td>';
            }
         ?>
