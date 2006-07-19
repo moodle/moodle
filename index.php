@@ -157,7 +157,7 @@
 
             case FRONTPAGECOURSELIST:
 
-                if (isloggedin() && !isset($USER->admin) && empty($CFG->disablemycourses)) {
+                if (isloggedin() and !isadmin() and !isguest() and empty($CFG->disablemycourses)) {
                     print_heading_block(get_string('mycourses'));
                     print_my_moodle();
                 } else if (!isadmin() or (count_records('course') <= FRONTPAGECOURSELIMIT)) {
