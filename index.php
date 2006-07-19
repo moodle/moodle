@@ -160,7 +160,7 @@
                 if (isloggedin() and !isadmin() and !isguest() and empty($CFG->disablemycourses)) {
                     print_heading_block(get_string('mycourses'));
                     print_my_moodle();
-                } else if (!isadmin() or (count_records('course') <= FRONTPAGECOURSELIMIT)) {
+                } else if ((!isadmin() and !isguest()) or (count_records('course') <= FRONTPAGECOURSELIMIT)) {
                     // admin should not see list of courses when there are too many of them
                     print_heading_block(get_string('availablecourses'));
                     print_courses(0, '100%', true);
