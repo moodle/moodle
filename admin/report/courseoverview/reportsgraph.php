@@ -28,7 +28,7 @@
     $courses = get_records_sql($sql);
     
     if (empty($courses)) {
-        error(get_string('statsnodata'),$CFG->wwwroot.'/admin/report/course/index.php');
+        error(get_string('statsnodata'),$CFG->wwwroot.'/'.$CFG->admin.'/report/course/index.php');
     }
     
 

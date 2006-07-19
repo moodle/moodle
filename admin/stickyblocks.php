@@ -63,7 +63,7 @@
     echo '<td valign="top" width="*" id="middle-column">';
     print_simple_box_start('center');
     print_heading($strheading);
-    echo '<form method="post" action="'.$CFG->wwwroot.'/admin/stickyblocks.php">'
+    echo '<form method="post" action="'.$CFG->wwwroot.'/'.$CFG->admin.'/stickyblocks.php">'
         .'<p align="center">'.get_string('stickyblockspagetype','admin').': ';
     choose_from_menu($options,'pt',$pt,'choose','this.form.submit();');
     echo '</p></form>';

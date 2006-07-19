@@ -49,11 +49,12 @@ class page_my_moodle extends page_base {
     }
     
     function url_get_path() {
+        global $CFG;
         page_id_and_class($id,$class);
         if ($id == PAGE_MY_MOODLE) {
-            return $GLOBALS['CFG']->wwwroot.'/my/index.php';
+            return $CFG->wwwroot.'/my/index.php';
         } elseif (defined('ADMIN_STICKYBLOCKS')){
-            return $GLOBALS['CFG']->wwwroot.'/admin/stickyblocks.php';
+            return $CFG->wwwroot.'/'.$CFG->admin.'/stickyblocks.php';
         }
     }
 

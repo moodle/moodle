@@ -23,7 +23,7 @@
     $strreports = get_string('reports');
     $strcourseoverview = get_string('courseoverview');
 
-    $strnav = '<a href="'.$CFG->wwwroot.'/admin/index.php">'.get_string('administration').'</a> -> <a href="'.$CFG->wwwroot.'/admin/report.php">'.$strreports.'</a> -> '.$strcourseoverview;
+    $strnav = '<a href="'.$CFG->wwwroot.'/'.$CFG->admin.'/index.php">'.get_string('administration').'</a> -> <a href="'.$CFG->wwwroot.'/'.$CFG->admin.'/report.php">'.$strreports.'</a> -> '.$strcourseoverview;
     
     $reportoptions = stats_get_report_options($course->id,STATS_MODE_RANKED);
 
@@ -75,10 +75,10 @@
         $courses = get_records_sql($sql);
 
         if (empty($courses)) {
-            error(get_string('statsnodata'),$CFG->wwwroot.'/admin/report/courseoverview/index.php');
+            error(get_string('statsnodata'),$CFG->wwwroot.'/'.$CFG->admin.'/report/courseoverview/index.php');
         }
 
-        echo '<center><img src="'.$CFG->wwwroot.'/admin/report/courseoverview/reportsgraph.php?time='.$time.'&report='.$report.'&numcourses='.$numcourses.'" /></center>';
+        echo '<center><img src="'.$CFG->wwwroot.'/'.$CFG->admin.'/report/courseoverview/reportsgraph.php?time='.$time.'&report='.$report.'&numcourses='.$numcourses.'" /></center>';
         
         $table = new object();
         $table->align = array('left','center','center','center');

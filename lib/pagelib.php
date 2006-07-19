@@ -440,7 +440,7 @@ class page_course extends page_base {
     function url_get_path() {
         global $CFG;
         if (defined('ADMIN_STICKYBLOCKS')) {
-            return $CFG->wwwroot.'/admin/stickyblocks.php';
+            return $CFG->wwwroot.'/'.$CFG->admin.'/stickyblocks.php';
         }
         if($this->id == SITEID) {
             return $CFG->wwwroot .'/index.php';
