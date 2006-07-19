@@ -1037,7 +1037,7 @@ function make_categories_list(&$list, &$parents, $category=NULL, $path="") {
 }
 
 
-function print_whole_category_list($category=NULL, $displaylist=NULL, $parentslist=NULL, $depth=-1, $files = false) {
+function print_whole_category_list($category=NULL, $displaylist=NULL, $parentslist=NULL, $depth=-1, $files = true) {
 /// Recursive function to print out all the categories in a nice format
 /// with or without courses included
     global $CFG;
