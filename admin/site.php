@@ -37,6 +37,13 @@
                 $form->numsections = 1;    // Force the topic display for this format
             }
 
+            $form->frontpageloggedin = array_flip($form->frontpageloggedin);
+            unset($form->frontpageloggedin[0]);
+            $form->frontpageloggedin = array_flip($form->frontpageloggedin);
+            asort($form->frontpageloggedin);
+            $form->frontpageloggedin = implode(',',array_flip($form->frontpageloggedin));
+            set_config("frontpageloggedin", $form->frontpageloggedin);
+
             $form->timemodified = time();
 
             if ($form->id) {
@@ -98,10 +105,16 @@
 
     if (isset($CFG->frontpage)) {
         $form->frontpage = $CFG->frontpage;
-
     } else {
         $form->frontpage = FRONTPAGECOURSELIST;  // Show course list by default
         set_config("frontpage", $form->frontpage);
+    }
+
+    if (isset($CFG->frontpageloggedin)) {
+        $form->frontpageloggedin = $CFG->frontpageloggedin;
+    } else {
+        $form->frontpageloggedin = $form->frontpage;
+        set_config("frontpageloggedin", $form->frontpageloggedin);
     }
 
     $stradmin = get_string("administration");

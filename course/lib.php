@@ -24,6 +24,9 @@ define("FRONTPAGENEWS",           0);
 define("FRONTPAGECOURSELIST",     1);
 define("FRONTPAGECATEGORYNAMES",  2);
 define("FRONTPAGETOPICONLY",      3);
+define("FRONTPAGECATEGORYCOMBO",  4);
+
+define("FRONTPAGECOURSELIMIT",    200);           // maximum number of courses displayed on the frontpage
 
 function print_recent_selector_form($course, $advancedfilter=0, $selecteduser=0, $selecteddate="lastlogin",
                                     $mod="", $modid="activity/All", $modaction="", $selectedgroup="", $selectedsort="default") {
@@ -1034,7 +1037,7 @@ function make_categories_list(&$list, &$parents, $category=NULL, $path="") {
 }
 
 
-function print_whole_category_list($category=NULL, $displaylist=NULL, $parentslist=NULL, $depth=-1) {
+function print_whole_category_list($category=NULL, $displaylist=NULL, $parentslist=NULL, $depth=-1, $files = false) {
 /// Recursive function to print out all the categories in a nice format
 /// with or without courses included
     global $CFG;
@@ -1049,7 +1052,7 @@ function print_whole_category_list($category=NULL, $displaylist=NULL, $parentsli
 
     if ($category) {
         if ($category->visible or iscreator()) {
-            print_category_info($category, $depth);
+            print_category_info($category, $depth, $files);
         } else {
             return;  // Don't bother printing children of invisible categories
         }
@@ -1072,7 +1075,7 @@ function print_whole_category_list($category=NULL, $displaylist=NULL, $parentsli
             $down = $last ? false : true;
             $first = false;
 
-            print_whole_category_list($cat, $displaylist, $parentslist, $depth + 1);
+            print_whole_category_list($cat, $displaylist, $parentslist, $depth + 1, $files);
         }
     }
 }
@@ -1093,7 +1096,7 @@ function make_categories_options() {
     return $cats;
 }
 
-function print_category_info($category, $depth) {
+function print_category_info($category, $depth, $files = false) {
 /// Prints the category info in indented fashion
 /// This function is only used by print_whole_category_list() above
 
@@ -1108,10 +1111,8 @@ function print_category_info($category, $depth) {
 
     $catlinkcss = $category->visible ? '' : ' class="dimmed" ';
 
-    $frontpage = explode(',', $CFG->frontpage);
-    $frontpage = $frontpage?array_flip($frontpage):array();
-    $coursecount = count_records('course') <= 200;
-    if (isset($frontpage[FRONTPAGECATEGORYNAMES]) && !isset($frontpage[FRONTPAGECOURSELIST]) && $coursecount) {
+    $coursecount = count_records('course') <= FRONTPAGECOURSELIMIT;
+    if ($files and $coursecount) {
         $catimage = '<img src="'.$CFG->pixpath.'/i/course.gif" width="16" height="16" border="0" alt="" />';
     } else {
         $catimage = "&nbsp;";
@@ -1119,7 +1120,7 @@ function print_category_info($category, $depth) {
 
     echo "\n\n".'<table border="0" cellpadding="3" cellspacing="0" width="100%">';
 
-    if (isset($frontpage[FRONTPAGECATEGORYNAMES]) && !isset($frontpage[FRONTPAGECOURSELIST]) && $coursecount) {
+    if ($files and $coursecount) {
         $courses = get_courses($category->id, 'c.sortorder ASC', 'c.id,c.sortorder,c.visible,c.fullname,c.shortname,c.password,c.summary,c.guest,c.cost,c.currency');
 
         echo "<tr>";

@@ -119,7 +119,13 @@
         }
     }
 
-    foreach (explode(',',$CFG->frontpage) as $v) {
+    if (isloggedin() and !isguest() and isset($CFG->frontpageloggedin)) {
+        $frontpagelayout = $CFG->frontpageloggedin;
+    } else {
+        $frontpagelayout = $CFG->frontpage;
+    }
+
+    foreach (explode(',',$frontpagelayout) as $v) {
         switch ($v) {     /// Display the main part of the front page.
             case strval(FRONTPAGENEWS):
                 if ($SITE->newsitems) { // Print forums only when needed
@@ -165,6 +171,15 @@
                 print_heading_block(get_string('categories'));
                 print_simple_box_start('center', '100%', '', 5, 'categorybox');
                 print_whole_category_list();
+                print_simple_box_end();
+                print_course_search('', false, 'short');
+            break;
+
+            case FRONTPAGECATEGORYCOMBO:
+
+                print_heading_block(get_string('categories'));
+                print_simple_box_start('center', '100%', '', 5, 'categorybox');
+                print_whole_category_list(NULL, NULL, NULL, -1, true);
                 print_simple_box_end();
                 print_course_search('', false, 'short');
             break;
