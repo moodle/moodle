@@ -3314,16 +3314,17 @@ function print_richedit_javascript($form, $name, $source='no') {
  * @param string $name Form element to replace with HTMl editor by name
  */
 function use_html_editor($name='', $editorhidebuttons='') {
+    $editor = 'editor_'.md5($name); //name might contain illegal characters
     echo '<script language="javascript" type="text/javascript" defer="defer">'."\n";
-    echo "edit_$name = new HTMLArea('edit-$name');\n";
-    echo "var config = edit_$name.config;\n";
+    echo "$editor = new HTMLArea('edit-$name');\n";
+    echo "var config = $editor.config;\n";
 
     echo print_editor_config($editorhidebuttons);
 
     if (empty($name)) {
-        echo "\nHTMLArea.replaceAll(edit_$name.config);\n";
+        echo "\nHTMLArea.replaceAll($editor.config);\n";
     } else {
-        echo "\nedit_$name.generate();\n";
+        echo "\n$editor.generate();\n";
     }
     echo '</script>'."\n";
 }
