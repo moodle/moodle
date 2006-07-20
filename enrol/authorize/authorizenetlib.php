@@ -137,10 +137,15 @@ function authorize_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE)
                 $message = "Order status must be AN_STATUS_NONE(0)!";
                 return false;
             }
-            if (empty($extra)) {
+            elseif (empty($extra)) {
                 $message = "Need extra fields!";
                 return false;
             }
+            elseif (($action == AN_ACTION_CAPTURE_ONLY) and empty($extra->x_auth_code)) {
+                $message = "x_auth_code is required for capture only transactions!";
+                return false;
+            }
+
             $ext = (array)$extra;
             $poststring .= '&x_type=' . (($action==AN_ACTION_AUTH_ONLY)
                                           ? 'AUTH_ONLY' :( ($action==AN_ACTION_CAPTURE_ONLY)
