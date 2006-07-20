@@ -5,20 +5,28 @@
         header('Location: ../install.php');
         die;
     }
-   
+
+/// Check that PHP is of a sufficient version
+/// Moved here because older versions do not allow while(@ob_end_clean());
+    if (version_compare(phpversion(), "4.3.0") < 0) {
+        $phpversion = phpversion();
+        echo "Sorry, Moodle requires PHP 4.3.0 or later (currently using version $phpversion)";
+        die;
+    }
+
+/// Turn off time limits and try to flush everything all the time, sometimes upgrades can be slow.
+
+    @set_time_limit(0);
+    @ob_implicit_flush(true);
+    while(@ob_end_clean()); // ob_end_flush prevents sending of headers
+
+
     require_once('../config.php');
     include_once($CFG->dirroot.'/lib/adminlib.php');  // Contains various admin-only functions
 
     $id             = optional_param('id', '', PARAM_ALPHANUM);
     $confirmupgrade = optional_param('confirmupgrade', 0, PARAM_BOOL);
     $agreelicence = optional_param('agreelicence',0, PARAM_BOOL);
-/// Check that PHP is of a sufficient version
-
-    if (!check_php_version("4.1.0")) { //TODO: should we bump it up to 4.3.0??
-        $phpversion = phpversion();
-        print_heading("Sorry, Moodle requires PHP 4.1.0 or later (currently using version $phpversion)");
-        die;
-    }
 
 
 /// Check some PHP server settings
@@ -67,13 +75,6 @@
     if (!isset($CFG->version)) {
         $CFG->version = "";
     }
-
-/// Turn off time limits and try to flush everything all the time, sometimes upgrades can be slow.
-
-    @set_time_limit(0);
-    @ob_implicit_flush(true);
-    @ob_end_flush();
- 
 
 /// Check if the main tables have been installed yet or not.
 
