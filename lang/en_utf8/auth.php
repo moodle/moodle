@@ -53,7 +53,7 @@ $string['auth_imaphost'] = 'The IMAP server address. Use the IP number, not DNS 
 $string['auth_imapport'] = 'IMAP server port number. Usually this is 143 or 993.';
 $string['auth_imaptitle'] = 'Use an IMAP server';
 $string['auth_imaptype'] = 'The IMAP server type.  IMAP servers can have different types of authentication and negotiation.';
-$string['auth_ldap_bind_dn'] = 'If you want to use bind-user to search users, specify it here. Someting like \'cn=ldapuser,ou=public,o=org\'';
+$string['auth_ldap_bind_dn'] = 'If you want to use bind-user to search users, specify it here. Something like \'cn=ldapuser,ou=public,o=org\'';
 $string['auth_ldap_bind_pw'] = 'Password for bind-user.';
 $string['auth_ldap_bind_settings'] = 'Bind settings';
 $string['auth_ldap_contexts'] = 'List of contexts where users are located. Separate different contexts with \';\'. For example: \'ou=users,o=org; ou=others,o=org\'';
