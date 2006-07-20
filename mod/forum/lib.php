@@ -244,7 +244,9 @@ function forum_cron () {
     }
 
     if (!empty($USER->id)) { // Remember real USER account if necessary
-        $realuser = $USER;
+        $realuser = clone($USER); //PHP5 compatibility
+    } else {
+        $realuser = false;
     }
 
     /// Posts older than 2 days will not be mailed.  This is to avoid the problem where
