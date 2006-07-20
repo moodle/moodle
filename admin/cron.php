@@ -42,11 +42,23 @@
     //unset test cookie, user must login again anyway
     setcookie('MoodleSessionTest'.$CFG->sessioncookie, '', time() - 3600, '/');
 
+/// switch to site language and locale
+	if (!empty($CFG->courselang)) {
+        unset ($CFG->courselang);
+	}
+    if (!empty($SESSION->lang)) {
+        unset ($SESSION->lang);
+    }
+    $USER->lang = '';
+    moodle_setlocale();
+
+/// send mime type and encoding
+    @header('Content-Type: text/plain; charset='.current_charset());
+
 /// Start output log
 
     $timenow  = time();
 
-    mtrace("<pre>");
     mtrace("Server Time: ".date('r',$timenow)."\n\n");
 
 /// Run all cron jobs for each module
