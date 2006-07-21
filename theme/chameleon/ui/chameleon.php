@@ -7,13 +7,13 @@ if (isset($THEME->chameleonenabled) && $THEME->chameleonenabled) {
     if (isset($course->id)) {
         $chameleon_courseparam = '?id=' . $course->id;
         if (!$chameleon_isadmin) {
-            $chameleon_isteacher = (isteacher($course->id) && isset($CFG->coursetheme));
+            $chameleon_isteacher = (isteacheredit($course->id) && isset($CFG->coursetheme));
         }
     } else {
         $chameleon_courseparam = '';
     }
-
-    if ($chameleon_isadmin || $chameleon_isteacher) { 
+    
+    if ($chameleon_isadmin || ($chameleon_isteacher && !empty($CFG->allowcoursethemes) && !empty($THEME->chameleonteachereditenabled))) { 
         // either we're an admin or we're a teacher and this is being used as the course theme
         // if we're on a page using a course theme edit that, otherwise edit the main chameleon theme
         // $chameleon_theme = (isset($CFG->coursetheme)) ? $CFG->coursetheme : $CFG->theme;
