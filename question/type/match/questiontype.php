@@ -178,11 +178,35 @@ class question_match_qtype extends default_questiontype {
     }
 
     function save_session_and_responses(&$question, &$state) {
+         $subquestions = &$state->options->subquestions;
+
+        // Prepare an array to help when disambiguating equal answers.
+        $answertexts = array();
+        foreach ($subquestions as $subquestion) {
+            $ans = reset($subquestion->options->answers);
+            $answertexts[$ans->id] = $ans->answer;
+        }
+        
         // Serialize responses
         $responses = array();
-        foreach ($state->options->subquestions as $key => $subquestion) {
+        foreach ($subquestions as $key => $subquestion) {
             if ($subquestion->questiontext) {
-                $responses[] = $key.'-'.($state->responses[$key] ? $state->responses[$key] : 0);
+                if ($state->responses[$key]) {
+                    $response = $state->responses[$key];
+                    if (!array_key_exists($response, $subquestion->options->answers)) {
+                        // If studen's answer did not match by id, but there may be
+                        // two answers with the same text, but different ids,
+                        // so we need to try matching the answer text.
+                        $expected_answer = reset($subquestion->options->answers);
+                        if ($answertexts[$response] == $expected_answer->answer) {
+                            $response = $expected_answer->id;
+                            $state->responses[$key] = $response;
+                        }
+                    }
+                } else {
+                    $response = 0;
+                }
+                $responses[] = $key.'-'.$response;
             }
         }
         $responses = implode(',', $responses);
@@ -212,15 +236,28 @@ class question_match_qtype extends default_questiontype {
         $correctanswers = $this->get_correct_responses($question, $state);
         $nameprefix     = $question->name_prefix;
         $answers        = array();
+        $answerids      = array();
         $responses      = &$state->responses;
 
         $formatoptions = new stdClass;
         $formatoptions->noclean = true;
         $formatoptions->para = false;
 
+        // Prepare a list of answers, removing duplicates, and fix up the ids
+        // of any responses that point the the eliminated duplicates. 
         foreach ($subquestions as $subquestion) {
             foreach ($subquestion->options->answers as $ans) {
-                $answers[$ans->id] = $ans->answer;
+                if (!in_array($ans->answer, $answers)) {
+                    $answers[$ans->id] = $ans->answer;
+                    $answerids[$ans->answer] = $ans->id;
+                } else {
+                    if (array_key_exists($subquestion->id, $responses) && $responses[$subquestion->id]) {
+                        $responses[$subquestion->id] = $answerids[$ans->answer];
+                    }
+                    if (array_key_exists($subquestion->id, $correctanswers)) {
+                        $correctanswers[$subquestion->id] = $answerids[$ans->answer];
+                    }
+                }
             }
         }
 
@@ -235,7 +272,6 @@ class question_match_qtype extends default_questiontype {
 
         ///// Print the input controls //////
         foreach ($subquestions as $key => $subquestion) {
-
             if ($subquestion->questiontext) {
                 /// Subquestion text:
                 $a = new stdClass;
@@ -278,13 +314,31 @@ class question_match_qtype extends default_questiontype {
         $subquestions = &$state->options->subquestions;
         $responses    = &$state->responses;
 
+        // Prepare an array to help when disambiguating equal answers.
+        $answertexts = array();
+        foreach ($subquestions as $subquestion) {
+            $ans = reset($subquestion->options->answers);
+            $answertexts[$ans->id] = $ans->answer;
+        }
+        
+        // Add up the grades from each subquestion.
         $sumgrade = 0;
         $totalgrade = 0;
         foreach ($subquestions as $key => $sub) {
             if ($sub->questiontext) {
                 $totalgrade += 1;
-                if (isset($sub->options->answers[$responses[$key]])) {
-                    $sumgrade += $sub->options->answers[$responses[$key]]->fraction;
+                $response = $responses[$key];
+                if ($response && !array_key_exists($response, $sub->options->answers)) {
+                    // If studen's answer did not match by id, but there may be
+                    // two answers with the same text, but different ids,
+                    // so we need to try matching the answer text.
+                    $expected_answer = reset($sub->options->answers);
+                    if ($answertexts[$response] == $expected_answer->answer) {
+                        $response = $expected_answer->id;
+                    }
+                }
+                if (array_key_exists($response, $sub->options->answers)) {
+                    $sumgrade += $sub->options->answers[$response]->fraction;
                 }
             }
         }
@@ -440,6 +494,7 @@ class question_match_qtype extends default_questiontype {
         }
 
         //We have created every match_sub, now create the match
+        $match = new stdClass;
         $match->question = $new_question_id;
         $match->subquestions = $subquestions_field;
 

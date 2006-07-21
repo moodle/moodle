@@ -314,7 +314,7 @@ class qformat_gift extends qformat_default {
     
                 foreach ($answers as $key => $answer) {
                     $answer = trim($answer);
-                    if (strpos($answer, "->") <= 0) {
+                    if (strpos($answer, "->") === false) {
                         if ($this->displayerrors) {
                         echo "<p>$text<p>Error processing Matching question.<br />
                             Improperly formatted answer: $answer";
