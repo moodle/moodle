@@ -121,7 +121,7 @@ class question_truefalse_qtype extends default_questiontype {
     }
 
     function get_correct_responses(&$question, &$state) {
-    	// The correct answer is the one which gives full marks
+        // The correct answer is the one which gives full marks
         foreach ($question->options->answers as $answer) {
             if (((int) $answer->fraction) === 1) {
                 return array('' => $answer->id);
