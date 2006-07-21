@@ -11,7 +11,7 @@ if (empty($THEME->chameleonenabled)) {
 
 $chameleon_id = isset($_GET['id']) ? (int) $_GET['id'] : 0;
 if ($chameleon_id != 0 && !empty($CFG->allowcoursethemes) && !empty($THEME->chameleonteachereditenabled)) {
-    if (!isteacher($chameleon_id)) {
+    if (!isteacheredit($chameleon_id)) {
         die('CHAMELEON_ERROR Either you are not logged in or you are not allowed to edit this theme');
     }
 } else if (!isadmin()) {
