@@ -22,8 +22,8 @@
     <?php $this->print_question_grading_details($question, $state, $cmoptions, $options); ?>
   </div>
   <?php if ($comment) { ?>
-	<div class="comment">
-	  <?php
+    <div class="comment">
+      <?php
         echo get_string('comment', 'quiz').': ';
         echo $comment;
       ?>
@@ -31,11 +31,11 @@
   <?php }
             echo $commentlink;
   if ($history) { ?>
-	<div class="history">
-	  <?php
+    <div class="history">
+      <?php
         print_string('history', 'quiz');
         echo $history;
       ?>
-	</div>
+    </div>
   <?php } ?>
 </div>
