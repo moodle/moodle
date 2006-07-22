@@ -47,6 +47,12 @@ $string['download'] = 'Pobierz';
 $string['downloadedfilecheckfailed'] = 'Pobierany plik jest uszkodzony';
 $string['downloadlanguagebutton'] = 'Pobierz &quot;$a&quot; pakiet językowy';
 $string['downloadlanguagehead'] = 'Pobierz pakiet językowy';
+$string['environmenterrortodo'] = 'Musisz rozwiązać wszystkie problemy środowiska znalezione powyzej aby kontynuować instalacje.';
+$string['environmentrecommendinstall'] = 'Polecane do zainstalowania/włączenia';
+$string['environmentrecommendversion'] = 'wersja $a->needed jest polecana a Ty używasz $a->current';
+$string['environmentrequireinstall'] = 'Wymagane do zainstalowania/włączenia';
+$string['environmentrequireversion'] = 'wersja $a->needed jest wymagana ty masz $a->current';
+$string['environmentxmlerror'] = 'Bład czytania danych środowiskowych ($a->error_code)';
 $string['error'] = 'Błąd';
 $string['fail'] = 'zawieść';
 $string['fileuploads'] = 'Plik pobrany';
@@ -55,11 +61,14 @@ $string['gdversion'] = 'versja biblioteki GD';
 $string['gdversionerror'] = 'Aby przeprowadzać operacje i kreować obrazy niezbędna jest biblioteka GD';
 $string['globalsquoteserror'] = 'Ustal swoje ustawienia PHP:  niedostępne register_globals i/lub udostępnione magic_quotes_gpc';
 $string['help'] = 'Pomoc';
+$string['iconvrecommended'] = 'Zainstalowanie opcjonalnej biblioteki ICONV jest mocno polecane aby poprawić działanie strony, szczególnie jeśli strona używa języków nie-łacińskich.';
 $string['info'] = 'Informacja';
 $string['installation'] = 'Instalacja';
+$string['invalidmd5'] = 'Nieważne md5';
 $string['language'] = 'Język';
 $string['magicquotesruntime'] = 'Magic Quotes Runtime';
 $string['magicquotesruntimeerror'] = 'Powinno być wyłączone';
+$string['mbstringrecommended'] = 'Zainstalowanie opcjonalnej biblioteki MBSTRING jest mocno polecane aby poprawić działanie strony, szczególnie jeśli strona używa języków nie łacińskich.';
 $string['memorylimit'] = 'Ograniczenie pamięci';
 $string['memorylimiterror'] = '= Limit pamięci PHP jest ustawiony zbyt nisko ... może to powodować problemy w przyszłości';
 $string['memorylimithelp'] = 'Limit pamięci PHP dla Twojego serwera jest ustawiony obecnie na $a.</p>
@@ -75,6 +84,9 @@ Pozwoli to Moodle ustawić samoczynnie limit pamięci. </li>
 <li> Na niektórych serwerach PHP można stworzyć plik. htaccess w katalogu Moodle zawierający poniższą linię:
 <p><blockquote>php_value memory_limit 16M</blockquote></p>
 <p> jednakże na niektórych serwerach będzie uniemożliwiało to działanie <b> wszystkich </b> stron PHP (ujrzysz błędy na stronie), a więc będziesz zmuszony usunąć plik .htaccess. </p></li></ol>”';
+$string['missingrequiredfield'] = 'Brak wymaganego pola';
+$string['mysql416bypassed'] = 'Jezeli Twoja strona używa ISO-8859-1 możesz nadal używać właśnie zainstalowanej  MySQL 4.1.12 (lub wyższej).';
+$string['mysql416required'] = 'MySQL 4.1.16 jest najniższą wersją polecaną dla Moodle 1.6 gwarantującą że wszystkie dane będą konwertowane do UTF8.';
 $string['mysqlextensionisnotpresentinphp'] = 'PHP nie został prawidłowo skonfigurowany z rozszerzeniem MySQL, co może zostać zakomunikowane przez MySQL. Sprawdź proszę swój plik php.ini lub przekompiluj PHP';
 $string['name'] = 'Nazwa';
 $string['next'] = 'Następne';
@@ -87,6 +99,7 @@ $string['phpversionhelp'] = '<p> Moodle wymaga wersji PHP co najmniej 4.1.0. </p
 <p>Obecnie jest uruchomiona wersja $a</p>
 <p> Musisz uaktualnić wersje PHP lub przenieść na host z nowszą wersją PHP!</p>';
 $string['previous'] = 'Poprzedni';
+$string['remotedownloadnotallowed'] = 'Pobieranie komponentów na Twój serwer jest niedozowolone. Musisz pobrać pliki ręcznie z <a href=\"$a->url\">$a->url</a> i skopiować do \"$a->dest\" na swoim serwerze i tam go otworzyć';
 $string['report'] = 'Raport ';
 $string['safemode'] = 'Bezpieczny tryb';
 $string['safemodeerror'] = 'Moodle ma trudności z włączeniem bezpiecznego trybu';
@@ -95,6 +108,9 @@ $string['status'] = 'Status';
 $string['thischarset'] = 'UTF-8';
 $string['thislanguage'] = 'Polski';
 $string['user'] = 'Użytkownik';
+$string['wrongdestpath'] = 'Błędna scieżka docelowa';
+$string['wrongsourcebase'] = 'Błędne żródło bazy URL';
+$string['wrongzipfilename'] = 'Błędna nazwa pliku ZIP.';
 $string['wwwroot'] = 'Adres w sieci';
 $string['wwwrooterror'] = 'Adres w sieci wydaje się być niepoprawny - wydaje się że nie ma tam instalacji Moodle';
 ?>
