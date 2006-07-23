@@ -57,35 +57,38 @@ if (!isset($CFG->scorm_framewidth)) {
 * @return int
 */
 function scorm_add_instance($scorm) {
+    if(empty($scorm->datadir)) { //check to make sure scorm object is valid BEFORE entering it in the database.
+        error(get_string('nomanifest', 'scorm'));
+    } else {
+        global $CFG;
+        $scorm->timemodified = time();
 
-    global $CFG;
-    $scorm->timemodified = time();
+        $scorm = scorm_option2text($scorm);
+        $scorm->width = str_replace('%','',$scorm->width);
+        $scorm->height = str_replace('%','',$scorm->height);
 
-    $scorm = scorm_option2text($scorm);
-    $scorm->width = str_replace('%','',$scorm->width);
-    $scorm->height = str_replace('%','',$scorm->height);
+        //sanitize submitted values a bit
+        $scorm->width = clean_param($scorm->width, PARAM_INT);
+        $scorm->height = clean_param($scorm->height, PARAM_INT);
 
-    //sanitize submitted values a bit
-    $scorm->width = clean_param($scorm->width, PARAM_INT);
-    $scorm->height = clean_param($scorm->height, PARAM_INT);
+        $id = insert_record('scorm', $scorm);
 
-    $id = insert_record('scorm', $scorm);
+        if (basename($scorm->reference) != 'imsmanifest.xml') {
+            // Rename temp scorm dir to scorm id
+            $scorm->dir = $CFG->dataroot.'/'.$scorm->course.'/moddata/scorm';
+            rename($scorm->dir.$scorm->datadir,$scorm->dir.'/'.$id);
+        }
 
-    if (basename($scorm->reference) != 'imsmanifest.xml') {
-        // Rename temp scorm dir to scorm id
-        $scorm->dir = $CFG->dataroot.'/'.$scorm->course.'/moddata/scorm';
-        rename($scorm->dir.$scorm->datadir,$scorm->dir.'/'.$id);
+        // Parse scorm manifest
+        if ($scorm->launch == 0) {
+            require_once('locallib.php');
+            $scorm->id = $id;
+            $scorm->launch = scorm_parse($scorm);
+            set_field('scorm','launch',$scorm->launch,'id',$scorm->id);
+        }
+
+        return $id;
     }
-
-    // Parse scorm manifest
-    if ($scorm->launch == 0) {
-        require_once('locallib.php');
-        $scorm->id = $id;
-        $scorm->launch = scorm_parse($scorm);
-        set_field('scorm','launch',$scorm->launch,'id',$scorm->id);
-    }
-
-    return $id;
 }
 
 /**
@@ -480,6 +483,7 @@ function scorm_delete_files($directory) {
                     scorm_delete_files($directory.'/'.$file);
                 }
             }
+         set_time_limit(5);
         }
         rmdir($directory);
         return true;
