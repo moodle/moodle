@@ -71,7 +71,7 @@ function scorm_validate($packagedir) {
             }
             closedir($handle);
         }
-        if (!isset($validation)) {
+        if (!isset($validation->result)) {
             $validation->result = 'nomanifest';
             $validation->pkgtype = 'SCORM';
         }

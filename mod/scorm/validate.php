@@ -2,7 +2,8 @@
 
     require_once("../../config.php");
     require_once('locallib.php');
-	
+    require_once('lib.php');
+
     $courseid = required_param('id', PARAM_INT);             // Course Module ID, or
     $reference = required_param('reference', PARAM_PATH);    // Package path
     $scormid = optional_param('instance', '', PARAM_INT);       // scorm ID
