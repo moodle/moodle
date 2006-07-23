@@ -292,7 +292,9 @@ $current = get_record('choice_answers', 'choiceid', $choice->id, 'userid', $user
                     add_to_log($courseid, "choice", "choose", "view.php?id=$cm->id", $choice->id, $cm->id);
                 }
             } else {
-                error("this choice is full!");
+                if (!($current->optionid==$formanswer)) { //check to see if current choice already selected - if not display error
+                    error("this choice is full!");    
+                }
             }
 }
 
