@@ -81,6 +81,9 @@ function get_user_courses(&$user, $type) {
             }
         }
         
+        /// Add it to new list
+        $newenrolments[$course_obj->id] = 'ldap';
+
         // deal with enrolment in the moodle db
         if (!empty($course_obj)) { // does course exist now?     
             if(isset($user->{$type}[$course_obj->id]) && $user->{$type}[$course_obj->id] == 'ldap'){
@@ -105,17 +108,25 @@ function get_user_courses(&$user, $type) {
     // array, those are old enrolments that we want to remove (or are they?)
     if(!empty($user->{$type})){
         foreach ($user->{$type} as $courseid => $value){
-            if($value == 'ldap'){ // this was a legacy 
+            if($value === 'ldap'){ // this was a legacy 
                 if ($type === 'student') { // enrol
                     unenrol_student($user->id, $courseid);
                 } else if ($type === 'teacher') {
                     remove_teacher($user->id, $courseid);
                 }
                 unset($user->{$type}[$course_obj->id]);
+            } else {
+                // This one is from a non-database
+                // enrolment. Add it to the newenrolments
+                // array, so we don't loose it.
+                $newenrolments[$courseid] = $value;
             }
 
         }
     }
+
+    /// Overwrite the old array with the new one
+    $user->{$type} = $newenrolments;
 
     @ldap_close($ldap_connection);
     return true;
