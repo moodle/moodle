@@ -11,6 +11,7 @@ define('AN_DELIM',    '|');
 define('AN_ENCAP',    '"');
 
 require_once('const.php');
+require_once('enrol.php');
 
 /**
  * Gets settlement date and time
@@ -234,7 +235,12 @@ function authorize_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE)
         return false;
     }
 
-    @ignore_user_abort(true); // this is critical section
+    // critical section
+    @ignore_user_abort(true);
+    if (intval(ini_get('max_execution_time')) > 0) {
+        @set_time_limit(300);
+    }
+
     fwrite($fp, "POST /gateway/transact.dll HTTP/1.0\r\n" .
                 "Host: $host\r\n" . $referer .
                 "Content-type: application/x-www-form-urlencoded\r\n" .
