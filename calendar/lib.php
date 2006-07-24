@@ -1093,6 +1093,10 @@ function calendar_set_filters(&$courses, &$group, &$user, $courseeventsfrom = NU
     else {
         $courses = false;
     }
+   //BUG 6130 clean $courses array as SESSION has bad entries. 
+   foreach ($courses as $index => $value) {
+       if (empty($value)) unset($courses[$index]);
+   }
 
     if($SESSION->cal_show_user || $ignorefilters) {
         // This doesn't work for arrays yet (maybe someday it will)
