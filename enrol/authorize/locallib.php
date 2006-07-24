@@ -5,6 +5,7 @@ if (!defined('MOODLE_INTERNAL')) {
 }
 
 require_once('const.php');
+require_once('enrol.php');
 require_once('authorizenetlib.php');
 
 define('ORDER_CAPTURE', 'capture');
@@ -224,7 +225,6 @@ function authorize_print_order_details($orderno)
             $message = '';
             $extra = NULL;
             $success = authorize_action($order, $message, $extra, AN_ACTION_PRIOR_AUTH_CAPTURE);
-            update_record("enrol_authorize", $order); // May be expired.
             if (!$success) {
                 $table->data[] = array("<b><font color='red'>$strs->error:</font></b>", $message);
             }
@@ -301,17 +301,8 @@ function authorize_print_order_details($orderno)
                 $success = authorize_action($order, $message, $extra, AN_ACTION_CREDIT);
                 if ($success) {
                     if (empty($CFG->an_test)) {
-                        $extra->id = insert_record("enrol_authorize_refunds", $extra);
                         if (empty($extra->id)) {
-                            $emailsubject = "Authorize.net: insert record error";
-                            $emailmessage = "Error while trying to insert new data to enrol_authorize_refunds table:\n";
-                            $data = (array)$extra;
-                            foreach ($data as $key => $value) {
-                                $emailmessage .= "$key => $value\n";
-                            }
-                            $adminuser = get_admin();
-                            email_to_user($adminuser, $adminuser, $emailsubject, $emailmessage);
-                            $table->data[] = array("<b><font color=red>$strs->error:</font></b>", $emailmessage);
+                            $table->data[] = array("<b><font color=red>$strs->error:</font></b>", 'insert record error');
                         }
                         else {
                             if (!empty($unenrol)) {
@@ -353,7 +344,6 @@ function authorize_print_order_details($orderno)
                 $extra = NULL;
                 $message = '';
                 $success = authorize_action($order, $message, $extra, AN_ACTION_VOID);
-                update_record("enrol_authorize", $order); // May be expired.
                 if ($success) {
                     if (empty($CFG->an_test)) {
                         redirect("index.php?order=$orderno");
@@ -395,7 +385,6 @@ function authorize_print_order_details($orderno)
                     $message = '';
                     $extra = NULL;
                     $success = authorize_action($suborder, $message, $extra, AN_ACTION_VOID);
-                    update_record("enrol_authorize_refunds", $suborder); // May be expired.
                     if ($success) {
                         if (empty($CFG->an_test)) {
                             if (!empty($unenrol)) {
