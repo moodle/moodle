@@ -189,11 +189,13 @@
                 $result->grade = "0.0";
             }
             
+            $a = new stdClass;
             $percentage = round(($attempt->sumgrades/$quiz->sumgrades)*100, 0);
-            $grade = round(($attempt->sumgrades/$quiz->sumgrades)*$quiz->grade, $CFG->quiz_decimalpoints);
+            $a->grade = round(($attempt->sumgrades/$quiz->sumgrades)*$quiz->grade, $CFG->quiz_decimalpoints);
+            $a->maxgrade = $quiz->grade;
             $rawscore = round($attempt->sumgrades, $CFG->quiz_decimalpoints);
             $table->data[] = array("$strscore:", "$rawscore/$quiz->sumgrades ($percentage %)");
-            $table->data[] = array("$strgrade:", $grade.get_string('outof', 'quiz').$quiz->grade);
+            $table->data[] = array("$strgrade:", get_string('outof', 'quiz', $a));
         }
     }
     if ($isteacher and $attempt->userid == $USER->id) {
