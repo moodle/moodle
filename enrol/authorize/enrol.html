@@ -1,6 +1,6 @@
 <?php // $Id$
 
-$this->prevent_double_paid($course);
+enrolment_plugin_authorize::prevent_double_paid($course);
 $formvars = array('password', 'ccaddress', 'cccity', 'ccstate', 'cccountry', 'cczip',
                   'ccfirstname', 'cclastname', 'cc', 'ccexpiremm', 'ccexpireyyyy', 'cctype', 'cvv');
 
@@ -10,7 +10,7 @@ foreach ($formvars as $var) {
     }
 }
 
-$curcost = $this->get_course_cost($course);
+$curcost = enrolment_plugin_authorize::get_course_cost($course);
 $userfirstname = empty($form->ccfirstname) ? $USER->firstname : $form->ccfirstname;
 $userlastname = empty($form->cclastname) ? $USER->lastname : $form->cclastname;
 $useraddress = empty($form->ccaddress) ? $USER->address : $form->ccaddress;
@@ -60,7 +60,7 @@ $usercountry = empty($form->cccountry) ? $USER->country : $form->cccountry;
 <tr>
   <td align="right"><?php print_string("cctype", "enrol_authorize") ?>: </td>
   <td align="left"><?php
-  choose_from_menu(get_list_of_creditcards(), 'cctype', $form->cctype);
+  choose_from_menu(enrolment_plugin_authorize::get_list_of_creditcards(), 'cctype', $form->cctype);
   if (!empty($this->ccerrors['cctype'])) { formerr($this->ccerrors['cctype']); }
   ?>
 </td>

@@ -15,8 +15,8 @@ require_once('const.php');
 /**
  * Gets settlement date and time
  *
- * @param int $time Processed time, usually now.
- * @return int Settlement date
+ * @param int $time Time processed, usually now.
+ * @return int Settlement date and time
  */
 function authorize_getsettletime($time)
 {
@@ -54,10 +54,6 @@ function authorize_expired(&$order)
 {
     static $timediff30;
 
-    if (empty($timediff30)) {
-        $timediff30 = authorize_getsettletime(time()) - (30 * 24 * 3600);
-    }
-
     if ($order->status == AN_STATUS_EXPIRE) {
         return true;
     }
@@ -65,24 +61,27 @@ function authorize_expired(&$order)
         return false;
     }
 
-    $exp = (authorize_getsettletime($order->timecreated) < $timediff30);
+    if (empty($timediff30)) {
+        $timediff30 = authorize_getsettletime(time()) - (30 * 24 * 3600);
+    }
 
-    if ($exp) {
+    $isexpired = (authorize_getsettletime($order->timecreated) < $timediff30);
+    if ($isexpired) {
         $order->status = AN_STATUS_EXPIRE;
         update_record('enrol_authorize', $order);
     }
-
-    return $exp;
+    return $isexpired;
 }
 
 /**
- * Performs an action on authorize.net
+ * Performs an action on authorize.net and updates/inserts records. If record update fails,
+ * sends email to admin.
  *
  * @param object &$order Which transaction data will be sent. See enrol_authorize table.
- * @param string &$message Information about error messages.
- * @param object &$extra Extra transaction data.
+ * @param string &$message Information about error message if this function returns false.
+ * @param object &$extra Extra data that used for refunding and credit card information.
  * @param int $action Which action will be performed. See AN_ACTION_*
- * @return bool true, transaction was successful, false otherwise.
+ * @return bool true Transaction was successful, false otherwise. Use $message for reason.
  * @author Ethem Evlice <ethem a.t evlice d.o.t com>
  * @uses $CFG
  */
@@ -117,12 +116,12 @@ function authorize_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE)
 
     $action = intval($action);
 
-    if (empty($order) || empty($order->id)) {
+    if (empty($order) or empty($order->id)) {
         $message = "Check order->id!";
         return false;
     }
-    elseif ($action <= AN_ACTION_NONE || $action > AN_ACTION_VOID) {
-        $message = "No action taken!";
+    elseif ($action <= AN_ACTION_NONE or $action > AN_ACTION_VOID) {
+        $message = "Invalid action!";
         return false;
     }
 
@@ -187,11 +186,10 @@ function authorize_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE)
                 return false;
             }
             if (empty($extra)) {
-                $message = "need extra fields for CREDIT!";
+                $message = "Need extra fields to REFUND!";
                 return false;
             }
             $total = floatval($extra->sum) + floatval($extra->amount);
-            unset($extra->sum); // this is not used in refunds table.
             if (($extra->amount == 0) || ($total > $order->amount)) {
                 $message = "Can be credited up to original amount.";
                 return false;
@@ -218,7 +216,7 @@ function authorize_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE)
                 }
             }
             else {
-                $message = "Order status must be authorized, auth/captured or refunded!";
+                $message = "Order status must be authorized/pending capture or captured-refunded/pending settlement!";
                 return false;
             }
             $poststring .= '&x_type=VOID&x_trans_id=' . urlencode($order->transid);
@@ -226,7 +224,7 @@ function authorize_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE)
         }
 
         default: {
-            $message = "Missing action? $action";
+            $message = "Invalid action: $action";
             return false;
         }
     }
@@ -243,6 +241,7 @@ function authorize_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE)
         return false;
     }
 
+    @ignore_user_abort(true); // this is critical section
     fwrite($fp, "POST /gateway/transact.dll HTTP/1.0\r\n" .
                 "Host: $host\r\n" . $referer .
                 "Content-type: application/x-www-form-urlencoded\r\n" .
@@ -297,6 +296,10 @@ function authorize_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE)
                     $order->status = AN_STATUS_AUTHCAPTURE;
                     $order->settletime = authorize_getsettletime(time());
                 }
+                if (! update_record('enrol_authorize', $order)) {
+                    enrolment_plugin_authorize::email_to_admin("Error while trying to update data " .
+                    "in table enrol_authorize. Please edit manually this record: ID=$order->id.", $order);
+                }
                 break;
             }
             case AN_ACTION_CREDIT:
@@ -306,12 +309,25 @@ function authorize_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE)
                 $extra->status = AN_STATUS_CREDIT;
                 $extra->transid = $transid;
                 $extra->settletime = authorize_getsettletime(time());
+                unset($extra->sum); // this is not used in refunds table.
+                if (! $extra->id = insert_record('enrol_authorize_refunds', $extra)) {
+                    enrolment_plugin_authorize::email_to_admin("Error while trying to insert data " .
+                    "into table enrol_authorize_refunds. Please add manually this record:", $extra);
+                }
                 break;
             }
             case AN_ACTION_VOID:
             {
-                $order->status = AN_STATUS_VOID;
+                $tableupdate = 'enrol_authorize';
+                if ($order->status == AN_STATUS_CREDIT) {
+                    $tableupdate = 'enrol_authorize_refunds';
+                }
                 // dont't update settletime
+                $order->status = AN_STATUS_VOID;
+                if (! update_record($tableupdate, $order)) {
+                    enrolment_plugin_authorize::email_to_admin("Error while trying to update data " .
+                    "in table $tableupdate. Please edit manually this record: ID=$order->id.", $order);
+                }
                 break;
             }
             default: return false;
