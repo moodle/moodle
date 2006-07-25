@@ -466,7 +466,9 @@ class enrolment_plugin_authorize
         global $CFG;
 
         // site settings
-        set_config('enrol_cost', optional_param('enrol_cost', 5, PARAM_INT));
+        if (($cost = optional_param('enrol_cost', 5, PARAM_INT)) > 0) {
+            set_config('enrol_cost', $cost);
+        }
         set_config('enrol_currency', optional_param('enrol_currency', 'USD', PARAM_ALPHA));
         set_config('enrol_mailstudents', optional_param('enrol_mailstudents', 0, PARAM_BOOL));
         set_config('enrol_mailteachers', optional_param('enrol_mailteachers', 0, PARAM_BOOL));
