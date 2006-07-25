@@ -10,8 +10,8 @@ define('AN_ERROR',    '3');
 define('AN_DELIM',    '|');
 define('AN_ENCAP',    '"');
 
-require_once('const.php');
-require_once('enrol.php');
+require_once($CFG->dirroot.'/enrol/authorize/const.php');
+require_once($CFG->dirroot.'/enrol/authorize/enrol.php');
 
 /**
  * Gets settlement date and time
