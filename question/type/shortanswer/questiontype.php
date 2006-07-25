@@ -10,6 +10,7 @@
 /// This class contains some special features in order to make the
 /// question type embeddable within a multianswer (cloze) question
 ///
+require_once("$CFG->dirroot/question/type/questiontype.php");
 
 class question_shortanswer_qtype extends default_questiontype {
 
