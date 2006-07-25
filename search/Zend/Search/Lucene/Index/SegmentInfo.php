@@ -430,7 +430,7 @@ class Zend_Search_Lucene_Index_SegmentInfo
         $freqPointer = $prevTermInfo->freqPointer;
         $proxPointer = $prevTermInfo->proxPointer;
         for ($count = $prevPosition*$indexInterval + 1;
-             $count < $termCount &&
+             $count <= $termCount &&
              ( $this->_getFieldPosition($termFieldNum) < $searchDicField ||
               ($this->_getFieldPosition($termFieldNum) == $searchDicField &&
                strcmp($termValue, $term->text) < 0) );

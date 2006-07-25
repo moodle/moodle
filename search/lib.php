@@ -1,19 +1,32 @@
 <?php
 
-  //Move this stuff to lib/searchlib.php?
-  // Author: Michael Champanis
-
-  //document types that can be searched
-  define('SEARCH_NO_TYPE', 'none');
-  define('SEARCH_WIKI_TYPE', 'wiki');
-  define('SEARCH_FORUM_TYPE', 'forum');
+  /* Move this stuff to lib/searchlib.php?
+   * Author: Michael Champanis
+   *
+   * This file must not contain any PHP 5, because it is used to test for PHP 5
+   * itself, and needs to be able to be executed on PHP 4 installations.
+   * */
+  
+  define('SEARCH_INDEX_PATH', "$CFG->dataroot/search");
+  
+  //document types that can be searched  
+  define('SEARCH_TYPE_NONE', 'none');
+  define('SEARCH_TYPE_WIKI', 'wiki');
+  define('SEARCH_TYPE_FORUM', 'forum');  
   
   //returns all the document type constants
-  function search_get_document_types() {
-    $r = Array(SEARCH_WIKI_TYPE, SEARCH_NO_TYPE, SEARCH_FORUM_TYPE);
-    return $r;
+  function search_get_document_types($prefix='SEARCH_TYPE') {
+    $ret = array();
+    
+    foreach (get_defined_constants() as $key=>$value) {
+      if (substr($key, 0, strlen($prefix)) == $prefix) {
+        $ret[$key] = $value;
+      } //if
+    } //foreach
+    
+    return $ret;
   } //search_get_document_types
-  
+    
   //shortens a url so it can fit on the results page
   function search_shorten_url($url, $length=30) {    
     return substr($url, 0, $length)."...";

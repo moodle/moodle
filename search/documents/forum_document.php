@@ -7,12 +7,7 @@
   
   class ForumSearchDocument extends SearchDocument {  
     public function __construct(&$post, $forum_id, $course_id, $group_id) {
-      // generic information
-      /*$doc->id        = $post->id;
-      $doc->title     = $post->subject;
-      $doc->author    = $post->firstname." ".$post->lastname;
-      $doc->contents  = $post->message;*/
-      
+      // generic information     
       $doc->id        = $post['id'];
       $doc->title     = $post['subject'];
       $doc->author    = $post['firstname']." ".$post['lastname'];
@@ -24,7 +19,7 @@
       $data->forum      = $forum_id;
       $data->discussion = $post['discussion'];
       
-      parent::__construct($doc, $data, SEARCH_FORUM_TYPE, $course_id, $group_id);
+      parent::__construct($doc, $data, SEARCH_TYPE_FORUM, $course_id, $group_id);
     } //constructor    
   } //ForumSearchDocument
   
@@ -34,7 +29,7 @@
   } //forum_make_link
   
   function forum_iterator() {
-      //no @ = Undefined index:  82 in /home/michael/public_html/moodle/lib/datalib.php on line 2671    
+      //no @ = Undefined index:  82 in moodle/lib/datalib.php on line 2671    
       return @get_all_instances_in_courses("forum", get_courses());
   } //forum_iterator
   
@@ -71,33 +66,6 @@
             
       return $documents;
   } //forum_get_content_for_index
-  
-  //old slower version
-  function forum_get_content_for_index_old(&$forum) {
-    $documents = array();  
-    if (!$forum) return $documents;
-  
-    $posts = forum_get_discussions($forum->id);      
-    if (!$posts) return $documents;
-                
-    foreach($posts as $post) {
-      if (is_object($post)) {
-        if (strlen($post->message) > 0 && ($post->deleted != 1)) {
-          $documents[] = new ForumSearchDocument($post, $forum->id, $forum->course, $post->groupid);
-        } //if
-          
-        if ($children = forum_get_child_posts($post->id, $forum->id)) {
-          foreach ($children as $child) {
-            if (strlen($child->message) > 0 && ($child->deleted != 1)) {
-              $documents[] = new ForumSearchDocument($child, $forum->id, $forum->course, $post->groupid);
-            } //if
-          } //foreach
-        } //if
-      } //if                
-    } //foreach      
-    
-    return $documents;
-  } //forum_get_content_for_index_old
   
   //reworked faster version from /mod/forum/lib.php
   function forum_get_discussions_fast($forum) {

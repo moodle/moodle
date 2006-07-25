@@ -48,16 +48,19 @@
     
   //php5 found, continue including php5-only files
   require_once("$CFG->dirroot/search/Zend/Search/Lucene.php");
-  
-  if (get_config("search_indexer_busy") == 1) {
-  } //if  
-  
-  //turn on busy flag
-  set_config("search_indexer_busy", 1);
+    
   mtrace('<pre>Server Time: '.date('r',time())."\n");
+
+  if ($CFG->search_indexer_busy == '1') {
+    //means indexing was not finished previously
+    mtrace("Warning: Indexing was not successfully completed last time, restarting.\n");
+  } //if
+
+  //turn on busy flag
+  set_config('search_indexer_busy', '1');
   
   //paths
-  $index_path = $CFG->dataroot.'/search';
+  $index_path = SEARCH_INDEX_PATH;
   $index_db_file = "$CFG->dirroot/search/db/$CFG->dbtype.sql";  
   
   //setup directory in data root
@@ -103,6 +106,7 @@
   
   if ($mods = get_records_select('modules' /*'index this module?' where statement*/)) {
     foreach ($mods as $mod) {
+      if ($mod->name == 'forum') continue;
       $class_file = $CFG->dirroot.'/search/documents/'.$mod->name.'_document.php';              
       
       if (file_exists($class_file)) {
@@ -174,6 +178,9 @@
   mtrace('</pre>');
   
   //finished, turn busy flag off
-  set_config("search_indexer_busy", 0);
+  set_config("search_indexer_busy", "0");
+  
+  //mark the time we last updated
+  set_config("search_indexer_run_date", time());
 
 ?>

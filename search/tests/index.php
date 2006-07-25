@@ -49,8 +49,8 @@
       if (file_exists($class_file)) {
         include_once($class_file);
         
-        if (!defined('SEARCH_'.strtoupper($mod->name).'_TYPE')) {
-          mtrace("ERROR: Constant 'SEARCH_".strtoupper($mod->name)."_TYPE' is not defined in /search/lib.php");
+        if (!defined('SEARCH_TYPE_'.strtoupper($mod->name))) {
+          mtrace("ERROR: Constant 'SEARCH_TYPE_".strtoupper($mod->name)."' is not defined in /search/lib.php");
           continue;
         } //if
         

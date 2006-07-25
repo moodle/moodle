@@ -32,7 +32,7 @@
       $data->wiki     = $wiki_id;
       
       // construct the parent class
-      parent::__construct($doc, $data, SEARCH_WIKI_TYPE, $course_id, $group_id);
+      parent::__construct($doc, $data, SEARCH_TYPE_WIKI, $course_id, $group_id);
     } //constructor    
   } //WikiSearchDocument
   

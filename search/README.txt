@@ -1,7 +1,23 @@
+2006/07/25
+----------
+Query logic moved into the SearchQuery class in querylib.php. Should be able
+to include this file in any page and run a query against the index (PHP 5
+checks must be added to those pages then, though).
+
+Index info can be retrieved using IndexInfo class in indexlib.php.
+
+Abstracted some stuff away, to reduce rendundancy and decrease the
+likelihood of errors. Improved the stats.php page to include some
+diagnostics for adminstrators.
+
+delete.php skeleton created for removing deleted documents from the
+index. cron.php will contain the logic for running delete.php,
+update.php and eventually add.php.
+
 2006/07/11
 ----------
 (Warning: It took me 1900 seconds to index the forum, go make coffee
-whilst you wait.)
+whilst you wait.) [Moodle.org forum data]
 
 Forum search functions changed to use 'get_recordset' instead of
 'get_records', for speed reasons. This provides a significant improvement,
