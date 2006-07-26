@@ -12,7 +12,8 @@
   //document types that can be searched  
   define('SEARCH_TYPE_NONE', 'none');
   define('SEARCH_TYPE_WIKI', 'wiki');
-  define('SEARCH_TYPE_FORUM', 'forum');  
+  define('SEARCH_TYPE_FORUM', 'forum');
+  define('SEARCH_TYPE_GLOSSARY', 'glossary');  
   
   //returns all the document type constants
   function search_get_document_types($prefix='SEARCH_TYPE') {
