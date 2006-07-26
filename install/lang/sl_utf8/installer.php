@@ -21,6 +21,6 @@ $string['password'] = 'Geslo';
 $string['previous'] = 'Prej&#65533;nji';
 $string['status'] = 'Stanje';
 $string['thischarset'] = 'UTF-8';
-$string['thislanguage'] = 'Slovenšèina';
+$string['thislanguage'] = 'Slovenščina';
 $string['user'] = 'uporabnik';
 ?>
