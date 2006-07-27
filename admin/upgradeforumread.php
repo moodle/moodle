@@ -2,6 +2,7 @@
 
     require_once('../config.php');
     require_once($CFG->dirroot.'/mod/forum/lib.php');
+    require_once($CFG->libdir.'/adminlib.php');
 
     $confirm = optional_param('confirm', 0, PARAM_BOOL);
 
