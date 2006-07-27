@@ -257,7 +257,7 @@ class datalib_test extends prefix_changing_test_case {
         $this->assertFalse(insert_record($this->table, $obj), 'Insert bad data - should fail.');
         $result = ob_get_contents();
         ob_end_clean();
-        $this->assert(new TextExpectation('ERROR:'), $result, 'Insert bad data - error should have been printed.');
+        $this->assert(new TextExpectation('ERROR:'), $result, 'Insert bad data - error should have been printed. This is known not to work on MySQL.');
     }
 }
 
