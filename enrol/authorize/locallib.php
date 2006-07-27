@@ -101,10 +101,10 @@ function authorize_print_orders()
     }
 
     if ($userid > 0) {
-        $where .= "AND (userid = '" . $userid . "') ";
+        $where .= "AND (E.userid = '" . $userid . "') ";
     }
     if ($courseid != SITEID) {
-        $where .= "AND (courseid = '" . $courseid . "') ";
+        $where .= "AND (E.courseid = '" . $courseid . "') ";
     }
 
     if ($sort = $table->get_sql_sort()) {
