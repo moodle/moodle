@@ -706,7 +706,7 @@ class enrolment_plugin_authorize
         $sql = "SELECT E.*, C.fullname, C.enrolperiod " .
                "FROM {$CFG->prefix}enrol_authorize E " .
                "INNER JOIN {$CFG->prefix}course C ON C.id = E.courseid " .
-               "WHERE (status = '" .AN_STATUS_AUTH. "') " .
+               "WHERE (E.status = '" .AN_STATUS_AUTH. "') " .
                "  AND (E.timecreated < '$timediffcnf') AND (E.timecreated > '$timediff30')";
 
         if (!$orders = get_records_sql($sql)) {
@@ -875,11 +875,12 @@ class enrolment_plugin_authorize
         }
 
         $sorttype = empty($CFG->an_sorttype) ? 'ttl' : $CFG->an_sorttype;
+        $where = "(E.status='". AN_STATUS_AUTH ."') AND (E.timecreated<'$timediffem') AND (E.timecreated>'$timediff30')";
         $sql = "SELECT E.courseid, E.currency, C.fullname, C.shortname, " .
                "COUNT(E.courseid) AS cnt, SUM(E.amount) as ttl " .
                "FROM {$CFG->prefix}enrol_authorize E " .
                "INNER JOIN {$CFG->prefix}course C ON C.id = E.courseid " .
-               "WHERE $select GROUP BY E.courseid ORDER BY $sorttype DESC";
+               "WHERE $where GROUP BY E.courseid ORDER BY $sorttype DESC";
 
         $courseinfos = get_records_sql($sql);
         foreach($courseinfos as $courseinfo) {
