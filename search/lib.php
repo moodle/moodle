@@ -8,6 +8,7 @@
    * */
   
   define('SEARCH_INDEX_PATH', "$CFG->dataroot/search");
+  define('SEARCH_DATABASE_TABLE', 'search_documents');
   
   //document types that can be searched  
   define('SEARCH_TYPE_NONE', 'none');
