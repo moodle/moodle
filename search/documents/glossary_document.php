@@ -12,7 +12,7 @@
   class GlossarySearchDocument extends SearchDocument {  
     public function __construct(&$entry, $glossary_id, $course_id, $group_id) {
       // generic information; required
-      $doc->id        = $entry['id'];
+      $doc->docid     = $entry['id'];
       $doc->title     = $entry['concept'];
                   
       $user = get_recordset('user', 'id', $entry['userid'])->fields;
@@ -60,6 +60,10 @@
     } //foreach
     
     return $documents;
-  } //glossary_get_content_for_index 
+  } //glossary_get_content_for_index
+    
+  function glossary_delete($info) {
+    return $info;            
+  } //glossary_delete  
   
 ?>

@@ -19,7 +19,7 @@
   class WikiSearchDocument extends SearchDocument {  
     public function __construct(&$page, $wiki_id, $course_id, $group_id) {
       // generic information; required
-      $doc->id        = $page->id;
+      $doc->docid     = $page->id;
       $doc->title     = $page->pagename;
       
       //remove '(ip.ip.ip.ip)' from wiki author field

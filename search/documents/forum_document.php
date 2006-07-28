@@ -8,7 +8,7 @@
   class ForumSearchDocument extends SearchDocument {  
     public function __construct(&$post, $forum_id, $course_id, $group_id) {
       // generic information     
-      $doc->id        = $post['id'];
+      $doc->docid     = $post['id'];
       $doc->title     = $post['subject'];
       $doc->author    = $post['firstname']." ".$post['lastname'];
       $doc->contents  = $post['message'];
