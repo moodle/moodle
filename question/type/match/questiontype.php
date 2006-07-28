@@ -190,6 +190,7 @@ class question_match_qtype extends default_questiontype {
         // Serialize responses
         $responses = array();
         foreach ($subquestions as $key => $subquestion) {
+            $response = 0;
             if ($subquestion->questiontext) {
                 if ($state->responses[$key]) {
                     $response = $state->responses[$key];
@@ -203,11 +204,9 @@ class question_match_qtype extends default_questiontype {
                             $state->responses[$key] = $response;
                         }
                     }
-                } else {
-                    $response = 0;
                 }
-                $responses[] = $key.'-'.$response;
             }
+            $responses[] = $key.'-'.$response;
         }
         $responses = implode(',', $responses);
 
