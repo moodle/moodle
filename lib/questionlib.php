@@ -37,7 +37,7 @@ define('QUESTION_EVENTMANUALGRADE', '9');   // Grade was entered by teacher
 /**#@-*/
 
 /**#@+
- * The core question types
+ * The core question types - I don't think these constants are used any more. If so, they can be removed.
  */
 define("SHORTANSWER",   "shortanswer");
 define("TRUEFALSE",     "truefalse");
