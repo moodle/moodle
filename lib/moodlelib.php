@@ -290,7 +290,7 @@ function optional_param($parname, $default=NULL, $type=PARAM_CLEAN) {
  * @uses PARAM_ALPHA
  * @uses PARAM_ALPHANUM
  * @uses PARAM_NOTAGS
- * @uses PARAM_ALPHATEXT
+ * @uses PARAM_ALPHAEXT
  * @uses PARAM_BOOL
  * @uses PARAM_SAFEDIR
  * @uses PARAM_CLEANFILE
