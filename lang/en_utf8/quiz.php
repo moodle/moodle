@@ -496,8 +496,8 @@ $string['viewallanswers'] = 'View $a quiz attempts';
 $string['viewallreports'] = 'View reports for $a attempts';
 $string['warningmissingtype'] = '<b>This question is of a type that has not been installed on your Moodle yet.<br />Please alert your Moodle administrator.</b>';
 $string['warningsdetected'] = '$a warning(s) detected';
-$string['wheregrade'] = 'Where\'s my grade?';
 $string['webct'] = 'WebCT format';
+$string['wheregrade'] = 'Where\'s my grade?';
 $string['wildcard'] = 'Wild card';
 $string['withselected'] = 'With selected';
 $string['withsummary'] = 'with Summary Statistics';
@@ -508,7 +508,6 @@ $string['xml'] = 'Moodle XML format';
 $string['xmltypeunsupported'] = 'Question type $a is not supported by xml import';
 $string['yourfinalgradeis'] = 'Your final grade for this quiz is $a';
 $string['zerosignificantfiguresnotallowed'] = 'The correct answer cannot have zero significant figures!';
-
 $string['backtoquestionlist'] = 'Back to Question List';
 $string['changessaved'] = 'Grading Changes Saved';
 $string['comments'] = 'Comments';
