@@ -90,7 +90,8 @@
 
         } else {
             // Inform block it's about to be deleted
-            block_instance($block->name)->before_delete();
+            $blockobject = block_instance($block->name);
+            $blockobject->before_delete();
             
             // Delete block
             if (!delete_records('block', 'id', $block->id)) {
