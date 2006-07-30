@@ -502,7 +502,7 @@
         $form->sesskey      = !empty($USER->id) ? $USER->sesskey : '';
 
         $sectionname    = get_string("name$course->format");
-        $fullmodulename = strtolower(get_string("modulename", $module->name));
+        $fullmodulename = get_string("modulename", $module->name);
 
         if ($form->section && $course->format != 'site') {
             $heading->what = $fullmodulename;
@@ -562,7 +562,7 @@
         $form->sesskey      = !empty($USER->id) ? $USER->sesskey : '';
 
         $sectionname    = get_string("name$course->format");
-        $fullmodulename = strtolower(get_string("modulename", $module->name));
+        $fullmodulename = get_string("modulename", $module->name);
 
         if ($form->section) {
             $heading->what = $fullmodulename;
