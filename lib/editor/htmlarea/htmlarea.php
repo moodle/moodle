@@ -2353,8 +2353,6 @@ HTMLArea.getHTML = function(root, outputRoot, editor) {
         break;      // skip comments, for now.
     }
 
-    // Still not workin' correctly...
-    //return HTMLArea.formathtml(html);
     return html;
 };
 
@@ -2479,54 +2477,3 @@ HTMLArea.getElementById = function(tag, id) {
             return el;
     return null;
 };
-
-HTMLArea.formathtml = function (html) {
-    // Original idea from FCKeditor
-    // http://www.fckeditor.net/
-    // by Frederico Caldeira Knabben
-
-    var indentchar = '    ';
-    var format     = new Object();
-    format.regex   = new Object();
-
-    format.regex.tagopen  = /<[^\/](P|DIV|H1|H2|H3|H4|H5|H6|ADDRESS|PRE|OL|UL|LI|TITLE|META|LINK|BASE|SCRIPT|LINK|TD|AREA|OPTION)[^>]*>/gi ;
-    format.regex.tagclose = /<\/{1}(P|DIV|H1|H2|H3|H4|H5|H6|ADDRESS|PRE|OL|UL|LI|TITLE|META|LINK|BASE|SCRIPT|LINK|TD|AREA|OPTION)[^>]*>/gi ;
-    format.regex.newlines = /<(BR|HR)[^>]>/gi ;
-    format.regex.tagsmain = /<\/?(HTML|HEAD|BODY|FORM|TABLE|TBODY|THEAD|TR)[^>]*>/gi ;
-    format.regex.splitter = /\s*\n+\s*/g ;
-    format.regex.notouchy = /<\/?(span|font)[^>]*>/gi;
-
-    format.regex.indent = /^<(HTML|HEAD|BODY|FORM|TABLE|TBODY|THEAD|TR|UL|OL)[ \/>]/i ;
-    format.regex.unindent = /^<\/(HTML|HEAD|BODY|FORM|TABLE|TBODY|THEAD|TR|UL|OL)[ >]/i ;
-    format.regex.inremove = new RegExp( indentchar );
-
-    //var formatted  = html.replace( format.regex.tagopen, '\n$&' );
-    //formatted      = formatted.replace( format.regex.tagclose, '$&\n' );
-    //formatted      = formatted.replace( format.regex.taglines, '$&\n' );
-    //formatted      = formatted.replace( format.regex.tagsmain, '\n$&\n' );
-
-    var indentation = '';
-    var tolines = html.split(format.regex.splitter);
-    var formatted = '';
-
-    for (var i = 0; i < tolines.length; i++) {
-        var line = tolines[i];
-        if (line.length < 1) {
-            continue;
-        }
-        if (format.regex.unindent.test(line) && !format.regex.notouchy.test(line)) {
-            indentation = indentation.replace(format.regex.inremove, '') ;
-        }
-
-        line = !format.regex.notouchy.test(line) ? line.replace(format.regex.tagopen, '\n$&') : line;
-        line = !format.regex.notouchy.test(line) ? line.replace(format.regex.tagclose, '$&\n'): line;
-        line = !format.regex.notouchy.test(line) ? line.replace(format.regex.tagsmain, '$&\n'): line;
-
-        formatted += indentation + line;
-
-        if (format.regex.indent.test(line)) {
-            indentation += indentchar;
-        }
-    }
-    return formatted;
-}
