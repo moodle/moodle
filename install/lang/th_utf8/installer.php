@@ -11,7 +11,9 @@
 
 $string['admindirerror'] = 'ไดเรกทอรี admin ที่ระบุไม่ถูกต้อง';
 $string['admindirname'] = 'ไดเรกทอรี admin';
+$string['bypassed'] = 'ข้าม';
 $string['caution'] = 'คำเตือน';
+$string['check'] = 'ตรวจสอบ';
 $string['closewindow'] = 'ปิดหน้าต่าง';
 $string['configfilenotwritten'] = 'ตัวติดตั้งอัตโนมัติไม่สามารถสร้างไฟล์ config.php ได้ อาจเป็นเพราะว่าไม่สามารถเขียนลงไดเรกทอรี moodle ได้ คุณสามารถสร้างไฟล์ดังกล่าวได้เองโดยการก้อปปี้โค้ดต่อไปนี้ลงในไฟล์ที่ต้องการสร้างใหม่';
 $string['configfilewritten'] = 'สร้าง config.php เรียบร้อยแล้ว';
@@ -33,6 +35,8 @@ $string['fileuploads'] = 'ไฟล์อัพโหลด';
 $string['fileuploadserror'] = 'ควรจะเปิด(on)';
 $string['gdversion'] = 'GD  เวอร์ชัน';
 $string['gdversionerror'] = 'เซิร์ฟเวอร์ควรมีการใช้ GD library เพื่อที่ใช้';
+$string['globalsquotes'] = 'การใช้งานแบบ Globals ยังไม่ปลอดภัย';
+$string['globalsquoteserror'] = 'แก้ไขค่า PHP ของท่านโดยปิดการใช้งาน register_globals และ/หรือ เปิดการใช้งาน magic_quotes_gpc';
 $string['help'] = 'ช่วยเหลือ';
 $string['info'] = 'ข้อมูล';
 $string['installation'] = 'การติดตั้ง';
@@ -63,8 +67,10 @@ $string['mysqlextensionisnotpresentinphp'] = 'การตั้งค่า  PH
 $string['name'] = 'ชื่อ';
 $string['next'] = 'ต่อไป';
 $string['ok'] = 'เรียบร้อย';
+$string['parentlanguage'] = 'en';
 $string['pass'] = 'สำเร็จ';
 $string['password'] = 'รหัสผ่าน';
+$string['php50restricted'] = 'PHP 5.0.x มีปัญหาในการใช้งาน กรุณาอัพเกรเป็นเวอร์ชัน  5.1.x หรือเปลี่ยนไปใช้งานเวอร์ชัน 4.3.x หรือ 4.4.x';
 $string['phpversion'] = 'PHP เวอร์ชัน';
 $string['phpversionerror'] = 'เวอร์ชันของ PHP ควรเป็นอย่างน้อย 4.1.0';
 $string['phpversionhelp'] = '<p>Moodle จำเป็นต้องใช้ PHP เวอร์ชัน 4.1.0 เป็นอย่างน้อย</p>
@@ -73,6 +79,8 @@ $string['phpversionhelp'] = '<p>Moodle จำเป็นต้องใช้ P
 
 <p>คุณต้องอัพเกรด  PHP หรือย้ายโฮสต์ใหม่ที่มี PHP เวอร์ชันใหม่กว่า</p>';
 $string['previous'] = 'หน้าก่อน';
+$string['report'] = 'รายงาน';
+$string['restricted'] = 'ห้าม';
 $string['safemode'] = 'Safe Mode';
 $string['safemodeerror'] = 'moodle อาจมีปัญหาหาก safe mode on';
 $string['sessionautostart'] = 'Session Auto Start';
