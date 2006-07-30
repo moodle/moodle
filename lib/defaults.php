@@ -60,7 +60,7 @@
        'langcache'                =>  1,
        'langmenu'                 =>  1,
        'langlist'                 => '',
-       'locale'                   => 'en',
+       'locale'                   => '', // by default language pack locales should be used
        'loginhttps'               =>  false,
        'loglifetime'              =>  0,
        'longtimenosee'            =>  100,

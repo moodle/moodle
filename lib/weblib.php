@@ -1882,7 +1882,7 @@ function highlightfast($needle, $haystack) {
 function print_header ($title='', $heading='', $navigation='', $focus='', $meta='',
                        $cache=true, $button='&nbsp;', $menu='', $usexml=false, $bodytags='') {
 
-    global $USER, $CFG, $THEME, $SESSION, $ME, $SITE, $COURSE, $HTTPSPAGEREQUIRED;
+    global $USER, $CFG, $THEME, $SESSION, $ME, $SITE, $HTTPSPAGEREQUIRED;
 
 /// This makes sure that the header is never repeated twice on a page
     if (defined('HEADER_PRINTED')) {
@@ -1893,13 +1893,23 @@ function print_header ($title='', $heading='', $navigation='', $focus='', $meta=
     }
     define('HEADER_PRINTED', 'true');
 
-/// Set up course-based lang and theme if any
+
+    global $course, $COURSE;
     if (!empty($COURSE->lang)) {
         $CFG->courselang = $COURSE->lang;
+        moodle_setlocale();
+    } else if (!empty($course->lang)) { // ugly backwards compatibility hack
+        $CFG->courselang = $course->lang;
+        moodle_setlocale();
     }
     if (!empty($COURSE->theme)) {
         if (!empty($CFG->allowcoursethemes)) {
             $CFG->coursetheme = $COURSE->theme;
+            theme_setup();
+        }
+    } else if (!empty($course->theme)) { // ugly backwards compatibility hack
+        if (!empty($CFG->allowcoursethemes)) {
+            $CFG->coursetheme = $course->theme;
             theme_setup();
         }
     }
@@ -1977,9 +1987,6 @@ function print_header ($title='', $heading='', $navigation='', $focus='', $meta=
 
 
     $encoding = current_charset();
-    if (!empty($CFG->courselang)) {
-        moodle_setlocale();
-    }
 
     $meta = '<meta http-equiv="content-type" content="text/html; charset='. $encoding .'" />'. "\n". $meta ."\n";
     if (!$usexml) {

@@ -508,6 +508,7 @@ $CFG->os = PHP_OS;
         $CFG->lang = !empty($CFG->unicodedb) ? 'en_utf8' : 'en';
     }
 
+    // set default locale - might be changed again later in require_login()
     moodle_setlocale();
 
     if (!empty($CFG->opentogoogle)) {
