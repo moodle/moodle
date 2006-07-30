@@ -505,7 +505,7 @@ function glossary_get_entries_search($concept, $courseid) {
         $bypassteacher = 0; //This means YES
     } 
 
-    $conceptupper = strtoupper(trim($concept));
+    $conceptlower = moodle_strtolower(trim($concept));
 
     return get_records_sql("SELECT e.*, g.name as glossaryname, cm.id as cmid, cm.course as courseid
                             FROM {$CFG->prefix}glossary_entries e, 
@@ -518,7 +518,7 @@ function glossary_get_entries_search($concept, $courseid) {
                                     (cm.course = '$courseid' AND cm.visible = $bypassteacher)) AND
                                   g.id = cm.instance AND
                                   e.glossaryid = g.id  AND
-                                  ( (e.casesensitive != 0 AND UPPER(concept) = '$conceptupper') OR
+                                  ( (e.casesensitive != 0 AND LOWER(concept) = '$conceptlower') OR
                                     (e.casesensitive = 0 and concept = '$concept')) AND
                                   (g.course = '$courseid' OR g.globalglossary = 1) AND
                                   e.usedynalink != 0 AND
@@ -1495,9 +1495,10 @@ global $CFG;
 }
 
 function glossary_sort_entries ( $entry0, $entry1 ) {
-    if ( strtolower(ltrim($entry0->concept)) < strtolower(ltrim($entry1->concept)) ) {
+    
+    if ( moodle_strtolower(ltrim($entry0->concept)) < moodle_strtolower(ltrim($entry1->concept)) ) {
         return -1;
-    } elseif ( strtolower(ltrim($entry0->concept)) > strtolower(ltrim($entry1->concept)) ) {
+    } elseif ( moodle_strtolower(ltrim($entry0->concept)) > moodle_strtolower(ltrim($entry1->concept)) ) {
         return 1;
     } else {
         return 0;
