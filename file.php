@@ -93,6 +93,7 @@
         and (strtolower($args[1]) == 'moddata')
         and ((strtolower($args[2]) == 'forum')
             or (strtolower($args[2]) == 'assignment')
+            or (strtolower($args[2]) == 'data')
             or (strtolower($args[2]) == 'glossary')
             or (strtolower($args[2]) == 'wiki')
             or (strtolower($args[2]) == 'exercise')
