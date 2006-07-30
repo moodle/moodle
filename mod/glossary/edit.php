@@ -31,9 +31,9 @@ if (! $glossary = get_record("glossary", "id", $cm->instance)) {
 }
 
 if ($CFG->dbtype == 'postgres7' ) {
-        $ucase = 'lower';
+        $lcase = 'lower';
 } else {
-        $ucase = 'lcase';
+        $lcase = 'lcase';
 }
 
 if (!$glossary->studentcanpost && !isteacher($glossary->course)) {
@@ -132,7 +132,7 @@ if ( $confirm ) {
 
         $permissiongranted = 1;
         if ( !$glossary->allowduplicatedentries ) {
-            if ($dupentries = get_records("glossary_entries","$ucase(concept)", moodle_strtolower($newentry->concept))) {
+            if ($dupentries = get_records("glossary_entries","$lcase(concept)", moodle_strtolower($newentry->concept))) {
                 foreach ($dupentries as $curentry) {
                     if ( $glossary->id == $curentry->glossaryid ) {
                        if ( $curentry->id != $e ) {
@@ -172,7 +172,7 @@ if ( $confirm ) {
 
         $permissiongranted = 1;
         if ( !$glossary->allowduplicatedentries ) {
-            if ($dupentries = get_record("glossary_entries","$ucase(concept)", moodle_strtolower($newentry->concept), "glossaryid", $glossary->id)) {
+            if ($dupentries = get_record("glossary_entries","$lcase(concept)", moodle_strtolower($newentry->concept), "glossaryid", $glossary->id)) {
                 $permissiongranted = 0;
             }
         }

@@ -24,9 +24,9 @@
     }
     
     if ($CFG->dbtype == 'postgres7' ) {
-            $ucase = 'lower';
+            $lcase = 'lower';
     } else {
-            $ucase = 'lcase';
+            $lcase = 'lcase';
     }
 
     if ( !isteacher($cm->course) ) {
@@ -63,7 +63,7 @@
 
         } else {
             if ( ! $mainglossary->allowduplicatedentries ) {
-                $dupentry = get_record('glossary_entries','glossaryid', $mainglossary->id, $ucase.'(concept)',moodle_strtolower(addslashes($entry->concept)));
+                $dupentry = get_record('glossary_entries','glossaryid', $mainglossary->id, $lcase.'(concept)',moodle_strtolower(addslashes($entry->concept)));
                 if ( $dupentry ) {
                     $PermissionGranted = 0;
                 }
