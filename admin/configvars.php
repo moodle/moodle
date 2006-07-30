@@ -312,10 +312,10 @@ class configvarrss extends configvar {
 /// language menu
     $interface['langcache'] = new configvar ( get_string('configlangcache', 'admin'),
         choose_from_menu($noyesoptions, 'langcache', $config->langcache, '', '', '', true) );
-        
+
 /// locale
     $interface['locale'] = new configvar ( get_string('configlocale', 'admin'),
-        '<input name="locale" type="text" size="10" value="'.s($config->locale).'" alt="locale" />' );
+        '<input name="locale" type="text" size="15" value="'.s($config->locale).'" alt="locale" />' );
 
 /// docroot
     $interface['docroot'] = new configvar ( get_string('configdocroot', 'admin'),

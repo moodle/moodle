@@ -46,7 +46,10 @@
                         $value = implode(',',$value);
                     }
                 }
-                unset($conf);
+                if ($name == "locale") {
+                    $value = trim($value);
+                }
+                $conf = new object();
                 $conf->name  = $name;
                 $conf->value = $value;
                 if ($current = get_record('config', 'name', $name)) {
@@ -74,9 +77,6 @@
 
     if (empty($config)) {
         $config = $CFG;
-        if (!$config->locale = get_field('config', 'value', 'name', 'locale')) {
-            $config->locale = $CFG->lang;
-        }
     }
 
     $sesskey = !empty($USER->id) ? $USER->sesskey : '';

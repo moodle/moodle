@@ -1894,12 +1894,20 @@ function print_header ($title='', $heading='', $navigation='', $focus='', $meta=
     define('HEADER_PRINTED', 'true');
 
 
-/// This is an ugly hack to be replaced later by a proper global $COURSE
-    global $course;
-    if (!empty($course->lang)) {
+    global $course, $COURSE;
+    if (!empty($COURSE->lang)) {
+        $CFG->courselang = $COURSE->lang;
+        moodle_setlocale();
+    } else if (!empty($course->lang)) { // ugly backwards compatibility hack
         $CFG->courselang = $course->lang;
+        moodle_setlocale();
     }
-    if (!empty($course->theme)) {
+    if (!empty($COURSE->theme)) {
+        if (!empty($CFG->allowcoursethemes)) {
+            $CFG->coursetheme = $COURSE->theme;
+            theme_setup();
+        }
+    } else if (!empty($course->theme)) { // ugly backwards compatibility hack
         if (!empty($CFG->allowcoursethemes)) {
             $CFG->coursetheme = $course->theme;
             theme_setup();
@@ -1979,9 +1987,6 @@ function print_header ($title='', $heading='', $navigation='', $focus='', $meta=
 
 
     $encoding = current_charset();
-    if (!empty($CFG->courselang)) {
-        moodle_setlocale();
-    }
 
     $meta = '<meta http-equiv="content-type" content="text/html; charset='. $encoding .'" />'. "\n". $meta ."\n";
     if (!$usexml) {

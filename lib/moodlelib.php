@@ -1507,10 +1507,15 @@ function require_login($courseid=0, $autologinguest=true, $cm=null) {
 
     // Redefine global $COURSE if we can
     global $course;  // We use the global hack once here so it doesn't need to be used again
-    if (is_object($course)) {
+    if (is_object($course) and !empty($course->id) and ($courseid == 0 or $course->id == $courseid)) {
         $COURSE = clone($course);
     } else if ($courseid) {
         $COURSE = get_record('course', 'id', $courseid);
+    }
+
+    if (!empty($COURSE->lang)) {
+        $CFG->courselang = $COURSE->lang;
+        moodle_setlocale();
     }
 
     // First check that the user is logged in to the site.
@@ -4698,9 +4703,11 @@ function get_string($identifier, $module='', $a=NULL) {
 
     global $CFG;
 
-    global $course;     /// Not a nice hack, but quick
+    global $course, $COURSE;
     if (empty($CFG->courselang)) {
-        if (is_object($course) and isset($course->lang)) {
+        if (!empty($COURSE->lang)) {
+            $CFG->courselang = $COURSE->lang;
+        } else if (!empty($course->lang)) { // ugly backwards compatibility hack
             $CFG->courselang = $course->lang;
         }
     }
@@ -5918,6 +5925,13 @@ function moodle_setlocale($locale='') {
 
     global $SESSION, $USER, $CFG;
 
+    static $currentlocale; // last locale caching
+    if (!isset($currentlocale)) {
+        $currentlocale = '';
+    }
+
+    $oldlocale = $currentlocale;
+
 /// Fetch the correct locale based on ostype
     if(!empty($CFG->unicodedb) && $CFG->ostype == 'WINDOWS') {
         $stringtofetch = 'localewin';
@@ -5925,19 +5939,18 @@ function moodle_setlocale($locale='') {
         $stringtofetch = 'locale';
     }
 
-    if ($locale) {
-        $CFG->locale = $locale;
-    } else if (!empty($CFG->courselang) and ($CFG->courselang != $CFG->lang) ) {
-        $CFG->locale = get_string($stringtofetch);
-    } else if (!empty($SESSION->lang) and ($SESSION->lang != $CFG->lang) ) {
-        $CFG->locale = get_string($stringtofetch);
-    } else if (!empty($USER->lang) and ($USER->lang != $CFG->lang) ) {
-        $CFG->locale = get_string($stringtofetch);
-    } else if (empty($CFG->locale)) {
-        $CFG->locale = get_string($stringtofetch);
-        if (!get_field('config', 'value', 'name', 'locale')) {  // Make SURE there isn't one already
-            set_config('locale', $CFG->locale);                 // Cache it to save lookups in future
-        }
+/// the priority is the same as in get_string() - parameter, config, course, session, user, global language
+    if (!empty($locale)) {
+        $currentlocale = $locale;
+    } else if (!empty($CFG->locale)) { // override locale for all language packs
+        $currentlocale = $CFG->locale;
+    } else {
+        $currentlocale = get_string($stringtofetch);
+    }
+
+/// do nothing if locale already set up
+    if ($oldlocale == $currentlocale) {
+        return;
     }
 
 /// Due to some strange BUG we cannot set the LC_TIME directly, so we fetch current values,
@@ -5952,14 +5965,14 @@ function moodle_setlocale($locale='') {
         $messages= setlocale (LC_MESSAGES, 0);
     }
 /// Set locale to all
-    setlocale (LC_ALL, $CFG->locale);
+    setlocale (LC_ALL, $currentlocale);
 /// Set old values
     setlocale (LC_MONETARY, $monetary);
     setlocale (LC_NUMERIC, $numeric);
     if ($CFG->ostype != 'WINDOWS') {
         setlocale (LC_MESSAGES, $messages);
     }
-    if ($CFG->locale == 'tr_TR' or $CFG->locale == 'tr_TR.UTF-8') {            // To workaround a well-known PHP bug with Turkish
+    if ($currentlocale == 'tr_TR' or $currentlocale == 'tr_TR.UTF-8') { // To workaround a well-known PHP problem with Turkish letter Ii
         setlocale (LC_CTYPE, $ctype);
     }
 }

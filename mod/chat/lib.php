@@ -321,9 +321,6 @@ function chat_force_language($lang) {
     if(!empty($CFG->courselang)) {
         unset($CFG->courselang);
     }
-    if(!empty($CFG->locale)) {
-        unset($CFG->locale);
-    }
     $CFG->lang = $lang;
     moodle_setlocale();
 }
