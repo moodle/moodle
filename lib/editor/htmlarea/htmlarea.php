@@ -1470,26 +1470,21 @@ HTMLArea.prototype._createLink = function(link) {
         }
         var a = link;
         if (!a) {
-            editor._doc.execCommand("createlink", false, param.f_href);
-            a = editor.getParentElement();
+            // Since startContainer check does not work
+            // very well in Moz use just insertHTML.
             var sel = editor._getSelection();
             var range = editor._createRange(sel);
-            /// Removed by PJ and Martin, Moodle bug #1455
-            /// Removed uncommenting since it prevents this function
-            /// to read given attributes for <a> tag such as target, title etc...
-            if (!HTMLArea.is_ie) {
-                try {
-                    a = range.startContainer;
-                    if (!/^a$/i.test(a.tagName)) {
-                        a = a.nextSibling;
-                        if ( a == null ) {
-                            a = range.startContainer.parentNode;
-                        }
-                    }
-                } catch (e) {
-                        alert("Send this message to bug tracker: " + e);
-                }
+            var strLink  = '<a href="'+ param.f_href.trim() +'"';
+            if ( param.f_title != "" ) {
+                strLink += ' title="'+ param.f_title.trim() +'"';
             }
+            if ( param.f_target != "" ) {
+                strLink += ' target="'+ param.f_target.trim() +'"';
+            }
+            strLink += '>';
+            strLink += (!HTMLArea.is_ie) ? sel : range.text;
+            strLink += '</a>';
+            editor.insertHTML(strLink);
         } else {
             var href = param.f_href.trim();
             editor.selectNodeContents(a);
