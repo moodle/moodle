@@ -372,7 +372,11 @@
     } else if (!empty($forum)) {
 /// User is starting a new discussion in a forum
 
-        $SESSION->fromurl = $_SERVER["HTTP_REFERER"];
+        if (!empty($_SERVER["HTTP_REFERER"])) {
+            $SESSION->fromurl = $_SERVER["HTTP_REFERER"];
+        } else {
+            $SESSION->fromurl = '';
+        }
 
         if (! $forum = get_record("forum", "id", $forum)) {
             error("The forum number was incorrect ($forum)");
