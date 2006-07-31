@@ -51,24 +51,14 @@ function backup_upgrade($oldversion=0) {
     }
 
     if ($oldversion < 2006042801) {
-        modify_database('', 'ALTER TABLE prefix_backup_log
-            ALTER COLUMN "time" TYPE integer,
-            ALTER COLUMN "time" SET DEFAULT 0,
-            ALTER COLUMN laststarttime TYPE integer,
-            ALTER COLUMN laststarttime SET DEFAULT 0,
-            ALTER COLUMN courseid TYPE integer,
-            ALTER COLUMN courseid SET DEFAULT 0');
+        table_column('backup_log', 'time', 'time', 'integer', '', '', '0');
+        table_column('backup_log', 'laststarttime', 'laststarttime', 'integer', '', '', '0');
+        table_column('backup_log', 'courseid', 'courseid', 'integer', '', '', '0');
 
-        modify_database('', 'ALTER TABLE mdl_backup_courses
-            ALTER COLUMN lastendtime TYPE integer,
-            ALTER COLUMN lastendtime SET DEFAULT 0,
-            ALTER COLUMN laststarttime TYPE integer,
-            ALTER COLUMN laststarttime SET DEFAULT 0,
-            ALTER COLUMN courseid TYPE integer,
-            ALTER COLUMN courseid SET DEFAULT 0,
-            ALTER COLUMN nextstarttime TYPE integer,
-            ALTER COLUMN nextstarttime SET DEFAULT 0');
-
+        table_column('backup_courses', 'lastendtime', 'lastendtime', 'integer', '', '', '0');
+        table_column('backup_courses', 'laststarttime', 'laststarttime', 'integer', '', '', '0');
+        table_column('backup_courses', 'courseid', 'courseid', 'integer', '', '', '0');
+        table_column('backup_courses', 'nextstarttime', 'nextstarttime', 'integer', '', '', '0');
     }
 
     //Finally, return result

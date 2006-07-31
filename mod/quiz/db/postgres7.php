@@ -1216,16 +1216,10 @@ function quiz_upgrade($oldversion) {
                                  id SERIAL PRIMARY KEY,
                                  modulename varchar(20) NOT NULL default 'quiz'
                               );");
-        // create one entry for all the existing quiz attempts
-        modify_database ("", "INSERT INTO prefix_question_attempts (id)
-                                   SELECT uniqueid
-                                   FROM prefix_quiz_attempts;");
-    }
-
-    if ($oldversion < 2006042802) {
         // this block is taken from mysql.php 2005070202
         // add new unique id to prepare the way for lesson module to have its own attempts table
         table_column('quiz_attempts', '', 'uniqueid', 'integer', '10', 'unsigned', '0', 'not null', 'id');
+        // create one entry for all the existing quiz attempts
         // initially we can use the id as the unique id because no other modules use attempts yet.
         execute_sql("UPDATE {$CFG->prefix}quiz_attempts SET uniqueid = id", false);
         // we set $CFG->attemptuniqueid to the next available id
@@ -1234,6 +1228,13 @@ function quiz_upgrade($oldversion) {
         // the above will be a race condition, see bug 5468
 
         modify_database('','CREATE UNIQUE INDEX prefix_quiz_attempts_uniqueid_uk ON prefix_quiz_attempts (uniqueid);');
+
+        modify_database ("", "INSERT INTO prefix_question_attempts (id)
+                                   SELECT uniqueid
+                                   FROM prefix_quiz_attempts;");
+    }
+
+    if ($oldversion < 2006042802) {
 
         // Copy the teacher comments from the question_essay_states table to the new
         // question_sessions table.
@@ -1275,7 +1276,8 @@ function quiz_upgrade($oldversion) {
         execute_sql('DROP TABLE '.$CFG->prefix.'quiz_attemptonlast_datasets');
 
         modify_database('', 'ALTER TABLE prefix_question
-            ALTER COLUMN qtype SET DEFAULT \'0\',
+            ALTER COLUMN qtype SET DEFAULT \'0\'');
+        modify_database('', 'ALTER TABLE prefix_question
             ALTER COLUMN version SET DEFAULT \'\'');
 
         // recreate the indexes that was not moved while quiz was transitioning to question lib

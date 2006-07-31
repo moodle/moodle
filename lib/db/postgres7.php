@@ -1544,18 +1544,14 @@ function main_upgrade($oldversion=0) {
             }
         }
 
-        modify_database('', 'ALTER TABLE prefix_course_request
-            ALTER COLUMN "password" TYPE varchar(50),
-            ALTER COLUMN "password" SET DEFAULT \'\'');
+        table_column('course_request', 'password', 'password', 'varchar', '50', '', '');
 
-        modify_database('', 'ALTER TABLE prefix_course
-            ALTER COLUMN currency TYPE varchar(3)');
+        table_column('course', 'currency', 'currency', 'varchar', '3');
 
         modify_database('', 'ALTER TABLE prefix_course_categories
             ALTER COLUMN path SET DEFAULT \'\'');
 
-        modify_database('', 'ALTER TABLE prefix_log_display
-            ALTER COLUMN module TYPE varchar(20)');
+        table_column('log_display', 'module', 'module', 'varchar', '20');
 
         modify_database("","DROP INDEX id_user_idx");
         modify_database("","DROP INDEX post_lastmodified_idx");
