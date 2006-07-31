@@ -64,6 +64,30 @@
             $discussion->forum = $forum->id;
             $discussion->timemodified = time();
             
+            // Leave behind a skeleton discussion containing only a post which 
+            // notifies that the discussion has been moved.            
+            $skeleton = clone($discussion);
+            $skeleton->forum = $fromforum->id;
+            $skeleton->name = addslashes( $skeleton->name . ' ' . get_string('movedmarker', 'forum') );
+
+            // Prepare replacement parameters for message content string 
+            // - these create the link to the new discussion location
+            $link = new stdClass;        
+            $me = strip_querystring(me());
+            $link->discusshref = $me . '?d=' . $discussion->id;
+            $link->forumhref = dirname($me) . '/view.php?f=' . $forum->id;
+            $link->forumname = $forum->name;
+
+            // retrieve translateable message content                    
+            $skeleton->intro = addslashes( get_string('discussionmovedpost', 'forum', $link) );
+            $skeleton->format = 1;
+            $skeleton->mailnow = 0;
+
+			// add the skeleton discussion to the database
+            if (!($skeleton->id = forum_add_discussion($skeleton, $msg))) {
+                notify('Failed to add discussion-moved notification : '. $msg);
+            }
+
             if (update_record('forum_discussions', $discussion)) {
                 // Update RSS feeds for both from and to forums.
                 require_once('rsslib.php');
