@@ -56,7 +56,7 @@
         }
 
         echo "<center>";
-        if (!isguest() and !isadmin() and !iscreator()) {  // Print link to request a new course
+        if (isloggedin() and !isguest() and !isadmin() and !iscreator()) {  // Print link to request a new course
             print_single_button("request.php", NULL, get_string("courserequest"), "get");
         }
         if (iscreator()) {       // Print link to create a new course
