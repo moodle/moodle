@@ -5160,29 +5160,34 @@ function get_list_of_themes() {
 
 
 /**
- * Returns a list of picture names in the current language
+ * Returns a list of picture names in the current or specified language
  *
  * @uses $CFG
  * @return array
  */
-function get_list_of_pixnames() {
+function get_list_of_pixnames($lang = '') {
     global $CFG;
 
-    $lang = current_language();
-
-    if (!file_exists($CFG->dirroot .'/lang/'. $lang .'/pix.php')) {
-        if ($parentlang = get_string('parentlanguage')) {
-            if (file_exists($CFG->dirroot .'/lang/'. $parentlang .'/pix.php')) {
-                $lang = $parentlang;
-            } else {
-                $lang = 'en_utf8';  // pix.php must exist in this pack
-            }
-        } else {
-            $lang = 'en_utf8';  // pix.php must exist in this pack
-        }
+    if (empty($lang)) {
+        $lang = current_language();
     }
 
-    include_once($CFG->dirroot .'/lang/'. $lang .'/pix.php');
+    $path = $CFG->dirroot .'/lang/en_utf8/pix.php'; // always exists
+
+    if (file_exists($CFG->dataroot .'/lang/'. $lang .'_local/pix.php')) {
+        $path = $CFG->dataroot .'/lang/'. $lang .'_local/pix.php';
+
+    } else if (file_exists($CFG->dirroot .'/lang/'. $lang .'/pix.php')) {
+        $path = $CFG->dirroot .'/lang/'. $lang .'/pix.php';
+
+    } else if (file_exists($CFG->dataroot .'/lang/'. $lang .'/pix.php')) {
+        $path = $CFG->dataroot .'/lang/'. $lang .'/pix.php';
+
+    } else if ($parentlang = get_string('parentlanguage')) {
+        return get_list_of_pixnames($parentlang); //return pixnames from parent language instead
+    }
+
+    include($path);
 
     return $string;
 }
