@@ -318,30 +318,38 @@ function lesson_upgrade($oldversion) {
         execute_sql('DROP TABLE '.$CFG->prefix.'lesson_essay', false);
 
         // properly set the correct default values
-        modify_database('', 'ALTER TABLE prefix_lesson
-            ALTER COLUMN activitylink TYPE int8,
-            ALTER COLUMN activitylink SET DEFAULT 0,
-            ALTER COLUMN dependency TYPE int8,
-            ALTER COLUMN dependency SET DEFAULT 0');
+        table_column('lesson', 'activitylink', 'activitylink', 'integer', '8', '', '0');
+        table_column('lesson', 'dependency', 'dependency', 'integer', '8', '', '0');
 
         modify_database('', 'ALTER TABLE prefix_lesson_timer
-            ALTER COLUMN lessontime SET DEFAULT 0,
-            ALTER COLUMN lessonid SET DEFAULT 0,
-            ALTER COLUMN userid SET DEFAULT 0,
+            ALTER COLUMN lessontime SET DEFAULT 0');
+        modify_database('', 'ALTER TABLE prefix_lesson_timer
+            ALTER COLUMN lessonid SET DEFAULT 0');
+        modify_database('', 'ALTER TABLE prefix_lesson_timer
+            ALTER COLUMN userid SET DEFAULT 0');
+        modify_database('', 'ALTER TABLE prefix_lesson_timer
             ALTER COLUMN starttime SET DEFAULT 0');
 
         modify_database('', 'ALTER TABLE prefix_lesson_branch
-            ALTER COLUMN lessonid SET DEFAULT 0,
-            ALTER COLUMN timeseen SET DEFAULT 0,
-            ALTER COLUMN userid SET DEFAULT 0,
-            ALTER COLUMN retry SET DEFAULT 0,
-            ALTER COLUMN pageid SET DEFAULT 0,
+            ALTER COLUMN lessonid SET DEFAULT 0');
+        modify_database('', 'ALTER TABLE prefix_lesson_branch
+            ALTER COLUMN timeseen SET DEFAULT 0');
+        modify_database('', 'ALTER TABLE prefix_lesson_branch
+            ALTER COLUMN userid SET DEFAULT 0');
+        modify_database('', 'ALTER TABLE prefix_lesson_branch
+            ALTER COLUMN retry SET DEFAULT 0');
+        modify_database('', 'ALTER TABLE prefix_lesson_branch
+            ALTER COLUMN pageid SET DEFAULT 0');
+        modify_database('', 'ALTER TABLE prefix_lesson_branch
             ALTER COLUMN flag SET DEFAULT 0');
 
         modify_database('', 'ALTER TABLE prefix_lesson_high_scores
-            ALTER COLUMN nickname SET DEFAULT \'\',
-            ALTER COLUMN lessonid SET DEFAULT 0,
-            ALTER COLUMN gradeid SET DEFAULT 0,
+            ALTER COLUMN nickname SET DEFAULT \'\'');
+        modify_database('', 'ALTER TABLE prefix_lesson_high_scores
+            ALTER COLUMN lessonid SET DEFAULT 0');
+        modify_database('', 'ALTER TABLE prefix_lesson_high_scores
+            ALTER COLUMN gradeid SET DEFAULT 0');
+        modify_database('', 'ALTER TABLE prefix_lesson_high_scores
             ALTER COLUMN userid SET DEFAULT 0');
     }
 

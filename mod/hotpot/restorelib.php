@@ -203,7 +203,7 @@ function hotpot_restore_details(&$restore, $status, &$xml, &$record) {
     if (empty($record->details)) {
         $status = true;
     } else {
-        unset($details);
+        $details = new stdClass();
         $details->attempt = $record->id;
         $details->details = $record->details;
         if (insert_record('hotpot_details', $details)) {
@@ -226,7 +226,8 @@ function hotpot_restore_records(&$restore, $status, &$xml, $table, $foreign_keys
     // $record_TAG  : (optional) the name of an XML tag which starts a single record
     //    If no $record_TAG is specified, the block of records is assumed to be a single record
     // other parameters are explained in "hotpot_restore_record" below
-    $i = 0;
+    
+    $i = 0; // index for $records_TAG
     do {
         unset($xml_records);
         if ($records_TAG) {
@@ -238,10 +239,8 @@ function hotpot_restore_records(&$restore, $status, &$xml, $table, $foreign_keys
                 $xml_records = &$xml;
             }
         }
-        if (empty($xml_records)) {
-            // do nothing
-        } else {
-            $ii = 0;
+        if (isset($xml_records)) {
+            $ii = 0; // index for $record_TAG
             do {
                 unset($xml_record);
                 if ($record_TAG) {
@@ -253,9 +252,7 @@ function hotpot_restore_records(&$restore, $status, &$xml, $table, $foreign_keys
                         $xml_record = &$xml_records;
                     }
                 }
-                if (empty($xml_record)) {
-                    // do nothing
-                } else {
+                if (isset($xml_record)) {
                     $status = hotpot_restore_record(
                         $restore, $status, $xml_record, $table, $foreign_keys, $more_restore, $secondary_key
                     );
@@ -283,7 +280,16 @@ function hotpot_restore_record(&$restore, $status, &$xml, $table, $foreign_keys,
     //    the name of the secondary key field, if any, in the current $record.
     //    If this field is specified, then the current record will only be added
     //    if the $record->$secondarykey value does not already exist in $table
-    unset($record);
+
+    // maintain a cache of info on table columns
+    static $table_columns = array();
+    if (empty($table_columns[$table])) {
+        global $CFG, $db;
+        $table_columns[$table] = $db->MetaColumns("$CFG->prefix$table");
+    }
+
+    // get values for fields in this record
+    $record = new stdClass();
     $TAGS = array_keys($xml);
     foreach ($TAGS as $TAG) {
         $value = $xml[$TAG][0]['#'];
@@ -292,41 +298,65 @@ function hotpot_restore_record(&$restore, $status, &$xml, $table, $foreign_keys,
             $record->$tag = backup_todb($value);
         }
     }
+
+    // update secondary keys, if any
     $ok = true;
     foreach ($foreign_keys as $key=>$value) {
         if (is_numeric($value)) {
             $record->$key = $value;
         } else {
-            if (empty($record->$key)) {
-                $record->$key = NULL;
-            } else {
-                $key_table = $value;
-                $new_ids = array();
+            $key_table = $value;
+            $new_ids = array();
+            if (isset($record->$key)) {
                 $old_ids = explode(',', $record->$key);
                 foreach ($old_ids as $old_id) {
-                    $key_record = backup_getid($restore->backup_unique_code, $key_table, $old_id);
-                    if ($key_record) {
-                        $new_ids[] = $key_record->new_id;
+                    if (empty($old_id)) {
+                        // do nothing
                     } else {
-                        // foreign key could not be updated
-                        if (!defined('RESTORE_SILENTLY')) {
-                            print "<ul><li><b>Warning:</b><br>Foreign key could not be updated:<br>";
-                            print "'$key_table' record (old id=$old_id) is missing from backup data<br>";
-                            print "'$table' record ";
-                            if (isset($record->id)) {
-                                print "(old id=$record->id) ";
+                        $key_record = backup_getid($restore->backup_unique_code, $key_table, $old_id);
+                        if ($key_record) {
+                            $new_ids[] = $key_record->new_id;
+                        } else {
+                            // foreign key could not be updated
+                            if (!defined('RESTORE_SILENTLY')) {
+                                print "<ul><li><b>Warning:</b><br>Foreign key could not be updated:<br>";
+                                print "'$key_table' record (old id=$old_id) is missing from backup data<br>";
+                                print "'$table' record ";
+                                if (isset($record->id)) {
+                                    print "(old id=$record->id) ";
+                                }
+                                print "was not restored</li></ul>";
                             }
-                            print "was not restored</li></ul>";
+                            $ok = false; 
                         }
-                        $ok = false; 
                     }
                 }
-                $record->$key = implode(',', $new_ids);
+            }
+            $record->$key = implode(',', $new_ids);
+        }
+    }
+
+    // check all "not null" fields have been set
+    foreach ($table_columns[$table] as $column) {
+        if ($column->not_null) {
+            $name = $column->name;
+            if ($name<>'id' && empty($record->$name)) {
+                if (isset($column->default_value)) {
+                    $default = $column->default_value;
+                } else {
+                    if (preg_match('/int|decimal|double|float|time|year/i', $column->type)) {
+                        $default = 0;
+                    } else {
+                        $default = '';
+                    }
+                }
+                $record->$name = $default;
             }
         }
     }
+
     // check everything is OK so far
-    if ($ok && isset($record)) {
+    if ($ok) {
         // store old record id, if necessary
         if (isset($record->id)) {
             $record->old_id = $record->id;
@@ -343,7 +373,7 @@ function hotpot_restore_record(&$restore, $status, &$xml, $table, $foreign_keys,
         }
         if (empty($record->id)) {
             // add the $record (and get new id)
-            $record->id = insert_record ($table, $record);
+            $record->id = insert_record($table, $record);
         }
         // check $record was added (or found)
         if (is_numeric($record->id)) {
