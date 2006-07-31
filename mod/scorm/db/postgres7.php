@@ -231,6 +231,13 @@ function scorm_upgrade($oldversion) {
 
     if ($oldversion < 2006021401) {
        table_column("scorm", "", "version", "VARCHAR", "9", "", "", "NOT NULL", "reference");
+
+       modify_database('', 'ALTER TABLE prefix_scorm ALTER COLUMN width SET DEFAULT 100');
+       modify_database('', 'ALTER TABLE prefix_scorm ALTER COLUMN height SET DEFAULT 500');
+       // there is an extra constraint key1, we should drop this
+       modify_database('', 'ALTER TABLE prefix_scorm_scoes_track DROP CONSTRAINT prefix_scorm_scoes_track_userid_key1');
+       modify_database('', 'ALTER TABLE prefix_scorm_scoes_track DROP CONSTRAINT prefix_scorm_scoes_track_userid_key');
+       modify_database('', 'ALTER TABLE prefix_scorm_scoes_track ADD CONSTRAINT prefix_scorm_scoes_track_userid_key UNIQUE (userid, scormid, scoid, attempt, element)');
     }
 
     return true;

@@ -147,9 +147,12 @@ function wiki_upgrade($oldversion) {
 
     if ($oldversion < 2006042801) {
         modify_database('', 'ALTER TABLE prefix_wiki_pages 
-            ALTER COLUMN content SET DEFAULT \'\', 
-            ALTER COLUMN refs SET DEFAULT \'\', 
-            ALTER COLUMN content DROP NOT NULL,
+            ALTER COLUMN content SET DEFAULT \'\'');
+        modify_database('', 'ALTER TABLE prefix_wiki_pages 
+            ALTER COLUMN refs SET DEFAULT \'\'');
+        modify_database('', 'ALTER TABLE prefix_wiki_pages 
+            ALTER COLUMN content DROP NOT NULL');
+        modify_database('', 'ALTER TABLE prefix_wiki_pages 
             ALTER COLUMN refs DROP NOT NULL');
     }
 
