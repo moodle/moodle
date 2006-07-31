@@ -87,8 +87,7 @@ function HTMLArea(textarea, config) {
 (function() {
     var scripts = HTMLArea._scripts = [ _editor_url + "htmlarea.js",
                         _editor_url + "dialog.js",
-                        _editor_url + "popupwin.js",
-                        _editor_url + "plugins/GetHtml/get-html.js" ];
+                        _editor_url + "popupwin.js" ];
     var head = document.getElementsByTagName("head")[0];
     // start from 1, htmlarea.js is already loaded
     for (var i = 1; i < scripts.length; ++i) {
@@ -579,9 +578,7 @@ HTMLArea.prototype._createStatusBar = function() {
 // Creates the HTMLArea object and replaces the textarea with it.
 HTMLArea.prototype.generate = function () {
     var editor = this;  // we'll need "this" in some nested functions
-    try {
-        editor.registerPlugin(GetHtml);
-    } catch (e) {}
+
     // get the textarea
     var textarea = this._textArea;
     if (typeof textarea == "string") {
@@ -2264,7 +2261,33 @@ HTMLArea.htmlEncode = function(str) {
     // JS compressors (well, at least mine fails.. ;)
     return str;
 };
-
+// Moodle hack for special tags. Note that in IE you cannot start
+// content with special tag ( innerHTML issue ).
+HTMLArea.isSpecialTag = function (el) {
+    var tags = new Array();
+    tags[0] = /^\/?(nolink|lang|tex|algebra|math|mi|mn|mo|mtext|mspace)$/i;
+    tags[1] = /^\/?(ms|mrow|mfrac|msqrt|mroot|mstyle|merror|mpadded|mphantom)$/i;
+    tags[2] = /^\/?(mfenced|msub|msup|msubsup|munder|mover|munderover|mmultiscripts)$/i;
+    tags[3] = /^\/?(mtable|mtr|mtd|maligngroup|malignmark|maction|cn|ci|apply|reln)$/i;
+    tags[4] = /^\/?(fn|interval|inverse|sep|condition|declare|lambda|compose|ident)$/i;
+    tags[5] = /^\/?(quotient|exp|factorial|divide|max|min|minus|plus|power|rem|times)$/i;
+    tags[6] = /^\/?(root|gcd|and|or|xor|not|implies|forall|exists|abs|conjugate|eq|neq)$/i;
+    tags[7] = /^\/?(gt|lt|geq|leq|ln|log|int|diff|partialdiff|lowlimit|uplimit|bvar)$/i;
+    tags[8] = /^\/?(degree|set|list|union|intersect|in|notin|subset|prsubset|notsubset)$/i;
+    tags[9] = /^\/?(notprsubset|setdiff|sum|product|limit|tendsto|mean|sdev|variance|median)$/i;
+    tags[10] = /^\/?(mode|moment|vector|matrix|matrixrow|determinant|transpose|selector)$/i;
+    tags[11] = /^\/?(annotation|semantics|annotation-xml)$/i;
+    for ( var i = 0; i < tags.length; i++ ) {
+        if ( tags[i].test(el.tagName.toLowerCase()) ) {
+            return true;
+        }
+    }
+    return false;
+};
+HTMLArea.isSingleTag = function (el) {
+    var re = /^(br|hr|img|input|link|meta|param|embed|area)$/i;
+    return re.test(el.tagName.toLowerCase());
+};
 // Retrieves the HTML code from the given node.  This is a replacement for
 // getting innerHTML, using standard DOM calls.
 HTMLArea.getHTML = function(root, outputRoot, editor) {
@@ -2290,7 +2313,7 @@ HTMLArea.getHTML = function(root, outputRoot, editor) {
                 html += "</head>";
             break;
         } else if (outputRoot) {
-            closed = (!(root.hasChildNodes() || HTMLArea.needsClosingTag(root)));
+            closed = (!(root.hasChildNodes() || !HTMLArea.isSingleTag(root)));
             html = "<" + root.tagName.toLowerCase();
             var attrs = root.attributes;
             for (i = 0; i < attrs.length; ++i) {
@@ -2324,7 +2347,7 @@ HTMLArea.getHTML = function(root, outputRoot, editor) {
                     }
                 } else { // IE fails to put style in attributes list
                     // FIXME: cssText reported by IE is UPPERCASE
-                    value = root.style.cssText;
+                    value = root.style.cssText.toLowerCase();
                 }
                 if (/(_moz|^$)/.test(value)) {
                     // Mozilla reports some special tags
@@ -2339,7 +2362,11 @@ HTMLArea.getHTML = function(root, outputRoot, editor) {
             html += HTMLArea.getHTML(i, true, editor);
         }
         if (outputRoot && !closed) {
-            html += "</" + root.tagName.toLowerCase() + ">";
+            if ( HTMLArea.is_ie && HTMLArea.isSpecialTag(root) ) {
+                html += '';
+            } else {
+                html += "</" + root.tagName.toLowerCase() + ">";
+            }
         }
         break;
         case 3: // Node.TEXT_NODE
@@ -2353,7 +2380,7 @@ HTMLArea.getHTML = function(root, outputRoot, editor) {
         break;      // skip comments, for now.
     }
 
-    return html;
+    return HTMLArea.indent(html);
 };
 
 HTMLArea.prototype.stripBaseURL = function(string) {
@@ -2476,4 +2503,52 @@ HTMLArea.getElementById = function(tag, id) {
         if (el.id == id)
             return el;
     return null;
+};
+// Modified version of GetHtml plugin's indent.
+HTMLArea.indent = function(s, sindentChar) {
+    var c = [
+    /*0*/  new RegExp().compile(/<\/?(div|p|h[1-6]|table|tr|td|th|ul|ol|li|blockquote|object|br|hr|img|embed|param|pre|script|html|head|body|meta|link|title|area)[^>]*>/g),
+    /*1*/  new RegExp().compile(/<\/(div|p|h[1-6]|table|tr|td|th|ul|ol|li|blockquote|object|html|head|body|script)( [^>]*)?>/g),//blocklevel closing tag
+    /*2*/  new RegExp().compile(/<(div|p|h[1-6]|table|tr|td|th|ul|ol|li|blockquote|object|html|head|body|script)( [^>]*)?>/g),//blocklevel opening tag
+    /*3*/  new RegExp().compile(/<(br|hr|img|embed|param|pre|meta|link|title|area)[^>]*>/g),//singlet tag
+    /*4*/  new RegExp().compile(/(^|<\/(pre|script)>)(\s|[^\s])*?(<(pre|script)[^>]*>|$)/g),//find content NOT inside pre and script tags
+    /*5*/  new RegExp().compile(/(<pre[^>]*>)(\s|[^\s])*?(<\/pre>)/g),//find content inside pre tags
+    /*6*/  new RegExp().compile(/(^|<!--(\s|\S)*?-->)((\s|\S)*?)(?=<!--(\s|\S)*?-->|$)/g),//find content NOT inside comments
+    /*7*/  new RegExp().compile(/<\/(table|tbody|tr|td|th|ul|ol|object|html|head|body)( [^>]*)?>/g),//blocklevel closing tag
+    ];
+    HTMLArea.__nindent = 0;
+    HTMLArea.__sindent = "";
+    HTMLArea.__sindentChar = (typeof sindentChar == "undefined") ? "  " : sindentChar;
+
+    if(HTMLArea.is_gecko) { //moz changes returns into <br> inside <pre> tags
+        s = s.replace(c[5], function(str){return str.replace(/<br \/>/g,"\n")});
+    }
+    s = s.replace(c[4], function(strn) { //skip pre and script tags
+      strn = strn.replace(c[6], function(st,$1,$2,$3) { //exclude comments
+        string = $3.replace(/[\n\r]/gi, " ").replace(/\s+/gi," ").replace(c[0], function(str) {
+            if (str.match(c[2])) {
+                var s = "\n" + HTMLArea.__sindent + str;
+                // blocklevel openingtag - increase indent
+                HTMLArea.__sindent += HTMLArea.__sindentChar;
+                ++HTMLArea.__nindent;
+                return s;
+            } else if (str.match(c[1])) {
+                // blocklevel closingtag - decrease indent
+                --HTMLArea.__nindent;
+                HTMLArea.__sindent = "";
+                for (var i=HTMLArea.__nindent;i>0;--i) {
+                    HTMLArea.__sindent += HTMLArea.__sindentChar;
+                }
+                return (str.match(c[7]) ? "\n" + HTMLArea.__sindent : "") + str;
+            }
+            return str; // this won't actually happen
+        });
+        return $1 + string;
+      });return strn;
+    });
+    if (s.charAt(0) == "\n") {
+        return s.substring(1, s.length);
+    }
+    s = s.replace(/ *\n/g,'\n');//strip spaces at end of lines
+    return s;
 };
