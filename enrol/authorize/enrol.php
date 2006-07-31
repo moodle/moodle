@@ -512,22 +512,36 @@ class enrolment_plugin_authorize
         set_config('an_emailexpiredteacher', $emailexpiredteacher);
         set_config('an_sorttype', $sorttype);
 
-        // required fields
-        $loginval = optional_param('an_login', '');
-        $tranval = optional_param('an_tran_key', '');
-        $passwordval = optional_param('an_password', '');
-
-        if ((empty($CFG->loginhttps) and substr($CFG->wwwroot, 0, 5) !== 'https') ||
-            !enrolment_plugin_authorize::check_openssl_loaded() ||
-            empty($loginval) ||
-            (empty($tranval) and empty($passwordval))) {
+        // https and openssl library is required
+        if ((substr($CFG->wwwroot, 0, 5) !== 'https' and empty($CFG->loginhttps)) or
+            !enrolment_plugin_authorize::check_openssl_loaded()) {
             return false;
         }
 
+        // required fields
+        $loginval = optional_param('an_login', '');
+        if (empty($loginval)) {
+        	return false;
+        }
         set_config('an_login', $loginval);
-        set_config('an_password', $passwordval);
-        set_config('an_tran_key', $tranval);
 
+        $tranval = optional_param('an_tran_key', '');
+        $passwordval = optional_param('an_password', '');
+        $deletecurrent = optional_param('delete_current', '');
+
+        if (!empty($passwordval)) { // password is changing
+            set_config('an_password', $passwordval);
+        }
+        elseif (!empty($deletecurrent) and !empty($tranval)) {
+            set_config('an_password', '');
+            $CFG->an_password = '';
+        }
+
+        if (empty($tranval) and empty($CFG->an_password)) {
+            return false;
+        }
+
+        set_config('an_tran_key', $tranval);
         return true;
     }
 

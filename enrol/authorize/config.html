@@ -9,6 +9,7 @@ if (!isset($frm->enrol_mailadmins)) $frm->enrol_mailadmins = '';
 if (!isset($frm->an_login)) $frm->an_login = '';
 if (!isset($frm->an_tran_key)) $frm->an_tran_key = '';
 if (!isset($frm->an_password)) $frm->an_password = '';
+if (!isset($frm->delete_current)) $frm->delete_current = '';
 if (!isset($frm->an_referer)) $frm->an_referer = 'http://';
 if (!isset($frm->an_avs)) $frm->an_avs = '';
 if (!isset($frm->an_test)) $frm->an_test = '';
@@ -84,20 +85,26 @@ if (!isset($frm->acceptccs)) {
 </tr>
 
 <tr valign="top">
-    <td align="right">#&nbsp;</td>
+    <td align="right">#&nbsp;#&nbsp;</td>
     <td colspan="2"><?php print_string("chooseone", "enrol_authorize") ?></td>
 </tr>
 
 <tr valign="top">
     <td align="right">an_tran_key:</td>
-    <td><input type="text" name="an_tran_key" value="<?php p($frm->an_tran_key) ?>" /></td>
+    <td><input type="text" name="an_tran_key" value="<?php p($frm->an_tran_key) ?>" /><sup>#1</sup></td>
     <td><?php print_string("antrankey", "enrol_authorize") ?></td>
 </tr>
 
 <tr valign="top">
     <td align="right">an_password:</td>
-    <td><input type="text" name="an_password" value="<?php p($frm->an_password) ?>" /></td>
-    <td><?php print_string("anpassword", "enrol_authorize") ?></td>
+    <td><input type="text" name="an_password" value="" /><sup>#2</sup></td>
+    <td><?php print_string("anpassword", "enrol_authorize") ?><br />(<?php print_string("leavetokeep") ?>)</td>
+</tr>
+
+<tr valign="top">
+    <td align="right">delete_current:</td>
+    <td><?php print_checkbox('delete_current', '1', !empty($frm->delete_current)) ?></td>
+    <td><?php print_string("deletecheck", "moodle", get_string('oldpassword')) ?><br /><br /></td>
 </tr>
 
 <tr valign="top">
