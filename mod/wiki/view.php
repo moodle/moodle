@@ -16,12 +16,11 @@
     $userid       = optional_param('userid', 0, PARAM_INT);              // User wiki.
     $groupid      = optional_param('groupid', 0, PARAM_INT);             // Group wiki.
     $canceledit   = optional_param('canceledit','', PARAM_ALPHA);          // Editing has been cancelled
+    $cacheme      = optional_param('allowcache', 1, PARAM_INT);   // Set this to 0 to try and disable page caching.
 
     // Only want to add edit log entries if we have made some changes ie submitted a form
     $editsave = optional_param('thankyou', '');
     
-
-
     if ($id) {
         if (! $cm = get_record("course_modules", "id", $id)) {
             error("Course Module ID was incorrect");
@@ -245,7 +244,7 @@
 
     print_header_simple($ewiki_title?$ewiki_title:format_string($wiki->name), "",
                 "<a href=\"index.php?id=$course->id\">$strwikis</a> -> <a href=\"view.php?id=$moodleID\">".format_string($wiki->name,true)."</a>".($ewiki_title?" -> $ewiki_title":""),
-                "", "", true, update_module_button($cm->id, $course->id, $strwiki),
+                "", "", $cacheme, update_module_button($cm->id, $course->id, $strwiki),
                 navmenu($course, $cm));
 
 
@@ -346,7 +345,24 @@
         print_tabs($tabrows, $currenttab);
     }
 
+    /// Insert a link to force page refresh if new content isn't showing.
     
+    // build new URL + query string
+    $queries = preg_split('/[?&]/', me());	
+    $nqueries = count($queries);
+    $me = $queries[0] . '?';
+    for($i=1; $i < $nqueries; $i++)
+    {
+        if( !strstr($queries[$i], 'allowcache') )
+        	$me .= $queries[$i] . '&'; 
+    }
+    $me .= 'allowcache=0';
+
+    // Insert the link
+    $linkdesc = get_string('reloadlinkdescription', 'wiki');
+    $linktext = get_string('reloadlinktext', 'wiki');
+    echo "<div align='right' style='padding-bottom: 0.5em;'><a href='$me' title='$linkdesc'><input type='button' value='$linktext'></a></div>";
+
     print_simple_box_start('center', '100%', '', '20');
 
     /// Don't filter any pages containing wiki actions (except view). A wiki page containing
