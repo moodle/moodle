@@ -180,16 +180,17 @@ global $HTTPSPAGEREQUIRED;
     raise_memory_limit('64M');    // We should never NEED this much but just in case...
 
 
-/// Try to get unicodedb status from DB
-/// (this is the only one transaction executed before "set names")
-    $utftmp = get_config('', 'unicodedb');
-    if ($utftmp !== false) {  //Only if the record exists
-        $CFG->unicodedb = $utftmp->value;
-    }
-/// If $CFG->unicodedb is not set, calculate it because we need
-/// to know to "set names" properly.
+/// If $CFG->unicodedb is not set, get it from database or calculate it because we need
+/// to know it to "set names" properly.
+/// (this is the only database interaction before "set names")
     if (!isset($CFG->unicodedb)) {
-        $CFG->unicodedb = setup_is_unicodedb();
+        $utftmp = get_config('', 'unicodedb');
+        if ($utftmp !== false) {  //Only if the record exists
+        $CFG->unicodedb = $utftmp->value;
+        } else {
+            $CFG->unicodedb = setup_is_unicodedb();
+            set_config('unicodedb', $CFG->unicodedb);
+        }
     }
 /// Set the client/server and connection to utf8 if necessary
     if ($CFG->unicodedb) {
