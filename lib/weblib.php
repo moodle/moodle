@@ -4301,12 +4301,17 @@ function redirect($url, $message='', $delay='0') {
     $encodedurl = htmlentities($url);
     $tmpstr = clean_text('<a href="'.$encodedurl.'" />'); //clean encoded URL
     $encodedurl = substr($tmpstr, 9, strlen($tmpstr)-13);
-    $url = addslashes(html_entity_decode($encodedurl));
+    $url = html_entity_decode($encodedurl);
+    $surl = addslashes($url); 
 
 /// when no message and header printed yet, try to redirect
     if (empty($message) and !defined('HEADER_PRINTED')) {
+        //try header redirection first
+        @header('HTTP/1.x 303 See Other'); //302 might not work for POST requests, 303 is ignored by obsolete clients
+        @header('Location: '.$url);
+        //another way for older browsers and already sent headers (eg trailing whitespace in config.php)
         echo '<meta http-equiv="refresh" content="'. $delay .'; url='. $encodedurl .'" />';
-        echo '<script type="text/javascript">'. "\n" .'<!--'. "\n". "location.replace('$url');". "\n". '//-->'. "\n". '</script>';   // To cope with Mozilla bug
+        echo '<script type="text/javascript">'. "\n" .'<!--'. "\n". "location.replace('$surl');". "\n". '//-->'. "\n". '</script>';   // To cope with Mozilla bug
         die;
     }
 
@@ -4326,7 +4331,7 @@ function redirect($url, $message='', $delay='0') {
 <!--
 
   function redirect() {
-      document.location.replace('<?php echo $url ?>');
+      document.location.replace('<?php echo $surl ?>');
   }
   setTimeout("redirect()", <?php echo ($delay * 1000) ?>);
 -->
