@@ -1154,6 +1154,7 @@ $string['showperpage'] = 'Show $a per page';
 $string['showrecent'] = 'Show recent activity';
 $string['showreports'] = 'Show activity reports';
 $string['showsettings'] = 'Show settings';
+$string['showtheselogs'] = 'Show these logs';
 $string['since'] = 'Since';
 $string['sincelast'] = ' since last login';
 $string['site'] = 'Site';
