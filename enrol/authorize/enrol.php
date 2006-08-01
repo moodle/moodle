@@ -321,7 +321,7 @@ class enrolment_plugin extends enrolment_base {
     function config_form($frm) {
         global $CFG;
 
-        $vars = array('an_login', 'an_tran_key', 'an_password', 'an_referer', 'an_avs', 'an_test',
+        $vars = array('an_login', 'an_tran_key', 'an_password', 'delete_current', 'an_referer', 'an_avs', 'an_test',
                       'enrol_cost', 'enrol_currency', 'enrol_mailstudents', 'enrol_mailteachers', 'enrol_mailadmins');
 
         foreach ($vars as $var) {
@@ -345,7 +345,6 @@ class enrolment_plugin extends enrolment_base {
             if (empty($CFG->loginhttps) and substr($CFG->wwwroot, 0, 5) !== 'https') {
                 notify("loginhttps must be ON");
             }
-
         }
         include($CFG->dirroot.'/enrol/authorize/config.html');
     }
@@ -369,24 +368,6 @@ class enrolment_plugin extends enrolment_base {
         }
         set_config('an_login', $config->an_login);
 
-        if (!isset($config->an_password)) {
-            $config->an_password = '';
-        }
-        set_config('an_password', $config->an_password);
-
-        if (!isset($config->an_tran_key)) {
-            $config->an_tran_key = '';
-        }
-        set_config('an_tran_key', $config->an_tran_key);
-
-        // Some required fields
-        if (empty($config->an_login)) {
-            $return = false;
-        }
-        if (empty($config->an_tran_key) && empty($config->an_password)) {
-            $return = false;
-        }
-
         if (empty($config->an_referer)) {
             $config->an_referer = 'http://';
         }
@@ -402,7 +383,8 @@ class enrolment_plugin extends enrolment_base {
         }
         set_config('an_test', $config->an_test);
 
-        // --------------------------------------
+        // enrol config
+
         if (!isset($config->enrol_cost)) {
             $config->enrol_cost = '0';
         }
@@ -427,6 +409,33 @@ class enrolment_plugin extends enrolment_base {
             $config->enrol_mailadmins = '';
         }
         set_config('enrol_mailadmins', $config->enrol_mailadmins);
+
+        // Some required fields
+        if (empty($config->an_login)) {
+            $return = false;
+        }
+
+        if (!isset($config->an_password)) {
+            $config->an_password = '';
+        }
+        if (!isset($config->an_tran_key)) {
+            $config->an_tran_key = '';
+        }
+
+        if (!empty($config->an_password)) { // password is changing
+            set_config('an_password', $config->an_password);
+        }
+        elseif (!empty($config->delete_current) and !empty($config->an_tran_key)) {
+            set_config('an_password', '');
+            $CFG->an_password = '';
+        }
+
+        if (empty($config->an_tran_key) and empty($CFG->an_password)) {
+            $return = false;
+        }
+        else {
+            set_config('an_tran_key', $config->an_tran_key);
+        }
 
         return $return;
     }
