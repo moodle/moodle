@@ -29,6 +29,9 @@
     $agreelicence = optional_param('agreelicence',0, PARAM_BOOL);
 
 
+/// check upgrade status first
+    upgrade_check_running("Upgrade already running, please wait!", 10);
+
 /// Check some PHP server settings
 
     $documentationlink = "please read the <a href=\"../doc/?frame=install.html&amp;sub=webserver\">install documentation</a>";
@@ -115,6 +118,7 @@
         print_header($strdatabasesetup, $strdatabasesetup, $strdatabasesetup,
                         "", $linktoscrolltoerrors, false, "&nbsp;", "&nbsp;");
         if (file_exists("$CFG->libdir/db/$CFG->dbtype.sql")) {
+            upgrade_log_start();
             $db->debug = true;
             if (modify_database("$CFG->libdir/db/$CFG->dbtype.sql")) {
                 $db->debug = false;
@@ -126,6 +130,7 @@
         } else {
             error("Error: Your database ($CFG->dbtype) is not yet fully supported by Moodle.  See the lib/db directory.");
         }
+        upgrade_log_finish();
         print_continue("index.php");
         die;
     }
@@ -156,6 +161,7 @@
                 $strdatabasesuccess  = get_string("databasesuccess");
                 print_header($strdatabasechecking, $stradministration, $strdatabasechecking,
                         "", $linktoscrolltoerrors, false, "&nbsp;", "&nbsp;");
+                upgrade_log_start();
                 print_heading($strdatabasechecking);
                 $db->debug=true;
                 if (main_upgrade($CFG->version)) {
@@ -163,6 +169,7 @@
                     if (set_config("version", $version)) {
                         remove_dir($CFG->dataroot . '/cache', true); // flush cache
                         notify($strdatabasesuccess, "green");
+                        upgrade_log_finish();
                         print_continue("index.php");
                         exit;
                     } else {
@@ -172,6 +179,7 @@
                     $db->debug=false;
                     notify("Upgrade failed!  See /version.php");
                 }
+                upgrade_log_finish();
             }
         } else if ($version < $CFG->version) {
             notify("WARNING!!!  The code you are using is OLDER than the version that made these databases!");
@@ -183,9 +191,12 @@
                      "", "", false, "&nbsp;", "&nbsp;");
 
         if (!set_config("version", $version)) {
+            upgrade_log_start();
             $db->debug=true;
             if (main_upgrade(0)) {
+                upgrade_log_finish();
                 print_continue("index.php");
+                exit;
             } else {
                 error("A problem occurred inserting current version into databases");
             }
@@ -200,7 +211,9 @@
         print_header($strcurrentrelease, $strcurrentrelease, $strcurrentrelease, "", "", false, "&nbsp;", "&nbsp;");
         print_heading("Moodle $release");
         if (!set_config("release", $release)) {
+            upgrade_log_start();
             notify("ERROR: Could not update release version in database!!");
+            upgrade_log_finish();
         }
         notice(get_string('releasenoteslink', 'admin', 'http://docs.moodle.org/en/Release_Notes'), 'index.php');
         exit;
@@ -252,6 +265,8 @@
     require_once("$CFG->dirroot/lib/locallib.php");
     upgrade_local_db("$CFG->wwwroot/$CFG->admin/index.php");  // Return here afterwards
 
+/// just make sure upgrade logging is properly terminated
+    upgrade_log_finish();
 
 /// Set up the overall site name etc.
     if (! $site = get_site()) {

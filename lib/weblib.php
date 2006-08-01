@@ -4089,6 +4089,12 @@ function error ($message, $link='') {
     for ($i=0;$i<512;$i++) {  // Padding to help IE work with 404
         echo ' ';
     }
+
+    // clean upgrade indicator if needed; buffer and log file will be closed automatically
+    if (!empty($_SESSION['upgraderunning'])) {
+        $_SESSION['upgraderunning'] = 0;
+    }
+
     die;
 }
 

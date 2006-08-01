@@ -2263,6 +2263,7 @@ function assignment_upgrade_submodules() {
                 continue;
             }
 
+            upgrade_log_start();
             $db->debug=true;
             if (!modify_database($fullpath .'/db/'.$CFG->dbtype.'.sql')) {
                 notify("Error installing tables for submodule '$type'!");
@@ -2289,6 +2290,7 @@ function assignment_upgrade_submodules() {
 
         $upgrade_function = 'assignment_'.$type.'_upgrade';
         if (function_exists($upgrade_function)) {
+            upgrade_log_start();
             $db->debug=true;
             if ($upgrade_function($CFG->$currentversion)) {
                 $db->debug=false;

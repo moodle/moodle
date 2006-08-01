@@ -327,12 +327,14 @@
                     '<script type="text/javascript" src="' . $CFG->wwwroot . '/lib/scroll_to_errors.js"></script>',
                     false, "&nbsp;", "&nbsp;");
 
+            upgrade_log_start();
             $db->debug=true;
             if (modify_database("$CFG->dirroot/backup/db/$CFG->dbtype.sql")) {
                 $db->debug = false;
                 if (set_config("backup_version", $backup_version) and set_config("backup_release", $backup_release)) {
                     notify(get_string("databasesuccess"), "green");
                     notify(get_string("databaseupgradebackups", "", $backup_version));
+                    upgrade_log_finish();
                     print_continue($continueto);
                     exit;
                 } else {
@@ -349,6 +351,7 @@
             print_header($strdatabaseupgrades, $strdatabaseupgrades, $strdatabaseupgrades, '',
                      '<script type="text/javascript" src="' . $CFG->wwwroot . '/lib/scroll_to_errors.js"></script>');
 
+            upgrade_log_start();
             require_once ("$CFG->dirroot/backup/db/$CFG->dbtype.php");
 
             $db->debug=true;
@@ -357,6 +360,7 @@
                 if (set_config("backup_version", $backup_version) and set_config("backup_release", $backup_release)) {
                     notify(get_string("databasesuccess"), "green");
                     notify(get_string("databaseupgradebackups", "", $backup_version));
+                    upgrade_log_finish();
                     print_continue($continueto);
                     exit;
                 } else {
@@ -368,8 +372,10 @@
             }
 
         } else if ($backup_version < $CFG->backup_version) {
+            upgrade_log_start();
             notify("WARNING!!!  The code you are using is OLDER than the version that made these databases!");
         }
+
     }
 
  

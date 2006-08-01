@@ -912,12 +912,14 @@ function upgrade_blocks_db($continueto) {
                 '<script type="text/javascript" src="' . $CFG->wwwroot . '/lib/scroll_to_errors.js"></script>',
                 false, '&nbsp;', '&nbsp;');
 
+        upgrade_log_start();
         $db->debug=true;
         if (modify_database($CFG->dirroot .'/blocks/db/'. $CFG->dbtype .'.sql')) {
             $db->debug = false;
             if (set_config('blocks_version', $blocks_version)) {
                 notify(get_string('databasesuccess'), 'notifysuccess');
                 notify(get_string('databaseupgradeblocks', '', $blocks_version));
+                upgrade_log_finish();
                 print_continue($continueto);
                 exit;
             } else {
@@ -933,6 +935,8 @@ function upgrade_blocks_db($continueto) {
         $strdatabaseupgrades = get_string('databaseupgrades');
         print_header($strdatabaseupgrades, $strdatabaseupgrades, $strdatabaseupgrades, '',
                 '<script type="text/javascript" src="' . $CFG->wwwroot . '/lib/scroll_to_errors.js"></script>');
+
+        upgrade_log_start();
         require_once ($CFG->dirroot .'/blocks/db/'. $CFG->dbtype .'.php');
 
         $db->debug=true;
@@ -941,6 +945,7 @@ function upgrade_blocks_db($continueto) {
             if (set_config('blocks_version', $blocks_version)) {
                 notify(get_string('databasesuccess'), 'notifysuccess');
                 notify(get_string('databaseupgradeblocks', '', $blocks_version));
+                upgrade_log_finish();
                 print_continue($continueto);
                 exit;
             } else {
@@ -952,8 +957,10 @@ function upgrade_blocks_db($continueto) {
         }
 
     } else if ($blocks_version < $CFG->blocks_version) {
+        upgrade_log_start();
         notify('WARNING!!!  The Blocks version you are using is OLDER than the version that made these databases!');
     }
+
 }
 
 //This function finds all available blocks and install them
@@ -1069,6 +1076,7 @@ function upgrade_blocks_plugins($continueto) {
                             '<script type="text/javascript" src="' . $CFG->wwwroot . '/lib/scroll_to_errors.js"></script>',
                             false, '&nbsp;', '&nbsp;');
                 }
+                upgrade_log_start();
                 print_heading('New version of '.$blocktitle.' ('.$block->name.') exists');
                 $upgrade_function = $block->name.'_upgrade';
                 if (function_exists($upgrade_function)) {
@@ -1098,6 +1106,7 @@ function upgrade_blocks_plugins($continueto) {
                 }
                 $updated_blocks = true;
             } else {
+                upgrade_log_start();
                 error('Version mismatch: block '. $block->name .' can\'t downgrade '. $currblock->version .' -> '. $block->version .'!');
             }
 
@@ -1123,6 +1132,7 @@ function upgrade_blocks_plugins($continueto) {
                         '<script type="text/javascript" src="' . $CFG->wwwroot . '/lib/scroll_to_errors.js"></script>',
                         false, '&nbsp;', '&nbsp;');
             }
+            upgrade_log_start();
             print_heading($block->name);
             $updated_blocks = true;
             $db->debug = true;
@@ -1145,6 +1155,7 @@ function upgrade_blocks_plugins($continueto) {
     }
 
     if(!empty($notices)) {
+        upgrade_log_start();
         foreach($notices as $notice) {
             notify($notice);
         }
@@ -1153,6 +1164,7 @@ function upgrade_blocks_plugins($continueto) {
     // Finally, if we are in the first_install of BLOCKS (this means that we are
     // upgrading from Moodle < 1.3), put blocks in all existing courses.
     if ($first_install) {
+        upgrade_log_start();
         //Iterate over each course
         if ($courses = get_records('course')) {
             foreach ($courses as $course) {
@@ -1163,10 +1175,13 @@ function upgrade_blocks_plugins($continueto) {
     }
 
     if (!empty($CFG->siteblocksadded)) {     /// This is a once-off hack to make a proper upgrade
+        upgrade_log_start();
         $page = page_create_object(PAGE_COURSE_VIEW, SITEID);
         blocks_repopulate_page($page);
         delete_records('config', 'name', 'siteblocksadded');
     }
+
+    upgrade_log_finish();
 
     if (!empty($updated_blocks)) {
         print_continue($continueto);

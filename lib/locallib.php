@@ -93,6 +93,7 @@ function upgrade_local_db($continueto) {
         print_header($strdatabaseupgrades, $strdatabaseupgrades, $strdatabaseupgrades, '',
                  '<script type="text/javascript" src="' . $CFG->wwwroot . '/lib/scroll_to_errors.js"></script>');
         
+        upgrade_log_start();
         require_once ($CFG->dirroot .'/local/db/'. $CFG->dbtype .'.php');
 
         $db->debug=true;
@@ -101,6 +102,7 @@ function upgrade_local_db($continueto) {
             if (set_config('local_version', $local_version)) {
                 notify(get_string('databasesuccess'), 'notifysuccess');
                 notify(get_string('databaseupgradelocal', '', $local_version));
+                upgrade_log_finish();
                 print_continue($continueto);
                 exit;
             } else {
@@ -112,8 +114,10 @@ function upgrade_local_db($continueto) {
         }
 
     } else if ($local_version < $CFG->local_version) {
+        upgrade_log_start();
         notify('WARNING!!!  The local version you are using is OLDER than the version that made these databases!');
     }
+    upgrade_log_finish();
 }
 
 /**

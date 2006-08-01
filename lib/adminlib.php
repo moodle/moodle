@@ -26,6 +26,9 @@ function upgrade_plugins($type, $dir, $return) {
         error('No '.$type.' plugins installed!');
     }
 
+    $updated_plugins = false;
+    $strpluginsetup  = get_string('pluginsetup');
+
     foreach ($plugs as $plug) {
 
         $fullplug = $CFG->dirroot .'/'.$dir.'/'. $plug;
@@ -54,7 +57,14 @@ function upgrade_plugins($type, $dir, $return) {
                 $info->pluginversion  = $plugin->version;
                 $info->currentmoodle = $CFG->version;
                 $info->requiremoodle = $plugin->requires;
+                if (!$updated_plugins) {
+                    print_header($strpluginsetup, $strpluginsetup, $strpluginsetup, '', 
+                        '<script type="text/javascript" src="' . $CFG->wwwroot . '/lib/scroll_to_errors.js"></script>',
+                        false, '&nbsp;', '&nbsp;');
+                }
+                upgrade_log_start();
                 notify(get_string('pluginrequirementsnotmet', 'error', $info));
+                $updated_plugins = true;
                 unset($info);
                 continue;
             }
@@ -71,14 +81,13 @@ function upgrade_plugins($type, $dir, $return) {
         if ($CFG->$pluginversion == $plugin->version) {
             // do nothing
         } else if ($CFG->$pluginversion < $plugin->version) {
-            if (empty($updated_plugins)) {
-                $strpluginsetup  = get_string('pluginsetup');
+            if (!$updated_plugins) {
                 print_header($strpluginsetup, $strpluginsetup, $strpluginsetup, '', 
                         '<script type="text/javascript" src="' . $CFG->wwwroot . '/lib/scroll_to_errors.js"></script>',
                         false, '&nbsp;', '&nbsp;');
             }
+            upgrade_log_start();
             print_heading($plugin->name .' plugin needs upgrading');
-
             if ($CFG->$pluginversion == 0) {    // It's a new install of this plugin
                 if (file_exists($fullplug .'/db/'. $CFG->dbtype .'.sql')) {
                     $db->debug = true;
@@ -112,13 +121,15 @@ function upgrade_plugins($type, $dir, $return) {
             }
             echo '<hr />';
             $updated_plugins = true;
-
         } else {
+            upgrade_log_start();
             error('Version mismatch: '. $plugin->name .' can\'t downgrade '. $CFG->$pluginversion .' -> '. $plugin->version .' !');
         }
     }
 
-    if (!empty($updated_plugins)) {
+    upgrade_log_finish();
+
+    if ($updated_plugins) {
         print_continue($return);
         die;
     }
@@ -139,6 +150,9 @@ function upgrade_activity_modules($return) {
     if (!$mods = get_list_of_plugins('mod') ) {
         error('No modules installed!');
     }
+
+    $updated_modules = false;
+    $strmodulesetup  = get_string('modulesetup');
 
     foreach ($mods as $mod) {
 
@@ -174,7 +188,14 @@ function upgrade_activity_modules($return) {
                 $info->moduleversion  = $module->version;
                 $info->currentmoodle = $CFG->version;
                 $info->requiremoodle = $module->requires;
+                if (!$updated_modules) {
+                    print_header($strmodulesetup, $strmodulesetup, $strmodulesetup, '', 
+                            '<script type="text/javascript" src="' . $CFG->wwwroot . '/lib/scroll_to_errors.js"></script>',
+                            false, '&nbsp;', '&nbsp;');
+                }
+                upgrade_log_start();
                 notify(get_string('modulerequirementsnotmet', 'error', $info));
+                $updated_modules = true;
                 unset($info);
                 continue;
             }
@@ -186,12 +207,12 @@ function upgrade_activity_modules($return) {
             if ($currmodule->version == $module->version) {
                 // do nothing
             } else if ($currmodule->version < $module->version) {
-                if (empty($updated_modules)) {
-                    $strmodulesetup  = get_string('modulesetup');
+                if (!$updated_modules) {
                     print_header($strmodulesetup, $strmodulesetup, $strmodulesetup, '', 
                             '<script type="text/javascript" src="' . $CFG->wwwroot . '/lib/scroll_to_errors.js"></script>',
                             false, '&nbsp;', '&nbsp;');
                 }
+                upgrade_log_start();
                 print_heading($module->name .' module needs upgrading');
                 $upgrade_function = $module->name.'_upgrade';
                 if (function_exists($upgrade_function)) {
@@ -213,16 +234,17 @@ function upgrade_activity_modules($return) {
                 }
                 $updated_modules = true;
             } else {
+                upgrade_log_start();
                 error('Version mismatch: '. $module->name .' can\'t downgrade '. $currmodule->version .' -> '. $module->version .' !');
             }
     
         } else {    // module not installed yet, so install it
-            if (empty($updated_modules)) {
-                $strmodulesetup    = get_string('modulesetup');
+            if (!$updated_modules) {
                 print_header($strmodulesetup, $strmodulesetup, $strmodulesetup, '', 
                         '<script type="text/javascript" src="' . $CFG->wwwroot . '/lib/scroll_to_errors.js"></script>',
                         false, '&nbsp;', '&nbsp;');
             }
+            upgrade_log_start();
             print_heading($module->name);
             $updated_modules = true;
             $db->debug = true;
@@ -266,7 +288,9 @@ function upgrade_activity_modules($return) {
         }
     }
 
-    if (!empty($updated_modules)) {
+    upgrade_log_finish(); // finish logging if started
+
+    if ($updated_modules) {
         print_continue($return);
         print_footer();
         die;
@@ -355,4 +379,95 @@ function print_progress($done, $total, $updatetime=5, $sleeptime=1, $donetext=''
         sleep($sleeptime);
     }
 }
+
+////////////////////////////////////////////////
+/// upgrade logging functions
+////////////////////////////////////////////////
+
+$upgradeloghandle = false;
+global $upgradeloghandle;  // needed for access from callback funtion
+
+/**
+ * Check if upgrade is already running.
+ *
+ * If anything goes wrong due to missing call to upgrade_log_finish()
+ * just restart the browser.
+ *
+ * @param string warning message indicating upgrade is already running
+ * @param int page reload timeout
+ */
+function upgrade_check_running($message, $timeout) {
+    if (!empty($_SESSION['upgraderunning'])) {
+        print_header();
+        redirect(me(), $message, $timeout);
+    }
+}
+
+/**
+ * Start logging of output into file (if not disabled) and
+ * prevent aborting and concurrent execution of upgrade script.
+ *
+ * Please note that you can not write into session variables after calling this function!
+ *
+ * This function may be called repeatedly.
+ */
+function upgrade_log_start() {
+    global $upgradeloghandle;
+
+    if (!empty($_SESSION['upgraderunning'])) {
+        return; // logging already started
+    }
+
+    @ignore_user_abort(true);            // ignore if user stops or otherwise aborts page loading
+    $_SESSION['upgraderunning'] = 1;     // set upgrade indicator
+    session_write_close();               // from now on user can reload page - will be displayed warning
+    make_upload_directory('upgradelogs');
+    ob_start('upgrade_log_callback', 2); // function for logging to disk; flush each line of text ASAP
+}
+
+/**
+ * Terminate logging of output, flush all data, allow script aborting
+ * and reopen session for writing. Function error() does terminate the logging too.
+ *
+ * Please make sure that each upgrade_log_start() is properly terminated by
+ * this function or error().
+ *
+ * This function may be called repeatedly.
+ */
+function upgrade_log_finish() {
+    global $upgradeloghandle;
+
+    if (empty($_SESSION['upgraderunning'])) {
+        return; // logging already terminated
+    }
+
+    @ob_end_flush();
+    @fclose($upgradeloghandle);
+    @session_start();                // ignore header errors, we only need to reopen session
+    $_SESSION['upgraderunning'] = 0; // clear upgrade indicator
+    if (connection_aborted()) {
+        die;
+    }
+    @ignore_user_abort(false);
+}
+
+/**
+ * Callback function for logging into files. Not more than one file is created per minute,
+ * upgrade session (terminated by upgrade_log_finish()) is always stored in one file.
+ *
+ * This function must not output any characters or throw warnigns and errors!
+ */
+function upgrade_log_callback($string) {
+    global $CFG, $upgradeloghandle;
+
+    if (empty($CFG->disableupgradelogging) and ($string != '') and ($upgradeloghandle !== 'error')) {
+        if ($upgradeloghandle or ($upgradeloghandle = @fopen($CFG->dataroot.'/upgradelogs/upg_'.date('Ymd-Hi').'.html', 'a'))) {
+            @fwrite($upgradeloghandle, $string);
+        } else {
+            $upgradeloghandle = 'error';
+        }
+    }
+    return $string;
+}
+
 ?>
