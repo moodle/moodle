@@ -7053,19 +7053,46 @@ function remove_dir($dir, $content_only=false) {
     return rmdir($dir);
 }
 
-//Function to check if a directory exists
-//and, optionally, create it
-function check_dir_exists($dir,$create=false) {
+/**
+ * Function to check if a directory exists and optionally create it.
+ *
+ * @param string absolute directory path
+ * @param boolean create directory if does not exist
+ * @param boolean create directory recursively
+ *
+ * @return boolean true if directory exists or created
+ */
+function check_dir_exists($dir, $create=false, $recursive=false) {
 
     global $CFG;
 
     $status = true;
+
     if(!is_dir($dir)) {
         if (!$create) {
             $status = false;
         } else {
             umask(0000);
-            $status = mkdir ($dir,$CFG->directorypermissions);
+            if ($recursive) {
+            	// PHP 5.0 has recursive mkdir parameter, but 4.x does not :-(
+                $dir = str_replace('\\', '/', $dir); //windows compatibility
+                $dirs = explode('/', $dir);
+                $dir = array_shift($dirs).'/'; //skip root or drive letter
+                foreach ($dirs as $part) {
+                    if ($part == '') {
+                        continue;
+                    }
+                    $dir .= $part.'/';
+                    if (!is_dir($dir)) {
+                        if (!mkdir($dir, $CFG->directorypermissions)) {
+                            $status = false;
+                            break;
+                        }
+                    }
+                }
+            } else {
+                $status = mkdir($dir, $CFG->directorypermissions);
+            }
         }
     }
     return $status;
