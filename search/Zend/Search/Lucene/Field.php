@@ -34,8 +34,6 @@
  * @copyright  Copyright (c) 2006 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-//require_once('EncodingConverter.php');
-
 class Zend_Search_Lucene_Field
 {
     public $kind;
@@ -48,33 +46,20 @@ class Zend_Search_Lucene_Field
     public $isBinary    = false;
 
     public $storeTermVector = false;
-    
+
     public $boost = 1.0;
 
     public function __construct($name, $stringValue, $isStored, $isIndexed, $isTokenized, $isBinary = false)
     {
-        $this->name = $name;        
+        $this->name        = $name;
 
-        if (!$isBinary) {            
-            /*
-             $econv = new EncodingConverter(mb_detect_encoding($stringValue), 'ASCII//TRANSLIT');
-             $this->stringValue = $econv->convert($stringValue);
-            
-            if ($econv->getLastError()) {
-                echo "Error: ".$econv->getLastError();
-                echo "<br>";
-                echo "x".$stringValue."x";
-                exit();
-            } else {                                            
-            }*/                            
-            
+        if (!$isBinary) {
             /**
              * @todo Correct UTF-8 string should be required in future
              * Until full UTF-8 support is not completed, string should be normalized to ANSII encoding
              */
-            
-             $this->stringValue = iconv('ISO-8859-1', 'ASCII//TRANSLIT', $stringValue);            
-             //$this->stringValue = iconv(mb_detect_encoding($stringValue), 'ASCII//TRANSLIT', $stringValue);            
+            $this->stringValue = iconv(mb_detect_encoding($stringValue), 'ASCII//TRANSLIT', $stringValue);
+            //$this->stringValue = iconv('', 'ASCII//TRANSLIT', $stringValue);
         } else {
             $this->stringValue = $stringValue;
         }
