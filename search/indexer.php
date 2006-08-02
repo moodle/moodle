@@ -104,9 +104,10 @@
   // * mod_get_content_for_index
   //are the sole basis for including a module in the index at the moment.
   
-  if ($mods = get_records_select('modules' /*'index this module?' where statement*/)) {
-    foreach ($mods as $mod) {
-      if ($mod->name == 'forum') continue;
+  if ($mods = get_records_select('modules' /*'index this module?' where statement*/)) {        
+    $mods = array_merge($mods, search_get_additional_modules());
+    
+    foreach ($mods as $mod) {      
       $class_file = $CFG->dirroot.'/search/documents/'.$mod->name.'_document.php';              
       
       if (file_exists($class_file)) {
@@ -141,7 +142,7 @@
               $id = insert_record('search_documents', $doc);
               
               //synchronise db with index
-              $document->addField(Zend_Search_Lucene_Field::Keyword('db_id', $id));
+              $document->addField(Zend_Search_Lucene_Field::Keyword('dbid', $id));
               
               //add document to index
               $index->addDocument($document);                  

@@ -14,7 +14,8 @@
   define('SEARCH_TYPE_NONE', 'none');
   define('SEARCH_TYPE_WIKI', 'wiki');
   define('SEARCH_TYPE_FORUM', 'forum');
-  define('SEARCH_TYPE_GLOSSARY', 'glossary');  
+  define('SEARCH_TYPE_GLOSSARY', 'glossary');
+  define('SEARCH_TYPE_RESOURCE', 'resource');
   
   //returns all the document type constants
   function search_get_document_types($prefix='SEARCH_TYPE') {
@@ -28,6 +29,24 @@
     
     return $ret;
   } //search_get_document_types
+  
+  // additional virtual modules to index
+  //
+  // By adding 'moo' to the extras array, an additional document type
+  // documents/moo_document.php will be indexed - this allows for
+  // virtual modules to be added to the index, i.e. non-module specific
+  // information.
+  function search_get_additional_modules() {
+    $extras = array(/* additional keywords go here */);
+    $ret = array();
+    
+    foreach($extras as $extra) {
+      $temp->name = $extra;
+      $ret[] = clone($temp);
+    } //foreach
+    
+    return $ret;
+  } //search_get_additional_modules  
     
   //shortens a url so it can fit on the results page
   function search_shorten_url($url, $length=30) {    

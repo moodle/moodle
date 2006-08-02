@@ -43,6 +43,8 @@
   //are the sole basis for including a module in the index at the moment.
   
   if ($mods = get_records_select('modules')) {
+    $mods = array_merge($mods, search_get_additional_modules());
+    
     foreach ($mods as $mod) {
       $class_file = $CFG->dirroot.'/search/documents/'.$mod->name.'_document.php';              
       
