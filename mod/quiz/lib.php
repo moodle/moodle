@@ -93,6 +93,7 @@ function quiz_add_instance($quiz) {
     }
     $quiz->name = trim($quiz->name);
     $quiz->timelimit = round($quiz->timelimit);
+    $quiz->questions = '';
     if (!$quiz->id = insert_record("quiz", $quiz)) {
         return false;  // some error occurred
     }
