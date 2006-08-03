@@ -1,4 +1,40 @@
 <?PHP
+function hotpot_update_to_v2_1_21() {
+    global $CFG;
+    $ok = true;
+
+	if (strtolower($CFG->dbtype)=='postgres7') {
+        // ensure setting of default values on certain fields
+        // this was originally done in postgres7.php, but was found to be incompatible with PG7 :-(
+        $table="hotpot";
+        $ok = $ok && hotpot_db_update_field_type($table, '', 'studentfeedbackurl', 'VARCHAR', 255, '',         'NOT NULL', '');
+        $ok = $ok && hotpot_db_update_field_type($table, '', 'studentfeedback',    'INTEGER', 4,   'UNSIGNED', 'NOT NULL', 0);
+        $ok = $ok && hotpot_db_update_field_type($table, '', 'clickreporting',     'INTEGER', 4,   'UNSIGNED', 'NOT NULL', 0);
+
+        $table="hotpot_attempts";
+        $ok = $ok && hotpot_db_update_field_type($table, '', 'score',     'INTEGER', 4, 'UNSIGNED', 'NOT NULL', 0);
+        $ok = $ok && hotpot_db_update_field_type($table, '', 'penalties', 'INTEGER', 4, 'UNSIGNED', 'NOT NULL', 0);
+        $ok = $ok && hotpot_db_update_field_type($table, '', 'status',    'INTEGER', 4, 'UNSIGNED', 'NOT NULL', 1);
+
+        $table="hotpot_questions";
+        $ok = $ok && hotpot_db_update_field_type($table, '', 'type',      'INTEGER', 4, 'UNSIGNED', 'NOT NULL', 0);
+
+        $table="hotpot_responses";
+        $ok = $ok && hotpot_db_update_field_type($table, '', 'score',     'INTEGER', 4,   'UNSIGNED', 'NOT NULL', 0);
+        $ok = $ok && hotpot_db_update_field_type($table, '', 'weighting', 'INTEGER', 4,   'UNSIGNED', 'NOT NULL', 0);
+        $ok = $ok && hotpot_db_update_field_type($table, '', 'correct',   'VARCHAR', 255, '',         'NOT NULL', '');
+        $ok = $ok && hotpot_db_update_field_type($table, '', 'wrong',     'VARCHAR', 255, '',         'NOT NULL', '');
+        $ok = $ok && hotpot_db_update_field_type($table, '', 'ignored',   'VARCHAR', 255, '',         'NOT NULL', '');
+        $ok = $ok && hotpot_db_update_field_type($table, '', 'hints',     'INTEGER', 4,   'UNSIGNED', 'NOT NULL', 0);
+        $ok = $ok && hotpot_db_update_field_type($table, '', 'clues',     'INTEGER', 4,   'UNSIGNED', 'NOT NULL', 0);
+        $ok = $ok && hotpot_db_update_field_type($table, '', 'checks',    'INTEGER', 4,   'UNSIGNED', 'NOT NULL', 0);
+
+        $table="hotpot_strings";
+        $ok = $ok && hotpot_db_update_field_type($table, '', 'string', 'TEXT', '', '', 'NOT NULL', '');
+    }
+
+    return $ok;
+}
 function hotpot_update_to_v2_1_18() {
 	$ok = true;
 
@@ -933,7 +969,7 @@ function hotpot_db_add_index($table, $field, $length='') {
 		break;
 		case 'postgres7' :
 			if ($length) {
-				$field = "SUBSTR($field,$length)";
+				$field = "SUBSTR(\"$field\",$length)";
 			}
 			$ok = $ok && $db->Execute("CREATE INDEX $index ON $table ($field)");
 		break;
