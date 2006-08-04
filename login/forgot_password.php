@@ -50,7 +50,7 @@ $page = ''; // page to display
 //******************************
 
 // if you are logged in then you shouldn't be here!
-if (isloggedin()) {
+if (isloggedin() && !isguest()) {
     redirect( $CFG->wwwroot.'/index.php', $txt->loginalready, 5 );
 }
 
