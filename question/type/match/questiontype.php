@@ -235,6 +235,7 @@ class question_match_qtype extends default_questiontype {
         $correctanswers = $this->get_correct_responses($question, $state);
         $nameprefix     = $question->name_prefix;
         $answers        = array();
+        $allanswers     = array();
         $answerids      = array();
         $responses      = &$state->responses;
 
@@ -242,22 +243,25 @@ class question_match_qtype extends default_questiontype {
         $formatoptions->noclean = true;
         $formatoptions->para = false;
 
-        // Prepare a list of answers, removing duplicates, and fix up the ids
-        // of any responses that point the the eliminated duplicates. 
+        // Prepare a list of answers, removing duplicates. 
         foreach ($subquestions as $subquestion) {
             foreach ($subquestion->options->answers as $ans) {
+                $allanswers[$ans->id] = $ans->answer;
                 if (!in_array($ans->answer, $answers)) {
                     $answers[$ans->id] = $ans->answer;
                     $answerids[$ans->answer] = $ans->id;
-                } else {
-                    if (array_key_exists($subquestion->id, $responses) && $responses[$subquestion->id]) {
-                        $responses[$subquestion->id] = $answerids[$ans->answer];
-                    }
-                    if (array_key_exists($subquestion->id, $correctanswers)) {
-                        $correctanswers[$subquestion->id] = $answerids[$ans->answer];
-                    }
                 }
             }
+        }
+        
+        // Fix up the ids of any responses that point the the eliminated duplicates.
+        foreach ($responses as $subquestionid => $ignored) {
+            if ($responses[$subquestionid]) {
+                $responses[$subquestionid] = $answerids[$allanswers[$responses[$subquestionid]]];
+            }
+        }
+        foreach ($correctanswers as $subquestionid => $ignored) {
+            $correctanswers[$subquestionid] = $answerids[$allanswers[$correctanswers[$subquestionid]]];
         }
 
         // Shuffle the answers
