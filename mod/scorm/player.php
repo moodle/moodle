@@ -232,7 +232,6 @@
                     <script lanuguage="javascript">
                         function openpopup(url,name,options,width,height) {
                             fullurl = "<?php echo $CFG->wwwroot.'/mod/scorm/' ?>" + url;
-                            alert(fullurl+"\n"+name+"\n"+options);
                             windowobj = window.open(fullurl,name,options);
                             if ((width==100) && (height==100)) {
                                 // Fullscreen
@@ -252,7 +251,7 @@
                         url = "loadSCO.php?id=<?php echo $cm->id.$scoidpop ?>";
                         width = <?php p($scorm->width) ?>;
                         height = <?php p($scorm->height) ?>;
-                        var main = openpopup(url, "popupwindow", "<?php p($scorm->options) ?>", width, height);
+                        var main = openpopup(url, "scormpopup", "<?php p($scorm->options) ?>", width, height);
                     </script>
                     <noscript>
                     <iframe id="main"
