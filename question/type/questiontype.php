@@ -249,7 +249,9 @@ class default_questiontype {
         // will use the empty string '' as the index for that one response. This will
         // automatically be stored in and restored from the answer field in the
         // question_states table.
-        $state->responses = array('' => '');
+        $state->responses = array(
+                '' => '',
+        );
         return true;
     }
 
@@ -814,27 +816,26 @@ class default_questiontype {
     * @param object $cmoptions
     */
     function grade_responses(&$question, &$state, $cmoptions) {
-        /* The default implementation uses the comparison method to check if
-        the responses given are equivalent to the responses for each answer
-        in turn and sets the marks and penalty accordingly. This works for the
-        most simple question types. */
+        // The default implementation uses the test_response method to
+        // compare what the student entered against each of the possible
+        // answers stored in the question, and uses the grade from the 
+        // first one that matches. It also sets the marks and penalty.
+        // This should be good enought for most simple question types.
 
-        $teststate = clone($state);
-        $teststate->raw_grade = 0;
+        $state->raw_grade = 0;
         foreach($question->options->answers as $answer) {
-            $teststate->responses[''] = $answer->answer;
-
-            if($this->compare_responses($question, $state, $teststate)) {
-                $state->raw_grade = min(max((float) $answer->fraction,
-                 0.0), 1.0) * $question->maxgrade;
+            if($this->test_response($question, $state, $answer)) {
+                $state->raw_grade = $answer->fraction;
                 break;
             }
         }
-        if (empty($state->raw_grade)) {
-            $state->raw_grade = 0.0;
-        }
-        // Only allow one attempt at the question
-        $state->penalty = 1;
+
+        // Make sure we don't assign negative or too high marks.
+        $state->raw_grade = min(max((float) $state->raw_grade,
+                            0.0), 1.0) * $question->maxgrade;
+                            
+        // Update the penalty.
+        $state->penalty = $question->penalty * $question->maxgrade;
 
         // mark the state as graded
         $state->event = ($state->event ==  QUESTION_EVENTCLOSE) ? QUESTION_EVENTCLOSEANDGRADE : QUESTION_EVENTGRADE;

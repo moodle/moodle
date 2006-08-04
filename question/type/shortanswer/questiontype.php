@@ -35,6 +35,8 @@ class question_shortanswer_qtype extends default_questiontype {
     }
 
     function save_question_options($question) {
+        $result = new stdClass;
+        
         if (!$oldanswers = get_records("question_answers", "question", $question->id, "id ASC")) {
             $oldanswers = array();
         }
@@ -55,7 +57,7 @@ class question_shortanswer_qtype extends default_questiontype {
                         return $result;
                     }
                 } else {    // This is a completely new answer
-                    unset($answer);
+                    $answer = new stdClass;
                     $answer->answer   = trim($dataanswer);
                     $answer->question = $question->id;
                     $answer->fraction = $question->fraction[$key];
@@ -123,6 +125,7 @@ class question_shortanswer_qtype extends default_questiontype {
     /// This implementation is also used by question type 'numerical'
         $correctanswers = $this->get_correct_responses($question, $state);
         $readonly = empty($options->readonly) ? '' : 'readonly="readonly"';
+        $formatoptions = new stdClass;
         $formatoptions->noclean = true;
         $formatoptions->para = false;
         $nameprefix = $question->name_prefix;
@@ -182,82 +185,36 @@ class question_shortanswer_qtype extends default_questiontype {
         return false;
     }
 
-    function grade_responses(&$question, &$state, $cmoptions) {
+    function compare_responses($question, $state, $teststate) {
+        if (isset($state->responses['']) && isset($teststate->responses[''])) {
+            if ($question->options->usecase) {
+                return $state->responses[''] == $teststate->responses[''];
+            } else {
+                return strcasecmp($state->responses[''], $teststate->responses['']) == 0;
+            }
+        }
+        return false;
+    }
+
+    function test_response(&$question, $state, $answer) {
+        return $this->compare_string_with_wildcard($state->responses[''],
+                $answer->answer, !$question->options->usecase);
+    }
+
+    function compare_string_with_wildcard($string, $pattern, $ignorecase) {
+        // Break the string on non-escaped asterisks.
+        $bits = preg_split('/(?<!\\\\)\*/', $pattern);
+        // Escape regexp special characters in the bits.
+        $bits = array_map('preg_quote', $bits);
+        // Put it back together to make the regexp.
+        $regexp = '|^' . implode('.*', $bits) . '$|u';
         
-        $teststate = clone($state);
-        $state->raw_grade = 0;
-        // Compare the response with every teacher answer in turn
-        // and return the first one that matches.
-        foreach($question->options->answers as $answer) {
-            // Now we use a bit of a hack: we put the answer into the response
-            // of a teststate so that we can use the function compare_responses()
-            $teststate->responses[''] = trim($answer->answer);
-            if($this->compare_responses($question, $state, $teststate)) {
-                $state->raw_grade = $answer->fraction;
-                break;
-            }
+        // Make the match insensitive if requested to.
+        if ($ignorecase) {
+            $regexp .= 'i';
         }
-
-        // Make sure we don't assign negative or too high marks
-        $state->raw_grade = min(max((float) $state->raw_grade,
-                            0.0), 1.0) * $question->maxgrade;
-        $state->penalty = $question->penalty * $question->maxgrade;
-
-        // mark the state as graded
-        $state->event = ($state->event ==  QUESTION_EVENTCLOSE) ? QUESTION_EVENTCLOSEANDGRADE : QUESTION_EVENTGRADE;
-
-        return true;
-    }
-
-    function compare_responses(&$question, &$state, &$teststate) {
-        // In this questiontype this function is not only used to compare responses
-        // between two different states but it is also used by grade_responses() and
-        // by test_responses() to compare responses with answers.
-        if (isset($state->responses[''])) {
-            $response0 = trim(stripslashes($state->responses['']));
-        } else {
-            $response0 = '';
-        }
-
-        if (isset($teststate->responses[''])) {
-            $response1 = trim(stripslashes($teststate->responses['']));
-        } else {
-            $response1 = '';
-        }
-
-        if (!$question->options->usecase) { // Don't compare case
-            $response0 = strtolower($response0);
-            $response1 = strtolower($response1);
-        }
-
-        /// These are things to protect in the strings when wildcards are used
-        $search = array('\\', '+', '(', ')', '[', ']', '-');
-        $replace = array('\\\\', '\+', '\(', '\)', '\[', '\]', '\-');
-
-        if (strpos(' '.$response1, '*')) {
-            $response1 = str_replace('\*','@@@@@@',$response1);
-            $response1 = str_replace('*','.*',$response1);
-            $response1 = str_replace($search, $replace, $response1);
-            $response1 = str_replace('@@@@@@', '\*',$response1);
-
-            if (ereg('^'.$response1.'$', $response0)) {
-                return true;
-            }
-
-        } else if ($response1 == $response0) {
-            return true;
-        }
-
-        return false;
-    }
-
-    function test_response(&$question, &$state, &$answer) {
-        $teststate   = clone($state);
-        $teststate->responses[''] = trim($answer->answer);
-            if($this->compare_responses($question, $state, $teststate)) {
-                return true;
-            }
-        return false;
+        
+        return preg_match($regexp, trim($string));
     }
 
     /// BACKUP FUNCTIONS ////////////////////////////
@@ -307,6 +264,7 @@ class question_shortanswer_qtype extends default_questiontype {
             $sho_info = $shortanswers[$i];
 
             //Now, build the question_shortanswer record structure
+            $shortanswer = new stdClass;
             $shortanswer->question = $new_question_id;
             $shortanswer->answers = backup_todb($sho_info['#']['ANSWERS']['0']['#']);
             $shortanswer->usecase = backup_todb($sho_info['#']['USECASE']['0']['#']);

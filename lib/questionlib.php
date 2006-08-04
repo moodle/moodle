@@ -617,8 +617,8 @@ function get_question_states(&$questions, $cmoptions, $attempt) {
             $states[$i]->changed = true;
 
             // Create the empty question type specific information
-            if (!$QTYPES[$questions[$i]->qtype]
-             ->create_session_and_responses($questions[$i], $states[$i], $cmoptions, $attempt)) {
+            if (!$QTYPES[$questions[$i]->qtype]->create_session_and_responses(
+                    $questions[$i], $states[$i], $cmoptions, $attempt)) {
                 return false;
             }
             $states[$i]->last_graded = clone($states[$i]);
@@ -936,15 +936,16 @@ function question_process_responses(&$question, &$state, $action, $cmoptions, &$
     if (question_isgradingevent($action->event)) {
         $state->responses = $state->last_graded->responses;
     }
+    
     // Check for unchanged responses (exactly unchanged, not equivalent).
     // We also have to catch questions that the student has not yet attempted
-    $sameresponses = (($state->responses == $action->responses) or
-     ($state->responses == array(''=>'') && array_keys(array_count_values($action->responses))===array('')));
+    $sameresponses = !$state->last_graded->event == QUESTION_EVENTOPEN && 
+            $state->responses == $action->responses;
 
     // If the response has not been changed then we do not have to process it again
     // unless the attempt is closing or validation is requested
     if ($sameresponses and QUESTION_EVENTCLOSE != $action->event
-     and QUESTION_EVENTVALIDATE != $action->event) {
+            and QUESTION_EVENTVALIDATE != $action->event) {
         return true;
     }
 
@@ -974,13 +975,14 @@ function question_process_responses(&$question, &$state, $action, $cmoptions, &$
 
         // Unless the attempt is closing, we want to work out if the current responses 
         // (or equivalent responses) were already given in the last graded attempt. 
-        if((QUESTION_EVENTCLOSE != $action->event) and $QTYPES[$question->qtype]->compare_responses(
-         $question, $state, $state->last_graded)) {
+        if(QUESTION_EVENTCLOSE != $action->event && QUESTION_EVENTOPEN != $state->last_graded->event &&
+                $QTYPES[$question->qtype]->compare_responses($question, $state, $state->last_graded)) {
             $state->event = QUESTION_EVENTDUPLICATE;
         }
 
         // If we did not find a duplicate or if the attempt is closing, perform grading
-        if ((!$sameresponses and (QUESTION_EVENTDUPLICATE != $state->event)) or (QUESTION_EVENTCLOSE == $action->event)) {
+        if ((!$sameresponses and QUESTION_EVENTDUPLICATE != $state->event) or
+                QUESTION_EVENTCLOSE == $action->event) {
             // Decrease sumgrades by previous grade and then later add new grade
             $attempt->sumgrades -= (float)$state->last_graded->grade;
 

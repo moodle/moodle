@@ -40,7 +40,7 @@ class question_numerical_qtype extends question_shortanswer_qtype {
         }
         $this->get_numerical_units($question);
 
-        // If units are defined we strip off the defaultunit from the answer, if
+        // If units are defined we strip off the default unit from the answer, if
         // it is present. (Required for compatibility with the old code and DB).
         if ($defaultunit = $this->get_default_numerical_unit($question)) {
             foreach($question->options->answers as $key => $val) {
@@ -255,11 +255,11 @@ class question_numerical_qtype extends question_shortanswer_qtype {
         return true;
     }
 
-    function compare_responses(&$question, &$state, &$teststate) {
-        $response = isset($state->responses['']) ? $state->responses[''] : '';
-        $testresponse = isset($teststate->responses[''])
-         ? $teststate->responses[''] : '';
-        return ($response == $testresponse);
+    function compare_responses(&$question, $state, $teststate) {
+        if (isset($state->responses['']) && isset($teststate->responses[''])) {
+            return $state->responses[''] == $teststate->responses[''];
+        }
+        return false;
     }
 
     /**
@@ -292,27 +292,6 @@ class question_numerical_qtype extends question_shortanswer_qtype {
             }
         }
         return false;
-    }
-
-    function grade_responses(&$question, &$state, $cmoptions) {
-        $answers = &$question->options->answers;
-        $state->raw_grade = 0;
-        foreach($answers as $answer) {
-            if($this->test_response($question, $state, $answer)) {
-                $state->raw_grade = $answer->fraction;
-                break;
-            }
-        }
-
-        // Make sure we don't assign negative or too high marks
-        $state->raw_grade = min(max((float) $state->raw_grade,
-                            0.0), 1.0) * $question->maxgrade;
-        $state->penalty = $question->penalty * $question->maxgrade;
-
-        // mark the state as graded
-        $state->event = ($state->event ==  QUESTION_EVENTCLOSE) ? QUESTION_EVENTCLOSEANDGRADE : QUESTION_EVENTGRADE;
-
-        return true;
     }
 
     function get_correct_responses(&$question, &$state) {
