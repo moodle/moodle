@@ -1816,6 +1816,7 @@ function assignment_grades($assignmentid) {
     } else { // Scale
         if ($grades) {
             $scaleid = - ($assignment->grade);
+            $maxgrade = "";
             if ($scale = get_record('scale', 'id', $scaleid)) {
                 $scalegrades = make_menu_from_list($scale->scale);
                 foreach ($grades as $userid => $grade) {
@@ -1825,10 +1826,11 @@ function assignment_grades($assignmentid) {
                         $grades[$userid] = $scalegrades[$grade];
                     }
                 }
+                $maxgrade = $scale->name;
             }
         }
         $return->grades = $grades;
-        $return->maxgrade = "";
+        $return->maxgrade = $maxgrade;
     }
 
     return $return;
