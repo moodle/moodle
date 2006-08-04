@@ -219,8 +219,6 @@
 <?php
     if ($result->prerequisites) {
         if ($scorm->popup == 0) {
-            if (strpos('MSIE',$_SERVER['HTTP_USER_AGENT']) === false) { 
-                /// Internet Explorer does not has full support to objects
 ?>
                 <iframe id="main"
                         class="scoframe"
@@ -229,18 +227,6 @@
                         src="loadSCO.php?id=<?php echo $cm->id.$scoidstr.$modestr ?>">
                 </iframe>
 <?php
-            } else {
-?>
-                <object id="main" 
-                        class="scoframe" 
-                        width="<?php echo $scorm->width<=100 ? $scorm->width.'%' : $scorm->width ?>" 
-                        height="<?php echo $scorm->height<=100 ? $scorm->height.'%' : $scorm->height ?>" 
-                        data="loadSCO.php?id=<?php echo $cm->id.$scoidstr.$modestr ?>"
-                        type="text/html">
-                     <?php print_string('noobjectsupport', 'scorm'); ?>
-                </object>
-<?php
-            }
         } else {
 ?>
                     <script lanuguage="javascript">
@@ -268,30 +254,12 @@
                         var main = openpopup(url, "<?php p($scorm->name) ?>", "<?php p($scorm->options) ?>", width, height);
                     </script>
                     <noscript>
-<?php
-            if (strpos('MSIE',$_SERVER['HTTP_USER_AGENT']) === false) { 
-                /// Internet Explorer does not has full support to objects
-?>
                     <iframe id="main"
                             class="scoframe"
                             width="<?php echo $scorm->width<=100 ? $scorm->width.'%' : $scorm->width ?>" 
                             height="<?php echo $scorm->height<=100 ? $scorm->height.'%' : $scorm->height ?>" 
                             src="loadSCO.php?id=<?php echo $cm->id.$scoidstr.$modestr ?>">
                     </iframe>
-<?php
-            } else {
-?>
-                    <object id="main" 
-                            class="scoframe" 
-                            width="<?php echo $scorm->width<=100 ? $scorm->width.'%' : $scorm->width ?>" 
-                            height="<?php echo $scorm->height<=100 ? $scorm->height.'%' : $scorm->height ?>" 
-                            data="loadSCO.php?id=<?php echo $cm->id.$scoidstr.$modestr ?>"
-                            type="text/html">
-                         <?php print_string('noobjectsupport', 'scorm'); ?>
-                    </object>
-<?php
-            }
-?>
                     </noscript>
 <?php            
         }
