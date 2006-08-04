@@ -111,9 +111,9 @@ class question_match_qtype extends default_questiontype {
 
     function create_session_and_responses(&$question, &$state, $cmoptions, $attempt) {
         if (!$state->options->subquestions = get_records('question_match_sub',
-         'question', $question->id)) {
-           notify('Error: Missing subquestions!');
-           return false;
+                'question', $question->id)) {
+            notify('Error: Missing subquestions!');
+            return false;
         }
 
         foreach ($state->options->subquestions as $key => $subquestion) {
@@ -126,7 +126,7 @@ class question_match_qtype extends default_questiontype {
             $answer->answer   = $subquestion->answertext;
             $answer->fraction = 1.0;
             $state->options->subquestions[$key]->options
-             ->answers[$subquestion->code] = clone($answer);
+                    ->answers[$subquestion->code] = clone($answer);
 
             $state->responses[$key] = '';
         }

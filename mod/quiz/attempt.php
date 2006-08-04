@@ -415,7 +415,7 @@
                 $action->responses = $closestates[$key]->responses;
                 $action->timestamp = $closestates[$key]->timestamp;
                 question_process_responses($question, $closestates[$key], $action, $quiz, $attempt);
-                            save_question_session($question, $closestates[$key]);
+                save_question_session($question, $closestates[$key]);
             }
         }
         add_to_log($course->id, 'quiz', 'close attempt',
