@@ -1,0 +1,899 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="lib/db" VERSION="20060807" COMMENT="XMLDB file for core Moodle tables">
+  <TABLES>
+    <TABLE NAME="config" COMMENT="Moodle configuration variables" NEXT="config_plugins">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="name"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="value"/>
+        <FIELD NAME="value" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="name"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for config" NEXT="name"/>
+        <KEY NAME="name" TYPE="unique" FIELDS="name" PREVIOUS="primary"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="config_plugins" COMMENT="Moodle modules and plugins configuration variables" PREVIOUS="config" NEXT="course">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="plugin"/>
+        <FIELD NAME="plugin" TYPE="char" LENGTH="100" NOTNULL="true" DEFAULT="core" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="name"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="plugin" NEXT="value"/>
+        <FIELD NAME="value" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="name"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for config_plugins" NEXT="plugin_name"/>
+        <KEY NAME="plugin_name" TYPE="unique" FIELDS="plugin, name" PREVIOUS="primary"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="course" COMMENT="Central course table" PREVIOUS="config_plugins" NEXT="course_categories">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="category"/>
+        <FIELD NAME="category" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="sortorder"/>
+        <FIELD NAME="sortorder" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="category" NEXT="password"/>
+        <FIELD NAME="password" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="sortorder" NEXT="fullname"/>
+        <FIELD NAME="fullname" TYPE="char" LENGTH="254" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="password" NEXT="shortname"/>
+        <FIELD NAME="shortname" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="fullname" NEXT="idnumber"/>
+        <FIELD NAME="idnumber" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="shortname" NEXT="summary"/>
+        <FIELD NAME="summary" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="idnumber" NEXT="format"/>
+        <FIELD NAME="format" TYPE="char" LENGTH="10" NOTNULL="true" DEFAULT="topics" SEQUENCE="false" ENUM="false" PREVIOUS="summary" NEXT="showgrades"/>
+        <FIELD NAME="showgrades" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" ENUM="false" PREVIOUS="format" NEXT="modinfo"/>
+        <FIELD NAME="modinfo" TYPE="text" LENGTH="big" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="showgrades" NEXT="newsitems"/>
+        <FIELD NAME="newsitems" TYPE="int" LENGTH="5" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" ENUM="false" PREVIOUS="modinfo" NEXT="teacher"/>
+        <FIELD NAME="teacher" TYPE="char" LENGTH="100" NOTNULL="true" DEFAULT="Teacher" SEQUENCE="false" ENUM="false" PREVIOUS="newsitems" NEXT="teachers"/>
+        <FIELD NAME="teachers" TYPE="char" LENGTH="100" NOTNULL="true" DEFAULT="Teachers" SEQUENCE="false" ENUM="false" PREVIOUS="teacher" NEXT="student"/>
+        <FIELD NAME="student" TYPE="char" LENGTH="100" NOTNULL="true" DEFAULT="Student" SEQUENCE="false" ENUM="false" PREVIOUS="teachers" NEXT="students"/>
+        <FIELD NAME="students" TYPE="char" LENGTH="100" NOTNULL="true" DEFAULT="Students" SEQUENCE="false" ENUM="false" PREVIOUS="student" NEXT="guest"/>
+        <FIELD NAME="guest" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="students" NEXT="startdate"/>
+        <FIELD NAME="startdate" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="guest" NEXT="enrolperiod"/>
+        <FIELD NAME="enrolperiod" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="startdate" NEXT="numsections"/>
+        <FIELD NAME="numsections" TYPE="int" LENGTH="5" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" ENUM="false" PREVIOUS="enrolperiod" NEXT="marker"/>
+        <FIELD NAME="marker" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="numsections" NEXT="maxbytes"/>
+        <FIELD NAME="maxbytes" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="marker" NEXT="showreports"/>
+        <FIELD NAME="showreports" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="maxbytes" NEXT="visible"/>
+        <FIELD NAME="visible" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" ENUM="false" PREVIOUS="showreports" NEXT="hiddensections"/>
+        <FIELD NAME="hiddensections" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="visible" NEXT="groupmode"/>
+        <FIELD NAME="groupmode" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="hiddensections" NEXT="groupmodeforce"/>
+        <FIELD NAME="groupmodeforce" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="groupmode" NEXT="lang"/>
+        <FIELD NAME="lang" TYPE="char" LENGTH="10" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="groupmodeforce" NEXT="theme"/>
+        <FIELD NAME="theme" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="lang" NEXT="cost"/>
+        <FIELD NAME="cost" TYPE="char" LENGTH="10" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="theme" NEXT="currency"/>
+        <FIELD NAME="currency" TYPE="char" LENGTH="3" NOTNULL="true" DEFAULT="USD" SEQUENCE="false" ENUM="false" PREVIOUS="cost" NEXT="timecreated"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="currency" NEXT="timemodified"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="timecreated" NEXT="metacourse"/>
+        <FIELD NAME="metacourse" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="timemodified" NEXT="requested"/>
+        <FIELD NAME="requested" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="metacourse" NEXT="restrictmodules"/>
+        <FIELD NAME="restrictmodules" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="requested" NEXT="expirynotify"/>
+        <FIELD NAME="expirynotify" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="restrictmodules" NEXT="expirythreshold"/>
+        <FIELD NAME="expirythreshold" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="expirynotify" NEXT="notifystudents"/>
+        <FIELD NAME="notifystudents" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="expirythreshold" NEXT="enrollable"/>
+        <FIELD NAME="enrollable" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" ENUM="false" PREVIOUS="notifystudents" NEXT="enrolstartdate"/>
+        <FIELD NAME="enrolstartdate" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="enrollable" NEXT="enrolenddate"/>
+        <FIELD NAME="enrolenddate" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="enrolstartdate" NEXT="enrol"/>
+        <FIELD NAME="enrol" TYPE="char" LENGTH="20" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="enrolenddate"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for course"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="category" UNIQUE="false" FIELDS="category" NEXT="idnumber"/>
+        <INDEX NAME="idnumber" UNIQUE="false" FIELDS="idnumber" PREVIOUS="category" NEXT="shortname"/>
+        <INDEX NAME="shortname" UNIQUE="false" FIELDS="shortname" PREVIOUS="idnumber"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="course_categories" COMMENT="Course categories" PREVIOUS="course" NEXT="course_display">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="name"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="description"/>
+        <FIELD NAME="description" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="name" NEXT="parent"/>
+        <FIELD NAME="parent" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="description" NEXT="sortorder"/>
+        <FIELD NAME="sortorder" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="parent" NEXT="coursecount"/>
+        <FIELD NAME="coursecount" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="sortorder" NEXT="visible"/>
+        <FIELD NAME="visible" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="false" DEFAULT="1" SEQUENCE="false" ENUM="false" PREVIOUS="coursecount" NEXT="timemodified"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="visible" NEXT="depth"/>
+        <FIELD NAME="depth" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="timemodified" NEXT="path"/>
+        <FIELD NAME="path" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="depth"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for course_categories"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="course_display" COMMENT="Stores info about how to display the course" PREVIOUS="course_categories" NEXT="course_meta">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="course"/>
+        <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="userid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="course" NEXT="display"/>
+        <FIELD NAME="display" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="userid"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for course_display"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="course_userid" UNIQUE="false" FIELDS="course, userid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="course_meta" COMMENT="to store meta-courses relations" PREVIOUS="course_display" NEXT="course_modules">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="parent_course"/>
+        <FIELD NAME="parent_course" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="child_course"/>
+        <FIELD NAME="child_course" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="parent_course"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for course_meta"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="parent_course" UNIQUE="false" FIELDS="parent_course" NEXT="child_course"/>
+        <INDEX NAME="child_course" UNIQUE="false" FIELDS="child_course" PREVIOUS="parent_course"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="course_modules" COMMENT="course_modules table retrofitted from MySQL" PREVIOUS="course_meta" NEXT="course_sections">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="course"/>
+        <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="module"/>
+        <FIELD NAME="module" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="course" NEXT="instance"/>
+        <FIELD NAME="instance" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="module" NEXT="section"/>
+        <FIELD NAME="section" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="instance" NEXT="added"/>
+        <FIELD NAME="added" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="section" NEXT="score"/>
+        <FIELD NAME="score" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="added" NEXT="indent"/>
+        <FIELD NAME="indent" TYPE="int" LENGTH="5" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="score" NEXT="visible"/>
+        <FIELD NAME="visible" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="false" DEFAULT="1" SEQUENCE="false" ENUM="false" PREVIOUS="indent" NEXT="visibleold"/>
+        <FIELD NAME="visibleold" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="false" DEFAULT="1" SEQUENCE="false" ENUM="false" PREVIOUS="visible" NEXT="groupmode"/>
+        <FIELD NAME="groupmode" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="visibleold"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for course_modules"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="visible" UNIQUE="false" FIELDS="visible" NEXT="course"/>
+        <INDEX NAME="course" UNIQUE="false" FIELDS="course" PREVIOUS="visible" NEXT="module"/>
+        <INDEX NAME="module" UNIQUE="false" FIELDS="module" PREVIOUS="course" NEXT="instance"/>
+        <INDEX NAME="instance" UNIQUE="false" FIELDS="instance" PREVIOUS="module"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="course_sections" COMMENT="to define the sections for each course" PREVIOUS="course_modules" NEXT="course_request">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="course"/>
+        <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="section"/>
+        <FIELD NAME="section" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="course" NEXT="summary"/>
+        <FIELD NAME="summary" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="section" NEXT="sequence"/>
+        <FIELD NAME="sequence" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="summary" NEXT="visible"/>
+        <FIELD NAME="visible" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="false" DEFAULT="1" SEQUENCE="false" ENUM="false" PREVIOUS="sequence"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for course_sections"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="course_section" UNIQUE="false" FIELDS="course, section"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="course_request" COMMENT="course requests" PREVIOUS="course_sections" NEXT="course_allowed_modules">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="fullname"/>
+        <FIELD NAME="fullname" TYPE="char" LENGTH="254" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="shortname"/>
+        <FIELD NAME="shortname" TYPE="char" LENGTH="15" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="fullname" NEXT="summary"/>
+        <FIELD NAME="summary" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="shortname" NEXT="reason"/>
+        <FIELD NAME="reason" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="summary" NEXT="requester"/>
+        <FIELD NAME="requester" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="reason" NEXT="password"/>
+        <FIELD NAME="password" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="requester"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for course_request"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="shortname" UNIQUE="false" FIELDS="shortname"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="course_allowed_modules" COMMENT="allowed modules foreach course" PREVIOUS="course_request" NEXT="event">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="course"/>
+        <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="module"/>
+        <FIELD NAME="module" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="course"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for course_allowed_modules"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="course" UNIQUE="false" FIELDS="course" NEXT="module"/>
+        <INDEX NAME="module" UNIQUE="false" FIELDS="module" PREVIOUS="course"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="event" COMMENT="For everything with a time associated to it" PREVIOUS="course_allowed_modules" NEXT="cache_filters">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="name"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="description"/>
+        <FIELD NAME="description" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="name" NEXT="format"/>
+        <FIELD NAME="format" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="description" NEXT="courseid"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="format" NEXT="groupid"/>
+        <FIELD NAME="groupid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="courseid" NEXT="userid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="groupid" NEXT="repeatid"/>
+        <FIELD NAME="repeatid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="userid" NEXT="modulename"/>
+        <FIELD NAME="modulename" TYPE="char" LENGTH="20" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="repeatid" NEXT="instance"/>
+        <FIELD NAME="instance" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="modulename" NEXT="eventtype"/>
+        <FIELD NAME="eventtype" TYPE="char" LENGTH="20" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="instance" NEXT="timestart"/>
+        <FIELD NAME="timestart" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="eventtype" NEXT="timeduration"/>
+        <FIELD NAME="timeduration" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="timestart" NEXT="visible"/>
+        <FIELD NAME="visible" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="false" DEFAULT="1" SEQUENCE="false" ENUM="false" PREVIOUS="timeduration" NEXT="uuid"/>
+        <FIELD NAME="uuid" TYPE="char" LENGTH="36" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="visible" NEXT="sequence"/>
+        <FIELD NAME="sequence" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" ENUM="false" PREVIOUS="uuid" NEXT="timemodified"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="sequence"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for event"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="courseid" UNIQUE="false" FIELDS="courseid" NEXT="userid"/>
+        <INDEX NAME="userid" UNIQUE="false" FIELDS="userid" PREVIOUS="courseid" NEXT="timestart"/>
+        <INDEX NAME="timestart" UNIQUE="false" FIELDS="timestart" PREVIOUS="userid" NEXT="timeduration"/>
+        <INDEX NAME="timeduration" UNIQUE="false" FIELDS="timeduration" PREVIOUS="timestart"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="cache_filters" COMMENT="For keeping information about cached data" PREVIOUS="event" NEXT="cache_text">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="filter"/>
+        <FIELD NAME="filter" TYPE="char" LENGTH="32" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="version"/>
+        <FIELD NAME="version" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="filter" NEXT="md5key"/>
+        <FIELD NAME="md5key" TYPE="char" LENGTH="32" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="version" NEXT="rawtext"/>
+        <FIELD NAME="rawtext" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="md5key" NEXT="timemodified"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="rawtext"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for cache_filters"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="filter_md5key" UNIQUE="false" FIELDS="filter, md5key"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="cache_text" COMMENT="For storing temporary copies of processed texts" PREVIOUS="cache_filters" NEXT="grade_category">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="md5key"/>
+        <FIELD NAME="md5key" TYPE="char" LENGTH="32" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="formattedtext"/>
+        <FIELD NAME="formattedtext" TYPE="binary" LENGTH="big" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="md5key" NEXT="timemodified"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="formattedtext"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for cache_text"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="md5key" UNIQUE="false" FIELDS="md5key"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="grade_category" COMMENT="to define categories to group activity grades" PREVIOUS="cache_text" NEXT="grade_exceptions">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="name"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="64" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="courseid"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="name" NEXT="drop_x_lowest"/>
+        <FIELD NAME="drop_x_lowest" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="courseid" NEXT="bonus_points"/>
+        <FIELD NAME="bonus_points" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="drop_x_lowest" NEXT="hidden"/>
+        <FIELD NAME="hidden" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="bonus_points" NEXT="weight"/>
+        <FIELD NAME="weight" TYPE="number" LENGTH="5" NOTNULL="true" UNSIGNED="false" DEFAULT="0.00" SEQUENCE="false" ENUM="false" DECIMALS="2" PREVIOUS="hidden"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for grade_category"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="courseid" UNIQUE="false" FIELDS="courseid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="grade_exceptions" COMMENT="individual grades to be skipped for certain students" PREVIOUS="grade_category" NEXT="grade_item">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="courseid"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="grade_itemid"/>
+        <FIELD NAME="grade_itemid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="courseid" NEXT="userid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="grade_itemid"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for grade_exceptions"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="courseid" UNIQUE="false" FIELDS="courseid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="grade_item" COMMENT="items to be graded" PREVIOUS="grade_exceptions" NEXT="grade_letter">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="courseid"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="category"/>
+        <FIELD NAME="category" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="courseid" NEXT="modid"/>
+        <FIELD NAME="modid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="category" NEXT="cminstance"/>
+        <FIELD NAME="cminstance" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="modid" NEXT="scale_grade"/>
+        <FIELD NAME="scale_grade" TYPE="float" LENGTH="11" NOTNULL="true" UNSIGNED="false" DEFAULT="1.0000000000" SEQUENCE="false" ENUM="false" DECIMALS="10" PREVIOUS="cminstance" NEXT="extra_credit"/>
+        <FIELD NAME="extra_credit" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="scale_grade" NEXT="sort_order"/>
+        <FIELD NAME="sort_order" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="extra_credit"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for grade_item"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="courseid" UNIQUE="false" FIELDS="courseid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="grade_letter" COMMENT="to convert numerical grades to letter grades" PREVIOUS="grade_item" NEXT="grade_preferences">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="courseid"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="letter"/>
+        <FIELD NAME="letter" TYPE="char" LENGTH="8" NOTNULL="true" DEFAULT="NA" SEQUENCE="false" ENUM="false" PREVIOUS="courseid" NEXT="grade_high"/>
+        <FIELD NAME="grade_high" TYPE="number" LENGTH="5" NOTNULL="true" UNSIGNED="false" DEFAULT="100.00" SEQUENCE="false" ENUM="false" DECIMALS="2" PREVIOUS="letter" NEXT="grade_low"/>
+        <FIELD NAME="grade_low" TYPE="number" LENGTH="5" NOTNULL="true" UNSIGNED="false" DEFAULT="0.00" SEQUENCE="false" ENUM="false" DECIMALS="2" PREVIOUS="grade_high"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for grade_letter"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="courseid" UNIQUE="false" FIELDS="courseid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="grade_preferences" COMMENT="Preferences of the gradebook for each course" PREVIOUS="grade_letter" NEXT="groups">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="courseid"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="preference"/>
+        <FIELD NAME="preference" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="courseid" NEXT="value"/>
+        <FIELD NAME="value" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="preference"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for grade_preferences"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="courseid-preference" UNIQUE="true" FIELDS="courseid, preference"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="groups" COMMENT="Each record is a group in a course" PREVIOUS="grade_preferences" NEXT="groups_members">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="courseid"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="name"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="254" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="courseid" NEXT="description"/>
+        <FIELD NAME="description" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="name" NEXT="password"/>
+        <FIELD NAME="password" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="description" NEXT="lang"/>
+        <FIELD NAME="lang" TYPE="char" LENGTH="10" NOTNULL="true" DEFAULT="en" SEQUENCE="false" ENUM="false" PREVIOUS="password" NEXT="theme"/>
+        <FIELD NAME="theme" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="lang" NEXT="picture"/>
+        <FIELD NAME="picture" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="theme" NEXT="hidepicture"/>
+        <FIELD NAME="hidepicture" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="picture" NEXT="timecreated"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="hidepicture" NEXT="timemodified"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="timecreated"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for groups"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="courseid" UNIQUE="false" FIELDS="courseid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="groups_members" COMMENT="Lists memberships of users to groups" PREVIOUS="groups" NEXT="log">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="groupid"/>
+        <FIELD NAME="groupid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="userid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="groupid" NEXT="timeadded"/>
+        <FIELD NAME="timeadded" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="userid"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for groups_members"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="groupid" UNIQUE="false" FIELDS="groupid" NEXT="userid"/>
+        <INDEX NAME="userid" UNIQUE="false" FIELDS="userid" PREVIOUS="groupid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="log" COMMENT="Every action is logged as far as possible" PREVIOUS="groups_members" NEXT="log_display">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="time"/>
+        <FIELD NAME="time" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="userid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="time" NEXT="ip"/>
+        <FIELD NAME="ip" TYPE="char" LENGTH="15" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="userid" NEXT="course"/>
+        <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="ip" NEXT="module"/>
+        <FIELD NAME="module" TYPE="char" LENGTH="20" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="course" NEXT="cmid"/>
+        <FIELD NAME="cmid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="module" NEXT="action"/>
+        <FIELD NAME="action" TYPE="char" LENGTH="40" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="cmid" NEXT="url"/>
+        <FIELD NAME="url" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="action" NEXT="info"/>
+        <FIELD NAME="info" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="url"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for log"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="time-course-module-action" UNIQUE="false" FIELDS="time, course, module, action" NEXT="course-module-action"/>
+        <INDEX NAME="course-module-action" UNIQUE="false" FIELDS="course, module, action" PREVIOUS="time-course-module-action" NEXT="course-userid"/>
+        <INDEX NAME="course-userid" UNIQUE="false" FIELDS="course, userid" PREVIOUS="course-module-action" NEXT="userid"/>
+        <INDEX NAME="userid" UNIQUE="false" FIELDS="userid" PREVIOUS="course-userid" NEXT="info"/>
+        <INDEX NAME="info" UNIQUE="false" FIELDS="info" PREVIOUS="userid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="log_display" COMMENT="For a particular module/action, specifies a moodle table/field" PREVIOUS="log" NEXT="message">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="module"/>
+        <FIELD NAME="module" TYPE="char" LENGTH="20" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="action"/>
+        <FIELD NAME="action" TYPE="char" LENGTH="40" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="module" NEXT="mtable"/>
+        <FIELD NAME="mtable" TYPE="char" LENGTH="30" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="action" NEXT="field"/>
+        <FIELD NAME="field" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="mtable"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for log_display"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="module-action" UNIQUE="true" FIELDS="module, action"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="message" COMMENT="Stores all unread messages" PREVIOUS="log_display" NEXT="message_read">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="useridfrom"/>
+        <FIELD NAME="useridfrom" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="useridto"/>
+        <FIELD NAME="useridto" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="useridfrom" NEXT="message"/>
+        <FIELD NAME="message" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="useridto" NEXT="format"/>
+        <FIELD NAME="format" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="message" NEXT="timecreated"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="format" NEXT="messagetype"/>
+        <FIELD NAME="messagetype" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="timecreated"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for message"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="useridfrom" UNIQUE="false" FIELDS="useridfrom" NEXT="useridto"/>
+        <INDEX NAME="useridto" UNIQUE="false" FIELDS="useridto" PREVIOUS="useridfrom"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="message_read" COMMENT="Stores all messages that have been read" PREVIOUS="message" NEXT="message_contacts">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="useridfrom"/>
+        <FIELD NAME="useridfrom" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="useridto"/>
+        <FIELD NAME="useridto" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="useridfrom" NEXT="message"/>
+        <FIELD NAME="message" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="useridto" NEXT="format"/>
+        <FIELD NAME="format" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="message" NEXT="timecreated"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="format" NEXT="timeread"/>
+        <FIELD NAME="timeread" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="timecreated" NEXT="messagetype"/>
+        <FIELD NAME="messagetype" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="timeread" NEXT="mailed"/>
+        <FIELD NAME="mailed" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="messagetype"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for message_read"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="useridfrom" UNIQUE="false" FIELDS="useridfrom" NEXT="useridto"/>
+        <INDEX NAME="useridto" UNIQUE="false" FIELDS="useridto" PREVIOUS="useridfrom"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="message_contacts" COMMENT="Maintains lists of relationships between users" PREVIOUS="message_read" NEXT="modules">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="userid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="contactid"/>
+        <FIELD NAME="contactid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="userid" NEXT="blocked"/>
+        <FIELD NAME="blocked" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="contactid"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for message_contacts"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="userid-contactid" UNIQUE="true" FIELDS="userid, contactid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="modules" COMMENT="modules available in the site" PREVIOUS="message_contacts" NEXT="scale">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="name"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="20" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="version"/>
+        <FIELD NAME="version" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="name" NEXT="cron"/>
+        <FIELD NAME="cron" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="version" NEXT="lastcron"/>
+        <FIELD NAME="lastcron" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="cron" NEXT="search"/>
+        <FIELD NAME="search" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="lastcron" NEXT="visible"/>
+        <FIELD NAME="visible" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="false" DEFAULT="1" SEQUENCE="false" ENUM="false" PREVIOUS="search"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for modules"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="name" UNIQUE="false" FIELDS="name"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="scale" COMMENT="Defines grading scales" PREVIOUS="modules" NEXT="sessions">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="courseid"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="userid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="courseid" NEXT="name"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="userid" NEXT="scale"/>
+        <FIELD NAME="scale" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="name" NEXT="description"/>
+        <FIELD NAME="description" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="scale" NEXT="timemodified"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="description"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for scale"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="courseid" UNIQUE="false" FIELDS="courseid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="sessions" COMMENT="Optional database session storage, not used by default" PREVIOUS="scale" NEXT="timezone">
+      <FIELDS>
+        <FIELD NAME="sesskey" TYPE="char" LENGTH="32" NOTNULL="true" SEQUENCE="false" ENUM="false" NEXT="expiry"/>
+        <FIELD NAME="expiry" TYPE="int" LENGTH="11" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="sesskey" NEXT="expireref"/>
+        <FIELD NAME="expireref" TYPE="char" LENGTH="64" NOTNULL="false" SEQUENCE="false" ENUM="false" PREVIOUS="expiry" NEXT="data"/>
+        <FIELD NAME="data" TYPE="text" LENGTH="medium" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="expireref"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="sesskey" COMMENT="Primary key for sessions"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="expiry" UNIQUE="false" FIELDS="expiry"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="timezone" COMMENT="Rules for calculating local wall clock time for users" PREVIOUS="sessions" NEXT="user">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="true" ENUM="false" NEXT="name"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="year"/>
+        <FIELD NAME="year" TYPE="int" LENGTH="11" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="name" NEXT="rule"/>
+        <FIELD NAME="rule" TYPE="char" LENGTH="20" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="year" NEXT="gmtoff"/>
+        <FIELD NAME="gmtoff" TYPE="int" LENGTH="11" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="rule" NEXT="dstoff"/>
+        <FIELD NAME="dstoff" TYPE="int" LENGTH="11" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="gmtoff" NEXT="dst_month"/>
+        <FIELD NAME="dst_month" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="dstoff" NEXT="dst_startday"/>
+        <FIELD NAME="dst_startday" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="dst_month" NEXT="dst_weekday"/>
+        <FIELD NAME="dst_weekday" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="dst_startday" NEXT="dst_skipweeks"/>
+        <FIELD NAME="dst_skipweeks" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="dst_weekday" NEXT="dst_time"/>
+        <FIELD NAME="dst_time" TYPE="char" LENGTH="5" NOTNULL="true" DEFAULT="00:00" SEQUENCE="false" ENUM="false" PREVIOUS="dst_skipweeks" NEXT="std_month"/>
+        <FIELD NAME="std_month" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="dst_time" NEXT="std_startday"/>
+        <FIELD NAME="std_startday" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="std_month" NEXT="std_weekday"/>
+        <FIELD NAME="std_weekday" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="std_startday" NEXT="std_skipweeks"/>
+        <FIELD NAME="std_skipweeks" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="std_weekday" NEXT="std_time"/>
+        <FIELD NAME="std_time" TYPE="char" LENGTH="5" NOTNULL="true" DEFAULT="00:00" SEQUENCE="false" ENUM="false" PREVIOUS="std_skipweeks"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for timezone"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="user" COMMENT="One record for each person" PREVIOUS="timezone" NEXT="user_admins">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="auth"/>
+        <FIELD NAME="auth" TYPE="char" LENGTH="20" NOTNULL="true" DEFAULT="manual" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="confirmed"/>
+        <FIELD NAME="confirmed" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="auth" NEXT="policyagreed"/>
+        <FIELD NAME="policyagreed" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="confirmed" NEXT="deleted"/>
+        <FIELD NAME="deleted" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="policyagreed" NEXT="username"/>
+        <FIELD NAME="username" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="deleted" NEXT="password"/>
+        <FIELD NAME="password" TYPE="char" LENGTH="32" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="username" NEXT="idnumber"/>
+        <FIELD NAME="idnumber" TYPE="char" LENGTH="64" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="password" NEXT="firstname"/>
+        <FIELD NAME="firstname" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="idnumber" NEXT="lastname"/>
+        <FIELD NAME="lastname" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="firstname" NEXT="email"/>
+        <FIELD NAME="email" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="lastname" NEXT="emailstop"/>
+        <FIELD NAME="emailstop" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="email" NEXT="icq"/>
+        <FIELD NAME="icq" TYPE="char" LENGTH="15" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="emailstop" NEXT="skype"/>
+        <FIELD NAME="skype" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="icq" NEXT="yahoo"/>
+        <FIELD NAME="yahoo" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="skype" NEXT="aim"/>
+        <FIELD NAME="aim" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="yahoo" NEXT="msn"/>
+        <FIELD NAME="msn" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="aim" NEXT="phone1"/>
+        <FIELD NAME="phone1" TYPE="char" LENGTH="20" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="msn" NEXT="phone2"/>
+        <FIELD NAME="phone2" TYPE="char" LENGTH="20" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="phone1" NEXT="institution"/>
+        <FIELD NAME="institution" TYPE="char" LENGTH="40" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="phone2" NEXT="department"/>
+        <FIELD NAME="department" TYPE="char" LENGTH="30" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="institution" NEXT="address"/>
+        <FIELD NAME="address" TYPE="char" LENGTH="70" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="department" NEXT="city"/>
+        <FIELD NAME="city" TYPE="char" LENGTH="20" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="address" NEXT="country"/>
+        <FIELD NAME="country" TYPE="char" LENGTH="2" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="city" NEXT="lang"/>
+        <FIELD NAME="lang" TYPE="char" LENGTH="10" NOTNULL="true" DEFAULT="en" SEQUENCE="false" ENUM="false" PREVIOUS="country" NEXT="theme"/>
+        <FIELD NAME="theme" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="lang" NEXT="timezone"/>
+        <FIELD NAME="timezone" TYPE="char" LENGTH="100" NOTNULL="true" DEFAULT="99" SEQUENCE="false" ENUM="false" PREVIOUS="theme" NEXT="firstaccess"/>
+        <FIELD NAME="firstaccess" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="timezone" NEXT="lastaccess"/>
+        <FIELD NAME="lastaccess" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="firstaccess" NEXT="lastlogin"/>
+        <FIELD NAME="lastlogin" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="lastaccess" NEXT="currentlogin"/>
+        <FIELD NAME="currentlogin" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="lastlogin" NEXT="lastip"/>
+        <FIELD NAME="lastip" TYPE="char" LENGTH="15" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="currentlogin" NEXT="secret"/>
+        <FIELD NAME="secret" TYPE="char" LENGTH="15" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="lastip" NEXT="picture"/>
+        <FIELD NAME="picture" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="secret" NEXT="url"/>
+        <FIELD NAME="url" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="picture" NEXT="description"/>
+        <FIELD NAME="description" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="url" NEXT="mailformat"/>
+        <FIELD NAME="mailformat" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" ENUM="false" PREVIOUS="description" NEXT="maildigest"/>
+        <FIELD NAME="maildigest" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="mailformat" NEXT="maildisplay"/>
+        <FIELD NAME="maildisplay" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="2" SEQUENCE="false" ENUM="false" PREVIOUS="maildigest" NEXT="htmleditor"/>
+        <FIELD NAME="htmleditor" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" ENUM="false" PREVIOUS="maildisplay" NEXT="autosubscribe"/>
+        <FIELD NAME="autosubscribe" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" ENUM="false" PREVIOUS="htmleditor" NEXT="trackforums"/>
+        <FIELD NAME="trackforums" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="autosubscribe" NEXT="timemodified"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="trackforums"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for user"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="username" UNIQUE="true" FIELDS="username" NEXT="deleted"/>
+        <INDEX NAME="deleted" UNIQUE="false" FIELDS="deleted" PREVIOUS="username" NEXT="confirmed"/>
+        <INDEX NAME="confirmed" UNIQUE="false" FIELDS="confirmed" PREVIOUS="deleted" NEXT="firstname"/>
+        <INDEX NAME="firstname" UNIQUE="false" FIELDS="firstname" PREVIOUS="confirmed" NEXT="lastname"/>
+        <INDEX NAME="lastname" UNIQUE="false" FIELDS="lastname" PREVIOUS="firstname" NEXT="city"/>
+        <INDEX NAME="city" UNIQUE="false" FIELDS="city" PREVIOUS="lastname" NEXT="country"/>
+        <INDEX NAME="country" UNIQUE="false" FIELDS="country" PREVIOUS="city" NEXT="lastaccess"/>
+        <INDEX NAME="lastaccess" UNIQUE="false" FIELDS="lastaccess" PREVIOUS="country" NEXT="email"/>
+        <INDEX NAME="email" UNIQUE="false" FIELDS="email" PREVIOUS="lastaccess" NEXT="auth"/>
+        <INDEX NAME="auth" UNIQUE="false" FIELDS="auth" PREVIOUS="email" NEXT="idnumber"/>
+        <INDEX NAME="idnumber" UNIQUE="false" FIELDS="idnumber" PREVIOUS="auth"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="user_admins" COMMENT="One record per administrator user" PREVIOUS="user" NEXT="user_preferences">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="userid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for user_admins"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="userid" UNIQUE="true" FIELDS="userid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="user_preferences" COMMENT="Allows modules to store arbitrary user preferences" PREVIOUS="user_admins" NEXT="user_students">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="userid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="name"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="userid" NEXT="value"/>
+        <FIELD NAME="value" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="name"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for user_preferences"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="userid-name" UNIQUE="true" FIELDS="userid, name"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="user_students" COMMENT="One record per student per course" PREVIOUS="user_preferences" NEXT="user_teachers">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="userid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="course"/>
+        <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="userid" NEXT="timestart"/>
+        <FIELD NAME="timestart" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="course" NEXT="timeend"/>
+        <FIELD NAME="timeend" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="timestart" NEXT="time"/>
+        <FIELD NAME="time" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="timeend" NEXT="timeaccess"/>
+        <FIELD NAME="timeaccess" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="time" NEXT="enrol"/>
+        <FIELD NAME="enrol" TYPE="char" LENGTH="20" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="timeaccess"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for user_students"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="course-userid" UNIQUE="true" FIELDS="course, userid" NEXT="userid"/>
+        <INDEX NAME="userid" UNIQUE="false" FIELDS="userid" PREVIOUS="course-userid" NEXT="enrol"/>
+        <INDEX NAME="enrol" UNIQUE="false" FIELDS="enrol" PREVIOUS="userid" NEXT="timeaccess"/>
+        <INDEX NAME="timeaccess" UNIQUE="false" FIELDS="timeaccess" PREVIOUS="enrol"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="user_teachers" COMMENT="One record per teacher per course" PREVIOUS="user_students" NEXT="user_coursecreators">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="userid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="course"/>
+        <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="userid" NEXT="authority"/>
+        <FIELD NAME="authority" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="3" SEQUENCE="false" ENUM="false" PREVIOUS="course" NEXT="role"/>
+        <FIELD NAME="role" TYPE="char" LENGTH="40" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="authority" NEXT="editall"/>
+        <FIELD NAME="editall" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" ENUM="false" PREVIOUS="role" NEXT="timestart"/>
+        <FIELD NAME="timestart" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="editall" NEXT="timeend"/>
+        <FIELD NAME="timeend" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="timestart" NEXT="timemodified"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="timeend" NEXT="timeaccess"/>
+        <FIELD NAME="timeaccess" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="timemodified" NEXT="enrol"/>
+        <FIELD NAME="enrol" TYPE="char" LENGTH="20" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="timeaccess"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for user_teachers"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="course-userid" UNIQUE="true" FIELDS="course, userid" COMMENT="Default comment for the index, please edit m" NEXT="userid"/>
+        <INDEX NAME="userid" UNIQUE="false" FIELDS="userid" PREVIOUS="course-userid" NEXT="enrol"/>
+        <INDEX NAME="enrol" UNIQUE="false" FIELDS="enrol" PREVIOUS="userid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="user_coursecreators" COMMENT="One record per course creator" PREVIOUS="user_teachers" NEXT="stats_daily">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="userid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for user_coursecreators"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="userid" UNIQUE="true" FIELDS="userid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="stats_daily" COMMENT="to accumulate daily stats" PREVIOUS="user_coursecreators" NEXT="stats_weekly">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="courseid"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="timeend"/>
+        <FIELD NAME="timeend" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="courseid" NEXT="students"/>
+        <FIELD NAME="students" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="timeend" NEXT="teachers"/>
+        <FIELD NAME="teachers" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="students" NEXT="activestudents"/>
+        <FIELD NAME="activestudents" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="teachers" NEXT="activeteachers"/>
+        <FIELD NAME="activeteachers" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="activestudents" NEXT="studentreads"/>
+        <FIELD NAME="studentreads" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="activeteachers" NEXT="studentwrites"/>
+        <FIELD NAME="studentwrites" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="studentreads" NEXT="teacherreads"/>
+        <FIELD NAME="teacherreads" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="studentwrites" NEXT="teacherwrites"/>
+        <FIELD NAME="teacherwrites" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="teacherreads" NEXT="logins"/>
+        <FIELD NAME="logins" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="teacherwrites" NEXT="uniquelogins"/>
+        <FIELD NAME="uniquelogins" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="logins"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for stats_daily"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="courseid" UNIQUE="false" FIELDS="courseid" NEXT="timeend"/>
+        <INDEX NAME="timeend" UNIQUE="false" FIELDS="timeend" PREVIOUS="courseid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="stats_weekly" COMMENT="To accumulate weekly stats" PREVIOUS="stats_daily" NEXT="stats_monthly">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="courseid"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="timeend"/>
+        <FIELD NAME="timeend" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="courseid" NEXT="students"/>
+        <FIELD NAME="students" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="timeend" NEXT="teachers"/>
+        <FIELD NAME="teachers" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="students" NEXT="activestudents"/>
+        <FIELD NAME="activestudents" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="teachers" NEXT="activeteachers"/>
+        <FIELD NAME="activeteachers" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="activestudents" NEXT="studentreads"/>
+        <FIELD NAME="studentreads" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="activeteachers" NEXT="studentwrites"/>
+        <FIELD NAME="studentwrites" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="studentreads" NEXT="teacherreads"/>
+        <FIELD NAME="teacherreads" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="studentwrites" NEXT="teacherwrites"/>
+        <FIELD NAME="teacherwrites" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="teacherreads" NEXT="logins"/>
+        <FIELD NAME="logins" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="teacherwrites" NEXT="uniquelogins"/>
+        <FIELD NAME="uniquelogins" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="logins"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for stats_weekly"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="courseid" UNIQUE="false" FIELDS="courseid" NEXT="timeend"/>
+        <INDEX NAME="timeend" UNIQUE="false" FIELDS="timeend" PREVIOUS="courseid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="stats_monthly" COMMENT="To accumulate monthly stats" PREVIOUS="stats_weekly" NEXT="stats_user_daily">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="courseid"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="timeend"/>
+        <FIELD NAME="timeend" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="courseid" NEXT="students"/>
+        <FIELD NAME="students" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="timeend" NEXT="teachers"/>
+        <FIELD NAME="teachers" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="students" NEXT="activestudents"/>
+        <FIELD NAME="activestudents" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="teachers" NEXT="activeteachers"/>
+        <FIELD NAME="activeteachers" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="activestudents" NEXT="studentreads"/>
+        <FIELD NAME="studentreads" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="activeteachers" NEXT="studentwrites"/>
+        <FIELD NAME="studentwrites" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="studentreads" NEXT="teacherreads"/>
+        <FIELD NAME="teacherreads" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="studentwrites" NEXT="teacherwrites"/>
+        <FIELD NAME="teacherwrites" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="teacherreads" NEXT="logins"/>
+        <FIELD NAME="logins" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="teacherwrites" NEXT="uniquelogins"/>
+        <FIELD NAME="uniquelogins" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="logins"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for stats_monthly"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="courseid" UNIQUE="false" FIELDS="courseid" NEXT="timeend"/>
+        <INDEX NAME="timeend" UNIQUE="false" FIELDS="timeend" PREVIOUS="courseid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="stats_user_daily" COMMENT="To accumulate daily stats per course/user" PREVIOUS="stats_monthly" NEXT="stats_user_weekly">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="courseid"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="userid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="courseid" NEXT="roleid"/>
+        <FIELD NAME="roleid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="userid" NEXT="timeend"/>
+        <FIELD NAME="timeend" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="roleid" NEXT="statsreads"/>
+        <FIELD NAME="statsreads" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="timeend" NEXT="statswrites"/>
+        <FIELD NAME="statswrites" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="statsreads" NEXT="stattype"/>
+        <FIELD NAME="stattype" TYPE="char" LENGTH="30" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="statswrites"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for stats_user_daily"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="courseid" UNIQUE="false" FIELDS="courseid" NEXT="userid"/>
+        <INDEX NAME="userid" UNIQUE="false" FIELDS="userid" PREVIOUS="courseid" NEXT="roleid"/>
+        <INDEX NAME="roleid" UNIQUE="false" FIELDS="roleid" PREVIOUS="userid" NEXT="timeend"/>
+        <INDEX NAME="timeend" UNIQUE="false" FIELDS="timeend" PREVIOUS="roleid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="stats_user_weekly" COMMENT="To accumulate weekly stats per course/user" PREVIOUS="stats_user_daily" NEXT="stats_user_monthly">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="courseid"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="userid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="courseid" NEXT="roleid"/>
+        <FIELD NAME="roleid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="userid" NEXT="timeend"/>
+        <FIELD NAME="timeend" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="roleid" NEXT="statsreads"/>
+        <FIELD NAME="statsreads" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="timeend" NEXT="statswrites"/>
+        <FIELD NAME="statswrites" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="statsreads" NEXT="stattype"/>
+        <FIELD NAME="stattype" TYPE="char" LENGTH="30" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="statswrites"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for stats_user_weekly"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="courseid" UNIQUE="false" FIELDS="courseid" NEXT="userid"/>
+        <INDEX NAME="userid" UNIQUE="false" FIELDS="userid" PREVIOUS="courseid" NEXT="roleid"/>
+        <INDEX NAME="roleid" UNIQUE="false" FIELDS="roleid" PREVIOUS="userid" NEXT="timeend"/>
+        <INDEX NAME="timeend" UNIQUE="false" FIELDS="timeend" PREVIOUS="roleid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="stats_user_monthly" COMMENT="To accumulate monthly stats per course/user" PREVIOUS="stats_user_weekly" NEXT="post">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="courseid"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="userid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="courseid" NEXT="roleid"/>
+        <FIELD NAME="roleid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="userid" NEXT="timeend"/>
+        <FIELD NAME="timeend" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="roleid" NEXT="statsreads"/>
+        <FIELD NAME="statsreads" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="timeend" NEXT="statswrites"/>
+        <FIELD NAME="statswrites" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="statsreads" NEXT="stattype"/>
+        <FIELD NAME="stattype" TYPE="char" LENGTH="30" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="statswrites"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for stats_user_monthly"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="courseid" UNIQUE="false" FIELDS="courseid" NEXT="userid"/>
+        <INDEX NAME="userid" UNIQUE="false" FIELDS="userid" PREVIOUS="courseid" NEXT="roleid"/>
+        <INDEX NAME="roleid" UNIQUE="false" FIELDS="roleid" PREVIOUS="userid" NEXT="timeend"/>
+        <INDEX NAME="timeend" UNIQUE="false" FIELDS="timeend" PREVIOUS="roleid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="post" COMMENT="Generic post table to hold data blog entries etc in different modules" PREVIOUS="stats_user_monthly" NEXT="tags">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="true" ENUM="false" NEXT="module"/>
+        <FIELD NAME="module" TYPE="char" LENGTH="20" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="userid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="module" NEXT="courseid"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="userid" NEXT="groupid"/>
+        <FIELD NAME="groupid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="courseid" NEXT="moduleid"/>
+        <FIELD NAME="moduleid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="groupid" NEXT="coursemoduleid"/>
+        <FIELD NAME="coursemoduleid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="moduleid" NEXT="subject"/>
+        <FIELD NAME="subject" TYPE="char" LENGTH="128" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="coursemoduleid" NEXT="summary"/>
+        <FIELD NAME="summary" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" ENUM="false" PREVIOUS="subject" NEXT="content"/>
+        <FIELD NAME="content" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" ENUM="false" PREVIOUS="summary" NEXT="uniquehash"/>
+        <FIELD NAME="uniquehash" TYPE="char" LENGTH="128" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="content" NEXT="rating"/>
+        <FIELD NAME="rating" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="uniquehash" NEXT="format"/>
+        <FIELD NAME="format" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="rating" NEXT="publishstate"/>
+        <FIELD NAME="publishstate" TYPE="char" LENGTH="20" NOTNULL="true" DEFAULT="draft" SEQUENCE="false" ENUM="true" ENUMVALUES="'draft', 'site', 'public'" PREVIOUS="format" NEXT="lastmodified"/>
+        <FIELD NAME="lastmodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="publishstate" NEXT="created"/>
+        <FIELD NAME="created" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="lastmodified"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for post"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="id-userid" UNIQUE="true" FIELDS="id, userid" NEXT="lastmodified"/>
+        <INDEX NAME="lastmodified" UNIQUE="false" FIELDS="lastmodified" PREVIOUS="id-userid" NEXT="module"/>
+        <INDEX NAME="module" UNIQUE="false" FIELDS="module" PREVIOUS="lastmodified" NEXT="subject"/>
+        <INDEX NAME="subject" UNIQUE="false" FIELDS="subject" PREVIOUS="module"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="tags" COMMENT="tags structure for moodle" PREVIOUS="post" NEXT="blog_tag_instance">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="true" ENUM="false" NEXT="type"/>
+        <FIELD NAME="type" TYPE="char" LENGTH="255" NOTNULL="true" DEFAULT="official" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="userid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="type" NEXT="text"/>
+        <FIELD NAME="text" TYPE="char" LENGTH="20" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="userid"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for tags"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="type-userid" UNIQUE="false" FIELDS="type, userid" NEXT="text"/>
+        <INDEX NAME="text" UNIQUE="false" FIELDS="text" PREVIOUS="type-userid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="blog_tag_instance" COMMENT="tag instance for blogs" PREVIOUS="tags">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="true" ENUM="false" NEXT="entryid"/>
+        <FIELD NAME="entryid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="tagid"/>
+        <FIELD NAME="tagid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="entryid" NEXT="groupid"/>
+        <FIELD NAME="groupid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="tagid" NEXT="courseid"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="groupid" NEXT="userid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="courseid" NEXT="timemodified"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="userid"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for blog_tag_instance"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="entryid" UNIQUE="false" FIELDS="entryid" NEXT="tagid"/>
+        <INDEX NAME="tagid" UNIQUE="false" FIELDS="tagid" PREVIOUS="entryid"/>
+      </INDEXES>
+    </TABLE>
+  </TABLES>
+  <STATEMENTS>
+    <STATEMENT NAME="insert log_display" TYPE="insert" TABLE="log_display" COMMENT="Initial insert of records on table log_display">
+      <SENTENCES>
+        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('user', 'view', 'user', 'CONCAT(firstname,&quot; &quot;,lastname)')" />
+        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('course', 'user report', 'user', 'CONCAT(firstname,&quot; &quot;,lastname)')" />
+        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('course', 'view', 'course', 'fullname')" />
+        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('course', 'update', 'course', 'fullname')" />
+        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('course', 'enrol', 'course', 'fullname')" />
+        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('course', 'report log', 'course', 'fullname')" />
+        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('course', 'report live', 'course', 'fullname')" />
+        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('course', 'report outline', 'course', 'fullname')" />
+        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('course', 'report participation', 'course', 'fullname')" />
+        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('course', 'report stats', 'course', 'fullname')" />
+        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('message', 'write', 'user', 'CONCAT(firstname,&quot; &quot;,lastname)')" />
+        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('message', 'read', 'user', 'CONCAT(firstname,&quot; &quot;,lastname)')" />
+        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('message', 'add contact', 'user', 'CONCAT(firstname,&quot; &quot;,lastname)')" />
+        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('message', 'remove contact', 'user', 'CONCAT(firstname,&quot; &quot;,lastname)')" />
+        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('message', 'block contact', 'user', 'CONCAT(firstname,&quot; &quot;,lastname)')" />
+        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('message', 'unblock contact', 'user', 'CONCAT(firstname,&quot; &quot;,lastname)')" />
+      </SENTENCES>
+    </STATEMENT>
+  </STATEMENTS>
+</XMLDB>
