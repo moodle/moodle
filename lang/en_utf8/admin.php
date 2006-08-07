@@ -191,6 +191,7 @@ $string['mediapluginmov'] = 'Enable .mov filter';
 $string['mediapluginmp3'] = 'Enable .mp3 filter';
 $string['mediapluginmpg'] = 'Enable .mpg filter';
 $string['mediapluginswf'] = 'Enable .swf filter';
+$string['mediapluginswfnote'] = 'As a default security measure, normal users should not allowed to embed swf flash files.';
 $string['mediapluginram'] = 'Enable .ram filter';
 $string['mediapluginrm']  = 'Enable .rm filter';
 $string['mediapluginrpm'] = 'Enable .rpm filter';

@@ -21,7 +21,7 @@
             set_config( 'filter_mediaplugin_ignore_swf','' );
         }
         else {
-            set_config( 'filter_mediaplugin_enable_swf', 1 );
+            set_config( 'filter_mediaplugin_enable_swf', 0 ); //disable swf embedding by default for now
         }
     }
     if (!isset($CFG->filter_mediaplugin_enable_mov) or $forcereset) {
