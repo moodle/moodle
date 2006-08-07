@@ -37,6 +37,11 @@
         $table->data[] = array('<b><a href="'.$CFG->dbtype.'/frame.php">'.get_string('managedatabase')."</a></b>",
                            get_string('adminhelpmanagedatabase'));
     }
+/// Hack to show the XMLDB editor
+    if (file_exists("$CFG->dirroot/$CFG->admin/xmldb")) {
+        $table->data[] = array('<b><a href="xmldb/index.php">'.get_string('xmldbeditor')."</a></b>",
+                           get_string('adminhelpxmldbeditor'));
+    }
 
     print_table($table);
 

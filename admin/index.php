@@ -451,6 +451,11 @@
         $miscdata .= '<div class="adminlink"><a href="'.$CFG->dbtype.'/frame.php">'.get_string('managedatabase').
         			 '</a> - <span class="explanation">'.get_string('adminhelpmanagedatabase').'</span></div>';
     }
+/// Hack to show the XMLDB editor
+    if (file_exists("$CFG->dirroot/$CFG->admin/xmldb")) {
+        $miscdata .= '<div class="adminlink"><a href="xmldb/index.php">'.get_string('xmldbeditor').
+        			 '</a> - <span class="explanation">'.get_string('adminhelpxmldbeditor').'</span></div>';
+    }
 
     $table->data[] = array('<strong><a href="misc.php">'.get_string('miscellaneous').'</a></strong>', $miscdata);
 
