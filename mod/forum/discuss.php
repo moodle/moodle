@@ -31,8 +31,8 @@
     
     $canviewdiscussion = false;
 
-    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-    if (has_capability('mod/forum:viewdiscussion', $context->id)) {
+    $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
+    if (has_capability('mod/forum:viewdiscussion', $modcontext->id)) {
         $canviewdiscussion = true;
     }
 
@@ -53,7 +53,7 @@
 
 
     if (!empty($move)) {
-        if (has_capability('mod/forum:movediscussions', $context->id)) {
+        if (has_capability('mod/forum:movediscussions', $modcontext->id)) {
             error("You do not have the permission to move this discussion!");
         }
         if ($forum = get_record("forum", "id", $move)) {
@@ -155,7 +155,7 @@
 
                                        
     
-    if ($groupmode and !has_capability('mod/forum:viewdiscussionsfromallgroups', $context->id)) {   // Groups must be kept separate
+    if ($groupmode and !has_capability('moodle/site:accessallgroups', $modcontext->id)) {   // Groups must be kept separate
         //change this to ismember
         $mygroupid = mygroupid($course->id); //only useful if 0, otherwise it's an array now
         if ($groupmode == SEPARATEGROUPS) {
@@ -174,7 +174,7 @@
         } else if ($groupmode == VISIBLEGROUPS) {
             $canreply = ( (empty($mygroupid) && $discussion->groupid == -1) ||
                     (ismember($discussion->groupid) || $mygroupid == $discussion->groupid) &&
-                    has_capability('mod/forum:replypost', $context->id) );
+                    has_capability('mod/forum:replypost', $modcontext->id) );
         }
     }
 
@@ -184,7 +184,7 @@
 
     echo '<table width="100%"><tr><td width="33%">';
 
-    if ($groupmode == VISIBLEGROUPS or ($groupmode and has_capability('mod/forum:viewdiscussionsfromallgroups', $context->id))) {
+    if ($groupmode == VISIBLEGROUPS or ($groupmode and has_capability('moodle/site:accessallgroups', $modcontext->id))) {
         if ($groups = get_records_menu('groups', 'courseid', $course->id, 'name ASC', 'id,name')) {
             print_group_menu($groups, $groupmode, $discussion->groupid, "view.php?id=$cm->id&amp;group=");
         }
@@ -194,7 +194,7 @@
     forum_print_mode_form($discussion->id, $displaymode);
 
     echo "</td><td width=\"33%\">";
-    if (has_capability('mod/forum:movediscussions', $context->id)) { // Popup menu to move discussions to other forums
+    if (has_capability('mod/forum:movediscussions', $modcontext->id)) { // Popup menu to move discussions to other forums
         if ($forums = get_all_instances_in_course("forum", $course)) {
             if ($course->format == 'weeks') {
                 $strsection = get_string("week");
@@ -228,7 +228,7 @@
         notify(get_string('thisforumisthrottled','forum',$a));
     }
 
-    if ($forum->type == 'qanda' && !has_capability('mod/forum:viewqandawithoutposting', $context->id) &&
+    if ($forum->type == 'qanda' && !has_capability('mod/forum:viewqandawithoutposting', $modcontext->id) &&
                 !forum_user_has_posted($forum->id,$discussion->id,$USER->id)) {
         notify(get_string('qandanotify','forum'));
     }
@@ -238,7 +238,7 @@
     }
 
 /// Print the actual discussion
-    $canrate = has_capability('mod/forum:rate', $context->id);
+    $canrate = has_capability('mod/forum:rate', $modcontext->id);
     forum_print_discussion($course, $forum, $discussion, $post, $displaymode, $canreply, $canrate);
 
     print_footer($course);

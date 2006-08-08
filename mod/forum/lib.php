@@ -1107,7 +1107,7 @@ function forum_get_child_posts($parent, $forumid) {
  * @param $groupid - either a single groupid or an array of groupids.
  *                   this specifies the groups the search is to be carried
  *                   for. However, please note that, unless the user has
- *                   the capability 'mod/forum:viewdiscussionsfromallgroups',
+ *                   the capability 'moodle/site:accessallgroups',
  *                   we will restrict the search to a subset of groups from 
  *                   $groupid. The subset consists of the groups the user
  *                   really is in.
@@ -1137,7 +1137,7 @@ function forum_search_posts($searchterms, $courseid, $page=0, $recordsperpage=50
     }
     
     // Take into account user groups.
-    if (has_capability('mod/forum:viewdiscussionsfromallgroups', $modcontext->id)) {
+    if (has_capability('moodle/site:accessallgroups', $modcontext->id)) {
         $selectgroup = '';
         $coursetable = '';
         
@@ -2779,7 +2779,7 @@ function forum_user_can_post_discussion($forum, $currentgroup=false, $groupmode=
     if ($forum->type == "eachuser") {
         return (!forum_user_has_posted_discussion($forum->id, $USER->id));
     } else if ($currentgroup) {
-        return (has_capability('mod/forum:viewdiscussionsfromallgroups', $context->id)
+        return (has_capability('moodle/site:accessallgroups', $context->id)
                 or (ismember($currentgroup) and $forum->open == 2));
     } else {
         //else it might be group 0 in visible mode
@@ -2844,7 +2844,7 @@ function forum_user_can_view_post($post, $course, $cm, $forum, $discussion, $use
     if ($discussion->groupid > 0) {
         if ($cm->groupmode == SEPARATEGROUPS) {
             return ismember($discussion->groupid) ||
-                    has_capability('mod/forum:viewdiscussionsfromallgroups', $modcontext->id);
+                    has_capability('moodle/site:accessallgroups', $modcontext->id);
         }
     }
     return true;
@@ -2983,7 +2983,7 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions=5, $dis
     }
 
     if (!$currentgroup and ($groupmode != SEPARATEGROUPS or 
-                has_capability('mod/forum:viewdiscussionsfromallgroups', $context->id)) ) {
+                has_capability('moodle/site:accessallgroups', $context->id)) ) {
         $visiblegroups = -1;
     } else {
         $visiblegroups = $currentgroup;

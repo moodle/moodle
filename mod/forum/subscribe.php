@@ -21,7 +21,7 @@
         
         $context = get_context_instance(CONTEXT_MODULE, $cm->id);
         if (groupmode($course, $cm) and
-                    !has_capability('mod/forum:viewdiscussionsfromallgroups', $context->id)) {
+                    !has_capability('moodle/site:accessallgroups', $context->id)) {
             if (!mygroupid($course->id)) {
                 error('Sorry, but you must be a group member to subscribe.');
             }

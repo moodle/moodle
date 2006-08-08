@@ -95,7 +95,7 @@
     $currentgroup = get_and_set_current_group($course, $groupmode, $changegroup);
     
     if ($groupmode and ($currentgroup === false) and
-            !has_capability('mod/forum:viewdiscussionsfromallgroups', $context->id)) {
+            !has_capability('moodle/site:accessallgroups', $context->id)) {
         
         print_heading(get_string("notingroup", "forum"));
         print_footer($course);
@@ -114,7 +114,7 @@
 
     //now we need a menu for separategroups as well!
     if ($groupmode == VISIBLEGROUPS or ($groupmode and
-            has_capability('module:forum:viewdiscussionsfromallgroups', $context->id))) {
+            has_capability('moodle/site:accessallgroups', $context->id))) {
         
         //the following query really needs to change
         if ($groups = get_records_menu("groups", "courseid", $course->id, "name ASC", "id,name")) {
