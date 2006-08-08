@@ -17,6 +17,8 @@
     $showteachers = optional_param('teachers', 1, PARAM_INT);                 // do we want to see the teacher list?
     $accesssince  = optional_param('accesssince',0,PARAM_INT);               // filter by last access. -1 = never
     $search       = optional_param('search','',PARAM_CLEAN);
+    $roleid       = optional_param('roleid', 0, PARAM_INT);					// optional roleid
+    $contextid    = required_param('contextid', PARAM_INT);				// required contextid
 
     $showteachers = $showteachers && empty($search); // if we're searching, we just want students.
 
@@ -25,6 +27,9 @@
     }
 
     require_login($course->id);
+
+	$context = get_context_instance(CONTEXT_COURSE, $id);
+	//has_capability('moodle/course:viewparticipants', $context->id, true);
 
     if (!$course->category) {
         if (!$CFG->showsiteparticipantslist and !isteacher(SITEID)) {
@@ -88,7 +93,7 @@
     }
 
     // Should use this variable so that we don't break stuff every time a variable is added or changed.
-    $baseurl = $CFG->wwwroot.'/user/index.php?id='.$course->id.'&amp;group='.$currentgroup.'&amp;perpage='.$perpage.'&amp;teachers='.$showteachers.'&amp;accesssince='.$accesssince.'&amp;search='.$search;
+    $baseurl = $CFG->wwwroot.'/user/index.php?contextid='.$contextid.'&amp;roleid='.$roleid.'&amp;id='.$course->id.'&amp;group='.$currentgroup.'&amp;perpage='.$perpage.'&amp;teachers='.$showteachers.'&amp;accesssince='.$accesssince.'&amp;search='.$search;
 
 /// Print headers
 
@@ -125,6 +130,31 @@
         $hiddenfields = array_flip(explode(',', $CFG->hiddenuserfields));
     }
 
+
+	/*****************************************
+ 	 * drop down for swapping between roles  *
+ 	 *****************************************/
+ 	 
+ 	// this needs to check capability too
+
+ 	$SQL = 'select distinct r.id, r.name from '.$CFG->prefix.'role_assignments ra, '.$CFG->prefix.'role r WHERE
+ 			r.id = ra.roleid AND ra.contextid = '.$contextid;
+ 			
+ 	$roles = get_records_sql($SQL);
+ 			
+    foreach ($roles as $role) {
+    	$options[$role->id] = $role->name;
+    }
+    
+	print ('<form name="rolesform" action="index.php" method="post">');
+    print ('<div align="center">Current Context: '.print_context_name($contextid).'<br/>');
+    print ('<input type="hidden" name="contextid" value="'.$contextid.'">Select a Role: ');
+    print ('<input type="hidden" name="id" value="'.$id.'">');
+    choose_from_menu ($options, 'roleid', $roleid, 'choose', $script='rolesform.submit()');
+	print ('</div></form>');
+
+
+
 /// Print settings and things in a table across the top
 
     echo '<table class="controls" cellspacing="0"><tr>';
@@ -138,7 +168,7 @@
         $my_course[$mycourse->id] = $mycourse->shortname;
     }
     //choose_from_menu($my_course, 'id', $course->id, '', 'courseform.submit()');
-    popup_form($CFG->wwwroot.'/user/index.php?id=',$my_course,'courseform',$course->id);
+    popup_form($CFG->wwwroot.'/user/index.php?contextid='.$contextid.'&amp;roleid='.$roleid.'&amp;id=',$my_course,'courseform',$course->id);
     echo '</td></tr>';
     
     if ($groupmode == VISIBLEGROUPS or ($groupmode and isteacheredit($course->id))) {
@@ -260,150 +290,12 @@ function checkchecked(form) {
         echo '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
     }
 
-    if($showteachers) {
-
-        $tablecolumns = array('picture', 'fullname');
-        $tableheaders = array('', get_string('fullname'));
-        if (!isset($hiddenfields['city'])) {
-            $tablecolumns[] = 'city';
-            $tableheaders[] = get_string('city');
-        }
-        if (!isset($hiddenfields['country'])) {
-            $tablecolumns[] = 'country';
-            $tableheaders[] = get_string('country');
-        }
-        if (!isset($hiddenfields['lastaccess'])) {
-            $tablecolumns[] = 'lastaccess';
-            $tableheaders[] = get_string('lastaccess');
-        }
-
-        if ($isteacher) {
-            $tablecolumns[] = '';
-            $tableheaders[] = get_string('select');
-        }
-
-        $table = new flexible_table('user-index-teachers-'.$course->id);
-
-        $table->define_columns($tablecolumns);
-        $table->define_headers($tableheaders);
-        $table->define_baseurl($baseurl);
-
-        $table->sortable(true, 'lastaccess', SORT_DESC);
-
-        $table->set_attribute('cellspacing', '0');
-        $table->set_attribute('id', 'teachers');
-        $table->set_attribute('class', 'generaltable generalbox');
-
-        $table->setup();
-
-        if($whereclause = $table->get_sql_where()) {
-            $whereclause .= ' AND ';
-        }
-
-        $teachersql = "SELECT u.id, u.username, u.firstname, u.lastname, u.maildisplay, u.mailformat, u.maildigest,
-                                   u.email, u.maildisplay, u.city, u.country, u.lastlogin, u.picture, u.lang, u.timezone,
-                                   u.emailstop, t.authority,t.role,t.editall,t.timeaccess as lastaccess, m.groupid
-                            FROM {$CFG->prefix}user u
-                       LEFT JOIN {$CFG->prefix}user_teachers t ON t.userid = u.id 
-                       LEFT JOIN {$CFG->prefix}groups_members m ON m.userid = u.id ";
-
-        if($isseparategroups) {
-            $whereclause .= '(t.editall OR groupid = '.$currentgroup.') AND ';
-        }
-        else if ($currentgroup) {    // Displaying a group by choice
-            $whereclause .= 'groupid = '.$currentgroup.' AND ';
-        }
-
-        $teachersql .= 'WHERE '.$whereclause.' t.course = '.$course->id.' AND u.deleted = 0 AND u.confirmed = 1';
-        if (!$isteacher) {
-            $teachersql .= ' AND t.authority > 0';
-        }
-
-        if ($isteacher) {
-            $teachersql .= get_lastaccess_sql($accesssince);
-        }
-
-        if($sortclause = $table->get_sql_sort()) {
-            $teachersql .= ' ORDER BY '.$sortclause;
-        }
-
-        $teachers = get_records_sql($teachersql);
-
-        if(!empty($teachers)) {
-
-            echo '<h2>'.$course->teachers;
-            echo ' <a href="'.$baseurl.'&amp;teachers=0">';
-            echo '<img src="'.$CFG->pixpath.'/i/hide.gif" height="16" width="16" alt="'.get_string('hide').'" /></a>';
-            if (isadmin() or ($course->category and (iscreator() or (isteacheredit($course->id) and !empty($CFG->teacherassignteachers))))) {
-                echo ' <a href="'.$CFG->wwwroot.'/course/teacher.php?id='.$course->id.'">';
-                echo '<img src="'.$CFG->pixpath.'/i/edit.gif" height="16" width="16" alt="'.get_string('edit').'" /></a>';
-            }
-            echo '</h2>';
-
-            $exceptions = array_keys($teachers);
-
-            if ($fullmode) {
-                foreach ($teachers as $key => $teacher) {
-                    print_user($teacher, $course, true);
-                }
-            } else {
-                $countrysort = (strpos($sortclause, 'country') !== false);
-                foreach ($teachers as $teacher) {
-        
-                    if ($teacher->lastaccess) {
-                        $lastaccess = format_time(time() - $teacher->lastaccess, $datestring);
-                    } else {
-                        $lastaccess = $strnever;
-                    }
-
-                    if (empty($teacher->country)) {
-                        $country = '';
-                    }
-                    else {
-                        if($countrysort) {
-                            $country = '('.$teacher->country.') '.$countries[$teacher->country];
-                        }
-                        else {
-                            $country = $countries[$teacher->country];
-                        }
-                    }
-        
-                    $data = array (
-                                    print_user_picture($teacher->id, $course->id, $teacher->picture, false, true),
-                                    '<strong><a'.($teacher->authority?'':' class="dimmed"').' href="'.$CFG->wwwroot.'/user/view.php?id='.$teacher->id.'&amp;course='.$course->id.'">'.fullname($teacher, $isteacher).'</a></strong>');
-                    if (!isset($hiddenfields['city'])) {
-                        $data[] = $teacher->city;
-                    }
-                    if (!isset($hiddenfields['country'])) {
-                        $data[] = $country;
-                    }
-                    if (!isset($hiddenfields['lastaccess'])) {
-                        $data[] = $lastaccess;
-                    }
-                    if ($isteacher) {
-                        $data[] = '<input type="checkbox" name="teacher'.$teacher->id.'" />';
-                    }
-                    $table->add_data($data);
-                }
-                
-                $table->print_html();
-            }
-        }
-    }
-    else {
-        // Don't show teachers
-        echo '<h2>'.$course->teachers;
-        echo ' <a href="'.$baseurl.'&amp;teachers=1">';
-        echo '<img src="'.$CFG->pixpath.'/i/show.gif" height="16" width="16" alt="'.get_string('show').'" /></a>';
-        if (isadmin() or ($course->category and (iscreator() or (isteacheredit($course->id) and !empty($CFG->teacherassignteachers))))) {
-            echo ' <a href="'.$CFG->wwwroot.'/course/teacher.php?id='.$course->id.'">';
-            echo '<img src="'.$CFG->pixpath.'/i/edit.gif" height="16" width="16" alt="'.get_string('edit').'" /></a>';
-        }
-        echo '</h2>';
-    }
-
     $guest = get_guest();
     $exceptions[] = $guest->id;
+
+/************************************
+ * start of foreach $roles as $role *
+ ************************************/
 
     $tablecolumns = array('picture', 'fullname');
     $tableheaders = array('', get_string('fullname'));
@@ -451,224 +343,222 @@ function checkchecked(form) {
         TABLE_VAR_PAGE    => 'spage'
     ));
     $table->setup();
+	
+	if ($roleid) {
+	  
+	  	// we are looking for all users with this role assigned in this context or higher
+		$context = get_record('context', 'id', $contextid);
+	  	$usercontexts = get_parent_contexts($context);  	
+		$listofcontexts = '('.implode(',', $usercontexts).')';
 
-    if(SITEID == $course->id) {
-        $select = 'SELECT u.id, u.username, u.firstname, u.lastname, u.email, u.city, u.country, 
-                      u.picture, u.lang, u.timezone, u.emailstop, u.maildisplay, u.lastaccess ';
-        $from   = 'FROM '.$CFG->prefix.'user u ';
-        $where  = 'WHERE confirmed = 1 AND u.deleted = 0 ';
-    }
-    else {
-        $select = 'SELECT u.id, u.username, u.firstname, u.lastname, u.email, u.city, u.country, 
-                      u.picture, u.lang, u.timezone, u.emailstop, u.maildisplay, s.timeaccess AS lastaccess ';
-        $select .= $course->enrolperiod?', s.timeend ':'';
-        $from   = 'FROM '.$CFG->prefix.'user u LEFT JOIN '.$CFG->prefix.'user_students s ON s.userid = u.id ';
-        $where  = 'WHERE s.course = '.$course->id.' AND u.deleted = 0 ';
-    }
+		$select = 'SELECT u.id, u.username, u.firstname, u.lastname, u.email, u.city, u.country, 
+	                      u.picture, u.lang, u.timezone, u.emailstop, u.maildisplay, u.lastaccess AS lastaccess '; // s.lastaccess
+	    //$select .= $course->enrolperiod?', s.timeend ':'';
+	    $from   = 'FROM '.$CFG->prefix.'user u LEFT JOIN '.$CFG->prefix.'role_assignments r ON r.userid = u.id ';
+	    $where  = 'WHERE (r.contextid = '.$contextid.' OR r.contextid in '.$listofcontexts.') AND u.deleted = 0 AND r.roleid = '.$roleid.' ';	
+		$where .= get_lastaccess_sql($accesssince);
+		$wheresearch = '';
+	
+	    if (!empty($search)) {
+	        $LIKE = sql_ilike();
+	        $fullname  = sql_fullname('u.firstname','u.lastname');
+	        $wheresearch .= ' AND ('. $fullname .' '. $LIKE .'\'%'. $search .'%\' OR email '. $LIKE .'\'%'. $search .'%\' OR idnumber '.$LIKE.' \'%'.$search.'%\') ';
+	
+	    }
+	
+	    if ($currentgroup) {    // Displaying a group by choice
+	        // FIX: TODO: This will not work if $currentgroup == 0, i.e. "those not in a group"
+	        $from  .= 'LEFT JOIN '.$CFG->prefix.'groups_members gm ON u.id = gm.userid ';
+	        $where .= ' AND gm.groupid = '.$currentgroup;
+	    }
+	
+	    if($course->id == SITEID) {
+	        $where .= ' AND u.id NOT IN ('.implode(',', $exceptions).')';
+	    }
 
-    if ($isteacher) {
-        $where .= get_lastaccess_sql($accesssince);
-    }
+    	$totalcount = count_records_sql('SELECT COUNT(distinct u.id) '.$from.$where); // 1 person can have multiple assignments
+	
+	    if($table->get_sql_where()) {
+	        $where .= ' AND '.$table->get_sql_where();
+	    }
+	
+	    if($table->get_sql_sort()) {
+	        $sort = ' ORDER BY '.$table->get_sql_sort();
+	    }
+	    else {
+	        $sort = '';
+	    }
+	
+	    $matchcount = count_records_sql('SELECT COUNT(*) '.$from.$where.$wheresearch);
+	
+	    $table->initialbars($totalcount > $perpage);
+	    $table->pagesize($perpage, $matchcount);
+	
+	    if($table->get_page_start() !== '' && $table->get_page_size() !== '') {
+	        $limit = ' '.sql_paging_limit($table->get_page_start(), $table->get_page_size());
+	    }
+	    else {
+	        $limit = '';
+	    }    
+	
+	    $students = get_records_sql($select.$from.$where.$wheresearch.$sort.$limit);
+	
+		$crole = get_record('role','id',$roleid);
+	
+	    $a->count = $totalcount;
+	    $a->items = $crole->name;
+	    echo '<h2>'.get_string('counteditems', '', $a);
+	    if (isteacheredit($course->id)) {
+	        echo ' <a href="'.$CFG->wwwroot.'/admin/roles/roleassignment.php?roleid='.$roleid.'&amp;contextid='.$contextid.'">';
+	        echo '<img src="'.$CFG->pixpath.'/i/edit.gif" height="16" width="16" alt="" /></a>';
+	    }
+	    echo '</h2>';
+	
+	    if ($CFG->longtimenosee > 0 && $CFG->longtimenosee < 1000 && $totalcount > 0) {
+	        echo '<p id="longtimenosee">('.get_string('unusedaccounts', '', $CFG->longtimenosee).')</p>';
+	    }
+	
+	    if ($fullmode) {    // Print simple listing
+	        if ($totalcount < 1) {
+	            print_heading(get_string("nostudentsfound", "", $course->students));
+	        }
+	        else {
+	            
+	            if($totalcount > $perpage) {
+	
+	                $firstinitial = $table->get_initial_first();
+	                $lastinitial  = $table->get_initial_last();
+	                $strall = get_string('all');
+	                $alpha  = explode(',', get_string('alphabet'));
+	    
+	                // Bar of first initials
+	    
+	                echo '<div class="initialbar firstinitial">'.get_string('firstname').' : ';
+	                if(!empty($firstinitial)) {
+	                    echo '<a href="'.$baseurl.'&amp;sifirst=">'.$strall.'</a>';
+	                } else {
+	                    echo '<strong>'.$strall.'</strong>';
+	                }
+	                foreach ($alpha as $letter) {
+	                    if ($letter == $firstinitial) {
+	                        echo ' <strong>'.$letter.'</strong>';
+	                    } else {
+	                        echo ' <a href="'.$baseurl.'&amp;sifirst='.$letter.'">'.$letter.'</a>';
+	                    }
+	                }
+	                echo '</div>';
+	    
+	                // Bar of last initials
+	    
+	                echo '<div class="initialbar lastinitial">'.get_string('lastname').' : ';
+	                if(!empty($lastinitial)) {
+	                    echo '<a href="'.$baseurl.'&amp;silast=">'.$strall.'</a>';
+	                } else {
+	                    echo '<strong>'.$strall.'</strong>';
+	                }
+	                foreach ($alpha as $letter) {
+	                    if ($letter == $lastinitial) {
+	                        echo ' <strong>'.$letter.'</strong>';
+	                    } else {
+	                        echo ' <a href="'.$baseurl.'&amp;silast='.$letter.'">'.$letter.'</a>';
+	                    }
+	                }
+	                echo '</div>';
+	
+	                print_paging_bar($matchcount, intval($table->get_page_start() / $perpage), $perpage, $baseurl.'&amp;', 'spage');
+	
+	            }
+	
+	            if($matchcount > 0) {
+	                foreach ($students as $student) {
+	                    print_user($student, $course, true);
+	                }
+	            }
+	            else {
+	                print_heading(get_string('nothingtodisplay'));
+	            }
+	        }
+	    }
+	    else {
+	        $countrysort = (strpos($sort, 'country') !== false);
+	        $timeformat = get_string('strftimedate');
+	        if (!empty($students))  {
+	            foreach ($students as $student) {
+	                if ($student->lastaccess) {
+	                    $lastaccess = format_time(time() - $student->lastaccess, $datestring);
+	                } else {
+	                    $lastaccess = $strnever;
+	                }
+	    
+	                if (empty($student->country)) {
+	                    $country = '';
+	                }
+	                else {
+	                    if($countrysort) {
+	                        $country = '('.$student->country.') '.$countries[$student->country];
+	                    }
+	                    else {
+	                        $country = $countries[$student->country];
+	                    }
+	                }
+	
+	                $data = array (
+	                        print_user_picture($student->id, $course->id, $student->picture, false, true),
+	                        '<strong><a href="'.$CFG->wwwroot.'/user/view.php?id='.$student->id.'&amp;course='.$course->id.'">'.fullname($student).'</a></strong>');
+	                if (!isset($hiddenfields['city'])) {
+	                    $data[] = $student->city;
+	                }
+	                if (!isset($hiddenfields['country'])) {
+	                    $data[] = $country;
+	                }
+	                if (!isset($hiddenfields['lastaccess'])) {
+	                    $data[] = $lastaccess;
+	                }
+	                if ($course->enrolperiod) {
+	                    if ($student->timeend) {
+	                        $data[] = userdate($student->timeend, $timeformat);
+	                    } else {
+	                        $data[] = get_string('unlimited');
+	                    }
+	                }
+	                if ($isteacher) {
+	                    $data[] = '<input type="checkbox" name="user'.$student->id.'" />';
+	                }
+	                $table->add_data($data);
+	
+	            }
+	        }
+	
+	        $table->print_html();
+	
+	    }
 
-    $wheresearch = '';
-
-    if (!empty($search)) {
-        $LIKE = sql_ilike();
-        $fullname  = sql_fullname('u.firstname','u.lastname');
-        $wheresearch .= ' AND ('. $fullname .' '. $LIKE .'\'%'. $search .'%\' OR email '. $LIKE .'\'%'. $search .'%\' OR idnumber '.$LIKE.' \'%'.$search.'%\') ';
-
-    }
-
-    if ($currentgroup) {    // Displaying a group by choice
-        // FIX: TODO: This will not work if $currentgroup == 0, i.e. "those not in a group"
-        $from  .= 'LEFT JOIN '.$CFG->prefix.'groups_members gm ON u.id = gm.userid ';
-        $where .= ' AND gm.groupid = '.$currentgroup;
-    }
-
-    if($course->id == SITEID) {
-        $where .= ' AND u.id NOT IN ('.implode(',', $exceptions).')';
-    }
-
-    $totalcount = count_records_sql('SELECT COUNT(*) '.$from.$where);
-
-    if($table->get_sql_where()) {
-        $where .= ' AND '.$table->get_sql_where();
-    }
-
-    if($table->get_sql_sort()) {
-        $sort = ' ORDER BY '.$table->get_sql_sort();
-    }
-    else {
-        $sort = '';
-    }
-
-    $matchcount = count_records_sql('SELECT COUNT(*) '.$from.$where.$wheresearch);
-
-    $table->initialbars($totalcount > $perpage);
-    $table->pagesize($perpage, $matchcount);
-
-    if($table->get_page_start() !== '' && $table->get_page_size() !== '') {
-        $limit = ' '.sql_paging_limit($table->get_page_start(), $table->get_page_size());
-    }
-    else {
-        $limit = '';
-    }    
-    
-    $students = get_records_sql($select.$from.$where.$wheresearch.$sort.$limit);
-
-    $a->count = $totalcount;
-    $a->items = $totalcount == 1 ? $course->student : $course->students;
-    echo '<h2>'.get_string('counteditems', '', $a);
-    if (isteacheredit($course->id)) {
-        echo ' <a href="../course/student.php?id='.$course->id.'">';
-        echo '<img src="'.$CFG->pixpath.'/i/edit.gif" height="16" width="16" alt="" /></a>';
-    }
-    echo '</h2>';
-
-    if ($CFG->longtimenosee > 0 && $CFG->longtimenosee < 1000 && $totalcount > 0) {
-        echo '<p id="longtimenosee">('.get_string('unusedaccounts', '', $CFG->longtimenosee).')</p>';
-    }
-
-    if ($fullmode) {    // Print simple listing
-        if ($totalcount < 1) {
-            print_heading(get_string("nostudentsfound", "", $course->students));
-        }
-        else {
-            
-            if($totalcount > $perpage) {
-
-                $firstinitial = $table->get_initial_first();
-                $lastinitial  = $table->get_initial_last();
-                $strall = get_string('all');
-                $alpha  = explode(',', get_string('alphabet'));
-    
-                // Bar of first initials
-    
-                echo '<div class="initialbar firstinitial">'.get_string('firstname').' : ';
-                if(!empty($firstinitial)) {
-                    echo '<a href="'.$baseurl.'&amp;sifirst=">'.$strall.'</a>';
-                } else {
-                    echo '<strong>'.$strall.'</strong>';
-                }
-                foreach ($alpha as $letter) {
-                    if ($letter == $firstinitial) {
-                        echo ' <strong>'.$letter.'</strong>';
-                    } else {
-                        echo ' <a href="'.$baseurl.'&amp;sifirst='.$letter.'">'.$letter.'</a>';
-                    }
-                }
-                echo '</div>';
-    
-                // Bar of last initials
-    
-                echo '<div class="initialbar lastinitial">'.get_string('lastname').' : ';
-                if(!empty($lastinitial)) {
-                    echo '<a href="'.$baseurl.'&amp;silast=">'.$strall.'</a>';
-                } else {
-                    echo '<strong>'.$strall.'</strong>';
-                }
-                foreach ($alpha as $letter) {
-                    if ($letter == $lastinitial) {
-                        echo ' <strong>'.$letter.'</strong>';
-                    } else {
-                        echo ' <a href="'.$baseurl.'&amp;silast='.$letter.'">'.$letter.'</a>';
-                    }
-                }
-                echo '</div>';
-
-                print_paging_bar($matchcount, intval($table->get_page_start() / $perpage), $perpage, $baseurl.'&amp;', 'spage');
-
-            }
-
-            if($matchcount > 0) {
-                foreach ($students as $student) {
-                    print_user($student, $course, true);
-                }
-            }
-            else {
-                print_heading(get_string('nothingtodisplay'));
-            }
-        }
-    }
-    else {
-        $countrysort = (strpos($sort, 'country') !== false);
-        $timeformat = get_string('strftimedate');
-        if (!empty($students))  {
-            foreach ($students as $student) {
-                if ($student->lastaccess) {
-                    $lastaccess = format_time(time() - $student->lastaccess, $datestring);
-                } else {
-                    $lastaccess = $strnever;
-                }
-    
-                if (empty($student->country)) {
-                    $country = '';
-                }
-                else {
-                    if($countrysort) {
-                        $country = '('.$student->country.') '.$countries[$student->country];
-                    }
-                    else {
-                        $country = $countries[$student->country];
-                    }
-                }
-
-                $data = array (
-                        print_user_picture($student->id, $course->id, $student->picture, false, true),
-                        '<strong><a href="'.$CFG->wwwroot.'/user/view.php?id='.$student->id.'&amp;course='.$course->id.'">'.fullname($student).'</a></strong>');
-                if (!isset($hiddenfields['city'])) {
-                    $data[] = $student->city;
-                }
-                if (!isset($hiddenfields['country'])) {
-                    $data[] = $country;
-                }
-                if (!isset($hiddenfields['lastaccess'])) {
-                    $data[] = $lastaccess;
-                }
-                if ($course->enrolperiod) {
-                    if ($student->timeend) {
-                        $data[] = userdate($student->timeend, $timeformat);
-                    } else {
-                        $data[] = get_string('unlimited');
-                    }
-                }
-                if ($isteacher) {
-                    $data[] = '<input type="checkbox" name="user'.$student->id.'" />';
-                }
-                $table->add_data($data);
-
-            }
-        }
-
-        $table->print_html();
-
-    }
-
-    if ($isteacher) {
-        echo '<br /><center>';
-        echo '<input type="button" onclick="checkall()" value="'.get_string('selectall').'" /> ';
-        echo '<input type="button" onclick="checknone()" value="'.get_string('deselectall').'" /> ';
-        $displaylist['messageselect.php'] = get_string('messageselectadd');
-        if ($course->enrolperiod) {
-            $displaylist['extendenrol.php'] = get_string('extendenrol');
-        }
-        choose_from_menu ($displaylist, "formaction", "", get_string("withselectedusers"), "if(checksubmit(this.form))this.form.submit();", "");
-        helpbutton("participantswithselectedusers", get_string("withselectedusers"));
-        echo '<input type="submit" value="' . get_string('ok') . '"';
-        echo '</center></form>';
-    }
-
-    if ($isteacher && $totalcount > ($perpage*3)) {
-        echo '<form action="index.php"><p align="center"><input type="hidden" name="id" value="'.$course->id.'" />'.get_string('search').':&nbsp;'."\n";
-        echo '<input type="text" name="search" value="'.$search.'" />&nbsp;<input type="submit" value="'.get_string('search').'" /></p></form>'."\n";
-    }
-
-    if ($perpage == 99999) {
-        echo '<div id="showall"><a href="'.$baseurl.'&amp;perpage='.DEFAULT_PAGE_SIZE.'">'.get_string('showperpage', '', DEFAULT_PAGE_SIZE).'</a></div>';
-    }
-    else if ($matchcount > 0 && $perpage < $matchcount) {
-        echo '<div id="showall"><a href="'.$baseurl.'&amp;perpage=99999">'.get_string('showall', '', $matchcount).'</a></div>';
-    }
+		if ($isteacher) {
+	        echo '<br /><center>';
+	        echo '<input type="button" onclick="checkall()" value="'.get_string('selectall').'" /> ';
+	        echo '<input type="button" onclick="checknone()" value="'.get_string('deselectall').'" /> ';
+	        $displaylist['messageselect.php'] = get_string('messageselectadd');
+	        if ($course->enrolperiod) {
+	            $displaylist['extendenrol.php'] = get_string('extendenrol');
+	        }
+	        choose_from_menu ($displaylist, "formaction", "", get_string("withselectedusers"), "if(checksubmit(this.form))this.form.submit();", "");
+	        helpbutton("participantswithselectedusers", get_string("withselectedusers"));
+	        echo '<input type="submit" value="' . get_string('ok') . '"';
+	        echo '</center></form>';
+	    }
+	
+	    if ($isteacher && $totalcount > ($perpage*3)) {
+	        echo '<form action="index.php"><p align="center"><input type="hidden" name="id" value="'.$course->id.'" />'.get_string('search').':&nbsp;'."\n";
+	        echo '<input type="text" name="search" value="'.$search.'" />&nbsp;<input type="submit" value="'.get_string('search').'" /></p></form>'."\n";
+	    }
+	
+	    if ($perpage == 99999) {
+	        echo '<div id="showall"><a href="'.$baseurl.'&amp;perpage='.DEFAULT_PAGE_SIZE.'">'.get_string('showperpage', '', DEFAULT_PAGE_SIZE).'</a></div>';
+	    }
+	    else if ($matchcount > 0 && $perpage < $matchcount) {
+	        echo '<div id="showall"><a href="'.$baseurl.'&amp;perpage=99999">'.get_string('showall', '', $matchcount).'</a></div>';
+	    }
+    } // end of if ($roleid);
     
     print_footer($course);
 
@@ -678,9 +568,9 @@ function get_lastaccess_sql($accesssince='') {
         return '';
     }
     if ($accesssince == -1) { // never
-        return ' AND timeaccess = 0';
+        return ' AND lastaccess = 0';
     } else {
-        return ' AND timeaccess != 0 AND timeaccess < '.$accesssince;
+        return ' AND lastaccess != 0 AND lastaccess < '.$accesssince;
     }
 }
 

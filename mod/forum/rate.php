@@ -5,13 +5,22 @@
 
     require_once("../../config.php");
     require_once("lib.php");
+    
 
-    if (isguest()) {
-        error("Guests are not allowed to rate posts.", $_SERVER["HTTP_REFERER"]);
+    $id = required_param('id',PARAM_INT);           // The course these ratings are part of
+    $forumid = required_param('forumid',PARAM_INT); // The forum the rated posts are from
+    
+    if (! $cm = get_coursemodule_from_instance('forum', $forumid, $id)) {
+        error('Course Module ID was incorrect');
     }
-
-    $id = required_param('id',PARAM_INT);  // The course these ratings are part of
-
+    
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    
+    if (!has_capability('mod/forum:ratepost', $context->id) {
+        error('You do not have the permission to rate this post');
+    }
+    
+    
     if (! $course = get_record("course", "id", $id)) {
         error("Course ID was incorrect");
     }

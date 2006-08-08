@@ -37,8 +37,10 @@
     }
 
     require_login($course->id, false, $cm);
-
-    if (isguest()) {
+    
+	$context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    
+	if (isguest()) {
         error('Guests are not allowed to post comments', $_SERVER['HTTP_REFERER']);
     }
     add_to_log($course->id, 'glossary', 'view', "view.php?id=$cm->id", "$glossary->id",$cm->id);
@@ -72,10 +74,10 @@
 /// Input section
 
     if ( $action == 'delete' ) {
-        if (($comment->userid <> $USER->id) and !isteacher($glossary->course)) {
+        if (($comment->userid <> $USER->id) and !has_capability('mod/glossary:managecomments', $context->id)) {
             error('You can\'t delete other people\'s comments!');
         }
-        if (!$glossary->allowcomments && !isteacher($glossary->course)) {
+        if (!$glossary->allowcomments && !has_capability('mod/glossary:managecomments', $context->id)) {
                 error('You can\'t delete comments in this glossary!');
             }
         if ( $confirm ) {
@@ -111,7 +113,7 @@
             print_simple_box_end();
         }
     } else {
-        if (!$glossary->allowcomments && !isteacher($glossary->course)) {
+        if (!$glossary->allowcomments && !has_capability('mod/glossary:comment', $context->id)) {
             error('You can\'t add/edit comments to this glossary!');
         }
         if ( $action == 'edit' ) {
@@ -121,7 +123,7 @@
                 $timetocheck = $comment->timemodified;
             }
             $ineditperiod = ((time() - $timetocheck <  $CFG->maxeditingtime) || $glossary->editalways);
-            if ( (!$ineditperiod || $USER->id != $comment->userid) and !isteacher($course->id) and $cid) {
+            if ( (!$ineditperiod || $USER->id != $comment->userid) and !has_capability('mod/glossary:comment', $context->id) and $cid) {
                 if ( $USER->id != $comment->userid ) {
                     error('You can\'t edit other people\'s comments!');
                 } elseif (!$ineditperiod) {

@@ -27,7 +27,7 @@
     require_course_login($course);
 
 
-    add_to_log($course->id, "forum", "user report", "user.php?course=$course->id&amp;id=$user->id&amp;mode=$mode", "$user->id");
+    add_to_log($course->id, "forum", "user report", "user.php?id=$course->id&amp;user=$user->id&amp;mode=$mode", "$user->id"); 
 
     $strforumposts   = get_string('forumposts', 'forum');
     $strparticipants = get_string('participants');
@@ -49,11 +49,18 @@
     $currenttab = $mode;
     include($CFG->dirroot.'/user/tabs.php');   /// Prints out tabs as part of user page
 
-    if ((!isteacheredit($course->id)) and forum_get_separate_modules($course->id)) {
-        $sepgroups = user_group($course->id, $USER->id);
-    } else {
-        $sepgroups = false;
+    $isseparategroups = /*(($course->groupmode == SEPARATEGROUPS and
+                         $course->groupmodeforce and
+                         !isteacheredit($course->id))*/forum_get_separate_modules($course->id);
+
+    /*
+    //editting teacher can view everything so do not pass in groupid
+    if (isteacheredit ($course->id)){
+        $isseparategroups = false;
     }
+    */
+
+    $groupid = $isseparategroups ? /*get_current_group*/mygroupid($course->id) : NULL;
 
     switch ($mode) {
         case 'posts' :
@@ -68,8 +75,10 @@
     }
     
     echo '<div class="user-content">';
+    // Get the posts regardless of group first.
     if ($posts = forum_search_posts($searchterms, $course->id, $page*$perpage, $perpage, 
-                                    $totalcount, $sepgroups, $extrasql)) {
+                                    $totalcount, $groupid, $extrasql)) {
+        
         print_paging_bar($totalcount, $page, $perpage, 
                          "user.php?id=$user->id&amp;course=$course->id&amp;mode=$mode&amp;perpage=$perpage&amp;");
         foreach ($posts as $post) {
@@ -80,7 +89,7 @@
             if (! $forum = get_record('forum', 'id', "$discussion->forum")) {
                 error("Could not find forum $discussion->forum");
             }
-    
+            
             $fullsubject = "<a href=\"view.php?f=$forum->id\">".format_string($forum->name,true)."</a>";
             if ($forum->type != 'single') {
                 $fullsubject .= " -> <a href=\"discuss.php?d=$discussion->id\">".format_string($discussion->name,true)."</a>";
@@ -88,19 +97,20 @@
                     $fullsubject .= " -> <a href=\"discuss.php?d=$post->discussion&amp;parent=$post->id\">".format_string($post->subject,true)."</a>";
                 }
             }
-
-            if (isadmin() && $course->id == SITEID) {
+            
+            $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
+            if ($course->id == SITEID && has_capability('moodle/site:config', $context->id)) {
                 $postcoursename = get_field('course', 'shortname', 'id', $forum->course);
                 $fullsubject = '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$forum->course.'">'.$postcoursename.'</a> -> '. $fullsubject;
             }
-    
+
             $post->subject = $fullsubject;
-    
+
             $fulllink = "<a href=\"discuss.php?d=$post->discussion#$post->id\">".
                          get_string("postincontext", "forum")."</a>";
 
             forum_print_post($post, $course->id, false, false, false, false, $fulllink);
-    
+
             echo "<br />";
         }
     

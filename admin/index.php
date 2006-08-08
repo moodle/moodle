@@ -28,9 +28,8 @@
     $confirmupgrade = optional_param('confirmupgrade', 0, PARAM_BOOL);
     $agreelicence = optional_param('agreelicence',0, PARAM_BOOL);
 
-
 /// check upgrade status first
-    upgrade_check_running("Upgrade already running, please wait!", 10);
+    #upgrade_check_running("Upgrade already running, please wait!", 10);
 
 /// Check some PHP server settings
 
@@ -78,6 +77,12 @@
     if (!isset($CFG->version)) {
         $CFG->version = "";
     }
+
+/// Turn off time limits and try to flush everything all the time, sometimes upgrades can be slow.
+
+    @set_time_limit(0);
+    @ob_implicit_flush(true);
+    @ob_end_flush();
 
 /// Check if the main tables have been installed yet or not.
 
@@ -165,6 +170,12 @@
                 print_heading($strdatabasechecking);
                 $db->debug=true;
                 if (main_upgrade($CFG->version)) {
+	                if (empty($CFG->rolesactive)) {
+		                moodle_upgrade_roles_system_17();
+	                }
+                    if (!update_capabilities()) {
+                        error('Had trouble upgrading the core capabilities for Roles');
+                    }
                     $db->debug=false;
                     if (set_config("version", $version)) {
                         remove_dir($CFG->dataroot . '/cache', true); // flush cache
@@ -240,6 +251,7 @@
         redirect("config.php");
     }
 
+
 /// Find and check all main modules and load them up or upgrade them if necessary
     upgrade_activity_modules("$CFG->wwwroot/$CFG->admin/index.php");  // Return here afterwards
 
@@ -304,7 +316,10 @@
 /// Check for valid admin user
     require_login();
 
-    if (!isadmin()) {
+	$context = get_context_instance(CONTEXT_SYSTEM, SITEID);
+
+	if (!isadmin()) {
+    //if (!has_capability('moodle/site:config', $context->id)) {
         error("You need to be an admin user to use this page.", "$CFG->wwwroot/login/index.php");
     }
 
@@ -416,6 +431,12 @@
                  get_string('addnewuser').'</a> - <span class="explanation">'.get_string('adminhelpaddnewuser').'</span></div>';
     $userdata .= '<div class="adminlink"><a href="'.$CFG->wwwroot.'/'.$CFG->admin.'/uploaduser.php?sesskey='.$USER->sesskey.'">'.
                  get_string('uploadusers').'</a> - <span class="explanation">'.get_string('adminhelpuploadusers').'</span></div>';
+    $userdata .= '<div class="adminlink"><a href="roles/manage.php">'.
+                 get_string('manageroles').'</a> - <span class="explanation">'.get_string('adminmanageroles').
+                 ' <img src="../pix/t/user.gif" height="11" width="11" alt="" /></span></div>';
+    $userdata .= '<div class="adminlink"><a href="roles/assign.php?contextid='.$context->id.'">'.
+                 get_string('assignroles').'</a> - <span class="explanation">'.get_string('adminassignroles').
+                 ' <img src="../pix/t/user.gif" height="11" width="11" alt="" /></span></div>';
 
     $table->data[] = array('<strong><a href="users.php">'.get_string('users').'</a></strong>', $userdata);
 
@@ -423,17 +444,25 @@
                  '</a> - <span class="explanation">'.get_string('adminhelpcourses').'</span></div>';
     $coursedata .= '<div class="adminlink"><a href="enrol.php?sesskey='.$USER->sesskey.'">'.get_string('enrolmentplugins').
                  '</a> - <span class="explanation">'.get_string('adminhelpenrolments').'</span></div>';
-    $coursedata .= '<div class="adminlink"><a href="../course/index.php?edit=off&amp;sesskey='.$USER->sesskey.'">'.
-                 get_string('assignstudents').'</a> - <span class="explanation">'.get_string('adminhelpassignstudents').'</span></div>';
-    $coursedata .= '<div class="adminlink"><a href="../course/index.php?edit=on&amp;sesskey='.$USER->sesskey.'">'.
-                 get_string('assignteachers').'</a> - <span class="explanation">'.get_string('adminhelpassignteachers').
-                 ' <img src="../pix/t/user.gif" height="11" width="11" alt="" /></span></div>';
-    $coursedata .= '<div class="adminlink"><a href="creators.php?sesskey='.$USER->sesskey.'">'.get_string('assigncreators').
-                 '</a> - <span class="explanation">'.get_string('adminhelpassigncreators').'</span></div>';
-    $coursedata .= '<div class="adminlink"><a href="admin.php?sesskey='.$USER->sesskey.'">'.get_string('assignadmins').
-                 '</a> - <span class="explanation">'.get_string('adminhelpassignadmins').'</span></div>';
+
 
     $table->data[] = array('<strong><a href="courses.php">'.get_string('courses').'</a></strong>', $coursedata);
+    
+    $table->data[] = array('<strong><a href="../files/index.php?id='.$site->id.'">'.get_string('sitefiles').'</a></strong>',
+                           '<div class="explanation">'.get_string('adminhelpsitefiles').'</div>');
+    $table->data[] = array('<strong><a href="stickyblocks.php">'.get_string('stickyblocks','admin').'</a></strong>',
+                           '<div class="explanation">'.get_string('adminhelpstickyblocks').'</div>');
+    $table->data[] = array('<strong><a href="report.php">'.get_string('reports').'</a></strong>', 
+                           '<div class="explanation">'.get_string('adminhelpreports').'</div>');
+
+    $testingdata  = '<div class="adminlink"><a href="environment.php">'.get_string('environment', 'admin').
+                   '</a> - <span class="explanation">'.get_string('adminhelpenvironment').'</span></div>';
+                           
+    $testingdata .= '<div class="adminlink"><a href="report/simpletest/index.php">'.get_string('simpletest', 'admin').
+                   '</a> - <span class="explanation">'.get_string('adminhelpsimpletest').'</span></div>';
+
+    $table->data[] = array('<strong><a href="tests.php">'.get_string('tests','admin').'</a></strong>',
+                           $testingdata);
 
     $miscdata = '<div class="adminlink"><a href="../files/index.php?id='.$site->id.'">'.get_string('sitefiles').
                  '</a> - <span class="explanation">'.get_string('adminhelpsitefiles').'</span></div>';

@@ -92,6 +92,56 @@ CREATE TABLE prefix_data_ratings (
   rating integer NOT NULL default '0'
 );
 
+# Roles tables
+
+CREATE TABLE prefix_roles (
+  `id` SERIAL PRIMARY KEY,
+  `name` varchar(255) NOT NULL default '',
+  `description` text NOT NULL default '',
+  `priority` decimal(2,2) NOT NULL default '0',
+);
+
+CREATE TABLE prefix_contexts (
+  `id` SERIAL PRIMARY KEY,
+  `system` int(1) NOT NULL default '0',
+  `metacourseid` int(10) NOT NULL default '0',
+  `coursecatid` int(10) NOT NULL default '0',
+  `courseid` int(10) NOT NULL default '0',
+  `moduleinstance` int(10) NOT NULL default '0',
+  `userid` int(10) NOT NULL default '0',
+);
+
+CREATE TABLE prefix_role_assignments (
+  `id` SERIAL PRIMARY KEY,
+  `roldid` int(10) NOT NULL default '0',
+  `contextid` int(10) NOT NULL default '0',
+  `userid` int(10) NOT NULL default '0',
+  `groupid` int(10) NOT NULL default '0',
+  `timestart` int(10) NOT NULL default '0',
+  `timeend` int(10) NOT NULL default '0',
+  `timemodified` int(10) NOT NULL default '0',
+  `modifierid` int(10) NOT NULL default '0',
+);
+
+CREATE TABLE prefix_capability_overrides (
+  `id` SERIAL PRIMARY KEY,
+  `contextid` int(10) NOT NULL default '0',
+  `roleid` int(10) NOT NULL default '0',
+  `module` varchar(255) NOT NULL default '',
+  `capability` varchar(255) NOT NULL default '',
+  `allow` int(1) NOT NULL default '0',
+  `priority` double(2,2) NOT NULL default '0',
+  `timemodified` int(10) NOT NULL default '0',
+  `modifierid` int(10) NOT NULL default '0',
+);
+
+CREATE TABLE prefix_role_capabilities (
+  `id` SERIAL PRIMARY KEY,
+  `module` varchar(255) NOT NULL default '',
+  `capability` varchar(255) NOT NULL default '',
+  `allow` int(1) NOT NULL default '0',
+);
+
 INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('data', 'view', 'data', 'name');
 INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('data', 'add', 'data', 'name');
 INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('data', 'update', 'data', 'name');

@@ -20,10 +20,9 @@
     }
 
     require_login($course->id, false);
-
-    if (!isteacher($course->id)) {
-        error("Sorry, only teachers can see this.");
-    }
+    
+	$context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    //has_capability('mod/survey:readresponses', $context->id, true);
 
     if (! $survey = get_record("survey", "id", $cm->instance)) {
         error("Survey ID was incorrect");
@@ -86,14 +85,18 @@
         echo "&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"report.php?action=scales&amp;id=$id\">$strscales</a>";
         echo "&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"report.php?action=questions&amp;id=$id\">$strquestions</a>";
         echo "&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"report.php?action=students&amp;id=$id\">$course->students</a>";
-        echo "&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"report.php?action=download&amp;id=$id\">$strdownload</a>";
+        if (has_capability('mod/survey:download', $context->id)) {
+        	echo "&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"report.php?action=download&amp;id=$id\">$strdownload</a>";
+        }
         if (empty($action)) {
             $action = "summary";
         }
     } else {
         echo "<a href=\"report.php?action=questions&amp;id=$id\">$strquestions</a>";
         echo "&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"report.php?action=students&amp;id=$id\">$course->students</a>";
-        echo "&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"report.php?action=download&amp;id=$id\">$strdownload</a>";
+        if (has_capability('mod/survey:download', $context->id)) {
+        	echo "&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"report.php?action=download&amp;id=$id\">$strdownload</a>";
+		}
         if (empty($action)) {
             $action = "questions";
         }
@@ -405,6 +408,7 @@
          break;
 
       case "download":
+      	has_capability('mod/survey:download', $context->id, true);
         print_heading($strdownload);
 
         echo '<p align="center">'.get_string("downloadinfo", "survey").'</p>';

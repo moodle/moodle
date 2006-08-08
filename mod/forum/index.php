@@ -91,7 +91,9 @@
         foreach ($forums as $forum) {
             if (!isset($forum->visible)) {
                 $forum->visible = instance_is_visible("forum", $forum);
-                if (!$forum->visible and !isteacher($course->id)) {
+                $cm = get_coursemodule_from_instance("forum", $forum->id, $course->id);
+                $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+                if (!$forum->visible and !has_capability('moodle/course:viewhiddenactivities', $context->id)) {
                     if (isset($forum->keyreference)) {
                         unset($learningforums[$forum->keyreference]);
                     }
@@ -106,12 +108,14 @@
                         unset($learningforums[$forum->keyreference]);
                     }
                     break;
+                /*
                 case "teacher":
                     if (isteacher($course->id)) {
                         $forum->visible = true;
                         $generalforums[] = $forum;
                     }
                     break;
+                */
                 default:
                     if (!$course->category or empty($forum->section)) {   // Site level or section 0
                         $generalforums[] = $forum;
@@ -153,13 +157,19 @@
 
     if ($generalforums) {
         foreach ($generalforums as $forum) {
-            if (isset($forum->groupmode)) {
+           
+            $cm = get_coursemodule_from_instance("forum", $forum->id, $course->id);
+            $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+           
+           if (isset($forum->groupmode)) {
                 $groupmode = groupmode($course, $forum);  /// Can do this because forum->groupmode is defined
             } else {
                 $groupmode = NOGROUPS;
             }
 
-            if ($groupmode == SEPARATEGROUPS and !isteacheredit($course->id)) {
+
+            // this is potentially wrong logic. could possibly check for if user has the right to hmmm
+            if ($groupmode == SEPARATEGROUPS and !has_capability('mod/forum:viewdiscussionsfromallgroups', $context->id)) {
                 $count = count_records_select("forum_discussions", "forum = '$forum->id' AND (groupid = '$currentgroup' OR groupid = '-1')");
             } else {
                 $count = count_records("forum_discussions", "forum", "$forum->id");
@@ -167,7 +177,7 @@
 
             if ($usetracking) {
                 if (($forum->trackingtype == FORUM_TRACKING_ON) || !isset($untracked[$forum->id])) {
-                    $groupid = ($groupmode==SEPARATEGROUPS && !isteacheredit($course->id)) ? $currentgroup : false;
+                    $groupid = ($groupmode==SEPARATEGROUPS && !has_capability('mod/forum:viewdiscussionsfromallgroups', $context->id)) ? $currentgroup : false;
                     $unread = forum_tp_count_forum_unread_posts($USER->id, $forum->id, $groupid);
                     if ($unread > 0) {
                         $unreadlink = '<span class="unread"><a href="view.php?f='.$forum->id.'">'.$unread.'</a>';
@@ -176,6 +186,7 @@
                     } else {
                         $unreadlink = '<span class="read"><a href="view.php?f='.$forum->id.'">'.$unread.'</a>';
                     }
+
 
                     if ($forum->trackingtype == FORUM_TRACKING_OPTIONAL) {
                         $trackedlink = '<a title="'.$strnotrackforum.'" href="settracking.php?id='.
@@ -226,7 +237,7 @@
                 if (forum_is_forcesubscribed($forum->id)) {
                     $sublink = $stryes;
                 } else {
-                    if ($groupmode and !isteacheredit($course->id) and !mygroupid($course->id)) {
+                    if ($groupmode and !has_capability('mod/forum:viewdiscussionsfromallgroups', $context->id) and !mygroupid($course->id)) {
                         $sublink = $strno;   // Can't subscribe to a group forum (not in a group)
                         $forumlink = format_string($forum->name,true);
                     } else {
@@ -303,11 +314,12 @@
 
         if ($learningforums) {
             $currentsection = "";
-
             foreach ($learningforums as $key => $forum) {
                 $groupmode = groupmode($course, $forum);  /// Can do this because forum->groupmode is defined
-
-                if ($groupmode == SEPARATEGROUPS and !isteacheredit($course->id)) {
+                $forum->visible = instance_is_visible("forum", $forum);
+                $cm = get_coursemodule_from_instance("forum", $forum->id, $course->id);
+ 
+                if ($groupmode == SEPARATEGROUPS and !has_capability('mod/forum:viewdiscussionsfromallgroups', $context->id)) {
                     $count = count_records("forum_discussions", "forum", "$forum->id", "groupid", $currentgroup);
                 } else {
                     $count = count_records("forum_discussions", "forum", "$forum->id");

@@ -16,6 +16,7 @@
     }
 
     require_login($course->id);
+	$context = get_context_instance(CONTEXT_COURSE, $course->id);
 
     $strscale = get_string("scale");
     $strscales = get_string("scales");
@@ -93,9 +94,8 @@
     //If action is details, show the popup info
     if ($action == "details") {
         //Check for teacher edit
-        if (! isteacheredit($course->id)) {
-            error("Only editing teachers can view scales !");
-        }
+       	has_capability('moodle/course:managescales', $context->id, true);
+	   
         //Check for scale
         if (! $scale = get_record("scale", "id", $scaleid)) {
             error("Scale ID was incorrect");
@@ -130,10 +130,8 @@
 
         $sesskey = !empty($USER->id) ? $USER->sesskey : '';
 
-        //Check for teacher edit
-        if (! isteacheredit($course->id)) {
-            error("Only editing teachers can modify scales !");
-        }
+       	has_capability('moodle/course:managescales', $context->id, true);
+       	
         //Check for scale if action = edit
         if ($action == "edit") {
             if (! $scale = get_record("scale", "id", $scaleid)) {
@@ -237,9 +235,7 @@
     //If action is delete, do it
     if ($action == "delete" and confirm_sesskey()) {
         //Check for teacher edit
-        if (! isteacheredit($course->id)) {
-            error("Only editing teachers can delete scales !");
-        }
+       	has_capability('moodle/course:managescales', $context->id, true);
         //Check for scale if action = edit
         if (! $scale = get_record("scale", "id", $scaleid)) {
             error("Scale ID was incorrect");
@@ -270,9 +266,7 @@
     //If action is down or up, do it
     if (($action == "down" || $action == "up") and confirm_sesskey()) {
         //Check for teacher edit
-        if (! isadmin()) {
-            error("Only administrators can move scales",$CFG->wwwroot.'/course/scales.php?id='.$course->id);
-        }
+       	has_capability('moodle/course:managescales', $context->id, true);
         //Check for scale if action = edit
         if (! $scale = get_record("scale", "id", $scaleid)) {
             error("Scale ID was incorrect");
@@ -302,7 +296,7 @@
     }
 
     if ($list) {       /// Just list the scales (in a helpwindow)
-
+       	has_capability('moodle/course:viewscales', $context->id, true);
         print_header($strscales);
 
         if (!empty($scaleid)) {
@@ -345,7 +339,7 @@
             }
 
         } else {
-            if (isteacheredit($course->id)) {
+            if (has_capability('moodle/course:managescales', $context->id)) {
                 echo "<p align=\"center\">(";
                 print_string("scalestip");
                 echo ")</p>";
@@ -375,9 +369,7 @@
 
 /// The rest is all about editing the scales
 
-    if (!isteacheredit($course->id)) {
-        error("Only editing teachers can modify scales !");
-    }
+    has_capability('moodle/course:managescales', $context->id, true);
 
 /// Print out the main page
 

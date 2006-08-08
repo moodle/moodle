@@ -36,8 +36,9 @@
     }
 
     require_login($course->id);
+	$context = get_context_instance(CONTEXT_COURSE, $course->id);
 
-    if (!isteacheredit($course->id)) {
+    if (!has_capability('moodle/course:managegroups', $context->id)) {
         redirect("group.php?id=$course->id");   // Not allowed to see all groups
     }
 

@@ -10,10 +10,6 @@
         error("You are not supposed to use this script like that.");
     }
 
-    if (isguest()) {
-        error("Guests are not allowed to answer surveys", $_SERVER["HTTP_REFERER"]);
-    }
-
     $id = required_param('id', PARAM_INT);    // Course Module ID
 
     if (! $cm = get_record("course_modules", "id", $id)) {
@@ -25,8 +21,11 @@
     }
 
     require_login($course->id, false, $cm);
-
-    if (! $survey = get_record("survey", "id", $cm->instance)) {
+    
+	$context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    has_capability('mod/survey:participate', $context->id, true);
+    
+	if (! $survey = get_record("survey", "id", $cm->instance)) {
         error("Survey ID was incorrect");
     }
 

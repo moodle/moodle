@@ -56,7 +56,9 @@
     }
 
     require_course_login($course, true, $cm);
-
+	$context = get_context_instance(CONTEXT_MODULE, $cm->id);
+	has_capability('mod/data:managetemplates', $context->id, true);
+/*	
     if (!isteacheredit($course->id)){
         error(get_string('noaccess','data'));
     }
@@ -66,7 +68,7 @@
             redirect($CFG->wwwroot.'/mod/data/field.php?d='.$data->id);  // Redirect to field entry
         }
     }
-
+*/
     //add_to_log($course->id, 'data', 'templates view', "templates.php?id=$cm->id&amp;d=$data->id", $data->id, $cm->id);
 
 

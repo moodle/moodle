@@ -120,6 +120,11 @@ img.grouppicture,
   padding: 10px;
 }   
 
+.notifytiny {
+  text-align:left;
+  padding: 0px;
+}   
+
 .generalbox {
   border-width:1px;
   border-style:solid;
@@ -416,6 +421,10 @@ body#admin-blocks
 body#admin-config .confighelp {
   display: block;
   padding-bottom: 20px;
+}
+
+body#admin-roles-manage table.generalbox {
+  margin: auto;
 }
 
 /***

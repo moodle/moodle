@@ -16,20 +16,19 @@
     $data[GLOSSARY_CATEGORY_VIEW]->caption = get_string("categoryview", "glossary");
     $data[GLOSSARY_DATE_VIEW]->caption = get_string("dateview", "glossary");
     $data[GLOSSARY_AUTHOR_VIEW]->caption = get_string("authorview","glossary");
-    if (!isguest()) {
-        if ( isteacher($course->id) or $glossary->studentcanpost  ) {
-            $data[GLOSSARY_ADDENTRY_VIEW]->caption = get_string("addentry", "glossary");
-            $data[GLOSSARY_ADDENTRY_VIEW]->link = "edit.php?id=$cm->id";
-        }
+
+    if (has_capability('mod/glossary:write', $context->id)) {
+        $data[GLOSSARY_ADDENTRY_VIEW]->caption = get_string("addentry", "glossary");
+        $data[GLOSSARY_ADDENTRY_VIEW]->link = "edit.php?id=$cm->id";
     }
-
-    if ( isteacher($course->id) ) {
+    if (has_capability('mod/glossary:import', $context->id)) {
         $data[GLOSSARY_IMPORT_VIEW]->caption = get_string("importentries", "glossary");
-        $data[GLOSSARY_EXPORT_VIEW]->caption = get_string("exportentries", "glossary");
-
-        $data[GLOSSARY_IMPORT_VIEW]->link = "import.php?id=$cm->id";
+    	$data[GLOSSARY_IMPORT_VIEW]->link = "import.php?id=$cm->id";
+	}
+        
+    if (has_capability('mod/glossary:export', $context->id)) {
+        $data[GLOSSARY_EXPORT_VIEW]->caption = get_string("exportentries", "glossary");     
         $data[GLOSSARY_EXPORT_VIEW]->link = "export.php?id=$cm->id&amp;mode=$mode&amp;hook=$hook";
-
     }
 
 //    $data[GLOSSARY_DATE_VIEW]->link = "view.php?id=$id&amp;tab=".GLOSSARY_DATE_VIEW;
@@ -40,9 +39,8 @@
     $data[GLOSSARY_CATEGORY_VIEW]->link = "view.php?id=$id&amp;mode=cat";
     $data[GLOSSARY_AUTHOR_VIEW]->link = "view.php?id=$id&amp;mode=author";
 
-
-    if (isteacher($course->id)) {
-        $data[GLOSSARY_APPROVAL_VIEW]->caption = get_string("waitingapproval", "glossary");
+	if (has_capability('mod/glossary:approve', $context->id)) {
+	    $data[GLOSSARY_APPROVAL_VIEW]->caption = get_string("waitingapproval", "glossary");
         $data[GLOSSARY_APPROVAL_VIEW]->link = "";
 
         $hiddenentries = get_records_select("glossary_entries","glossaryid  = $glossary->id and approved = 0");

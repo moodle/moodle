@@ -899,6 +899,74 @@ CREATE TABLE prefix_blog_tag_instance (
   PRIMARY KEY  (`id`)
 ) TYPE=MyISAM COMMENT ='tag instance for blogs.';
 
+###################################
+# Roles tables
+###################################
+
+CREATE TABLE prefix_role (
+  `id` int(10) NOT NULL auto_increment,
+  `name` varchar(255) NOT NULL default '',
+  `description` text NOT NULL default '',
+  `sortorder` int(10) NOT NULL default '0',
+  PRIMARY KEY  (`id`)
+) TYPE=MyISAM COMMENT ='moodle roles';
+
+CREATE TABLE prefix_context (
+  `id` int(10) NOT NULL auto_increment,
+  `level` int(10) NOT NULL default '0',
+  `instanceid` int(10) NOT NULL default '0',
+  PRIMARY KEY  (`id`)
+) TYPE=MyISAM COMMENT ='one of these must be set';
+
+CREATE TABLE prefix_role_assignments (
+  `id` int(10) NOT NULL auto_increment,
+  `roleid` int(10) NOT NULL default '0',
+  `contextid` int(10) NOT NULL default '0',
+  `userid` int(10) NOT NULL default '0',
+  `hidden` int(1) NOT NULL default '0',
+  `timestart` int(10) NOT NULL default '0',
+  `timeend` int(10) NOT NULL default '0',
+  `timemodified` int(10) NOT NULL default '0',
+  `modifierid` int(10) NOT NULL default '0',
+  `enrol` varchar(20) NOT NULL default '',
+  `sortorder` int(10) NOT NULL default '0',
+  PRIMARY KEY  (`id`)
+) TYPE=MyISAM COMMENT ='assigning roles to different context';
+
+CREATE TABLE prefix_role_capabilities (
+  `id` int(10) NOT NULL auto_increment,
+  `contextid` int(10) NOT NULL default '0',
+  `roleid` int(10) NOT NULL default '0',
+  `capability` varchar(255) NOT NULL default '',
+  `permission` int(10) NOT NULL default '0',
+  `timemodified` int(10) NOT NULL default '0',
+  `modifierid` int(10) NOT NULL default '0',
+  PRIMARY KEY (`id`)
+) TYPE=MYISAM COMMENT ='overriding a capability for a particular role in a particular context';
+
+CREATE TABLE prefix_role_deny_grant (
+  `id` int(10) NOT NULL auto_increment,
+  `roleid` int(10) NOT NULL default '0',
+  `unviewableroleid` int(10) NOT NULL default '0',
+  PRIMARY KEY (`id`)
+) TYPE=MYISAM COMMENT ='this defines what role can touch (assign, override) what role';
+
+CREATE TABLE prefix_capabilities ( 
+  `id` int(10) NOT NULL auto_increment, 
+  `name` varchar(150) NOT NULL default '', 
+  `captype` varchar(50) NOT NULL default '', 
+  `contextlevel` int(10) NOT NULL default '0', 
+  `component` varchar(100) NOT NULL default '', 
+  PRIMARY KEY (`id`) 
+) TYPE=MYISAM COMMENT ='this defines all capabilities';
+
+CREATE TABLE prefix_role_names ( 
+  `id` int(10) NOT NULL auto_increment, 
+  `roleid` int(10) NOT NULL default '0',
+  `contextid` int(10) NOT NULL default '0', 
+  `text` text NOT NULL default '',
+  PRIMARY KEY (`id`) 
+) TYPE=MYISAM COMMENT ='role names in native strings';
 
 INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('user', 'view', 'user', 'CONCAT(firstname," ",lastname)');
 INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('course', 'user report', 'user', 'CONCAT(firstname," ",lastname)');

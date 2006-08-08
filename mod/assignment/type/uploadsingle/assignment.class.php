@@ -45,9 +45,12 @@ class assignment_uploadsingle extends assignment_base {
     }
 
     function view() {
-
+	
         global $USER;
-
+		
+		$context = get_context_instance(CONTEXT_MODULE,$this->cm->id);
+        has_capability('mod/assignment:view', $context->id, true);
+        
         add_to_log($this->course->id, "assignment", "view", "view.php?id={$this->cm->id}", $this->assignment->id, $this->cm->id);
 
         $this->view_header();
@@ -66,7 +69,7 @@ class assignment_uploadsingle extends assignment_base {
             }
         }
 
-        if (!isguest($USER->id) && $this->isopen() && (!$filecount || $this->assignment->resubmit || !$submission->timemarked)) {
+        if (has_capability('mod/assignment:submit', $context->id)  && $this->isopen() && (!$filecount || $this->assignment->resubmit || !$submission->timemarked)) {
             $this->view_upload_form();
         }
 

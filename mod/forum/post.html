@@ -1,4 +1,9 @@
 <?php
+/**
+ * This file is required by post.php. Therefore, the context objects
+ * $modcontext and $coursecontext are available to the script.
+ */
+
 if (!isset($discussion->timestart)) {
     $discussion->timestart = 0;
 }
@@ -59,7 +64,8 @@ if (!isset($discussion->timeend)) {
     <?php 
        if (forum_is_forcesubscribed($forum->id)) {
            print_string("everyoneissubscribed", "forum");
-       } else if ($forum->forcesubscribe != FORUM_DISALLOWSUBSCRIBE  || isteacher($forum->course)){
+       } else if ($forum->forcesubscribe != FORUM_DISALLOWSUBSCRIBE ||
+                    has_capability('moodle/course:manageactivities', $coursecontext->id)){
            unset($options);
            if (forum_is_subscribed($USER->id, $post->forum)) {
                $options[0] = get_string("subscribestart", "forum");
@@ -102,7 +108,10 @@ if (!isset($discussion->timeend)) {
 <?php } ?>
 
 
-<?php if (isadmin() && empty($post->id)) { ?>
+<?php
+    if (has_capability('moodle/course:manageactivities', $coursecontext->id)
+            && empty($post->id)) {
+?>
 
 <tr valign="top">
     <td align="right"><b><?php print_string("mailnow", "forum") ?>:</b></td>
@@ -113,9 +122,8 @@ if (!isset($discussion->timeend)) {
 <?php } ?>
 
 
-<?php if (!empty($CFG->forum_enabletimedposts) && 
-    isteacher($course->id) && $forum->type == 'news' && !$post->parent) {  
-   //  This is the first post of a discussion in news forum 
+<?php if (!empty($CFG->forum_enabletimedposts) && !$post->parent) {
+   // This is the first post of a discussion, and  timed posts are enabled.
  ?>
 <tr valign="top">
     <td align="right"><b><?php print_string("displayperiod", "forum") ?>:<br />(<?php print_string("optional") ?>)&nbsp;</b></td>
@@ -150,7 +158,7 @@ if (!isset($discussion->timeend)) {
 <?php } else { ?>
 <input type="hidden" name="timestartdisabled" value="1" />
 <input type="hidden" name="timeenddisabled" value="1" />
-<?php } ?>
+<? } ?>
 <tr>
     <td align="center" colspan="2">
     <input type="hidden" name="course"     value="<?php p($post->course) ?>" />
@@ -158,6 +166,7 @@ if (!isset($discussion->timeend)) {
     <input type="hidden" name="discussion" value="<?php p($post->discussion) ?>" />
     <input type="hidden" name="parent"     value="<?php p($post->parent) ?>" />
     <input type="hidden" name="userid"     value="<?php p($post->userid) ?>" />
+    <input type="hidden" name="groupid"    value="<?php p($post->groupid) ?>" />
     <input type="hidden" name="edit"       value="<?php p($post->edit) ?>" />
     <input type="submit" value="<?php p(($post->edit) ? get_string('savechanges') : get_string('posttoforum', 'forum')); ?>" />
     </td>

@@ -21,14 +21,16 @@
         error('Course is misconfigured');
     }
 
+	$context = get_context_instance(CONTEXT_MODULE, $cm->id);
     require_login($course->id, false, $cm);
 
     $isteacher     = isteacher($course->id);
     $isteacheredit = isteacheredit($course->id);
 
-    if (isguest() or (!$isteacher and !$chat->studentlogs)) {
-        error('You can not view these chat reports');
-    }
+    //if (isguest() or (!$isteacher and !$chat->studentlogs)) {
+    	//error('You can not view these chat reports');
+    //}
+	has_capability('mod/chat:readlog', $context->id, true); // if can't even read, kill
 
     add_to_log($course->id, 'chat', 'report', "report.php?id=$cm->id", $chat->id, $cm->id);
 
@@ -62,7 +64,8 @@
             $groupselect = "";
         }
 
-        if ($deletesession and $isteacheredit) {
+        //if ($deletesession and $isteacheredit) {
+        if ($deletesession and has_capability('mod/chat:deletelog', $context->id)) {
             notice_yesno(get_string('deletesessionsure', 'chat'),
                          "report.php?id=$cm->id&amp;deletesession=1&amp;confirmdelete=1&amp;start=$start&amp;end=$end&amp;sesskey=$USER->sesskey",
                          "report.php?id=$cm->id");
@@ -86,7 +89,8 @@
             print_simple_box_end('center');
         }
 
-        if (!$deletesession or !$isteacheredit) {
+		if (!$deletesession or !has_capability('mod/chat:deletelog', $context->id)) {
+        //if (!$deletesession or !$isteacheredit) {
             print_continue("report.php?id=$cm->id");
         }
 
@@ -120,7 +124,8 @@
 
 /// Delete a session if one has been specified
 
-    if ($deletesession and $isteacheredit and $confirmdelete and $start and $end and confirm_sesskey()) {
+	if ($deletesession and has_capability('mod/chat:deletelog', $context->id) and $confirmdelete and $start and $end and confirm_sesskey()) {
+    //if ($deletesession and $isteacheredit and $confirmdelete and $start and $end and confirm_sesskey()) {
         delete_records_select('chat_messages', "chatid = $chat->id AND
                                             timestamp >= '$start' AND
                                             timestamp <= '$end' $groupselect");
@@ -181,14 +186,15 @@
                 foreach ($sessionusers as $sessionuser => $usermessagecount) {
                     if ($user = get_record('user', 'id', $sessionuser)) {
                         print_user_picture($user->id, $course->id, $user->picture);
-                        echo '&nbsp;'.fullname($user, $isteacher);
+                        echo '&nbsp;'.fullname($user, $isteacher); // need to fix this
                         echo "&nbsp;($usermessagecount)<br />";
                     }
                 }
 
                 echo '<p align="right">';
                 echo "<a href=\"report.php?id=$cm->id&amp;start=$sessionstart&amp;end=$sessionend\">$strseesession</a>";
-                if ($isteacheredit) {
+                //if ($isteacheredit)
+				if (has_capability('mod/chat:deletelog', $context->id)) {
                     echo "<br /><a href=\"report.php?id=$cm->id&amp;start=$sessionstart&amp;end=$sessionend&amp;deletesession=1\">$strdeletesession</a>";
                 }
                 echo '</p>';

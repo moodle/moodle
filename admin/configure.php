@@ -4,8 +4,9 @@
 
     require_login();
 
-    if (!isadmin()) {
-        error('Only admins can access this page');
+    $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
+    if (!has_capability('moodle/site:config', $context->id)) {
+        error('Only the admin can use this page');
     }
 
     if (!$site = get_site()) {

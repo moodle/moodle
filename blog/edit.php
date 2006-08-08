@@ -16,29 +16,31 @@ if (!$referrer = optional_param('referrer','', PARAM_URL)) {
     }
 }
 
-//first verify that user is not a guest
-if (isguest()) {
-    error(get_string('noguestpost', 'blog'), $referrer);
+
+$context = get_context_instance(CONTEXT_SYSTEM, SITEID);
+if (!has_capability('moodle/blog:readentries', $context->id)) {
+    error(get_string('nopost', 'blog'), $referrer);
 }
 
-// make sure that the person trying to edit have access right
+
+// Make sure that the person trying to edit have access right
 if ($editid = optional_param('editid', 0, PARAM_INT)) {
 
     $blogEntry = get_record('post', 'id', $editid);
 
-    if (!blog_user_can_edit_post($blogEntry)) {
-         error( get_string('notallowedtoedit', 'blog'), $CFG->wwwroot .'/login/index.php');
+    if (!blog_user_can_edit_post($blogEntry, $context->id)) {
+        error( get_string('notallowedtoedit', 'blog'), $CFG->wwwroot .'/login/index.php');
     }
 }
 
-//check to see if there is a requested blog to edit
+// Check to see if there is a requested blog to edit
 if (isloggedin() && !isguest()) {
     $userid = $USER->id;
 } else {
     error(get_string('noblogspecified', 'blog') .'<a href="'. $CFG->blog_blogurl .'">' .get_string('viewentries', 'blog') .'</a>');
 }
 
-// if we are trying to delete an non-existing blog entry
+// If we are trying to delete an non-existing blog entry
 if (isset($act) && ($act == 'del') && (empty($blogEntry))) {
     error ('the entry you are trying to delete does not exist');
 }
@@ -153,7 +155,7 @@ function do_delete($postid) {
     // check ownership
     $blogEntry = get_record('post','id',$postid);
 
-    if (blog_user_can_edit_post($blogEntry)) {
+    if (blog_user_can_edit_post($blogEntry, $context->id)) {
         
         if (delete_records('post','id',$postid)) {
             //echo "bloginfo_arg:"; //debug

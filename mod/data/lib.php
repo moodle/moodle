@@ -548,12 +548,16 @@ function data_numentries($data){
  ****************************************************************/
 function data_add_record($data, $groupid=0){
     global $USER;
+    
+    $cm = data_get_cm($data);
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
     $record->userid = $USER->id;
     $record->dataid = $data->id;
     $record->groupid = $groupid;
     $record->timecreated = $record->timemodified = time();
-    if (isteacher($data->course)) {
+    if (has_capability('mod/data:approve', $context->id)) {
+	//if (isteacher($data->course)) {
         $record->approved = 1;
     } else {
         $record->approved = 0;
@@ -835,6 +839,9 @@ function data_get_coursemodule_info($coursemodule) {
 function data_print_template($template, $records, $data, $search='',$page=0, $return=false) {
     global $CFG;
 
+	$cm = data_get_cm($data);
+	$context = get_context_instance(CONTEXT_MODULE, $cm->id);
+
     static $fields = NULL;
     static $isteacher;
     static $dataid = NULL;
@@ -872,7 +879,7 @@ function data_print_template($template, $records, $data, $search='',$page=0, $re
     /// Replacing special tags (##Edit##, ##Delete##, ##More##)
         $patterns[]='/\#\#Edit\#\#/i';
         $patterns[]='/\#\#Delete\#\#/i';
-        if ($isteacher or data_isowner($record->id)) {
+        if (has_capability('mod/data:manageentries', $context->id) or data_isowner($record->id)) {
             $replacement[] = '<a href="'.$CFG->wwwroot.'/mod/data/edit.php?d='
                              .$data->id.'&amp;rid='.$record->id.'&amp;sesskey='.sesskey().'"><img src="'.$CFG->pixpath.'/t/edit.gif" height="11" width="11" border="0" alt="'.get_string('edit').'" /></a>';
             $replacement[] = '<a href="'.$CFG->wwwroot.'/mod/data/view.php?d='
@@ -892,7 +899,7 @@ function data_print_template($template, $records, $data, $search='',$page=0, $re
                                '&amp;course='.$data->course.'">'.fullname($record).'</a>';
 
         $patterns[]='/\#\#Approve\#\#/i';
-        if ($isteacher && ($data->approval) && (!$record->approved)){
+        if (has_capability('mod/data:approve', $context->id) && ($data->approval) && (!$record->approved)){
             $replacement[] = '<a href="'.$CFG->wwwroot.'/mod/data/view.php?d='.$data->id.'&amp;approve='.$record->id.'&amp;sesskey='.sesskey().'"><img src="'.$CFG->pixpath.'/i/approve.gif" height="11" width="11" border="0" alt="'.get_string('approve').'" /></a>';
         } else {
             $replacement[] = '';
@@ -984,19 +991,22 @@ function data_print_preference_form($data, $perpage, $search, $sort='', $order='
 function data_print_ratings($data, $record) {
     global $USER;
 
+	$cm = data_get_cm($data);
+	$context = get_context_instance(CONTEXT_MODULE, $cm->id);
+	
     $ratingsmenuused = false;
     if ($data->ratings and !empty($USER->id)) {
         if ($ratings->scale = make_grades_menu($data->scale)) {
             $ratings->assesspublic = $data->assesspublic;
-            $ratings->allow = (($data->assessed != 2 or isteacher($data->course)) && !isguest());
+            $ratings->allow = ($data->assessed != 2 or has_capability('mod/data:rate', $context->id));
             if ($ratings->allow) {
                 echo '<div class="ratings" align="center">';
                 echo '<form name="form" method="post" action="rate.php">';
                 $useratings = true;
 
                 if ($useratings) {
-                    if ((isteacher($data->course) or $ratings->assesspublic) and !data_isowner($record->id)) {
-                        data_print_ratings_mean($record->id, $ratings->scale, isteacher($data->course));
+                    if ((has_capability('mod/data:rate', $context->id) or $ratings->assesspublic) and !data_isowner($record->id)) {
+                        data_print_ratings_mean($record->id, $ratings->scale, has_capability('mod/data:rate', $context->id));
                         if (!empty($ratings->allow)) {
                             echo '&nbsp;';
                             data_print_rating_menu($record->id, $USER->id, $ratings->scale);
@@ -1155,7 +1165,10 @@ function data_print_comment($data, $comment, $page=0) {
 
     global $USER, $CFG;
     
-    $stredit = get_string('edit');
+	$cm = data_get_cm($data);
+	$context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    
+	$stredit = get_string('edit');
     $strdelete = get_string('delete');
 
     $user = get_record('user','id',$comment->userid);
@@ -1192,7 +1205,7 @@ function data_print_comment($data, $comment, $page=0) {
 /// Commands
 
     echo '<div class="commands">';
-    if (data_isowner($comment->recordid) or isteacher($data->course)) {
+    if (data_isowner($comment->recordid) or has_capability('mod/data:managecomments', $context->id)) {
             echo '<a href="'.$CFG->wwwroot.'/mod/data/comment.php?rid='.$comment->recordid.'&amp;mode=edit&amp;commentid='.$comment->id.'&amp;page='.$page.'">'.$stredit.'</a>';
             echo '| <a href="'.$CFG->wwwroot.'/mod/data/comment.php?rid='.$comment->recordid.'&amp;mode=delete&amp;commentid='.$comment->id.'&amp;page='.$page.'">'.$strdelete.'</a>';
     }
@@ -1239,13 +1252,15 @@ function data_convert_arrays_to_strings(&$fieldinput) {
     }
 }
 
-function data_clean_field_name($fn) {
-    $fn = trim($fn);
-    //hack from clean_filename - to be replaced by something nicer later
-    $fn = preg_replace("/[\\000-\\x2c\\x2f\\x3a-\\x40\\x5b-\\x5e\\x60\\x7b-\\177]/s", '_', $fn);
-    $fn = preg_replace("/_+/", '_', $fn);
-    $fn = preg_replace("/\.\.+/", '.', $fn);
-    return $fn;
+// returns the $cm given $data
+function data_get_cm($data) {
+  	global $CFG, $course;
+	$datamod = get_record('modules', 'name', 'data');
+	$SQL = "select * from {$CFG->prefix}course_modules
+			where course = $course->id and
+			module = $datamod->id and
+			instance = $data->id";
+	return get_record_sql($SQL);
 }
 
 ?>

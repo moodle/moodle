@@ -18,20 +18,24 @@
     }
 
     if ($cm = get_coursemodule_from_instance("forum", $forum->id, $course->id)) {
-        if (groupmode($course, $cm) and !isteacheredit($course->id)) {   // Make sure user is allowed
-            if (! mygroupid($course->id)) {
-                error("Sorry, but you must be a group member to subscribe.");
+        
+        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+        if (groupmode($course, $cm) and
+                    !has_capability('mod/forum:viewdiscussionsfromallgroups', $context->id)) {
+            if (!mygroupid($course->id)) {
+                error('Sorry, but you must be a group member to subscribe.');
             }
         }
     } else {
         $cm->id = 0;
+        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     }
 
     if ($user) {
-        if (!isteacher($course->id)) {
-            error("Only teachers can subscribe/unsubscribe other people!");
+        if (!has_capability('mod/forum:managesubscriptions', $context->id)) {
+            error('You do not have the permission to subscribe/unsubscribe other people!');
         }
-        if (! $user = get_record("user", "id", $user)) {
+        if (!$user = get_record("user", "id", $user)) {
             error("User ID was incorrect");
         }
     } else {
@@ -43,7 +47,7 @@
     if (isguest()) {   // Guests can't subscribe
         $wwwroot = $CFG->wwwroot.'/login/index.php';
         if (!empty($CFG->loginhttps)) {
-            $wwwroot = str_replace('http:','https:', $wwwroot);
+            $wwwroot = str_replace('http','https', $wwwroot);
         }
 
         $strforums = get_string('modulenameplural', 'forum');
@@ -63,15 +67,9 @@
         exit;
     }
 
-    if ($forum->type == "teacher") {
-        if (!isteacher($course->id)) {
-            error("You must be a $course->teacher to subscribe to this forum");
-        }
-    }
-
     $returnto = forum_go_back_to("index.php?id=$course->id");
 
-    if ($force and isteacher($course->id)) {
+    if ($force and has_capability('mod/forum:managesubscriptions', $context->id)) {
         if (forum_is_forcesubscribed($forum->id)) {
             forum_forcesubscribe($forum->id, 0);
             redirect($returnto, get_string("everyonecanchoose", "forum"), 1);
@@ -97,7 +95,8 @@
         }
 
     } else { // subscribe
-        if ($forum->forcesubscribe == FORUM_DISALLOWSUBSCRIBE && !isteacher($forum->course)) {
+        if ($forum->forcesubscribe == FORUM_DISALLOWSUBSCRIBE &&
+                    !has_capability('mod/forum:managesubscriptions', $context->id)) {
             error(get_string('disallowsubscribe'),$_SERVER["HTTP_REFERER"]);
         }
         if (forum_subscribe($user->id, $forum->id) ) {

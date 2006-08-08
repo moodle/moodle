@@ -7,7 +7,25 @@ class block_participants extends block_list {
     }
 
     function get_content() {
+      	
         global $USER, $CFG;
+	
+		// the following 3 lines is need to pass _self_test();
+		if (!$this->instance->pageid) {
+			return '';  
+		}
+			
+		// only 2 possible contexts, site or course
+		if ($this->instance->pageid == SITEID) { // site context
+		  	$context = get_context_instance(CONTEXT_SYSTEM, SITEID); 
+		} else { // course context
+			$context = get_context_instance(CONTEXT_COURSE, $this->instance->pageid);
+		}
+		
+		if (!has_capability('moodle/course:viewparticipants', $context->id)) {
+		  	$this->context = '';
+		  	return $this->content;
+		}
 
         if ($this->content !== NULL) {
             return $this->content;
@@ -33,7 +51,7 @@ class block_participants extends block_list {
             isteacher(SITEID)) {
 
             $this->content->items[] = '<a title="'.get_string('listofallpeople').'" href="'.
-                                      $CFG->wwwroot.'/user/index.php?id='.$this->instance->pageid.'">'.get_string('participants').'</a>';
+                                      $CFG->wwwroot.'/user/index.php?id='.$this->instance->pageid.'&amp;contextid='.$context->id.'">'.get_string('participants').'</a>';
             $this->content->icons[] = '<img src="'.$CFG->pixpath.'/i/users.gif" height="16" width="16" alt="" />';
         }
 

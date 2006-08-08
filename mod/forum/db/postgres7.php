@@ -156,7 +156,6 @@ function forum_upgrade($oldversion) {
   }
 
   if ($oldversion < 2006011600) {
-      notify('forum_type does not exists, you can ignore and this will properly removed');
       execute_sql("ALTER TABLE {$CFG->prefix}forum DROP CONSTRAINT {$CFG->prefix}forum_type");
       execute_sql("ALTER TABLE {$CFG->prefix}forum ADD CONSTRAINT {$CFG->prefix}forum_type CHECK (type IN ('single','news','general','social','eachuser','teacher','qanda')) ");
   }
@@ -170,15 +169,6 @@ function forum_upgrade($oldversion) {
   if ($oldversion < 2006011700) {
       table_column('forum_posts','','mailnow','integer');
   }
-
-  if ($oldversion < 2006011701) {
-      execute_sql("ALTER TABLE {$CFG->prefix}forum DROP CONSTRAINT {$CFG->prefix}forum_type_check");
-  }
-
-  if ($oldversion < 2006011702) {
-      execute_sql("INSERT INTO {$CFG->prefix}log_display (module, action, mtable, field) VALUES ('forum', 'user report', 'user', 'firstname||\' \'||lastname')");
-  }
-
 
   return true;
 

@@ -1,5 +1,8 @@
 <?php // $Id$
 
+// this needs to be changed back
+require_once('accesslib.php');
+
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
 // NOTICE OF COPYRIGHT                                                   //
@@ -1599,8 +1602,11 @@ function require_login($courseid=0, $autologinguest=true, $cm=null) {
         if (!isteacher($courseid) && !($course->visible && course_parent_visible($course))) {
             print_header();
             notice(get_string('coursehidden'), $CFG->wwwroot .'/');
-        }
-        if (!empty($USER->student[$courseid]) or !empty($USER->teacher[$courseid]) or !empty($USER->admin)) {
+        }    
+        
+		$context = get_context_instance(CONTEXT_COURSE, $courseid);
+
+        if (has_capability('moodle/course:view', $context->id)) {
             if (isset($USER->realuser)) {   // Make sure the REAL person can also access this course
                 if (!isteacher($courseid, $USER->realuser)) {
                     print_header();
@@ -2002,6 +2008,22 @@ function isadmin($userid=0) {
     global $USER;
     static $admins, $nonadmins;
 
+	if (isset($CFG->rolesactive) && $CFG->rolesactive ===1) {
+
+		if ($courseid == 0) {
+			$context = get_context_instance(CONTEXT_SYSTEM, SITEID);  
+		} else {
+			$context = get_context_instance(CONTEXT_COURSE, $courseid);
+		}
+		
+		if (!$userid) {
+			return has_capability('moodle/legacy:admin', $context->id);
+		} else {
+			return has_capability('moodle/legacy:admin', $context->id, false, $userid);
+		}
+	  
+	}
+
     if (!isset($admins)) {
         $admins = array();
         $nonadmins = array();
@@ -2044,6 +2066,23 @@ function isadmin($userid=0) {
 function isteacher($courseid=0, $userid=0, $includeadmin=true) {
 /// Is the user able to access this course as a teacher?
     global $USER, $CFG;
+
+	if (isset($CFG->rolesactive) && $CFG->rolesactive ===1) {   // should be always
+
+		if ($courseid == 0) {
+			$context = get_context_instance(CONTEXT_SYSTEM, SITEID);  
+		} else {
+			$context = get_context_instance(CONTEXT_COURSE, $courseid);
+		}
+	
+		if (!$userid) {
+			return has_capability('moodle/legacy:teacher', $context->id);
+		} else {
+			return has_capability('moodle/legacy:teacher', $context->id, false, $userid);
+		}  
+	}
+
+    // Old code follows, will be removed before 1.7 because it shouldn't run
 
     if (empty($userid)) {                           // we are relying on $USER
         if (empty($USER) or empty($USER->id)) {     // not logged in so can't be a teacher
@@ -2116,7 +2155,22 @@ function isteacherinanycourse($userid=0, $includeadmin=true) {
  */
 function isteacheredit($courseid, $userid=0, $ignorestudentview=false) {
     global $USER;
+	
+	if (isset($CFG->rolesactive) && $CFG->rolesactive ===1) {
 
+		if ($courseid == 0) {
+			$context = get_context_instance(CONTEXT_SYSTEM, SITEID);  
+		} else {
+			$context = get_context_instance(CONTEXT_COURSE, $courseid);
+		}
+		
+		if (!$userid) {
+			return has_capability('moodle/legacy:edittingteacher', $context->id);
+		} else {
+			return has_capability('moodle/legacy:edittingteacher', $context->id, false, $userid);
+		}
+	  
+	}
     // we can't edit in studentview
     if (!empty($USER->studentview) and !$ignorestudentview) {
         return false;
@@ -2148,6 +2202,22 @@ function isteacheredit($courseid, $userid=0, $ignorestudentview=false) {
  */
 function iscreator ($userid=0) {
     global $USER;
+    
+    if (isset($CFG->rolesactive) && $CFG->rolesactive ===1) {
+
+		if ($courseid == 0) {
+			$context = get_context_instance(CONTEXT_SYSTEM, SITEID);  
+		} else {
+			$context = get_context_instance(CONTEXT_COURSE, $courseid);
+		}
+		
+		if (!$userid) {
+			return has_capability('moodle/legacy:coursecreator', $context->id);
+		} else {
+			return has_capability('moodle/legacy:coursecreator', $context->id, false, $userid);
+		}
+	  
+	}
     if (empty($USER->id)) {
         return false;
     }
@@ -2176,6 +2246,22 @@ function iscreator ($userid=0) {
  */
 function isstudent($courseid, $userid=0) {
     global $USER, $CFG;
+	
+	if (isset($CFG->rolesactive) && $CFG->rolesactive ===1) {
+
+		if ($courseid == 0) {
+			$context = get_context_instance(CONTEXT_SYSTEM, SITEID);  
+		} else {
+			$context = get_context_instance(CONTEXT_COURSE, $courseid);
+		}
+		
+		if (!$userid) {
+			return has_capability('moodle/legacy:student', $context->id);
+		} else {
+			return has_capability('moodle/legacy:student', $context->id, false, $userid);
+		}
+	  
+	}
 
     if (empty($USER->id) and !$userid) {
         return false;

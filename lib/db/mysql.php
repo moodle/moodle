@@ -2001,6 +2001,75 @@ function main_upgrade($oldversion=0) {
         table_column('grade_letter', 'grade_low', 'grade_low', 'decimal(5,2)', '', '', '0.00', 'not null', '');
     }
     
+    if ($oldversion < 2006080400) {
+         execute_sql("CREATE TABLE {$CFG->prefix}role (
+                              `id` int(10) NOT NULL auto_increment,
+                              `name` varchar(255) NOT NULL default '',
+                              `description` text NOT NULL default '',
+                              `sortorder` int(10) NOT NULL default '0',
+                              PRIMARY KEY  (`id`)
+                            )", true);
+
+         execute_sql("CREATE TABLE {$CFG->prefix}context (
+                              `id` int(10) NOT NULL auto_increment,
+                              `level` int(10) NOT NULL default '0',
+                              `instanceid` int(10) NOT NULL default '0',
+                              PRIMARY KEY  (`id`)
+                            )", true);
+
+        execute_sql("CREATE TABLE {$CFG->prefix}role_assignments (
+                              `id` int(10) NOT NULL auto_increment,
+                              `roleid` int(10) NOT NULL default '0',
+                              `contextid` int(10) NOT NULL default '0',
+                              `userid` int(10) NOT NULL default '0',
+                              `hidden` int(1) NOT NULL default '0',
+                              `timestart` int(10) NOT NULL default '0',
+                              `timeend` int(10) NOT NULL default '0',
+                              `timemodified` int(10) NOT NULL default '0',
+                              `modifierid` int(10) NOT NULL default '0',
+                              `enrol` varchar(20) NOT NULL default '',
+                              `sortorder` int(10) NOT NULL default '0',
+                              PRIMARY KEY  (`id`)
+                            )", true);
+
+        execute_sql("CREATE TABLE {$CFG->prefix}role_capabilities (
+                              `id` int(10) NOT NULL auto_increment,
+                              `contextid` int(10) NOT NULL default '0',
+                              `roleid` int(10) NOT NULL default '0',
+                              `capability` varchar(255) NOT NULL default '',
+                              `permission` int(10) NOT NULL default '0',
+                              `timemodified` int(10) NOT NULL default '0',
+                              `modifierid` int(10) NOT NULL default '0',
+                              PRIMARY KEY (`id`)
+                            )", true);
+                            
+        execute_sql("CREATE TABLE {$CFG->prefix}role_deny_grant (
+                              `id` int(10) NOT NULL auto_increment,
+                              `roleid` int(10) NOT NULL default '0',
+                              `unviewableroleid` int(10) NOT NULL default '0',
+                              PRIMARY KEY (`id`)
+                            )", true);
+                            
+        execute_sql("CREATE TABLE {$CFG->prefix}capabilities ( 
+							  `id` int(10) NOT NULL auto_increment, 
+							  `name` varchar(150) NOT NULL default '', 
+							  `captype` varchar(50) NOT NULL default '', 
+							  `contextlevel` int(10) NOT NULL default '0', 
+							  `component` varchar(100) NOT NULL default '', 
+							  PRIMARY KEY (`id`) 
+							)", true);     
+							
+		execute_sql("CREATE TABLE {$CFG->prefix}role_names ( 
+							  `id` int(10) NOT NULL auto_increment, 
+							  `roleid` int(10) NOT NULL default '0',
+							  `contextid` int(10) NOT NULL default '0', 
+							  `text` text NOT NULL default '',
+							  PRIMARY KEY (`id`) 
+							)", true);   					
+						
+    }
+
+    
     return $result;
 }
 

@@ -14,6 +14,8 @@
     $moveto   = optional_param('moveto',-1,PARAM_INT);
     $moveup   = optional_param('moveup',0,PARAM_INT);
     $movedown = optional_param('movedown',0,PARAM_INT);
+    
+    $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
 
     if (!$site = get_site()) {
         error("Site isn't defined!");
@@ -97,7 +99,7 @@
 
 
 /// If data for a new category was submitted, then add it
-    if ($form = data_submitted() and confirm_sesskey()) {
+    if ($form = data_submitted() and confirm_sesskey() and has_capability('moodle/category:create', $context->id)) {
         if (!empty($form->addcategory)) {
             unset($newcategory);
             $newcategory->name = $form->addcategory;
@@ -114,7 +116,10 @@
 /// Delete a category if necessary
 
     if (!empty($delete) and confirm_sesskey()) {
-        if ($deletecat = get_record("course_categories", "id", $delete)) {
+      	
+      	// context is coursecat, if not present admins should have it set in site level
+     	$context = get_context_instance(CONTEXT_COURSECAT, $delete);  	  
+		if ($deletecat = get_record("course_categories", "id", $delete) and has_capability('moodle/category:delete', $context->id)) {
             if (!empty($sure) && $sure == md5($deletecat->timemodified)) {
                 /// Send the children categories to live with their grandparent
                 if ($childcats = get_records("course_categories", "parent", $deletecat->id)) {
@@ -269,17 +274,17 @@
     fix_course_sortorder();
 
 /// Print form for creating new categories
-
-    echo "<center>";
-    echo "<form name=\"addform\" action=\"index.php\" method=\"post\">";
-    echo "<input type=\"text\" size=\"30\" alt=\"$straddnewcategory\" name=\"addcategory\" />";
-    echo "<input type=\"submit\" value=\"$straddnewcategory\" />";
-    echo "<input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\" />";
-    echo "</form>";
-    echo "</center>";
-
-    echo "<br />";
-
+	if (has_capability('moodle/category:create', $context->id)) {
+	    echo "<center>";
+	    echo "<form name=\"addform\" action=\"index.php\" method=\"post\">";
+	    echo "<input type=\"text\" size=\"30\" alt=\"$straddnewcategory\" name=\"addcategory\" />";
+	    echo "<input type=\"submit\" value=\"$straddnewcategory\" />";
+	    echo "<input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\" />";
+	    echo "</form>";
+	    echo "</center>";
+	
+	    echo "<br />";
+	}
 
 /// Print out the categories with all the knobs
 
@@ -310,7 +315,11 @@
     echo "<center>";
     unset($options);
     $options["category"] = $category->id;
-    print_single_button("edit.php", $options, get_string("addnewcourse"), "get");
+    
+    
+    if (has_capability('moodle/course:create', $context->id)) {
+    	print_single_button("edit.php", $options, get_string("addnewcourse"), "get");
+    }
     print_single_button('pending.php',NULL, get_string('coursespending'),"get");
     echo "<br />";
     echo "</center>";
@@ -336,6 +345,8 @@ function print_category_edit($category, $displaylist, $parentslist, $depth=-1, $
     }
     
     if ($category) {
+      	$context  = get_context_instance(CONTEXT_COURSECAT, $category->id);
+      	
         echo "<tr><td align=\"left\" nowrap=\"nowrap\">";
         for ($i=0; $i<$depth;$i++) {
             echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
@@ -348,16 +359,20 @@ function print_category_edit($category, $displaylist, $parentslist, $depth=-1, $
 
         echo "<td nowrap=\"nowrap\">";    /// Print little icons
 
-        echo "<a title=\"$str->delete\" href=\"index.php?delete=$category->id&amp;sesskey=$USER->sesskey\"><img".
-             " src=\"$CFG->pixpath/t/delete.gif\" height=\"11\" width=\"11\" border=\"0\" alt=\"$str->delete\" /></a> ";
-
-        if (!empty($category->visible)) {
-            echo "<a title=\"$str->hide\" href=\"index.php?hide=$category->id&amp;sesskey=$USER->sesskey\"><img".
-                 " src=\"$CFG->pixpath/t/hide.gif\" height=\"11\" width=\"11\" border=\"0\" alt=\"$str->hide\" /></a> ";
-        } else {
-            echo "<a title=\"$str->show\" href=\"index.php?show=$category->id&amp;sesskey=$USER->sesskey\"><img".
-                 " src=\"$CFG->pixpath/t/show.gif\" height=\"11\" width=\"11\" border=\"0\"alt=\"$str->show\" /></a> ";
-        }
+		if (has_capability('moodle/category:delete', $context->id)) {
+        	echo "<a title=\"$str->delete\" href=\"index.php?delete=$category->id&amp;sesskey=$USER->sesskey\"><img".
+             	" src=\"$CFG->pixpath/t/delete.gif\" height=\"11\" width=\"11\" border=\"0\" alt=\"\" /></a> ";
+		}
+		
+		if (has_capability('moodle/category:visibility', $context->id)) {
+	        if (!empty($category->visible)) {
+	            echo "<a title=\"$str->hide\" href=\"index.php?hide=$category->id&amp;sesskey=$USER->sesskey\"><img".
+	                 " src=\"$CFG->pixpath/t/hide.gif\" height=\"11\" width=\"11\" border=\"0\" alt=\"\" /></a> ";
+	        } else {
+	            echo "<a title=\"$str->show\" href=\"index.php?show=$category->id&amp;sesskey=$USER->sesskey\"><img".
+	                 " src=\"$CFG->pixpath/t/show.gif\" height=\"11\" width=\"11\" border=\"0\"alt=\"\" /></a> ";
+	        }
+	    }
 
         if ($up) {
             echo "<a title=\"$str->moveup\" href=\"index.php?moveup=$category->id&amp;sesskey=$USER->sesskey\"><img".

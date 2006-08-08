@@ -57,13 +57,18 @@
         }
     }
     
-    if (isteacher($course->id)) {
+	$context = get_context_instance(CONTEXT_MODULE, $cm->id);
+	has_capability('mod/data:uploadentries', $context->id, true);
+    
+    if (has_capability('mod/data:managetemplates', $context->id)) {
         if (!count_records('data_fields','dataid',$data->id)) {      // Brand new database!
             redirect($CFG->wwwroot.'/mod/data/field.php?d='.$data->id);  // Redirect to field entry
         }
     }
 
     ///checking for participants
+    // needs fixing?
+    /*
     if ((!isteacher($course->id)) && $data->participants == DATA_TEACHERS_ONLY) {
         error ('students are not allowed to participate in this activity');
     }
@@ -72,7 +77,7 @@
         if (!isteacher($course->id) or !data_isowner($rid) or !confirm_sesskey()){
             error (get_string('noaccess','data'));
         }
-    }
+    }*/
   
 
 /// Print the page header

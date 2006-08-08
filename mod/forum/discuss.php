@@ -25,17 +25,20 @@
         notify("Bad forum ID stored in this discussion");
     }
 
-    if ($forum->type == "teacher") {
-        require_login($course->id);
+    if (! $cm = get_coursemodule_from_instance('forum', $forum->id, $course->id)) {
+        error('Course Module ID was incorrect');
+    }
+    
+    $canviewdiscussion = false;
 
-        if (!isteacher($course->id)) {
-            error("You must be a $course->teacher to view this forum");
-        }
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    if (has_capability('mod/forum:viewdiscussion', $context->id)) {
+        $canviewdiscussion = true;
+    }
 
-    } elseif ($forum->type == "news") {
-        if (!((isadmin() and !empty($CFG->admineditalways))
-            || isteacher($course->id)
-            || (!empty($USER->id) && $USER->id == $discussion->userid)
+    
+    if ($forum->type == "news") {
+        if (!($canviewdiscussion || $USER->id == $discussion->userid
             || (($discussion->timestart == 0 || $discussion->timestart <= time())
             && ($discussion->timeend == 0 || $discussion->timeend > time())))) {
             error('Discussion ID was incorrect or no longer exists', "$CFG->wwwroot/mod/forum/view.php?f=$forum->id");
@@ -50,58 +53,15 @@
 
 
     if (!empty($move)) {
-        if (!isteacher($course->id)) {
-            error("Only teachers can do that!");
+        if (has_capability('mod/forum:movediscussions', $context->id)) {
+            error("You do not have the permission to move this discussion!");
         }
         if ($forum = get_record("forum", "id", $move)) {
             if (!forum_move_attachments($discussion, $move)) {
                 notify("Errors occurred while moving attachment directories - check your file permissions");
             }
-            
-            if (!$fromforum = get_record("forum", "id", $discussion->forum)) {
-                notify('Bad forum ID stored in this discussion');
-            }
+            set_field("forum_discussions", "forum", $forum->id, "id", $discussion->id);
             $discussion->forum = $forum->id;
-            $discussion->timemodified = time();
-            
-            // Leave behind a skeleton discussion containing only a post which 
-            // notifies that the discussion has been moved.            
-            $skeleton = clone($discussion);
-            $skeleton->forum = $fromforum->id;
-            $skeleton->name = addslashes( $skeleton->name . ' ' . get_string('movedmarker', 'forum') );
-
-            // Prepare replacement parameters for message content string 
-            // - these create the link to the new discussion location
-            $link = new stdClass;        
-            $me = strip_querystring(me());
-            $link->discusshref = $me . '?d=' . $discussion->id;
-            $link->forumhref = dirname($me) . '/view.php?f=' . $forum->id;
-            $link->forumname = $forum->name;
-
-            // retrieve translateable message content                    
-            $skeleton->intro = addslashes( get_string('discussionmovedpost', 'forum', $link) );
-            $skeleton->format = 1;
-            $skeleton->mailnow = 0;
-
-			// add the skeleton discussion to the database
-            if (!($skeleton->id = forum_add_discussion($skeleton, $msg))) {
-                notify('Failed to add discussion-moved notification : '. $msg);
-            }
-
-            if (update_record('forum_discussions', $discussion)) {
-                // Update RSS feeds for both from and to forums.
-                require_once('rsslib.php');
-                require_once($CFG->libdir.'/rsslib.php');
-                
-                // Delete the RSS files for the 2 forums because we want to force
-                // the regeneration of the feeds since the discussions have been
-                // moved.
-                if (!forum_rss_delete_file($forum) || !forum_rss_delete_file($fromforum)) {
-                    notify('Could not purge the cached RSS feeds for the source and/or'.
-                           'destination forum(s) - check your file permissionsforums');
-                }
-            }
-            
             if ($cm = get_coursemodule_from_instance("forum", $forum->id, $course->id)) {
                 add_to_log($course->id, "forum", "move discussion", "discuss.php?d=$discussion->id", "$discussion->id",
                            $cm->id);
@@ -195,9 +155,9 @@
 
                                        
     
-    if ($groupmode and !isteacheredit($course->id)) {   // Groups must be kept separate
+    if ($groupmode and !has_capability('mod/forum:viewdiscussionsfromallgroups', $context->id)) {   // Groups must be kept separate
         //change this to ismember
-        $mygroupid = mygroupid($course->id);//only useful if 0, otherwise it's an array now
+        $mygroupid = mygroupid($course->id); //only useful if 0, otherwise it's an array now
         if ($groupmode == SEPARATEGROUPS) {
             require_login();
 
@@ -212,7 +172,9 @@
             }
 
         } else if ($groupmode == VISIBLEGROUPS) {
-            $canreply = ((empty($mygroupid) and $discussion->groupid == -1) || (ismember($discussion->groupid) || $mygroupid == $discussion->groupid));
+            $canreply = ( (empty($mygroupid) && $discussion->groupid == -1) ||
+                    (ismember($discussion->groupid) || $mygroupid == $discussion->groupid) &&
+                    has_capability('mod/forum:replypost', $context->id) );
         }
     }
 
@@ -222,7 +184,7 @@
 
     echo '<table width="100%"><tr><td width="33%">';
 
-    if ($groupmode == VISIBLEGROUPS or ($groupmode and isteacheredit($course->id))) {
+    if ($groupmode == VISIBLEGROUPS or ($groupmode and has_capability('mod/forum:viewdiscussionsfromallgroups', $context->id))) {
         if ($groups = get_records_menu('groups', 'courseid', $course->id, 'name ASC', 'id,name')) {
             print_group_menu($groups, $groupmode, $discussion->groupid, "view.php?id=$cm->id&amp;group=");
         }
@@ -232,7 +194,7 @@
     forum_print_mode_form($discussion->id, $displaymode);
 
     echo "</td><td width=\"33%\">";
-    if (isteacher($course->id) && $forum->type != "teacher") { // Popup menu to move discussions to other forums
+    if (has_capability('mod/forum:movediscussions', $context->id)) { // Popup menu to move discussions to other forums
         if ($forums = get_all_instances_in_course("forum", $course)) {
             if ($course->format == 'weeks') {
                 $strsection = get_string("week");
@@ -266,7 +228,8 @@
         notify(get_string('thisforumisthrottled','forum',$a));
     }
 
-    if ($forum->type == 'qanda' && !isteacher($forum->course) && !forum_user_has_posted($forum->id,$discussion->id,$USER->id)) {
+    if ($forum->type == 'qanda' && !has_capability('mod/forum:viewqandawithoutposting', $context->id) &&
+                !forum_user_has_posted($forum->id,$discussion->id,$USER->id)) {
         notify(get_string('qandanotify','forum'));
     }
 
@@ -275,8 +238,8 @@
     }
 
 /// Print the actual discussion
-
-    forum_print_discussion($course, $forum, $discussion, $post, $displaymode, $canreply);
+    $canrate = has_capability('mod/forum:rate', $context->id);
+    forum_print_discussion($course, $forum, $discussion, $post, $displaymode, $canreply, $canrate);
 
     print_footer($course);
 

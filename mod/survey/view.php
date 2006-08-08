@@ -14,6 +14,9 @@
     }
 
     require_login($course->id, false, $cm);
+    
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    //has_capability('mod/survey:participate', $context->id, true);
 
     if (! $survey = get_record("survey", "id", $cm->instance)) {
         error("Survey ID was incorrect");
@@ -39,11 +42,13 @@
         $currentgroup = 0;
     }
 
-    if (isteacheredit($course->id) or ($groupmode == VISIBLEGROUPS)) {
-        $currentgroup = 0;
+    //if (isteacheredit($course->id) or ($groupmode == VISIBLEGROUPS)) {
+    if (has_capability('mod/survey:readresponses', $context->id) or ($groupmode == VISIBLEGROUPS)) {    
+	    $currentgroup = 0;
     }
-
-    if (isteacher($course->id)) {
+	
+	if (isteacher($course->id)) {
+    //if (has_capability('mod/survey:readresponses', $context->id)) {
         $numusers = survey_count_responses($survey->id, $currentgroup);
         echo "<div class=\"reportlink\"><a href=\"report.php?id=$cm->id\">".
               get_string("viewsurveyresponses", "survey", $numusers)."</a></div>";

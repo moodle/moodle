@@ -1,0 +1,116 @@
+<?php
+// this deals with tabs, as well as print_headers for navigation
+
+if ($currenttab != 'update') {
+	switch ($context->level) {
+	  
+		case CONTEXT_SYSTEM:
+			print_header($site->fullname, "$site->fullname","$straction");
+	    break;
+	
+	    case CONTEXT_PERSONAL:
+	    break;
+	
+	    case CONTEXT_USERID:
+	    break;
+	
+	    case CONTEXT_COURSECAT:
+	    	$category = get_record('course_categories', 'id', $context->instanceid);
+	        $strcategories = get_string("categories");
+	    	$strcategory = get_string("category");
+	    	$strcourses = get_string("courses");
+	        print_header("$site->shortname: $category->name", "$site->fullname: $strcourses",
+	                     "<a href=\"$CFG->wwwroot/course/index.php\">$strcategories</a> -> <a href=\"$CFG->wwwroot/course/category.php?id=$category->id\">$category->name</a> -> $straction", "", "", true);
+	    break;
+	
+	    case CONTEXT_COURSE:
+	        $streditcoursesettings = get_string("editcoursesettings");
+	        
+	    	$course = get_record('course', 'id', $context->instanceid);
+	    	print_header($streditcoursesettings, "$course->fullname",
+	                     "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a>
+	                      -> <a href=\"$CFG->wwwroot/course/edit.php?id=$course->id\">$streditcoursesettings</a> -> $straction");
+	    break;
+	
+	    case CONTEXT_GROUP:
+	    break;
+	
+	    case CONTEXT_MODULE:
+	    	// get module type?
+	    	$cm = get_record('course_modules','id',$context->instanceid);
+	    	$module = get_record('modules','id',$cm->module); //$module->name;
+	    	$course = get_record('course','id',$cm->course);
+	    	
+	    	if (! $form = get_record($module->name, "id", $cm->instance)) {
+	            error("The required instance of this module doesn't exist");
+	        }
+	
+			$strnav = "<a href=\"$CFG->wwwroot/mod/$module->name/view.php?id=$cm->id\">$form->name</a> ->";
+	        $fullmodulename = get_string("modulename", $module->name);
+	    	$streditinga = get_string("editinga", "moodle", $fullmodulename);
+	    	$strmodulenameplural = get_string("modulenameplural", $module->name);
+	
+		    if ($module->name == "label") {
+		        $focuscursor = "";
+		    } else {
+		        $focuscursor = "form.name";
+		    }
+	
+	    	print_header_simple($streditinga, '',
+	     	"<a href=\"$CFG->wwwroot/mod/$module->name/index.php?id=$course->id\">$strmodulenameplural</a> ->
+	     	$strnav <a href=\"$CFG->wwwroot/course/mod.php?update=$cm->id&sesskey=".sesskey()."\">$streditinga</a> -> $straction", $focuscursor, "", false);
+	
+	    break;
+	
+	    case CONTEXT_BLOCK:
+	    	print_header();
+	    break;
+	
+	    default:
+	        error ('This is an unknown context!');
+	    return false;
+	   
+	}
+}
+
+
+	// Printing the tabs
+    if ($context->level == CONTEXT_MODULE) { // only show update button if module?
+    
+    	$toprow[] = new tabobject('update', $CFG->wwwroot.'/course/mod.php?update='.$context->instanceid.'&amp;return=true&amp;sesskey='.sesskey(), get_string('update'));
+		
+	}	
+	
+		$toprow[] = new tabobject('roles', $CFG->wwwroot.'/admin/roles/assign.php?contextid='.$context->id, get_string('roles')); 
+
+	if (isset($tabsmode)) {
+		$inactive[] = 'roles';
+
+		$secondrow[] = new tabobject('assign', $CFG->wwwroot.'/admin/roles/assign.php?contextid='.$context->id, get_string('roleassignments')); 
+                
+        if ($context->level == CONTEXT_SYSTEM) {
+    	    $secondrow[] = new tabobject('override', '', get_string('roleoverrides')); 		
+        } else {
+    	    $secondrow[] = new tabobject('override', $CFG->wwwroot.'/admin/roles/override.php?contextid='.$context->id, get_string('roleoverrides')); 		
+        }
+		
+		if ($tabsmode == 'override') {
+			$currenttab = 'override';  
+		} elseif ($tabsmode == 'assign') {
+			$currenttab = 'assign';  
+		}
+    	
+    } else {
+    	$inactive[] = '';  
+    }
+    
+	if (!empty($secondrow)) {
+        $tabs = array($toprow, $secondrow);
+    } else {
+        $tabs = array($toprow);
+    }
+    
+    print_tabs($tabs, $currenttab, $inactive);
+
+
+?>

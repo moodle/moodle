@@ -738,10 +738,11 @@ function  glossary_print_entry_aliases($course, $cm, $glossary, $entry,$mode='',
 
 function glossary_print_entry_icons($course, $cm, $glossary, $entry, $mode='',$hook='', $type = 'print') {
     global $USER, $CFG;
+	
+	$context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
     $output = false;   //To decide if we must really return text in "return". Activate when needed only!
     $importedentry = ($entry->sourceglossaryid == $glossary->id);
-    $isteacher = isteacher($course->id);
     $ismainglossary = $glossary->mainglossary;
 
 
@@ -752,16 +753,16 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry, $mode='',$h
     }
     $return .= glossary_print_entry_commentslink($course, $cm, $glossary, $entry,$mode,$hook,'html');
     
-    if ( (!empty($USER->id) && $glossary->allowcomments && !isguest()) || $isteacher) {
-        $output = true;
+    if (has_capability('mod/glossary:comment', $context->id)) {
+	    $output = true;
         $return .= ' <a title="' . get_string('addcomment','glossary') . '" href="comment.php?id='.$cm->id.'&amp;eid='.$entry->id.'"><img src="comment.gif" height="11" width="11" border="0" alt="'.get_string('addcomment','glossary').'" /></a>';
     }
 
 
-    if ($isteacher or (!empty($USER->id) and $glossary->studentcanpost and $entry->userid == $USER->id)) {
+    if (has_capability('mod/glossary:write', $context->id) or (!empty($USER->id) and $glossary->studentcanpost and $entry->userid == $USER->id)) {
         // only teachers can export entries so check it out
-        if ($isteacher and !$ismainglossary and !$importedentry) {
-            $mainglossary = get_record('glossary','mainglossary',1,'course',$course->id);
+    	if (has_capability('mod/glossary:export', $context->id) and !$ismainglossary and !$importedentry) {
+	        $mainglossary = get_record('glossary','mainglossary',1,'course',$course->id);
             if ( $mainglossary ) {  // if there is a main glossary defined, allow to export the current entry
                 $output = true;
                 $return .= ' <a title="'.get_string('exporttomainglossary','glossary') . '" href="exportentry.php?id='.$cm->id.'&amp;entry='.$entry->id.'&amp;mode='.$mode.'&amp;hook='.$hook.'"><img src="export.gif" height="11" width="11" border="0" alt="'.get_string('exporttomainglossary','glossary').'" /></a>';
@@ -778,7 +779,7 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry, $mode='',$h
         // -It isn't a imported entry (so nobody can edit a imported (from secondary to main) entry)) and
         // -The user is teacher or he is a student with time permissions (edit period or editalways defined).
         $ineditperiod = ((time() - $entry->timecreated <  $CFG->maxeditingtime) || $glossary->editalways);
-        if ( !$importedentry and ($isteacher or ($entry->userid == $USER->id and $ineditperiod))) {
+        if ( !$importedentry and (has_capability('mod/glossary:manageentries', $context->id) or ($entry->userid == $USER->id and $ineditperiod))) {
             $output = true;
             $return .= " <a title=\"" . get_string("delete") . "\" href=\"deleteentry.php?id=$cm->id&amp;mode=delete&amp;entry=$entry->id&amp;prevmode=$mode&amp;hook=$hook\"><img src=\"";
             $return .= $icon;
@@ -1301,13 +1302,16 @@ function glossary_print_author_menu($cm, $glossary,$mode, $hook, $sortkey = '', 
 }
 
 function glossary_print_categories_menu($cm, $glossary, $hook, $category) {
-     global $CFG;
+     
+	 global $CFG;
+	 
+	 $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
      echo '<table border="0" width="100%">';
      echo '<tr>';
 
      echo '<td align="center" width="20%">';
-     if ( isteacher($glossary->course) ) {
+     if (has_capability('mod/glossary:managecategories', $context->id)) {
              $options['id'] = $cm->id;
              $options['mode'] = 'cat';
              $options['hook'] = $hook;
@@ -1507,6 +1511,8 @@ function glossary_sort_entries ( $entry0, $entry1 ) {
 
 function glossary_print_comment($course, $cm, $glossary, $entry, $comment) {
     global $CFG, $USER;
+    
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
     $user = get_record('user', 'id', $comment->userid);
     $strby = get_string('writtenby','glossary');
@@ -1536,11 +1542,11 @@ function glossary_print_comment($course, $cm, $glossary, $entry, $comment) {
     echo '<div class="icons commands">';
 
     $ineditperiod = ((time() - $comment->timemodified <  $CFG->maxeditingtime) || $glossary->editalways);
-    if ( ($glossary->allowcomments &&  $ineditperiod && $USER->id == $comment->userid)  || isteacher($course->id) ) {
+    if ( ($glossary->allowcomments &&  $ineditperiod && $USER->id == $comment->userid)  || has_capability('mod/glossary:managecomments', $context->id)) {
         echo "<a href=\"comment.php?id=$cm->id&amp;eid=$entry->id&amp;cid=$comment->id&amp;action=edit\"><img  
                alt=\"" . get_string("edit") . "\" src=\"$CFG->pixpath/t/edit.gif\" height=\"11\" width=\"11\" border=\"0\" /></a> ";
     }
-    if ( ($glossary->allowcomments && $USER->id == $comment->userid) || isteacher($course->id) ) {
+    if ( ($glossary->allowcomments && $USER->id == $comment->userid) || has_capability('mod/glossary:managecomments', $context->id) ) {
         echo "<a href=\"comment.php?id=$cm->id&amp;eid=$entry->id&amp;cid=$comment->id&amp;action=delete\"><img  
                alt=\"" . get_string("delete") . "\" src=\"$CFG->pixpath/t/delete.gif\" height=\"11\" width=\"11\" border=\"0\" /></a>";
     }
@@ -1552,7 +1558,14 @@ function glossary_print_comment($course, $cm, $glossary, $entry, $comment) {
 
 function  glossary_print_entry_ratings($course, $entry, $ratings = NULL) {
     
-    global $USER;
+    global $USER, $CFG;
+    
+    $glossary = get_record('glossary', 'id', $entry->glossaryid);
+    $glossarymod = get_record('modules','name','glossary');
+    $cm = get_record_sql("select * from {$CFG->prefix}course_modules where course = $course->id 
+    					  and module = $glossarymod->id and instance = $glossary->id");
+    					  
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
     $ratingsmenuused = false;
     if (!empty($ratings) and !empty($USER->id)) {
@@ -1563,7 +1576,7 @@ function  glossary_print_entry_ratings($course, $entry, $ratings = NULL) {
             }
         }
         if ($useratings) {
-            if (isteacher($course->id)) {
+            if (has_capability('mod/glossary:viewrating', $context->id)) {
                 glossary_print_ratings_mean($entry->id, $ratings->scale);
                 if ($USER->id != $entry->userid) {
                      glossary_print_rating_menu($entry->id, $USER->id, $ratings->scale);

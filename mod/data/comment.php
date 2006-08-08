@@ -26,15 +26,18 @@
     }
 
     require_login($course->id);
-
-    if ($commentid) {
+	
+	$cm = data_get_cm($data);
+	$context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    
+	if ($commentid) {
         if (! $comment = get_record('data_comments', 'id', $commentid)) {
             error('Comment ID is misconfigured');
         }
         if ($comment->recordid != $record->id) { 
             error('Comment ID is misconfigured');
         }
-        if (!isteacher($course->id) && $comment->userid != $USER->id) { 
+        if (!has_capability('mod/data:managecomments', $context->id) && $comment->userid != $USER->id) { 
             error('Comment is not yours to edit!');
         }
     }

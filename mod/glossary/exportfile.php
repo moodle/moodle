@@ -21,10 +21,10 @@
     }
 
     require_login($course->id, false);
-    if (!isteacher($course->id)) {
-        error("You must be a teacher to use this page.");
-    }
-
+	
+	$context = get_context_instance(CONTEXT_MODULE, $cm->id);
+	has_capability('mod/glossary:export', $context->id, true);
+	
     $filename = clean_filename(strip_tags(format_string($glossary->name,true)).'.xml');
     $content = glossary_generate_export_file($glossary,$l,$cat);
     

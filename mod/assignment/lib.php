@@ -106,8 +106,11 @@ class assignment_base {
      * This in turn calls the methods producing individual parts of the page
      */
     function view() {
-
-        add_to_log($this->course->id, "assignment", "view", "view.php?id={$this->cm->id}", 
+      
+		$context = get_context_instance(CONTEXT_MODULE,$this->cm->id);
+        has_capability('mod/assignment:view', $context->id, true);
+        
+		add_to_log($this->course->id, "assignment", "view", "view.php?id={$this->cm->id}", 
                    $this->assignment->id, $this->cm->id);
 
         $this->view_header();
@@ -273,9 +276,13 @@ class assignment_base {
 
         $submitted = '';
 
-        if (isteacher($this->course->id)) {
-            if (!isteacheredit($this->course->id) and (groupmode($this->course, $this->cm) == SEPARATEGROUPS)) {
-                $count = $this->count_real_submissions($this->currentgroup);  // Only their group
+        $context = get_context_instance(CONTEXT_MODULE,$this->cm->id);
+        if (has_capability('mod/assignment:grade', $context->id) && (groupmode($this->course, $this->cm) == SEPARATEGROUPS)) {
+
+        // if this user can mark and is put in a group
+        // then he can only see/mark submission in his own groups
+            if (user_group($this->course->id, $USER->id)) { 			
+                $count = $this->count_real_submissions($this->currentgroup);  // Only their groups
             } else {
                 $count = $this->count_real_submissions();                     // Everyone
             }
@@ -2349,7 +2356,9 @@ function assignment_print_overview($courses, &$htmlarray) {
             $str .= '<div class="info">'.$strduedateno.'</div>';
         }
 
-        if (isteacher($assignment->course)) {
+        // if (isteacher($assignment->course)) {
+        $context = get_context_instance(CONTEXT_MODULE,$this->cm->id);
+        if (has_capability('mod/assignment:grade', $context->id)) {
             $submissions = count_records_sql("SELECT COUNT(*)
                               FROM {$CFG->prefix}assignment_submissions a, 
                                    {$CFG->prefix}user_students s,

@@ -103,6 +103,9 @@ table.formtable tbody th {
 .notifysuccess {
   color:#006600;
 }
+.notifytiny {
+  color:#000044;
+}
 
 .required {
   background-color:#DDDDDD;

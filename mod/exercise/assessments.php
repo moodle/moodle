@@ -55,6 +55,8 @@
 
     require_login($course->id, false, $cm);
 
+	$context = get_context_instance(CONTEXT_MODULE, $cm->id);
+
     $strexercises = get_string("modulenameplural", "exercise");
     $strexercise  = get_string("modulename", "exercise");
     $strassessments = get_string("assessments", "exercise");
@@ -71,7 +73,7 @@
     /******************* admin amend Grading Grade ************************************/
     if ($action == 'adminamendgradinggrade' ) {
 
-        if (!isteacher($course->id)) {
+        if (!has_capability('mod/exercise:assess', $context->id)) {
             error("Only teachers can look at this page");
         }
         if (empty($aid)) {
@@ -109,7 +111,7 @@
     /******************* admin confirm delete ************************************/
     elseif ($action == 'adminconfirmdelete' ) {
 
-        if (!isteacher($course->id)) {
+        if (!has_capability('mod/exercise:assess', $context->id)) {
             error("Only teachers can look at this page");
         }
         if (empty($aid)) {
@@ -125,7 +127,7 @@
     /******************* admin delete ************************************/
     elseif ($action == 'admindelete' ) {
 
-        if (!isteacher($course->id)) {
+        if (!has_capability('mod/exercise:assess', $context->id)) {
             error("Only teachers can look at this page");
         }
         if (empty($aid)) {
@@ -145,7 +147,7 @@
     /*********************** admin list of asssessments (of a submission) (by teachers)**************/
     elseif ($action == 'adminlist') {
 
-        if (!isteacher($course->id)) {
+        if (!has_capability('mod/exercise:assess', $context->id)) {
             error("Only teachers can look at this page");
         }
 
@@ -161,7 +163,7 @@
     /****************** admin list of asssessments by a student (used by teachers only )******************/
     elseif ($action == 'adminlistbystudent') {
 
-        if (!isteacher($course->id)) {
+        if (!has_capability('mod/exercise:assess', $context->id)) {
             error("Only teachers can look at this page");
         }
 
@@ -258,7 +260,7 @@
     /****************** edit assessment elements (for teachers) ***********************/
     elseif ($action == 'editelements') {
 
-        if (!isteacher($course->id)) {
+        if (!has_capability('mod/exercise:assess', $context->id)) {
             error("Only teachers can look at this page");
         }
 
@@ -455,7 +457,7 @@
     /****************** insert/update assignment elements (for teachers)***********************/
     elseif ($action == 'insertelements') {
 
-        if (!isteacher($course->id)) {
+        if (!has_capability('mod/exercise:assess', $context->id)) {
             error("Only teachers can look at this page");
         }
 
@@ -572,7 +574,7 @@
     /****************** list assessments for grading (Student submissions)(by teachers)*********************/
     elseif ($action == 'listungradedstudentsubmissions') {
 
-        if (!isteacher($course->id)) {
+        if (!has_capability('mod/exercise:assess', $context->id)) {
             error("Only teachers can look at this page");
         }
         exercise_list_ungraded_assessments($exercise, "student");
@@ -584,7 +586,7 @@
     ******************Teacher's submissions) (by teachers)****/
     elseif ($action == 'listungradedstudentassessments') {
 
-        if (!isteacher($course->id)) {
+        if (!has_capability('mod/exercise:assess', $context->id)) {
             error("Only teachers can look at this page");
         }
         exercise_list_ungraded_assessments($exercise, "teacher");
@@ -603,7 +605,7 @@
     /******************* regrade student assessments ************************************/
     elseif ($action == 'regradestudentassessments' ) {
 
-        if (!isteacher($course->id)) {
+        if (!has_capability('mod/exercise:assess', $context->id)) {
             error("Only teachers can look at this page");
         }
         // get all the student assessments
@@ -636,7 +638,7 @@
     /****************** teacher assessment : grading of assessment and submission (from student) ************/
     elseif ($action == 'teacherassessment') {
 
-        if (!isteacher($course->id)) {
+        if (!has_capability('mod/exercise:assess', $context->id)) {
             error("Only teachers can look at this page");
         }
 
@@ -659,7 +661,7 @@
     /****************** teacher table : show assessments by exercise and teacher ************/
     elseif ($action == 'teachertable') {
 
-        if (!isteacher($course->id)) {
+        if (!has_capability('mod/exercise:assess', $context->id)) {
             error("Only teachers can look at this page");
         }
 
@@ -850,7 +852,7 @@
         }
 
         // is user allowed to resubmit?
-        if (isteacher($course->id)) {
+        if (has_capability('mod/exercise:assess', $context->id)) {
             if (!$submission = get_record("exercise_submissions", "id", $assessment->submissionid)) {
                 error ("Updateassessment: submission record not found");
             }
@@ -885,7 +887,7 @@
     /****************** update teacher assessment (by teacher only) ***************************/
     elseif ($action == 'updateteacherassessment') {
 
-        if (!isteacher($course->id)) {
+        if (!has_capability('mod/exercise:assess', $context->id)) {
             error("Only teachers can look at this page");
         }
 
@@ -1098,7 +1100,7 @@
     /****************** update grading grade(by teacher) ***************************/
     elseif ($action == 'updategradinggrade') {
 
-        if (!isteacher($course->id)) {
+        if (!has_capability('mod/exercise:assess', $context->id)) {
             error("Only teachers can look at this page");
             }
 

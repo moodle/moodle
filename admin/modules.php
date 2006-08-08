@@ -126,8 +126,10 @@
                     }
                 }
             }  
-
-            //rebuild_course_cache();  // Because things have changed
+            // Delete the capabilities that were defined by this module
+            capabilities_cleanup('mod/'.$module->name);
+            
+            // rebuild_course_cache();  // Because things have changed
             $coursesaffected = true;
 
             $a->module = $strmodulename;

@@ -114,13 +114,13 @@
 
     $searchform = forum_search_form($course, $search);
 
-    if ((!isteacheredit($course->id)) and forum_get_separate_modules($course->id)) {
-        $sepgroups = user_group($course->id, $USER->id);
+    if ($group = user_group($course->id, $USER->id)) {
+        $groupid = $group->id;
     } else {
-        $sepgroups = false;
+        $groupid = 0;
     }
 
-    if (!$posts = forum_search_posts($searchterms, $course->id, $page*$perpage, $perpage, $totalcount, $sepgroups)) {
+    if (!$posts = forum_search_posts($searchterms, $course->id, $page*$perpage, $perpage, $totalcount, $groupid)) {
 
         print_header_simple("$strsearchresults", "",
                 "<a href=\"index.php?id=$course->id\">$strforums</a> ->
@@ -361,15 +361,7 @@ function forum_clean_search_terms($words, $prefix='') {
 function forum_menu_list($course)  {
 
     $menu = array();
-
     $currentgroup = get_current_group($course->id);
-    $isteacher = isteacher($course->id);
-
-    if ($isteacher) {   // Add teacher forum
-        if ($forum = forum_get_course_forum($course->id, 'teacher')) {
-            $menu[$forum->id] = format_string($forum->name,true);
-        }
-    }
 
     if ($forums = get_all_instances_in_course("forum", $course)) {
         if ($course->format == 'weeks') {
@@ -379,23 +371,19 @@ function forum_menu_list($course)  {
         }
 
         foreach ($forums as $forum) {
-            if (!$isteacher) {   // Non-teachers
-                if ($forum->type == "teacher") {
+            if ($cm = get_coursemodule_from_instance('forum', $forum->id, $course->id)) {
+                if (!isset($forum->visible)) {
+                    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+                    if (!instance_is_visible("forum", $forum) &&
+                            !has_capability('moodle/course:viewhiddenactivities', $context->id)) {
+                        continue;
+                    }
+                }
+                $groupmode = groupmode($course, $cm);   // Groups are being used
+                if (($groupmode == SEPARATEGROUPS) and ($currentgroup === false)) {
                     continue;
                 }
-                if (!isset($forum->visible)) {
-                    if (! instance_is_visible("forum", $forum)) {
-                        continue;
-                    }
-                }
-                if ($cm = get_coursemodule_from_instance('forum', $forum->id, $course->id)) {
-                    $groupmode = groupmode($course, $cm);   // Groups are being used
-                    if (($groupmode == SEPARATEGROUPS) and ($currentgroup === false)) {
-                        continue;
-                    }
-                }
             }
-
             $menu[$forum->id] = format_string($forum->name,true);
         }
     }
@@ -404,4 +392,3 @@ function forum_menu_list($course)  {
 }
 
 ?>
-

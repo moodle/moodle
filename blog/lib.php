@@ -3,18 +3,21 @@
     /**
      * Library of functions and constants for blog
      */
-
     require_once($CFG->libdir .'/blocklib.php');
     require_once($CFG->libdir .'/pagelib.php');
     require_once('rsslib.php');
     require_once($CFG->dirroot .'/blog/blogpage.php');
 
-    /* blog access level constant declaration */
+
+    /**
+     * Blog access level constant declaration
+     */
     define ('BLOG_USER_LEVEL', 1);
     define ('BLOG_GROUP_LEVEL', 2);
     define ('BLOG_COURSE_LEVEL', 3);
     define ('BLOG_SITE_LEVEL', 4);
     define ('BLOG_GLOBAL_LEVEL', 5);
+
 
     /**
      * Definition of blogcourse page type (blog page with course id present).
@@ -25,15 +28,18 @@
     $BLOG_YES_NO_MODES = array ( '0'  => get_string('no'),
                                  '1' => get_string('yes') );
 
-    //set default setting for $CFG->blog_* vars used by blog's blocks
-    //if they are not already. Otherwise errors are thrown
-    //when an attempt is made to use an empty var.
+    // Set default setting for $CFG->blog_* vars used by blog's blocks.
+    // If they are not already. Otherwise errors are thrown when an attempt
+    // is made to use an empty var.
     if (empty($SESSION->blog_editing_enabled)) {
         $SESSION->blog_editing_enabled = false;
     }
 
-    // checks to see if user has visited blogpages before, if not, install 2 default blocks
-    // (blog_menu and blog_tags)
+
+    /** 
+     * Checks to see if user has visited blogpages before, if not, install 2
+     * default blocks (blog_menu and blog_tags).
+     */
     function blog_check_and_install_blocks() {
         global $USER;
         if (isloggedin() && !isguest()) {
@@ -77,6 +83,7 @@
         }
         return ($SESSION->blog_editing_enabled);
     }
+
 
     /**
      *  This function is in lib and not in BlogInfo because entries being searched
@@ -132,9 +139,10 @@
         print $output;
     }
 
+
     /**
-     *  This function is in lib and not in BlogInfo because entries being searched
-     *   might be found in any number of blogs rather than just one.
+     * This function is in lib and not in BlogInfo because entries being searched
+     * might be found in any number of blogs rather than just one.
      *
      * This function builds an array which can be used by the included
      * template file, making predefined and nicely formatted variables available
@@ -184,7 +192,7 @@
         echo '</td>';
 
         echo '<td class="topic starter"><div class="subject">'.$template['title'].'</div><div class="author">';
-        $fullname = fullname($user, isteacher($template['userid']));
+        $fullname = fullname($user, $template['userid']);
         $by->name =  '<a href="'.$CFG->wwwroot.'/user/view.php?id='.
                     $user->id.'&amp;course='.$course->id.'">'.$fullname.'</a>';
         $by->date = $template['lastmod'];
@@ -240,11 +248,14 @@
         echo '<div class="commands">';
 
         if (isset($USER->id)) {
-            if (($template['userid'] == $USER->id) or isadmin()) {
+            $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
+            $canmanage = has_capability('moodle/blog:manageentries', $context->id);
+            
+            if (($template['userid'] == $USER->id) or $canmanage) {
                     echo '<a href="'.$CFG->wwwroot.'/blog/edit.php?editid='.$blogEntry->id.'&amp;sesskey='.sesskey().'">'.$stredit.'</a>';
             }
 
-            if (($template['userid'] == $USER->id) or isadmin()) {
+            if (($template['userid'] == $USER->id) or $canmanage) {
                 echo '| <a href="'.$CFG->wwwroot.'/blog/edit.php?act=del&amp;editid='.$blogEntry->id.'&amp;sesskey='.sesskey().'">'.$strdelete.'</a>';
             }
         }
@@ -254,6 +265,7 @@
         echo '</td></tr></table>'."\n\n";
 
     }
+
 
     /**
      * Use this function to retrieve a list of publish states available for
@@ -274,25 +286,36 @@
         return $options;
     }
 
-    // user can edit if he's an admin, or blog owner
-    function blog_user_can_edit_post($blogEntry) {
 
+    /**
+     * User can edit a blog entry if this is their own blog post and they have
+     * the capability moodle/blog:writeentry, or if they have the capability
+     * moodle/blog:manageentries.
+     */
+    function blog_user_can_edit_post($blogEntry, $contextid) {
+        
         global $CFG, $USER;
         
-        return (isadmin() || ($blogEntry->userid == $USER->id));
-
+        return ((has_capability('moodle/blog:writeentries', $contextid) &&
+                    $blogEntry->userid == $USER->id) ||
+                    has_capability('moodle/blog:manageentries', $context->id));
     }
-    /// Checks to see if a user can view the blogs of another user.
-    /// He can do so, if he is admin, in any same non-spg course,
-    /// or spg group, but same group member
+
+
+    /**
+     * Checks to see if a user can view the blogs of another user.
+     * He can do so, if he has the moodle/blog:readentry capability. In the
+     * case of spg group course, the user also needs to be in the same group.
+     */
     function blog_user_can_view_user_post($targetuserid, $blogEntry=null) {
-
+        
         global $CFG, $USER;
-
         $canview = 0;    //bad start
-
-        if (isadmin()) {
-            return true;
+        
+        $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
+        
+        if (!has_capability('moodle/blog:readentry', $context->id)) {
+            return false;
         }
         
         if ($USER->id && ($USER->id == $targetuserid)) {
@@ -302,17 +325,17 @@
         if ($blogEntry and $blogEntry->publishstate == 'draft') {  // can not view draft
             return false;
         }
-
+        
         $usercourses = get_my_courses($targetuserid);
         foreach ($usercourses as $usercourse) {
-                /// if viewer and user sharing same non-spg course, then grant permission
-            if (groupmode($usercourse)!= SEPARATEGROUPS){
-                if (isstudent($usercourse->id) || isteacher($usercourse->id)) {
-                    $canview = 1;
-                    return $canview;
-                }
+            // If the viewer and user are sharing same non-spg course, then
+            // grant permission.
+            if (groupmode($usercourse) != SEPARATEGROUPS) {
+                $canview = 1;
+                return $canview;
             } else {
-                /// now we need every group the user is in, and check to see if view is a member
+                // Now we need every group the user is in, and check to see
+                // if view is a member.
                 if ($usergroups = user_group($usercourse->id, $targetuserid)) {
                     foreach ($usergroups as $usergroup) {
                         if (ismember($usergroup->id)) {
@@ -325,14 +348,16 @@
         }
 
         if (!$canview && $CFG->bloglevel < BLOG_SITE_LEVEL) {
-            error ('you can not view this user\'s blogs');
+            error ('You can not view this user\'s blogs');
         }
 
         return $canview;
     }
 
 
-    /// moved from BlogEntry class
+    /**
+     * Moved from BlogEntry class.
+     */
     function get_formatted_entry_body($body, $format) {
         global $CFG;
         include_once($CFG->libdir .'/weblib.php');
@@ -342,8 +367,10 @@
         return stripslashes_safe($body);
     }
 
-/// Main filter function
 
+    /**
+     * Main filter function.
+     */
     function fetch_entries($userid, $postid='', $fetchlimit=10, $fetchstart='', $filtertype='', $filterselect='', $tagid='', $tag ='', $sort='lastmodified DESC', $limit=true) {
 
         global $CFG, $USER;
@@ -522,18 +549,25 @@
         return $records;
     }
 
+
     /**
      * get the count of viewable entries, easiest way is to count fetch_entries
      * this is used for print_paging_bar
      * this is not ideal, but because of the UNION in the sql in fetch_entries,
      * it is hard to use count_records_sql
      */
-    function get_viewable_entry_count($userid, $postid='', $fetchlimit=10, $fetchstart='', $filtertype='', $filterselect='', $tagid='', $tag ='', $sort='lastmodified DESC') {
+    function get_viewable_entry_count($userid, $postid='', $fetchlimit=10,
+                $fetchstart='', $filtertype='', $filterselect='', $tagid='',
+                $tag ='', $sort='lastmodified DESC') {
 
-        $blogEntries = fetch_entries($userid, $postid, $fetchlimit, $fetchstart,$filtertype, $filterselect, $tagid, $tag, $sort='lastmodified DESC', false);
+        $blogEntries = fetch_entries($userid, $postid, $fetchlimit,
+                $fetchstart, $filtertype, $filterselect, $tagid, $tag,
+                $sort='lastmodified DESC', false);
+        
         return count($blogEntries);
     }
-    
+
+
     /// Find the base url from $_GET variables, for print_paging_bar
     function get_baseurl($filtertype, $filterselect) {
 
@@ -570,7 +604,8 @@
             $querystring = '?';
         }
 
-        return strip_querystring(qualified_me()) . $querystring. 'filtertype='.$filtertype.'&amp;filterselect='.$filterselect.'&amp;';
+        return strip_querystring(qualified_me()) . $querystring. 'filtertype='.
+                $filtertype.'&amp;filterselect='.$filterselect.'&amp;';
 
     }
 ?>

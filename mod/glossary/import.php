@@ -18,7 +18,7 @@
     if (! $cm = get_record("course_modules", "id", $id)) {
         error("Course Module ID was incorrect");
     }
-
+	
     if (! $course = get_record("course", "id", $cm->course)) {
         error("Course is misconfigured");
     }
@@ -27,10 +27,10 @@
         error("Course module is incorrect");
     }
 
-    require_login($course->id, false);
-    if (!isteacher($course->id)) {
-        error("You must be a teacher to use this page.");
-    }
+    require_login($course->id, false);	
+	
+	$context = get_context_instance(CONTEXT_MODULE, $cm->id);
+	has_capability('mod/glossary:import', $context->id, true);
 
     if ($dest != 'new' and $dest != 'current') {
         $dest = 'current';

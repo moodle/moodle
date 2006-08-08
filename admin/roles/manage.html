@@ -1,0 +1,60 @@
+<form name="rolesform" action="manage.php" method="post">
+<input type="hidden" name="roleid" value="<?php echo $roleid; ?>">
+<input type="hidden" name="sesskey" value="<?php print (sesskey()); ?>">
+<input type="hidden" name="action" value="<?php echo $action; ?>">
+<br/>Role Name: <input type="text" name="name" value="<?php echo $role->name; ?>">
+<br/>Role Description: <input type="text" name="description" value="<?php echo $role->description; ?>">
+<input type="hidden" name="contextid" value="<?php echo $contextid; ?>">
+<p>			
+			<table>
+			<tr>
+				<td>Capability Name</td><td>Inherit</td><td>Allow</td><td>Prevent</td><td>Prohibit</td>
+			</tr>
+			<?php 
+			
+			// init these 2
+			$contextlevel = 0;
+			$component = '';
+			
+			foreach ($capabilities as $capability) {
+			// prints a breaker if component or name or context level  
+				if ($capability->component != $component or $capability->contextlevel != $contextlevel) {
+					echo ('<tr><td colspan="4"><b>'.get_component_string($capability->component, $capability->contextlevel).'</b></td></tr>');  
+				}
+				
+				// these 2 are used to see to group same mod/core capabilities together
+				$contextlevel = $capability->contextlevel;
+				$component = $capability->component;
+				
+				// check the capability override for this cap, this role in this context
+				
+				$SQL = "select * from {$CFG->prefix}role_capabilities where
+						roleid = $roleid and capability = '$capability->name' and contextid = $contextid";
+						
+				$localoverride = get_record_sql($SQL);
+				
+				if (isset($r_caps[$capability->name])) {
+					$isallow = $r_caps[$capability->name] > 0;
+					$isprevent = $r_caps[$capability->name] < 0 && $r_caps[$capability->name] > -500;
+					$isprohibit = $r_caps[$capability->name] <= -500;
+				} else {
+					$isallow = 0;
+					$isprevent = 0;
+					$isprohibit = 0;  
+				}
+				
+			?>
+				
+			<tr>
+			  <td><?php echo get_capability_string($capability->name); ?></td>
+				 <td><INPUT TYPE=radio NAME="<?php echo $capability->name; ?>" VALUE="0" <?php if (!isset($localoverride->permission) || $localoverride->permission==0){ echo 'checked="checked"'; }?>></td>
+                 <td><INPUT TYPE=radio NAME="<?php echo $capability->name; ?>" VALUE="1" <?php if (isset($localoverride->permission) && $localoverride->permission==1){ echo 'checked="checked"'; }?>></td>
+                 <td ><INPUT TYPE=radio NAME="<?php echo $capability->name; ?>" VALUE="-1" <?php if (isset($localoverride->permission) && $localoverride->permission==-1){ echo 'checked="checked"'; }?>></td>
+                 <td ><INPUT TYPE=radio NAME="<?php echo $capability->name; ?>" VALUE="-1000" <?php if (isset($localoverride->permission) && $localoverride->permission==-1000){ echo 'checked="checked"'; }?>></td>
+            </tr>
+			
+			<?php } ?>    
+			</table>	 
+</p>
+<br/><input type="submit" value="<?php print_string($action);?>">
+</form>

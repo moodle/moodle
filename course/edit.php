@@ -19,7 +19,9 @@
             error("Course ID was incorrect");
         }
 
-        if (!isteacheredit($course->id)) {
+		$context = get_context_instance(CONTEXT_COURSE, $id);
+		
+        if (!has_capability('moodle/course:update', $context->id)) {
             error("You do not currently have editing privileges!");
         }
         
@@ -38,7 +40,8 @@
         }
     } else {  // Admin is creating a new course
 
-        if (!iscreator()) {
+		$context = get_context_instance(CONTEXT_SYSTEM, SITEID);
+		if (!has_capability('moodle/course:create',$context->id)) {
             error("You do not currently have course creation privileges!");
         }
 

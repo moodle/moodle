@@ -105,17 +105,6 @@
         <?php print_textarea($usehtmleditor, 20, 50, 680, 400, 'intro', $form->intro); ?>
     </td>
 </tr>
-
-<tr valign="top">
-    <td align="right"><b><?php print_string('allowdiscussions', 'forum', strtolower("$course->student")) ?>:</b></td>
-    <td>
-        <?php
-            choose_from_menu($FORUM_OPEN_MODES, 'open', $form->open, '');
-            helpbutton('allowdiscussions', get_string('allowdiscussions',
-                       'forum', moodle_strtolower("$course->student")), 'forum');
-        ?>
-    </td>
-</tr>
 <tr>
     <td align="right"><b><?php print_string('forcesubscribeq', 'forum') ?>:</b></td>
     <td>
@@ -218,26 +207,7 @@
             echo ' />';
             echo '&nbsp;'.get_string('ratingsuse', 'forum').':';
             echo '</td></tr>';
-
-            echo '<tr><td>';
-            // The odd order below was to maintain backward compatibility
-            unset($options);
-            $options[2] = get_string('ratingonlyteachers', 'forum', moodle_strtolower($course->teachers));
-            $options[1] = get_string('ratingeveryone', 'forum');
-            echo get_string('users').': ';
-            echo '</td><td>';
-            choose_from_menu($options, 'assessed', $form->assessed, '');
-            echo '</td></tr>';
-
-            echo '<tr><td>';
-            unset($options);
-            $options[0] = get_string('ratingpublicnot', 'forum', $course->students);
-            $options[1] = get_string('ratingpublic', 'forum', $course->students);
-            echo get_string('view').': ';
-            echo '</td><td>';
-            choose_from_menu($options, 'assesspublic', $form->assesspublic, '');
-            echo '</td></tr>';
-
+            
             echo '<tr><td>';
             echo get_string('grade').': ';
             echo '</td><td>';

@@ -2,16 +2,17 @@
 require_once('../config.php');
 require_login();
 
-if (isguest()) {
-    error ('Guests can not modify tags!');
-}
+
 //form process
 $mode = optional_param('mode','',PARAM_ALPHA);
 
+$context = get_context_instance(CONTEXT_SYSTEM, SITEID);
+
+
 switch ($mode) {
-    case 'addofficial':    /// adding official tags
-    
-        if (!isadmin() || !confirm_sesskey()) {
+    case 'addofficial':
+        /// Adding official tags.
+        if (!has_capability('moodle/blog:manageofficialtags', $context->id) || !confirm_sesskey()) {
             die('you can not add official tags');
         }
         
@@ -21,21 +22,25 @@ switch ($mode) {
             $tag->type = 'official';
             $tagid = insert_record('tags', $tag);
             
-            /// write newly added tags back into window opener
+            /// Write newly added tags back into window opener.
             echo '<script language="JavaScript" type="text/javascript">
             var o = opener.document.createElement("option");
             o.innerHTML = "<option>'.$tag->text.'</option>";
             o.value = '.$tagid.';
             opener.document.entry[\'otags[]\'].insertBefore(o, null);
             </script>';
-        } else {  // tag already exist
+        } else {
+            /// Tag already exists.
             notify(get_string('tagalready'));
         }
 
     break;
     
-    case 'addpersonal':    /// everyone can add personal tags
-        if (!confirm_sesskey() || isguest() || !isset($USER->id)) {
+    case 'addpersonal':
+        /// Everyone can add personal tags as long as they can write blog entries.
+        if (!confirm_sesskey() ||
+                !has_capability('moodle/blog:writeentries', $context->id) ||
+                !isset($USER->id)) {
             error ('you can not add tags');
         }
         
@@ -45,20 +50,22 @@ switch ($mode) {
             $tag->type = 'personal';
             $tagid = insert_record('tags', $tag);
 
-            /// write newly added tags back into window opener
+            /// Write newly added tags back into window opener.
             echo '<script language="JavaScript" type="text/javascript">
             var o = opener.document.createElement("option");
             o.innerHTML = "<option>'.$tag->text.'</option>";
             o.value = '.$tagid.';
             opener.document.entry[\'ptags[]\'].insertBefore(o, null);
             </script>';
-        } else {  //tag already exist
+        } else {  
+            /// Tag already exists.
             notify(get_string('tagalready'));
         }
         
     break;
     
-    case 'delete':  /// delete a tag
+    case 'delete':
+        /// Delete a tag.
         if (!confirm_sesskey()) {
             error('you can not delete tags');
         }
@@ -69,14 +76,18 @@ switch ($mode) {
 
                 $blogtag = get_record('tags','id',$tag);
 
-                // you can only delete your own tags, or you have to be an admin
-                if (!isadmin() and $USER->id != $blogtag->userid) {
+                // You can only delete your own tags, or you have to have the
+                // moodle/blog:manageofficialtags capability.
+                if (!has_capability('moodle/blog:manageofficialtags', $context->id)
+                            && $USER->id != $blogtag->userid) {
                     notify(get_string('norighttodeletetag','blog', $blogtag->text));
                     continue;
                 }
 
-                /// Only admin can delete tags that are referenced
-                if (!isadmin() && get_records('blog_tag_instance','tagid', $tag)) {
+                // You can only delete tags that are referenced if you have
+                // the moodle/blog:manageofficialtags capability.
+                if (!has_capability('moodle/blog:manageofficialtags', $context->id)
+                            && get_records('blog_tag_instance','tagid', $tag)) {
                     notify('tag is used by other users, can not delete!');
                     continue;
                 }
@@ -84,7 +95,7 @@ switch ($mode) {
                 delete_records('tags','id',$tag);
                 delete_records('blog_tag_instance', 'tagid', $tag);
 
-                /// remove parent window option via javascript
+                /// Remove parent window option via javascript.
                 echo '<script>
                 var i=0;
                 while (i < window.opener.document.entry[\'otags[]\'].length) {
@@ -107,16 +118,15 @@ switch ($mode) {
         }
     break;
     
-    default:  // just displaying tags form
+    default:
+        /// Just display the tags form.
     break;
 }
 
-//print the table
 
+/// Print the table.
 print_header();
-
 include_once('tags.html');
-
 print_footer();
 
 

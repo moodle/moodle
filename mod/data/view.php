@@ -42,7 +42,6 @@
 /// These can be added to perform an action on a record
     $approve = optional_param('approve', 0, PARAM_INT);    //approval recordid
     $delete = optional_param('delete', 0, PARAM_INT);    //delete recordid
-
     
     if ($id) {
         if (! $cm = get_record('course_modules', 'id', $id)) {
@@ -82,12 +81,13 @@
         $record = NULL;
     }
 
-
     require_course_login($course, true, $cm);
-
+	
+	$context = get_context_instance(CONTEXT_MODULE, $cm->id);
+	has_capability('mod/data:readentry', $context->id, true);
 
 /// If it's hidden then it's don't show anything.  :)
-    if (empty($cm->visible) and !isteacher($course->id)) {
+    if (empty($cm->visible) and !has_capability('mod/data:managetemplates', $context->id)) {
         $strdatabases = get_string("modulenameplural", "data");
         $navigation = "<a href=\"index.php?id=$course->id\">$strdatabases</a> ->";
         print_header_simple(format_string($data->name), "",
@@ -96,7 +96,7 @@
     }
 
 /// If we have an empty Database then redirect because this page is useless without data
-    if (isteacher($course->id)) {
+    if (has_capability('mod/data:managetemplates', $context->id)) {
         if (!record_exists('data_fields','dataid',$data->id)) {      // Brand new database!
             redirect($CFG->wwwroot.'/mod/data/field.php?d='.$data->id);  // Redirect to field entry
         }
@@ -198,7 +198,7 @@
 
 /// Delete any requested records
 
-    if ($delete && confirm_sesskey() && (isteacher($course->id) or data_isowner($delete))) {
+    if ($delete && confirm_sesskey() && (has_capability('mod/data:manageentries', $context->id) or data_isowner($delete))) {
         if ($confirm = optional_param('confirm',0,PARAM_INT)) {
             if ($deleterecord = get_record('data_records', 'id', $delete)) {   // Need to check this is valid
                 if ($deleterecord->dataid == $data->id) {                       // Must be from this database
@@ -249,7 +249,7 @@
 
 /// Approve any requested records
 
-    if ($approve && confirm_sesskey() && isteacher($course->id)) {
+    if ($approve && confirm_sesskey() && has_capability('mod/data:approve', $context->id)) {
         if ($approverecord = get_record('data_records', 'id', $approve)) {   // Need to check this is valid
             if ($approverecord->dataid == $data->id) {                       // Must be from this database
                 $newrecord->id = $approverecord->id;
@@ -262,7 +262,7 @@
     }
 
 // If not teacher, check whether user has sufficient records to view
-    if (!isteacher($course->id) and data_numentries($data) < $data->requiredentriestoview){
+    if (!has_capability('mod/data:managetemplates', $context->id) and data_numentries($data) < $data->requiredentriestoview){
         notify (($data->requiredentriestoview - data_numentries($data)).'&nbsp;'.get_string('insufficiententries','data'));
         echo '</td></tr></table>';
         print_footer($course);
@@ -272,7 +272,7 @@
 
 /// We need to examine the whole dataset to produce the correct paging
 
-    if ((!isteacher($course->id)) && ($data->approval)) {
+    if ((!has_capability('mod/data:managetemplates', $context->id)) && ($data->approval)) {
         if (isloggedin()) {
             $approveselect = ' AND (r.approved=1 OR r.userid='.$USER->id.') ';
         } else {
@@ -390,7 +390,7 @@
 
     if (empty($records)) {     // Nothing to show!
         if ($record) {         // Something was requested so try to show that at least (bug 5132)
-            if (isteacher($course->id) || empty($data->approval) || 
+            if (has_capability('mod/data:manageentries', $context->id) || empty($data->approval) || 
                      $record->approved || (isloggedin() && $record->userid == $USER->id)) {
                 if (!$currentgroup || $record->groupid == $currentgroup || $record->groupid == 0) {
                     $records[] = $record;

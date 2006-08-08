@@ -1006,7 +1006,7 @@ function upgrade_blocks_plugins($continueto) {
             $invalidblocks[] = $blockname;
             continue;
         }
-
+		
         $fullblock = $CFG->dirroot .'/blocks/'. $blockname;
 
         if ( is_readable($fullblock.'/block_'.$blockname.'.php')) {
@@ -1095,6 +1095,9 @@ function upgrade_blocks_plugins($continueto) {
                 if(!$upgradesuccess) {
                     notify('Upgrading block '. $block->name .' from '. $currblock->version .' to '. $block->version .' FAILED!');
                 }
+                if (!update_capabilities('block/'.$block->name)) {
+                    notify('Could not update '.$block->name.' capabilities!');
+                }
                 else {
                     // OK so far, now update the block record
                     $block->id = $currblock->id;
@@ -1145,6 +1148,9 @@ function upgrade_blocks_plugins($continueto) {
                     echo '<hr />';
                 } else {
                     error($block->name .' block could not be added to the block list!');
+                }
+                if (!update_capabilities('block', $block->name)) {
+                    notify('Could not set up '.$block->name.' capabilities!');
                 }
             } else {
                 error('Block '. $block->name .' tables could NOT be set up successfully!');

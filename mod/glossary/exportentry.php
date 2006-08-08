@@ -29,10 +29,8 @@
             $lcase = 'lcase';
     }
 
-    if ( !isteacher($cm->course) ) {
-        $PermissionGranted = 0;
-        error('You must be a teacher to use this page.');
-    }
+	$context = get_context_instance(CONTEXT_MODULE, $cm->id);
+	has_capability('mod/glossary:export', $context->id, true);
 
     if (! $course = get_record('course', 'id', $cm->course)) {
         error('Course is misconfigured');

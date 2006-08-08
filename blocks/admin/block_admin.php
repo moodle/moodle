@@ -31,17 +31,25 @@ class block_admin extends block_list {
 
     function load_content_for_site() {
         global $CFG, $USER;
+        
+		$context = get_context_instance(CONTEXT_SYSTEM, SITEID);
+        if (has_capability('moodle/site:config', $context->id)) {
 
-        if (isadmin()) {
             $this->content->items[] = '<a href="'.$CFG->wwwroot.'/'.$CFG->admin.'/configure.php">'.get_string('configuration').'</a>';
             $this->content->icons[] = '<img src="'.$CFG->pixpath.'/i/admin.gif" alt="" />';
-
+		}
+		
+		if (isadmin()) {
             $this->content->items[] = '<a href="'.$CFG->wwwroot.'/'.$CFG->admin.'/users.php">'.get_string('users').'</a>';
             $this->content->icons[] = '<img src="'.$CFG->pixpath.'/i/users.gif" alt="" />';
-
+        }
+        
+		if (has_capability('moodle/site:backup', $context->id)) {
             $this->content->items[]='<a href="'.$CFG->wwwroot.'/backup/backup.php?id='.SITEID.'">'.get_string('backup').'</a>';
             $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/backup.gif" alt="" />';
-
+		}
+		
+		if (has_capability('moodle/site:restore', $context->id)) {
             $this->content->items[]='<a href="'.$CFG->wwwroot.'/files/index.php?id='.SITEID.'&amp;wdir=/backupdata">'.get_string('restore').'</a>';
             $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/restore.gif" alt="" />';
         }
@@ -83,6 +91,7 @@ class block_admin extends block_list {
 
     function load_content_for_course() {
         global $CFG, $USER;
+		$context = get_context_instance(CONTEXT_COURSE, $this->instance->pageid);
 
         require_once($CFG->dirroot.'/mod/forum/lib.php');
 
@@ -102,7 +111,8 @@ class block_admin extends block_list {
 
             $isteacheredit = isteacheredit($this->instance->pageid);
 
-            if ($isteacheredit) {
+            if (has_capability('moodle/course:update', $context->id)) {
+            //if (isteacheredit($this->instance->pageid)) {
                 $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/edit.gif" alt="" />';
                 if (isediting($this->instance->pageid)) {
                     $this->content->items[]='<a href="view.php?id='.$this->instance->pageid.'&amp;edit=off&amp;sesskey='.sesskey().'">'.get_string('turneditingoff').'</a>';
@@ -112,66 +122,65 @@ class block_admin extends block_list {
                 
                 $this->content->items[]='<a href="edit.php?id='.$this->instance->pageid.'">'.get_string('settings').'</a>';
                 $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/settings.gif" alt="" />';
+			}
+	        
+			$fullname = fullname($USER, true);
+	        $editmyprofile = '<a title="'.$fullname.'" href="'.$CFG->wwwroot.'/user/edit.php?id='.$USER->id.'&amp;course='.$this->instance->pageid.'">'.get_string('editmyprofile').'</a>';
+	        if (empty($USER->description)) {
+	            	//Accessibility: replace non-standard <blink> with CSS (<a> makes title visible in IE).
+	            $text = get_string('profile').' '.get_string('missingdescription');
+	            $this->content->items[]= $editmyprofile.' <a title="'.$text.'" class="useredit blink">*<span class="accesshide">'.$text.'</span></a>';
+	        } else {
+	            $this->content->items[]= $editmyprofile;
+	        }
+	        $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/user.gif" alt="" />';
 
-
-            $fullname = fullname($USER, true);
-            $editmyprofile = '<a title="'.$fullname.'" href="'.$securewwwroot.'/user/edit.php?id='.$USER->id.'&amp;course='.$this->instance->pageid.'">'.get_string('editmyprofile').'</a>';
-            if (empty($USER->description)) {
-                //Accessibility: replace non-standard <blink> with CSS (<a> makes title visible in IE).
-                $text = get_string('profile').' '.get_string('missingdescription');
-                $this->content->items[]= $editmyprofile.' <a title="'.$text.'" class="useredit blink">*<span class="accesshide">'.$text.'</span></a>';
-            } else {
-                $this->content->items[]= $editmyprofile;
+            /// always need a role assignment link
+            if (has_capability('moodle/role:assign', $context->id)) { 
+				$this->content->items[]='<a href="'.$CFG->wwwroot.'/admin/roles/roleassignment.php?contextid='.$context->id.'">'.get_string('assignusers', 'roles').'</a>';
+            	$this->content->icons[]='<img src="'.$CFG->pixpath.'/i/users.gif" alt="" />';         
+			}
+			
+            if ($course->metacourse) {
+                $strchildcourses = get_string('childcourses');
+                $this->content->items[]='<a href="importstudents.php?id='.$this->instance->pageid.'">'.$strchildcourses.'</a>';
+                $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/course.gif" alt="" />';
             }
-            $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/user.gif" alt="" />';
-
-
-                if (iscreator() || !empty($CFG->teacherassignteachers)) {
-                    if (!$course->teachers) {
-                        $course->teachers = get_string('defaultcourseteachers');
-                    }
-                    $this->content->items[]='<a href="teacher.php?id='.$this->instance->pageid.'">'.$course->teachers.'</a>';
-                    $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/users.gif" alt="" />';
-                }
-
-                if (!$course->students) {
-                    $course->students = get_string('defaultcoursestudents');
-                } 
-                if (!$course->metacourse) {
-                    $this->content->items[]='<a href="student.php?id='.$this->instance->pageid.'">'.$course->students.'</a>';
-                    $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/users.gif" alt="" />';
-                } else {
-                    $strchildcourses = get_string('childcourses');
-                    $this->content->items[]='<a href="importstudents.php?id='.$this->instance->pageid.'">'.$strchildcourses.'</a>';
-                    $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/course.gif" alt="" />';
-                }
-                if ($course->groupmode || !$course->groupmodeforce) {
-                    $strgroups = get_string('groups');
-                    $this->content->items[]='<a title="'.$strgroups.'" href="'.$CFG->wwwroot.'/course/groups.php?id='.$this->instance->pageid.'">'.$strgroups.'</a>';
-                    $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/group.gif" alt="" />';
-                }
-
-                $this->content->items[]='<a href="'.$CFG->wwwroot.'/backup/backup.php?id='.$this->instance->pageid.'">'.get_string('backup').'</a>';
-                $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/backup.gif" alt="" />';
-
-                $this->content->items[]='<a href="'.$CFG->wwwroot.'/files/index.php?id='.$this->instance->pageid.'&amp;wdir=/backupdata">'.get_string('restore').'</a>';
-                $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/restore.gif" alt="" />';
-
-                $this->content->items[]='<a href="'.$CFG->wwwroot.'/course/import.php?id='.$this->instance->pageid.'">'.get_string('import').'</a>';
-                $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/restore.gif" alt="" />';
-                $this->content->items[]='<a href="'.$CFG->wwwroot.'/course/reset.php?id='.$this->instance->pageid.'">'.get_string('reset').'</a>';
-                $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/return.gif" alt="" />';
-                $this->content->items[]='<a href="'.$CFG->wwwroot.'/course/report.php?id='.$this->instance->pageid.'">'.get_string('reports').'</a>';
-                $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/stats.gif" alt="" />';
-
-                $this->content->items[]='<a href="'.$CFG->wwwroot.'/question/edit.php?courseid='.$this->instance->pageid.'&amp;clean=true">'.get_string('questions', 'quiz').'</a>';
-                $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/questions.gif" alt="" />';
-
-                $this->content->items[]='<a href="scales.php?id='.$this->instance->pageid.'">'.get_string('scales').'</a>';
-                $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/scales.gif" alt="" />';
-
+            if ($course->groupmode || !$course->groupmodeforce) {
+                $strgroups = get_string('groups');
+                $this->content->items[]='<a title="'.$strgroups.'" href="'.$CFG->wwwroot.'/course/groups.php?id='.$this->instance->pageid.'">'.$strgroups.'</a>';
+                $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/group.gif" alt="" />';
             }
 
+			if (has_capability('moodle/site:backup', $context->id)) { 
+            	$this->content->items[]='<a href="'.$CFG->wwwroot.'/backup/backup.php?id='.$this->instance->pageid.'">'.get_string('backup').'</a>';
+            	$this->content->icons[]='<img src="'.$CFG->pixpath.'/i/backup.gif" alt="" />';
+			}
+			
+			if (has_capability('moodle/site:restore', $context->id)) {
+	            $this->content->items[]='<a href="'.$CFG->wwwroot.'/files/index.php?id='.$this->instance->pageid.'&amp;wdir=/backupdata">'.get_string('restore').'</a>';
+	            $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/restore.gif" alt="" />';
+			}
+			
+            $this->content->items[]='<a href="'.$CFG->wwwroot.'/course/import.php?id='.$this->instance->pageid.'">'.get_string('import').'</a>';
+            $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/restore.gif" alt="" />';
+            
+			if (has_capability('moodle/site:import', $context->id)) {
+				$this->content->items[]='<a href="'.$CFG->wwwroot.'/course/reset.php?id='.$this->instance->pageid.'">'.get_string('reset').'</a>';
+            	$this->content->icons[]='<img src="'.$CFG->pixpath.'/i/return.gif" alt="" />';
+            }
+            
+            $this->content->items[]='<a href="'.$CFG->wwwroot.'/course/report.php?id='.$this->instance->pageid.'">'.get_string('reports').'</a>';
+            $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/stats.gif" alt="" />';
+
+            $this->content->items[]='<a href="'.$CFG->wwwroot.'/question/edit.php?courseid='.$this->instance->pageid.'&amp;clean=true">'.get_string('questions', 'quiz').'</a>';
+            $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/questions.gif" alt="" />';
+
+			if (has_capability('moodle/course:managescales', $context->id)) {
+            	$this->content->items[]='<a href="scales.php?id='.$this->instance->pageid.'">'.get_string('scales').'</a>';
+            	$this->content->icons[]='<img src="'.$CFG->pixpath.'/i/scales.gif" alt="" />';      
+			}
+			
             $this->content->items[]='<a href="'.$CFG->wwwroot.'/grade/index.php?id='.$this->instance->pageid.'">'.get_string('grades').'</a>';
             $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/grades.gif" alt="" />';
 

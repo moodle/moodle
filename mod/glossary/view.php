@@ -44,6 +44,9 @@
         error("Must specify glossary ID or course module ID");
     }
 
+	$context = get_context_instance(CONTEXT_MODULE, $cm->id);
+	has_capability('mod/glossary:view', $context->id, true); // kill the page if user can't even read
+
     if ($CFG->forcelogin) {
         require_login();
     }
@@ -320,7 +323,7 @@
                 $ratings->assesstimestart = $glossary->assesstimestart;
                 $ratings->assesstimefinish = $glossary->assesstimefinish;
             }
-            if ($glossary->assessed == 2 and !isteacher($course->id)) {
+            if ($glossary->assessed == 2 and !has_capability('mod/glossary:rate', $context->id)) {
                 $ratings->allow = false;
             } else {
                 $ratings->allow = true;

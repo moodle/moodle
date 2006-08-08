@@ -78,20 +78,6 @@
         }
         return $status;
     }
-    
-    
-    // Given a forum object, deletes the RSS file
-    function forum_rss_delete_file($forum) {
-        global $CFG;
-        //return unlink("{$CFG->dataroot}/rss/{$modname}/{$forum->id}.xml");
-        $rssfile = rss_file_name('forum', $forum);
-        if (file_exists($rssfile)) {
-            return unlink($rssfile);
-        } else {
-            return true;
-        }
-    }
-    
 
     function forum_rss_newstuff($forum, $time) {
     // If there is new stuff in the forum since $time then this returns
@@ -172,7 +158,7 @@
         $items = array();
 
         if ($newsince) {
-            $newsince = " AND (p.modified > '$newsince' OR d.timemodified > '$newsince')";
+            $newsince = " AND p.modified > '$newsince'";
         } else {
             $newsince = "";
         }
@@ -232,7 +218,7 @@
         $items = array();
 
         if ($newsince) {
-            $newsince = " AND (p.modified > '$newsince' OR d.timemodified > '$newsince')";
+            $newsince = " AND p.modified > '$newsince'";
         } else {
             $newsince = "";
         }
@@ -277,7 +263,7 @@
                 $item->description = format_text($rec->postmessage,$rec->postformat,NULL,$forum->course);
 
 
-                $post_file_area_name = "$forum->course/$CFG->moddata/forum/$forum->id/$rec->postid";
+                $post_file_area_name = str_replace('//', '/', "$forum->course/$CFG->moddata/$rec->course/forum/$forum->id/$rec->postid");
                 $post_files = get_directory_list("$CFG->dataroot/$post_file_area_name");
                 
                 if (!empty($post_files)) {            

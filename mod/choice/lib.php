@@ -155,9 +155,11 @@ $cdisplay = array();
         if (isset($text)) { //make sure there are no dud entries in the db with blank text values.
             $countanswers = (get_records("choice_answers", "optionid", $optionid));
             $countans = 0;           
+            $context = get_context_instance(CONTEXT_MODULE, $cm->id);
             if (!empty($countanswers)) {
-                foreach ($countanswers as $ca) { //only return enrolled users.				
-				    if (isstudent($cm->course, $ca->userid) or isteacher($cm->course, $ca->userid)) {	
+                foreach ($countanswers as $ca) { //only return enrolled users.					
+				    if (has_capability('mod/choice:choose', $context->id)) {
+					//if (isstudent($cm->course, $ca->userid) or isteacher($cm->course, $ca->userid)) {	
                         $countans = $countans+1;
                     }
                 }
@@ -254,12 +256,13 @@ $cdisplay = array();
 function choice_user_submit_response($formanswer, $choice, $userid, $courseid, $cm) {
 
 $current = get_record('choice_answers', 'choiceid', $choice->id, 'userid', $userid);
-	
+	$context = get_context_instance(CONTEXT_MODULE, $cm->id);
 	$countanswers = get_records("choice_answers", "optionid", $formanswer);
             if ($countanswers) {
             $countans = 0;
             foreach ($countanswers as $ca) { //only return enrolled users.
-				if (isstudent($courseid, $ca->userid) or isteacher($courseid, $ca->userid)) {	
+				if (has_capability('mod/choice:choose', $context->id)) {
+				//if (isstudent($courseid, $ca->userid) or isteacher($courseid, $ca->userid)) {	
 			   	    $countans = $countans+1;
 			    }
 			}				
@@ -300,10 +303,12 @@ $current = get_record('choice_answers', 'choiceid', $choice->id, 'userid', $user
 
 
 function choice_show_reportlink($choice, $courseid, $cmid) {
+        $context = get_context_instance(CONTEXT_MODULE, $cmid);
 	    if ( $allanswers = get_records("choice_answers", "choiceid", $choice->id)) {
             $responsecount = 0;
             foreach ($allanswers as $aa) {
-                if (isstudent($courseid, $aa->userid) or isteacher($courseid, $aa->userid)) { //check to make sure user is enrolled in course.
+                if (has_capability('mod/choice:readresponses', $context->id)) {
+				//if (isstudent($courseid, $aa->userid) or isteacher($courseid, $aa->userid)) { //check to make sure user is enrolled in course.
                     $responsecount++;
                 }
             }
@@ -316,8 +321,9 @@ function choice_show_reportlink($choice, $courseid, $cmid) {
 }
 
 function choice_show_results($choice, $course, $cm, $forcepublish='') {
-
+            
         global $CFG, $COLUMN_HEIGHT, $USER;
+		$context = get_context_instance(CONTEXT_MODULE, $cm->id);
         print_heading(get_string("responses", "choice"));        
         if (empty($forcepublish)) { //alow the publish setting to be overridden
 			$forcepublish = $choice->publish;
@@ -374,11 +380,11 @@ function choice_show_results($choice, $course, $cm, $forcepublish='') {
         switch ($forcepublish) {
           case CHOICE_PUBLISH_NAMES:
 
-            $isteacher = isteacher($course->id);
+            //$isteacher = isteacher($course->id);
 
             $tablewidth = (int) (100.0 / count($useranswer));
-
-            if (isteacher($course->id, $USER->id)) {
+			if (has_capability('mod/choice:readresponses', $context->id)) {
+            //if (isteacher($course->id, $USER->id)) {
 				echo '<div id="tablecontainer">';
                 echo '<form id="attemptsform" method="post" action="'.$_SERVER['PHP_SELF'].'" onsubmit="var menu = document.getElementById(\'menuaction\'); return (menu.options[menu.selectedIndex].value == \'delete\' ? \''.addslashes(get_string('deleteattemptcheck','quiz')).'\' : true);">';
                 echo '<input type="hidden" name="id" value="'.$cm->id.'" />';
@@ -414,6 +420,7 @@ function choice_show_results($choice, $course, $cm, $forcepublish='') {
 
                 echo "<table width=\"100%\">";
                 foreach ($userlist as $user) {
+                  	// this needs to be fixed
                     if (!($optionid==0 && isadmin($user->id)) && !($optionid==0 && isteacher($course->id, $user->id) && !(isteacheredit($course->id, $user->id)) )  ) { //make sure admins and hidden teachers are not shown in not answered yet column.
                         echo "<tr>";
                         if (isteacher($course->id, $USER->id) && !($optionid==0)) {
@@ -443,7 +450,8 @@ function choice_show_results($choice, $course, $cm, $forcepublish='') {
                 $countanswers = get_records("choice_answers", "optionid", $optionid);                
                 $countans = 0;  
                 if (!empty($countanswers)) {              
-                    foreach ($countanswers as $ca) { //only return enrolled users.		                			
+                    foreach ($countanswers as $ca) { //only return enrolled users.		
+						// needs fixing too                			
 				        if (isstudent($course->id, $ca->userid) or isteacher($course->id, $ca->userid)) {							
 			   	           $countans = $countans+1;
 			            }			        
@@ -462,7 +470,8 @@ function choice_show_results($choice, $course, $cm, $forcepublish='') {
             }
             
                 /// Print "Select all" etc.
-                if (isteacher($course->id, $USER->id)) {
+                if (has_capability('mod/choice:readresponses', $context->id)) {
+                //if (isteacher($course->id, $USER->id)) {
                     echo '<tr><td><p>';
                     echo '<tr><td>';
                     echo '<a href="javascript:select_all_in(\'DIV\',null,\'tablecontainer\');">'.get_string('selectall', 'quiz').'</a> / ';
@@ -479,7 +488,8 @@ function choice_show_results($choice, $course, $cm, $forcepublish='') {
             
             
             echo "</tr></table>";
-            if (isteacher($course->id, $USER->id)) {
+            //if (isteacher($course->id, $USER->id)) {
+            if (has_capability('mod/choice:readresponses', $context->id)) {
 			    echo "</form></div>";
 			}
             break;

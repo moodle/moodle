@@ -21,17 +21,15 @@
 
     require_login($course->id, false, $cm);
 
-    if (!isteacher($course->id)) {
-        error("This page is for teachers only");
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+
+    if (!has_capability('mod/forum:viewsubscribers', $context->id)) {
+        error('You do not have the permission to view forum subscribers');
     }
 
     unset($SESSION->fromdiscussion);
 
     add_to_log($course->id, "forum", "view subscribers", "subscribers.php?id=$forum->id", $forum->id, $cm->id);
-
-    if ($edit != -1) {
-        $USER->subscriptionsediting = $edit;
-    }
 
     $strsubscribeall = get_string("subscribeall", "forum");
     $strsubscribenone = get_string("subscribenone", "forum");
@@ -41,8 +39,16 @@
     $navigation = "<a href=\"index.php?id=$course->id\">$strforums</a> ->
        <a href=\"view.php?f=$forum->id\">".format_string($forum->name,true)."</a> -> $strsubscribers";
 
-    print_header_simple("$strsubscribers", "", "$navigation",
-        "", "", true, forum_update_subscriptions_button($course->id, $id));
+    if (has_capability('mod/forum:managesubscriptions', $context->id)) {
+        print_header_simple("$strsubscribers", "", "$navigation",
+            "", "", true, forum_update_subscriptions_button($course->id, $id));
+        if ($edit != -1) {
+            $USER->subscriptionsediting = $edit;
+        }
+    } else {
+        print_header_simple("$strsubscribers", "", "$navigation", "", "", true, '');
+        unset($USER->subscriptionsediting);
+    }
 
 /// Check to see if groups are being used in this forum
     if ($groupmode = groupmode($course, $cm)) {   // Groups are being used

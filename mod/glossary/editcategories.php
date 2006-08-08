@@ -19,6 +19,8 @@
     if (! $cm = get_record("course_modules", "id", $id)) {
         error("Course Module ID was incorrect");
     }
+    
+
 
     if (! $course = get_record("course", "id", $cm->course)) {
         error("Course is misconfigured");
@@ -41,9 +43,8 @@
 
     require_login($course->id, false);
 
-    if ( !isteacher($course->id) ) {
-        error("You must be a teacher to use this page.");
-    }
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+	has_capability('mod/glossary:managecategories', $context->id, true);
 
     $strglossaries   = get_string("modulenameplural", "glossary");
     $strglossary     = get_string("modulename", "glossary");

@@ -26,6 +26,8 @@ $postid = optional_param('postid',0,PARAM_INT);
 $filtertype = optional_param('filtertype', '', PARAM_ALPHA);
 $filterselect = optional_param('filterselect', 0, PARAM_INT);
 
+
+
 /// overwrite filter code here
 
 if ($filtertype) {
@@ -48,7 +50,6 @@ if ($filtertype) {
             }
             $userid =0;
             $groupid = 0;
-            
         break;
 
         case 'group':
@@ -61,7 +62,6 @@ if ($filtertype) {
                 $groupid = 0;
             }
             $userid = 0;
-            
         break;
 
         case 'user':
@@ -69,13 +69,12 @@ if ($filtertype) {
                 $userid = $filterselect;
             }
             $groupid = 0;
-
         break;
         default:
         break;
     }
 
-} else if ($userid) {    //default to user
+} else if ($userid) {    // default to user
     $filtertype = 'user';
     $filterselect = $userid;
 } else {
@@ -83,43 +82,53 @@ if ($filtertype) {
     $filterselect = '';
 }
 
-/// rights checking
+
+
+/// Rights checking.
 
 switch ($filtertype) {
     case 'site':
-        if ($CFG->bloglevel < BLOG_SITE_LEVEL && (!isadmin())) {
-            error ('site blogs is not enabled');
+        $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
+        if ($CFG->bloglevel < BLOG_SITE_LEVEL &&
+                    !has_capability('moodle/site:config', $context->id)) {
+            error('Site blogs is not enabled');
         } else if ($CFG->bloglevel < BLOG_GLOBAL_LEVEL) {
             require_login();
         }
     break;
     case 'course':
-        if ($CFG->bloglevel < BLOG_COURSE_LEVEL && (!isadmin())) {
-            error ('course blogs is not enabled');
+        $context = get_context_instance(CONTEXT_COURSE, $courseid);
+        if ($CFG->bloglevel < BLOG_COURSE_LEVEL &&
+                    !has_capability('moodle/course:update', $context->id)) {
+            error('Course blogs is not enabled');
         }
-
-        if (!isstudent($filterselect) && !isteacher($filterselect)) {
-            error ('you must be a student in this course to view course blogs');
+        if (!has_capability('moodle/blog:readentry', $context->id)) {
+            error('You do not have the required permissions to to view course blogs');
         }
-        /// check if viewer is student
     break;
     case 'group':
-        if ($CFG->bloglevel < BLOG_GROUP_LEVEL && (!isadmin())) {
-            error ('group blogs is not enabled');
+        $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
+        $coursecontext = get_context_instance(CONTEXT_COURSE, $courseid);
+        if ($CFG->bloglevel < BLOG_GROUP_LEVEL &&
+                    !has_capability('moodle/site:config', $sitecontext->id)) {
+            error ('Group blogs is not enabled');
         }
-        if (!isteacheredit($course) and (groupmode($course) == SEPARATEGROUPS)) {
+        if (!has_capability('moodle/course:update', $coursecontext->id) &&
+                    groupmode($course) == SEPARATEGROUPS) {
             if (!ismember($filterselect)) {
-                error ('you are not in this group');
+                error ('You are not a member of this group');
             }
         }
         /// check if user is editting teacher, or if spg, is member
     break;
     case 'user':
-        if ($CFG->bloglevel < BLOG_USER_LEVEL && (!isadmin())) {
+        $context = get_context_instance(CONTEXT_SYSTEM, $context->id);
+        if ($CFG->bloglevel < BLOG_USER_LEVEL &&
+                    !has_capability('moodle/site:config', SITEID)) {
             error ('Blogs is not enabled');
         }
-        
-        if ($CFG->bloglevel == BLOG_USER_LEVEL and $USER->id != $filterselect and !isadmin()) {
+        if ($CFG->bloglevel == BLOG_USER_LEVEL && $USER->id != $filterselect &&
+                    !has_capability('moodle/site:config', $context->id)) {
             error ('Under this setting, you can only view your own blogs');
         }
 
@@ -134,12 +143,20 @@ switch ($filtertype) {
 
 // first set the start and end day equal to the day argument passed in from the get vars
 if ($limit == 'none') {
-    $limit = get_user_preferences('blogpagesize',10);
+    $limit = get_user_preferences('blogpagesize', 10);
 }
 
 include($CFG->dirroot .'/blog/header.php');
 
-$blogpage = optional_param('blogpage',0,PARAM_INT);
+// prints the tabs
+$currenttab = 'blogs';
+$user = $USER;
+if (!$course) {
+    $course = get_record('course', 'id', optional_param('courseid', SITEID, PARAM_INT));
+}
+require_once($CFG->dirroot .'/user/tabs.php');
+
+$blogpage = optional_param('blogpage', 0, PARAM_INT);
 
 blog_print_html_formatted_entries($userid, $postid, $limit, ($blogpage * $limit) ,$filtertype, $filterselect, $tagid, $tag, $filtertype, $filterselect);
 

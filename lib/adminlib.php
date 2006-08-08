@@ -35,13 +35,13 @@ function upgrade_plugins($type, $dir, $return) {
 
         unset($plugin);
 
-        if ( is_readable($fullplug .'/version.php')) {
+        if (is_readable($fullplug .'/version.php')) {
             include_once($fullplug .'/version.php');  // defines $plugin with version etc
         } else {
             continue;                              // Nothing to do.
         }
 
-        if ( is_readable($fullplug .'/db/'. $CFG->dbtype .'.php')) {
+        if (is_readable($fullplug .'/db/'. $CFG->dbtype .'.php')) {
             include_once($fullplug .'/db/'. $CFG->dbtype .'.php');  // defines upgrading function
         } else {
             continue;
@@ -95,6 +95,9 @@ function upgrade_plugins($type, $dir, $return) {
                     if (modify_database($fullplug .'/db/'. $CFG->dbtype .'.sql')) {
                         // OK so far, now update the plugins record
                         set_config($pluginversion, $plugin->version);
+                        if (!update_capabilities($dir)) {
+                            error('Could not set up the capabilities for '.$module->name.'!');
+                        }
                         notify(get_string('modulesuccess', '', $plugin->name), 'notifysuccess');
                     } else {
                         notify('Installing '. $plugin->name .' FAILED!');
@@ -112,6 +115,9 @@ function upgrade_plugins($type, $dir, $return) {
                         $db->debug=false;
                         // OK so far, now update the plugins record
                         set_config($pluginversion, $plugin->version);
+                        if (!update_capabilities($dir)) {
+                            error('Could not update '.$plugin->name.' capabilities!');
+                        }
                         notify(get_string('modulesuccess', '', $plugin->name), 'notifysuccess');
                     } else {
                         $db->debug=false;
@@ -214,6 +220,8 @@ function upgrade_activity_modules($return) {
                 }
                 upgrade_log_start();
                 print_heading($module->name .' module needs upgrading');
+                
+                // Run the upgrade function for the module.
                 $upgrade_function = $module->name.'_upgrade';
                 if (function_exists($upgrade_function)) {
                     $db->debug=true;
@@ -232,7 +240,14 @@ function upgrade_activity_modules($return) {
                         notify('Upgrading '. $module->name .' from '. $currmodule->version .' to '. $module->version .' FAILED!');
                     }
                 }
+
+                // Update the capabilities table?
+                if (!update_capabilities('mod/'.$module->name)) {
+                    error('Could not update '.$module->name.' capabilities!');
+                }
+
                 $updated_modules = true;
+                
             } else {
                 upgrade_log_start();
                 error('Version mismatch: '. $module->name .' can\'t downgrade '. $currmodule->version .' -> '. $module->version .' !');
@@ -252,6 +267,9 @@ function upgrade_activity_modules($return) {
             if (modify_database($fullmod .'/db/'. $CFG->dbtype .'.sql')) {
                 $db->debug = false;
                 if ($module->id = insert_record('modules', $module)) {
+                    if (!update_capabilities('mod/'.$module->name)) {
+                        error('Could not set up the capabilities for '.$module->name.'!');
+                    }
                     notify(get_string('modulesuccess', '', $module->name), 'notifysuccess');
                     echo '<hr />';
                 } else {

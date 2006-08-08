@@ -60,12 +60,15 @@
 
     $navigation = "<a href=\"index.php?id=$course->id\">$strforums</a> ->";
 
-    if ($forum->type == "teacher") {
-        if (!isteacher($course->id)) {
-            error("You must be a $course->teacher to view this forum");
-        }
-    }
 
+/// Check whether the should be able to view this forum.
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    
+    if (!has_capability('mod/forum:viewforum', $context->id)) {
+        error('You do not have the permission to view this forum');
+    }
+    
+    
     if ($cm->id) {
         add_to_log($course->id, "forum", "view forum", "view.php?id=$cm->id", "$forum->id", $cm->id);
     } else {
@@ -75,7 +78,7 @@
     print_header_simple(format_string($forum->name), "",
                  "$navigation ".format_string($forum->name), "", "", true, $buttontext, navmenu($course, $cm));
 
-    if (empty($cm->visible) and !isteacher($course->id)) {
+    if (empty($cm->visible) and !has_capability('moodle/course:manageactivities', $context->id)) {
         notice(get_string("activityiscurrentlyhidden"));
     }
 
@@ -91,7 +94,9 @@
     
     $currentgroup = get_and_set_current_group($course, $groupmode, $changegroup);
     
-    if ($groupmode and ($currentgroup === false) and !isteacheredit($course->id)) {
+    if ($groupmode and ($currentgroup === false) and
+            !has_capability('mod/forum:viewdiscussionsfromallgroups', $context->id)) {
+        
         print_heading(get_string("notingroup", "forum"));
         print_footer($course);
         exit;
@@ -108,7 +113,9 @@
     ///menu for students in forums.
 
     //now we need a menu for separategroups as well!
-    if ($groupmode == VISIBLEGROUPS or ($groupmode and isteacheredit($course->id))) {
+    if ($groupmode == VISIBLEGROUPS or ($groupmode and
+            has_capability('module:forum:viewdiscussionsfromallgroups', $context->id))) {
+        
         //the following query really needs to change
         if ($groups = get_records_menu("groups", "courseid", $course->id, "name ASC", "id,name")) {
             echo '<td>';
@@ -143,7 +150,7 @@
             $strallowchoice = get_string('allowchoice', 'forum');
             helpbutton("subscription", $streveryoneissubscribed, "forum");
             echo '&nbsp;<span class="helplink">';
-            if (isteacher($course->id)) {
+            if (has_capability('moodle/course:manageactivities', $context->id)) {
                 echo "<a title=\"$strallowchoice\" href=\"subscribe.php?id=$forum->id&amp;force=no\">$streveryoneissubscribed</a>";
             } else {
                 echo $streveryoneissubscribed;
@@ -161,7 +168,7 @@
 
             helpbutton("subscription", $streveryonecanchoose, "forum");
             echo '&nbsp;';
-            if (isteacher($course->id)) {
+            if (has_capability('moodle/course:manageactivities', $context->id)) {
                 echo "<span class=\"helplink\"><a title=\"$strforcesubscribe\" href=\"subscribe.php?id=$forum->id&amp;force=yes\">$streveryonecanchoose</a></span>";
                 echo "<br />";
                 echo "<span class=\"helplink\"><a href=\"subscribers.php?id=$forum->id\">$strshowsubscribers</a></span>";
@@ -223,7 +230,7 @@
         notify(get_string('thisforumisthrottled','forum',$a));
     }
 
-    if ($forum->type == 'qanda' && !isteacher($forum->course)) {
+    if ($forum->type == 'qanda' && !has_capability('moodle/course:manageactivities', $context->id)) {
         notify(get_string('qandanotify','forum'));
     }
 
@@ -246,7 +253,8 @@
                 set_user_preference("forum_displaymode", $mode);
             }
             $displaymode = get_user_preferences("forum_displaymode", $CFG->forum_displaymode);
-            forum_print_discussion($course, $forum, $discussion, $post, $displaymode);
+            $canrate = has_capability('mod/forum:rate', $context->id);
+            forum_print_discussion($course, $forum, $discussion, $post, $displaymode, NULL, $canrate);
             break;
 
         case 'eachuser':

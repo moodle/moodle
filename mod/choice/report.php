@@ -17,10 +17,14 @@
     }
 
     require_login($course->id, false, $cm);
-
-    if (!isteacher($course->id)) {
-        error("Only teachers can look at this page");
-    }
+    
+	$context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    
+    has_capability('mod/choice:readresponses', $context->id, true);
+    
+	//if (!isteacher($course->id)) {
+    //    error("Only teachers can look at this page");
+    //}
 
     if (!$choice = choice_get_choice($cm->instance)) {
         error("Course module is incorrect");
@@ -32,7 +36,8 @@
 
     add_to_log($course->id, "choice", "report", "report.php?id=$cm->id", "$choice->id",$cm->id);
       
-    if ($action == 'delete') { //some responses need to be deleted
+    if ($action == 'delete' && has_capability('mod/choice:deleteresponses',$context->id, true)) {
+    //if ($action == 'delete') { //some responses need to be deleted
         $attemptids = isset($_POST['attemptid']) ? $_POST['attemptid'] : array(); //get array of repsonses to delete.
         choice_delete_responses($attemptids); //delete responses.
         redirect("report.php?id=$cm->id");			            
@@ -81,7 +86,8 @@
     ksort($useranswer);
     
     //print spreadsheet if one is asked for:
-    if ($download == "xls") {
+    //if ($download == "xls") {
+    if ($download == "xls" && has_capability('mod/choice:downloadresponses', $context->id, true)) {
         require_once("$CFG->libdir/excellib.class.php");
   
     /// Calculate file name 
@@ -137,8 +143,9 @@
 
         exit;
     } 
-    // print text file     
-    if ($download == "txt") {
+    // print text file  
+	//if ($download == "txt") {   
+    if ($download == "txt" && has_capability('mod/choice:downloadresponses', $context->id, true)) {
         $filename = clean_filename("$course->shortname ".strip_tags(format_string($choice->name,true))).'.txt';
             
             header("Content-Type: application/download\n");

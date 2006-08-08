@@ -25,6 +25,7 @@
         error("Entry is incorrect");
     }
 
+	$context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
     require_login($course->id, false, $cm);
 
@@ -56,7 +57,7 @@
 
     print_heading(format_string(get_string('commentson','glossary')." <b>\"$entry->concept\"</b>"));
 
-    if ($glossary->allowcomments || isteacher($glossary->course)) {
+    if ($glossary->allowcomments || has_capability('mod/glossary:managecomments', $context->id)) {
         print_heading("<a href=\"comment.php?id=$cm->id&amp;eid=$entry->id\">$straddcomment</a> <img title=\"$straddcomment\" src=\"comment.gif\" height=\"11\" width=\"11\" border=\"0\" alt=\"\" />");
     }
 

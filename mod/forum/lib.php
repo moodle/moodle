@@ -81,9 +81,6 @@ if (!isset($CFG->forum_enabletimedposts)) {   // Newish feature that is not quit
     $CFG->forum_enabletimedposts = false;
 }
 
-if (!isset($CFG->forum_enablerssfeeds)) {   // Disable forum RSS feeds by default
-    $CFG->forum_enablerssfeeds = false;
-}
 
 /// STANDARD FUNCTIONS ///////////////////////////////////////////////////////////
 
@@ -110,10 +107,6 @@ function forum_add_instance($forum) {
         $forum->assesstimestart  = 0;
         $forum->assesstimefinish = 0;
     }
-
-    //sanitize given values a bit
-    $forum->warnafter = clean_param($forum->warnafter, PARAM_INT);
-    $forum->blockafter = clean_param($forum->blockafter, PARAM_INT);
 
     if (! $forum->id = insert_record('forum', $forum)) {
         return false;
@@ -244,9 +237,7 @@ function forum_cron () {
     }
 
     if (!empty($USER->id)) { // Remember real USER account if necessary
-        $realuser = clone($USER); //PHP5 compatibility
-    } else {
-        $realuser = false;
+        $realuser = $USER;
     }
 
     /// Posts older than 2 days will not be mailed.  This is to avoid the problem where
@@ -1105,48 +1096,95 @@ function forum_get_child_posts($parent, $forumid) {
                           ORDER BY p.created ASC");
 }
 
+/**
+ * Returns a list of posts found using an array of search terms.
+ * e.g.  word  +word -word
+ * @param $searchterms
+ * @param $courseid
+ * @param $page
+ * @param $recordsperpage=50
+ * @param &$totalcount
+ * @param $groupid - either a single groupid or an array of groupids.
+ *                   this specifies the groups the search is to be carried
+ *                   for. However, please note that, unless the user has
+ *                   the capability 'mod/forum:viewdiscussionsfromallgroups',
+ *                   we will restrict the search to a subset of groups from 
+ *                   $groupid. The subset consists of the groups the user
+ *                   really is in.
+ * @param $extrasql
+ */
+function forum_search_posts($searchterms, $courseid, $page=0, $recordsperpage=50,
+                            &$totalcount, $groupid=0, $extrasql='') {
 
-function forum_search_posts($searchterms, $courseid, $page=0, $recordsperpage=50, &$totalcount, $sepgroups=0, $extrasql='') {
-/// Returns a list of posts found using an array of search terms
-/// eg   word  +word -word
-///
     global $CFG, $USER;
     require_once($CFG->libdir.'/searchlib.php');
 
-    if (!isteacher($courseid)) {
-        $notteacherforum = "AND f.type <> 'teacher'";
-        $forummodule = get_record("modules", "name", "forum");
-        $onlyvisible = "AND d.forum = f.id AND f.id = cm.instance AND cm.visible = 1 AND cm.module = $forummodule->id";
-        $onlyvisibletable = ", {$CFG->prefix}course_modules cm, {$CFG->prefix}forum f";
-        if (!empty($sepgroups)) {
-            $separategroups = SEPARATEGROUPS;
-            $selectgroup = " AND ( NOT (cm.groupmode='$separategroups'".
-                                      " OR (c.groupmode='$separategroups' AND c.groupmodeforce='1') )";//.
-            $selectgroup .= " OR d.groupid = '-1'"; //search inside discussions for all groups too
-            foreach ($sepgroups as $sepgroup){
-                $selectgroup .= " OR d.groupid = '$sepgroup->id'";
-            }
-            $selectgroup .= ")";
-
-                               //  " OR d.groupid = '$groupid')";
-            $selectcourse = " AND d.course = '$courseid' AND c.id='$courseid'";
-            $coursetable = ", {$CFG->prefix}course c";
-        } else {
-            $selectgroup = '';
-            $selectcourse = " AND d.course = '$courseid'";
-            $coursetable = '';
-        }
+    $forummodule = get_record("modules", "name", "forum");
+    $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
+    $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);  // Will need to fix this.
+    
+    // Take into account forum visibility.
+    if (has_capability('moodle/course:viewhiddenactivities', $coursecontext->id)) {
+        $onlyvisible = '';
+        $onlyvisibletable = '';
     } else {
-        $notteacherforum = "";
+        $onlyvisible = "AND d.forum = f.id 
+                        AND f.id = cm.instance 
+                        AND cm.visible = 1 
+                        AND cm.module = $forummodule->id";
+        
+        $onlyvisibletable = ", {$CFG->prefix}course_modules cm, {$CFG->prefix}forum f";
+    }
+    
+    // Take into account user groups.
+    if (has_capability('mod/forum:viewdiscussionsfromallgroups', $modcontext->id)) {
         $selectgroup = '';
-        $onlyvisible = "";
-        $onlyvisibletable = "";
         $coursetable = '';
+        
         if ($courseid == SITEID && isadmin()) {
             $selectcourse = '';
         } else {
             $selectcourse = " AND d.course = '$courseid'";
         }
+    } else {
+        $searchgroupid = mygroupid($courseid);
+        if ($groupid) {
+            // Okay we don't necessarily trust the groups specified. We'll
+            // force the search to occur for a subset of the groups the user
+            // is really in.
+            $novalidgroups = false;
+            
+            if (is_array($groupid)) {
+                foreach ($searchgroupid as $index => $validgroupid) {
+                    if (array_search($validgroupid, $groupid) === false) {
+                        unset($searchgroupid[$index]);
+                    }
+                }
+                if (count($searchgroupid) == 0) {
+                    $novalidgroups = true;
+                }
+            } else {
+                if (array_search($groupid, $searchgroupid) === false) {
+                    $novalidgroups = true;
+                }
+            }
+            if ($novalidgroups) {
+                error('The user does not belong in the group(s) specified '.
+                      'by $groupid and the user does not have the '.
+                      'required permission to view posts from all '.
+                      'groups.');
+            }
+        }
+        $separategroups = SEPARATEGROUPS;
+        $selectgroup = " AND ( NOT (cm.groupmode='$separategroups'".
+                                  " OR (c.groupmode='$separategroups' AND c.groupmodeforce='1') )";//.
+        foreach ($searchgroupid as $index => $value){
+            $selectgroup .= " OR d.groupid = '$value'";
+        }
+        $selectgroup .= ")";
+                           //  " OR d.groupid = '$groupid')";
+        $selectcourse = " AND d.course = '$courseid' AND c.id='$courseid'";
+        $coursetable = ", {$CFG->prefix}course c";
     }
 
     $timelimit = '';
@@ -1190,14 +1228,23 @@ function forum_search_posts($searchterms, $courseid, $page=0, $recordsperpage=50
         $parsearray = $parser->get_parsed_array();
         $messagesearch = search_generate_SQL($parsearray,'p.message','p.subject','p.userid','u.id','u.firstname','u.lastname','p.modified', 'd.forum');
     }
-
+    
+    /*
     $selectsql = "{$CFG->prefix}forum_posts p,
                   {$CFG->prefix}forum_discussions d,
                   {$CFG->prefix}user u $onlyvisibletable $coursetable
              WHERE ($messagesearch)
                AND p.userid = u.id
                AND p.discussion = d.id $selectcourse $notteacherforum $onlyvisible $selectgroup $timelimit $extrasql";
-
+               */
+    
+    $selectsql = "{$CFG->prefix}forum_posts p,
+                             {$CFG->prefix}forum_discussions d,
+                             {$CFG->prefix}user u $onlyvisibletable $coursetable
+                        WHERE ($messagesearch)
+                          AND p.userid = u.id
+                          AND p.discussion = d.id $selectcourse $onlyvisible $selectgroup $timelimit $extrasql";
+    
     $totalcount = count_records_sql("SELECT COUNT(*) FROM $selectsql");
 
     return get_records_sql("SELECT p.*,d.forum, u.firstname,u.lastname,u.email,u.picture FROM
@@ -2264,14 +2311,14 @@ function forum_print_mode_form($discussion, $mode) {
 function forum_search_form($course, $search='') {
     global $CFG;
 
-    $output  = '<div class="forumsearchform">';
-    $output .= '<form name="search" action="'.$CFG->wwwroot.'/mod/forum/search.php" style="display:inline">';
+    $output  = '<table border="0" cellpadding="0" cellspacing="0"><tr><td nowrap="nowrap">';
+    $output .= helpbutton('search', get_string('search'), 'moodle', true, false, '', true);
+    $output .= '&nbsp;<form name="search" action="'.$CFG->wwwroot.'/mod/forum/search.php" style="display:inline">';
     $output .= '<input name="search" type="text" size="18" value="'.$search.'" alt="search" />';
     $output .= '<input value="'.get_string('searchforums', 'forum').'" type="submit" />';
     $output .= '<input name="id" type="hidden" value="'.$course->id.'" />';
     $output .= '</form>';
-    $output .= helpbutton('search', get_string('search'), 'moodle', true, false, '', true);
-    $output .= '</div>';
+    $output .= '</td></tr></table>';
 
     return $output;
 }
@@ -2712,32 +2759,32 @@ function forum_user_has_posted_discussion($forumid, $userid) {
     }
 }
 
-function forum_user_has_posted($forumid,$did,$userid) {
+function forum_user_has_posted($forumid, $did, $userid) {
     return record_exists('forum_posts','discussion',$did,'userid',$userid);
 }
 
-function forum_user_can_post_discussion($forum, $currentgroup=false, $groupmode='', $edit=0) {
+function forum_user_can_post_discussion($forum, $currentgroup=false, $groupmode='') {
 // $forum is an object
     global $USER, $SESSION;
+
+    if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $forum->course)) {
+        error('Course Module ID was incorrect');
+    }
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+
+    if (!has_capability('mod/forum:startdiscussion', $context->id)) {
+        return false;
+    }
+
     if ($forum->type == "eachuser") {
-        if ($edit) { // fix for 5551, if 1 post per user, should allow edit, if poster is owner
-            $post = get_record('forum_posts','id',$edit);
-            return ($post->userid == $USER->id); // editting your own post?
-        } else {
-            return (! forum_user_has_posted_discussion($forum->id, $USER->id));
-        }
-    } else if ($forum->type == 'qanda') {
-        return isteacher($forum->course);
-    } else if ($forum->type == "teacher") {
-        return isteacher($forum->course);
+        return (!forum_user_has_posted_discussion($forum->id, $USER->id));
     } else if ($currentgroup) {
-        return (isteacheredit($forum->course) or (ismember($currentgroup) and $forum->open == 2));
-    } else if (isteacher($forum->course)) {
-        return true;
+        return (has_capability('mod/forum:viewdiscussionsfromallgroups', $context->id)
+                or (ismember($currentgroup) and $forum->open == 2));
     } else {
         //else it might be group 0 in visible mode
         if ($groupmode == VISIBLEGROUPS){
-            return ($forum->open == 2 AND ismember($currentgroup));
+            return ($forum->open == 2 and ismember($currentgroup));
         }
         else {
             return ($forum->open == 2);
@@ -2745,59 +2792,66 @@ function forum_user_can_post_discussion($forum, $currentgroup=false, $groupmode=
     }
 }
 
+/**
+ * This function checks whether the user can reply to posts in a forum
+ * discussion. Use forum_user_can_post_discussion() to check whether the user
+ * can start dicussions.
+ * @param $forum - forum object
+ * @param $user - user object
+ */
 function forum_user_can_post($forum, $user=NULL) {
-// $forum, $user are objects
 
-    if ($user) {
-        $isteacher = isteacher($forum->course, $user->id);
+    if (!$forum->open) {
+        // No point doing the more expensive has_capability checks.
+        return false;
+    }
+    
+    if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $forum->course)) {
+        error('Course Module ID was incorrect');
+    }
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+
+    if (isset($user)) {
+        $canreply = has_capability('mod/forum:replypost', $context->id, false, $user->id);
     } else {
-        $isteacher = isteacher($forum->course);
+        $canreply = has_capability('mod/forum:replypost', $context->id, false);
     }
 
-    if ($forum->type == "teacher") {
-        return $isteacher;
-    } else if ($isteacher) {
-        return true;
-    } else {
-        return $forum->open;
-    }
+    return $canreply;
 }
+
 
 //checks to see if a user can view a particular post
 function forum_user_can_view_post($post, $course, $cm, $forum, $discussion, $user=NULL){
 
     global $CFG, $USER;
-
+    
     if (!$user){
         $user = $USER;
     }
-
-    if (isteacheredit($course->id)) {
-        return true;   
+    
+    $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
+    if (!has_capability('mod/forum:viewdiscussion', $modcontext->id)) {
+        return false;
     }
-
-    if ($forum->type == 'teacher'){    //teacher type forum
-        return isteacher($course->id);
-    }
-
-/// Make sure the user is allowed in the course
-    if (!(isstudent($course->id) or 
-          isteacher($course->id) or 
-          ($course->id == SITEID && !$CFG->forcelogin) or 
-          (isguest() && $course->guest) )){
+    
+    $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
+    if (!has_capability('moodle/course:view', $coursecontext->id)) {
         return false;
     }
 
 /// If it's a grouped discussion, make sure the user is a member
     if ($discussion->groupid > 0) {
         if ($cm->groupmode == SEPARATEGROUPS) {
-            return ismember($discussion->groupid);
+            return ismember($discussion->groupid) ||
+                    has_capability('mod/forum:viewdiscussionsfromallgroups', $modcontext->id);
         }
     }
     return true;
 }
 
-function forum_user_can_see_discussion($forum,$discussion,$user=NULL) {
+
+function forum_user_can_see_discussion($forum, $discussion, $contextid, $user=NULL) {
     global $USER;
 
     if (empty($user) || empty($user->id)) {
@@ -2815,19 +2869,22 @@ function forum_user_can_see_discussion($forum,$discussion,$user=NULL) {
             return false;
         }
     }
-    if ($forum->type == 'qanda') {
-        return (forum_user_has_posted($forum->id,$discussion->id,$user->id) || isteacher($forum->course));
+    
+    if (!has_capability('mod/forum:viewdiscussion', $contextid)) {
+        return false;
+    }
+    
+    if ($forum->type == 'qanda' &&
+            !forum_user_has_posted($forum->id, $discussion->id, $user->id) &&
+            !has_capability('mod/forum:viewqandawithoutposting', $contextid)) {
+        return false;
     }
     return true;
 }
     
 
-function forum_user_can_see_post($forum,$discussion,$post,$user=NULL) {
+function forum_user_can_see_post($forum, $discussion, $post, $user=NULL) {
     global $USER;
-
-    if (empty($user) || empty($user->id)) {
-        $user = $USER;
-    }
 
     // retrive objects (yuk)
     if (is_numeric($forum)) {
@@ -2835,9 +2892,7 @@ function forum_user_can_see_post($forum,$discussion,$post,$user=NULL) {
             return false;
         }
     }
-    if (isteacher($forum->course)) {
-        return true;
-    }
+    
     if (is_numeric($discussion)) {
         if (!$discussion = get_record('forum_discussions','id',$discussion)) { 
             return false;
@@ -2848,14 +2903,29 @@ function forum_user_can_see_post($forum,$discussion,$post,$user=NULL) {
             return false;
         }
     }
-    
     if (!isset($post->id) && isset($post->parent)) {
         $post->id = $post->parent;
     }
     
+    if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $forum->course)) {
+        error('Course Module ID was incorrect');
+    }
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+
+    if (empty($user) || empty($user->id)) {
+        $user = $USER;
+    }
+
+    if (!has_capability('mod/forum:viewdiscussion', $context->id, false, $user->id)) {
+        return false;
+    }
+    
     if ($forum->type == 'qanda') {
         $firstpost = forum_get_firstpost_from_discussion($discussion->id);
-        return (forum_user_has_posted($forum->id,$discussion->id,$user->id) || $firstpost->id == $post->id || isteacher($forum->course));
+        
+        return (forum_user_has_posted($forum->id,$discussion->id,$user->id) ||
+                $firstpost->id == $post->id ||
+                has_capability('mod/forum:viewqandawithoutposting', $context->id, false, $user->id));
     }
     return true;
 }
@@ -2877,6 +2947,12 @@ function forum_user_can_see_post($forum,$discussion,$post,$user=NULL) {
 function forum_print_latest_discussions($course, $forum, $maxdiscussions=5, $displayformat='plain', $sort='',
                                         $currentgroup=-1, $groupmode=-1, $page=-1) {
     global $CFG, $USER;
+    
+    if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $forum->course)) {
+        error('Course Module ID was incorrect');
+    }
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    
 
 /// Sort out some defaults
 
@@ -2906,7 +2982,8 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions=5, $dis
         $currentgroup = get_current_group($course->id);
     }
 
-    if (!$currentgroup and ($groupmode != SEPARATEGROUPS or isteacheredit($course->id)) ) {
+    if (!$currentgroup and ($groupmode != SEPARATEGROUPS or 
+                has_capability('mod/forum:viewdiscussionsfromallgroups', $context->id)) ) {
         $visiblegroups = -1;
     } else {
         $visiblegroups = $currentgroup;
@@ -3098,7 +3175,7 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions=5, $dis
 }
 
 
-function forum_print_discussion($course, $forum, $discussion, $post, $mode, $canreply=NULL) {
+function forum_print_discussion($course, $forum, $discussion, $post, $mode, $canreply=NULL, $canrate=false) {
 
     global $USER, $CFG;
 
@@ -3120,11 +3197,12 @@ function forum_print_discussion($course, $forum, $discussion, $post, $mode, $can
             $ratings->assesspublic = $forum->assesspublic;
             $ratings->assesstimestart = $forum->assesstimestart;
             $ratings->assesstimefinish = $forum->assesstimefinish;
-            $ratings->allow = (($forum->assessed != 2 or isteacher($course->id)) && !isguest());
+            $ratings->allow = $canrate;
 
             if ($ratings->allow) {
                 echo '<form name="form" method="post" action="rate.php">';
                 echo '<input type="hidden" name="id" value="'.$course->id.'" />';
+                echo '<input type="hidden" name="forumid" value="'.$forum->id.'" />';
             }
         }
     }
@@ -3241,7 +3319,7 @@ function forum_print_posts_threaded($parent, $courseid, $depth, $ratings, $reply
                 if (!forum_user_can_see_post($post->forum,$post->discussion,$post)) {
                     continue;
                 }
-                $by->name = fullname($post, isteacher($courseid));
+                $by->name = fullname($post);
                 $by->date = userdate($post->modified);
 
                 if ($istracking) {
@@ -3426,19 +3504,17 @@ function forum_update_subscriptions_button($courseid, $forumid) {
 // Prints the editing button on subscribers page
     global $CFG, $USER;
 
-    if (isteacher($courseid)) {
-        if (!empty($USER->subscriptionsediting)) {
-            $string = get_string("turneditingoff");
-            $edit = "off";
-        } else {
-            $string = get_string("turneditingon");
-            $edit = "on";
-        }
-        return "<form target=\"$CFG->framename\" method=\"get\" action=\"$CFG->wwwroot/mod/forum/subscribers.php\">".
-               "<input type=\"hidden\" name=\"id\" value=\"$forumid\" />".
-               "<input type=\"hidden\" name=\"edit\" value=\"$edit\" />".
-               "<input type=\"submit\" value=\"$string\" /></form>";
+    if (!empty($USER->subscriptionsediting)) {
+        $string = get_string("turneditingoff");
+        $edit = "off";
+    } else {
+        $string = get_string("turneditingon");
+        $edit = "on";
     }
+    return "<form target=\"$CFG->framename\" method=\"get\" action=\"$CFG->wwwroot/mod/forum/subscribers.php\">".
+           "<input type=\"hidden\" name=\"id\" value=\"$forumid\" />".
+           "<input type=\"hidden\" name=\"edit\" value=\"$edit\" />".
+           "<input type=\"submit\" value=\"$string\" /></form>";
 }
 
 function forum_add_user($userid, $courseid) {

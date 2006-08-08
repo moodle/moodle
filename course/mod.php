@@ -62,9 +62,8 @@
             $mod->coursemodule = $cm->id;
         }
 
-        if (!isteacheredit($course->id)) {
-            error("You can't modify this course!");
-        }
+		$context = get_context_instance(CONTEXT_COURSE, $course->id);
+		has_capability('moodle/course:update', $context->id, true);
         
         $mod->course = $course->id;
         $mod->modulename = clean_param($mod->modulename, PARAM_SAFEDIR);  // For safety
@@ -242,9 +241,8 @@
             }
         }
 
-        if (!isteacheredit($section->course)) {
-            error("You can't modify this course!");
-        }
+		$context = get_context_instance(CONTEXT_COURSE, $section->course);
+		has_capability('moodle/course:update', $context->id, true);
 
         if (!ismoving($section->course)) {
             error("You need to copy something first!");
@@ -272,9 +270,8 @@
             error("This course module doesn't exist");
         }
 
-        if (!isteacheredit($cm->course)) {
-            error("You can't modify this course!");
-        }
+		$context = get_context_instance(CONTEXT_COURSE, $cm->course);
+		has_capability('moodle/course:update', $context->id, true);
 
         $cm->indent += $indent;
 
@@ -299,9 +296,8 @@
             error("This course module doesn't exist");
         }
 
-        if (!isteacheredit($cm->course)) {
-            error("You can't modify this course!");
-        }
+		$context = get_context_instance(CONTEXT_COURSE, $cm->course);
+		has_capability('moodle/course:update', $context->id, true);
 
         set_coursemodule_visible($cm->id, 0);
 
@@ -320,9 +316,8 @@
             error("This course module doesn't exist");
         }
 
-        if (!isteacheredit($cm->course)) {
-            error("You can't modify this course!");
-        }
+		$context = get_context_instance(CONTEXT_COURSE, $cm->course);
+		has_capability('moodle/course:update', $context->id, true);
 
         if (! $section = get_record("course_sections", "id", $cm->section)) {
             error("This module doesn't exist");
@@ -352,9 +347,8 @@
             error("This course module doesn't exist");
         }
 
-        if (!isteacheredit($cm->course)) {
-            error("You can't modify this course!");
-        }
+		$context = get_context_instance(CONTEXT_COURSE, $cm->course);
+		has_capability('moodle/course:update', $context->id, true);
 
         set_coursemodule_groupmode($cm->id, $groupmode);
 
@@ -373,9 +367,8 @@
             error("This course module doesn't exist");
         }
 
-        if (!isteacheredit($cm->course)) {
-            error("You can't modify this course!");
-        }
+		$context = get_context_instance(CONTEXT_COURSE, $cm->course);
+		has_capability('moodle/course:update', $context->id, true);
 
         if (! $section = get_record("course_sections", "id", $cm->section)) {
             error("This module doesn't exist");
@@ -415,10 +408,9 @@
             error("This course doesn't exist");
         }
 
-        if (!isteacheredit($course->id)) {
-            error("You can't modify this course!");
-        }
-
+		$context = get_context_instance(CONTEXT_COURSE, $cm->course);
+		has_capability('moodle/course:update', $context->id, true);
+		
         if (! $module = get_record("modules", "id", $cm->module)) {
             error("This module doesn't exist");
         }
@@ -472,9 +464,8 @@
             error("This course doesn't exist");
         }
 
-        if (!isteacheredit($course->id)) {
-            error("You can't modify this course!");
-        }
+		$context = get_context_instance(CONTEXT_COURSE, $course->id);
+		has_capability('moodle/course:update', $context->id, true);
 
         if (! $module = get_record("modules", "id", $cm->module)) {
             error("This module doesn't exist");
@@ -530,10 +521,9 @@
             error("This course doesn't exist");
         }
 
-        if (!isteacheredit($course->id)) {
-            error("You can't modify this course!");
-        }
-
+		$context = get_context_instance(CONTEXT_COURSE, $course->id);
+		has_capability('moodle/course:update', $context->id, true);
+		
         if (! $module = get_record("modules", "id", $cm->module)) {
             error("This module doesn't exist");
         }
@@ -629,9 +619,8 @@
         error("No action was specfied");
     }
 
-    if (!isteacheredit($course->id)) {
-        error("You can't modify this course!");
-    }
+	$context = get_context_instance(CONTEXT_COURSE, $course->id);
+	has_capability('moodle/course:update', $context->id, true);
 
     $streditinga = get_string("editinga", "moodle", $fullmodulename);
     $strmodulenameplural = get_string("modulenameplural", $module->name);
@@ -645,6 +634,12 @@
     print_header_simple($streditinga, '',
      "<a href=\"$CFG->wwwroot/mod/$module->name/index.php?id=$course->id\">$strmodulenameplural</a> ->
      $strnav $streditinga", $focuscursor, "", false);
+
+    if (!empty($cm->id)) {
+	    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+	    $currenttab = 'update';
+	    include_once($CFG->dirroot.'/admin/roles/tabs.php');
+    }
 
     unset($SESSION->modform); // Clear any old ones that may be hanging around.
 

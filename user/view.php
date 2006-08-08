@@ -1,9 +1,8 @@
 <?PHP // $Id$
 
 //  Display profile for a particular user
-
+	
     require_once("../config.php");
-
     $id      = optional_param('id',     0,      PARAM_INT);   // user id
     $course  = optional_param('course', SITEID, PARAM_INT);   // course id (defaults to Site)
     $enable  = optional_param('enable', '');                  // enable email
@@ -96,6 +95,11 @@
     } else {
         print_header("$course->fullname: $personalprofile: $fullname", "$course->fullname",
                      "$fullname", "", "", true, "&nbsp;", navmenu($course));
+    }
+
+    if ($CFG->debug) {
+        print_heading('DEBUG MODE:  User session variables');
+        print_object($USER);
     }
 
 

@@ -281,8 +281,34 @@ class block_base {
      * @todo complete documenting this function. Define $options.
      */
     function _add_edit_controls($options) {
+      
         global $CFG, $USER;
-
+		
+		// this is the context relevant to this particular block instance
+		$blockcontext = get_context_instance(CONTEXT_BLOCK, $this->instance->id);
+		
+		// context for site or course, i.e. participant list etc
+		// check to see if user can edit site or course blocks.
+		// blocks can appear on other pages such as mod and blog pages...
+		
+		switch ($this->instance->pagetype) {
+			case 'course-view':
+				if ($this->instance->pageid == SITEID) {
+				  	$context = get_context_instance(CONTEXT_SYSTEM, $this->instance->pageid);
+				} else {
+					$context = get_context_instance(CONTEXT_COURSE, $this->instance->pageid);
+				}
+				
+				if (!has_capability('moodle/site:manageblocks', $context->id)) {
+					return null;
+				}
+			break;
+			default:
+			
+			break;  
+		}
+		
+		
         if (!isset($this->str)) {
             $this->str->delete    = get_string('delete');
             $this->str->moveup    = get_string('moveup');
@@ -309,6 +335,10 @@ class block_base {
         }
         $page   = page_create_object($this->instance->pagetype, $this->instance->pageid);
         $script = $page->url_get_full(array('instanceid' => $this->instance->id, 'sesskey' => $USER->sesskey));
+     
+     	// place holder for roles button
+     	$movebuttons .= '<a class="icon roles" title="'. $title .'" href="'.$CFG->wwwroot.'/admin/roles/roleassignment.php?contextid='.$blockcontext->id.'">' .
+                        '<img src="'.$CFG->pixpath.'/i/users.gif" alt="'.get_string('roles').'" /></a>';
      
         $movebuttons .= '<a class="icon hide" title="'. $title .'" href="'.$script.'&amp;blockaction=toggle">' .
                         '<img src="'. $CFG->pixpath.$icon .'" alt="'.$title.'" /></a>';

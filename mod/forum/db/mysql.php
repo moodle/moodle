@@ -223,11 +223,38 @@ function forum_upgrade($oldversion) {
   if ($oldversion < 2006011700) {
       table_column('forum_posts','','mailnow','integer');
   }
-
-  if ($oldversion < 2006011702) {
-      execute_sql("INSERT INTO {$CFG->prefix}log_display (module, action, mtable, field) VALUES ('forum', 'user report', 'user', 'CONCAT(firstname,\' \',lastname)')");
+  
+  
+  // Upgrades for new roles and capabilities support.
+  if ($oldversion < 2006011701) {
+      
+      // forum.open defines what students can do:
+      //   0 = No discussions, no replies
+      //   1 = No discussions, but replies are allowed
+      //   2 = Discussions and replies are allowed
+      
+      
+      // Delete column forum.open
+      
+      
+      // forum.assessed defines who can rate posts:
+      //   1 = Everyone can rate posts
+      //   2 = Only teachers can rate posts
+      
+      
+      // Delete column forum.assessed
+      
+      
+      // forum.assesspublic defines whether students can see everybody's
+      // ratings:
+      //   0 = Students can only see their own ratings
+      //   1 = Students can see everyone's ratings
+      
+      
+      // Delete column forum.assesspublic
   }
-
+  
+  
   return true;
   
 }

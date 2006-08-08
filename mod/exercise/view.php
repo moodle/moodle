@@ -38,6 +38,8 @@
 
     require_login($course->id, false, $cm);
 
+	$context = get_context_instance(CONTEXT_MODULE, $cm->id);
+
     // ...log activity...
     add_to_log($course->id, "exercise", "view", "view.php?id=$cm->id", $exercise->id, $cm->id);
 
@@ -308,8 +310,8 @@
     /****************** submission of assignment by teacher only***********************/
     elseif ($action == 'submitassignment') {
 
-        if (!isteacheredit($course->id)) {
-            error("Only teachers with editing permissions can do this.");
+        if (!has_capability('mod/exercise:assess', $context->id)) {
+            //error("Only teachers with editing permissions can do this.");
         }
 
         exercise_print_assignment_info($exercise);

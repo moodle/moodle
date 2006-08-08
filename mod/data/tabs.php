@@ -28,6 +28,9 @@
     if (empty($currenttab) or empty($data) or empty($course)) {
         error('You cannot call this script in that way');
     }
+    
+    $cm = data_get_cm($data);
+	$context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
     $inactive = NULL;
     $row = array();
@@ -40,13 +43,13 @@
         $row[] = new tabobject('single', $CFG->wwwroot.'/mod/data/view.php?d='.$data->id.'&amp;mode=single', get_string('single','data'), '', true);
     }
 
-    if (isloggedin() and !isguest()) {
-        if (isteacher($course->id) or ($data->participants == DATA_STUDENTS_ONLY) or 
-                                      ($data->participants == DATA_TEACHERS_AND_STUDENTS)){
-            $addstring = empty($editentry) ? get_string('add', 'data') : get_string('editentry', 'data');
+    //if (isloggedin() and !isguest()) {
+    if (isloggedin()) {
+        if (has_capability('mod/data:writeentry', $context->id)) { // took out participation list here!
+			$addstring = empty($editentry) ? get_string('add', 'data') : get_string('editentry', 'data');
             $row[] = new tabobject('add', $CFG->wwwroot.'/mod/data/edit.php?d='.$data->id, $addstring, '', true);
         }
-        if (isteacher($course->id)) {
+        if (has_capability('mod/data:managetemplates', $context->id)) {
             if ($currenttab == 'list') {
                 $defaultemplate = 'listtemplate';
             } else if ($currenttab == 'add') {
