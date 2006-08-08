@@ -458,6 +458,15 @@
     $testingdata  = '<div class="adminlink"><a href="environment.php">'.get_string('environment', 'admin').
                    '</a> - <span class="explanation">'.get_string('adminhelpenvironment').'</span></div>';
                            
+    $testingdata .= '<div class="adminlink"><a href="unittest/index.php">'.get_string('unittests', 'admin').
+                   '</a> - <span class="explanation">'.get_string('adminhelpunittests').'</span></div>';
+
+    $table->data[] = array('<strong><a href="tests.php">'.get_string('tests','admin').'</a></strong>',
+                           $testingdata);
+
+    $testingdata  = '<div class="adminlink"><a href="environment.php">'.get_string('environment', 'admin').
+                   '</a> - <span class="explanation">'.get_string('adminhelpenvironment').'</span></div>';
+                           
     $testingdata .= '<div class="adminlink"><a href="report/simpletest/index.php">'.get_string('simpletest', 'admin').
                    '</a> - <span class="explanation">'.get_string('adminhelpsimpletest').'</span></div>';
 

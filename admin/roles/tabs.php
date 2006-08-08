@@ -5,7 +5,8 @@ if ($currenttab != 'update') {
 	switch ($context->level) {
 	  
 		case CONTEXT_SYSTEM:
-			print_header($site->fullname, "$site->fullname","$straction");
+			$stradministration = get_string('administration');
+			print_header($site->fullname, "$site->fullname","<a href=\"../index.php\">$stradministration</a> -> $straction");
 	    break;
 	
 	    case CONTEXT_PERSONAL:
@@ -110,7 +111,8 @@ if ($currenttab != 'update') {
         $tabs = array($toprow);
     }
     
-    print_tabs($tabs, $currenttab, $inactive);
-
+	if ($context->level != CONTEXT_SYSTEM) { // do not show tabs otherwise
+    	print_tabs($tabs, $currenttab, $inactive);
+	}
 
 ?>

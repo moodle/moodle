@@ -24,10 +24,20 @@
     
     $stradministration = get_string('administration');
     $strmanageroles = get_string('manageroles');
+
+    if ($roleid && $action!='delete') {
+      	$role = get_record('role', 'id', $roleid);
+      
+    	$edittingstr = '-> '.get_string('editting', $role->name);  
+    } else {
+    	$edittingstr ='';  
+    }
     
     print_header("$site->shortname: $strmanageroles", 
                  "$site->fullname", 
-                 "<a href=\"../index.php\">$stradministration</a> -> $strmanageroles");
+                 "<a href=\"../index.php\">$stradministration</a> -> <a href=\"manage.php\">$strmanageroles</a>
+				 $edittingstr
+				 ");
 
 	// form processing, editting a role, adding a role or deleting a role
 	if ($action && confirm_sesskey()) {
@@ -136,52 +146,68 @@
 		
 	}
 
-	if ($roleid) { // load the role if id is present
-	  	$role = get_record('role', 'id', $roleid);
-	  	$action = 'edit';
-	} else {
-		$role->name='';
-		$role->description='';
-		$action = 'add';  
-	}	
-
 	$roles = get_records('role');
 
-    foreach ($roles as $rolex) {
-    	$options[$rolex->id] = $rolex->name;
-    }
-    
-    // prints a form to swap roles
-    print ('<form name="rolesform1" action="manage.php" method="post">');
-    print ('<div align="center">Select a Role: ');
-    choose_from_menu ($options, 'roleid', $roleid, 'choose', $script='rolesform1.submit()');
-	print ('</div></form>');
-	  	
-	$sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
-	$contextid = $sitecontext->id;
+	if (($roleid && $action!='delete') || $action=='new') { // load the role if id is present
+	  		
+		if ($roleid) {
+		  	$action='edit';
+		  	$role = get_record('role', 'id', $roleid);
+		} else {	
+		  	$action='add';	  		
+			$role->name='';
+			$role->description='';
+		}
+		
+	    foreach ($roles as $rolex) {
+	    	$options[$rolex->id] = $rolex->name;
+	    }
+	    
+	    // prints a form to swap roles
+	    print ('<form name="rolesform1" action="manage.php" method="post">');
+	    print ('<div align="center">Select a Role: ');
+	    choose_from_menu ($options, 'roleid', $roleid, 'choose', $script='rolesform1.submit()');
+		print ('</div></form>');
+		  	
+		$sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
+		$contextid = $sitecontext->id;
+		
+		// this is the array holding capabilities of this role sorted till this context
+		$r_caps = role_context_capabilities($roleid, $sitecontext->id);
+		  	
+		// this is the available capabilities assignable in this context
+		$capabilities = fetch_context_capabilities($sitecontext->id);
+		
+		print_simple_box_start();
+		include_once('manage.html');
+		print_simple_box_end();
 	
-	// this is the array holding capabilities of this role sorted till this context
-	$r_caps = role_context_capabilities($roleid, $sitecontext->id);
-	  	
-	// this is the available capabilities assignable in this context
-	$capabilities = fetch_context_capabilities($sitecontext->id);
-	
-	if (!$roleid) {
-		$action='add';  
 	} else {
-		$action='edit';  
+		
+		$table->tablealign = "center";
+    	$table->align = array ("middle", "left");
+    	$table->wrap = array ("nowrap", "nowrap");
+    	$table->cellpadding = 5;
+    	$table->cellspacing = 0;
+    	$table->width = '40%';
+		/*************************
+	 	* List all current roles *
+	 	**************************/
+		
+		$table->data[] = array('roles', 'description', 'delete');
+		foreach ($roles as $role) {
+	  
+	  		$table->data[] = array('<a href="manage.php?roleid='.$role->id.'&amp;sesskey='.sesskey().'">'.$role->name.'</a>', $role->description, '<a href="manage.php?action=delete&roleid='.$role->id.'&sesskey='.sesskey().'">delete</a>');
+	  
+		}	
+	  	print_table($table);
+	  	
+	  	echo ('<form action="manage.php" method="POST">');
+	  	echo ('<input type="hidden" name="sesskey" value="'.sesskey().'">');
+	  	echo ('<input type="hidden" name="action" value="new">');
+	  	echo ('<input type="submit" value="add new role">');
 	}
-	
-	print_simple_box_start();
-	include_once('manage.html');
-	print_simple_box_end();
-	/*************************************************
-	 * List all roles and link them to override page *
-	 *************************************************/
 
-	foreach ($roles as $role) {
-		echo ('<br><a href="roleoverride.php?contextid=1&roleid='.$role->id.'">'.$role->name.'</a>&nbsp;<a href="manage.php?action=delete&roleid='.$role->id.'&sesskey='.sesskey().'">delete</a>');		  
-	}
-
+	use_html_editor("description");
 	print_footer($course);
 ?>

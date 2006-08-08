@@ -61,6 +61,7 @@
 	*/
 	$straction = get_string('roleassignment');
 	$context = get_record('context', 'id', $contextid);
+	
 	$currenttab = '';
 	$tabsmode = 'assign';
 	include_once('tabs.php');

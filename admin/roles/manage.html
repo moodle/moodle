@@ -3,7 +3,10 @@
 <input type="hidden" name="sesskey" value="<?php print (sesskey()); ?>">
 <input type="hidden" name="action" value="<?php echo $action; ?>">
 <br/>Role Name: <input type="text" name="name" value="<?php echo $role->name; ?>">
-<br/>Role Description: <input type="text" name="description" value="<?php echo $role->description; ?>">
+<br/>Role Description: 
+
+<?php print_textarea($CFG->htmleditor, 10, 50, 50, 10, 'description', "$role->description"); ?>
+
 <input type="hidden" name="contextid" value="<?php echo $contextid; ?>">
 <p>			
 			<table>
