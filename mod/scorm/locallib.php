@@ -730,16 +730,21 @@ function scorm_forge_cols_regexp($columns,$remodule='(".*")?,') {
     return $regexp;
 }
 
-function scorm_parse_aicc($pkgdir,$scormid){
+function scorm_parse_aicc($pkgdir,$scormid) {
     $version = 'AICC';
     $ids = array();
     $courses = array();
+    $extaiccfiles = array('crs','des','au','cst','ort','pre','cmp');
     if ($handle = opendir($pkgdir)) {
         while (($file = readdir($handle)) !== false) {
-            $ext = substr($file,strrpos($file,'.'));
-            $extension = strtolower(substr($ext,1));
-            $id = strtolower(basename($file,$ext));
-            $ids[$id]->$extension = $file;
+            if ($file[0] != '.') { 
+                $ext = substr($file,strrpos($file,'.'));
+                $extension = strtolower(substr($ext,1));
+                if (in_array($extension,$extaiccfiles)) {
+                    $id = strtolower(basename($file,$ext));
+                    $ids[$id]->$extension = $file;
+                }
+            }
         }
         closedir($handle);
     }
