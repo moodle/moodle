@@ -850,22 +850,22 @@ CREATE TABLE prefix_stats_user_monthly (
 # Table structure for table `prefix_post`
 #
 CREATE TABLE prefix_post (
-  `id` int(10) NOT NULL auto_increment,
+  `id` int(10) unsigned NOT NULL auto_increment,
   `module` varchar(20) NOT NULL default '',
-  `userid` int(10) NOT NULL default '0',
-  `courseid` int(10) NOT NULL default '0',
-  `groupid` int(10) NOT NULL default '0',
-  `moduleid` int(10) NOT NULL default '0',
-  `coursemoduleid` int(10) NOT NULL default '0',
+  `userid` int(10) unsigned NOT NULL default '0',
+  `courseid` int(10) unsigned NOT NULL default '0',
+  `groupid` int(10) unsigned NOT NULL default '0',
+  `moduleid` int(10) unsigned NOT NULL default '0',
+  `coursemoduleid` int(10) unsigned NOT NULL default '0',
   `subject` varchar(128) NOT NULL default '',
   `summary` longtext,
   `content` longtext,
   `uniquehash` varchar(128) NOT NULL default '',
-  `rating` int(10) NOT NULL default '0',
-  `format` int(10) NOT NULL default '0',
+  `rating` int(10) unsigned NOT NULL default '0',
+  `format` int(10) unsigned NOT NULL default '0',
   `publishstate` enum('draft','site','public') NOT NULL default 'draft',
-  `lastmodified` int(10) NOT NULL default '0',
-  `created` int(10) NOT NULL default '0',
+  `lastmodified` int(10) unsigned NOT NULL default '0',
+  `created` int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (`id`),
   UNIQUE KEY `id_user_idx` (`id`, `userid`),
   KEY `post_lastmodified_idx` (`lastmodified`),
@@ -876,9 +876,9 @@ CREATE TABLE prefix_post (
 
 # tags are not limited to blogs
 CREATE TABLE prefix_tags (
-  `id` int(10) NOT NULL auto_increment,
+  `id` int(10) unsigned NOT NULL auto_increment,
   `type` varchar(255) NOT NULL default 'official',
-  `userid` int(10) NOT NULL default '0',
+  `userid` int(10) unsigned NOT NULL default '0',
   `text` varchar(20) NOT NULL default '',
   KEY `tags_typeuserid_idx` (`type`, `userid`),
   KEY `tags_text_idx` (`text`),
@@ -887,12 +887,12 @@ CREATE TABLE prefix_tags (
 
 # instance of a tag for a blog
 CREATE TABLE prefix_blog_tag_instance (
-  `id` int(10) NOT NULL auto_increment,
-  `entryid` int(10) NOT NULL default '0',
-  `tagid` int(10) NOT NULL default '0',
-  `groupid` int(10) NOT NULL default '0',
-  `courseid` int(10) NOT NULL default '0',
-  `userid` int(10) NOT NULL default '0',
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `entryid` int(10) unsigned NOT NULL default '0',
+  `tagid` int(10) unsigned NOT NULL default '0',
+  `groupid` int(10) unsigned NOT NULL default '0',
+  `courseid` int(10) unsigned NOT NULL default '0',
+  `userid` int(10) unsigned NOT NULL default '0',
   `timemodified` int(10) unsigned NOT NULL default '0',
   KEY `bti_entryid_idx` (`entryid`),
   KEY `bti_tagid_idx` (`tagid`),
@@ -904,66 +904,66 @@ CREATE TABLE prefix_blog_tag_instance (
 ###################################
 
 CREATE TABLE prefix_role (
-  `id` int(10) NOT NULL auto_increment,
+  `id` int(10) unsigned NOT NULL auto_increment,
   `name` varchar(255) NOT NULL default '',
   `description` text NOT NULL default '',
-  `sortorder` int(10) NOT NULL default '0',
+  `sortorder` int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (`id`)
 ) TYPE=MyISAM COMMENT ='moodle roles';
 
 CREATE TABLE prefix_context (
-  `id` int(10) NOT NULL auto_increment,
-  `level` int(10) NOT NULL default '0',
-  `instanceid` int(10) NOT NULL default '0',
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `level` int(10) unsigned NOT NULL default '0',
+  `instanceid` int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (`id`)
 ) TYPE=MyISAM COMMENT ='one of these must be set';
 
 CREATE TABLE prefix_role_assignments (
-  `id` int(10) NOT NULL auto_increment,
-  `roleid` int(10) NOT NULL default '0',
-  `contextid` int(10) NOT NULL default '0',
-  `userid` int(10) NOT NULL default '0',
-  `hidden` int(1) NOT NULL default '0',
-  `timestart` int(10) NOT NULL default '0',
-  `timeend` int(10) NOT NULL default '0',
-  `timemodified` int(10) NOT NULL default '0',
-  `modifierid` int(10) NOT NULL default '0',
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `roleid` int(10) unsigned NOT NULL default '0',
+  `contextid` int(10) unsigned NOT NULL default '0',
+  `userid` int(10) unsigned NOT NULL default '0',
+  `hidden` int(1) unsigned NOT NULL default '0',
+  `timestart` int(10) unsigned NOT NULL default '0',
+  `timeend` int(10) unsigned NOT NULL default '0',
+  `timemodified` int(10) unsigned NOT NULL default '0',
+  `modifierid` int(10) unsigned NOT NULL default '0',
   `enrol` varchar(20) NOT NULL default '',
-  `sortorder` int(10) NOT NULL default '0',
+  `sortorder` int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (`id`)
 ) TYPE=MyISAM COMMENT ='assigning roles to different context';
 
 CREATE TABLE prefix_role_capabilities (
-  `id` int(10) NOT NULL auto_increment,
-  `contextid` int(10) NOT NULL default '0',
-  `roleid` int(10) NOT NULL default '0',
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `contextid` int(10)unsigned NOT NULL default '0',
+  `roleid` int(10) unsigned NOT NULL default '0',
   `capability` varchar(255) NOT NULL default '',
-  `permission` int(10) NOT NULL default '0',
-  `timemodified` int(10) NOT NULL default '0',
-  `modifierid` int(10) NOT NULL default '0',
+  `permission` int(10) unsigned NOT NULL default '0',
+  `timemodified` int(10) unsigned NOT NULL default '0',
+  `modifierid` int(10) unsigned NOT NULL default '0',
   PRIMARY KEY (`id`)
 ) TYPE=MYISAM COMMENT ='overriding a capability for a particular role in a particular context';
 
 CREATE TABLE prefix_role_deny_grant (
-  `id` int(10) NOT NULL auto_increment,
-  `roleid` int(10) NOT NULL default '0',
-  `unviewableroleid` int(10) NOT NULL default '0',
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `roleid` int(10) unsigned NOT NULL default '0',
+  `unviewableroleid` int(10) unsigned NOT NULL default '0',
   PRIMARY KEY (`id`)
 ) TYPE=MYISAM COMMENT ='this defines what role can touch (assign, override) what role';
 
 CREATE TABLE prefix_capabilities ( 
-  `id` int(10) NOT NULL auto_increment, 
+  `id` int(10) unsigned NOT NULL auto_increment, 
   `name` varchar(150) NOT NULL default '', 
   `captype` varchar(50) NOT NULL default '', 
-  `contextlevel` int(10) NOT NULL default '0', 
+  `contextlevel` int(10) unsigned NOT NULL default '0', 
   `component` varchar(100) NOT NULL default '', 
   PRIMARY KEY (`id`) 
 ) TYPE=MYISAM COMMENT ='this defines all capabilities';
 
 CREATE TABLE prefix_role_names ( 
-  `id` int(10) NOT NULL auto_increment, 
-  `roleid` int(10) NOT NULL default '0',
-  `contextid` int(10) NOT NULL default '0', 
+  `id` int(10) unsigned NOT NULL auto_increment, 
+  `roleid` int(10) unsigned NOT NULL default '0',
+  `contextid` int(10) unsigned NOT NULL default '0', 
   `text` text NOT NULL default '',
   PRIMARY KEY (`id`) 
 ) TYPE=MYISAM COMMENT ='role names in native strings';
