@@ -12,7 +12,7 @@
 
     $id = required_param('id', PARAM_INT);    // Course Module ID
 
-    if (! $cm = get_record("course_modules", "id", $id)) {
+    if (! $cm = get_coursemodule_from_id('survey', $id)) {
         error("Course Module ID was incorrect");
     }
 

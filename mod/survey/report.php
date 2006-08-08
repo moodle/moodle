@@ -11,7 +11,7 @@
     $student = optional_param('student', 0, PARAM_INT);   // Student ID
     $notes   = optional_param('notes', '', PARAM_RAW);    // Save teachers notes
 
-    if (! $cm = get_record("course_modules", "id", $id)) {
+    if (! $cm = get_coursemodule_from_id('survey', $id)) {
         error("Course Module ID was incorrect");
     }
 

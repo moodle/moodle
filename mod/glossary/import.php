@@ -15,7 +15,7 @@
     $mode     = optional_param('mode', 'letter', PARAM_ALPHA );
     $hook     = optional_param('hook', 'ALL', PARAM_ALPHANUM);
 
-    if (! $cm = get_record("course_modules", "id", $id)) {
+    if (! $cm = get_coursemodule_from_id('glossary', $id)) {
         error("Course Module ID was incorrect");
     }
 	

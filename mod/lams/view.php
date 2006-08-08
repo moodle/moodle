@@ -9,7 +9,7 @@ require_once("constants.php");
 
 $id = optional_param('id', 0, PARAM_INT);    // Course Module ID, or
 
-if (! $cm = get_record("course_modules", "id", $id)) {
+if (! $cm = get_coursemodule_from_id('lams', $id)) {
     error("Course Module ID was incorrect");
 }
 

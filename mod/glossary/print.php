@@ -14,7 +14,7 @@
     $hook    = optional_param('hook','ALL', PARAM_ALPHANUM);   // what to show
     $sortkey = optional_param('sortkey','UPDATE', PARAM_ALPHA); // Sorting key
 
-    if (! $cm = get_record("course_modules", "id", $id)) {
+    if (! $cm = get_coursemodule_from_id('glossary', $id)) {
         error("Course Module ID was incorrect");
     }
 

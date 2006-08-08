@@ -26,7 +26,7 @@
     $action = required_param('action', PARAM_ALPHA);   // Action
  
     // get some esential stuff...
-    if (! $cm = get_record("course_modules", "id", $id)) {
+    if (! $cm = get_coursemodule_from_id('lesson', $id)) {
         error("Course Module ID was incorrect");
     }
 

@@ -53,7 +53,7 @@ class assignment_base {
         if ($cmid) {
             if ($cm) {
                 $this->cm = $cm;
-            } else if (! $this->cm = get_record('course_modules', 'id', $cmid)) {
+            } else if (! $this->cm = get_coursemodule_from_id('assignment', $cmid)) {
                 error('Course Module ID was incorrect');
             }
 

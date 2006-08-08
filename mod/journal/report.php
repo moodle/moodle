@@ -5,7 +5,7 @@
 
     $id = required_param('id', PARAM_INT);   // course module
 
-    if (! $cm = get_record("course_modules", "id", $id)) {
+    if (! $cm = get_coursemodule_from_id('journal', $id)) {
         error("Course Module ID was incorrect");
     }
 

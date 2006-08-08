@@ -14,7 +14,7 @@
     $mode    = optional_param('mode', '', PARAM_ALPHA);     // for eacherview action todo use user pref
     
 
-    if (! $cm = get_record('course_modules', 'id', $id)) {
+    if (! $cm = get_coursemodule_from_id('lesson', $id)) {
         error('Course Module ID was incorrect');
     }
 
