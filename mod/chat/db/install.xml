@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="mod/chat/db" VERSION="20060808" COMMENT="XMLDB file for Moodle mod/chat">
+  <TABLES>
+    <TABLE NAME="chat" COMMENT="Each of these is a chat room" NEXT="chat_messages">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="course"/>
+        <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="name"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="course" NEXT="intro"/>
+        <FIELD NAME="intro" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="name" NEXT="keepdays"/>
+        <FIELD NAME="keepdays" TYPE="int" LENGTH="11" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="intro" NEXT="studentlogs"/>
+        <FIELD NAME="studentlogs" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="keepdays" NEXT="chattime"/>
+        <FIELD NAME="chattime" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="studentlogs" NEXT="schedule"/>
+        <FIELD NAME="schedule" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="chattime" NEXT="timemodified"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="schedule"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for chat"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="course" UNIQUE="false" FIELDS="course"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="chat_messages" COMMENT="Stores all the actual chat messages" PREVIOUS="chat" NEXT="chat_users">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="chatid"/>
+        <FIELD NAME="chatid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="userid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="chatid" NEXT="groupid"/>
+        <FIELD NAME="groupid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="userid" NEXT="system"/>
+        <FIELD NAME="system" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="groupid" NEXT="message"/>
+        <FIELD NAME="message" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="system" NEXT="timestamp"/>
+        <FIELD NAME="timestamp" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="message"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for chat_messages" NEXT="chatid"/>
+        <KEY NAME="chatid" TYPE="foreign" FIELDS="chatid" REFTABLE="chat" REFFIELDS="id" PREVIOUS="primary"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="userid" UNIQUE="false" FIELDS="userid" NEXT="groupid"/>
+        <INDEX NAME="groupid" UNIQUE="false" FIELDS="groupid" PREVIOUS="userid" NEXT="timestamp-chatid"/>
+        <INDEX NAME="timestamp-chatid" UNIQUE="false" FIELDS="timestamp, chatid" PREVIOUS="groupid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="chat_users" COMMENT="Keeps track of which users are in which chat rooms" PREVIOUS="chat_messages">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="chatid"/>
+        <FIELD NAME="chatid" TYPE="int" LENGTH="11" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="userid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="11" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="chatid" NEXT="groupid"/>
+        <FIELD NAME="groupid" TYPE="int" LENGTH="11" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="userid" NEXT="version"/>
+        <FIELD NAME="version" TYPE="char" LENGTH="16" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="groupid" NEXT="ip"/>
+        <FIELD NAME="ip" TYPE="char" LENGTH="15" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="version" NEXT="firstping"/>
+        <FIELD NAME="firstping" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="ip" NEXT="lastping"/>
+        <FIELD NAME="lastping" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="firstping" NEXT="lastmessageping"/>
+        <FIELD NAME="lastmessageping" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="lastping" NEXT="sid"/>
+        <FIELD NAME="sid" TYPE="char" LENGTH="32" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="lastmessageping" NEXT="course"/>
+        <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="sid" NEXT="lang"/>
+        <FIELD NAME="lang" TYPE="char" LENGTH="10" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="course"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for chat_users" NEXT="chatid"/>
+        <KEY NAME="chatid" TYPE="foreign" FIELDS="chatid" REFTABLE="chat" REFFIELDS="id" PREVIOUS="primary"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="userid" UNIQUE="false" FIELDS="userid" NEXT="lastping"/>
+        <INDEX NAME="lastping" UNIQUE="false" FIELDS="lastping" PREVIOUS="userid" NEXT="groupid"/>
+        <INDEX NAME="groupid" UNIQUE="false" FIELDS="groupid" PREVIOUS="lastping"/>
+      </INDEXES>
+    </TABLE>
+  </TABLES>
+  <STATEMENTS>
+    <STATEMENT NAME="insert log_display" TYPE="insert" TABLE="log_display" COMMENT="Initial insert of records on table log_display">
+      <SENTENCES>
+        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('chat', 'view', 'chat', 'name')" />
+        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('chat', 'add', 'chat', 'name')" />
+        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('chat', 'update', 'chat', 'name')" />
+        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('chat', 'report', 'chat', 'name')" />
+        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('chat', 'talk', 'chat', 'name')" />
+      </SENTENCES>
+    </STATEMENT>
+  </STATEMENTS>
+</XMLDB>
