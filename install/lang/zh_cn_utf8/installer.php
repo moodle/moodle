@@ -126,6 +126,7 @@ $string['next'] = '向后';
 $string['ok'] = '好';
 $string['pass'] = '通过';
 $string['password'] = '密码';
+$string['php50restricted'] = 'PHP 5.0.x有数个已知的问题，请升级到5.1.x或者降级到4.3.x或4.4.x';
 $string['phpversion'] = 'PHP版本';
 $string['phpversionerror'] = 'PHP版本至少为4.1.0';
 $string['phpversionhelp'] = '<p>Moodle需要PHP 4.1.0以上的版本。</p>
