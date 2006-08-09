@@ -1006,7 +1006,7 @@ function upgrade_blocks_plugins($continueto) {
             $invalidblocks[] = $blockname;
             continue;
         }
-		
+
         $fullblock = $CFG->dirroot .'/blocks/'. $blockname;
 
         if ( is_readable($fullblock.'/block_'.$blockname.'.php')) {

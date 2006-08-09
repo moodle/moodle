@@ -2051,22 +2051,22 @@ function main_upgrade($oldversion=0) {
                             )", true);
                             
         execute_sql("CREATE TABLE {$CFG->prefix}capabilities ( 
-							  `id` int(10) unsigned NOT NULL auto_increment, 
-							  `name` varchar(150) NOT NULL default '', 
-							  `captype` varchar(50) NOT NULL default '', 
-							  `contextlevel` int(10) unsigned NOT NULL default '0', 
-							  `component` varchar(100) NOT NULL default '', 
-							  PRIMARY KEY (`id`) 
-							)", true);     
-							
-		execute_sql("CREATE TABLE {$CFG->prefix}role_names ( 
-							  `id` int(10) unsigned NOT NULL auto_increment, 
-							  `roleid` int(10) unsigned NOT NULL default '0',
-							  `contextid` int(10) unsigned NOT NULL default '0', 
-							  `text` text NOT NULL default '',
-							  PRIMARY KEY (`id`) 
-							)", true);   					
-						
+                              `id` int(10) unsigned NOT NULL auto_increment, 
+                              `name` varchar(150) NOT NULL default '', 
+                              `captype` varchar(50) NOT NULL default '', 
+                              `contextlevel` int(10) unsigned NOT NULL default '0', 
+                              `component` varchar(100) NOT NULL default '', 
+                              PRIMARY KEY (`id`) 
+                            )", true);     
+                            
+        execute_sql("CREATE TABLE {$CFG->prefix}role_names ( 
+                              `id` int(10) unsigned NOT NULL auto_increment, 
+                              `roleid` int(10) unsigned NOT NULL default '0',
+                              `contextid` int(10) unsigned NOT NULL default '0', 
+                              `text` text NOT NULL default '',
+                              PRIMARY KEY (`id`) 
+                            )", true);                      
+                        
     }
 
     

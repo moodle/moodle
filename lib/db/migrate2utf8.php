@@ -75,9 +75,9 @@ function migrate2utf8_user($fields, $crash, $debug, $maxrecords, $done, $tablest
                 
                 // this is the only encoding we need for this table
                 if ($globallang) {
-        			$fromenc = $globallang;
-        		} else {
-                	$fromenc = get_original_encoding('','',$record->lang);
+                    $fromenc = $globallang;
+                } else {
+                    $fromenc = get_original_encoding('','',$record->lang);
                 }
 
                 if (($fromenc != 'utf-8') && ($fromenc != 'UTF-8')) {
@@ -126,8 +126,8 @@ function migrate2utf8_user($fields, $crash, $debug, $maxrecords, $done, $tablest
                 //print some output once in a while
                 
                 if (($processedrecords) % 1000 == 0) {
-            		print_progress($done, $tablestoconvert, 5, 1, 'Processing: user');
-            	}
+                    print_progress($done, $tablestoconvert, 5, 1, 'Processing: user');
+                }
             }
         }
     }
