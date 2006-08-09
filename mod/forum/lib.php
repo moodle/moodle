@@ -1453,7 +1453,13 @@ function forum_get_discussions($forum="0", $forumsort="d.timemodified DESC",
     $timelimit = '';
 
     if (!empty($CFG->forum_enabletimedposts)) {
-        if (!((isadmin() and !empty($CFG->admineditalways)) || isteacher(get_field('forum', 'course', 'id', $forum)))) {
+        
+        if (!$cm = get_coursemodule_from_instance('forum', $forum)) {
+            error('Course Module ID was incorrect');
+        }
+        $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
+        
+        if (!has_capability('mod/forum:viewhiddentimedposts', $modcontext->id)) {
             $now = time();
             $timelimit = " AND ((d.timestart = 0 OR d.timestart <= '$now') AND (d.timeend = 0 OR d.timeend > '$now')";
             if (!empty($USER->id)) {
@@ -1676,6 +1682,16 @@ function forum_make_mail_post(&$post, $user, $touser, $course,
     static $formattedtext;        // Cached version of formatted text for a post
     static $formattedtextid;      // The ID number of the post
 
+
+    if (!$forumid = get_record('discussion', 'id', $post->discussion)) {
+        error('Could not get the forum id for the discussion the post belongs to');
+    }
+    if (!$cm = get_coursemodule_from_instance('forum', $forumid)) {
+        error('Course Module ID was incorrect');
+    }
+    $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
+
+
     if (empty($formattedtextid) or $formattedtextid != $post->id) {    // Recalculate the formatting
         $options = new Object;
         $options->para = true;
@@ -1696,7 +1712,7 @@ function forum_make_mail_post(&$post, $user, $touser, $course,
     }
     $output .= '<div class="subject">'.format_string($post->subject).'</div>';
 
-    $fullname = fullname($user, isteacher($course->id));
+    $fullname = fullname($user, has_capability('moodle/site:viewfullnames', $modcontext->id););
     $by->name = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.$course->id.'">'.$fullname.'</a>';
     $by->date = userdate($post->modified, '', $touser->timezone);
     $output .= '<div class="author">'.get_string('bynameondate', 'forum', $by).'</div>';
