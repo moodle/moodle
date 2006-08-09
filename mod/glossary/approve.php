@@ -22,9 +22,9 @@
     }
 
     require_login($course->id, false, $cm);    
-	
-	$context = get_context_instance(CONTEXT_MODULE, $cm->id);
-	has_capability('mod/glossary:approve', $context->id, true);
+    
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    has_capability('mod/glossary:approve', $context->id, true);
 
     $newentry->id = $eid;
     $newentry->approved = 1;

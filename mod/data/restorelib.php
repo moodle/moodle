@@ -92,11 +92,11 @@ function data_restore_mods($mod,$restore) {
                              $mod->id, $newid);
             //Now check if want to restore user data and do it.
             if (function_exists('restore_userdata_selected')) {
-            	// Moodle 1.6
-	            $restore_userdata_selected = restore_userdata_selected($restore, 'data', $mod->id);
+                // Moodle 1.6
+                $restore_userdata_selected = restore_userdata_selected($restore, 'data', $mod->id);
             } else {
                 // Moodle 1.5
-	            $restore_userdata_selected = $restore->mods['data']->userinfo;
+                $restore_userdata_selected = $restore->mods['data']->userinfo;
             }
             if ($restore_userdata_selected) {
                 //Restore data_fields first!!! need to hold an array of [oldid]=>newid due to double dependencies

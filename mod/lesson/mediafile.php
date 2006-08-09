@@ -136,8 +136,8 @@
         error('Flash is not supported yet');
     
     } else if ($mimetype == "audio/x-pn-realaudio") {   // It's a realmedia file
-    	
-		echo '<object id="rvocx" classid="clsid:CFCDAA03-8BE4-11cf-B84B-0020AFBBCCFA" width="600" height="50">';
+        
+        echo '<object id="rvocx" classid="clsid:CFCDAA03-8BE4-11cf-B84B-0020AFBBCCFA" width="600" height="50">';
         echo "<param name=\"src\" value=\"$fullurl\">";
         echo '<param name="console" value="video">';  // not sure what the console param should equal
         echo '<param name="controls" value="ControlPanel">';

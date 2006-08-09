@@ -493,8 +493,8 @@
             var ourForm = document.forms['responseform']; 
             ourForm.page.value=page;
             if (ourForm.onsubmit) {
-	            ourForm.onsubmit();
-	        }
+                ourForm.onsubmit();
+            }
             ourForm.submit();
         }
         </script>

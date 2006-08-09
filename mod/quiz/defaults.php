@@ -36,7 +36,7 @@
        'quiz_fix_timelimit' => 0,
        'quiz_fix_adaptive' => 0,
        'quiz_fix_penaltyscheme' => 0,
-	   'quiz_fix_delay1' => 0,
+       'quiz_fix_delay1' => 0,
        'quiz_fix_delay2' => 0,
 
     );

@@ -461,9 +461,9 @@ if ($form->mode == "add") {
             $select = "course = $course->id AND id != $form->instance";
         }
         if ($lessons = get_records_select('lesson', $select, 'name ASC')) {
-        	foreach($lessons as $lesson) {
-        		$options[$lesson->id] = $lesson->name;
-        	}
+            foreach($lessons as $lesson) {
+                $options[$lesson->id] = $lesson->name;
+            }
         }
         
         choose_from_menu($options, "dependency", $form->dependency, "");

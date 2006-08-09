@@ -17,17 +17,17 @@
     if (!$cm = get_coursemodule_from_instance('chat', $chat->id, $course->id)) {
         error('Course Module ID was incorrect');
     }
-	
-	$context = get_context_instance(CONTEXT_MODULE, $cm->id);
     
-	require_login($course->id, false, $cm);
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    
+    require_login($course->id, false, $cm);
 
-	has_capability('mod/chat:chat',$context->id, true);
-	/*
+    has_capability('mod/chat:chat',$context->id, true);
+    /*
     if (isguest()) {
         error('Guest does not have access to chat rooms');
     }
-	*/
+    */
     if (!$cm->visible and !isteacher($course->id)) {
         print_header();
         notice(get_string("activityiscurrentlyhidden"));

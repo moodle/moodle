@@ -65,8 +65,8 @@
 
     require_course_login($course, true, $cm);
 
-	$context = get_context_instance(CONTEXT_MODULE, $cm->id);
-	has_capability('mod/data:managetemplates', $context->id, true);
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    has_capability('mod/data:managetemplates', $context->id, true);
 
 
     if (!isteacheredit($course->id)){

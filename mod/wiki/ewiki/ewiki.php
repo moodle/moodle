@@ -29,60 +29,60 @@
 
         #-- I'm sorry for that, but all the @ annoy me
         error_reporting(0x0000377 & error_reporting());
-#	error_reporting(E_ALL^E_NOTICE);
+#   error_reporting(E_ALL^E_NOTICE);
 
-	#-- the position of your ewiki-wrapper script
-	define("EWIKI_SCRIPT", "?id=");		# relative/absolute to docroot
-#	define("EWIKI_SCRIPT_URL", "http://...?id=");		# absolute URL
+    #-- the position of your ewiki-wrapper script
+    define("EWIKI_SCRIPT", "?id=");     # relative/absolute to docroot
+#   define("EWIKI_SCRIPT_URL", "http://...?id=");       # absolute URL
 
         #-- change to your needs (site lang)
-	define("EWIKI_NAME", "ErfurtWiki");
-	define("EWIKI_PAGE_INDEX", "ErfurtWiki");
-	define("EWIKI_PAGE_NEWEST", "NewestPages");
-	define("EWIKI_PAGE_SEARCH", "SearchPages");
-	define("EWIKI_PAGE_HITS", "MostVisitedPages");
-	define("EWIKI_PAGE_VERSIONS", "MostOftenChangedPages");
-	define("EWIKI_PAGE_UPDATES", "UpdatedPages");
+    define("EWIKI_NAME", "ErfurtWiki");
+    define("EWIKI_PAGE_INDEX", "ErfurtWiki");
+    define("EWIKI_PAGE_NEWEST", "NewestPages");
+    define("EWIKI_PAGE_SEARCH", "SearchPages");
+    define("EWIKI_PAGE_HITS", "MostVisitedPages");
+    define("EWIKI_PAGE_VERSIONS", "MostOftenChangedPages");
+    define("EWIKI_PAGE_UPDATES", "UpdatedPages");
 
-	#-- default settings are good settings - most often ;)
+    #-- default settings are good settings - most often ;)
         #- look & feel
-	define("EWIKI_PRINT_TITLE", 1);		# <h2>WikiPageName</h2> on top
-	define("EWIKI_SPLIT_TITLE", 0);		# <h2>Wiki Page Name</h2>
-	define("EWIKI_CONTROL_LINE", 1);	# EditThisPage-link at bottom
-	define("EWIKI_LIST_LIMIT", 20);		# listing limit
+    define("EWIKI_PRINT_TITLE", 1);     # <h2>WikiPageName</h2> on top
+    define("EWIKI_SPLIT_TITLE", 0);     # <h2>Wiki Page Name</h2>
+    define("EWIKI_CONTROL_LINE", 1);    # EditThisPage-link at bottom
+    define("EWIKI_LIST_LIMIT", 20);     # listing limit
         #- behaviour
-	define("EWIKI_AUTO_EDIT", 1);		# edit box for non-existent pages
-	define("EWIKI_EDIT_REDIRECT", 1);	# redirect after edit save
-	define("EWIKI_DEFAULT_ACTION", "view"); # (keep!)
-	define("EWIKI_CASE_INSENSITIVE", 1);	# wikilink case sensitivity
-	define("EWIKI_HIT_COUNTING", 1);
-	define("UNIX_MILLENNIUM", 1000000000);
+    define("EWIKI_AUTO_EDIT", 1);       # edit box for non-existent pages
+    define("EWIKI_EDIT_REDIRECT", 1);   # redirect after edit save
+    define("EWIKI_DEFAULT_ACTION", "view"); # (keep!)
+    define("EWIKI_CASE_INSENSITIVE", 1);    # wikilink case sensitivity
+    define("EWIKI_HIT_COUNTING", 1);
+    define("UNIX_MILLENNIUM", 1000000000);
         #- rendering
-	define("EWIKI_ALLOW_HTML", 0);		# often a very bad idea
-	define("EWIKI_HTML_CHARS", 1);		# allows for &#200;
-	define("EWIKI_ESCAPE_AT", 1);		# "@" -> "&#x40;"
+    define("EWIKI_ALLOW_HTML", 0);      # often a very bad idea
+    define("EWIKI_HTML_CHARS", 1);      # allows for &#200;
+    define("EWIKI_ESCAPE_AT", 1);       # "@" -> "&#x40;"
         #- http/urls
-	define("EWIKI_HTTP_HEADERS", 1);	# most often a good thing
-	define("EWIKI_NO_CACHE", 1);		# browser+proxy shall not cache
-	define("EWIKI_URLENCODE", 1);		# disable when _USE_PATH_INFO
-	define("EWIKI_URLDECODE", 1);
-	define("EWIKI_USE_PATH_INFO", 1  &&!strstr($_SERVER["SERVER_SOFTWARE"],"Apache"));
-	define("EWIKI_USE_ACTION_PARAM", 1);
-	define("EWIKI_ACTION_SEP_CHAR", "/");
-	define("EWIKI_UP_PAGENUM", "n");	# _UP_ means "url parameter"
-	define("EWIKI_UP_PAGEEND", "e");
-	define("EWIKI_UP_BINARY", "binary");
-	define("EWIKI_UP_UPLOAD", "upload");
+    define("EWIKI_HTTP_HEADERS", 1);    # most often a good thing
+    define("EWIKI_NO_CACHE", 1);        # browser+proxy shall not cache
+    define("EWIKI_URLENCODE", 1);       # disable when _USE_PATH_INFO
+    define("EWIKI_URLDECODE", 1);
+    define("EWIKI_USE_PATH_INFO", 1  &&!strstr($_SERVER["SERVER_SOFTWARE"],"Apache"));
+    define("EWIKI_USE_ACTION_PARAM", 1);
+    define("EWIKI_ACTION_SEP_CHAR", "/");
+    define("EWIKI_UP_PAGENUM", "n");    # _UP_ means "url parameter"
+    define("EWIKI_UP_PAGEEND", "e");
+    define("EWIKI_UP_BINARY", "binary");
+    define("EWIKI_UP_UPLOAD", "upload");
         #- other stuff
         define("EWIKI_DEFAULT_LANG", "en");
         define("EWIKI_CHARSET", current_charset());
-	#- user permissions
-	define("EWIKI_PROTECTED_MODE", 0);	# disable funcs + require auth
-	define("EWIKI_PROTECTED_MODE_HIDING", 0);  # hides disallowed actions
-	define("EWIKI_AUTH_DEFAULT_RING", 3);	# 0=root 1=priv 2=user 3=view
-	define("EWIKI_AUTO_LOGIN", 1);		# [auth_query] on startup
+    #- user permissions
+    define("EWIKI_PROTECTED_MODE", 0);  # disable funcs + require auth
+    define("EWIKI_PROTECTED_MODE_HIDING", 0);  # hides disallowed actions
+    define("EWIKI_AUTH_DEFAULT_RING", 3);   # 0=root 1=priv 2=user 3=view
+    define("EWIKI_AUTO_LOGIN", 1);      # [auth_query] on startup
 
-	#-- allowed WikiPageNameCharacters
+    #-- allowed WikiPageNameCharacters
 
 #### BEGIN MOODLE CHANGES - to remove auto-camelcase linking.   
     global $moodle_disable_camel_case;   
@@ -93,72 +93,72 @@
     else {
 #### END MOODLE CHANGES
 
-  	define("EWIKI_CHARS_L", "a-z_µ¤$\337-\377");
+    define("EWIKI_CHARS_L", "a-z_µ¤$\337-\377");
     define("EWIKI_CHARS_U", "A-Z0-9\300-\336");
 
 #### BEGIN MOODLE CHANGES   
     }
 #### END MOODLE CHANGES
    
-	define("EWIKI_CHARS", EWIKI_CHARS_L.EWIKI_CHARS_U);
+    define("EWIKI_CHARS", EWIKI_CHARS_L.EWIKI_CHARS_U);
 
         #-- database
-	define("EWIKI_DB_TABLE_NAME", "ewiki");      # MySQL / ADOdb
-	define("EWIKI_DBFILES_DIRECTORY", "/tmp");   # see "db_flat_files.php"
-	define("EWIKI_DBA", "/tmp/ewiki.dba");       # see "db_dba.php"
-	define("EWIKI_DBQUERY_BUFFER", 512*1024);    # 512K
-	define("EWIKI_INIT_PAGES", "./init-pages");  # for initialization
+    define("EWIKI_DB_TABLE_NAME", "ewiki");      # MySQL / ADOdb
+    define("EWIKI_DBFILES_DIRECTORY", "/tmp");   # see "db_flat_files.php"
+    define("EWIKI_DBA", "/tmp/ewiki.dba");       # see "db_dba.php"
+    define("EWIKI_DBQUERY_BUFFER", 512*1024);    # 512K
+    define("EWIKI_INIT_PAGES", "./init-pages");  # for initialization
 
-	define("EWIKI_DB_F_TEXT", 1<<0);
-	define("EWIKI_DB_F_BINARY", 1<<1);
-	define("EWIKI_DB_F_DISABLED", 1<<2);
-	define("EWIKI_DB_F_HTML", 1<<3);
-	define("EWIKI_DB_F_READONLY", 1<<4);
-	define("EWIKI_DB_F_WRITEABLE", 1<<5);
-	define("EWIKI_DB_F_APPENDONLY", 1<<6);  #nyi
-	define("EWIKI_DB_F_SYSTEM", 1<<7);
-	define("EWIKI_DB_F_PART", 1<<8);
-	define("EWIKI_DB_F_TYPE", EWIKI_DB_F_TEXT | EWIKI_DB_F_BINARY | EWIKI_DB_F_DISABLED | EWIKI_DB_F_SYSTEM | EWIKI_DB_F_PART);
-	define("EWIKI_DB_F_ACCESS", EWIKI_DB_F_READONLY | EWIKI_DB_F_WRITEABLE | EWIKI_DB_F_APPENDONLY);
-	define("EWIKI_DB_F_COPYMASK", EWIKI_DB_F_TYPE | EWIKI_DB_F_ACCESS);
+    define("EWIKI_DB_F_TEXT", 1<<0);
+    define("EWIKI_DB_F_BINARY", 1<<1);
+    define("EWIKI_DB_F_DISABLED", 1<<2);
+    define("EWIKI_DB_F_HTML", 1<<3);
+    define("EWIKI_DB_F_READONLY", 1<<4);
+    define("EWIKI_DB_F_WRITEABLE", 1<<5);
+    define("EWIKI_DB_F_APPENDONLY", 1<<6);  #nyi
+    define("EWIKI_DB_F_SYSTEM", 1<<7);
+    define("EWIKI_DB_F_PART", 1<<8);
+    define("EWIKI_DB_F_TYPE", EWIKI_DB_F_TEXT | EWIKI_DB_F_BINARY | EWIKI_DB_F_DISABLED | EWIKI_DB_F_SYSTEM | EWIKI_DB_F_PART);
+    define("EWIKI_DB_F_ACCESS", EWIKI_DB_F_READONLY | EWIKI_DB_F_WRITEABLE | EWIKI_DB_F_APPENDONLY);
+    define("EWIKI_DB_F_COPYMASK", EWIKI_DB_F_TYPE | EWIKI_DB_F_ACCESS);
 
-	define("EWIKI_DBFILES_NLR", '\\n');
-	define("EWIKI_DBFILES_ENCODE", 0 || (DIRECTORY_SEPARATOR != "/"));
-	define("EWIKI_DBFILES_GZLEVEL", "2");
+    define("EWIKI_DBFILES_NLR", '\\n');
+    define("EWIKI_DBFILES_ENCODE", 0 || (DIRECTORY_SEPARATOR != "/"));
+    define("EWIKI_DBFILES_GZLEVEL", "2");
 
-	#-- internal
- 	define("EWIKI_ADDPARAMDELIM", (strstr(EWIKI_SCRIPT,"?") ? "&" : "?"));
+    #-- internal
+    define("EWIKI_ADDPARAMDELIM", (strstr(EWIKI_SCRIPT,"?") ? "&" : "?"));
 
-	#-- binary content (images)
-	define("EWIKI_SCRIPT_BINARY", /*"/binary.php?binary="*/  ltrim(strtok(" ".EWIKI_SCRIPT,"?"))."?".EWIKI_UP_BINARY."="  );
-	define("EWIKI_CACHE_IMAGES", 1  &&!headers_sent());
-	define("EWIKI_IMAGE_MAXSIZE", 64 *1024);
-	define("EWIKI_IMAGE_MAXWIDTH", 3072);
-	define("EWIKI_IMAGE_MAXHEIGHT", 2048);
-	define("EWIKI_IMAGE_MAXALLOC", 1<<19);
-	define("EWIKI_IMAGE_RESIZE", 1);
-	define("EWIKI_IMAGE_ACCEPT", "image/jpeg,image/png,image/gif,application/x-shockwave-flash");
-	define("EWIKI_IDF_INTERNAL", "internal://");
-	define("EWIKI_ACCEPT_BINARY", 0);   # for arbitrary binary data files
+    #-- binary content (images)
+    define("EWIKI_SCRIPT_BINARY", /*"/binary.php?binary="*/  ltrim(strtok(" ".EWIKI_SCRIPT,"?"))."?".EWIKI_UP_BINARY."="  );
+    define("EWIKI_CACHE_IMAGES", 1  &&!headers_sent());
+    define("EWIKI_IMAGE_MAXSIZE", 64 *1024);
+    define("EWIKI_IMAGE_MAXWIDTH", 3072);
+    define("EWIKI_IMAGE_MAXHEIGHT", 2048);
+    define("EWIKI_IMAGE_MAXALLOC", 1<<19);
+    define("EWIKI_IMAGE_RESIZE", 1);
+    define("EWIKI_IMAGE_ACCEPT", "image/jpeg,image/png,image/gif,application/x-shockwave-flash");
+    define("EWIKI_IDF_INTERNAL", "internal://");
+    define("EWIKI_ACCEPT_BINARY", 0);   # for arbitrary binary data files
 
-	#-- misc
+    #-- misc
         define("EWIKI_TMP", $_SERVER["TEMP"] ? $_SERVER["TEMP"] : "/tmp");
-	define("EWIKI_LOGLEVEL", -1);		# 0=error 1=warn 2=info 3=debug
-	define("EWIKI_LOGFILE", "/tmp/ewiki.log");
+    define("EWIKI_LOGLEVEL", -1);       # 0=error 1=warn 2=info 3=debug
+    define("EWIKI_LOGFILE", "/tmp/ewiki.log");
 
-	#-- plugins (tasks mapped to function names)
-	$ewiki_plugins["database"][] = "ewiki_database_mysql";
-	$ewiki_plugins["edit_preview"][] = "ewiki_page_edit_preview";
-	$ewiki_plugins["render"][] = "ewiki_format";
-	$ewiki_plugins["init"][-5] = "ewiki_localization";
-	$ewiki_plugins["init"][-1] = "ewiki_binary";
+    #-- plugins (tasks mapped to function names)
+    $ewiki_plugins["database"][] = "ewiki_database_mysql";
+    $ewiki_plugins["edit_preview"][] = "ewiki_page_edit_preview";
+    $ewiki_plugins["render"][] = "ewiki_format";
+    $ewiki_plugins["init"][-5] = "ewiki_localization";
+    $ewiki_plugins["init"][-1] = "ewiki_binary";
         $ewiki_plugins["handler"][-105] = "ewiki_eventually_initialize";
         $ewiki_plugins["handler"][] = "ewiki_intermap_walking";
-	$ewiki_plugins["view_append"][-1] = "ewiki_control_links";
+    $ewiki_plugins["view_append"][-1] = "ewiki_control_links";
         $ewiki_plugins["view_final"][-1] = "ewiki_add_title";
         $ewiki_plugins["page_final"][] = "ewiki_http_headers";
         $ewiki_plugins["page_final"][99115115] = "ewiki_page_css_container";
-	$ewiki_plugins["edit_form_final"][] = "ewiki_page_edit_form_final_imgupload";
+    $ewiki_plugins["edit_form_final"][] = "ewiki_page_edit_form_final_imgupload";
         $ewiki_plugins["format_block"]["pre"][] = "ewiki_format_pre";
         $ewiki_plugins["format_block"]["code"][] = "ewiki_format_pre";
         $ewiki_plugins["format_block"]["htm"][] = "ewiki_format_html";
@@ -166,36 +166,36 @@
         $ewiki_plugins["format_block"]["comment"][] = "ewiki_format_comment";
 
 
-	#-- internal pages
-	$ewiki_plugins["page"][EWIKI_PAGE_NEWEST] = "ewiki_page_newest";
-	$ewiki_plugins["page"][EWIKI_PAGE_SEARCH] = "ewiki_page_search";
-	if (EWIKI_HIT_COUNTING) $ewiki_plugins["page"][EWIKI_PAGE_HITS] = "ewiki_page_hits";
-	$ewiki_plugins["page"][EWIKI_PAGE_VERSIONS] = "ewiki_page_versions";
-	$ewiki_plugins["page"][EWIKI_PAGE_UPDATES] = "ewiki_page_updates";
+    #-- internal pages
+    $ewiki_plugins["page"][EWIKI_PAGE_NEWEST] = "ewiki_page_newest";
+    $ewiki_plugins["page"][EWIKI_PAGE_SEARCH] = "ewiki_page_search";
+    if (EWIKI_HIT_COUNTING) $ewiki_plugins["page"][EWIKI_PAGE_HITS] = "ewiki_page_hits";
+    $ewiki_plugins["page"][EWIKI_PAGE_VERSIONS] = "ewiki_page_versions";
+    $ewiki_plugins["page"][EWIKI_PAGE_UPDATES] = "ewiki_page_updates";
 
-	#-- page actions
-	$ewiki_plugins["action"]["edit"] = "ewiki_page_edit";
-	$ewiki_plugins["action_always"]["links"] = "ewiki_page_links";
-	$ewiki_plugins["action"]["info"] = "ewiki_page_info";
-	$ewiki_plugins["action"]["view"] = "ewiki_page_view";
+    #-- page actions
+    $ewiki_plugins["action"]["edit"] = "ewiki_page_edit";
+    $ewiki_plugins["action_always"]["links"] = "ewiki_page_links";
+    $ewiki_plugins["action"]["info"] = "ewiki_page_info";
+    $ewiki_plugins["action"]["view"] = "ewiki_page_view";
 
-	#-- helper vars ---------------------------------------------------
-	$ewiki_config["idf"]["url"] = array("http://", "mailto:", "internal://", "ftp://", "https://", "irc://", "telnet://", "news://", "chrome://", "file://", "gopher://", "httpz://");
-	$ewiki_config["idf"]["img"] = array(".jpeg", ".png", ".jpg", ".gif", ".j2k");
-	$ewiki_config["idf"]["obj"] = array(".swf", ".svg");
+    #-- helper vars ---------------------------------------------------
+    $ewiki_config["idf"]["url"] = array("http://", "mailto:", "internal://", "ftp://", "https://", "irc://", "telnet://", "news://", "chrome://", "file://", "gopher://", "httpz://");
+    $ewiki_config["idf"]["img"] = array(".jpeg", ".png", ".jpg", ".gif", ".j2k");
+    $ewiki_config["idf"]["obj"] = array(".swf", ".svg");
 
-	#-- entitle actions
-	$ewiki_config["action_links"]["view"] = @array_merge(array(
-		"edit" => "EDITTHISPAGE",	# ewiki_t() is called on these
-		"links" => "BACKLINKS",
-		"info" => "PAGEHISTORY",
-		"like" => "LIKEPAGES",
-	), @$ewiki_config["action_links"]["view"]
+    #-- entitle actions
+    $ewiki_config["action_links"]["view"] = @array_merge(array(
+        "edit" => "EDITTHISPAGE",   # ewiki_t() is called on these
+        "links" => "BACKLINKS",
+        "info" => "PAGEHISTORY",
+        "like" => "LIKEPAGES",
+    ), @$ewiki_config["action_links"]["view"]
         );
-	$ewiki_config["action_links"]["info"] = @array_merge(array(
-		"view" => "browse",
-		"edit" => "fetchback",
-	), @$ewiki_config["action_links"]["info"]
+    $ewiki_config["action_links"]["info"] = @array_merge(array(
+        "view" => "browse",
+        "edit" => "fetchback",
+    ), @$ewiki_config["action_links"]["info"]
         );
 
         #-- variable configuration settings (go into '$ewiki_config')
@@ -209,72 +209,72 @@
            "script" => EWIKI_SCRIPT,
            "script_url" => (defined("EWIKI_SCRIPT_URL")?EWIKI_SCRIPT_URL:NULL),
            "script_binary" => EWIKI_SCRIPT_BINARY,
-	#-- heart of the wiki -- don't try to read this! ;)
+    #-- heart of the wiki -- don't try to read this! ;)
 
-           "wiki_pre_scan_regex" =>	'/
-		(?<![~!])
-		((?:(?:\w+:)*['.EWIKI_CHARS_U.']+['.EWIKI_CHARS_L.']+){2,}[\w\d]*)
-		|\^([-'.EWIKI_CHARS_L.EWIKI_CHARS_U.']{3,})
-		|\[ (?:"[^\]\"]+" | \s+ | [^:\]#]+\|)*  ([^\|\"\[\]\#]+)  (?:\s+ | "[^\]\"]+")* [\]\#] 
-		|(\w{3,9}:\/\/[^?#\s\[\]\'\"\)\,<]+)	/x',
+           "wiki_pre_scan_regex" => '/
+        (?<![~!])
+        ((?:(?:\w+:)*['.EWIKI_CHARS_U.']+['.EWIKI_CHARS_L.']+){2,}[\w\d]*)
+        |\^([-'.EWIKI_CHARS_L.EWIKI_CHARS_U.']{3,})
+        |\[ (?:"[^\]\"]+" | \s+ | [^:\]#]+\|)*  ([^\|\"\[\]\#]+)  (?:\s+ | "[^\]\"]+")* [\]\#] 
+        |(\w{3,9}:\/\/[^?#\s\[\]\'\"\)\,<]+)    /x',
 
            "wiki_link_regex" => "\007 [!~]?(
-		\#?\[[^<>\[\]\n]+\] |
-		\^[-".EWIKI_CHARS_U.EWIKI_CHARS_L."]{3,} |
-		\b([\w]{3,}:)*([".EWIKI_CHARS_U."]+[".EWIKI_CHARS_L."]+){2,}\#?[\w\d]* |
-		([a-z]{2,9}://|mailto:)[^\s\[\]\'\"\)\,<]+ |
-		\w[-_.+\w]+@(\w[-_\w]+[.])+\w{2,}	) \007x",
+        \#?\[[^<>\[\]\n]+\] |
+        \^[-".EWIKI_CHARS_U.EWIKI_CHARS_L."]{3,} |
+        \b([\w]{3,}:)*([".EWIKI_CHARS_U."]+[".EWIKI_CHARS_L."]+){2,}\#?[\w\d]* |
+        ([a-z]{2,9}://|mailto:)[^\s\[\]\'\"\)\,<]+ |
+        \w[-_.+\w]+@(\w[-_\w]+[.])+\w{2,}   ) \007x",
 
-	#-- rendering ruleset
+    #-- rendering ruleset
            "wm_indent" => '<div style="margin-left:15px;" class="indent">',
            "wm_table_defaults" => 'cellpadding="2" border="1" cellspacing="0"',
            "wm_whole_line" => array(),
            "htmlentities" => array(
-		"&" => "&amp;",
-		">" => "&gt;",
-		"<" => "&lt;",
+        "&" => "&amp;",
+        ">" => "&gt;",
+        "<" => "&lt;",
            ),
            "wm_source" => array(
-		"%%%" => "<br />",
-		"\t" => "        ",
-		"\n;:" => "\n      ",   # workaround, replaces the old ;:
+        "%%%" => "<br />",
+        "\t" => "        ",
+        "\n;:" => "\n      ",   # workaround, replaces the old ;:
            ),
            "wm_list" => array(
-		"-" => array('ul type="square"', "", "li"),
-		"*" => array('ul type="circle"', "", "li"),
-		"#" => array("ol", "", "li"),
-		":" => array("dl", "dt", "dd"),
-	#<out># ";" => array("dl", "dt", "dd"),
+        "-" => array('ul type="square"', "", "li"),
+        "*" => array('ul type="circle"', "", "li"),
+        "#" => array("ol", "", "li"),
+        ":" => array("dl", "dt", "dd"),
+    #<out># ";" => array("dl", "dt", "dd"),
            ),
            "wm_style" => array(
-		"'''''" => array("<b><i>", "</i></b>"),
-		"'''" => array("<b>", "</b>"),
-		"___" => array("<i><b>", "</b></i>"),
-		"''" => array("<em>", "</em>"),
-		"__" => array("<strong>", "</strong>"),
-		"^^" => array("<sup>", "</sup>"),
-		"==" => array("<tt>", "</tt>"),
-	#<off>#	"***" => array("<b><i>", "</i></b>"),
-	#<off>#	"###" => array("<big><b>", "</b></big>"),
-		"**" => array("<b>", "</b>"),
-		"##" => array("<big>", "</big>"),
-		"µµ" => array("<small>", "</small>"),
+        "'''''" => array("<b><i>", "</i></b>"),
+        "'''" => array("<b>", "</b>"),
+        "___" => array("<i><b>", "</b></i>"),
+        "''" => array("<em>", "</em>"),
+        "__" => array("<strong>", "</strong>"),
+        "^^" => array("<sup>", "</sup>"),
+        "==" => array("<tt>", "</tt>"),
+    #<off># "***" => array("<b><i>", "</i></b>"),
+    #<off># "###" => array("<big><b>", "</b></big>"),
+        "**" => array("<b>", "</b>"),
+        "##" => array("<big>", "</big>"),
+        "µµ" => array("<small>", "</small>"),
            ),
            "wm_start_end" => array(
            ),
-	#-- rendering plugins
+    #-- rendering plugins
            "format_block" => array(
-		"html" => array("&lt;html&gt;", "&lt;/html&gt;", "html", 0x0000),
-		"htm" => array("&lt;htm&gt;", "&lt;/htm&gt;", "html", 0x0003),
-		"code" => array("&lt;code&gt;", "&lt;/code&gt;", false, 0x0000),
-		"pre" => array("&lt;pre&gt;", "&lt;/pre&gt;", false, 0x003F),
-		"comment" => array("\n&lt;!--", "--&gt;", false, 0x0030),
-		#  "verbatim" => array("&lt;verbatim&gt;", "&lt;/verbatim&gt;", false, 0x0000),
+        "html" => array("&lt;html&gt;", "&lt;/html&gt;", "html", 0x0000),
+        "htm" => array("&lt;htm&gt;", "&lt;/htm&gt;", "html", 0x0003),
+        "code" => array("&lt;code&gt;", "&lt;/code&gt;", false, 0x0000),
+        "pre" => array("&lt;pre&gt;", "&lt;/pre&gt;", false, 0x003F),
+        "comment" => array("\n&lt;!--", "--&gt;", false, 0x0030),
+        #  "verbatim" => array("&lt;verbatim&gt;", "&lt;/verbatim&gt;", false, 0x0000),
            ),
            "format_params" => array(
-		"scan_links" => 1,
-		"html" => EWIKI_ALLOW_HTML,
-		"mpi" => 1,
+        "scan_links" => 1,
+        "html" => EWIKI_ALLOW_HTML,
+        "mpi" => 1,
            ),
         );
         foreach ($ewiki_config_DEFAULTSTMP as $set => $val) {
@@ -292,9 +292,9 @@
         }
         $ewiki_config_DEFAULTSTMP = $valv = $vali = $val = NULL;
 
-	#-- init stuff, autostarted parts
-	ksort($ewiki_plugins["init"]);
-	if ($pf_a = $ewiki_plugins["init"]) foreach ($pf_a as $pf) {
+    #-- init stuff, autostarted parts
+    ksort($ewiki_plugins["init"]);
+    if ($pf_a = $ewiki_plugins["init"]) foreach ($pf_a as $pf) {
            // Binary Handling starts here
            #### MOODLE CHANGE TO BE COMPATIBLE WITH PHP 4.1
            #if(headers_sent($file,$line)) {
@@ -304,52 +304,52 @@
            }
            $pf($GLOBALS);
         }
-	unset($ewiki_plugins["init"]);
+    unset($ewiki_plugins["init"]);
 
-	#-- text  (never remove the "C" or "en" sections!)
+    #-- text  (never remove the "C" or "en" sections!)
         #
-	$ewiki_t["C"] = @array_merge(@$ewiki_t["C"], array(
+    $ewiki_t["C"] = @array_merge(@$ewiki_t["C"], array(
            "DATE" => "%a, %d %b %G %T %Z",
-	   "EDIT_TEXTAREA_RESIZE_JS" => '<a href="javascript:ewiki_enlarge()" style="text-decoration:none">+</a><script type="text/javascript"><!--'."\n".'function ewiki_enlarge() {var ta=document.getElementById("ewiki_content");ta.style.width=((ta.cols*=1.1)*10).toString()+"px";ta.style.height=((ta.rows*=1.1)*30).toString()+"px";}'."\n".'//--></script>',
+       "EDIT_TEXTAREA_RESIZE_JS" => '<a href="javascript:ewiki_enlarge()" style="text-decoration:none">+</a><script type="text/javascript"><!--'."\n".'function ewiki_enlarge() {var ta=document.getElementById("ewiki_content");ta.style.width=((ta.cols*=1.1)*10).toString()+"px";ta.style.height=((ta.rows*=1.1)*30).toString()+"px";}'."\n".'//--></script>',
         ));
         #
-	$ewiki_t["en"] = @array_merge(@$ewiki_t["en"], array(
-	   "EDITTHISPAGE" => "EditThisPage",
+    $ewiki_t["en"] = @array_merge(@$ewiki_t["en"], array(
+       "EDITTHISPAGE" => "EditThisPage",
            "APPENDTOPAGE" => "Add to",
-	   "BACKLINKS" => "BackLinks",
-	   "PAGESLINKINGTO" => "Pages linking to \$title",
-	   "PAGEHISTORY" => "PageInfo",
-	   "INFOABOUTPAGE" => "Information about page",
-	   "LIKEPAGES" => "Pages like this",
-	   "NEWESTPAGES" => "Newest Pages",
-	   "LASTCHANGED" => "last changed on %c",
-	   "DOESNOTEXIST" => "This page does not yet exist, please click on EditThisPage if you'd like to create it.",
-	   "DISABLEDPAGE" => "This page is currently not available.",
-	   "ERRVERSIONSAVE" => "Sorry, while you edited this page someone else
-		did already save a changed version. Please go back to the
-		previous screen and copy your changes to your computers
-		clipboard to insert it again after you reload the edit
-		screen.",
-	   "ERRORSAVING" => "An error occoured while saving your changes. Please try again.",
-	   "THANKSFORCONTRIBUTION" => "Thank you for your contribution!",
-	   "CANNOTCHANGEPAGE" => "This page cannot be changed.",
-	   "OLDVERCOMEBACK" => "Make this old version come back to replace the current one",
-	   "PREVIEW" => "Preview",
-	   "SAVE" => "Save",
-	   "CANCEL_EDIT" => "CancelEditing",
-	   "UPLOAD_PICTURE_BUTTON" => "upload picture &gt;&gt;&gt;",
-	   "EDIT_FORM_1" => "<a href=\"".EWIKI_SCRIPT."GoodStyle\">GoodStyle</a> is to
-		write what comes to your mind. Don't care about how it
-		looks too much now. You can add <a href=\"".EWIKI_SCRIPT."WikiMarkup\">WikiMarkup</a>
-		also later if you think it is necessary.<br />",
-	   "EDIT_FORM_2" => "<br />Please do not write things, which may make other
-		people angry. And please keep in mind that you are not all that
-		anonymous in the internet (find out more about your computers
-		'<a href=\"http://google.com/search?q=my+computers+IP+address\">IP address</a>' at Google).",
-	   "BIN_IMGTOOLARGE" => "Image file is too large!",
-	   "BIN_NOIMG" => "This is no image file (inacceptable file format)!",
-	   "FORBIDDEN" => "You are not authorized to access this page.",
-	));
+       "BACKLINKS" => "BackLinks",
+       "PAGESLINKINGTO" => "Pages linking to \$title",
+       "PAGEHISTORY" => "PageInfo",
+       "INFOABOUTPAGE" => "Information about page",
+       "LIKEPAGES" => "Pages like this",
+       "NEWESTPAGES" => "Newest Pages",
+       "LASTCHANGED" => "last changed on %c",
+       "DOESNOTEXIST" => "This page does not yet exist, please click on EditThisPage if you'd like to create it.",
+       "DISABLEDPAGE" => "This page is currently not available.",
+       "ERRVERSIONSAVE" => "Sorry, while you edited this page someone else
+        did already save a changed version. Please go back to the
+        previous screen and copy your changes to your computers
+        clipboard to insert it again after you reload the edit
+        screen.",
+       "ERRORSAVING" => "An error occoured while saving your changes. Please try again.",
+       "THANKSFORCONTRIBUTION" => "Thank you for your contribution!",
+       "CANNOTCHANGEPAGE" => "This page cannot be changed.",
+       "OLDVERCOMEBACK" => "Make this old version come back to replace the current one",
+       "PREVIEW" => "Preview",
+       "SAVE" => "Save",
+       "CANCEL_EDIT" => "CancelEditing",
+       "UPLOAD_PICTURE_BUTTON" => "upload picture &gt;&gt;&gt;",
+       "EDIT_FORM_1" => "<a href=\"".EWIKI_SCRIPT."GoodStyle\">GoodStyle</a> is to
+        write what comes to your mind. Don't care about how it
+        looks too much now. You can add <a href=\"".EWIKI_SCRIPT."WikiMarkup\">WikiMarkup</a>
+        also later if you think it is necessary.<br />",
+       "EDIT_FORM_2" => "<br />Please do not write things, which may make other
+        people angry. And please keep in mind that you are not all that
+        anonymous in the internet (find out more about your computers
+        '<a href=\"http://google.com/search?q=my+computers+IP+address\">IP address</a>' at Google).",
+       "BIN_IMGTOOLARGE" => "Image file is too large!",
+       "BIN_NOIMG" => "This is no image file (inacceptable file format)!",
+       "FORBIDDEN" => "You are not authorized to access this page.",
+    ));
         #
         $ewiki_t["es"] = @array_merge(@$ewiki_t["es"], array(
            "EDITTHISPAGE" => "EditarEstaPágina",
@@ -363,10 +363,10 @@
            "DOESNOTEXIST" => "Esta página aún no existe, por favor eliga EditarEstaPágina si desea crearla.",
            "DISABLEDPAGE" => "Esta página no está disponible en este momento.",
            "ERRVERSIONSAVE" => "Disculpe, mientras editaba esta página alguién más
-		salvó una versión modificada. Por favor regrese a
-		a la pantalla anterior y copie sus cambios a su computador
-		para insertalos nuevamente después de que cargue
-		la pantalla de edición.",
+        salvó una versión modificada. Por favor regrese a
+        a la pantalla anterior y copie sus cambios a su computador
+        para insertalos nuevamente después de que cargue
+        la pantalla de edición.",
            "ERRORSAVING" => "Ocurrió un error mientras se salvavan sus cambios. Por favor intente de nuevo.",
            "THANKSFORCONTRIBUTION" => "Gracias por su contribución!",
            "CANNOTCHANGEPAGE" => "Esta página no puede ser modificada.",
@@ -376,88 +376,88 @@
            "CANCEL_EDIT" => "CancelarEdición",
            "UPLOAD_PICTURE_BUTTON" => "subir gráfica &gt;&gt;&gt;",
            "EDIT_FORM_1" => "<a href=\"".EWIKI_SCRIPT."BuenEstilo\">BuenEstilo</a> es
-		escribir lo que viene a su mente. No se preocupe mucho
-		por la apariencia. También puede agregar <a href=\"".EWIKI_SCRIPT."ReglasDeMarcadoWiki\">ReglasDeMarcadoWiki</a>
-		más adelante si piensa que es necesario.<br />",
+        escribir lo que viene a su mente. No se preocupe mucho
+        por la apariencia. También puede agregar <a href=\"".EWIKI_SCRIPT."ReglasDeMarcadoWiki\">ReglasDeMarcadoWiki</a>
+        más adelante si piensa que es necesario.<br />",
            "EDIT_FORM_2" => "<br />Por favor no escriba cosas, que puedan
-		enfadar a otras personas. Y por favor tenga en mente que
-		usted no es del todo anónimo en Internet 
-		(encuentre más sobre 
-		'<a href=\"http://google.com/search?q=my+computers+IP+address\">IP address</a>' de su computador con Google).",
+        enfadar a otras personas. Y por favor tenga en mente que
+        usted no es del todo anónimo en Internet 
+        (encuentre más sobre 
+        '<a href=\"http://google.com/search?q=my+computers+IP+address\">IP address</a>' de su computador con Google).",
            "BIN_IMGTOOLARGE" => "¡La gráfica es demasiado grande!",
            "BIN_NOIMG" => "¡No es un archivo con una gráfica (formato de archivo inaceptable)!",
            "FORBIDDEN" => "No está autorizado para acceder a esta página.",
         ));
         #
-	$ewiki_t["de"] = @array_merge(@$ewiki_t["de"], array(
-	   "EDITTHISPAGE" => "DieseSeiteÄndern",
+    $ewiki_t["de"] = @array_merge(@$ewiki_t["de"], array(
+       "EDITTHISPAGE" => "DieseSeiteÄndern",
            "APPENDTOPAGE" => "Ergänze",
-	   "BACKLINKS" => "ZurückLinks",
-	   "PAGESLINKINGTO" => "Verweise zur Seite \$title",
-	   "PAGEHISTORY" => "SeitenInfo",
-	   "INFOABOUTPAGE" => "Informationen über Seite",
-	   "LIKEPAGES" => "Ähnliche Seiten",
-	   "NEWESTPAGES" => "Neueste Seiten",
-	   "LASTCHANGED" => "zuletzt geändert am %d.%m.%Y um %H:%M",
-	   "DISABLEDPAGE" => "Diese Seite kann momentan nicht angezeigt werden.",
-	   "ERRVERSIONSAVE" => "Entschuldige, aber während Du an der Seite
-		gearbeitet hast, hat bereits jemand anders eine geänderte
-		Fassung gespeichert. Damit nichts verloren geht, browse bitte
-		zurück und speichere Deine Änderungen in der Zwischenablage
-		(Bearbeiten->Kopieren) um sie dann wieder an der richtigen
-		Stelle einzufügen, nachdem du die EditBoxSeite nocheinmal
-		geladen hast.<br />
-		Vielen Dank für Deine Mühe.",
-	   "ERRORSAVING" => "Beim Abspeichern ist ein Fehler aufgetreten. Bitte versuche es erneut.",
-	   "THANKSFORCONTRIBUTION" => "Vielen Dank für Deinen Beitrag!",
-	   "CANNOTCHANGEPAGE" => "Diese Seite kann nicht geändert werden.",
-	   "OLDVERCOMEBACK" => "Diese alte Version der Seite wieder zur Aktuellen machen",
-	   "PREVIEW" => "Vorschau",
-	   "SAVE" => "Speichern",
-	   "CANCEL_EDIT" => "ÄnderungenVerwerfen",
-	   "UPLOAD_PICTURE_BUTTON" => "Bild hochladen &gt;&gt;&gt;",
-	   "EDIT_FORM_1" => "<a href=\"".EWIKI_SCRIPT."GuterStil\">GuterStil</a> ist es,
-		ganz einfach das zu schreiben, was einem gerade in den
-		Sinn kommt. Du solltest dich jetzt noch nicht so sehr
-		darum kümmern, wie die Seite aussieht. Du kannst später
-		immernoch zurückkommen und den Text mit <a href=\"".EWIKI_SCRIPT."FormatierungsRegeln\">WikiTextFormatierungsRegeln</a>
-		aufputschen.<br />",
-	   "EDIT_FORM_2" => "<br />Bitte schreib keine Dinge, die andere Leute
-		verärgern könnten. Und bedenke auch, daß es schnell auf
-		dich zurückfallen kann wenn du verschiedene andere Dinge sagst (mehr Informationen zur
-		'<a href=\"http://google.de/search?q=computer+IP+adresse\">IP Adresse</a>'
-		deines Computers findest du bei Google).",
-	));
+       "BACKLINKS" => "ZurückLinks",
+       "PAGESLINKINGTO" => "Verweise zur Seite \$title",
+       "PAGEHISTORY" => "SeitenInfo",
+       "INFOABOUTPAGE" => "Informationen über Seite",
+       "LIKEPAGES" => "Ähnliche Seiten",
+       "NEWESTPAGES" => "Neueste Seiten",
+       "LASTCHANGED" => "zuletzt geändert am %d.%m.%Y um %H:%M",
+       "DISABLEDPAGE" => "Diese Seite kann momentan nicht angezeigt werden.",
+       "ERRVERSIONSAVE" => "Entschuldige, aber während Du an der Seite
+        gearbeitet hast, hat bereits jemand anders eine geänderte
+        Fassung gespeichert. Damit nichts verloren geht, browse bitte
+        zurück und speichere Deine Änderungen in der Zwischenablage
+        (Bearbeiten->Kopieren) um sie dann wieder an der richtigen
+        Stelle einzufügen, nachdem du die EditBoxSeite nocheinmal
+        geladen hast.<br />
+        Vielen Dank für Deine Mühe.",
+       "ERRORSAVING" => "Beim Abspeichern ist ein Fehler aufgetreten. Bitte versuche es erneut.",
+       "THANKSFORCONTRIBUTION" => "Vielen Dank für Deinen Beitrag!",
+       "CANNOTCHANGEPAGE" => "Diese Seite kann nicht geändert werden.",
+       "OLDVERCOMEBACK" => "Diese alte Version der Seite wieder zur Aktuellen machen",
+       "PREVIEW" => "Vorschau",
+       "SAVE" => "Speichern",
+       "CANCEL_EDIT" => "ÄnderungenVerwerfen",
+       "UPLOAD_PICTURE_BUTTON" => "Bild hochladen &gt;&gt;&gt;",
+       "EDIT_FORM_1" => "<a href=\"".EWIKI_SCRIPT."GuterStil\">GuterStil</a> ist es,
+        ganz einfach das zu schreiben, was einem gerade in den
+        Sinn kommt. Du solltest dich jetzt noch nicht so sehr
+        darum kümmern, wie die Seite aussieht. Du kannst später
+        immernoch zurückkommen und den Text mit <a href=\"".EWIKI_SCRIPT."FormatierungsRegeln\">WikiTextFormatierungsRegeln</a>
+        aufputschen.<br />",
+       "EDIT_FORM_2" => "<br />Bitte schreib keine Dinge, die andere Leute
+        verärgern könnten. Und bedenke auch, daß es schnell auf
+        dich zurückfallen kann wenn du verschiedene andere Dinge sagst (mehr Informationen zur
+        '<a href=\"http://google.de/search?q=computer+IP+adresse\">IP Adresse</a>'
+        deines Computers findest du bei Google).",
+    ));
 
-	#-- InterWiki:Links
-	$ewiki_config["interwiki"] = @array_merge(
-	@$ewiki_config["interwiki"],
-	array(
+    #-- InterWiki:Links
+    $ewiki_config["interwiki"] = @array_merge(
+    @$ewiki_config["interwiki"],
+    array(
            "javascript" => "",  # this actually protects from javascript: links
            "url" => "",
 #          "self" => "this",
            "this" => EWIKI_SCRIPT,  # better was absolute _URL to ewiki wrapper
            "jump" => "",
-	   "ErfurtWiki" => "http://erfurtwiki.sourceforge.net/?id=",
-	   "InterWiki" => "InterWikiSearch",
-	   "InterWikiSearch" => "http://sunir.org/apps/meta.pl?",
-	   "Wiki" => "WardsWiki",
-	   "WardsWiki" => "http://www.c2.com/cgi/wiki?",
-	   "WikiFind" => "http://c2.com/cgi/wiki?FindPage&amp;value=",
-	   "WikiPedia" => "http://www.wikipedia.com/wiki.cgi?",
-	   "MeatBall" => "MeatballWiki",
-	   "MeatballWiki" => "http://www.usemod.com/cgi-bin/mb.pl?",
-	   "UseMod"       => "http://www.usemod.com/cgi-bin/wiki.pl?",
-	   "PhpWiki" => "http://phpwiki.sourceforge.net/phpwiki/index.php3?",
-	   "LinuxWiki" => "http://linuxwiki.de/",
-	   "OpenWiki" => "http://openwiki.com/?",
-	   "Tavi" => "http://andstuff.org/tavi/",
-	   "TWiki" => "http://twiki.sourceforge.net/cgi-bin/view/",
-	   "MoinMoin" => "http://www.purl.net/wiki/moin/",
-	   "Google" => "http://google.com/search?q=",
-	   "ISBN" => "http://www.amazon.com/exec/obidos/ISBN=",
-	   "icq" => "http://www.icq.com/",
-	));
+       "ErfurtWiki" => "http://erfurtwiki.sourceforge.net/?id=",
+       "InterWiki" => "InterWikiSearch",
+       "InterWikiSearch" => "http://sunir.org/apps/meta.pl?",
+       "Wiki" => "WardsWiki",
+       "WardsWiki" => "http://www.c2.com/cgi/wiki?",
+       "WikiFind" => "http://c2.com/cgi/wiki?FindPage&amp;value=",
+       "WikiPedia" => "http://www.wikipedia.com/wiki.cgi?",
+       "MeatBall" => "MeatballWiki",
+       "MeatballWiki" => "http://www.usemod.com/cgi-bin/mb.pl?",
+       "UseMod"       => "http://www.usemod.com/cgi-bin/wiki.pl?",
+       "PhpWiki" => "http://phpwiki.sourceforge.net/phpwiki/index.php3?",
+       "LinuxWiki" => "http://linuxwiki.de/",
+       "OpenWiki" => "http://openwiki.com/?",
+       "Tavi" => "http://andstuff.org/tavi/",
+       "TWiki" => "http://twiki.sourceforge.net/cgi-bin/view/",
+       "MoinMoin" => "http://www.purl.net/wiki/moin/",
+       "Google" => "http://google.com/search?q=",
+       "ISBN" => "http://www.amazon.com/exec/obidos/ISBN=",
+       "icq" => "http://www.icq.com/",
+    ));
 
 
 
@@ -2091,7 +2091,7 @@ function ewiki_format (
         global $ewiki_use_editor, $ewiki_editor_content;
         if(!($ewiki_use_editor && $ewiki_editor_content)) {
       ##### END MOODLE ADDITION #####
-	      ewiki_render_wiki_links($ooo[$in][0]);
+          ewiki_render_wiki_links($ooo[$in][0]);
       ##### BEGIN MOODLE ADDITION #####
          }
       ##### END MOODLE ADDITION #####
@@ -2422,7 +2422,7 @@ function ewiki_link_regex_callback($uu, $force_noimg=0) {
          $str = ($obj ? '<embed width="70%"' : '<img') . ' src="' . $href . '"' .
                 ' alt="' . ($title) . '"' .
                 (@$states["titled"] ? ' title="' . ($title) . '"' : '').
-		($x && $y ? " width=\"$x\" height=\"$y\"" : "") .
+        ($x && $y ? " width=\"$x\" height=\"$y\"" : "") .
                 $align . " />" . ($obj ? "</embed>" : "");
                                             # htmlentities($title)
       }
@@ -2977,8 +2977,8 @@ function ewiki_array($array, $key=false, $am=1, $ci=EWIKI_CASE_INSENSITIVE) {
             $r[$i] = $v;
          }
          else {
-            $r[$i] .= $v;	//RET: doubling for images`meta won't happen
-         }			// but should be "+" here for integers
+            $r[$i] .= $v;   //RET: doubling for images`meta won't happen
+         }          // but should be "+" here for integers
       }
       $array = &$r;
    }
@@ -3008,7 +3008,7 @@ function ewiki_author($defstr="") {
 
    (empty($author)) && (
       ($author = $defstr) ||
-      ($author = $_SERVER["HTTP_FROM"]) ||	// RFC2068 sect 14.22
+      ($author = $_SERVER["HTTP_FROM"]) ||  // RFC2068 sect 14.22
       ($author = $_SERVER["PHP_AUTH_USER"])
    );
 
@@ -3418,7 +3418,7 @@ function ewiki_database_mysql($action, &$args, $sw1, $sw2) {
           existing entries (using WRITE); returns 0 on failure and 1 if
           saved correctly.
       */
-      case "OVERWRITE":		// fall-through
+      case "OVERWRITE":     // fall-through
          $COMMAND = "REPLACE";
 
       case "WRITE":

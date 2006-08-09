@@ -2,7 +2,7 @@
 
     require_once("../../config.php");
     require_once('locallib.php');
-	
+    
     $id = optional_param('id', '', PARAM_INT);       // Course Module ID, or
     $a = optional_param('a', '', PARAM_INT);         // scorm ID
     $scoid = required_param('scoid', PARAM_INT);  // sco ID

@@ -55,7 +55,7 @@
 
     require_login($course->id, false, $cm);
 
-	$context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
     $strexercises = get_string("modulenameplural", "exercise");
     $strexercise  = get_string("modulename", "exercise");

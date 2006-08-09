@@ -38,7 +38,7 @@
 
     require_login($course->id, false, $cm);
 
-	$context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
     // ...log activity...
     add_to_log($course->id, "exercise", "view", "view.php?id=$cm->id", $exercise->id, $cm->id);

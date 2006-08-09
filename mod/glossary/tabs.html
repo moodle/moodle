@@ -23,8 +23,8 @@
     }
     if (has_capability('mod/glossary:import', $context->id)) {
         $data[GLOSSARY_IMPORT_VIEW]->caption = get_string("importentries", "glossary");
-    	$data[GLOSSARY_IMPORT_VIEW]->link = "import.php?id=$cm->id";
-	}
+        $data[GLOSSARY_IMPORT_VIEW]->link = "import.php?id=$cm->id";
+    }
         
     if (has_capability('mod/glossary:export', $context->id)) {
         $data[GLOSSARY_EXPORT_VIEW]->caption = get_string("exportentries", "glossary");     
@@ -39,8 +39,8 @@
     $data[GLOSSARY_CATEGORY_VIEW]->link = "view.php?id=$id&amp;mode=cat";
     $data[GLOSSARY_AUTHOR_VIEW]->link = "view.php?id=$id&amp;mode=author";
 
-	if (has_capability('mod/glossary:approve', $context->id)) {
-	    $data[GLOSSARY_APPROVAL_VIEW]->caption = get_string("waitingapproval", "glossary");
+    if (has_capability('mod/glossary:approve', $context->id)) {
+        $data[GLOSSARY_APPROVAL_VIEW]->caption = get_string("waitingapproval", "glossary");
         $data[GLOSSARY_APPROVAL_VIEW]->link = "";
 
         $hiddenentries = get_records_select("glossary_entries","glossaryid  = $glossary->id and approved = 0");

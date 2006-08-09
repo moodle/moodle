@@ -1143,7 +1143,7 @@ function quiz_upgrade($oldversion) {
     }
 
     if ($oldversion < 2006032100) {
-    	// change from the old questiontype numbers to using the questiontype names
+        // change from the old questiontype numbers to using the questiontype names
         table_column('question', 'qtype', 'qtype',  'varchar', 20, '', '', 'not null');
         set_field('question', 'qtype', 'shortanswer', 'qtype', 1);
         set_field('question', 'qtype', 'truefalse', 'qtype', 2);
@@ -1362,11 +1362,11 @@ function quiz_upgrade($oldversion) {
         modify_database('', 'ALTER TABLE prefix_question_multichoice DROP CONSTRAINT prefix_quiz_multichoice_pkey');
         modify_database('', 'ALTER TABLE prefix_question_multichoice ADD CONSTRAINT prefix_question_multichoice_pkey PRIMARY KEY (id)');
 
-        modify_database('', 'ALTER TABLE prefix_question_rqp_states	DROP CONSTRAINT prefix_quiz_rqp_states_pkey');
-        modify_database('', 'ALTER TABLE prefix_question_rqp_states	ADD CONSTRAINT prefix_question_rqp_states_pkey PRIMARY KEY (id)');
+        modify_database('', 'ALTER TABLE prefix_question_rqp_states DROP CONSTRAINT prefix_quiz_rqp_states_pkey');
+        modify_database('', 'ALTER TABLE prefix_question_rqp_states ADD CONSTRAINT prefix_question_rqp_states_pkey PRIMARY KEY (id)');
 
-        modify_database('', 'ALTER TABLE prefix_question_categories	DROP CONSTRAINT prefix_quiz_categories_pkey');
-        modify_database('', 'ALTER TABLE prefix_question_categories	ADD CONSTRAINT prefix_question_categories_pkey PRIMARY KEY (id)');
+        modify_database('', 'ALTER TABLE prefix_question_categories DROP CONSTRAINT prefix_quiz_categories_pkey');
+        modify_database('', 'ALTER TABLE prefix_question_categories ADD CONSTRAINT prefix_question_categories_pkey PRIMARY KEY (id)');
 
         modify_database('', 'ALTER TABLE prefix_question_shortanswer DROP CONSTRAINT prefix_quiz_shortanswer_pkey');
         modify_database('', 'ALTER TABLE prefix_question_shortanswer ADD CONSTRAINT prefix_question_shortanswer_pkey PRIMARY KEY (id)');
@@ -1377,8 +1377,8 @@ function quiz_upgrade($oldversion) {
         modify_database('', 'ALTER TABLE prefix_question_sessions DROP CONSTRAINT prefix_quiz_newest_states_pkey');
         modify_database('', 'ALTER TABLE prefix_question_sessions ADD CONSTRAINT prefix_question_sessions_pkey PRIMARY KEY (id)');
 
-        modify_database('', 'ALTER TABLE prefix_question_calculated	DROP CONSTRAINT prefix_quiz_calculated_pkey');
-        modify_database('', 'ALTER TABLE prefix_question_calculated	ADD CONSTRAINT prefix_question_calculated_pkey PRIMARY KEY (id)');
+        modify_database('', 'ALTER TABLE prefix_question_calculated DROP CONSTRAINT prefix_quiz_calculated_pkey');
+        modify_database('', 'ALTER TABLE prefix_question_calculated ADD CONSTRAINT prefix_question_calculated_pkey PRIMARY KEY (id)');
 
         modify_database('', 'ALTER TABLE prefix_question_answers DROP CONSTRAINT prefix_quiz_answers_pkey');
         modify_database('', 'ALTER TABLE prefix_question_answers ADD CONSTRAINT prefix_question_answers_pkey PRIMARY KEY (id)');

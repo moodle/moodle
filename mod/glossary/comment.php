@@ -38,9 +38,9 @@
 
     require_login($course->id, false, $cm);
     
-	$context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     
-	if (isguest()) {
+    if (isguest()) {
         error('Guests are not allowed to post comments', $_SERVER['HTTP_REFERER']);
     }
     add_to_log($course->id, 'glossary', 'view', "view.php?id=$cm->id", "$glossary->id",$cm->id);

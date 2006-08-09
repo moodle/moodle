@@ -29,8 +29,8 @@
     }
 
     require_login($course->id, false, $cm);
-	$context = get_context_instance(CONTEXT_MODULE, $cm->id);
-	
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    
     if (isguest()) {
         error("Guests are not allowed to edit or delete entries", $_SERVER["HTTP_REFERER"]);
     }

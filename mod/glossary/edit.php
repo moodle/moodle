@@ -166,7 +166,7 @@ if ( $confirm ) {
             error("Could not update this glossary entry because this concept already exist.");
         }
     } else {
-		
+        
         $newentry->userid = $USER->id;
         $newentry->timecreated = $timenow;
         $newentry->sourceglossaryid = 0;
@@ -332,7 +332,7 @@ $tab = GLOSSARY_ADDENTRY_VIEW;
 include("tabs.html");
 
 if (!$e) {
-	has_capability('glossary_write', $context->id, true);  
+    has_capability('glossary_write', $context->id, true);  
 }
 
 include("edit.html");

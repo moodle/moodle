@@ -33,7 +33,7 @@
 
     if ($form = data_submitted()) {
         $timenow = time();
-		if (has_capability('mod/choice:deleteresponses', $context->id)) {
+        if (has_capability('mod/choice:deleteresponses', $context->id)) {
         //if (isteacher($course->id, $USER->id)) {
             if ($action == 'delete') { //some responses need to be deleted     
                 choice_delete_responses($attemptids); //delete responses.
@@ -59,7 +59,7 @@
                  "<a href=\"index.php?id=$course->id\">$strchoices</a> -> ".format_string($choice->name), "", "", true,
                   update_module_button($cm->id, $course->id, $strchoice), navmenu($course, $cm));
                                                       
-	if (has_capability('mod/choice:readresponses', $context->id)) {
+    if (has_capability('mod/choice:readresponses', $context->id)) {
     //if (isteacher($course->id)) {
         choice_show_reportlink($choice, $course->id, $cm->id);
     } else if (!$cm->visible) {
@@ -102,7 +102,7 @@
         ( $choice->showresults == CHOICE_SHOWRESULTS_AFTER_ANSWER and $current ) or
         ( $choice->showresults == CHOICE_SHOWRESULTS_AFTER_CLOSE and $choice->timeclose <= time() ) )  {
 
-		choice_show_results($choice, $course, $cm);
+        choice_show_results($choice, $course, $cm);
     }
 
     print_footer($course);

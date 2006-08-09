@@ -43,9 +43,9 @@
 
     require_course_login($course, true, $cm);
     
-	$context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     
-	add_to_log($course->id, 'chat', 'view', "view.php?id=$cm->id", $chat->id, $cm->id);
+    add_to_log($course->id, 'chat', 'view', "view.php?id=$cm->id", $chat->id, $cm->id);
 
 // Initialize $PAGE, compute blocks
 
@@ -76,7 +76,7 @@
 
     echo '<td id="middle-column">';
     
-	if ($chat->studentlogs or has_capability('mod/chat:readlog',$context->id)) {
+    if ($chat->studentlogs or has_capability('mod/chat:readlog',$context->id)) {
     //if (($chat->studentlogs or isteacher($course->id)) and !isguest()) {
         echo '<div class="reportlink">';
         echo "<a href=\"report.php?id=$cm->id\">".

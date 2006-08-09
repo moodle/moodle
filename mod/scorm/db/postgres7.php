@@ -205,7 +205,7 @@ function scorm_upgrade($oldversion) {
             foreach($scorms as $scorm) {
                 if ($scorm->browsemode = 1) {
                     $scorm->hidebrowse = 0;
-            	} else {
+                } else {
                     $scorm->hidebrowse = 1;
                 }
                 update_record('scorm',$scorm);

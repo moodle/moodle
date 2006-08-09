@@ -30,7 +30,7 @@
     }
     
     $cm = data_get_cm($data);
-	$context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
     $inactive = NULL;
     $row = array();
@@ -46,7 +46,7 @@
     //if (isloggedin() and !isguest()) {
     if (isloggedin()) {
         if (has_capability('mod/data:writeentry', $context->id)) { // took out participation list here!
-			$addstring = empty($editentry) ? get_string('add', 'data') : get_string('editentry', 'data');
+            $addstring = empty($editentry) ? get_string('add', 'data') : get_string('editentry', 'data');
             $row[] = new tabobject('add', $CFG->wwwroot.'/mod/data/edit.php?d='.$data->id, $addstring, '', true);
         }
         if (has_capability('mod/data:managetemplates', $context->id)) {

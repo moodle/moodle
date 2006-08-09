@@ -112,10 +112,10 @@ function scorm_update_instance($scorm) {
 
     // Check if scorm manifest needs to be reparsed
     if ($scorm->launch == 0) {
-		//$f = "D:\\test.txt";
-		//@$ft = fopen($f,"a");
-		//fwrite($ft,"\n Xu ly trong update trong lib.php \n");
-		//fwrite($ft,"\n Lauch co gia tri \n".($scorm->launch));
+        //$f = "D:\\test.txt";
+        //@$ft = fopen($f,"a");
+        //fwrite($ft,"\n Xu ly trong update trong lib.php \n");
+        //fwrite($ft,"\n Lauch co gia tri \n".($scorm->launch));
 
         // Delete old related records
         delete_records('scorm_scoes','scorm',$scorm->id);
@@ -124,9 +124,9 @@ function scorm_update_instance($scorm) {
         delete_records('scorm_sequencing_rolluprules','scormid',$scorm->id);
         delete_records('scorm_sequencing_rolluprule','scormid',$scorm->id);
         delete_records('scorm_sequencing_rollupruleconditions','scormid',$scorm->id);
-        delete_records('scorm_sequencing_rolluprulecondition','scormid',$scorm->id);				
+        delete_records('scorm_sequencing_rolluprulecondition','scormid',$scorm->id);                
         delete_records('scorm_sequencing_ruleconditions','scormid',$scorm->id);
-        delete_records('scorm_sequencing_rulecondition','scormid',$scorm->id);				
+        delete_records('scorm_sequencing_rulecondition','scormid',$scorm->id);              
 
         
         $scorm->dir = $CFG->dataroot.'/'.$scorm->course.'/moddata/scorm';
@@ -193,7 +193,7 @@ function scorm_delete_instance($id) {
     }
     if (! delete_records('scorm_sequencing_ruleconditions', 'scormid', $scorm->id)) {
         $result = false;
-    }		
+    }       
     return $result;
 }
 
@@ -220,8 +220,8 @@ function scorm_user_outline($course, $user, $mod, $scorm) {
         require_once('locallib.php');
         foreach ($scoes as $sco) {
             if ($sco->launch!='') {
-		$scores->count++;
-		if ($userdata = scorm_get_tracks($sco->id, $user->id)) {
+        $scores->count++;
+        if ($userdata = scorm_get_tracks($sco->id, $user->id)) {
                     if (!isset($scores->{$userdata->status})) {
                         $scores->{$userdata->status} = 1;
                     } else {    
@@ -240,7 +240,7 @@ function scorm_user_outline($course, $user, $mod, $scorm) {
         }
         switch ($scorm->grademethod) {
             case GRADEHIGHEST:
-		if ($scores->values > 0) {
+        if ($scores->values > 0) {
                     $return->info = get_string('score','scorm').':&nbsp;'.$scores->max;
                     $return->time = $scores->lastmodify;
                 }
@@ -261,30 +261,30 @@ function scorm_user_outline($course, $user, $mod, $scorm) {
                 $return->info = '';
                 $scores->notattempted = $scores->count;
                 if (isset($scores->completed)) {
-		    $return->info .= get_string('completed','scorm').':&nbsp;'.$scores->completed.'<br />';
+            $return->info .= get_string('completed','scorm').':&nbsp;'.$scores->completed.'<br />';
                     $scores->notattempted -= $scores->completed;
                 }
                 if (isset($scores->passed)) {
-		    $return->info .= get_string('passed','scorm').':&nbsp;'.$scores->passed.'<br />';
+            $return->info .= get_string('passed','scorm').':&nbsp;'.$scores->passed.'<br />';
                     $scores->notattempted -= $scores->passed;
                 }
                 if (isset($scores->failed)) {
-		    $return->info .= get_string('failed','scorm').':&nbsp;'.$scores->failed.'<br />';
+            $return->info .= get_string('failed','scorm').':&nbsp;'.$scores->failed.'<br />';
                     $scores->notattempted -= $scores->failed;
                 }
                 if (isset($scores->incomplete)) {
-		    $return->info .= get_string('incomplete','scorm').':&nbsp;'.$scores->incomplete.'<br />';
+            $return->info .= get_string('incomplete','scorm').':&nbsp;'.$scores->incomplete.'<br />';
                     $scores->notattempted -= $scores->incomplete;
                 }
                 if (isset($scores->browsed)) {
-		    $return->info .= get_string('browsed','scorm').':&nbsp;'.$scores->browsed.'<br />';
+            $return->info .= get_string('browsed','scorm').':&nbsp;'.$scores->browsed.'<br />';
                     $scores->notattempted -= $scores->browsed;
                 }
                 $return->time = $scores->lastmodify;
                 if ($return->info == '') {
                     $return = NULL;
                 } else {
-		    $return->info .= get_string('notattempted','scorm').':&nbsp;'.$scores->notattempted.'<br />';
+            $return->info .= get_string('notattempted','scorm').':&nbsp;'.$scores->notattempted.'<br />';
                 }
             break;
         }
@@ -422,7 +422,7 @@ function scorm_user_complete($course, $user, $mod, $scorm) {
         echo get_string('report','scorm').":<br />\n";
         echo $report;
     } else {
-    	print_string('noactivity','scorm');
+        print_string('noactivity','scorm');
     }
 
     return true;

@@ -26,11 +26,11 @@
     }
 
     require_login($course->id);
-	
-	$cm = data_get_cm($data);
-	$context = get_context_instance(CONTEXT_MODULE, $cm->id);
     
-	if ($commentid) {
+    $cm = data_get_cm($data);
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    
+    if ($commentid) {
         if (! $comment = get_record('data_comments', 'id', $commentid)) {
             error('Comment ID is misconfigured');
         }

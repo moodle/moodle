@@ -21,8 +21,8 @@
     
     $module = get_record("modules","name","glossary");
     $cm = get_record("course_modules","module",$module->id,"instance",$entry->glossaryid);
-	$context = get_context_instance(CONTEXT_MODULE, $cm->id);
-	
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    
     if (!has_capability('mod/glossary:manageentries', $context->id) and $USER->id != $entry->userid) {
         error("You can only look at results for your own entries");
     }

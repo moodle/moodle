@@ -25,7 +25,7 @@
         error("Entry is incorrect");
     }
 
-	$context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
     require_login($course->id, false, $cm);
 

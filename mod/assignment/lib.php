@@ -107,10 +107,10 @@ class assignment_base {
      */
     function view() {
       
-		$context = get_context_instance(CONTEXT_MODULE,$this->cm->id);
+        $context = get_context_instance(CONTEXT_MODULE,$this->cm->id);
         has_capability('mod/assignment:view', $context->id, true);
         
-		add_to_log($this->course->id, "assignment", "view", "view.php?id={$this->cm->id}", 
+        add_to_log($this->course->id, "assignment", "view", "view.php?id={$this->cm->id}", 
                    $this->assignment->id, $this->cm->id);
 
         $this->view_header();
@@ -281,7 +281,7 @@ class assignment_base {
 
         // if this user can mark and is put in a group
         // then he can only see/mark submission in his own groups
-            if (user_group($this->course->id, $USER->id)) { 			
+            if (user_group($this->course->id, $USER->id)) {             
                 $count = $this->count_real_submissions($this->currentgroup);  // Only their groups
             } else {
                 $count = $this->count_real_submissions();                     // Everyone

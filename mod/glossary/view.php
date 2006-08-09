@@ -44,8 +44,8 @@
         error("Must specify glossary ID or course module ID");
     }
 
-	$context = get_context_instance(CONTEXT_MODULE, $cm->id);
-	has_capability('mod/glossary:view', $context->id, true); // kill the page if user can't even read
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    has_capability('mod/glossary:view', $context->id, true); // kill the page if user can't even read
 
     if ($CFG->forcelogin) {
         require_login();

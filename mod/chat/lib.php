@@ -200,17 +200,17 @@ function chat_print_recent_activity($course, $isteacher, $timestart) {
             }
             if ($chat = get_record('chat', 'id', $chatuser->chatid)) {
               
-              	// we find the course module id
-              	$chatmod = get_record('modules', 'name', 'chat');
-              	$SQL = "select * from {$CFG->prefix}course_modules where
-              			course = $course->id 
-						and module = $chatmod->id
-              			and instance = $chat->id";
-              	$cm = get_records_sql($SQL);
-              	$context = get_context_instance(CONTEXT_MODULE, $cm->id);
+                // we find the course module id
+                $chatmod = get_record('modules', 'name', 'chat');
+                $SQL = "select * from {$CFG->prefix}course_modules where
+                        course = $course->id 
+                        and module = $chatmod->id
+                        and instance = $chat->id";
+                $cm = get_records_sql($SQL);
+                $context = get_context_instance(CONTEXT_MODULE, $cm->id);
               
-              	// needs to be fixed
-			  	if (!(has_capability('mod/chat:readlog', $context->id) or instance_is_visible('chat', $chat))) {  // Chat hidden to students
+                // needs to be fixed
+                if (!(has_capability('mod/chat:readlog', $context->id) or instance_is_visible('chat', $chat))) {  // Chat hidden to students
                 //if (!($isteacher or instance_is_visible('chat', $chat))) {  // Chat hidden to students
                     continue;
                 }

@@ -2,7 +2,7 @@
 
     require_once("../../config.php");
     require_once('locallib.php');
-	
+    
     $id = optional_param('id', '', PARAM_INT);    // Course Module ID, or
     $a = optional_param('a', '', PARAM_INT);     // SCORM ID
     $b = optional_param('b', '', PARAM_INT);     // SCO ID
@@ -58,8 +58,8 @@
         $strscorm  = get_string("modulename", "scorm");
         $strreport  = get_string("report", "scorm");
         $strname  = get_string('name');
-		$strcoefficient = get_string('coefficient',"scorm");
-		$strcoefficient = "Thiet lap he so";
+        $strcoefficient = get_string('coefficient',"scorm");
+        $strcoefficient = "Thiet lap he so";
         if (empty($b)) {
             print_header("$course->shortname: ".format_string($scorm->name), "$course->fullname",
                      "$navigation <a href=\"index.php?id=$course->id\">$strscorms</a>
@@ -77,32 +77,32 @@
 
     $scormpixdir = $CFG->modpixpath.'/scorm/pix';
 
-	//Phan trinh bay chinh
+    //Phan trinh bay chinh
 ?>
 
   <?php
-	$examScoes = get_records_select('scorm_scoes', 'scorm ='.($scorm->id).' and minnormalizedmeasure > -1');
-	foreach ($examScoes as $examSco){
-		$newcoefficient = optional_param($examSco->id,'',PARAM_INT);
-		$sco = get_record('scorm_scoes','scorm',$scorm->id,'id',$examSco->id,'','');
-		$sco->score_coefficient = $newcoefficient;
-		$ketqua = update_record('scorm_scoes',$sco);
-		//echo "Cap nhat $examSco->id voi he so diem ".$newcoefficient."<br>";
-	}
+    $examScoes = get_records_select('scorm_scoes', 'scorm ='.($scorm->id).' and minnormalizedmeasure > -1');
+    foreach ($examScoes as $examSco){
+        $newcoefficient = optional_param($examSco->id,'',PARAM_INT);
+        $sco = get_record('scorm_scoes','scorm',$scorm->id,'id',$examSco->id,'','');
+        $sco->score_coefficient = $newcoefficient;
+        $ketqua = update_record('scorm_scoes',$sco);
+        //echo "Cap nhat $examSco->id voi he so diem ".$newcoefficient."<br>";
+    }
 
-	if ($ketqua)
-	{
-		echo "".get_string('updatesuccess','scorm');
-	}
-	else
-	{
-		echo "".get_string('updatefail','scorm');
-	}
+    if ($ketqua)
+    {
+        echo "".get_string('updatesuccess','scorm');
+    }
+    else
+    {
+        echo "".get_string('updatefail','scorm');
+    }
 
-	echo "<br><br><a href=coefficientsetting.php?id=$id>".get_string('back','scorm')."</a>"
+    echo "<br><br><a href=coefficientsetting.php?id=$id>".get_string('back','scorm')."</a>"
 ?>
 <?php
-	//ket thuc phan trinh bay chinh
+    //ket thuc phan trinh bay chinh
 
     if (empty($noheader)) {
         print_footer($course);

@@ -2,7 +2,7 @@
 
     require_once("../../config.php");
     require_once('locallib.php');
-	
+    
     $id = optional_param('id', '', PARAM_INT);    // Course Module ID, or
     $a = optional_param('a', '', PARAM_INT);     // SCORM ID
     $b = optional_param('b', '', PARAM_INT);     // SCO ID
@@ -58,7 +58,7 @@
         $strscorm  = get_string("modulename", "scorm");
         $strreport  = get_string("report", "scorm");
         $strname  = get_string('name');
-		$strcoefficient = get_string('coefficient','scorm');
+        $strcoefficient = get_string('coefficient','scorm');
         if (empty($b)) {
             print_header("$course->shortname: ".format_string($scorm->name), "$course->fullname",
                      "$navigation <a href=\"index.php?id=$course->id\">$strscorms</a>
@@ -76,12 +76,12 @@
 
     $scormpixdir = $CFG->modpixpath.'/scorm/pix';
 
-	//Phan trinh bay chinh
+    //Phan trinh bay chinh
 ?>
 <script type="text/javascript">
 function validate_form()
 {
-	return true;
+    return true;
 }
 </script>
 <form name="form" method="post" action="coefficientconfirm.php" onsubmit="return validate_form();" >
@@ -92,15 +92,15 @@ function validate_form()
     </tr>
  
   <?php
-	$examScoes = get_records_select('scorm_scoes', 'scorm ='.($scorm->id).' and minnormalizedmeasure > -1');
-	if(!empty($examScoes))
-	{
-	
-		foreach ($examScoes as $examSco){
-		echo "<tr><td>";	
-		echo "$examSco->identifier.</td><td><input type='text' name='$examSco->id' class='scormtextbox' value=$examSco->score_coefficient /></td></tr><br>";
-		}
-	}
+    $examScoes = get_records_select('scorm_scoes', 'scorm ='.($scorm->id).' and minnormalizedmeasure > -1');
+    if(!empty($examScoes))
+    {
+    
+        foreach ($examScoes as $examSco){
+        echo "<tr><td>";    
+        echo "$examSco->identifier.</td><td><input type='text' name='$examSco->id' class='scormtextbox' value=$examSco->score_coefficient /></td></tr><br>";
+        }
+    }
 
 ?>
  </table>
@@ -109,7 +109,7 @@ function validate_form()
 <input type="submit" value="<?php print_string('savechanges') ?>" />
 </form>
 <?php
-	//ket thuc phan trinh bay chinh
+    //ket thuc phan trinh bay chinh
 
     if (empty($noheader)) {
         print_footer($course);

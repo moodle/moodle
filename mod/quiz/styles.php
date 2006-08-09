@@ -85,7 +85,7 @@ body#mod-quiz-grading table#grading td
 }
 
 #mod-quiz-attempt #page {
-	text-align: center;
+    text-align: center;
 }
 
 #mod-quiz-attempt #timer .generalbox {

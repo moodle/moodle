@@ -557,7 +557,7 @@ function data_add_record($data, $groupid=0){
     $record->groupid = $groupid;
     $record->timecreated = $record->timemodified = time();
     if (has_capability('mod/data:approve', $context->id)) {
-	//if (isteacher($data->course)) {
+    //if (isteacher($data->course)) {
         $record->approved = 1;
     } else {
         $record->approved = 0;
@@ -839,8 +839,8 @@ function data_get_coursemodule_info($coursemodule) {
 function data_print_template($template, $records, $data, $search='',$page=0, $return=false) {
     global $CFG;
 
-	$cm = data_get_cm($data);
-	$context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    $cm = data_get_cm($data);
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
     static $fields = NULL;
     static $isteacher;
@@ -991,9 +991,9 @@ function data_print_preference_form($data, $perpage, $search, $sort='', $order='
 function data_print_ratings($data, $record) {
     global $USER;
 
-	$cm = data_get_cm($data);
-	$context = get_context_instance(CONTEXT_MODULE, $cm->id);
-	
+    $cm = data_get_cm($data);
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    
     $ratingsmenuused = false;
     if ($data->ratings and !empty($USER->id)) {
         if ($ratings->scale = make_grades_menu($data->scale)) {
@@ -1165,10 +1165,10 @@ function data_print_comment($data, $comment, $page=0) {
 
     global $USER, $CFG;
     
-	$cm = data_get_cm($data);
-	$context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    $cm = data_get_cm($data);
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     
-	$stredit = get_string('edit');
+    $stredit = get_string('edit');
     $strdelete = get_string('delete');
 
     $user = get_record('user','id',$comment->userid);
@@ -1254,13 +1254,13 @@ function data_convert_arrays_to_strings(&$fieldinput) {
 
 // returns the $cm given $data
 function data_get_cm($data) {
-  	global $CFG, $course;
-	$datamod = get_record('modules', 'name', 'data');
-	$SQL = "select * from {$CFG->prefix}course_modules
-			where course = $course->id and
-			module = $datamod->id and
-			instance = $data->id";
-	return get_record_sql($SQL);
+    global $CFG, $course;
+    $datamod = get_record('modules', 'name', 'data');
+    $SQL = "select * from {$CFG->prefix}course_modules
+            where course = $course->id and
+            module = $datamod->id and
+            instance = $data->id";
+    return get_record_sql($SQL);
 }
 
 ?>

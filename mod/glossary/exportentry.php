@@ -29,8 +29,8 @@
             $lcase = 'lcase';
     }
 
-	$context = get_context_instance(CONTEXT_MODULE, $cm->id);
-	has_capability('mod/glossary:export', $context->id, true);
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    has_capability('mod/glossary:export', $context->id, true);
 
     if (! $course = get_record('course', 'id', $cm->course)) {
         error('Course is misconfigured');

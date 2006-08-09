@@ -18,11 +18,11 @@
 
     require_login($course->id, false, $cm);
     
-	$context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     
     has_capability('mod/choice:readresponses', $context->id, true);
     
-	//if (!isteacher($course->id)) {
+    //if (!isteacher($course->id)) {
     //    error("Only teachers can look at this page");
     //}
 
@@ -40,7 +40,7 @@
     //if ($action == 'delete') { //some responses need to be deleted
         $attemptids = isset($_POST['attemptid']) ? $_POST['attemptid'] : array(); //get array of repsonses to delete.
         choice_delete_responses($attemptids); //delete responses.
-        redirect("report.php?id=$cm->id");			            
+        redirect("report.php?id=$cm->id");                      
     }
         
     if ($download <> "xls" and $download <> "txt" ) {
@@ -123,9 +123,9 @@
                     $ug2 = '';
                     if ($usergrps = user_group($course->id, $user->id)) {
                         foreach ($usergrps as $ug) {
-						    $ug2 = $ug2. $ug->name;
-					    }
-			        }
+                            $ug2 = $ug2. $ug->name;
+                        }
+                    }
                     $myxls->write_string($row,3,$ug2);
                     
                     $useroption = choice_get_option_text($choice, $answers[$user->id]->optionid);
@@ -144,7 +144,7 @@
         exit;
     } 
     // print text file  
-	//if ($download == "txt") {   
+    //if ($download == "txt") {   
     if ($download == "txt" && has_capability('mod/choice:downloadresponses', $context->id, true)) {
         $filename = clean_filename("$course->shortname ".strip_tags(format_string($choice->name,true))).'.txt';
             
@@ -172,15 +172,15 @@
               echo "\t".$user->firstname;
               $studentid = " ";
               if (!empty($user->idnumber)) {
-			      $studentid = $user->idnumber;
-		 	  }              
+                  $studentid = $user->idnumber;
+              }              
               echo "\t". $studentid."\t";
               $ug2 = '';
               if ($usergrps = user_group($course->id, $user->id)) {
                   foreach ($usergrps as $ug) {
-			          $ug2 = $ug2. $ug->name;
-			      }
-			  }
+                      $ug2 = $ug2. $ug->name;
+                  }
+              }
               echo $ug2. "\t";
               echo format_string(choice_get_option_text($choice, $answers[$user->id]->optionid),true). "\n";
           }

@@ -348,13 +348,13 @@
     /// Insert a link to force page refresh if new content isn't showing.
     
     // build new URL + query string
-    $queries = preg_split('/[?&]/', me());	
+    $queries = preg_split('/[?&]/', me());  
     $nqueries = count($queries);
     $me = $queries[0] . '?';
     for($i=1; $i < $nqueries; $i++)
     {
         if( !strstr($queries[$i], 'allowcache') )
-        	$me .= $queries[$i] . '&'; 
+            $me .= $queries[$i] . '&'; 
     }
     $me .= 'allowcache=0';
 
