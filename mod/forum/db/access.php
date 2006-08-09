@@ -255,8 +255,21 @@ $mod_forum_capabilities = array(
             'coursecreator' => CAP_ALLOW,
             'admin' => CAP_ALLOW
         )
-    )
+    ),
     
+    'mod/forum:throttlingapplies' => array(
+    
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_MODULE,
+        'legacy' => array(
+            'guest' => CAP_ALLOW,
+            'student' => CAP_ALLOW,
+            'teacher' => CAP_PREVENT,
+            'editingteacher' => CAP_PREVENT,
+            'coursecreator' => CAP_PREVENT,
+            'admin' => CAP_PREVENT
+        )
+    )
 );
 
 ?>

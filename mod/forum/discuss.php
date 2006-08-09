@@ -13,29 +13,24 @@
     $mark   = optional_param('mark', 0, PARAM_INT);   // Used for tracking read posts if user initiated.
     $postid = optional_param('postid', 0, PARAM_INT); // Used for tracking read posts if user initiated.
 
-    if (! $discussion = get_record("forum_discussions", "id", $d)) {
+    if (!$discussion = get_record("forum_discussions", "id", $d)) {
         error("Discussion ID was incorrect or no longer exists");
     }
 
-    if (! $course = get_record("course", "id", $discussion->course)) {
+    if (!$course = get_record("course", "id", $discussion->course)) {
         error("Course ID is incorrect - discussion is faulty");
     }
 
-    if (! $forum = get_record("forum", "id", $discussion->forum)) {
+    if (!$forum = get_record("forum", "id", $discussion->forum)) {
         notify("Bad forum ID stored in this discussion");
     }
 
-    if (! $cm = get_coursemodule_from_instance('forum', $forum->id, $course->id)) {
+    if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $course->id)) {
         error('Course Module ID was incorrect');
     }
-    
-    $canviewdiscussion = false;
-
     $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
-    if (has_capability('mod/forum:viewdiscussion', $modcontext->id)) {
-        $canviewdiscussion = true;
-    }
-
+    $canviewdiscussion = has_capability('mod/forum:viewdiscussion', $modcontext->id);
+    
     
     if ($forum->type == "news") {
         if (!($canviewdiscussion || $USER->id == $discussion->userid

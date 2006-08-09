@@ -104,13 +104,13 @@
             $message = '';
 
             //fix for bug #4314
-            if (!$realpost = get_record('forum_posts','id',$post->id)){
+            if (!$realpost = get_record('forum_posts','id',$post->id)) {
                 $realpost = new object;
                 $realpost->userid = -1;
             }
 
             if ( !(($realpost->userid == $USER->id && has_capability('mod/forum:replypost', $modcontext->id)) ||
-                        has_capability('mod/forum:editanypost', $modcontext->id)) )
+                        has_capability('mod/forum:editanypost', $modcontext->id)) ) {
                 error("You can not update this post");
             }
 
@@ -155,8 +155,8 @@
                     error(get_string("couldnotupdate", "forum"), $errordestination);
                 }
                 exit;
-
             }
+            
         } else if ($post->discussion) { // Adding a new post to an existing discussion
             $message = '';
             if ($post->id = forum_add_new_post($post,$message)) {

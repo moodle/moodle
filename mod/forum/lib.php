@@ -108,7 +108,7 @@ function forum_add_instance($forum) {
         $forum->assesstimefinish = 0;
     }
 
-    if (! $forum->id = insert_record('forum', $forum)) {
+    if (!$forum->id = insert_record('forum', $forum)) {
         return false;
     }
 
@@ -196,7 +196,7 @@ function forum_delete_instance($id) {
 // this function will permanently delete the instance
 // and any data that depends on it.
 
-    if (! $forum = get_record('forum', 'id', $id)) {
+    if (!$forum = get_record('forum', 'id', $id)) {
         return false;
     }
 
@@ -204,19 +204,19 @@ function forum_delete_instance($id) {
 
     if ($discussions = get_records('forum_discussions', 'forum', $forum->id)) {
         foreach ($discussions as $discussion) {
-            if (! forum_delete_discussion($discussion, true)) {
+            if (!forum_delete_discussion($discussion, true)) {
                 $result = false;
             }
         }
     }
 
-    if (! delete_records('forum_subscriptions', 'forum', $forum->id)) {
+    if (!delete_records('forum_subscriptions', 'forum', $forum->id)) {
         $result = false;
     }
 
     forum_tp_delete_read_records(-1, -1, -1, $forum->id);
 
-    if (! delete_records('forum', 'id', $forum->id)) {
+    if (!delete_records('forum', 'id', $forum->id)) {
         $result = false;
     }
 
@@ -224,7 +224,7 @@ function forum_delete_instance($id) {
 }
 
 
-function forum_cron () {
+function forum_cron() {
 /// Function to be run periodically according to the moodle cron
 /// Finds all posts that have yet to be mailed out, and mails them
 /// out to all subscribers
@@ -320,14 +320,18 @@ function forum_cron () {
             } else {
                 $cm->id = 0;
             }
-
+            
+            $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
+            
             if ($users = forum_subscribed_users($course, $forum)) {
 
                 $mailcount=0;
                 $errorcount=0;
                 foreach ($users as $userto) {
                     if ($groupmode) {    // Look for a reason not to send this email
-                        if (!isteacheredit($course->id, $userto->id)) {
+                        
+                        if (!has_capability('moodle/site:accessallgroups',
+                                        $modcontext->id, false, $userto->id)) {
                             if (!empty($group->id)) {
                                 if (!ismember($group->id, $userto->id)) {
                                     continue;
@@ -627,9 +631,15 @@ function forum_cron () {
 
 function forum_make_mail_text($course, $forum, $discussion, $post, $userfrom, $userto, $bare = false) {
     global $CFG;
-
+    
+    if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $course->id)) {
+        error('Course Module ID was incorrect');
+    }
+    $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
+    $viewfullnames = has_capability('mod/site:viewfullnames', $modcontext->id);
+    
     $by = New stdClass;
-    $by->name = fullname($userfrom, isteacher($course->id, $userto->id));
+    $by->name = fullname($userfrom, $viewfullnames);
     $by->date = userdate($post->modified, "", $userto->timezone);
 
     $strbynameondate = get_string('bynameondate', 'forum', $by);
@@ -641,7 +651,7 @@ function forum_make_mail_text($course, $forum, $discussion, $post, $userfrom, $u
 
     $posttext = '';
 
-    if(!$bare) {
+    if (!$bare) {
         $posttext  = "$course->shortname -> $strforums -> ".format_string($forum->name,true);
 
         if ($discussion->name != $forum->name) {
@@ -651,7 +661,7 @@ function forum_make_mail_text($course, $forum, $discussion, $post, $userfrom, $u
 
     $posttext .= "\n---------------------------------------------------------------------\n";
     $posttext .= format_string($post->subject,true);
-    if($bare) {
+    if ($bare) {
         $posttext .= " ($CFG->wwwroot/mod/forum/discuss.php?d=$discussion->id#$post->id)";
     }
     $posttext .= "\n".$strbynameondate."\n";
@@ -3303,6 +3313,13 @@ function forum_print_posts_threaded($parent, $courseid, $depth, $ratings, $reply
     $istracking = forum_tp_can_track_forums($forumid) && forum_tp_is_tracked($forumid);
 
     if ($posts = forum_get_child_posts($parent, $forumid)) {
+        
+        if (!$cm = get_coursemodule_from_instance('forum', $forumid, $courseid)) {
+            error('Course Module ID was incorrect');
+        }
+        $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
+        $canviewfullnames = has_capability('mod/site:viewfullnames', $modcontext->id);
+        
         foreach ($posts as $post) {
 
             echo '<div class="indent">';
@@ -3319,7 +3336,7 @@ function forum_print_posts_threaded($parent, $courseid, $depth, $ratings, $reply
                 if (!forum_user_can_see_post($post->forum,$post->discussion,$post)) {
                     continue;
                 }
-                $by->name = fullname($post);
+                $by->name = fullname($post, $canviewfullnames);
                 $by->date = userdate($post->modified);
 
                 if ($istracking) {
@@ -3397,7 +3414,8 @@ function forum_get_recent_mod_activity(&$activities, &$index, $sincetime, $cours
     }
 
     $posts = get_records_sql("SELECT p.*, d.name, u.firstname, u.lastname,
-                                     u.picture, d.groupid, cm.instance, f.name, cm.section
+                                     u.picture, d.groupid, cm.instance, f.name,
+                                     cm.section, cm.id AS cmid
                                FROM {$CFG->prefix}forum_posts p,
                                     {$CFG->prefix}forum_discussions d,
                                     {$CFG->prefix}user u,
@@ -3417,11 +3435,12 @@ function forum_get_recent_mod_activity(&$activities, &$index, $sincetime, $cours
         return;
     }
 
-    $isteacheredit = isteacheredit($courseid);
-
     foreach ($posts as $post) {
-
-        if ($groupid and ($post->groupid != -1 and $groupid != $post->groupid and !$isteacheredit)) {
+        
+        $modcontext = get_context_instance(CONTEXT_MODULE, $post->cmid);
+        $canviewallgroups = has_capability('moodle/site:accessallgroups', $modcontext->id);
+        
+        if ($groupid and ($post->groupid != -1 and $groupid != $post->groupid and !$canviewallgroups)) {
             continue;
         }
 
@@ -4007,7 +4026,7 @@ function forum_get_separate_modules($courseid) {
 }
 
 function forum_check_throttling($forum) {
-    global $USER,$CFG;
+    global $USER, $CFG;
 
     if (is_numeric($forum)) {
         $forum = get_record('forum','id',$forum);
@@ -4024,7 +4043,11 @@ function forum_check_throttling($forum) {
         return true;
     }
     
-    if (isteacher($forum->course)) {
+    if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $forum->course)) {
+        error('Course Module ID was incorrect');
+    }
+    $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
+    if(!has_capability('mod/forum:throttlingapplies', $modcontext->id)) {
         return true;
     }
 
