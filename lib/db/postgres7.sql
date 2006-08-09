@@ -670,6 +670,65 @@ CREATE TABLE prefix_blog_tag_instance (
 CREATE INDEX prefix_bti_entryid_idx ON prefix_blog_tag_instance (entryid);
 CREATE INDEX prefix_bti_tagid_idx ON prefix_blog_tag_instance (tagid);
 
+# Roles tables 	 
+CREATE TABLE prefix_role ( 	 
+  id SERIAL PRIMARY KEY, 	 
+  name varchar(255) NOT NULL default '', 	 
+  description text NOT NULL default '', 	 
+  sortorder integer NOT NULL default '0' 	 
+); 	 
+	  	 
+CREATE TABLE prefix_context ( 	 
+  id SERIAL PRIMARY KEY, 	 
+  level integer NOT NULL default 0, 	 
+  instanceid integer NOT NULL default 0 	 
+); 	 
+	  	 
+CREATE TABLE prefix_role_assignments ( 	 
+  id SERIAL PRIMARY KEY, 	 
+  roleid interger NOT NULL default 0, 	 
+  contextid interger NOT NULL default 0, 	 
+  userid interger NOT NULL default 0, 	 
+  hidden interger NOT NULL default 0, 	 
+  timestart interger NOT NULL default 0, 	 
+  timeend interger NOT NULL default 0, 	 
+  timemodified interger NOT NULL default 0, 	 
+  modifierid interger NOT NULL default 0, 	 
+  enrol varchar(20) NOT NULL default '', 	 
+  sortorder integer NOT NULL default '0' 	 
+); 	 
+	  	 
+CREATE TABLE prefix_role_capabilities ( 	 
+  id SERIAL PRIMARY KEY, 	 
+  contextid interger NOT NULL default 0, 	 
+  roleid interger NOT NULL default 0, 	 
+  capability varchar(255) NOT NULL default '', 	 
+  permission integer NOT NULL default 0, 	 
+  timemodified interger NOT NULL default 0, 	 
+  modifierid interger NOT NULL default 0 	 
+); 	 
+	  	 
+CREATE TABLE prefix_role_deny_grant ( 	 
+  id SERIAL PRIMARY KEY, 	 
+  roleid integer NOT NULL default '0', 	 
+  unviewableroleid integer NOT NULL default '0' 	 
+); 	 
+	  	 
+CREATE TABLE prefix_capabilities ( 	 
+  id SERIAL PRIMARY KEY, 	 
+  name varchar(150) NOT NULL default '', 	 
+  captype varchar(50) NOT NULL default '', 	 
+  contextlevel integer NOT NULL default 0, 	 
+  component varchar(100) NOT NULL default '' 	 
+); 	 
+	  	 
+CREATE TABLE prefix_role_names ( 	 
+  id SERIAL PRIMARY KEY, 	 
+  roleid integer NOT NULL default 0, 	 
+  contextid integer NOT NULL default 0, 	 
+  text text NOT NULL default '' 	 
+);
+
 INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('user', 'view', 'user', 'firstname||\' \'||lastname');
 INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('course', 'user report', 'user', 'firstname||\' \'||lastname');
 INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('course', 'view', 'course', 'fullname');
