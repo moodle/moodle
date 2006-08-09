@@ -105,9 +105,6 @@ function has_capability($capability, $contextid, $kill=false, $userid=NULL) {
         $capabilities = $USER->capabilities;  
     }
     
-    //echo ("capablity is ".$capability);
-    //print_object($contextid);
-
     $context = get_record('context','id',$contextid);
 
     // Check site
@@ -354,7 +351,7 @@ function load_user_capability($capability='', $contextid ='', $userid='') {
 
     $siteinstance = get_context_instance(CONTEXT_SYSTEM, SITEID);
 
-    $SQL = " SELECT  rc.capability, c1.id, (c1.level * 100) AS level,
+    $SQL = " SELECT  rc.capability, c1.id, (c1.level * 100) AS aggregatelevel,
                      SUM(rc.permission) AS sum
                      FROM
                      {$CFG->prefix}role_assignments AS ra
@@ -366,12 +363,12 @@ function load_user_capability($capability='', $contextid ='', $userid='') {
                      rc.contextid=$siteinstance->id 
                      $capsearch
               GROUP BY
-                     rc.capability,level,c1.id
+                     rc.capability,aggregatelevel,c1.id
                      HAVING
-                     sum != 0
+                     SUM(rc.permission) != 0
               UNION
 
-              SELECT rc.capability, c1.id, (c1.level * 100 + c2.level) AS level,
+              SELECT rc.capability, c1.id, (c1.level * 100 + c2.level) AS aggregatelevel,
                      SUM(rc.permission) AS sum
                      FROM
                      {$CFG->prefix}role_assignments AS ra
@@ -385,14 +382,13 @@ function load_user_capability($capability='', $contextid ='', $userid='') {
                      $capsearch
                   
               GROUP BY
-                     rc.capability, level, c1.id
+                     rc.capability, aggregatelevel, c1.id
                      HAVING
-                     sum != 0
+                     SUM(rc.permission) != 0
               ORDER BY
-                     level ASC
+                     aggregatelevel ASC
             ";
 
-//    echo "$SQL"; // debug
 
     $capabilities = array();  // Reinitialize.
     $rs = get_recordset_sql($SQL);
@@ -411,31 +407,31 @@ function load_user_capability($capability='', $contextid ='', $userid='') {
     }
 
     /* so up to this point we should have somethign like this
-     * $capabilities[1]    ->level = 1000
+     * $capabilities[1]    ->aggregatelevel = 1000
                            ->module = SITEID
                            ->capability = do_anything
                            ->id = 1 (id is the context id)
                            ->sum = 0
                            
-     * $capabilities[2]     ->level = 1000
+     * $capabilities[2]     ->aggregatelevel = 1000
                             ->module = SITEID
                             ->capability = post_messages
                             ->id = 1
                             ->sum = -9000
 
-     * $capabilittes[3]     ->level = 3000
+     * $capabilittes[3]     ->aggregatelevel = 3000
                             ->module = course
                             ->capability = view_course_activities
                             ->id = 25
                             ->sum = 1
 
-     * $capabilittes[4]     ->level = 3000
+     * $capabilittes[4]     ->aggregatelevel = 3000
                             ->module = course
                             ->capability = view_course_activities
                             ->id = 26
                             ->sum = 0 (this is another course)
                             
-     * $capabilities[5]     ->level = 3050
+     * $capabilities[5]     ->aggregatelevel = 3050
                             ->module = course
                             ->capability = view_course_activities
                             ->id = 25 (override in course 25)
@@ -459,7 +455,7 @@ function load_user_capability($capability='', $contextid ='', $userid='') {
     $usercap = array(); // for other user's capabilities
     foreach ($capabilities as $capability) {
 
-        if ($otheruserid) { // we are pulling out other user's capabilities, do not write to session
+        if (!empty($otheruserid)) { // we are pulling out other user's capabilities, do not write to session
             
             if (capability_prohibits($capability->capability, $capability->id, $capability->sum, $usercap)) {
                 $usercap[$capability->id][$capability->capability] = -9000;
@@ -489,7 +485,7 @@ function load_user_capability($capability='', $contextid ='', $userid='') {
     // now we don't care about the huge array anymore, we can dispose it.
     unset($capabilities);
     
-    if ($otheruseid) {
+    if (!empty($otheruseid)) {
         return $usercap; // return the array  
     }
     // see array in session to see what it looks like
@@ -550,7 +546,7 @@ function capability_prohibits($capability, $contextid, $sum='', $array='') {
         case CONTEXT_COURSECAT:
             // Coursecat -> coursecat or site.
             $coursecat = get_record('course_categories','id',$context->instanceid);
-            if ($coursecat->parent) {
+            if (!empty($coursecat->parent)) {
                 // return parent value if exist.
                 $parent = get_context_instance(CONTEXT_COURSECAT, $coursecat->parent);
             } else {
