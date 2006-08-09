@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="enrol/authorize/db" VERSION="20060807" COMMENT="XMLDB file for Moodle enrol/authorize">
+<XMLDB PATH="enrol/authorize/db" VERSION="20060809" COMMENT="XMLDB file for Moodle enrol/authorize">
   <TABLES>
     <TABLE NAME="enrol_authorize" COMMENT="Holds all known information about authorize.net transactions" NEXT="enrol_authorize_refunds">
       <FIELDS>
@@ -35,11 +35,11 @@
         <FIELD NAME="settletime" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="transid"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for enrol_authorize_refunds"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for enrol_authorize_refunds" NEXT="orderid"/>
+        <KEY NAME="orderid" TYPE="foreign" FIELDS="orderid" REFTABLE="enrol_authorize" REFFIELDS="id" COMMENT="Default comment for the key, please edit me" PREVIOUS="primary"/>
       </KEYS>
       <INDEXES>
-        <INDEX NAME="orderid" UNIQUE="false" FIELDS="orderid" NEXT="transid"/>
-        <INDEX NAME="transid" UNIQUE="false" FIELDS="transid" PREVIOUS="orderid"/>
+        <INDEX NAME="transid" UNIQUE="false" FIELDS="transid"/>
       </INDEXES>
     </TABLE>
   </TABLES>
