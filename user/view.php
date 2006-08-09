@@ -1,7 +1,7 @@
 <?PHP // $Id$
 
 //  Display profile for a particular user
-	
+    
     require_once("../config.php");
     $id      = optional_param('id',     0,      PARAM_INT);   // user id
     $course  = optional_param('course', SITEID, PARAM_INT);   // course id (defaults to Site)

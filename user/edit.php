@@ -70,21 +70,21 @@
 /// If data submitted, then process and store.
 
     if ($usernew = data_submitted()) {
-		
-		$context = get_context_instance(CONTEXT_SYSTEM, SITEID);
-		// if userid = x and name = changeme then we are adding 1
-		// else we are editting one
-		$dummyuser = get_record('user','id', $id);
-	
-		if ($dummyuser->username == 'changeme') {
-			// check for add user
-			has_capability('moodle/user:create', $context->id, true);
-		} else {
-	  		if ($USER->id <> $usernew->id and !has_capability('moodle/user:update', $context->id)) {
-		// check for edit  
-				print_error('onlyeditown');
-			}	
-		}	
+        
+        $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
+        // if userid = x and name = changeme then we are adding 1
+        // else we are editting one
+        $dummyuser = get_record('user','id', $id);
+    
+        if ($dummyuser->username == 'changeme') {
+            // check for add user
+            has_capability('moodle/user:create', $context->id, true);
+        } else {
+            if ($USER->id <> $usernew->id and !has_capability('moodle/user:update', $context->id)) {
+        // check for edit  
+                print_error('onlyeditown');
+            }   
+        }   
 
         if (isset($USER->username)) {
             check_for_restricted_user($USER->username, "$CFG->wwwroot/course/view.php?id=$course->id");
