@@ -1137,39 +1137,60 @@ function capabilities_cleanup($component, $newcapdef=NULL) {
  */
 function print_context_name($contextid) {
   
+    $name = '';
+
 	$context = get_record('context', 'id', $contextid);  
+
   	switch ($context->level) {
   	
         case CONTEXT_SYSTEM: // by now it's a definite an inherit
-            $level = 'SYSTEM';
+            $name = get_string('site');
         break;
 
         case CONTEXT_PERSONAL:
-            $level = 'PERSONAL';
+            $name = get_string('personal');
         break;
         
         case CONTEXT_USERID:
-            $level = 'USERID';
+            if ($user = get_record('user', 'id', $context->instanceid)) {
+                $name = get_string('user').': '.fullname($user);
+            }
         break;
         
         case CONTEXT_COURSECAT: // Coursecat -> coursecat or site
-            $level = 'COURSECAT';
+            if ($category = get_record('course_categories', 'id', $context->instanceid)) {
+                $name = get_string('category').': '.$category->name;
+            }
         break;
 
         case CONTEXT_COURSE: // 1 to 1 to course cat
-            $level = 'COURSE';
+            if ($course = get_record('course', 'id', $context->instanceid)) {
+                $name = get_string('course').': '.$course->fullname;
+            }
         break;
 
         case CONTEXT_GROUP: // 1 to 1 to course
-            $level = 'GROUP';
+            if ($group = get_record('groups', 'id', $context->instanceid)) {
+                $name = get_string('group').': '.$group->name;
+            }
         break;
 
         case CONTEXT_MODULE: // 1 to 1 to course
-            $level = 'MODULE';
+	    	if ($cm = get_record('course_modules','id',$context->instanceid)) {
+	    	    if ($module = get_record('modules','id',$cm->module)) {
+	    	        if ($mod = get_record($module->name, 'id', $cm->instance)) {
+                        $name = get_string('activitymodule').': '.$mod->name;
+	                }
+                }
+            }
         break;
 
         case CONTEXT_BLOCK: // 1 to 1 to course
-            $level = 'BLOCK';
+	    	if ($blockinstance = get_record('block_instance','id',$context->instanceid)) {
+	    	    if ($block = get_record('block','id',$blockinstance->blockid)) {
+                    $name = get_string('blocks').': '.get_string($block->name, 'block_'.$block->name);
+                }
+            }
         break;
 
         default:
@@ -1178,7 +1199,7 @@ function print_context_name($contextid) {
   	  	  
   	}
   
-  	return ($level.' '.$context->instanceid);  
+  	return $name;
 }
 
 
