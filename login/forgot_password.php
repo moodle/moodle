@@ -218,7 +218,8 @@ if (count($errors)) {
 // check $page for appropriate page to display
 if ($page=='emailconfirm') {
     // Confirm (internal method) email sent
-    $txt->emailpasswordconfirmsent = get_string( 'emailpasswordconfirmsent','',$user->email );
+    $protectedemail = preg_replace('/([^@]*)@(.*)/', '???????@$2', $user->email); // obfuscate the email address to protect privacy
+    $txt->emailpasswordconfirmsent = get_string( 'emailpasswordconfirmsent','',$protectedemail );
     notice( $txt->emailpasswordconfirmsent,$CFG->wwwroot.'/index.php'); 
 }
 
