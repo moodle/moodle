@@ -1635,26 +1635,26 @@ function main_upgrade($oldversion=0) {
 
          modify_database('', "CREATE TABLE prefix_role_assignments (
                                   id SERIAL PRIMARY KEY,
-                                  roleid interger NOT NULL default 0,
-                                  contextid interger NOT NULL default 0,
-                                  userid interger NOT NULL default 0,
-                                  hidden interger NOT NULL default 0,
-                                  timestart interger NOT NULL default 0,
-                                  timeend interger NOT NULL default 0,
-                                  timemodified interger NOT NULL default 0,
-                                  modifierid interger NOT NULL default 0,
+                                  roleid integer NOT NULL default 0,
+                                  contextid integer NOT NULL default 0,
+                                  userid integer NOT NULL default 0,
+                                  hidden integer NOT NULL default 0,
+                                  timestart integer NOT NULL default 0,
+                                  timeend integer NOT NULL default 0,
+                                  timemodified integer NOT NULL default 0,
+                                  modifierid integer NOT NULL default 0,
                                   enrol varchar(20) NOT NULL default '',
-  								  sortorder integer NOT NULL default '0'
+                                  sortorder integer NOT NULL default '0'
                                 );");
 
         modify_database('', "CREATE TABLE prefix_role_capabilities (
                                   id SERIAL PRIMARY KEY,
-                                  contextid interger NOT NULL default 0,
-                                  roleid interger NOT NULL default 0,
+                                  contextid integer NOT NULL default 0,
+                                  roleid integer NOT NULL default 0,
                                   capability varchar(255) NOT NULL default '',
                                   permission integer NOT NULL default 0,
-                                  timemodified interger NOT NULL default 0,
-                                  modifierid interger NOT NULL default 0
+                                  timemodified integer NOT NULL default 0,
+                                  modifierid integer NOT NULL default 0
                                 );");
 
         modify_database('', "CREATE TABLE prefix_role_deny_grant (
@@ -1664,19 +1664,19 @@ function main_upgrade($oldversion=0) {
                                 );");
                                 
         modify_database('', "CREATE TABLE prefix_capabilities ( 
-							  id SERIAL PRIMARY KEY,
-							  name varchar(150) NOT NULL default '', 
-							  captype varchar(50) NOT NULL default '', 
-							  contextlevel integer NOT NULL default 0, 
-							  component varchar(100) NOT NULL default ''
+                              id SERIAL PRIMARY KEY,
+                              name varchar(150) NOT NULL default '', 
+                              captype varchar(50) NOT NULL default '', 
+                              contextlevel integer NOT NULL default 0, 
+                              component varchar(100) NOT NULL default ''
                                 );"); 
-								
-		modify_database('', "CREATE TABLE prefix_role_names ( 
-							  id SERIAL PRIMARY KEY,
-							  roleid integer NOT NULL default 0,
-							  contextid integer NOT NULL default 0, 
-							  text text NOT NULL default ''
-								);");                                
+                                
+        modify_database('', "CREATE TABLE prefix_role_names ( 
+                              id SERIAL PRIMARY KEY,
+                              roleid integer NOT NULL default 0,
+                              contextid integer NOT NULL default 0, 
+                              text text NOT NULL default ''
+                                );");                                
                                                                                      
     }
     return $result;
