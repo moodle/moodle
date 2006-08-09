@@ -209,17 +209,20 @@ function modify_database($sqlfile='', $sqlstring='') {
 /**
  * Add a new field to a table, or modify an existing one (if oldfield is defined).
  * Warning: Please be careful on primary keys, as this function will eat auto_increments
+ * 
  * @uses $CFG
  * @uses $db
- * @param string $table ?
- * @param string $oldfield ?
- * @param string $field ?
- * @param string $type ?
- * @param string $size ?
- * @param string $signed ?
- * @param string $default ?
- * @param string $null ?
- * @todo Finish documenting this function
+ * @param string $table the name of the table to modify. (Without the prefix.)
+ * @param string $oldfield If changing an existing column, the name of that column.
+ * @param string $field The name of the column at the end of the operation.
+ * @param string $type The type of the column at the end of the operation. TEXT, VARCHAR, CHAR, INTEGER, REAL, or TINYINT
+ * @param string $size The size of that column type. As in VARCHAR($size), or INTEGER($size).
+ * @param string $signed For numeric column types, whether that column is 'signed' or 'unsigned'.
+ * @param string $default The new default value for the column.
+ * @param string $null 'not null', or '' to allow nulls.
+ * @param string $after Which column to insert this one after. Not supported on Postgres.
+ * 
+ * @return boolean Wheter the operation succeeded.
  */
 
 function table_column($table, $oldfield, $field, $type='integer', $size='10',
