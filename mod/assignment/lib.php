@@ -1494,7 +1494,7 @@ class assignment_base {
 
         $filearea = $this->file_area_name($userid);
 
-        if ( is_dir($filearea) && $basedir = $this->file_area($userid)) {
+        if ( is_dir($CFG->dataroot.'/'.$filearea) && $basedir = $this->file_area($userid)) {
             if ($files = get_directory_list($basedir)) {
                 return count($files);
             }
