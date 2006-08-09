@@ -87,12 +87,13 @@ if ($currenttab != 'update') {
 	if (isset($tabsmode)) {
 		$inactive[] = 'roles';
 
-		$secondrow[] = new tabobject('assign', $CFG->wwwroot.'/admin/roles/assign.php?contextid='.$context->id, get_string('roleassignments')); 
+		$secondrow[] = new tabobject('assign', $CFG->wwwroot.'/admin/roles/assign.php?contextid='.$context->id, get_string('assignroles', 'role')); 
                 
         if ($context->level == CONTEXT_SYSTEM) {
-    	    $secondrow[] = new tabobject('override', '', get_string('roleoverrides')); 		
+    	    $secondrow[] = new tabobject('override', '', get_string('overrideroles', 'role')); 		
         } else {
-    	    $secondrow[] = new tabobject('override', $CFG->wwwroot.'/admin/roles/override.php?contextid='.$context->id, get_string('roleoverrides')); 		
+    	    $secondrow[] = new tabobject('override', $CFG->wwwroot.'/admin/roles/override.php?contextid='.$context->id,
+                                          get_string('overrideroles', 'role')); 		
         }
 		
 		if ($tabsmode == 'override') {

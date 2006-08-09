@@ -1,5 +1,4 @@
- <? 
- /* interface page for writing role overrides */
+<?php
     
 	require_once("../../config.php");
 	
@@ -15,23 +14,24 @@
         redirect("$CFG->wwwroot/$CFG->admin/index.php");
     }
 
-	$stroverrides = get_string('roleoverries');
-/*
-	if ($course && $course->id != SITEID) { // course header
-	    print_header("$course->shortname: $stroverrides",
-	                 "$site->fullname",
-	                 "<a href=\"view.php?id=$course->id\">$course->shortname</a> -> $stroverrides");
-	} else { // site header
-	    print_header("$site->shortname: $stroverrides",
-	                 "$site->fullname",
-	                 "$stroverrides");
-	}
-*/
+	$strassignusers = get_string('assignusers', 'role');
+	$strpotentialusers = get_string('potentialusers', 'role');
+	$strexistingusers = get_string('existingusers', 'role');
+	$straction = get_string('assignroles', 'role');
+	$strcurrentrole = get_string('currentrole', 'role');
+	$strcurrentcontext = get_string('currentcontext', 'role');
+	$strsearch = get_string('search');
+	$strshowall = get_string('showall');
+
 	$context = get_record('context', 'id', $contextid);
-	$straction = get_string('editoverride');
+
+	$straction = get_string('overrideroles', 'role');
 	$currenttab = '';
+
 	$tabsmode = 'override';
 	include_once('tabs.php');
+
+
  	/*************************
  	 * form processing here  *
  	 *************************/
@@ -88,9 +88,9 @@
     	$options[$rolex->id] = $rolex->name;
     }
     
-	print ('<form name="rolesform" action="override.php" method="post">');
-    print ('<div align="center">Current Context: '.print_context_name($contextid).'<br/>');
-    print ('<input type="hidden" name="contextid" value="'.$contextid.'">Select a Role: ');
+    print ('<form name="rolesform" action="override.php" method="post">');
+    print ('<div align="center">'.$strcurrentcontext.': '.print_context_name($contextid).'<br/>');
+    print ('<input type="hidden" name="contextid" value="'.$contextid.'">'.$strcurrentrole.': ');
     choose_from_menu ($options, 'roleid', $roleid, 'choose', $script='rolesform.submit()');
 	print ('</div></form>');
 		

@@ -32,34 +32,21 @@
      * end of permission checking  
 	 */
     
-/*
-    if ($course->metacourse) {
-        redirect("$CFG->wwwroot/course/importstudents.php?id=$course->id");
-    }
-*/
     require_login($course->id);
 
     if (!isteacheredit($course->id)) {
         error("You must be an editing teacher in this course, or an admin");
     }
 
-	$strassignusers = get_string('assignusers');
-	$strpotentialusers = get_string('potentialusers');
-	$strexistingusers = get_string('existingusers');
+	$strassignusers = get_string('assignusers', 'role');
+	$strpotentialusers = get_string('potentialusers', 'role');
+	$strexistingusers = get_string('existingusers', 'role');
+	$straction = get_string('assignroles', 'role');
+	$strcurrentrole = get_string('currentrole', 'role');
+	$strcurrentcontext = get_string('currentcontext', 'role');
 	$strsearch = get_string('search');
 	$strshowall = get_string('showall');
-/*
-	if ($course && $course->id != SITEID) { // course header
-	    print_header("$course->shortname: $strassignusers",
-	                 "$site->fullname",
-	                 "<a href=\"view.php?id=$course->id\">$course->shortname</a> -> $strassignusers");
-	} else { // site header
-	    print_header("$site->shortname: $strassignusers",
-	                 "$site->fullname",
-	                 "$strassignusers");
-	}
-	*/
-	$straction = get_string('roleassignment');
+
 	$context = get_record('context', 'id', $contextid);
 	
 	$currenttab = '';
@@ -106,6 +93,7 @@
     $existinguserarray = array();
 
 	$SQL = "select u.* from {$CFG->prefix}role_assignments r, {$CFG->prefix}user u where contextid = $contextid and roleid = $roleid and u.id = r.userid"; // join now so that we can just use fullname() later
+
     if (!$contextusers = get_records_sql($SQL)) {
     	$contextusers = array();  
     }
@@ -146,8 +134,8 @@
     
     // prints a form to swap roles
     print ('<form name="rolesform" action="assign.php" method="post">');
-    print ('<div align="center">Current Context: '.print_context_name($contextid).'<br/>');
-    print ('<input type="hidden" name="contextid" value="'.$contextid.'">Select a Role: ');
+    print ('<div align="center">'.$strcurrentcontext.': '.print_context_name($contextid).'<br/>');
+    print ('<input type="hidden" name="contextid" value="'.$contextid.'">'.$strcurrentrole.': ');
     choose_from_menu ($options, 'roleid', $roleid, 'choose', $script='rolesform.submit()');
 	print ('</div></form>');
 	
