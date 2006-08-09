@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="blocks/db" VERSION="20060807" COMMENT="XMLDB file for Moodle block tables">
+<XMLDB PATH="blocks/db" VERSION="20060809" COMMENT="XMLDB file for Moodle block tables">
   <TABLES>
     <TABLE NAME="block" COMMENT="to store installed blocks" NEXT="block_instance">
       <FIELDS>
@@ -27,7 +27,8 @@
         <FIELD NAME="configdata" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="visible"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="blockid"/>
+        <KEY NAME="blockid" TYPE="foreign" FIELDS="blockid" REFTABLE="block" REFFIELDS="id" PREVIOUS="primary"/>
       </KEYS>
       <INDEXES>
         <INDEX NAME="pageid" UNIQUE="false" FIELDS="pageid" NEXT="pagetype"/>
