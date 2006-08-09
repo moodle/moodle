@@ -61,6 +61,20 @@ $mod_forum_capabilities = array(
         )
     ),
     
+    'mod/forum:viewhiddentimedposts' => array(
+    
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_MODULE,
+        'legacy' => array(
+            'guest' => CAP_PREVENT,
+            'student' => CAP_PREVENT,
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'coursecreator' => CAP_ALLOW,
+            'admin' => CAP_ALLOW
+        )
+    ),
+    
     'mod/forum:startdiscussion' => array(
     
         'captype' => 'read',
