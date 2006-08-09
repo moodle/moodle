@@ -1712,7 +1712,7 @@ function forum_make_mail_post(&$post, $user, $touser, $course,
     }
     $output .= '<div class="subject">'.format_string($post->subject).'</div>';
 
-    $fullname = fullname($user, has_capability('moodle/site:viewfullnames', $modcontext->id););
+    $fullname = fullname($user, has_capability('moodle/site:viewfullnames', $modcontext->id));
     $by->name = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.$course->id.'">'.$fullname.'</a>';
     $by->date = userdate($post->modified, '', $touser->timezone);
     $output .= '<div class="author">'.get_string('bynameondate', 'forum', $by).'</div>';
