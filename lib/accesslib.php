@@ -928,9 +928,11 @@ function get_roles_with_capability($capability, $permission=NULL) {
  * @return id - new id of the assigment
  */
 function role_assign($roleid, $userid, $groupid, $contextid, $timestart=0, $timeend=0, $hidden=0) {
-    global $USER;
+    global $USER, $CFG;
 
-	echo "attempting to assign roleid $roleid userid $userid contextid $contextid";
+    if ($CFG->debug) {
+	    notify("Assign roleid $roleid userid $userid contextid $contextid", 'notifytiny');
+    }
 
     if (empty($roleid)) {
         error ('you need to select a role');
