@@ -432,11 +432,11 @@
     $userdata .= '<div class="adminlink"><a href="'.$CFG->wwwroot.'/'.$CFG->admin.'/uploaduser.php?sesskey='.$USER->sesskey.'">'.
                  get_string('uploadusers').'</a> - <span class="explanation">'.get_string('adminhelpuploadusers').'</span></div>';
     $userdata .= '<div class="adminlink"><a href="roles/manage.php">'.
-                 get_string('manageroles').'</a> - <span class="explanation">'.get_string('adminmanageroles').
-                 ' <img src="../pix/t/user.gif" height="11" width="11" alt="" /></span></div>';
+                 get_string('manageroles').'</a> - <span class="explanation">'.get_string('adminhelpmanageroles').
+                 '</span></div>';
     $userdata .= '<div class="adminlink"><a href="roles/assign.php?contextid='.$context->id.'">'.
-                 get_string('assignroles').'</a> - <span class="explanation">'.get_string('adminassignroles').
-                 ' <img src="../pix/t/user.gif" height="11" width="11" alt="" /></span></div>';
+                 get_string('assignsiteroles').'</a> - <span class="explanation">'.get_string('adminhelpassignsiteroles').
+                 '</span></div>';
 
     $table->data[] = array('<strong><a href="users.php">'.get_string('users').'</a></strong>', $userdata);
 
@@ -454,24 +454,6 @@
                            '<div class="explanation">'.get_string('adminhelpstickyblocks').'</div>');
     $table->data[] = array('<strong><a href="report.php">'.get_string('reports').'</a></strong>', 
                            '<div class="explanation">'.get_string('adminhelpreports').'</div>');
-
-    $testingdata  = '<div class="adminlink"><a href="environment.php">'.get_string('environment', 'admin').
-                   '</a> - <span class="explanation">'.get_string('adminhelpenvironment').'</span></div>';
-                           
-    $testingdata .= '<div class="adminlink"><a href="unittest/index.php">'.get_string('unittests', 'admin').
-                   '</a> - <span class="explanation">'.get_string('adminhelpunittests').'</span></div>';
-
-    $table->data[] = array('<strong><a href="tests.php">'.get_string('tests','admin').'</a></strong>',
-                           $testingdata);
-
-    $testingdata  = '<div class="adminlink"><a href="environment.php">'.get_string('environment', 'admin').
-                   '</a> - <span class="explanation">'.get_string('adminhelpenvironment').'</span></div>';
-                           
-    $testingdata .= '<div class="adminlink"><a href="report/simpletest/index.php">'.get_string('simpletest', 'admin').
-                   '</a> - <span class="explanation">'.get_string('adminhelpsimpletest').'</span></div>';
-
-    $table->data[] = array('<strong><a href="tests.php">'.get_string('tests','admin').'</a></strong>',
-                           $testingdata);
 
     $miscdata = '<div class="adminlink"><a href="../files/index.php?id='.$site->id.'">'.get_string('sitefiles').
                  '</a> - <span class="explanation">'.get_string('adminhelpsitefiles').'</span></div>';
