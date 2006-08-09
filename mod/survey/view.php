@@ -44,10 +44,10 @@
 
     //if (isteacheredit($course->id) or ($groupmode == VISIBLEGROUPS)) {
     if (has_capability('mod/survey:readresponses', $context->id) or ($groupmode == VISIBLEGROUPS)) {    
-	    $currentgroup = 0;
+        $currentgroup = 0;
     }
-	
-	if (isteacher($course->id)) {
+    
+    if (isteacher($course->id)) {
     //if (has_capability('mod/survey:readresponses', $context->id)) {
         $numusers = survey_count_responses($survey->id, $currentgroup);
         echo "<div class=\"reportlink\"><a href=\"report.php?id=$cm->id\">".
