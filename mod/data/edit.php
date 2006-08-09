@@ -296,7 +296,7 @@
             echo '<tr>';
             echo '<td align="right">'.get_string('csvfile', 'data').':</td>';
             echo '<td><input type="file" name="recordsfile" size="30">';
-            helpbutton('importcvs', get_string('csvimport', 'data'), 'data', true, false);
+            helpbutton('importcsv', get_string('csvimport', 'data'), 'data', true, false);
             echo '</td><tr>';
             echo '<td align="right">'.get_string('fielddelimiter', 'data').':</td>';
             echo '<td><input type="text" name="fielddelimiter" size="6">';
