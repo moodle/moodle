@@ -20,7 +20,7 @@
     $admin   = new object();
     $teacher = new object();
 
-	$context = get_context_instance(CONTEXT_SYSTEM, SITEID);
+    $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
 
     if (! record_exists("user_admins")) {   // No admin user yet
 
@@ -309,9 +309,9 @@
                 if ($user->id == $USER->id or $user->username == "changeme") {
                     $deletebutton = "";
                 } else {
-                  	if (has_capability('moodle/user:delete', $context->id)) {
-                    	$deletebutton = "<a href=\"user.php?delete=$user->id&amp;sesskey=$USER->sesskey\">$strdelete</a>";					} else {
-                    	$deletebutton ="";	  
+                      if (has_capability('moodle/user:delete', $context->id)) {
+                        $deletebutton = "<a href=\"user.php?delete=$user->id&amp;sesskey=$USER->sesskey\">$strdelete</a>";                    } else {
+                        $deletebutton ="";      
                     }
                 }
                 if ($user->lastaccess) {
@@ -328,7 +328,7 @@
                 
                 if (has_capability('moodle/user:edit', $context->id)) {
                 
-					$table->data[] = array ("<a href=\"../user/view.php?id=$user->id&amp;course=$site->id\">$fullname</a>",
+                    $table->data[] = array ("<a href=\"../user/view.php?id=$user->id&amp;course=$site->id\">$fullname</a>",
                                         "$user->email",
                                         "$user->city",
                                         "$user->country",
@@ -337,15 +337,15 @@
                                         $deletebutton,
                                         $confirmbutton);
                 } else {
-				  	$table->data[] = array ("<a href=\"../user/view.php?id=$user->id&amp;course=$site->id\">$fullname</a>",
+                      $table->data[] = array ("<a href=\"../user/view.php?id=$user->id&amp;course=$site->id\">$fullname</a>",
                                         "$user->email",
                                         "$user->city",
                                         "$user->country",
                                         $strlastaccess,
                                         $deletebutton,
                                         $confirmbutton);
-				  
-				}
+                  
+                }
             }
         }
 
@@ -359,16 +359,16 @@
         echo "</form>";
         echo "</td></tr></table>";
         
-		if (has_capability('moodle/user:create', $context->id)) {
-			print_heading("<a href=\"user.php?newuser=true&amp;sesskey=$USER->sesskey\">".get_string("addnewuser")."</a>");	
-		}
+        if (has_capability('moodle/user:create', $context->id)) {
+            print_heading("<a href=\"user.php?newuser=true&amp;sesskey=$USER->sesskey\">".get_string("addnewuser")."</a>");    
+        }
         if (!empty($table)) {
             print_table($table);
             print_paging_bar($usercount, $page, $perpage,
                              "user.php?sort=$sort&amp;dir=$dir&amp;perpage=$perpage".
                              "&amp;firstinitial=$firstinitial&amp;lastinitial=$lastinitial&amp;search=".urlencode(stripslashes($search))."&amp;");
             if (has_capability('moodle/user:create', $context->id)) {                
-            	print_heading("<a href=\"user.php?newuser=true&amp;sesskey=$USER->sesskey\">".get_string("addnewuser")."</a>");
+                print_heading("<a href=\"user.php?newuser=true&amp;sesskey=$USER->sesskey\">".get_string("addnewuser")."</a>");
             }
         }
 

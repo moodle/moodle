@@ -6,16 +6,16 @@
     define("MAX_USERS_PER_PAGE", 5000);
 
     $contextid      = required_param('contextid',PARAM_INT); // context id
-    $roleid			= optional_param('roleid', 0, PARAM_INT); // required role id
+    $roleid            = optional_param('roleid', 0, PARAM_INT); // required role id
     $add            = optional_param('add', 0, PARAM_BOOL);
     $remove         = optional_param('remove', 0, PARAM_BOOL);
     $showall        = optional_param('showall', 0, PARAM_BOOL);
     $searchtext     = optional_param('searchtext', '', PARAM_RAW); // search string
     $previoussearch = optional_param('previoussearch', 0, PARAM_BOOL);
-    $hidden 		= optional_param('hidden', 0, PARAM_BOOL); // whether this assignment is hidden
+    $hidden         = optional_param('hidden', 0, PARAM_BOOL); // whether this assignment is hidden
     $previoussearch = ($searchtext != '') or ($previoussearch) ? 1:0;
-    $timestart		= optional_param('timestart', 0, PARAM_INT);
-    $timeend		= optional_param('timened', 0, PARAM_INT);
+    $timestart        = optional_param('timestart', 0, PARAM_INT);
+    $timeend        = optional_param('timened', 0, PARAM_INT);
 
     if (! $site = get_site()) {
         redirect("$CFG->wwwroot/$CFG->admin/index.php");
@@ -26,11 +26,11 @@
     }
     
     /* permission check to see whether this user can assign people to this role
-     * needs to be:	
+     * needs to be:    
      * 1) has the capability to assign
      * 2) not in role_deny_grant
      * end of permission checking  
-	 */
+     */
     
     require_login($course->id);
 
@@ -38,21 +38,21 @@
         error("You must be an editing teacher in this course, or an admin");
     }
 
-	$strassignusers = get_string('assignusers', 'role');
-	$strpotentialusers = get_string('potentialusers', 'role');
-	$strexistingusers = get_string('existingusers', 'role');
-	$straction = get_string('assignroles', 'role');
-	$strcurrentrole = get_string('currentrole', 'role');
-	$strcurrentcontext = get_string('currentcontext', 'role');
-	$strsearch = get_string('search');
-	$strshowall = get_string('showall');
+    $strassignusers = get_string('assignusers', 'role');
+    $strpotentialusers = get_string('potentialusers', 'role');
+    $strexistingusers = get_string('existingusers', 'role');
+    $straction = get_string('assignroles', 'role');
+    $strcurrentrole = get_string('currentrole', 'role');
+    $strcurrentcontext = get_string('currentcontext', 'role');
+    $strsearch = get_string('search');
+    $strshowall = get_string('showall');
 
-	$context = get_record('context', 'id', $contextid);
-	
-	$currenttab = '';
-	$tabsmode = 'assign';
-	include_once('tabs.php');
-	
+    $context = get_record('context', 'id', $contextid);
+    
+    $currenttab = '';
+    $tabsmode = 'assign';
+    include_once('tabs.php');
+    
 /// Don't allow restricted teachers to even see this page (because it contains
 /// a lot of email addresses and access to all student on the server
 
@@ -66,9 +66,9 @@
 
     } else {
         if ($add and !empty($frm->addselect) and confirm_sesskey()) {
-		  	//$timestart = ????
-		  	// time end = ????
-		  	$timemodified = time();
+              //$timestart = ????
+              // time end = ????
+              $timemodified = time();
             foreach ($frm->addselect as $adduser) {
                 $adduser = clean_param($adduser, PARAM_INT);
                 if (! role_assign($roleid, $adduser, 0, $contextid, $timestart, $timeend, $hidden)) {
@@ -92,17 +92,17 @@
 /// Get all existing students and teachers for this course.
     $existinguserarray = array();
 
-	$SQL = "select u.* from {$CFG->prefix}role_assignments r, {$CFG->prefix}user u where contextid = $contextid and roleid = $roleid and u.id = r.userid"; // join now so that we can just use fullname() later
+    $SQL = "select u.* from {$CFG->prefix}role_assignments r, {$CFG->prefix}user u where contextid = $contextid and roleid = $roleid and u.id = r.userid"; // join now so that we can just use fullname() later
 
     if (!$contextusers = get_records_sql($SQL)) {
-    	$contextusers = array();  
+        $contextusers = array();  
     }
 
-	foreach ($contextusers as $contextuser) {
-		$existinguserarray[] = $contextuser->id;
-	}
-	
-	$existinguserlist = implode(',', $existinguserarray);
+    foreach ($contextusers as $contextuser) {
+        $existinguserarray[] = $contextuser->id;
+    }
+    
+    $existinguserlist = implode(',', $existinguserarray);
     unset($existinguserarray);
 
 /// Get search results excluding any users already in this course
@@ -125,11 +125,11 @@
         }
 
     }
-    	
+        
     // this needs to check capability too
     $role = get_records('role');
     foreach ($role as $rolex) {
-    	$options[$rolex->id] = $rolex->name;
+        $options[$rolex->id] = $rolex->name;
     }
     
     // prints a form to swap roles
@@ -137,17 +137,17 @@
     print ('<div align="center">'.$strcurrentcontext.': '.print_context_name($contextid).'<br/>');
     print ('<input type="hidden" name="contextid" value="'.$contextid.'">'.$strcurrentrole.': ');
     choose_from_menu ($options, 'roleid', $roleid, 'choose', $script='rolesform.submit()');
-	print ('</div></form>');
-	
-	if ($roleid) {
+    print ('</div></form>');
+    
+    if ($roleid) {
 
-    	print_simple_box_start("center");
-	
-    	include('assign.html');
+        print_simple_box_start("center");
+    
+        include('assign.html');
 
-    	print_simple_box_end();
+        print_simple_box_end();
 
-	}
+    }
     print_footer($course);
 
 ?>

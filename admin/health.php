@@ -3,8 +3,8 @@
     ob_start(); //for whitespace test
     require_once('../config.php');
 
-	// extra whitespace test - intentionally breaks cookieless mode
-	$extraws = '';
+    // extra whitespace test - intentionally breaks cookieless mode
+    $extraws = '';
     while (true) {
         $extraws .= ob_get_contents();
         if (!@ob_end_clean()) { //

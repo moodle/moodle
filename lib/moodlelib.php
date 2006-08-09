@@ -1604,7 +1604,7 @@ function require_login($courseid=0, $autologinguest=true, $cm=null) {
             notice(get_string('coursehidden'), $CFG->wwwroot .'/');
         }    
         
-		$context = get_context_instance(CONTEXT_COURSE, $courseid);
+        $context = get_context_instance(CONTEXT_COURSE, $courseid);
 
         if (has_capability('moodle/course:view', $context->id)) {
             if (isset($USER->realuser)) {   // Make sure the REAL person can also access this course
@@ -2008,21 +2008,21 @@ function isadmin($userid=0) {
     global $USER;
     static $admins, $nonadmins;
 
-	if (isset($CFG->rolesactive) && $CFG->rolesactive ===1) {
+    if (isset($CFG->rolesactive) && $CFG->rolesactive ===1) {
 
-		if ($courseid == 0) {
-			$context = get_context_instance(CONTEXT_SYSTEM, SITEID);  
-		} else {
-			$context = get_context_instance(CONTEXT_COURSE, $courseid);
-		}
-		
-		if (!$userid) {
-			return has_capability('moodle/legacy:admin', $context->id);
-		} else {
-			return has_capability('moodle/legacy:admin', $context->id, false, $userid);
-		}
-	  
-	}
+        if ($courseid == 0) {
+            $context = get_context_instance(CONTEXT_SYSTEM, SITEID);  
+        } else {
+            $context = get_context_instance(CONTEXT_COURSE, $courseid);
+        }
+        
+        if (!$userid) {
+            return has_capability('moodle/legacy:admin', $context->id);
+        } else {
+            return has_capability('moodle/legacy:admin', $context->id, false, $userid);
+        }
+      
+    }
 
     if (!isset($admins)) {
         $admins = array();
@@ -2067,20 +2067,20 @@ function isteacher($courseid=0, $userid=0, $includeadmin=true) {
 /// Is the user able to access this course as a teacher?
     global $USER, $CFG;
 
-	if (isset($CFG->rolesactive) && $CFG->rolesactive ===1) {   // should be always
+    if (isset($CFG->rolesactive) && $CFG->rolesactive ===1) {   // should be always
 
-		if ($courseid == 0) {
-			$context = get_context_instance(CONTEXT_SYSTEM, SITEID);  
-		} else {
-			$context = get_context_instance(CONTEXT_COURSE, $courseid);
-		}
-	
-		if (!$userid) {
-			return has_capability('moodle/legacy:teacher', $context->id);
-		} else {
-			return has_capability('moodle/legacy:teacher', $context->id, false, $userid);
-		}  
-	}
+        if ($courseid == 0) {
+            $context = get_context_instance(CONTEXT_SYSTEM, SITEID);  
+        } else {
+            $context = get_context_instance(CONTEXT_COURSE, $courseid);
+        }
+    
+        if (!$userid) {
+            return has_capability('moodle/legacy:teacher', $context->id);
+        } else {
+            return has_capability('moodle/legacy:teacher', $context->id, false, $userid);
+        }  
+    }
 
     // Old code follows, will be removed before 1.7 because it shouldn't run
 
@@ -2155,22 +2155,22 @@ function isteacherinanycourse($userid=0, $includeadmin=true) {
  */
 function isteacheredit($courseid, $userid=0, $ignorestudentview=false) {
     global $USER;
-	
-	if (isset($CFG->rolesactive) && $CFG->rolesactive ===1) {
+    
+    if (isset($CFG->rolesactive) && $CFG->rolesactive ===1) {
 
-		if ($courseid == 0) {
-			$context = get_context_instance(CONTEXT_SYSTEM, SITEID);  
-		} else {
-			$context = get_context_instance(CONTEXT_COURSE, $courseid);
-		}
-		
-		if (!$userid) {
-			return has_capability('moodle/legacy:edittingteacher', $context->id);
-		} else {
-			return has_capability('moodle/legacy:edittingteacher', $context->id, false, $userid);
-		}
-	  
-	}
+        if ($courseid == 0) {
+            $context = get_context_instance(CONTEXT_SYSTEM, SITEID);  
+        } else {
+            $context = get_context_instance(CONTEXT_COURSE, $courseid);
+        }
+        
+        if (!$userid) {
+            return has_capability('moodle/legacy:edittingteacher', $context->id);
+        } else {
+            return has_capability('moodle/legacy:edittingteacher', $context->id, false, $userid);
+        }
+      
+    }
     // we can't edit in studentview
     if (!empty($USER->studentview) and !$ignorestudentview) {
         return false;
@@ -2205,19 +2205,19 @@ function iscreator ($userid=0) {
     
     if (isset($CFG->rolesactive) && $CFG->rolesactive ===1) {
 
-		if ($courseid == 0) {
-			$context = get_context_instance(CONTEXT_SYSTEM, SITEID);  
-		} else {
-			$context = get_context_instance(CONTEXT_COURSE, $courseid);
-		}
-		
-		if (!$userid) {
-			return has_capability('moodle/legacy:coursecreator', $context->id);
-		} else {
-			return has_capability('moodle/legacy:coursecreator', $context->id, false, $userid);
-		}
-	  
-	}
+        if ($courseid == 0) {
+            $context = get_context_instance(CONTEXT_SYSTEM, SITEID);  
+        } else {
+            $context = get_context_instance(CONTEXT_COURSE, $courseid);
+        }
+        
+        if (!$userid) {
+            return has_capability('moodle/legacy:coursecreator', $context->id);
+        } else {
+            return has_capability('moodle/legacy:coursecreator', $context->id, false, $userid);
+        }
+      
+    }
     if (empty($USER->id)) {
         return false;
     }
@@ -2246,22 +2246,22 @@ function iscreator ($userid=0) {
  */
 function isstudent($courseid, $userid=0) {
     global $USER, $CFG;
-	
-	if (isset($CFG->rolesactive) && $CFG->rolesactive ===1) {
+    
+    if (isset($CFG->rolesactive) && $CFG->rolesactive ===1) {
 
-		if ($courseid == 0) {
-			$context = get_context_instance(CONTEXT_SYSTEM, SITEID);  
-		} else {
-			$context = get_context_instance(CONTEXT_COURSE, $courseid);
-		}
-		
-		if (!$userid) {
-			return has_capability('moodle/legacy:student', $context->id);
-		} else {
-			return has_capability('moodle/legacy:student', $context->id, false, $userid);
-		}
-	  
-	}
+        if ($courseid == 0) {
+            $context = get_context_instance(CONTEXT_SYSTEM, SITEID);  
+        } else {
+            $context = get_context_instance(CONTEXT_COURSE, $courseid);
+        }
+        
+        if (!$userid) {
+            return has_capability('moodle/legacy:student', $context->id);
+        } else {
+            return has_capability('moodle/legacy:student', $context->id, false, $userid);
+        }
+      
+    }
 
     if (empty($USER->id) and !$userid) {
         return false;
@@ -7160,7 +7160,7 @@ function check_dir_exists($dir, $create=false, $recursive=false) {
         } else {
             umask(0000);
             if ($recursive) {
-            	// PHP 5.0 has recursive mkdir parameter, but 4.x does not :-(
+                // PHP 5.0 has recursive mkdir parameter, but 4.x does not :-(
                 $dir = str_replace('\\', '/', $dir); //windows compatibility
                 $dirs = explode('/', $dir);
                 $dir = array_shift($dirs).'/'; //skip root or drive letter

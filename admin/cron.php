@@ -43,9 +43,9 @@
     setcookie('MoodleSessionTest'.$CFG->sessioncookie, '', time() - 3600, '/');
 
 /// switch to site language and locale
-	if (!empty($CFG->courselang)) {
+    if (!empty($CFG->courselang)) {
         unset ($CFG->courselang);
-	}
+    }
     if (!empty($SESSION->lang)) {
         unset ($SESSION->lang);
     }
