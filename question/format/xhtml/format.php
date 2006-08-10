@@ -118,7 +118,7 @@ function presave_process( $content ) {
   $css = implode( ' ',$css_lines ); 
 
   $xp =  "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\"\n";
-  $xp .= "	\"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">\n";
+  $xp .= "  \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">\n";
   $xp .= "<html xmlns=\"http://www.w3.org/1999/xhtml\">\n";
   $xp .= "<head>\n";
   $xp .= "<title>Moodle Quiz XHTML Export</title>\n";
