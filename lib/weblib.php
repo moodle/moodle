@@ -655,20 +655,27 @@ function button_to_popup_window ($url, $name='popup', $linkname='click here',
 /**
  * Prints a simple button to close a window
  */
-function close_window_button($name='closewindow') {
+function close_window_button($name='closewindow', $return=false) {
+    $output = '';
 
-    echo '<center>' . "\n";
-    echo '<script type="text/javascript">' . "\n";
-    echo '<!--' . "\n";
-    echo "document.write('<form>');\n";
-    echo "document.write('<input type=\"button\" onclick=\"self.close();\" value=\"".get_string("closewindow")."\" />');\n";
-    echo "document.write('<\/form>');\n";
-    echo '-->' . "\n";
-    echo '</script>' . "\n";
-    echo '<noscript>' . "\n";
-    print_string($name);
-    echo '</noscript>' . "\n";
-    echo '</center>' . "\n";
+    $output .= '<center>' . "\n";
+    $output .= '<script type="text/javascript">' . "\n";
+    $output .= '<!--' . "\n";
+    $output .= "document.write('<form>');\n";
+    $output .= "document.write('<input type=\"button\" onclick=\"self.close();\" value=\"".get_string("closewindow")."\" />');\n";
+    $output .= "document.write('<\/form>');\n";
+    $output .= '-->' . "\n";
+    $output .= '</script>' . "\n";
+    $output .= '<noscript>' . "\n";
+    $output .= get_string($name);
+    $output .= '</noscript>' . "\n";
+    $output .= '</center>' . "\n";
+
+    if ($return) {
+        return $output;
+    } else {
+        echo $output;
+    }
 }
 
 /*
@@ -802,7 +809,7 @@ function choose_from_menu_nested($options,$name,$selected='',$nothing='choose',$
  * @param string $name     Name of the radiogroup (unique in the form)
  * @param string $checked  The value that is already checked
  */
-function choose_from_radio ($options, $name, $checked='') {
+function choose_from_radio ($options, $name, $checked='', $return=false) {
 
     static $idcounter = 0;
 
@@ -832,7 +839,11 @@ function choose_from_radio ($options, $name, $checked='') {
 
     $output .= '</span>' .  "\n";
 
-    echo $output;
+    if ($return) {
+        return $output;
+    } else {
+        echo $output;
+    }
 }
 
 /** Display an standard html checkbox with an optional label
@@ -884,7 +895,7 @@ function print_checkbox ($name, $value, $checked = true, $label = '', $alt = '',
  * @param string  $label   The label to be showed near the text field
  * @param string  $alt     The info to be inserted in the alt tag
  */
-function print_textfield ($name, $value, $alt = '',$size=50,$maxlength= 0,$return=false) {
+function print_textfield ($name, $value, $alt = '',$size=50,$maxlength=0, $return=false) {
 
     static $idcounter = 0;
 
