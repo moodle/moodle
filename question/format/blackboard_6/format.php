@@ -518,9 +518,9 @@ function process_tf($quest, &$questions) {
 
     $question->qtype = TRUEFALSE;
     $question->defaultgrade = 1;
-    $question->single = 1;	// Only one answer is allowed
-    $question->image = "";	// No images with this format
-	$question->questiontext = addslashes($quest->QUESTION_BLOCK->text);
+    $question->single = 1; // Only one answer is allowed
+    $question->image = ""; // No images with this format
+    $question->questiontext = addslashes($quest->QUESTION_BLOCK->text);
     // put name in question object
     $question->name = $question->questiontext;
 
@@ -679,8 +679,8 @@ function process_ma($quest, &$questions) {
     $question->name = $question->questiontext; 
     $question->qtype = MULTICHOICE;
     $question->defaultgrade = 1;
-    $question->single = 0;	// More than one answers allowed
-    $question->image = "";	// No images with this format
+    $question->single = 0; // More than one answers allowed
+    $question->image = ""; // No images with this format
 
     $answers = $quest->responses;
     $correct_answers = array();
@@ -727,8 +727,8 @@ function process_essay($quest, &$questions) {
         // treat as short answer
         $question->qtype = ESSAY;
         $question->defaultgrade = 1;
-        $question->usecase = 0;	// Ignore case
-        $question->image = "";	// No images with this format
+        $question->usecase = 0; // Ignore case
+        $question->image = ""; // No images with this format
         $question->questiontext = addslashes(trim($quest->QUESTION_BLOCK->text));
         $question->name = $question->questiontext;
     

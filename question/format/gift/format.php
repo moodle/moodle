@@ -269,9 +269,9 @@ class qformat_gift extends qformat_default {
     
                 $countanswers = count($answers);
                 
-		if (!$this->check_answer_count( 2,$answers,$text )) {
-  		  return false;
- 		  break;
+                if (!$this->check_answer_count( 2,$answers,$text )) {
+                    return false;
+                    break;
                 }
 
                 foreach ($answers as $key => $answer) {
@@ -307,9 +307,9 @@ class qformat_gift extends qformat_default {
                     array_shift($answers);
                 }
     
-		if (!$this->check_answer_count( 2,$answers,$text )) {
-  		  return false;
- 		  break;
+                if (!$this->check_answer_count( 2,$answers,$text )) {
+                    return false;
+                    break;
                 }
     
                 foreach ($answers as $key => $answer) {
@@ -364,9 +364,9 @@ class qformat_gift extends qformat_default {
                     array_shift($answers);
                 }
     
-		if (!$this->check_answer_count( 1,$answers,$text )) {
-  		  return false;
- 		  break;
+                if (!$this->check_answer_count( 1,$answers,$text )) {
+                    return false;
+                    break;
                 }
 
                 foreach ($answers as $key => $answer) {

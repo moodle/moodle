@@ -305,8 +305,8 @@ function handle_questions_media(&$questions, $path, $courseid) {
         // zip files into single export file
         zip_files( array($path), "$path.zip" );
 
-     	// remove the temporary directory
-		remove_dir( $path );
+        // remove the temporary directory
+        remove_dir( $path );
  
         return true;
     }
@@ -548,7 +548,7 @@ function xml_entitize(&$collection) {
                 $answers = $this->shuffle_things($answers);
             }
             
-	    if (isset($question->response)) {
+        if (isset($question->response)) {
               $correctresponseid = $question->response[$questionid];
               if ($answers[0]['id'] == $correctresponseid) {
                   $correctresponse = $answers[0];

@@ -59,7 +59,7 @@ class qformat_aiken extends qformat_default {
                     //trim off the label and space
                     $question->answer[] = substr($nowline,3);
                     $question->fraction[] = 0;
-		    $question->feedback[] = '';
+                    $question->feedback[] = '';
                     continue;
                 }
                 if ($leader == "AN"){

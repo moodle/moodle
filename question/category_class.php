@@ -58,7 +58,7 @@ class question_category_object {
         $this->str->editcategory   = get_string('editcategory', 'quiz');
         $this->str->cancel         = get_string('cancel');
         $this->str->editcategories = get_string('editcategories', 'quiz');
-        $this->str->page	   = get_string('page');
+        $this->str->page           = get_string('page');
         $this->pixpath = $CFG->pixpath;
 
     }

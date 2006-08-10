@@ -91,15 +91,15 @@ function process_tf($xml, &$questions, $defaultq) {
         $question = $defaultq;
 
         $question->qtype = TRUEFALSE;
-        $question->single = 1;	// Only one answer is allowed
+        $question->single = 1; // Only one answer is allowed
 
-	$thisquestion = $tfquestions[$i];
+        $thisquestion = $tfquestions[$i];
         // put questiontext in question object
-	$question->questiontext = addslashes(trim($thisquestion["#"]["BODY"][0]["#"]["TEXT"][0]["#"]));
+        $question->questiontext = addslashes(trim($thisquestion["#"]["BODY"][0]["#"]["TEXT"][0]["#"]));
         // put name in question object
         $question->name = $question->questiontext;
 
-	$choices = $thisquestion["#"]["ANSWER"];
+        $choices = $thisquestion["#"]["ANSWER"];
 
         $correct_answer = $thisquestion["#"]["GRADABLE"][0]["#"]["CORRECTANSWER"][0]["@"]["answer_id"];
 
@@ -136,30 +136,30 @@ function process_mc($xml, &$questions, $defaultq) {
         $question = $defaultq;
 
         $question->qtype = MULTICHOICE;
-        $question->single = 1;	// Only one answer is allowed
+        $question->single = 1; // Only one answer is allowed
 
-	$thisquestion = $mcquestions[$i];
+        $thisquestion = $mcquestions[$i];
         // put questiontext in question object
-	$question->questiontext = addslashes(trim($thisquestion["#"]["BODY"][0]["#"]["TEXT"][0]["#"]));
+        $question->questiontext = addslashes(trim($thisquestion["#"]["BODY"][0]["#"]["TEXT"][0]["#"]));
         // put name of question in question object
         $question->name = $question->questiontext;
 
-	$choices = $thisquestion["#"]["ANSWER"];
-	for ($j = 0; $j < sizeof ($choices); $j++) {
+        $choices = $thisquestion["#"]["ANSWER"];
+        for ($j = 0; $j < sizeof ($choices); $j++) {
 
-	    $choice = trim($choices[$j]["#"]["TEXT"][0]["#"]);
+            $choice = trim($choices[$j]["#"]["TEXT"][0]["#"]);
             // put this choice in the question object.
             $question->answer[$j] = addslashes($choice);
 
-	    $id = $choices[$j]["@"]["id"];
-	    $correct_answer_id = $thisquestion["#"]["GRADABLE"][0]["#"]["CORRECTANSWER"][0]["@"]["answer_id"];
+            $id = $choices[$j]["@"]["id"];
+            $correct_answer_id = $thisquestion["#"]["GRADABLE"][0]["#"]["CORRECTANSWER"][0]["@"]["answer_id"];
             // if choice is the answer, give 100%, otherwise give 0%
-	    if (strcmp ($id, $correct_answer_id) == 0) {
-	      $question->fraction[$j] = 1;
-              $question->feedback[$j] = addslashes(trim($thisquestion["#"]["GRADABLE"][0]["#"]["FEEDBACK_WHEN_CORRECT"][0]["#"]));
+            if (strcmp ($id, $correct_answer_id) == 0) {
+                $question->fraction[$j] = 1;
+                $question->feedback[$j] = addslashes(trim($thisquestion["#"]["GRADABLE"][0]["#"]["FEEDBACK_WHEN_CORRECT"][0]["#"]));
             } else {
-	      $question->fraction[$j] = 0;
-              $question->feedback[$j] = addslashes(trim($thisquestion["#"]["GRADABLE"][0]["#"]["FEEDBACK_WHEN_INCORRECT"][0]["#"]));
+                $question->fraction[$j] = 0;
+                $question->feedback[$j] = addslashes(trim($thisquestion["#"]["GRADABLE"][0]["#"]["FEEDBACK_WHEN_INCORRECT"][0]["#"]));
             }
         }
         $questions[] = $question;
@@ -184,21 +184,21 @@ function process_ma($xml, &$questions, $defaultq) {
 
         $question->qtype = MULTICHOICE;
         $question->defaultgrade = 1;
-        $question->single = 0;	// More than one answers allowed
-        $question->image = "";	// No images with this format
+        $question->single = 0; // More than one answers allowed
+        $question->image = ""; // No images with this format
 
-	$thisquestion = $maquestions[$i];
+        $thisquestion = $maquestions[$i];
         // put questiontext in question object
-	$question->questiontext = addslashes(trim($thisquestion["#"]["BODY"][0]["#"]["TEXT"][0]["#"]));
+        $question->questiontext = addslashes(trim($thisquestion["#"]["BODY"][0]["#"]["TEXT"][0]["#"]));
         // put name of question in question object
         $question->name = $question->questiontext;
 
-	$choices = $thisquestion["#"]["ANSWER"];
+        $choices = $thisquestion["#"]["ANSWER"];
         $correctanswers = $thisquestion["#"]["GRADABLE"][0]["#"]["CORRECTANSWER"];
 
-	for ($j = 0; $j < sizeof ($choices); $j++) {
+        for ($j = 0; $j < sizeof ($choices); $j++) {
 
-	    $choice = trim($choices[$j]["#"]["TEXT"][0]["#"]);
+            $choice = trim($choices[$j]["#"]["TEXT"][0]["#"]);
             // put this choice in the question object.
             $question->answer[$j] = addslashes($choice);
 
@@ -243,15 +243,15 @@ function process_fib($xml, &$questions, $defaultq) {
         $question = $defaultq;
 
         $question->qtype = SHORTANSWER;
-        $question->usecase = 0;	// Ignore case
+        $question->usecase = 0; // Ignore case
 
-	$thisquestion = $fibquestions[$i];
+        $thisquestion = $fibquestions[$i];
         // put questiontext in question object
-	$question->questiontext = addslashes(trim($thisquestion["#"]["BODY"][0]["#"]["TEXT"][0]["#"]));
+        $question->questiontext = addslashes(trim($thisquestion["#"]["BODY"][0]["#"]["TEXT"][0]["#"]));
         // put name of question in question object
         $question->name = $question->questiontext;
 
-	$answer = trim($thisquestion["#"]["ANSWER"][0]["#"]["TEXT"][0]["#"]);
+        $answer = trim($thisquestion["#"]["ANSWER"][0]["#"]["TEXT"][0]["#"]);
 
         $question->answer[] = addslashes($answer);
         $question->fraction[] = 1;
@@ -280,54 +280,54 @@ function process_matching($xml, &$questions, $defaultq) {
 
         $question->qtype = MATCH;
 
-	$thisquestion = $matchquestions[$i];
+        $thisquestion = $matchquestions[$i];
         // put questiontext in question object
-	$question->questiontext = addslashes(trim($thisquestion["#"]["BODY"][0]["#"]["TEXT"][0]["#"]));
+        $question->questiontext = addslashes(trim($thisquestion["#"]["BODY"][0]["#"]["TEXT"][0]["#"]));
         // put name of question in question object
         $question->name = $question->questiontext;
 
-	$choices = $thisquestion["#"]["CHOICE"];
-	for ($j = 0; $j < sizeof ($choices); $j++) {
+        $choices = $thisquestion["#"]["CHOICE"];
+        for ($j = 0; $j < sizeof ($choices); $j++) {
 
             $subquestion = NULL;
 
-	    $choice = $choices[$j]["#"]["TEXT"][0]["#"];
-	    $choice_id = $choices[$j]["@"]["id"];
+            $choice = $choices[$j]["#"]["TEXT"][0]["#"];
+            $choice_id = $choices[$j]["@"]["id"];
           
             $question->subanswers[] = addslashes(trim($choice));
  
-	    $correctanswers = $thisquestion["#"]["GRADABLE"][0]["#"]["CORRECTANSWER"];
-	    for ($k = 0; $k < sizeof ($correctanswers); $k++) {
+            $correctanswers = $thisquestion["#"]["GRADABLE"][0]["#"]["CORRECTANSWER"];
+            for ($k = 0; $k < sizeof ($correctanswers); $k++) {
 
-		if (strcmp($choice_id, $correctanswers[$k]["@"]["choice_id"]) == 0) {
+                if (strcmp($choice_id, $correctanswers[$k]["@"]["choice_id"]) == 0) {
 
-		    $answer_id = $correctanswers[$k]["@"]["answer_id"];
+                    $answer_id = $correctanswers[$k]["@"]["answer_id"];
 
-		    $answers = $thisquestion["#"]["ANSWER"];
-		    for ($m = 0; $m < sizeof ($answers); $m++) {
+                    $answers = $thisquestion["#"]["ANSWER"];
+                    for ($m = 0; $m < sizeof ($answers); $m++) {
 
-			$answer = $answers[$m];
-			$current_ans_id = $answer["@"]["id"];
-			if (strcmp ($current_ans_id, $answer_id) == 0) {
+                        $answer = $answers[$m];
+                        $current_ans_id = $answer["@"]["id"];
+                        if (strcmp ($current_ans_id, $answer_id) == 0) {
 
-			    $answer = $answer["#"]["TEXT"][0]["#"];
+                            $answer = $answer["#"]["TEXT"][0]["#"];
                             $question->subquestions[] = addslashes(trim($answer));
-			    break;
+                            break;
 
-			  }
+                        }
 
-		      }
+                    }
 
-		    break;
+                    break;
 
-		  }
+                }
 
-	      }
+            }
            
-	  }
+        }
 
-          $questions[] = $question;
+        $questions[] = $question;
           
-      }
+    }
 }
 ?>

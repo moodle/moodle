@@ -15,16 +15,16 @@ class qformat_learnwise extends qformat_default {
     function readquestions($lines) {
         $questions = array();
         $currentquestion = array();
-		
+
         foreach($lines as $line) {
             $line = trim($line);
             $currentquestion[] = $line;
-			
+
             if ($question = $this->readquestion($currentquestion)) {
                 $questions[] = $question;
                 $currentquestion = array();
             }
-        }				
+        }
         return $questions;
     }
 
@@ -100,7 +100,7 @@ class qformat_learnwise extends qformat_default {
         $question->questiontext = $questiontext;
         $question->single = ($type == 'multichoice') ? 1 : 0;
         $question->feedback[] = '';
-			
+
         $question->fraction = array();
         $question->answer = array();
         for ($n = 0; $n < count($optionstext); ++$n) {
@@ -130,7 +130,7 @@ class qformat_learnwise extends qformat_default {
     function stringbetween($text, $start, $end) {
         $startpos = strpos($text, $start) + strlen($start);
         $endpos = strpos($text, $end);
-	
+
         if ($startpos <= $endpos) {
             return substr($text, $startpos, $endpos - $startpos);
         }
