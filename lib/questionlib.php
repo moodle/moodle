@@ -313,7 +313,7 @@ function question_category_isused($categoryid, $recursive = false) {
 /**
  * Deletes all data associated to an attempt from the database
  *
- * @param object $question  The question being deleted
+ * @param integer $attemptid The id of the attempt being deleted
  */
 function delete_attempt($attemptid) {
     global $QTYPES;
