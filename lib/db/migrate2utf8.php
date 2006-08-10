@@ -77,7 +77,7 @@ function migrate2utf8_user($fields, $crash, $debug, $maxrecords, $done, $tablest
                 if ($globallang) {
         			$fromenc = $globallang;
         		} else {
-                	$fromenc = get_original_encoding('','',$record->lang);
+                	$fromenc = get_original_encoding($CFG->lang,'',$record->lang);
                 }
 
                 if (($fromenc != 'utf-8') && ($fromenc != 'UTF-8')) {
