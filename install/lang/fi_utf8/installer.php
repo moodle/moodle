@@ -69,6 +69,8 @@ $string['phpversionhelp'] = '<p>Moodle vaatii vähintään PHP version 4.1.0.</p
 <p>Käytät parhaillaan versiota $a</p>
 <p>Sinun täytyy päivittää PHP tai siirtää isäntä uudemman PHP version kanssa!</p>';
 $string['previous'] = 'Edellinen';
+$string['report'] = 'Raportti';
+$string['restricted'] = 'Rajoitettu';
 $string['safemode'] = 'Safe mode';
 $string['safemodeerror'] = 'Moodlella saattaa olla ongelmia PHP:n  Safe Moden ollessa päällä';
 $string['sessionautostart'] = 'Istunnon automaattinen aloitus';
