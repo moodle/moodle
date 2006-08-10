@@ -137,8 +137,10 @@
      
     // this needs to check capability too
 
+
+
     $SQL = 'select distinct r.id, r.name from '.$CFG->prefix.'role_assignments ra, '.$CFG->prefix.'role r WHERE
-            r.id = ra.roleid AND ra.contextid = '.$contextid;
+            r.id = ra.roleid AND ra.contextid = '.$contextid.' ORDER BY r.sortorder ASC';
             
     $roles = get_records_sql($SQL);
             
@@ -146,11 +148,16 @@
         $options[$role->id] = $role->name;
     }
     
+    if (!$roleid) {
+        $rolesarray = array_keys($options);
+        $roleid = array_shift($rolesarray); // get first element
+    }
+    
     print ('<form name="rolesform" action="index.php" method="post">');
     print ('<div align="center">Current Context: '.print_context_name($contextid).'<br/>');
     print ('<input type="hidden" name="contextid" value="'.$contextid.'">Select a Role: ');
     print ('<input type="hidden" name="id" value="'.$id.'">');
-    choose_from_menu ($options, 'roleid', $roleid, 'choose', $script='rolesform.submit()');
+    choose_from_menu ($options, 'roleid', $roleid, '', $script='rolesform.submit()');
     print ('</div></form>');
 
 

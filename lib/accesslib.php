@@ -354,10 +354,12 @@ function load_user_capability($capability='', $contextid ='', $userid='') {
     $SQL = " SELECT  rc.capability, c1.id, (c1.level * 100) AS aggregatelevel,
                      SUM(rc.permission) AS sum
                      FROM
-                     {$CFG->prefix}role_assignments AS ra
-                     INNER JOIN {$CFG->prefix}role_capabilities AS rc ON ra.roleid=rc.roleid
-                     INNER JOIN {$CFG->prefix}context AS c1 ON ra.contextid=c1.id
+                     {$CFG->prefix}role_assignments AS ra, 
+					 {$CFG->prefix}role_capabilities AS rc,
+					 {$CFG->prefix}context AS c1
                      WHERE
+					 ra.contextid=c1.id AND
+					 ra.roleid=rc.roleid AND
                      ra.userid=$userid AND
                      c1.id IN $listofcontexts AND
                      rc.contextid=$siteinstance->id 
@@ -371,12 +373,15 @@ function load_user_capability($capability='', $contextid ='', $userid='') {
               SELECT rc.capability, c1.id, (c1.level * 100 + c2.level) AS aggregatelevel,
                      SUM(rc.permission) AS sum
                      FROM
-                     {$CFG->prefix}role_assignments AS ra
-                     INNER JOIN {$CFG->prefix}role_capabilities AS rc ON ra.roleid=rc.roleid
-                     INNER JOIN {$CFG->prefix}context AS c1 ON ra.contextid=c1.id
-                     LEFT OUTER JOIN {$CFG->prefix}context AS c2 ON rc.contextid=c2.id
+                     {$CFG->prefix}role_assignments AS ra,
+                     {$CFG->prefix}role_capabilities AS rc,
+                     {$CFG->prefix}context AS c1,
+                     {$CFG->prefix}context AS c2
                      WHERE
-                     ra.userid=$userid AND
+					 ra.contextid=c1.id AND
+					 ra.roleid=rc.roleid AND 
+					 ra.userid=$userid AND		 
+					 rc.contextid=c2.id AND             
                      c1.id IN $listofcontexts AND
                      c2.id IN $listofcontexts AND rc.contextid != $siteinstance->id
                      $capsearch
