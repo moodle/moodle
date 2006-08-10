@@ -1696,7 +1696,7 @@ function main_upgrade($oldversion=0) {
         modify_database('',"CREATE INDEX prefix_role_deny_grant_roleid_idx ON prefix_role_deny_grant (roleid);");
         modify_database('',"CREATE INDEX prefix_role_deny_grant_unviewableroleid_idx ON prefix_role_deny_grant (unviewableroleid);");
         modify_database('',"CREATE UNIQUE INDEX prefix_role_deny_grant_roleidunviewableroleid_idx ON prefix_role_deny_grant (roleid, unviewableroleid);");
-        modify_database('',"CREATE INDEX prefix_capabilities_name_idx ON prefix_capabilities (name);");
+        modify_database('',"CREATE UNIQUE INDEX prefix_capabilities_name_idx ON prefix_capabilities (name);");
         modify_database('',"CREATE INDEX prefix_role_names_roleid_idx ON prefix_role_names (roleid);");
         modify_database('',"CREATE INDEX prefix_role_names_contextid_idx ON prefix_role_names (contextid);");
         modify_database('',"CREATE UNIQUE INDEX prefix_role_names_roleidcontextid_idx ON prefix_role_names (roleid, contextid);");     

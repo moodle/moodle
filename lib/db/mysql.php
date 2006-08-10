@@ -2094,7 +2094,7 @@ function main_upgrade($oldversion=0) {
         execute_sql("ALTER TABLE `{$CFG->prefix}role_deny_grant` ADD INDEX `unviewableroleid` (`unviewableroleid`)",true);    
         execute_sql("ALTER TABLE `{$CFG->prefix}role_deny_grant` ADD UNIQUE INDEX `roleid-unviewableroleid` (`roleid`, `unviewableroleid`)",true);         
        
-        execute_sql("ALTER TABLE `{$CFG->prefix}capabilities` ADD INDEX `name` (`name`)",true); 
+        execute_sql("ALTER TABLE `{$CFG->prefix}capabilities` ADD UNIQUE INDEX `name` (`name`)",true); 
                              
         execute_sql("ALTER TABLE `{$CFG->prefix}role_names` ADD INDEX `roleid` (`roleid`)",true);                         
         execute_sql("ALTER TABLE `{$CFG->prefix}role_names` ADD INDEX `contextid` (`contextid`)",true); 

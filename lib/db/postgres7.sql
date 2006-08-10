@@ -736,7 +736,7 @@ CREATE TABLE prefix_capabilities (
   contextlevel integer NOT NULL default 0,   
   component varchar(100) NOT NULL default ''     
 );         
-CREATE INDEX prefix_capabilities_name_idx ON prefix_capabilities (name);
+CREATE UNIQUE INDEX prefix_capabilities_name_idx ON prefix_capabilities (name);
 
 CREATE TABLE prefix_role_names (     
   id SERIAL PRIMARY KEY,     
