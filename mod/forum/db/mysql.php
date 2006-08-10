@@ -224,9 +224,14 @@ function forum_upgrade($oldversion) {
       table_column('forum_posts','','mailnow','integer');
   }
   
+  if ($oldversion < 2006011702) {
+      execute_sql("INSERT INTO {$CFG->prefix}log_display (module, action, mtable, field) VALUES ('forum', 'user report', 'user', 'CONCAT(firstname,\' \',lastname)')");
+  }
   
+  
+  /*
   // Upgrades for new roles and capabilities support.
-  if ($oldversion < 2006011701) {
+  if ($oldversion < 2006080800) {
       
       // forum.open defines what students can do:
       //   0 = No discussions, no replies
@@ -253,7 +258,7 @@ function forum_upgrade($oldversion) {
       
       // Delete column forum.assesspublic
   }
-  
+  */
   
   return true;
   
