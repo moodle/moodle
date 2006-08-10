@@ -585,7 +585,8 @@ function frmchecked(&$var, $true_value = 'checked', $false_value = '') {
  * @uses $CFG
  */
 function link_to_popup_window ($url, $name='popup', $linkname='click here',
-                               $height=400, $width=500, $title='Popup window', $options='none', $return=false) {
+                               $height=400, $width=500, $title='Popup window',
+                               $options='none', $return=false) {
 
     global $CFG;
 
@@ -2127,7 +2128,7 @@ function print_header_simple($title='', $heading='', $navigation='', $focus='', 
     }
 
     $output = print_header($course->shortname .': '. $title, $course->fullname .' '. $heading, $shortname .' '. $navigation, $focus, $meta,
-                           $cache, $button, $menu, $usexml, $bodytags, $return);
+                           $cache, $button, $menu, $usexml, $bodytags, true);
 
     if ($return) {
         return $output;
@@ -2501,22 +2502,30 @@ function user_login_string($course=NULL, $user=NULL) {
  * @uses $CFG
  * @param string $navigation The breadcrumbs string to be printed
  */
-function print_navigation ($navigation) {
-   global $CFG, $USER;
+function print_navigation ($navigation, $return=false) {
+    global $CFG, $USER;
 
-   if ($navigation) {
-       //Accessibility: breadcrumb links now in a list, &raquo; replaced with image.
-       $nav_text = get_string('youarehere','access');
-       echo '<h2 class="accesshide">'.$nav_text.",</h2><ul>\n";
-       if (! $site = get_site()) {
-           $site->shortname = get_string('home');
-       }
-       $navigation = '<li title="'.$nav_text.'"><img src="'.$CFG->pixpath.'/a/r_breadcrumb.gif" class="resize" alt="" /> '
-           .str_replace('->', '</li><li title="'.$nav_text.'"><img src="'.$CFG->pixpath.'/a/r_breadcrumb.gif" class="resize" alt="" /> ', $navigation)."</li>\n";
-       echo '<li class="first"><a target="'. $CFG->framename .'" href="'. $CFG->wwwroot.((!isadmin() && !empty($USER->id) && !empty($CFG->mymoodleredirect) && !isguest())
+    $output = '';
+
+    if ($navigation) {
+        //Accessibility: breadcrumb links now in a list, &raquo; replaced with image.
+        $nav_text = get_string('youarehere','access');
+        $output .= '<h2 class="accesshide">'.$nav_text.",</h2><ul>\n";
+        if (! $site = get_site()) {
+            $site->shortname = get_string('home');
+        }
+        $navigation = '<li title="'.$nav_text.'"><img src="'.$CFG->pixpath.'/a/r_breadcrumb.gif" class="resize" alt="" /> '
+            .str_replace('->', '</li><li title="'.$nav_text.'"><img src="'.$CFG->pixpath.'/a/r_breadcrumb.gif" class="resize" alt="" /> ', $navigation)."</li>\n";
+        $output .= '<li class="first"><a target="'. $CFG->framename .'" href="'. $CFG->wwwroot.((!isadmin() && !empty($USER->id) && !empty($CFG->mymoodleredirect) && !isguest())
                                                                        ? '/my' : '') .'/">'. $site->shortname ."</a></li>\n". $navigation;
-       echo "</ul>\n";  
-   }
+        $output .= "</ul>\n";  
+    }
+
+    if ($return) {
+        return $output;
+    } else {
+        echo $output;
+    }
 }
 
 /**
@@ -2525,8 +2534,13 @@ function print_navigation ($navigation) {
  * @param string $text The text to be displayed
  * @param int $size The size to set the font for text display.
  */
-function print_headline($text, $size=2) {
-    print_heading($text, 'left', $size);
+function print_headline($text, $size=2, $return=false) {
+    $output = print_heading($text, 'left', $size, true);
+    if ($return) {
+        return $output;
+    } else {
+        echo $output;
+    }
 }
 
 /**
@@ -2536,14 +2550,20 @@ function print_headline($text, $size=2) {
  * @param string $align The alignment of the printed paragraph of text
  * @param int $size The size to set the font for text display.
  */
-function print_heading($text, $align='', $size=2, $class='main') {
+function print_heading($text, $align='', $size=2, $class='main', $return=false) {
     if ($align) {
         $align = ' align="'.$align.'"';
     }
     if ($class) {
         $class = ' class="'.$class.'"';
     }
-    echo "<h$size $align $class>".stripslashes_safe($text)."</h$size>";
+    $output = "<h$size $align $class>".stripslashes_safe($text)."</h$size>";
+
+    if ($return) {
+        return $output;
+    } else {
+        echo $output;
+    }
 }
 
 /**
@@ -2555,16 +2575,29 @@ function print_heading($text, $align='', $size=2, $class='main') {
  * @param string $module The module whose help should be linked to
  * @param string $icon Image to display if needed
  */
-function print_heading_with_help($text, $helppage, $module='moodle', $icon='') {
-    echo '<h2 class="main help">'.$icon.stripslashes_safe($text);
-    helpbutton($helppage, $text, $module);
-    echo '</h2>';
+function print_heading_with_help($text, $helppage, $module='moodle', $icon='', $return=false) {
+    $output = '';
+    $output .= '<h2 class="main help">'.$icon.stripslashes_safe($text);
+    $output .= helpbutton($helppage, $text, $module, true, false, '', true);
+    $output .= '</h2>';
+
+    if ($return) {
+        return $output;
+    } else {
+        echo $output;
+    }
 }
 
 
-function print_heading_block($heading, $class='') {
+function print_heading_block($heading, $class='', $return=false) {
     //Accessibility: 'headingblock' is now H1, see theme/standard/styles_*.css: ??
-    echo '<h2 class="headingblock header '.$class.'">'.stripslashes($heading).'</h2>';
+    $output = '<h2 class="headingblock header '.$class.'">'.stripslashes($heading).'</h2>';
+
+    if ($return) {
+        return $output;
+    } else {
+        echo $output;
+    }
 }
 
 
@@ -2574,17 +2607,25 @@ function print_heading_block($heading, $class='') {
  * @uses $CFG
  * @param string $link The url to create a link to.
  */
-function print_continue($link) {
+function print_continue($link, $return=false) {
 
     global $CFG;
+
+    $output = '';
 
     if (!$link) {
         $link = $_SERVER['HTTP_REFERER'];
     }
 
-    echo '<div class="continuebutton">';
-    print_single_button($link, NULL, get_string('continue'), 'post', $CFG->framename);
-    echo '</div>'."\n";
+    $output .= '<div class="continuebutton">';
+    $output .= print_single_button($link, NULL, get_string('continue'), 'post', $CFG->framename, true);
+    $output .= '</div>'."\n";
+
+    if ($return) {
+        return $output;
+    } else {
+        echo $output;
+    }
 }
 
 /**
@@ -2598,10 +2639,17 @@ function print_continue($link) {
  * @param string $class string, space-separated class names.
  * @todo Finish documenting this function
  */
-function print_simple_box($message, $align='', $width='', $color='', $padding=5, $class='generalbox', $id='') {
-    print_simple_box_start($align, $width, $color, $padding, $class, $id);
-    echo stripslashes_safe($message);
-    print_simple_box_end();
+function print_simple_box($message, $align='', $width='', $color='', $padding=5, $class='generalbox', $id='', $return=false) {
+    $output = '';
+    $output .= print_simple_box_start($align, $width, $color, $padding, $class, $id, true);
+    $output .= stripslashes_safe($message);
+    $output .= print_simple_box_end(true);
+
+    if ($return) {
+        return $output;
+    } else {
+        echo $output;
+    }
 }
 
 /**
@@ -2614,7 +2662,9 @@ function print_simple_box($message, $align='', $width='', $color='', $padding=5,
  * @param int $padding integer, padding in pixels, specified without units.
  * @param string $class string, space-separated class names.
  */
-function print_simple_box_start($align='', $width='', $color='', $padding=5, $class='generalbox', $id='') {
+function print_simple_box_start($align='', $width='', $color='', $padding=5, $class='generalbox', $id='', $return=false) {
+
+    $output = '';
 
     if ($color) {
         $color = 'bgcolor="'. $color .'"';
@@ -2628,15 +2678,26 @@ function print_simple_box_start($align='', $width='', $color='', $padding=5, $cl
     if ($id) {
         $id = 'id="'. $id .'"';
     }
-    echo "<table $align $width $id class=\"$class\" border=\"0\" cellpadding=\"$padding\" cellspacing=\"0\">".
+    $output .= "<table $align $width $id class=\"$class\" border=\"0\" cellpadding=\"$padding\" cellspacing=\"0\">".
          "<tr><td $color class=\"$class"."content\">";
+
+    if ($return) {
+        return $output;
+    } else {
+        echo $output;
+    }
 }
 
 /**
  * Print the end portion of a standard themed box.
  */
-function print_simple_box_end() {
-    echo '</td></tr></table>';
+function print_simple_box_end($return=false) {
+    $output = '</td></tr></table>';
+    if ($return) {
+        return $output;
+    } else {
+        echo $output;
+    }
 }
 
 
@@ -2649,15 +2710,22 @@ function print_simple_box_end() {
  * @param string $method ?
  * @todo Finish documenting this function
  */
-function print_single_button($link, $options, $label='OK', $method='get', $target='_self') {
-    echo '<div class="singlebutton">';
-    echo '<form action="'. $link .'" method="'. $method .'" target="'.$target.'">';
+function print_single_button($link, $options, $label='OK', $method='get', $target='_self', $return=false) {
+    $output = '';
+    $output .= '<div class="singlebutton">';
+    $output .= '<form action="'. $link .'" method="'. $method .'" target="'.$target.'">';
     if ($options) {
         foreach ($options as $name => $value) {
-            echo '<input type="hidden" name="'. $name .'" value="'. $value .'" />';
+            $output .= '<input type="hidden" name="'. $name .'" value="'. $value .'" />';
         }
     }
-    echo '<input type="submit" value="'. $label .'" /></form></div>';
+    $output .= '<input type="submit" value="'. $label .'" /></form></div>';
+
+    if ($return) {
+        return $output;
+    } else {
+        echo $output;
+    }
 }
 
 /**
@@ -2668,11 +2736,19 @@ function print_single_button($link, $options, $label='OK', $method='get', $targe
  * @param boolean $br ?
  * @todo Finish documenting this function
  */
-function print_spacer($height=1, $width=1, $br=true) {
+function print_spacer($height=1, $width=1, $br=true, $return=false) {
     global $CFG;
-    echo '<img class="spacer" height="'. $height .'" width="'. $width .'" src="'. $CFG->wwwroot .'/pix/spacer.gif" alt="" />';
+    $output = '';
+
+    $output .= '<img class="spacer" height="'. $height .'" width="'. $width .'" src="'. $CFG->wwwroot .'/pix/spacer.gif" alt="" />';
     if ($br) {
-        echo '<br />'."\n";
+        $output .= '<br />'."\n";
+    }
+
+    if ($return) {
+        return $output;
+    } else {
+        echo $output;
     }
 }
 
@@ -2687,8 +2763,9 @@ function print_spacer($height=1, $width=1, $br=true) {
  * @param string $link ?
  * @todo Finish documenting this function
  */
-function print_file_picture($path, $courseid=0, $height='', $width='', $link='') {
+function print_file_picture($path, $courseid=0, $height='', $width='', $link='', $return=false) {
     global $CFG;
+    $output = '';
 
     if ($height) {
         $height = 'height="'. $height .'"';
@@ -2697,24 +2774,30 @@ function print_file_picture($path, $courseid=0, $height='', $width='', $link='')
         $width = 'width="'. $width .'"';
     }
     if ($link) {
-        echo '<a href="'. $link .'">';
+        $output .= '<a href="'. $link .'">';
     }
     if (substr(strtolower($path), 0, 7) == 'http://') {
-        echo '<img border="0" '.$height . $width .' src="'. $path .'" />';
+        $output .= '<img border="0" '.$height . $width .' src="'. $path .'" />';
 
     } else if ($courseid) {
-        echo '<img border="0" '. $height . $width .' src="';
+        $output .= '<img border="0" '. $height . $width .' src="';
         if ($CFG->slasharguments) {        // Use this method if possible for better caching
-            echo $CFG->wwwroot .'/file.php/'. $courseid .'/'. $path;
+            $output .= $CFG->wwwroot .'/file.php/'. $courseid .'/'. $path;
         } else {
-            echo $CFG->wwwroot .'/file.php?file=/'. $courseid .'/'. $path;
+            $output .= $CFG->wwwroot .'/file.php?file=/'. $courseid .'/'. $path;
         }
-        echo '" />';
+        $output .= '" />';
     } else {
-        echo 'Error: must pass URL or course';
+        $output .= 'Error: must pass URL or course';
     }
     if ($link) {
-        echo '</a>';
+        $output .= '</a>';
+    }
+
+    if ($return) {
+        return $output;
+    } else {
+        echo $output;
     }
 }
 
@@ -2725,12 +2808,12 @@ function print_file_picture($path, $courseid=0, $height='', $width='', $link='')
  * @param int $courseid ?
  * @param boolean $picture Print the user picture?
  * @param int $size Size in pixels.  Special values are (true/1 = 100px) and (false/0 = 35px) for backward compatability
- * @param boolean $returnstring If false print picture to current page, otherwise return the output as string
+ * @param boolean $return If false print picture to current page, otherwise return the output as string
  * @param boolean $link Enclose printed image in a link to view specified course?
  * return string
  * @todo Finish documenting this function
  */
-function print_user_picture($userid, $courseid, $picture, $size=0, $returnstring=false, $link=true, $target='') {
+function print_user_picture($userid, $courseid, $picture, $size=0, $return=false, $link=true, $target='') {
     global $CFG;
 
     if ($link) {
@@ -2769,7 +2852,7 @@ function print_user_picture($userid, $courseid, $picture, $size=0, $returnstring
         $output .= '</a>';
     }
 
-    if ($returnstring) {
+    if ($return) {
         return $output;
     } else {
         echo $output;
@@ -2784,9 +2867,11 @@ function print_user_picture($userid, $courseid, $picture, $size=0, $returnstring
  * @param user $user A {@link $USER} object representing a user
  * @param course $course A {@link $COURSE} object representing a course
  */
-function print_user($user, $course, $messageselect=false) {
+function print_user($user, $course, $messageselect=false, $return=false) {
 
     global $CFG, $USER;
+
+    $output = '';
 
     static $string;
     static $datestring;
@@ -2829,73 +2914,79 @@ function print_user($user, $course, $messageselect=false) {
         $hiddenfields = array_flip(explode(',', $CFG->hiddenuserfields));
     }
 
-    echo '<table class="userinfobox">';
-    echo '<tr>';
-    echo '<td class="left side">';
-    print_user_picture($user->id, $course->id, $user->picture, true);
-    echo '</td>';
-    echo '<td class="content">';
-    echo '<div class="username">'.fullname($user, $isteacher).'</div>';
-    echo '<div class="info">';
+    $output .= '<table class="userinfobox">';
+    $output .= '<tr>';
+    $output .= '<td class="left side">';
+    $output .= print_user_picture($user->id, $course->id, $user->picture, true, true);
+    $output .= '</td>';
+    $output .= '<td class="content">';
+    $output .= '<div class="username">'.fullname($user, $isteacher).'</div>';
+    $output .= '<div class="info">';
     if (!empty($user->role) and ($user->role <> $course->teacher)) {
-        echo $string->role .': '. $user->role .'<br />';
+        $output .= $string->role .': '. $user->role .'<br />';
     }
     if ($user->maildisplay == 1 or ($user->maildisplay == 2 and $course->category and !isguest()) or $isteacher) {
-        echo $string->email .': <a href="mailto:'. $user->email .'">'. $user->email .'</a><br />';
+        $output .= $string->email .': <a href="mailto:'. $user->email .'">'. $user->email .'</a><br />';
     }
     if (($user->city or $user->country) and (!isset($hiddenfields['city']) or !isset($hiddenfields['country']))) {
-        echo $string->location .': ';
+        $output .= $string->location .': ';
         if ($user->city && !isset($hiddenfields['city'])) {
-            echo $user->city;
+            $output .= $user->city;
         }
         if (!empty($countries[$user->country]) && !isset($hiddenfields['country'])) {
             if ($user->city && !isset($hiddenfields['city'])) {
-                echo ', ';
+                $output .= ', ';
             }
-            echo $countries[$user->country];
+            $output .= $countries[$user->country];
         }
-        echo '<br />';
+        $output .= '<br />';
     }
 
     if (!isset($hiddenfields['lastaccess'])) {
         if ($user->lastaccess) {
-            echo $string->lastaccess .': '. userdate($user->lastaccess);
-            echo '&nbsp ('. format_time(time() - $user->lastaccess, $datestring) .')';
+            $output .= $string->lastaccess .': '. userdate($user->lastaccess);
+            $output .= '&nbsp ('. format_time(time() - $user->lastaccess, $datestring) .')';
         } else {
-            echo $string->lastaccess .': '. $string->never;
+            $output .= $string->lastaccess .': '. $string->never;
         }
     }
-    echo '</div></td><td class="links">';
+    $output .= '</div></td><td class="links">';
     //link to blogs
     if ($CFG->bloglevel > 0) {
-        echo '<a href="'.$CFG->wwwroot.'/blog/index.php?userid='.$user->id.'">'.get_string('blogs','blog').'</a><br />';    
+        $output .= '<a href="'.$CFG->wwwroot.'/blog/index.php?userid='.$user->id.'">'.get_string('blogs','blog').'</a><br />';
     }
-    
+
     if ($isteacher) {
         $timemidnight = usergetmidnight(time());
-        echo '<a href="'. $CFG->wwwroot .'/course/user.php?id='. $course->id .'&amp;user='. $user->id .'">'. $string->activity .'</a><br />';
+        $output .= '<a href="'. $CFG->wwwroot .'/course/user.php?id='. $course->id .'&amp;user='. $user->id .'">'. $string->activity .'</a><br />';
         if (!iscreator($user->id) or ($isadmin and !isadmin($user->id))) {  // Includes admins
             if ($course->category and isteacheredit($course->id) and isstudent($course->id, $user->id)) {  // Includes admins
-                echo '<a href="'. $CFG->wwwroot .'/course/unenrol.php?id='. $course->id .'&amp;user='. $user->id .'">'. $string->unenrol .'</a><br />';
+                $output .= '<a href="'. $CFG->wwwroot .'/course/unenrol.php?id='. $course->id .'&amp;user='. $user->id .'">'. $string->unenrol .'</a><br />';
             }
             if ($USER->id != $user->id) {
-                echo '<a href="'. $CFG->wwwroot .'/course/loginas.php?id='. $course->id .'&amp;user='. $user->id .'">'. $string->loginas .'</a><br />';
+                $output .= '<a href="'. $CFG->wwwroot .'/course/loginas.php?id='. $course->id .'&amp;user='. $user->id .'">'. $string->loginas .'</a><br />';
             }
         }
     }
-    echo '<a href="'. $CFG->wwwroot .'/user/view.php?id='. $user->id .'&amp;course='. $course->id .'">'. $string->fullprofile .'...</a>';
+    $output .= '<a href="'. $CFG->wwwroot .'/user/view.php?id='. $user->id .'&amp;course='. $course->id .'">'. $string->fullprofile .'...</a>';
 
     if (!empty($messageselect) && $isteacher) {
-        echo '<br /><input type="checkbox" name="';
+        $output .= '<br /><input type="checkbox" name="';
         if (isteacher($course->id, $user->id)) {
-            echo 'teacher';
+            $output .= 'teacher';
         } else {
-            echo 'user';
+            $output .= 'user';
         }
-        echo $user->id.'" /> ';
+        $output .= $user->id.'" /> ';
     }
 
-    echo '</td></tr></table>';
+    $output .= '</td></tr></table>';
+
+    if ($return) {
+        return $output;
+    } else {
+        echo $output;
+    }
 }
 
 /**
@@ -2904,12 +2995,12 @@ function print_user($user, $course, $messageselect=false) {
  * @param group $group A {@link group} object representing a group or array of groups
  * @param int $courseid ?
  * @param boolean $large ?
- * @param boolean $returnstring ?
+ * @param boolean $return ?
  * @param boolean $link ?
  * @return string
  * @todo Finish documenting this function
  */
-function print_group_picture($group, $courseid, $large=false, $returnstring=false, $link=true) {
+function print_group_picture($group, $courseid, $large=false, $return=false, $link=true) {
     global $CFG;
 
     if (is_array($group)) {
@@ -2917,7 +3008,7 @@ function print_group_picture($group, $courseid, $large=false, $returnstring=fals
         foreach($group as $g) {
             $output .= print_group_picture($g, $courseid, $large, true, $link);
         }
-        if ($returnstring) {
+        if ($return) {
             return $output;
         } else {
             echo $output;
@@ -2960,7 +3051,7 @@ function print_group_picture($group, $courseid, $large=false, $returnstring=fals
         $output .= '</a>';
     }
 
-    if ($returnstring) {
+    if ($return) {
         return $output;
     } else {
         echo $output;
@@ -2973,11 +3064,11 @@ function print_group_picture($group, $courseid, $large=false, $returnstring=fals
  * @param string $url ?
  * @param int $sizex ?
  * @param int $sizey ?
- * @param boolean $returnstring ?
+ * @param boolean $return ?
  * @param string $parameters ?
  * @todo Finish documenting this function
  */
-function print_png($url, $sizex, $sizey, $returnstring, $parameters='alt=""') {
+function print_png($url, $sizex, $sizey, $return, $parameters='alt=""') {
     global $CFG;
     static $recentIE;
 
@@ -2996,7 +3087,7 @@ function print_png($url, $sizex, $sizey, $returnstring, $parameters='alt=""') {
                    ' '. $parameters .' />';
     }
 
-    if ($returnstring) {
+    if ($return) {
         return $output;
     } else {
         echo $output;
@@ -3242,8 +3333,10 @@ function make_table($table) {
     return $output;
 }
 
-function print_recent_activity_note($time, $user, $isteacher, $text, $link) {
+function print_recent_activity_note($time, $user, $isteacher, $text, $link, $return=false) {
     static $strftimerecent;
+
+    $output = '';
 
     if (empty($strftimerecent)) {
         $strftimerecent = get_string('strftimerecent');
@@ -3252,11 +3345,17 @@ function print_recent_activity_note($time, $user, $isteacher, $text, $link) {
     $date = userdate($time, $strftimerecent);
     $name = fullname($user, $isteacher);
 
-    echo '<div class="head">';
-    echo '<div class="date">'.$date.'</div> '.
+    $output .= '<div class="head">';
+    $output .= '<div class="date">'.$date.'</div> '.
          '<div class="name">'.fullname($user, $isteacher).'</div>';
-    echo '</div>';
-    echo '<div class="info"><a href="'.$link.'">'.format_string($text,true).'</a></div>';
+    $output .= '</div>';
+    $output .= '<div class="info"><a href="'.$link.'">'.format_string($text,true).'</a></div>';
+
+    if ($return) {
+        return $output;
+    } else {
+        echo $output;
+    }
 }
 
 
@@ -3678,7 +3777,9 @@ function update_groups_button($courseid) {
  * @param boolean $showall: if set to 0, it is a student in separate groups, do not display all participants
  * @todo Finish documenting this function
  */
-function print_group_menu($groups, $groupmode, $currentgroup, $urlroot, $showall=1) {
+function print_group_menu($groups, $groupmode, $currentgroup, $urlroot, $showall=1, $return=false) {
+
+    $output = '';
 
 /// Add an "All groups" to the start of the menu
     if ($showall){
@@ -3688,16 +3789,22 @@ function print_group_menu($groups, $groupmode, $currentgroup, $urlroot, $showall
         $groupsmenu[$key] = $groupname;
     }
 
-    echo '<table><tr><td align="right">';
+    $output .= '<table><tr><td align="right">';
     if ($groupmode == VISIBLEGROUPS) {
-        print_string('groupsvisible');
+        $output .= get_string('groupsvisible');
     } else {
-        print_string('groupsseparate');
+        $output .= get_string('groupsseparate');
     }
-    echo ':';
-    echo '</td><td nowrap="nowrap" align="left">';
-    popup_form($urlroot.'&amp;group=', $groupsmenu, 'selectgroup', $currentgroup, '', '', '', false, 'self');
-    echo '</td></tr></table>';
+    $output .= ':';
+    $output .= '</td><td nowrap="nowrap" align="left">';
+    $output .= popup_form($urlroot.'&amp;group=', $groupsmenu, 'selectgroup', $currentgroup, '', '', '', true, 'self');
+    $output .= '</td></tr></table>';
+
+    if ($return) {
+        return $output;
+    } else {
+        echo $output;
+    }
 
 }
 
@@ -4024,10 +4131,11 @@ function print_timer_selector($timelimit = 0, $unit = '', $name = 'timelimit', $
  * @param boolean $includenograde ?
  * @todo Finish documenting this function
  */
-function print_grade_menu($courseid, $name, $current, $includenograde=true) {
+function print_grade_menu($courseid, $name, $current, $includenograde=true, $return=false) {
 
     global $CFG;
 
+    $output = '';
     $strscale = get_string('scale');
     $strscales = get_string('scales');
 
@@ -4041,11 +4149,17 @@ function print_grade_menu($courseid, $name, $current, $includenograde=true) {
     for ($i=100; $i>=1; $i--) {
         $grades[$i] = $i;
     }
-    choose_from_menu($grades, $name, $current, '');
+    $output .= choose_from_menu($grades, $name, $current, '', '', 0, true);
 
     $linkobject = '<span class="helplink"><img height="17" width="17" alt="'.$strscales.'" src="'.$CFG->pixpath .'/help.gif" /></span>';
-    link_to_popup_window ('/course/scales.php?id='. $courseid .'&amp;list=true', 'ratingscales',
-                          $linkobject, 400, 500, $strscales);
+    $output .= link_to_popup_window ('/course/scales.php?id='. $courseid .'&amp;list=true', 'ratingscales',
+                                     $linkobject, 400, 500, $strscales, 'none', true);
+
+    if ($return) {
+        return $output;
+    } else {
+        echo $output;
+    }
 }
 
 /**
@@ -4057,16 +4171,22 @@ function print_grade_menu($courseid, $name, $current, $includenograde=true) {
  * @param string $current ?
  * @todo Finish documenting this function
  */
-function print_scale_menu($courseid, $name, $current) {
+function print_scale_menu($courseid, $name, $current, $return=false) {
 
     global $CFG;
 
+    $output = '';
     $strscales = get_string('scales');
-    choose_from_menu(get_scales_menu($courseid), $name, $current, '');
+    $output .= choose_from_menu(get_scales_menu($courseid), $name, $current, '', '', 0, true);
 
     $linkobject = '<span class="helplink"><img height="17" width="17" alt="'.$strscales.'" src="'.$CFG->pixpath .'/help.gif" /></span>';
-    link_to_popup_window ('/course/scales.php?id='. $courseid .'&amp;list=true', 'ratingscales',
-                          $linkobject, 400, 500, $strscales);
+    $output .= link_to_popup_window ('/course/scales.php?id='. $courseid .'&amp;list=true', 'ratingscales',
+                                     $linkobject, 400, 500, $strscales, 'none', true);
+    if ($return) {
+        return $output;
+    } else {
+        echo $output;
+    }
 }
 
 /**
@@ -4077,15 +4197,21 @@ function print_scale_menu($courseid, $name, $current) {
  * @param object $scale ?
  * @todo Finish documenting this function
  */
-function print_scale_menu_helpbutton($courseid, $scale) {
+function print_scale_menu_helpbutton($courseid, $scale, $return=false) {
 
     global $CFG;
 
+    $output = '';
     $strscales = get_string('scales');
 
     $linkobject = '<span class="helplink"><img height="17" width="17" alt="'.$scale->name.'" src="'.$CFG->pixpath .'/help.gif" /></span>';
-    link_to_popup_window ('/course/scales.php?id='. $courseid .'&amp;list=true&amp;scaleid='. $scale->id, 'ratingscale',
-                          $linkobject, 400, 500, $scale->name);
+    $output .= link_to_popup_window ('/course/scales.php?id='. $courseid .'&amp;list=true&amp;scaleid='. $scale->id, 'ratingscale',
+                                     $linkobject, 400, 500, $scale->name, 'none', true);
+    if ($return) {
+        return $output;
+    } else {
+        echo $output;
+    }
 }
 
 /**
