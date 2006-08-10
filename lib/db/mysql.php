@@ -2002,7 +2002,7 @@ function main_upgrade($oldversion=0) {
     }
     
     if ($oldversion < 2006080400) {
-         execute_sql("CREATE TABLE {$CFG->prefix}role (
+        execute_sql("CREATE TABLE {$CFG->prefix}role (
                               `id` int(10) unsigned NOT NULL auto_increment,
                               `name` varchar(255) NOT NULL default '',
                               `description` text NOT NULL default '',
@@ -2010,7 +2010,7 @@ function main_upgrade($oldversion=0) {
                               PRIMARY KEY  (`id`)
                             )", true);
 
-         execute_sql("CREATE TABLE {$CFG->prefix}context (
+        execute_sql("CREATE TABLE {$CFG->prefix}context (
                               `id` int(10) unsigned NOT NULL auto_increment,
                               `level` int(10) unsigned NOT NULL default '0',
                               `instanceid` int(10) unsigned NOT NULL default '0',
@@ -2064,12 +2064,42 @@ function main_upgrade($oldversion=0) {
                               `roleid` int(10) unsigned NOT NULL default '0',
                               `contextid` int(10) unsigned NOT NULL default '0', 
                               `text` text NOT NULL default '',
+                              KEY `roleid` (`roleid`),
+                              KEY `contextid` (`roleid`),
+                              UNIQUE KEY `roleid-contextid` (`roleid`, `contextid`),
                               PRIMARY KEY (`id`) 
                             )", true);                      
                         
     }
-
     
+    if ($oldversion < 2006081000) {
+      
+        execute_sql("ALTER TABLE `{$CFG->prefix}role` ADD INDEX `sortorder` (`sortorder`)",true);
+        
+        execute_sql("ALTER TABLE `{$CFG->prefix}context` ADD INDEX `instanceid` (`instanceid`)",true);
+        execute_sql("ALTER TABLE `{$CFG->prefix}context` ADD UNIQUE INDEX `level-instanceid` (`level`, `instanceid`)",true);
+
+        execute_sql("ALTER TABLE `{$CFG->prefix}role_assignments` ADD INDEX `roleid` (`roleid`)",true);
+        execute_sql("ALTER TABLE `{$CFG->prefix}role_assignments` ADD INDEX `contextid` (`contextid`)",true);  
+        execute_sql("ALTER TABLE `{$CFG->prefix}role_assignments` ADD INDEX `userid` (`userid`)",true);
+        execute_sql("ALTER TABLE `{$CFG->prefix}role_assignments` ADD UNIQUE INDEX `contextid-roleid-userid` (`contextid`, `roleid`, `userid`)",true);
+        execute_sql("ALTER TABLE `{$CFG->prefix}role_assignments` ADD INDEX `sortorder` (`sortorder`)",true);
+
+        execute_sql("ALTER TABLE `{$CFG->prefix}role_capabilities` ADD INDEX `roleid` (`roleid`)",true);  
+        execute_sql("ALTER TABLE `{$CFG->prefix}role_capabilities` ADD INDEX `contextid` (`contextid`)",true); 
+        execute_sql("ALTER TABLE `{$CFG->prefix}role_capabilities` ADD INDEX `modifierid` (`modifierid`)",true); 
+        execute_sql("ALTER TABLE `{$CFG->prefix}role_capabilities` ADD UNIQUE INDEX `roleid-contextid-capability` (`roleid`, `contextid`, `capability`)",true);         
+                        
+        execute_sql("ALTER TABLE `{$CFG->prefix}role_deny_grant` ADD INDEX `roleid` (`roleid`)",true);
+        execute_sql("ALTER TABLE `{$CFG->prefix}role_deny_grant` ADD INDEX `unviewableroleid` (`unviewableroleid`)",true);    
+        execute_sql("ALTER TABLE `{$CFG->prefix}role_deny_grant` ADD UNIQUE INDEX `roleid-unviewableroleid` (`roleid`, `unviewableroleid`)",true);         
+       
+        execute_sql("ALTER TABLE `{$CFG->prefix}capabilities` ADD INDEX `name` (`name`)",true); 
+                             
+        execute_sql("ALTER TABLE `{$CFG->prefix}role_names` ADD INDEX `roleid` (`roleid`)",true);                         
+        execute_sql("ALTER TABLE `{$CFG->prefix}role_names` ADD INDEX `contextid` (`contextid`)",true); 
+        execute_sql("ALTER TABLE `{$CFG->prefix}role_names` ADD UNIQUE INDEX `roleid-contextid` (`roleid`, `contextid`)",true);                 
+    }
     return $result;
 }
 

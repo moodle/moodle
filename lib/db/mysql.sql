@@ -908,6 +908,7 @@ CREATE TABLE prefix_role (
   `name` varchar(255) NOT NULL default '',
   `description` text NOT NULL default '',
   `sortorder` int(10) unsigned NOT NULL default '0',
+  KEY `sortorder` (`sortorder`),
   PRIMARY KEY  (`id`)
 ) TYPE=MyISAM COMMENT ='moodle roles';
 
@@ -915,6 +916,8 @@ CREATE TABLE prefix_context (
   `id` int(10) unsigned NOT NULL auto_increment,
   `level` int(10) unsigned NOT NULL default '0',
   `instanceid` int(10) unsigned NOT NULL default '0',
+  KEY `instanceid` (`instanceid`),
+  UNIQUE KEY `level-instanceid` (`level`, `instanceid`),
   PRIMARY KEY  (`id`)
 ) TYPE=MyISAM COMMENT ='one of these must be set';
 
@@ -930,6 +933,11 @@ CREATE TABLE prefix_role_assignments (
   `modifierid` int(10) unsigned NOT NULL default '0',
   `enrol` varchar(20) NOT NULL default '',
   `sortorder` int(10) unsigned NOT NULL default '0',
+  KEY `roleid` (`roleid`),
+  KEY `contextid` (`contextid`),
+  KEY `userid` (`userid`),
+  UNIQUE KEY `contextid-roleid-userid` (`contextid`, `roleid`, `userid`),
+  KEY `sortorder` (`sortorder`),
   PRIMARY KEY  (`id`)
 ) TYPE=MyISAM COMMENT ='assigning roles to different context';
 
@@ -941,6 +949,10 @@ CREATE TABLE prefix_role_capabilities (
   `permission` int(10) unsigned NOT NULL default '0',
   `timemodified` int(10) unsigned NOT NULL default '0',
   `modifierid` int(10) unsigned NOT NULL default '0',
+  KEY `roleid` (`roleid`),
+  KEY `contextid` (`contextid`),
+  KEY `modifierid` (`modifierid`),
+  UNIQUE KEY `roleid-contextid-capability` (`roleid`, `contextid`, `capability`),  
   PRIMARY KEY (`id`)
 ) TYPE=MYISAM COMMENT ='overriding a capability for a particular role in a particular context';
 
@@ -948,6 +960,9 @@ CREATE TABLE prefix_role_deny_grant (
   `id` int(10) unsigned NOT NULL auto_increment,
   `roleid` int(10) unsigned NOT NULL default '0',
   `unviewableroleid` int(10) unsigned NOT NULL default '0',
+  KEY `roleid` (`roleid`),
+  KEY `unviewableroleid` (`unviewableroleid`),
+  UNIQUE KEY `roleid-unviewableroleid` (`roleid`, `unviewableroleid`),
   PRIMARY KEY (`id`)
 ) TYPE=MYISAM COMMENT ='this defines what role can touch (assign, override) what role';
 
@@ -957,6 +972,7 @@ CREATE TABLE prefix_capabilities (
   `captype` varchar(50) NOT NULL default '', 
   `contextlevel` int(10) unsigned NOT NULL default '0', 
   `component` varchar(100) NOT NULL default '', 
+  KEY `name` (`name`),
   PRIMARY KEY (`id`) 
 ) TYPE=MYISAM COMMENT ='this defines all capabilities';
 
@@ -965,6 +981,9 @@ CREATE TABLE prefix_role_names (
   `roleid` int(10) unsigned NOT NULL default '0',
   `contextid` int(10) unsigned NOT NULL default '0', 
   `text` text NOT NULL default '',
+  KEY `roleid` (`roleid`),
+  KEY `contextid` (`contextid`),
+  UNIQUE KEY `roleid-contextid` (`roleid`, `contextid`),
   PRIMARY KEY (`id`) 
 ) TYPE=MYISAM COMMENT ='role names in native strings';
 

@@ -677,12 +677,15 @@ CREATE TABLE prefix_role (
   description text NOT NULL default '',      
   sortorder integer NOT NULL default '0'     
 );   
+CREATE INDEX prefix_role_sortorder_idx ON prefix_role (sortorder);
          
 CREATE TABLE prefix_context (    
   id SERIAL PRIMARY KEY,     
   level integer NOT NULL default 0,      
   instanceid integer NOT NULL default 0      
-);   
+);
+CREATE INDEX prefix_context_instanceid_idx ON prefix_context (instanceid);
+CREATE UNIQUE INDEX prefix_context_levelinstanceid_idx ON prefix_context (level, instanceid);
          
 CREATE TABLE prefix_role_assignments (   
   id SERIAL PRIMARY KEY,     
@@ -696,8 +699,13 @@ CREATE TABLE prefix_role_assignments (
   modifierid integer NOT NULL default 0,     
   enrol varchar(20) NOT NULL default '',     
   sortorder integer NOT NULL default '0'     
-);   
-         
+);  
+CREATE INDEX prefix_role_assignments_roleid_idx ON prefix_role_assignments (roleid);
+CREATE INDEX prefix_role_assignments_contextidid_idx ON prefix_role_assignments (contextid);
+CREATE INDEX prefix_role_assignments_userid_idx ON prefix_role_assignments (userid);
+CREATE UNIQUE INDEX prefix_role_assignments_contextidroleiduserid_idx ON prefix_role_assignments (contextid, roleid, userid);
+CREATE INDEX prefix_role_assignments_sortorder_idx ON prefix_role_assignments (sortorder);
+       
 CREATE TABLE prefix_role_capabilities (      
   id SERIAL PRIMARY KEY,     
   contextid integer NOT NULL default 0,      
@@ -707,28 +715,39 @@ CREATE TABLE prefix_role_capabilities (
   timemodified integer NOT NULL default 0,   
   modifierid integer NOT NULL default 0      
 );   
-         
+CREATE INDEX prefix_role_capabilities_roleid_idx ON prefix_role_capabilities (roleid);
+CREATE INDEX prefix_role_capabilities_contextid_idx ON prefix_role_capabilities (contextid);
+CREATE INDEX prefix_role_capabilities_modifierid_idx ON prefix_role_capabilities (modifierid);
+CREATE UNIQUE INDEX prefix_role_capabilities_roleidcontextidcapability_idx ON prefix_role_capabilities (roleid, contextid, capability);       
+              
 CREATE TABLE prefix_role_deny_grant (    
   id SERIAL PRIMARY KEY,     
   roleid integer NOT NULL default '0',   
   unviewableroleid integer NOT NULL default '0'      
 );   
-         
+CREATE INDEX prefix_role_deny_grant_roleid_idx ON prefix_role_deny_grant (roleid);
+CREATE INDEX prefix_role_deny_grant_unviewableroleid_idx ON prefix_role_deny_grant (unviewableroleid);
+CREATE UNIQUE INDEX prefix_role_deny_grant_roleidunviewableroleid_idx ON prefix_role_deny_grant (roleid, unviewableroleid);
+       
 CREATE TABLE prefix_capabilities (   
   id SERIAL PRIMARY KEY,     
   name varchar(150) NOT NULL default '',     
   captype varchar(50) NOT NULL default '',   
   contextlevel integer NOT NULL default 0,   
   component varchar(100) NOT NULL default ''     
-);   
-         
+);         
+CREATE INDEX prefix_capabilities_name_idx ON prefix_capabilities (name);
+
 CREATE TABLE prefix_role_names (     
   id SERIAL PRIMARY KEY,     
   roleid integer NOT NULL default 0,     
   contextid integer NOT NULL default 0,      
   text text NOT NULL default ''      
 );
-
+CREATE INDEX prefix_role_names_roleid_idx ON prefix_role_names (roleid);
+CREATE INDEX prefix_role_names_contextid_idx ON prefix_role_names (contextid);
+CREATE UNIQUE INDEX prefix_role_names_roleidcontextid_idx ON prefix_role_names (roleid, contextid);
+       
 INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('user', 'view', 'user', 'firstname||\' \'||lastname');
 INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('course', 'user report', 'user', 'firstname||\' \'||lastname');
 INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('course', 'view', 'course', 'fullname');

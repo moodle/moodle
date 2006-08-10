@@ -1679,6 +1679,28 @@ function main_upgrade($oldversion=0) {
                                 );");                                
                                                                                      
     }
+    
+    if ($oldversion < 2006081000) {
+        modify_database('',"CREATE INDEX prefix_role_sortorder_idx ON prefix_role (sortorder);");
+        modify_database('',"CREATE INDEX prefix_context_instanceid_idx ON prefix_context (instanceid);");
+        modify_database('',"CREATE UNIQUE INDEX prefix_context_levelinstanceid_idx ON prefix_context (level, instanceid);"); 
+        modify_database('',"CREATE INDEX prefix_role_assignments_roleid_idx ON prefix_role_assignments (roleid);");
+        modify_database('',"CREATE INDEX prefix_role_assignments_contextidid_idx ON prefix_role_assignments (contextid);");
+        modify_database('',"CREATE INDEX prefix_role_assignments_userid_idx ON prefix_role_assignments (userid);");
+        modify_database('',"CREATE UNIQUE INDEX prefix_role_assignments_contextidroleiduserid_idx ON prefix_role_assignments (contextid, roleid, userid);");
+        modify_database('',"CREATE INDEX prefix_role_assignments_sortorder_idx ON prefix_role_assignments (sortorder);");
+        modify_database('',"CREATE INDEX prefix_role_capabilities_roleid_idx ON prefix_role_capabilities (roleid);");
+        modify_database('',"CREATE INDEX prefix_role_capabilities_contextid_idx ON prefix_role_capabilities (contextid);");
+        modify_database('',"CREATE INDEX prefix_role_capabilities_modifierid_idx ON prefix_role_capabilities (modifierid);");
+        modify_database('',"CREATE UNIQUE INDEX prefix_role_capabilities_roleidcontextidcapability_idx ON prefix_role_capabilities (roleid, contextid, capability);"); 
+        modify_database('',"CREATE INDEX prefix_role_deny_grant_roleid_idx ON prefix_role_deny_grant (roleid);");
+        modify_database('',"CREATE INDEX prefix_role_deny_grant_unviewableroleid_idx ON prefix_role_deny_grant (unviewableroleid);");
+        modify_database('',"CREATE UNIQUE INDEX prefix_role_deny_grant_roleidunviewableroleid_idx ON prefix_role_deny_grant (roleid, unviewableroleid);");
+        modify_database('',"CREATE INDEX prefix_capabilities_name_idx ON prefix_capabilities (name);");
+        modify_database('',"CREATE INDEX prefix_role_names_roleid_idx ON prefix_role_names (roleid);");
+        modify_database('',"CREATE INDEX prefix_role_names_contextid_idx ON prefix_role_names (contextid);");
+        modify_database('',"CREATE UNIQUE INDEX prefix_role_names_roleidcontextid_idx ON prefix_role_names (roleid, contextid);");     
+    }
     return $result;
 }
 

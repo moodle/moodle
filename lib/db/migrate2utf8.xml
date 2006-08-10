@@ -8,6 +8,54 @@
         <FIELD name="tracer" method="NO_CONV" type="text" length="0" />
       </FIELDS>
     </TABLE>
+ 
+    <TABLE name="role">
+	  <FIELDS>
+	    <FIELD name="name" method="PHP_FUNCTION" type="varchar" length="255">
+	      <PHP_FUNCTION>
+	        migrate2utf8_role_name(RECORDID)
+	      </PHP_FUNCTION>	     
+	    </FIELD>
+	    <FIELD name="description" method="PHP_FUNCTION" type="text" length="0">
+	      <PHP_FUNCTION>
+	        migrate2utf8_role_description(RECORDID)
+	      </PHP_FUNCTION>	     
+	    </FIELD>		
+      </FIELDS>
+    </TABLE>
+    
+    <TABLE name="context" />
+    <TABLE name="role_deny_grant" />
+    <TABLE name="role_assignments">
+	  <FIELDS>
+	    <FIELD name="enrol" method="NO_CONV" type="varchar" length="20" />	
+      </FIELDS>
+    </TABLE>
+    
+    <TABLE name="role_capabilities">
+	  <FIELDS>
+	    <FIELD name="capability" method="NO_CONV" type="varchar" length="255" dropindex="roleid-contextid-capability" adduniqueindex ="roleid-contextid-capability(roleid, contextid, capability(255))" />		
+      </FIELDS>
+    </TABLE>
+    
+	<TABLE name="capabilities">
+	  <FIELDS>
+	    <FIELD name="name" method="NO_CONV" type="varchar" length="150" dropindex="name" addindex ="name(name(150))" />
+		<FIELD name="captype" method="NO_CONV" type="varchar" length="50" />
+		<FIELD name="component" method="NO_CONV" type="varchar" length="100" />		
+      </FIELDS>
+    </TABLE> 
+    
+	<TABLE name="role_names">
+	  <FIELDS>
+	    <FIELD name="text" method="PHP_FUNCTION" type="text" length="0">
+	      <PHP_FUNCTION>
+	        migrate2utf8_role_names_text(RECORDID)
+	      </PHP_FUNCTION>	     
+	    </FIELD>		
+      </FIELDS>
+    </TABLE>
+    
     <TABLE name="blog_tag_instance" />
     <TABLE name="post">
       <FIELDS>
