@@ -1889,9 +1889,11 @@ function highlightfast($needle, $haystack) {
  * @param string $menu HTML code for a popup menu
  * @param boolean $usexml use XML for this page
  * @param string $bodytags This text will be included verbatim in the <body> tag (useful for onload() etc)
+ * @param bool   $return If true, return the visible elements of the header instead of echoing them.
  */
-function print_header ($title='', $heading='', $navigation='', $focus='', $meta='',
-                       $cache=true, $button='&nbsp;', $menu='', $usexml=false, $bodytags='') {
+function print_header ($title='', $heading='', $navigation='', $focus='',
+                       $meta='', $cache=true, $button='&nbsp;', $menu='',
+                       $usexml=false, $bodytags='', $return=false) {
 
     global $USER, $CFG, $THEME, $SESSION, $ME, $SITE, $HTTPSPAGEREQUIRED;
 
@@ -2081,10 +2083,19 @@ function print_header ($title='', $heading='', $navigation='', $focus='', $meta=
 
     $bodytags .= ' class="'.$pageclass.'" id="'.$pageid.'"';
 
+    ob_start();
     include ($CFG->themedir.current_theme().'/header.html');
+    $output = ob_get_contents();
+    ob_end_clean();
 
     if (!empty($CFG->messaging)) {
-        echo message_popup_window();
+        $output .= message_popup_window();
+    }
+
+    if ($return) {
+        return $output;
+    } else {
+        echo $output;
     }
 }
 
@@ -2103,9 +2114,10 @@ function print_header ($title='', $heading='', $navigation='', $focus='', $meta=
  * @param string $menu HTML code for a popup menu
  * @param boolean $usexml use XML for this page
  * @param string $bodytags This text will be included verbatim in the <body> tag (useful for onload() etc)
+ * @param bool   $return If true, return the visible elements of the header instead of echoing them.
  */
 function print_header_simple($title='', $heading='', $navigation='', $focus='', $meta='',
-                       $cache=true, $button='&nbsp;', $menu='', $usexml=false, $bodytags='') {
+                       $cache=true, $button='&nbsp;', $menu='', $usexml=false, $bodytags='', $return=false) {
 
     global $course,$CFG;                // The same hack is used in print_header
 
@@ -2114,8 +2126,14 @@ function print_header_simple($title='', $heading='', $navigation='', $focus='', 
         $shortname = '<a href="'.$CFG->wwwroot.'/course/view.php?id='. $course->id .'">'. $course->shortname .'</a> ->';
     }
 
-    print_header($course->shortname .': '. $title, $course->fullname .' '. $heading, $shortname .' '. $navigation, $focus, $meta,
-                       $cache, $button, $menu, $usexml, $bodytags);
+    $output = print_header($course->shortname .': '. $title, $course->fullname .' '. $heading, $shortname .' '. $navigation, $focus, $meta,
+                           $cache, $button, $menu, $usexml, $bodytags, $return);
+
+    if ($return) {
+        return $output;
+    } else {
+        echo $output;
+    }
 }
 
 
