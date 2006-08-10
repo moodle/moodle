@@ -36,7 +36,7 @@
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for enrol_authorize_refunds" NEXT="orderid"/>
-        <KEY NAME="orderid" TYPE="foreign" FIELDS="orderid" REFTABLE="enrol_authorize" REFFIELDS="id" COMMENT="Default comment for the key, please edit me" PREVIOUS="primary"/>
+        <KEY NAME="orderid" TYPE="foreign" FIELDS="orderid" REFTABLE="enrol_authorize" REFFIELDS="id" COMMENT="Reference to enrol_authorize.id" PREVIOUS="primary"/>
       </KEYS>
       <INDEXES>
         <INDEX NAME="transid" UNIQUE="false" FIELDS="transid"/>
