@@ -8,7 +8,7 @@
     $timenow = time();
 
     // get some esential stuff...
-    if (! $cm = get_record("course_modules", "id", $id)) {
+    if (! $cm = get_coursemodule_from_id('exercise', $id)) {
         error("Course Module ID was incorrect");
     }
 

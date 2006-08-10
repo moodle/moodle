@@ -9,7 +9,7 @@
     $mode = optional_param('mode','approval', PARAM_ALPHA);
     $hook = optional_param('hook','ALL', PARAM_CLEAN);
 
-    if (! $cm = get_record("course_modules", "id", $id)) {
+    if (! $cm = get_coursemodule_from_id('glossary', $id)) {
         error("Course Module ID was incorrect");
     }
 

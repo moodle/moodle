@@ -13,7 +13,7 @@
     $groupid = optional_param('groupid', 0, PARAM_INT);    // Group wiki.
 
     if ($id) {
-        if (! $cm = get_record("course_modules", "id", $id)) {
+        if (! $cm = get_coursemodule_from_id('wiki', $id)) {
             error("Course Module ID was incorrect");
         }
 

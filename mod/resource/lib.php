@@ -82,7 +82,7 @@ function resource_base($cmid=0) {
     global $course;   // Ugly hack, needed for course language ugly hack
 
     if ($cmid) {
-        if (! $this->cm = get_record("course_modules", "id", $cmid)) {
+        if (! $this->cm = get_coursemodule_from_id('resource', $cmid)) {
             error("Course Module ID was incorrect");
         }
 

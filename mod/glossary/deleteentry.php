@@ -16,7 +16,7 @@
     $entrydeleted = get_string("entrydeleted","glossary");
 
 
-    if (! $cm = get_record("course_modules", "id", $id)) {
+    if (! $cm = get_coursemodule_from_id('glossary', $id)) {
         error("Course Module ID was incorrect");
     }
 

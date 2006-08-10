@@ -8,7 +8,7 @@
     $format   = optional_param('format', CHOICE_PUBLISH_NAMES, PARAM_INT);
     $download = optional_param('download', '', PARAM_ALPHA);
 
-    if (! $cm = get_record("course_modules", "id", $id)) {
+    if (! $cm = get_coursemodule_from_id('choice', $id)) {
         error("Course Module ID was incorrect");
     }
 

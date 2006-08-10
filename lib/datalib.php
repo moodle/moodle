@@ -2585,22 +2585,45 @@ function get_course_mods($courseid) {
 
 
 /**
- * Given an instance of a module, finds the coursemodule description
+ * Given an id of a course module, finds the coursemodule description
  *
- * @uses $CFG
- * @param string $modulename ?
- * @param string $instance ?
- * @param int $courseid The id of the course as found in the 'course' table.
- * @return array
- * @todo Finish documenting this function
+ * @param string $modulename name of module type, eg. resource, assignment,...
+ * @param int $cmid course module id (id in course_modules table)
+ * @param int $courseid optional course id for extra validation
+ * @return object course module instance with instance and module name
+ */
+function get_coursemodule_from_id($modulename, $cmid, $courseid=0) {
+
+    global $CFG;
+
+    $courseselect = ($courseid) ? "cm.course = '$courseid' AND " : '';
+
+    return get_record_sql("SELECT cm.*, m.name, md.name as modname
+                           FROM {$CFG->prefix}course_modules cm,
+                                {$CFG->prefix}modules md,
+                                {$CFG->prefix}$modulename m
+                           WHERE $courseselect
+                                 cm.id = '$cmid' AND
+                                 cm.instance = m.id AND
+                                 md.name = '$modulename' AND
+                                 md.id = cm.module");
+}
+
+/**
+ * Given an instance number of a module, finds the coursemodule description
+ *
+ * @param string $modulename name of module type, eg. resource, assignment,...
+ * @param int $instance module instance number (id in resource, assignment etc. table)
+ * @param int $courseid optional course id for extra validation
+ * @return object course module instance with instance and module name
  */
 function get_coursemodule_from_instance($modulename, $instance, $courseid=0) {
 
     global $CFG;
-    
+
     $courseselect = ($courseid) ? "cm.course = '$courseid' AND " : '';
 
-    return get_record_sql("SELECT cm.*, m.name
+    return get_record_sql("SELECT cm.*, m.name, md.name as modname
                            FROM {$CFG->prefix}course_modules cm,
                                 {$CFG->prefix}modules md,
                                 {$CFG->prefix}$modulename m

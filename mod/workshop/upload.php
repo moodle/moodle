@@ -7,7 +7,7 @@
     require_variable($id);          // CM ID
 
 
-    if (! $cm = get_record("course_modules", "id", $id)) {
+    if (! $cm = get_coursemodule_from_id('workshop', $id)) {
         error("Course Module ID was incorrect");
     }
     if (! $course = get_record("course", "id", $cm->course)) {

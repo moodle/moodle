@@ -13,7 +13,7 @@
 
 
     if ($id) {
-        if (! $cm = get_record("course_modules", "id", $id)) {
+        if (! $cm = get_coursemodule_from_id('quiz', $id)) {
             error("There is no coursemodule with id $id");
         }
 
