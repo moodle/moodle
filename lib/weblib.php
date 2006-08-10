@@ -2147,7 +2147,7 @@ function print_header_simple($title='', $heading='', $navigation='', $focus='', 
  * @param ? $usercourse ?
  * @todo Finish documenting this function
  */
-function print_footer($course=NULL, $usercourse=NULL) {
+function print_footer($course=NULL, $usercourse=NULL, $return=false) {
     global $USER, $CFG, $THEME;
 
 /// Course links
@@ -2210,8 +2210,16 @@ function print_footer($course=NULL, $usercourse=NULL) {
 
 /// Include the actual footer file
 
+    ob_start();
     include ($CFG->themedir.current_theme().'/footer.html');
+    $output = ob_get_contents();
+    ob_end_clean();
 
+    if ($return) {
+        return $output;
+    } else {
+        echo $output;
+    }
 }
 
 /**
