@@ -968,7 +968,7 @@ CREATE TABLE prefix_role_deny_grant (
 
 CREATE TABLE prefix_capabilities ( 
   `id` int(10) unsigned NOT NULL auto_increment, 
-  `name` varchar(150) NOT NULL default '', 
+  `name` varchar(255) NOT NULL default '', 
   `captype` varchar(50) NOT NULL default '', 
   `contextlevel` int(10) unsigned NOT NULL default '0', 
   `component` varchar(100) NOT NULL default '', 

@@ -40,7 +40,7 @@
     
 	<TABLE name="capabilities">
 	  <FIELDS>
-	    <FIELD name="name" method="NO_CONV" type="varchar" length="150" dropindex="name" addindex ="name(name(150))" />
+	    <FIELD name="name" method="NO_CONV" type="varchar" length="255" dropindex="name" addindex ="name(name(150))" />
 		<FIELD name="captype" method="NO_CONV" type="varchar" length="50" />
 		<FIELD name="component" method="NO_CONV" type="varchar" length="100" />		
       </FIELDS>

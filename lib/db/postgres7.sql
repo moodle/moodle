@@ -731,7 +731,7 @@ CREATE UNIQUE INDEX prefix_role_deny_grant_roleidunviewableroleid_idx ON prefix_
        
 CREATE TABLE prefix_capabilities (   
   id SERIAL PRIMARY KEY,     
-  name varchar(150) NOT NULL default '',     
+  name varchar(255) NOT NULL default '',     
   captype varchar(50) NOT NULL default '',   
   contextlevel integer NOT NULL default 0,   
   component varchar(100) NOT NULL default ''     
