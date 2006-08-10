@@ -383,7 +383,7 @@
                         url = "loadSCO.php?id=<?php echo $cm->id.$scoidpop ?>";
                         width = <?php p($scorm->width) ?>;
                         height = <?php p($scorm->height) ?>;
-                        var main = openpopup(url, "<?php p($scorm->name) ?>", "<?php p($scorm->options) ?>", width, height);
+                        var main = openpopup(url, "scormpopup", "<?php p($scorm->options) ?>", width, height);
                     </script>
                     <noscript>
 <?php
