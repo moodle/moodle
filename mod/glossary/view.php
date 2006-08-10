@@ -20,7 +20,7 @@
     $show       = optional_param('show', '', PARAM_ALPHA);           // [ concept | alias ] => mode=term hook=$show
 
     if (!empty($id)) {
-        if (! $cm = get_record("course_modules", "id", $id)) {
+        if (! $cm = get_coursemodule_from_id('glossary', $id)) {
             error("Course Module ID was incorrect");
         }
         if (! $course = get_record("course", "id", $cm->course)) {

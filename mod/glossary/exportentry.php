@@ -13,7 +13,7 @@
 
     $PermissionGranted = 1;
 
-    $cm = get_record('course_modules','id',$id);
+    $cm = get_coursemodule_from_id('glossary', $id);
     if ( ! $cm ) {
         $PermissionGranted = 0;
     } else {

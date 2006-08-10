@@ -35,7 +35,7 @@
     $fieldenclosure = optional_param('fieldenclosure', '', PARAM_CLEANHTML);   // characters used as record delimiters for csv file import
         
     if ($id) {
-        if (! $cm = get_record('course_modules', 'id', $id)) {
+        if (! $cm = get_coursemodule_from_id('data', $id)) {
             error('Course Module ID was incorrect');
         }
         if (! $course = get_record('course', 'id', $cm->course)) {

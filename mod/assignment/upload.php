@@ -7,7 +7,7 @@
     $a  = optional_param('a', 0, PARAM_INT);   // Assignment ID
 
     if ($id) {
-        if (! $cm = get_record("course_modules", "id", $id)) {
+        if (! $cm = get_coursemodule_from_id('assignment', $id)) {
             error("Course Module ID was incorrect");
         }
 

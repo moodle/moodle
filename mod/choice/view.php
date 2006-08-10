@@ -7,7 +7,7 @@
     $action     = optional_param('action', '', PARAM_ALPHA);
     $attemptids = optional_param('attemptid', array(), PARAM_INT); // array of attempt ids for delete action
     
-    if (! $cm = get_record("course_modules", "id", $id)) {
+    if (! $cm = get_coursemodule_from_id('choice', $id)) {
         error("Course Module ID was incorrect");
     }
 

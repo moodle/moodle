@@ -24,7 +24,7 @@
     $changegroup = optional_param('group', -1, PARAM_INT);
 
     // get some esential stuff...
-    if (! $cm = get_record("course_modules", "id", $id)) {
+    if (! $cm = get_coursemodule_from_id('exercise', $id)) {
         error("Course Module ID was incorrect");
     }
 

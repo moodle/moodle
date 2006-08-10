@@ -7,7 +7,7 @@
     $id     = required_param('id', PARAM_INT);      // Course Module ID
     $userid = required_param('userid', PARAM_INT);  // User ID
 
-    if (! $cm = get_record("course_modules", "id", $id)) {
+    if (! $cm = get_coursemodule_from_id('assignment', $id)) {
         error("Course Module ID was incorrect");
     }
 

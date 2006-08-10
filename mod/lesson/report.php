@@ -12,7 +12,7 @@
     $action = optional_param('action', 'view', PARAM_ALPHA);  // action to take
     $nothingtodisplay = false;
 
-    if (! $cm = get_record('course_modules', 'id', $id)) {
+    if (! $cm = get_coursemodule_from_id('lesson', $id)) {
         error('Course Module ID was incorrect');
     }
 

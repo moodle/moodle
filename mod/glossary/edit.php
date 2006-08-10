@@ -12,7 +12,7 @@ $confirm = optional_param('confirm',0, PARAM_INT);    // proceed. Edit the edtry
 $mode = optional_param('mode', '', PARAM_ALPHA);      // categories if by category?
 $hook = optional_param('hook', '', PARAM_ALPHANUM);   // CategoryID
 
-if (! $cm = get_record("course_modules", "id", $id)) {
+if (! $cm = get_coursemodule_from_id('glossary', $id)) {
     error("Course Module ID was incorrect");
 }
 

@@ -46,7 +46,7 @@
 
 /// Fetch some records from DB
     $course   = get_record ('course', 'id', $courseid);
-    $cm       = get_record ('course_modules', 'id', $cmid);
+    $cm       = get_coursemodule_from_id('resource', $cmid);
     $resource = get_record ('resource', 'id', $cm->instance);
 
 /// Get some needed strings

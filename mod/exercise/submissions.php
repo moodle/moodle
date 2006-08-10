@@ -31,7 +31,7 @@
     $title  = optional_param('title', '', PARAM_CLEAN);
 
     // get some essential stuff...
-    if (! $cm = get_record("course_modules", "id", $id)) {
+    if (! $cm = get_coursemodule_from_id('exercise', $id)) {
         error("Course Module ID was incorrect");
     }
 

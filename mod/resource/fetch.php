@@ -9,7 +9,7 @@
     $id = required_param('id', PARAM_INT);     // Course Module ID
     $url = required_param('url', PARAM_URL);    // url to fetch
 
-    if (! $cm = get_record("course_modules", "id", $id)) {
+    if (! $cm = get_coursemodule_from_id('resource', $id)) {
         error("Course Module ID was incorrect");
     }
 
