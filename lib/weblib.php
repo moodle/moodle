@@ -718,7 +718,8 @@ function choose_from_menu ($options, $name, $selected='', $nothing='choose', $sc
         $attributes .= ' tabindex="'.$tabindex.'"';
     }
 
-    $output = '<select id="menu'.$name.'" name="'. $name .'" '. $attributes .'>' . "\n";
+    $id = str_replace('[]', '', $name); // name may end in [], which would make an invalid id. e.g. numeric question type editing form.
+    $output = '<select id="menu'.$id.'" name="'. $name .'" '. $attributes .'>' . "\n";
     if ($nothing) {
         $output .= '   <option value="'. $nothingvalue .'"'. "\n";
         if ($nothingvalue === $selected) {
