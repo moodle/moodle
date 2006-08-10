@@ -222,7 +222,7 @@ function modify_database($sqlfile='', $sqlstring='') {
  * @param string $null 'not null', or '' to allow nulls.
  * @param string $after Which column to insert this one after. Not supported on Postgres.
  * 
- * @return boolean Wheter the operation succeeded.
+ * @return boolean Whether the operation succeeded.
  */
 
 function table_column($table, $oldfield, $field, $type='integer', $size='10',
