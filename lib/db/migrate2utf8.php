@@ -75,9 +75,9 @@ function migrate2utf8_user($fields, $crash, $debug, $maxrecords, $done, $tablest
                 
                 // this is the only encoding we need for this table
                 if ($globallang) {
-                    $fromenc = $globallang;
-                } else {
-                    $fromenc = get_original_encoding('','',$record->lang);
+        			$fromenc = $globallang;
+        		} else {
+                	$fromenc = get_original_encoding($CFG->lang,'',$record->lang);
                 }
 
                 if (($fromenc != 'utf-8') && ($fromenc != 'UTF-8')) {
@@ -189,35 +189,116 @@ function migrate2utf8_user($fields, $crash, $debug, $maxrecords, $done, $tablest
 
 }
 
-/*********************************************
- * Development under progress                *
- * This space is left intentionally blank    *
- *********************************************/
-/*********************************************
- * Development under progress                *
- * This space is left intentionally blank    *
- *********************************************/
- /*********************************************
- * Development under progress                *
- * This space is left intentionally blank    *
- *********************************************/
- /*********************************************
- * Development under progress                *
- * This space is left intentionally blank    *
- *********************************************/
- /*********************************************
- * Development under progress                *
- * This space is left intentionally blank    *
- *********************************************/
- /*********************************************
- * Development under progress                *
- * This space is left intentionally blank    *
- *********************************************/
+
+
+
+function migrate2utf8_role_name($recordid){
+    global $CFG, $globallang;
+
+/// Some trivial checks
+    if (empty($recordid)) {
+        log_the_problem_somewhere();
+        return false;
+    }
+
+    if (!$role = get_record('role', 'id', $recordid)) {
+        log_the_problem_somewhere();
+        return false;
+    }
+    if ($globallang) {
+        $fromenc = $globallang;
+    } else {
+        $sitelang   = $CFG->lang;
+        $courselang = null;  //Non existing!
+		$userlang = null; // Non existing
+        $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+    }
+/// We are going to use textlib facilities
+
+/// Convert the text
+    if (($fromenc != 'utf-8') && ($fromenc != 'UTF-8')) {
+        $result = utfconvert($role->name, $fromenc);
+
+        $newrole = new object;
+        $newrole->id = $recordid;
+        $newrole->name = $result;
+        migrate2utf8_update_record('role',$newrole);
+    }
+/// And finally, just return the converted field
+    return $result;
+}
+
+function migrate2utf8_role_description($recordid){
+    global $CFG, $globallang;
+
+/// Some trivial checks
+    if (empty($recordid)) {
+        log_the_problem_somewhere();
+        return false;
+    }
+
+    if (!$role = get_record('role', 'id', $recordid)) {
+        log_the_problem_somewhere();
+        return false;
+    }
+    if ($globallang) {
+        $fromenc = $globallang;
+    } else {
+        $sitelang   = $CFG->lang;
+        $courselang = null;  //Non existing!
+		$userlang = null; // Non existing
+        $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+    }
+/// We are going to use textlib facilities
+
+/// Convert the text
+    if (($fromenc != 'utf-8') && ($fromenc != 'UTF-8')) {
+        $result = utfconvert($role->description, $fromenc);
+
+        $newrole = new object;
+        $newrole->id = $recordid;
+        $newrole->description = $result;
+        migrate2utf8_update_record('role',$newrole);
+    }
+/// And finally, just return the converted field
+    return $result;
+}
  
+function migrate2utf8_role_names_text($recordid){
+    global $CFG, $globallang;
 
+/// Some trivial checks
+    if (empty($recordid)) {
+        log_the_problem_somewhere();
+        return false;
+    }
 
+    if (!$rn = get_record('role_names', 'id', $recordid)) {
+        log_the_problem_somewhere();
+        return false;
+    }
+    if ($globallang) {
+        $fromenc = $globallang;
+    } else {
+        $sitelang   = $CFG->lang;
+        $courselang = null;  //Non existing!
+		$userlang = null; // Non existing
+        $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+    }
+/// We are going to use textlib facilities
 
+/// Convert the text
+    if (($fromenc != 'utf-8') && ($fromenc != 'UTF-8')) {
+        $result = utfconvert($rn->text, $fromenc);
 
+        $newrn = new object;
+        $newrn->id = $recordid;
+        $newrn->text = $result;
+        migrate2utf8_update_record('role_names',$newrn);
+    }
+/// And finally, just return the converted field
+    return $result;
+}
 
 function migrate2utf8_post_subject($recordid){
     global $CFG, $globallang;
