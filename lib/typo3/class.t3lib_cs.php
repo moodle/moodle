@@ -609,7 +609,7 @@ class t3lib_cs {
 				break;
 
 			case 'iconv':
-				$conv_str = iconv($fromCS,$toCS.'//TRANSLIT',$str);
+				$conv_str = iconv($fromCS,$toCS.'//IGNORE',$str);
 				if (false !== $conv_str)	return $conv_str;
 				break;
 
