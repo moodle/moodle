@@ -627,16 +627,20 @@ function print_capabilities($modid=0) {
 
 
 /**
- * This function handles the upgrade process of assigning default roles
- * to the existing users
+ * Installs the roles system.
+ * This function runs on a fresh install as well as on an upgrade from the old
+ * hard-coded student/teacher/admin etc. roles to the new roles system.
  */
-function moodle_upgrade_roles_system_17() {
+function moodle_install_roles() {
 
-    global $CFG;
+    global $CFG, $db;
+    
     // Create a system wide context for assignemnt.
     $systemcontext = $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
 
-    // loading legacy roles and capabilities (1 legacy capability per legacy role at system levle)
+
+    // Create default/legacy roles and capabilities.
+    // (1 legacy capability per legacy role at system level).
     $adminrole = create_role(get_string('administrator'), get_string('administratordescription'), 'moodle/legacy:admin');   
     if (!assign_capability('moodle/site:doanything', CAP_ALLOW, $adminrole, $systemcontext->id)) {
         error('Could not assign moodle/site:doanything to the admin role');
@@ -646,66 +650,80 @@ function moodle_upgrade_roles_system_17() {
     $editteacherrole = create_role(get_string('defaultcourseteacher'), get_string('defaultcourseteacherdescription'), 'moodle/legacy:editingteacher');    
     $studentrole = create_role(get_string('defaultcoursestudent'), get_string('defaultcoursestudentdescription'), 'moodle/legacy:student');
     $guestrole = create_role(get_string('guest'), get_string('guestdescription'), 'moodle/legacy:guest');
+
+
+    // Look inside user_admin, user_creator, user_teachers, user_students and
+    // assign above new roles. If a user has both teacher and student role,
+    // only teacher role is assigned. The assignment should be system level.
+    $dbtables = $db->MetaTables('TABLES');
     
-    // Look inside user_admin, user_creator, $user_teachers, $user_students
-    // and assign roles. If a user has both teacher and student role, only
-    // teacher role is assigned. The assignment should be system level.
-    
+
     /**
      * Upgrade the admins.
+     * Sort using id ASC, first one is primary admin.
      */
-
-    // sort using id asc, first one is primary admin
-    $useradmins = get_records_sql('SELECT * from '.$CFG->prefix.'user_admins ORDER BY ID ASC'); 
-    foreach ($useradmins as $admin) {
-        role_assign($adminrole, $admin->userid, 0, $systemcontext->id);
+    if (in_array($CFG->prefix.'user_admins', $dbtables)) {
+        if ($useradmins = get_records_sql('SELECT * from '.$CFG->prefix.'user_admins ORDER BY ID ASC')) { 
+            foreach ($useradmins as $admin) {
+                role_assign($adminrole, $admin->userid, 0, $systemcontext->id);
+            }
+        }
+    } else {
+        // This is a fresh install.
     }
-    // Do we assign the capability moodle/doanything to the admin roles here?
-    
-    
+
+
     /**
      * Upgrade course creators.
      */
-
-    $usercoursecreators = get_records('user_coursecreators');
-    foreach ($usercoursecreators as $coursecreator) {
-        role_assign($$coursecreatorrole, $coursecreator->userid, 0, $systemcontext->id);
+    if (in_array($CFG->prefix.'user_coursecreators', $dbtables)) {
+        if ($usercoursecreators = get_records('user_coursecreators')) {
+            foreach ($usercoursecreators as $coursecreator) {
+                role_assign($$coursecreatorrole, $coursecreator->userid, 0, $systemcontext->id);
+            }
+        }
     }
+
 
     /**
      * Upgrade editting teachers and non-editting teachers.
      */
-
-    $userteachers = get_records('user_teachers');
-    foreach ($userteachers as $teacher) {
-        $coursecontext = get_context_instance(CONTEXT_COURSE, $teacher->course); // needs cache
-        if ($teacher->editall) { // editting teacher
-            role_assign($editteacherrole, $teacher->userid, 0, $coursecontext->id);
-        } else {
-            role_assign($noneditteacherrole, $teacher->userid, 0, $coursecontext->id);
+    if (in_array($CFG->prefix.'user_teachers', $dbtables)) {
+        if ($userteachers = get_records('user_teachers')) {
+            foreach ($userteachers as $teacher) {
+                $coursecontext = get_context_instance(CONTEXT_COURSE, $teacher->course); // needs cache
+                if ($teacher->editall) { // editting teacher
+                    role_assign($editteacherrole, $teacher->userid, 0, $coursecontext->id);
+                } else {
+                    role_assign($noneditteacherrole, $teacher->userid, 0, $coursecontext->id);
+                }
+            }
         }
     }
-    
+
+
     /**
      * Upgrade students.
      */
-    $userstudents = get_records('user_students');
-    foreach ($userstudents as $student) {
-        $coursecontext = get_context_instance(CONTEXT_COURSE, $student->course);
-        role_assign($studentrole, $student->userid, 0, $coursecontext->id);
+    if (in_array($CFG->prefix.'user_students', $dbtables)) {
+        if ($userstudents = get_records('user_students')) {
+            foreach ($userstudents as $student) {
+                $coursecontext = get_context_instance(CONTEXT_COURSE, $student->course);
+                role_assign($studentrole, $student->userid, 0, $coursecontext->id);
+            }
+        }
     }
-     
+
+
     /**
      * Upgrade guest (only 1 entry).
      */
-    $guestuser = get_record('user', 'username', 'guest');
-    role_assign($guestrole, $guestuser->id, 0, $systemcontext->id);
-    
-    //
-    // Should we delete the tables after we are done?
-    //
-    
-    set_config('rolesactive', 1);
+    if ($guestuser = get_record('user', 'username', 'guest')) {
+        role_assign($guestrole, $guestuser->id, 0, $systemcontext->id);
+    }
+
+
+    // Should we delete the tables after we are done? Not yet.
 }
 
 
@@ -835,9 +853,9 @@ function create_role($name, $description, $legacy='') {
     $role->description = $description;
                                 
     if ($id = insert_record('role', $role)) {
-          if ($legacy) {
-                $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
-              assign_capability($legacy, CAP_ALLOW, $id, $context->id);            
+        if ($legacy) {
+            $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
+            assign_capability($legacy, CAP_ALLOW, $id, $context->id);            
         }
         return $id;
     } else {
@@ -868,7 +886,11 @@ function assign_capability($capability, $permission, $roleid, $contextid) {
     $cap->capability = $capability;
     $cap->permission = $permission;
     $cap->timemodified = time();
-    $cap->modifierid = $USER->id;
+    if ($USER->id) {
+        $cap->modifierid = $USER->id;
+    } else {
+        $cap->modifierid = -1;  // Happens during fresh install or Moodle.
+    }
     
     return insert_record('role_capabilities', $cap);
 }
