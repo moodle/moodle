@@ -22,7 +22,9 @@
 
     $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
 
-    if (! record_exists("user_admins")) {   // No admin user yet
+
+    //if (! record_exists("user_admins")) {   // No admin user yet
+    if (!$CFG->rolesactive) {   // No admin user yet.
 
         $user->firstname    = get_string("admin");
         $user->lastname     = get_string("user");
@@ -38,20 +40,28 @@
             error("SERIOUS ERROR: Could not create admin user record !!!");
         }
 
+        
         $admin->userid = $user->id;
 
         if (! insert_record("user_admins", $admin)) {
             error("Could not make user $user->id an admin !!!");
         }
 
-        if (! $user = get_record("user", "id", $user->id)) {     // Double check
+        if (! $user = get_record("user", "id", $user->id)) {   // Double check.
             error("User ID was incorrect (can't find it)");
         }
 
+
+        // Assign the default admin role to the new user.
+        $adminrole = get_record('role', 'name', get_string('administrator'));
+        role_assign($adminrole->id, $user->id, 0, $context->id);
+        set_config('rolesactive', 1);
+
+
+        // Assign as a teacher in the site-level course.
         if (! $site = get_site()) {
             error("Could not find site-level course");
         }
-
         $teacher->userid = $user->id;
         $teacher->course = $site->id;
         $teacher->authority = 1;
@@ -59,6 +69,8 @@
             error("Could not make user $id a teacher of site-level course !!!");
         }
 
+
+        // Log the user in.
         $USER = $user;
         $USER->loggedin = true;
         $USER->sessionIP = md5(getremoteaddr());   // Store the current IP in the session
@@ -66,7 +78,9 @@
         $USER->admin = true;
         $USER->teacher["$site->id"] = true;
         $USER->newadminuser = true;
-        sesskey(); // for added security, used to check script parameters
+        sesskey();   // For added security, used to check script parameters
+        load_user_capability();
+
 
         redirect("$CFG->wwwroot/user/edit.php?id=$user->id&amp;course=$site->id");
         exit;
@@ -79,11 +93,13 @@
 
     require_login();
 
-    if (!isadmin()) {
-        error("You must be an administrator to edit users this way.");
-    }
-
-    if ($newuser and confirm_sesskey()) {                 // Create a new user
+    
+    if ($newuser && confirm_sesskey()) {                 // Create a new user
+        
+        if (!has_capability('moodle/user:create', $context->id)) {
+            error('You do not have the required permission to create new users.');
+        }
+        
         $user->auth         = "manual";
         $user->firstname    = "";
         $user->lastname     = "";
@@ -103,7 +119,11 @@
         redirect("$CFG->wwwroot/user/edit.php?id=$user->id&amp;course=$site->id");
 
     } else {                        // List all users for editing
-
+        
+        if (!has_capability('moodle/user:update', $context->id)) {
+            error('You do not have the required permission to edit users.');
+        }
+        
         $stredituser = get_string("edituser");
         $stradministration = get_string("administration");
         $strusers = get_string("users");
@@ -140,7 +160,12 @@
                 notify(get_string("usernotconfirmed", "", fullname($user, true)));
             }
 
-        } else if ($delete and confirm_sesskey() and has_capability('moodle/user:delete', $context->id)) {              // Delete a selected user, after confirmation
+        } else if ($delete and confirm_sesskey()) {              // Delete a selected user, after confirmation
+            
+            if (!has_capability('moodle/user:delete', $context->id)) {
+                error('You do not have the required permission to delete a user.');
+            }
+            
             if (!$user = get_record("user", "id", "$delete")) {
                 error("No such user!");
             }

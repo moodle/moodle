@@ -127,6 +127,12 @@
             $db->debug = true;
             if (modify_database("$CFG->libdir/db/$CFG->dbtype.sql")) {
                 $db->debug = false;
+                
+                // Install the roles system.
+                moodle_install_roles();
+                if (!update_capabilities()) {
+                    error('Had trouble installing the core capabilities for the Roles System');
+                }
                 notify($strdatabasesuccess, "green");
             } else {
                 $db->debug = false;
@@ -171,10 +177,13 @@
                 $db->debug=true;
                 if (main_upgrade($CFG->version)) {
                     if (empty($CFG->rolesactive)) {
-                        moodle_upgrade_roles_system_17();
+                        // Upgrade to the roles system.
+                        moodle_install_roles();
                     }
                     if (!update_capabilities()) {
-                        error('Had trouble upgrading the core capabilities for Roles');
+                        error('Had trouble upgrading the core capabilities for the Roles System');
+                    } else {
+                        set_config('rolesactive', 1);
                     }
                     $db->debug=false;
                     if (set_config("version", $version)) {
@@ -308,8 +317,20 @@
         }
     }
 
+
+//////////////////////////////////////////////////////////////////////////////
+//
+//
+// NOTE: We aren't going to have a user_admin table anymore. FIX below!
+// We need to assign the "admin" user to the default admin role at some point!
+//
+//
+//////////////////////////////////////////////////////////////////////////////
+
+
 /// Set up the admin user
-    if (! record_exists("user_admins")) {   // No admin user yet
+    //if (!record_exists("user_admins")) {   // No admin user yet
+    if (!$CFG->rolesactive) {
         redirect("user.php");
     }
 
