@@ -1,0 +1,24 @@
+<table width="100%">
+    <tr>
+        <td class="c0"><?php echo get_string('fieldname', 'data'); ?>:</td>
+        <td class="c1"><input class="fieldname" type="text" name="name" id="name" value = "<?php echo($this->field->name); ?>" /></td>
+    </tr>
+    <tr>
+        <td class="c0"><?php echo get_string('fielddescription', 'data'); ?>:</td>
+        <td class="c1"><input class="fielddescription" type="text" name="description" id="description" value = "<?php echo ($this->field->description);?>" /></td>
+    </tr>
+    <tr>
+        <td class="c0"><?php echo get_string('latlonglinkservicesdisplayed', 'data'); ?>:</td>
+        <td class="c1">
+          <select class="linkservicesdisplayed" type="text" name="param1[]" id="param1" multiple="multiple" size="<?php echo sizeof($this->linkoutservices) ?>">
+            <?php
+            $serviceschosen = explode(',', htmlspecialchars($this->field->param1));
+            foreach($this->linkoutservices as $servicename=>$serviceurl) {
+              $servicename = htmlspecialchars($servicename);
+              echo "\n  <option" . (array_search($servicename, $serviceschosen)===false ? '' : ' selected="selected"') . ">$servicename</option>";
+            }
+            ?>
+          </select>
+        </td>
+    </tr>
+</table>
