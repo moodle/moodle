@@ -55,8 +55,12 @@
 
 
         // Assign the default admin role to the new user.
-        $adminrole = get_record('role', 'name', get_string('administrator'));
-        role_assign($adminrole->id, $user->id, 0, $context->id);
+        if (!$adminroles = get_roles_with_capability('moodle/legacy:admin', CAP_ALLOW)) {
+            error('No admin role could be found');
+        }
+        foreach ($adminroles as $adminrole) {
+            role_assign($adminrole->id, $user->id, 0, $context->id);
+        }
         set_config('rolesactive', 1);
 
 
