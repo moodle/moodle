@@ -6,7 +6,7 @@
     define("MAX_USERS_PER_PAGE", 5000);
 
     $contextid      = required_param('contextid',PARAM_INT); // context id
-    $roleid            = optional_param('roleid', 0, PARAM_INT); // required role id
+    $roleid         = optional_param('roleid', 0, PARAM_INT); // required role id
     $add            = optional_param('add', 0, PARAM_BOOL);
     $remove         = optional_param('remove', 0, PARAM_BOOL);
     $showall        = optional_param('showall', 0, PARAM_BOOL);
@@ -14,7 +14,7 @@
     $previoussearch = optional_param('previoussearch', 0, PARAM_BOOL);
     $hidden         = optional_param('hidden', 0, PARAM_BOOL); // whether this assignment is hidden
     $previoussearch = ($searchtext != '') or ($previoussearch) ? 1:0;
-    $timestart        = optional_param('timestart', 0, PARAM_INT);
+    $timestart      = optional_param('timestart', 0, PARAM_INT);
     $timeend        = optional_param('timened', 0, PARAM_INT);
 
     if (! $site = get_site()) {
@@ -24,19 +24,20 @@
     if (! $context = get_record("context", "id", $contextid)) {
         error("Context ID was incorrect (can't find it)");
     }
+    if (!has_capability('moodle/role:assign', $context->id)) {
+        error('You do not have the required permission to assign roles to users.');
+    }
     
-    /* permission check to see whether this user can assign people to this role
+    /**
+     * TO DO:
+     * Permission check to see whether this user can assign people to this role
      * needs to be:    
      * 1) has the capability to assign
      * 2) not in role_deny_grant
      * end of permission checking  
      */
     
-    require_login($course->id);
-
-    if (!isteacheredit($course->id)) {
-        error("You must be an editing teacher in this course, or an admin");
-    }
+    require_login();
 
     $strassignusers = get_string('assignusers', 'role');
     $strpotentialusers = get_string('potentialusers', 'role');
@@ -56,7 +57,7 @@
 /// Don't allow restricted teachers to even see this page (because it contains
 /// a lot of email addresses and access to all student on the server
 
-    check_for_restricted_user($USER->username, "$CFG->wwwroot/course/view.php?id=$course->id");
+    check_for_restricted_user($USER->username, $CFG->wwwroot);
 
 /// Print a help notice about the need to use this page
 

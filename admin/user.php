@@ -43,9 +43,11 @@
         
         $admin->userid = $user->id;
 
+        /*
         if (! insert_record("user_admins", $admin)) {
             error("Could not make user $user->id an admin !!!");
         }
+        */
 
         if (! $user = get_record("user", "id", $user->id)) {   // Double check.
             error("User ID was incorrect (can't find it)");
@@ -58,16 +60,20 @@
         set_config('rolesactive', 1);
 
 
-        // Assign as a teacher in the site-level course.
         if (! $site = get_site()) {
             error("Could not find site-level course");
         }
+        
+        
+        /*
+        // Assign as a teacher in the site-level course.
         $teacher->userid = $user->id;
         $teacher->course = $site->id;
         $teacher->authority = 1;
         if (! insert_record("user_teachers", $teacher)) {
             error("Could not make user $id a teacher of site-level course !!!");
         }
+        */
 
 
         // Log the user in.
@@ -76,7 +82,7 @@
         $USER->sessionIP = md5(getremoteaddr());   // Store the current IP in the session
         $USER->site = $CFG->wwwroot;
         $USER->admin = true;
-        $USER->teacher["$site->id"] = true;
+        //$USER->teacher["$site->id"] = true;
         $USER->newadminuser = true;
         sesskey();   // For added security, used to check script parameters
         load_user_capability();
