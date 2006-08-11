@@ -4307,6 +4307,7 @@ function print_error ($errorcode, $module='', $link='', $a=NULL) {
  *           'Help with' (or the language equivalent) will be prefixed and '...' will be stripped.
  * @param string $module Which module is the page defined in
  * @param mixed $image Use a help image for the link?  (true/false/"both")
+ * @param boolean $linktext If true, display the title next to the help icon.
  * @param string $text If defined then this text is used in the page, and
  *           the $page variable is ignored.
  * @param boolean $return If true then the output is returned as a string, if false it is printed to the current page.
@@ -4330,15 +4331,16 @@ function helpbutton ($page, $title='', $module='moodle', $image=true, $linktext=
     $linkobject = '';
 
     if ($image) {
-        if ($imagetext == '') {
-            $imagetext = '<img alt="'.$tooltip.'" src="'.
-                          $CFG->pixpath .'/help.gif" />';
-        }
         if ($linktext) {
             $linkobject .= $title.'&nbsp;';
         }
 
-        $linkobject .= $imagetext;
+        if ($imagetext) {
+            $linkobject .= $imagetext;
+        } else {
+            $linkobject .= '<img alt="'.$tooltip.'" src="'.
+                    $CFG->pixpath .'/help.gif" />';
+        }
 
     } else {
         $linkobject .= $tooltip;
