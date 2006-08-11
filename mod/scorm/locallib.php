@@ -2,6 +2,62 @@
 
 /// Local Library of functions and constants for module scorm
 
+//
+// Repository configurations
+//
+$repositoryconfigfile = $CFG->dirroot.'/mod/resource/type/ims/repository_config.php';
+$repositorybrowser = '/mod/resource/type/ims/finder.php';
+
+
+/// Local Library of functions and constants for module scorm
+
+/**
+* This function will permanently delete the given
+* directory and all files and subdirectories.
+*
+* @param string $directory The directory to remove
+* @return boolean
+*/
+function scorm_delete_files($directory) {
+    if (is_dir($directory)) {
+        $files=scorm_scandir($directory);
+        foreach($files as $file) {
+            if (($file != '.') && ($file != '..')) {
+                if (!is_dir($directory.'/'.$file)) {
+                    unlink($directory.'/'.$file);
+                } else {
+                    scorm_delete_files($directory.'/'.$file);
+                }
+            }
+         set_time_limit(5);
+        }
+        rmdir($directory);
+        return true;
+    }
+    return false;
+}
+
+/**
+* Given a diretory path returns the file list
+*
+* @param string $directory
+* @return array
+*/
+function scorm_scandir($directory) {
+    if (version_compare(phpversion(),'5.0.0','>=')) {
+        return scandir($directory);
+    } else {
+        $files = array();
+        if ($dh = opendir($directory)) {
+            while (($file = readdir($dh)) !== false) {
+               $files[] = $file;
+            }
+            closedir($dh);
+        }
+        return $files;
+    }
+}
+
 /**
 * Create a new temporary subdirectory with a random name in the given path
 *
@@ -127,9 +183,6 @@ function scorm_eval_prerequisites($prerequisites,$usertracks) {
             case '(':
             case ')':
             case '*':
-            //case '{':
-            //case '}':
-            //case ',':
                 $element = trim($element);
                 
                 if (!empty($element)) {
@@ -256,7 +309,6 @@ function scorm_eval_prerequisites($prerequisites,$usertracks) {
     return eval('return '.implode($stack).';');
 }
 
-
 function scorm_insert_track($userid,$scormid,$scoid,$attempt,$element,$value) {
     $id = null;
     if ($track = get_record_select('scorm_scoes_track',"userid='$userid' AND scormid='$scormid' AND scoid='$scoid' AND attempt='$attempt' AND element='$element'")) {
@@ -275,7 +327,6 @@ function scorm_insert_track($userid,$scormid,$scoid,$attempt,$element,$value) {
     }
     return $id;
 }
-
 
 function scorm_add_time($a, $b) {
     $aes = explode(':',$a);
@@ -664,23 +715,29 @@ function scorm_get_tracks($scoid,$userid,$attempt='') {
     }
 }
 
-
 /// Library of functions and constants for parsing packages
 
 function scorm_parse($scorm) {
-    global $CFG;
+    global $CFG,$repositoryconfigfile;
 
     // Parse scorm manifest
     if ($scorm->pkgtype == 'AICC') {
         $scorm->launch = scorm_parse_aicc($scorm->dir.'/'.$scorm->id,$scorm->id);
     } else {
-        if (basename($scorm->reference) != 'imsmanifest.xml') {
+        $reference = $scorm->reference;
+        if ($scorm->reference[0] == '#') {
+            require_once($repositoryconfigfile);
+            $reference = $CFG->repository.substr($scorm->reference,1).'/imsmanifest.xml';
+        } else if (substr($reference,0,7) != 'http://') {
+            $reference = $CFG->dataroot.'/'.$scorm->course.'/'.$scorm->reference;
+        }
+
+        if (basename($reference) != 'imsmanifest.xml') {
             $scorm->launch = scorm_parse_scorm($scorm->dir.'/'.$scorm->id,$scorm->id);
         } else {
-            $scorm->launch = scorm_parse_scorm($CFG->dataroot.'/'.$scorm->course.'/'.dirname($scorm->reference),$scorm->id);
+            $scorm->launch = scorm_parse_scorm(dirname($reference),$scorm->id);
         }
     }
-
     return $scorm->launch;
 }
 
@@ -737,7 +794,7 @@ function scorm_parse_aicc($pkgdir,$scormid) {
     $extaiccfiles = array('crs','des','au','cst','ort','pre','cmp');
     if ($handle = opendir($pkgdir)) {
         while (($file = readdir($handle)) !== false) {
-            if ($file[0] != '.') { 
+            if ($file[0] != '.') {
                 $ext = substr($file,strrpos($file,'.'));
                 $extension = strtolower(substr($ext,1));
                 if (in_array($extension,$extaiccfiles)) {
@@ -827,6 +884,9 @@ function scorm_parse_aicc($pkgdir,$scormid) {
         }
     }
     //print_r($courses);
+
+    $oldscoes = get_records('scorm_scoes','scorm',$scormid);
+    
     $launch = 0;
     if (isset($courses)) {
         foreach ($courses as $course) {
@@ -838,8 +898,15 @@ function scorm_parse_aicc($pkgdir,$scormid) {
             $sco->parent = '/';
             $sco->launch = '';
             $sco->scormtype = '';
+
             //print_r($sco);
-            $id = insert_record('scorm_scoes',$sco);
+            if (get_record('scorm_scoes','scorm',$scormid,'identifier',$sco->identifier)) {
+                $id = update_record('scorm_scoes',$sco);
+                unset($oldscoes[$id]);
+            } else {
+                $id = insert_record('scorm_scoes',$sco);
+            }
+
             if ($launch == 0) {
                 $launch = $id;
             }
@@ -880,7 +947,13 @@ function scorm_parse_aicc($pkgdir,$scormid) {
                     $sco->masteryscore = $element->mastery_score;
                     $sco->previous = 0;
                     $sco->next = 0;
-                    $id = insert_record('scorm_scoes',$sco);
+                    if ($oldscoid = scorm_array_search('identifier',$sco->identifier,$oldscoes)) {
+                        $sco->id = $oldscoid;
+                        $id = update_record('scorm_scoes',$sco);
+                        unset($oldscoes[$oldscoid]);
+                    } else {
+                        $id = insert_record('scorm_scoes',$sco);
+                    }
                     if ($launch==0) {
                         $launch = $id;
                     }
@@ -888,11 +961,18 @@ function scorm_parse_aicc($pkgdir,$scormid) {
             }
         }
     }
+    if (!empty($oldscoes)) {
+        foreach($oldscoes as $oldsco) {
+            delete_records('scorm_scoes','id',$oldsco->id);
+            delete_records('scorm_scoes_track','scoid',$oldsco->id);
+        }
+    }
     set_field('scorm','version','AICC','id',$scormid);
     return $launch;
 }
 
 function scorm_get_resources($blocks) {
+    $resources = array();
     foreach ($blocks as $block) {
         if ($block['name'] == 'RESOURCES') {
             foreach ($block['children'] as $resource) {
@@ -978,7 +1058,7 @@ function scorm_get_manifest($blocks,$scoes) {
                 case 'ITEM':
                     $parent = array_pop($parents);
                     array_push($parents, $parent);
-                    
+
                     $identifier = addslashes($block['attrs']['IDENTIFIER']);
                     $scoes->elements[$manifest][$organization][$identifier]->identifier = $identifier;
                     $scoes->elements[$manifest][$organization][$identifier]->parent = $parent->identifier;
@@ -1068,7 +1148,6 @@ function scorm_get_manifest($blocks,$scoes) {
             }
         }
     }
-
     return $scoes;
 }
 
@@ -1083,19 +1162,26 @@ function scorm_parse_scorm($pkgdir,$scormid) {
         $xmlstring = file_get_contents($manifestfile);
         $objXML = new xml2Array();
         $manifests = $objXML->parse($xmlstring);
-            
+        //   print_r($manifests); 
         $scoes = new stdClass();
         $scoes->version = '';
         $scoes = scorm_get_manifest($manifests,$scoes);
 
         if (count($scoes->elements) > 0) {
+            $olditems = get_records('scorm_scoes','scorm',$scormid);
             foreach ($scoes->elements as $manifest => $organizations) {
                 foreach ($organizations as $organization => $items) {
                     foreach ($items as $identifier => $item) {
                         $item->scorm = $scormid;
                         $item->manifest = $manifest;
                         $item->organization = $organization;
-                        $id = insert_record('scorm_scoes',$item);
+                        if ($olditemid = scorm_array_search('identifier',$item->identifier,$olditems)) {
+                            $item->id = $olditemid;
+                            $id = update_record('scorm_scoes',$item);
+                            unset($olditems[$olditemid]);
+                        } else {
+                            $id = insert_record('scorm_scoes',$item);
+                        }
                 
                         if (($launch == 0) && ((empty($scoes->defaultorg)) || ($scoes->defaultorg == $identifier))) {
                             $launch = $id;
@@ -1103,11 +1189,34 @@ function scorm_parse_scorm($pkgdir,$scormid) {
                     }
                 }
             }
+            if (!empty($olditems)) {
+                foreach($olditems as $olditem) {
+                   delete_records('scorm_scoes','id',$olditem->id);
+                   delete_records('scorm_scoes_track','scoid',$olditem->id);
+                }
+            }
             set_field('scorm','version',$scoes->version,'id',$scormid);
         }
     } 
     
     return $launch;
+}
+
+function scorm_array_search($item, $needle, $haystacks, $strict=false) {
+    if (!empty($haystacks)) {
+        foreach ($haystacks as $key => $element) {
+            if ($strict) {
+                if ($element->{$item} === $needle) {
+                    return $key;
+                }
+            } else {
+                if ($element->{$item} == $needle) {
+                    return $key;
+                }
+            }
+        }
+    }
+    return false;
 }
 
 function scorm_course_format_display($user,$course) {
@@ -1151,7 +1260,7 @@ function scorm_course_format_display($user,$course) {
     } else {
         if (isteacheredit($course->id, $user->id)) {
             // Create a new activity
-	        redirect('mod.php?id='.$course->id.'&amp;section=0&sesskey='.sesskey().'&amp;add=scorm');
+            redirect('mod.php?id='.$course->id.'&amp;section=0&sesskey='.sesskey().'&amp;add=scorm');
         } else {
             notify('Could not find a scorm course here');
         }
@@ -1230,7 +1339,6 @@ function scorm_view_display ($user, $scorm, $action, $cm, $blockwidth='') {
           </div>
 <?php
 }
-
 
 function scorm_repeater($what, $times) {
     if ($times <= 0) {

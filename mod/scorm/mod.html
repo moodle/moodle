@@ -79,6 +79,7 @@
 
     $strfilename = get_string('coursepacket', 'scorm');
     $strchooseafile = get_string('chooseapacket', 'scorm');
+    $strbrowserepository = get_string('browserepository', 'scorm');
     $striframe = get_string('iframe', 'scorm');
     $striframedisplay = get_string('iframedisplay', 'scorm');
     $strnewwindow = get_string('popup', 'scorm');
@@ -96,9 +97,14 @@
 
 <script type="text/javascript" src="<?php p($CFG->wwwroot) ?>/mod/scorm/request.js" ></script>
 <script type="text/javascript">
-    function validate_scorm(theform,filename) {
+    function validate_scorm(theform,filename,confirmed) {
+        var confirmedstr = '';
+        if (confirmed == true) {
+           confirmedstr = '&confirmed=true';
+        }
+
         var myRequest = NewHttpReq();
-        result = DoRequest(myRequest,"<?php p($CFG->wwwroot) ?>/mod/scorm/validate.php","id=<?php p($form->course) ?>&reference="+filename+"<?php echo $sessionkey.$scormid.$datadir ?>");
+        result = DoRequest(myRequest,"<?php p($CFG->wwwroot) ?>/mod/scorm/validate.php","id=<?php p($form->course) ?>&reference="+filename+"<?php echo $sessionkey.$scormid.$datadir ?>"+confirmedstr);
         //alert(result);
         results = result.split('\n');
         result = '';
@@ -133,19 +139,28 @@
             theform.datadir.value = datadir;
             theform.pkgtype.value = pkgtype;
             theform.launch.value = launch;
-            if (launch == 0) {
-                if ('<?php echo $scormid ?>' != '') {
-                    return confirm('<?php print_string('trackingloose','scorm') ?>');
-                }
+            if (theform.mode.value == 'add') {
+                theform.parse.value = 1;
+            } else if (launch == 0) {
+                theform.parse.value = 1;
             }
             return true;
         } else {
-            result = '<?php print_string('validation','scorm') ?>: '+ result + '\n';
-            if (errorlogs != '') {
-               result.concat('<?php print_string('errorlogs','scorm') ?>:\n'+errorlogs);
+            if (result == "confirm") {
+                response = confirm("<?php print_string('confirmloosetracks','scorm') ?>");
+                if (response == true) {
+                    return validate_scorm(theform,filename,true);
+                } else {
+                    return false;
+                }
+            } else {
+                result = '<?php print_string('validation','scorm') ?>: '+ result + '\n';
+                if (errorlogs != '') {
+                    result.concat('<?php print_string('errorlogs','scorm') ?>:\n'+errorlogs);
+                }
+                alert(result);
+                return false;
             }
-            alert(result);
-            return false;
         }
     }
 
@@ -183,7 +198,7 @@
     }
 </script>
 
-<form name="form" method="post" action="mod.php" onsubmit="return validate_scorm(document.form,document.form.reference.value);">
+<form name="form" method="post" action="mod.php" onsubmit="return validate_scorm(document.form,document.form.reference.value,false,false);">
     <table cellpadding="5">
         <tr valign="top">
             <td align="right"><b><?php print_string('name') ?>:</b></td>
@@ -208,6 +223,11 @@
                 <?php
                     button_to_popup_window ('/files/index.php?id='.$course->id.'&amp;choose=form.reference',
                                             'coursefiles', $strchooseafile, 500, 750, $strchooseafile);
+                    require_once($repositoryconfigfile);
+                    if ($CFG->repositoryactivate) {
+                        button_to_popup_window ($repositorybrowser.'?choose=form.reference',
+                                                'browserepository', $strbrowserepository, 500, 750, $strbrowserepository);
+                    }
                     helpbutton('package', get_string('coursepacket', 'scorm'), 'scorm', true);
                 ?>
             </td>
@@ -401,6 +421,7 @@
     <input type="hidden" name="datadir" value="<?php p($form->datadir) ?>" />
     <input type="hidden" name="pkgtype" value="<?php p($form->pkgtype) ?>" />
     <input type="hidden" name="launch"  value="<?php p($form->launch) ?>" />
+    <input type="hidden" name="parse"  value="0" />
     <?php
         $scorms = get_all_instances_in_course('scorm', $course);
         $coursescorm = current($scorms);

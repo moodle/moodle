@@ -2,34 +2,67 @@
 
     require_once("../../config.php");
     require_once('locallib.php');
-    require_once('lib.php');
 
-    $courseid = required_param('id', PARAM_INT);             // Course Module ID, or
-    $reference = required_param('reference', PARAM_PATH);    // Package path
-    $scormid = optional_param('instance', '', PARAM_INT);       // scorm ID
+    $courseid = required_param('id', PARAM_INT);                  // Course Module ID
+    $reference = required_param('reference', PARAM_PATH);         // Package path
+    $scormid = optional_param('instance', '', PARAM_INT);         // scorm ID
+    $confirmed = optional_param('confirmed', false, PARAM_BOOL);  // This package is changed and some tracks could be lost.
+                                                                  // Has the editor confirmed to continue?
 
     require_login($courseid, false);
 
 if (confirm_sesskey() && !empty($courseid)) {
     $launch = 0;
     $validation = new stdClass();
+    $referencefield = $reference;
     if (empty($reference)) {
         $launch = -1;
         $validation->result = "packagefile";
+    } else if ($reference[0] == '#') {
+        require_once($repositoryconfigfile);
+        if ($CFG->repositoryactivate) {
+            $referencefield = $reference.'/imsmanfest.xml';
+            $reference = $CFG->repository.substr($reference,1).'/imsmanifest.xml';
+        } else {
+            $launch = -1;
+            $validation->result = "packagefile";
+        }
+    } else if (substr($reference,0,7) != 'http://') {
+        $reference = $CFG->dataroot.'/'.$courseid.'/'.$reference;
     }
+
     if (!empty($scormid)) {  
         //
         // SCORM Update
         //
-        if (is_file($CFG->dataroot.'/'.$courseid.'/'.$reference)) {
-            $fp = fopen($CFG->dataroot.'/'.$courseid.'/'.$reference,"r");
+        if (($launch != -1) && is_file($reference)) {
+            $fp = fopen($reference,"r");
             $fstat = fstat($fp);
             fclose($fp);
             if ($scorm = get_record("scorm","id",$scormid)) {
+                if ($scorm->reference[0] == '#') {
+                    require_once($repositoryconfigfile);
+                    if ($CFG->repositoryactivate) {
+                        $oldreference = $CFG->repository.substr($scorm->reference,1).'/imsmanifest.xml';
+                    } else {
+                        $oldreference = $scorm->reference;
+                    }
+                } else if (substr($reference,0,7) != 'http://') {
+                    $oldreference = $CFG->dataroot.'/'.$courseid.'/'.$scorm->reference;
+                }
                 $launch = $scorm->launch;
-                if ((($scorm->timemodified < $fstat["mtime"]) && ($scorm->reference == $reference)) || ($scorm->reference != $reference)) {
-                    // This is a new package
-                    $launch = 0;
+                if ((($scorm->timemodified < $fstat["mtime"]) && ($oldreference == $reference)) || ($oldreference != $reference)) {
+                    // This is a new or a modified package
+                    if (!$confirmed) {
+                        if ($tracks = get_records('scorm_scoes_track','scormid',$scormid)) {
+                            $validation->result='confirm';
+                            $launch = -1;
+                        } else {
+                            $launch = 0;
+                        }
+                    } else {
+                        $launch = 0;
+                    }
                 } else {
                     // Old package already validated
                     $validation->result = 'found';
@@ -63,7 +96,7 @@ if (confirm_sesskey() && !empty($courseid)) {
                 $scormdir = '';
                 if ($scormdir = make_upload_directory("$courseid/$CFG->moddata/scorm")) {
                     if ($tempdir = scorm_datadir($scormdir)) {
-                        copy ("$CFG->dataroot/$courseid/$reference", $tempdir."/".basename($reference));
+                        copy ("$reference", $tempdir."/".basename($reference));
                         unzip_file($tempdir."/".basename($reference), $tempdir, false);
                         unlink ($tempdir."/".basename($reference));
                         $validation = scorm_validate($tempdir);
@@ -76,7 +109,7 @@ if (confirm_sesskey() && !empty($courseid)) {
             break;
             case '.xml':
                 if (basename($reference) == 'imsmanifest.xml') {
-                    $validation = scorm_validate("$CFG->dataroot/$courseid/".dirname($reference));
+                    $validation = scorm_validate(dirname($reference));
                 } else {
                     $validation->result = "manifestfile";
                 }
@@ -93,7 +126,7 @@ if (confirm_sesskey() && !empty($courseid)) {
             }
         } else {
             if ($ext == '.xml') {
-                $datadir = dirname($reference);
+                $datadir = dirname($referencefield);
             } else {
                 $datadir = substr($tempdir,strlen($scormdir));
             }

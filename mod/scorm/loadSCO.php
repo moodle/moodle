@@ -4,7 +4,7 @@
 
     $id = optional_param('id', '', PARAM_INT);       // Course Module ID, or
     $a = optional_param('a', '', PARAM_INT);         // scorm ID
-    $scoid = required_param('scoid', PARAM_INT); // sco ID
+    $scoid = required_param('scoid', PARAM_INT);     // sco ID
 
     if (!empty($id)) {
         if (! $cm = get_coursemodule_from_id('scorm', $id)) {
@@ -33,7 +33,7 @@
     require_login($course->id, false, $cm);
     if (!empty($scoid)) {
     //
-    // Direct sco request
+    // Direct SCO request
     //
         if ($sco = get_record("scorm_scoes","id",$scoid)) {
             if ($sco->launch == '') {
@@ -79,6 +79,9 @@
     
     if (scorm_external_link($sco->launch)) {
         $result = $launcher;
+    } else if ($scorm->reference[0] == '#') {
+        require_once($repositoryconfigfile);
+        $result = $CFG->repositorywebroot.substr($scorm->reference,1).'/'.$sco->launch;
     } else {
         if (basename($scorm->reference) == 'imsmanifest.xml') {
             $basedir = dirname($scorm->reference);
