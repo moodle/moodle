@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20060810" COMMENT="XMLDB file for core Moodle tables">
+<XMLDB PATH="lib/db" VERSION="20060811" COMMENT="XMLDB file for core Moodle tables">
   <TABLES>
     <TABLE NAME="config" COMMENT="Moodle configuration variables" NEXT="config_plugins">
       <FIELDS>
@@ -93,7 +93,8 @@
         <FIELD NAME="path" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="depth"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for course_categories"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for course_categories" NEXT="parent"/>
+        <KEY NAME="parent" TYPE="foreign" FIELDS="parent" REFTABLE="course_categories" REFFIELDS="id" COMMENT="note that to make this recursive FK working someday, the parent field must be declared NULL" PREVIOUS="primary"/>
       </KEYS>
     </TABLE>
     <TABLE NAME="course_display" COMMENT="Stores info about how to display the course" PREVIOUS="course_categories" NEXT="course_meta">
