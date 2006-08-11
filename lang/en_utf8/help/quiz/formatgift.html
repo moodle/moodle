@@ -9,6 +9,12 @@
     <p>The text encoding of your text file must be utf-8 (unless you only use ascii characters). 
     An example questions text file can be found here: <a href="<?php echo $CFG->wwwroot; ?>/question/format/gift/examples.txt">gift/examples.txt</a>.</p>
 
+<h3>Basics</h3>
+
+<p>Each individual question in the GIFT file must not contain any blank lines. Each question is delimited by
+    at least one blank line. If you need to represent a blank line in your question you can use
+    the entity <b>\n</b>. You can use comments wherever you wish but they must start with two forward
+    slashes (<b>//</b>) at the start of the line.</p>
 
 <h3>QUESTION TYPES</h3>
 
@@ -147,12 +153,9 @@
     <p>Note that the last two examples are essentially the same question, first as multiple choice and then as short answer.</p>
 
     <p><font size="-1">Note that it is possible to specify percentage answer weights that are NOT 
-    available through the browser interface. Such answer-weights will calculate correctly 
-    (according to the value assigned when imported), and will appear normal to students taking the test. 
-    But such answer-weights will not display correctly to teachers when editing them through Moodle's 
-    Edit Question interface. The pull-down menu only allows certain fixed values, and if the answer-weight 
-    does not exactly match one of those predetermined values, then it will not display correctly. 
-    If you edit such a question through the browser interface, the answer weight will change to that displayed.</font></p>
+    available through the browser interface. The <b>Match Grades</b> drop-down on the import
+    page determines how these are handled. You can either request that an error be reported
+    or that the answer weight be adjusted to the nearest valid answer weight.</font></p>
 
 <p><u>Specify text-formatting for the question</u><br />
     The question text (only) may have an optional text format specified. Currently the available formats are
