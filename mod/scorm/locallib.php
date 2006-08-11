@@ -5,225 +5,61 @@ define("VALUEHIGHEST",1);
 define("VALUEAVERAGE",2);
 define("VALUESUM",3);
 
-// Functions added by Pham Minh Duc
-function scorm_get_score_from_parent($sco,$userid,$grademethod=VALUESCOES) {
-    $scores = NULL; 
-    $scores->scoes = 0;
-    $scores->values = 0;
-    $scores->scaled = 0;
-    $scores->max = 0;
-    $scores->sum = 0;
+//
+// Repository configurations
+//
+$repositoryconfigfile = $CFG->dirroot.'/mod/resource/type/ims/repository_config.php';
+$repositorybrowser = '/mod/resource/type/ims/finder.php';
 
-    $scoes_total = 0;
-    $scoes_count = 0;
-    $attempt = scorm_get_last_attempt($sco->scorm, $userid);
-    $scoes = get_records('scorm_scoes', 'parent', $sco->identifier);
-    foreach ($scoes as $sco)
-    {
-        $scoes_total++;
-        if ($userdata=scorm_get_tracks($sco->id, $userid,$attempt)) {
-            if (($userdata->status == 'completed') || ($userdata->success_status == 'passed')) {
-                $scoes_count++;
-            }
-
-            $scoreraw = $userdata->score_raw; 
-
-            if (!empty($userdata->score_raw)) {
-                $scores->values++;
-                $scores->sum += $userdata->score_raw;
-                $scores->max = ($userdata->score_raw > $scores->max)?$userdata->score_raw:$scores->max;
-            }   
-            if (!empty($userdata->score_scaled)) {
-                $scores->scaled = $scores->scaled + $userdata->score_scaled;
-            }       
-        }       
-    }
-    if ($scoes_count > 0) {
-        $scores->scaled = ($scores->scaled)/($scoes_count);
-    }
-    switch ($grademethod) {
-        case VALUEHIGHEST:
-            return $scores->max;
-        break;  
-        case VALUEAVERAGE:
-            if ($scores->values > 0) {
-                return $scores->sum/$scores->values;
-            } else {
-                return 0;
-            }       
-        break;  
-        case VALUESUM:
-            return $scores->sum;
-        break;  
-        case VALUESCOES:
-            return $scores->scaled;
-        break;  
-    }
-}
-
-function scorm_get_user_sco_count($scormid, $userid) {
-    $scoes_count = 0;
-    $attempt = scorm_get_last_attempt($current->scorm, $userid);
-    $scoes = get_records('scorm_scoes', 'scorm', $scormid);
-
-    foreach ($scoes as $sco) {
-        if ($userdata=scorm_get_tracks($sco->id, $userid,$attempt)) {
-            if (($userdata->status == 'completed') || ($userdata->success_status == 'passed')) {
-                $scoes_count++;
-            }
-        }
-    }
-    return $scoes_count;
-}
-
-function scorm_grade_user_new($scoes, $userid, $grademethod=VALUESCOES) {
-    $scores = NULL; 
-    $scores->scoes = 0;
-    $scores->values = 0;
-    $scores->scaled = 0;
-    $scores->max = 0;
-    $scores->sum = 0;
-
-    if (!$scoes) {
-        return '';
-    }
-    $current = current($scoes);
-    $attempt = scorm_get_last_attempt($current->scorm, $userid);
-    foreach ($scoes as $sco) { 
-        if ($userdata=scorm_get_tracks($sco->id, $userid,$attempt)) {
-            if (($userdata->status == 'completed') || ($userdata->success_status == 'passed')) {
-                $scores->scoes++;
-            }  
-            $scaled = $userdata->score_scaled;
-            $scoreraw = $userdata->score_raw; 
-            if ($scaled ==0){
-                $scores->scaled = $scores->scaled / $scores->scoes;
-            }
-            if (!empty($userdata->score_raw)) {
-                $scores->values++;
-                $scores->sum += $userdata->score_raw;
-                $scores->max = ($userdata->score_raw > $scores->max)?$userdata->score_raw:$scores->max;
-            }  
-            if (!empty($scaled)) {
-                $scores->scaled = (($scores->scaled) * ($scores->scoes-1) + $scaled)/($scores->scoes);
-            }       
-        }       
-    }
-    switch ($grademethod) {
-        case VALUEHIGHEST:
-            return $scores->max;
-        break;  
-        case VALUEAVERAGE:
-            if ($scores->values > 0) {
-                return $scores->sum/$scores->values;
-            } else {
-                return 0;
-            }       
-        break;  
-        case VALUESUM:
-            return $scores->sum;
-        break;  
-        case VALUESCOES:
-            return $scores->scaled;
-        break;  
-    }
-}
-
-function scorm_insert_statistic($statisticInput){
-    $id = null;
-    if ($statistic = get_record_select('scorm_statistic',"userid='$statisticInput->userid' AND scormid='$statisticInput->scormid'")) {
-
-        $statistic->durationtime = $statisticInput->duration;
-        $statistic->accesstime = $statisticInput->accesstime;        
-        $statistic->status = $statisticInput->status;        
-        $statistic->attemptnumber = $statisticInput->attemptnumber;        
-        $id = update_record('scorm_statistic',$statistic);
-    } else {
-        $id = insert_record('scorm_statistic',$statisticInput);
-    }
-    return $id;
-}
-
-function scorm_insert_trackmodel($userid,$scormid,$scoid,$attempt) {
-    $id = null;
-    if ($suspendtrack = get_record_select('scorm_suspendtrack',"userid='$userid' AND scormid='$scormid'")) {
-        $suspendtrack->suspendscoid = $scoid;
-        $suspendtrack->attempt = $attempt;
-        $id = update_record('scorm_suspendtrack',$suspendtrack);
-    } else {
-        $suspendtrack->scormid = $scormid;
-        $suspendtrack->suspendscoid = $scoid;
-        $suspendtrack->userid = $userid;
-        $suspendtrack->attempt = $attempt;
-        $id = insert_record('scorm_suspendtrack',$suspendtrack);
-    }
-    return $id;
-}
-
-function scorm_get_suspendscoid($scormid,$userid) {
-    if ($sco = get_record("scorm_suspendtrack","scormid",$scormid,"userid",$userid)) {
-        $suspendscoid = $sco->suspendscoid;
-        return $suspendscoid;
-    } else {
-        return 0;
-    }
-}
-
-function scorm_set_attempt($scoid,$userid) {
-    if ($scormid = get_field('scorm_scoes','scorm','id',$scoid)) {
-        $attempt = scorm_get_last_attempt($scormid,$userid);
-    } else {
-        $attempt = 1;
-    }
-    $scormtype = get_field('scorm_scoes','scormtype','id',$scoid) ;
-    if ($scormtype == 'sco'){
-        $element = 'cmi.attempt_status';
-        $value = 'attempted';
-        scorm_insert_track($userid,$scormid,$scoid,$attempt,$element,$value);
-    }
-}
-
-function scorm_get_AbsoluteTimeLimit($scoid){
-    $sco = get_record("scorm_scoes","id",$scoid);
-    if (!empty($sco)){
-        return $sco->attemptAbsoluteDurationLimit;
-    }
-    return 0;
-}
-
-function scorm_update_status($scormid,$scoid)
-{
-    
-}
-
-function scorm_get_nextsco($scormid,$scoid)
-{
-
-}
-
-function scorm_get_presco($scormid,$scoid)
-{
-
-}
-
-function scorm_isChoice($scormid,$scoid)
-{
-    $sco = get_record("scorm_sequencing_controlmode","scormid",$scormid,"scoid",$scoid);
-    $scoparent = get_record("scorm_sequencing_controlmode","scormid",$scormid,"identifier",$sco->parent);
-
-    return $scoparent->choice;
-}
-
-function scorm_isChoiceexit($scormid,$scoid)
-{
-    $sco = get_record("scorm_sequencing_controlmode","scormid",$scormid,"scoid",$scoid);
-    $scoparent = get_record("scorm_sequencing_controlmode","scormid",$scormid,"identifier",$sco->parent);
-
-    return $scoparent->choiceexit;
-}
-// End add
 
 /// Local Library of functions and constants for module scorm
+
+/**
+* This function will permanently delete the given
+* directory and all files and subdirectories.
+*
+* @param string $directory The directory to remove
+* @return boolean
+*/
+function scorm_delete_files($directory) {
+    if (is_dir($directory)) {
+        $files=scorm_scandir($directory);
+        foreach($files as $file) {
+            if (($file != '.') && ($file != '..')) {
+                if (!is_dir($directory.'/'.$file)) {
+                    unlink($directory.'/'.$file);
+                } else {
+                    scorm_delete_files($directory.'/'.$file);
+                }
+            }
+         set_time_limit(5);
+        }
+        rmdir($directory);
+        return true;
+    }
+    return false;
+}
+
+/**
+* Given a diretory path returns the file list
+*
+* @param string $directory
+* @return array
+*/
+function scorm_scandir($directory) {
+    if (version_compare(phpversion(),'5.0.0','>=')) {
+        return scandir($directory);
+    } else {
+        $files = array();
+        if ($dh = opendir($directory)) {
+            while (($file = readdir($dh)) !== false) {
+               $files[] = $file;
+            }
+            closedir($dh);
+        }
+        return $files;
+    }
+}
 
 /**
 * Create a new temporary subdirectory with a random name in the given path
@@ -267,7 +103,6 @@ function scorm_datadir($strPath)
 * @return mixed
 */
 function scorm_validate($packagedir) {
-
     $validation = new stdClass();
     if (is_file($packagedir.'/imsmanifest.xml')) {
         $validation->result = 'found';
@@ -645,8 +480,10 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
         $attempt = scorm_get_last_attempt($scorm->id, $user->id);
     }
     $result->attemptleft = $scorm->maxattempt - $attempt;
-    
     if ($scoes = get_records_select('scorm_scoes',"scorm='$scorm->id' $organizationsql order by id ASC")){
+        //
+        // Retrieve user tracking data for each learning object
+        // 
         $usertracks = array();
         foreach ($scoes as $sco) {
             if (!empty($sco->launch)) {
@@ -716,6 +553,7 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
                 if (empty($scoid) && ($mode != 'normal')) {
                     $scoid = $sco->id;
                 }
+                // Modified by Pham Minh Duc
                 if ($suspendscoid == $sco->id){
                     $result->toc .= '<img src="'.$scormpixdir.'/suspend.gif" alt="Dang tam dung o day" title="Dang dung o day" />';                
                 } else {
@@ -745,6 +583,7 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
                         }
                     }
                 }
+                // End Modify
                 if ($sco->id == $scoid) {
                     $startbold = '<b>';
                     $endbold = '</b>';
@@ -921,23 +760,29 @@ function scorm_get_tracks($scoid,$userid,$attempt='') {
     }
 }
 
-//-----------------------------------------------------
 /// Library of functions and constants for parsing packages
 
 function scorm_parse($scorm) {
-    global $CFG;
+    global $CFG,$repositoryconfigfile;
 
     // Parse scorm manifest
     if ($scorm->pkgtype == 'AICC') {
         $scorm->launch = scorm_parse_aicc($scorm->dir.'/'.$scorm->id,$scorm->id);
     } else {
-        if (basename($scorm->reference) != 'imsmanifest.xml') {
+        $reference = $scorm->reference;
+        if ($scorm->reference[0] == '#') {
+            require_once($repositoryconfigfile);
+            $reference = $CFG->repository.substr($scorm->reference,1).'/imsmanifest.xml';
+        } else if (substr($reference,0,7) != 'http://') {
+            $reference = $CFG->dataroot.'/'.$scorm->course.'/'.$scorm->reference;
+        }
+
+        if (basename($reference) != 'imsmanifest.xml') {
             $scorm->launch = scorm_parse_scorm($scorm->dir.'/'.$scorm->id,$scorm->id);
         } else {
-            $scorm->launch = scorm_parse_scorm($CFG->dataroot.'/'.$scorm->course.'/'.dirname($scorm->reference),$scorm->id);
+            $scorm->launch = scorm_parse_scorm(dirname($reference),$scorm->id);
         }
     }
-
     return $scorm->launch;
 }
 
@@ -984,7 +829,7 @@ function scorm_forge_cols_regexp($columns,$remodule='(".*")?,') {
     return $regexp;
 }
 
-function scorm_parse_aicc($pkgdir,$scormid){
+function scorm_parse_aicc($pkgdir,$scormid) {
     $version = 'AICC';
     $ids = array();
     $courses = array();
@@ -1081,6 +926,9 @@ function scorm_parse_aicc($pkgdir,$scormid){
         }
     }
     //print_r($courses);
+
+    $oldscoes = get_records('scorm_scoes','scorm',$scormid);
+    
     $launch = 0;
     if (isset($courses)) {
         foreach ($courses as $course) {
@@ -1092,8 +940,15 @@ function scorm_parse_aicc($pkgdir,$scormid){
             $sco->parent = '/';
             $sco->launch = '';
             $sco->scormtype = '';
+
             //print_r($sco);
-            $id = insert_record('scorm_scoes',$sco);
+            if (get_record('scorm_scoes','scorm',$scormid,'identifier',$sco->identifier)) {
+                $id = update_record('scorm_scoes',$sco);
+                unset($oldscoes[$id]);
+            } else {
+                $id = insert_record('scorm_scoes',$sco);
+            }
+
             if ($launch == 0) {
                 $launch = $id;
             }
@@ -1134,7 +989,13 @@ function scorm_parse_aicc($pkgdir,$scormid){
                     $sco->masteryscore = $element->mastery_score;
                     $sco->previous = 0;
                     $sco->next = 0;
-                    $id = insert_record('scorm_scoes',$sco);
+                    if ($oldscoid = scorm_array_search('identifier',$sco->identifier,$oldscoes)) {
+                        $sco->id = $oldscoid;
+                        $id = update_record('scorm_scoes',$sco);
+                        unset($oldscoes[$oldscoid]);
+                    } else {
+                        $id = insert_record('scorm_scoes',$sco);
+                    }
                     if ($launch==0) {
                         $launch = $id;
                     }
@@ -1142,11 +1003,18 @@ function scorm_parse_aicc($pkgdir,$scormid){
             }
         }
     }
+    if (!empty($oldscoes)) {
+        foreach($oldscoes as $oldsco) {
+            delete_records('scorm_scoes','id',$oldsco->id);
+            delete_records('scorm_scoes_track','scoid',$oldsco->id);
+        }
+    }
     set_field('scorm','version','AICC','id',$scormid);
     return $launch;
 }
 
 function scorm_get_resources($blocks) {
+    $resources = array();
     foreach ($blocks as $block) {
         if ($block['name'] == 'RESOURCES') {
             foreach ($block['children'] as $resource) {
@@ -1259,7 +1127,7 @@ function scorm_get_manifest($blocks,$scoes) {
                         }
                         $scoes->elements[$manifest][$organization][$identifier]->scormtype = addslashes($resources[$idref]['ADLCP:SCORMTYPE']);
                     }
-                    
+
                     $parent = new stdClass();
                     $parent->identifier = $identifier;
                     $parent->organization = $organization;
@@ -1581,19 +1449,26 @@ function scorm_parse_scorm($pkgdir,$scormid) {
         $xmlstring = file_get_contents($manifestfile);
         $objXML = new xml2Array();
         $manifests = $objXML->parse($xmlstring);
-            
+        //   print_r($manifests); 
         $scoes = new stdClass();
         $scoes->version = '';
         $scoes = scorm_get_manifest($manifests,$scoes);
 
         if (count($scoes->elements) > 0) {
+            $olditems = get_records('scorm_scoes','scorm',$scormid);
             foreach ($scoes->elements as $manifest => $organizations) {
                 foreach ($organizations as $organization => $items) {
                     foreach ($items as $identifier => $item) {
                         $item->scorm = $scormid;
                         $item->manifest = $manifest;
                         $item->organization = $organization;
-                        $id = insert_record('scorm_scoes',$item);
+                        if ($olditemid = scorm_array_search('identifier',$item->identifier,$olditems)) {
+                            $item->id = $olditemid;
+                            $id = update_record('scorm_scoes',$item);
+                            unset($olditems[$olditemid]);
+                        } else {
+                            $id = insert_record('scorm_scoes',$item);
+                        }
                         // Added by Pham Minh Duc
                         $item->scormid = $scormid;
                         $item->scoid = $id;
@@ -1638,11 +1513,34 @@ function scorm_parse_scorm($pkgdir,$scormid) {
                     }
                 }
             }
+            if (!empty($olditems)) {
+                foreach($olditems as $olditem) {
+                   delete_records('scorm_scoes','id',$olditem->id);
+                   delete_records('scorm_scoes_track','scoid',$olditem->id);
+                }
+            }
             set_field('scorm','version',$scoes->version,'id',$scormid);
         }
     } 
     
     return $launch;
+}
+
+function scorm_array_search($item, $needle, $haystacks, $strict=false) {
+    if (!empty($haystacks)) {
+        foreach ($haystacks as $key => $element) {
+            if ($strict) {
+                if ($element->{$item} === $needle) {
+                    return $key;
+                }
+            } else {
+                if ($element->{$item} == $needle) {
+                    return $key;
+                }
+            }
+        }
+    }
+    return false;
 }
 
 function scorm_course_format_display($user,$course) {
@@ -1696,6 +1594,7 @@ function scorm_course_format_display($user,$course) {
 
 function scorm_view_display ($user, $scorm, $action, $cm, $blockwidth='') {
     global $CFG;
+
     $organization = optional_param('organization', '', PARAM_INT);
 
     print_simple_box_start('center',$blockwidth);
@@ -1885,4 +1784,223 @@ class xml2Array {
    }
 
 }
+
+//
+// Functions added by Pham Minh Duc
+//
+function scorm_get_score_from_parent($sco,$userid,$grademethod=VALUESCOES) {
+    $scores = NULL; 
+    $scores->scoes = 0;
+    $scores->values = 0;
+    $scores->scaled = 0;
+    $scores->max = 0;
+    $scores->sum = 0;
+
+    $scoes_total = 0;
+    $scoes_count = 0;
+    $attempt = scorm_get_last_attempt($sco->scorm, $userid);
+    $scoes = get_records('scorm_scoes', 'parent', $sco->identifier);
+    foreach ($scoes as $sco)
+    {
+        $scoes_total++;
+        if ($userdata=scorm_get_tracks($sco->id, $userid,$attempt)) {
+            if (($userdata->status == 'completed') || ($userdata->success_status == 'passed')) {
+                $scoes_count++;
+            }
+
+            $scoreraw = $userdata->score_raw; 
+            if (!empty($userdata->score_raw)) {
+                $scores->values++;
+                $scores->sum += $userdata->score_raw;
+                $scores->max = ($userdata->score_raw > $scores->max)?$userdata->score_raw:$scores->max;
+            }   
+            if (!empty($userdata->score_scaled)) {
+                $scores->scaled = $scores->scaled + $userdata->score_scaled;
+            }       
+        }       
+    }
+    if ($scoes_count > 0) {
+        $scores->scaled = ($scores->scaled)/($scoes_count);
+    }
+    switch ($grademethod) {
+        case VALUEHIGHEST:
+            return $scores->max;
+        break;  
+        case VALUEAVERAGE:
+            if ($scores->values > 0) {
+                return $scores->sum/$scores->values;
+            } else {
+                return 0;
+            }       
+        break;  
+        case VALUESUM:
+            return $scores->sum;
+        break;  
+        case VALUESCOES:
+            return $scores->scaled;
+        break;  
+    }
+}
+
+function scorm_get_user_sco_count($scormid, $userid) {
+    $scoes_count = 0;
+    $attempt = scorm_get_last_attempt($current->scorm, $userid);
+    $scoes = get_records('scorm_scoes', 'scorm', $scormid);
+
+    foreach ($scoes as $sco) {
+        if ($userdata=scorm_get_tracks($sco->id, $userid,$attempt)) {
+            if (($userdata->status == 'completed') || ($userdata->success_status == 'passed')) {
+                $scoes_count++;
+            }
+        }
+    }
+    return $scoes_count;
+}
+
+function scorm_grade_user_new($scoes, $userid, $grademethod=VALUESCOES) {
+    $scores = NULL; 
+    $scores->scoes = 0;
+    $scores->values = 0;
+    $scores->scaled = 0;
+    $scores->max = 0;
+    $scores->sum = 0;
+
+    if (!$scoes) {
+        return '';
+    }
+    $current = current($scoes);
+    $attempt = scorm_get_last_attempt($current->scorm, $userid);
+    foreach ($scoes as $sco) { 
+        if ($userdata=scorm_get_tracks($sco->id, $userid,$attempt)) {
+            if (($userdata->status == 'completed') || ($userdata->success_status == 'passed')) {
+                $scores->scoes++;
+            }  
+            $scaled = $userdata->score_scaled;
+            $scoreraw = $userdata->score_raw; 
+            if ($scaled ==0){
+                $scores->scaled = $scores->scaled / $scores->scoes;
+            }
+            if (!empty($userdata->score_raw)) {
+                $scores->values++;
+                $scores->sum += $userdata->score_raw;
+                $scores->max = ($userdata->score_raw > $scores->max)?$userdata->score_raw:$scores->max;
+            }  
+            if (!empty($scaled)) {
+                $scores->scaled = (($scores->scaled) * ($scores->scoes-1) + $scaled)/($scores->scoes);
+            }       
+        }       
+    }
+    switch ($grademethod) {
+        case VALUEHIGHEST:
+            return $scores->max;
+        break;  
+        case VALUEAVERAGE:
+            if ($scores->values > 0) {
+                return $scores->sum/$scores->values;
+            } else {
+                return 0;
+            }       
+        break;  
+        case VALUESUM:
+            return $scores->sum;
+        break;  
+        case VALUESCOES:
+            return $scores->scaled;
+        break;  
+    }
+}
+
+function scorm_insert_statistic($statisticInput){
+    $id = null;
+    if ($statistic = get_record_select('scorm_statistic',"userid='$statisticInput->userid' AND scormid='$statisticInput->scormid'")) {
+
+        $statistic->durationtime = $statisticInput->duration;
+        $statistic->accesstime = $statisticInput->accesstime;        
+        $statistic->status = $statisticInput->status;        
+        $statistic->attemptnumber = $statisticInput->attemptnumber;        
+        $id = update_record('scorm_statistic',$statistic);
+    } else {
+        $id = insert_record('scorm_statistic',$statisticInput);
+    }
+    return $id;
+}
+
+function scorm_insert_trackmodel($userid,$scormid,$scoid,$attempt) {
+    $id = null;
+    if ($suspendtrack = get_record_select('scorm_suspendtrack',"userid='$userid' AND scormid='$scormid'")) {
+        $suspendtrack->suspendscoid = $scoid;
+        $suspendtrack->attempt = $attempt;
+        $id = update_record('scorm_suspendtrack',$suspendtrack);
+    } else {
+        $suspendtrack->scormid = $scormid;
+        $suspendtrack->suspendscoid = $scoid;
+        $suspendtrack->userid = $userid;
+        $suspendtrack->attempt = $attempt;
+        $id = insert_record('scorm_suspendtrack',$suspendtrack);
+    }
+    return $id;
+}
+
+function scorm_get_suspendscoid($scormid,$userid) {
+    if ($sco = get_record("scorm_suspendtrack","scormid",$scormid,"userid",$userid)) {
+        $suspendscoid = $sco->suspendscoid;
+        return $suspendscoid;
+    } else {
+        return 0;
+    }
+}
+
+function scorm_set_attempt($scoid,$userid) {
+    if ($scormid = get_field('scorm_scoes','scorm','id',$scoid)) {
+        $attempt = scorm_get_last_attempt($scormid,$userid);
+    } else {
+        $attempt = 1;
+    }
+    $scormtype = get_field('scorm_scoes','scormtype','id',$scoid) ;
+    if ($scormtype == 'sco'){
+        $element = 'cmi.attempt_status';
+        $value = 'attempted';
+        scorm_insert_track($userid,$scormid,$scoid,$attempt,$element,$value);
+    }
+}
+
+function scorm_get_AbsoluteTimeLimit($scoid){
+    $sco = get_record("scorm_scoes","id",$scoid);
+    if (!empty($sco)){
+        return $sco->attemptAbsoluteDurationLimit;
+    }
+    return 0;
+}
+
+function scorm_update_status($scormid,$scoid)
+{
+    
+}
+
+function scorm_get_nextsco($scormid,$scoid)
+{
+
+}
+
+function scorm_get_presco($scormid,$scoid)
+{
+
+}
+
+function scorm_isChoice($scormid,$scoid)
+{
+    $sco = get_record("scorm_sequencing_controlmode","scormid",$scormid,"scoid",$scoid);
+    $scoparent = get_record("scorm_sequencing_controlmode","scormid",$scormid,"identifier",$sco->parent);
+
+    return $scoparent->choice;
+}
+
+function scorm_isChoiceexit($scormid,$scoid)
+{
+    $sco = get_record("scorm_sequencing_controlmode","scormid",$scormid,"scoid",$scoid);
+    $scoparent = get_record("scorm_sequencing_controlmode","scormid",$scormid,"identifier",$sco->parent);
+
+    return $scoparent->choiceexit;
+}
+// End add
 ?>

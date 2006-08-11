@@ -47,6 +47,12 @@ if (!isset($CFG->scorm_framewidth)) {
     set_config('scorm_framewidth','100%');
 }
 
+//
+// Repository configurations
+//
+$repositoryconfigfile = $CFG->dirroot.'/mod/resource/type/ims/repository_config.php';
+$repositorybrowser = '/mod/resource/type/ims/finder.php';
+
 /**
 * Given an object containing all the necessary data,
 * (defined by the form in mod.html) this function
@@ -73,14 +79,14 @@ function scorm_add_instance($scorm) {
 
         $id = insert_record('scorm', $scorm);
 
-        if (basename($scorm->reference) != 'imsmanifest.xml') {
+        if ((basename($scorm->reference) != 'imsmanifest.xml') && ($scorm->reference[0] != '#')) {
             // Rename temp scorm dir to scorm id
             $scorm->dir = $CFG->dataroot.'/'.$scorm->course.'/moddata/scorm';
             rename($scorm->dir.$scorm->datadir,$scorm->dir.'/'.$id);
         }
 
         // Parse scorm manifest
-        if ($scorm->launch == 0) {
+        if ($scorm->parse == 1) {
             require_once('locallib.php');
             $scorm->id = $id;
             $scorm->launch = scorm_parse($scorm);
@@ -111,34 +117,29 @@ function scorm_update_instance($scorm) {
     $scorm->height = str_replace('%','',$scorm->height);
 
     // Check if scorm manifest needs to be reparsed
-    if ($scorm->launch == 0) {
-        //$f = "D:\\test.txt";
-        //@$ft = fopen($f,"a");
-        //fwrite($ft,"\n Xu ly trong update trong lib.php \n");
-        //fwrite($ft,"\n Lauch co gia tri \n".($scorm->launch));
-
-        // Delete old related records
-        delete_records('scorm_scoes','scorm',$scorm->id);
-        delete_records('scorm_scoes_track','scormid',$scorm->id);
-        delete_records('scorm_sequencing_controlmode','scormid',$scorm->id);
-        delete_records('scorm_sequencing_rolluprules','scormid',$scorm->id);
-        delete_records('scorm_sequencing_rolluprule','scormid',$scorm->id);
-        delete_records('scorm_sequencing_rollupruleconditions','scormid',$scorm->id);
-        delete_records('scorm_sequencing_rolluprulecondition','scormid',$scorm->id);                
-        delete_records('scorm_sequencing_ruleconditions','scormid',$scorm->id);
-        delete_records('scorm_sequencing_rulecondition','scormid',$scorm->id);              
-
-        
+    if ($scorm->parse == 1) {
+        require_once('locallib.php');
         $scorm->dir = $CFG->dataroot.'/'.$scorm->course.'/moddata/scorm';
-        if (isset($scorm->datadir) && ($scorm->datadir != $scorm->id) && (basename($scorm->reference) != 'imsmanifest.xml')) {
+        if (is_dir($scorm->dir.'/'.$scorm->id)) {
             scorm_delete_files($scorm->dir.'/'.$scorm->id);
+        }
+        if (isset($scorm->datadir) && ($scorm->datadir != $scorm->id) && 
+           (basename($scorm->reference) != 'imsmanifest.xml') && ($scorm->reference[0] != '#')) {
             rename($scorm->dir.$scorm->datadir,$scorm->dir.'/'.$scorm->id);
         }
-        
-        require_once('locallib.php');
+        /*    // Delete old related records
+            delete_records('scorm_scoes','scorm',$scorm->id);
+            delete_records('scorm_scoes_track','scormid',$scorm->id);
+            delete_records('scorm_sequencing_controlmode','scormid',$scorm->id);
+            delete_records('scorm_sequencing_rolluprules','scormid',$scorm->id);
+            delete_records('scorm_sequencing_rolluprule','scormid',$scorm->id);
+            delete_records('scorm_sequencing_rollupruleconditions','scormid',$scorm->id);
+            delete_records('scorm_sequencing_rolluprulecondition','scormid',$scorm->id);
+            delete_records('scorm_sequencing_ruleconditions','scormid',$scorm->id);
+            delete_records('scorm_sequencing_rulecondition','scormid',$scorm->id);
+*/
         $scorm->launch = scorm_parse($scorm);
     }
-
     return update_record('scorm', $scorm);
 }
 
@@ -161,6 +162,7 @@ function scorm_delete_instance($id) {
     $result = true;
 
     // Delete any dependent files
+    require_once('locallib.php');
     scorm_delete_files($CFG->dataroot.'/'.$scorm->course.'/moddata/scorm/'.$scorm->id);
 
     // Delete any dependent records
@@ -220,8 +222,8 @@ function scorm_user_outline($course, $user, $mod, $scorm) {
         require_once('locallib.php');
         foreach ($scoes as $sco) {
             if ($sco->launch!='') {
-        $scores->count++;
-        if ($userdata = scorm_get_tracks($sco->id, $user->id)) {
+                $scores->count++;
+                if ($userdata = scorm_get_tracks($sco->id, $user->id)) {
                     if (!isset($scores->{$userdata->status})) {
                         $scores->{$userdata->status} = 1;
                     } else {    
@@ -240,7 +242,7 @@ function scorm_user_outline($course, $user, $mod, $scorm) {
         }
         switch ($scorm->grademethod) {
             case GRADEHIGHEST:
-        if ($scores->values > 0) {
+                if ($scores->values > 0) {
                     $return->info = get_string('score','scorm').':&nbsp;'.$scores->max;
                     $return->time = $scores->lastmodify;
                 }
@@ -261,30 +263,30 @@ function scorm_user_outline($course, $user, $mod, $scorm) {
                 $return->info = '';
                 $scores->notattempted = $scores->count;
                 if (isset($scores->completed)) {
-            $return->info .= get_string('completed','scorm').':&nbsp;'.$scores->completed.'<br />';
+                    $return->info .= get_string('completed','scorm').':&nbsp;'.$scores->completed.'<br />';
                     $scores->notattempted -= $scores->completed;
                 }
                 if (isset($scores->passed)) {
-            $return->info .= get_string('passed','scorm').':&nbsp;'.$scores->passed.'<br />';
+                    $return->info .= get_string('passed','scorm').':&nbsp;'.$scores->passed.'<br />';
                     $scores->notattempted -= $scores->passed;
                 }
                 if (isset($scores->failed)) {
-            $return->info .= get_string('failed','scorm').':&nbsp;'.$scores->failed.'<br />';
+                    $return->info .= get_string('failed','scorm').':&nbsp;'.$scores->failed.'<br />';
                     $scores->notattempted -= $scores->failed;
                 }
                 if (isset($scores->incomplete)) {
-            $return->info .= get_string('incomplete','scorm').':&nbsp;'.$scores->incomplete.'<br />';
+                    $return->info .= get_string('incomplete','scorm').':&nbsp;'.$scores->incomplete.'<br />';
                     $scores->notattempted -= $scores->incomplete;
                 }
                 if (isset($scores->browsed)) {
-            $return->info .= get_string('browsed','scorm').':&nbsp;'.$scores->browsed.'<br />';
+                    $return->info .= get_string('browsed','scorm').':&nbsp;'.$scores->browsed.'<br />';
                     $scores->notattempted -= $scores->browsed;
                 }
                 $return->time = $scores->lastmodify;
                 if ($return->info == '') {
                     $return = NULL;
                 } else {
-            $return->info .= get_string('notattempted','scorm').':&nbsp;'.$scores->notattempted.'<br />';
+                    $return->info .= get_string('notattempted','scorm').':&nbsp;'.$scores->notattempted.'<br />';
                 }
             break;
         }
@@ -473,7 +475,7 @@ function scorm_grades($scormid) {
         return NULL;
     }
 
-    if ($scorm->grademethod == VALUESCOES) {
+    if ($scorm->grademethod == GRADESCOES) {
         if (!$return->maxgrade = count_records_select('scorm_scoes',"scorm='$scormid' AND launch<>''")) {
             return NULL;
         }
@@ -498,54 +500,6 @@ function scorm_get_view_actions() {
 function scorm_get_post_actions() {
     return array();
 }
-
-/**
-* This function will permanently delete the given
-* directory and all files and subdirectories.
-*
-* @param string $directory The directory to remove
-* @return boolean
-*/
-function scorm_delete_files($directory) {
-    if (is_dir($directory)) {
-        $files=scorm_scandir($directory);
-        foreach($files as $file) {
-            if (($file != '.') && ($file != '..')) {
-                if (!is_dir($directory.'/'.$file)) {
-                    unlink($directory.'/'.$file);
-                } else {
-                    scorm_delete_files($directory.'/'.$file);
-                }
-            }
-         set_time_limit(5);
-        }
-        rmdir($directory);
-        return true;
-    }
-    return false;
-}
-
-/**
-* Given a diretory path returns the file list
-*
-* @param string $directory
-* @return array
-*/
-function scorm_scandir($directory) {
-    if (version_compare(phpversion(),'5.0.0','>=')) {
-        return scandir($directory);
-    } else {
-        $files = array();
-        if ($dh = opendir($directory)) {
-            while (($file = readdir($dh)) !== false) {
-               $files[] = $file;
-            }
-            closedir($dh);
-        }
-        return $files;
-    }
-}
-
 
 function scorm_option2text($scorm) {
     global $SCORM_POPUP_OPTIONS;
