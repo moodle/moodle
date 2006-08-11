@@ -239,10 +239,6 @@ class question_match_qtype extends default_questiontype {
         $answerids      = array();
         $responses      = &$state->responses;
 
-        $formatoptions = new stdClass;
-        $formatoptions->noclean = true;
-        $formatoptions->para = false;
-
         // Prepare a list of answers, removing duplicates. 
         foreach ($subquestions as $subquestion) {
             foreach ($subquestion->options->answers as $ans) {
@@ -268,9 +264,8 @@ class question_match_qtype extends default_questiontype {
         $answers = draw_rand_array($answers, count($answers));
 
         // Print formulation
-        $questiontext = format_text($question->questiontext,
-                         $question->questiontextformat,
-                         $formatoptions, $cmoptions->course);
+        $questiontext = $this->format_text($question->questiontext,
+                $question->questiontextformat, $cmoptions);
         $image = get_question_image($question, $cmoptions->course);
 
         ///// Print the input controls //////
@@ -278,8 +273,8 @@ class question_match_qtype extends default_questiontype {
             if ($subquestion->questiontext) {
                 /// Subquestion text:
                 $a = new stdClass;
-                $a->text = format_text($subquestion->questiontext,
-                    $question->questiontextformat, $formatoptions, $cmoptions->course);
+                $a->text = $this->format_text($subquestion->questiontext,
+                        $question->questiontextformat, $cmoptions);
     
                 /// Drop-down list:
                 $menuname = $nameprefix.$subquestion->id;

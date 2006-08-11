@@ -8,6 +8,14 @@
     $numberavailable = count($saquestions);
     unset($saquestions);
 
+    if (empty($question->name)) {
+        $question->name =  get_string("randomsamatch", "quiz");
+    }
+
+    if (empty($question->questiontext)) {
+        $question->questiontext =  get_string("randomsamatchintro", "quiz");
+    }
+
     $yesnooptions = array();
     $yesnooptions[0] = get_string("no");
     $yesnooptions[1] = get_string("yes");

@@ -4,7 +4,7 @@
 // It defines default values for any important configuration variables
 
    $defaults = array (
-       'quiz_review' => hexdec('ffffff'),
+       'quiz_review' => 0xffffff,
        'quiz_attemptonlast' => 0,
        'quiz_attempts' => 0,
        'quiz_grademethod' => '',

@@ -82,6 +82,11 @@ class qformat_xml extends qformat_default {
             $image_base64 = stripslashes( trim( $question['#']['image_base64'][0]['#'] ) );
             $image = $this->importimagefile( $image, $image_base64 );
         }
+        if (array_key_exists('commentarytext', $question['#'])) {
+            $commentarytext = $this->import_text( $question['#']['commentarytext'][0]['#']['text'] );
+        } else {
+            $commentarytext = '';
+        }
         $penalty = $question['#']['penalty'][0]['#'];
 
         $qo = $this->defaultquestion();
@@ -89,6 +94,7 @@ class qformat_xml extends qformat_default {
         $qo->questiontext = $qtext;
         $qo->questiontextformat = $this->trans_format( $qformat );
         $qo->image = ((!empty($image)) ?  $image : '');
+        $qo->commentarytext = $commentarytext;
         $qo->penalty = $penalty;
 
         return $qo;
@@ -603,6 +609,7 @@ class qformat_xml extends qformat_default {
             $name_text = $this->writetext( $question->name );
             $qtformat = $this->get_format($question->questiontextformat);
             $question_text = $this->writetext( $question->questiontext );
+            $commentary_text = $this->writetext( $question->commentarytext );
             $expout .= "  <question type=\"$question_type\">\n";   
             $expout .= "    <name>$name_text</name>\n";
             $expout .= "    <questiontext format=\"$qtformat\">\n";
@@ -610,6 +617,9 @@ class qformat_xml extends qformat_default {
             $expout .= "    </questiontext>\n";   
             $expout .= "    <image>{$question->image}</image>\n";
             $expout .= $this->writeimage($question->image);
+            $expout .= "    <commentarytext>\n";
+            $expout .= $commentary_text;
+            $expout .= "    </commentarytext>\n";
             $expout .= "    <penalty>{$question->penalty}</penalty>\n";
             $expout .= "    <hidden>{$question->hidden}</hidden>\n";
         }

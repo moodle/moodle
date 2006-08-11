@@ -29,7 +29,12 @@
       ?>
     </div>
   <?php }
-            echo $commentlink;
+  echo $commentlink;
+  if ($commentary) { ?>
+    <div class="commentary">
+      <?php echo $commentary ?>
+    </div>
+  <?php }
   if ($history) { ?>
     <div class="history">
       <?php

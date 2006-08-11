@@ -459,6 +459,7 @@ function quiz_upgrade_states($attempt) {
     $questionlist = quiz_questions_in_quiz($attempt->layout);
     if ($questionlist and $states = get_records_select('question_states', "attempt = '$attempt->uniqueid' AND question IN ($questionlist)")) {
         foreach ($states as $state) {
+            $session = new stdClass;
             $session->newgraded = $state->id;
             $session->newest = $state->id;
             $session->questionid = $state->question;
@@ -474,8 +475,9 @@ function quiz_get_question_review($quiz, $question) {
     $strpreview = get_string('previewquestion', 'quiz');
     $context = $quiz->id ? '&amp;contextquiz='.$quiz->id : '';
     $quiz_id = $quiz->id ? '&amp;quizid=' . $quiz->id : '';
-    return "<a title=\"$strpreview\" href=\"javascript:void(0)\" onClick=\"openpopup('/question/preview.php?id=$qnum$quiz_id','questionpreview','scrollbars=yes,resizable=yes,width=700,height=480', false)\">
-          <img src=\"../../pix/t/preview.gif\" border=\"0\" alt=\"$strpreview\" /></a>";
+    return "<a title=\"$strpreview\" href=\"javascript:void(0)\" onClick=\"openpopup('/question/preview.php?id=$qnum$quiz_id','questionpreview', " .
+            QUESTION_PREVIEW_POPUP_OPTIONS . ", false)\">
+            <img src=\"../../pix/t/preview.gif\" border=\"0\" alt=\"$strpreview\" /></a>";
 }
 
 
@@ -486,6 +488,8 @@ function quiz_get_question_review($quiz, $question) {
  * @param object $state
  */
 function quiz_get_renderoptions($reviewoptions, $state) {
+    $options = new stdClass;
+    
     // Show the question in readonly (review) mode if the question is in
     // the closed state
     $options->readonly = question_state_is_closed($state);
@@ -499,6 +503,9 @@ function quiz_get_renderoptions($reviewoptions, $state) {
     // Show correct responses in readonly mode if the quiz allows it
     $options->correct_responses = $options->readonly && ($reviewoptions & QUIZ_REVIEW_ANSWERS & QUIZ_REVIEW_IMMEDIATELY);
 
+    // Show commentary if the question has been graded and the quiz allows it.
+    $options->commentary = question_state_is_graded($state) && ($reviewoptions & QUIZ_REVIEW_COMMENTARY & QUIZ_REVIEW_IMMEDIATELY);
+
     // Always show responses and scores
     $options->responses = true;
     $options->scores = true;
@@ -511,6 +518,8 @@ function quiz_get_renderoptions($reviewoptions, $state) {
 * Determine review options
 */
 function quiz_get_reviewoptions($quiz, $attempt, $isteacher=false) {
+
+    $options = new stdClass;
     $options->readonly = true;
     // Provide the links to the question review and comment script
     $options->questionreviewlink = '/mod/quiz/reviewquestion.php';
@@ -523,32 +532,28 @@ function quiz_get_reviewoptions($quiz, $attempt, $isteacher=false) {
         $options->feedback = true;
         $options->correct_responses = true;
         $options->solutions = false;
+        $options->commentary = true;
+        
         // Show a link to the comment box only for closed attempts
         if ($attempt->timefinish) {
             $options->questioncommentlink = '/mod/quiz/comment.php';
         }
-        return $options;
-    }
-    if (((time() - $attempt->timefinish) < 120) || $attempt->timefinish==0) {
-        $options->responses = ($quiz->review & QUIZ_REVIEW_IMMEDIATELY & QUIZ_REVIEW_RESPONSES) ? 1 : 0;
-        $options->scores = ($quiz->review & QUIZ_REVIEW_IMMEDIATELY & QUIZ_REVIEW_SCORES) ? 1 : 0;
-        $options->feedback = ($quiz->review & QUIZ_REVIEW_IMMEDIATELY & QUIZ_REVIEW_FEEDBACK) ? 1 : 0;
-        $options->correct_responses = ($quiz->review & QUIZ_REVIEW_IMMEDIATELY & QUIZ_REVIEW_ANSWERS) ? 1 : 0;
-        $options->solutions = ($quiz->review & QUIZ_REVIEW_IMMEDIATELY & QUIZ_REVIEW_SOLUTIONS) ? 1 : 0;
-    } else if (!$quiz->timeclose or time() < $quiz->timeclose) {
-        $options->responses = ($quiz->review & QUIZ_REVIEW_OPEN & QUIZ_REVIEW_RESPONSES) ? 1 : 0;
-        $options->scores = ($quiz->review & QUIZ_REVIEW_OPEN & QUIZ_REVIEW_SCORES) ? 1 : 0;
-        $options->feedback = ($quiz->review & QUIZ_REVIEW_OPEN & QUIZ_REVIEW_FEEDBACK) ? 1 : 0;
-        $options->correct_responses = ($quiz->review & QUIZ_REVIEW_OPEN & QUIZ_REVIEW_ANSWERS) ? 1 : 0;
-        $options->solutions = ($quiz->review & QUIZ_REVIEW_OPEN & QUIZ_REVIEW_SOLUTIONS) ? 1 : 0;
     } else {
-        $options->responses = ($quiz->review & QUIZ_REVIEW_CLOSED & QUIZ_REVIEW_RESPONSES) ? 1 : 0;
-        $options->scores = ($quiz->review & QUIZ_REVIEW_CLOSED & QUIZ_REVIEW_SCORES) ? 1 : 0;
-        $options->feedback = ($quiz->review & QUIZ_REVIEW_CLOSED & QUIZ_REVIEW_FEEDBACK) ? 1 : 0;
-        $options->correct_responses = ($quiz->review & QUIZ_REVIEW_CLOSED & QUIZ_REVIEW_ANSWERS) ? 1 : 0;
-        $options->solutions = ($quiz->review & QUIZ_REVIEW_CLOSED & QUIZ_REVIEW_SOLUTIONS) ? 1 : 0;
+        if (((time() - $attempt->timefinish) < 120) || $attempt->timefinish==0) {
+            $quiz_state_mask = QUIZ_REVIEW_IMMEDIATELY;
+        } else if (!$quiz->timeclose or time() < $quiz->timeclose) {
+            $quiz_state_mask = QUIZ_REVIEW_OPEN;
+        } else {
+            $quiz_state_mask = QUIZ_REVIEW_CLOSED;
+        }
+        $options->responses = ($quiz->review & $quiz_state_mask & QUIZ_REVIEW_RESPONSES) ? 1 : 0;
+        $options->scores = ($quiz->review & $quiz_state_mask & QUIZ_REVIEW_SCORES) ? 1 : 0;
+        $options->feedback = ($quiz->review & $quiz_state_mask & QUIZ_REVIEW_FEEDBACK) ? 1 : 0;
+        $options->correct_responses = ($quiz->review & $quiz_state_mask & QUIZ_REVIEW_ANSWERS) ? 1 : 0;
+        $options->solutions = ($quiz->review & $quiz_state_mask & QUIZ_REVIEW_SOLUTIONS) ? 1 : 0;
+        $options->commentary = ($quiz->review & $quiz_state_mask & QUIZ_REVIEW_COMMENTARY) ? 1 : 0;
     }
-
+    
     return $options;
 }
 ////////////////////////////////////////////////////////////////////////////////

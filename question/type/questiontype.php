@@ -59,6 +59,12 @@ class default_questiontype {
             $question->image = $form->image;
         }
 
+        if (empty($form->commentarytext)) {
+            $question->commentarytext = '';
+        } else {
+            $question->commentarytext = trim($form->commentarytext);
+        }
+
         if (empty($question->name)) {
             $question->name = substr(strip_tags($question->questiontext), 0, 15);
             if (empty($question->name)) {
@@ -458,7 +464,9 @@ class default_questiontype {
         /* The default implementation should work for most question types
         provided the member functions it calls are overridden where required.
         The layout is determined by the template question.html */
+        
         global $CFG;
+        $isgraded = question_state_is_graded($state->last_graded);
 
         // For editing teachers print a link to an editing popup window
         $editlink = '';
@@ -468,10 +476,16 @@ class default_questiontype {
             $editlink = link_to_popup_window('/question/question.php?id='.$question->id, $stredit, $linktext, 450, 550, $stredit, '', true);
         }
 
+        $commentary = '';
+        if ($isgraded && $options->commentary) {
+            $commentary = $this->format_text($question->commentarytext,
+                    $question->questiontextformat, $cmoptions);
+        }
+
         $grade = '';
         if ($question->maxgrade and $options->scores) {
             if ($cmoptions->optionflags & QUESTION_ADAPTIVE) {
-                $grade = (!question_state_is_graded($state->last_graded)) ? '--/' : round($state->last_graded->grade, $cmoptions->decimalpoints).'/';
+                $grade = !$isgraded ? '--/' : round($state->last_graded->grade, $cmoptions->decimalpoints).'/';
             }
             $grade .= $question->maxgrade;
         }
@@ -506,7 +520,7 @@ class default_questiontype {
             }
             if (count($states) > 1) {
                 $strreviewquestion = get_string('reviewresponse', 'quiz');
-                unset($table);
+                $table = new stdClass;
                 $table->width = '100%';
                 if ($options->scores) {
                     $table->head  = array (
@@ -599,6 +613,7 @@ class default_questiontype {
         if (!empty($question->maxgrade) && $options->scores) {
             if (question_state_is_graded($state->last_graded)) {
                 // Display the grading details from the last graded state
+                $grade = new stdClass;
                 $grade->cur = round($state->last_graded->grade, $cmoptions->decimalpoints);
                 $grade->max = $question->maxgrade;
                 $grade->raw = round($state->last_graded->raw_grade, $cmoptions->decimalpoints);
@@ -987,24 +1002,71 @@ class default_questiontype {
         echo "</td></tr>\n";
     }
 
-    function print_question_form_end($question, $submitscript='') {
-    // This function is used at the end of the question edit forms in all question types
-    // It prints the submit, copy, and cancel buttons and the standard hidden form fields
-        global $USER;
-        echo '<tr valign="top">
-              <td colspan="2" align="center">
-              <input type="submit" '.$submitscript.' value="'.get_string('savechanges').'" /> ';
-        if ($question->id) {
-            echo '<input type="submit" name="makecopy" '.$submitscript.' value="'.get_string("makecopy", "quiz").'" /> ';
+    /**
+     * Print the start of the question editing form, including the question category,
+     * questionname, questiontext, image, defaultgrade, penalty and commentary fields.
+     * 
+     * Three of the fields, image, defaultgrade, penalty, are optional, and
+     * can be removed from the from using the $hidefields argument. 
+     * 
+     * @param object $question The question object that the form we are printing is for.
+     * @param array $err Array of optional error messages to display by each field.
+     *          Used when the form is being redisplayed after validation failed.
+     * @param object $course The course object for the course this question belongs to.
+     * @param boolean $usehtmleditor Whether the html editor should be used.
+     * @param array $hidefields An array which may contain the strings,
+     *          'image', 'defaultgrade' or 'penalty' to remove the corresponding field.
+     */
+    function print_question_form_start($question, $err, $course, $usehtmleditor, $hidefields = array()) {
+        global $CFG;
+
+        // If you edit this function, you also need to edit random/editquestion.html.
+        
+        if (!in_array('image', $hidefields)) {
+            make_upload_directory("$course->id");    // Just in case
+            $coursefiles = get_directory_list("$CFG->dataroot/$course->id", $CFG->moddata);
+            foreach ($coursefiles as $filename) {
+                if (mimeinfo("icon", $filename) == "image.gif") {
+                    $images["$filename"] = $filename;
+                }
+            }
         }
-        echo '<input type="submit" name="cancel" value="'.get_string("cancel").'" />
-              <input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />
-              <input type="hidden" name="id" value="'.$question->id.'" />
-              <input type="hidden" name="qtype" value="'.$question->qtype.'" />';
-        // The following hidden field indicates that the versioning code should be turned on, i.e.,
-        // that old versions should be kept if necessary
-        echo '<input type="hidden" name="versioning" value="on" />
-              </td></tr>';
+        
+        include('editquestionstart.html');
+    }
+    
+    /**
+     * Print the end of the question editing form, including the submit, copy,
+     * and cancel button, and the standard hidden fields like the sesskey and
+     * the question type.
+     * 
+     * @param object $question The question object that the form we are printing is for.
+     * @param string $submitscript Extra attributes, for example 'onsubmit="myfunction"',
+     *          that is added to the HTML of the submit button.
+     * @param string $hiddenfields Extra hidden fields (actually any HTML)
+     *          to be added at the end of the form.
+     */
+    function print_question_form_end($question, $submitscript = '', $hiddenfields = '') {
+        global $USER;
+        
+        // If you edit this function, you also need to edit random/editquestion.html.
+
+        include('editquestionend.html');
+    }
+    
+    /**
+     * Call format_text from weblib.php with the options appropriate to question types.
+     * 
+     * @param string $text the text to format.
+     * @param integer $text the type of text. Normally $question->questiontextformat.
+     * @param object $cmoptions the context the string is being displayed in. Only $cmoptions->course is used.
+     * @return string the formatted text.
+     */
+    function format_text($text, $textformat, $cmoptions) {
+        $formatoptions = new stdClass;
+        $formatoptions->noclean = true;
+        $formatoptions->para = false;
+        return format_text($text, $textformat, $formatoptions, $cmoptions->course);
     }
     
 /// BACKUP FUNCTIONS ////////////////////////////

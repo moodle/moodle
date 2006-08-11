@@ -59,6 +59,10 @@ define("ESSAY",         "essay");
  */
 define("QUESTION_NUMANS", "10");
 
+/**
+ * The options used when popping up a question preview window in Javascript.
+ */
+define('QUESTION_PREVIEW_POPUP_OPTIONS', "'scrollbars=yes,resizable=yes,width=700,height=540'");
 
 /**#@+
  * Option flags for ->optionflags

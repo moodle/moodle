@@ -261,14 +261,6 @@
     }
 
 
-    make_upload_directory("$course->id");    // Just in case
-    $coursefiles = get_directory_list("$CFG->dataroot/$course->id", $CFG->moddata);
-    foreach ($coursefiles as $filename) {
-        if (mimeinfo("icon", $filename) == "image.gif") {
-            $images["$filename"] = $filename;
-        }
-    }
-
     // Print the question editing form
 
     if (empty($question->id)) {
@@ -288,6 +280,9 @@
     }
     if (!isset($question->defaultgrade)) {
         $question->defaultgrade = 1;
+    }
+    if (empty($question->commentarytext)) {
+        $question->commentarytext = "";
     }
 
     // Set up some Richtext editing if necessary

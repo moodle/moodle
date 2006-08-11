@@ -22,25 +22,25 @@ require_once($CFG->libdir.'/questionlib.php');
 /**
  * The first 6 bits refer to the time immediately after the attempt
  */
-define('QUIZ_REVIEW_IMMEDIATELY', 64-1);
+define('QUIZ_REVIEW_IMMEDIATELY', 0x3f);
 /**
  * the next 6 bits refer to the time after the attempt but while the quiz is open
  */
-define('QUIZ_REVIEW_OPEN', 4096-64);
+define('QUIZ_REVIEW_OPEN', 0xfc0);
 /**
  * the final 6 bits refer to the time after the quiz closes
  */
-define('QUIZ_REVIEW_CLOSED', 262144-4096);
+define('QUIZ_REVIEW_CLOSED', 0x3f000);
 
 // within each group of 6 bits we determine what should be shown
-define('QUIZ_REVIEW_RESPONSES', 1+64+4096);    // Show responses
-define('QUIZ_REVIEW_SCORES', 2*4161);   // Show scores
-define('QUIZ_REVIEW_FEEDBACK', 4*4161); // Show feedback
-define('QUIZ_REVIEW_ANSWERS', 8*4161);  // Show correct answers
+define('QUIZ_REVIEW_RESPONSES',   1*0x1041); // Show responses
+define('QUIZ_REVIEW_SCORES',      2*0x1041); // Show scores
+define('QUIZ_REVIEW_FEEDBACK',    4*0x1041); // Show feedback
+define('QUIZ_REVIEW_ANSWERS',     8*0x1041); // Show correct answers
 // Some handling of worked solutions is already in the code but not yet fully supported
 // and not switched on in the user interface.
-define('QUIZ_REVIEW_SOLUTIONS', 16*4161);  // Show solutions
-// the 6th bit is as yet unused
+define('QUIZ_REVIEW_SOLUTIONS',  16*0x1041); // Show solutions
+define('QUIZ_REVIEW_COMMENTARY', 32*0x1041); // Show commentary
 /**#@-*/
 
 /**
@@ -668,6 +668,19 @@ function quiz_process_options(&$form) {
     }
     if (isset($form->solutionsclosed)) {
         $review += (QUIZ_REVIEW_SOLUTIONS & QUIZ_REVIEW_CLOSED);
+        unset($form->solutionsclosed);
+    }
+
+    if (isset($form->commentaryimmediately)) {
+        $review += (QUIZ_REVIEW_COMMENTARY & QUIZ_REVIEW_IMMEDIATELY);
+        unset($form->solutionsimmediately);
+    }
+    if (isset($form->commentaryopen)) {
+        $review += (QUIZ_REVIEW_COMMENTARY & QUIZ_REVIEW_OPEN);
+        unset($form->solutionsopen);
+    }
+    if (isset($form->commentaryclosed)) {
+        $review += (QUIZ_REVIEW_COMMENTARY & QUIZ_REVIEW_CLOSED);
         unset($form->solutionsclosed);
     }
 

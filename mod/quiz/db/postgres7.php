@@ -5,6 +5,8 @@ function quiz_upgrade($oldversion) {
 // older versions to match current functionality
 
     global $CFG, $db;
+    $success = true;
+    
     include_once("$CFG->dirroot/mod/quiz/locallib.php");
 
     if ($oldversion < 2003010100) {
@@ -1419,8 +1421,22 @@ function quiz_upgrade($oldversion) {
 
     }
 
+    if ($oldversion < 2006081000) {
+        // Add a column to the the question table to store the question commentary.
+        $success = $success && table_column('question', '', 'commentarytext', 'text', '', '', '', 'not null', 'image');
 
-    return true;
+        // Adjust the quiz review options so that commentary is displayed whenever feedback is.
+        $success = $success && execute_sql('UPDATE ' . $CFG->prefix . 'quiz SET review = ' .
+                '(review & ~' . QUIZ_REVIEW_COMMENTARY . ') | ' . // Clear any existing junk from the commenary bits.
+                '((review & ' . QUIZ_REVIEW_FEEDBACK . ') * 8)'); // Set the commentary bits to be the same as the feedback ones.
+
+        // Same adjustment to the defaults for new quizzes.
+        $success = $success && set_config('quiz_review', ($CFG->quiz_review & ~QUIZ_REVIEW_COMMENTARY) |
+                (($CFG->quiz_review & QUIZ_REVIEW_FEEDBACK) << 3));
+    }
+    
+    
+    return $success;
 }
 
 ?>

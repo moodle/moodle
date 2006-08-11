@@ -267,15 +267,16 @@ function quiz_print_question_list($quiz, $allowdelete=true, $showbreaks=true, $r
 
         $context = $quiz->id ? '&amp;contextquiz='.$quiz->id : '';
         $quiz_id = $quiz->id ? '&amp;quizid=' . $quiz->id : '';
-        echo "<a title=\"$strpreview\" href=\"javascript:void(0)\" onClick=\"openpopup('/question/preview.php?id=$qnum$quiz_id','questionpreview','scrollbars=yes,resizable=yes,width=700,height=480', false)\">
-              <img src=\"$CFG->pixpath/t/preview.gif\" border=\"0\" alt=\"$strpreview\" /></a>";
+        echo "<a title=\"$strpreview\" href=\"javascript:void(0)\" onClick=\"openpopup('/question/preview.php?id=$qnum$quiz_id','questionpreview', " . 
+                QUESTION_PREVIEW_POPUP_OPTIONS . ", false)\">
+                <img src=\"$CFG->pixpath/t/preview.gif\" border=\"0\" alt=\"$strpreview\" /></a>";
         if ($canedit) {
             echo "<a title=\"$stredit\" href=\"$CFG->wwwroot/question/question.php?id=$qnum$context\">
-                  <img src=\"$CFG->pixpath/t/edit.gif\" border=\"0\" alt=\"$stredit\" /></a>";
+                    <img src=\"$CFG->pixpath/t/edit.gif\" border=\"0\" alt=\"$stredit\" /></a>";
         }
         if ($allowdelete) {
             echo "<a title=\"$strremove\" href=\"edit.php?delete=$count&amp;quizid=$quiz->id&amp;sesskey=$USER->sesskey\">
-                  <img src=\"$CFG->pixpath/t/removeright.gif\" border=\"0\" alt=\"$strremove\" /></a>";
+                    <img src=\"$CFG->pixpath/t/removeright.gif\" border=\"0\" alt=\"$strremove\" /></a>";
         }
 
         echo "</td></tr>";

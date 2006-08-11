@@ -189,6 +189,11 @@
             $question->questiontext = backup_todb($que_info['#']['QUESTIONTEXT']['0']['#']);
             $question->questiontextformat = backup_todb($que_info['#']['QUESTIONTEXTFORMAT']['0']['#']);
             $question->image = backup_todb($que_info['#']['IMAGE']['0']['#']);
+            if (array_key_exists('COMMENTARYTEXT', $que_info['#'])) {
+                $question->commentarytext = backup_todb($que_info['#']['COMMENTARYTEXT']['0']['#']);
+            } else {
+                $question->commentarytext = '';
+            }
             $question->defaultgrade = backup_todb($que_info['#']['DEFAULTGRADE']['0']['#']);
             $question->penalty = backup_todb($que_info['#']['PENALTY']['0']['#']);
             $question->qtype = backup_todb($que_info['#']['QTYPE']['0']['#']);

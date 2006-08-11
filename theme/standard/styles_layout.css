@@ -1239,6 +1239,7 @@ body#message-messages {
 .que .grading,
 .que .comment,
 .que .commentlink,
+.que .commentary,
 .que .history {
   float: right;
   margin: 5px;
