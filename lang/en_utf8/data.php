@@ -84,6 +84,7 @@ $string['latlong'] = 'Latitude/longitude';
 $string['latlongotherfields'] = 'Other fields';
 $string['latlongkmllabelling'] = 'How to label items in KML files (Google Earth)';
 $string['latlonglinkservicesdisplayed'] = 'Link-out services to display';
+$string['latlongdownloadallhint'] = 'Download link for all entries as KML';
 $string['list'] = 'View list';
 $string['listtemplate'] = 'List template';
 $string['longitude'] = 'Longitude';
