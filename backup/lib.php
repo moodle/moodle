@@ -293,6 +293,8 @@
 
         global $CFG;
 
+        $status = true; // Initialize this, next code will change its value if needed
+
         if (!is_dir($to_file)) {
             //echo "<br />Creating ".$to_file;                                //Debug
             umask(0000);
