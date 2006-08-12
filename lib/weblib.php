@@ -1262,7 +1262,7 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
 
     if (!empty($CFG->cachetext)) {
         $time = time() - $CFG->cachetext;
-        $md5key = md5($text.'-'.$courseid.$options->noclean.$options->smiley.$options->filter.$options->para.$options->newlines);
+        $md5key = md5($text.'-'.$courseid.$options->noclean.$options->smiley.$options->filter.$options->para.$options->newlines.$format.current_language().$courseid);
         if ($oldcacheitem = get_record_sql('SELECT * FROM '.$CFG->prefix.'cache_text WHERE md5key = \''.$md5key.'\'', true)) {
             if ($oldcacheitem->timemodified >= $time) {
                 return $oldcacheitem->formattedtext;
