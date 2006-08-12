@@ -41,4 +41,8 @@
           </select>
         </td>
     </tr>
+    <tr>
+        <td class="c0">&nbsp;</td>
+        <td class="c1"><?php if($this->field->id) {echo "<a href='./field/latlong/kml.php?d=".$this->data->id."&fieldid=".$this->field->id."'>" . get_string('latlongdownloadallhint', 'data') . "</a>"; } ?></td>
+    </tr>
 </table>
