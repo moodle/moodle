@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="question/type/calculated/db" VERSION="20060812" COMMENT="XMLDB file for Moodle question/type/calculated">
+  <TABLES>
+    <TABLE NAME="question_calculated" COMMENT="Options for questions of type calculated">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="question"/>
+        <FIELD NAME="question" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="answer"/>
+        <FIELD NAME="answer" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="question" NEXT="tolerance"/>
+        <FIELD NAME="tolerance" TYPE="char" LENGTH="20" NOTNULL="true" DEFAULT="0.0" SEQUENCE="false" ENUM="false" PREVIOUS="answer" NEXT="tolerancetype"/>
+        <FIELD NAME="tolerancetype" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="1" SEQUENCE="false" ENUM="false" PREVIOUS="tolerance" NEXT="correctanswerlength"/>
+        <FIELD NAME="correctanswerlength" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="2" SEQUENCE="false" ENUM="false" PREVIOUS="tolerancetype" NEXT="correctanswerformat"/>
+        <FIELD NAME="correctanswerformat" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="2" SEQUENCE="false" ENUM="false" PREVIOUS="correctanswerlength"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for question_calculated" NEXT="question"/>
+        <KEY NAME="question" TYPE="foreign" FIELDS="question" REFTABLE="questions" REFFIELDS="id" PREVIOUS="primary"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="answer" UNIQUE="false" FIELDS="answer"/>
+      </INDEXES>
+    </TABLE>
+  </TABLES>
+</XMLDB>
