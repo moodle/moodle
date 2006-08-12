@@ -78,12 +78,11 @@ if (isteacher($course->id)) {
 header('Content-type: application/vnd.google-earth.kml+xml kml');
 header('Content-Disposition: attachment; filename="moodleearth-'.$d.'-'.$rid.'-'.$fieldid.'.kml"');
 
-//print_r($record);
 
 echo data_latlong_kml_top();
 
 if($rid) { // List one single item
-    $pm->name = "Item #$rid";
+    $pm->name = data_latlong_kml_get_item_name($content, $field);
     $pm->description = "&lt;a href='$CFG->wwwroot/mod/data/view.php?d=$d&amp;rid=$rid'&gt;Item #$rid&lt;/a&gt; in Moodle data activity";
     $pm->long = $content->content1;
     $pm->lat = $content->content;
@@ -92,13 +91,17 @@ if($rid) { // List one single item
 
     $contents = get_records('data_content', 'fieldid', $fieldid);
     
+    echo '<Document>';
+
     foreach($contents as $content) {
-		$pm->name = "Item #$content->recordid";
+        $pm->name = data_latlong_kml_get_item_name($content, $field);
 		$pm->description = "&lt;a href='$CFG->wwwroot/mod/data/view.php?d=$d&amp;rid=$content->recordid'&gt;Item #$content->recordid&lt;/a&gt; in Moodle data activity";
 		$pm->long = $content->content1;
 		$pm->lat = $content->content;
 		echo data_latlong_kml_placemark($pm);
     }
+
+    echo '</Document>';
 
 }
 
@@ -110,7 +113,7 @@ echo data_latlong_kml_bottom();
 function data_latlong_kml_top() {
     return '<?xml version="1.0" encoding="UTF-8"?>
 <kml xmlns="http://earth.google.com/kml/2.0">
-<Document>
+
 ';
 }
 
@@ -136,6 +139,23 @@ function data_latlong_kml_placemark($pm) {
 }
 
 function data_latlong_kml_bottom() {
-    return '</Document></kml>';
+    return '</kml>';
 }
 
+function data_latlong_kml_get_item_name($content, $field) {
+	// $field->param2 contains the user-specified labelling method
+	
+	$name = '';
+	
+	if($field->param2 > 0) {
+		$name = htmlspecialchars(get_field('data_content', 'content', 'fieldid', $field->param2, 'recordid', $content->recordid));
+	}elseif($field->param2 == -2) {
+	    $name = $content->content . ', ' . $content->content1;
+	}
+	if($name=='') { // Done this way so that "item #" is the default that catches any problems
+		$name = get_string('entry', 'data') . " #$content->recordid";
+	}
+	
+	
+	return $name;
+}

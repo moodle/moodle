@@ -10,13 +10,33 @@
     <tr>
         <td class="c0"><?php echo get_string('latlonglinkservicesdisplayed', 'data'); ?>:</td>
         <td class="c1">
-          <select class="linkservicesdisplayed" type="text" name="param1[]" id="param1" multiple="multiple" size="<?php echo sizeof($this->linkoutservices) ?>">
+          <select class="linkservicesdisplayed" name="param1[]" id="param1" multiple="multiple" size="<?php echo sizeof($this->linkoutservices) ?>">
             <?php
             $serviceschosen = explode(',', htmlspecialchars($this->field->param1));
             foreach($this->linkoutservices as $servicename=>$serviceurl) {
               $servicename = htmlspecialchars($servicename);
               echo "\n  <option" . (array_search($servicename, $serviceschosen)===false ? '' : ' selected="selected"') . ">$servicename</option>";
             }
+            ?>
+          </select>
+        </td>
+    </tr>
+    <tr>
+        <td class="c0"><?php echo get_string('latlongkmllabelling', 'data'); ?>:</td>
+        <td class="c1">
+          <select class="kmllabelling" name="param2" id="param2">
+            <option value="-1"<?php if($this->field->param2==-1) echo ' selected="selected"' ?>><?php echo get_string('entry', 'data') ?> #</option>
+            <option value="-2"<?php if($this->field->param2==-2) echo ' selected="selected"' ?>><?php echo get_string('latitude', 'data').'/'.get_string('longitude', 'data') ?></option>
+            <?php
+                // Fetch all "suitable" other fields that exist for this database
+                $textfields = get_records_select('data_fields', 'dataid='.$this->data->id.' AND type="text"');
+                echo '<optgroup label="'.get_string('latlongotherfields', 'data').':">';
+                if(sizeof($textfields)>0) {
+                    foreach($textfields as $textfield) {
+                        echo "<option value='$textfield->id'".($this->field->param2==$textfield->id ? ' selected="selected"' : '').">$textfield->name</option>";
+                    }
+                }
+                echo '</optgroup>';
             ?>
           </select>
         </td>

@@ -41,6 +41,12 @@ class data_field_latlong extends data_field_base {
 
 
 
+    // Parameter data used:
+    // "param1" is a comma-separated list of the linkout service names that are enabled for this instance
+    // "param2" indicates the label that will be used in generating Google Earth KML files: -1 for item #, -2 for lat/long, positive number for the (text) field to use.
+
+
+
     function data_field_latlong($field=0, $data=0) {
         parent::data_field_base($field, $data);
     }
