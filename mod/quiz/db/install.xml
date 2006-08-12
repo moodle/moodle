@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/quiz/db" VERSION="20060811" COMMENT="XMLDB file for Moodle mod/quiz">
+<XMLDB PATH="mod/quiz/db" VERSION="20060812" COMMENT="XMLDB file for Moodle mod/quiz">
   <TABLES>
     <TABLE NAME="question_categories" COMMENT="Categories are for grouping questions" NEXT="question">
       <FIELDS>
@@ -215,7 +215,7 @@
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for quiz_attempts" NEXT="uniqueid"/>
-        <KEY NAME="uniqueid" TYPE="foreign" FIELDS="uniqueid" REFTABLE="question_attempts" REFFIELDS="id" PREVIOUS="primary" NEXT="quiz"/>
+        <KEY NAME="uniqueid" TYPE="foreign-unique" FIELDS="uniqueid" REFTABLE="question_attempts" REFFIELDS="id" PREVIOUS="primary" NEXT="quiz"/>
         <KEY NAME="quiz" TYPE="foreign" FIELDS="quiz" REFTABLE="quiz" REFFIELDS="id" PREVIOUS="uniqueid"/>
       </KEYS>
       <INDEXES>
