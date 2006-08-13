@@ -2,11 +2,16 @@
       // role.php 
 
 $string['assignroles'] = 'Assign roles';
+$string['allow'] = 'Allow';
+$string['capability'] = 'Capability';
 $string['currentrole'] = 'Current role';
 $string['currentcontext'] = 'Current context';
 $string['existingusers'] = '$a existing users';
+$string['inherit'] = 'Inherit';
 $string['overrideroles'] = 'Override roles';
 $string['potentialusers'] = '$a potential users';
+$string['prevent'] = 'Prevent';
+$string['prohibit'] = 'Prohibit';
 
 $string['site:doanything'] = 'Allowed to do everything';
 $string['legacy:guest'] = 'LEGACY ROLE: Guest';

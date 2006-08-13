@@ -828,6 +828,16 @@ function context_level($contextid) {
 }
 
 
+/**
+ * Get the local override (if any) for a given capability in a role in a context
+ * @param $roleid
+ * @param $instance
+ */
+function get_local_override($roleid, $contextid, $capability) {
+    return get_record('role_capabilities', 'roleid', $roleid, 'capability', $capability, 'contextid', $contextid);
+}
+
+
 
 /************************************
  *    DB TABLE RELATED FUNCTIONS    *
