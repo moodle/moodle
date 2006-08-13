@@ -30,6 +30,8 @@ define('CONTEXT_GROUP', 60);
 define('CONTEXT_MODULE', 70);
 define('CONTEXT_BLOCK', 80);
 
+$context_cache    = array();    // Cache of all used context objects for performance (by level and instance)
+$context_cache_id = array();    // Index to above cache by id
 
 /**
  * This functions get all the course categories in proper order
@@ -40,7 +42,7 @@ define('CONTEXT_BLOCK', 80);
 function get_parent_cats($contextid, $type) {
     
     $parents = array();
-    $context = get_record('context', 'id', $contextid);
+    $context = get_context_instance_by_id($contextid);
     
     switch($type) {
 
@@ -95,17 +97,25 @@ function get_parent_cats($contextid, $type) {
  * @param kill bool - if set, kill when the user has no capability
  * @return bool
  */
-function has_capability($capability, $contextid, $kill=false, $userid=NULL) {
+function has_capability($capability, $contextid=NULL, $kill=false, $userid=NULL) {
 
-    global $USER;
+    global $USER, $CONTEXT;
 
     if ($userid && $userid != $USER->id) { // loading other user's capability
-          $capabilities = load_user_capability($capability, $contextid, $userid);
+        $capabilities = load_user_capability($capability, $contextid, $userid);
     } else {
         $capabilities = $USER->capabilities;  
     }
     
-    $context = get_record('context','id',$contextid);
+    if (empty($contextid)) {
+        if (empty($CONTEXT)) {
+            return false;
+        } else {
+            $context = $CONTEXT;
+        }
+    } else {
+        $context = get_context_instance_by_id($contextid);
+    }
 
     // Check site
     $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
@@ -231,7 +241,7 @@ function capability_search($capability, $contextid, $kill=false, $capabilities) 
     }
     
     /* Then, we check the cache recursively */
-    $context = get_record('context','id',$contextid); // shared
+    $context = get_context_instance_by_id($contextid);
     $permission = 0;    
     
     switch (context_level($contextid)) {
@@ -330,7 +340,7 @@ function load_user_capability($capability='', $contextid ='', $userid='') {
     // First we generate a list of all relevant contexts of the user
 
     if ($contextid) { // if context is specified
-        $context = get_record('context', 'id', $contextid);
+        $context = get_context_instance_by_id($contextid);
     
         $usercontexts = get_parent_contexts($context->id);          
         $listofcontexts = '('.implode(',', $usercontexts).')';
@@ -530,7 +540,7 @@ function capability_prohibits($capability, $contextid, $sum='', $array='') {
             return true;
         }
     }
-    $context = get_record('context', 'id', $contextid);
+    $context = get_context_instance_by_id($contextid);
     switch (context_level($contextid)) {
         
         case CONTEXT_SYSTEM:
@@ -804,26 +814,56 @@ function create_context($level, $instanceid) {
  * @param $level
  * @param $instance
  */
-function get_context_instance($level, $instance=SITEID) {
+function get_context_instance($level=NULL, $instance=SITEID) {
 
-    static $contexts;   // Cache context lookups per page for performance
+    global $CONTEXT;
 
-    if (!isset($contexts)) {
-        $contexts = array();
+/// If no level is supplied then return the current global context if there is one
+    if (empty($level)) {
+        if (empty($CONTEXT)) {
+            if ($CFG->debug > 7) {
+                notify("Error: get_context_instance() called without a context");
+            }
+        } else {
+            return $CONTEXT;
+        }
     }
 
-    if (isset($contexts[$level][$instance])) {  // Already cached
-        return $contexts[$level][$instance];
+/// Check the cache
+    if (isset($context_cache[$level][$instance])) {  // Already cached
+        return $context_cache[$level][$instance];
     }
 
+/// Get it from the database, or create it
     if (!$context = get_record('context', 'level', $level, 'instanceid', $instance)) {
         create_context($level, $instance);
         $context = get_record('context', 'level', $level, 'instanceid', $instance);
     }
 
-    $contexts[$level][$instance] = $context;    // Cache it for later
+/// Update the cache
+    $context_cache[$level][$instance] = $context;    // Cache it for later
+    $context_cache_id[$context->id] = $context;      // Cache it for later
 
     return $context;
+}
+
+/**
+ * Get a context instance as an object, from a given id.
+ * @param $id
+ */
+function get_context_instance_by_id($id) {
+
+    if (isset($context_cache_id[$id])) {  // Already cached
+        return $context_cache[$id];
+    }
+
+    if ($context = get_record('context', 'id', $id)) {   // Update the cache and return
+        $context_cache[$context->level][$context->instance] = $context;
+        $context_cache_id[$context->id] = $context;
+        return $context;
+    }
+
+    return false;
 }
 
 
@@ -833,8 +873,10 @@ function get_context_instance($level, $instance=SITEID) {
  * @return int
  */
 function context_level($contextid) {
-    $context = get_record('context','id',$contextid);
-    return ($context->level);
+    if ($context = get_context_instance_by_id($contextid)) {
+        return $context->level;
+    } 
+    return false;
 }
 
 
@@ -1181,44 +1223,44 @@ function capabilities_cleanup($component, $newcapdef=NULL) {
  * prints human readable context identifier.
  */
 function print_context_name($contextid) {
-  
+
     $name = '';
 
-    $context = get_record('context', 'id', $contextid);  
+    $context = get_context_instance_by_id($contextid);
 
-      switch ($context->level) {
-      
+    switch ($context->level) {
+
         case CONTEXT_SYSTEM: // by now it's a definite an inherit
             $name = get_string('site');
-        break;
+            break;
 
         case CONTEXT_PERSONAL:
             $name = get_string('personal');
-        break;
-        
+            break;
+
         case CONTEXT_USERID:
             if ($user = get_record('user', 'id', $context->instanceid)) {
                 $name = get_string('user').': '.fullname($user);
             }
-        break;
-        
+            break;
+
         case CONTEXT_COURSECAT: // Coursecat -> coursecat or site
             if ($category = get_record('course_categories', 'id', $context->instanceid)) {
                 $name = get_string('category').': '.$category->name;
             }
-        break;
+            break;
 
         case CONTEXT_COURSE: // 1 to 1 to course cat
             if ($course = get_record('course', 'id', $context->instanceid)) {
                 $name = get_string('course').': '.$course->fullname;
             }
-        break;
+            break;
 
         case CONTEXT_GROUP: // 1 to 1 to course
             if ($group = get_record('groups', 'id', $context->instanceid)) {
                 $name = get_string('group').': '.$group->name;
             }
-        break;
+            break;
 
         case CONTEXT_MODULE: // 1 to 1 to course
             if ($cm = get_record('course_modules','id',$context->instanceid)) {
@@ -1228,7 +1270,7 @@ function print_context_name($contextid) {
                     }
                 }
             }
-        break;
+            break;
 
         case CONTEXT_BLOCK: // 1 to 1 to course
             if ($blockinstance = get_record('block_instance','id',$context->instanceid)) {
@@ -1236,15 +1278,15 @@ function print_context_name($contextid) {
                     $name = get_string('blocks').': '.get_string($block->name, 'block_'.$block->name);
                 }
             }
-        break;
+            break;
 
         default:
             error ('This is an unknown context!');
-        return false;
-              
-      }
-  
-      return $name;
+            return false;
+
+    }
+
+    return $name;
 }
 
 
@@ -1292,7 +1334,7 @@ function fetch_context_capabilities($contextid) {
         break;
 
         case CONTEXT_MODULE: // mod caps
-            $context = get_record('context','id',$contextid);
+            $context = get_context_instance_by_id($contextid);
             $cm = get_record('course_modules', 'id', $context->instanceid);
             $module = get_record('modules', 'id', $cm->module);
         
@@ -1301,7 +1343,7 @@ function fetch_context_capabilities($contextid) {
         break;
 
         case CONTEXT_BLOCK: // block caps
-            $context = get_record('context','id',$contextid);
+            $context = get_context_instance_by_id($contextid);
             $cb = get_record('block_instance', 'id', $context->instanceid);
             $block = get_record('block', 'id', $cb->blockid);
         
@@ -1336,7 +1378,7 @@ function role_context_capabilities($roleid, $contextid) {
     }
     
     // first of all, figure out all parental contexts
-    $context = get_record('context', 'id', $contextid);
+    $context = get_context_instance_by_id($contextid);
     $contexts = array_reverse(get_parent_contexts($context));
     $contexts = '('.implode(',', $contexts).')';
     
