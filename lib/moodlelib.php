@@ -1808,46 +1808,6 @@ function reset_login_count() {
     $SESSION->logincount = 0;
 }
 
-/**
- * check_for_restricted_user
- *
- * @uses $CFG
- * @uses $USER
- * @param string $username ?
- * @param string $redirect ?
- * @todo Finish documenting this function
- */
-function check_for_restricted_user($username=NULL, $redirect='') {
-    global $CFG, $USER;
-
-    if (!$username) {
-        if (!empty($USER->username)) {
-            $username = $USER->username;
-        } else {
-            return false;
-        }
-    }
-
-    if (!empty($CFG->restrictusers)) {
-        $names = explode(',', $CFG->restrictusers);
-        if (in_array($username, $names)) {
-            error(get_string('restricteduser', 'error', fullname($USER)), $redirect);
-        }
-    }
-}
-
-function is_restricted_user($username){
-    global $CFG;
-
-    if (!empty($CFG->restrictusers)) {
-        $names = explode(',', $CFG->restrictusers);
-        if (in_array($username, $names)) {
-            return true;
-        }
-    }
-    return false;
-}
-
 function sync_metacourses() {
 
     global $CFG;

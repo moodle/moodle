@@ -54,11 +54,6 @@
     $tabsmode = 'assign';
     include_once('tabs.php');
     
-/// Don't allow restricted teachers to even see this page (because it contains
-/// a lot of email addresses and access to all student on the server
-
-    check_for_restricted_user($USER->username, $CFG->wwwroot);
-
 /// Print a help notice about the need to use this page
 
     if (!$frm = data_submitted()) {

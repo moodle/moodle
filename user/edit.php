@@ -86,10 +86,6 @@
             }   
         }   
 
-        if (isset($USER->username)) {
-            check_for_restricted_user($USER->username, "$CFG->wwwroot/course/view.php?id=$course->id");
-        }
-
         if (isset($usernew->password)) {
             unset($usernew->password);
         }

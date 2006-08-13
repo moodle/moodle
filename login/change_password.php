@@ -21,8 +21,6 @@
     if ($frm = data_submitted()) {
         validate_form($frm, $err);
 
-        check_for_restricted_user($frm->username);
-
         update_login_count();
 
         if (!count((array)$err)) {

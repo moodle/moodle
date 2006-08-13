@@ -50,8 +50,6 @@
         error("Only teachers can use this page!");
     }
 
-    check_for_restricted_user($USER->username, "$CFG->wwwroot/user/view.php?id=$user&amp;course=$course->id");
-
     // validate loginaspassword if defined in config.php
 
     if (empty($SESSION->loginasvalidated) && !empty($CFG->loginaspassword)) {

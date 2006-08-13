@@ -139,10 +139,6 @@ $CFG->admin = 'admin';
 // Useful for webhost operators who have alternate methods of backups
 //      $CFG->disablescheduledbackups = true;
 //
-// Restrict certain usernames from doing things that may mess up a site
-// This is especially useful for demonstration teacher accounts
-//      $CFG->restrictusers = 'teacher,fred,jim';
-//
 // Set global password for "Login as", teacher is prompted only once in each session.
 // Set your own password and tell it only to teachers that should have access to this feature.
 //      $CFG->loginaspassword = 'yoursharedpassword';

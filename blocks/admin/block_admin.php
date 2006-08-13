@@ -232,7 +232,7 @@ class block_admin extends block_list {
             }
             $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/user.gif" alt="" />';
 
-            if (is_internal_auth() && !is_restricted_user($USER->username)) {
+            if (is_internal_auth()) {
                 $this->content->items[]='<a href="'.$securewwwroot.'/login/change_password.php?id='.$this->instance->pageid.'">'.get_string('changepassword').'</a>';
                 $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/user.gif" alt="" />';
             } 

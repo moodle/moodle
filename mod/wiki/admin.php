@@ -124,7 +124,6 @@
     /// Check if the Form has been submitted and display confirmation
     ////////////////////////////////////////////////////////////
     if ($form = data_submitted()) {
-      check_for_restricted_user($USER->username, "$CFG->wwwroot/course/view.php?id=$course->id");
       /// Moodle Log
       /// Get additional info
       $addloginfo="";

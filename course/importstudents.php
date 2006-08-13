@@ -51,10 +51,6 @@
                  "<a href=\"view.php?id=$course->id\">$course->shortname</a> -> $strassigncourses",
                  "studentform.searchtext");
 
-/// Don't allow restricted teachers to even see this page (because it contains
-/// a lot of email addresses and access to all student on the server
-
-    check_for_restricted_user($USER->username, "$CFG->wwwroot/course/view.php?id=$course->id");
 
 /// Print a help notice about the need to use this page
 

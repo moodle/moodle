@@ -57,12 +57,6 @@
 
     if ($form = data_submitted() and confirm_sesskey()) {
 
-        if (empty($course)) {
-            check_for_restricted_user($USER->username, "$CFG->wwwroot");
-        } else {
-            check_for_restricted_user($USER->username, "$CFG->wwwroot/course/view.php?id=$course->id");
-        }
-
         $form->startdate = make_timestamp($form->startyear, $form->startmonth, $form->startday);
         $form->category = clean_param($form->category, PARAM_INT);
 

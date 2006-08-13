@@ -20,7 +20,6 @@
         error("Could not find a site!");
     }
 
-    check_for_restricted_user($USER->username);
 
 /// Refreshing enrolment data in the USER session
     if (!($plugins = explode(',', $CFG->enrol_plugins_enabled))) {
