@@ -17,17 +17,17 @@
 
     if (!empty($id)) {
         if (!isteacheredit($id)) {
-            if (empty($to)) {
-                error("You need to be a teacher or admin user to use this page.", "$CFG->wwwroot/login/index.php");
-            } else {
-                if (!isteacheredit($to)) {
-                    error("You need to be a teacher or admin user to use this page.", "$CFG->wwwroot/login/index.php");
-                }
-            }
+            error("You need to be a teacher or admin user to use this page.", "$CFG->wwwroot/login/index.php");
         }
     } else {
         if (!isadmin()) {
             error("You need to be an admin user to use this page.", "$CFG->wwwroot/login/index.php");
+        }
+    }
+
+    if (!empty($to)) {
+        if (!isteacheredit($to)) {
+            error("You need to be a teacher or admin user to use this page.", "$CFG->wwwroot/login/index.php");
         }
     }
 
@@ -128,7 +128,7 @@
     }
     print_simple_box_end();
 
-    //Print footer  
+    //Print footer
     print_footer();
 
 ?>
