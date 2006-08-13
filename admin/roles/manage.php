@@ -5,7 +5,7 @@
 
     require_login();
 
-    $roleid      = optional_param('roleid', 0, PARAM_INT); // if set, we are editting a role
+    $roleid      = optional_param('roleid', 0, PARAM_INT); // if set, we are editing a role
     $action      = optional_param('action', '', PARAM_ALPHA);
     $name        = optional_param('name', '', PARAM_ALPHA); // new role name
     $description = optional_param('description', '', PARAM_NOTAGS); // new role desc
@@ -28,18 +28,18 @@
     if ($roleid && $action!='delete') {
           $role = get_record('role', 'id', $roleid);
       
-        $edittingstr = '-> '.get_string('editting', $role->name);  
+        $editingstr = '-> '.get_string('editinga', '', $role->name);  
     } else {
-        $edittingstr ='';  
+        $editingstr ='';  
     }
     
     print_header("$site->shortname: $strmanageroles", 
                  "$site->fullname", 
                  "<a href=\"../index.php\">$stradministration</a> -> <a href=\"manage.php\">$strmanageroles</a>
-                 $edittingstr
+                 $editingstr
                  ");
 
-    // form processing, editting a role, adding a role or deleting a role
+    // form processing, editing a role, adding a role or deleting a role
     if ($action && confirm_sesskey()) {
         
         switch ($action) {
