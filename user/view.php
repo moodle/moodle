@@ -97,7 +97,7 @@
                      "$fullname", "", "", true, "&nbsp;", navmenu($course));
     }
 
-    if ($CFG->debug) {
+    if ($CFG->debug && $USER->id == $user->id) {   // TEMPORARY in DEV!
         print_heading('DEBUG MODE:  User session variables');
         print_object($USER);
     }
