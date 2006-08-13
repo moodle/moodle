@@ -1500,7 +1500,8 @@ function print_courses($category, $width="100%", $hidesitecourse = false) {
         }
     } else {
         print_heading(get_string("nocoursesyet"));
-        if (iscreator()) {  // Make it obvious for newbies on new sites how to add a course
+		$context = get_context_instance(CONTEXT_SYSTEM, SITEID);
+        if (has_capability('moodle/course:create', $context->id)) {
             $options = array();
             $options['category'] = $category->id;
             echo '<div class="addcoursebutton" align="center">';
