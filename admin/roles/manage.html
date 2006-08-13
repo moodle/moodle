@@ -49,7 +49,7 @@
             ?>
                 
             <tr>
-              <td><?php echo get_capability_string($capability->name); ?></td>
+              <td><span title="<?php echo $capability->name ?>"><?php echo get_capability_string($capability->name); ?></span></td>
                  <td><INPUT TYPE=radio NAME="<?php echo $capability->name; ?>" VALUE="0" <?php if (!isset($localoverride->permission) || $localoverride->permission==0){ echo 'checked="checked"'; }?>></td>
                  <td><INPUT TYPE=radio NAME="<?php echo $capability->name; ?>" VALUE="1" <?php if (isset($localoverride->permission) && $localoverride->permission==1){ echo 'checked="checked"'; }?>></td>
                  <td ><INPUT TYPE=radio NAME="<?php echo $capability->name; ?>" VALUE="-1" <?php if (isset($localoverride->permission) && $localoverride->permission==-1){ echo 'checked="checked"'; }?>></td>

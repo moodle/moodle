@@ -1429,38 +1429,39 @@ function get_role_context_capability($contextid, $capability, $capabilities) {
 
 
 // a big switch statement
-function get_capability_string($capname) {
+function get_capability_string($capabilityname) {
 
-    $names = split('/', $capname);
-    $componentname = split(':', $names[1]);
-    $componentname = $componentname[0];
-    $capability = split(':', $capname);
-    $capability = 'capability_'.$capability[1];
+    // Typical capabilityname is:   mod/choice:readresponses
+
+    $names = split('/', $capabilityname);
+    $stringname = $names[1];                 // choice:readresponses
+    $components = split(':', $stringname);   
+    $componentname = $components[0];               // choice
 
     switch ($names[0]) {
         case 'mod':
-            $string = get_string($capability, $componentname);
+            $string = get_string($stringname, $componentname);
         break;
         
         case 'block':
-            $string = get_string($capability, 'block_'.$componentname);
+            $string = get_string($stringname, 'block_'.$componentname);
         break;
-        
+
         case 'moodle':
-            $string = get_string($capability);
+            $string = get_string($stringname, 'role');
         break;
         
         case 'enrol':
-            $string = get_string($capability, 'enrol_'.$componentname);
+            $string = get_string($stringname, 'enrol_'.$componentname);
+        break;  
         
         default:
-            $string = get_string($capability);
+            $string = get_string($stringname);
         break;  
-            
       
     }
 
-      return $string;
+    return $string;
 }
 
 
@@ -1470,7 +1471,7 @@ function get_component_string($component, $contextlevel) {
     switch ($contextlevel) {
 
         case CONTEXT_SYSTEM:
-            $string = get_string('system');
+            $string = get_string('coresystem');
         break;
 
         case CONTEXT_PERSONAL:
