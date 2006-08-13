@@ -805,14 +805,24 @@ function create_context($level, $instanceid) {
  * @param $instance
  */
 function get_context_instance($level, $instance=SITEID) {
-    // echo "getting level $level instance $instance";
 
-    // XXX TODO  Add caching here
-      if (!$context = get_record('context', 'level', $level, 'instanceid', $instance)) {
-          //echo "creating ...";
+    static $contexts;   // Cache context lookups per page for performance
+
+    if (!isset($contexts)) {
+        $contexts = array();
+    }
+
+    if (isset($contexts[$level][$instance])) {  // Already cached
+        return $contexts[$level][$instance];
+    }
+
+    if (!$context = get_record('context', 'level', $level, 'instanceid', $instance)) {
         create_context($level, $instance);
         $context = get_record('context', 'level', $level, 'instanceid', $instance);
-      }
+    }
+
+    $contexts[$level][$instance] = $context;    // Cache it for later
+
     return $context;
 }
 
