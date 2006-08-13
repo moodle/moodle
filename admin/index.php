@@ -339,9 +339,8 @@
 
     $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
 
-    if (!isadmin()) {
-    //if (!has_capability('moodle/site:config', $context->id)) {
-        error("You need to be an admin user to use this page.", "$CFG->wwwroot/login/index.php");
+    if (!has_capability('moodle/site:config', $context->id)) {
+        print_error("permissionconfig", '', "$CFG->wwwroot/login/index.php");
     }
 
 /// Check if we are returning from moodle.org registration and if so, we mark that fact to remove reminders

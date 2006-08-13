@@ -39,7 +39,7 @@ class block_admin extends block_list {
             $this->content->icons[] = '<img src="'.$CFG->pixpath.'/i/admin.gif" alt="" />';
 		}
 		
-		if (isadmin()) {
+        if (has_capability('moodle/site:config', $context->id)) {
             $this->content->items[] = '<a href="'.$CFG->wwwroot.'/'.$CFG->admin.'/users.php">'.get_string('users').'</a>';
             $this->content->icons[] = '<img src="'.$CFG->pixpath.'/i/users.gif" alt="" />';
         }
@@ -54,12 +54,12 @@ class block_admin extends block_list {
             $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/restore.gif" alt="" />';
         }
 
-        if (iscreator()) {
+        if (has_capability('moodle/course:create', $context->id)) {
             $this->content->items[] = '<a href="'.$CFG->wwwroot.'/course/index.php?edit=on&amp;sesskey='.sesskey().'">'.get_string('courses').'</a>';
             $this->content->icons[] = '<img src="'.$CFG->pixpath.'/i/course.gif" alt="" />';
         }
 
-        if (isadmin()) {
+        if (has_capability('moodle/site:config', $context->id)) {
             $this->content->items[] = '<a href="'.$CFG->wwwroot.'/course/report/log/index.php?id='.SITEID.'">'.get_string('logs').'</a>';
             $this->content->icons[] = '<img src="'.$CFG->pixpath.'/i/log.gif" alt="" />';
 
