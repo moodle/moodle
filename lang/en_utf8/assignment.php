@@ -3,6 +3,9 @@
 
 
 $string['allowresubmit'] = 'Allow resubmitting';
+$string['assignment:view'] = 'View assignment';
+$string['assignment:grade'] = 'Grade assignment';
+$string['assignment:submit'] = 'Submit assignment';
 $string['assignmentdetails'] = 'Assignment details';
 $string['assignmentmail'] = '$a->teacher has posted some feedback on your
 assignment submission for \'$a->assignment\'

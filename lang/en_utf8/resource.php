@@ -89,6 +89,7 @@ $string['preview'] = 'Preview';
 $string['previous'] = 'Previous';
 $string['redeploy'] = 'Deploy again';
 $string['repository'] = 'IMS repository';
+$string['resource:view'] = 'View resource';
 $string['resourcetype'] = 'Type of resource';
 $string['resourcetype1'] = 'Reference';
 $string['resourcetype2'] = 'Web Page';

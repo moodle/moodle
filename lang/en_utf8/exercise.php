@@ -47,6 +47,7 @@ $string['enterpassword'] = 'Enter Password';
 $string['entriessaved'] = 'Entries Saved';
 $string['errorbanded'] = 'Error Banded';
 $string['excellent'] = 'Excellent';
+$string['exercise:assess'] = 'Assess exercises';
 $string['exerciseassessments'] = 'Exercise Assessments';
 $string['exercisefeedback'] = 'Exercise Feedback';
 $string['exercisesubmissions'] = 'Exercise Submissions';

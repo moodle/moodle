@@ -1,6 +1,9 @@
 <?php // $Id$ 
 
 $string['beep'] = 'beep';
+$string['chat:chat'] = 'Talk in a chat';
+$string['chat:readlog'] = 'Read chat logs';
+$string['chat:deletelog'] = 'Delete chat logs';
 $string['chatintro'] = 'Introduction text';
 $string['chatname'] = 'Name of this chat room';
 $string['chatreport'] = 'Chat sessions';

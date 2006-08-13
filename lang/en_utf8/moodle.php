@@ -220,6 +220,7 @@ $string['copyingcoursefiles'] = 'Copying course files';
 $string['copyinguserfiles'] = 'Copying user files';
 $string['copyingzipfile'] = 'Copying zip file';
 $string['copyrightnotice'] = 'Copyright notice';
+$string['coresystem'] = 'Core system';
 $string['cost'] = 'Cost';
 $string['costdefault'] = 'Default cost';
 $string['counteditems'] = '$a->count $a->items';

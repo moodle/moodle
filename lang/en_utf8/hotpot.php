@@ -19,6 +19,8 @@ $string['displayhotpotnext'] = 'Display Hot Potatoes quiz next';
 $string['displaycoursenext'] = 'Display Course page next';
 $string['displayindexnext'] = 'Display HotPot index next';
 
+$string['hotpot:view'] = 'Use quiz';
+
 $string['outputformat'] = 'Output format';
 $string['outputformat_best'] = 'best';
 $string['outputformat_v6_plus'] = 'v6+';
