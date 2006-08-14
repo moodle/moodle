@@ -1,6 +1,14 @@
 
 <form name="assignform" id="assignform" method="post" action="assign.php">
 <input type="hidden" name="previoussearch" value="<?php echo $previoussearch ?>" />
+<?php
+if ($userid) {
+    print ('<input type="hidden" name="userid" value="'.$userid.'"/>');
+}
+if ($course->id) {
+    print ('<input type="hidden" name="courseid" value="'.$courseid.'" />');
+}
+?>
 <input type="hidden" name="sesskey" value="<?php echo sesskey() ?>" />
 <input type="hidden" name="contextid" value="<?php echo $contextid ?>" />
 <input type="hidden" name="roleid" value="<?php echo $roleid ?>" />

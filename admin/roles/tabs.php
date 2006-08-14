@@ -13,6 +13,7 @@ if ($currenttab != 'update') {
         break;
     
         case CONTEXT_USERID:
+            print_header();
         break;
     
         case CONTEXT_COURSECAT:
@@ -82,7 +83,7 @@ if ($currenttab != 'update') {
         
     }    
     
-        $toprow[] = new tabobject('roles', $CFG->wwwroot.'/admin/roles/assign.php?contextid='.$context->id, get_string('roles')); 
+    $toprow[] = new tabobject('roles', $CFG->wwwroot.'/admin/roles/assign.php?contextid='.$context->id, get_string('roles')); 
 
     if (isset($tabsmode)) {
         $inactive[] = 'roles';

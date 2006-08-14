@@ -16,7 +16,13 @@
     $previoussearch = ($searchtext != '') or ($previoussearch) ? 1:0;
     $timestart      = optional_param('timestart', 0, PARAM_INT);
     $timeend        = optional_param('timened', 0, PARAM_INT);
+    $userid         = optional_param('userid', 0, PARAM_INT); // needed for user tabs
+    $courseid       = optional_param('courseid', 0, PARAM_INT); // needed for user tabs
 
+    if ($courseid) {
+        $course = get_record('course', 'id', $courseid);  
+    }
+    
     if (! $site = get_site()) {
         redirect("$CFG->wwwroot/$CFG->admin/index.php");
     }
@@ -37,7 +43,6 @@
      * 2) not in role_deny_grant
      * end of permission checking  
      */
-    
 
     $strassignusers = get_string('assignusers', 'role');
     $strpotentialusers = get_string('potentialusers', 'role');
@@ -48,10 +53,21 @@
     $strsearch = get_string('search');
     $strshowall = get_string('showall');
 
-    $currenttab = '';
-    $tabsmode = 'assign';
-    include_once('tabs.php');
+    $context = get_record('context', 'id', $contextid);
     
+    // we got a few tabs there
+    if ($context->level == CONTEXT_USERID) {
+        print_header();
+      
+        $currenttab = 'roles';
+        include_once($CFG->dirroot.'/user/tabs.php');
+    } else {
+        $currenttab = '';
+        $tabsmode = 'assign';
+        include_once('tabs.php');
+    }
+
+
 /// Print a help notice about the need to use this page
 
     if (!$frm = data_submitted()) {
@@ -129,7 +145,13 @@
     // prints a form to swap roles
     print ('<form name="rolesform" action="assign.php" method="post">');
     print ('<div align="center">'.$strcurrentcontext.': '.print_context_name($context).'<br/>');
-    print ('<input type="hidden" name="contextid" value="'.$context->id.'">'.$strcurrentrole.': ');
+    if ($userid) {
+        print ('<input type="hidden" name="userid" value="'.$userid.'" />');
+    }
+    if ($course->id) {
+        print ('<input type="hidden" name="courseid" value="'.$courseid.'" />');
+    }
+    print ('<input type="hidden" name="contextid" value="'.$context->id.'" />'.$strcurrentrole.': ');
     choose_from_menu ($options, 'roleid', $roleid, 'choose', $script='rolesform.submit()');
     print ('</div></form>');
     

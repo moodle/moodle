@@ -132,12 +132,15 @@
         
 
     /// Current user must be teacher of the course or the course allows user to view their reports
+    
+    //print_object($course);
+    //print_object($user);
         if (isteacher($course->id) or ($course->showreports and $USER->id == $user->id)) {
 
             $toprow[] = new tabobject('reports', $CFG->wwwroot.'/course/user.php?id='.$course->id.
                                       '&amp;user='.$user->id.'&amp;mode=outline', get_string('activityreports'));
 
-            if (in_array($currenttab, array('outline', 'complete', 'todaylogs', 'alllogs', 'stats'))) {
+            if (in_array($currenttab, array('outline', 'complete', 'todaylogs', 'alllogs', 'stats', 'grade'))) {
                 $inactive = array('reports');
                 $activetwo = array('reports');
 
@@ -154,11 +157,24 @@
                     $secondrow[] = new tabobject('stats',$CFG->wwwroot.'/course/user.php?id='.$course->id.
                                                  '&amp;user='.$user->id.'&amp;mode=stats',get_string('stats'));
                 }
+                
+                // needs permission checking!!!
+                
+                $secondrow[] = new tabobject('grade', $CFG->wwwroot.'/course/user.php?id='.$course->id.
+                                          '&amp;user='.$user->id.'&amp;mode=grade', get_string('grade'));
+                                
             }
 
         }
 
     }    //close last bracket (individual tags)
+
+
+    /// this needs permission checkings
+    
+    $context = get_context_instance(CONTEXT_USERID, $user->id);
+    $toprow[] = new tabobject('roles', $CFG->wwwroot.'/admin/roles/assign.php?contextid='.$context->id.'&amp;userid='.$user->id.'&amp;courseid='.$course->id
+                              ,get_string('roles'));
 
 /// Add second row to display if there is one
 

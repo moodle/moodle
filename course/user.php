@@ -59,10 +59,15 @@
     $currenttab = $mode;
     include($CFG->dirroot.'/user/tabs.php');
 
-
     get_all_mods($course->id, $mods, $modnames, $modnamesplural, $modnamesused);
 
     switch ($mode) {
+        case "grade":
+            $course = get_record('course', 'id', required_param('id', PARAM_INT));
+            require_once($CFG->dirroot.'/grade/lib.php');
+            grade_view_all_grades($user->id, 'user');
+            break;
+      
         case "todaylogs" :
             echo '<div class="graph">';
             print_log_graph($course, $user->id, "userday.png");
