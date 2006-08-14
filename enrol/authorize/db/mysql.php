@@ -117,6 +117,12 @@ function enrol_authorize_upgrade($oldversion=0) {
         delete_records('config_plugins', 'name', 'an_nextmail'); // run twice.
     }
 
+    if ($oldversion < 2006081401) { // no need an_teachermanagepay in 1.7
+        if (isset($CFG->an_teachermanagepay)) {
+            delete_records('config', 'name', 'an_teachermanagepay');
+        }
+    }
+
     return $result;
 }
 

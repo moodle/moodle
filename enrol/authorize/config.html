@@ -18,7 +18,6 @@ if (!isset($frm->an_capture_day)) $frm->an_capture_day = '5';
 if (!isset($frm->an_emailexpired)) $frm->an_emailexpired = '2';
 if (!isset($frm->an_emailexpiredteacher)) $frm->an_emailexpiredteacher = '';
 if (!isset($frm->an_sorttype)) $frm->an_sorttype = 'ttl';
-if (!isset($frm->an_teachermanagepay)) $frm->an_teachermanagepay = '';
 
 if (isset($CFG->an_cutoff)) {
     $cutoff = intval($CFG->an_cutoff);
@@ -57,12 +56,6 @@ if (!isset($frm->acceptccs)) {
     <td><?php choose_from_menu(get_list_of_currencies(), "enrol_currency", $frm->enrol_currency, "","", "") ?></td>
     <td><?php print_string("currency") ?>
     </td>
-</tr>
-
-<tr valign="top">
-    <td align="right">an_teachermanagepay:</td>
-    <td><?php print_checkbox('an_teachermanagepay', '1', !empty($frm->an_teachermanagepay)) ?></td>
-    <td><?php print_string("adminteachermanagepay", "enrol_authorize") ?></td>
 </tr>
 
 <?php if (substr($CFG->wwwroot, 0, 5) !== 'https') { /* https && loginhttps */ ?>

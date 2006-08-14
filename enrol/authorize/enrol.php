@@ -477,7 +477,6 @@ class enrolment_plugin_authorize
         // optional authorize.net settings
         set_config('an_avs', optional_param('an_avs', 0, PARAM_BOOL));
         set_config('an_test', optional_param('an_test', 0, PARAM_BOOL));
-        set_config('an_teachermanagepay', optional_param('an_teachermanagepay', 0, PARAM_BOOL));
         set_config('an_referer', optional_param('an_referer', 'http://', PARAM_URL));
 
         $acceptccs = optional_param('acceptccs',
@@ -884,8 +883,8 @@ class enrolment_plugin_authorize
         email_to_user($adminuser, $adminuser, $subject, $message);
 
         // Email to teachers
-        if (empty($CFG->an_teachermanagepay) or empty($CFG->an_emailexpiredteacher)) {
-            return; // teachers can't manage payments or email feature disabled for teachers.
+        if (empty($CFG->an_emailexpiredteacher)) {
+            return; // email feature disabled for teachers.
         }
 
         $sorttype = empty($CFG->an_sorttype) ? 'ttl' : $CFG->an_sorttype;
@@ -914,8 +913,11 @@ class enrolment_plugin_authorize
                 $a->url = $CFG->wwwroot.'/enrol/authorize/index.php?course='.
                           $lastcourse.'&amp;status='.AN_STATUS_AUTH;
                 $message = get_string('pendingordersemailteacher', 'enrol_authorize', $a);
+                $context = get_context_instance(CONTEXT_COURSE, $lastcourse);
                 foreach ($teachers as $teacher) {
-                    email_to_user($teacher, $adminuser, $subject, $message);
+                    if (has_capability('enrol/authorize:managepayments', $context, $teacher->id)) {
+                        email_to_user($teacher, $adminuser, $subject, $message);
+                    }
                 }
             }
         }

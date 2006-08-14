@@ -26,7 +26,8 @@ function authorize_print_orders()
     $perpage = 10;
     $status = optional_param('status', AN_STATUS_NONE, PARAM_INT);
 
-    if (! isteacher($courseid)) {
+    $context = get_context_instance(CONTEXT_COURSE, $courseid);
+    if (! has_capability('enrol/authorize:managepayments', $context)) {
         $userid = $USER->id;
     }
 
@@ -182,8 +183,9 @@ function authorize_print_order_details($orderno)
     }
 
     if ($USER->id != $order->userid) { // Current user viewing someone else's order
-        if (! isteacher($order->courseid)) {
-           error("Students can view their order.");
+        $context = get_context_instance(CONTEXT_COURSE, $order->courseid);
+        if (! has_capability('enrol/authorize:managepayments', $context)) {
+           error("You don't have access rights on this order.");
         }
     }
 
