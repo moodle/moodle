@@ -335,7 +335,7 @@
                 $db->debug = false;
                 if (set_config("backup_version", $backup_version) and set_config("backup_release", $backup_release)) {
                     notify(get_string("databasesuccess"), "green");
-                    notify(get_string("databaseupgradebackups", "", $backup_version));
+                    notify(get_string("databaseupgradebackups", "", $backup_version), "green");
                     upgrade_log_finish();
                     print_continue($continueto);
                     exit;
@@ -361,7 +361,7 @@
                 $db->debug=false;
                 if (set_config("backup_version", $backup_version) and set_config("backup_release", $backup_release)) {
                     notify(get_string("databasesuccess"), "green");
-                    notify(get_string("databaseupgradebackups", "", $backup_version));
+                    notify(get_string("databaseupgradebackups", "", $backup_version), "green");
                     upgrade_log_finish();
                     print_continue($continueto);
                     exit;
