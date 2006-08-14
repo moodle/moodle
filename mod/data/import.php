@@ -120,7 +120,7 @@
             $fieldnames = array_shift($records);
             
             foreach ($records as $record) {
-                if ($recordid = data_add_record($data->id, 0)) {  // add instance to data_record
+                if ($recordid = data_add_record($data, 0)) {  // add instance to data_record
                     $fields = get_records('data_fields', 'dataid', $data->id, '', 'name, id, type');
                     
                     // do a manual round of inserting, to make sure even empty contents get stored
@@ -137,7 +137,7 @@
                         $newfield = 'data_field_'.$field->type;
                         $currentfield = new $newfield($field->id);
 
-                        $currentfield->update_data_content($currentfield->id, $recordid, $value, $name);
+                        $currentfield->update_content($recordid, $value, $name);
                     }
                     $recordsadded++;
                 }
