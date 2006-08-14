@@ -251,7 +251,7 @@ function has_capability($capability, $context=NULL, $userid=NULL) {
 function capability_search($capability, $context, $capabilities) {
     global $USER, $CFG;
 
-    if ($CFG->debug) {
+    if ($CFG->debug > 7) {
         notify("Looking for $capability in context $context->id", 'notifytiny');
     }
     
@@ -1023,7 +1023,7 @@ function get_roles_with_capability($capability, $permission=NULL) {
 function role_assign($roleid, $userid, $groupid, $contextid, $timestart=0, $timeend=0, $hidden=0) {
     global $USER, $CFG;
 
-    if ($CFG->debug) {
+    if ($CFG->debug > 7) {
         notify("Assign roleid $roleid userid $userid contextid $contextid", 'notifytiny');
     }
 
