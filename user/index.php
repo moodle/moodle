@@ -9,7 +9,6 @@
     define('USER_LARGE_CLASS', 200);  // Above this is considered large
     define('DEFAULT_PAGE_SIZE', 20);
 
-    $id           = required_param('id', PARAM_INT);                          // Course id
     $group        = optional_param('group', -1, PARAM_INT);                   // Group to show
     $page         = optional_param('page', 0, PARAM_INT);                     // which page to show
     $perpage      = optional_param('perpage', DEFAULT_PAGE_SIZE, PARAM_INT);  // how many per page
@@ -18,17 +17,30 @@
     $accesssince  = optional_param('accesssince',0,PARAM_INT);               // filter by last access. -1 = never
     $search       = optional_param('search','',PARAM_CLEAN);
     $roleid       = optional_param('roleid', 0, PARAM_INT);                 // optional roleid
-    $contextid    = required_param('contextid', PARAM_INT);             // required contextid
+
+    $contextid    = optional_param('contextid', PARAM_INT);                 // one of this or
+    $courseid     = optional_param('id', PARAM_INT);                        // this are required
 
     $showteachers = $showteachers && empty($search); // if we're searching, we just want students.
 
-    if (! $course = get_record('course', 'id', $id)) {
-        error("Course ID is incorrect");
+    if ($contextid) {
+        if (! $context = get_context_instance_by_id($contextid)) {
+            error("Context ID is incorrect");
+        }
+        if (! $course = get_record('course', 'id', $context->instanceid)) {
+            error("Course ID is incorrect");
+        }
+    } else {
+        if (! $course = get_record('course', 'id', $courseid)) {
+            error("Course ID is incorrect");
+        }
+        if (! $context = get_context_instance(CONTEXT_COURSE, $course->id)) {
+            error("Context ID is incorrect");
+        }
     }
 
     require_login($course->id);
 
-    $context = get_context_instance(CONTEXT_COURSE, $id);
     require_capability('moodle/course:viewparticipants', $context);
 
     if (!$course->category) {
@@ -93,7 +105,7 @@
     }
 
     // Should use this variable so that we don't break stuff every time a variable is added or changed.
-    $baseurl = $CFG->wwwroot.'/user/index.php?contextid='.$contextid.'&amp;roleid='.$roleid.'&amp;id='.$course->id.'&amp;group='.$currentgroup.'&amp;perpage='.$perpage.'&amp;teachers='.$showteachers.'&amp;accesssince='.$accesssince.'&amp;search='.$search;
+    $baseurl = $CFG->wwwroot.'/user/index.php?contextid='.$context->id.'&amp;roleid='.$roleid.'&amp;id='.$course->id.'&amp;group='.$currentgroup.'&amp;perpage='.$perpage.'&amp;teachers='.$showteachers.'&amp;accesssince='.$accesssince.'&amp;search='.$search;
 
 /// Print headers
 
@@ -108,11 +120,11 @@
 
 
     //setting up tags
-    if ($id == SITEID) {
+    if ($course->id == SITEID) {
         $filtertype = 'site';
-    } else if ($id && !$currentgroup) {
+    } else if ($course->id && !$currentgroup) {
         $filtertype = 'course';
-        $filterselect = $id;
+        $filterselect = $course->id;
     } else {
         $filtertype = 'group';
         $filterselect = $currentgroup;
@@ -137,28 +149,23 @@
      
     // this needs to check capability too
 
-
-
-    $SQL = 'select distinct r.id, r.name from '.$CFG->prefix.'role_assignments ra, '.$CFG->prefix.'role r WHERE
-            r.id = ra.roleid AND ra.contextid = '.$contextid.' ORDER BY r.sortorder ASC';
-            
-    $roles = get_records_sql($SQL);
-            
-    foreach ($roles as $role) {
-        $options[$role->id] = $role->name;
+    if ($roles = get_roles_used_in_context($context)) {
+        foreach ($roles as $role) {
+            $options[$role->id] = $role->name;
+        }
     }
     
     if (!$roleid) {
-        $rolesarray = array_keys($options);
-        $roleid = array_shift($rolesarray); // get first element
+        if ($options) {
+            $roleid = array_shift(array_keys($options)); // get first element
+        }
     }
-    
-    print ('<form name="rolesform" action="index.php" method="post">');
-    print ('<div align="center">Current Context: '.print_context_name($contextid).'<br/>');
-    print ('<input type="hidden" name="contextid" value="'.$contextid.'">Select a Role: ');
-    print ('<input type="hidden" name="id" value="'.$id.'">');
+
+    echo '<form name="rolesform" action="index.php" method="get">';
+    echo '<div align="center">';
+    echo '<input type="hidden" name="contextid" value="'.$context->id.'">'.get_string('currentrole', 'role').': ';
     choose_from_menu ($options, 'roleid', $roleid, '', $script='rolesform.submit()');
-    print ('</div></form>');
+    echo '</div></form>';
 
 
 
@@ -175,7 +182,7 @@
         $my_course[$mycourse->id] = $mycourse->shortname;
     }
     //choose_from_menu($my_course, 'id', $course->id, '', 'courseform.submit()');
-    popup_form($CFG->wwwroot.'/user/index.php?contextid='.$contextid.'&amp;roleid='.$roleid.'&amp;id=',$my_course,'courseform',$course->id);
+    popup_form($CFG->wwwroot.'/user/index.php?contextid='.$context->id.'&amp;roleid='.$roleid.'&amp;id=',$my_course,'courseform',$course->id);
     echo '</td></tr>';
     
     if ($groupmode == VISIBLEGROUPS or ($groupmode and isteacheredit($course->id))) {
@@ -292,7 +299,6 @@ function checkchecked(form) {
 </script>
 ';
         echo '<form action="action_redir.php" method="post" name="studentsform" onSubmit="return checksubmit(this);">';
-        echo '<input type="hidden" name="id" value="'.$id.'" />';
         echo '<input type="hidden" name="returnto" value="'.$_SERVER['REQUEST_URI'].'" />';
         echo '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
     }
@@ -354,7 +360,6 @@ function checkchecked(form) {
     if ($roleid) {
       
         // we are looking for all users with this role assigned in this context or higher
-        $context = get_record('context', 'id', $contextid);
         $usercontexts = get_parent_contexts($context);      
         $listofcontexts = '('.implode(',', $usercontexts).')';
 
@@ -362,7 +367,7 @@ function checkchecked(form) {
                           u.picture, u.lang, u.timezone, u.emailstop, u.maildisplay, u.lastaccess AS lastaccess '; // s.lastaccess
         //$select .= $course->enrolperiod?', s.timeend ':'';
         $from   = 'FROM '.$CFG->prefix.'user u LEFT JOIN '.$CFG->prefix.'role_assignments r ON r.userid = u.id ';
-        $where  = 'WHERE (r.contextid = '.$contextid.' OR r.contextid in '.$listofcontexts.') AND u.deleted = 0 AND r.roleid = '.$roleid.' ';   
+        $where  = 'WHERE (r.contextid = '.$context->id.' OR r.contextid in '.$listofcontexts.') AND u.deleted = 0 AND r.roleid = '.$roleid.' ';   
         $where .= get_lastaccess_sql($accesssince);
         $wheresearch = '';
     
@@ -379,20 +384,19 @@ function checkchecked(form) {
             $where .= ' AND gm.groupid = '.$currentgroup;
         }
     
-        if($course->id == SITEID) {
+        if ($course->id == SITEID) {
             $where .= ' AND u.id NOT IN ('.implode(',', $exceptions).')';
         }
 
         $totalcount = count_records_sql('SELECT COUNT(distinct u.id) '.$from.$where); // 1 person can have multiple assignments
     
-        if($table->get_sql_where()) {
+        if ($table->get_sql_where()) {
             $where .= ' AND '.$table->get_sql_where();
         }
     
-        if($table->get_sql_sort()) {
+        if ($table->get_sql_sort()) {
             $sort = ' ORDER BY '.$table->get_sql_sort();
-        }
-        else {
+        } else {
             $sort = '';
         }
     
@@ -401,22 +405,23 @@ function checkchecked(form) {
         $table->initialbars($totalcount > $perpage);
         $table->pagesize($perpage, $matchcount);
     
-        if($table->get_page_start() !== '' && $table->get_page_size() !== '') {
+        if ($table->get_page_start() !== '' && $table->get_page_size() !== '') {
             $limit = ' '.sql_paging_limit($table->get_page_start(), $table->get_page_size());
-        }
-        else {
+        } else {
             $limit = '';
         }    
     
         $students = get_records_sql($select.$from.$where.$wheresearch.$sort.$limit);
     
-        $crole = get_record('role','id',$roleid);
-    
+        if (!$currentrole = get_record('role','id',$roleid)) {
+            error('That role does not exist');
+        }
+
         $a->count = $totalcount;
-        $a->items = $crole->name;
+        $a->items = $currentrole->name;
         echo '<h2>'.get_string('counteditems', '', $a);
         if (isteacheredit($course->id)) {
-            echo ' <a href="'.$CFG->wwwroot.'/admin/roles/roleassignment.php?roleid='.$roleid.'&amp;contextid='.$contextid.'">';
+            echo ' <a href="'.$CFG->wwwroot.'/admin/roles/assign.php?roleid='.$roleid.'&amp;contextid='.$context->id.'">';
             echo '<img src="'.$CFG->pixpath.'/i/edit.gif" height="16" width="16" alt="" /></a>';
         }
         echo '</h2>';
