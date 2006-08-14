@@ -56,9 +56,9 @@
                 }
             }
 
-            if (file_exists($filepath)) {
+            if (file_exists($filepath) and is_file($filepath) and is_readable($filepath)) {
                 $helpfound = true;
-                include($filepath);   // The actual helpfile
+                @include($filepath);   // The actual helpfile
 
                 if ($module == 'moodle' and ($file == 'index.html' or $file == 'mods.html')) {
                     // include file for each module
