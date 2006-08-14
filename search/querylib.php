@@ -170,7 +170,7 @@
       
       foreach ($hits as $hit) {            
         //check permissions on each result
-        if ($this->can_display($USER, $hit->course_id, $hit->group_id)) {
+        if ($this->can_display($USER, $hit->id, $hit->doctype, $hit->course_id, $hit->group_id)) {
           $resultdoc->number  = $i;
           $resultdoc->url     = $hit->url;
           $resultdoc->title   = $hit->title;
@@ -212,7 +212,7 @@
     
     public function page_numbers() {
       $pages  = $this->total_pages();
-      $query  = $this->term;
+      $query  = htmlentities($this->term);     
       $page   = $this->pagenumber;
       $next   = "Next";
       $back   = "Back";
@@ -254,12 +254,12 @@
         $end = $pages - 3;      
         $ret = preg_replace("/<a\D+\d+\D+>$start<\/a>.*?<a\D+\d+\D+>$end<\/a>/", '...', $ret);
       } //if
-      
+     
       return $ret;
     } //page_numbers    
 
     //can the user see this result?          
-    private function can_display($user, $course_id, $group_id) {
+    private function can_display(&$user, $this_id, $doctype, $course_id, $group_id) {
       //this function should return true/false depending on
       //whether or not a user can see this resource
       //..

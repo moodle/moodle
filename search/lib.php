@@ -11,7 +11,7 @@
   define('SEARCH_DATABASE_TABLE', 'search_documents');
   
   //document types that can be searched  
-  define('SEARCH_TYPE_NONE', 'none');
+  //define('SEARCH_TYPE_NONE', 'none');
   define('SEARCH_TYPE_WIKI', 'wiki');
   define('SEARCH_TYPE_FORUM', 'forum');
   define('SEARCH_TYPE_GLOSSARY', 'glossary');
@@ -26,6 +26,8 @@
         $ret[$key] = $value;
       } //if
     } //foreach
+    
+    sort($ret);
     
     return $ret;
   } //search_get_document_types

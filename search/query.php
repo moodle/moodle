@@ -21,7 +21,7 @@
    *   All articles written by Helen Foster
    *   
    * */
-    
+
   require_once('../config.php');
   require_once("$CFG->dirroot/search/lib.php"); 
     
@@ -29,8 +29,61 @@
   if ($check = search_check_php5()) {      
     require_once("$CFG->dirroot/search/querylib.php");    
     
-    $query_string = optional_param('query_string', '', PARAM_CLEAN);
-    $page_number  = optional_param('page', 1, PARAM_INT);
+    $advanced     = (optional_param('a', '0', PARAM_INT) == '1') ? true : false;   
+    $pages        = (optional_param('p', '0', PARAM_INT) == '1') ? true : false;
+    $query_string = optional_param('query_string', '', PARAM_CLEAN); 
+      
+    if ($pages && isset($_SESSION['search_advanced_query'])) {
+      $adv = unserialize($_SESSION['search_advanced_query']);
+    } else if ($advanced) {
+      unset($_SESSION['search_advanced_query']);
+      session_unregister('search_advanced_query');
+            
+      $adv->mustappear  = trim(optional_param('mustappear', '', PARAM_CLEAN), $chars);
+      $adv->notappear   = trim(optional_param('notappear', '', PARAM_CLEAN), $chars);
+      $adv->canappear   = trim(optional_param('canappear', '', PARAM_CLEAN), $chars);
+      $adv->module      = optional_param('module', '', PARAM_CLEAN);
+      $adv->title       = trim(optional_param('title', '', PARAM_CLEAN), $chars);
+      $adv->author      = trim(optional_param('author', '', PARAM_CLEAN), $chars);
+    } //else      
+    
+    if ($advanced) {
+      $chars = ' \t\n\r\0\x0B,;';
+      $query_string = '';      
+      
+      $module_types = array_merge(array('All'), array_values(search_get_document_types()));      
+      $adv->module = in_array($adv->module, $module_types) ? $adv->module : 'All';
+      
+      if (strlen(trim($adv->mustappear)) > 0) {
+        $query_string  = ' +'.implode(' +', preg_split("/[\s,;]+/", $adv->mustappear));
+      } //if
+      
+      if (strlen(trim($adv->notappear)) > 0) {
+        $query_string .= ' -'.implode(' -', preg_split("/[\s,;]+/", $adv->notappear));
+      } //if
+      
+      if (strlen(trim($adv->canappear)) > 0) { 
+        $query_string .= ' '.implode(' ', preg_split("/[\s,;]+/", $adv->canappear));
+      } //if
+      
+      if ($adv->module != 'All') {
+        $query_string .= ' +doctype:'.$adv->module;
+      } //if
+      
+      if (strlen(trim($adv->title)) > 0) {
+        $query_string .= ' +title:'.implode(' +title:', preg_split("/[\s,;]+/", $adv->title));
+      } //if
+      
+      if (strlen(trim($adv->author)) > 0) {
+        $query_string .= ' +author:'.implode(' +author:', preg_split("/[\s,;]+/", $adv->author));
+      } //if     
+      
+      if (!empty($query_string)) {
+        $_SESSION['search_advanced_query'] = serialize($adv);
+      } //if 
+    } //if
+    
+    $page_number  = optional_param('page', 1, PARAM_INT);        
     
     if ($page_number < 1) {
       $page_number = 1;
@@ -60,19 +113,94 @@
   print_heading($strquery);
   
   print_simple_box_start('center', '', '', 20);
+      
+  $vars = get_object_vars($adv);
+  
+  foreach ($vars as $key => $value) {
+    $adv->$key = stripslashes(htmlentities($value));
+  } //foreach  
   
 ?>
 
 <form name="query" method="get" action="query.php">
-  <input type="text" name="query_string" length="50" value="<?php print stripslashes(htmlentities($query_string)) ?>"/>
-  &nbsp;<input type="submit" value="Search"/>&nbsp;&nbsp;<a href="query.php?advanced=yes">Advanced search</a>
-  <a href="stats.php">Statistics</a>
+  <?php if (!$advanced) { ?>
+    <input type="text" name="query_string" length="50" value="<?php print stripslashes(htmlentities($query_string)) ?>"/>
+    &nbsp;<input type="submit" value="Search"/>&nbsp;&nbsp; 
+    <a href="query.php?a=1">Advanced search</a>
+    <a href="stats.php">Statistics</a>
+  <?php } else {
+    print_simple_box_start('center', '', 'white', 10);    
+  ?>    
+    <input type="hidden" name="a" value="<?php print $advanced; ?>"/>
+     
+    <table border="0" cellpadding="3" cellspacing="3">
+    
+    <tr>
+      <td width="240">These words must appear:</td>
+      <td><input type="text" name="mustappear" length="50" value="<?php print $adv->mustappear; ?>"/></td>
+    </tr>
+    
+    <tr>
+      <td>These words must not appear:</td>
+      <td><input type="text" name="notappear" length="50" value="<?php print $adv->notappear; ?>"/></td>
+    </tr>
+
+    <tr>
+      <td>These words help improve rank:</td>
+      <td><input type="text" name="canappear" length="50" value="<?php print $adv->canappear; ?>"/></td>
+    </tr>    
+    
+    <tr>
+      <td>Which modules to search?:</td>
+      <td>
+        <select name="module">          
+          <?php foreach($module_types as $mod) {
+            if ($mod == $adv->module) {
+              print "<option value='$mod' selected>$mod</option>\n";
+            } else {
+              print "<option value='$mod'>$mod</option>\n";
+            } //else
+          } ?>
+        </select>
+      </td>
+    </tr>
+    
+    <tr>
+      <td>Words in title:</td>
+      <td><input type="text" name="title" length="50" value="<?php print $adv->title; ?>"/></td>
+    </tr>
+    
+    <tr>
+      <td>Author name:</td>
+      <td><input type="text" name="author" length="50" value="<?php print $adv->author; ?>"/></td>
+    </tr>
+    
+    <tr>
+      <td colspan="3" align="center"><br><input type="submit" value="Search"/></td>
+    </tr>
+    
+    <tr>
+      <td colspan="3" align="center">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr>
+            <td><a href="query.php">Normal search</a>&nbsp;</td>
+            <td>&nbsp;<a href="stats.php">Statistics</a></td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+    </table>           
+  <?php
+    print_simple_box_end();
+  } //if
+  ?>
 </form>
 
 <br>
 
-<div align="center">
 <?php
+
+  print '<div align="center">';
   print 'Searching: ';
   
   if ($sq->is_valid_index()) {
@@ -86,10 +214,9 @@
   if (!$sq->is_valid_index() and isadmin()) {
     print "<br><br>Admin: There appears to be no index, click <a href='indexersplash.php'>here</a> to create one.";
   } //if
-?>
-</div>
 
-<?php  
+  print '</div>';
+
   print_simple_box_end();
   
   if ($sq->is_valid()) {
@@ -103,9 +230,13 @@
     print $hit_count." results returned for '".stripslashes($query_string)."'.";
     print "<br>";
       
-    if ($hit_count > 0) {
-      $page_links = $sq->page_numbers();
+    if ($hit_count > 0) {     
+      $page_links = $sq->page_numbers();     
       $hits       = $sq->results();
+      
+      if ($advanced) {
+        $page_links = preg_replace("/query_string=[^&]+/", 'a=1&p=1', $page_links);
+      } //if
         
       print "<ol>";
         

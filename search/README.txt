@@ -1,3 +1,30 @@
+2006/08/14
+----------
+First revision of the advanced search page completed. Functional,
+but needs a date search field still.
+
+2006/08/02
+----------
+Added resource search type, and the ability to specify custom 'virtual'
+models to search - allowing for non-module specific information to be
+indexed. Specify the extra search types to use in lib.php.
+
+2006/07/28
+----------
+Added delete logic to documents; the moodle database log is checked
+and any found delete events are used to remove the referenced documents
+from the database table and search index.
+
+Added database table name constant to lib.php, must change files using
+the static table name.
+
+Changed documents to use 'docid' instead of 'id' to reference the moodle
+instance id, since Zend Search adds it's own internal 'id' field. Noticed
+this whilst working on deletions.
+
+Added some additional fields to the permissions checking method, must still
+implement it though.
+
 2006/07/25
 ----------
 Query logic moved into the SearchQuery class in querylib.php. Should be able
