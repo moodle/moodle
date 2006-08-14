@@ -467,13 +467,6 @@
 
     $table->data[] = array('<strong><a href="courses.php">'.get_string('courses').'</a></strong>', $coursedata);
     
-    $table->data[] = array('<strong><a href="../files/index.php?id='.$site->id.'">'.get_string('sitefiles').'</a></strong>',
-                           '<div class="explanation">'.get_string('adminhelpsitefiles').'</div>');
-    $table->data[] = array('<strong><a href="stickyblocks.php">'.get_string('stickyblocks','admin').'</a></strong>',
-                           '<div class="explanation">'.get_string('adminhelpstickyblocks').'</div>');
-    $table->data[] = array('<strong><a href="report.php">'.get_string('reports').'</a></strong>', 
-                           '<div class="explanation">'.get_string('adminhelpreports').'</div>');
-
     $miscdata = '<div class="adminlink"><a href="../files/index.php?id='.$site->id.'">'.get_string('sitefiles').
                  '</a> - <span class="explanation">'.get_string('adminhelpsitefiles').'</span></div>';
     $miscdata .= '<div class="adminlink"><a href="stickyblocks.php">'.get_string('stickyblocks','admin').
