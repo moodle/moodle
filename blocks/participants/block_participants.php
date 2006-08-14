@@ -51,7 +51,7 @@ class block_participants extends block_list {
             isteacher(SITEID)) {
 
             $this->content->items[] = '<a title="'.get_string('listofallpeople').'" href="'.
-                                      $CFG->wwwroot.'/user/index.php?id='.$this->instance->pageid.'&amp;contextid='.$context->id.'">'.get_string('participants').'</a>';
+                                      $CFG->wwwroot.'/user/index.php?contextid='.$context->id.'">'.get_string('participants').'</a>';
             $this->content->icons[] = '<img src="'.$CFG->pixpath.'/i/users.gif" height="16" width="16" alt="" />';
         }
 
