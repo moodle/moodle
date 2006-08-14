@@ -123,7 +123,7 @@ function has_capability($capability, $context=NULL, $userid=NULL) {
     if ($userid && $userid != $USER->id) { // loading other user's capability
         $capabilities = load_user_capability($capability, $context, $userid);
     } else {
-        $capabilities = $USER->capabilities;  
+        $capabilities = empty($USER->capabilities) ? NULL : $USER->capabilities;  
     }
     
     if (empty($context)) {                 // Use default CONTEXT if none specified
