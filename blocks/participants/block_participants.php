@@ -11,7 +11,7 @@ class block_participants extends block_list {
         global $USER, $CFG;
 	
 		// the following 3 lines is need to pass _self_test();
-		if (!$this->instance->pageid) {
+		if (empty($this->instance->pageid)) {
 			return '';  
 		}
 			
