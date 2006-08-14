@@ -93,7 +93,7 @@
                 $forum->visible = instance_is_visible("forum", $forum);
                 $cm = get_coursemodule_from_instance("forum", $forum->id, $course->id);
                 $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-                if (!$forum->visible and !has_capability('moodle/course:viewhiddenactivities', $context->id)) {
+                if (!$forum->visible and !has_capability('moodle/course:viewhiddenactivities', $context)) {
                     if (isset($forum->keyreference)) {
                         unset($learningforums[$forum->keyreference]);
                     }
@@ -169,7 +169,7 @@
 
 
             // this is potentially wrong logic. could possibly check for if user has the right to hmmm
-            if ($groupmode == SEPARATEGROUPS and !has_capability('moodle/site:accessallgroups', $context->id)) {
+            if ($groupmode == SEPARATEGROUPS and !has_capability('moodle/site:accessallgroups', $context)) {
                 $count = count_records_select("forum_discussions", "forum = '$forum->id' AND (groupid = '$currentgroup' OR groupid = '-1')");
             } else {
                 $count = count_records("forum_discussions", "forum", "$forum->id");
@@ -177,7 +177,7 @@
 
             if ($usetracking) {
                 if (($forum->trackingtype == FORUM_TRACKING_ON) || !isset($untracked[$forum->id])) {
-                    $groupid = ($groupmode==SEPARATEGROUPS && !has_capability('moodle/site:accessallgroups', $context->id)) ? $currentgroup : false;
+                    $groupid = ($groupmode==SEPARATEGROUPS && !has_capability('moodle/site:accessallgroups', $context)) ? $currentgroup : false;
                     $unread = forum_tp_count_forum_unread_posts($USER->id, $forum->id, $groupid);
                     if ($unread > 0) {
                         $unreadlink = '<span class="unread"><a href="view.php?f='.$forum->id.'">'.$unread.'</a>';
@@ -237,7 +237,7 @@
                 if (forum_is_forcesubscribed($forum->id)) {
                     $sublink = $stryes;
                 } else {
-                    if ($groupmode and !has_capability('moodle/site:accessallgroups', $context->id) and !mygroupid($course->id)) {
+                    if ($groupmode and !has_capability('moodle/site:accessallgroups', $context) and !mygroupid($course->id)) {
                         $sublink = $strno;   // Can't subscribe to a group forum (not in a group)
                         $forumlink = format_string($forum->name,true);
                     } else {
@@ -319,7 +319,7 @@
                 $forum->visible = instance_is_visible("forum", $forum);
                 $cm = get_coursemodule_from_instance("forum", $forum->id, $course->id);
  
-                if ($groupmode == SEPARATEGROUPS and !has_capability('moodle/site:accessallgroups', $context->id)) {
+                if ($groupmode == SEPARATEGROUPS and !has_capability('moodle/site:accessallgroups', $context)) {
                     $count = count_records("forum_discussions", "forum", "$forum->id", "groupid", $currentgroup);
                 } else {
                     $count = count_records("forum_discussions", "forum", "$forum->id");

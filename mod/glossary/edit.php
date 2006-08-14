@@ -38,7 +38,7 @@ if ($CFG->dbtype == 'postgres7' ) {
         $lcase = 'lcase';
 }
 
-if (!$glossary->studentcanpost && !has_capability('mod/glossary:manageentries', $context->id)) {
+if (!$glossary->studentcanpost && !has_capability('mod/glossary:manageentries', $context)) {
     error("You can't add/edit entries to this glossary!");
 }
 if ( $confirm ) {
@@ -67,7 +67,7 @@ if ( $confirm ) {
     $newentry->timemodified = $timenow;
     $newentry->approved = 0;
     $newentry->aliases = "";
-    if ( $glossary->defaultapproval or has_capability('mod/glossary:approve', $context->id) ) {
+    if ( $glossary->defaultapproval or has_capability('mod/glossary:approve', $context) ) {
         $newentry->approved = 1;
     }
 
@@ -121,7 +121,7 @@ if ( $confirm ) {
         //Perhaps too much security? Anyway thanks to skodak (Bug 1823)
         $old = get_record('glossary_entries', 'id', $e);
         $ineditperiod = ((time() - $old->timecreated <  $CFG->maxeditingtime) || $glossary->editalways);
-        if ( (!$ineditperiod  || $USER->id != $old->userid) and !has_capability('mod/glossary:manageentries', $context->id) and $e) {
+        if ( (!$ineditperiod  || $USER->id != $old->userid) and !has_capability('mod/glossary:manageentries', $context) and $e) {
             if ( $USER->id != $old->userid ) {
                 error("You can't edit other people's entries!");
             } elseif (!$ineditperiod) {
@@ -170,7 +170,7 @@ if ( $confirm ) {
         $newentry->userid = $USER->id;
         $newentry->timecreated = $timenow;
         $newentry->sourceglossaryid = 0;
-        $newentry->teacherentry = has_capability('mod/glossary:manageentries', $context->id);
+        $newentry->teacherentry = has_capability('mod/glossary:manageentries', $context);
 
         $permissiongranted = 1;
         if ( !$glossary->allowduplicatedentries ) {
@@ -237,7 +237,7 @@ if ( $confirm ) {
         $newentry->definition = $form->definition;
         $newentry->format = $form->format;
         $newentry->timemodified = time();
-        $newentry->approved = $glossary->defaultapproval or has_capability('mod/glossary:approve', context->id);
+        $newentry->approved = $glossary->defaultapproval or has_capability('mod/glossary:approve', $context);
         $newentry->usedynalink = $form->usedynalink;
         $newentry->casesensitive = $form->casesensitive;
         $newentry->fullmatch = $form->fullmatch;
@@ -308,7 +308,7 @@ print_header_simple(format_string($glossary->name), "",
               "", true, "", navmenu($course, $cm));
 
 $ineditperiod = ((time() - $newentry->timecreated <  $CFG->maxeditingtime) || $glossary->editalways);
-if ( (!$ineditperiod  || $USER->id != $newentry->userid) and !has_capability('mod/glossary:manageentries', $context->id) and $e) {
+if ( (!$ineditperiod  || $USER->id != $newentry->userid) and !has_capability('mod/glossary:manageentries', $context) and $e) {
     if ( $USER->id != $newentry->userid ) {
         error("You can't edit other people's entries!");
     } elseif (!$ineditperiod) {
@@ -332,7 +332,7 @@ $tab = GLOSSARY_ADDENTRY_VIEW;
 include("tabs.html");
 
 if (!$e) {
-    has_capability('glossary_write', $context->id, true);  
+    require_capability('glossary_write', $context);  
 }
 
 include("edit.html");

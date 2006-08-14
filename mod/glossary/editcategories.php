@@ -44,7 +44,7 @@
     require_login($course->id, false);
 
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-    has_capability('mod/glossary:managecategories', $context->id, true);
+    require_capability('mod/glossary:managecategories', $context);
 
     $strglossaries   = get_string("modulenameplural", "glossary");
     $strglossary     = get_string("modulename", "glossary");

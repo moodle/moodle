@@ -375,7 +375,7 @@ function forum_menu_list($course)  {
                 if (!isset($forum->visible)) {
                     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
                     if (!instance_is_visible("forum", $forum) &&
-                            !has_capability('moodle/course:viewhiddenactivities', $context->id)) {
+                            !has_capability('moodle/course:viewhiddenactivities', $context)) {
                         continue;
                     }
                 }

@@ -556,7 +556,7 @@ function data_add_record($data, $groupid=0){
     $record->dataid = $data->id;
     $record->groupid = $groupid;
     $record->timecreated = $record->timemodified = time();
-    if (has_capability('mod/data:approve', $context->id)) {
+    if (has_capability('mod/data:approve', $context)) {
     //if (isteacher($data->course)) {
         $record->approved = 1;
     } else {
@@ -879,7 +879,7 @@ function data_print_template($template, $records, $data, $search='',$page=0, $re
     /// Replacing special tags (##Edit##, ##Delete##, ##More##)
         $patterns[]='/\#\#Edit\#\#/i';
         $patterns[]='/\#\#Delete\#\#/i';
-        if (has_capability('mod/data:manageentries', $context->id) or data_isowner($record->id)) {
+        if (has_capability('mod/data:manageentries', $context) or data_isowner($record->id)) {
             $replacement[] = '<a href="'.$CFG->wwwroot.'/mod/data/edit.php?d='
                              .$data->id.'&amp;rid='.$record->id.'&amp;sesskey='.sesskey().'"><img src="'.$CFG->pixpath.'/t/edit.gif" height="11" width="11" border="0" alt="'.get_string('edit').'" /></a>';
             $replacement[] = '<a href="'.$CFG->wwwroot.'/mod/data/view.php?d='
@@ -899,7 +899,7 @@ function data_print_template($template, $records, $data, $search='',$page=0, $re
                                '&amp;course='.$data->course.'">'.fullname($record).'</a>';
 
         $patterns[]='/\#\#Approve\#\#/i';
-        if (has_capability('mod/data:approve', $context->id) && ($data->approval) && (!$record->approved)){
+        if (has_capability('mod/data:approve', $context) && ($data->approval) && (!$record->approved)){
             $replacement[] = '<a href="'.$CFG->wwwroot.'/mod/data/view.php?d='.$data->id.'&amp;approve='.$record->id.'&amp;sesskey='.sesskey().'"><img src="'.$CFG->pixpath.'/i/approve.gif" height="11" width="11" border="0" alt="'.get_string('approve').'" /></a>';
         } else {
             $replacement[] = '';
@@ -998,15 +998,15 @@ function data_print_ratings($data, $record) {
     if ($data->ratings and !empty($USER->id)) {
         if ($ratings->scale = make_grades_menu($data->scale)) {
             $ratings->assesspublic = $data->assesspublic;
-            $ratings->allow = ($data->assessed != 2 or has_capability('mod/data:rate', $context->id));
+            $ratings->allow = ($data->assessed != 2 or has_capability('mod/data:rate', $context));
             if ($ratings->allow) {
                 echo '<div class="ratings" align="center">';
                 echo '<form name="form" method="post" action="rate.php">';
                 $useratings = true;
 
                 if ($useratings) {
-                    if ((has_capability('mod/data:rate', $context->id) or $ratings->assesspublic) and !data_isowner($record->id)) {
-                        data_print_ratings_mean($record->id, $ratings->scale, has_capability('mod/data:rate', $context->id));
+                    if ((has_capability('mod/data:rate', $context) or $ratings->assesspublic) and !data_isowner($record->id)) {
+                        data_print_ratings_mean($record->id, $ratings->scale, has_capability('mod/data:rate', $context));
                         if (!empty($ratings->allow)) {
                             echo '&nbsp;';
                             data_print_rating_menu($record->id, $USER->id, $ratings->scale);
@@ -1205,7 +1205,7 @@ function data_print_comment($data, $comment, $page=0) {
 /// Commands
 
     echo '<div class="commands">';
-    if (data_isowner($comment->recordid) or has_capability('mod/data:managecomments', $context->id)) {
+    if (data_isowner($comment->recordid) or has_capability('mod/data:managecomments', $context)) {
             echo '<a href="'.$CFG->wwwroot.'/mod/data/comment.php?rid='.$comment->recordid.'&amp;mode=edit&amp;commentid='.$comment->id.'&amp;page='.$page.'">'.$stredit.'</a>';
             echo '| <a href="'.$CFG->wwwroot.'/mod/data/comment.php?rid='.$comment->recordid.'&amp;mode=delete&amp;commentid='.$comment->id.'&amp;page='.$page.'">'.$strdelete.'</a>';
     }

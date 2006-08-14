@@ -310,8 +310,8 @@
     /****************** submission of assignment by teacher only***********************/
     elseif ($action == 'submitassignment') {
 
-        if (!has_capability('mod/exercise:assess', $context->id)) {
-            //error("Only teachers with editing permissions can do this.");
+        if (!has_capability('mod/exercise:assess', $context)) {
+            error("Only teachers with editing permissions can do this.");
         }
 
         exercise_print_assignment_info($exercise);

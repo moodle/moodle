@@ -18,7 +18,7 @@ if (!$referrer = optional_param('referrer','', PARAM_URL)) {
 
 
 $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
-if (!has_capability('moodle/blog:readentries', $context->id)) {
+if (!has_capability('moodle/blog:readentries', $context)) {
     error(get_string('nopost', 'blog'), $referrer);
 }
 
@@ -28,7 +28,7 @@ if ($editid = optional_param('editid', 0, PARAM_INT)) {
 
     $blogEntry = get_record('post', 'id', $editid);
 
-    if (!blog_user_can_edit_post($blogEntry, $context->id)) {
+    if (!blog_user_can_edit_post($blogEntry, $context)) {
         error( get_string('notallowedtoedit', 'blog'), $CFG->wwwroot .'/login/index.php');
     }
 }
@@ -155,7 +155,7 @@ function do_delete($postid) {
     // check ownership
     $blogEntry = get_record('post','id',$postid);
 
-    if (blog_user_can_edit_post($blogEntry, $context->id)) {
+    if (blog_user_can_edit_post($blogEntry, $context->id)) {          /// XXX TODO
         
         if (delete_records('post','id',$postid)) {
             //echo "bloginfo_arg:"; //debug

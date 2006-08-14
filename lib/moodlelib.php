@@ -1606,7 +1606,7 @@ function require_login($courseid=0, $autologinguest=true, $cm=null) {
         
         $context = get_context_instance(CONTEXT_COURSE, $courseid);
 
-        if (has_capability('moodle/course:view', $context->id)) {
+        if (has_capability('moodle/course:view', $context)) {
             if (isset($USER->realuser)) {   // Make sure the REAL person can also access this course
                 if (!isteacher($courseid, $USER->realuser)) {
                     print_header();
@@ -1965,21 +1965,19 @@ function isloggedin() {
  * @return bool
  */
 function isadmin($userid=0) {
-    global $USER;
+    global $USER, $CFG;
+
     static $admins, $nonadmins;
 
-    if (isset($CFG->rolesactive) && $CFG->rolesactive ===1) {
+    if (isset($CFG->rolesactive) && $CFG->rolesactive == 1) {
 
-        if ($courseid == 0) {
-            $context = get_context_instance(CONTEXT_SYSTEM, SITEID);  
-        } else {
-            $context = get_context_instance(CONTEXT_COURSE, $courseid);
-        }
+
+        $context = get_context_instance(CONTEXT_SYSTEM, SITEID);  
         
         if (!$userid) {
-            return has_capability('moodle/legacy:admin', $context->id);
+            return has_capability('moodle/legacy:admin', $context);
         } else {
-            return has_capability('moodle/legacy:admin', $context->id, false, $userid);
+            return has_capability('moodle/legacy:admin', $context, false, $userid);
         }
       
     }
@@ -2023,6 +2021,7 @@ function isadmin($userid=0) {
  * @param bool $includeadmin If true this function will return true when it encounters an admin user.
  * @return bool
  */
+
 function isteacher($courseid=0, $userid=0, $includeadmin=true) {
 /// Is the user able to access this course as a teacher?
     global $USER, $CFG;
@@ -2036,13 +2035,13 @@ function isteacher($courseid=0, $userid=0, $includeadmin=true) {
         }
     
         if (!$userid) {
-            return has_capability('moodle/legacy:teacher', $context->id);
+            return has_capability('moodle/legacy:teacher', $context);
         } else {
-            return has_capability('moodle/legacy:teacher', $context->id, false, $userid);
+            return has_capability('moodle/legacy:teacher', $context, $userid);
         }  
     }
 
-    // Old code follows, will be removed before 1.7 because it shouldn't run
+    // Old code follows, will be removed before 1.7 because it shouldn't run   XXX TODO
 
     if (empty($userid)) {                           // we are relying on $USER
         if (empty($USER) or empty($USER->id)) {     // not logged in so can't be a teacher
@@ -2125,9 +2124,9 @@ function isteacheredit($courseid, $userid=0, $ignorestudentview=false) {
         }
         
         if (!$userid) {
-            return has_capability('moodle/legacy:edittingteacher', $context->id);
+            return has_capability('moodle/legacy:edittingteacher', $context);
         } else {
-            return has_capability('moodle/legacy:edittingteacher', $context->id, false, $userid);
+            return has_capability('moodle/legacy:edittingteacher', $context, false, $userid);
         }
       
     }
@@ -2172,9 +2171,9 @@ function iscreator ($userid=0) {
         }
         
         if (!$userid) {
-            return has_capability('moodle/legacy:coursecreator', $context->id);
+            return has_capability('moodle/legacy:coursecreator', $context);
         } else {
-            return has_capability('moodle/legacy:coursecreator', $context->id, false, $userid);
+            return has_capability('moodle/legacy:coursecreator', $context, false, $userid);
         }
       
     }
@@ -2216,9 +2215,9 @@ function isstudent($courseid, $userid=0) {
         }
         
         if (!$userid) {
-            return has_capability('moodle/legacy:student', $context->id);
+            return has_capability('moodle/legacy:student', $context);
         } else {
-            return has_capability('moodle/legacy:student', $context->id, false, $userid);
+            return has_capability('moodle/legacy:student', $context, false, $userid);
         }
       
     }

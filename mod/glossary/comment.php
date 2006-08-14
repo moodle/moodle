@@ -74,10 +74,10 @@
 /// Input section
 
     if ( $action == 'delete' ) {
-        if (($comment->userid <> $USER->id) and !has_capability('mod/glossary:managecomments', $context->id)) {
+        if (($comment->userid <> $USER->id) and !has_capability('mod/glossary:managecomments', $context)) {
             error('You can\'t delete other people\'s comments!');
         }
-        if (!$glossary->allowcomments && !has_capability('mod/glossary:managecomments', $context->id)) {
+        if (!$glossary->allowcomments && !has_capability('mod/glossary:managecomments', $context)) {
                 error('You can\'t delete comments in this glossary!');
             }
         if ( $confirm ) {
@@ -113,7 +113,7 @@
             print_simple_box_end();
         }
     } else {
-        if (!$glossary->allowcomments && !has_capability('mod/glossary:comment', $context->id)) {
+        if (!$glossary->allowcomments && !has_capability('mod/glossary:comment', $context)) {
             error('You can\'t add/edit comments to this glossary!');
         }
         if ( $action == 'edit' ) {
@@ -123,7 +123,7 @@
                 $timetocheck = $comment->timemodified;
             }
             $ineditperiod = ((time() - $timetocheck <  $CFG->maxeditingtime) || $glossary->editalways);
-            if ( (!$ineditperiod || $USER->id != $comment->userid) and !has_capability('mod/glossary:comment', $context->id) and $cid) {
+            if ( (!$ineditperiod || $USER->id != $comment->userid) and !has_capability('mod/glossary:comment', $context) and $cid) {
                 if ( $USER->id != $comment->userid ) {
                     error('You can\'t edit other people\'s comments!');
                 } elseif (!$ineditperiod) {

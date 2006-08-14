@@ -12,7 +12,7 @@ $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
 switch ($mode) {
     case 'addofficial':
         /// Adding official tags.
-        if (!has_capability('moodle/blog:manageofficialtags', $context->id) || !confirm_sesskey()) {
+        if (!has_capability('moodle/blog:manageofficialtags', $context) || !confirm_sesskey()) {
             die('you can not add official tags');
         }
         
@@ -39,7 +39,7 @@ switch ($mode) {
     case 'addpersonal':
         /// Everyone can add personal tags as long as they can write blog entries.
         if (!confirm_sesskey() ||
-                !has_capability('moodle/blog:writeentries', $context->id) ||
+                !has_capability('moodle/blog:writeentries', $context) ||
                 !isset($USER->id)) {
             error ('you can not add tags');
         }
@@ -78,7 +78,7 @@ switch ($mode) {
 
                 // You can only delete your own tags, or you have to have the
                 // moodle/blog:manageofficialtags capability.
-                if (!has_capability('moodle/blog:manageofficialtags', $context->id)
+                if (!has_capability('moodle/blog:manageofficialtags', $context)
                             && $USER->id != $blogtag->userid) {
                     notify(get_string('norighttodeletetag','blog', $blogtag->text));
                     continue;
@@ -86,7 +86,7 @@ switch ($mode) {
 
                 // You can only delete tags that are referenced if you have
                 // the moodle/blog:manageofficialtags capability.
-                if (!has_capability('moodle/blog:manageofficialtags', $context->id)
+                if (!has_capability('moodle/blog:manageofficialtags', $context)
                             && get_records('blog_tag_instance','tagid', $tag)) {
                     notify('tag is used by other users, can not delete!');
                     continue;

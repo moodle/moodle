@@ -331,7 +331,7 @@ function forum_cron() {
                     if ($groupmode) {    // Look for a reason not to send this email
                         
                         if (!has_capability('moodle/site:accessallgroups',
-                                        $modcontext->id, false, $userto->id)) {
+                                        $modcontext, false, $userto->id)) {
                             if (!empty($group->id)) {
                                 if (!ismember($group->id, $userto->id)) {
                                     continue;
@@ -636,7 +636,7 @@ function forum_make_mail_text($course, $forum, $discussion, $post, $userfrom, $u
         error('Course Module ID was incorrect');
     }
     $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
-    $viewfullnames = has_capability('mod/site:viewfullnames', $modcontext->id);
+    $viewfullnames = has_capability('mod/site:viewfullnames', $modcontext);
     
     $by = New stdClass;
     $by->name = fullname($userfrom, $viewfullnames);
@@ -1134,7 +1134,7 @@ function forum_search_posts($searchterms, $courseid, $page=0, $recordsperpage=50
     $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);  // Will need to fix this.
     
     // Take into account forum visibility.
-    if (has_capability('moodle/course:viewhiddenactivities', $coursecontext->id)) {
+    if (has_capability('moodle/course:viewhiddenactivities', $coursecontext)) {
         $onlyvisible = '';
         $onlyvisibletable = '';
     } else {
@@ -1147,7 +1147,7 @@ function forum_search_posts($searchterms, $courseid, $page=0, $recordsperpage=50
     }
     
     // Take into account user groups.
-    if (has_capability('moodle/site:accessallgroups', $modcontext->id)) {
+    if (has_capability('moodle/site:accessallgroups', $modcontext)) {
         $selectgroup = '';
         $coursetable = '';
         
@@ -1459,7 +1459,7 @@ function forum_get_discussions($forum="0", $forumsort="d.timemodified DESC",
         }
         $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
         
-        if (!has_capability('mod/forum:viewhiddentimedposts', $modcontext->id)) {
+        if (!has_capability('mod/forum:viewhiddentimedposts', $modcontext)) {
             $now = time();
             $timelimit = " AND ((d.timestart = 0 OR d.timestart <= '$now') AND (d.timeend = 0 OR d.timeend > '$now')";
             if (!empty($USER->id)) {
@@ -1712,7 +1712,7 @@ function forum_make_mail_post(&$post, $user, $touser, $course,
     }
     $output .= '<div class="subject">'.format_string($post->subject).'</div>';
 
-    $fullname = fullname($user, has_capability('moodle/site:viewfullnames', $modcontext->id));
+    $fullname = fullname($user, has_capability('moodle/site:viewfullnames', $modcontext));
     $by->name = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.$course->id.'">'.$fullname.'</a>';
     $by->date = userdate($post->modified, '', $touser->timezone);
     $output .= '<div class="author">'.get_string('bynameondate', 'forum', $by).'</div>';
@@ -2798,14 +2798,14 @@ function forum_user_can_post_discussion($forum, $currentgroup=false, $groupmode=
     }
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
-    if (!has_capability('mod/forum:startdiscussion', $context->id)) {
+    if (!has_capability('mod/forum:startdiscussion', $context)) {
         return false;
     }
 
     if ($forum->type == "eachuser") {
         return (!forum_user_has_posted_discussion($forum->id, $USER->id));
     } else if ($currentgroup) {
-        return (has_capability('moodle/site:accessallgroups', $context->id)
+        return (has_capability('moodle/site:accessallgroups', $context)
                 or (ismember($currentgroup) and $forum->open == 2));
     } else {
         //else it might be group 0 in visible mode
@@ -2838,9 +2838,9 @@ function forum_user_can_post($forum, $user=NULL) {
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
     if (isset($user)) {
-        $canreply = has_capability('mod/forum:replypost', $context->id, false, $user->id);
+        $canreply = has_capability('mod/forum:replypost', $context, false, $user->id);
     } else {
-        $canreply = has_capability('mod/forum:replypost', $context->id, false);
+        $canreply = has_capability('mod/forum:replypost', $context, false);
     }
 
     return $canreply;
@@ -2857,12 +2857,12 @@ function forum_user_can_view_post($post, $course, $cm, $forum, $discussion, $use
     }
     
     $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
-    if (!has_capability('mod/forum:viewdiscussion', $modcontext->id)) {
+    if (!has_capability('mod/forum:viewdiscussion', $modcontext)) {
         return false;
     }
     
     $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
-    if (!has_capability('moodle/course:view', $coursecontext->id)) {
+    if (!has_capability('moodle/course:view', $coursecontext)) {
         return false;
     }
 
@@ -2870,7 +2870,7 @@ function forum_user_can_view_post($post, $course, $cm, $forum, $discussion, $use
     if ($discussion->groupid > 0) {
         if ($cm->groupmode == SEPARATEGROUPS) {
             return ismember($discussion->groupid) ||
-                    has_capability('moodle/site:accessallgroups', $modcontext->id);
+                    has_capability('moodle/site:accessallgroups', $modcontext);
         }
     }
     return true;
@@ -2942,7 +2942,7 @@ function forum_user_can_see_post($forum, $discussion, $post, $user=NULL) {
         $user = $USER;
     }
 
-    if (!has_capability('mod/forum:viewdiscussion', $context->id, false, $user->id)) {
+    if (!has_capability('mod/forum:viewdiscussion', $context, false, $user->id)) {
         return false;
     }
     
@@ -2951,7 +2951,7 @@ function forum_user_can_see_post($forum, $discussion, $post, $user=NULL) {
         
         return (forum_user_has_posted($forum->id,$discussion->id,$user->id) ||
                 $firstpost->id == $post->id ||
-                has_capability('mod/forum:viewqandawithoutposting', $context->id, false, $user->id));
+                has_capability('mod/forum:viewqandawithoutposting', $context, false, $user->id));
     }
     return true;
 }
@@ -3009,7 +3009,7 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions=5, $dis
     }
 
     if (!$currentgroup and ($groupmode != SEPARATEGROUPS or 
-                has_capability('moodle/site:accessallgroups', $context->id)) ) {
+                has_capability('moodle/site:accessallgroups', $context)) ) {
         $visiblegroups = -1;
     } else {
         $visiblegroups = $currentgroup;
@@ -3334,7 +3334,7 @@ function forum_print_posts_threaded($parent, $courseid, $depth, $ratings, $reply
             error('Course Module ID was incorrect');
         }
         $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
-        $canviewfullnames = has_capability('mod/site:viewfullnames', $modcontext->id);
+        $canviewfullnames = has_capability('mod/site:viewfullnames', $modcontext);
         
         foreach ($posts as $post) {
 
@@ -3454,7 +3454,7 @@ function forum_get_recent_mod_activity(&$activities, &$index, $sincetime, $cours
     foreach ($posts as $post) {
         
         $modcontext = get_context_instance(CONTEXT_MODULE, $post->cmid);
-        $canviewallgroups = has_capability('moodle/site:accessallgroups', $modcontext->id);
+        $canviewallgroups = has_capability('moodle/site:accessallgroups', $modcontext);
         
         if ($groupid and ($post->groupid != -1 and $groupid != $post->groupid and !$canviewallgroups)) {
             continue;
@@ -4063,7 +4063,7 @@ function forum_check_throttling($forum) {
         error('Course Module ID was incorrect');
     }
     $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
-    if(!has_capability('mod/forum:throttlingapplies', $modcontext->id)) {
+    if(!has_capability('mod/forum:throttlingapplies', $modcontext)) {
         return true;
     }
 

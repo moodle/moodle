@@ -22,12 +22,8 @@
     
     require_login($course->id, false, $cm);
 
-    has_capability('mod/chat:chat',$context->id, true);
-    /*
-    if (isguest()) {
-        error('Guest does not have access to chat rooms');
-    }
-    */
+    require_capability('mod/chat:chat',$context);
+
     if (!$cm->visible and !isteacher($course->id)) {
         print_header();
         notice(get_string("activityiscurrentlyhidden"));

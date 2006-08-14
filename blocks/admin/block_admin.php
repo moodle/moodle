@@ -33,33 +33,33 @@ class block_admin extends block_list {
         global $CFG, $USER;
         
 		$context = get_context_instance(CONTEXT_SYSTEM, SITEID);
-        if (has_capability('moodle/site:config', $context->id)) {
+        if (has_capability('moodle/site:config', $context)) {
 
             $this->content->items[] = '<a href="'.$CFG->wwwroot.'/'.$CFG->admin.'/configure.php">'.get_string('configuration').'</a>';
             $this->content->icons[] = '<img src="'.$CFG->pixpath.'/i/admin.gif" alt="" />';
 		}
 		
-        if (has_capability('moodle/site:config', $context->id)) {
+        if (has_capability('moodle/site:config', $context)) {
             $this->content->items[] = '<a href="'.$CFG->wwwroot.'/'.$CFG->admin.'/users.php">'.get_string('users').'</a>';
             $this->content->icons[] = '<img src="'.$CFG->pixpath.'/i/users.gif" alt="" />';
         }
         
-		if (has_capability('moodle/site:backup', $context->id)) {
+		if (has_capability('moodle/site:backup', $context)) {
             $this->content->items[]='<a href="'.$CFG->wwwroot.'/backup/backup.php?id='.SITEID.'">'.get_string('backup').'</a>';
             $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/backup.gif" alt="" />';
 		}
 		
-		if (has_capability('moodle/site:restore', $context->id)) {
+		if (has_capability('moodle/site:restore', $context)) {
             $this->content->items[]='<a href="'.$CFG->wwwroot.'/files/index.php?id='.SITEID.'&amp;wdir=/backupdata">'.get_string('restore').'</a>';
             $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/restore.gif" alt="" />';
         }
 
-        if (has_capability('moodle/course:create', $context->id)) {
+        if (has_capability('moodle/course:create', $context)) {
             $this->content->items[] = '<a href="'.$CFG->wwwroot.'/course/index.php?edit=on&amp;sesskey='.sesskey().'">'.get_string('courses').'</a>';
             $this->content->icons[] = '<img src="'.$CFG->pixpath.'/i/course.gif" alt="" />';
         }
 
-        if (has_capability('moodle/site:config', $context->id)) {
+        if (has_capability('moodle/site:config', $context)) {
             $this->content->items[] = '<a href="'.$CFG->wwwroot.'/course/report/log/index.php?id='.SITEID.'">'.get_string('logs').'</a>';
             $this->content->icons[] = '<img src="'.$CFG->pixpath.'/i/log.gif" alt="" />';
 
@@ -111,7 +111,7 @@ class block_admin extends block_list {
 
             $isteacheredit = isteacheredit($this->instance->pageid);
 
-            if (has_capability('moodle/course:update', $context->id)) {
+            if (has_capability('moodle/course:update', $context)) {
             //if (isteacheredit($this->instance->pageid)) {
                 $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/edit.gif" alt="" />';
                 if (isediting($this->instance->pageid)) {
@@ -136,7 +136,7 @@ class block_admin extends block_list {
 	        $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/user.gif" alt="" />';
 
             /// always need a role assignment link
-            if (has_capability('moodle/role:assign', $context->id)) { 
+            if (has_capability('moodle/role:assign', $context)) { 
 				$this->content->items[]='<a href="'.$CFG->wwwroot.'/admin/roles/roleassignment.php?contextid='.$context->id.'">'.get_string('assignusers', 'roles').'</a>';
             	$this->content->icons[]='<img src="'.$CFG->pixpath.'/i/users.gif" alt="" />';         
 			}
@@ -152,12 +152,12 @@ class block_admin extends block_list {
                 $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/group.gif" alt="" />';
             }
 
-			if (has_capability('moodle/site:backup', $context->id)) { 
+			if (has_capability('moodle/site:backup', $context)) { 
             	$this->content->items[]='<a href="'.$CFG->wwwroot.'/backup/backup.php?id='.$this->instance->pageid.'">'.get_string('backup').'</a>';
             	$this->content->icons[]='<img src="'.$CFG->pixpath.'/i/backup.gif" alt="" />';
 			}
 			
-			if (has_capability('moodle/site:restore', $context->id)) {
+			if (has_capability('moodle/site:restore', $context)) {
 	            $this->content->items[]='<a href="'.$CFG->wwwroot.'/files/index.php?id='.$this->instance->pageid.'&amp;wdir=/backupdata">'.get_string('restore').'</a>';
 	            $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/restore.gif" alt="" />';
 			}
@@ -165,7 +165,7 @@ class block_admin extends block_list {
             $this->content->items[]='<a href="'.$CFG->wwwroot.'/course/import.php?id='.$this->instance->pageid.'">'.get_string('import').'</a>';
             $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/restore.gif" alt="" />';
             
-			if (has_capability('moodle/site:import', $context->id)) {
+			if (has_capability('moodle/site:import', $context)) {
 				$this->content->items[]='<a href="'.$CFG->wwwroot.'/course/reset.php?id='.$this->instance->pageid.'">'.get_string('reset').'</a>';
             	$this->content->icons[]='<img src="'.$CFG->pixpath.'/i/return.gif" alt="" />';
             }
@@ -176,7 +176,7 @@ class block_admin extends block_list {
             $this->content->items[]='<a href="'.$CFG->wwwroot.'/question/edit.php?courseid='.$this->instance->pageid.'&amp;clean=true">'.get_string('questions', 'quiz').'</a>';
             $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/questions.gif" alt="" />';
 
-			if (has_capability('moodle/course:managescales', $context->id)) {
+			if (has_capability('moodle/course:managescales', $context)) {
             	$this->content->items[]='<a href="scales.php?id='.$this->instance->pageid.'">'.get_string('scales').'</a>';
             	$this->content->icons[]='<img src="'.$CFG->pixpath.'/i/scales.gif" alt="" />';      
 			}

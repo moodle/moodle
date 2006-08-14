@@ -8,7 +8,7 @@
     if ($site = get_site()) {   // If false then this is a new installation
         require_login();
         $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
-        if (!has_capability('moodle/site:config', $context->id)) {
+        if (!has_capability('moodle/site:config', $context)) {
             error('Only the admin can use this page');
         }
     }

@@ -109,8 +109,8 @@
                 $realpost->userid = -1;
             }
 
-            if ( !(($realpost->userid == $USER->id && has_capability('mod/forum:replypost', $modcontext->id)) ||
-                        has_capability('mod/forum:editanypost', $modcontext->id)) ) {
+            if ( !(($realpost->userid == $USER->id && has_capability('mod/forum:replypost', $modcontext)) ||
+                        has_capability('mod/forum:editanypost', $modcontext)) ) {
                 error("You can not update this post");
             }
 
@@ -302,7 +302,7 @@
         }
 
         if ($cm = get_coursemodule_from_instance("forum", $forum->id, $course->id)) {
-            if (!$cm->visible and !has_capability('moodle/course:manageactivities', $coursecontext->id)) {
+            if (!$cm->visible and !has_capability('moodle/course:manageactivities', $coursecontext)) {
                 error(get_string("activityiscurrentlyhidden"));
             }
         }
@@ -351,7 +351,7 @@
                     error("Sorry, but you can not post in this discussion.");
                 }
             }
-            if (!$cm->visible and !has_capability('moodle/course:manageactivities', $coursecontext->id)) {
+            if (!$cm->visible and !has_capability('moodle/course:manageactivities', $coursecontext)) {
                 error(get_string("activityiscurrentlyhidden"));
             }
         }
@@ -380,7 +380,7 @@
             error("Post ID was incorrect");
         }
         if (($post->userid <> $USER->id) and
-                    !has_capability('mod/forum:editanypost', $modcontext->id)) {
+                    !has_capability('mod/forum:editanypost', $modcontext)) {
             error("You can't edit other people's posts!");
         }
         if ($post->parent) {
@@ -396,7 +396,7 @@
         }
         if (!($forum->type == 'news' && !$post->parent && $discussion->timestart > time())) {
             if (((time() - $post->created) > $CFG->maxeditingtime) and
-                        !has_capability('mod/forum:editanypost', $modcontext->id)) {
+                        !has_capability('mod/forum:editanypost', $modcontext)) {
                 error( get_string("maxtimehaspassed", "forum", format_time($CFG->maxeditingtime)) );
             }
         }
@@ -425,8 +425,8 @@
         if (! $forum = get_record("forum", "id", $discussion->forum)) {
             error("The forum number was incorrect ($discussion->forum)");
         }
-        if ( !(($post->userid == $USER->id && has_capability('mod/forum:deleteownpost', $modcontext->id))
-                    || has_capability('mod/forum:deleteanypost', $modcontext->id)) ) {
+        if ( !(($post->userid == $USER->id && has_capability('mod/forum:deleteownpost', $modcontext))
+                    || has_capability('mod/forum:deleteanypost', $modcontext)) ) {
             error("You can't delete this post!");
         }
         if (!empty($forum->course)) {
@@ -445,7 +445,7 @@
                 notice(get_string("couldnotdeleteratings", "forum"),
                         forum_go_back_to("discuss.php?d=$post->discussion"));
 
-            } else if ($replycount && !has_capability('mod/forum:deleteanypost', $modcontext->id)) {
+            } else if ($replycount && !has_capability('mod/forum:deleteanypost', $modcontext)) {
                 error(get_string("couldnotdeletereplies", "forum"),
                         forum_go_back_to("discuss.php?d=$post->discussion"));
 
@@ -466,7 +466,7 @@
                     redirect("view.php?f=$discussion->forum",
                              get_string("deleteddiscussion", "forum"), 1);
 
-                } else if (forum_delete_post($post, has_capability('mod/forum:deleteanypost', $modcontext->id))) {
+                } else if (forum_delete_post($post, has_capability('mod/forum:deleteanypost', $modcontext))) {
 
                     add_to_log($discussion->course, "forum", "delete post",
                                "discuss.php?d=$post->discussion", "$post->id", $cm->id);
@@ -484,7 +484,7 @@
             forum_set_return();
 
             if ($replycount) {
-                if (!has_capability('mof/forum:deleteanypost', $modcontext->id)) {
+                if (!has_capability('mof/forum:deleteanypost', $modcontext)) {
                     error(get_string("couldnotdeletereplies", "forum"),
                           forum_go_back_to("discuss.php?d=$post->discussion"));
                 }
@@ -526,7 +526,7 @@
         if (!$forum = get_record("forum", "id", $discussion->forum)) {
             error("The forum number was incorrect ($discussion->forum)");
         }
-        if (!has_capability('mod/forum:splitdiscussions', $modcontext->id)) {
+        if (!has_capability('mod/forum:splitdiscussions', $modcontext)) {
             error("You can't split discussions!");
         }
         if (!$post->parent) {
@@ -667,7 +667,7 @@
         error("You cannot start a new discussion in this forum");
     }
 
-    if ($forum->type == 'qanda' && !has_capability('mod/forum:viewqandawithoutposting', $modcontext->id) &&
+    if ($forum->type == 'qanda' && !has_capability('mod/forum:viewqandawithoutposting', $modcontext) &&
                 !forum_user_has_posted($forum->id,$discussion->id,$USER->id)) {
         notify(get_string('qandanotify','forum'));
     }
@@ -682,7 +682,7 @@
             } else {
                 $user_read_array = array();
             }
-            if ($forum->type != 'qanda' || forum_user_can_see_discussion($forum, $discussion, $modcontext->id)) {
+            if ($forum->type != 'qanda' || forum_user_can_see_discussion($forum, $discussion, $modcontext)) {
                 forum_print_posts_threaded($parent->id, $course->id, 0, false, false, $user_read_array, $discussion->forum);
             }
         }

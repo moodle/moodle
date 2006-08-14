@@ -63,7 +63,7 @@
         }
 
 		$context = get_context_instance(CONTEXT_COURSE, $course->id);
-		has_capability('moodle/course:update', $context->id, true);
+		require_capability('moodle/course:update', $context);
         
         $mod->course = $course->id;
         $mod->modulename = clean_param($mod->modulename, PARAM_SAFEDIR);  // For safety
@@ -242,7 +242,7 @@
         }
 
 		$context = get_context_instance(CONTEXT_COURSE, $section->course);
-		has_capability('moodle/course:update', $context->id, true);
+		require_capability('moodle/course:update', $context);
 
         if (!ismoving($section->course)) {
             error("You need to copy something first!");
@@ -271,7 +271,7 @@
         }
 
 		$context = get_context_instance(CONTEXT_COURSE, $cm->course);
-		has_capability('moodle/course:update', $context->id, true);
+		require_capability('moodle/course:update', $context);
 
         $cm->indent += $indent;
 
@@ -297,7 +297,7 @@
         }
 
 		$context = get_context_instance(CONTEXT_COURSE, $cm->course);
-		has_capability('moodle/course:update', $context->id, true);
+		require_capability('moodle/course:update', $context);
 
         set_coursemodule_visible($cm->id, 0);
 
@@ -317,7 +317,7 @@
         }
 
 		$context = get_context_instance(CONTEXT_COURSE, $cm->course);
-		has_capability('moodle/course:update', $context->id, true);
+		require_capability('moodle/course:update', $context);
 
         if (! $section = get_record("course_sections", "id", $cm->section)) {
             error("This module doesn't exist");
@@ -348,7 +348,7 @@
         }
 
 		$context = get_context_instance(CONTEXT_COURSE, $cm->course);
-		has_capability('moodle/course:update', $context->id, true);
+		require_capability('moodle/course:update', $context);
 
         set_coursemodule_groupmode($cm->id, $groupmode);
 
@@ -368,7 +368,7 @@
         }
 
 		$context = get_context_instance(CONTEXT_COURSE, $cm->course);
-		has_capability('moodle/course:update', $context->id, true);
+		require_capability('moodle/course:update', $context);
 
         if (! $section = get_record("course_sections", "id", $cm->section)) {
             error("This module doesn't exist");
@@ -409,7 +409,7 @@
         }
 
 		$context = get_context_instance(CONTEXT_COURSE, $cm->course);
-		has_capability('moodle/course:update', $context->id, true);
+		require_capability('moodle/course:update', $context);
 		
         if (! $module = get_record("modules", "id", $cm->module)) {
             error("This module doesn't exist");
@@ -465,7 +465,7 @@
         }
 
 		$context = get_context_instance(CONTEXT_COURSE, $course->id);
-		has_capability('moodle/course:update', $context->id, true);
+		require_capability('moodle/course:update', $context);
 
         if (! $module = get_record("modules", "id", $cm->module)) {
             error("This module doesn't exist");
@@ -522,7 +522,7 @@
         }
 
 		$context = get_context_instance(CONTEXT_COURSE, $course->id);
-		has_capability('moodle/course:update', $context->id, true);
+		require_capability('moodle/course:update', $context);
 		
         if (! $module = get_record("modules", "id", $cm->module)) {
             error("This module doesn't exist");
@@ -620,7 +620,7 @@
     }
 
 	$context = get_context_instance(CONTEXT_COURSE, $course->id);
-	has_capability('moodle/course:update', $context->id, true);
+	require_capability('moodle/course:update', $context);
 
     $streditinga = get_string("editinga", "moodle", $fullmodulename);
     $strmodulenameplural = get_string("modulenameplural", $module->name);

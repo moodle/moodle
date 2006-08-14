@@ -292,13 +292,13 @@
      * the capability moodle/blog:writeentry, or if they have the capability
      * moodle/blog:manageentries.
      */
-    function blog_user_can_edit_post($blogEntry, $contextid) {
+    function blog_user_can_edit_post($blogEntry, $context) {
         
         global $CFG, $USER;
         
-        return ((has_capability('moodle/blog:writeentries', $contextid) &&
+        return ((has_capability('moodle/blog:writeentries', $context) &&
                     $blogEntry->userid == $USER->id) ||
-                    has_capability('moodle/blog:manageentries', $context->id));
+                    has_capability('moodle/blog:manageentries', $context));
     }
 
 
@@ -314,7 +314,7 @@
         
         $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
         
-        if (!has_capability('moodle/blog:readentry', $context->id)) {
+        if (!has_capability('moodle/blog:readentry', $context)) {
             return false;
         }
         

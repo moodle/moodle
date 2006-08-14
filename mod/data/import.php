@@ -58,9 +58,9 @@
     }
     
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-    has_capability('mod/data:uploadentries', $context->id, true);
+    require_capability('mod/data:uploadentries', $context);
     
-    if (has_capability('mod/data:managetemplates', $context->id)) {
+    if (has_capability('mod/data:managetemplates', $context)) {
         if (!count_records('data_fields','dataid',$data->id)) {      // Brand new database!
             redirect($CFG->wwwroot.'/mod/data/field.php?d='.$data->id);  // Redirect to field entry
         }

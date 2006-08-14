@@ -17,16 +17,16 @@
     $data[GLOSSARY_DATE_VIEW]->caption = get_string("dateview", "glossary");
     $data[GLOSSARY_AUTHOR_VIEW]->caption = get_string("authorview","glossary");
 
-    if (has_capability('mod/glossary:write', $context->id)) {
+    if (has_capability('mod/glossary:write', $context)) {
         $data[GLOSSARY_ADDENTRY_VIEW]->caption = get_string("addentry", "glossary");
         $data[GLOSSARY_ADDENTRY_VIEW]->link = "edit.php?id=$cm->id";
     }
-    if (has_capability('mod/glossary:import', $context->id)) {
+    if (has_capability('mod/glossary:import', $context)) {
         $data[GLOSSARY_IMPORT_VIEW]->caption = get_string("importentries", "glossary");
         $data[GLOSSARY_IMPORT_VIEW]->link = "import.php?id=$cm->id";
     }
         
-    if (has_capability('mod/glossary:export', $context->id)) {
+    if (has_capability('mod/glossary:export', $context)) {
         $data[GLOSSARY_EXPORT_VIEW]->caption = get_string("exportentries", "glossary");     
         $data[GLOSSARY_EXPORT_VIEW]->link = "export.php?id=$cm->id&amp;mode=$mode&amp;hook=$hook";
     }
@@ -39,7 +39,7 @@
     $data[GLOSSARY_CATEGORY_VIEW]->link = "view.php?id=$id&amp;mode=cat";
     $data[GLOSSARY_AUTHOR_VIEW]->link = "view.php?id=$id&amp;mode=author";
 
-    if (has_capability('mod/glossary:approve', $context->id)) {
+    if (has_capability('mod/glossary:approve', $context)) {
         $data[GLOSSARY_APPROVAL_VIEW]->caption = get_string("waitingapproval", "glossary");
         $data[GLOSSARY_APPROVAL_VIEW]->link = "";
 

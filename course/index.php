@@ -99,7 +99,7 @@
 
 
 /// If data for a new category was submitted, then add it
-    if ($form = data_submitted() and confirm_sesskey() and has_capability('moodle/category:create', $context->id)) {
+    if ($form = data_submitted() and confirm_sesskey() and has_capability('moodle/category:create', $context)) {
         if (!empty($form->addcategory)) {
             unset($newcategory);
             $newcategory->name = $form->addcategory;
@@ -119,7 +119,7 @@
       	
       	// context is coursecat, if not present admins should have it set in site level
      	$context = get_context_instance(CONTEXT_COURSECAT, $delete);  	  
-		if ($deletecat = get_record("course_categories", "id", $delete) and has_capability('moodle/category:delete', $context->id)) {
+		if ($deletecat = get_record("course_categories", "id", $delete) and has_capability('moodle/category:delete', $context)) {
             if (!empty($sure) && $sure == md5($deletecat->timemodified)) {
                 /// Send the children categories to live with their grandparent
                 if ($childcats = get_records("course_categories", "parent", $deletecat->id)) {
@@ -274,7 +274,7 @@
     fix_course_sortorder();
 
 /// Print form for creating new categories
-	if (has_capability('moodle/category:create', $context->id)) {
+	if (has_capability('moodle/category:create', $context)) {
 	    echo "<center>";
 	    echo "<form name=\"addform\" action=\"index.php\" method=\"post\">";
 	    echo "<input type=\"text\" size=\"30\" alt=\"$straddnewcategory\" name=\"addcategory\" />";
@@ -317,7 +317,7 @@
     $options["category"] = $category->id;
     
     
-    if (has_capability('moodle/course:create', $context->id)) {
+    if (has_capability('moodle/course:create', $context)) {
     	print_single_button("edit.php", $options, get_string("addnewcourse"), "get");
     }
     print_single_button('pending.php',NULL, get_string('coursespending'),"get");
@@ -359,12 +359,12 @@ function print_category_edit($category, $displaylist, $parentslist, $depth=-1, $
 
         echo "<td nowrap=\"nowrap\">";    /// Print little icons
 
-		if (has_capability('moodle/category:delete', $context->id)) {
+		if (has_capability('moodle/category:delete', $context)) {
         	echo "<a title=\"$str->delete\" href=\"index.php?delete=$category->id&amp;sesskey=$USER->sesskey\"><img".
              	" src=\"$CFG->pixpath/t/delete.gif\" height=\"11\" width=\"11\" border=\"0\" alt=\"\" /></a> ";
 		}
 		
-		if (has_capability('moodle/category:visibility', $context->id)) {
+		if (has_capability('moodle/category:visibility', $context)) {
 	        if (!empty($category->visible)) {
 	            echo "<a title=\"$str->hide\" href=\"index.php?hide=$category->id&amp;sesskey=$USER->sesskey\"><img".
 	                 " src=\"$CFG->pixpath/t/hide.gif\" height=\"11\" width=\"11\" border=\"0\" alt=\"\" /></a> ";

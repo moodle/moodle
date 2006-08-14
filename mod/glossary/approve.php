@@ -24,7 +24,7 @@
     require_login($course->id, false, $cm);    
     
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-    has_capability('mod/glossary:approve', $context->id, true);
+    require_capability('mod/glossary:approve', $context);
 
     $newentry->id = $eid;
     $newentry->approved = 1;

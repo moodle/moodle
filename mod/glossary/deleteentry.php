@@ -39,7 +39,7 @@
         error("Glossary is incorrect");
     }
 
-    if (!has_capability('mod/glossary:manageentries', $context->id) ) {
+    if (!has_capability('mod/glossary:manageentries', $context) ) {
         error("You are not allowed to edit or delete entries");
     }
 

@@ -21,7 +21,7 @@
 
 		$context = get_context_instance(CONTEXT_COURSE, $id);
 		
-        if (!has_capability('moodle/course:update', $context->id)) {
+        if (!has_capability('moodle/course:update', $context)) {
             error("You do not currently have editing privileges!");
         }
         
@@ -41,7 +41,7 @@
     } else {  // Admin is creating a new course
 
 		$context = get_context_instance(CONTEXT_SYSTEM, SITEID);
-		if (!has_capability('moodle/course:create',$context->id)) {
+		if (!has_capability('moodle/course:create',$context)) {
             error("You do not currently have course creation privileges!");
         }
 

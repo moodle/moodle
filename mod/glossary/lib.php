@@ -753,15 +753,15 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry, $mode='',$h
     }
     $return .= glossary_print_entry_commentslink($course, $cm, $glossary, $entry,$mode,$hook,'html');
     
-    if (has_capability('mod/glossary:comment', $context->id)) {
+    if (has_capability('mod/glossary:comment', $context)) {
         $output = true;
         $return .= ' <a title="' . get_string('addcomment','glossary') . '" href="comment.php?id='.$cm->id.'&amp;eid='.$entry->id.'"><img src="comment.gif" height="11" width="11" border="0" alt="'.get_string('addcomment','glossary').'" /></a>';
     }
 
 
-    if (has_capability('mod/glossary:write', $context->id) or (!empty($USER->id) and $glossary->studentcanpost and $entry->userid == $USER->id)) {
+    if (has_capability('mod/glossary:write', $context) or (!empty($USER->id) and $glossary->studentcanpost and $entry->userid == $USER->id)) {
         // only teachers can export entries so check it out
-        if (has_capability('mod/glossary:export', $context->id) and !$ismainglossary and !$importedentry) {
+        if (has_capability('mod/glossary:export', $context) and !$ismainglossary and !$importedentry) {
             $mainglossary = get_record('glossary','mainglossary',1,'course',$course->id);
             if ( $mainglossary ) {  // if there is a main glossary defined, allow to export the current entry
                 $output = true;
@@ -779,7 +779,7 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry, $mode='',$h
         // -It isn't a imported entry (so nobody can edit a imported (from secondary to main) entry)) and
         // -The user is teacher or he is a student with time permissions (edit period or editalways defined).
         $ineditperiod = ((time() - $entry->timecreated <  $CFG->maxeditingtime) || $glossary->editalways);
-        if ( !$importedentry and (has_capability('mod/glossary:manageentries', $context->id) or ($entry->userid == $USER->id and $ineditperiod))) {
+        if ( !$importedentry and (has_capability('mod/glossary:manageentries', $context) or ($entry->userid == $USER->id and $ineditperiod))) {
             $output = true;
             $return .= " <a title=\"" . get_string("delete") . "\" href=\"deleteentry.php?id=$cm->id&amp;mode=delete&amp;entry=$entry->id&amp;prevmode=$mode&amp;hook=$hook\"><img src=\"";
             $return .= $icon;
@@ -1311,7 +1311,7 @@ function glossary_print_categories_menu($cm, $glossary, $hook, $category) {
      echo '<tr>';
 
      echo '<td align="center" width="20%">';
-     if (has_capability('mod/glossary:managecategories', $context->id)) {
+     if (has_capability('mod/glossary:managecategories', $context)) {
              $options['id'] = $cm->id;
              $options['mode'] = 'cat';
              $options['hook'] = $hook;
@@ -1542,11 +1542,11 @@ function glossary_print_comment($course, $cm, $glossary, $entry, $comment) {
     echo '<div class="icons commands">';
 
     $ineditperiod = ((time() - $comment->timemodified <  $CFG->maxeditingtime) || $glossary->editalways);
-    if ( ($glossary->allowcomments &&  $ineditperiod && $USER->id == $comment->userid)  || has_capability('mod/glossary:managecomments', $context->id)) {
+    if ( ($glossary->allowcomments &&  $ineditperiod && $USER->id == $comment->userid)  || has_capability('mod/glossary:managecomments', $context)) {
         echo "<a href=\"comment.php?id=$cm->id&amp;eid=$entry->id&amp;cid=$comment->id&amp;action=edit\"><img  
                alt=\"" . get_string("edit") . "\" src=\"$CFG->pixpath/t/edit.gif\" height=\"11\" width=\"11\" border=\"0\" /></a> ";
     }
-    if ( ($glossary->allowcomments && $USER->id == $comment->userid) || has_capability('mod/glossary:managecomments', $context->id) ) {
+    if ( ($glossary->allowcomments && $USER->id == $comment->userid) || has_capability('mod/glossary:managecomments', $context) ) {
         echo "<a href=\"comment.php?id=$cm->id&amp;eid=$entry->id&amp;cid=$comment->id&amp;action=delete\"><img  
                alt=\"" . get_string("delete") . "\" src=\"$CFG->pixpath/t/delete.gif\" height=\"11\" width=\"11\" border=\"0\" /></a>";
     }
@@ -1576,7 +1576,7 @@ function  glossary_print_entry_ratings($course, $entry, $ratings = NULL) {
             }
         }
         if ($useratings) {
-            if (has_capability('mod/glossary:viewrating', $context->id)) {
+            if (has_capability('mod/glossary:viewrating', $context)) {
                 glossary_print_ratings_mean($entry->id, $ratings->scale);
                 if ($USER->id != $entry->userid) {
                      glossary_print_rating_menu($entry->id, $USER->id, $ratings->scale);

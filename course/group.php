@@ -27,7 +27,7 @@
 	$context = get_context_instance(CONTEXT_GROUP, $group->id);
 
 	// this is really weird
-    if (!has_capability('moodle/course:managegroups', $context->id)) {
+    if (!has_capability('moodle/course:managegroups', $context)) {
         close_window();
     }
 

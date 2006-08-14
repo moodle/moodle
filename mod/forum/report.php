@@ -29,10 +29,10 @@
     
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     
-    if (!has_capability('mod/forum:viewrating', $context->id)) {
+    if (!has_capability('mod/forum:viewrating', $context)) {
         error('You do not have the capability to view post ratings');
     }
-    if (!has_capability('mod/forum:viewanyrating', $context->id) and $USER->id != $post->userid) {
+    if (!has_capability('mod/forum:viewanyrating', $context) and $USER->id != $post->userid) {
         error("You can only look at results for posts that you made");
     }
 

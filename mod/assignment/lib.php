@@ -108,7 +108,7 @@ class assignment_base {
     function view() {
       
         $context = get_context_instance(CONTEXT_MODULE,$this->cm->id);
-        has_capability('mod/assignment:view', $context->id, true);
+        require_capability('mod/assignment:view', $context);
         
         add_to_log($this->course->id, "assignment", "view", "view.php?id={$this->cm->id}", 
                    $this->assignment->id, $this->cm->id);
@@ -277,7 +277,7 @@ class assignment_base {
         $submitted = '';
 
         $context = get_context_instance(CONTEXT_MODULE,$this->cm->id);
-        if (has_capability('mod/assignment:grade', $context->id) && (groupmode($this->course, $this->cm) == SEPARATEGROUPS)) {
+        if (has_capability('mod/assignment:grade', $context) && (groupmode($this->course, $this->cm) == SEPARATEGROUPS)) {
 
         // if this user can mark and is put in a group
         // then he can only see/mark submission in his own groups
@@ -2358,7 +2358,7 @@ function assignment_print_overview($courses, &$htmlarray) {
 
         // if (isteacher($assignment->course)) {
         $context = get_context_instance(CONTEXT_MODULE,$this->cm->id);
-        if (has_capability('mod/assignment:grade', $context->id)) {
+        if (has_capability('mod/assignment:grade', $context)) {
             $submissions = count_records_sql("SELECT COUNT(*)
                               FROM {$CFG->prefix}assignment_submissions a, 
                                    {$CFG->prefix}user_students s,

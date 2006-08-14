@@ -22,7 +22,7 @@ class block_participants extends block_list {
 			$context = get_context_instance(CONTEXT_COURSE, $this->instance->pageid);
 		}
 		
-		if (!has_capability('moodle/course:viewparticipants', $context->id)) {
+		if (!has_capability('moodle/course:viewparticipants', $context)) {
 		  	$this->context = '';
 		  	return $this->content;
 		}

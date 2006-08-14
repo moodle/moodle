@@ -23,7 +23,7 @@
     require_login($course->id, false, $cm);
     
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-    has_capability('mod/survey:participate', $context->id, true);
+    require_capability('mod/survey:participate', $context);
     
     if (! $survey = get_record("survey", "id", $cm->instance)) {
         error("Survey ID was incorrect");

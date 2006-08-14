@@ -23,7 +23,7 @@
     $cm = get_record("course_modules","module",$module->id,"instance",$entry->glossaryid);
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     
-    if (!has_capability('mod/glossary:manageentries', $context->id) and $USER->id != $entry->userid) {
+    if (!has_capability('mod/glossary:manageentries', $context) and $USER->id != $entry->userid) {
         error("You can only look at results for your own entries");
     }
 
@@ -54,7 +54,7 @@
         echo "<th width=\"100%\" class=\"header\"><a href=\"report.php?id=$entry->id&amp;sort=rating\">$strrating</a></th>";
         echo "<th class=\"header\"><a href=\"report.php?id=$entry->id&amp;sort=time\">$strtime</a></th>";
         foreach ($ratings as $rating) {
-            if (has_capability('mod/glossary:manageentries', $context->id)) {
+            if (has_capability('mod/glossary:manageentries', $context)) {
                 echo '<tr class="teacher">';
             } else {
                 echo '<tr>';

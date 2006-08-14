@@ -21,15 +21,16 @@
         redirect("$CFG->wwwroot/$CFG->admin/index.php");
     }
 
-    if (! $context = get_record("context", "id", $contextid)) {
+    if (! $context = get_context_instance_by_id($contextid)) {
         error("Context ID was incorrect (can't find it)");
     }
-    if (!has_capability('moodle/role:assign', $context->id)) {
-        error('You do not have the required permission to assign roles to users.');
-    }
+
+    require_login();
+
+    require_capability('moodle/role:assign', $context);
     
     /**
-     * TO DO:
+     * TODO XXX:
      * Permission check to see whether this user can assign people to this role
      * needs to be:    
      * 1) has the capability to assign
@@ -37,7 +38,6 @@
      * end of permission checking  
      */
     
-    require_login();
 
     $strassignusers = get_string('assignusers', 'role');
     $strpotentialusers = get_string('potentialusers', 'role');
@@ -48,8 +48,6 @@
     $strsearch = get_string('search');
     $strshowall = get_string('showall');
 
-    $context = get_record('context', 'id', $contextid);
-    
     $currenttab = '';
     $tabsmode = 'assign';
     include_once('tabs.php');
@@ -67,14 +65,14 @@
               $timemodified = time();
             foreach ($frm->addselect as $adduser) {
                 $adduser = clean_param($adduser, PARAM_INT);
-                if (! role_assign($roleid, $adduser, 0, $contextid, $timestart, $timeend, $hidden)) {
+                if (! role_assign($roleid, $adduser, 0, $context->id, $timestart, $timeend, $hidden)) {
                     error("Could not add user with id $adduser to this role!");
                 }
             }
         } else if ($remove and !empty($frm->removeselect) and confirm_sesskey()) {
             foreach ($frm->removeselect as $removeuser) {
                 $removeuser = clean_param($removeuser, PARAM_INT);
-                if (! role_unassign($roleid, $removeuser, 0, $contextid)) {
+                if (! role_unassign($roleid, $removeuser, 0, $context->id)) {
                     error("Could not remove user with id $removeuser from this role!");
                 }
             }
@@ -88,7 +86,7 @@
 /// Get all existing students and teachers for this course.
     $existinguserarray = array();
 
-    $SQL = "select u.* from {$CFG->prefix}role_assignments r, {$CFG->prefix}user u where contextid = $contextid and roleid = $roleid and u.id = r.userid"; // join now so that we can just use fullname() later
+    $SQL = "select u.* from {$CFG->prefix}role_assignments r, {$CFG->prefix}user u where contextid = $context->id and roleid = $roleid and u.id = r.userid"; // join now so that we can just use fullname() later
 
     if (!$contextusers = get_records_sql($SQL)) {
         $contextusers = array();  
@@ -130,8 +128,8 @@
     
     // prints a form to swap roles
     print ('<form name="rolesform" action="assign.php" method="post">');
-    print ('<div align="center">'.$strcurrentcontext.': '.print_context_name($contextid).'<br/>');
-    print ('<input type="hidden" name="contextid" value="'.$contextid.'">'.$strcurrentrole.': ');
+    print ('<div align="center">'.$strcurrentcontext.': '.print_context_name($context).'<br/>');
+    print ('<input type="hidden" name="contextid" value="'.$context->id.'">'.$strcurrentrole.': ');
     choose_from_menu ($options, 'roleid', $roleid, 'choose', $script='rolesform.submit()');
     print ('</div></form>');
     

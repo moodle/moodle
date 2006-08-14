@@ -37,7 +37,7 @@
         if ($comment->recordid != $record->id) { 
             error('Comment ID is misconfigured');
         }
-        if (!has_capability('mod/data:managecomments', $context->id) && $comment->userid != $USER->id) { 
+        if (!has_capability('mod/data:managecomments', $context) && $comment->userid != $USER->id) { 
             error('Comment is not yours to edit!');
         }
     }

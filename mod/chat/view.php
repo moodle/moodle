@@ -76,8 +76,7 @@
 
     echo '<td id="middle-column">';
     
-    if ($chat->studentlogs or has_capability('mod/chat:readlog',$context->id)) {
-    //if (($chat->studentlogs or isteacher($course->id)) and !isguest()) {
+    if ($chat->studentlogs or has_capability('mod/chat:readlog',$context)) {
         echo '<div class="reportlink">';
         echo "<a href=\"report.php?id=$cm->id\">".
               get_string('viewreport', 'chat').'</a>';
@@ -103,14 +102,13 @@
 
 /// Print the main part of the page
 
-    //if (!isguest()) {
-    if (has_capability('mod/chat:chat',$context->id, true)) {
+    if (has_capability('mod/chat:chat',$context)) {
         print_simple_box_start('center');
         link_to_popup_window ("/mod/chat/gui_$CFG->chat_method/index.php?id=$chat->id$groupparam",
                               "chat$course->id$chat->id$groupparam", "$strenterchat", 500, 700, get_string('modulename', 'chat'));
         print_simple_box_end();
     } else {
-/*
+/*    XXX TODO
         $wwwroot = $CFG->wwwroot.'/login/index.php';
         if (!empty($CFG->loginhttps)) {
             $wwwroot = str_replace('http:','https:', $wwwroot);

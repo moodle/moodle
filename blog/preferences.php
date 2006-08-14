@@ -20,7 +20,7 @@
     $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
 
     // Ensure that the logged in user has the capability to post blog entries.
-    if (!has_capability('moodle/blog:writepost', $context->id)) {
+    if (!has_capability('moodle/blog:writepost', $context)) {
         error(get_string('nopost', 'blog'), $referrer);
     }
     $userid = $USER->id;

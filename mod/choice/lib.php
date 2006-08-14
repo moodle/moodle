@@ -158,7 +158,7 @@ $cdisplay = array();
             $context = get_context_instance(CONTEXT_MODULE, $cm->id);
             if (!empty($countanswers)) {
                 foreach ($countanswers as $ca) { //only return enrolled users.                  
-                    if (has_capability('mod/choice:choose', $context->id)) {
+                    if (has_capability('mod/choice:choose', $context)) {
                     //if (isstudent($cm->course, $ca->userid) or isteacher($cm->course, $ca->userid)) { 
                         $countans = $countans+1;
                     }
@@ -261,7 +261,7 @@ $current = get_record('choice_answers', 'choiceid', $choice->id, 'userid', $user
             if ($countanswers) {
             $countans = 0;
             foreach ($countanswers as $ca) { //only return enrolled users.
-                if (has_capability('mod/choice:choose', $context->id)) {
+                if (has_capability('mod/choice:choose', $context)) {
                 //if (isstudent($courseid, $ca->userid) or isteacher($courseid, $ca->userid)) { 
                     $countans = $countans+1;
                 }
@@ -307,7 +307,7 @@ function choice_show_reportlink($choice, $courseid, $cmid) {
         if ( $allanswers = get_records("choice_answers", "choiceid", $choice->id)) {
             $responsecount = 0;
             foreach ($allanswers as $aa) {
-                if (has_capability('mod/choice:readresponses', $context->id)) {
+                if (has_capability('mod/choice:readresponses', $context)) {
                 //if (isstudent($courseid, $aa->userid) or isteacher($courseid, $aa->userid)) { //check to make sure user is enrolled in course.
                     $responsecount++;
                 }
@@ -383,7 +383,7 @@ function choice_show_results($choice, $course, $cm, $forcepublish='') {
             //$isteacher = isteacher($course->id);
 
             $tablewidth = (int) (100.0 / count($useranswer));
-            if (has_capability('mod/choice:readresponses', $context->id)) {
+            if (has_capability('mod/choice:readresponses', $context)) {
             //if (isteacher($course->id, $USER->id)) {
                 echo '<div id="tablecontainer">';
                 echo '<form id="attemptsform" method="post" action="'.$_SERVER['PHP_SELF'].'" onsubmit="var menu = document.getElementById(\'menuaction\'); return (menu.options[menu.selectedIndex].value == \'delete\' ? \''.addslashes(get_string('deleteattemptcheck','quiz')).'\' : true);">';
@@ -470,7 +470,7 @@ function choice_show_results($choice, $course, $cm, $forcepublish='') {
             }
             
                 /// Print "Select all" etc.
-                if (has_capability('mod/choice:readresponses', $context->id)) {
+                if (has_capability('mod/choice:readresponses', $context)) {
                 //if (isteacher($course->id, $USER->id)) {
                     echo '<tr><td><p>';
                     echo '<tr><td>';
@@ -489,7 +489,7 @@ function choice_show_results($choice, $course, $cm, $forcepublish='') {
             
             echo "</tr></table>";
             //if (isteacher($course->id, $USER->id)) {
-            if (has_capability('mod/choice:readresponses', $context->id)) {
+            if (has_capability('mod/choice:readresponses', $context)) {
                 echo "</form></div>";
             }
             break;

@@ -99,7 +99,7 @@
             }
             
             $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
-            if ($course->id == SITEID && has_capability('moodle/site:config', $context->id)) {
+            if ($course->id == SITEID && has_capability('moodle/site:config', $context)) {
                 $postcoursename = get_field('course', 'shortname', 'id', $forum->course);
                 $fullsubject = '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$forum->course.'">'.$postcoursename.'</a> -> '. $fullsubject;
             }

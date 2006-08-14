@@ -29,7 +29,7 @@
     require_login($course->id);
 
     $context = get_context_instance(CONTEXT_COURSE, $id);
-    //has_capability('moodle/course:viewparticipants', $context->id, true);
+    require_capability('moodle/course:viewparticipants', $context);
 
     if (!$course->category) {
         if (!$CFG->showsiteparticipantslist and !isteacher(SITEID)) {

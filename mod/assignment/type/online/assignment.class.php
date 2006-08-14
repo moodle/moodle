@@ -15,7 +15,7 @@ class assignment_online extends assignment_base {
         global $USER;
 		
 		$context = get_context_instance(CONTEXT_MODULE,$this->cm->id);
-        has_capability('mod/assignment:view', $context->id, true);
+        require_capability('mod/assignment:view', $context);
         
 		$submission = $this->get_submission();
         
@@ -59,7 +59,7 @@ class assignment_online extends assignment_base {
             notify(get_string('submissionsaved', 'assignment'));
         }
 
-		if (has_capability('mod/assignment:submit', $context->id)) {
+		if (has_capability('mod/assignment:submit', $context)) {
 	        print_simple_box_start('center', '70%', '', '', 'generalbox', 'online');
 	        if ($editmode) {
 	            $this->view_edit_form($submission);

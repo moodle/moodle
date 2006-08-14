@@ -76,12 +76,10 @@
         // else we are editting one
         $dummyuser = get_record('user','id', $id);
     
-        if ($dummyuser->username == 'changeme') {
-            // check for add user
-            has_capability('moodle/user:create', $context->id, true);
+        if ($dummyuser->username == 'changeme') {                                            // check for add user
+            require_capability('moodle/user:create', $context);
         } else {
-            if ($USER->id <> $usernew->id and !has_capability('moodle/user:update', $context->id)) {
-        // check for edit  
+            if ($USER->id <> $usernew->id and !has_capability('moodle/user:update', $context)) { // check for edit  
                 print_error('onlyeditown');
             }   
         }   

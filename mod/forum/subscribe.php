@@ -21,7 +21,7 @@
         
         $context = get_context_instance(CONTEXT_MODULE, $cm->id);
         if (groupmode($course, $cm) and
-                    !has_capability('moodle/site:accessallgroups', $context->id)) {
+                    !has_capability('moodle/site:accessallgroups', $context)) {
             if (!mygroupid($course->id)) {
                 error('Sorry, but you must be a group member to subscribe.');
             }
@@ -32,7 +32,7 @@
     }
 
     if ($user) {
-        if (!has_capability('mod/forum:managesubscriptions', $context->id)) {
+        if (!has_capability('mod/forum:managesubscriptions', $context)) {
             error('You do not have the permission to subscribe/unsubscribe other people!');
         }
         if (!$user = get_record("user", "id", $user)) {
@@ -69,7 +69,7 @@
 
     $returnto = forum_go_back_to("index.php?id=$course->id");
 
-    if ($force and has_capability('mod/forum:managesubscriptions', $context->id)) {
+    if ($force and has_capability('mod/forum:managesubscriptions', $context)) {
         if (forum_is_forcesubscribed($forum->id)) {
             forum_forcesubscribe($forum->id, 0);
             redirect($returnto, get_string("everyonecanchoose", "forum"), 1);
@@ -96,7 +96,7 @@
 
     } else { // subscribe
         if ($forum->forcesubscribe == FORUM_DISALLOWSUBSCRIBE &&
-                    !has_capability('mod/forum:managesubscriptions', $context->id)) {
+                    !has_capability('mod/forum:managesubscriptions', $context)) {
             error(get_string('disallowsubscribe'),$_SERVER["HTTP_REFERER"]);
         }
         if (forum_subscribe($user->id, $forum->id) ) {

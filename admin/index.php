@@ -339,7 +339,7 @@
 
     $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
 
-    if (!has_capability('moodle/site:config', $context->id)) {
+    if (!has_capability('moodle/site:config', $context)) {
         print_error("permissionconfig", '', "$CFG->wwwroot/login/index.php");
     }
 

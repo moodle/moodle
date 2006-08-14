@@ -210,7 +210,7 @@ function chat_print_recent_activity($course, $isteacher, $timestart) {
                 $context = get_context_instance(CONTEXT_MODULE, $cm->id);
               
                 // needs to be fixed
-                if (!(has_capability('mod/chat:readlog', $context->id) or instance_is_visible('chat', $chat))) {  // Chat hidden to students
+                if (!(has_capability('mod/chat:readlog', $context) or instance_is_visible('chat', $chat))) {  // Chat hidden to students
                 //if (!($isteacher or instance_is_visible('chat', $chat))) {  // Chat hidden to students
                     continue;
                 }

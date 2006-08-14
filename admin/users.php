@@ -25,17 +25,17 @@
     $table->data[] = array("<b><a href=\"auth.php?sesskey=$USER->sesskey\">".get_string("authentication")."</a></b>",
                            get_string("adminhelpauthentication"));
 
-    if (has_capability('moodle/user:update', $context->id)) {
+    if (has_capability('moodle/user:update', $context)) {
         $table->data[] = array("<b><a href=\"user.php\">".get_string("edituser")."</a></b>",
                            get_string("adminhelpedituser"));
     }
     
-    if (has_capability('moodle/user:create', $context->id)) {
+    if (has_capability('moodle/user:create', $context)) {
         $table->data[] = array("<b><a href=\"$CFG->wwwroot/$CFG->admin/user.php?newuser=true&amp;sesskey=$USER->sesskey\">".get_string("addnewuser")."</a></b>",
                                get_string("adminhelpaddnewuser"));
     }
         
-    if (has_capability('moodle/user:create', $context->id)) {        
+    if (has_capability('moodle/user:create', $context)) {        
         $table->data[] = array("<b><a href=\"$CFG->wwwroot/$CFG->admin/uploaduser.php?sesskey=$USER->sesskey\">".get_string("uploadusers")."</a></b>",
                                get_string("adminhelpuploadusers"));
     }

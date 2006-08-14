@@ -23,7 +23,7 @@
 
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
-    if (!has_capability('mod/forum:viewsubscribers', $context->id)) {
+    if (!has_capability('mod/forum:viewsubscribers', $context)) {
         error('You do not have the permission to view forum subscribers');
     }
 
@@ -39,7 +39,7 @@
     $navigation = "<a href=\"index.php?id=$course->id\">$strforums</a> ->
        <a href=\"view.php?f=$forum->id\">".format_string($forum->name,true)."</a> -> $strsubscribers";
 
-    if (has_capability('mod/forum:managesubscriptions', $context->id)) {
+    if (has_capability('mod/forum:managesubscriptions', $context)) {
         print_header_simple("$strsubscribers", "", "$navigation",
             "", "", true, forum_update_subscriptions_button($course->id, $id));
         if ($edit != -1) {

@@ -94,7 +94,7 @@
     //If action is details, show the popup info
     if ($action == "details") {
         //Check for teacher edit
-       	has_capability('moodle/course:managescales', $context->id, true);
+       	require_capability('moodle/course:managescales', $context);
 	   
         //Check for scale
         if (! $scale = get_record("scale", "id", $scaleid)) {
@@ -130,7 +130,7 @@
 
         $sesskey = !empty($USER->id) ? $USER->sesskey : '';
 
-       	has_capability('moodle/course:managescales', $context->id, true);
+       	require_capability('moodle/course:managescales', $context);
        	
         //Check for scale if action = edit
         if ($action == "edit") {
@@ -235,7 +235,7 @@
     //If action is delete, do it
     if ($action == "delete" and confirm_sesskey()) {
         //Check for teacher edit
-       	has_capability('moodle/course:managescales', $context->id, true);
+       	require_capability('moodle/course:managescales', $context);
         //Check for scale if action = edit
         if (! $scale = get_record("scale", "id", $scaleid)) {
             error("Scale ID was incorrect");
@@ -266,7 +266,7 @@
     //If action is down or up, do it
     if (($action == "down" || $action == "up") and confirm_sesskey()) {
         //Check for teacher edit
-       	has_capability('moodle/course:managescales', $context->id, true);
+       	require_capability('moodle/course:managescales', $context);
         //Check for scale if action = edit
         if (! $scale = get_record("scale", "id", $scaleid)) {
             error("Scale ID was incorrect");
@@ -296,7 +296,7 @@
     }
 
     if ($list) {       /// Just list the scales (in a helpwindow)
-       	has_capability('moodle/course:viewscales', $context->id, true);
+       	require_capability('moodle/course:viewscales', $context);
         print_header($strscales);
 
         if (!empty($scaleid)) {
@@ -339,7 +339,7 @@
             }
 
         } else {
-            if (has_capability('moodle/course:managescales', $context->id)) {
+            if (has_capability('moodle/course:managescales', $context)) {
                 echo "<p align=\"center\">(";
                 print_string("scalestip");
                 echo ")</p>";
@@ -369,7 +369,7 @@
 
 /// The rest is all about editing the scales
 
-    has_capability('moodle/course:managescales', $context->id, true);
+    require_capability('moodle/course:managescales', $context);
 
 /// Print out the main page
 

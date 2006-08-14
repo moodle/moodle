@@ -299,7 +299,7 @@ class block_base {
 					$context = get_context_instance(CONTEXT_COURSE, $this->instance->pageid);
 				}
 				
-				if (!has_capability('moodle/site:manageblocks', $context->id)) {
+				if (!has_capability('moodle/site:manageblocks', $context)) {
 					return null;
 				}
 			break;

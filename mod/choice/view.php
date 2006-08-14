@@ -18,7 +18,7 @@
     require_course_login($course, false, $cm);
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     
-    has_capability('mod/choice:choose', $context->id, true);
+    require_capability('mod/choice:choose', $context);
 
     if (!$choice = choice_get_choice($cm->instance)) {
         error("Course module is incorrect");
@@ -33,8 +33,7 @@
 
     if ($form = data_submitted()) {
         $timenow = time();
-        if (has_capability('mod/choice:deleteresponses', $context->id)) {
-        //if (isteacher($course->id, $USER->id)) {
+        if (has_capability('mod/choice:deleteresponses', $context)) {
             if ($action == 'delete') { //some responses need to be deleted     
                 choice_delete_responses($attemptids); //delete responses.
                 redirect("view.php?id=$cm->id");
@@ -59,8 +58,7 @@
                  "<a href=\"index.php?id=$course->id\">$strchoices</a> -> ".format_string($choice->name), "", "", true,
                   update_module_button($cm->id, $course->id, $strchoice), navmenu($course, $cm));
                                                       
-    if (has_capability('mod/choice:readresponses', $context->id)) {
-    //if (isteacher($course->id)) {
+    if (has_capability('mod/choice:readresponses', $context)) {
         choice_show_reportlink($choice, $course->id, $cm->id);
     } else if (!$cm->visible) {
         notice(get_string("activityiscurrentlyhidden"));

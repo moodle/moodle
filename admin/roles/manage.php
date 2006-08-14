@@ -12,7 +12,6 @@
     $confirm     = optional_param('confirm', 0, PARAM_BOOL);
 
     $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
-    $contextid = $sitecontext->id;
     
     if (!isadmin()) {
         error('Only admins can access this page');
@@ -46,18 +45,18 @@
             case 'add':
                                                 
                 $newrole = create_role($name, $description);        
-            
+
                 $ignore = array('roleid', 'sesskey', 'action', 'name', 'description', 'contextid');
-                
+
                 $data = data_submitted();
-                
-                 foreach ($data as $capname => $value) {
-                       if (in_array($capname, $ignore)) { 
-                         continue;
+
+                foreach ($data as $capname => $value) {
+                    if (in_array($capname, $ignore)) { 
+                        continue;
                     }
 
-                    assign_capability($capname, $value, $newrole, $contextid);
-                            
+                    assign_capability($capname, $value, $newrole, $sitecontext->id);
+
                 }
             
             break;
@@ -68,38 +67,38 @@
                 
                 $data = data_submitted();
                 
-                 foreach ($data as $capname => $value) {
-                       if (in_array($capname, $ignore)) { 
-                         continue;
+                foreach ($data as $capname => $value) {
+                    if (in_array($capname, $ignore)) { 
+                        continue;
                     }
-                   
+
                     // edit default caps
                     $SQL = "select * from {$CFG->prefix}role_capabilities where
-                            roleid = $roleid and capability = '$capname' and contextid = $contextid";
-                            
+                            roleid = $roleid and capability = '$capname' and contextid = $sitecontext->id";
+
                     $localoverride = get_record_sql($SQL);
-             
-                     if ($localoverride) { // update current overrides
-                 
-                         if ($value == 0) { // inherit = delete
-                               
-                               unassign_capability($capname, $roleid, $contextid);
-                               
-                         } else {
-                     
-                             $localoverride->permission = $value;
-                             $localoverride->timemodified = time();
-                             $localoverride->modifierid = $USER->id;
-                             update_record('role_capabilities', $localoverride);    
-                         
-                         }
-                
+
+                    if ($localoverride) { // update current overrides
+
+                        if ($value == 0) { // inherit = delete
+
+                            unassign_capability($capname, $roleid, $sitecontext->id);
+
+                        } else {
+
+                            $localoverride->permission = $value;
+                            $localoverride->timemodified = time();
+                            $localoverride->modifierid = $USER->id;
+                            update_record('role_capabilities', $localoverride);    
+
+                        }
+
                     } else { // insert a record
-                                        
-                        assign_capability($capname, $value, $roleid, $contextid);
+
+                        assign_capability($capname, $value, $roleid, $sitecontext->id);
 
                     }
-                    
+
                 }
             
                 // update normal role settings
@@ -169,14 +168,11 @@
         choose_from_menu ($options, 'roleid', $roleid, 'choose', $script='rolesform1.submit()');
         print ('</div></form>');
               
-        $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
-        $contextid = $sitecontext->id;
-        
         // this is the array holding capabilities of this role sorted till this context
-        $r_caps = role_context_capabilities($roleid, $sitecontext->id);
+        $r_caps = role_context_capabilities($roleid, $sitecontext);
               
         // this is the available capabilities assignable in this context
-        $capabilities = fetch_context_capabilities($sitecontext->id);
+        $capabilities = fetch_context_capabilities($sitecontext);
         
         print_simple_box_start();
         include_once('manage.html');
