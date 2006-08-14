@@ -1577,4 +1577,17 @@ function get_component_string($component, $contextlevel) {
 }
 
 
+function get_roles_used_in_context($context) {
+
+    global $CFG;
+
+    return get_records_sql('SELECT distinct r.id, r.name 
+                              FROM '.$CFG->prefix.'role_assignments ra,
+                                   '.$CFG->prefix.'role r 
+                             WHERE r.id = ra.roleid 
+                               AND ra.contextid = '.$context->id.' 
+                             ORDER BY r.sortorder ASC');
+}
+
+
 ?>
