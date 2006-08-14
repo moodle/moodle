@@ -498,9 +498,11 @@ function authorize_get_status_action($order)
     $ret = new stdClass();
     $ret->actions = array();
 
+    $context = get_context_instance(CONTEXT_COURSE, $order->courseid);
+
     if (intval($order->transid) == 0) { // test transaction or new order
         if ($order->timecreated < $newordertime) {
-            if (isadmin() || (!empty($CFG->an_teachermanagepay) && isteacher($order->courseid))) {
+            if (has_capability('enrol/authorize:managepayments', $context)) {
                 $ret->actions = array(ORDER_DELETE);
             }
             $ret->status = 'tested';
@@ -514,13 +516,13 @@ function authorize_get_status_action($order)
     switch ($order->status) {
     case AN_STATUS_AUTH:
         if (authorize_expired($order)) {
-            if (isadmin() || (!empty($CFG->an_teachermanagepay) && isteacher($order->courseid))) {
+            if (has_capability('enrol/authorize:managepayments', $context)) {
                 $ret->actions = array(ORDER_DELETE);
             }
             $ret->status = 'expired';
         }
         else {
-            if (isadmin() || (!empty($CFG->an_teachermanagepay) && isteacher($order->courseid))) {
+            if (has_capability('enrol/authorize:managepayments', $context)) {
                 $ret->actions = array(ORDER_CAPTURE, ORDER_VOID);
             }
             $ret->status = 'authorizedpendingcapture';
@@ -529,13 +531,13 @@ function authorize_get_status_action($order)
 
     case AN_STATUS_AUTHCAPTURE:
         if (authorize_settled($order)) {
-            if (isadmin() || (!empty($CFG->an_teachermanagepay) && isteacher($order->courseid))) {
+            if (has_capability('enrol/authorize:managepayments', $context)) {
                 $ret->actions = array(ORDER_REFUND);
             }
             $ret->status = 'capturedsettled';
         }
         else {
-            if (isadmin() || (!empty($CFG->an_teachermanagepay) && isteacher($order->courseid))) {
+            if (has_capability('enrol/authorize:managepayments', $context)) {
                 $ret->actions = array(ORDER_VOID);
             }
             $ret->status = 'capturedpendingsettle';
@@ -547,7 +549,7 @@ function authorize_get_status_action($order)
             $ret->status = 'settled';
         }
         else {
-            if (isadmin() || (!empty($CFG->an_teachermanagepay) && isteacher($order->courseid))) {
+            if (has_capability('enrol/authorize:managepayments', $context)) {
                 $ret->actions = array(ORDER_VOID);
             }
             $ret->status = 'refunded';
@@ -559,7 +561,7 @@ function authorize_get_status_action($order)
         return $ret;
 
     case AN_STATUS_EXPIRE:
-        if (isadmin() || (!empty($CFG->an_teachermanagepay) && isteacher($order->courseid))) {
+        if (has_capability('enrol/authorize:managepayments', $context)) {
             $ret->actions = array(ORDER_DELETE);
         }
         $ret->status = 'expired';
