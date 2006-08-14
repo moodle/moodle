@@ -6,6 +6,16 @@
     $nomoodlecookie = true;     // Because it interferes with caching
 
     require_once('../../config.php');
+
+    if (empty($CFG->textfilters)) {
+        error ('Filter not enabled!');
+    } else {
+        $filters = explode(',', $CFG->textfilters);
+        if (array_search('filter/tex', $filters) === FALSE) {
+            error ('Filter not enabled!');
+        }
+    }
+
     require_once($CFG->libdir.'/filelib.php');
     require_once('defaultsettings.php' );
     require_once('latex.php');
