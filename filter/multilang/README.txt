@@ -14,7 +14,6 @@ How it works:
     - for each "lang block":
         - if there are texts in the currently active language, print them.
         - else, if there exists texts in the current parent language, print them.
-        - else, if there are English texts, print them
         - else, print the first language found in the text.
     - text out of "lang blocks" will be showed always.
 
