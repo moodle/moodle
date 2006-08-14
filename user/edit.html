@@ -21,8 +21,8 @@
 <table class="formtable">
 <?php
 if (isadmin()) {
-    $theadmin = get_admin();
-    $adminself = (($theadmin->id == $USER->id) and ($USER->id == $user->id));
+    $theadmin = get_admin(); // returns false during install
+    $adminself = (!empty($theadmin) and ($theadmin->id == $USER->id) and ($USER->id == $user->id));
     echo '<tr>';
     echo '<th>'.get_string('username').':</th>';
     if ($adminself || is_internal_auth($user->auth) ){
