@@ -98,7 +98,7 @@ function stats_cron_daily () {
     
     $days = 0;
     mtrace("starting at $timestart");
-    while ($midnight >= $nextmidnight) {
+    while ($midnight > $nextmidnight && $timestart < $nextmidnight) {
 
         $timesql = " (l.time > $timestart AND l.time < $nextmidnight) ";
         begin_sql();
