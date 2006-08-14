@@ -95,7 +95,7 @@ function upgrade_plugins($type, $dir, $return) {
                     if (modify_database($fullplug .'/db/'. $CFG->dbtype .'.sql')) {
                         // OK so far, now update the plugins record
                         set_config($pluginversion, $plugin->version);
-                        if (!update_capabilities($dir)) {
+                        if (!update_capabilities($dir.'/'.$plug)) {
                             error('Could not set up the capabilities for '.$module->name.'!');
                         }
                         notify(get_string('modulesuccess', '', $plugin->name), 'notifysuccess');
@@ -115,7 +115,7 @@ function upgrade_plugins($type, $dir, $return) {
                         $db->debug=false;
                         // OK so far, now update the plugins record
                         set_config($pluginversion, $plugin->version);
-                        if (!update_capabilities($dir)) {
+                        if (!update_capabilities($dir.'/'.$plug)) {
                             error('Could not update '.$plugin->name.' capabilities!');
                         }
                         notify(get_string('modulesuccess', '', $plugin->name), 'notifysuccess');
