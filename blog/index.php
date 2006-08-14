@@ -89,8 +89,7 @@ if ($filtertype) {
 switch ($filtertype) {
     case 'site':
         $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
-        if ($CFG->bloglevel < BLOG_SITE_LEVEL &&
-                    !has_capability('moodle/site:config', $context)) {
+        if ($CFG->bloglevel < BLOG_SITE_LEVEL) {
             error('Site blogs is not enabled');
         } else if ($CFG->bloglevel < BLOG_GLOBAL_LEVEL) {
             require_login();
@@ -98,23 +97,17 @@ switch ($filtertype) {
     break;
     case 'course':
         $context = get_context_instance(CONTEXT_COURSE, $courseid);
-        if ($CFG->bloglevel < BLOG_COURSE_LEVEL &&
-                    !has_capability('moodle/course:update', $context)) {
+        if ($CFG->bloglevel < BLOG_COURSE_LEVEL) {
             error('Course blogs is not enabled');
-        }
-        if (!has_capability('moodle/blog:readentry', $context)) {
-            error('You do not have the required permissions to to view course blogs');
         }
     break;
     case 'group':
-        $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
-        $coursecontext = get_context_instance(CONTEXT_COURSE, $courseid);
-        if ($CFG->bloglevel < BLOG_GROUP_LEVEL &&
-                    !has_capability('moodle/site:config', $sitecontext)) {
+        $context = get_context_instance(CONTEXT_GROUP, $groupid);
+        if ($CFG->bloglevel < BLOG_GROUP_LEVEL) {
             error ('Group blogs is not enabled');
         }
-        if (!has_capability('moodle/course:update', $coursecontext) &&
-                    groupmode($course) == SEPARATEGROUPS) {
+        if (groupmode($course) == SEPARATEGROUPS &&
+                    !has_capability('moodle/site:accessallgroups', $context)) {
             if (!ismember($filterselect)) {
                 error ('You are not a member of this group');
             }
@@ -122,13 +115,11 @@ switch ($filtertype) {
         /// check if user is editting teacher, or if spg, is member
     break;
     case 'user':
-        $context = get_context_instance(CONTEXT_SYSTEM, $context->id);   /// XXXXX  TODO
-        if ($CFG->bloglevel < BLOG_USER_LEVEL &&
-                    !has_capability('moodle/site:config', SITEID)) {
+        $context = get_context_instance(CONTEXT_USERID, $userid);
+        if ($CFG->bloglevel < BLOG_USER_LEVEL) {
             error ('Blogs is not enabled');
         }
-        if ($CFG->bloglevel == BLOG_USER_LEVEL && $USER->id != $filterselect &&
-                    !has_capability('moodle/site:config', $context)) {
+        if ($CFG->bloglevel == BLOG_USER_LEVEL && $USER->id != $filterselect) {
             error ('Under this setting, you can only view your own blogs');
         }
 
@@ -140,6 +131,11 @@ switch ($filtertype) {
     default:
     break;
 }
+
+if (!has_capability('moodle/blog:view', $context)) {
+    error('You do not have the required permissions to to view blogs');
+}
+
 
 // first set the start and end day equal to the day argument passed in from the get vars
 if ($limit == 'none') {
@@ -163,5 +159,6 @@ blog_print_html_formatted_entries($userid, $postid, $limit, ($blogpage * $limit)
 add_to_log($courseid, 'blog', 'view', 'index.php?filtertype='.$filtertype.'&amp;filterselect='.$filterselect.'&amp;postid='.$postid.'&amp;tagid='.$tagid.'&amp;tag='.$tag, 'view blog entry');
 
 include($CFG->dirroot .'/blog/footer.php');
+
 
 ?>

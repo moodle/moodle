@@ -18,7 +18,7 @@ if (!$referrer = optional_param('referrer','', PARAM_URL)) {
 
 
 $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
-if (!has_capability('moodle/blog:readentries', $context)) {
+if (!has_capability('moodle/blog:view', $context)) {
     error(get_string('nopost', 'blog'), $referrer);
 }
 
@@ -55,7 +55,7 @@ if (isset($act) && ($act == 'del') && confirm_sesskey())
 {
     $postid = required_param('editid', PARAM_INT);
     if (optional_param('confirm',0,PARAM_INT)) {
-        do_delete($postid);
+        do_delete($postid, $context);
     } else {
 
     /// prints blog entry and what confirmation form
@@ -98,7 +98,7 @@ if (($post = data_submitted( get_referer() )) && confirm_sesskey()) {
             do_update($post);
         } else if ($post->act == 'del') {
             $postid = required_param('postid', PARAM_INT);
-            do_delete($postid);
+            do_delete($postid, $context);
         }
     }
 } else {
@@ -148,16 +148,15 @@ include($CFG->dirroot .'/blog/footer.php');
 * takes $bloginfo_arg argument as reference to a blogInfo object.
 * also takes the postid - the id of the entry to be removed
 */
-function do_delete($postid) {
+function do_delete($postid, $context) {
     global $CFG, $USER, $referrer;
     // make sure this user is authorized to delete this entry.
     // cannot use $post->pid because it may not have been initialized yet. Also the pid may be in get format rather than post.
     // check ownership
-    $blogEntry = get_record('post','id',$postid);
+    $blogEntry = get_record('post', 'id', $postid);
 
-    if (blog_user_can_edit_post($blogEntry, $context->id)) {          /// XXX TODO
-        
-        if (delete_records('post','id',$postid)) {
+    if (blog_user_can_edit_post($blogEntry, $context)) {
+        if (delete_records('post', 'id', $postid)) {
             //echo "bloginfo_arg:"; //debug
             //print_object($bloginfo_arg); //debug
             //echo "pid to delete:".$postid; //debug
