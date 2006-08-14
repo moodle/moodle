@@ -24,6 +24,8 @@
         error("Course id is incorrect.");
     }
 
+    $syscontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
+
     require_course_login($course);
 
 
@@ -32,7 +34,7 @@
     $strforumposts   = get_string('forumposts', 'forum');
     $strparticipants = get_string('participants');
     $strmode         = get_string($mode, 'forum');
-    $fullname        = fullname($user, isteacher($course->id));
+    $fullname        = fullname($user, has_capability('moodle/site:viewfullnames', $syscontext));
 
     if ($course->category) {
         print_header("$course->shortname: $fullname: $strmode", "$course->fullname",
@@ -49,11 +51,16 @@
     $currenttab = $mode;
     include($CFG->dirroot.'/user/tabs.php');   /// Prints out tabs as part of user page
 
-    $isseparategroups = /*(($course->groupmode == SEPARATEGROUPS and
+    $isseparategroups = /*
+                         NOTE: isteacheredit is deprecated.
+                         
+                         (($course->groupmode == SEPARATEGROUPS and
                          $course->groupmodeforce and
                          !isteacheredit($course->id))*/forum_get_separate_modules($course->id);
 
     /*
+    NOTE: isteacheredit is deprecated.
+    
     //editting teacher can view everything so do not pass in groupid
     if (isteacheredit ($course->id)){
         $isseparategroups = false;

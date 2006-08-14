@@ -853,6 +853,11 @@ function forum_print_overview($courses,&$htmlarray) {
     }    
 }
 
+/**
+ * NOTE:
+ * $isteacher is to be deprecated. We will need to remove it from all
+ * _print_recent_activity functions for all modules.
+ */
 function forum_print_recent_activity($course, $isteacher, $timestart) {
 /// Given a course and a date, prints a summary of all the new
 /// messages posted in the course since that date
@@ -1123,143 +1128,108 @@ function forum_get_child_posts($parent, $forumid) {
  *                   really is in.
  * @param $extrasql
  */
-function forum_search_posts($searchterms, $courseid, $page=0, $recordsperpage=50,
-                            &$totalcount, $groupid=0, $extrasql='') {
+ //
+ //
+ // TODO: This function needs to be converted to use has_capability().
+ //
+ //
+ function forum_search_posts($searchterms, $courseid, $page=0, $recordsperpage=50, &$totalcount, $sepgroups=0, $extrasql='') {
+ /// Returns a list of posts found using an array of search terms
+ /// eg   word  +word -word
+ ///
+     global $CFG, $USER;
+     require_once($CFG->libdir.'/searchlib.php');
 
-    global $CFG, $USER;
-    require_once($CFG->libdir.'/searchlib.php');
+     if (!isteacher($courseid)) {
+         $notteacherforum = "AND f.type <> 'teacher'";
+         $forummodule = get_record("modules", "name", "forum");
+         $onlyvisible = "AND d.forum = f.id AND f.id = cm.instance AND cm.visible = 1 AND cm.module = $forummodule->id";
+         $onlyvisibletable = ", {$CFG->prefix}course_modules cm, {$CFG->prefix}forum f";
+         if (!empty($sepgroups)) {
+             $separategroups = SEPARATEGROUPS;
+             $selectgroup = " AND ( NOT (cm.groupmode='$separategroups'".
+                                       " OR (c.groupmode='$separategroups' AND c.groupmodeforce='1') )";//.
+             $selectgroup .= " OR d.groupid = '-1'"; //search inside discussions for all groups too
+             foreach ($sepgroups as $sepgroup){
+                 $selectgroup .= " OR d.groupid = '$sepgroup->id'";
+             }
+             $selectgroup .= ")";
 
-    $forummodule = get_record("modules", "name", "forum");
-    $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
-    $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);  // Will need to fix this.
-    
-    // Take into account forum visibility.
-    if (has_capability('moodle/course:viewhiddenactivities', $coursecontext)) {
-        $onlyvisible = '';
-        $onlyvisibletable = '';
-    } else {
-        $onlyvisible = "AND d.forum = f.id 
-                        AND f.id = cm.instance 
-                        AND cm.visible = 1 
-                        AND cm.module = $forummodule->id";
-        
-        $onlyvisibletable = ", {$CFG->prefix}course_modules cm, {$CFG->prefix}forum f";
-    }
-    
-    // Take into account user groups.
-    if (has_capability('moodle/site:accessallgroups', $modcontext)) {
-        $selectgroup = '';
-        $coursetable = '';
-        
-        if ($courseid == SITEID && isadmin()) {
-            $selectcourse = '';
-        } else {
-            $selectcourse = " AND d.course = '$courseid'";
-        }
-    } else {
-        $searchgroupid = mygroupid($courseid);
-        if ($groupid) {
-            // Okay we don't necessarily trust the groups specified. We'll
-            // force the search to occur for a subset of the groups the user
-            // is really in.
-            $novalidgroups = false;
-            
-            if (is_array($groupid)) {
-                foreach ($searchgroupid as $index => $validgroupid) {
-                    if (array_search($validgroupid, $groupid) === false) {
-                        unset($searchgroupid[$index]);
-                    }
-                }
-                if (count($searchgroupid) == 0) {
-                    $novalidgroups = true;
-                }
-            } else {
-                if (array_search($groupid, $searchgroupid) === false) {
-                    $novalidgroups = true;
-                }
-            }
-            if ($novalidgroups) {
-                error('The user does not belong in the group(s) specified '.
-                      'by $groupid and the user does not have the '.
-                      'required permission to view posts from all '.
-                      'groups.');
-            }
-        }
-        $separategroups = SEPARATEGROUPS;
-        $selectgroup = " AND ( NOT (cm.groupmode='$separategroups'".
-                                  " OR (c.groupmode='$separategroups' AND c.groupmodeforce='1') )";//.
-        foreach ($searchgroupid as $index => $value){
-            $selectgroup .= " OR d.groupid = '$value'";
-        }
-        $selectgroup .= ")";
-                           //  " OR d.groupid = '$groupid')";
-        $selectcourse = " AND d.course = '$courseid' AND c.id='$courseid'";
-        $coursetable = ", {$CFG->prefix}course c";
-    }
+                                //  " OR d.groupid = '$groupid')";
+             $selectcourse = " AND d.course = '$courseid' AND c.id='$courseid'";
+             $coursetable = ", {$CFG->prefix}course c";
+         } else {
+             $selectgroup = '';
+             $selectcourse = " AND d.course = '$courseid'";
+             $coursetable = '';
+         }
+     } else {
+         $notteacherforum = "";
+         $selectgroup = '';
+         $onlyvisible = "";
+         $onlyvisibletable = "";
+         $coursetable = '';
+         if ($courseid == SITEID && isadmin()) {
+             $selectcourse = '';
+         } else {
+             $selectcourse = " AND d.course = '$courseid'";
+         }
+     }
 
-    $timelimit = '';
-    if (!empty($CFG->forum_enabletimedposts) && (!((isadmin() and !empty($CFG->admineditalways)) || isteacher($courseid)))) {
-        $now = time();
-        $timelimit = " AND (d.userid = $USER->id OR ((d.timestart = 0 OR d.timestart <= $now) AND (d.timeend = 0 OR d.timeend > $now)))";
-    }
+     $timelimit = '';
+     if (!empty($CFG->forum_enabletimedposts) && (!((isadmin() and !empty($CFG->admineditalways)) || isteacher($courseid)))) {
+         $now = time();
+         $timelimit = " AND (d.userid = $USER->id OR ((d.timestart = 0 OR d.timestart <= $now) AND (d.timeend = 0 OR d.timeend > $now)))";
+     }
 
-    $limit = sql_paging_limit($page, $recordsperpage);
+     $limit = sql_paging_limit($page, $recordsperpage);
 
-    /// Some differences in syntax for PostgreSQL
-    if ($CFG->dbtype == "postgres7") {
-        $LIKE = "ILIKE";   // case-insensitive
-        $NOTLIKE = "NOT ILIKE";   // case-insensitive
-        $REGEXP = "~*";
-        $NOTREGEXP = "!~*";
-    } else {
-        $LIKE = "LIKE";
-        $NOTLIKE = "NOT LIKE";
-        $REGEXP = "REGEXP";
-        $NOTREGEXP = "NOT REGEXP";
-    }
+     /// Some differences in syntax for PostgreSQL
+     if ($CFG->dbtype == "postgres7") {
+         $LIKE = "ILIKE";   // case-insensitive
+         $NOTLIKE = "NOT ILIKE";   // case-insensitive
+         $REGEXP = "~*";
+         $NOTREGEXP = "!~*";
+     } else {
+         $LIKE = "LIKE";
+         $NOTLIKE = "NOT LIKE";
+         $REGEXP = "REGEXP";
+         $NOTREGEXP = "NOT REGEXP";
+     }
 
-    $messagesearch = "";
-    $searchstring = "";
-    // Need to concat these back together for parser to work.
-    foreach($searchterms as $searchterm){
-        if ($searchstring != "") {
-            $searchstring .= " ";
-        }
-        $searchstring .= $searchterm;
-    }
+     $messagesearch = "";
+     $searchstring = "";
+     // Need to concat these back together for parser to work.
+     foreach($searchterms as $searchterm){
+         if ($searchstring != "") {
+             $searchstring .= " ";
+         }
+         $searchstring .= $searchterm;
+     }
 
-    // We need to allow quoted strings for the search. The quotes *should* be stripped
-    // by the parser, but this should be examined carefully for security implications.
-    $searchstring = str_replace("\\\"","\"",$searchstring);
-    $parser = new search_parser();
-    $lexer = new search_lexer($parser);
+     // We need to allow quoted strings for the search. The quotes *should* be stripped
+     // by the parser, but this should be examined carefully for security implications.
+     $searchstring = str_replace("\\\"","\"",$searchstring);
+     $parser = new search_parser();
+     $lexer = new search_lexer($parser);
 
-    if ($lexer->parse($searchstring)) {
-        $parsearray = $parser->get_parsed_array();
-        $messagesearch = search_generate_SQL($parsearray,'p.message','p.subject','p.userid','u.id','u.firstname','u.lastname','p.modified', 'd.forum');
-    }
-    
-    /*
-    $selectsql = "{$CFG->prefix}forum_posts p,
-                  {$CFG->prefix}forum_discussions d,
-                  {$CFG->prefix}user u $onlyvisibletable $coursetable
-             WHERE ($messagesearch)
-               AND p.userid = u.id
-               AND p.discussion = d.id $selectcourse $notteacherforum $onlyvisible $selectgroup $timelimit $extrasql";
-               */
-    
-    $selectsql = "{$CFG->prefix}forum_posts p,
-                             {$CFG->prefix}forum_discussions d,
-                             {$CFG->prefix}user u $onlyvisibletable $coursetable
-                        WHERE ($messagesearch)
-                          AND p.userid = u.id
-                          AND p.discussion = d.id $selectcourse $onlyvisible $selectgroup $timelimit $extrasql";
-    
-    $totalcount = count_records_sql("SELECT COUNT(*) FROM $selectsql");
+     if ($lexer->parse($searchstring)) {
+         $parsearray = $parser->get_parsed_array();
+         $messagesearch = search_generate_SQL($parsearray,'p.message','p.subject','p.userid','u.id','u.firstname','u.lastname','p.modified', 'd.forum');
+     }
 
-    return get_records_sql("SELECT p.*,d.forum, u.firstname,u.lastname,u.email,u.picture FROM
-                            $selectsql ORDER BY p.modified DESC $limit");
-}
+     $selectsql = "{$CFG->prefix}forum_posts p,
+                   {$CFG->prefix}forum_discussions d,
+                   {$CFG->prefix}user u $onlyvisibletable $coursetable
+              WHERE ($messagesearch)
+                AND p.userid = u.id
+                AND p.discussion = d.id $selectcourse $notteacherforum $onlyvisible $selectgroup $timelimit $extrasql";
+
+     $totalcount = count_records_sql("SELECT COUNT(*) FROM $selectsql");
+
+     return get_records_sql("SELECT p.*,d.forum, u.firstname,u.lastname,u.email,u.picture FROM
+                             $selectsql ORDER BY p.modified DESC $limit");
+ }
 
 
 function forum_get_ratings($postid, $sort="u.firstname ASC") {
@@ -1787,9 +1757,17 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
 
     global $USER, $CFG, $SESSION;
 
-    static $stredit, $strdelete, $strreply, $strparent, $strprune, $strpruneheading, $threadedmode, $isteacher, $adminedit;
-
+    static $stredit, $strdelete, $strreply, $strparent, $strprune;
+    static $strpruneheading, $threadedmode;
     static $strmarkread, $strmarkunread, $istracked;
+
+
+    $discussion = get_record('discussion', 'id', $post->discussion);
+    if (!$cm = get_coursemodule_from_instance('forum', $discussion->forum)) {
+        error('Course Module ID was incorrect');
+    }
+    $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
+
 
     if (!forum_user_can_see_post($post->forum,$post->discussion,$post)) {
         if (empty($SESSION->forum_search)) {
@@ -1830,8 +1808,6 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
         $strpruneheading = get_string('pruneheading', 'forum');
         $strprune = get_string('prune', 'forum');
         $threadedmode = (!empty($USER->mode) and ($USER->mode == FORUM_MODE_THREADED));
-        $isteacher = isteacher($courseid);
-        $adminedit = (isadmin() and !empty($CFG->admineditalways));
         $strmarkread = get_string('markread', 'forum');
         $strmarkunread = get_string('markunread', 'forum');
 
@@ -1875,7 +1851,7 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
     echo '<div class="subject">'.$post->subject.'</div>';
 
     echo '<div class="author">';
-    $fullname = fullname($post, $isteacher);
+    $fullname = fullname($post, has_capability('moodle/site:viewfullnames', $modcontext));
     $by->name = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.
                 $post->userid.'&amp;course='.$courseid.'">'.$fullname.'</a>';
     $by->date = userdate($post->modified);
@@ -1966,18 +1942,20 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
         && get_field_sql("SELECT id FROM {$CFG->prefix}forum_discussions WHERE id = $post->discussion AND timestart > ".time())) {
         $age = 0;
     }
-    if ($ownpost or $adminedit) {
-        if (($age < $CFG->maxeditingtime) or $adminedit) {
+    $editanypost = has_capability('mod/forum:editanypost', $modcontext);
+    if ($ownpost or $editanypost) {
+        if (($age < $CFG->maxeditingtime) or $editanypost) {
             $commands[] =  '<a href="'.$CFG->wwwroot.'/mod/forum/post.php?edit='.$post->id.'">'.$stredit.'</a>';
         }
     }
 
-    if (isteacheredit($courseid) and $post->parent) {
+    if (has_capability('mod/forum:splitdiscussions', $modcontext) and $post->parent) {
         $commands[] = '<a href="'.$CFG->wwwroot.'/mod/forum/post.php?prune='.$post->id.
                       '" title="'.$strpruneheading.'">'.$strprune.'</a>';
     }
 
-    if (($ownpost and $age < $CFG->maxeditingtime) or $isteacher) {
+    if (($ownpost and $age < $CFG->maxeditingtime) or
+                has_capability('mod/forum:editanypost', $modcontext)) {
         $commands[] = '<a href="'.$CFG->wwwroot.'/mod/forum/post.php?delete='.$post->id.'">'.$strdelete.'</a>';
     }
 
@@ -2003,9 +1981,11 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
         }
         if ($useratings) {
             $mypost = ($USER->id == $post->userid);
-
-            if (($isteacher or $ratings->assesspublic) and !$mypost) {
-                forum_print_ratings_mean($post->id, $ratings->scale, $isteacher);
+            
+            $canviewallratings = has_capability('mod/forum:viewanyrating', $modcontext);
+            
+            if (($canviewallratings or $ratings->assesspublic) and !$mypost) {    
+                forum_print_ratings_mean($post->id, $ratings->scale, $canviewallratings);
                 if (!empty($ratings->allow)) {
                     echo '&nbsp;';
                     forum_print_rating_menu($post->id, $USER->id, $ratings->scale);
@@ -2061,12 +2041,20 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
 * @param boolean $cantrack Is tracking enabled for this forum.
 * @param boolean $forumtracked Is the user tracking this forum.
 */
-function forum_print_discussion_header(&$post, $forum, $group=-1, $datestring="", $cantrack=true, $forumtracked=true) {
+function forum_print_discussion_header(&$post, $forum, $group=-1, $datestring="",
+                                        $cantrack=true, $forumtracked=true) {
 
     global $USER, $CFG;
 
     static $rowcount;
     static $strmarkalldread;
+
+    
+    if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $forum->course)) {
+        error('Course Module ID was incorrect');
+    }
+    $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
+    
 
     if (!isset($rowcount)) {
         $rowcount = 0;
@@ -2091,7 +2079,7 @@ function forum_print_discussion_header(&$post, $forum, $group=-1, $datestring=""
     echo "</td>\n";
 
     // User name
-    $fullname = fullname($post, isteacher($forum->course));
+    $fullname = fullname($post, has_capability('moodle/site:viewfullnames', $modcontext));
     echo '<td class="author">';
     echo '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$post->userid.'&amp;course='.$forum->course.'">'.$fullname.'</a>';
     echo "</td>\n";
@@ -2877,7 +2865,7 @@ function forum_user_can_view_post($post, $course, $cm, $forum, $discussion, $use
 }
 
 
-function forum_user_can_see_discussion($forum, $discussion, $contextid, $user=NULL) {
+function forum_user_can_see_discussion($forum, $discussion, $context, $user=NULL) {
     global $USER;
 
     if (empty($user) || empty($user->id)) {
@@ -2896,13 +2884,13 @@ function forum_user_can_see_discussion($forum, $discussion, $contextid, $user=NU
         }
     }
     
-    if (!has_capability('mod/forum:viewdiscussion', $contextid)) {
+    if (!has_capability('mod/forum:viewdiscussion', $context)) {
         return false;
     }
     
     if ($forum->type == 'qanda' &&
             !forum_user_has_posted($forum->id, $discussion->id, $user->id) &&
-            !has_capability('mod/forum:viewqandawithoutposting', $contextid)) {
+            !has_capability('mod/forum:viewqandawithoutposting', $context)) {
         return false;
     }
     return true;

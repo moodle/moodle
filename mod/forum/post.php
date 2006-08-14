@@ -660,7 +660,7 @@
     }
 
 // checkup
-    if (!empty($parent) && !forum_user_can_see_post($forum,$discussion,$post)) {
+    if (!empty($parent) && !forum_user_can_see_post($forum, $discussion, $post)) {
         error("You cannot reply to this post");
     }
     if (empty($parent) && !forum_user_can_post_discussion($forum)) {
