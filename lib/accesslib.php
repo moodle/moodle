@@ -867,7 +867,7 @@ function get_context_instance_by_id($id) {
     }
 
     if ($context = get_record('context', 'id', $id)) {   // Update the cache and return
-        $context_cache[$context->level][$context->instance] = $context;
+        $context_cache[$context->level][$context->instanceid] = $context;
         $context_cache_id[$context->id] = $context;
         return $context;
     }
