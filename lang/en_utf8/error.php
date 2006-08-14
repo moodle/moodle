@@ -42,6 +42,7 @@ $string['mustbeteacher'] = 'You must be a teacher to look at this page';
 $string['noinstances'] = 'There are no instances of $a in this course! ';
 $string['nonmeaningfulcontent'] = 'Non meaningful content';
 $string['noparticipatorycms'] =  'Sorry, but you have no participatory course modules to report on.';
+$string['nopermissions'] =  'Sorry, but you do not currently have permissions to do that ($a)';
 $string['notavailable'] = 'That is not currently available';
 $string['onlyeditown'] = 'You can only edit your own information';
 $string['onlyeditingteachers'] = 'Only editing teachers can do that.';

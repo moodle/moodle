@@ -339,9 +339,8 @@
 
     $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
 
-    if (!has_capability('moodle/site:config', $context)) {
-        print_error("permissionconfig", '', "$CFG->wwwroot/login/index.php");
-    }
+    require_capability('moodle/site:config', $context);
+
 
 /// Check if we are returning from moodle.org registration and if so, we mark that fact to remove reminders
 
