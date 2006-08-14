@@ -956,11 +956,7 @@ function assign_capability($capability, $permission, $roleid, $contextid) {
     $cap->capability = $capability;
     $cap->permission = $permission;
     $cap->timemodified = time();
-    if ($USER->id) {
-        $cap->modifierid = $USER->id;
-    } else {
-        $cap->modifierid = -1;  // Happens during fresh install or Moodle.
-    }
+    $cap->modifierid = empty($USER->id) ? 0 : $USER->id;
     
     return insert_record('role_capabilities', $cap);
 }
@@ -1048,7 +1044,7 @@ function role_assign($roleid, $userid, $groupid, $contextid, $timestart=0, $time
     $ra->timestart = $timestart;
     $ra->timeend = $timeend;
     $ra->timemodified = time();
-    $ra->modifier = $USER->id;
+    $ra->modifier = empty($USER->id) ? 0 : $USER->id;
     
     return insert_record('role_assignments', $ra);
 
