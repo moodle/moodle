@@ -7,6 +7,15 @@
 
     require_once("../../config.php");
 
+    if (empty($CFG->textfilters)) {
+        error ('Filter not enabled!');
+    } else {
+        $filters = explode(',', $CFG->textfilters);
+        if (array_search('filter/tex', $filters) === FALSE) {
+            error ('Filter not enabled!');
+        }
+    }
+
     $CFG->texfilterdir = "filter/tex";
     $CFG->teximagedir = "filter/tex";
 
