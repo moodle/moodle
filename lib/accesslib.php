@@ -1,5 +1,6 @@
 <?php
- /* capability session information format
+ /**
+  * Capability session information format
   * 2 x 2 array
   * [context][capability]
   * where context is the context id of the table 'context'
@@ -32,6 +33,7 @@ define('CONTEXT_BLOCK', 80);
 
 $context_cache    = array();    // Cache of all used context objects for performance (by level and instance)
 $context_cache_id = array();    // Index to above cache by id
+
 
 /**
  * This functions get all the course categories in proper order
@@ -81,7 +83,10 @@ function get_parent_cats($context, $type) {
 }
 
 
-/* Functions for Roles & Capabilites */
+
+/*************************************
+ * Functions for Roles & Capabilites *
+ *************************************/
 
 
 /**
@@ -147,7 +152,7 @@ function has_capability($capability, $context=NULL, $userid=NULL) {
             foreach ($parentcats as $parentcat) {
                 if (isset($capabilities[$parentcat]['moodle/site:doanything'])) {
                     return ($capabilities[$parentcat]['moodle/site:doanything']);
-                }      
+                }
             }
         break;
 
@@ -190,13 +195,13 @@ function has_capability($capability, $context=NULL, $userid=NULL) {
                 foreach ($parentcats as $parentcat) {
                     if (isset($capabilities[$parentcat]['do_anything'])) {
                         return ($capabilities[$parentcat]['do_anything']);
-                    }      
+                    }
                 }    
             }    
 
             if (isset($capabilities[$courseinstance->id]['do_anything'])) {
                 return ($capabilities[$courseinstance->id]['do_anything']);
-            }  
+            }
 
         break;
 
@@ -210,12 +215,12 @@ function has_capability($capability, $context=NULL, $userid=NULL) {
             foreach ($parentcats as $parentcat) {
                 if (isset($capabilities[$parentcat]['do_anything'])) {
                     return ($capabilities[$parentcat]['do_anything']);
-                }      
-            }    
+                }
+            }
             
             if (isset($capabilities[$courseinstance->id]['do_anything'])) {
                 return ($capabilities[$courseinstance->id]['do_anything']);
-            }  
+            }
         break;
 
         default:
@@ -786,7 +791,11 @@ function assign_legacy_capabilities($capability, $legacyperms) {
 }
 
 
-// checks to see if a capability is a legacy capability, returns bool
+/**
+ * Checks to see if a capability is a legacy capability.
+ * @param $capabilityname
+ * @return boolean
+ */
 function islegacy($capabilityname) {
     if (strstr($capabilityname, 'legacy') === false) {
         return false;  
@@ -795,10 +804,11 @@ function islegacy($capabilityname) {
     }
 }
 
-/************************************
+
+
+/**********************************
  * Context Manipulation functions *
  **********************************/
-
 
 /**
  * This should be called prolly everytime a user, group, module, course,
@@ -856,6 +866,7 @@ function get_context_instance($level=NULL, $instance=SITEID) {
     return $context;
 }
 
+
 /**
  * Get a context instance as an object, from a given id.
  * @param $id
@@ -892,7 +903,7 @@ function get_local_override($roleid, $contextid, $capability) {
  *    DB TABLE RELATED FUNCTIONS    *
  ************************************/
 
-/**********************************************
+/**
  * function that creates a role
  * @param name - role name
  * @param description - role description
@@ -921,6 +932,7 @@ function create_role($name, $description, $legacy='') {
     }
   
 }
+
 
 /**
  * Function to write context specific overrides, or default capabilities.
@@ -1209,10 +1221,9 @@ function capabilities_cleanup($component, $newcapdef=NULL) {
 
 
 
-
-/************************************************************
- *                     * UI FUNCTIONS *                     *
- ************************************************************/
+/****************
+ * UI FUNCTIONS *
+ ****************/
 
 
 /**
@@ -1401,8 +1412,6 @@ function role_context_capabilities($roleid, $context) {
  * @param object $context
  * @return array()
  */
- 
- 
 function get_parent_contexts($context) {
   
     switch ($context->level) {
@@ -1473,16 +1482,19 @@ function get_parent_contexts($context) {
  * @param array $capabilities - array loaded using role_context_capabilities
  * @return int (allow, prevent, prohibit, inherit)
  */
- 
- 
 function get_role_context_capability($contextid, $capability, $capabilities) {
     return $capabilities[$contextid][$capability];
 }
 
 
+/**
+ * Returns the human-readable, translated version of the capability.
+ * Basically a big switch statement.
+ * @param $capabilityname - e.g. mod/choice:readresponses
+ */
 function get_capability_string($capabilityname) {
 
-    // Typical capabilityname is:   mod/choice:readresponses
+    // Typical capabilityname is mod/choice:readresponses
 
     $names = split('/', $capabilityname);
     $stringname = $names[1];                 // choice:readresponses
@@ -1511,12 +1523,15 @@ function get_capability_string($capabilityname) {
         break;  
       
     }
-
     return $string;
 }
 
 
-// this gets the mod/block/course/core etc strings
+/**
+ * This gets the mod/block/course/core etc strings.
+ * @param $component
+ * @param $contextlevel
+ */
 function get_component_string($component, $contextlevel) {
 
     switch ($contextlevel) {
@@ -1558,8 +1573,8 @@ function get_component_string($component, $contextlevel) {
         return false;
       
     }
-    
     return $string;
-  
 }
+
+
 ?>
