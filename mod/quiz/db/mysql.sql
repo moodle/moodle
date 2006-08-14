@@ -1,20 +1,13 @@
--- phpMyAdmin SQL Dump
--- version 2.6.0-pl1
--- http://www.phpmyadmin.net
--- 
--- Host: localhost
--- Generation Time: Jun 05, 2005 at 04:32 PM
--- Server version: 4.0.15
--- PHP Version: 4.3.3
--- 
--- Database: `moodle15`
--- 
-
+-- --------------------------------------------------------
+-- Quiz module and question bank table definitions.
+--
+-- The tables are grouped divided by:
+-- quiz/questionbank and definition/runtime.
 -- --------------------------------------------------------
 
--- 
--- Table structure for table `prefix_quiz`
--- 
+-- --------------------------------------------------------
+-- Quiz module, quiz definition data.
+-- --------------------------------------------------------
 
 CREATE TABLE prefix_quiz (
   id int(10) unsigned NOT NULL auto_increment,
@@ -48,27 +41,30 @@ CREATE TABLE prefix_quiz (
   KEY course (course)
 ) TYPE=MyISAM COMMENT='Main information about each quiz';
 
--- --------------------------------------------------------
-
--- 
--- Table structure for table `prefix_question_answers`
--- 
-
-CREATE TABLE prefix_question_answers (
+CREATE TABLE prefix_quiz_question_instances (
   id int(10) unsigned NOT NULL auto_increment,
+  quiz int(10) unsigned NOT NULL default '0',
   question int(10) unsigned NOT NULL default '0',
-  answer text NOT NULL default '',
-  fraction float NOT NULL default '0',
-  feedback text NOT NULL default '',
+  grade smallint(6) NOT NULL default '0',
   PRIMARY KEY  (id),
+  KEY quiz (quiz),
   KEY question (question)
-) TYPE=MyISAM COMMENT='Answers, with a fractional grade (0-1) and feedback';
+) TYPE=MyISAM COMMENT='The grade for a question in a quiz';
+
+CREATE TABLE prefix_quiz_question_versions (
+  id int(10) unsigned NOT NULL auto_increment,
+  quiz int(10) unsigned NOT NULL default '0',
+  oldquestion int(10) unsigned NOT NULL default '0',
+  newquestion int(10) unsigned NOT NULL default '0',
+  originalquestion int(10) unsigned NOT NULL default '0',
+  userid int(10) unsigned NOT NULL default '0',
+  timestamp int(10) unsigned NOT NULL default '0',
+  PRIMARY KEY  (id)
+) TYPE=MyISAM COMMENT='The mapping between old and new versions of a question';
 
 -- --------------------------------------------------------
-
--- 
--- Table structure for table `prefix_quiz_attempts`
--- 
+-- Quiz module, quiz runtime data.
+-- --------------------------------------------------------
 
 CREATE TABLE prefix_quiz_attempts (
   id int(10) unsigned NOT NULL auto_increment,
@@ -88,11 +84,24 @@ CREATE TABLE prefix_quiz_attempts (
   KEY userid (userid)
 ) TYPE=MyISAM COMMENT='Stores various attempts on a quiz';
 
--- --------------------------------------------------------
+CREATE TABLE prefix_quiz_grades (
+  id int(10) unsigned NOT NULL auto_increment,
+  quiz int(10) unsigned NOT NULL default '0',
+  userid int(10) unsigned NOT NULL default '0',
+  grade double NOT NULL default '0',
+  timemodified int(10) unsigned NOT NULL default '0',
+  PRIMARY KEY  (id),
+  KEY quiz (quiz),
+  KEY userid (userid)
+) TYPE=MyISAM COMMENT='Final quiz grade (may be best of several attempts)';
 
+-- --------------------------------------------------------
+-- Questionbank definition data.
 -- 
--- Table structure for table `prefix_question_categories`
--- 
+-- TODO, these tables no longer belong to the quiz module.
+-- They should be moved elsewhere when a good home for them
+-- is found.
+-- --------------------------------------------------------
 
 CREATE TABLE prefix_question_categories (
   id int(10) unsigned NOT NULL auto_increment,
@@ -106,141 +115,6 @@ CREATE TABLE prefix_question_categories (
   PRIMARY KEY  (id),
   KEY course (course)
 ) TYPE=MyISAM COMMENT='Categories are for grouping questions';
-
--- --------------------------------------------------------
-
--- 
--- Table structure for table `prefix_question_dataset_definitions`
--- 
-
-CREATE TABLE prefix_question_dataset_definitions (
-  id int(10) unsigned NOT NULL auto_increment,
-  category int(10) unsigned NOT NULL default '0',
-  name varchar(255) NOT NULL default '',
-  type int(10) NOT NULL default '0',
-  options varchar(255) NOT NULL default '',
-  itemcount int(10) unsigned NOT NULL default '0',
-  PRIMARY KEY  (id),
-  KEY category (category)
-) TYPE=MyISAM COMMENT='Organises and stores properties for dataset items';
-
--- --------------------------------------------------------
-
--- 
--- Table structure for table `prefix_question_dataset_items`
--- 
-
-CREATE TABLE prefix_question_dataset_items (
-  id int(10) unsigned NOT NULL auto_increment,
-  definition int(10) unsigned NOT NULL default '0',
-  number int(10) unsigned NOT NULL default '0',
-  value varchar(255) NOT NULL default '',
-  PRIMARY KEY  (id),
-  KEY definition (definition)
-) TYPE=MyISAM COMMENT='Individual dataset items';
-
--- --------------------------------------------------------
-
--- 
--- Table structure for table `prefix_quiz_grades`
--- 
-
-CREATE TABLE prefix_quiz_grades (
-  id int(10) unsigned NOT NULL auto_increment,
-  quiz int(10) unsigned NOT NULL default '0',
-  userid int(10) unsigned NOT NULL default '0',
-  grade double NOT NULL default '0',
-  timemodified int(10) unsigned NOT NULL default '0',
-  PRIMARY KEY  (id),
-  KEY quiz (quiz),
-  KEY userid (userid)
-) TYPE=MyISAM COMMENT='Final quiz grade (may be best of several attempts)';
-
--- --------------------------------------------------------
-
--- 
--- Table structure for table `prefix_question_sessions`
--- 
-
-CREATE TABLE prefix_question_sessions (
-  id int(10) unsigned NOT NULL auto_increment,
-  attemptid int(10) unsigned NOT NULL default '0',
-  questionid int(10) unsigned NOT NULL default '0',
-  newest int(10) unsigned NOT NULL default '0',
-  newgraded int(10) unsigned NOT NULL default '0',
-  sumpenalty float NOT NULL default '0',
-  comment text NOT NULL default '',
-  PRIMARY KEY  (id),
-  UNIQUE KEY attemptid (attemptid,questionid)
-) TYPE=MyISAM COMMENT='Gives ids of the newest open and newest graded states';
-
--- --------------------------------------------------------
-
--- 
--- Table structure for table `prefix_question_numerical_units`
--- 
-
-CREATE TABLE prefix_question_numerical_units (
-  id int(10) unsigned NOT NULL auto_increment,
-  question int(10) unsigned NOT NULL default '0',
-  multiplier decimal(40,20) NOT NULL default '1.00000000000000000000',
-  unit varchar(50) NOT NULL default '',
-  PRIMARY KEY  (id),
-  KEY question (question)
-) TYPE=MyISAM COMMENT='Optional unit options for numerical questions';
-
--- --------------------------------------------------------
-
--- 
--- Table structure for table `prefix_question_datasets`
--- 
-
-CREATE TABLE prefix_question_datasets (
-  id int(10) unsigned NOT NULL auto_increment,
-  question int(10) unsigned NOT NULL default '0',
-  datasetdefinition int(10) unsigned NOT NULL default '0',
-  PRIMARY KEY  (id),
-  KEY question (question,datasetdefinition)
-) TYPE=MyISAM COMMENT='Many-many relation between questions and dataset definitions';
-
--- --------------------------------------------------------
-
--- 
--- Table structure for table `prefix_quiz_question_instances`
--- 
-
-CREATE TABLE prefix_quiz_question_instances (
-  id int(10) unsigned NOT NULL auto_increment,
-  quiz int(10) unsigned NOT NULL default '0',
-  question int(10) unsigned NOT NULL default '0',
-  grade smallint(6) NOT NULL default '0',
-  PRIMARY KEY  (id),
-  KEY quiz (quiz),
-  KEY question (question)
-) TYPE=MyISAM COMMENT='The grade for a question in a quiz';
-
--- --------------------------------------------------------
-
--- 
--- Table structure for table `prefix_quiz_question_versions`
--- 
-
-CREATE TABLE prefix_quiz_question_versions (
-  id int(10) unsigned NOT NULL auto_increment,
-  quiz int(10) unsigned NOT NULL default '0',
-  oldquestion int(10) unsigned NOT NULL default '0',
-  newquestion int(10) unsigned NOT NULL default '0',
-  originalquestion int(10) unsigned NOT NULL default '0',
-  userid int(10) unsigned NOT NULL default '0',
-  timestamp int(10) unsigned NOT NULL default '0',
-  PRIMARY KEY  (id)
-) TYPE=MyISAM COMMENT='The mapping between old and new versions of a question';
-
--- --------------------------------------------------------
-
--- 
--- Table structure for table `prefix_question`
--- 
 
 CREATE TABLE prefix_question (
   id int(10) NOT NULL auto_increment,
@@ -262,11 +136,75 @@ CREATE TABLE prefix_question (
   KEY category (category)
 ) TYPE=MyISAM COMMENT='The quiz questions themselves';
 
+CREATE TABLE prefix_question_answers (
+  id int(10) unsigned NOT NULL auto_increment,
+  question int(10) unsigned NOT NULL default '0',
+  answer text NOT NULL default '',
+  fraction float NOT NULL default '0',
+  feedback text NOT NULL default '',
+  PRIMARY KEY  (id),
+  KEY question (question)
+) TYPE=MyISAM COMMENT='Answers, with a fractional grade (0-1) and feedback';
+
+CREATE TABLE prefix_question_numerical_units (
+  id int(10) unsigned NOT NULL auto_increment,
+  question int(10) unsigned NOT NULL default '0',
+  multiplier decimal(40,20) NOT NULL default '1.00000000000000000000',
+  unit varchar(50) NOT NULL default '',
+  PRIMARY KEY  (id),
+  KEY question (question)
+) TYPE=MyISAM COMMENT='Optional unit options for numerical questions';
+
+CREATE TABLE prefix_question_datasets (
+  id int(10) unsigned NOT NULL auto_increment,
+  question int(10) unsigned NOT NULL default '0',
+  datasetdefinition int(10) unsigned NOT NULL default '0',
+  PRIMARY KEY  (id),
+  KEY question (question,datasetdefinition)
+) TYPE=MyISAM COMMENT='Many-many relation between questions and dataset definitions';
+
+CREATE TABLE prefix_question_dataset_definitions (
+  id int(10) unsigned NOT NULL auto_increment,
+  category int(10) unsigned NOT NULL default '0',
+  name varchar(255) NOT NULL default '',
+  type int(10) NOT NULL default '0',
+  options varchar(255) NOT NULL default '',
+  itemcount int(10) unsigned NOT NULL default '0',
+  PRIMARY KEY  (id),
+  KEY category (category)
+) TYPE=MyISAM COMMENT='Organises and stores properties for dataset items';
+
+CREATE TABLE prefix_question_dataset_items (
+  id int(10) unsigned NOT NULL auto_increment,
+  definition int(10) unsigned NOT NULL default '0',
+  number int(10) unsigned NOT NULL default '0',
+  value varchar(255) NOT NULL default '',
+  PRIMARY KEY  (id),
+  KEY definition (definition)
+) TYPE=MyISAM COMMENT='Individual dataset items';
+
+-- --------------------------------------------------------
+-- Questionbank runtime data.
+-- See above TODO.
 -- --------------------------------------------------------
 
--- 
--- Table structure for table `prefix_question_states`
--- 
+CREATE TABLE prefix_question_attempts (
+  id int(10) unsigned NOT NULL auto_increment,
+  modulename varchar(20) NOT NULL default 'quiz',
+  PRIMARY KEY  (id)
+) TYPE=MyISAM COMMENT='Student attempts. This table gets extended by the modules';
+
+CREATE TABLE prefix_question_sessions (
+  id int(10) unsigned NOT NULL auto_increment,
+  attemptid int(10) unsigned NOT NULL default '0',
+  questionid int(10) unsigned NOT NULL default '0',
+  newest int(10) unsigned NOT NULL default '0',
+  newgraded int(10) unsigned NOT NULL default '0',
+  sumpenalty float NOT NULL default '0',
+  comment text NOT NULL default '',
+  PRIMARY KEY  (id),
+  UNIQUE KEY attemptid (attemptid,questionid)
+) TYPE=MyISAM COMMENT='Gives ids of the newest open and newest graded states';
 
 CREATE TABLE prefix_question_states (
   id int(10) unsigned NOT NULL auto_increment,
@@ -286,19 +224,8 @@ CREATE TABLE prefix_question_states (
 ) TYPE=MyISAM COMMENT='Stores user responses to a quiz, and percentage grades';
 
 -- --------------------------------------------------------
-
--- 
--- Table structure for table `prefix_question_attempts`
--- 
-
-CREATE TABLE prefix_question_attempts (
-  id int(10) unsigned NOT NULL auto_increment,
-  modulename varchar(20) NOT NULL default 'quiz',
-  PRIMARY KEY  (id)
-) TYPE=MyISAM COMMENT='Student attempts. This table gets extended by the modules';
-
+-- Quiz log actions.
 -- --------------------------------------------------------
-
 
 INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('quiz', 'add', 'quiz', 'name');
 INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('quiz', 'update', 'quiz', 'name');

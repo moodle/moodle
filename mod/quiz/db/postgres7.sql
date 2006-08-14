@@ -1,17 +1,13 @@
-# phpMyAdmin MySQL-Dump
-# version 2.3.2-dev
-# http://www.phpmyadmin.net/ (download page)
-#
-# Host: localhost
-# Generation Time: Oct 16, 2002 at 01:12 AM
-# Server version: 3.23.49
-# PHP Version: 4.2.3
-# Database : moodle
-# --------------------------------------------------------
+-- --------------------------------------------------------
+-- Quiz module and question bank table definitions.
+--
+-- The tables are grouped divided by:
+-- quiz/questionbank and definition/runtime.
+-- --------------------------------------------------------
 
-#
-# Table structure for table prefix_quiz
-#
+-- --------------------------------------------------------
+-- Quiz module, quiz definition data.
+-- --------------------------------------------------------
 
 CREATE TABLE prefix_quiz (
   id SERIAL PRIMARY KEY,
@@ -42,30 +38,30 @@ CREATE TABLE prefix_quiz (
   delay1 integer NOT NULL default '0',
   delay2 integer NOT NULL default '0'
 );
-
 CREATE INDEX prefix_quiz_course_idx ON prefix_quiz (course);
 
-# --------------------------------------------------------
-
-#
-# Table structure for table prefix_question_answers
-#
-
-CREATE TABLE prefix_question_answers (
+CREATE TABLE prefix_quiz_question_instances (
   id SERIAL PRIMARY KEY,
+  quiz integer NOT NULL default '0',
   question integer NOT NULL default '0',
-  answer text NOT NULL default '',
-  fraction real NOT NULL default '0',
-  feedback text NOT NULL default ''
+  grade integer NOT NULL default '0'
+);
+CREATE INDEX prefix_quiz_question_instances_quiz_idx ON prefix_quiz_question_instances (quiz);
+CREATE INDEX prefix_quiz_question_instances_question_idx ON prefix_quiz_question_instances (question);
+
+CREATE TABLE prefix_quiz_question_versions (
+  id SERIAL PRIMARY KEY,
+  quiz integer NOT NULL default '0',
+  oldquestion integer NOT NULL default '0',
+  newquestion integer NOT NULL default '0',
+  originalquestion integer NOT NULL default '0',
+  userid integer NOT NULL default '0',
+  timestamp integer NOT NULL default '0'
 );
 
-CREATE INDEX prefix_question_answers_question_idx ON prefix_question_answers (question);
-
-
-# --------------------------------------------------------
-#
-# Table structure for table prefix_quiz_attempts
-#
+-- --------------------------------------------------------
+-- Quiz module, quiz runtime data.
+-- --------------------------------------------------------
 
 CREATE TABLE prefix_quiz_attempts (
   id SERIAL PRIMARY KEY,
@@ -80,66 +76,9 @@ CREATE TABLE prefix_quiz_attempts (
   layout text NOT NULL default '',
   preview integer NOT NULL default '0'
 );
-
 CREATE INDEX prefix_quiz_attempts_quiz_idx ON prefix_quiz_attempts (quiz);
 CREATE INDEX prefix_quiz_attempts_userid_idx ON prefix_quiz_attempts (userid);
 CREATE UNIQUE INDEX prefix_quiz_attempts_uniqueid_uk ON prefix_quiz_attempts (uniqueid);
-
-# --------------------------------------------------------
-
-#
-# Table structure for table prefix_question_categories
-#
-
-CREATE TABLE prefix_question_categories (
-  id SERIAL PRIMARY KEY,
-  course integer NOT NULL default '0',
-  name varchar(255) NOT NULL default '',
-  info text NOT NULL default '',
-  publish integer NOT NULL default '0',
-  stamp varchar(255) NOT NULL default '',
-  parent integer NOT NULL default '0',
-  sortorder integer NOT NULL default '999'
-);
-
-CREATE INDEX prefix_question_categories_course_idx ON prefix_question_categories (course);
-
-# --------------------------------------------------------
-#
-# Table structure for table prefix_question_dataset_definitions
-#
-
-
-CREATE TABLE prefix_question_dataset_definitions (
-    id SERIAL8 PRIMARY KEY,
-    category INT8  NOT NULL default '0',
-    name varchar(255) NOT NULL default '',
-    type INT8 NOT NULL default '0',
-    options varchar(255) NOT NULL default '',
-    itemcount INT8  NOT NULL default '0'
-);
-
-CREATE INDEX prefix_question_dataset_definitions_category_idx ON prefix_question_dataset_definitions (category);
-
-# --------------------------------------------------------
-#
-# Table structure for table prefix_question_dataset_items
-#
-
-CREATE TABLE prefix_question_dataset_items (
-    id SERIAL8 PRIMARY KEY,
-    definition INT8  NOT NULL default '0',
-    number INT8  NOT NULL default '0',
-    value varchar(255) NOT NULL default ''
-);
-
-CREATE INDEX prefix_question_dataset_items_definition_idx  ON prefix_question_dataset_items (definition);
-
-# --------------------------------------------------------
-
-#
-# Table structure for table prefix_quiz_grades
-#
 
 CREATE TABLE prefix_quiz_grades (
   id SERIAL PRIMARY KEY,
@@ -152,89 +91,25 @@ CREATE TABLE prefix_quiz_grades (
 CREATE INDEX prefix_quiz_grades_quiz_idx ON prefix_quiz_grades (quiz);
 CREATE INDEX prefix_quiz_grades_userid_idx ON prefix_quiz_grades (userid);
 
-# --------------------------------------------------------
+-- --------------------------------------------------------
+-- Questionbank definition data.
+-- 
+-- TODO, these tables no longer belong to the quiz module.
+-- They should be moved elsewhere when a good home for them
+-- is found.
+-- --------------------------------------------------------
 
-#
-# Table structure for table prefix_question_sessions
-#
-
-
-CREATE TABLE prefix_question_sessions (
+CREATE TABLE prefix_question_categories (
   id SERIAL PRIMARY KEY,
-  attemptid integer NOT NULL default '0',
-  questionid integer NOT NULL default '0',
-  newest integer NOT NULL default '0',
-  newgraded integer NOT NULL default '0',
-  sumpenalty real NOT NULL default '0',
-  comment text NOT NULL default ''
+  course integer NOT NULL default '0',
+  name varchar(255) NOT NULL default '',
+  info text NOT NULL default '',
+  publish integer NOT NULL default '0',
+  stamp varchar(255) NOT NULL default '',
+  parent integer NOT NULL default '0',
+  sortorder integer NOT NULL default '999'
 );
-
-CREATE UNIQUE INDEX prefix_question_sessions_attempt_idx ON prefix_question_sessions (attemptid,questionid);
-
-# --------------------------------------------------------
-#
-# Table structure for table prefix_question_numerical_units
-#
-
-CREATE TABLE prefix_question_numerical_units (
-    id SERIAL8 PRIMARY KEY,
-    question INT8  NOT NULL default '0',
-    multiplier decimal(40,20) NOT NULL default '1.00000000000000000000',
-    unit varchar(50) NOT NULL default ''
-);
-
-CREATE INDEX prefix_question_numerical_units_question_idx ON prefix_question_numerical_units (question);
-
-# --------------------------------------------------------
-#
-# Table structure for table prefix_question_datasets
-#
-
-CREATE TABLE prefix_question_datasets (
-    id SERIAL8 PRIMARY KEY,
-    question INT8  NOT NULL default '0',
-    datasetdefinition INT8  NOT NULL default '0'
-);
-
-CREATE INDEX prefix_question_datasets_question_datasetdefinition_idx  ON prefix_question_datasets (question,datasetdefinition);
-
-# --------------------------------------------------------
-
-#
-# Table structure for table prefix_quiz_question_instances
-#
-
-CREATE TABLE prefix_quiz_question_instances (
-  id SERIAL PRIMARY KEY,
-  quiz integer NOT NULL default '0',
-  question integer NOT NULL default '0',
-  grade integer NOT NULL default '0'
-);
-
-CREATE INDEX prefix_quiz_question_instances_quiz_idx ON prefix_quiz_question_instances (quiz);
-CREATE INDEX prefix_quiz_question_instances_question_idx ON prefix_quiz_question_instances (question);
-
-# --------------------------------------------------------
-
-#
-# Table structure for table prefix_quiz_question_versions
-#
-
-CREATE TABLE prefix_quiz_question_versions (
-  id SERIAL PRIMARY KEY,
-  quiz integer NOT NULL default '0',
-  oldquestion integer NOT NULL default '0',
-  newquestion integer NOT NULL default '0',
-  originalquestion integer NOT NULL default '0',
-  userid integer NOT NULL default '0',
-  timestamp integer NOT NULL default '0'
-);
-
-# --------------------------------------------------------
-
-#
-# Table structure for table prefix_question
-#
+CREATE INDEX prefix_question_categories_course_idx ON prefix_question_categories (course);
 
 CREATE TABLE prefix_question (
   id SERIAL PRIMARY KEY,
@@ -253,25 +128,70 @@ CREATE TABLE prefix_question (
   version varchar(255) NOT NULL default '',
   hidden integer NOT NULL default '0'
 );
-
 CREATE INDEX prefix_question_category_idx ON prefix_question (category);
 
-# --------------------------------------------------------
+CREATE TABLE prefix_question_answers (
+  id SERIAL PRIMARY KEY,
+  question integer NOT NULL default '0',
+  answer text NOT NULL default '',
+  fraction real NOT NULL default '0',
+  feedback text NOT NULL default ''
+);
+CREATE INDEX prefix_question_answers_question_idx ON prefix_question_answers (question);
 
-#
-# Table structure for table prefix_question_attempts
-#
+CREATE TABLE prefix_question_numerical_units (
+    id SERIAL8 PRIMARY KEY,
+    question INT8  NOT NULL default '0',
+    multiplier decimal(40,20) NOT NULL default '1.00000000000000000000',
+    unit varchar(50) NOT NULL default ''
+);
+CREATE INDEX prefix_question_numerical_units_question_idx ON prefix_question_numerical_units (question);
+
+CREATE TABLE prefix_question_datasets (
+    id SERIAL8 PRIMARY KEY,
+    question INT8  NOT NULL default '0',
+    datasetdefinition INT8  NOT NULL default '0'
+);
+CREATE INDEX prefix_question_datasets_question_datasetdefinition_idx  ON prefix_question_datasets (question,datasetdefinition);
+
+CREATE TABLE prefix_question_dataset_definitions (
+    id SERIAL8 PRIMARY KEY,
+    category INT8  NOT NULL default '0',
+    name varchar(255) NOT NULL default '',
+    type INT8 NOT NULL default '0',
+    options varchar(255) NOT NULL default '',
+    itemcount INT8  NOT NULL default '0'
+);
+CREATE INDEX prefix_question_dataset_definitions_category_idx ON prefix_question_dataset_definitions (category);
+
+CREATE TABLE prefix_question_dataset_items (
+    id SERIAL8 PRIMARY KEY,
+    definition INT8  NOT NULL default '0',
+    number INT8  NOT NULL default '0',
+    value varchar(255) NOT NULL default ''
+);
+CREATE INDEX prefix_question_dataset_items_definition_idx  ON prefix_question_dataset_items (definition);
+
+-- --------------------------------------------------------
+-- Questionbank runtime data.
+-- See above TODO.
+-- --------------------------------------------------------
 
 CREATE TABLE prefix_question_attempts (
   id SERIAL PRIMARY KEY,
   modulename varchar(20) NOT NULL default 'quiz'
 );
 
-# --------------------------------------------------------
-
-#
-# Table structure for table prefix_question_states
-#
+CREATE TABLE prefix_question_sessions (
+  id SERIAL PRIMARY KEY,
+  attemptid integer NOT NULL default '0',
+  questionid integer NOT NULL default '0',
+  newest integer NOT NULL default '0',
+  newgraded integer NOT NULL default '0',
+  sumpenalty real NOT NULL default '0',
+  comment text NOT NULL default ''
+);
+CREATE UNIQUE INDEX prefix_question_sessions_attempt_idx ON prefix_question_sessions (attemptid,questionid);
 
 CREATE TABLE prefix_question_states (
   id SERIAL PRIMARY KEY,
@@ -286,10 +206,12 @@ CREATE TABLE prefix_question_states (
   raw_grade real NOT NULL default '0',
   penalty real NOT NULL default '0'
 );
-
 CREATE INDEX prefix_question_states_attempt_idx ON prefix_question_states (attempt);
 CREATE INDEX prefix_question_states_question_idx ON prefix_question_states (question);;
 
+-- --------------------------------------------------------
+-- Quiz log actions.
+-- --------------------------------------------------------
 
 INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('quiz', 'add', 'quiz', 'name');
 INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('quiz', 'update', 'quiz', 'name');
