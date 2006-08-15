@@ -27,8 +27,8 @@ class block_site_main_menu extends block_list {
         }
 
         $course = get_record('course', 'id', $this->instance->pageid);
+        $context = get_context_instance(CONTEXT_COURSE, $course->id);
 
-        $isteacher = isteacher($this->instance->pageid);
         $isediting = isediting($this->instance->pageid);
         $ismoving  = ismoving($this->instance->pageid);
 
@@ -80,7 +80,7 @@ class block_site_main_menu extends block_list {
                 } else {
                     $editbuttons = '';
                 }
-                if ($mod->visible || $isteacher) {
+                if ($mod->visible || has_capability('moodle/course:viewhiddenactivities', $context)) {
                     if ($ismoving) {
                         if ($mod->id == $USER->activitycopy) {
                             continue;
