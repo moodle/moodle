@@ -2920,4 +2920,70 @@ function grade_download_form($type='both') {
     }
 }
 
+
+
+
+
+/** 
+ * Simply prints all grade of one student from all modules from a given course
+ * @param int $userid;
+ * @param int $courseid;
+ */
+function print_student_grade($user, $course) {
+    
+    global $CFG;
+  
+    if (!empty($user)) {
+        $grades[$user->id] = array();    // Collect all grades in this array
+        $gradeshtml[$user->id] = array(); // Collect all grades html formatted in this array
+        $totals[$user->id] = array();    // Collect all totals in this array
+    }
+  
+    $strmax = get_string("maximumshort");
+  /// Collect modules data
+    get_all_mods($course->id, $mods, $modnames, $modnamesplural, $modnamesused);
+
+/// Search through all the modules, pulling out grade data
+    $sections = get_all_sections($course->id); // Sort everything the same as the course
+    for ($i=0; $i<=$course->numsections; $i++) {
+        if (isset($sections[$i])) {   // should always be true
+            $section = $sections[$i];
+            if ($section->sequence) {
+                $sectionmods = explode(",", $section->sequence);
+                foreach ($sectionmods as $sectionmod) {
+                    $mod = $mods[$sectionmod];
+                    $instance = get_record("$mod->modname", "id", "$mod->instance");
+                    $libfile = "$CFG->dirroot/mod/$mod->modname/lib.php";    
+                    
+                    if (file_exists($libfile)) {
+                        require_once($libfile);
+                        $gradefunction = $mod->modname."_grades";
+                        if (function_exists($gradefunction)) {   // Skip modules without grade function
+                            if ($modgrades = $gradefunction($mod->instance)) {
+                                if (!empty($modgrades->maxgrade)) {
+                                    if ($mod->visible) {
+                                        $maxgrade = "$modgrades->maxgrade";
+                                    } else {
+                                        $maxgrade = "$modgrades->maxgrade";
+                                    }
+                                } else {
+                                    $maxgrade = "";
+                                }
+                                
+                                if ($maxgrade) { 
+                                    echo "<br/>";
+                                    if (!empty($modgrades->grades[$user->id])) {
+                                        $currentgrade = $modgrades->grades[$user->id];
+                                        echo "$mod->modfullname: ".format_string($instance->name,true)." - $currentgrade/$maxgrade";            } else {
+                                        echo "$mod->modfullname: ".format_string($instance->name,true)." - ".get_string('nograde')."/$maxgrade";                                        
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    } // a new Moodle nesting record? ;-) 
+}
 ?>

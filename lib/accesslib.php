@@ -1228,7 +1228,6 @@ function capabilities_cleanup($component, $newcapdef=NULL) {
 function print_context_name($context) {
 
     $name = '';
-
     switch ($context->level) {
 
         case CONTEXT_SYSTEM: // by now it's a definite an inherit
@@ -1286,7 +1285,6 @@ function print_context_name($context) {
             return false;
 
     }
-
     return $name;
 }
 
@@ -1318,9 +1316,11 @@ function fetch_context_capabilities($context) {
         break;
 
         case CONTEXT_PERSONAL:
+            $SQL = "select * from {$CFG->prefix}capabilities where contextlevel = ".CONTEXT_PERSONAL;
         break;
         
         case CONTEXT_USERID:
+            $SQL = "select * from {$CFG->prefix}capabilities where contextlevel = ".CONTEXT_USERID;
         break;
         
         case CONTEXT_COURSECAT: // all
@@ -1364,7 +1364,7 @@ function fetch_context_capabilities($context) {
  * This function pulls out all the resolved capabilities (overrides and
  * defaults) of a role used in capability overrieds in contexts at a given
  * context.
- * @param int $context
+ * @param obj $context
  * @param int $roleid
  * @return array
  */
@@ -1585,5 +1585,18 @@ function get_roles_used_in_context($context) {
                              ORDER BY r.sortorder ASC');
 }
 
-
+// this function is used to print roles column in user profile page. 
+function get_user_roles_in_context($userid, $contextid){
+    global $CFG;
+    
+    $rolestring = '';
+    $SQL = 'select * from '.$CFG->prefix.'role_assignments ra, '.$CFG->prefix.'role r where ra.userid='.$userid.' and ra.contextid='.$contextid.' and ra.roleid = r.id';
+    if ($roles = get_records_sql($SQL)) {
+        foreach ($roles as $userrole) {
+            $rolestring .= '<a href="'.$CFG->wwwroot.'/user/index.php?contextid='.$userrole->contextid.'&amp;roleid='.$userrole->roleid.'">'.$userrole->name.'</a>, ';
+        }   
+        
+    }
+    return rtrim($rolestring, ', ');
+}
 ?>

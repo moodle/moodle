@@ -25,6 +25,7 @@
 
     if ($contextid) {
         if (! $context = get_context_instance_by_id($contextid)) {
+            
             error("Context ID is incorrect");
         }
         if (! $course = get_record('course', 'id', $context->instanceid)) {
@@ -154,7 +155,7 @@
             $options[$role->id] = $role->name;
         }
     }
-    
+
     if (!$roleid) {
         if ($options) {
             $roleid = array_shift(array_keys($options)); // get first element
@@ -360,9 +361,12 @@ function checkchecked(form) {
     if ($roleid) {
       
         // we are looking for all users with this role assigned in this context or higher
-        $usercontexts = get_parent_contexts($context);      
-        $listofcontexts = '('.implode(',', $usercontexts).')';
-
+        if ($usercontexts = get_parent_contexts($context)) {
+            $listofcontexts = '('.implode(',', $usercontexts).')';
+        } else {
+            $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
+            $listofcontexts = '('.$sitecontext->id.')'; // must be site  
+        }
         $select = 'SELECT u.id, u.username, u.firstname, u.lastname, u.email, u.city, u.country, 
                           u.picture, u.lang, u.timezone, u.emailstop, u.maildisplay, u.lastaccess AS lastaccess '; // s.lastaccess
         //$select .= $course->enrolperiod?', s.timeend ':'';

@@ -58,8 +58,8 @@
     // we got a few tabs there
     if ($context->level == CONTEXT_USERID) {
         print_header();
-      
-        $currenttab = 'roles';
+        $showroles = 1;
+        $currenttab = 'assign';
         include_once($CFG->dirroot.'/user/tabs.php');
     } else {
         $currenttab = '';

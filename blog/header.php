@@ -184,6 +184,7 @@ if ($ME == $CFG->wwwroot.'/blog/edit.php') {  /// We are in edit mode, print the
 } /// close switch
 
 // prints the tabs
+$showroles = 1;
 $currenttab = 'blogs';
 $user = $USER;
 if (!$course) {

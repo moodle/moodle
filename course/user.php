@@ -65,7 +65,7 @@
         case "grade":
             $course = get_record('course', 'id', required_param('id', PARAM_INT));
             require_once($CFG->dirroot.'/grade/lib.php');
-            grade_view_all_grades($user->id, 'user');
+            print_student_grade($user, $course);
             break;
       
         case "todaylogs" :

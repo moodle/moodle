@@ -1,6 +1,13 @@
              <form action="override.php" method="post">     
             <input type="hidden" name="contextid" value="<?php echo $contextid; ?>">
             <input type="hidden" name="roleid" value="<?php echo $roleid; ?>">
+<?php
+if ($userid) {
+    print ('<input type="hidden" name="userid" value="'.$userid.'"/>');
+}
+if ($course->id) {
+    print ('<input type="hidden" name="courseid" value="'.$courseid.'" />');
+}?>
             <table class="override">
             <tr>
                 <td>Capability Name</td>

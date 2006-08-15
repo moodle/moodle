@@ -8,7 +8,9 @@
     $enable  = optional_param('enable', '');                  // enable email
     $disable = optional_param('disable', '');                 // disable email
 
-
+    if ($course) {
+        $coursecontext = get_context_instance(CONTEXT_COURSE, $course); 
+    }
     if (empty($id)) {         // See your own profile by default
         require_login();
         $id = $USER->id;
@@ -127,7 +129,9 @@
 ///     /user/view.php
 ///     /user/edit.php
 ///     /course/user.php
+    $context = get_context_instance(CONTEXT_USERID, $user->id);
     $currenttab = 'profile';
+    $showroles = 1;
     include('tabs.php');
 
     echo "<table width=\"80%\" align=\"center\" border=\"0\" cellspacing=\"0\" class=\"userinfobox\">";
@@ -268,7 +272,10 @@
         }
         print_row(get_string("lastaccess").":", $datestring);
     }
-
+/// printing roles
+    
+    $rolestring = get_user_roles_in_context($id, $coursecontext->id);
+    print_row(get_string("roles").":", $rolestring);
 
 /// Printing groups
     $isseparategroups = ($course->groupmode == SEPARATEGROUPS and $course->groupmodeforce and

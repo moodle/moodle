@@ -150,7 +150,6 @@ $user = $USER;
 if (!$course) {
     $course = get_record('course', 'id', optional_param('courseid', SITEID, PARAM_INT));
 }
-require_once($CFG->dirroot .'/user/tabs.php');
 
 $blogpage = optional_param('blogpage', 0, PARAM_INT);
 
