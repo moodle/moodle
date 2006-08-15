@@ -666,7 +666,7 @@ function grade_drop_lowest($grades, $drop, $total) {
     return $grades;    
 }
 
-function grade_get_grades($mode='') {
+function grade_get_grades() {
     global $CFG;
     global $course;
     $mods = grade_get_grade_items($course->id);
@@ -675,7 +675,7 @@ function grade_get_grades($mode='') {
     if ($mods) {
         foreach ($mods as $mod)    {
             // hidden is a gradebook setting for an assignment and visible is a course_module setting 
-            if (($mod->hidden != 1 && $mod->visible==1) or (isteacher($course->id) && $preferences->show_hidden==1 && mode=='grade')) {
+            if (($mod->hidden != 1 && $mod->visible==1) or (isteacher($course->id) && $preferences->show_hidden==1)) {
                 $libfile = "$CFG->dirroot/mod/$mod->modname/lib.php";
                 if (file_exists($libfile)) {
                     require_once($libfile);
@@ -1969,28 +1969,24 @@ function grade_view_category_grades($view_by_student) {
     }
 }
 
-function grade_view_all_grades($view_by_student, $mode='') { // if mode=='grade' then we are in user view
+function grade_view_all_grades($view_by_student) { // if mode=='grade' then we are in user view
 // displays all grades for the course
     global $CFG;
     global $course;
     global $USER;
     global $group; // yu: fix for 5814
+    global $preferences;
     
     if (!isteacher($course->id)) {
         $view_by_student = $USER->id;    
     }
     
-    $preferences = grade_get_preferences($course->id);
-    
     list($grades_by_student, $all_categories) = grade_get_formatted_grades();
     
     if ($grades_by_student != 0 && $all_categories != 0) {
       
-        // output a form for the user to download the grades.
-
-        if ($mode!='user') {   
-            grade_download_form();
-        }
+        // output a form for the user to download the grades.  
+        grade_download_form();
         
         if ($view_by_student != -1) {
             // unset all grades except for this student
@@ -2009,7 +2005,7 @@ function grade_view_all_grades($view_by_student, $mode='') { // if mode=='grade'
         $reprint=0;
         
         echo  '<table align="center" class="grades">';
-        if (!$mode=='user' && isteacher($course->id) ) {
+        if (isteacher($course->id) ) {
             $student_heading_link = get_string('student','grades');
             if ($view_by_student == -1) {
                 $student_heading_link .='<a href="?id='.$course->id.'&amp;action=grades&amp;sort=lastname&amp;group='.$group.'"><br /><font size="-2">'.get_string('sortbylastname','grades').'</font></a>';
@@ -2044,7 +2040,7 @@ function grade_view_all_grades($view_by_student, $mode='') { // if mode=='grade'
             $oddrow = !$oddrow;
             
             // set the links to student information based on multiview or individual... if individual go to student info... if many go to individual grades view.
-            if (isteacher($course->id) && !$mode=='user') {
+            if (isteacher($course->id)) {
                 if ($view_by_student != -1) {
                     $studentviewlink = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$student.'&amp;course='.$course->id.'">'.$grades_by_student[$student]['student_data']['lastname'].', '.$grades_by_student[$student]['student_data']['firstname'].'</a>';
                 }
@@ -2117,7 +2113,7 @@ function grade_view_all_grades($view_by_student, $mode='') { // if mode=='grade'
                     $total_columns = $grade_columns;
                 }
                 
-                if (isteacher($course->id) && $view_by_student == -1 && !$mode=='user') {
+                if (isteacher($course->id) && $view_by_student == -1) {
                     $grade_sort_link = '<a href="?id='.$course->id.'&amp;action=grades&amp;sort=highgrade&amp;group='.$group.'"><img src="'.$CFG->wwwroot.'/pix/t/down.gif" alt="'.get_string('highgradedescending','grades').'" /></a>';
                     $grade_sort_link .= '<a href="?id='.$course->id.'&amp;action=grades&amp;sort=highgrade_asc&amp;group='.$group.'"><img src="'.$CFG->wwwroot.'/pix/t/up.gif" alt="'.get_string('highgradeascending','grades').'" /></a>';
                     $points_sort_link = '<a href="?id='.$course->id.'&amp;action=grades&amp;sort=points&amp;group='.$group.'"><img src="'.$CFG->wwwroot.'/pix/t/down.gif" alt="'.get_string('pointsdescending','grades').'" /></a>';
@@ -2129,7 +2125,7 @@ function grade_view_all_grades($view_by_student, $mode='') { // if mode=='grade'
                 }
                 $stats_link = '<a href="javascript:void(0)"onclick="window.open(\'?id='.$course->id.'&amp;action=stats&amp;category=all\',\''.get_string('statslink','grades').'\',\'height=200,width=300,scrollbars=no\')"><font size=-2>'.get_string('statslink','grades').'</font></a>';
                 $header .= '<th colspan="'.$total_columns.'">'.get_string('total','grades').'&nbsp;'.$stats_link.'</th>';
-                if (isteacher($course->id) && $view_by_student == -1 && !$mode=='user') {
+                if (isteacher($course->id) && $view_by_student == -1) {
                     if ($preferences->show_points) {
                         $header1 .= '<th>'.get_string('points','grades').'('.$all_categories['stats']['totalpoints'].')';
                         if ($category != 'student_data' && $all_categories[$category]['stats']['bonus_points'] != 0) {
@@ -2168,14 +2164,14 @@ function grade_view_all_grades($view_by_student, $mode='') { // if mode=='grade'
                     }
                     $header1 .= '</tr>';
                 }
-                if (isteacher($course->id) && !$mode=='user') {
+                if (isteacher($course->id)) {
                     $header .= '<th rowspan="2">'.$student_heading_link.'</th></tr>';
                 }
                 // adjust colcount to reflect actual number of columns output
                 $colcount = $colcount * $grade_columns + $total_columns + 2;
   
                 echo  '<tr><th colspan="'.$colcount.'"><font size="+1">'.get_string('allgrades','grades').'</font>';
-                if (isteacher($course->id) && !$mode=='user') {
+                if (isteacher($course->id)) {
                     helpbutton('teacher', get_string('gradehelp','grades'), 'grade');
                 }
                 else {
@@ -2218,7 +2214,7 @@ function grade_view_all_grades($view_by_student, $mode='') { // if mode=='grade'
                     }
                 }
             }
-            if (isteacher($course->id) && !$mode=='user') {
+            if (isteacher($course->id)) {
                 $row .= '<td>'. $studentviewlink .'</td></tr>';
             }
             else {
