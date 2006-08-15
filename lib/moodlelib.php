@@ -5557,7 +5557,7 @@ function update_event($event) {
 /**
  * Call this function to delete the event with id $id from calendar table.
  *
-  * @uses $CFG
+ * @uses $CFG
  * @param int $id The id of an event from the 'calendar' table.
  * @return array An associative array with the results from the SQL call.
  * @todo Verify return type
