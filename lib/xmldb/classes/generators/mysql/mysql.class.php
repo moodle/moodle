@@ -34,6 +34,11 @@
 class XMLDBmysql {
 
     var $quote_string = '`';   // String used to quote names
+    var $quote_all    = false; // To decide if we want to quote all the names or only the reserved ones
+
+    var $integer_to_number = false;  // To create all the integers as NUMBER(x) (also called DECIMAL, NUMERIC...)
+    var $float_to_number   = false;  // To create all the floats as NUMBER(x) (also called DECIMAL, NUMERIC...)
+    var $number_type = 'NUMERIC';    // Proper type for NUMBER(x) in this DB
 
     var $primary_keys = true;  // Does the constructor build primary keys
     var $unique_keys = false;  // Does the constructor build unique keys
@@ -76,7 +81,6 @@ class XMLDBmysql {
                 }
                 if ($xmldb_length > 9) {
                     $dbtype = 'BIGINT';
-                    $xmldb_length = 10;
                 } else if ($xmldb_length > 6) {
                     $dbtype = 'INT';
                 } else if ($xmldb_length > 4) {
@@ -89,7 +93,7 @@ class XMLDBmysql {
                 $dbtype .= '(' . $xmldb_length . ')';
                 break;
             case XMLDB_TYPE_NUMBER:
-                $dbtype = 'DECIMAL';
+                $dbtype = $this->number_type;
                 if (!empty($xmldb_length)) {
                     $dbtype .= '(' . $xmldb_length;
                     if (!empty($xmldb_decimals)) {
@@ -174,6 +178,19 @@ class XMLDBmysql {
      */
     function getCreateFieldSQL($xmldb_field) {
 
+    /// First of all, convert integers to numbers if defined
+        if ($this->integer_to_number) {
+            if ($xmldb_field->getType() == XMLDB_TYPE_INTEGER) {
+                $xmldb_field->setType(XMLDB_TYPE_NUMBER);
+            }
+        }
+    /// Same for floats
+        if ($this->float_to_number) {
+            if ($xmldb_field->getType() == XMLDB_TYPE_FLOAT) {
+                $xmldb_field->setType(XMLDB_TYPE_NUMBER);
+            }
+        }
+
     /// The name
         $field = $this->getEncQuoted($xmldb_field->getName());
     /// The type and length (if the field isn't enum)
@@ -223,10 +240,11 @@ class XMLDBmysql {
      * Given any string, enclose it by the proper quotes
      */
     function getEncQuoted($string) {
+
     /// Always lowercase
         $string = strtolower($string);
-    /// if reserved, quote it
-        if (in_array($string, $this->reserved_words)) {
+    /// if reserved or quote_all, quote it
+        if ($this->quote_all || in_array($string, $this->reserved_words)) {
             $string = $this->quote_string . $string . $this->quote_string;
         }
         return $string;
