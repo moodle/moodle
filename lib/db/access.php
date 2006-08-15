@@ -95,9 +95,9 @@ $moodle_capabilities = array(
         'legacy' => array(
             'guest' => CAP_PREVENT,
             'student' => CAP_PREVENT,
-            'teacher' => CAP_PREVENT,
-            'editingteacher' => CAP_PREVENT,
-            'coursecreator' => CAP_PREVENT,
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'coursecreator' => CAP_ALLOW,
             'admin' => CAP_ALLOW
         )
     ),
@@ -162,6 +162,20 @@ $moodle_capabilities = array(
         
         'captype' => 'read',
         'contextlevel' => CONTEXT_SYSTEM,
+        'legacy' => array(
+            'guest' => CAP_PREVENT,
+            'student' => CAP_PREVENT,
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'coursecreator' => CAP_ALLOW,
+            'admin' => CAP_ALLOW
+        )
+    ),
+    
+    'moodle/site:viewreports' => array(
+    
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_SITE,
         'legacy' => array(
             'guest' => CAP_PREVENT,
             'student' => CAP_PREVENT,
@@ -382,6 +396,34 @@ $moodle_capabilities = array(
         )
     ),
     
+    'moodle/course:managefiles' => array(
+    
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+        'legacy' => array(
+            'guest' => CAP_PREVENT,
+            'student' => CAP_PREVENT,
+            'teacher' => CAP_PREVENT,
+            'editingteacher' => CAP_ALLOW,
+            'coursecreator' => CAP_ALLOW,
+            'admin' => CAP_ALLOW
+        )
+    ),
+    
+    'moodle/course:managequestions' => array(
+    
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+        'legacy' => array(
+            'guest' => CAP_PREVENT,
+            'student' => CAP_PREVENT,
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'coursecreator' => CAP_ALLOW,
+            'admin' => CAP_ALLOW
+        )
+    ),
+    
     'moodle/course:manageactivities' => array(
     
         'captype' => 'write',
@@ -467,6 +509,20 @@ $moodle_capabilities = array(
     ),
     
     'moodle/course:managegroups' => array(
+
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+        'legacy' => array(
+            'guest' => CAP_PREVENT,
+            'student' => CAP_PREVENT,
+            'teacher' => CAP_PREVENT,
+            'editingteacher' => CAP_ALLOW,
+            'coursecreator' => CAP_ALLOW,
+            'admin' => CAP_ALLOW
+        )
+    ),
+    
+    'moodle/course:reset' => array(
 
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
