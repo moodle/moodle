@@ -259,6 +259,7 @@
         
         if (!record_exists('data_fields','dataid',$data->id)) {
             notify(get_string('nofieldindatabase','data'));  // nothing in database
+            notify(get_string('pleaseaddsome','data', 'preset.php?id='.$cm->id));      // link to presets
 
         } else {    //else print quiz style list of fields
 
@@ -336,32 +337,5 @@
 /// Finish the page
     print_footer($course);
 
-
-    function data_fields_print_header($course,$cm,$data,$showtabs=true) {
-
-        global $CFG, $displaynoticegood, $displaynoticebad;
-
-        $strdata = get_string('modulenameplural','data');
-
-        print_header_simple($data->name, '', "<a href='index.php?id=$course->id'>$strdata</a> -> $data->name", 
-                '', '', true, '', navmenu($course, $cm));
-
-        print_heading(format_string($data->name));
-
-        /// Print the tabs
-
-        if ($showtabs) {
-            $currenttab = 'fields';
-            include_once('tabs.php');
-        }
-
-        /// Print any notices
-
-        if (!empty($displaynoticegood)) {
-            notify($displaynoticegood, 'notifysuccess');    // good (usually green)
-        } else if (!empty($displaynoticebad)) {
-            notify($displaynoticebad);                     // bad (usuually red)
-        }
-    }
 
 ?>

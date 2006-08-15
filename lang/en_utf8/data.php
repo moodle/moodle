@@ -137,6 +137,7 @@ $string['optionalfilename'] = 'Filename (optional)';
 $string['pagesize'] = 'Entries per page';
 $string['participants'] = 'Participants';
 $string['picture'] = 'Picture';
+$string['pleaseaddsome'] = 'Please create some below or <a href=\"$a\">choose a predefined set</a> to get started.';
 $string['radiobutton'] = 'Radio buttons';
 $string['rate'] = 'Rate';
 $string['rating'] = 'Rating';
@@ -181,5 +182,27 @@ $string['uploadfile'] = 'Upload file';
 $string['url'] = 'Url';
 $string['viewfromdate'] = 'Viewable from';
 $string['viewtodate'] = 'Viewable to';
+
+$string['presets'] = 'Presets';
+$string['exportaszip'] = 'Export as zip';
+$string['exportedtozip'] = 'Exported to temporary zip...';
+$string['saveaspreset'] = 'Save as preset';
+$string['export'] = 'Export';
+$string['fromfile'] = 'from zip file';
+$string['usestandard'] = 'use a preset';
+$string['chooseorupload'] = 'Choose file';
+$string['fieldmappings'] = 'Field Mappings';
+$string['mappingwarning'] = 'All old fields not mapped to a new field will be lost and all data in that field will be removed.';
+$string['blank'] = 'Blank';
+
+$string['presetwarning'] = 'Saving as a preset publishes this template across the entire site. All users will be able to use it in their databases.';
+$string['deletewarning'] = 'Are you sure you want to delete this preset?';
+$string['importsuccess'] = 'The preset has been successfully applied.';
+$string['addentries'] = 'Add entries';
+$string['todatabase'] = 'to this database.';
+$string['savesuccess'] = 'Saved successfully. Your preset will now be available across the site.';
+$string['overwrite'] = 'Overwrite';
+
+$string['download'] = 'Download';
 
 ?>

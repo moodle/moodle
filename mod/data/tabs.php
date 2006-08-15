@@ -43,7 +43,6 @@
         $row[] = new tabobject('single', $CFG->wwwroot.'/mod/data/view.php?d='.$data->id.'&amp;mode=single', get_string('single','data'), '', true);
     }
 
-    //if (isloggedin() and !isguest()) {
     if (isloggedin()) {
         if (has_capability('mod/data:writeentry', $context)) { // took out participation list here!
             $addstring = empty($editentry) ? get_string('add', 'data') : get_string('editentry', 'data');
@@ -58,10 +57,12 @@
                 $defaultemplate = 'singletemplate';
             }
     
-            $row[] = new tabobject('templates', $CFG->wwwroot.'/mod/data/templates.php?d='.$data->id.
-                                                '&amp;mode='.$defaultemplate, get_string('templates','data'));
+            $row[] = new tabobject('templates', $CFG->wwwroot.'/mod/data/templates.php?d='.$data->id.'&amp;mode='.$defaultemplate, 
+                         get_string('templates','data'));
             $row[] = new tabobject('fields', $CFG->wwwroot.'/mod/data/field.php?d='.$data->id, 
-                                             get_string('fields','data'), '', true);
+                         get_string('fields','data'), '', true);
+            $row[] = new tabobject('presets', $CFG->wwwroot.'/mod/data/preset.php?d='.$data->id, 
+                         get_string('presets', 'data'), '', true);
         }
     }
 

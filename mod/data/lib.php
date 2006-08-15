@@ -1263,4 +1263,32 @@ function data_get_cm($data) {
     return get_record_sql($SQL);
 }
 
+
+function data_fields_print_header($course,$cm,$data,$showtabs=true) {
+
+    global $CFG, $displaynoticegood, $displaynoticebad;
+
+    $strdata = get_string('modulenameplural','data');
+
+    print_header_simple($data->name, '', "<a href='index.php?id=$course->id'>$strdata</a> -> $data->name", 
+            '', '', true, '', navmenu($course, $cm));
+
+    print_heading(format_string($data->name));
+
+    /// Print the tabs
+
+    if ($showtabs) {
+        $currenttab = 'fields';
+        include_once('tabs.php');
+    }
+
+    /// Print any notices
+
+    if (!empty($displaynoticegood)) {
+        notify($displaynoticegood, 'notifysuccess');    // good (usually green)
+    } else if (!empty($displaynoticebad)) {
+        notify($displaynoticebad);                     // bad (usuually red)
+    }
+}
+
 ?>
