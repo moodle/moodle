@@ -12,9 +12,11 @@
     }
 	
 	require_login($course->id);
+	$context = get_context_instance(CONTEXT_COURSE, $mycourseid);
 	
-    if (!isadmin() && !isteacheredit($course->id)) {
-        error("You must be an administrator to edit users this way.");
+	
+    if (!has_capability('moodle/course:managegroups', $context)) {
+        error("You do not have the required permissions to manage groups.");
     }
 
     //if (!confirm_sesskey()) {
@@ -159,9 +161,10 @@
                		$newgroup->timecreated = time();
                 	$linenum++;
                 	$groupname = $newgroup->name;
-				
-					///Teachers can not upload groups in courses they are not teaching...
-					if (!isadmin() and !isteacheredit($newgroup->courseid)){
+				    $newgrpcoursecontext = get_context_instance(CONTEXT_COURSE, $newgroup->courseid);
+				    
+					///Users cannot upload groups in courses they cannot update.
+					if (has_capability('moodle/course:update', $newgrpcoursecontext)){
 						notify("$newgroup->name ".get_string('notaddedto').$newgroup->coursename.get_string('notinyourcapacity'));
 					}
 					
