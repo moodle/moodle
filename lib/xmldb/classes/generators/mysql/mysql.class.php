@@ -43,7 +43,9 @@ class XMLDBmysql {
     var $unique_index = true;  // Does the constructor need to build one index for unique keys
     var $foreign_index = true; // Does the constructor need to build one index for foreign keys
 
-    var $prefix;  // Prefix to be used for all the DB objects
+    var $prefix;         // Prefix to be used for all the DB objects
+
+    var $reserved_words; // List of reserved words (in order to quote them properly)
 
  
     /**
@@ -52,6 +54,7 @@ class XMLDBmysql {
     function XMLDBmysql() {
         global $CFG;
         $this->prefix = '';
+        $this->reserved_words = $this->getReservedWords();
     }
 
     /**
@@ -220,9 +223,65 @@ class XMLDBmysql {
      * Given any string, enclose it by the proper quotes
      */
     function getEncQuoted($string) {
-        return $this->quote_string . $string . $this->quote_string;
+    /// Always lowercase
+        $string = strtolower($string);
+    /// if reserved, quote it
+        if (in_array($string, $this->reserved_words)) {
+            $string = $this->quote_string . $string . $this->quote_string;
+        }
+        return $string;
     }
 
+    /**
+     * Returns an array of reserved words (lowercase) for this DB
+     */
+    function getReservedWords() {
+    /// This file contains the reserved words for MySQL databases
+    /// from http://dev.mysql.com/doc/refman/5.0/en/reserved-words.html
+        $reserved_words = array (
+            'add', 'all', 'alter', 'analyze', 'and', 'as', 'asc',
+            'asensitive', 'before', 'between', 'bigint', 'binary',
+            'blob', 'both', 'by', 'call', 'cascade', 'case', 'change',
+            'char', 'character', 'check', 'collate', 'column',
+            'condition', 'connection', 'constraint', 'continue',
+            'convert', 'create', 'cross', 'current_date', 'current_time',
+            'current_timestamp', 'current_user', 'cursor', 'database',
+            'databases', 'day_hour', 'day_microsecond',
+            'day_minute', 'day_second', 'dec', 'decimal', 'declare',
+            'default', 'delayed', 'delete', 'desc', 'describe',
+            'deterministic', 'distinct', 'distinctrow', 'div', 'double',
+            'drop', 'dual', 'each', 'else', 'elseif', 'enclosed', 'escaped',
+            'exists', 'exit', 'explain', 'false', 'fetch', 'float', 'float4',
+            'float8', 'for', 'force', 'foreign', 'from', 'fulltext', 'grant',
+            'group', 'having', 'high_priority', 'hour_microsecond',
+            'hour_minute', 'hour_second', 'if', 'ignore', 'in', 'index',
+            'infile', 'inner', 'inout', 'insensitive', 'insert', 'int', 'int1',
+            'int2', 'int3', 'int4', 'int8', 'integer', 'interval', 'into', 'is',
+            'iterate', 'join', 'key', 'keys', 'kill', 'leading', 'leave', 'left',
+            'like', 'limit', 'lines', 'load', 'localtime', 'localtimestamp',
+            'lock', 'long', 'longblob', 'longtext', 'loop', 'low_priority',
+            'match', 'mediumblob', 'mediumint', 'mediumtext',
+            'middleint', 'minute_microsecond', 'minute_second',
+            'mod', 'modifies', 'natural', 'not', 'no_write_to_binlog',
+            'null', 'numeric', 'on', 'optimize', 'option', 'optionally',
+            'or', 'order', 'out', 'outer', 'outfile', 'precision', 'primary',
+            'procedure', 'purge', 'raid0', 'read', 'reads', 'real',
+            'references', 'regexp', 'release', 'rename', 'repeat', 'replace',
+            'require', 'restrict', 'return', 'revoke', 'right', 'rlike', 'schema',
+            'schemas', 'second_microsecond', 'select', 'sensitive',
+            'separator', 'set', 'show', 'smallint', 'soname', 'spatial',
+            'specific', 'sql', 'sqlexception', 'sqlstate', 'sqlwarning',
+            'sql_big_result', 'sql_calc_found_rows', 'sql_small_result',
+            'ssl', 'starting', 'straight_join', 'table', 'terminated', 'then',
+            'tinyblob', 'tinyint', 'tinytext', 'to', 'trailing', 'trigger', 'true',
+            'undo', 'union', 'unique', 'unlock', 'unsigned', 'update',
+            'upgrade', 'usage', 'use', 'using', 'utc_date', 'utc_time',
+            'utc_timestamp', 'values', 'varbinary', 'varchar', 'varcharacter',
+            'varying', 'when', 'where', 'while', 'with', 'write', 'x509',
+            'xor', 'year_month', 'zerofill'
+        );  
+        return $reserved_words;
+    }
 }
 
 ?>
