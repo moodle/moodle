@@ -43,6 +43,7 @@ class block_section_links extends block_base {
         }
 
         $course = get_record('course', 'id', $this->instance->pageid);
+        $context = get_context_instance(CONTEXT_COURSE, $course->id);
 
         if ($course->format == 'weeks') {
             $highlight = ceil((time()-$course->startdate)/604800);
@@ -73,7 +74,7 @@ class block_section_links extends block_base {
         $text = '';
         for ($i = $inc; $i <= $course->numsections; $i += $inc) {
             $isvisible = get_field('course_sections', 'visible', 'course', $this->instance->pageid, 'section', $i);
-            if (!$isvisible and !isteacher($this->instance->pageid)) {
+            if (!$isvisible and !has_capability('moodle/course:update', $context)) {
                 continue;
             }
             $style = ($isvisible) ? '' : ' class="dimmed"';
@@ -85,7 +86,7 @@ class block_section_links extends block_base {
         }
         if ($highlight) {
             $isvisible = get_field('course_sections', 'visible', 'course', $this->instance->pageid, 'section', $highlight);
-            if ($isvisible or isteacher($this->instance->pageid)) {
+            if ($isvisible or has_capability('moodle/course:update', $context)) {
                 $style = ($isvisible) ? '' : ' class="dimmed"';
                 $text .= "<br /><a href=\"$link$highlight\"$style>$linktext</a>";
             }
