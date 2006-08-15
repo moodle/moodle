@@ -23,13 +23,14 @@
     require_login($course->id);
     $tocontext = get_context_instance(CONTEXT_COURSE, $id);
     $fromcontext = get_context_instance(CONTEXT_COURSE, $fromcourse);
+    $syscontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
 
     if (!has_capability('moodle/course:manageactivities', $tocontext)) {
         error("You need do not have the required permissions to import activities to this course");
     }
 
     // if we're not a course creator , we can only import from our own courses.
-    if (iscreator()) {
+    if (has_capability('moodle/course:create', $syscontext)) {
         $creator = true;
     }
 
