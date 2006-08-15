@@ -21,9 +21,11 @@
     }
 
     require_login($course->id);
+    $tocontext = get_context_instance(CONTEXT_COURSE, $id);
+    $fromcontext = get_context_instance(CONTEXT_COURSE, $fromcourse);
 
-    if (!isteacheredit($course->id)) {
-        error("You need to be a teacher or an admin to use this page");
+    if (!has_capability('moodle/course:manageactivities', $tocontext)) {
+        error("You need do not have the required permissions to import activities to this course");
     }
 
     // if we're not a course creator , we can only import from our own courses.
@@ -31,15 +33,15 @@
         $creator = true;
     }
 
-    if ($from = get_record("course","id",$fromcourse)) {
-        if (!isteacheredit($fromcourse)) {
-            error("You need to be a course creator, or a teacher in the course you are importing data from, as well");
+    if ($from = get_record('course', 'id', $fromcourse)) {
+        if (!has_capability('moodle/course:manageactivities', $fromcontext)) {
+            error("You need to have the required permissions in the course you are importing data from, as well");
         }
         if (!empty($filename) && file_exists($CFG->dataroot.'/'.$filename) && !empty($SESSION->import_preferences)) {
             $restore = backup_to_restore_array($SESSION->import_preferences);
             $restore->restoreto = 1;
-            $restore->course_id=$id; 
-            $restore->importing=1; // magic variable so we know that we're importing rather than just restoring.
+            $restore->course_id = $id;
+            $restore->importing = 1; // magic variable so we know that we're importing rather than just restoring.
             
             $SESSION->restore = $restore;
             redirect($CFG->wwwroot.'/backup/restore.php?file='.$filename.'&id='.$fromcourse.'&to='.$id);
@@ -53,7 +55,7 @@
                  "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> ".
                  "-> <a href=\"$CFG->wwwroot/course/import.php?id=$course->id\">".get_string('import')."</a> ".
                  "-> $strimportactivities");
-    require_once('mod.php');    
+    require_once('mod.php');
 
     print_footer();
 ?>
