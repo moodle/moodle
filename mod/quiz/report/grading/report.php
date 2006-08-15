@@ -383,7 +383,7 @@ class quiz_report extends quiz_default_report {
             $grade          = round($state->last_graded->grade, 3);
             $state->comment = $copy;
 
-            include($CFG->wwwroot.'/question/comment.html');
+            include($CFG->dirroot . '/question/comment.html');
 
             echo '</div>';
         }
