@@ -209,6 +209,8 @@ class qformat_gift extends qformat_default {
             $question->name = $question->questiontext;
             }
 
+        // ensure name is not longer than 250 characters
+        $question->name = shorten_text( $question->name, 250 );
 
          // determine QUESTION TYPE
         $question->qtype = NULL;
