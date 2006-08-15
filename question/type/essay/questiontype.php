@@ -10,6 +10,14 @@ class question_essay_qtype extends default_questiontype {
     function name() {
         return 'essay';
     }
+    
+    function is_manual_graded() {
+        return true;   
+    }
+
+    function is_usable_by_random() {
+        return false;
+    }
 
     function save_question_options($question) {
         if ($answer = get_record("question_answers", "question", $question->id)) {
@@ -104,10 +112,5 @@ class question_essay_qtype extends default_questiontype {
 //////////////////////////////////////////////////////////////////////////
 //// INITIATION - Without this line the question type is not in use... ///
 //////////////////////////////////////////////////////////////////////////
-$QTYPES['essay'] = new question_essay_qtype();
-// The following adds the questiontype to the menu of types shown to teachers
-$QTYPE_MENU['essay'] = get_string("essay", "quiz");
-// Add essay to the list of manually graded questions
-$QTYPE_MANUAL = isset($QTYPE_MANUAL) ? $QTYPE_MANUAL.",'essay'" : "'essay'";
-
+question_register_questiontype(new question_essay_qtype());
 ?>

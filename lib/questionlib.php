@@ -37,7 +37,7 @@ define('QUESTION_EVENTMANUALGRADE', '9');   // Grade was entered by teacher
 /**#@-*/
 
 /**#@+
- * The core question types - I don't think these constants are used any more. If so, they can be removed.
+ * The core question types.
  */
 define("SHORTANSWER",   "shortanswer");
 define("TRUEFALSE",     "truefalse");
@@ -78,13 +78,13 @@ define('QUESTION_ADAPTIVE', 1);
 /**#@-*/
 
 /// QTYPES INITIATION //////////////////
-
+// These variables get initialised via calls to question_register_questiontype
+// as the question type classes are included.
+global $QTYPES, $QTYPE_MENU, $QTYPE_MANUAL, $QTYPE_EXCLUDE_FROM_RANDOM;
 /**
  * Array holding question type objects
  */
-global $QTYPES;
-$QTYPES = array(); // This array will be populated when the questiontype.php files are loaded below
-
+$QTYPES = array();
 /**
  * Array of question types names translated to the user's language
  *
@@ -92,15 +92,51 @@ $QTYPES = array(); // This array will be populated when the questiontype.php fil
  * be able to create directly. Some internal question types like random questions are excluded.
  * The complete list of question types can be found in {@link $QTYPES}.
  */
-$QTYPE_MENU = array(); // This array will be populated when the questiontype.php files are loaded
+$QTYPE_MENU = array();
+/**
+ * String in the format "'type1','type2'" that can be used in SQL clauses like
+ * "WHERE q.type IN ($QTYPE_MANUAL)".
+ */
+$QTYPE_MANUAL = ''; 
+/**
+ * String in the format "'type1','type2'" that can be used in SQL clauses like
+ * "WHERE q.type NOT IN ($QTYPE_EXCLUDE_FROM_RANDOM)".
+ */
+$QTYPE_EXCLUDE_FROM_RANDOM = '';
+
+/**
+ * Add a new question type to the various global arrays above.
+ * 
+ * @param object $qtype An instance of the new question type class.
+ */
+function question_register_questiontype($qtype) {
+    global $QTYPES, $QTYPE_MENU, $QTYPE_MANUAL, $QTYPE_EXCLUDE_FROM_RANDOM;
+    
+    $name = $qtype->name();
+    $QTYPES[$name] = $qtype;
+    $menuname = $qtype->menu_name();
+    if ($menuname) {
+        $QTYPE_MENU[$name] = $menuname;
+    }
+    if ($qtype->is_manual_graded()) {
+        if ($QTYPE_MANUAL) {
+            $QTYPE_MANUAL .= ',';
+        }
+        $QTYPE_MANUAL .= "'$name'";
+    }
+    if (!$qtype->is_usable_by_random()) {
+        if ($QTYPE_EXCLUDE_FROM_RANDOM) {
+            $QTYPE_EXCLUDE_FROM_RANDOM .= ',';
+        }
+        $QTYPE_EXCLUDE_FROM_RANDOM .= "'$name'";
+    }
+}
 
 require_once("$CFG->dirroot/question/type/questiontype.php");
 
-/*
-* Load the questiontype.php file for each question type
-* These files in turn instantiate the corresponding question type class
-* and add them to the $QTYPES array
-*/
+// Load the questiontype.php file for each question type
+// These files in turn call question_register_questiontype() 
+// with a new instance of each qtype class.
 $qtypenames= get_list_of_plugins('question/type');
 foreach($qtypenames as $qtypename) {
     // Instanciates all plug-in question types

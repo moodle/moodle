@@ -500,8 +500,5 @@ class question_numerical_qtype extends question_shortanswer_qtype {
 }
 
 // INITIATION - Without this line the question type is not in use.
-$QTYPES['numerical']= new question_numerical_qtype();
-// The following adds the questiontype to the menu of types shown to teachers
-$QTYPE_MENU['numerical'] = get_string("numerical", "quiz");
-
+question_register_questiontype(new question_numerical_qtype());
 ?>

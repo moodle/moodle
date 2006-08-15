@@ -16,6 +16,10 @@ class description_qtype extends default_questiontype {
     function name() {
         return 'description';
     }
+    
+    function is_usable_by_random() {
+        return false;
+    }
 
     function get_question_options(&$question) {
         // No options to be restored for this question type
@@ -69,9 +73,5 @@ class description_qtype extends default_questiontype {
 //////////////////////////////////////////////////////////////////////////
 //// INITIATION - Without this line the question type is not in use... ///
 //////////////////////////////////////////////////////////////////////////
-// define("DESCRIPTION",   "7"); // already defined in questionlib.php
-$QTYPES['description']= new description_qtype();
-// The following adds the questiontype to the menu of types shown to teachers
-$QTYPE_MENU['description'] = get_string("description", "quiz");
-
+question_register_questiontype(new description_qtype());
 ?>

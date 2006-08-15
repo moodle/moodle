@@ -18,13 +18,13 @@ require_once($CFG->dirroot . '/question/type/rqp/remote.php');
 */
 class question_rqp_qtype extends default_questiontype {
 
-    /**
-    * Name of the rqp question type
-    *
-    * @ return string 'rqp'
-    */
     function name() {
         return 'rqp';
+    }
+
+    function menu_name() {
+        // Does not currently work, so don't include in the menu.
+        return false;
     }
 
     /**
@@ -547,6 +547,6 @@ class question_rqp_qtype extends default_questiontype {
 //////////////////////////////////////////////////////////////////////////
 //// INITIATION - Without this line the question type is not in use... ///
 //////////////////////////////////////////////////////////////////////////
-$QTYPES[RQP]= new question_rqp_qtype();
+question_register_questiontype(new question_rqp_qtype());
 
 ?>

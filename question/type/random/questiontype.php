@@ -7,14 +7,20 @@
 /// QUESTION TYPE CLASS //////////////////
 class random_qtype extends default_questiontype {
 
-    var $excludedtypes = array("'random'", "'randomsamatch'", "'essay'", "'description'");
-
     // Carries questions available as randoms sorted by category
     // This array is used when needed only
     var $catrandoms = array();
 
     function name() {
         return 'random';
+    }
+
+    function menu_name() {
+        return false;
+    }
+
+    function is_usable_by_random() {
+        return false;
     }
 
     function get_question_options(&$question) {
@@ -32,6 +38,7 @@ class random_qtype extends default_questiontype {
     }
 
     function create_session_and_responses(&$question, &$state, $cmoptions, $attempt) {
+        global $QTYPE_EXCLUDE_FROM_RANDOM;
         // Choose a random question from the category:
         // We need to make sure that no question is used more than once in the
         // quiz. Therfore the following need to be excluded:
@@ -46,7 +53,6 @@ class random_qtype extends default_questiontype {
             // Need to fetch random questions from category $question->category"
             // (Note: $this refers to the questiontype, not the question.)
             global $CFG;
-            $excludedtypes = implode(',', $this->excludedtypes);
             if ($question->questiontext == "1") {
                 // recurse into subcategories
                 $categorylist = question_categorylist($question->category);
@@ -58,7 +64,7 @@ class random_qtype extends default_questiontype {
                        WHERE category IN ($categorylist)
                          AND parent = '0'
                          AND id NOT IN ($cmoptions->questionsinuse)
-                         AND qtype NOT IN ($excludedtypes)")) {
+                         AND qtype NOT IN ($QTYPE_EXCLUDE_FROM_RANDOM)")) {
                 $this->catrandoms[$question->category][$question->questiontext] =
                   draw_rand_array($catrandoms, count($catrandoms)); // from bug 1889
             } else {
@@ -242,6 +248,6 @@ class random_qtype extends default_questiontype {
 //////////////////////////////////////////////////////////////////////////
 //// INITIATION - Without this line the question type is not in use... ///
 //////////////////////////////////////////////////////////////////////////
-$QTYPES[RANDOM]= new random_qtype();
+question_register_questiontype(new random_qtype());
 
 ?>

@@ -1,7 +1,7 @@
 <?php  // $Id$
 
 /////////////////
-/// CALCULATED ///
+// CALCULATED ///
 /////////////////
 
 /// QUESTION TYPE CLASS //////////////////
@@ -704,9 +704,7 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
 //////////////////////////////////////////////////////////////////////////
 //// INITIATION - Without this line the question type is not in use... ///
 //////////////////////////////////////////////////////////////////////////
-$QTYPES['calculated']= new question_calculated_qtype();
-// The following adds the questiontype to the menu of types shown to teachers
-$QTYPE_MENU['calculated'] = get_string("calculated", "quiz");
+question_register_questiontype(new question_calculated_qtype());
 
 function qtype_calculated_calculate_answer($formula, $individualdata,
         $tolerance, $tolerancetype, $answerlength, $answerformat='1', $unit='') {

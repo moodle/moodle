@@ -319,8 +319,5 @@ class question_shortanswer_qtype extends default_questiontype {
 //////////////////////////////////////////////////////////////////////////
 //// INITIATION - Without this line the question type is not in use... ///
 //////////////////////////////////////////////////////////////////////////
-$QTYPES['shortanswer']= new question_shortanswer_qtype();
-// The following adds the questiontype to the menu of types shown to teachers
-$QTYPE_MENU['shortanswer'] = get_string("shortanswer", "quiz");
-
+question_register_questiontype(new question_shortanswer_qtype());
 ?>

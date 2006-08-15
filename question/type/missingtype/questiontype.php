@@ -18,6 +18,14 @@ class question_missingtype_qtype extends default_questiontype {
     function name() {
         return 'missingtype';
     }
+    
+    function menu_name() {
+        return false;
+    }
+    
+    function is_usable_by_random() {
+        return false;
+    }
 
     function print_question_formulation_and_controls(&$question, &$state, $cmoptions, $options) {
         global $CFG;
@@ -56,6 +64,6 @@ class question_missingtype_qtype extends default_questiontype {
 //////////////////////////////////////////////////////////////////////////
 //// INITIATION - Without this line the question type is not in use... ///
 //////////////////////////////////////////////////////////////////////////
-$QTYPES['missingtype']= new question_missingtype_qtype();
+question_register_questiontype(new question_missingtype_qtype());
 
 ?>

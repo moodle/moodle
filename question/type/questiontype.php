@@ -16,14 +16,46 @@
 class default_questiontype {
 
     /**
-    * Name of the question type
-    *
-    * The name returned should coincide with the name of the directory
-    * in which this questiontype is located
-    * @ return string
-    */
+     * Name of the question type
+     *
+     * The name returned should coincide with the name of the directory
+     * in which this questiontype is located
+     * 
+     * @ return string the name of this question type.
+     */
     function name() {
         return 'default';
+    }
+
+    /**
+     * The name this question should appear as in the create new question 
+     * dropdown.
+     * 
+     * @return mixed the desired string, or false to hide this question type in the menu.
+     */
+    function menu_name() {
+        $name = $this->name();
+        $menu_name = get_string($name, 'qtype_' . $name);
+        if ($menu_name[0] == '[') {
+            // Legacy behavior, if the string was not in the proper qtype_name 
+            // language file, look it up in the quiz one.
+            $menu_name = get_string($this->name(), 'quiz');
+        }
+        return $menu_name;
+    }
+    
+    /**
+     * @return boolean true if this question can only be graded manually.
+     */
+    function is_manual_graded() {
+        return false;
+    }
+
+    /**
+     * @return boolean true if this question type can be used by the random question type.
+     */
+    function is_usable_by_random() {
+        return true;
     }
 
     /**

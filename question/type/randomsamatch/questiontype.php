@@ -15,6 +15,10 @@ class question_randomsamatch_qtype extends question_match_qtype {
         return 'randomsamatch';
     }
 
+    function is_usable_by_random() {
+        return false;
+    }
+
     function get_question_options(&$question) {
         if (!$question->options = get_record('question_randomsamatch', 'question', $question->id)) {
             notify('Error: Missing question options for random short answer question '.$question->id.'!');
@@ -351,8 +355,5 @@ class question_randomsamatch_qtype extends question_match_qtype {
 //////////////////////////////////////////////////////////////////////////
 //// INITIATION - Without this line the question type is not in use... ///
 //////////////////////////////////////////////////////////////////////////
-$QTYPES['randomsamatch']= new question_randomsamatch_qtype();
-// The following adds the questiontype to the menu of types shown to teachers
-$QTYPE_MENU['randomsamatch'] = get_string("randomsamatch", "quiz");
-
+question_register_questiontype(new question_randomsamatch_qtype());
 ?>

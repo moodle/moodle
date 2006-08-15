@@ -584,9 +584,7 @@ class embedded_cloze_qtype extends default_questiontype {
 //////////////////////////////////////////////////////////////////////////
 //// INITIATION - Without this line the question type is not in use... ///
 //////////////////////////////////////////////////////////////////////////
-$QTYPES['multianswer']= new embedded_cloze_qtype();
-// The following adds the questiontype to the menu of types shown to teachers
-$QTYPE_MENU['multianswer'] = get_string("multianswer", "quiz");
+question_register_questiontype(new embedded_cloze_qtype());
 
 /////////////////////////////////////////////////////////////
 //// ADDITIONAL FUNCTIONS

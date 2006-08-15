@@ -513,8 +513,5 @@ class question_multichoice_qtype extends default_questiontype {
 //////////////////////////////////////////////////////////////////////////
 //// INITIATION - Without this line the question type is not in use... ///
 //////////////////////////////////////////////////////////////////////////
-$QTYPES['multichoice']= new question_multichoice_qtype();
-// The following adds the questiontype to the menu of types shown to teachers
-$QTYPE_MENU['multichoice'] = get_string("multichoice", "quiz");
-
+question_register_questiontype(new question_multichoice_qtype());
 ?>
