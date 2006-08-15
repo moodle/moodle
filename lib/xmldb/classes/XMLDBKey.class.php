@@ -1,0 +1,381 @@
+<?php // $Id$
+
+///////////////////////////////////////////////////////////////////////////
+//                                                                       //
+// NOTICE OF COPYRIGHT                                                   //
+//                                                                       //
+// Moodle - Modular Object-Oriented Dynamic Learning Environment         //
+//          http://moodle.com                                            //
+//                                                                       //
+// Copyright (C) 2001-3001 Martin Dougiamas        http://dougiamas.com  //
+//           (C) 2001-3001 Eloy Lafuente (stronk7) http://contiento.com  //
+//                                                                       //
+// This program is free software; you can redistribute it and/or modify  //
+// it under the terms of the GNU General Public License as published by  //
+// the Free Software Foundation; either version 2 of the License, or     //
+// (at your option) any later version.                                   //
+//                                                                       //
+// This program is distributed in the hope that it will be useful,       //
+// but WITHOUT ANY WARRANTY; without even the implied warranty of        //
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         //
+// GNU General Public License for more details:                          //
+//                                                                       //
+//          http://www.gnu.org/copyleft/gpl.html                         //
+//                                                                       //
+///////////////////////////////////////////////////////////////////////////
+
+/// This class represent one XMLDB Key
+
+class XMLDBKey extends XMLDBObject {
+ 
+    var $type;
+    var $fields;
+    var $reftable;
+    var $reffields;
+
+    /**
+     * Creates one new XMLDBKey
+     */
+    function XMLDBKey($name) {
+        parent::XMLDBObject($name);
+        $this->type = NULL;
+        $this->fields = array();
+        $this->reftable = NULL;
+        $this->reffields = array();
+    }
+
+    /**
+     * Get the key type
+     */
+    function getType() {
+        return $this->type;
+    }
+
+    /**
+     * Set the key type
+     */
+    function setType($type) {
+        $this->type = $type;
+    }
+
+    /**
+     * Set the key fields
+     */
+    function setFields($fields) {
+        $this->fields = $fields;
+    }
+
+    /**
+     * Set the key reftable
+     */
+    function setRefTable($reftable) {
+        $this->reftable = $reftable;
+    }
+
+    /**
+     * Set the key reffields
+     */
+    function setRefFields($reffields) {
+        $this->reffields = $reffields;
+    }
+
+    /** 
+     * Get the key fields
+     */
+    function &getFields() {
+        return $this->fields;
+    }
+
+    /**
+     * Get the key reftable
+     */
+    function &getRefTable() {
+        return $this->reftable;
+    }
+
+    /**
+     * Get the key reffields
+     */
+    function &getRefFields() {
+        return $this->reffields;
+    }
+
+    /**
+     * Load data from XML to the key
+     */
+    function arr2XMLDBKey($xmlarr) {
+
+        $result = true;
+
+    /// Debug the table
+    /// traverse_xmlize($xmlarr);                   //Debug
+    /// print_object ($GLOBALS['traverse_array']);  //Debug
+    /// $GLOBALS['traverse_array']="";              //Debug
+
+    /// Process key attributes (name, type, fields, reftable, 
+    /// reffields, comment, previous, next)
+        if (isset($xmlarr['@']['NAME'])) {
+            $this->name = trim($xmlarr['@']['NAME']);
+        } else {
+            $this->errormsg = 'Missing NAME attribute';
+            $result = false;
+        }
+
+        if (isset($xmlarr['@']['TYPE'])) {
+        /// Check for valid type
+            $type = $this->getXMLDBKeyType(trim($xmlarr['@']['TYPE']));
+            if ($type) {
+                $this->type = $type;
+            } else {
+                $this->errormsg = 'Invalid TYPE attribute';
+                $result = false;
+            }
+        } else {
+            $this->errormsg = 'Missing TYPE attribute';
+            $result = false;
+        }
+
+        if (isset($xmlarr['@']['FIELDS'])) {
+            $fields = strtolower(trim($xmlarr['@']['FIELDS']));
+            if ($fields) {
+                $fieldsarr = explode(',',$fields);
+                if ($fieldsarr) {
+                    foreach ($fieldsarr as $key => $element) {
+                        $fieldsarr [$key] = trim($element);
+                    }
+                } else {
+                    $this->errormsg = 'Incorrect FIELDS attribute (comma separated of fields)';
+                    $result = false;
+                }
+            } else {
+                $this->errormsg = 'Empty FIELDS attribute';
+                $result = false;
+            }
+        } else {
+            $this->errormsg = 'Missing FIELDS attribute';
+            $result = false;
+        }
+    /// Finally, set the array of fields
+        $this->fields = $fieldsarr;
+
+        if (isset($xmlarr['@']['REFTABLE'])) {
+        /// Check we are in a FK
+            if ($this->type == XMLDB_KEY_FOREIGN || 
+                $this->type == XMLDB_KEY_FOREIGN_UNIQUE) { 
+                $reftable = strtolower(trim($xmlarr['@']['REFTABLE']));
+                if (!$reftable) {
+                    $this->errormsg = 'Empty REFTABLE attribute';
+                    $result = false;
+                }
+            } else {
+                $this->errormsg = 'Wrong REFTABLE attribute (only FK can have it)';
+                $result = false;
+            }
+        } else if ($this->type == XMLDB_KEY_FOREIGN ||
+                   $this->type == XMLDB_KEY_FOREIGN_UNIQUE) {
+            $this->errormsg = 'Missing REFTABLE attribute';
+            $result = false;
+        }
+    /// Finally, set the reftable
+        if ($this->type == XMLDB_KEY_FOREIGN ||
+            $this->type == XMLDB_KEY_FOREIGN_UNIQUE) {
+            $this->reftable = $reftable;
+        }
+
+        if (isset($xmlarr['@']['REFFIELDS'])) {
+        /// Check we are in a FK
+            if ($this->type == XMLDB_KEY_FOREIGN ||
+                $this->type == XMLDB_KEY_FOREIGN_UNIQUE) {
+                $reffields = strtolower(trim($xmlarr['@']['REFFIELDS']));
+                if ($reffields) {
+                    $reffieldsarr = explode(',',$reffields);
+                    if ($reffieldsarr) {
+                        foreach ($reffieldsarr as $key => $element) {
+                            $reffieldsarr [$key] = trim($element);
+                        }
+                    } else {
+                        $this->errormsg = 'Incorrect REFFIELDS attribute (comma separated of fields)';
+                        $result = false;
+                    }
+                } else {
+                    $this->errormsg = 'Empty REFFIELDS attribute';
+                    $result = false;
+                }
+            } else {
+                $this->errormsg = 'Wrong REFFIELDS attribute (only FK can have it)';
+                $result = false;
+            }
+        } else if ($this->type == XMLDB_KEY_FOREIGN ||
+                   $this->type == XMLDB_KEY_FOREIGN_UNIQUE) {
+            $this->errormsg = 'Missing REFFIELDS attribute';
+            $result = false;
+        }
+    /// Finally, set the array of reffields
+        if ($this->type == XMLDB_KEY_FOREIGN ||
+            $this->type == XMLDB_KEY_FOREIGN_UNIQUE) {
+            $this->reffields = $reffieldsarr;
+        }
+
+        if (isset($xmlarr['@']['COMMENT'])) {
+            $this->comment = trim($xmlarr['@']['COMMENT']);
+        }
+
+        if (isset($xmlarr['@']['PREVIOUS'])) {
+            $this->previous = trim($xmlarr['@']['PREVIOUS']);
+        }
+
+        if (isset($xmlarr['@']['NEXT'])) {
+            $this->next = trim($xmlarr['@']['NEXT']);
+        }
+
+    /// Set some attributes
+        if ($result) {
+            $this->loaded = true;
+        }
+        $this->calculateHash();
+        return $result;
+    }
+
+    /**
+     * This function returns the correct XMLDB_KEY_XXX value for the
+     * string passed as argument
+     */
+    function getXMLDBKeyType($type) {
+
+        $result = XMLDB_KEY_INCORRECT;
+        
+        switch (strtolower($type)) {
+            case 'primary':
+                $result = XMLDB_KEY_PRIMARY;
+                break;
+            case 'unique':
+                $result = XMLDB_KEY_UNIQUE;
+                break;
+            case 'foreign':
+                $result = XMLDB_KEY_FOREIGN;
+                break;
+            case 'foreign-unique':
+                $result = XMLDB_KEY_FOREIGN_UNIQUE;
+                break;
+        /// case 'check':  //Not supported
+        ///     $result = XMLDB_KEY_CHECK;
+        ///     break;
+        }
+    /// Return the normalized XMLDB_KEY
+        return $result;
+    }
+
+    /**
+     * This function returns the correct name value for the
+     * XMLDB_KEY_XXX passed as argument
+     */
+    function getXMLDBKeyName($type) {
+
+        $result = '';
+        
+        switch (strtolower($type)) {
+            case XMLDB_KEY_PRIMARY:
+                $result = 'primary';
+                break;
+            case XMLDB_KEY_UNIQUE:
+                $result = 'unique';
+                break;
+            case XMLDB_KEY_FOREIGN:
+                $result = 'foreign';
+                break;
+            case XMLDB_KEY_FOREIGN_UNIQUE:
+                $result = 'foreign-unique';
+                break;
+        /// case XMLDB_KEY_CHECK:  //Not supported
+        ///     $result = 'check';
+        ///     break;
+        }
+    /// Return the normalized name
+        return $result;
+    }
+
+    /**
+     * This function calculate and set the hash of one XMLDBKey
+     */
+     function calculateHash($recursive = false) {
+        if (!$this->loaded) {
+            $this->hash = NULL;
+        } else {
+            $key = $this->type . implode(', ', $this->fields);
+            if ($this->type == XMLDB_KEY_FOREIGN ||
+                $this->type == XMLDB_KEY_FOREIGN_UNIQUE) {
+                $key .= $this->reftable . implode(', ', $this->reffields);
+            }
+                    ;
+            $this->hash = md5($key);
+        }
+    }
+
+    /** 
+     *This function will output the XML text for one key
+     */
+    function xmlOutput() {
+        $o = '';
+        $o.= '        <KEY NAME="' . $this->name . '"';
+        $o.= ' TYPE="' . $this->getXMLDBKeyName($this->type) . '"';
+        $o.= ' FIELDS="' . implode(', ', $this->fields) . '"';
+        if ($this->type == XMLDB_KEY_FOREIGN ||
+            $this->type == XMLDB_KEY_FOREIGN_UNIQUE) {
+            $o.= ' REFTABLE="' . $this->reftable . '"';
+            $o.= ' REFFIELDS="' . implode(', ', $this->reffields) . '"';
+        }
+        if ($this->comment) {
+            $o.= ' COMMENT="' . htmlspecialchars($this->comment) . '"';
+        }
+        if ($this->previous) {
+            $o.= ' PREVIOUS="' . $this->previous . '"';
+        }
+        if ($this->next) {
+            $o.= ' NEXT="' . $this->next . '"';
+        }
+        $o.= '/>' . "\n";
+
+        return $o;
+    }
+
+    /**
+     * This function will set all the attributes of the XMLDBKey object
+     * based on information passed in one ADOkey
+     */
+    function setFromADOKey($adokey) {
+
+    /// Calculate the XMLDB_KEY
+        switch (strtolower($adokey['name'])) {
+            case 'primary':
+                $this->type = XMLDB_KEY_PRIMARY;
+                break;
+            default:
+                $this->type = XMLDB_KEY_UNIQUE;
+        }
+    /// Set the fields
+        $this->fields = $adokey['columns'];
+    /// Some more fields
+        $this->loaded = true;
+        $this->changed = true;
+    }
+
+    /**     
+     * Shows info in a readable format
+     */ 
+    function readableInfo() {
+        $o = '';
+    /// type
+        $o .= $this->getXMLDBKeyName($this->type);
+    /// fields
+        $o .= ' (' . implode(', ', $this->fields) . ')';
+    /// foreign key
+        if ($this->type == XMLDB_KEY_FOREIGN ||
+            $this->type == XMLDB_KEY_FOREIGN_UNIQUE) {
+            $o .= ' references ' . $this->reftable . ' (' . implode(', ', $this->reffields) . ')';
+        }
+
+        return $o;
+    }
+}
+
+?>

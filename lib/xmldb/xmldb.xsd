@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="FIELD">
+    <xs:complexType>
+      <xs:attribute name="ENUM" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:NMTOKEN">
+            <xs:enumeration value="false" />
+            <xs:enumeration value="true" />
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="LENGTH" type="xs:NMTOKEN" use="required" />
+      <xs:attribute name="DECIMALS" type="xs:NMTOKEN" use="optional" />
+      <xs:attribute name="NEXT" type="xs:NMTOKEN" use="optional" />
+      <xs:attribute name="SEQUENCE" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:NMTOKEN">
+            <xs:enumeration value="false" />
+            <xs:enumeration value="true" />
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="ENUMVALUES" type="xs:string" use="optional" />
+      <xs:attribute name="DEFAULT" type="xs:NMTOKEN" use="optional" />
+      <xs:attribute name="TYPE" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:NMTOKEN">
+            <xs:enumeration value="binary" />
+            <xs:enumeration value="char" />
+            <xs:enumeration value="float" />
+            <xs:enumeration value="int" />
+            <xs:enumeration value="number" />
+            <xs:enumeration value="text" />
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="UNSIGNED" use="optional">
+        <xs:simpleType>
+          <xs:restriction base="xs:NMTOKEN">
+            <xs:enumeration value="false" />
+            <xs:enumeration value="true" />
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="PREVIOUS" type="xs:NMTOKEN" use="optional" />
+      <xs:attribute name="NOTNULL" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:NMTOKEN">
+            <xs:enumeration value="false" />
+            <xs:enumeration value="true" />
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="NAME" type="xs:NMTOKEN" use="required" />
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="FIELDS">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="FIELD" maxOccurs="unbounded" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="INDEX">
+    <xs:complexType>
+      <xs:attribute name="PREVIOUS" type="xs:NMTOKEN" use="optional" />
+      <xs:attribute name="COMMENT" type="xs:string" use="optional" />
+      <xs:attribute name="UNIQUE" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:NMTOKEN">
+            <xs:enumeration value="false" />
+            <xs:enumeration value="true" />
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="NAME" type="xs:NMTOKEN" use="required" />
+      <xs:attribute name="FIELDS" type="xs:string" use="required" />
+      <xs:attribute name="NEXT" type="xs:NMTOKEN" use="optional" />
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="INDEXES">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="INDEX" maxOccurs="unbounded" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="KEY">
+    <xs:complexType>
+      <xs:attribute name="PREVIOUS" type="xs:NMTOKEN" use="optional" />
+      <xs:attribute name="COMMENT" type="xs:string" use="optional" />
+      <xs:attribute name="NAME" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:NMTOKEN">
+            <xs:enumeration value="name" />
+            <xs:enumeration value="plugin_name" />
+            <xs:enumeration value="primary" />
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="FIELDS" type="xs:string" use="required" />
+      <xs:attribute name="TYPE" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:NMTOKEN">
+            <xs:enumeration value="primary" />
+            <xs:enumeration value="unique" />
+            <xs:enumeration value="foreign" />
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="NEXT" type="xs:NMTOKEN" use="optional" />
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="KEYS">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="KEY" maxOccurs="unbounded" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="SENTENCE">
+    <xs:complexType>
+      <xs:attribute name="TEXT" type="xs:string" use="required" />
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="SENTENCES">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="SENTENCE" maxOccurs="unbounded" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="STATEMENT">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="SENTENCES" />
+      </xs:sequence>
+      <xs:attribute name="COMMENT" type="xs:string" use="required" />
+      <xs:attribute name="TABLE" type="xs:NMTOKEN" use="required" />
+      <xs:attribute name="NAME" type="xs:string" use="required" />
+      <xs:attribute name="TYPE" type="xs:NMTOKEN" use="required" />
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="STATEMENTS">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="STATEMENT" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="TABLE">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="FIELDS" />
+        <xs:element ref="KEYS" />
+        <xs:element ref="INDEXES" minOccurs="0" />
+      </xs:sequence>
+      <xs:attribute name="PREVIOUS" type="xs:NMTOKEN" use="optional" />
+      <xs:attribute name="COMMENT" type="xs:string" use="required" />
+      <xs:attribute name="NAME" type="xs:ID" use="required" />
+      <xs:attribute name="NEXT" type="xs:NMTOKEN" use="optional" />
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="TABLES">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="TABLE" maxOccurs="unbounded" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="XMLDB">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="TABLES" />
+        <xs:element ref="STATEMENTS" />
+      </xs:sequence>
+      <xs:attribute name="PATH" type="xs:string" use="required" />
+      <xs:attribute name="COMMENT" type="xs:string" use="required" />
+      <xs:attribute name="VERSION" type="xs:NMTOKEN" use="required" />
+    </xs:complexType>
+  </xs:element>
+
+</xs:schema>
