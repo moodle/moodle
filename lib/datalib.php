@@ -946,17 +946,22 @@ function get_records_sql_menu($sql) {
  * @return mixed the specified value, or false if an error occured.
  */
 function get_field($table, $return, $field1, $value1, $field2='', $value2='', $field3='', $value3='') {
-   
-    global $CFG;
     $select = where_clause($field1, $value1, $field2, $value2, $field3, $value3);
+    return get_field_select($table, $return, $select);
+}
 
-    $rs = get_recordset_sql('SELECT ' . $return . ' FROM ' . $CFG->prefix . $table . ' ' . $select);
-
-    if ($rs && $rs->RecordCount() == 1) {
-        return $rs->fields[0];
-    } else {
-        return false;
-    }
+/**
+ * Get a single value from a table row where a particular select clause is true.
+ *
+ * @uses $CFG
+ * @param string $table the table to query.
+ * @param string $return the field to return the value of.
+ * @param string $select A fragment of SQL to be used in a where clause in the SQL call.
+ * @return mixed the specified value, or false if an error occured.
+ */
+function get_field_select($table, $return, $select) {
+    global $CFG;
+    return get_field_sql('SELECT ' . $return . ' FROM ' . $CFG->prefix . $table . ' ' . $select);
 }
 
 /**
