@@ -21,6 +21,7 @@
       // generic information; required
       $doc->docid     = $page->id;
       $doc->title     = $page->pagename;
+      $doc->date      = $page->timemodified;
       
       //remove '(ip.ip.ip.ip)' from wiki author field
       $doc->author    = preg_replace('/\(.*?\)/', '', $page->author);

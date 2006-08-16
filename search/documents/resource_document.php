@@ -7,6 +7,7 @@
       // generic information; required
       $doc->docid     = $resource['id'];
       $doc->title     = strip_tags($resource['name']);
+      $doc->date      = $resource['timemodified'];
                       
       $doc->author    = '';
       $doc->contents  = strip_tags($resource['summary']).' '.strip_tags($resource['alltext']);

@@ -14,6 +14,7 @@
       // generic information; required
       $doc->docid     = $entry['id'];
       $doc->title     = $entry['concept'];
+      $doc->date      = $entry['timecreated'];
                   
       $user = get_recordset('user', 'id', $entry['userid'])->fields;
       
@@ -38,7 +39,7 @@
     //preserve glossary pop-up, be careful where you place your ' and "s
     //this function is meant to return a url that is placed between href='[url here]'
     return "$CFG->wwwroot/mod/glossary/showentry.php?eid=$entry_id' onclick='return openpopup(\"/mod/glossary/showentry.php?eid=$entry_id\", \"entry\", \"menubar=0,location=0,scrollbars,resizable,width=600,height=450\", 0);";    
-  } //glossary_make_link
+  } //glossary_make_link 
     
   function glossary_iterator() {
     return get_all_instances_in_courses("glossary", get_courses());  
@@ -61,9 +62,23 @@
     
     return $documents;
   } //glossary_get_content_for_index
+  
+  function glossary_single_document($id) {
+    $entries = get_recordset('glossary_entries', 'id', $id);
+    $entry = $entries->fields;
+    
+    $glossaries = get_recordset('glossary', 'id', $entry['glossaryid']);
+    $glossary = $glossaries->fields;
+    
+    return new GlossarySearchDocument($entry, $entry['glossaryid'], $glossary['course'], -1);
+  } //glossary_single_document    
     
   function glossary_delete($info) {
     return $info;            
-  } //glossary_delete  
+  } //glossary_delete
+  
+  function glossary_db_names() {
+    return array('id', 'glossary_entries', 'timemodified');            
+  } //glossary_db_names    
   
 ?>

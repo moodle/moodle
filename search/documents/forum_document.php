@@ -12,6 +12,7 @@
       $doc->title     = $post['subject'];
       $doc->author    = $post['firstname']." ".$post['lastname'];
       $doc->contents  = $post['message'];
+      $doc->date      = $post['created'];
       
       $doc->url       = forum_make_link($post['discussion'], $post['id']);      
       

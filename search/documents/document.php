@@ -10,6 +10,7 @@
       $this->addField(Zend_Search_Lucene_Field::Text('author', $doc->author));
       $this->addField(Zend_Search_Lucene_Field::UnStored('contents', $doc->contents));
       $this->addField(Zend_Search_Lucene_Field::UnIndexed('url', $doc->url));
+      $this->addField(Zend_Search_Lucene_Field::UnIndexed('date', $doc->date));
       
       $this->addField(Zend_Search_Lucene_Field::Binary('data', serialize($data)));
       
