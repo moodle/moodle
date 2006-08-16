@@ -151,8 +151,8 @@ class XMLDBoci8po extends XMLDBgenerator {
      * Returns an array of reserved words (lowercase) for this DB
      */
     function getReservedWords() {
-    /// This file contains the reserved words for MySQL databases
-    /// from http://www.postgresql.org/docs/7.3/static/sql-keywords-appendix.html
+    /// This file contains the reserved words for Oracle databases
+    /// from http://download-uk.oracle.com/docs/cd/B10501_01/server.920/a96540/ap_keywd.htm
         $reserved_words = array (
             'access', 'add', 'all', 'alter', 'and', 'any',
             'as', 'asc', 'audit', 'between', 'by', 'char',

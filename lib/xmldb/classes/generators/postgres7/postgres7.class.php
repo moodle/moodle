@@ -142,7 +142,7 @@ class XMLDBpostgres7 extends XMLDBgenerator {
      * Returns an array of reserved words (lowercase) for this DB
      */
     function getReservedWords() {
-    /// This file contains the reserved words for MySQL databases
+    /// This file contains the reserved words for PostgreSQL databases
     /// from http://www.postgresql.org/docs/7.3/static/sql-keywords-appendix.html
         $reserved_words = array (
             'abort', 'abs', 'absolute', 'access', 'action', 'ada',

@@ -130,7 +130,7 @@ class XMLDBmssql extends XMLDBgenerator {
      * Returns an array of reserved words (lowercase) for this DB
      */
     function getReservedWords() {
-    /// This file contains the reserved words for MySQL databases
+    /// This file contains the reserved words for MSSQL databases
     /// from http://msdn.microsoft.com/library/en-us/tsqlref/ts_ra-rz_9oj7.asp
         $reserved_words = array (
             'absolute', 'action', 'ada', 'add', 'admin', 'after', 'aggregate',
