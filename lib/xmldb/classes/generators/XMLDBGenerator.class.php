@@ -47,7 +47,7 @@ class XMLDBgenerator {
     var $number_type = 'NUMERIC';    // Proper type for NUMBER(x) in this DB
 
     var $unsigned_allowed = true;    // To define in the generator must handle unsigned information
-    var $default_for_char = '';      // To define the default to set for NOT NULLs CHARs without default (null=do nothing)
+    var $default_for_char = null;      // To define the default to set for NOT NULLs CHARs without default (null=do nothing)
 
     var $primary_key_name = null; //To force primary key names to one string (null=no force)
 
