@@ -1,5 +1,10 @@
 <?PHP //$Id$
 
+/**
+ * This block needs to be reworked.
+ * The new roles system does away with the concepts of rigid student and
+ * teacher roles.
+ */
 class block_online_users extends block_base {
     function init() {
         $this->title = get_string('blockname','block_online_users');
@@ -22,15 +27,20 @@ class block_online_users extends block_base {
         if (empty($this->instance)) {
             return $this->content;
         }
-    
+
         $timetoshowusers = 300; //Seconds default
         if (isset($CFG->block_online_users_timetosee)) {
             $timetoshowusers = $CFG->block_online_users_timetosee * 60;
         }
         $timefrom = time()-$timetoshowusers;
 
+        // Get context so we can check capabilities.
+        $context = get_context_instance(CONTEXT_COURSE, $COURSE->id);
+
         //Calculate if we are in separate groups
-        $isseparategroups = ($COURSE->groupmode == SEPARATEGROUPS && $COURSE->groupmodeforce && !isteacheredit($COURSE->id));
+        $isseparategroups = ($COURSE->groupmode == SEPARATEGROUPS 
+                             && $COURSE->groupmodeforce
+                             && !has_capability('moodle/site:accessallgroups', $context));
 
         //Get the user current group
         $currentgroup = $isseparategroups ? get_current_group($COURSE->id) : NULL;
@@ -85,7 +95,9 @@ class block_online_users extends block_base {
                                           {$CFG->prefix}user_teachers s
                                           $groupmembers
                                      WHERE u.id = s.userid $courseselect $groupselect $timeselect ";
-
+        
+        // Now that we have the Roles System, how will we handle what
+        // used to be hidden teachers?
         if (!isteacher($COURSE->id)) {
             // Hide hidden teachers from students.
             $findteacherssql .= 'AND s.authority > 0 ';

@@ -718,7 +718,10 @@ class block_nuke extends block_base {
                         $oldvals['admin'] = $GLOBALS['admin'];
                     }
 
+                    // isteacher() will eventually be deprecated and blocks
+                    // should define their own capabilities.
                     $GLOBALS['admin'] = isteacher($this->course->id);
+                    
                     @include($dir.$file);
 
                     foreach($oldvals as $key => $val) {

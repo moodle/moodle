@@ -27,6 +27,7 @@ class block_social_activities extends block_list {
         }
 
         $course = get_record('course', 'id', $this->instance->pageid);
+        $context = get_context_instance(CONTEXT_COURSE, $course->id);
 
         // To make our day, we start with an ugly hack
         global $sections, $mods, $modnames;
@@ -36,8 +37,8 @@ class block_social_activities extends block_list {
 
         $groupbuttons = $course->groupmode;
         $groupbuttonslink = (!$course->groupmodeforce);
-        $isteacher = isteacher($this->instance->pageid);
-        $isediting = isediting($this->instance->pageid);
+        $viewhiddenactivities = has_capability('moodle/course:viewhiddenactivities', $context);
+        $manageactivities = has_capability('moodle/course:manageactivities', $context);
         $ismoving = ismoving($this->instance->pageid);
         if ($ismoving) {
             $strmovehere = get_string('movehere');
@@ -61,7 +62,7 @@ class block_social_activities extends block_list {
                     continue;
                 }
                 $mod = $mods[$modnumber];
-                if ($isediting && !$ismoving) {
+                if ($manageactivities && !$ismoving) {
                     if ($groupbuttons) {
                         if (! $mod->groupmodelink = $groupbuttonslink) {
                             $mod->groupmode = $course->groupmode;
@@ -74,7 +75,7 @@ class block_social_activities extends block_list {
                 } else {
                     $editbuttons = '';
                 }
-                if ($mod->visible || $isteacher) {
+                if ($mod->visible || $viewhiddenactivities) {
                     if ($ismoving) {
                         if ($mod->id == $USER->activitycopy) {
                             continue;
@@ -115,7 +116,7 @@ class block_social_activities extends block_list {
             $this->content->icons[] = '';
         }
 
-        if ($isediting && $modnames) {
+        if ($manageactivities && $modnames) {
             $this->content->footer = print_section_add_menus($course, 0, $modnames, true, true);
         } else {
             $this->content->footer = '';

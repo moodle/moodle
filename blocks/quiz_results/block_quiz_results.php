@@ -51,6 +51,9 @@ class block_quiz_results extends block_base {
             $courseid = $this->config->courseid;
         }
 
+        $context = get_context_instance(CONTEXT_COURSE, $courseid);
+
+
         if(empty($quizid)) {
             $this->content->text = get_string('error_emptyquizid', 'block_quiz_results');
             return $this->content;
@@ -101,7 +104,7 @@ class block_quiz_results extends block_base {
             // The actual groupmode for the quiz is now known to be $groupmode
         }
 
-        if(isteacheredit($courseid) && $groupmode == SEPARATEGROUPS) {
+        if(has_capability('moodle/site:accessallgroups', $context) && $groupmode == SEPARATEGROUPS) {
             // We 'll make an exception in this case
             $groupmode = VISIBLEGROUPS;
         }

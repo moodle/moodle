@@ -14,15 +14,17 @@ class block_participants extends block_list {
 		if (empty($this->instance->pageid)) {
 			return '';  
 		}
-			
+		
+		$sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
+		
 		// only 2 possible contexts, site or course
 		if ($this->instance->pageid == SITEID) { // site context
-		  	$context = get_context_instance(CONTEXT_SYSTEM, SITEID); 
+		  	$currentcontext = $sitecontext;
 		} else { // course context
-			$context = get_context_instance(CONTEXT_COURSE, $this->instance->pageid);
+			$currentcontext = get_context_instance(CONTEXT_COURSE, $this->instance->pageid);
 		}
 		
-		if (!has_capability('moodle/course:viewparticipants', $context)) {
+		if (!has_capability('moodle/course:viewparticipants', $currentcontext)) {
 		  	$this->context = '';
 		  	return $this->content;
 		}
@@ -45,13 +47,14 @@ class block_participants extends block_list {
             $this->instance->pageid = SITEID;
         }
 
+        // $CFG->showsiteparticipantslist == 1  <-- this is deprecated.
         if ($this->instance->pageid != SITEID || 
             $CFG->showsiteparticipantslist > 1 || 
             ($CFG->showsiteparticipantslist == 1 && isteacherinanycourse()) || 
-            isteacher(SITEID)) {
+            has_capability('moodle/course:viewparticipants', $sitecontext)) {
 
             $this->content->items[] = '<a title="'.get_string('listofallpeople').'" href="'.
-                                      $CFG->wwwroot.'/user/index.php?contextid='.$context->id.'">'.get_string('participants').'</a>';
+                                      $CFG->wwwroot.'/user/index.php?contextid='.$currentcontext->id.'">'.get_string('participants').'</a>';
             $this->content->icons[] = '<img src="'.$CFG->pixpath.'/i/users.gif" height="16" width="16" alt="" />';
         }
 
