@@ -68,7 +68,8 @@ class XMLDBgenerator {
     var $add_table_comments  = true;  // Does the generator need to add code for table comments
 
     var $prefix_on_names = true; //Does the generator need to prepend the prefix to all the key/index/sequence/trigger/check names
-    var $names_max_length = 30; //Max length for key/index/sequence/trigger/check names
+
+    var $names_max_length = 30; //Max length for key/index/sequence/trigger/check names (keep 30 for all!)
 
     var $prefix;         // Prefix to be used for all the DB objects
 
@@ -139,7 +140,7 @@ class XMLDBgenerator {
 
     /// Add comments if specified
         if ($this->add_table_comments) {
-            $table .= $this->getCommentSQL ($xmldb_table) . "\n";
+            $table .= $this->getCommentSQL ($xmldb_table) . ";\n";
         }
     /// Add the indexes (each one, one statement)
         $indexcombs = array(); //To store all the key combinations used
