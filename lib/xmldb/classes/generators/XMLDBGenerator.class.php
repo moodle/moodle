@@ -63,6 +63,7 @@ class XMLDBgenerator {
     var $sequence_name = 'auto_increment'; //Particular name for inline sequences in this generator
     var $sequence_only = false; //To avoid to output the rest of the field specs, leaving only the name and the sequence_name variable
 
+    var $enum_inline_code = true; //Does the generator need to add inline code in the column definition
     var $enum_extra_code = true; //Does the generator need to add extra code to generate code for the enums in the table
 
     var $add_table_comments  = true;  // Does the generator need to add code for table comments
@@ -257,7 +258,7 @@ class XMLDBgenerator {
     /// The name
         $field = $this->getEncQuoted($xmldb_field->getName());
     /// The type and length (if the field isn't enum)
-        if (!$xmldb_field->getEnum()) {
+        if (!$xmldb_field->getEnum() || $this->enum_inline_code == false) {
             $field .= ' ' . $this->getTypeSQL($xmldb_field->getType(), $xmldb_field->getLength(), $xmldb_field->getDecimals());
         } else {
         /// call to custom function
@@ -431,10 +432,10 @@ class XMLDBgenerator {
     }
 
     /**
-     * Given one XMLDB Field, return its enum SQL
+     * Given one XMLDB Field, return its enum SQL to be added inline with the column definition
      */
     function getEnumSQL ($xmldb_field) {
-        return 'code for inline enum declaration goes to function getEnumSQL()';
+        return 'code for inline enum declaration goes to function getEnumSQL(). Can be disabled with enum_inline_code=false';
     }
 
     /**
