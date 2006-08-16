@@ -27,6 +27,7 @@ $string['closewindow'] = 'Loka þessum glugga';
 $string['compatibilitysettingshead'] = 'Stillingar á PHP athugaðar';
 $string['compatibilitysettingssub'] = 'Vefþjóninn verður að standast allar þessar prófanir til þess að tryggja að Moodle keyri án vandkvæða';
 $string['configfilewritten'] = 'config.php skráin hefur verið mynduð';
+$string['configurationcompletesub'] = 'Moodle gerði tilraun til þess að vista uppsetningarskránna í rót Moodle skráarsafnins.';
 $string['continue'] = 'Áfram';
 $string['database'] = 'Gagnagrunnur';
 $string['databasecreationsettingssub'] = 'Nú er komið að því að setja upp gagnagrunninn þar sem flest gögn sem tilheyra Moodle eru hýst. Uppsetningarforritið skilgreinir gagnagrunninn með neðangreindum stillingum.
@@ -44,6 +45,7 @@ $string['databasesettingssub'] = '<b>Tegund:</b> mysql eða postgres7<br />
 <b>Lykilorð:</b> lykilorð að gagnagrunni<br />
 <b>Forskeyti á töflur:</b> valkvæmt forskeyti á töflur';
 $string['dataroot'] = 'Gagnamappa';
+$string['datarooterror'] = 'Gagnamappan sem þú tilgreindir fannst ekki eða ekki var hægt að búa hana til. Lagfærðu slóðina eða búðu möppuna til handvirkt.';
 $string['dbconnectionerror'] = 'Ekki náðist tenging við uppgefinn gagnagrunn. Vinsamlegast athugaðu hvort stillingar séu réttar.';
 $string['dbcreationerror'] = 'Villa við myndun á gagnagrunni. Gat ekki myndað gagnagrunn með uppgefnum stillingum';
 $string['dbhost'] = 'Vefþjónn';
@@ -51,10 +53,13 @@ $string['dbprefix'] = 'fortáknun taflna';
 $string['dbtype'] = 'Tegund';
 $string['directorysettingshead'] = 'Vinsamlegast staðfestu staðsetningu á þessari Moodle uppsetningu';
 $string['dirroot'] = 'Moodle skráarsafnið';
+$string['dirrooterror'] = 'Ekki tókst að finna Moodle uppsetningu í uppgefnu Moodle skráarsafni. Gildið hér að neðan hefur verið endursett.';
 $string['download'] = 'Sækja';
 $string['downloadlanguagebutton'] = 'Sækja \"$a\" tungumálapakkann';
 $string['downloadlanguagehead'] = 'Sækja tungumálapakka';
 $string['downloadlanguagenotneeded'] = 'Þú getur haldið áfram með uppsetninguna með sjálfgefnum tungumálapakka, \"$a\".';
+$string['downloadlanguagesub'] = 'Núna hefur þú kost á því að sækja tungumálapakka og halda uppsetningunni áfram á því tungumáli.<br /><br />
+Ef þú getur ekki sótt tungumálapakkann þá heldur uppsetningarferlið áfram á ensku. Eftir að uppsetningu lýkur getur þú sótt og sett upp önnur tungumál.';
 $string['environmentrecommendinstall'] = 'mælum við með að sé uppsett/virkt';
 $string['environmentrecommendversion'] = 'mælt er með útgáfu $a->needed en þú notast við útgáfu $a->current';
 $string['environmentrequireinstall'] = 'verður að vera uppsett/virkt';
@@ -68,11 +73,13 @@ $string['iconvrecommended'] = 'Mælt er með uppsetningu á ICONV safninu í þv
 $string['info'] = 'Upplýsingar';
 $string['installation'] = 'Uppsetning';
 $string['invalidmd5'] = 'Ótækt md5';
+$string['langdownloaderror'] = 'Því miður tókst ekki að setja upp tungumálið $a. Uppsetning heldur áfram á ensku.';
+$string['langdownloadok'] = 'Tungumálið $a hefur verið sótt og sett upp. Innsetningarferlið heldur nú áfram á því máli.';
 $string['language'] = 'Tungumál';
 $string['mbstringrecommended'] = 'Mælt er með uppsetningu á MBSTRING safninu í því skyni að auka virkni vefsins, sérstaklega ef vefurinn styður við tungumál sem ekki eru af latneskum stofni (non-latin).';
 $string['missingrequiredfield'] = 'Einhverjir reitir eru enn óútfylltir';
-$string['mysql416bypassed'] = 'Ef vefurinn notast hinsvegar EINUNGIS við iso-8859-1 (latin) stafasettið er óhætt að notast áfram við MySQL 4.1.12 eða yngri útgáfur. ';
-$string['mysql416required'] = ' Moodle gerir lágmarkskröfu um MySQL 4.1.16 gagnagrunninn til þess að trygga að mögulegt sé að yfirfæra öll gögn yfir í UTF-8.';
+$string['mysql416bypassed'] = 'Ef vefurinn notast hinsvegar EINUNGIS við iso-8859-1 (latin) stafasettið er óhætt að notast áfram við MySQL 4.1.12 eða yngri útgáfur.';
+$string['mysql416required'] = 'Moodle gerir lágmarkskröfu um MySQL 4.1.16 gagnagrunninn til þess að trygga að mögulegt sé að yfirfæra öll gögn yfir í UTF-8.';
 $string['name'] = 'Nafn';
 $string['next'] = 'Áfram';
 $string['ok'] = 'OK';
@@ -81,8 +88,19 @@ $string['pass'] = 'Staðið';
 $string['password'] = 'Lykilorð';
 $string['phpversion'] = 'PHP útgáfa';
 $string['phpversionerror'] = 'PHP útgáfan má ekki vera eldri en 4.1.0';
+$string['phpversionhelp'] = '<p>Moodle requires a PHP version of at least 4.3.0 or 5.1.0 (5.0.x has a number of known problems).</p>
+<p>You are currently running version $a</p>
+<p>You must upgrade PHP or move to a host with a newer version of PHP!<br/>
+(In case of 5.0.x you could also downgrade to 4.4.x version)</p>
+
+<p>Moodle krefst útgáfu 4.3.0 eða 5.1.0 af PHP (5.0.x útgáfan inniheldur villur).</p>
+<p>Þú er með útgáfu $a</p>
+<p>Þú verður að uppfæra PHP eða velja vefþjónustu sem býður upp á nýrri útgáfu af PHP!<br/>
+(Ef þú notar útgáfu 5.0.x gætir þú hugsanlega breytt yfir í 4.4.x)</p>';
 $string['previous'] = 'Til baka';
 $string['report'] = 'Skýrsla';
+$string['restricted'] = 'Aðgangur takmarkaður';
+$string['safemode'] = 'Safe Mode';
 $string['safemodeerror'] = 'Moodle getur átt í vandræðum ef \"Save mode\" stillingin er virkjuð';
 $string['status'] = 'Staða';
 $string['thischarset'] = 'UTF-8';
