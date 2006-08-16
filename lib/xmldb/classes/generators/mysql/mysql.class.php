@@ -24,35 +24,30 @@
 //                                                                       //
 ///////////////////////////////////////////////////////////////////////////
 
-/// This class represent the base generator class where all the
-/// needed functions to generate proper SQL are defined. 
+/// This class generate SQL code to be used against MySQL
+/// It extends XMLDBgenerator so everything can be
+/// overriden as needed to generate correct SQL.
 
-/// If fact, this class generate SQL code to be used against MySQL
-/// so the rest of classes will inherit, by default, the same logic.
-/// Functions will be overriden as needed to generate correct SQL.
+class XMLDBmysql extends XMLDBGenerator {
 
-class XMLDBmysql {
+/// Only set values that are different from the defaults present in XMLDBgenerator
 
     var $quote_string = '`';   // String used to quote names
-    var $quote_all    = false; // To decide if we want to quote all the names or only the reserved ones
 
-    var $integer_to_number = false;  // To create all the integers as NUMBER(x) (also called DECIMAL, NUMERIC...)
-    var $float_to_number   = false;  // To create all the floats as NUMBER(x) (also called DECIMAL, NUMERIC...)
-    var $number_type = 'NUMERIC';    // Proper type for NUMBER(x) in this DB
+    var $default_for_char = '';      // To define the default to set for NOT NULLs CHARs without default (null=do nothing)
 
-    var $primary_keys = true;  // Does the constructor build primary keys
-    var $unique_keys = false;  // Does the constructor build unique keys
-    var $foreign_keys = false; // Does the constructor build foreign keys
+    var $primary_key_name = 'primary'; //To force primary key names to one string (null=no force)
 
-    var $primary_index = false;// Does the constructor need to build one index for primary keys
-    var $unique_index = true;  // Does the constructor need to build one index for unique keys
-    var $foreign_index = true; // Does the constructor need to build one index for foreign keys
+    var $foreign_keys = false; // Does the generator build foreign keys
 
-    var $prefix;         // Prefix to be used for all the DB objects
+    var $primary_index = false;// Does the generator need to build one index for primary keys
+    var $unique_index = false;  // Does the generator need to build one index for unique keys
 
-    var $reserved_words; // List of reserved words (in order to quote them properly)
+    var $sequence_extra_code = false; //Does the generator need to add extra code to generate the sequence fields
+    var $sequence_name = 'auto_increment'; //Particular name for inline sequences in this generator
 
- 
+    var $enum_extra_code = false; //Does the generator need to add extra code to generate code for the enums in the table
+
     /**
      * Creates one new XMLDBmysql
      */
@@ -72,7 +67,7 @@ class XMLDBmysql {
     /**
      * Given one XMLDB Type, lenght and decimals, returns the DB proper SQL type
      */
-    function getType ($xmldb_type, $xmldb_length=null, $xmldb_decimals=null) {
+    function getTypeSQL ($xmldb_type, $xmldb_length=null, $xmldb_decimals=null) {
 
         switch ($xmldb_type) {
             case XMLDB_TYPE_INTEGER:    // From http://mysql.com/doc/refman/5.0/en/numeric-types.html!
@@ -88,7 +83,7 @@ class XMLDBmysql {
                 } else if ($xmldb_length > 2) {
                     $dbtype = 'SMALLINT';
                 } else {
-                    $dbtype = 'TINTINT';
+                    $dbtype = 'TINYINT';
                 }
                 $dbtype .= '(' . $xmldb_length . ')';
                 break;
@@ -150,104 +145,23 @@ class XMLDBmysql {
     }
 
     /**
-     * Given one correct XMLDBTable, returns the complete SQL lines to create it
+     * Given one XMLDB Field, return its enum SQL
      */
-    function getCreateTableSQL($xmldb_table) {
+    function getEnumSQL ($xmldb_field) {
+        return 'enum(' . implode(', ', $xmldb_field->getEnumValues()) . ')';
+    }
 
-    /// Table header
-        $table = 'CREATE TABLE ' . $this->getEncQuoted($this->prefix . $xmldb_table->getName()) . ' (';
+    /**
+     * Returns the code needed to add one comment to the table
+     */
+    function getCommentSQL ($xmldb_table) {
 
-        if (!$xmldb_fields = $xmldb_table->getFields()) {
-            return false;
-        }
-    /// Add the fields, separated by commas
-        foreach ($xmldb_fields as $xmldb_field) {
-            $table .= "\n    " . $this->getCreateFieldSQL($xmldb_field) . ',';
-        }
-    /// Table footer, trim the latest comma
-        $table = trim($table,',');
-        $table .= "\n)";
+        $comment = '';
+        
         if ($xmldb_table->getComment()) {
-            $table .= " COMMENT='" . $xmldb_table->getComment() . "';\n\n";
+            $comment .= " COMMENT='" . substr($xmldb_table->getComment(), 0, 250) . "'";
         }
-        return $table;
-    }
-
-    /**
-     * Given one correct XMLDBField, returns the complete SQL line to create it
-     */
-    function getCreateFieldSQL($xmldb_field) {
-
-    /// First of all, convert integers to numbers if defined
-        if ($this->integer_to_number) {
-            if ($xmldb_field->getType() == XMLDB_TYPE_INTEGER) {
-                $xmldb_field->setType(XMLDB_TYPE_NUMBER);
-            }
-        }
-    /// Same for floats
-        if ($this->float_to_number) {
-            if ($xmldb_field->getType() == XMLDB_TYPE_FLOAT) {
-                $xmldb_field->setType(XMLDB_TYPE_NUMBER);
-            }
-        }
-
-    /// The name
-        $field = $this->getEncQuoted($xmldb_field->getName());
-    /// The type and length (if the field isn't enum)
-        if (!$xmldb_field->getEnum()) {
-            $field .= ' ' . $this->getType($xmldb_field->getType(), $xmldb_field->getLength(), $xmldb_field->getDecimals());
-        } else {
-        /// If enum, do it with its values
-            $field .= ' enum(' . implode(', ', $xmldb_field->getEnumValues()) . ')';
-        }
-    /// The unsigned
-        if ($xmldb_field->getType() == XMLDB_TYPE_INTEGER ||
-            $xmldb_field->getType() == XMLDB_TYPE_NUMBER ||
-            $xmldb_field->getType() == XMLDB_TYPE_FLOAT) {
-            if ($xmldb_field->getUnsigned()) {
-                $field .= ' unsigned';
-            }
-        }
-    /// The not null
-        if ($xmldb_field->getNotNull()) {
-            $field .= ' NOT NULL';
-        }
-    /// The sequence
-        if ($xmldb_field->getSequence()) {
-            $field .= ' auto_increment';
-        }
-    /// The default
-        if ($xmldb_field->getDefault() != NULL) {
-            $field .= ' default ';
-            if ($xmldb_field->getType() == XMLDB_TYPE_CHAR ||
-                $xmldb_field->getType() == XMLDB_TYPE_TEXT) {
-                    $field .= "'" . $xmldb_field->getDefault() . "'";
-            } else {
-                $field .= $xmldb_field->getDefault();
-            }
-        } else {
-        /// We force default '' for not null char columns without proper default
-        /// some day this should be out!
-            if ($xmldb_field->getType() == XMLDB_TYPE_CHAR &&
-                $xmldb_field->getNotNull()) {
-                $field .= ' default ' . "''";
-            }
-        }
-        return $field;
-    }
-
-    /**
-     * Given any string, enclose it by the proper quotes
-     */
-    function getEncQuoted($string) {
-
-    /// Always lowercase
-        $string = strtolower($string);
-    /// if reserved or quote_all, quote it
-        if ($this->quote_all || in_array($string, $this->reserved_words)) {
-            $string = $this->quote_string . $string . $this->quote_string;
-        }
-        return $string;
+        return $comment . ";";
     }
 
     /**
