@@ -166,8 +166,10 @@
       $resultdocs = array();
       $i = 0;
       
-      $hits = $this->index->find(strtolower($this->term));
+      $term = strtolower($this->term);
       
+      $hits = $this->index->find($term." title:".$term." author:".$term);
+            
       foreach ($hits as $hit) {            
         //check permissions on each result
         if ($this->can_display($USER, $hit->id, $hit->doctype, $hit->course_id, $hit->group_id)) {

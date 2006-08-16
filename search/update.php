@@ -2,7 +2,7 @@
 
   require_once('../config.php');
   require_once("$CFG->dirroot/search/lib.php");
-    
+  
   require_login();
 
   if (!isadmin()) {
@@ -15,54 +15,69 @@
     mtrace("Sorry, global search requires PHP 5.0.0 or later (currently using version $phpversion)");
     exit(0);
   } //if  
-  
-  require_once("$CFG->dirroot/search/indexlib.php");  
+    
+  require_once("$CFG->dirroot/search/indexlib.php");   
   
   $index = new Zend_Search_Lucene(SEARCH_INDEX_PATH);
   $dbcontrol = new IndexDBControl();
-  $deletion_count = 0;   
+  $update_count = 0;
   
-  mtrace('<pre>Starting clean-up of removed records...');
-  mtrace('Index size before: '.$index->count()."\n");
+  $indexdate = $CFG->search_indexer_run_date;
+
+  mtrace("<pre>Starting index update (updates)...\n");  
   
   if ($mods = get_records_select('modules')) {
   foreach ($mods as $mod) {
     $class_file = $CFG->dirroot.'/search/documents/'.$mod->name.'_document.php';
+    $get_document_function = $mod->name.'_single_document';
     $delete_function = $mod->name.'_delete';
     $db_names_function = $mod->name.'_db_names';
-    $deletions = array();    
+    $updates = array();    
     
     if (file_exists($class_file)) {
       require_once($class_file);
     
-      if (function_exists($delete_function) and function_exists($db_names_function)) {
-        mtrace("Checking $mod->name module for deletions.");
+      if (function_exists($delete_function) and function_exists($db_names_function) and function_exists($get_document_function)) {
+        mtrace("Checking $mod->name module for updates.");
         $values = $db_names_function();
         
-        $sql = "select id, docid from ".SEARCH_DATABASE_TABLE."
-                where doctype like '$mod->name'
-                and docid not in
-                (select ".$values[0]." from ".$values[1].")";
-
+        $sql = "select id, ".$values[0]." as docid from ".$values[1]."
+                where ".$values[2]." > $indexdate";
+                
         $records = get_records_sql($sql);     
         
         if (is_array($records)) {       
           foreach($records as $record) {
-            $deletions[] = $delete_function($record->docid);
+            $updates[] = $delete_function($record->docid);
           } //foreach
         } //if    
           
-        foreach ($deletions as $delete) {        
-          $doc = $index->find("+docid:$delete +doctype:$mod->name");            
+        foreach ($updates as $update) {
+          ++$update_count;
+                
+          //delete old document  
+          $doc = $index->find("+docid:$update +doctype:$mod->name");            
           
           //get the record, should only be one
-          foreach ($doc as $thisdoc) {
-            ++$deletion_count;
+          foreach ($doc as $thisdoc) {            
             mtrace("  Delete: $thisdoc->title (database id = $thisdoc->dbid, index id = $thisdoc->id, moodle instance id = $thisdoc->docid)");
             
             $dbcontrol->delDocument($thisdoc);
             $index->delete($thisdoc->id);              
           } //foreach
+          
+          //add new modified document back into index
+          $add = $get_document_function($update);
+          
+          //object to insert into db
+          $dbid = $dbcontrol->addDocument($add);                   
+              
+          //synchronise db with index
+          $add->addField(Zend_Search_Lucene_Field::Keyword('dbid', $dbid));          
+          
+          mtrace("  Add: $add->title (database id = $add->dbid, moodle instance id = $add->docid)");
+                            
+          $index->addDocument($add);          
         } //foreach
                     
         mtrace("Finished $mod->name.\n");
@@ -77,7 +92,6 @@
   //update index date
   set_config("search_indexer_run_date", time());
 
-  mtrace("Finished $deletion_count removals.");
-  mtrace('Index size after: '.$index->count().'</pre>');
+  mtrace("Finished $update_count updates.</pre>");  
 
 ?>

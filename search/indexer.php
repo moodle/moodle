@@ -47,7 +47,8 @@
   } //if
     
   //php5 found, continue including php5-only files
-  require_once("$CFG->dirroot/search/Zend/Search/Lucene.php");
+  //require_once("$CFG->dirroot/search/Zend/Search/Lucene.php");
+  require_once("$CFG->dirroot/search/indexlib.php");  
     
   mtrace('<pre>Server Time: '.date('r',time())."\n");
 
@@ -61,7 +62,8 @@
   
   //paths
   $index_path = SEARCH_INDEX_PATH;
-  $index_db_file = "$CFG->dirroot/search/db/$CFG->dbtype.sql";  
+  $index_db_file = "$CFG->dirroot/search/db/$CFG->dbtype.sql";
+  $dbcontrol = new IndexDBControl();  
   
   //setup directory in data root
   if (!file_exists($index_path)) {
@@ -77,23 +79,9 @@
   
   $index = new Zend_Search_Lucene($index_path, true);
   
-  //create the database tables
-  $tables = $db->MetaTables();
-    
-  if (in_array($CFG->prefix.'search_documents', $tables)) {
-    //delete_records('search_documents');    
-    //temporary measure - db doesn't have update scripts and I realised that cvs 1.1 db
-    //is incompatible with cvs 1.2! Must fix ASAP.    
-    execute_sql('drop table '.$CFG->prefix.'search_documents', false);
-    
-    ob_start(); //turn output buffering on - to hide modify_database() output
-    modify_database($index_db_file, '', false);
-    ob_end_clean(); //chuck the buffer and resume normal operation
-  } else {        
-    ob_start(); //turn output buffering on - to hide modify_database() output
-    modify_database($index_db_file, '', false);
-    ob_end_clean(); //chuck the buffer and resume normal operation
-  } //else
+  if (!$dbcontrol->checkDB()) {
+    search_pexit("Database error. Please check settings/files.");
+  } //if     
 
   //begin timer
   search_stopwatch();
@@ -130,19 +118,11 @@
             foreach($documents as $document) {
               $counter++;
                             
-              //object to insert into db                            
-              $doc->doctype   = $document->doctype;
-              $doc->title     = search_escape_string($document->title);
-              $doc->url       = search_escape_string($document->url);              
-              $doc->update    = time();                            
-              $doc->courseid  = $document->course_id;              
-              $doc->groupid   = $document->group_id;              
-              
-              //insert summary into db
-              $id = insert_record('search_documents', $doc);
+              //object to insert into db
+              $dbid = $dbcontrol->addDocument($document);
               
               //synchronise db with index
-              $document->addField(Zend_Search_Lucene_Field::Keyword('dbid', $id));
+              $document->addField(Zend_Search_Lucene_Field::Keyword('dbid', $dbid));
               
               //add document to index
               $index->addDocument($document);                  

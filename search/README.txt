@@ -1,3 +1,19 @@
+2006/08/16
+----------
+Add/delete/update cron functions finished - can be called seperately
+or all at once via cron.php.
+
+Document date field added to index and database summary.
+
+Some index db functionality abstracted out to indexlib.php - can
+use IndexDBControl class to add/del documents from database, and
+to make sure the db table is functioning.
+
+DB sql files changed to add some extra fields.
+
+Default 'simple' query modified to search title and author, as well
+as contents of document, to provide better results for users.
+
 2006/08/14
 ----------
 First revision of the advanced search page completed. Functional,
@@ -101,5 +117,6 @@ To index for the first time, login as an admin user and browse to /search/index.
 or /search/stats.php - there will be a message and a link telling you to go index.
 
 -- Michael Champanis (mchampan)
-   cynnical@gmail.com
+   email: cynnical@gmail.com
+   skype: mchampan
    Summer of Code 2006
