@@ -1,0 +1,185 @@
+<?php // $Id$
+
+///////////////////////////////////////////////////////////////////////////
+//                                                                       //
+// NOTICE OF COPYRIGHT                                                   //
+//                                                                       //
+// Moodle - Modular Object-Oriented Dynamic Learning Environment         //
+//          http://moodle.com                                            //
+//                                                                       //
+// Copyright (C) 2001-3001 Martin Dougiamas        http://dougiamas.com  //
+//           (C) 2001-3001 Eloy Lafuente (stronk7) http://contiento.com  //
+//                                                                       //
+// This program is free software; you can redistribute it and/or modify  //
+// it under the terms of the GNU General Public License as published by  //
+// the Free Software Foundation; either version 2 of the License, or     //
+// (at your option) any later version.                                   //
+//                                                                       //
+// This program is distributed in the hope that it will be useful,       //
+// but WITHOUT ANY WARRANTY; without even the implied warranty of        //
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         //
+// GNU General Public License for more details:                          //
+//                                                                       //
+//          http://www.gnu.org/copyleft/gpl.html                         //
+//                                                                       //
+///////////////////////////////////////////////////////////////////////////
+
+/// This class generate SQL code to be used against Oracle
+/// It extends XMLDBgenerator so everything can be
+/// overriden as needed to generate correct SQL.
+
+class XMLDBoci8po extends XMLDBgenerator {
+
+/// Only set values that are different from the defaults present in XMLDBgenerator
+
+    var $number_type = 'NUMBER';    // Proper type for NUMBER(x) in this DB
+
+    var $unsigned_allowed = false;    // To define in the generator must handle unsigned information
+    var $default_for_char = '';      // To define the default to set for NOT NULLs CHARs without default (null=do nothing)
+
+    var $foreign_keys = false; // Does the generator build foreign keys
+
+    var $primary_index = false;// Does the generator need to build one index for primary keys
+    var $unique_index = true;  // Does the generator need to build one index for unique keys
+    var $foreign_index = true; // Does the generator need to build one index for foreign keys
+
+    var $sequence_extra_code = true; //Does the generator need to add extra code to generate the sequence fields
+    var $sequence_name = ''; //Particular name for inline sequences in this generator
+
+    var $enum_inline_code = false; //Does the generator need to add inline code in the column definition
+
+    /**
+     * Creates one new XMLDBpostgres7
+     */
+    function XMLDBoci8po() {
+        parent::XMLDBgenerator();
+        $this->prefix = '';
+        $this->reserved_words = $this->getReservedWords();
+    }
+
+    /**
+     * Given one XMLDB Type, lenght and decimals, returns the DB proper SQL type
+     */
+    function getTypeSQL ($xmldb_type, $xmldb_length=null, $xmldb_decimals=null) {
+
+        switch ($xmldb_type) {
+            case XMLDB_TYPE_INTEGER:    // From http://www.postgresql.org/docs/7.4/interactive/datatype.html
+                if (empty($xmldb_length)) {
+                    $xmldb_length = 10;
+                }
+                $dbtype = 'NUMBER(' .  $xmldb_length . ')';
+                break;
+            case XMLDB_TYPE_NUMBER:
+                $dbtype = $this->number_type;
+                if (!empty($xmldb_length)) {
+                    $dbtype .= '(' . $xmldb_length;
+                    if (!empty($xmldb_decimals)) {
+                        $dbtype .= ',' . $xmldb_decimals;
+                    }
+                    $dbtype .= ')';
+                }
+                break;
+            case XMLDB_TYPE_FLOAT:
+                $dbtype = 'NUMBER';
+                break;
+            case XMLDB_TYPE_CHAR:
+                $dbtype = 'VARCHAR2';
+                if (empty($xmldb_length)) {
+                    $xmldb_length='255';
+                }
+                $dbtype .= '(' . $xmldb_length . ')';
+                break;
+            case XMLDB_TYPE_TEXT:
+                $dbtype = 'CLOB';
+                break;
+            case XMLDB_TYPE_BINARY:
+                $dbtype = 'BLOB';
+                break;
+            case XMLDB_TYPE_DATETIME:
+                $dbtype = 'DATE';
+                break;
+        }
+        return $dbtype;
+    }
+
+    /**         
+     * Returns the code needed to create one enum for the xmldb_table and xmldb_field passes
+     */     
+    function getEnumExtraSQL ($xmldb_table, $xmldb_field) {
+        
+        $sql = 'CONSTRAINT ' . $this->getNameForObject($xmldb_table->getName(), $xmldb_field->getName(), 'ck');
+        $sql.= ' CHECK (' . $this->getEncQuoted($xmldb_field->getName()) . ' IN (' . implode(', ', $xmldb_field->getEnumValues()) . ')),';
+
+        return $sql;
+    }
+
+    /**
+     * Returns the code needed to create one sequence for the xmldb_table and xmldb_field passes
+     */
+    function getCreateSequenceSQL ($xmldb_table, $xmldb_field) {
+
+        $sequence = "\nCREATE SEQUENCE ";
+        $sequence.= $this->getNameForObject($xmldb_table->getName(), $xmldb_field->getName(), 'seq');
+        $sequence.= "\n    START WITH 1";
+        $sequence.= "\n    INCREMENT BY 1";
+        $sequence.= "\n    NOMAXVALUE;";
+
+        $trigger_name = $this->getNameForObject($xmldb_table->getName(), $xmldb_field->getName(), 'trg');
+ 
+        $trigger = "\nCREATE OR REPLACE TRIGGER " . $trigger_name;
+        $trigger.= "\n    BEFORE INSERT";
+        $trigger.= "\nON " . $this->getEncQuoted($this->prefix . $xmldb_table->getName());
+        $trigger.= "\n    FOR EACH ROW";
+        $trigger.= "\nBEGIN";
+        $trigger.= "\n    SELECT " . $trigger_name . '.nextval INTO :new.' . $this->getEncQuoted($xmldb_field->getName()) . " FROM dual;";
+        $trigger.= "\nEND;";
+        return $sequence . "\n" . $trigger;
+    }
+
+     /**
+      * Returns the code needed to add one comment to the table
+      */
+     function getCommentSQL ($xmldb_table) {
+
+         $comment = ";\n\nCOMMENT ON TABLE " . $this->getEncQuoted($this->prefix . $xmldb_table->getName());
+         $comment.= " IS '" . substr($xmldb_table->getComment(), 0, 250) . "'";
+
+         return $comment;
+     }
+
+    /**
+     * Returns an array of reserved words (lowercase) for this DB
+     */
+    function getReservedWords() {
+    /// This file contains the reserved words for MySQL databases
+    /// from http://www.postgresql.org/docs/7.3/static/sql-keywords-appendix.html
+        $reserved_words = array (
+            'access', 'add', 'all', 'alter', 'and', 'any',
+            'as', 'asc', 'audit', 'between', 'by', 'char',
+            'check', 'cluster', 'column', 'comment',
+            'compress', 'connect', 'create', 'current',
+            'date', 'decimal', 'default', 'delete', 'desc',
+            'distinct', 'drop', 'else', 'exclusive', 'exists',
+            'file', 'float', 'for', 'from', 'grant', 'group',
+            'having', 'identified', 'immediate', 'in',
+            'increment', 'index', 'initial', 'insert',
+            'integer', 'intersect', 'into', 'is', 'level',
+            'like', 'lock', 'long', 'maxextents', 'minus',
+            'mlslabel', 'mode', 'modify', 'noaudit',
+            'nocompress', 'not', 'nowait', 'null', 'number',
+            'of', 'offline', 'on', 'online', 'option', 'or',
+            'order', 'pctfree', 'prior', 'privileges',
+            'public', 'raw', 'rename', 'resource', 'revoke',
+            'row', 'rowid', 'rownum', 'rows', 'select',
+            'session', 'set', 'share', 'size', 'smallint',
+            'start', 'successful', 'synonym', 'sysdate',
+            'table', 'then', 'to', 'trigger', 'uid', 'union',
+            'unique', 'update', 'user', 'validate', 'values',
+            'varchar', 'varchar2', 'view', 'whenever',
+            'where', 'with'
+        );  
+        return $reserved_words;
+    }
+}
+
+?>
