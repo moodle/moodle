@@ -142,6 +142,8 @@ class XMLDBgenerator {
     /// Add comments if specified
         if ($this->add_table_comments) {
             $table .= $this->getCommentSQL ($xmldb_table) . ";\n";
+        } else {
+            $table .= ";\n";
         }
     /// Add the indexes (each one, one statement)
         $indexcombs = array(); //To store all the key combinations used
