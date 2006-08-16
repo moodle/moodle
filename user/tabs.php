@@ -89,7 +89,7 @@
 
         $toprow[] = new tabobject('profile', $CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.$course->id, get_string('profile'));
 
-
+        $personalcontext = get_context_instance(CONTEXT_USERID, $user->id);
     /// Can only edit profile if it belongs to user or current user is admin and not editing primary admin
 
         if (($mainadmin = get_admin()) === false) {
@@ -107,26 +107,27 @@
             $toprow[] = new tabobject('editprofile', $wwwroot.'/user/edit.php?id='.$user->id.'&amp;course='.$course->id, get_string('editmyprofile'));
         }
 
-
     /// Everyone can see posts for this user
+    
+    /// add logic to see course read posts permission
+        if (has_capability('moodle/user:readuserposts', $personalcontext) || has_capability('mod/forum:viewdiscussion', get_context_instance(CONTEXT_COURSE, $courseid))) {
+            $toprow[] = new tabobject('forumposts', $CFG->wwwroot.'/mod/forum/user.php?id='.$user->id.'&amp;course='.$course->id,
+                        get_string('forumposts', 'forum'));
 
-        $toprow[] = new tabobject('forumposts', $CFG->wwwroot.'/mod/forum/user.php?id='.$user->id.'&amp;course='.$course->id,
-                    get_string('forumposts', 'forum'));
+            if (in_array($currenttab, array('posts', 'discussions'))) {
+                $inactive = array('forumposts');
+                $activetwo = array('forumposts');
 
-        if (in_array($currenttab, array('posts', 'discussions'))) {
-            $inactive = array('forumposts');
-            $activetwo = array('forumposts');
-
-            $secondrow = array();
-            $secondrow[] = new tabobject('posts', $CFG->wwwroot.'/mod/forum/user.php?course='.$course->id.
+                $secondrow = array();
+                $secondrow[] = new tabobject('posts', $CFG->wwwroot.'/mod/forum/user.php?course='.$course->id.
                                       '&amp;id='.$user->id.'&amp;mode=posts', get_string('posts', 'forum'));
-            $secondrow[] = new tabobject('discussions', $CFG->wwwroot.'/mod/forum/user.php?course='.$course->id.
+                $secondrow[] = new tabobject('discussions', $CFG->wwwroot.'/mod/forum/user.php?course='.$course->id.
                                       '&amp;id='.$user->id.'&amp;mode=discussions', get_string('discussions', 'forum'));
+            }
+
         }
-
-
     /// Blog entry, everyone can view
-        if ($CFG->bloglevel > 0) { // only if blog is enabled. Permission check kicks in when display list
+        if ($CFG->bloglevel > 0 && has_capability('moodle/user:readuserblogs')) { // only if blog is enabled. Permission check kicks in when display list
             $toprow[] = new tabobject('blogs', $CFG->wwwroot.'/blog/index.php?userid='.$user->id.'&amp;courseid='.$course->id, get_string('blogs', 'blog'));
         }
         
@@ -135,7 +136,9 @@
     
     //print_object($course);
     //print_object($user);
-        if (isteacher($course->id) or ($course->showreports and $USER->id == $user->id)) {
+    
+        // add in logic to check course read report
+        if (has_capability('moodle/user:viewactivitiesreport', $personalcontext) || ($course->showreports and $USER->id == $user->id)) {
 
             $toprow[] = new tabobject('reports', $CFG->wwwroot.'/course/user.php?id='.$course->id.
                                       '&amp;user='.$user->id.'&amp;mode=outline', get_string('activityreports'));
@@ -183,9 +186,9 @@
 
             $secondrow = array();
             $secondrow[] = new tabobject('assign', $CFG->wwwroot.'/admin/roles/assign.php?contextid='.$usercontext->id.'&amp;userid='.$user->id.'&amp;courseid='.$course->id
-                              ,get_string('assign'));
+                              ,get_string('assignroles', 'role'));
             $secondrow[] = new tabobject('override', $CFG->wwwroot.'/admin/roles/override.php?contextid='.$usercontext->id.'&amp;userid='.$user->id.'&amp;courseid='.$course->id
-                              ,get_string('override'));
+                              ,get_string('overrideroles', 'role'));
                                 
         }                                                                                                       
     }

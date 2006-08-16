@@ -35,23 +35,10 @@ foreach ($capabilities as $capability) {
     $contextlevel = $capability->contextlevel;
     $component = $capability->component;
 
-    // check the capability override for this cap, this role in this context
+   // check the capability override for this cap, this role in this context
+    $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
 
-    $SQL = "select * from {$CFG->prefix}role_capabilities where
-                     roleid = $roleid and capability = '$capability->name' and contextid = $contextid";
-    get_record_sql($SQL);
-
-    $localoverride = get_local_override($roleid, $contextid, $capability->name);
-
-    if (isset($r_caps[$capability->name])) {
-        $isallow = $r_caps[$capability->name] > 0;
-        $isprevent = $r_caps[$capability->name] < 0 && $r_caps[$capability->name] > -500;
-        $isprohibit = $r_caps[$capability->name] <= -500;
-    } else {
-        $isallow = 0;
-        $isprevent = 0;
-        $isprohibit = 0;  
-    }
+    $localoverride = get_local_override($roleid, $sitecontext->id, $capability->name);
 
     ?>
 

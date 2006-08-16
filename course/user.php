@@ -57,6 +57,7 @@
 ///     /user/edit.php
 ///     /course/user.php
     $currenttab = $mode;
+    $showroles = 1;
     include($CFG->dirroot.'/user/tabs.php');
 
     get_all_mods($course->id, $mods, $modnames, $modnamesplural, $modnamesused);

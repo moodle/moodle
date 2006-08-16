@@ -30,12 +30,27 @@
     $strshowall = get_string('showall');
 
     $context = get_record('context', 'id', $contextid);
-
-    $straction = get_string('overrideroles', 'role');
     
+    $participants = get_string("participants");
+    $user = get_record('user', 'id', $userid);
+    $fullname = fullname($user, isteacher($course->id));
+    $straction = get_string('overrideroles', 'role');
+
     // we got a few tabs there
     if ($context->level == CONTEXT_USERID) {
-        print_header();
+      
+        /// course header
+        if ($courseid!= SITEID) {
+            print_header("$fullname", "$fullname",
+                     "<a href=\"../course/view.php?id=$course->id\">$course->shortname</a> ->
+                      <a href=\"".$CFG->wwwroot."/user/index.php?id=$course->id\">$participants</a> -> <a href=\"".$CFG->wwwroot."/user/view.php?id=".$userid."&course=".$courseid."\">$fullname</a> -> $straction",
+                      "", "", true, "&nbsp;", navmenu($course));      
+        
+        /// site header  
+        } else {
+            print_header("$course->fullname: $fullname", "$course->fullname",
+                        "<a href=\"".$CFG->wwwroot."/user/view.php?id=".$userid."&course=".$courseid."\">$fullname</a> -> $straction", "", "", true, "&nbsp;", navmenu($course));     
+        }
         $showroles = 1;
         $currenttab = 'override';
         include_once($CFG->dirroot.'/user/tabs.php');
@@ -58,9 +73,9 @@
              }
          
              $SQL = "select * from {$CFG->prefix}role_capabilities where
-            roleid = $roleid and capability = '$capname' and contextid = $contextid";
+             roleid = $roleid and capability = '$capname' and contextid = $contextid";
                         
-            $localoverride = get_record_sql($SQL);
+             $localoverride = get_record_sql($SQL);
          
              if ($localoverride) { // update current overrides
              
@@ -73,6 +88,7 @@
                      $localoverride->permission = $value;
                      $localoverride->timemodified = time();
                      $localoverride->modifierid = $USER->id;
+                     
                      update_record('role_capabilities', $localoverride);    
                  
                  }

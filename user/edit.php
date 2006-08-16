@@ -340,6 +340,7 @@
         ///     /user/view.php
         ///     /user/edit.php
         ///     /course/user.php
+        $showroles = 1;
         $currenttab = 'editprofile';
         include('tabs.php');
     }

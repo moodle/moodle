@@ -49,6 +49,7 @@
     }
 
     $currenttab = $mode;
+    $showroles = 1;
     include($CFG->dirroot.'/user/tabs.php');   /// Prints out tabs as part of user page
 
     $isseparategroups = /*
