@@ -59,13 +59,6 @@ class XMLDBmysql extends XMLDBGenerator {
     }
 
     /**
-     * Set the prefix
-     */
-    function setPrefix($prefix) {
-        $this->prefix = $prefix;
-    }
-
-    /**
      * Given one XMLDB Type, lenght and decimals, returns the DB proper SQL type
      */
     function getTypeSQL ($xmldb_type, $xmldb_length=null, $xmldb_decimals=null) {

@@ -59,13 +59,6 @@ class XMLDBpostgres7 extends XMLDBgenerator {
     }
 
     /**
-     * Set the prefix
-     */
-    function setPrefix($prefix) {
-        $this->prefix = $prefix;
-    }
-
-    /**
      * Given one XMLDB Type, lenght and decimals, returns the DB proper SQL type
      */
     function getTypeSQL ($xmldb_type, $xmldb_length=null, $xmldb_decimals=null) {
@@ -139,7 +132,7 @@ class XMLDBpostgres7 extends XMLDBgenerator {
       */
      function getCommentSQL ($xmldb_table) {
 
-         $comment = ";\n\nCOMMENT ON TABLE " . $this->prefix . $this->getEncQuoted($xmldb_table->getName());
+         $comment = ";\n\nCOMMENT ON TABLE " . $this->getEncQuoted($this->prefix . $xmldb_table->getName());
          $comment.= " IS '" . substr($xmldb_table->getComment(), 0, 250) . "'";
 
          return $comment;

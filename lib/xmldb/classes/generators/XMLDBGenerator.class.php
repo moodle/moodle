@@ -233,7 +233,7 @@ class XMLDBgenerator {
 
         $index = 'CREATE' . $unique . ' INDEX ';
         $index .= $this->getNameForObject($xmldb_table->getName(), implode(', ', $xmldb_index->getFields()), $suffix);
-        $index .= ' ON ' . $this->prefix . $this->getEncQuoted($xmldb_table->getName());
+        $index .= ' ON ' . $this->getEncQuoted($this->prefix . $xmldb_table->getName());
         $index .= ' (' . implode(', ', $this->getEncQuoted($xmldb_index->getFields())) . ');';
 
         return $index;
