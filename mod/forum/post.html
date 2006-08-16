@@ -1,8 +1,11 @@
 <?php
-/**
- * This file is required by post.php. Therefore, the context objects
- * $modcontext and $coursecontext are available to the script.
- */
+
+
+if (!isset($coursecontext)) {
+    // Has not yet been set by post.php.
+    $coursecontext = get_context_instance(CONTEXT_COURSE, $forum->course);
+}
+
 
 if (!isset($discussion->timestart)) {
     $discussion->timestart = 0;

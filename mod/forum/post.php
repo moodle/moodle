@@ -14,8 +14,6 @@
     $confirm = optional_param('confirm',0,PARAM_INT);
     
     
-    $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
-    
     
     if (isguest()) {
         $wwwroot = $CFG->wwwroot.'/login/index.php';
@@ -41,6 +39,7 @@
         if (! $course = get_record('course', 'id', $forum->course)) {
             error('The course number was incorrect');
         }
+        
         if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $course->id)) { // For the logs
             // Teacher forum?
             $cm->id = 0;
@@ -75,7 +74,7 @@
         if (!$course = get_record('course', 'id', $post->course)) {
             error('Could not find specified course!');
         }
-
+        
         if (!empty($course->lang)) {           // Override current language
             $CFG->courselang = $course->lang;
         }
@@ -95,6 +94,7 @@
         if (!$cm = get_coursemodule_from_instance("forum", $post->forum, $course->id)) { // For the logs
             $cm->id = 0;
         }
+        $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
 
         if (!$post->subject or !$post->message) {
             $post->error = get_string("emptymessage", "forum");
@@ -296,11 +296,12 @@
         if (! $course = get_record("course", "id", $forum->course)) {
             error("The course number was incorrect ($forum->course)");
         }
-
+        $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
+        
         if (! forum_user_can_post_discussion($forum)) {
             error("Sorry, but you can not post a new discussion in this forum.");
         }
-
+        
         if ($cm = get_coursemodule_from_instance("forum", $forum->id, $course->id)) {
             if (!$cm->visible and !has_capability('moodle/course:manageactivities', $coursecontext)) {
                 error(get_string("activityiscurrentlyhidden"));
@@ -339,11 +340,12 @@
         if (! $course = get_record("course", "id", $discussion->course)) {
             error("The course number was incorrect ($discussion->course)");
         }
-
+        $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
+        
         if (! forum_user_can_post($forum)) {
             error("Sorry, but you can not post in this forum.");
         }
-
+        
         if ($cm = get_coursemodule_from_instance("forum", $forum->id, $course->id)) {
             if (groupmode($course, $cm)) {   // Make sure user can post here
                 $mygroupid = mygroupid($course->id);
@@ -425,6 +427,11 @@
         if (! $forum = get_record("forum", "id", $discussion->forum)) {
             error("The forum number was incorrect ($discussion->forum)");
         }
+        if (!$cm = get_coursemodule_from_instance("forum", $forum->id, $forum->course)) {
+            $cm->id = 0;
+        } else {
+            $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
+        }
         if ( !(($post->userid == $USER->id && has_capability('mod/forum:deleteownpost', $modcontext))
                     || has_capability('mod/forum:deleteanypost', $modcontext)) ) {
             error("You can't delete this post!");
@@ -450,9 +457,6 @@
                         forum_go_back_to("discuss.php?d=$post->discussion"));
 
             } else {
-                if (!$cm = get_coursemodule_from_instance("forum", $forum->id, $forum->course)) { // For the logs
-                    $cm->id = 0;
-                }
                 if (! $post->parent) {  // post is a discussion topic as well, so delete discussion
                     if ($forum->type == "single") {
                         notice("Sorry, but you are not allowed to delete that discussion!",
