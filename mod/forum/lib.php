@@ -1762,7 +1762,7 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
     static $strmarkread, $strmarkunread, $istracked;
 
 
-    $discussion = get_record('discussion', 'id', $post->discussion);
+    $discussion = get_record('forum_discussions', 'id', $post->discussion);
     if (!$cm = get_coursemodule_from_instance('forum', $discussion->forum)) {
         error('Course Module ID was incorrect');
     }
