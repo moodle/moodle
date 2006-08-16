@@ -49,6 +49,8 @@ class XMLDBgenerator {
     var $unsigned_allowed = true;    // To define in the generator must handle unsigned information
     var $default_for_char = null;      // To define the default to set for NOT NULLs CHARs without default (null=do nothing)
 
+    var $default_after_null = true;  //To decide if the default clause of each field must go after the null clause
+
     var $primary_key_name = null; //To force primary key names to one string (null=no force)
 
     var $primary_keys = true;  // Does the generator build primary keys
@@ -274,9 +276,17 @@ class XMLDBgenerator {
                 $field .= ' unsigned';
             }
         }
-    /// The not null
+    /// Calculate the not null clause
         if ($xmldb_field->getNotNull()) {
-            $field .= ' NOT NULL';
+            $notnull = ' NOT NULL';
+        }
+    /// Calculate the default clause
+        $default = $this->getDefaultClause($xmldb_field);
+    /// Based on default_after_null, set both clauses properly
+        if ($this->default_after_null) {
+            $field .= $notnull . $default;
+        } else {
+            $field .= $default . $notnull;
         }
     /// The sequence
         if ($xmldb_field->getSequence()) {
@@ -285,24 +295,6 @@ class XMLDBgenerator {
             /// We only want the field name and sequence name to be printed
             /// so, calculate it and return
                 return $this->getEncQuoted($xmldb_field->getName()) . ' ' . $this->sequence_name;
-            }
-        }
-    /// The default
-        if ($xmldb_field->getDefault() != NULL) {
-            $field .= ' default ';
-            if ($xmldb_field->getType() == XMLDB_TYPE_CHAR ||
-                $xmldb_field->getType() == XMLDB_TYPE_TEXT) {
-                    $field .= "'" . $xmldb_field->getDefault() . "'";
-            } else {
-                $field .= $xmldb_field->getDefault();
-            }
-        } else {
-        /// We force default '' for not null char columns without proper default
-        /// some day this should be out!
-            if ($this->default_for_char !== NULL && 
-                $xmldb_field->getType() == XMLDB_TYPE_CHAR &&
-                $xmldb_field->getNotNull()) {
-                $field .= ' default ' . "'" . $this->default_for_char . "'";
             }
         }
         return $field;
@@ -337,13 +329,40 @@ class XMLDBgenerator {
                 if ($this->foreign_keys) {
                     $key = $this->getNameForObject($xmldb_table->getName(), implode(', ', $xmldb_key->getFields()), 'fk');
                     $key .= ' FOREIGN KEY (' . implode(', ', $this->getEncQuoted($xmldb_key->getFields())) . ')';
-                    $key .= ' REFERENCES ' . $this->getEncQuoted($xmldb_key->getRefTable());
+                    $key .= ' REFERENCES ' . $this->getEncQuoted($this->prefix . $xmldb_key->getRefTable());
                     $key .= ' (' . implode(', ', $this->getEncQuoted($xmldb_key->getRefFields())) . ')';
                 }
                 break;
         }
 
         return $key;
+    }
+
+    /**
+     * Give one XMLDBField, returns the correct "default clause" for the current configuration
+     */
+    function getDefaultClause ($xmldb_field) {
+
+        $default = '';
+
+        if ($xmldb_field->getDefault() != NULL) {
+            $default = ' default ';
+            if ($xmldb_field->getType() == XMLDB_TYPE_CHAR ||
+                $xmldb_field->getType() == XMLDB_TYPE_TEXT) {
+                    $default .= "'" . $xmldb_field->getDefault() . "'";
+            } else {
+                $default .= $xmldb_field->getDefault();
+            }
+        } else {
+        /// We force default '' for not null char columns without proper default
+        /// some day this should be out!
+            if ($this->default_for_char !== NULL && 
+                $xmldb_field->getType() == XMLDB_TYPE_CHAR &&
+                $xmldb_field->getNotNull()) {
+                $default .= ' default ' . "'" . $this->default_for_char . "'";
+            }
+        }
+        return $default;
     }
 
     /**
