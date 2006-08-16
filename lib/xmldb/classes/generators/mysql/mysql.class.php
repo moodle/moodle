@@ -52,6 +52,7 @@ class XMLDBmysql extends XMLDBGenerator {
      * Creates one new XMLDBmysql
      */
     function XMLDBmysql() {
+        parent::XMLDBGenerator();
         global $CFG;
         $this->prefix = '';
         $this->reserved_words = $this->getReservedWords();
@@ -161,7 +162,7 @@ class XMLDBmysql extends XMLDBGenerator {
         if ($xmldb_table->getComment()) {
             $comment .= " COMMENT='" . substr($xmldb_table->getComment(), 0, 250) . "'";
         }
-        return $comment . ";";
+        return $comment;
     }
 
     /**
