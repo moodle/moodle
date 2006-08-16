@@ -376,7 +376,9 @@ function delete_question($questionid) {
     // Now recursively delete all child questions
     if ($children = get_records('question', 'parent', $questionid)) {
         foreach ($children as $child) {
-            delete_question($child->id);
+            if ($child->id != $questionid) {
+                delete_question($child->id);
+            }
         }
     }
     
