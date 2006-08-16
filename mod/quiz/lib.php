@@ -51,198 +51,57 @@ define("QUIZ_MAX_EVENT_LENGTH", "432000");   // 5 days maximum
 
 /// FUNCTIONS ///////////////////////////////////////////////////////////////////
 
+/**
+ * Given an object containing all the necessary data,
+ * (defined by the form in mod.html) this function
+ * will create a new instance and return the id number
+ * of the new instance.
+ * 
+ * @param object $quiz the data that came from the form.
+ * @return integer the id of the new instance.
+ */
 function quiz_add_instance($quiz) {
-/// Given an object containing all the necessary data,
-/// (defined by the form in mod.html) this function
-/// will create a new instance and return the id number
-/// of the new instance.
 
+    // Process the options from the form.
+    $quiz->created = time();
     quiz_process_options($quiz);
-
-    $quiz->created      = time();
-    $quiz->timemodified = time();
-    // The following is adapted from the assignment module
-    if (empty($quiz->dueenable)) {
-        $quiz->timeclose = 0;
-    } else {
-        $quiz->timeclose = make_timestamp($quiz->dueyear, $quiz->duemonth, 
-                                              $quiz->dueday, $quiz->duehour, 
-                                              $quiz->dueminute);
-    }
-    if (empty($quiz->availableenable)) {
-        $quiz->timeopen = 0;
-        $quiz->preventlate = 0;
-    } else {
-        $quiz->timeopen = make_timestamp($quiz->availableyear, $quiz->availablemonth, 
-                                                    $quiz->availableday, $quiz->availablehour, 
-                                                    $quiz->availableminute);
-    }
-
-    if ($quiz->timeopen != 0 && $quiz->timeclose != 0 && $quiz->timeclose < $quiz->timeopen) {
-        return get_string('closebeforeopen', 'quiz');
-    }
-
-    $quiz->timelimit = round($quiz->timelimit);
-
-    if (empty($quiz->name)) {
-        if (empty($quiz->intro)) {
-            $quiz->name = get_string('modulename', 'quiz');
-        } else {
-            $quiz->name = strip_tags($quiz->intro);
-        }
-    }
-    $quiz->name = trim($quiz->name);
-    $quiz->timelimit = round($quiz->timelimit);
     $quiz->questions = '';
+
+    // Try to store it in the database.
     if (!$quiz->id = insert_record("quiz", $quiz)) {
-        return false;  // some error occurred
+        return false;
     }
 
-    if (isset($quiz->optionsettingspref)) {
-        set_user_preference('quiz_optionsettingspref', $quiz->optionsettingspref);
-    }
-
-    delete_records('event', 'modulename', 'quiz', 'instance', $quiz->id);  // Just in case
-
-    $event = new stdClass;
-    $event->description = $quiz->intro;
-    $event->courseid    = $quiz->course;
-    $event->groupid     = 0;
-    $event->userid      = 0;
-    $event->modulename  = 'quiz';
-    $event->instance    = $quiz->id;
-    $event->timestart   = $quiz->timeopen;
-    $event->visible     = instance_is_visible('quiz', $quiz);
-
-    if ($quiz->timeclose and $quiz->timeopen) {
-        // we have both a start and an end date
-        $event->eventtype   = 'open';
-        $event->timeduration = ($quiz->timeclose - $quiz->timeopen);
-
-        if ($event->timeduration > QUIZ_MAX_EVENT_LENGTH) {  /// Long durations create two events
+    // Do the processing required after an add or an update.
+    quiz_after_add_or_update($quiz);
     
-            $event->name          = $quiz->name.' ('.get_string('quizopens', 'quiz').')';
-            $event->timeduration  = 0;
-            add_event($event);
-    
-            $event->timestart    = $quiz->timeclose;
-            $event->eventtype    = 'close';
-            $event->name         = $quiz->name.' ('.get_string('quizcloses', 'quiz').')';
-            unset($event->id);
-            add_event($event);
-        } else { // single event with duration
-            $event->name        = $quiz->name;
-            add_event($event);
-        }
-    } elseif ($quiz->timeopen) { // only an open date
-        $event->name          = $quiz->name.' ('.get_string('quizopens', 'quiz').')';
-        $event->eventtype   = 'open';
-        $event->timeduration = 0;
-        add_event($event);
-    } elseif ($quiz->timeclose) { // only a closing date
-        $event->name         = $quiz->name.' ('.get_string('quizcloses', 'quiz').')';
-        $event->timestart    = $quiz->timeclose;
-        $event->eventtype    = 'close';
-        $event->timeduration = 0;
-        add_event($event);
-    }
-
     return $quiz->id;
 }
 
-
+/**
+ * Given an object containing all the necessary data,
+ * (defined by the form in mod.html) this function
+ * will update an existing instance with new data.
+ * 
+ * @param object $quiz the data that came from the form.
+ * @return boolean true on success, false on failure.
+ */
 function quiz_update_instance($quiz) {
-/// Given an object containing all the necessary data,
-/// (defined by the form in mod.html or edit.php) this function
-/// will update an existing instance with new data.
 
+    // Process the options from the form.
     quiz_process_options($quiz);
 
-    $quiz->timemodified = time();
-    // The following is adapted from the assignment module
-    if (empty($quiz->dueenable)) {
-        $quiz->timeclose = 0;
-    } else {
-        $quiz->timeclose = make_timestamp($quiz->dueyear, $quiz->duemonth, 
-                                              $quiz->dueday, $quiz->duehour, 
-                                              $quiz->dueminute);
-    }
-    if (empty($quiz->availableenable)) {
-        $quiz->timeopen = 0;
-        $quiz->preventlate = 0;
-    } else {
-        $quiz->timeopen = make_timestamp($quiz->availableyear, $quiz->availablemonth, 
-                                                    $quiz->availableday, $quiz->availablehour, 
-                                                    $quiz->availableminute);
-    }
-
-    if ($quiz->timeopen != 0 && $quiz->timeclose != 0 && $quiz->timeclose < $quiz->timeopen) {
-        return get_string('closebeforeopen', 'quiz');
-    }
-
-    $quiz->timelimit = round($quiz->timelimit);
-
+    // Update the database.
     $quiz->id = $quiz->instance;
     if (!update_record("quiz", $quiz)) {
         return false;  // some error occurred
     }
 
-    // Delete any preview attempts
+    // Do the processing required after an add or an update.
+    quiz_after_add_or_update($quiz);
+
+    // Delete any previous preview attempts
     delete_records('quiz_attempts', 'preview', '1', 'quiz', $quiz->id);
-
-    if (isset($quiz->optionsettingspref)) {
-        set_user_preference('quiz_optionsettingspref', $quiz->optionsettingspref);
-    }
-
-    // currently this code deletes all existing events and adds new ones
-    // this should be improved to update existing events only
-    if ($events = get_records_select('event', "modulename = 'quiz' and instance = '$quiz->id'")) {
-        foreach($events as $event) {
-            delete_event($event->id);
-        }
-    }
-
-    unset($event);
-    $event->description = $quiz->intro;
-    $event->courseid    = $quiz->course;
-    $event->groupid     = 0;
-    $event->userid      = 0;
-    $event->modulename  = 'quiz';
-    $event->instance    = $quiz->id;
-    $event->timestart   = $quiz->timeopen;
-    $event->visible     = instance_is_visible('quiz', $quiz);
-    if ($quiz->timeclose and $quiz->timeopen) {
-        // we have both a start and an end date
-        $event->eventtype   = 'open';
-        $event->timeduration = ($quiz->timeclose - $quiz->timeopen);
-
-        if ($event->timeduration > QUIZ_MAX_EVENT_LENGTH) {  /// Long durations create two events
-    
-            $event->name          = $quiz->name.' ('.get_string('quizopens', 'quiz').')';
-            $event->timeduration  = 0;
-            add_event($event);
-    
-            $event->timestart    = $quiz->timeclose;
-            $event->eventtype    = 'close';
-            $event->name         = $quiz->name.' ('.get_string('quizcloses', 'quiz').')';
-            unset($event->id);
-            add_event($event);
-        } else { // single event with duration
-            $event->name        = $quiz->name;
-            add_event($event);
-        }
-    } elseif ($quiz->timeopen) { // only an open date
-        $event->name          = $quiz->name.' ('.get_string('quizopens', 'quiz').')';
-        $event->eventtype   = 'open';
-        $event->timeduration = 0;
-        add_event($event);
-    } elseif ($quiz->timeclose) { // only a closing date
-        $event->name         = $quiz->name.' ('.get_string('quizcloses', 'quiz').')';
-        $event->timestart    = $quiz->timeclose;
-        $event->eventtype    = 'close';
-        $event->timeduration = 0;
-        add_event($event);
-    }
 
     return true;
 }
@@ -405,6 +264,8 @@ function quiz_get_participants($quizid) {
 }
 
 function quiz_refresh_events($courseid = 0) {
+// This horrible function only seems to be called from mod/quiz/db/[dbtype].php.
+
 // This standard function will check all instances of this module
 // and make sure there are up-to-date events created for each of them.
 // If courseid = 0, then every quiz event in the site is checked, else
@@ -590,108 +451,193 @@ function quiz_print_recent_mod_activity($activity, $course, $detail=false) {
 }
 
 /**
-* Pre-process the options form data
-*
-* Encode the review options from the setup form into the bits of $form->review
-* and other options into $form->optionflags
-* The form data is passed by reference and modified by this function
-* @return integer
-* @param object $form  The variables set on the form.
-*/
-function quiz_process_options(&$form) {
-    $optionflags = 0;
-    $review = 0;
+ * Pre-process the quiz options form data, making any necessary adjustments.
+ *
+ * @param object $quiz The variables set on the form.
+ */
+function quiz_process_options(&$quiz) {
+    $quiz->timemodified = time();
 
-    if (!empty($form->adaptive)) {
-        $optionflags |= QUESTION_ADAPTIVE;
-    }
-
-    if (isset($form->responsesimmediately)) {
-        $review += (QUIZ_REVIEW_RESPONSES & QUIZ_REVIEW_IMMEDIATELY);
-        unset($form->responsesimmediately);
-    }
-    if (isset($form->responsesopen)) {
-        $review += (QUIZ_REVIEW_RESPONSES & QUIZ_REVIEW_OPEN);
-        unset($form->responsesopen);
-    }
-    if (isset($form->responsesclosed)) {
-        $review += (QUIZ_REVIEW_RESPONSES & QUIZ_REVIEW_CLOSED);
-        unset($form->responsesclosed);
+    // Quiz open time.
+    if (empty($quiz->availableenable)) {
+        $quiz->timeopen = 0;
+        $quiz->preventlate = 0;
+    } else {
+        $quiz->timeopen = make_timestamp($quiz->availableyear, $quiz->availablemonth, 
+                $quiz->availableday, $quiz->availablehour, $quiz->availableminute);
     }
 
-    if (isset($form->scoreimmediately)) {
-        $review += (QUIZ_REVIEW_SCORES & QUIZ_REVIEW_IMMEDIATELY);
-        unset($form->scoreimmediately);
-    }
-    if (isset($form->scoreopen)) {
-        $review += (QUIZ_REVIEW_SCORES & QUIZ_REVIEW_OPEN);
-        unset($form->scoreopen);
-    }
-    if (isset($form->scoreclosed)) {
-        $review += (QUIZ_REVIEW_SCORES & QUIZ_REVIEW_CLOSED);
-        unset($form->scoreclosed);
+    // Quiz close time.
+    if (empty($quiz->dueenable)) {
+        $quiz->timeclose = 0;
+    } else {
+        $quiz->timeclose = make_timestamp($quiz->dueyear, $quiz->duemonth, 
+                $quiz->dueday, $quiz->duehour, $quiz->dueminute);
     }
 
-    if (isset($form->feedbackimmediately)) {
-        $review += (QUIZ_REVIEW_FEEDBACK & QUIZ_REVIEW_IMMEDIATELY);
-        unset($form->feedbackimmediately);
-    }
-    if (isset($form->feedbackopen)) {
-        $review += (QUIZ_REVIEW_FEEDBACK & QUIZ_REVIEW_OPEN);
-        unset($form->feedbackopen);
-    }
-    if (isset($form->feedbackclosed)) {
-        $review += (QUIZ_REVIEW_FEEDBACK & QUIZ_REVIEW_CLOSED);
-        unset($form->feedbackclosed);
+    // Check open and close times are consistent.
+    if ($quiz->timeopen != 0 && $quiz->timeclose != 0 && $quiz->timeclose < $quiz->timeopen) {
+        return get_string('closebeforeopen', 'quiz');
     }
 
-    if (isset($form->answersimmediately)) {
-        $review += (QUIZ_REVIEW_ANSWERS & QUIZ_REVIEW_IMMEDIATELY);
-        unset($form->answersimmediately);
+    // Quiz name. (Make up a default if one was not given.)
+    if (empty($quiz->name)) {
+        if (empty($quiz->intro)) {
+            $quiz->name = get_string('modulename', 'quiz');
+        } else {
+            $quiz->name = shorten_text(strip_tags($quiz->intro));
+        }
     }
-    if (isset($form->answersopen)) {
-        $review += (QUIZ_REVIEW_ANSWERS & QUIZ_REVIEW_OPEN);
-        unset($form->answersopen);
-    }
-    if (isset($form->answersclosed)) {
-        $review += (QUIZ_REVIEW_ANSWERS & QUIZ_REVIEW_CLOSED);
-        unset($form->answersclosed);
-    }
-
-    if (isset($form->solutionsimmediately)) {
-        $review += (QUIZ_REVIEW_SOLUTIONS & QUIZ_REVIEW_IMMEDIATELY);
-        unset($form->solutionsimmediately);
-    }
-    if (isset($form->solutionsopen)) {
-        $review += (QUIZ_REVIEW_SOLUTIONS & QUIZ_REVIEW_OPEN);
-        unset($form->solutionsopen);
-    }
-    if (isset($form->solutionsclosed)) {
-        $review += (QUIZ_REVIEW_SOLUTIONS & QUIZ_REVIEW_CLOSED);
-        unset($form->solutionsclosed);
-    }
-
-    if (isset($form->commentaryimmediately)) {
-        $review += (QUIZ_REVIEW_COMMENTARY & QUIZ_REVIEW_IMMEDIATELY);
-        unset($form->solutionsimmediately);
-    }
-    if (isset($form->commentaryopen)) {
-        $review += (QUIZ_REVIEW_COMMENTARY & QUIZ_REVIEW_OPEN);
-        unset($form->solutionsopen);
-    }
-    if (isset($form->commentaryclosed)) {
-        $review += (QUIZ_REVIEW_COMMENTARY & QUIZ_REVIEW_CLOSED);
-        unset($form->solutionsclosed);
-    }
-
-    $form->review = $review;
-    $form->optionflags = $optionflags;
+    $quiz->name = trim($quiz->name);
     
-    // The following implements the time limit check box
-    if (empty($form->timelimitenable) or $form->timelimit < 1) {
-        $form->timelimit = 0;
+    // Time limit. (Get rid of it if the checkbox was not ticked.)
+    if (empty($quiz->timelimitenable) or empty($quiz->timelimit) or $quiz->timelimit < 0) {
+        $quiz->timelimit = 0;
+    }
+    $quiz->timelimit = round($quiz->timelimit);
+
+    // Settings that get combined to go into the optionflags column.
+    $quiz->optionflags = 0;
+    if (!empty($quiz->adaptive)) {
+        $quiz->optionflags |= QUESTION_ADAPTIVE;
     }
 
+    // Settings that get combined to go into the review column.
+    $review = 0;
+    if (isset($quiz->responsesimmediately)) {
+        $review += (QUIZ_REVIEW_RESPONSES & QUIZ_REVIEW_IMMEDIATELY);
+        unset($quiz->responsesimmediately);
+    }
+    if (isset($quiz->responsesopen)) {
+        $review += (QUIZ_REVIEW_RESPONSES & QUIZ_REVIEW_OPEN);
+        unset($quiz->responsesopen);
+    }
+    if (isset($quiz->responsesclosed)) {
+        $review += (QUIZ_REVIEW_RESPONSES & QUIZ_REVIEW_CLOSED);
+        unset($quiz->responsesclosed);
+    }
+
+    if (isset($quiz->scoreimmediately)) {
+        $review += (QUIZ_REVIEW_SCORES & QUIZ_REVIEW_IMMEDIATELY);
+        unset($quiz->scoreimmediately);
+    }
+    if (isset($quiz->scoreopen)) {
+        $review += (QUIZ_REVIEW_SCORES & QUIZ_REVIEW_OPEN);
+        unset($quiz->scoreopen);
+    }
+    if (isset($quiz->scoreclosed)) {
+        $review += (QUIZ_REVIEW_SCORES & QUIZ_REVIEW_CLOSED);
+        unset($quiz->scoreclosed);
+    }
+
+    if (isset($quiz->feedbackimmediately)) {
+        $review += (QUIZ_REVIEW_FEEDBACK & QUIZ_REVIEW_IMMEDIATELY);
+        unset($quiz->feedbackimmediately);
+    }
+    if (isset($quiz->feedbackopen)) {
+        $review += (QUIZ_REVIEW_FEEDBACK & QUIZ_REVIEW_OPEN);
+        unset($quiz->feedbackopen);
+    }
+    if (isset($quiz->feedbackclosed)) {
+        $review += (QUIZ_REVIEW_FEEDBACK & QUIZ_REVIEW_CLOSED);
+        unset($quiz->feedbackclosed);
+    }
+
+    if (isset($quiz->answersimmediately)) {
+        $review += (QUIZ_REVIEW_ANSWERS & QUIZ_REVIEW_IMMEDIATELY);
+        unset($quiz->answersimmediately);
+    }
+    if (isset($quiz->answersopen)) {
+        $review += (QUIZ_REVIEW_ANSWERS & QUIZ_REVIEW_OPEN);
+        unset($quiz->answersopen);
+    }
+    if (isset($quiz->answersclosed)) {
+        $review += (QUIZ_REVIEW_ANSWERS & QUIZ_REVIEW_CLOSED);
+        unset($quiz->answersclosed);
+    }
+
+    if (isset($quiz->solutionsimmediately)) {
+        $review += (QUIZ_REVIEW_SOLUTIONS & QUIZ_REVIEW_IMMEDIATELY);
+        unset($quiz->solutionsimmediately);
+    }
+    if (isset($quiz->solutionsopen)) {
+        $review += (QUIZ_REVIEW_SOLUTIONS & QUIZ_REVIEW_OPEN);
+        unset($quiz->solutionsopen);
+    }
+    if (isset($quiz->solutionsclosed)) {
+        $review += (QUIZ_REVIEW_SOLUTIONS & QUIZ_REVIEW_CLOSED);
+        unset($quiz->solutionsclosed);
+    }
+
+    if (isset($quiz->commentaryimmediately)) {
+        $review += (QUIZ_REVIEW_COMMENTARY & QUIZ_REVIEW_IMMEDIATELY);
+        unset($quiz->solutionsimmediately);
+    }
+    if (isset($quiz->commentaryopen)) {
+        $review += (QUIZ_REVIEW_COMMENTARY & QUIZ_REVIEW_OPEN);
+        unset($quiz->solutionsopen);
+    }
+    if (isset($quiz->commentaryclosed)) {
+        $review += (QUIZ_REVIEW_COMMENTARY & QUIZ_REVIEW_CLOSED);
+        unset($quiz->solutionsclosed);
+    }
+
+    $quiz->review = $review;
+}
+
+/**
+ * This function is called at the end of quiz_add_instance
+ * and quiz_update_instance, to do the common processing.
+ * 
+ * @param object $quiz the quiz object.
+ */
+function quiz_after_add_or_update($quiz) {
+
+    // Remember whether this user likes the advanced settings visible or hidden.
+    if (isset($quiz->optionsettingspref)) {
+        set_user_preference('quiz_optionsettingspref', $quiz->optionsettingspref);
+    }
+
+    // Update the events relating to this quiz.
+    // This is slightly inefficient, deleting the old events and creating new ones. However,
+    // there are at most two events, and this keeps the code simpler.
+    if ($events = get_records_select('event', "modulename = 'quiz' and instance = '$quiz->id'")) {
+        foreach($events as $event) {
+            delete_event($event->id);
+        }
+    }
+
+    $event = new stdClass;
+    $event->description = $quiz->intro;
+    $event->courseid    = $quiz->course;
+    $event->groupid     = 0;
+    $event->userid      = 0;
+    $event->modulename  = 'quiz';
+    $event->instance    = $quiz->id;
+    $event->timestart   = $quiz->timeopen;
+    $event->timeduration = $quiz->timeclose - $quiz->timeopen;
+    $event->visible     = instance_is_visible('quiz', $quiz);
+    $event->eventtype   = 'open';
+
+    if ($quiz->timeclose and $quiz->timeopen and $event->timeduration <= QUIZ_MAX_EVENT_LENGTH) {
+        // Single event for the whole quiz.
+        $event->name = $quiz->name;
+        add_event($event);
+    } else {
+        // Separate start and end events.
+        $event->timeduration  = 0;
+        if ($quiz->timeopen) {
+            $event->name = $quiz->name.' ('.get_string('quizopens', 'quiz').')';
+            add_event($event);
+            unset($event->id); // So we can use the same object for the close event.
+        }
+        if ($quiz->timeclose) {
+            $event->name      = $quiz->name.' ('.get_string('quizcloses', 'quiz').')';
+            $event->timestart = $quiz->timeclose;
+            $event->eventtype = 'close';
+            add_event($event);
+        }
+    }
 }
 
 function quiz_get_view_actions() {
