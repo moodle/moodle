@@ -2100,6 +2100,10 @@ function main_upgrade($oldversion=0) {
         execute_sql("ALTER TABLE `{$CFG->prefix}role_names` ADD INDEX `contextid` (`contextid`)",true); 
         execute_sql("ALTER TABLE `{$CFG->prefix}role_names` ADD UNIQUE INDEX `roleid-contextid` (`roleid`, `contextid`)",true);                 
     }
+    
+    if ($version < 2006081600) {
+        execute_sql("ALTER TABLE `{$CFG->prefix}role_capabilities` CHANGE permission permission int(10) NOT NULL default '0'",true);   
+    }
     return $result;
 }
 

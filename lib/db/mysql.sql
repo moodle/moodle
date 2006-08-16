@@ -946,7 +946,7 @@ CREATE TABLE prefix_role_capabilities (
   `contextid` int(10)unsigned NOT NULL default '0',
   `roleid` int(10) unsigned NOT NULL default '0',
   `capability` varchar(255) NOT NULL default '',
-  `permission` int(10) unsigned NOT NULL default '0',
+  `permission` int(10) NOT NULL default '0',
   `timemodified` int(10) unsigned NOT NULL default '0',
   `modifierid` int(10) unsigned NOT NULL default '0',
   KEY `roleid` (`roleid`),
@@ -954,7 +954,7 @@ CREATE TABLE prefix_role_capabilities (
   KEY `modifierid` (`modifierid`),
   UNIQUE KEY `roleid-contextid-capability` (`roleid`, `contextid`, `capability`),  
   PRIMARY KEY (`id`)
-) TYPE=MYISAM COMMENT ='overriding a capability for a particular role in a particular context';
+) TYPE=MYISAM COMMENT ='permission has to be signed, overriding a capability for a particular role in a particular context';
 
 CREATE TABLE prefix_role_deny_grant (
   `id` int(10) unsigned NOT NULL auto_increment,

@@ -175,7 +175,7 @@ $moodle_capabilities = array(
     'moodle/site:viewreports' => array(
     
         'captype' => 'read',
-        'contextlevel' => CONTEXT_SITE,
+        'contextlevel' => CONTEXT_SYSTEM,
         'legacy' => array(
             'guest' => CAP_PREVENT,
             'student' => CAP_PREVENT,
@@ -632,8 +632,49 @@ $moodle_capabilities = array(
             'coursecreator' => CAP_ALLOW,
             'admin' => CAP_ALLOW
         )
-    )
+    ),
     
+    // The next 3 might make no sense for some roles, e.g teacher, etc. 
+    // since the next level up is site. These are more for the parent role
+    'moodle/user:readuserposts' => array(
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_USERID,
+        'legacy' => array(
+            'guest' => CAP_PREVENT,
+            'student' => CAP_ALLOW,
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'coursecreator' => CAP_ALLOW,
+            'admin' => CAP_ALLOW
+        )
+    ),
+    
+    'moodle/user:readuserblogs' => array(
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_USERID,
+        'legacy' => array(
+            'guest' => CAP_PREVENT,
+            'student' => CAP_ALLOW,
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'coursecreator' => CAP_ALLOW,
+            'admin' => CAP_ALLOW
+        )
+    ),
+    
+    'moodle/user:viewuseractivitiesreport' => array(
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_USERID,
+        'legacy' => array(
+            'guest' => CAP_PREVENT,
+            'student' => CAP_PREVENT,
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'coursecreator' => CAP_ALLOW,
+            'admin' => CAP_ALLOW
+        )
+    )
+  
 );
 
 ?>
