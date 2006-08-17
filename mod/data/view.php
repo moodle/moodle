@@ -147,7 +147,7 @@
         $USER->editing = $edit;
     }
 
-/// RSS and CSS meta
+/// RSS and CSS and JS meta
     $meta = '';
     if (!empty($CFG->enablerssfeeds) && !empty($CFG->data_enablerssfeeds) && $data->rssarticles > 0) {
         $rsspath = rss_get_url($course->id, $USER->id, 'data', $data->id);
@@ -157,6 +157,10 @@
     if ($data->csstemplate) {
         $meta .= '<link rel="stylesheet" type="text/css" href="'.$CFG->wwwroot.'/mod/data/css.php?d='.$data->id.'" /> ';
     }
+    if ($data->jstemplate) {
+        $meta .= '<script type="text/javascript" src="'.$CFG->wwwroot.'/mod/data/js.php?d='.$data->id.'"></script>';
+    }
+
     
 /// Print the page header
     $PAGE->print_header($course->shortname.': %fullname%', '', $meta);
