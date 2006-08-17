@@ -42,7 +42,7 @@ class XMLDBoci8po extends XMLDBgenerator {
     var $foreign_keys = false; // Does the generator build foreign keys
 
     var $primary_index = false;// Does the generator need to build one index for primary keys
-    var $unique_index = true;  // Does the generator need to build one index for unique keys
+    var $unique_index = false;  // Does the generator need to build one index for unique keys
     var $foreign_index = true; // Does the generator need to build one index for foreign keys
 
     var $sequence_extra_code = true; //Does the generator need to add extra code to generate the sequence fields
