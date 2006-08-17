@@ -205,4 +205,7 @@ $string['overwrite'] = 'Overwrite';
 
 $string['download'] = 'Download';
 
+$string['jstemplate'] ='Javascript Template';
+$string['headerjstemplate'] = 'Defines custom Javascript for the other templates';
+
 ?>
