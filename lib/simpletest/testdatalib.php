@@ -172,6 +172,15 @@ class datalib_test extends prefix_changing_test_case {
         $this->assertEqual(get_field($this->table, 'number + id', 'text', 'tadpole', 'id', 4), 108);
     }
 
+    function test_get_field_select() {
+        $this->assertEqual(get_field_select($this->table, 'number',  'id = 1'), 101);
+    }
+
+    function test_get_field_sql() {
+        global $CFG;
+        $this->assertEqual(get_field_sql("SELECT number FROM {$CFG->prefix}$this->table WHERE id = 1"), 101);
+    }
+
     function test_set_field() {
         set_field($this->table, 'number', 12345, 'id', 1);
         $this->assertEqual(get_field($this->table, 'number', 'id', 1), 12345);

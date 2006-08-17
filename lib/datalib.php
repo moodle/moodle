@@ -946,8 +946,9 @@ function get_records_sql_menu($sql) {
  * @return mixed the specified value, or false if an error occured.
  */
 function get_field($table, $return, $field1, $value1, $field2='', $value2='', $field3='', $value3='') {
+    global $CFG;
     $select = where_clause($field1, $value1, $field2, $value2, $field3, $value3);
-    return get_field_select($table, $return, $select);
+    return get_field_sql('SELECT ' . $return . ' FROM ' . $CFG->prefix . $table . ' ' . $select);
 }
 
 /**
@@ -961,6 +962,9 @@ function get_field($table, $return, $field1, $value1, $field2='', $value2='', $f
  */
 function get_field_select($table, $return, $select) {
     global $CFG;
+    if ($select) {
+        $select = 'WHERE '. $select;
+    }
     return get_field_sql('SELECT ' . $return . ' FROM ' . $CFG->prefix . $table . ' ' . $select);
 }
 
