@@ -2101,8 +2101,34 @@ function main_upgrade($oldversion=0) {
         execute_sql("ALTER TABLE `{$CFG->prefix}role_names` ADD UNIQUE INDEX `roleid-contextid` (`roleid`, `contextid`)",true);                 
     }
     
-    if ($version < 2006081600) {
+    if ($oldversion < 2006081600) {
         execute_sql("ALTER TABLE `{$CFG->prefix}role_capabilities` CHANGE permission permission int(10) NOT NULL default '0'",true);   
+    }
+    
+    // drop role_deny_grant table, and create 2 new ones
+    if ($oldversion < 2006081700) {
+        execute_sql("DROP TABLE `{$CFG->prefix}role_deny_grant`", true);
+        
+        execute_sql("CREATE TABLE {$CFG->prefix}role_allow_assign (
+                    `id` int(10) unsigned NOT NULL auto_increment,
+                    `roleid` int(10) unsigned NOT NULL default '0',
+                    `allowassign` int(10) unsigned NOT NULL default '0',
+                    KEY `roleid` (`roleid`),
+                    KEY `allowassign` (`allowassign`),
+                    UNIQUE KEY `roleid-allowassign` (`roleid`, `allowassign`),
+                    PRIMARY KEY (`id`)
+                    )", true); 
+                            
+        execute_sql("CREATE TABLE {$CFG->prefix}role_allow_override (
+                    `id` int(10) unsigned NOT NULL auto_increment,
+                    `roleid` int(10) unsigned NOT NULL default '0',
+                    `allowoverride` int(10) unsigned NOT NULL default '0',
+                    KEY `roleid` (`roleid`),
+                    KEY `allowoverride` (`allowoverride`),
+                    UNIQUE KEY `roleid-allowoverride` (`roleid`, `allowoverride`),
+                    PRIMARY KEY (`id`)
+                    )", true); 
+        
     }
     return $result;
 }

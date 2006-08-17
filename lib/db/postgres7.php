@@ -1699,7 +1699,31 @@ function main_upgrade($oldversion=0) {
         modify_database('',"CREATE UNIQUE INDEX prefix_capabilities_name_idx ON prefix_capabilities (name);");
         modify_database('',"CREATE INDEX prefix_role_names_roleid_idx ON prefix_role_names (roleid);");
         modify_database('',"CREATE INDEX prefix_role_names_contextid_idx ON prefix_role_names (contextid);");
-        modify_database('',"CREATE UNIQUE INDEX prefix_role_names_roleidcontextid_idx ON prefix_role_names (roleid, contextid);");     
+        modify_database('',"CREATE UNIQUE INDEX prefix_role_names_roleidcontextid_idx ON prefix_role_names (roleid, contextid);");    
+        
+    if ($oldversion < 2006081700) { 
+        modify_database('',"DROP TABLE prefix_role_deny_grant");
+        
+        modify_database('',"CREATE TABLE prefix_role_allow_assign (    
+            id SERIAL PRIMARY KEY,     
+            roleid integer NOT NULL default '0',   
+            allowassign integer NOT NULL default '0'      
+        );");
+
+        modify_database('',"CREATE INDEX prefix_role_allow_assign_roleid_idx ON prefix_role_allow_assign (roleid);");
+        modify_database('',"CREATE INDEX prefix_role_allow_assign_allowassign_idx ON prefix_role_allow_assign (allowassign);");
+        modify_database('',"CREATE UNIQUE INDEX prefix_role_allow_assign_roleidallowassign_idx ON prefix_role_allow_assign (roleid, allowassign);");
+
+        modify_database('',"CREATE TABLE prefix_role_allow_override (    
+            id SERIAL PRIMARY KEY,     
+            roleid integer NOT NULL default '0',   
+            allowoverride integer NOT NULL default '0'      
+        );");
+        
+        modify_database('',"CREATE INDEX prefix_role_allow_override_roleid_idx ON prefix_role_allow_override (roleid);");
+        modify_database('',"CREATE INDEX prefix_role_allow_override_allowoverride_idx ON prefix_role_allow_override (allowoverride);");
+        modify_database('',"CREATE UNIQUE INDEX prefix_role_allow_override_roleidallowoverride_idx ON prefix_role_allow_override (roleid, allowoverride);");
+               
     }
     return $result;
 }

@@ -25,7 +25,8 @@
     </TABLE>
     
     <TABLE name="context" />
-    <TABLE name="role_deny_grant" />
+    <TABLE name="role_allow_assign" />
+    <TABLE name="role_allow_override" />
     <TABLE name="role_assignments">
 	  <FIELDS>
 	    <FIELD name="enrol" method="NO_CONV" type="varchar" length="20" />	

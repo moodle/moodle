@@ -720,14 +720,23 @@ CREATE INDEX prefix_role_capabilities_contextid_idx ON prefix_role_capabilities 
 CREATE INDEX prefix_role_capabilities_modifierid_idx ON prefix_role_capabilities (modifierid);
 CREATE UNIQUE INDEX prefix_role_capabilities_roleidcontextidcapability_idx ON prefix_role_capabilities (roleid, contextid, capability);       
               
-CREATE TABLE prefix_role_deny_grant (    
+CREATE TABLE prefix_role_allow_assign (    
   id SERIAL PRIMARY KEY,     
   roleid integer NOT NULL default '0',   
-  unviewableroleid integer NOT NULL default '0'      
+  allowassign integer NOT NULL default '0'      
 );   
-CREATE INDEX prefix_role_deny_grant_roleid_idx ON prefix_role_deny_grant (roleid);
-CREATE INDEX prefix_role_deny_grant_unviewableroleid_idx ON prefix_role_deny_grant (unviewableroleid);
-CREATE UNIQUE INDEX prefix_role_deny_grant_roleidunviewableroleid_idx ON prefix_role_deny_grant (roleid, unviewableroleid);
+CREATE INDEX prefix_role_allow_assign_roleid_idx ON prefix_role_allow_assign (roleid);
+CREATE INDEX prefix_role_allow_assign_allowassign_idx ON prefix_role_allow_assign (allowassign);
+CREATE UNIQUE INDEX prefix_role_allow_assign_roleidallowassign_idx ON prefix_role_allow_assign (roleid, allowassign);
+
+CREATE TABLE prefix_role_allow_override (    
+  id SERIAL PRIMARY KEY,     
+  roleid integer NOT NULL default '0',   
+  allowoverride integer NOT NULL default '0'      
+);   
+CREATE INDEX prefix_role_allow_override_roleid_idx ON prefix_role_allow_override (roleid);
+CREATE INDEX prefix_role_allow_override_allowoverride_idx ON prefix_role_allow_override (allowoverride);
+CREATE UNIQUE INDEX prefix_role_allow_override_roleidallowoverride_idx ON prefix_role_allow_override (roleid, allowoverride);
        
 CREATE TABLE prefix_capabilities (   
   id SERIAL PRIMARY KEY,     

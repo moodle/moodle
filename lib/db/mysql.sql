@@ -956,15 +956,25 @@ CREATE TABLE prefix_role_capabilities (
   PRIMARY KEY (`id`)
 ) TYPE=MYISAM COMMENT ='permission has to be signed, overriding a capability for a particular role in a particular context';
 
-CREATE TABLE prefix_role_deny_grant (
+CREATE TABLE prefix_role_allow_assign (
   `id` int(10) unsigned NOT NULL auto_increment,
   `roleid` int(10) unsigned NOT NULL default '0',
-  `unviewableroleid` int(10) unsigned NOT NULL default '0',
+  `allowassign` int(10) unsigned NOT NULL default '0',
   KEY `roleid` (`roleid`),
-  KEY `unviewableroleid` (`unviewableroleid`),
-  UNIQUE KEY `roleid-unviewableroleid` (`roleid`, `unviewableroleid`),
+  KEY `allowassign` (`allowassign`),
+  UNIQUE KEY `roleid-allowassign` (`roleid`, `allowassign`),
   PRIMARY KEY (`id`)
-) TYPE=MYISAM COMMENT ='this defines what role can touch (assign, override) what role';
+) TYPE=MYISAM COMMENT ='this defines what role can assign what role';
+
+CREATE TABLE prefix_role_allow_override (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `roleid` int(10) unsigned NOT NULL default '0',
+  `allowoverride` int(10) unsigned NOT NULL default '0',
+  KEY `roleid` (`roleid`),
+  KEY `allowoverride` (`allowoverride`),
+  UNIQUE KEY `roleid-allowoverride` (`roleid`, `allowoverride`),
+  PRIMARY KEY (`id`)
+) TYPE=MYISAM COMMENT ='this defines what role can override what role';
 
 CREATE TABLE prefix_capabilities ( 
   `id` int(10) unsigned NOT NULL auto_increment, 
