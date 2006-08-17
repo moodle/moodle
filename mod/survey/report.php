@@ -7,9 +7,13 @@
 
     $id      = required_param('id', PARAM_INT);           // Course Module ID
     $action  = optional_param('action', '', PARAM_ALPHA); // What to look at
-    $qid     = optional_param('qid', 0, PARAM_INT);       // Question ID
+    $qid     = optional_param('qid', 0, PARAM_RAW);       // Question IDs comma-separated list
     $student = optional_param('student', 0, PARAM_INT);   // Student ID
     $notes   = optional_param('notes', '', PARAM_RAW);    // Save teachers notes
+
+    $qids = explode(',', $qid);
+    $qids = clean_param($qids, PARAM_INT);
+    $qid = implode (',', $qids);
 
     if (! $cm = get_coursemodule_from_id('survey', $id)) {
         error("Course Module ID was incorrect");
