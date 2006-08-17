@@ -403,7 +403,10 @@ function print_progress($done, $total, $updatetime=5, $sleeptime=1, $donetext=''
 ////////////////////////////////////////////////
 
 $upgradeloghandle = false;
-global $upgradeloghandle;  // needed for access from callback funtion
+$upgradelogbuffer = '';
+// I did not find out how to use static variable in callback function,
+// the problem was that I could not flush the static buffer :-(
+global $upgradeloghandle, $upgradelogbuffer;
 
 /**
  * Check if upgrade is already running.
@@ -454,14 +457,19 @@ function upgrade_log_start() {
  * This function may be called repeatedly.
  */
 function upgrade_log_finish() {
-    global $upgradeloghandle;
+    global $upgradeloghandle, $upgradelogbuffer;
 
     if (empty($_SESSION['upgraderunning'])) {
         return; // logging already terminated
     }
 
     @ob_end_flush();
-    @fclose($upgradeloghandle);
+    if ($upgradelogbuffer !== '') {
+        @fwrite($upgradeloghandle, $upgradelogbuffer);
+    }
+    if ($upgradeloghandle and ($upgradeloghandle !== 'error')) {
+        @fclose($upgradeloghandle);
+    }
     @session_start();                // ignore header errors, we only need to reopen session
     $_SESSION['upgraderunning'] = 0; // clear upgrade indicator
     if (connection_aborted()) {
@@ -477,11 +485,15 @@ function upgrade_log_finish() {
  * This function must not output any characters or throw warnigns and errors!
  */
 function upgrade_log_callback($string) {
-    global $CFG, $upgradeloghandle;
+    global $CFG, $upgradeloghandle, $upgradelogbuffer;
 
     if (empty($CFG->disableupgradelogging) and ($string != '') and ($upgradeloghandle !== 'error')) {
         if ($upgradeloghandle or ($upgradeloghandle = @fopen($CFG->dataroot.'/upgradelogs/upg_'.date('Ymd-Hi').'.html', 'a'))) {
-            @fwrite($upgradeloghandle, $string);
+            $upgradelogbuffer .= $string;
+            if (strlen($upgradelogbuffer) > 2048) { // 2kB write buffer
+                @fwrite($upgradeloghandle, $upgradelogbuffer);
+                $upgradelogbuffer = '';
+            }
         } else {
             $upgradeloghandle = 'error';
         }
