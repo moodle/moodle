@@ -16,14 +16,14 @@ class qformat_multianswer extends qformat_default {
     }
 
     function readquestions($lines) {
-    /// Parses an array of lines into an array of questions.
-    /// For this class the method has been simplified as
-    /// there can never be more than one question for a
-    /// multianswer import
+        // Parses an array of lines into an array of questions.
+        // For this class the method has been simplified as
+        // there can never be more than one question for a
+        // multianswer import
 
         $questions= array();
-        $thequestion= quiz_qtype_multianswer_extract_question
-                            (addslashes(implode('',$lines)));
+        $thequestion= qtype_multianswer_extract_question(
+                addslashes(implode('',$lines)));
         $thequestion->qtype = MULTIANSWER;
         $thequestion->course = $this->course;
 
