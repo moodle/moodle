@@ -38,4 +38,21 @@
 //
 // For further documentation, visit http://docs.moodle.org/en/DDL_functions
 
+/// Add required XMLDB constants
+    require_once($CFG->libdir . '/xmldb/classes/XMLDBConstants.php');
+
+/// Add main XMLDB Generator
+    require_once($CFG->libdir . '/xmldb/classes/generators/XMLDBGenerator.class.php');
+
+/// Add required XMLDB DB classes
+    require_once($CFG->libdir . '/xmldb/classes/XMLDBObject.class.php');
+    require_once($CFG->libdir . '/xmldb/classes/XMLDBFile.class.php');
+    require_once($CFG->libdir . '/xmldb/classes/XMLDBStructure.class.php');
+    require_once($CFG->libdir . '/xmldb/classes/XMLDBTable.class.php');
+    require_once($CFG->libdir . '/xmldb/classes/XMLDBField.class.php');
+    require_once($CFG->libdir . '/xmldb/classes/XMLDBKey.class.php');
+    require_once($CFG->libdir . '/xmldb/classes/XMLDBIndex.class.php');
+    require_once($CFG->libdir . '/xmldb/classes/XMLDBStatement.class.php');
+
+
 ?>
