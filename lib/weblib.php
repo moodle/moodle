@@ -2612,6 +2612,11 @@ function print_continue($link, $return=false) {
 
     global $CFG;
 
+    // in case we are logging upgrade in admin/index.php stop it
+    if (function_exists('upgrade_log_finish')) {
+        upgrade_log_finish();
+    }
+
     $output = '';
 
     if (!$link) {
@@ -4240,6 +4245,11 @@ function error ($message, $link='') {
 
     print_simple_box($message, '', '', '', '', 'errorbox');
 
+    // in case we are logging upgrade in admin/index.php stop it
+    if (function_exists('upgrade_log_finish')) {
+        upgrade_log_finish();
+    }
+
     if (!$link) {
         if ( !empty($SESSION->fromurl) ) {
             $link = $SESSION->fromurl;
@@ -4252,11 +4262,6 @@ function error ($message, $link='') {
     print_footer();
     for ($i=0;$i<512;$i++) {  // Padding to help IE work with 404
         echo ' ';
-    }
-
-    // clean upgrade indicator if needed; buffer and log file will be closed automatically
-    if (!empty($_SESSION['upgraderunning'])) {
-        $_SESSION['upgraderunning'] = 0;
     }
 
     die;

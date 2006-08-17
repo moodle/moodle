@@ -336,7 +336,6 @@
                 if (set_config("backup_version", $backup_version) and set_config("backup_release", $backup_release)) {
                     notify(get_string("databasesuccess"), "green");
                     notify(get_string("databaseupgradebackups", "", $backup_version), "green");
-                    upgrade_log_finish();
                     print_continue($continueto);
                     exit;
                 } else {
@@ -362,7 +361,6 @@
                 if (set_config("backup_version", $backup_version) and set_config("backup_release", $backup_release)) {
                     notify(get_string("databasesuccess"), "green");
                     notify(get_string("databaseupgradebackups", "", $backup_version), "green");
-                    upgrade_log_finish();
                     print_continue($continueto);
                     exit;
                 } else {
@@ -376,6 +374,7 @@
         } else if ($backup_version < $CFG->backup_version) {
             upgrade_log_start();
             notify("WARNING!!!  The code you are using is OLDER than the version that made these databases!");
+            upgrade_log_finish();
         }
 
     }

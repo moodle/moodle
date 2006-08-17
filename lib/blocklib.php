@@ -919,7 +919,6 @@ function upgrade_blocks_db($continueto) {
             if (set_config('blocks_version', $blocks_version)) {
                 notify(get_string('databasesuccess'), 'notifysuccess');
                 notify(get_string('databaseupgradeblocks', '', $blocks_version), 'notifysuccess');
-                upgrade_log_finish();
                 print_continue($continueto);
                 exit;
             } else {
@@ -945,7 +944,6 @@ function upgrade_blocks_db($continueto) {
             if (set_config('blocks_version', $blocks_version)) {
                 notify(get_string('databasesuccess'), 'notifysuccess');
                 notify(get_string('databaseupgradeblocks', '', $blocks_version), 'notifysuccess');
-                upgrade_log_finish();
                 print_continue($continueto);
                 exit;
             } else {
@@ -959,6 +957,7 @@ function upgrade_blocks_db($continueto) {
     } else if ($blocks_version < $CFG->blocks_version) {
         upgrade_log_start();
         notify('WARNING!!!  The Blocks version you are using is OLDER than the version that made these databases!');
+        upgrade_log_finish();
     }
 
 }

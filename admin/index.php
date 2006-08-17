@@ -80,12 +80,6 @@
         $CFG->version = "";
     }
 
-/// Turn off time limits and try to flush everything all the time, sometimes upgrades can be slow.
-
-    @set_time_limit(0);
-    @ob_implicit_flush(true);
-    @ob_end_flush();
-
 /// Check if the main tables have been installed yet or not.
 
     if (! $tables = $db->Metatables() ) {    // No tables yet at all.
@@ -143,7 +137,6 @@
         } else {
             error("Error: Your database ($CFG->dbtype) is not yet fully supported by Moodle.  See the lib/db directory.");
         }
-        upgrade_log_finish();
         print_continue("index.php");
         die;
     }
@@ -191,7 +184,6 @@
                     if (set_config("version", $version)) {
                         remove_dir($CFG->dataroot . '/cache', true); // flush cache
                         notify($strdatabasesuccess, "green");
-                        upgrade_log_finish();
                         print_continue("index.php");
                         exit;
                     } else {
@@ -204,7 +196,9 @@
                 upgrade_log_finish();
             }
         } else if ($version < $CFG->version) {
+            upgrade_log_start();
             notify("WARNING!!!  The code you are using is OLDER than the version that made these databases!");
+            upgrade_log_finish();
         }
 
     } else {
@@ -216,7 +210,6 @@
             upgrade_log_start();
             $db->debug=true;
             if (main_upgrade(0)) {
-                upgrade_log_finish();
                 print_continue("index.php");
                 exit;
             } else {

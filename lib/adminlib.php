@@ -441,6 +441,7 @@ function upgrade_log_start() {
     session_write_close();               // from now on user can reload page - will be displayed warning
     make_upload_directory('upgradelogs');
     ob_start('upgrade_log_callback', 2); // function for logging to disk; flush each line of text ASAP
+    register_shutdown_function('upgrade_log_finish'); // in case somebody forgets to stop logging
 }
 
 /**
