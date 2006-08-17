@@ -27,8 +27,7 @@
 /// This class represent the base generator class where all the
 /// needed functions to generate proper SQL are defined. 
 
-/// If fact, this class generate SQL code to be used against MySQL
-/// so the rest of classes will inherit, by default, the same logic.
+/// The rest of classes will inherit, by default, the same logic.
 /// Functions will be overriden as needed to generate correct SQL.
 
 class XMLDBgenerator {
@@ -40,6 +39,8 @@ class XMLDBgenerator {
 
     var $quote_string = '"';   // String used to quote names
     var $quote_all    = false; // To decide if we want to quote all the names or only the reserved ones
+
+    var $statement_end = ';'; // String to be automatically added at the end of each statement
 
     var $integer_to_number = false;  // To create all the integers as NUMBER(x) (also called DECIMAL, NUMERIC...)
     var $float_to_number   = false;  // To create all the floats as NUMBER(x) (also called DECIMAL, NUMERIC...)
@@ -98,9 +99,12 @@ class XMLDBgenerator {
     }
 
     /**
-     * Given one correct XMLDBTable, returns the complete SQL lines to create it
+     * Given one correct XMLDBTable, returns the SQL statements
+     * to create it (inside one array)
      */
     function getCreateTableSQL($xmldb_table) {
+
+        $results = array();  //Array where all the sentences will be stored
 
     /// Table header
         $table = 'CREATE TABLE ' . $this->getEncQuoted($this->prefix . $xmldb_table->getName()) . ' (';
@@ -141,12 +145,16 @@ class XMLDBgenerator {
         $table = trim($table,',');
         $table .= "\n)";
 
+    /// Add the CREATE TABLE to results
+        $results[] = $table;
+
     /// Add comments if specified
         if ($this->add_table_comments) {
-            $table .= $this->getCommentSQL ($xmldb_table) . ";\n";
-        } else {
-            $table .= ";\n";
+            $comment = $this->getCommentSQL ($xmldb_table);
+        /// Add the COMMENT to results
+            $results = array_merge($results, $comment);
         }
+
     /// Add the indexes (each one, one statement)
         $indexcombs = array(); //To store all the key combinations used
         if ($xmldb_indexes = $xmldb_table->getIndexes()) {
@@ -157,13 +165,15 @@ class XMLDBgenerator {
                 if ($indextext = $this->getCreateIndexSQL($xmldb_table, $xmldb_index)) {
                 /// Only create the index if the combination hasn't been used before
                     if (!in_array($currentcomb, $indexcombs)) {
-                        $table .= "\n" . $indextext;
+                    /// Add the INDEX to the array
+                        $results = array_merge($results, $indextext);
                     }
                 }
             /// Add the index to the array of used combinations
                 $indexcombs[] = $currentcomb;
             }
         }
+
     /// Also, add the indexes needed from keys, based on configuration (each one, one statement)
         if ($xmldb_keys = $xmldb_table->getKeys()) {
             foreach ($xmldb_keys as $xmldb_key) {
@@ -199,7 +209,8 @@ class XMLDBgenerator {
                         $currentcomb = strtolower(implode('-', $fieldsarr));
                     /// Only create the index if the combination hasn't been used before
                         if (!in_array($currentcomb, $indexcombs)) {
-                            $table .= "\n" . $indextext;
+                        /// Add the INDEX to the array
+                            $results = array_merge($results, $indextext);
                         }
                     }
                 /// Add the index to the array of used combinations
@@ -213,16 +224,20 @@ class XMLDBgenerator {
         /// Iterate over fields looking for sequences
             foreach ($xmldb_fields as $xmldb_field) {
                 if ($xmldb_field->getSequence()) {
-                    $table .= "\n" . $this->getCreateSequenceSQL($xmldb_table, $xmldb_field);
+                /// returns an array of statements needed to create one sequence
+                    $sequence_sentences = $this->getCreateSequenceSQL($xmldb_table, $xmldb_field);
+                /// Add the SEQUENCE to the array
+                    $results = array_merge($results, $sequence_sentences);
                 }
             }
         }
 
-        return $table;
+        return $results;
     }
 
     /**
-     * Given one correct XMLDBIndex, returns the complete SQL line to create it
+     * Given one correct XMLDBIndex, returns the SQL statements
+     * needed to create it (in array)
      */
     function getCreateIndexSQL ($xmldb_table, $xmldb_index) {
 
@@ -236,9 +251,9 @@ class XMLDBgenerator {
         $index = 'CREATE' . $unique . ' INDEX ';
         $index .= $this->getNameForObject($xmldb_table->getName(), implode(', ', $xmldb_index->getFields()), $suffix);
         $index .= ' ON ' . $this->getEncQuoted($this->prefix . $xmldb_table->getName());
-        $index .= ' (' . implode(', ', $this->getEncQuoted($xmldb_index->getFields())) . ');';
+        $index .= ' (' . implode(', ', $this->getEncQuoted($xmldb_index->getFields())) . ')';
 
-        return $index;
+        return array($index);
     }
 
     /**
@@ -444,6 +459,22 @@ class XMLDBgenerator {
         }
     }
 
+    /** 
+     * Given one string (or one array), ends it with statement_end
+     */
+    function getEndedStatements ($input) {
+
+        if (is_array($input)) {
+            foreach ($input as $key=>$content) {
+                $input[$key] = $this->getEndedStatements($content);
+            }
+            return $input; 
+        } else {
+            $input = trim($input) . $this->statement_end;
+            return $input;
+        }
+    }
+
 /// ALL THESE FUNCTION MUST BE CUSTOMISED BY ALL THE XMLDGenerator classes
 
     /**
@@ -468,14 +499,15 @@ class XMLDBgenerator {
     }
 
     /**
-     * Returns the code needed to create one sequence for the xmldb_table and xmldb_field passes
+     * Returns the code (array of statements) needed 
+     * to create one sequence for the xmldb_table and xmldb_field passes
      */
     function getCreateSequenceSQL ($xmldb_table, $xmldb_field) {
         return 'Code for extra sequence SQL goes to getCreateSequenceSQL(). Can be disabled with sequence_extra_code=false';
     }
 
     /**
-     * Returns the code needed to add one comment to the table
+     * Returns the code (array of statements) needed to add one comment to the table
      */
     function getCommentSQL ($xmldb_table) {
         return 'Code for table comment goes to getCommentSQL(). Can be disabled with add_table_comments=false;';
@@ -488,7 +520,7 @@ class XMLDBgenerator {
     function getReservedWords() {
     /// Some wel-know reserved words
         $reserved_words = array (
-            'user', 'scale', 'type', 'comment'
+            'user', 'scale', 'type', 'comment', 'view', 'value', 'table', 'index', 'key', 'sequence', 'trigger'
         );  
         return $reserved_words;
     }

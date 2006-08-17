@@ -32,6 +32,8 @@ class XMLDBmssql extends XMLDBgenerator {
 
 /// Only set values that are different from the defaults present in XMLDBgenerator
 
+    var $statement_end = "\ngo"; // String to be automatically added at the end of each statement
+
     var $number_type = 'DECIMAL';    // Proper type for NUMBER(x) in this DB
 
     var $unsigned_allowed = false;    // To define in the generator must handle unsigned information

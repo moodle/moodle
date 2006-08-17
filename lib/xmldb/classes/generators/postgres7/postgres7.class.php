@@ -128,14 +128,14 @@ class XMLDBpostgres7 extends XMLDBgenerator {
     }
 
      /**
-      * Returns the code needed to add one comment to the table
+      * Returns the code (in array) needed to add one comment to the table
       */
      function getCommentSQL ($xmldb_table) {
 
-         $comment = ";\n\nCOMMENT ON TABLE " . $this->getEncQuoted($this->prefix . $xmldb_table->getName());
+         $comment = "COMMENT ON TABLE " . $this->getEncQuoted($this->prefix . $xmldb_table->getName());
          $comment.= " IS '" . substr($xmldb_table->getComment(), 0, 250) . "'";
 
-         return $comment;
+         return array($comment);
      }
 
     /**

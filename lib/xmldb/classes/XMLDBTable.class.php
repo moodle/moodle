@@ -718,11 +718,18 @@ class XMLDBTable extends XMLDBObject {
      * This function will return the SQL code needed to create the table for the specified DB and
      * prefix. Just one simple wrapper over generators.
      */
-    function getCreateTableSQL ($dbtype, $prefix) {
+    function getCreateTableSQL ($dbtype, $prefix, $statement_end=true) {
+
+        $results = array();
+
         $classname = 'XMLDB' . $dbtype;
         $generator = new $classname();
         $generator->setPrefix($prefix);
-        return $generator->getCreateTableSQL($this);
+        $results = $generator->getCreateTableSQL($this);
+        if ($statement_end) {
+            $results = $generator->getEndedStatements($results);
+        }
+        return $results;
     }
 }
 

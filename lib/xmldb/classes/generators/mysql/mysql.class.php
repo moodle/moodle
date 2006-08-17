@@ -146,16 +146,17 @@ class XMLDBmysql extends XMLDBGenerator {
     }
 
     /**
-     * Returns the code needed to add one comment to the table
+     * Returns the code (in array) needed to add one comment to the table
      */
     function getCommentSQL ($xmldb_table) {
 
         $comment = '';
         
         if ($xmldb_table->getComment()) {
+            $comment .= 'ALTER TABLE ' . $this->getEncQuoted($this->prefix . $xmldb_table->getName());
             $comment .= " COMMENT='" . substr($xmldb_table->getComment(), 0, 250) . "'";
         }
-        return $comment;
+        return array($comment);
     }
 
     /**

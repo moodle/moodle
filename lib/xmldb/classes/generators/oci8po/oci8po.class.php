@@ -120,33 +120,33 @@ class XMLDBoci8po extends XMLDBgenerator {
      */
     function getCreateSequenceSQL ($xmldb_table, $xmldb_field) {
 
-        $sequence = "\nCREATE SEQUENCE ";
+        $sequence = "CREATE SEQUENCE ";
         $sequence.= $this->getNameForObject($xmldb_table->getName(), $xmldb_field->getName(), 'seq');
         $sequence.= "\n    START WITH 1";
         $sequence.= "\n    INCREMENT BY 1";
-        $sequence.= "\n    NOMAXVALUE;";
+        $sequence.= "\n    NOMAXVALUE";
 
         $trigger_name = $this->getNameForObject($xmldb_table->getName(), $xmldb_field->getName(), 'trg');
  
-        $trigger = "\nCREATE OR REPLACE TRIGGER " . $trigger_name;
+        $trigger = "CREATE OR REPLACE TRIGGER " . $trigger_name;
         $trigger.= "\n    BEFORE INSERT";
         $trigger.= "\nON " . $this->getEncQuoted($this->prefix . $xmldb_table->getName());
         $trigger.= "\n    FOR EACH ROW";
         $trigger.= "\nBEGIN";
         $trigger.= "\n    SELECT " . $trigger_name . '.nextval INTO :new.' . $this->getEncQuoted($xmldb_field->getName()) . " FROM dual;";
-        $trigger.= "\nEND;";
-        return $sequence . "\n" . $trigger;
+        $trigger.= "\nEND";
+        return array($sequence, $trigger);
     }
 
      /**
-      * Returns the code needed to add one comment to the table
+      * Returns the code (in array) needed to add one comment to the table
       */
      function getCommentSQL ($xmldb_table) {
 
-         $comment = ";\n\nCOMMENT ON TABLE " . $this->getEncQuoted($this->prefix . $xmldb_table->getName());
+         $comment = "COMMENT ON TABLE " . $this->getEncQuoted($this->prefix . $xmldb_table->getName());
          $comment.= " IS '" . substr($xmldb_table->getComment(), 0, 250) . "'";
 
-         return $comment;
+         return array($comment);
      }
 
     /**
