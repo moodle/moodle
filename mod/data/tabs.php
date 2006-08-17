@@ -72,7 +72,7 @@
     *****************************/
     if ($currenttab == 'templates' and isset($mode)) {
         $inactive[] = 'templates';
-        $templatelist = array ('listtemplate', 'singletemplate', 'addtemplate', 'rsstemplate', 'csstemplate');
+        $templatelist = array ('listtemplate', 'singletemplate', 'addtemplate', 'rsstemplate', 'csstemplate', 'jstemplate');
 
         $row  = array();
         $currenttab ='';
