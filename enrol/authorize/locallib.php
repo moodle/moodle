@@ -323,14 +323,13 @@ function authorize_print_order_details($orderno)
         print_table($table);
     }
     elseif (!empty($cmdvoid) and confirm_sesskey()) { // VOID
-        if (!in_array(ORDER_VOID, $status->actions)) {
-            $a = new stdClass;
-            $a->action = $authstrs->void;
-            error(get_string('youcantdo', 'enrol_authorize', $a));
-        }
-
         $suborderno = optional_param('suborder', 0, PARAM_INT);
         if (empty($suborderno)) { // cancel original transaction.
+            if (!in_array(ORDER_VOID, $status->actions)) {
+                $a = new stdClass;
+                $a->action = $authstrs->void;
+                error(get_string('youcantdo', 'enrol_authorize', $a));
+            }
             if (empty($confirm)) {
                 $strvoidyes = get_string('voidyes', 'enrol_authorize');
                 $table->data[] = array("<b>$strs->confirm:</b>",
@@ -358,14 +357,22 @@ function authorize_print_order_details($orderno)
             }
         }
         else { // cancel refunded transaction
-            $suborder = get_record('enrol_authorize_refunds',
-                                   'id', $suborderno,
-                                   'orderid', $orderno,
-                                   'status', AN_STATUS_CREDIT);
+            $sql = "SELECT R.*, E.courseid FROM {$CFG->prefix}enrol_authorize_refunds R " .
+                   "INNER JOIN {$CFG->prefix}enrol_authorize E ON R.orderid = E.id " .
+                   "WHERE R.id = '$suborderno' AND R.orderid = '$orderno' AND R.status = '" .AN_STATUS_CREDIT. "'";
+
+            $suborder = get_record_sql($sql);
             if (!$suborder) { // not found
                 error("Transaction can not be voided because of already been voided.");
             }
             else {
+                $refundedstatus = authorize_get_status_action($suborder);
+                if (!in_array(ORDER_VOID, $refundedstatus->actions)) {
+                    $a = new stdClass;
+                    $a->action = $authstrs->void;
+                    error(get_string('youcantdo', 'enrol_authorize', $a));
+                }
+                unset($suborder->courseid);
                 if (empty($confirm)) {
                     $a = new stdClass;
                     $a->transid = $suborder->transid;
@@ -449,7 +456,12 @@ function authorize_print_order_details($orderno)
                               $strs->status,
                               $authstrs->settlementdate,
                               $strs->action);
-            $refunds = get_records('enrol_authorize_refunds', 'orderid', $orderno);
+
+            $sql = "SELECT R.*, E.courseid FROM {$CFG->prefix}enrol_authorize_refunds R " .
+                   "INNER JOIN {$CFG->prefix}enrol_authorize E ON R.orderid = E.id " .
+                   "WHERE R.orderid = '$orderno'";
+
+            $refunds = get_records_sql($sql);
             if ($refunds) {
                 foreach ($refunds as $rf) {
                     $substatus = authorize_get_status_action($rf);
