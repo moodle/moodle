@@ -149,7 +149,7 @@
 
 
 /// Add the HTML editor(s).
-    $usehtmleditor = can_use_html_editor() && ($mode != 'csstemplate');
+    $usehtmleditor = can_use_html_editor() && ($mode != 'csstemplate') && ($mode != 'jstemplate');
     if ($mode == 'listtemplate'){
         // Print the list template header.
         echo '<tr>';
