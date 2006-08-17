@@ -372,6 +372,7 @@ function is_directory_a_preset($directory) {
 	file_exists($directory.'rsstemplate.html') &&
 	file_exists($directory.'rsstitletemplate.html') &&
 	file_exists($directory.'csstemplate.css') && 
+	file_exists($directory.'jstemplate.js') && 
 	file_exists($directory.'preset.xml')) return true;
     else return false;
 }
@@ -413,6 +414,7 @@ function clean_preset($folder) {
 	unlink($folder.'/rsstemplate.html') &&
 	unlink($folder.'/rsstitletemplate.html') &&
 	unlink($folder.'/csstemplate.css') &&
+	unlink($folder.'/jstemplate.js') &&
 	unlink($folder.'/preset.xml')) return true;
     else return false;
 }
@@ -430,6 +432,7 @@ function data_presets_export($course, $cm, $data) {
     $rsstemplate        = fopen($tempfolder.'/rsstemplate.html', 'w');
     $rsstitletemplate   = fopen($tempfolder.'/rsstitletemplate.html', 'w');
     $csstemplate        = fopen($tempfolder.'/csstemplate.css', 'w');
+    $jstemplate         = fopen($tempfolder.'/jstemplate.js', 'w');
 
     fwrite($singletemplate, $data->singletemplate);
     fwrite($listtemplate, $data->listtemplate);
@@ -439,6 +442,7 @@ function data_presets_export($course, $cm, $data) {
     fwrite($rsstemplate, $data->rsstemplate);
     fwrite($rsstitletemplate, $data->rsstitletemplate);
     fwrite($csstemplate, $data->csstemplate);
+    fwrite($jstemplate, $data->jstemplate);
 
     fclose($singletemplate);
     fclose($listtemplate);
@@ -448,6 +452,7 @@ function data_presets_export($course, $cm, $data) {
     fclose($rsstemplate);
     fclose($rsstitletemplate);
     fclose($csstemplate);
+    fclose($jstemplate);
 
     /* All the display data is now done. Now assemble preset.xml */
     $fields = get_records('data_fields', 'dataid', $data->id);
@@ -497,6 +502,7 @@ function data_presets_export($course, $cm, $data) {
                       "rsstemplate.html",
                       "rsstitletemplate.html",
                       "csstemplate.css",
+		      "jstemplate.js",
                       "preset.xml");
 
     foreach ($filelist as $key => $file) {
@@ -591,6 +597,7 @@ class PresetImporter {
         $settings->rsstemplate        = file_get_contents($this->folder."/rsstemplate.html");
         $settings->rsstitletemplate   = file_get_contents($this->folder."/rsstitletemplate.html");
         $settings->csstemplate        = file_get_contents($this->folder."/csstemplate.css");
+        $settings->jstemplate         = file_get_contents($this->folder."/jstemplate.js");
 
         $settings->instance = $this->data->id;
 
@@ -665,7 +672,7 @@ class PresetImporter {
         global $CFG;
 
         list($settings, $newfields, $currentfields) = $this->get_settings();
-
+	print_r($settings);
         $preservedfields = array();
 
         /* Maps fields and makes new ones */
@@ -729,8 +736,8 @@ class PresetImporter {
             }
         }
 
-        data_update_instance($settings);
-
+        data_update_instance(addslashes_object($settings));
+      
         if (strstr($this->folder, "/temp/")) clean_preset($this->folder); /* Removes the temporary files */
         return true;
     }
