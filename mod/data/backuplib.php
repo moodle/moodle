@@ -90,12 +90,13 @@ function data_backup_one_mod($bf,$preferences,$data) {
     fwrite ($bf,full_tag("RSSARTICLES",4,false,$data->rssarticles));
     fwrite ($bf,full_tag("SINGLETEMPLATE",4,false,$data->singletemplate));
     fwrite ($bf,full_tag("LISTTEMPLATE",4,false,$data->listtemplate));
-    fwrite ($bf,full_tag("ADDTEMPLATE",4,false,$data->addtemplate));
-    fwrite ($bf,full_tag("RSSTEMPLATE",4,false,$data->rsstemplate));
-    fwrite ($bf,full_tag("CSSTEMPLATE",4,false,$data->csstemplate));
-    fwrite ($bf,full_tag("RSSTITLETEMPLATE",4,false,$data->rsstitletemplate));
     fwrite ($bf,full_tag("LISTTEMPLATEHEADER",4,false,$data->listtemplateheader));
     fwrite ($bf,full_tag("LISTTEMPLATEFOOTER",4,false,$data->listtemplatefooter));
+    fwrite ($bf,full_tag("ADDTEMPLATE",4,false,$data->addtemplate));
+    fwrite ($bf,full_tag("RSSTEMPLATE",4,false,$data->rsstemplate));
+    fwrite ($bf,full_tag("RSSTITLETEMPLATE",4,false,$data->rsstitletemplate));
+    fwrite ($bf,full_tag("CSSTEMPLATE",4,false,$data->csstemplate));
+    fwrite ($bf,full_tag("JSTEMPLATE",4,false,$data->jstemplate));
     fwrite ($bf,full_tag("APPROVAL",4,false,$data->approval));
     fwrite ($bf,full_tag("SCALE",4,false,$data->scale));
     fwrite ($bf,full_tag("ASSESSED",4,false,$data->assessed));

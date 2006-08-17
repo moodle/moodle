@@ -34,6 +34,7 @@ CREATE TABLE prefix_data (
   rsstemplate text NOT NULL default '',
   rsstitletemplate text NOT NULL default '',
   csstemplate text NOT NULL default '',
+  jstemplate text NOT NULL default '',
   approval tinyint(4) unsigned NOT NULL default '0',
   scale int(10) NOT NULL default '0',
   assessed int(10) unsigned NOT NULL default '0',

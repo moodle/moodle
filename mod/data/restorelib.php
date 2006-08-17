@@ -68,12 +68,13 @@ function data_restore_mods($mod,$restore) {
         $database->rssarticles = backup_todb($info['MOD']['#']['RSSARTICLES']['0']['#']);
         $database->singletemplate = backup_todb($info['MOD']['#']['SINGLETEMPLATE']['0']['#']);
         $database->listtemplate = backup_todb($info['MOD']['#']['LISTTEMPLATE']['0']['#']);
-        $database->addtemplate = backup_todb($info['MOD']['#']['ADDTEMPLATE']['0']['#']);
-        $database->rsstemplate = backup_todb($info['MOD']['#']['RSSTEMPLATE']['0']['#']);
-        $database->csstemplate = backup_todb($info['MOD']['#']['CSSTEMPLATE']['0']['#']);
-        $database->rsstitletemplate = backup_todb($info['MOD']['#']['RSSTITLETEMPLATE']['0']['#']);
         $database->listtemplateheader = backup_todb($info['MOD']['#']['LISTTEMPLATEHEADER']['0']['#']);
         $database->listtemplatefooter = backup_todb($info['MOD']['#']['LISTTEMPLATEFOOTER']['0']['#']);
+        $database->addtemplate = backup_todb($info['MOD']['#']['ADDTEMPLATE']['0']['#']);
+        $database->rsstemplate = backup_todb($info['MOD']['#']['RSSTEMPLATE']['0']['#']);
+        $database->rsstitletemplate = backup_todb($info['MOD']['#']['RSSTITLETEMPLATE']['0']['#']);
+        $database->csstemplate = backup_todb($info['MOD']['#']['CSSTEMPLATE']['0']['#']);
+        $database->jstemplate = backup_todb($info['MOD']['#']['JSTEMPLATE']['0']['#']);
         $database->approval = backup_todb($info['MOD']['#']['APPROVAL']['0']['#']);
         $database->scale = backup_todb($info['MOD']['#']['SCALE']['0']['#']);
         $database->assessed = backup_todb($info['MOD']['#']['ASSESSED']['0']['#']);

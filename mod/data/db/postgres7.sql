@@ -23,6 +23,7 @@ CREATE TABLE prefix_data (
   rsstemplate text NOT NULL default '',
   rsstitletemplate text NOT NULL default '',
   csstemplate text NOT NULL default '',
+  jstemplate text NOT NULL default '',
   approval integer NOT NULL default '0',
   scale integer NOT NULL default '0',
   assessed integer NOT NULL default '0',
