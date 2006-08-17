@@ -322,7 +322,7 @@ class XMLDBgenerator {
             case XMLDB_KEY_UNIQUE:
                 if ($this->unique_keys) {
                     $key = $this->getNameForObject($xmldb_table->getName(), implode(', ', $xmldb_key->getFields()), 'uk');
-                    $key .= ' UNIQUE KEY (' . implode(', ', $this->getEncQuoted($xmldb_key->getFields())) . ')';
+                    $key .= ' UNIQUE (' . implode(', ', $this->getEncQuoted($xmldb_key->getFields())) . ')';
                 }
                 break;
             case XMLDB_KEY_FOREIGN:
