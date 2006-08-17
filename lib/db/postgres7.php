@@ -1700,6 +1700,7 @@ function main_upgrade($oldversion=0) {
         modify_database('',"CREATE INDEX prefix_role_names_roleid_idx ON prefix_role_names (roleid);");
         modify_database('',"CREATE INDEX prefix_role_names_contextid_idx ON prefix_role_names (contextid);");
         modify_database('',"CREATE UNIQUE INDEX prefix_role_names_roleidcontextid_idx ON prefix_role_names (roleid, contextid);");    
+    }
         
     if ($oldversion < 2006081700) { 
         modify_database('',"DROP TABLE prefix_role_deny_grant");
