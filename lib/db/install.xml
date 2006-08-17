@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20060816" COMMENT="XMLDB file for core Moodle tables">
+<XMLDB PATH="lib/db" VERSION="20060817" COMMENT="XMLDB file for core Moodle tables">
   <TABLES>
     <TABLE NAME="config" COMMENT="Moodle configuration variables" NEXT="config_plugins">
       <FIELDS>
@@ -902,7 +902,7 @@
         <INDEX NAME="instanceid" UNIQUE="false" FIELDS="instanceid" PREVIOUS="level-instanceid"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="capabilities" COMMENT="this defines all capabilities" PREVIOUS="context" NEXT="role_assignments">
+    <TABLE NAME="capabilities" COMMENT="this defines all capabilities" PREVIOUS="context" NEXT="role_allow_assign">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="name"/>
         <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="captype"/>
@@ -915,7 +915,37 @@
         <KEY NAME="name" TYPE="unique" FIELDS="name" PREVIOUS="primary"/>
       </KEYS>
     </TABLE>
-    <TABLE NAME="role_assignments" COMMENT="assigning roles to different context" PREVIOUS="capabilities" NEXT="role_capabilities">
+    <TABLE NAME="role_allow_assign" COMMENT="this defines what role can assign what role" PREVIOUS="capabilities" NEXT="role_allow_override">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="roleid"/>
+        <FIELD NAME="roleid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="allowassign"/>
+        <FIELD NAME="allowassign" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="roleid"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for role_allow_assign" NEXT="roleid"/>
+        <KEY NAME="roleid" TYPE="foreign" FIELDS="roleid" REFTABLE="role" REFFIELDS="id" PREVIOUS="primary" NEXT="allowassign"/>
+        <KEY NAME="allowassign" TYPE="foreign" FIELDS="allowassign" REFTABLE="role" REFFIELDS="id" PREVIOUS="roleid"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="roleid-allowassign" UNIQUE="true" FIELDS="roleid, allowassign"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="role_allow_override" COMMENT="this defines what role can override what role" PREVIOUS="role_allow_assign" NEXT="role_assignments">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="roleid"/>
+        <FIELD NAME="roleid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="allowoverride"/>
+        <FIELD NAME="allowoverride" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="roleid"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for role_allow_override" NEXT="roleid"/>
+        <KEY NAME="roleid" TYPE="foreign" FIELDS="roleid" REFTABLE="role" REFFIELDS="id" PREVIOUS="primary" NEXT="allowoverride"/>
+        <KEY NAME="allowoverride" TYPE="foreign" FIELDS="allowoverride" REFTABLE="role" REFFIELDS="id" PREVIOUS="roleid"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="roleid-allowoverride" UNIQUE="true" FIELDS="roleid, allowoverride"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="role_assignments" COMMENT="assigning roles to different context" PREVIOUS="role_allow_override" NEXT="role_capabilities">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="roleid"/>
         <FIELD NAME="roleid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="contextid"/>
@@ -940,7 +970,7 @@
         <INDEX NAME="sortorder" UNIQUE="false" FIELDS="sortorder" PREVIOUS="contextid-roleid-userid"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="role_capabilities" COMMENT="permission has to be signed, overriding a capability for a particular role in a particular context" PREVIOUS="role_assignments" NEXT="role_deny_grant">
+    <TABLE NAME="role_capabilities" COMMENT="permission has to be signed, overriding a capability for a particular role in a particular context" PREVIOUS="role_assignments" NEXT="role_names">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="contextid"/>
         <FIELD NAME="contextid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="roleid"/>
@@ -961,22 +991,7 @@
         <INDEX NAME="roleid-contextid-capability" UNIQUE="true" FIELDS="roleid, contextid, capability"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="role_deny_grant" COMMENT="this defines what role can touch (assign, override) what role" PREVIOUS="role_capabilities" NEXT="role_names">
-      <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="roleid"/>
-        <FIELD NAME="roleid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="unviewableroleid"/>
-        <FIELD NAME="unviewableroleid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="roleid"/>
-      </FIELDS>
-      <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for role_deny_grant" NEXT="roleid"/>
-        <KEY NAME="roleid" TYPE="foreign" FIELDS="roleid" REFTABLE="role" REFFIELDS="id" PREVIOUS="primary" NEXT="unviewableroleid"/>
-        <KEY NAME="unviewableroleid" TYPE="foreign" FIELDS="unviewableroleid" REFTABLE="role" REFFIELDS="id" PREVIOUS="roleid"/>
-      </KEYS>
-      <INDEXES>
-        <INDEX NAME="roleid-unviewableroleid" UNIQUE="true" FIELDS="roleid, unviewableroleid"/>
-      </INDEXES>
-    </TABLE>
-    <TABLE NAME="role_names" COMMENT="role names in native strings" PREVIOUS="role_deny_grant">
+    <TABLE NAME="role_names" COMMENT="role names in native strings" PREVIOUS="role_capabilities">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="roleid"/>
         <FIELD NAME="roleid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="contextid"/>
