@@ -24,6 +24,8 @@
     require_once('../config.php');
     include_once($CFG->dirroot.'/lib/adminlib.php');  // Contains various admin-only functions
 
+    include_once($CFG->dirroot.'/lib/ddllib.php'); // Install/upgrade related functions
+
     $id             = optional_param('id', '', PARAM_ALPHANUM);
     $confirmupgrade = optional_param('confirmupgrade', 0, PARAM_BOOL);
     $agreelicence = optional_param('agreelicence',0, PARAM_BOOL);
