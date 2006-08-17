@@ -148,7 +148,8 @@
 </tr>
 <?php
     //Only show rss parameters if rss is activated at site and forum levels
-    if ($CFG->enablerssfeeds && $CFG->forum_enablerssfeeds) {
+    if ($CFG->enablerssfeeds
+            && isset($CFG->forum_enablerssfeeds) && $CFG->forum_enablerssfeeds) {
         echo '<tr valign="top">';
         echo '<td align="right"><b>'.get_string('rsstype').':</b></td>';
         echo '<td>';
