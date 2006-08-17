@@ -277,6 +277,7 @@ class XMLDBgenerator {
             }
         }
     /// Calculate the not null clause
+        $notnull = '';
         if ($xmldb_field->getNotNull()) {
             $notnull = ' NOT NULL';
         }
