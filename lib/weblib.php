@@ -3684,13 +3684,13 @@ function update_categories_button() {
     if (isadmin()) {
         if (!empty($USER->categoryediting)) {
             $string = get_string('turneditingoff');
-            $edit = 'off';
+            $categoryedit = 'off';
         } else {
             $string = get_string('turneditingon');
-            $edit = 'on';
+            $categoryedit = 'on';
         }
         return "<form target=\"$CFG->framename\" method=\"get\" action=\"$CFG->wwwroot/course/index.php\">".
-               '<input type="hidden" name="edit" value="'. $edit .'" />'.
+               '<input type="hidden" name="categoryedit" value="'. $categoryedit .'" />'.
                '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />'.
                '<input type="submit" value="'. $string .'" /></form>';
     }
