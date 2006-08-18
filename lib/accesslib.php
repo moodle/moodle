@@ -1599,4 +1599,58 @@ function get_user_roles_in_context($userid, $contextid){
     }
     return rtrim($rolestring, ', ');
 }
+
+
+// returns bool
+function user_can_override($context, $targetroleid) {
+    // first check if user has override capability
+    // if not return false;
+    if (!has_capability('moodle/role:override', $context)) {
+        return false;  
+    }
+    // pull out all active roles of this user from this context(or above)
+    $userroles = get_user_roles($context);
+    foreach ($userroles as $userrole) {
+        // if any in the role_allow_override table, then it's ok
+        if (get_record('role_allow_override', 'roleid', $userrole->roleid, 'allowoverride', $targetroleid)) {
+            return true;
+        }
+    }
+    
+    return false;
+  
+}
+
+function user_can_assign($context, $targetroleid) {
+    
+    // first check if user has override capability
+    // if not return false;
+    if (!has_capability('moodle/role:assign', $context)) {
+        return false;  
+    }
+    // pull out all active roles of this user from this context(or above)
+    $userroles = get_user_roles($context);
+    foreach ($userroles as $userrole) {
+        // if any in the role_allow_override table, then it's ok
+        if (get_record('role_allow_assign', 'roleid', $userrole->roleid, 'allowassign', $targetroleid)) {
+            return true;
+        }
+    }
+    
+    return false; 
+}
+
+// gets all the user roles assigned in this context, or higher
+function get_user_roles($context) {
+
+    global $USER, $CFG, $db;
+    
+    $parents = get_parent_contexts($context);
+    $parentlists = '('.implode(',' , $parents).')';
+    return get_records_sql('SELECT *
+                             FROM '.$CFG->prefix.'role_assignments ra
+                             WHERE ra.userid = '.$USER->id.'
+                             AND ra.contextid IN '.$parentlists);
+}
+
 ?>

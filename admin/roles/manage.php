@@ -41,6 +41,9 @@
 //                 $editingstr
 //                 ");
 
+    $currenttab = 'manage';
+    include_once('managetabs.php');
+
     // form processing, editing a role, adding a role or deleting a role
     if ($action && confirm_sesskey()) {
         

@@ -31,6 +31,13 @@
 
     $context = get_record('context', 'id', $contextid);
     
+    // role overriding permission checking
+    if ($roleid) {
+        if (!user_can_override($context, $roleid)) {
+            error ('you can not override this role in this context');
+        }  
+    }
+    
     $participants = get_string("participants");
     $user = get_record('user', 'id', $userid);
     $fullname = fullname($user, isteacher($course->id));
@@ -115,7 +122,9 @@
      // this needs to check capability too
     $role = get_records('role');
     foreach ($role as $rolex) {
-        $options[$rolex->id] = $rolex->name;
+        if (user_can_override($context, $rolex->id)) {
+            $options[$rolex->id] = $rolex->name;
+        }
     }
 
     print ('<form name="rolesform" action="override.php" method="post">');
