@@ -51,6 +51,23 @@ class datalib_test extends prefix_changing_test_case {
         $this->assertEqual(where_clause('f1', 'v1', 'f2', 2), "WHERE f1 = 'v1' AND f2 = '2'");
         $this->assertEqual(where_clause('f1', 'v1', 'f2', 1.75, 'f3', 'v3'), "WHERE f1 = 'v1' AND f2 = '1.75' AND f3 = 'v3'");
     }
+    
+    function test_record_exists() {
+        $this->assertTrue(record_exists($this->table, 'number', 101, 'id', 1));
+        $this->assertFalse(record_exists($this->table, 'number', 102, 'id', 1));
+    }
+
+    function test_record_exists_select() {
+        $this->assertTrue(record_exists_select($this->table, 'number = 101 AND id = 1'));
+        $this->assertFalse(record_exists_select($this->table, 'number = 102 AND id = 1'));
+    }
+
+    function test_record_exists_sql() {
+        global $CFG;
+        $this->assertTrue(record_exists_sql("SELECT * FROM {$CFG->prefix}$this->table WHERE number = 101 AND id = 1"));
+        $this->assertFalse(record_exists_sql("SELECT * FROM {$CFG->prefix}$this->table WHERE number = 102 AND id = 1"));
+    }
+
 
     function test_get_record() {
         // Get particular records.
