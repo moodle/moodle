@@ -9,7 +9,7 @@
     $id       = required_param('id', PARAM_INT);          // Category id
     $page     = optional_param('page', 0, PARAM_INT);     // which page to show
     $perpage  = optional_param('perpage', 20, PARAM_INT); // how many per page
-    $edit     = optional_param('edit', -1, PARAM_BOOL);
+    $categoryedit     = optional_param('categoryedit', -1, PARAM_BOOL);
     $hide     = optional_param('hide', 0, PARAM_INT);
     $show     = optional_param('show', 0, PARAM_INT);
     $moveup   = optional_param('moveup', 0, PARAM_INT);
@@ -32,7 +32,7 @@
 
     if (iscreator()) {
         if ($edit !== -1) {
-            $USER->categoryediting = $edit;
+            $USER->categoryediting = $categoryedit;
         }
         $navbaritem = update_category_button($category->id);
 
@@ -89,10 +89,11 @@
 
     if ($creatorediting) {
         if ($adminediting) {
-            print_header("$site->shortname: $category->name", "$site->fullname: $strcourses",
-                         "<a href=\"../$CFG->admin/index.php\">$stradministration</a> -> ".
-                         "<a href=\"index.php\">$strcategories</a> -> $category->name",
-                         "", "", true, $navbaritem);
+            // modify this to treat this as an admin page
+
+            require_once($CFG->dirroot . '/admin/adminlib.php');
+            admin_externalpage_setup('coursemgmt');
+            admin_externalpage_print_header();
         } else {
             print_header("$site->shortname: $category->name", "$site->fullname: $strcourses",
                          "<a href=\"index.php\">$strcategories</a> -> $category->name", "", "", true, $navbaritem);
@@ -441,7 +442,11 @@
 	print_course_search();
     
     echo "</center>";
-
-    print_footer();
+    
+    if ($adminediting) {
+        admin_externalpage_print_footer();
+    } else {
+        print_footer();
+    }
 
 ?>

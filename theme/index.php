@@ -1,18 +1,11 @@
 <?php // $Id$
 
     require_once("../config.php");
+    require_once($CFG->dirroot . '/admin/adminlib.php');
 
     $choose = optional_param("choose",'',PARAM_FILE);   // set this theme as default
 
-    if (! $site = get_site()) {
-        error("Site doesn't exist!");
-    }
-
-    require_login();
-
-    if (!isadmin()) {
-        error("You must be an administrator to change themes.");
-    }
+    admin_externalpage_setup('themeselector');
 
     unset($SESSION->theme);
 
@@ -34,10 +27,7 @@
         }
         if (set_config("theme", $choose)) {
             theme_setup($choose);
-
-            print_header("$site->shortname: $strthemes", $site->fullname, 
-                 "<a href=\"$CFG->wwwroot/$CFG->admin/index.php\">$stradministration</a> -> ".
-                 "<a href=\"$CFG->wwwroot/$CFG->admin/configure.php\">$strconfiguration</a> -> $strthemes");
+              admin_externalpage_print_header();
             print_heading(get_string("themesaved"));
             print_continue("$CFG->wwwroot/");
 
@@ -52,16 +42,14 @@
                 echo format_text(implode('', $file), FORMAT_MOODLE);
                 print_simple_box_end();
             }
-            print_footer();
+              admin_externalpage_print_footer();
             exit;
         } else {
             error("Could not set the theme!");
         }
     }
 
-    print_header("$site->shortname: $strthemes", $site->fullname, 
-                 "<a href=\"$CFG->wwwroot/$CFG->admin/index.php\">$stradministration</a> -> ".
-                 "<a href=\"$CFG->wwwroot/$CFG->admin/configure.php\">$strconfiguration</a> -> $strthemes");
+              admin_externalpage_print_header('themeselector');
 
 
     print_heading($strthemes);
@@ -143,6 +131,7 @@
     $options["sub"] = "themes";
     print_single_button("$CFG->wwwroot/doc/index.php", $options, get_string("howtomakethemes"));
     echo "</div>";
-    print_footer();
+    admin_externalpage_print_footer();
+
 
 ?>

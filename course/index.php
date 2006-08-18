@@ -5,7 +5,7 @@
     require_once("../config.php");
     require_once("lib.php");
 
-    $edit     = optional_param('edit', -1,PARAM_BOOL);
+    $categoryedit = optional_param('categoryedit', -1,PARAM_BOOL);
     $delete   = optional_param('delete',0,PARAM_INT);
     $hide     = optional_param('hide',0,PARAM_INT);
     $show     = optional_param('show',0,PARAM_INT);
@@ -26,8 +26,8 @@
     }
 
     if (isadmin()) {
-        if ($edit !== -1) {
-            $USER->categoryediting = $edit;
+        if ($categoryedit !== -1) {
+            $USER->categoryediting = $categoryedit;
         }
         $adminediting = !empty($USER->categoryediting);
     } else {
@@ -74,11 +74,10 @@
 
 /// From now on is all the admin functions
 
-    require_login();
 
-    if (!isadmin()) {
-        error("Only administrators can use this page!");
-    }
+    require_once($CFG->dirroot . '/admin/adminlib.php');
+    admin_externalpage_setup('coursemgmt');
+
 
 /// Print headings
 
@@ -91,9 +90,9 @@
     $straction = get_string("action");
     $straddnewcategory = get_string("addnewcategory");
 
-    print_header("$site->shortname: $strcategories", "$site->fullname", 
-                 "<a href=\"../$CFG->admin/index.php\">$stradministration</a> -> $strcategories",
-                 "addform.addcategory", "", true, update_categories_button());
+
+
+    admin_externalpage_print_header();
 
     print_heading($strcategories);
 
@@ -324,7 +323,7 @@
     echo "<br />";
     echo "</center>";
 
-    print_footer();
+    admin_externalpage_print_footer();
 
 
 
@@ -352,7 +351,7 @@ function print_category_edit($category, $displaylist, $parentslist, $depth=-1, $
             echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
         }
         $linkcss = $category->visible ? "" : " class=\"dimmed\" ";
-        echo "<a $linkcss title=\"$str->edit\" href=\"category.php?id=$category->id&amp;edit=on&amp;sesskey=$USER->sesskey\">$category->name</a>";
+        echo "<a $linkcss title=\"$str->edit\" href=\"category.php?id=$category->id&amp;categoryedit=on&amp;sesskey=$USER->sesskey\">$category->name</a>";
         echo "</td>";
 
         echo "<td align=\"right\">$category->coursecount</td>";
