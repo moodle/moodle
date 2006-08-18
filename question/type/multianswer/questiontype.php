@@ -236,14 +236,11 @@ class embedded_cloze_qtype extends default_questiontype {
                     case 'numerical':
                         $testedstate = clone($state);
                         $testedstate->responses[''] = $response;
-                        $raw_grade   = 0;
                         foreach ($answers as $answer) {
                             if($QTYPES[$wrapped->qtype]
-                             ->test_response($wrapped, $testedstate, $answer)) {
-                                if (empty($raw_grade) || $raw_grade < $answer->fraction) {
-                                    $chosenanswer = clone($answer);
-                                    $raw_grade = $answer->fraction;
-                                }
+                                    ->test_response($wrapped, $testedstate, $answer)) {
+                                $chosenanswer = clone($answer);
+                                break;
                             }
                         }
                         break;
@@ -251,15 +248,12 @@ class embedded_cloze_qtype extends default_questiontype {
                         $testedstate = clone($state);
                         $testedstate->responses[''] = $response;
                         $teststate   = clone($state);
-                        $raw_grade   = 0;
                         foreach ($answers as $answer) {
                             $teststate->responses[''] = trim($answer->answer);
                             if($QTYPES[$wrapped->qtype]
-                             ->compare_responses($wrapped, $testedstate, $teststate)) {
-                                if (empty($raw_grade) || $raw_grade < $answer->fraction) {
-                                    $chosenanswer = clone($answer);
-                                    $raw_grade = $answer->fraction;
-                                }
+                                    ->compare_responses($wrapped, $testedstate, $teststate)) {
+                                $chosenanswer = clone($answer);
+                                break;
                             }
                         }
                         break;
