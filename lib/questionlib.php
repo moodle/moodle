@@ -635,16 +635,15 @@ function get_question_states(&$questions, $cmoptions, $attempt) {
 *
 * Extends the state objects for a question by calling
 * {@link restore_session_and_responses()}
-* @return boolean         Represents success or failure
 * @param object $question The question for which the state is needed
-* @param object $state   The state as loaded from the database
+* @param object $state The state as loaded from the database
+* @return boolean Represents success or failure
 */
 function restore_question_state(&$question, &$state) {
     global $QTYPES;
 
     // initialise response to the value in the answer field
-    $state->answer = addslashes($state->answer);
-    $state->responses = array('' => $state->answer);
+    $state->responses = array('' => addslashes($state->answer));
     unset($state->answer);
     $state->comment = isset($state->comment) ? addslashes($state->comment) : '';
 
@@ -657,7 +656,7 @@ function restore_question_state(&$question, &$state) {
 
     // Load the question type specific data
     return $QTYPES[$question->qtype]
-     ->restore_session_and_responses($question, $state);
+            ->restore_session_and_responses($question, $state);
 
 }
 
@@ -697,7 +696,7 @@ function save_question_session(&$question, &$state) {
 
     // create or update the session
     if (!$session = get_record('question_sessions', 'attemptid',
-     $state->attempt, 'questionid', $question->id)) {
+            $state->attempt, 'questionid', $question->id)) {
         $session->attemptid = $state->attempt;
         $session->questionid = $question->id;
         $session->newest = $state->id;
@@ -831,7 +830,8 @@ function regrade_question_in_attempt($question, $attempt, $cmoptions, $verbose=f
 
     // load all states for this question in this attempt, ordered in sequence
     if ($states = get_records_select('question_states',
-     "attempt = '{$attempt->uniqueid}' AND question = '{$question->id}'", 'seq_number ASC')) {
+            "attempt = '{$attempt->uniqueid}' AND question = '{$question->id}'",
+            'seq_number ASC')) {
         $states = array_values($states);
 
         // Subtract the grade for the latest state from $attempt->sumgrades to get the
@@ -856,8 +856,8 @@ function regrade_question_in_attempt($question, $attempt, $cmoptions, $verbose=f
 
             // Change event to submit so that it will be reprocessed
             if (QUESTION_EVENTCLOSE == $states[$j]->event
-                       or QUESTION_EVENTGRADE == $states[$j]->event
-                       or QUESTION_EVENTCLOSEANDGRADE == $states[$j]->event) {
+                    or QUESTION_EVENTGRADE == $states[$j]->event
+                    or QUESTION_EVENTCLOSEANDGRADE == $states[$j]->event) {
                 $action->event = QUESTION_EVENTSUBMIT;
 
             // By default take the event that was saved in the database
@@ -866,12 +866,13 @@ function regrade_question_in_attempt($question, $attempt, $cmoptions, $verbose=f
             }
 
             if ($action->event == QUESTION_EVENTMANUALGRADE) {
-                question_process_comment($question, $replaystate, $attempt, $replaystate->comment, $states[$j]->grade);
+                question_process_comment($question, $replaystate, $attempt,
+                        $replaystate->comment, $states[$j]->grade);
             } else {
 
                 // Reprocess (regrade) responses
-                if (!question_process_responses($question, $replaystate, $action, $cmoptions,
-                 $attempt)) {
+                if (!question_process_responses($question, $replaystate,
+                        $action, $cmoptions, $attempt)) {
                     $verbose && notify("Couldn't regrade state #{$state->id}!");
                 }
             }
@@ -879,8 +880,8 @@ function regrade_question_in_attempt($question, $attempt, $cmoptions, $verbose=f
             // We need rounding here because grades in the DB get truncated
             // e.g. 0.33333 != 0.3333333, but we want them to be equal here
             if ((round((float)$replaystate->raw_grade, 5) != round((float)$states[$j]->raw_grade, 5))
-                  or (round((float)$replaystate->penalty, 5) != round((float)$states[$j]->penalty, 5))
-                  or (round((float)$replaystate->grade, 5) != round((float)$states[$j]->grade, 5))) {
+                    or (round((float)$replaystate->penalty, 5) != round((float)$states[$j]->penalty, 5))
+                    or (round((float)$replaystate->grade, 5) != round((float)$states[$j]->grade, 5))) {
                 $changed = true;
             }
 
@@ -1141,7 +1142,6 @@ function question_process_comment($question, &$state, &$attempt, $comment, $grad
     if (!set_field('question_sessions', 'comment', $comment, 'attemptid', $attempt->uniqueid, 'questionid', $question->id)) {
         error("Cannot save comment");
     }
-
     // If the teacher has changed the grade then update the attempt and the state
     // The modified attempt is stored to the database, the state not yet but the
     // $state->changed flag is set 
