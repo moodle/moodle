@@ -61,15 +61,17 @@ class page_admin extends page_base {
     // has to be fixed. i know there's a "proper" way to do this
     function user_is_editing() { 
         global $USER;
-        return (($_GET["edit"] == 'on') && isadmin());
+        return $USER->adminediting;
     }
 
     function url_get_path() { 
-        global $ADMIN, $root;
-        if (!$root) {
-            $root = $ADMIN->locate($this->section);
+        global $ADMIN, $CFG;
+        $root = $ADMIN->locate($this->section);
+        if ($root instanceof admin_externalpage) {
+            return $root->url;
+        } else {
+            return ($CFG->admin . '/settings.php?section=' . $this->section);
         }
-        return $root->url;
     }
 
     function url_get_parameters() {  // only handles parameters relevant to the admin pagetype
@@ -98,7 +100,7 @@ class page_admin extends page_base {
         // should this rely on showblocksonmodpages in any way? after all, teachers aren't accessing this...
         if ($this->user_allowed_editing()) {
             $buttons = '<table><tr><td><form target="' . $CFG->framename . '" method="get" action="' . $this->url_get_path() . '">'.
-                       '<input type="hidden" name="edit" value="'.($this->user_is_editing()?'off':'on').'" />'.
+                       '<input type="hidden" name="adminedit" value="'.($this->user_is_editing()?'off':'on').'" />'.
                        '<input type="hidden" name="section" value="'.$this->section.'" />'.
                        '<input type="submit" value="'.get_string($this->user_is_editing()?'blockseditoff':'blocksediton').'" /></form></td>' . 
                        '</tr></table>';
@@ -106,7 +108,7 @@ class page_admin extends page_base {
             $buttons = '&nbsp;';
         }
 		
-/*ML*/  print_header("$SITE->shortname: " . implode(": ",$this->visiblepathtosection), $SITE->fullname, implode(" -> ",$this->visiblepathtosection),'', '', true, $buttons, '');
+        print_header("$SITE->shortname: " . implode(": ",$this->visiblepathtosection), $SITE->fullname, implode(" -> ",$this->visiblepathtosection),'', '', true, $buttons, '');
     }
 
     function get_type() {

@@ -15,6 +15,20 @@ if ($site = get_site()) { //d
     require_login(); //d
 } //d
 
+$adminediting = optional_param('adminedit', PARAM_BOOL);
+   
+if (!isset($USER->adminediting)) {
+    $USER->adminediting = true;
+}
+
+if ($PAGE->user_allowed_editing()) {
+    if ($adminediting == 'on') {
+        $USER->adminediting = true;
+    } elseif ($adminediting == 'off') {
+        $USER->adminediting = false;
+    }
+}
+
 // Question: what pageid should be used for this?
 
 define('TEMPORARY_ADMIN_PAGE_ID',26); //d

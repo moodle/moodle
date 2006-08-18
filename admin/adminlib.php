@@ -189,6 +189,7 @@ class admin_settingpage implements part_of_admin_tree {
 	}
 	
 	function admin_settingpage($name, $visiblename, $role = 'moodle/legacy:admin') {
+	    global $CFG;
 	    $this->settings = new stdClass();
 		$this->name = $name;
 		$this->visiblename = $visiblename;
@@ -1167,7 +1168,7 @@ class admin_setting_special_perfdebug extends admin_setting_configcheckbox {
 // N.B.: THIS FUNCTION HANDLES AUTHENTICATION
 function admin_externalpage_setup($section) {
 
-    global $CFG, $ADMIN, $PAGE, $_GET, $root;
+    global $CFG, $ADMIN, $PAGE, $_GET, $USER;
     
     require_once($CFG->libdir . '/blocklib.php');
     require_once($CFG->dirroot . '/admin/pagelib.php');
@@ -1199,21 +1200,35 @@ function admin_externalpage_setup($section) {
     }
 
     if (!($root instanceof admin_externalpage)) {
-        error('Section does not exist, is invalid, or should not be accessed via this URL.');
+        error(get_string('sectionerror','admin'));
     	die;
     }
 
     // this eliminates our need to authenticate on the actual pages
     if (!($root->check_access())) {
-        error('Access denied.');
+        error(get_string('accessdenied', 'admin'));
     	die;
+    }
+    
+    $adminediting = optional_param('adminedit', PARAM_BOOL);
+    
+    if (!isset($USER->adminediting)) {
+        $USER->adminediting = true;
+    }
+    
+    if ($PAGE->user_allowed_editing()) {
+        if ($adminediting == 'on') {
+            $USER->adminediting = true;
+        } elseif ($adminediting == 'off') {
+            $USER->adminediting = false;
+        }
     }
     
 }
 
 function admin_externalpage_print_header() {
 
-    global $CFG, $ADMIN, $PAGE, $_GET, $root;
+    global $CFG, $ADMIN, $PAGE;
     
     $pageblocks = blocks_setup($PAGE);
 

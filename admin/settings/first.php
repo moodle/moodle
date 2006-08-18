@@ -24,6 +24,10 @@ $ADMIN->add('plugins', new admin_externalpage('modulemanagement', get_string('mo
 
 $ADMIN->add('root', new admin_category('unsorted', 'Unsorted', 999));
 
+if (!isset($site)) {
+    $site = get_site();
+}
+
 $ADMIN->add('unsorted', new admin_externalpage('sitefiles', get_string('sitefiles'), $CFG->wwwroot . '/files/index.php?id=' . $site->id));
 $ADMIN->add('unsorted', new admin_externalpage('stickyblocks', get_string('stickyblocks'), $CFG->wwwroot . '/admin/stickyblocks.php'));
 

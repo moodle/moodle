@@ -2,8 +2,12 @@
 
 // This file defines settingpages and externalpages under the "authenticationandsecurity" category
 
+global $USER;
 
-
+// this depends on what file is including us
+if (!isset($site)) {
+    $site = get_site();
+}
 
 // stuff under the "usermanagement" subcategory
 $ADMIN->add('authenticationandsecurity', new admin_category('usermanagement', get_string('usermanagement', 'admin')), 0);
