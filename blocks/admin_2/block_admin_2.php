@@ -166,6 +166,7 @@ class block_admin_2 extends block_base {
             $this->content->text .= $this->expandjavascript;
 
             $this->content->text .= '</script>' . "\n";
+            $this->content->footer = '';
         }
         return $this->content;
 
