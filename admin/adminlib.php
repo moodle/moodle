@@ -434,7 +434,7 @@ class admin_setting_special_adminseesall extends admin_setting_configcheckbox {
 	    $name = 'calendar_adminseesall';
 		$visiblename = get_string('adminseesall', 'admin');
 		$description = get_string('helpadminseesall', 'admin');
-		parent::admin_setting_configcheckbox($name, $visiblename, $description);
+		parent::admin_setting($name, $visiblename, $description);
 	}
 
     function write_setting($data) {

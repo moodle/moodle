@@ -64,9 +64,12 @@ class page_admin extends page_base {
         return (($_GET["edit"] == 'on') && isadmin());
     }
 
-    function url_get_path() {  // erm.... this has to be based on the current location, right?
-        global $CFG;
-        return $CFG->wwwroot .'/admin/settings.php';
+    function url_get_path() { 
+        global $ADMIN, $root;
+        if (!$root) {
+            $root = $ADMIN->locate($this->section);
+        }
+        return $root->url;
     }
 
     function url_get_parameters() {  // only handles parameters relevant to the admin pagetype
@@ -94,7 +97,7 @@ class page_admin extends page_base {
 
         // should this rely on showblocksonmodpages in any way? after all, teachers aren't accessing this...
         if ($this->user_allowed_editing()) {
-            $buttons = '<table><tr><td><form target="' . $CFG->framename . '" method="get" action="settings.php">'.
+            $buttons = '<table><tr><td><form target="' . $CFG->framename . '" method="get" action="' . $this->url_get_path() . '">'.
                        '<input type="hidden" name="edit" value="'.($this->user_is_editing()?'off':'on').'" />'.
                        '<input type="hidden" name="section" value="'.$this->section.'" />'.
                        '<input type="submit" value="'.get_string($this->user_is_editing()?'blockseditoff':'blocksediton').'" /></form></td>' . 
