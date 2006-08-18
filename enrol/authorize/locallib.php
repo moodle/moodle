@@ -217,8 +217,9 @@ function authorize_print_order_details($orderno)
         if (empty($confirm)) {
             $strcaptureyes = get_string('captureyes', 'enrol_authorize');
             $table->data[] = array("<b>$strs->confirm:</b>",
-            "$strcaptureyes<br /><a href='index.php?order=$orderno&amp;sesskey=$USER->sesskey&amp;".ORDER_CAPTURE."=y&amp;confirm=1'>$strs->yes</a>
-            &nbsp;&nbsp;&nbsp;&nbsp;<a href='index.php?order=$orderno'>$strs->no</a>");
+            "$strcaptureyes <br />
+            <input type='hidden' name='confirm' value='1'><input type='submit' name='". ORDER_CAPTURE ."' value='$authstrs->capture' />
+            &nbsp;&nbsp;&nbsp;<a href='index.php?order=$orderno'>$strs->no</a>");
         }
         else {
             $message = '';
@@ -335,7 +336,7 @@ function authorize_print_order_details($orderno)
                 $table->data[] = array("<b>$strs->confirm:</b>",
                     "$strvoidyes<br /><input type='hidden' name='".ORDER_VOID."' value='y'>
                      <input type='hidden' name='confirm' value='1'>
-                     <input type='submit' value='$strs->yes'>
+                     <input type='submit' value='$authstrs->void'>
                      &nbsp;&nbsp;&nbsp;&nbsp;<a href='index.php?order=$orderno'>$strs->no</a>");
             }
             else {
@@ -384,7 +385,7 @@ function authorize_print_order_details($orderno)
                         "$strsubvoidyes<br /><input type='hidden' name='".ORDER_VOID."' value='y'>
                          <input type='hidden' name='confirm' value='1'>
                          <input type='hidden' name='suborder' value='$suborderno'>
-                         <input type='submit' value='$strs->yes'>
+                         <input type='submit' value='$authstrs->void'>
                          &nbsp;&nbsp;&nbsp;&nbsp;<a href='index.php?order=$orderno'>$strs->no</a>");
                 }
                 else {
@@ -423,7 +424,7 @@ function authorize_print_order_details($orderno)
             $table->data[] = array("<b>$strs->confirm:</b>",
                 "<input type='hidden' name='".ORDER_DELETE."' value='y'>
                  <input type='hidden' name='confirm' value='1'>
-                 <input type='submit' value='$strs->yes'>
+                 <input type='submit' value='$authstrs->delete'>
                  &nbsp;&nbsp;&nbsp;&nbsp;<a href='index.php?order=$orderno'>$strs->no</a>");
         }
         else {

@@ -17,7 +17,7 @@
     }
 
 /// Load strings. All strings should be defined here. locallib.php uses these strings.
-    $strs = get_strings(array('status','action','time','course','confirm','yes','no','all','none','error'));
+    $strs = get_strings(array('status','action','time','course','confirm','no','all','none','error'));
     $authstrs = get_strings(array('orderid','nameoncard','void','capture','refund','delete',
                 'authcaptured','authorizedpendingcapture','capturedpendingsettle','capturedsettled',
                 'settled','refunded','cancelled','expired','tested','new',
