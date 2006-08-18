@@ -452,13 +452,13 @@ function authorize_print_order_details($orderno)
         print_table($table);
         if ($settled) { // show refunds.
             $t2 = new stdClass;
-            $t2->size = array('15%', '15%', '20%', '35%', '15%');
+            $t2->size = array('45%', '15%', '20%', '10%', '10%');
             $t2->align = array('right', 'right', 'right', 'right', 'right');
-            $t2->head = array($authstrs->transid,
-                              $authstrs->amount,
+            $t2->head = array($authstrs->settlementdate,
+                              $authstrs->transid,
                               $strs->status,
-                              $authstrs->settlementdate,
-                              $strs->action);
+                              $strs->action,
+                              $authstrs->amount);
 
             $sql = "SELECT R.*, E.courseid FROM {$CFG->prefix}enrol_authorize_refunds R " .
                    "INNER JOIN {$CFG->prefix}enrol_authorize E ON R.orderid = E.id " .
@@ -466,6 +466,7 @@ function authorize_print_order_details($orderno)
 
             $refunds = get_records_sql($sql);
             if ($refunds) {
+                $sumrefund = floatval(0.0);
                 foreach ($refunds as $rf) {
                     $substatus = authorize_get_status_action($rf);
                     $subactions = '&nbsp;';
@@ -478,12 +479,36 @@ function authorize_print_order_details($orderno)
                             "<a href='index.php?$vl=y&amp;sesskey=$USER->sesskey&amp;order=$orderno&amp;suborder=$rf->id'>{$authstrs->$vl}</a> ";
                         }
                     }
-                    $t2->data[] = array($rf->transid,
-                                        $rf->amount,
-                                        $authstrs->{$substatus->status},
-                                        userdate($rf->settletime),
-                                        $subactions);
+                    $sign = '';
+                    $color = '';
+                    switch ($substatus->status) {
+                        case 'cancelled':
+                            $color = 'black';
+                            break;
+
+                        case 'refunded':
+                            $sign = '-';
+                            $color = 'red';
+                            $sumrefund += floatval($rf->amount);
+                            break;
+
+                        case 'settled':
+                        default:
+                            $sign = '-';
+                            $color = 'green';
+                            $sumrefund += floatval($rf->amount);
+                            break;
+                    }
+
+                    $t2->data[] = array(
+                        userdate($rf->settletime),
+                        $rf->transid,
+                        $authstrs->{$substatus->status},
+                        $subactions,
+                        "<font color='$color'>" . format_float($sign . $rf->amount, 2) . "</font>"
+                    );
                 }
+                $t2->data[] = array('','',get_string('total'),$order->currency,format_float('-'.$sumrefund, 2));
             }
             else {
                 $t2->data[] = array('','',get_string('noreturns', 'enrol_authorize'),'','');
