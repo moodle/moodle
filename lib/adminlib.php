@@ -466,9 +466,11 @@ function upgrade_log_finish() {
     @ob_end_flush();
     if ($upgradelogbuffer !== '') {
         @fwrite($upgradeloghandle, $upgradelogbuffer);
+        $upgradelogbuffer = '';
     }
     if ($upgradeloghandle and ($upgradeloghandle !== 'error')) {
         @fclose($upgradeloghandle);
+        $upgradeloghandle = false;
     }
     @session_start();                // ignore header errors, we only need to reopen session
     $_SESSION['upgraderunning'] = 0; // clear upgrade indicator
