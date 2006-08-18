@@ -2,6 +2,35 @@
       // admin.php - created with Moodle 1.6 development (2005053000)
 
 
+// begin {added with admin cleanup}
+$string['userinterface'] = 'User Interface';
+$string['serverinterface'] = 'Server Interface';
+$string['authenticationandsecurity'] = 'Authentication &amp; Security';
+$string['maintenanceandauditing'] = 'Maintenance &amp; Auditing';
+$string['courses'] = 'Courses';
+
+$string['languageandlocation'] = 'Language &amp; Location';
+$string['htmleditor'] = 'HTML Editor';
+$string['misc'] = 'Miscellaneous';
+$string['filtersettings'] = 'Filter Settings';
+$string['generalsettings'] = 'General Settings';
+$string['frontpage'] = 'Front Page';
+$string['systempaths'] = 'System Paths';
+$string['mail'] = 'Email';
+$string['sessionhandling'] = 'Session Handling';
+$string['http'] = 'HTTP';
+$string['httpsecurity'] = 'HTTP Security';
+$string['modulesecurity'] = 'Module Security';
+$string['notifications'] = 'Notifications';
+$string['sitepolicies'] = 'Site Policies';
+$string['userpolicies'] = 'User Policies';
+$string['antivirus'] = 'Anti-Virus';
+$string['authentication'] = 'Authentication';
+$string['performanceandstats'] = 'Performance &amp; Stats';
+$string['backups'] = 'Backups';
+$string['courserequests'] = 'Course Requests';
+// end {added with admin cleanup}
+
 $string['adminseesallevents'] = 'Administrators see all events';
 $string['adminseesownevents'] = 'Administrators are just like other users';
 $string['allowrenames'] = 'Allow renames';
