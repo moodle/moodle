@@ -232,6 +232,97 @@ function forum_upgrade($oldversion) {
   /*
   // Upgrades for new roles and capabilities support.
   if ($oldversion < 2006080800) {
+    
+      $forummodid = get_record('modules', 'name', 'forum');
+      
+      // Convert old teacher forums to general forums, making sure the
+      // same behavior is implemented using the new Roles System.
+      if($teacherforums = get_records('forum', 'type', 'teacher')) {
+          
+          if (!$studentroles = get_roles_with_capability('moodle/legacy:student', CAP_ALLOW)) {
+              error('No default student role found');
+          }
+          if (!$guestroles = get_roles_with_capability('moodle/legacy:guest', CAP_ALLOW)) {
+              error('No default guest role found');
+          }
+          
+          foreach ($teacherforums as $teacherforum) {
+              
+              // Delete empty teacher forums.
+              if (count_records('forum_discussions', 'forum', $teacherforum->id) == 0) {
+                  delete_records('forum', 'id', $teacherforum->id);
+              }
+              
+              // Create a course module for the forum and assign it to
+              // section 0 in the course.
+              $mod = new object;
+              $mod->course = $teacherforum->course;
+              $mod->module = $forummodid;
+              $mod->instance = $teacherforum->id;
+              $mod->section = 0;
+              $mod->visible = 0;
+              $mod->visibleold = 0;
+              $mod->groupmode = 0;
+              
+              if (!$cmid = add_course_module($mod)) {
+                  error('Could not create new course module instance for the teacher forum');
+              } else {
+                  $mod->coursemodule = $cmid;
+                  if (!add_mod_to_section($mod)) {
+                      error('Could not add new forum instance to section 0 in the course');
+                  }
+              }
+              
+              // Change the forum type to general.
+              $teacherforum->type = 'general';
+              if (!update_record('forum', $teacherforum)) {
+                  error('Could not change forum from type teacher to type general');
+              }
+              
+              $context = get_context_instance(CONTEXT_MODULE, $cmid);
+              
+              // Create overrides for default student and guest roles (prevent).
+              foreach($studentroles as $studentrole) {
+                  assign_capability('mod/forum:viewforum', CAP_PREVENT, $studentrole->id, $context->id);
+                  assign_capability('mod/forum:viewdiscussion', CAP_PREVENT, $studentrole->id, $context->id);
+                  assign_capability('mod/forum:viewhiddentimedposts', CAP_PREVENT, $studentrole->id, $context->id);
+                  assign_capability('mod/forum:startdiscussion', CAP_PREVENT, $studentrole->id, $context->id);
+                  assign_capability('mod/forum:replypost', CAP_PREVENT, $studentrole->id, $context->id);
+                  assign_capability('mod/forum:viewrating', CAP_PREVENT, $studentrole->id, $context->id);
+                  assign_capability('mod/forum:viewanyrating', CAP_PREVENT, $studentrole->id, $context->id);
+                  assign_capability('mod/forum:rate', CAP_PREVENT, $studentrole->id, $context->id);
+                  assign_capability('mod/forum:deleteownpost', CAP_PREVENT, $studentrole->id, $context->id);
+                  assign_capability('mod/forum:deleteanypost', CAP_PREVENT, $studentrole->id, $context->id);
+                  assign_capability('mod/forum:splitdiscussions', CAP_PREVENT, $studentrole->id, $context->id);
+                  assign_capability('mod/forum:movediscussions', CAP_PREVENT, $studentrole->id, $context->id);
+                  assign_capability('mod/forum:editanypost', CAP_PREVENT, $studentrole->id, $context->id);
+                  assign_capability('mod/forum:viewqandawithoutposting', CAP_PREVENT, $studentrole->id, $context->id);
+                  assign_capability('mod/forum:viewsubscribers', CAP_PREVENT, $studentrole->id, $context->id);
+                  assign_capability('mod/forum:managesubscriptions', CAP_PREVENT, $studentrole->id, $context->id);
+                  assign_capability('mod/forum:throttlingapplies', CAP_PREVENT, $studentrole->id, $context->id);
+              }
+              foreach($guestroles as $guestrole) {
+                  assign_capability('mod/forum:viewforum', CAP_PREVENT, $guestrole->id, $context->id);
+                  assign_capability('mod/forum:viewdiscussion', CAP_PREVENT, $guestrole->id, $context->id);
+                  assign_capability('mod/forum:viewhiddentimedposts', CAP_PREVENT, $guestrole->id, $context->id);
+                  assign_capability('mod/forum:startdiscussion', CAP_PREVENT, $guestrole->id, $context->id);
+                  assign_capability('mod/forum:replypost', CAP_PREVENT, $guestrole->id, $context->id);
+                  assign_capability('mod/forum:viewrating', CAP_PREVENT, $guestrole->id, $context->id);
+                  assign_capability('mod/forum:viewanyrating', CAP_PREVENT, $guestrole->id, $context->id);
+                  assign_capability('mod/forum:rate', CAP_PREVENT, $guestrole->id, $context->id);
+                  assign_capability('mod/forum:deleteownpost', CAP_PREVENT, $guestrole->id, $context->id);
+                  assign_capability('mod/forum:deleteanypost', CAP_PREVENT, $guestrole->id, $context->id);
+                  assign_capability('mod/forum:splitdiscussions', CAP_PREVENT, $guestrole->id, $context->id);
+                  assign_capability('mod/forum:movediscussions', CAP_PREVENT, $guestrole->id, $context->id);
+                  assign_capability('mod/forum:editanypost', CAP_PREVENT, $guestrole->id, $context->id);
+                  assign_capability('mod/forum:viewqandawithoutposting', CAP_PREVENT, $guestrole->id, $context->id);
+                  assign_capability('mod/forum:viewsubscribers', CAP_PREVENT, $guestrole->id, $context->id);
+                  assign_capability('mod/forum:managesubscriptions', CAP_PREVENT, $guestrole->id, $context->id);
+                  assign_capability('mod/forum:throttlingapplies', CAP_PREVENT, $guestrole->id, $context->id);
+              }
+          } // End foreach $teacherforums.
+      } // End if.
+      
       
       // forum.open defines what students can do:
       //   0 = No discussions, no replies
@@ -258,12 +349,12 @@ function forum_upgrade($oldversion) {
       
       // Delete column forum.assesspublic
   }
-  */
+  
   
   return true;
   
 }
-
+*/
 
 
 ?>
