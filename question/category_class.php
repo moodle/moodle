@@ -406,7 +406,7 @@ class question_category_object {
         $publishoptions[1] = get_string("yes");
         $strupdate = get_string('update');
 
-        unset ($edittable);
+        $edittable = new stdClass;
 
         $edittable->head  = array ($this->str->parent, $this->str->category, $this->str->categoryinfo, $this->str->publish, $this->str->action);
         $edittable->width = 200;
@@ -581,13 +581,14 @@ class question_category_object {
             if (!$category2 = get_record("question_categories", "id", $destcategoryid)) {  // security
                 error("No such category $destcategoryid!", "category.php?id={$this->course->id}");
             }
-            if (! set_field('question', 'category', $category2, 'category', $category1)) {
+            if (! set_field('question', 'category', $destcategoryid, 'category', $deletecat)) {
                 error("Error while moving questions from category '$category->name' to '$category2->name'", "category.php?id={$this->course->id}");
             }
 
         } else {
             // todo: delete any hidden questions that are not actually in use any more
             if ($count = count_records("question", "category", $category->id)) {
+                $vars = new stdClass;
                 $vars->name = $category->name;
                 $vars->count = $count;
                 print_simple_box(get_string("categorymove", "quiz", $vars), "center");
@@ -606,7 +607,6 @@ class question_category_object {
                 exit;
             }
         }
-        delete_records("question_categories", "id", $category->id);
 
         /// Send the children categories to live with their grandparent
         if ($childcats = get_records("question_categories", "parent", $category->id)) {

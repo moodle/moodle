@@ -254,6 +254,7 @@ function question_list($course, $categoryid, $quizid=0,
         return;
     }
     echo "<center>";
+    $formatoptions = new stdClass;
     $formatoptions->noclean = true;
     echo format_text($category->info, FORMAT_MOODLE, $formatoptions, $course->id);
 

@@ -106,6 +106,7 @@
             //$GLOBALS['traverse_array']="";                                                              //Debug
 
             //Now, build the question_categories record structure
+            $question_cat = new stdClass;
             $question_cat->course = $restore->course_id;
             $question_cat->name = backup_todb($info['QUESTION_CATEGORY']['#']['NAME']['0']['#']);
             $question_cat->info = backup_todb($info['QUESTION_CATEGORY']['#']['INFO']['0']['#']);
@@ -321,6 +322,7 @@
                 $oldid = backup_todb($ans_info['#']['ID']['0']['#']);
 
                 //Now, build the question_answers record structure
+                $answer = new stdClass;
                 $answer->question = $new_question_id;
                 $answer->answer = backup_todb($ans_info['#']['ANSWER_TEXT']['0']['#']);
                 $answer->fraction = backup_todb($ans_info['#']['FRACTION']['0']['#']);
@@ -431,6 +433,7 @@
             //$GLOBALS['traverse_array']="";                                                              //Debug
 
             //Now, build the question_numerical_UNITS record structure
+            $numerical_unit = new stdClass;
             $numerical_unit->question = $new_question_id;
             $numerical_unit->multiplier = backup_todb($nu_info['#']['MULTIPLIER']['0']['#']);
             $numerical_unit->unit = backup_todb($nu_info['#']['UNIT']['0']['#']);
@@ -463,6 +466,7 @@
             //$GLOBALS['traverse_array']="";                                                              //Debug
 
             //Now, build the question_dataset_DEFINITION record structure
+            $dataset_definition = new stdClass;
             $dataset_definition->category = backup_todb($dd_info['#']['CATEGORY']['0']['#']);
             $dataset_definition->name = backup_todb($dd_info['#']['NAME']['0']['#']);
             $dataset_definition->type = backup_todb($dd_info['#']['TYPE']['0']['#']);
@@ -522,6 +526,7 @@
             //Now, we must have a definition (created o reused). Its id is in newid. Create the question_datasets record
             //to join the question and the dataset_definition
             if ($newid) {
+                $question_dataset = new stdClass;
                 $question_dataset->question = $new_question_id;
                 $question_dataset->datasetdefinition = $newid;
                 $newid = insert_record ("question_datasets",$question_dataset);
@@ -552,6 +557,7 @@
             //$GLOBALS['traverse_array']="";                                                              //Debug
 
             //Now, build the question_dataset_ITEMS record structure
+            $dataset_item = new stdClass;
             $dataset_item->definition = $definitionid;
             $dataset_item->number = backup_todb($di_info['#']['NUMBER']['0']['#']);
             $dataset_item->value = backup_todb($di_info['#']['VALUE']['0']['#']);
@@ -588,6 +594,7 @@
             $oldid = backup_todb($res_info['#']['ID']['0']['#']);
 
             //Now, build the STATES record structure
+            $state = new stdClass;
             $state->attempt = $attempt_id;
             $state->question = backup_todb($res_info['#']['QUESTION']['0']['#']);
             $state->originalquestion = backup_todb($res_info['#']['ORIGINALQUESTION']['0']['#']);
@@ -664,6 +671,7 @@
             //$GLOBALS['traverse_array']="";                                                              //Debug
 
             //Now, build the NEWEST_STATES record structure
+            $session = new stdClass;
             $session->attemptid = $attempt_id;
             $session->questionid = backup_todb($res_info['#']['QUESTIONID']['0']['#']);
             $session->newest = backup_todb($res_info['#']['NEWEST']['0']['#']);
