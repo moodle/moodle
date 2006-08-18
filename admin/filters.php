@@ -3,20 +3,13 @@
     // Edit list of available text filters
 
     require_once('../config.php');
+    require_once($CFG->dirroot . '/admin/adminlib.php');
     require_once($CFG->libdir.'/tablelib.php');
 
     // defines
     define('FILTER_TABLE','filter_administration_table');
 
-    // check for allowed access
-    require_login();
-
-    if (!isadmin()) {
-        error('Only administrators can use the filters administration page');
-    }
-    if (!$site = get_site()) {
-        error('Site is not defined in filters administration page');
-    }
+    admin_externalpage_setup('filtermanagement');
 
     // get values from page
     $params = new object();
@@ -274,61 +267,15 @@
     // Display logic
     //==============================
 
-    print_header("$site->shortname: $txt->managefilters", "$site->fullname",
-        "<a href=\"index.php\">$txt->administration</a> -> <a href=\"configure.php\">$txt->configuration</a> " .
-        "-> $txt->managefilters");
+    admin_externalpage_print_header();
 
     print_heading_with_help($txt->managefilters, 'filters');
 
     // print the table of all the filters
     $table->print_html();
 
-    // print the table for the cache controls
-    print_heading($txt->cachecontrols);
-    print_simple_box_start('center');
-    ?>
+    // cache control table has been removed
 
-    <form name="options" id="options" method="post" action="<?php echo $url; ?>" >
-        <input type="hidden" name="sesskey" value="<?php echo sesskey(); ?>" />
-        <input type="hidden" name="action" value="config" />
-        <table cellpadding="20">
-            <tr valign="top">
-                <td nowrap="nowrap" align="right"><?php echo $txt->cachetext; ?></td>
-                <td><?php choose_from_menu($options, "cachetext", $CFG->cachetext, "", "", ""); ?></td>
-                <td><?php echo $txt->configcachetext; ?></td>
-            </tr>
-            <tr valign="top">
-                <td nowrap="nowrap" align="right"><?php echo $txt->filteruploadedfiles; ?></td>
-                <td><?php choose_from_menu(array($txt->none,$txt->allfiles,$txt->htmlfilesonly),
-                    "filteruploadedfiles", $CFG->filteruploadedfiles,"","",""); ?></td>
-                <td><?php echo $txt->configfilteruploadedfiles; ?></td>
-            </tr>
-            <tr valign="top">
-                <td nowrap="nowrap" align="right"><?php echo $txt->filtermatchoneperpage; ?></td>
-                <td><?php choose_from_menu(array($txt->no,$txt->yes), "filtermatchoneperpage", $CFG->filtermatchoneperpage,"","",""); ?></td>
-                <td><?php echo $txt->configfiltermatchoneperpage; ?></td>
-        <tr valign="top">
-        <td nowrap="nowrap" align="right"><?php echo $txt->filtermatchonepertext; ?></td>
-        <td><?php choose_from_menu(array($txt->no,$txt->yes), "filtermatchonepertext", $CFG->filtermatchonepertext,"","",""); ?></td>
-        <td><?php echo $txt->configfiltermatchonepertext; ?></td>
-        </tr>
-            </tr>
-            <tr valign="top">
-                <td nowrap="nowrap" align="right"><?php echo $txt->filterall; ?></td>
-                <td><?php choose_from_menu(array($txt->no,$txt->yes), "filterall", $CFG->filterall,"","",""); ?></td>
-                <td><?php echo $txt->configfilterall; ?></td>
-            </tr>
-            <tr valign="top">
-                <td>&nbsp;</td>
-                <td><input type="submit" value="<?php print_string('savechanges'); ?>" /></td>
-                <td>&nbsp;</td>
-            </tr>
-        </table>
-    </form>
-
-    <?php
-    print_simple_box_end();
-
-    print_footer();
+    admin_externalpage_print_footer();
 
 ?>

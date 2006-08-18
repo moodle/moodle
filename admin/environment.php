@@ -30,24 +30,16 @@
 // from moodle.org be able to check more and more versions.
 
     require_once('../config.php');
+    require_once($CFG->dirroot . '/admin/adminlib.php');
     require_once($CFG->libdir.'/environmentlib.php');
     require_once($CFG->libdir.'/componentlib.class.php');
 
+    admin_externalpage_setup('environment');
 
 /// Parameters
     $action  = optional_param('action', '', PARAM_ACTION);
     $version = optional_param('version', '', PARAM_FILE); //
 
-/// Security checks
-    require_login();
-
-    if (!isadmin()) {
-        error('You need to be admin to use this page');
-    }
-
-    if (!$site = get_site()) {
-        error("Site isn't defined!");
-    }
 
 /// Get some strings
     $stradmin = get_string('administration');
@@ -60,9 +52,7 @@
     $strmisc = get_string('miscellaneous');
 
 /// Print the header stuff
-    print_header("$SITE->shortname: $strenvironment", $SITE->fullname,
-                 "<a href=\"index.php\">$stradmin</a> -> <a href=\"misc.php\">$strmisc</a> -> "
-                 .$strenvironment);
+    admin_externalpage_print_header();
 
 /// Print the component download link
     echo '<div class="reportlink"><a href="environment.php?action=updatecomponent&amp;sesskey='.$USER->sesskey.'">'.$strupdate.'</a></div>';
@@ -147,5 +137,5 @@
     echo '</div>';
 
 /// Print footer
-    print_footer();
+    admin_externalpage_print_footer();
 ?>

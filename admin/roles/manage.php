@@ -3,7 +3,9 @@
 //testing
     require_once('../../config.php');
 
-    require_login();
+    require_once($CFG->dirroot . '/admin/adminlib.php');
+    admin_externalpage_setup('manageroles');
+//    require_login();
 
     $roleid      = optional_param('roleid', 0, PARAM_INT); // if set, we are editing a role
     $action      = optional_param('action', '', PARAM_ALPHA);
@@ -13,13 +15,13 @@
 
     $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
     
-    if (!isadmin()) {
-        error('Only admins can access this page');
-    }
+//    if (!isadmin()) {
+//        error('Only admins can access this page');
+//    }
 
-    if (!$site = get_site()) {
-        redirect('index.php');
-    }
+//    if (!$site = get_site()) {
+//        redirect('index.php');
+//    }
     
     $stradministration = get_string('administration');
     $strmanageroles = get_string('manageroles');
@@ -32,11 +34,12 @@
         $editingstr ='';  
     }
     
-    print_header("$site->shortname: $strmanageroles", 
-                 "$site->fullname", 
-                 "<a href=\"../index.php\">$stradministration</a> -> <a href=\"manage.php\">$strmanageroles</a>
-                 $editingstr
-                 ");
+    admin_externalpage_print_header();
+//    print_header("$site->shortname: $strmanageroles", 
+//                 "$site->fullname", 
+//                 "<a href=\"../index.php\">$stradministration</a> -> <a href=\"manage.php\">$strmanageroles</a>
+//                 $editingstr
+//                 ");
 
     // form processing, editing a role, adding a role or deleting a role
     if ($action && confirm_sesskey()) {
@@ -128,7 +131,8 @@
                       echo ('<input type="hidden" name="confirm" value="1">');
                       echo ('are you sure?');
                       echo ('<input type="submit" value="yes">');
-                      print_footer($course);
+                      admin_externalpage_print_footer();
+//                      print_footer($course);
                       exit;
                       
                       // prints confirmation form
@@ -205,5 +209,6 @@
     }
 
     use_html_editor("description");
-    print_footer($course);
+    admin_externalpage_print_footer();
+//    print_footer($course);
 ?>

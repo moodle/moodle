@@ -2,16 +2,8 @@
        // module.php - allows admin to edit all local configuration variables for a module
 
     require_once('../config.php');
-
-    require_login();
-
-    if (!isadmin()) {
-        error("Only an admin can use this page");
-    }
-
-    if (!$site = get_site()) {
-        error("Site isn't defined!");
-    }
+    require_once($CFG->dirroot . '/admin/adminlib.php');
+    admin_externalpage_setup('modulemanagement');
 
 /// If data submitted, then process and store.
 
@@ -61,10 +53,7 @@
     // of the page. It is also used to generate the link to the Moodle Docs for this view.
     $CFG->pagepath = 'mod/' . $module . '/config';
     
-    print_header("$site->shortname: $strmodulename: $strconfiguration", $site->fullname,
-                  "<a href=\"index.php\">$stradmin</a> -> ".
-                  "<a href=\"configure.php\">$strconfiguration</a> -> ".
-                  "<a href=\"modules.php\">$strmanagemodules</a> -> $strmodulename");
+    admin_externalpage_print_header();
 
     print_heading($strmodulename);
 
@@ -75,6 +64,6 @@
     include("$CFG->dirroot/mod/$module/config.html");
     print_simple_box_end();
 
-    print_footer();
+    admin_externalpage_print_footer();
 
 ?>

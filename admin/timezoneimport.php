@@ -1,22 +1,16 @@
 <?php // $Id$
 
     // Automatic update of Timezones from a new source
-
+    
     require_once('../config.php');
+    require_once($CFG->dirroot .'/admin/adminlib.php');
     require_once($CFG->libdir.'/filelib.php');
     require_once($CFG->libdir.'/olson.php');
 
+    admin_externalpage_setup('timezoneimport');
+
     $ok = optional_param('ok', 0, PARAM_BOOL);
 
-    require_login();
-
-    if (!isadmin()) {
-        error('Only administrators can use this page!');
-    }
-
-    if (!$site = get_site()) {
-        error('Site isn\'t defined!');
-    }
 
 /// Print headings
 
@@ -25,10 +19,7 @@
     $strcalendarsettings = get_string('calendarsettings', 'admin');
     $strimporttimezones = get_string('importtimezones', 'admin');
 
-    print_header("$site->shortname: $strcalendarsettings", "$site->fullname",
-                 "<a href=\"index.php\">$stradministration</a> -> ".
-                 "<a href=\"configure.php\">$strconfiguration</a> -> ".
-                 "<a href=\"calendar.php\">$strcalendarsettings</a> -> $strimporttimezones");
+    admin_externalpage_print_header();
 
     print_heading($strimporttimezones);
 
@@ -42,9 +33,9 @@
 
         $message = get_string("configintrotimezones", 'admin', $message);
 
-        notice_yesno($message, 'timezoneimport.php?ok=1&sesskey='.sesskey(), 'calendar.php');
+        notice_yesno($message, 'timezoneimport.php?ok=1&sesskey='.sesskey(), 'index.php');
 
-        print_footer();
+        admin_externalpage_print_footer();
         exit;
     }
 
@@ -110,7 +101,7 @@
         $a->source  = $importdone;
         print_heading(get_string('importtimezonescount', 'admin', $a), '', 3);
 
-        print_continue('calendar.php');
+        print_continue('index.php');
 
         $timezonelist = array();
         foreach ($timezones as $timezone) {
@@ -131,9 +122,9 @@
 
     } else {
         print_heading(get_string('importtimezonesfailed', 'admin'), '', 3);
-        print_continue('calendar.php');
+        print_continue('index.php');
     }
 
-    print_footer();
+    admin_externalpage_print_footer();
 
 ?>

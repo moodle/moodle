@@ -10,6 +10,8 @@
  *             for intensive testing of this my first contribution
  */
     require_once('../config.php');
+    require_once($CFG->dirroot . '/admin/adminlib.php');
+    admin_externalpage_setup('langedit');
 
     //
     // Some local configuration
@@ -24,16 +26,6 @@
 
     $currentfile = optional_param('currentfile', 'docs/README.txt', PARAM_PATH); 
 
-    require_login();
-
-    if (!isadmin()) {
-        error("You need to be admin to edit this page");
-    }     
-
-    if (! $site = get_site()) {
-        error("Site not defined!");
-    }
-
     $stradministration = get_string("administration");
     $strconfiguration = get_string("configuration");
     $strlanguage = get_string("language");
@@ -41,11 +33,7 @@
     $strthislanguage = get_string("thislanguage");
     $stredithelpdocs = get_string('edithelpdocs', 'admin');
 
-    print_header("$site->shortname: $stredithelpdocs: $currentfile", "$site->fullname",
-                 "<a href=\"index.php\">$stradministration</a> -> ".
-                 "<a href=\"configure.php\">$strconfiguration</a> -> 
-                  <a href=\"lang.php\">$strlanguage</a> -> $stredithelpdocs",
-                 'choosefile.popup', '', true);
+    admin_externalpage_print_header();
 
     $currentlang = current_language();
     $langdir = "$CFG->dataroot/lang/$currentlang";
@@ -207,7 +195,7 @@ $langdir/$currentfile")."</font></p>";
         error_reporting($CFG->debug);
     }
 
-    print_footer();
+    admin_externalpage_print_footer();
 
 //////////////////////////////////////////////////////////////////////
 

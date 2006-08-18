@@ -347,11 +347,16 @@
 
 /// At this point everything is set up and the user is an admin, so print menu
 
-    $stradministration = get_string("administration");
-    print_header("$site->shortname: $stradministration","$site->fullname", "$stradministration");
-    print_simple_box_start('center', '100%', '', 20);
-    print_heading($stradministration);
+#    $stradministration = get_string("administration");
+#    print_header("$site->shortname: $stradministration","$site->fullname", "$stradministration");
+#    print_simple_box_start('center', '100%', '', 20);
+#    print_heading($stradministration);
 
+    require_once($CFG->dirroot . '/admin/adminlib.php');
+    admin_externalpage_setup('adminnotifications');
+    admin_externalpage_print_header();
+    echo 'Umm... any notifications should show up here... I hope :)<br /><br />';
+    echo 'Also, I\'m including the old admin menu on this page incase I forgot any links in the new admin structure. It should be removed after. <br /><br />';
 /// Deprecated database! Warning!!
     if (!empty($CFG->migrated_to_new_db)) {
         print_simple_box_start('center','60%');
@@ -402,6 +407,7 @@
         print_simple_box_end();
     }
 
+// keeping this old menu here for a little while /*
     $table->tablealign = "center";
     $table->align = array ("right", "left");
     $table->wrap = array ("nowrap", "nowrap");
@@ -436,7 +442,6 @@
 
     $table->data[] = array('<strong><a href="configure.php">'.get_string('configuration').'</a></strong>', $configdata);
 
-
     $userdata =  '<div class="adminlink"><a href="auth.php?sesskey='.$USER->sesskey.'">'.get_string("authentication").
                  '</a> - <span class="explanation">'.get_string('adminhelpauthentication').'</span></div>';
     $userdata .= '<div class="adminlink"><a href="user.php">'.get_string('edituser').
@@ -461,7 +466,7 @@
 
 
     $table->data[] = array('<strong><a href="courses.php">'.get_string('courses').'</a></strong>', $coursedata);
-    
+  
     $miscdata = '<div class="adminlink"><a href="../files/index.php?id='.$site->id.'">'.get_string('sitefiles').
                  '</a> - <span class="explanation">'.get_string('adminhelpsitefiles').'</span></div>';
     $miscdata .= '<div class="adminlink"><a href="stickyblocks.php">'.get_string('stickyblocks','admin').
@@ -491,19 +496,21 @@
 /// The eventual official versions may not look like this
     if (isset($CFG->portfolio) && file_exists("$CFG->dirroot/$CFG->portfolio")) {
                 $table->data[] = array("<strong><a href=\"../portfolio/\">".get_string('portfolio','portfolio').'</a></
-trong>',
+strong>',
                             '<div class="explanation">'.get_string('adminhelpportfolio','portfolio').'</div>');
     }
 
     if (isset($CFG->repo) && file_exists("$CFG->dirroot/$CFG->repo")) {
             $table->data[] = array("<strong><a href=\"../repository/?repoid=1&action=list\">".get_string('repository','
-epository').'</a></strong>',
+repository').'</a></strong>',
                             '<div class="explanation">'.get_string('adminhelprepository','repository').'</div>');
     }
 
 
 
     print_table($table);
+
+// old stuff ends here  */
 
     //////////////////////////////////////////////////////////////////////////////////////////////////
     ////  IT IS ILLEGAL AND A VIOLATION OF THE GPL TO REMOVE OR MODIFY THE COPYRIGHT NOTICE BELOW ////
@@ -533,6 +540,6 @@ epository').'</a></strong>',
     }
 
 
-    print_footer($site);
+    admin_externalpage_print_footer();
 
 ?>

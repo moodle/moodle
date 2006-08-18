@@ -2,14 +2,11 @@
       // Enables/disables maintenance mode
 
     require('../config.php');
+    require_once($CFG->dirroot . '/admin/adminlib.php');
 
     $action = optional_param('action', '', PARAM_ALPHA);
 
-    require_login();
-
-    if (!isadmin()) {
-        error('You need to be admin to use this page');
-    }
+    admin_externalpage_setup('maintenancemode');
 
     //Check folder exists
     if (! make_upload_directory(SITEID)) {   // Site folder
@@ -22,27 +19,19 @@
         if (confirm_sesskey()) {
             if ($form->action == "disable") {
                 unlink($filename);
-                redirect('index.php', get_string('sitemaintenanceoff','admin'));
+                redirect('maintenance.php', get_string('sitemaintenanceoff','admin'));
             } else {
                 $file = fopen($filename, 'w');
                 fwrite($file, stripslashes($form->text));
                 fclose($file);
-                redirect('index.php', get_string('sitemaintenanceon', 'admin'));
+                redirect('maintenance.php', get_string('sitemaintenanceon', 'admin'));
             }
         }
     }
 
 /// Print the header stuff
 
-    $strmaintenance = get_string('sitemaintenancemode', 'admin');
-    $stradmin = get_string('administration');
-    $strconfiguration = get_string('configuration');
-
-    print_header("$SITE->shortname: $strmaintenance", $SITE->fullname,
-                  "<a href=\"index.php\">$stradmin</a> -> ".
-                  "<a href=\"configure.php\">$strconfiguration</a> -> $strmaintenance");
-
-    print_heading($strmaintenance);
+    admin_externalpage_print_header();
 
 /// Print the appropriate form
 
@@ -74,5 +63,5 @@
         }
     }
 
-    print_footer();
+    admin_externalpage_print_footer();
 ?>

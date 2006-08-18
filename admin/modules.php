@@ -2,22 +2,14 @@
       // Allows the admin to manage activity modules
 
     require_once('../config.php');
+    require_once($CFG->dirroot . '/admin/adminlib.php');
+    admin_externalpage_setup('modulemanagement');
     require_once('../course/lib.php');
 
     $show    = optional_param('show', '', PARAM_SAFEDIR);
     $hide    = optional_param('hide', '', PARAM_SAFEDIR);
     $delete  = optional_param('delete', '', PARAM_SAFEDIR);
     $confirm = optional_param('confirm', '', PARAM_BOOL);
-
-    require_login();
-
-    if (!isadmin()) {
-        error("Only administrators can use this page!");
-    }
-
-    if (!$site = get_site()) {
-        error("Site isn't defined!");
-    }
 
 
 /// Print headings
@@ -33,9 +25,11 @@
     $stractivities = get_string("activities");
     $stractivitymodule = get_string("activitymodule");
 
-    print_header("$site->shortname: $strmanagemodules", "$site->fullname", 
-                 "<a href=\"index.php\">$stradministration</a> -> ".
-                 "<a href=\"configure.php\">$strconfiguration</a> -> $strmanagemodules");
+//    print_header("$site->shortname: $strmanagemodules", "$site->fullname", 
+//                 "<a href=\"index.php\">$stradministration</a> -> ".
+//                 "<a href=\"configure.php\">$strconfiguration</a> -> $strmanagemodules");
+
+    admin_externalpage_print_header();
 
     print_heading($strmanagemodules);
    
@@ -72,7 +66,7 @@
             notice_yesno(get_string("moduledeleteconfirm", "", $strmodulename), 
                          "modules.php?delete=$delete&amp;confirm=1&amp;sesskey=$USER->sesskey", 
                          "modules.php");
-            print_footer();
+            admin_externalpage_print_footer();
             exit;
 
         } else {  // Delete everything!!
@@ -201,6 +195,6 @@
 
     echo "<br /><br />";
 
-    print_footer();
+    admin_externalpage_print_footer();
 
 ?>

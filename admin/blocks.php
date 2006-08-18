@@ -3,6 +3,8 @@
     // Allows the admin to configure blocks (hide/show, delete and configure)
 
     require_once('../config.php');
+    require_once($CFG->dirroot . '/admin/adminlib.php');
+    admin_externalpage_setup('blockmanagement');
     require_once($CFG->libdir.'/blocklib.php');
     require_once($CFG->libdir.'/tablelib.php');
 
@@ -11,16 +13,6 @@
     $show     = optional_param('show', 0, PARAM_INT);
     $delete   = optional_param('delete', 0, PARAM_INT);
     $multiple = optional_param('multiple', 0, PARAM_INT);
-
-    require_login();
-
-    if (!isadmin()) {
-        error("Only administrators can use this page!");
-    }
-
-    if (!$site = get_site()) {
-        error("Site isn't defined!");
-    }
 
 
 /// Print headings
@@ -37,9 +29,7 @@
     $strname = get_string('name');
     $strmultiple = get_string('blockmultiple', 'admin');
 
-    print_header("$site->shortname: $strmanageblocks", "$site->fullname",
-                 "<a href=\"index.php\">$stradministration</a> -> ".
-                 "<a href=\"configure.php\">$strconfiguration</a> -> $strmanageblocks");
+    admin_externalpage_print_header();
 
     print_heading($strmanageblocks);
 
@@ -85,7 +75,7 @@
             notice_yesno(get_string('blockdeleteconfirm', '', $strblockname),
                          'blocks.php?delete='.$block->id.'&amp;confirm=1&amp;sesskey='.$USER->sesskey,
                          'blocks.php');
-            print_footer();
+            admin_externalpage_print_footer();
             exit;
 
         } else {
@@ -241,6 +231,6 @@
         $table->print_html();
     }
 
-    print_footer();
+    admin_externalpage_print_footer();
 
 ?>

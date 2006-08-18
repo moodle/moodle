@@ -5,6 +5,8 @@
 ///This helps to avoid confusion.
 
     require_once('../config.php');
+    require_once($CFG->dirroot . '/admin/adminlib.php');
+    admin_externalpage_setup('langimport');
 
     $mode          = optional_param('mode', 0, PARAM_INT);     //phase
     $pack          = optional_param('pack', '', PARAM_FILE);   //pack to install
@@ -17,16 +19,6 @@
     define('CHANGE_SITE_LANG', 3);
     define('DELETION_OF_SELECTED_LANG', 4);
     define('UPDATE_ALL_LANG', 5);
-
-    require_login();
-
-    if (!isadmin()) {
-        error('You must be an admin');
-    }
-    
-    if (!$site = get_site()) {
-        error("Site not defined!");
-    }
     
     $strlang = get_string('langimport','admin');
     
@@ -35,14 +27,9 @@
     $strlanguage = get_string("language");
     $strthislanguage = get_string("thislanguage");
     $title = $strlang;
+        
+    admin_externalpage_print_header();
     
-    print_header("$site->shortname: $title", "$site->fullname",
-                 "<a href=\"index.php\">$stradministration</a> -> ".
-                 "<a href=\"configure.php\">$strconfiguration</a> -> ".
-                 "<a href=\"lang.php\">$strlanguage</a> -> $strlang",
-                 '', '', true, '');
-    
-    print_heading('');
 
     switch ($mode){
     
@@ -284,23 +271,25 @@
             echo '<p />';
             
             /// Display option to change site language
+ 
+ /// Erm... this doesn't seem to work. Plus it's redundant. -vinkmar
             
-            print_string('changesitelang','admin');
-            $sitelanguage = get_record('config','name','lang');
-            echo '<form name="changelangform" action="langimport.php?mode=3" method="POST">';
-            echo '<select name="sitelangconfig">';
-            
-            foreach ($installedlangs as $clang =>$ilang) {
-                if ($clang == $sitelanguage->value){
-                    echo '<option value="'.$clang.'" selected="selected">'.$ilang.'</option>';
-                } else {
-                    echo '<option value="'.$clang.'">'.$ilang.'</option>';
-                }
-            }
-            echo '</select>';
-            echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
-            echo '<input type="submit" value="'.get_string('change','admin').'" />';
-            echo '</form>';
+//            print_string('changesitelang','admin');
+//            $sitelanguage = get_record('config','name','lang');
+//            echo '<form name="changelangform" action="langimport.php?mode=3" method="POST">';
+//            echo '<select name="sitelangconfig">';
+//            
+//            foreach ($installedlangs as $clang =>$ilang) {
+//                if ($clang == $sitelanguage->value){
+//                    echo '<option value="'.$clang.'" selected="selected">'.$ilang.'</option>';
+//                } else {
+//                    echo '<option value="'.$clang.'">'.$ilang.'</option>';
+//                }
+//            }
+//            echo '</select>';
+//            echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
+//            echo '<input type="submit" value="'.get_string('change','admin').'" />';
+//            echo '</form>';
 
             /// display to be installed langs here
 
@@ -354,7 +343,7 @@
 
     }    //close of main switch
 
-    print_footer();
+    admin_externalpage_print_footer();
     
     /* returns a list of available language packs from a
      * local copy shipped with standard moodle distro

@@ -3,16 +3,10 @@
     // Edit text filter settings
 
     require_once('../config.php');
+    require_once($CFG->dirroot . '/admin/adminlib.php');
     require_once($CFG->libdir.'/tablelib.php');
 
-    // check for allowed access
-    require_login();
-    if (!isadmin()) {
-        error( 'Only administrators can use the filters administration page' );
-    }
-    if (!$site = get_site()) {
-        error( 'Site is not defined in filters administration page' );
-    }
+    admin_externalpage_setup('filtermanagement');
 
     // get parameters
     $param = new Object;
@@ -76,11 +70,8 @@
     //==============================
     
     $filtername = ucfirst($filtername);
-    print_header( "$site->shortname: $txt->managefilters", "$site->fullname",
-        "<a href=\"index.php\">$txt->administration</a> -> <a href=\"configure.php\">$txt->configuration</a> " .
-        "-> <a href=\"filters.php\">$txt->managefilters</a> -> $filtername" );
-
-    print_heading( $txt->managefilters );
+    admin_externalpage_print_header();
+    print_heading( $filtername );
 
     print_simple_box("<center>".get_string("configwarning", "admin")."</center>", "center", "50%");
     echo "<br />";
@@ -104,5 +95,5 @@
 
     print_simple_box_end();
 
-    print_footer();
+    admin_externalpage_print_footer();
 ?>

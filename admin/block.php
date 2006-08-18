@@ -3,16 +3,9 @@
 // block.php - allows admin to edit all local configuration variables for a block
 
     require_once('../config.php');
+    require_once($CFG->dirroot . '/admin/adminlib.php');
+    admin_externalpage_setup('blockmanagement');
     require_once($CFG->libdir.'/blocklib.php');
-
-    require_login();
-
-    if (!isadmin()) {
-        error('Only an admin can use this page');
-    }
-    if (!$site = get_site()) {
-        error("Site isn't defined!");
-    }
 
     $blockid = required_param('block', PARAM_INT);
    
@@ -62,10 +55,8 @@
     // of the page. It is also used to generate the link to the Moodle Docs for this view.
     $CFG->pagepath = 'block/' . $block->name() . '/config';
     
-    print_header($site->shortname.': '.$strblockname.": $strconfiguration", $site->fullname,
-                  "<a href=\"index.php\">$stradmin</a> -> ".
-                  "<a href=\"configure.php\">$strconfiguration</a> -> ".
-                  "<a href=\"blocks.php\">$strmanageblocks</a> -> ".$strblockname);
+
+    admin_externalpage_print_header();
 
     print_heading($strblockname);
 
@@ -80,6 +71,6 @@
     echo '</p>';
     $block->config_print();
     echo '</form>';
-    print_footer();
+    admin_externalpage_print_footer();
 
 ?>

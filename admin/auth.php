@@ -3,27 +3,22 @@
 
     require_once('../config.php');
 
+    require_once($CFG->dirroot . '/admin/adminlib.php');
+
+    admin_externalpage_setup('userauthentication');
+
     $auth = optional_param('auth', '', PARAM_SAFEDIR);
 
-    require_login();
-
-    if (!$site = get_site()) {
-        redirect("index.php");
-    }
-
-    if (!isadmin()) {
-        error("Only the admin can use this page");
-    }
-
-    if (!confirm_sesskey()) {
-        error(get_string('confirmsesskeybad', 'error'));
-    }
 
     $focus = '';
 
 /// If data submitted, then process and store.
 
     if ($config = data_submitted()) {
+
+        if (!confirm_sesskey()) {
+            error(get_string('confirmsesskeybad', 'error'));
+        }
 
         $config = (array)$config;
 
@@ -126,17 +121,18 @@
     $strsettings = get_string("settings");
     $strusers = get_string("users");
 
-    print_header("$site->shortname: $strauthenticationoptions", "$site->fullname",
-                  "<a href=\"index.php\">$stradministration</a> -> <a href=\"users.php\">$strusers</a> -> $strauthenticationoptions", "$focus");
+    admin_externalpage_print_header();
 
     echo "<center><b>";
     echo "<form target=\"{$CFG->framename}\" name=\"authmenu\" method=\"post\" action=\"auth.php\">";
     echo "<input type=\"hidden\" name=\"sesskey\" value=\"".$USER->sesskey."\" />";
     print_string("chooseauthmethod","auth");
+    
+    echo '&nbsp;&nbsp;';
 
     choose_from_menu ($options, "auth", $auth, "","document.location='auth.php?sesskey=$USER->sesskey&auth='+document.authmenu.auth.options[document.authmenu.auth.selectedIndex].value", "");
 
-    echo "</b></center>";
+    echo "</b></center><br />";
 
     print_simple_box_start("center", "100%");
     print_heading($options[$auth]);
@@ -235,7 +231,7 @@
 
     print_simple_box_end();
 
-    print_footer();
+    admin_externalpage_print_footer();
     exit;
 
 /// Functions /////////////////////////////////////////////////////////////////

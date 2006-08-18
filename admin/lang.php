@@ -33,6 +33,8 @@
     */
 
     require_once('../config.php');
+    require_once($CFG->dirroot . '/admin/adminlib.php');
+    admin_externalpage_setup('langedit');    
 
     define('LANG_SUBMIT_REPEAT', 1);            // repeat displaying submit button?
     define('LANG_SUBMIT_REPEAT_EVERY', 20);     // if so, after how many lines?
@@ -53,16 +55,6 @@
         }
     } else {
         $SESSION->langtranslateintolocal = $uselocal;
-    }
-
-    require_login();
-
-    if (!isadmin()) {
-        error("You need to be admin to edit this page");
-    }     
-
-    if (! $site = get_site()) {
-        error("Site not defined!");
     }
 
     $stradministration = get_string("administration");
@@ -118,37 +110,25 @@
     }
 
 
-    print_header("$site->shortname: $title", "$site->fullname",
-                 "<a href=\"index.php\">$stradministration</a> -> ".
-                 "<a href=\"configure.php\">$strconfiguration</a> -> $navigation",
-                 '', '', true, $button);
+    admin_externalpage_print_header();
 
     if (!$mode) {
         print_simple_box_start('center','80%');
-        echo '<table summary="" align="center" width="100%"><tr><td width="50%" align="center">';
-        print_string('managelang','admin');
-        echo '</td><td align="center" width="50%">';
+        echo '<div align="center">';
         print_string('editlang','admin');
-        echo '</td></tr><tr><td>';
-        print_string('lang16notify','admin');
-        echo '<p /><a href="langimport.php">'.get_string('langimport','admin').'</a>';
-        echo '</td><td>';
+        echo '<br />';
         $currlang = current_language();
         $langs = get_list_of_languages();
-        echo "<table summary=\"\" align=\"center\"><tr><td align=\"right\">";
         echo "<b>$strcurrentlanguage:</b>";
-        echo "</td><td>";
+        echo '<br />';
         echo popup_form ("$CFG->wwwroot/$CFG->admin/lang.php?lang=", $langs, "chooselang", $currlang, "", "", "", true);
-        echo '</td></tr><tr><td colspan="2">';
         $options["lang"] = $currentlang;
-        //print_single_button("http://moodle.org/download/lang/", $options, get_string("latestlanguagepack"));
-        echo "</td></tr></table>";
         print_heading("<a href=\"lang.php?mode=missing\">$strmissingstrings</a>");
         print_heading("<a href=\"lang.php?mode=compare\">$streditstrings</a>");
         print_heading("<a href=\"langdoc.php\">$stredithelpdocs</a>");
-        echo '</td></tr></table>';
+        echo '</div>';
         print_simple_box_end();
-        print_footer();
+        admin_externalpage_print_footer();
         exit;
     }
 
@@ -519,7 +499,7 @@
         }
     }
 
-    print_footer();
+    admin_externalpage_print_footer();
 
 //////////////////////////////////////////////////////////////////////
 
