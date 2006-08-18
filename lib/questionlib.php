@@ -755,6 +755,8 @@ function save_question_session(&$question, &$state) {
             $session->newgraded = $state->id;
             $session->sumpenalty = $state->sumpenalty;
             $session->comment = $state->comment;
+        } else {
+            $session->comment = addslashes($session->comment);
         }
         update_record('question_sessions', $session);
     }
