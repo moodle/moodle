@@ -1,24 +1,23 @@
 <?php  // $Id$
 
 // This script regrades all attempts at this quiz
-
-    require_once($CFG->libdir.'/tablelib.php');
+require_once($CFG->libdir.'/tablelib.php');
 
 class quiz_report extends quiz_default_report {
 
-    function display($quiz, $cm, $course) {     /// This function just displays the report
+    function display($quiz, $cm, $course) {
         global $CFG, $SESSION, $db, $QTYPES;
 
-    /// Print header
+        // Print header
         $this->print_header_and_tabs($cm, $course, $quiz, $reportmode="regrade");
 
-    /// Fetch all attempts
+        // Fetch all attempts
         if (!$attempts = get_records_select('quiz_attempts', "quiz = '$quiz->id' AND preview = 0")) {
             print_heading(get_string('noattempts', 'quiz'));
             return true;
         }
 
-    /// Fetch all questions
+        // Fetch all questions
         $sql = "SELECT q.*, i.grade AS maxgrade FROM {$CFG->prefix}question q,
                                          {$CFG->prefix}quiz_question_instances i
                 WHERE i.quiz = $quiz->id
@@ -29,13 +28,13 @@ class quiz_report extends quiz_default_report {
         }
         get_question_options($questions);
 
-    /// Print heading
+        // Print heading
         print_heading(get_string('regradingquiz', 'quiz', format_string($quiz->name)));
         echo '<center>';
         print_string('regradedisplayexplanation', 'quiz');
         echo '<center>';
 
-    /// Loop through all questions and all attempts and regrade while printing progress info
+        // Loop through all questions and all attempts and regrade while printing progress info
         foreach ($questions as $question) {
             echo '<b>'.get_string('regradingquestion', 'quiz', $question->name).'</b> '.get_string('attempts', 'quiz').": \n";
             foreach ($attempts as $attempt) {
@@ -53,7 +52,7 @@ class quiz_report extends quiz_default_report {
             @flush();@ob_flush();
         }
 
-    /// Loop through all questions and recalculate $attempt->sumgrade
+        // Loop through all questions and recalculate $attempt->sumgrade
         $attemptschanged = 0;
         foreach ($attempts as $attempt) {
             $sumgrades = 0;
@@ -68,7 +67,7 @@ class quiz_report extends quiz_default_report {
             }
         }
 
-    /// Update the overall quiz grades
+        // Update the overall quiz grades
         if ($grades = get_records('quiz_grades', 'quiz', $quiz->id)) {
             foreach($grades as $grade) {
                 quiz_save_best_grade($quiz, $grade->userid);
