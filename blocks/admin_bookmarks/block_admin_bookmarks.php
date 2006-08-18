@@ -32,7 +32,7 @@ class block_admin_bookmarks extends block_base {
         }
 
         $this->content = new stdClass;
-		if ($USER->preference['admin_bookmarks']) {
+		if (isset($USER->preference['admin_bookmarks'])) {
             $bookmarks = explode(',',$USER->preference['admin_bookmarks']);
 			// hmm... just a liiitle (potentially) processor-intensive
 			// (recall that $ADMIN->locate is a huge recursive call... and we're calling it repeatedly here
