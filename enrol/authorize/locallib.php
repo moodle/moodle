@@ -125,6 +125,7 @@ function authorize_print_orders()
     if ($records = get_records_sql($select . $from . $where . $sort . $limit)) {
         foreach ($records as $record) {
             $actionstatus = authorize_get_status_action($record);
+            $color = authorize_get_status_color($actionstatus->status);
             $actions = '';
 
             if (empty($actionstatus->actions)) {
@@ -140,7 +141,7 @@ function authorize_print_orders()
                 "<a href='index.php?order=$record->id'>$record->id</a>",
                 userdate($record->timecreated),
                 $record->ccname,
-                $authstrs->{$actionstatus->status},
+                "<font style='color:$color'>" . $authstrs->{$actionstatus->status} . "</font>",
                 $actions
             ));
         }
@@ -200,8 +201,9 @@ function authorize_print_order_details($orderno)
     $table->data[] = array("<b>$authstrs->transid:</b>", $order->transid);
     $table->data[] = array("<b>$authstrs->amount:</b>", "$order->currency $order->amount");
     if (empty($cmdcapture) and empty($cmdrefund) and empty($cmdvoid) and empty($cmddelete)) {
+        $color = authorize_get_status_color($status->status);
         $table->data[] = array("<b>$strs->course:</b>", $order->shortname);
-        $table->data[] = array("<b>$strs->status:</b>", $authstrs->{$status->status});
+        $table->data[] = array("<b>$strs->status:</b>", "<font style='color:$color'>" . $authstrs->{$status->status} . "</font>");
         $table->data[] = array("<b>$authstrs->nameoncard:</b>", $order->ccname);
         $table->data[] = array("<b>$strs->time:</b>", userdate($order->timecreated));
         $table->data[] = array("<b>$authstrs->settlementdate:</b>", $settled ?
@@ -480,32 +482,17 @@ function authorize_print_order_details($orderno)
                         }
                     }
                     $sign = '';
-                    $color = '';
-                    switch ($substatus->status) {
-                        case 'cancelled':
-                            $color = 'black';
-                            break;
-
-                        case 'refunded':
-                            $sign = '-';
-                            $color = 'red';
-                            $sumrefund += floatval($rf->amount);
-                            break;
-
-                        case 'settled':
-                        default:
-                            $sign = '-';
-                            $color = 'green';
-                            $sumrefund += floatval($rf->amount);
-                            break;
+                    $color = authorize_get_status_color($substatus->status);
+                    if ($substatus->status == 'refunded' or $substatus->status == 'settled') {
+                        $sign = '-';
+                        $sumrefund += floatval($rf->amount);
                     }
-
                     $t2->data[] = array(
                         userdate($rf->settletime),
                         $rf->transid,
-                        $authstrs->{$substatus->status},
+                        "<font style='color:$color'>" .$authstrs->{$substatus->status} . "</font>",
                         $subactions,
-                        "<font color='$color'>" . format_float($sign . $rf->amount, 2) . "</font>"
+                        format_float($sign . $rf->amount, 2)
                     );
                 }
                 $t2->data[] = array('','',get_string('total'),$order->currency,format_float('-'.$sumrefund, 2));
@@ -610,5 +597,32 @@ function authorize_get_status_action($order)
     default:
         return $ret;
     }
+}
+
+
+function authorize_get_status_color($status)
+{
+    $color = 'black';
+    switch ($status) {
+        case 'new':
+        case 'tested':
+        case 'cancelled':
+        case 'authorizedpendingcapture':
+            $color = '#FF6600'; // orange
+            break;
+
+        case 'capturedpendingsettle':
+        case 'capturedsettled':
+        case 'settled':
+            $color = '#339900'; // green
+            break;
+
+        case 'expired':
+        case 'cancelled':
+        case 'refunded';
+            $color = '#FF0033'; // red
+            break;
+    }
+    return $color;
 }
 ?>
