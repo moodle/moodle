@@ -930,6 +930,8 @@ function regrade_question_in_attempt($question, $attempt, $cmoptions, $verbose=f
             save_question_session($question, $replaystate);
         }
         if ($changed) {
+            // TODO, call a method in quiz to do this, where 'quiz' comes from
+            // the question_attempts table.
             update_record('quiz_attempts', $attempt);
         }
 
