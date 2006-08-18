@@ -171,7 +171,8 @@ global $HTTPSPAGEREQUIRED;
     
     require_once($CFG->libdir .'/textlib.class.php');   // Functions to handle multibyte strings
     require_once($CFG->libdir .'/weblib.php');          // Functions for producing HTML
-    require_once($CFG->libdir .'/datalib.php');         // Functions for accessing databases
+    require_once($CFG->libdir .'/dmllib.php');          // Functions to handle DB data (DML)
+    require_once($CFG->libdir .'/datalib.php');         // Legacy lib with a big-mix of functions.
     require_once($CFG->libdir .'/moodlelib.php');       // Other general-purpose functions
 
 
