@@ -289,6 +289,10 @@ class admin_setting_configtext extends admin_setting {
 
 class admin_setting_configcheckbox extends admin_setting {
 
+    function admin_setting_configcheckbox($name, $visiblename, $description) {
+        parent::admin_setting($name, $visiblename, $description);
+    }
+
     function get_setting() {
 	    global $CFG;
 		$temp = $this->name;  // there's gotta be a more elegant way
@@ -400,6 +404,10 @@ class admin_setting_configtime extends admin_setting {
 }
 
 class admin_setting_configmultiselect extends admin_setting_configselect {
+
+    function admin_setting_configmultiselect($name, $visiblename, $description, $choices) {
+        parent::admin_setting_configselect($name, $visiblename, $description, $choices);
+    }
 
     function get_setting() {
 	    global $CFG;
@@ -906,6 +914,10 @@ class admin_setting_special_editorhidebuttons extends admin_setting {
 
 class admin_setting_backupselect extends admin_setting_configselect {
 
+    function admin_setting_backupselect($name, $visiblename, $description, $choices) {
+        parent::admin_setting_configselect($name, $visiblename, $description, $choices);
+    }
+
     function get_setting() {
     	$backup_config =  backup_get_config(); // we need this function from backup/lib.php ... but it causes conflicts. ideas?
 		$temp = $this->name;
@@ -951,6 +963,10 @@ class admin_setting_special_backupsaveto extends admin_setting_configtext {
 }
 
 class admin_setting_backupcheckbox extends admin_setting_configcheckbox {
+
+    function admin_setting_backupcheckbox($name, $visiblename, $description) {
+        parent::admin_setting_configcheckbox($name, $visiblename, $description);
+    }
 
     function write_setting($data) {
 	    if ($data == '1') {
