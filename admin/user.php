@@ -1,11 +1,6 @@
 <?php // $Id$
 
-require_once('../config.php');
-require_once($CFG->dirroot . '/admin/adminlib.php');
-
-admin_externalpage_setup('editusers');
-admin_externalpage_print_header();
-
+    require_once('../config.php');
 
     $newuser      = optional_param('newuser', 0, PARAM_BOOL);
     $delete       = optional_param('delete', 0, PARAM_INT);
@@ -111,7 +106,7 @@ admin_externalpage_print_header();
     
     if ($newuser && confirm_sesskey()) {                 // Create a new user
         
-        if (!has_capability('moodle/user:create', $context->id)) {
+        if (!has_capability('moodle/user:create', $context)) {
             error('You do not have the required permission to create new users.');
         }
         
@@ -135,7 +130,7 @@ admin_externalpage_print_header();
 
     } else {                        // List all users for editing
         
-        if (!has_capability('moodle/user:update', $context->id)) {
+        if (!has_capability('moodle/user:update', $context)) {
             error('You do not have the required permission to edit users.');
         }
         
@@ -148,6 +143,16 @@ admin_externalpage_print_header();
         $strsearch = get_string("search");
         $strshowallusers = get_string("showallusers");
 
+        if ($firstinitial or $lastinitial or $search or $page) {
+            print_header("$site->shortname: $stredituser", $site->fullname,
+                         "<a href=\"index.php\">$stradministration</a> -> ".
+                         "<a href=\"users.php\">$strusers</a> -> ".
+                         "<a href=\"user.php\">$stredituser</a>");
+        } else {
+            print_header("$site->shortname: $stredituser", $site->fullname,
+                         "<a href=\"index.php\">$stradministration</a> -> ".
+                         "<a href=\"users.php\">$strusers</a> -> $stredituser");
+        }
 
         if ($confirmuser and confirm_sesskey()) {
             if (!$user = get_record("user", "id", "$confirmuser")) {
@@ -167,7 +172,7 @@ admin_externalpage_print_header();
 
         } else if ($delete and confirm_sesskey()) {              // Delete a selected user, after confirmation
             
-            if (!has_capability('moodle/user:delete', $context->id)) {
+            if (!has_capability('moodle/user:delete', $context)) {
                 error('You do not have the required permission to delete a user.');
             }
             
@@ -339,7 +344,7 @@ admin_externalpage_print_header();
                 if ($user->id == $USER->id or $user->username == "changeme") {
                     $deletebutton = "";
                 } else {
-                      if (has_capability('moodle/user:delete', $context->id)) {
+                      if (has_capability('moodle/user:delete', $context)) {
                         $deletebutton = "<a href=\"user.php?delete=$user->id&amp;sesskey=$USER->sesskey\">$strdelete</a>";                    } else {
                         $deletebutton ="";      
                     }
@@ -356,7 +361,7 @@ admin_externalpage_print_header();
                 }
                 $fullname = fullname($user, true);
                 
-                if (has_capability('moodle/user:edit', $context->id)) {
+                if (has_capability('moodle/user:edit', $context)) {
                 
                     $table->data[] = array ("<a href=\"../user/view.php?id=$user->id&amp;course=$site->id\">$fullname</a>",
                                         "$user->email",
@@ -389,7 +394,7 @@ admin_externalpage_print_header();
         echo "</form>";
         echo "</td></tr></table>";
         
-        if (has_capability('moodle/user:create', $context->id)) {
+        if (has_capability('moodle/user:create', $context)) {
             print_heading("<a href=\"user.php?newuser=true&amp;sesskey=$USER->sesskey\">".get_string("addnewuser")."</a>");    
         }
         if (!empty($table)) {
@@ -397,13 +402,13 @@ admin_externalpage_print_header();
             print_paging_bar($usercount, $page, $perpage,
                              "user.php?sort=$sort&amp;dir=$dir&amp;perpage=$perpage".
                              "&amp;firstinitial=$firstinitial&amp;lastinitial=$lastinitial&amp;search=".urlencode(stripslashes($search))."&amp;");
-            if (has_capability('moodle/user:create', $context->id)) {                
+            if (has_capability('moodle/user:create', $context)) {                
                 print_heading("<a href=\"user.php?newuser=true&amp;sesskey=$USER->sesskey\">".get_string("addnewuser")."</a>");
             }
         }
 
 
-    admin_externalpage_print_footer();
+        print_footer();
     }
 
 ?>
