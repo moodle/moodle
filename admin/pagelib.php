@@ -60,7 +60,7 @@ class page_admin extends page_base {
         if (is_a($root, 'admin_externalpage')) {
             return $root->url;
         } else {
-            return ($CFG->wwwroot . '/' . $CFG->admin . '/settings.php?section=' . $this->section);
+            return ($CFG->wwwroot . '/' . $CFG->admin . '/settings.php');
         }
     }
 
