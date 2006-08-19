@@ -28,8 +28,8 @@
 /// generic and work against the major number of RDBMS possible. This is the
 /// list of currently supported and tested DBs: mysql, postresql, mssql, oracle
 
-/// This library is automatically included by Moodle code so won't need to
-/// include it manually at all.
+/// This library is automatically included by Moodle core so you never need to
+/// include it yourself.
 
 /// For more info about the functions available in this library, please visit:
 ///     http://docs.moodle.org/en/DML_functions
