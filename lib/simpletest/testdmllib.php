@@ -14,7 +14,7 @@ require_once(dirname(__FILE__) . '/../../config.php');
 global $CFG;
 require_once($CFG->libdir . '/simpletestlib.php');
 require_once($CFG->libdir . '/simpletestlib/web_tester.php');
-require_once($CFG->libdir . '/datalib.php');
+require_once($CFG->libdir . '/dmllib.php');
 
 class datalib_test extends prefix_changing_test_case {
     var $table = 'table';
