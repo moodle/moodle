@@ -12,7 +12,7 @@ if (!isset($site)) {
 // stuff under the "usermanagement" subcategory
 $ADMIN->add('authenticationandsecurity', new admin_category('usermanagement', get_string('usermanagement', 'admin')), 0);
 $ADMIN->add('usermanagement', new admin_externalpage('editusers', get_string('editusers','admin'), $CFG->wwwroot . '/admin/user.php'), 1);
-$ADMIN->add('usermanagement', new admin_externalpage('addnewuser', get_string('addnewuser'), $CFG->wwwroot . '/admin/user.php?newuser=true&amp;sesskey='.$USER->sesskey), 0);
+$ADMIN->add('usermanagement', new admin_externalpage('addnewuser', get_string('addnewuser'), $CFG->wwwroot . '/admin/user.php?newuser=true&amp;sesskey='. (isset($USER->sesskey) ? $USER->sesskey : '')), 0);
 $ADMIN->add('usermanagement', new admin_externalpage('uploadusers', get_string('uploadusers','admin'), $CFG->wwwroot . '/admin/uploaduser.php'), 2);
 
 
