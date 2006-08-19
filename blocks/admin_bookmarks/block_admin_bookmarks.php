@@ -32,6 +32,7 @@ class block_admin_bookmarks extends block_base {
         }
 
         $this->content = new stdClass;
+        $this->content->text = '';
 		if (isset($USER->preference['admin_bookmarks'])) {
             $bookmarks = explode(',',$USER->preference['admin_bookmarks']);
 			// hmm... just a liiitle (potentially) processor-intensive

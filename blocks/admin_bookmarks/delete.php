@@ -6,7 +6,7 @@ require_once($CFG->dirroot . '/admin/adminlib.php');
 
 if ($section = optional_param('section', '', PARAM_ALPHAEXT)) {
 
-    if ($USER->preference['admin_bookmarks']) {
+    if (isset($USER->preference['admin_bookmarks'])) {
 
         $bookmarks = explode(',', $USER->preference['admin_bookmarks']);
 
