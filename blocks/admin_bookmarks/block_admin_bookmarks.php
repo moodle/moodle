@@ -38,9 +38,9 @@ class block_admin_bookmarks extends block_base {
 			// (recall that $ADMIN->locate is a huge recursive call... and we're calling it repeatedly here
             foreach($bookmarks as $bookmark) {
 			    $temp = $ADMIN->locate($bookmark);
-			    if ($temp instanceof admin_settingpage) {
+			    if (is_a($temp, 'admin_settingpage')) {
                     $this->content->text .= '<a href="' . $CFG->wwwroot . '/admin/settings.php?section=' . $bookmark . '">' . $temp->visiblename . '</a>' . '<br />';
-                } elseif ($temp instanceof admin_externalpage) {
+                } elseif (is_a($temp, 'admin_externalpage')) {
                     $this->content->text .= '<a href="' . $temp->url . '">' . $temp->visiblename . '</a>' . '<br />';
                 }                
     		}
@@ -52,6 +52,8 @@ class block_admin_bookmarks extends block_base {
             $this->content->footer = '<a href="' . $CFG->wwwroot . '/blocks/admin_bookmarks/delete.php?section=' . $section . '&returnurl=' . $CFG->wwwroot . '">unbookmark this page</a>';	
 		} elseif ($section = optional_param('section','',PARAM_ALPHAEXT)) {
     	    $this->content->footer = '<a href="' . $CFG->wwwroot . '/blocks/admin_bookmarks/create.php?section=' . $section . '">bookmark this page</a>';		
+		} else {
+		    $this->content->footer = '';
 		}
 	
 	    return $this->content;

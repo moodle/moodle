@@ -20,7 +20,7 @@ if ($section = optional_param('section', '', PARAM_ALPHAEXT)) {
 
     $temp = $ADMIN->locate($section);
     
-    if ($temp instanceof admin_settingpage || $temp instanceof admin_externalpage) {
+    if (is_a($temp, 'admin_settingpage') || is_a($temp, 'admin_externalpage')) {
 	
         $bookmarks[] = $section;
 	
@@ -35,11 +35,11 @@ if ($section = optional_param('section', '', PARAM_ALPHAEXT)) {
         
     }
 	
-	if ($temp instanceof admin_settingpage) {
+	if (is_a($temp, 'admin_settingpage')) {
 	
         redirect("$CFG->wwwroot/admin/settings.php?section=" . $section, 'Bookmark added.',1);	
     
-    } elseif ($temp instanceof admin_externalpage) {
+    } elseif (is_a($temp, 'admin_externalpage')) {
     
         redirect($temp->url, 'Bookmark added.', 1);
         

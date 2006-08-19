@@ -23,9 +23,9 @@ if ($section = optional_param('section', '', PARAM_ALPHAEXT)) {
         
         $temp = $ADMIN->locate($section);
         
-        if ($temp instanceof admin_externalpage) {
+        if (is_a($temp, 'admin_externalpage')) {
             redirect($temp->url, 'Bookmark deleted.',1);
-        } elseif ($temp instanceof admin_settingpage) {
+        } elseif (is_a($temp, 'admin_settingpage')) {
             redirect($CFG->wwwroot . '/admin/settings.php?section=' . $section, 'Bookmark deleted.',1);        
         } else {
             redirect($CFG->wwwroot, 'Bookmark deleted.',1);
