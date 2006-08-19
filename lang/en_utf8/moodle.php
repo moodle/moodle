@@ -954,6 +954,7 @@ $string['noteuserschangednonetocourse'] = 'Note: course users need to be restore
 $string['nothingnew'] = 'Nothing new since your last login';
 $string['nothingtodisplay'] = 'Nothing to display';
 $string['noticenewerbackup'] = 'This backup file has been created with Moodle $a->backuprelease ($a->backupversion) and it\'s newer than your currently installed Moodle $a->serverrelease ($a->serverversion). This could cause some inconsistencies because backwards compatibility of backup files cannot be guaranteed.';
+$string['notifications'] = 'Notifications';
 $string['notifyloginfailuresmessage'] = '$a->time, IP: $a->ip, User: $a->info';
 $string['notifyloginfailuresmessageend'] = 'You can view these logs at $a/course/log.php?id=1&chooselog=1&modid=site_errors.';
 $string['notifyloginfailuresmessagestart'] = 'Here is a list of failed login attempts at $a since you were last notified ';

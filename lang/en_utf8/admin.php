@@ -4,6 +4,7 @@
 
 // begin {added with admin cleanup}
 $string['userinterface'] = 'User Interface';
+$string['userlist'] = 'Browse list of users';
 $string['serverinterface'] = 'Server Interface';
 $string['authenticationandsecurity'] = 'Authentication &amp; Security';
 $string['maintenanceandauditing'] = 'Maintenance &amp; Auditing';
@@ -203,6 +204,7 @@ $string['install'] = 'Install selected language pack';
 $string['installedlangs'] = 'Installed language packs';
 $string['invaliduserchangeme'] = 'Username "changeme" is reserved -- you cannot create an account with it.';
 $string['lang16notify'] = 'Moodle 1.6 and above allows you to install and update language packs directly from download.moodle.org by following the link below';
+$string['langedit'] = 'Language editing';
 $string['langimport'] = 'Language import utility';
 $string['langimportsuccess'] = 'Language pack successfully upgraded';
 $string['langpackremoved'] = 'Language pack was uninstalled';
@@ -286,6 +288,7 @@ $string['userscreated']  = 'Users created';
 $string['usersrenamed']  = 'Users renamed';
 $string['usersupdated']  = 'Users updated';
 $string['updateaccounts']  = 'Update existing accounts';
+$string['updatetimezones'] = 'Update timezones';
 $string['upwards']  = 'upwards';
 
 ?>

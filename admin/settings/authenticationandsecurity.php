@@ -10,16 +10,16 @@ if (!isset($site)) {
 }
 
 // stuff under the "usermanagement" subcategory
-$ADMIN->add('authenticationandsecurity', new admin_category('usermanagement', get_string('usermanagement', 'admin')), 0);
-$ADMIN->add('usermanagement', new admin_externalpage('editusers', get_string('editusers','admin'), $CFG->wwwroot . '/admin/user.php'), 1);
+$ADMIN->add('authenticationandsecurity', new admin_category('usermanagement', get_string('users')), 0);
+$ADMIN->add('usermanagement', new admin_externalpage('editusers', get_string('userlist','admin'), $CFG->wwwroot . '/admin/user.php'), 1);
 $ADMIN->add('usermanagement', new admin_externalpage('addnewuser', get_string('addnewuser'), $CFG->wwwroot . '/admin/user.php?newuser=true&amp;sesskey='. (isset($USER->sesskey) ? $USER->sesskey : '')), 0);
-$ADMIN->add('usermanagement', new admin_externalpage('uploadusers', get_string('uploadusers','admin'), $CFG->wwwroot . '/admin/uploaduser.php'), 2);
+$ADMIN->add('usermanagement', new admin_externalpage('uploadusers', get_string('uploadusers'), $CFG->wwwroot . '/admin/uploaduser.php'), 2);
 
 
 // stuff under the "roles" subcategory
 $ADMIN->add('authenticationandsecurity', new admin_category('roles', get_string('roles')));
-$ADMIN->add('roles', new admin_externalpage('manageroles', get_string('manageroles', 'admin'), $CFG->wwwroot . '/admin/roles/manage.php'));
-$ADMIN->add('roles', new admin_externalpage('assignsitewideroles', get_string('assignsitewideroles', 'admin'), $CFG->wwwroot . '/admin/roles/assign.php?contextid=' . $site->id));
+$ADMIN->add('roles', new admin_externalpage('manageroles', get_string('manageroles'), $CFG->wwwroot . '/admin/roles/manage.php'));
+$ADMIN->add('roles', new admin_externalpage('assignsitewideroles', get_string('assignsiteroles'), $CFG->wwwroot . '/admin/roles/assign.php?contextid=' . $site->id));
 
 
 
