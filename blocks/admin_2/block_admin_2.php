@@ -2,12 +2,12 @@
 
 class block_admin_2 extends block_base {
 
-    private $currentdepth;
-    private $spancounter;
-    private $tempcontent;
-    private $pathtosection;
-    private $expandjavascript;
-	private $destination;
+    var $currentdepth;
+    var $spancounter;
+    var $tempcontent;
+    var $pathtosection;
+    var $expandjavascript;
+	var $destination;
 
     function init() {
         $this->title = "Administration (Beta)";
@@ -51,15 +51,15 @@ class block_admin_2 extends block_base {
 
     function build_tree (&$content) {
 	    global $CFG;
-		if ($content instanceof admin_settingpage) {
+		if (is_a($content, 'admin_settingpage')) {
 		    if ($content->check_access()) {
         		$this->create_item($content->visiblename,$CFG->wwwroot.'/admin/settings.php?section=' . $content->name,$CFG->wwwroot .'/blocks/admin_2/item.gif');
 			}
-		} else if ($content instanceof admin_externalpage) {
+		} else if (is_a($content, 'admin_externalpage')) {
 		    if ($content->check_access()) {
 		        $this->create_item($content->visiblename, $content->url, $CFG->wwwroot . '/blocks/admin_2/item.gif');
 		    }
-		} else if ($content instanceof admin_category) {
+		} else if (is_a($content, 'admin_category')) {
 		    if ($content->check_access()) {
 			
                 // check if the category we're currently printing is a parent category for the current page; if it is, we
@@ -166,6 +166,10 @@ class block_admin_2 extends block_base {
             $this->content->text .= $this->expandjavascript;
 
             $this->content->text .= '</script>' . "\n";
+            $this->content->footer = '';
+        } else {
+            $this->content = new stdClass;
+            $this->content->text = '';
             $this->content->footer = '';
         }
         return $this->content;
