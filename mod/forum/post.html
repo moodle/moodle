@@ -92,7 +92,8 @@ if (!isset($discussion->timeend)) {
 </tr>
 
 
-<?php if ($forum->maxbytes != 1) {  //  1 = No attachments at all  ?>
+<?php if ($forum->maxbytes != 1) {  //  1 = No attachments at all
+?>
 
 <tr valign="top">
     <td align="right"><b><?php print_string("attachment", "forum") ?>:<br />(<?php print_string("optional") ?>)&nbsp;</b></td>
@@ -161,7 +162,7 @@ if (!isset($discussion->timeend)) {
 <?php } else { ?>
 <input type="hidden" name="timestartdisabled" value="1" />
 <input type="hidden" name="timeenddisabled" value="1" />
-<? } ?>
+<?php } ?>
 <tr>
     <td align="center" colspan="2">
     <input type="hidden" name="course"     value="<?php p($post->course) ?>" />
