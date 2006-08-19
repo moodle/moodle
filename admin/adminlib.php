@@ -223,7 +223,11 @@ class admin_settingpage extends part_of_admin_tree {
     function write_settings($data) {
 	    $return = '';
 		foreach($this->settings as $setting) {
-		    $return .= $setting->write_setting($data['s_' . $setting->name]);
+		    if (isset($data['s_' . $setting->name])) {
+                $return .= $setting->write_setting($data['s_' . $setting->name]);
+            } else {
+                $return .= $setting->write_setting('');
+            }
 		}
 		return $return;
 	}
@@ -264,7 +268,7 @@ class admin_setting_configtext extends admin_setting {
 
     var $paramtype;
 
-    function admin_setting_configtext($name, $visiblename, $description, $paramtype = PARAM_RAW) {
+    function admin_setting_configtext($name, $visiblename, $description, $paramtype) {
         $this->paramtype = $paramtype;
         parent::admin_setting($name, $visiblename, $description);
     }
@@ -577,11 +581,11 @@ class admin_setting_sitesettext extends admin_setting_configtext {
 
     var $id;
 
-    function admin_setting_sitesettext($name, $visiblename, $description) {
+    function admin_setting_sitesettext($name, $visiblename, $description, $paramtype) {
 
     	$site = get_site();	
     	$this->id = $site->id;
-    	parent::admin_setting_configtext($name, $visiblename, $description);
+    	parent::admin_setting_configtext($name, $visiblename, $description, $paramtype);
 	
 	}
 	
@@ -700,7 +704,7 @@ class admin_setting_special_editorfontlist extends admin_setting {
 		$result = '';
 		for ($i = 0; $i < count($keys); $i++) {
 		    if (($keys[$i] !== '') && ($values[$i] !== '')) {
-    		    $result .= $keys[$i] . ':' . $values[$i] . ';';
+    		    $result .= clean_param($keys[$i],PARAM_NOTAGS) . ':' . clean_param($values[$i], PARAM_NOTAGS) . ';';
 			}
 		}
 		
@@ -942,7 +946,7 @@ class admin_setting_special_backupsaveto extends admin_setting_configtext {
 	    $name = 'backup_sche_destination';
 		$visiblename = get_string('saveto');
 		$description = get_string('backupsavetohelp');
-		parent::admin_setting_configtext($name, $visiblename, $description);
+		parent::admin_setting_configtext($name, $visiblename, $description, PARAM_PATH);
 	}
 	
 	function get_setting() {

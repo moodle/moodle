@@ -31,8 +31,8 @@ $temp->add(new admin_setting_configselect('fullnamedisplay', get_string('fullnam
 																																						 'firstname' => get_string('firstname'))));
 $temp->add(new admin_setting_configcheckbox('extendedusernamechars', get_string('extendedusernamechars', 'admin'), get_string('configextendedusernamechars', 'admin')));
 $temp->add(new admin_setting_configcheckbox('mymoodleredirect', get_string('mymoodleredirect', 'admin'), get_string('configmymoodleredirect', 'admin')));
-$temp->add(new admin_setting_configtext('sitepolicy', get_string('sitepolicy', 'admin'), get_string('configsitepolicy', 'admin')));
-$temp->add(new admin_setting_configtext('docroot', get_string('docroot', 'admin'), get_string('configdocroot', 'admin')));
+$temp->add(new admin_setting_configtext('sitepolicy', get_string('sitepolicy', 'admin'), get_string('configsitepolicy', 'admin'), PARAM_URL));
+$temp->add(new admin_setting_configtext('docroot', get_string('docroot', 'admin'), get_string('configdocroot', 'admin'), PARAM_URL));
 $temp->add(new admin_setting_configcheckbox('doctonewwindow', get_string('doctonewwindow', 'admin'), get_string('configdoctonewwindow', 'admin')));
 $temp->add(new admin_setting_configselect('bloglevel', get_string('bloglevel', 'admin'), get_string('configbloglevel', 'admin'), array(5 => get_string('worldblogs','blog'),
                                                                                                                                       4 => get_string('siteblogs','blog'),
@@ -56,8 +56,8 @@ $temp->add(new admin_setting_configselect('startwday', get_string('startwday', '
                                                                                                                                        4 => get_string('thursday', 'calendar'), 
                                                                                                                                        5 => get_string('friday', 'calendar'), 
                                                                                                                                        6 => get_string('saturday', 'calendar'))));
-$temp->add(new admin_setting_configtext('calendar_lookahead', get_string('calendar_lookahead', 'admin'), get_string('helpupcominglookahead', 'admin')));
-$temp->add(new admin_setting_configtext('calendar_maxevents', get_string('calendar_maxevents', 'admin'), get_string('helpupcomingmaxevents', 'admin')));
+$temp->add(new admin_setting_configtext('calendar_lookahead', get_string('calendar_lookahead', 'admin'), get_string('helpupcominglookahead', 'admin'), PARAM_INT));
+$temp->add(new admin_setting_configtext('calendar_maxevents', get_string('calendar_maxevents', 'admin'), get_string('helpupcomingmaxevents', 'admin'), PARAM_INT));
 $temp->add(new admin_setting_special_calendar_weekend());
 
 $ADMIN->add('unsorted', $temp);

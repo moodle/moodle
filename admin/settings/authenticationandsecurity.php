@@ -74,7 +74,7 @@ $temp->add(new admin_setting_configselect('showsiteparticipantslist', get_string
 $temp->add(new admin_setting_configcheckbox('forcelogin', get_string('forcelogin', 'admin'), get_string('configforcelogin', 'admin')));
 $temp->add(new admin_setting_configcheckbox('forceloginforprofiles', get_string('forceloginforprofiles', 'admin'), get_string('configforceloginforprofiles', 'admin')));
 $temp->add(new admin_setting_configcheckbox('opentogoogle', get_string('opentogoogle', 'admin'), get_string('configopentogoogle', 'admin')));
-$temp->add(new admin_setting_configtext('maxbytes', get_string('maxbytes', 'admin'), get_string('configmaxbytes', 'admin')));
+$temp->add(new admin_setting_configtext('maxbytes', get_string('maxbytes', 'admin'), get_string('configmaxbytes', 'admin'), PARAM_INT));
 $temp->add(new admin_setting_configcheckbox('messaging', get_string('messaging', 'admin'), get_string('configmessaging','admin')));
 $temp->add(new admin_setting_configcheckbox('allowobjectembed', get_string('allowobjectembed', 'admin'), get_string('configallowobjectembed', 'admin')));
 $temp->add(new admin_setting_configselect('maxeditingtime', get_string('maxeditingtime','admin'), get_string('configmaxeditingtime','admin'), array(60 => get_string('numminutes', '', 1),
@@ -113,8 +113,8 @@ $ADMIN->add('authenticationandsecurity', $temp);
 // "antivirus" settingpage
 $temp = new admin_settingpage('antivirus', get_string('antivirus', 'admin'));
 $temp->add(new admin_setting_configcheckbox('runclamavonupload', get_string('runclamavonupload', 'admin'), get_string('configrunclamavonupload', 'admin')));
-$temp->add(new admin_setting_configtext('pathtoclam', get_string('pathtoclam', 'admin'), get_string('configpathtoclam', 'admin')));
-$temp->add(new admin_setting_configtext('quarantinedir', get_string('quarantinedir', 'admin'), get_string('configquarantinedir', 'admin')));
+$temp->add(new admin_setting_configtext('pathtoclam', get_string('pathtoclam', 'admin'), get_string('configpathtoclam', 'admin'), PARAM_PATH));
+$temp->add(new admin_setting_configtext('quarantinedir', get_string('quarantinedir', 'admin'), get_string('configquarantinedir', 'admin'), PARAM_PATH));
 $temp->add(new admin_setting_configselect('clamfailureonupload', get_string('clamfailureonupload', 'admin'), get_string('configclamfailureonupload', 'admin'), array('donothing' => get_string('configclamdonothing', 'admin'),
                                                                                                                                                                    'actlikevirus' => get_string('configclamactlikevirus', 'admin'))));
 $ADMIN->add('authenticationandsecurity', $temp);

@@ -24,12 +24,12 @@ $ADMIN->add('userinterface', $temp);
 
 // "generalsettings" settingpage
 $temp = new admin_settingpage('generalsettings', get_string('generalsettings','admin'));
-$temp->add(new admin_setting_sitesettext('fullname', get_string('fullsitename'), get_string('fullsitenamehelp')));
-$temp->add(new admin_setting_sitesettext('shortname', get_string('shortsitename'), get_string('shortsitenamehelp')));
-$temp->add(new admin_setting_sitesettext('teacher', get_string('wordforteacher'), get_string('wordforteachereg')));
-$temp->add(new admin_setting_sitesettext('teachers', get_string('wordforteachers'), get_string('wordforteacherseg')));
-$temp->add(new admin_setting_sitesettext('student', get_string('wordforstudent'), get_string('wordforstudenteg')));
-$temp->add(new admin_setting_sitesettext('students', get_string('wordforstudents'), get_string('wordforstudentseg')));
+$temp->add(new admin_setting_sitesettext('fullname', get_string('fullsitename'), get_string('fullsitenamehelp'), PARAM_NOTAGS));
+$temp->add(new admin_setting_sitesettext('shortname', get_string('shortsitename'), get_string('shortsitenamehelp'), PARAM_NOTAGS));
+$temp->add(new admin_setting_sitesettext('teacher', get_string('wordforteacher'), get_string('wordforteachereg'), PARAM_ALPHA));
+$temp->add(new admin_setting_sitesettext('teachers', get_string('wordforteachers'), get_string('wordforteacherseg'), PARAM_ALPHA));
+$temp->add(new admin_setting_sitesettext('student', get_string('wordforstudent'), get_string('wordforstudenteg'), PARAM_ALPHA));
+$temp->add(new admin_setting_sitesettext('students', get_string('wordforstudents'), get_string('wordforstudentseg'), PARAM_ALPHA));
 $ADMIN->add('userinterface', $temp);
 
 
@@ -67,7 +67,7 @@ $ADMIN->add('userinterface', $temp);
 
 // "themesettings" settingpage
 $temp = new admin_settingpage('themesettings', get_string('themes'));
-$temp->add(new admin_setting_configtext('themelist', get_string('themelist', 'admin'), get_string('configthemelist','admin')));
+$temp->add(new admin_setting_configtext('themelist', get_string('themelist', 'admin'), get_string('configthemelist','admin'), PARAM_NOTAGS));
 $temp->add(new admin_setting_configcheckbox('allowuserthemes', get_string('allowuserthemes', 'admin'), get_string('configallowuserthemes', 'admin')));
 $temp->add(new admin_setting_configcheckbox('allowcoursethemes', get_string('allowcoursethemes', 'admin'), get_string('configallowcoursethemes', 'admin')));
 $temp->add(new admin_setting_configcheckbox('allowuserblockhiding', get_string('allowuserblockhiding', 'admin'), get_string('configallowuserblockhiding', 'admin')));
@@ -80,9 +80,9 @@ $ADMIN->add('userinterface', $temp);
 // "htmleditor" settingpage
 $temp = new admin_settingpage('htmleditor', get_string('htmleditor', 'admin'));
 $temp->add(new admin_setting_configcheckbox('htmleditor', get_string('usehtmleditor', 'admin'), get_string('confightmleditor','admin')));
-$temp->add(new admin_setting_configtext('editorbackgroundcolor', get_string('editorbackgroundcolor', 'admin'), get_string('edhelpbgcolor')));
-$temp->add(new admin_setting_configtext('editorfontfamily', get_string('editorfontfamily', 'admin'), get_string('edhelpfontfamily')));
-$temp->add(new admin_setting_configtext('editorfontsize', get_string('editorfontsize', 'admin'), get_string('edhelpfontsize')));
+$temp->add(new admin_setting_configtext('editorbackgroundcolor', get_string('editorbackgroundcolor', 'admin'), get_string('edhelpbgcolor'), PARAM_NOTAGS));
+$temp->add(new admin_setting_configtext('editorfontfamily', get_string('editorfontfamily', 'admin'), get_string('edhelpfontfamily'), PARAM_NOTAGS));
+$temp->add(new admin_setting_configtext('editorfontsize', get_string('editorfontsize', 'admin'), get_string('edhelpfontsize'), PARAM_NOTAGS));
 $temp->add(new admin_setting_special_editorfontlist());
 $temp->add(new admin_setting_configcheckbox('editorkillword', get_string('editorkillword', 'admin'), get_string('edhelpcleanword')));
 if ($CFG->aspellpath !== '') { // make aspell settings disappear if path isn't set
@@ -98,9 +98,9 @@ $ADMIN->add('userinterface', $temp);
 $temp = new admin_settingpage('languageandlocation', get_string('languageandlocation', 'admin'));
 $temp->add(new admin_setting_configselect('lang', get_string('lang', 'admin'), get_string('configlang', 'admin'), get_list_of_languages()));
 $temp->add(new admin_setting_configcheckbox('langmenu', get_string('langmenu', 'admin'), get_string('configlangmenu', 'admin')));
-$temp->add(new admin_setting_configtext('langlist', get_string('langlist', 'admin'), get_string('configlanglist', 'admin')));
+$temp->add(new admin_setting_configtext('langlist', get_string('langlist', 'admin'), get_string('configlanglist', 'admin'), PARAM_NOTAGS));
 $temp->add(new admin_setting_configcheckbox('langcache', get_string('langcache', 'admin'), get_string('configlangcache', 'admin')));
-$temp->add(new admin_setting_configtext('locale', get_string('localetext', 'admin'), get_string('configlocale', 'admin')));
+$temp->add(new admin_setting_configtext('locale', get_string('localetext', 'admin'), get_string('configlocale', 'admin'), PARAM_ALPHAEXT));
 $temp->add(new admin_setting_configselect('timezone', get_string('timezone','admin'), get_string('configtimezone', 'admin'), get_list_of_timezones()));
 $temp->add(new admin_setting_configselect('country', get_string('country', 'admin'), get_string('configcountry', 'admin'), get_list_of_countries()));
 unset($options);

@@ -63,7 +63,7 @@ $temp->add(new admin_setting_configselect('statsmaxruntime', get_string('statsma
 																																						  60*60*7 => '7 '.get_string('hours'),
 																																						  60*60*8 => '8 '.get_string('hours') )));
 $temp->add(new admin_setting_configtime('statsruntimestarthour', 'statsruntimestartminute', get_string('statsruntimestart', 'admin'), get_string('configstatsruntimestart', 'admin')));
-$temp->add(new admin_setting_configtext('statsuserthreshold', get_string('statsuserthreshold', 'admin'), get_string('configstatsuserthreshold', 'admin')));
+$temp->add(new admin_setting_configtext('statsuserthreshold', get_string('statsuserthreshold', 'admin'), get_string('configstatsuserthreshold', 'admin'), PARAM_INT));
 $ADMIN->add('maintenanceandauditing', $temp);																																				   
 
 
