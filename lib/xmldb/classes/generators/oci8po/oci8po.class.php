@@ -120,8 +120,9 @@ class XMLDBoci8po extends XMLDBgenerator {
      */
     function getCreateSequenceSQL ($xmldb_table, $xmldb_field) {
 
-        $sequence = "CREATE SEQUENCE ";
-        $sequence.= $this->getNameForObject($xmldb_table->getName(), $xmldb_field->getName(), 'seq');
+        $sequence_name = $this->getNameForObject($xmldb_table->getName(), $xmldb_field->getName(), 'seq');
+        
+        $sequence = "CREATE SEQUENCE " . $sequence_name;
         $sequence.= "\n    START WITH 1";
         $sequence.= "\n    INCREMENT BY 1";
         $sequence.= "\n    NOMAXVALUE";
@@ -133,7 +134,7 @@ class XMLDBoci8po extends XMLDBgenerator {
         $trigger.= "\nON " . $this->getEncQuoted($this->prefix . $xmldb_table->getName());
         $trigger.= "\n    FOR EACH ROW";
         $trigger.= "\nBEGIN";
-        $trigger.= "\n    SELECT " . $trigger_name . '.nextval INTO :new.' . $this->getEncQuoted($xmldb_field->getName()) . " FROM dual;";
+        $trigger.= "\n    SELECT " . $sequence_name . '.nextval INTO :new.' . $this->getEncQuoted($xmldb_field->getName()) . " FROM dual;";
         $trigger.= "\nEND";
         return array($sequence, $trigger);
     }
