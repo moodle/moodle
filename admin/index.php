@@ -313,18 +313,7 @@
     }
 
 
-//////////////////////////////////////////////////////////////////////////////
-//
-//
-// NOTE: We aren't going to have a user_admin table anymore. FIX below!
-// We need to assign the "admin" user to the default admin role at some point!
-//
-//
-//////////////////////////////////////////////////////////////////////////////
-
-
 /// Set up the admin user
-    //if (!record_exists("user_admins")) {   // No admin user yet
     if (!$CFG->rolesactive) {
         redirect("user.php");
     }
@@ -345,18 +334,14 @@
         }
     }
 
-/// At this point everything is set up and the user is an admin, so print menu
+/// Everything should now be set up, and the user is an admin
 
-#    $stradministration = get_string("administration");
-#    print_header("$site->shortname: $stradministration","$site->fullname", "$stradministration");
-#    print_simple_box_start('center', '100%', '', 20);
-#    print_heading($stradministration);
+/// Print default admin page with notifications.
 
     require_once($CFG->dirroot . '/admin/adminlib.php');
     admin_externalpage_setup('adminnotifications');
     admin_externalpage_print_header();
-    echo 'Umm... any notifications should show up here... I hope :)<br /><br />';
-    echo 'Also, I\'m including the old admin menu on this page incase I forgot any links in the new admin structure. It should be removed after. <br /><br />';
+
 /// Deprecated database! Warning!!
     if (!empty($CFG->migrated_to_new_db)) {
         print_simple_box_start('center','60%');
@@ -364,7 +349,8 @@
         print_simple_box_end();
     }
 
-    if (!empty($CFG->upgrade)) {  // Print notice about extra upgrading that needs to be done
+/// Check for any special upgrades that might need to be run
+    if (!empty($CFG->upgrade)) {  
         print_simple_box(get_string("upgrade$CFG->upgrade", "admin",
                                     "$CFG->wwwroot/$CFG->admin/upgrade$CFG->upgrade.php"), "center", '60%');
         print_spacer(10,10);
@@ -373,7 +359,6 @@
     if (ini_get_bool('register_globals') && !ini_get_bool('magic_quotes_gpc')) {
         print_simple_box(get_string('globalsquoteswarning', 'admin'), 'center', '60%');
     }
-
 
 /// If no recently cron run
     $lastcron = get_field_sql('SELECT max(lastcron) FROM ' . $CFG->prefix . 'modules');
@@ -405,112 +390,116 @@
         print_single_button('register.php', $options, get_string('registration'));
         echo '</div>';
         print_simple_box_end();
+        $registrationbuttonshown = true;
     }
 
-// keeping this old menu here for a little while /*
-    $table->tablealign = "center";
-    $table->align = array ("right", "left");
-    $table->wrap = array ("nowrap", "nowrap");
-    $table->cellpadding = 5;
-    $table->cellspacing = 0;
-    $table->width = '40%';
-
-    $configdata  = '<div class="adminlink"><a href="config.php">'.get_string('configvariables', 'admin').
-                   '</a> - <span class="explanation">'.get_string('adminhelpconfigvariables').'</span></div>';
-    $configdata .= '<div class="adminlink"><a href="site.php">'.get_string('sitesettings').
-                   '</a> - <span class="explanation">'.get_string('adminhelpsitesettings').'</span></div>';
-    $configdata .= '<div class="adminlink"><a href="../theme/index.php">'.get_string('themes').
-                   '</a> - <span class="explanation">'.get_string('adminhelpthemes').'</span></div>';
-    $configdata .= '<div class="adminlink"><a href="lang.php">'.get_string('language').
-                   '</a> - <span class="explanation">'.get_string('adminhelplanguage').'</span></div>';
-    $configdata .= '<div class="adminlink"><a href="modules.php">'.get_string('managemodules').
-                   '</a> - <span class="explanation">'.get_string('adminhelpmanagemodules').'</span></div>';
-    $configdata .= '<div class="adminlink"><a href="blocks.php">'.get_string('manageblocks').
-                   '</a> - <span class="explanation">'.get_string('adminhelpmanageblocks').'</span></div>';
-    $configdata .= '<div class="adminlink"><a href="filters.php">'.get_string('managefilters').
-                   '</a> - <span class="explanation">'.get_string('adminhelpmanagefilters').'</span></div>';
-    if (!isset($CFG->disablescheduledbackups)) {
-        $configdata .= '<div class="adminlink"><a href="backup.php">'.get_string('backup').
-                       '</a> - <span class="explanation">'.get_string('adminhelpbackup').'</span></div>';
-    }
-    $configdata .= '<div class="adminlink"><a href="editor.php">'.get_string('editorsettings').
-                   '</a> - <span class="explanation">'.get_string('adminhelpeditorsettings').'</span></div>';
-    $configdata .= '<div class="adminlink"><a href="calendar.php">'.get_string('calendarsettings', 'admin').
-                   '</a> - <span class="explanation">'.get_string('helpcalendarsettings', 'admin').'</span></div>';
-    $configdata .= '<div class="adminlink"><a href="maintenance.php">'.get_string('sitemaintenancemode', 'admin').
-                   '</a> - <span class="explanation">'.get_string('helpsitemaintenance', 'admin').'</span></div>';
-
-    $table->data[] = array('<strong><a href="configure.php">'.get_string('configuration').'</a></strong>', $configdata);
-
-    $userdata =  '<div class="adminlink"><a href="auth.php?sesskey='.$USER->sesskey.'">'.get_string("authentication").
-                 '</a> - <span class="explanation">'.get_string('adminhelpauthentication').'</span></div>';
-    $userdata .= '<div class="adminlink"><a href="user.php">'.get_string('edituser').
-                 '</a> - <span class="explanation">'.get_string('adminhelpedituser').'</span></div>';
-    $userdata .= '<div class="adminlink"><a href="'.$CFG->wwwroot.'/'.$CFG->admin.'/user.php?newuser=true&amp;sesskey='.$USER->sesskey.'">'.
-                 get_string('addnewuser').'</a> - <span class="explanation">'.get_string('adminhelpaddnewuser').'</span></div>';
-    $userdata .= '<div class="adminlink"><a href="'.$CFG->wwwroot.'/'.$CFG->admin.'/uploaduser.php?sesskey='.$USER->sesskey.'">'.
-                 get_string('uploadusers').'</a> - <span class="explanation">'.get_string('adminhelpuploadusers').'</span></div>';
-    $userdata .= '<div class="adminlink"><a href="roles/manage.php">'.
-                 get_string('manageroles').'</a> - <span class="explanation">'.get_string('adminhelpmanageroles').
-                 '</span></div>';
-    $userdata .= '<div class="adminlink"><a href="roles/assign.php?contextid='.$context->id.'">'.
-                 get_string('assignsiteroles').'</a> - <span class="explanation">'.get_string('adminhelpassignsiteroles').
-                 '</span></div>';
-
-    $table->data[] = array('<strong><a href="users.php">'.get_string('users').'</a></strong>', $userdata);
-
-    $coursedata = '<div class="adminlink"><a href="../course/index.php?edit=on&amp;sesskey='.$USER->sesskey.'">'.get_string('managecourses').
-                 '</a> - <span class="explanation">'.get_string('adminhelpcourses').'</span></div>';
-    $coursedata .= '<div class="adminlink"><a href="enrol.php?sesskey='.$USER->sesskey.'">'.get_string('enrolmentplugins').
-                 '</a> - <span class="explanation">'.get_string('adminhelpenrolments').'</span></div>';
-
-
-    $table->data[] = array('<strong><a href="courses.php">'.get_string('courses').'</a></strong>', $coursedata);
-  
-    $miscdata = '<div class="adminlink"><a href="../files/index.php?id='.$site->id.'">'.get_string('sitefiles').
-                 '</a> - <span class="explanation">'.get_string('adminhelpsitefiles').'</span></div>';
-    $miscdata .= '<div class="adminlink"><a href="stickyblocks.php">'.get_string('stickyblocks','admin').
-                 '</a> - <span class="explanation">'.get_string('adminhelpstickyblocks').'</span></div>';
-    $miscdata .= '<div class="adminlink"><a href="report.php">'.get_string('reports').
-                 '</a> - <span class="explanation">'.get_string('adminhelpreports').'</span></div>';
-//to be enabled later
-/*    $miscdata .= '<div class="adminlink"><a href="health.php">'.get_string('healthcenter').
-                 '</a> - <span class="explanation">'.get_string('adminhelphealthcenter').'</span></div>';*/
-    $miscdata .= '<div class="adminlink"><a href="environment.php">'.get_string('environment', 'admin').
-                 '</a> - <span class="explanation">'.get_string('adminhelpenvironment').'</span></div>';
-/// Optional stuff
-    if (file_exists("$CFG->dirroot/$CFG->admin/$CFG->dbtype")) {
-        $miscdata .= '<div class="adminlink"><a href="'.$CFG->dbtype.'/frame.php">'.get_string('managedatabase').
-                     '</a> - <span class="explanation">'.get_string('adminhelpmanagedatabase').'</span></div>';
-    }
-/// Hack to show the XMLDB editor
-    if (file_exists("$CFG->dirroot/$CFG->admin/xmldb")) {
-        $miscdata .= '<div class="adminlink"><a href="xmldb/index.php">'.get_string('xmldbeditor').
-                     '</a> - <span class="explanation">'.get_string('adminhelpxmldbeditor').'</span></div>';
-    }
-
-    $table->data[] = array('<strong><a href="misc.php">'.get_string('miscellaneous').'</a></strong>', $miscdata);
-
-
-/// Hooks for Matt Oquists contrib code for repositories and portfolio.  
-/// The eventual official versions may not look like this
-    if (isset($CFG->portfolio) && file_exists("$CFG->dirroot/$CFG->portfolio")) {
-                $table->data[] = array("<strong><a href=\"../portfolio/\">".get_string('portfolio','portfolio').'</a></
-strong>',
-                            '<div class="explanation">'.get_string('adminhelpportfolio','portfolio').'</div>');
-    }
-
-    if (isset($CFG->repo) && file_exists("$CFG->dirroot/$CFG->repo")) {
+/// The old admin menu
+    if (optional_param('oldmenu', 0)) {
+        $table->tablealign = "center";
+        $table->align = array ("right", "left");
+        $table->wrap = array ("nowrap", "nowrap");
+        $table->cellpadding = 5;
+        $table->cellspacing = 0;
+        $table->width = '40%';
+    
+        $configdata  = '<div class="adminlink"><a href="config.php">'.get_string('configvariables', 'admin').
+            '</a> - <span class="explanation">'.get_string('adminhelpconfigvariables').'</span></div>';
+        $configdata .= '<div class="adminlink"><a href="site.php">'.get_string('sitesettings').
+            '</a> - <span class="explanation">'.get_string('adminhelpsitesettings').'</span></div>';
+        $configdata .= '<div class="adminlink"><a href="../theme/index.php">'.get_string('themes').
+            '</a> - <span class="explanation">'.get_string('adminhelpthemes').'</span></div>';
+        $configdata .= '<div class="adminlink"><a href="lang.php">'.get_string('language').
+            '</a> - <span class="explanation">'.get_string('adminhelplanguage').'</span></div>';
+        $configdata .= '<div class="adminlink"><a href="modules.php">'.get_string('managemodules').
+            '</a> - <span class="explanation">'.get_string('adminhelpmanagemodules').'</span></div>';
+        $configdata .= '<div class="adminlink"><a href="blocks.php">'.get_string('manageblocks').
+            '</a> - <span class="explanation">'.get_string('adminhelpmanageblocks').'</span></div>';
+        $configdata .= '<div class="adminlink"><a href="filters.php">'.get_string('managefilters').
+            '</a> - <span class="explanation">'.get_string('adminhelpmanagefilters').'</span></div>';
+        if (!isset($CFG->disablescheduledbackups)) {
+            $configdata .= '<div class="adminlink"><a href="backup.php">'.get_string('backup').
+                '</a> - <span class="explanation">'.get_string('adminhelpbackup').'</span></div>';
+        }
+        $configdata .= '<div class="adminlink"><a href="editor.php">'.get_string('editorsettings').
+            '</a> - <span class="explanation">'.get_string('adminhelpeditorsettings').'</span></div>';
+        $configdata .= '<div class="adminlink"><a href="calendar.php">'.get_string('calendarsettings', 'admin').
+            '</a> - <span class="explanation">'.get_string('helpcalendarsettings', 'admin').'</span></div>';
+        $configdata .= '<div class="adminlink"><a href="maintenance.php">'.get_string('sitemaintenancemode', 'admin').
+            '</a> - <span class="explanation">'.get_string('helpsitemaintenance', 'admin').'</span></div>';
+    
+        $table->data[] = array('<strong><a href="configure.php">'.get_string('configuration').'</a></strong>', $configdata);
+    
+        $userdata =  '<div class="adminlink"><a href="auth.php?sesskey='.$USER->sesskey.'">'.get_string("authentication").
+            '</a> - <span class="explanation">'.get_string('adminhelpauthentication').'</span></div>';
+        $userdata .= '<div class="adminlink"><a href="user.php">'.get_string('edituser').
+            '</a> - <span class="explanation">'.get_string('adminhelpedituser').'</span></div>';
+        $userdata .= '<div class="adminlink"><a href="'.$CFG->wwwroot.'/'.$CFG->admin.'/user.php?newuser=true&amp;sesskey='.$USER->sesskey.'">'.
+            get_string('addnewuser').'</a> - <span class="explanation">'.get_string('adminhelpaddnewuser').'</span></div>';
+        $userdata .= '<div class="adminlink"><a href="'.$CFG->wwwroot.'/'.$CFG->admin.'/uploaduser.php?sesskey='.$USER->sesskey.'">'.
+            get_string('uploadusers').'</a> - <span class="explanation">'.get_string('adminhelpuploadusers').'</span></div>';
+        $userdata .= '<div class="adminlink"><a href="roles/manage.php">'.
+            get_string('manageroles').'</a> - <span class="explanation">'.get_string('adminhelpmanageroles').
+            '</span></div>';
+        $userdata .= '<div class="adminlink"><a href="roles/assign.php?contextid='.$context->id.'">'.
+            get_string('assignsiteroles').'</a> - <span class="explanation">'.get_string('adminhelpassignsiteroles').
+            '</span></div>';
+    
+        $table->data[] = array('<strong><a href="users.php">'.get_string('users').'</a></strong>', $userdata);
+    
+        $coursedata = '<div class="adminlink"><a href="../course/index.php?edit=on&amp;sesskey='.$USER->sesskey.'">'.get_string('managecourses').
+            '</a> - <span class="explanation">'.get_string('adminhelpcourses').'</span></div>';
+        $coursedata .= '<div class="adminlink"><a href="enrol.php?sesskey='.$USER->sesskey.'">'.get_string('enrolmentplugins').
+            '</a> - <span class="explanation">'.get_string('adminhelpenrolments').'</span></div>';
+    
+    
+        $table->data[] = array('<strong><a href="courses.php">'.get_string('courses').'</a></strong>', $coursedata);
+    
+        $miscdata = '<div class="adminlink"><a href="../files/index.php?id='.$site->id.'">'.get_string('sitefiles').
+            '</a> - <span class="explanation">'.get_string('adminhelpsitefiles').'</span></div>';
+        $miscdata .= '<div class="adminlink"><a href="stickyblocks.php">'.get_string('stickyblocks','admin').
+            '</a> - <span class="explanation">'.get_string('adminhelpstickyblocks').'</span></div>';
+        $miscdata .= '<div class="adminlink"><a href="report.php">'.get_string('reports').
+            '</a> - <span class="explanation">'.get_string('adminhelpreports').'</span></div>';
+        //to be enabled later
+        /*    $miscdata .= '<div class="adminlink"><a href="health.php">'.get_string('healthcenter').
+              '</a> - <span class="explanation">'.get_string('adminhelphealthcenter').'</span></div>';*/
+        $miscdata .= '<div class="adminlink"><a href="environment.php">'.get_string('environment', 'admin').
+            '</a> - <span class="explanation">'.get_string('adminhelpenvironment').'</span></div>';
+        /// Optional stuff
+        if (file_exists("$CFG->dirroot/$CFG->admin/$CFG->dbtype")) {
+            $miscdata .= '<div class="adminlink"><a href="'.$CFG->dbtype.'/frame.php">'.get_string('managedatabase').
+                '</a> - <span class="explanation">'.get_string('adminhelpmanagedatabase').'</span></div>';
+        }
+        /// Hack to show the XMLDB editor
+        if (file_exists("$CFG->dirroot/$CFG->admin/xmldb")) {
+            $miscdata .= '<div class="adminlink"><a href="xmldb/index.php">'.get_string('xmldbeditor').
+                '</a> - <span class="explanation">'.get_string('adminhelpxmldbeditor').'</span></div>';
+        }
+    
+        $table->data[] = array('<strong><a href="misc.php">'.get_string('miscellaneous').'</a></strong>', $miscdata);
+    
+    
+        /// Hooks for Matt Oquists contrib code for repositories and portfolio.  
+        /// The eventual official versions may not look like this
+        if (isset($CFG->portfolio) && file_exists("$CFG->dirroot/$CFG->portfolio")) {
+            $table->data[] = array("<strong><a href=\"../portfolio/\">".get_string('portfolio','portfolio').'</a></
+                    strong>',
+                    '<div class="explanation">'.get_string('adminhelpportfolio','portfolio').'</div>');
+        }
+    
+        if (isset($CFG->repo) && file_exists("$CFG->dirroot/$CFG->repo")) {
             $table->data[] = array("<strong><a href=\"../repository/?repoid=1&action=list\">".get_string('repository','
-repository').'</a></strong>',
-                            '<div class="explanation">'.get_string('adminhelprepository','repository').'</div>');
+                        repository').'</a></strong>',
+                    '<div class="explanation">'.get_string('adminhelprepository','repository').'</div>');
+        }
+    
+    
+    
+        print_table($table);
+    
+    } else {
+        print_simple_box('The old admin menu has been replaced by a new system, make sure the administration block is showing on this page.   If you want to, you can can also <a href="index.php?oldmenu=true">temporarily display the old menu</a>' , 'center', '60%');
     }
-
-
-
-    print_table($table);
-
-// old stuff ends here  */
 
     //////////////////////////////////////////////////////////////////////////////////////////////////
     ////  IT IS ILLEGAL AND A VIOLATION OF THE GPL TO REMOVE OR MODIFY THE COPYRIGHT NOTICE BELOW ////
@@ -522,12 +511,13 @@ repository').'</a></strong>',
     //////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-    echo '<div align="center">';
-    $options = array();
-    $options['sesskey'] = $USER->sesskey;
-    print_single_button('register.php', $options, get_string('registration'));
-    echo '</div>';
-
+    if (empty($registrationbuttonshown)) {
+        echo '<div align="center">';
+        $options = array();
+        $options['sesskey'] = $USER->sesskey;
+        print_single_button('register.php', $options, get_string('registration'));
+        echo '</div>';
+    }
 
     print_simple_box_end();
 
