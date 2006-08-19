@@ -1609,11 +1609,12 @@ function user_can_override($context, $targetroleid) {
         return false;  
     }
     // pull out all active roles of this user from this context(or above)
-    $userroles = get_user_roles($context);
-    foreach ($userroles as $userrole) {
-        // if any in the role_allow_override table, then it's ok
-        if (get_record('role_allow_override', 'roleid', $userrole->roleid, 'allowoverride', $targetroleid)) {
-            return true;
+    if ($userroles = get_user_roles($context)) {
+        foreach ($userroles as $userrole) {
+            // if any in the role_allow_override table, then it's ok
+            if (get_record('role_allow_override', 'roleid', $userrole->roleid, 'allowoverride', $targetroleid)) {
+                return true;
+            }
         }
     }
     
@@ -1629,11 +1630,12 @@ function user_can_assign($context, $targetroleid) {
         return false;  
     }
     // pull out all active roles of this user from this context(or above)
-    $userroles = get_user_roles($context);
-    foreach ($userroles as $userrole) {
-        // if any in the role_allow_override table, then it's ok
-        if (get_record('role_allow_assign', 'roleid', $userrole->roleid, 'allowassign', $targetroleid)) {
-            return true;
+    if ($userroles = get_user_roles($context)) {
+        foreach ($userroles as $userrole) {
+            // if any in the role_allow_override table, then it's ok
+            if (get_record('role_allow_assign', 'roleid', $userrole->roleid, 'allowassign', $targetroleid)) {
+                return true;
+            }
         }
     }
     
@@ -1641,16 +1643,27 @@ function user_can_assign($context, $targetroleid) {
 }
 
 // gets all the user roles assigned in this context, or higher
-function get_user_roles($context) {
+function get_user_roles($context, $userid=0) {
 
     global $USER, $CFG, $db;
-    
-    $parents = get_parent_contexts($context);
-    $parentlists = '('.implode(',' , $parents).')';
+
+    if (empty($userid)) {
+        if (empty($USER->id)) {
+            return array();
+        }
+        $userid = $USER->id;
+    }
+
+    if ($parents = get_parent_contexts($context)) {
+        $contexts = ' AND ra.contextid IN ('.implode(',' , $parents).')';
+    } else {
+        $contexts = ' AND ra.contextid = \''.$context->id.'\'';
+    }
+
     return get_records_sql('SELECT *
                              FROM '.$CFG->prefix.'role_assignments ra
-                             WHERE ra.userid = '.$USER->id.'
-                             AND ra.contextid IN '.$parentlists);
+                             WHERE ra.userid = '.$userid.
+                             $contexts);
 }
 
 ?>
