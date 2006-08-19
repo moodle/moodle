@@ -1,20 +1,10 @@
 <?php // $Id$
 
-// Places where there's a multilingual issue (i.e. a string is hardcoded when it should be
-// fetched from current lang) are marked with  /*ML*/
-
-// Two Big Issues
-//  -What do I use as the pageid? Is 1 okay for index.php given that no other pages
-//   in Moodle use this pagelib?
-//  -How do I handle user_is_editing()? I'm sure what I have below isn't... well... "proper".
-
 require_once($CFG->libdir.'/pagelib.php');
 
 define('PAGE_ADMIN', 'admin-index');
 
 page_map_class(PAGE_ADMIN, 'page_admin');
-
-// $DEFINEDPAGES = array(PAGE_CHAT_VIEW);  -- is anything like this needed?
 
 class page_admin extends page_base {
 
@@ -67,10 +57,10 @@ class page_admin extends page_base {
     function url_get_path() { 
         global $ADMIN, $CFG;
         $root = $ADMIN->locate($this->section);
-        if ($root instanceof admin_externalpage) {
+        if (is_a($root, 'admin_externalpage')) {
             return $root->url;
         } else {
-            return ($CFG->admin . '/settings.php?section=' . $this->section);
+            return ($CFG->wwwroot . '/' . $CFG->admin . '/settings.php?section=' . $this->section);
         }
     }
 

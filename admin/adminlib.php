@@ -7,25 +7,25 @@
 include_once($CFG->dirroot . '/backup/lib.php');
 
 //---------------------------------------------------------------------------------------------------
-// Interfaces
+// Interfaces (pseudointerfaces, for PHP 4 compatibility)
 //---------------------------------------------------------------------------------------------------
 
 // part_of_admin_tree indicates that a node (whether it be an admin_settingpage or an
 // admin_category or an admin_externalpage) is searchable
-interface part_of_admin_tree {
+class part_of_admin_tree {
 
-	function &locate($name);
-	function check_access();	
-	function path($name, $path = array());
+	function &locate($name) { trigger_error('Admin class does not implement method <strong>locate()</strong>', E_USER_WARNING); return; }
+	function check_access() { trigger_error('Admin class does not implement method <strong>check_access()</strong>', E_USER_WARNING); return; }
+	function path($name, $path = array()) { trigger_error('Admin class does not implement method <strong>path()</strong>', E_USER_WARNING); return; }
 
 }
 
 // parentable_part_of_admin_tree indicates that a node can have children in the hierarchy. only
 // admin_category implements this interface (yes, yes, theoretically admin_setting* is a child of
 // admin_settingpage, but you can't navigate admin_setting*s through the hierarchy)
-interface parentable_part_of_admin_tree {
+class parentable_part_of_admin_tree extends part_of_admin_tree {
 
-    function add($destinationname, &$something);
+    function add($destinationname, &$something) { trigger_error('Admin class does not implement method <strong>add()</strong>', E_USER_WARNING); return; }
 	
 }
 
@@ -35,7 +35,7 @@ interface parentable_part_of_admin_tree {
 
 // admin categories don't handle much... they can't be printed to the screen (except as a hierarchy), and when we
 // check_access() to a category, we're actually just checking if any of its children are accessible
-class admin_category implements part_of_admin_tree, parentable_part_of_admin_tree {
+class admin_category extends parentable_part_of_admin_tree {
 
     var $children;
 	var $name;
@@ -82,7 +82,7 @@ class admin_category implements part_of_admin_tree, parentable_part_of_admin_tre
 
     function add($destinationname, &$something, $precedence = '') {
 	
-	    if (!($something instanceof part_of_admin_tree)) {
+	    if (!is_a($something, 'part_of_admin_tree')) {
 		    return false;
 		}
 
@@ -99,7 +99,7 @@ class admin_category implements part_of_admin_tree, parentable_part_of_admin_tre
 		}
 		
 		foreach($this->children as $child) {
-			if ($child instanceof parentable_part_of_admin_tree) {
+			if (is_a($child, 'parentable_part_of_admin_tree')) {
 			    if ($child->add($destinationname, $something, $precedence)) {
 				    return true;
 				}
@@ -129,7 +129,7 @@ class admin_category implements part_of_admin_tree, parentable_part_of_admin_tre
 //  -start the page with a call to admin_externalpage_setup($name)
 //  -use admin_externalpage_print_header() to print the header & blocks
 //  -use admin_externalpage_print_footer() to print the footer
-class admin_externalpage implements part_of_admin_tree {
+class admin_externalpage extends part_of_admin_tree {
 
     var $name;
     var $visiblename;
@@ -167,7 +167,7 @@ class admin_externalpage implements part_of_admin_tree {
 // authentication happens at this level
 // an admin_settingpage is a LEAF of the admin_tree, it can't have children. it only contains
 // an array of admin_settings that can be printed out onto a webpage
-class admin_settingpage implements part_of_admin_tree {
+class admin_settingpage extends part_of_admin_tree {
 
     var $name;
 	var $visiblename;
@@ -197,7 +197,7 @@ class admin_settingpage implements part_of_admin_tree {
 	}
 	
 	function add(&$setting) {
-	    if ($setting instanceof admin_setting) {
+	    if (is_a($setting, 'admin_setting')) {
 		    $temp = $setting->name;
     	    $this->settings->$temp =& $setting;
 			return true;
@@ -264,7 +264,7 @@ class admin_setting_configtext extends admin_setting {
 
     var $paramtype;
 
-    function admin_setting_configtext($name, $visiblename, $description, $paramtype = 'PARAM_RAW') {
+    function admin_setting_configtext($name, $visiblename, $description, $paramtype = PARAM_RAW) {
         $this->paramtype = $paramtype;
         parent::admin_setting($name, $visiblename, $description);
     }
@@ -277,7 +277,7 @@ class admin_setting_configtext extends admin_setting {
 	
 	function write_setting($data) {
 	    $data = clean_param($data, $this->paramtype);
-	    return (set_config($this->name,$data) ? '' : 'Error setting ' . $this->visiblename . '<br />');
+	    return (set_config($this->name,$data) ? '' : get_string('errorsetting', 'admin') . $this->visiblename . '<br />');
 	}
 
     function output_html() {
@@ -302,9 +302,9 @@ class admin_setting_configcheckbox extends admin_setting {
 	
 	function write_setting($data) {
 	    if ($data == '1') {
-    	    return (set_config($this->name,1) ? '' : 'Error setting ' . $this->visiblename . '<br />');
+    	    return (set_config($this->name,1) ? '' : get_string('errorsetting', 'admin') . $this->visiblename . '<br />');
 		} else {
-    	    return (set_config($this->name,0) ? '' : 'Error setting ' . $this->visiblename . '<br />');
+    	    return (set_config($this->name,0) ? '' : get_string('errorsetting', 'admin') . $this->visiblename . '<br />');
 		}
 	}
 
@@ -337,7 +337,7 @@ class admin_setting_configselect extends admin_setting {
 		     return 'Error setting ' . $this->visiblename . '<br />';
 	     }
 		 
-		 return (set_config($this->name, $data) ? '' : 'Error setting ' . $this->visiblename . '<br />');
+		 return (set_config($this->name, $data) ? '' : get_string('errorsetting', 'admin') . $this->visiblename . '<br />');
     }
 	
 	function output_html() {
@@ -382,10 +382,10 @@ class admin_setting_configtime extends admin_setting {
 	function write_setting($data) {
          // check that what we got was in the original choices
 		 if (!(in_array($data['h'], array_keys($this->choices)) && in_array($data['m'], array_keys($this->choices2)))) {
-		     return 'Error setting ' . $this->visiblename . '<br />';
+		     return get_string('errorsetting', 'admin') . $this->visiblename . '<br />';
 	     }
 		 
-		 return (set_config($this->name, $data['h']) && set_config($this->name2, $data['m']) ? '' : 'Error setting ' . $this->visiblename . '<br />');
+		 return (set_config($this->name, $data['h']) && set_config($this->name2, $data['m']) ? '' : get_string('errorsetting', 'admin') . $this->visiblename . '<br />');
     }
 	
 	function output_html() {
@@ -419,11 +419,11 @@ class admin_setting_configmultiselect extends admin_setting_configselect {
 	function write_setting($data) {
 	    foreach ($data as $datum) {
 		    if (! in_array($datum, array_keys($this->choices))) {
-			    return 'Error setting ' . $this->visiblename . '<br />';
+			    return get_string('errorsetting', 'admin') . $this->visiblename . '<br />';
 			}
 		}
 		
-		return (set_config($this->name, implode(',',$data)) ? '' : 'Error setting ' . $this->visiblename . '<br />');
+		return (set_config($this->name, implode(',',$data)) ? '' : get_string('errorsetting', 'admin') . $this->visiblename . '<br />');
 	}
 	
 	function output_html() {
@@ -473,14 +473,14 @@ class admin_setting_sitesetselect extends admin_setting_configselect {
 	
 	function write_setting($data) {
 	    if (!in_array($data, array_keys($this->choices))) {
-            return 'Error setting ' . $this->visiblename . '<br />';
+            return get_string('errorsetting', 'admin') . $this->visiblename . '<br />';
 		}
 	    $record = new stdClass();
 		$record->id = $this->id;
 		$temp = $this->name;
 		$record->$temp = $data;
 		$record->timemodified = time();
-	    return (update_record('course', $record) ? '' : 'Error setting ' . $this->visiblename . '<br />');
+	    return (update_record('course', $record) ? '' : get_string('errorsetting', 'admin') . $this->visiblename . '<br />');
 	}
 	
 }
@@ -517,10 +517,10 @@ class admin_setting_special_frontpage extends admin_setting_configselect {
 		}
 	    foreach($data as $datum) {
 		    if (! in_array($datum, array_keys($this->choices))) {
-			    return 'Error setting ' . $this->visiblename . '<br />';
+			    return get_string('errorsetting', 'admin') . $this->visiblename . '<br />';
 			}
 		}
-		return (set_config($this->name, implode(',', $data)) ? '' : 'Error setting ' . $this->visiblename . '<br />');
+		return (set_config($this->name, implode(',', $data)) ? '' : get_string('errorsetting', 'admin') . $this->visiblename . '<br />');
 	}
 	
 	function output_html() {
@@ -568,7 +568,7 @@ class admin_setting_sitesetcheckbox extends admin_setting_configcheckbox {
 		$temp = $this->name;
 		$record->$temp = ($data == '1' ? 1 : 0);
 		$record->timemodified = time();
-	    return (update_record('course', $record) ? '' : 'Error setting ' . $this->visiblename . '<br />');
+	    return (update_record('course', $record) ? '' : get_string('errorsetting', 'admin') . $this->visiblename . '<br />');
 	}
 	
 }
@@ -597,7 +597,7 @@ class admin_setting_sitesettext extends admin_setting_configtext {
 		$temp = $this->name;
 		$record->$temp = $data;
 		$record->timemodified = time();
-	    return (update_record('course', $record) ? '' : 'Error setting ' . $this->visiblename . '<br />');
+	    return (update_record('course', $record) ? '' : get_string('errorsetting', 'admin') . $this->visiblename . '<br />');
 	}
 	
 }
@@ -653,7 +653,7 @@ class admin_setting_special_frontpagedesc extends admin_setting {
 		$record->$temp = $data;
 		$record->timemodified = time();
 		
-		return(update_record('course', $record) ? '' : 'Error setting ' . $this->visiblename . '<br />');
+		return(update_record('course', $record) ? '' : get_string('errorsetting', 'admin') . $this->visiblename . '<br />');
 	
 	}
 
@@ -706,7 +706,7 @@ class admin_setting_special_editorfontlist extends admin_setting {
 		
 		$result = substr($result, 0, -1); // trim the last semicolon
 		
-		return (set_config($this->name, $result) ? '' : 'Error setting ' . $this->visiblename . '<br />');
+		return (set_config($this->name, $result) ? '' : get_string('errorsetting', 'admin') . $this->visiblename . '<br />');
 	}
     
 	function output_html() {
@@ -867,13 +867,13 @@ class admin_setting_special_editorhidebuttons extends admin_setting {
 		if (empty($data)) { $data = array(); }
         foreach ($data as $key => $value) {
 		    if (!in_array($key, array_keys($this->items))) {
-		        return 'Error setting ' . $this->visiblename . '<br />';
+		        return get_string('errorsetting', 'admin') . $this->visiblename . '<br />';
 			}
 			if ($value == '1') {
 			    $result[] = $key;
 			}
 		}
-		return (set_config($this->name, implode(' ',$result)) ? '' : 'Error setting ' . $this->visiblename . '<br />');
+		return (set_config($this->name, implode(' ',$result)) ? '' : get_string('errorsetting', 'admin') . $this->visiblename . '<br />');
 	}
 
     function output_html() {
@@ -928,10 +928,10 @@ class admin_setting_backupselect extends admin_setting_configselect {
 	function write_setting($data) {
          // check that what we got was in the original choices
 		 if (! in_array($data, array_keys($this->choices))) {
-		     return 'Error setting ' . $this->visiblename . '<br />';
+		     return get_string('errorsetting', 'admin') . $this->visiblename . '<br />';
 	     }
 		 
-		 return (backup_set_config($this->name, $data) ? '' : 'Error setting ' . $this->visiblename . '<br />');
+		 return (backup_set_config($this->name, $data) ? '' : get_string('errorsetting', 'admin') . $this->visiblename . '<br />');
     }
 
 }
@@ -958,7 +958,7 @@ class admin_setting_special_backupsaveto extends admin_setting_configtext {
         } else if (!empty($data) and !is_dir($data)) {
 		    return get_string('pathnotexists') . '<br />';
         }
-		return (backup_set_config($this->name, $data) ? '' : 'Error setting ' . $this->visiblename . '<br />');
+		return (backup_set_config($this->name, $data) ? '' : get_string('errorsetting', 'admin') . $this->visiblename . '<br />');
 	}
 
 }
@@ -971,9 +971,9 @@ class admin_setting_backupcheckbox extends admin_setting_configcheckbox {
 
     function write_setting($data) {
 	    if ($data == '1') {
-		    return (backup_set_config($this->name, 1) ? '' : 'Error setting ' . $this->visiblename . '<br />');
+		    return (backup_set_config($this->name, 1) ? '' : get_string('errorsetting', 'admin') . $this->visiblename . '<br />');
 		} else {
-		    return (backup_set_config($this->name, 0) ? '' : 'Error setting ' . $this->visiblename . '<br />');
+		    return (backup_set_config($this->name, 0) ? '' : get_string('errorsetting', 'admin') . $this->visiblename . '<br />');
 		}
 	}
 	
@@ -1005,10 +1005,10 @@ class admin_setting_special_backuptime extends admin_setting_configtime {
 	function write_setting($data) {
          // check that what we got was in the original choices
 		 if (!(in_array($data['h'], array_keys($this->choices)) && in_array($data['m'], array_keys($this->choices2)))) {
-		     return 'Error setting ' . $this->visiblename . '<br />';
+		     return get_string('errorsetting', 'admin') . $this->visiblename . '<br />';
 	     }
 		 
-		 return (backup_set_config($this->name, $data['h']) && backup_set_config($this->name2, $data['m']) ? '' : 'Error setting ' . $this->visiblename . '<br />');	
+		 return (backup_set_config($this->name, $data['h']) && backup_set_config($this->name2, $data['m']) ? '' : get_string('errorsetting', 'admin') . $this->visiblename . '<br />');	
 	}
 	
 }
@@ -1058,7 +1058,7 @@ class admin_setting_special_backupdays extends admin_setting {
 		      $result[strpos($week, $key)] = 1;
 		  }
 	    }
-		return (backup_set_config($this->name, implode('',$result)) ? '' : 'Error setting ' . $this->visiblename . '<br />');
+		return (backup_set_config($this->name, implode('',$result)) ? '' : get_string('errorsetting', 'admin') . $this->visiblename . '<br />');
 	}
 }
 
@@ -1073,9 +1073,9 @@ class admin_setting_special_debug extends admin_setting_configcheckbox {
 
 	function write_setting($data) {
 	    if ($data == '1') {
-    	    return (set_config($this->name,15) ? '' : 'Error setting ' . $this->visiblename . '<br />');
+    	    return (set_config($this->name,15) ? '' : get_string('errorsetting', 'admin') . $this->visiblename . '<br />');
 		} else {
-    	    return (set_config($this->name,7) ? '' : 'Error setting ' . $this->visiblename . '<br />');
+    	    return (set_config($this->name,7) ? '' : get_string('errorsetting', 'admin') . $this->visiblename . '<br />');
 		}
 	}
 
@@ -1112,7 +1112,7 @@ class admin_setting_special_calendar_weekend extends admin_setting {
 		      $result[strpos($week, $key)] = 1;
 		  }
 	    }
-		return (set_config($this->name, bindec(implode('',$result))) ? '' : 'Error setting ' . $this->visiblename . '<br />');
+		return (set_config($this->name, bindec(implode('',$result))) ? '' : get_string('errorsetting', 'admin') . $this->visiblename . '<br />');
 	}
     
 	function output_html() {
@@ -1150,9 +1150,9 @@ class admin_setting_special_perfdebug extends admin_setting_configcheckbox {
 
 	function write_setting($data) {
 	    if ($data == '1') {
-    	    return (set_config($this->name,15) ? '' : 'Error setting ' . $this->visiblename . '<br />');
+    	    return (set_config($this->name,15) ? '' : get_string('errorsetting', 'admin') . $this->visiblename . '<br />');
 		} else {
-    	    return (set_config($this->name,7) ? '' : 'Error setting ' . $this->visiblename . '<br />');
+    	    return (set_config($this->name,7) ? '' : get_string('errorsetting', 'admin') . $this->visiblename . '<br />');
 		}
 	}
 
@@ -1173,8 +1173,8 @@ function admin_externalpage_setup($section) {
     require_once($CFG->libdir . '/blocklib.php');
     require_once($CFG->dirroot . '/admin/pagelib.php');
     
-    // we really shouldn't do this... but it works. and it's so elegantly simple.
-    // oh well :)
+
+    // this needs to be changed.
     $_GET['section'] = $section;
     
     define('TEMPORARY_ADMIN_PAGE_ID',26);
@@ -1182,9 +1182,9 @@ function admin_externalpage_setup($section) {
     define('BLOCK_L_MIN_WIDTH',160);
     define('BLOCK_L_MAX_WIDTH',210);
 
-    $pagetype = PAGE_ADMIN;                 // erm... someone should check this. does
-    $pageclass = 'page_admin';              // any of it duplicate the code I have in 
-    page_map_class($pagetype, $pageclass);  // admin/pagelib.php?
+    $pagetype = PAGE_ADMIN;               
+    $pageclass = 'page_admin';            
+    page_map_class($pagetype, $pageclass);
 
     $PAGE = page_create_object($pagetype,TEMPORARY_ADMIN_PAGE_ID);
 
@@ -1199,7 +1199,7 @@ function admin_externalpage_setup($section) {
         die;
     }
 
-    if (!($root instanceof admin_externalpage)) {
+    if (!is_a($root, 'admin_externalpage')) {
         error(get_string('sectionerror','admin'));
     	die;
     }
@@ -1210,16 +1210,16 @@ function admin_externalpage_setup($section) {
     	die;
     }
     
-    $adminediting = optional_param('adminedit', PARAM_BOOL);
+    $adminediting = optional_param('adminedit', -1, PARAM_BOOL);
     
     if (!isset($USER->adminediting)) {
         $USER->adminediting = true;
     }
     
     if ($PAGE->user_allowed_editing()) {
-        if ($adminediting == 'on') {
+        if ($adminediting == 1) {
             $USER->adminediting = true;
-        } elseif ($adminediting == 'off') {
+        } elseif ($adminediting == 0) {
             $USER->adminediting = false;
         }
     }

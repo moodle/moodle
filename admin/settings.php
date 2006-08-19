@@ -1,62 +1,54 @@
 <?php // $Id$
 
 require_once('../config.php');
-require_once($CFG->dirroot . '/admin/adminlib.php');
-
-// for external pages, most of this code is duplicated in the admin_externalpage_print_header()
-// and admin_externalpage_print_footer() functions... just include adminlib.php!
-//
-// lines marked //d at the end are handled (for other pages) by admin_externalpage_print_header()
-// and admin_externalpage_print_footer()
+require_once($CFG->dirroot . '/' . $CFG->admin . '/adminlib.php');
 require_once($CFG->libdir . '/blocklib.php'); //d
-require_once($CFG->dirroot . '/admin/pagelib.php'); //d
+require_once($CFG->dirroot . '/' . $CFG->admin . '/pagelib.php'); //d
 
-if ($site = get_site()) { //d
-    require_login(); //d
-} //d
+if ($site = get_site()) {
+    require_login();
+} 
 
-$adminediting = optional_param('adminedit', PARAM_BOOL);
+define('TEMPORARY_ADMIN_PAGE_ID',26);
+
+define('BLOCK_L_MIN_WIDTH',160);
+define('BLOCK_L_MAX_WIDTH',210);
+
+$pagetype = PAGE_ADMIN;
+$pageclass = 'page_admin';
+page_map_class($pagetype, $pageclass);
+
+$PAGE = page_create_object($pagetype,TEMPORARY_ADMIN_PAGE_ID);
+
+$PAGE->init_full();
+
+$adminediting = optional_param('adminedit', -1, PARAM_BOOL);
    
 if (!isset($USER->adminediting)) {
     $USER->adminediting = true;
 }
 
 if ($PAGE->user_allowed_editing()) {
-    if ($adminediting == 'on') {
+    if ($adminediting == 1) {
         $USER->adminediting = true;
-    } elseif ($adminediting == 'off') {
+    } elseif ($adminediting == 0) {
         $USER->adminediting = false;
     }
 }
 
-// Question: what pageid should be used for this?
+unset($root);
 
-define('TEMPORARY_ADMIN_PAGE_ID',26); //d
+$root = $ADMIN->locate($PAGE->section);
 
-define('BLOCK_L_MIN_WIDTH',160); //d
-define('BLOCK_L_MAX_WIDTH',210); //d
+if (!is_a($root, 'admin_settingpage')) {
+    error(get_string('sectionerror', 'admin'));
+	die;
+}
 
-$pagetype = PAGE_ADMIN; //d
-$pageclass = 'page_admin'; //d
-page_map_class($pagetype, $pageclass); //d
-
-$PAGE = page_create_object($pagetype,TEMPORARY_ADMIN_PAGE_ID); //d
-
-$PAGE->init_full(); //d
-
-unset($root); //d
-
-$root = $ADMIN->locate($PAGE->section); //d
-
-if (!($root instanceof admin_settingpage)) { //d
-    error('Section does not exist, is invalid, or should not be accessed via this URL.'); //d
-	die; //d
-} //d
-
-if (!($root->check_access())) { //d
-    error('Access denied.'); //d
-	die; //d
-} //d
+if (!($root->check_access())) {
+    error(get_string('accessdenied', 'admin'));
+	die;
+}
 
 // WRITING SUBMITTED DATA (IF ANY) -------------------------------------------------------------------------------
 
@@ -66,7 +58,7 @@ if ($data = data_submitted()) {
         if (empty($errors)) {
     	    redirect("$CFG->wwwroot/admin/settings.php?section=" . $PAGE->section, get_string('changessaved'),1);
     	} else {
-    	    error('The following errors occurred when trying to save settings: <br />' . $errors);
+    	    error(get_string('errorwithsettings', 'admin') . ' <br />' . $errors);
     	}
 	} else {
 	    error(get_string('confirmsesskeybad', 'error'));
@@ -97,8 +89,8 @@ echo $root->output_html();
 echo '<center><input type="submit" value="Save Changes" /></center>';
 echo '</form>';
 print_simple_box_end();
-echo '</td></tr></table>'; //d
+echo '</td></tr></table>';
 
-print_footer(); //d
+print_footer();
 
 ?>
