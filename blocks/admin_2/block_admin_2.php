@@ -70,9 +70,13 @@ class block_admin_2 extends block_base {
         		}
 
 			    $this->open_folder($content->visiblename);
-
-    		    foreach ($content->children as &$child) {
-			        $this->build_tree($child);
+                
+                unset($entries);
+                
+                $entries = array_keys($content->children);
+                
+    		    foreach ($entries as $entry) {
+			        $this->build_tree($content->children[$entry]);
     			}
 
 				$this->close_folder();
@@ -100,9 +104,15 @@ class block_admin_2 extends block_base {
 
         // we need to do this instead of $this->build_tree($ADMIN) because the top-level folder
 		// is redundant (and ideally ignored). (the top-level folder is "administration".)
-		ksort($ADMIN->children);			    
-	    foreach ($ADMIN->children as &$child) {
-            $this->build_tree($child);
+		
+		unset($entries);
+		
+		$entries = array_keys($ADMIN->children);
+        
+        asort($entries);			    
+        
+	    foreach ($entries as $entry) {
+            $this->build_tree($ADMIN->children[$entry]);
         }
 	
         if ($this->tempcontent !== '') {

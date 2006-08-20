@@ -98,7 +98,12 @@ class admin_category extends parentable_part_of_admin_tree {
 			return true;
 		}
 		
-		foreach($this->children as $child) {
+		unset($entries);
+        
+        $entries = array_keys($this->children);
+		
+		foreach($entries as $entry) {
+		    $child =& $this->children[$entry];
 			if (is_a($child, 'parentable_part_of_admin_tree')) {
 			    if ($child->add($destinationname, $something, $precedence)) {
 				    return true;
@@ -534,7 +539,7 @@ class admin_setting_special_frontpage extends admin_setting_configselect {
 		for ($i = 0; $i < count($this->choices) - 1; $i++) {
     		$return .='<select name="s_' . $this->name .'[]">';		
             foreach ($this->choices as $key => $value) {
-    		    $return .= '<option value="' . $key . '"' . ($key == $currentsetting[$i] ? ' selected="selected"' : '') . '>' . $value . '</option>';
+                $return .= '<option value="' . $key . '"' . ($key == $currentsetting[$i] ? ' selected="selected"' : '') . '>' . $value . '</option>';
     		}
     		$return .= '</select>';
 			if ($i !== count($this->choices) - 2) {
