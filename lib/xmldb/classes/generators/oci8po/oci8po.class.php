@@ -32,6 +32,9 @@ class XMLDBoci8po extends XMLDBgenerator {
 
 /// Only set values that are different from the defaults present in XMLDBgenerator
 
+    var $statement_end = "\n/"; // String to be automatically added at the end of each statement
+                                // Using "/" because the standard ";" isn't good for stored procedures (triggers)
+
     var $number_type = 'NUMBER';    // Proper type for NUMBER(x) in this DB
 
     var $unsigned_allowed = false;    // To define in the generator must handle unsigned information
@@ -135,7 +138,7 @@ class XMLDBoci8po extends XMLDBgenerator {
         $trigger.= "\n    FOR EACH ROW";
         $trigger.= "\nBEGIN";
         $trigger.= "\n    SELECT " . $sequence_name . '.nextval INTO :new.' . $this->getEncQuoted($xmldb_field->getName()) . " FROM dual;";
-        $trigger.= "\nEND";
+        $trigger.= "\nEND;";
         return array($sequence, $trigger);
     }
 
