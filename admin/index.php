@@ -30,6 +30,12 @@
     $confirmupgrade = optional_param('confirmupgrade', 0, PARAM_BOOL);
     $agreelicence = optional_param('agreelicence',0, PARAM_BOOL);
 
+/// Interim solution to keep the XMLDB installation disabled
+/// can be enabled by hand in the config.php, of course
+    if (!isset($CFG->xmldb_enabled)) {
+        $CFG->xmldb_enabled = false;
+    }
+
 /// check upgrade status first
     #upgrade_check_running("Upgrade already running, please wait!", 10);
 
@@ -118,10 +124,19 @@
         $strdatabasesuccess  = get_string("databasesuccess");
         print_header($strdatabasesetup, $strdatabasesetup, $strdatabasesetup,
                         "", $linktoscrolltoerrors, false, "&nbsp;", "&nbsp;");
-        if (file_exists("$CFG->libdir/db/$CFG->dbtype.sql")) {
+    /// Both old *.sql files and new install.xml are supported
+        if (file_exists("$CFG->libdir/db/$CFG->dbtype.sql") ||
+            ($CFG->xmldb_enabled && file_exists("$CFG->libdir/db/install.xml"))) {
             upgrade_log_start();
             $db->debug = true;
-            if (modify_database("$CFG->libdir/db/$CFG->dbtype.sql")) {
+        /// But we priorize install.xml (XMLDB) if present
+            if (file_exists("$CFG->libdir/db/install.xml") && $CFG->xmldb_enabled) {
+                $status = install_from_xmldb_file("$CFG->libdir/db/install.xml"); //New method
+            } else {
+                $status = modify_database("$CFG->libdir/db/$CFG->dbtype.sql"); //Old method
+            }
+        /// Continue with the instalation
+            if ($status) {
                 $db->debug = false;
                 
                 // Install the roles system.
@@ -146,7 +161,12 @@
 /// and upgrade if possible.
 
     include_once("$CFG->dirroot/version.php");              # defines $version
-    include_once("$CFG->dirroot/lib/db/$CFG->dbtype.php");  # defines upgrades
+    if (file_exists("$CFG->dirroot/lib/db/$CFG->dbtype.php")) {
+        include_once("$CFG->dirroot/lib/db/$CFG->dbtype.php");  # defines old upgrades
+    }
+    if (file_exists("$CFG->dirroot/lib/db/upgrade.php") && $CFG->xmldb_enabled) {
+        include_once("$CFG->dirroot/lib/db/$CFG->dbtype.php");  # defines new upgrades
+    }
 
     $stradministration = get_string("administration");
 
@@ -257,27 +277,34 @@
 
 
 /// Find and check all main modules and load them up or upgrade them if necessary
+/// first old *.php update and then the new upgrade.php script
     upgrade_activity_modules("$CFG->wwwroot/$CFG->admin/index.php");  // Return here afterwards
 
 /// Check all questiontype plugins and upgrade if necessary
-    // It is important that this is done AFTER the quiz module has been upgraded
+/// first old *.php update and then the new upgrade.php script
+/// It is important that this is done AFTER the quiz module has been upgraded
     upgrade_plugins('qtype', 'question/type', "$CFG->wwwroot/$CFG->admin/index.php");  // Return here afterwards
 
 /// Upgrade backup/restore system if necessary
+/// first old *.php update and then the new upgrade.php script
     require_once("$CFG->dirroot/backup/lib.php");
     upgrade_backup_db("$CFG->wwwroot/$CFG->admin/index.php");  // Return here afterwards
 
 /// Upgrade blocks system if necessary
+/// first old *.php update and then the new upgrade.php script
     require_once("$CFG->dirroot/lib/blocklib.php");
     upgrade_blocks_db("$CFG->wwwroot/$CFG->admin/index.php");  // Return here afterwards
 
 /// Check all blocks and load (or upgrade them if necessary)
+/// first old *.php update and then the new upgrade.php script
     upgrade_blocks_plugins("$CFG->wwwroot/$CFG->admin/index.php");  // Return here afterwards
 
 /// Check all enrolment plugins and upgrade if necessary
+/// first old *.php update and then the new upgrade.php script
     upgrade_plugins('enrol', 'enrol', "$CFG->wwwroot/$CFG->admin/index.php");  // Return here afterwards
 
 /// Check for local database customisations
+/// first old *.php update and then the new upgrade.php script
     require_once("$CFG->dirroot/lib/locallib.php");
     upgrade_local_db("$CFG->wwwroot/$CFG->admin/index.php");  // Return here afterwards
 
