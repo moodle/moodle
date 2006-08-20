@@ -197,7 +197,7 @@ class question_truefalse_qtype extends default_questiontype {
             $state->raw_grade = 0;
         }
         // Only allow one attempt at the question
-        $state->penalty = 1;
+        $state->penalty = 1 * $question->maxgrade;
 
         // mark the state as graded
         $state->event = ($state->event ==  QUESTION_EVENTCLOSE) ? QUESTION_EVENTCLOSEANDGRADE : QUESTION_EVENTGRADE;
