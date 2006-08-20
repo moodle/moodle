@@ -12,6 +12,7 @@ class question_truefalse_qtype extends default_questiontype {
     }
 
     function save_question_options($question) {
+        $result = new stdClass;
         
         // fetch old answer ids so that we can reuse them
         if (!$oldanswers = get_records("question_answers", "question", $question->id, "id ASC")) {
@@ -138,6 +139,8 @@ class question_truefalse_qtype extends default_questiontype {
         global $CFG;
 
         $readonly = $options->readonly ? ' disabled="disabled"' : '';
+        
+        $formatoptions = new stdClass;
         $formatoptions->noclean = true;
         $formatoptions->para = false;
 
@@ -267,6 +270,7 @@ class question_truefalse_qtype extends default_questiontype {
             $tru_info = $truefalses[$i];
 
             //Now, build the question_truefalse record structure
+            $truefalse = new stdClass;
             $truefalse->question = $new_question_id;
             $truefalse->trueanswer = backup_todb($tru_info['#']['TRUEANSWER']['0']['#']);
             $truefalse->falseanswer = backup_todb($tru_info['#']['FALSEANSWER']['0']['#']);
@@ -284,7 +288,7 @@ class question_truefalse_qtype extends default_questiontype {
             }
 
             //The structure is equal to the db, so insert the question_truefalse
-            $newid = insert_record ("question_truefalse",$truefalse);
+            $newid = insert_record ("question_truefalse", $truefalse);
 
             //Do some output
             if (($i+1) % 50 == 0) {
@@ -310,7 +314,7 @@ class question_truefalse_qtype extends default_questiontype {
         if ($answer) {
             return $answer->new_id;
         } else {
-            echo 'Could not recode truefalse answer id '.$state->answer.' for state '.$oldid.'<br />';
+            echo 'Could not recode truefalse answer id '.$state->answer.' for state '.$state->oldid.'<br />';
         }
         return '';
     }
