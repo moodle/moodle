@@ -36,7 +36,7 @@ class XMLDBmysql extends XMLDBGenerator {
 
     var $default_for_char = '';      // To define the default to set for NOT NULLs CHARs without default (null=do nothing)
 
-    var $primary_key_name = 'primary'; //To force primary key names to one string (null=no force)
+    var $primary_key_name = ''; //To force primary key names to one string (null=no force)
 
     var $foreign_keys = false; // Does the generator build foreign keys
 
