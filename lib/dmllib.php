@@ -1240,4 +1240,38 @@ function column_type($table, $column) {
     return $rs->MetaType($field->type);
 }
 
+/**
+ * This function, called from setup.php includes all the configuration
+ * needed to properly work agains any DB. It setups connection encoding
+ * and some other variables.
+ */
+function configure_dbconnection() {
+
+    global $CFG, $db;
+
+    switch ($CFG->dbtype) {
+        case 'mysql':
+        /// Set names if needed
+            if ($CFG->unicodedb) {
+                $db->Execute("SET NAMES 'utf8'");
+            }
+        break;
+        case 'postgres7':
+        /// Set names if needed
+            if ($CFG->unicodedb) {
+                $db->Execute("SET NAMES 'utf8'");
+            }
+        break;
+        case 'mssql':
+        /// No need to set charset. It must be specified in the driver conf
+        /// Allow quoted identifiers
+            $db->Execute('SET QUOTED_IDENTIFIER ON');
+        break;
+        case 'oracle':
+        /// No need to set charset. It must be specified by the NLS_LANG env. variable
+        break;
+    }
+}
+
+
 ?>
