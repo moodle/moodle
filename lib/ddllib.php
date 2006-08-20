@@ -54,6 +54,13 @@
     require_once($CFG->libdir . '/xmldb/classes/XMLDBIndex.class.php');
     require_once($CFG->libdir . '/xmldb/classes/XMLDBStatement.class.php');
 
+/// Based on $CFG->dbtype, add the proper generator class
+    require_once($CFG->libdir . '/xmldb/classes/generators/' . $CFG->dbtype . '/' . $CFG->dbtype . '.class.php');
+
+/// Add other libraries
+    require_once($CFG->libdir . '/xmlize.php');
+    
+
 function table_column($table, $oldfield, $field, $type='integer', $size='10',
                       $signed='unsigned', $default='0', $null='not null', $after='') {
     global $CFG, $db, $empty_rs_cache;
@@ -212,6 +219,48 @@ function table_column($table, $oldfield, $field, $type='integer', $size='10',
             execute_sql('ALTER TABLE '. $CFG->prefix . $table .' ALTER COLUMN '. $field .' SET '. $null);
             return execute_sql('ALTER TABLE '. $CFG->prefix . $table .' ALTER COLUMN '. $field .' SET '. $default);
     }
+}
+
+/**
+ * This function will load one entire XMLDB file, generating all the needed
+ * SQL statements, specific for each RDBMS ($CFG->dbtype) and, finally, it
+ * will execute all those statements against the DB.
+ *
+ * @uses $CFG 
+ * @param $file full path to the XML file to be used
+ * @return boolean (true on success, false on error)
+ */
+function install_from_xmldb_file($file) {
+
+    global $CFG, $db;
+
+    $status = true;
+
+
+    $xmldb_file = new XMLDBFile($file);
+
+    if (!$xmldb_file->fileExists()) {
+        return false;
+    }
+
+    $loaded = $xmldb_file->loadXMLStructure();
+    if (!$loaded || !$xmldb_file->isLoaded()) {
+        return false;
+    }
+
+    $structure = $xmldb_file->getStructure();
+
+    if (!$sqlarr = $structure->getCreateStructureSQL($CFG->dbtype, $CFG->prefix, false)) {
+        return false;
+    }
+
+    foreach($sqlarr as $sql) {
+        if (!execute_sql($sql)) {
+            $status = false;  // Allow to continue to mimic old behaviour
+        }                     // perhaps it would be better to exit false
+    }
+
+    return $status;
 }
 
 ?>
