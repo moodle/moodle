@@ -399,20 +399,32 @@ function get_record_sql($sql, $expectmultiple=false, $nolimit=false) {
 
     global $CFG;
 
+/// Default situation
+    $limitfrom = 0; /// Number of records to skip
+    $limitnum  = 1; /// Number of records to retrieve
+
+/// Only a few uses of the 2nd and 3rd parameter have been found
+/// I think that we should avoid to use them completely, one
+/// record is one record, and everything else should return error.
+/// So the proposal is to change all the uses, (4-5 inside Moodle 
+/// Core), drop them from the definition and delete the next two
+/// "if" sentences. (eloy, 2006-08-19)
+
     if ($nolimit) {
-        $limit = '';
+        $limitfrom = 0;
+        $limitnum  = 0;
     } else if ($expectmultiple) {
-        $limit = ' LIMIT 1';
+        $limitfrom = 0;
+        $limitnum  = 1;
     } else if (isset($CFG->debug) && $CFG->debug > 7) {
         // Debugging mode - don't use a limit of 1, but do change the SQL, because sometimes that
         // causes errors, and in non-debug mode you don't see the error message and it is 
         // impossible to know what's wrong.
-        $limit = ' LIMIT 100';
-    } else {
-        $limit = ' LIMIT 1';
+        $limitfrom = 0;
+        $limitnum  = 100;
     }
 
-    if (!$rs = get_recordset_sql($sql . $limit)) {
+    if (!$rs = get_recordset_sql($sql, $limitfrom, $limitnum)) {
         return false;   
     }
     
@@ -426,7 +438,7 @@ function get_record_sql($sql, $expectmultiple=false, $nolimit=false) {
 
     } else {                          // Error: found more than one record
         notify('Error:  Turn off debugging to hide this error.');
-        notify($sql . $limit);
+        notify($sql . '(with limits ' . $limitfrom . ', ' . $limitnum . ')');
         if ($records = $rs->GetAssoc(true)) {
             notify('Found more than one record in get_record_sql !');
             print_object($records);
@@ -580,21 +592,28 @@ function get_recordset_list($table, $field='', $values='', $sort='', $fields='*'
  * @uses $CFG
  * @uses $db
  * @param string $sql the SQL select query to execute.
+ * @param int $limitfrom return a subset of records, starting at this point (optional, required if $limitnum is set).
+ * @param int $limitnum return a subset comprising this many records (optional, required if $limitfrom is set).
  * @return mixed an ADODB RecordSet object, or false if an error occured.
  */
-function get_recordset_sql($sql) {
+function get_recordset_sql($sql, $limitfrom=null, $limitnum=null) {
 
     global $CFG, $db;
 
     if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++; };
 
-    if (!$rs = $db->Execute($sql)) {
+    if ($limitfrom && $limitnum) {
+        $rs = $db->SelectLimit($sql, $limitnum, $limitfrom);
+    } else {
+        $rs = $db->Execute($sql);
+    }
+    if (!$rs) {
         if (isset($CFG->debug) and $CFG->debug > 7) {
             notify($db->ErrorMsg() .'<br /><br />'. $sql);
         }
         if (!empty($CFG->dblogerror)) {
             $debug=array_shift(debug_backtrace());
-            error_log("SQL ".$db->ErrorMsg()." in {$debug['file']} on line {$debug['line']}. STATEMENT:  $sql");
+            error_log("SQL ".$db->ErrorMsg()." in {$debug['file']} on line {$debug['line']}. STATEMENT:  $sql with limits ($limitfrom, $limitnum)");
         }
         return false;
     }
