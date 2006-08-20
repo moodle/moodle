@@ -110,6 +110,10 @@ global $HTTPSPAGEREQUIRED;
 
 /// Connect to the database using adodb
 
+/// Some defines required BEFORE including AdoDB library
+    define ('ADODB_ASSOC_CASE', 0); //Use lowercase fieldnames for ADODB_FETCH_BOTH
+                                    //(only meaningful for oci8po, it's the default
+                                    //for other DB drivers so this won't affect them)
 
     require_once($CFG->libdir .'/adodb/adodb.inc.php'); // Database access functions
 
@@ -149,6 +153,12 @@ global $HTTPSPAGEREQUIRED;
         die;
     }
 
+/// Force fetchmode of records for Execute() and SelectLimit() to BOTH
+/// (it isn't default in all the DB drivers. With the time we should
+/// try to migrate to FETCH_ASSOC, possible with some tricks in the 
+/// recordset_to_array() function to maintain the id field properly.
+    $db->SetFetchMode(ADODB_FETCH_BOTH);
+
 /// Starting here we have a correct DB conection but me must avoid
 /// to execute any DB transaction until "set names" has been executed
 /// some lines below!
@@ -180,7 +190,6 @@ global $HTTPSPAGEREQUIRED;
 
     raise_memory_limit('64M');    // We should never NEED this much but just in case...
 
-
 /// If $CFG->unicodedb is not set, get it from database or calculate it because we need
 /// to know it to "set names" properly.
 /// (this is the only database interaction before "set names")
@@ -194,13 +203,9 @@ global $HTTPSPAGEREQUIRED;
         }
     }
 /// Set the client/server and connection to utf8 if necessary
-    if ($CFG->unicodedb) {
-        if ($db->databaseType == 'mysql') {
-            $db->Execute("SET NAMES 'utf8'");
-        } else if ($db->databaseType == 'postgres7') {
-            $db->Execute("SET NAMES 'utf8'");
-        }
-    }
+/// and configure some other specific variables for each db
+    configure_dbconnection();
+
 /// Now that "set names" has been executed it is safe to
 /// work with the DB, but never before this!
 
