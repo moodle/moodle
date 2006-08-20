@@ -327,7 +327,7 @@ class XMLDBgenerator {
             case XMLDB_KEY_PRIMARY:
                 if ($this->primary_keys) {
                     if ($this->primary_key_name !== null) {
-                        $key = $this->primary_key_name;
+                        $key = $this->getEncQuoted($this->primary_key_name);
                     } else {
                         $key = $this->getNameForObject($xmldb_table->getName(), implode(', ', $xmldb_key->getFields()), 'pk');
                     }
@@ -383,6 +383,7 @@ class XMLDBgenerator {
 
     /**
      * Given three strings (table name, list of fields (comma separated) and suffix), create the proper object name
+     * quoting it if necessary
      */
     function getNameForObject($tablename, $fields, $suffix) {
 
@@ -434,6 +435,9 @@ class XMLDBgenerator {
 
     /// Add the name to the cache
         $used_names[] = $namewithsuffix;
+
+    /// Quote it if necessary (reserved words)
+        $namewithsuffix = $this->getEncQuoted($namewithsuffix);
 
         return $namewithsuffix;
     }
