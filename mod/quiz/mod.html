@@ -328,7 +328,7 @@
     echo '</tr>';
 } else $fix=1 ?>
 
-<?php if ($CFG->quiz_fix_delay1) { ?>
+<?php if (!$CFG->quiz_fix_delay1) { ?>
     <tr valign="top">
         <td align="right"><b><?php print_string("delay1", "quiz") ?>:</b></td>
         <td align="left">
@@ -338,19 +338,19 @@
         ?>
         </td>
         </tr>
-<?php } ?>
+<?php } else $fix=1 ?>
 
-<?php if ($CFG->quiz_fix_delay2) { ?>
-     <tr valign="top">
-         <td align="right"><b><?php print_string("delay2", "quiz") ?>:</b></td>
-         <td align="left">
-         <?php
+<?php if (!$CFG->quiz_fix_delay2) { ?>
+    <tr valign="top">
+        <td align="right"><b><?php print_string("delay2", "quiz") ?>:</b></td>
+        <td align="left">
+        <?php
              choose_from_menu($timedelayoptions, "delay2", "$form->delay2", "");
              helpbutton("timedelay2", get_string("delay2","quiz"), "quiz");
-         ?>
-         </td>
-         </tr>
-<?php } ?>
+        ?>
+        </td>
+        </tr>
+<?php } else $fix=1 ?>
 
 <?php if (!$CFG->quiz_fix_popup) { ?>
     <tr valign="top">
