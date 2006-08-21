@@ -408,8 +408,8 @@ function schedule_backup_course_configure($course,$starttime = 0) {
                     if (empty($preferences->mods[$mod->modname]->instances)) {
                         $preferences->mods[$mod->modname]->instances = array(); // avoid warnings
                     }
-                    $preferences->mods[$mod->modname]->instances[$mod->instance]->backup = $preferences->mods[$modname]->backup;
-                    $preferences->mods[$mod->modname]->instances[$mod->instance]->userinfo = $preferences->mods[$modname]->userinfo;
+                    $preferences->mods[$mod->modname]->instances[$mod->instance]->backup = $preferences->mods[$mod->modname]->backup;
+                    $preferences->mods[$mod->modname]->instances[$mod->instance]->userinfo = $preferences->mods[$mod->modname]->userinfo;
                     // there isn't really a nice way to do this...
                     $preferences->mods[$mod->modname]->instances[$mod->instance]->name = get_field($mod->modname,'name','id',$mod->instance);
                 }
