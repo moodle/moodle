@@ -10,12 +10,13 @@ class block_admin_2 extends block_base {
 	var $destination;
 
     function init() {
+        global $PAGE;
         $this->title = "Administration (Beta)";
         $this->version = 2006081800;
         $this->currentdepth = 0;
         $this->spancounter = 1;
         $this->tempcontent = '';
-		$this->section = optional_param("section","",PARAM_PATH);
+		$this->section = (isset($PAGE->section) ? $PAGE->section : '');
         $this->pathtosection = array();
         $this->expandjavascript = '';
     }
