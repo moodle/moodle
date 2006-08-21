@@ -1,6 +1,6 @@
 <?php
 /*
- V4.71 24 Jan 2006  (c) 2000-2006 John Lim (jlim#natsoft.com.my). All rights reserved.
+ V4.91 2 Aug 2006  (c) 2000-2006 John Lim (jlim#natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -56,6 +56,7 @@ class ADODB_postgres7 extends ADODB_postgres64 {
 	}
  	*/
 
+
 	// from  Edward Jaramilla, improved version - works on pg 7.4
 	function MetaForeignKeys($table, $owner=false, $upper=false)
 	{
@@ -73,21 +74,21 @@ class ADODB_postgres7 extends ADODB_postgres64 {
 		
 		$rs =& $this->Execute($sql);
 		
-		if ($rs && !$rs->EOF) {
-			$arr =& $rs->GetArray();
-			$a = array();
-			foreach($arr as $v)
-			{
-				$data = explode(chr(0), $v['args']);
-				if ($upper) {
-					$a[strtoupper($data[2])][] = strtoupper($data[4].'='.$data[5]);
-				} else {
-				$a[$data[2]][] = $data[4].'='.$data[5];
-				}
+		if (!$rs || $rs->EOF) return false;
+		
+		$arr =& $rs->GetArray();
+		$a = array();
+		foreach($arr as $v) {
+			$data = explode(chr(0), $v['args']);
+			$size = count($data)-1; //-1 because the last node is empty
+			for($i = 4; $i < $size; $i++) {
+				if ($upper) 
+					$a[strtoupper($data[2])][] = strtoupper($data[$i].'='.$data[++$i]);
+				else 
+					$a[$data[2]][] = $data[$i].'='.$data[++$i];
 			}
-			return $a;
 		}
-		return false;
+		return $a;
 	}
 
 	function _query($sql,$inputarr)
@@ -96,6 +97,7 @@ class ADODB_postgres7 extends ADODB_postgres64 {
 			// We don't have native support for parameterized queries, so let's emulate it at the parent
 			return ADODB_postgres64::_query($sql, $inputarr);
 		}
+		$this->_errorMsg = false;
 		// -- added Cristiano da Cunha Duarte
 		if ($inputarr) {
 			$sqlarr = explode('?',trim($sql));

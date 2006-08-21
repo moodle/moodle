@@ -1,6 +1,6 @@
 <?php
 /*
-V4.71 24 Jan 2006  (c) 2000-2006 John Lim (jlim@natsoft.com.my). All rights reserved.
+V4.91 2 Aug 2006  (c) 2000-2006 John Lim (jlim#natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -24,7 +24,7 @@ class ADODB_mysql extends ADOConnection {
 	var $hasInsertID = true;
 	var $hasAffectedRows = true;	
 	var $metaTablesSQL = "SHOW TABLES";	
-	var $metaColumnsSQL = "SHOW COLUMNS FROM %s";
+	var $metaColumnsSQL = "SHOW COLUMNS FROM `%s`";
 	var $fmtTimeStamp = "'Y-m-d H:i:s'";
 	var $hasLimit = true;
 	var $hasMoveFirst = true;
@@ -38,6 +38,7 @@ class ADODB_mysql extends ADOConnection {
 	var $clientFlags = 0;
 	var $substr = "substring";
 	var $nameQuote = '`';		/// string to use to quote identifiers and names
+	var $compat323 = false; 		// true if compat with mysql 3.23
 	
 	function ADODB_mysql() 
 	{			
@@ -156,7 +157,7 @@ class ADODB_mysql extends ADOConnection {
 	
 	function GetOne($sql,$inputarr=false)
 	{
-		if (strncasecmp($sql,'sele',4) == 0) {
+		if ($this->compat323 == false && strncasecmp($sql,'sele',4) == 0) {
 			$rs =& $this->SelectLimit($sql,1,-1,$inputarr);
 			if ($rs) {
 				$rs->Close();
@@ -340,8 +341,11 @@ class ADODB_mysql extends ADOConnection {
 	function OffsetDate($dayFraction,$date=false)
 	{		
 		if (!$date) $date = $this->sysDate;
+		
 		$fraction = $dayFraction * 24 * 3600;
-		return "from_unixtime(unix_timestamp($date)+$fraction)";
+		return $date . ' + INTERVAL ' .	 $fraction.' SECOND';
+		
+//		return "from_unixtime(unix_timestamp($date)+$fraction)";
 	}
 	
 	// returns true or false
@@ -541,6 +545,9 @@ class ADODB_mysql extends ADOConnection {
 	// "Innox - Juan Carlos Gonzalez" <jgonzalez#innox.com.mx>
 	function MetaForeignKeys( $table, $owner = FALSE, $upper = FALSE, $associative = FALSE )
      {
+	 global $ADODB_FETCH_MODE;
+		if ($ADODB_FETCH_MODE == ADODB_FETCH_ASSOC || $this->fetchMode == ADODB_FETCH_ASSOC) $associative = true;
+
          if ( !empty($owner) ) {
             $table = "$owner.$table";
          }
@@ -636,8 +643,8 @@ class ADORecordSet_mysql extends ADORecordSet{
 
 	function &GetRowAssoc($upper=true)
 	{
-		if ($this->fetchMode == MYSQL_ASSOC && !$upper) return $this->fields;
-		$row =& ADORecordSet::GetRowAssoc($upper);
+		if ($this->fetchMode == MYSQL_ASSOC && !$upper) $row = $this->fields;
+		else $row =& ADORecordSet::GetRowAssoc($upper);
 		return $row;
 	}
 	

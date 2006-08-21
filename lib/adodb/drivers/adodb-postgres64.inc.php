@@ -1,6 +1,6 @@
 <?php
 /*
- V4.71 24 Jan 2006  (c) 2000-2006 John Lim (jlim@natsoft.com.my). All rights reserved.
+ V4.91 2 Aug 2006  (c) 2000-2006 John Lim (jlim#natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -161,7 +161,7 @@ a different OID if a database must be reloaded. */
 	}
 
 // I get this error with PHP before 4.0.6 - jlim
-// Warning: This compilation does not support pg_cmdtuples() in d:/inetpub/wwwroot/php/adodb/adodb-postgres.inc.php on line 44
+// Warning: This compilation does not support pg_cmdtuples() in adodb-postgres.inc.php on line 44
    function _affectedrows()
    {
    		if (!is_resource($this->_resultid) || get_resource_type($this->_resultid) !== 'pgsql result') return false;
@@ -174,7 +174,7 @@ a different OID if a database must be reloaded. */
 	{
 		if ($this->transOff) return true;
 		$this->transCnt += 1;
-		return @pg_Exec($this->_connectionID, "begin");
+		return @pg_Exec($this->_connectionID, "begin ".$this->_transmode);
 	}
 	
 	function RowLock($tables,$where,$flds='1 as ignore') 
@@ -532,6 +532,8 @@ select viewname,'V' from pg_views where viewname like $mask";
 			$fld->name = $rs->fields[0];
 			$fld->type = $rs->fields[1];
 			$fld->max_length = $rs->fields[2];
+			$fld->attnum = $rs->fields[6];
+			
 			if ($fld->max_length <= 0) $fld->max_length = $rs->fields[3]-4;
 			if ($fld->max_length <= 0) $fld->max_length = -1;
 			if ($fld->type == 'numeric') {
@@ -617,12 +619,14 @@ WHERE (c2.relname=\'%s\' or c2.relname=lower(\'%s\'))';
 					return $false;
                 }
 				
-                $col_names = $this->MetaColumnNames($table,true);
+                $col_names = $this->MetaColumnNames($table,true,true); 
+				//3rd param is use attnum, 
+				// see http://sourceforge.net/tracker/index.php?func=detail&aid=1451245&group_id=42718&atid=433976
                 $indexes = array();
                 while ($row = $rs->FetchRow()) {
                         $columns = array();
                         foreach (explode(' ', $row[2]) as $col) {
-                                $columns[] = $col_names[$col - 1];
+                                $columns[] = $col_names[$col];
                         }
                         
                         $indexes[$row[0]] = array(
@@ -701,7 +705,7 @@ WHERE (c2.relname=\'%s\' or c2.relname=lower(\'%s\'))';
 	// returns queryID or false
 	function _query($sql,$inputarr)
 	{
-		
+		$this->_errorMsg = false;
 		if ($inputarr) {
 		/*
 			It appears that PREPARE/EXECUTE is slower for many queries.
@@ -731,6 +735,7 @@ WHERE (c2.relname=\'%s\' or c2.relname=lower(\'%s\'))';
 			if ($execp) $exsql = "EXECUTE $plan ($execp)";
 			else $exsql = "EXECUTE $plan";
 			
+			
 			$rez = @pg_exec($this->_connectionID,$exsql);
 			if (!$rez) {
 			# Perhaps plan does not exist? Prepare/compile plan.
@@ -756,12 +761,11 @@ WHERE (c2.relname=\'%s\' or c2.relname=lower(\'%s\'))';
 				$s = "PREPARE $plan ($params) AS ".substr($sql,0,strlen($sql)-2);		
 				//adodb_pr($s);
 				pg_exec($this->_connectionID,$s);
-				echo $this->ErrorMsg();
+				//echo $this->ErrorMsg();
 			}
 			
 			$rez = pg_exec($this->_connectionID,$exsql);
 		} else {
-			$this->_errorMsg = false;
 			//adodb_backtrace();
 			$rez = pg_exec($this->_connectionID,$sql);
 		}
@@ -1000,6 +1004,7 @@ class ADORecordSet_postgres64 extends ADORecordSet{
 		   		case 'BPCHAR':
 				case '_VARCHAR':
 				case 'INET':
+				case 'MACADDR':
 					if ($len <= $this->blobSize) return 'C';
 				
 				case 'TEXT':
@@ -1019,6 +1024,8 @@ class ADORecordSet_postgres64 extends ADORecordSet{
 				case 'DATE':
 					return 'D';
 				
+				
+				case 'TIMESTAMP WITHOUT TIME ZONE':
 				case 'TIME':
 				case 'DATETIME':
 				case 'TIMESTAMP':

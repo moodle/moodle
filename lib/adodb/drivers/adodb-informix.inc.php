@@ -1,6 +1,6 @@
 <?php
 /**
-* @version V4.71 24 Jan 2006 (c) 2000-2006 John Lim (jlim@natsoft.com.my). All rights reserved.
+* @version V4.91 2 Aug 2006 (c) 2000-2006 John Lim (jlim#natsoft.com.my). All rights reserved.
 * Released under both BSD license and Lesser GPL library license.
 * Whenever there is any discrepancy between the two licenses,
 * the BSD license will take precedence.
@@ -22,6 +22,11 @@ class ADODB_informix extends ADODB_informix72 {
 	var $databaseType = "informix";
 	var $hasTop = 'FIRST';
 	var $ansiOuter = true;
+	
+	function IfNull( $field, $ifNull )
+	{
+		return " NVL($field, $ifNull) "; // if Informix 9.X or 10.X
+	}
 }
 
 class ADORecordset_informix extends ADORecordset_informix72 {

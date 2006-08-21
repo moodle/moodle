@@ -97,7 +97,7 @@ http://adodb-xmlschema.sourceforge.net
 					</xsl:element>
 				</xsl:when>
 				<xsl:when test="count(DEFTIMESTAMP) > 0">
-					<xsl:element name="DEFDTIMESTAMP">
+					<xsl:element name="DEFTIMESTAMP">
 						<xsl:attribute name="value">
 							<xsl:value-of select="DEFTIMESTAMP[1]/@value"/>
 						</xsl:attribute>

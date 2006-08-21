@@ -1,13 +1,41 @@
 <?php
 
 /**
-  V4.71 24 Jan 2006  (c) 2000-2006 John Lim (jlim@natsoft.com.my). All rights reserved.
+  V4.91 2 Aug 2006  (c) 2000-2006 John Lim (jlim#natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
 	
   Set tabs to 4 for best viewing.
  
+*/
+
+/*
+In ADOdb, named quotes for MS SQL Server use ". From the MSSQL Docs:
+
+	Note Delimiters are for identifiers only. Delimiters cannot be used for keywords, 
+	whether or not they are marked as reserved in SQL Server.
+	
+	Quoted identifiers are delimited by double quotation marks ("):
+	SELECT * FROM "Blanks in Table Name"
+	
+	Bracketed identifiers are delimited by brackets ([ ]):
+	SELECT * FROM [Blanks In Table Name]
+	
+	Quoted identifiers are valid only when the QUOTED_IDENTIFIER option is set to ON. By default, 
+	the Microsoft OLE DB Provider for SQL Server and SQL Server ODBC driver set QUOTED_IDENTIFIER ON 
+	when they connect. 
+	
+	In Transact-SQL, the option can be set at various levels using SET QUOTED_IDENTIFIER, 
+	the quoted identifier option of sp_dboption, or the user options option of sp_configure.
+	
+	When SET ANSI_DEFAULTS is ON, SET QUOTED_IDENTIFIER is enabled.
+	
+	Syntax
+	
+		SET QUOTED_IDENTIFIER { ON | OFF }
+
+
 */
 
 // security - hide paths

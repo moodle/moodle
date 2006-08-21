@@ -1,6 +1,6 @@
 <?php
 /* 
-V4.71 24 Jan 2006  (c) 2000-2006 John Lim (jlim@natsoft.com.my). All rights reserved.
+V4.91 2 Aug 2006  (c) 2000-2006 John Lim (jlim#natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. See License.txt. 
@@ -71,7 +71,7 @@ function& adodb_log_sql(&$conn,$sql,$inputarr)
 	$rs =& $conn->Execute($sql,$inputarr);
 	$t1 = microtime();
 
-	if (!empty($conn->_logsql)) {
+	if (!empty($conn->_logsql) && (empty($conn->_logsqlErrors) || !$rs)) {
 		$conn->_logsql = false; // disable logsql error simulation
 		$dbT = $conn->databaseType;
 		
@@ -149,6 +149,7 @@ function& adodb_log_sql(&$conn,$sql,$inputarr)
 			if ($dbT == 'informix') $isql = str_replace(chr(10),' ',$isql);
 			$arr = false;
 		} else {
+			if ($dbT == 'db2') $arr['f'] = (float) $arr['f'];
 			$isql = "insert into $perf_table (created,sql0,sql1,params,tracer,timer) values( $d,?,?,?,?,?)";
 		}
 
@@ -860,8 +861,10 @@ Committed_AS:   348732 kB
 	{
 		if (!$this->createTableSQL) return false;
 		
+		$table = $this->table();
+		$sql = str_replace('adodb_logsql',$table,$this->createTableSQL);
 		$savelog = $this->conn->LogSQL(false);
-		$ok = $this->conn->Execute($this->createTableSQL);
+		$ok = $this->conn->Execute($sql);
 		$this->conn->LogSQL($savelog);
 		return ($ok) ? true : false;
 	}

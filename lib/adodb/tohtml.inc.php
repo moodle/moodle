@@ -1,6 +1,6 @@
 <?php 
 /*
-  V4.71 24 Jan 2006  (c) 2000-2006 John Lim (jlim@natsoft.com.my). All rights reserved.
+  V4.91 2 Aug 2006  (c) 2000-2006 John Lim (jlim#natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -95,7 +95,7 @@ GLOBAL $gSQLMaxRows,$gSQLBlockRows,$ADODB_ROUND;
 			break;
 			
 			case 'N':
-				if (abs($v) - round($v,0) < 0.00000001)
+				if (abs(abs($v) - round($v,0)) < 0.00000001)
 					$v = round($v);
 				else
 					$v = round($v,$ADODB_ROUND);

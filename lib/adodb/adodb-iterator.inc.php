@@ -1,7 +1,7 @@
 <?php
 
 /*
-  V4.71 24 Jan 2006  (c) 2000-2006 John Lim (jlim@natsoft.com.my). All rights reserved.
+  V4.91 2 Aug 2006  (c) 2000-2006 John Lim (jlim#natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -80,5 +80,6 @@ class ADODB_BASE_RS implements IteratorAggregate {
 		return _adodb_export($this,',',',',false,true);
 	}
 } 
+
 
 ?>

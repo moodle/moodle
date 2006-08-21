@@ -1,6 +1,6 @@
 <?php
 /* 
-V4.71 24 Jan 2006  (c) 2000-2006 John Lim (jlim@natsoft.com.my). All rights reserved.
+V4.91 2 Aug 2006  (c) 2000-2006 John Lim (jlim#natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. 
@@ -11,8 +11,8 @@ Set tabs to 4 for best viewing.
   Microsoft SQL Server ADO data driver. Requires ADO and MSSQL client. 
   Works only on MS Windows.
   
-  It is normally better to use the mssql driver directly because it is much faster. 
-  This file is only a technology demonstration and for test purposes.
+  Warning: Some versions of PHP (esp PHP4) leak memory when ADO/COM is used. 
+  Please check http://bugs.php.net/ for more info.
 */
 
 // security - hide paths
@@ -53,6 +53,17 @@ class  ADODB_ado_mssql extends ADODB_ado {
 	        return $this->GetOne('select @@rowcount');
 	}
 	
+	function SetTransactionMode( $transaction_mode ) 
+	{
+		$this->_transmode  = $transaction_mode;
+		if (empty($transaction_mode)) {
+			$this->Execute('SET TRANSACTION ISOLATION LEVEL READ COMMITTED');
+			return;
+		}
+		if (!stristr($transaction_mode,'isolation')) $transaction_mode = 'ISOLATION LEVEL '.$transaction_mode;
+		$this->Execute("SET TRANSACTION ".$transaction_mode);
+	}
+	
 	function MetaColumns($table)
 	{
         $table = strtoupper($table);
@@ -82,6 +93,44 @@ class  ADODB_ado_mssql extends ADODB_ado {
         }
         $false = false;
 		return empty($arr) ? $false : $arr;
+	}
+	
+	function CreateSequence($seq='adodbseq',$start=1)
+	{
+		
+		$this->Execute('BEGIN TRANSACTION adodbseq');
+		$start -= 1;
+		$this->Execute("create table $seq (id float(53))");
+		$ok = $this->Execute("insert into $seq with (tablock,holdlock) values($start)");
+		if (!$ok) {
+				$this->Execute('ROLLBACK TRANSACTION adodbseq');
+				return false;
+		}
+		$this->Execute('COMMIT TRANSACTION adodbseq'); 
+		return true;
+	}
+
+	function GenID($seq='adodbseq',$start=1)
+	{
+		//$this->debug=1;
+		$this->Execute('BEGIN TRANSACTION adodbseq');
+		$ok = $this->Execute("update $seq with (tablock,holdlock) set id = id + 1");
+		if (!$ok) {
+			$this->Execute("create table $seq (id float(53))");
+			$ok = $this->Execute("insert into $seq with (tablock,holdlock) values($start)");
+			if (!$ok) {
+				$this->Execute('ROLLBACK TRANSACTION adodbseq');
+				return false;
+			}
+			$this->Execute('COMMIT TRANSACTION adodbseq'); 
+			return $start;
+		}
+		$num = $this->GetOne("select id from $seq");
+		$this->Execute('COMMIT TRANSACTION adodbseq'); 
+		return $num;
+		
+		// in old implementation, pre 1.90, we returned GUID...
+		//return $this->GetOne("SELECT CONVERT(varchar(255), NEWID()) AS 'Char'");
 	}
 	
 	} // end class 

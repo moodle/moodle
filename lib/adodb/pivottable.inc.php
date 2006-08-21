@@ -1,15 +1,12 @@
 <?php
 /** 
- * @version V4.71 24 Jan 2006 (c) 2000-2006 John Lim (jlim@natsoft.com.my). All rights reserved.
+ * @version V4.91 2 Aug 2006 (c) 2000-2006 John Lim (jlim#natsoft.com.my). All rights reserved.
  * Released under both BSD license and Lesser GPL library license. 
  * Whenever there is any discrepancy between the two licenses, 
  * the BSD license will take precedence. 
  *
  * Set tabs to 4 for best viewing.
  * 
- * Latest version is available at http://php.weblogs.com
- *
- * Requires PHP4.01pl2 or later because it uses include_once
 */
 
 /*
@@ -23,7 +20,7 @@
  * @where			Where clause. Optional.
  * @aggfield		This is the field to sum. Optional. 
  *						Since 2.3.1, if you can use your own aggregate function 
- *						instead of SUM, eg. $sumfield = 'AVG(fieldname)';
+ *						instead of SUM, eg. $aggfield = 'fieldname'; $aggfn = 'AVG';
  * @sumlabel		Prefix to display in sum columns. Optional.
  * @aggfn			Aggregate function to use (could be AVG, SUM, COUNT)
  * @showcount		Show count of records
@@ -31,14 +28,14 @@
  * @returns			Sql generated
  */
  
- function PivotTableSQL($db,$tables,$rowfields,$colfield, $where=false,
+ function PivotTableSQL(&$db,$tables,$rowfields,$colfield, $where=false,
  	$aggfield = false,$sumlabel='Sum ',$aggfn ='SUM', $showcount = true)
  {
 	if ($aggfield) $hidecnt = true;
 	else $hidecnt = false;
 	
 	$iif = strpos($db->databaseType,'access') !== false; 
-		// note - vfp still doesn' work even with IIF enabled || $db->databaseType == 'vfp';
+		// note - vfp 6 still doesn' work even with IIF enabled || $db->databaseType == 'vfp';
 	
 	//$hidecnt = false;
 	
@@ -95,7 +92,12 @@
 	else
 		$sel = substr($sel,0,strlen($sel)-2);
 	
+	
+	// Strip aliases
+	$rowfields = preg_replace('/ AS (\w+)/i', '', $rowfields);
+	
 	$sql = "SELECT $sel \nFROM $tables $where \nGROUP BY $rowfields";
+	
 	return $sql;
  }
 

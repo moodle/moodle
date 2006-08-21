@@ -1,7 +1,7 @@
 <?php
 
 /**
-  V4.71 24 Jan 2006  (c) 2000-2006 John Lim (jlim@natsoft.com.my). All rights reserved.
+  V4.91 2 Aug 2006  (c) 2000-2006 John Lim (jlim#natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -75,8 +75,8 @@ class ADODB2_oci8 extends ADODB_DataDict {
 		case 'X': return $this->typeX;
 		case 'XL': return $this->typeXL;
 		
-		case 'C2': return 'NVARCHAR';
-		case 'X2': return 'NVARCHAR(2000)';
+		case 'C2': return 'NVARCHAR2';
+		case 'X2': return 'NVARCHAR2(4000)';
 		
 		case 'B': return 'BLOB';
 			

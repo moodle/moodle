@@ -1,6 +1,6 @@
 <?php
 /* 
-V4.71 24 Jan 2006  (c) 2000-2006 John Lim (jlim@natsoft.com.my). All rights reserved.
+V4.91 2 Aug 2006  (c) 2000-2006 John Lim (jlim#natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. 
@@ -58,8 +58,22 @@ class ADODB_ado extends ADOConnection {
 	// you can also pass a connection string like this:
 	//
 	// $DB->Connect('USER ID=sa;PASSWORD=pwd;SERVER=mangrove;DATABASE=ai',false,false,'SQLOLEDB');
-	function _connect($argHostname, $argUsername, $argPassword, $argProvider= 'MSDASQL')
+	function _connect($argHostname, $argUsername, $argPassword,$argDBorProvider, $argProvider= '')
 	{
+	// two modes
+	//	-	if $argProvider is empty, we assume that $argDBorProvider holds provider -- this is for backward compat
+	//	- 	if $argProvider is not empty, then $argDBorProvider holds db
+	
+		
+		 if ($argProvider) {
+		 	$argDatabasename = $argDBorProvider;
+		 } else {
+		 	$argDatabasename = '';
+		 	if ($argDBorProvider) $argProvider = $argDBorProvider;
+			else $argProvider = 'MSDASQL';
+		}
+		
+		
 		try {
 		$u = 'UID';
 		$p = 'PWD';
@@ -86,7 +100,11 @@ class ADODB_ado extends ADOConnection {
 			$argProvider = "Microsoft.Jet.OLEDB.4.0"; // Microsoft Jet Provider
 		
 		if ($argProvider) $dbc->Provider = $argProvider;	
+
+		if ($argProvider) $argHostname = "PROVIDER=$argProvider;DRIVER={SQL Server};SERVER=$argHostname";	
 		
+
+		if ($argDatabasename) $argHostname .= ";DATABASE=$argDatabasename";		
 		if ($argUsername) $argHostname .= ";$u=$argUsername";
 		if ($argPassword)$argHostname .= ";$p=$argPassword";
 		
@@ -205,9 +223,6 @@ class ADODB_ado extends ADOConnection {
 		return $arr;
 	}
 	
-
-
-	
 	/* returns queryID or false */
 	function &_query($sql,$inputarr=false) 
 	{
@@ -216,6 +231,9 @@ class ADODB_ado extends ADOConnection {
 		$dbc = $this->_connectionID;
 		
 	//	return rs	
+	
+		$false = false;
+		
 		if ($inputarr) {
 			
 			if (!empty($this->charPage))
@@ -236,22 +254,25 @@ class ADODB_ado extends ADOConnection {
 			$p = false;
 			$rs = $oCmd->Execute();
 			$e = $dbc->Errors;
-			if ($dbc->Errors->Count > 0) return false;
+			if ($dbc->Errors->Count > 0) return $false;
 			return $rs;
 		}
 		
 		$rs = @$dbc->Execute($sql,$this->_affectedRows, $this->_execute_option);
 			
-		if ($dbc->Errors->Count > 0) return false;
-		if (! $rs) return false;
+		if ($dbc->Errors->Count > 0) return $false;
+		if (! $rs) return $false;
 		
-		if ($rs->State == 0) return true; // 0 = adStateClosed means no records returned
+		if ($rs->State == 0) {
+			$true = true;
+			return $true; // 0 = adStateClosed means no records returned
+		}
 		return $rs;
 		
 		} catch (exception $e) {
 			
 		}
-		return false;
+		return $false;
 	}
 
 	
@@ -290,10 +311,18 @@ class ADODB_ado extends ADOConnection {
 
 	function ErrorMsg() 
 	{
-		$errc = $this->_connectionID->Errors;
-		if ($errc->Count == 0) return '';
-		$err = $errc->Item($errc->Count-1);
-		return $err->Description;
+		if (!$this->_connectionID) return "No connection established";
+		$errmsg = '';
+		
+		try {
+			$errc = $this->_connectionID->Errors;
+			if (!$errc) return "No Errors object found";
+			if ($errc->Count == 0) return '';
+			$err = $errc->Item($errc->Count-1);
+			$errmsg = $err->Description;
+		}catch(exception $e) {
+		}
+		return $errmsg;
 	}
 	
 	function ErrorNo() 

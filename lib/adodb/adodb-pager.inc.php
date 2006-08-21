@@ -1,7 +1,7 @@
 <?php
 
 /*
-	V4.71 24 Jan 2006  (c) 2000-2006 John Lim (jlim@natsoft.com.my). All rights reserved.
+	V4.91 2 Aug 2006  (c) 2000-2006 John Lim (jlim#natsoft.com.my). All rights reserved.
 	  Released under both BSD license and Lesser GPL library license. 
 	  Whenever there is any discrepancy between the two licenses, 
 	  the BSD license will take precedence. 
@@ -60,7 +60,7 @@ class ADODB_Pager {
 	global $PHP_SELF;
 	
 		$curr_page = $id.'_curr_page';
-		if (empty($PHP_SELF)) $PHP_SELF = $_SERVER['PHP_SELF'];
+		if (empty($PHP_SELF)) $PHP_SELF = htmlspecialchars($_SERVER['PHP_SELF']); // htmlspecialchars() to prevent XSS attacks
 		
 		$this->sql = $sql;
 		$this->id = $id;
@@ -70,7 +70,7 @@ class ADODB_Pager {
 		$next_page = $id.'_next_page';	
 		
 		if (isset($_GET[$next_page])) {
-			$_SESSION[$curr_page] = $_GET[$next_page];
+			$_SESSION[$curr_page] = (integer) $_GET[$next_page];
 		}
 		if (empty($_SESSION[$curr_page])) $_SESSION[$curr_page] = 1; ## at first page
 		
