@@ -4,8 +4,8 @@
     require_once("lib.php");
     require_once("$CFG->libdir/rsslib.php");
 
-    $id = optional_param('id',0,PARAM_INT);          // course
-    $subscribe = optional_param('subscribe',null,PARAM_INT);    // Subscribe/Unsubscribe all forums
+    $id = optional_param('id', 0, PARAM_INT);                   // Course id
+    $subscribe = optional_param('subscribe', null, PARAM_INT);  // Subscribe/Unsubscribe all forums
 
     if ($id) {
         if (! $course = get_record("course", "id", $id)) {
@@ -89,10 +89,18 @@
         }
 
         foreach ($forums as $forum) {
+            
+            $cm = get_coursemodule_from_instance("forum", $forum->id, $course->id);
+            $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+            
+            if (!has_capability('mod/forum:viewforum', $context)) {
+                if (isset($forum->keyreference)) {
+                    unset($learningforums[$forum->keyreference]);
+                }
+                continue;
+            }
             if (!isset($forum->visible)) {
                 $forum->visible = instance_is_visible("forum", $forum);
-                $cm = get_coursemodule_from_instance("forum", $forum->id, $course->id);
-                $context = get_context_instance(CONTEXT_MODULE, $cm->id);
                 if (!$forum->visible and !has_capability('moodle/course:viewhiddenactivities', $context)) {
                     if (isset($forum->keyreference)) {
                         unset($learningforums[$forum->keyreference]);

@@ -61,13 +61,12 @@
     $navigation = "<a href=\"index.php?id=$course->id\">$strforums</a> ->";
 
 
-/// Check whether the should be able to view this forum.
+/// Check whether the user should be able to view this forum.
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     
     if (!has_capability('mod/forum:viewforum', $context)) {
         error('You do not have the permission to view this forum');
     }
-    
     
     if ($cm->id) {
         add_to_log($course->id, "forum", "view forum", "view.php?id=$cm->id", "$forum->id", $cm->id);
@@ -78,7 +77,7 @@
     print_header_simple(format_string($forum->name), "",
                  "$navigation ".format_string($forum->name), "", "", true, $buttontext, navmenu($course, $cm));
 
-    if (empty($cm->visible) and !has_capability('moodle/course:manageactivities', $context)) {
+    if (empty($cm->visible) and !has_capability('moodle/course:viewhiddenactivities', $context)) {
         notice(get_string("activityiscurrentlyhidden"));
     }
 

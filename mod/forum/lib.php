@@ -94,10 +94,10 @@ function forum_add_instance($forum) {
 
     $forum->timemodified = time();
 
-    if (!$forum->userating) {
+    if (!$forum->assessed) {
         $forum->assessed = 0;
     }
-
+    
     if (!empty($forum->ratingtime)) {
         $forum->assesstimestart  = make_timestamp($forum->startyear, $forum->startmonth, $forum->startday,
                                                   $forum->starthour, $forum->startminute, 0);
@@ -145,10 +145,10 @@ function forum_update_instance($forum) {
     $forum->timemodified = time();
     $forum->id = $forum->instance;
 
-    if (empty($forum->userating)) {
+    if (empty($forum->assessed)) {
         $forum->assessed = 0;
     }
-
+    
     if (!empty($forum->ratingtime)) {
         $forum->assesstimestart  = make_timestamp($forum->startyear, $forum->startmonth, $forum->startday,
                                                   $forum->starthour, $forum->startminute, 0);
@@ -1583,7 +1583,6 @@ function forum_get_course_forum($courseid, $type) {
             $forum->name  = addslashes(get_string("namenews", "forum"));
             $forum->intro = addslashes(get_string("intronews", "forum"));
             $forum->forcesubscribe = FORUM_FORCESUBSCRIBE;
-            $forum->open = 1;   // 0 - no, 1 - posts only, 2 - discuss and post
             $forum->assessed = 0;
             if ($courseid == SITEID) {
                 $forum->name  = get_string("sitenews");
@@ -1593,14 +1592,12 @@ function forum_get_course_forum($courseid, $type) {
         case "social":
             $forum->name  = addslashes(get_string("namesocial", "forum"));
             $forum->intro = addslashes(get_string("introsocial", "forum"));
-            $forum->open = 2;   // 0 - no, 1 - posts only, 2 - discuss and post
             $forum->assessed = 0;
             $forum->forcesubscribe = 0;
             break;
         case "teacher":
             $forum->name  = addslashes(get_string("nameteacher", "forum"));
             $forum->intro = addslashes(get_string("introteacher", "forum"));
-            $forum->open = 2;   // 0 - no, 1 - posts only, 2 - discuss and post
             $forum->assessed = 0;
             $forum->forcesubscribe = 0;
             break;
@@ -1984,7 +1981,7 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
             
             $canviewallratings = has_capability('mod/forum:viewanyrating', $modcontext);
             
-            if (($canviewallratings or $ratings->assesspublic) and !$mypost) {    
+            if ($canviewallratings and !$mypost) {    
                 forum_print_ratings_mean($post->id, $ratings->scale, $canviewallratings);
                 if (!empty($ratings->allow)) {
                     echo '&nbsp;';
@@ -2095,7 +2092,7 @@ function forum_print_discussion_header(&$post, $forum, $group=-1, $datestring=""
         echo "</td>\n";
     }
 
-    if ($forum->open or $forum->type == 'teacher') {   // Show the column with replies
+    if (has_capability('mod/forum:viewdiscussion', $modcontext)) {   // Show the column with replies
         echo '<td class="replies">';
         echo '<a href="'.$CFG->wwwroot.'/mod/forum/discuss.php?d='.$post->discussion.'">';
         echo $post->replies.'</a>';
@@ -2794,14 +2791,14 @@ function forum_user_can_post_discussion($forum, $currentgroup=false, $groupmode=
         return (!forum_user_has_posted_discussion($forum->id, $USER->id));
     } else if ($currentgroup) {
         return (has_capability('moodle/site:accessallgroups', $context)
-                or (ismember($currentgroup) and $forum->open == 2));
+                or ismember($currentgroup));
     } else {
         //else it might be group 0 in visible mode
         if ($groupmode == VISIBLEGROUPS){
-            return ($forum->open == 2 and ismember($currentgroup));
+            return (ismember($currentgroup));
         }
         else {
-            return ($forum->open == 2);
+            return true;
         }
     }
 }
@@ -2815,11 +2812,6 @@ function forum_user_can_post_discussion($forum, $currentgroup=false, $groupmode=
  */
 function forum_user_can_post($forum, $user=NULL) {
 
-    if (!$forum->open) {
-        // No point doing the more expensive has_capability checks.
-        return false;
-    }
-    
     if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $forum->course)) {
         error('Course Module ID was incorrect');
     }
@@ -3084,7 +3076,7 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions=5, $dis
         if ($groupmode > 0) {
             echo '<th class="header group">'.get_string('group').'</th>';
         }
-        if ($forum->open or $forum->type == 'teacher') {
+        if (has_capability('mod/forum:viewdiscussion', $context)) {
             echo '<th class="header replies">'.get_string('replies', 'forum').'</th>';
             /// If the forum can be tracked, display the unread column.
             if ($cantrack) {
@@ -3208,7 +3200,6 @@ function forum_print_discussion($course, $forum, $discussion, $post, $mode, $can
     $ratingsmenuused = false;
     if ($forum->assessed and !empty($USER->id)) {
         if ($ratings->scale = make_grades_menu($forum->scale)) {
-            $ratings->assesspublic = $forum->assesspublic;
             $ratings->assesstimestart = $forum->assesstimestart;
             $ratings->assesstimefinish = $forum->assesstimefinish;
             $ratings->allow = $canrate;

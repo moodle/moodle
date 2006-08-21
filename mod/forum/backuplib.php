@@ -71,9 +71,7 @@
         fwrite ($bf,full_tag("TYPE",4,false,$forum->type));
         fwrite ($bf,full_tag("NAME",4,false,$forum->name));
         fwrite ($bf,full_tag("INTRO",4,false,$forum->intro));
-        fwrite ($bf,full_tag("OPEN",4,false,$forum->open));
         fwrite ($bf,full_tag("ASSESSED",4,false,$forum->assessed));
-        fwrite ($bf,full_tag("ASSESSPUBLIC",4,false,$forum->assesspublic));
         fwrite ($bf,full_tag("ASSESSTIMESTART",4,false,$forum->assesstimestart));
         fwrite ($bf,full_tag("ASSESSTIMEFINISH",4,false,$forum->assesstimefinish));
         fwrite ($bf,full_tag("MAXBYTES",4,false,$forum->maxbytes));

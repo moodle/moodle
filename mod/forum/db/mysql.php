@@ -229,11 +229,9 @@ function forum_upgrade($oldversion) {
   }
   
   
-  /*
-  // Upgrades for new roles and capabilities support.
   if ($oldversion < 2006081800) {
+      // Upgrades for new roles and capabilities support.
       $forummodid = get_record('modules', 'name', 'forum');
-      
       
       if ($forums = get_records('forum')) {
           
@@ -247,9 +245,11 @@ function forum_upgrade($oldversion) {
           foreach ($forums as $forum) {
               
               if ($forum->type == 'teacher') {
+                  
                   // Teacher forums should be converted to normal forums that
                   // use the Roles System to implement the old behavior.
-              
+                  require_once($CFG->dirroot.'/course/lib.php');
+                  
                   // Delete empty teacher forums.
                   if (count_records('forum_discussions', 'forum', $forum->id) == 0) {
                       delete_records('forum', 'id', $forum->id);
@@ -356,10 +356,11 @@ function forum_upgrade($oldversion) {
                           break;
                   }
                   // Drop column forum.open.
-                  modify_database('','ALTER TABLE prefix_forum DROP COLUMN open;');
+                  modify_database('', 'ALTER TABLE prefix_forum DROP COLUMN open;');
                   
                   
-                  // $forum->assessed defines who can rate posts:
+                  // $forum->assessed defines whether forum rating is turned
+                  // on (1 or 2) and who can rate posts:
                   //   1 = Everyone can rate posts
                   //   2 = Only teachers can rate posts
                   switch ($forum->assessed) {
@@ -389,12 +390,12 @@ function forum_upgrade($oldversion) {
                           break;
                   }
                   // Drop column forum.assesspublic.
-                  modify_database('','ALTER TABLE prefix_forum DROP COLUMN assesspublic;');
+                  modify_database('', 'ALTER TABLE prefix_forum DROP COLUMN assesspublic;');
               }
           } // End foreach $teacherforums.
       } // End if.
   }
-  */
+  
   
   return true;
   

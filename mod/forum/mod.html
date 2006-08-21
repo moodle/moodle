@@ -14,10 +14,7 @@
         $form->open = 2;
     }
     if (!isset($form->assessed)) {
-        $form->assessed = 1;
-    }
-    if (!isset($form->assesspublic)) {
-        $form->assesspublic = 1;
+        $form->assessed = 0;
     }
     if (!isset($form->forcesubscribe)) {
         $form->forcesubscribe = 0;
@@ -105,6 +102,17 @@
         <?php print_textarea($usehtmleditor, 20, 50, 680, 400, 'intro', $form->intro); ?>
     </td>
 </tr>
+
+<tr valign="top">
+    <td align="right"><b><?php print_string('allowdiscussions', 'forum', strtolower("$course->student")) ?>:</b></td>
+    <td>
+        <?php
+            choose_from_menu($FORUM_OPEN_MODES, 'open', $form->open, '');
+            helpbutton('allowdiscussions', get_string('allowdiscussions',
+                       'forum', moodle_strtolower("$course->student")), 'forum');
+        ?>
+    </td>
+</tr>
 <tr>
     <td align="right"><b><?php print_string('forcesubscribeq', 'forum') ?>:</b></td>
     <td>
@@ -149,7 +157,8 @@
 <?php
     //Only show rss parameters if rss is activated at site and forum levels
     if ($CFG->enablerssfeeds
-            && isset($CFG->forum_enablerssfeeds) && $CFG->forum_enablerssfeeds) {
+                && isset($CFG->forum_enablerssfeeds)
+                && $CFG->forum_enablerssfeeds) {
         echo '<tr valign="top">';
         echo '<td align="right"><b>'.get_string('rsstype').':</b></td>';
         echo '<td>';
@@ -195,13 +204,14 @@
             echo '<script type="text/javascript">';
             echo "  var subitemstime = ['startday','startmonth','startyear','starthour', 'startminute',".
                                        "'finishday','finishmonth','finishyear','finishhour','finishminute'];";
-            echo "  var subitemsall = ['assessed', 'assesspublic', 'ratingtime', 'scale', ".
-                                      "'startday','startmonth','startyear','starthour', 'startminute',".
-                                      "'finishday','finishmonth','finishyear','finishhour','finishminute'];";
+            
+            echo "  var subitemsall = ['ratingtime', 'scale', ".
+                                       "'startday','startmonth','startyear','starthour', 'startminute',".
+                                       "'finishday','finishmonth','finishyear','finishhour','finishminute'];";
             echo '</script>';
 
-            echo '<input name="userating" type="checkbox" alt="'.get_string('ratingsuse', 'forum').'" value="1" ';
-            echo " onclick=\"return lockoptions('form','userating', subitemsall)\" ";
+            echo '<input name="assessed" type="checkbox" alt="'.get_string('ratingsuse', 'forum').'" value="1" ';
+            echo " onclick=\"return lockoptions('form','assessed', subitemsall)\" ";
             if ($form->assessed) {
                 echo ' checked="checked" ';
             }
@@ -257,7 +267,7 @@
             echo '<input type="hidden" name="hfinishminute" value="0" />';
 
             echo '<script type="text/javascript">';
-            echo "lockoptions('form','userating', subitemsall);";
+            echo "lockoptions('form','assessed', subitemsall);";
             echo '</script>';
 
             if (empty($form->ratingtime)) {
