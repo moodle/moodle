@@ -144,7 +144,7 @@ function has_capability($capability, $context=NULL, $userid=NULL) {
         return ($capabilities[$sitecontext->id]['moodle/site:doanything']);
     }
     
-    switch ($context->level) {
+    switch ($context->aggregatelevel) {
         
         case CONTEXT_COURSECAT:
             // Check parent cats.
@@ -262,7 +262,7 @@ function capability_search($capability, $context, $capabilities) {
     /* Then, we check the cache recursively */
     $permission = 0;    
     
-    switch ($context->level) {
+    switch ($context->aggregatelevel) {
 
         case CONTEXT_SYSTEM: // by now it's a definite an inherit
             $permission = 0;
@@ -338,7 +338,7 @@ function capability_search($capability, $context, $capabilities) {
  *                   [273][blah blah blah] = 2
  */
 function load_user_capability($capability='', $context ='', $userid='') {
-    
+
     global $USER, $CFG;
 
     if (empty($userid)) {
@@ -372,7 +372,7 @@ function load_user_capability($capability='', $context ='', $userid='') {
 
     $siteinstance = get_context_instance(CONTEXT_SYSTEM, SITEID);
 
-    $SQL = " SELECT  rc.capability, c1.id, (c1.level * 100) AS aggregatelevel,
+    $SQL = " SELECT  rc.capability, c1.id, (c1.aggregatelevel * 100) AS aggregatelevel,
                      SUM(rc.permission) AS sum
                      FROM
                      {$CFG->prefix}role_assignments AS ra, 
@@ -391,7 +391,7 @@ function load_user_capability($capability='', $context ='', $userid='') {
                      SUM(rc.permission) != 0
               UNION
 
-              SELECT rc.capability, c1.id, (c1.level * 100 + c2.level) AS aggregatelevel,
+              SELECT rc.capability, c1.id, (c1.aggregatelevel * 100 + c2.aggregatelevel) AS aggregatelevel,
                      SUM(rc.permission) AS sum
                      FROM
                      {$CFG->prefix}role_assignments AS ra,
@@ -431,7 +431,7 @@ function load_user_capability($capability='', $context ='', $userid='') {
             $rs->MoveNext();
         }
     }
-
+    
     /* so up to this point we should have somethign like this
      * $capabilities[1]    ->aggregatelevel = 1000
                            ->module = SITEID
@@ -554,7 +554,7 @@ function capability_prohibits($capability, $context, $sum='', $array='') {
             return true;
         }
     }
-    switch ($context->level) {
+    switch ($context->aggregatelevel) {
         
         case CONTEXT_SYSTEM:
             // By now it's a definite an inherit.
@@ -816,10 +816,10 @@ function islegacy($capabilityname) {
  * @param $level
  * @param $instanceid
  */
-function create_context($level, $instanceid) {
-    if (!get_record('context','level',$level,'instanceid',$instanceid)) {
+function create_context($aggregatelevel, $instanceid) {
+    if (!get_record('context','aggregatelevel',$aggregatelevel,'instanceid',$instanceid)) {
         $context = new object;
-        $context->level = $level;
+        $context->aggregatelevel = $aggregatelevel;
         $context->instanceid = $instanceid;
         return insert_record('context',$context);
     }
@@ -832,12 +832,10 @@ function create_context($level, $instanceid) {
  * @param $level
  * @param $instance
  */
-function get_context_instance($level=NULL, $instance=SITEID) {
-
-    global $CONTEXT, $context_cache, $context_cache_id;
+function get_context_instance($aggregatelevel=NULL, $instance=SITEID) {
 
 /// If no level is supplied then return the current global context if there is one
-    if (empty($level)) {
+    if (empty($aggregatelevel)) {
         if (empty($CONTEXT)) {
             if ($CFG->debug > 7) {
                 notify("Error: get_context_instance() called without a context");
@@ -848,18 +846,18 @@ function get_context_instance($level=NULL, $instance=SITEID) {
     }
 
 /// Check the cache
-    if (isset($context_cache[$level][$instance])) {  // Already cached
-        return $context_cache[$level][$instance];
+    if (isset($context_cache[$aggregatelevel][$instance])) {  // Already cached
+        return $context_cache[$aggregatelevel][$instance];
     }
 
 /// Get it from the database, or create it
-    if (!$context = get_record('context', 'level', $level, 'instanceid', $instance)) {
-        create_context($level, $instance);
-        $context = get_record('context', 'level', $level, 'instanceid', $instance);
+    if (!$context = get_record('context', 'aggregatelevel', $aggregatelevel, 'instanceid', $instance)) {
+        create_context($aggregatelevel, $instance);
+        $context = get_record('context', 'aggregatelevel', $aggregatelevel, 'instanceid', $instance);
     }
 
 /// Update the cache
-    $context_cache[$level][$instance] = $context;    // Cache it for later
+    $context_cache[$aggregatelevel][$instance] = $context;    // Cache it for later
     $context_cache_id[$context->id] = $context;      // Cache it for later
 
 
@@ -878,7 +876,7 @@ function get_context_instance_by_id($id) {
     }
 
     if ($context = get_record('context', 'id', $id)) {   // Update the cache and return
-        $context_cache[$context->level][$context->instanceid] = $context;
+        $context_cache[$context->aggregatelevel][$context->instanceid] = $context;
         $context_cache_id[$context->id] = $context;
         return $context;
     }
@@ -1228,7 +1226,7 @@ function capabilities_cleanup($component, $newcapdef=NULL) {
 function print_context_name($context) {
 
     $name = '';
-    switch ($context->level) {
+    switch ($context->aggregatelevel) {
 
         case CONTEXT_SYSTEM: // by now it's a definite an inherit
             $name = get_string('site');
@@ -1309,7 +1307,7 @@ function fetch_context_capabilities($context) {
 
     $sort = 'ORDER BY contextlevel,component,id';   // To group them sensibly for display
       
-    switch ($context->level) {
+    switch ($context->aggregatelevel) {
 
         case CONTEXT_SYSTEM: // all
             $SQL = "select * from {$CFG->prefix}capabilities";
@@ -1384,7 +1382,7 @@ function role_context_capabilities($roleid, $context) {
             where rc.contextid in $contexts
             and rc.roleid = $roleid
             and rc.contextid = c.id
-            ORDER BY c.level DESC, rc.capability DESC";
+            ORDER BY c.aggregatelevel DESC, rc.capability DESC";
             
     $records = get_records_sql($SQL);
     
@@ -1410,7 +1408,7 @@ function role_context_capabilities($roleid, $context) {
  */
 function get_parent_contexts($context) {
   
-    switch ($context->level) {
+    switch ($context->aggregatelevel) {
 
         case CONTEXT_SYSTEM: // no parent
             return null;

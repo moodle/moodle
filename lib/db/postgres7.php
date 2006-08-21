@@ -1726,6 +1726,12 @@ function main_upgrade($oldversion=0) {
         modify_database('',"CREATE UNIQUE INDEX prefix_role_allow_override_roleidallowoverride_idx ON prefix_role_allow_override (roleid, allowoverride);");
                
     }
+    
+    if ($oldversion < 2006082100) {
+        execute_sql("DROP INDEX {$CFG->prefix}context_levelinstanceid_idx;",false);
+        table_column('context', 'level', 'aggregatelevel', 'integer', '10', 'unsigned', '0', 'not null', '');
+        modify_database('',"CREATE UNIQUE INDEX prefix_context_aggregatelevelinstanceid_idx ON prefix_context (aggregatelevel, instanceid);"); 
+    }
     return $result;
 }
 

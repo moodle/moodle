@@ -65,9 +65,9 @@
     $participants = get_string("participants");
     $user = get_record('user', 'id', $userid);
     $fullname = fullname($user, isteacher($course->id));
-    
+
     // we got a few tabs there
-    if ($context->level == CONTEXT_USERID) {
+    if ($context->aggregatelevel == CONTEXT_USERID) {
         /// course header
         if ($courseid!= SITEID) {
             print_header("$fullname", "$fullname",

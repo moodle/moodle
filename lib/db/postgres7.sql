@@ -681,11 +681,11 @@ CREATE INDEX prefix_role_sortorder_idx ON prefix_role (sortorder);
          
 CREATE TABLE prefix_context (    
   id SERIAL PRIMARY KEY,     
-  level integer NOT NULL default 0,      
+  aggregatelevel integer NOT NULL default 0,      
   instanceid integer NOT NULL default 0      
 );
 CREATE INDEX prefix_context_instanceid_idx ON prefix_context (instanceid);
-CREATE UNIQUE INDEX prefix_context_levelinstanceid_idx ON prefix_context (level, instanceid);
+CREATE UNIQUE INDEX prefix_context_aggregatelevelinstanceid_idx ON prefix_context (aggregatelevel, instanceid);
          
 CREATE TABLE prefix_role_assignments (   
   id SERIAL PRIMARY KEY,     

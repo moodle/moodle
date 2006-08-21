@@ -2127,6 +2127,13 @@ function main_upgrade($oldversion=0) {
                     )", true); 
         
     }
+    
+    if ($oldversion < 2006082100) {
+        execute_sql("ALTER TABLE `{$CFG->prefix}context` DROP INDEX `level-instanceid`;",false);
+        table_column('context', 'level', 'aggregatelevel', 'int', '10', 'unsigned', '0', 'not null', '');
+        execute_sql("ALTER TABLE `{$CFG->prefix}context` ADD UNIQUE INDEX `aggregatelevel-instanceid` (`aggregatelevel`, `instanceid`)",false);
+    }
+    
     return $result;
 }
 

@@ -2,7 +2,7 @@
 // this deals with tabs, as well as print_headers for navigation
 
 if ($currenttab != 'update') {
-    switch ($context->level) {
+    switch ($context->aggregatelevel) {
       
         case CONTEXT_SYSTEM:
             $stradministration = get_string('administration');
@@ -77,7 +77,7 @@ if ($currenttab != 'update') {
 
 
     // Printing the tabs
-    if ($context->level == CONTEXT_MODULE) { // only show update button if module?
+    if ($context->aggregatelevel == CONTEXT_MODULE) { // only show update button if module?
     
         $toprow[] = new tabobject('update', $CFG->wwwroot.'/course/mod.php?update='.$context->instanceid.'&amp;return=true&amp;sesskey='.sesskey(), get_string('update'));
         
@@ -90,7 +90,7 @@ if ($currenttab != 'update') {
 
         $secondrow[] = new tabobject('assign', $CFG->wwwroot.'/admin/roles/assign.php?contextid='.$context->id, get_string('assignroles', 'role')); 
                 
-        if ($context->level == CONTEXT_SYSTEM) {
+        if ($context->aggregatelevel == CONTEXT_SYSTEM) {
             $secondrow[] = new tabobject('override', '', get_string('overrideroles', 'role'));         
         } else {
             $secondrow[] = new tabobject('override', $CFG->wwwroot.'/admin/roles/override.php?contextid='.$context->id,
@@ -113,7 +113,7 @@ if ($currenttab != 'update') {
         $tabs = array($toprow);
     }
     
-    if ($context->level != CONTEXT_SYSTEM) { // do not show tabs otherwise
+    if ($context->aggregatelevel != CONTEXT_SYSTEM) { // do not show tabs otherwise
         print_tabs($tabs, $currenttab, $inactive);
     }
 

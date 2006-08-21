@@ -914,10 +914,10 @@ CREATE TABLE prefix_role (
 
 CREATE TABLE prefix_context (
   `id` int(10) unsigned NOT NULL auto_increment,
-  `level` int(10) unsigned NOT NULL default '0',
+  `aggregatelevel` int(10) unsigned NOT NULL default '0',
   `instanceid` int(10) unsigned NOT NULL default '0',
   KEY `instanceid` (`instanceid`),
-  UNIQUE KEY `level-instanceid` (`level`, `instanceid`),
+  UNIQUE KEY `aggregatelevel-instanceid` (`aggregatelevel`, `instanceid`),
   PRIMARY KEY  (`id`)
 ) TYPE=MyISAM COMMENT ='one of these must be set';
 
