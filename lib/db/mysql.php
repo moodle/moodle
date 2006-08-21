@@ -2064,9 +2064,6 @@ function main_upgrade($oldversion=0) {
                               `roleid` int(10) unsigned NOT NULL default '0',
                               `contextid` int(10) unsigned NOT NULL default '0', 
                               `text` text NOT NULL default '',
-                              KEY `roleid` (`roleid`),
-                              KEY `contextid` (`roleid`),
-                              UNIQUE KEY `roleid-contextid` (`roleid`, `contextid`),
                               PRIMARY KEY (`id`) 
                             )", true);                      
                         
