@@ -2,8 +2,8 @@
 
 require_once('../config.php');
 require_once($CFG->dirroot . '/' . $CFG->admin . '/adminlib.php');
-require_once($CFG->libdir . '/blocklib.php'); //d
-require_once($CFG->dirroot . '/' . $CFG->admin . '/pagelib.php'); //d
+require_once($CFG->libdir . '/blocklib.php');
+require_once($CFG->dirroot . '/' . $CFG->admin . '/pagelib.php');
 
 if ($site = get_site()) {
     require_login();
@@ -20,7 +20,9 @@ page_map_class($pagetype, $pageclass);
 
 $PAGE = page_create_object($pagetype,TEMPORARY_ADMIN_PAGE_ID);
 
-$PAGE->init_full();
+$section = optional_param('section', '', PARAM_ALPHAEXT);
+
+$PAGE->init_full($section);
 
 $adminediting = optional_param('adminedit', -1, PARAM_BOOL);
    
@@ -42,12 +44,12 @@ $root = $ADMIN->locate($PAGE->section);
 
 if (!is_a($root, 'admin_settingpage')) {
     error(get_string('sectionerror', 'admin'));
-	die;
+    die;
 }
 
 if (!($root->check_access())) {
     error(get_string('accessdenied', 'admin'));
-	die;
+    die;
 }
 
 // WRITING SUBMITTED DATA (IF ANY) -------------------------------------------------------------------------------
@@ -56,14 +58,14 @@ if ($data = data_submitted()) {
     if (confirm_sesskey()) {
         $errors = $root->write_settings((array)$data);
         if (empty($errors)) {
-    	    redirect("$CFG->wwwroot/admin/settings.php?section=" . $PAGE->section, get_string('changessaved'),1);
-    	} else {
-    	    error(get_string('errorwithsettings', 'admin') . ' <br />' . $errors);
-    	}
-	} else {
-	    error(get_string('confirmsesskeybad', 'error'));
-		die;
-	}
+            redirect("$CFG->wwwroot/admin/settings.php?section=" . $PAGE->section, get_string('changessaved'),1);
+        } else {
+            error(get_string('errorwithsettings', 'admin') . ' <br />' . $errors);
+        }
+    } else {
+        error(get_string('confirmsesskeybad', 'error'));
+        die;
+    }
 }
 
 // ---------------------------------------------------------------------------------------------------------------

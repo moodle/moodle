@@ -9,10 +9,10 @@ page_map_class(PAGE_ADMIN, 'page_admin');
 class page_admin extends page_base {
 
     var $section;
-	var $pathtosection;
+    var $pathtosection;
     var $visiblepathtosection;
 
-    function init_full() { 
+    function init_full($section) { 
         global $CFG, $ADMIN;
 
         if($this->full_init_done) {
@@ -20,19 +20,19 @@ class page_admin extends page_base {
         }
 
         // fetch the path parameter
-        $this->section = optional_param("section","",PARAM_PATH);
+        $this->section = $section;
 
         $this->visiblepathtosection = array();
-		
-		// this part is (potentially) processor-intensive... there's gotta be a better way
-		// of handling this
-		if ($this->pathtosection = $ADMIN->path($this->section)) {
-		    foreach($this->pathtosection as $element) {
-			    if ($pointer = $ADMIN->locate($element)) {
-				    array_push($this->visiblepathtosection, $pointer->visiblename);
-				}
-			}
-		}
+        
+        // this part is (potentially) processor-intensive... there's gotta be a better way
+        // of handling this
+        if ($this->pathtosection = $ADMIN->path($this->section)) {
+            foreach($this->pathtosection as $element) {
+                if ($pointer = $ADMIN->locate($element)) {
+                    array_push($this->visiblepathtosection, $pointer->visiblename);
+                }
+            }
+        }
 
         // all done
         $this->full_init_done = true;
@@ -65,8 +65,7 @@ class page_admin extends page_base {
     }
 
     function url_get_parameters() {  // only handles parameters relevant to the admin pagetype
-        $this->init_full();
-        return array('section' => $this->section);
+        return array('section' => (isset($this->section) ? $this->section : ''));
     }
 
     function blocks_get_positions() { 
@@ -82,12 +81,12 @@ class page_admin extends page_base {
         parent::init_quick($data);
     }
 
-    function print_header() {
+    function print_header($section = '') {
         global $USER, $CFG, $SITE;
 
-        $this->init_full();
+        $this->init_full($section); // we're trusting that init_full() has already been called by now; it should have.
+                                    // if not, print_header() has to be called with a $section parameter
 
-        // should this rely on showblocksonmodpages in any way? after all, teachers aren't accessing this...
         if ($this->user_allowed_editing()) {
             $buttons = '<table><tr><td><form target="' . $CFG->framename . '" method="get" action="' . $this->url_get_path() . '">'.
                        '<input type="hidden" name="adminedit" value="'.($this->user_is_editing()?'off':'on').'" />'.
@@ -97,7 +96,7 @@ class page_admin extends page_base {
         } else {
             $buttons = '&nbsp;';
         }
-		
+        
         print_header("$SITE->shortname: " . implode(": ",$this->visiblepathtosection), $SITE->fullname, implode(" -> ",$this->visiblepathtosection),'', '', true, $buttons, '');
     }
 
