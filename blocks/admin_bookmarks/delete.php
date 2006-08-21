@@ -2,7 +2,7 @@
 
 require('../../config.php');
 
-require_once($CFG->dirroot . '/admin/adminlib.php');
+require_once($CFG->dirroot . '/' . $CFG->admin . '/adminlib.php');
 
 if ($section = optional_param('section', '', PARAM_ALPHAEXT)) {
 
@@ -26,7 +26,7 @@ if ($section = optional_param('section', '', PARAM_ALPHAEXT)) {
         if (is_a($temp, 'admin_externalpage')) {
             redirect($temp->url, 'Bookmark deleted.',1);
         } elseif (is_a($temp, 'admin_settingpage')) {
-            redirect($CFG->wwwroot . '/admin/settings.php?section=' . $section, 'Bookmark deleted.',1);        
+            redirect($CFG->wwwroot . '/' . $CFG->admin . '/settings.php?section=' . $section, 'Bookmark deleted.',1);        
         } else {
             redirect($CFG->wwwroot, 'Bookmark deleted.',1);
         }

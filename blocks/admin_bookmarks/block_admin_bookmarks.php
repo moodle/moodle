@@ -21,7 +21,7 @@ class block_admin_bookmarks extends block_base {
 
     function get_content() {
 
-        global $CFG, $USER, $ADMIN;
+        global $CFG, $USER, $ADMIN, $PAGE;
 		
 		if (!$ADMIN) {
             require_once($CFG->dirroot . '/admin/adminlib.php');
@@ -40,7 +40,7 @@ class block_admin_bookmarks extends block_base {
             foreach($bookmarks as $bookmark) {
 			    $temp = $ADMIN->locate($bookmark);
 			    if (is_a($temp, 'admin_settingpage')) {
-                    $this->content->text .= '<a href="' . $CFG->wwwroot . '/admin/settings.php?section=' . $bookmark . '">' . $temp->visiblename . '</a>' . '<br />';
+                    $this->content->text .= '<a href="' . $CFG->wwwroot . '/' . $CFG->admin . '/settings.php?section=' . $bookmark . '">' . $temp->visiblename . '</a>' . '<br />';
                 } elseif (is_a($temp, 'admin_externalpage')) {
                     $this->content->text .= '<a href="' . $temp->url . '">' . $temp->visiblename . '</a>' . '<br />';
                 }                
@@ -49,9 +49,9 @@ class block_admin_bookmarks extends block_base {
 			$bookmarks = array();
 		}
 		
-        if (($section = optional_param('section','',PARAM_ALPHAEXT)) && (in_array($section, $bookmarks))) {
+        if (($section = (isset($PAGE->section) ? $PAGE->section : '')) && (in_array($section, $bookmarks))) {
             $this->content->footer = '<a href="' . $CFG->wwwroot . '/blocks/admin_bookmarks/delete.php?section=' . $section . '&returnurl=' . $CFG->wwwroot . '">unbookmark this page</a>';	
-		} elseif ($section = optional_param('section','',PARAM_ALPHAEXT)) {
+		} elseif ($section = (isset($PAGE->section) ? $PAGE->section : '')) {
     	    $this->content->footer = '<a href="' . $CFG->wwwroot . '/blocks/admin_bookmarks/create.php?section=' . $section . '">bookmark this page</a>';		
 		} else {
 		    $this->content->footer = '';
