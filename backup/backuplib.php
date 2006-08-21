@@ -521,7 +521,8 @@
             fwrite ($bf,full_tag("INCLUDED",4,false,$included));
             fwrite ($bf,full_tag("USERINFO",4,false,$userinfo));
 
-            if (is_array($preferences->mods[$element->name]->instances)
+            if (isset($preferences->mods[$element->name]->instances)
+                && is_array($preferences->mods[$element->name]->instances)
                 && count($preferences->mods[$element->name]->instances)) {
                 fwrite ($bf, start_tag("INSTANCES",4,true));
                 foreach ($preferences->mods[$element->name]->instances as $id => $object) {
@@ -1239,7 +1240,8 @@
                     //See if it is a valid module to backup
                     if ($log->module == "course" or 
                         $log->module == "user" or
-                        $preferences->mods[$log->module]->backup == 1) {
+                        (array_key_exists($log->module, $preferences->mods) and $preferences->mods[$log->module]->backup == 1)) {
+                        // logs with 'upload' in module field are ignored, there is no restore code anyway 
                         //Begin log tag
                          fwrite ($bf,start_tag("LOG",3,true));
     
@@ -1661,7 +1663,8 @@
 
         require_once($CFG->dirroot.'/mod/'.$module.'/backuplib.php');
 
-        if (is_array($preferences->mods[$module]->instances)) {
+        if (isset($preferences->mods[$module]->instances)
+            && is_array($preferences->mods[$module]->instances)) {
             $onemodbackup = $module.'_backup_one_mod';
             if (function_exists($onemodbackup)) {
                 foreach ($preferences->mods[$module]->instances as $instance => $object) {
