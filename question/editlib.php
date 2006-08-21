@@ -208,6 +208,8 @@ function question_category_form($course, $current, $recurse=1, $showhidden=false
 function question_list($course, $categoryid, $quizid=0,
  $recurse=1, $page=0, $perpage=100, $showhidden=false, $sortorder='qtype, name ASC') {
     global $QTYPE_MENU, $USER, $CFG;
+    
+    $context = get_context_instance(CONTEXT_COURSE, $course->id);
 
     $qtypemenu = $QTYPE_MENU;
     if ($rqp_types = get_records('question_rqp_types')) {
@@ -277,13 +279,17 @@ function question_list($course, $categoryid, $quizid=0,
     }
 
     echo '<tr><td colspan="3" align="right"><font size="2">';
-    if (isteacheredit($category->course)) {
+    
+    if (has_capability('moodle/question:import', $context)) {
         echo '<a href="'.$CFG->wwwroot.'/question/import.php?category='.$category->id.'">'.$strimportquestions.'</a>';
         helpbutton("import", $strimportquestions, "quiz");
         echo ' | ';
     }
-    echo "<a href=\"$CFG->wwwroot/question/export.php?category={$category->id}&amp;courseid={$course->id}\">$strexportquestions</a>";
-    helpbutton("export", $strexportquestions, "quiz");
+    
+    if (has_capability('moodle/question:import', $context)) {
+        echo "<a href=\"$CFG->wwwroot/question/export.php?category={$category->id}&amp;courseid={$course->id}\">$strexportquestions</a>";
+        helpbutton("export", $strexportquestions, "quiz");
+    }  
     echo '</font></td></tr>';
 
     echo '</table>';
@@ -336,14 +342,20 @@ function question_list($course, $categoryid, $quizid=0,
     echo "</tr>\n";
     foreach ($questions as $question) {
         echo "<tr>\n<td nowrap=\"nowrap\">\n";
-        if ($quizid) {
+        
+        // add to quiz
+        if ($quizid && has_capability('mod/quiz:manage', $context)) {
             echo "<a title=\"$straddtoquiz\" href=\"edit.php?addquestion=$question->id&amp;quizid=$quizid&amp;sesskey=$USER->sesskey\"><img
                   src=\"$CFG->pixpath/t/moveleft.gif\" border=\"0\" alt=\"$straddtoquiz\" /></a>&nbsp;";
         }
+        
+        // preview
         echo "<a title=\"$strpreview\" href=\"javascript:void();\" onClick=\"openpopup('/question/preview.php?id=$question->id&quizid=$quizid','$strpreview', " .
                 QUESTION_PREVIEW_POPUP_OPTIONS . ", false)\"><img
                 src=\"$CFG->pixpath/t/preview.gif\" border=\"0\" alt=\"$strpreview\" /></a>&nbsp;";
-        if ($canedit) {
+        
+        // edit, hide, delete question, using question capabilities, not quiz capabilieies
+        if (has_capability('moodle/question:manage', $context)) {
             echo "<a title=\"$stredit\" href=\"$CFG->wwwroot/question/question.php?id=$question->id\"><img
                     src=\"$CFG->pixpath/t/edit.gif\" border=\"0\" alt=\"$stredit\" /></a>&nbsp;";
             // hide-feature
@@ -384,18 +396,20 @@ function question_list($course, $categoryid, $quizid=0,
     echo '<a href="javascript:select_all_in(\'TABLE\', null, \'categoryquestions\');">'.$strselectall.'</a> /'.
      ' <a href="javascript:deselect_all_in(\'TABLE\', null, \'categoryquestions\');">'.$strselectnone.'</a>'.
      '</td><td align="right"><b>&nbsp;'.get_string('withselected', 'quiz').':</b></td></tr><tr><td>';
-    if ($quizid) {
+    if ($quizid && has_capability('mod/quiz:manage', $context)) {
         echo "<input type=\"submit\" name=\"add\" value=\"<< $straddtoquiz\" />\n";
         echo '</td><td>';
     }
-    if ($canedit) {
+    // print delete and move selected question
+    if (has_capability('moodle/question:manage', $context)) {
         echo '<input type="submit" name="deleteselected" value="'.$strdelete."\" /></td><td>\n";
         echo '<input type="submit" name="move" value="'.get_string('moveto', 'quiz')."\" />\n";
         question_category_select_menu($course->id, false, true, $category->id);
     }
     echo "</td></tr></table>";
 
-    if ($quizid) {
+    // add random question
+    if ($quizid && has_capability('mod/quiz:manage', $context)) {
         for ($i=1;$i<=10; $i++) {
             $randomcount[$i] = $i;
         }

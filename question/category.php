@@ -33,12 +33,11 @@
     if (! $course = get_record("course", "id", $id)) {
         error("Course ID is incorrect");
     }
-
+    
+    $context = get_context_instance(CONTEXT_COURSE, $id);
+    
     require_login($course->id, false);
-
-    if (!isteacheredit($course->id)) {
-        error("Only teachers authorized to edit the course '{$course->fullname}' can use this page!");
-    }
+    require_capability('moodle/question:managecategory', $context);
 
     $qcobject = new question_category_object();
     $qcobject->set_course($course);

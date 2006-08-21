@@ -27,13 +27,9 @@
     if (! $course = get_record("course", "id", $courseid)) {
         error("This course doesn't exist");
     }
-
+    $context = get_context_instance(CONTEXT_COURSE, $courseid);
     require_login($course->id, false);
-
-    if (!isteacheredit($course->id)) {
-        error("You can't modify this course!");
-    }
-    
+  
     $SESSION->returnurl = $FULLME;
 
     // Print basic page layout.
