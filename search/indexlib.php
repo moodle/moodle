@@ -24,13 +24,15 @@
       
       $this->path = $path;
       
+      //test to see if there is a valid index on disk, at the specified path
       try {
         $test_index = new Zend_Search_Lucene($this->path, false);
         $validindex = true;        
       } catch(Exception $e) {    
         $validindex = false;
       } //catch
-      
+
+      //retrieve file system info about the index if it is valid            
       if ($validindex) {      
         $this->size = display_size(get_directory_size($this->path));
         $index_dir  = get_directory_list($this->path, '', false, false);
@@ -42,11 +44,16 @@
         $this->indexcount = 0;
       } //else
 
-      $db_exists = false;
+      $db_exists = false; //for now
             
+      //get all the current tables in moodle
       $admin_tables = $db->MetaTables();
       
+      //TODO: use new IndexDBControl class for database checks?
+      
+      //check if our search table exists
       if (in_array($CFG->prefix.SEARCH_DATABASE_TABLE, $admin_tables)) {
+        //retrieve database information if it does
         $db_exists = true;
         
         //total documents
@@ -65,12 +72,14 @@
         $this->types = array();
       } //else      
       
+      //check if the busy flag is set
       if ($CFG->search_indexer_busy == '1') {
         $this->complete = false;
       } else {
         $this->complete = true;
       } //if
       
+      //get the last run date for the indexer
       if ($this->valid() && $CFG->search_indexer_run_date) {
         $this->time = $CFG->search_indexer_run_date;
       } else {
@@ -78,6 +87,7 @@
       } //else
     } //__construct
     
+    //returns false on error, and the error message via referenced variable $err
     public function valid(&$err=null) {
       $err = array();
       $ret = true;
@@ -100,6 +110,7 @@
       return $ret;      
     } //valid
     
+    //is the index dir valid
     public function is_valid_dir() {
       if ($this->filecount > 0) {
         return true;
@@ -108,6 +119,7 @@
       } //else
     } //is_valid_dir
     
+    //is the db table valid
     public function is_valid_db() {
       if ($this->dbcount > 0) {
         return true;
@@ -116,6 +128,7 @@
       } //else
     } //is_valid_db      
         
+    //shorthand get method for the class variables
     public function __get($var) {      
       if (in_array($var, array_keys(get_class_vars(get_class($this))))) {
         return $this->$var;
@@ -126,9 +139,11 @@
   
   /* DB Index control class 
    * 
+   * Used to control the search index database table
    * */
    
   class IndexDBControl {  
+    //does the table exist?
     public function checkTableExists() {
       global $CFG, $db;
       
@@ -142,6 +157,7 @@
       } //else
     } //checkTableExists
     
+    //is our database setup valid?
     public function checkDB() {
       global $CFG, $db;
             
@@ -159,6 +175,7 @@
       return $ret;
     } //checkDB
     
+    //add a document record to the table
     public function addDocument($document=null) {
       global $db;
       
@@ -182,6 +199,7 @@
       return $id;
     } //addDocument
     
+    //remove a document record from the index
     public function delDocument($document) {
       global $db;
       

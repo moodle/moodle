@@ -92,15 +92,17 @@
   // * mod_get_content_for_index
   //are the sole basis for including a module in the index at the moment.
   
-  if ($mods = get_records_select('modules' /*'index this module?' where statement*/)) {        
-    $mods = array_merge($mods, search_get_additional_modules());
+  if ($mods = get_records_select('modules' /*'index this module?' where statement*/)) {
+    //add virtual modules onto the back of the array        
+    $mods = array_merge($mods, search_get_additional_modules());    
     
-    foreach ($mods as $mod) {      
+    foreach ($mods as $mod) {            
       $class_file = $CFG->dirroot.'/search/documents/'.$mod->name.'_document.php';              
       
       if (file_exists($class_file)) {
         include_once($class_file);
         
+        //build function names
         $iter_function = $mod->name.'_iterator';
         $index_function = $mod->name.'_get_content_for_index';
                 
@@ -163,5 +165,8 @@
   
   //mark the time we last updated
   set_config("search_indexer_run_date", time());
-
+  
+  //and the index size
+  set_config("search_index_size", (int)$index->count());
+  
 ?>

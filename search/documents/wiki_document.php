@@ -134,4 +134,25 @@
     return $documents;
   } //wiki_get_content_for_index 
   
+  //returns a single wiki search document based on a wiki_entry id
+  function wiki_single_document($id) {
+    $pages = get_recordset('wiki_pages', 'id', $id);
+    $page = $pages->fields;
+    
+    $entries = get_recordset('wiki_entries', 'id', $page['wiki']);
+    $entry = $entries->fields;
+    
+    return new WikiSearchDocument($page, $entry['wikiid'], $entry['course'], $entry['groupid']);
+  } //wiki_single_document    
+    
+  function wiki_delete($info) {
+    return $info;            
+  } //wiki_delete
+  
+  //returns the var names needed to build a sql query for addition/deletions
+  function wiki_db_names() {
+    //[primary id], [table name], [time created field name], [time modified field name]
+    return array('id', 'wiki_pages', 'created', 'lastmodified');            
+  } //wiki_db_names    
+  
 ?>

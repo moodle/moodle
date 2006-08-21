@@ -12,6 +12,7 @@
       $this->addField(Zend_Search_Lucene_Field::UnIndexed('url', $doc->url));
       $this->addField(Zend_Search_Lucene_Field::UnIndexed('date', $doc->date));
       
+      //additional data added on a per-module basis
       $this->addField(Zend_Search_Lucene_Field::Binary('data', serialize($data)));
       
       $this->addField(Zend_Search_Lucene_Field::Keyword('doctype', $document_type));

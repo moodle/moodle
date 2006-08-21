@@ -68,6 +68,30 @@
       return $documents;
   } //forum_get_content_for_index
   
+  //returns a single forum search document based on a forum_entry id
+  function forum_single_document($id) {
+    $posts = get_recordset('forum_posts', 'id', $id);
+    $post = $posts->fields;
+    
+    $discussions = get_recordset('forum_discussions', 'id', $post['discussion']);
+    $discussion = $discussions->fields;
+    
+    $forums = get_recordset('forum', 'id', $discussion['forum']);
+    $forum = $forums->fields;
+    
+    return new ForumSearchDocument($post, $forum['id'], $forum['course'], $post['groupid']);
+  } //forum_single_document    
+    
+  function forum_delete($info) {
+    return $info;            
+  } //forum_delete
+  
+  //returns the var names needed to build a sql query for addition/deletions
+  function forum_db_names() {
+    //[primary id], [table name], [time created field name], [time modified field name]
+    return array('id', 'forum_posts', 'created', 'modified');            
+  } //forum_db_names      
+  
   //reworked faster version from /mod/forum/lib.php
   function forum_get_discussions_fast($forum) {
     global $CFG, $USER;

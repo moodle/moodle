@@ -27,18 +27,22 @@
     
   //check for php5, but don't die yet (see line 52)
   if ($check = search_check_php5()) {      
-    require_once("$CFG->dirroot/search/querylib.php");    
+    require_once("$CFG->dirroot/search/querylib.php");
     
-    $advanced     = (optional_param('a', '0', PARAM_INT) == '1') ? true : false;   
-    $pages        = (optional_param('p', '0', PARAM_INT) == '1') ? true : false;
+    $page_number  = optional_param('page', -1, PARAM_INT);
+    $pages        = ($page_number == -1) ? false : true;               
+    $advanced     = (optional_param('a', '0', PARAM_INT) == '1') ? true : false;       
     $query_string = optional_param('query_string', '', PARAM_CLEAN); 
       
     if ($pages && isset($_SESSION['search_advanced_query'])) {
+      //if both are set, then we are busy browsing through the result pages of an advanced query
       $adv = unserialize($_SESSION['search_advanced_query']);
     } else if ($advanced) {
+      //otherwise we are dealing with a new advanced query
       unset($_SESSION['search_advanced_query']);
       session_unregister('search_advanced_query');
             
+      //retrieve advanced query variables
       $adv->mustappear  = trim(optional_param('mustappear', '', PARAM_CLEAN), $chars);
       $adv->notappear   = trim(optional_param('notappear', '', PARAM_CLEAN), $chars);
       $adv->canappear   = trim(optional_param('canappear', '', PARAM_CLEAN), $chars);
@@ -48,47 +52,59 @@
     } //else      
     
     if ($advanced) {
+      //parse the advanced variables into a query string
+      //TODO: move out to external query class (QueryParse?)
+                  
+      //chars to strip from strings (whitespace)
       $chars = ' \t\n\r\0\x0B,;';
       $query_string = '';      
       
+      //get all available module types
       $module_types = array_merge(array('All'), array_values(search_get_document_types()));      
       $adv->module = in_array($adv->module, $module_types) ? $adv->module : 'All';
       
+      //convert '1 2' into '+1 +2' for required words field    
       if (strlen(trim($adv->mustappear)) > 0) {
         $query_string  = ' +'.implode(' +', preg_split("/[\s,;]+/", $adv->mustappear));
       } //if
       
+      //convert '1 2' into '-1 -2' for not wanted words field
       if (strlen(trim($adv->notappear)) > 0) {
         $query_string .= ' -'.implode(' -', preg_split("/[\s,;]+/", $adv->notappear));
       } //if
       
+      //this field is left untouched, apart from whitespace being stripped
       if (strlen(trim($adv->canappear)) > 0) { 
         $query_string .= ' '.implode(' ', preg_split("/[\s,;]+/", $adv->canappear));
       } //if
       
+      //add module restriction
       if ($adv->module != 'All') {
         $query_string .= ' +doctype:'.$adv->module;
       } //if
       
+      //create title search string
       if (strlen(trim($adv->title)) > 0) {
         $query_string .= ' +title:'.implode(' +title:', preg_split("/[\s,;]+/", $adv->title));
       } //if
       
+      //create author search string
       if (strlen(trim($adv->author)) > 0) {
         $query_string .= ' +author:'.implode(' +author:', preg_split("/[\s,;]+/", $adv->author));
       } //if     
       
+      //save our options if the query is valid
       if (!empty($query_string)) {
         $_SESSION['search_advanced_query'] = serialize($adv);
       } //if 
     } //if
     
-    $page_number  = optional_param('page', 1, PARAM_INT);        
-    
+    //normalise page number
     if ($page_number < 1) {
       $page_number = 1;
-    } //if
+    } //if    
     
+    //run the query against the index
     $sq = new SearchQuery($query_string, $page_number, 10, true);  
   } //if
   
@@ -204,7 +220,8 @@
   print 'Searching: ';
   
   if ($sq->is_valid_index()) {
-    print $sq->index_count();    
+    //use cached variable to show up-to-date index size (takes deletions into account)
+    print $CFG->search_index_size;
   } else {
     print "0";
   } //else
@@ -235,7 +252,10 @@
       $hits       = $sq->results();
       
       if ($advanced) {
-        $page_links = preg_replace("/query_string=[^&]+/", 'a=1&p=1', $page_links);
+        //if in advanced mode, search options are saved in the session, so 
+        //we can remove the query string var from the page links, and replace
+        //it with a=1 (Advanced = on) instead
+        $page_links = preg_replace("/query_string=[^&]+/", 'a=1', $page_links);
       } //if
         
       print "<ol>";

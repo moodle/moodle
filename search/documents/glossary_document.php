@@ -7,7 +7,6 @@
    * */
 
   require_once("$CFG->dirroot/search/documents/document.php");
-  //require_once("$CFG->dirroot/mod/glossary/lib.php");
   
   class GlossarySearchDocument extends SearchDocument {  
     public function __construct(&$entry, $glossary_id, $course_id, $group_id) {
@@ -63,6 +62,7 @@
     return $documents;
   } //glossary_get_content_for_index
   
+  //returns a single glossary search document based on a glossary_entry id
   function glossary_single_document($id) {
     $entries = get_recordset('glossary_entries', 'id', $id);
     $entry = $entries->fields;
@@ -73,12 +73,16 @@
     return new GlossarySearchDocument($entry, $entry['glossaryid'], $glossary['course'], -1);
   } //glossary_single_document    
     
+  //dummy delete function that converts docid from the search table to itself..
+  //this was here for a reason, but I can't remember it at the moment.
   function glossary_delete($info) {
     return $info;            
   } //glossary_delete
   
+  //returns the var names needed to build a sql query for addition/deletions
   function glossary_db_names() {
-    return array('id', 'glossary_entries', 'timemodified');            
+    //[primary id], [table name], [time created field name], [time modified field name]
+    return array('id', 'glossary_entries', 'timecreated', 'timemodified');            
   } //glossary_db_names    
   
 ?>

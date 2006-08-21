@@ -87,10 +87,14 @@
   
   $table->data[] = array('<strong>Database</strong>', '<em><strong>search_documents<strong></em>');
   
-  //add an extra field if we're admin
+  //add extra fields if we're admin
   if (isadmin()) {
     //don't want to confuse users if the two totals don't match (hint: they should)
     $table->data[] = array('Documents in index', $indexinfo->indexcount);
+    
+    //*cough* they should match if deletions were actually removed from the index,
+    //as it turns out, they're only marked as deleted and not returned in search results
+    $table->data[] = array('Deletions in index', (int)$indexinfo->indexcount - (int)$indexinfo->dbcount);
   } //if
   
   $table->data[] = array('Documents in database', $indexinfo->dbcount);

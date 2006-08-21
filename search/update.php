@@ -27,6 +27,8 @@
   mtrace("<pre>Starting index update (updates)...\n");  
   
   if ($mods = get_records_select('modules')) {
+  $mods = array_merge($mods, search_get_additional_modules());
+  
   foreach ($mods as $mod) {
     $class_file = $CFG->dirroot.'/search/documents/'.$mod->name.'_document.php';
     $get_document_function = $mod->name.'_single_document';
@@ -41,8 +43,10 @@
         mtrace("Checking $mod->name module for updates.");
         $values = $db_names_function();
         
-        $sql = "select id, ".$values[0]." as docid from ".$values[1]."
-                where ".$values[2]." > $indexdate";
+        //TODO: check 'in' syntax with other RDBMS' (add and update.php as well)
+        $sql = "select id, ".$values[0]." as docid from ".$values[1].
+               " where ".$values[3]." > $indexdate".
+               " and id in (select docid from ".SEARCH_DATABASE_TABLE.")";
                 
         $records = get_records_sql($sql);     
         

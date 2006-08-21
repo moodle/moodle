@@ -274,9 +274,10 @@
       return count($this->results);
     } //count
     
-    public function index_count() {
-      return $this->index->count();
-    } //index_count    
+    //this shouldn't be in this class
+    //public function index_count() {
+    //  return $this->index->count();
+    //} //index_count    
     
     public function is_valid() {
       return ($this->validquery and $this->validindex);

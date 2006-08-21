@@ -23,10 +23,13 @@
   $deletion_count = 0;   
   
   mtrace('<pre>Starting clean-up of removed records...');
-  mtrace('Index size before: '.$index->count()."\n");
+  mtrace('Index size before: '.$CFG->search_index_size."\n");
   
   if ($mods = get_records_select('modules')) {
+  $mods = array_merge($mods, search_get_additional_modules());
+  
   foreach ($mods as $mod) {
+    //build function names
     $class_file = $CFG->dirroot.'/search/documents/'.$mod->name.'_document.php';
     $delete_function = $mod->name.'_delete';
     $db_names_function = $mod->name.'_db_names';
@@ -39,13 +42,14 @@
         mtrace("Checking $mod->name module for deletions.");
         $values = $db_names_function();
         
-        $sql = "select id, docid from ".SEARCH_DATABASE_TABLE."
-                where doctype like '$mod->name'
-                and docid not in
-                (select ".$values[0]." from ".$values[1].")";
+        $sql = "select id, docid from ".SEARCH_DATABASE_TABLE.
+                " where doctype like '$mod->name'".
+                " and docid not in".
+                " (select ".$values[0]." from ".$values[1].")";
 
         $records = get_records_sql($sql);     
         
+        //build an array of all the deleted records
         if (is_array($records)) {       
           foreach($records as $record) {
             $deletions[] = $delete_function($record->docid);
@@ -53,6 +57,7 @@
         } //if    
           
         foreach ($deletions as $delete) {        
+          //find the specific document in the index, using it's docid and doctype as keys
           $doc = $index->find("+docid:$delete +doctype:$mod->name");            
           
           //get the record, should only be one
@@ -60,6 +65,7 @@
             ++$deletion_count;
             mtrace("  Delete: $thisdoc->title (database id = $thisdoc->dbid, index id = $thisdoc->id, moodle instance id = $thisdoc->docid)");
             
+            //remove it from index and database table
             $dbcontrol->delDocument($thisdoc);
             $index->delete($thisdoc->id);              
           } //foreach
@@ -74,8 +80,9 @@
   //commit changes
   $index->commit();
   
-  //update index date
+  //update index date and index size
   set_config("search_indexer_run_date", time());
+  set_config("search_index_size", (int)$CFG->search_index_size - (int)$deletion_count);
 
   mtrace("Finished $deletion_count removals.");
   mtrace('Index size after: '.$index->count().'</pre>');

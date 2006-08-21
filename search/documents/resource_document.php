@@ -58,4 +58,29 @@
     return $documents;
   } //resource_get_content_for_index
   
+  //returns a single resource search document based on a resource_entry id
+  function resource_single_document($id) {
+    $resources = get_recordset_sql('SELECT *
+                              FROM `resource`
+                              WHERE alltext NOT LIKE ""
+                              AND alltext NOT LIKE " "
+                              AND alltext NOT LIKE "&nbsp;"
+                              AND TYPE != "file",
+                              AND id = '.$id);  
+                                      
+    $resource = $resources->fields;
+        
+    return new ResourceSearchDocument($resource);
+  } //resource_single_document    
+    
+  function resource_delete($info) {
+    return $info;            
+  } //resource_delete
+  
+  //returns the var names needed to build a sql query for addition/deletions
+  function resource_db_names() {
+    //[primary id], [table name], [time created field name], [time modified field name], [additional where conditions for sql]
+    return array('id', 'resource', 'timemodified', 'timemodified', "WHERE alltext NOT LIKE '' AND alltext NOT LIKE ' ' AND alltext NOT LIKE '&nbsp;' AND TYPE != 'file'");            
+  } //resource_db_names                                      
+  
 ?>

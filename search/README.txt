@@ -1,3 +1,25 @@
+2006/08/21
+----------
+Fixed index document count, and created new config variable to store
+the size. (Search now has 3 global vars in $CFG, date, size and complete,
+see indexer.php for var names). Index size is cached to provide an always
+current value for the index - this is to take into account the fact that
+deleted documents are in fact not removed from the index, but instead just
+marked as deleted and not returned in search results. The actual document
+still features in the index, and skews sizes. When the index optimiser is
+completed in ZFS, then these deleted documents will be pruned, thus 
+correctly modifying the index size.
+
+Additional commenting added.
+
+Query page logic very slightly modified to clean up GET string a bit (removed
+'p' variable).
+
+Add/delete functions added to other document types.
+
+A few TODO fields added to source, indicating changes still to come (or at
+least to be considered).
+
 2006/08/16
 ----------
 Add/delete/update cron functions finished - can be called seperately
