@@ -77,8 +77,10 @@ class question_essay_qtype extends default_questiontype {
             $answer = print_textarea($usehtmleditor, 18, 80, 630, 400, $inputname, $value, $cmoptions->course, true);
         } else {
             // it is read only, so just format the students answer and output it
-            $answer = format_text($value, $question->questiontextformat,
-                                  $formatoptions, $cmoptions->course);
+            $safeformatoptions = new stdClass;
+            $safeformatoptions->para = false;
+            $answer = format_text($value, FORMAT_MOODLE,
+                                  $safeformatoptions, $cmoptions->course);
         }
         
         include("$CFG->dirroot/question/type/essay/display.html");
