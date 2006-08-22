@@ -103,6 +103,8 @@
                              $mod->id, $newid);
                 //We have to restore the question_instances now (course level table)
                 $status = quiz_question_instances_restore_mods($newid,$info,$restore);
+                //We have to restore the feedback now (course level table)
+                $status = quiz_feedback_restore_mods($newid, $info, $restore, $quiz);
                 //We have to restore the question_versions now (course level table)
                 $status = quiz_question_versions_restore_mods($newid,$info,$restore);
                 //Now check if want to restore user data and do it.
@@ -132,7 +134,11 @@
         $status = true;
 
         //Get the quiz_question_instances array
-        $instances = $info['MOD']['#']['QUESTION_INSTANCES']['0']['#']['QUESTION_INSTANCE'];
+        if (array_key_exists('QUESTION_INSTANCES', $info['MOD']['#'])) {
+            $instances = $info['MOD']['#']['QUESTION_INSTANCES']['0']['#']['QUESTION_INSTANCE'];
+        } else {
+            $instances = array();
+        }
 
         //Iterate over question_instances
         for($i = 0; $i < sizeof($instances); $i++) {
@@ -176,6 +182,52 @@
             } else {
                 $status = false;
             }
+        }
+
+        return $status;
+    }
+
+    //This function restores the quiz_question_instances
+    function quiz_feedback_restore_mods($quiz_id, $info, $restore, $quiz) {
+        $status = true;
+
+        //Get the quiz_feedback array
+        if (array_key_exists('FEEDBACKS', $info['MOD']['#'])) {
+            $feedbacks = $info['MOD']['#']['FEEDBACKS']['0']['#']['FEEDBACK'];
+
+            //Iterate over the feedbacks
+            foreach ($feedbacks as $feedback_info) {
+                //traverse_xmlize($feedback_info);                                                            //Debug
+                //print_object ($GLOBALS['traverse_array']);                                                  //Debug
+                //$GLOBALS['traverse_array']="";                                                              //Debug
+    
+                //We'll need this later!!
+                $oldid = backup_todb($feedback_info['#']['ID']['0']['#']);
+    
+                //Now, build the quiz_feedback record structure
+                $feedback = new stdClass();
+                $feedback->quizid = $quiz_id;
+                $feedback->feedbacktext = backup_todb($feedback_info['#']['FEEDBACKTEXT']['0']['#']);
+                $feedback->mingrade = backup_todb($feedback_info['#']['MINGRADE']['0']['#']);
+                $feedback->maxgrade = backup_todb($feedback_info['#']['MAXGRADE']['0']['#']);
+    
+                //The structure is equal to the db, so insert the quiz_question_instances
+                $newid = insert_record('quiz_feedback', $feedback);
+    
+                if ($newid) {
+                    //We have the newid, update backup_ids
+                    backup_putid($restore->backup_unique_code, 'quiz_feedback', $oldid, $newid);
+                } else {
+                    $status = false;
+                }
+            }
+        } else {
+            $feedback = new stdClass();
+            $feedback->quizid = $quiz_id;
+            $feedback->feedbacktext = '';
+            $feedback->mingrade = 0;
+            $feedback->maxgrade = $quiz->grade + 1;
+            insert_record('quiz_feedback', $feedback);
         }
 
         return $status;

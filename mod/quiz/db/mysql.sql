@@ -62,6 +62,16 @@ CREATE TABLE prefix_quiz_question_versions (
   PRIMARY KEY  (id)
 ) TYPE=MyISAM COMMENT='The mapping between old and new versions of a question';
 
+CREATE TABLE prefix_quiz_feedback (
+  id int(10) unsigned NOT NULL auto_increment,
+  quizid int(10) unsigned NOT NULL default '0',
+  feedbacktext text NOT NULL default '',
+  mingrade double NOT NULL default '0',
+  maxgrade double NOT NULL default '0',
+  PRIMARY KEY (id),
+  KEY quizid (quizid),
+) TYPE=MyISAM COMMENT='Feedback given to students based on their overall score on the test';
+
 -- --------------------------------------------------------
 -- Quiz module, quiz runtime data.
 -- --------------------------------------------------------

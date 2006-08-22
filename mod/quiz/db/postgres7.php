@@ -1435,6 +1435,24 @@ function quiz_upgrade($oldversion) {
                 (($CFG->quiz_review & QUIZ_REVIEW_FEEDBACK) << 3));
     }
     
+    if ($success && $oldversion < 2006081400) {
+        $success = $success && modify_database('', "
+            CREATE TABLE prefix_quiz_feedback (
+                id SERIAL PRIMARY KEY,
+                quizid integer NOT NULL default '0',
+                feedbacktext text NOT NULL default '',
+                maxgrade real NOT NULL default '0',
+                mingrade real NOT NULL default '0'
+            );
+        ");
+        $success = $success && modify_database('',
+            "CREATE INDEX prefix_quiz_feedback_quizid_idx ON prefix_quiz_feedback (quizid);");
+            
+        $success = $success && execute_sql("
+            INSERT INTO {$CFG->prefix}quiz_feedback (quizid, feedbacktext, maxgrade, mingrade)
+            SELECT id, '', grade + 1, 0 FROM {$CFG->prefix}quiz;
+        ");
+    }
     
     return $success;
 }

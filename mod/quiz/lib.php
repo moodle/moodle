@@ -58,14 +58,18 @@ define("QUIZ_MAX_EVENT_LENGTH", "432000");   // 5 days maximum
  * of the new instance.
  * 
  * @param object $quiz the data that came from the form.
- * @return integer the id of the new instance.
+ * @return mixed the id of the new instance on success,
+ *          false or a string error message on failure.
  */
 function quiz_add_instance($quiz) {
 
     // Process the options from the form.
     $quiz->created = time();
-    quiz_process_options($quiz);
     $quiz->questions = '';
+    $result = quiz_process_options($quiz);
+    if ($result && is_string($result)) {
+        return $result;
+    }
 
     // Try to store it in the database.
     if (!$quiz->id = insert_record("quiz", $quiz)) {
@@ -84,12 +88,15 @@ function quiz_add_instance($quiz) {
  * will update an existing instance with new data.
  * 
  * @param object $quiz the data that came from the form.
- * @return boolean true on success, false on failure.
+ * @return mixed true on success, false or a string error message on failure.
  */
 function quiz_update_instance($quiz) {
 
     // Process the options from the form.
-    quiz_process_options($quiz);
+    $result = quiz_process_options($quiz);
+    if ($result && is_string($result)) {
+        return $result;
+    }
 
     // Update the database.
     $quiz->id = $quiz->instance;
@@ -120,7 +127,7 @@ function quiz_delete_instance($id) {
 
     if ($attempts = get_records("quiz_attempts", "quiz", "$quiz->id")) {
         foreach ($attempts as $attempt) {
-            // TODO: this should use function in questionlib.php
+            // TODO: this should use the delete_attempt($attempt->uniqueid) function in questionlib.php
             if (! delete_records("question_states", "attempt", "$attempt->uniqueid")) {
                 $result = false;
             }
@@ -130,20 +137,18 @@ function quiz_delete_instance($id) {
         }
     }
 
-    if (! delete_records("quiz_attempts", "quiz", "$quiz->id")) {
-        $result = false;
-    }
-
-    if (! delete_records("quiz_grades", "quiz", "$quiz->id")) {
-        $result = false;
-    }
-
-    if (! delete_records("quiz_question_instances", "quiz", "$quiz->id")) {
-        $result = false;
-    }
-
-    if (! delete_records("quiz", "id", "$quiz->id")) {
-        $result = false;
+    $tables_to_purge = array(
+        'quiz_attempts' => 'quiz',
+        'quiz_grades' => 'quiz',
+        'quiz_question_instances' => 'quiz',
+        'quiz_grades' => 'quiz',
+        'quiz_feedback' => 'quizid',
+        'quiz' => 'id'
+    );
+    foreach ($tables_to_purge as $table => $keyfield) {
+        if (!delete_records($table, $keyfield, $quiz->id)) {
+            $result = false;
+        }
     }
 
     $pagetypes = page_import_types('mod/quiz/');
@@ -495,7 +500,58 @@ function quiz_process_options(&$quiz) {
         $quiz->timelimit = 0;
     }
     $quiz->timelimit = round($quiz->timelimit);
-
+    
+    // Quiz feedback
+    
+    // Clean up the boundary text.
+    for ($i = 0; $i < count($quiz->feedbacktext); $i += 1) {
+        if (empty($quiz->feedbacktext[$i])) {
+            $quiz->feedbacktext[$i] = '';
+        } else {
+            $quiz->feedbacktext[$i] = trim($quiz->feedbacktext[$i]);
+        }
+    }
+    
+    // Check the boundary value is a number or a percentage, and in range.
+    $i = 0;
+    while (!empty($quiz->feedbackboundaries[$i])) {
+        $boundary = trim($quiz->feedbackboundaries[$i]);
+        if (!is_numeric($boundary)) {
+            if (strlen($boundary) > 0 && $boundary[strlen($boundary) - 1] == '%') {
+                $boundary = substr($boundary, 0, -1);
+                if (is_numeric($boundary)) {
+                    $boundary = $boundary * $quiz->grade / 100.0;
+                } else {
+                    return get_string('feedbackerrorboundaryformat', 'quiz', $i + 1);
+                }
+            }
+        }
+        if ($boundary <= 0 || $boundary >= $quiz->grade) {
+            return get_string('feedbackerrorboundaryoutofrange', 'quiz', $i + 1);
+        }
+        if ($i > 0 && $boundary >= $quiz->feedbackboundaries[$i - 1]) {
+            return get_string('feedbackerrororder', 'quiz', $i + 1);
+        }
+        $quiz->feedbackboundaries[$i] = $boundary;
+        $i += 1;
+    }
+    $numboundaries = $i;
+    
+    // Check there is nothing in the remaining unused fields.
+    for ($i = $numboundaries; $i < count($quiz->feedbackboundaries); $i += 1) {
+        if (!empty($quiz->feedbackboundaries[$i]) && trim($quiz->feedbackboundaries[$i]) != '') {
+            return get_string('feedbackerrorjunkinboundary', 'quiz', $i + 1);
+        }
+    }
+    for ($i = $numboundaries + 1; $i < count($quiz->feedbacktext); $i += 1) {
+        if (!empty($quiz->feedbacktext[$i]) && trim($quiz->feedbacktext[$i]) != '') {
+            return get_string('feedbackerrorjunkinfeedback', 'quiz', $i + 1);
+        }
+    }
+    $quiz->feedbackboundaries[-1] = $quiz->grade + 1; // Needs to be bigger than $quiz->grade because of '<' test in quiz_feedback_for_grade().
+    $quiz->feedbackboundaries[$numboundaries] = 0;
+    $quiz->feedbackboundarycount = $numboundaries;
+    
     // Settings that get combined to go into the optionflags column.
     $quiz->optionflags = 0;
     if (!empty($quiz->adaptive)) {
@@ -592,6 +648,20 @@ function quiz_process_options(&$quiz) {
  * @param object $quiz the quiz object.
  */
 function quiz_after_add_or_update($quiz) {
+
+    // Save the feedback
+    delete_records('quiz_feedback', 'quizid', $quiz->id);
+    
+    for ($i = 0; $i <= $quiz->feedbackboundarycount; $i += 1) {
+        $feedback = new stdClass;
+        $feedback->quizid = $quiz->id;
+        $feedback->feedbacktext = $quiz->feedbacktext[$i];
+        $feedback->mingrade = $quiz->feedbackboundaries[$i];
+        $feedback->maxgrade = $quiz->feedbackboundaries[$i - 1];
+        if (!insert_record('quiz_feedback', $feedback, false)) {
+            return "Could not save quiz feedback.";
+        }
+    }
 
     // Remember whether this user likes the advanced settings visible or hidden.
     if (isset($quiz->optionsettingspref)) {

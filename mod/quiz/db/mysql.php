@@ -1113,6 +1113,25 @@ function quiz_upgrade($oldversion) {
                 (($CFG->quiz_review & QUIZ_REVIEW_FEEDBACK) << 3));
     }
     
+    if ($success && $oldversion < 2006081400) {
+        $success = $success && modify_database('', "
+            CREATE TABLE prefix_quiz_feedback (
+                id int(10) unsigned NOT NULL auto_increment,
+                quizid int(10) unsigned NOT NULL default '0',
+                feedbacktext text NOT NULL default '',
+                mingrade double NOT NULL default '0',
+                maxgrade double NOT NULL default '0',
+                PRIMARY KEY (id),
+                KEY quizid (quizid)
+            ) TYPE=MyISAM COMMENT='Feedback given to students based on their overall score on the test';
+        ");
+    
+        $success = $success && execute_sql("
+            INSERT INTO {$CFG->prefix}quiz_feedback (quizid, feedbacktext, maxgrade, mingrade)
+            SELECT id, '', grade + 1, 0 FROM {$CFG->prefix}quiz;
+        ");
+    }
+
     return $success;
 }
 

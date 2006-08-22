@@ -274,9 +274,8 @@ if (self.name == 'editquestion') {
 
         // If rescaling is required save the new maximum
         if (isset($_REQUEST['maxgrade'])) {
-            $modform->grade = optional_param('maxgrade', 0);
-            if (!set_field('quiz', 'grade', $modform->grade, 'id', $modform->instance)) {
-                error('Could not set new maximal grade for quiz');
+            if (!quiz_set_grade(optional_param('maxgrade', 0), $modform)) {
+                error('Could not set a new maximum grade for the quiz');
             }
         }
     }
@@ -308,7 +307,7 @@ if (self.name == 'editquestion') {
 
     // Print basic page layout.
 
-    if (isset($modform->instance) and record_exists_sql("SELECT * FROM {$CFG->prefix}quiz_attempts WHERE quiz = '$modform->instance' AND preview = '0' LIMIT 1")){
+    if (isset($modform->instance) and record_exists_select('quiz_attempts', "quiz = '$modform->instance' AND preview = '0'")){
         // one column layout with table of questions used in this quiz
         $strupdatemodule = has_capability('moodle/course:manageactivities', $coursecontext)
                     ? update_module_button($modform->cmid, $course->id, get_string('modulename', 'quiz'))

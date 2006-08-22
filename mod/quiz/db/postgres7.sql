@@ -59,6 +59,15 @@ CREATE TABLE prefix_quiz_question_versions (
   timestamp integer NOT NULL default '0'
 );
 
+CREATE TABLE prefix_quiz_feedback (
+  id SERIAL PRIMARY KEY,
+  quizid integer NOT NULL default '0',
+  feedbacktext text NOT NULL default '',
+  mingrade real NOT NULL default '0',
+  maxgrade real NOT NULL default '0'
+);
+CREATE INDEX prefix_quiz_feedback_quizid_idx ON prefix_quiz_feedback (quizid);
+
 -- --------------------------------------------------------
 -- Quiz module, quiz runtime data.
 -- --------------------------------------------------------
@@ -207,7 +216,7 @@ CREATE TABLE prefix_question_states (
   penalty real NOT NULL default '0'
 );
 CREATE INDEX prefix_question_states_attempt_idx ON prefix_question_states (attempt);
-CREATE INDEX prefix_question_states_question_idx ON prefix_question_states (question);;
+CREATE INDEX prefix_question_states_question_idx ON prefix_question_states (question);
 
 -- --------------------------------------------------------
 -- Quiz log actions.

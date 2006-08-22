@@ -30,6 +30,9 @@
     if (! $cm = get_coursemodule_from_instance("quiz", $quiz->id, $course->id)) {
         error("The course module for the quiz with id $quiz->id is missing");
     }
+    
+    $grade = quiz_rescale_grade($attempt->sumgrades, $quiz);
+    $feedback = quiz_feedback_for_grade($grade, $attempt->quiz);
 
     if (!count_records('question_sessions', 'attemptid', $attempt->uniqueid)) {
         // this question has not yet been upgraded to the new model
@@ -194,12 +197,15 @@
             
             $a = new stdClass;
             $percentage = round(($attempt->sumgrades/$quiz->sumgrades)*100, 0);
-            $a->grade = round(($attempt->sumgrades/$quiz->sumgrades)*$quiz->grade, $CFG->quiz_decimalpoints);
+            $a->grade = $grade;
             $a->maxgrade = $quiz->grade;
             $rawscore = round($attempt->sumgrades, $CFG->quiz_decimalpoints);
             $table->data[] = array("$strscore:", "$rawscore/$quiz->sumgrades ($percentage %)");
             $table->data[] = array("$strgrade:", get_string('outof', 'quiz', $a));
         }
+    }
+    if ($options->feedback && $feedback) {
+        $table->data[] = array(get_string('feedback', 'quiz'), $feedback);
     }
     if ($isteacher and $attempt->userid == $USER->id) {
         // the teacher is at the end of a preview. Print button to start new preview

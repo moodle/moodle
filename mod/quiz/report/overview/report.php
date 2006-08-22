@@ -88,6 +88,7 @@ class quiz_report extends quiz_default_report {
         $noattempts = optional_param('noattempts', 0, PARAM_INT);
         $detailedmarks = optional_param('detailedmarks', 0, PARAM_INT);
         $pagesize = optional_param('pagesize', 10, PARAM_INT);
+        $hasfeedback = quiz_has_feedback($quiz->id) && $quiz->grade > 1.e-7 && $quiz->sumgrades > 1.e-7;
 
         // Now check if asked download of data
         if ($download) {
@@ -134,6 +135,11 @@ class quiz_report extends quiz_default_report {
             }
         }
 
+        if ($hasfeedback) {
+            $tablecolumns[] = 'feedback';
+            $tableheaders[] = get_string('feedback', 'quiz');
+        }
+        
         if (!$download) {
             // Set up the table
 
@@ -200,6 +206,9 @@ class quiz_report extends quiz_default_report {
                     $headers[] = '#'.$questions[$id]->number;
                 }
             }
+            if ($hasfeedback) {
+                $headers[] = get_string('feedback', 'quiz');
+            }
             $colnum = 0;
             foreach ($headers as $item) {
                 $myxls->write(0,$colnum,$item,$formatbc);
@@ -224,6 +233,9 @@ class quiz_report extends quiz_default_report {
                 foreach ($questions as $question) {
                     $headers .= "\t#".$question->number;
                 }
+            }
+            if ($hasfeedback) {
+                $headers .= "\t" . get_string('feedback', 'quiz');
             }
             echo $headers." \n";
         }
@@ -319,7 +331,7 @@ class quiz_report extends quiz_default_report {
             if (empty($sort)) {
                 $sort = ' ORDER BY uniqueid';
             }
-
+            
             // Now it is time to page the data
             if (!isset($pagesize)  || ((int)$pagesize < 1) ) {
                 $pagesize = 10;
@@ -331,6 +343,14 @@ class quiz_report extends quiz_default_report {
             } else {
                 $limit = '';
             }
+        }
+
+        // If there is feedback, include it in the query.
+        if ($hasfeedback) {
+            $factor = $quiz->grade/$quiz->sumgrades;
+            $select .= ', qf.feedbacktext ';
+            $from .= " JOIN {$CFG->prefix}quiz_feedback AS qf ON " .
+                    "qf.quizid = $quiz->id AND qf.mingrade <= qa.sumgrades * $factor AND qa.sumgrades * $factor < qf.maxgrade";
         }
 
         // Fetch the attempts
@@ -401,6 +421,13 @@ class quiz_report extends quiz_default_report {
                                 $row[] = $grade;
                                 }
                             }
+                        }
+                    }
+                    if ($hasfeedback) {
+                        if ($attempt->timefinish) {
+                            $row[] = $attempt->feedbacktext;
+                        } else {
+                            $row[] = '-';
                         }
                     }
                     if (!$download) {

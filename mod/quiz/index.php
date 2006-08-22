@@ -121,20 +121,23 @@
             // or the quiz has no grade, display nothing in grade col
             if ($bestgrade === NULL || $quiz->grade == 0) {
                 $gradecol = "";
+                $feedbackcol = '';
             } else {
                 //If all quiz's attempts have visible results, show bestgrade
                 if(all_attempt_results_visible($quiz, $USER)) {
                     $gradecol = "$bestgrade / $quiz->grade";
+                    $feedbackcol = quiz_get_feedback($quiz, $bestgrade);
                 } else {
                     $gradecol = "";
+                    $feedbackcol = '';
                 }
             }
         }
 
         if ($course->format == "weeks" or $course->format == "topics") {
-            $table->data[] = array ($printsection, $link, $closequiz, $gradecol);
+            $table->data[] = array ($printsection, $link, $closequiz, $gradecol, $feedbackcol);
         } else {
-            $table->data[] = array ($link, $closequiz, $gradecol);
+            $table->data[] = array ($link, $closequiz, $gradecol, $feedbackcol);
         }
     }
 

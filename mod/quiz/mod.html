@@ -1,7 +1,7 @@
-<!-- This page defines the form to create or edit an instance of this module -->
-<!-- It is used from /course/mod.php.  The whole instance is available as $form. -->
-
 <?php
+// This page defines the form to create or edit an instance of this module -->
+// It is used from /course/mod.php. The whole instance is available as $form. -->
+
     require_once("$CFG->dirroot/mod/quiz/locallib.php");
 
     // Set any form variables that have not been initialized to their default value.
@@ -76,6 +76,37 @@
     }
     if (!isset($form->delay2)) {
          $form->delay2 = $CFG->quiz_delay2;
+    }
+    
+    // Get any existing feedback text out of the database.
+    if (!empty($form->id)) {
+        $feedbacks = get_records('quiz_feedback', 'quizid', $form->id, 'mingrade DESC');
+    } else {
+        $feedbacks = array();
+    }
+    $form->feedbacktext = array();
+    $form->feedbackboundaries = array();
+    foreach ($feedbacks as $feedback) {
+        $form->feedbacktext[] = $feedback->feedbacktext;
+        if ($feedback->mingrade > 0) {
+            $form->feedbackboundaries[] = (100.0 * $feedback->mingrade / $form->grade) . '%';
+        }
+    }
+
+    // Make sure there are at least 5 feedbacktexts, or a bit more than the current nubmer.
+    $numfeedbacks = max(
+            count($form->feedbacktext) * 1.5,
+            count($form->feedbackboundaries) * 1.5,
+            5
+    );
+    
+    for ($i = 0; $i < $numfeedbacks; $i += 1) {
+        if (!array_key_exists($i, $form->feedbacktext)) {
+            $form->feedbacktext[$i] = '';
+        }
+        if (!array_key_exists($i, $form->feedbackboundaries)) {
+            $form->feedbackboundaries[$i] = '';
+        }
     }
 
     // The following are used for drop-down menus
@@ -186,11 +217,47 @@
     // This time out put the ones that were not fixed.
     $fix = output_quiz_options_fields($form, 0);
 
+    // Output standard module settings.
     print_standard_coursemodule_settings($form);
 
+    // Output the boxes for typing feedback depending on overall quiz score.
+?>
+<tr><td colspan="2">
+    <?php print_heading_with_help(get_string('overallfeedback', 'quiz'), 'overallfeedback', 'quiz'); ?>
+</td></tr>
+
+<tr valign="top">
+    <td align="right"><b><?php print_string('gradeboundary', 'quiz') ?>:</b></td>
+    <td align="left">100%</td>
+</tr>
+
+<?php for ($i = 0; $i < count($form->feedbacktext); $i = $i + 1) { ?>
+    
+<tr valign="top">
+    <td align="right"><b><?php print_string('feedback', 'quiz') ?>:</b></td>
+    <td align="left">
+        <input type="text" name="feedbacktext[]" size="60" value="<?php p($form->feedbacktext[$i]) ?>" />
+    </td>
+</tr>
+        
+<?php     if ($i < count($form->feedbacktext) - 1) { ?>    
+<tr valign="top">
+    <td align="right"><b><?php print_string('gradeboundary', 'quiz') ?>:</b></td>
+    <td align="left">
+        <input type="text" name="feedbackboundaries[]" size="20" value="<?php p($form->feedbackboundaries[$i]) ?>" />
+    </td>
+</tr>
+<?php     } ?>
+
+<?php } ?>
+<tr valign="top">
+    <td align="right"><b><?php print_string('gradeboundary', 'quiz') ?>:</b></td>
+    <td align="left">0%</td>
+</tr>
+
+<?php
     if ($fix) {
         // Some options were fixed by the admin. Show them, but hidden behind an Advanced button.
-
 ?>
 <tr>
     <td align="right"><b><?php print_string('advancedsettings') ?>:</b>

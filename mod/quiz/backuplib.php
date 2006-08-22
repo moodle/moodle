@@ -9,12 +9,12 @@
     //                        (CL,pk->id)
     //                            |
     //           -------------------------------------------------------------------
-    //           |                    |                        |                    |
-    //           |               quiz_grades                   |        quiz_question_versions
-    //           |           (UL,pk->id,fk->quiz)              |         (CL,pk->id,fk->quiz)
-    //           |                                             |
-    //      quiz_attempts                          quiz_question_instances
-    //  (UL,pk->id,fk->quiz)                    (CL,pk->id,fk->quiz,question)
+    //           |               |                |                |               |
+    //           |          quiz_grades           |     quiz_question_versions     |
+    //           |      (UL,pk->id,fk->quiz)      |      (CL,pk->id,fk->quiz)      |
+    //           |                                |                                |
+    //      quiz_attempts             quiz_question_instances                quiz_feedback
+    //  (UL,pk->id,fk->quiz)       (CL,pk->id,fk->quiz,question)         (CL,pk->id,fk->quiz)
     //
     // Meaning: pk->primary key field of the table
     //          fk->foreign key to link with parent
@@ -204,6 +204,8 @@
         fwrite ($bf,full_tag("DELAY2",4,false,$quiz->delay2));
         //Now we print to xml question_instances (Course Level)
         $status = backup_quiz_question_instances($bf,$preferences,$quiz->id);
+        //Now we print to xml quiz_feedback (Course Level)
+        $status = backup_quiz_feedback($bf,$preferences,$quiz->id);
         //Now we print to xml question_versions (Course Level)
         $status = backup_quiz_question_versions($bf,$preferences,$quiz->id);
         //if we've selected to backup users info, then execute:
@@ -242,9 +244,6 @@
 
     //Backup quiz_question_instances contents (executed from quiz_backup_mods)
     function backup_quiz_question_instances ($bf,$preferences,$quiz) {
-
-        global $CFG;
-
         $status = true;
 
         $quiz_question_instances = get_records("quiz_question_instances","quiz",$quiz,"id");
@@ -269,11 +268,41 @@
         return $status;
     }
 
+    //Backup quiz_question_instances contents (executed from quiz_backup_mods)
+    function backup_quiz_feedback ($bf,$preferences,$quiz) {
+        $status = true;
+
+        $quiz_feedback = get_records('quiz_feedback', 'quizid', $quiz, 'id');
+        // If there are question_instances ...
+        if ($quiz_feedback) {
+            // Write start tag.
+            $status = $status & fwrite($bf,start_tag('FEEDBACKS', 4, true));
+            
+            // Iterate over each question_instance.
+            foreach ($quiz_feedback as $feedback) {
+                
+                //Start feedback instance
+                $status = $status & fwrite($bf, start_tag('FEEDBACK',5,true));
+                
+                //Print question_instance contents.
+                $status = $status & fwrite($bf, full_tag('ID', 6, false, $feedback->id));
+                $status = $status & fwrite($bf, full_tag('QUIZID', 6, false, $feedback->quizid));
+                $status = $status & fwrite($bf, full_tag('FEEDBACKTEXT', 6, false, $feedback->feedbacktext));
+                $status = $status & fwrite($bf, full_tag('MINGRADE', 6, false, $feedback->mingrade));
+                $status = $status & fwrite($bf, full_tag('MAXGRADE', 6, false, $feedback->maxgrade));
+                
+                // End feedback instance.
+                $status = $status & fwrite($bf, end_tag('FEEDBACK', 5, true));
+            }
+            
+            // Write end tag.
+            $status = $status & fwrite($bf, end_tag('FEEDBACKS', 4, true));
+        }
+        return $status;
+    }
+    
     //Backup quiz_question_versions contents (executed from quiz_backup_mods)
     function backup_quiz_question_versions ($bf,$preferences,$quiz) {
-
-        global $CFG;
-
         $status = true;
 
         $quiz_question_versions = get_records("quiz_question_versions","quiz",$quiz,"id");
@@ -304,9 +333,6 @@
 
     //Backup quiz_grades contents (executed from quiz_backup_mods)
     function backup_quiz_grades ($bf,$preferences,$quiz) {
-
-        global $CFG;
-
         $status = true;
 
         $quiz_grades = get_records("quiz_grades","quiz",$quiz,"id");
@@ -334,9 +360,6 @@
 
     //Backup quiz_attempts contents (executed from quiz_backup_mods)
     function backup_quiz_attempts ($bf,$preferences,$quiz) {
-
-        global $CFG;
-
         $status = true;
 
         $quiz_attempts = get_records("quiz_attempts","quiz",$quiz,"id");

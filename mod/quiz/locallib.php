@@ -83,10 +83,18 @@ function quiz_get_user_attempt_unfinished($quizid, $userid) {
     return get_record("quiz_attempts", "quiz", $quizid, "userid", $userid, "timefinish", 0);
 }
 
+/**
+ * @param integer $quizid the quiz id.
+ * @param integer $userid the userid.
+ * @return an array of all the ueser's attempts at this quiz. Returns an empty array if there are none.
+ */
 function quiz_get_user_attempts($quizid, $userid) {
-// Returns a list of all attempts by a user
-    return get_records_select("quiz_attempts", "quiz = '$quizid' AND userid = '$userid' AND timefinish > 0",
-                              "attempt ASC");
+    if ($attempts = get_records_select("quiz_attempts", "quiz = '$quizid' AND userid = '$userid' AND timefinish > 0",
+            "attempt ASC")) {
+        return $attempts;                        
+    } else {
+        return array();
+    }
 }
 
 
@@ -249,30 +257,132 @@ function quiz_get_all_question_grades($quiz) {
     return $grades;
 }
 
-
+/**
+ * Get the best current grade for a particular user in a quiz.
+ * 
+ * @param object $quiz the quiz object.
+ * @param integer $userid the id of the user.
+ * @return float the user's current grade for this quiz.
+ */
 function quiz_get_best_grade($quiz, $userid) {
-/// Get the best current grade for a particular user in a quiz
-if (!$grade = get_record('quiz_grades', 'quiz', $quiz->id, 'userid', $userid)) {
+    $grade = get_field('quiz_grades', 'grade', 'quiz', $quiz->id, 'userid', $userid);
+
+    // Need to detect errors/no result, without catching 0 scores.
+    if (is_numeric($grade)) {
+        return round($grade,$quiz->decimalpoints);
+    } else {
         return NULL;
     }
-
-    return (round($grade->grade,$quiz->decimalpoints));
 }
 
 /**
-* Save the overall grade for a user at a quiz in the quiz_grades table
-*
-* @return boolean        Indicates success or failure.
-* @param object $quiz    The quiz for which the best grade is to be calculated
-*                        and then saved.
-* @param integer $userid The id of the user to save the best grade for. Can be
-*                        null in which case the current user is assumed.
-*/
-function quiz_save_best_grade($quiz, $userid=null) {
+ * Convert the raw grade stored in $attempt into a grade out of the maximum
+ * grade for this quiz.
+ * 
+ * @param float $rawgrade the unadjusted grade, fof example $attempt->sumgrades
+ * @param object $quiz the quiz object. Only the fields grade, sumgrades and decimalpoints are used.
+ * @return float the rescaled grade.
+ */
+function quiz_rescale_grade($rawgrade, $quiz) {
+    if ($quiz->sumgrades) {
+        return round($rawgrade*$quiz->grade/$quiz->sumgrades, $quiz->decimalpoints);
+    } else {
+        return 0;
+    }
+}
+
+/**
+ * Get the feedback text that should be show to a student who
+ * got this grade on this quiz.
+ * 
+ * @param float $grade a grade on this quiz.
+ * @param integer $quizid the id of the quiz object.
+ * @return string the comment that corresponds to this grade (empty string if there is not one.
+ */
+function quiz_feedback_for_grade($grade, $quizid) {
+    $feedback = get_field_select('quiz_feedback', 'feedbacktext',
+            "quizid = $quizid AND mingrade <= $grade AND $grade < maxgrade");
+
+    if (empty($feedback)) {
+        $feedback = '';
+    }
+    
+    return $feedback;
+}
+
+/**
+ * @param integer $quizid the id of the quiz object.
+ * @return boolean Whether this quiz has any non-blank feedback text.
+ */
+function quiz_has_feedback($quizid) {
+    static $cache = array();
+    if (!array_key_exists($quizid, $cache)) {
+        $cache[$quizid] = record_exists_select('quiz_feedback',
+                "quizid = $quizid AND feedbacktext <> ''");
+    }
+    return $cache[$quizid];
+}
+
+/**
+ * The quiz grade is the score that student's results are marked out of. When it 
+ * changes, the corresponding data in quiz_grades and quiz_feedback needs to be
+ * rescaled.
+ * 
+ * @param float $newgrade the new maximum grade for the quiz.
+ * @param object $quiz the quiz we are updating. Passed by reference so its grade field can be updated too.
+ * @return boolean indicating success or failure.
+ */
+function quiz_set_grade($newgrade, &$quiz) {
+    // This is potentially expensive, so only do it if necessary.
+    if (abs($quiz->grade - $newgrade) < 1e-7) {
+        // Nothing to do.
+        return true;
+    }
+    
+    // Use a transaction, so that on those databases that support it, this is safer.
+    begin_sql();
+    
+    // Update the quiz table.
+    $success = set_field('quiz', 'grade', $newgrade, 'id', $quiz->instance);
+    
+    // Rescaling the other data is only possible if the old grade was non-zero.
+    if ($quiz->grade > 1e-7) {
+        global $CFG;
+    
+        $factor = $newgrade/$quiz->grade;
+        $quiz->grade = $newgrade;
+
+        // Update the quiz_grades table.
+        $timemodified = time();
+        $success = $success && set_field('quiz_grades', 'grade',
+                '$factor * grade, timemodified = $timemodified',
+                'quiz', $quiz->id);
+        
+        // Update the quiz_grades table.
+        $success = $success && execute_sql('quiz_feedback', 'mingrade', 
+                '$factor * mingrade, maxgrade = $factor * maxgrade',
+                'quizid', $quiz->id);
+    }
+    
+    if ($success) {
+        return commit_sql();
+    } else {
+        rollback_sql();
+        return false;
+    }
+}
+
+/**
+ * Save the overall grade for a user at a quiz in the quiz_grades table
+ *
+ * @param object $quiz The quiz for which the best grade is to be calculated and then saved.
+ * @param integer $userid The userid to calculate the grade for. Defaults to the current user.
+ * @return boolean Indicates success or failure.
+ */
+function quiz_save_best_grade($quiz, $userid = null) {
     global $USER;
 
-    // Assume the current user if $userid is null
-    if (is_null($userid)) {
+    if (empty($userid)) {
         $userid = $USER->id;
     }
 
@@ -284,12 +394,10 @@ function quiz_save_best_grade($quiz, $userid=null) {
 
     // Calculate the best grade
     $bestgrade = quiz_calculate_best_grade($quiz, $attempts);
-    $bestgrade = $quiz->sumgrades ? (($bestgrade / $quiz->sumgrades) * $quiz->grade) : 0;
-    $bestgrade = round($bestgrade, $quiz->decimalpoints);
-
+    $bestgrade = quiz_rescale_grade($bestgrade, $quiz);
+    
     // Save the best grade in the database
-    if ($grade = get_record('quiz_grades', 'quiz', $quiz->id, 'userid',
-     $userid)) {
+    if ($grade = get_record('quiz_grades', 'quiz', $quiz->id, 'userid', $userid)) {
         $grade->grade = $bestgrade;
         $grade->timemodified = time();
         if (!update_record('quiz_grades', $grade)) {
