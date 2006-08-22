@@ -62,8 +62,8 @@
     $coursecontext = get_context_instance(CONTEXT_COURSE, $id); // course context
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     // if no questions have been set up yet redirect to edit.php
-    if (!$quiz->questions and has_capability('mod/quiz:manage', $context) {
-        redirect('edit.php?quizid='.$quiz->id);
+    if (!$quiz->questions and has_capability('mod/quiz:manage', $context)) {
+        redirect('edit.php?quizid=' . $quiz->id);
     }
 
 // Get number for the next or unfinished attempt
@@ -202,7 +202,7 @@
     if (!$attempt) {
         // Check if this is a preview request from a teacher
         // in which case the previous previews should be deleted
-        if (has_capability('mod/quiz:preview', $context) {
+        if (has_capability('mod/quiz:preview', $context)) {
             if ($oldattempts = get_records_select('quiz_attempts', "quiz = '$quiz->id'
              AND userid = '$USER->id'")) {
                 delete_records('quiz_attempts', 'quiz', $quiz->id, 'userid', $USER->id);
