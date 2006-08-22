@@ -231,7 +231,7 @@ function forum_upgrade($oldversion) {
   
   if ($oldversion < 2006081800) {
       // Upgrades for new roles and capabilities support.
-      $forummodid = get_record('modules', 'name', 'forum');
+      $forummod = get_record('modules', 'name', 'forum');
       
       if ($forums = get_records('forum')) {
           
@@ -258,7 +258,7 @@ function forum_upgrade($oldversion) {
                       // section 0 in the course.
                       $mod = new object;
                       $mod->course = $forum->course;
-                      $mod->module = $forummodid;
+                      $mod->module = $forummod->id;
                       $mod->instance = $forum->id;
                       $mod->section = 0;
                       $mod->visible = 0;
