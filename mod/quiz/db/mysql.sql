@@ -69,7 +69,7 @@ CREATE TABLE prefix_quiz_feedback (
   mingrade double NOT NULL default '0',
   maxgrade double NOT NULL default '0',
   PRIMARY KEY (id),
-  KEY quizid (quizid),
+  KEY quizid (quizid)
 ) TYPE=MyISAM COMMENT='Feedback given to students based on their overall score on the test';
 
 -- --------------------------------------------------------
