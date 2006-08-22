@@ -75,22 +75,8 @@
                 }
             }
 
-            $forumtobeinserted = true;
-            //If the forum is a teacher forum, then we have to look if it exists in destination course
-            if ($forum->type == "teacher") {
-                //Look for teacher forum in destination course
-                $teacherforum = get_record("forum","course",$restore->course_id,"type","teacher");
-                if ($teacherforum) {
-                    $newid = $teacherforum->id;
-                    $forumtobeinserted = false;
-                }
-            }
-
-            //If the forum has to be inserted
-            if ($forumtobeinserted) {
-                //The structure is equal to the db, so insert the forum
-                $newid = insert_record ("forum",$forum);
-            }
+            $newid = insert_record ('forum', $forum);
+            
 
             //Do some output
             if (!defined('RESTORE_SILENTLY')) {
