@@ -37,11 +37,14 @@
     }
 
     require_login($course->id, false, $cm);
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    $coursecontext = get_context_instance(CONTEXT_COURSE, $id);
     $isteacher = isteacher($course->id);
     $options = quiz_get_reviewoptions($quiz, $attempt, $isteacher);
     $popup = $isteacher ? 0 : $quiz->popup; // Controls whether this is shown in a javascript-protected window.
 
-    if (!$isteacher) {
+    // this capability is not correct, need to find the right one
+    if (!has_capability('mod/quiz:manage', $context)) {
         if (!$attempt->timefinish) {
             redirect('attempt.php?q='.$quiz->id);
         }
@@ -90,7 +93,7 @@
         /// Include Javascript protection for this page
         include('protect_js.php');
     } else {
-        $strupdatemodule = isteacheredit($course->id)
+        $strupdatemodule = has_capability('moodle/course:manageactivities', $coursecontext)
                     ? update_module_button($cm->id, $course->id, get_string('modulename', 'quiz'))
                     : "";
         print_header_simple(format_string($quiz->name), "",
@@ -101,7 +104,7 @@
     echo '<div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000;"></div>'; // for overlib
 
 /// Print heading and tabs if this is part of a preview
-    if ($isteacher) {
+    if (has_capability('mod/quiz:preview', $context)) {
         if ($attempt->userid == $USER->id) { // this is the report on a preview
             $currenttab = 'preview';
         } else {
@@ -162,7 +165,7 @@
        $picture = print_user_picture($student->id, $course->id, $student->picture, false, true);
        $table->data[] = array($picture, '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$student->id.'&amp;course='.$course->id.'">'.fullname($student, true).'</a>');
     }
-    if ($isteacher and count($attempts = get_records_select('quiz_attempts', "quiz = '$quiz->id' AND userid = '$attempt->userid'", 'attempt ASC')) > 1) {
+    if (has_capability('mod/quiz:grade', $context) and count($attempts = get_records_select('quiz_attempts', "quiz = '$quiz->id' AND userid = '$attempt->userid'", 'attempt ASC')) > 1) {
         // print list of attempts
         $attemptlist = '';
         foreach ($attempts as $at) {

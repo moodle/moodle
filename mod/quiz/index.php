@@ -57,7 +57,8 @@
     $strattempts = get_string("attempts", "quiz");
     $strusers  = $course->students;
 
-    if (isteacher($course->id)) {
+    $context = get_context_instance(CONTEXT_COURSE, $id);
+    if (has_capability('mod/quiz:viewreports', $context)) {
         $gradecol = $strattempts;
     } else {
         $gradecol = $strbestgrade;
@@ -80,6 +81,10 @@
     $currentsection = "";
 
     foreach ($quizzes as $quiz) {
+      
+        $cm = get_coursemodule_from_instance('quiz', $quiz->id);
+        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+        
         if (!$quiz->visible) {
             //Show dimmed if the mod is hidden
             $link = "<a class=\"dimmed\" href=\"view.php?id=$quiz->coursemodule\">".format_string($quiz->name,true)."</a>";
@@ -103,7 +108,7 @@
 
         $closequiz = $quiz->timeclose ? userdate($quiz->timeclose) : '';
 
-        if (isteacher($course->id)) {
+        if (has_capability('mod/quiz:viewreports', $context)) {
             if ($a->attemptnum = count_records('quiz_attempts', 'quiz', $quiz->id, 'preview', 0)) {
                 $a->studentnum = count_records_select('quiz_attempts', "quiz = '$quiz->id' AND preview = '0'", 'COUNT(DISTINCT userid)');
                 $a->studentstring  = $course->students;

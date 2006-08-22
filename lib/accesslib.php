@@ -358,7 +358,9 @@ function load_user_capability($capability='', $context ='', $userid='') {
         $usercontexts = get_parent_contexts($context);          
         $listofcontexts = '('.implode(',', $usercontexts).')';
     } else { // else, we load everything
+        echo $userid;
         $userroles = get_records('role_assignments','userid',$userid);    
+
         $usercontexts = array();
         foreach ($userroles as $userrole) {
             $usercontexts[] = $userrole->contextid;
@@ -415,10 +417,9 @@ function load_user_capability($capability='', $context ='', $userid='') {
                      aggregatelevel ASC
             ";
 
-
     $capabilities = array();  // Reinitialize.
     $rs = get_recordset_sql($SQL);
-    
+
     if ($rs && $rs->RecordCount() > 0) {
         while (!$rs->EOF) {
               $array = $rs->fields;

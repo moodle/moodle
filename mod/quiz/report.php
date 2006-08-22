@@ -36,13 +36,11 @@
     }
 
     require_login($course->id, false);
-
-    if (!isteacher($course->id)) {
-        error("You are not allowed to use this script");
-    }
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    require_capability('mod/quiz:viewre ports', $context);
 
     // if no questions have been set up yet redirect to edit.php
-    if (!$quiz->questions and isteacheredit($course->id)) {
+    if (!$quiz->questions and has_capability('mod/quiz:manage', $context)) {
         redirect('edit.php?quizid='.$quiz->id);
     }
 

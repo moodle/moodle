@@ -525,7 +525,11 @@ class default_questiontype {
         
         $comment = stripslashes($state->comment);
         $commentlink = '';
-        if (isset($options->questioncommentlink)) {
+        
+        $cm = get_coursemodule_from_instance('quiz', $quiz->id);
+        $context = get_context_instance(CONTEXT_MODULE, $context);
+        
+        if (isset($options->questioncommentlink) && has_capability('mod/quiz:grade', $context)) {
             $strcomment = get_string('commentorgrade', 'quiz');
             $commentlink = '<div class="commentlink">'.link_to_popup_window ($options->questioncommentlink.'?attempt='.$state->attempt.'&amp;question='.$question->id,
                              'commentquestion', $strcomment, 450, 650, $strcomment, 'none', true).'</div>';

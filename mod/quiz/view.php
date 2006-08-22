@@ -35,12 +35,13 @@
             error("The course module for the quiz with id $q is missing");
         }
     }
-
+    
     require_login($course->id, false, $cm);
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     $isteacher = isteacher($course->id);
 
     // if no questions have been set up yet redirect to edit.php
-    if (!$quiz->questions and isteacheredit($course->id)) {
+    if (!$quiz->questions and has_capability('mod/quiz:manage', $context)) {
         redirect('edit.php?quizid='.$quiz->id);
     }
 
@@ -80,10 +81,10 @@
 // Print the main part of the page
 
     // Print heading and tabs for teacher
-    if ($isteacher) {
-        $currenttab = 'info';
-        include('tabs.php');
-    }
+
+    $currenttab = 'info';
+    include('tabs.php');
+
     print_heading(format_string($quiz->name));
 
     if (trim(strip_tags($quiz->intro))) {
@@ -110,7 +111,7 @@
 
 
     // This is all the teacher will get
-    if ($isteacher) {
+    if (has_capability('mod/quiz:manage', $context)) {
         if ($a->attemptnum = count_records('quiz_attempts', 'quiz', $quiz->id, 'preview', 0)) {
             $a->studentnum = count_records_select('quiz_attempts', "quiz = '$quiz->id' AND preview = '0'", 'COUNT(DISTINCT userid)');
             $a->studentstring  = $course->students;
@@ -120,20 +121,6 @@
         
         echo '</td></tr></table>';
         print_footer($course);
-        exit;
-    }
-
-    if (isguest()) {
-
-        $wwwroot = $CFG->wwwroot.'/login/index.php';
-        if (!empty($CFG->loginhttps)) {
-            $wwwroot = str_replace('http:','https:', $wwwroot);
-        }
-
-        notice_yesno(get_string('guestsno', 'quiz').'<br /><br />'.get_string('liketologin'),
-                     $wwwroot, $_SERVER['HTTP_REFERER']);
-        print_footer($course);
-        echo '</td></tr></table>';
         exit;
     }
 
@@ -203,7 +190,7 @@
             if ($attempt->timefinish > 0) { // attempt has finished
                 $timetaken = format_time($attempt->timefinish - $attempt->timestart);
                 $datecompleted = userdate($attempt->timefinish);
-            } else if ($available) { // The student can continue this attempt, so put appropriate link
+            } else if ($available && has_capability('mod/quiz:attempt', $context)) { // The student can continue this attempt, so put appropriate link
                 $timetaken = format_time(time() - $attempt->timestart);
                 $datecompleted  = "\n".'<script language="javascript" type="text/javascript">';
                 $datecompleted .= "\n<!--\n"; // -->
@@ -319,23 +306,23 @@
                          $lastattempt = $lastattempt_obj->timefinish;
                      }
                      if($numattempts == 1 && $quiz->delay1) {
-                         if ($timenow - $quiz->delay1 > $lastattempt) {
-                              print_start_quiz_button($quiz, $attempts, $numattempts, $unfinished, $cm);
+                         if (($timenow - $quiz->delay1 > $lastattempt) && has_capability('mod/quiz:attempt', $context)) {
+                             print_start_quiz_button($quiz, $attempts, $numattempts, $unfinished, $cm);
                          } else {
                              $notify_msg = get_string('temporaryblocked', 'quiz') . '<b>'. userdate($lastattempt + $quiz->delay1). '<b>';
                              print_simple_box($notify_msg, "center");
                          }
                      } else if($numattempts > 1 && $quiz->delay2) {
-                         if ($timenow - $quiz->delay2 > $lastattempt) {
+                         if (($timenow - $quiz->delay2 > $lastattempt) && has_capability('mod/quiz:attempt', $context)) {
                               print_start_quiz_button($quiz, $attempts, $numattempts, $unfinished, $cm);
                          } else {
                               $notify_msg = get_string('temporaryblocked', 'quiz') . '<b>'. userdate($lastattempt + $quiz->delay2). '<b>';
                               print_simple_box($notify_msg, "center");
                          }
-                     } else {
+                     } elseif (has_capability('mod/quiz:attempt', $context)) {
                          print_start_quiz_button($quiz, $attempts, $numattempts, $unfinished, $cm);
                      }
-                } else {
+                } elseif (has_capability('mod/quiz:attempt', $context)) {
                      print_start_quiz_button($quiz, $attempts, $numattempts, $unfinished, $cm);
                 }     
                 echo "</div>\n";

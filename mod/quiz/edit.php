@@ -99,12 +99,13 @@ if (self.name == 'editquestion') {
     if (! $course = get_record("course", "id", $modform->course)) {
         error("This course doesn't exist");
     }
+    
+    $coursecontext = get_context_instance(CONTEXT_COURSE, $id);
 
     require_login($course->id, false);
 
-    if (!isteacheredit($course->id)) {
-        error("You can't modify this course!");
-    }
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    require_capability('mod/quiz:manage', $context);
 
     if (isset($modform->instance)
         && empty($modform->grades))  // Construct an array to hold all the grades.
@@ -309,7 +310,7 @@ if (self.name == 'editquestion') {
 
     if (isset($modform->instance) and record_exists_sql("SELECT * FROM {$CFG->prefix}quiz_attempts WHERE quiz = '$modform->instance' AND preview = '0' LIMIT 1")){
         // one column layout with table of questions used in this quiz
-        $strupdatemodule = isteacheredit($course->id)
+        $strupdatemodule = has_capability('moodle/course:manageactivities', $coursecontext)
                     ? update_module_button($modform->cmid, $course->id, get_string('modulename', 'quiz'))
                     : "";
         print_header_simple($streditingquiz, '',
@@ -346,7 +347,7 @@ if (self.name == 'editquestion') {
     }
 
     // two column layout with quiz info in left column
-    $strupdatemodule = isteacheredit($course->id)
+    $strupdatemodule = has_capability('moodle/course:manageactivities', $coursecontext)
         ? update_module_button($modform->cmid, $course->id, get_string('modulename', 'quiz'))
         : "";
     print_header_simple($streditingquiz, '',

@@ -28,13 +28,15 @@
     $tabs = array();
     $row  = array();
     $inactive = array();
-
-    $row[] = new tabobject('info', "$CFG->wwwroot/mod/quiz/view.php?q=$quiz->id", get_string('info', 'quiz'));
+    
     if (has_capability('mod/quiz:viewreports', $context)) {
+        $row[] = new tabobject('info', "$CFG->wwwroot/mod/quiz/view.php?q=$quiz->id", get_string('info', 'quiz'));
         $row[] = new tabobject('reports', "$CFG->wwwroot/mod/quiz/report.php?q=$quiz->id", get_string('results', 'quiz'));  
     }
-    $row[] = new tabobject('preview', "$CFG->wwwroot/mod/quiz/attempt.php?q=$quiz->id", get_string('preview', 'quiz'));
-    if (has_capability('mod/quiz:manage', $context)) {
+    if (has_capability('mod/quiz:viewreports', $context)) {
+        $row[] = new tabobject('preview', "$CFG->wwwroot/mod/quiz/attempt.php?q=$quiz->id", get_string('preview', 'quiz'));
+    }
+    if (has_capability('mod/quiz:preview', $context)) {
         $row[] = new tabobject('edit', "$CFG->wwwroot/mod/quiz/edit.php?quizid=$quiz->id", get_string('edit'));
     }
 

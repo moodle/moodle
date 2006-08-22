@@ -58,9 +58,11 @@
 
     require_login($course->id, false, $cm);
     $isteacher = isteacher($course->id);
-
+    
+    $coursecontext = get_context_instance(CONTEXT_COURSE, $id); // course context
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     // if no questions have been set up yet redirect to edit.php
-    if (!$quiz->questions and isteacheredit($course->id)) {
+    if (!$quiz->questions and has_capability('mod/quiz:manage', $context) {
         redirect('edit.php?quizid='.$quiz->id);
     }
 
@@ -81,7 +83,7 @@
         print_header($course->shortname.': '.format_string($quiz->name), '', '', '', '', false, '', '', false, '');
         include('protect_js.php');
     } else {
-        $strupdatemodule = isteacheredit($course->id)
+        $strupdatemodule = has_capability('moodle/course:manageactivities', $coursecontext)
                     ? update_module_button($cm->id, $course->id, get_string('modulename', 'quiz'))
                     : "";
         print_header_simple(format_string($quiz->name), "",
@@ -93,7 +95,7 @@
     echo '<div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000;"></div>'; // for overlib
 
     /// Print the quiz name heading and tabs for teacher
-    if ($isteacher) {
+    if (has_capability('mod/quiz:preview', $context)) {
         $currenttab = 'preview';
         include('tabs.php');
     } else {
@@ -187,7 +189,7 @@
 
 /// Load attempt or create a new attempt if there is no unfinished one
 
-    if ($isteacher and $forcenew) { // teacher wants a new preview
+    if (has_capability('mod/quiz:preview', $context) and $forcenew) { // teacher wants a new preview
         // so we set a finish time on the current attempt (if any).
         // It will then automatically be deleted below
         set_field('quiz_attempts', 'timefinish', $timestamp, 'quiz', $quiz->id, 'userid', $USER->id);
@@ -200,7 +202,7 @@
     if (!$attempt) {
         // Check if this is a preview request from a teacher
         // in which case the previous previews should be deleted
-        if ($isteacher) {
+        if (has_capability('mod/quiz:preview', $context) {
             if ($oldattempts = get_records_select('quiz_attempts', "quiz = '$quiz->id'
              AND userid = '$USER->id'")) {
                 delete_records('quiz_attempts', 'quiz', $quiz->id, 'userid', $USER->id);
@@ -215,7 +217,7 @@
         // Start a new attempt and initialize the question sessions
         $attempt = quiz_create_attempt($quiz, $attemptnumber);
         // If this is an attempt by a teacher mark it as a preview
-        if ($isteacher) {
+        if (has_capability('mod/quiz:preview', $context)) {
             $attempt->preview = 1;
         }
         // Save the attempt
@@ -451,7 +453,7 @@
 /// Print the quiz page ////////////////////////////////////////////////////////
 
 /// Print the preview heading
-    if ($isteacher) {
+    if (has_capability('mod/quiz:preview', $context)) {
         print_heading(get_string('previewquiz', 'quiz', format_string($quiz->name)));
         unset($buttonoptions);
         $buttonoptions['q'] = $quiz->id;

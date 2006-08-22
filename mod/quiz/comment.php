@@ -30,9 +30,10 @@
 
     require_login($course->id);
 
-    if (!isteacher($course->id)) {
-        error('This page is for teachers only');
-    }
+    $cm = get_coursemodule_from_instance('quiz', $quiz->id);
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    
+    require_capability('mod/quiz:grade', $context);
 
     // Load question
     if (! $question = get_record('question', 'id', $questionid)) {
