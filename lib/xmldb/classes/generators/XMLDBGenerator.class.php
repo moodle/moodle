@@ -397,7 +397,7 @@ class XMLDBgenerator {
     /// Use standard naming. See http://docs.moodle.org/en/XMLDB_key_and_index_naming
         $tablearr = explode ('_', $tablename);
         foreach ($tablearr as $table) {
-            $name .= substr(trim($table),0,3);
+            $name .= substr(trim($table),0,4);
         }
         $name .= '_';
         $fieldsarr = explode (',', $fields);
