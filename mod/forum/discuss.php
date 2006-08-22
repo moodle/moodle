@@ -141,14 +141,8 @@
 /// Also, if we know they should be able to reply, then explicitly set $canreply
 
     $canreply = NULL;   /// No override one way or the other
-
-    if ($forum->type == "teacher") {
-        $groupmode = NOGROUPS;
-    } else {
-        $groupmode = groupmode($course, $cm);
-    }
-
-                                       
+    $groupmode = groupmode($course, $cm);
+    
     
     if ($groupmode and !has_capability('moodle/site:accessallgroups', $modcontext)) {   // Groups must be kept separate
         //change this to ismember

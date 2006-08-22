@@ -82,14 +82,7 @@
     }
 
 
-/// Check to see if groups are being used in this forum
-/// and if so, set $currentgroup to reflect the current group
-
-    if ($forum->type == "teacher") {
-        $groupmode = NOGROUPS;
-    } else {
-        $groupmode = groupmode($course, $cm);   // Groups are being used
-    }
+    $groupmode = groupmode($course, $cm);
     
     $currentgroup = get_and_set_current_group($course, $groupmode, $changegroup);
     
