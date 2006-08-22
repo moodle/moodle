@@ -31,7 +31,7 @@ class question_essay_qtype extends default_questiontype {
                 return $result;
             }
         } else {
-            unset($answer);
+            $answer = new stdClass;
             $answer->question = $question->id;
             $answer->answer   = $question->feedback;
             $answer->feedback = $question->feedback;
