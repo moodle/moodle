@@ -92,9 +92,10 @@ class XMLDBmssql extends XMLDBgenerator {
                 break;
             case XMLDB_TYPE_FLOAT:
                 $dbtype = 'FLOAT';
-                if (!empty($xmldb_length)) {
-                    $dbtype .= '(' . $xmldb_length;
-                    $dbtype .= ')';
+                if (!empty($xmldb_decimals)) {
+                    if ($xmldb_decimals < 6) {
+                        $dbtype = 'REAL';
+                    }
                 }
                 break;
             case XMLDB_TYPE_CHAR:
