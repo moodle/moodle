@@ -141,10 +141,19 @@ $INSTALL['release'] = $release;
 /// Have the $db object ready because we are going to use it often
 $db = &ADONewConnection($INSTALL['dbtype']);
 
-/// guess the www root
+/// guess the www root and secure dataroot
 if ($INSTALL['wwwroot'] == '') {
     list($INSTALL['wwwroot'], $xtra) = explode('/install.php', qualified_me());
     $INSTALL['wwwrootform'] = $INSTALL['wwwroot'];
+
+    // now count slashes and treverse dirroot to get one level above web root
+    $up = preg_match_all('/\//', $INSTALL['wwwroot'], $matches) - 1;
+    $CFG->dataroot = $CFG->dirroot;
+    for ($i=0; $i<$up; $i++) {
+        $CFG->dataroot = dirname($CFG->dataroot);
+    }
+    $CFG->dataroot .= '/moodledata';
+    $INSTALL['dataroot'] = $CFG->dataroot;
 }
 
 $headstagetext = array(WELCOME       => get_string('chooselanguagehead', 'install'),
