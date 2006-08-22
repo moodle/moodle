@@ -973,8 +973,10 @@ class default_questiontype {
     function print_replacement_options($question, $course, $cmid='0') {
 
         // Disable until the versioning code has been fixed
-        return;
-
+        if (true) {
+            return;
+        }
+        
         // no need to display replacement options if the question is new
         if(empty($question->id)) {
             return true;
