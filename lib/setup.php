@@ -221,7 +221,7 @@ global $HTTPSPAGEREQUIRED;
 
 /// Set error reporting back to normal
     if (!isset($CFG->debug)) { // empty() would override 0 or false from config.php
-        $CFG->debug = 7;
+        $CFG->debug = 5;
     }
     error_reporting($CFG->debug);
 
