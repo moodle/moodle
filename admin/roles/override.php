@@ -40,11 +40,11 @@
     
     $participants = get_string("participants");
     $user = get_record('user', 'id', $userid);
-    $fullname = fullname($user, isteacher($course->id));
+    $fullname = fullname($user, has_capability('moodle/site:viewfullnames', $context));
     $straction = get_string('overrideroles', 'role');
 
     // we got a few tabs there
-    if ($context->level == CONTEXT_USERID) {
+    if ($context->aggregatelevel == CONTEXT_USERID) {
       
         /// course header
         if ($courseid!= SITEID) {
@@ -121,6 +121,7 @@
       
      // this needs to check capability too
     $role = get_records('role');
+    $options = array();
     foreach ($role as $rolex) {
         if (user_can_override($context, $rolex->id)) {
             $options[$rolex->id] = $rolex->name;
