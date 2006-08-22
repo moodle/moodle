@@ -296,6 +296,7 @@ function forum_upgrade($oldversion) {
                           assign_capability('mod/forum:viewrating', CAP_PREVENT, $studentrole->id, $context->id);
                           assign_capability('mod/forum:viewanyrating', CAP_PREVENT, $studentrole->id, $context->id);
                           assign_capability('mod/forum:rate', CAP_PREVENT, $studentrole->id, $context->id);
+                          assign_capability('mod/forum:createattachment', CAP_PREVENT, $studentrole->id, $context->id);
                           assign_capability('mod/forum:deleteownpost', CAP_PREVENT, $studentrole->id, $context->id);
                           assign_capability('mod/forum:deleteanypost', CAP_PREVENT, $studentrole->id, $context->id);
                           assign_capability('mod/forum:splitdiscussions', CAP_PREVENT, $studentrole->id, $context->id);
@@ -315,6 +316,7 @@ function forum_upgrade($oldversion) {
                           assign_capability('mod/forum:viewrating', CAP_PREVENT, $guestrole->id, $context->id);
                           assign_capability('mod/forum:viewanyrating', CAP_PREVENT, $guestrole->id, $context->id);
                           assign_capability('mod/forum:rate', CAP_PREVENT, $guestrole->id, $context->id);
+                          assign_capability('mod/forum:createattachment', CAP_PREVENT, $studentrole->id, $context->id);
                           assign_capability('mod/forum:deleteownpost', CAP_PREVENT, $guestrole->id, $context->id);
                           assign_capability('mod/forum:deleteanypost', CAP_PREVENT, $guestrole->id, $context->id);
                           assign_capability('mod/forum:splitdiscussions', CAP_PREVENT, $guestrole->id, $context->id);
