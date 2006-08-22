@@ -38,7 +38,8 @@ class XMLDBoci8po extends XMLDBgenerator {
     var $number_type = 'NUMBER';    // Proper type for NUMBER(x) in this DB
 
     var $unsigned_allowed = false;    // To define in the generator must handle unsigned information
-    var $default_for_char = '';      // To define the default to set for NOT NULLs CHARs without default (null=do nothing)
+    var $default_for_char = ' ';      // To define the default to set for NOT NULLs CHARs without default (null=do nothing)
+                                      // Using this whitespace here because Oracle doesn't distinguish empty and null! :-(
 
     var $default_after_null = false;  //To decide if the default clause of each field must go after the null clause
 
