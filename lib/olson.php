@@ -168,6 +168,16 @@ if(isset($mdl_tz['dst_time']) && !strpos($mdl_tz['dst_time'], ':') || isset($mdl
     }
     */
 
+/// Since Moodle 1.7, rule is tzrule in DB (reserved words problem), so change it here
+/// after everything is calculated to be properly loaded to the timezone table.
+/// Pre 1.7 users won't have the old rule if updating this from moodle.org but it
+/// seems that such field isn't used at all by the rest of Moodle (at least I haven't 
+/// found any use when looking for it).
+
+    foreach($mdl_zones as $key=>$mdl_zone) {
+        $mdl_zones[$key]['tzrule'] = $mdl_zones[$key]['rule'];
+    }
+    
     return $mdl_zones;
 }
 
