@@ -102,17 +102,6 @@
         <?php print_textarea($usehtmleditor, 20, 50, 680, 400, 'intro', $form->intro); ?>
     </td>
 </tr>
-
-<tr valign="top">
-    <td align="right"><b><?php print_string('allowdiscussions', 'forum', strtolower("$course->student")) ?>:</b></td>
-    <td>
-        <?php
-            choose_from_menu($FORUM_OPEN_MODES, 'open', $form->open, '');
-            helpbutton('allowdiscussions', get_string('allowdiscussions',
-                       'forum', moodle_strtolower("$course->student")), 'forum');
-        ?>
-    </td>
-</tr>
 <tr>
     <td align="right"><b><?php print_string('forcesubscribeq', 'forum') ?>:</b></td>
     <td>
