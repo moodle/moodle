@@ -344,7 +344,7 @@
     <TABLE name="timezone">
       <FIELDS>
         <FIELD name="name" method="NO_CONV" type="varchar" length="100" />
-        <FIELD name="rule" method="NO_CONV" type="varchar" length="20" />
+        <FIELD name="tzrule" method="NO_CONV" type="varchar" length="20" />
         <FIELD name="dst_time" method="NO_CONV" type="varchar" length="5" />
         <FIELD name="std_time" method="NO_CONV" type="varchar" length="5" />
       </FIELDS>

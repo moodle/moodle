@@ -554,7 +554,7 @@ CREATE TABLE `prefix_timezone` (
   `id` int(10) NOT NULL auto_increment,
   `name` varchar(100) NOT NULL default '',
   `year` int(11) NOT NULL default '0',
-  `rule` varchar(20) NOT NULL default '',
+  `tzrule` varchar(20) NOT NULL default '',
   `gmtoff` int(11) NOT NULL default '0',
   `dstoff` int(11) NOT NULL default '0',
   `dst_month` tinyint(2) NOT NULL default '0',

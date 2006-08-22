@@ -1732,6 +1732,11 @@ function main_upgrade($oldversion=0) {
         table_column('context', 'level', 'aggregatelevel', 'integer', '10', 'unsigned', '0', 'not null', '');
         modify_database('',"CREATE UNIQUE INDEX prefix_context_aggregatelevelinstanceid_idx ON prefix_context (aggregatelevel, instanceid);"); 
     }
+
+    if ($oldversion < 2006082200) {
+        table_column('timezone', 'rule', 'tzrule', 'varchar', '20', '', '', 'not null', '');
+    }
+
     return $result;
 }
 

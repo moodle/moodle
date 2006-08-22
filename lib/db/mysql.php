@@ -2134,6 +2134,10 @@ function main_upgrade($oldversion=0) {
         execute_sql("ALTER TABLE `{$CFG->prefix}context` ADD UNIQUE INDEX `aggregatelevel-instanceid` (`aggregatelevel`, `instanceid`)",false);
     }
     
+    if ($oldversion < 2006082200) {
+        table_column('timezone', 'rule', 'tzrule', 'varchar', '20', '', '', 'not null', '');
+    }
+    
     return $result;
 }
 

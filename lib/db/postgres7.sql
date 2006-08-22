@@ -351,7 +351,7 @@ CREATE TABLE prefix_timezone (
   id SERIAL PRIMARY KEY,
   name varchar(100) NOT NULL default '',
   year integer NOT NULL default '0',
-  rule varchar(20) NOT NULL default '',
+  tzrule varchar(20) NOT NULL default '',
   gmtoff integer NOT NULL default '0',
   dstoff integer NOT NULL default '0',
   dst_month integer NOT NULL default '0',
