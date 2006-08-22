@@ -59,6 +59,7 @@
             //$GLOBALS['traverse_array']="";                                                              //Debug
 
             //Now, build the QUIZ record structure
+            $quiz = new stdClass;
             $quiz->course = $restore->course_id;
             $quiz->name = backup_todb($info['MOD']['#']['NAME']['0']['#']);
             $quiz->intro = backup_todb($info['MOD']['#']['INTRO']['0']['#']);
@@ -151,6 +152,7 @@
             $oldid = backup_todb($gra_info['#']['ID']['0']['#']);
 
             //Now, build the QUESTION_INSTANCES record structure
+            $instance = new stdClass;
             $instance->quiz = $quiz_id;
             $instance->question = backup_todb($gra_info['#']['QUESTION']['0']['#']);
             $instance->grade = backup_todb($gra_info['#']['GRADE']['0']['#']);
@@ -258,6 +260,7 @@
             $oldid = backup_todb($ver_info['#']['ID']['0']['#']);
 
             //Now, build the QUESTION_VERSIONS record structure
+            $version = new stdClass;
             $version->quiz = $quiz_id;
             $version->oldquestion = backup_todb($ver_info['#']['OLDQUESTION']['0']['#']);
             $version->newquestion = backup_todb($ver_info['#']['NEWQUESTION']['0']['#']);
@@ -339,6 +342,7 @@
             $olduserid = backup_todb($att_info['#']['USERID']['0']['#']);
 
             //Now, build the ATTEMPTS record structure
+            $attempt = new stdClass;
             $attempt->quiz = $quiz_id;
             $attempt->userid = backup_todb($att_info['#']['USERID']['0']['#']);
             $attempt->attempt = backup_todb($att_info['#']['ATTEMPTNUM']['0']['#']);
@@ -412,6 +416,7 @@
             $olduserid = backup_todb($gra_info['#']['USERID']['0']['#']);
 
             //Now, build the GRADES record structure
+            $grade = new stdClass;
             $grade->quiz = $quiz_id;
             $grade->userid = backup_todb($gra_info['#']['USERID']['0']['#']);
             $grade->grade = backup_todb($gra_info['#']['GRADEVAL']['0']['#']);
@@ -573,6 +578,7 @@
                                                b.table_name = 'question' AND
                                                q.id = b.new_id AND
                                                q.questiontextformat = ".FORMAT_WIKI)) {
+            $i = 0;
             foreach ($records as $record) {
                 //Rebuild wiki links
                 $record->questiontext = restore_decode_wiki_content($record->questiontext, $restore);

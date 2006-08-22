@@ -144,6 +144,7 @@
                 //If the category doesn't exist
                 if (!$exist) {
                     //Build a new category
+                    $db_cat = new stdClass;
                     $db_cat->course = $course;
                     $db_cat->name = get_string('recreatedcategory','',$key);
                     $db_cat->info = get_string('recreatedcategory','',$key);
