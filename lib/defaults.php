@@ -23,7 +23,7 @@
        'country'                  => '',
        'clamfailureonupload'      => 'donothing',
        'dbsessions'               =>  false,
-       'debug'                    =>  7,
+       'debug'                    =>  5,
        'defaultrequestedcategory' =>  1,
        'deleteunconfirmed'        =>  168,
        'denyemailaddresses'       =>  '',

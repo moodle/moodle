@@ -69,7 +69,7 @@ class configvar {
 
 /// debug
     unset($options);
-    $options[7]  = $strno;
+    $options[5]  = $strno;
     $options[15] = $stryes;
 
     $misc['debug'] = new configvar (get_string('configdebug', 'admin'),
