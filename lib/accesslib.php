@@ -374,7 +374,7 @@ function load_user_capability($capability='', $context ='', $userid='') {
 
     $siteinstance = get_context_instance(CONTEXT_SYSTEM, SITEID);
 
-    $SQL = " SELECT  rc.capability, c1.id, (c1.aggregatelevel * 100) AS aggregatelevel,
+    $SQL = " SELECT  rc.capability, c1.id, (c1.aggregatelevel * 100) AS aggrlevel,
                      SUM(rc.permission) AS sum
                      FROM
                      {$CFG->prefix}role_assignments AS ra, 
@@ -388,12 +388,12 @@ function load_user_capability($capability='', $context ='', $userid='') {
                      rc.contextid=$siteinstance->id 
                      $capsearch
               GROUP BY
-                     rc.capability,aggregatelevel,c1.id
+                     rc.capability,aggrlevel,c1.id
                      HAVING
                      SUM(rc.permission) != 0
               UNION
 
-              SELECT rc.capability, c1.id, (c1.aggregatelevel * 100 + c2.aggregatelevel) AS aggregatelevel,
+              SELECT rc.capability, c1.id, (c1.aggregatelevel * 100 + c2.aggregatelevel) AS aggrlevel,
                      SUM(rc.permission) AS sum
                      FROM
                      {$CFG->prefix}role_assignments AS ra,
@@ -410,23 +410,29 @@ function load_user_capability($capability='', $context ='', $userid='') {
                      $capsearch
                   
               GROUP BY
-                     rc.capability, aggregatelevel, c1.id
+                     rc.capability, aggrlevel, c1.id
                      HAVING
                      SUM(rc.permission) != 0
               ORDER BY
-                     aggregatelevel ASC
+                     aggrlevel ASC
             ";
 
     $capabilities = array();  // Reinitialize.
-    $rs = get_recordset_sql($SQL);
+    if (!$rs = get_recordset_sql($SQL)) {
+        error("Query failed in load_user_capability.");
+    }
 
     if ($rs && $rs->RecordCount() > 0) {
         while (!$rs->EOF) {
-              $array = $rs->fields;
-              $temprecord = new object;
+            $array = $rs->fields;
+            $temprecord = new object;
               
             foreach ($array as $key=>$val) {
-                  $temprecord->{$key} = $val;
+                if ($key == 'aggrlevel') {
+                    $temprecord->aggregatelevel = $val;
+                } else {
+                    $temprecord->{$key} = $val;
+                }
             }
             $capabilities[] = $temprecord;
             $rs->MoveNext();
@@ -873,7 +879,7 @@ function get_context_instance($aggregatelevel=NULL, $instance=SITEID) {
 function get_context_instance_by_id($id) {
 
     if (isset($context_cache_id[$id])) {  // Already cached
-        return $context_cache[$id];
+        return $context_cache_id[$id];
     }
 
     if ($context = get_record('context', 'id', $id)) {   // Update the cache and return
