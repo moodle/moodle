@@ -501,9 +501,12 @@ class default_questiontype {
         global $CFG;
         $isgraded = question_state_is_graded($state->last_graded);
 
+        $cm = get_coursemodule_from_instance('quiz', $cmoptions->id);
+        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+        
         // For editing teachers print a link to an editing popup window
         $editlink = '';
-        if (isteacheredit($cmoptions->course)) {
+        if (has_capability('mod/quiz:manage', $context)) {
             $stredit = get_string('edit');
             $linktext = '<img src="'.$CFG->pixpath.'/t/edit.gif" border="0" alt="'.$stredit.'" />';
             $editlink = link_to_popup_window('/question/question.php?id='.$question->id, $stredit, $linktext, 450, 550, $stredit, '', true);
@@ -525,9 +528,6 @@ class default_questiontype {
         
         $comment = stripslashes($state->comment);
         $commentlink = '';
-        
-        $cm = get_coursemodule_from_instance('quiz', $quiz->id);
-        $context = get_context_instance(CONTEXT_MODULE, $context);
         
         if (isset($options->questioncommentlink) && has_capability('mod/quiz:grade', $context)) {
             $strcomment = get_string('commentorgrade', 'quiz');
