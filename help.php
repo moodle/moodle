@@ -30,20 +30,20 @@ $helpfound = false;
 
 if (!empty($file)) {
     // The help to display is from a help file.
-    
+
     // Get the list of parent languages.
     if (empty($forcelang)) {
         $langs = array(current_language(), get_string('parentlanguage'), 'en_utf8');  // Fallback
     } else {
         $langs = array($forcelang);
-    } 
+    }
 
     // Work through the possible languages, starting with the most specific.
     foreach ($langs as $lang) {
         if (empty($lang)) {
             continue;
         }
-        
+
         // Work out which directory the help files live in.
         if ($lang == 'en_utf8') {
             $helpdir = $CFG->dirroot;
@@ -51,13 +51,13 @@ if (!empty($file)) {
             $helpdir = $CFG->dataroot;
         }
         $helpdir .= "/lang/$lang/help";
-        
+
         // Then which file in there we should be serving.
         if ($module == 'moodle') {
             $filepath = "$helpdir/$file";
         } else {
             $filepath = "$helpdir/$module/$file";
-            
+
             // If that does not exist, try a fallback into the module code folder.
             if (!file_exists($filepath)) {
                 $filepath = "$CFG->dirroot/mod/$module/lang/$lang/help/$module/$file";
@@ -69,7 +69,7 @@ if (!empty($file)) {
             $helpfound = true;
             @include($filepath);   // The actual helpfile
 
-            // Now, we process some special cases.  
+            // Now, we process some special cases.
             if ($module == 'moodle' and ($file == 'index.html' or $file == 'mods.html')) {
                 include_help_for_each_module($file, $langs, $helpdir);
             }
@@ -178,7 +178,7 @@ function include_help_for_each_assignment_type() {
 
     require_once($CFG->dirroot .'/mod/assignment/lib.php');
     $typelist = assignment_types();
-    
+
     foreach ($typelist as $type => $name) {
         echo '<p><b>'.$name.'</b></p>';
         echo get_string('help'.$type, 'assignment');
