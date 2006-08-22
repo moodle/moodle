@@ -1595,12 +1595,6 @@ function forum_get_course_forum($courseid, $type) {
             $forum->assessed = 0;
             $forum->forcesubscribe = 0;
             break;
-        case "teacher":
-            $forum->name  = addslashes(get_string("nameteacher", "forum"));
-            $forum->intro = addslashes(get_string("introteacher", "forum"));
-            $forum->assessed = 0;
-            $forum->forcesubscribe = 0;
-            break;
         default:
             notify("That forum type doesn't exist!");
             return false;

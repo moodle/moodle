@@ -78,7 +78,7 @@
 
     $generalforums = array();            // For now
     $learningforums = get_all_instances_in_course("forum", $course);
-
+    
     if ($forums = get_records("forum", "course", $id, "name ASC")) {  // All known forums
 
         if ($learningforums) {           // Copy "full" data into this complete array

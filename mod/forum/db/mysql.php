@@ -264,15 +264,17 @@ function forum_upgrade($oldversion) {
                       $mod->visible = 0;
                       $mod->visibleold = 0;
                       $mod->groupmode = 0;
-                  
-                      print_object($mod);
-                  
+                      
                       if (!$cmid = add_course_module($mod)) {
                           error('Could not create new course module instance for the teacher forum');
                       } else {
                           $mod->coursemodule = $cmid;
-                          if (!add_mod_to_section($mod)) {
-                              error('Could not add new forum instance to section 0 in the course');
+                          if (!$sectionid = add_mod_to_section($mod)) {
+                              error('Could not add converted teacher forum instance to section 0 in the course');
+                          } else {
+                              if (!set_field('course_modules', 'section', $sectionid, 'id', $cmid)) {
+                                  error('Could not update course module with section id');
+                              }
                           }
                       }
               
@@ -357,9 +359,6 @@ function forum_upgrade($oldversion) {
                           }
                           break;
                   }
-                  // Drop column forum.open.
-                  modify_database('', 'ALTER TABLE prefix_forum DROP COLUMN open;');
-                  
                   
                   // $forum->assessed defines whether forum rating is turned
                   // on (1 or 2) and who can rate posts:
@@ -378,7 +377,6 @@ function forum_upgrade($oldversion) {
                           break;
                   }
                   
-                  
                   // $forum->assesspublic defines whether students can see
                   // everybody's ratings:
                   //   0 = Students can only see their own ratings
@@ -391,10 +389,19 @@ function forum_upgrade($oldversion) {
                           assign_capability('mod/forum:viewanyrating', CAP_ALLOW, $studentrole->id, $context->id);
                           break;
                   }
-                  // Drop column forum.assesspublic.
-                  modify_database('', 'ALTER TABLE prefix_forum DROP COLUMN assesspublic;');
               }
-          } // End foreach $teacherforums.
+          } // End foreach $forums.
+          
+          // Drop column forum.open.
+          modify_database('', 'ALTER TABLE prefix_forum DROP COLUMN open;');
+          
+          // Drop column forum.assesspublic.
+          modify_database('', 'ALTER TABLE prefix_forum DROP COLUMN assesspublic;');
+          
+          // We need to rebuild all the course caches to refresh the state of
+          // the forum modules.
+          rebuild_course_cache();
+          
       } // End if.
   }
   
