@@ -1,4 +1,54 @@
 <?php // $Id$
+
+function migrate2utf8_quiz_feedback_feedbacktext($recordid) {
+    global $CFG, $globallang; 
+    /// Some trivial checks
+    if (empty($recordid)) {
+        log_the_problem_somewhere();
+        return false;
+    }
+  
+    $SQL = "SELECT q.course
+           FROM {$CFG->prefix}quiz_feedback qf,
+                {$CFG->prefix}quiz q
+           WHERE qf.quizid = q.id
+           AND qf.id = $recordid";
+ 
+    if (!$quiz = get_record_sql($SQL)) {
+        log_the_problem_somewhere();
+        return false;
+    }
+ 
+    if (!$quizfeedback = get_record('quiz_feedback','id',$recordid)) {
+        log_the_problem_somewhere();
+        return false;
+    }
+     
+    if ($globallang) {
+        $fromenc = $globallang;
+    } else {
+        $sitelang   = $CFG->lang;
+        $courselang = get_course_lang($quiz->course);
+        $userlang   = null; //N.E.!!
+        
+        $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+    }
+
+/// We are going to use textlib facilities
+    
+/// Convert the text
+    if (($fromenc != 'utf-8') && ($fromenc != 'UTF-8')) {
+        $result = utfconvert($quizfeedback->feedbacktext, $fromenc);
+
+        $newquizfeedback = new object;
+        $newquizfeedback->id = $recordid;
+        $newquizfeedback->feedbacktext = $result;
+        update_record('quiz_feedback',$newquizfeedback);
+    }
+/// And finally, just return the converted field
+    return $result;  
+}
+
 function migrate2utf8_question_name($recordid){
     global $CFG, $globallang;
 
