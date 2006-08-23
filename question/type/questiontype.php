@@ -501,12 +501,19 @@ class default_questiontype {
         global $CFG;
         $isgraded = question_state_is_graded($state->last_graded);
 
+        // If this question is being shown in the context of a quiz
+        // get the context so we can determine whether some extra links
+        // should be shown. (Don't show these links during question preview.) 
         $cm = get_coursemodule_from_instance('quiz', $cmoptions->id);
-        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+        if (!empty($cm->id)) {
+            $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+        } else {
+            $context = false;
+        }
         
         // For editing teachers print a link to an editing popup window
         $editlink = '';
-        if (has_capability('mod/quiz:manage', $context)) {
+        if ($context && has_capability('mod/quiz:manage', $context)) {
             $stredit = get_string('edit');
             $linktext = '<img src="'.$CFG->pixpath.'/t/edit.gif" border="0" alt="'.$stredit.'" />';
             $editlink = link_to_popup_window('/question/question.php?id='.$question->id, $stredit, $linktext, 450, 550, $stredit, '', true);
@@ -529,7 +536,7 @@ class default_questiontype {
         $comment = stripslashes($state->comment);
         $commentlink = '';
         
-        if (isset($options->questioncommentlink) && has_capability('mod/quiz:grade', $context)) {
+        if (isset($options->questioncommentlink) && $context && has_capability('mod/quiz:grade', $context)) {
             $strcomment = get_string('commentorgrade', 'quiz');
             $commentlink = '<div class="commentlink">'.link_to_popup_window ($options->questioncommentlink.'?attempt='.$state->attempt.'&amp;question='.$question->id,
                              'commentquestion', $strcomment, 450, 650, $strcomment, 'none', true).'</div>';
