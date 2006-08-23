@@ -26,9 +26,9 @@ class question_shortanswer_qtype extends default_questiontype {
         }
 
         if (!$question->options->answers = get_records('question_answers', 'question',
-         $question->id, 'id ASC')) {
-           notify('Error: Missing question answers!');
-           return false;
+                $question->id, 'id ASC')) {
+            notify('Error: Missing question answers!');
+            return false;
         }
         return true;
     }
@@ -136,7 +136,7 @@ class question_shortanswer_qtype extends default_questiontype {
         /// Print input controls
 
         if (isset($state->responses[''])) {
-            $value = ' value="'.s($state->responses['']).'" ';
+            $value = ' value="'.s($state->responses[''], true).'" ';
         } else {
             $value = ' value="" ';
         }
@@ -219,7 +219,7 @@ class question_shortanswer_qtype extends default_questiontype {
         }
 
         if (isset($teststate->responses[''])) {
-            $response1 = trim(stripslashes($teststate->responses['']));
+            $response1 = trim($teststate->responses['']);
         } else {
             $response1 = '';
         }
