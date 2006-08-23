@@ -829,10 +829,12 @@ class default_questiontype {
     *                          compared. Question type specific information is
     *                          included.
     * @param object $state     The state of the question. The responses are in
-    *                          ->responses.
+    *                          ->responses. This is the only field of $state
+    *                          that it is safe to use.
     * @param object $teststate The state whose responses are to be
     *                          compared. The state will be of the same age or
-    *                          older than $state.
+    *                          older than $state. Again, the method should only
+    *                          use the field $teststate->responses.
     */
     function compare_responses(&$question, $state, $teststate) {
         // The default implementation performs a comparison of the response
