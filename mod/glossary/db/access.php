@@ -133,7 +133,7 @@ $mod_glossary_capabilities = array(
     
     'mod/glossary:export' => array(
     
-        'captype' => 'write',
+        'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
             'guest' => CAP_PREVENT,
