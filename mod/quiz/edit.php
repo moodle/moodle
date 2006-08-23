@@ -53,13 +53,6 @@
             }
             $modform->instance = $modform->id;
             $SESSION->modform = $modform;    // Save the form in the current session
-
-            $cm = get_coursemodule_from_instance('quiz', $modform->instance);
-            $modform->cmid = $cm->id;
-            // We don't log all visits to this page but only those that recreate modform
-            add_to_log($cm->course, 'quiz', 'editquestions',
-                               "view.php?id=$cm->id",
-                               "$quizid", $cm->id);
         }
 
     } else if (!empty($sortorder)) {
@@ -96,15 +89,23 @@ if (self.name == 'editquestion') {
         }
     }
 
+    // Get the course object and related bits.
     if (! $course = get_record("course", "id", $modform->course)) {
         error("This course doesn't exist");
     }
-    
-    $coursecontext = get_context_instance(CONTEXT_COURSE, $id);
+    $coursecontext = get_context_instance(CONTEXT_COURSE, $modform->course);
 
     require_login($course->id, false);
-
+    
+    // Get the module and related bits.
+    $cm = get_coursemodule_from_instance('quiz', $modform->instance);
+    $modform->cmid = $cm->id;
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+
+    // Log this visit.
+    add_to_log($cm->course, 'quiz', 'editquestions',
+            "view.php?id=$cm->id", "$quizid", $cm->id);
+
     require_capability('mod/quiz:manage', $context);
 
     if (isset($modform->instance)
