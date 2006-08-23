@@ -775,16 +775,7 @@ function moodle_install_roles() {
     allow_override($adminrole, $noneditteacherrole);
     allow_override($adminrole, $editteacherrole);   
     allow_override($adminrole, $studentrole);
-    allow_override($adminrole, $guestrole);
-    
-    allow_override($coursecreatorrole, $noneditteacherrole);
-    allow_override($coursecreatorrole, $editteacherrole);
-    allow_override($coursecreatorrole, $studentrole);     
-    allow_override($coursecreatorrole, $guestrole);
-    
-    allow_override($editteacherrole, $noneditteacherrole);     
-    allow_override($editteacherrole, $studentrole);      
-    allow_override($editteacherrole, $guestrole);           
+    allow_override($adminrole, $guestrole);    
 
     // Should we delete the tables after we are done? Not yet.
 }
