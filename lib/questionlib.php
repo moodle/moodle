@@ -848,6 +848,7 @@ function question_extract_responses($questions, $formdata, $defaultevent=QUESTIO
             $actions[$quid]->timestamp = $time;
         }
     }
+    ksort($actions[$quid]->responses);
     return $actions;
 }
 
@@ -987,7 +988,7 @@ function question_process_responses(&$question, &$state, $action, $cmoptions, &$
     // Check for unchanged responses (exactly unchanged, not equivalent).
     // We also have to catch questions that the student has not yet attempted
     $sameresponses = !$state->last_graded->event == QUESTION_EVENTOPEN && 
-            $state->responses == $action->responses;
+            $QTYPES[$question->qtype]->compare_responses($question, $action, $state);
 
     // If the response has not been changed then we do not have to process it again
     // unless the attempt is closing or validation is requested

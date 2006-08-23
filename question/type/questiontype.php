@@ -841,7 +841,7 @@ class default_questiontype {
         // arrays. The ordering of the arrays does not matter.
         // Question types may wish to override this (eg. to ignore trailing
         // white space or to make "7.0" and "7" compare equal).
-        return $state->responses == $teststate->responses;
+        return $state->responses === $teststate->responses;
     }
 
     /**

@@ -188,7 +188,7 @@ class question_shortanswer_qtype extends default_questiontype {
     function compare_responses($question, $state, $teststate) {
         if (isset($state->responses['']) && isset($teststate->responses[''])) {
             if ($question->options->usecase) {
-                return $state->responses[''] == $teststate->responses[''];
+                return strcmp($state->responses[''], $teststate->responses['']) == 0;
             } else {
                 return strcasecmp($state->responses[''], $teststate->responses['']) == 0;
             }
