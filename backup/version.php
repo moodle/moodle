@@ -1,10 +1,12 @@
-<?PHP  //$Id$
-// This file defines the current version of the
-// backup/restore code that is being used.  This can be
-// compared against the values stored in the 
-// database (backup_version) to determine whether upgrades should
-// be performed (see db/backup_*.php)
+<?php  //$Id$
 
-$backup_version = 2006072000;   // The current version is a date (YYYYMMDDXX)
+/// This file defines the current version of the
+/// backup/restore code that is being used.  This can be
+/// compared against the values stored in the 
+/// database (backup_version) to determine whether upgrades should
+/// be performed (see db/backup_*.php)
 
-$backup_release = "1.7dev";  // User-friendly version number
+    $backup_version = 2006082301;   // The current version is a date (YYYYMMDDXX)
+    $backup_release = "1.7dev";  // User-friendly version number
+
+?>
