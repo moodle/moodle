@@ -166,13 +166,13 @@
         }
         
         foreach ($roles as $rolex) {
-            $options[$rolex->id] = $rolex->name;
+            $roleoptions[$rolex->id] = $rolex->name;
         }
         
         // prints a form to swap roles
         print ('<form name="rolesform1" action="manage.php" method="post">');
         print ('<div align="center">Select a Role: ');
-        choose_from_menu ($options, 'roleid', $roleid, 'choose', $script='rolesform1.submit()');
+        choose_from_menu ($roleoptions, 'roleid', $roleid, 'choose', $script='rolesform1.submit()');
         print ('</div></form>');
               
         // this is the array holding capabilities of this role sorted till this context
