@@ -54,6 +54,7 @@
     $strshowall = get_string('showall');
 
     $context = get_record('context', 'id', $contextid);
+    $assignableroles = get_assignable_roles($context);
     
     // role assigning permission checking
     if ($roleid) {
@@ -158,15 +159,6 @@
         }
 
     }
-        
-    // this needs to check capability too
-    $role = get_records('role');
-    $options = array();
-    foreach ($role as $rolex) {
-        if (user_can_assign($context, $rolex->id)) {
-            $options[$rolex->id] = $rolex->name;
-        }
-    }
     
     // prints a form to swap roles
     print ('<form name="rolesform" action="assign.php" method="post">');
@@ -178,7 +170,7 @@
         print ('<input type="hidden" name="courseid" value="'.$courseid.'" />');
     }
     print ('<input type="hidden" name="contextid" value="'.$context->id.'" />'.$strcurrentrole.': ');
-    choose_from_menu ($options, 'roleid', $roleid, 'choose', $script='rolesform.submit()');
+    choose_from_menu ($assignableroles, 'roleid', $roleid, 'choose', $script='rolesform.submit()');
     print ('</div></form>');
     
     if ($roleid) {

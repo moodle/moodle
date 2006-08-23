@@ -37,9 +37,7 @@
             foreach ($roles as $trole) {
                 if (isset($temp[$srole->id][$trole->id])) { // if set, need to write to db
                     if (!$record = get_record('role_allow_override', 'roleid', $srole->id, 'allowoverride', $trole->id)) {
-                        $record->roleid = $srole->id;
-                        $record->allowoverride = $trole->id;
-                        insert_record('role_allow_override', $record);
+                        allow_override($srole->id, $trole->id);
                     }
                 } else { //if set, means can access, attempt to remove it from db
                     delete_records('role_allow_override', 'roleid', $srole->id, 'allowoverride', $trole->id);

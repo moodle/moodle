@@ -13,13 +13,11 @@
   *                   [273][moodle:blahblah] = 1
   *                   [273][moodle:blahblahblah] = 2
   */
- 
 
 // permission definitions
 define('CAP_ALLOW', 1);
 define('CAP_PREVENT', -1);
 define('CAP_PROHIBIT', -1000);
-
 
 // context definitions
 define('CONTEXT_SYSTEM', 10);
@@ -752,6 +750,41 @@ function moodle_install_roles() {
         role_assign($guestrole, $guestuser->id, 0, $systemcontext->id);
     }
 
+    /**
+     * Insert the correct records for legacy roles 
+     */
+    allow_assign($adminrole, $adminrole);
+    allow_assign($adminrole, $coursecreatorrole);
+    allow_assign($adminrole, $noneditteacherrole);
+    allow_assign($adminrole, $editteacherrole);   
+    allow_assign($adminrole, $studentrole);
+    allow_assign($adminrole, $guestrole);
+    
+    allow_assign($coursecreatorrole, $noneditteacherrole);
+    allow_assign($coursecreatorrole, $editteacherrole);
+    allow_assign($coursecreatorrole, $studentrole);     
+    allow_assign($coursecreatorrole, $guestrole);
+    
+    allow_assign($editteacherrole, $noneditteacherrole);     
+    allow_assign($editteacherrole, $studentrole);      
+    allow_assign($editteacherrole, $guestrole);
+    
+    /// overrides
+    allow_override($adminrole, $adminrole);
+    allow_override($adminrole, $coursecreatorrole);
+    allow_override($adminrole, $noneditteacherrole);
+    allow_override($adminrole, $editteacherrole);   
+    allow_override($adminrole, $studentrole);
+    allow_override($adminrole, $guestrole);
+    
+    allow_override($coursecreatorrole, $noneditteacherrole);
+    allow_override($coursecreatorrole, $editteacherrole);
+    allow_override($coursecreatorrole, $studentrole);     
+    allow_override($coursecreatorrole, $guestrole);
+    
+    allow_override($editteacherrole, $noneditteacherrole);     
+    allow_override($editteacherrole, $studentrole);      
+    allow_override($editteacherrole, $guestrole);           
 
     // Should we delete the tables after we are done? Not yet.
 }
@@ -1581,7 +1614,10 @@ function get_component_string($component, $contextlevel) {
     return $string;
 }
 
-
+/** gets the list of roles assigned to this context
+ * @param object $context
+ * @return array
+ */
 function get_roles_used_in_context($context) {
 
     global $CFG;
@@ -1594,7 +1630,11 @@ function get_roles_used_in_context($context) {
                              ORDER BY r.sortorder ASC');
 }
 
-// this function is used to print roles column in user profile page. 
+/** this function is used to print roles column in user profile page. 
+ * @param int userid
+ * @param int contextid
+ * @return string
+ */
 function get_user_roles_in_context($userid, $contextid){
     global $CFG;
     
@@ -1610,7 +1650,12 @@ function get_user_roles_in_context($userid, $contextid){
 }
 
 
-// returns bool
+/**
+ * Checks if a user can override capabilities of a particular role in this context
+ * @param object $context
+ * @param int targetroleid - the id of the role you want to override
+ * @return boolean
+ */
 function user_can_override($context, $targetroleid) {
     // first check if user has override capability
     // if not return false;
@@ -1631,6 +1676,12 @@ function user_can_override($context, $targetroleid) {
   
 }
 
+/**
+ * Checks if a user can assign users to a particular role in this context
+ * @param object $context
+ * @param int targetroleid - the id of the role you want to assign users to
+ * @return boolean
+ */
 function user_can_assign($context, $targetroleid) {
     
     // first check if user has override capability
@@ -1651,7 +1702,15 @@ function user_can_assign($context, $targetroleid) {
     return false; 
 }
 
-// gets all the user roles assigned in this context, or higher
+/**
+ * gets all the user roles assigned in this context, or higher contexts
+ * this is mainly used when checking if a user can assign a role, or overriding a role
+ * i.e. we need to know what this user holds, in order to verify against allow_assign and
+ * allow_override tables
+ * @param object $context
+ * @param int $userid
+ * @return array
+ */
 function get_user_roles($context, $userid=0) {
 
     global $USER, $CFG, $db;
@@ -1675,4 +1734,63 @@ function get_user_roles($context, $userid=0) {
                              $contexts);
 }
 
+/**
+ * Creates a record in the allow_override table 
+ * @param int sroleid - source roleid
+ * @param int troleid - target roleid
+ * @return int - id or false
+ */
+function allow_override($sroleid, $troleid) {
+    $record->roleid = $sroleid;
+    $record->allowoverride = $troleid;
+    return insert_record('role_allow_override', $record);
+}
+
+/**
+ * Creates a record in the allow_assign table 
+ * @param int sroleid - source roleid
+ * @param int troleid - target roleid
+ * @return int - id or false
+ */
+function allow_assign($sroleid, $troleid) {
+    $record->roleid = $sroleid;
+    $record->allowassign = $troleid;
+    return insert_record('role_allow_assign', $record);
+}
+
+/**
+ * gets a list of roles assignalbe in this context for this user
+ * @param object $context
+ * @return array
+ */
+function get_assignable_roles ($context) {
+
+    $role = get_records('role');
+    $options = array();
+    foreach ($role as $rolex) {
+        if (user_can_assign($context, $rolex->id)) {
+            $options[$rolex->id] = $rolex->name;
+        }
+    }
+    return $options;
+}
+
+/**
+ * gets a list of roles that can be overriden in this context by this user
+ * @param object $context
+ * @return array
+ */
+function get_overridable_roles ($context) {
+
+    $role = get_records('role');
+    $options = array();
+    foreach ($role as $rolex) {
+        if (user_can_override($context, $rolex->id)) {
+            $options[$rolex->id] = $rolex->name;
+        }
+    } 
+    
+    return $options;  
+  
+}
 ?>

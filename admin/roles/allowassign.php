@@ -39,9 +39,7 @@
             foreach ($roles as $trole) {
                 if (isset($temp[$srole->id][$trole->id])) { // if set, need to write to db
                     if (!$record = get_record('role_allow_assign', 'roleid', $srole->id, 'allowassign', $trole->id)) {
-                        $record->roleid = $srole->id;
-                        $record->allowassign = $trole->id;
-                        insert_record('role_allow_assign', $record);
+                        allow_assign($srole->id, $trole->id);
                     }
                 } else { //if set, means can access, attempt to remove it from db
                     delete_records('role_allow_assign', 'roleid', $srole->id, 'allowassign', $trole->id);

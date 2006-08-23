@@ -30,6 +30,7 @@
     $strshowall = get_string('showall');
 
     $context = get_record('context', 'id', $contextid);
+    $overridableroles = get_overridable_roles($context);
     
     // role overriding permission checking
     if ($roleid) {
@@ -43,6 +44,8 @@
     $fullname = fullname($user, has_capability('moodle/site:viewfullnames', $context));
     $straction = get_string('overrideroles', 'role');
 
+    
+    
     // we got a few tabs there
     if ($context->aggregatelevel == CONTEXT_USERID) {
       
@@ -118,15 +121,6 @@
     /*****************************************
       * drop down for swapping between roles  *
       *****************************************/
-      
-     // this needs to check capability too
-    $role = get_records('role');
-    $options = array();
-    foreach ($role as $rolex) {
-        if (user_can_override($context, $rolex->id)) {
-            $options[$rolex->id] = $rolex->name;
-        }
-    }
 
     print ('<form name="rolesform" action="override.php" method="post">');
     print ('<div align="center">'.$strcurrentcontext.': '.print_context_name($context).'<br/>');
@@ -137,7 +131,7 @@
     if ($course->id) {
         print ('<input type="hidden" name="courseid" value="'.$courseid.'" />');
     }
-    choose_from_menu ($options, 'roleid', $roleid, 'choose', $script='rolesform.submit()');
+    choose_from_menu ($overridableroles, 'roleid', $roleid, 'choose', $script='rolesform.submit()');
     print ('</div></form>');
    
     /**************************************
