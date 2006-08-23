@@ -20,9 +20,13 @@ class qformat_xml extends qformat_default {
 
     // IMPORT FUNCTIONS START HERE
 
+    /* 
+     * Translate human readable format name
+     * into internal Moodle code number
+     * @PARAM string name format name from xml file
+     * @RETURN int Moodle format code
+     */
     function trans_format( $name ) {
-    // translate text format string to its internal code
-
         $name = trim($name); 
  
         if ($name=='moodle_auto_format') {
@@ -46,9 +50,13 @@ class qformat_xml extends qformat_default {
         return $id;
     }
 
+    /*
+     * Translate human readable single answer option
+     * to internal code number
+     * @PARAM string name true/false
+     * @RETURN int internal code number
+     */
     function trans_single( $name ) {
-    // translate single string to its internal format
-
       $name = trim($name);
 
       if ($name=="true") {
@@ -63,16 +71,23 @@ class qformat_xml extends qformat_default {
       return $id;
     }
 
+    /*
+     * process text string from xml file
+     * @PARAM array text bit of xml tree after ['text']
+     * @RETURN string processed text
+     */
     function import_text( $text ) {
-    // handle xml 'text' element
         $data = $text[0]['#'];
         $data = html_entity_decode( $data );
         return addslashes(trim( $data ));
     }
 
+    /*
+     * import parts of question common to all types
+     * @PARAM array question question array from xml tree
+     * @RETURN object question object
+     */
     function import_headers( $question ) {
-    // read bits that are common to all questions
-
         // this routine initialises the question object
         $name = $this->import_text( $question['#']['name'][0]['#']['text'] );
         $qtext = $this->import_text( $question['#']['questiontext'][0]['#']['text'] );
@@ -81,6 +96,9 @@ class qformat_xml extends qformat_default {
         if (!empty($question['#']['image_base64'][0]['#'])) {
             $image_base64 = stripslashes( trim( $question['#']['image_base64'][0]['#'] ) );
             $image = $this->importimagefile( $image, $image_base64 );
+        }
+        if (!empty($question['#']['defaultgrade'][0]['#'])) {
+            $qo->defaultgrade = $question['#']['defaultgrade'][0]['#'];
         }
         $penalty = $question['#']['penalty'][0]['#'];
 
@@ -94,10 +112,12 @@ class qformat_xml extends qformat_default {
         return $qo;
     }
 
-
+    /*
+     * import the common parts of a single answer
+     * @PARAM array answer xml tree for single answer
+     * @RETURN object answer object
+     */   
     function import_answer( $answer ) {
-    // import answer part of question
-
         $fraction = $answer['@']['fraction'];
         $text = $this->import_text( $answer['#']['text']);
         $feedback = $this->import_text( $answer['#']['feedback'][0]['#']['text'] );
@@ -110,9 +130,12 @@ class qformat_xml extends qformat_default {
         return $ans;
     }
 
+    /*
+     * import multiple choice question 
+     * @PARAM array question question array from xml tree
+     * @RETURN object question object
+     */
     function import_multichoice( $question ) {
-    // import multichoice type questions
-
         // get common parts
         $qo = $this->import_headers( $question );
 
@@ -135,9 +158,12 @@ class qformat_xml extends qformat_default {
         return $qo;
     }
 
+    /*
+     * import cloze type question
+     * @PARAM array question question array from xml tree
+     * @RETURN object question object
+     */
     function import_multianswer( $questions ) {
-    // import multianswer (cloze) type questions
-    
         $qo = qtype_multianswer_extract_question($this->import_text( 
             $questions['#']['questiontext'][0]['#']['text'] ));
 
@@ -152,9 +178,12 @@ class qformat_xml extends qformat_default {
         return $qo;
     }
 
+    /*
+     * import true/false type question
+     * @PARAM array question question array from xml tree
+     * @RETURN object question object
+     */
     function import_truefalse( $question ) {
-    // import true/false type question
-
         // get common parts
         $qo = $this->import_headers( $question );
 
@@ -183,9 +212,12 @@ class qformat_xml extends qformat_default {
         return $qo;
     }
 
+    /*
+     * import short answer type question
+     * @PARAM array question question array from xml tree
+     * @RETURN object question object
+     */
     function import_shortanswer( $question ) {
-    // import short answer question
-
         // get common parts
         $qo = $this->import_headers( $question );
 
@@ -209,9 +241,12 @@ class qformat_xml extends qformat_default {
         return $qo;
     }
     
+    /*
+     * import regexp type question
+     * @PARAM array question question array from xml tree
+     * @RETURN object question object
+     */
     function import_regexp( $question ) {
-    // import short answer question
-
         // get common parts
         $qo = $this->import_headers( $question );
 
@@ -235,6 +270,11 @@ class qformat_xml extends qformat_default {
         return $qo;
     }
     
+    /*
+     * import description type question
+     * @PARAM array question question array from xml tree
+     * @RETURN object question object
+     */
     function import_description( $question ) {
         // get common parts
         $qo = $this->import_headers( $question );
@@ -242,9 +282,13 @@ class qformat_xml extends qformat_default {
         $qo->qtype = DESCRIPTION;
         return $qo;
     }
-    function import_numerical( $question ) {
-    // import numerical question
 
+    /*
+     * import numerical type question
+     * @PARAM array question question array from xml tree
+     * @RETURN object question object
+     */
+    function import_numerical( $question ) {
         // get common parts
         $qo = $this->import_headers( $question );
 
@@ -277,9 +321,12 @@ class qformat_xml extends qformat_default {
         return $qo;
     }
 
+    /*
+     * import matching type question
+     * @PARAM array question question array from xml tree
+     * @RETURN object question object
+     */
     function import_matching( $question ) {
-        // import matching question
-
         // get common parts
         $qo = $this->import_headers( $question );
 
@@ -306,11 +353,35 @@ class qformat_xml extends qformat_default {
         return $qo;
     }
 
-    function readquestions($lines) {
-    // parse the array of lines into an array of questions
-    // this *could* burn memory - but it won't happen that much
-    // so fingers crossed!
+    /*
+     * import  essay type question
+     * @PARAM array question question array from xml tree
+     * @RETURN object question object
+     */
+    function import_essay( $question ) {
+        // get common parts
+        $qo = $this->import_headers( $question );
 
+        // header parts particular to essay
+        $qo->qtype = ESSAY;
+
+        // get feedback
+        $qo->feedback = $this->import_text( $question['#']['answer'][0]['#']['feedback'][0]['#']['text'] );        
+
+        // get fraction
+        $qo->fraction = $question['#']['answer'][0]['#']['fraction'][0]['#'];
+
+        return $qo;
+    }
+
+    /**
+     * parse the array of lines into an array of questions
+     * this *could* burn memory - but it won't happen that much
+     * so fingers crossed!
+     * @PARAM array lines array of lines from the input file
+     * @RETURN array (of objects) question objects
+     */
+    function readquestions($lines) {
         // we just need it as one big string
         $text = implode($lines, " ");
         unset( $lines );
@@ -327,7 +398,6 @@ class qformat_xml extends qformat_default {
         foreach ($xml['quiz']['#']['question'] as $question) {
             $question_type = $question['@']['type'];
             $questiontype = get_string( 'questiontype','quiz',$question_type );
-            // echo "<p>$questiontype</p>"; 
 
             if ($question_type=='multichoice') {
                 $qo = $this->import_multichoice( $question );
@@ -351,7 +421,10 @@ class qformat_xml extends qformat_default {
                 $qo = $this->import_matching( $question );
             }
             elseif ($question_type=='cloze') {
-              $qo = $this->import_multianswer( $question );
+                $qo = $this->import_multianswer( $question );
+            }
+            elseif ($question_type=='essay') {
+                $qo = $this->import_essay( $question );
             }
             else {
                 $notsupported = get_string( 'xmltypeunsupported','quiz',$question_type );
@@ -370,101 +443,21 @@ class qformat_xml extends qformat_default {
 
     // EXPORT FUNCTIONS START HERE
 
-    function indent_xhtml($source, $indenter = ' ') { 
-        // xml tidier-upper
-        // (c) Ari Koivula http://ventionline.com
-    
-        // Remove all pre-existing formatting. 
-        // Remove all newlines. 
-        $source = str_replace("\n", '', $source); 
-        $source = str_replace("\r", '', $source); 
-        // Remove all tabs. 
-        $source = str_replace("\t", '', $source); 
-        // Remove all space after ">" and before "<". 
-        $source = ereg_replace(">( )*", ">", $source); 
-        $source = ereg_replace("( )*<", "<", $source); 
-
-        // Iterate through the source. 
-        $level = 0; 
-        $source_len = strlen($source); 
-        $pt = 0; 
-        while ($pt < $source_len) { 
-            if ($source{$pt} === '<') { 
-                // We have entered a tag. 
-                // Remember the point where the tag starts. 
-                $started_at = $pt; 
-                $tag_level = 1; 
-                // If the second letter of the tag is "/", assume its an ending tag. 
-                if ($source{$pt+1} === '/') { 
-                    $tag_level = -1; 
-                } 
-                // If the second letter of the tag is "!", assume its an "invisible" tag. 
-                if ($source{$pt+1} === '!') { 
-                    $tag_level = 0; 
-                } 
-                // Iterate throught the source until the end of tag. 
-                while ($source{$pt} !== '>') { 
-                    $pt++; 
-                } 
-                // If the second last letter is "/", assume its a self ending tag. 
-                if ($source{$pt-1} === '/') { 
-                    $tag_level = 0; 
-                } 
-                $tag_lenght = $pt+1-$started_at; 
-             
-                // Decide the level of indention for this tag. 
-                // If this was an ending tag, decrease indent level for this tag.. 
-                if ($tag_level === -1) { 
-                    $level--; 
-                } 
-                // Place the tag in an array with proper indention. 
-                $array[] = str_repeat($indenter, $level).substr($source, $started_at, $tag_lenght); 
-                // If this was a starting tag, increase the indent level after this tag. 
-                if ($tag_level === 1) { 
-                    $level++; 
-                } 
-                // if it was a self closing tag, dont do shit. 
-            } 
-            // Were out of the tag. 
-            // If next letter exists... 
-            if (($pt+1) < $source_len) { 
-                // ... and its not an "<". 
-                if ($source{$pt+1} !== '<') { 
-                    $started_at = $pt+1; 
-                    // Iterate through the source until the start of new tag or until we reach the end of file. 
-                    while ($source{$pt} !== '<' && $pt < $source_len) { 
-                         $pt++; 
-                    } 
-                    // If we found a "<" (we didnt find the end of file) 
-                    if ($source{$pt} === '<') { 
-                        $tag_lenght = $pt-$started_at; 
-                        // Place the stuff in an array with proper indention. 
-                        $array[] = str_repeat($indenter, $level).substr($source, $started_at, $tag_lenght); 
-                    }  
-                // If the next tag is "<", just advance pointer and let the tag indenter take care of it. 
-                } else { 
-                    $pt++; 
-                } 
-            // If the next letter doesnt exist... Were done... well, almost.. 
-            } else { 
-                break; 
-            } 
-        } 
-        // Replace old source with the new one we just collected into our array. 
-        $source = implode($array, "\n"); 
-        return $source; 
-    } 
-
-
     function export_file_extension() {
     // override default type so extension is .xml
     
         return ".xml";
     }
 
+
+    /**
+     * Turn the internal question code into a human readable form
+     * (The code used to be numeric, but this remains as some of
+     * the names don't match the new internal format)
+     * @PARAM mixed type_id Internal code
+     * @RETURN string question type string
+     */
     function get_qtype( $type_id ) {
-    // translates question type code number into actual name
-   
         switch( $type_id ) {
         case TRUEFALSE:
             $name = 'truefalse';
@@ -490,15 +483,22 @@ class qformat_xml extends qformat_default {
         case MULTIANSWER:
             $name = 'cloze';
             break;
+        case ESSAY:
+            $name = 'essay';
+            break;
         default:
             $name = 'unknown';
         }
         return $name;
     }
 
+    /*
+     * Convert internal Moodle text format code into
+     * human readable form
+     * @PARAM int id internal code
+     * @RETURN string format text
+     */
     function get_format( $id ) {
-    // translates question text format id number into something sensible
-
         switch( $id ) {
         case 0:
             $name = "moodle_auto_format";
@@ -521,9 +521,13 @@ class qformat_xml extends qformat_default {
         return $name;
     }
 
+    /*
+     * Convert internal single question code into 
+     * human readable form
+     * @PARAM int id single question code
+     * @RETURN string single question string
+     */
     function get_single( $id ) {
-    // translate single value into something sensible
-
         switch( $id ) {
         case 0:
             $name = "false";
@@ -537,10 +541,13 @@ class qformat_xml extends qformat_default {
         return $name;
     }
 
+    /*
+     * generates <text></text> tags, processing raw text therein 
+     * @PARAM int ilev the current indent level
+     * @PARAM boolean short stick it on one line
+     * @RETURN string formatted text
+     */
     function writetext( $raw, $ilev=0, $short=true) {
-    // generates <text></text> tags, processing raw text therein 
-    // $ilev is the current indent level
-    // $short=true sticks it on one line
         $indent = str_repeat( "  ",$ilev );
 
         // encode the text to 'disguise' HTML content 
@@ -567,8 +574,12 @@ class qformat_xml extends qformat_default {
         return $content;
     }
 
+    /*
+     * Include an image encoded in base 64
+     * @PARAM string imagepath The location of the image file
+     * @RETURN string xml code segment 
+     */
     function writeimage( $imagepath ) {
-    // includes image in base64
         global $CFG;
    
         if (empty($imagepath)) {
@@ -585,10 +596,12 @@ class qformat_xml extends qformat_default {
         return $content;
     }
 
+    /*
+     * Turns question into an xml segment
+     * @PARAM array question question array
+     * @RETURN string xml segment
+     */
     function writequestion( $question ) {
-    // turns question into string
-    // question reflects database fields for general question and specific to type
-
         // initial string;
         $expout = "";
 
@@ -610,6 +623,7 @@ class qformat_xml extends qformat_default {
             $expout .= "    </questiontext>\n";   
             $expout .= "    <image>{$question->image}</image>\n";
             $expout .= $this->writeimage($question->image);
+            $expout .= "    <defaultgrade>{$question->defaultgrade}</defaultgrade>\n";
             $expout .= "    <penalty>{$question->penalty}</penalty>\n";
             $expout .= "    <hidden>{$question->hidden}</hidden>\n";
         }
@@ -713,7 +727,7 @@ class qformat_xml extends qformat_default {
             }
             break;
         case DESCRIPTION:
-            // nothing more to do for theis type
+            // nothing more to do for this type
             break;
         case MULTIANSWER:
             $a_count=1;
@@ -724,15 +738,21 @@ class qformat_xml extends qformat_default {
                 $a_count++;
             }
         break;
+        case ESSAY:
+            foreach ($question->options->answers as $answer) {
+                $expout .= "<answer>\n";
+                $expout .= "    <feedback>".$this->writetext( $answer->feedback )."</feedback>\n";
+                $expout .= "    <fraction>{$answer->fraction}</fraction>\n";
+                $expout .= "</answer>\n";
+            }
+            
+            break;
         default:
             $expout .= "<!-- Question type is unknown or not supported (Type=$question->qtype) -->\n";
         }
 
         // close the question tag
         $expout .= "</question>\n";
-
-        // run through xml tidy function
-        // $tidy_expout = $this->indent_xhtml( $expout, '    ' ) . "\n\n";
 
         return $expout;
     }
