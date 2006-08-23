@@ -207,11 +207,6 @@ class block_admin extends block_list {
             $this->content->items[]='<a href="http://docs.moodle.org/'.$lang.'/Teacher_documentation">'.get_string('help').'</a>';
             $this->content->icons[]='<img src="'.$CFG->modpixpath.'/resource/icon.gif" alt="" />';
 
-            if ($teacherforum = forum_get_course_forum($this->instance->pageid, 'teacher')) {
-                $this->content->items[]='<a href="'.$CFG->wwwroot.'/mod/forum/view.php?f='.$teacherforum->id.'">'.get_string('nameteacher', 'forum').'</a>';
-                $this->content->icons[]='<img src="'.$CFG->modpixpath.'/forum/icon.gif" alt="" />';
-            }
-
         } else if (!isguest()) {  // Students menu
 
             if ($course->showgrades) {
