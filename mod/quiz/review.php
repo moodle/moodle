@@ -41,7 +41,7 @@
 
     require_login($course->id, false, $cm);
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-    $coursecontext = get_context_instance(CONTEXT_COURSE, $id);
+    $coursecontext = get_context_instance(CONTEXT_COURSE, $cm->course);
     $isteacher = isteacher($course->id);
     $options = quiz_get_reviewoptions($quiz, $attempt, $isteacher);
     $popup = $isteacher ? 0 : $quiz->popup; // Controls whether this is shown in a javascript-protected window.
