@@ -841,6 +841,8 @@ function create_context($aggregatelevel, $instanceid) {
  */
 function get_context_instance($aggregatelevel=NULL, $instance=SITEID) {
 
+    global $context_cache, $context_cache_id;
+
 /// If no level is supplied then return the current global context if there is one
     if (empty($aggregatelevel)) {
         if (empty($CONTEXT)) {
@@ -877,6 +879,8 @@ function get_context_instance($aggregatelevel=NULL, $instance=SITEID) {
  * @param $id
  */
 function get_context_instance_by_id($id) {
+
+    global $context_cache, $context_cache_id;
 
     if (isset($context_cache_id[$id])) {  // Already cached
         return $context_cache_id[$id];
