@@ -252,6 +252,7 @@ function blocks_have_content(&$pageblocks, $position) {
 // This function prints one group of blocks in a page
 // Parameters passed by reference for speed; they are not modified.
 function blocks_print_group(&$page, &$pageblocks, $position) {
+    global $COURSE;
 
     if(empty($pageblocks[$position])) {
         $pageblocks[$position] = array();
@@ -318,17 +319,16 @@ function blocks_print_group(&$page, &$pageblocks, $position) {
             $obj->_add_edit_controls($options);
         }
 
-        if(!$instance->visible) {
-            if($isediting) {
+        if (!$instance->visible && empty($COURSE->javascriptportal)) {
+            if ($isediting) {
                 $obj->_print_shadow();
             }
-        }
-        else {
+        } else {
             $obj->_print_block();
         }
     }
 
-    if($page->blocks_default_position() == $position && $page->user_is_editing()) {
+    if ($page->blocks_default_position() == $position && $page->user_is_editing()) {
         blocks_print_adminblock($page, $pageblocks);
     }
 

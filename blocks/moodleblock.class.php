@@ -218,8 +218,10 @@ class block_base {
      * Display the block!
      */
     function _print_block() {
+    	global $COURSE;
+
         // is_empty() includes a call to get_content()
-        if ($this->is_empty()) {
+        if ($this->is_empty()&&!($COURSE->javascriptportal)) {
             if (empty($this->edit_controls)) {
                 // No content, no edit controls, so just shut up
                 return;
@@ -234,6 +236,11 @@ class block_base {
             } else {
                 // The full treatment, please. Include the title text.
                 print_side_block($this->_title_html(), $this->content->text, NULL, NULL, $this->content->footer, $this->html_attributes(), $this->title);
+            }
+            
+            //make a record of the block for the ajax course format to use
+            if (!empty($COURSE->javascriptportal)) {
+                $COURSE->javascriptportal->block_add('inst'.$this->instance->id,!$this->instance->visible);	
             }
         }
     }
@@ -664,8 +671,11 @@ class block_list extends block_base {
     }
 
     function _print_block() {
+    	global $COURSE;
+
         // is_empty() includes a call to get_content()
-        if ($this->is_empty()) {
+
+        if ($this->is_empty()&&!($COURSE->javascriptportal)) {
             if (empty($this->edit_controls)) {
                 // No content, no edit controls, so just shut up
                 return;
@@ -676,10 +686,17 @@ class block_list extends block_base {
         } else {
             if ($this->hide_header() && empty($this->edit_controls)) {
                 // Header wants to hide, no edit controls to show, so no header it is
-                print_side_block(NULL, '', $this->content->items, $this->content->icons, $this->content->footer, $this->html_attributes());
+                print_side_block(NULL, '', $this->content->items, $this->content->icons, 
+                                 $this->content->footer, $this->html_attributes());
             } else {
                 // The full treatment, please. Include the title text.
-                print_side_block($this->_title_html(), '', $this->content->items, $this->content->icons, $this->content->footer, $this->html_attributes(), $this->title);
+                print_side_block($this->_title_html(), '', $this->content->items, $this->content->icons, 
+                                 $this->content->footer, $this->html_attributes(), $this->title);
+            }
+            
+            //make a record of the block for the ajax course format to use
+            if (!empty($COURSE->javascriptportal)) {
+                $COURSE->javascriptportal->block_add('inst'.$this->instance->id,!$this->instance->visible);	
             }
         }
     }
