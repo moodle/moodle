@@ -59,13 +59,13 @@
 /// moved here to fix bug 5734
     if ($course->metacourse) {
         print_header_simple();
-        notice(get_string('coursenotaccessible'), $CFG->wwwroot);
+        notice(get_string('coursenotaccessible'), "$CFG->wwwroot/index.php");
     }
     
 /// Users can't enroll to site course
     if (!$course->category) {
         print_header_simple();
-        notice(get_string('enrollfirst'), $CFG->wwwroot);
+        notice(get_string('enrollfirst'), "$CFG->wwwroot/index.php");
     }
 
 /// Double check just in case they are enrolled to start in the future 
@@ -74,14 +74,14 @@
         if ($course->enrolperiod and $student->timestart and ($student->timestart >= time())) {
             $message = get_string('enrolmentnotyet', '', userdate($student->timestart));
             print_header();
-            notice($message, $CFG->wwwroot);
+            notice($message, "$CFG->wwwroot/index.php");
         }
     }
 
 /// Check if the course is enrollable
     if (!method_exists($enrol, 'print_entry')) {
         print_header_simple();
-        notice(get_string('enrolmentnointernal'), $CFG->wwwroot);
+        notice(get_string('enrolmentnointernal'), "$CFG->wwwroot/index.php");
     }
 
     if (!$course->enrollable ||
@@ -89,7 +89,7 @@
             ($course->enrollable == 2 && $course->enrolenddate > 0 && $course->enrolenddate <= time())
             ) {
         print_header_simple();
-        notice(get_string('notenrollable'), $CFG->wwwroot);
+        notice(get_string('notenrollable'), "$CFG->wwwroot/index.php");
     }
 
 /// Check the submitted enrollment key if there is one
