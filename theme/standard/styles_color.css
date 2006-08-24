@@ -615,10 +615,7 @@ table.message_search_results td {
 .truefalse .answer {
 	background-color: #EEE;
 }
-.calculated .feedback,
-.numerical .feedback,
-.shortanswer .feedback,
-.truefalse .feedback {
+.que .feedback {
   border-color: #DDD;
 }	
 .que.multianswer .incorrect {

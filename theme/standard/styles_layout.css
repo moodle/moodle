@@ -1208,7 +1208,7 @@ body#message-messages {
   padding: 0 0 0.3em 0.3em;
   border: 1px solid;
 }
-.multichoice .feedback {
+.multichoice td.feedback {
   width: auto;
   vertical-align: top;
   padding-top: 0.3em;

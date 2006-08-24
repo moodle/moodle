@@ -83,6 +83,21 @@ class qformat_xml extends qformat_default {
     }
 
     /**
+     * Process text from an element in the XML that may or not be there.
+     * @param string $subelement the name of the element which is either present or missing.
+     * @param array $question a bit of xml tree, this method looks for $question['#'][$subelement][0]['#']['text'].
+     * @return string If $subelement is present, return the content of the text tag inside it.
+     *      Otherwise returns an empty string.
+     */
+    function import_optional_text($subelement, $question) {
+        if (array_key_exists($subelement, $question['#'])) {
+            return $this->import_text($question['#'][$subelement][0]['#']['text']);
+        } else {
+            return '';
+        }
+    }
+
+    /**
      * import parts of question common to all types
      * @param array question question array from xml tree
      * @return object question object
@@ -149,7 +164,16 @@ class qformat_xml extends qformat_default {
         $qo->qtype = MULTICHOICE;
         $single = $question['#']['single'][0]['#'];
         $qo->single = $this->trans_single( $single );
-
+        if (array_key_exists('shuffleanswers', $question['#'])) {
+            $shuffleanswers = $question['#']['shuffleanswers'][0]['#'];
+        } else {
+            $shuffleanswers = 'false';
+        }
+        $qo->$shuffleanswers = $this->trans_single($shuffleanswers);
+        $qo->correctfeedback = $this->import_optional_text('correctfeedback', $question);
+        $qo->partiallycorrectfeedback = $this->import_optional_text('partiallycorrectfeedback', $question);
+        $qo->incorrectfeedback = $this->import_optional_text('incorrectfeedback', $question);
+        
         // run through the answers
         $answers = $question['#']['answer'];  
         $a_count = 0;
@@ -671,6 +695,10 @@ class qformat_xml extends qformat_default {
             break;
         case MULTICHOICE:
             $expout .= "    <single>".$this->get_single($question->options->single)."</single>\n";
+            $expout .= "    <shuffleanswers>".$this->get_single($question->options->shuffleanswers)."</shuffleanswers>\n";
+            $expout .= "    <correctfeedback>".$this->writetext($question->options->correctfeedback, 3)."</correctfeedback>\n";
+            $expout .= "    <partiallycorrectfeedback>".$this->writetext($question->options->partiallycorrectfeedback, 3)."</partiallycorrectfeedback>\n";
+            $expout .= "    <incorrectfeedback>".$this->writetext($question->options->incorrectfeedback, 3)."</incorrectfeedback>\n";
             foreach($question->options->answers as $answer) {
                 $percent = $answer->fraction * 100;
                 $expout .= "      <answer fraction=\"$percent\">\n";

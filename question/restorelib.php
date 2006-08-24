@@ -614,6 +614,7 @@
             $state->grade = backup_todb($res_info['#']['GRADE']['0']['#']);
             $state->raw_grade = backup_todb($res_info['#']['RAW_GRADE']['0']['#']);
             $state->penalty = backup_todb($res_info['#']['PENALTY']['0']['#']);
+            $state->oldid = $oldid; // So it is available to restore_recode_answer.
 
             //We have to recode the question field
             $question = backup_getid($restore->backup_unique_code,"question",$state->question);

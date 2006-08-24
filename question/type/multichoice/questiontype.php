@@ -35,7 +35,7 @@ class question_multichoice_qtype extends default_questiontype {
     }
 
     function save_question_options($question) {
-
+        $result = new stdClass;
         if (!$oldanswers = get_records("question_answers", "question",
                                        $question->id, "id ASC")) {
             $oldanswers = array();
@@ -50,7 +50,7 @@ class question_multichoice_qtype extends default_questiontype {
         }
         $answercount += count($oldanswers);
         if ($answercount < 2) { // check there are at lest 2 answers for multiple choice
-            $result->notice = get_string("notenoughanswers", "quiz", "2");
+            $result->notice = get_string("notenoughanswers", "qtype_multichoice", "2");
             return $result;
         }
 
@@ -93,20 +93,26 @@ class question_multichoice_qtype extends default_questiontype {
             }
         }
 
-        if ($options = get_record("question_multichoice", "question", $question->id)) {
-            $options->answers = implode(",",$answers);
-            $options->single = $question->single;
-            $options->shuffleanswers = $question->shuffleanswers;
+        $update = true;
+        $options = get_record("question_multichoice", "question", $question->id);
+        if (!$options) {
+            $update = false;
+            $options = new stdClass;
+            $options->question = $question->id;
+            
+        }
+        $options->answers = implode(",",$answers);
+        $options->single = $question->single;
+        $options->shuffleanswers = $question->shuffleanswers;
+        $options->correctfeedback = trim($question->correctfeedback);
+        $options->partiallycorrectfeedback = trim($question->partiallycorrectfeedback);
+        $options->incorrectfeedback = trim($question->incorrectfeedback);
+        if ($update) {
             if (!update_record("question_multichoice", $options)) {
                 $result->error = "Could not update quiz multichoice options! (id=$options->id)";
                 return $result;
             }
         } else {
-            unset($options);
-            $options->question = $question->id;
-            $options->answers = implode(",",$answers);
-            $options->single = $question->single;
-            $options->shuffleanswers = $question->shuffleanswers;
             if (!insert_record("question_multichoice", $options)) {
                 $result->error = "Could not insert quiz multichoice options!";
                 return $result;
@@ -124,14 +130,14 @@ class question_multichoice_qtype extends default_questiontype {
         if ($options->single) {
             if ($maxfraction != 1) {
                 $maxfraction = $maxfraction * 100;
-                $result->noticeyesno = get_string("fractionsnomax", "quiz", $maxfraction);
+                $result->noticeyesno = get_string("fractionsnomax", "qtype_multichoice", $maxfraction);
                 return $result;
             }
         } else {
             $totalfraction = round($totalfraction,2);
             if ($totalfraction != 1) {
                 $totalfraction = $totalfraction * 100;
-                $result->noticeyesno = get_string("fractionsaddwrong", "quiz", $totalfraction);
+                $result->noticeyesno = get_string("fractionsaddwrong", "qtype_multichoice", $totalfraction);
                 return $result;
             }
         }
@@ -291,6 +297,7 @@ class question_multichoice_qtype extends default_questiontype {
                          ? 'checked="checked"' : '';
             }
 
+            $a = new stdClass;
             $a->id   = $question->name_prefix . $aid;
 
             // Print the control
@@ -314,6 +321,21 @@ class question_multichoice_qtype extends default_questiontype {
 
             $anss[] = clone($a);
         }
+        
+        $feedback = '';
+        if ($options->feedback) {
+            if ($state->raw_grade >= $question->maxgrade/1.01) {
+                $feedback = $question->options->correctfeedback;                
+            } else if ($state->raw_grade > 0) {
+                $feedback = $question->options->partiallycorrectfeedback;                
+            } else {
+                $feedback = $question->options->incorrectfeedback;                
+            }
+            $feedback = format_text($feedback,
+                    $question->questiontextformat,
+                    $formatoptions, $cmoptions->course);
+        }
+        
         include("$CFG->dirroot/question/type/multichoice/display.html");
     }
 
@@ -392,6 +414,9 @@ class question_multichoice_qtype extends default_questiontype {
                 fwrite ($bf,full_tag("ANSWERS",$level+1,false,$multichoice->answers));
                 fwrite ($bf,full_tag("SINGLE",$level+1,false,$multichoice->single));
                 fwrite ($bf,full_tag("SHUFFLEANSWERS",$level+1,false,$multichoice->shuffleanswers));
+                fwrite ($bf,full_tag("CORRECTFEEDBACK",$level+1,false,$multichoice->correctfeedback));
+                fwrite ($bf,full_tag("PARTIALLYCORRECTFEEDBACK",$level+1,false,$multichoice->partiallycorrectfeedback));
+                fwrite ($bf,full_tag("INCORRECTFEEDBACK",$level+1,false,$multichoice->incorrectfeedback));
                 $status = fwrite ($bf,end_tag("MULTICHOICE",$level,true));
             }
 
@@ -420,11 +445,27 @@ class question_multichoice_qtype extends default_questiontype {
             $mul_info = $multichoices[$i];
 
             //Now, build the question_multichoice record structure
+            $multichoice = new stdClass;
             $multichoice->question = $new_question_id;
             $multichoice->layout = backup_todb($mul_info['#']['LAYOUT']['0']['#']);
             $multichoice->answers = backup_todb($mul_info['#']['ANSWERS']['0']['#']);
             $multichoice->single = backup_todb($mul_info['#']['SINGLE']['0']['#']);
             $multichoice->shuffleanswers = backup_todb($mul_info['#']['SHUFFLEANSWERS']['0']['#']);
+            if (array_key_exists("CORRECTFEEDBACK", $mul_info['#'])) {
+                $multichoice->correctfeedback = backup_todb($mul_info['#']['CORRECTFEEDBACK']['0']['#']);
+            } else {
+                $multichoice->correctfeedback = '';
+            }
+            if (array_key_exists("PARTIALLYCORRECTFEEDBACK", $mul_info['#'])) {
+                $multichoice->partiallycorrectfeedback = backup_todb($mul_info['#']['PARTIALLYCORRECTFEEDBACK']['0']['#']);
+            } else {
+                $multichoice->partiallycorrectfeedback = '';
+            }
+            if (array_key_exists("INCORRECTFEEDBACK", $mul_info['#'])) {
+                $multichoice->incorrectfeedback = backup_todb($mul_info['#']['INCORRECTFEEDBACK']['0']['#']);
+            } else {
+                $multichoice->incorrectfeedback = '';
+            }
 
             //We have to recode the answers field (a list of answers id)
             //Extracts answer id from sequence
@@ -490,7 +531,7 @@ class question_multichoice_qtype extends default_questiontype {
                 if ($answer) {
                     $order[$key] = $answer->new_id;
                 } else {
-                    echo 'Could not recode multichoice answer id '.$oldansid.' for state '.$oldid.'<br />';
+                    echo 'Could not recode multichoice answer id '.$oldansid.' for state '.$state->oldid.'<br />';
                 }
             }
         }
@@ -500,7 +541,7 @@ class question_multichoice_qtype extends default_questiontype {
                 if ($answer) {
                     $responses[$key] = $answer->new_id;
                 } else {
-                    echo 'Could not recode multichoice response answer id '.$oldansid.' for state '.$oldid.'<br />';
+                    echo 'Could not recode multichoice response answer id '.$oldansid.' for state '.$state->oldid.'<br />';
                 }
             }
         }

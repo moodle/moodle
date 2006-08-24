@@ -2,28 +2,28 @@
 $QTYPES[$question->qtype]->print_question_form_start($question, array(), $course, $usehtmleditor);
 ?>
   <tr valign="top">
-    <td align="right"><b><?php  print_string("answerhowmany", "quiz") ?>:</b></td>
+    <td align="right"><b><?php  print_string("answerhowmany", "qtype_multichoice") ?>:</b></td>
     <td align="left">
       <?php
-          $menu[0] = get_string("answersingleno", "quiz");
-          $menu[1] = get_string("answersingleyes", "quiz");
+          $menu[0] = get_string("answersingleno", "qtype_multichoice");
+          $menu[1] = get_string("answersingleyes", "qtype_multichoice");
           choose_from_menu($menu, "single", "$options->single", "");
           unset($menu);
       ?>
     </td>
   </tr>
 <tr valign="top">
-    <td align="right"><b><?php print_string("shuffleanswers", "quiz") ?>:</b></td>
+    <td align="right"><b><?php print_string("shuffleanswers", "qtype_multichoice") ?>:</b></td>
      <td align="left">
     <?php
         choose_from_menu($yesnooptions, "shuffleanswers", "$options->shuffleanswers", "");
-        helpbutton("multichoiceshuffle", get_string("shuffleanswers","quiz"), "quiz");
+        helpbutton("multichoiceshuffle", get_string("shuffleanswers","qtype_multichoice"), "quiz");
      ?>
     </td>
 </tr>
   <tr valign="top">
-    <td align="right"><b><?php  print_string("choices", "quiz") ?></b>:</td>
-    <td align="left"><?php  print_string("fillouttwochoices", "quiz") ?></td>
+    <td align="right"><b><?php  print_string("choices", "qtype_multichoice") ?></b>:</td>
+    <td align="left"><?php  print_string("fillouttwochoices", "qtype_multichoice") ?></td>
   </tr>
 
 <?php
@@ -36,9 +36,9 @@ for ($i=1; $i<=count($answers); $i++) {
 ?>
 
   <tr valign="top">
-    <td align="right"><b><?php  echo get_string("choice", "quiz")." $i";  ?>:</b></td>
+    <td align="right"><b><?php print_string("choiceno", "qtype_multichoice", $i); ?>:</b></td>
     <td align="left">
-      <input type="text" name="answer[]" size="50" value="<?php  p($answers[$i-1]->answer) ?>" alt="<?php  echo get_string("choice", "quiz")." $i";  ?>"/>&nbsp;&nbsp;
+      <input type="text" name="answer[]" size="50" value="<?php  p($answers[$i-1]->answer) ?>" />&nbsp;&nbsp;
       <?php
           print_string("grade");
           echo ":&nbsp;";
@@ -49,7 +49,7 @@ for ($i=1; $i<=count($answers); $i++) {
   </tr>
 
   <tr valign="top">
-    <td align="right"><b><?php  print_string("feedback", "quiz") ?>:</b></td>
+    <td align="right"><b><?php print_string("feedback", "qtype_multichoice") ?>:</b></td>
     <td align="left">
       <textarea name="feedback[]" rows="2" cols="50"><?php  p($answers[$i-1]->feedback) ?></textarea>
     </td>
@@ -61,7 +61,33 @@ for ($i=1; $i<=count($answers); $i++) {
 
 <?php
 } /// End of loop, printing answers
+?>
+  <tr valign="top">
+    <td align="right"><b><?php print_string("overallcorrectfeedback", "qtype_multichoice") ?>:</b></td>
+    <td align="left">
+      <textarea name="correctfeedback" rows="4" cols="50"><?php p($options->correctfeedback) ?></textarea>
+    </td>
+  </tr>
 
+  <tr valign="top">
+    <td align="right"><b><?php print_string("overallpartiallycorrectfeedback", "qtype_multichoice") ?>:</b></td>
+    <td align="left">
+      <textarea name="partiallycorrectfeedback" rows="4" cols="50"><?php p($options->partiallycorrectfeedback) ?></textarea>
+    </td>
+  </tr>
+
+  <tr valign="top">
+    <td align="right"><b><?php print_string("overallincorrectfeedback", "qtype_multichoice") ?>:</b></td>
+    <td align="left">
+      <textarea name="incorrectfeedback" rows="4" cols="50"><?php p($options->incorrectfeedback) ?></textarea>
+    </td>
+  </tr>
+
+  <tr valign="top">
+    <td colspan="2">&nbsp;</td>
+  </tr>
+ 
+<?php
 $QTYPES[$question->qtype]->print_replacement_options($question, $course, $contextquiz);
 $QTYPES[$question->qtype]->print_question_form_end($question);
 ?>
