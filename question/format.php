@@ -39,7 +39,7 @@ class qformat_default {
 
     /**
      *
-     * @PARAM $matchgrades string 'error' or 'nearest', mismatched grades handling
+     * @param $matchgrades string 'error' or 'nearest', mismatched grades handling
      */
     function importprocess($filename, $matchgrades='error') {
     /// Processes a given file.  There's probably little need to change this
