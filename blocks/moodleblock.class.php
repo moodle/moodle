@@ -344,7 +344,7 @@ class block_base {
         $script = $page->url_get_full(array('instanceid' => $this->instance->id, 'sesskey' => $USER->sesskey));
      
      	// place holder for roles button
-     	$movebuttons .= '<a class="icon roles" title="'. $title .'" href="'.$CFG->wwwroot.'/admin/roles/roleassignment.php?contextid='.$blockcontext->id.'">' .
+     	$movebuttons .= '<a class="icon roles" title="'. $title .'" href="'.$CFG->wwwroot.'/admin/roles/assign.php?contextid='.$blockcontext->id.'">' .
                         '<img src="'.$CFG->pixpath.'/i/users.gif" alt="'.get_string('roles').'" /></a>';
      
         $movebuttons .= '<a class="icon hide" title="'. $title .'" href="'.$script.'&amp;blockaction=toggle">' .
