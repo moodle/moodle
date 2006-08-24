@@ -42,12 +42,7 @@ class description_qtype extends default_questiontype {
             $editlink = link_to_popup_window('/question/question.php?id='.$question->id, $stredit, $linktext, 450, 550, $stredit, '', true);
         }
 
-        $formatoptions->noclean = true;
-        $formatoptions->para = false;
-
-        $questiontext = format_text($question->questiontext,
-                         $question->questiontextformat,
-                         $formatoptions, $cmoptions->course);
+        $questiontext = $this->format_text($question->questiontext, $question->questiontextformat, $cmoptions);
         $image = get_question_image($question, $cmoptions->course);
 
         include "$CFG->dirroot/question/type/description/question.html";
