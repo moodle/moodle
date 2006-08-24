@@ -13,7 +13,7 @@
 
     $courseid = required_param('courseId');
 
-    if (!$course = get_record('course', 'id', $courseid) {
+    if (!$course = get_record('course', 'id', $courseid)) {
         error('Course does not exists');
     }
       
