@@ -19,7 +19,7 @@ require_once($CFG->libdir . '/dmllib.php');
 class datalib_test extends prefix_changing_test_case {
     var $table = 'table';
     var $data = array(
-            array('id',   'text', 'number'),
+            array('id',   'textfield', 'numberfield'),
             array(  1,    'frog',     101),
             array(  2,    'toad',     102),
             array(  3, 'tadpole',     103),
@@ -53,26 +53,26 @@ class datalib_test extends prefix_changing_test_case {
     }
     
     function test_record_exists() {
-        $this->assertTrue(record_exists($this->table, 'number', 101, 'id', 1));
-        $this->assertFalse(record_exists($this->table, 'number', 102, 'id', 1));
+        $this->assertTrue(record_exists($this->table, 'numberfield', 101, 'id', 1));
+        $this->assertFalse(record_exists($this->table, 'numberfield', 102, 'id', 1));
     }
 
     function test_record_exists_select() {
-        $this->assertTrue(record_exists_select($this->table, 'number = 101 AND id = 1'));
-        $this->assertFalse(record_exists_select($this->table, 'number = 102 AND id = 1'));
+        $this->assertTrue(record_exists_select($this->table, 'numberfield = 101 AND id = 1'));
+        $this->assertFalse(record_exists_select($this->table, 'numberfield = 102 AND id = 1'));
     }
 
     function test_record_exists_sql() {
         global $CFG;
-        $this->assertTrue(record_exists_sql("SELECT * FROM {$CFG->prefix}$this->table WHERE number = 101 AND id = 1"));
-        $this->assertFalse(record_exists_sql("SELECT * FROM {$CFG->prefix}$this->table WHERE number = 102 AND id = 1"));
+        $this->assertTrue(record_exists_sql("SELECT * FROM {$CFG->prefix}$this->table WHERE numberfield = 101 AND id = 1"));
+        $this->assertFalse(record_exists_sql("SELECT * FROM {$CFG->prefix}$this->table WHERE numberfield = 102 AND id = 1"));
     }
 
 
     function test_get_record() {
         // Get particular records.
         $this->assert(new CheckSpecifiedFieldsExpectation($this->objects[1]), get_record($this->table, 'id', 1), 'id = 1');
-        $this->assert(new CheckSpecifiedFieldsExpectation($this->objects[3]), get_record($this->table, 'text', 'tadpole', 'number', 103), 'text = tadpole AND number = 103');
+        $this->assert(new CheckSpecifiedFieldsExpectation($this->objects[3]), get_record($this->table, 'textfield', 'tadpole', 'numberfield', 103), 'textfield = tadpole AND numberfield = 103');
 
         // Abiguous get attempt, should return one, and print a warning in debug mode.
         global $CFG;
@@ -80,14 +80,14 @@ class datalib_test extends prefix_changing_test_case {
         $CFG->debug = 0;
 
         ob_start();
-        $record = get_record($this->table, 'text', 'tadpole');
+        $record = get_record($this->table, 'textfield', 'tadpole');
         $result = ob_get_contents();
         ob_end_clean();
         $this->assertEqual('', $result, '%s (No error ouside debug mode).');
 
         $CFG->debug = E_ALL;
         ob_start();
-        $record = get_record($this->table, 'text', 'tadpole');
+        $record = get_record($this->table, 'textfield', 'tadpole');
         $result = ob_get_contents();
         ob_end_clean();
         $this->assert(new TextExpectation('Error:'), $result, 'Error in debug mode.');
@@ -97,19 +97,19 @@ class datalib_test extends prefix_changing_test_case {
         // Return only specified fields
         $expected = new stdClass;
         $expected->id = 3;
-        $expected->text = 'tadpole';
-        $result = get_record($this->table, 'id', '3', '', '', '', '', 'id,text');
+        $expected->textfield = 'tadpole';
+        $result = get_record($this->table, 'id', '3', '', '', '', '', 'id,textfield');
         $this->assert(new CheckSpecifiedFieldsExpectation($expected), $result);
-        $this->assertFalse(isset($result->number));
+        $this->assertFalse(isset($result->numberfield));
         $expected = new stdClass;
-        $expected->text = 'tadpole';
-        $expected->number = 103;
-        $result = get_record($this->table, 'id', '3', '', '', '', '', 'text,number');
+        $expected->textfield = 'tadpole';
+        $expected->numberfield = 103;
+        $result = get_record($this->table, 'id', '3', '', '', '', '', 'textfield,numberfield');
         $this->assert(new CheckSpecifiedFieldsExpectation($expected), $result);
         $this->assertFalse(isset($result->id));
 
         // Attempting to get a non-existant records should return false.
-        $this->assertFalse(get_record($this->table, 'text', 'not there'), 'attempt to get non-existant record');
+        $this->assertFalse(get_record($this->table, 'textfield', 'not there'), 'attempt to get non-existant record');
     }
 
     function test_get_record_sql() {
@@ -122,20 +122,20 @@ class datalib_test extends prefix_changing_test_case {
         $CFG->debug = 0;
 
         ob_start();
-        $record = get_record_sql("SELECT * FROM {$CFG->prefix}" . $this->table . " WHERE text = 'tadpole'");
+        $record = get_record_sql("SELECT * FROM {$CFG->prefix}" . $this->table . " WHERE textfield = 'tadpole'");
         $result = ob_get_contents();
         ob_end_clean();
         $this->assertEqual('', $result, '%s (No error ouside debug mode).');
 
         $CFG->debug = E_ALL;
         ob_start();
-        $record = get_record_sql("SELECT * FROM {$CFG->prefix}" . $this->table . " WHERE text = 'tadpole'");
+        $record = get_record_sql("SELECT * FROM {$CFG->prefix}" . $this->table . " WHERE textfield = 'tadpole'");
         $result = ob_get_contents();
         ob_end_clean();
         $this->assert(new TextExpectation('Error:'), $result, 'Error in debug mode.');
 
         ob_start();
-        $record = get_record_sql("SELECT * FROM {$CFG->prefix}" . $this->table . " WHERE text = 'tadpole'", true);
+        $record = get_record_sql("SELECT * FROM {$CFG->prefix}" . $this->table . " WHERE textfield = 'tadpole'", true);
         $result = ob_get_contents();
         ob_end_clean();
         $this->assertEqual('', $result, '%s (No error ouside debug mode).');
@@ -143,7 +143,7 @@ class datalib_test extends prefix_changing_test_case {
         $CFG->debug = $old_debug;
 
         // Attempting to get a non-existant records should return false.
-        $this->assertFalse(get_record_sql("SELECT * FROM {$CFG->prefix}" . $this->table . " WHERE text = 'not there'"), 'attempt to get non-existant record');
+        $this->assertFalse(get_record_sql("SELECT * FROM {$CFG->prefix}" . $this->table . " WHERE textfield = 'not there'"), 'attempt to get non-existant record');
     }
 
     function test_get_record_select() {
@@ -156,14 +156,14 @@ class datalib_test extends prefix_changing_test_case {
         $CFG->debug = 0;
 
         ob_start();
-        $record = get_record_select($this->table, "text = 'tadpole'");
+        $record = get_record_select($this->table, "textfield = 'tadpole'");
         $result = ob_get_contents();
         ob_end_clean();
         $this->assertEqual('', $result, '%s (No error ouside debug mode).');
 
         $CFG->debug = E_ALL;
         ob_start();
-        $record = get_record_select($this->table, "text = 'tadpole'");
+        $record = get_record_select($this->table, "textfield = 'tadpole'");
         $result = ob_get_contents();
         ob_end_clean();
         $this->assert(new TextExpectation('Error:'), $result, 'Error in debug mode.');
@@ -173,40 +173,40 @@ class datalib_test extends prefix_changing_test_case {
         // Return only specified fields
         $expected = new stdClass;
         $expected->id = 1;
-        $expected->text = 'frog';
-        $result = get_record_select($this->table, "text = 'frog'", 'id,text');
+        $expected->textfield = 'frog';
+        $result = get_record_select($this->table, "textfield = 'frog'", 'id,textfield');
         $this->assert(new CheckSpecifiedFieldsExpectation($expected), $result);
-        $this->assertFalse(isset($result->number));
+        $this->assertFalse(isset($result->numberfield));
 
         // Attempting to get a non-existant records should return false.
         $this->assertFalse(get_record_select($this->table, 'id > 666'), 'attempt to get non-existant record');
     }
 
     function test_get_field() {
-        $this->assertEqual(get_field($this->table, 'number', 'id', 1), 101);
-        $this->assertEqual(get_field($this->table, 'text', 'number', 102), 'toad');
-        $this->assertEqual(get_field($this->table, 'number', 'text', 'tadpole', 'id', 4), 104);
-        $this->assertEqual(get_field($this->table, 'number + id', 'text', 'tadpole', 'id', 4), 108);
+        $this->assertEqual(get_field($this->table, 'numberfield', 'id', 1), 101);
+        $this->assertEqual(get_field($this->table, 'textfield', 'numberfield', 102), 'toad');
+        $this->assertEqual(get_field($this->table, 'numberfield', 'textfield', 'tadpole', 'id', 4), 104);
+        $this->assertEqual(get_field($this->table, 'numberfield + id', 'textfield', 'tadpole', 'id', 4), 108);
     }
 
     function test_get_field_select() {
-        $this->assertEqual(get_field_select($this->table, 'number',  'id = 1'), 101);
+        $this->assertEqual(get_field_select($this->table, 'numberfield',  'id = 1'), 101);
     }
 
     function test_get_field_sql() {
         global $CFG;
-        $this->assertEqual(get_field_sql("SELECT number FROM {$CFG->prefix}$this->table WHERE id = 1"), 101);
+        $this->assertEqual(get_field_sql("SELECT numberfield FROM {$CFG->prefix}$this->table WHERE id = 1"), 101);
     }
 
     function test_set_field() {
-        set_field($this->table, 'number', 12345, 'id', 1);
-        $this->assertEqual(get_field($this->table, 'number', 'id', 1), 12345);
+        set_field($this->table, 'numberfield', 12345, 'id', 1);
+        $this->assertEqual(get_field($this->table, 'numberfield', 'id', 1), 12345);
 
-        set_field($this->table, 'text', 'newvalue', 'number', 102);
-        $this->assertEqual(get_field($this->table, 'text', 'number', 102), 'newvalue');
+        set_field($this->table, 'textfield', 'newvalue', 'numberfield', 102);
+        $this->assertEqual(get_field($this->table, 'textfield', 'numberfield', 102), 'newvalue');
 
-        set_field($this->table, 'number', -1, 'text', 'tadpole', 'id', 4);
-        $this->assertEqual(get_field($this->table, 'number', 'text', 'tadpole', 'id', 4), -1);
+        set_field($this->table, 'numberfield', -1, 'textfield', 'tadpole', 'id', 4);
+        $this->assertEqual(get_field($this->table, 'numberfield', 'textfield', 'tadpole', 'id', 4), -1);
     }
 
     function test_delete_records() {
@@ -214,19 +214,19 @@ class datalib_test extends prefix_changing_test_case {
         $this->assertEqual(count_records($this->table), 4);
         delete_records($this->table, 'id', 1);
         $this->assertEqual(count_records($this->table), 3);
-        delete_records($this->table, 'text', 'tadpole');
+        delete_records($this->table, 'textfield', 'tadpole');
         $this->assertEqual(count_records($this->table), 1);
     }
 
     function test_delete_records2() {
-        delete_records($this->table, 'text', 'tadpole', 'id', 4);
+        delete_records($this->table, 'textfield', 'tadpole', 'id', 4);
         $this->assertEqual(count_records($this->table), 3);
         delete_records($this->table);
         $this->assertEqual(count_records($this->table), 0);
     }
 
     function test_delete_records_select() {
-        delete_records_select($this->table, "text LIKE 't%'");
+        delete_records_select($this->table, "textfield LIKE 't%'");
         $this->assertEqual(count_records($this->table), 1);
         delete_records_select($this->table, "'1' = '1'");
         $this->assertEqual(count_records($this->table), 0);
@@ -236,33 +236,33 @@ class datalib_test extends prefix_changing_test_case {
     function test_insert_record() {
         // Simple insert with $returnid
         $obj = new stdClass;
-        $obj->text = 'new entry';
-        $obj->number = 123;
+        $obj->textfield = 'new entry';
+        $obj->numberfield = 123;
         $this->assertEqual(insert_record($this->table, $obj), 5);
         $obj->id = 5;
         $this->assert(new CheckSpecifiedFieldsExpectation($obj, 'Simple insert with returnid (%s)'), get_record($this->table, 'id', 5));
         
         // Simple insert without $returnid
         $obj = new stdClass;
-        $obj->text = 'newer entry';
-        $obj->number = 321;
+        $obj->textfield = 'newer entry';
+        $obj->numberfield = 321;
         $this->assertEqual(insert_record($this->table, $obj, false), true);
         $obj->id = 6;
         $this->assert(new CheckSpecifiedFieldsExpectation($obj, 'Simple insert without returnid (%s)'), get_record($this->table, 'id', 6));
         
         // Insert with missing columns - should get defaults.
         $obj = new stdClass;
-        $obj->text = 'partial entry';
+        $obj->textfield = 'partial entry';
         $this->assertEqual(insert_record($this->table, $obj), 7);
         $obj->id = 7;
-        $obj->number = 0xDefa;
+        $obj->numberfield = 0xDefa;
         $got = get_record($this->table, 'id', 7);
         $this->assert(new CheckSpecifiedFieldsExpectation($obj, 'Insert with missing columns - should get defaults (%s)'), get_record($this->table, 'id', 7));
         
         // Insert with extra columns - should be ingnored.
         $obj = new stdClass;
-        $obj->text = 'entry with extra';
-        $obj->number = 747;
+        $obj->textfield = 'entry with extra';
+        $obj->numberfield = 747;
         $obj->unused = 666;
         $this->assertEqual(insert_record($this->table, $obj), 8);
         $obj->id = 8;
@@ -271,14 +271,14 @@ class datalib_test extends prefix_changing_test_case {
         
         // Insert into nonexistant table - should fail.
         $obj = new stdClass;
-        $obj->text = 'new entry';
-        $obj->number = 123;
+        $obj->textfield = 'new entry';
+        $obj->numberfield = 123;
         $this->assertFalse(insert_record('nonexistant_table', $obj), 'Insert into nonexistant table');
         
         // Insert bad data - error should be printed.
         $obj = new stdClass;
-        $obj->text = 'new entry';
-        $obj->number = 'not a number';
+        $obj->textfield = 'new entry';
+        $obj->numberfield = 'not a number';
         ob_start();
         $this->assertFalse(insert_record($this->table, $obj), 'Insert bad data - should fail.');
         $result = ob_get_contents();
