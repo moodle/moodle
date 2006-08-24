@@ -848,7 +848,9 @@ function question_extract_responses($questions, $formdata, $defaultevent=QUESTIO
             $actions[$quid]->timestamp = $time;
         }
     }
-    ksort($actions[$quid]->responses);
+    foreach ($actions as $quid => $notused) {
+        ksort($actions[$quid]->responses);
+    }
     return $actions;
 }
 
