@@ -165,7 +165,7 @@
         include_once("$CFG->dirroot/lib/db/$CFG->dbtype.php");  # defines old upgrades
     }
     if (file_exists("$CFG->dirroot/lib/db/upgrade.php") && $CFG->xmldb_enabled) {
-        include_once("$CFG->dirroot/lib/db/$CFG->dbtype.php");  # defines new upgrades
+        include_once("$CFG->dirroot/lib/db/upgrade.php");  # defines new upgrades
     }
 
     $stradministration = get_string("administration");
@@ -190,7 +190,14 @@
                 upgrade_log_start();
                 print_heading($strdatabasechecking);
                 $db->debug=true;
-                if (main_upgrade($CFG->version)) {
+            /// Launch the old main upgrade
+                $status = main_upgrade($CFG->version);
+            /// If succesful and exists launch the new main upgrade (XMLDB), called xmldb_main_upgrade
+                if ($status && $CFG->xmldb_enabled && function_exists('xmldb_main_upgrade')) {
+                    $status = xmldb_main_upgrade($CFG->version);
+                }
+            /// If successful, continue upgrading roles and setting everything properly
+                if ($status) {
                     if (empty($CFG->rolesactive)) {
                         // Upgrade to the roles system.
                         moodle_install_roles();
@@ -209,6 +216,7 @@
                     } else {
                         notify("Upgrade failed!  (Could not update version in config table)");
                     }
+            /// Main upgrade not success
                 } else {
                     $db->debug=false;
                     notify("Upgrade failed!  See /version.php");
