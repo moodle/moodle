@@ -611,7 +611,7 @@ function get_question_states(&$questions, $cmoptions, $attempt) {
 
     // The question field must be listed first so that it is used as the
     // array index in the array returned by get_records_sql
-    $statefields = 'n.questionid as question, s.*, n.sumpenalty, n.comment';
+    $statefields = 'n.questionid as question, s.*, n.sumpenalty, n.manualcomment';
     // Load the newest states for the questions
     $sql = "SELECT $statefields".
            "  FROM {$CFG->prefix}question_states s,".
@@ -652,7 +652,7 @@ function get_question_states(&$questions, $cmoptions, $attempt) {
             $states[$i]->raw_grade = 0;
             $states[$i]->penalty = 0;
             $states[$i]->sumpenalty = 0;
-            $states[$i]->comment = '';
+            $states[$i]->manualcomment = '';
             $states[$i]->responses = array('' => '');
             // Prevent further changes to the session from incrementing the
             // sequence number
@@ -685,7 +685,7 @@ function restore_question_state(&$question, &$state) {
     // initialise response to the value in the answer field
     $state->responses = array('' => addslashes($state->answer));
     unset($state->answer);
-    $state->comment = isset($state->comment) ? addslashes($state->comment) : '';
+    $state->manualcomment = isset($state->manualcomment) ? addslashes($state->manualcomment) : '';
 
     // Set the changed field to false; any code which changes the
     // question session must set this to true and must increment
@@ -744,7 +744,7 @@ function save_question_session(&$question, &$state) {
         // already even if there is no graded state yet.
         $session->newgraded = $state->id;
         $session->sumpenalty = $state->sumpenalty;
-        $session->comment = $state->comment;
+        $session->manualcomment = $state->manualcomment;
         if (!insert_record('question_sessions', $session)) {
             error('Could not insert entry in question_sessions');
         }
@@ -754,9 +754,9 @@ function save_question_session(&$question, &$state) {
             // this state is graded or newly opened, so it goes into the lastgraded field as well
             $session->newgraded = $state->id;
             $session->sumpenalty = $state->sumpenalty;
-            $session->comment = $state->comment;
+            $session->manualcomment = $state->manualcomment;
         } else {
-            $session->comment = addslashes($session->comment);
+            $session->manualcomment = addslashes($session->manualcomment);
         }
         update_record('question_sessions', $session);
     }
@@ -885,7 +885,7 @@ function regrade_question_in_attempt($question, $attempt, $cmoptions, $verbose=f
 
         // Initialise the replaystate
         $state = clone($states[0]);
-        $state->comment = get_field('question_sessions', 'comment', 'attemptid',
+        $state->manualcomment = get_field('question_sessions', 'manualcomment', 'attemptid',
                 $attempt->uniqueid, 'questionid', $question->id);
         restore_question_state($question, $state);
         $state->sumpenalty = 0.0;
@@ -912,7 +912,7 @@ function regrade_question_in_attempt($question, $attempt, $cmoptions, $verbose=f
 
             if ($action->event == QUESTION_EVENTMANUALGRADE) {
                 question_process_comment($question, $replaystate, $attempt,
-                        $replaystate->comment, $states[$j]->grade);
+                        $replaystate->manualcomment, $states[$j]->grade);
             } else {
 
                 // Reprocess (regrade) responses
@@ -1187,7 +1187,7 @@ function question_print_comment_box($question, $state, $attempt, $url) {
 function question_process_comment($question, &$state, &$attempt, $comment, $grade) {
 
     // Update the comment and save it in the database
-    $state->comment = $comment;
+    $state->manualcomment = $comment;
     if (!set_field('question_sessions', 'comment', $comment, 'attemptid', $attempt->uniqueid, 'questionid', $question->id)) {
         error("Cannot save comment");
     }

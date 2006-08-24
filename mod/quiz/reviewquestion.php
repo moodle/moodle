@@ -108,7 +108,7 @@
 
     $session = get_record('question_sessions', 'attemptid', $attempt->uniqueid, 'questionid', $question->id);
     $state->sumpenalty = $session->sumpenalty;
-    $state->comment = $session->comment;
+    $state->manualcomment = $session->manualcomment;
     restore_question_state($question, $state);
     $state->last_graded = $state;
 

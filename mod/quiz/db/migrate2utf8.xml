@@ -54,7 +54,7 @@
     </TABLE>
     <TABLE name="question_sessions">
       <FIELDS>
-        <FIELD name="comment" method="PLAIN_SQL_UPDATE" type="text" length="0">
+        <FIELD name="manualcomment" method="PLAIN_SQL_UPDATE" type="text" length="0">
           <SQL_DETECT_USER>
            SELECT qa.userid
            FROM {$CFG->prefix}question_sessions qs,

@@ -533,7 +533,7 @@ class default_questiontype {
             $grade .= $question->maxgrade;
         }
         
-        $comment = stripslashes($state->comment);
+        $comment = stripslashes($state->manualcomment);
         $commentlink = '';
         
         if (isset($options->questioncommentlink) && $context && has_capability('mod/quiz:grade', $context)) {

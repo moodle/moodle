@@ -367,8 +367,8 @@ class quiz_report extends quiz_default_report {
 
             $options = quiz_get_reviewoptions($quiz, $attempt, true);
             unset($options->questioncommentlink);
-            $copy = $state->comment;
-            $state->comment = '';
+            $copy = $state->manualcomment;
+            $state->manualcomment = '';
 
             $options->readonly = 1;
 
@@ -381,7 +381,7 @@ class quiz_report extends quiz_default_report {
 
             $prefix         = "manualgrades[$attempt->uniqueid]";
             $grade          = round($state->last_graded->grade, 3);
-            $state->comment = $copy;
+            $state->manualcomment = $copy;
 
             include($CFG->dirroot . '/question/comment.html');
 

@@ -1454,6 +1454,10 @@ function quiz_upgrade($oldversion) {
         ");
     }
     
+    if ($success && $oldversion < 2006082400) {
+        $success = $success && table_column('question_sessions', 'comment', 'manualcomment', 'text', '', '', '');
+    }
+
     return $success;
 }
 

@@ -211,7 +211,7 @@ CREATE TABLE prefix_question_sessions (
   newest int(10) unsigned NOT NULL default '0',
   newgraded int(10) unsigned NOT NULL default '0',
   sumpenalty float NOT NULL default '0',
-  comment text NOT NULL default '',
+  manualcomment text NOT NULL default '',
   PRIMARY KEY  (id),
   UNIQUE KEY attemptid (attemptid,questionid)
 ) TYPE=MyISAM COMMENT='Gives ids of the newest open and newest graded states';
