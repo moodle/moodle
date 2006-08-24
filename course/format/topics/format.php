@@ -7,16 +7,9 @@
       // Included from "view.php"
 
     require_once($CFG->dirroot.'/mod/forum/lib.php');
-    require_once($CFG->dirroot.'/lib/ajaxlib/ajaxlib.php');
-  
-  	
 
-    
-    
     $topic = optional_param('topic', -1, PARAM_INT);
-    
 
-    
     // Bounds for block widths
     define('BLOCK_L_MIN_WIDTH', 100);
     define('BLOCK_L_MAX_WIDTH', 210);
@@ -62,10 +55,6 @@
         $strmarkedthistopic = get_string('markedthistopic');
         $strmoveup = get_string('moveup');
         $strmovedown = get_string('movedown');
-        
-       	$COURSE->javascriptportal = new jsportal();
-	    print_require_js(Array("yui_yahoo","yui_dom","yui_event","yui_dragdrop","yui_logger","yui_connection","ajaxcourse_blocks","ajaxcourse_sections","ajaxcourse_topic"));
-    
     }
 
 
@@ -274,9 +263,5 @@
     }
 
     echo '</tr></table>';
-    
-    //create javascript portal code
-    if($COURSE->javascriptportal)
-    	$COURSE->javascriptportal->print_javascript($course->id);
 
 ?>
