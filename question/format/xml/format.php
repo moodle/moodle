@@ -20,11 +20,11 @@ class qformat_xml extends qformat_default {
 
     // IMPORT FUNCTIONS START HERE
 
-    /* 
+    /** 
      * Translate human readable format name
      * into internal Moodle code number
-     * @PARAM string name format name from xml file
-     * @RETURN int Moodle format code
+     * @param string name format name from xml file
+     * @return int Moodle format code
      */
     function trans_format( $name ) {
         $name = trim($name); 
@@ -50,11 +50,11 @@ class qformat_xml extends qformat_default {
         return $id;
     }
 
-    /*
+    /**
      * Translate human readable single answer option
      * to internal code number
-     * @PARAM string name true/false
-     * @RETURN int internal code number
+     * @param string name true/false
+     * @return int internal code number
      */
     function trans_single( $name ) {
       $name = trim($name);
@@ -71,10 +71,10 @@ class qformat_xml extends qformat_default {
       return $id;
     }
 
-    /*
+    /**
      * process text string from xml file
-     * @PARAM array text bit of xml tree after ['text']
-     * @RETURN string processed text
+     * @param array $text bit of xml tree after ['text']
+     * @return string processed text
      */
     function import_text( $text ) {
         $data = $text[0]['#'];
@@ -82,10 +82,10 @@ class qformat_xml extends qformat_default {
         return addslashes(trim( $data ));
     }
 
-    /*
+    /**
      * import parts of question common to all types
-     * @PARAM array question question array from xml tree
-     * @RETURN object question object
+     * @param array question question array from xml tree
+     * @return object question object
      */
     function import_headers( $question ) {
         // this routine initialises the question object
@@ -118,10 +118,10 @@ class qformat_xml extends qformat_default {
         return $qo;
     }
 
-    /*
+    /**
      * import the common parts of a single answer
-     * @PARAM array answer xml tree for single answer
-     * @RETURN object answer object
+     * @param array answer xml tree for single answer
+     * @return object answer object
      */   
     function import_answer( $answer ) {
         $fraction = $answer['@']['fraction'];
@@ -136,10 +136,10 @@ class qformat_xml extends qformat_default {
         return $ans;
     }
 
-    /*
+    /**
      * import multiple choice question 
-     * @PARAM array question question array from xml tree
-     * @RETURN object question object
+     * @param array question question array from xml tree
+     * @return object question object
      */
     function import_multichoice( $question ) {
         // get common parts
@@ -164,10 +164,10 @@ class qformat_xml extends qformat_default {
         return $qo;
     }
 
-    /*
+    /**
      * import cloze type question
-     * @PARAM array question question array from xml tree
-     * @RETURN object question object
+     * @param array question question array from xml tree
+     * @return object question object
      */
     function import_multianswer( $questions ) {
         $qo = qtype_multianswer_extract_question($this->import_text( 
@@ -184,10 +184,10 @@ class qformat_xml extends qformat_default {
         return $qo;
     }
 
-    /*
+    /**
      * import true/false type question
-     * @PARAM array question question array from xml tree
-     * @RETURN object question object
+     * @param array question question array from xml tree
+     * @return object question object
      */
     function import_truefalse( $question ) {
         // get common parts
@@ -218,10 +218,10 @@ class qformat_xml extends qformat_default {
         return $qo;
     }
 
-    /*
+    /**
      * import short answer type question
-     * @PARAM array question question array from xml tree
-     * @RETURN object question object
+     * @param array question question array from xml tree
+     * @return object question object
      */
     function import_shortanswer( $question ) {
         // get common parts
@@ -247,10 +247,10 @@ class qformat_xml extends qformat_default {
         return $qo;
     }
     
-    /*
+    /**
      * import regexp type question
-     * @PARAM array question question array from xml tree
-     * @RETURN object question object
+     * @param array question question array from xml tree
+     * @return object question object
      */
     function import_regexp( $question ) {
         // get common parts
@@ -276,10 +276,10 @@ class qformat_xml extends qformat_default {
         return $qo;
     }
     
-    /*
+    /**
      * import description type question
-     * @PARAM array question question array from xml tree
-     * @RETURN object question object
+     * @param array question question array from xml tree
+     * @return object question object
      */
     function import_description( $question ) {
         // get common parts
@@ -289,10 +289,10 @@ class qformat_xml extends qformat_default {
         return $qo;
     }
 
-    /*
+    /**
      * import numerical type question
-     * @PARAM array question question array from xml tree
-     * @RETURN object question object
+     * @param array question question array from xml tree
+     * @return object question object
      */
     function import_numerical( $question ) {
         // get common parts
@@ -327,10 +327,10 @@ class qformat_xml extends qformat_default {
         return $qo;
     }
 
-    /*
+    /**
      * import matching type question
-     * @PARAM array question question array from xml tree
-     * @RETURN object question object
+     * @param array question question array from xml tree
+     * @return object question object
      */
     function import_matching( $question ) {
         // get common parts
@@ -359,10 +359,10 @@ class qformat_xml extends qformat_default {
         return $qo;
     }
 
-    /*
+    /**
      * import  essay type question
-     * @PARAM array question question array from xml tree
-     * @RETURN object question object
+     * @param array question question array from xml tree
+     * @return object question object
      */
     function import_essay( $question ) {
         // get common parts
@@ -384,8 +384,8 @@ class qformat_xml extends qformat_default {
      * parse the array of lines into an array of questions
      * this *could* burn memory - but it won't happen that much
      * so fingers crossed!
-     * @PARAM array lines array of lines from the input file
-     * @RETURN array (of objects) question objects
+     * @param array lines array of lines from the input file
+     * @return array (of objects) question objects
      */
     function readquestions($lines) {
         // we just need it as one big string
@@ -460,8 +460,8 @@ class qformat_xml extends qformat_default {
      * Turn the internal question code into a human readable form
      * (The code used to be numeric, but this remains as some of
      * the names don't match the new internal format)
-     * @PARAM mixed type_id Internal code
-     * @RETURN string question type string
+     * @param mixed type_id Internal code
+     * @return string question type string
      */
     function get_qtype( $type_id ) {
         switch( $type_id ) {
@@ -498,11 +498,11 @@ class qformat_xml extends qformat_default {
         return $name;
     }
 
-    /*
+    /**
      * Convert internal Moodle text format code into
      * human readable form
-     * @PARAM int id internal code
-     * @RETURN string format text
+     * @param int id internal code
+     * @return string format text
      */
     function get_format( $id ) {
         switch( $id ) {
@@ -527,11 +527,11 @@ class qformat_xml extends qformat_default {
         return $name;
     }
 
-    /*
+    /**
      * Convert internal single question code into 
      * human readable form
-     * @PARAM int id single question code
-     * @RETURN string single question string
+     * @param int id single question code
+     * @return string single question string
      */
     function get_single( $id ) {
         switch( $id ) {
@@ -547,11 +547,11 @@ class qformat_xml extends qformat_default {
         return $name;
     }
 
-    /*
+    /**
      * generates <text></text> tags, processing raw text therein 
-     * @PARAM int ilev the current indent level
-     * @PARAM boolean short stick it on one line
-     * @RETURN string formatted text
+     * @param int ilev the current indent level
+     * @param boolean short stick it on one line
+     * @return string formatted text
      */
     function writetext( $raw, $ilev=0, $short=true) {
         $indent = str_repeat( "  ",$ilev );
@@ -580,10 +580,10 @@ class qformat_xml extends qformat_default {
         return $content;
     }
 
-    /*
+    /**
      * Include an image encoded in base 64
-     * @PARAM string imagepath The location of the image file
-     * @RETURN string xml code segment 
+     * @param string imagepath The location of the image file
+     * @return string xml code segment 
      */
     function writeimage( $imagepath ) {
         global $CFG;
@@ -602,10 +602,10 @@ class qformat_xml extends qformat_default {
         return $content;
     }
 
-    /*
+    /**
      * Turns question into an xml segment
-     * @PARAM array question question array
-     * @RETURN string xml segment
+     * @param array question question array
+     * @return string xml segment
      */
     function writequestion( $question ) {
         // initial string;
@@ -676,7 +676,7 @@ class qformat_xml extends qformat_default {
                 $expout .= "      <answer fraction=\"$percent\">\n";
                 $expout .= $this->writetext( $answer->answer,4,false );
                 $expout .= "      <feedback>\n";
-                $expout .= $this->writetext( $answer->feedback,4,false );
+                $expout .= $this->writetext( $answer->feedback,5,false );
                 $expout .= "      </feedback>\n";
                 $expout .= "    </answer>\n";
                 }
