@@ -221,7 +221,7 @@ class block_base {
     	global $COURSE;
 
         // is_empty() includes a call to get_content()
-        if ($this->is_empty()&&!($COURSE->javascriptportal)) {
+        if ($this->is_empty() && empty($COURSE->javascriptportal)) {
             if (empty($this->edit_controls)) {
                 // No content, no edit controls, so just shut up
                 return;
@@ -674,8 +674,7 @@ class block_list extends block_base {
     	global $COURSE;
 
         // is_empty() includes a call to get_content()
-
-        if ($this->is_empty()&&!($COURSE->javascriptportal)) {
+        if ($this->is_empty() && empty($COURSE->javascriptportal)) {
             if (empty($this->edit_controls)) {
                 // No content, no edit controls, so just shut up
                 return;
