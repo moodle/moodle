@@ -157,21 +157,26 @@
     }
 
 
-    /*****************************************
-     * drop down for swapping between roles  *
-     *****************************************/
+/// If there are multiple Roles in the course, then show a drop down menu for switching
 
-    if (!$roleid) {
-        if ($options) {
-            $roleid = array_shift(array_keys($options)); // get first element
+    if ($roles = get_roles_used_in_context($context)) {
+
+        $rolenames = array();
+
+        foreach ($roles as $role) {
+            $rolenames[$role->id] = $role->name;
         }
-    }
 
-    echo '<form name="rolesform" action="index.php" method="get">';
-    echo '<div align="center">';
-    echo '<input type="hidden" name="contextid" value="'.$context->id.'">'.get_string('currentrole', 'role').': ';
-    choose_from_menu ($options, 'roleid', $roleid, '', $script='rolesform.submit()');
-    echo '</div></form>';
+        if (empty($roleid)) {
+            $roleid = array_shift(array_keys($rolenames)); // get first element
+        }
+
+        echo '<form name="rolesform" action="index.php" method="get">';
+        echo '<div align="center">';
+        echo '<input type="hidden" name="contextid" value="'.$context->id.'">'.get_string('currentrole', 'role').': ';
+        choose_from_menu ($rolenames, 'roleid', $roleid, '', $script='rolesform.submit()');
+        echo '</div></form>';
+    }
 
 
 
@@ -179,7 +184,7 @@
 
     echo '<table class="controls" cellspacing="0"><tr>';
 
-    //print my course menus
+/// Print my course menus
     echo '<td class="left">';
     print_string('mycourses');
     echo ': ';
@@ -187,7 +192,6 @@
     foreach ($mycourses as $mycourse) {
         $my_course[$mycourse->id] = $mycourse->shortname;
     }
-    //choose_from_menu($my_course, 'id', $course->id, '', 'courseform.submit()');
     popup_form($CFG->wwwroot.'/user/index.php?contextid='.$context->id.'&amp;roleid='.$roleid.'&amp;id=',$my_course,'courseform',$course->id);
     echo '</td></tr>';
     
@@ -312,9 +316,7 @@ function checkchecked(form) {
     $guest = get_guest();
     $exceptions[] = $guest->id;
 
-/************************************
- * start of foreach $roles as $role *
- ************************************/
+/// Define a table showing a list of users in the current role.
 
     $tablecolumns = array('picture', 'fullname');
     $tableheaders = array('', get_string('fullname'));
