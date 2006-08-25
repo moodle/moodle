@@ -33,7 +33,7 @@
     //-----------------------------------------------------------
 
     function forum_restore_mods($mod,$restore) {
-
+        
         global $CFG,$db;
 
         $status = true;
@@ -53,6 +53,18 @@
             $forum->type = backup_todb($info['MOD']['#']['TYPE']['0']['#']);
             $forum->name = backup_todb($info['MOD']['#']['NAME']['0']['#']);
             $forum->intro = backup_todb($info['MOD']['#']['INTRO']['0']['#']);
+            
+            
+            // These get dropped in Moodle 1.7 when the new Roles System gets
+            // set up. Therefore they might or not be there depending on whether
+            // we are restoring a 1.6+ forum or a 1.7 or later forum backup.
+            if (isset($info['MOD']['#']['OPEN']['0']['#'])) {
+                $forum->open = backup_todb($info['MOD']['#']['OPEN']['0']['#']);
+            }
+            if (isset($info['MOD']['#']['ASSESSPUBLIC']['0']['#'])) {
+                $forum->assesspublic = backup_todb($info['MOD']['#']['ASSESSPUBLIC']['0']['#']);
+            }
+            
             $forum->assessed = backup_todb($info['MOD']['#']['ASSESSED']['0']['#']);
             $forum->assesstimestart = backup_todb($info['MOD']['#']['ASSESSTIMESTART']['0']['#']);
             $forum->assesstimefinish = backup_todb($info['MOD']['#']['ASSESSTIMEFINISH']['0']['#']);
@@ -67,6 +79,7 @@
             $forum->blockafter = backup_todb($info['MOD']['#']['BLOCKAFTER']['0']['#']);
             $forum->blockperiod = backup_todb($info['MOD']['#']['BLOCKPERIOD']['0']['#']);
 
+
             //We have to recode the scale field if it's <0 (positive is a grade, not a scale)
             if ($forum->scale < 0) {
                 $scale = backup_getid($restore->backup_unique_code,"scale",abs($forum->scale));
@@ -74,9 +87,9 @@
                     $forum->scale = -($scale->new_id);
                 }
             }
-
-            $newid = insert_record ('forum', $forum);
             
+            $newid = insert_record("forum", $forum);
+
 
             //Do some output
             if (!defined('RESTORE_SILENTLY')) {
@@ -88,6 +101,9 @@
                 //We have the newid, update backup_ids
                 backup_putid($restore->backup_unique_code,$mod->modtype,
                              $mod->id, $newid);
+
+                $forum->id = $newid;
+
                 //Now check if want to restore user data and do it.
                 if (restore_userdata_selected($restore,'forum',$mod->id)) {
                     //Restore forum_subscriptions
@@ -130,10 +146,34 @@
                         set_field ('forum_posts','mailed', '1', 'discussion', $sdid);
                     }
                 }
-
+            
             } else {
                 $status = false;
             }
+            
+            // If the backup contained $forum->open and $forum->assesspublic,
+            // we need to convert the forum to use Roles. It means the backup
+            // was made pre Moodle 1.7. We check the backup_version to make
+            // sure.
+            if ($restore->backup_version < 2006082300 &&
+                            isset($forum->open) && isset($forum->assesspublic)) {
+                
+                $forummod = get_record('modules', 'name', 'forum');
+                
+                if (!$studentroles = get_roles_with_capability('moodle/legacy:student', CAP_ALLOW)) {
+                      notice('Default student role was not found. Roles and permissions '.
+                             'for all your forums will have to be manually set.');
+                }
+                if (!$guestroles = get_roles_with_capability('moodle/legacy:guest', CAP_ALLOW)) {
+                      notice('Default guest role was not found. Roles and permissions '.
+                             'for teacher forums will have to be manually set.');
+                }
+                require_once($CFG->dirroot.'/mod/forum/lib.php');
+                forum_convert_to_roles($forum, $forummod->id,
+                                       $studentroles, $guestroles,
+                                       $restore->mods['forum']->instances[$mod->id]->restored_as_course_module);
+            }
+            
         } else {
             $status = false;
         }
@@ -149,7 +189,10 @@
         $status = true;
 
         //Get the discussions array
-        $subscriptions = $info['MOD']['#']['SUBSCRIPTIONS']['0']['#']['SUBSCRIPTION'];
+        $subscriptions = array();
+        if (isset($info['MOD']['#']['SUBSCRIPTIONS']['0']['#']['SUBSCRIPTION'])) {
+            $subscriptions = $info['MOD']['#']['SUBSCRIPTIONS']['0']['#']['SUBSCRIPTION'];
+        }
 
         //Iterate over subscriptions
         for($i = 0; $i < sizeof($subscriptions); $i++) {
@@ -307,7 +350,10 @@
         $status = true;
 
         //Get the read array
-        $readposts = $info['MOD']['#']['READPOSTS']['0']['#']['READ'];
+        $readposts = array();
+        if (isset($info['MOD']['#']['READPOSTS']['0']['#']['READ'])) {
+            $readposts = $info['MOD']['#']['READPOSTS']['0']['#']['READ'];
+        }
 
         //Iterate over readposts
         for($i = 0; $i < sizeof($readposts); $i++) {
@@ -548,7 +594,10 @@
         $status = true;
 
         //Get the ratings array
-        $ratings = $info['#']['RATINGS']['0']['#']['RATING'];
+        $ratings = array();
+        if (isset($info['#']['RATINGS']['0']['#']['RATING'])) {
+            $ratings = $info['#']['RATINGS']['0']['#']['RATING'];
+        }
 
         //Iterate over ratings
         for($i = 0; $i < sizeof($ratings); $i++) {

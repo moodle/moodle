@@ -1542,11 +1542,7 @@ function forum_subscribed_users($course, $forum, $groupid=0) {
     }
 
     if (forum_is_forcesubscribed($forum->id)) {
-        if ($forum->type == "teacher") {
-            return get_course_teachers($course->id);  // Only teachers can be subscribed to teacher forums
-        } else {
-            return get_course_users($course->id);     // Otherwise get everyone in the course
-        }
+        return get_course_users($course->id);     // Otherwise get everyone in the course
     }
     return get_records_sql("SELECT u.id, u.username, u.firstname, u.lastname, u.maildisplay, u.mailformat, u.maildigest, u.emailstop,
                                    u.email, u.city, u.country, u.lastaccess, u.lastlogin, u.picture, u.timezone, u.lang, u.trackforums
@@ -1604,30 +1600,28 @@ function forum_get_course_forum($courseid, $type) {
     $forum->timemodified = time();
     $forum->id = insert_record("forum", $forum);
 
-    if ($forum->type != "teacher") {
-        if (! $module = get_record("modules", "name", "forum")) {
-            notify("Could not find forum module!!");
-            return false;
-        }
-        $mod->course = $courseid;
-        $mod->module = $module->id;
-        $mod->instance = $forum->id;
-        $mod->section = 0;
-        if (! $mod->coursemodule = add_course_module($mod) ) {   // assumes course/lib.php is loaded
-            notify("Could not add a new course module to the course '$course->fullname'");
-            return false;
-        }
-        if (! $sectionid = add_mod_to_section($mod) ) {   // assumes course/lib.php is loaded
-            notify("Could not add the new course module to that section");
-            return false;
-        }
-        if (! set_field("course_modules", "section", $sectionid, "id", $mod->coursemodule)) {
-            notify("Could not update the course module with the correct section");
-            return false;
-        }
-        include_once("$CFG->dirroot/course/lib.php");
-        rebuild_course_cache($courseid);
+    if (! $module = get_record("modules", "name", "forum")) {
+        notify("Could not find forum module!!");
+        return false;
     }
+    $mod->course = $courseid;
+    $mod->module = $module->id;
+    $mod->instance = $forum->id;
+    $mod->section = 0;
+    if (! $mod->coursemodule = add_course_module($mod) ) {   // assumes course/lib.php is loaded
+        notify("Could not add a new course module to the course '$course->fullname'");
+        return false;
+    }
+    if (! $sectionid = add_mod_to_section($mod) ) {   // assumes course/lib.php is loaded
+        notify("Could not add the new course module to that section");
+        return false;
+    }
+    if (! set_field("course_modules", "section", $sectionid, "id", $mod->coursemodule)) {
+        notify("Could not update the course module with the correct section");
+        return false;
+    }
+    include_once("$CFG->dirroot/course/lib.php");
+    rebuild_course_cache($courseid);
 
     return get_record("forum", "id", "$forum->id");
 }
@@ -4109,8 +4103,8 @@ function forum_delete_userdata($data, $showfeedback=true) {
     }
 }
 
-// Called by course/reset.php
 
+// Called by course/reset.php
 function forum_reset_course_form($course) {
     echo get_string('resetforums', 'forum'); echo ':<br />';
     print_checkbox('reset_forum_news', 1, true, get_string('namenews','forum'), '', '');  echo '<br />';
@@ -4119,5 +4113,187 @@ function forum_reset_course_form($course) {
     print_checkbox('reset_forum_eachuser', 1, true, get_string('eachuserforum','forum'), '', '');  echo '<br />';
     print_checkbox('reset_forum_general', 1, true, get_string('generalforum','forum'), '', '');  echo '<br />';
 }
+
+
+/**
+ * Converts a forum to use the Roles System
+ * @param $forum        - a forum object with the same attributes as a record
+ *                        from the forum database table
+ * @param $forummodid   - the id of the forum module, from the modules table
+ * @param $studentroles - array of roles that have the moodle/legacy:student
+ *                        capability
+ * @param $guestroles   - array of roles that have the moodle/legacy:guest
+ *                        capability
+ * @param $cmid         - the course_module id for this forum instance
+ * @return boolean      - forum was converted or not
+ */
+function forum_convert_to_roles($forum, $forummodid, $studentroles=array(), $guestroles=array(), $cmid=NULL) {
+    
+    global $CFG;
+    
+    if (!isset($forum->open) && !isset($forum->assesspublic)) {
+        // We assume that this forum has already been converted to use the
+        // Roles System. Columns forum.open and forum.assesspublic get dropped
+        // once the forum module has been upgraded to use Roles.
+        return false;
+    }
+    
+    if ($forum->type == 'teacher') {
+        
+        // Teacher forums should be converted to normal forums that
+        // use the Roles System to implement the old behavior.
+        require_once($CFG->dirroot.'/course/lib.php');
+
+        if (count_records('forum_discussions', 'forum', $forum->id) == 0) {
+            // Delete empty teacher forums.
+            delete_records('forum', 'id', $forum->id);
+        } else {
+            // Create a course module for the forum and assign it to
+            // section 0 in the course.
+            $mod = new object;
+            $mod->course = $forum->course;
+            $mod->module = $forummodid;
+            $mod->instance = $forum->id;
+            $mod->section = 0;
+            $mod->visible = 0;
+            $mod->visibleold = 0;
+            $mod->groupmode = 0;
+
+            if (!$cmid = add_course_module($mod)) {
+                error('Could not create new course module instance for the teacher forum');
+            } else {
+                $mod->coursemodule = $cmid;
+                if (!$sectionid = add_mod_to_section($mod)) {
+                    error('Could not add converted teacher forum instance to section 0 in the course');
+                } else {
+                    if (!set_field('course_modules', 'section', $sectionid, 'id', $cmid)) {
+                        error('Could not update course module with section id');
+                    }
+                }
+            }
+
+            // Change the forum type to general.
+            $forum->type = 'general';
+            if (!update_record('forum', $forum)) {
+                error('Could not change forum from type teacher to type general');
+            }
+
+            $context = get_context_instance(CONTEXT_MODULE, $cmid);
+
+            // Create overrides for default student and guest roles (prevent).
+            foreach ($studentroles as $studentrole) {
+                assign_capability('mod/forum:viewforum', CAP_PREVENT, $studentrole->id, $context->id);
+                assign_capability('mod/forum:viewdiscussion', CAP_PREVENT, $studentrole->id, $context->id);
+                assign_capability('mod/forum:viewhiddentimedposts', CAP_PREVENT, $studentrole->id, $context->id);
+                assign_capability('mod/forum:startdiscussion', CAP_PREVENT, $studentrole->id, $context->id);
+                assign_capability('mod/forum:replypost', CAP_PREVENT, $studentrole->id, $context->id);
+                assign_capability('mod/forum:viewrating', CAP_PREVENT, $studentrole->id, $context->id);
+                assign_capability('mod/forum:viewanyrating', CAP_PREVENT, $studentrole->id, $context->id);
+                assign_capability('mod/forum:rate', CAP_PREVENT, $studentrole->id, $context->id);
+                assign_capability('mod/forum:createattachment', CAP_PREVENT, $studentrole->id, $context->id);
+                assign_capability('mod/forum:deleteownpost', CAP_PREVENT, $studentrole->id, $context->id);
+                assign_capability('mod/forum:deleteanypost', CAP_PREVENT, $studentrole->id, $context->id);
+                assign_capability('mod/forum:splitdiscussions', CAP_PREVENT, $studentrole->id, $context->id);
+                assign_capability('mod/forum:movediscussions', CAP_PREVENT, $studentrole->id, $context->id);
+                assign_capability('mod/forum:editanypost', CAP_PREVENT, $studentrole->id, $context->id);
+                assign_capability('mod/forum:viewqandawithoutposting', CAP_PREVENT, $studentrole->id, $context->id);
+                assign_capability('mod/forum:viewsubscribers', CAP_PREVENT, $studentrole->id, $context->id);
+                assign_capability('mod/forum:managesubscriptions', CAP_PREVENT, $studentrole->id, $context->id);
+                assign_capability('mod/forum:throttlingapplies', CAP_PREVENT, $studentrole->id, $context->id);
+            }
+            foreach ($guestroles as $guestrole) {
+                assign_capability('mod/forum:viewforum', CAP_PREVENT, $guestrole->id, $context->id);
+                assign_capability('mod/forum:viewdiscussion', CAP_PREVENT, $guestrole->id, $context->id);
+                assign_capability('mod/forum:viewhiddentimedposts', CAP_PREVENT, $guestrole->id, $context->id);
+                assign_capability('mod/forum:startdiscussion', CAP_PREVENT, $guestrole->id, $context->id);
+                assign_capability('mod/forum:replypost', CAP_PREVENT, $guestrole->id, $context->id);
+                assign_capability('mod/forum:viewrating', CAP_PREVENT, $guestrole->id, $context->id);
+                assign_capability('mod/forum:viewanyrating', CAP_PREVENT, $guestrole->id, $context->id);
+                assign_capability('mod/forum:rate', CAP_PREVENT, $guestrole->id, $context->id);
+                assign_capability('mod/forum:createattachment', CAP_PREVENT, $guestrole->id, $context->id);
+                assign_capability('mod/forum:deleteownpost', CAP_PREVENT, $guestrole->id, $context->id);
+                assign_capability('mod/forum:deleteanypost', CAP_PREVENT, $guestrole->id, $context->id);
+                assign_capability('mod/forum:splitdiscussions', CAP_PREVENT, $guestrole->id, $context->id);
+                assign_capability('mod/forum:movediscussions', CAP_PREVENT, $guestrole->id, $context->id);
+                assign_capability('mod/forum:editanypost', CAP_PREVENT, $guestrole->id, $context->id);
+                assign_capability('mod/forum:viewqandawithoutposting', CAP_PREVENT, $guestrole->id, $context->id);
+                assign_capability('mod/forum:viewsubscribers', CAP_PREVENT, $guestrole->id, $context->id);
+                assign_capability('mod/forum:managesubscriptions', CAP_PREVENT, $guestrole->id, $context->id);
+                assign_capability('mod/forum:throttlingapplies', CAP_PREVENT, $guestrole->id, $context->id);
+            }
+        }
+    } else {
+        // Non-teacher forum.
+        
+        if (empty($cmid)) {
+            // We were not given the course_module id. Try to find it.
+            if (!$cm = get_coursemodule_from_instance('forum', $forum->id)) {
+                notice('Could not get the course module for the forum');
+                continue;
+            } else {
+                $cmid = $cm->id;
+            }
+        }
+        $context = get_context_instance(CONTEXT_MODULE, $cmid);
+
+        // $forum->open defines what students can do:
+        //   0 = No discussions, no replies
+        //   1 = No discussions, but replies are allowed
+        //   2 = Discussions and replies are allowed
+        switch ($forum->open) {
+            case 0:
+                foreach ($studentroles as $studentrole) {
+                    assign_capability('mod/forum:startdiscussion', CAP_PREVENT, $studentrole->id, $context->id);
+                    assign_capability('mod/forum:replypost', CAP_PREVENT, $studentrole->id, $context->id);
+                }
+                break;
+            case 1:
+                foreach ($studentroles as $studentrole) {
+                    assign_capability('mod/forum:startdiscussion', CAP_PREVENT, $studentrole->id, $context->id);
+                    assign_capability('mod/forum:replypost', CAP_ALLOW, $studentrole->id, $context->id);
+                }
+                break;
+            case 2:
+                foreach ($studentroles as $studentrole) {
+                    assign_capability('mod/forum:startdiscussion', CAP_ALLOW, $studentrole->id, $context->id);
+                    assign_capability('mod/forum:replypost', CAP_ALLOW, $studentrole->id, $context->id);
+                }
+                break;
+        }
+
+        // $forum->assessed defines whether forum rating is turned
+        // on (1 or 2) and who can rate posts:
+        //   1 = Everyone can rate posts
+        //   2 = Only teachers can rate posts
+        switch ($forum->assessed) {
+            case 1:
+                foreach ($studentroles as $studentrole) {
+                    assign_capability('mod/forum:rate', CAP_ALLOW, $studentrole->id, $context->id);
+                }
+                // The legacy teacher role can already rate forum posts by default.
+                break;
+            case 2:
+                // The legacy student role cannot rate forum posts by default.
+                // The legacy teacher role can already rate forum posts by default.
+                break;
+        }
+
+        // $forum->assesspublic defines whether students can see
+        // everybody's ratings:
+        //   0 = Students can only see their own ratings
+        //   1 = Students can see everyone's ratings
+        switch ($forum->assesspublic) {
+            case 0:
+                // This is already the behavior of the default legacy roles.
+                break;
+            case 1:
+                assign_capability('mod/forum:viewanyrating', CAP_ALLOW, $studentrole->id, $context->id);
+                break;
+        }
+    }
+    return true;
+}
+
+
 
 ?>

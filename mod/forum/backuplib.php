@@ -65,6 +65,7 @@
         
         //Start mod
         fwrite ($bf,start_tag("MOD",3,true));
+        
         //Print forum data
         fwrite ($bf,full_tag("ID",4,false,$forum->id));
         fwrite ($bf,full_tag("MODTYPE",4,false,"forum"));
