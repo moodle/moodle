@@ -28,13 +28,15 @@
     }
 
     require_login($course->id);
-
-    if (!isteacher($course->id)) {
+    $context = get_context_instance(CONTEXT_COURSE, $course->id);
+    
+    if (!has_capability('moodle/site:viewreports', $context)) {
         print_error('mustbeteacher', '', $CFG->wwwroot.'/course/view.php?id='.$course->id);
     }
+    
 
     add_to_log($course->id, "course", "report participation", "report/participation/index.php?id=$course->id", $course->id); 
-        
+    
     $strparticipation = get_string('participationreport');
     $strviews         = get_string('views');
     $strposts         = get_string('posts');
