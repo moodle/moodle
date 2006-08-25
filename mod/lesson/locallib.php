@@ -245,7 +245,7 @@ function lesson_save_question_options($question) {
                     $answer->timecreated   = $timenow;
                     $answer->grade = $question->fraction[$key] * 100;
                     $answer->answer   = $dataanswer;
-                    $answer->feedback = $question->feedback[$key];
+                    $answer->response = $question->feedback[$key];
                     if (!$answer->id = insert_record("lesson_answers", $answer)) {
                         $result->error = "Could not insert shortanswer quiz answer!";
                         return $result;
