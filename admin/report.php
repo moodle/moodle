@@ -3,9 +3,7 @@
 
     require_once('../config.php');
 
-    if (!isadmin()) {
-        error("You are not allowed to look at this page");
-    }
+    require_capability('moodle/site:viewreports', get_context_instance(CONTEXT_SYSTEM, SITEID));
 
     $stradmin = get_string('administration');
     $strreports = get_string('reports');

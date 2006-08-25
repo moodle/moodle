@@ -12,9 +12,7 @@ $allowrenames   = optional_param('allowrenames', 0, PARAM_BOOL);
 
 require_login();
 
-if (!isadmin()) {
-    error("You must be an administrator to edit users this way.");
-}
+require_capability('moodle/user:create', get_context_instance(CONTEXT_SYSTEM, SITEID));
 
 if (! $site = get_site()) {
     error("Could not find site-level course");

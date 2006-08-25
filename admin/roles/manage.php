@@ -15,14 +15,6 @@
 
     $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
     
-//    if (!isadmin()) {
-//        error('Only admins can access this page');
-//    }
-
-//    if (!$site = get_site()) {
-//        redirect('index.php');
-//    }
-    
     $stradministration = get_string('administration');
     $strmanageroles = get_string('manageroles');
 

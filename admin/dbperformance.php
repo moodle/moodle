@@ -9,9 +9,7 @@
 
     require_login();
 
-    if (!isadmin()) {
-        error("Only the admin can use this page");
-    }
+    require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM, SITEID));
 
     $strdatabaseperformance = get_string("databaseperformance");
     $stradministration = get_string("administration");

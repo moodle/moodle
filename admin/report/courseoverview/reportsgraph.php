@@ -10,10 +10,8 @@
 
     require_login();
 
-    if (!isadmin()) {
-        error("You must be an admin to use this page");
-    }
-
+    require_capability('moodle/site:viewreports', get_context_instance(CONTEXT_SYSTEM, SITEID));
+    
     stats_check_uptodate($course->id);
 
     $param = stats_get_parameters($time,$report,SITEID,STATS_MODE_RANKED);

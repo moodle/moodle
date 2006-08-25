@@ -8,9 +8,7 @@ $replace = optional_param('replace', '', PARAM_RAW);
 
 require_login();
 
-if (!isadmin()) {
-    error("Admins only");
-}
+require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM, SITEID));
 
 ###################################################################
 print_header('Search and replace throughout the whole database', 'Replace text within the whole database');

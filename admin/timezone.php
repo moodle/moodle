@@ -6,9 +6,7 @@
 
     require_login();
 
-    if (!isadmin()) {
-        error("You must be an admin");
-    }
+    require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM, SITEID));
 
     $strtimezone = get_string("timezone");
     $strsavechanges = get_string("savechanges");

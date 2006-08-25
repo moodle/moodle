@@ -49,9 +49,7 @@
      * End custom lang pack handling      *
      **************************************/
 
-    if (!isadmin()) {
-        error('Only admins can access this page');
-    }
+    require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM, SITEID));
 
     if (!$site = get_site()) {
         redirect('index.php');

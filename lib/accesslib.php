@@ -780,7 +780,6 @@ function moodle_install_roles() {
     // Should we delete the tables after we are done? Not yet.
 }
 
-
 /**
  * Assign the defaults found in this capabality definition to roles that have
  * the corresponding legacy capabilities assigned to them.

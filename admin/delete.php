@@ -10,9 +10,7 @@
     $sure       = optional_param('sure', 0, PARAM_BOOL);
     $reallysure = optional_param('reallysure', 0, PARAM_BOOL);
 
-    if (!isadmin()) {
-        error('You must be admin to use this script!');
-    }
+    require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM, SITEID));
 
     $deletedir = $CFG->dataroot;   // The directory to delete!
 

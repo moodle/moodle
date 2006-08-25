@@ -7,9 +7,8 @@
 
     require_login();
 
-    if (!isadmin()) {
-        error("Only admins can access this page");
-    }
+    $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
+    require_capability('moodle/site:config', $context);
 
     if (($data = data_submitted()) && confirm_sesskey()) {
 

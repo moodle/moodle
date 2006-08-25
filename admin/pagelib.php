@@ -45,7 +45,7 @@ class page_admin extends page_base {
     // seems reasonable that the only people that can edit blocks on the admin pages
     // are the admins... but maybe we want a role for this?
     function user_allowed_editing() { 
-        return isadmin();
+        return has_capability('moodle/site:manageblocks', get_context_instance(CONTEXT_SYSTEM, SITEID));
     }
 
     // has to be fixed. i know there's a "proper" way to do this

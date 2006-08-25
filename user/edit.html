@@ -20,7 +20,7 @@
 <form method="post" name="form" enctype="multipart/form-data" action="edit.php">
 <table class="formtable">
 <?php
-if (isadmin()) {
+if (has_capability('moodle/user:update', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
     $theadmin = get_admin(); // returns false during install
     $adminself = (!empty($theadmin) and ($theadmin->id == $USER->id) and ($USER->id == $user->id));
     echo '<tr>';
@@ -275,7 +275,7 @@ if (isadmin()) {
 
 <?php
     $maxbytes = get_max_upload_file_size($CFG->maxbytes, $course->maxbytes);
-    if (!empty($CFG->gdversion) and $maxbytes and (empty($CFG->disableuserimages) or isadmin())) {
+    if (!empty($CFG->gdversion) and $maxbytes and (empty($CFG->disableuserimages) or has_capability('moodle/user:update', get_context_instance(CONTEXT_SYSTEM, SITEID)))) {
 ?>
 <tr>
     <th><?php print_string("currentpicture") ?>:</th>
@@ -300,7 +300,7 @@ if (isadmin()) {
     ?>
     </td>
 </tr>
-<?php } else if (empty($CFG->gdversion) and isadmin()) {  ?>
+<?php } else if (empty($CFG->gdversion) and has_capability('moodle/user:update', get_context_instance(CONTEXT_SYSTEM, SITEID))) {  ?>
 <tr>
     <th><?php print_string("newpicture") ?>:</th>
     <td>
@@ -356,7 +356,7 @@ if (isadmin()) {
     <?php if (isset($err["idnumber"])) formerr($err["idnumber"]); ?>
     </td>
 </tr>
-<?php if (isadmin()) {  ?>
+<?php if (has_capability('moodle/user:update', get_context_instance(CONTEXT_SYSTEM, SITEID))) {  ?>
 <tr>
     <th><?php print_string("institution") ?>:</th>
     <td><input type="text" name="institution" size="25" alt="<?php print_string("institution") ?>" maxlength="40" value="<?php p($user->institution) ?>" /> <?php p($teacheronly) ?>

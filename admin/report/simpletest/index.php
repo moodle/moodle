@@ -21,10 +21,7 @@ define('UNITTEST', true);
 $langfile = 'simpletest';
 
 require_login();
-if (!isadmin()) {
-    print_error('Only admins can access this page');
-}
-
+require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM, SITEID));
 // CGI arguments
 $path = optional_param('path', '', PARAM_PATH);
 $showpasses = optional_param('showpasses', false, PARAM_BOOL);

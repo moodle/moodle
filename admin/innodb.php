@@ -6,9 +6,7 @@
 
    require_login();
 
-   if (!isadmin()) {
-       error('Admin only');
-   }
+   require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM, SITEID));
 
    print_header("Convert all tables from MYISAM to InnoDB", "Convert all tables from MYISAM to InnoDB", 
                 "Convert all tables from MYISAM to InnoDB");

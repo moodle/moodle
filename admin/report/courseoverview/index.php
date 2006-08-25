@@ -13,9 +13,7 @@
 
     require_login();
 
-    if (!isadmin()) {
-        error("This page is for admins only");
-    }
+    require_capability('moodle/site:viewreports', get_context_instance(CONTEXT_SYSTEM, SITEID));
 
     $course = get_site();
     stats_check_uptodate($course->id);

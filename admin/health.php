@@ -20,9 +20,7 @@
     $solution = optional_param('solution', 0, PARAM_SAFEDIR); //in fact it is class name alhanumeric and _
 
     require_login();
-    if (!isadmin()) {
-        error('Only the admin can use this page');
-    }
+    require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM, SITEID));
 
     $site = get_site();
     $stradmin         = get_string('administration');

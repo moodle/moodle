@@ -7,11 +7,9 @@
     $confirm = optional_param('confirm', 0, PARAM_BOOL);
 
     require_login();
-
-    if (!isadmin()) {
-        error("You must be an admin to use this script");
-    }
-
+    
+    require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM, SITEID));
+    
     if ($CFG->version < 2005042300) {
         error("This script does not work with this old version of Moodle");
     }

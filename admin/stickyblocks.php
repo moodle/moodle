@@ -24,9 +24,7 @@
 
     require_login();
   
-    if (!isadmin()) {
-        error("Only the admin can use this page");
-    }
+    require_capability('moodle/site:manageblocks', get_context_instance(CONTEXT_SYSTEM, SITEID));
 
     // first thing to do is print the dropdown menu
 

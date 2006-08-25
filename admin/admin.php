@@ -1,6 +1,8 @@
 <?PHP // $Id$
       // Admin-only script to assign administrative rights to users
 
+    /// this file is depreciated, assigning of admin is done in admin/roles/assign.php
+
     require_once('../config.php');
     
     define("MAX_USERS_PER_PAGE", 50);
@@ -11,9 +13,7 @@
 
     require_login();
 
-    if (!isadmin()) {
-        error("You must be an administrator to use this page.");
-    }
+    require_capability('moodle/user:assign', get_context_instance(CONTEXT_SYSTEM, SITEID));
 
     if (!confirm_sesskey()) {
         error(get_string('confirmsesskeybad', 'error'));

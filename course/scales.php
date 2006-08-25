@@ -159,7 +159,7 @@
         }
 
         //Check for standard scales
-        if ($scale->courseid == 0 and !isadmin()) {
+        if ($scale->courseid == 0 and !has_capability('moodle/course:managescales', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
             error("Only administrators can edit this scale",$CFG->wwwroot.'/course/scales.php?id='.$course->id);
         }
 
@@ -254,7 +254,7 @@
         }
 
         //Check for standard scales
-        if ($scale->courseid == 0 and !isadmin()) {
+        if ($scale->courseid == 0 and !has_capability('moodle/course:managescales', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
             error("Only administrators can delete this scale",$CFG->wwwroot.'/course/scales.php?id='.$course->id);
         }
 
@@ -436,14 +436,14 @@
                 $line[] = $strstandardscale;
             }
             $buttons = "";
-            if (empty($scales_uses) && ($incustom || isadmin())) {
+            if (empty($scales_uses) && ($incustom || has_capability('moodle/course:managescales', get_context_instance(CONTEXT_SYSTEM, SITEID)))) {
                 $buttons .= "<a title=\"$stredit\" href=\"$path/scales.php?id=$course->id&amp;scaleid=$scale->id&amp;action=edit\"><img".
                             " src=\"$CFG->pixpath/t/edit.gif\" hspace=\"2\" height=\"11\" width=\"11\" border=\"0\" alt=\"\" /></a> ";
-                if ($incustom && isadmin()) {
+                if ($incustom && has_capability('moodle/course:managescales', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
                     $buttons .= "<a title=\"$strdown\" href=\"$path/scales.php?id=$course->id&amp;scaleid=$scale->id&amp;action=down&amp;sesskey=$USER->sesskey\"><img".
                                 " src=\"$CFG->pixpath/t/down.gif\" hspace=\"2\" height=\"11\" width=\"11\" border=\"0\" alt=\"\" /></a> ";
                 }
-                if (!$incustom && isadmin()) {
+                if (!$incustom && has_capability('moodle/course:managescales', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
                     $buttons .= "<a title=\"$strup\" href=\"$path/scales.php?id=$course->id&amp;scaleid=$scale->id&amp;action=up&amp;sesskey=$USER->sesskey\"><img".
                                 " src=\"$CFG->pixpath/t/up.gif\" hspace=\"2\" height=\"11\" width=\"11\" border=\"0\" alt=\"\" /></a> ";
                 }

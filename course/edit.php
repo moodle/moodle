@@ -130,10 +130,11 @@
                     $section->id = insert_record("course_sections", $section);
 
                     fix_course_sortorder();
-                    add_to_log(SITEID, "course", "new", "view.php?id=$newcourseid", "$form->fullname (ID $newcourseid)");
+                    add_to_log(SITEID, "course", "new", "view.php?id=$newcourseid", "$form->fullname (ID $newcourseid)")        ;
+                    $context = get_context_instance(CONTEXT_COURSE, $newcourseid);
 
-                    if (isadmin()) { // Redirect admin to add teachers
-                        redirect("teacher.php?id=$newcourseid", get_string("changessaved"));
+                    if (has_capability('moodle/role:assign', $context)) { // Redirect users with assign capability to assign users to different roles
+                        redirect($CFG->wwwroot."/admin/roles/assign.php?contextid=$context->id", get_string("changessaved"));
 
                     } else {         // Add current teacher and send to course
 

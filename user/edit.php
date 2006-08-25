@@ -36,7 +36,7 @@
     }
 
     if ($USER->id <> $user->id) {    // Current user editing someone else's profile
-        if (isadmin()) {             // Current user is an admin
+        if (has_capability('moodle/user:update', get_context_instance(CONTEXT_SYSTEM, SITEID))) { // Current user can update user profiles
             if ($mainadmin = get_admin()) {        
                 if ($user->id == $mainadmin->id) {  // Can't edit primary admin
                     print_error('adminprimarynoedit');
@@ -143,7 +143,7 @@
             $usernew->username = moodle_strtolower($usernew->username);
         }
 
-        if (!empty($_FILES) and !(empty($CFG->disableuserimages) or isadmin())) {
+        if (!empty($_FILES) and !(empty($CFG->disableuserimages) or has_capability('moodle/user:update', get_context_instance(CONTEXT_SYSTEM, SITEID)))) {
             error('Users can not update profile images!');
         }
 
@@ -151,7 +151,7 @@
         $um = new upload_manager('imagefile',false,false,null,false,0,true,true);
 
         // override locked values
-        if (!isadmin()) {      
+        if (!has_capability('moodle/user:update', get_context_instance(CONTEXT_SYSTEM, SITEID))) {      
             $fields = get_user_fieldnames();
             $authconfig = get_config( 'auth/' . $user->auth );
             foreach ($fields as $field) {
@@ -197,7 +197,7 @@
 
             $usernew->timemodified = time();
 
-            if (isadmin()) {
+            if (has_capability('moodle/user:update', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
                 if (!empty($usernew->newpassword)) {
                     $usernew->password = hash_internal_user_password($usernew->newpassword);
                     // update external passwords
@@ -354,7 +354,7 @@
     }
 
     $teacher = strtolower($course->teacher);
-    if (!isadmin()) {
+    if (!has_capability('moodle/user:update', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
         $teacheronly = '('.get_string('teacheronly', '', $teacher).')';
     } else {
         $teacheronly = '';
@@ -362,7 +362,7 @@
 
     include("edit.html");
 
-    if (!isadmin()) {      /// Lock all the locked fields using Javascript
+    if (!has_capability('moodle/user:update', get_context_instance(CONTEXT_SYSTEM, SITEID))) {      /// Lock all the locked fields using Javascript
         $fields = get_user_fieldnames();
 
         echo '<script type="text/javascript">'."\n";
@@ -403,7 +403,7 @@
 function find_form_errors(&$user, &$usernew, &$err, &$um) {
     global $CFG;
 
-    if (isadmin()) {
+    if (has_capability('moodle/user:update', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
         if (empty($usernew->username)) {
             $err["username"] = get_string("missingusername");
 
@@ -433,7 +433,7 @@ function find_form_errors(&$user, &$usernew, &$err, &$um) {
     if (over_bounce_threshold($user) && $user->email == $usernew->email) 
         $err['email'] = get_string('toomanybounces');
 
-    if (empty($usernew->description) and !isadmin())
+    if (empty($usernew->description) and !has_capability('moodle/user:update', get_context_instance(CONTEXT_SYSTEM, SITEID)))
         $err["description"] = get_string("missingdescription");
 
     if (empty($usernew->city))
@@ -457,7 +457,7 @@ function find_form_errors(&$user, &$usernew, &$err, &$um) {
         }
     }
 
-    if (empty($err["email"]) and !isadmin()) {
+    if (empty($err["email"]) and !has_capability('moodle/user:update', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
         if ($error = email_is_not_allowed($usernew->email)) {
             $err["email"] = $error;
         }

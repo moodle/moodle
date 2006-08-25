@@ -42,6 +42,19 @@
 
     require_login($course->id);
 
+
+    if ($roles = get_roles_used_in_context($context)) {
+        foreach ($roles as $role) {
+            $options[$role->id] = $role->name;
+        }
+    } else { // no roles yet
+        if (has_capability('moodle/user:assign', $context)) {
+            redirect($CFG->wwwroot.'/admin/roles/assign.php?contextid='.$context->id);  
+        } else {
+            error ('no participants found for this course');  
+        }
+    }
+
     require_capability('moodle/course:viewparticipants', $context);
 
     if (!$course->category) {
@@ -147,14 +160,6 @@
     /*****************************************
      * drop down for swapping between roles  *
      *****************************************/
-     
-    // this needs to check capability too
-
-    if ($roles = get_roles_used_in_context($context)) {
-        foreach ($roles as $role) {
-            $options[$role->id] = $role->name;
-        }
-    }
 
     if (!$roleid) {
         if ($options) {

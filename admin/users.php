@@ -4,9 +4,7 @@
 
     require_login();
 
-    if (!isadmin()) {
-        error("Only admins can access this page");
-    }
+    require_capability('moodle/user:create', get_context_instance(CONTEXT_SYSTEM, SITEID));
 
     if (!$site = get_site()) {
         redirect("index.php");
@@ -43,14 +41,8 @@
     $table->data[] = array('', '<hr />');
     $table->data[] = array("<b><a href=\"enrol.php?sesskey=$USER->sesskey\">".get_string("enrolmentplugins")."</a></b>",
                            get_string("adminhelpenrolments"));
-    $table->data[] = array("<b><a href=\"../course/index.php?edit=off&amp;sesskey=$USER->sesskey\">".get_string("assignstudents")."</a></b>",
-                           get_string("adminhelpassignstudents"));
-    $table->data[] = array("<b><a href=\"../course/index.php?edit=on&amp;sesskey=$USER->sesskey\">".get_string("assignteachers")."</a></b>",
-                           get_string("adminhelpassignteachers")." <img src=\"../pix/t/user.gif\" height=\"11\" width=\"11\" alt=\"\" />");
-    $table->data[] = array("<b><a href=\"creators.php?sesskey=$USER->sesskey\">".get_string("assigncreators")."</a></b>",
-                           get_string("adminhelpassigncreators"));
-    $table->data[] = array("<b><a href=\"admin.php?sesskey=$USER->sesskey\">".get_string("assignadmins")."</a></b>",
-                           get_string("adminhelpassignadmins"));
+    $table->data[]= array('<b><a href="roles/assign.php?contextid='.$context->id.'">'.
+            get_string('assignsiteroles').'</a></b>', get_string('adminhelpassignsiteroles'));
 
     print_table($table);
 

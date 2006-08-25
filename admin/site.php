@@ -5,9 +5,7 @@
 
     if ($site = get_site()) {
         require_login();
-        if (!isadmin()) {
-            error("You need to be admin to edit this page");
-        }
+        require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM, SITEID));
         $site->format = "social";   // override
     }
 

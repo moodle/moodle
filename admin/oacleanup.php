@@ -6,11 +6,8 @@ if (!isset($CFG)) {
 
     require_login();
 
-    if (!isadmin()) {
-        error('You must be an admin to use this script');
-        exit;
-    }
-    
+    require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM, SITEID));
+
     print_header_simple('Online Assignment Cleanup','Online Assignment Cleanup', 'Admin');
 
     online_assignment_cleanup(true);
