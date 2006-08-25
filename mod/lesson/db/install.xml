@@ -117,7 +117,7 @@
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="lessonid"/>
         <FIELD NAME="lessonid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="userid"/>
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="lessonid" NEXT="grade"/>
-        <FIELD NAME="grade" TYPE="text" LENGTH="small" NOTNULL="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="userid" NEXT="late"/>
+        <FIELD NAME="grade" TYPE="float" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="userid" NEXT="late"/>
         <FIELD NAME="late" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="grade" NEXT="completed"/>
         <FIELD NAME="completed" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="late"/>
       </FIELDS>
