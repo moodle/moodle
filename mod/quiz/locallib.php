@@ -78,9 +78,17 @@ function quiz_create_attempt($quiz, $attemptnumber) {
     return $attempt;
 }
 
+/**
+ * Returns an unfinished attempt (if there is one) for the given
+ * user on the given quiz. This function does not return preview attempts.
+ * 
+ * @param integer $quizid the id of the quiz.
+ * @param integer $userid the id of the user.
+ * 
+ * @return mixed the unfinished attempt if there is one, false if not. 
+ */
 function quiz_get_user_attempt_unfinished($quizid, $userid) {
-// Returns an object containing an unfinished attempt (if there is one)
-    return get_record("quiz_attempts", "quiz", $quizid, "userid", $userid, "timefinish", 0);
+    return get_record_select("quiz_attempts", "quiz = $quizid AND userid = $userid AND timefinish = 0 AND preview = 0");
 }
 
 /**
@@ -623,16 +631,24 @@ function quiz_get_renderoptions($reviewoptions, $state) {
 
 
 /**
-* Determine review options
-*/
-function quiz_get_reviewoptions($quiz, $attempt, $isteacher=false) {
+ * Determine review options
+ * 
+ * @param object $quiz the quiz instance.
+ * @param object $attempt the attempt in question.
+ * @param $context the roles and permissions context,
+ *          normally the context for the quiz module instance.
+ * 
+ * @return object an object with boolean fields responses, scores, feedback,
+ *          correct_responses, solutions and commentary
+ */
+function quiz_get_reviewoptions($quiz, $attempt, $context=null) {
 
     $options = new stdClass;
     $options->readonly = true;
     // Provide the links to the question review and comment script
     $options->questionreviewlink = '/mod/quiz/reviewquestion.php';
 
-    if ($isteacher and !$attempt->preview) {
+    if ($context && has_capability('mod/quiz:viewreports'. $context) and !$attempt->preview) {
         // The teacher should be shown everything except during preview when the teachers
         // wants to see just what the students see
         $options->responses = true;

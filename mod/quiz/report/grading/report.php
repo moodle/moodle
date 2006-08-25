@@ -321,6 +321,9 @@ class quiz_report extends quiz_default_report {
         $userid    = optional_param('userid', 0, PARAM_INT);
         $attemptid = optional_param('attemptid', 0, PARAM_INT);
 
+        // TODO get the context, and put in proper roles an permissions checks.
+        $context = NULL;
+
         $questions[$question->id] = &$question;
         $usehtmleditor = can_use_richtext_editor();
         $users     = get_course_students($quiz->course);
@@ -365,7 +368,7 @@ class quiz_report extends quiz_default_report {
             // with only one question there is only one entry in this array
             $state = &$states[$question->id];
 
-            $options = quiz_get_reviewoptions($quiz, $attempt, true);
+            $options = quiz_get_reviewoptions($quiz, $attempt, $context);
             unset($options->questioncommentlink);
             $copy = $state->manualcomment;
             $state->manualcomment = '';

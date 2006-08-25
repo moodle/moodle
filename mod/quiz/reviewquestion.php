@@ -58,9 +58,9 @@
     }
 
     require_login($course->id, false, $cm);
-    $isteacher = isteacher($course->id);
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
-    if (!$isteacher) {
+    if (!has_capability('mod/quiz:viewreports', $context)) {
         if (!$attempt->timefinish) {
             redirect('attempt.php?q='.$quiz->id);
         }
@@ -112,9 +112,9 @@
     restore_question_state($question, $state);
     $state->last_graded = $state;
 
-    $options = quiz_get_reviewoptions($quiz, $attempt, $isteacher);
+    $options = quiz_get_reviewoptions($quiz, $attempt, $context);
     $options->validation = ($state->event == QUESTION_EVENTVALIDATE);
-    $options->history = ($isteacher and !$attempt->preview) ? 'all' : 'graded';
+    $options->history = (has_capability('mod/quiz:viewreports', $context) and !$attempt->preview) ? 'all' : 'graded';
 
 /// Print infobox
     $table->align  = array("right", "left");
@@ -126,7 +126,7 @@
     }
     // print quiz name
     $table->data[] = array(get_string('modulename', 'quiz').':', format_string($quiz->name));
-    if ($isteacher and count($attempts = get_records_select('quiz_attempts', "quiz = '$quiz->id' AND userid = '$attempt->userid'", 'attempt ASC')) > 1) {
+    if (has_capability('mod/quiz:viewreports', $context) and count($attempts = get_records_select('quiz_attempts', "quiz = '$quiz->id' AND userid = '$attempt->userid'", 'attempt ASC')) > 1) {
         // print list of attempts
         $attemptlist = '';
         foreach ($attempts as $at) {
