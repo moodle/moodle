@@ -864,7 +864,7 @@ function create_context($aggregatelevel, $instanceid) {
  */
 function get_context_instance($aggregatelevel=NULL, $instance=SITEID) {
 
-    global $context_cache, $context_cache_id;
+    global $context_cache, $context_cache_id, $CONTEXT;
 
 /// If no level is supplied then return the current global context if there is one
     if (empty($aggregatelevel)) {
