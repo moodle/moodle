@@ -15,8 +15,10 @@
     }
 
     require_login($course->id);
+    $context = get_context_instance(CONTEXT_COURSE, $course->id);
 
-    if (! (isteacher($course->id) or ($course->showreports and $USER->id == $user))) {
+    if (! (has_capability('moodle/site:viewreports', $context)
+                or ($course->showreports and $USER->id == $user)) ) {
         error("Sorry, you aren't allowed to see this.");
     }
 

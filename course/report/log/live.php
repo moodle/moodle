@@ -13,8 +13,9 @@
         error("That's an invalid course id");
     }
 
-    if (! isteacher($course->id)) {
-        error("Only teachers can view logs");
+    $context = get_context_instance(CONTEXT_COURSE, $course->id);
+    if (!has_capability('moodle/site:viewreports', $context)) {
+        error('You need do not have the required permission to view this report');
     }
 
     add_to_log($course->id, "course", "report live", "report/log/live.php?id=$course->id", $course->id); 

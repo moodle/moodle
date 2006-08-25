@@ -24,15 +24,10 @@
     if (! $course = get_record('course', 'id', $id) ) {
         error('That\'s an invalid course id');
     }
-
-    if (! isteacher($course->id)) {
-        error('Only teachers can view logs');
-    }
-
-    if (! $course->category) {
-        if (!isadmin()) {
-            error('Only administrators can look at the site logs');
-        }
+    
+    $context = get_context_instance(CONTEXT_COURSE, $course->id);
+    if (!has_capability('moodle/site:viewreports', $context)) {
+        error('You need do not have the required permission to view this report');
     }
 
     add_to_log($course->id, "course", "report log", "report/log/index.php?id=$course->id", $course->id); 
@@ -51,7 +46,7 @@
             if (!$u = get_record('user', 'id', $user) ) {
                 error('That\'s an invalid user!');
             }
-            $userinfo = fullname($u, isteacher($course->id));
+            $userinfo = fullname($u, has_capability('moodle/site:viewfullnames', $context));
         }
         if ($date) {
             $dateinfo = userdate($date, get_string('strftimedaydate'));
