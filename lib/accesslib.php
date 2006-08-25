@@ -118,12 +118,16 @@ function has_capability($capability, $context=NULL, $userid=NULL) {
 
     global $USER, $CONTEXT;
 
-    if ($userid && $userid != $USER->id) { // loading other user's capability
-        $capabilities = load_user_capability($capability, $context, $userid);
-    } else {
-        $capabilities = empty($USER->capabilities) ? NULL : $USER->capabilities;  
+    if ($userid) {
+        if (empty($USER->id) or ($userid != $USER->id)) {
+            $capabilities = load_user_capability($capability, $context, $userid);
+        } else { //$USER->id == $userid
+            $capabilities = empty($USER->capabilities) ? NULL : $USER->capabilities;
+        }
+    } else { // no userid
+        $capabilities = empty($USER->capabilities) ? NULL : $USER->capabilities;
     }
-    
+
     if (empty($context)) {                 // Use default CONTEXT if none specified
         if (empty($CONTEXT)) {
             return false;
@@ -139,7 +143,7 @@ function has_capability($capability, $context=NULL, $userid=NULL) {
     // Check site
     $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
     if (isset($capabilities[$sitecontext->id]['moodle/site:doanything'])) {
-        return ($capabilities[$sitecontext->id]['moodle/site:doanything']);
+        return (0 < $capabilities[$sitecontext->id]['moodle/site:doanything']);
     }
     
     switch ($context->aggregatelevel) {
@@ -149,7 +153,7 @@ function has_capability($capability, $context=NULL, $userid=NULL) {
             $parentcats = get_parent_cats($context, CONTEXT_COURSECAT);
             foreach ($parentcats as $parentcat) {
                 if (isset($capabilities[$parentcat]['moodle/site:doanything'])) {
-                    return ($capabilities[$parentcat]['moodle/site:doanything']);
+                    return (0 < $capabilities[$parentcat]['moodle/site:doanything']);
                 }
             }
         break;
@@ -160,8 +164,8 @@ function has_capability($capability, $context=NULL, $userid=NULL) {
 
             foreach ($parentcats as $parentcat) {
                 if (isset($capabilities[$parentcat]['do_anything'])) {
-                    return ($capabilities[$parentcat]['do_anything']);
-                }      
+                    return (0 < $capabilities[$parentcat]['do_anything']);
+                }
             }
         break;
 
@@ -169,36 +173,36 @@ function has_capability($capability, $context=NULL, $userid=NULL) {
             // Find course.
             $group = get_record('groups','id',$context->instanceid);
             $courseinstance = get_context_instance(CONTEXT_COURSE, $group->courseid);
-            
-            $parentcats = get_parent_cats($courseinstance->id, CONTEXT_COURSE);
+
+            $parentcats = get_parent_cats($courseinstance, CONTEXT_COURSE);
             foreach ($parentcats as $parentcat) {
                 if (isset($capabilities[$parentcat->id]['do_anything'])) {
-                    return ($capabilities[$parentcat->id]['do_anything']);
-                }      
-            }    
-            
+                    return (0 < $capabilities[$parentcat->id]['do_anything']);
+                }
+            }
+
             $coursecontext = '';
             if (isset($capabilities[$courseinstance->id]['do_anything'])) {
-                return ($capabilities[$courseinstance->id]['do_anything']);
-            }            
-            
+                return (0 < $capabilities[$courseinstance->id]['do_anything']);
+            }
+
         break;
 
         case CONTEXT_MODULE:
             // Find course.
             $cm = get_record('course_modules', 'id', $context->instanceid);
             $courseinstance = get_context_instance(CONTEXT_COURSE, $cm->course);
-        
-            if ($parentcats = get_parent_cats($courseinstance->id, CONTEXT_COURSE)) {
+
+            if ($parentcats = get_parent_cats($courseinstance, CONTEXT_COURSE)) {
                 foreach ($parentcats as $parentcat) {
                     if (isset($capabilities[$parentcat]['do_anything'])) {
-                        return ($capabilities[$parentcat]['do_anything']);
+                        return (0 < $capabilities[$parentcat]['do_anything']);
                     }
-                }    
-            }    
+                }
+            }
 
             if (isset($capabilities[$courseinstance->id]['do_anything'])) {
-                return ($capabilities[$courseinstance->id]['do_anything']);
+                return (0 < $capabilities[$courseinstance->id]['do_anything']);
             }
 
         break;
@@ -208,16 +212,16 @@ function has_capability($capability, $context=NULL, $userid=NULL) {
             // Find course.
             $block = get_record('block_instance','id',$context->instanceid);
             $courseinstance = get_context_instance(CONTEXT_COURSE, $block->pageid); // needs check
-            
-            $parentcats = get_parent_cats($courseinstance->id, CONTEXT_COURSE);
+
+            $parentcats = get_parent_cats($courseinstance, CONTEXT_COURSE);
             foreach ($parentcats as $parentcat) {
                 if (isset($capabilities[$parentcat]['do_anything'])) {
-                    return ($capabilities[$parentcat]['do_anything']);
+                    return (0 < $capabilities[$parentcat]['do_anything']);
                 }
             }
-            
+
             if (isset($capabilities[$courseinstance->id]['do_anything'])) {
-                return ($capabilities[$courseinstance->id]['do_anything']);
+                return (0 < $capabilities[$courseinstance->id]['do_anything']);
             }
         break;
 
@@ -229,13 +233,13 @@ function has_capability($capability, $context=NULL, $userid=NULL) {
 
     // Last: check self.
     if (isset($capabilities[$context->id]['do_anything'])) {
-        return ($capabilities[$context->id]['do_anything']);
+        return (0 < $capabilities[$context->id]['do_anything']);
     }
-    
-    // do_anything has not been set, we now look for it the normal way.
-    return capability_search($capability, $context, $capabilities);
 
-}    
+    // do_anything has not been set, we now look for it the normal way.
+    return (0 < capability_search($capability, $context, $capabilities));
+
+}
 
 
 /**
@@ -249,17 +253,17 @@ function has_capability($capability, $context=NULL, $userid=NULL) {
 function capability_search($capability, $context, $capabilities) {
     global $USER, $CFG;
 
-    if ($CFG->debug > 7) {
-        notify("Looking for $capability in context $context->id", 'notifytiny');
-    }
-    
+
     if (isset($capabilities[$context->id][$capability])) {
+        if ($CFG->debug > 15) {
+            notify("Found $capability in context $context->id at level $context->aggregatelevel: ".$capabilities[$context->id][$capability], 'notifytiny');
+        }
         return ($capabilities[$context->id][$capability]);
     }
-    
+
     /* Then, we check the cache recursively */
-    $permission = 0;    
-    
+    $permission = 0;
+
     switch ($context->aggregatelevel) {
 
         case CONTEXT_SYSTEM: // by now it's a definite an inherit
@@ -270,12 +274,12 @@ function capability_search($capability, $context, $capabilities) {
             $parentcontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
             $permission = capability_search($capability, $parentcontext, $capabilities);
         break;
-        
+
         case CONTEXT_USERID:
             $parentcontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
             $permission = capability_search($capability, $parentcontext, $capabilities);
         break;
-        
+
         case CONTEXT_COURSECAT: // Coursecat -> coursecat or site
             $coursecat = get_record('course_categories','id',$context->instanceid);
             if (!empty($coursecat->parent)) { // return parent value if it exists
@@ -315,7 +319,10 @@ function capability_search($capability, $context, $capabilities) {
             error ('This is an unknown context!');
         return false;
     }
-    
+    if ($CFG->debug > 15) {
+        notify("Found $capability recursively from context $context->id at level $context->aggregatelevel: $permission", 'notifytiny');
+    }
+
     return $permission;
 }
 
@@ -342,13 +349,13 @@ function load_user_capability($capability='', $context ='', $userid='') {
     if (empty($userid)) {
         $userid = $USER->id;
     } else {
-        $otheruserid = $userid;  
+        $otheruserid = $userid;
     }
-    
+
     if ($capability) {
-        $capsearch = ' AND rc.capability = '.$capability.' ';
+        $capsearch = " AND rc.capability = '$capability' ";
     } else {
-        $capsearch ='';  
+        $capsearch ="";  
     }
     // First we generate a list of all relevant contexts of the user
 

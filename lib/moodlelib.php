@@ -1969,8 +1969,7 @@ function isadmin($userid=0) {
 
     static $admins, $nonadmins;
 
-    if (isset($CFG->rolesactive) && $CFG->rolesactive == 1) {
-
+    if (!empty($CFG->rolesactive)) {
 
         $context = get_context_instance(CONTEXT_SYSTEM, SITEID);  
         
@@ -2026,18 +2025,21 @@ function isteacher($courseid=0, $userid=0, $includeadmin=true) {
 /// Is the user able to access this course as a teacher?
     global $USER, $CFG;
 
-    if (isset($CFG->rolesactive) && $CFG->rolesactive ===1) {   // should be always
+    if (!empty($CFG->rolesactive)) {
 
         if ($courseid == 0) {
             $context = get_context_instance(CONTEXT_SYSTEM, SITEID);  
         } else {
             $context = get_context_instance(CONTEXT_COURSE, $courseid);
         }
-    
+
         if (!$userid) {
-            return has_capability('moodle/legacy:teacher', $context);
+
+            return (has_capability('moodle/legacy:teacher', $context) 
+                    or has_capability('moodle/legacy:editingteacher', $context));
         } else {
-            return has_capability('moodle/legacy:teacher', $context, $userid);
+            return (has_capability('moodle/legacy:teacher', $context, $userid)
+                    or has_capability('moodle/legacy:editingteacher', $context, $userid));
         }  
     }
 
@@ -2113,22 +2115,21 @@ function isteacherinanycourse($userid=0, $includeadmin=true) {
  * @return boo
  */
 function isteacheredit($courseid, $userid=0, $ignorestudentview=false) {
-    global $USER;
-    
-    if (isset($CFG->rolesactive) && $CFG->rolesactive ===1) {
+    global $USER, $CFG;
+
+    if (!empty($CFG->rolesactive)) {
 
         if ($courseid == 0) {
             $context = get_context_instance(CONTEXT_SYSTEM, SITEID);  
         } else {
             $context = get_context_instance(CONTEXT_COURSE, $courseid);
         }
-        
+
         if (!$userid) {
-            return has_capability('moodle/legacy:edittingteacher', $context);
+            return has_capability('moodle/legacy:editingteacher', $context);
         } else {
-            return has_capability('moodle/legacy:edittingteacher', $context, false, $userid);
+            return has_capability('moodle/legacy:editingteacher', $context, $userid);
         }
-      
     }
     // we can't edit in studentview
     if (!empty($USER->studentview) and !$ignorestudentview) {
@@ -2160,20 +2161,16 @@ function isteacheredit($courseid, $userid=0, $ignorestudentview=false) {
  * @return bool
  */
 function iscreator ($userid=0) {
-    global $USER;
-    
-    if (isset($CFG->rolesactive) && $CFG->rolesactive ===1) {
+    global $USER, $CFG;
 
-        if ($courseid == 0) {
-            $context = get_context_instance(CONTEXT_SYSTEM, SITEID);  
-        } else {
-            $context = get_context_instance(CONTEXT_COURSE, $courseid);
-        }
-        
+    if (!empty($CFG->rolesactive)) {
+
+        $context = get_context_instance(CONTEXT_SYSTEM, SITEID);  
+
         if (!$userid) {
             return has_capability('moodle/legacy:coursecreator', $context);
         } else {
-            return has_capability('moodle/legacy:coursecreator', $context, false, $userid);
+            return has_capability('moodle/legacy:coursecreator', $context, $userid);
         }
       
     }
@@ -2205,21 +2202,20 @@ function iscreator ($userid=0) {
  */
 function isstudent($courseid, $userid=0) {
     global $USER, $CFG;
-    
-    if (isset($CFG->rolesactive) && $CFG->rolesactive ===1) {
+
+    if (!empty($CFG->rolesactive)) {
 
         if ($courseid == 0) {
             $context = get_context_instance(CONTEXT_SYSTEM, SITEID);  
         } else {
             $context = get_context_instance(CONTEXT_COURSE, $courseid);
         }
-        
+
         if (!$userid) {
             return has_capability('moodle/legacy:student', $context);
         } else {
-            return has_capability('moodle/legacy:student', $context, false, $userid);
+            return has_capability('moodle/legacy:student', $context, $userid);
         }
-      
     }
 
     if (empty($USER->id) and !$userid) {
