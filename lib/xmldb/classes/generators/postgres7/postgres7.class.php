@@ -87,7 +87,7 @@ class XMLDBpostgres7 extends XMLDBgenerator {
                 }
                 break;
             case XMLDB_TYPE_FLOAT:
-                $dbtype = 'DOUBLE';
+                $dbtype = 'DOUBLE PRECISION';
                 if (!empty($xmldb_decimals)) {
                     if ($xmldb_decimals < 6) {
                         $dbtype = 'REAL';
