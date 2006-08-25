@@ -1,11 +1,13 @@
-<?php
-/*
- * Created on Aug 20, 2006
- *
- * To change the template for this generated file go to
- * Window - Preferences - PHPeclipse - PHP - Code Templates
- */
+<?php // $Id$
+/**
+ * The language strings for the multiple choice question type.
+ * 
+ * @author Tim Hunt.
+ * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+ * @package question
+ *//** */
 
+$string['answerhowmany'] = 'One or multiple answers?';
 $string['answersingleno'] = 'Multiple answers allowed';
 $string['answersingleyes'] = 'One answer only';
 $string['choiceno'] = 'Choice $a';
