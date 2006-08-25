@@ -448,190 +448,9 @@ function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $per
 
 function print_log_csv($course, $user, $date, $order='l.time DESC', $modname,
                         $modid, $modaction, $groupid) {
-	
-	$text = get_string('course')."\t".get_string('time')."\t".get_string('ip_address')."\t".
-	        get_string('fullname')."\t".get_string('action')."\t".get_string('info');
-	
-	if (!$logs = build_logs_array($course, $user, $date, $order, '', '',
-                       $modname, $modid, $modaction, $groupid)) {
-        return false;
-    }
     
-    if ($course->id == SITEID) {
-        $courses[0] = '';
-        if ($ccc = get_courses('all', 'c.id ASC', 'c.id,c.shortname')) {
-            foreach ($ccc as $cc) {
-                $courses[$cc->id] = $cc->shortname;
-            }
-        }
-    }
-	
-    $count=0;
-    $ldcache = array();
-    $tt = getdate(time());
-    $today = mktime (0, 0, 0, $tt["mon"], $tt["mday"], $tt["year"]);
-
-    $strftimedatetime = get_string("strftimedatetime");
-    $isteacher = isteacher($course->id);
-
-	$filename = 'logs_'.userdate(time(),get_string('backupnameformat'),99,false);
-	$filename .= '.txt';
-	header("Content-Type: application/download\n");   
-	header("Content-Disposition: attachment; filename=$filename");
-	header("Expires: 0");
-	header("Cache-Control: must-revalidate,post-check=0,pre-check=0");
-	header("Pragma: public");
-
-	echo get_string('savedat').userdate(time(), $strftimedatetime)."\n";
-	echo $text;
-
-	foreach ($logs['logs'] as $log) {
-		if (isset($ldcache[$log->module][$log->action])) {
-			$ld = $ldcache[$log->module][$log->action];
-		} else {
-			$ld = get_record('log_display', 'module', $log->module, 'action', $log->action);
-			$ldcache[$log->module][$log->action] = $ld;
-		}
-		if ($ld && !empty($log->info)) {
-			// ugly hack to make sure fullname is shown correctly
-			if (($ld->mtable == 'user') and ($ld->field == 'CONCAT(firstname," ",lastname)')) {
-				$log->info = fullname(get_record($ld->mtable, 'id', $log->info), true);
-			} else {
-				$log->info = get_field($ld->mtable, $ld->field, 'id', $log->info);
-			}
-		}
-
-		//Filter log->info 
-		$log->info = format_string($log->info);
-
-		$log->url  = strip_tags(urldecode($log->url));     // Some XSS protection
-		$log->info = strip_tags(urldecode($log->info));    // Some XSS protection
-		$log->url  = str_replace('&', '&amp;', $log->url); // XHTML compatibility
-
-		$firstField = $courses[$log->course];
-		$fullname = fullname($log, $isteacher);
-		$row = array($firstField, userdate($log->time, $strftimedatetime), $log->ip, $fullname, $log->module.' '.$log->action, $log->info);
-		$text = implode("\t", $row);
-		echo $text." \n";
-	}
-	return true;
-}
-
-
-function print_log_xls($course, $user, $date, $order='l.time DESC', $modname,
-                        $modid, $modaction, $groupid) {
-    
-    global $CFG;
-
-	require_once("$CFG->libdir/excellib.class.php");
-	
-	if (!$logs = build_logs_array($course, $user, $date, $order, '', '',
-                       $modname, $modid, $modaction, $groupid)) {
-        return false;
-    }
-    
-    if ($course->id == SITEID) {
-        $courses[0] = '';
-        if ($ccc = get_courses('all', 'c.id ASC', 'c.id,c.shortname')) {
-            foreach ($ccc as $cc) {
-                $courses[$cc->id] = $cc->shortname;
-            }
-        }
-    }
-	
-    $count=0;
-    $ldcache = array();
-    $tt = getdate(time());
-    $today = mktime (0, 0, 0, $tt["mon"], $tt["mday"], $tt["year"]);
-
-    $strftimedatetime = get_string("strftimedatetime");
-    $isteacher = isteacher($course->id);
-
-	$nroPages = ceil(count($logs)/(EXCELROWS-FIRSTUSEDEXCELROW+1));
-	$filename = 'logs_'.userdate(time(),get_string('backupnameformat'),99,false);
-	$filename .= '.xls';
-    
-    $workbook = new MoodleExcelWorkbook('-');
-    $workbook->send($filename);
-    
-	$worksheet = array();
-	$headers = array(get_string('course'), get_string('time'), get_string('ip_address'),
-    					get_string('fullname'),	get_string('action'), get_string('info'));
-    
-	// Creating worksheets
-	for ($wsnumber = 1; $wsnumber <= $nroPages; $wsnumber++) {
-		$sheettitle = get_string('excel_sheettitle', 'logs', $wsnumber).$nroPages;
-		$worksheet[$wsnumber] =& $workbook->add_worksheet($sheettitle);
-		$worksheet[$wsnumber]->set_column(1, 1, 30);
-		$worksheet[$wsnumber]->write_string(0, 0, get_string('savedat').
-		                            userdate(time(), $strftimedatetime));
-		$col = 0;
-		foreach ($headers as $item) {
-			$worksheet[$wsnumber]->write(FIRSTUSEDEXCELROW-1,$col,$item,'');
-			$col++;
-		}
-	}
-
-	$formatDate =& $workbook->add_format();
-	$formatDate->set_num_format(get_string('log_excel_date_format'));
-
-	$row = FIRSTUSEDEXCELROW;
-	$wsnumber = 1;
-	$myxls =& $worksheet[$wsnumber];
-	foreach ($logs['logs'] as $log) {
-		if (isset($ldcache[$log->module][$log->action])) {
-			$ld = $ldcache[$log->module][$log->action];
-		} else {
-			$ld = get_record('log_display', 'module', $log->module, 'action', $log->action);
-			$ldcache[$log->module][$log->action] = $ld;
-		}
-		if ($ld && !empty($log->info)) {
-			// ugly hack to make sure fullname is shown correctly
-			if (($ld->mtable == 'user') and ($ld->field == 'CONCAT(firstname," ",lastname)')) {
-				$log->info = fullname(get_record($ld->mtable, 'id', $log->info), true);
-			} else {
-				$log->info = get_field($ld->mtable, $ld->field, 'id', $log->info);
-			}
-		}
-
-		// Filter log->info
-		$log->info = format_string($log->info);
-		$log->info = strip_tags(urldecode($log->info));  // Some XSS protection
-
-		if ($nroPages>1) {
-			if ($row > EXCELROWS) {
-				$wsnumber++;
-				$myxls =& $worksheet[$wsnumber];
-				$row = FIRSTUSEDEXCELROW;
-			}
-		}
-		
-		$myxls->write($row, 0, $courses[$log->course], '');
-		// Excel counts from 1/1/1900
-		$excelTime=25569+$log->time/(3600*24);
-		$myxls->write($row, 1, $excelTime, $formatDate);
-		$myxls->write($row, 2, $log->ip, '');
-		$fullname = fullname($log, $isteacher);
-		$myxls->write($row, 3, $fullname, '');
-		$myxls->write($row, 4, $log->module.' '.$log->action, '');
-		$myxls->write($row, 5, $log->info, '');
-	
-		$row++;
-	}
-
-	$workbook->close();
-	return true;
-}
-
-/*
-// Relies on $CFG->libdir.'/phpdocwriter/lib/include.php', which is not
-// included in the default Moodle distribution.
-
-function print_log_ooo($course, $user, $date, $order='l.time DESC', $modname,
-                        $modid, $modaction, $groupid) {
-    
-    global $CFG;
-	require_once($CFG->libdir.'/phpdocwriter/lib/include.php');
+    $text = get_string('course')."\t".get_string('time')."\t".get_string('ip_address')."\t".
+            get_string('fullname')."\t".get_string('action')."\t".get_string('info');
     
     if (!$logs = build_logs_array($course, $user, $date, $order, '', '',
                        $modname, $modid, $modaction, $groupid)) {
@@ -655,67 +474,248 @@ function print_log_ooo($course, $user, $date, $order='l.time DESC', $modname,
     $strftimedatetime = get_string("strftimedatetime");
     $isteacher = isteacher($course->id);
 
-	$filename = 'logs_'.userdate(time(),get_string('backupnameformat'),99,false);
-	$filename .= '.sxw';
-	import('phpdocwriter.pdw_document');
-	header("Content-Type: application/download\n");
-	header("Content-Disposition: attachment; filename=$filename");
-	header("Expires: 0");
-	header("Cache-Control: must-revalidate,post-check=0,pre-check=0");
-	header("Pragma: public");
-	header("Content-Transfer-Encoding: binary");
+    $filename = 'logs_'.userdate(time(),get_string('backupnameformat'),99,false);
+    $filename .= '.txt';
+    header("Content-Type: application/download\n");   
+    header("Content-Disposition: attachment; filename=$filename");
+    header("Expires: 0");
+    header("Cache-Control: must-revalidate,post-check=0,pre-check=0");
+    header("Pragma: public");
 
-	$sxw = new pdw_document;
-	$sxw->SetFileName($filename);
-	$sxw->SetAuthor('Moodle');
-	$sxw->SetTitle('logs');
-	$sxw->SetDescription('logs'.' - '.$filename);
-	$sxw->SetLanguage('es','ES');
-	$sxw->SetStdFont("Times New Roman",12);
-	$sxw->AddPageDef(array('name'=>'Standard', 'margins'=>'1,1,1,1', 'w'=>'29.7', 'h'=>'21'));
-	$sxw->Write(get_string('savedat').userdate(time(), $strftimedatetime));
+    echo get_string('savedat').userdate(time(), $strftimedatetime)."\n";
+    echo $text;
+
+    foreach ($logs['logs'] as $log) {
+        if (isset($ldcache[$log->module][$log->action])) {
+            $ld = $ldcache[$log->module][$log->action];
+        } else {
+            $ld = get_record('log_display', 'module', $log->module, 'action', $log->action);
+            $ldcache[$log->module][$log->action] = $ld;
+        }
+        if ($ld && !empty($log->info)) {
+            // ugly hack to make sure fullname is shown correctly
+            if (($ld->mtable == 'user') and ($ld->field == 'CONCAT(firstname," ",lastname)')) {
+                $log->info = fullname(get_record($ld->mtable, 'id', $log->info), true);
+            } else {
+                $log->info = get_field($ld->mtable, $ld->field, 'id', $log->info);
+            }
+        }
+
+        //Filter log->info 
+        $log->info = format_string($log->info);
+
+        $log->url  = strip_tags(urldecode($log->url));     // Some XSS protection
+        $log->info = strip_tags(urldecode($log->info));    // Some XSS protection
+        $log->url  = str_replace('&', '&amp;', $log->url); // XHTML compatibility
+
+        $firstField = $courses[$log->course];
+        $fullname = fullname($log, $isteacher);
+        $row = array($firstField, userdate($log->time, $strftimedatetime), $log->ip, $fullname, $log->module.' '.$log->action, $log->info);
+        $text = implode("\t", $row);
+        echo $text." \n";
+    }
+    return true;
+}
+
+
+function print_log_xls($course, $user, $date, $order='l.time DESC', $modname,
+                        $modid, $modaction, $groupid) {
+    
+    global $CFG;
+
+    require_once("$CFG->libdir/excellib.class.php");
+    
+    if (!$logs = build_logs_array($course, $user, $date, $order, '', '',
+                       $modname, $modid, $modaction, $groupid)) {
+        return false;
+    }
+    
+    if ($course->id == SITEID) {
+        $courses[0] = '';
+        if ($ccc = get_courses('all', 'c.id ASC', 'c.id,c.shortname')) {
+            foreach ($ccc as $cc) {
+                $courses[$cc->id] = $cc->shortname;
+            }
+        }
+    }
+    
+    $count=0;
+    $ldcache = array();
+    $tt = getdate(time());
+    $today = mktime (0, 0, 0, $tt["mon"], $tt["mday"], $tt["year"]);
+
+    $strftimedatetime = get_string("strftimedatetime");
+    $isteacher = isteacher($course->id);
+
+    $nroPages = ceil(count($logs)/(EXCELROWS-FIRSTUSEDEXCELROW+1));
+    $filename = 'logs_'.userdate(time(),get_string('backupnameformat'),99,false);
+    $filename .= '.xls';
+    
+    $workbook = new MoodleExcelWorkbook('-');
+    $workbook->send($filename);
+    
+    $worksheet = array();
+    $headers = array(get_string('course'), get_string('time'), get_string('ip_address'),
+                        get_string('fullname'),    get_string('action'), get_string('info'));
+    
+    // Creating worksheets
+    for ($wsnumber = 1; $wsnumber <= $nroPages; $wsnumber++) {
+        $sheettitle = get_string('excel_sheettitle', 'logs', $wsnumber).$nroPages;
+        $worksheet[$wsnumber] =& $workbook->add_worksheet($sheettitle);
+        $worksheet[$wsnumber]->set_column(1, 1, 30);
+        $worksheet[$wsnumber]->write_string(0, 0, get_string('savedat').
+                                    userdate(time(), $strftimedatetime));
+        $col = 0;
+        foreach ($headers as $item) {
+            $worksheet[$wsnumber]->write(FIRSTUSEDEXCELROW-1,$col,$item,'');
+            $col++;
+        }
+    }
+
+    $formatDate =& $workbook->add_format();
+    $formatDate->set_num_format(get_string('log_excel_date_format'));
+
+    $row = FIRSTUSEDEXCELROW;
+    $wsnumber = 1;
+    $myxls =& $worksheet[$wsnumber];
+    foreach ($logs['logs'] as $log) {
+        if (isset($ldcache[$log->module][$log->action])) {
+            $ld = $ldcache[$log->module][$log->action];
+        } else {
+            $ld = get_record('log_display', 'module', $log->module, 'action', $log->action);
+            $ldcache[$log->module][$log->action] = $ld;
+        }
+        if ($ld && !empty($log->info)) {
+            // ugly hack to make sure fullname is shown correctly
+            if (($ld->mtable == 'user') and ($ld->field == 'CONCAT(firstname," ",lastname)')) {
+                $log->info = fullname(get_record($ld->mtable, 'id', $log->info), true);
+            } else {
+                $log->info = get_field($ld->mtable, $ld->field, 'id', $log->info);
+            }
+        }
+
+        // Filter log->info
+        $log->info = format_string($log->info);
+        $log->info = strip_tags(urldecode($log->info));  // Some XSS protection
+
+        if ($nroPages>1) {
+            if ($row > EXCELROWS) {
+                $wsnumber++;
+                $myxls =& $worksheet[$wsnumber];
+                $row = FIRSTUSEDEXCELROW;
+            }
+        }
+        
+        $myxls->write($row, 0, $courses[$log->course], '');
+        // Excel counts from 1/1/1900
+        $excelTime=25569+$log->time/(3600*24);
+        $myxls->write($row, 1, $excelTime, $formatDate);
+        $myxls->write($row, 2, $log->ip, '');
+        $fullname = fullname($log, $isteacher);
+        $myxls->write($row, 3, $fullname, '');
+        $myxls->write($row, 4, $log->module.' '.$log->action, '');
+        $myxls->write($row, 5, $log->info, '');
+    
+        $row++;
+    }
+
+    $workbook->close();
+    return true;
+}
+
+/*
+// Relies on $CFG->libdir.'/phpdocwriter/lib/include.php', which is not
+// included in the default Moodle distribution.
+
+function print_log_ooo($course, $user, $date, $order='l.time DESC', $modname,
+                        $modid, $modaction, $groupid) {
+    
+    global $CFG;
+    require_once($CFG->libdir.'/phpdocwriter/lib/include.php');
+    
+    if (!$logs = build_logs_array($course, $user, $date, $order, '', '',
+                       $modname, $modid, $modaction, $groupid)) {
+        return false;
+    }
+    
+    if ($course->id == SITEID) {
+        $courses[0] = '';
+        if ($ccc = get_courses('all', 'c.id ASC', 'c.id,c.shortname')) {
+            foreach ($ccc as $cc) {
+                $courses[$cc->id] = $cc->shortname;
+            }
+        }
+    }
+    
+    $count=0;
+    $ldcache = array();
+    $tt = getdate(time());
+    $today = mktime (0, 0, 0, $tt["mon"], $tt["mday"], $tt["year"]);
+
+    $strftimedatetime = get_string("strftimedatetime");
+    $isteacher = isteacher($course->id);
+
+    $filename = 'logs_'.userdate(time(),get_string('backupnameformat'),99,false);
+    $filename .= '.sxw';
+    import('phpdocwriter.pdw_document');
+    header("Content-Type: application/download\n");
+    header("Content-Disposition: attachment; filename=$filename");
+    header("Expires: 0");
+    header("Cache-Control: must-revalidate,post-check=0,pre-check=0");
+    header("Pragma: public");
+    header("Content-Transfer-Encoding: binary");
+
+    $sxw = new pdw_document;
+    $sxw->SetFileName($filename);
+    $sxw->SetAuthor('Moodle');
+    $sxw->SetTitle('logs');
+    $sxw->SetDescription('logs'.' - '.$filename);
+    $sxw->SetLanguage('es','ES');
+    $sxw->SetStdFont("Times New Roman",12);
+    $sxw->AddPageDef(array('name'=>'Standard', 'margins'=>'1,1,1,1', 'w'=>'29.7', 'h'=>'21'));
+    $sxw->Write(get_string('savedat').userdate(time(), $strftimedatetime));
     $sxw->Ln(3);
     
     $headers = array(get_string('course'), get_string('time'), get_string('ip_address'),
-    					get_string('fullname'),	get_string('action'), get_string('info'));
+                        get_string('fullname'),    get_string('action'), get_string('info'));
     
-	foreach($headers as $key=>$header){
-		$headers[$key] = eregi_replace ("<br?>", " ",$header);
-	}
+    foreach($headers as $key=>$header){
+        $headers[$key] = eregi_replace ("<br?>", " ",$header);
+    }
 
-	foreach ($logs['logs'] as $log) {
-		if (isset($ldcache[$log->module][$log->action])) {
-			$ld = $ldcache[$log->module][$log->action];
-		} else {
-			$ld = get_record('log_display', 'module', $log->module, 'action', $log->action);
-			$ldcache[$log->module][$log->action] = $ld;
-		}
-		if ($ld && !empty($log->info)) {
-			// ugly hack to make sure fullname is shown correctly
-			if (($ld->mtable == 'user') and ($ld->field == 'CONCAT(firstname," ",lastname)')) {
-				$log->info = fullname(get_record($ld->mtable, 'id', $log->info), true);
-			} else {
-				$log->info = get_field($ld->mtable, $ld->field, 'id', $log->info);
-			}
-		}
+    foreach ($logs['logs'] as $log) {
+        if (isset($ldcache[$log->module][$log->action])) {
+            $ld = $ldcache[$log->module][$log->action];
+        } else {
+            $ld = get_record('log_display', 'module', $log->module, 'action', $log->action);
+            $ldcache[$log->module][$log->action] = $ld;
+        }
+        if ($ld && !empty($log->info)) {
+            // ugly hack to make sure fullname is shown correctly
+            if (($ld->mtable == 'user') and ($ld->field == 'CONCAT(firstname," ",lastname)')) {
+                $log->info = fullname(get_record($ld->mtable, 'id', $log->info), true);
+            } else {
+                $log->info = get_field($ld->mtable, $ld->field, 'id', $log->info);
+            }
+        }
 
-		// Filter log->info 
-		$log->info = format_string($log->info);
+        // Filter log->info 
+        $log->info = format_string($log->info);
 
-		$log->url  = strip_tags(urldecode($log->url));     // Some XSS protection
-		$log->info = strip_tags(urldecode($log->info));    // Some XSS protection
-		$log->url  = str_replace('&', '&amp;', $log->url); // XHTML compatibility
+        $log->url  = strip_tags(urldecode($log->url));     // Some XSS protection
+        $log->info = strip_tags(urldecode($log->info));    // Some XSS protection
+        $log->url  = str_replace('&', '&amp;', $log->url); // XHTML compatibility
 
-		$firstField = $courses[$log->course];
-		$fullname = fullname($log, $isteacher);
-		$row = array($firstField, userdate($log->time, $strftimedatetime), $log->ip, $fullname, $log->module.' '.$log->action, $log->info);
+        $firstField = $courses[$log->course];
+        $fullname = fullname($log, $isteacher);
+        $row = array($firstField, userdate($log->time, $strftimedatetime), $log->ip, $fullname, $log->module.' '.$log->action, $log->info);
 
-		$data[] = $row;
-	}
-	$sxw->Table($headers,$data);
-	$sxw->Output();
-	
-	return true;
+        $data[] = $row;
+    }
+    $sxw->Table($headers,$data);
+    $sxw->Output();
+    
+    return true;
 }
 */
 
@@ -1098,7 +1098,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
             $mod = $mods[$modnumber];
 
             if ($mod->visible or $isteacher) {
-                echo '<li class="activity '.$mod->modname.'">';
+                echo '<li class="activity '.$mod->modname.'" id="module-'.$modnumber.'">';  // Unique ID
                 if ($ismoving) {
                     if ($mod->id == $USER->activitycopy) {
                         continue;
@@ -1110,7 +1110,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                          ';
                 }
                 $instancename = urldecode($modinfo[$modnumber]->name);
-                    $instancename = format_string($instancename, true,  $course->id);
+                $instancename = format_string($instancename, true,  $course->id);
 
                 if (!empty($modinfo[$modnumber]->extra)) {
                     $extra = urldecode($modinfo[$modnumber]->extra);
@@ -1500,7 +1500,7 @@ function print_courses($category, $width="100%", $hidesitecourse = false) {
         }
     } else {
         print_heading(get_string("nocoursesyet"));
-		$context = get_context_instance(CONTEXT_SYSTEM, SITEID);
+        $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
         if (has_capability('moodle/course:create', $context)) {
             $options = array();
             $options['category'] = $category->id;
