@@ -6,17 +6,17 @@
     require_once("../config.php");
     require_once("lib.php");
 
-    $id       = required_param('id', PARAM_INT);          // Category id
-    $page     = optional_param('page', 0, PARAM_INT);     // which page to show
-    $perpage  = optional_param('perpage', 20, PARAM_INT); // how many per page
-    $categoryedit     = optional_param('categoryedit', -1, PARAM_BOOL);
-    $hide     = optional_param('hide', 0, PARAM_INT);
-    $show     = optional_param('show', 0, PARAM_INT);
-    $moveup   = optional_param('moveup', 0, PARAM_INT);
-    $movedown = optional_param('movedown', 0, PARAM_INT);
-    $moveto   = optional_param('moveto', 0, PARAM_INT);
-    $rename   = optional_param('rename', '', PARAM_NOTAGS);
-    $resort   = optional_param('resort', 0, PARAM_BOOL);
+    $id           = required_param('id', PARAM_INT);          // Category id
+    $page         = optional_param('page', 0, PARAM_INT);     // which page to show
+    $perpage      = optional_param('perpage', 20, PARAM_INT); // how many per page
+    $categoryedit = optional_param('categoryedit', -1, PARAM_BOOL);
+    $hide         = optional_param('hide', 0, PARAM_INT);
+    $show         = optional_param('show', 0, PARAM_INT);
+    $moveup       = optional_param('moveup', 0, PARAM_INT);
+    $movedown     = optional_param('movedown', 0, PARAM_INT);
+    $moveto       = optional_param('moveto', 0, PARAM_INT);
+    $rename       = optional_param('rename', '', PARAM_NOTAGS);
+    $resort       = optional_param('resort', 0, PARAM_BOOL);
 
     if (!$site = get_site()) {
         error("Site isn't defined!");
@@ -31,7 +31,7 @@
     }
 
     if (iscreator()) {
-        if ($edit !== -1) {
+        if ($categoryedit !== -1) {
             $USER->categoryediting = $categoryedit;
         }
         $navbaritem = update_category_button($category->id);
