@@ -77,9 +77,6 @@
         <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for hotpot_questions" NEXT="hotpot"/>
         <KEY NAME="hotpot" TYPE="foreign" FIELDS="hotpot" REFTABLE="hotpot" REFFIELDS="id" PREVIOUS="primary"/>
       </KEYS>
-      <INDEXES>
-        <INDEX NAME="name" UNIQUE="false" FIELDS="name"/>
-      </INDEXES>
     </TABLE>
     <TABLE NAME="hotpot_responses" COMMENT="details about responses in Hot Potatoes quiz attempts" PREVIOUS="hotpot_questions" NEXT="hotpot_strings">
       <FIELDS>
@@ -109,9 +106,6 @@
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for hotpot_strings"/>
       </KEYS>
-      <INDEXES>
-        <INDEX NAME="string" UNIQUE="false" FIELDS="string"/>
-      </INDEXES>
     </TABLE>
   </TABLES>
 </XMLDB>
