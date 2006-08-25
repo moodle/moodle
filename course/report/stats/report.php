@@ -4,7 +4,9 @@
     $courseoptions = array();
 
     foreach ($courses as $c) {
-        if (isteacher($c->id)) {
+        $context = get_context_instance(CONTEXT_COURSE, $c->id);
+
+        if (has_capability('moodle/site:viewreports', $context)) {
             $courseoptions[$c->id] = $c->shortname;
         }
     }
