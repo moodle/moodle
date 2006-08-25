@@ -433,7 +433,7 @@ function upgrade_check_running($message, $timeout) {
  * This function may be called repeatedly.
  */
 function upgrade_log_start() {
-    global $upgradeloghandle;
+    global $CFG, $upgradeloghandle;
 
     if (!empty($_SESSION['upgraderunning'])) {
         return; // logging already started
@@ -441,7 +441,9 @@ function upgrade_log_start() {
 
     @ignore_user_abort(true);            // ignore if user stops or otherwise aborts page loading
     $_SESSION['upgraderunning'] = 1;     // set upgrade indicator
-    session_write_close();               // from now on user can reload page - will be displayed warning
+    if (empty($CFG->dbsessions)) {       // workaround for bug in adodb, db session can not be restarted
+        session_write_close();           // from now on user can reload page - will be displayed warning
+    }
     make_upload_directory('upgradelogs');
     ob_start('upgrade_log_callback', 2); // function for logging to disk; flush each line of text ASAP
     register_shutdown_function('upgrade_log_finish'); // in case somebody forgets to stop logging
@@ -457,7 +459,7 @@ function upgrade_log_start() {
  * This function may be called repeatedly.
  */
 function upgrade_log_finish() {
-    global $upgradeloghandle, $upgradelogbuffer;
+    global $CFG, $upgradeloghandle, $upgradelogbuffer;
 
     if (empty($_SESSION['upgraderunning'])) {
         return; // logging already terminated
@@ -472,7 +474,9 @@ function upgrade_log_finish() {
         @fclose($upgradeloghandle);
         $upgradeloghandle = false;
     }
-    @session_start();                // ignore header errors, we only need to reopen session
+    if (empty($CFG->dbsessions)) {
+        @session_start();                // ignore header errors, we only need to reopen session
+    }
     $_SESSION['upgraderunning'] = 0; // clear upgrade indicator
     if (connection_aborted()) {
         die;
