@@ -813,7 +813,7 @@
     //This function creates all the course_sections and course_modules from xml
     //when restoring in a new course or simply checks sections and create records
     //in backup_ids when restoring in a existing course
-    function restore_create_sections($restore,$xml_file) {
+    function restore_create_sections(&$restore, $xml_file) {
 
         global $CFG,$db;
 
@@ -842,7 +842,7 @@
                 //Now calculate the section's newid
                 $newid = 0;
                 if ($restore->restoreto == 2) {
-                //Save it to db (only if restoring to new course)
+                    //Save it to db (only if restoring to new course)
                     $newid = insert_record("course_sections",$section);
                 } else {
                     //Get section id when restoring in existing course
@@ -856,7 +856,7 @@
                     }
                     //New check. If section 0 doesn't exist, insert it here !!
                     //Teorically this never should happen but, in practice, some users
-                    //have reported this issue. 
+                    //have reported this issue.
                     if(!$rec) {
                         $zero_sec->course = $restore->course_id;
                         $zero_sec->section = 0;
@@ -886,6 +886,7 @@
                                 if (!is_array($restore->mods[$mod->type]->instances)  // we don't care about per instance
                                     || (array_key_exists($mod->instance,$restore->mods[$mod->type]->instances) 
                                         && !empty($restore->mods[$mod->type]->instances[$mod->instance]->restore))) {
+                                    
                                     //Get the module id from modules
                                     $module = get_record("modules","name",$mod->type);
                                     if ($module) {
@@ -911,6 +912,8 @@
                                             //to use it later
                                             backup_putid ($restore->backup_unique_code,"course_modules",
                                                           $keym,$newidmod,$mod->instance);
+                                            
+                                            $restore->mods[$mod->type]->instances[$mod->instance]->restored_as_course_module = $newidmod;
                                         } else {
                                             $status = false;
                                         }
@@ -2463,7 +2466,6 @@
     function restore_create_modules($restore,$xml_file) {
 
         global $CFG;
-
         $status = true;
         //Check it exists
         if (!file_exists($xml_file)) {
