@@ -37,7 +37,7 @@
 
     require_login($course->id, false);
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-    require_capability('mod/quiz:viewre ports', $context);
+    require_capability('mod/quiz:viewreports', $context);
 
     // if no questions have been set up yet redirect to edit.php
     if (!$quiz->questions and has_capability('mod/quiz:manage', $context)) {
