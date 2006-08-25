@@ -148,7 +148,7 @@
             $lesson->maxanswers = $lesson->maxanswers + 2;
         }
         for ($i = 0; $i < $lesson->maxanswers; $i++) {
-            if (trim(strip_tags($form->answer[$i]))) { // strip_tags because the HTML editor adds <p><br />...
+            if (!empty($form->answer[$i]) and trim(strip_tags($form->answer[$i]))) { // strip_tags because the HTML editor adds <p><br />...
                 $newanswer->lessonid = $lesson->id;
                 $newanswer->pageid = $newpageid;
                 $newanswer->timecreated = $timenow;
