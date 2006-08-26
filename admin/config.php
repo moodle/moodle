@@ -53,15 +53,15 @@
                 if ($current = get_record('config', 'name', $name)) {
                     $conf->id = $current->id;
                     if (! update_record('config', $conf)) {
-                        notify("Could not update $name to $value");
+                        error("Error: Could not update $name to $value");
                     }
                 } else {
                     if (! insert_record('config', $conf)) {
-                        notify("Error: could not add new variable $name !");
+                        error("Error: could not add new variable $name !");
                     }
                 }
             }
-            redirect('index.php', get_string('changessaved'), 1);
+            redirect('index.php');
             exit;
 
         } else {
