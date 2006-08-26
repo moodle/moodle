@@ -83,6 +83,10 @@ class XMLDBmssql extends XMLDBgenerator {
             case XMLDB_TYPE_NUMBER:
                 $dbtype = $this->number_type;
                 if (!empty($xmldb_length)) {
+                /// 38 is the max allowed
+                    if ($xmldb_length > 38) {
+                        $xmldb_length = 38;
+                    }
                     $dbtype .= '(' . $xmldb_length;
                     if (!empty($xmldb_decimals)) {
                         $dbtype .= ',' . $xmldb_decimals;
