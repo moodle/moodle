@@ -75,7 +75,7 @@ $string['downloadedfilecheckfailed'] = '下载文件检查失败。';
 $string['downloadlanguagebutton'] = '下载“{$a}”语言包';
 $string['downloadlanguagehead'] = '下载语言包';
 $string['downloadlanguagenotneeded'] = '您可以使用缺省的语言包“{$a}”继续安装过程。';
-$string['downloadlanguagesub'] = '您现在可以下载一个语言包并以该种语言继续安装过程。<br /><br />如果您无法下载语言包，安装过程将会以中文继续。(当安装过程结束后，您就有机会下载并安装更多的语言包了。)';
+$string['downloadlanguagesub'] = '您现在可以下载一个语言包并以该种语言继续安装过程。<br /><br />如果您无法下载语言包，安装过程将会以英文继续。(当安装过程结束后，您就有机会下载并安装更多的语言包了。)';
 $string['environmenterrortodo'] = '在您继续安装这个版本的 Moodle 前，您必需受限解决上面所列出的所有环境问题！';
 $string['environmenthead'] = '检测您的运行环境...';
 $string['environmentrecommendinstall'] = '- 推荐安装/激活';
@@ -118,7 +118,7 @@ $string['memorylimithelp'] = '<p>您的服务器的PHP内存限制是${a}。</p>
 <p>然而，在一些服务器上这会让<b>所有</b>PHP页面无法正常工作(在访问页面时会有错误)，因此您可能不得不删除.htaccess文件。</p></li>
 </ol>';
 $string['missingrequiredfield'] = '缺少了必需的字段';
-$string['mysql416bypassed'] = '如果您的站点使用只 iso-8859-1 (latin) 语言，您可以使用您当前安装的 MySQL 4.1.12(或更高)。';
+$string['mysql416bypassed'] = '如果您的站点只使用 iso-8859-1 (latin) 语言，您可以使用您当前安装的 MySQL 4.1.12(或更高)。';
 $string['mysql416required'] = 'MySQL 4.1.16 是 Moodle 1.6 所需要的最低版本，否则将无法保证所有数据都能转换到 UTF-8 编码。';
 $string['mysqlextensionisnotpresentinphp'] = 'PHP的MySQL扩展并未安装正确，因此无法与MySQL通信。请检查您的php.ini文件或重新编译PHP。';
 $string['name'] = '名称';
