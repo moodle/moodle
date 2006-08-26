@@ -2262,7 +2262,18 @@ function isstudent($courseid, $userid=0) {
  * @return bool
  */
 function isguest($userid=0) {
-    global $USER;
+    global $USER, $CFG;
+
+    if (!empty($CFG->rolesactive)) {
+
+        $context = get_context_instance(CONTEXT_SYSTEM, SITEID);  
+
+        if (!$userid) {
+            return has_capability('moodle/legacy:guest', $context);
+        } else {
+            return has_capability('moodle/legacy:guest', $context, $userid);
+        }
+    }
 
     if (!$userid) {
         if (empty($USER->username)) {
