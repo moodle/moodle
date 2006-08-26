@@ -629,9 +629,15 @@ function get_recordset_sql($sql, $limitfrom=null, $limitnum=null) {
  */
 function recordset_to_array($rs) {
     if ($rs && $rs->RecordCount() > 0) {
+    /// First of all, we are going to get the name of the first column
+    /// to introduce it back after transforming the recordset to assoc array
+    /// See http://docs.moodle.org/en/XMLDB_Problems, fetch mode problem.
+        $firstcolumn = $rs->FetchField(0);
+    /// Get the whole associative array
         if ($records = $rs->GetAssoc(true)) {
             foreach ($records as $key => $record) {
-                $objects[$key] = (object) $record;
+                $record[$firstcolumn->name] = $key;/// Re-add the assoc field
+                $objects[$key] = (object) $record; /// To object
             }
             return $objects;
         } else {
