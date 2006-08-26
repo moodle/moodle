@@ -225,6 +225,9 @@ class configvarrss extends configvar {
     $permissions['allowobjectembed'] = new configvar (get_string('configallowobjectembed', 'admin'),
         choose_from_menu ($noyesoptions, 'allowobjectembed', $config->allowobjectembed, '', '', '', true) );
 
+/// enabletrusttext
+    $permissions['enabletrusttext'] = new configvar (get_string('configenabletrusttext', 'admin'),
+        choose_from_menu ($noyesoptions, 'enabletrusttext', $config->enabletrusttext, '', '', '', true) );
 
     unset($options);
     $options['none'] = 'No courses';

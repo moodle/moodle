@@ -77,6 +77,7 @@ $temp->add(new admin_setting_configcheckbox('opentogoogle', get_string('opentogo
 $temp->add(new admin_setting_configtext('maxbytes', get_string('maxbytes', 'admin'), get_string('configmaxbytes', 'admin'), PARAM_INT));
 $temp->add(new admin_setting_configcheckbox('messaging', get_string('messaging', 'admin'), get_string('configmessaging','admin')));
 $temp->add(new admin_setting_configcheckbox('allowobjectembed', get_string('allowobjectembed', 'admin'), get_string('configallowobjectembed', 'admin')));
+$temp->add(new admin_setting_configcheckbox('enabletrusttext', get_string('enabletrusttext', 'admin'), get_string('configenabletrusttext', 'admin')));
 $temp->add(new admin_setting_configselect('maxeditingtime', get_string('maxeditingtime','admin'), get_string('configmaxeditingtime','admin'), array(60 => get_string('numminutes', '', 1),
                                                                                                                                                     300 => get_string('numminutes', '', 5),
 																																					900 => get_string('numminutes', '', 15),

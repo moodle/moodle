@@ -34,6 +34,7 @@
        'enablecourserequests'     =>  0,
        'enablerssfeeds'           =>  0,
        'enablestats'              =>  0,
+       'enabletrusttext'          =>  0,
        'enrol'                    => 'internal',
        'extendedusernamechars'    =>  false,
        'editorbackgroundcolor'    => '#ffffff',

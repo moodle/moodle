@@ -72,6 +72,11 @@ define('FORMAT_WIKI',     '3');   // Wiki-formatted text
  */
 define('FORMAT_MARKDOWN', '4');   // Markdown-formatted text http://daringfireball.net/projects/markdown/
 
+/**
+ * TRUSTTEXT marker - if present in text, text cleaning should be bypassed
+ */
+define('TRUSTTEXT', '#####TRUSTTEXT#####');
+
 
 /**
  * Allowed tags - string of html tags that can be tested against for safe html tags
@@ -1234,9 +1239,13 @@ function format_text_menu() {
  * @return string
  * @todo Finish documenting this function
  */
-function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL ) {
+function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL) {
 
     global $CFG, $course;
+
+    if (!isset($options->trusttext)) {
+        $options->trusttext = false;
+    }
 
     if (!isset($options->noclean)) {
         $options->noclean=false;
@@ -1262,7 +1271,7 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
 
     if (!empty($CFG->cachetext)) {
         $time = time() - $CFG->cachetext;
-        $md5key = md5($text.'-'.$courseid.$options->noclean.$options->smiley.$options->filter.$options->para.$options->newlines.$format.current_language().$courseid);
+        $md5key = md5($text.'-'.$courseid.$options->noclean.$options->smiley.$options->filter.$options->para.$options->newlines.$format.current_language().$courseid.$options->trusttext);
         if ($oldcacheitem = get_record_sql('SELECT * FROM '.$CFG->prefix.'cache_text WHERE md5key = \''.$md5key.'\'', true)) {
             if ($oldcacheitem->timemodified >= $time) {
                 return $oldcacheitem->formattedtext;
@@ -1270,17 +1279,31 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
         }
     }
 
+    // trusttext overrides the noclean option!
+    if ($options->trusttext) {
+        if (trusttext_present($text)) {
+            $text = trusttext_strip($text);
+            if (!empty($CFG->enabletrusttext)) {
+                $options->noclean = true;
+            } else {
+                $options->noclean = false;
+            }
+        } else {
+            $options->noclean = false;
+        }
+    }
+
     $CFG->currenttextiscacheable = true;   // Default status - can be changed by any filter
 
     switch ($format) {
         case FORMAT_HTML:
-            if (!empty($options->smiley)) {
+            if ($options->smiley) {
                 replace_smilies($text);
             }
-            if (empty($options->noclean)) {
+            if (!$options->noclean) {
                 $text = clean_text($text, $format);
             }
-            if (!empty($options->filter)) {
+            if ($options->filter) {
                 $text = filter_text($text, $courseid);
             }
             break;
@@ -1302,25 +1325,25 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
 
         case FORMAT_MARKDOWN:
             $text = markdown_to_html($text);
-            if (!empty($options->smiley)) {
+            if ($options->smiley) {
                 replace_smilies($text);
             }
-            if (empty($options->noclean)) {
+            if (!$options->noclean) {
                 $text = clean_text($text, $format);
             }
 
-            if (!empty($options->filter)) {
+            if ($options->filter) {
                 $text = filter_text($text, $courseid);
             }
             break;
 
         default:  // FORMAT_MOODLE or anything else
             $text = text_to_html($text, $options->smiley, $options->para, $options->newlines);
-            if (empty($options->noclean)) {
+            if (!$options->noclean) {
                 $text = clean_text($text, $format);
             }
 
-            if (!empty($options->filter)) {
+            if ($options->filter) {
                 $text = filter_text($text, $courseid);
             }
             break;
@@ -1475,7 +1498,6 @@ function format_text_email($text, $format) {
  * @todo Finish documenting this function
  */
 function filter_text($text, $courseid=NULL) {
-
     global $CFG;
 
     require_once($CFG->libdir.'/filterlib.php');
@@ -1497,6 +1519,88 @@ function filter_text($text, $courseid=NULL) {
     $text = str_replace('</nolink>', '', $text);
 
     return $text;
+}
+
+/**
+ * Is the text marked as trusted?
+ *
+ * @param string $text text to be searched for TRUSTTEXT marker
+ * @return boolean
+ */
+function trusttext_present($text) {
+    if (strpos($text, TRUSTTEXT) !== FALSE) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+/**
+ * This funtion MUST be called before the cleaning or any other
+ * function that modifies the data! We do not know the origin of trusttext
+ * in database, if it gets there in tweaked form we must not convert it
+ * to supported form!!!
+ *
+ * Please be carefull not to use stripslashes on data from database
+ * or twice stripslashes when processing data recieved from user.
+ *
+ * @param string $text text that may contain TRUSTTEXT marker 
+ * @return text without any TRUSTTEXT marker
+ */
+function trusttext_strip($text) {
+    global $CFG;
+
+    while (true) { //removing nested TRUSTTEXT
+        $orig = $text; 
+        $text = str_replace(TRUSTTEXT, '', $text);
+        if (strcmp($orig, $text) === 0) {
+            return $text;
+        }
+    }
+}
+
+/**
+ * Mark text as trusted, such text may contain any HTML tags because the
+ * normal text cleaning will be bypassed.
+ * Please make sure that the text comes from trusted user before storing
+ * it into database!
+ */
+function trusttext_mark($text) {
+    global $CFG;
+    if (!empty($CFG->enabletrusttext) and (strpos($text, TRUSTTEXT) === FALSE)) {
+        return TRUSTTEXT.$text;
+    } else {
+        return $text;
+    }
+}
+function trusttext_after_edit(&$text, $context) {
+    if (has_capability('moodle/site:trustcontent', $context)) {
+        $text = trusttext_mark($text);
+    } else {
+        $text = trusttext_strip($text);
+    }
+}
+
+function trusttext_prepare_edit(&$text, &$format, $usehtmleditor, $context) {
+    global $CFG;
+
+    $options = new object();
+    $options->smiley = false;
+    $options->filter = false;
+    if (!empty($CFG->enabletrusttext)
+         and has_capability('moodle/site:trustcontent', $context)
+         and trusttext_present($text)) {
+        $options->noclean = true;
+    } else {
+        $options->noclean = false;
+    }
+    $text = trusttext_strip($text);
+    if ($usehtmleditor) {
+        $text = format_text($text, $format, $options);
+        $format = FORMAT_HTML;
+    } else if (!$options->noclean){
+        $text = clean_text($text, $format);
+    }
 }
 
 /**

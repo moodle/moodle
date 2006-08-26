@@ -134,7 +134,7 @@
         }
 
         if ( $confirm and $form = data_submitted() ) {
-            //$form->text = clean_text($form->text, $form->format);
+            trusttext_after_edit($form->text, $context);
 
             $newentry->entryid = $entry->id;
             $newentry->comment = $form->text;

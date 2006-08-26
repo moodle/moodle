@@ -212,7 +212,7 @@
             $xmlentry = $xmlentries[$i];
             unset($newentry);
             $newentry->concept = trim(addslashes($xmlentry['#']['CONCEPT'][0]['#']));
-            $newentry->definition = addslashes($xmlentry['#']['DEFINITION'][0]['#']);
+            $newentry->definition = trusttext_strip(addslashes($xmlentry['#']['DEFINITION'][0]['#']));
             if ( isset($xmlentry['#']['CASESENSITIVE'][0]['#']) ) {
                 $newentry->casesensitive    = addslashes($xmlentry['#']['CASESENSITIVE'][0]['#']);
             } else {

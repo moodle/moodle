@@ -43,6 +43,8 @@ if (!$glossary->studentcanpost && !has_capability('mod/glossary:manageentries', 
 }
 if ( $confirm ) {
     $form = data_submitted();
+    trusttext_after_edit($form->text, $context);
+
     if ( !isset($form->usedynalink) ) {
         $form->usedynalink = 0;
     }
@@ -245,6 +247,7 @@ if ( $confirm ) {
         $newentry->userid = $form->userid;
         $newentry->timecreated = $form->timecreated;
 
+
         if ( $aliases = get_records("glossary_alias","entryid",$e) ) {
             foreach ($aliases as $alias) {
                 $newentry->aliases .= $alias->alias . "\n";
@@ -332,7 +335,7 @@ $tab = GLOSSARY_ADDENTRY_VIEW;
 include("tabs.html");
 
 if (!$e) {
-    require_capability('glossary_write', $context);  
+    require_capability('mod/glossary:write', $context);  
 }
 
 include("edit.html");

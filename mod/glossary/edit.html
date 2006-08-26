@@ -2,13 +2,9 @@
     if (!isset($newentry->format)) {
         $newentry->format = $defaultformat;
     }
-    if ($usehtmleditor) { //clean and convert before editing
-        $options = new object();
-        $options->smiley = false;
-        $options->filter = false;
-        $newentry->definition = format_text($newentry->definition, $newentry->format, $options);
-        $newentry->format = FORMAT_HTML;
-    }
+
+    trusttext_prepare_edit($newentry->definition, $newentry->format, $usehtmleditor, $context)
+
 ?>
 <form name="form" method="post" action="edit.php" enctype="multipart/form-data">
 <table border="0" cellpadding="5">
