@@ -1575,6 +1575,7 @@ function trusttext_mark($text) {
 }
 function trusttext_after_edit(&$text, $context) {
     if (has_capability('moodle/site:trustcontent', $context)) {
+        $text = trusttext_strip($text);
         $text = trusttext_mark($text);
     } else {
         $text = trusttext_strip($text);
