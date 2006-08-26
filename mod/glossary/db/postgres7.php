@@ -182,6 +182,25 @@ function glossary_upgrade($oldversion) {
         table_column('glossary','allowprintview','allowprintview','smallint','4','unsigned','1');
     }
 
+    if ($oldversion < 2006082600) {
+        $sql1 = "UPDATE {$CFG->prefix}glossary_entries SET definition = REPLACE(definition, '".TRUSTTEXT."', '');";
+        $sql2 = "UPDATE {$CFG->prefix}glossary_comments SET comment = REPLACE(comment, '".TRUSTTEXT."', '');";
+        $likecond = sql_ilike()." '%".TRUSTTEXT."%'";
+        while (true) {
+            if (!count_records_select('glossary_entries', "definition $likecond")) {
+                break;
+            }
+            execute_sql($sql1);
+        }
+        while (true) {
+            if (!count_records_select('glossary_comments', "comment $likecond")) {
+                break;
+            }
+            execute_sql($sql2);
+        }
+    }
+
+
   return true;
 }
 
