@@ -33,11 +33,12 @@
     print_header();
 
     require_course_login($course, true, $cm);
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
 /// Loading the textlib singleton instance. We are going to need it.
     $textlib = textlib_get_instance();
 
-    if (!isteacher($course->id) and !$glossary->allowprintview) {
+    if (!has_capability('mod/glossary:manageentries', $context) and !$glossary->allowprintview) {
         notice(get_string('printviewnotallowed', 'glossary'));
     }
 
@@ -169,7 +170,7 @@
                     if ( isset($entry->uid) ) {
                         // printing the user icon if defined (only when browsing authors)
                         $user = get_record("user","id",$entry->uid);
-                        $pivottoshow = fullname($user, isteacher($course->id));
+                        $pivottoshow = fullname($user);
                     }
 
                     echo "<p align=\"center\"><strong>".clean_text($pivottoshow)."</strong></p>" ;

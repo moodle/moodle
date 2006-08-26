@@ -14,6 +14,7 @@
     }
 
     require_course_login($course);
+    $context = get_context_instance(CONTEXT_COURSE, $course->id);
 
     add_to_log($course->id, "glossary", "view all", "index.php?id=$course->id", "");
 
@@ -55,7 +56,7 @@
         $table->align = array ("LEFT", "CENTER");
     }
 
-    $can_subscribe = (isstudent($course->id) or isteacher($course->id) or isadmin());
+    $can_subscribe = has_capability('mod/glossary:view', $context);
 
     if ($show_rss = (($can_subscribe || $course->id == SITEID) &&
                      isset($CFG->enablerssfeeds) && isset($CFG->glossary_enablerssfeeds) &&

@@ -22,7 +22,7 @@ function glossary_show_entry_fullwithauthor($course, $cm, $glossary, $entry, $mo
         glossary_print_entry_concept($entry);
         echo '</span><br />';
 
-        $fullname = fullname($user, isteacher($course->id));
+        $fullname = fullname($user);
         $by->name = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.$course->id.'">'.$fullname.'</a>';
         $by->date = userdate($entry->timemodified);
         echo '<span class="author">'.get_string('bynameondate', 'forum', $by).'</span>';

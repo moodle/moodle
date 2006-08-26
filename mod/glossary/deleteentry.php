@@ -30,18 +30,13 @@
 
     require_login($course->id, false, $cm);
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    require_capability('mod/glossary:view', $context);
+    $manageentries = has_capability('mod/glossary:manageentries', $context); 
     
-    if (isguest()) {
-        error("Guests are not allowed to edit or delete entries", $_SERVER["HTTP_REFERER"]);
-    }
-
     if (! $glossary = get_record("glossary", "id", $cm->instance)) {
         error("Glossary is incorrect");
     }
 
-    if (!has_capability('mod/glossary:manageentries', $context) ) {
-        error("You are not allowed to edit or delete entries");
-    }
 
     $strareyousuredelete = get_string("areyousuredelete","glossary");
 
@@ -51,11 +46,11 @@
                   navmenu($course, $cm));
 
 
-    if (($entry->userid != $USER->id) and !isteacher($course->id)) {
+    if (($entry->userid != $USER->id) and !$manageentries) { // guest id is never matched, no need for special check here
         error("You can't delete other people's entries!");
     }
     $ineditperiod = ((time() - $entry->timecreated <  $CFG->maxeditingtime) || $glossary->editalways);
-    if (!$ineditperiod and !isteacher($course->id)) {
+    if ((!$ineditperiod or !$glossary->studentcanpost) and !$manageentries) {
         error("You can't delete this. Time expired!");
     }
 
