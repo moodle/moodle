@@ -253,6 +253,9 @@ function glossary_print_recent_activity($course, $isteacher, $timestart) {
         //Create a temp valid module structure (course,id)
         $tempmod->course = $log->course;        
         $entry           = get_record('glossary_entries','id',$log->info);
+        if (!$entry) {
+            continue;
+        }
         $tempmod->id = $entry->glossaryid;
         //Obtain the visible property from the instance        
         $modvisible = instance_is_visible($log->module,$tempmod);
