@@ -390,8 +390,14 @@ class XMLDBgenerator {
         $name = '';
 
     /// Implement one basic cache to avoid object name duplication
+    /// and to speed up repeated queries for the same objects
         if (!isset($used_names)) {
             static $used_names = array();
+        }
+
+    /// If this exact object has been requested, return it
+        if (array_key_exists($tablename.'-'.$fields.'-'.$suffix, $used_names)) {
+            return $used_names[$tablename.'-'.$fields.'-'.$suffix];
         }
 
     /// Use standard naming. See http://docs.moodle.org/en/XMLDB_key_and_index_naming
@@ -434,7 +440,7 @@ class XMLDBgenerator {
         }
 
     /// Add the name to the cache
-        $used_names[] = $namewithsuffix;
+        $used_names[$tablename.'-'.$fields.'-'.$suffix] = $namewithsuffix;
 
     /// Quote it if necessary (reserved words)
         $namewithsuffix = $this->getEncQuoted($namewithsuffix);

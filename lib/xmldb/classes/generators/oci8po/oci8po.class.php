@@ -138,7 +138,9 @@ class XMLDBoci8po extends XMLDBgenerator {
         $trigger.= "\nON " . $this->getEncQuoted($this->prefix . $xmldb_table->getName());
         $trigger.= "\n    FOR EACH ROW";
         $trigger.= "\nBEGIN";
-        $trigger.= "\n    SELECT " . $sequence_name . '.nextval INTO :new.' . $this->getEncQuoted($xmldb_field->getName()) . " FROM dual;";
+        $trigger.= "\n    IF :old." . $this->getEncQuoted($xmldb_field->getName()) . ' IS NOT NULL THEN';
+        $trigger.= "\n        SELECT " . $sequence_name . '.nextval INTO :new.' . $this->getEncQuoted($xmldb_field->getName()) . " FROM dual;";
+        $trigger.= "\n    END IF;";
         $trigger.= "\nEND;";
         return array($sequence, $trigger);
     }
