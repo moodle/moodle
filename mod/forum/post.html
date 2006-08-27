@@ -13,6 +13,9 @@ if (!isset($discussion->timestart)) {
 if (!isset($discussion->timeend)) {
     $discussion->timeend = 0;
 }
+
+trusttext_prepare_edit($post->message, $post->format, $usehtmleditor, $modcontext);
+
 ?>
 <form name="theform" method="post" action="post.php" enctype="multipart/form-data">
 <table border="0" cellpadding="5">

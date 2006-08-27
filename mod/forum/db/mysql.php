@@ -267,7 +267,17 @@ function forum_upgrade($oldversion) {
           
       } // End if.
   }
-  
+
+  if ($oldversion < 2006082700) {
+      $sql = "UPDATE {$CFG->prefix}forum_posts SET message = REPLACE(message, '".TRUSTTEXT."', '');";
+      $likecond = sql_ilike()." '%".TRUSTTEXT."%'";
+      while (true) {
+          if (!count_records_select('forum_posts', "message $likecond")) {
+              break;
+          }
+          execute_sql($sql);
+      }
+  }
   
   return true;
   

@@ -666,7 +666,7 @@ function forum_make_mail_text($course, $forum, $discussion, $post, $userfrom, $u
     }
     $posttext .= "\n".$strbynameondate."\n";
     $posttext .= "---------------------------------------------------------------------\n";
-    $posttext .= format_text_email($post->message, $post->format);
+    $posttext .= format_text_email(trusttext_strip($post->message), $post->format);
     $posttext .= "\n\n";
     if ($post->attachment) {
         $post->course = $course->id;
@@ -1650,7 +1650,7 @@ function forum_make_mail_post(&$post, $user, $touser, $course,
     if (empty($formattedtextid) or $formattedtextid != $post->id) {    // Recalculate the formatting
         $options = new Object;
         $options->para = true;
-        $formattedtext = format_text($post->message, $post->format, $options, $course->id);
+        $formattedtext = format_text(trusttext_strip($post->message), $post->format, $options, $course->id);
         $formattedtextid = $post->id;
     }
 
@@ -1867,6 +1867,7 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
 
     $options = new Object;
     $options->para = false;
+    $options->trusttext = true;
     if ($link and (strlen(strip_tags($post->message)) > $CFG->forum_longpost)) {
         // Print shortened version
         echo format_text(forum_shorten_post($post->message), $post->format, $options, $courseid);

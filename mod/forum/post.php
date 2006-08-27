@@ -85,9 +85,9 @@
             $errordestination = $SESSION->fromurl;
         }
 
-        $post->subject = strip_tags($post->subject, '<lang><span>');        // Strip all tags except lang
+        $post->subject = clean_param(strip_tags($post->subject, '<lang><span>'), PARAM_CLEAN); // Strip all tags except multilang
 
-        //$post->message = clean_text($post->message, $post->format);   // Clean up any bad tags
+        //$post->message will be cleaned later before display
 
         $post->attachment = isset($_FILES['attachment']) ? $_FILES['attachment'] : NULL;
 
@@ -95,6 +95,7 @@
             $cm->id = 0;
         }
         $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
+        trusttext_after_edit($post->message, $modcontext);
 
         if (!$post->subject or !$post->message) {
             $post->error = get_string("emptymessage", "forum");
@@ -174,7 +175,7 @@
                     $timemessage = 4;
                 }
 
-                if ($post->mailnow) {
+                if (!empty($post->mailnow)) {
                     $message .= get_string("postmailnow", "forum");
                     $timemessage = 4;
                 }
@@ -614,6 +615,7 @@
 
     require_login($course->id, false, $cm);
 
+    $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
 
     if ($post->discussion) {
         if (! $toppost = get_record("forum_posts", "discussion", $post->discussion, "parent", 0)) {
