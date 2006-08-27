@@ -8,21 +8,21 @@ document.getElementById('content').style.display='none';
 
 //onload object for handling scripts on page load, this insurses they run in my order
 function onload_class(){
-	this.scripts = new Array();
-	this.debug = false;
+        this.scripts = new Array();
+     this.debug = false;
 }
 
 onload_class.prototype.add = function(script){
-		if(this.debug)YAHOO.log("onload.add - adding "+script,"junk");
-		this.scripts[this.scripts.length] = script;
-	}
-	
+              if(this.debug)YAHOO.log("onload.add - adding "+script,"junk");
+          this.scripts[this.scripts.length] = script;
+     }
+       
 onload_class.prototype.load = function(){
-		var scriptcount = this.scripts.length;
-		if(this.debug)YAHOO.log("onload.load - loading "+scriptcount+" scripts","info");
-		for(i=0;i<scriptcount;i++)
-			eval(this.scripts[i]);		
-	}
+               var scriptcount = this.scripts.length;
+          if(this.debug)YAHOO.log("onload.load - loading "+scriptcount+" scripts","info");
+                for(i=0;i<scriptcount;i++)
+                      eval(this.scripts[i]);          
+        }
 
 var onload = new onload_class();
 
@@ -30,39 +30,39 @@ var onload = new onload_class();
 
 //main page object
 function main_class(){
-	this.portal = new php_portal_class();
-	
-	this.blocks = new Array();
+       this.portal = new php_portal_class();
+   
+        this.blocks = new Array();
     this.sections = new Array();
-	
-	this.leftcolumn = null;
-	this.rightcolumn = null;	
-	this.adminBlock = null;	
+      
+        this.leftcolumn = null;
+ this.rightcolumn = null;        
+        this.adminBlock = null; 
     
     //if you use firefox the firebug extension will show log contents otherwise uncomment to view
-	//this.logview = new YAHOO.widget.LogReader(document.body.appendChild(document.createElement('div'))); 
-	
+   //this.logview = new YAHOO.widget.LogReader(document.body.appendChild(document.createElement('div'))); 
+ 
 
-	
-	this.icons = [];
-	this.marker = null;
-	
-	//things to process onload
-	onload.add('main.process_document();');
-	onload.add("document.getElementById('content').style.display='block';");
-	
-	//connection queue allows xhttp requests to be sent in order
-	this.connectQueue = [];
-	this.connectQueueHead = 0;
-	this.connectQueueConnection = null;
-	
-	this.debug = true;
+        
+        this.icons = [];
+        this.marker = null;
+     
+        //things to process onload
+      onload.add('main.process_document();');
+ onload.add("document.getElementById('content').style.display='block';");
+        
+        //connection queue allows xhttp requests to be sent in order
+    this.connectQueue = [];
+ this.connectQueueHead = 0;
+      this.connectQueueConnection = null;
+     
+        this.debug = true;
 }
 
 
 main_class.prototype.process_blocks = function(){
     
-	   //remove unneeded icons (old school position icons and delete/hide although they will be readded)
+           //remove unneeded icons (old school position icons and delete/hide although they will be readded)
        var rmIconClasses = ['icon up','icon down','icon right','icon left','icon delete','icon hide'];
        for(var c=0;c<rmIconClasses.length;c++){
             els = YAHOO.util.Dom.getElementsByClassName(rmIconClasses[c]);
@@ -72,11 +72,11 @@ main_class.prototype.process_blocks = function(){
        }    
     
         //process the block ids passed from php
-		var blockcount = this.portal.blocks.length;
-		YAHOO.log("main.processBlocks - processing "+blockcount+" blocks","info");
-		for(i=0;i<blockcount;i++){
-			this.blocks[i] = new block_class(this.portal.blocks[i][1],"blocks");
-			
+           var blockcount = this.portal.blocks.length;
+             YAHOO.log("main.processBlocks - processing "+blockcount+" blocks","info");
+              for(i=0;i<blockcount;i++){
+                      this.blocks[i] = new block_class(this.portal.blocks[i][1],"blocks");
+                    
            //put in correct side array also
             if(this.portal.blocks[i][0] == 'l')
                 main.leftcolumn.add_block(this.blocks[i]);
@@ -86,18 +86,18 @@ main_class.prototype.process_blocks = function(){
            //hide if called for
            if(this.portal.blocks[i][2] == 1)
               this.blocks[i].toggle_hide(null,null,true);                         
-		}     
+              }     
 
-	}
-	
+  }
+       
 
 main_class.prototype.process_document = function(){
     
         //process the document to get important containers0    
         YAHOO.log("Processing Document","info");
         //process columns for blocks
-		this.leftcolumn = new column_class('left-column',"blocks",null,'l');
-		this.rightcolumn = new column_class('right-column',"blocks",null,'r');
+              this.leftcolumn = new column_class('left-column',"blocks",null,'l');
+            this.rightcolumn = new column_class('right-column',"blocks",null,'r');
         
         //process sections
        
@@ -112,26 +112,26 @@ main_class.prototype.process_document = function(){
         this.adminBlock = YAHOO.util.Dom.getElementsByClassName('block_adminblock')[0]; 
         YAHOO.log("admin - "+this.adminBlock.className);
 
-	}
+    }
 
 main_class.prototype.mk_safe_for_transport = function(input){
        return input.replace(/&/i,'_.amp._');
-    }	
+    } 
 
 main_class.prototype.get_block_index = function(el){
        //return block by id
-	   var blockcount = this.blocks.length;
-	   for(i=0;i<blockcount;i++)
-	       if(this.blocks[i] == el)
-	           return i;
-	}
-	
+    var blockcount = this.blocks.length;
+    for(i=0;i<blockcount;i++)
+           if(this.blocks[i] == el)
+            return i;
+    }
+       
 main_class.prototype.get_section_index = function(el){
-	   var sectioncount = this.sections.length;
-	   for(i=0;i<sectioncount;i++)
-	       if(this.sections[i] == el)
-	           return i;
-	}	
+     var sectioncount = this.sections.length;
+        for(i=0;i<sectioncount;i++)
+         if(this.sections[i] == el)
+                  return i;
+    }       
 
 main_class.prototype.mk_button = function(tag,imgSrc,attributes,imgAttributes){
         //create button and return object   
