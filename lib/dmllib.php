@@ -1336,21 +1336,29 @@ function configure_dbconnection() {
             if ($CFG->unicodedb) {
                 $db->Execute("SET NAMES 'utf8'");
             }
-        break;
+            break;
         case 'postgres7':
         /// Set names if needed
             if ($CFG->unicodedb) {
                 $db->Execute("SET NAMES 'utf8'");
             }
-        break;
+            break;
         case 'mssql':
         /// No need to set charset. It must be specified in the driver conf
         /// Allow quoted identifiers
             $db->Execute('SET QUOTED_IDENTIFIER ON');
-        break;
-        case 'oracle':
+        /// Enable sybase quotes, so addslashes and stripslashes will use "'"
+            ini_set('magic_quotes_sybase', '1');
+        /// NOTE: Not 100% useful because GPC has been addslashed with the setting off
+        ///       so IT'S MANDATORY TO CHANGE THIS UNDER php.ini or .htaccess for this DB
+            break;
+        case 'oci8po':
         /// No need to set charset. It must be specified by the NLS_LANG env. variable
-        break;
+        /// Enable sybase quotes, so addslashes and stripslashes will use "'"
+            ini_set('magic_quotes_sybase', '1');
+        /// NOTE: Not 100% useful because GPC has been addslashed with the setting off
+        ///       so IT'S MANDATORY TO ENABLE THIS UNDER php.ini or .htaccess for this DB
+            break;
     }
 }
 
