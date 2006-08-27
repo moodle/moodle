@@ -2264,6 +2264,8 @@ function isstudent($courseid, $userid=0) {
 function isguest($userid=0) {
     global $USER, $CFG;
 
+// can not be used because admin has guest capability :-(
+/*
     if (!empty($CFG->rolesactive)) {
 
         $context = get_context_instance(CONTEXT_SYSTEM, SITEID);  
@@ -2274,7 +2276,7 @@ function isguest($userid=0) {
             return has_capability('moodle/legacy:guest', $context, $userid);
         }
     }
-
+*/
     if (!$userid) {
         if (empty($USER->username)) {
             return false;
