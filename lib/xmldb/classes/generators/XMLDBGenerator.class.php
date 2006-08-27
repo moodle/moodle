@@ -38,6 +38,7 @@ class XMLDBgenerator {
 /// To change any of them, do it in extended classes instead.
 
     var $quote_string = '"';   // String used to quote names
+
     var $quote_all    = false; // To decide if we want to quote all the names or only the reserved ones
 
     var $statement_end = ';'; // String to be automatically added at the end of each statement
@@ -75,6 +76,9 @@ class XMLDBgenerator {
 
     var $names_max_length = 30; //Max length for key/index/sequence/trigger/check names (keep 30 for all!)
 
+    var $concat_character = '||'; //Characters to be used as concatenation operator. If not defined
+                                  //MySQL CONCAT function will be used
+
     var $prefix;         // Prefix to be used for all the DB objects
 
     var $reserved_words; // List of reserved words (in order to quote them properly)
@@ -95,7 +99,9 @@ class XMLDBgenerator {
      * Set the prefix
      */
     function setPrefix($prefix) {
-        $this->prefix = $prefix;
+        if ($this->prefix_on_names) { // Only if we want prefix on names
+            $this->prefix = $prefix;
+        }
     }
 
     /**
@@ -365,7 +371,7 @@ class XMLDBgenerator {
             $default = ' default ';
             if ($xmldb_field->getType() == XMLDB_TYPE_CHAR ||
                 $xmldb_field->getType() == XMLDB_TYPE_TEXT) {
-                    $default .= "'" . $xmldb_field->getDefault() . "'";
+                    $default .= "'" . addslashes($xmldb_field->getDefault()) . "'";
             } else {
                 $default .= $xmldb_field->getDefault();
             }
@@ -410,10 +416,9 @@ class XMLDBgenerator {
         foreach ($fieldsarr as $field) {
             $name .= substr(trim($field),0,3);
         }
-    /// Prepend the prefix if required
-        if ($this->prefix_on_names) {
-            $name = $this->prefix . $name;
-        }
+    /// Prepend the prefix
+        $name = $this->prefix . $name;
+
         $name = substr(trim($name), 0, $this->names_max_length - 1 - strlen($suffix)); //Max names_max_length
 
     /// Add the suffix
@@ -423,7 +428,7 @@ class XMLDBgenerator {
         if (in_array($namewithsuffix, $used_names)) {
             $counter = 2;
         /// If have free space, we add 2
-            if (strlen($namewithsuffix) < 30) {
+            if (strlen($namewithsuffix) < $this->names_max_length) {
                 $newname = $name . $counter;
         /// Else replace the last char by 2
             } else {
@@ -450,6 +455,7 @@ class XMLDBgenerator {
 
     /**
      * Given any string (or one array), enclose it by the proper quotes
+     * if it's a reserved word
      */
     function getEncQuoted($input) {
 
@@ -466,6 +472,81 @@ class XMLDBgenerator {
                 $input = $this->quote_string . $input . $this->quote_string;
             }
             return $input;
+        }
+    }
+
+    /**
+     * Given one XMLDB Statement, build the needed SQL insert sentences to execute it
+     */
+    function getExecuteInsertSQL($statement) {
+
+         $results = array();  //Array where all the sentences will be stored
+
+         if ($sentences = $statement->getSentences()) {
+             foreach ($sentences as $sentence) {
+             /// Get the list of fields
+                 $fields = $statement->getFieldsFromInsertSentence($sentence);
+             /// Get the values of fields
+                 $values = $statement->getValuesFromInsertSentence($sentence);
+             /// Look if we have some CONCAT value and transform it dinamically
+                 foreach($values as $key => $value) {
+                 /// Trim single quotes
+                     $value = trim($value,"'");
+                     if (stristr($value, 'CONCAT') !== false){ 
+                     /// Look for data between parentesis
+                         preg_match("/CONCAT\s*\((.*)\)$/is", trim($value), $matches);
+                         if (isset($matches[1])) {
+                             $part = $matches[1];
+                         /// Convert the comma separated string to an array
+                             $arr = XMLDBObject::comma2array($part);
+                             if ($arr) {
+                                 $value = $this->getConcatSQL($arr);
+                             }
+                         }
+                     }
+                 /// Values to be sent to DB must be properly escaped
+                     $value = addslashes($value);
+                 /// Back trimmed quotes
+                     $value = "'" . $value . "'";
+                 /// Back to the array
+                     $values[$key] = $value;
+                 }
+
+             /// Iterate over fields, escaping them if necessary
+                 foreach($fields as $key => $field) {
+                     $fields[$key] = $this->getEncQuoted($field);
+                 }
+             /// Build the final SQL sentence and add it to the array of results
+             $sql = 'INSERT INTO ' . $this->getEncQuoted($this->prefix . $statement->getTable()) .
+                         '(' . implode(', ', $fields) . ') ' .
+                         'VALUES (' . implode(', ', $values) . ')';
+                 $results[] = $sql;
+             }
+
+         }
+         return $results;
+    }
+
+    /**
+     * Given one array of elements, build de proper CONCAT expresion, based
+     * in the $concat_character setting. If such setting is empty, then
+     * MySQL's CONCAT function will be used instead
+     */
+    function getConcatSQL($elements) {
+
+    /// Replace double quoted elements by single quotes
+        foreach($elements as $key => $element) {
+            $element = trim($element);
+            if (substr($element, 0, 1) == '"' &&
+                substr($element, -1, 1) == '"') {
+                    $elements[$key] = "'" . trim($element, '"') . "'";
+            }
+        }
+
+        if ($this->concat_character) {
+            return implode (' ' . $this->concat_character . ' ', $elements);
+        } else {
+            return 'CONCAT(' . implode(', ', $elements) . ')';
         }
     }
 
