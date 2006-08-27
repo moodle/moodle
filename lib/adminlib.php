@@ -177,11 +177,15 @@ function upgrade_activity_modules($return) {
             continue;
         }
 
+        $oldupgrade = false;
+        $newupgrade = false;
         if ( is_readable($fullmod .'/db/'. $CFG->dbtype .'.php')) {
-            include_once($fullmod .'/db/'. $CFG->dbtype .'.php');  // defines upgrading function
-        } else {
-            notify('Module '. $mod .': '. $fullmod .'/db/'. $CFG->dbtype .'.php was not readable');
-            continue;
+            include_once($fullmod .'/db/'. $CFG->dbtype .'.php');  // defines old upgrading function
+            $oldupgrade = true;
+        }
+        if ( is_readable($fullmod .'/db/upgrade.php') && $CFG->xmldb_enabled) {
+            include_once($fullmod .'/db/upgrade.php');  // defines new upgrading function
+            $newupgrade = true;
         }
 
         if (!isset($module)) {
@@ -213,6 +217,12 @@ function upgrade_activity_modules($return) {
             if ($currmodule->version == $module->version) {
                 // do nothing
             } else if ($currmodule->version < $module->version) {
+            /// If versions say that we need to upgrade but no upgrade files are available, notify and continue
+                if (!$oldupgrade && !$newupgrade) {
+                    notify('Upgrade files ' . $mod . ': ' . $fullmod . '/db/' . $CFG->dbtype . '.php or ' .
+                                                            $fullmod . '/db/upgrade.php were not readable');
+                    continue;
+                }
                 if (!$updated_modules) {
                     print_header($strmodulesetup, $strmodulesetup, $strmodulesetup, '', 
                             '<script type="text/javascript" src="' . $CFG->wwwroot . '/lib/scroll_to_errors.js"></script>',
@@ -220,28 +230,50 @@ function upgrade_activity_modules($return) {
                 }
                 upgrade_log_start();
                 print_heading($module->name .' module needs upgrading');
-                
-                // Run the upgrade function for the module.
-                $upgrade_function = $module->name.'_upgrade';
-                if (function_exists($upgrade_function)) {
-                    $db->debug=true;
-                    if ($upgrade_function($currmodule->version, $module)) {
-                        $db->debug=false;
-                        // OK so far, now update the modules record
-                        $module->id = $currmodule->id;
-                        if (! update_record('modules', $module)) {
-                            error('Could not update '. $module->name .' record in modules table!');
-                        }
-                        remove_dir($CFG->dataroot . '/cache', true); // flush cache
-                        notify(get_string('modulesuccess', '', $module->name), 'notifysuccess');
-                        echo '<hr />';
-                    } else {
-                        $db->debug=false;
-                        notify('Upgrading '. $module->name .' from '. $currmodule->version .' to '. $module->version .' FAILED!');
-                    }
+
+            /// Run de old and new upgrade functions for the module
+                $oldupgrade_function = $module->name . '_upgrade';
+                $newupgrade_function = 'xmldb_' . $module->name . '_upgrade';
+
+            /// First, the old function if exists
+                $oldupgrade_status = true;
+                if ($oldupgrade && function_exists($oldupgrade_function)) {
+                    $db->debug = true;
+                    $oldupgrade_status = $oldupgrade_function($currmodule->version, $module);
+                } else {
+                    notify ('Upgrade function ' . $oldupgrade_function . ' was not available in ' .
+                             $mod . ': ' . $fullmod . '/db/' . $CFG->dbtype . '.php');
+                    continue;
                 }
 
-                // Update the capabilities table?
+            /// Then, the new function if exists and the old one was ok
+                $newupgrade_status = true;
+                if ($newupgrade && function_exists($newupgrade_function) && $newupgrade_status) {
+                    $db->debug = true;
+                    $newupgrade_status = $newupgrade_function($currmodule->version, $module);
+                } else {
+                    notify ('Upgrade function ' . $newupgrade_function . ' was not available in ' .
+                             $mod . ': ' . $fullmod . '/db/upgrade.php');
+                    continue;
+                }
+
+            /// Now analyze upgrade results
+                if ($oldupgrade_status && $newupgrade_status) {
+                    $db->debug=false;
+                    // OK so far, now update the modules record
+                    $module->id = $currmodule->id;
+                    if (! update_record('modules', $module)) {
+                        error('Could not update '. $module->name .' record in modules table!');
+                    }
+                    remove_dir($CFG->dataroot . '/cache', true); // flush cache
+                    notify(get_string('modulesuccess', '', $module->name), 'notifysuccess');
+                    echo '<hr />';
+                } else {
+                    $db->debug=false;
+                    notify('Upgrading '. $module->name .' from '. $currmodule->version .' to '. $module->version .' FAILED!');
+                }
+
+            /// Update the capabilities table?
                 if (!update_capabilities('mod/'.$module->name)) {
                     error('Could not update '.$module->name.' capabilities!');
                 }
@@ -264,7 +296,17 @@ function upgrade_activity_modules($return) {
             $updated_modules = true;
             $db->debug = true;
             @set_time_limit(0);  // To allow slow databases to complete the long SQL
-            if (modify_database($fullmod .'/db/'. $CFG->dbtype .'.sql')) {
+
+        /// Both old .sql files and new install.xml are supported
+        /// but we priorize install.xml (XMLDB) if present
+            if (file_exists($fullmod . '/db/install.xml') && $CFG->xmldb_enabled) {
+                $status = install_from_xmldb_file($fullmod . '/db/install.xml'); //New method
+            } else {
+                $status = modify_database($fullmod .'/db/'. $CFG->dbtype .'.sql'); //Old method
+            }
+
+        /// Continue with the instalation, roles and other stuff
+            if ($status) {
                 $db->debug = false;
                 if ($module->id = insert_record('modules', $module)) {
                     if (!update_capabilities('mod/'.$module->name)) {
