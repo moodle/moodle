@@ -193,7 +193,7 @@
             /// Launch the old main upgrade
                 $status = main_upgrade($CFG->version);
             /// If succesful and exists launch the new main upgrade (XMLDB), called xmldb_main_upgrade
-                if ($status && $CFG->xmldb_enabled && function_exists('xmldb_main_upgrade')) {
+                if ($status && function_exists('xmldb_main_upgrade')) {
                     $status = xmldb_main_upgrade($CFG->version);
                 }
             /// If successful, continue upgrading roles and setting everything properly
