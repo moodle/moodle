@@ -53,6 +53,9 @@ class XMLDBmssql extends XMLDBgenerator {
 
     var $add_table_comments  = false;  // Does the generator need to add code for table comments
 
+    var $concat_character = '+'; //Characters to be used as concatenation operator. If not defined
+                                  //MySQL CONCAT function will be use
+
     /**
      * Creates one new XMLDBmssql
      */
