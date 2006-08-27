@@ -358,9 +358,13 @@ function stripslashes_safe($mixed) {
     if (empty($mixed)) {
         //nothing to do...
     } else if (is_string($mixed)) {
-        $mixed = str_replace("\\'", "'", $mixed);
-        $mixed = str_replace('\\"', '"', $mixed);
-        $mixed = str_replace('\\\\', '\\', $mixed);
+        if (ini_get_bool('magic_quotes_sybase')) { //only unescape single quotes
+            $mixed = str_replace("''", "'", $mixed);
+        } else { //the rest, simple and double quotes and backslashes
+            $mixed = str_replace("\\'", "'", $mixed);
+            $mixed = str_replace('\\"', '"', $mixed);
+            $mixed = str_replace('\\\\', '\\', $mixed);
+        }
     } else if (is_array($mixed)) {
         foreach ($mixed as $key => $value) {
             $mixed[$key] = stripslashes_safe($value);
