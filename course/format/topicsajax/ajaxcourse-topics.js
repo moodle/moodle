@@ -1,6 +1,7 @@
 /*
  * Contains Main class and supporting functions for topic ajax course layout
  */
+ 
 
 //hide content body until done loading (manipulation looks ugly elsewise)
 document.getElementById('content').style.display='none';

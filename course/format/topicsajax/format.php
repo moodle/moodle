@@ -5,6 +5,7 @@
       // the dates aren't printed - it's just an aesthetic thing for
       // courses that aren't so rigidly defined by time.
       // Included from "view.php"
+      
 
     require_once($CFG->dirroot.'/mod/forum/lib.php');
     require_once($CFG->libdir.'/ajax/ajaxlib.php');

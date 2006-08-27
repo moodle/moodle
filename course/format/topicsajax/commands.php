@@ -1,8 +1,8 @@
 <?php 
 	/* 
 	 * $Id$
-     *Provide RESTful interface for topics AJAX course formats
-    */
+             *Provide RESTful interface for topics AJAX course formats
+             */
     
 	require_once('../../../config.php');
     require_once('../../lib.php');
