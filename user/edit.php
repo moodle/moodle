@@ -245,9 +245,9 @@
                 }
 
                 /// Update forum track preference.
-                if (($usernew->trackforums != $USER->trackforums) && !$usernew->trackforums) {
+                if (($usernew->trackforums != $userold->trackforums) && !$usernew->trackforums) {
                     require_once($CFG->dirroot.'/mod/forum/lib.php');
-                    forum_tp_delete_read_records($USER->id);
+                    forum_tp_delete_read_records($usernew->id);
                 }
 
                 add_to_log($course->id, "user", "update", "view.php?id=$user->id&course=$course->id", "");
