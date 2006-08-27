@@ -478,8 +478,12 @@ class XMLDBStructure extends XMLDBObject {
         $o.= '<XMLDB PATH="' . $this->path . '"';
         $o.= ' VERSION="' . $this->version . '"';
         if ($this->comment) {
-            $o.= ' COMMENT="' . htmlspecialchars($this->comment) . '"';
+            $o.= ' COMMENT="' . htmlspecialchars($this->comment) . '"'."\n";
         }
+        $rel = array_fill(0, count(explode('/', $this->path)), '..');
+        $rel = implode('/', $rel);
+        $o.= '    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"'."\n";
+        $o.= '    xsi:noNamespaceSchemaLocation="'.$rel.'/lib/xmldb/xmldb.xsd"'."\n";
         $o.= '>' . "\n";
     /// Now the tables
         if ($this->tables) {
