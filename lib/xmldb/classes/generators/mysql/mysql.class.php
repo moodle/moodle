@@ -48,6 +48,9 @@ class XMLDBmysql extends XMLDBGenerator {
 
     var $enum_extra_code = false; //Does the generator need to add extra code to generate code for the enums in the table
 
+    var $concat_character = null; //Characters to be used as concatenation operator. If not defined
+                                  //MySQL CONCAT function will be use
+
     /**
      * Creates one new XMLDBmysql
      */
