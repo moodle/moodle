@@ -710,6 +710,12 @@ class XMLDBStructure extends XMLDBObject {
                 $results = array_merge($results, $table->getCreateTableSQL($dbtype, $prefix, $statement_end));
             }
         }
+
+        if ($statements = $this->getStatements()) {
+            foreach ($statements as $statement) {
+                $results = array_merge($results, $statement->getExecuteStatementSQL($dbtype, $prefix, $statement_end));
+            }
+        }
         return $results;
     }
 }
