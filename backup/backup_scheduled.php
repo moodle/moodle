@@ -772,7 +772,9 @@ function schedule_backup_course_delete_old_files($preferences,$starttime=0) {
         $dirtocheck = $CFG->dataroot."/".$preferences->backup_course."/backupdata";
     }
     schedule_backup_log($starttime,$preferences->backup_course,"    checking $dirtocheck");
-    mtrace("            Keeping backup files in $dirtocheck");
+    if ($CFG->debug > 7) {
+        mtrace("            Keeping backup files in $dirtocheck");
+    }
 
     //Get all the files in $dirtocheck
     $files = get_directory_list($dirtocheck,"",false);
