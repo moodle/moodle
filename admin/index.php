@@ -29,6 +29,7 @@
     $id             = optional_param('id', '', PARAM_ALPHANUM);
     $confirmupgrade = optional_param('confirmupgrade', 0, PARAM_BOOL);
     $agreelicence = optional_param('agreelicence',0, PARAM_BOOL);
+    $ignoreupgradewarning = optional_param('ignoreupgradewarning', 0, PARAM_BOOL);
 
 /// Interim solution to keep the XMLDB installation disabled
 /// can be enabled by hand in the config.php, of course
@@ -37,7 +38,10 @@
     }
 
 /// check upgrade status first
-    #upgrade_check_running("Upgrade already running, please wait!", 10);
+    if ($ignoreupgradewarning and !empty($_SESSION['upgraderunning'])) {
+        $_SESSION['upgraderunning'] = 0;
+    }
+    upgrade_check_running("Upgrade already running in this session, please wait!<br />Click on the exclamation marks to ignore this warning (<a href=\"index.php?ignoreupgradewarning=1\">!!!</a>).", 10);
 
 /// Check some PHP server settings
 
