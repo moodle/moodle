@@ -60,9 +60,7 @@
         $strmoveup = get_string('moveup');
         $strmovedown = get_string('movedown');
         
-        //use temporarily until I figure out how to add a field to the user object
-        $temporary_override = true;
-        if (!empty($USER->use_ajax) || $temporary_override ){
+        if (!empty($USER->use_ajax)){
             /*
              * if user doesnt want AJAX, than they wont get it, 
              * from here everything detects $COURSE->javascriptportal
