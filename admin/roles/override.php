@@ -148,7 +148,7 @@
             include_once('override.html');
             print_simple_box_end();
         } else {
-            notice(get_string('nocapabilitiesincontext', 'moodle'),
+            notice(get_string('nocapabilitiesincontext', 'role'),
                     $CFG->wwwroot.'/admin/roles/override.php?contextid='.$contextid);
         }
     }

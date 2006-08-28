@@ -8,6 +8,7 @@ $string['currentrole'] = 'Current role';
 $string['currentcontext'] = 'Current context';
 $string['existingusers'] = '$a existing users';
 $string['inherit'] = 'Inherit';
+$string['nocapabilitiesincontext'] = 'No capabilities available in this context';
 $string['overrideroles'] = 'Override roles';
 $string['potentialusers'] = '$a potential users';
 $string['prevent'] = 'Prevent';
