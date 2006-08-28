@@ -218,6 +218,46 @@ function forum_upgrade($oldversion) {
       } // End if.
   }
 
+
+  if ($oldversion < 2006081800) {
+      // Upgrades for new roles and capabilities support.
+      require_once($CFG->dirroot.'/mod/forum/lib.php');
+
+      $forummod = get_record('modules', 'name', 'forum');
+
+      if ($forums = get_records('forum')) {
+
+          if (!$studentroles = get_roles_with_capability('moodle/legacy:student', CAP_ALLOW)) {
+              notice('Default student role was not found. Roles and permissions '.
+                     'for all your forums will have to be manually set after '.
+                     'this upgrade.');
+          }
+          if (!$guestroles = get_roles_with_capability('moodle/legacy:guest', CAP_ALLOW)) {
+              notice('Default guest role was not found. Roles and permissions '.
+                     'for teacher forums will have to be manually set after '.
+                     'this upgrade.');
+          }
+
+          foreach ($forums as $forum) {
+              if (!forum_convert_to_roles($forum, $forummod->id,
+                        $studentroles, $guestroles)) {
+                  notice('Forum with id '.$forum->id.' was not upgraded');
+              }
+          }
+
+          // Drop column forum.open.
+          modify_database('', 'ALTER TABLE prefix_forum DROP COLUMN open;');
+
+          // Drop column forum.assesspublic.
+          modify_database('', 'ALTER TABLE prefix_forum DROP COLUMN assesspublic;');
+
+          // We need to rebuild all the course caches to refresh the state of
+          // the forum modules.
+          rebuild_course_cache();
+
+      } // End if.
+  }
+    
   if ($oldversion < 2006082700) {
       $sql = "UPDATE {$CFG->prefix}forum_posts SET message = REPLACE(message, '".TRUSTTEXT."', '');";
       $likecond = sql_ilike()." '%".TRUSTTEXT."%'";
