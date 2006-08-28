@@ -1096,7 +1096,7 @@ function main_upgrade($oldversion=0) {
     if ($oldversion < 2005011000) {     // Create a .htaccess file in dataroot, just in case
         if (!file_exists($CFG->dataroot.'/.htaccess')) {
             if ($handle = fopen($CFG->dataroot.'/.htaccess', 'w')) {   // For safety
-                @fwrite($handle, "deny from all\r\n");
+                @fwrite($handle, "deny from all\r\nAllowOverride None\r\n");
                 @fclose($handle); 
                 notify("Created a default .htaccess file in $CFG->dataroot");
             }

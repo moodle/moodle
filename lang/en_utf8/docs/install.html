@@ -254,7 +254,7 @@ php_value post_max_size 2M
     <p>The Moodle installer tries hard to create this directory for you but if it fails then you will have to create a directory for this purpose manually. </p>
     <p>For security, it's best that this directory is NOT accessible directly via the web. The easiest way to do this is to simply locate it OUTSIDE the web directory, but if you must have it in the web directory then  protect it by creating a file in the data directory called .htaccess, containing this line: </p>
     <blockquote>
-      <pre>deny from all</pre>
+      <pre>deny from all<br />AllowOverride None</pre>
     </blockquote>
     <p>To make sure that Moodle can save uploaded files in this directory, check that the web server software (eg Apache) has permission to read, write and execute in  this directory. </p>
     <p>On Unix machines, this means setting the owner of the directory to be something like &quot;nobody&quot; or &quot;apache&quot;, and then giving that user read, write and execute permissions.</p>
