@@ -1087,6 +1087,7 @@
                 fwrite ($bf,full_tag("MAILDIGEST",4,false,$user_data->maildigest));
                 fwrite ($bf,full_tag("MAILDISPLAY",4,false,$user_data->maildisplay));
                 fwrite ($bf,full_tag("HTMLEDITOR",4,false,$user_data->htmleditor));
+                fwrite ($bf,full_tag("AJAX",4,false,$user_data->ajax));
                 fwrite ($bf,full_tag("AUTOSUBSCRIBE",4,false,$user_data->autosubscribe));
                 fwrite ($bf,full_tag("TRACKFORUMS",4,false,$user_data->trackforums));
                 fwrite ($bf,full_tag("TIMEMODIFIED",4,false,$user_data->timemodified));

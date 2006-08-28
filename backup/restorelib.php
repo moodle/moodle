@@ -3990,6 +3990,9 @@
                         case "HTMLEDITOR": 
                             $this->info->tempuser->htmleditor = $this->getContents();
                             break;
+                        case "AJAX": 
+                            $this->info->tempuser->ajax = $this->getContents();
+                            break;
                         case "AUTOSUBSCRIBE": 
                             $this->info->tempuser->autosubscribe = $this->getContents();
                             break;

@@ -2,6 +2,9 @@
    if (!isset($user->htmleditor)) {
        $user->htmleditor = 1;
    }
+   if (!isset($user->ajax)) {
+       $user->ajax = 1;
+   }
    if (!isset($user->picture)) {
        $user->picture = NULL;
    }
@@ -193,6 +196,15 @@ if (has_capability('moodle/user:update', get_context_instance(CONTEXT_SYSTEM, SI
     </td>
 </tr>
 <?php } ?>
+<tr>
+    <th><?php print_string("ajaxuse") ?>:</th>
+    <td><?php
+    unset($choices);
+    $choices["0"] = get_string("ajaxno");
+    $choices["1"] = get_string("ajaxyes");
+    choose_from_menu ($choices, 'ajax', $user->ajax, "") ?>
+    </td>
+</tr>
 <tr>
     <th><?php print_string("city") ?>:</th>
     <td>

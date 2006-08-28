@@ -437,6 +437,7 @@ CREATE TABLE prefix_user (
    maildigest integer NOT NULL default '0',
    maildisplay integer NOT NULL default '2',
    htmleditor integer NOT NULL default '1',
+   ajax integer NOT NULL default '1',
    autosubscribe integer NOT NULL default '1',
    trackforums integer NOT NULL default '0',
    timemodified integer NOT NULL default '0'

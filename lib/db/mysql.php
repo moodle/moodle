@@ -2137,6 +2137,10 @@ function main_upgrade($oldversion=0) {
     if ($oldversion < 2006082200) {
         table_column('timezone', 'rule', 'tzrule', 'varchar', '20', '', '', 'not null', '');
     }
+
+    if ($oldversion < 2006082800) {
+        table_column('user', '', 'ajax', 'integer', '1', 'unsigned', '1', '', 'htmleditor');
+    }
     
     return $result;
 }

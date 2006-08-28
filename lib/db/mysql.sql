@@ -618,6 +618,7 @@ CREATE TABLE `prefix_user` (
   `maildigest` tinyint(1) unsigned NOT NULL default '0',
   `maildisplay` tinyint(2) unsigned NOT NULL default '2',
   `htmleditor` tinyint(1) unsigned NOT NULL default '1',
+  `ajax` tinyint(1) unsigned NOT NULL default '1',
   `autosubscribe` tinyint(1) unsigned NOT NULL default '1',
   `trackforums` tinyint(1) unsigned NOT NULL default '0',
   `timemodified` int(10) unsigned NOT NULL default '0',
