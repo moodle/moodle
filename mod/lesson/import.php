@@ -4,6 +4,7 @@
     require_once("../../config.php");
     require_once("lib.php");
     require_once("locallib.php");
+    require_once($CFG->libdir.'/questionlib.php');
 
     $id     = required_param('id', PARAM_INT);         // Course Module ID
     $pageid = optional_param('pageid', '', PARAM_INT); // Page ID
@@ -51,7 +52,6 @@
             }
 
             require("format.php");  // Parent class
-            require("$CFG->libdir/questionlib.php"); // for the constants used in quiz/format/<format>/format.php
             require("$CFG->dirroot/question/format/$form->format/format.php");
 
             $classname = "qformat_$form->format";
@@ -78,17 +78,7 @@
 
     /// Print upload form
 
-    $fileformats = get_list_of_plugins('question/format');
-    $fileformatnames = array();
-    foreach ($fileformats as $key => $fileformat) {
-        $formatname = get_string($fileformat, 'lesson');
-        if ($formatname == "[[$fileformat]]") {
-            $formatname = $fileformat;  // Just use the raw folder name
-        }
-        $fileformatnames[$fileformat] = $formatname;
-    }
-    natcasesort($fileformatnames);
-
+    $fileformatnames = get_import_export_formats('import');
 
     print_heading_with_help($strimportquestions, "import", "lesson");
 
