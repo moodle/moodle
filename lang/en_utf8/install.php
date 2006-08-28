@@ -92,7 +92,7 @@ Make sure the upper/lower case is correct.</p>
 <p><b>Data Directory:</b>
 You need a place where Moodle can save uploaded files.  This
 directory should be readable AND WRITEABLE by the web server user 
-(usually \'nobody\' or \'apache\'), but it should not be accessible 
+(usually \'nobody\' or \'apache\'), but it must not be accessible 
 directly via the web.</p>';
 $string['directorysettingshead'] = 'Please confirm the locations of this Moodle installation';
 $string['directorysettingssub'] ='<b>Web Address:</b>
