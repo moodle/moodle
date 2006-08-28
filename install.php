@@ -153,7 +153,7 @@ if ($INSTALL['wwwroot'] == '') {
     while(is_dataroot_insecure()) {
         $parrent = dirname($CFG->dataroot);
         $i++;
-        if ($parrent == '/' or $parrent == '.' or preg_match('/^[a-z]:\\?$/i', $parrent) or ($i > 100)) {
+        if ($parrent == '/' or $parrent == '.' or preg_match('/^[a-z]:\\\?$/i', $parrent) or ($i > 100)) {
             $CFG->dataroot = ''; //can not find secure location for dataroot
             break;
         }
