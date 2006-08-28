@@ -48,7 +48,7 @@
     $strpotentialusers = get_string('potentialusers', 'role');
     $strexistingusers = get_string('existingusers', 'role');
     $straction = get_string('assignroles', 'role');
-    $strcurrentrole = get_string('currentrole', 'role');
+    $strroletoassign = get_string('roletoassign', 'role');
     $strcurrentcontext = get_string('currentcontext', 'role');
     $strsearch = get_string('search');
     $strshowall = get_string('showall');
@@ -169,7 +169,7 @@
     if ($courseid) {
         print ('<input type="hidden" name="courseid" value="'.$courseid.'" />');
     }
-    print ('<input type="hidden" name="contextid" value="'.$context->id.'" />'.$strcurrentrole.': ');
+    print ('<input type="hidden" name="contextid" value="'.$context->id.'" />'.$strroletoassign.': ');
     choose_from_menu ($assignableroles, 'roleid', $roleid, 'choose', $script='rolesform.submit()');
     print ('</div></form>');
     

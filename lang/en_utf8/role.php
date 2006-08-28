@@ -12,6 +12,7 @@ $string['overrideroles'] = 'Override roles';
 $string['potentialusers'] = '$a potential users';
 $string['prevent'] = 'Prevent';
 $string['prohibit'] = 'Prohibit';
+$string['roletoassign'] = 'Role to assign';
 
 $string['site:doanything'] = 'Allowed to do everything';
 $string['legacy:guest'] = 'LEGACY ROLE: Guest';
