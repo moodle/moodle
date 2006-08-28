@@ -18,7 +18,7 @@ class assignment_online extends assignment_base {
         require_capability('mod/assignment:view', $context);
         
 		$submission = $this->get_submission();
-        
+
         //Guest can not submit nor edit an assignment (bug: 4604)
         if (isguest($USER->id)) {
             $editable = null;

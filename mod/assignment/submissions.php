@@ -33,9 +33,7 @@
 
     require_login($course->id, false, $cm);
 
-    if (!isteacher($course->id)) {
-        error("Only teachers can look at this page");
-    }
+    require_capability('mod/assignment:grade', get_context_instance(CONTEXT_MODULE, $cm->id));
 
 /// Load up the required assignment code
     require($CFG->dirroot.'/mod/assignment/type/'.$assignment->assignmenttype.'/assignment.class.php');

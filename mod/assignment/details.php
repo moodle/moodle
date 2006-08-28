@@ -15,7 +15,7 @@
 
     require_login($course->id);
 
-    if (!isteacheredit($course->id)) {
+    if (!has_capability('moodle/course:manageactivities', get_context_instance(CONTEXT_COURSE, $form->course))) {
         redirect($CFG->wwwroot.'/course/view.php?id='.$course->id);
     }
 

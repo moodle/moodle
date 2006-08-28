@@ -1407,7 +1407,7 @@ function fetch_context_capabilities($context) {
  * @param int $roleid
  * @return array
  */
-function role_context_capabilities($roleid, $context) {
+function role_context_capabilities($roleid, $context, $cap='') {
     global $CFG; 
     
     $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
@@ -1419,14 +1419,19 @@ function role_context_capabilities($roleid, $context) {
     $contexts = array_reverse(get_parent_contexts($context));
     $contexts = '('.implode(',', $contexts).')';
     
+    if ($cap) {
+        $search = ' AND rc.capability = "'.$cap.'" ';
+    } else {
+        $search = '';  
+    }
+    
     $SQL = "SELECT rc.* FROM {$CFG->prefix}role_capabilities rc, {$CFG->prefix}context c
             where rc.contextid in $contexts
             and rc.roleid = $roleid
-            and rc.contextid = c.id
+            and rc.contextid = c.id $search
             ORDER BY c.aggregatelevel DESC, rc.capability DESC";
-            
+  
     $records = get_records_sql($SQL);
-    
     $capabilities = array();
     
     // We are traversing via reverse order.
@@ -1789,5 +1794,46 @@ function get_overridable_roles ($context) {
     
     return $options;  
   
+}
+
+
+/**
+ * who has this capability in this context
+ * does not handling user level resolving!!!
+ * i.e 1 person has 2 roles 1 allow, 1 prevent, this will not work properly
+ * @param $context - object
+ * @param $capability - string capability
+ * @param $fields - fields to be pulled
+ * @param $sort - the sort order
+ */
+function get_users_by_capability($context, $capability, $fields='distinct u.*', $sort='') {
+    
+    global $CFG;
+    
+    // first get all roles with this capability in this context, or above
+    $possibleroles = get_roles_with_capability($capability, CAP_ALLOW);
+    $validroleids = array();
+    foreach ($possibleroles as $prole) {
+        $caps = role_context_capabilities($prole->id, $context, $capability); // resolved list
+        if ($caps[$capability] > 0) { // resolved capability > 0
+            $validroleids[] = $prole->id;
+        }
+    }
+    
+    if ($usercontexts = get_parent_contexts($context)) {
+        $listofcontexts = '('.implode(',', $usercontexts).')';
+    } else {
+        $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
+        $listofcontexts = '('.$sitecontext->id.')'; // must be site  
+    }
+    
+    $roleids =  '('.implode(',', $validroleids).')';
+    
+    $select = ' SELECT '.$fields;
+    $from   = ' FROM '.$CFG->prefix.'user u LEFT JOIN '.$CFG->prefix.'role_assignments ra ON ra.userid = u.id ';
+    $where  = ' WHERE (ra.contextid = '.$context->id.' OR ra.contextid in '.$listofcontexts.') AND u.deleted = 0 AND ra.roleid in '.$roleids.' ';    
+
+    return get_records_sql($select.$from.$where);  
+
 }
 ?>

@@ -277,11 +277,11 @@ class assignment_base {
         $submitted = '';
 
         $context = get_context_instance(CONTEXT_MODULE,$this->cm->id);
-        if (has_capability('mod/assignment:grade', $context) && (groupmode($this->course, $this->cm) == SEPARATEGROUPS)) {
+        if (has_capability('mod/assignment:grade', $context)) {
 
         // if this user can mark and is put in a group
         // then he can only see/mark submission in his own groups
-            if (user_group($this->course->id, $USER->id)) {             
+            if (!has_capability('moodle/course:managegroups', $context) and (groupmode($this->course, $this->cm) == SEPARATEGROUPS)) {
                 $count = $this->count_real_submissions($this->currentgroup);  // Only their groups
             } else {
                 $count = $this->count_real_submissions();                     // Everyone
@@ -571,7 +571,7 @@ class assignment_base {
                 $this->display_submission();
                 break;
 
-            case 'all':                           // Main window, display everything
+            case 'all':                          // Main window, display everything
                 $this->display_submissions();
                 break;
 
@@ -1012,7 +1012,8 @@ class assignment_base {
         if ($currentgroup) {
             $users = get_group_users($currentgroup);
         } else {
-            $users = get_course_users($course->id);
+            $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+            $users = get_users_by_capability($context, 'mod/assignment:submit'); // everyone with this capability set to non-prohibit
         }
 
         $tablecolumns = array('picture', 'fullname', 'grade', 'comment', 'timemodified', 'timemarked', 'status');
@@ -2158,16 +2159,22 @@ function assignment_count_real_submissions($assignment, $groupid=0) {
                                       AND g.groupid = '$groupid' 
                                       AND a.userid = g.userid ");
     } else {
-        $select = "s.course = '$assignment->course' AND";
-        if ($assignment->course == SITEID) {
-            $select = '';
+        $cm = get_coursemodule_from_instance('assignment', $assignment->id);
+        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+        
+        // this is all the users with this capability set, in this context or higher
+        $users = get_users_by_capability($context, 'mod/assignment:submit');
+        foreach ($users as $user) {
+            $array[] = $user->id;
         }
+        
+        $userlists = '('.implode(',',$array).')';
+                                   
         return count_records_sql("SELECT COUNT(*)
-                                  FROM {$CFG->prefix}assignment_submissions a, 
-                                       {$CFG->prefix}user_students s
-                                 WHERE a.assignment = '$assignment->id' 
-                                   AND a.timemodified > 0
-                                   AND $select a.userid = s.userid ");
+                                  FROM {$CFG->prefix}assignment_submissions
+                                 WHERE assignment = '$assignment->id' 
+                                   AND timemodified > 0
+                                   AND userid IN $userlists ");
     }
 }
 

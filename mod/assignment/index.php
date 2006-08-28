@@ -44,7 +44,7 @@
     }
 
     $currentgroup = get_current_group($course->id);
-    if ($currentgroup and isteacheredit($course->id)) {
+    if ($currentgroup and has_capability('moodle/site:accessallgroups', get_context_instance(CONTEXT_COURSE, $id))) {
         $group = get_record("groups", "id", $currentgroup);
         $groupname = " ($group->name)";
     } else {
