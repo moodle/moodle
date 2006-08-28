@@ -5,11 +5,15 @@
       // the dates aren't printed - it's just an aesthetic thing for
       // courses that aren't so rigidly defined by time.
       // Included from "view.php"
+      
 
     require_once($CFG->dirroot.'/mod/forum/lib.php');
-
+    require_once($CFG->libdir.'/ajax/ajaxlib.php');
+  
+    
     $topic = optional_param('topic', -1, PARAM_INT);
 
+    
     // Bounds for block widths
     define('BLOCK_L_MIN_WIDTH', 100);
     define('BLOCK_L_MAX_WIDTH', 210);
@@ -55,6 +59,22 @@
         $strmarkedthistopic = get_string('markedthistopic');
         $strmoveup = get_string('moveup');
         $strmovedown = get_string('movedown');
+        
+        if (!empty($USER->ajax)){
+
+         // If user doesnt want AJAX, then they wont get it, 
+         // from here everything detects $COURSE->javascriptportal
+                               
+            $COURSE->javascriptportal = new jsportal();
+
+            print_require_js(array('yui_yahoo','yui_dom','yui_event','yui_dragdrop', 'yui_connection',
+                                   'ajaxcourse_blocks','ajaxcourse_sections','ajaxcourse_topic'));
+            
+            //javascript logging facilities
+            if ($CFG->debug > 7)  {
+                print_require_js(Array('yui_logger'));
+            }
+        }
     }
 
 
@@ -263,5 +283,10 @@
     }
 
     echo '</tr></table>';
+    
+    //create javascript portal code
+    if (!empty($COURSE->javascriptportal)) {
+        $COURSE->javascriptportal->print_javascript($course->id);
+    }
 
 ?>
