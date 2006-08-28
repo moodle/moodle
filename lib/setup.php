@@ -34,7 +34,7 @@ global $USER;
  * Some typical settings in the $CFG global:
  *  - $CFG->wwwroot - Path to moodle index directory in url format.
  *  - $CFG->dataroot - Path to moodle index directory on server's filesystem.
- *  - $CFG->libroot  - Path to moodle's library folder on server's filesystem.
+ *  - $CFG->libdir  - Path to moodle's library folder on server's filesystem.
  *
  * @global object(cfg) $CFG
  */
