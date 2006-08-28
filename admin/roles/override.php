@@ -128,7 +128,7 @@
     if ($userid) {
         print ('<input type="hidden" name="userid" value="'.$userid.'" />');
     }
-    if ($course->id) {
+    if ($courseid) {
         print ('<input type="hidden" name="courseid" value="'.$courseid.'" />');
     }
     choose_from_menu ($overridableroles, 'roleid', $roleid, 'choose', $script='rolesform.submit()');
