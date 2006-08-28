@@ -27,7 +27,7 @@ $PAGE->init_full($section);
 $adminediting = optional_param('adminedit', -1, PARAM_BOOL);
    
 if (!isset($USER->adminediting)) {
-    $USER->adminediting = true;
+    $USER->adminediting = false;
 }
 
 if ($PAGE->user_allowed_editing()) {
@@ -89,8 +89,8 @@ print_simple_box_start('','100%','',5,'generalbox','');
 echo $root->output_html();
 
 echo '<center><input type="submit" value="Save Changes" /></center>';
-echo '</form>';
 print_simple_box_end();
+echo '</form>';
 echo '</td></tr></table>';
 
 print_footer();

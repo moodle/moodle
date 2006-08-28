@@ -39,7 +39,7 @@ class page_admin extends page_base {
     }
 
     function blocks_get_default() {
-        return 'admin_2';
+        return 'admin_2,admin_bookmarks';
     }
 
     // seems reasonable that the only people that can edit blocks on the admin pages
