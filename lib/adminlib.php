@@ -240,17 +240,17 @@ function upgrade_activity_modules($return) {
                 if ($oldupgrade && function_exists($oldupgrade_function)) {
                     $db->debug = true;
                     $oldupgrade_status = $oldupgrade_function($currmodule->version, $module);
-                } else {
+                } else if ($oldupgrade) {
                     notify ('Upgrade function ' . $oldupgrade_function . ' was not available in ' .
                              $mod . ': ' . $fullmod . '/db/' . $CFG->dbtype . '.php');
                 }
 
             /// Then, the new function if exists and the old one was ok
                 $newupgrade_status = true;
-                if ($newupgrade && function_exists($newupgrade_function) && $newupgrade_status) {
+                if ($newupgrade && function_exists($newupgrade_function) && $oldupgrade_status) {
                     $db->debug = true;
                     $newupgrade_status = $newupgrade_function($currmodule->version, $module);
-                } else {
+                } else if ($newupgrade) {
                     notify ('Upgrade function ' . $newupgrade_function . ' was not available in ' .
                              $mod . ': ' . $fullmod . '/db/upgrade.php');
                 }
