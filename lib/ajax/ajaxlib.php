@@ -22,8 +22,8 @@
         "yui_connection" => "/lib/yui/connection/connection.js",        
         "ajaxcourse_blocks" => "/lib/ajax/block_classes.js",
         "ajaxcourse_sections" => "/lib/ajax/section-resource_classes.js",
-        "ajaxcourse_topic" => "/course/format/topicsajax/ajaxcourse-topics.js",
-        "ajaxcourse_week" => "/course/format/weeksajax/ajaxcourse-weeks.js"           
+        "ajaxcourse_topic" => "/course/format/topics/ajaxcourse-topics.js",
+        "ajaxcourse_week" => "/course/format/weeks/ajaxcourse-weeks.js"           
         );
         
         
