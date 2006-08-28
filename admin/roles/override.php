@@ -139,19 +139,18 @@
       **************************************/
 
     if ($roleid) {
-     
-          // this is the array holding capabilities of this role sorted till this context
+        // This is the array holding capabilities of this role sorted till this context
         $r_caps = role_context_capabilities($roleid, $context);
-      
-        // this is the available capabilities assignable in this context
-        $capabilities = fetch_context_capabilities($context);
         
-        print_simple_box_start("center");
-    
-        include_once('override.html');
-
-        print_simple_box_end();
-
+        // Get the capabilities assignable in this context
+        if ($capabilities = fetch_context_capabilities($context)) {
+            print_simple_box_start("center");
+            include_once('override.html');
+            print_simple_box_end();
+        } else {
+            notice(get_string('nocapabilitiesincontext', 'moodle'),
+                    $CFG->wwwroot.'/admin/roles/override.php?contextid='.$contextid);
+        }
     }
     
     print_footer($course);
