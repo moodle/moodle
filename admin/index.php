@@ -144,6 +144,27 @@
                 if (!update_capabilities()) {
                     error('Had trouble installing the core capabilities for the Roles System');
                 }
+
+                // Write default settings unconditionally (i.e. even if a setting is already set, overwrite it)
+                // (this should only have any effect during initial install).
+                require_once($CFG->dirroot . '/admin/adminlib.php');
+                apply_default_settings($ADMIN);
+
+                /// This is used to handle any settings that must exist in $CFG but which do not exist in
+                /// $ADMIN as admin_setting objects (there are some exceptions).
+                apply_default_exception_settings(array('alternateloginurl' => '',
+                                                       'auth' => 'email',
+                                                       'auth_pop3mailbox' => 'INBOX',
+                                                       'changepassword' => '',
+                                                       'enrol' => 'internal',
+                                                       'frontpage' => 1,
+                                                       'guestloginbutton' => 1,
+                                                       'prefix' => 1,
+                                                       'style' => 'default',
+                                                       'template' => 'default',
+                                                       'textfilters' => 'mod/glossary/dynalink.php',
+                                                       'theme' => 'standardwhite'));
+                
                 notify($strdatabasesuccess, "green");
             } else {
                 $db->debug = false;
@@ -152,7 +173,7 @@
         } else {
             error("Error: Your database ($CFG->dbtype) is not yet fully supported by Moodle.  See the lib/db directory.");
         }
-        print_continue("index.php");
+        print_continue('index.php');
         die;
     }
 
@@ -211,7 +232,7 @@
                     if (set_config("version", $version)) {
                         remove_dir($CFG->dataroot . '/cache', true); // flush cache
                         notify($strdatabasesuccess, "green");
-                        print_continue("index.php");
+                        print_continue("upgradesettings.php");
                         exit;
                     } else {
                         notify("Upgrade failed!  (Could not update version in config table)");
@@ -262,26 +283,9 @@
         exit;
     }
 
-/// Insert default values for any important configuration variables
-
-    include_once("$CFG->dirroot/lib/defaults.php");
-
-    foreach ($defaults as $name => $value) {
-        if (!isset($CFG->$name)) {
-            $CFG->$name = $value;
-            set_config($name, $value);
-            $configchange = true;
-        }
-    }
-
 /// Send $CFG->unicodedb to DB to have it available for next requests
     set_config('unicodedb', $CFG->unicodedb);
 
-/// If any new configurations were found then send to the config page to check
-
-    if (!empty($configchange)) {
-        redirect("config.php");
-    }
 
 
 /// Find and check all main modules and load them up or upgrade them if necessary
@@ -373,7 +377,7 @@
 
 /// Print default admin page with notifications.
 
-    require_once($CFG->dirroot . '/admin/adminlib.php');
+    require_once($CFG->dirroot . '/' . $CFG->admin . '/adminlib.php');
     admin_externalpage_setup('adminnotifications');
     admin_externalpage_print_header();
 
@@ -566,5 +570,45 @@
 
 
     admin_externalpage_print_footer();
+
+// n.b. this function unconditionally applies default settings
+function apply_default_settings(&$node) {
+
+    global $CFG;
+
+    if (is_a($node, 'admin_category')) {
+        $entries = array_keys($node->children);
+        foreach ($entries as $entry) {
+            apply_default_settings($node->children[$entry]);
+        }
+        return;
+    } 
+
+    if (is_a($node, 'admin_settingpage')) { 
+        foreach ($node->settings as $setting) {
+                $CFG->{$setting->name} = $setting->defaultsetting;
+                $setting->write_setting($setting->defaultsetting);
+            unset($setting); // needed to prevent odd (imho) reference behaviour
+                             // see http://www.php.net/manual/en/language.references.whatdo.php#AEN6399
+        }
+        return;
+    }
+
+    return;
+
+}
+
+// n.b. this function unconditionally applies default settings
+function apply_default_exception_settings($defaults) {
+
+    global $CFG;
+
+    foreach($defaults as $key => $value) {
+            $CFG->$key = $value;
+            set_config($key, $value);
+    }
+    
+}
+
 
 ?>
