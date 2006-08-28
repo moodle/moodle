@@ -1,142 +1,142 @@
-<?php 
-        /* 
-         * $Id$
-             *Provide RESTful interface for topics AJAX course formats
-             */
-    
-        require_once('../../../config.php');
-    require_once('../../lib.php');
-      
-          
-        //verify user is authorized
-        require_login();
-        if(!isteacher($course->id)){
-                echo("Not authorized to edit page!");
-                die;
-        }
-        
-        if(!optional_param('courseId')){
-                echo("No ID presented!");
-                die;    
-        }
-        
-        
-        switch($_SERVER['REQUEST_METHOD']){
-                
-                
-            case POST:        
-                    switch(optional_param('class')){
-                            case block: 
-                                switch(optional_param('field')){
-                                        
-                                    case visible:       
-                                                $dataobject->id = optional_param('instanceId');
-                                                $dataobject->visible =optional_param('value');
-                                                update_record('block_instance',$dataobject);
-                                                break;
-                        
-                                    case position:  
-                                                $dataobject->id = optional_param('instanceId');
-                                                $dataobject->position = optional_param('value');
-                                                $dataobject->weight = optional_param('weight');
-                                                update_record('block_instance',$dataobject);                                                                            
-                                                break;                            
-                                }
-                                break;
-                                                
-                                                
-                            case section: 
-                    
-                                $dataobject->id = get_field('course_sections','id','course',optional_param('courseId'),'section',(int)optional_param('id'));
-                       
-                                switch(optional_param(field)){
-                                                
-                                    case visible:                                                                   
-                                                $dataobject->visible = optional_param(value);
-                                                update_record('course_sections',$dataobject);                                                                           
-                                                break;  
-                                                                                
-                                                                                
-                                    case sequence:                                                                  
-                                                $dataobject->sequence = optional_param(value);
-                                                update_record('course_sections',$dataobject);                                                                   
-                                                break;  
-                                                                                                                                                                                                                                
-                                    case all:                                                                       
-                                                $dataobject->summary = make_dangerous(optional_param('summary'));
-                                                $dataobject->sequence = optional_param('sequence');
-                                                $dataobject->visible = optional_param('visible');
-                                                update_record('course_sections',$dataobject);                                                                                                                                                                                                                                   
-                                                break;  
+<?php  // $Id$
+       // Provide RESTful interface for topics AJAX course formats
 
-                                }
-                                break;                                                                                                                                                  
+require_once('../../../config.php');
+require_once($CFG->dirroot.'/course/lib.php');
 
-                                
-                                
-                            case resource: switch(optional_param(field)){
-                                                
-                                    case visible:
-                                                $dataobject->id = optional_param('id');
-                                                $dataobject->visible = optional_param('value');
-                                                update_record('course_modules',$dataobject);                                                                            
-                                                break;  
-                                                                                
-                                    case groupmode:
-                                                $dataobject->id = optional_param('id');
-                                                $dataobject->groupmode = optional_param('value');
-                                                update_record('course_modules',$dataobject);                                                                            
-                                                break;                                                                                          
-                                                                                
-                                    case section:
-                                                $dataobject->id =optional_param('id');
-                                                $dataobject->section = optional_param('value');
-                                                update_record('course_modules',$dataobject);                                                                            
-                                                break;                                          
-                                                
-                                }
-                                break;
-                                                
-                            case course: switch(optional_param(field)){
-                                                
-                                    case marker:
-                                                $dataobject->id = optional_param('courseId');
-                                                $dataobject->marker = optional_param('value');
-                                                update_record('course',$dataobject);                                                                                                                                                    
-                                                 break;                                                                          
-                                                
-                                                
-                                }
-                                break;                                          
-                                                        
-                        }                                                                                
-                        break;
-                        
-                        
-                case DELETE:
-                        switch(optional_param('class')){
-                            case block: 
-                                    delete_records('block_instance','id',optional_param('instanceId'));     
-                                    break;  
-                                                                
-                            case section: 
-                                    $dataobject->id = get_field('course_sections','id','course',optional_param('courseId'),'section',(int)optional_param('id'));
-                                    $dataobject->summary = '';
-                                    $dataobject->sequence = '';
-                                    $dataobject->visible = '1';
-                                    update_record('course_sections',$dataobject);                                                                                                                                           
-                                    break;                  
-                                                                
-                            case resource: 
-                                    delete_records('course_modules','id',optional_param('id'));     
-                                    break;                                                                                                                  
-                                                                                        
-                        }
-                        break;
-        }       
-        
-        function make_dangerous($input){
-                //the compliment to the javascript function 'make_safe'
-                return str_replace("_.amp._","&",$input);       
-        }  
+// Initialise ALL the incoming parameters here, up front.
+
+$courseid = required_param('courseId', PARAM_INT);
+$class    = required_param('class', PARAM_ALPHA);
+$field    = required_param('field', PARAM_ALPHA);
+
+$instanceid = optional_param('instanceId', 0, PARAM_INT);
+$value      = optional_param('value', 0, PARAM_INT);
+$weight     = optional_param('weight', 0, PARAM_INT);
+$id         = optional_param('id', 0, PARAM_INT);
+$summary    = optional_param('summary', '', PARAM_INT);
+$sequence   = optional_param('sequence', '', PARAM_INT);
+$visible    = optional_param('visible', 0, PARAM_INT);
+
+// Authorise the user and verify some incoming data
+
+if (!$course = get_record('course', 'id', $courseid)) {     
+    error('Course does not exist');    
+}   
+
+require_login($course->id);
+
+$context = get_context_instance(CONTEXT_COURSE, $course->id);
+
+require_capability('moodle/course:update', $context);
+
+
+// OK, now let's process the parameters and do stuff
+
+$dataobject = NULL;
+
+switch ($class) {
+    case 'block': 
+        switch ($field) {
+            case 'visible':       
+                $dataobject->id = $instanceid;
+                $dataobject->visible = $value;
+                if (!update_record('block_instance',$dataobject)) {
+                    error('Failed to update block!');
+                }
+                break;
+
+            case 'position':  
+                $dataobject->id = $instanceid;
+                $dataobject->position = $value;
+                $dataobject->weight = $weight;
+                if (!update_record('block_instance',$dataobject)) {
+                    error('Failed to update block!');
+                }
+                break;                            
+        }
+        break;
+
+
+    case 'section': 
+
+        if ($dataobject->id = get_field('course_sections','id','course',$course->id,'section',$id)) {
+            error('Bad Section ID');
+        }
+
+        switch ($field) {
+
+            case 'visible':
+                $dataobject->visible = $value;
+                if (!update_record('course_sections',$dataobject)) {
+                    error('Failed to update section');
+                }
+                break;  
+
+
+            case 'sequence':
+                $dataobject->sequence = $value;
+                if (!update_record('course_sections',$dataobject)) {
+                    error('Failed to update section');
+                }
+                break;  
+
+            case 'all':
+                $dataobject->summary = make_dangerous($summary);
+                $dataobject->sequence = $sequence;
+                $dataobject->visible = $visible;
+                if (!update_record('course_sections',$dataobject)) {
+                    error('Failed to update section');
+                }
+                break;  
+        }
+        break;
+
+    case 'resource':
+        switch($field) {
+            case 'visible':
+                $dataobject->id = $id;
+                $dataobject->visible = $value;
+                if (!update_record('course_modules',$dataobject)) {
+                    error('Failed to update activity');
+                }
+                break;
+
+            case 'groupmode':
+                $dataobject->id = $id;
+                $dataobject->groupmode = $value;
+                if (!update_record('course_modules',$dataobject)) {
+                    error('Failed to update activity');
+                }
+                break;
+
+            case 'section':
+                $dataobject->id = $id;
+                $dataobject->section = $value;
+                if (!update_record('course_modules',$dataobject)) {
+                    error('Failed to update activity');
+                }
+                break;
+        }
+        break;
+
+    case 'course': 
+        switch($field) {
+            case 'marker':
+                $dataobject->id = $course->id;
+                $dataobject->marker = $value;
+                if (!update_record('course',$dataobject)) {
+                    error('Failed to update course');
+                }
+                break;
+        }
+        break;
+}
+
+
+
+function make_dangerous($input){
+    //the compliment to the javascript function 'make_safe'
+    return str_replace("_.amp._","&",$input);       
+}  
 ?>
