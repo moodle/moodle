@@ -171,6 +171,7 @@ main_class.prototype.connectQueue_add = function(method,urlStub,callback,body){
         
         if(main.connectQueueConnection == null || !YAHOO.util.Connect.isCallInProgress(main.connectQueueConnection))
             main.connectQueue_fireNext();
+
     }  
     
 main_class.prototype.connectQueue_fireNext= function(){
