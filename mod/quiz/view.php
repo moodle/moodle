@@ -324,7 +324,8 @@
                 // Work out if the quiz is temporarily unavailable becuase of the delay option.
                 if (!empty($attempts)) {
                     $tempunavailable = '';
-                    $lastattempttime = end($attempts)->timefinish;
+                    $lastattempt = end($attempts);
+                    $lastattempttime = $lastattempt->timefinish;
                     if ($numattempts == 1 && $quiz->delay1 && $timenow <= $lastattempttime + $quiz->delay1) {
                         $tempunavailable = get_string('temporaryblocked', 'quiz') .
                                 '<b>'. userdate($lastattempt + $quiz->delay1). '<b>';
