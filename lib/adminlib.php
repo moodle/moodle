@@ -243,7 +243,6 @@ function upgrade_activity_modules($return) {
                 } else {
                     notify ('Upgrade function ' . $oldupgrade_function . ' was not available in ' .
                              $mod . ': ' . $fullmod . '/db/' . $CFG->dbtype . '.php');
-                    continue;
                 }
 
             /// Then, the new function if exists and the old one was ok
@@ -254,11 +253,10 @@ function upgrade_activity_modules($return) {
                 } else {
                     notify ('Upgrade function ' . $newupgrade_function . ' was not available in ' .
                              $mod . ': ' . $fullmod . '/db/upgrade.php');
-                    continue;
                 }
 
             /// Now analyze upgrade results
-                if ($oldupgrade_status && $newupgrade_status) {
+                if ($oldupgrade_status && $newupgrade_status) {    // No upgrading failed
                     $db->debug=false;
                     // OK so far, now update the modules record
                     $module->id = $currmodule->id;
