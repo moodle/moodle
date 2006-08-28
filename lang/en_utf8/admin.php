@@ -160,6 +160,7 @@ $string['configzip'] = 'Indicate the location of your zip program (Unix only, op
 $string['confirmation'] = 'Confirmation';
 $string['confirminstall'] = 'You are about to install language pack ($a), are you sure?';
 $string['cronwarning'] = 'The <a href=\"cron.php\">cron.php maintenance script</a> has not been run for at least 24 hours.';
+$string['datarootsecuritywarning'] = 'Your site configuration might not be secure. Please make sure that your dataroot directory ($a) is not directly accesible via web.';
 $string['dbmigrate'] = 'Moodle Database Migration';
 $string['dbmigrationdeprecateddb'] = '<font color=\"#ff0000\">This database is migrated to a new UTF8 database and deprecated. Please edit your config.php and use the new database for this moodle.</font>';
 $string['dbmigrationdupfailed'] = 'Database duplication failed with possible error:<font color=\"#ff0000\"><pre>$a</pre></font>';

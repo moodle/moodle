@@ -403,6 +403,10 @@
         print_simple_box(get_string('globalsquoteswarning', 'admin'), 'center', '60%');
     }
 
+    if (is_dataroot_insecure()) {
+        print_simple_box(get_string('datarootsecuritywarning', 'admin', $CFG->dataroot), 'center', '60%');
+    }
+
 /// If no recently cron run
     $lastcron = get_field_sql('SELECT max(lastcron) FROM ' . $CFG->prefix . 'modules');
     if (time() - $lastcron > 3600 * 24) {

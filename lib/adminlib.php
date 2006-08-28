@@ -547,4 +547,34 @@ function upgrade_log_callback($string) {
     return $string;
 }
 
+/**
+ * Try to verify that dataroot is not accessible from web.
+ * It is not 100% correct but might help to reduce number of vulnerable sites.
+ *
+ * Protection from httpd.conf and .htaccess is not detected properly.
+ */
+function is_dataroot_insecure() {
+    global $CFG;
+
+    $siteroot = str_replace('\\', '/', strrev($CFG->dirroot.'/')); // win32 backslash workaround
+
+    $rp = preg_replace('|https?://[^/]+|i', '', $CFG->wwwroot, 1);
+    $rp = strrev(trim($rp, '/'));
+    $rp = explode('/', $rp);
+    foreach($rp as $r) {
+        if (strpos($siteroot, '/'.$r.'/') === 0) {
+            $siteroot = substr($siteroot, strlen($r)+1); // moodle web in subdirectory
+        } else {
+            break; // probably alias root
+        }
+    }
+
+    $siteroot = strrev($siteroot);
+    $dataroot = str_replace('\\', '/', $CFG->dataroot.'/');
+
+    if (strpos($dataroot, $siteroot) === 0) {
+        return true;
+    }
+    return false;
+}
 ?>
