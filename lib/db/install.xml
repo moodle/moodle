@@ -575,7 +575,7 @@
         <FIELD NAME="maildisplay" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="2" SEQUENCE="false" ENUM="false" PREVIOUS="maildigest" NEXT="htmleditor"/>
         <FIELD NAME="htmleditor" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" ENUM="false" PREVIOUS="maildisplay" NEXT="ajax"/>
         <FIELD NAME="ajax" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" ENUM="false" PREVIOUS="htmleditor" NEXT="autosubscribe"/>
-        <FIELD NAME="autosubscribe" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" ENUM="false" PREVIOUS="htmleditor" NEXT="trackforums"/>
+        <FIELD NAME="autosubscribe" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" ENUM="false" PREVIOUS="ajax" NEXT="trackforums"/>
         <FIELD NAME="trackforums" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="autosubscribe" NEXT="timemodified"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="trackforums"/>
       </FIELDS>
