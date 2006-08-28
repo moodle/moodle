@@ -324,7 +324,11 @@ function blocks_print_group(&$page, &$pageblocks, $position) {
                 $obj->_print_shadow();
             }
         } else {
+            global $COURSE;
+            if(!empty($COURSE->javascriptportal))
+                 $COURSE->javascriptportal->currentblocksection = $position;            
             $obj->_print_block();
+            
         }
     }
 
