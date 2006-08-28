@@ -166,7 +166,7 @@
     if ($userid) {
         print ('<input type="hidden" name="userid" value="'.$userid.'" />');
     }
-    if ($course->id) {
+    if ($courseid) {
         print ('<input type="hidden" name="courseid" value="'.$courseid.'" />');
     }
     print ('<input type="hidden" name="contextid" value="'.$context->id.'" />'.$strcurrentrole.': ');
