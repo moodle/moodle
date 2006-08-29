@@ -77,8 +77,8 @@ class edit_xml_file extends XMLDBAction {
     /// Do the job, setting $result as needed
 
     /// Get the dir containing the file
-        $dirpath = required_param('dir', PARAM_CLEAN);
-        $dirpath = stripslashes_safe($dirpath);
+        $dirpath = required_param('dir', PARAM_PATH);
+        $dirpath = $CFG->dirroot . stripslashes_safe($dirpath);
 
     /// Get the correct dir
         if (!empty($XMLDB->dbdirs)) {
@@ -101,7 +101,7 @@ class edit_xml_file extends XMLDBAction {
                 $structure =& $editeddir->xml_file->getStructure();
             /// Add the main form
                 $o = '<form id="form" action="index.php" method="post">';
-                $o.= '    <input type="hidden" name ="dir" value="' . $dirpath . '" />';
+                $o.= '    <input type="hidden" name ="dir" value="' . str_replace($CFG->dirroot, '', $dirpath) . '" />';
                 $o.= '    <input type="hidden" name ="action" value="edit_xml_file_save" />';
                 $o.= '    <input type="hidden" name ="postaction" value="edit_xml_file" />';
                 $o.= '    <input type="hidden" name ="path" value="' . s($structure->getPath()) .'" />';
@@ -116,31 +116,31 @@ class edit_xml_file extends XMLDBAction {
             /// Calculate the buttons
                 $b = ' <p align="center" class="buttons">';
             /// The view original XML button
-                $b .= '&nbsp;<a href="index.php?action=view_structure_xml&amp;dir=' . urlencode($dirpath) . '&amp;select=original" target="_blank">[' . $this->str['vieworiginal'] . ']</a>';
+                $b .= '&nbsp;<a href="index.php?action=view_structure_xml&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '&amp;select=original" target="_blank">[' . $this->str['vieworiginal'] . ']</a>';
             /// The view edited XML button
                 if ($structure->hasChanged()) {
-                    $b .= '&nbsp;<a href="index.php?action=view_structure_xml&amp;dir=' . urlencode($dirpath) . '&amp;select=edited" target="_blank">[' . $this->str['viewedited'] . ']</a>';
+                    $b .= '&nbsp;<a href="index.php?action=view_structure_xml&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '&amp;select=edited" target="_blank">[' . $this->str['viewedited'] . ']</a>';
                 } else {
                     $b .= '&nbsp;[' . $this->str['viewedited'] . ']';
                 }
             /// The new table button
-                $b .= '&nbsp;<a href="index.php?action=new_table&amp;postaction=edit_table&amp;table=changeme&amp;dir=' . urlencode($dirpath) . '">[' . $this->str['newtable'] . ']</a>';
+                $b .= '&nbsp;<a href="index.php?action=new_table&amp;postaction=edit_table&amp;table=changeme&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['newtable'] . ']</a>';
             /// The new from MySQL button
                 if ($CFG->dbtype == 'mysql') {
-                    $b .= '&nbsp;<a href="index.php?action=new_table_from_mysql&amp;dir=' . urlencode($dirpath) . '">[' . $this->str['newtablefrommysql'] . ']</a>';
+                    $b .= '&nbsp;<a href="index.php?action=new_table_from_mysql&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['newtablefrommysql'] . ']</a>';
                 } else {
                     $b .= '&nbsp;[' . $this->str['newtablefrommysql'] . ']';
                 }
             /// The new statement button
-                $b .= '&nbsp;<a href="index.php?action=new_statement&amp;dir=' . urlencode($dirpath) . '">[' . $this->str['newstatement'] . ']</a>';
+                $b .= '&nbsp;<a href="index.php?action=new_statement&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['newstatement'] . ']</a>';
             /// The back to main menu button
                 $b .= '&nbsp;<a href="index.php?action=main_view#lastused">[' . $this->str['backtomainview'] . ']</a>';
                 $b .= '</p>';
                 $b .= ' <p align="center" class="buttons">';
             /// The view sql code button
-                $b .= '<a href="index.php?action=view_structure_sql&amp;dir=' . urlencode($dirpath) . '">[' .$this->str['viewsqlcode'] . ']</a>';
+                $b .= '<a href="index.php?action=view_structure_sql&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' .$this->str['viewsqlcode'] . ']</a>';
             /// The view php code button
-                $b .= '&nbsp;<a href="index.php?action=view_structure_php&amp;dir=' . urlencode($dirpath) . '">[' . $this->str['viewphpcode'] . ']</a>';
+                $b .= '&nbsp;<a href="index.php?action=view_structure_php&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['viewphpcode'] . ']</a>';
                 $b .= '</p>';
                 $o .= $b;
             /// Join all the reserved words into one big array
@@ -164,18 +164,18 @@ class edit_xml_file extends XMLDBAction {
                     /// Calculate buttons
                         $b = '</td><td class="button cell">';
                     /// The edit button
-                        $b .= '<a href="index.php?action=edit_table&amp;table=' . $table->getName() . '&amp;dir=' . urlencode($dirpath) . '">[' . $this->str['edit'] . ']</a>';
+                        $b .= '<a href="index.php?action=edit_table&amp;table=' . $table->getName() . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['edit'] . ']</a>';
                         $b .= '</td><td class="button cell">';
                     /// The up button
                         if ($table->getPrevious()) {
-                            $b .= '<a href="index.php?action=move_updown_table&amp;direction=up&amp;table=' . $table->getName() . '&amp;postaction=edit_xml_file' . '&amp;dir=' . urlencode($dirpath) . '">[' . $this->str['up'] . ']</a>';
+                            $b .= '<a href="index.php?action=move_updown_table&amp;direction=up&amp;table=' . $table->getName() . '&amp;postaction=edit_xml_file' . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['up'] . ']</a>';
                         } else {
                             $b .= '[' . $this->str['up'] . ']';
                         }
                         $b .= '</td><td class="button cell">';
                     /// The down button
                         if ($table->getNext()) {
-                            $b .= '<a href="index.php?action=move_updown_table&amp;direction=down&amp;table=' . $table->getName() . '&amp;postaction=edit_xml_file' . '&amp;dir=' . urlencode($dirpath) . '">[' . $this->str['down'] . ']</a>';
+                            $b .= '<a href="index.php?action=move_updown_table&amp;direction=down&amp;table=' . $table->getName() . '&amp;postaction=edit_xml_file' . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['down'] . ']</a>';
                         } else {
                             $b .= '[' . $this->str['down'] . ']';
                         }
@@ -184,7 +184,7 @@ class edit_xml_file extends XMLDBAction {
                         if (count($tables) > 1 &&
                             !$structure->getTableUses($table->getName())) {
                             ///!$structure->getTableUses($table->getName())) {
-                            $b .= '<a href="index.php?action=delete_table&amp;table=' . $table->getName() . '&amp;dir=' . urlencode($dirpath) . '">[' . $this->str['delete'] . ']</a>';
+                            $b .= '<a href="index.php?action=delete_table&amp;table=' . $table->getName() . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['delete'] . ']</a>';
                         } else {
                             $b .= '[' . $this->str['delete'] . ']';
                         }
@@ -194,7 +194,7 @@ class edit_xml_file extends XMLDBAction {
                          }
                         $b .= '</td>';
                     /// Print table row
-                        $o .= '<tr class="r' . $row . '"><td class="table cell"><a href="index.php?action=view_table_xml&amp;dir=' . urlencode($dirpath) . '&amp;table=' . $table->getName() . '&amp;select=edited" target="_blank">' . $table->getName() . '</a>' . $b . '</tr>'; 
+                        $o .= '<tr class="r' . $row . '"><td class="table cell"><a href="index.php?action=view_table_xml&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '&amp;table=' . $table->getName() . '&amp;select=edited" target="_blank">' . $table->getName() . '</a>' . $b . '</tr>'; 
                         $row = ($row + 1) % 2;
                     }
                     $o .= '</table>';
@@ -209,27 +209,27 @@ class edit_xml_file extends XMLDBAction {
                     /// Calculate buttons
                         $b = '</td><td class="button cell">';
                     /// The edit button
-                        $b .= '<a href="index.php?action=edit_statement&amp;statement=' . $statement->getName() . '&amp;dir=' . urlencode($dirpath) . '">[' . $this->str['edit'] . ']</a>';
+                        $b .= '<a href="index.php?action=edit_statement&amp;statement=' . $statement->getName() . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['edit'] . ']</a>';
                         $b .= '</td><td class="button cell">';
                     /// The up button
                         if ($statement->getPrevious()) {
-                            $b .= '<a href="index.php?action=move_updown_statement&amp;direction=up&amp;statement=' . $statement->getName() . '&amp;postaction=edit_xml_file' . '&amp;dir=' . urlencode($dirpath) . '">[' . $this->str['up'] . ']</a>';
+                            $b .= '<a href="index.php?action=move_updown_statement&amp;direction=up&amp;statement=' . $statement->getName() . '&amp;postaction=edit_xml_file' . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['up'] . ']</a>';
                         } else {
                             $b .= '[' . $this->str['up'] . ']';
                         }
                         $b .= '</td><td class="button cell">';
                     /// The down button
                         if ($statement->getNext()) {
-                            $b .= '<a href="index.php?action=move_updown_statement&amp;direction=down&amp;statement=' . $statement->getName() . '&amp;postaction=edit_xml_file' . '&amp;dir=' . urlencode($dirpath) . '">[' . $this->str['down'] . ']</a>';
+                            $b .= '<a href="index.php?action=move_updown_statement&amp;direction=down&amp;statement=' . $statement->getName() . '&amp;postaction=edit_xml_file' . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['down'] . ']</a>';
                         } else {
                             $b .= '[' . $this->str['down'] . ']';
                         }
                         $b .= '</td><td class="button cell">';
                     /// The delete button
-                        $b .= '<a href="index.php?action=delete_statement&amp;statement=' . $statement->getName() . '&amp;dir=' . urlencode($dirpath) . '">[' . $this->str['delete'] . ']</a>';
+                        $b .= '<a href="index.php?action=delete_statement&amp;statement=' . $statement->getName() . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['delete'] . ']</a>';
                         $b .= '</td>';
                     /// Print statement row
-                        $o .= '<tr class="r' . $row . '"><td class="statement cell"><a href="index.php?action=view_statement_xml&amp;dir=' . urlencode($dirpath) . '&amp;statement=' . $statement->getName() . '&amp;select=edited" target="_blank">' . $statement->getName() . '</a>' . $b . '</tr>'; 
+                        $o .= '<tr class="r' . $row . '"><td class="statement cell"><a href="index.php?action=view_statement_xml&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '&amp;statement=' . $statement->getName() . '&amp;select=edited" target="_blank">' . $statement->getName() . '</a>' . $b . '</tr>'; 
                         $row = ($row + 1) % 2;
                     }
                     $o .= '</table>';
