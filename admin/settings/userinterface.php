@@ -112,7 +112,7 @@ $ADMIN->add('userinterface', $temp);
 
 
 $ADMIN->add('userinterface', new admin_externalpage('timezoneimport', get_string('updatetimezones', 'admin'), $CFG->wwwroot . '/admin/timezoneimport.php'));
-$ADMIN->add('userinterface', new admin_externalpage('themeselector', get_string('themes'), $CFG->wwwroot . '/theme/index.php'));
+$ADMIN->add('userinterface', new admin_externalpage('themeselector', get_string('themeselector','admin'), $CFG->wwwroot . '/theme/index.php'));
 $ADMIN->add('userinterface', new admin_externalpage('langedit', get_string('langedit', 'admin'), $CFG->wwwroot . '/admin/lang.php'));
 $ADMIN->add('userinterface', new admin_externalpage('langimport', get_string('langimport', 'admin'), $CFG->wwwroot . '/admin/langimport.php'));
 
