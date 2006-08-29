@@ -66,11 +66,11 @@ class edit_table_save extends XMLDBAction {
     /// Do the job, setting result as needed
 
     /// Get parameters
-        $dirpath = required_param('dir', PARAM_CLEAN);
-        $dirpath = stripslashes_safe($dirpath);
+        $dirpath = required_param('dir', PARAM_PATH);
+        $dirpath = $CFG->dirroot . stripslashes_safe($dirpath);
 
-        $tableparam = strtolower(required_param('table', PARAM_CLEAN));
-        $name = substr(trim(strtolower(required_param('name', PARAM_CLEAN))),0,28);
+        $tableparam = strtolower(required_param('table', PARAM_PATH));
+        $name = substr(trim(strtolower(required_param('name', PARAM_PATH))),0,28);
         $comment = required_param('comment', PARAM_CLEAN);
         $comment = stripslashes_safe($comment);
 
@@ -103,7 +103,7 @@ class edit_table_save extends XMLDBAction {
                          "<a href=\"../index.php\">" . $this->str['administration'] . "</a> -> <a href=\"index.php\">XMLDB</a>");
             notice ('<p>' .implode(', ', $errors) . '</p>
                      <p>' . $temptable->readableInfo(),
-                     'index.php?action=edit_table&amp;table=' . $tableparam . '&amp;dir=' . urlencode($dirpath));
+                     'index.php?action=edit_table&amp;table=' . $tableparam . '&amp;dir=' . str_replace($CFG->dirroot, '', urlencode($dirpath)));
             die; /// re-die :-P
         }
 
