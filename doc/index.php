@@ -11,7 +11,7 @@
     }
 
     if (!empty($sub)) {
-        $sub = "#$sub";
+        $sub = '#'.s($sub);
     } else {
         $sub = "";
     }
