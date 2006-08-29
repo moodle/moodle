@@ -83,7 +83,9 @@ class assignment_base {
 
             $this->pagetitle = strip_tags($this->course->shortname.': '.$this->strassignment.': '.format_string($this->assignment->name,true));
 
-            if (!$this->cm->visible and !isteacher($this->course->id)) {
+            // visibility
+            $context = get_context_instance(CONTEXT_MODULE, $cmid);
+            if (!$this->cm->visible and !has_capability('moodle/course:viewhiddenactivities', $context)) {
                 $pagetitle = strip_tags($this->course->shortname.': '.$this->strassignment);
                 print_header($pagetitle, $this->course->fullname, "$this->navigation $this->strassignment", 
                              "", "", true, '', navmenu($this->course, $this->cm));
@@ -1737,8 +1739,8 @@ function assignment_cron () {
                 echo "Could not find course $submission->course\n";
                 continue;
             }
-
-            if (! isstudent($course->id, $user->id) and !isteacher($course->id, $user->id)) {
+            
+            if (!has_capability('moodle/course:view', get_context_instance(CONTEXT_COURSE, $$submission->course))) {
                 echo fullname($user)." not an active participant in $course->shortname\n";
                 continue;
             }
@@ -2082,7 +2084,7 @@ function assignment_print_recent_mod_activity($activity, $course, $detail=false)
 
     }
 
-    if (isteacher($course)) {
+    if (has_capability('moodle/course:viewrecent', get_context_instance(CONTEXT_COURSE, $course))) {
         $grades = "(" .  $activity->content->grade . " / " . $activity->content->maxgrade . ") ";
 
         $assignment->id = $activity->instance;
@@ -2363,7 +2365,6 @@ function assignment_print_overview($courses, &$htmlarray) {
             $str .= '<div class="info">'.$strduedateno.'</div>';
         }
 
-        // if (isteacher($assignment->course)) {
         $context = get_context_instance(CONTEXT_MODULE,$this->cm->id);
         if (has_capability('mod/assignment:grade', $context)) {
             $submissions = count_records_sql("SELECT COUNT(*)
