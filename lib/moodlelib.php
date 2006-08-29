@@ -200,6 +200,11 @@ define('PARAM_ALPHAEXT', 0x2000);
  */
 define('PARAM_SAFEDIR',  0x4000);
 
+/**
+ * PARAM_SEQUENCE - expects a sequence of numbers like 8 to 1,5,6,4,6,8,9.  Numbers and comma only.
+ */
+define('PARAM_SEQUENCE',  0x8000);
+
 /// Page types ///
 /**
  * PAGE_COURSE_VIEW is a definition of a page type. For more information on the page class see moodle/lib/pagelib.php.
@@ -303,6 +308,7 @@ function optional_param($parname, $default=NULL, $type=PARAM_CLEAN) {
  * @uses PARAM_URL
  * @uses PARAM_LOCALURL
  * @uses PARAM_CLEANHTML
+ * @uses PARAM_SEQUENCE
  * @param mixed $param the variable we are cleaning
  * @param int $type expected format of param after cleaning.
  * @return mixed
@@ -347,6 +353,9 @@ function clean_param($param, $type) {
 
         case PARAM_ALPHAEXT:     // Remove everything not a-zA-Z/_-
             return eregi_replace('[^a-zA-Z/_-]', '', $param);
+
+        case PARAM_SEQUENCE:     // Remove everything not 0-9,
+            return eregi_replace('[^0-9,]', '', $param);
 
         case PARAM_BOOL:         // Convert to 1 or 0
             $tempstr = strtolower($param);
