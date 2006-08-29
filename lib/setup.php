@@ -314,9 +314,12 @@ $CFG->os = PHP_OS;
             $ADODB_SESSION_USER    = $CFG->dbuser;
             $ADODB_SESSION_PWD     = $CFG->dbpass;
             $ADODB_SESSION_DB      = $CFG->dbname;
-            $ADODB_SESSION_TBL     = $CFG->prefix.'sessions';
+            $ADODB_SESSION_TBL     = $CFG->prefix.'sessions2';
+            if (!empty($CFG->sessiontimeout)) {
+                $ADODB_SESS_LIFE   = $CFG->sessiontimeout;
+            }
 
-            require_once($CFG->libdir. '/adodb/session/adodb-session.php');
+            require_once($CFG->libdir. '/adodb/session/adodb-session2.php');
         }
     }
 /// Set sessioncookie variable if it isn't already

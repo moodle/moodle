@@ -338,14 +338,19 @@ CREATE TABLE prefix_scale (
    timemodified integer NOT NULL default '0'
 );
 
-CREATE TABLE prefix_sessions (
-  sesskey char(32) PRIMARY KEY,
-  expiry integer NOT null,
-  expireref varchar(64),
-  data text NOT null
+CREATE TABLE prefix_sessions2 (
+    sesskey VARCHAR(255) NOT NULL default '',
+    expiry TIMESTAMP NOT NULL,
+    expireref VARCHAR(255),
+    created TIMESTAMP NOT NULL,
+    modified TIMESTAMP NOT NULL,
+    sessdata TEXT,
+CONSTRAINT prefix_sess_ses_pk PRIMARY KEY (sesskey)
 );
 
-CREATE INDEX prefix_sessions_expiry_idx ON prefix_sessions (expiry);
+CREATE INDEX prefix_sess_exp_ix ON prefix_sessions2 (expiry);
+
+CREATE INDEX prefix_sess_exp2_ix ON prefix_sessions2 (expireref);
 
 CREATE TABLE prefix_timezone (
   id SERIAL PRIMARY KEY,

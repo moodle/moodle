@@ -1741,6 +1741,25 @@ function main_upgrade($oldversion=0) {
         table_column('user', '', 'ajax', 'integer', '1', 'unsigned', '1', '', 'htmleditor');
     }
 
+    if ($oldversion < 2006082900) {
+        execute_sql("DROP TABLE {$CFG->prefix}sessions", false);
+        execute_sql("
+            CREATE TABLE {$CFG->prefix}sessions2 (
+                sesskey VARCHAR(255) NOT NULL default '',
+                expiry TIMESTAMP NOT NULL,
+                expireref VARCHAR(255),
+                created TIMESTAMP NOT NULL,
+                modified TIMESTAMP NOT NULL,
+                sessdata TEXT,
+                CONSTRAINT {$CFG->prefix}sess_ses_pk PRIMARY KEY (sesskey)
+            );", true);
+
+        execute_sql("
+            CREATE INDEX {$CFG->prefix}sess_exp_ix ON {$CFG->prefix}sessions2 (expiry);", true);
+        execute_sql("
+            CREATE INDEX {$CFG->prefix}sess_exp2_ix ON {$CFG->prefix}sessions2 (expireref);", true);
+    }
+
     return $result;
 }
 

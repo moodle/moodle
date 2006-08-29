@@ -532,19 +532,21 @@ CREATE TABLE `prefix_scale` (
 
 
 #
-# Table structure for table `sessions`
+# Table structure for table `sessions2`
 #
+CREATE TABLE prefix_sessions2 (
+    sesskey VARCHAR(64) NOT NULL default '',
+    expiry DATETIME NOT NULL,
+    expireref VARCHAR(250),
+    created DATETIME NOT NULL,
+    modified DATETIME NOT NULL,
+    sessdata TEXT,
+CONSTRAINT  PRIMARY KEY (sesskey)
+) COMMENT='Optional database session storage in new format, not used by default';
 
-CREATE TABLE `prefix_sessions` (
-  `sesskey` char(32) NOT null default '',
-  `expiry` int(11) unsigned NOT null default '0',
-  `expireref` varchar(64) default '',
-  `data` mediumtext NOT null default '',
-  PRIMARY KEY (`sesskey`), 
-  KEY (`expiry`) 
-) TYPE=MyISAM COMMENT='Optional database session storage, not used by default';
+CREATE INDEX prefix_sess_exp_ix ON prefix_sessions2 (expiry);
+CREATE INDEX prefix_sess_exp2_ix ON prefix_sessions2 (expireref);
 # --------------------------------------------------------
-
 
 #
 # Table structure for table `timezone`
