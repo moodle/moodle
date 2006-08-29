@@ -75,27 +75,31 @@ class edit_field_save extends XMLDBAction {
 
     /// Do the job, setting result as needed
 
-    /// Get parameters
-        $dirpath = required_param('dir', PARAM_CLEAN);
-        $dirpath = stripslashes_safe($dirpath);
+        if (!data_submitted('nomatch')) { ///Basic prevention
+            error('Wrong action call');
+        }
 
-        $tableparam = strtolower(required_param('table', PARAM_CLEAN));
-        $fieldparam = strtolower(required_param('field', PARAM_CLEAN));
-        $name = substr(trim(strtolower(optional_param('name', $fieldparam, PARAM_CLEAN))),0,30);
+    /// Get parameters
+        $dirpath = required_param('dir', PARAM_PATH);
+        $dirpath = $CFG->dirroot . stripslashes_safe($dirpath);
+
+        $tableparam = strtolower(required_param('table', PARAM_PATH));
+        $fieldparam = strtolower(required_param('field', PARAM_PATH));
+        $name = substr(trim(strtolower(optional_param('name', $fieldparam, PARAM_PATH))),0,30);
 
         $comment = required_param('comment', PARAM_CLEAN);
         $comment = trim(stripslashes_safe($comment));
 
         $type       = required_param('type', PARAM_INT);
-        $length     = strtolower(optional_param('length', NULL, PARAM_CLEAN));
-        $decimals   = optional_param('decimals', NULL, PARAM_CLEAN);
+        $length     = strtolower(optional_param('length', NULL, PARAM_ALPHANUM));
+        $decimals   = optional_param('decimals', NULL, PARAM_INT);
         $unsigned   = optional_param('unsigned', false, PARAM_BOOL);
         $notnull    = optional_param('notnull', false, PARAM_BOOL);
         $sequence   = optional_param('sequence', false, PARAM_BOOL);
         $enum       = optional_param('enum', false, PARAM_BOOL);
         $enumvalues = optional_param('enumvalues', 0, PARAM_CLEAN);
         $enumvalues = trim(stripslashes_safe($enumvalues));
-        $default    = optional_param('default', NULL, PARAM_CLEAN);
+        $default    = optional_param('default', NULL, PARAM_PATH);
         $default    = trim(stripslashes_safe($default));
 
         $editeddir =& $XMLDB->editeddirs[$dirpath];
@@ -284,7 +288,7 @@ class edit_field_save extends XMLDBAction {
                          "<a href=\"../index.php\">" . $this->str['administration'] . "</a> -> <a href=\"index.php\">XMLDB</a>");
             notice ('<p>' .implode(', ', $errors) . '</p>
                      <p>' . $tempfield->readableInfo(),
-                    'index.php?action=edit_field&amp;field=' .$field->getName() . '&amp;table=' . $table->getName() . '&amp;dir=' . urlencode($dirpath));
+                    'index.php?action=edit_field&amp;field=' .$field->getName() . '&amp;table=' . $table->getName() . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)));
             die; /// re-die :-P
         }
 

@@ -75,13 +75,17 @@ class edit_key_save extends XMLDBAction {
 
     /// Do the job, setting result as needed
 
-    /// Get parameters
-        $dirpath = required_param('dir', PARAM_CLEAN);
-        $dirpath = stripslashes_safe($dirpath);
+        if (!data_submitted('nomatch')) { ///Basic prevention
+            error('Wrong action call');
+        }
 
-        $tableparam = strtolower(required_param('table', PARAM_CLEAN));
-        $keyparam = strtolower(required_param('key', PARAM_CLEAN));
-        $name = trim(strtolower(optional_param('name', $keyparam, PARAM_CLEAN)));
+    /// Get parameters
+        $dirpath = required_param('dir', PARAM_PATH);
+        $dirpath = $CFG->dirroot . stripslashes_safe($dirpath);
+
+        $tableparam = strtolower(required_param('table', PARAM_PATH));
+        $keyparam = strtolower(required_param('key', PARAM_PATH));
+        $name = trim(strtolower(optional_param('name', $keyparam, PARAM_PATH)));
 
         $comment = required_param('comment', PARAM_CLEAN);
         $comment = trim(stripslashes_safe($comment));
@@ -92,7 +96,7 @@ class edit_key_save extends XMLDBAction {
 
         if ($type == XMLDB_KEY_FOREIGN ||
             $type == XMLDB_KEY_FOREIGN_UNIQUE) {
-            $reftable = trim(strtolower(required_param('reftable', PARAM_CLEAN)));
+            $reftable = trim(strtolower(required_param('reftable', PARAM_PATH)));
             $reffields= required_param('reffields', PARAM_CLEAN);
             $reffields = str_replace(' ', '', trim(strtolower(stripslashes_safe($reffields))));
         }
@@ -241,7 +245,7 @@ class edit_key_save extends XMLDBAction {
                          "<a href=\"../index.php\">" . $this->str['administration'] . "</a> -> <a href=\"index.php\">XMLDB</a>");
             notice ('<p>' .implode(', ', $errors) . '</p>
                      <p>' . $tempkey->readableInfo(),
-                    'index.php?action=edit_key&amp;key=' .$key->getName() . '&amp;table=' . $table->getName() . '&amp;dir=' . urlencode($dirpath));
+                    'index.php?action=edit_key&amp;key=' .$key->getName() . '&amp;table=' . $table->getName() . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)));
             die; /// re-die :-P
         }
 

@@ -69,13 +69,17 @@ class edit_index_save extends XMLDBAction {
 
     /// Do the job, setting result as needed
 
-    /// Get parameters
-        $dirpath = required_param('dir', PARAM_CLEAN);
-        $dirpath = stripslashes_safe($dirpath);
+        if (!data_submitted('nomatch')) { ///Basic prevention
+            error('Wrong action call');
+        }
 
-        $tableparam = strtolower(required_param('table', PARAM_CLEAN));
-        $indexparam = strtolower(required_param('index', PARAM_CLEAN));
-        $name = trim(strtolower(optional_param('name', $indexparam, PARAM_CLEAN)));
+    /// Get parameters
+        $dirpath = required_param('dir', PARAM_PATH);
+        $dirpath = $CFG->dirroot . stripslashes_safe($dirpath);
+
+        $tableparam = strtolower(required_param('table', PARAM_PATH));
+        $indexparam = strtolower(required_param('index', PARAM_PATH));
+        $name = trim(strtolower(optional_param('name', $indexparam, PARAM_PATH)));
 
         $comment = required_param('comment', PARAM_CLEAN);
         $comment = trim(stripslashes_safe($comment));
@@ -165,7 +169,7 @@ class edit_index_save extends XMLDBAction {
                          "<a href=\"../index.php\">" . $this->str['administration'] . "</a> -> <a href=\"index.php\">XMLDB</a>");
             notice ('<p>' .implode(', ', $errors) . '</p>
                      <p>' . $tempindex->readableInfo(),
-                    'index.php?action=edit_index&amp;index=' .$index->getName() . '&amp;table=' . $table->getName() . '&amp;dir=' . urlencode($dirpath));
+                    'index.php?action=edit_index&amp;index=' .$index->getName() . '&amp;table=' . $table->getName() . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)));
             die; /// re-die :-P
         }
 
