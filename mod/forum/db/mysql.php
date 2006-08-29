@@ -247,25 +247,23 @@ function forum_upgrade($oldversion) {
                      'for teacher forums will have to be manually set after '.
                      'this upgrade.');
           }
-          
           foreach ($forums as $forum) {
               if (!forum_convert_to_roles($forum, $forummod->id,
                         $studentroles, $guestroles)) {
                   notice('Forum with id '.$forum->id.' was not upgraded');
               }
           }
-          
-          // Drop column forum.open.
-          modify_database('', 'ALTER TABLE prefix_forum DROP COLUMN open;');
-          
-          // Drop column forum.assesspublic.
-          modify_database('', 'ALTER TABLE prefix_forum DROP COLUMN assesspublic;');
-          
           // We need to rebuild all the course caches to refresh the state of
           // the forum modules.
           rebuild_course_cache();
           
       } // End if.
+      
+      // Drop column forum.open.
+      modify_database('', 'ALTER TABLE prefix_forum DROP COLUMN open;');
+        
+      // Drop column forum.assesspublic.
+      modify_database('', 'ALTER TABLE prefix_forum DROP COLUMN assesspublic;');
   }
 
   if ($oldversion < 2006082700) {
