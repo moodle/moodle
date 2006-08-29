@@ -289,7 +289,7 @@ function authorize_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE)
                 $order->transid = $transid;
                 if ($action == AN_ACTION_AUTH_ONLY) {
                     $order->status = AN_STATUS_AUTH;
-                    // dont't update settletime
+                    // don't update order->settletime
                 } else {
                     $order->status = AN_STATUS_AUTHCAPTURE;
                     $order->settletime = authorize_getsettletime(time());
@@ -316,12 +316,9 @@ function authorize_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE)
             }
             case AN_ACTION_VOID:
             {
-                $tableupdate = 'enrol_authorize';
-                if ($order->status == AN_STATUS_CREDIT) {
-                    $tableupdate = 'enrol_authorize_refunds';
-                }
-                // dont't update settletime
+                $tableupdate = ($order->status == AN_STATUS_CREDIT) ? 'enrol_authorize_refunds' : 'enrol_authorize';
                 $order->status = AN_STATUS_VOID;
+                // don't update order->settletime
                 if (! update_record($tableupdate, $order)) {
                     enrolment_plugin_authorize::email_to_admin("Error while trying to update data " .
                     "in table $tableupdate. Please edit manually this record: ID=$order->id.", $order);
