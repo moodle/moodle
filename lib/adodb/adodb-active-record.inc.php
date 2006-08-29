@@ -1,7 +1,7 @@
 <?php
 /*
 
-@version V4.91 2 Aug 2006  (c) 2000-2006 John Lim (jlim#natsoft.com.my). All rights reserved.
+@version V4.92 29 Aug 2006  (c) 2000-2006 John Lim (jlim#natsoft.com.my). All rights reserved.
   Latest version is available at http://adodb.sourceforge.net
  
   Released under both BSD license and Lesser GPL library license. 
@@ -100,6 +100,12 @@ class ADODB_Active_Record {
 		$this->_table = $table;
 		$this->_tableat = $table; # reserved for setting the assoc value to a non-table name, eg. the sql string in future
 		$this->UpdateActiveTable($pkeyarr);
+	}
+	
+	function __wakeup()
+	{
+  		$class = get_class($this);
+  		new $class;
 	}
 	
 	function _pluralize($table)

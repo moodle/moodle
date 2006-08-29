@@ -1,7 +1,7 @@
 <?php
 /*
 
-  version V4.91 2 Aug 2006 (c) 2000-2006 John Lim. All rights reserved.
+  version V4.92 29 Aug 2006 (c) 2000-2006 John Lim. All rights reserved.
 
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
@@ -75,6 +75,7 @@ class ADODB_oci8 extends ADOConnection {
 	var $noNullStrings = false;
 	var $connectSID = false;
 	var $_bind = false;
+	var $_nestedSQL = true;
 	var $_hasOCIFetchStatement = false;
 	var $_getarray = false; // currently not working
 	var $leftOuter = '';  // oracle wierdness, $col = $value (+) for LEFT OUTER, $col (+)= $value for RIGHT OUTER

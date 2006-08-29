@@ -1,4 +1,4 @@
-Description of ADODB v4.91 library import into Moodle
+Description of ADODB v4.9 library import into Moodle
 
 Removed:
  * contrib
@@ -13,4 +13,4 @@ Added:
  * readme_moodle.txt - this file ;-)
 
 skodak
-21 August 2006
+29 August 2006

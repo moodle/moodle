@@ -1,6 +1,6 @@
 <?php
 /* 
-  V4.91 2 Aug 2006  (c) 2006 John Lim (jlim#natsoft.com.my). All rights reserved.
+  V4.92 29 Aug 2006  (c) 2006 John Lim (jlim#natsoft.com.my). All rights reserved.
 
   This is a version of the ADODB driver for DB2.  It uses the 'ibm_db2' PECL extension
   for PHP (http://pecl.php.net/package/ibm_db2), which in turn requires DB2 V8.2.2 or
@@ -120,12 +120,24 @@ class ADODB_db2 extends ADOConnection {
 		return $this->_connectionID != false;
 	}
 
+	// format and return date string in database timestamp format
+	function DBTimeStamp($ts)
+	{
+		if (empty($ts) && $ts !== 0) return 'null';
+		if (is_string($ts)) $ts = ADORecordSet::UnixTimeStamp($ts);
+		return 'TO_DATE('.adodb_date($this->fmtTimeStamp,$ts).",'YYYY-MM-DD HH24:MI:SS')";
+	}
 	
 	// Format date column in sql string given an input format that understands Y M D
 	function SQLDate($fmt, $col=false)
 	{	
 	// use right() and replace() ?
 		if (!$col) $col = $this->sysDate;
+
+		/* use TO_CHAR() if $fmt is TO_CHAR() allowed fmt */
+		if ($fmt== 'Y-m-d H:i:s')
+			return 'TO_CHAR('.$col.", 'YYYY-MM-DD HH24:MI:SS')";
+
 		$s = '';
 		
 		$len = strlen($fmt);
@@ -135,31 +147,38 @@ class ADODB_db2 extends ADOConnection {
 			switch($ch) {
 			case 'Y':
 			case 'y':
+				if ($len==1) return "year($col)";
 				$s .= "char(year($col))";
 				break;
 			case 'M':
+				if ($len==1) return "monthname($col)";
 				$s .= "substr(monthname($col),1,3)";
 				break;
 			case 'm':
+				if ($len==1) return "month($col)";
 				$s .= "right(digits(month($col)),2)";
 				break;
 			case 'D':
 			case 'd':
+				if ($len==1) return "day($col)";
 				$s .= "right(digits(day($col)),2)";
 				break;
 			case 'H':
 			case 'h':
+				if ($len==1) return "hour($col)";
 				if ($col != $this->sysDate) $s .= "right(digits(hour($col)),2)";	
 				else $s .= "''";
 				break;
 			case 'i':
 			case 'I':
+				if ($len==1) return "minute($col)";
 				if ($col != $this->sysDate)
 					$s .= "right(digits(minute($col)),2)";
 					else $s .= "''";
 				break;
 			case 'S':
 			case 's':
+				if ($len==1) return "second($col)";
 				if ($col != $this->sysDate)
 					$s .= "right(digits(second($col)),2)";
 				else $s .= "''";

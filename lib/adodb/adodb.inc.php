@@ -14,7 +14,7 @@
 /**
 	\mainpage 	
 	
-	 @version V4.91 2 Aug 2006  (c) 2000-2006 John Lim (jlim#natsoft.com.my). All rights reserved.
+	 @version V4.90 8 June 2006  (c) 2000-2006 John Lim (jlim#natsoft.com.my). All rights reserved.
 
 	Released under both BSD license and Lesser GPL library license. You can choose which license
 	you prefer.
@@ -171,7 +171,7 @@
 		/**
 		 * ADODB version as a string.
 		 */
-		$ADODB_vers = 'V4.91 2 Aug 2006  (c) 2000-2006 John Lim (jlim#natsoft.com.my). All rights reserved. Released BSD & LGPL.';
+		$ADODB_vers = 'V4.90 8 June 2006  (c) 2000-2006 John Lim (jlim#natsoft.com.my). All rights reserved. Released BSD & LGPL.';
 	
 		/**
 		 * Determines whether recordset->RecordCount() is used. 
@@ -273,6 +273,13 @@
 	var $raiseErrorFn = false; 	/// error function to call
 	var $isoDates = false; /// accepts dates in ISO format
 	var $cacheSecs = 3600; /// cache for 1 hour
+
+	// memcache
+	var $memCache = false; /// should we use memCache instead of caching in files
+	var $memCacheHost; /// memCache host
+	var $memCachePort = 11211; /// memCache port
+	var $memCacheCompress = false; /// Use 'true' to store the item compressed (uses zlib)
+
 	var $sysDate = false; /// name of function that returns the current date
 	var $sysTimeStamp = false; /// name of function that returns the current timestamp
 	var $arrayClass = 'ADORecordSet_array'; /// name of class used to generate array recordsets, which are pre-downloaded recordsets
@@ -678,6 +685,7 @@
 		return $this->Parameter($stmt,$var,$name,true,$maxLen,$type);
 	
 	}
+
 	
 	/* 
 	Usage in oracle
@@ -697,6 +705,19 @@
 	function Parameter(&$stmt,&$var,$name,$isOutput=false,$maxLen=4000,$type=false)
 	{
 		return false;
+	}
+	
+	
+	function IgnoreErrors($saveErrs=false)
+	{
+		if (!$saveErrs) {
+			$saveErrs = array($this->raiseErrorFn,$this->_transOK);
+			$this->raiseErrorFn = false;
+			return $saveErrs;
+		} else {
+			$this->raiseErrorFn = $saveErrs[0];
+			$this->_transOK = $saveErrs[1];
+		}
 	}
 	
 	/**
@@ -1108,14 +1129,14 @@
 			if ($ismssql) $isaccess = false;
 			else $isaccess = (strpos($this->databaseType,'access') !== false);
 			
-			if ($offset <= 0) {
+			if ($offset <= 	0) {
 				
 					// access includes ties in result
 					if ($isaccess) {
 						$sql = preg_replace(
 						'/(^\s*select\s+(distinctrow|distinct)?)/i','\\1 '.$this->hasTop.' '.((integer)$nrows).' ',$sql);
 
-						if ($secs2cache >= 0) {
+						if ($secs2cache != 0) {
 							$ret =& $this->CacheExecute($secs2cache, $sql,$inputarr);
 						} else {
 							$ret =& $this->Execute($sql,$inputarr);
@@ -1148,10 +1169,10 @@
 		$ADODB_COUNTRECS = false;
 			
 		if ($offset>0){
-			if ($secs2cache >= 0) $rs = &$this->CacheExecute($secs2cache,$sql,$inputarr);
+			if ($secs2cache != 0) $rs = &$this->CacheExecute($secs2cache,$sql,$inputarr);
 			else $rs = &$this->Execute($sql,$inputarr);
 		} else {
-			if ($secs2cache >= 0) $rs = &$this->CacheExecute($secs2cache,$sql,$inputarr);
+			if ($secs2cache != 0) $rs = &$this->CacheExecute($secs2cache,$sql,$inputarr);
 			else $rs = &$this->Execute($sql,$inputarr);
 		}
 		$ADODB_COUNTRECS = $savec;
@@ -1334,6 +1355,16 @@
 	  	}
 	  	return $rv;
 	}
+	
+	function &Transpose(&$rs)
+	{
+		$rs2 =& $this->_rs2rs($rs);
+		$false = false;
+		if (!$rs2) return $false;
+		
+		$rs2->_transpose();
+		return $rs2;
+	}
  
 	/*
 		Calculate the offset of a date for a particular database and generate
@@ -1347,6 +1378,7 @@
 		if (!$date) $date = $this->sysDate;
 		return  '('.$date.'+'.$dayFraction.')';
 	}
+	
 	
 	/**
 	*
@@ -1517,6 +1549,16 @@
 	{
 	global $ADODB_CACHE_DIR;
 	
+		if ($this->memCache) {
+		global $ADODB_INCLUDED_MEMCACHE;
+		
+			$key = false;
+			if (empty($ADODB_INCLUDED_MEMCACHE)) include(ADODB_DIR.'/adodb-memcache.lib.inc.php');
+			if ($sql) $key = $this->_gencachename($sql.serialize($inputarr),false,true);
+			FlushMemCache($key, $this->memCacheHost, $this->memCachePort, $this->debug);
+			return;
+		}
+	
 		if (strlen($ADODB_CACHE_DIR) > 1 && !$sql) {
          /*if (strncmp(PHP_OS,'WIN',3) === 0)
             $dir = str_replace('/', '\\', $ADODB_CACHE_DIR);
@@ -1567,6 +1609,15 @@
 	{
 	global $ADODB_CACHE_DIR;
 	
+		if ($this->memCache) {
+			global $ADODB_INCLUDED_MEMCACHE;
+			$key = false;
+			if (empty($ADODB_INCLUDED_MEMCACHE)) include(ADODB_DIR.'/adodb-memcache.lib.inc.php');
+			if ($sql) $key = $this->_gencachename($sql.serialize($inputarr),false,true);
+			flushmemCache($key, $this->memCacheHost, $this->memCachePort, $this->debug);
+			return;
+		}
+
 		if (strlen($ADODB_CACHE_DIR) > 1 && !$sql) {
 			if (strncmp(PHP_OS,'WIN',3) === 0) {
 				$cmd = 'del /s '.str_replace('/','\\',$ADODB_CACHE_DIR).'\adodb_*.cache';
@@ -1607,7 +1658,7 @@
 	* Assuming that we can have 50,000 files per directory with good performance, 
 	* then we can scale to 12.8 million unique cached recordsets. Wow!
  	*/
-	function _gencachename($sql,$createdir)
+	function _gencachename($sql,$createdir,$memcache=false)
 	{
 	global $ADODB_CACHE_DIR;
 	static $notSafeMode;
@@ -1619,6 +1670,7 @@
 			$mode = $this->fetchMode;
 		}
 		$m = md5($sql.$this->databaseType.$this->database.$this->user.$mode);
+		if ($memcache) return $m;
 		
 		if (!isset($notSafeMode)) $notSafeMode = !ini_get('safe_mode');
 		$dir = ($notSafeMode) ? $ADODB_CACHE_DIR.'/'.substr($m,0,2) : $ADODB_CACHE_DIR;
@@ -1658,14 +1710,23 @@
 		} else
 			$sqlparam = $sql;
 			
+		if ($this->memCache) {
+			global $ADODB_INCLUDED_MEMCACHE;
+			if (empty($ADODB_INCLUDED_MEMCACHE)) include(ADODB_DIR.'/adodb-memcache.lib.inc.php');
+			$md5file = $this->_gencachename($sql.serialize($inputarr),false,true);
+		} else {
 		global $ADODB_INCLUDED_CSV;
-		if (empty($ADODB_INCLUDED_CSV)) include(ADODB_DIR.'/adodb-csvlib.inc.php');
-		
-		$md5file = $this->_gencachename($sql.serialize($inputarr),true);
+			if (empty($ADODB_INCLUDED_CSV)) include(ADODB_DIR.'/adodb-csvlib.inc.php');
+			$md5file = $this->_gencachename($sql.serialize($inputarr),true);
+		}
+
 		$err = '';
 		
 		if ($secs2cache > 0){
-			$rs = &csv2rs($md5file,$err,$secs2cache,$this->arrayClass);
+			if ($this->memCache)
+				$rs = &getmemCache($md5file,$err,$secs2cache, $this->memCacheHost, $this->memCachePort);
+			else
+				$rs = &csv2rs($md5file,$err,$secs2cache,$this->arrayClass);
 			$this->numCacheHits += 1;
 		} else {
 			$err='Timeout 1';
@@ -1675,7 +1736,7 @@
 		if (!$rs) {
 		// no cached rs found
 			if ($this->debug) {
-				if (get_magic_quotes_runtime()) {
+				if (get_magic_quotes_runtime() && !$this->memCache) {
 					ADOConnection::outp("Please disable magic_quotes_runtime - it corrupts cache files :(");
 				}
 				if ($this->debug !== -1) ADOConnection::outp( " $md5file cache failure: $err (see sql below)");
@@ -1683,6 +1744,14 @@
 			
 			$rs = &$this->Execute($sqlparam,$inputarr);
 
+			if ($rs && $this->memCache) {
+				$rs = &$this->_rs2rs($rs); // read entire recordset into memory immediately
+				if(!putmemCache($md5file, $rs, $this->memCacheHost, $this->memCachePort, $this->memCacheCompress, $this->debug)) {
+					if ($fn = $this->raiseErrorFn)
+						$fn($this->databaseType,'CacheExecute',-32000,"Cache write error",$md5file,$sql,$this);
+					if ($this->debug) ADOConnection::outp( " Cache write error");
+				}
+			} else
 			if ($rs) {
 				$eof = $rs->EOF;
 				$rs = &$this->_rs2rs($rs); // read entire recordset into memory immediately
@@ -1701,6 +1770,7 @@
 				}  
 				
 			} else
+			if (!$this->memCache)
 				@unlink($md5file);
 		} else {
 			$this->_errorMsg = '';
@@ -3573,6 +3643,7 @@ http://www.stanford.edu/dept/itss/docs/oracle/10g/server.101/b10759/statements_1
 		}
 	}
 	
+	
 	function _close() {}
 	
 	/**
@@ -3629,7 +3700,7 @@ http://www.stanford.edu/dept/itss/docs/oracle/10g/server.101/b10759/statements_1
 		var $_types;	// the array of types of each column (C B I L M)
 		var $_colnames;	// names of each column in array
 		var $_skiprow1;	// skip 1st row because it holds column names
-		var $_fieldarr; // holds array of field objects
+		var $_fieldobjects; // holds array of field objects
 		var $canSeek = true;
 		var $affectedrows = false;
 		var $insertid = false;
@@ -3649,6 +3720,37 @@ http://www.stanford.edu/dept/itss/docs/oracle/10g/server.101/b10759/statements_1
 			$this->fetchMode = $ADODB_FETCH_MODE;
 		}
 		
+		function _transpose()
+		{
+		global $ADODB_INCLUDED_LIB;
+			
+			if (empty($ADODB_INCLUDED_LIB)) include(ADODB_DIR.'/adodb-lib.inc.php');
+			$hdr = true;
+			
+			adodb_transpose($this->_array, $newarr, $hdr);
+			//adodb_pr($newarr);
+			
+			$this->_skiprow1 = false;
+			$this->_array =& $newarr;
+			$this->_colnames = $hdr;
+			
+			adodb_probetypes($newarr,$this->_types);
+		
+			$this->_fieldobjects = array();
+			
+			foreach($hdr as $k => $name) {
+				$f = new ADOFieldObject();
+				$f->name = $name;
+				$f->type = $this->_types[$k];
+				$f->max_length = -1;
+				$this->_fieldobjects[] = $f;
+				
+			}
+			$this->fields = reset($this->_array);
+			
+			$this->_initrs();
+			
+		}
 		
 		/**
 		 * Setup the array.
