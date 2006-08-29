@@ -64,7 +64,7 @@ class delete_xml_file extends XMLDBAction {
 
     /// Get the dir containing the file
         $dirpath = required_param('dir', PARAM_CLEAN);
-        $dirpath = stripslashes_safe($dirpath);
+        $dirpath = $CFG->dirroot . stripslashes_safe($dirpath);
 
         $confirmed = optional_param('confirmed', false, PARAM_BOOL);
 
@@ -72,10 +72,10 @@ class delete_xml_file extends XMLDBAction {
         if (!$confirmed) {
             $o = '<table align="center" width="60" class="generalbox" border="0" cellpadding="5" cellspacing="0" id="notice">';
             $o.= '  <tr><td class="generalboxcontent">';
-            $o.= '    <p align="center">' . $this->str['confirmdeletexmlfile'] . '<br /><br />' . $dirpath . '</p>';
+            $o.= '    <p align="center">' . $this->str['confirmdeletexmlfile'] . '<br /><br />' . $dirpath . '/install.php</p>';
             $o.= '    <table align="center" cellpadding="20"><tr><td>';
             $o.= '      <div class="singlebutton">';
-            $o.= '        <form action="index.php?action=delete_xml_file&amp;confirmed=yes&amp;dir=' . urlencode($dirpath) . '&amp;postaction=main_view#lastused" method="post">';
+            $o.= '        <form action="index.php?action=delete_xml_file&amp;confirmed=yes&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '&amp;postaction=main_view#lastused" method="post">';
             $o.= '          <input type="submit" value="'. $this->str['yes'] .'" /></form></div>';
             $o.= '      </td><td>';
             $o.= '      <div class="singlebutton">';

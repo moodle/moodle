@@ -96,7 +96,7 @@ class main_view extends XMLDBAction {
             foreach ($XMLDB->dbdirs as $key => $dbdir) {
             /// Detect if this is the lastused dir
                 $hithis = false;
-                if ($key == $lastused) {
+                if (str_replace($CFG->dirroot, '', $key) == $lastused) {
                     $hithis = true;
                 }
                 $elementtext = str_replace($CFG->dirroot . '/', '', $key);
@@ -120,7 +120,7 @@ class main_view extends XMLDBAction {
                 if ($dbdir->path_exists &&
                     !file_exists($key . '/install.xml') &&
                     is_writeable($key)) {
-                    $b .= '<a href="index.php?action=create_xml_file&amp;dir=' . urlencode($key) . '&amp;time=' . time() . '&amp;postaction=main_view#lastused">[' . $this->str['create'] . ']</a>';
+                    $b .= '<a href="index.php?action=create_xml_file&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $key)) . '&amp;time=' . time() . '&amp;postaction=main_view#lastused">[' . $this->str['create'] . ']</a>';
                 } else {
                     $b .= '[' . $this->str['create'] . ']';
                 }
@@ -130,7 +130,7 @@ class main_view extends XMLDBAction {
                     file_exists($key . '/install.xml') &&
                     is_readable($key . '/install.xml') &&
                     empty($dbdir->xml_loaded)) {
-                    $b .= '<a href="index.php?action=load_xml_file&amp;dir=' . urlencode($key) . '&amp;time=' . time() . '&amp;postaction=main_view#lastused">[' . $this->str['load'] . ']</a>';
+                    $b .= '<a href="index.php?action=load_xml_file&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $key)) . '&amp;time=' . time() . '&amp;postaction=main_view#lastused">[' . $this->str['load'] . ']</a>';
                 } else {
                     $b .= '[' . $this->str['load'] . ']';
                 }
@@ -141,7 +141,7 @@ class main_view extends XMLDBAction {
                     is_readable($key . '/install.xml') &&
                     is_readable($key) &&
                     !empty($dbdir->xml_loaded)) {
-                    $b .= '<a href="index.php?action=edit_xml_file&amp;dir=' . urlencode($key) . '">[' . $this->str['edit'] . ']</a>';
+                    $b .= '<a href="index.php?action=edit_xml_file&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $key)) . '">[' . $this->str['edit'] . ']</a>';
                 } else {
                     $b .= '[' . $this->str['edit'] . ']';
                 }
@@ -153,7 +153,7 @@ class main_view extends XMLDBAction {
                     is_writeable($key) &&
                     !empty($dbdir->xml_loaded) &&
                     !empty($dbdir->xml_changed)) {
-                    $b .= '<a href="index.php?action=save_xml_file&amp;dir=' . urlencode($key) . '&amp;time=' . time() . '&amp;postaction=main_view#lastused">[' . $this->str['save'] . ']</a>';
+                    $b .= '<a href="index.php?action=save_xml_file&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $key)) . '&amp;time=' . time() . '&amp;postaction=main_view#lastused">[' . $this->str['save'] . ']</a>';
                 } else {
                     $b .= '[' . $this->str['save'] . ']';
                 }
@@ -165,7 +165,7 @@ class main_view extends XMLDBAction {
                     is_writeable($key) &&
                     !empty($dbdir->xml_loaded) &&
                     !empty($dbdir->xml_changed)) {
-                    $b .= '<a href="index.php?action=revert_changes&amp;dir=' . urlencode($key) . '">[' . $this->str['revert'] . ']</a>';
+                    $b .= '<a href="index.php?action=revert_changes&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $key)) . '">[' . $this->str['revert'] . ']</a>';
                 } else {
                     $b .= '[' . $this->str['revert'] . ']';
                 }
@@ -176,7 +176,7 @@ class main_view extends XMLDBAction {
                     is_readable($key . '/install.xml') &&
                     !empty($dbdir->xml_loaded) &&
                     empty($dbdir->xml_changed)) {
-                    $b .= '<a href="index.php?action=unload_xml_file&amp;dir=' . urlencode($key) . '&amp;time=' . time() . '&amp;postaction=main_view#lastused">[' . $this->str['unload'] . ']</a>';
+                    $b .= '<a href="index.php?action=unload_xml_file&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $key)) . '&amp;time=' . time() . '&amp;postaction=main_view#lastused">[' . $this->str['unload'] . ']</a>';
                 } else {
                     $b .= '[' . $this->str['unload'] . ']';
                 }
@@ -187,7 +187,7 @@ class main_view extends XMLDBAction {
                     is_readable($key . '/install.xml') &&
                     is_writeable($key) &&
                     empty($dbdir->xml_loaded)) {
-                    $b .= '<a href="index.php?action=delete_xml_file&amp;dir=' . urlencode($key) . '">[' . $this->str['delete'] . ']</a>';
+                    $b .= '<a href="index.php?action=delete_xml_file&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $key)) . '">[' . $this->str['delete'] . ']</a>';
                 } else {
                     $b .= '[' . $this->str['delete'] . ']';
                 }
@@ -196,7 +196,7 @@ class main_view extends XMLDBAction {
                 if ($dbdir->path_exists &&
                     file_exists($key . '/install.xml') &&
                     is_readable($key . '/install.xml')) {
-                    $elementtext = '<a href="index.php?action=view_xml&amp;file=' . urlencode($key . '/install.xml') . '" target="_blank">' . $elementtext . '</a></td>';
+                    $elementtext = '<a href="index.php?action=view_xml&amp;file=' . urlencode(str_replace($CFG->dirroot, '', $key) . '/install.xml') . '" target="_blank">' . $elementtext . '</a></td>';
                 } else {
                     $elementtext = $elementtext . '</td>';
                 }
