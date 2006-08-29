@@ -30,7 +30,7 @@ class ADODB_postgres7 extends ADODB_postgres64 {
 		}
 		$this->_bindInputArray = PHP_VERSION >= 5.1;
 		
-		$info = $zthis->ServerInfo();
+		$info = $this->ServerInfo();
 		$this->pgVersion = (float) substr($info['version'],0,3);
 		if ($this->pgVersion >= 7.1) { // good till version 999
 			$this->_nestedSQL = true;

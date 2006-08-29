@@ -12,5 +12,8 @@ Added:
  * tests/tmssql.php - detection of attack attempts and overwrite on incorrectly upgraded sites
  * readme_moodle.txt - this file ;-)
 
+our bug fixes:
+ * drivers/adodb-postgres7.inc.php: line 33 $zthis typo - should be $this
+
 skodak
 29 August 2006
