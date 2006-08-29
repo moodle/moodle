@@ -56,8 +56,9 @@ admin_externalpage_print_header();
 echo '<form action="upgradesettings.php" method="post" name="mainform">';
 echo '<input type="hidden" name="sesskey" value="' . $USER->sesskey . '" />';
 print_simple_box_start('','100%','',5,'generalbox','');
+print_heading(get_string('upgradesettings','admin'));
 echo '<table class="generaltable" width="100%" border="0" align="center" cellpadding="5" cellspacing="1">' . "\n";
-echo '<tr><td colspan="2">' . get_string('modifiedsettingsintro','admin') . '</td></tr>';
+echo '<tr><td colspan="2">' . get_string('upgradesettingsintro','admin') . '</td></tr>';
 foreach ($newsettings as $newsetting) {
     echo $newsetting->output_html();
 }
