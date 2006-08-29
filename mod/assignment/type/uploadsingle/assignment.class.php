@@ -96,11 +96,10 @@ class assignment_uploadsingle extends assignment_base {
 
 
     function upload() {
+        
         global $CFG, $USER;
-
-        if (isguest($USER->id)) {
-            error(get_string('guestnoupload','assignment'));
-        }
+        
+        require_capability('mod/assignment:submit', get_context_instance(CONTEXT_MODULE, $this->cm->id));
 
         $this->view_header(get_string('upload'));
 

@@ -20,7 +20,7 @@ class assignment_online extends assignment_base {
 		$submission = $this->get_submission();
 
         //Guest can not submit nor edit an assignment (bug: 4604)
-        if (isguest($USER->id)) {
+        if (!has_capability('mod/assignment:submit', $context)) {
             $editable = null;
         }
         else {
@@ -30,8 +30,8 @@ class assignment_online extends assignment_base {
 
         if ($editmode) {
             //guest can not edit or submit assignment
-            if (isguest($USER->id)) {
-                 error(get_string('guestnosubmit', 'assignment'));
+            if (!has_capability('mod/assignment:submit', $context)) {
+                error(get_string('guestnosubmit', 'assignment'));
             }
             $this->view_header(get_string('editmysubmission', 'assignment'));
         } else {
@@ -66,7 +66,7 @@ class assignment_online extends assignment_base {
 	        } else {
 	            if ($submission) {
 	                echo format_text($submission->data1, $submission->data2);
-	            } else if (isguest($USER->id)) { //fix for #4604
+	            } else if (!has_capability('mod/assignment:submit', $context)) { //fix for #4604
 	                echo '<center>'. get_string('guestnosubmit', 'assignment').'</center>';
 	            } else if ($this->isopen()){    //fix for #4206
 	                echo '<center>'.get_string('emptysubmission', 'assignment').'</center>';

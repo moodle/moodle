@@ -79,7 +79,7 @@ class assignment_upload extends assignment_base {
         //display submisison status
         notify("<b>".get_string('submissionstatus', 'assignment')." </b> ".$submission_status);
 
-        if ($submission->data1 != get_string("submissionstatussubmitted", "assignment") && !isguest($USER->id) && $this->isopen() && 
+        if ($submission->data1 != get_string("submissionstatussubmitted", "assignment") && has_capability('mod/assignment:submit', get_context_instance(CONTEXT_MODULE, $this->cm->id)) && $this->isopen() && 
             ((!$this->assignment->var1 && $submission->data1 == get_string("submissionstatusreturned", "assignment")) || 
              // $this->assignment->var1 || 
              !$filecount || 
@@ -267,9 +267,7 @@ class assignment_upload extends assignment_base {
     function final_upload() { 
         global $CFG, $USER;
 
-        if (isguest($USER->id)) {
-            error(get_string('guestnoupload','assignment'));
-        }
+        require_capability('mod/assignment:submit', get_context_instance(CONTEXT_MODULE, $this->cm->id));
 
         $this->view_header(get_string('upload'));
         $filecount = $this->count_user_files($USER->id);
