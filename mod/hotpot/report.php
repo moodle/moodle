@@ -297,8 +297,8 @@ function hotpot_print_report_selector(&$course, &$hotpot, &$mode, &$reportcourse
 		'all' => get_string('allparticipants')
 	);
 	$menus['reportattempts'] = array(
-		'best' => get_string('bestattempt', 'hotpot'),
-		'all' => get_string('allattempts', 'hotpot')
+		'best' => get_string('attemptsbest', 'hotpot'),
+		'all' => get_string('attemptsall', 'hotpot')
 	);
 
 	print '<tr><td align="center" colspan="'.count($reports).'">';
