@@ -898,7 +898,8 @@ class enrolment_plugin_authorize
         $courseinfos = get_records_sql($sql);
         foreach($courseinfos as $courseinfo) {
             $lastcourse = $courseinfo->courseid;
-            if ($teachers = get_course_teachers($lastcourse)) {
+            $context = get_context_instance(CONTEXT_COURSE, $lastcourse);
+            if ($paymentmanagers = get_users_by_capability($context, 'enrol/authorize:managepayments')) {
                 $a = new stdClass;
                 $a->course = $courseinfo->shortname;
                 $a->pending = $courseinfo->cnt;
@@ -910,14 +911,10 @@ class enrolment_plugin_authorize
                 $a->currency = $courseinfo->currency;
                 $a->sumcost = $courseinfo->ttl;
                 $a->days = $CFG->an_emailexpired;
-                $a->url = $CFG->wwwroot.'/enrol/authorize/index.php?course='.
-                          $lastcourse.'&amp;status='.AN_STATUS_AUTH;
+                $a->url = $CFG->wwwroot.'/enrol/authorize/index.php?course='.$lastcourse.'&amp;status='.AN_STATUS_AUTH;
                 $message = get_string('pendingordersemailteacher', 'enrol_authorize', $a);
-                $context = get_context_instance(CONTEXT_COURSE, $lastcourse);
-                foreach ($teachers as $teacher) {
-                    if (has_capability('enrol/authorize:managepayments', $context, $teacher->id)) {
-                        email_to_user($teacher, $adminuser, $subject, $message);
-                    }
+                foreach ($paymentmanagers as $paymentmanager) {
+                    email_to_user($paymentmanager, $adminuser, $subject, $message);
                 }
             }
         }
