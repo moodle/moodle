@@ -15,8 +15,10 @@ class hotpot_report extends hotpot_default_report {
 		$strdeletecheck = get_string('deleteattemptcheck','quiz');
 
 		// create scores table
-		$this->create_overview_table($users, $attempts, $questions, $s_table=NULL, $download, $course, $hotpot, $abandoned=0);
-		
+		$s_table= NULL;
+		$abandoned = 0;
+		$this->create_overview_table($users, $attempts, $questions, $s_table, $download, $course, $hotpot, $abandoned);
+
 		if (isteacher($course->id)) {
 			$this->print_javascript();
 			$onsub = "return delcheck('".$strdeletecheck."', 'selection')";
@@ -121,12 +123,15 @@ class hotpot_report extends hotpot_default_report {
 				$scores[] = $score;
 
 			} // end foreach $attempt
-
 			$attempts = implode("<br />\n", $attempts);
 			$starttimes = implode("<br />\n", $starttimes);
 			$durations = implode("<br />\n", $durations);
 			$scores = implode("<br />\n", $scores);
 
+			if (empty($table)) {
+				$table = new stdClass();
+				$table->data = array();
+			}
 			$table->data[] = array ($picture, $name, $grade, $attempts, $starttimes, $durations, $scores);
 
 		} // end foreach $user

@@ -40,8 +40,10 @@ class hotpot_report extends hotpot_default_report {
 		}
 
 		// create the tables
-		$this->create_responses_table($users, $attempts, $questions, $r_table=NULL, $download, $course, $hotpot);
-		$this->create_analysis_table($users, $attempts, $questions, $a_table=NULL, $download);
+		$r_table = NULL;
+		$this->create_responses_table($users, $attempts, $questions, $r_table, $download, $course, $hotpot);
+		$a_table = NULL;
+		$this->create_analysis_table($users, $attempts, $questions, $a_table, $download);
 
 		switch ($download) {
 			case 'txt':
@@ -99,6 +101,8 @@ class hotpot_report extends hotpot_default_report {
 		$show_penalties = false;
 
 		// initialize $table
+		$table = new stdClass();
+		$table->data = array();
 		$table->border = 1;
 		$table->width = '100%';
 
@@ -351,6 +355,8 @@ class hotpot_report extends hotpot_default_report {
 			$help_button = $download ? "" : helpbutton("discrimination", "", "quiz", true, false, "", true);
 
 			// table properties
+			$table = new stdClass();
+			$table->data = array();
 			$table->border = 1;
 			$table->width = '100%';
 			$table->caption = get_string('itemanal', 'quiz');

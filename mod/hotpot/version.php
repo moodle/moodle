@@ -5,8 +5,8 @@
 ///  This fragment is called by moodle_needs_upgrading() and /admin/index.php
 /////////////////////////////////////////////////////////////////////////////////
 
-$module->version  = 2005031421;  // release date of this version (see note below)
-$module->release  = 'v2.0.11';    // human-friendly version name (used in mod/hotpot/lib.php)
+$module->version  = 2006082800;  // release date of this version (see note below)
+$module->release  = 'v2.0.12';   // human-friendly version name (used in mod/hotpot/lib.php)
 $module->requires = 2005060241;  // Requires at least Moodle version 1.5.4+
 $module->cron     = 0;           // period for cron to check this module (secs)
 

@@ -9,7 +9,8 @@ class hotpot_report extends hotpot_default_report {
 		global $download;
 		optional_param($download, "");
 
-		$this->create_scores_table($users, $attempts, $questions, $s_table=NULL, $download, $course, $hotpot);
+		$s_table=NULL;
+		$this->create_scores_table($users, $attempts, $questions, $s_table, $download, $course, $hotpot);
 
 		switch ($download) {
 			case 'txt':
@@ -37,6 +38,8 @@ class hotpot_report extends hotpot_default_report {
 		$allow_review = true; // (!$download && (isteacher($course->id) || $hotpot->review));
 
 		// start the table
+		$table = new stdClass();
+		$table->data = array();
 		$table->border = 1;
 
 		$table->head = array();
