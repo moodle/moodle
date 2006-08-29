@@ -227,7 +227,7 @@ class enrolment_plugin_authorize
             return;
         }
 
-        if ($an_review) { // review enabled, inform admin and redirect user to main page.
+        if ($an_review) { // review enabled, inform site payment managers and redirect the user who have paid to main page.
             $a = new stdClass;
             $a->url = "$CFG->wwwroot/enrol/authorize/index.php?order=$order->id";
             $a->orderid = $order->id;
@@ -243,9 +243,11 @@ class enrolment_plugin_authorize
             $a->course = $course->shortname;
             $a->orderid = $order->id;
             $emailsubject = get_string('adminnewordersubject', 'enrol_authorize', $a);
-            $admins = get_admins();
-            foreach ($admins as $admin) {
-                email_to_user($admin, $USER, $emailsubject, $emailmessage);
+            $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
+            if ($sitepaymentmanagers = get_users_by_capability($context, 'enrol/authorize:managepayments')) {
+                foreach ($sitepaymentmanagers as $sitepaymentmanager) {
+                    email_to_user($sitepaymentmanager, $USER, $emailsubject, $emailmessage);
+                }
             }
             redirect($CFG->wwwroot, get_string("reviewnotify", "enrol_authorize"), '30');
             return;
