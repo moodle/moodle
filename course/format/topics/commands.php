@@ -12,7 +12,7 @@ $field    = required_param('field', PARAM_ALPHA);
 
 $instanceid = optional_param('instanceId', 0, PARAM_INT);
 $value      = optional_param('value', 0, PARAM_INT);
-$weight     = optional_param('weight', 0, PARAM_INT);
+$column     = optional_param('weight', 0, PARAM_ALPHA);
 $id         = optional_param('id', 0, PARAM_INT);
 $summary    = optional_param('summary', '', PARAM_INT);
 $sequence   = optional_param('sequence', '', PARAM_INT);
@@ -48,8 +48,8 @@ switch ($class) {
 
             case 'position':  
                 $dataobject->id = $instanceid;
-                $dataobject->position = $value;
-                $dataobject->weight = $weight;
+                $dataobject->position = $column;
+                $dataobject->weight = $value;
                 if (!update_record('block_instance',$dataobject)) {
                     error('Failed to update block!');
                 }
@@ -60,7 +60,7 @@ switch ($class) {
 
     case 'section': 
 
-        if ($dataobject->id = get_field('course_sections','id','course',$course->id,'section',$id)) {
+        if (!$dataobject->id = get_field('course_sections','id','course',$course->id,'section',$id)) {
             error('Bad Section ID');
         }
 
