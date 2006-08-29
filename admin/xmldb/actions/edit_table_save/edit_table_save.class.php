@@ -65,6 +65,10 @@ class edit_table_save extends XMLDBAction {
 
     /// Do the job, setting result as needed
 
+        if (!data_submitted('nomatch')) { ///Basic prevention
+            error('Wrong action call');
+        }
+
     /// Get parameters
         $dirpath = required_param('dir', PARAM_PATH);
         $dirpath = $CFG->dirroot . stripslashes_safe($dirpath);
