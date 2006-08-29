@@ -30,6 +30,11 @@ $string['authentication'] = 'Authentication';
 $string['performanceandstats'] = 'Performance &amp; Stats';
 $string['backups'] = 'Backups';
 $string['courserequests'] = 'Course Requests';
+$string['themeselector'] = 'Theme Selector';
+
+$string['nonewsettings'] = 'No new settings were added during this upgrade.';
+$string['upgradesettings'] = 'New Settings';
+$string['upgradesettingsintro'] = 'The settings shown below were added during your last Moodle upgrade. Make any changes necessary to the defaults and then click &quot;Save Settings&quot; at the bottom of this page.';
 // end {added with admin cleanup}
 
 $string['adminseesallevents'] = 'Administrators see all events';
