@@ -22,10 +22,6 @@
     
     require_capability('mod/choice:readresponses', $context);
     
-    //if (!isteacher($course->id)) {
-    //    error("Only teachers can look at this page");
-    //}
-
     if (!$choice = choice_get_choice($cm->instance)) {
         error("Course module is incorrect");
     }
@@ -109,10 +105,11 @@
         $i=0;  
         $row=1;
         if ($users) {
-            foreach ($users as $user) {
+            foreach ($users as $user) {        
+                // this needs fixing
                 if (!empty($answers[$user->id]) && !($answers[$user->id]->optionid==0 && isadmin($user->id)) && 
                     (!($answers[$user->id]->optionid==0 && isteacher($course->id, $user->id) && !(isteacheredit($course->id, $user->id)) ) ) &&  
-                    !($choice->showunanswered==0 && $answers[$user->id]->optionid==0)  ) { //make sure admins and hidden teachers are not shown in not answered yet column, and not answered only shown if set in config page.
+                    !($choice->showunanswered==0 && $answers[$user->id]->optionid==0)  ) { // make sure admins and hidden teachers are not shown in not answered yet column, and not answered only shown if set in config page.
 
                     $myxls->write_string($row,0,$user->lastname);
                     $myxls->write_string($row,1,$user->firstname);

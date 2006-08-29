@@ -159,7 +159,6 @@ $cdisplay = array();
             if (!empty($countanswers)) {
                 foreach ($countanswers as $ca) { //only return enrolled users.                  
                     if (has_capability('mod/choice:choose', $context)) {
-                    //if (isstudent($cm->course, $ca->userid) or isteacher($cm->course, $ca->userid)) { 
                         $countans = $countans+1;
                     }
                 }
@@ -262,7 +261,6 @@ $current = get_record('choice_answers', 'choiceid', $choice->id, 'userid', $user
             $countans = 0;
             foreach ($countanswers as $ca) { //only return enrolled users.
                 if (has_capability('mod/choice:choose', $context)) {
-                //if (isstudent($courseid, $ca->userid) or isteacher($courseid, $ca->userid)) { 
                     $countans = $countans+1;
                 }
             }               
@@ -308,7 +306,6 @@ function choice_show_reportlink($choice, $courseid, $cmid) {
             $responsecount = 0;
             foreach ($allanswers as $aa) {
                 if (has_capability('mod/choice:readresponses', $context)) {
-                //if (isstudent($courseid, $aa->userid) or isteacher($courseid, $aa->userid)) { //check to make sure user is enrolled in course.
                     $responsecount++;
                 }
             }
@@ -380,11 +377,8 @@ function choice_show_results($choice, $course, $cm, $forcepublish='') {
         switch ($forcepublish) {
           case CHOICE_PUBLISH_NAMES:
 
-            //$isteacher = isteacher($course->id);
-
             $tablewidth = (int) (100.0 / count($useranswer));
             if (has_capability('mod/choice:readresponses', $context)) {
-            //if (isteacher($course->id, $USER->id)) {
                 echo '<div id="tablecontainer">';
                 echo '<form id="attemptsform" method="post" action="'.$_SERVER['PHP_SELF'].'" onsubmit="var menu = document.getElementById(\'menuaction\'); return (menu.options[menu.selectedIndex].value == \'delete\' ? \''.addslashes(get_string('deleteattemptcheck','quiz')).'\' : true);">';
                 echo '<input type="hidden" name="id" value="'.$cm->id.'" />';
@@ -421,7 +415,7 @@ function choice_show_results($choice, $course, $cm, $forcepublish='') {
                 echo "<table width=\"100%\">";
                 foreach ($userlist as $user) {
                     // this needs to be fixed
-                    if (!($optionid==0 && isadmin($user->id)) && !($optionid==0 && isteacher($course->id, $user->id) && !(isteacheredit($course->id, $user->id)) )  ) { //make sure admins and hidden teachers are not shown in not answered yet column.
+                    if (!($optionid==0 && isadmin($user->id)) && !($optionid==0 && isteacher($course->id, $user->id) && !(isteacheredit($course->id, $user->id)) )  ) { // make sure admins and hidden teachers are not shown in not answered yet column.
                         echo "<tr>";
                         if (isteacher($course->id, $USER->id) && !($optionid==0)) {
                             echo '<td width=\"5\" nowrap=\"nowrap\"><input type="checkbox" name="attemptid[]" value="'. $answers[$user->id]->id. '" /></td>';
@@ -450,9 +444,8 @@ function choice_show_results($choice, $course, $cm, $forcepublish='') {
                 $countanswers = get_records("choice_answers", "optionid", $optionid);                
                 $countans = 0;  
                 if (!empty($countanswers)) {              
-                    foreach ($countanswers as $ca) { //only return enrolled users.      
-                        // needs fixing too                         
-                        if (isstudent($course->id, $ca->userid) or isteacher($course->id, $ca->userid)) {                           
+                    foreach ($countanswers as $ca) { //only return enrolled users.                            
+                        if (has_capability('mod/choice:choose', get_context_instance(CONTEXT_MODULE, $cm->id))) {                        
                            $countans = $countans+1;
                         }                   
                     }
@@ -471,7 +464,6 @@ function choice_show_results($choice, $course, $cm, $forcepublish='') {
             
                 /// Print "Select all" etc.
                 if (has_capability('mod/choice:readresponses', $context)) {
-                //if (isteacher($course->id, $USER->id)) {
                     echo '<tr><td><p>';
                     echo '<tr><td>';
                     echo '<a href="javascript:select_all_in(\'DIV\',null,\'tablecontainer\');">'.get_string('selectall', 'quiz').'</a> / ';
@@ -488,7 +480,6 @@ function choice_show_results($choice, $course, $cm, $forcepublish='') {
             
             
             echo "</tr></table>";
-            //if (isteacher($course->id, $USER->id)) {
             if (has_capability('mod/choice:readresponses', $context)) {
                 echo "</form></div>";
             }

@@ -24,7 +24,7 @@
 
     require_capability('mod/chat:chat',$context);
 
-    if (!$cm->visible and !isteacher($course->id)) {
+    if (!$cm->visible and !has_capability('moodle/course:viewhiddenactivities', get_context_instance(CONTEXT_MODULE, $cm->id))) {
         print_header();
         notice(get_string("activityiscurrentlyhidden"));
     }
