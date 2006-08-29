@@ -63,8 +63,8 @@ class delete_table extends XMLDBAction {
     /// Do the job, setting result as needed
 
     /// Get the dir containing the file
-        $dirpath = required_param('dir', PARAM_CLEAN);
-        $dirpath = stripslashes_safe($dirpath);
+        $dirpath = required_param('dir', PARAM_PATH);
+        $dirpath = $CFG->dirroot . stripslashes_safe($dirpath);
         $tableparam = required_param('table', PARAM_CLEAN);
 
         $confirmed = optional_param('confirmed', false, PARAM_BOOL);
@@ -76,11 +76,11 @@ class delete_table extends XMLDBAction {
             $o.= '    <p align="center">' . $this->str['confirmdeletetable'] . '<br /><br />' . $tableparam . '</p>';
             $o.= '    <table align="center" cellpadding="20"><tr><td>';
             $o.= '      <div class="singlebutton">';
-            $o.= '        <form action="index.php?action=delete_table&amp;confirmed=yes&amp;postaction=edit_xml_file&amp;table=' . $tableparam . '&amp;dir=' . urlencode($dirpath) . '" method="post">';
+            $o.= '        <form action="index.php?action=delete_table&amp;confirmed=yes&amp;postaction=edit_xml_file&amp;table=' . $tableparam . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '" method="post">';
             $o.= '          <input type="submit" value="'. $this->str['yes'] .'" /></form></div>';
             $o.= '      </td><td>';
             $o.= '      <div class="singlebutton">';
-            $o.= '        <form action="index.php?action=edit_xml_file&amp;dir=' . urlencode($dirpath) . '" method="post">';
+            $o.= '        <form action="index.php?action=edit_xml_file&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '" method="post">';
             $o.= '          <input type="submit" value="'. $this->str['no'] .'" /></form></div>';
             $o.= '      </td></tr>';
             $o.= '    </table>';

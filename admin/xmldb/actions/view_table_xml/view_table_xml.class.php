@@ -64,8 +64,8 @@ class view_table_xml extends XMLDBAction {
         $table =  required_param('table', PARAM_CLEAN);
         $select = required_param('select', PARAM_ALPHA); //original/edited
     /// Get the dir containing the file
-        $dirpath = required_param('dir', PARAM_CLEAN);
-        $dirpath = stripslashes_safe($dirpath);
+        $dirpath = required_param('dir', PARAM_PATH);
+        $dirpath = $CFG->dirroot . stripslashes_safe($dirpath);
 
     /// Get the correct dir
         if ($select == 'original') {

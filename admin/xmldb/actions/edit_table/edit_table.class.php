@@ -76,8 +76,8 @@ class edit_table extends XMLDBAction {
 
     /// Do the job, setting result as needed
     /// Get the dir containing the file
-        $dirpath = required_param('dir', PARAM_CLEAN);
-        $dirpath = stripslashes_safe($dirpath);
+        $dirpath = required_param('dir', PARAM_PATH);
+        $dirpath = $CFG->dirroot . stripslashes_safe($dirpath);
 
     /// Get the correct dirs
         if (!empty($XMLDB->dbdirs)) {
@@ -103,7 +103,7 @@ class edit_table extends XMLDBAction {
 
     /// Add the main form
         $o = '<form id="form" action="index.php" method="post">';
-        $o.= '    <input type="hidden" name ="dir" value="' . $dirpath . '" />';
+        $o.= '    <input type="hidden" name ="dir" value="' . str_replace($CFG->dirroot, '', $dirpath) . '" />';
         $o.= '    <input type="hidden" name ="table" value="' . $tableparam .'" />';
         $o.= '    <input type="hidden" name ="action" value="edit_table_save" />';
         $o.= '    <input type="hidden" name ="postaction" value="edit_table" />';
@@ -122,30 +122,30 @@ class edit_table extends XMLDBAction {
         $b = ' <p align="center" class="buttons">';
     /// The view original XML button
         if ($origstructure->getTable($tableparam)) {
-            $b .= '&nbsp;<a href="index.php?action=view_table_xml&amp;dir=' . urlencode($dirpath) . '&amp;select=original&amp;table=' . $tableparam . '" target="_blank">[' . $this->str['vieworiginal'] . ']</a>';
+            $b .= '&nbsp;<a href="index.php?action=view_table_xml&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '&amp;select=original&amp;table=' . $tableparam . '" target="_blank">[' . $this->str['vieworiginal'] . ']</a>';
         } else {
             $b .= '&nbsp;[' . $this->str['vieworiginal'] . ']';
         }
     /// The view edited XML button
         if ($table->hasChanged()) {
-            $b .= '&nbsp;<a href="index.php?action=view_table_xml&amp;dir=' . urlencode($dirpath) . '&amp;select=edited&amp;table=' . $tableparam . '" target="_blank">[' . $this->str['viewedited'] . ']</a>';
+            $b .= '&nbsp;<a href="index.php?action=view_table_xml&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '&amp;select=edited&amp;table=' . $tableparam . '" target="_blank">[' . $this->str['viewedited'] . ']</a>';
         } else {
             $b .= '&nbsp;[' . $this->str['viewedited'] . ']';
         }
     /// The new field button
-        $b .= '&nbsp;<a href="index.php?action=new_field&amp;postaction=edit_field&amp;table=' . $tableparam . '&amp;field=changeme&amp;dir=' . urlencode($dirpath) . '">[' . $this->str['newfield'] . ']</a>';
+        $b .= '&nbsp;<a href="index.php?action=new_field&amp;postaction=edit_field&amp;table=' . $tableparam . '&amp;field=changeme&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['newfield'] . ']</a>';
     /// The new key button
-        $b .= '&nbsp;<a href="index.php?action=new_key&amp;postaction=edit_key&amp;table=' . $tableparam . '&amp;key=changeme&amp;dir=' . urlencode($dirpath) . '">[' . $this->str['newkey'] . ']</a>';
+        $b .= '&nbsp;<a href="index.php?action=new_key&amp;postaction=edit_key&amp;table=' . $tableparam . '&amp;key=changeme&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['newkey'] . ']</a>';
     /// The new index button
-        $b .= '&nbsp;<a href="index.php?action=new_index&amp;postaction=edit_index&amp;table=' . $tableparam . '&amp;index=changeme&amp;dir=' . urlencode($dirpath) . '">[' . $this->str['newindex'] . ']</a>';
+        $b .= '&nbsp;<a href="index.php?action=new_index&amp;postaction=edit_index&amp;table=' . $tableparam . '&amp;index=changeme&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['newindex'] . ']</a>';
     /// The back to edit xml file button
-        $b .= '&nbsp;<a href="index.php?action=edit_xml_file&amp;dir=' . urlencode($dirpath) . '">[' . $this->str['back'] . ']</a>';
+        $b .= '&nbsp;<a href="index.php?action=edit_xml_file&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['back'] . ']</a>';
         $b .= '</p>';
         $b .= ' <p align="center" class="buttons">';
     /// The view sql code button
-        $b .= '<a href="index.php?action=view_table_sql&amp;table=' . $tableparam . '&amp;dir=' . urlencode($dirpath) . '">[' .$this->str['viewsqlcode'] . ']</a>';
+        $b .= '<a href="index.php?action=view_table_sql&amp;table=' . $tableparam . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' .$this->str['viewsqlcode'] . ']</a>';
     /// The view php code button
-        $b .= '&nbsp;<a href="index.php?action=view_table_php&amp;table=' . $tableparam . '&amp;dir=' . urlencode($dirpath) . '">[' . $this->str['viewphpcode'] . ']</a>';
+        $b .= '&nbsp;<a href="index.php?action=view_table_php&amp;table=' . $tableparam . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['viewphpcode'] . ']</a>';
         $b .= '</p>';
         $o .= $b;
 
@@ -177,21 +177,21 @@ class edit_table extends XMLDBAction {
                 $b = '</td><td class="button cell">';
             /// The edit button (if the field has no uses)
                 if (!$structure->getFieldUses($table->getName(), $field->getName())) {
-                    $b .= '<a href="index.php?action=edit_field&amp;field=' .$field->getName() . '&amp;table=' . $table->getName() . '&amp;dir=' . urlencode($dirpath) . '">[' . $this->str['edit'] . ']</a>';
+                    $b .= '<a href="index.php?action=edit_field&amp;field=' .$field->getName() . '&amp;table=' . $table->getName() . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['edit'] . ']</a>';
                 } else {
                     $b .= '[' . $this->str['edit'] . ']';
                 }
                 $b .= '</td><td class="button cell">';
             /// The up button
                 if ($field->getPrevious()) {
-                    $b .= '<a href="index.php?action=move_updown_field&amp;direction=up&amp;field=' . $field->getName() . '&amp;table=' . $table->getName() . '&amp;postaction=edit_table' . '&amp;dir=' . urlencode($dirpath) . '">[' . $this->str['up'] . ']</a>';
+                    $b .= '<a href="index.php?action=move_updown_field&amp;direction=up&amp;field=' . $field->getName() . '&amp;table=' . $table->getName() . '&amp;postaction=edit_table' . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['up'] . ']</a>';
                 } else {
                     $b .= '[' . $this->str['up'] . ']';
                 }
                 $b .= '</td><td class="button cell">';
             /// The down button
                 if ($field->getNext()) {
-                    $b .= '<a href="index.php?action=move_updown_field&amp;direction=down&amp;field=' . $field->getName() . '&amp;table=' . $table->getName() . '&amp;postaction=edit_table' . '&amp;dir=' . urlencode($dirpath) . '">[' . $this->str['down'] . ']</a>';
+                    $b .= '<a href="index.php?action=move_updown_field&amp;direction=down&amp;field=' . $field->getName() . '&amp;table=' . $table->getName() . '&amp;postaction=edit_table' . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['down'] . ']</a>';
                 } else {
                     $b .= '[' . $this->str['down'] . ']';
                 }
@@ -199,7 +199,7 @@ class edit_table extends XMLDBAction {
             /// The delete button (if we have more than one and it isn't used
                 if (count($fields) > 1 && 
                 !$structure->getFieldUses($table->getName(), $field->getName())) {
-                    $b .= '<a href="index.php?action=delete_field&amp;field=' . $field->getName() . '&amp;table=' . $table->getName() . '&amp;dir=' . urlencode($dirpath) . '">[' . $this->str['delete'] . ']</a>';
+                    $b .= '<a href="index.php?action=delete_field&amp;field=' . $field->getName() . '&amp;table=' . $table->getName() . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['delete'] . ']</a>';
                 } else {
                     $b .= '[' . $this->str['delete'] . ']';
                 }
@@ -210,7 +210,7 @@ class edit_table extends XMLDBAction {
             /// The readable info
                 $r = '</td><td class="readableinfo cell">' . $field->readableInfo() . '</td>';
             /// Print table row
-            $o .= '<tr class="r' . $row . '"><td class="table cell"><a href="index.php?action=view_field_xml&amp;dir=' . urlencode($dirpath) . '&amp;field=' . $field->getName() . '&amp;table=' . $table->getName() . '&amp;select=edited" target="_blank">' . $field->getName() . '</a>' . $b . $r . '</tr>'; 
+            $o .= '<tr class="r' . $row . '"><td class="table cell"><a href="index.php?action=view_field_xml&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '&amp;field=' . $field->getName() . '&amp;table=' . $table->getName() . '&amp;select=edited" target="_blank">' . $field->getName() . '</a>' . $b . $r . '</tr>'; 
                 $row = ($row + 1) % 2;
             }
             $o .= '</table>';
@@ -226,35 +226,35 @@ class edit_table extends XMLDBAction {
                 $b = '</td><td class="button cell">';
             /// The edit button (if the key hasn't uses)
                 if (!$structure->getKeyUses($table->getName(), $key->getName())) {
-                    $b .= '<a href="index.php?action=edit_key&amp;key=' .$key->getName() . '&amp;table=' . $table->getName() . '&amp;dir=' . urlencode($dirpath) . '">[' . $this->str['edit'] . ']</a>';
+                    $b .= '<a href="index.php?action=edit_key&amp;key=' .$key->getName() . '&amp;table=' . $table->getName() . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['edit'] . ']</a>';
                 } else {
                      $b .= '[' . $this->str['edit'] . ']';
                 }
                 $b .= '</td><td class="button cell">';
             /// The up button
                 if ($key->getPrevious()) {
-                    $b .= '<a href="index.php?action=move_updown_key&amp;direction=up&amp;key=' . $key->getName() . '&amp;table=' . $table->getName() . '&amp;postaction=edit_table' . '&amp;dir=' . urlencode($dirpath) . '">[' . $this->str['up'] . ']</a>';
+                    $b .= '<a href="index.php?action=move_updown_key&amp;direction=up&amp;key=' . $key->getName() . '&amp;table=' . $table->getName() . '&amp;postaction=edit_table' . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['up'] . ']</a>';
                 } else {
                     $b .= '[' . $this->str['up'] . ']';
                 }
                 $b .= '</td><td class="button cell">';
             /// The down button
                 if ($key->getNext()) {
-                    $b .= '<a href="index.php?action=move_updown_key&amp;direction=down&amp;key=' . $key->getName() . '&amp;table=' . $table->getName() . '&amp;postaction=edit_table' . '&amp;dir=' . urlencode($dirpath) . '">[' . $this->str['down'] . ']</a>';
+                    $b .= '<a href="index.php?action=move_updown_key&amp;direction=down&amp;key=' . $key->getName() . '&amp;table=' . $table->getName() . '&amp;postaction=edit_table' . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['down'] . ']</a>';
                 } else {
                     $b .= '[' . $this->str['down'] . ']';
                 }
                 $b .= '</td><td class="button cell">';
             /// The delete button (if the key hasn't uses)
                 if (!$structure->getKeyUses($table->getName(), $key->getName())) {
-                    $b .= '<a href="index.php?action=delete_key&amp;key=' . $key->getName() . '&amp;table=' . $table->getName() . '&amp;dir=' . urlencode($dirpath) . '">[' . $this->str['delete'] . ']</a>';
+                    $b .= '<a href="index.php?action=delete_key&amp;key=' . $key->getName() . '&amp;table=' . $table->getName() . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['delete'] . ']</a>';
                 } else {
                     $b .= '[' . $this->str['delete'] . ']';
                 }
             /// The readable info
                 $r = '</td><td class="readableinfo cell">' . $key->readableInfo() . '</td>';
             /// Print table row
-            $o .= '<tr class="r' . $row . '"><td class="table cell"><a href="index.php?action=view_key_xml&amp;dir=' . urlencode($dirpath) . '&amp;key=' . $key->getName() . '&amp;table=' . $table->getName() . '&amp;select=edited" target="_blank">' . $key->getName() . '</a>' . $b . $r .'</tr>'; 
+            $o .= '<tr class="r' . $row . '"><td class="table cell"><a href="index.php?action=view_key_xml&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '&amp;key=' . $key->getName() . '&amp;table=' . $table->getName() . '&amp;select=edited" target="_blank">' . $key->getName() . '</a>' . $b . $r .'</tr>'; 
                 $row = ($row + 1) % 2;
             }
             $o .= '</table>';
@@ -269,28 +269,28 @@ class edit_table extends XMLDBAction {
             /// Calculate buttons
                 $b = '</td><td class="button cell">';
             /// The edit button
-            $b .= '<a href="index.php?action=edit_index&amp;index=' .$index->getName() . '&amp;table=' . $table->getName() . '&amp;dir=' . urlencode($dirpath) . '">[' . $this->str['edit'] . ']</a>';
+            $b .= '<a href="index.php?action=edit_index&amp;index=' .$index->getName() . '&amp;table=' . $table->getName() . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['edit'] . ']</a>';
                 $b .= '</td><td class="button cell">';
             /// The up button
                 if ($index->getPrevious()) {
-                    $b .= '<a href="index.php?action=move_updown_index&amp;direction=up&amp;index=' . $index->getName() . '&amp;table=' . $table->getName() . '&amp;postaction=edit_table' . '&amp;dir=' . urlencode($dirpath) . '">[' . $this->str['up'] . ']</a>';
+                    $b .= '<a href="index.php?action=move_updown_index&amp;direction=up&amp;index=' . $index->getName() . '&amp;table=' . $table->getName() . '&amp;postaction=edit_table' . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['up'] . ']</a>';
                 } else {
                     $b .= '[' . $this->str['up'] . ']';
                 }
                 $b .= '</td><td class="button cell">';
             /// The down button
                 if ($index->getNext()) {
-                    $b .= '<a href="index.php?action=move_updown_index&amp;direction=down&amp;index=' . $index->getName() . '&amp;table=' . $table->getName() . '&amp;postaction=edit_table' . '&amp;dir=' . urlencode($dirpath) . '">[' . $this->str['down'] . ']</a>';
+                    $b .= '<a href="index.php?action=move_updown_index&amp;direction=down&amp;index=' . $index->getName() . '&amp;table=' . $table->getName() . '&amp;postaction=edit_table' . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['down'] . ']</a>';
                 } else {
                     $b .= '[' . $this->str['down'] . ']';
                 }
                 $b .= '</td><td class="button cell">';
             /// The delete button
-                    $b .= '<a href="index.php?action=delete_index&amp;index=' . $index->getName() . '&amp;table=' . $table->getName() . '&amp;dir=' . urlencode($dirpath) . '">[' . $this->str['delete'] . ']</a>';
+                    $b .= '<a href="index.php?action=delete_index&amp;index=' . $index->getName() . '&amp;table=' . $table->getName() . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['delete'] . ']</a>';
             /// The readable info
                 $r = '</td><td class="readableinfo cell">' . $index->readableInfo() . '</td>';
             /// Print table row
-            $o .= '<tr class="r' . $row . '"><td class="table cell"><a href="index.php?action=view_index_xml&amp;dir=' . urlencode($dirpath) . '&amp;index=' . $index->getName() . '&amp;table=' . $table->getName() . '&amp;select=edited" target="_blank">' . $index->getName() . '</a>' . $b . $r .'</tr>'; 
+            $o .= '<tr class="r' . $row . '"><td class="table cell"><a href="index.php?action=view_index_xml&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '&amp;index=' . $index->getName() . '&amp;table=' . $table->getName() . '&amp;select=edited" target="_blank">' . $index->getName() . '</a>' . $b . $r .'</tr>'; 
                 $row = ($row + 1) % 2;
             }
             $o .= '</table>';
