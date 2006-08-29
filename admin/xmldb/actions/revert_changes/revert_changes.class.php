@@ -63,8 +63,8 @@ class revert_changes extends XMLDBAction {
     /// Do the job, setting result as needed
 
     /// Get the dir containing the file
-        $dirpath = required_param('dir', PARAM_CLEAN);
-        $dirpath = stripslashes_safe($dirpath);
+        $dirpath = required_param('dir', PARAM_PATH);
+        $dirpath = $CFG->dirroot . stripslashes_safe($dirpath);
 
         $confirmed = optional_param('confirmed', false, PARAM_BOOL);
 
@@ -75,7 +75,7 @@ class revert_changes extends XMLDBAction {
             $o.= '    <p align="center">' . $this->str['confirmrevertchanges'] . '<br /><br />' . $dirpath . '</p>';
             $o.= '    <table align="center" cellpadding="20"><tr><td>';
             $o.= '      <div class="singlebutton">';
-            $o.= '        <form action="index.php?action=revert_changes&amp;confirmed=yes&amp;dir=' . urlencode($dirpath) . '&amp;postaction=main_view#lastused" method="post">';
+            $o.= '        <form action="index.php?action=revert_changes&amp;confirmed=yes&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '&amp;postaction=main_view#lastused" method="post">';
             $o.= '          <input type="submit" value="'. $this->str['yes'] .'" /></form></div>';
             $o.= '      </td><td>';
             $o.= '      <div class="singlebutton">';
