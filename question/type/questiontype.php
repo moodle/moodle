@@ -13,7 +13,19 @@
 
 require_once($CFG->libdir . '/questionlib.php');
 
-/// Question type class //////////////////////////////////////////////
+/**
+ * This is the base class for Moodle question types.
+ * 
+ * There are detailed comments on each method, explaining what the method is
+ * for, and the circumstances under which you might need to override it.
+ * 
+ * Note: the questiontype API should NOT be considered stable yet. Very few
+ * question tyeps have been produced yet, so we do not yet know all the places
+ * where the current API is insufficient. I would rather learn from the 
+ * experiences of the first few question type implementors, and improve the
+ * interface to meet their needs, rather the freeze the API prematurely and
+ * condem everyone to working round a clunky interface for ever afterwards.
+ */
 class default_questiontype {
 
     /**
@@ -22,7 +34,7 @@ class default_questiontype {
      * The name returned should coincide with the name of the directory
      * in which this questiontype is located
      * 
-     * @ return string the name of this question type.
+     * @return string the name of this question type.
      */
     function name() {
         return 'default';
@@ -68,10 +80,14 @@ class default_questiontype {
     * a form, and also by {@link import.php} when importing questions
     * This function in turn calls {@link save_question_options}
     * to save question-type specific options
-    * @return object A {@link question} object
-    * @param object $question   The question object which should be updated
-    * @param object $form       The form submitted by the teacher
-    * @param object $course     The course we are in
+    * @param object $question the question object which should be updated
+    * @param object $form the form submitted by the teacher
+    * @param object $course the course we are in
+    * @return mixed On success, return the id of the saved question. On failure,
+    *       return an error object. If the error object has an errors field, 
+    *       display that as an error message. Otherwise, the editing form will be
+    *       redisplayed with validation errors from the errors object shown next
+    *       to the form fields.
     */
     function save_question($question, $form, $course) {
         // This default implementation is suitable for most
