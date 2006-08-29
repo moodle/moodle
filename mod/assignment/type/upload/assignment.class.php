@@ -6,7 +6,6 @@
  */
 class assignment_upload extends assignment_base {
     
-
     function print_student_answer($userid, $return=false){
         global $CFG, $USER;
        
@@ -70,10 +69,12 @@ class assignment_upload extends assignment_base {
         }
 
         //display Blank if there were no files uploaded yet, otherwithe display submission status
-        if (!$submission->data1)
-               $submission_status = get_string('submissionstatusblank','assignment');
-        else
-               $submission_status = $submission->data1;
+        if (!$submission->data1) {
+            $submission_status = get_string('submissionstatusblank','assignment');
+        }
+        else {
+            $submission_status = $submission->data1;
+        }
 
         //display submisison status
         notify("<b>".get_string('submissionstatus', 'assignment')." </b> ".$submission_status);
@@ -86,8 +87,8 @@ class assignment_upload extends assignment_base {
              $submission->data1 == get_string("submissionstatusreturned", "assignment") || 
              !$submission->timemarked)
         ) {
-              $this->view_upload_form();
-          }
+            $this->view_upload_form();
+        }
         $this->view_footer();
     }
 
@@ -106,7 +107,7 @@ class assignment_upload extends assignment_base {
         upload_print_form_fragment(1,array('newfile'),false,null,0,$this->assignment->maxbytes,false);
         //upload files
         echo '<input type="submit" name="save" value="'.get_string('attachfile','assignment').'" />';
-	echo "<p><b>".get_string('step2','assignment')."</b>".get_string('submitformarking','assignment')."</p>";
+	    echo "<p><b>".get_string('step2','assignment')."</b>".get_string('submitformarking','assignment')."</p>";
         //final submit
         echo '<input type="submit" name="save" value="'.get_string('sendformarking','assignment').'" />';
         echo "<p>".get_string('onceassignmentsent','assignment')."</p>";
@@ -123,7 +124,7 @@ class assignment_upload extends assignment_base {
         $userid = required_param('userid');
 
         echo '<center>';
-	echo get_string('choosereviewfile','assignment').'<br>';
+	    echo get_string('choosereviewfile','assignment').'<br>';
 
         echo '<form enctype="multipart/form-data" method="post" '.
              "action=\"$CFG->wwwroot/mod/assignment/upload.php\">";
@@ -139,25 +140,25 @@ class assignment_upload extends assignment_base {
 
     //general function which calls function for drafts upload, final upload, teachers responce upload
     function upload(){
-         global $offset;
+        global $offset;
 
         //if this is final submit
-        if ($_POST['save']===get_string('sendformarking','assignment')){              
+        $savestr = optional_param('save', '', PARAM_ALPHA);
+        if ($savestr === get_string('sendformarking','assignment')) {              
 
            $this->final_upload();
 
-        }else{
+        } else {
            //if this is draft upload
            if ($_POST['save']==get_string('attachfile','assignment') && !isset($_POST['userid'])){         
 
                $this->submission_upload();
 
-           }else{                                         
+           } else {                                         
                //if this is upload of teacher's response
-               $id      = optional_param('id');         // Course module ID
-               $a       = optional_param('a');          // Assignment ID
-               $userid  = required_param('userid');     // Stores student id for uploading a review file to
-
+               $id      = optional_param('id', 0, PARAM_INT);         // Course module ID
+               $a       = optional_param('a', 0, PARAM_INT);          // Assignment ID
+               $userid  = required_param('userid', 0, PARAM_INT);     // Stores student id for uploading a review file to
                $this->response_upload($userid);   // Upload files
                echo "<form action=\"submissions.php\">";
                echo "<input type=\"hidden\" value=\"$userid\" name=\"userid\">";
@@ -172,11 +173,9 @@ class assignment_upload extends assignment_base {
     function submission_upload() {
         global $CFG, $USER, $counter;
 
-        if (isguest($USER->id)) {
-            error(get_string('guestnoupload','assignment'));
-        }
+        require_capability('mod/assignment:submit', get_context_instance(CONTEXT_MODULE, $this->cm->id));
 
-       $this->view_header(get_string('upload'));
+        $this->view_header(get_string('upload'));
 
         $filecount = $this->count_user_files($USER->id);
         $submission = $this->get_submission($USER->id);
@@ -185,7 +184,7 @@ class assignment_upload extends assignment_base {
         $basedir = $this->file_area($USER->id);
         $files = get_directory_list($basedir);
 
-        if ($this->isopen() ){//&& ($this->assignment->var1 || !$filecount || $this->assignment->resubmit || !$submission->timemarked)) {
+        if ($this->isopen()) {//&& ($this->assignment->var1 || !$filecount || $this->assignment->resubmit || !$submission->timemarked)) {
             if ($submission) {
                 //TODO: change later to ">= 0", to prevent resubmission when graded 0
                 if (($submission->grade > 0) and !$this->assignment->resubmit) {
@@ -207,16 +206,23 @@ class assignment_upload extends assignment_base {
                     //$submission->timemodified = time();
                     $flag=false;
                     foreach ($files as $key => $file) {
-                      if ($file == $newfile_name) 
-                          $flag = true;
+                        if ($file == $newfile_name) {
+                            $flag = true;
+                        }
                     } 
                     //if this is an assignment for single upload
-                    if (!$this->assignment->var1){
+                    if (!$this->assignment->var1) {
                       //if numfiles=1 
-                      if ( $submission->numfiles==0 && !$flag)  $submission->numfiles ++;
-                    }else
+                        if ($submission->numfiles==0 && !$flag) {
+                            $submission->numfiles ++;
+                        }
+                    } else {
                       //if file with the same name has not been uploaded before  
-                      if (!$flag)  $submission->numfiles ++;
+                        if (!$flag) {
+                            $submission->numfiles ++;
+                        }
+                    }
+                    
                     $submission->comment = addslashes($submission->comment);
                     unset($submission->data1);  // Don't need to update this.
                     //unset($submission->data2);  // Don't need to update this.
@@ -230,7 +236,7 @@ class assignment_upload extends assignment_base {
                         notify(get_string("uploadfailnoupdate", "assignment"));
                     }
                 //if it's first student's submission
-                } else{ 
+                } else { 
                     $newsubmission = $this->prepare_new_submission($USER->id);
                     //submissions has been created, but not submitted for marking
                     $newsubmission->timecreated  = time();
@@ -244,7 +250,7 @@ class assignment_upload extends assignment_base {
                         //$this->email_teachers($newsubmission);
                         print_heading(get_string('uploadedfile'));
                     } else { 
-                        notify(get_string("uploadnotregistered", "assignment", $newfile_name) );
+                        notify(get_string("uploadnotregistered", "assignment", $newfile_name));
                     }
                 }
             }
@@ -263,7 +269,7 @@ class assignment_upload extends assignment_base {
 
         if (isguest($USER->id)) {
             error(get_string('guestnoupload','assignment'));
-       }
+        }
 
         $this->view_header(get_string('upload'));
         $filecount = $this->count_user_files($USER->id);
@@ -322,7 +328,7 @@ class assignment_upload extends assignment_base {
                  } else {
                      notify(get_string("uploadnotregistered", "assignment", $newfile_name) );
                  }*/ 
-                  notify(get_string("nofilesforsubmit","assignment"));
+                notify(get_string("nofilesforsubmit","assignment"));
             }
         //  }
         } else {   
@@ -339,23 +345,23 @@ class assignment_upload extends assignment_base {
     function response_file_area_name($userid, $teachid = 0) {
      //  Creates a directory file name, suitable for make_upload_directory()
         global $CFG, $USER;
-                $fileloc = "";
+        $fileloc = "";
         if ($teachid == 0) {
-                        $fileloc = "$USER->id/$userid";
-                } else {
-                        $fileloc = "$teachid/$USER->id";
-                }
-                return $this->course->id.'/'.$CFG->moddata.'/assignment/'.$this->assignment->id.'/responses/'.$fileloc;
+            $fileloc = "$USER->id/$userid";
+        } else {
+            $fileloc = "$teachid/$USER->id";
+        }
+        return $this->course->id.'/'.$CFG->moddata.'/assignment/'.$this->assignment->id.'/responses/'.$fileloc;
      }
 
      //from upload&review
      //make the folder which going to hold response files
      function response_file_area($userid, $teachid = 0) {
-                if ($teachid == 0) {
-                        return make_upload_directory( $this->response_file_area_name($userid) );
-                } else {
-                        return make_upload_directory( $this->response_file_area_name($userid, $teachid) );
-                }
+        if ($teachid == 0) {
+            return make_upload_directory( $this->response_file_area_name($userid) );
+        } else {
+            return make_upload_directory( $this->response_file_area_name($userid, $teachid) );
+        }
      }
 
      //from upload&review
@@ -368,31 +374,31 @@ class assignment_upload extends assignment_base {
         if (!$this->isopen()) {
             notify(get_string("uploadfailnoupdate", "assignment"));
         } else {
-                    $submission = $this->get_submission($userid);
+            $submission = $this->get_submission($userid);
 
             $dir = $this->response_file_area_name($userid);
 
             require_once($CFG->dirroot.'/lib/uploadlib.php');
             //$um = new upload_manager('newfile',true,false,$course,false,$this->assignment->maxbytes);
             //set up $deletothers=false to allow multiple feedback uploads
-             $um = new upload_manager('newfile',false,false,$course,false,$this->assignment->maxbytes);
+            $um = new upload_manager('newfile',false,false,$course,false,$this->assignment->maxbytes);
 
             if ($um->process_file_uploads($dir)) {
                 $newfile_name = $um->get_new_filename();
                 if ($submission) {
                     // stores teacher id's in data2 in comma-separated list so students can view all responses from all teachers
                     if ($teachids = $submission->data2) {
-                         $teachidarr = explode(',', $teachids);
-                         $teachidexists = false;
-                         foreach($teachidarr as $t) {
-                             if ($t == $USER->id) {
-                                 $teachidexists = true;
-                             }
-                         }
-                         if ($teachidexists == false) {
-                              $teachids .= ",$USER->id";
-                         }
-                         $submission->data2 = $teachids;
+                        $teachidarr = explode(',', $teachids);
+                        $teachidexists = false;
+                        foreach($teachidarr as $t) {
+                            if ($t == $USER->id) {
+                                $teachidexists = true;
+                            }
+                        }
+                        if ($teachidexists == false) {
+                            $teachids .= ",$USER->id";
+                        }
+                        $submission->data2 = $teachids;
                     } else {
                         $submission->data2 = $USER->id;
                     }
@@ -419,7 +425,7 @@ class assignment_upload extends assignment_base {
     }
 
      //from upload&review
-     function email_students($submission) {
+    function email_students($submission) {
         /// Alerts students by email of assignments that recieve a new response
 //      Email students when uploaded & when grade changed?
         global $CFG;
@@ -479,7 +485,7 @@ class assignment_upload extends assignment_base {
         ///as the userid to store...
         //removed by Oksana. it was braking functionality and submitting teacher's feedback to.. teacher-user
         //this was inherited from upload type. check if nothing brackes???????????????
-        if ((int)$feedback->saveuserid !== -1){
+        if ((int)$feedback->saveuserid !== -1) {
             $feedback->userid = $feedback->saveuserid;
         }       
         if (!empty($feedback->cancel)) {          // User hit cancel button
@@ -487,18 +493,19 @@ class assignment_upload extends assignment_base {
         }
        
         $newsubmission = $this->get_submission($feedback->userid, true);  // Get or make one
-	$newsubmission->grade      = $feedback->grade;
+	    $newsubmission->grade      = $feedback->grade;
         $newsubmission->comment    = $feedback->comment;
         $newsubmission->format     = $feedback->format;
         $newsubmission->teacher    = $USER->id;
         $newsubmission->mailed     = 0;       // Make sure mail goes out (again, even)
         $newsubmission->timemarked = time();
         //marker graded assignment then status set into Marked; if marker didn't grade it then status set into Returned 
-       if (/*$feedback->grade != 0 && */ $feedback->grade != -1 )
+        if (/*$feedback->grade != 0 && */ $feedback->grade != -1 ) {
             $newsubmission->data1 = get_string("submissionstatusmarked", "assignment");
-        else  
+        }
+        else {
             $newsubmission->data1 = get_string("submissionstatusreturned", "assignment");
- 
+        }
         //unset($newsubmission->data1);  // Don't need to update this.
         //unset($newsubmission->data2);  // Don't need to update this.
 
@@ -567,7 +574,7 @@ class assignment_upload extends assignment_base {
                     break;
                 }
 
-                foreach ($_POST[$col] as $id => $unusedvalue){
+                foreach ($_POST[$col] as $id => $unusedvalue) {
 
                     $id = (int)$id; //clean parameter name
                     if (!$submission = $this->get_submission($id)) {
@@ -593,11 +600,12 @@ class assignment_upload extends assignment_base {
                     }
 
                     //change status if assignment was graded or returned
-                    if ($submission->grade != -1 )
+                    if ($submission->grade != -1 ) {
                          $submission->data1 = get_string("submissionstatusmarked", "assignment");
-                    else
+                    }
+                    else {
                          $submission->data1 = get_string("submissionstatusreturned", "assignment");
-
+                    }
                     if ($commenting) {
                         $commentvalue = trim($_POST['comment'][$id]);
                         $updatedb = $updatedb || ($submission->comment != stripslashes($commentvalue));
@@ -613,7 +621,7 @@ class assignment_upload extends assignment_base {
                     //if it is not an update, we don't change the last modified time etc.
                     //this will also not write into database if no comment and grade is entered.
 
-                    if ($updatedb){
+                    if ($updatedb) {
                         if ($newsubmission) {
                             if (!insert_record('assignment_submissions', $submission)) {
                                 return false;
@@ -720,7 +728,7 @@ class assignment_upload extends assignment_base {
     }
 
 //display student's submission for marking in pop-up window
-function display_submission() {
+    function display_submission() {
 
         global $CFG, $offset;
 
@@ -767,7 +775,7 @@ function display_submission() {
         //we don't need to grade draft or empty assignments
 
         require_once($CFG->libdir.'/tablelib.php');
-        if($sort = flexible_table::get_sql_sort('mod-assignment-submissions')) {
+        if ($sort = flexible_table::get_sql_sort('mod-assignment-submissions')) {
             $sort = 'ORDER BY '.$sort.' ';
         }
 
@@ -907,52 +915,52 @@ function display_submission() {
 
         $submission = $this->get_submission($stuid);
         if ($teachids = $submission->data2) {           // Only will show files if there is a submission
-                 $teachidarr = explode(',', $teachids);
+            $teachidarr = explode(',', $teachids);
 
-                  foreach ($teachidarr as $t) {
-                       if (! $teacher = get_record('user', 'id', $t)) {
-                              print_object($submission);
-                              error('Could not find the teacher');
-                        }
-                        echo '<tr>';
-                        echo '<td class="left picture">';
-                        print_user_picture($teacher->id, $this->course->id, $teacher->picture);
-                        echo '</td>';
-                        echo '<td class="topic">';
-                        echo '<div class="from">';
-                        echo '<div class="fullname">'.fullname($teacher).'</div>';
-                        echo '</div>';
+            foreach ($teachidarr as $t) {
+                if (! $teacher = get_record('user', 'id', $t)) {
+                    print_object($submission);
+                    error('Could not find the teacher');
+                }
+                echo '<tr>';
+                echo '<td class="left picture">';
+                print_user_picture($teacher->id, $this->course->id, $teacher->picture);
+                echo '</td>';
+                echo '<td class="topic">';
+                echo '<div class="from">';
+                echo '<div class="fullname">'.fullname($teacher).'</div>';
+                echo '</div>';
 
-                        $filearea = $this->response_file_area_name($stuid, $t);
-                        if ($basedir = $this->response_file_area($stuid, $t)) {
-                               $output = '';
-                               if ($files = get_directory_list($basedir)) {
-                                       foreach ($files as $key => $file) {
-                                             require_once($CFG->libdir.'/filelib.php');
-                                             $icon = mimeinfo('icon', $file);
-                                              if ($CFG->slasharguments) {
-                                                       $ffurl = "$CFG->wwwroot/mod/assignment/type/uploadreview/file.php/$filearea/$file";
-                                              } else {
-                                                       $ffurl = "$CFG->wwwroot/mod/assignment/type/uploadreview/file.php?file=/$filearea/$file";
-                                              }
+                $filearea = $this->response_file_area_name($stuid, $t);
+                if ($basedir = $this->response_file_area($stuid, $t)) {
+                    $output = '';
+                    if ($files = get_directory_list($basedir)) {
+                        foreach ($files as $key => $file) {
+                            require_once($CFG->libdir.'/filelib.php');
+                            $icon = mimeinfo('icon', $file);
+                            if ($CFG->slasharguments) {
+                                $ffurl = "$CFG->wwwroot/mod/assignment/type/uploadreview/file.php/$filearea/$file";
+                            } else {
+                                $ffurl = "$CFG->wwwroot/mod/assignment/type/uploadreview/file.php?file=/$filearea/$file";
+                            }
                                               /*echo '<div class="files"><center><img align="middle" src="'.$CFG->pixpath.'/f/'.$icon.'" height="16" width="16" alt="'.$icon.'" />'.
                                                link_to_popup_window ('/'.$ffurl, 'file'.$key, $file, 450, 580, $file, 'none', true).'</div></center><br />';
                                                echo '</td></tr>';*/
                                               //displays multiple teachers responces
-                                              $output .='<img align="middle" src="'.$CFG->pixpath.'/f/'.$icon.'" height="16" width="16" alt="'.$icon.'" />'.
-                                                        link_to_popup_window ('/'.$ffurl, 'file'.$key, $file, 450, 580, $file, 'none', true)."<br />";
-                                        }
-                               }
-                         }
-                         echo '<div class="files"><left>'.$output.'</left></div>';
-                         echo '</td></tr>';
-                  }
-                  echo '</table>';
+                            $output .='<img align="middle" src="'.$CFG->pixpath.'/f/'.$icon.'" height="16" width="16" alt="'.$icon.'" />'.
+                            link_to_popup_window ('/'.$ffurl, 'file'.$key, $file, 450, 580, $file, 'none', true)."<br />";
+                        }
+                    }
+                }
+                echo '<div class="files"><left>'.$output.'</left></div>';
+                echo '</td></tr>';
+            }
+            echo '</table>';
         }
     }
 
     //print teacher's files
-    function print_user_response_files($stuid,$display_remove_button=false,$offset=NULL){//, $return=false) {
+    function print_user_response_files($stuid,$display_remove_button=false,$offset=NULL) {//, $return=false) {
 
         global $CFG, $USER;
 
@@ -978,7 +986,7 @@ function display_submission() {
                     //get feedback file size, generate and display remove file link
                     $filesize = display_size(filesize($basedir."/".$file));
                     $remove_link=''; 
-                    if ($display_remove_button){ 
+                    if ($display_remove_button) { 
                          $course_mod_id=$this->cm->id;           
                          $deleteurl="$CFG->wwwroot/mod/assignment/type/upload/deleteonesubmission.php?confirm=0&view=teacher&userid=$stuid&id=$course_mod_id&name=$file&file=".$basedir."/".$file."&offset=".$offset;
                          $remove_link='[<a href="'.$deleteurl.'">'.get_string("removelink", "assignment").'</a>]';
@@ -1026,30 +1034,30 @@ function display_submission() {
                     } else {
                         $ffurl = "$CFG->wwwroot/file.php?file=/$filearea/$file";
                     } 
-                   if (isteacher($this->course->id)) {
-		             $output .= '<img align="middle" src="'.$CFG->pixpath.'/f/'.$icon.'" height="16" width="16" alt="'.$icon.'" />'.
-                		        '<a href="'.$ffurl.'" >'.$file.'</a> ['.$filesize.'] <br />';
-		    }else {
-            		if (isset($USER->id)) {
-		                if ($submission = $this->get_submission($USER->id)){ 
+                    if (isteacher($this->course->id)) {
+		                $output .= '<img align="middle" src="'.$CFG->pixpath.'/f/'.$icon.'" height="16" width="16" alt="'.$icon.'" />'.
+                		           '<a href="'.$ffurl.'" >'.$file.'</a> ['.$filesize.'] <br />';
+		            } else {
+            	        if (isset($USER->id)) {
+		                    if ($submission = $this->get_submission($USER->id)) { 
                                     //i have changed timemodified=0 for Draft assignments, thats' why we remove this condition 
                                     //otherwise student's dont' se etheir own submissions
-//                 		    if ($submission->timemodified) { 
-		                        if ($submission->timemodified <= $this->assignment->timedue || empty($this->assignment->timedue)){
+//                 		        if ($submission->timemodified) { 
+		                        if ($submission->timemodified <= $this->assignment->timedue || empty($this->assignment->timedue)) {
                                             //remove link shouldn't be displayed if file was marked or submited for marking
-                                            $remove_link = ''; 
-					    if ($submission->data1 == get_string("submissionstatusdraft", "assignment") || $submission->data1 == get_string("submissionstatusreturned", "assignment")){
-                                                 $course_mod_id=$this->cm->id;  
-                                                 $deleteurl="$CFG->wwwroot/mod/assignment/type/upload/deleteonesubmission.php?confirm=0&view=student&userid=$userid&id=$course_mod_id&name=$file&file=".$basedir."/".$file;
-                                                 $remove_link= '[<a href="'.$deleteurl.'">'.get_string("removelink", "assignment").'</a>]'; //students of the course
-                                            } 
-                			    $output .= '<img align="middle" src="'.$CFG->pixpath.'/f/'.$icon.'" height="16" width="16" alt="'.$icon.'" />'.$file.' ['.$filesize.']'.$remove_link.'<br />';
-		                        }else 
-                			     $output .= '';
-//                                    }
+                                    $remove_link = ''; 
+					                if ($submission->data1 == get_string("submissionstatusdraft", "assignment") || $submission->data1 == get_string("submissionstatusreturned", "assignment")) {
+                                        $course_mod_id=$this->cm->id;  
+                                        $deleteurl="$CFG->wwwroot/mod/assignment/type/upload/deleteonesubmission.php?confirm=0&view=student&userid=$userid&id=$course_mod_id&name=$file&file=".$basedir."/".$file;
+                                        $remove_link= '[<a href="'.$deleteurl.'">'.get_string("removelink", "assignment").'</a>]'; //students of the course
+                                    } 
+                			        $output .= '<img align="middle" src="'.$CFG->pixpath.'/f/'.$icon.'" height="16" width="16" alt="'.$icon.'" />'.$file.' ['.$filesize.']'.$remove_link.'<br />';
+		                        } else {
+                			        $output .= '';
+                                }
              		        }
                         }
-        	    }
+        	        }
                 }
             }
         }
@@ -1073,7 +1081,7 @@ function display_submission() {
         /* first we check to see if the form has just been submitted
          * to request user_preference updates
          */
-        if (isset($_POST['updatepref'])){
+        if (isset($_POST['updatepref'])) {
             $perpage = optional_param('perpage', 10, PARAM_INT);
             $perpage = ($perpage <= 0) ? 10 : $perpage ;
             set_user_preference('assignment_perpage', $perpage);
@@ -1148,11 +1156,11 @@ function display_submission() {
         if ($currentgroup) {
             $users = get_group_users($currentgroup);
         } else {
-	   $users = get_course_users($course->id);
+	        $users = get_course_users($course->id);
         }
 
         if (!$teacherattempts) {
-	  $teachers = get_course_teachers($course->id);
+	        $teachers = get_course_teachers($course->id);
             if (!empty($teachers)) {
                 $keys = array_keys($teachers);
             }
@@ -1161,7 +1169,7 @@ function display_submission() {
             }
         }
 
-       if (empty($users)) {
+        if (empty($users)) {
             print_heading(get_string('noattempts','assignment'));
             return true;
         }
@@ -1211,10 +1219,10 @@ function display_submission() {
                 }
 
                 //if there is no upload status, then display "blank"
-                if (empty($auser->upload_status))  
+                if (empty($auser->upload_status)) {
                     $auser->upload_status=get_string("submissionstatusblank", "assignment");
-
-                if (!empty($auser->submissionid)){
+                }
+                if (!empty($auser->submissionid)) {
                    ///Prints student answer and student modified date
                    ///attach file or print link to student answer, depending on the type of the assignment.
                    ///Refer to print_student_answer in inherited classes
@@ -1229,7 +1237,7 @@ function display_submission() {
                         //display teachers feedback files here as well
                         $teachermodified = '<div id="tt'.$auser->id.'">'.$this->print_user_response_files($auser->id,false).userdate($auser->timemarked).'</div>';
                         //disable grading ability in case of Blank or Draft assignment
-                        if ($quickgrade ){//&& ($auser->upload_status != get_string("submissionstatusdraft", "assignment") ||  !$auser->upload_status )){//  get_string("submissionstatusblank", "assignment"))){
+                        if ($quickgrade) {//&& ($auser->upload_status != get_string("submissionstatusdraft", "assignment") ||  !$auser->upload_status )){//  get_string("submissionstatusblank", "assignment"))){
                             $grade = '<div id="g'.$auser->id.'">'.choose_from_menu(make_grades_menu($this->assignment->grade),
                             'menu['.$auser->id.']', $auser->grade, get_string('nograde'),'',-1,true,false,$tabindex++).'</div>';
                         } else {
@@ -1239,7 +1247,7 @@ function display_submission() {
                     } else {
                         $teachermodified = '<div id="tt'.$auser->id.'">&nbsp;</div>';
 
-                        if ($quickgrade && $auser->upload_status != get_string("submissionstatusdraft", "assignment") &&  $auser->upload_status != get_string("submissionstatusblank", "assignment")){
+                        if ($quickgrade && $auser->upload_status != get_string("submissionstatusdraft", "assignment") &&  $auser->upload_status != get_string("submissionstatusblank", "assignment")) {
                             $grade = '<div id="g'.$auser->id.'">'.choose_from_menu(make_grades_menu($this->assignment->grade),
                             'menu['.$auser->id.']', $auser->grade, get_string('nograde'),'',-1,true,false,$tabindex++).'</div>';                            
                         } else {
@@ -1247,7 +1255,7 @@ function display_submission() {
                         }
                     }
                     ///Print Comment
-                    if ($quickgrade && $auser->upload_status != get_string("submissionstatusdraft", "assignment") &&  $auser->upload_status != get_string("submissionstatusblank", "assignment")){
+                    if ($quickgrade && $auser->upload_status != get_string("submissionstatusdraft", "assignment") &&  $auser->upload_status != get_string("submissionstatusblank", "assignment")) {
                         $comment = '<div id="com'.$auser->id.'"><textarea tabindex="'.$tabindex++.'" name="comment['.$auser->id.']" id="comment['.$auser->id.']">'.($auser->comment).'</textarea></div>';
                     } else {
                         $comment = '<div id="com'.$auser->id.'">'.shorten_text(strip_tags($auser->comment),15).'</div>';
@@ -1257,7 +1265,7 @@ function display_submission() {
                     $teachermodified = '<div id="tt'.$auser->id.'">&nbsp;</div>';
                     $status          = '<div id="st'.$auser->id.'">&nbsp;</div>';
 
-                    if ($quickgrade  && $auser->upload_status != get_string("submissionstatusdraft", "assignment") &&  $auser->upload_status != get_string("submissionstatusblank", "assignment") ){ // allow editing
+                    if ($quickgrade  && $auser->upload_status != get_string("submissionstatusdraft", "assignment") &&  $auser->upload_status != get_string("submissionstatusblank", "assignment")) { // allow editing
                         $grade = '<div id="g'.$auser->id.'">'.choose_from_menu(make_grades_menu($this->assignment->grade),
                                  'menu['.$auser->id.']', $auser->grade, get_string('nograde'),'',-1,true,false,$tabindex++).'</div>';
                     } else {
@@ -1280,7 +1288,7 @@ function display_submission() {
                 //do not display link to the grading pop-up if upload_status={Blank, Draft}
                 if ($auser->upload_status == get_string("submissionstatusdraft", "assignment") || $auser->upload_status ==  get_string("submissionstatusblank", "assignment")){
                    $button = $buttontext;
-                }else{
+                } else {
                    ///No more buttons, we use popups ;-).                
                    $button = link_to_popup_window ('/mod/assignment/submissions.php?id='.$this->cm->id.'&amp;userid='.$auser->id.'&amp;mode=single'.'&amp;offset='.$offset++,'grade'.$auser->id, $buttontext, 500, 780, $buttontext, 'none', true, 'button'.$auser->id); 
                 }
@@ -1292,7 +1300,7 @@ function display_submission() {
         }
 
         /// Print quickgrade form around the table
-        if ($quickgrade){
+        if ($quickgrade) {
             echo '<form action="submissions.php" name="fastg" method="post">';
             echo '<input type="hidden" name="id" value="'.$this->cm->id.'">';
             echo '<input type="hidden" name="mode" value="fastgrade">';
@@ -1301,7 +1309,7 @@ function display_submission() {
 
         $table->print_html();  /// Print the whole table
 
-        if ($quickgrade){
+        if ($quickgrade) {
             echo '<p align="center"><input type="submit" name="fastg" value="'.get_string('saveallfeedback', 'assignment').'" /></p>';
             echo '</form>';
         }
@@ -1324,7 +1332,7 @@ function display_submission() {
         print_string('quickgrade','assignment');
         echo ':</td>';
         echo '<td align="left">';
-        if ($quickgrade){
+        if ($quickgrade) {
             echo '<input type="checkbox" name="quickgrade" value="1" checked="checked" />';
         } else {
             echo '<input type="checkbox" name="quickgrade" value="1" />';
@@ -1341,55 +1349,57 @@ function display_submission() {
     }
 
     //deletes submitted file (assignment or response)
-    function deleteonesubmission (){
-         global $CFG, $USER;
+    function deleteonesubmission () {
+        global $CFG, $USER;
 
-         require_once($CFG->libdir.'/filelib.php');
+        require_once($CFG->libdir.'/filelib.php');
 
-         $id      = required_param('id', PARAM_INT); // Course module ID
-         $a       = optional_param('a');             // Assignment ID
-         $file    = optional_param('file', '', PARAM_PATH);
-         $userid  = optional_param('userid');
-         $confirm = optional_param('confirm');
-         $name    = optional_param('name');
-         $offset  = optional_param('offset');
-         $view    = optional_param('view');          //teacher or student view
+        $id      = required_param('id', PARAM_INT); // Course module ID
+        $a       = optional_param('a');             // Assignment ID
+        $file    = optional_param('file', '', PARAM_PATH);
+        $userid  = optional_param('userid');
+        $confirm = optional_param('confirm');
+        $name    = optional_param('name');
+        $offset  = optional_param('offset');
+        $view    = optional_param('view');          //teacher or student view
 
-         $submission = $this->get_submission($USER->id);
+        $submission = $this->get_submission($USER->id);
 
 
-         if ($view == 'teacher'){
+        if ($view == 'teacher') {
             $yes_url = "$CFG->wwwroot/mod/assignment/type/upload/deleteonesubmission.php?confirm=1&view=teacher&userid=$userid&id=$id&name=$name&file=$file&offset=$offset";
             $no_url =  "../../submissions.php?userid=$userid&id=$id&mode=single&offset=$offset";
             $back_button = get_string("backtofeedback", "assignment");
             $action_url = '../../submissions.php';
-         }else{
+        } else {
             $yes_url = "$CFG->wwwroot/mod/assignment/type/upload/deleteonesubmission.php?confirm=1&view=student&userid=$userid&id=$id&name=$name&file=$file&offset=$offset";
             $no_url =  "../../view.php?id=$id&offset=$offset";
             $back_button = get_string("backtoassignment", "assignment");
             $action_url = '../../view.php';
-         }
+        }
 
-        if ($view == 'student') $this->view_header(); 
+        if ($view == 'student') {
+            $this->view_header();
+        }
 
-         if (!empty($confirm)) {
+        if (!empty($confirm)) {
 
             if (!fulldelete($file)) { 
-                   notify(get_string("deletefail", "assignment"));
-                   notify($file);
-            }else{
+                notify(get_string("deletefail", "assignment"));
+                notify($file);
+            } else {
                //if student deletes submitted files then numfiles should be changed
-               if ($view == 'student'){
-                   $submission->numfiles --;
-                   if (update_record("assignment_submissions", $submission)) {
+                if ($view == 'student'){
+                    $submission->numfiles --;
+                    if (update_record("assignment_submissions", $submission)) {
                         notify(get_string("deleteednotification", "assignment"));
-                   } else {  
+                    } else {  
                         notify(get_string("deletefail", "assignment"));
                         notify($file);
-                  }
-               }else{
-                  notify(get_string("deleteednotification", "assignment")); 
-               }
+                    }
+                } else {
+                    notify(get_string("deleteednotification", "assignment")); 
+                }
                     
             }
 /* echo '<form name="submitform" action="submissions.php" method="post">';
@@ -1401,76 +1411,76 @@ function display_submission() {
   //new hidden field, initialized to -1.
         echo '<input type="hidden" name="saveuserid" value="-1" />';
 */
-           echo "<form action=\"".$action_url."\">";
-           echo '<input type="hidden" name="offset" value="'.$offset.'">';
-           echo "<input type=\"hidden\" value=\"$userid\" name=\"userid\">";
-           echo "<input type=\"hidden\" value=\"$id\" name=\"id\">";
+            echo "<form action=\"".$action_url."\">";
+            echo '<input type="hidden" name="offset" value="'.$offset.'">';
+            echo "<input type=\"hidden\" value=\"$userid\" name=\"userid\">";
+            echo "<input type=\"hidden\" value=\"$id\" name=\"id\">";
            //echo "<input type=\"hidden\" value=\"$a\" name=\"a\">";
-           echo "<input type=\"hidden\" value=\"single\" name=\"mode\">";
-           echo "<center><input type=\"submit\" value=\"".$back_button."\" name=\"submit\"></center></form>";
+            echo "<input type=\"hidden\" value=\"single\" name=\"mode\">";
+            echo "<center><input type=\"submit\" value=\"".$back_button."\" name=\"submit\"></center></form>";
              
-       } else {
+        } else {
             notify (get_string("namedeletefile", "assignment"));
             notify($name);
             notice_yesno (get_string("deletecheckfile", "assignment"), $yes_url, $no_url);
-       }
+        }
 
-       if ($view == 'student') $this->view_footer();
+        if ($view == 'student') $this->view_footer();
 
     }
 
   //from moodlelib.php
   //we need to dispaly studentID along with student name in a grading interface
-  function fullname($user, $override=false) {
+    function fullname($user, $override=false) {
 
-    global $CFG, $SESSION;
+        global $CFG, $SESSION;
 
-    $user_id='';
-    if ($user->idnumber) {
-       $user_id = ' ('. $user->idnumber .') ';
-    }
-
-    if (!isset($user->firstname) and !isset($user->lastname)) {
-        return '';
-    }
-
-    if (!$override) {
-        if (!empty($CFG->forcefirstname)) {
-            $user->firstname = $CFG->forcefirstname;
+        $user_id='';
+        if ($user->idnumber) {
+            $user_id = ' ('. $user->idnumber .') ';
         }
-        if (!empty($CFG->forcelastname)) {
-            $user->lastname = $CFG->forcelastname;
+
+        if (!isset($user->firstname) and !isset($user->lastname)) {
+            return '';
         }
-    }
 
-    if (!empty($SESSION->fullnamedisplay)) {
-        $CFG->fullnamedisplay = $SESSION->fullnamedisplay;
-    }
-
-    if ($CFG->fullnamedisplay == 'firstname lastname') {
-        return $user->firstname .' '. $user->lastname . $user_id;
-
-    } else if ($CFG->fullnamedisplay == 'lastname firstname') {
-        return $user->lastname .' '. $user->firstname . $user_id;
-
-    } else if ($CFG->fullnamedisplay == 'firstname') {
-        if ($override) {
-            return get_string('fullnamedisplay', '', $user);
-        } else {
-            return $user->firstname . $user_id;;
+        if (!$override) {
+            if (!empty($CFG->forcefirstname)) {
+                $user->firstname = $CFG->forcefirstname;
+            }
+            if (!empty($CFG->forcelastname)) {
+                $user->lastname = $CFG->forcelastname;
+            }
         }
-    } else if ($CFG->fullnamedisplay == 'textuid') {
-      if ( $override ) {
-	return get_string('fullnamedisplay', '', $user) . $user_id;
-      } else if (isset($user->username)) {
-	return $user->username . $user_id;
-      } else {
-	return $user->firstname . $user_id;
-      }
-    }
 
-    return get_string('fullnamedisplay', '', $user) . $user_id;
-}
+        if (!empty($SESSION->fullnamedisplay)) {
+            $CFG->fullnamedisplay = $SESSION->fullnamedisplay;
+        }
+
+        if ($CFG->fullnamedisplay == 'firstname lastname') {
+            return $user->firstname .' '. $user->lastname . $user_id;
+
+        } else if ($CFG->fullnamedisplay == 'lastname firstname') {
+            return $user->lastname .' '. $user->firstname . $user_id;
+
+        } else if ($CFG->fullnamedisplay == 'firstname') {
+            if ($override) {
+                return get_string('fullnamedisplay', '', $user);
+            } else {
+                return $user->firstname . $user_id;;
+            }
+        } else if ($CFG->fullnamedisplay == 'textuid') {
+            if ( $override ) {
+	           return get_string('fullnamedisplay', '', $user) . $user_id;
+            } else if (isset($user->username)) {
+	           return $user->username . $user_id;
+            } else {
+	           return $user->firstname . $user_id;
+            }
+        }
+
+        return get_string('fullnamedisplay', '', $user) . $user_id;
+    }
 
 }
 
