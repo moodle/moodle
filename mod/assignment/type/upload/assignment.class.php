@@ -1032,7 +1032,7 @@ class assignment_upload extends assignment_base {
                     } else {
                         $ffurl = "$CFG->wwwroot/file.php?file=/$filearea/$file";
                     } 
-                    if (isteacher($this->course->id)) {
+                    if (has_capability('mod/assignment:grade', get_context_instance(CONTEXT_MODULE, $this->course->id))) {
 		                $output .= '<img align="middle" src="'.$CFG->pixpath.'/f/'.$icon.'" height="16" width="16" alt="'.$icon.'" />'.
                 		           '<a href="'.$ffurl.'" >'.$file.'</a> ['.$filesize.'] <br />';
 		            } else {
