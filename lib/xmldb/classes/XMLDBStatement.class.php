@@ -384,10 +384,6 @@ class XMLDBStatement extends XMLDBObject {
                 break;
         }
 
-        if ($statement_end) {
-            $results = $generator->getEndedStatements($results);
-        }
-
         return $results;
     }
 
@@ -405,6 +401,10 @@ class XMLDBStatement extends XMLDBObject {
         $generator->setPrefix($prefix);
 
         $results = $generator->getExecuteInsertSQL($this);
+
+        if ($statement_end) {
+            $results = $generator->getEndedStatements($results);
+        }
 
         return $results;
     }
