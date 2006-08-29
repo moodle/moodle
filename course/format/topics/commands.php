@@ -12,7 +12,7 @@ $field    = required_param('field', PARAM_ALPHA);
 
 $instanceid = optional_param('instanceId', 0, PARAM_INT);
 $value      = optional_param('value', 0, PARAM_INT);
-$column     = optional_param('weight', 0, PARAM_ALPHA);
+$column     = optional_param('column', 0, PARAM_ALPHA);
 $id         = optional_param('id', 0, PARAM_INT);
 $summary    = optional_param('summary', '', PARAM_INT);
 $sequence   = optional_param('sequence', '', PARAM_INT);
