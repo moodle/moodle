@@ -68,8 +68,8 @@ class edit_statement extends XMLDBAction {
 
     /// Do the job, setting result as needed
     /// Get the dir containing the file
-        $dirpath = required_param('dir', PARAM_CLEAN);
-        $dirpath = stripslashes_safe($dirpath);
+        $dirpath = required_param('dir', PARAM_PATH);
+        $dirpath = $CFG->dirroot . stripslashes_safe($dirpath);
 
     /// Get the correct dirs
         if (!empty($XMLDB->dbdirs)) {
@@ -103,7 +103,7 @@ class edit_statement extends XMLDBAction {
 
     /// Add the main form
         $o = '<form id="form" action="index.php" method="post">';
-        $o.= '    <input type="hidden" name ="dir" value="' . $dirpath . '" />';
+        $o.= '    <input type="hidden" name ="dir" value="' . str_replace($CFG->dirroot, '', $dirpath) . '" />';
         $o.= '    <input type="hidden" name ="statement" value="' . $statementparam .'" />';
         $o.= '    <input type="hidden" name ="action" value="edit_statement_save" />';
         $o.= '    <input type="hidden" name ="postaction" value="edit_statement" />';
@@ -117,20 +117,20 @@ class edit_statement extends XMLDBAction {
         $b = ' <p align="center" class="buttons">';
     /// The view original XML button
         if ($origstructure->getStatement($statementparam)) {
-            $b .= '&nbsp;<a href="index.php?action=view_statement_xml&amp;dir=' . urlencode($dirpath) . '&amp;select=original&amp;statement=' . $statementparam . '" target="_blank">[' . $this->str['vieworiginal'] . ']</a>';
+            $b .= '&nbsp;<a href="index.php?action=view_statement_xml&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '&amp;select=original&amp;statement=' . $statementparam . '" target="_blank">[' . $this->str['vieworiginal'] . ']</a>';
         } else {
             $b .= '&nbsp;[' . $this->str['vieworiginal'] . ']';
         }
     /// The view edited XML button
         if ($statement->hasChanged()) {
-            $b .= '&nbsp;<a href="index.php?action=view_statement_xml&amp;dir=' . urlencode($dirpath) . '&amp;select=edited&amp;statement=' . $statementparam . '" target="_blank">[' . $this->str['viewedited'] . ']</a>';
+            $b .= '&nbsp;<a href="index.php?action=view_statement_xml&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '&amp;select=edited&amp;statement=' . $statementparam . '" target="_blank">[' . $this->str['viewedited'] . ']</a>';
         } else {
             $b .= '&nbsp;[' . $this->str['viewedited'] . ']';
         }
     /// The new sentence button
-        $b .= '&nbsp;<a href="index.php?action=new_sentence&amp;postaction=edit_sentence&amp;statement=' . $statementparam . '&amp;dir=' . urlencode($dirpath) . '">[' . $this->str['newsentence'] . ']</a>';
+        $b .= '&nbsp;<a href="index.php?action=new_sentence&amp;postaction=edit_sentence&amp;statement=' . $statementparam . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['newsentence'] . ']</a>';
     /// The back to edit xml file button
-        $b .= '&nbsp;<a href="index.php?action=edit_xml_file&amp;dir=' . urlencode($dirpath) . '">[' . $this->str['back'] . ']</a>';
+        $b .= '&nbsp;<a href="index.php?action=edit_xml_file&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['back'] . ']</a>';
         $b .= '</p>';
         $o .= $b;
 
@@ -153,13 +153,13 @@ class edit_statement extends XMLDBAction {
             /// Calculate buttons
                 $b = '</td><td class="button cell">';
             /// The edit button
-                $b .= '<a href="index.php?action=edit_sentence&amp;sentence=' .$key . '&amp;statement=' . urlencode($statement->getName()) . '&amp;dir=' . urlencode($dirpath) . '">[' . $this->str['edit'] . ']</a>';
+                $b .= '<a href="index.php?action=edit_sentence&amp;sentence=' .$key . '&amp;statement=' . urlencode($statement->getName()) . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['edit'] . ']</a>';
                 $b .= '</td><td class="button cell">';
             /// The duplicate button
-                $b .= '<a href="index.php?action=new_sentence&amp;postaction=edit_sentence&amp;basesentence=' . $key . '&amp;statement=' . urlencode($statement->getName()) . '&amp;dir=' . urlencode($dirpath) . '">[' . $this->str['duplicate'] . ']</a>';
+                $b .= '<a href="index.php?action=new_sentence&amp;postaction=edit_sentence&amp;basesentence=' . $key . '&amp;statement=' . urlencode($statement->getName()) . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['duplicate'] . ']</a>';
                 $b .= '</td><td class="button cell">';
             /// The delete button
-                $b .= '<a href="index.php?action=delete_sentence&amp;sentence=' . $key . '&amp;statement=' . urlencode($statement->getName()) . '&amp;dir=' . urlencode($dirpath) . '">[' . $this->str['delete'] . ']</a>';
+                $b .= '<a href="index.php?action=delete_sentence&amp;sentence=' . $key . '&amp;statement=' . urlencode($statement->getName()) . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['delete'] . ']</a>';
                 $b .= '</td>';
             /// Print table row
             $o .= '<tr class="r' . $row . '"><td class="table cell">' . $p . $sentence . $b . '</tr>'; 
