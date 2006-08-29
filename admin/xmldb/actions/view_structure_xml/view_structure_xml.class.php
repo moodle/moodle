@@ -61,10 +61,10 @@ class view_structure_xml extends XMLDBAction {
     /// Do the job, setting result as needed
 
     /// Get the file parameter
-        $select = required_param('select', PARAM_ALPHAEXT); //original/edited
+        $select = required_param('select', PARAM_ALPHA); //original/edited
     /// Get the dir containing the file
-        $dirpath = required_param('dir', PARAM_CLEAN);
-        $dirpath = stripslashes_safe($dirpath);
+        $dirpath = required_param('dir', PARAM_PATH);
+        $dirpath = $CFG->dirroot . stripslashes_safe($dirpath);
 
     /// Get the correct dir
         if ($select == 'original') {

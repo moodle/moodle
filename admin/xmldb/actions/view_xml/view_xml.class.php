@@ -64,8 +64,8 @@ class view_xml extends XMLDBAction {
     /// Do the job, setting result as needed
 
     /// Get the file parameter
-        $file = required_param('file', PARAM_CLEAN);
-        $file = stripslashes_safe($file);
+        $file = required_param('file', PARAM_PATH);
+        $file = $CFG->dirroot . stripslashes_safe($file);
     /// File must be under $CFG->wwwroot and 
     ///  under one db directory (simple protection)
         if (substr($file, 0, strlen($CFG->dirroot)) == $CFG->dirroot &&

@@ -62,8 +62,8 @@ class view_structure_sql extends XMLDBAction {
 
     /// Do the job, setting result as needed
     /// Get the dir containing the file
-        $dirpath = required_param('dir', PARAM_CLEAN);
-        $dirpath = stripslashes_safe($dirpath);
+        $dirpath = required_param('dir', PARAM_PATH);
+        $dirpath = $CFG->dirroot . stripslashes_safe($dirpath);
 
     /// Get the correct dirs
         if (!empty($XMLDB->dbdirs)) {
@@ -78,7 +78,7 @@ class view_structure_sql extends XMLDBAction {
     /// ADD YOUR CODE HERE
 
     /// Get parameters
-        $generatorparam = optional_param('generator', null, PARAM_CLEAN);
+        $generatorparam = optional_param('generator', null, PARAM_ALPHANUM);
         if (empty($generatorparam)) {
             $generatorparam = $CFG->dbtype;
         }
@@ -96,7 +96,7 @@ class view_structure_sql extends XMLDBAction {
 
         /// The back to edit table button
         $b = ' <p align="center" class="buttons">';
-        $b .= '<a href="index.php?action=edit_xml_file&amp;dir=' . urlencode($dirpath) . '">[' . $this->str['back'] . ']</a>';
+        $b .= '<a href="index.php?action=edit_xml_file&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['back'] . ']</a>';
         $b .= '</p>';
         $o = $b;
 
@@ -104,7 +104,7 @@ class view_structure_sql extends XMLDBAction {
         $o.= '      <tr><td align="center">' . $this->str['selectdb'];
 
     /// Show the popup of generators
-        $url = 'index.php?action=view_structure_sql&amp;dir=' . urlencode($dirpath) . '&amp;generator=';
+        $url = 'index.php?action=view_structure_sql&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '&amp;generator=';
         $o.= popup_form($url, $generators, 'selectgenerator', $generatorparam, '', '', '' , true);
         $o.= '      </td></tr>';
         $o.= '      <tr><td><textarea cols="80" rows="32">';
