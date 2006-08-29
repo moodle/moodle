@@ -65,8 +65,8 @@ class edit_key extends XMLDBAction {
 
     /// Do the job, setting result as needed
     /// Get the dir containing the file
-        $dirpath = required_param('dir', PARAM_CLEAN);
-        $dirpath = stripslashes_safe($dirpath);
+        $dirpath = required_param('dir', PARAM_PATH);
+        $dirpath = $CFG->dirroot . stripslashes_safe($dirpath);
 
     /// Get the correct dirs
         if (!empty($XMLDB->dbdirs)) {
@@ -99,7 +99,7 @@ class edit_key extends XMLDBAction {
 
     /// Add the main form
         $o = '<form name="form" id="form" action="index.php" method="post">';
-        $o.= '    <input type="hidden" name ="dir" value="' . $dirpath . '" />';
+        $o.= '    <input type="hidden" name ="dir" value="' . str_replace($CFG->dirroot, '', $dirpath) . '" />';
         $o.= '    <input type="hidden" name ="table" value="' . $tableparam .'" />';
         $o.= '    <input type="hidden" name ="key" value="' . $keyparam .'" />';
         $o.= '    <input type="hidden" name ="action" value="edit_key_save" />';
@@ -142,18 +142,18 @@ class edit_key extends XMLDBAction {
         $b = ' <p align="center" class="buttons">';
     /// The view original XML button
         if ($table->getKey($keyparam)) {
-            $b .= '&nbsp;<a href="index.php?action=view_key_xml&amp;dir=' . urlencode($dirpath) . '&amp;select=original&amp;table=' . $tableparam . '&amp;key=' . $keyparam . '" target="_blank">[' . $this->str['vieworiginal'] . ']</a>';
+            $b .= '&nbsp;<a href="index.php?action=view_key_xml&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '&amp;select=original&amp;table=' . $tableparam . '&amp;key=' . $keyparam . '" target="_blank">[' . $this->str['vieworiginal'] . ']</a>';
         } else {
             $b .= '&nbsp;[' . $this->str['vieworiginal'] . ']';
         }
     /// The view edited XML button
         if ($key->hasChanged()) {
-            $b .= '&nbsp;<a href="index.php?action=view_key_xml&amp;dir=' . urlencode($dirpath) . '&amp;select=edited&amp;table=' . $tableparam . '&amp;key=' . $keyparam . '" target="_blank">[' . $this->str['viewedited'] . ']</a>';
+            $b .= '&nbsp;<a href="index.php?action=view_key_xml&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '&amp;select=edited&amp;table=' . $tableparam . '&amp;key=' . $keyparam . '" target="_blank">[' . $this->str['viewedited'] . ']</a>';
         } else {
             $b .= '&nbsp;[' . $this->str['viewedited'] . ']';
         }
     /// The back to edit table button
-        $b .= '&nbsp;<a href="index.php?action=edit_table&amp;table=' . $tableparam . '&amp;dir=' . urlencode($dirpath) . '">[' . $this->str['back'] . ']</a>';
+        $b .= '&nbsp;<a href="index.php?action=edit_table&amp;table=' . $tableparam . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['back'] . ']</a>';
         $b .= '</p>';
         $o .= $b;
 

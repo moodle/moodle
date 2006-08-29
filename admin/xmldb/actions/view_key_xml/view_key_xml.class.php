@@ -61,12 +61,12 @@ class view_key_xml extends XMLDBAction {
     /// Do the job, setting result as needed
 
     /// Get the file parameter
-        $key =  required_param('key', PARAM_CLEAN);
-        $table =  required_param('table', PARAM_CLEAN);
+        $key =  required_param('key', PARAM_PATH);
+        $table =  required_param('table', PARAM_PATH);
         $select = required_param('select', PARAM_ALPHA); //original/edited
     /// Get the dir containing the file
-        $dirpath = required_param('dir', PARAM_CLEAN);
-        $dirpath = stripslashes_safe($dirpath);
+        $dirpath = required_param('dir', PARAM_PATH);
+        $dirpath = $CFG->dirroot . stripslashes_safe($dirpath);
 
     /// Get the correct dir
         if ($select == 'original') {
