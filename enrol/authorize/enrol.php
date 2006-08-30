@@ -10,12 +10,12 @@ require_once($CFG->dirroot.'/enrol/authorize/const.php');
 class enrolment_plugin_authorize
 {
     /**
-     * Credit card error messages.
+     * Credit card and Echeck error messages.
      *
      * @var array
      * @access public
      */
-    var $ccerrors = array();
+    var $authorizeerrors = array();
 
     /**
      * Cron log.
@@ -89,7 +89,9 @@ class enrolment_plugin_authorize
         $strcourses = get_string('courses');
         $strloginto = get_string('loginto', '', $course->shortname);
 
-        print_header($strloginto, $course->fullname, "<a href=\"$CFG->wwwroot/course/\">$strcourses</a> -> $strloginto");
+        print_header($strloginto,
+                     $course->fullname,
+                     "<a href=\"$CFG->wwwroot/course/\">$strcourses</a> -> $strloginto");
         print_course($course, '80%');
 
         if ($course->password) {
@@ -126,16 +128,30 @@ class enrolment_plugin_authorize
      * @param object $course Course info
      * @access public
      */
-    function check_entry($form, $course) {
+    function check_entry($form, $course)
+    {
+        global $CFG;
+
         if (enrolment_plugin_authorize::zero_cost($course) or
-           (!empty($course->password) and !empty($form->password))) {
+           (!empty($course->password) and !empty($form->password))) { // MANUAL ENROLMENT
             $manual = enrolment_factory::factory('manual');
             $manual->check_entry($form, $course);
             if (!empty($manual->errormsg)) {
                 $this->errormsg = $manual->errormsg;
             }
-        } elseif ((!empty($form->ccsubmit)) and $this->validate_enrol_form($form)) {
-            $this->cc_submit($form, $course);
+        }
+        else { // AUTHORIZE.NET ENROLMENT
+            $paymentmethodsenabled = enrolment_plugin_authorize::get_list_of_payment_methods();
+            if (in_array(AN_METHOD_CC, $paymentmethodsenabled) and
+                !empty($form->ccsubmit) and
+                $this->validate_cc_form($form)) {
+                    $this->cc_submit($form, $course);
+            }
+            elseif (in_array(AN_METHOD_ECHECK, $paymentmethodsenabled) and
+                !empty($form->echecksubmit) and
+                $this->validate_echeck_form($form)) {
+                    $this->echeck_submit($form, $course);
+            }
         }
     }
 
@@ -175,7 +191,7 @@ class enrolment_plugin_authorize
         $order->id = insert_record("enrol_authorize", $order);
         if (!$order->id) {
             enrolment_plugin_authorize::email_to_admin("Error while trying to insert new data", $order);
-            $this->ccerrors['header'] = "Insert record error. Admin has been notified!";
+            $this->authorizeerrors['header'] = "Insert record error. Admin has been notified!";
             return;
         }
 
@@ -209,7 +225,7 @@ class enrolment_plugin_authorize
         $success = authorize_action($order, $message, $extra, $action);
         if (!$success) {
             enrolment_plugin_authorize::email_to_admin($message, $order);
-            $this->ccerrors['header'] = $message;
+            $this->authorizeerrors['header'] = $message;
             return;
         }
 
@@ -306,68 +322,84 @@ class enrolment_plugin_authorize
         redirect($destination);
     }
 
+    function echeck_submit($form, $course)
+    {
+        global $CFG, $USER, $SESSION;
+        require_once('authorizenetlib.php');
+
+    }
+
+
     /**
-     * validate_enrol_form
+     * validate_cc_form (static method)
      *
-     * @param object $form Form parameters
-     * @access private
+     * @param unknown_type $form
+     * @return bool
      */
-    function validate_enrol_form($form)
+    function validate_cc_form($form)
     {
         global $CFG;
         require_once('ccval.php');
 
         if (empty($form->cc)) {
-            $this->ccerrors['cc'] = get_string('missingcc', 'enrol_authorize');
+            $this->authorizeerrors['cc'] = get_string('missingcc', 'enrol_authorize');
         }
         if (empty($form->ccexpiremm) || empty($form->ccexpireyyyy)) {
-            $this->ccerrors['ccexpire'] = get_string('missingccexpire', 'enrol_authorize');
+            $this->authorizeerrors['ccexpire'] = get_string('missingccexpire', 'enrol_authorize');
         }
         else {
             $expdate = sprintf("%02d", intval($form->ccexpiremm)) . $form->ccexpireyyyy;
             $validcc = CCVal($form->cc, $form->cctype, $expdate);
             if (!$validcc) {
                 if ($validcc === 0) {
-                    $this->ccerrors['ccexpire'] = get_string('ccexpired', 'enrol_authorize');
+                    $this->authorizeerrors['ccexpire'] = get_string('ccexpired', 'enrol_authorize');
                 }
                 else {
-                    $this->ccerrors['cc'] = get_string('ccinvalid', 'enrol_authorize');
+                    $this->authorizeerrors['cc'] = get_string('ccinvalid', 'enrol_authorize');
                 }
             }
         }
 
         if (empty($form->ccfirstname) || empty($form->cclastname)) {
-            $this->ccerrors['ccfirstlast'] = get_string('missingfullname');
+            $this->authorizeerrors['ccfirstlast'] = get_string('missingfullname');
         }
 
         if (empty($form->cvv) || !is_numeric($form->cvv)) {
-            $this->ccerrors['cvv'] = get_string('missingcvv', 'enrol_authorize');
+            $this->authorizeerrors['cvv'] = get_string('missingcvv', 'enrol_authorize');
         }
 
         if (empty($form->cctype) or
             !in_array($form->cctype, array_keys(enrolment_plugin_authorize::get_list_of_creditcards()))) {
-            $this->ccerrors['cctype'] = get_string('missingcctype', 'enrol_authorize');
+            $this->authorizeerrors['cctype'] = get_string('missingcctype', 'enrol_authorize');
         }
 
         if (!empty($CFG->an_avs)) {
             if (empty($form->ccaddress)) {
-                $this->ccerrors['ccaddress'] = get_string('missingaddress', 'enrol_authorize');
+                $this->authorizeerrors['ccaddress'] = get_string('missingaddress', 'enrol_authorize');
             }
             if (empty($form->cccity)) {
-                $this->ccerrors['cccity'] = get_string('missingcity');
+                $this->authorizeerrors['cccity'] = get_string('missingcity');
             }
             if (empty($form->cccountry)) {
-                $this->ccerrors['cccountry'] = get_string('missingcountry');
+                $this->authorizeerrors['cccountry'] = get_string('missingcountry');
             }
         }
         if (empty($form->cczip) || !is_numeric($form->cczip)) {
-            $this->ccerrors['cczip'] = get_string('missingzip', 'enrol_authorize');
+            $this->authorizeerrors['cczip'] = get_string('missingzip', 'enrol_authorize');
         }
 
-        if (!empty($this->ccerrors)) {
-            $this->ccerrors['header'] = get_string('someerrorswerefound');
+        if (!empty($this->authorizeerrors)) {
+            $this->authorizeerrors['header'] = get_string('someerrorswerefound');
             return false;
         }
+
+        return true;
+    }
+
+    function validate_echeck_form($form)
+    {
+        global $CFG;
+
 
         return true;
     }
@@ -481,7 +513,9 @@ class enrolment_plugin_authorize
         set_config('an_test', optional_param('an_test', 0, PARAM_BOOL));
         set_config('an_referer', optional_param('an_referer', 'http://', PARAM_URL));
 
-        $acceptmethods = optional_param('acceptmethods', array('cc'), PARAM_ALPHA);
+        $acceptmethods = optional_param('acceptmethods',
+                                        enrolment_plugin_authorize::get_list_of_payment_methods(),
+                                        PARAM_ALPHA);
         set_config('an_acceptmethods', implode(',', $acceptmethods));
 
         $acceptccs = optional_param('acceptccs',
@@ -674,6 +708,29 @@ class enrolment_plugin_authorize
         $ccs = explode(',', $CFG->an_acceptccs);
         foreach ($ccs as $key) {
             $ret[$key] = $alltypes[$key];
+        }
+        return $ret;
+    }
+
+    function get_list_of_payment_methods($getall = false)
+    {
+        global $CFG;
+
+        $alltypes = array(AN_METHOD_CC, AN_METHOD_ECHECK);
+
+        if ($getall) {
+        	return $alltypes;
+        }
+
+        $ret = array();
+        if (empty($CFG->an_acceptmethods)) {
+            $ret[] = AN_METHOD_CC; // default
+        }
+        else {
+            $mthds = explode(',', $CFG->an_acceptmethods);
+            foreach ($mthds as $mthd) {
+                $ret[] = $mthd;
+            }
         }
         return $ret;
     }

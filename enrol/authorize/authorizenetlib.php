@@ -82,7 +82,7 @@ function authorize_expired(&$order)
  * @param string &$message Information about error message if this function returns false.
  * @param object &$extra Extra data that used for refunding and credit card information.
  * @param int $action Which action will be performed. See AN_ACTION_*
- * @param int $method Transaction method. AN_METHOD_CC or AN_METHOD_ECHECK
+ * @param string $method Transaction method. AN_METHOD_CC or AN_METHOD_ECHECK
  * @return bool true Transaction was successful, false otherwise. Use $message for reason.
  * @author Ethem Evlice <ethem a.t evlice d.o.t com>
  * @uses $CFG
@@ -91,8 +91,6 @@ function authorize_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE, $
 {
     global $CFG;
     static $conststring;
-
-    $test = !empty($CFG->an_test);
 
     if (!isset($conststring)) {
         $constdata = array(
@@ -124,10 +122,11 @@ function authorize_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE, $
         $method = AN_METHOD_CC;
     }
     elseif ($method != AN_METHOD_CC && $method != AN_METHOD_ECHECK) {
-        $message = "Missing method: $method";
+        $message = "Invalid method: $method";
         return false;
     }
 
+    $action = intval($action);
     if ($method == AN_METHOD_ECHECK) {
         if ($action != AN_ACTION_AUTH_CAPTURE && $action != AN_ACTION_CREDIT) {
             $message = "Please perform AUTH_CAPTURE or CREDIT for echecks";
@@ -135,16 +134,16 @@ function authorize_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE, $
         }
     }
 
-    $action = intval($action);
     if ($action <= AN_ACTION_NONE or $action > AN_ACTION_VOID) {
         $message = "Invalid action!";
         return false;
     }
 
     $poststring = $conststring;
-    $poststring .= '&x_method=' . ($method==AN_METHOD_CC ? 'CC' : 'ECHECK');
+    $poststring .= '&x_method=' . $method;
+
+    $test = !empty($CFG->an_test);
     $poststring .= '&x_test_request=' . ($test ? 'TRUE' : 'FALSE');
-    $timenowsettle = getsettletime(time());
 
     switch ($action) {
         case AN_ACTION_AUTH_ONLY:
@@ -362,7 +361,7 @@ function authorize_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE, $
         if ($message == '[[' . $reason . ']]') {
             $message = isset($response[3]) ? $response[3] : 'unknown error';
         }
-        if (!empty($CFG->an_avs) and $method == AN_METHOD_CC) {
+        if ($method == AN_METHOD_CC and !empty($CFG->an_avs)) {
             $avs = "avs" . strtolower($response[5]);
             $stravs = get_string($avs, "enrol_authorize");
             $message .= "<br />" . get_string("avsresult", "enrol_authorize", $stravs);

@@ -31,13 +31,8 @@ if (!isset($frm->an_cutoff_hour)) {
 }
 
 if (!isset($frm->acceptmethods)) {
-    if (empty($CFG->an_acceptmethods)) {
-        $frm->acceptmethods = array('cc');
-        $CFG->an_acceptmethods = implode(',', $frm->acceptmethods);
-    }
-    else {
-    	$frm->acceptmethods = explode(',', $CFG->an_acceptmethods);
-    }
+    $frm->acceptmethods = enrolment_plugin_authorize::get_list_of_payment_methods();
+    $CFG->an_acceptmethods = implode(',', $frm->acceptmethods);
 }
 
 if (!isset($frm->acceptccs)) {
@@ -50,99 +45,100 @@ if (!isset($frm->acceptccs)) {
 <table cellspacing="0" cellpadding="5" border="0" align="center">
 
 <tr valign="top">
-    <td colspan="3" align="right"><a href="../enrol/authorize/index.php"><?php print_string("paymentmanagement", "enrol_authorize") ?></a></td>
+    <td colspan="2" align="right"><a href="../enrol/authorize/index.php"><?php print_string("paymentmanagement", "enrol_authorize") ?></a></td>
 </tr>
 
-<tr valign="top"><td colspan="3"><h4><?php print_string("adminauthorizewide", "enrol_authorize") ?></h4></td></tr>
+<tr valign="top"><td colspan="2"><h4><?php print_string("adminauthorizewide", "enrol_authorize") ?></h4></td></tr>
 
 <tr valign="top">
     <td align="right">enrol_cost:</td>
-    <td><input type="text" size="5" name="enrol_cost" value="<?php p($frm->enrol_cost) ?>" /></td>
-    <td><?php print_string("costdefault") ?>. <?php print_string("costdefaultdesc", "enrol_authorize") ?></td>
+    <td><input type="text" size="5" name="enrol_cost" value="<?php p($frm->enrol_cost) ?>" /><br />
+        <?php print_string("costdefault") ?>. <?php print_string("costdefaultdesc", "enrol_authorize") ?></td>
 </tr>
 
 <tr valign="top">
     <td align="right">enrol_currency:</td>
-    <td><?php choose_from_menu(get_list_of_currencies(), "enrol_currency", $frm->enrol_currency, "","", "") ?></td>
-    <td><?php print_string("currency") ?>
+    <td><?php choose_from_menu(get_list_of_currencies(), "enrol_currency", $frm->enrol_currency, "","", "") ?><br />
+        <?php print_string("currency") ?>
     </td>
 </tr>
 
 <?php if (substr($CFG->wwwroot, 0, 5) !== 'https') { /* https && loginhttps */ ?>
 <tr valign="top">
     <td align="right">loginhttps:</td>
-    <td><?php echo (empty($CFG->loginhttps) ? "<font color=\"red\"><b>off</b></font>" : "<font color=\"green\">on</font>") ?></td>
     <td><?php
-    $a->url = "$CFG->wwwroot/$CFG->admin/config.php#configsectionsecurity";
-    print_string("logindesc", "enrol_authorize", $a)
-    ?></td>
+          echo (empty($CFG->loginhttps) ? "<font color=\"red\"><b>off</b></font>" : "<font color=\"green\">on</font>");
+          $a->url = "$CFG->wwwroot/$CFG->admin/config.php#configsectionsecurity";
+          echo '<br />'; print_string("logindesc", "enrol_authorize", $a);
+        ?>
+    </td>
 </tr>
 <?php } /* end: https && loginhttps */ ?>
 
-<tr valign="top"><td colspan="3"><h4><?php print_string("adminauthorizesettings", "enrol_authorize") ?></h4></td></tr>
+<tr valign="top"><td colspan="2"><h4><?php print_string("adminauthorizesettings", "enrol_authorize") ?></h4></td></tr>
 
 <tr valign="top">
     <td align="right">an_login:</td>
-    <td><input type="text" name="an_login" value="<?php p($frm->an_login) ?>" /></td>
-    <td><?php print_string("anlogin", "enrol_authorize") ?></td>
+    <td><input type="text" name="an_login" value="<?php p($frm->an_login) ?>" /><br />
+        <?php print_string("anlogin", "enrol_authorize") ?></td>
 </tr>
 
 <tr valign="top">
     <td align="right">#&nbsp;#&nbsp;</td>
-    <td colspan="2"><?php print_string("chooseone", "enrol_authorize") ?></td>
+    <td><?php print_string("chooseone", "enrol_authorize") ?></td>
 </tr>
 
 <tr valign="top">
     <td align="right">an_tran_key:</td>
-    <td><input type="text" name="an_tran_key" value="<?php p($frm->an_tran_key) ?>" /><sup>#1</sup></td>
-    <td><?php print_string("antrankey", "enrol_authorize") ?></td>
+    <td><input type="text" name="an_tran_key" value="<?php p($frm->an_tran_key) ?>" /><sup>#1</sup><br />
+        <?php print_string("antrankey", "enrol_authorize") ?></td>
 </tr>
 
 <tr valign="top">
     <td align="right">an_password:</td>
-    <td><input type="text" name="an_password" value="" /><sup>#2</sup></td>
-    <td><?php print_string("anpassword", "enrol_authorize") ?><br />(<?php print_string("leavetokeep") ?>)</td>
+    <td><input type="text" name="an_password" value="" /><sup>#2</sup><br />
+        <?php print_string("anpassword", "enrol_authorize") ?><br />(<?php print_string("leavetokeep") ?>)</td>
 </tr>
 
 <tr valign="top">
     <td align="right">delete_current:</td>
-    <td><?php print_checkbox('delete_current', '1', !empty($frm->delete_current)) ?></td>
-    <td><?php print_string("deletecheck", "moodle", get_string('oldpassword')) ?><br /><br /></td>
+    <td><?php print_checkbox('delete_current', '1', !empty($frm->delete_current)) ?> <br />
+        <?php print_string("deletecheck", "moodle", get_string('oldpassword')) ?><br /><br /></td>
 </tr>
 
 <tr valign="top">
     <td align="right">an_referer:</td>
-    <td><input type="text" name="an_referer" value="<?php p($frm->an_referer) ?>" /></td>
-    <td><?php print_string("anreferer", "enrol_authorize") ?></td>
+    <td><input type="text" name="an_referer" value="<?php p($frm->an_referer) ?>" /><br />
+        <?php print_string("anreferer", "enrol_authorize") ?></td>
 </tr>
 
 <tr valign="top">
     <td align="right">an_cutoff:</td>
-    <td><?php print_time_selector("an_cutoff_hour","an_cutoff_min",make_timestamp(2000,1,1,$frm->an_cutoff_hour,$frm->an_cutoff_min),5); ?></td>
-    <td><?php print_string("cutofftime", "enrol_authorize") ?></td>
+    <td><?php print_time_selector("an_cutoff_hour","an_cutoff_min",make_timestamp(2000,1,1,$frm->an_cutoff_hour,$frm->an_cutoff_min),5); ?><br />
+        <?php print_string("cutofftime", "enrol_authorize") ?></td>
 </tr>
 
 <tr valign="top">
     <td align="right">an_avs:</td>
-    <td><?php print_checkbox('an_avs', '1', !empty($frm->an_avs)) ?></td>
-    <td><?php print_string("adminavs", "enrol_authorize") ?></td>
+    <td><?php print_checkbox('an_avs', '1', !empty($frm->an_avs)) ?><br />
+        <?php print_string("adminavs", "enrol_authorize") ?></td>
 </tr>
 
 <tr valign="top">
     <td align="right">an_test:</td>
-    <td><?php print_checkbox('an_test', '1', !empty($frm->an_test)) ?></td>
-    <td><?php print_string("antestmode", "enrol_authorize") ?></td>
+    <td><?php print_checkbox('an_test', '1', !empty($frm->an_test)) ?><br />
+        <?php print_string("antestmode", "enrol_authorize") ?></td>
 </tr>
 
 <tr valign="top">
     <td align="right">an_acceptmethods:</td>
     <td><?php
-    $allmethods = array('CC','ECHECK');
-    foreach ($allmethods as $key) {
-        print_checkbox('acceptmethods[]', strtolower($key), stristr($CFG->an_acceptmethods, $key) !== false, $key); echo "<br />\n";
+    $allpaymentmethods = enrolment_plugin_authorize::get_list_of_payment_methods(true);
+    $paymentmethodsenabled = enrolment_plugin_authorize::get_list_of_payment_methods();
+    foreach ($allpaymentmethods as $key) {
+        print_checkbox('acceptmethods[]', $key, in_array($key, $paymentmethodsenabled), get_string('method'.strtolower($key),'enrol_authorize')); echo "<br />\n";
     }
-    ?></td>
-    <td><?php print_string("adminacceptmethods", "enrol_authorize") ?></td>
+    ?><br /><?php print_string("adminacceptmethods", "enrol_authorize") ?></td>
 </tr>
 
 <tr valign="top">
@@ -152,41 +148,40 @@ if (!isset($frm->acceptccs)) {
     foreach ($allccs as $key => $val) {
         print_checkbox('acceptccs[]', $key, stristr($CFG->an_acceptccs, $key) !== false, $val); echo "<br />\n";
     }
-    ?></td>
-    <td><?php print_string("adminacceptccs", "enrol_authorize") ?></td>
+    ?><br /><?php print_string("adminacceptccs", "enrol_authorize") ?></td>
 </tr>
 
-<tr valign="top"><td colspan="3"><h4><?php print_string("adminauthorizeccapture", "enrol_authorize") ?>
+<tr valign="top"><td colspan="2"><h4><?php print_string("adminauthorizeccapture", "enrol_authorize") ?>
                                      <?php helpbutton('orderreview', '', 'enrol/authorize'); ?>
-</h4></td></tr>
+                                 </h4></td></tr>
 
 <tr valign="top">
     <td align="right">an_review:</td>
     <td><?php print_checkbox('an_review', '1', !empty($frm->an_review)) ?>
-        <?php helpbutton('review', get_string('adminhelpreviewtitle', 'enrol_authorize'), 'enrol/authorize'); ?></td>
-    <td><?php print_string("adminreview", "enrol_authorize") ?></td>
+        <?php helpbutton('review', get_string('adminhelpreviewtitle', 'enrol_authorize'), 'enrol/authorize'); ?><br />
+        <?php print_string("adminreview", "enrol_authorize") ?></td>
 </tr>
 
 <tr valign="top">
     <td align="right">an_capture_day:</td>
     <td><input type="text" name="an_capture_day" size="2" maxlength="2" value="<?php p($frm->an_capture_day) ?>" />
-        <?php helpbutton('captureday', get_string('adminhelpcapturetitle', 'enrol_authorize'), 'enrol/authorize'); ?></td>
-    <td><?php print_string("reviewday", "enrol_authorize", $frm->an_capture_day) ?></td>
+        <?php helpbutton('captureday', get_string('adminhelpcapturetitle', 'enrol_authorize'), 'enrol/authorize'); ?><br />
+        <?php print_string("reviewday", "enrol_authorize", $frm->an_capture_day) ?></td>
 </tr>
 
-<tr valign="top"><td colspan="3"><h4><?php print_string("adminauthorizeemail", "enrol_authorize") ?></h4></td></tr>
+<tr valign="top"><td colspan="2"><h4><?php print_string("adminauthorizeemail", "enrol_authorize") ?></h4></td></tr>
 
 <tr valign="top">
     <td align="right">an_emailexpired:</td>
-    <td><input type="text" name="an_emailexpired" size="1" maxlength="1" value="<?php p($frm->an_emailexpired) ?>" /></td>
-    <td><?php print_string("adminemailexpired", "enrol_authorize", $frm->an_emailexpired) ?><br />
+    <td><input type="text" name="an_emailexpired" size="1" maxlength="1" value="<?php p($frm->an_emailexpired) ?>" /><br />
+        <?php print_string("adminemailexpired", "enrol_authorize", $frm->an_emailexpired) ?><br />
         <?php print_string("adminemailexpsetting", "enrol_authorize") ?></td>
 </tr>
 
 <tr valign="top">
     <td align="right">an_emailexpiredteacher:</td>
-    <td><?php print_checkbox('an_emailexpiredteacher', '1', !empty($frm->an_emailexpiredteacher)) ?></td>
-    <td><?php print_string("adminemailexpiredteacher", "enrol_authorize") ?></td>
+    <td><?php print_checkbox('an_emailexpiredteacher', '1', !empty($frm->an_emailexpiredteacher)) ?><br />
+        <?php print_string("adminemailexpiredteacher", "enrol_authorize") ?></td>
 </tr>
 
 <tr valign="top">
@@ -194,26 +189,26 @@ if (!isset($frm->acceptccs)) {
     <td><?php
     $sorts = array('ttl' => get_string('adminemailexpiredsortsum', 'enrol_authorize'),
                    'cnt' => get_string('adminemailexpiredsortcount', 'enrol_authorize'));
-    choose_from_menu($sorts, "an_sorttype", $frm->an_sorttype, "","", "") ?></td>
-    <td><?php print_string("adminemailexpiredsort", "enrol_authorize") ?></td>
+    choose_from_menu($sorts, "an_sorttype", $frm->an_sorttype, "","", "") ?><br />
+    <?php print_string("adminemailexpiredsort", "enrol_authorize") ?></td>
 </tr>
 
 <tr valign="top">
     <td align="right">enrol_mailstudents:</td>
-    <td><?php print_checkbox('enrol_mailstudents', '1', !empty($frm->enrol_mailstudents)) ?></td>
-    <td><?php print_string("mailstudents") ?></td>
+    <td><?php print_checkbox('enrol_mailstudents', '1', !empty($frm->enrol_mailstudents)) ?><br />
+        <?php print_string("mailstudents") ?></td>
 </tr>
 
 <tr valign="top">
     <td align="right">enrol_mailteachers:</td>
-    <td><?php print_checkbox('enrol_mailteachers', '1', !empty($frm->enrol_mailteachers)) ?></td>
-    <td><?php print_string("mailteachers") ?></td>
+    <td><?php print_checkbox('enrol_mailteachers', '1', !empty($frm->enrol_mailteachers)) ?><br />
+        <?php print_string("mailteachers") ?></td>
 </tr>
 
 <tr valign="top">
     <td align="right">enrol_mailadmins:</td>
-    <td><?php print_checkbox('enrol_mailadmins', '1', !empty($frm->enrol_mailadmins)) ?></td>
-    <td><?php print_string("mailadmins") ?></td>
+    <td><?php print_checkbox('enrol_mailadmins', '1', !empty($frm->enrol_mailadmins)) ?><br />
+        <?php print_string("mailadmins") ?></td>
 </tr>
 
 </table>

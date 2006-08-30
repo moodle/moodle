@@ -6,8 +6,8 @@
  * Credit Card (CC)
  * ECheck (ECHECK)
  */
-define('AN_METHOD_CC',     1);
-define('AN_METHOD_ECHECK', 2);
+define('AN_METHOD_CC',     'CC');
+define('AN_METHOD_ECHECK', 'ECHECK');
 /**#@-*/
 
 /**#@+
@@ -47,7 +47,7 @@ define('AN_STATUS_TEST',        0x80);
 /**#@-*/
 
 /**#@+
- * Actions used in authorizenet_action function.
+ * Actions used in authorize_action function.
  *
  * NONE: No action. Function always returns false.
  * AUTH_ONLY: Used to authorize only, don't capture.
