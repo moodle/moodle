@@ -85,10 +85,8 @@
     }
 
     require_login($course->id, false);
-
-    if (!isteacheredit($course->id)) {
-        error("You can't modify these questions!");
-    }
+    $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
+    require_capability('moodle/question:manage', $coursecontext);
 
     // TODO: remove restriction to quiz
     $streditingquestion = get_string('editingquestion', 'quiz');
@@ -100,7 +98,7 @@
             get_string("editquestions", "quiz").'</a> -> '.$streditingquestion;
     }
 
-    print_header_simple("$streditingquestion", "", $strediting);
+    print_header_simple($streditingquestion, '', $strediting);
 
     if ($form = data_submitted() and confirm_sesskey()) {
 
