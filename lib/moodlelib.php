@@ -6686,7 +6686,8 @@ function unzip_file ($zipfile, $destination = '', $showstatus = true) {
         include_once("$CFG->libdir/pclzip/pclzip.lib.php");
         $archive = new PclZip(cleardoubleslashes("$zippath/$zipfilename"));
         if (!$list = $archive->extract(PCLZIP_OPT_PATH, $destpath,
-                                       PCLZIP_CB_PRE_EXTRACT, 'unzip_cleanfilename')) {
+                                       PCLZIP_CB_PRE_EXTRACT, 'unzip_cleanfilename',
+                                       PCLZIP_OPT_EXTRACT_DIR_RESTRICTION, $destpath)) {
             notice($archive->errorInfo(true));
             return false;
         }

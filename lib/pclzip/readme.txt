@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------
-// PclZip 2.4 - readme.txt
+// PclZip 2.5 - readme.txt
 // --------------------------------------------------------------------------------
-// License GNU/LGPL - November 2004
+// License GNU/LGPL - March 2006
 // Vincent Blavet - vincent@phpconcept.net
 // http://www.phpconcept.net
 // --------------------------------------------------------------------------------
@@ -18,8 +18,9 @@
     4 - Known bugs or limitations
     5 - License
     6 - Warning
-    7 - Author
-    8 - Contribute
+    7 - Documentation
+    8 - Author
+    9 - Contribute
 
 1 - Introduction
 ================
@@ -31,6 +32,24 @@
 2 - What's new
 ==============
 
+  Version 2.5 :
+    - Introduce the ability to add file/folder with individual properties (file descriptor).
+      This gives for example the ability to change the filename of a zipped file.
+      . Able to add files individually
+      . Able to change full name
+      . Able to change short name
+      . Compatible with global options
+    - New attributes : PCLZIP_ATT_FILE_NAME, PCLZIP_ATT_FILE_NEW_SHORT_NAME, PCLZIP_ATT_FILE_NEW_FULL_NAME
+    - New error code : PCLZIP_ERR_INVALID_ATTRIBUTE_VALUE
+    - Add a security control feature. PclZip can extract any file in any folder
+      of a system. People may use this to upload a zip file and try to override
+      a system file. The PCLZIP_OPT_EXTRACT_DIR_RESTRICTION will give the
+      ability to forgive any directory transversal behavior.
+    - New PCLZIP_OPT_EXTRACT_DIR_RESTRICTION : check extraction path
+    - New error code : PCLZIP_ERR_DIRECTORY_RESTRICTION
+    - Modification in PclZipUtilPathInclusion() : dir and path beginning with ./ will be prepend
+      by current path (getcwd())
+  
   Version 2.4 :
     - Code improvment : try to speed up the code by removing unusefull call to pack()
     - Correct bug in delete() : delete() should be called with no argument. This was not
@@ -320,12 +339,17 @@
   the author can not be responsible.
   The use of this software is at the risk of the user.
 
-7 - Author
+7 - Documentation
+=================
+  PclZip User Manuel is available in English on PhpConcept : http://www.phpconcept.net/pclzip/man/en/index.php
+  A Russian translation was done by Feskov Kuzma : http://php.russofile.ru/ru/authors/unsort/zip/
+
+8 - Author
 ==========
 
   This software was written by Vincent Blavet (vincent@phpconcept.net) on its leasure time.
 
-8 - Contribute
+9 - Contribute
 ==============
   If you want to contribute to the development of PclZip, please contact vincent@phpconcept.net.
   If you can help in financing PhpConcept hosting service, please go to
