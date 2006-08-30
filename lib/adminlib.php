@@ -105,8 +105,8 @@ function upgrade_plugins($type, $dir, $return) {
             /// Both old .sql files and new install.xml are supported
             /// but we priorize install.xml (XMLDB) if present
                 $status = false;
-                if (file_exists($fullplug . '/db/installl.xml') && $CFG->xmldb_enabled) {
-                    $status = install_from_xmldb_file($fullplug . '/db/installl.xml'); //New method
+                if (file_exists($fullplug . '/db/install.xml') && $CFG->xmldb_enabled) {
+                    $status = install_from_xmldb_file($fullplug . '/db/install.xml'); //New method
                 } else if (file_exists($fullplug .'/db/'. $CFG->dbtype .'.sql')) {
                     $status = modify_database($fullplug .'/db/'. $CFG->dbtype .'.sql'); //Old method
                 } else { 
