@@ -120,9 +120,9 @@ class XMLDBmysql extends XMLDBGenerator {
                 if (empty($xmldb_length)) {
                     $xmldb_length = 'small';
                 }
-                if ($xmldb_length = 'small') {
+                if ($xmldb_length == 'small') {
                     $dbtype = 'TEXT';
-                } else if ($xmldb_length = 'medium') {
+                } else if ($xmldb_length == 'medium') {
                     $dbtype = 'MEDIUMTEXT';
                 } else {
                     $dbtype = 'BIGTEXT';
@@ -132,9 +132,9 @@ class XMLDBmysql extends XMLDBGenerator {
                 if (empty($xmldb_length)) {
                     $xmldb_length = 'small';
                 }
-                if ($xmldb_length = 'small') {
+                if ($xmldb_length == 'small') {
                     $dbtype = 'BLOB';
-                } else if ($xmldb_length = 'medium') {
+                } else if ($xmldb_length == 'medium') {
                     $dbtype = 'MEDIUMBLOB';
                 } else {
                     $dbtype = 'BIGBLOB';
