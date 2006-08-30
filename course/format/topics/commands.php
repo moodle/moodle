@@ -1,5 +1,5 @@
 <?php  // $Id$
-       // Provide RESTful interface for topics AJAX course formats
+       // Provide interface for topics AJAX course formats
 
 require_once('../../../config.php');
 require_once($CFG->dirroot.'/course/lib.php');
@@ -11,6 +11,8 @@ $class    = required_param('class', PARAM_ALPHA);
 
 $field      = optional_param('field', '', PARAM_ALPHA);
 $instanceid = optional_param('instanceId', 0, PARAM_INT);
+$sectionid = optional_param('sectionId', 0, PARAM_INT);
+$beforeid = optional_param('beforeId', 0, PARAM_INT);
 $value      = optional_param('value', 0, PARAM_INT);
 $column     = optional_param('column', 0, PARAM_ALPHA);
 $id         = optional_param('id', 0, PARAM_INT);
@@ -68,36 +70,11 @@ switch($_SERVER['REQUEST_METHOD']){
                 switch ($field) {
         
                     case 'visible':
-                        $dataobject->visible = $value;
-                        if (!update_record('course_sections',$dataobject)) {
-                            error('Failed to update section');
-                        }
-                        break;  
-        
-        
-                    case 'sequence':
-                        $dataobject->sequence = $sequence;
-                        if (!update_record('course_sections',$dataobject)) {
-                            error('Failed to update section');
-                        }
-                        break;  
-        
-                    case 'all':
-                        $dataobject->summary = make_dangerous($summary);
-                        $dataobject->sequence = $sequence;
-                        $dataobject->visible = $visible;
-                        if (!update_record('course_sections',$dataobject)) {
-                            error('Failed to update section');
-                        }
-                        break;  
+                        set_section_visible($course->id, $id, $value);
+                        break;                 
                         
-                    case 'swap':
-                        $dataobject->summary = make_dangerous($summary);
-                        $dataobject->sequence = $sequence;
-                        $dataobject->visible = $visible;
-                        if (!update_record('course_sections',$dataobject)) {
-                            error('Failed to update section');
-                        }
+                    case 'move':
+                        move_section($course, $id, $value);
                         break;                  
                         
                         
@@ -107,27 +84,22 @@ switch($_SERVER['REQUEST_METHOD']){
             case 'resource':
                 switch($field) {
                     case 'visible':
-                        $dataobject->id = $id;
-                        $dataobject->visible = $value;
-                        if (!update_record('course_modules',$dataobject)) {
-                            error('Failed to update activity');
-                        }
+                        set_coursemodule_visible($id, $value);
                         break;
         
                     case 'groupmode':
-                        $dataobject->id = $id;
-                        $dataobject->groupmode = $value;
-                        if (!update_record('course_modules',$dataobject)) {
-                            error('Failed to update activity');
+                        set_coursemodule_groupmode($id, $value);
+                        break;        
+                        
+                    case 'move':
+                        $section = get_record('course_sections','course',$course->id,'section',$sectionid);
+                        $mod = get_record('course_modules', 'id', $id);
+                        
+                        if($beforeid > 0){
+                            $beforemod = get_record('course_modules', 'id', $beforeid);
                         }
-                        break;
-        
-                    case 'section':
-                        $dataobject->id = $id;
-                        $dataobject->section = $value;
-                        if (!update_record('course_modules',$dataobject)) {
-                            error('Failed to update activity');
-                        }
+                        
+                        moveto_module($mod, $section, $beforemod);
                         break;
                 }
                 break;
@@ -152,26 +124,12 @@ switch($_SERVER['REQUEST_METHOD']){
                 delete_records('block_instance','id',$instanceid);     
                 break; 
                 
-            case 'section':
-                $dataobject->id = get_field('course_sections','id','course',$course->id,'section',$id);
-                $dataobject->summary = '';
-                $dataobject->sequence = '';
-                $dataobject->visible = '1';
-                update_record('course_sections',$dataobject);                                                                                                                                           
-                break; 
-                
-            case 'resource':                          
-                delete_records('course_modules','id',$id);     
+            case 'resource':
+                delete_course_module($id);                           
                 break;          
         }
         break;
             
 }       
 
-
-
-function make_dangerous($input){
-    //the compliment to the javascript function 'make_safe'
-    return str_replace("_.amp._","&",$input);       
-}  
 ?>
