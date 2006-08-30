@@ -329,13 +329,6 @@ class enrolment_plugin_authorize
 
     }
 
-
-    /**
-     * validate_cc_form (static method)
-     *
-     * @param unknown_type $form
-     * @return bool
-     */
     function validate_cc_form($form)
     {
         global $CFG;
@@ -559,7 +552,7 @@ class enrolment_plugin_authorize
         // required fields
         $loginval = optional_param('an_login', '');
         if (empty($loginval)) {
-        	return false;
+            return false;
         }
         set_config('an_login', $loginval);
 
@@ -719,7 +712,7 @@ class enrolment_plugin_authorize
         $alltypes = array(AN_METHOD_CC, AN_METHOD_ECHECK);
 
         if ($getall) {
-        	return $alltypes;
+            return $alltypes;
         }
 
         $ret = array();
