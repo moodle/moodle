@@ -2143,7 +2143,7 @@ function main_upgrade($oldversion=0) {
     }
 
     if ($oldversion < 2006082900) {
-        execute_sql("DROP TABLE {$CFG->prefix}sessions", false);
+        execute_sql("DROP TABLE {$CFG->prefix}sessions", true);
         execute_sql("
             CREATE TABLE {$CFG->prefix}sessions2 (
                 sesskey VARCHAR(64) NOT NULL default '',
@@ -2159,6 +2159,10 @@ function main_upgrade($oldversion=0) {
             CREATE INDEX {$CFG->prefix}sess_exp_ix ON {$CFG->prefix}sessions2 (expiry);", true);
         execute_sql("
             CREATE INDEX {$CFG->prefix}sess_exp2_ix ON {$CFG->prefix}sessions2 (expireref);", true);
+    }
+
+    if ($oldversion < 2006083001) {
+        table_column('sessions2', 'sessdata', 'sessdata', 'LONGTEXT', '', '', '', '', '');
     }
     
     return $result;

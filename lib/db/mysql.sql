@@ -540,7 +540,7 @@ CREATE TABLE prefix_sessions2 (
     expireref VARCHAR(250),
     created DATETIME NOT NULL,
     modified DATETIME NOT NULL,
-    sessdata TEXT,
+    sessdata LONGTEXT,
 CONSTRAINT  PRIMARY KEY (sesskey)
 ) COMMENT='Optional database session storage in new format, not used by default';
 

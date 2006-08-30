@@ -1742,7 +1742,7 @@ function main_upgrade($oldversion=0) {
     }
 
     if ($oldversion < 2006082900) {
-        execute_sql("DROP TABLE {$CFG->prefix}sessions", false);
+        execute_sql("DROP TABLE {$CFG->prefix}sessions", true);
         execute_sql("
             CREATE TABLE {$CFG->prefix}sessions2 (
                 sesskey VARCHAR(255) NOT NULL default '',
