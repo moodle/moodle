@@ -1,4 +1,4 @@
-<?PHP  //$Id$
+<?php //$Id$
 
 // PostgreSQL commands for upgrading this enrolment module
 

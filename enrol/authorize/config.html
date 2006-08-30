@@ -30,6 +30,16 @@ if (!isset($frm->an_cutoff_hour)) {
     $frm->an_cutoff_min = (intval(round($timezone)) != intval($timezone)) ? 35 : 5;
 }
 
+if (!isset($frm->acceptmethods)) {
+    if (empty($CFG->an_acceptmethods)) {
+        $frm->acceptmethods = array('cc');
+        $CFG->an_acceptmethods = implode(',', $frm->acceptmethods);
+    }
+    else {
+    	$frm->acceptmethods = explode(',', $CFG->an_acceptmethods);
+    }
+}
+
 if (!isset($frm->acceptccs)) {
     $frm->acceptccs = array_keys(enrolment_plugin_authorize::get_list_of_creditcards());
     $CFG->an_acceptccs = implode(',', $frm->acceptccs);
@@ -122,6 +132,17 @@ if (!isset($frm->acceptccs)) {
     <td align="right">an_test:</td>
     <td><?php print_checkbox('an_test', '1', !empty($frm->an_test)) ?></td>
     <td><?php print_string("antestmode", "enrol_authorize") ?></td>
+</tr>
+
+<tr valign="top">
+    <td align="right">an_acceptmethods:</td>
+    <td><?php
+    $allmethods = array('CC','ECHECK');
+    foreach ($allmethods as $key) {
+        print_checkbox('acceptmethods[]', strtolower($key), stristr($CFG->an_acceptmethods, $key) !== false, $key); echo "<br />\n";
+    }
+    ?></td>
+    <td><?php print_string("adminacceptmethods", "enrol_authorize") ?></td>
 </tr>
 
 <tr valign="top">

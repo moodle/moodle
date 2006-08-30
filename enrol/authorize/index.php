@@ -1,4 +1,4 @@
-<?PHP // $Id$
+<?php // $Id$
 
 /// Load libraries
     require_once('../../config.php');

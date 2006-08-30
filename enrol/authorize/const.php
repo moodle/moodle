@@ -1,6 +1,30 @@
 <?php // $Id$
 
 /**#@+
+ * Authorize.net methods.
+ *
+ * Credit Card (CC)
+ * ECheck (ECHECK)
+ */
+define('AN_METHOD_CC',     1);
+define('AN_METHOD_ECHECK', 2);
+/**#@-*/
+
+/**#@+
+ * E-Check types
+ *
+ * Cash Concentration or Disbursement (CCD)
+ * Prearranged Payment and Deposit Entry (PPD)
+ * Telephone-Initiated Entry (TEL)
+ * Internet-Initiated Entry (WEB)
+ */
+define('AN_ECHECK_CCD', 'CCD');
+define('AN_ECHECK_PPD', 'PPD');
+define('AN_ECHECK_TEL', 'TEL');
+define('AN_ECHECK_WEB', 'WEB');
+/**#@-*/
+
+/**#@+
  * Order status used in enrol_authorize table.
  *
  * NONE: New order or order is in progress. TransactionID hasn't received yet.
@@ -23,13 +47,13 @@ define('AN_STATUS_TEST',        0x80);
 /**#@-*/
 
 /**#@+
- * Actions used in authorize_action function.
+ * Actions used in authorizenet_action function.
  *
  * NONE: No action. Function always returns false.
  * AUTH_ONLY: Used to authorize only, don't capture.
  * CAPTURE_ONLY: Authorization code received from a bank over the phone and capture now.
- * PRIOR_AUTH_CAPTURE:  Used to capture, it was authorized before.
  * AUTH_CAPTURE: Used to authorize and capture.
+ * PRIOR_AUTH_CAPTURE:  Used to capture, it was authorized before.
  * CREDIT: Used to return funds to a customer's credit card.
  * VOID: Used to cancel an exiting pending transaction.
  *

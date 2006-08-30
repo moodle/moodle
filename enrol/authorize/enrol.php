@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php // $Id$
 
 require_once($CFG->dirroot.'/enrol/enrol.class.php');
 require_once($CFG->dirroot.'/enrol/authorize/const.php');
@@ -481,6 +481,9 @@ class enrolment_plugin_authorize
         set_config('an_test', optional_param('an_test', 0, PARAM_BOOL));
         set_config('an_referer', optional_param('an_referer', 'http://', PARAM_URL));
 
+        $acceptmethods = optional_param('acceptmethods', array('cc'), PARAM_ALPHA);
+        set_config('an_acceptmethods', implode(',', $acceptmethods));
+
         $acceptccs = optional_param('acceptccs',
                                     array_keys(enrolment_plugin_authorize::get_list_of_creditcards()),
                                     PARAM_ALPHA);
@@ -695,7 +698,6 @@ class enrolment_plugin_authorize
         $timenow = time();
         $settlementtime = authorize_getsettletime($timenow);
         $timediff30 = $settlementtime - (30 * $oneday);
-
         $mconfig = get_config('enrol/authorize');
         set_config('an_lastcron', $timenow, 'enrol/authorize');
 
