@@ -8,8 +8,8 @@ require_once($CFG->dirroot.'/course/lib.php');
 
 $courseid = required_param('courseId', PARAM_INT);
 $class    = required_param('class', PARAM_ALPHA);
-$field    = required_param('field', PARAM_ALPHA);
 
+$field      = optional_param('field', '', PARAM_ALPHA);
 $instanceid = optional_param('instanceId', 0, PARAM_INT);
 $value      = optional_param('value', 0, PARAM_INT);
 $column     = optional_param('column', 0, PARAM_ALPHA);
@@ -34,104 +34,139 @@ require_capability('moodle/course:update', $context);
 // OK, now let's process the parameters and do stuff
 
 $dataobject = NULL;
-
-switch ($class) {
-    case 'block': 
-        switch ($field) {
-            case 'visible':       
-                $dataobject->id = $instanceid;
-                $dataobject->visible = $value;
-                if (!update_record('block_instance',$dataobject)) {
-                    error('Failed to update block!');
+switch($_SERVER['REQUEST_METHOD']){                              
+    case 'POST':    
+        switch ($class) {
+            case 'block': 
+                switch ($field) {
+                    case 'visible':       
+                        $dataobject->id = $instanceid;
+                        $dataobject->visible = $value;
+                        if (!update_record('block_instance',$dataobject)) {
+                            error('Failed to update block!');
+                        }
+                        break;
+        
+                    case 'position':  
+                        $dataobject->id = $instanceid;
+                        $dataobject->position = $column;
+                        $dataobject->weight = $value;
+                        if (!update_record('block_instance',$dataobject)) {
+                            error('Failed to update block!');
+                        }
+                        break;                            
                 }
                 break;
-
-            case 'position':  
-                $dataobject->id = $instanceid;
-                $dataobject->position = $column;
-                $dataobject->weight = $value;
-                if (!update_record('block_instance',$dataobject)) {
-                    error('Failed to update block!');
+        
+        
+            case 'section': 
+        
+                if (!$dataobject->id = get_field('course_sections','id','course',$course->id,'section',$id)) {
+                    error('Bad Section ID');
                 }
-                break;                            
+        
+                switch ($field) {
+        
+                    case 'visible':
+                        $dataobject->visible = $value;
+                        if (!update_record('course_sections',$dataobject)) {
+                            error('Failed to update section');
+                        }
+                        break;  
+        
+        
+                    case 'sequence':
+                        $dataobject->sequence = $sequence;
+                        if (!update_record('course_sections',$dataobject)) {
+                            error('Failed to update section');
+                        }
+                        break;  
+        
+                    case 'all':
+                        $dataobject->summary = make_dangerous($summary);
+                        $dataobject->sequence = $sequence;
+                        $dataobject->visible = $visible;
+                        if (!update_record('course_sections',$dataobject)) {
+                            error('Failed to update section');
+                        }
+                        break;  
+                        
+                    case 'swap':
+                        $dataobject->summary = make_dangerous($summary);
+                        $dataobject->sequence = $sequence;
+                        $dataobject->visible = $visible;
+                        if (!update_record('course_sections',$dataobject)) {
+                            error('Failed to update section');
+                        }
+                        break;                  
+                        
+                        
+                }
+                break;
+        
+            case 'resource':
+                switch($field) {
+                    case 'visible':
+                        $dataobject->id = $id;
+                        $dataobject->visible = $value;
+                        if (!update_record('course_modules',$dataobject)) {
+                            error('Failed to update activity');
+                        }
+                        break;
+        
+                    case 'groupmode':
+                        $dataobject->id = $id;
+                        $dataobject->groupmode = $value;
+                        if (!update_record('course_modules',$dataobject)) {
+                            error('Failed to update activity');
+                        }
+                        break;
+        
+                    case 'section':
+                        $dataobject->id = $id;
+                        $dataobject->section = $value;
+                        if (!update_record('course_modules',$dataobject)) {
+                            error('Failed to update activity');
+                        }
+                        break;
+                }
+                break;
+        
+            case 'course': 
+                switch($field) {
+                    case 'marker':
+                        $dataobject->id = $course->id;
+                        $dataobject->marker = $value;
+                        if (!update_record('course',$dataobject)) {
+                            error('Failed to update course');
+                        }
+                        break;
+                }
+                break;
         }
         break;
-
-
-    case 'section': 
-
-        if (!$dataobject->id = get_field('course_sections','id','course',$course->id,'section',$id)) {
-            error('Bad Section ID');
-        }
-
-        switch ($field) {
-
-            case 'visible':
-                $dataobject->visible = $value;
-                if (!update_record('course_sections',$dataobject)) {
-                    error('Failed to update section');
-                }
-                break;  
-
-
-            case 'sequence':
-                $dataobject->sequence = $sequence;
-                if (!update_record('course_sections',$dataobject)) {
-                    error('Failed to update section');
-                }
-                break;  
-
-            case 'all':
-                $dataobject->summary = make_dangerous($summary);
-                $dataobject->sequence = $sequence;
-                $dataobject->visible = $visible;
-                if (!update_record('course_sections',$dataobject)) {
-                    error('Failed to update section');
-                }
-                break;  
-        }
-        break;
-
-    case 'resource':
-        switch($field) {
-            case 'visible':
-                $dataobject->id = $id;
-                $dataobject->visible = $value;
-                if (!update_record('course_modules',$dataobject)) {
-                    error('Failed to update activity');
-                }
-                break;
-
-            case 'groupmode':
-                $dataobject->id = $id;
-                $dataobject->groupmode = $value;
-                if (!update_record('course_modules',$dataobject)) {
-                    error('Failed to update activity');
-                }
-                break;
-
+        
+    case 'DELETE':
+        switch ($class) {
+            case 'block':        
+                delete_records('block_instance','id',$instanceid);     
+                break; 
+                
             case 'section':
-                $dataobject->id = $id;
-                $dataobject->section = $value;
-                if (!update_record('course_modules',$dataobject)) {
-                    error('Failed to update activity');
-                }
-                break;
+                $dataobject->id = get_field('course_sections','id','course',$course->id,'section',$id);
+                $dataobject->summary = '';
+                $dataobject->sequence = '';
+                $dataobject->visible = '1';
+                update_record('course_sections',$dataobject);                                                                                                                                           
+                break; 
+                
+            case 'resource':                          
+                delete_records('course_modules','id',$id);     
+                break;          
         }
         break;
-
-    case 'course': 
-        switch($field) {
-            case 'marker':
-                $dataobject->id = $course->id;
-                $dataobject->marker = $value;
-                if (!update_record('course',$dataobject)) {
-                    error('Failed to update course');
-                }
-                break;
-        }
-        break;
-}
+            
+}       
 
 
 
