@@ -77,6 +77,21 @@
     <TABLE name="question_multichoice">
       <FIELDS>
         <FIELD name="answers" method="NO_CONV" type="varchar" length="255" />
+        <FIELD name="correctfeedback" method="PHP_FUNCTION" type="text" length="0">
+          <PHP_FUNCTION>
+            migrate2utf8_question_multichoice_correctfeedback(RECORDID)
+          </PHP_FUNCTION>
+        </FIELD>
+        <FIELD name="partiallycorrectfeedback" method="PHP_FUNCTION" type="text" length="0">
+          <PHP_FUNCTION>
+            migrate2utf8_question_multichoice_partiallycorrectfeedback(RECORDID)
+          </PHP_FUNCTION>
+        </FIELD>
+        <FIELD name="incorrectfeedback" method="PHP_FUNCTION" type="text" length="0">
+          <PHP_FUNCTION>
+            migrate2utf8_question_multichoice_incorrectfeedback(RECORDID)
+          </PHP_FUNCTION>
+        </FIELD>
       </FIELDS>
     </TABLE>
     <TABLE name="question_multianswer">
@@ -145,6 +160,11 @@
           </PHP_FUNCTION>
         </FIELD>
         <FIELD name="image" method="NO_CONV" type="varchar" length="255" />
+        <FIELD name="commentarytext" method="PHP_FUNCTION" type="text" length="0">
+          <PHP_FUNCTION>
+            migrate2utf8_question_commentarytext(RECORDID)
+          </PHP_FUNCTION>
+        </FIELD>
         <FIELD name="stamp" method="NO_CONV" type="varchar" length="255" />
       </FIELDS>
     </TABLE>

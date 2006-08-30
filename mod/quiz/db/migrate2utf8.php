@@ -1,5 +1,161 @@
 <?php // $Id$
 
+function migrate2utf8_question_multichoice_correctfeedback($recordid){
+    global $CFG, $globallang;
+
+/// Some trivial checks
+    if (empty($recordid)) {
+        log_the_problem_somewhere();
+        return false;
+    }
+
+    $SQL = "SELECT qc.course
+           FROM {$CFG->prefix}question_categories qc,
+                {$CFG->prefix}question qq,
+                {$CFG->prefix}question_multichoice qm
+           WHERE qc.id = qq.category
+                 AND qq.id = qm.question
+                 AND qm.id =  $recordid";
+
+    if (!$quiz = get_record_sql($SQL)) {
+        log_the_problem_somewhere();
+        return false;
+    }
+
+    if (!$questionmultichoice = get_record('question_multichoice','id',$recordid)) {
+        log_the_problem_somewhere();
+        return false;
+    }
+
+    if ($globallang) {
+        $fromenc = $globallang;
+    } else {
+        $sitelang   = $CFG->lang;
+        $courselang = get_course_lang($quiz->course);  //Non existing!
+        $userlang   = get_main_teacher_lang($quiz->course); //N.E.!!
+
+        $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+    }
+
+/// We are going to use textlib facilities
+    
+/// Convert the text
+    if (($fromenc != 'utf-8') && ($fromenc != 'UTF-8')) {
+        $result = utfconvert($questionmultichoice->correctfeedback, $fromenc);
+
+        $newquestionmultichoice = new object;
+        $newquestionmultichoice->id = $recordid;
+        $newquestionmultichoice->correctfeedback = $result;
+        update_record('question_multichoice',$newquestionmultichoice);
+    }
+/// And finally, just return the converted field
+    return $result;
+}
+
+function migrate2utf8_question_multichoice_partiallycorrectfeedback($recordid){
+    global $CFG, $globallang;
+
+/// Some trivial checks
+    if (empty($recordid)) {
+        log_the_problem_somewhere();
+        return false;
+    }
+
+    $SQL = "SELECT qc.course
+           FROM {$CFG->prefix}question_categories qc,
+                {$CFG->prefix}question qq,
+                {$CFG->prefix}question_multichoice qm
+           WHERE qc.id = qq.category
+                 AND qq.id = qm.question
+                 AND qm.id =  $recordid";
+
+    if (!$quiz = get_record_sql($SQL)) {
+        log_the_problem_somewhere();
+        return false;
+    }
+
+    if (!$questionmultichoice = get_record('question_multichoice','id',$recordid)) {
+        log_the_problem_somewhere();
+        return false;
+    }
+
+    if ($globallang) {
+        $fromenc = $globallang;
+    } else {
+        $sitelang   = $CFG->lang;
+        $courselang = get_course_lang($quiz->course);  //Non existing!
+        $userlang   = get_main_teacher_lang($quiz->course); //N.E.!!
+
+        $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+    }
+
+/// We are going to use textlib facilities
+    
+/// Convert the text
+    if (($fromenc != 'utf-8') && ($fromenc != 'UTF-8')) {
+        $result = utfconvert($questionmultichoice->partiallycorrectfeedback, $fromenc);
+
+        $newquestionmultichoice = new object;
+        $newquestionmultichoice->id = $recordid;
+        $newquestionmultichoice->partiallycorrectfeedback= $result;
+        update_record('question_multichoice',$newquestionmultichoice);
+    }
+/// And finally, just return the converted field
+    return $result;
+}
+
+function migrate2utf8_question_multichoice_incorrectfeedback($recordid){
+    global $CFG, $globallang;
+
+/// Some trivial checks
+    if (empty($recordid)) {
+        log_the_problem_somewhere();
+        return false;
+    }
+
+    $SQL = "SELECT qc.course
+           FROM {$CFG->prefix}question_categories qc,
+                {$CFG->prefix}question qq,
+                {$CFG->prefix}question_multichoice qm
+           WHERE qc.id = qq.category
+                 AND qq.id = qm.question
+                 AND qm.id =  $recordid";
+
+    if (!$quiz = get_record_sql($SQL)) {
+        log_the_problem_somewhere();
+        return false;
+    }
+
+    if (!$questionmultichoice = get_record('question_multichoice','id',$recordid)) {
+        log_the_problem_somewhere();
+        return false;
+    }
+
+    if ($globallang) {
+        $fromenc = $globallang;
+    } else {
+        $sitelang   = $CFG->lang;
+        $courselang = get_course_lang($quiz->course);  //Non existing!
+        $userlang   = get_main_teacher_lang($quiz->course); //N.E.!!
+
+        $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+    }
+
+/// We are going to use textlib facilities
+    
+/// Convert the text
+    if (($fromenc != 'utf-8') && ($fromenc != 'UTF-8')) {
+        $result = utfconvert($questionmultichoice->incorrectfeedback, $fromenc);
+
+        $newquestionmultichoice = new object;
+        $newquestionmultichoice->id = $recordid;
+        $newquestionmultichoice->incorrectfeedback= $result;
+        update_record('question_multichoice',$newquestionmultichoice);
+    }
+/// And finally, just return the converted field
+    return $result;
+}
+
 function migrate2utf8_quiz_feedback_feedbacktext($recordid) {
     global $CFG, $globallang; 
     /// Some trivial checks
@@ -198,6 +354,55 @@ function migrate2utf8_question_questiontext($recordid){
     return $result;
 }
 
+function migrate2utf8_question_commentarytext($recordid){
+    global $CFG, $globallang;
+
+/// Some trivial checks
+    if (empty($recordid)) {
+        log_the_problem_somewhere();
+        return false;
+    }
+
+    $SQL = "SELECT qc.course
+           FROM {$CFG->prefix}question_categories qc,
+                {$CFG->prefix}question qq
+           WHERE qc.id = qq.category
+                 AND qq.id = $recordid";
+
+    if (!$quiz = get_record_sql($SQL)) {
+        log_the_problem_somewhere();
+        return false;
+    }
+
+    if (!$quizquestions = get_record('question','id',$recordid)) {
+        log_the_problem_somewhere();
+        return false;
+    }
+
+    if ($globallang) {
+        $fromenc = $globallang;
+    } else {
+        $sitelang   = $CFG->lang;
+        $courselang = get_course_lang($quiz->course);  //Non existing!
+        $userlang   = get_main_teacher_lang($quiz->course); //N.E.!!
+
+        $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+    }
+
+/// We are going to use textlib facilities
+    
+/// Convert the text
+    if (($fromenc != 'utf-8') && ($fromenc != 'UTF-8')) {
+        $result = utfconvert($quizquestions->commentarytext, $fromenc);
+
+        $newquizquestion = new object;
+        $newquizquestion->id = $recordid;
+        $newquizquestion->commentarytext = $result;
+        update_record('question',$newquizquestion);
+    }
+/// And finally, just return the converted field
+    return $result;
+}
 
 function migrate2utf8_question_numerical_units_unit($recordid){
     global $CFG, $globallang;
