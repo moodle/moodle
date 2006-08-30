@@ -11,24 +11,6 @@ define('AN_METHOD_ECHECK', 'ECHECK');
 /**#@-*/
 
 /**#@+
- * Some useful authorize.net responses.
- * Autoconfigure payment methods and credit card types.
- *
- * NOCCTYPE: The merchant does not accept this type of credit card.
- *    NOACH: ACH transactions are not accepted by this merchant.
- *  ACHONLY: This merchant accepts ACH transactions only;
- *           no credit card transactions are accepted.
- *
- */
-define('AN_REASON_NOCCTYPE', 17);
-define('AN_REASON_NOCCTYPE2', 28);
-define('AN_REASON_NOACH', 18);
-define('AN_REASON_ACHONLY', 56);
-define('AN_REASON_NOACHTYPE', 245);
-define('AN_REASON_NOACHTYPE2', 246);
-/**#@-*/
-
-/**#@+
  * E-Check types
  *
  * Cash Concentration or Disbursement (CCD)

@@ -10,6 +10,13 @@ define('AN_ERROR',    '3');
 define('AN_DELIM',    '|');
 define('AN_ENCAP',    '"');
 
+define('AN_REASON_NOCCTYPE',    17);
+define('AN_REASON_NOCCTYPE2',   28);
+define('AN_REASON_NOACH',       18);
+define('AN_REASON_ACHONLY',     56);
+define('AN_REASON_NOACHTYPE',  245);
+define('AN_REASON_NOACHTYPE2', 246);
+
 require_once($CFG->dirroot.'/enrol/authorize/const.php');
 require_once($CFG->dirroot.'/enrol/authorize/enrol.php');
 
