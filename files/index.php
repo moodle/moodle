@@ -16,7 +16,7 @@
     $action  = optional_param('action', '', PARAM_ACTION);
     $name    = optional_param('name', '', PARAM_FILE);
     $oldname = optional_param('oldname', '', PARAM_FILE);
-    $choose  = optional_param('choose', '', PARAM_CLEAN);
+    $choose  = optional_param('choose', '', PARAM_FILE); //in fact it is always 'formname.inputname'
     $userfile= optional_param('userfile','',PARAM_FILE);
     $save    = optional_param('save', 0, PARAM_BOOL);
     $text    = optional_param('text', '', PARAM_RAW);
