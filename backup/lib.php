@@ -330,9 +330,20 @@
                     false, "&nbsp;", "&nbsp;");
 
             upgrade_log_start();
+            print_heading('backup');
             $db->debug=true;
-            if (modify_database("$CFG->dirroot/backup/db/$CFG->dbtype.sql")) {
-                $db->debug = false;
+
+        /// Both old .sql files and new install.xml are supported
+        /// but we priorize install.xml (XMLDB) if present
+            $status = false;
+            if (file_exists($CFG->dirroot . '/backup/db/install.xml') && $CFG->xmldb_enabled) {
+                $status = install_from_xmldb_file($CFG->dirroot . '/backup/db/install.xml'); //New method
+            } else if (file_exists($CFG->dirroot . '/backup/db/' . $CFG->dbtype . '.sql')) {
+                $status = modify_database($CFG->dirroot . '/backup/db/' . $CFG->dbtype . '.sql'); //Old method
+            }
+ 
+            $db->debug = false;
+            if ($status) {
                 if (set_config("backup_version", $backup_version) and set_config("backup_release", $backup_release)) {
                     notify(get_string("databasesuccess"), "green");
                     notify(get_string("databaseupgradebackups", "", $backup_version), "green");
@@ -346,6 +357,17 @@
             }
         }
 
+    /// Upgrading code starts here
+        $oldupgrade = false;
+        $newupgrade = false;
+        if (is_readable($CFG->dirroot . '/backup/db/' . $CFG->dbtype . '.php')) {
+            include_once($CFG->dirroot . '/backup/db/' . $CFG->dbtype . '.php');  // defines old upgrading function
+            $oldupgrade = true;
+        }
+        if (is_readable($CFG->dirroot . '/backup/db/upgrade.php')  && $CFG->xmldb_enabled) {
+            include_once($CFG->dirroot . '/backup/db/upgrade.php');  // defines new upgrading function
+            $newupgrade = true;
+        }
 
         if ($backup_version > $CFG->backup_version) {       // Upgrade tables
             $strdatabaseupgrades = get_string("databaseupgrades");
@@ -353,11 +375,35 @@
                      '<script type="text/javascript" src="' . $CFG->wwwroot . '/lib/scroll_to_errors.js"></script>');
 
             upgrade_log_start();
-            require_once ("$CFG->dirroot/backup/db/$CFG->dbtype.php");
+            print_heading('backup');
 
-            $db->debug=true;
-            if (backup_upgrade($CFG->backup_version)) {
-                $db->debug=false;
+        /// Run de old and new upgrade functions for the module
+            $oldupgrade_function = 'backup_upgrade';
+            $newupgrade_function = 'xmldb_backup_upgrade';
+
+        /// First, the old function if exists
+            $oldupgrade_status = true;
+            if ($oldupgrade && function_exists($oldupgrade_function)) {
+                $db->debug = true;
+                $oldupgrade_status = $oldupgrade_function($CFG->backup_version);
+            } else if ($oldupgrade) {
+                notify ('Upgrade function ' . $oldupgrade_function . ' was not available in ' .
+                        '/backup/db/' . $CFG->dbtype . '.php');
+            }
+
+        /// Then, the new function if exists and the old one was ok
+            $newupgrade_status = true;
+            if ($newupgrade && function_exists($newupgrade_function) && $oldupgrade_status) {
+                $db->debug = true;
+                $newupgrade_status = $newupgrade_function($CFG->backup_version);
+            } else if ($newupgrade) {
+                notify ('Upgrade function ' . $newupgrade_function . ' was not available in ' .
+                        '/backup/db/upgrade.php');
+            }
+
+            $db->debug=false;
+        /// Now analyze upgrade results
+            if ($oldupgrade_status && $newupgrade_status) {    // No upgrading failed
                 if (set_config("backup_version", $backup_version) and set_config("backup_release", $backup_release)) {
                     notify(get_string("databasesuccess"), "green");
                     notify(get_string("databaseupgradebackups", "", $backup_version), "green");
@@ -367,16 +413,14 @@
                     error("Upgrade of backup system failed! (Could not update version in config table)");
                 }
             } else {
-                $db->debug=false;
                 error("Upgrade failed!  See backup/version.php");
             }
 
         } else if ($backup_version < $CFG->backup_version) {
             upgrade_log_start();
             notify("WARNING!!!  The code you are using is OLDER than the version that made these databases!");
-            upgrade_log_finish();
         }
-
+        upgrade_log_finish();
     }
 
  
