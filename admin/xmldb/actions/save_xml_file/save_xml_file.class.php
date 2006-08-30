@@ -38,7 +38,7 @@ class save_xml_file extends XMLDBAction {
 
     /// Get needed strings
         $this->loadStrings(array(
-        /// 'key' => 'module'
+            'filenotwriteable' => 'xmldb'
         ));
     }
 
@@ -78,6 +78,12 @@ class save_xml_file extends XMLDBAction {
             }
         }
 
+    /// Chech for perms
+        if (!is_writeable($dirpath . '/install.xml')) {
+            $this->errormsg = $this->str['filenotwriteable'] . '(' . $dirpath . '/install.xml)';
+            return false;
+        }
+
     /// Save the original dir
         $result = $dbdir->xml_file->saveXMLFile();
 
@@ -91,7 +97,8 @@ class save_xml_file extends XMLDBAction {
             unset($XMLDB->dbdirs[$dirpath]->xml_exists);
             unset($XMLDB->dbdirs[$dirpath]->xml_writeable);
         } else {
-            $errormsg = 'Error saving XML file (' . $dirpath . ')';
+            $this->errormsg = 'Error saving XML file (' . $dirpath . ')';
+            return false;
         }
 
     /// Launch postaction if exists (leave this here!)
