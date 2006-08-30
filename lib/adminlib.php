@@ -43,12 +43,12 @@ function upgrade_plugins($type, $dir, $return) {
 
         $oldupgrade = false;
         $newupgrade = false;
-        if (is_readable($fullplug .'/db/'. $CFG->dbtype .'.php')) {
-            include_once($fullplug .'/db/'. $CFG->dbtype .'.php');  // defines old upgrading function
+        if (is_readable($fullplug . '/db/'. $CFG->dbtype . '.php')) {
+            include_once($fullplug . '/db/'. $CFG->dbtype . '.php');  // defines old upgrading function
             $oldupgrade = true;
         }
-        if (is_readable($fullplug .'/db/upgrade.php')  && $CFG->xmldb_enabled) {
-            include_once($fullplug .'/db/upgrade.php');  // defines new upgrading function
+        if (is_readable($fullplug . '/db/upgrade.php')  && $CFG->xmldb_enabled) {
+            include_once($fullplug . '/db/upgrade.php');  // defines new upgrading function
             $newupgrade = true;
         }
 
@@ -109,9 +109,8 @@ function upgrade_plugins($type, $dir, $return) {
                     $status = install_from_xmldb_file($fullplug . '/db/installl.xml'); //New method
                 } else if (file_exists($fullplug .'/db/'. $CFG->dbtype .'.sql')) {
                     $status = modify_database($fullplug .'/db/'. $CFG->dbtype .'.sql'); //Old method
-                } else {    // We'll assume no tables are necessary
-                    set_config($pluginversion, $plugin->version);
-                    notify(get_string('modulesuccess', '', $plugin->name), 'notifysuccess');
+                } else { 
+                    $status = true;
                 }
 
                 $db->debug = false;
@@ -217,12 +216,12 @@ function upgrade_activity_modules($return) {
 
         $oldupgrade = false;
         $newupgrade = false;
-        if ( is_readable($fullmod .'/db/'. $CFG->dbtype .'.php')) {
-            include_once($fullmod .'/db/'. $CFG->dbtype .'.php');  // defines old upgrading function
+        if ( is_readable($fullmod .'/db/' . $CFG->dbtype . '.php')) {
+            include_once($fullmod .'/db/' . $CFG->dbtype . '.php');  // defines old upgrading function
             $oldupgrade = true;
         }
-        if ( is_readable($fullmod .'/db/upgrade.php') && $CFG->xmldb_enabled) {
-            include_once($fullmod .'/db/upgrade.php');  // defines new upgrading function
+        if ( is_readable($fullmod . '/db/upgrade.php') && $CFG->xmldb_enabled) {
+            include_once($fullmod . '/db/upgrade.php');  // defines new upgrading function
             $newupgrade = true;
         }
 
