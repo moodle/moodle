@@ -41,9 +41,18 @@ function upgrade_plugins($type, $dir, $return) {
             continue;                              // Nothing to do.
         }
 
+        $oldupgrade = false;
+        $newupgrade = false;
         if (is_readable($fullplug .'/db/'. $CFG->dbtype .'.php')) {
-            include_once($fullplug .'/db/'. $CFG->dbtype .'.php');  // defines upgrading function
-        } else {
+            include_once($fullplug .'/db/'. $CFG->dbtype .'.php');  // defines old upgrading function
+            $oldupgrade = true;
+        }
+        if (is_readable($fullplug .'/db/upgrade.php')  && $CFG->xmldb_enabled) {
+            include_once($fullplug .'/db/upgrade.php');  // defines new upgrading function
+            $newupgrade = true;
+        }
+
+        if (!$oldupgrade && !$newupgrade) {
             continue;
         }
 
@@ -86,47 +95,76 @@ function upgrade_plugins($type, $dir, $return) {
                         '<script type="text/javascript" src="' . $CFG->wwwroot . '/lib/scroll_to_errors.js"></script>',
                         false, '&nbsp;', '&nbsp;');
             }
+            $updated_plugins = true;
             upgrade_log_start();
             print_heading($plugin->name .' plugin needs upgrading');
+            $db->debug = true;
+            @set_time_limit(0);  // To allow slow databases to complete the long SQL
+
             if ($CFG->$pluginversion == 0) {    // It's a new install of this plugin
-                if (file_exists($fullplug .'/db/'. $CFG->dbtype .'.sql')) {
-                    $db->debug = true;
-                    @set_time_limit(0);  // To allow slow databases to complete the long SQL
-                    if (modify_database($fullplug .'/db/'. $CFG->dbtype .'.sql')) {
-                        // OK so far, now update the plugins record
-                        set_config($pluginversion, $plugin->version);
-                        if (!update_capabilities($dir.'/'.$plug)) {
-                            error('Could not set up the capabilities for '.$module->name.'!');
-                        }
-                        notify(get_string('modulesuccess', '', $plugin->name), 'notifysuccess');
-                    } else {
-                        notify('Installing '. $plugin->name .' FAILED!');
-                    }
-                    $db->debug = false;
+            /// Both old .sql files and new install.xml are supported
+            /// but we priorize install.xml (XMLDB) if present
+                $status = false;
+                if (file_exists($fullplug . '/db/installl.xml') && $CFG->xmldb_enabled) {
+                    $status = install_from_xmldb_file($fullplug . '/db/installl.xml'); //New method
+                } else if (file_exists($fullplug .'/db/'. $CFG->dbtype .'.sql')) {
+                    $status = modify_database($fullplug .'/db/'. $CFG->dbtype .'.sql'); //Old method
                 } else {    // We'll assume no tables are necessary
                     set_config($pluginversion, $plugin->version);
                     notify(get_string('modulesuccess', '', $plugin->name), 'notifysuccess');
                 }
-            } else {                            // Upgrade existing install
-                $upgrade_function = $type.'_'.$plugin->name .'_upgrade';
-                if (function_exists($upgrade_function)) {
-                    $db->debug=true;
-                    if ($upgrade_function($CFG->$pluginversion)) {
-                        $db->debug=false;
-                        // OK so far, now update the plugins record
-                        set_config($pluginversion, $plugin->version);
-                        if (!update_capabilities($dir.'/'.$plug)) {
-                            error('Could not update '.$plugin->name.' capabilities!');
-                        }
-                        notify(get_string('modulesuccess', '', $plugin->name), 'notifysuccess');
-                    } else {
-                        $db->debug=false;
-                        notify('Upgrading '. $plugin->name .' from '. $CFG->$pluginversion .' to '. $plugin->version .' FAILED!');
+
+                $db->debug = false;
+            /// Continue with the instalation, roles and other stuff 
+                if ($status) {
+                    // OK so far, now update the plugins record
+                    set_config($pluginversion, $plugin->version);
+                    if (!update_capabilities($dir.'/'.$plug)) {
+                        error('Could not set up the capabilities for '.$module->name.'!');
                     }
+                    notify(get_string('modulesuccess', '', $plugin->name), 'notifysuccess');
+                } else {
+                    notify('Installing '. $plugin->name .' FAILED!');
+                }
+            } else {                            // Upgrade existing install
+            /// Run de old and new upgrade functions for the module
+                $oldupgrade_function = $type.'_'.$plugin->name .'_upgrade';
+                $newupgrade_function = 'xmldb_' . $type.'_'.$plugin->name .'_upgrade';
+
+            /// First, the old function if exists
+                $oldupgrade_status = true;
+                if ($oldupgrade && function_exists($oldupgrade_function)) {
+                    $db->debug = true;
+                    $oldupgrade_status = $oldupgrade_function($CFG->$pluginversion);
+                } else if ($oldupgrade) {
+                    notify ('Upgrade function ' . $oldupgrade_function . ' was not available in ' .
+                             $fullplug . '/db/' . $CFG->dbtype . '.php');
+                }
+
+            /// Then, the new function if exists and the old one was ok
+                $newupgrade_status = true;
+                if ($newupgrade && function_exists($newupgrade_function) && $oldupgrade_status) {
+                    $db->debug = true;
+                    $newupgrade_status = $newupgrade_function($CFG->$pluginversion);
+                } else if ($newupgrade) {
+                    notify ('Upgrade function ' . $newupgrade_function . ' was not available in ' .
+                             $fullplug . '/db/upgrade.php');
+                }
+
+                $db->debug=false;
+            /// Now analyze upgrade results
+                if ($oldupgrade_status && $newupgrade_status) {    // No upgrading failed
+                    // OK so far, now update the plugins record
+                    set_config($pluginversion, $plugin->version);
+                    if (!update_capabilities($dir.'/'.$plug)) {
+                        error('Could not update '.$plugin->name.' capabilities!');
+                    }
+                    notify(get_string('modulesuccess', '', $plugin->name), 'notifysuccess');
+                } else {
+                    notify('Upgrading '. $plugin->name .' from '. $CFG->$pluginversion .' to '. $plugin->version .' FAILED!');
                 }
             }
             echo '<hr />';
-            $updated_plugins = true;
         } else {
             upgrade_log_start();
             error('Version mismatch: '. $plugin->name .' can\'t downgrade '. $CFG->$pluginversion .' -> '. $plugin->version .' !');
@@ -255,9 +293,9 @@ function upgrade_activity_modules($return) {
                              $mod . ': ' . $fullmod . '/db/upgrade.php');
                 }
 
+                $db->debug=false;
             /// Now analyze upgrade results
                 if ($oldupgrade_status && $newupgrade_status) {    // No upgrading failed
-                    $db->debug=false;
                     // OK so far, now update the modules record
                     $module->id = $currmodule->id;
                     if (! update_record('modules', $module)) {
@@ -267,7 +305,6 @@ function upgrade_activity_modules($return) {
                     notify(get_string('modulesuccess', '', $module->name), 'notifysuccess');
                     echo '<hr />';
                 } else {
-                    $db->debug=false;
                     notify('Upgrading '. $module->name .' from '. $currmodule->version .' to '. $module->version .' FAILED!');
                 }
 
@@ -303,9 +340,9 @@ function upgrade_activity_modules($return) {
                 $status = modify_database($fullmod .'/db/'. $CFG->dbtype .'.sql'); //Old method
             }
 
+            $db->debug = false;
         /// Continue with the instalation, roles and other stuff
             if ($status) {
-                $db->debug = false;
                 if ($module->id = insert_record('modules', $module)) {
                     if (!update_capabilities('mod/'.$module->name)) {
                         error('Could not set up the capabilities for '.$module->name.'!');
