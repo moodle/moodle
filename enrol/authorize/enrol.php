@@ -577,10 +577,10 @@ class enrolment_plugin_authorize
     }
 
     /**
-     * zero_cost (static method)
+     * Whether a course cost is smaller than 0.01
      *
-     * @param unknown_type $course
-     * @return number
+     * @param object $course Course information
+     * @return bool true if the course is free cost
      * @static
      */
     function zero_cost($course) {
@@ -590,10 +590,10 @@ class enrolment_plugin_authorize
 
 
     /**
-     * get_course_cost (static method)
+     * Gets course cost
      *
      * @param object $course
-     * @return array
+     * @return array cost=>'cost', currency=>'currency'
      * @static
      */
     function get_course_cost($course)
@@ -616,7 +616,8 @@ class enrolment_plugin_authorize
     }
 
     /**
-     * email_to_admin (static method)
+     * Sends email to main admin.
+     * FIXME: Admin ROLES
      *
      * @param string $subject
      * @param mixed $data
@@ -671,10 +672,10 @@ class enrolment_plugin_authorize
     }
 
     /**
-     * get_list_of_creditcards (static method)
+     * Gets list of credits cards
      *
-     * @param bool $getall
-     * @return array
+     * @param bool $getall, true get all of types, false config values
+     * @return array, Key => Value
      * @static
      */
     function get_list_of_creditcards($getall = false)
@@ -705,27 +706,26 @@ class enrolment_plugin_authorize
         return $ret;
     }
 
+    /**
+     * Gets lists of payment methods (CC,ECHECK)
+     *
+     * @param bool $getall, get all of types, false config values
+     * @return array, Key only
+     * @static
+     */
     function get_list_of_payment_methods($getall = false)
     {
         global $CFG;
 
-        $alltypes = array(AN_METHOD_CC, AN_METHOD_ECHECK);
-
         if ($getall) {
-            return $alltypes;
+            return array(AN_METHOD_CC, AN_METHOD_ECHECK);
         }
-
-        $ret = array();
-        if (empty($CFG->an_acceptmethods)) {
-            $ret[] = AN_METHOD_CC; // default
+        elseif (empty($CFG->an_acceptmethods)) {
+            return array(AN_METHOD_CC); // default
         }
         else {
-            $mthds = explode(',', $CFG->an_acceptmethods);
-            foreach ($mthds as $mthd) {
-                $ret[] = $mthd;
-            }
+            return explode(',', $CFG->an_acceptmethods);
         }
-        return $ret;
     }
 
 
