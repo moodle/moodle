@@ -82,11 +82,11 @@ class hotpot_report extends hotpot_default_report {
 				}
 				$attemptnumber = $attempt->attempt;
 				$starttime = trim(userdate($attempt->timestart, $strtimeformat));
-				if ($is_html && isset($attempt->score) && (isteacher($course->id) || $hotpot->review)) {
+				if ($is_html && isset($attempt->score) && (has_capability('mod/hotpot:viewreport',get_context_instance(CONTEXT_COURSE, $course->id)) || $hotpot->review)) {
 					$attemptnumber = '<a href="review.php?hp='.$hotpot->id.'&attempt='.$attempt->id.'">'.$attemptnumber.'</a>';
 					$starttime = '<a href="review.php?hp='.$hotpot->id.'&attempt='.$attempt->id.'">'.$starttime.'</a>';
 				}
-				if ($is_html && isteacher($course->id)) {
+				if ($is_html && has_capability('mod/hotpot:viewreport',get_context_instance(CONTEXT_COURSE, $course))) {
 					$checkbox = '<input type=checkbox name="box'.$attempt->clickreportid.'" value="'.$attempt->clickreportid.'">'.$spacer;
 				} else {
 					$checkbox = '';
@@ -111,7 +111,7 @@ class hotpot_report extends hotpot_default_report {
 		// remove final 'hr' from data rows
 		array_pop($table->data);
 		// add the "delete" form to the table
-		if ($options['reportformat']=='htm' && isteacher($course->id)) {
+		if ($options['reportformat']=='htm' && has_capability('mod/hotpot:viewreport',get_context_instance(CONTEXT_COURSE, $course->id))) {
 			$strdeletecheck = get_string('deleteattemptcheck','quiz');
 			$table->start = $this->deleteform_javascript();
 			$table->start .= '<form method="post" action="report.php" name="deleteform" onsubmit="'."return deletecheck('".$strdeletecheck."', 'selection')".'">'."\n";

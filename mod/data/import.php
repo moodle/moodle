@@ -66,18 +66,11 @@
         }
     }
 
-    ///checking for participants
-    // needs fixing?
-    /*
-    if ((!isteacher($course->id)) && $data->participants == DATA_TEACHERS_ONLY) {
-        error ('students are not allowed to participate in this activity');
-    }
-
     if ($rid){    //editting a record, do you have access to edit this?
-        if (!isteacher($course->id) or !data_isowner($rid) or !confirm_sesskey()){
+        if (!has_capability('mod/data:manageentries', $context) or !data_isowner($rid) or !confirm_sesskey()){
             error (get_string('noaccess','data'));
         }
-    }*/
+    }
   
 
 /// Print the page header

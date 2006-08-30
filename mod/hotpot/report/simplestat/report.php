@@ -15,7 +15,7 @@ class hotpot_report extends hotpot_default_report {
 		$is_html = ($options['reportformat']=='htm');
 		$blank = ($download ? '' : '&nbsp;');
 		$no_value = ($download ? '' : '-');
-		$allow_review = true; // ($options['reportformat']=='htm' && (isteacher($course->id) || $hotpot->review));
+		$allow_review = true;
 		// start the table
 		unset($table);
 		$table->border = 1;

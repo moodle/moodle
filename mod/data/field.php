@@ -67,13 +67,6 @@
 
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     require_capability('mod/data:managetemplates', $context);
-
-
-    if (!isteacheredit($course->id)){
-        error(get_string('noaccess','data'));
-    }
-
-    
     
     /************************************
      *        Data Processing           *

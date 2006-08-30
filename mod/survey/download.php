@@ -17,10 +17,7 @@
     }
 
     require_login($course->id, false);
-
-    if (!isteacher($course->id)) {
-        error("Sorry, only teachers can see this.");
-    }
+    require_capability('mod/survey:download', get_context_instance(CONTEXT_MODULE, $cm->id)) ;
 
     if (! $survey = get_record("survey", "id", $cm->instance)) {
         error("Survey ID was incorrect");

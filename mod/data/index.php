@@ -74,7 +74,7 @@
     }
 
     $currentgroup = get_current_group($course->id);
-    if ($currentgroup and isteacheredit($course->id)) {
+    if ($currentgroup and has_capability('mod/data:manageentries', $context)) {
         $group = get_record("groups", "id", $currentgroup);
         $groupname = " ($group->name)";
     } else {

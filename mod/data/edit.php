@@ -60,9 +60,11 @@
     if (!isloggedin() or isguest()) {
         redirect('view.php?d='.$data->id);
     }
+    
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
 /// If it's hidden then it's don't show anything.  :)
-    if (empty($cm->visible) and !isteacher($course->id)) {
+    if (empty($cm->visible) and !has_capability('moodle/course:viewhiddenactivities', $context)) {
         $strdatabases = get_string("modulenameplural", "data");
         $navigation = "<a href=\"index.php?id=$course->id\">$strdatabases</a> ->";
         print_header_simple(format_string($data->name), "",
@@ -71,19 +73,14 @@
     }
     
 /// Can't use this if there are no fields
-    if (isteacher($course->id)) {
+    if (has_capability('mod/data:managetemplates', $context)) {
         if (!record_exists('data_fields','dataid',$data->id)) {      // Brand new database!
             redirect($CFG->wwwroot.'/mod/data/field.php?d='.$data->id);  // Redirect to field entry
         }
     }
 
-/// Check access for participants
-    if ((!isteacher($course->id)) && $data->participants == DATA_TEACHERS_ONLY) {
-        error (get_string('noaccess','data'));
-    }
-
     if ($rid) {    // So do you have access?
-        if (!(isteacher($course->id) or data_isowner($rid)) or !confirm_sesskey() ) {
+        if (!(has_capability('mod/data:manageentries', $context) or data_isowner($rid)) or !confirm_sesskey() ) {
             error(get_string('noaccess','data'));
         }
     }
@@ -138,7 +135,7 @@
             /// All student edits are marked unapproved by default
             $record = get_record('data_records','id',$rid);
             
-            if ($data->approval == 1 || isteacher($course->id)) {
+            if ($data->approval == 1 || has_capability('mod/data:approve', $context)) {
                 $record->approved = 1;
             } else {
                 $record->approved = 0;
@@ -171,7 +168,7 @@
         /// Check if maximum number of entry as specified by this database is reached
         /// Of course, you can't be stopped if you are an editting teacher! =)
 
-            if (data_atmaxentries($data) and !isteacheredit($course->id)){
+            if (data_atmaxentries($data) and !has_capability('mod/data:manageentries',$context)){
                 notify (get_string('atmaxentry','data'));
                 print_footer($course);
                 exit;
@@ -281,7 +278,7 @@
     
 /// Upload records section. Only for teachers and the admin.
     
-    if (isteacher($course->id)) {
+    if (has_capability('mod/data:manageentries',$context)) {
         if ($import) {
             print_simple_box_start('center','80%');
             print_heading(get_string('uploadrecords', 'data'), '', 3);

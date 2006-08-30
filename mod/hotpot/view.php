@@ -32,8 +32,10 @@
             if (! $cm = get_coursemodule_from_instance("hotpot", $hotpot->id, $course->id)) {
                 error("Course Module ID was incorrect");
             }
+        
         }
         require_login($course->id);
+        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     }
     // set nextpage (for error messages)
     $nextpage = "$CFG->wwwroot/course/view.php?id=$course->id";
@@ -49,7 +51,7 @@
     $loggedinas = '<span class="logininfo">'.user_login_string($course, $USER).'</span>';
     $time = time();
     $hppassword = optional_param('hppassword');
-    if (HOTPOT_FIRST_ATTEMPT && !isteacher($course->id)) {
+    if (HOTPOT_FIRST_ATTEMPT && !has_capability('mod/hotpot:grade', $context)) {
         // check this quiz is available to this student
         // error message, if quiz is unavailable
         $error = '';

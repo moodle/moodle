@@ -10,9 +10,7 @@
 
         require_login($course->id, false);
 
-        if (!isteacher($course->id)) {
-            error("You can't modify this course!");
-        }
+        require_capability('moodle/course:manageactivities', get_context_instance(CONTEXT_COURSE, $course->id));
 
         $streditingasurvey = get_string("editingasurvey", "survey");
         $strsurveys = get_string("modulenameplural", "survey");

@@ -557,7 +557,6 @@ function data_add_record($data, $groupid=0){
     $record->groupid = $groupid;
     $record->timecreated = $record->timemodified = time();
     if (has_capability('mod/data:approve', $context)) {
-    //if (isteacher($data->course)) {
         $record->approved = 1;
     } else {
         $record->approved = 0;
@@ -857,7 +856,7 @@ function data_print_template($template, $records, $data, $search='',$page=0, $re
         foreach ($fieldrecords as $fieldrecord) {
             $fields[]= data_get_field($fieldrecord, $data);
         }
-        $isteacher = isteacher($data->course);
+        $isteacher = has_capability('mod/data:managetemplates', $context);
     }
 
     if (empty($records)) {

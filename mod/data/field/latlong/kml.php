@@ -56,7 +56,7 @@ if ($rid) {
 require_course_login($course, true, $cm);
 
 /// If it's hidden then it's don't show anything.  :)
-if (empty($cm->visible) and !isteacher($course->id)) {
+if (empty($cm->visible) and !has_capability('moodle/course:viewhiddenactivities',get_context_instance(CONTEXT_MODULE, $cm->id))) {
 	$strdatabases = get_string("modulenameplural", "data");
 	$navigation = "<a href=\"index.php?id=$course->id\">$strdatabases</a> ->";
 	print_header_simple(format_string($data->name), "",
@@ -65,7 +65,7 @@ if (empty($cm->visible) and !isteacher($course->id)) {
 }
 
 /// If we have an empty Database then redirect because this page is useless without data
-if (isteacher($course->id)) {
+if (has_capability('mod/data:managetemplates', $context)) {
 	if (!record_exists('data_fields','dataid',$data->id)) {      // Brand new database!
 		redirect($CFG->wwwroot.'/mod/data/field.php?d='.$data->id);  // Redirect to field entry
 	}

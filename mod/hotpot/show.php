@@ -9,7 +9,7 @@
     $params->course = required_param('course');
     $params->reference = required_param('reference');
     require_login($params->course);
-    if (!isteacher($params->course)) {
+    if (!has_capability('mod/hotpot:viewreport',get_context_instance(CONTEXT_COURSE, $params->course))) {
         error("You are not allowed to view this page!");
     }
     if (isadmin()) {

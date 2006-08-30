@@ -31,13 +31,14 @@
         }
     }
 
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     // set homeurl of couse (for error messages)
     $course_homeurl = "$CFG->wwwroot/course/view.php?id=$course->id";
 
     require_login($course->id);
 
     // get report mode
-    if (isteacher($course->id)) {
+    if (has_capability('mod/hotpot:viewreport',$context)) {
         $mode = optional_param("mode", "overview");
     } else {
         // students have no choice
@@ -48,7 +49,7 @@
     $formdata = array(
         'mode' => $mode,
         'reportcourse'     => isadmin() ? optional_param('reportcourse', get_user_preferences('hotpot_reportcourse', 'this')) : 'this',
-        'reportusers'      => isteacher($course->id) ? optional_param('reportusers', get_user_preferences('hotpot_reportusers', 'all')) : 'this',
+        'reportusers'      => has_capability('mod/hotpot:viewreport',$context) ? optional_param('reportusers', get_user_preferences('hotpot_reportusers', 'all')) : 'this',
         'reportattempts'   => optional_param('reportattempts', get_user_preferences('hotpot_reportattempts', 'all')),
         'reportformat'     => optional_param('reportformat', 'htm'),
         'reportshowlegend' => optional_param('reportshowlegend', get_user_preferences('hotpot_reportshowlegend', '0')),
@@ -67,13 +68,13 @@
     // print page header. if required
     if ($formdata['reportformat']=='htm') {
         hotpot_print_report_heading($course, $cm, $hotpot, $mode);
-        if (isteacher($course->id)) {
+        if (has_capability('mod/hotpot:viewreport',$context)) {
             hotpot_print_report_selector($course, $hotpot, $formdata);
         }
     }
 
     // delete selected attempts, if any
-    if (isteacher($course->id)) {
+    if (has_capability('mod/hotpot:deleteattempt',$context)) {
         $del = optional_param("del", "");
         hotpot_delete_selected_attempts($hotpot, $del);
     }
@@ -384,7 +385,7 @@ function hotpot_print_report_heading(&$course, &$cm, &$hotpot, &$mode) {
 
     $navigation = "<a href=index.php?id=$course->id>$strmodulenameplural</a> -> ";
     $navigation .= "<a href=\"view.php?id=$cm->id\">$hotpot->name</a> -> ";
-    if (isteacher($course->id)) {
+    if (has_capability('mod/hotpot:viewreport',$context)) {
         if ($mode=='overview' || $mode=='simplestat' || $mode=='fullstat') {
             $module = "quiz";
         } else {

@@ -29,8 +29,10 @@
     if (! $attempt = get_record("hotpot_attempts", "id", $attempt)) {
         error("Attempt ID was incorrect");
     }
+    
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     require_login($course->id);
-    if (!isteacher($course->id)) {
+    if (!has_capability('mod/hotpot:viewreport',$context)) {
         if (!$hotpot->review) {
             error(get_string("noreview", "quiz"));
         }
@@ -58,7 +60,7 @@
     print_heading($hotpot->name);
     hotpot_print_attempt_summary($hotpot, $attempt);
     hotpot_print_review_buttons($course, $hotpot, $attempt);
-    $action = isteacher($course->id) ? optional_param('action') : '';
+    $action = has_capability('mod/hotpot:viewreport',$context) ? optional_param('action') : '';
     if ($action) {
         $xml = get_field('hotpot_details', 'details', 'attempt', $attempt->id);
         print '<hr>';
@@ -130,7 +132,7 @@ function hotpot_print_review_buttons(&$course, &$hotpot, &$attempt) {
     print "\n".'<table border="0" align="center" cellpadding="2" cellspacing="2" class="generaltable">';
     print "\n<tr>\n".'<td align="center">';
     print_single_button("report.php?hp=$hotpot->id", NULL, get_string('continue'), 'post');
-    if (isteacher($course->id) && record_exists('hotpot_details', 'attempt', $attempt->id)) {
+    if (has_capability('mod/hotpot:viewreport',$context) && record_exists('hotpot_details', 'attempt', $attempt->id)) {
         print "</td>\n".'<td align="center">';
         print_single_button("review.php?hp=$hotpot->id&attempt=$attempt->id&action=showxmlsource", NULL, get_string('showxmlsource', 'hotpot'), 'post');
         print "</td>\n".'<td align="center">';

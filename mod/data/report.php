@@ -40,7 +40,7 @@
         echo "<th><a href=\"report.php?id=$id&amp;sort=firstname\">$strname</a>";
         echo "<th width=\"100%\"><a href=\"report.php?id=$id&amp;sort=rating\">$strrating</a>";
         foreach ($ratings as $rating) {
-            if (isteacher($data->course)) {
+            if (has_capability('mod/data:manageentries', $context)) {
                 echo '<tr class="forumpostheadertopic">';
             } else {
                 echo '<tr class="forumpostheader">';

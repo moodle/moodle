@@ -504,7 +504,7 @@ function glossary_get_entries_search($concept, $courseid) {
 
     //Check if the user is a teacher 
     $bypassteacher = 1; //This means NO (by default)
-    if (isteacher($courseid)) {
+    if (has_capability('mod/glossary:manageentries', get_context_instance(CONTEXT_COURSE, $courseid))) {
         $bypassteacher = 0; //This means YES
     } 
 
@@ -947,7 +947,7 @@ function glossary_search($course, $searchterms, $extended = 0, $glossary = NULL)
         $glos = $glossary->id;
     }
     
-    if (!isteacher($glossary->course)) {
+    if (!has_capability('mod/glossary:manageentries', get_context_instance(CONTEXT_COURSE, $glossary->course))) {
         $glossarymodule = get_record("modules", "name", "glossary");
         $onlyvisible = " AND g.id = cm.instance AND cm.visible = 1 AND cm.module = $glossarymodule->id";
         $onlyvisibletable = ", {$CFG->prefix}course_modules cm";

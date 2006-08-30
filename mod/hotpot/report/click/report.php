@@ -53,7 +53,7 @@ class hotpot_report extends hotpot_default_report {
 		// set align and wrap
 		$this->set_align_and_wrap($table);
 		// is link to review allowed?
-		$allow_review = ($is_html && (isteacher($course->id) || $hotpot->review));
+		$allow_review = ($is_html && (has_capability('mod/hotpot:viewreport',get_context_instance(CONTEXT_COURSE, $course->id)) || $hotpot->review));
 		// initialize array of data values
 		$this->data = array();
 		// set exercise data values

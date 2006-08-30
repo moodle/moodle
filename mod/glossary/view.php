@@ -119,7 +119,7 @@
         $navigation = "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> ->";
         require_login($course->id);
     }
-    if (!$cm->visible and !isteacher($course->id)) {
+    if (!$cm->visible and !has_capability('moodle/course:viewhiddenactivities', $context)) {
         print_header();
         notice(get_string("activityiscurrentlyhidden"));
     }
@@ -252,7 +252,7 @@
     /// the "Print" icon
     $printicon = '';
     if ( $isuserframe and $mode != 'search') {
-        if (isteacher($course->id) or $glossary->allowprintview) {
+        if (has_capability('mod/glossary:manageentries', $context) or $glossary->allowprintview) {
             $printicon = " <a title =\"". get_string("printerfriendly","glossary") . "\" target=\"printview\" href=\"print.php?id=$cm->id&amp;mode=$mode&amp;hook=$hook&amp;sortkey=$sortkey&amp;sortorder=$sortorder&amp;offset=$offset\"><img border=\"0\" src=\"print.gif\" alt=\"\" /></a>";
         }
     }

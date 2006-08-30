@@ -42,10 +42,7 @@ if ($id) {
 
 require_login($course->id);
 
-if (!isteacher($course->id)) {
-    error('Must be a teacher to Import Database');
-}
-
+require_capability('mod/data:managetemplates', get_context_instance(CONTEXT_MODULE, $cm->id))
 
 /* get the list of standard presets found in /mod/data/preset */
 $presets = array();

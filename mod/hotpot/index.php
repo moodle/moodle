@@ -7,7 +7,8 @@
     require_once("lib.php");
 
     $id = required_param("id");   // course
-
+    $coursecontext = get_context_instance(CONTEXT_COURSE, $id);
+    
     if (! $course = get_record("course", "id", $id)) {
         error("Course ID is incorrect");
     }
@@ -240,7 +241,7 @@
         MAX(a.score) AS maxscore
     ";
     $select = "a.hotpot IN ($hotpotids)";
-    if (isteacher($course->id)) {
+    if (has_capability('mod/hotpot:viewreport', $coursecontext)) {
         // do nothing (=get all users)
     } else {
         // restrict results to this user only
@@ -298,7 +299,7 @@
         array_push($table->head, $title); 
         array_push($table->align, "center");
     }
-    if (isteacheredit($course->id)) {
+    if (has_capability('moodle/course:manageactivities', $coursecontext)) {
         array_push($table->head, $strupdate);
         array_push($table->align, "center");
     }
@@ -311,7 +312,7 @@
     array_push($table->align, 
         "left", "left", "center", "left"
     );
-    if (isadmin()) {
+    if (has_capability('mod/hotpot:grade', $coursecontext)) {
         array_push($table->head, $strregrade);
         array_push($table->align, "center");
     }
@@ -350,9 +351,11 @@
             $bestscore = "&nbsp;";
 
         } else {
+          
+            $cm = get_coursemodule_from_instance('hotpot', $hotpot->id);
             // report number of attempts and users
             $report = get_string("viewallreports","quiz", $totals[$hotpot->id]->attemptcount);
-            if (isteacher($course->id)) {
+            if (has_capability('mod/hotpot:viewreport', get_context_instance(CONTEXT_MODULE, $cm->id))) {
                 $report .= " (".$totals[$hotpot->id]->usercount." $strusers)";
             }
             $report = '<a href="report.php?hp='.$hotpot->id.'">'.$report.'</a>';
@@ -377,7 +380,7 @@
             array_push($data, $printsection);
         }
 
-        if (isteacheredit($course->id)) {
+        if (has_capability('moodle/course:manageactivities', $coursecontext)) {
             $updatebutton = ''
             .   '<form target="'.$CFG->framename.'" method="get" action="'.$CFG->wwwroot.'/course/mod.php">'
             .   '<input type="hidden" name="update" value="'.$hotpot->coursemodule.'" />'

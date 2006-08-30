@@ -26,7 +26,7 @@ class hotpot_report extends hotpot_default_report {
 		$nobr_start = $is_html ? '<nobr>'  : '';
 		$nobr_end   = $is_html ? '</nobr>' : '';
 		// is review allowed? (do this once here, to save time later)
-		$allow_review = ($is_html && (isteacher($course->id) || $hotpot->review));
+		$allow_review = ($is_html && (has_capability('mod/hotpot:viewreport',get_context_instance(CONTEXT_COURSE, $course->id)) || $hotpot->review));
 		// assume penalties column is NOT required
 		$show_penalties = false;
 		// initialize $table

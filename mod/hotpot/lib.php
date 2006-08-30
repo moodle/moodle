@@ -707,7 +707,8 @@ function hotpot_get_all_instances_in_course($modulename, $course) {
     if ($rawmods = get_records_sql($query)) {
 
         // cache $isteacher setting
-        $isteacher = isteacher($course->id);
+        
+        $isteacher = has_capability('mod/hotpot:viewreport', get_context_instance(CONTEXT_MODULE, $course->id));
 
         $explodesection = array();
         $order = array();
@@ -1018,7 +1019,7 @@ function hotpot_print_recent_mod_activity($activity, $course, $detail=false) {
         $href = "$CFG->wwwroot/mod/hotpot/view.php?hp=$activity->instance";
         print '<a href="'.$href.'">'.$activity->name.'</a> - ';
     }
-    if (isteacher($course)) {
+    if (has_capability('mod/hotpot:viewreport',get_context_instance(CONTEXT_COURSE, $course))) {
         // score (with link to attempt details)
         $href = "$CFG->wwwroot/mod/hotpot/review.php?hp=$activity->instance&attempt=".$activity->content->attemptid;
         print '<a href="'.$href.'">('.hotpot_format_score($activity->content).')</a> ';

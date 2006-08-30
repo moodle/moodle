@@ -21,8 +21,9 @@
     require_login($course->id, false, $cm);
 
     $groupmode = groupmode($course, $cm);   // Groups are being used
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
-    if (!isteacher($course->id)) {
+    if (!has_capability('mod/survey:readresponses', $context)) {
         if ($type != "student.png" or $sid != $USER->id ) {
             error("Sorry, you aren't allowed to see this.");
         } else if ($groupmode and !ismember($group)) {
