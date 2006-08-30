@@ -66,11 +66,11 @@ class edit_sentence_save extends XMLDBAction {
     /// Do the job, setting result as needed
 
     /// Get parameters
-        $dirpath = required_param('dir', PARAM_CLEAN);
-        $dirpath = stripslashes_safe($dirpath);
+        $dirpath = required_param('dir', PARAM_PATH);
+        $dirpath = $CFG->dirroot . stripslashes_safe($dirpath);
 
         $statementparam = strtolower(required_param('statement', PARAM_CLEAN));
-        $sentenceparam = strtolower(required_param('sentence', PARAM_CLEAN));
+        $sentenceparam = strtolower(required_param('sentence', PARAM_ALPHANUM));
 
         $fields = required_param('fields', PARAM_CLEAN);
         $fields = trim(stripslashes_safe($fields));
@@ -125,7 +125,7 @@ class edit_sentence_save extends XMLDBAction {
                          "<a href=\"../index.php\">" . $this->str['administration'] . "</a> -> <a href=\"index.php\">XMLDB</a>");
             notice ('<p>' .implode(', ', $errors) . '</p>
                      <p>' . s($sentence),
-                    'index.php?action=edit_sentence&amp;sentence=' .$sentenceparam . '&amp;statement=' . urlencode($statementparam) . '&amp;dir=' . urlencode($dirpath));
+                    'index.php?action=edit_sentence&amp;sentence=' .$sentenceparam . '&amp;statement=' . urlencode($statementparam) . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)));
             die; /// re-die :-P
         }
 

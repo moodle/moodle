@@ -63,8 +63,8 @@ class edit_statement_save extends XMLDBAction {
     /// Do the job, setting result as needed
 
     /// Get parameters
-        $dirpath = required_param('dir', PARAM_CLEAN);
-        $dirpath = stripslashes_safe($dirpath);
+        $dirpath = required_param('dir', PARAM_PATH);
+        $dirpath = $CFG->dirroot . stripslashes_safe($dirpath);
 
         $statementparam = strtolower(required_param('statement', PARAM_CLEAN));
         $name = trim(strtolower(required_param('name', PARAM_CLEAN)));

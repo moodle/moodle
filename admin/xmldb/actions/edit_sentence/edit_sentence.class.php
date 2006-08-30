@@ -63,8 +63,8 @@ class edit_sentence extends XMLDBAction {
 
     /// Do the job, setting result as needed
     /// Get the dir containing the file
-        $dirpath = required_param('dir', PARAM_CLEAN);
-        $dirpath = stripslashes_safe($dirpath);
+        $dirpath = required_param('dir', PARAM_PATH);
+        $dirpath = $CFG->dirroot . stripslashes_safe($dirpath);
 
     /// Get the correct dirs
         if (!empty($XMLDB->dbdirs)) {
@@ -115,7 +115,7 @@ class edit_sentence extends XMLDBAction {
 
         /// Add the main form
             $o = '<form name="form" id="form" action="index.php" method="post">';
-            $o.= '    <input type="hidden" name ="dir" value="' . $dirpath . '" />';
+            $o.= '    <input type="hidden" name ="dir" value="' . str_replace($CFG->dirroot, '', $dirpath) . '" />';
             $o.= '    <input type="hidden" name ="statement" value="' . $statementparam .'" />';
             $o.= '    <input type="hidden" name ="sentence" value="' . $sentenceparam .'" />';
             $o.= '    <input type="hidden" name ="action" value="edit_sentence_save" />';
@@ -134,7 +134,7 @@ class edit_sentence extends XMLDBAction {
         /// Calculate the buttons
             $b = ' <p align="center" class="buttons">';
         /// The back to edit statement button
-            $b .= '&nbsp;<a href="index.php?action=edit_statement&amp;statement=' . urlencode($statementparam) . '&amp;dir=' . urlencode($dirpath) . '">[' . $this->str['back'] . ']</a>';
+            $b .= '&nbsp;<a href="index.php?action=edit_statement&amp;statement=' . urlencode($statementparam) . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['back'] . ']</a>';
             $b .= '</p>';
             $o .= $b;
     

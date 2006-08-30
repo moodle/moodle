@@ -62,8 +62,8 @@ class unload_xml_file extends XMLDBAction {
     /// Do the job, setting result as needed
 
     /// Get the dir containing the file
-        $dirpath = required_param('dir', PARAM_CLEAN);
-        $dirpath = stripslashes_safe($dirpath);
+        $dirpath = required_param('dir', PARAM_PATH);
+        $dirpath = $CFG->dirroot . stripslashes_safe($dirpath);
 
         /// Get the original dir and delete some elements
         if (!empty($XMLDB->dbdirs)) {
