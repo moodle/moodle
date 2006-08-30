@@ -1,4 +1,4 @@
-Description of ADODB v4.9 library import into Moodle
+Description of ADODB v4.92a library import into Moodle
 
 Removed:
  * contrib
@@ -12,8 +12,5 @@ Added:
  * tests/tmssql.php - detection of attack attempts and overwrite on incorrectly upgraded sites
  * readme_moodle.txt - this file ;-)
 
-our bug fixes:
- * drivers/adodb-postgres7.inc.php: line 33 $zthis typo - should be $this
-
 skodak
-29 August 2006
+30 August 2006

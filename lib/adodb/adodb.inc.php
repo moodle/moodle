@@ -14,7 +14,7 @@
 /**
 	\mainpage 	
 	
-	 @version V4.90 8 June 2006  (c) 2000-2006 John Lim (jlim#natsoft.com.my). All rights reserved.
+	 @version V4.92a 29 Aug 2006  (c) 2000-2006 John Lim (jlim#natsoft.com.my). All rights reserved.
 
 	Released under both BSD license and Lesser GPL library license. You can choose which license
 	you prefer.
@@ -3604,7 +3604,14 @@ http://www.stanford.edu/dept/itss/docs/oracle/10g/server.101/b10759/statements_1
 		'SQLDTIME' => 'T', 
 		'SQLINTERVAL' => 'N', 
 		'SQLBYTES' => 'B', 
-		'SQLTEXT' => 'X' 
+		'SQLTEXT' => 'X',
+		 ## informix 10
+		"SQLINT8" => 'I8',
+		"SQLSERIAL8" => 'I8',
+		"SQLNCHAR" => 'C',
+		"SQLNVCHAR" => 'C',
+		"SQLLVARCHAR" => 'X',
+		"SQLBOOL" => 'L'
 		);
 		
 		$tmap = false;
