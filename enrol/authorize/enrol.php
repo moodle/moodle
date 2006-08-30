@@ -222,7 +222,7 @@ class enrolment_plugin_authorize
         $message = '';
         $an_review = !empty($CFG->an_review);
         $action = $an_review ? AN_ACTION_AUTH_ONLY : AN_ACTION_AUTH_CAPTURE;
-        $success = authorize_action($order, $message, $extra, $action);
+        $success = authorize_action($order, $message, $extra, $action, $form->cctype);
         if (!$success) {
             enrolment_plugin_authorize::email_to_admin($message, $order);
             $this->authorizeerrors['header'] = $message;
@@ -327,6 +327,13 @@ class enrolment_plugin_authorize
         global $CFG, $USER, $SESSION;
         require_once('authorizenetlib.php');
 
+        enrolment_plugin_authorize::prevent_double_paid($course);
+
+        $useripno = getremoteaddr();
+        $curcost = enrolment_plugin_authorize::get_course_cost($course);
+
+
+        return; // not implemented yet
     }
 
     function validate_cc_form($form)
@@ -392,6 +399,7 @@ class enrolment_plugin_authorize
     function validate_echeck_form($form)
     {
         global $CFG;
+        require_once('abaval.php');
 
 
         return true;

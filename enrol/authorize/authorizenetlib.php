@@ -83,11 +83,12 @@ function authorize_expired(&$order)
  * @param object &$extra Extra data that used for refunding and credit card information.
  * @param int $action Which action will be performed. See AN_ACTION_*
  * @param string $method Transaction method. AN_METHOD_CC or AN_METHOD_ECHECK
+ * @param string $cctype Credit card type, used internally to configure automatically types.
  * @return bool true Transaction was successful, false otherwise. Use $message for reason.
  * @author Ethem Evlice <ethem a.t evlice d.o.t com>
  * @uses $CFG
  */
-function authorize_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE, $method=AN_METHOD_CC)
+function authorize_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE, $method=AN_METHOD_CC, $cctype=NULL)
 {
     global $CFG;
     static $conststring;
@@ -356,15 +357,46 @@ function authorize_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE, $
     }
     else
     {
-        $reason = "reason" . $response[2];
-        $message = get_string($reason, "enrol_authorize");
-        if ($message == '[[' . $reason . ']]') {
+        $reasonno = $response[2];
+        $reasonstr = "reason" . $reasonno;
+        $message = get_string($reasonstr, "enrol_authorize");
+        if ($message == '[[' . $reasonstr . ']]') {
             $message = isset($response[3]) ? $response[3] : 'unknown error';
         }
         if ($method == AN_METHOD_CC and !empty($CFG->an_avs)) {
             $avs = "avs" . strtolower($response[5]);
             $stravs = get_string($avs, "enrol_authorize");
             $message .= "<br />" . get_string("avsresult", "enrol_authorize", $stravs);
+        }
+        if (!$test) { // Autoconfigure :)
+            switch($reasonno) {
+                // Credit card type isn't accepted
+                case AN_REASON_NOCCTYPE:
+                case AN_REASON_NOCCTYPE2:
+                {
+                    if (!empty($cctype)) {
+                        $ccaccepts = enrolment_plugin_authorize::get_list_of_creditcards();
+                        unset($ccaccepts[$cctype]);
+                        set_config('an_acceptccs', array_keys($ccaccepts));
+                        enrolment_plugin_authorize::email_to_admin("Autoconfigure; This card type " .
+                        "isn't accepted: $cctype. New config:", $ccaccepts);
+                    }
+                    break;
+                }
+                // Electronic checks aren't accepted
+                case AN_REASON_NOACH:
+                {
+                    // Not implemented yet.
+                    break;
+                }
+                // This echeck type isn't accepted
+                case AN_REASON_NOACHTYPE:
+                case AN_REASON_NOACHTYPE2:
+                {
+                    // Not implemented yet.
+                    break;
+                }
+            }
         }
         return false;
     }
