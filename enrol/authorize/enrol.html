@@ -170,15 +170,47 @@ function print_echeck_form($classreference)
 
     <form name="form" method="post" action="enrol.php" autocomplete="off">
     <input type="hidden" name="id" value="<?php p($course->id) ?>" />
+
+    echeck form (not ready)
+
     <table align="center" width="100%" border=0>
     <tr>
       <td align="right" colspan="2">&nbsp;<?php print_other_method(AN_METHOD_ECHECK, $paymentmethodsenabled, $course); ?></td>
     </tr>
-
-
-    echeck form (not ready)
-
-
+    <tr>
+      <td align="right"><?php print_string("echeckabacode", "enrol_authorize") ?>: </td>
+      <td align="left"><input type="text" name="abacode" size="9" maxlength="9" value="<?php p($form->abacode) ?>" />
+      <?php if (!empty($classreference->authorizeerrors['abacode'])) { formerr($classreference->authorizeerrors['abacode']); } ?></td>
+    </tr>
+    <tr>
+      <td align="right"><?php print_string("echeckaccnum", "enrol_authorize") ?>: </td>
+      <td align="left"><input type="text" name="accnum" size="20" maxlength="20" value="<?php p($form->accnum) ?>" />
+      <?php if (!empty($classreference->authorizeerrors['accnum'])) { formerr($classreference->authorizeerrors['accnum']); } ?></td>
+    </tr>
+    <tr>
+      <td align="right"><?php print_string("echeckacctype", "enrol_authorize") ?>: </td>
+      <td align="left"><?php
+      $acctypes = array(
+          'CHECKING'         => get_string("echeckchecking", "enrol_authorize"),
+          'BUSINESSCHECKING' => get_string("echeckbusinesschecking", "enrol_authorize"),
+          'SAVINGS'          => get_string("echecksavings", "enrol_authorize")
+      );
+      choose_from_menu($acctypes, 'acctype', $form->acctype);
+      if (!empty($classreference->authorizeerrors['acctype'])) { formerr($classreference->authorizeerrors['acctype']); }
+      ?>
+    </td>
+    </tr>
+    <tr>
+      <td align="right"><?php print_string("echeckbankname", "enrol_authorize") ?>: </td>
+      <td align="left"><input type="text" name="bankname" size="20" maxlength="50" value="<?php p($form->bankname) ?>" />
+      <?php if (!empty($classreference->authorizeerrors['bankname'])) { formerr($classreference->authorizeerrors['bankname']); } ?></td>
+    </tr>
+    <tr>
+      <td align="right"><?php print_string("echeckfirslasttname", "enrol_authorize") ?>: </td>
+      <td align="left"><input type="text" name="firstname" size="8" value="<?php p($userfirstname) ?>" />
+      <input type="text" name="lastname" size="8" value="<?php p($userlastname) ?>" />
+      <?php if (!empty($classreference->authorizeerrors['firstlast'])) { formerr($classreference->authorizeerrors['firstlast']); } ?></td>
+    </tr>
     </table>
     <input type="submit" name="echecksubmit" value="<?php print_string("sendpaymentbutton", "enrol_authorize") ?>">
     </form>
