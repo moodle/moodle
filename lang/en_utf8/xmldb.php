@@ -40,6 +40,7 @@ $string['enumvaluesincorrect'] = 'Incorrect values for enum field';
 $string['field'] = 'Field';
 $string['fieldnameempty'] = 'Name field empty';
 $string['fields'] = 'Fields';
+$string['filenotwriteable'] = 'File not writeable';
 $string['floatincorrectdecimals'] = 'Incorrect number of decimals for float field';
 $string['floatincorrectlength'] = 'Incorrect length for float field';
 $string['gotolastused'] = ' Go to last used file';
