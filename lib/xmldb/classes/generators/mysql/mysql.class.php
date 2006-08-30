@@ -125,7 +125,7 @@ class XMLDBmysql extends XMLDBGenerator {
                 } else if ($xmldb_length == 'medium') {
                     $dbtype = 'MEDIUMTEXT';
                 } else {
-                    $dbtype = 'BIGTEXT';
+                    $dbtype = 'LONGTEXT';
                 }
                 break;
             case XMLDB_TYPE_BINARY:
@@ -137,7 +137,7 @@ class XMLDBmysql extends XMLDBGenerator {
                 } else if ($xmldb_length == 'medium') {
                     $dbtype = 'MEDIUMBLOB';
                 } else {
-                    $dbtype = 'BIGBLOB';
+                    $dbtype = 'LONGBLOB';
                 }
                 break;
             case XMLDB_TYPE_DATETIME:
