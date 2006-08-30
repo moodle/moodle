@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20060829" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20060830" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -511,8 +511,8 @@
         <KEY NAME="primary" TYPE="primary" FIELDS="sesskey" COMMENT="Primary key for sessions"/>
       </KEYS>
       <INDEXES>
-        <INDEX NAME="sess2_expiry" UNIQUE="false" FIELDS="expiry" NEXT="sess2_expireref"/>
-        <INDEX NAME="sess2_expireref" UNIQUE="false" FIELDS="expireref" PREVIOUS="sess2_expiry"/>
+        <INDEX NAME="expiry" UNIQUE="false" FIELDS="expiry" NEXT="expireref"/>
+        <INDEX NAME="expireref" UNIQUE="false" FIELDS="expireref" PREVIOUS="expiry"/>
       </INDEXES>
     </TABLE>
     <TABLE NAME="timezone" COMMENT="Rules for calculating local wall clock time for users" PREVIOUS="sessions2" NEXT="user">
