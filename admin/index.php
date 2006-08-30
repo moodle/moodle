@@ -24,7 +24,7 @@
     require_once('../config.php');
     include_once($CFG->dirroot.'/lib/adminlib.php');  // Contains various admin-only functions
 
-    include_once($CFG->dirroot.'/lib/ddllib.php'); // Install/upgrade related functions
+    include_once($CFG->dirroot.'/lib/ddllib.php'); // Install/upgrade related db functions
 
     $id             = optional_param('id', '', PARAM_ALPHANUM);
     $confirmupgrade = optional_param('confirmupgrade', 0, PARAM_BOOL);
@@ -128,54 +128,52 @@
         $strdatabasesuccess  = get_string("databasesuccess");
         print_header($strdatabasesetup, $strdatabasesetup, $strdatabasesetup,
                         "", $linktoscrolltoerrors, false, "&nbsp;", "&nbsp;");
-    /// Both old *.sql files and new install.xml are supported
-        if (file_exists("$CFG->libdir/db/$CFG->dbtype.sql") ||
-            ($CFG->xmldb_enabled && file_exists("$CFG->libdir/db/install.xml"))) {
-            upgrade_log_start();
-            $db->debug = true;
-        /// But we priorize install.xml (XMLDB) if present
-            if (file_exists("$CFG->libdir/db/install.xml") && $CFG->xmldb_enabled) {
-                $status = install_from_xmldb_file("$CFG->libdir/db/install.xml"); //New method
-            } else {
-                $status = modify_database("$CFG->libdir/db/$CFG->dbtype.sql"); //Old method
-            }
-        /// Continue with the instalation
-            if ($status) {
-                $db->debug = false;
-                
-                // Install the roles system.
-                moodle_install_roles();
-                if (!update_capabilities()) {
-                    error('Had trouble installing the core capabilities for the Roles System');
-                }
+        upgrade_log_start();
+        $db->debug = true;
 
-                // Write default settings unconditionally (i.e. even if a setting is already set, overwrite it)
-                // (this should only have any effect during initial install).
-                require_once($CFG->dirroot . '/admin/adminlib.php');
-                apply_default_settings($ADMIN);
-
-                /// This is used to handle any settings that must exist in $CFG but which do not exist in
-                /// $ADMIN as admin_setting objects (there are some exceptions).
-                apply_default_exception_settings(array('alternateloginurl' => '',
-                                                       'auth' => 'email',
-                                                       'auth_pop3mailbox' => 'INBOX',
-                                                       'changepassword' => '',
-                                                       'enrol' => 'internal',
-                                                       'frontpage' => 1,
-                                                       'guestloginbutton' => 1,
-                                                       'prefix' => 1,
-                                                       'style' => 'default',
-                                                       'template' => 'default',
-                                                       'textfilters' => 'mod/glossary/dynalink.php',
-                                                       'theme' => 'standardwhite'));
-                
-                notify($strdatabasesuccess, "green");
-            } else {
-                $db->debug = false;
-                error("Error: Main databases NOT set up successfully");
-            }
+    /// Both old .sql files and new install.xml are supported
+    /// But we priorize install.xml (XMLDB) if present
+        $status = false;
+        if (file_exists("$CFG->libdir/db/install.xml") && $CFG->xmldb_enabled) {
+            $status = install_from_xmldb_file("$CFG->libdir/db/install.xml"); //New method
+        } else if (file_exists("$CFG->libdir/db/$CFG->dbtype.sql")) {
+            $status = modify_database("$CFG->libdir/db/$CFG->dbtype.sql"); //Old method
         } else {
-            error("Error: Your database ($CFG->dbtype) is not yet fully supported by Moodle.  See the lib/db directory.");
+            error("Error: Your database ($CFG->dbtype) is not yet fully supported by Moodle or install.xml is not present.  See the lib/db directory.");
+        }
+
+    /// Continue with the instalation
+        $db->debug = false;
+        if ($status) {
+            // Install the roles system.
+            moodle_install_roles();
+            if (!update_capabilities()) {
+                error('Had trouble installing the core capabilities for the Roles System');
+            }
+
+            // Write default settings unconditionally (i.e. even if a setting is already set, overwrite it)
+            // (this should only have any effect during initial install).
+            require_once($CFG->dirroot . '/admin/adminlib.php');
+            apply_default_settings($ADMIN);
+
+            /// This is used to handle any settings that must exist in $CFG but which do not exist in
+            /// $ADMIN as admin_setting objects (there are some exceptions).
+            apply_default_exception_settings(array('alternateloginurl' => '',
+                                                   'auth' => 'email',
+                                                   'auth_pop3mailbox' => 'INBOX',
+                                                   'changepassword' => '',
+                                                   'enrol' => 'internal',
+                                                   'frontpage' => 1,
+                                                   'guestloginbutton' => 1,
+                                                   'prefix' => 1,
+                                                   'style' => 'default',
+                                                   'template' => 'default',
+                                                   'textfilters' => 'mod/glossary/dynalink.php',
+                                                   'theme' => 'standardwhite'));
+
+            notify($strdatabasesuccess, "green");
+        } else {
+            error("Error: Main databases NOT set up successfully");
         }
         print_continue('index.php');
         die;
@@ -185,7 +183,13 @@
 /// Check version of Moodle code on disk compared with database
 /// and upgrade if possible.
 
-    include_once("$CFG->dirroot/version.php");              # defines $version
+    if ( is_readable("$CFG->dirroot/version.php")) {
+        include_once("$CFG->dirroot/version.php");              # defines $version
+    }
+    if (!$version) {
+        error('Main version.php was not readable or specified');# without version, stop
+    }
+
     if (file_exists("$CFG->dirroot/lib/db/$CFG->dbtype.php")) {
         include_once("$CFG->dirroot/lib/db/$CFG->dbtype.php");  # defines old upgrades
     }
@@ -221,6 +225,7 @@
                 if ($status && function_exists('xmldb_main_upgrade')) {
                     $status = xmldb_main_upgrade($CFG->version);
                 }
+                $db->debug=false;
             /// If successful, continue upgrading roles and setting everything properly
                 if ($status) {
                     if (empty($CFG->rolesactive)) {
@@ -232,7 +237,6 @@
                     } else {
                         set_config('rolesactive', 1);
                     }
-                    $db->debug=false;
                     if (set_config("version", $version)) {
                         remove_dir($CFG->dataroot . '/cache', true); // flush cache
                         notify($strdatabasesuccess, "green");
@@ -243,7 +247,6 @@
                     }
             /// Main upgrade not success
                 } else {
-                    $db->debug=false;
                     notify("Upgrade failed!  See /version.php");
                 }
                 upgrade_log_finish();
@@ -253,22 +256,13 @@
             notify("WARNING!!!  The code you are using is OLDER than the version that made these databases!");
             upgrade_log_finish();
         }
-
     } else {
         $strcurrentversion = get_string("currentversion");
         print_header($strcurrentversion, $stradministration, $strcurrentversion,
                      "", "", false, "&nbsp;", "&nbsp;");
 
         if (!set_config("version", $version)) {
-            upgrade_log_start();
-            $db->debug=true;
-            if (main_upgrade(0)) {
-                print_continue("index.php");
-                exit;
-            } else {
-                error("A problem occurred inserting current version into databases");
-            }
-            $db->debug=false;
+            error("A problem occurred inserting current version into databases");
         }
     }
 
