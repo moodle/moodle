@@ -144,9 +144,10 @@ class default_questiontype {
 
         // Now to save all the answers and type-specific options
 
-        $form->id       = $question->id;
-        $form->qtype    = $question->qtype;
+        $form->id = $question->id;
+        $form->qtype = $question->qtype;
         $form->category = $question->category;
+        $form->questiontext = $question->questiontext;
 
         $result = $this->save_question_options($form);
 
@@ -856,6 +857,7 @@ class default_questiontype {
         // arrays. The ordering of the arrays does not matter.
         // Question types may wish to override this (eg. to ignore trailing
         // white space or to make "7.0" and "7" compare equal).
+        
         return $state->responses === $teststate->responses;
     }
 
