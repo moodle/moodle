@@ -109,6 +109,21 @@ function get_parent_cats($context, $type) {
  * @param string $errorstring - an errorstring
  */
 function require_capability($capability, $context=NULL, $userid=NULL, $errormessage="nopermissions", $stringfile='') {
+
+    global $USER;
+
+/// If the current user is not logged in, then make sure they are
+
+    if (empty($userid) and empty($USER->id)) {
+        if ($context && ($context->aggregatelevel == CONTEXT_COURSE)) {
+            require_login($context->instanceid);
+        } else {
+            require_login();
+        }
+    }
+   
+/// OK, if they still don't have the capability then print a nice error message
+
     if (!has_capability($capability, $context, $userid)) {
         $capabilityname = get_capability_string($capability);
         print_error($errormessage, $stringfile, '', $capabilityname);
@@ -1068,7 +1083,7 @@ function get_roles_with_capability($capability, $permission=NULL) {
 
 
 /**
- * This function makes a role-assignment (user to a role)
+ * This function makes a role-assignment (a role for a user or group in a particular context)
  * @param $roleid - the role of the id
  * @param $userid - userid
  * @param $groupid - group id
@@ -1085,31 +1100,62 @@ function role_assign($roleid, $userid, $groupid, $contextid, $timestart=0, $time
         notify("Assign roleid $roleid userid $userid contextid $contextid", 'notifytiny');
     }
 
+/// Do some data validation
+
     if (empty($roleid)) {
-        error ('you need to select a role');
+        notify('Role ID not provided');
+        return false;
     }
 
     if (empty($userid) && empty($groupid)) {
-        error ('you need to assign this role to a user or a group');
+        notify('Either userid or groupid must be provided');
+        return false;
     }
 
     if (empty($contextid)) {
-        error ('you need to assign this role to a context, e.g. a course, or an activity');
+        notify('A valid context must be provided');
+        return false;
     }
 
-    $ra = new object;
-    $ra->roleid = $roleid;
-    $ra->contextid = $contextid;
-    $ra->userid = $userid;
-    $ra->hidden = $hidden;
-    $ra->groupid = $groupid;
-    $ra->timestart = $timestart;
-    $ra->timeend = $timeend;
-    $ra->timemodified = time();
-    $ra->modifier = empty($USER->id) ? 0 : $USER->id;
-    
-    return insert_record('role_assignments', $ra);
+    if (($timestart and $timeend) and ($timestart > $timeend)) {
+        notify('The end time must be later than the start time');
+        return false;
+    }
 
+/// Check for existing entry
+    if ($userid) {
+        $ra = get_record('role_assignments', 'roleid', $roleid, 'contextid', $contextid, 'userid', $userid);
+    } else {
+        $ra = get_record('role_assignments', 'roleid', $roleid, 'contextid', $contextid, 'groupid', $groupid);
+    }
+
+    $newra = new object;
+
+    if (empty($ra)) {             // Create a new entry
+        $newra->roleid = $roleid;
+        $newra->contextid = $contextid;
+        $newra->userid = $userid;
+        $newra->groupid = $groupid;
+
+        $newra->hidden = $hidden;
+        $newra->timestart = $timestart;
+        $newra->timeend = $timeend;
+        $newra->timemodified = time();
+        $newra->modifier = empty($USER->id) ? 0 : $USER->id;
+
+        return insert_record('role_assignments', $newra);
+
+    } else {                      // We already have one, just update it
+
+        $newra->id = $ra->id;
+        $newra->hidden = $hidden;
+        $newra->timestart = $timestart;
+        $newra->timeend = $timeend;
+        $newra->timemodified = time();
+        $newra->modifier = empty($USER->id) ? 0 : $USER->id;
+
+        return update_record('role_assignments', $newra);
+    }
 }
 
 
