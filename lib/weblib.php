@@ -759,6 +759,16 @@ function choose_from_menu ($options, $name, $selected='', $nothing='choose', $sc
 }
 
 /**
+ * Choose value 0 or 1 from a menu with options 'No' and 'Yes'.
+ * Other options like choose_from_menu.
+ */
+function choose_from_menu_yesno($name, $selected, $script = '',
+        $return = false, $disabled = false, $tabindex = 0) {
+    return choose_from_menu(array(get_string('no'), get_string('yes')), $name,
+            $selected, '', $script, '0', $return, $disabled, $tabindex);
+}
+
+/**
  * Just like choose_from_menu, but takes a nested array (2 levels) and makes a dropdown menu
  * including option headings with the first level.
  */
