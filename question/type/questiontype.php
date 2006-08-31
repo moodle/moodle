@@ -83,18 +83,17 @@ class default_questiontype {
     * @param object $question the question object which should be updated
     * @param object $form the form submitted by the teacher
     * @param object $course the course we are in
-    * @return mixed On success, return the id of the saved question. On failure,
-    *       return an error object. If the error object has an errors field, 
+    * @return object On success, return the new question object. On failure,
+    *       return an object as follows. If the error object has an errors field, 
     *       display that as an error message. Otherwise, the editing form will be
-    *       redisplayed with validation errors from the errors object shown next
-    *       to the form fields.
+    *       redisplayed with validation errors, from validation_errors field, which
+    *       is itself an object, shown next to the form fields.
     */
     function save_question($question, $form, $course) {
         // This default implementation is suitable for most
         // question types.
-
+        
         // First, save the basic question itself
-
         $question->name               = trim($form->name);
         $question->questiontext       = trim($form->questiontext);
         $question->questiontextformat = $form->questiontextformat;
@@ -173,7 +172,7 @@ class default_questiontype {
 
         return $question;
     }
-
+    
     /**
     * Saves question-type specific options
     *
