@@ -221,9 +221,11 @@ function authorize_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE, $
                 return false;
             }
             $poststring .= '&x_type=CREDIT&x_trans_id=' . urlencode($order->transid);
-            $poststring .= '&x_card_num=' . sprintf("%04d", intval($order->cclastfour));
             $poststring .= '&x_currency_code=' . urlencode($order->currency);
             $poststring .= '&x_amount=' . urlencode($extra->amount);
+            if ($method == AN_METHOD_CC) {
+                $poststring .= '&x_card_num=' . sprintf("%04d", intval($order->cclastfour));
+            }
             break;
         }
 
