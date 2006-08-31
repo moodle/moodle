@@ -135,7 +135,7 @@
                 break;
                 case 'putparam':
                     if ($status == 'Running') {
-                        if (!empty($aiccdata) && isstudent($scorm->course)) {
+                        if (!empty($aiccdata) && has_capability('mod/scorm:savetrack', $context)) {
                             $initlessonstatus = 'not attempted';
                             $lessonstatus = 'not attempted';
                             if (isset($SESSION->scorm_lessonstatus)) {

@@ -483,6 +483,7 @@ function scorm_sequecingrule_implement($scormid,$scoidchild, $userid)
     }
     return $sequencingResult;
 }
+
 function get_sco_after_exit($scoid,$scormid){
     $scochild = get_record("scorm_scoes","id",$scoid);
     $scoparent = get_record("scorm_scoes","scorm",$scormid,"identifier",$scochild->parent);

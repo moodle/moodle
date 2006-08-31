@@ -5,7 +5,7 @@
     
     $id = optional_param('id', '', PARAM_INT);       // Course Module ID, or
     $a = optional_param('a', '', PARAM_INT);         // scorm ID
-    $scoid = required_param('scoid', PARAM_INT);  // sco ID
+    $scoid = required_param('scoid', PARAM_INT);     // sco ID
     $mode = optional_param('mode', '', PARAM_ALPHA); // navigation mode
     $attempt = required_param('attempt', PARAM_INT); // new attempt
 
@@ -60,20 +60,11 @@
     } else {
         error('Sco not found');
     }
-
-    switch ($scorm->version) {
-        case 'SCORM_1.2':
-            include_once ('datamodels/scorm1_2.js.php');
-        break;
-        case 'SCORM_1.3':
-            include_once ('datamodels/scorm1_3.js.php');
-        break;
-        case 'AICC':
-            include_once ('datamodels/aicc.js.php');
-        break;
-        default:
-            include_once ('datamodels/scorm1_2.js.php');
-        break;
+    $scorm->version = strtolower(clean_param($scorm->version, PARAM_SAFEDIR));   // Just to be safe
+    if (file_exists($CFG->dirroot.'/mod/scorm/datamodels/'.$scorm->version.'.js.php')) {
+        include_once($CFG->dirroot.'/mod/scorm/datamodels/'.$scorm->version.'.js.php');
+    } else {
+        include_once($CFG->dirroot.'/mod/scorm/datamodels/scorm_12.js.php');
     }
 ?>
 

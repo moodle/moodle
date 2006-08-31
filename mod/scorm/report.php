@@ -42,7 +42,7 @@
 
     require_login($course->id, false, $cm);
 
-    if (!isteacher($course->id)) {
+    if (!has_capability('moodle/user:viewuseractivitiesreport',$context)) {
         error("You are not allowed to use this script");
     }
 

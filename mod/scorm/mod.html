@@ -1,5 +1,5 @@
 <?php
-    require_once($CFG->dirroot.'/mod/scorm/lib.php');
+    require_once($CFG->dirroot.'/mod/scorm/configurations.php');
     if (!isset($form->name)) {
         $form->name = '';
     }
@@ -63,6 +63,9 @@
         list($element,$value) = explode('=',$option);
         $element = trim($element);
         $window->$element = trim($value)==1?'checked':''; 
+    }
+    if (!isset($form->pkgtype)) {
+        $form->pkgtype = '';
     }
     $scormid = '';
     if (!empty($form->instance)) {

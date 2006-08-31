@@ -6,7 +6,7 @@
     $a = optional_param('a', '', PARAM_INT);         // scorm ID
     $scoid = required_param('scoid', PARAM_INT);  // sco ID
 //    $attempt = required_param('attempt', PARAM_INT);  // attempt number
-    $attempt = $USER->attempt;
+    $attempt = $SESSION->scorm_attempt;
 
 
     if (!empty($id)) {
@@ -37,7 +37,7 @@
 
     if (confirm_sesskey() && (!empty($scoid))) {
         $result = true;
-        if (isstudent($course->id) || (isteacher($course->id) && !isadmin())) {
+        if (has_capability('mod/scorm:savetrack', $context)) {
             foreach ($_POST as $element => $value) {
                 if (substr($element,0,3) == 'cmi') {
                     $element = str_replace('__','.',$element);

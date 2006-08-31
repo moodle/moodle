@@ -1,58 +1,5 @@
 <?php  // $Id$
 
-/// Library of functions and constants for module scorm
-
-define('GRADESCOES', '0');
-define('GRADEHIGHEST', '1');
-define('GRADEAVERAGE', '2');
-define('GRADESUM', '3');
-$SCORM_GRADE_METHOD = array (GRADESCOES => get_string('gradescoes', 'scorm'),
-                             GRADEHIGHEST => get_string('gradehighest', 'scorm'),
-                             GRADEAVERAGE => get_string('gradeaverage', 'scorm'),
-                             GRADESUM => get_string('gradesum', 'scorm'));
-
-define('VALUEHIGHEST', '0');
-define('VALUEAVERAGE', '1');
-define('VALUEFIRST', '2');
-define('VALUELAST', '3');
-$SCORM_WHAT_GRADE = array (VALUEHIGHEST => get_string('highestattempt', 'scorm'),
-                           VALUEAVERAGE => get_string('averageattempt', 'scorm'),
-                           VALUEFIRST => get_string('firstattempt', 'scorm'),
-                           VALUELAST => get_string('lastattempt', 'scorm'));
-
-$SCORM_POPUP_OPTIONS = array('resizable'=>1, 
-                             'scrollbars'=>1, 
-                             'directories'=>0, 
-                             'location'=>0,
-                             'menubar'=>0, 
-                             'toolbar'=>0, 
-                             'status'=>0);
-$stdoptions = '';
-foreach ($SCORM_POPUP_OPTIONS as $popupopt => $value) {
-    $stdoptions .= $popupopt.'='.$value;
-    if ($popupopt != 'status') {
-        $stdoptions .= ',';
-    }
-}
-
-if (!isset($CFG->scorm_maxattempts)) {
-    set_config('scorm_maxattempts','6');
-}
-
-if (!isset($CFG->scorm_frameheight)) {
-    set_config('scorm_frameheight','500');
-}
-
-if (!isset($CFG->scorm_framewidth)) {
-    set_config('scorm_framewidth','100%');
-}
-
-//
-// Repository configurations
-//
-$repositoryconfigfile = $CFG->dirroot.'/mod/resource/type/ims/repository_config.php';
-$repositorybrowser = '/mod/resource/type/ims/finder.php';
-
 /**
 * Given an object containing all the necessary data,
 * (defined by the form in mod.html) this function
@@ -127,10 +74,7 @@ function scorm_update_instance($scorm) {
            (basename($scorm->reference) != 'imsmanifest.xml') && ($scorm->reference[0] != '#')) {
             rename($scorm->dir.$scorm->datadir,$scorm->dir.'/'.$scorm->id);
         }
-        /*    // Delete old related records
-            delete_records('scorm_scoes','scorm',$scorm->id);
-            delete_records('scorm_scoes_track','scormid',$scorm->id);
-            delete_records('scorm_sequencing_controlmode','scormid',$scorm->id);
+/*          delete_records('scorm_sequencing_controlmode','scormid',$scorm->id);
             delete_records('scorm_sequencing_rolluprules','scormid',$scorm->id);
             delete_records('scorm_sequencing_rolluprule','scormid',$scorm->id);
             delete_records('scorm_sequencing_rollupruleconditions','scormid',$scorm->id);
@@ -161,9 +105,12 @@ function scorm_delete_instance($id) {
 
     $result = true;
 
-    // Delete any dependent files
-    require_once('locallib.php');
-    scorm_delete_files($CFG->dataroot.'/'.$scorm->course.'/moddata/scorm/'.$scorm->id);
+    $scorm->dir = $CFG->dataroot.'/'.$scorm->course.'/moddata/scorm';
+    if (is_dir($scorm->dir.'/'.$scorm->id)) {
+        // Delete any dependent files
+        require_once('locallib.php');
+        scorm_delete_files($scorm->dir.'/'.$scorm->id);
+    }
 
     // Delete any dependent records
     if (! delete_records('scorm_scoes_track', 'scormid', $scorm->id)) {
@@ -175,7 +122,7 @@ function scorm_delete_instance($id) {
     if (! delete_records('scorm', 'id', $scorm->id)) {
         $result = false;
     }
-    if (! delete_records('scorm_sequencing_controlmode', 'scormid', $scorm->id)) {
+    /*if (! delete_records('scorm_sequencing_controlmode', 'scormid', $scorm->id)) {
         $result = false;
     }
     if (! delete_records('scorm_sequencing_rolluprules', 'scormid', $scorm->id)) {
@@ -195,7 +142,7 @@ function scorm_delete_instance($id) {
     }
     if (! delete_records('scorm_sequencing_ruleconditions', 'scormid', $scorm->id)) {
         $result = false;
-    }       
+    }*/       
     return $result;
 }
 

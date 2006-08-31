@@ -72,7 +72,7 @@
         if (!empty($sco->parameters)) {
             $sco->parameters = '&'. $sco->parameters;
         }
-        $launcher = $sco->launch.$connector.'aicc_sid='.sesskey().'&aicc_url='.$CFG->wwwroot.'/mod/scorm/aicc.php'.$sco->parameters;
+        $launcher = $sco->launch.$connector.'aicc_sid='.sesskey().'&aicc_url='.$CFG->wwwroot.'/mod/scorm/type/aicc/aicc.php'.$sco->parameters;
     } else {
         $launcher = $sco->launch.$connector.$sco->parameters;
     }
@@ -100,11 +100,11 @@
         <title>LoadSCO</title>
         <script language="javascript" type="text/javascript">
         <!--
-            setTimeout('document.location = "<?php echo $result ?>";',1000);
+            setTimeout('document.location = "<?php echo $result ?>";',2000);
         -->
         </script>
         <noscript>
-            <meta http-equiv="refresh" content="1;url=<?php echo $result ?>" />
+            <meta http-equiv="refresh" content="2;url=<?php echo $result ?>" />
         </noscript> 
     </head>
     <body>

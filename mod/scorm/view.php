@@ -60,38 +60,37 @@
     //
     // Print the page header
     //
-    if (!$cm->visible and !isteacher($course->id)) {
-        print_header($pagetitle, "$course->fullname", "$navigation ".format_string($scorm->name), '', '', true,
-                     update_module_button($cm->id, $course->id, $strscorm), navmenu($course, $cm));
-        notice(get_string('activityiscurrentlyhidden'));
-    } else {
-        print_header($pagetitle, "$course->fullname",
-                     "$navigation <a target=\"{$CFG->framename}\" href=\"view.php?id=$cm->id\">".format_string($scorm->name,true)."</a>",
-                     '', '', true, update_module_button($cm->id, $course->id, $strscorm), navmenu($course, $cm));
+    print_header($pagetitle, "$course->fullname",
+                 "$navigation <a target=\"{$CFG->framename}\" href=\"view.php?id=$cm->id\">".format_string($scorm->name,true)."</a>",
+                 '', '', true, update_module_button($cm->id, $course->id, $strscorm), navmenu($course, $cm));
 
-        if (isteacher($course->id)) {
-
-        //Phan thiet lap he so diem
-            $examNumber = get_record_select('scorm_scoes', 'scorm ='.($scorm->id).' and minnormalizedmeasure > -1','count(id) as examCount');
-            //fwrite($ft,"\n So bai kiem tra la ".($examNumber->examCount));    
-            if ($examNumber->examCount > 0){
-                echo "<div class=\"reportlink\"><img src='pix\SuaHeSoDiem.png' /><a target=\"{$CFG->framename}\" href=\"coefficientSetting.php?id=$cm->id\"> ".get_string('scorecoefficientsetting','scorm',$examNumber->examCount).'</a></div>';
-            }
-
-        //-----------------------
-            $trackedusers = get_record('scorm_scoes_track', 'scormid', $scorm->id, '', '', '', '', 'count(distinct(userid)) as c');
-            if ($trackedusers->c > 0) {
-                echo "<div class=\"reportlink\"><img src='pix\ThongKe.png' /><a target=\"{$CFG->framename}\" href=\"report.php?id=$cm->id\"> ".get_string('viewallreports','scorm',$trackedusers->c).'</a></div>';
-            } else {
-                echo '<div class="reportlink">'.get_string('noreports','scorm').'</div>';
-            }
-        }
-
-        $USER->setAttempt = 'notset';
-        // Print the main part of the page
-        print_heading(format_string($scorm->name));
-        print_simple_box(format_text($scorm->summary), 'center', '70%', '', 5, 'generalbox', 'intro');
-        scorm_view_display($USER, $scorm, 'view.php?id='.$cm->id, $cm);
-        print_footer($course);
+    if (empty($cm->visible) and !has_capability('moodle/course:manageactivities', $context)) {
+            notice(get_string("activityiscurrentlyhidden"));
     }
+
+    if (has_capability('moodle/course:manageactivities', $context)) {
+        // Added by Pham Minh Duc
+        $examNumber = get_record_select('scorm_scoes', 'scorm ='.($scorm->id).' and minnormalizedmeasure > -1','count(id) as examCount');
+        if ($examNumber->examCount > 0){
+            echo "<div class=\"reportlink\"><img src='pix/SuaHeSoDiem.png' /><a target=\"{$CFG->framename}\" href=\"coefficientSetting.php?id=$cm->id\"> ".get_string('scorecoefficientsetting','scorm',$examNumber->examCount).'</a></div>';
+        }
+        // End Add
+
+        $trackedusers = get_record('scorm_scoes_track', 'scormid', $scorm->id, '', '', '', '', 'count(distinct(userid)) as c');
+        if ($trackedusers->c > 0) {
+            echo "<div class=\"reportlink\"><img src='pix/ThongKe.png' /><a target=\"{$CFG->framename}\" href=\"report.php?id=$cm->id\"> ".get_string('viewallreports','scorm',$trackedusers->c).'</a></div>';
+        } else {
+            echo '<div class="reportlink">'.get_string('noreports','scorm').'</div>';
+        }
+    }
+
+    // Added by Pham Minh Duc
+    $USER->setAttempt = 'notset';
+    // End Add
+
+    // Print the main part of the page
+    print_heading(format_string($scorm->name));
+    print_simple_box(format_text($scorm->summary), 'center', '70%', '', 5, 'generalbox', 'intro');
+    scorm_view_display($USER, $scorm, 'view.php?id='.$cm->id, $cm);
+    print_footer($course);
 ?>
