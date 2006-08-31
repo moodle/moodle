@@ -1170,12 +1170,10 @@ function role_assign($roleid, $userid, $groupid, $contextid, $timestart=0, $time
  * @return boolean - success or failure
  */
 function role_unassign($roleid, $userid, $groupid, $contextid) {
-    if ($groupid) {
-        // do nothing yet as this is not implemented
-    } 
-    else {
-          return delete_records('role_assignments', 'userid', $userid, 
-                  'roleid', $roleid, 'contextid', $contextid); 
+    if ($groupid && empty($userid)) {
+        return delete_records('role_assignments', 'groupid', $groupid, 'roleid', $roleid, 'contextid', $contextid); 
+    } else {
+        return delete_records('role_assignments', 'userid', $userid, 'roleid', $roleid, 'contextid', $contextid); 
     } 
 }
 
