@@ -135,7 +135,10 @@
                 break;
                 case 'putparam':
                     if ($status == 'Running') {
-                        if (!empty($aiccdata) && has_capability('mod/scorm:savetrack', $context)) {
+                        if (! $cm = get_coursemodule_from_instance("scorm", $scorm->id, $scorm->course)) {
+                            echo "error = 1\nerror_text = Unknown\n"; // No one must see this error message if not hacked
+                        }
+                        if (!empty($aiccdata) && has_capability('mod/scorm:savetrack', get_context_instance(CONTEXT_MODULE, $cm->id))) {
                             $initlessonstatus = 'not attempted';
                             $lessonstatus = 'not attempted';
                             if (isset($SESSION->scorm_lessonstatus)) {

@@ -37,7 +37,7 @@
 
     if (confirm_sesskey() && (!empty($scoid))) {
         $result = true;
-        if (has_capability('mod/scorm:savetrack', $context)) {
+        if (has_capability('mod/scorm:savetrack', get_context_instance(CONTEXT_MODULE,$cm->id))) {
             foreach ($_POST as $element => $value) {
                 if (substr($element,0,3) == 'cmi') {
                     $element = str_replace('__','.',$element);

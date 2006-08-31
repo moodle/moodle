@@ -60,7 +60,7 @@
 
     $pagetitle = strip_tags("$course->shortname: ".format_string($scorm->name));
 
-    if (!$cm->visible and !has_capability('moodle/user:viewhiddenactivities',$context)) {
+    if (!$cm->visible and !has_capability('moodle/course:viewhiddenactivities', get_context_instance(CONTEXT_COURSE,$course->id))) {
         print_header($pagetitle, "$course->fullname",
                  "$navigation <a target='{$CFG->framename}' href='view.php?id=$cm->id'>".format_string($scorm->name,true)."</a>",
                  '', '', true, update_module_button($cm->id, $course->id, $strscorm), '', false);

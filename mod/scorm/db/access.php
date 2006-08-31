@@ -47,6 +47,20 @@ $mod_scorm_capabilities = array(
         )
     ),
     
+    'mod/scorm:viewreport' => array(
+    
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_MODULE,
+        'legacy' => array(
+            'guest' => CAP_PREVENT,
+            'student' => CAP_PREVENT,
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'coursecreator' => CAP_ALLOW,
+            'admin' => CAP_ALLOW
+        )
+    ),
+    
     'mod/scorm:savetrack' => array(
     
         'captype' => 'write',
@@ -74,7 +88,6 @@ $mod_scorm_capabilities = array(
             'admin' => CAP_PREVENT
         )
     )
-    
     
 );
 

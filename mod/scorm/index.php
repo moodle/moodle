@@ -52,6 +52,7 @@
 
     foreach ($scorms as $scorm) {
 
+        $context = get_context_instance(CONTEXT_MODULE,$scorm->coursemodule);
         $tt = "";
         if ($course->format == "weeks" or $course->format == "topics") {
             if ($scorm->section) {
@@ -61,7 +62,7 @@
             $tt = userdate($scorm->timemodified);
         }
         $report = '&nbsp;';
-        if (has_capability('moodle/user:viewuseractivitiesreport', $context)) {
+        if (has_capability('mod/scorm:viewreport', $context)) {
             $trackedusers = get_record('scorm_scoes_track', 'scormid', $scorm->id, '', '', '', '', 'count(distinct(userid)) as c');
             if ($trackedusers->c > 0) {
                 $reportshow = '<a href="report.php?a='.$scorm->id.'">'.get_string('viewallreports','scorm',$trackedusers->c).'</a></div>';

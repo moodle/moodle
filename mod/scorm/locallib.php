@@ -376,6 +376,7 @@ function scorm_course_format_display($user,$course) {
 
     $strupdate = get_string('update');
     $strmodule = get_string('modulename','scorm');
+    $context get_context_instance(CONTEXT_COURSE,$course->id);
 
     echo '<div class="mod-scorm">';
     if ($scorms = get_all_instances_in_course('scorm', $course)) {
@@ -410,7 +411,7 @@ function scorm_course_format_display($user,$course) {
         print_simple_box($headertext,'','100%');
         scorm_view_display($user, $scorm, 'view.php?id='.$course->id, $cm, '100%');
     } else {
-        if (has_capability('moodle/course:', $context)) {
+        if (has_capability('moodle/course:update', $context)) {
             // Create a new activity
             redirect($CFG->wwwroot.'/course/mod.php?id='.$course->id.'&amp;section=0&sesskey='.sesskey().'&amp;add=scorm');
         } else {

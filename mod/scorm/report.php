@@ -42,7 +42,7 @@
 
     require_login($course->id, false, $cm);
 
-    if (!has_capability('moodle/user:viewuseractivitiesreport',$context)) {
+    if (!has_capability('mod/scorm:viewreport', get_context_instance(CONTEXT_MODULE,$cm->id)) {
         error("You are not allowed to use this script");
     }
 

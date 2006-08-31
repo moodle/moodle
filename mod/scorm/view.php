@@ -5,10 +5,10 @@
     
     $id = optional_param('id', '', PARAM_INT);       // Course Module ID, or
     $a = optional_param('a', '', PARAM_INT);         // scorm ID
-    //$organization = optional_param('organization', '', PARAM_INT); // organization ID
+    $organization = optional_param('organization', '', PARAM_INT); // organization ID
 
     if (!empty($id)) {
-        if (! $cm = $cm = get_coursemodule_from_id('scorm', $id)) {
+        if (! $cm = get_coursemodule_from_id('scorm', $id)) {
             error("Course Module ID was incorrect");
         }
         if (! $course = get_record("course", "id", $cm->course)) {
@@ -32,6 +32,8 @@
     }
 
     require_login($course->id, false, $cm);
+
+    $context = get_context_instance(CONTEXT_COURSE, $course->id)
 
     if (isset($SESSION->scorm_scoid)) {
         unset($SESSION->scorm_scoid);
@@ -69,24 +71,13 @@
     }
 
     if (has_capability('moodle/course:manageactivities', $context)) {
-        // Added by Pham Minh Duc
-        $examNumber = get_record_select('scorm_scoes', 'scorm ='.($scorm->id).' and minnormalizedmeasure > -1','count(id) as examCount');
-        if ($examNumber->examCount > 0){
-            echo "<div class=\"reportlink\"><img src='pix/SuaHeSoDiem.png' /><a target=\"{$CFG->framename}\" href=\"coefficientSetting.php?id=$cm->id\"> ".get_string('scorecoefficientsetting','scorm',$examNumber->examCount).'</a></div>';
-        }
-        // End Add
-
         $trackedusers = get_record('scorm_scoes_track', 'scormid', $scorm->id, '', '', '', '', 'count(distinct(userid)) as c');
         if ($trackedusers->c > 0) {
-            echo "<div class=\"reportlink\"><img src='pix/ThongKe.png' /><a target=\"{$CFG->framename}\" href=\"report.php?id=$cm->id\"> ".get_string('viewallreports','scorm',$trackedusers->c).'</a></div>';
+            echo "<div class=\"reportlink\"><a target=\"{$CFG->framename}\" href=\"report.php?id=$cm->id\"> ".get_string('viewallreports','scorm',$trackedusers->c).'</a></div>';
         } else {
             echo '<div class="reportlink">'.get_string('noreports','scorm').'</div>';
         }
     }
-
-    // Added by Pham Minh Duc
-    $USER->setAttempt = 'notset';
-    // End Add
 
     // Print the main part of the page
     print_heading(format_string($scorm->name));
