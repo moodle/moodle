@@ -1014,7 +1014,7 @@ function upgrade_blocks_db($continueto) {
 //into blocks table or do all the upgrade process if newer
 function upgrade_blocks_plugins($continueto) {
 
-    global $CFG;
+    global $CFG, $db;
 
     $blocktitles = array();
     $invalidblocks = array();
@@ -1063,13 +1063,21 @@ function upgrade_blocks_plugins($continueto) {
             continue;
         }
 
+        $oldupgrade = false;
+        $newupgrade = false;
         if ( @is_dir($fullblock .'/db/')) {
             if ( @is_readable($fullblock .'/db/'. $CFG->dbtype .'.php')) {
-                include_once($fullblock .'/db/'. $CFG->dbtype .'.php');  // defines upgrading function
-            } else {
-                //$notices[] ='Block '. $blockname .': '. $fullblock .'/db/'. $CFG->dbtype .'.php was not readable';
-                continue;
+                include_once($fullblock .'/db/'. $CFG->dbtype .'.php');  // defines old upgrading function
+                $oldupgrade = true;
             }
+            if ( @is_readable($fullblock .'/db/upgrade.php')) {
+                include_once($fullblock .'/db/upgrade.php');  // defines new upgrading function
+                $newupgrade = true;
+            }
+        }
+
+        if (!$oldupgrade && !$newupgrade) {
+            continue;
         }
 
         $classname = 'block_'.$blockname;
@@ -1123,38 +1131,51 @@ function upgrade_blocks_plugins($continueto) {
                             '<script type="text/javascript" src="' . $CFG->wwwroot . '/lib/scroll_to_errors.js"></script>',
                             false, '&nbsp;', '&nbsp;');
                 }
+                $updated_blocks = true;
                 upgrade_log_start();
                 print_heading('New version of '.$blocktitle.' ('.$block->name.') exists');
-                $upgrade_function = $block->name.'_upgrade';
-                if (function_exists($upgrade_function)) {
-                    $db->debug=true;
-                    if ($upgrade_function($currblock->version, $block)) {
+                @set_time_limit(0);  // To allow slow databases to complete the long SQL
 
-                        $upgradesuccess = true;
-                    } else {
-                        $upgradesuccess = false;
-                    }
-                    $db->debug=false;
+            /// Run de old and new upgrade functions for the module
+                $oldupgrade_function = $block->name .'_upgrade';
+                $newupgrade_function = 'xmldb_' . $block->name .'_upgrade';
+
+            /// First, the old function if exists
+                $oldupgrade_status = true;
+                if ($oldupgrade && function_exists($oldupgrade_function)) {
+                    $db->debug = true;
+                    $oldupgrade_status = $oldupgrade_function($currblock->version, $block);
+                } else if ($oldupgrade) {
+                    notify ('Upgrade function ' . $oldupgrade_function . ' was not available in ' .
+                             $fullblock . '/db/' . $CFG->dbtype . '.php');
                 }
-                else {
-                    $upgradesuccess = true;
+
+            /// Then, the new function if exists and the old one was ok
+                $newupgrade_status = true;
+                if ($newupgrade && function_exists($newupgrade_function) && $oldupgrade_status) {
+                    $db->debug = true;
+                    $newupgrade_status = $newupgrade_function($currblock->version, $block);
+                } else if ($newupgrade) {
+                    notify ('Upgrade function ' . $newupgrade_function . ' was not available in ' .
+                             $fullblock . '/db/upgrade.php');
                 }
-                if(!$upgradesuccess) {
-                    notify('Upgrading block '. $block->name .' from '. $currblock->version .' to '. $block->version .' FAILED!');
-                }
-                if (!update_capabilities('block/'.$block->name)) {
-                    notify('Could not update '.$block->name.' capabilities!');
-                }
-                else {
+
+                $db->debug=false;
+            /// Now analyze upgrade results
+                if ($oldupgrade_status && $newupgrade_status) {    // No upgrading failed
                     // OK so far, now update the block record
                     $block->id = $currblock->id;
                     if (! update_record('block', $block)) {
                         error('Could not update block '. $block->name .' record in block table!');
                     }
+                    if (!update_capabilities('block/'.$block->name)) {
+                        error('Could not update '.$block->name.' capabilities!');
+                    }
                     notify(get_string('blocksuccess', '', $blocktitle), 'notifysuccess');
-                    echo '<hr />';
+                } else {
+                    notify('Upgrading block '. $block->name .' from '. $currblock->version .' to '. $block->version .' FAILED!');
                 }
-                $updated_blocks = true;
+                echo '<hr />';
             } else {
                 upgrade_log_start();
                 error('Version mismatch: block '. $block->name .' can\'t downgrade '. $currblock->version .' -> '. $block->version .'!');
@@ -1182,22 +1203,34 @@ function upgrade_blocks_plugins($continueto) {
                         '<script type="text/javascript" src="' . $CFG->wwwroot . '/lib/scroll_to_errors.js"></script>',
                         false, '&nbsp;', '&nbsp;');
             }
+            $updated_blocks = true;
             upgrade_log_start();
             print_heading($block->name);
-            $updated_blocks = true;
             $db->debug = true;
             @set_time_limit(0);  // To allow slow databases to complete the long SQL
-            if (!is_dir($fullblock .'/db/') || modify_database($fullblock .'/db/'. $CFG->dbtype .'.sql')) {
-                $db->debug = false;
+
+        /// Both old .sql files and new install.xml are supported
+        /// but we priorize install.xml (XMLDB) if present
+            $status = false;
+            if (file_exists($fullblock . '/db/install.xml') && $CFG->xmldb_enabled) {
+                $status = install_from_xmldb_file($fullblock . '/db/install.xml'); //New method
+            } else if (file_exists($fullblock .'/db/'. $CFG->dbtype .'.sql')) {
+                $status = modify_database($fullblock .'/db/'. $CFG->dbtype .'.sql'); //Old method
+            } else {
+                $status = true;
+            }
+
+            $db->debug = false;
+            if ($status) {
                 if ($block->id = insert_record('block', $block)) {
                     $blockobj->after_install();
+                    if (!update_capabilities('block', $block->name)) {
+                        notify('Could not set up '.$block->name.' capabilities!');
+                    }
                     notify(get_string('blocksuccess', '', $blocktitle), 'notifysuccess');
                     echo '<hr />';
                 } else {
                     error($block->name .' block could not be added to the block list!');
-                }
-                if (!update_capabilities('block', $block->name)) {
-                    notify('Could not set up '.$block->name.' capabilities!');
                 }
             } else {
                 error('Block '. $block->name .' tables could NOT be set up successfully!');
