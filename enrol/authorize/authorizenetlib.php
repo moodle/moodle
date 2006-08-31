@@ -341,7 +341,7 @@ function authorize_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE, $
         if (!$test && !empty($cctype) && ($reasonno == 17 or $reasonno == 28)) {
                $ccaccepts = enrolment_plugin_authorize::get_list_of_creditcards();
                unset($ccaccepts[$cctype]);
-               set_config('an_acceptccs', array_keys($ccaccepts));
+               set_config('an_acceptccs', implode(',', array_keys($ccaccepts)));
                enrolment_plugin_authorize::email_to_admin("Autoconfigure; This card type " .
                "isn't accepted: $cctype. New config:", $ccaccepts);
         }
