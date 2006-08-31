@@ -77,6 +77,10 @@ class XMLDBoci8po extends XMLDBgenerator {
                 break;
             case XMLDB_TYPE_NUMBER:
                 $dbtype = $this->number_type;
+            /// 38 is the max allowed
+                if ($xmldb_length > 38) {
+                    $xmldb_length = 38;
+                }
                 if (!empty($xmldb_length)) {
                     $dbtype .= '(' . $xmldb_length;
                     if (!empty($xmldb_decimals)) {
@@ -138,7 +142,7 @@ class XMLDBoci8po extends XMLDBgenerator {
         $trigger.= "\nON " . $this->getEncQuoted($this->prefix . $xmldb_table->getName());
         $trigger.= "\n    FOR EACH ROW";
         $trigger.= "\nBEGIN";
-        $trigger.= "\n    IF :old." . $this->getEncQuoted($xmldb_field->getName()) . ' IS NOT NULL THEN';
+        $trigger.= "\n    IF :new." . $this->getEncQuoted($xmldb_field->getName()) . ' IS NULL THEN';
         $trigger.= "\n        SELECT " . $sequence_name . '.nextval INTO :new.' . $this->getEncQuoted($xmldb_field->getName()) . " FROM dual;";
         $trigger.= "\n    END IF;";
         $trigger.= "\nEND;";
