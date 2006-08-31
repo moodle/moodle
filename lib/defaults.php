@@ -35,7 +35,7 @@
        'enablerssfeeds'           =>  0,
        'enablestats'              =>  0,
        'enabletrusttext'          =>  0,
-       'enrol'                    => 'internal',
+       'enrol'                    => 'internal',//wrong
        'extendedusernamechars'    =>  false,
        'editorbackgroundcolor'    => '#ffffff',
        'editorfontfamily'         => 'Trebuchet MS,Verdana,Arial,Helvetica,sans-serif',
@@ -106,7 +106,7 @@
        'tabselectedtofront'       =>  false,
        'teacherassignteachers'    =>  true,
        'template'                 => 'default',
-       'textfilters'              => 'mod/glossary/dynalink.php',
+       'textfilters'              => 'mod/glossary/dynalink.php',//wrong
        'theme'                    => 'standardwhite',
        'themelist'                => '',
        'timezone'                 =>  99,

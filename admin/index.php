@@ -162,12 +162,12 @@
                                                    'auth' => 'email',
                                                    'auth_pop3mailbox' => 'INBOX',
                                                    'changepassword' => '',
-                                                   'enrol' => 'internal',
+                                                   'enrol' => 'manual',
+                                                   'enrol_plugins_enabled' => 'manual',
                                                    'frontpage' => 1,
                                                    'guestloginbutton' => 1,
                                                    'style' => 'default',
                                                    'template' => 'default',
-                                                   'textfilters' => 'mod/glossary/dynalink.php',
                                                    'theme' => 'standardwhite'));
 
             notify($strdatabasesuccess, "green");
