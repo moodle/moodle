@@ -53,7 +53,7 @@ CREATE TABLE `prefix_course` (
   `summary` text NOT NULL default '',
   `format` varchar(10) NOT NULL default 'topics',
   `showgrades` smallint(2) unsigned NOT NULL default '1',
-  `modinfo` longtext NOT NULL default '',
+  `modinfo` longtext,
   `newsitems` smallint(5) unsigned NOT NULL default '1',
   `teacher` varchar(100) NOT NULL default 'Teacher',
   `teachers` varchar(100) NOT NULL default 'Teachers',

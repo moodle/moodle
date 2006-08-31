@@ -1764,6 +1764,11 @@ function main_upgrade($oldversion=0) {
         table_column('capabilities', '', 'riskbitmask', 'INTEGER', '10', 'unsigned', '0', 'not null', '');
     }
 
+    if ($oldversion < 2006083100) {
+        execute_sql("ALTER TABLE {$CFG->prefix}course ALTER COLUMN modinfo DROP NOT NULL");
+        execute_sql("ALTER TABLE {$CFG->prefix}course ALTER COLUMN modinfo DROP DEFAULT");
+    }
+
     return $result;
 }
 
