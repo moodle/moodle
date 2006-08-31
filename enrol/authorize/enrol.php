@@ -222,7 +222,7 @@ class enrolment_plugin_authorize
         $message = '';
         $an_review = !empty($CFG->an_review);
         $action = $an_review ? AN_ACTION_AUTH_ONLY : AN_ACTION_AUTH_CAPTURE;
-        $success = authorize_action($order, $message, $extra, $action, $form->cctype);
+        $success = authorize_action($order, $message, $extra, $action, AN_METHOD_CC, $form->cctype);
         if (!$success) {
             enrolment_plugin_authorize::email_to_admin($message, $order);
             $this->authorizeerrors['header'] = $message;
@@ -401,6 +401,33 @@ class enrolment_plugin_authorize
         global $CFG;
         require_once('abaval.php');
 
+        if (empty($form->abacode) || !is_numeric($form->abacode)) {
+            $this->authorizeerrors['abacode'] = get_string('missingaba', 'enrol_authorize');
+        }
+        elseif (!ABAVal($form->abacode)) {
+            $this->authorizeerrors['abacode'] = get_string('invalidaba', 'enrol_authorize');
+        }
+
+        if (empty($form->accnum) || !is_numeric($form->accnum)) {
+            $this->authorizeerrors['accnum'] = get_string('invalidaccnum', 'enrol_authorize');
+        }
+
+        if (empty($form->acctype) || !in_array($form->acctype, array('CHECKING','BUSINESSCHECKING','SAVINGS'))) {
+            $this->authorizeerrors['acctype'] = get_string('invalidacctype', 'enrol_authorize');
+        }
+
+        if (empty($form->bankname)) {
+            $this->authorizeerrors['bankname'] = get_string('missingbankname', 'enrol_authorize');
+        }
+
+        if (empty($form->firstname) || empty($form->lastname)) {
+            $this->authorizeerrors['firstlast'] = get_string('missingfullname');
+        }
+
+        if (!empty($this->authorizeerrors)) {
+            $this->authorizeerrors['header'] = get_string('someerrorswerefound');
+            return false;
+        }
 
         return true;
     }
@@ -810,7 +837,7 @@ class enrolment_plugin_authorize
         foreach ($orders as $order) {
             $message = '';
             $extra = NULL;
-            $success = authorize_action($order, $message, $extra, AN_ACTION_PRIOR_AUTH_CAPTURE);
+            $success = authorize_action($order, $message, $extra, AN_ACTION_PRIOR_AUTH_CAPTURE, AN_METHOD_CC);
             if ($success) {
                 $timestart = $timeend = 0;
                 if ($order->enrolperiod) {

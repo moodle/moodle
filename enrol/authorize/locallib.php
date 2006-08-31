@@ -228,7 +228,7 @@ function authorize_print_order_details($orderno)
         else {
             $message = '';
             $extra = NULL;
-            $success = authorize_action($order, $message, $extra, AN_ACTION_PRIOR_AUTH_CAPTURE);
+            $success = authorize_action($order, $message, $extra, AN_ACTION_PRIOR_AUTH_CAPTURE, AN_METHOD_CC);
             if (!$success) {
                 $table->data[] = array("<b><font color='red'>$strs->error:</font></b>", $message);
             }
