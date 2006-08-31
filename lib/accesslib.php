@@ -357,25 +357,34 @@ function load_user_capability($capability='', $context ='', $userid='') {
     } else {
         $capsearch ="";  
     }
-    // First we generate a list of all relevant contexts of the user
+
+/// First we generate a list of all relevant contexts of the user
+
+    $usercontexts = array();
 
     if ($context) { // if context is specified
         $usercontexts = get_parent_contexts($context);          
-        $listofcontexts = '('.implode(',', $usercontexts).')';
     } else { // else, we load everything
-        echo $userid;
-        $userroles = get_records('role_assignments','userid',$userid);    
-
-        $usercontexts = array();
-        foreach ($userroles as $userrole) {
-            $usercontexts[] = $userrole->contextid;
+        if ($userroles = get_records('role_assignments','userid',$userid)) {
+            foreach ($userroles as $userrole) {
+                $usercontexts[] = $userrole->contextid;
+            }
         }
-        $listofcontexts = '('.implode(',', $usercontexts).')';
     }
 
-    // Then we use 1 giant SQL to bring out all relevant capabilities.
-    // The first part gets the capabilities of orginal role.
-    // The second part gets the capabilities of overriden roles.
+/// Set up SQL fragments for searching contexts
+
+    if ($usercontexts) {
+        $listofcontexts = '('.implode(',', $usercontexts).')';
+        $searchcontexts1 = "c1.id IN $listofcontexts AND";
+        $searchcontexts2 = "c2.id IN $listofcontexts AND";
+    } else {
+        $listofcontexts = $searchcontexts1 = $searchcontexts2 = '';
+    }
+
+/// Then we use 1 giant SQL to bring out all relevant capabilities.
+/// The first part gets the capabilities of orginal role.
+/// The second part gets the capabilities of overriden roles.
 
     $siteinstance = get_context_instance(CONTEXT_SYSTEM, SITEID);
 
@@ -389,7 +398,7 @@ function load_user_capability($capability='', $context ='', $userid='') {
 					 ra.contextid=c1.id AND
 					 ra.roleid=rc.roleid AND
                      ra.userid=$userid AND
-                     c1.id IN $listofcontexts AND
+                     $searchcontexts1
                      rc.contextid=$siteinstance->id 
                      $capsearch
               GROUP BY
@@ -410,8 +419,9 @@ function load_user_capability($capability='', $context ='', $userid='') {
 					 ra.roleid=rc.roleid AND 
 					 ra.userid=$userid AND		 
 					 rc.contextid=c2.id AND             
-                     c1.id IN $listofcontexts AND
-                     c2.id IN $listofcontexts AND rc.contextid != $siteinstance->id
+                     $searchcontexts1
+                     $searchcontexts2
+                     rc.contextid != $siteinstance->id
                      $capsearch
                   
               GROUP BY
