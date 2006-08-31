@@ -634,7 +634,8 @@ class admin_setting_configselect extends admin_setting {
     
     function write_setting($data) {
          // check that what we got was in the original choices
-         if (! in_array($data, array_keys($this->choices))) {
+         // or that the data is the default setting - needed during install when choices can not be constructed yet
+         if ($data != $this->defaultsetting and ! in_array($data, array_keys($this->choices))) {
              return 'Error setting ' . $this->visiblename . '<br />';
          }
          
