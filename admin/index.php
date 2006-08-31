@@ -165,7 +165,6 @@
                                                    'enrol' => 'internal',
                                                    'frontpage' => 1,
                                                    'guestloginbutton' => 1,
-                                                   'prefix' => 1,
                                                    'style' => 'default',
                                                    'template' => 'default',
                                                    'textfilters' => 'mod/glossary/dynalink.php',
