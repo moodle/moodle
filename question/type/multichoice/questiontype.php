@@ -339,34 +339,18 @@ class question_multichoice_qtype extends default_questiontype {
         include("$CFG->dirroot/question/type/multichoice/display.html");
     }
 
+    
+
     function grade_responses(&$question, &$state, $cmoptions) {
-        $answers      = $question->options->answers;
-        $testedstate = clone($state);
-        $teststate    = clone($state);
-        $state->raw_grade = 0;
-        foreach($answers as $answer) {
-            $teststate->responses = array('' => $answer->id);
-            if($question->options->single) {
-                if($this->compare_responses($question, $testedstate,
-                 $teststate)) {
-                    $state->raw_grade = $answer->fraction;
-                    break;
-                }
-            } else {
-                foreach($state->responses as $response) {
-                    $testedstate->responses = array('' => $response);
-                    if($this->compare_responses($question, $testedstate,
-                     $teststate)) {
-                        $state->raw_grade += $answer->fraction;
-                         break;
-                    }
-                }
+        if($question->options->single) {
+            $state->raw_grade = $question->options->answers[reset($state->responses)]->fraction;
+        } else {
+            $state->raw_grade = 0;
+            foreach ($state->responses as $response) {
+                $state->raw_grade += $question->options->answers[$response]->fraction;
             }
         }
-        if (empty($state->raw_grade)) {
-            $state->raw_grade = 0;
-        }
-
+                
         // Make sure we don't assign negative or too high marks
         $state->raw_grade = min(max((float) $state->raw_grade,
                             0.0), 1.0) * $question->maxgrade;
