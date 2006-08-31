@@ -43,14 +43,18 @@ function get_parent_cats($context, $type) {
     
     $parents = array();
     
-    switch($type) {
+    switch ($type) {
 
         case CONTEXT_COURSECAT:
             
-            $cat = get_record('course_categories','id',$context->instanceid);
-            while ($cat->parent) {
-              
-                $context = get_context_instance(CONTEXT_COURSECAT, $cat->parent);
+            if (!$cat = get_record('course_categories','id',$context->instanceid)) {
+                break;
+            }
+
+            while (!empty($cat->parent)) {
+                if (!$context = get_context_instance(CONTEXT_COURSECAT, $cat->parent)) {
+                    break;
+                }
                 $parents[] = $context->id;
                 $cat = get_record('course_categories','id',$cat->parent);
             }
@@ -59,14 +63,23 @@ function get_parent_cats($context, $type) {
         
         case CONTEXT_COURSE:
         
-            $course = get_record('course', 'id', $context->instanceid);
-            $cat = get_record('course_categories','id',$course->category);        
-            $catinstance = get_context_instance(CONTEXT_COURSECAT, $course->category);
+            if (!$course = get_record('course', 'id', $context->instanceid)) {
+                break;
+            }
+            if (!$catinstance = get_context_instance(CONTEXT_COURSECAT, $course->category)) {
+                break;
+            }
+
             $parents[] = $catinstance->id;
-            
-            // what to do with cat 0?
-            while ($cat->parent) {
-                $context = get_context_instance(CONTEXT_COURSECAT, $cat->parent);
+
+            if (!$cat = get_record('course_categories','id',$course->category)) {
+                break;
+            }
+
+            while (!empty($cat->parent)) {
+                if (!$context = get_context_instance(CONTEXT_COURSECAT, $cat->parent)) {
+                    break;
+                }
                 $parents[] = $context->id;
                 $cat = get_record('course_categories','id',$cat->parent);
             }
@@ -1482,7 +1495,7 @@ function get_parent_contexts($context) {
         
         case CONTEXT_COURSECAT: // Coursecat -> coursecat or site
             $coursecat = get_record('course_categories','id',$context->instanceid);
-            if ($coursecat->parent) { // return parent value if exist
+            if (!empty($coursecat->parent)) { // return parent value if exist
                 $parent = get_context_instance(CONTEXT_COURSECAT, $coursecat->parent);
                 return array_merge(array($parent->id), get_parent_contexts($parent));
             } else { // else return site value
