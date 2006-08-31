@@ -1769,6 +1769,11 @@ function main_upgrade($oldversion=0) {
         execute_sql("ALTER TABLE {$CFG->prefix}course ALTER COLUMN modinfo DROP DEFAULT");
     }
 
+    if ($oldversion < 2006083101) {
+        execute_sql("ALTER TABLE {$CFG->prefix}course_categories ALTER COLUMN description DROP NOT NULL");
+        execute_sql("ALTER TABLE {$CFG->prefix}course_categories ALTER COLUMN description DROP DEFAULT");
+    }
+
     return $result;
 }
 

@@ -100,7 +100,7 @@ CREATE TABLE `prefix_course` (
 CREATE TABLE `prefix_course_categories` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `name` varchar(255) NOT NULL default '',
-  `description` text NOT NULL default '',
+  `description` text,
   `parent` int(10) unsigned NOT NULL default '0',
   `sortorder` int(10) unsigned NOT NULL default '0',
   `coursecount` int(10) unsigned NOT NULL default '0',

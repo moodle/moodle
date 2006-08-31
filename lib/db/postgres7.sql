@@ -66,7 +66,7 @@ CREATE INDEX prefix_course_shortname_idx ON prefix_course (shortname);
 CREATE TABLE prefix_course_categories (
    id SERIAL PRIMARY KEY,
    name varchar(255) NOT NULL default '',
-   description text NOT NULL default '',
+   description text,
    parent integer NOT NULL default '0',
    sortorder integer NOT NULL default '0',
    coursecount integer NOT NULL default '0',

@@ -2173,6 +2173,10 @@ function main_upgrade($oldversion=0) {
         execute_sql("ALTER TABLE {$CFG->prefix}course CHANGE modinfo modinfo longtext NULL AFTER showgrades");
     }
 
+    if ($oldversion < 2006083101) {
+        execute_sql("ALTER TABLE {$CFG->prefix}course_categories CHANGE description description text NULL AFTER name");
+    }
+
     return $result;
 }
 
