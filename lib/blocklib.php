@@ -1076,10 +1076,6 @@ function upgrade_blocks_plugins($continueto) {
             }
         }
 
-        if (!$oldupgrade && !$newupgrade) {
-            continue;
-        }
-
         $classname = 'block_'.$blockname;
         if(!class_exists($classname)) {
             $notices[] = 'Block '. $blockname .': '. $classname .' not implemented';
