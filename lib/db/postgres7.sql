@@ -749,8 +749,8 @@ CREATE TABLE prefix_capabilities (
   name varchar(255) NOT NULL default '',     
   captype varchar(50) NOT NULL default '',   
   contextlevel integer NOT NULL default 0,   
-  component varchar(100) NOT NULL default ''     
-  riskbitmask integer NOT NULL default 0,   
+  component varchar(100) NOT NULL default '',     
+  riskbitmask integer NOT NULL default 0   
 );         
 CREATE UNIQUE INDEX prefix_capabilities_name_idx ON prefix_capabilities (name);
 
