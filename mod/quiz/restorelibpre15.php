@@ -1494,7 +1494,8 @@
             $attempt->layout = $quizquestions;
 
             //Set the preview field (code from upgrade)
-            if (isteacher($restore->course_id,$attempt->userid)) {
+            $cm = get_coursemodule_from_instance('quiz', $quiz_id);
+            if (has_capability('mod/quiz:preview', get_context_instance(CONTEXT_MODULE, $cm->id))) {
                 $attempt->preview = 1;
             }
 

@@ -57,7 +57,7 @@
     }
 
     require_login($course->id, false, $cm);
-    $isteacher = isteacher($course->id);
+    $isteacher = has_capability('mod/quiz:grade', get_context_instance(CONTEXT_MODULE, $cm->id));
     
     $coursecontext = get_context_instance(CONTEXT_COURSE, $id); // course context
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);

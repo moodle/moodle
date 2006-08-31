@@ -25,7 +25,7 @@
 
     require_login($course->id, false, $cm);
 
-    if (($USER->id != $user->id) && !isteacher($course->id)) {
+    if (($USER->id != $user->id) && !has_capability('mod/assignment:grade', get_context_instance(CONTEXT_MODULE, $cm->id))) {
         error("You can not view this assignment");
     }
 

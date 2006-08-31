@@ -49,9 +49,8 @@
             }
         } else {
             require_login($questioncategory->course);
-            if (!isteacher($questioncategory->course)) {
-                error('Access not allowed');
-            }
+            $cm = get_coursemodule_from_instance('quiz', $quizid);
+            require_capability('mod/quiz:preview', get_context_instance(CONTEXT_MODULE, $cm->id));
         }        
     } else {
         if (!($quiz = get_record('quiz', 'id', $quizid))) {
