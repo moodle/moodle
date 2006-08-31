@@ -384,7 +384,7 @@ function authorize_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE, $
                     if (!empty($cctype)) {
                         $ccaccepts = enrolment_plugin_authorize::get_list_of_creditcards();
                         unset($ccaccepts[$cctype]);
-                        set_config('an_acceptccs', array_keys($ccaccepts));
+                        set_config('an_acceptccs', implode(',', array_keys($ccaccepts)));
                         enrolment_plugin_authorize::email_to_admin("Autoconfigure; This card type " .
                         "isn't accepted: $cctype. New config:", $ccaccepts);
                     }
@@ -393,7 +393,9 @@ function authorize_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE, $
                 // Electronic checks aren't accepted
                 case AN_REASON_NOACH:
                 {
-                    // Not implemented yet.
+                    set_config('an_acceptmethods', AN_METHOD_CC);
+                    enrolment_plugin_authorize::email_to_admin("Autoconfigure; ACH (Echeck) payment type " .
+                    "isn't accepted: New config:", array(AN_METHOD_CC));
                     break;
                 }
                 // This echeck type isn't accepted
