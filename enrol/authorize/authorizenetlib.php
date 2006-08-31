@@ -82,11 +82,12 @@ function authorize_expired(&$order)
  * @param string &$message Information about error message if this function returns false.
  * @param object &$extra Extra data that used for refunding and credit card information.
  * @param int $action Which action will be performed. See AN_ACTION_*
+ * @param string $cctype Credit card type, used internally to configure types automatically.
  * @return bool true Transaction was successful, false otherwise. Use $message for reason.
  * @author Ethem Evlice <ethem a.t evlice d.o.t com>
  * @uses $CFG
  */
-function authorize_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE)
+function authorize_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE, $cctype=NULL)
 {
     global $CFG;
     static $conststring;
@@ -331,10 +332,18 @@ function authorize_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE)
     }
     else
     {
-        $reason = "reason" . $response[2];
-        $message = get_string($reason, "enrol_authorize");
-        if ($message == '[[' . $reason . ']]') {
+        $reasonno = $response[2];
+        $reasonstr = "reason" . $reasonno;
+        $message = get_string($reasonstr, "enrol_authorize");
+        if ($message == '[[' . $reasonstr . ']]') {
             $message = isset($response[3]) ? $response[3] : 'unknown error';
+        }
+        if (!$test && !empty($cctype) && ($reasonno == 17 or $reasonno == 28)) {
+               $ccaccepts = enrolment_plugin_authorize::get_list_of_creditcards();
+               unset($ccaccepts[$cctype]);
+               set_config('an_acceptccs', array_keys($ccaccepts));
+               enrolment_plugin_authorize::email_to_admin("Autoconfigure; This card type " .
+               "isn't accepted: $cctype. New config:", $ccaccepts);
         }
         if (!empty($CFG->an_avs)) {
             $avs = "avs" . strtolower($response[5]);

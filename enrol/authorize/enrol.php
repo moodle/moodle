@@ -206,7 +206,7 @@ class enrolment_plugin_authorize
         $message = '';
         $an_review = !empty($CFG->an_review);
         $action = $an_review ? AN_ACTION_AUTH_ONLY : AN_ACTION_AUTH_CAPTURE;
-        $success = authorize_action($order, $message, $extra, $action);
+        $success = authorize_action($order, $message, $extra, $action, $form->cctype);
         if (!$success) {
             enrolment_plugin_authorize::email_to_admin($message, $order);
             $this->ccerrors['header'] = $message;
