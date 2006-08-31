@@ -52,10 +52,6 @@ function upgrade_plugins($type, $dir, $return) {
             $newupgrade = true;
         }
 
-        if (!$oldupgrade && !$newupgrade) {
-            continue;
-        }
-
         if (!isset($plugin)) {
             continue;
         }
