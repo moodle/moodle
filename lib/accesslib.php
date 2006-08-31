@@ -1093,7 +1093,7 @@ function get_roles_with_capability($capability, $permission=NULL) {
  * @uses $USER
  * @return id - new id of the assigment
  */
-function role_assign($roleid, $userid, $groupid, $contextid, $timestart=0, $timeend=0, $hidden=0) {
+function role_assign($roleid, $userid, $groupid, $contextid, $timestart=0, $timeend=0, $hidden=0, $enrol='manual') {
     global $USER, $CFG;
 
     if ($CFG->debug > 7) {
@@ -1138,6 +1138,7 @@ function role_assign($roleid, $userid, $groupid, $contextid, $timestart=0, $time
         $newra->groupid = $groupid;
 
         $newra->hidden = $hidden;
+        $newra->enrol = $enrol;
         $newra->timestart = $timestart;
         $newra->timeend = $timeend;
         $newra->timemodified = time();
@@ -1149,6 +1150,7 @@ function role_assign($roleid, $userid, $groupid, $contextid, $timestart=0, $time
 
         $newra->id = $ra->id;
         $newra->hidden = $hidden;
+        $newra->enrol = $enrol;
         $newra->timestart = $timestart;
         $newra->timeend = $timeend;
         $newra->timemodified = time();
