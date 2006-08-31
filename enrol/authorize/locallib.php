@@ -73,7 +73,7 @@ function authorize_print_orders()
     $table->pageable(true);
     $table->setup();
 
-    $select = "SELECT E.id, E.transid, E.courseid, E.userid, E.status, E.ccname, E.timecreated, E.settletime ";
+    $select = "SELECT E.id, E.paymentmethod, E.transid, E.courseid, E.userid, E.status, E.ccname, E.timecreated, E.settletime ";
     $from   = "FROM {$CFG->prefix}enrol_authorize E ";
     $where  = "WHERE (1=1) ";
 
@@ -228,7 +228,7 @@ function authorize_print_order_details($orderno)
         else {
             $message = '';
             $extra = NULL;
-            $success = authorize_action($order, $message, $extra, AN_ACTION_PRIOR_AUTH_CAPTURE, AN_METHOD_CC);
+            $success = authorize_action($order, $message, $extra, AN_ACTION_PRIOR_AUTH_CAPTURE);
             if (!$success) {
                 $table->data[] = array("<b><font color='red'>$strs->error:</font></b>", $message);
             }
@@ -362,7 +362,7 @@ function authorize_print_order_details($orderno)
             }
         }
         else { // cancel refunded transaction
-            $sql = "SELECT R.*, E.courseid FROM {$CFG->prefix}enrol_authorize_refunds R " .
+            $sql = "SELECT R.*, E.courseid, E.paymentmethod FROM {$CFG->prefix}enrol_authorize_refunds R " .
                    "INNER JOIN {$CFG->prefix}enrol_authorize E ON R.orderid = E.id " .
                    "WHERE R.id = '$suborderno' AND R.orderid = '$orderno' AND R.status = '" .AN_STATUS_CREDIT. "'";
 
@@ -462,7 +462,7 @@ function authorize_print_order_details($orderno)
                               $strs->action,
                               $authstrs->amount);
 
-            $sql = "SELECT R.*, E.courseid FROM {$CFG->prefix}enrol_authorize_refunds R " .
+            $sql = "SELECT R.*, E.courseid, E.paymentmethod FROM {$CFG->prefix}enrol_authorize_refunds R " .
                    "INNER JOIN {$CFG->prefix}enrol_authorize E ON R.orderid = E.id " .
                    "WHERE R.orderid = '$orderno'";
 
@@ -564,8 +564,9 @@ function authorize_get_status_action($order)
             $ret->status = 'capturedsettled';
         }
         else {
-            if (has_capability('enrol/authorize:managepayments', $context)) {
-                $ret->actions = array(ORDER_VOID);
+            if ($order->paymentmethod == AN_METHOD_CC &&
+                has_capability('enrol/authorize:managepayments', $context)) {
+                    $ret->actions = array(ORDER_VOID);
             }
             $ret->status = 'capturedpendingsettle';
         }

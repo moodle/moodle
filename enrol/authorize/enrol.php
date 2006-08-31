@@ -175,9 +175,10 @@ class enrolment_plugin_authorize
         $curcost = enrolment_plugin_authorize::get_course_cost($course);
         $exp_date = sprintf("%02d", $form->ccexpiremm) . $form->ccexpireyyyy;
 
-        // NEW ORDER
+        // NEW CC ORDER
         $timenow = time();
         $order = new stdClass();
+        $order->paymentmethod = AN_METHOD_CC;
         $order->cclastfour = substr($form->cc, -4);
         $order->ccname = $form->ccfirstname . " " . $form->cclastname;
         $order->courseid = $course->id;
@@ -222,7 +223,7 @@ class enrolment_plugin_authorize
         $message = '';
         $an_review = !empty($CFG->an_review);
         $action = $an_review ? AN_ACTION_AUTH_ONLY : AN_ACTION_AUTH_CAPTURE;
-        $success = authorize_action($order, $message, $extra, $action, AN_METHOD_CC, $form->cctype);
+        $success = authorize_action($order, $message, $extra, $action, $form->cctype);
         if (!$success) {
             enrolment_plugin_authorize::email_to_admin($message, $order);
             $this->authorizeerrors['header'] = $message;
@@ -332,8 +333,31 @@ class enrolment_plugin_authorize
         $useripno = getremoteaddr();
         $curcost = enrolment_plugin_authorize::get_course_cost($course);
 
+        // NEW ECHECK ORDER
+        $timenow = time();
+        $order = new stdClass();
+        $order->paymentmethod = AN_METHOD_ECHECK;
+        $order->cclastfour = 0;
+        $order->ccname = $form->firstname . ' ' . $form->lastname;
+        $order->courseid = $course->id;
+        $order->userid = $USER->id;
+        $order->status = AN_STATUS_NONE; // it will be changed...
+        $order->settletime = 0; // cron changes this.
+        $order->transid = 0; // Transaction Id
+        $order->timecreated = $timenow;
+        $order->amount = $curcost['cost'];
+        $order->currency = $curcost['currency'];
+        /////////// not implemented yet
+        /*
+        $order->id = insert_record("enrol_authorize", $order);
+        if (!$order->id) {
+            enrolment_plugin_authorize::email_to_admin("Error while trying to insert new data", $order);
+            $this->authorizeerrors['header'] = "Insert record error. Admin has been notified!";
+            return;
+        }
+        */
 
-        return; // not implemented yet
+        return;
     }
 
     function validate_cc_form($form)
@@ -837,7 +861,7 @@ class enrolment_plugin_authorize
         foreach ($orders as $order) {
             $message = '';
             $extra = NULL;
-            $success = authorize_action($order, $message, $extra, AN_ACTION_PRIOR_AUTH_CAPTURE, AN_METHOD_CC);
+            $success = authorize_action($order, $message, $extra, AN_ACTION_PRIOR_AUTH_CAPTURE);
             if ($success) {
                 $timestart = $timeend = 0;
                 if ($order->enrolperiod) {

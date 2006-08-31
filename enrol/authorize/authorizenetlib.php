@@ -89,13 +89,12 @@ function authorize_expired(&$order)
  * @param string &$message Information about error message if this function returns false.
  * @param object &$extra Extra data that used for refunding and credit card information.
  * @param int $action Which action will be performed. See AN_ACTION_*
- * @param string $method Transaction method. AN_METHOD_CC or AN_METHOD_ECHECK
  * @param string $cctype Credit card type, used internally to configure automatically types.
  * @return bool true Transaction was successful, false otherwise. Use $message for reason.
  * @author Ethem Evlice <ethem a.t evlice d.o.t com>
  * @uses $CFG
  */
-function authorize_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE, $method=AN_METHOD_CC, $cctype=NULL)
+function authorize_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE, $cctype=NULL)
 {
     global $CFG;
     static $conststring;
@@ -126,6 +125,7 @@ function authorize_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE, $
         return false;
     }
 
+    $method = $order->paymentmethod;
     if (empty($method)) {
         $method = AN_METHOD_CC;
     }
@@ -351,7 +351,11 @@ function authorize_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE, $
             }
             case AN_ACTION_VOID:
             {
-                $tableupdate = ($order->status == AN_STATUS_CREDIT) ? 'enrol_authorize_refunds' : 'enrol_authorize';
+                $tableupdate = 'enrol_authorize';
+                if ($order->status == AN_STATUS_CREDIT) {
+                    $tableupdate = 'enrol_authorize_refunds';
+                    unset($order->paymentmethod);
+                }
                 $order->status = AN_STATUS_VOID;
                 // don't update order->settletime
                 if (! update_record($tableupdate, $order)) {

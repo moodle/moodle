@@ -1,5 +1,6 @@
 CREATE TABLE `prefix_enrol_authorize` (
   `id` int(10) unsigned NOT NULL auto_increment,
+  `paymentmethod` enum('cc', 'echeck') NOT NULL default 'cc',
   `cclastfour` int(4) unsigned NOT NULL default '0',
   `ccname` varchar(255) NOT NULL default '',
   `courseid` int(10) unsigned NOT NULL default '0',

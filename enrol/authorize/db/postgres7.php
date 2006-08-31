@@ -134,6 +134,16 @@ function enrol_authorize_upgrade($oldversion=0) {
         }
     }
 
+    if ($oldversion < 2006083100) {
+        // enums are lower case
+        if (isset($CFG->an_acceptmethods)) {
+            set_config('an_acceptmethods', strtolower($CFG->an_acceptmethods));
+        }
+        // new ENUM field: paymentmethod(cc,echeck)
+        table_column('enrol_authorize', '', 'paymentmethod', 'varchar', '6', '', 'cc', 'not null');
+        execute_sql("ALTER TABLE {$CFG->prefix}enrol_authorize ADD CONSTRAINT enroauth_pay_ck CHECK (paymentmethod IN ('cc', 'echeck'))", true);
+    }
+
     return $result;
 }
 

@@ -6,8 +6,8 @@
  * Credit Card (CC)
  * ECheck (ECHECK)
  */
-define('AN_METHOD_CC',     'CC');
-define('AN_METHOD_ECHECK', 'ECHECK');
+define('AN_METHOD_CC',     'cc');
+define('AN_METHOD_ECHECK', 'echeck');
 /**#@-*/
 
 /**#@+
@@ -18,10 +18,10 @@ define('AN_METHOD_ECHECK', 'ECHECK');
  * Telephone-Initiated Entry (TEL)
  * Internet-Initiated Entry (WEB)
  */
-define('AN_ECHECK_CCD', 'CCD');
-define('AN_ECHECK_PPD', 'PPD');
-define('AN_ECHECK_TEL', 'TEL');
-define('AN_ECHECK_WEB', 'WEB');
+define('AN_ECHECK_CCD', 'ccd');
+define('AN_ECHECK_PPD', 'ppd');
+define('AN_ECHECK_TEL', 'tel');
+define('AN_ECHECK_WEB', 'web');
 /**#@-*/
 
 /**#@+
