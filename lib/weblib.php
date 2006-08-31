@@ -4565,18 +4565,17 @@ function notice_yesno ($message, $linkyes, $linkno) {
  *      the correct input) and then encode for where it's needed
  *      echo "<script type='text/javascript'>alert('Redirect $url');</script>";
  */
-function redirect($url, $message='', $delay='0') {
+function redirect($url, $message='', $delay=-1) {
 
     global $CFG;
 
-    //$url     = clean_text($url);
     if (!empty($CFG->usesid) && !isset($_COOKIE[session_name()])) {
        $url = sid_process_url($url);
     }
 
     $message = clean_text($message);
 
-    $url = html_entity_decode($url); // for php < 4.3.0 this is defined in moodlelib.php
+    $url = html_entity_decode($url);
     $url = str_replace(array("\n", "\r"), '', $url); // some more cleaning
     $encodedurl = htmlentities($url);
     $tmpstr = clean_text('<a href="'.$encodedurl.'" />'); //clean encoded URL
@@ -4586,6 +4585,7 @@ function redirect($url, $message='', $delay='0') {
 
 /// when no message and header printed yet, try to redirect
     if (empty($message) and !defined('HEADER_PRINTED')) {
+        $delay = 0;
         //try header redirection first
         @header('HTTP/1.x 303 See Other'); //302 might not work for POST requests, 303 is ignored by obsolete clients
         @header('Location: '.$url);
@@ -4595,8 +4595,8 @@ function redirect($url, $message='', $delay='0') {
         die;
     }
 
-    if (empty($delay)) {
-        $delay = 3;  // if there is something already printed or message to display wait min 3 seconds
+    if ($delay == -1) {
+        $delay = 3;  // if no delay specified wait 3 seconds
     }
     if (! defined('HEADER_PRINTED')) {
         print_header('', '', '', '', '<meta http-equiv="refresh" content="'. $delay .'; url='. $encodedurl .'" />');
@@ -4605,7 +4605,7 @@ function redirect($url, $message='', $delay='0') {
     echo '<p>'. $message .'</p>';
     echo '<p>( <a href="'. $encodedurl .'">'. get_string('continue') .'</a> )</p>';
     echo '</center>';
-
+// it might be better not to set timeout the same for both types of redirect, so that we can be sure which one wins 
 ?>
 <script type="text/javascript">
 <!--
@@ -4613,7 +4613,7 @@ function redirect($url, $message='', $delay='0') {
   function redirect() {
       document.location.replace('<?php echo $surl ?>');
   }
-  setTimeout("redirect()", <?php echo ($delay * 1000) ?>);
+  setTimeout("redirect()", <?php echo (($delay * 1000) + 300) ?>);
 -->
 </script>
 <?php
