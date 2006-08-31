@@ -1352,7 +1352,9 @@ class hotpot_xml_quiz extends hotpot_xml_tree {
 	function v6_expand_MatchDivItems() {
 		$str = '';
 
-		$this->get_jmatch_items($l_items=array(), $r_items = array());
+		$l_items=array();
+		$r_items = array();
+		$this->get_jmatch_items($l_items, $r_items);
 
 		$l_keys = $this->shuffle_jmatch_items($l_items);
 		$r_keys = $this->shuffle_jmatch_items($r_items);
@@ -1576,7 +1578,9 @@ class hotpot_xml_quiz extends hotpot_xml_tree {
 
 	function v6_expand_FixedArray() {
 		$str = '';
-		$this->get_jmatch_items($l_items=array(), $r_items = array());
+		$l_items=array();
+		$r_items = array();
+		$this->get_jmatch_items($l_items, $r_items);
 		foreach ($l_items as $i=>$item) {
 			$str .= "F[$i] = new Array();\n";
 			$str .= "F[$i][0] = '".$this->js_safe($item['text'][0]['#'], true)."';\n";
@@ -1586,7 +1590,9 @@ class hotpot_xml_quiz extends hotpot_xml_tree {
 	}
 	function v6_expand_DragArray() {
 		$str = '';
-		$this->get_jmatch_items($l_items=array(), $r_items = array());
+		$l_items=array();
+		$r_items = array();
+		$this->get_jmatch_items($l_items, $r_items);
 		foreach ($r_items as $i=>$item) {
 			$str .= "D[$i] = new Array();\n";
 			$str .= "D[$i][0] = '".$this->js_safe($item['text'][0]['#'], true)."';\n";
@@ -1831,7 +1837,10 @@ class hotpot_xml_quiz extends hotpot_xml_tree {
 	}
 	function v6_expand_jcross_clues($direction) {
 		// $direction: A(cross) or D(own)
-		$this->v6_get_jcross_grid($row=NULL, $r_max=0, $c_max=0);
+		$row = NULL;
+		$r_max = 0;
+		$c_max = 0;
+		$this->v6_get_jcross_grid($row, $r_max, $c_max);
 		$i = 0; // clue index;
 		$str = '';
 		for($r=0; $r<=$r_max; $r++) {
@@ -1865,7 +1874,10 @@ class hotpot_xml_quiz extends hotpot_xml_tree {
 	// jcross6.js_
 
 	function v6_expand_LetterArray() {
-		$this->v6_get_jcross_grid($row=NULL, $r_max=0, $c_max=0);
+		$row = NULL;
+		$r_max = 0;
+		$c_max = 0;
+		$this->v6_get_jcross_grid($row, $r_max, $c_max);
 		$str = '';
 		for($r=0; $r<=$r_max; $r++) {
 			$str .= "L[$r] = new Array(";
@@ -1877,7 +1889,10 @@ class hotpot_xml_quiz extends hotpot_xml_tree {
 		return $str;
 	}
 	function v6_expand_GuessArray() {
-		$this->v6_get_jcross_grid($row=NULL, $r_max=0, $c_max=0);
+		$row = NULL;
+		$r_max = 0;
+		$c_max = 0;
+		$this->v6_get_jcross_grid($row, $r_max, $c_max);
 		$str = '';
 		for($r=0; $r<=$r_max; $r++) {
 			$str .= "G[$r] = new Array('".str_repeat("','", $c_max)."');\n";
@@ -1885,7 +1900,10 @@ class hotpot_xml_quiz extends hotpot_xml_tree {
 		return $str;
 	}
 	function v6_expand_ClueNumArray() {
-		$this->v6_get_jcross_grid($row=NULL, $r_max=0, $c_max=0);
+		$row = NULL;
+		$r_max = 0;
+		$c_max = 0;
+		$this->v6_get_jcross_grid($row, $r_max, $c_max);
 		$i = 0; // clue index
 		$str = '';
 		for($r=0; $r<=$r_max; $r++) {
@@ -1908,7 +1926,10 @@ class hotpot_xml_quiz extends hotpot_xml_tree {
 		return $str;
 	}
 	function v6_expand_GridBody() {
-		$this->v6_get_jcross_grid($row=NULL, $r_max=0, $c_max=0);
+		$row = NULL;
+		$r_max = 0;
+		$c_max = 0;
+		$this->v6_get_jcross_grid($row, $r_max, $c_max);
 		$i = 0; // clue index;
 		$str = '';
 		for($r=0; $r<=$r_max; $r++) {
