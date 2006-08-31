@@ -615,7 +615,7 @@ CREATE TABLE `prefix_user` (
   `secret` varchar(15) NOT NULL default '',
   `picture` tinyint(1) NOT NULL default '0',
   `url` varchar(255) NOT NULL default '',
-  `description` text NOT NULL default '',
+  `description` text,
   `mailformat` tinyint(1) unsigned NOT NULL default '1',
   `maildigest` tinyint(1) unsigned NOT NULL default '0',
   `maildisplay` tinyint(2) unsigned NOT NULL default '2',
