@@ -376,7 +376,7 @@ function scorm_course_format_display($user,$course) {
 
     $strupdate = get_string('update');
     $strmodule = get_string('modulename','scorm');
-    $context get_context_instance(CONTEXT_COURSE,$course->id);
+    $context = get_context_instance(CONTEXT_COURSE,$course->id);
 
     echo '<div class="mod-scorm">';
     if ($scorms = get_all_instances_in_course('scorm', $course)) {

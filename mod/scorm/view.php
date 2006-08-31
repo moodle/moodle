@@ -33,7 +33,7 @@
 
     require_login($course->id, false, $cm);
 
-    $context = get_context_instance(CONTEXT_COURSE, $course->id)
+    $context = get_context_instance(CONTEXT_COURSE, $course->id);
 
     if (isset($SESSION->scorm_scoid)) {
         unset($SESSION->scorm_scoid);
