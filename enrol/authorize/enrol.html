@@ -21,16 +21,14 @@
 
     	case AN_METHOD_ECHECK:
     	{
-    	    print_eheck_form($this);
+    	    print_echeck_form($this);
     	    break;
     	}
     }
-?>
 
-<?php
 function print_cc_form($classreference)
 {
-    global $form, $course, $paymentmethodsenabled;
+    global $form, $course;
     global $CFG, $USER;
 
     $formvars = array(
@@ -60,9 +58,10 @@ function print_cc_form($classreference)
 
     <form name="form" method="post" action="enrol.php" autocomplete="off">
     <input type="hidden" name="id" value="<?php p($course->id) ?>" />
+    <input type="hidden" name="paymentmethod" value="<?php p(AN_METHOD_CC) ?>" />
     <table align="center" width="100%" border=0>
     <tr>
-      <td align="right" colspan="2">&nbsp;<?php print_other_method(AN_METHOD_CC, $paymentmethodsenabled, $course); ?></td>
+      <td align="right" colspan="2">&nbsp;<?php print_other_method(AN_METHOD_CC); ?></td>
     </tr>
     <tr>
       <td align="right"><?php print_string("ccno", "enrol_authorize") ?>: </td>
@@ -142,11 +141,12 @@ function print_cc_form($classreference)
     </form>
     </div>
 <!-- END CC -->
-<?php } /* end: print_cc_form */ ?>
 <?php
+}
+
 function print_echeck_form($classreference)
-    {
-        global $form, $course, $paymentmethodsenabled;
+{
+        global $form, $course;
         global $CFG, $USER;
 
         $formvars = array('password', 'abacode', 'accnum', 'acctype', 'bankname', 'firstname', 'lastname');
@@ -170,12 +170,13 @@ function print_echeck_form($classreference)
 
     <form name="form" method="post" action="enrol.php" autocomplete="off">
     <input type="hidden" name="id" value="<?php p($course->id) ?>" />
+    <input type="hidden" name="paymentmethod" value="<?php p(AN_METHOD_ECHECK) ?>" />
 
     echeck form (not ready)
 
     <table align="center" width="100%" border=0>
     <tr>
-      <td align="right" colspan="2">&nbsp;<?php print_other_method(AN_METHOD_ECHECK, $paymentmethodsenabled, $course); ?></td>
+      <td align="right" colspan="2">&nbsp;<?php print_other_method(AN_METHOD_ECHECK); ?></td>
     </tr>
     <tr>
       <td align="right"><?php print_string("echeckabacode", "enrol_authorize") ?>: </td>
@@ -216,17 +217,20 @@ function print_echeck_form($classreference)
     </form>
     </div>
 <!-- END ECHECK -->
-<?php } /* end: print_echeck_form */ ?>
 <?php
-function print_other_method($currentmethod, $paymentmethodsenabled, $course)
+}
+
+function print_other_method($currentmethod)
 {
+    global $course;
+
     if ($currentmethod == AN_METHOD_CC) {
-        $otheravailable = in_array(AN_METHOD_ECHECK, $paymentmethodsenabled);
+        $otheravailable = in_array(AN_METHOD_ECHECK, enrolment_plugin_authorize::get_list_of_payment_methods());
         $url = 'enrol.php?id='.$course->id.'&amp;paymentmethod='.AN_METHOD_ECHECK;
         $stringtofetch = 'usingecheckmethod';
     }
     else {
-        $otheravailable = in_array(AN_METHOD_CC, $paymentmethodsenabled);
+        $otheravailable = in_array(AN_METHOD_CC, enrolment_plugin_authorize::get_list_of_payment_methods());
         $url = 'enrol.php?id='.$course->id.'&amp;paymentmethod='.AN_METHOD_CC;
         $stringtofetch = 'usingccmethod';
     }
