@@ -1246,7 +1246,7 @@ function update_capabilities($component='moodle') {
             // update risk bitmasks in existing capabilitites if needed
             if (array_key_exists($cachedcap->name, $filecaps)) {
                 if (!array_key_exists('riskbitmask', $filecaps[$cachedcap->name])) {
-                    $filecaps[$cachedcap->name]['riskbitmask'] = 0; // no risk by default
+                    $filecaps[$cachedcap->name]['riskbitmask'] = 0; // no risk if not specified
                 }
                 if ($cachedcap->riskbitmask != $filecaps[$cachedcap->name]['riskbitmask']) {
                     $updatecap = new object;
@@ -1266,6 +1266,9 @@ function update_capabilities($component='moodle') {
     foreach ($filecaps as $filecap => $def) {
         if (!$storedcaps || 
                 ($storedcaps && in_array($filecap, $storedcaps) === false)) {
+            if (!array_key_exists('riskbitmask', $def)) {
+                $def['riskbitmask'] = 0; // no risk if not specified
+            }
             $newcaps[$filecap] = $def;
         }
     }
