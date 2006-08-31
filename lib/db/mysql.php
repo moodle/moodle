@@ -2165,6 +2165,10 @@ function main_upgrade($oldversion=0) {
         table_column('sessions2', 'sessdata', 'sessdata', 'LONGTEXT', '', '', '', '', '');
     }
     
+    if ($oldversion < 2006083002) {
+        table_column('capabilities', '', 'riskbitmask', 'INTEGER', '10', 'unsigned', '0', 'not null', '');
+    }
+
     return $result;
 }
 

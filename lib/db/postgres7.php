@@ -1759,6 +1759,10 @@ function main_upgrade($oldversion=0) {
         execute_sql("
             CREATE INDEX {$CFG->prefix}sess_exp2_ix ON {$CFG->prefix}sessions2 (expireref);", true);
     }
+    
+    if ($oldversion < 2006083002) {
+        table_column('capabilities', '', 'riskbitmask', 'INTEGER', '10', 'unsigned', '0', 'not null', '');
+    }
 
     return $result;
 }

@@ -985,6 +985,7 @@ CREATE TABLE prefix_capabilities (
   `captype` varchar(50) NOT NULL default '', 
   `contextlevel` int(10) unsigned NOT NULL default '0', 
   `component` varchar(100) NOT NULL default '', 
+  `riskbitmask` int(10) unsigned NOT NULL default '0', 
   UNIQUE KEY `name` (`name`),
   PRIMARY KEY (`id`) 
 ) TYPE=MYISAM COMMENT ='this defines all capabilities';

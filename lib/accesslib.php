@@ -1237,17 +1237,29 @@ function get_cached_capabilities($component='moodle') {
 function update_capabilities($component='moodle') {
     
     $storedcaps = array();
-    $filecaps = array();
-    
+
+    $filecaps = load_capability_def($component);
     $cachedcaps = get_cached_capabilities($component);
     if ($cachedcaps) {
         foreach ($cachedcaps as $cachedcap) {
             array_push($storedcaps, $cachedcap->name);
+            // update risk bitmasks in existing capabilitites if needed
+            if (array_key_exists($cachedcap->name, $filecaps)) {
+                if (!array_key_exists('riskbitmask', $filecaps[$cachedcap->name])) {
+                    $filecaps[$cachedcap->name]['riskbitmask'] = 0; // no risk by default
+                }
+                if ($cachedcap->riskbitmask != $filecaps[$cachedcap->name]['riskbitmask']) {
+                    $updatecap = new object;
+                    $updatecap->id = $cachedcap->id;
+                    $updatecap->riskbitmask = $filecaps[$cachedcap->name]['riskbitmask'];
+                    if (!update_record('capabilities', $updatecap)) {
+                        return false;
+                    }
+                }
+            }
         }
     }
-    
-    $filecaps = load_capability_def($component);
-    
+
     // Are there new capabilities in the file definition?
     $newcaps = array();
     
@@ -1264,6 +1276,7 @@ function update_capabilities($component='moodle') {
         $capability->captype = $capdef['captype'];
         $capability->contextlevel = $capdef['contextlevel'];
         $capability->component = $component;
+        $capability->riskbitmask = $capdef['riskbitmask'];
         
         if (!insert_record('capabilities', $capability, false, 'id')) {
             return false;
