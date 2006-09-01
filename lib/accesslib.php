@@ -32,6 +32,23 @@ define('CONTEXT_BLOCK', 80);
 $context_cache    = array();    // Cache of all used context objects for performance (by level and instance)
 $context_cache_id = array();    // Index to above cache by id
 
+function load_notloggedin_role() {
+    global $CFG, $USER;
+
+    $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
+    // load default not logged in role capabilities when user is not logged in
+
+    $SQL = "select * from {$CFG->prefix}role_capabilities where roleid=$CFG->notloggedinroleid
+            AND contextid = $sitecontext->id";
+          
+    $capabilities = get_records_sql($SQL);
+
+    foreach ($capabilities as $capability) {
+        $USER->capabilities[$sitecontext->id][$capability->capability] = $capability->permission;     
+    }
+
+    return true;
+}
 
 /**
  * This functions get all the course categories in proper order
@@ -140,13 +157,18 @@ function require_capability($capability, $context=NULL, $userid=NULL, $errormess
  * @param string $capability - name of the capability
  * @param object $context - a context object (record from context table)
  * @param integer $userid - a userid number
+ * @param bool $doanything - if false, ignore do anything
  * @return bool
  */
-function has_capability($capability, $context=NULL, $userid=NULL) {
+function has_capability($capability, $context=NULL, $userid=NULL, $doanything='true') {
 
-    global $USER, $CONTEXT;
+    global $USER, $CONTEXT, $CFG;
 
-    if ($userid) {
+    if (!isloggedin() && !isset($USER->capabilities)) {
+        load_notloggedin_role();
+    }
+
+    if ($userid && $userid != $USER->id) {
         if (empty($USER->id) or ($userid != $USER->id)) {
             $capabilities = load_user_capability($capability, $context, $userid);
         } else { //$USER->id == $userid
@@ -168,102 +190,103 @@ function has_capability($capability, $context=NULL, $userid=NULL) {
         }
     }
 
-    // Check site
-    $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
-    if (isset($capabilities[$sitecontext->id]['moodle/site:doanything'])) {
-        return (0 < $capabilities[$sitecontext->id]['moodle/site:doanything']);
-    }
+    if ($doanything) {
+        // Check site
+        $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
+        if (isset($capabilities[$sitecontext->id]['moodle/site:doanything'])) {
+            return (0 < $capabilities[$sitecontext->id]['moodle/site:doanything']);
+        }
     
-    switch ($context->aggregatelevel) {
+        switch ($context->aggregatelevel) {
         
-        case CONTEXT_COURSECAT:
-            // Check parent cats.
-            $parentcats = get_parent_cats($context, CONTEXT_COURSECAT);
-            foreach ($parentcats as $parentcat) {
-                if (isset($capabilities[$parentcat]['moodle/site:doanything'])) {
-                    return (0 < $capabilities[$parentcat]['moodle/site:doanything']);
+            case CONTEXT_COURSECAT:
+                // Check parent cats.
+                $parentcats = get_parent_cats($context, CONTEXT_COURSECAT);
+                foreach ($parentcats as $parentcat) {
+                    if (isset($capabilities[$parentcat]['moodle/site:doanything'])) {
+                        return (0 < $capabilities[$parentcat]['moodle/site:doanything']);
+                    }
                 }
-            }
-        break;
+            break;
 
-        case CONTEXT_COURSE:
-            // Check parent cat.
-            $parentcats = get_parent_cats($context, CONTEXT_COURSE);
+            case CONTEXT_COURSE:
+                // Check parent cat.
+                $parentcats = get_parent_cats($context, CONTEXT_COURSE);
 
-            foreach ($parentcats as $parentcat) {
-                if (isset($capabilities[$parentcat]['do_anything'])) {
-                    return (0 < $capabilities[$parentcat]['do_anything']);
-                }
-            }
-        break;
-
-        case CONTEXT_GROUP:
-            // Find course.
-            $group = get_record('groups','id',$context->instanceid);
-            $courseinstance = get_context_instance(CONTEXT_COURSE, $group->courseid);
-
-            $parentcats = get_parent_cats($courseinstance, CONTEXT_COURSE);
-            foreach ($parentcats as $parentcat) {
-                if (isset($capabilities[$parentcat->id]['do_anything'])) {
-                    return (0 < $capabilities[$parentcat->id]['do_anything']);
-                }
-            }
-
-            $coursecontext = '';
-            if (isset($capabilities[$courseinstance->id]['do_anything'])) {
-                return (0 < $capabilities[$courseinstance->id]['do_anything']);
-            }
-
-        break;
-
-        case CONTEXT_MODULE:
-            // Find course.
-            $cm = get_record('course_modules', 'id', $context->instanceid);
-            $courseinstance = get_context_instance(CONTEXT_COURSE, $cm->course);
-
-            if ($parentcats = get_parent_cats($courseinstance, CONTEXT_COURSE)) {
                 foreach ($parentcats as $parentcat) {
                     if (isset($capabilities[$parentcat]['do_anything'])) {
                         return (0 < $capabilities[$parentcat]['do_anything']);
                     }
                 }
-            }
+            break;
 
-            if (isset($capabilities[$courseinstance->id]['do_anything'])) {
-                return (0 < $capabilities[$courseinstance->id]['do_anything']);
-            }
+            case CONTEXT_GROUP:
+                // Find course.
+                $group = get_record('groups','id',$context->instanceid);
+                $courseinstance = get_context_instance(CONTEXT_COURSE, $group->courseid);
 
-        break;
-
-        case CONTEXT_BLOCK:
-            // 1 to 1 to course.
-            // Find course.
-            $block = get_record('block_instance','id',$context->instanceid);
-            $courseinstance = get_context_instance(CONTEXT_COURSE, $block->pageid); // needs check
-
-            $parentcats = get_parent_cats($courseinstance, CONTEXT_COURSE);
-            foreach ($parentcats as $parentcat) {
-                if (isset($capabilities[$parentcat]['do_anything'])) {
-                    return (0 < $capabilities[$parentcat]['do_anything']);
+                $parentcats = get_parent_cats($courseinstance, CONTEXT_COURSE);
+                foreach ($parentcats as $parentcat) {
+                    if (isset($capabilities[$parentcat->id]['do_anything'])) {
+                        return (0 < $capabilities[$parentcat->id]['do_anything']);
+                    }
                 }
-            }
 
-            if (isset($capabilities[$courseinstance->id]['do_anything'])) {
-                return (0 < $capabilities[$courseinstance->id]['do_anything']);
-            }
-        break;
+                $coursecontext = '';
+                if (isset($capabilities[$courseinstance->id]['do_anything'])) {
+                    return (0 < $capabilities[$courseinstance->id]['do_anything']);
+                }
 
-        default:
-            // CONTEXT_SYSTEM: CONTEXT_PERSONAL: CONTEXT_USERID:
-            // Do nothing.
-        break;
+            break;
+
+            case CONTEXT_MODULE:
+                // Find course.
+                $cm = get_record('course_modules', 'id', $context->instanceid);
+                $courseinstance = get_context_instance(CONTEXT_COURSE, $cm->course);
+
+                if ($parentcats = get_parent_cats($courseinstance, CONTEXT_COURSE)) {
+                    foreach ($parentcats as $parentcat) {
+                        if (isset($capabilities[$parentcat]['do_anything'])) {
+                            return (0 < $capabilities[$parentcat]['do_anything']);
+                        }
+                    }
+                }
+
+                if (isset($capabilities[$courseinstance->id]['do_anything'])) {
+                    return (0 < $capabilities[$courseinstance->id]['do_anything']);
+                }
+
+            break;
+
+            case CONTEXT_BLOCK:
+                // 1 to 1 to course.
+                // Find course.
+                $block = get_record('block_instance','id',$context->instanceid);
+                $courseinstance = get_context_instance(CONTEXT_COURSE, $block->pageid); // needs check
+
+                $parentcats = get_parent_cats($courseinstance, CONTEXT_COURSE);
+                foreach ($parentcats as $parentcat) {
+                    if (isset($capabilities[$parentcat]['do_anything'])) {
+                        return (0 < $capabilities[$parentcat]['do_anything']);
+                    }
+                }
+
+                if (isset($capabilities[$courseinstance->id]['do_anything'])) {
+                    return (0 < $capabilities[$courseinstance->id]['do_anything']);
+                }
+            break;
+
+            default:
+                // CONTEXT_SYSTEM: CONTEXT_PERSONAL: CONTEXT_USERID:
+                // Do nothing.
+            break;
+        }
+
+        // Last: check self.
+        if (isset($capabilities[$context->id]['do_anything'])) {
+            return (0 < $capabilities[$context->id]['do_anything']);
+        }
     }
-
-    // Last: check self.
-    if (isset($capabilities[$context->id]['do_anything'])) {
-        return (0 < $capabilities[$context->id]['do_anything']);
-    }
-
     // do_anything has not been set, we now look for it the normal way.
     return (0 < capability_search($capability, $context, $capabilities));
 
@@ -279,8 +302,8 @@ function has_capability($capability, $context=NULL, $userid=NULL) {
  * @return permission (int)
  */
 function capability_search($capability, $context, $capabilities) {
+   
     global $USER, $CFG;
-
 
     if (isset($capabilities[$context->id][$capability])) {
         if ($CFG->debug > 15) {
@@ -374,6 +397,11 @@ function load_user_capability($capability='', $context ='', $userid='') {
 
     global $USER, $CFG;
 
+    // make sure it's cleaned when loaded (again)
+    if (!empty($USER->capabilities)) {
+        unset($USER->capabilities);  
+    }
+    
     if (empty($userid)) {
         $userid = $USER->id;
     } else {
@@ -1509,11 +1537,11 @@ function role_context_capabilities($roleid, $context, $cap='') {
     
     $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
     if ($sitecontext->id == $context->id) {
-        return array();  
+        $contexts = array($sitecontext->id);  
+    } else {
+        // first of all, figure out all parental contexts
+        $contexts = array_reverse(get_parent_contexts($context));
     }
-    
-    // first of all, figure out all parental contexts
-    $contexts = array_reverse(get_parent_contexts($context));
     $contexts = '('.implode(',', $contexts).')';
     
     if ($cap) {
@@ -1903,7 +1931,7 @@ function get_overridable_roles ($context) {
  * @param $fields - fields to be pulled
  * @param $sort - the sort order
  */
-function get_users_by_capability($context, $capability, $fields='distinct u.*', $sort='') {
+function get_users_by_capability($context, $capability, $fields='distinct u.*', $sort='', $limit='') {
     
     global $CFG;
     
@@ -1930,7 +1958,7 @@ function get_users_by_capability($context, $capability, $fields='distinct u.*', 
     $from   = ' FROM '.$CFG->prefix.'user u LEFT JOIN '.$CFG->prefix.'role_assignments ra ON ra.userid = u.id ';
     $where  = ' WHERE (ra.contextid = '.$context->id.' OR ra.contextid in '.$listofcontexts.') AND u.deleted = 0 AND ra.roleid in '.$roleids.' ';    
 
-    return get_records_sql($select.$from.$where);  
+    return get_records_sql($select.$from.$where.$sort.$limit);  
 
 }
 ?>

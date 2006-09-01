@@ -863,19 +863,40 @@ function get_main_teacher_lang($courseid) {
     global $CFG;
     static $mainteachercache;
     
+    if ($courseid == SITEID || $courseid==0) {
+        $admin = get_admin();
+        $mainteachercache[$courseid] = $admin->lang;
+        return $admin->lang;
+    }
+    
     if (!isset($mainteachercache[$courseid])) {
-        $SQL = 'SELECT u.lang from '.$CFG->prefix.'user_teachers ut,
-               '.$CFG->prefix.'course c,
-               '.$CFG->prefix.'user u WHERE
-               c.id = ut.course AND ut.course = '.$courseid.' AND u.id = ut.userid ORDER BY ut.authority ASC';
-
-        if ($teacher = get_record_sql($SQL, true)) {
+        
+        /// this is a worse guess
+        if (!empty($CFG->rolesactive)) {
+            
+            $context = get_context_instance(CONTEXT_COURSE, $courseid);
+            $teachers = get_users_by_capability($context, 'moodle/legacy:editingteacher', 'distinct u.*', ' ORDER BY ra.id ASC ', sql_paging_limit(0,1)); // only need first one
+            $teacher = array_shift($teachers);
             $mainteachercache[$courseid] = $teacher->lang;
+            
             return $teacher->lang;
+            
+        /// this is a better guess
         } else {
-            $admin = get_admin();
-            $mainteachercache[$courseid] = $admin->lang;
-            return $admin->lang;
+      
+            $SQL = 'SELECT u.lang from '.$CFG->prefix.'user_teachers ut,
+                '.$CFG->prefix.'course c,
+                '.$CFG->prefix.'user u WHERE
+                c.id = ut.course AND ut.course = '.$courseid.' AND u.id = ut.userid ORDER BY ut.authority ASC';
+
+            if ($teacher = get_record_sql($SQL, true)) {
+                $mainteachercache[$courseid] = $teacher->lang;
+                return $teacher->lang;
+            } else {
+                $admin = get_admin();
+                $mainteachercache[$courseid] = $admin->lang;
+                return $admin->lang;
+            }
         }
     } else {
         return $mainteachercache[$courseid];

@@ -47,7 +47,7 @@ function get_guest() {
 
 /**
  * Returns $user object of the main admin user
- *
+ * primary admin = admin with lowest role_assignment id among admins
  * @uses $CFG
  * @return object(admin) An associative array representing the admin user.
  * @todo Verify documentation of this function
@@ -74,12 +74,11 @@ function get_admin () {
 function get_admins() {
 
     global $CFG;
+    
+    $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
 
-    return get_records_sql("SELECT u.*, a.id as adminid
-                              FROM {$CFG->prefix}user u,
-                                   {$CFG->prefix}user_admins a
-                             WHERE a.userid = u.id
-                             ORDER BY a.id ASC");
+    return get_users_by_capability($context, 'moodle/legacy:admin', 'distinct u.*, ra.id as adminid', ' ORDER BY ra.id ASC '); // only need first one
+                             
 }
 
 /**

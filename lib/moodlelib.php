@@ -1983,9 +1983,9 @@ function isadmin($userid=0) {
         $context = get_context_instance(CONTEXT_SYSTEM, SITEID);  
         
         if (!$userid) {
-            return has_capability('moodle/legacy:admin', $context);
+            return has_capability('moodle/legacy:admin', $context, $USER->id, false);
         } else {
-            return has_capability('moodle/legacy:admin', $context, false, $userid);
+            return has_capability('moodle/legacy:admin', $context, false, $userid, false);
         }
       
     }
@@ -2044,11 +2044,13 @@ function isteacher($courseid=0, $userid=0, $includeadmin=true) {
 
         if (!$userid) {
 
-            return (has_capability('moodle/legacy:teacher', $context) 
-                    or has_capability('moodle/legacy:editingteacher', $context));
+            return (has_capability('moodle/legacy:teacher', $context, $USER->id, false) 
+                    or has_capability('moodle/legacy:editingteacher', $context, $USER->id, false)
+                    or has_capability('moodle/legacy:admin', $context, $USER->id, false));
         } else {
-            return (has_capability('moodle/legacy:teacher', $context, $userid)
-                    or has_capability('moodle/legacy:editingteacher', $context, $userid));
+            return (has_capability('moodle/legacy:teacher', $context, $userid, false)
+                    or has_capability('moodle/legacy:editingteacher', $context, $userid, false)
+                    or has_capability('moodle/legacy:admin', $context, $userid, false));
         }  
     }
 
@@ -2135,9 +2137,11 @@ function isteacheredit($courseid, $userid=0, $ignorestudentview=false) {
         }
 
         if (!$userid) {
-            return has_capability('moodle/legacy:editingteacher', $context);
+            return (has_capability('moodle/legacy:editingteacher', $context, $USER->id, false)
+                    or has_capability('moodle/legacy:admin', $context, $USER->id, false));
         } else {
-            return has_capability('moodle/legacy:editingteacher', $context, $userid);
+            return (has_capability('moodle/legacy:editingteacher', $context, $userid, false)
+                    or has_capability('moodle/legacy:admin', $context, $userid, false));
         }
     }
     // we can't edit in studentview
@@ -2177,9 +2181,11 @@ function iscreator ($userid=0) {
         $context = get_context_instance(CONTEXT_SYSTEM, SITEID);  
 
         if (!$userid) {
-            return has_capability('moodle/legacy:coursecreator', $context);
+            return (has_capability('moodle/legacy:coursecreator', $context, $USER->id, false)
+                    or has_capability('moodle/legacy:admin', $context, $USER->id, false));
         } else {
-            return has_capability('moodle/legacy:coursecreator', $context, $userid);
+            return (has_capability('moodle/legacy:coursecreator', $context, $userid, false)
+                    or has_capability('moodle/legacy:admin', $context, $userid, false));
         }
       
     }
@@ -2221,9 +2227,9 @@ function isstudent($courseid, $userid=0) {
         }
 
         if (!$userid) {
-            return has_capability('moodle/legacy:student', $context);
+            return has_capability('moodle/legacy:student', $context, $USER->id, false);
         } else {
-            return has_capability('moodle/legacy:student', $context, $userid);
+            return has_capability('moodle/legacy:student', $context, $userid, false);
         }
     }
 

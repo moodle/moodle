@@ -23,7 +23,6 @@
 
     require_once('../config.php');
     include_once($CFG->dirroot.'/lib/adminlib.php');  // Contains various admin-only functions
-
     include_once($CFG->dirroot.'/lib/ddllib.php'); // Install/upgrade related db functions
 
     $id             = optional_param('id', '', PARAM_ALPHANUM);
