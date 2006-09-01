@@ -347,17 +347,105 @@ class enrolment_plugin_authorize
         $order->timecreated = $timenow;
         $order->amount = $curcost['cost'];
         $order->currency = $curcost['currency'];
-        /////////// not implemented yet
-        /*
         $order->id = insert_record("enrol_authorize", $order);
         if (!$order->id) {
             enrolment_plugin_authorize::email_to_admin("Error while trying to insert new data", $order);
             $this->authorizeerrors['header'] = "Insert record error. Admin has been notified!";
             return;
         }
-        */
 
-        return;
+        $extra = new stdClass();
+        $extra->x_bank_aba_code = $form->abacode;
+        $extra->x_bank_acct_num = $form->accnum;
+        $extra->x_bank_acct_type = $form->acctype;
+        $extra->x_bank_name = $form->bankname;
+        $extra->x_currency_code = $curcost['currency'];
+        $extra->x_amount = $curcost['cost'];
+        $extra->x_first_name = $form->firstname;
+        $extra->x_last_name = $form->lastname;
+        $extra->x_country = $USER->country;
+        $extra->x_address = $USER->address;
+        $extra->x_city = $USER->city;
+        $extra->x_state = '';
+        $extra->x_zip = '';
+
+        $extra->x_invoice_num = $order->id;
+        $extra->x_description = $course->shortname;
+
+        $extra->x_cust_id = $USER->id;
+        $extra->x_email = $USER->email;
+        $extra->x_customer_ip = $useripno;
+        $extra->x_email_customer = empty($CFG->enrol_mailstudents) ? 'FALSE' : 'TRUE';
+        $extra->x_phone = '';
+        $extra->x_fax = '';
+
+        $message = ''; // 2 actions only for echecks: auth_capture and credit
+        $success = authorize_action($order, $message, $extra, AN_ACTION_AUTH_CAPTURE);
+        if (!$success) {
+            enrolment_plugin_authorize::email_to_admin($message, $order);
+            $this->authorizeerrors['header'] = $message;
+            return;
+        }
+
+        $SESSION->ccpaid = 1; // security check: don't duplicate payment
+        if ($order->transid == 0) { // TEST MODE
+            $timestart = $timenow;
+            $timeend = $timestart + (3600 * 24); // just enrol for 1 days :)
+            enrol_student($USER->id, $course->id, $timestart, $timeend, 'manual');
+            redirect("$CFG->wwwroot/course/view.php?id=$course->id");
+        }
+
+        // ENROL student now ...
+        if ($course->enrolperiod) {
+            $timestart = $timenow;
+            $timeend = $timestart + $course->enrolperiod;
+        } else {
+            $timestart = $timeend = 0;
+        }
+
+        if (enrol_student($USER->id, $course->id, $timestart, $timeend, 'manual')) {
+            $teacher = get_teacher($course->id);
+            if (!empty($CFG->enrol_mailstudents)) {
+                $a = new stdClass;
+                $a->coursename = "$course->fullname";
+                $a->profileurl = "$CFG->wwwroot/user/view.php?id=$USER->id";
+                email_to_user($USER,
+                              $teacher,
+                              get_string("enrolmentnew", '', $course->shortname),
+                              get_string('welcometocoursetext', '', $a));
+            }
+            if (!empty($CFG->enrol_mailteachers)) {
+                $a = new stdClass;
+                $a->course = "$course->fullname";
+                $a->user = fullname($USER);
+                email_to_user($teacher,
+                              $USER,
+                              get_string("enrolmentnew", '', $course->shortname),
+                              get_string('enrolmentnewuser', '', $a));
+            }
+            if (!empty($CFG->enrol_mailadmins)) {
+                $a = new stdClass;
+                $a->course = "$course->fullname";
+                $a->user = fullname($USER);
+                $admins = get_admins();
+                foreach ($admins as $admin) {
+                    email_to_user($admin,
+                                  $USER,
+                                  get_string("enrolmentnew", '', $course->shortname),
+                                  get_string('enrolmentnewuser', '', $a));
+                }
+            }
+        } else {
+            enrolment_plugin_authorize::email_to_admin("Error while trying to enrol " .
+            fullname($USER) . " in '$course->fullname'", $order);
+        }
+
+        if ($SESSION->wantsurl) {
+            $destination = $SESSION->wantsurl; unset($SESSION->wantsurl);
+        } else {
+            $destination = "$CFG->wwwroot/course/view.php?id=$course->id";
+        }
+        redirect($destination);
     }
 
     function validate_cc_form($form)

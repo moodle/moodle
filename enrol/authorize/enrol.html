@@ -170,9 +170,6 @@ function print_echeck_form($classreference)
     <form name="form" method="post" action="enrol.php" autocomplete="off">
     <input type="hidden" name="id" value="<?php p($course->id) ?>" />
     <input type="hidden" name="paymentmethod" value="<?php p(AN_METHOD_ECHECK) ?>" />
-
-    echeck form (not ready)
-
     <table align="center" width="100%" border=0>
     <tr>
       <td align="right"><?php print_string("echeckabacode", "enrol_authorize") ?>: </td>
