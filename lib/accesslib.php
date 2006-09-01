@@ -1162,19 +1162,25 @@ function role_assign($roleid, $userid, $groupid, $contextid, $timestart=0, $time
 
 
 /**
- * Deletes a role assignment.
+ * Deletes one or more role assignments.   You must specify at least one parameter.
  * @param $roleid
  * @param $userid
  * @param $groupid
  * @param $contextid
  * @return boolean - success or failure
  */
-function role_unassign($roleid, $userid, $groupid, $contextid) {
-    if ($groupid && empty($userid)) {
-        return delete_records('role_assignments', 'groupid', $groupid, 'roleid', $roleid, 'contextid', $contextid); 
-    } else {
-        return delete_records('role_assignments', 'userid', $userid, 'roleid', $roleid, 'contextid', $contextid); 
-    } 
+function role_unassign($roleid=0, $userid=0, $groupid=0, $contextid=0) {
+    $args = array('roleid', 'userid', 'groupid', 'contextid');
+    $select = array();
+    foreach ($args as $arg) {
+        if ($$arg) {
+            $select[] = $arg.' = '.$$arg;
+        }
+    }
+    if ($select) {
+        return delete_records_select('role_assignments', implode(' AND ', $select)); 
+    }
+    return false;
 }
 
 
