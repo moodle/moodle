@@ -1247,6 +1247,8 @@ function sql_fullname($firstname='firstname', $lastname='lastname') {
              return ' CONCAT('. $firstname .'," ",'. $lastname .') ';
         case 'postgres7':
              return " ". $firstname ."||' '||". $lastname ." ";
+        case 'mssql':
+             return " ". $firstname ."+' '+". $lastname ." ";
         default:
              return ' '. $firstname .'||" "||'. $lastname .' ';
     }
@@ -1266,6 +1268,27 @@ function sql_isnull($fieldname) {
              return $fieldname.' IS NULL';
         default:
              return $fieldname.' IS NULL';
+    }
+}
+
+/** 
+ * Returns the proper AS keyword to be used to aliase columns
+ * SQL defines the keyword as optional and nobody but PG
+ * seems to require it. This function should be used inside all
+ * the statements using column aliases.
+ * Note than the use of table aliases doesn't require the
+ * AS keyword at all, only columns for postgres.
+ * @uses $CFG
+ * @ return string the keyword
+ */
+function sql_as() {
+    global $db;
+
+    switch ($CFG->dbtype) {
+        case 'postgres7':
+            return 'AS';
+        default:
+            return '';
     }
 }
 
@@ -1320,6 +1343,7 @@ function column_type($table, $column) {
     $field = $rs->FetchField(0);
     return $rs->MetaType($field->type);
 }
+
 
 /**
  * This function, called from setup.php includes all the configuration
