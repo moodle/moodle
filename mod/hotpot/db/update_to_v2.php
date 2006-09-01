@@ -1016,12 +1016,16 @@ function hotpot_db_add_index($table, $field, $length='') {
 
     switch (strtolower($CFG->dbtype)) {
         case 'mysql' :
-            $length = empty($length) ? '' : " ($length)";
-            $ok = $ok && $db->Execute("ALTER TABLE `$table` ADD INDEX `$index` (`$field`$length)");
+            $field = "`$field`";
+            if ($length) {
+                $field = "$field ($length)";
+            }
+            $ok = $ok && $db->Execute("ALTER TABLE `$table` ADD INDEX `$index` ($field)");
         break;
         case 'postgres7' :
+            $field = '"'.$field.'"';
             if ($length) {
-                $field = "SUBSTR(\"$field\",$length)";
+                $field = "SUBSTR($field,$length)";
             }
             $ok = $ok && $db->Execute("CREATE INDEX $index ON $table ($field)");
         break;
@@ -1236,9 +1240,17 @@ function hotpot_db_update_field_type($table, $oldfield, $field, $type, $size, $u
             $ok = $ok && execute_sql("ALTER TABLE `$table` $action `$field` $fieldtype");
         break;
         case 'postgres7':
-            // get db version
-            $dbinfo = $db->ServerInfo();
-            $dbversion = substr($dbinfo['version'],0,3);
+            // get db version 
+            //    N.B. $db->ServerInfo() usually returns blank 
+            //    (except lib/adodb/drivers/adodb-postgre64-inc.php)
+            $dbversion = '';
+            $rs = $db->Execute("SELECT version()");
+            if ($rs && $rs->RecordCount()>0) {
+                $records = $rs->GetArray();
+                if (preg_match('/\d+\.\d+/', $records[0][0], $matches)) {
+                    $dbversion = $matches[0];
+                }
+            }
             $tmpfield = 'temporary_'.$field.'_'.time();
             switch (strtoupper($type)) {
                 case "INTEGER":
