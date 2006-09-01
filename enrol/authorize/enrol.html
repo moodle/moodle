@@ -52,6 +52,7 @@ function print_cc_form($classreference)
     <p align="center"><?php if (!empty($classreference->authorizeerrors['header'])) { formerr($classreference->authorizeerrors['header']); } ?></p>
     <div align="center">
 
+    <p align="right"><?php print_other_method(AN_METHOD_CC) ?></p>
     <p><?php print_string("paymentrequired") ?></p>
     <p><b><?php echo get_string("cost").": $curcost[currency] $curcost[cost]"; ?></b></p>
     <p><?php print_string("paymentinstant") ?></p>
@@ -60,9 +61,6 @@ function print_cc_form($classreference)
     <input type="hidden" name="id" value="<?php p($course->id) ?>" />
     <input type="hidden" name="paymentmethod" value="<?php p(AN_METHOD_CC) ?>" />
     <table align="center" width="100%" border=0>
-    <tr>
-      <td align="right" colspan="2">&nbsp;<?php print_other_method(AN_METHOD_CC); ?></td>
-    </tr>
     <tr>
       <td align="right"><?php print_string("ccno", "enrol_authorize") ?>: </td>
       <td align="left"><input type="text" name="cc" size="16" value="<?php p($form->cc) ?>" />
@@ -164,6 +162,7 @@ function print_echeck_form($classreference)
     <p align="center"><?php if (!empty($classreference->authorizeerrors['header'])) { formerr($classreference->authorizeerrors['header']); } ?></p>
     <div align="center">
 
+    <p align="right"><?php print_other_method(AN_METHOD_ECHECK) ?></p>
     <p><?php print_string("paymentrequired") ?></p>
     <p><b><?php echo get_string("cost").": $curcost[currency] $curcost[cost]"; ?></b></p>
     <p><?php print_string("paymentinstant") ?></p>
@@ -175,9 +174,6 @@ function print_echeck_form($classreference)
     echeck form (not ready)
 
     <table align="center" width="100%" border=0>
-    <tr>
-      <td align="right" colspan="2">&nbsp;<?php print_other_method(AN_METHOD_ECHECK); ?></td>
-    </tr>
     <tr>
       <td align="right"><?php print_string("echeckabacode", "enrol_authorize") ?>: </td>
       <td align="left"><input type="text" name="abacode" size="9" maxlength="9" value="<?php p($form->abacode) ?>" />

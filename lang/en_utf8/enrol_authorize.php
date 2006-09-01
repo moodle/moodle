@@ -1,8 +1,9 @@
-<?PHP // $Id$
-      // enrol_authorize.php - created with Moodle 1.7 dev (2006050501)
+<?PHP // $Id$ 
+      // enrol_authorize.php - created with Moodle 1.7 dev (2006083102)
 
 
 $string['adminacceptccs'] = 'Which credit card types will be accepted?';
+$string['adminacceptmethods'] = 'Which payment methods will be accepted?';
 $string['adminauthorizeccapture'] = 'Order Review & Scheduled-Capture Settings';
 $string['adminauthorizeemail'] = 'Email Sending Settings';
 $string['adminauthorizesettings'] = 'Authorize.net Settings';
@@ -80,12 +81,27 @@ $string['costdefaultdesc'] = '<strong>In course settings, enter -1</strong> to c
 $string['cutofftime'] = 'Transaction Cut-Off Time. When the last transaction is picked up for settlement?';
 $string['delete'] = 'Destroy';
 $string['description'] = 'The Authorize.net module allows you to set up paid courses via CC providers.  If the cost for any course is zero, then students are not asked to pay for entry.  Two ways to set the course cost (1) a site-wide cost as a default for the whole site or (2) a course setting that you can set for each course individually. The course cost overrides the site cost.<br /><br /><b>Note:</b> If you enter an enrolment key in the course settings, then students will also have the option to enrol using a key. This is useful if you have a mixture of paying and non-paying students.';
+$string['echeckabacode'] = 'Bank ABA Number';
+$string['echeckaccnum'] = 'Bank Account Number';
+$string['echeckacctype'] = 'Bank Account Type';
+$string['echeckbankname'] = 'Bank Name';
+$string['echeckbusinesschecking'] = 'Business Checking';
+$string['echeckchecking'] = 'Checking';
+$string['echeckfirslasttname'] = 'Bank Account Owner';
+$string['echecksavings'] = 'Savings';
 $string['enrolname'] = 'Authorize.net Payment Gateway';
 $string['expired'] = 'Expired';
 $string['howmuch'] = 'How much?';
 $string['httpsrequired'] = 'We are sorry to inform you that your request cannot be processed now. This site\'s configuration couldn\'t be set up correctly.<br /><br />Please don\'t enter your credit card number unless you see a yellow lock at the bottom of the browser. If the symbol appears, it means the page encrypts all data sent between client and server. So the information during the transaction between the two computers is protected, hence your credit card number cannot be captured over the internet.';
+$string['invalidaba'] = 'Invalid ABA number';
+$string['invalidaccnum'] = 'Invalid account number';
+$string['invalidacctype'] = 'Invalid account type';
 $string['logindesc'] = 'This option must be ON. <br /><br />Please ensure that you have turned <a href=\"$a->url\">loginhttps ON</a> in Admin >> Variables >> Security.<br /><br />Turning this on will make Moodle use a secure https connection just for the login and payment pages.';
+$string['methodcc'] = 'Credit Card';
+$string['methodecheck'] = 'eCheck (ACH)';
+$string['missingaba'] = 'Missing ABA number';
 $string['missingaddress'] = 'Missing address';
+$string['missingbankname'] = 'Missing bank name';
 $string['missingcc'] = 'Missing card number';
 $string['missingccexpire'] = 'Missing expiration date';
 $string['missingcctype'] = 'Missing card type';
@@ -151,6 +167,8 @@ $string['testmode'] = '[TEST MODE]';
 $string['testwarning'] = 'Capture/Void/Credit seems working in test mode, but no record was updated or inserted in database.';
 $string['transid'] = 'Transaction ID';
 $string['unenrolstudent'] = 'Unenrol student?';
+$string['usingccmethod'] = 'Enrol using <a href=\"$a->url\"><strong>Credit Card</strong></a>';
+$string['usingecheckmethod'] = 'Enrol using <a href=\"$a->url\"><strong>eCheck</strong></a>';
 $string['void'] = 'Void';
 $string['voidyes'] = 'Transaction will be cancelled. Are you sure?';
 $string['welcometocoursesemail'] = 'Dear student,
