@@ -1,4 +1,56 @@
 <?PHP
+function hotpot=update_to_v2_2() {
+    global $CFG;
+    $ok = true;
+
+    // remove the index on hotpot_questions.name
+    $table = 'hotpot_questions';
+    $field = 'name';
+    $index = "{$table}_{$field}_idx";
+    if (strtolower($CFG->dbtype)=='postgres7') {
+        $index = "{$CFG->prefix}$index";
+    }
+    hotpot_db_delete_index("{$CFG->prefix}$table", $index);
+    
+    // add new hotpot_questions.md5key field (and index)
+    $table = 'hotpot_questions';
+    $field = 'md5key';
+    $ok = $ok && hotpot_db_update_field_type($table, '', $field, 'VARCHAR', 32, '', 'NOT NULL', '', 'name');
+    $ok = $ok && hotpot_db_add_index($table, $field);
+
+    // add new values hotpot_questions.md5key
+    $table = 'hotpot_questions';
+    if ($records = get_records($table)) {
+        foreach ($records as $record) {
+            $ok = $ok && set_field($table, 'md5key', md5($record->name), 'id', $record->id);
+        }
+    }
+    
+    // remove the index on hotpot_strings.string
+    $table = 'hotpot_strings';
+    $field = 'string';
+    $index = "{$table}_{$field}_idx";
+    if (strtolower($CFG->dbtype)=='postgres7') {
+        $index = "{$CFG->prefix}$index";
+    }
+    hotpot_db_delete_index("{$CFG->prefix}$table", $index);
+
+    // add new hotpot_strings.md5key field (and index)
+    $table = 'hotpot_strings';
+    $field = 'md5key';
+    $ok = $ok && hotpot_db_update_field_type($table, '', $field, 'VARCHAR', 32, '', 'NOT NULL', '', 'string');
+    $ok = $ok && hotpot_db_add_index($table, $field);
+
+    // add new values hotpot_strings.md5key
+    $table = 'hotpot_strings';
+    if ($records = get_records($table)) {
+        foreach ($records as $record) {
+            $ok = $ok && set_field($table, 'md5key', md5($record->string), 'id', $record->id);
+        }
+    }
+    
+    return $ok;
+}
 function hotpot_update_to_v2_1_21() {
     global $CFG;
     $ok = true;

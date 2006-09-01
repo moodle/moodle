@@ -1962,7 +1962,8 @@ function hotpot_add_response(&$attempt, &$question, &$response) {
             $questionname = $question->name;
         }
 
-        if (!$question->id = get_field('hotpot_questions', 'id', 'name', $question->name, 'hotpot', $attempt->hotpot)) {
+        $question->md5key = md5($question->name);
+        if (!$question->id = get_field('hotpot_questions', 'id', 'hotpot', $attempt->hotpot, 'md5key', $question->md5key, 'name', $question->name)) {
             // add question record
             if (!$question->id = insert_record('hotpot_questions', $question)) {
                 error("Could not add question record (attempt_id=$attempt->id): ".$db->ErrorMsg(), $next_url);
@@ -2133,11 +2134,13 @@ function hotpot_string_id($str) {
     if (isset($str) && $str<>'') {
 
         // get the id from the table if it is already there
-        if (!$id = get_field('hotpot_strings', 'id', 'string', $str)) {
+		$md5key = md5($str);
+        if (!$id = get_field('hotpot_strings', 'id', 'md5key', $md5key, 'string', $str)) {
 
             // create a string record
-            $record = NULL;
+            $record = new stdClass();
             $record->string = $str;
+            $record->md5key = $md5key;
 
             // try and add the new string record
             if (!$id = insert_record('hotpot_strings', $record)) {

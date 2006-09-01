@@ -299,7 +299,7 @@ function hotpot_restore_record(&$restore, $status, &$xml, $table, $foreign_keys,
         }
     }
 
-    // update secondary keys, if any
+    // update foreign keys, if any
     $ok = true;
     foreach ($foreign_keys as $key=>$value) {
         if (is_numeric($value)) {
@@ -335,6 +335,14 @@ function hotpot_restore_record(&$restore, $status, &$xml, $table, $foreign_keys,
             $record->$key = implode(',', $new_ids);
         }
     }
+
+    // set md5 keys if necessary (restoring from Moodle<1.6)
+	if ($table=='hotpot_questions' && empty($record->md5key)) {
+		$record->md5key = md5($record->name);
+	}
+	if ($table=='hotpot_strings' && empty($record->md5key)) {
+		$record->md5key = md5($record->string);
+	}
 
     // check all "not null" fields have been set
     foreach ($table_columns[$table] as $column) {
