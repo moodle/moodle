@@ -88,14 +88,21 @@ function hotpot_restore_mods($mod, $restore) {
             $restore_userdata_selected = $restore->mods['hotpot']->userinfo;
         }
         if ($restore_userdata_selected) {
-            if (isset($xml["STRING_DATA"]) && isset($xml["QUESTION_DATA"])) {
+            $has_details = false;
+            if (isset($xml["ATTEMPT_DATA"]["0"]["#"]["ATTEMPT"]["0"]["#"]["DETAILS"]["0"]["#"])) {
+                $details = trim($xml["ATTEMPT_DATA"]["0"]["#"]["ATTEMPT"]["0"]["#"]["DETAILS"]["0"]["#"]);
+                if ($details<>'' && $details<>'<?xml version="1.0"?><hpjsresult><fields></fields></hpjsresult>') {
+                    $has_details = true;
+                }
+            }
+            if ($has_details && empty($xml["STRING_DATA"]) && empty($xml["QUESTION_DATA"])) {
+                // HotPot v2.0.x (regenerate questions, responses and strings from attempt details)
+                $more_restore .= '$status = hotpot_restore_attempts($restore, $status, $xml, $record, true);';
+            } else {
                 // HotPot v2.1+
                 $more_restore .= '$status = hotpot_restore_strings($restore, $status, $xml, $record);';
                 $more_restore .= '$status = hotpot_restore_questions($restore, $status, $xml, $record);';
                 $more_restore .= '$status = hotpot_restore_attempts($restore, $status, $xml, $record);';
-            } else {
-                // HotPot v2.0.x (regenerate questions, responses and strings from attempt details)
-                $more_restore .= '$status = hotpot_restore_attempts($restore, $status, $xml, $record, true);';
             }
         }
         $status = hotpot_restore_records(
@@ -337,12 +344,12 @@ function hotpot_restore_record(&$restore, $status, &$xml, $table, $foreign_keys,
     }
 
     // set md5 keys if necessary (restoring from Moodle<1.6)
-	if ($table=='hotpot_questions' && empty($record->md5key)) {
-		$record->md5key = md5($record->name);
-	}
-	if ($table=='hotpot_strings' && empty($record->md5key)) {
-		$record->md5key = md5($record->string);
-	}
+    if ($table=='hotpot_questions' && empty($record->md5key)) {
+        $record->md5key = md5($record->name);
+    }
+    if ($table=='hotpot_strings' && empty($record->md5key)) {
+        $record->md5key = md5($record->string);
+    }
 
     // check all "not null" fields have been set
     foreach ($table_columns[$table] as $column) {
