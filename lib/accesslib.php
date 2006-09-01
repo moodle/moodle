@@ -1129,6 +1129,7 @@ function role_assign($roleid, $userid, $groupid, $contextid, $timestart=0, $time
         $ra = get_record('role_assignments', 'roleid', $roleid, 'contextid', $contextid, 'groupid', $groupid);
     }
 
+
     $newra = new object;
 
     if (empty($ra)) {             // Create a new entry
@@ -1144,7 +1145,7 @@ function role_assign($roleid, $userid, $groupid, $contextid, $timestart=0, $time
         $newra->timemodified = time();
         $newra->modifier = empty($USER->id) ? 0 : $USER->id;
 
-        return insert_record('role_assignments', $newra);
+        $success = insert_record('role_assignments', $newra);
 
     } else {                      // We already have one, just update it
 
@@ -1156,7 +1157,12 @@ function role_assign($roleid, $userid, $groupid, $contextid, $timestart=0, $time
         $newra->timemodified = time();
         $newra->modifier = empty($USER->id) ? 0 : $USER->id;
 
-        return update_record('role_assignments', $newra);
+        $success = update_record('role_assignments', $newra);
+    }
+
+/// If the user is the current user, then reload the capabilities too.
+    if ($success && !empty($USER->id) && $USER->id == $userid) {
+        load_user_capability();
     }
 }
 
