@@ -458,7 +458,7 @@ function load_user_capability($capability='', $context ='', $userid='') {
                      rc.contextid=$siteinstance->id 
                      $capsearch
               GROUP BY
-                     rc.capability,aggrlevel,c1.id
+                     rc.capability, (c1.aggregatelevel * 100), c1.id
                      HAVING
                      SUM(rc.permission) != 0
               UNION
@@ -481,7 +481,7 @@ function load_user_capability($capability='', $context ='', $userid='') {
                      $capsearch
                   
               GROUP BY
-                     rc.capability, aggrlevel, c1.id
+                     rc.capability, (c1.aggregatelevel * 100 + c2.aggregatelevel), c1.id
                      HAVING
                      SUM(rc.permission) != 0
               ORDER BY
