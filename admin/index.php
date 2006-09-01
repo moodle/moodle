@@ -412,8 +412,8 @@
         print_simple_box(get_string('sitemaintenancewarning', 'admin') , 'center', '60%');
     }
 
-/// Alert if we are currently in maintenance mode
-    if (empty($CFG->unicodedb)) {
+/// Alert to display the utf-8 migration button (if !unicode yet and DB is MySQL or PG)
+    if (empty($CFG->unicodedb) && in_array($CFG->dbtype, array('mysql', 'postgres7'))) {
         print_simple_box(get_string('unicodeupgradenotice', 'admin') , 'center', '60%');
     }
 
