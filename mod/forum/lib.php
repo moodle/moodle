@@ -3524,12 +3524,13 @@ function forum_add_user($userid, $courseid) {
 /// Add subscriptions for new users
     if ($forums = get_records_select('forum', "course = '$courseid' AND forcesubscribe = '".FORUM_INITIALSUBSCRIBE."'")) {
         foreach ($forums as $forum) {
-            forum_subscribe($userid, $forum->id);
-        }
-    }
-    if ($forums = get_records_select('forum', "course = '".SITEID."' AND forcesubscribe = '".FORUM_INITIALSUBSCRIBE."'")) {
-        foreach ($forums as $forum) {
-            forum_subscribe($userid, $forum->id);
+            if ($cm = get_coursemodule_from_id('forum', $forum->id)) {   // TODO: get this data in the above query
+                if ($context = get_context_instance(CONTEXT_MODULE, $cm->id)) {
+                    if (has_capability('mod/forum:viewforum', $context)) {
+                        forum_subscribe($userid, $forum->id);
+                    }
+                }
+            }
         }
     }
 }
