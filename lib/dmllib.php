@@ -248,7 +248,7 @@ function record_exists($table, $field1='', $value1='', $field2='', $value2='', $
 
     $select = where_clause($field1, $value1, $field2, $value2, $field3, $value3);
 
-    return record_exists_sql('SELECT * FROM '. $CFG->prefix . $table .' '. $select .' LIMIT 1');
+    return record_exists_sql('SELECT * FROM '. $CFG->prefix . $table .' '. $select);
 }
 
 /**
@@ -280,7 +280,11 @@ function record_exists_select($table, $select='') {
  * @return bool true if the SQL executes without errors and returns at least one record.
  */
 function record_exists_sql($sql) {
-    $rs = get_recordset_sql($sql);
+
+    $limitfrom = 0; /// Number of records to skip
+    $limitnum  = 1; /// Number of records to retrieve
+
+    $rs = get_recordset_sql($sql, $limitfrom, $limitnum);
 
     if ($rs && $rs->RecordCount() > 0) {
         return true;
