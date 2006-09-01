@@ -210,7 +210,7 @@ function authorize_print_order_details($orderno)
             $table->data[] = array("<b>$authstrs->nameoncard:</b>", $order->ccname);
         }
         else {
-        	$table->data[] = array("<b>$authstrs->echeckfirslasttname:</b>", $order->ccname);
+            $table->data[] = array("<b>$authstrs->echeckfirslasttname:</b>", $order->ccname);
         }
         $table->data[] = array("<b>$strs->time:</b>", userdate($order->timecreated));
         $table->data[] = array("<b>$authstrs->settlementdate:</b>", $settled ?
@@ -584,7 +584,8 @@ function authorize_get_status_action($order)
             $ret->status = 'settled';
         }
         else {
-            if (has_capability('enrol/authorize:managepayments', $context)) {
+            if ($order->paymentmethod == AN_METHOD_CC &&
+                has_capability('enrol/authorize:managepayments', $context)) {
                 $ret->actions = array(ORDER_VOID);
             }
             $ret->status = 'refunded';
