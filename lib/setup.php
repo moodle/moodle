@@ -309,6 +309,10 @@ $CFG->os = PHP_OS;
             $ADODB_SESSION_PWD     = $CFG->dbpass;
             $ADODB_SESSION_DB      = $CFG->dbname;
             $ADODB_SESSION_TBL     = $CFG->prefix.'sessions';
+            // Respect sessiontimeout setting for DB sessions.
+            if (!empty($CFG->sessiontimeout)) {
+             	$ADODB_SESS_LIFE   = $CFG->sessiontimeout;
+            } 
 
             require_once($CFG->libdir. '/adodb/session/adodb-session.php');
         }
