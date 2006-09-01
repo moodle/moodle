@@ -15,7 +15,7 @@ function hotpot_update_to_v2_2() {
     // add new hotpot_questions.md5key field (and index)
     $table = 'hotpot_questions';
     $field = 'md5key';
-    $ok = $ok && hotpot_db_update_field_type($table, '', $field, 'VARCHAR', 32, '', 'NOT NULL', '', 'name');
+    $ok = $ok && hotpot_db_update_field_type($table, '', $field, 'VARCHAR', 32, '', 'NOT NULL', '');
     $ok = $ok && hotpot_db_add_index($table, $field);
 
     // add new values hotpot_questions.md5key
@@ -38,7 +38,7 @@ function hotpot_update_to_v2_2() {
     // add new hotpot_strings.md5key field (and index)
     $table = 'hotpot_strings';
     $field = 'md5key';
-    $ok = $ok && hotpot_db_update_field_type($table, '', $field, 'VARCHAR', 32, '', 'NOT NULL', '', 'string');
+    $ok = $ok && hotpot_db_update_field_type($table, '', $field, 'VARCHAR', 32, '', 'NOT NULL', '');
     $ok = $ok && hotpot_db_add_index($table, $field);
 
     // add new values hotpot_strings.md5key

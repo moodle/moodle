@@ -74,12 +74,13 @@ CREATE TABLE prefix_hotpot_questions (
     name   TEXT NOT NULL default '',
     type   INT2 NOT NULL default '0',
     text   INT4 NOT NULL default '0',
-    hotpot INT4 NOT NULL default '0'
+    hotpot INT4 NOT NULL default '0',
+    md5key VARCHAR(32) NOT NULL default ''
 );
 COMMENT ON TABLE prefix_hotpot_questions IS 'details about questions in Hot Potatoes quiz attempts';
 
 CREATE INDEX prefix_hotpot_questions_hotpot_idx ON prefix_hotpot_questions (hotpot);
-CREATE INDEX prefix_hotpot_questions_name_idx ON prefix_hotpot_questions (SUBSTR("name",20));
+CREATE INDEX prefix_hotpot_questions_md5key_idx ON prefix_hotpot_questions (md5key);
 
 #
 # Table structure for table `hotpot_responses`
@@ -108,9 +109,10 @@ CREATE INDEX prefix_hotpot_responses_question_idx ON prefix_hotpot_responses (qu
 #
 
 CREATE TABLE prefix_hotpot_strings (
-  id  SERIAL PRIMARY KEY,
-  string TEXT NOT NULL default ''
+    id  SERIAL PRIMARY KEY,
+    string TEXT NOT NULL default '',
+    md5key VARCHAR(32) NOT NULL default ''
 );
 COMMENT ON TABLE prefix_hotpot_strings IS 'strings used in Hot Potatoes questions and responses';
 
-CREATE INDEX prefix_hotpot_strings_string_idx ON prefix_hotpot_strings (SUBSTR("string",20));
+CREATE INDEX prefix_hotpot_strings_md5key_idx ON prefix_hotpot_strings (md5key);

@@ -66,9 +66,10 @@ CREATE TABLE prefix_hotpot_questions (
     type tinyint(4) unsigned NOT NULL default '0',
     text int(10) unsigned NOT NULL default '0',
     hotpot int(10) unsigned NOT NULL default '0',
+    md5key varchar(32) NOT NULL default '',
     PRIMARY KEY (id),
-    KEY hotpot_questions_name_idx (name(20)),
-    KEY hotpot_questions_hotpot_idx (hotpot)
+    KEY hotpot_questions_hotpot_idx (hotpot),
+    KEY hotpot_questions_md5key_idx (md5key)
 ) TYPE=MyISAM COMMENT='details about questions in Hot Potatoes quiz attempts';
 #
 # Table structure for table `hotpot_responses`
@@ -95,7 +96,8 @@ CREATE TABLE prefix_hotpot_responses (
 CREATE TABLE prefix_hotpot_strings (
     id int(10) unsigned NOT NULL auto_increment,
     string text NOT NULL default '',
+    md5key varchar(32) NOT NULL default '',
     PRIMARY KEY (id),
-    KEY hotpot_strings_string_idx (string(20))
+    KEY hotpot_strings_md5key_idx (md5key)
 ) TYPE=MyISAM COMMENT='strings used in Hot Potatoes questions and responses';
         
