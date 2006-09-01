@@ -197,6 +197,8 @@ function authorize_print_order_details($orderno)
     $settled = authorize_settled($order);
     $status = authorize_get_status_action($order);
 
+    $table->data[] = array("<b>$authstrs->paymentmethod:</b>",
+                          ($order->paymentmethod == AN_METHOD_CC ? $authstrs->methodcc : $authstrs->methodecheck));
     $table->data[] = array("<b>$authstrs->orderid:</b>", $orderno);
     $table->data[] = array("<b>$authstrs->transid:</b>", $order->transid);
     $table->data[] = array("<b>$authstrs->amount:</b>", "$order->currency $order->amount");
@@ -204,7 +206,12 @@ function authorize_print_order_details($orderno)
         $color = authorize_get_status_color($status->status);
         $table->data[] = array("<b>$strs->course:</b>", $order->shortname);
         $table->data[] = array("<b>$strs->status:</b>", "<font style='color:$color'>" . $authstrs->{$status->status} . "</font>");
-        $table->data[] = array("<b>$authstrs->nameoncard:</b>", $order->ccname);
+        if ($order->paymentmethod == AN_METHOD_CC) {
+            $table->data[] = array("<b>$authstrs->nameoncard:</b>", $order->ccname);
+        }
+        else {
+        	$table->data[] = array("<b>$authstrs->echeckfirslasttname:</b>", $order->ccname);
+        }
         $table->data[] = array("<b>$strs->time:</b>", userdate($order->timecreated));
         $table->data[] = array("<b>$authstrs->settlementdate:</b>", $settled ?
                                userdate($order->settletime) : $authstrs->notsettled);

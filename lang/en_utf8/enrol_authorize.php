@@ -113,6 +113,7 @@ $string['noreturns'] = 'No returns!';
 $string['notsettled'] = 'Not settled';
 $string['orderid'] = 'Order ID';
 $string['paymentmanagement'] = 'Payment Management';
+$string['paymentmethod'] = 'Payment Method';
 $string['paymentpending'] = 'Your payment is pending for this course with this order number $a->orderid.  See <a href=\'$a->url\'>Order Details</a>.';
 $string['pendingordersemail'] = 'Dear admin,
 
