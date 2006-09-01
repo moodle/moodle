@@ -1239,10 +1239,7 @@ function hotpot_db_update_field_type($table, $oldfield, $field, $type, $size, $u
             // get db version
             $dbinfo = $db->ServerInfo();
             $dbversion = substr($dbinfo['version'],0,3);
-            // prevent conflicts with reserved words
-            $tmpfield = "\"temporary_{$field}_".time()."\"";
-            $oldfield = "\"$oldfield\"";
-            $field    = "\"$field\"";
+            $tmpfield = 'temporary_'.$field.'_'.time();
             switch (strtoupper($type)) {
                 case "INTEGER":
                     if (!is_numeric($size)) {
@@ -1262,40 +1259,40 @@ function hotpot_db_update_field_type($table, $oldfield, $field, $type, $size, $u
                     $fieldtype = $type;
             }
             // start transaction
-            execute_sql("BEGIN");
+            execute_sql('BEGIN');
             // create temporary field
-            execute_sql("ALTER TABLE $table ADD COLUMN $tmpfield $fieldtype");
+            execute_sql('ALTER TABLE '.$table.' ADD COLUMN "'.$tmpfield.'" '.$fieldtype);
             // set default
             if (isset($default)) {
-                execute_sql("UPDATE $table SET $tmpfield = $default");
-                execute_sql("ALTER TABLE $table ALTER COLUMN $tmpfield SET DEFAULT $default");
+                execute_sql('UPDATE '.$table.' SET "'.$tmpfield.'" = '.$default);
+                execute_sql('ALTER TABLE '.$table.' ALTER COLUMN "'.$tmpfield.'" SET DEFAULT '.$default);
             } else {
-                execute_sql("ALTER TABLE $table ALTER COLUMN $tmpfield DROP DEFAULT");
+                execute_sql('ALTER TABLE '.$table.' ALTER COLUMN "'.$tmpfield.'" DROP DEFAULT');
             }
             // set not null
-            if ($dbversion >= "7.3") {
-                $notnull = ($notnull ? "SET NOT NULL" : "DROP NOT NULL");
-                execute_sql("ALTER TABLE $table ALTER COLUMN $tmpfield $notnull");
+            if ($dbversion=='' || $dbversion >= "7.3") {
+                $notnull = ($notnull ? 'SET NOT NULL' : 'DROP NOT NULL');
+                execute_sql('ALTER TABLE '.$table.' ALTER COLUMN "'.$tmpfield.'" '.$notnull);
             } else {
                 execute_sql("
                     UPDATE pg_attribute SET attnotnull=".($notnull ? 'TRUE' : 'FALSE')." 
-                    WHERE attname = $tmpfield
+                    WHERE attname = '$tmpfield'
                     AND attrelid = (SELECT oid FROM pg_class WHERE relname = '$table')
                 ");
             }
             // transfer $oldfield values, if necessary
-            if ( $oldfield != '""' ) {
-                execute_sql("UPDATE $table SET $tmpfield = CAST ($oldfield AS $fieldtype)");
-                execute_sql("ALTER TABLE $table DROP COLUMN $oldfield");
+            if ( $oldfield != '' ) {
+                execute_sql('UPDATE '.$table.' SET "'.$tmpfield.'" = CAST ("'.$oldfield.'" AS '.$fieldtype.')');
+                execute_sql('ALTER TABLE '.$table.' DROP COLUMN "'.$oldfield.'"');
             }
             // rename $tmpfield to $field
-            execute_sql("ALTER TABLE $table RENAME COLUMN $tmpfield TO $field");
+            execute_sql('ALTER TABLE '.$table.' RENAME COLUMN "'.$tmpfield.'" TO "'.$field.'"');
             // do the transaction
-            execute_sql("COMMIT");
+            execute_sql('COMMIT');
             // reclaim disk space (must be done outside transaction)
-            if ($oldfield != '""' && $dbversion >= "7.3") {
-                execute_sql("UPDATE $table SET $field = $field");
-                execute_sql("VACUUM FULL $table");
+            if ($oldfield != '' && $dbversion >= "7.3") {
+                execute_sql('UPDATE '.$table.' SET "'.$field.'" = "'.$field.'"');
+                execute_sql('VACUUM FULL '.$table);
             }
         break;
     } // end switch $CGF->dbtype
