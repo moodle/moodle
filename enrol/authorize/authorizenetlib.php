@@ -376,7 +376,7 @@ function authorize_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE, $
         if ($message == '[[' . $reasonstr . ']]') {
             $message = isset($response[3]) ? $response[3] : 'unknown error';
         }
-        if ($method == AN_METHOD_CC and !empty($CFG->an_avs)) {
+        if ($method == AN_METHOD_CC && !empty($CFG->an_avs) && $response[5] != "P") {
             $avs = "avs" . strtolower($response[5]);
             $stravs = get_string($avs, "enrol_authorize");
             $message .= "<br />" . get_string("avsresult", "enrol_authorize", $stravs);
@@ -391,8 +391,8 @@ function authorize_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE, $
                         $ccaccepts = enrolment_plugin_authorize::get_list_of_creditcards();
                         unset($ccaccepts[$cctype]);
                         set_config('an_acceptccs', implode(',', array_keys($ccaccepts)));
-                        enrolment_plugin_authorize::email_to_admin("Autoconfigure; This card type " .
-                        "isn't accepted: $cctype. New config:", $ccaccepts);
+                        enrolment_plugin_authorize::email_to_admin("$message ($cctype)" .
+                        "This is new config(an_acceptccs):", $ccaccepts);
                     }
                     break;
                 }
@@ -400,8 +400,8 @@ function authorize_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE, $
                 case AN_REASON_NOACH:
                 {
                     set_config('an_acceptmethods', AN_METHOD_CC);
-                    enrolment_plugin_authorize::email_to_admin("Autoconfigure; ACH (Echeck) payment type " .
-                    "isn't accepted: New config:", array(AN_METHOD_CC));
+                    enrolment_plugin_authorize::email_to_admin("$message " .
+                    "This is new config(an_acceptmethods):", array(AN_METHOD_CC));
                     break;
                 }
                 // This echeck type isn't accepted
