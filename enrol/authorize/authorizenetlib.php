@@ -338,17 +338,17 @@ function authorize_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE, $
         if ($message == '[[' . $reasonstr . ']]') {
             $message = isset($response[3]) ? $response[3] : 'unknown error';
         }
-        if (!$test && !empty($cctype) && ($reasonno == 17 or $reasonno == 28)) {
-               $ccaccepts = enrolment_plugin_authorize::get_list_of_creditcards();
-               unset($ccaccepts[$cctype]);
-               set_config('an_acceptccs', implode(',', array_keys($ccaccepts)));
-               enrolment_plugin_authorize::email_to_admin("Autoconfigure; This card type " .
-               "isn't accepted: $cctype. New config:", $ccaccepts);
-        }
-        if (!empty($CFG->an_avs)) {
+        if (! (empty($CFG->an_avs) or $response[5] == "P")) { // P = AVS not applicable
             $avs = "avs" . strtolower($response[5]);
             $stravs = get_string($avs, "enrol_authorize");
             $message .= "<br />" . get_string("avsresult", "enrol_authorize", $stravs);
+        }
+        if (!$test && !empty($cctype) && ($reasonno == 17 or $reasonno == 28)) {
+            $ccaccepts = enrolment_plugin_authorize::get_list_of_creditcards();
+            unset($ccaccepts[$cctype]);
+            set_config('an_acceptccs', implode(',', array_keys($ccaccepts)));
+            enrolment_plugin_authorize::email_to_admin("$message: ($cctype)" .
+            "This is new config(an_acceptccs):", $ccaccepts);
         }
         return false;
     }
