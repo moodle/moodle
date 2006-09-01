@@ -1,5 +1,5 @@
 <?PHP
-function hotpot=update_to_v2_2() {
+function hotpot_update_to_v2_2() {
     global $CFG;
     $ok = true;
 
