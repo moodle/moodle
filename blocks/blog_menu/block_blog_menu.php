@@ -33,7 +33,7 @@ class block_blog_menu extends block_base {
         }
 
         global $CFG, $USER, $course;
-        if (isset($USER->id)) {
+        if (!empty($USER->id)) {
             $userBlog->userid = $USER->id;
         }   //what is $userBlog anyway
         if($this->content !== NULL) {

@@ -41,7 +41,7 @@
     $fullpivot = 1;
 
     $userid = '';
-    if ( isset($USER->id) ) {
+    if ( !empty($USER->id) ) {
         $userid = "OR ge.userid = $USER->id";
     }
     switch ($tab) {

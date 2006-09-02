@@ -247,7 +247,7 @@
 
         echo '<div class="commands">';
 
-        if (isset($USER->id)) {
+        if (!empty($USER->id)) {
             $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
             $canmanage = has_capability('moodle/blog:manageentries', $context->id);
             

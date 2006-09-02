@@ -1566,7 +1566,7 @@ function print_my_moodle() {
 
     global $USER, $CFG;
 
-    if (!isset($USER->id)) {
+    if (empty($USER->id)) {
         error("It shouldn't be possible to see My Moodle without being logged in.");
     }
 

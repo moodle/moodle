@@ -1465,7 +1465,7 @@ function sesskey() {
 
 function require_logout() {
     global $USER, $CFG;
-    if (isset($USER) and isset($USER->id)) {
+    if (!empty($USER->id)) {
         add_to_log(SITEID, "user", "logout", "view.php?id=$USER->id&course=".SITEID, $USER->id, 0, $USER->id);
 
         if ($USER->auth == 'cas' && !empty($CFG->cas_enabled)) {

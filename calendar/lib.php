@@ -1034,7 +1034,7 @@ function calendar_session_vars() {
         // The empty() instead of !isset() here makes a whole world of difference,
         // as it will automatically change to the user's id when the user first logs
         // in. With !isset(), it would never do that.
-        $SESSION->cal_users_shown = isset($USER->id) ? $USER->id : false;
+        $SESSION->cal_users_shown = !empty($USER->id) ? $USER->id : false;
     }
     else if(is_numeric($SESSION->cal_users_shown) && !empty($USER->id) && $SESSION->cal_users_shown != $USER->id) {
         // Follow the white rabbit, for example if a teacher logs in as a student

@@ -7,7 +7,7 @@
     define('MESSAGE_WINDOW', true);  // This prevents the message window coming up
 
 
-    if (!isset($USER->id)) {
+    if (empty($USER->id)) {
         require_login();
     }
 

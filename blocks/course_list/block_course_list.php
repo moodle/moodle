@@ -34,7 +34,7 @@ class block_course_list extends block_list {
            }
         }
 
-        if (empty($CFG->disablemycourses) and isset($USER->id) and !(isadmin() and $adminseesall)) {    // Just print My Courses
+        if (empty($CFG->disablemycourses) and !empty($USER->id) and !(isadmin() and $adminseesall)) {    // Just print My Courses
             if ($courses = get_my_courses($USER->id)) {
                 foreach ($courses as $course) {
                     if ($course->id == SITEID) {

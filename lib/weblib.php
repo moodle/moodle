@@ -2574,7 +2574,7 @@ function theme_setup($theme = '', $params=NULL) {
 function user_login_string($course=NULL, $user=NULL) {
     global $USER, $CFG, $SITE;
 
-    if (empty($user) and isset($USER->id)) {
+    if (empty($user) and !empty($USER->id)) {
         $user = $USER;
     }
 

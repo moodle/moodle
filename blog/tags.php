@@ -40,7 +40,7 @@ switch ($mode) {
         /// Everyone can add personal tags as long as they can write blog entries.
         if (!confirm_sesskey() ||
                 !has_capability('moodle/blog:writeentries', $context) ||
-                !isset($USER->id)) {
+                empty($USER->id)) {
             error ('you can not add tags');
         }
         

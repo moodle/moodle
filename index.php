@@ -159,7 +159,7 @@
                         error('Could not find or create a main news forum for the site');
                     }
 
-                    if (isset($USER->id)) {
+                    if (!empty($USER->id)) {
                         $SESSION->fromdiscussion = $CFG->wwwroot;
                         if (forum_is_subscribed($USER->id, $newsforum->id)) {
                             $subtext = get_string('unsubscribe', 'forum');

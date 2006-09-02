@@ -97,7 +97,7 @@
         // then allow the user to add rss feeds
         global $USER;
         $userisloggedin = false;
-        if (isset($USER) && isset($USER->id) && $USER->id && !isguest()) {
+        if (isset($USER) && !empty($USER->id) && $USER->id && !isguest()) {
             $userisloggedin = true;
         }
         if ( $userisloggedin && ($submitters == SUBMITTERS_ALL_ACCOUNT_HOLDERS || ($submitters == SUBMITTERS_ADMIN_AND_TEACHER && $isteacher)) ) {

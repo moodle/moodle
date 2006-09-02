@@ -291,7 +291,7 @@ class assignment_base {
             $submitted = '<a href="submissions.php?id='.$this->cm->id.'">'.
                          get_string('viewsubmissions', 'assignment', $count).'</a>';
         } else {
-            if (isset($USER->id)) {
+            if (!empty($USER->id)) {
                 if ($submission = $this->get_submission($USER->id)) {
                     if ($submission->timemodified) {
                         if ($submission->timemodified <= $this->assignment->timedue || empty($this->assignment->timedue)) {

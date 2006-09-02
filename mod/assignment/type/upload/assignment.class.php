@@ -1036,7 +1036,7 @@ class assignment_upload extends assignment_base {
 		                $output .= '<img align="middle" src="'.$CFG->pixpath.'/f/'.$icon.'" height="16" width="16" alt="'.$icon.'" />'.
                 		           '<a href="'.$ffurl.'" >'.$file.'</a> ['.$filesize.'] <br />';
 		            } else {
-            	        if (isset($USER->id)) {
+            	        if (!empty($USER->id)) {
 		                    if ($submission = $this->get_submission($USER->id)) { 
                                     //i have changed timemodified=0 for Draft assignments, thats' why we remove this condition 
                                     //otherwise student's dont' se etheir own submissions

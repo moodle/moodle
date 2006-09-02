@@ -41,7 +41,7 @@ $pageclass = 'page_blog';
 page_map_class($pagetype, $pageclass);    
 
 // Now, create our page object.
-if (!isset($USER->id)) {
+if (empty($USER->id)) {
     $PAGE = page_create_object($pagetype);
 } else {
     $PAGE = page_create_object($pagetype, $USER->id);
