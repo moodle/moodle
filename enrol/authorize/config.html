@@ -31,12 +31,12 @@ if (!isset($frm->an_cutoff_hour)) {
 }
 
 if (!isset($frm->acceptmethods)) {
-    $frm->acceptmethods = enrolment_plugin_authorize::get_list_of_payment_methods();
+    $frm->acceptmethods = get_list_of_payment_methods();
     $CFG->an_acceptmethods = implode(',', $frm->acceptmethods);
 }
 
 if (!isset($frm->acceptccs)) {
-    $frm->acceptccs = array_keys(enrolment_plugin_authorize::get_list_of_creditcards());
+    $frm->acceptccs = array_keys(get_list_of_creditcards());
     $CFG->an_acceptccs = implode(',', $frm->acceptccs);
 }
 
@@ -133,8 +133,8 @@ if (!isset($frm->acceptccs)) {
 <tr valign="top">
     <td align="right">an_acceptmethods:</td>
     <td><?php print_string("adminacceptmethods", "enrol_authorize") ?><br /><?php
-    $allpaymentmethods = enrolment_plugin_authorize::get_list_of_payment_methods(true);
-    $paymentmethodsenabled = enrolment_plugin_authorize::get_list_of_payment_methods();
+    $allpaymentmethods = get_list_of_payment_methods(true);
+    $paymentmethodsenabled = get_list_of_payment_methods();
     foreach ($allpaymentmethods as $key) {
         print_checkbox('acceptmethods[]', $key, in_array($key, $paymentmethodsenabled), get_string('method'.strtolower($key),'enrol_authorize')); echo "<br />\n";
     }
@@ -144,7 +144,7 @@ if (!isset($frm->acceptccs)) {
 <tr valign="top">
     <td align="right">an_acceptccs:</td>
     <td><?php print_string("adminacceptccs", "enrol_authorize") ?><br /><?php
-    $allccs = enrolment_plugin_authorize::get_list_of_creditcards(true);
+    $allccs = get_list_of_creditcards(true);
     foreach ($allccs as $key => $val) {
         print_checkbox('acceptccs[]', $key, stristr($CFG->an_acceptccs, $key) !== false, $val); echo "<br />\n";
     }

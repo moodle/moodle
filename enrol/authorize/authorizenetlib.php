@@ -18,6 +18,7 @@ define('AN_REASON_NOACHTYPE',  245);
 define('AN_REASON_NOACHTYPE2', 246);
 
 require_once($CFG->dirroot.'/enrol/authorize/const.php');
+require_once($CFG->dirroot.'/enrol/authorize/localfuncs.php');
 require_once($CFG->dirroot.'/enrol/authorize/enrol.php');
 
 /**
@@ -330,7 +331,7 @@ function authorize_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE, $
                     $order->settletime = authorize_getsettletime(time());
                 }
                 if (! update_record('enrol_authorize', $order)) {
-                    enrolment_plugin_authorize::email_to_admin("Error while trying to update data " .
+                    email_to_admin("Error while trying to update data " .
                     "in table enrol_authorize. Please edit manually this record: ID=$order->id.", $order);
                 }
                 break;
@@ -344,7 +345,7 @@ function authorize_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE, $
                 $extra->settletime = authorize_getsettletime(time());
                 unset($extra->sum); // this is not used in refunds table.
                 if (! $extra->id = insert_record('enrol_authorize_refunds', $extra)) {
-                    enrolment_plugin_authorize::email_to_admin("Error while trying to insert data " .
+                    email_to_admin("Error while trying to insert data " .
                     "into table enrol_authorize_refunds. Please add manually this record:", $extra);
                 }
                 break;
@@ -359,7 +360,7 @@ function authorize_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE, $
                 $order->status = AN_STATUS_VOID;
                 // don't update order->settletime
                 if (! update_record($tableupdate, $order)) {
-                    enrolment_plugin_authorize::email_to_admin("Error while trying to update data " .
+                    email_to_admin("Error while trying to update data " .
                     "in table $tableupdate. Please edit manually this record: ID=$order->id.", $order);
                 }
                 break;
@@ -388,10 +389,10 @@ function authorize_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE, $
                 case AN_REASON_NOCCTYPE2:
                 {
                     if (!empty($cctype)) {
-                        $ccaccepts = enrolment_plugin_authorize::get_list_of_creditcards();
+                        $ccaccepts = get_list_of_creditcards();
                         unset($ccaccepts[$cctype]);
                         set_config('an_acceptccs', implode(',', array_keys($ccaccepts)));
-                        enrolment_plugin_authorize::email_to_admin("$message ($cctype)" .
+                        email_to_admin("$message ($cctype)" .
                         "This is new config(an_acceptccs):", $ccaccepts);
                     }
                     break;
@@ -400,7 +401,7 @@ function authorize_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE, $
                 case AN_REASON_NOACH:
                 {
                     set_config('an_acceptmethods', AN_METHOD_CC);
-                    enrolment_plugin_authorize::email_to_admin("$message " .
+                    email_to_admin("$message " .
                     "This is new config(an_acceptmethods):", array(AN_METHOD_CC));
                     break;
                 }

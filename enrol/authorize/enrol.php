@@ -2,10 +2,10 @@
 
 require_once($CFG->dirroot.'/enrol/enrol.class.php');
 require_once($CFG->dirroot.'/enrol/authorize/const.php');
+require_once($CFG->dirroot.'/enrol/authorize/localfuncs.php');
 
 /**
- * enrolment_plugin_authorize
- *
+ * Authorize.net Payment Gateway plugin
  */
 class enrolment_plugin_authorize
 {
@@ -64,7 +64,7 @@ class enrolment_plugin_authorize
     function print_entry($course) {
         global $CFG, $USER, $form;
 
-        $zerocost = enrolment_plugin_authorize::zero_cost($course);
+        $zerocost = zero_cost($course);
         if ($zerocost) {
             $manual = enrolment_factory::factory('manual');
             if (!empty($this->errormsg)) {
@@ -100,7 +100,7 @@ class enrolment_plugin_authorize
 
         print_simple_box_start('center');
         if (isguest()) {
-            $curcost = enrolment_plugin_authorize::get_course_cost($course);
+            $curcost = get_course_cost($course);
             echo '<div align="center">';
             echo '<p>'.get_string('paymentrequired').'</p>';
             echo '<p><b>'.get_string('cost').": $curcost[currency] $curcost[cost]".'</b></p>';
@@ -132,7 +132,7 @@ class enrolment_plugin_authorize
     {
         global $CFG;
 
-        if (enrolment_plugin_authorize::zero_cost($course) or
+        if (zero_cost($course) or
            (!empty($course->password) and !empty($form->password))) { // MANUAL ENROLMENT
             $manual = enrolment_factory::factory('manual');
             $manual->check_entry($form, $course);
@@ -141,15 +141,15 @@ class enrolment_plugin_authorize
             }
         }
         else { // AUTHORIZE.NET ENROLMENT
-            $paymentmethodsenabled = enrolment_plugin_authorize::get_list_of_payment_methods();
+            $paymentmethodsenabled = get_list_of_payment_methods();
             if (in_array(AN_METHOD_CC, $paymentmethodsenabled) and
                 !empty($form->ccsubmit) and
-                $this->validate_cc_form($form)) {
+                validate_cc_form($form, $this->authorizeerrors)) {
                     $this->cc_submit($form, $course);
             }
             elseif (in_array(AN_METHOD_ECHECK, $paymentmethodsenabled) and
                 !empty($form->echecksubmit) and
-                $this->validate_echeck_form($form)) {
+                validate_echeck_form($form, $this->authorizeerrors)) {
                     $this->echeck_submit($form, $course);
             }
         }
@@ -169,10 +169,10 @@ class enrolment_plugin_authorize
         global $CFG, $USER, $SESSION;
         require_once('authorizenetlib.php');
 
-        enrolment_plugin_authorize::prevent_double_paid($course);
+        prevent_double_paid($course);
 
         $useripno = getremoteaddr();
-        $curcost = enrolment_plugin_authorize::get_course_cost($course);
+        $curcost = get_course_cost($course);
         $exp_date = sprintf("%02d", $form->ccexpiremm) . $form->ccexpireyyyy;
 
         // NEW CC ORDER
@@ -191,7 +191,7 @@ class enrolment_plugin_authorize
         $order->currency = $curcost['currency'];
         $order->id = insert_record("enrol_authorize", $order);
         if (!$order->id) {
-            enrolment_plugin_authorize::email_to_admin("Error while trying to insert new data", $order);
+            email_to_admin("Error while trying to insert new data", $order);
             $this->authorizeerrors['header'] = "Insert record error. Admin has been notified!";
             return;
         }
@@ -225,7 +225,7 @@ class enrolment_plugin_authorize
         $action = $an_review ? AN_ACTION_AUTH_ONLY : AN_ACTION_AUTH_CAPTURE;
         $success = authorize_action($order, $message, $extra, $action, $form->cctype);
         if (!$success) {
-            enrolment_plugin_authorize::email_to_admin($message, $order);
+            email_to_admin($message, $order);
             $this->authorizeerrors['header'] = $message;
             return;
         }
@@ -311,7 +311,7 @@ class enrolment_plugin_authorize
                 }
             }
         } else {
-            enrolment_plugin_authorize::email_to_admin("Error while trying to enrol " .
+            email_to_admin("Error while trying to enrol " .
             fullname($USER) . " in '$course->fullname'", $order);
         }
 
@@ -328,10 +328,10 @@ class enrolment_plugin_authorize
         global $CFG, $USER, $SESSION;
         require_once('authorizenetlib.php');
 
-        enrolment_plugin_authorize::prevent_double_paid($course);
+        prevent_double_paid($course);
 
         $useripno = getremoteaddr();
-        $curcost = enrolment_plugin_authorize::get_course_cost($course);
+        $curcost = get_course_cost($course);
 
         // NEW ECHECK ORDER
         $timenow = time();
@@ -349,7 +349,7 @@ class enrolment_plugin_authorize
         $order->currency = $curcost['currency'];
         $order->id = insert_record("enrol_authorize", $order);
         if (!$order->id) {
-            enrolment_plugin_authorize::email_to_admin("Error while trying to insert new data", $order);
+            email_to_admin("Error while trying to insert new data", $order);
             $this->authorizeerrors['header'] = "Insert record error. Admin has been notified!";
             return;
         }
@@ -382,7 +382,7 @@ class enrolment_plugin_authorize
         $message = ''; // 2 actions only for echecks: auth_capture and credit
         $success = authorize_action($order, $message, $extra, AN_ACTION_AUTH_CAPTURE);
         if (!$success) {
-            enrolment_plugin_authorize::email_to_admin($message, $order);
+            email_to_admin($message, $order);
             $this->authorizeerrors['header'] = $message;
             return;
         }
@@ -436,7 +436,7 @@ class enrolment_plugin_authorize
                 }
             }
         } else {
-            enrolment_plugin_authorize::email_to_admin("Error while trying to enrol " .
+            email_to_admin("Error while trying to enrol " .
             fullname($USER) . " in '$course->fullname'", $order);
         }
 
@@ -446,102 +446,6 @@ class enrolment_plugin_authorize
             $destination = "$CFG->wwwroot/course/view.php?id=$course->id";
         }
         redirect($destination);
-    }
-
-    function validate_cc_form($form)
-    {
-        global $CFG;
-        require_once('ccval.php');
-
-        if (empty($form->cc)) {
-            $this->authorizeerrors['cc'] = get_string('missingcc', 'enrol_authorize');
-        }
-        if (empty($form->ccexpiremm) || empty($form->ccexpireyyyy)) {
-            $this->authorizeerrors['ccexpire'] = get_string('missingccexpire', 'enrol_authorize');
-        }
-        else {
-            $expdate = sprintf("%02d", intval($form->ccexpiremm)) . $form->ccexpireyyyy;
-            $validcc = CCVal($form->cc, $form->cctype, $expdate);
-            if (!$validcc) {
-                if ($validcc === 0) {
-                    $this->authorizeerrors['ccexpire'] = get_string('ccexpired', 'enrol_authorize');
-                }
-                else {
-                    $this->authorizeerrors['cc'] = get_string('ccinvalid', 'enrol_authorize');
-                }
-            }
-        }
-
-        if (empty($form->ccfirstname) || empty($form->cclastname)) {
-            $this->authorizeerrors['ccfirstlast'] = get_string('missingfullname');
-        }
-
-        if (empty($form->cvv) || !is_numeric($form->cvv)) {
-            $this->authorizeerrors['cvv'] = get_string('missingcvv', 'enrol_authorize');
-        }
-
-        if (empty($form->cctype) or
-            !in_array($form->cctype, array_keys(enrolment_plugin_authorize::get_list_of_creditcards()))) {
-            $this->authorizeerrors['cctype'] = get_string('missingcctype', 'enrol_authorize');
-        }
-
-        if (!empty($CFG->an_avs)) {
-            if (empty($form->ccaddress)) {
-                $this->authorizeerrors['ccaddress'] = get_string('missingaddress', 'enrol_authorize');
-            }
-            if (empty($form->cccity)) {
-                $this->authorizeerrors['cccity'] = get_string('missingcity');
-            }
-            if (empty($form->cccountry)) {
-                $this->authorizeerrors['cccountry'] = get_string('missingcountry');
-            }
-        }
-        if (empty($form->cczip) || !is_numeric($form->cczip)) {
-            $this->authorizeerrors['cczip'] = get_string('missingzip', 'enrol_authorize');
-        }
-
-        if (!empty($this->authorizeerrors)) {
-            $this->authorizeerrors['header'] = get_string('someerrorswerefound');
-            return false;
-        }
-
-        return true;
-    }
-
-    function validate_echeck_form($form)
-    {
-        global $CFG;
-        require_once('abaval.php');
-
-        if (empty($form->abacode) || !is_numeric($form->abacode)) {
-            $this->authorizeerrors['abacode'] = get_string('missingaba', 'enrol_authorize');
-        }
-        elseif (!ABAVal($form->abacode)) {
-            $this->authorizeerrors['abacode'] = get_string('invalidaba', 'enrol_authorize');
-        }
-
-        if (empty($form->accnum) || !is_numeric($form->accnum)) {
-            $this->authorizeerrors['accnum'] = get_string('invalidaccnum', 'enrol_authorize');
-        }
-
-        if (empty($form->acctype) || !in_array($form->acctype, array('CHECKING','BUSINESSCHECKING','SAVINGS'))) {
-            $this->authorizeerrors['acctype'] = get_string('invalidacctype', 'enrol_authorize');
-        }
-
-        if (empty($form->bankname)) {
-            $this->authorizeerrors['bankname'] = get_string('missingbankname', 'enrol_authorize');
-        }
-
-        if (empty($form->firstname) || empty($form->lastname)) {
-            $this->authorizeerrors['firstlast'] = get_string('missingfullname');
-        }
-
-        if (!empty($this->authorizeerrors)) {
-            $this->authorizeerrors['header'] = get_string('someerrorswerefound');
-            return false;
-        }
-
-        return true;
     }
 
 
@@ -556,7 +460,7 @@ class enrolment_plugin_authorize
 
         $manual = enrolment_factory::factory('manual');
         $str = $manual->get_access_icons($course);
-        $curcost = enrolment_plugin_authorize::get_course_cost($course);
+        $curcost = get_course_cost($course);
 
         if (abs($curcost['cost']) > 0.00) {
             $strrequirespayment = get_string("requirespayment");
@@ -589,7 +493,7 @@ class enrolment_plugin_authorize
     {
         global $CFG;
 
-        if (! enrolment_plugin_authorize::check_openssl_loaded()) {
+        if (! check_openssl_loaded()) {
             notify('PHP must be compiled with SSL support (--with-openssl)');
         }
 
@@ -653,14 +557,10 @@ class enrolment_plugin_authorize
         set_config('an_test', optional_param('an_test', 0, PARAM_BOOL));
         set_config('an_referer', optional_param('an_referer', 'http://', PARAM_URL));
 
-        $acceptmethods = optional_param('acceptmethods',
-                                        enrolment_plugin_authorize::get_list_of_payment_methods(),
-                                        PARAM_ALPHA);
+        $acceptmethods = optional_param('acceptmethods', get_list_of_payment_methods(), PARAM_ALPHA);
         set_config('an_acceptmethods', implode(',', $acceptmethods));
 
-        $acceptccs = optional_param('acceptccs',
-                                    array_keys(enrolment_plugin_authorize::get_list_of_creditcards()),
-                                    PARAM_ALPHA);
+        $acceptccs = optional_param('acceptccs', array_keys(get_list_of_creditcards()), PARAM_ALPHA);
         set_config('an_acceptccs', implode(',', $acceptccs));
 
         $cutoff_hour = optional_param('an_cutoff_hour', 0, PARAM_INT);
@@ -676,12 +576,12 @@ class enrolment_plugin_authorize
 
         $captureday = ($captureday > 29) ? 29 : (($captureday < 0) ? 0 : $captureday);
         $emailexpired = ($emailexpired > 5) ? 5 : (($emailexpired < 0) ? 0 : $emailexpired);
-        $mconfig = get_config('enrol/authorize');
 
-        if ((!empty($reviewval)) &&
-            ($captureday > 0 || $emailexpired > 0) &&
-            (time() - intval($mconfig->an_lastcron) > 3600 * 24)) {
-            return false;
+        if (!empty($reviewval) && ($captureday > 0 || $emailexpired > 0)) {
+            $mconfig = get_config('enrol/authorize');
+            if (time() - intval($mconfig->an_lastcron) > 3600 * 24) {
+                return false;
+            }
         }
 
         set_config('an_review', $reviewval);
@@ -692,7 +592,7 @@ class enrolment_plugin_authorize
 
         // https and openssl library is required
         if ((substr($CFG->wwwroot, 0, 5) !== 'https' and empty($CFG->loginhttps)) or
-            !enrolment_plugin_authorize::check_openssl_loaded()) {
+            !check_openssl_loaded()) {
             return false;
         }
 
@@ -722,159 +622,6 @@ class enrolment_plugin_authorize
         set_config('an_tran_key', $tranval);
         return true;
     }
-
-    /**
-     * Whether a course cost is smaller than 0.01
-     *
-     * @param object $course Course information
-     * @return bool true if the course is free cost
-     * @static
-     */
-    function zero_cost($course) {
-        $curcost = enrolment_plugin_authorize::get_course_cost($course);
-        return (abs($curcost['cost']) < 0.01);
-    }
-
-
-    /**
-     * Gets course cost
-     *
-     * @param object $course
-     * @return array cost=>'cost', currency=>'currency'
-     * @static
-     */
-    function get_course_cost($course)
-    {
-        global $CFG;
-
-        $cost = (float)0;
-        $currency = (!empty($course->currency))
-                     ? $course->currency :( empty($CFG->enrol_currency)
-                                            ? 'USD' : $CFG->enrol_currency );
-
-        if (!empty($course->cost)) {
-            $cost = (float)(((float)$course->cost) < 0) ? $CFG->enrol_cost : $course->cost;
-        }
-
-        $cost = format_float($cost, 2);
-        $ret = array('cost' => $cost, 'currency' => $currency);
-
-        return $ret;
-    }
-
-    /**
-     * Sends email to main admin.
-     * FIXME: Admin ROLES
-     *
-     * @param string $subject
-     * @param mixed $data
-     * @static
-     */
-    function email_to_admin($subject, $data)
-    {
-        global $SITE;
-
-        $admin = get_admin();
-        $data = (array)$data;
-
-        $message = "$SITE->fullname: Transaction failed.\n\n$subject\n\n";
-        $message .= print_r($data, true);
-        email_to_user($admin, $admin, "$SITE->fullname: Authorize.net ERROR", $message);
-    }
-
-    /**
-     * prevent_double_paid (static method)
-     *
-     * @param object $course
-     * @static
-     */
-    function prevent_double_paid($course)
-    {
-        global $CFG, $SESSION, $USER;
-
-        $status = empty($CFG->an_test) ? AN_STATUS_AUTH : AN_STATUS_NONE;
-
-        if ($rec=get_record('enrol_authorize','userid',$USER->id,'courseid',$course->id,'status',$status,'id')) {
-            $a = new stdClass;
-            $a->orderid = $rec->id;
-            $a->url = "$CFG->wwwroot/enrol/authorize/index.php?order=$a->orderid";
-            redirect($a->url, get_string("paymentpending", "enrol_authorize", $a), '10');
-            return;
-        }
-        if (isset($SESSION->ccpaid)) {
-            unset($SESSION->ccpaid);
-            redirect($CFG->wwwroot . '/login/logout.php');
-            return;
-        }
-    }
-
-    /**
-     * check_openssl_loaded (static method)
-     *
-     * @return bool
-     * @static
-     */
-    function check_openssl_loaded() {
-        return extension_loaded('openssl');
-    }
-
-    /**
-     * Gets list of credits cards
-     *
-     * @param bool $getall, true get all of types, false config values
-     * @return array, Key => Value
-     * @static
-     */
-    function get_list_of_creditcards($getall = false)
-    {
-        global $CFG;
-
-        $alltypes = array(
-            'mcd' => 'Master Card',
-            'vis' => 'Visa',
-            'amx' => 'American Express',
-            'dsc' => 'Discover',
-            'dnc' => 'Diners Club',
-            'jcb' => 'JCB',
-            'swi' => 'Switch',
-            'dlt' => 'Delta',
-            'enr' => 'EnRoute'
-        );
-
-        if ($getall or empty($CFG->an_acceptccs)) {
-            return $alltypes;
-        }
-
-        $ret = array();
-        $ccs = explode(',', $CFG->an_acceptccs);
-        foreach ($ccs as $key) {
-            $ret[$key] = $alltypes[$key];
-        }
-        return $ret;
-    }
-
-    /**
-     * Gets lists of payment methods (CC,ECHECK)
-     *
-     * @param bool $getall, get all of types, false config values
-     * @return array, Key only
-     * @static
-     */
-    function get_list_of_payment_methods($getall = false)
-    {
-        global $CFG;
-
-        if ($getall) {
-            return array(AN_METHOD_CC, AN_METHOD_ECHECK);
-        }
-        elseif (empty($CFG->an_acceptmethods)) {
-            return array(AN_METHOD_CC); // default
-        }
-        else {
-            return explode(',', $CFG->an_acceptmethods);
-        }
-    }
-
 
     /**
      * This function is run by admin/cron.php every time if admin has enabled this plugin.
@@ -911,7 +658,7 @@ class enrolment_plugin_authorize
         if (empty($CFG->an_review) or
            (!empty($CFG->an_test)) or
            (intval($CFG->an_capture_day) < 1) or
-           (!enrolment_plugin_authorize::check_openssl_loaded())) {
+           (!check_openssl_loaded())) {
             mtrace("disabled");
             return; // order review disabled or test mode or manual capture or openssl wasn't loaded.
         }

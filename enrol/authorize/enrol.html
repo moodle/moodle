@@ -1,10 +1,10 @@
 <?php // $Id$
 
 /// Prevent double paid
-    enrolment_plugin_authorize::prevent_double_paid($course);
+    prevent_double_paid($course);
 
 /// Get payment methods enabled and use the first method as default payment method
-    $paymentmethodsenabled = enrolment_plugin_authorize::get_list_of_payment_methods();       // methods enabled
+    $paymentmethodsenabled = get_list_of_payment_methods(); // methods enabled
     $paymentmethod = optional_param('paymentmethod', $paymentmethodsenabled[0], PARAM_ALPHA); // user's payment preference
 
     if (!in_array($paymentmethod, $paymentmethodsenabled)) {
@@ -41,7 +41,7 @@ function print_cc_form($classreference)
         }
     }
 
-    $curcost = enrolment_plugin_authorize::get_course_cost($course);
+    $curcost = get_course_cost($course);
     $userfirstname = empty($form->ccfirstname) ? $USER->firstname : $form->ccfirstname;
     $userlastname = empty($form->cclastname) ? $USER->lastname : $form->cclastname;
     $useraddress = empty($form->ccaddress) ? $USER->address : $form->ccaddress;
@@ -91,7 +91,7 @@ function print_cc_form($classreference)
     <tr>
       <td align="right"><?php print_string("cctype", "enrol_authorize") ?>: </td>
       <td align="left"><?php
-      choose_from_menu(enrolment_plugin_authorize::get_list_of_creditcards(), 'cctype', $form->cctype);
+      choose_from_menu(get_list_of_creditcards(), 'cctype', $form->cctype);
       if (!empty($classreference->authorizeerrors['cctype'])) { formerr($classreference->authorizeerrors['cctype']); }
       ?>
     </td>
@@ -154,7 +154,7 @@ function print_echeck_form($classreference)
             }
         }
 
-        $curcost = enrolment_plugin_authorize::get_course_cost($course);
+        $curcost = get_course_cost($course);
         $userfirstname = empty($form->firstname) ? $USER->firstname : $form->firstname;
         $userlastname = empty($form->lastname) ? $USER->lastname : $form->lastname;
 ?>
@@ -218,12 +218,12 @@ function print_other_method($currentmethod)
     global $course;
 
     if ($currentmethod == AN_METHOD_CC) {
-        $otheravailable = in_array(AN_METHOD_ECHECK, enrolment_plugin_authorize::get_list_of_payment_methods());
+        $otheravailable = in_array(AN_METHOD_ECHECK, get_list_of_payment_methods());
         $url = 'enrol.php?id='.$course->id.'&amp;paymentmethod='.AN_METHOD_ECHECK;
         $stringtofetch = 'usingecheckmethod';
     }
     else {
-        $otheravailable = in_array(AN_METHOD_CC, enrolment_plugin_authorize::get_list_of_payment_methods());
+        $otheravailable = in_array(AN_METHOD_CC, get_list_of_payment_methods());
         $url = 'enrol.php?id='.$course->id.'&amp;paymentmethod='.AN_METHOD_CC;
         $stringtofetch = 'usingccmethod';
     }
