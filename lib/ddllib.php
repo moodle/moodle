@@ -272,13 +272,31 @@ function install_from_xmldb_file($file) {
         return false;
     }
 
-    foreach($sqlarr as $sql) {
-        if (!execute_sql($sql)) {
-            $status = false;  // Allow to continue to mimic old behaviour
-        }                     // perhaps it would be better to exit false
+    return execute_sql_arr($sqlarr);
+}
+
+/**
+ * This function will create the table passed as argument with all its
+ * fields/keys/indexes/sequences, everything based in the XMLDB object
+ *
+ * @param XMLDBtable table object containing all the table info
+ * @return boolean true on success, false on error
+ */
+function create_table($table) {
+
+    global $CFG, $db;
+
+    $status = true;
+
+    if (strtolower(get_class($table)) != 'xmldbtable') {
+        return false;
     }
 
-    return $status;
+    if(!$sqlarr = $table->getCreateTableSQL($CFG->dbtype, $CFG->prefix, false)) {
+        return false;
+    }
+
+    return execute_sql_arr($sqlarr);
 }
 
 ?>
