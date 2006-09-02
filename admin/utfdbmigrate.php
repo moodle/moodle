@@ -473,18 +473,20 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
                                Note that this code will leave remaining NOT NULL fiels
                                unmodified at all, folowing the old approach 
                             */
-                               $cols = $db->MetaColumns($prefix.$dbtablename);
-                               $cols = array_change_key_case($cols, CASE_LOWER); ///lowercase col names
-                               $notnull = 'NOT NULL';  ///Old default
-                               $col = $cols[strtolower($fieldname)];
-                           /// If the column was null before UTF-8 migration, save it
-                               if (!$col->not_null) {
-                                   $notnull = 'NULL';
-                               /// And, if the column had an empty string as default, make it NULL now
-                                   if ($default == "''") {
-                                       $default = 'NULL';
-                                   }
-                               }
+                            if($cols = $db->MetaColumns($prefix.$dbtablename)) {
+                                $cols = array_change_key_case($cols, CASE_LOWER); ///lowercase col names
+                                $notnull = 'NOT NULL';  ///Old default
+                                if ($col = $cols[strtolower($fieldname)]) {
+                                /// If the column was null before UTF-8 migration, save it
+                                    if (!$col->not_null) {
+                                        $notnull = 'NULL';
+                                    /// And, if the column had an empty string as default, make it NULL now
+                                        if ($default == "''") {
+                                            $default = 'NULL';
+                                        }
+                                    }
+                                }
+                            }
 
                             /* Change to longblob, serves 2 purposes:
                                1. column loses encoding, so when we finally change it to unicode,
