@@ -1593,6 +1593,44 @@ function admin_externalpage_print_footer() {
     
 }
 
+// n.b. this function unconditionally applies default settings
+function apply_default_settings(&$node) {
+
+    global $CFG;
+
+    if (is_a($node, 'admin_category')) {
+        $entries = array_keys($node->children);
+        foreach ($entries as $entry) {
+            apply_default_settings($node->children[$entry]);
+        }
+        return;
+    } 
+
+    if (is_a($node, 'admin_settingpage')) { 
+        foreach ($node->settings as $setting) {
+                $CFG->{$setting->name} = $setting->defaultsetting;
+                $setting->write_setting($setting->defaultsetting);
+            unset($setting); // needed to prevent odd (imho) reference behaviour
+                             // see http://www.php.net/manual/en/language.references.whatdo.php#AEN6399
+        }
+        return;
+    }
+
+    return;
+
+}
+
+// n.b. this function unconditionally applies default settings
+function apply_default_exception_settings($defaults) {
+
+    global $CFG;
+
+    foreach($defaults as $key => $value) {
+            $CFG->$key = $value;
+            set_config($key, $value);
+    }
+
+}
 
 
 // Code to build admin-tree ----------------------------------------------------------------------------
