@@ -217,8 +217,11 @@
                 upgrade_log_start();
                 print_heading($strdatabasechecking);
                 $db->debug=true;
-            /// Launch the old main upgrade
-                $status = main_upgrade($CFG->version);
+            /// Launch the old main upgrade (if exists)
+                $status = true;
+                if (function_exists('main_upgrade')) {
+                    $status = main_upgrade($CFG->version);
+                }
             /// If succesful and exists launch the new main upgrade (XMLDB), called xmldb_main_upgrade
                 if ($status && function_exists('xmldb_main_upgrade')) {
                     $status = xmldb_main_upgrade($CFG->version);
