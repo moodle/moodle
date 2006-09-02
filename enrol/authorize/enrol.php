@@ -133,15 +133,14 @@ class enrolment_plugin_authorize
         global $CFG;
 
         if (zero_cost($course) ||
-           (!empty($course->password) and !empty($form->password))) { // MANUAL ENROLMENT
+           (!empty($course->password) and !empty($form->password))) {
             $manual = enrolment_factory::factory('manual');
             $manual->check_entry($form, $course);
             if (!empty($manual->errormsg)) {
                 $this->errormsg = $manual->errormsg;
             }
         }
-        else { // AUTHORIZE.NET ENROLMENT
-            if (in_array($form->paymentmethod, get_list_of_payment_methods())) {
+        elseif (!empty($form->paymentmethod) && in_array($form->paymentmethod, get_list_of_payment_methods())) {
                 if ($form->paymentmethod == AN_METHOD_CC && validate_cc_form($form, $this->authorizeerrors)) {
                     $this->cc_submit($form, $course);
                 }
