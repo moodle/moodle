@@ -14,7 +14,7 @@
     $customlang = array();
     
     $enc = array('af' => 'iso-8859-1', 'ar' => 'windows-1256', 'be' => 'windows-1251', 'bg' => 'windows-1251', 'bs' => 'windows-1250', 'ca' => 'iso-8859-1', 'cs' => 'iso-8859-2', 'da' => 'iso-8859-1', 'de' => 'iso-8859-1', 'de_du' => 'iso-8859-1', 'de_utf8' => 'utf-8', 'el' => 'windows-1253', 'en' => 'iso-8859-1', 'en_ja' => 'euc-jp', 'en_us' => 'iso-8859-1', 'en_utf8' => 'utf-8', 'es' => 'iso-8859-1', 'es_ar' => 'iso-8859-1', 'es_es' => 'iso-8859-1', 'es_mx' => 'iso-8859-1', 'et' => 'iso-8859-1', 'eu' => 'iso-8859-1', 'fa' => 'windows-1256', 'fa_utf8' => 'utf-8', 'fi' => 'iso-8859-1', 'fil' => 'iso-8859-15', 'fr' => 'iso-8859-1', 'fr_ca' => 'iso-8859-15', 'ga' => 'iso-8859-1', 'gl' => 'iso-8859-1', 'he' => 'ISO-8859-8-I', 'he_utf8' => 'utf-8', 'hi' => 'iso-8859-1', 'hr' => 'windows-1250', 'hr_utf8' => 'utf-8', 'hu' => 'iso-8859-2', 'id' => 'iso-8859-1', 'is' => 'iso-8859-1', 'it' => 'iso-8859-1', 'ja' => 'EUC-JP', 'ja_utf8' => 'UTF-8', 'ka_utf8' => 'UTF-8', 'km_utf8' => 'UTF-8', 'kn_utf8' => 'utf-8', 'ko' => 'EUC-KR', 'ko_utf8' => 'UTF-8', 'lt' => 'windows-1257', 'lv' => 'ISO-8859-4', 'mi_nt' => 'iso-8859-1', 'mi_tn_utf8' => 'utf-8', 'ms' => 'iso-8859-1', 'nl' => 'iso-8859-1', 'nn' => 'iso-8859-1', 'no' => 'iso-8859-1', 'no_gr' => 'iso-8859-1', 'pl' => 'iso-8859-2', 'pt' => 'iso-8859-1', 'pt_br' => 'iso-8859-1', 'ro' => 'iso-8859-2', 'ru' => 'windows-1251', 'sk' => 'iso-8859-2', 'sl' => 'iso-8859-2', 'sl_utf8' => 'utf-8', 'so' => 'iso-8859-1', 'sq' => 'iso-8859-1', 'sr_utf8' => 'utf-8', 'sv' => 'iso-8859-1', 'th' => 'TIS-620', 'th_utf8' => 'UTF-8', 'tl' => 'iso-8859-15', 'tl_utf8' => 'UTF-8', 'tr' => 'iso-8859-9', 'uk' => 'windows-1251', 'vi_utf8' => 'UTF-8', 'zh_cn' => 'GB18030', 'zh_cn_utf8' => 'UTF-8', 'zh_tw' => 'Big5', 'zh_tw_utf8' => 'UTF-8');
-    
+
     /**************************************
      * Custom lang pack handling           *
      **************************************/
@@ -463,6 +463,28 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
                                 }
                             }
 
+                            /* Previously to change the field to LONGBLOB, we are going to
+                               use Meta info to fetch the NULL/NOT NULL status of the field.
+                               Then, when converting back the field to its final UTF8 status
+                               we'll apply such status (and default)
+                               This has been added on 1.7 because we are in the process of
+                               converting some fields to NULL and the assumption of all the 
+                               CHAR/TEXT fields being always NOT NULL isn't valid anymore! 
+                               Note that this code will leave remaining NOT NULL fiels
+                               unmodified at all, folowing the old approach 
+                            */
+                               $cols = $db->MetaColumns($prefix.$dbtablename);
+                               $cols = array_change_key_case($cols, CASE_LOWER); ///lowercase col names
+                               $notnull = 'NOT NULL';  ///Old default
+                               $col = $cols[strtolower($fieldname)];
+                           /// If the column was null before UTF-8 migration, save it
+                               if (!$col->not_null) {
+                                   $notnull = 'NULL';
+                               /// And, if the column had an empty string as default, make it NULL now
+                                   if ($default == "''") {
+                                       $default = 'NULL';
+                               }
+
                             /* Change to longblob, serves 2 purposes:
                                1. column loses encoding, so when we finally change it to unicode,
                                   mysql does not do a double convertion
@@ -654,7 +676,7 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
                             if ($length > 0) {
                                 $SQL.='('.$length.') ';
                             }
-                            $SQL.=' CHARACTER SET utf8 NOT NULL DEFAULT '.$default.';';
+                            $SQL.=' CHARACTER SET utf8 ' . $notnull . ' DEFAULT '. $default . ';';
                             if ($debug) {
                                 $db->debug=999;
                             }
