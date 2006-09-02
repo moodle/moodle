@@ -483,6 +483,7 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
                                /// And, if the column had an empty string as default, make it NULL now
                                    if ($default == "''") {
                                        $default = 'NULL';
+                                   }
                                }
 
                             /* Change to longblob, serves 2 purposes:
