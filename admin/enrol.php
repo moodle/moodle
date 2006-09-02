@@ -3,12 +3,13 @@
        //             Yes, enrol is correct English spelling.
 
     require_once('../config.php');
-    require_once($CFG->dirroot . '/admin/adminlib.php');
+    require_once($CFG->libdir.'/adminlib.php');
 
     $enrol = optional_param('enrol', $CFG->enrol, PARAM_SAFEDIR);
     $CFG->pagepath = 'enrol';
     
-    admin_externalpage_setup('enrolment');
+    $adminroot = admin_get_root();
+    admin_externalpage_setup('enrolment', $adminroot);
 
 
 
@@ -40,7 +41,7 @@
 
     $str = get_strings(array('enrolmentplugins', 'users', 'administration', 'settings', 'edit'));
 
-    admin_externalpage_print_header();
+    admin_externalpage_print_header($adminroot);
 
     $modules = get_list_of_plugins("enrol");
     $options = array();
@@ -98,6 +99,6 @@
     echo "<center><input type=\"submit\" value=\"".get_string("savechanges")."\"></center>\n";
     echo "</form>";
 
-    admin_externalpage_print_footer();
+    admin_externalpage_print_footer($adminroot);
 
 ?>

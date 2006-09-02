@@ -75,8 +75,9 @@
 /// From now on is all the admin functions
 
 
-    require_once($CFG->dirroot . '/admin/adminlib.php');
-    admin_externalpage_setup('coursemgmt');
+    require_once($CFG->libdir.'/adminlib.php');
+    $adminroot = admin_get_root();
+    admin_externalpage_setup('coursemgmt', $adminroot);
 
 
 /// Print headings
@@ -92,7 +93,7 @@
 
 
 
-    admin_externalpage_print_header();
+    admin_externalpage_print_header($adminroot);
 
     print_heading($strcategories);
 
@@ -323,7 +324,7 @@
     echo "<br />";
     echo "</center>";
 
-    admin_externalpage_print_footer();
+    admin_externalpage_print_footer($adminroot);
 
 
 

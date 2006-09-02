@@ -91,9 +91,10 @@
         if ($adminediting) {
             // modify this to treat this as an admin page
 
-            require_once($CFG->dirroot . '/admin/adminlib.php');
-            admin_externalpage_setup('coursemgmt');
-            admin_externalpage_print_header();
+            require_once($CFG->libdir.'/adminlib.php');
+            $adminroot = admin_get_root();
+            admin_externalpage_setup('coursemgmt', $adminroot);
+            admin_externalpage_print_header($adminroot);
         } else {
             print_header("$site->shortname: $category->name", "$site->fullname: $strcourses",
                          "<a href=\"index.php\">$strcategories</a> -> $category->name", "", "", true, $navbaritem);
@@ -444,7 +445,7 @@
     echo "</center>";
     
     if ($adminediting) {
-        admin_externalpage_print_footer();
+        admin_externalpage_print_footer($adminroot);
     } else {
         print_footer();
     }

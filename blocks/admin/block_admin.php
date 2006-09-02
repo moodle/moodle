@@ -70,7 +70,7 @@ class block_admin extends block_list {
             $this->content->items[] = '<a href="'.$CFG->wwwroot.'/files/index.php?id='.SITEID.'">'.get_string('sitefiles').'</a>';
             $this->content->icons[] = '<img src="'.$CFG->pixpath.'/i/files.gif" alt="" />';
 
-            if (file_exists($CFG->dirroot.'/'.$CFG->admin.'/'.$CFG->dbtype)) {
+            if (file_exists($CFG->dirroot.'/admin/'.$CFG->dbtype)) {
                 $this->content->items[] = '<a href="'.$CFG->wwwroot.'/'.$CFG->admin.'/'.$CFG->dbtype.'/frame.php">'.get_string('managedatabase').'</a>';
                 $this->content->icons[] = '<img src="'.$CFG->pixpath.'/i/db.gif" alt="" />';
             }

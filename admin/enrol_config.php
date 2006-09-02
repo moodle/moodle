@@ -3,9 +3,10 @@
        //                    Yes, enrol is correct English spelling.
 
     require_once("../config.php");
-    require_once($CFG->dirroot . '/admin/adminlib.php');
+    require_once($CFG->libdir.'/adminlib.php');
     
-    admin_externalpage_setup('enrolment');
+    $adminroot = admin_get_root();
+    admin_externalpage_setup('enrolment', $adminroot);
 
     $enrol = required_param('enrol', PARAM_ALPHA);
     $CFG->pagepath = 'enrol/' . $enrol;
@@ -41,7 +42,7 @@
     }
     asort($options);
 
-    admin_externalpage_print_header();
+    admin_externalpage_print_header($adminroot);
 
     echo "<form target=\"{$CFG->framename}\" name=\"enrolmenu\" method=\"post\" action=\"enrol_config.php\">";
     echo "<input type=\"hidden\" name=\"sesskey\" value=\"".$USER->sesskey."\">";
@@ -72,7 +73,7 @@
 
     print_simple_box_end();
 
-    admin_externalpage_print_footer();
+    admin_externalpage_print_footer($adminroot);
 
     exit;
 ?>

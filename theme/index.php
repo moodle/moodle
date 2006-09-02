@@ -1,11 +1,12 @@
 <?php // $Id$
 
     require_once("../config.php");
-    require_once($CFG->dirroot . '/admin/adminlib.php');
+    require_once($CFG->libdir.'/adminlib.php');
 
     $choose = optional_param("choose",'',PARAM_FILE);   // set this theme as default
 
-    admin_externalpage_setup('themeselector');
+    $adminroot = admin_get_root();
+    admin_externalpage_setup('themeselector', $adminroot);
 
     unset($SESSION->theme);
 
@@ -27,7 +28,7 @@
         }
         if (set_config("theme", $choose)) {
             theme_setup($choose);
-              admin_externalpage_print_header();
+              admin_externalpage_print_header($adminroot);
             print_heading(get_string("themesaved"));
             print_continue("$CFG->wwwroot/");
 
@@ -42,7 +43,7 @@
                 echo format_text(implode('', $file), FORMAT_MOODLE);
                 print_simple_box_end();
             }
-              admin_externalpage_print_footer();
+              admin_externalpage_print_footer($adminroot);
             exit;
         } else {
             error("Could not set the theme!");
@@ -131,7 +132,7 @@
     $options["sub"] = "themes";
     print_single_button("$CFG->wwwroot/doc/index.php", $options, get_string("howtomakethemes"));
     echo "</div>";
-    admin_externalpage_print_footer();
+    admin_externalpage_print_footer($adminroot);
 
 
 ?>

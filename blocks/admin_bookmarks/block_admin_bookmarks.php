@@ -21,11 +21,10 @@ class block_admin_bookmarks extends block_base {
 
     function get_content() {
 
-        global $CFG, $USER, $ADMIN, $PAGE;
+        global $CFG, $USER, $PAGE;
 		
-		if (!$ADMIN) {
-            require_once($CFG->dirroot . '/admin/adminlib.php');
-        }
+        require_once($CFG->libdir.'/adminlib.php');
+        $adminroot = admin_get_root();
 		
         if ($this->content !== NULL) {
             return $this->content;
@@ -36,9 +35,9 @@ class block_admin_bookmarks extends block_base {
 		if (isset($USER->preference['admin_bookmarks'])) {
             $bookmarks = explode(',',$USER->preference['admin_bookmarks']);
 			// hmm... just a liiitle (potentially) processor-intensive
-			// (recall that $ADMIN->locate is a huge recursive call... and we're calling it repeatedly here
+			// (recall that $adminroot->locate is a huge recursive call... and we're calling it repeatedly here
             foreach($bookmarks as $bookmark) {
-			    $temp = $ADMIN->locate($bookmark);
+			    $temp = $adminroot->locate($bookmark);
 			    if (is_a($temp, 'admin_settingpage')) {
                     $this->content->text .= '<a href="' . $CFG->wwwroot . '/' . $CFG->admin . '/settings.php?section=' . $bookmark . '">' . $temp->visiblename . '</a>' . '<br />';
                 } elseif (is_a($temp, 'admin_externalpage')) {

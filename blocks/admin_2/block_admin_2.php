@@ -89,31 +89,29 @@ class block_admin_2 extends block_base {
 
         global $CFG, $ADMIN;
 		
-		// better place to require this?
-		if (!$ADMIN) {
-           	require_once($CFG->dirroot . '/admin/adminlib.php');
-        }
+       	require_once($CFG->libdir.'/adminlib.php');
+        $adminroot = admin_get_root();
 
         if ($this->content !== NULL) {
             return $this->content;
         }
 
-        if ($this->pathtosection = $ADMIN->path($this->section)) {
+        if ($this->pathtosection = $adminroot->path($this->section)) {
             $this->pathtosection = array_reverse($this->pathtosection);
     		array_pop($this->pathtosection);
 		}
 
-        // we need to do this instead of $this->build_tree($ADMIN) because the top-level folder
+        // we need to do this instead of $this->build_tree($adminroot) because the top-level folder
 		// is redundant (and ideally ignored). (the top-level folder is "administration".)
 		
 		unset($entries);
 		
-		$entries = array_keys($ADMIN->children);
+		$entries = array_keys($adminroot->children);
         
         asort($entries);			    
         
 	    foreach ($entries as $entry) {
-            $this->build_tree($ADMIN->children[$entry]);
+            $this->build_tree($adminroot->children[$entry]);
         }
 	
         if ($this->tempcontent !== '') {

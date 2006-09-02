@@ -2,11 +2,12 @@
       // Enables/disables maintenance mode
 
     require('../config.php');
-    require_once($CFG->dirroot . '/admin/adminlib.php');
+    require_once($CFG->libdir.'/adminlib.php');
 
     $action = optional_param('action', '', PARAM_ALPHA);
 
-    admin_externalpage_setup('maintenancemode');
+    $adminroot = admin_get_root();
+    admin_externalpage_setup('maintenancemode', $adminroot);
 
     //Check folder exists
     if (! make_upload_directory(SITEID)) {   // Site folder
@@ -31,7 +32,7 @@
 
 /// Print the header stuff
 
-    admin_externalpage_print_header();
+    admin_externalpage_print_header($adminroot);
 
 /// Print the appropriate form
 
@@ -63,5 +64,5 @@
         }
     }
 
-    admin_externalpage_print_footer();
+    admin_externalpage_print_footer($adminroot);
 ?>

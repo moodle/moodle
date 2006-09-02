@@ -3,13 +3,14 @@
     // Edit list of available text filters
 
     require_once('../config.php');
-    require_once($CFG->dirroot . '/admin/adminlib.php');
+    require_once($CFG->libdir.'/adminlib.php');
     require_once($CFG->libdir.'/tablelib.php');
 
     // defines
     define('FILTER_TABLE','filter_administration_table');
 
-    admin_externalpage_setup('filtermanagement');
+    $adminroot = admin_get_root();
+    admin_externalpage_setup('filtermanagement', $adminroot);
 
     // get values from page
     $params = new object();
@@ -267,7 +268,7 @@
     // Display logic
     //==============================
 
-    admin_externalpage_print_header();
+    admin_externalpage_print_header($adminroot);
 
     print_heading_with_help($txt->managefilters, 'filters');
 
@@ -276,6 +277,6 @@
 
     // cache control table has been removed
 
-    admin_externalpage_print_footer();
+    admin_externalpage_print_footer($adminroot);
 
 ?>

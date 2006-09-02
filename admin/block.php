@@ -3,8 +3,9 @@
 // block.php - allows admin to edit all local configuration variables for a block
 
     require_once('../config.php');
-    require_once($CFG->dirroot . '/admin/adminlib.php');
-    admin_externalpage_setup('blockmanagement');
+    require_once($CFG->libdir.'/adminlib.php');
+    $adminroot = admin_get_root();
+    admin_externalpage_setup('blockmanagement', $adminroot);
     require_once($CFG->libdir.'/blocklib.php');
 
     $blockid = required_param('block', PARAM_INT);
@@ -56,7 +57,7 @@
     $CFG->pagepath = 'block/' . $block->name() . '/config';
     
 
-    admin_externalpage_print_header();
+    admin_externalpage_print_header($adminroot);
 
     print_heading($strblockname);
 
@@ -71,6 +72,6 @@
     echo '</p>';
     $block->config_print();
     echo '</form>';
-    admin_externalpage_print_footer();
+    admin_externalpage_print_footer($adminroot);
 
 ?>

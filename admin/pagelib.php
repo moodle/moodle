@@ -13,11 +13,13 @@ class page_admin extends page_base {
     var $visiblepathtosection;
 
     function init_full($section) { 
-        global $CFG, $ADMIN;
+        global $CFG;
 
         if($this->full_init_done) {
             return;
         }
+
+        $adminroot = admin_get_root();
 
         // fetch the path parameter
         $this->section = $section;
@@ -26,9 +28,9 @@ class page_admin extends page_base {
         
         // this part is (potentially) processor-intensive... there's gotta be a better way
         // of handling this
-        if ($this->pathtosection = $ADMIN->path($this->section)) {
+        if ($this->pathtosection = $adminroot->path($this->section)) {
             foreach($this->pathtosection as $element) {
-                if ($pointer = $ADMIN->locate($element)) {
+                if ($pointer = $adminroot->locate($element)) {
                     array_push($this->visiblepathtosection, $pointer->visiblename);
                 }
             }
@@ -55,8 +57,11 @@ class page_admin extends page_base {
     }
 
     function url_get_path() { 
-        global $ADMIN, $CFG;
-        $root = $ADMIN->locate($this->section);
+        global $CFG;
+
+        $adminroot = admin_get_root();
+
+        $root = $adminroot->locate($this->section);
         if (is_a($root, 'admin_externalpage')) {
             return $root->url;
         } else {

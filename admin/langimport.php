@@ -5,8 +5,9 @@
 ///This helps to avoid confusion.
 
     require_once('../config.php');
-    require_once($CFG->dirroot . '/admin/adminlib.php');
-    admin_externalpage_setup('langimport');
+    require_once($CFG->libdir.'/adminlib.php');
+    $adminroot = admin_get_root();
+    admin_externalpage_setup('langimport', $adminroot);
 
     $mode          = optional_param('mode', 0, PARAM_INT);     //phase
     $pack          = optional_param('pack', '', PARAM_FILE);   //pack to install
@@ -28,7 +29,7 @@
     $strthislanguage = get_string("thislanguage");
     $title = $strlang;
         
-    admin_externalpage_print_header();
+    admin_externalpage_print_header($adminroot);
     
 
     switch ($mode){
@@ -343,7 +344,7 @@
 
     }    //close of main switch
 
-    admin_externalpage_print_footer();
+    admin_externalpage_print_footer($adminroot);
     
     /* returns a list of available language packs from a
      * local copy shipped with standard moodle distro

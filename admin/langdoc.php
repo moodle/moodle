@@ -10,8 +10,9 @@
  *             for intensive testing of this my first contribution
  */
     require_once('../config.php');
-    require_once($CFG->dirroot . '/admin/adminlib.php');
-    admin_externalpage_setup('langedit');
+    require_once($CFG->libdir.'/adminlib.php');
+    $adminroot = admin_get_root();
+    admin_externalpage_setup('langedit', $adminroot);
 
     //
     // Some local configuration
@@ -33,7 +34,7 @@
     $strthislanguage = get_string("thislanguage");
     $stredithelpdocs = get_string('edithelpdocs', 'admin');
 
-    admin_externalpage_print_header();
+    admin_externalpage_print_header($adminroot);
 
     $currentlang = current_language();
     $langdir = "$CFG->dataroot/lang/$currentlang";
@@ -195,7 +196,7 @@ $langdir/$currentfile")."</font></p>";
         error_reporting($CFG->debug);
     }
 
-    admin_externalpage_print_footer();
+    admin_externalpage_print_footer($adminroot);
 
 //////////////////////////////////////////////////////////////////////
 

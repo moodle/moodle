@@ -1,9 +1,9 @@
 <?php // $Id$
 
 require_once('../config.php');
-require_once($CFG->dirroot . '/' . $CFG->admin . '/adminlib.php');
+require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->libdir . '/blocklib.php');
-require_once($CFG->dirroot . '/' . $CFG->admin . '/pagelib.php');
+require_once($CFG->dirroot . '/admin/pagelib.php');
 
 if ($site = get_site()) {
     require_login();
@@ -38,9 +38,9 @@ if ($PAGE->user_allowed_editing()) {
     }
 }
 
-unset($root);
+$adminroot = admin_get_root();
 
-$root = $ADMIN->locate($PAGE->section);
+$root = $adminroot->locate($PAGE->section);
 
 if (!is_a($root, 'admin_settingpage')) {
     error(get_string('sectionerror', 'admin'));

@@ -20,7 +20,7 @@ $ADMIN->add('plugins', new admin_externalpage('filtermanagement', get_string('fi
 $ADMIN->add('plugins', new admin_externalpage('blockmanagement', get_string('blockmanagement', 'admin'), $CFG->wwwroot . '/admin/blocks.php'));
 $ADMIN->add('plugins', new admin_externalpage('modulemanagement', get_string('modulemanagement', 'admin'), $CFG->wwwroot . '/admin/modules.php'));
 
-if (file_exists($CFG->dirroot . '/' . $CFG->admin . '/mysql/frame.php')) {
+if (file_exists($CFG->dirroot . '/admin/mysql/frame.php')) {
     $ADMIN->add('root', new admin_externalpage('database', get_string('managedatabase'), $CFG->wwwroot . '/' . $CFG->admin . '/mysql/frame.php'));
 }
 

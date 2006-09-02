@@ -3,9 +3,10 @@
 
     require_once('../config.php');
 
-    require_once($CFG->dirroot . '/admin/adminlib.php');
+    require_once($CFG->libdir.'/adminlib.php');
 
-    admin_externalpage_setup('userauthentication');
+    $adminroot = admin_get_root();
+    admin_externalpage_setup('userauthentication', $adminroot);
 
     $auth = optional_param('auth', '', PARAM_SAFEDIR);
 
@@ -121,7 +122,7 @@
     $strsettings = get_string("settings");
     $strusers = get_string("users");
 
-    admin_externalpage_print_header();
+    admin_externalpage_print_header($adminroot);
 
     echo "<center><b>";
     echo "<form target=\"{$CFG->framename}\" name=\"authmenu\" method=\"post\" action=\"auth.php\">";
@@ -231,7 +232,7 @@
 
     print_simple_box_end();
 
-    admin_externalpage_print_footer();
+    admin_externalpage_print_footer($adminroot);
     exit;
 
 /// Functions /////////////////////////////////////////////////////////////////

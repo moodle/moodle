@@ -3,8 +3,9 @@
 //testing
     require_once('../../config.php');
 
-    require_once($CFG->dirroot . '/admin/adminlib.php');
-    admin_externalpage_setup('manageroles');
+    require_once($CFG->libdir.'/adminlib.php');
+    $adminroot = admin_get_root();
+    admin_externalpage_setup('manageroles', $adminroot);
 //    require_login();
 
     $roleid      = optional_param('roleid', 0, PARAM_INT); // if set, we are editing a role
@@ -26,7 +27,7 @@
         $editingstr ='';  
     }
     
-    admin_externalpage_print_header();
+    admin_externalpage_print_header($adminroot);
 //    print_header("$site->shortname: $strmanageroles", 
 //                 "$site->fullname", 
 //                 "<a href=\"../index.php\">$stradministration</a> -> <a href=\"manage.php\">$strmanageroles</a>
@@ -126,7 +127,7 @@
                       echo ('<input type="hidden" name="confirm" value="1">');
                       echo ('are you sure?');
                       echo ('<input type="submit" value="yes">');
-                      admin_externalpage_print_footer();
+                      admin_externalpage_print_footer($adminroot);
 //                      print_footer($course);
                       exit;
                       
@@ -204,6 +205,6 @@
     }
 
     use_html_editor("description");
-    admin_externalpage_print_footer();
+    admin_externalpage_print_footer($adminroot);
 //    print_footer($course);
 ?>

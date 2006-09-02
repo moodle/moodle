@@ -2,8 +2,9 @@
        // module.php - allows admin to edit all local configuration variables for a module
 
     require_once('../config.php');
-    require_once($CFG->dirroot . '/admin/adminlib.php');
-    admin_externalpage_setup('modulemanagement');
+    require_once($CFG->libdir.'/adminlib.php');
+    $adminroot = admin_get_root();
+    admin_externalpage_setup('modulemanagement', $adminroot);
 
 /// If data submitted, then process and store.
 
@@ -53,7 +54,7 @@
     // of the page. It is also used to generate the link to the Moodle Docs for this view.
     $CFG->pagepath = 'mod/' . $module . '/config';
     
-    admin_externalpage_print_header();
+    admin_externalpage_print_header($adminroot);
 
     print_heading($strmodulename);
 
@@ -64,6 +65,6 @@
     include("$CFG->dirroot/mod/$module/config.html");
     print_simple_box_end();
 
-    admin_externalpage_print_footer();
+    admin_externalpage_print_footer($adminroot);
 
 ?>

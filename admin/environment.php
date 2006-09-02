@@ -30,11 +30,12 @@
 // from moodle.org be able to check more and more versions.
 
     require_once('../config.php');
-    require_once($CFG->dirroot . '/admin/adminlib.php');
+    require_once($CFG->libdir.'/adminlib.php');
     require_once($CFG->libdir.'/environmentlib.php');
     require_once($CFG->libdir.'/componentlib.class.php');
 
-    admin_externalpage_setup('environment');
+    $adminroot = admin_get_root();
+    admin_externalpage_setup('environment', $adminroot);
 
 /// Parameters
     $action  = optional_param('action', '', PARAM_ACTION);
@@ -52,7 +53,7 @@
     $strmisc = get_string('miscellaneous');
 
 /// Print the header stuff
-    admin_externalpage_print_header();
+    admin_externalpage_print_header($adminroot);
 
 /// Print the component download link
     echo '<div class="reportlink"><a href="environment.php?action=updatecomponent&amp;sesskey='.$USER->sesskey.'">'.$strupdate.'</a></div>';
@@ -137,5 +138,5 @@
     echo '</div>';
 
 /// Print footer
-    admin_externalpage_print_footer();
+    admin_externalpage_print_footer($adminroot);
 ?>

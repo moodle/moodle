@@ -22,8 +22,8 @@
 
 
     require_once('../config.php');
-    include_once($CFG->dirroot.'/lib/adminlib.php');  // Contains various admin-only functions
-    include_once($CFG->dirroot.'/lib/ddllib.php'); // Install/upgrade related db functions
+    require_once($CFG->libdir.'/adminlib.php');  // Contains various admin-only functions
+    require_once($CFG->libdir.'/ddllib.php'); // Install/upgrade related db functions
 
     $id             = optional_param('id', '', PARAM_ALPHANUM);
     $confirmupgrade = optional_param('confirmupgrade', 0, PARAM_BOOL);
@@ -152,11 +152,11 @@
 
             // Write default settings unconditionally (i.e. even if a setting is already set, overwrite it)
             // (this should only have any effect during initial install).
-            require_once($CFG->dirroot . '/admin/adminlib.php');
-            apply_default_settings($ADMIN);
+            $adminroot = admin_get_root();
+            apply_default_settings($adminroot);
 
             /// This is used to handle any settings that must exist in $CFG but which do not exist in
-            /// $ADMIN as admin_setting objects (there are some exceptions).
+            /// admin_get_root()/$ADMIN as admin_setting objects (there are some exceptions).
             apply_default_exception_settings(array('alternateloginurl' => '',
                                                    'auth' => 'email',
                                                    'auth_pop3mailbox' => 'INBOX',
@@ -373,9 +373,10 @@
 
 /// Print default admin page with notifications.
 
-    require_once($CFG->dirroot . '/' . $CFG->admin . '/adminlib.php');
-    admin_externalpage_setup('adminnotifications');
-    admin_externalpage_print_header();
+    require_once($CFG->libdir.'/adminlib.php');
+    $adminroot = admin_get_root();
+    admin_externalpage_setup('adminnotifications', $adminroot);
+    admin_externalpage_print_header($adminroot);
 
 /// Deprecated database! Warning!!
     if (!empty($CFG->migrated_to_new_db)) {
@@ -569,7 +570,7 @@
     }
 
 
-    admin_externalpage_print_footer();
+    admin_externalpage_print_footer($adminroot);
 
 
 

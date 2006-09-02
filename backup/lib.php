@@ -319,7 +319,7 @@
     /// This function upgrades the backup tables, if necessary
     /// It's called from admin/index.php, also backup.php and restore.php
     
-        global $CFG, $db, $ADMIN;
+        global $CFG, $db;
 
         require_once ("$CFG->dirroot/backup/version.php");  // Get code versions
 
@@ -346,8 +346,8 @@
             if ($status) {
                 if (set_config("backup_version", $backup_version) and set_config("backup_release", $backup_release)) {
                     //initialize default backup settings now
-                    require_once($CFG->dirroot . '/admin/adminlib.php');
-                    apply_default_settings($ADMIN->locate('backups'));
+                    $adminroot = admin_get_root();
+                    apply_default_settings($adminroot->locate('backups'));
                     notify(get_string("databasesuccess"), "green");
                     notify(get_string("databaseupgradebackups", "", $backup_version), "green");
                     print_continue($continueto);

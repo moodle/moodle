@@ -33,8 +33,9 @@
     */
 
     require_once('../config.php');
-    require_once($CFG->dirroot . '/admin/adminlib.php');
-    admin_externalpage_setup('langedit');    
+    require_once($CFG->libdir.'/adminlib.php');
+    $adminroot = admin_get_root();
+    admin_externalpage_setup('langedit', $adminroot);    
 
     define('LANG_SUBMIT_REPEAT', 1);            // repeat displaying submit button?
     define('LANG_SUBMIT_REPEAT_EVERY', 20);     // if so, after how many lines?
@@ -110,7 +111,7 @@
     }
 
 
-    admin_externalpage_print_header();
+    admin_externalpage_print_header($adminroot);
 
     if (!$mode) {
         print_simple_box_start('center','80%');
@@ -128,7 +129,7 @@
         print_heading("<a href=\"langdoc.php\">$stredithelpdocs</a>");
         echo '</div>';
         print_simple_box_end();
-        admin_externalpage_print_footer();
+        admin_externalpage_print_footer($adminroot);
         exit;
     }
 
@@ -499,7 +500,7 @@
         }
     }
 
-    admin_externalpage_print_footer();
+    admin_externalpage_print_footer($adminroot);
 
 //////////////////////////////////////////////////////////////////////
 

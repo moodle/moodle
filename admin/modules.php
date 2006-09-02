@@ -2,8 +2,9 @@
       // Allows the admin to manage activity modules
 
     require_once('../config.php');
-    require_once($CFG->dirroot . '/admin/adminlib.php');
-    admin_externalpage_setup('modulemanagement');
+    require_once($CFG->libdir.'/adminlib.php');
+    $adminroot = admin_get_root();
+    admin_externalpage_setup('modulemanagement', $adminroot);
     require_once('../course/lib.php');
 
     $show    = optional_param('show', '', PARAM_SAFEDIR);
@@ -29,7 +30,7 @@
 //                 "<a href=\"index.php\">$stradministration</a> -> ".
 //                 "<a href=\"configure.php\">$strconfiguration</a> -> $strmanagemodules");
 
-    admin_externalpage_print_header();
+    admin_externalpage_print_header($adminroot);
 
     print_heading($strmanagemodules);
    
@@ -66,7 +67,7 @@
             notice_yesno(get_string("moduledeleteconfirm", "", $strmodulename), 
                          "modules.php?delete=$delete&amp;confirm=1&amp;sesskey=$USER->sesskey", 
                          "modules.php");
-            admin_externalpage_print_footer();
+            admin_externalpage_print_footer($adminroot);
             exit;
 
         } else {  // Delete everything!!
@@ -195,6 +196,6 @@
 
     echo "<br /><br />";
 
-    admin_externalpage_print_footer();
+    admin_externalpage_print_footer($adminroot);
 
 ?>

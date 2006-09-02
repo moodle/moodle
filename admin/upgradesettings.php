@@ -4,15 +4,17 @@
 // modify them, and then processes modifications
 
 require_once('../config.php');
-require_once($CFG->dirroot . '/' . $CFG->admin . '/adminlib.php');
+require_once($CFG->libdir.'/adminlib.php');
 
-admin_externalpage_setup('adminnotifications'); // we pretend to be the adminnotifications page... don't wanna show up in the menu :)
+    $adminroot = admin_get_root();
+admin_externalpage_setup('adminnotifications', $adminroot); // we pretend to be the adminnotifications page... don't wanna show up in the menu :)
 
 // a caveat: we're depending on only having one admin access this page at once. why? the following line
 // (the function call to find_new_settings) must have the EXACT SAME RETURN VALUE both times that this
 // page is loaded (i.e. both when we're displaying the form and then when we process the form's input).
 // if the return values don't match, we could potentially lose changes that the admin is making.
-$newsettings = find_new_settings($ADMIN);
+
+$newsettings = find_new_settings(admin_get_root());
 
 // first we deal with the case where there are no new settings to be set
 if (count($newsettings) === 0) {
@@ -50,7 +52,7 @@ if ($data = data_submitted()) {
 
 // and finally, if we get here, then there are new settings and we have to print a form
 // to modify them
-admin_externalpage_print_header();
+admin_externalpage_print_header($adminroot);
 
 
 echo '<form action="upgradesettings.php" method="post" name="mainform">';
@@ -67,7 +69,7 @@ echo '<center><input type="submit" value="Save Changes" /></center>';
 print_simple_box_end();
 echo '</form>';
 
-admin_externalpage_print_footer();
+admin_externalpage_print_footer($adminroot);
 
 
 

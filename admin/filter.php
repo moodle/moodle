@@ -3,10 +3,11 @@
     // Edit text filter settings
 
     require_once('../config.php');
-    require_once($CFG->dirroot . '/admin/adminlib.php');
+    require_once($CFG->libdir.'/adminlib.php');
     require_once($CFG->libdir.'/tablelib.php');
 
-    admin_externalpage_setup('filtermanagement');
+    $adminroot = admin_get_root();
+    admin_externalpage_setup('filtermanagement', $adminroot);
 
     // get parameters
     $param = new Object;
@@ -70,7 +71,7 @@
     //==============================
     
     $filtername = ucfirst($filtername);
-    admin_externalpage_print_header();
+    admin_externalpage_print_header($adminroot);
     print_heading( $filtername );
 
     print_simple_box("<center>".get_string("configwarning", "admin")."</center>", "center", "50%");
@@ -95,5 +96,5 @@
 
     print_simple_box_end();
 
-    admin_externalpage_print_footer();
+    admin_externalpage_print_footer($adminroot);
 ?>

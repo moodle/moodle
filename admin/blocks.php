@@ -3,8 +3,9 @@
     // Allows the admin to configure blocks (hide/show, delete and configure)
 
     require_once('../config.php');
-    require_once($CFG->dirroot . '/admin/adminlib.php');
-    admin_externalpage_setup('blockmanagement');
+    require_once($CFG->libdir.'/adminlib.php');
+    $adminroot = admin_get_root();
+    admin_externalpage_setup('blockmanagement', $adminroot);
     require_once($CFG->libdir.'/blocklib.php');
     require_once($CFG->libdir.'/tablelib.php');
 
@@ -29,7 +30,7 @@
     $strname = get_string('name');
     $strmultiple = get_string('blockmultiple', 'admin');
 
-    admin_externalpage_print_header();
+    admin_externalpage_print_header($adminroot);
 
     print_heading($strmanageblocks);
 
@@ -75,7 +76,7 @@
             notice_yesno(get_string('blockdeleteconfirm', '', $strblockname),
                          'blocks.php?delete='.$block->id.'&amp;confirm=1&amp;sesskey='.$USER->sesskey,
                          'blocks.php');
-            admin_externalpage_print_footer();
+            admin_externalpage_print_footer($adminroot);
             exit;
 
         } else {
@@ -231,6 +232,6 @@
         $table->print_html();
     }
 
-    admin_externalpage_print_footer();
+    admin_externalpage_print_footer($adminroot);
 
 ?>

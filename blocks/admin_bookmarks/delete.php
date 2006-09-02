@@ -2,7 +2,8 @@
 
 require('../../config.php');
 
-require_once($CFG->dirroot . '/' . $CFG->admin . '/adminlib.php');
+require_once($CFG->libdir.'/adminlib.php');
+$adminroot = admin_get_root();
 
 if ($section = optional_param('section', '', PARAM_ALPHAEXT)) {
 
@@ -21,7 +22,7 @@ if ($section = optional_param('section', '', PARAM_ALPHAEXT)) {
 		$bookmarks = implode(',',$bookmarks);
         set_user_preference('admin_bookmarks', $bookmarks);
         
-        $temp = $ADMIN->locate($section);
+        $temp = $adminroot->locate($section);
         
         if (is_a($temp, 'admin_externalpage')) {
             redirect($temp->url, 'Bookmark deleted.',1);

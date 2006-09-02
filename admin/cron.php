@@ -27,7 +27,7 @@
     }
 
     require_once(dirname(__FILE__) . '/../config.php');
-    require_once($CFG->dirroot.'/lib/adminlib.php');
+    require_once($CFG->libdir.'/adminlib.php');
 
     if (!$alreadyadmin = has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
         unset($_SESSION['USER']);
