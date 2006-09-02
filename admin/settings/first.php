@@ -24,6 +24,8 @@ if (file_exists($CFG->dirroot . '/admin/mysql/frame.php')) {
     $ADMIN->add('root', new admin_externalpage('database', get_string('managedatabase'), $CFG->wwwroot . '/' . $CFG->admin . '/mysql/frame.php'));
 }
 
+$ADMIN->add('root', new admin_category('legacy', get_string('legacy','admin')));
+
 // the following is TEMPORARY
 
 $ADMIN->add('root', new admin_category('unsorted', 'Unsorted', 999));

@@ -4,6 +4,8 @@
 
 // "frontpage" settingpage
 $temp = new admin_settingpage('frontpage', get_string('frontpage','admin'));
+$temp->add(new admin_setting_sitesettext('fullname', get_string('fullsitename'), get_string('fullsitenamehelp'), '', PARAM_NOTAGS));
+$temp->add(new admin_setting_sitesettext('shortname', get_string('shortsitename'), get_string('shortsitenamehelp'), '', PARAM_NOTAGS));
 $temp->add(new admin_setting_special_frontpagedesc());
 $temp->add(new admin_setting_sitesetcheckbox('numsections', get_string('sitesection'), get_string('sitesectionhelp'), 1));
 $temp->add(new admin_setting_sitesetselect('newsitems', get_string('newsitemsnumber'), get_string('newsitemsnumberhelp'), 3, array('0' => '0 ' . get_string('newsitems'),
@@ -17,19 +19,8 @@ $temp->add(new admin_setting_sitesetselect('newsitems', get_string('newsitemsnum
                                                                                                                                 '8' => '8 ' . get_string('newsitems'),
                                                                                                                                 '9' => '9 ' . get_string('newsitems'),
                                                                                                                                 '10' => '10 ' . get_string('newsitems'))));
-$temp->add(new admin_setting_special_frontpage(false)); // non-loggedin version of the setting (that's what the parameter is for :) )
-$temp->add(new admin_setting_special_frontpage(true)); // loggedin version of the setting
-$ADMIN->add('userinterface', $temp);
-
-
-// "generalsettings" settingpage
-$temp = new admin_settingpage('generalsettings', get_string('generalsettings','admin'));
-$temp->add(new admin_setting_sitesettext('fullname', get_string('fullsitename'), get_string('fullsitenamehelp'), '', PARAM_NOTAGS));
-$temp->add(new admin_setting_sitesettext('shortname', get_string('shortsitename'), get_string('shortsitenamehelp'), '', PARAM_NOTAGS));
-$temp->add(new admin_setting_sitesettext('teacher', get_string('wordforteacher'), get_string('wordforteachereg'), '', PARAM_ALPHA));
-$temp->add(new admin_setting_sitesettext('teachers', get_string('wordforteachers'), get_string('wordforteacherseg'), '', PARAM_ALPHA));
-$temp->add(new admin_setting_sitesettext('student', get_string('wordforstudent'), get_string('wordforstudenteg'), '', PARAM_ALPHA));
-$temp->add(new admin_setting_sitesettext('students', get_string('wordforstudents'), get_string('wordforstudentseg'), '', PARAM_ALPHA));
+$temp->add(new admin_setting_courselist_frontpage(false)); // non-loggedin version of the setting (that's what the parameter is for :) )
+$temp->add(new admin_setting_courselist_frontpage(true)); // loggedin version of the setting
 $ADMIN->add('userinterface', $temp);
 
 
