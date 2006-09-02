@@ -66,4 +66,9 @@
     define ('XMLDB_ENUM',            true);  //If the field is going to be a enumeration of possible fields
     define ('XMLDB_INDEX_UNIQUE',    true);  //If the index is going to be unique
     define ('XMLDB_INDEX_NOTUNIQUE',false);  //If the index is NOT going to be unique
+
+/// Some strings used widely
+    define ('XMLDB_LINEFEED', "\n");
+    define ('XMLDB_PHP_HEADER', '    if ($status && $oldversion < XXXXXXXXXX) {' . XMLDB_LINEFEED);
+    define ('XMLDB_PHP_FOOTER', '    }' . XMLDB_LINEFEED);
 ?>
