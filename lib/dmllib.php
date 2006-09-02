@@ -1348,6 +1348,32 @@ function column_type($table, $column) {
     return $rs->MetaType($field->type);
 }
 
+/**
+ * This function will execute an array of SQL commands, returning
+ * true/false if any error is found and stopping/continue as desired.
+ * It's widely used by all the ddllib.php functions
+ *
+ * @param array sqlarr array of sql statements to execute
+ * @param boolean continue to specify if must continue on error (true) or stop (false
+ * @param boolean true if everything was ok, false if some error was found
+ */
+function execute_sql_arr($sqlarr, $continue=true) {
+
+    if (!is_array($sqlarr)) {
+        return false;
+    }
+
+    $status = true;
+    foreach($sqlarr as $sql) {
+        if (!execute_sql($sql)) {
+            $status = false;
+            if (!$continue) {
+                break;
+            }
+        }
+    }
+    return $status;
+}
 
 /**
  * This function, called from setup.php includes all the configuration
