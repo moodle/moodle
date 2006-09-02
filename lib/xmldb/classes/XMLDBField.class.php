@@ -55,6 +55,48 @@ class XMLDBField extends XMLDBObject {
     }
 
     /**
+     * Set all the attributes of one XMLDBField
+     *
+     * @param string type XMLDB_TYPE_INTEGER, XMLDB_TYPE_NUMBER, XMLDB_TYPE_CHAR, XMLDB_TYPE_TEXT, XMLDB_TYPE_BINARY
+     * @param string precision length for integers and chars, two-comma separated numbers for numbers and 'small', 'medium', 'big' for texts and binaries
+     * @param string unsigned XMLDB_UNSIGNED or null (or false)
+     * @param string notnull XMLDB_NOTNULL or null (or false)
+     * @param string sequence XMLDB_SEQUENCE or null (or false)
+     * @param string enum XMLDB_ENUM or null (or false)
+     * @param array enumvalues an array of possible values if XMLDB_ENUM is set
+     * @param string default meaningful default o null (or false)
+     */
+    function setAttributes($type, $precision=null, $unsigned=null, $notnull=null, $sequence=null, $enum=null, $enumvalues=null, $default=null, $previous=null) {
+        $this->type = $type;
+    /// Try to split the precision into length and decimals and apply
+    /// each one as needed
+        $precisionarr = explode(',', $precision);
+        if (isset($precisionarr[0])) {
+            $this->length = trim($precisionarr[0]);
+        }
+        if (isset($precisionarr[1])) {
+            $this->decimals = trim($precisionarr[1]);
+        }
+        $this->precision = $type;
+        $this->unsigned = !empty($unsigned) ? true : false;
+        $this->notnull = !empty($notnull) ? true : false;
+        $this->sequence = !empty($secuence) ? true : false;
+        $this->enum = !empty($enum) ? true : false;
+    /// Accept both quoted and non-quoted vales (quoting them)a
+        if (is_array($enumvalues)) {
+            $this->enumvalues = array();
+            foreach ($enumvalues as $value) {
+            /// trim each value quotes
+                $value = trim($value, "'");
+            /// add them back
+                $valus = "'" . $value . "'";
+                $this->enumvalues[] = $value;
+            }
+        }
+        $this->default = $default;
+    }
+
+    /**
      * Get the type
      */
     function getType() {

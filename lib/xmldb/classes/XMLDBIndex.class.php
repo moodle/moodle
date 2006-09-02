@@ -40,19 +40,30 @@ class XMLDBIndex extends XMLDBObject {
         $this->fields = array();
     }
 
-     /**
-      * Get the index unique
-      */
-     function getUnique() {
-         return $this->unique;
-     }
+    /**
+     * Set all the attributes of one XMLDBIndex
+     *
+     * @param string type XMLDB_INDEX_UNIQUE, XMLDB_INDEX_NOTUNIQUE
+     * @param array fields an array of fieldnames to build the index over
+     */
+    function setAttributes($type, $fields) {
+        $this->type = !empty($type) ? true : false;
+        $this->fields = $fields;
+    }
 
-     /**
-      * Set the index unique
-      */
-     function setUnique($unique = true) {
-         $this->unique = $unique;
-     }
+    /**
+     * Get the index unique
+     */
+    function getUnique() {
+        return $this->unique;
+    }
+
+    /**
+     * Set the index unique
+     */
+    function setUnique($unique = true) {
+        $this->unique = $unique;
+    }
 
     /**
      * Set the index fields

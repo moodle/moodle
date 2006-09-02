@@ -45,6 +45,21 @@ class XMLDBKey extends XMLDBObject {
     }
 
     /**
+     * Set all the attributes of one XMLDBKey
+     *
+     * @param string type XMLDB_KEY_PRIMARY, XMLDB_KEY_UNIQUE, XMLDB_KEY_FOREIGN
+     * @param array fields an array of fieldnames to build the key over
+     * @param string reftable name of the table the FK points to or null
+     * @param array reffields an array of fieldnames in the FK table or null
+     */
+    function setAttributes($type, $fields, $reftable=null, $reffields=null) {
+        $this->type = $type;
+        $this->fields = $fields;
+        $this->reftable = $reftable;
+        $this->reffields = $reffields;
+    }
+
+    /**
      * Get the key type
      */
     function getType() {
