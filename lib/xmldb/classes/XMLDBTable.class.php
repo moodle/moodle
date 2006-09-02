@@ -670,6 +670,57 @@ class XMLDBTable extends XMLDBObject {
         return $o;
     }
 
+    /**
+     * This function will add one new field to the table with all
+     * its attributes defined
+     *
+     * @param string name name of the field
+     * @param string type XMLDB_TYPE_INTEGER, XMLDB_TYPE_NUMBER, XMLDB_TYPE_CHAR, XMLDB_TYPE_TEXT, XMLDB_TYPE_BINARY
+     * @param string precision length for integers and chars, two-comma separated numbers for numbers and 'small', 'medium', 'big' for texts and binaries
+     * @param string unsigned XMLDB_UNSIGNED or null (or false)
+     * @param string notnull XMLDB_NOTNULL or null (or false)
+     * @param string sequence XMLDB_SEQUENCE or null (or false)
+     * @param string enum XMLDB_ENUM or null (or false)
+     * @param array enumvalues an array of possible values if XMLDB_ENUM is set
+     * @param string default meaningful default o null (or false)
+     * @param string previous name of the previous field in the table or null (or false)
+     */
+    function addFieldInfo($name, $type, $precision=null, $unsigned=null, $notnull=null, $sequence=null, $enum=null, $enumvalues=null, $default=null, $previous=null) {
+        $field = new XMLDBField($name);
+        $field->setAttributes($type, $precision, $unsigned, $notnull, $sequence, $enum, $enumvalues, $default);
+        $this->addField($field, $previous);
+    }
+
+    /**
+     * This function will add one new key to the table with all
+     * its attributes defined
+     *
+     * @param string name name of the key
+     * @param string type XMLDB_KEY_PRIMARY, XMLDB_KEY_UNIQUE, XMLDB_KEY_FOREIGN
+     * @param array fields an array of fieldnames to build the key over
+     * @param string reftable name of the table the FK points to or null
+     * @param array reffields an array of fieldnames in the FK table or null
+     */
+    function addKeyInfo($name, $type, $fields, $reftable=null, $reffields=null) {
+        $key = new XMLDBKey($name);
+        $key->setAttributes($type, $fields, $reftable, $reffields);
+        $this->addKey($key);
+    }
+    
+    /**
+     * This function will add one new index to the table with all
+     * its attributes defined
+     *
+     * @param string name name of the index
+     * @param string type XMLDB_INDEX_UNIQUE, XMLDB_INDEX_NOTUNIQUE
+     * @param array fields an array of fieldnames to build the index over
+     */
+    function addIndexInfo($name, $type, $fields) {
+        $index = new XMLDBIndex($name);
+        $index->setAttributes($type, $fields);
+        $this->addIndex($index);
+    }
+    
     /** 
      * This function will return all the errors found in one table
      * looking recursively inside each field/key/index. Returns
