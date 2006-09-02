@@ -738,7 +738,18 @@ class part_of_admin_tree {
         trigger_error('Admin class does not implement method <strong>locate()</strong>', E_USER_WARNING); 
         return; 
     }
-    
+
+    /**
+     * Removes named part_of_admin_tree.
+     *
+     * @param string $name The internal name of the part_of_admin_tree we want to remove.
+     * @return boolean success.
+     */
+    function prune($name) {
+        trigger_error('Admin class does not implement method <strong>prune()</strong>', E_USER_WARNING); 
+        return;
+    } 
+
     /**
      * Verifies current user's access to this part_of_admin_tree.
      *
@@ -902,6 +913,31 @@ class admin_category extends parentable_part_of_admin_tree {
     }
 
     /**
+     * Removes part_of_admin_tree object with internal name $name.
+     *
+     * @param string $name The internal name of the object we want to remove.
+     * @return boolean success
+     */
+    function prune($name) {
+
+        if ($this->name == $name) {
+            return false;  //can not remove itself
+        }
+
+        foreach($this->children as $precedence => $child) {
+            if ($child->name == $name) {
+                // found it!
+                unset($this->children[$precedence]); 
+                return true;
+            }
+            if ($this->children[$precedence]->prune($name)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Adds a part_of_admin_tree to a child or grandchild (or great-grandchild, and so forth) of this object.
      *
      * @param string $destinationame The internal name of the immediate parent that we want for &$something.
@@ -1033,7 +1069,11 @@ class admin_externalpage extends part_of_admin_tree {
         $return = ($this->name == $name ? $this : NULL);
         return $return;
     }
-    
+
+    function prune($name) {
+        return false;
+    }
+
     /**
      * Determines if the current user has access to this external page based on $this->role.
      *
@@ -1093,7 +1133,11 @@ class admin_settingpage extends part_of_admin_tree {
         $return = ($this->name == $name ? $this : NULL);
         return $return;
     }
-    
+
+    function prune($name) {
+        return false;
+    }
+
     // see admin_externalpage
     function admin_settingpage($name, $visiblename, $role = 'moodle/legacy:admin') {
         global $CFG;
@@ -1427,11 +1471,7 @@ class admin_setting_courselist_frontpage extends admin_setting_configselect {
         if (count_records("course") > FRONTPAGECOURSELIMIT) {
             unset($choices[FRONTPAGECOURSELIST]);
         }
-        if ($loggedin) {
-            $defaults = FRONTPAGECOURSELIST.',,,';
-        } else {
-            $defaults = FRONTPAGECATEGORYCOMBO.',,,';
-        }
+        $defaults = FRONTPAGECOURSELIST.',,,';
         parent::admin_setting_configselect($name, $visiblename, $description, $defaults, $choices);
     }
     

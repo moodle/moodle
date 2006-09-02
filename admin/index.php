@@ -153,6 +153,7 @@
             // Write default settings unconditionally (i.e. even if a setting is already set, overwrite it)
             // (this should only have any effect during initial install).
             $adminroot = admin_get_root();
+            $adminroot->prune('backups'); // backup settings table not created yet
             apply_default_settings($adminroot);
 
             /// This is used to handle any settings that must exist in $CFG but which do not exist in
