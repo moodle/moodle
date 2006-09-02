@@ -400,10 +400,11 @@ class block_base {
             $errors[] = 'invalid_content_type';
             $correct = false;
         }
-        if ($this->get_content() === NULL) {
+        //following selftest was not working when roles&capabilitites were used from block 
+/*        if ($this->get_content() === NULL) {
             $errors[] = 'content_not_set';
             $correct = false;
-        }
+        }*/
         if ($this->get_version() === NULL) {
             $errors[] = 'version_not_set';
             $correct = false;

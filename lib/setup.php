@@ -447,6 +447,9 @@ $CFG->os = PHP_OS;
 
         $SESSION = &$_SESSION['SESSION'];   // Makes them easier to reference
         $USER    = &$_SESSION['USER'];
+        if (!isset($USER->id)) {
+            $USER->id = 0; // to enable proper function of $CFG->notloggedinroleid hack
+        }
     }
     else {
         $SESSION = NULL;

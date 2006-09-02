@@ -38,6 +38,12 @@ function load_notloggedin_role() {
     $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
     // load default not logged in role capabilities when user is not logged in
 
+    // HACK ALERT!!!! - replace with proper default value!!!!!
+    if (empty($CFG->notloggedinroleid)) {
+        $guestrole = get_record('role', 'name', 'Guest');
+        $CFG->notloggedinroleid = $guestrole->id;
+    }
+
     $SQL = "select * from {$CFG->prefix}role_capabilities where roleid=$CFG->notloggedinroleid
             AND contextid = $sitecontext->id";
           
