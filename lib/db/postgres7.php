@@ -1779,6 +1779,13 @@ function main_upgrade($oldversion=0) {
         execute_sql("ALTER TABLE {$CFG->prefix}user ALTER COLUMN description DROP DEFAULT");
     }
 
+    if ($oldversion < 2006090200) {
+        execute_sql("ALTER TABLE {$CFG->prefix}course_sections ALTER COLUMN summary DROP NOT NULL");
+        execute_sql("ALTER TABLE {$CFG->prefix}course_sections ALTER COLUMN summary DROP DEFAULT");
+        execute_sql("ALTER TABLE {$CFG->prefix}course_sections ALTER COLUMN sequence DROP NOT NULL");
+        execute_sql("ALTER TABLE {$CFG->prefix}course_sections ALTER COLUMN sequence DROP DEFAULT");
+    }
+
     return $result;
 }
 

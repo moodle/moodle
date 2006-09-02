@@ -117,8 +117,8 @@ CREATE TABLE prefix_course_sections (
    id SERIAL PRIMARY KEY,
    course integer NOT NULL default '0',
    section integer NOT NULL default '0',
-   summary text NOT NULL default '',
-   sequence text NOT NULL default '',
+   summary text,
+   sequence text,
    visible integer NOT NULL default '1'
 );
 

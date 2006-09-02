@@ -178,8 +178,8 @@ CREATE TABLE `prefix_course_sections` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `course` int(10) unsigned NOT NULL default '0',
   `section` int(10) unsigned NOT NULL default '0',
-  `summary` text NOT NULL default '',
-  `sequence` text NOT NULL default '',
+  `summary` text,
+  `sequence` text,
   `visible` tinyint(1) NOT NULL default '1',
   PRIMARY KEY  (`id`),
   KEY `coursesection` (course,section)

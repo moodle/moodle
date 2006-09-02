@@ -2181,6 +2181,11 @@ function main_upgrade($oldversion=0) {
         execute_sql("ALTER TABLE {$CFG->prefix}user CHANGE description description text NULL AFTER url");
     }
 
+    if ($oldversion < 2006090200) {
+        execute_sql("ALTER TABLE {$CFG->prefix}course_sections CHANGE summary summary text NULL AFTER section");
+        execute_sql("ALTER TABLE {$CFG->prefix}course_sections CHANGE sequence sequence text NULL AFTER section");
+    }
+
     return $result;
 }
 
