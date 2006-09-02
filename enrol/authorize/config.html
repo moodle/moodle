@@ -133,10 +133,10 @@ if (!isset($frm->acceptccs)) {
 <tr valign="top">
     <td align="right">an_acceptmethods:</td>
     <td><?php print_string("adminacceptmethods", "enrol_authorize") ?><br /><?php
-    $allpaymentmethods = get_list_of_payment_methods(true);
     $paymentmethodsenabled = get_list_of_payment_methods();
+    $allpaymentmethods = get_list_of_payment_methods(true);
     foreach ($allpaymentmethods as $key) {
-        print_checkbox('acceptmethods[]', $key, in_array($key, $paymentmethodsenabled), get_string('method'.strtolower($key),'enrol_authorize')); echo "<br />\n";
+        print_checkbox('acceptmethods[]', $key, in_array($key, $paymentmethodsenabled), get_string('method'.$key,'enrol_authorize')); echo "<br />\n";
     }
     ?><br /></td>
 </tr>
@@ -144,9 +144,10 @@ if (!isset($frm->acceptccs)) {
 <tr valign="top">
     <td align="right">an_acceptccs:</td>
     <td><?php print_string("adminacceptccs", "enrol_authorize") ?><br /><?php
+    $acceptedccs = array_keys(get_list_of_creditcards());
     $allccs = get_list_of_creditcards(true);
     foreach ($allccs as $key => $val) {
-        print_checkbox('acceptccs[]', $key, stristr($CFG->an_acceptccs, $key) !== false, $val); echo "<br />\n";
+        print_checkbox('acceptccs[]', $key, in_array($key, $acceptedccs), $val); echo "<br />\n";
     }
     ?><br /></td>
 </tr>

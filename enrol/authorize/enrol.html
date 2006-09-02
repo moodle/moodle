@@ -32,7 +32,7 @@ function print_cc_form($classreference)
     global $CFG, $USER;
 
     $formvars = array(
-        'password', 'ccaddress', 'cccity', 'ccstate', 'cccountry', 'cczip',
+        'ccaddress', 'cccity', 'ccstate', 'cccountry', 'cczip',
         'ccfirstname', 'cclastname', 'cc', 'ccexpiremm', 'ccexpireyyyy', 'cctype', 'cvv'
     );
     foreach ($formvars as $var) {
@@ -147,7 +147,7 @@ function print_echeck_form($classreference)
         global $form, $course;
         global $CFG, $USER;
 
-        $formvars = array('password', 'abacode', 'accnum', 'acctype', 'bankname', 'firstname', 'lastname');
+        $formvars = array('abacode', 'accnum', 'acctype', 'bankname', 'firstname', 'lastname');
         foreach ($formvars as $var) {
             if (!isset($form->$var)) {
                 $form->$var = '';
