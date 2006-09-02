@@ -428,6 +428,9 @@ class admin_externalpage extends part_of_admin_tree {
      * @return bool True if user has access, false otherwise.
      */
     function check_access() {
+        if (!get_site()) {
+            return true; // no access check before site is fully set up
+        }
         $context = get_context_instance(CONTEXT_SYSTEM, SITEID); 
         return has_capability($this->role, $context);
     }
@@ -500,6 +503,9 @@ class admin_settingpage extends part_of_admin_tree {
     
     // see admin_externalpage
     function check_access() {
+        if (!get_site()) {
+            return true; // no access check before site is fully set up
+        }
         $context = get_context_instance(CONTEXT_SYSTEM, SITEID); 
         return has_capability($this->role, $context);
     }
@@ -766,8 +772,7 @@ class admin_setting_sitesetselect extends admin_setting_configselect {
 
     function admin_setting_sitesetselect($name, $visiblename, $description, $defaultsetting, $choices) {
 
-        $site = get_site();    
-        $this->id = $site->id;
+        $this->id = SITEID;
         parent::admin_setting_configselect($name, $visiblename, $description, $defaultsetting, $choices);
     
     }
@@ -863,8 +868,7 @@ class admin_setting_sitesetcheckbox extends admin_setting_configcheckbox {
 
     function admin_setting_sitesetcheckbox($name, $visiblename, $description, $defaultsetting) {
 
-        $site = get_site();    
-        $this->id = $site->id;
+        $this->id = SITEID;
         parent::admin_setting_configcheckbox($name, $visiblename, $description, $defaultsetting);
     
     }
@@ -891,8 +895,7 @@ class admin_setting_sitesettext extends admin_setting_configtext {
 
     function admin_setting_sitesettext($name, $visiblename, $description, $defaultsetting, $paramtype) {
 
-        $site = get_site();    
-        $this->id = $site->id;
+        $this->id = SITEID;
         parent::admin_setting_configtext($name, $visiblename, $description, $defaultsetting, $paramtype);
     
     }
@@ -918,8 +921,7 @@ class admin_setting_special_frontpagedesc extends admin_setting {
     var $id;
     
     function admin_setting_special_frontpagedesc() {
-        $site = get_site();
-        $this->id = $site->id;
+        $this->id = SITEID;
         $name = 'summary';
         $visiblename = get_string('frontpagedescription');
         $description = get_string('frontpagedescriptionhelp');

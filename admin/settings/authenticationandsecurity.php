@@ -4,10 +4,6 @@
 
 global $USER;
 
-// this depends on what file is including us
-if (!isset($site)) {
-    $site = get_site();
-}
 
 // stuff under the "usermanagement" subcategory
 $ADMIN->add('authenticationandsecurity', new admin_category('usermanagement', get_string('users')), 0);
@@ -19,7 +15,7 @@ $ADMIN->add('usermanagement', new admin_externalpage('uploadusers', get_string('
 // stuff under the "roles" subcategory
 $ADMIN->add('authenticationandsecurity', new admin_category('roles', get_string('roles')));
 $ADMIN->add('roles', new admin_externalpage('manageroles', get_string('manageroles'), $CFG->wwwroot . '/admin/roles/manage.php'));
-$ADMIN->add('roles', new admin_externalpage('assignsitewideroles', get_string('assignsiteroles'), $CFG->wwwroot . '/admin/roles/assign.php?contextid=' . $site->id));
+$ADMIN->add('roles', new admin_externalpage('assignsitewideroles', get_string('assignsiteroles'), $CFG->wwwroot . '/admin/roles/assign.php?contextid=' . SITEID));
 
 
 
