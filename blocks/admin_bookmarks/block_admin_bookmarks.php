@@ -7,8 +7,12 @@
 class block_admin_bookmarks extends block_base {
 
     function init() {
-        $this->title = "Admin Bookmarks";
-        $this->version = 2006081800;
+        $this->title = get_string('adminbookmarks');
+        $this->version = 2006090300;
+    }
+
+    function applicable_formats() {
+        return array('site' => true, 'admin' => true);
     }
 
     function preferred_width() {

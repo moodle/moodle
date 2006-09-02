@@ -2,7 +2,7 @@
 
 require_once($CFG->libdir.'/pagelib.php');
 
-define('PAGE_ADMIN', 'admin-index');
+define('PAGE_ADMIN', 'admin');
 
 page_map_class(PAGE_ADMIN, 'page_admin');
 
@@ -12,7 +12,10 @@ class page_admin extends page_base {
     var $pathtosection;
     var $visiblepathtosection;
 
-    function init_full($section) { 
+    // hack alert!
+    // this function works around the inability to store the section name
+    // in default block, maybe we should "improve" the blocks a bit?
+    function init_extra($section) { 
         global $CFG;
 
         if($this->full_init_done) {
@@ -39,9 +42,9 @@ class page_admin extends page_base {
         // all done
         $this->full_init_done = true;
     }
-
+    
     function blocks_get_default() {
-        return 'admin_2,admin_bookmarks';
+        return 'admin_tree,admin_bookmarks';
     }
 
     // seems reasonable that the only people that can edit blocks on the admin pages

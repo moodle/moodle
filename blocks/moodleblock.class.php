@@ -289,7 +289,7 @@ class block_base {
      */
     function _add_edit_controls($options) {
       
-        global $CFG, $USER;
+        global $CFG, $USER, $PAGE;
 		
 		// this is the context relevant to this particular block instance
 		$blockcontext = get_context_instance(CONTEXT_BLOCK, $this->instance->id);
@@ -340,7 +340,11 @@ class block_base {
         if (empty($this->instance->pageid)) {
             $this->instance->pageid = 0;
         }
-        $page   = page_create_object($this->instance->pagetype, $this->instance->pageid);
+        if (!empty($PAGE->type) and ($this->instance->pagetype == $PAGE->type) and $this->instance->pageid == $PAGE->id) {
+            $page = $PAGE;
+        } else {
+            $page = page_create_object($this->instance->pagetype, $this->instance->pageid);
+        }
         $script = $page->url_get_full(array('instanceid' => $this->instance->id, 'sesskey' => $USER->sesskey));
      
      	// place holder for roles button

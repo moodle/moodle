@@ -2181,20 +2181,16 @@ function admin_externalpage_setup($section, $adminroot) {
     global $CFG, $PAGE, $USER;
     
     require_once($CFG->libdir . '/blocklib.php');
-    require_once($CFG->dirroot . '/admin/pagelib.php');
+    require_once($CFG->dirroot . '/'.$CFG->admin.'/pagelib.php');
     
-    define('TEMPORARY_ADMIN_PAGE_ID',26);
-
     define('BLOCK_L_MIN_WIDTH',160);
     define('BLOCK_L_MAX_WIDTH',210);
 
-    $pagetype = PAGE_ADMIN;               
-    $pageclass = 'page_admin';            
-    page_map_class($pagetype, $pageclass);
+    page_map_class(PAGE_ADMIN, 'page_admin');
 
-    $PAGE = page_create_object($pagetype,TEMPORARY_ADMIN_PAGE_ID);
+    $PAGE = page_create_object(PAGE_ADMIN, 0); // there must be some id number
 
-    $PAGE->init_full($section);
+    $PAGE->init_extra($section); // hack alert!
 
     $root = $adminroot->locate($PAGE->section);
 

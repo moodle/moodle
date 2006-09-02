@@ -325,7 +325,7 @@
 /// Set up the blank site - to be customized later at the end of install.
     if (! $site = get_site()) {
         // We are about to create the site "course"
-        require_once($CFG->dirroot.'/lib/blocklib.php');
+        require_once($CFG->libdir.'/blocklib.php');
 
         $newsite = new Object();
         $newsite->fullname = "";
@@ -356,6 +356,16 @@
         } else {
             error("Serious Error! Could not set up the site!");
         }
+    }
+
+    // initialise default blocks on admin page if needed
+    if (empty($CFG->adminblocks_initialised)) {
+        require_once("$CFG->dirroot/$CFG->admin/pagelib.php");
+        require_once($CFG->libdir.'/blocklib.php');
+        page_map_class(PAGE_ADMIN, 'page_admin');
+        $page = page_create_object(PAGE_ADMIN, 0); // there must be some id number
+        blocks_repopulate_page($page);
+        set_config('adminblocks_initialised', 1);
     }
 
 /// Define the unique site ID code if it isn't already

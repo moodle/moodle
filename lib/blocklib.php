@@ -682,7 +682,7 @@ function blocks_execute_action($page, &$pageblocks, $blockaction, $instanceorid,
 
 // You can use this to get the blocks to respond to URL actions without much hassle
 function blocks_execute_url_action(&$PAGE, &$pageblocks,$pinned=false) {
-    $blockaction = optional_param('blockaction');
+    $blockaction = optional_param('blockaction', '', PARAM_ALPHA);
 
     if (empty($blockaction) || !$PAGE->user_allowed_editing() || !confirm_sesskey()) {
         return;

@@ -45,7 +45,7 @@ class block_activity_modules extends block_list {
     }
 
     function applicable_formats() {
-        return array('all' => true, 'mod' => false, 'my' => false);
+        return array('all' => true, 'mod' => false, 'my' => false, 'admin' => false);
     }
 }
 
