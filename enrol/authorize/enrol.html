@@ -135,7 +135,7 @@ function print_cc_form($classreference)
       <?php if (!empty($classreference->authorizeerrors['cczip'])) { formerr($classreference->authorizeerrors['cczip']); } ?></td>
     </tr>
     </table>
-    <input type="submit" name="ccsubmit" value="<?php print_string("sendpaymentbutton", "enrol_authorize") ?>">
+    <input type="submit" value="<?php print_string("sendpaymentbutton", "enrol_authorize") ?>">
     </form>
     </div>
 <!-- END CC -->
@@ -206,7 +206,7 @@ function print_echeck_form($classreference)
       <?php if (!empty($classreference->authorizeerrors['firstlast'])) { formerr($classreference->authorizeerrors['firstlast']); } ?></td>
     </tr>
     </table>
-    <input type="submit" name="echecksubmit" value="<?php print_string("sendpaymentbutton", "enrol_authorize") ?>">
+    <input type="submit" value="<?php print_string("sendpaymentbutton", "enrol_authorize") ?>">
     </form>
     </div>
 <!-- END ECHECK -->

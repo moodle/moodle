@@ -132,7 +132,7 @@ class enrolment_plugin_authorize
     {
         global $CFG;
 
-        if (zero_cost($course) or
+        if (zero_cost($course) ||
            (!empty($course->password) and !empty($form->password))) { // MANUAL ENROLMENT
             $manual = enrolment_factory::factory('manual');
             $manual->check_entry($form, $course);
@@ -141,20 +141,16 @@ class enrolment_plugin_authorize
             }
         }
         else { // AUTHORIZE.NET ENROLMENT
-            $paymentmethodsenabled = get_list_of_payment_methods();
-            if (in_array(AN_METHOD_CC, $paymentmethodsenabled) and
-                !empty($form->ccsubmit) and
-                validate_cc_form($form, $this->authorizeerrors)) {
+            if (in_array($form->paymentmethod, get_list_of_payment_methods())) {
+                if ($form->paymentmethod == AN_METHOD_CC && validate_cc_form($form, $this->authorizeerrors)) {
                     $this->cc_submit($form, $course);
-            }
-            elseif (in_array(AN_METHOD_ECHECK, $paymentmethodsenabled) and
-                !empty($form->echecksubmit) and
-                validate_echeck_form($form, $this->authorizeerrors)) {
+                }
+                elseif($form->paymentmethod == AN_METHOD_ECHECK && validate_echeck_form($form, $this->authorizeerrors)) {
                     $this->echeck_submit($form, $course);
+                }
             }
         }
     }
-
 
     /**
      * Credit card number mode.
