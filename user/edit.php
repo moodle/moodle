@@ -260,7 +260,8 @@
                     }
                     if (isset($USER->newadminuser)) {
                         unset($USER->newadminuser);
-                        redirect("$CFG->wwwroot/", get_string('changessaved'));
+                        // redirect to admin/ to continue with installation
+                        redirect("$CFG->wwwroot/$CFG->admin/", get_string('changessaved'));
                     }
                     if (!empty($SESSION->wantsurl)) {  // User may have been forced to edit account, so let's 
                                                        // send them to where they wanted to go originally

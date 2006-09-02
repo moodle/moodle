@@ -1411,9 +1411,9 @@ class admin_setting_sitesetselect extends admin_setting_configselect {
 }
 
 
-class admin_setting_special_frontpage extends admin_setting_configselect {
+class admin_setting_courselist_frontpage extends admin_setting_configselect {
 
-    function admin_setting_special_frontpage($loggedin = false) {
+    function admin_setting_courselist_frontpage($loggedin) {
         global $CFG;
         require_once($CFG->dirroot . '/course/lib.php');
         $name = 'frontpage' . ($loggedin ? 'loggedin' : '');
@@ -1427,7 +1427,12 @@ class admin_setting_special_frontpage extends admin_setting_configselect {
         if (count_records("course") > FRONTPAGECOURSELIMIT) {
             unset($choices[FRONTPAGECOURSELIST]);
         }
-        parent::admin_setting_configselect($name, $visiblename, $description, '', $choices);
+        if ($loggedin) {
+            $defaults = FRONTPAGECOURSELIST.',,,';
+        } else {
+            $defaults = FRONTPAGECATEGORYCOMBO.',,,';
+        }
+        parent::admin_setting_configselect($name, $visiblename, $description, $defaults, $choices);
     }
     
     function get_setting() {
@@ -1438,6 +1443,8 @@ class admin_setting_special_frontpage extends admin_setting_configselect {
     function write_setting($data) {
         if (empty($data)) {
             $data = array();
+        } if (!is_array($data)) {
+            $data = explode(',', $data);
         }
         foreach($data as $datum) {
             if (! in_array($datum, array_keys($this->choices))) {

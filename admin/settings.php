@@ -25,6 +25,7 @@ $section = optional_param('section', '', PARAM_ALPHAEXT);
 $PAGE->init_full($section);
 
 $adminediting = optional_param('adminedit', -1, PARAM_BOOL);
+$return       = optional_param('return','', PARAM_ALPHA);
    
 if (!isset($USER->adminediting)) {
     $USER->adminediting = false;
@@ -58,7 +59,14 @@ if ($data = data_submitted()) {
     if (confirm_sesskey()) {
         $errors = $root->write_settings((array)$data);
         if (empty($errors)) {
-            redirect("$CFG->wwwroot/admin/settings.php?section=" . $PAGE->section, get_string('changessaved'),1);
+            switch ($return) {
+                case 'site':
+                    redirect("$CFG->wwwroot/", get_string('changessaved'),1);
+                case 'admin':
+                    redirect("$CFG->wwwroot/admin/", get_string('changessaved'),1);
+                default:
+                    redirect("$CFG->wwwroot/admin/settings.php?section=" . $PAGE->section, get_string('changessaved'),1);
+            }
         } else {
             error(get_string('errorwithsettings', 'admin') . ' <br />' . $errors);
         }
@@ -84,6 +92,7 @@ echo '<td id="middle-column" width="*">';
 echo '<form action="settings.php" method="post" name="mainform">';
 echo '<input type="hidden" name="section" value="' . $PAGE->section . '" />';
 echo '<input type="hidden" name="sesskey" value="' . $USER->sesskey . '" />';
+echo '<input type="hidden" name="return" value="' . $return . '" />';
 print_simple_box_start('','100%','',5,'generalbox','');
 
 echo $root->output_html();

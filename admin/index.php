@@ -163,7 +163,6 @@
                                                    'changepassword' => '',
                                                    'enrol' => 'manual',
                                                    'enrol_plugins_enabled' => 'manual',
-                                                   'frontpage' => 1,
                                                    'guestloginbutton' => 1,
                                                    'style' => 'default',
                                                    'template' => 'default',
@@ -319,9 +318,40 @@
 /// just make sure upgrade logging is properly terminated
     upgrade_log_finish();
 
-/// Set up the overall site name etc.
+/// Set up the blank site - to be customized later at the end of install.
     if (! $site = get_site()) {
-        redirect("site.php");
+        // We are about to create the site "course"
+        require_once($CFG->dirroot.'/lib/blocklib.php');
+
+        $newsite = new Object();
+        $newsite->fullname = "";
+        $newsite->shortname = "";
+        $newsite->summary = "";
+        $newsite->newsitems = 3;
+        $newsite->numsections = 0;
+        $newsite->category = 0;
+        $newsite->format = 'site';  // Only for this course
+        $newsite->teacher = get_string("defaultcourseteacher");
+        $newsite->teachers = get_string("defaultcourseteachers");
+        $newsite->student = get_string("defaultcoursestudent");
+        $newsite->students = get_string("defaultcoursestudents");
+        $newsite->timemodified = time();
+
+        if ($newid = insert_record('course', $newsite)) {
+            // Site created, add blocks for it
+            $page = page_create_object(PAGE_COURSE_VIEW, $newid);
+            blocks_repopulate_page($page); // Return value not checked because you can always edit later
+
+            $cat = new Object();
+            $cat->name = get_string('miscellaneous');
+            if (insert_record('course_categories', $cat)) {
+                  print_continue("index.php");
+            } else {
+                 error("Serious Error! Could not set up a default course category!");
+            }
+        } else {
+            error("Serious Error! Could not set up the site!");
+        }
     }
 
 /// Define the unique site ID code if it isn't already
@@ -349,7 +379,7 @@
 
 
 /// Set up the admin user
-    if (!$CFG->rolesactive) {
+    if (empty($CFG->rolesactive)) {
         redirect("user.php");
     }
 
@@ -360,6 +390,10 @@
 
     require_capability('moodle/site:config', $context);
 
+/// check that site is properly customized
+    if (empty($site->shortname) or empty($site->shortname)) {
+        redirect('settings.php?section=frontpage&return=site');
+    }
 
 /// Check if we are returning from moodle.org registration and if so, we mark that fact to remove reminders
 
