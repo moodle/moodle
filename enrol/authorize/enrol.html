@@ -99,7 +99,7 @@ function print_cc_form($classreference)
     <tr>
       <td align="right"><?php print_string("ccvv", "enrol_authorize") ?>: </td>
       <td align="left"><input type="text" name="cvv" size="4" maxlength="4" value="<?php p($form->cvv) ?>" />
-      <?php helpbutton('', '', 'enrol_authorize', true, 'cvv', get_string('ccvvhelp', 'enrol_authorize')); ?>
+      <?php helpbutton('cvv', '', 'enrol/authorize'); ?>
       <?php if (!empty($classreference->authorizeerrors['cvv'])) { formerr($classreference->authorizeerrors['cvv']); } ?></td>
     </tr>
     <?php if (!empty($CFG->an_avs)) { /* Address Verification System */ ?>
