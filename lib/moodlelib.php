@@ -1,8 +1,5 @@
 <?php // $Id$
 
-// this needs to be changed back
-require_once('accesslib.php');
-
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
 // NOTICE OF COPYRIGHT                                                   //
@@ -449,70 +446,6 @@ function clean_param($param, $type) {
     }
 }
 
-/**
- * For security purposes, this function will check that the currently
- * given sesskey (passed as a parameter to the script or this function)
- * matches that of the current user.
- *
- * @param string $sesskey optionally provided sesskey
- * @return bool
- */
-function confirm_sesskey($sesskey=NULL) {
-    global $USER;
-
-    if (!empty($USER->ignoresesskey) || !empty($CFG->ignoresesskey)) {
-        return true;
-    }
-
-    if (empty($sesskey)) {
-        $sesskey = required_param('sesskey', PARAM_RAW);  // Check script parameters
-    }
-
-    if (!isset($USER->sesskey)) {
-        return false;
-    }
-
-    return ($USER->sesskey === $sesskey);
-}
-
-
-/**
- * Ensure that a variable is set
- *
- * If $var is undefined throw an error, otherwise return $var.
- * This function will soon be made obsolete by {@link required_param()}
- *
- * @param mixed $var the variable which may be unset
- * @param mixed $default the value to return if $var is unset
- */
-function require_variable($var) {
-    global $CFG;
-    if (!empty($CFG->disableglobalshack)) {
-      error( 'The require_variable() function is deprecated.' );
-    }
-    if (! isset($var)) {
-        error('A required parameter was missing');
-    }
-}
-
-
-/**
- * Ensure that a variable is set
- *
- * If $var is undefined set it (by reference), otherwise return $var.
- *
- * @param mixed $var the variable which may be unset
- * @param mixed $default the value to return if $var is unset
- */
-function optional_variable(&$var, $default=0) {
-    global $CFG;
-    if (!empty($CFG->disableglobalshack)) {
-      error( "The optional_variable() function is deprecated ($var, $default)." );
-    }
-    if (! isset($var)) {
-        $var = $default;
-    }
-}
 
 
 /**
@@ -1461,32 +1394,34 @@ function sesskey() {
     return $USER->sesskey;
 }
 
-/* this function forces a user to log out */
 
-function require_logout() {
-    global $USER, $CFG;
-    if (!empty($USER->id)) {
-        add_to_log(SITEID, "user", "logout", "view.php?id=$USER->id&course=".SITEID, $USER->id, 0, $USER->id);
+/**
+ * For security purposes, this function will check that the currently
+ * given sesskey (passed as a parameter to the script or this function)
+ * matches that of the current user.
+ *
+ * @param string $sesskey optionally provided sesskey
+ * @return bool
+ */
+function confirm_sesskey($sesskey=NULL) {
+    global $USER;
 
-        if ($USER->auth == 'cas' && !empty($CFG->cas_enabled)) {
-            require($CFG->dirroot.'/auth/cas/logout.php');
-        }
+    if (!empty($USER->ignoresesskey) || !empty($CFG->ignoresesskey)) {
+        return true;
     }
 
-    if (ini_get_bool("register_globals") and check_php_version("4.3.0")) {
-        // This method is just to try to avoid silly warnings from PHP 4.3.0
-        session_unregister("USER");
-        session_unregister("SESSION");
+    if (empty($sesskey)) {
+        $sesskey = required_param('sesskey', PARAM_RAW);  // Check script parameters
     }
 
-    setcookie('MoodleSessionTest'.$CFG->sessioncookie, '', time() - 3600, $CFG->sessioncookiepath);
-    unset($_SESSION['USER']);
-    unset($_SESSION['SESSION']);
+    if (!isset($USER->sesskey)) {
+        return false;
+    }
 
-    unset($SESSION);
-    unset($USER);
-
+    return ($USER->sesskey === $sesskey);
 }
+
+
 /**
  * This function checks that the current user is logged in and has the
  * required privileges
@@ -1519,7 +1454,7 @@ function require_login($courseid=0, $autologinguest=true, $cm=null) {
 
     // Redefine global $COURSE if we can
     global $course;  // We use the global hack once here so it doesn't need to be used again
-    if (is_object($course) and !empty($course->id) and ($courseid == 0 or $course->id == $courseid)) {
+    if (is_object($course) and !empty($course->id) and ($courseid == 0 || $course->id == $courseid)) {
         $COURSE = clone($course);
     } else if ($courseid) {
         $COURSE = get_record('course', 'id', $courseid);
@@ -1672,6 +1607,41 @@ function require_login($courseid=0, $autologinguest=true, $cm=null) {
         redirect($CFG->wwwroot .'/course/enrol.php?id='. $courseid);
         die;
     }
+}
+
+
+
+/**
+ * This function just makes sure a user is logged out.
+ *
+ * @uses $CFG
+ * @uses $USER
+ */
+function require_logout() {
+
+    global $USER, $CFG;
+
+    if (isset($USER) and isset($USER->id)) {
+        add_to_log(SITEID, "user", "logout", "view.php?id=$USER->id&course=".SITEID, $USER->id, 0, $USER->id);
+
+        if ($USER->auth == 'cas' && !empty($CFG->cas_enabled)) {
+            require($CFG->dirroot.'/auth/cas/logout.php');
+        }
+    }
+
+    if (ini_get_bool("register_globals") and check_php_version("4.3.0")) {
+        // This method is just to try to avoid silly warnings from PHP 4.3.0
+        session_unregister("USER");
+        session_unregister("SESSION");
+    }
+
+    setcookie('MoodleSessionTest'.$CFG->sessioncookie, '', time() - 3600, $CFG->sessioncookiepath);
+    unset($_SESSION['USER']);
+    unset($_SESSION['SESSION']);
+
+    unset($SESSION);
+    unset($USER);
+
 }
 
 /**
@@ -1963,362 +1933,6 @@ function isloggedin() {
     return (!empty($USER->id));
 }
 
-
-/**
- * Determines if a user an admin
- *
- * @uses $USER
- * @param int $userid The id of the user as is found in the 'user' table
- * @staticvar array $admins List of users who have been found to be admins by user id
- * @staticvar array $nonadmins List of users who have been found not to be admins by user id
- * @return bool
- */
-function isadmin($userid=0) {
-    global $USER, $CFG;
-
-    static $admins, $nonadmins;
-
-    if (!empty($CFG->rolesactive)) {
-
-        $context = get_context_instance(CONTEXT_SYSTEM, SITEID);  
-        if (!$userid) {
-            if (empty($USER->id)) {
-                return false;
-            } else {
-                return has_capability('moodle/legacy:admin', $context, $USER->id, false);
-            }
-        } else {
-            return has_capability('moodle/legacy:admin', $context, false, $userid, false);
-        }
-      
-    }
-
-    if (!isset($admins)) {
-        $admins = array();
-        $nonadmins = array();
-    }
-
-    if (!$userid){
-        if (empty($USER->id)) {
-            return false;
-        }
-        $userid = $USER->id;
-    }
-
-    if (!empty($USER->id) and ($userid == $USER->id)) {  // Check session cache
-        return !empty($USER->admin);
-    }
-
-    if (in_array($userid, $admins)) {
-        return true;
-    } else if (in_array($userid, $nonadmins)) {
-        return false;
-    } else if (record_exists('user_admins', 'userid', $userid)){
-        $admins[] = $userid;
-        return true;
-    } else {
-        $nonadmins[] = $userid;
-        return false;
-    }
-}
-
-/**
- * Determines if a user is a teacher (or better)
- *
- * @uses $USER
- * @uses $CFG
- * @param int $courseid The id of the course that is being viewed, if any
- * @param int $userid The id of the user that is being tested against. Set this to 0 if you would just like to test against the currently logged in user.
- * @param bool $includeadmin If true this function will return true when it encounters an admin user.
- * @return bool
- */
-
-function isteacher($courseid=0, $userid=0, $includeadmin=true) {
-/// Is the user able to access this course as a teacher?
-    global $USER, $CFG;
-
-    if (!empty($CFG->rolesactive)) {
-
-        if ($courseid == 0) {
-            $context = get_context_instance(CONTEXT_SYSTEM, SITEID);  
-        } else {
-            $context = get_context_instance(CONTEXT_COURSE, $courseid);
-        }
-
-        if (!$userid) {
-            if (empty($USER->id)) {
-                return false;
-            } else {
-                return (has_capability('moodle/legacy:teacher', $context, $USER->id, false) 
-                    or has_capability('moodle/legacy:editingteacher', $context, $USER->id, false)
-                    or has_capability('moodle/legacy:admin', $context, $USER->id, false));
-            }
-        } else {
-            return (has_capability('moodle/legacy:teacher', $context, $userid, false)
-                    or has_capability('moodle/legacy:editingteacher', $context, $userid, false)
-                    or has_capability('moodle/legacy:admin', $context, $userid, false));
-        }  
-    }
-
-    // Old code follows, will be removed before 1.7 because it shouldn't run   XXX TODO
-
-    if (empty($userid)) {                           // we are relying on $USER
-        if (empty($USER) or empty($USER->id)) {     // not logged in so can't be a teacher
-            return false;
-        }
-        if (!empty($USER->studentview)) {
-            return false;
-        }
-        if (!empty($USER->teacher) and $courseid) {   // look in session cache
-            if (!empty($USER->teacher[$courseid])) {  // Explicitly a teacher, good
-                return true;
-            }
-        }
-        $userid = $USER->id;                        // we need to make further checks
-    }
-
-    if ($includeadmin and isadmin($userid)) {   // admins can do anything the teacher can
-        return true;
-    }
-
-    if (empty($courseid)) {                     // should not happen, but we handle it
-        if (isadmin() or $CFG->debug > 7) {
-            notify('Coding error: isteacher() should not be used without a valid course id '.
-                   'as argument.  Please notify the developer for this module.');
-        }
-        return isteacherinanycourse($userid, $includeadmin);
-    }
-
-/// Last resort, check the database
-
-    return record_exists('user_teachers', 'userid', $userid, 'course', $courseid);
-}
-
-/**
- * Determines if a user is a teacher in any course, or an admin
- *
- * @uses $USER
- * @param int $userid The id of the user that is being tested against. Set this to 0 if you would just like to test against the currently logged in user.
- * @param bool $includeadmin If true this function will return true when it encounters an admin user.
- * @return bool
- */
-function isteacherinanycourse($userid=0, $includeadmin=true) {
-    global $USER;
-
-    if (empty($userid)) {
-        if (empty($USER) or empty($USER->id)) {
-            return false;
-        }
-        if (!empty($USER->teacher)) {   // look in session cache
-            return true;
-        }
-        $userid = $USER->id;
-    }
-
-    if ($includeadmin and isadmin($userid)) {  // admins can do anything
-        return true;
-    }
-
-    return record_exists('user_teachers', 'userid', $userid);
-}
-
-/**
- * Determines if a user is allowed to edit a given course
- *
- * @uses $USER
- * @param int $courseid The id of the course that is being edited
- * @param int $userid The id of the user that is being tested against. Set this to 0 if you would just like to test against the currently logged in user.
- * @param bool $ignorestudentview true = don't do check for studentview mode
- * @return boo
- */
-function isteacheredit($courseid, $userid=0, $ignorestudentview=false) {
-    global $USER, $CFG;
-
-    if (!empty($CFG->rolesactive)) {
-
-        if ($courseid == 0) {
-            $context = get_context_instance(CONTEXT_SYSTEM, SITEID);  
-        } else {
-            $context = get_context_instance(CONTEXT_COURSE, $courseid);
-        }
-
-        if (!$userid) {
-            if (empty($USER->id)) {
-                return false;
-            } else {
-                return (has_capability('moodle/legacy:editingteacher', $context, $USER->id, false)
-                    or has_capability('moodle/legacy:admin', $context, $USER->id, false));
-            }
-        } else {
-            return (has_capability('moodle/legacy:editingteacher', $context, $userid, false)
-                    or has_capability('moodle/legacy:admin', $context, $userid, false));
-        }
-    }
-    // we can't edit in studentview
-    if (!empty($USER->studentview) and !$ignorestudentview) {
-        return false;
-    }
-
-    if (isadmin($userid)) {  // admins can do anything
-        return true;
-    }
-
-    if (!$userid) {
-        if (empty($USER) or empty($USER->id)) {     // not logged in so can't be a teacher
-            return false;
-        }
-        if (empty($USER->teacheredit)) {            // we are relying on session cache
-            return false;
-        }
-        return !empty($USER->teacheredit[$courseid]);
-    }
-
-    return get_field('user_teachers', 'editall', 'userid', $userid, 'course', $courseid);
-}
-
-/**
- * Determines if a user can create new courses
- *
- * @uses $USER
- * @param int $userid The user being tested. You can set this to 0 or leave it blank to test the currently logged in user.
- * @return bool
- */
-function iscreator ($userid=0) {
-    global $USER, $CFG;
-
-    if (!empty($CFG->rolesactive)) {
-
-        $context = get_context_instance(CONTEXT_SYSTEM, SITEID);  
-
-        if (!$userid) {
-            if (empty($USER->id)) {
-                return false;
-            } else {
-                return (has_capability('moodle/legacy:coursecreator', $context, $USER->id, false)
-                    or has_capability('moodle/legacy:admin', $context, $USER->id, false));
-            }
-        } else {
-            return (has_capability('moodle/legacy:coursecreator', $context, $userid, false)
-                    or has_capability('moodle/legacy:admin', $context, $userid, false));
-        }
-      
-    }
-    if (empty($USER->id)) {
-        return false;
-    }
-    if (isadmin($userid)) {  // admins can do anything
-        return true;
-    }
-    if (empty($userid)) {
-        return record_exists('user_coursecreators', 'userid', $USER->id);
-    }
-
-    return record_exists('user_coursecreators', 'userid', $userid);
-}
-
-/**
- * Determines if a user is a student in the specified course
- *
- * If the course id specifies the site then the function determines
- * if the user is a confirmed and valid user of this site.
- *
- * @uses $USER
- * @uses $CFG
- * @uses SITEID
- * @param int $courseid The id of the course being tested
- * @param int $userid The user being tested. You can set this to 0 or leave it blank to test the currently logged in user.
- * @return bool
- */
-function isstudent($courseid, $userid=0) {
-    global $USER, $CFG;
-
-    if (!empty($CFG->rolesactive)) {
-
-        if ($courseid == 0) {
-            $context = get_context_instance(CONTEXT_SYSTEM, SITEID);  
-        } else {
-            $context = get_context_instance(CONTEXT_COURSE, $courseid);
-        }
-
-        if (!$userid) {
-            if (empty($USER->id)) {
-                return false;
-            } else {
-                return has_capability('moodle/legacy:student', $context, $USER->id, false);
-            }
-        } else {
-            return has_capability('moodle/legacy:student', $context, $userid, false);
-        }
-    }
-
-    if (empty($USER->id) and !$userid) {
-        return false;
-    }
-
-    if ($courseid == SITEID) {
-        if (!$userid) {
-            $userid = $USER->id;
-        }
-        if (isguest($userid)) {
-            return false;
-        }
-        // a site teacher can never be a site student
-        if (isteacher($courseid, $userid)) {
-            return false;
-        }
-        if ($CFG->allusersaresitestudents) {
-            return record_exists('user', 'id', $userid);
-        } else {
-            return (record_exists('user_students', 'userid', $userid)
-                     or record_exists('user_teachers', 'userid', $userid));
-        }
-    }
-
-    if (!$userid) {
-        if (empty($USER->studentview)) {
-            return (!empty($USER->student[$courseid]));
-        } else {
-            return(!empty($USER->teacher[$courseid]) or isadmin());
-        }
-    }
-
-  //  $timenow = time();   // todo:  add time check below
-
-    return record_exists('user_students', 'userid', $userid, 'course', $courseid);
-}
-
-/**
- * Determines if the specified user is logged in as guest.
- *
- * @uses $USER
- * @param int $userid The user being tested. You can set this to 0 or leave it blank to test the currently logged in user.
- * @return bool
- */
-function isguest($userid=0) {
-    global $USER, $CFG;
-
-// can not be used because admin has guest capability :-(
-/*
-    if (!empty($CFG->rolesactive)) {
-
-        $context = get_context_instance(CONTEXT_SYSTEM, SITEID);  
-
-        if (!$userid) {
-            return has_capability('moodle/legacy:guest', $context);
-        } else {
-            return has_capability('moodle/legacy:guest', $context, $userid);
-        }
-    }
-*/
-    if (!$userid) {
-        if (empty($USER->username)) {
-            return false;
-        }
-        return ($USER->username == 'guest');
-    }
-
-    return record_exists('user', 'id', $userid, 'username', 'guest');
-}
 
 /**
  * Determines if the currently logged in user is in editing mode
@@ -2908,9 +2522,6 @@ function get_complete_user_data($field, $value) {
 
 }
 
-function get_user_info_from_db($field, $value) {  // For backward compatibility
-    return get_complete_user_data($field, $value);
-}
 
 /*
  * When logging in, this function is run to set certain preferences
@@ -2930,287 +2541,6 @@ function set_login_session_preferences() {
     }
 }
 
-
-/**
- * Enrols (or re-enrols) a student in a given course
- *
- * NOTE: Defaults to 'manual' enrolment - enrolment plugins
- * must set it explicitly.
- *
- * @uses $CFG
- * @param int $userid The id of the user that is being tested against. Set this to 0 if you would just like to test against the currently logged in user.
- * @param int $courseid The id of the course that is being viewed
- * @param int $timestart ?
- * @param int $timeend ?
- * @param string $enrol ?
- * @return bool
- * @todo Finish documenting this function
- */
-function enrol_student($userid, $courseid, $timestart=0, $timeend=0, $enrol='manual') {
-
-    global $CFG, $USER;
-
-    if (!$course = get_record('course', 'id', $courseid)) {  // Check course
-        return false;
-    }
-    if (!$user = get_record('user', 'id', $userid)) {        // Check user
-        return false;
-    }
-    // enrol the student in any parent meta courses...
-    if ($parents = get_records('course_meta', 'child_course', $courseid)) {
-        foreach ($parents as $parent) {
-            enrol_student($userid, $parent->parent_course, $timestart, $timeend,'metacourse');
-            // if we're enrolling ourselves in the child course, add the parent courses to USER too
-            // otherwise they'll have to logout and in again to get it
-            // http://moodle.org/mod/forum/post.php?reply=185699
-            if (!empty($USER) && $userid == $USER->id) {
-                $USER->student[$parent->parent_course] = true;
-            }
-        }
-    }
-
-    if ($student = get_record('user_students', 'userid', $userid, 'course', $courseid)) {
-        $student->timestart = $timestart;
-        $student->timeend = $timeend;
-        $student->time = time();
-        $student->enrol = $enrol;
-        return update_record('user_students', $student);
-
-    } else {
-        require_once("$CFG->dirroot/mod/forum/lib.php");
-        forum_add_user($userid, $courseid);
-
-        $student->userid = $userid;
-        $student->course = $courseid;
-        $student->timestart = $timestart;
-        $student->timeend = $timeend;
-        $student->time = time();
-        $student->enrol = $enrol;
-        return insert_record('user_students', $student);
-    }
-}
-
-/**
- * Unenrols a student from a given course
- *
- * @param int $courseid The id of the course that is being viewed, if any
- * @param int $userid The id of the user that is being tested against.
- * @return bool
- */
-function unenrol_student($userid, $courseid=0) {
-    global $CFG;
-
-    if ($courseid) {
-        /// First delete any crucial stuff that might still send mail
-        if ($forums = get_records('forum', 'course', $courseid)) {
-            foreach ($forums as $forum) {
-                delete_records('forum_subscriptions', 'forum', $forum->id, 'userid', $userid);
-            }
-        }
-        if ($groups = get_groups($courseid, $userid)) {
-            foreach ($groups as $group) {
-                delete_records('groups_members', 'groupid', $group->id, 'userid', $userid);
-            }
-        }
-        // unenrol the student from any parent meta courses...
-        if ($parents = get_records('course_meta','child_course',$courseid)) {
-            foreach ($parents as $parent) {
-                if (!record_exists_sql('SELECT us.id FROM '.$CFG->prefix.'user_students us, '
-                                       .$CFG->prefix.'course_meta cm WHERE cm.child_course = us.course
-                                        AND us.userid = '.$userid .' AND us.course != '.$courseid)) {
-                    unenrol_student($userid, $parent->parent_course);
-                }
-            }
-        }
-        return delete_records('user_students', 'userid', $userid, 'course', $courseid);
-
-    } else {
-        delete_records('forum_subscriptions', 'userid', $userid);
-        delete_records('groups_members', 'userid', $userid);
-        return delete_records('user_students', 'userid', $userid);
-    }
-}
-
-/**
- * Add a teacher to a given course
- *
- * @uses $USER
- * @param int $userid The id of the user that is being tested against. Set this to 0 if you would just like to test against the currently logged in user.
- * @param int $courseid The id of the course that is being viewed, if any
- * @param int $editall ?
- * @param string $role ?
- * @param int $timestart ?
- * @param int $timeend ?
- * @param string $enrol ?
- * @return bool
- * @todo Finish documenting this function
- */
-function add_teacher($userid, $courseid, $editall=1, $role='', $timestart=0, $timeend=0, $enrol='manual') {
-    global $CFG;
-
-    if ($teacher = get_record('user_teachers', 'userid', $userid, 'course', $courseid)) {
-        $newteacher = NULL;
-        $newteacher->id = $teacher->id;
-        $newteacher->editall = $editall;
-        $newteacher->enrol = $enrol;
-        if ($role) {
-            $newteacher->role = $role;
-        }
-        if ($timestart) {
-            $newteacher->timestart = $timestart;
-        }
-        if ($timeend) {
-            $newteacher->timeend = $timeend;
-        }
-        return update_record('user_teachers', $newteacher);
-    }
-
-    if (!record_exists('user', 'id', $userid)) {
-        return false;   // no such user
-    }
-
-    if (!record_exists('course', 'id', $courseid)) {
-        return false;   // no such course
-    }
-
-    $teacher = NULL;
-    $teacher->userid  = $userid;
-    $teacher->course  = $courseid;
-    $teacher->editall = $editall;
-    $teacher->role    = $role;
-    $teacher->enrol   = $enrol;
-    $teacher->timemodified = time();
-    $teacher->timestart = $timestart;
-    $teacher->timeend = $timeend;
-    if ($student = get_record('user_students', 'userid', $userid, 'course', $courseid)) {
-        $teacher->timestart = $student->timestart;
-        $teacher->timeend = $student->timeend;
-        $teacher->timeaccess = $student->timeaccess;
-    }
-
-    if (record_exists('user_teachers', 'course', $courseid)) {
-        $teacher->authority = 2;
-    } else {
-        $teacher->authority = 1;
-    }
-    delete_records('user_students', 'userid', $userid, 'course', $courseid); // Unenrol as student
-
-    /// Add forum subscriptions for new users
-    require_once($CFG->dirroot.'/mod/forum/lib.php');
-    forum_add_user($userid, $courseid);
-
-    return insert_record('user_teachers', $teacher);
-
-}
-
-/**
- * Removes a teacher from a given course (or ALL courses)
- * Does not delete the user account
- *
- * @param int $courseid The id of the course that is being viewed, if any
- * @param int $userid The id of the user that is being tested against.
- * @return bool
- */
-function remove_teacher($userid, $courseid=0) {
-    if ($courseid) {
-        /// First delete any crucial stuff that might still send mail
-        if ($forums = get_records('forum', 'course', $courseid)) {
-            foreach ($forums as $forum) {
-                delete_records('forum_subscriptions', 'forum', $forum->id, 'userid', $userid);
-            }
-        }
-
-        /// Next if the teacher is not registered as a student, but is
-        /// a member of a group, remove them from the group.
-        if (!isstudent($courseid, $userid)) {
-            if ($groups = get_groups($courseid, $userid)) {
-                foreach ($groups as $group) {
-                    delete_records('groups_members', 'groupid', $group->id, 'userid', $userid);
-                }
-            }
-        }
-
-        return delete_records('user_teachers', 'userid', $userid, 'course', $courseid);
-    } else {
-        delete_records('forum_subscriptions', 'userid', $userid);
-        return delete_records('user_teachers', 'userid', $userid);
-    }
-}
-
-/**
- * Add a creator to the site
- *
- * @param int $userid The id of the user that is being tested against.
- * @return bool
- */
-function add_creator($userid) {
-
-    if (!record_exists('user_admins', 'userid', $userid)) {
-        if (record_exists('user', 'id', $userid)) {
-            $creator->userid = $userid;
-            return insert_record('user_coursecreators', $creator);
-        }
-        return false;
-    }
-    return true;
-}
-
-/**
- * Remove a creator from a site
- *
- * @uses $db
- * @param int $userid The id of the user that is being tested against.
- * @return bool
- */
-function remove_creator($userid) {
-    global $db;
-
-    return delete_records('user_coursecreators', 'userid', $userid);
-}
-
-/**
- * Add an admin to a site
- *
- * @uses SITEID
- * @param int $userid The id of the user that is being tested against.
- * @return bool
- */
-function add_admin($userid) {
-
-    if (!record_exists('user_admins', 'userid', $userid)) {
-        if (record_exists('user', 'id', $userid)) {
-            $admin->userid = $userid;
-
-            // any admin is also a teacher on the site course
-            if (!record_exists('user_teachers', 'course', SITEID, 'userid', $userid)) {
-                if (!add_teacher($userid, SITEID)) {
-                    return false;
-                }
-            }
-
-            return insert_record('user_admins', $admin);
-        }
-        return false;
-    }
-    return true;
-}
-
-/**
- * Removes an admin from a site
- *
- * @uses $db
- * @uses SITEID
- * @param int $userid The id of the user that is being tested against.
- * @return bool
- */
-function remove_admin($userid) {
-    global $db;
-
-    // remove also from the list of site teachers
-    remove_teacher($userid, SITEID);
-
-    return delete_records('user_admins', 'userid', $userid);
-}
 
 /**
  * Delete a course, including all related data from the database,
@@ -7278,6 +6608,19 @@ function loadeditor($args) {
     global $CFG;
     include($CFG->libdir .'/editorlib.php');
     return editorObject::loadeditor($args);
+}
+
+/**
+ * Returns true if the current enviromental debuggin settings (user+site)
+ * are equal to the specified level: DEBUG_NORMAL or DEBUG_DETAILED
+ * @param int $level DEBUG_NORMAL or DEBUG_DETAILED
+ * @return bool
+ */
+function debugging($level=DEBUG_NORMAL) {
+
+    if ($CFG->debug > 7) {     // Temporary code
+        return true;
+    }
 }
 
 // vim:autoindent:expandtab:shiftwidth=4:tabstop=4:tw=140:
