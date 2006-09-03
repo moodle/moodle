@@ -359,13 +359,14 @@
         page_map_class(PAGE_ADMIN, 'page_admin');
         $page = page_create_object(PAGE_ADMIN, 0); // there must be some id number
         blocks_repopulate_page($page);
-        set_config('adminblocks_initialised', 1);
 
         //add admin_tree block to site if not already present
         if ($admintree = get_record('block', 'name', 'admin_tree')) {
             $page = page_create_object(PAGE_COURSE_VIEW, SITEID);
             blocks_execute_action($page, blocks_get_by_page($page), 'add', (int)$admintree->id, false, false);
         }
+
+        set_config('adminblocks_initialised', 1);
     }
 
 /// Define the unique site ID code if it isn't already
