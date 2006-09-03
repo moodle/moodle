@@ -5111,6 +5111,7 @@ function get_list_of_countries() {
         }
     }
 
+    $string = array();
     if (file_exists($CFG->dataroot .'/lang/'. $lang .'/countries.php')) {
         include($CFG->dataroot .'/lang/'. $lang .'/countries.php');
     } else if (file_exists($CFG->dirroot .'/lang/'. $lang .'/countries.php')) {
