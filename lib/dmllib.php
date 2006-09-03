@@ -1355,9 +1355,10 @@ function column_type($table, $column) {
  *
  * @param array sqlarr array of sql statements to execute
  * @param boolean continue to specify if must continue on error (true) or stop (false
+ * @param boolean feedback to specify to show debug info (true) or not (false
  * @param boolean true if everything was ok, false if some error was found
  */
-function execute_sql_arr($sqlarr, $continue=true) {
+function execute_sql_arr($sqlarr, $continue=true, $feedback=true) {
 
     if (!is_array($sqlarr)) {
         return false;
@@ -1365,7 +1366,7 @@ function execute_sql_arr($sqlarr, $continue=true) {
 
     $status = true;
     foreach($sqlarr as $sql) {
-        if (!execute_sql($sql)) {
+        if (!execute_sql($sql, $feedback)) {
             $status = false;
             if (!$continue) {
                 break;
