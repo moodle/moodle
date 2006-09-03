@@ -9,7 +9,7 @@
     $CFG->pagepath = 'enrol';
     
     $adminroot = admin_get_root();
-    admin_externalpage_setup('enrolmentplugins', $adminroot);
+    admin_externalpage_setup('enrolment', $adminroot);
 
 
 

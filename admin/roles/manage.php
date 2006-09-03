@@ -5,7 +5,7 @@
 
     require_once($CFG->libdir.'/adminlib.php');
     $adminroot = admin_get_root();
-    admin_externalpage_setup('manageroles', $adminroot);
+    admin_externalpage_setup('defineroles', $adminroot);
 //    require_login();
 
     $roleid      = optional_param('roleid', 0, PARAM_INT); // if set, we are editing a role
