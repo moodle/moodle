@@ -132,7 +132,7 @@ class enrolment_plugin_authorize
     {
         global $CFG;
 
-        if (zero_cost($course) || (!empty($course->password) && !empty($form->password))) {
+        if (zero_cost($course) || (!empty($course->password) && !empty($form->password) && $form->enrol == 'manual')) {
             $manual = enrolment_factory::factory('manual');
             $manual->check_entry($form, $course);
             if (!empty($manual->errormsg)) {
