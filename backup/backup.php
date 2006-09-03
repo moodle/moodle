@@ -7,6 +7,7 @@
     require_once ("lib.php");
     require_once ("backuplib.php");
     require_once ("$CFG->libdir/blocklib.php");
+    require_once ("$CFG->libdir/adminlib.php");
 
     $id = optional_param( 'id' );       // course id
     $to = optional_param( 'to' ); // id of course to import into afterwards.

@@ -4,14 +4,15 @@
     //Define some globals for all the script
 
     //Units used
-    require_once ("../config.php");
-    require_once ("../lib/xmlize.php");
-    require_once ("../course/lib.php");
-    require_once ("lib.php");
-    require_once ("restorelib.php");
-    require_once ("bb/restore_bb.php");
+    require_once("../config.php");
+    require_once("../lib/xmlize.php");
+    require_once("../course/lib.php");
+    require_once("lib.php");
+    require_once("restorelib.php");
+    require_once("bb/restore_bb.php");
     require_once("$CFG->libdir/blocklib.php");
     require_once("$CFG->libdir/wiki_to_markdown.php" );
+    require_once("$CFG->libdir/adminlib.php");
 
     //Optional
     $id = optional_param( 'id' );
