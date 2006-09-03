@@ -383,7 +383,7 @@ function capability_search($capability, $context, $capabilities) {
             error ('This is an unknown context!');
         return false;
     }
-    if ($CFG->debug > 7) {
+    if ($CFG->debug > 15) {
         notify("Found $capability recursively from context $context->id at level $context->aggregatelevel: $permission", 'notifytiny');
     }
 
