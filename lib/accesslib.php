@@ -177,7 +177,7 @@ function has_capability($capability, $context=NULL, $userid=NULL, $doanything='t
 
     global $USER, $CONTEXT, $CFG;
 
-    if (!isloggedin() && !isset($USER->capabilities)) {
+    if (empty($userid) && !isloggedin() && !isset($USER->capabilities)) {
         load_notloggedin_role();
     }
 
@@ -383,7 +383,7 @@ function capability_search($capability, $context, $capabilities) {
             error ('This is an unknown context!');
         return false;
     }
-    if ($CFG->debug > 15) {
+    if ($CFG->debug > 7) {
         notify("Found $capability recursively from context $context->id at level $context->aggregatelevel: $permission", 'notifytiny');
     }
 
@@ -410,13 +410,16 @@ function load_user_capability($capability='', $context ='', $userid='') {
 
     global $USER, $CFG;
 
-    // make sure it's cleaned when loaded (again)
-    if (!empty($USER->capabilities)) {
-        unset($USER->capabilities);  
-    }
     
     if (empty($userid)) {
+        if (empty($USER->id)) {               // We have no user to get capabilities for
+            return false;
+        }
+        if (!empty($USER->capabilities)) {    // make sure it's cleaned when loaded (again)
+            unset($USER->capabilities);  
+        }
         $userid = $USER->id;
+        $otheruserid = false;
     } else {
         $otheruserid = $userid;
     }
@@ -1155,6 +1158,11 @@ function role_assign($roleid, $userid, $groupid, $contextid, $timestart=0, $time
     
     if ($userid && !record_exists('user', 'id', $userid)) {
         notify('User does not exist!');
+        return false;
+    }
+
+    if ($groupid && !record_exists('groups', 'id', $groupid)) {
+        notify('Group does not exist!');
         return false;
     }
 
