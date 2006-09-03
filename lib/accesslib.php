@@ -1216,7 +1216,7 @@ function role_assign($roleid, $userid, $groupid, $contextid, $timestart=0, $time
 
     /// Make sure the user is subscribed to any appropriate forums in this context
         require_once($CFG->dirroot.'/mod/forum/lib.php');
-        forum_add_user_default_subscriptions($user->id, $context);
+        forum_add_user_default_subscriptions($userid, $context);
     }
 
     return $success;
