@@ -193,7 +193,7 @@
         $my_course[$mycourse->id] = $mycourse->shortname;
     }
     popup_form($CFG->wwwroot.'/user/index.php?contextid='.$context->id.'&amp;roleid='.$roleid.'&amp;id=',$my_course,'courseform',$course->id);
-    echo '</td></tr>';
+    echo '</td>';
     
     if ($groupmode == VISIBLEGROUPS or ($groupmode and isteacheredit($course->id))) {
         if ($groups = get_records_menu("groups", "courseid", $course->id, "name ASC", "id,name")) {
