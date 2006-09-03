@@ -591,6 +591,7 @@ class configvarrss extends configvar {
     }
     
 /// enable stats
+if (empty($CFG->disablestatsprocessing)) {
     $stats['enablestats'] = new configvar (get_string('configenablestats','admin'),
         choose_from_menu($noyesoptions, 'enablestats', $config->enablestats, '', '', '', true) );
 
@@ -636,7 +637,7 @@ class configvarrss extends configvar {
 
     $stats['statsuserthreshold'] = new configvar (get_string('configstatsuserthreshold','admin'),
       '<input type="text" name="statsuserthreshold" size="4" value="'.$config->statsuserthreshold.'" />');
-                                              
+}                                        
 
 ////////////////////////////////////////////////////////////////////
 
@@ -649,6 +650,8 @@ class configvarrss extends configvar {
     $configvars['permissions']     = $permissions;
     $configvars['requestedcourse'] = $reqcourse;
     $configvars['misc']            = $misc;
+if (empty($CFG->disablestatsprocessing)) {
     $configvars['stats']           = $stats;
+}
 
 ?>

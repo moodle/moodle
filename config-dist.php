@@ -139,6 +139,9 @@ $CFG->admin = 'admin';
 // Useful for webhost operators who have alternate methods of backups
 //      $CFG->disablescheduledbackups = true;
 //
+// Prevent stats processing and hide the GUI
+//      $CFG->disablestatsprocessing = true;
+//
 // Restrict certain usernames from doing things that may mess up a site
 // This is especially useful for demonstration teacher accounts
 //      $CFG->restrictusers = 'teacher,fred,jim';
