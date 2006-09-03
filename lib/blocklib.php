@@ -431,7 +431,7 @@ function blocks_setup(&$PAGE,$pinned=BLOCKS_PINNED_FALSE) {
     return $pageblocks;
 }
 
-function blocks_execute_action($page, &$pageblocks, $blockaction, $instanceorid, $pinned=false) {
+function blocks_execute_action($page, &$pageblocks, $blockaction, $instanceorid, $pinned=false, $redirect=true) {
     global $CFG;
 
     if (is_int($instanceorid)) {
@@ -674,8 +674,10 @@ function blocks_execute_action($page, &$pageblocks, $blockaction, $instanceorid,
         break;
     }
 
-    // In order to prevent accidental duplicate actions, redirect to a page with a clean url
-    redirect($page->url_get_full());
+    if ($redirect) {
+        // In order to prevent accidental duplicate actions, redirect to a page with a clean url
+        redirect($page->url_get_full());
+    }
 }
 
 // You can use this to get the blocks to respond to URL actions without much hassle

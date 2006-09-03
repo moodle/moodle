@@ -352,7 +352,7 @@
         }
     }
 
-    // initialise default blocks on admin page if needed
+    // initialise default blocks on admin and site page if needed
     if (empty($CFG->adminblocks_initialised)) {
         require_once("$CFG->dirroot/$CFG->admin/pagelib.php");
         require_once($CFG->libdir.'/blocklib.php');
@@ -360,6 +360,14 @@
         $page = page_create_object(PAGE_ADMIN, 0); // there must be some id number
         blocks_repopulate_page($page);
         set_config('adminblocks_initialised', 1);
+
+        //add admin_tree block to site if not already present
+        if ($admintree = get_record('block', 'name', 'admin_tree')) {
+            require_once("$CFG->dirroot/$CFG->admin/pagelib.php");
+            require_once($CFG->libdir.'/blocklib.php');
+            $page = page_create_object(PAGE_COURSE_VIEW, SITEID);
+            blocks_execute_action($page, blocks_get_by_page($page), 'add', (int)$admintree->id, false, false);
+        }
     }
 
 /// Define the unique site ID code if it isn't already

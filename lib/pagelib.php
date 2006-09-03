@@ -495,7 +495,7 @@ class page_course extends page_base {
             }
             /// Failsafe - in case nothing was defined.
             else {
-                $blocknames = 'site_main_menu,admin:course_summary,calendar_month';
+                $blocknames = 'site_main_menu,admin,admin_tree:course_summary,calendar_month';
             }
         }
         // It's a normal course, so do it according to the course format
