@@ -5,6 +5,19 @@ function migrate2utf8_user($fields, $crash, $debug, $maxrecords, $done, $tablest
 
     global $CFG, $db, $processedrecords, $globallang;
 
+    /* Previously to change the field to LONGBLOB, we are going to
+       use Meta info to fetch the NULL/NOT NULL status of the field.
+       Then, when converting back the field to its final UTF8 status
+       we'll apply such status (and default)
+       This has been added on 1.7 because we are in the process of
+       converting some fields to NULL and the assumption of all the 
+       CHAR/TEXT fields being always NOT NULL isn't valid anymore! 
+       Note that this code will leave remaining NOT NULL fiels
+       unmodified at all, folowing the old approach 
+    */
+        $cols = $db->MetaColumns($CFG->prefix.'user');
+        $cols = array_change_key_case($cols, CASE_LOWER); ///lowercase col names
+
     // convert all columns to blobs
     foreach ($fields as $field) {
         $fieldname = isset($field['@']['name'])?$field['@']['name']:"";
@@ -141,11 +154,26 @@ function migrate2utf8_user($fields, $crash, $debug, $maxrecords, $done, $tablest
         $length = isset($field['@']['length'])?$field['@']['length']:"";
         $default = isset($field['@']['default'])?"'".$field['@']['default']."'":"''";
 
+        // Now based on the Metainfo retrieved before conversion, leave some fields
+        // nulable and without default.
+        $notnull = 'NOT NULL';  ///Old default
+        if ($col = $cols[strtolower($fieldname)]) {
+        /// If the column was null before UTF-8 migration, save it
+            if (!$col->not_null) {
+                $notnull = 'NULL';
+            /// And, if the column had an empty string as default, make it NULL now
+                if ($default == "''") {
+                    $default = 'NULL';
+                }
+            }
+        }
+
         $SQL = 'ALTER TABLE '.$CFG->prefix.'user CHANGE '.$fieldname.' '.$fieldname.' '.$type;
         if ($length > 0) {
             $SQL.='('.$length.') ';
         }
-        $SQL.=' CHARACTER SET utf8 NOT NULL DEFAULT '.$default.';';
+
+        $SQL.=' CHARACTER SET utf8 ' . $notnull . ' DEFAULT '.$default.';';
             if ($debug) {
             $db->debug=999;
         }
