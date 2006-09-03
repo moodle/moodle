@@ -3508,10 +3508,10 @@ function forum_update_subscriptions_button($courseid, $forumid) {
     global $CFG, $USER;
 
     if (!empty($USER->subscriptionsediting)) {
-        $string = get_string("turneditingoff");
+        $string = get_string('turneditingoff');
         $edit = "off";
     } else {
-        $string = get_string("turneditingon");
+        $string = get_string('turneditingon');
         $edit = "on";
     }
     return "<form target=\"$CFG->framename\" method=\"get\" action=\"$CFG->wwwroot/mod/forum/subscribers.php\">".
@@ -3520,19 +3520,47 @@ function forum_update_subscriptions_button($courseid, $forumid) {
            "<input type=\"submit\" value=\"$string\" /></form>";
 }
 
-function forum_add_user($userid, $courseid) {
+function forum_add_user_default_subscriptions($userid, $context) {
 /// Add subscriptions for new users
-    if ($forums = get_records_select('forum', "course = '$courseid' AND forcesubscribe = '".FORUM_INITIALSUBSCRIBE."'")) {
-        foreach ($forums as $forum) {
-            if ($cm = get_coursemodule_from_id('forum', $forum->id)) {   // TODO: get this data in the above query
-                if ($context = get_context_instance(CONTEXT_MODULE, $cm->id)) {
-                    if (has_capability('mod/forum:viewforum', $context)) {
-                        forum_subscribe($userid, $forum->id);
-                    }
-                }
-            }
-        }
+
+    if (empty($context->aggregatelevel)) {
+        return false;
     }
+
+    switch ($context->aggregatelevel) {
+
+        case CONTEXT_COURSE:   // For a whole course
+             if ($course = get_record('course', 'id', $context->instanceid)) {
+                 if ($forums = get_all_instances_in_course('forum', $course)) {
+                     foreach ($forums as $forum) {
+                         if ($forum->forcesubscribe != FORUM_INITIALSUBSCRIBE) {
+                             continue;
+                         }
+                         if ($modcontext = get_context_instance(CONTEXT_MODULE, $forum->coursemodule)) {
+                             if (has_capability('mod/forum:viewdiscussion', $modcontext, $userid)) {
+                                 forum_subscribe($userid, $forum->id);
+                             }
+                         }
+                     }
+                 }
+             }
+             break;
+         
+        case CONTEXT_MODULE:   // Just one forum
+             if ($cm = get_coursemodule_from_id('forum', $context->instanceid)) {
+                 if ($forum = get_record('forum', 'id', $cm->instance)) { 
+                     if ($forum->forcesubscribe != FORUM_INITIALSUBSCRIBE) {
+                         continue;
+                     }
+                     if (has_capability('mod/forum:viewdiscussion', $context, $userid)) {
+                         forum_subscribe($userid, $forum->id);
+                     }
+                 }
+             }
+             break;
+    }
+
+    return true;
 }
 
 /// Functions to do with read tracking.
