@@ -1,7 +1,8 @@
 <?php // $Id$
-      // Script to assign students to courses
+      // Script to assign users to contexts
 
     require_once("../../config.php");
+    require_once($CFG->dirroot.'/mod/forum/lib.php');
 
     define("MAX_USERS_PER_PAGE", 5000);
 
@@ -31,19 +32,10 @@
         error("Context ID was incorrect (can't find it)");
     }
 
-    require_login();
 
     require_capability('moodle/role:assign', $context);
-    
-    /**
-     * TODO XXX:
-     * Permission check to see whether this user can assign people to this role
-     * needs to be:    
-     * 1) has the capability to assign
-     * 2) not in role_deny_grant
-     * end of permission checking  
-     */
 
+    
     $strassignusers = get_string('assignusers', 'role');
     $strpotentialusers = get_string('potentialusers', 'role');
     $strexistingusers = get_string('existingusers', 'role');
@@ -56,7 +48,9 @@
     $context = get_record('context', 'id', $contextid);
     $assignableroles = get_assignable_roles($context);
     
-    // role assigning permission checking
+
+/// Make sure this user can assign that role
+
     if ($roleid) {
         if (!user_can_assign($context, $roleid)) {
             error ('you can not override this role in this context');
@@ -67,7 +61,9 @@
     $user = get_record('user', 'id', $userid);
     $fullname = fullname($user, has_capability('moodle/site:viewfullnames', $context));
 
-    // we got a few tabs there
+
+/// Print the header and tabs
+
     if ($context->aggregatelevel == CONTEXT_USERID) {
         /// course header
         if ($courseid!= SITEID) {
@@ -92,30 +88,30 @@
     }
 
 
-/// Print a help notice about the need to use this page
+/// Process incoming role assignment
 
-    if (!$frm = data_submitted()) {
+    if ($frm = data_submitted()) {
 
-/// A form was submitted so process the input
-
-    } else {
         if ($add and !empty($frm->addselect) and confirm_sesskey()) {
-              //$timestart = ????
-              // time end = ????
-              $timemodified = time();
+
+            $timemodified = time();
+
             foreach ($frm->addselect as $adduser) {
                 $adduser = clean_param($adduser, PARAM_INT);
                 if (! role_assign($roleid, $adduser, 0, $context->id, $timestart, $timeend, $hidden)) {
                     error("Could not add user with id $adduser to this role!");
                 }
             }
+
         } else if ($remove and !empty($frm->removeselect) and confirm_sesskey()) {
+
             foreach ($frm->removeselect as $removeuser) {
                 $removeuser = clean_param($removeuser, PARAM_INT);
                 if (! role_unassign($roleid, $removeuser, 0, $context->id)) {
                     error("Could not remove user with id $removeuser from this role!");
                 }
             }
+
         } else if ($showall) {
             $searchtext = '';
             $previoussearch = 0;
@@ -123,7 +119,8 @@
     }
 
 
-/// Get all existing students and teachers for this course.
+/// Get all existing participants in this course.
+
     $existinguserarray = array();
 
     $SQL = "select u.* from {$CFG->prefix}role_assignments r, {$CFG->prefix}user u where contextid = $context->id and roleid = $roleid and u.id = r.userid"; // join now so that we can just use fullname() later
