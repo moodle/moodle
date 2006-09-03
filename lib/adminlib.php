@@ -2188,7 +2188,7 @@ function admin_externalpage_setup($section, $adminroot) {
 
     page_map_class(PAGE_ADMIN, 'page_admin');
 
-    $PAGE = page_create_object(PAGE_ADMIN, 0); // there must be some id number
+    $PAGE = page_create_object(PAGE_ADMIN, 0); // there must be any constant id number
 
     $PAGE->init_extra($section); // hack alert!
 

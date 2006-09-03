@@ -82,18 +82,22 @@
         } else {
             // Inform block it's about to be deleted
             $blockobject = block_instance($block->name);
-            $blockobject->before_delete();
-            
-            // Delete block
-            if (!delete_records('block', 'id', $block->id)) {
-                notify("Error occurred while deleting the $strblockname record from blocks table");
+            if ($blockobject) {
+                $blockobject->before_delete();  //only if we can create instance, block might have been already removed
             }
 
+            // First delete instances and then block
             $instances = get_records('block_instance', 'blockid', $block->id);
             if(!empty($instances)) {
                 foreach($instances as $instance) {
                     blocks_delete_instance($instance);
+                    blocks_delete_instance($instance, true);
                 }
+            }
+
+            // Delete block
+            if (!delete_records('block', 'id', $block->id)) {
+                notify("Error occurred while deleting the $strblockname record from blocks table");
             }
 
             // Then the tables themselves

@@ -22,7 +22,7 @@ require_once($CFG->libdir.'/pagelib.php');
 function block_is_compatible($blockname) {
     global $CFG;
 
-    $file = file($CFG->dirroot.'/blocks/'.$blockname.'/block_'.$blockname.'.php');
+    $file = @file($CFG->dirroot.'/blocks/'.$blockname.'/block_'.$blockname.'.php'); // ignore errors when file does not exist
     if(empty($file)) {
         return NULL;
     }
@@ -119,7 +119,7 @@ function block_load_class($blockname) {
     }
 
     require_once($CFG->dirroot.'/blocks/moodleblock.class.php');
-    include_once($CFG->dirroot.'/blocks/'.$blockname.'/block_'.$blockname.'.php');
+    @include_once($CFG->dirroot.'/blocks/'.$blockname.'/block_'.$blockname.'.php'); // do not throw errors if block code not present
 
     return class_exists($classname);
 }
@@ -189,16 +189,14 @@ function blocks_name_allowed_in_format($name, $pageformat) {
 function blocks_delete_instance($instance,$pinned=false) {
     global $CFG;
 
-    // Get the block object and call instance_delete() first
+    // Get the block object and call instance_delete() if possible
     if(!$record = blocks_get_record($instance->blockid)) {
-        return false;
-    }
-    if(!$obj = block_instance($record->name, $instance)) {
-        return false;
+        if(!$obj = block_instance($record->name, $instance)) {
+            // Return value ignored
+            $obj->instance_delete();
+        }
     }
 
-    // Return value ignored
-    $obj->instance_delete();
     if (!empty($pinned)) {
          delete_records('block_pinned', 'id', $instance->id);
         // And now, decrement the weight of all blocks after this one

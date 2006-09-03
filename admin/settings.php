@@ -14,7 +14,7 @@ define('BLOCK_L_MAX_WIDTH',210);
 
 page_map_class(PAGE_ADMIN, 'page_admin');
 
-$PAGE = page_create_object(PAGE_ADMIN, 0); // there must be some id number
+$PAGE = page_create_object(PAGE_ADMIN, 0); // there must be any constant id number
 
 $section = optional_param('section', '', PARAM_ALPHAEXT);
 
