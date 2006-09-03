@@ -11,9 +11,9 @@ $ADMIN->add('root', new admin_category('location', get_string('location','admin'
 $ADMIN->add('root', new admin_category('language', get_string('language')));
 
 $ADMIN->add('root', new admin_category('modules', get_string('plugins', 'admin')));
-$ADMIN->add('modules', new admin_externalpage('modulemanagement', get_string('activities'), "$CFG->wwwroot/$CFG->admin/modules.php"));
-$ADMIN->add('modules', new admin_externalpage('blockmanagement', get_string('blocks'), "$CFG->wwwroot/$CFG->admin/blocks.php"));
-$ADMIN->add('modules', new admin_externalpage('filtermanagement', get_string('managefilters'), "$CFG->wwwroot/$CFG->admin/filters.php"));
+$ADMIN->add('modules', new admin_externalpage('managemodules', get_string('activities'), "$CFG->wwwroot/$CFG->admin/modules.php"));
+$ADMIN->add('modules', new admin_externalpage('manageblocks', get_string('blocks'), "$CFG->wwwroot/$CFG->admin/blocks.php"));
+$ADMIN->add('modules', new admin_externalpage('managefilters', get_string('managefilters'), "$CFG->wwwroot/$CFG->admin/filters.php"));
 
 $ADMIN->add('root', new admin_category('security', get_string('security','admin')));
 $ADMIN->add('root', new admin_category('appearance', get_string('appearance','admin')));
