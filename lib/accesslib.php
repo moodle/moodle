@@ -32,25 +32,32 @@ define('CONTEXT_BLOCK', 80);
 $context_cache    = array();    // Cache of all used context objects for performance (by level and instance)
 $context_cache_id = array();    // Index to above cache by id
 
+
+/**
+ * Load default not logged in role capabilities when user is not logged in
+ * @return bool 
+ */
 function load_notloggedin_role() {
     global $CFG, $USER;
 
-    $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
-    // load default not logged in role capabilities when user is not logged in
-
-    // HACK ALERT!!!! - replace with proper default value!!!!!
-    if (empty($CFG->notloggedinroleid)) {
-        $guestrole = get_record('role', 'name', 'Guest');
-        $CFG->notloggedinroleid = $guestrole->id;
+    if (!$sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID)) {
+        return false;
     }
 
-    $SQL = "select * from {$CFG->prefix}role_capabilities where roleid=$CFG->notloggedinroleid
-            AND contextid = $sitecontext->id";
-          
-    $capabilities = get_records_sql($SQL);
+    if (empty($CFG->notloggedinroleid)) {    // Let's set the default to the guest role
+        if ($roles = get_roles_with_capability('moodle/legacy:guest', CAP_ALLOW)) {
+            $role = array_shift($roles);   // Pick the first one
+            set_config('notloggedinroleid', $role->id);
+        } else {
+            return false;
+        }
+    }
 
-    foreach ($capabilities as $capability) {
-        $USER->capabilities[$sitecontext->id][$capability->capability] = $capability->permission;     
+    if ($capabilities = get_records_select('role_capabilities', 
+                                     "roleid = $CFG->notloggedinroleid AND contextid = $sitecontext->id")) {
+        foreach ($capabilities as $capability) {
+            $USER->capabilities[$sitecontext->id][$capability->capability] = $capability->permission;     
+        }
     }
 
     return true;
@@ -1145,22 +1152,28 @@ function role_assign($roleid, $userid, $groupid, $contextid, $timestart=0, $time
         notify('Either userid or groupid must be provided');
         return false;
     }
+    
+    if ($userid && !record_exists('user', 'id', $userid)) {
+        notify('User does not exist!');
+        return false;
+    }
 
-    if (empty($contextid)) {
+    if (!$context = get_context_instance_by_id($contextid)) {
         notify('A valid context must be provided');
         return false;
     }
 
     if (($timestart and $timeend) and ($timestart > $timeend)) {
-        notify('The end time must be later than the start time');
+        notify('The end time can not be earlier than the start time');
         return false;
     }
 
+
 /// Check for existing entry
     if ($userid) {
-        $ra = get_record('role_assignments', 'roleid', $roleid, 'contextid', $contextid, 'userid', $userid);
+        $ra = get_record('role_assignments', 'roleid', $roleid, 'contextid', $context->id, 'userid', $userid);
     } else {
-        $ra = get_record('role_assignments', 'roleid', $roleid, 'contextid', $contextid, 'groupid', $groupid);
+        $ra = get_record('role_assignments', 'roleid', $roleid, 'contextid', $context->id, 'groupid', $groupid);
     }
 
 
@@ -1168,7 +1181,7 @@ function role_assign($roleid, $userid, $groupid, $contextid, $timestart=0, $time
 
     if (empty($ra)) {             // Create a new entry
         $newra->roleid = $roleid;
-        $newra->contextid = $contextid;
+        $newra->contextid = $context->id;
         $newra->userid = $userid;
         $newra->groupid = $groupid;
 
@@ -1194,9 +1207,16 @@ function role_assign($roleid, $userid, $groupid, $contextid, $timestart=0, $time
         $success = update_record('role_assignments', $newra);
     }
 
-/// If the user is the current user, then reload the capabilities too.
-    if ($success && !empty($USER->id) && $USER->id == $userid) {
-        load_user_capability();
+    if ($success) {   /// Role was assigned, so do some other things
+
+    /// If the user is the current user, then reload the capabilities too.
+        if (!empty($USER->id) && $USER->id == $userid) {
+            load_user_capability();
+        }
+
+    /// Make sure the user is subscribed to any appropriate forums in this context
+        require_once($CFG->dirroot.'/mod/forum/lib.php');
+        forum_add_user_default_subscriptions($user->id, $context);
     }
 
     return $success;
@@ -1969,4 +1989,5 @@ function get_users_by_capability($context, $capability, $fields='distinct u.*', 
     return get_records_sql($select.$from.$where.$sort.$limit);  
 
 }
+
 ?>
