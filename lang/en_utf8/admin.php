@@ -1,16 +1,26 @@
 <?PHP // $Id$ 
       // admin.php - created with Moodle 1.6 development (2005053000)
 
-/*
-// begin {added with admin cleanup}
-$string['userinterface'] = 'User Interface';
-$string['userlist'] = 'Browse list of users';
-$string['serverinterface'] = 'Server Interface';
-$string['authenticationandsecurity'] = 'Authentication &amp; Security';
-$string['maintenanceandauditing'] = 'Maintenance &amp; Auditing';
-$string['courses'] = 'Courses';
 
-$string['languageandlocation'] = 'Language &amp; Location';
+// begin {added with admin cleanup}
+$string['accounts'] = 'Accounts';
+$string['appearance'] = 'Appearance';
+$string['server'] = 'Server';
+$string['users'] = 'Users';
+$string['security'] = 'Security';
+$string['userlist'] = 'Browse list of users';
+$string['courses'] = 'Courses';
+$string['location'] = 'Location';
+$string['coursemgmt'] = 'Add/edit courses';
+$string['debugging'] = 'Debugging';
+$string['plugins'] = 'Modules';
+$string['mustenablestats'] = 'Stats have not yet been enabled on this site.';
+$string['courseoverview'] = 'Course overview';
+$string['log'] = 'Logs';
+$string['simpletest'] = 'Unit tests';
+$string['stats'] = 'Statistics';
+$string['mymoodle'] = 'My Moodle';
+
 $string['htmleditor'] = 'HTML Editor';
 $string['misc'] = 'Miscellaneous';
 $string['filtersettings'] = 'Filter Settings';
@@ -27,17 +37,14 @@ $string['sitepolicies'] = 'Site Policies';
 $string['userpolicies'] = 'User Policies';
 $string['antivirus'] = 'Anti-Virus';
 $string['authentication'] = 'Authentication';
-$string['performanceandstats'] = 'Performance &amp; Stats';
 $string['backups'] = 'Backups';
 $string['courserequests'] = 'Course Requests';
 $string['themeselector'] = 'Theme Selector';
-*/
 
 $string['nonewsettings'] = 'No new settings were added during this upgrade.';
 $string['upgradesettings'] = 'New Settings';
 $string['upgradesettingsintro'] = 'The settings shown below were added during your last Moodle upgrade. Make any changes necessary to the defaults and then click &quot;Save Settings&quot; at the bottom of this page.';
 // end {added with admin cleanup}
-
 
 $string['adminseesallevents'] = 'Administrators see all events';
 $string['adminseesownevents'] = 'Administrators are just like other users';
@@ -213,7 +220,7 @@ $string['installedlangs'] = 'Installed language packs';
 $string['invaliduserchangeme'] = 'Username "changeme" is reserved -- you cannot create an account with it.';
 $string['lang16notify'] = 'Moodle 1.6 and above allows you to install and update language packs directly from download.moodle.org by following the link below';
 $string['langedit'] = 'Language editing';
-$string['langimport'] = 'Language import utility';
+$string['langpacks'] = 'Language packs';
 $string['langimportsuccess'] = 'Language pack successfully upgraded';
 $string['langpackremoved'] = 'Language pack was uninstalled';
 $string['langpackupdated'] = 'Language pack $a was successfully installed';
@@ -266,7 +273,6 @@ $string['sitemaintenancewarning'] = 'Your site is currently in maintenance mode 
 $string['stickyblocks'] = 'Sticky blocks';
 $string['stickyblocksduplicatenotice'] = 'If any block you add here is already present in a particular page, it will result in a duplicate.<br />Only the pinned block will be non-editable, the duplicate will still be editable.';
 $string['stickyblockspagetype'] = 'Page type to configure';
-$string['stickyblocksmymoodle'] = 'My moodle';
 $string['stickyblockscourseview'] = 'Course page';
 $string['releasenoteslink'] = 'For information about this version of Moodle, please see the online <a target=\"_new\" href=\"$a\">Release Notes</a>';
 $string['renameerrors'] = 'Errors in renames';
