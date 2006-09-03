@@ -5178,7 +5178,7 @@ function print_tabs($tabrows, $selected=NULL, $inactive=NULL, $activetwo=NULL, $
 function page_doc_link($text='', $iconpath='') {
     global $ME, $CFG;
 
-    if (empty($CFG->docroot) || !isteacherinanycourse()) {
+    if (empty($CFG->docroot) || !has_capability('moodle/site:doclinks')) {
         return '';
     }
 
