@@ -207,11 +207,9 @@
             }
 
             reset_login_count();
-            $rolesconfig = get_config('', 'rolesactive');
-			if ($rolesconfig->value == 1) {
-				load_user_capability(); // load user's capabilities
-
-			}
+            if (!empty($CFG->rolesactive)) {
+                load_user_capability(); // load user's capabilities
+            }
             redirect($urltogo);
 
             exit;
