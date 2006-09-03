@@ -139,7 +139,7 @@
     }
     //choose_from_menu($my_course, 'id', $course->id, '', 'courseform.submit()');
     popup_form($CFG->wwwroot.'/user/index.php?id=',$my_course,'courseform',$course->id);
-    echo '</td></tr>';
+    echo '</td>';
     
     if ($groupmode == VISIBLEGROUPS or ($groupmode and isteacheredit($course->id))) {
         if ($groups = get_records_menu("groups", "courseid", $course->id, "name ASC", "id,name")) {
