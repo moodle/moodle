@@ -188,12 +188,12 @@ function forum_upgrade($oldversion) {
       if ($forums = get_records('forum')) {
           
           if (!$studentroles = get_roles_with_capability('moodle/legacy:student', CAP_ALLOW)) {
-              notice('Default student role was not found. Roles and permissions '.
+              notify('Default student role was not found. Roles and permissions '.
                      'for all your forums will have to be manually set after '.
                      'this upgrade.');
           }
           if (!$guestroles = get_roles_with_capability('moodle/legacy:guest', CAP_ALLOW)) {
-              notice('Default guest role was not found. Roles and permissions '.
+              notify('Default guest role was not found. Roles and permissions '.
                      'for teacher forums will have to be manually set after '.
                      'this upgrade.');
           }
@@ -201,7 +201,7 @@ function forum_upgrade($oldversion) {
           foreach ($forums as $forum) {
               if (!forum_convert_to_roles($forum, $forummod->id,
                         $studentroles, $guestroles)) {
-                  notice('Forum with id '.$forum->id.' was not upgraded');
+                  notify('Forum with id '.$forum->id.' was not upgraded');
               }
           }
           
@@ -228,19 +228,19 @@ function forum_upgrade($oldversion) {
       if ($forums = get_records('forum')) {
 
           if (!$studentroles = get_roles_with_capability('moodle/legacy:student', CAP_ALLOW)) {
-              notice('Default student role was not found. Roles and permissions '.
+              notify('Default student role was not found. Roles and permissions '.
                      'for all your forums will have to be manually set after '.
                      'this upgrade.');
           }
           if (!$guestroles = get_roles_with_capability('moodle/legacy:guest', CAP_ALLOW)) {
-              notice('Default guest role was not found. Roles and permissions '.
+              notify('Default guest role was not found. Roles and permissions '.
                      'for teacher forums will have to be manually set after '.
                      'this upgrade.');
           }
           foreach ($forums as $forum) {
               if (!forum_convert_to_roles($forum, $forummod->id,
                         $studentroles, $guestroles)) {
-                  notice('Forum with id '.$forum->id.' was not upgraded');
+                  notify('Forum with id '.$forum->id.' was not upgraded');
               }
           }
           // We need to rebuild all the course caches to refresh the state of
