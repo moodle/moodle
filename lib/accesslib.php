@@ -796,7 +796,7 @@ function moodle_install_roles() {
     if (in_array($CFG->prefix.'user_coursecreators', $dbtables)) {
         if ($usercoursecreators = get_records('user_coursecreators')) {
             foreach ($usercoursecreators as $coursecreator) {
-                role_assign($$coursecreatorrole, $coursecreator->userid, 0, $systemcontext->id);
+                role_assign($coursecreatorrole, $coursecreator->userid, 0, $systemcontext->id);
             }
         }
     }
