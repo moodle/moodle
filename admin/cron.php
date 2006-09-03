@@ -274,7 +274,7 @@
         unset($enrol);
     }
 
-    if (!empty($CFG->enablestats)) {
+    if (!empty($CFG->enablestats) and empty($CFG->disablestatsprocessing)) {
 
         // check we're not before our runtime
         $timetocheck = strtotime("$CFG->statsruntimestarthour:$CFG->statsruntimestartminute today");
