@@ -4258,8 +4258,8 @@ function forum_convert_to_roles($forum, $forummodid, $studentroles=array(), $gue
         if (empty($cmid)) {
             // We were not given the course_module id. Try to find it.
             if (!$cm = get_coursemodule_from_instance('forum', $forum->id)) {
-                notice('Could not get the course module for the forum');
-                continue;
+                notify('Could not get the course module for the forum');
+                return false;
             } else {
                 $cmid = $cm->id;
             }
