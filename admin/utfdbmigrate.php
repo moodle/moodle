@@ -6,6 +6,8 @@
     require_once($CFG->libdir.'/adminlib.php');
     require_once($CFG->libdir.'/environmentlib.php');
     require_once($CFG->dirroot.'/course/lib.php');
+    require_once($CFG->libdir.'/ddllib.php');      //We are going to need DDL services here
+    require_once($CFG->dirroot.'/backup/lib.php');  //We are going to need BACKUP services here
     require_login();
 
     // decalre once
@@ -124,7 +126,7 @@
             echo '<form name="migratefrom" action="utfdbmigrate.php" method="POST">';
             echo '<input name="confirm" type="hidden" value="1" />';
             echo '<input name="sesskey" type="hidden" value="'.sesskey().'" />';
-        
+
             $xmls = utf_get_xml();
             $sumrecords = 0;   //this is the sum of all records of relavent tables.
             foreach ($xmls as $xml) {    ///foreach xml file, we must get a list of tables
@@ -220,8 +222,6 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
     global $db, $CFG, $dbtablename, $fieldname, $record, $processedrecords;
     $debug = ($CFG->debug > 7);
 
-     //echo date("H:i:s");
-    
     ignore_user_abort(false); // see bug report 5352. This should kill this thread as soon as user aborts.
     
     @set_time_limit(0);
@@ -372,6 +372,31 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
                 print_heading("<br><b>Processsing db table ".$dbtablename.'...</b>');
             }
 
+        /*  Insted of relying in the indexes defined for the table in utfmigrate.xml
+            files, we are going to use the MetaIndexes() DB call in order to detect
+            all the table indexes. Once fetched, they are saved in backup tables for
+            safe storage and they are dropped from the table.
+            At the end of the table, we'll fetch them from backup tables and all them
+            will be recreated again.
+            This will ensure that no index in lost in the UTF8 migration process and
+            they will be exactly the same for each server (custom indexes...)
+            Also this will leave free to keep the utfmigrate.xml files in sync for
+            all the existing indexes and we only have to maintain fields in such
+            files
+        */
+
+        /// Calculate all the indexes of the table
+            if ($CFG->dbtype == 'mysql' && $allindexes = $db->MetaIndexes($prefix.$dbtablename)) {
+            /// Send them to backup_ids table for temporal storage if crash
+                backup_putid(9876543210, $prefix.$dbtablename, 1, 1, $allindexes);
+            /// Drop all the indexes
+                $sqlarr = array();
+                foreach ($allindexes as $onekey => $oneindex) {
+                    $sqlarr[] = 'ALTER TABLE '.$prefix.$dbtablename.' DROP INDEX '.$onekey;
+                }
+                execute_sql_arr($sqlarr, true, $debug);
+            }
+
             /**********************************************************
              * This is the by pass structure. It allows us to process *
              * tables on row basis instead of column/field basis      *
@@ -402,7 +427,7 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
                     $addindexarray = array();
                     $adduniqueindexarray = array();
                     $addprimaryarray = array();
-
+                    
                     foreach ($fields as $field){
 
                         //if in crash state, and field name is not the same as crash field name
@@ -438,7 +463,12 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
 
                         if ($CFG->dbtype == 'mysql') {
 
-                            /* Drop the index, because with index on, you can't change it to longblob */
+                            /* Drop the index, because with index on, you can't change it to longblob
+                            
+                               NOTE: We aren't going to drop individual indexes anymore, because we have
+                                     dropped them at the begining of the table iteration, saving them to
+                                     backup temp tables. At the end of the table iteration we are going
+                                     to rebuild them back
 
                             if ($dropindex){    //drop index if index is varchar, text etc type
                                 $SQL = 'ALTER TABLE '.$prefix.$dbtablename.' DROP INDEX '.$dropindex.';';
@@ -446,13 +476,15 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
                                 if ($debug) {
                                     $db->debug=999;
                                 }
+
                                 execute_sql($SQL, false); // see bug 5205
                                 execute_sql($SQL1, false); // see bug 5205
 
                                 if ($debug) {
                                     $db->debug=0;
                                 }
-                            } else if ($dropprimary) {    // drop primary key
+                            } else */
+                            if ($dropprimary) {    // drop primary key
                                 $SQL = 'ALTER TABLE '.$prefix.$dbtablename.' DROP PRIMARY KEY;';
                                 if ($debug) {
                                     $db->debug=999;
@@ -715,7 +747,12 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
                     $alter = 0;
 
                     if ($CFG->dbtype=='mysql'){
+
                         $SQL = 'ALTER TABLE '.$prefix.$dbtablename;
+                    /*
+                        NOTE: We aren't going to create the indexes back here any more because they
+                              are going to be recreated at the end of the table iteration with
+                              the info saved at the begining of it.
 
                         if (!empty($addindexarray)) {
                             foreach ($addindexarray as $aidx){
@@ -730,6 +767,7 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
                                 $alter++;
                             }
                         }
+                    */
 
                         if (!empty($addprimaryarray)) {
                             foreach ($addprimaryarray as $apm){
@@ -775,10 +813,27 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
                 if ($debug) {
                     $db->debug=0;
                 }
+
             } else {
 
                 ///posgresql code here
                 ///No we don't need to do anything here
+            }
+
+        /// Recreate all the indexes previously dropped and sent to backup
+        /// tables. Retrieve information from backup tables
+            if ($backupindexes = backup_getid(9876543210, $prefix.$dbtablename, 1)) {
+            /// Confirm we have indexes
+                if ($allindexes = $backupindexes->info) {
+                /// Recreate all the indexes
+                    $sqlarr = array();
+                    foreach ($allindexes as $onekey => $oneindex) {
+                        $unique = $oneindex['unique']? 'UNIQUE ' : '';
+                        $sqlarr[] = 'ALTER TABLE '.$prefix.$dbtablename.' ADD '.$unique.'INDEX '.$onekey.
+                                    ' ('.implode(', ', $oneindex['columns']).')';
+                    }
+                    execute_sql_arr($sqlarr, true, $debug);
+                }
             }
         }
     }
@@ -799,14 +854,17 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
     
     //These have to go!
     if ($debug) {
-        $db->debug=999;
+        $db->debug=true;
     }
+
     if ($CFG->dbtype == 'postgres7') {
         $backup_db = $GLOBALS['db'];
         $GLOBALS['db'] = &get_postgres_db();
     }
+
     execute_sql('TRUNCATE TABLE '.$CFG->prefix.'cache_text', $debug);
     execute_sql('TRUNCATE TABLE '.$CFG->prefix.'cache_filters', $debug);
+
     if ($CFG->dbtype == 'postgres7') {
         $GLOBALS['db'] = $backup_db;
         unset($backup_db);
@@ -814,6 +872,7 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
     if ($debug) {
         $db->debug=0;
     }
+
     //update site language
     $sitelanguage = get_record('config','name', 'lang');
     if (strstr($sitelanguage->value, 'utf8')===false and $sitelanguage->value) {
