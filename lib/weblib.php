@@ -2601,12 +2601,11 @@ function user_login_string($course=NULL, $user=NULL) {
     if (isset($user->id) and $user->id) {
         $fullname = fullname($user, true);
         $username = "<a target=\"{$CFG->framename}\" href=\"$CFG->wwwroot/user/view.php?id=$user->id&amp;course=$course->id\">$fullname</a>";
-        $instudentview = (!empty($USER->studentview)) ? get_string('instudentview') : '';
         if (isguest($user->id)) {
             $loggedinas = $realuserinfo.get_string('loggedinasguest').
                       " (<a target=\"{$CFG->framename}\" href=\"$wwwroot/login/index.php\">".get_string('login').'</a>)';
         } else {
-            $loggedinas = $realuserinfo.get_string('loggedinas', 'moodle', $username).' '.$instudentview.
+            $loggedinas = $realuserinfo.get_string('loggedinas', 'moodle', $username).' '.
                       " (<a target=\"{$CFG->framename}\" href=\"$CFG->wwwroot/login/logout.php\">".get_string('logout').'</a>)';
         }
     } else {
@@ -3681,34 +3680,6 @@ function update_course_icon($courseid) {
     }
 }
 
-/**
- * Returns a turn student view on/off button for course in a self contained form.
- *
- * @uses $CFG
- * @uses $USER
- * @param int $courseid The course  to update by id as found in 'course' table
- * @return string
- */
-function update_studentview_button($courseid) {
-
-    global $CFG, $USER;
-
-    if (isteacheredit($courseid,0,true)) {
-        if (!empty($USER->studentview)) {
-            $svstring = get_string('studentviewoff');
-            $svedit = 'off';
-        } else {
-            $svstring = get_string('studentviewon');
-            $svedit = 'on';
-        }
-        $button = "<form target=\"$CFG->framename\" method=\"get\" action=\"$CFG->wwwroot/course/view.php\">".
-            "<input type=\"hidden\" name=\"id\" value=\"$courseid\" />".
-            "<input type=\"hidden\" name=\"studentview\" value=\"$svedit\" />".
-            "<input type=\"hidden\" name=\"sesskey\" value=\"".sesskey()."\" />".
-            "<input type=\"submit\" value=\"$svstring\" /></form>";
-        return $button;
-    }
-}
 
 /**
  * Returns a turn edit on/off button for course in a self contained form.
@@ -3745,10 +3716,6 @@ function update_mymoodle_icon() {
 function update_module_button($moduleid, $courseid, $string) {
     global $CFG, $USER;
 
-    // do not display if studentview is on
-    if (!empty($USER->studentview)) {
-        return '';
-    }
 
     if (isteacheredit($courseid)) {
         $string = get_string('updatethis', '', $string);
