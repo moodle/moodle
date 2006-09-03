@@ -10,7 +10,7 @@
     define('FILTER_TABLE','filter_administration_table');
 
     $adminroot = admin_get_root();
-    admin_externalpage_setup('filtermanagement', $adminroot);
+    admin_externalpage_setup('managefilters', $adminroot);
 
     // get values from page
     $params = new object();

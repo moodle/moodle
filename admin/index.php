@@ -258,10 +258,6 @@
             upgrade_log_finish();
         }
     } else {
-        $strcurrentversion = get_string("currentversion");
-        print_header($strcurrentversion, $stradministration, $strcurrentversion,
-                     "", "", false, "&nbsp;", "&nbsp;");
-
         if (!set_config("version", $version)) {
             error("A problem occurred inserting current version into databases");
         }
@@ -274,9 +270,7 @@
         print_header($strcurrentrelease, $strcurrentrelease, $strcurrentrelease, "", "", false, "&nbsp;", "&nbsp;");
         print_heading("Moodle $release");
         if (!set_config("release", $release)) {
-            upgrade_log_start();
             notify("ERROR: Could not update release version in database!!");
-            upgrade_log_finish();
         }
         notice(get_string('releasenoteslink', 'admin', 'http://docs.moodle.org/en/Release_Notes'), 'index.php');
         exit;
@@ -504,7 +498,7 @@
             '</a> - <span class="explanation">'.get_string('adminhelpmanageblocks').'</span></div>';
         $configdata .= '<div class="adminlink"><a href="filters.php">'.get_string('managefilters').
             '</a> - <span class="explanation">'.get_string('adminhelpmanagefilters').'</span></div>';
-        if (!isset($CFG->disablescheduledbackups)) {
+        if (empty($CFG->disablescheduledbackups)) {
             $configdata .= '<div class="adminlink"><a href="backup.php">'.get_string('backup').
                 '</a> - <span class="explanation">'.get_string('adminhelpbackup').'</span></div>';
         }
@@ -515,7 +509,7 @@
         $configdata .= '<div class="adminlink"><a href="maintenance.php">'.get_string('sitemaintenancemode', 'admin').
             '</a> - <span class="explanation">'.get_string('helpsitemaintenance', 'admin').'</span></div>';
     
-        $table->data[] = array('<strong><a href="configure.php">'.get_string('configuration').'</a></strong>', $configdata);
+        $table->data[] = array('<strong>'.get_string('configuration').'</strong>', $configdata);
     
         $userdata =  '<div class="adminlink"><a href="auth.php?sesskey='.$USER->sesskey.'">'.get_string("authentication").
             '</a> - <span class="explanation">'.get_string('adminhelpauthentication').'</span></div>';
@@ -532,7 +526,7 @@
             get_string('assignsiteroles').'</a> - <span class="explanation">'.get_string('adminhelpassignsiteroles').
             '</span></div>';
     
-        $table->data[] = array('<strong><a href="users.php">'.get_string('users').'</a></strong>', $userdata);
+        $table->data[] = array('<strong>'.get_string('users').'</strong>', $userdata);
     
         $coursedata = '<div class="adminlink"><a href="../course/index.php?edit=on&amp;sesskey='.$USER->sesskey.'">'.get_string('managecourses').
             '</a> - <span class="explanation">'.get_string('adminhelpcourses').'</span></div>';
@@ -540,7 +534,7 @@
             '</a> - <span class="explanation">'.get_string('adminhelpenrolments').'</span></div>';
     
     
-        $table->data[] = array('<strong><a href="courses.php">'.get_string('courses').'</a></strong>', $coursedata);
+        $table->data[] = array('<strong>'.get_string('courses').'</strong>', $coursedata);
     
         $miscdata = '<div class="adminlink"><a href="../files/index.php?id='.$site->id.'">'.get_string('sitefiles').
             '</a> - <span class="explanation">'.get_string('adminhelpsitefiles').'</span></div>';
@@ -564,9 +558,9 @@
                 '</a> - <span class="explanation">'.get_string('adminhelpxmldbeditor').'</span></div>';
         }
     
-        $table->data[] = array('<strong><a href="misc.php">'.get_string('miscellaneous').'</a></strong>', $miscdata);
+        $table->data[] = array('<strong>'.get_string('miscellaneous').'</strong>', $miscdata);
     
-    
+/*    
         /// Hooks for Matt Oquists contrib code for repositories and portfolio.  
         /// The eventual official versions may not look like this
         if (isset($CFG->portfolio) && file_exists("$CFG->dirroot/$CFG->portfolio")) {
@@ -580,7 +574,7 @@
                         repository').'</a></strong>',
                     '<div class="explanation">'.get_string('adminhelprepository','repository').'</div>');
         }
-    
+*/   
     
     
         print_table($table);

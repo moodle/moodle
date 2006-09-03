@@ -33,7 +33,7 @@ class block_admin extends block_list {
         global $CFG, $USER;
         
         $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
-        if (has_capability('moodle/site:config', $context)) {
+/*        if (has_capability('moodle/site:config', $context)) {
 
             $this->content->items[] = '<a href="'.$CFG->wwwroot.'/'.$CFG->admin.'/configure.php">'.get_string('configuration').'</a>';
             $this->content->icons[] = '<img src="'.$CFG->pixpath.'/i/admin.gif" alt="" />';
@@ -42,7 +42,7 @@ class block_admin extends block_list {
         if (has_capability('moodle/site:config', $context)) {
             $this->content->items[] = '<a href="'.$CFG->wwwroot.'/'.$CFG->admin.'/users.php">'.get_string('users').'</a>';
             $this->content->icons[] = '<img src="'.$CFG->pixpath.'/i/users.gif" alt="" />';
-        }
+        }*/
         
         if (has_capability('moodle/site:backup', $context)) {
             $this->content->items[]='<a href="'.$CFG->wwwroot.'/backup/backup.php?id='.SITEID.'">'.get_string('backup').'</a>';

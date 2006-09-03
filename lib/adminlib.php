@@ -1232,7 +1232,7 @@ class admin_setting_configtext extends admin_setting {
 
     var $paramtype;
 
-    function admin_setting_configtext($name, $visiblename, $description, $defaultsetting, $paramtype) {
+    function admin_setting_configtext($name, $visiblename, $description, $defaultsetting, $paramtype=PARAM_RAW) {
         $this->paramtype = $paramtype;
         parent::admin_setting($name, $visiblename, $description, $defaultsetting);
     }
@@ -1554,7 +1554,7 @@ class admin_setting_sitesettext extends admin_setting_configtext {
 
     var $id;
 
-    function admin_setting_sitesettext($name, $visiblename, $description, $defaultsetting, $paramtype) {
+    function admin_setting_sitesettext($name, $visiblename, $description, $defaultsetting, $paramtype=PARAM_RAW) {
 
         $this->id = SITEID;
         parent::admin_setting_configtext($name, $visiblename, $description, $defaultsetting, $paramtype);
@@ -2261,12 +2261,12 @@ function admin_get_root() {
         // start the admin tree!
         $ADMIN = new admin_category('root','Administration');
         // we process this file first to get categories up and running
-        include($CFG->dirroot . '/admin/settings/first.php');
+        include($CFG->dirroot . '/admin/settings/top.php');
 
         // now we process all other files in admin/settings to build the
         // admin tree
         foreach (glob($CFG->dirroot . '/admin/settings/*.php') as $file) {
-            if ($file != $CFG->dirroot . '/admin/settings/first.php') {
+            if ($file != $CFG->dirroot . '/admin/settings/top.php') {
                 include_once($file);
             }
         }

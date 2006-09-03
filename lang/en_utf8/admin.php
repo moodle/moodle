@@ -1,7 +1,7 @@
 <?PHP // $Id$ 
       // admin.php - created with Moodle 1.6 development (2005053000)
 
-
+/*
 // begin {added with admin cleanup}
 $string['userinterface'] = 'User Interface';
 $string['userlist'] = 'Browse list of users';
@@ -31,11 +31,13 @@ $string['performanceandstats'] = 'Performance &amp; Stats';
 $string['backups'] = 'Backups';
 $string['courserequests'] = 'Course Requests';
 $string['themeselector'] = 'Theme Selector';
+*/
 
 $string['nonewsettings'] = 'No new settings were added during this upgrade.';
 $string['upgradesettings'] = 'New Settings';
 $string['upgradesettingsintro'] = 'The settings shown below were added during your last Moodle upgrade. Make any changes necessary to the defaults and then click &quot;Save Settings&quot; at the bottom of this page.';
 // end {added with admin cleanup}
+
 
 $string['adminseesallevents'] = 'Administrators see all events';
 $string['adminseesownevents'] = 'Administrators are just like other users';

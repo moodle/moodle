@@ -6,7 +6,7 @@
     require_once($CFG->libdir.'/adminlib.php');
 
     $adminroot = admin_get_root();
-    admin_externalpage_setup('userauthentication', $adminroot);
+    admin_externalpage_setup('authentication', $adminroot);
 
     $auth = optional_param('auth', '', PARAM_SAFEDIR);
 

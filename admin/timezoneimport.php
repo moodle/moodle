@@ -3,7 +3,7 @@
     // Automatic update of Timezones from a new source
     
     require_once('../config.php');
-    require_once($CFG->dirroot .'/admin/adminlib.php');
+    require_once($CFG->libdir.'/adminlib.php');
     require_once($CFG->libdir.'/filelib.php');
     require_once($CFG->libdir.'/olson.php');
 

@@ -4,7 +4,7 @@
     require_once('../config.php');
     require_once($CFG->libdir.'/adminlib.php');
     $adminroot = admin_get_root();
-    admin_externalpage_setup('modulemanagement', $adminroot);
+    admin_externalpage_setup('managemodules', $adminroot);
     require_once('../course/lib.php');
 
     $show    = optional_param('show', '', PARAM_SAFEDIR);

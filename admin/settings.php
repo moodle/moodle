@@ -89,6 +89,7 @@ echo '<form action="settings.php" method="post" name="mainform">';
 echo '<input type="hidden" name="section" value="' . $PAGE->section . '" />';
 echo '<input type="hidden" name="sesskey" value="' . $USER->sesskey . '" />';
 echo '<input type="hidden" name="return" value="' . $return . '" />';
+print_heading($root->visiblename);
 print_simple_box_start('','100%','',5,'generalbox','');
 
 echo $root->output_html();

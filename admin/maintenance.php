@@ -7,7 +7,7 @@
     $action = optional_param('action', '', PARAM_ALPHA);
 
     $adminroot = admin_get_root();
-    admin_externalpage_setup('maintenancemode', $adminroot);
+    admin_externalpage_setup('sitemaintenancemode', $adminroot);
 
     //Check folder exists
     if (! make_upload_directory(SITEID)) {   // Site folder
