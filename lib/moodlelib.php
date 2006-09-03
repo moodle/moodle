@@ -5091,12 +5091,6 @@ function get_list_of_countries() {
 
     $lang = current_language();
 
-    if (!empty($CFG->unicodedb)) {
-        $defaultlang = 'en_utf8';
-    } else {
-        $defaultlang = 'en';
-    }
-
     if (!file_exists($CFG->dirroot .'/lang/'. $lang .'/countries.php') &&
         !file_exists($CFG->dataroot.'/lang/'. $lang .'/countries.php')) {
         if ($parentlang = get_string('parentlanguage')) {
@@ -5104,14 +5098,13 @@ function get_list_of_countries() {
                 file_exists($CFG->dataroot.'/lang/'. $parentlang .'/countries.php')) {
                 $lang = $parentlang;
             } else {
-                $lang = $defaultlang;  // countries.php must exist in this pack
+                $lang = 'en_utf8';  // countries.php must exist in this pack
             }
         } else {
-            $lang = $defaultlang;  // countries.php must exist in this pack
+            $lang = 'en_utf8';  // countries.php must exist in this pack
         }
     }
 
-    $string = array();
     if (file_exists($CFG->dataroot .'/lang/'. $lang .'/countries.php')) {
         include($CFG->dataroot .'/lang/'. $lang .'/countries.php');
     } else if (file_exists($CFG->dirroot .'/lang/'. $lang .'/countries.php')) {
