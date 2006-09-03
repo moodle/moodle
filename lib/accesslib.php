@@ -1198,6 +1198,8 @@ function role_assign($roleid, $userid, $groupid, $contextid, $timestart=0, $time
     if ($success && !empty($USER->id) && $USER->id == $userid) {
         load_user_capability();
     }
+
+    return $success;
 }
 
 
