@@ -12,7 +12,6 @@
     $hide        = optional_param('hide', 0, PARAM_INT);
     $show        = optional_param('show', 0, PARAM_INT);
     $idnumber    = optional_param('idnumber', '', PARAM_RAW);
-    $studentview = optional_param('studentview', -1, PARAM_BOOL);
     $section     = optional_param('section', 0, PARAM_INT);
     $move        = optional_param('move', 0, PARAM_INT);
     $marker      = optional_param('marker',-1 , PARAM_INT);
@@ -42,7 +41,7 @@
     //url with appropriate authentication attached as parameter 
     if (file_exists($CFG->dirroot .'/course/externservercourse.php')) {
         include $CFG->dirroot .'/course/externservercourse.php';
-        if (function_exists(extern_server_course)) {
+        if (function_exists('extern_server_course')) {
             if ($extern_url = extern_server_course($course)) {
                 redirect($extern_url);
             }
@@ -65,15 +64,6 @@
         $USER->editing = 0;
     }
 
-    if (!isset($USER->studentview)) {
-        $USER->studentview = false;
-    }
-
-    // need to check this here, as studentview=on disables edit allowed (where 'on' is checked)
-    if (($studentview == 0) and confirm_sesskey()) {
-        $USER->studentview = false;
-    }
-
     if ($PAGE->user_allowed_editing()) {
         if (($edit == 1) and confirm_sesskey()) {
             $USER->editing = 1;
@@ -83,11 +73,6 @@
                 $USER->activitycopy       = false;
                 $USER->activitycopycourse = NULL;
             }
-        }
-
-        if (($studentview == 1) and confirm_sesskey()) {
-            $USER->studentview = true;
-            $USER->editing = 0;
         }
 
         if ($hide && confirm_sesskey()) {
