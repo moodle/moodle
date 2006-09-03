@@ -4,11 +4,16 @@
     require_once($CFG->dirroot.'/lib/statslib.php');
     require_once($CFG->dirroot.'/course/report/stats/lib.php');
 
-    if (empty($CFG->enablestats)) {
-        error("Stats is not enabled.");
-    }
+    require_once($CFG->libdir.'/adminlib.php');
 
-    $courseid = required_param('course', PARAM_INT);
+    $adminroot = admin_get_root();
+
+    admin_externalpage_setup('reportcourseoverview', $adminroot);
+
+    admin_externalpage_print_header($adminroot);
+
+
+    $courseid = optional_param('course', SITEID, PARAM_INT);
     $report   = optional_param('report', 0, PARAM_INT);
     $time     = optional_param('time', 0, PARAM_INT);
     $mode     = optional_param('mode', STATS_MODE_GENERAL, PARAM_INT);
@@ -33,6 +38,11 @@
     }
 
     require_login();
+
+    if (empty($CFG->enablestats)) {
+        redirect("$CFG->wwwroot/$CFG->admin/settings.php?section=stats", get_string('mustenablestats', 'admin'));
+    }
+
     if (!isteacher($course->id)) {
         error("You need to be a teacher to use this page");
     }
@@ -42,22 +52,22 @@
     stats_check_uptodate($course->id);
     
     
-    $strreports = get_string("reports");
-    $strstats = get_string('stats');
+//    $strreports = get_string("reports");
+//    $strstats = get_string('stats');
+//
+//    $menu = report_stats_mode_menu($course, $mode, $time);
+//
+//
+//    $crumb = "<a href=\"{$CFG->wwwroot}/admin\">".get_string('administration')."</a> ->
+//             <a href=\"{$CFG->wwwroot}/admin/report.php\">$strreports</a> ->
+//             $strstats";
 
-    $menu = report_stats_mode_menu($course, $mode, $time);
-
-
-    $crumb = "<a href=\"{$CFG->wwwroot}/admin\">".get_string('administration')."</a> ->
-              <a href=\"{$CFG->wwwroot}/admin/report.php\">$strreports</a> ->
-              $strstats";
-
-    print_header("$course->shortname: $strstats", "$course->fullname", 
-                  $crumb, '', '', true, '&nbsp', $menu);
+//    print_header("$course->shortname: $strstats", "$course->fullname", 
+//                  $crumb, '', '', true, '&nbsp', $menu);
     
     
     require_once($CFG->dirroot.'/course/report/stats/report.php');
     
-    print_footer();
+    admin_externalpage_print_footer($adminroot);
 
 ?>

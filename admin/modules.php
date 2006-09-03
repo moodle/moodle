@@ -17,7 +17,7 @@
 
     $stradministration = get_string("administration");
     $strconfiguration = get_string("configuration");
-    $strmanagemodules = get_string("managemodules");
+    $stractivities = get_string("activities");
     $strdelete = get_string("delete");
     $strversion = get_string("version");
     $strhide = get_string("hide");
@@ -26,13 +26,9 @@
     $stractivities = get_string("activities");
     $stractivitymodule = get_string("activitymodule");
 
-//    print_header("$site->shortname: $strmanagemodules", "$site->fullname", 
-//                 "<a href=\"index.php\">$stradministration</a> -> ".
-//                 "<a href=\"configure.php\">$strconfiguration</a> -> $strmanagemodules");
-
     admin_externalpage_print_header($adminroot);
 
-    print_heading($strmanagemodules);
+    print_heading($stractivities);
    
     $coursesaffected = false;
     

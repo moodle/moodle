@@ -4,15 +4,27 @@
 // We use it to create the categories, since they need to exist *before* settingpages and externalpages
 // are added to them
 
-$ADMIN->add('root', new admin_externalpage('adminnotifications', get_string('notifications'), $CFG->wwwroot . '/admin/index.php'));
-$ADMIN->add('root', new admin_category('settings', get_string('sitesettings')));
-$ADMIN->add('root', new admin_category('advancedconfiguration', get_string('advancedconfiguration','admin')));
-$ADMIN->add('root', new admin_category('users', get_string('users')));
-$ADMIN->add('root', new admin_category('courses', get_string('courses')));
-$ADMIN->add('root', new admin_category('maintenance', get_string('maintenance','admin')));
-$ADMIN->add('root', new admin_category('misc', get_string('miscellaneous')));
-if ($CFG->debug > 7) {
-    $ADMIN->add('root', new admin_category('devel', get_string('developers','admin')));
+$ADMIN->add('root', new admin_externalpage('adminnotifications', get_string('notifications'), "$CFG->wwwroot/$CFG->admin/index.php"));
+$ADMIN->add('root', new admin_category('users', get_string('users','admin')));
+$ADMIN->add('root', new admin_category('courses', get_string('courses','admin')));
+$ADMIN->add('root', new admin_category('location', get_string('location','admin')));
+$ADMIN->add('root', new admin_category('language', get_string('language')));
+
+$ADMIN->add('root', new admin_category('modules', get_string('plugins', 'admin')));
+$ADMIN->add('modules', new admin_externalpage('modulemanagement', get_string('activities'), "$CFG->wwwroot/$CFG->admin/modules.php"));
+$ADMIN->add('modules', new admin_externalpage('blockmanagement', get_string('blocks'), "$CFG->wwwroot/$CFG->admin/blocks.php"));
+$ADMIN->add('modules', new admin_externalpage('filtermanagement', get_string('managefilters'), "$CFG->wwwroot/$CFG->admin/filters.php"));
+
+$ADMIN->add('root', new admin_category('security', get_string('security','admin')));
+$ADMIN->add('root', new admin_category('appearance', get_string('appearance','admin')));
+$ADMIN->add('root', new admin_category('server', get_string('server','admin')));
+
+$ADMIN->add('root', new admin_category('reports', get_string('reports')));
+foreach(get_list_of_plugins('admin/report') as $plugin) {
+    $ADMIN->add('reports', new admin_externalpage('report' . $plugin, get_string($plugin, 'admin'), "$CFG->wwwroot/$CFG->admin/report/$plugin/index.php"));
 }
+
+$ADMIN->add('root', new admin_category('misc', get_string('miscellaneous'), 999));
+
 
 ?>

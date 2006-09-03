@@ -2,14 +2,20 @@
 
 // This file defines settingpages and externalpages under the "users" category
 
-global $USER;
+
+$ADMIN->add('users', new admin_externalpage('userauthentication', get_string('authentication','admin'), "$CFG->wwwroot/$CFG->admin/auth.php"));
+
+// stuff under the "accounts" subcategory
+$ADMIN->add('users', new admin_category('accounts', get_string('accounts', 'admin')));
+$ADMIN->add('accounts', new admin_externalpage('editusers', get_string('userlist','admin'), "$CFG->wwwroot/$CFG->admin/user.php"));
+$ADMIN->add('accounts', new admin_externalpage('addnewuser', get_string('addnewuser'), "$CFG->wwwroot/$CFG->admin/user.php?newuser=true"));
+$ADMIN->add('accounts', new admin_externalpage('uploadusers', get_string('uploadusers'), "$CFG->wwwroot/$CFG->admin/uploaduser.php"));
 
 
-$ADMIN->add('users', new admin_externalpage('authentication', get_string('authentication'), $CFG->wwwroot . '/admin/auth.php'));
-$ADMIN->add('users', new admin_externalpage('edituser', get_string('edituser'), $CFG->wwwroot . '/admin/user.php'));
-$ADMIN->add('users', new admin_externalpage('addnewuser', get_string('addnewuser'), $CFG->wwwroot . '/admin/user.php?newuser=true&amp;sesskey='. (isset($USER->sesskey) ? $USER->sesskey : '')));
-$ADMIN->add('users', new admin_externalpage('uploadusers', get_string('uploadusers'), $CFG->wwwroot . '/admin/uploaduser.php'));
-$ADMIN->add('users', new admin_externalpage('manageroles', get_string('manageroles'), $CFG->wwwroot . '/admin/roles/manage.php'));
-$ADMIN->add('users', new admin_externalpage('assignsitewideroles', get_string('assignsiteroles'), $CFG->wwwroot . '/admin/roles/assign.php?contextid=' . SITEID));
+// stuff under the "roles" subcategory
+$ADMIN->add('users', new admin_category('roles', get_string('permissions', 'role')));
+$ADMIN->add('roles', new admin_externalpage('defineroles', get_string('defineroles', 'role'), "$CFG->wwwroot/$CFG->admin/roles/manage.php"));
+$ADMIN->add('roles', new admin_externalpage('assignroles', get_string('assignroles', 'role'), "$CFG->wwwroot/$CFG->admin/roles/assign.php?contextid=" . SITEID));
+
 
 ?>

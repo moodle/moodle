@@ -9,7 +9,7 @@
 
     $pagetypes = array(PAGE_MY_MOODLE => array('id' => PAGE_MY_MOODLE,
                                               'lib' => '/my/pagelib.php',
-                                              'name' => get_string('stickyblocksmymoodle','admin')),
+                                              'name' => get_string('mymoodle','admin')),
                        PAGE_COURSE_VIEW => array('id' => PAGE_COURSE_VIEW, 
                                                 'lib' => '/lib/pagelib.php',
                                                 'name' => get_string('stickyblockscourseview','admin'))

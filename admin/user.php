@@ -20,10 +20,10 @@
     $admin   = new object();
     $teacher = new object();
 
-    $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
+    if (!$context = get_context_instance(CONTEXT_SYSTEM, SITEID)) {  // Should never happen
+        redirect('index.php');
+    }
 
-
-    //if (! record_exists("user_admins")) {   // No admin user yet
     if (!$CFG->rolesactive) {   // No admin user yet.
 
         $user->firstname    = get_string("admin");
@@ -42,12 +42,6 @@
 
         
         $admin->userid = $user->id;
-
-        /*
-        if (! insert_record("user_admins", $admin)) {
-            error("Could not make user $user->id an admin !!!");
-        }
-        */
 
         if (! $user = get_record("user", "id", $user->id)) {   // Double check.
             error("User ID was incorrect (can't find it)");
@@ -68,18 +62,6 @@
             error("Could not find site-level course");
         }
         
-        
-        /*
-        // Assign as a teacher in the site-level course.
-        $teacher->userid = $user->id;
-        $teacher->course = $site->id;
-        $teacher->authority = 1;
-        if (! insert_record("user_teachers", $teacher)) {
-            error("Could not make user $id a teacher of site-level course !!!");
-        }
-        */
-
-
         // Log the user in.
         $USER = $user;
         $USER->loggedin = true;
@@ -88,11 +70,12 @@
         $USER->admin = true;
         //$USER->teacher["$site->id"] = true;
         $USER->newadminuser = true;
+
         sesskey();   // For added security, used to check script parameters
+
         load_user_capability();
 
-
-        redirect("$CFG->wwwroot/user/edit.php?id=$user->id&amp;course=$site->id");
+        redirect("$CFG->wwwroot/user/edit.php?id=$user->id&amp;course=$site->id");  // Edit thyself
         exit;
 
     } else {
@@ -104,25 +87,27 @@
     require_login();
 
     
-    if ($newuser && confirm_sesskey()) {                 // Create a new user
+    if ($newuser) {                 // Create a new user
         
         if (!has_capability('moodle/user:create', $context)) {
             error('You do not have the required permission to create new users.');
         }
-        
-        $user->auth         = "manual";
-        $user->firstname    = "";
-        $user->lastname     = "";
-        $user->username     = "changeme";
-        $user->password     = "";
-        $user->email        = "";
-        $user->lang         = $CFG->lang;
-        $user->confirmed    = 1;
-        $user->timemodified = time();
 
-        if (! $user->id = insert_record("user", $user)) {
-            if (!$user = get_record("user", "username", "changeme")) {   // half finished user from another time
-                error("Could not start a new user!");
+        if (!$user = get_record('user', 'username', 'changeme')) {   // half finished user from another time
+        
+            $user = new object;
+            $user->auth         = 'manual';
+            $user->firstname    = '';
+            $user->lastname     = '';
+            $user->username     = 'changeme';
+            $user->password     = '';
+            $user->email        = '';
+            $user->lang         = $CFG->lang;
+            $user->confirmed    = 1;
+            $user->timemodified = time();
+
+            if (! $user->id = insert_record('user', $user)) {
+                error('Could not start a new user!');
             }
         }
 

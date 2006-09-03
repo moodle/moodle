@@ -12,16 +12,22 @@
 /** */
 require_once(dirname(__FILE__) . '/../../../config.php');
 require_once($CFG->libdir . '/moodlelib.php');
+require_once($CFG->libdir.'/adminlib.php');
 require_once('ex_simple_test.php');
 require_once('ex_reporter.php');
+
+require_login();
+require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM, SITEID));
+
+$adminroot = admin_get_root();
+admin_externalpage_setup('reportsimpletest', $adminroot);
+
 
 /* The UNITTEST constant can be checked elsewhere if you need to know
  * when your code is being run as part of a unit test. */
 define('UNITTEST', true);
 $langfile = 'simpletest';
 
-require_login();
-require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM, SITEID));
 // CGI arguments
 $path = optional_param('path', '', PARAM_PATH);
 $showpasses = optional_param('showpasses', false, PARAM_BOOL);
@@ -41,12 +47,9 @@ $reporter = new ExHtmlReporter($showpasses);
 
 // Print the header.
 $strtitle = get_string('unittests', $langfile);
-$stradmin = get_string('administration');
-print_header("$SITE->shortname: $strtitle", $SITE->fullname,
-        '<a href="../../index.php">' . get_string('administration') . '</a> -> ' .
-        '<a href="../../misc.php">' . get_string('miscellaneous') . '</a> -> ' .
-        '<a href="../../report.php">' . get_string('reports') . '</a> -> ' .
-        $strtitle, '', '<style type="text/css">' . $reporter->_getCss() . '</style>');
+
+admin_externalpage_print_header($adminroot);
+
 if ($showsearch) {
     print_heading('Searching for test cases');
 }
@@ -98,6 +101,6 @@ echo '</form>';
 print_simple_box_end();
 
 // Footer.
-print_footer();
+admin_externalpage_print_footer($adminroot);
 
 ?>

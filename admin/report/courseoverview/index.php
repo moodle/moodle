@@ -2,18 +2,24 @@
 
     require_once('../../../config.php');
     require_once($CFG->dirroot.'/lib/statslib.php');
+    require_once($CFG->libdir.'/adminlib.php');
+
+    $adminroot = admin_get_root();
+
+    admin_externalpage_setup('reportcourseoverview', $adminroot);
+
+    admin_externalpage_print_header($adminroot);
 
     $report     = optional_param('report', STATS_REPORT_ACTIVE_COURSES, PARAM_INT);
     $time       = optional_param('time', 0, PARAM_INT);
     $numcourses = optional_param('numcourses', 20, PARAM_INT);
 
+    require_capability('moodle/site:viewreports', get_context_instance(CONTEXT_SYSTEM, SITEID));  // needed?
+
     if (empty($CFG->enablestats)) {
-        error("Stats is not enabled.");
+        redirect("$CFG->wwwroot/$CFG->admin/settings.php?section=stats", get_string('mustenablestats', 'admin'));
     }
 
-    require_login();
-
-    require_capability('moodle/site:viewreports', get_context_instance(CONTEXT_SYSTEM, SITEID));
 
     $course = get_site();
     stats_check_uptodate($course->id);
@@ -104,6 +110,6 @@
         print_table($table);
     }
     
-    print_footer();
+    admin_externalpage_print_footer($adminroot);
 
 ?>
