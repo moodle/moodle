@@ -30,6 +30,11 @@ function migrate2utf8_user($fields, $crash, $debug, $maxrecords, $done, $tablest
 
         /// Drop index here
 
+        /* Note: we aren't going to drop indexes from migration
+           functions anymore. The main script is responsible for
+           both dropping and recreating all the indexes present
+           in each table
+           
         if ($dropindex) {
             $SQL = 'ALTER TABLE '.$CFG->prefix.'user DROP INDEX '.$dropindex.';';
             $SQL1 = 'ALTER TABLE '.$CFG->prefix.'user DROP INDEX '.$CFG->prefix.$dropindex.';'; // see bug 5205
@@ -38,7 +43,7 @@ function migrate2utf8_user($fields, $crash, $debug, $maxrecords, $done, $tablest
             }
             execute_sql($SQL, false); // see bug 5205
             execute_sql($SQL1, false); // see bug 5205
-        }
+        } */
 
         /// Change column encoding here
 
@@ -183,6 +188,12 @@ function migrate2utf8_user($fields, $crash, $debug, $maxrecords, $done, $tablest
     }
     
     /// Add index back
+
+    /* Note: we aren't going to drop indexes from migration
+       functions anymore. The main script is responsible for
+       both dropping and recreating all the indexes present
+       in each table
+
     $alter = 0;
     $SQL = 'ALTER TABLE '.$CFG->prefix.'user';
 
@@ -213,11 +224,9 @@ function migrate2utf8_user($fields, $crash, $debug, $maxrecords, $done, $tablest
             $db->debug=0;
         }
     }
-    /// Done adding index back
+    /// Done adding index back */
 
 }
-
-
 
 
 function migrate2utf8_role_name($recordid){
