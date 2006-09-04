@@ -581,11 +581,10 @@ function validate_form(&$form, &$err) {
 
 function calendar_add_event_allowed($courseid, $groupid, $userid) {
     global $USER;
-
-    if(isadmin()) {
-        return true;
-    }
-    else if($courseid == 0 && $groupid == 0 && $userid == $USER->id) {
+    
+    $coursecontext = get_context_instance(CONTEXT_COURSE, $group->courseid);
+    
+    if ($courseid == 0 && $groupid == 0 && $userid == $USER->id && has_capability('moodle/calendar:manageownentries', $context)) {
         return true;
     }
     else if($courseid == 0 && $groupid != 0) {
@@ -593,9 +592,14 @@ function calendar_add_event_allowed($courseid, $groupid, $userid) {
         if($group === false) {
             return false;
         }
-        return isteacheredit($group->courseid) || isteacher($group->courseid) && ismember($groupid);
+        $course = get_record('course', 'id', $courseid);
+        if ($course->groupmode == SEPARATE_GROUPS) {
+            return has_capability('moodle/calendar:manageentries', $context) && ismember($groupid);
+        } else {
+            return has_capability('moodle/calendar:manageentries', $context);
+        }
     }
-    else if($courseid != 0 && isteacher($courseid)) {
+    else if($courseid != 0 && has_capability('moodle/calendar:manageentries', $context)) {
         return true;
     }
 

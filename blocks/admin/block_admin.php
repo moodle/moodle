@@ -207,7 +207,7 @@ class block_admin extends block_list {
             $this->content->items[]='<a href="http://docs.moodle.org/'.$lang.'/Teacher_documentation">'.get_string('help').'</a>';
             $this->content->icons[]='<img src="'.$CFG->modpixpath.'/resource/icon.gif" alt="" />';
 
-        } else if (!isguest()) {  // Students menu
+        } else if (has_capability('moodle/course:view', $context)) {  // Students menu
 
             if ($course->showgrades) {
                 $this->content->items[]='<a href="'.$CFG->wwwroot.'/grade/index.php?id='.$this->instance->pageid.'">'.get_string('grades').'</a>';

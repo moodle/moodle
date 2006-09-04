@@ -1125,7 +1125,7 @@ function calendar_set_filters(&$courses, &$group, &$user, $courseeventsfrom = NU
             foreach($groupcourses as $courseid) {
 
                 // If the user is an editing teacher in there,
-                if(!empty($USER->id) && isteacheredit($courseid, $USER->id)) {
+                if(!empty($USER->id) && has_capability('moodle/calendar:manageentries', get_context_instance(CONTEXT_COURSE, $courseid))) {
 
                     // The first time we get in here, retrieve all groupmodes at once
                     if($groupmodes === NULL) {
@@ -1163,22 +1163,28 @@ function calendar_set_filters(&$courses, &$group, &$user, $courseeventsfrom = NU
 function calendar_edit_event_allowed($event) {
     global $USER;
 
-    if(empty($USER->id) || isguest($USER->id)) {
+    $context = get_context_instance(CONTEXT_COURSE, $event->courseid);
+    
+    if(!has_capability('moodle/calendar:manageownentries', $context)) {
         return false;
     }
 
-    if (isadmin($USER->id)) return true; // Admins are allowed anything
-
-    if ($event->courseid != 0 && isteacher($event->courseid)) {
+    if ($event->courseid != 0 && has_capability('moodle/calendar:manageentries', $context)) {
         return true;
-    } else if($event->courseid == 0 && $event->groupid != 0) {
+    } else if ($event->courseid == 0 && $event->groupid != 0) {
         // Group event
         $group = get_record('groups', 'id', $event->groupid);
         if($group === false) {
             return false;
         }
-        return isteacheredit($group->courseid) || isteacher($group->courseid) && ismember($event->groupid);
-    } else if($event->courseid == 0 && $event->groupid == 0 && $event->userid == $USER->id) {
+        $course = get_record('course', 'id', $event->courseid);
+        
+        if ($course->groupmode == SEPARATE_GROUPS) {
+            return has_capability('moodle/calendar:manageownentries', $context) && ismember($event->groupid);
+        } else {
+            return has_capability('moodle/calendar:manageownentries', $context);
+        }
+    } else if ($event->courseid == 0 && $event->groupid == 0 && $event->userid == $USER->id && has_capability('moodle/calendar:manageownentries', $context)) {
         // User event, owned by this user
         return true;
     }

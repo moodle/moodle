@@ -90,7 +90,7 @@
         $this->courseid = SITEID;
         if ($this->instance->pagetype == PAGE_COURSE_VIEW) {
             $this->courseid = $COURSE->id;
-            $isteacher = isteacher($this->courseid);
+            $isteacher = has_capability('moodle/site:manageblocks', get_context_instance(CONTEXT_BLOCK, $this->instance->id));
         }
 
         //if the user is an admin, course teacher, or all users are allowed
@@ -100,6 +100,7 @@
         if (isset($USER) && !empty($USER->id) && $USER->id && !isguest()) {
             $userisloggedin = true;
         }
+        
         if ( $userisloggedin && ($submitters == SUBMITTERS_ALL_ACCOUNT_HOLDERS || ($submitters == SUBMITTERS_ADMIN_AND_TEACHER && $isteacher)) ) {
 
             $page = page_create_object($this->instance->pagetype, $this->instance->pageid);

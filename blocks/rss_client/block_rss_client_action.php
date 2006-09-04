@@ -69,7 +69,15 @@ print_header($straddedit, $straddedit, $navigation);
 
 //check to make sure that the user is allowed to post new feeds
 $submitters = $CFG->block_rss_client_submitters;
-$isteacher  = empty($course) ? false : isteacher($id);
+if (empty($course)) {
+    $isteacher = false;
+} else {
+    if ($id == SITEID) {
+        $isteacher = has_capability('moodle/site:manageblocks', get_context_instance(CONTEXT_SITE, SITEID));
+    } else {
+        $isteacher = has_capability('moodle/site:manageblocks', get_context_instance(CONTEXT_COURSE, $id));
+    }
+}
 
 if ( !isset($act) ) {
     rss_display_feeds($id);
@@ -84,7 +92,7 @@ if ( isset($rssid) ) {
 
 //if the user is an admin or course teacher then allow the user to
 //assign categories to other uses than personal
-if (isset($rss_record) && !( isadmin() || $submitters == SUBMITTERS_ALL_ACCOUNT_HOLDERS || 
+if (isset($rss_record) && !( has_capability('moodle/site:manageblocks', get_context_instance(CONTEXT_SYSTEM, SITEID)) || $submitters == SUBMITTERS_ALL_ACCOUNT_HOLDERS || 
         ($submitters == SUBMITTERS_ADMIN_AND_TEACHER && $isteacher) || 
             ( ($act == 'rssedit' || $act == 'delfeed' || $act == 'updfeed') && $USER->id == $rss_record->userid)  ) ) {
         error(get_string('noguestpost', 'forum').' You are not allowed to make modifications to this RSS feed at this time.', $referrer);

@@ -56,7 +56,7 @@ class block_online_users extends block_base {
 
         if ($COURSE->id == SITEID) {  // Site-level
             $courseselect = '';
-            $timeselect = "AND (s.timeaccess > $timefrom OR u.lastaccess > $timefrom)";
+            $timeselect = "AND timeaccess > $timefrom OR u.lastaccess > $timefrom)";
         } else {
             $courseselect = "AND s.course = '".$COURSE->id."'";
             $timeselect = "AND s.timeaccess > $timefrom";
@@ -64,54 +64,26 @@ class block_online_users extends block_base {
 
         $users = array();
 
-        if ($students = get_records_sql("SELECT u.id, u.username, u.firstname, u.lastname, u.picture, u.lastaccess, s.timeaccess
-                                     FROM {$CFG->prefix}user u,
-                                          {$CFG->prefix}user_students s
-                                          $groupmembers
-                                     WHERE u.id = s.userid $courseselect $groupselect $timeselect 
-                                  ORDER BY s.timeaccess DESC ".sql_paging_limit(0,20))) {
-
-            foreach ($students as $student) {
-                $student->fullname = fullname($student);
-                $users[$student->id] = $student;
+        $SQL1 = "SELECT DISTINCT userid, userid FROM {$CFG->prefix}log WHERE course=$COURSE->id AND time>$timefrom";
+        if ($records = get_records_sql($SQL1)) {
+            $possibleusers = '(';
+            foreach ($records as $record) {
+                $possibleusers .= $record->userid.',';
             }
-        }
-
-        if ($COURSE->id == SITEID && $CFG->allusersaresitestudents) {
-            if ($siteusers = get_records_sql("SELECT u.id, u.username, u.firstname, u.lastname, u.picture, u.lastaccess
-                                     FROM {$CFG->prefix}user u
-                                     WHERE u.lastaccess > $timefrom AND u.username <> 'guest'
-                                  ORDER BY u.lastaccess DESC ".sql_paging_limit(0,20))) {
-                foreach ($siteusers as $siteuser) {
-                    $siteuser->fullname = fullname($siteuser);
-                    $siteuser->timeaccess = $siteuser->lastaccess;
-                    $users[$siteuser->id] = $siteuser;
-                }
-            }
-        }
-
-        $findteacherssql = "SELECT u.id, u.username, u.firstname, u.lastname, u.picture, u.lastaccess, s.timeaccess
-                                     FROM {$CFG->prefix}user u,
-                                          {$CFG->prefix}user_teachers s
-                                          $groupmembers
-                                     WHERE u.id = s.userid $courseselect $groupselect $timeselect ";
+            $possibleusers = rtrim($possibleusers, ',').')';
+            $SQL2 = "SELECT u.id, u.username, u.firstname, u.lastname, u.picture, u.lastaccess
+                    FROM {$CFG->prefix}user u
+                    $groupmembers
+                    WHERE u.id IN $possibleusers $groupselect ".sql_paging_limit(0,20);
         
-        // Now that we have the Roles System, how will we handle what
-        // used to be hidden teachers?
-        if (!isteacher($COURSE->id)) {
-            // Hide hidden teachers from students.
-            $findteacherssql .= 'AND s.authority > 0 ';
-        }
-        $findteacherssql .= 'ORDER BY s.timeaccess DESC';
-
-        if ($teachers = get_records_sql($findteacherssql)) {
-            foreach ($teachers as $teacher) {
-                $teacher->fullname = '<strong>'.fullname($teacher).'</strong>';
-                $users[$teacher->id] = $teacher;
-            }
-        }
-
-
+            if ($pusers = get_records_sql($SQL2)) {
+                foreach ($pusers as $puser) {
+                    $puser->fullname = fullname($puser);
+                    $users[$puser->id] = $puser;  
+                }
+            }  
+        }   
+        
         //Calculate minutes
         $minutes  = floor($timetoshowusers/60);
 
