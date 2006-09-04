@@ -268,7 +268,7 @@ function iscreator ($userid=0) {
  * @return bool
  */
 function isstudent($courseid=0, $userid=0) {
-    global $CFG;
+    global $USER, $CFG;
 
     if (empty($CFG->rolesactive)) {
         return false;
@@ -295,7 +295,7 @@ function isstudent($courseid=0, $userid=0) {
  * @return bool
  */
 function isguest($userid=0) {
-    global $CFG;
+    global $USER, $CFG;
 
     if (empty($CFG->rolesactive)) {
         return false;
