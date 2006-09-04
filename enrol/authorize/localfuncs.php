@@ -79,11 +79,8 @@ function get_list_of_payment_methods($getall = false)
 {
     global $CFG;
 
-    if ($getall) {
+    if ($getall || empty($CFG->an_acceptmethods)) {
         return array(AN_METHOD_CC, AN_METHOD_ECHECK);
-    }
-    elseif (empty($CFG->an_acceptmethods)) {
-        return array(AN_METHOD_CC); // default
     }
     else {
         return explode(',', $CFG->an_acceptmethods);
