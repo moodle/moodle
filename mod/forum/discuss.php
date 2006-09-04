@@ -62,7 +62,9 @@
                 notify('Bad forum ID stored in this discussion');
             }
             $discussion->forum = $forum->id;
-            $discussion->timemodified = time();
+            // Had to comment out the following line because the timemodified field is used to sort the list
+            // of discussions and also to provide the "Last post" date. It should really be renamed to timelastpost.
+            // $discussion->timemodified = time();
             
             if (update_record('forum_discussions', $discussion)) {
                 // Update RSS feeds for both from and to forums.
