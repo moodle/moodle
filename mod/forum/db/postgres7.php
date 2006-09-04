@@ -213,6 +213,7 @@ function forum_upgrade($oldversion) {
           
           // We need to rebuild all the course caches to refresh the state of
           // the forum modules.
+          include_once( "$CFG->dirroot/course/lib.php" );
           rebuild_course_cache();
           
       } // End if.
