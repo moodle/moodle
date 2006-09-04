@@ -46,8 +46,8 @@ class block_social_activities extends block_list {
             $strcancel= get_string('cancel');
             $stractivityclipboard = $USER->activitycopyname;
         }
-
-        $modinfo = unserialize($course->modinfo);
+    /// Casting $course->modinfo to string prevents one notice when the field is null
+        $modinfo = unserialize((string)$course->modinfo);
         $editbuttons = '';
 
         if ($ismoving) {

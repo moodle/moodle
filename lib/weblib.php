@@ -3934,7 +3934,8 @@ function navmenu($course, $cm=NULL, $targetwindow='self') {
     }
     $strjumpto = get_string('jumpto');
 
-    if (!$modinfo = unserialize($course->modinfo)) {
+/// Casting $course->modinfo to string prevents one notice when the field is null
+    if (!$modinfo = unserialize((string)$course->modinfo)) {
         return '';
     }
     $isteacher = isteacher($course->id);

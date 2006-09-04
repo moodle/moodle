@@ -71,7 +71,8 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate='today'
     $activities = array();
     $selectedactivity = "";
 
-    if ($modinfo = unserialize($course->modinfo)) {
+/// Casting $course->modinfo to string prevents one notice when the field is null
+    if ($modinfo = unserialize((string)$course->modinfo)) {
         $section = 0;
         if ($course->format == 'weeks') {  // Bodgy
             $strsection = get_string("week");

@@ -19,7 +19,8 @@
         if (empty($activitylist)) {
 
             $course = get_record("course","id",$courseid);
-            $modinfo = unserialize($course->modinfo);
+        /// Casting $course->modinfo to string prevents one notice when the field is null
+            $modinfo = unserialize((string)$course->modinfo);
 
             if (!empty($modinfo)) {
 

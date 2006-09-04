@@ -60,7 +60,8 @@ function print_recent_selector_form($course, $advancedfilter=0, $selecteduser=0,
 
         $selectedactivity = $modid;
 
-        if ($modinfo = unserialize($course->modinfo)) {
+    /// Casting $course->modinfo to string prevents one notice when the field is null
+        if ($modinfo = unserialize((string)$course->modinfo)) {
             $section = 0;
             if ($course->format == 'weeks') {  // Body
                 $strsection = get_string("week");
@@ -1082,7 +1083,8 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
     }
     $labelformatoptions->noclean = true;
 
-    $modinfo = unserialize($course->modinfo);
+/// Casting $course->modinfo to string prevents one notice when the field is null
+    $modinfo = unserialize((string)$course->modinfo);
 
     //Acccessibility: replace table with list <ul>, but don't output empty list.
     if (!empty($section->sequence)) {

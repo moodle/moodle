@@ -51,11 +51,9 @@ class block_site_main_menu extends block_list {
             $strcancel= get_string('cancel');
             $stractivityclipboard = $USER->activitycopyname;
         }
-        if ($course->modinfo !== NULL) {
-            $modinfo = unserialize($course->modinfo);
-        } else {
-            $modinfo = null;
-        }
+    /// Casting $course->modinfo to string prevents one notice when the field is null
+        $modinfo = unserialize((string)$course->modinfo);
+
         $editbuttons = '';
 
         if ($ismoving) {

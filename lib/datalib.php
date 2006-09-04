@@ -1447,8 +1447,9 @@ function get_all_instances_in_courses($modulename,$courses) {
         } else {
             $invisible = 0;
         }
-        
-        if (!$modinfo = unserialize($course->modinfo)) {
+
+   /// Casting $course->modinfo to string prevents one notice when the field is null
+        if (!$modinfo = unserialize((string)$course->modinfo)) {
             continue;
         }
         foreach ($modinfo as $mod) {
@@ -1482,7 +1483,8 @@ function get_all_instances_in_course($modulename, $course) {
 
     global $CFG;
 
-    if (!$modinfo = unserialize($course->modinfo)) {
+/// Casting $course->modinfo to string prevents one notice when the field is null
+    if (!$modinfo = unserialize((string)$course->modinfo)) {
         return array();
     }
 
