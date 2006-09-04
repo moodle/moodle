@@ -8,9 +8,10 @@
     require_once($CFG->dirroot.'/course/lib.php');
     require_once($CFG->libdir.'/ddllib.php');      //We are going to need DDL services here
     require_once($CFG->dirroot.'/backup/lib.php');  //We are going to need BACKUP services here
+    define ('BACKUP_UNIQUE_CODE', '1100110011');    //One code in the past to store UTF8 temp indexes info
     require_login();
 
-    // decalre once
+    // declare once
     global $enc;
     
     $customlang = array();
@@ -222,6 +223,10 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
     global $db, $CFG, $dbtablename, $fieldname, $record, $processedrecords;
     $debug = ($CFG->debug > 7);
 
+    if ($CFG->dbtype == 'mysql') {
+        check_and_create_backup_dir(BACKUP_UNIQUE_CODE);  //Create the backup temp dir
+    }
+
     ignore_user_abort(false); // see bug report 5352. This should kill this thread as soon as user aborts.
     
     @set_time_limit(0);
@@ -388,7 +393,7 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
         /// Calculate all the indexes of the table
             if ($CFG->dbtype == 'mysql' && $allindexes = $db->MetaIndexes($prefix.$dbtablename)) {
             /// Send them to backup_ids table for temporal storage if crash
-                backup_putid(9876543210, $prefix.$dbtablename, 1, 1, $allindexes);
+                backup_putid(BACKUP_UNIQUE_CODE, $prefix.$dbtablename, 1, 1, $allindexes);
             /// Drop all the indexes
                 $sqlarr = array();
                 foreach ($allindexes as $onekey => $oneindex) {
@@ -822,7 +827,7 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
 
         /// Recreate all the indexes previously dropped and sent to backup
         /// tables. Retrieve information from backup tables
-            if ($backupindexes = backup_getid(9876543210, $prefix.$dbtablename, 1)) {
+            if ($backupindexes = backup_getid(BACKUP_UNIQUE_CODE, $prefix.$dbtablename, 1)) {
             /// Confirm we have indexes
                 if ($allindexes = $backupindexes->info) {
                 /// Recreate all the indexes
@@ -901,6 +906,12 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
 
     //remove the cache file!
     @unlink($CFG->dataroot.'/cache/languages');
+
+    //remove backup temp storage
+    if ($CFG->dbtype = 'mysql') {
+        $pref->backup_unique_code = BACKUP_UNIQUE_CODE;
+        clean_temp_data($pref);
+    }
 
     // Regenerate some cached data
     
