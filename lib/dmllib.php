@@ -1286,7 +1286,7 @@ function sql_isnull($fieldname) {
  * @ return string the keyword
  */
 function sql_as() {
-    global $db;
+    global $CFG, $db;
 
     switch ($CFG->dbtype) {
         case 'postgres7':
