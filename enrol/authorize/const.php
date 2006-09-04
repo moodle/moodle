@@ -11,20 +11,6 @@ define('AN_METHOD_ECHECK', 'echeck');
 /**#@-*/
 
 /**#@+
- * E-Check types
- *
- * Cash Concentration or Disbursement (CCD)
- * Prearranged Payment and Deposit Entry (PPD)
- * Telephone-Initiated Entry (TEL)
- * Internet-Initiated Entry (WEB)
- */
-define('AN_ECHECK_CCD', 'ccd');
-define('AN_ECHECK_PPD', 'ppd');
-define('AN_ECHECK_TEL', 'tel');
-define('AN_ECHECK_WEB', 'web');
-/**#@-*/
-
-/**#@+
  * Order status used in enrol_authorize table.
  *
  * NONE: New order or order is in progress. TransactionID hasn't received yet.
