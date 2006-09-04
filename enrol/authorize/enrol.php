@@ -554,9 +554,10 @@ class enrolment_plugin_authorize
 
         $acceptmethods = optional_param('acceptmethods', get_list_of_payment_methods(), PARAM_ALPHA);
         set_config('an_acceptmethods', implode(',', $acceptmethods));
-
         $acceptccs = optional_param('acceptccs', array_keys(get_list_of_creditcards()), PARAM_ALPHA);
         set_config('an_acceptccs', implode(',', $acceptccs));
+        $acceptechecktypes = optional_param('acceptechecktypes', get_list_of_bank_account_types(), PARAM_ALPHA);
+        set_config('an_acceptechecktypes', implode(',', $acceptechecktypes));
 
         $cutoff_hour = optional_param('an_cutoff_hour', 0, PARAM_INT);
         $cutoff_min = optional_param('an_cutoff_min', 5, PARAM_INT);

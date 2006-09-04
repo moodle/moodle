@@ -40,6 +40,11 @@ if (!isset($frm->acceptccs)) {
     $CFG->an_acceptccs = implode(',', $frm->acceptccs);
 }
 
+if (!isset($frm->acceptechecktypes)) {
+    $frm->acceptechecktypes = get_list_of_bank_account_types();
+    $CFG->an_acceptechecktypes = implode(',', $frm->acceptechecktypes);
+}
+
 ?>
 
 <table cellspacing="0" cellpadding="5" border="0" align="center">
@@ -131,23 +136,31 @@ if (!isset($frm->acceptccs)) {
 </tr>
 
 <tr valign="top">
-    <td align="right">an_acceptmethods:</td>
-    <td><?php print_string("adminacceptmethods", "enrol_authorize") ?><br /><?php
+    <td align="right">accepts:</td>
+    <td><?php print_string("adminaccepts", "enrol_authorize") ?><br /><br /><?php
     $paymentmethodsenabled = get_list_of_payment_methods();
     $allpaymentmethods = get_list_of_payment_methods(true);
     foreach ($allpaymentmethods as $key) {
-        print_checkbox('acceptmethods[]', $key, in_array($key, $paymentmethodsenabled), get_string('method'.$key,'enrol_authorize')); echo "<br />\n";
-    }
-    ?><br /></td>
-</tr>
-
-<tr valign="top">
-    <td align="right">an_acceptccs:</td>
-    <td><?php print_string("adminacceptccs", "enrol_authorize") ?><br /><?php
-    $acceptedccs = array_keys(get_list_of_creditcards());
-    $allccs = get_list_of_creditcards(true);
-    foreach ($allccs as $key => $val) {
-        print_checkbox('acceptccs[]', $key, in_array($key, $acceptedccs), $val); echo "<br />\n";
+        if ($key == AN_METHOD_CC) {
+            print_checkbox('acceptmethods[]', AN_METHOD_CC, in_array(AN_METHOD_CC, $paymentmethodsenabled), get_string('method'.AN_METHOD_CC,'enrol_authorize'));
+            echo("<blockquote>");
+            $acceptedccs = array_keys(get_list_of_creditcards());
+            $allccs = get_list_of_creditcards(true);
+            foreach ($allccs as $key => $val) {
+                print_checkbox('acceptccs[]', $key, in_array($key, $acceptedccs), $val); echo "<br />\n";
+            }
+            echo("</blockquote>");
+        }
+        elseif ($key == AN_METHOD_ECHECK) {
+            print_checkbox('acceptmethods[]', AN_METHOD_ECHECK, in_array(AN_METHOD_ECHECK, $paymentmethodsenabled), get_string('method'.AN_METHOD_ECHECK,'enrol_authorize'));
+            echo("<blockquote>");
+            $echecktypesenabled = get_list_of_bank_account_types();
+            $allechecktypes = get_list_of_bank_account_types(true);
+            foreach ($allechecktypes as $key) {
+                print_checkbox('acceptechecktypes[]', $key, in_array($key, $echecktypesenabled), get_string('echeck'.strtolower($key),'enrol_authorize')); echo "<br />\n";
+            }
+            echo("</blockquote>");
+        }
     }
     ?><br /></td>
 </tr>
