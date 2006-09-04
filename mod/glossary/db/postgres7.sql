@@ -117,7 +117,7 @@ CREATE TABLE prefix_glossary_comments (
      id SERIAL,
      entryid int4 NOT NULL default '0',
      userid int4 NOT NULL default '0',
-     comment text NOT NULL,
+     entrycomment text NOT NULL,
      format int2 NOT NULL default '0',
      timemodified int4 NOT NULL default '0',
      PRIMARY KEY  (id)

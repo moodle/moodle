@@ -137,7 +137,7 @@
             trusttext_after_edit($form->text, $context);
 
             $newentry->entryid = $entry->id;
-            $newentry->comment = $form->text;
+            $newentry->entrycomment = $form->text;
             $newentry->format = $form->format;
             $newentry->timemodified = time();
 
@@ -178,7 +178,7 @@
                 $defaultformat = FORMAT_MOODLE;
             }
             if (isset($comment) ) {
-                $form->text = $comment->comment;
+                $form->text = $comment->entrycomment;
                 $form->format = $comment->format;
             } else {
                 $form->text = '';

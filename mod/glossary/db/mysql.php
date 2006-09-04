@@ -436,7 +436,11 @@ function glossary_upgrade($oldversion) {
         }
     }
 
-  return true;
+    if ($oldversion < 2006090400) {
+         table_column('glossary_comments', 'comment', 'entrycomment', 'text', '', '', '');
+    }
+
+    return true;
 }
 
 ?>

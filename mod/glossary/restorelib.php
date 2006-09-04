@@ -244,7 +244,11 @@
             //Now, build the GLOSSARY_COMMENTS record structure
             $comment->entryid = $new_entry_id;
             $comment->userid = backup_todb($com_info['#']['USERID']['0']['#']);
-            $comment->comment = backup_todb($com_info['#']['COMMENT']['0']['#']);
+            if (isset($com_info['#']['COMMENT']['0']['#'])) {
+                $comment->entrycomment = backup_todb($com_info['#']['COMMENT']['0']['#']);
+            } else {
+                $comment->entrycomment = backup_todb($com_info['#']['ENTRYCOMMENT']['0']['#']);
+            }
             $comment->timemodified = backup_todb($com_info['#']['TIMEMODIFIED']['0']['#']);
             $comment->format = backup_todb($com_info['#']['FORMAT']['0']['#']);
 
@@ -676,8 +680,8 @@
 
         $status = true;
 
-        //Convert glossary_comments->comment
-        if ($records = get_records_sql ("SELECT c.id, c.comment, c.format
+        //Convert glossary_comments->entrycomment
+        if ($records = get_records_sql ("SELECT c.id, c.entrycomment, c.format
                                          FROM {$CFG->prefix}glossary_comments c,
                                               {$CFG->prefix}glossary_entries e,
                                               {$CFG->prefix}glossary g,
@@ -691,10 +695,10 @@
                                                b.new_id = c.id")) {
             foreach ($records as $record) {
                 //Rebuild wiki links
-                $record->comment = restore_decode_wiki_content($record->comment, $restore);
+                $record->entrycomment = restore_decode_wiki_content($record->entrycomment, $restore);
                 //Convert to Markdown
                 $wtm = new WikiToMarkdown();
-                $record->comment = $wtm->convert($record->comment, $restore->course_id);
+                $record->entrycomment = $wtm->convert($record->entrycomment, $restore->course_id);
                 $record->format = FORMAT_MARKDOWN;
                 $status = update_record('glossary_comments', addslashes_object($record));
                 //Do some output

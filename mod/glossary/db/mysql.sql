@@ -107,7 +107,7 @@ CREATE TABLE prefix_glossary_comments (
      id int(10) unsigned NOT NULL auto_increment,
      entryid int(10) unsigned NOT NULL default '0',
      userid int(10) unsigned NOT NULL default '0',
-     comment text NOT NULL default '',
+     entrycomment text NOT NULL default '',
      format tinyint(2) unsigned NOT NULL default '0',
      timemodified int(10) unsigned NOT NULL default '0',
      PRIMARY KEY  (id),

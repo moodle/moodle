@@ -233,7 +233,7 @@
 
                 fwrite ($bf,full_tag("ID",8,false,$comment->id));
                 fwrite ($bf,full_tag("USERID",8,false,$comment->userid));
-                fwrite ($bf,full_tag("COMMENT",8,false,$comment->comment));
+                fwrite ($bf,full_tag("ENTRYCOMMENT",8,false,$comment->entrycomment));
                 fwrite ($bf,full_tag("FORMAT",8,false,$comment->format));
                 fwrite ($bf,full_tag("TIMEMODIFIED",8,false,$comment->timemodified));
 

@@ -1582,7 +1582,7 @@ function glossary_print_comment($course, $cm, $glossary, $entry, $comment) {
 
     $options = new object();
     $options->trusttext = true;
-    echo format_text($comment->comment, $comment->format, $options);
+    echo format_text($comment->entrycomment, $comment->format, $options);
 
     echo '<div class="icons commands">';
 
