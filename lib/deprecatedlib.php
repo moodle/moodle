@@ -105,17 +105,12 @@ function isadmin($userid=0) {
 
     $context = get_context_instance(CONTEXT_SYSTEM, SITEID);  
     
-    if (!$userid) {
-        return has_capability('moodle/legacy:admin', $context, $USER->id, false);
-    } else {
-        return has_capability('moodle/legacy:admin', $context, $userid, false);
-    }
+    return has_capability('moodle/legacy:admin', $context, $userid, false);
 }
 
 /**
  * Determines if a user is a teacher (or better)
  *
- * @uses $USER
  * @uses $CFG
  * @param int $courseid The id of the course that is being viewed, if any
  * @param int $userid The id of the user that is being tested against. Set this to 0 if you would just like to test against the currently logged in user.
@@ -125,7 +120,7 @@ function isadmin($userid=0) {
 
 function isteacher($courseid=0, $userid=0, $obsolete_includeadmin=true) {
 /// Is the user able to access this course as a teacher?
-    global $USER, $CFG;
+    global $CFG;
 
     if (empty($CFG->rolesactive)) {     // Teachers are locked out during an upgrade to 1.7
         return false;
@@ -137,17 +132,9 @@ function isteacher($courseid=0, $userid=0, $obsolete_includeadmin=true) {
         $context = get_context_instance(CONTEXT_SYSTEM, SITEID);  
     }
 
-    if (!$userid) {
-        return (has_capability('moodle/legacy:teacher', $context, $USER->id, false) 
-                    or has_capability('moodle/legacy:editingteacher', $context, $USER->id, false)
-                    or has_capability('moodle/legacy:admin', $context, $USER->id, false)
-                    );
-    } else {
-        return (has_capability('moodle/legacy:teacher', $context, $userid, false)
-                    or has_capability('moodle/legacy:editingteacher', $context, $userid, false)
-                    or has_capability('moodle/legacy:admin', $context, $userid, false)
-                    );
-    }  
+    return (has_capability('moodle/legacy:teacher', $context, $userid, false)
+         or has_capability('moodle/legacy:editingteacher', $context, $userid, false)
+         or has_capability('moodle/legacy:admin', $context, $userid, false));
 }
 
 /**
@@ -155,10 +142,10 @@ function isteacher($courseid=0, $userid=0, $obsolete_includeadmin=true) {
  *
  * @uses $USER
  * @param int $userid The id of the user that is being tested against. Set this to 0 if you would just like to test against the currently logged in user.
- * @param bool $obsolete_includeadmin No longer used
+ * @param bool $includeadmin Include anyone wo is an admin as well
  * @return bool
  */
-function isteacherinanycourse($userid=0, $obsolete_includeadmin=true) {
+function isteacherinanycourse($userid=0, $includeadmin=true) {
     global $USER, $CFG;
 
     if (empty($CFG->rolesactive)) {     // Teachers are locked out during an upgrade to 1.7
@@ -194,6 +181,13 @@ function isteacherinanycourse($userid=0, $obsolete_includeadmin=true) {
         }
     }
 
+/// Include admins if required
+    if ($includeadmin) {
+        $context = get_context_instance(CONTEXT_SYSTEM, SITEID);  
+        if (has_capability('moodle/legacy:admin', $context, $userid, false)) {
+            return true;
+        }
+    }
 
     return false;
 }
@@ -202,13 +196,12 @@ function isteacherinanycourse($userid=0, $obsolete_includeadmin=true) {
 /**
  * Determines if a user is allowed to edit a given course
  *
- * @uses $USER
  * @param int $courseid The id of the course that is being edited
  * @param int $userid The id of the user that is being tested against. Set this to 0 if you would just like to test against the currently logged in user.
  * @return bool
  */
 function isteacheredit($courseid, $userid=0, $obsolete_ignorestudentview=false) {
-    global $USER, $CFG;
+    global $CFG;
 
     if (empty($CFG->rolesactive)) {
         return false;
@@ -220,24 +213,18 @@ function isteacheredit($courseid, $userid=0, $obsolete_ignorestudentview=false) 
         $context = get_context_instance(CONTEXT_COURSE, $courseid);
     }
 
-    if (!$userid) {
-        return (has_capability('moodle/legacy:editingteacher', $context, $USER->id, false)
-                or has_capability('moodle/legacy:admin', $context, $USER->id, false));
-    } else {
-        return (has_capability('moodle/legacy:editingteacher', $context, $userid, false)
-                or has_capability('moodle/legacy:admin', $context, $userid, false));
-    }
+    return (has_capability('moodle/legacy:editingteacher', $context, $userid, false)
+         or has_capability('moodle/legacy:admin', $context, $userid, false));
 }
 
 /**
  * Determines if a user can create new courses
  *
- * @uses $USER
  * @param int $userid The user being tested. You can set this to 0 or leave it blank to test the currently logged in user.
  * @return bool
  */
 function iscreator ($userid=0) {
-    global $USER, $CFG;
+    global $CFG;
 
     if (empty($CFG->rolesactive)) {
         return false;
@@ -245,13 +232,8 @@ function iscreator ($userid=0) {
 
     $context = get_context_instance(CONTEXT_SYSTEM, SITEID);  
 
-    if (!$userid) {
-        return (has_capability('moodle/legacy:coursecreator', $context, $userid, false)
-                or has_capability('moodle/legacy:admin', $context, $userid, false));
-    } else {
-        return (has_capability('moodle/legacy:coursecreator', $context, $USER->id, false)
-                or has_capability('moodle/legacy:admin', $context, $USER->id, false));
-    }
+    return (has_capability('moodle/legacy:coursecreator', $context, $userid, false)
+         or has_capability('moodle/legacy:admin', $context, $userid, false));
 }
 
 /**
@@ -260,7 +242,6 @@ function iscreator ($userid=0) {
  * If the course id specifies the site then this determines
  * if the user is a confirmed and valid user of this site.
  *
- * @uses $USER
  * @uses $CFG
  * @uses SITEID
  * @param int $courseid The id of the course being tested
@@ -268,7 +249,7 @@ function iscreator ($userid=0) {
  * @return bool
  */
 function isstudent($courseid=0, $userid=0) {
-    global $USER, $CFG;
+    global $CFG;
 
     if (empty($CFG->rolesactive)) {
         return false;
@@ -280,22 +261,17 @@ function isstudent($courseid=0, $userid=0) {
         $context = get_context_instance(CONTEXT_COURSE, $courseid);
     }
 
-    if ($userid) {
-        return has_capability('moodle/legacy:student', $context, $userid, false);
-    } else {
-        return has_capability('moodle/legacy:student', $context, $USER->id, false);
-    }
+    return has_capability('moodle/legacy:student', $context, $userid, false);
 }
 
 /**
  * Determines if the specified user is logged in as guest.
  *
- * @uses $USER
  * @param int $userid The user being tested. You can set this to 0 or leave it blank to test the currently logged in user.
  * @return bool
  */
 function isguest($userid=0) {
-    global $USER, $CFG;
+    global $CFG;
 
     if (empty($CFG->rolesactive)) {
         return false;
@@ -303,11 +279,7 @@ function isguest($userid=0) {
 
     $context = get_context_instance(CONTEXT_SYSTEM, SITEID);  
 
-    if ($userid) {
-        return has_capability('moodle/legacy:guest', $context, $userid, false);
-    } else {
-        return has_capability('moodle/legacy:guest', $context, $USER->id, false);
-    }
+    return has_capability('moodle/legacy:guest', $context, $userid, false);
 }
 
 
@@ -401,7 +373,6 @@ function unenrol_student($userid, $courseid=0) {
 /**
  * Add a teacher to a given course  
  *
- * @uses $USER
  * @param int $userid The id of the user that is being tested against. Set this to 0 if you would just like to test against the currently logged in user.
  * @param int $courseid The id of the course that is being viewed, if any
  * @param int $editall Can edit the course
@@ -444,12 +415,12 @@ function add_teacher($userid, $courseid, $editall=1, $role='', $timestart=0, $ti
 function remove_teacher($userid, $courseid=0) {
     global $CFG;
 
-    $capability = $editall ? 'moodle/legacy:editingteacher' : 'moodle/legacy:teacher';
-
     $roles = get_roles_with_capability('moodle/legacy:editingteacher', CAP_ALLOW);
 
     if ($roles) {
         $roles += get_roles_with_capability('moodle/legacy:teacher', CAP_ALLOW);
+    } else {
+        $roles = get_roles_with_capability('moodle/legacy:teacher', CAP_ALLOW);
     }
 
     if (empty($roles)) {
