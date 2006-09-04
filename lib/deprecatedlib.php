@@ -106,9 +106,9 @@ function isadmin($userid=0) {
     $context = get_context_instance(CONTEXT_SYSTEM, SITEID);  
     
     if (!$userid) {
-        return has_capability('moodle/legacy:admin', $context);
+        return has_capability('moodle/legacy:admin', $context, $USER->id, false);
     } else {
-        return has_capability('moodle/legacy:admin', $context, $userid);
+        return has_capability('moodle/legacy:admin', $context, $userid, false);
     }
 }
 
@@ -137,12 +137,16 @@ function isteacher($courseid=0, $userid=0, $obsolete_includeadmin=true) {
         $context = get_context_instance(CONTEXT_SYSTEM, SITEID);  
     }
 
-    if ($userid) {
-        return (has_capability('moodle/legacy:teacher', $context) 
-                    or has_capability('moodle/legacy:editingteacher', $context));
+    if (!$userid) {
+        return (has_capability('moodle/legacy:teacher', $context, $USER->id, false) 
+                    or has_capability('moodle/legacy:editingteacher', $context, $USER->id, false)
+                    or has_capability('moodle/legacy:admin', $context, $USER->id, false)
+                    );
     } else {
-        return (has_capability('moodle/legacy:teacher', $context, $userid)
-                    or has_capability('moodle/legacy:editingteacher', $context, $userid));
+        return (has_capability('moodle/legacy:teacher', $context, $userid, false)
+                    or has_capability('moodle/legacy:editingteacher', $context, $userid, false)
+                    or has_capability('moodle/legacy:admin', $context, $userid, false)
+                    );
     }  
 }
 
@@ -216,10 +220,12 @@ function isteacheredit($courseid, $userid=0, $obsolete_ignorestudentview=false) 
         $context = get_context_instance(CONTEXT_COURSE, $courseid);
     }
 
-    if ($userid) {
-        return has_capability('moodle/legacy:editingteacher', $context, $userid);
+    if (!$userid) {
+        return (has_capability('moodle/legacy:editingteacher', $context, $USER->id, false)
+                or has_capability('moodle/legacy:admin', $context, $USER->id, false));
     } else {
-        return has_capability('moodle/legacy:editingteacher', $context);
+        return (has_capability('moodle/legacy:editingteacher', $context, $userid, false)
+                or has_capability('moodle/legacy:admin', $context, $userid, false));
     }
 }
 
@@ -239,10 +245,12 @@ function iscreator ($userid=0) {
 
     $context = get_context_instance(CONTEXT_SYSTEM, SITEID);  
 
-    if ($userid) {
-        return has_capability('moodle/legacy:coursecreator', $context, $userid);
+    if (!$userid) {
+        return (has_capability('moodle/legacy:coursecreator', $context, $userid, false)
+                or has_capability('moodle/legacy:admin', $context, $userid, false));
     } else {
-        return has_capability('moodle/legacy:coursecreator', $context);
+        return (has_capability('moodle/legacy:coursecreator', $context, $USER->id, false)
+                or has_capability('moodle/legacy:admin', $context, $USER->id, false));
     }
 }
 
@@ -273,9 +281,9 @@ function isstudent($courseid=0, $userid=0) {
     }
 
     if ($userid) {
-        return has_capability('moodle/legacy:student', $context, $userid);
+        return has_capability('moodle/legacy:student', $context, $userid, false);
     } else {
-        return has_capability('moodle/legacy:student', $context);
+        return has_capability('moodle/legacy:student', $context, $USER->id, false);
     }
 }
 
@@ -296,11 +304,9 @@ function isguest($userid=0) {
     $context = get_context_instance(CONTEXT_SYSTEM, SITEID);  
 
     if ($userid) {
-        return has_capability('moodle/legacy:guest', $context, $userid) &&
-              !has_capability('moodle/site:doanything', $context, $userid);
+        return has_capability('moodle/legacy:guest', $context, $userid, false);
     } else {
-        return has_capability('moodle/legacy:guest', $context) && 
-              !has_capability('moodle/site:doanything', $context);
+        return has_capability('moodle/legacy:guest', $context, $USER->id, false);
     }
 }
 
