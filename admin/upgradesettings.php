@@ -6,7 +6,7 @@
 require_once('../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 
-    $adminroot = admin_get_root();
+$adminroot = admin_get_root();
 admin_externalpage_setup('adminnotifications', $adminroot); // we pretend to be the adminnotifications page... don't wanna show up in the menu :)
 
 // a caveat: we're depending on only having one admin access this page at once. why? the following line
@@ -14,10 +14,10 @@ admin_externalpage_setup('adminnotifications', $adminroot); // we pretend to be 
 // page is loaded (i.e. both when we're displaying the form and then when we process the form's input).
 // if the return values don't match, we could potentially lose changes that the admin is making.
 
-$newsettings = find_new_settings(admin_get_root());
+$newsettingshtml = output_new_settings_by_page(admin_get_root());
 
 // first we deal with the case where there are no new settings to be set
-if (count($newsettings) === 0) {
+if ($newsettingshtml == '') {
     redirect($CFG->wwwroot . '/' . $CFG->admin . '/index.php', get_string('nonewsettings','admin'),1);	
     die;
 }
@@ -26,6 +26,7 @@ if (count($newsettings) === 0) {
 if ($data = data_submitted()) {
     $data = (array)$data;
     if (confirm_sesskey()) {
+        $newsettings = find_new_settings(admin_get_root());
         $errors = '';
 
         foreach($newsettings as $newsetting) {
@@ -61,9 +62,7 @@ print_simple_box_start('','100%','',5,'generalbox','');
 print_heading(get_string('upgradesettings','admin'));
 echo '<table class="generaltable" width="100%" border="0" align="center" cellpadding="5" cellspacing="1">' . "\n";
 echo '<tr><td colspan="2">' . get_string('upgradesettingsintro','admin') . '</td></tr>';
-foreach ($newsettings as $newsetting) {
-    echo $newsetting->output_html();
-}
+echo $newsettingshtml;
 echo '</table>';
 echo '<center><input type="submit" value="Save Changes" /></center>';
 print_simple_box_end();
@@ -71,9 +70,6 @@ echo '</form>';
 
 admin_externalpage_print_footer($adminroot);
 
-
-
-// function that we use (vital to this page working)
 
 /**
  * Find settings that have not been initialized (e.g. during initial install or an upgrade).
@@ -108,6 +104,40 @@ function find_new_settings(&$node) {
     }
 
     return array();
+
+}
+
+function output_new_settings_by_page(&$node) {
+
+    if (is_a($node, 'admin_category')) {
+        $entries = array_keys($node->children);
+        $return = '';
+        foreach ($entries as $entry) {
+            $return .= output_new_settings_by_page($node->children[$entry]);
+        }
+        return $return;
+    } 
+
+    if (is_a($node, 'admin_settingpage')) { 
+        $newsettings = array();
+        foreach ($node->settings as $setting) {
+            if ($setting->get_setting() === NULL) {
+                $newsettings[] =& $setting;
+            }
+            unset($setting); // needed to prevent odd (imho) reference behaviour
+                             // see http://www.php.net/manual/en/language.references.whatdo.php#AEN6399
+        }
+        $return = '';
+        if (count($newsettings) > 0) {
+            $return = '<tr><td colspan="2"><strong>' . $node->visiblename . '</strong></td></tr>';
+            foreach ($newsettings as $newsetting) {
+                $return .= $newsetting->output_html();
+            }        
+        }
+        return $return;
+    }
+
+    return '';
 
 }
 
