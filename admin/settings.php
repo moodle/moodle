@@ -49,6 +49,8 @@ if (!($root->check_access())) {
     die;
 }
 
+$CFG->pagepath = 'admin/setting/'.$section;
+
 // WRITING SUBMITTED DATA (IF ANY) -------------------------------------------------------------------------------
 
 if ($data = data_submitted()) {
