@@ -117,6 +117,10 @@ function setup_is_unicodedb() {
                 }
             }
             break;
+        case 'mssql':
+        /// MSSQL only runs under UTF8 + the proper ODBTP driver (both for Unix and Win32)
+            $unicodedb = true;
+            break:
     }
     return $unicodedb;
 }
