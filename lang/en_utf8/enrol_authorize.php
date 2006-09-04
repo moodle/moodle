@@ -1,9 +1,9 @@
-<?PHP // $Id$ 
+<?PHP // $Id$
       // enrol_authorize.php - created with Moodle 1.7 dev (2006083102)
 
 
 $string['adminacceptccs'] = 'Which credit card types will be accepted?';
-$string['adminacceptmethods'] = 'Which payment methods will be accepted?';
+$string['adminaccepts'] = 'Select payment methods allowed and their types';
 $string['adminauthorizeccapture'] = 'Order Review & Scheduled-Capture Settings';
 $string['adminauthorizeemail'] = 'Email Sending Settings';
 $string['adminauthorizesettings'] = 'Authorize.net Settings';
