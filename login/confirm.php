@@ -3,12 +3,23 @@
     require_once("../config.php");
     require_once("../auth/$CFG->auth/lib.php");
 
-    $p = required_param( 'p' ); // user.secret
-    $s = required_param( 's' ); // user.username
+    $data = optional_param('data', '', PARAM_CLEAN);  // Formatted as:  secret/username
 
-    if (!empty($p) and !empty($s) ) {    
+    $p = optional_param('p', '', PARAM_ALPHA);        // Old parameter:  secret
+    $s = optional_param('s', '', PARAM_CLEAN);                     // Old parameter:  username
 
-        $user = get_complete_user_data('username', $s );
+    if (!empty($data) || (!empty($p) && !empty($s))) {    
+
+        if (!empty($data)) {
+            $dataelements = explode('/',$data);
+            $usersecret = $dataelements[0];
+            $username   = $dataelements[1];
+        } else {
+            $usersecret = $p;
+            $username   = $s;
+        }
+
+        $user = get_complete_user_data('username', $username );
 
         if (!empty($user)) {
 
@@ -21,7 +32,7 @@
                 exit;
             }
 
-            if ($user->secret == $p) {   // They have provided the secret key to get in
+            if ($user->secret == $usersecret) {   // They have provided the secret key to get in
 
                 if (!set_field("user", "confirmed", 1, "id", $user->id)) {
                     error("Could not confirm this user!");
