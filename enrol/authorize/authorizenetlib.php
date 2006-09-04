@@ -397,7 +397,15 @@ function authorize_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE, $
                     }
                     break;
                 }
-                // Electronic checks aren't accepted
+                // Echecks only
+                case AN_REASON_ACHONLY:
+                {
+                    set_config('an_acceptmethods', AN_METHOD_ECHECK);
+                    email_to_admin("$message " .
+                    "This is new config(an_acceptmethods):", array(AN_METHOD_ECHECK));
+                    break;
+                }
+                // Echecks aren't accepted
                 case AN_REASON_NOACH:
                 {
                     set_config('an_acceptmethods', AN_METHOD_CC);

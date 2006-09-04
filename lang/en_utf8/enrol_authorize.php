@@ -154,6 +154,7 @@ $string['reason50'] = 'This transaction is awaiting settlement and cannot be ref
 $string['reason51'] = 'The sum of all credits against this transaction is greater than the original transaction amount.';
 $string['reason54'] = 'The referenced transaction does not meet the criteria for issuing a credit.';
 $string['reason55'] = 'The sum of credits against the referenced transaction would exceed the original debit amount.';
+$string['reason56'] = 'This merchant accepts eCheck (ACH) transactions only; no credit card transactions are accepted.';
 $string['refund'] = 'Refund';
 $string['refunded'] = 'Refunded';
 $string['returns'] = 'Returns';
