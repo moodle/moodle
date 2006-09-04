@@ -87,6 +87,18 @@ function get_list_of_payment_methods($getall = false)
     }
 }
 
+function get_list_of_bank_account_types($getall = false)
+{
+    global $CFG;
+
+    if ($getall || empty($CFG->an_acceptechecktypes)) {
+        return array('CHECKING', 'BUSINESSCHECKING', 'SAVINGS');
+    }
+    else {
+        return explode(',', $CFG->an_acceptechecktypes);
+    }
+}
+
 function ABAVal($aba)
 {
     if (ereg("^[0-9]{9}$", $aba)) {
@@ -263,7 +275,7 @@ function validate_echeck_form($form, &$err)
         $err['accnum'] = get_string('invalidaccnum', 'enrol_authorize');
     }
 
-    if (empty($form->acctype) || !in_array($form->acctype, array('CHECKING', 'BUSINESSCHECKING', 'SAVINGS'))) {
+    if (empty($form->acctype) || !in_array($form->acctype, get_list_of_bank_account_types())) {
         $err['acctype'] = get_string('invalidacctype', 'enrol_authorize');
     }
 

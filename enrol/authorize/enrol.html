@@ -185,11 +185,11 @@ function print_echeck_form($classreference)
     <tr>
       <td align="right"><?php print_string("echeckacctype", "enrol_authorize") ?>: </td>
       <td align="left"><?php
-      $acctypes = array(
-          'CHECKING'         => get_string("echeckchecking", "enrol_authorize"),
-          'BUSINESSCHECKING' => get_string("echeckbusinesschecking", "enrol_authorize"),
-          'SAVINGS'          => get_string("echecksavings", "enrol_authorize")
-      );
+      $acctypes = array();
+      $acctypesenabled = get_list_of_bank_account_types();
+      foreach ($acctypesenabled as $key) {
+          $acctypes[$key] = get_string("echeck".strtolower($key), "enrol_authorize");
+      }
       choose_from_menu($acctypes, 'acctype', $form->acctype);
       if (!empty($classreference->authorizeerrors['acctype'])) { formerr($classreference->authorizeerrors['acctype']); }
       ?>

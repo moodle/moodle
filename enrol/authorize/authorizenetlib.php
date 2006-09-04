@@ -417,7 +417,26 @@ function authorize_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE, $
                 case AN_REASON_NOACHTYPE:
                 case AN_REASON_NOACHTYPE2:
                 {
-                    // Not implemented yet.
+                    if (!empty($extra->x_echeck_type)) {
+                        switch ($extra->x_echeck_type) {
+                            // CCD=BUSINESSCHECKING
+                            case 'CCD':
+                            {
+                                set_config('an_acceptechecktypes', 'CHECKING,SAVINGS');
+                                email_to_admin("$message " .
+                                "This is new config(an_acceptechecktypes):", array('CHECKING','SAVINGS'));
+                            }
+                            break;
+                            // WEB=CHECKING or SAVINGS
+                            case 'WEB':
+                            {
+                                set_config('an_acceptechecktypes', 'BUSINESSCHECKING');
+                                email_to_admin("$message " .
+                                "This is new config(an_acceptechecktypes):", array('BUSINESSCHECKING'));
+                            }
+                            break;
+                        }
+                    }
                     break;
                 }
             }

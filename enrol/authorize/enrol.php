@@ -352,6 +352,7 @@ class enrolment_plugin_authorize
         $extra->x_bank_aba_code = $form->abacode;
         $extra->x_bank_acct_num = $form->accnum;
         $extra->x_bank_acct_type = $form->acctype;
+        $extra->x_echeck_type = ($form->acctype == 'BUSINESSCHECKING') ? 'CCD' : 'WEB';
         $extra->x_bank_name = $form->bankname;
         $extra->x_currency_code = $curcost['currency'];
         $extra->x_amount = $curcost['cost'];
