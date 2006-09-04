@@ -18,14 +18,7 @@
 
 /// fullpivot indicate if the whole pivot should be compared agasint the db or just the first letter
 /// printpivot indicate if the pivot should be printed or not
-    switch ($CFG->dbtype) {
-    case 'postgres7':
-        $as = 'as';
-    break;
-    case 'mysql':
-        $as = '';
-    break;
-    }    
+    $as = sql_as(); ///To use or no the AS keyword on column aliases
 
     switch ( $sortkey ) {    
     case "CREATION": 
