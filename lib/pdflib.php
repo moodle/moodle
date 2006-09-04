@@ -38,12 +38,12 @@
  * with TCPDF.
  * 
  * Example usage:
- *    $pdf = new pdf;
- *    $pdf->print_header = false;
- *    $pdf->print_footer = false;
- *    $pdf->AddPage();
- *    $pdf->Write(5, 'Hello World!');
- *    $pdf->Output();
+ *    $doc = new pdf;
+ *    $doc->print_header = false;
+ *    $doc->print_footer = false;
+ *    $doc->AddPage();
+ *    $doc->Write(5, 'Hello World!');
+ *    $doc->Output();
  * 
  * @author Vy-Shane Sin Fat
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
@@ -94,7 +94,7 @@ class pdf extends TCPDF {
     
     /**
      * Return fonts path
-     * Overriden from class TCPDF
+     * Overriding TCPDF::_getfontpath()
      */
     function _getfontpath() {
         global $CFG;
