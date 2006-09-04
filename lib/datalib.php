@@ -687,7 +687,7 @@ function get_groups($courseid, $userid=0) {
         $userselect = '';
     }
 
-    return get_records_sql("SELECT DISTINCT g.*
+    return get_records_sql("SELECT g.*
                               FROM {$CFG->prefix}groups g $dbselect
                              WHERE g.courseid = '$courseid' $userselect ");
 }
