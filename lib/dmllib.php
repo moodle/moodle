@@ -117,36 +117,18 @@ function rollback_sql() {
 
 /**
  * returns db specific uppercase function
+ * @deprecated Moodle 1.7 because all the RDBMS use upper()
  */
 function db_uppercase() {
-    global $CFG;
-    switch (strtolower($CFG->dbtype)) {
-
-    case "postgres7":
-        return "upper";
-
-    case "mysql":
-    default:
-        return "ucase";
-
-    }
+    return "upper";
 }
 
 /**
  * returns db specific lowercase function
+ * @deprecated Moodle 1.7 because all the RDBMS use lower()
  */
 function db_lowercase() {
-    global $CFG;
-    switch (strtolower($CFG->dbtype)) {
-
-    case "postgres7":
-        return "lower";
-
-    case "mysql":
-    default:
-        return "lcase";
-
-    }
+    return "lower";
 }
 
 /**
