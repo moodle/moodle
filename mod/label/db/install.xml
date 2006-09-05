@@ -1,15 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/label/db" VERSION="20060811" COMMENT="XMLDB file for Moodle mod/label">
+<XMLDB PATH="mod/label/db" VERSION="20060905" COMMENT="XMLDB file for Moodle mod/label"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
   <TABLES>
-    <TABLE NAME="label2" COMMENT="Default comment for label, please edit me" NEXT="label">
-      <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" COMMENT="id of the table, please edit me"/>
-      </FIELDS>
-      <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for label"/>
-      </KEYS>
-    </TABLE>
-    <TABLE NAME="label" COMMENT="Defines labels" PREVIOUS="label2">
+    <TABLE NAME="label" COMMENT="Defines labels">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="course"/>
         <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="name"/>
