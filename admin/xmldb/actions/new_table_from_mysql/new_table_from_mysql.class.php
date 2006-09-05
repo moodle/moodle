@@ -131,7 +131,10 @@ class new_table_from_mysql extends XMLDBAction {
             $table = new XMLDBTable(strtolower(trim($tableparam)));
             $table->setComment($table->getName() . ' table retrofitted from MySQL');
         /// Get fields info from ADODb
-            $dbfields = $db->MetaColumns($CFG->prefix . $tableparam);
+            if(!$dbfields = $db->MetaColumns($CFG->prefix . $tableparam)) {
+            ///Try it without prefix if doesn't exist
+                $dbfields = $db->MetaColumns($tableparam);
+            }
             if ($dbfields) {
                 foreach ($dbfields as $dbfield) {
                 /// Create new XMLDB field
