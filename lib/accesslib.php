@@ -1587,7 +1587,7 @@ function role_context_capabilities($roleid, $context, $cap='') {
     $contexts = '('.implode(',', $contexts).')';
     
     if ($cap) {
-        $search = ' AND rc.capability = "'.$cap.'" ';
+        $search = " AND rc.capability = '$cap' ";
     } else {
         $search = '';  
     }
