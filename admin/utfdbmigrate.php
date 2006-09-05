@@ -970,8 +970,8 @@ function get_main_teacher_lang($courseid) {
         if (!empty($CFG->rolesactive)) {
             
             $context = get_context_instance(CONTEXT_COURSE, $courseid);
-            $teachers = get_users_by_capability($context, 'moodle/legacy:editingteacher', 'distinct u.*', ' ORDER BY ra.id ASC ', sql_paging_limit(0,1)); // only need first one
-            $teacher = array_shift($teachers);
+            $teachers = get_users_by_capability($context, 'moodle/legacy:editingteacher', 'u.id, u.lang', ' ORDER BY ra.id ASC ', 0, 1); // only need first one
+            $teacher = reset($teachers);
             $mainteachercache[$courseid] = $teacher->lang;
             
             return $teacher->lang;
@@ -979,10 +979,14 @@ function get_main_teacher_lang($courseid) {
         /// this is a better guess
         } else {
       
-            $SQL = 'SELECT u.lang from '.$CFG->prefix.'user_teachers ut,
-                '.$CFG->prefix.'course c,
-                '.$CFG->prefix.'user u WHERE
-                c.id = ut.course AND ut.course = '.$courseid.' AND u.id = ut.userid ORDER BY ut.authority ASC';
+            $SQL = 'SELECT u.id, u.lang 
+                    FROM '.$CFG->prefix.'user_teachers ut,
+                         '.$CFG->prefix.'course c,
+                         '.$CFG->prefix.'user u 
+                    WHERE c.id = ut.course AND 
+                          ut.course = '.$courseid.' AND 
+                          u.id = ut.userid 
+                    ORDER BY ut.authority ASC';
 
             if ($teacher = get_record_sql($SQL, true)) {
                 $mainteachercache[$courseid] = $teacher->lang;
