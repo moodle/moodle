@@ -607,7 +607,7 @@ function load_user_capability($capability='', $context ='', $userid='') {
     // now we don't care about the huge array anymore, we can dispose it.
     unset($capabilities);
     
-    if (!empty($otheruseid)) {
+    if (!empty($otheruserid)) {
         return $usercap; // return the array  
     }
     // see array in session to see what it looks like
