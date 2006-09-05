@@ -1188,6 +1188,8 @@ function update_record($table, $dataobject) {
  * @uses $CFG
  * @param string $page Offset page number
  * @param string $recordsperpage Number of records per page
+ * @deprecated Moodle 1.7 use the new $limitfrom, $limitnum available in all
+ *             the get_recordXXX() funcions.
  * @return string
  */
 function sql_paging_limit($page, $recordsperpage) {
