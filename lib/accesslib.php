@@ -2003,7 +2003,7 @@ function get_overridable_roles ($context) {
  * @param $limitfrom - number of records to skip (offset)
  * @param $limitnum - number of records to fetch 
  */
-function get_users_by_capability($context, $capability, $fields='distinct u.*', $sort='', $limitfrom='', $limitnum='') {
+function get_users_by_capability($context, $capability, $fields='u.*', $sort='', $limitfrom='', $limitnum='') {
     
     global $CFG;
     
