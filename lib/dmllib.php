@@ -701,10 +701,12 @@ function get_records_list($table, $field='', $values='', $sort='', $fields='*', 
  * Return value as for @see function get_records.
  * 
  * @param string $sql the SQL select query to execute.
+ * @param int $limitfrom return a subset of records, starting at this point (optional, required if $limitnum is set).
+ * @param int $limitnum return a subset comprising this many records (optional, required if $limitfrom is set).
  * @return mixed an array of objects, or false if no records were found or an error occured.
  */
-function get_records_sql($sql) {
-    $rs = get_recordset_sql($sql);
+function get_records_sql($sql, $limitfrom='', $limitnum='') {
+    $rs = get_recordset_sql($sql, $limitfrom='', $limitnum='');
     return recordset_to_array($rs);
 }
 
