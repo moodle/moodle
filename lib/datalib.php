@@ -1650,12 +1650,6 @@ function add_to_log($courseid, $module, $action, $url='', $info='', $cm=0, $user
 function get_logs($select, $order='l.time DESC', $limitfrom='', $limitnum='', &$totalcount) {
     global $CFG;
 
-    if ($limitfrom !== '') {
-        $limit = sql_paging_limit($limitfrom, $limitnum);
-    } else {
-        $limit = '';
-    }
-
     if ($order) {
         $order = 'ORDER BY '. $order;
     }
@@ -1666,7 +1660,7 @@ function get_logs($select, $order='l.time DESC', $limitfrom='', $limitnum='', &$
     $totalcount = count_records_sql("SELECT COUNT(*) FROM $countsql");
 
     return get_records_sql('SELECT l.*, u.firstname, u.lastname, u.picture
-                                FROM '. $selectsql .' '. $order .' '. $limit);
+                                FROM '. $selectsql .' '. $order, $limitfrom, $limitnum) ;
 }
 
 
