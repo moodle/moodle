@@ -334,11 +334,11 @@
         </FIELD>
       </FIELDS>
     </TABLE>
-    <TABLE name="sessions">
+    <TABLE name="sessions2">
       <FIELDS>
-        <FIELD name="sesskey" method="NO_CONV" type="varchar" length="32" dropprimary="true" addprimary="(sesskey(32))"/>
-        <FIELD name="expireref" method="NO_CONV" type="varchar" length="64" />
-        <FIELD name="data" method="NO_CONV" type="mediumtext" length="0" />
+        <FIELD name="sesskey" method="NO_CONV" type="varchar" length="64" dropprimary="true" addprimary="(sesskey(64))"/>
+        <FIELD name="expireref" method="NO_CONV" type="varchar" length="250" />
+        <FIELD name="sessdata" method="NO_CONV" type="longtext" length="0" />
       </FIELDS>
     </TABLE>
     <TABLE name="timezone">
