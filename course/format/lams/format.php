@@ -30,7 +30,9 @@ if ($topic != -1) {
     }
 }
 
-if (($marker >=0) and isteacher($course->id) and confirm_sesskey()) {
+$context = get_context_instance(CONTEXT_COURSE, $course->id);
+
+if (($marker >=0) and has_capability('moodle/course:setcurrentsection', $context) and confirm_sesskey()) {
     $course->marker = $marker;
     if (! set_field("course", "marker", $marker, "id", $course->id)) {
         error("Could not mark that topic for this course");
@@ -216,7 +218,7 @@ while ($section <= $course->numsections) {
         }
     }
 
-    $showsection = (isteacher($course->id) or $thissection->visible or !$course->hiddensections);
+    $showsection = (has_capability('moodle/course:viewhiddensections', $context) or $thissection->visible or !$course->hiddensections);
 
     if (!empty($displaysection) and $displaysection != $section) {
         if ($showsection) {
@@ -249,7 +251,7 @@ while ($section <= $course->numsections) {
         echo '<td class="left side">&nbsp;</td>';
 
         echo '<td class="content">';
-        if (!isteacher($course->id) and !$thissection->visible) {   // Hidden for students
+        if (!has_capability('moodle/course:viewhiddensections', $context) and !$thissection->visible) {   // Hidden for students
             echo get_string('notavailable');
         } else {
             echo '<div class="summary">';

@@ -23,7 +23,11 @@
         error("User ID is incorrect");
     }
 
-    if (! (isteacher($course->id) or ($course->showreports and $USER->id == $user->id))) {
+    $coursecontext = get_context_instance(CONTEXT_COURSE, $id);
+    $personalcontext = get_context_instance(CONTEXT_USERID, $user->id);
+
+    // if in either context, we can read report, then we can proceed
+    if (!(has_capability('moodle/site:viewreports', $coursecontext) or ($course->showreports and $USER->id == $user->id) or has_capability('moodle/user:viewuseractivitiesreport', $personalcontext))) {
         error("You are not allowed to look at this page");
     }
 
@@ -160,7 +164,7 @@
                 if (isset($sections[$i])) {   // should always be true
 
                     $section = $sections[$i];
-                    $showsection = (isteacher($course->id) or $section->visible or !$course->hiddensections);
+                    $showsection = (has_capability('moodle/course:viewhiddensections', $context) or $section->visible or !$course->hiddensections);
 
                     if ($showsection) { // prevent hidden sections in user activity. Thanks to Geoff Wilbert!
 

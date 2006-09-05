@@ -12,9 +12,7 @@
 
     require_login($course->id);
 
-    if (!isteacher($course->id)) {
-        error(get_string('notteachererror', 'grades'));
-    }
+    require_capability('moodle/course:managegrades', get_context_instance(CONTEXT_MODULE, $id));
 
     $group = get_current_group($course->id);
     

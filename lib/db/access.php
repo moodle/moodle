@@ -766,6 +766,84 @@ $moodle_capabilities = array(
             'coursecreator' => CAP_ALLOW,
             'admin' => CAP_ALLOW
         )
+    ),
+    
+    'moodle/course:sectionvisibility' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+        'legacy' => array(
+            'guest' => CAP_PREVENT,
+            'student' => CAP_PREVENT,
+            'teacher' => CAP_PREVENT,
+            'editingteacher' => CAP_ALLOW,
+            'coursecreator' => CAP_ALLOW,
+            'admin' => CAP_ALLOW
+        )
+    ),
+    
+    'moodle/course:viewhiddensections' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+        'legacy' => array(
+            'guest' => CAP_PREVENT,
+            'student' => CAP_PREVENT,
+            'teacher' => CAP_PREVENT,
+            'editingteacher' => CAP_ALLOW,
+            'coursecreator' => CAP_ALLOW,
+            'admin' => CAP_ALLOW
+        )
+    ),
+    
+    'moodle/course:setcurrentsection' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+        'legacy' => array(
+            'guest' => CAP_PREVENT,
+            'student' => CAP_PREVENT,
+            'teacher' => CAP_PREVENT,
+            'editingteacher' => CAP_ALLOW,
+            'coursecreator' => CAP_ALLOW,
+            'admin' => CAP_ALLOW
+        )
+    ),
+    
+    'moodle/course:viewcoursegrades' => array(
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_COURSE,
+        'legacy' => array(
+            'guest' => CAP_PREVENT,
+            'student' => CAP_PREVENT,
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'coursecreator' => CAP_ALLOW,
+            'admin' => CAP_ALLOW
+        )
+    ),
+    
+    'moodle/course:managegrades' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+        'legacy' => array(
+            'guest' => CAP_PREVENT,
+            'student' => CAP_PREVENT,
+            'teacher' => CAP_PREVENT,
+            'editingteacher' => CAP_ALLOW,
+            'coursecreator' => CAP_ALLOW,
+            'admin' => CAP_ALLOW
+        )
+    ),
+    
+    'moodle/user:viewusergrades' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+        'legacy' => array(
+            'guest' => CAP_PREVENT,
+            'student' => CAP_ALLOW,
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'coursecreator' => CAP_ALLOW,
+            'admin' => CAP_ALLOW
+        )
     )
 );
 

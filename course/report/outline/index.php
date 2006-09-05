@@ -17,9 +17,7 @@
         error("Course id is incorrect.");
     }
 
-    if (!isteacher($course->id)) {
-        error("You are not allowed to look at this page");
-    }
+    require_capability('moodle/site:viewreports', get_context_instance(CONTEXT_COURSE, $courseid));
 
     add_to_log($course->id, "course", "report outline", "report/outline/index.php?id=$course->id", $course->id); 
 

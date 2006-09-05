@@ -82,7 +82,7 @@ function print_recent_selector_form($course, $advancedfilter=0, $selecteduser=0,
                 if ($mod->mod == "label") {
                     continue;
                 }
-                if (!$mod->visible and !$isteacher) {
+                if (!$mod->visible and !has_capability('moodle/course:viewhiddenactivities',get_context_instance(CONTEXT_MODULE, $mod->cm))) {
                     continue;
                 }
 
@@ -174,7 +174,7 @@ function print_recent_selector_form($course, $advancedfilter=0, $selecteduser=0,
 
         $groupmode =  groupmode($course);
 
-        if ($groupmode == VISIBLEGROUPS or ($groupmode and isteacheredit($course->id))) {
+        if ($groupmode == VISIBLEGROUPS or ($groupmode and has_capability('moodle/course:managegroups', get_context_instance(CONTEXT_COURSE, $course->id)))) {
             if ($groups = get_records_menu("groups", "courseid", $course->id, "name ASC", "id,name")) {
             echo '<td><b>';
                 if ($groupmode == VISIBLEGROUPS) {
@@ -272,7 +272,7 @@ function build_logs_array($course, $user=0, $date=0, $order="l.time ASC", $limit
 
     /// If the group mode is separate, and this user does not have editing privileges,
     /// then only the user's group can be viewed.
-    if ($course->groupmode == SEPARATEGROUPS and !$isteacheredit) {
+    if ($course->groupmode == SEPARATEGROUPS and !has_capability('moodle/course:managegroups', get_context_instance(CONTEXT_COURSE, $course->id))) {
         $groupid = get_current_group($course->id);
     }
     /// If this course doesn't have groups, no groupid can be specified.
@@ -985,7 +985,7 @@ function get_all_mods($courseid, &$mods, &$modnames, &$modnamesplural, &$modname
             }
             $mods[$mod->id] = $mod;
             $mods[$mod->id]->modfullname = $modnames[$mod->modname];
-            if ($mod->visible or isteacher($courseid)) {
+            if ($mod->visible or has_capability('moodle/course:viewhiddenactivities', get_context_instance(CONTEXT_COURSE, $courseid))) {
                 $modnamesused[$mod->modname] = $modnames[$mod->modname];
             }
         }
@@ -1099,7 +1099,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
             }
             $mod = $mods[$modnumber];
 
-            if ($mod->visible or $isteacher) {
+            if ($mod->visible or has_capability('moodle/course:viewhiddenactivities', get_context_instance(CONTEXT_COURSE, $course->id))) {
                 echo '<li class="activity '.$mod->modname.'" id="module-'.$modnumber.'">';  // Unique ID
                 if ($ismoving) {
                     if ($mod->id == $USER->activitycopy) {
@@ -1149,7 +1149,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                 }
                 if ($usetracking && $mod->modname == 'forum') {
                     $groupmode = groupmode($course, $mod);
-                    $groupid = ($groupmode == SEPARATEGROUPS && !isteacheredit($course->id)) ?
+                    $groupid = ($groupmode == SEPARATEGROUPS && !has_capability('moodle/course:managegroups', get_context_instance(CONTEXT_COURSE, $course->id))) ?
                                get_current_group($course->id) : false;
 
                     if (forum_tp_can_track_forums() && !isset($untracked[$mod->instance])) {

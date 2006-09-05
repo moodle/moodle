@@ -64,7 +64,6 @@
                 calendar_set_referring_course(0);
             }
             else {
-                // We don't check for membership anymore: if(isstudent($id, $USER->id) || isteacher($id, $USER->id)) {
                 if(get_record('course', 'id', $id) === false) {
                     // There is no such course
                     $SESSION->cal_courses_shown = array();

@@ -54,7 +54,7 @@
     }
 
     // security: only editing teachers can access backups
-    if ((!isteacheredit($course->id))
+    if ((!has_capability('moodle/site:backup', get_context_instance(CONTEXT_COURSE, $course->id)))
         and (count($args) >= 2)
         and (strtolower($args[1]) == 'backupdata')) {
 
@@ -83,7 +83,7 @@
         and (strtolower($args[2]) == 'assignment')) {
 
         $lifetime = 0;  // do not cache assignments, students may reupload them
-        if ((!isteacher($course->id)) && (count($args) != 6 || $args[4] != $USER->id)) {
+        if ((!has_capability('mod/assignment:grade', get_context_instance(CONTEXT_COURSE, $course->id))) && (count($args) != 6 || $args[4] != $USER->id)) {
            error('Access not allowed');
         }
     }

@@ -16,10 +16,7 @@
         error("Could not find the course!");
     }
 
-    if (!isteacher($course->id)) {
-        error("Only teachers can edit this!");
-    }
-
+    require_capability('moodle/course:update', get_context_instance(CONTEXT_COURSE, $id));
 
 /// If data submitted, then process and store.
 

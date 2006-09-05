@@ -48,7 +48,7 @@
         $strmovedown = get_string('movedown');
     }
 
-
+    $context = get_context_instance(CONTEXT_COURSE, $course->id);
 /// Layout the whole page as three big columns.
     echo '<table id="layout-table" cellspacing="0"><tr>';
 
@@ -146,7 +146,7 @@
             }
         }
 
-        $showsection = (isteacher($course->id) or $thissection->visible or !$course->hiddensections);
+        $showsection = (has_capability('moodle/course:viewhiddensections', $context) or $thissection->visible or !$course->hiddensections);
 
         if (!empty($displaysection) and $displaysection != $section) {  // Check this week is visible
             if ($showsection) {
@@ -173,7 +173,7 @@
             echo '<td class="left side">&nbsp;</td>';
 
             echo '<td class="content">';
-            if (!isteacher($course->id) and !$thissection->visible) {   // Hidden for students
+            if (!has_capability('moodle/course:viewhiddensections', $context) and !$thissection->visible) {   // Hidden for students
                 echo '<div class="weekdates">'.$weekday.' - '.$endweekday.' ('.get_string('notavailable').')</div>';
 
             } else {

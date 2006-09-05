@@ -109,7 +109,7 @@
 
     } else { // you chose a group of activities
 
-        if (isteacher($course->id)) {
+        if (has_capability('moodle/course:viewhiddensections', get_context_instance(CONTEXT_COURSE, $course->id))) {
             $hiddenfilter = "";
         } else {
             $hiddenfilter = " AND cs.visible = '1' ";
@@ -134,7 +134,7 @@
             $activityfilter = "";
         }
 
-        if (isteacher($course->id)) {
+        if (has_capability('moodle/course:viewhiddensections', get_context_instance(CONTEXT_COURSE, $course->id))) {
             $hiddenfilter = "";
         } else {
             $hiddenfilter = " AND cm.visible = '1' ";
@@ -224,7 +224,7 @@
 
         $section = 0;
 
-        if (isteacher($course->id)) {
+        if (has_capability('moodle/course:viewhiddensections', get_context_instance(CONTEXT_COURSE, $course->id))) {
             $teacher = true;
         } else {
             $teacher = false;

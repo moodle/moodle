@@ -9,9 +9,7 @@
         error("That's an invalid course id");
     }
 
-    if (!isteacher($course->id)) {
-        error("You are not allowed to look at this page");
-    }
+    require_capability('moodle/site:import', get_context_instance(CONTEXT_COURSE, $id));
 
 /// Always we begin an import, we delete all backup/restore/import session structures
     if (isset($SESSION->course_header)) {

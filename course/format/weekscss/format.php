@@ -60,7 +60,7 @@
         $strmovedown = get_string('movedown');
     }
 
-
+    $context = get_context_instance(CONTEXT_COURSE, $course->id);
 /* Internet Explorer min-width fix. (See theme/standard/styles_layout.css: min-width for Firefox.)
    Window width: 800px, Firefox 763px, IE 752px. (Window width: 640px, Firefox 602px, IE 588px.)    
 */
@@ -175,7 +175,7 @@
             }
         }
 
-        $showsection = (isteacher($course->id) or $thissection->visible or !$course->hiddensections);
+        $showsection = (has_capability('moodle/course:viewhiddensections', $context) or $thissection->visible or !$course->hiddensections);
 
         if (!empty($displaysection) and $displaysection != $section) {  // Check this week is visible
             if ($showsection) {
@@ -233,7 +233,7 @@
             echo '</div>';
 
             echo '<div class="content">';
-            if (!isteacher($course->id) and !$thissection->visible) {   // Hidden for students
+            if (!has_capability('moodle/course:viewhiddensections', $context) and !$thissection->visible) {   // Hidden for students
                 echo '<div class="weekdates">'.$weekday.' - '.$endweekday.' ('.get_string('notavailable').')</div>';
 
             } else {
