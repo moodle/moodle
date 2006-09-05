@@ -2000,8 +2000,10 @@ function get_overridable_roles ($context) {
  * @param $capability - string capability
  * @param $fields - fields to be pulled
  * @param $sort - the sort order
+ * @param $limitfrom - number of records to skip (offset)
+ * @param $limitnum - number of records to fetch 
  */
-function get_users_by_capability($context, $capability, $fields='distinct u.*', $sort='', $limit='') {
+function get_users_by_capability($context, $capability, $fields='distinct u.*', $sort='', $limitfrom='', $limitnum='') {
     
     global $CFG;
     
@@ -2028,7 +2030,7 @@ function get_users_by_capability($context, $capability, $fields='distinct u.*', 
     $from   = ' FROM '.$CFG->prefix.'user u LEFT JOIN '.$CFG->prefix.'role_assignments ra ON ra.userid = u.id ';
     $where  = ' WHERE (ra.contextid = '.$context->id.' OR ra.contextid in '.$listofcontexts.') AND u.deleted = 0 AND ra.roleid in '.$roleids.' ';    
 
-    return get_records_sql($select.$from.$where.$sort.$limit);  
+    return get_records_sql($select.$from.$where.$sort, $limitfrom, $limitnum);  
 
 }
 
