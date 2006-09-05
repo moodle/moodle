@@ -1475,7 +1475,13 @@ function print_context_name($context) {
         case CONTEXT_BLOCK: // 1 to 1 to course
             if ($blockinstance = get_record('block_instance','id',$context->instanceid)) {
                 if ($block = get_record('block','id',$blockinstance->blockid)) {
-                    $name = get_string('blocks').': '.get_string($block->name, 'block_'.$block->name);
+                    global $CFG;
+                    require_once("$CFG->dirroot/blocks/moodleblock.class.php");
+                    require_once("$CFG->dirroot/blocks/$block->name/block_$block->name.php");
+                    $blockname = "block_$block->name";
+                    if ($blockobject = new $blockname()) {
+                        $name = $blockobject->title.' ('.get_string('block').')';
+                    }
                 }
             }
             break;
