@@ -1625,21 +1625,29 @@ function get_parent_contexts($context) {
     switch ($context->aggregatelevel) {
 
         case CONTEXT_SYSTEM: // no parent
-            return null;
+            return array();
         break;
 
         case CONTEXT_PERSONAL:
-            $parent = get_context_instance(CONTEXT_SYSTEM, SITEID);
-            return array($parent->id);
+            if (!$parent = get_context_instance(CONTEXT_SYSTEM, SITEID)) {
+                return array();
+            } else {
+                return array($parent->id);
+            }
         break;
         
         case CONTEXT_USERID:
-            $parent = get_context_instance(CONTEXT_SYSTEM, SITEID);
-            return array($parent->id);
+            if (!$parent = get_context_instance(CONTEXT_SYSTEM, SITEID)) {
+                return array();
+            } else {
+                return array($parent->id);
+            }
         break;
         
         case CONTEXT_COURSECAT: // Coursecat -> coursecat or site
-            $coursecat = get_record('course_categories','id',$context->instanceid);
+            if (!$coursecat = get_record('course_categories','id',$context->instanceid)) {
+                return array();
+            }
             if (!empty($coursecat->parent)) { // return parent value if exist
                 $parent = get_context_instance(CONTEXT_COURSECAT, $coursecat->parent);
                 return array_merge(array($parent->id), get_parent_contexts($parent));
@@ -1650,35 +1658,54 @@ function get_parent_contexts($context) {
         break;
 
         case CONTEXT_COURSE: // 1 to 1 to course cat
-            // find the course cat, and return its value
-            $course = get_record('course','id',$context->instanceid);
-            $parent = get_context_instance(CONTEXT_COURSECAT, $course->category);
-            return array_merge(array($parent->id), get_parent_contexts($parent));
+            if (!$course = get_record('course','id',$context->instanceid)) {
+                return array();
+            }
+            if (!empty($course->category)) {
+                $parent = get_context_instance(CONTEXT_COURSECAT, $course->category);
+                return array_merge(array($parent->id), get_parent_contexts($parent));
+            } else {
+                return array();
+            }
         break;
 
         case CONTEXT_GROUP: // 1 to 1 to course
-            $group = get_record('groups','id',$context->instanceid);
-            $parent = get_context_instance(CONTEXT_COURSE, $group->courseid);
-            return array_merge(array($parent->id), get_parent_contexts($parent));
+            if (!$group = get_record('groups','id',$context->instanceid)) {
+                return array();
+            }
+            if ($parent = get_context_instance(CONTEXT_COURSE, $group->courseid)) {
+                return array_merge(array($parent->id), get_parent_contexts($parent));
+            } else {
+                return array();
+            }
         break;
 
         case CONTEXT_MODULE: // 1 to 1 to course
-            $cm = get_record('course_modules','id',$context->instanceid);
-            $parent = get_context_instance(CONTEXT_COURSE, $cm->course);
-            return array_merge(array($parent->id), get_parent_contexts($parent));
+            if (!$cm = get_record('course_modules','id',$context->instanceid)) {
+                return array();
+            }
+            if ($parent = get_context_instance(CONTEXT_COURSE, $cm->course)) {
+                return array_merge(array($parent->id), get_parent_contexts($parent));
+            } else {
+                return array();
+            }
         break;
 
         case CONTEXT_BLOCK: // 1 to 1 to course
-            $block = get_record('block_instance','id',$context->instanceid);
-            $parent = get_context_instance(CONTEXT_COURSE, $block->pageid); // needs check
-            return array_merge(array($parent->id), get_parent_contexts($parent));
+            if (!$block = get_record('block_instance','id',$context->instanceid)) {
+                return array();
+            }
+            if ($parent = get_context_instance(CONTEXT_COURSE, $block->pageid)) {
+                return array_merge(array($parent->id), get_parent_contexts($parent));
+            } else {
+                return array();
+            }
         break;
 
         default:
-            error ('This is an unknown context!');
+            error('This is an unknown context!');
         return false;
     }
-  
 }
 
 
