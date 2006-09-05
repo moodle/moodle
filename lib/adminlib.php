@@ -1239,7 +1239,7 @@ class admin_setting_configtext extends admin_setting {
 
     function get_setting() {
         global $CFG;
-        return (isset($CFG->{$this->name}) ? $CFG->{$this->name} : NULL);
+        return (isset($CFG->{$this->name}) ? $CFG->{$this->name} : $this->defaultsetting);
     }
     
     function write_setting($data) {
