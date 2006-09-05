@@ -422,7 +422,6 @@
 
 /// Print default admin page with notifications.
 
-    require_once($CFG->libdir.'/adminlib.php');
     $adminroot = admin_get_root();
     admin_externalpage_setup('adminnotifications', $adminroot);
     admin_externalpage_print_header($adminroot);
