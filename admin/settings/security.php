@@ -1,49 +1,5 @@
 <?php // $Id$
 
-global $USER;
-
-
-// "httpsecurity" settingpage
-$temp = new admin_settingpage('httpsecurity', get_string('httpsecurity', 'admin'));
-$temp->add(new admin_setting_configcheckbox('loginhttps', get_string('loginhttps', 'admin'), get_string('configloginhttps', 'admin'), 0));
-$temp->add(new admin_setting_configcheckbox('secureforms', get_string('secureforms', 'admin'), get_string('configsecureforms', 'admin'), 0));
-$ADMIN->add('security', $temp);
-
-
-// "modulesecurity" settingpage
-$temp = new admin_settingpage('modulesecurity', get_string('modulesecurity', 'admin'));
-$temp->add(new admin_setting_configselect('restrictmodulesfor', get_string('restrictmodulesfor', 'admin'), get_string('configrestrictmodulesfor', 'admin'), 'none', array('none' => 'No courses',
-                                                                                                                                                                          'all' => 'All courses',
-																																								          'requested' => 'Requested courses')));
-$temp->add(new admin_setting_configcheckbox('restrictbydefault', get_string('restrictbydefault', 'admin'), get_string('configrestrictbydefault', 'admin'), 0));																																								  
-if (!$options = get_records("modules")) {
-    $options = array();
-}
-$options2 = array();
-foreach ($options as $option) {
-    $options2[$option->id] = $option->name;
-}
-$temp->add(new admin_setting_configmultiselect('defaultallowedmodules', get_string('defaultallowedmodules', 'admin'), get_string('configdefaultallowedmodules', 'admin'), array(), $options2));
-$ADMIN->add('security', $temp);
-
-
-
-// "notifications" settingpage
-$temp = new admin_settingpage('notifications', get_string('notifications', 'admin'));
-$temp->add(new admin_setting_configselect('displayloginfailures', get_string('displayloginfailures', 'admin'), get_string('configdisplayloginfailures', 'admin'), '', array('' => get_string('nobody'),
-                                                                                                                                                                            'admin' => get_string('administrators'),
-																																									        'teacher' => get_string('administratorsandteachers'),
-                                                                                                                                                                            'everybody' => get_string('everybody'))));
-$temp->add(new admin_setting_configselect('notifyloginfailures', get_string('notifyloginfailures', 'admin'), get_string('confignotifyloginfailures', 'admin'), '', array('' => get_string('nobody'),
-                                                                                                                                                                         'mainadmin' => get_string('administrator'),
-																																									     'alladmins' => get_string('administratorsall'))));
-$options = array();
-for ($i = 1; $i <= 100; $i++) {
-    $options[$i] = $i;
-}
-$temp->add(new admin_setting_configselect('notifyloginthreshold', get_string('notifyloginthreshold', 'admin'), get_string('confignotifyloginthreshold', 'admin'), '10', $options));
-$ADMIN->add('security', $temp);
-
 
 
 // "sitepolicies" settingpage
@@ -99,6 +55,51 @@ $temp->add(new admin_setting_configcheckbox('allowunenroll', get_string('allowun
 $temp->add(new admin_setting_configcheckbox('allusersaresitestudents', get_string('allusersaresitestudents', 'admin'), get_string('configallusersaresitestudents','admin'), 1));
 $temp->add(new admin_setting_special_adminseesall());
 $ADMIN->add('security', $temp);
+
+
+
+// "httpsecurity" settingpage
+$temp = new admin_settingpage('httpsecurity', get_string('httpsecurity', 'admin'));
+$temp->add(new admin_setting_configcheckbox('loginhttps', get_string('loginhttps', 'admin'), get_string('configloginhttps', 'admin'), 0));
+$temp->add(new admin_setting_configcheckbox('secureforms', get_string('secureforms', 'admin'), get_string('configsecureforms', 'admin'), 0));
+$ADMIN->add('security', $temp);
+
+
+// "modulesecurity" settingpage
+$temp = new admin_settingpage('modulesecurity', get_string('modulesecurity', 'admin'));
+$temp->add(new admin_setting_configselect('restrictmodulesfor', get_string('restrictmodulesfor', 'admin'), get_string('configrestrictmodulesfor', 'admin'), 'none', array('none' => 'No courses',
+                                                                                                                                                                          'all' => 'All courses',
+																																								          'requested' => 'Requested courses')));
+$temp->add(new admin_setting_configcheckbox('restrictbydefault', get_string('restrictbydefault', 'admin'), get_string('configrestrictbydefault', 'admin'), 0));																																								  
+if (!$options = get_records("modules")) {
+    $options = array();
+}
+$options2 = array();
+foreach ($options as $option) {
+    $options2[$option->id] = $option->name;
+}
+$temp->add(new admin_setting_configmultiselect('defaultallowedmodules', get_string('defaultallowedmodules', 'admin'), get_string('configdefaultallowedmodules', 'admin'), array(), $options2));
+$ADMIN->add('security', $temp);
+
+
+
+// "notifications" settingpage
+$temp = new admin_settingpage('notifications', get_string('notifications', 'admin'));
+$temp->add(new admin_setting_configselect('displayloginfailures', get_string('displayloginfailures', 'admin'), get_string('configdisplayloginfailures', 'admin'), '', array('' => get_string('nobody'),
+                                                                                                                                                                            'admin' => get_string('administrators'),
+																																									        'teacher' => get_string('administratorsandteachers'),
+                                                                                                                                                                            'everybody' => get_string('everybody'))));
+$temp->add(new admin_setting_configselect('notifyloginfailures', get_string('notifyloginfailures', 'admin'), get_string('confignotifyloginfailures', 'admin'), '', array('' => get_string('nobody'),
+                                                                                                                                                                         'mainadmin' => get_string('administrator'),
+																																									     'alladmins' => get_string('administratorsall'))));
+$options = array();
+for ($i = 1; $i <= 100; $i++) {
+    $options[$i] = $i;
+}
+$temp->add(new admin_setting_configselect('notifyloginthreshold', get_string('notifyloginthreshold', 'admin'), get_string('confignotifyloginthreshold', 'admin'), '10', $options));
+$ADMIN->add('security', $temp);
+
+
 
 
 
