@@ -34,6 +34,7 @@ $temp->add(new admin_setting_sitesetselect('newsitems', get_string('newsitemsnum
                                                                                                                                 '10' => '10 ' . get_string('newsitems'))));
 $temp->add(new admin_setting_courselist_frontpage(false)); // non-loggedin version of the setting (that's what the parameter is for :) )
 $temp->add(new admin_setting_courselist_frontpage(true)); // loggedin version of the setting
+$temp->add(new admin_setting_configtext('coursesperpage', get_string('coursesperpage', 'admin'), get_string('configcoursesperpage', 'admin'), '20', PARAM_INT));
 $ADMIN->add('appearance', $temp);
 
 
