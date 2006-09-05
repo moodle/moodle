@@ -1445,10 +1445,10 @@ function forum_get_discussions($forum="0", $forumsort="d.timemodified DESC",
         $userselect = "";
     }
 
+    $limitfrom = 0;
+    $limitnum = 0;
     if ($limit) {
-        $limit = " LIMIT $limit ";
-    } else {
-        $limit = "";
+        $limitnum = $limit;
     }
 
     if ($visiblegroups == -1) {
@@ -1485,7 +1485,7 @@ function forum_get_discussions($forum="0", $forumsort="d.timemodified DESC",
                              WHERE d.forum = '$forum'
                                AND p.parent = 0
                                    $timelimit $groupselect $userselect 
-                          ORDER BY $forumsort $limit");
+                          ORDER BY $forumsort", $limitfrom, $limitnum);
     } else {
         return get_records_sql("SELECT $postdata, d.name, d.timemodified, d.usermodified, d.groupid,
                                    u.firstname, u.lastname, u.email, u.picture $umfields
@@ -1497,7 +1497,7 @@ function forum_get_discussions($forum="0", $forumsort="d.timemodified DESC",
                                AND p.discussion = d.id
                                AND p.parent = 0
                                AND p.userid = u.id $timelimit $groupselect $userselect
-                          ORDER BY $forumsort $limit");
+                          ORDER BY $forumsort", $limitfrom, $limitnum);
     }
 }
 
