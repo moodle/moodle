@@ -4272,7 +4272,7 @@ function notice_yesno ($message, $linkyes, $linkno) {
  *      the correct input) and then encode for where it's needed
  *      echo "<script type='text/javascript'>alert('Redirect $url');</script>";
  */
-function redirect($url, $message='', $delay='0') {
+function redirect($url, $message='', $delay=-1) {
 
     global $CFG;
 
@@ -4292,13 +4292,16 @@ function redirect($url, $message='', $delay='0') {
 
 /// when no message and header printed yet, try to redirect
     if (empty($message) and !defined('HEADER_PRINTED')) {
+        if ($delay == -1) {
+            $delay = 0;
+        }
         echo '<meta http-equiv="refresh" content="'. $delay .'; url='. $encodedurl .'" />';
         echo '<script type="text/javascript">'. "\n" .'<!--'. "\n". "location.replace('$url');". "\n". '//-->'. "\n". '</script>';   // To cope with Mozilla bug
         die;
     }
 
-    if (empty($delay)) {
-        $delay = 3;  // if there is something already printed or message to display wait min 3 seconds
+    if ($delay == -1) {
+        $delay = 3;  // if no delay specified wait 3 seconds
     }
     if (! defined('HEADER_PRINTED')) {
         print_header('', '', '', '', '<meta http-equiv="refresh" content="'. $delay .'; url='. $encodedurl .'" />');
