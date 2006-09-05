@@ -1592,15 +1592,16 @@ function role_context_capabilities($roleid, $context, $cap='') {
             and rc.contextid = c.id $search
             ORDER BY c.aggregatelevel DESC, rc.capability DESC";
   
-    $records = get_records_sql($SQL);
     $capabilities = array();
     
-    // We are traversing via reverse order.
-    foreach ($records as $record) {
-          // If not set yet (i.e. inherit or not set at all), or currently we have a prohibit
-        if (!isset($capabilities[$record->capability]) || $record->permission<-500) {
-            $capabilities[$record->capability] = $record->permission;
-        }  
+    if ($records = get_records_sql($SQL)) {
+        // We are traversing via reverse order.
+        foreach ($records as $record) {
+            // If not set yet (i.e. inherit or not set at all), or currently we have a prohibit
+            if (!isset($capabilities[$record->capability]) || $record->permission<-500) {
+                $capabilities[$record->capability] = $record->permission;
+            }  
+        }
     }
     return $capabilities;
 }
