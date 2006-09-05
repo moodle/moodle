@@ -3,6 +3,8 @@
 
 require_once('../../../config.php');
 require_once($CFG->dirroot.'/course/lib.php');
+require_once($CFG->libdir .'/pagelib.php');
+require_once($CFG->libdir .'/blocklib.php');
 
 // Initialise ALL the incoming parameters here, up front.
 
@@ -26,6 +28,13 @@ if (!$course = get_record('course', 'id', $courseid)) {
     error('Course does not exist');    
 }   
 
+$PAGE = page_create_object(PAGE_COURSE_VIEW, $course->id);
+$pageblocks = blocks_setup($PAGE,BLOCKS_PINNED_BOTH);
+
+if(!empty($instanceid)){
+      $instance = blocks_find_instance($instanceid, $pageblocks);         
+}
+
 require_login($course->id);
 
 $context = get_context_instance(CONTEXT_COURSE, $course->id);
@@ -39,14 +48,10 @@ $dataobject = NULL;
 switch($_SERVER['REQUEST_METHOD']){                              
     case 'POST':    
         switch ($class) {
-            case 'block': 
-                switch ($field) {
-                    case 'visible':       
-                        $dataobject->id = $instanceid;
-                        $dataobject->visible = $value;
-                        if (!update_record('block_instance',$dataobject)) {
-                            error('Failed to update block!');
-                        }
+            case 'block':                  
+            switch ($field) {
+                    case 'visible':   
+                        blocks_execute_action($PAGE, $pageblocks, 'toggle', $instance);   
                         break;
         
                     case 'position':  
@@ -120,8 +125,8 @@ switch($_SERVER['REQUEST_METHOD']){
         
     case 'DELETE':
         switch ($class) {
-            case 'block':        
-                delete_records('block_instance','id',$instanceid);     
+            case 'block':   
+                blocks_execute_action($PAGE, $pageblocks, 'delete', $instance);                    
                 break; 
                 
             case 'resource':
