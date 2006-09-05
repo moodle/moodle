@@ -8,7 +8,7 @@
 
     $id       = required_param('id', PARAM_INT);          // Category id
     $page     = optional_param('page', 0, PARAM_INT);     // which page to show
-    $perpage  = optional_param('perpage', 20, PARAM_INT); // how many per page
+    $perpage  = optional_param('perpage', $CFG->coursesperpage, PARAM_INT); // how many per page
     $edit     = optional_param('edit', -1, PARAM_BOOL);
     $hide     = optional_param('hide', 0, PARAM_INT);
     $show     = optional_param('show', 0, PARAM_INT);

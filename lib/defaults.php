@@ -21,6 +21,7 @@
        'cachetext'                =>  60,
        'changepassword'           =>  '',
        'country'                  => '',
+       'coursesperpage'           =>  20,
        'clamfailureonupload'      => 'donothing',
        'dbsessions'               =>  false,
        'debug'                    =>  5,
