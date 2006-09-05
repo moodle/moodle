@@ -69,7 +69,7 @@
         if ($courseid!= SITEID) {
             print_header("$fullname", "$fullname",
                      "<a href=\"../course/view.php?id=$course->id\">$course->shortname</a> ->
-                      <a href=\"".$CFG->wwwroot."/user/index.php?id=$course->id\">$participants</a> -> <a href=\"".$CFG->wwwroot."/user/view.php?id=".$userid."&course=".$courseid."\">$fullname</a> ->".get_string('assign', 'roles'),
+                      <a href=\"".$CFG->wwwroot."/user/index.php?id=$course->id\">$participants</a> -> <a href=\"".$CFG->wwwroot."/user/view.php?id=".$userid."&course=".$courseid."\">$fullname</a> ->".$straction,
                       "", "", true, "&nbsp;", navmenu($course));      
         
         /// site header  
