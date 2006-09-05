@@ -162,7 +162,7 @@ function rss_standard_header($title = NULL, $link = NULL, $description = NULL) {
         $result .= rss_start_tag('channel', 1, true);
 
         //write channel info
-        $result .= rss_full_tag('title', 2, false, $title);
+        $result .= rss_full_tag('title', 2, false, strip_tags($title));
         $result .= rss_full_tag('link', 2, false, $link);
         $result .= rss_full_tag('description', 2, false, $description);
         $result .= rss_full_tag('generator', 2, false, 'Moodle');
@@ -217,7 +217,7 @@ function rss_add_items($items) {
             if (isset($item->category)) {
                 $result .= rss_full_tag('category',3,false,$item->category);
             }
-            $result .= rss_full_tag('title',3,false,$item->title);
+            $result .= rss_full_tag('title',3,false,strip_tags($item->title));
             $result .= rss_full_tag('link',3,false,$item->link);
             $result .= rss_add_enclosures($item);
             $result .= rss_full_tag('pubDate',3,false,date('D, d M Y H:i:s T',$item->pubdate));
