@@ -83,7 +83,6 @@ class XMLDBgenerator {
 
     var $reserved_words; // List of reserved words (in order to quote them properly)
 
- 
     /**
      * Creates one new XMLDBGenerator
      */
@@ -109,6 +108,15 @@ class XMLDBgenerator {
      * to create it (inside one array)
      */
     function getCreateTableSQL($xmldb_table) {
+
+        $tempprefix = '';
+    /// If the table needs to be created without prefix
+        if (in_array($xmldb_table->getName(), $this->getTablesWithoutPrefix())) {
+        /// Save current prefix to be restore later
+            $tempprefix = $this->prefix;
+        /// Empty prefix
+            $this->prefix = '';
+        }
 
         $results = array();  //Array where all the sentences will be stored
 
@@ -236,6 +244,11 @@ class XMLDBgenerator {
                     $results = array_merge($results, $sequence_sentences);
                 }
             }
+        }
+
+    /// Re-set the original prefix if it has changed
+        if ($tempprefix) {
+            $this->prefix = $tempprefix;
         }
 
         return $results;
@@ -609,11 +622,23 @@ class XMLDBgenerator {
      * You MUST provide the real list for each DB inside every XMLDB class
      */
     function getReservedWords() {
-    /// Some wel-know reserved words
+    /// Some well-know reserved words
         $reserved_words = array (
             'user', 'scale', 'type', 'comment', 'view', 'value', 'table', 'index', 'key', 'sequence', 'trigger'
         );  
         return $reserved_words;
+    }
+
+    /**
+     * Returns an array of tables to be built without prefix (lowercase)
+     * It's enough to keep updated here this function.
+     */
+    function getTablesWithoutPrefix() {
+    /// Some well-known tables to be created without prefix
+        $tables = array (
+            'adodb_logsql'
+        );  
+        return $tables;
     }
 }
 
