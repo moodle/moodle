@@ -27,6 +27,10 @@
 
     $qtype = optional_param('qtype', '', PARAM_FILE);
     $category = optional_param('category', 0, PARAM_INT);
+    
+    
+    $CFG->pagepath = 'question/type/'.$qtype;
+    
 
     // rqp questions set the type to rqp_nn where nn is the rqp_type id
     if (substr($qtype, 0, 4) == 'rqp_') {
