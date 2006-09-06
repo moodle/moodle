@@ -782,6 +782,24 @@ class XMLDBTable extends XMLDBObject {
         }
         return $results;
     }
+
+    /** 
+     * This function will return the SQL code needed to create the table for the specified DB and
+     * prefix. Just one simple wrapper over generators.
+     */
+    function getRenameTableSQL ($dbtype, $prefix, $newname, $statement_end=true) {
+
+        $results = array();
+
+        $classname = 'XMLDB' . $dbtype;
+        $generator = new $classname();
+        $generator->setPrefix($prefix);
+        $results = $generator->getRenameTableSQL($this, $newname);
+        if ($statement_end) {
+            $results = $generator->getEndedStatements($results);
+        }
+        return $results;
+    }
 }
 
 ?>
