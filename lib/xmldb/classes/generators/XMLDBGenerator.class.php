@@ -78,6 +78,10 @@ class XMLDBgenerator {
 
     var $concat_character = '||'; //Characters to be used as concatenation operator. If not defined
                                   //MySQL CONCAT function will be used
+    var $rename_table_sql = 'ALTER TABLE OLDNAME RENAME TO NEWNAME'; //SQL sentence to rename one table, both
+                                  //OLDNAME and NEWNAME are dinamically replaced
+
+    var $rename_table_extra_code = false; //Does the generatos need to add code after table renaming
 
     var $prefix;         // Prefix to be used for all the DB objects
 
@@ -401,6 +405,24 @@ class XMLDBgenerator {
     }
 
     /**
+     * Given one correct XMLDBTable and the new name, returns the SQL statements
+     * to rename it (inside one array)
+     */ 
+    function getRenameTableSQL($xmldb_table, $newname) {
+
+        $results = array();  //Array where all the sentences will be stored
+
+        $rename = str_replace('OLDNAME', $this->getEncQuoted($this->prefix . $xmldb_table->getName), $rename_table_sql);
+        $rename = str_replace('NEWNAME', $this->getEncQuoted($this->prefix . $newname), $rename_table_sql);
+
+        $results[] = $rename;
+
+    /// TODO, call to getRenameTableExtraSQL() if $rename_table_extra_code is enabled. It will add sequence regeneration code.
+
+        return $results;
+    }
+
+    /**
      * Given three strings (table name, list of fields (comma separated) and suffix), create the proper object name
      * quoting it if necessary
      */
@@ -614,6 +636,13 @@ class XMLDBgenerator {
      * Returns the code (array of statements) needed to add one comment to the table
      */
     function getCommentSQL ($xmldb_table) {
+        return 'Code for table comment goes to getCommentSQL(). Can be disabled with add_table_comments=false;';
+    }
+
+    /**
+     * Returns the code (array of statements) needed to execute extra statements on table rename
+     */
+    function getRenameTableExtraSQL ($xmldb_table) {
         return 'Code for table comment goes to getCommentSQL(). Can be disabled with add_table_comments=false;';
     }
 
