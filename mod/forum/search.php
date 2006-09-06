@@ -257,7 +257,7 @@
 
 
 function forum_print_big_search_form($course) {
-    global $words, $subject, $phrase, $user, $userid, $fullwords, $notwords, $datefrom, $dateto;
+    global $CFG, $words, $subject, $phrase, $user, $userid, $fullwords, $notwords, $datefrom, $dateto;
 
     print_simple_box(get_string('searchforumintro', 'forum'), 'center', '', '', 'searchbox', 'intro');
 
@@ -287,10 +287,12 @@ function forum_print_big_search_form($course) {
     echo '<td class="c1"><input type="text" size="35" name="notwords" value="'.s($notwords).'" alt=""></td>';
     echo '</tr>';
 
-    echo '<tr>';
-    echo '<td class="c0">'.get_string('searchfullwords', 'forum').':</td>';
-    echo '<td class="c1"><input type="text" size="35" name="fullwords" value="'.s($fullwords).'" alt=""></td>';
-    echo '</tr>';
+    if ($CFG->dbtype == 'mysql' || $CFG->dbtype == 'postgres7') {
+        echo '<tr>';
+        echo '<td class="c0">'.get_string('searchfullwords', 'forum').':</td>';
+        echo '<td class="c1"><input type="text" size="35" name="fullwords" value="'.s($fullwords).'" alt=""></td>';
+        echo '</tr>';
+    }
 
     echo '<tr>';
     echo '<td class="c0">'.get_string('searchdatefrom', 'forum').':</td>';
