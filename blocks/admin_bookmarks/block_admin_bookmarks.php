@@ -12,7 +12,7 @@ class block_admin_bookmarks extends block_base {
     }
 
     function applicable_formats() {
-        return array('site' => true, 'admin' => true);
+        return array('all' => true);
     }
 
     function preferred_width() {
