@@ -211,6 +211,31 @@ class XMLDBIndex extends XMLDBObject {
         $this->changed = true;
     }
 
+    /**
+     * Returns the PHP code needed to define one XMLDBIndex
+     */
+    function getPHP() {
+
+        $result = '';
+
+    /// The type
+        $unique = $this->getUnique();
+        if (!empty($unique)) {
+            $result .= 'XMLDB_INDEX_UNIQUE, ';
+        } else {
+            $result .= 'XMLDB_INDEX_NOTUNIQUE, ';
+        }
+    /// The fields
+        $indexfields = $this->getFields();
+        if (!empty($indexfields)) {
+            $result .= 'array(' . "'".  implode("', '", $indexfields) . "')";
+        } else {
+            $result .= 'null';
+        }
+    /// Return result
+        return $result;
+    }
+
     /**     
      * Shows info in a readable format
      */
