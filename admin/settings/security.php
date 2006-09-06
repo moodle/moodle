@@ -5,6 +5,7 @@
 // "sitepolicies" settingpage
 $temp = new admin_settingpage('sitepolicies', get_string('sitepolicies', 'admin'));
 $temp->add(new admin_setting_configselect('showsiteparticipantslist', get_string('showsiteparticipantslist', 'admin'), get_string('configshowsiteparticipantslist', 'admin'), 0, array(0 => get_string('siteteachers'), 1 => get_string('allteachers'), 2 => get_string('studentsandteachers'))));
+$temp->add(new admin_setting_configcheckbox('protectusernames', get_string('protectusernames', 'admin'), get_string('configprotectusernames', 'admin'), 1));
 $temp->add(new admin_setting_configcheckbox('forcelogin', get_string('forcelogin', 'admin'), get_string('configforcelogin', 'admin'), 0));
 $temp->add(new admin_setting_configcheckbox('forceloginforprofiles', get_string('forceloginforprofiles', 'admin'), get_string('configforceloginforprofiles', 'admin'), 0));
 $temp->add(new admin_setting_configcheckbox('opentogoogle', get_string('opentogoogle', 'admin'), get_string('configopentogoogle', 'admin'), 0));
