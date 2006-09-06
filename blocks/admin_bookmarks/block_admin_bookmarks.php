@@ -53,9 +53,9 @@ class block_admin_bookmarks extends block_base {
 		}
 		
         if (($section = (isset($PAGE->section) ? $PAGE->section : '')) && (in_array($section, $bookmarks))) {
-            $this->content->footer = '<a href="' . $CFG->wwwroot . '/blocks/admin_bookmarks/delete.php?section=' . $section . '&returnurl=' . $CFG->wwwroot . '">unbookmark this page</a>';	
+            $this->content->footer = '<a href="' . $CFG->wwwroot . '/blocks/admin_bookmarks/delete.php?section=' . $section . '&returnurl=' . $CFG->wwwroot . '">' . get_string('unbookmarkthispage','admin') . '</a>';	
 		} elseif ($section = (isset($PAGE->section) ? $PAGE->section : '')) {
-    	    $this->content->footer = '<a href="' . $CFG->wwwroot . '/blocks/admin_bookmarks/create.php?section=' . $section . '">bookmark this page</a>';		
+    	    $this->content->footer = '<a href="' . $CFG->wwwroot . '/blocks/admin_bookmarks/create.php?section=' . $section . '">' . get_string('bookmarkthispage','admin') . '</a>';		
 		} else {
 		    $this->content->footer = '';
 		}

@@ -14,7 +14,7 @@ if ($section = optional_param('section', '', PARAM_ALPHAEXT)) {
         $key = array_search($section, $bookmarks);
 
         if ($key === false) {
-		    error('Bookmark doesn\'t exist.');
+                    error(get_string('nonexistentbookmark','admin'));
 			die;
 		}
 
@@ -25,22 +25,22 @@ if ($section = optional_param('section', '', PARAM_ALPHAEXT)) {
         $temp = $adminroot->locate($section);
         
         if (is_a($temp, 'admin_externalpage')) {
-            redirect($temp->url, 'Bookmark deleted.',1);
+            redirect($temp->url, get_string('bookmarkdeleted','admin'),1);
         } elseif (is_a($temp, 'admin_settingpage')) {
             redirect($CFG->wwwroot . '/' . $CFG->admin . '/settings.php?section=' . $section, 'Bookmark deleted.',1);        
         } else {
-            redirect($CFG->wwwroot, 'Bookmark deleted.',1);
+            redirect($CFG->wwwroot, get_string('bookmarkdeleted', 'admin'),1);
         }
 		die;
 
 
 	}
 	
-    error('No bookmarks found for current user.');
+        error(get_string('nobookmarksforuser','admin'));
 	die;
 
 } else {
-    error('Valid section not specified.');
+    error(get_string('invalidsection', 'admin'));
 	die;
 }
 

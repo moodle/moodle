@@ -11,8 +11,8 @@ if ($section = optional_param('section', '', PARAM_ALPHAEXT)) {
         $bookmarks = explode(',',$USER->preference['admin_bookmarks']);
 		
         if (in_array($section, $bookmarks)) {
-    	    error('Bookmark already exists.');
-    		die;
+            error(get_string('bookmarkalreadyexists','admin'));
+    	    die;
     	}
 		
 	} else {
@@ -30,8 +30,8 @@ if ($section = optional_param('section', '', PARAM_ALPHAEXT)) {
     	set_user_preference('admin_bookmarks', $bookmarks);
     
     } else {
-    
-        error('Invalid section.');
+   
+        error(get_string('invaludsection','admin')); 
         die;
         
     }
@@ -42,13 +42,13 @@ if ($section = optional_param('section', '', PARAM_ALPHAEXT)) {
     
     } elseif (is_a($temp, 'admin_externalpage')) {
     
-        redirect($temp->url, 'Bookmark added.', 1);
+        redirect($temp->url, get_string('bookmarkadded','admin'), 1);
         
     }
 
 } else {
-    error('Valid section not specified.');
-	die;
+    error(get_string('invalidsection','admin'));
+    die;
 }
 
 
