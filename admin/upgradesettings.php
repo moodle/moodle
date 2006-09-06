@@ -18,7 +18,7 @@ $newsettingshtml = output_new_settings_by_page(admin_get_root());
 
 // first we deal with the case where there are no new settings to be set
 if ($newsettingshtml == '') {
-    redirect($CFG->wwwroot . '/' . $CFG->admin . '/index.php', get_string('nonewsettings','admin'),1);	
+    redirect($CFG->wwwroot . '/' . $CFG->admin . '/index.php');	
     die;
 }
 
