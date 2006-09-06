@@ -77,6 +77,7 @@ CREATE TABLE `prefix_workshop_assessments` (
   `timeagreed` int(10) unsigned NOT NULL default '0',
   `grade` float NOT NULL default '0',
   `gradinggrade` int(3) NOT NULL default '0',
+  `teachergraded` int(3) NOT NULL default '0',
   `mailed` tinyint(3) unsigned NOT NULL default '0',
   `resubmission` tinyint(3) unsigned NOT NULL default '0',
   `donotuse` tinyint(3) unsigned NOT NULL default '0',

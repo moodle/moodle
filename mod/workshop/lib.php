@@ -26,6 +26,42 @@ $WORKSHOP_ASSESSMENT_COMPS = array (
                           4 => array('name' => get_string('verystrict', 'workshop'), 'value' => 0.2) );
 
 
+/*** Moodle 1.7 compatibility functions *****
+ *
+ ********************************************/
+function workshop_context($workshop) {
+    //TODO: add some $cm caching if needed
+    if (is_object($workshop)) {
+        $workshop = $workshop->id;
+    }
+    if (! $cm = get_coursemodule_from_instance('workshop', $workshop)) {
+        error('Course Module ID was incorrect');
+    }
+
+    return get_context_instance(CONTEXT_MODULE, $cm->id);
+}
+
+function workshop_is_teacher($workshop, $userid=NULL) {
+    return has_capability('mod/workshop:manage', workshop_context($workshop), $userid);
+}
+
+//TODO: should we make new role for it and fix the code or wait for new workshop? 
+function workshop_is_teacheredit($workshop, $userid=NULL) {
+    return has_capability('mod/workshop:manage', workshop_context($workshop), $userid);
+}
+
+function workshop_is_student($workshop, $userid=NULL) {
+    return has_capability('mod/workshop:participate', workshop_context($workshop), $userid);
+}
+
+function workshop_get_students($workshop, $sort='u.lastaccess', $fields='u.*') {
+    return $users = get_users_by_capability(workshop_context($workshop), 'mod/workshop:participate', $fields, $sort);
+}
+
+function workshop_get_teachers($workshop, $sort='u.lastaccess', $fields='u.*') {
+    return $users = get_users_by_capability(workshop_context($workshop), 'mod/workshop:manage', $fields, $sort);
+}
+
 
 /*** Standard Moodle functions ******************
 workshop_add_instance($workshop) 
@@ -174,11 +210,11 @@ function workshop_cron () {
                 echo "Could not find user $assessment->userid\n";
                 continue;
             }
-            if (! isstudent($course->id, $submissionowner->id) and !isteacher($course->id, 
+            if (! workshop_is_student($workshop, $submissionowner->id) and !workshop_is_teacher($workshop, 
                         $submissionowner->id)) {
                 continue;  // Not an active participant
             }
-            if (! isstudent($course->id, $assessmentowner->id) and !isteacher($course->id, 
+            if (! workshop_is_student($workshop, $assessmentowner->id) and !workshop_is_teacher($workshop, 
                         $assessmentowner->id)) {
                 continue;  // Not an active participant
             }
@@ -193,7 +229,7 @@ function workshop_cron () {
             $USER->lang = $submissionowner->lang;
             $sendto = $submissionowner;
             // "Your assignment \"$submission->title\" has been assessed by"
-            if (isstudent($course->id, $assessmentowner->id)) {
+            if (workshop_is_student($workshop, $assessmentowner->id)) {
                 $msg = get_string("mail1", "workshop", $submission->title)." a $course->student.\n";
             }
             else {
@@ -273,11 +309,11 @@ function workshop_cron () {
                 echo "Could not find user $assessment->userid\n";
                 continue;
             }
-            if (! isstudent($course->id, $submissionowner->id) and !isteacher($course->id, 
+            if (! workshop_is_student($workshop, $submissionowner->id) and !workshop_is_teacher($workshop, 
                         $submissionowner->id)) {
                 continue;  // Not an active participant
             }
-            if (! isstudent($course->id, $assessmentowner->id) and !isteacher($course->id, 
+            if (! workshop_is_student($workshop, $assessmentowner->id) and !workshop_is_teacher($workshop, 
                         $assessmentowner->id)) {
                 continue;  // Not an active participant
             }
@@ -367,11 +403,11 @@ function workshop_cron () {
                 echo "Could not find user $assessment->userid\n";
                 continue;
             }
-            if (! isstudent($course->id, $submissionowner->id) and !isteacher($course->id, 
+            if (! workshop_is_student($workshop, $submissionowner->id) and !workshop_is_teacher($workshop, 
                         $submissionowner->id)) {
                 continue;  // Not an active participant
             }
-            if (! isstudent($course->id, $assessmentowner->id) and !isteacher($course->id, 
+            if (! workshop_is_student($workshop, $assessmentowner->id) and !workshop_is_teacher($workshop, 
                         $assessmentowner->id)) {
                 continue;  // Not an active participant
             }
@@ -384,7 +420,7 @@ function workshop_cron () {
                 $USER->lang = $submissionowner->lang;
                 $sendto = $submissionowner;
                 // "A comment has been added to the assignment \"$submission->title\" by
-                if (isstudent($course->id, $assessmentowner->id)) {
+                if (workshop_is_student($workshop, $assessmentowner->id)) {
                     $msg = get_string("mail4", "workshop", $submission->title)." a $course->student.\n";
                 }
                 else {
@@ -430,7 +466,7 @@ function workshop_cron () {
                 $USER->lang = $assessmentowner->lang;
                 $sendto = $assessmentowner;
                 // "A comment has been added to the assignment \"$submission->title\" by
-                if (isstudent($course->id, $submissionowner->id)) {
+                if (workshop_is_student($workshop, $submissionowner->id)) {
                     $msg = get_string("mail4", "workshop", $submission->title)." a $course->student.\n";
                 }
                 else {
@@ -540,7 +576,7 @@ function workshop_grades($workshopid) {
     $return = null;
     if ($workshop = get_record("workshop", "id", $workshopid)) {
         if (($workshop->assessmentstart < time()) and $workshop->gradingstrategy) {
-            if ($students = get_course_students($workshop->course)) {
+            if ($students = workshop_get_students($workshop)) {
                 foreach ($students as $student) {
                     if ($workshop->wtype) {
                         $gradinggrade = workshop_gradinggrade($workshop, $student);
@@ -629,7 +665,7 @@ function workshop_print_recent_activity($course, $isteacher, $timestart) {
                     $tempmod->id = $log->workshopid;
                     //Obtain the visible property from the instance
                     if (instance_is_visible("workshop",$tempmod)) {
-                        if (!isteacher($course->id, $log->userid)) {  // don't break anonymous rule
+                        if (!workshop_is_teacher($workshop, $log->userid)) {  // don't break anonymous rule
                             $log->firstname = $course->student;
                             $log->lastname = '';
                         }
@@ -665,7 +701,7 @@ function workshop_print_recent_activity($course, $isteacher, $timestart) {
                     $tempmod->id = $log->workshopid;
                     //Obtain the visible property from the instance
                     if (instance_is_visible("workshop",$tempmod)) {
-                        if (!isteacher($course->id, $log->userid)) {  // don't break anonymous rule
+                        if (!workshop_is_teacher($tempmod->id, $log->userid)) {  // don't break anonymous rule
                             $log->firstname = $course->student;
                             $log->lastname = '';
                         }
@@ -1243,7 +1279,7 @@ function workshop_count_ungraded_assessments($workshop) {
     if ($assessments = get_records_select("workshop_assessments", "workshopid = $workshop->id AND 
             (timecreated + $CFG->maxeditingtime) < $timenow AND timegraded = 0")) {
         foreach ($assessments as $assessment) {
-            if (isstudent($workshop->course, $assessment->userid)) {
+            if (workshop_is_student($workshop, $assessment->userid)) {
                 $n++;
             }
         }
@@ -1409,20 +1445,22 @@ function workshop_get_student_submissions($workshop, $order = "title") {
     if ($order == "time") {
         $order = "s.timecreated ASC";
     }
-    // make sure it works on the site course
-    $select = "u.course = '$workshop->course' AND";
-    $site = get_site();
-    if ($workshop->course == $site->id) {
-        $select = '';
-    }
 
-    return get_records_sql("SELECT s.* FROM {$CFG->prefix}workshop_submissions s, 
-                            {$CFG->prefix}user_students u, {$CFG->prefix}user a 
-                            WHERE $select s.userid = u.userid
-                              AND a.id = u.userid
+    if (!$students = workshop_get_students($workshop)) {
+        return false;
+    }
+    $list = "(";
+    foreach ($students as $student) {
+        $list .= "$student->id,";
+    }
+    $list = rtrim($list, ',').")";
+
+    return get_records_sql("SELECT s.* FROM {$CFG->prefix}workshop_submissions s, {$CFG->prefix}user a 
+                            WHERE s.userid IN $list
                               AND s.workshopid = $workshop->id
                               AND s.timecreated > 0
-                              ORDER BY $order");
+                              AND s.userid = a.id
+                            ORDER BY $order");
 }
 
 
@@ -1537,7 +1575,7 @@ function workshop_grade_assessments($workshop, $verbose=false) {
                 if ($assessments = workshop_get_assessments($submission)) {
                     foreach ($assessments as $assessment) {
                         // test if assessment is "good", a teacher assessment always "good", but may be weighted out 
-                        if (isteacher($workshop->course, $assessment->userid)) {
+                        if (workshop_is_teacher($workshop, $assessment->userid)) {
                             if (!$workshop->teacherweight) {
                                 // drop teacher's assessment as weight is zero
                                 continue;
@@ -1548,14 +1586,14 @@ function workshop_grade_assessments($workshop, $verbose=false) {
                             continue;
                         }
                         if (isset($num[$submission->id])) {
-                            if (isteacher($workshop->course, $assessment->userid)) {
+                            if (workshop_is_teacher($workshop, $assessment->userid)) {
                                 $num[$submission->id] += $workshop->teacherweight; // weight teacher's assessment
                             } else {
                                 $num[$submission->id]++; // number of assessments
                             }
                             $nassessments[$submission->id]++;
                         } else {
-                            if (isteacher($workshop->course, $assessment->userid)) {
+                            if (workshop_is_teacher($workshop, $assessment->userid)) {
                                 $num[$submission->id] = $workshop->teacherweight;
                             } else {
                                 $num[$submission->id] = 1;
@@ -1566,13 +1604,13 @@ function workshop_grade_assessments($workshop, $verbose=false) {
                             $grade =  get_field("workshop_grades", "grade",
                                     "assessmentid", $assessment->id, "elementno", $i);
                             if (isset($sum[$submission->id][$i])) {
-                                if (isteacher($workshop->course, $assessment->userid)) {
+                                if (workshop_is_teacher($workshop, $assessment->userid)) {
                                     $sum[$submission->id][$i] += $workshop->teacherweight * $grade; // teacher's grade
                                 } else {
                                     $sum[$submission->id][$i] += $grade; // student's grade
                                 }
                             } else { 
-                                if (isteacher($workshop->course, $assessment->userid)) {
+                                if (workshop_is_teacher($workshop, $assessment->userid)) {
                                     $sum[$submission->id][$i] = $workshop->teacherweight * $grade; // teacher's grade
                                 } else {
                                     $sum[$submission->id][$i] = $grade; // students's grade
@@ -1674,7 +1712,7 @@ function workshop_grade_assessments($workshop, $verbose=false) {
                         // first calculate the mean grades for each element
                         foreach ($assessments as $assessment) {
                             // test if assessment is "good", a teacher assessment always "good", but may be weighted out 
-                            if (isteacher($workshop->course, $assessment->userid)) {
+                            if (workshop_is_teacher($workshop, $assessment->userid)) {
                                 if (!$workshop->teacherweight) {
                                     // drop teacher's assessment as weight is zero
                                     continue;
@@ -1684,7 +1722,7 @@ function workshop_grade_assessments($workshop, $verbose=false) {
                                 // it's a duff assessment, or it's not been agreed
                                 continue;
                             }
-                            if (isteacher($workshop->course, $assessment->userid)) {
+                            if (workshop_is_teacher($workshop, $assessment->userid)) {
                                 $num += $workshop->teacherweight; // weight teacher's assessment
                             } else {
                                 $num++; // student assessment just add one
@@ -1692,7 +1730,7 @@ function workshop_grade_assessments($workshop, $verbose=false) {
                             for ($i = 0; $i < $workshop->nelements; $i++) {
                                 $grade =  get_field("workshop_grades", "grade",
                                         "assessmentid", $assessment->id, "elementno", $i);
-                                if (isteacher($workshop->course, $assessment->userid)) {
+                                if (workshop_is_teacher($workshop, $assessment->userid)) {
                                     $sum[$i] += $workshop->teacherweight * $grade; // teacher's grade
                                 } else {
                                     $sum[$i] += $grade; // student's grade
@@ -1816,7 +1854,7 @@ function workshop_submission_grade($workshop, $submission) {
             }
             if ($assessment->gradinggrade or !$assessment->timegraded) { 
                 // a good assessment (or one that has not been graded yet)
-                if (isteacher($workshop->course, $assessment->userid)) {
+                if (workshop_is_teacher($workshop, $assessment->userid)) {
                     $timenow = time();
                     if ($timenow > $workshop->releasegrades) {
                         // teacher's grade is available

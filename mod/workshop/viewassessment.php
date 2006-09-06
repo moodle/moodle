@@ -68,7 +68,7 @@
         // show assessment but don't allow changes
         workshop_print_assessment($workshop, $assessment, false, $allowcomments);
 
-        if (isteacher($course->id) and !isteacher($course->id, $assessment->userid)) {
+        if (workshop_is_teacher($workshop) and !workshop_is_teacher($workshop, $assessment->userid)) {
             print_heading_with_help(get_string("gradeassessment", "workshop"), "gradingassessments", "workshop");
             include('assessment_grading_form.html');
         }
@@ -81,7 +81,7 @@
 
     print_header('', '', '', '', '<base target="_parent" />');
     $title = '"'.$submission->title.'" ';
-    if (isteacher($course->id)) {
+    if (workshop_is_teacher($workshop)) {
         $title .= ' '.get_string('by', 'workshop').' '.workshop_fullname($submission->userid, $course->id);
     }
     print_heading($title);

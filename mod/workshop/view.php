@@ -21,7 +21,6 @@
     $action = optional_param('action', '', PARAM_ALPHA);
     $sort   = optional_param('sort', 'lastname', PARAM_ALPHA);
     $dir    = optional_param('dir', 'ASC', PARAM_ALPHA);
-    $group  = optional_param('group', -1, PARAM_INT);
 
     $timenow = time();
 
@@ -37,20 +36,15 @@
     }
 
     require_login($course->id, false, $cm);
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    require_capability('mod/workshop:view', $context);
 
     $strworkshops = get_string("modulenameplural", "workshop");
     $strworkshop  = get_string("modulename", "workshop");
     $straction = ($action) ? '-> '.get_string($action, 'workshop') : '';
 
-    // ...display header...
-    print_header_simple(format_string($workshop->name), "",
-                 "<a href=\"index.php?id=$course->id\">$strworkshops</a> ->
-                  <a href=\"view.php?id=$cm->id\">".format_string($workshop->name,true)."</a> $straction",
-                  "", "", true, update_module_button($cm->id, $course->id, $strworkshop), navmenu($course, $cm));
-
     // ...and if necessary set default action
-
-    if (isteacher($course->id)) {
+    if (workshop_is_teacher($workshop)) {
         if (empty($action)) { // no action specified, either go straight to elements page else the admin page
             // has the assignment any elements
             if (count_records("workshop_elements", "workshopid", $workshop->id) >= $workshop->nelements) {
@@ -60,8 +54,7 @@
                 redirect("assessments.php?action=editelements&id=$cm->id");
             }
         }
-    }
-    elseif (!isguest()) { // it's a student then
+    } else { // it's a student then
         if (!$cm->visible) {
             notice(get_string("activityiscurrentlyhidden"));
         }
@@ -75,15 +68,24 @@
             }
         }
     }
-    else { // it's a guest, oh no!
-        $action = 'notavailable';
-    }
+
+    // ...display header...
+    print_header_simple(format_string($workshop->name), "",
+                 "<a href=\"index.php?id=$course->id\">$strworkshops</a> ->
+                  <a href=\"view.php?id=$cm->id\">".format_string($workshop->name,true)."</a> $straction",
+                  "", "", true, update_module_button($cm->id, $course->id, $strworkshop), navmenu($course, $cm));
+
 
     // ...log activity...
     add_to_log($course->id, "workshop", "view", "view.php?id=$cm->id", $workshop->id, $cm->id);
 
+    if ($action == 'studentsview' and !workshop_is_student($workshop)) {
+        $action = 'showdescription';
+    }
+
     /****************** display final grade (for students) ************************************/
     if ($action == 'displayfinalgrade' ) {
+        require_capability('mod/workshop:participate', $context);
 
         print_heading("<b><a href=\"view.php?id=$cm->id&amp;action=showdescription\">".
                 get_string("showdescription", 'workshop')."</a></b>");
@@ -136,9 +138,10 @@
         print_heading(get_string("notavailable", "workshop"));
     }
 
-
     /****************** student's view could be in 1 of 4 stages ***********************/
     elseif ($action == 'studentsview') {
+        require_capability('mod/workshop:participate', $context);
+
         // is a password needed?
         if ($workshop->usepassword) {
             $correctpass = false;
@@ -273,9 +276,7 @@
     /****************** submission of example by teacher only***********************/
     elseif ($action == 'submitexample') {
 
-        if (!isteacher($course->id)) {
-            error("Only teachers can look at this page");
-        }
+        require_capability('mod/workshop:manage', $context);
 
         // list previous submissions from teacher
         workshop_list_user_submissions($workshop, $USER);
@@ -293,9 +294,7 @@
     /****************** teacher's view - display admin page  ************/
     elseif ($action == 'teachersview') {
 
-        if (!isteacher($course->id)) {
-            error("Only teachers can look at this page");
-        }
+        require_capability('mod/workshop:manage', $context);
 
         // automatically grade assessments if workshop has examples and/or peer assessments
         if ($workshop->gradingstrategy and ($workshop->ntassessments or $workshop->nsassessments)) {
@@ -303,23 +302,9 @@
         }
 
         /// Check to see if groups are being used in this workshop
-        /// and if so, set $currentgroup to reflect the current group
-        // $changegroup = isset($_GET['_param('group',0,PARAM_INT);group']) ? $_GET['group'] : -1;  // Group change requested?
-        $changegroup = $group;
-        $groupmode = groupmode($course, $cm);   // Groups are being used?
-        $currentgroup = get_and_set_current_group($course, $groupmode, $changegroup);
+        setup_and_print_groups($course, groupmode($course, $cm), "view.php?id=$cm->id");
+        $currentgroup = get_current_group($course->id);
 
-        /// Print settings and things in a table across the top
-        echo '<table width="100%" border="0" cellpadding="3" cellspacing="0"><tr valign="top">';
-
-        /// Allow the teacher to change groups (for this session)
-        if ($groupmode and isteacheredit($course->id)) {
-            if ($groups = get_records_menu("groups", "courseid", $course->id, "name ASC", "id,name")) {
-                echo '<td>';
-                print_group_menu($groups, $groupmode, $currentgroup, "view.php?id=$cm->id");
-                echo '</td>';
-            }
-        }
         /// Print admin links
         echo "<td align=\"right\">";
         echo "<a href=\"submissions.php?id=$cm->id&amp;action=adminlist\">".
@@ -370,7 +355,7 @@
         }
 
         // Get all the students
-        if (!$users = get_course_students($course->id, "u.lastname, u.firstname")) {
+        if (!$users = workshop_get_students($workshop)) {
             print_heading(get_string("nostudentsyet"));
             print_footer($course);
             exit;
@@ -540,15 +525,21 @@
 
     /****************** show description  ************/
     elseif ($action == 'showdescription') {
+        require_capability('mod/workshop:view', $context);
 
         workshop_print_assignment_info($workshop);
         print_simple_box(format_text($workshop->description, $workshop->format), 'center', '70%', '', 5, 'generalbox', 'intro');
-        print_continue($_SERVER["HTTP_REFERER"]);
+        if (isset($_SERVER["HTTP_REFERER"])) {
+            print_continue($_SERVER["HTTP_REFERER"]);
+        } else {
+            print_continue("$CFG->wwwroot/course/view.php?id=$cm->id");
+        }
     }
 
 
     /****************** teacher's view - list all submissions  ************/
     elseif ($action == 'allsubmissions') {
+        require_capability('mod/workshop:manage', $context);
 
         if ($submissions = get_records('workshop_submissions', 'workshopid', $workshop->id)) {
             foreach($submissions as $submission) {

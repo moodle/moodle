@@ -23,11 +23,15 @@
         error("No coursemodule found");
     }
 
+    require_login($course->id, false, $cm);
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    require_capability('mod/workshop:view', $context);
+
     if (!$redirect) {
-        $redirect = urlencode($_SERVER["HTTP_REFERER"].'#sid='.$submission->id);
+        //seems not to work properly
+//        $redirect = urlencode($_SERVER["HTTP_REFERER"].'#sid='.$submission->id);
     }
 
-    require_login($course->id, false, $cm);
 
     $strworkshops = get_string("modulenameplural", "workshop");
     $strworkshop  = get_string("modulename", "workshop");
@@ -67,7 +71,7 @@
         if (!$assessment = get_record("workshop_assessments", "submissionid", $submission->id, "userid",
                     $USER->id)) {
             // if it's the teacher see if the user has done a self assessment if so copy it
-            if (isteacher($course->id) and  ($assessment = get_record("workshop_assessments", "submissionid",
+            if (workshop_is_teacher($workshop) and  ($assessment = get_record("workshop_assessments", "submissionid",
                             $submission->id, "userid", $submission->userid))) {
                 $assessment = workshop_copy_assessment($assessment, $submission, true);
                 // need to set owner of assessment
@@ -90,7 +94,7 @@
                     error("Could not insert workshop assessment!");
                 }
                 // if it's the teacher and the workshop is error banded set all the elements to Yes
-                if (isteacher($course->id) and ($workshop->gradingstrategy == 2)) {
+                if (workshop_is_teacher($workshop) and ($workshop->gradingstrategy == 2)) {
                     for ($i =0; $i < $workshop->nelements; $i++) {
                         unset($element);
                         $element->workshopid = $workshop->id;
@@ -130,13 +134,13 @@
 
     print_header('', '', '', '', '<base target="_parent" />');
     $title = '"'.$submission->title.'" ';
-    if (isteacher($course->id)) {
+    if (workshop_is_teacher($workshop)) {
         $title .= ' '.get_string('by', 'workshop').' '.workshop_fullname($submission->userid, $course->id);
     }
     print_heading($title);
     workshop_print_submission($workshop, $submission);
 
-    if (isteacher($course->id)) {
+    if (workshop_is_teacher($workshop)) {
         echo '<br /><center><b>'.get_string('assessments', 'workshop').': </b><br />';
         echo workshop_print_submission_assessments($workshop, $submission, "all");
         echo '</center>';

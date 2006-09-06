@@ -63,6 +63,8 @@
     }
 
     require_login($course->id, false, $cm);
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    require_capability('mod/workshop:view', $context);
 
     $navigation = "";
     if ($course->category) {
@@ -125,9 +127,7 @@
             error("Workshop Assessment ID and/or Element Number missing");
         }
 
-        if (!isteacher($course->id)) {
-            error("Only teachers can look at this page");
-        }
+        require_capability('mod/workshop:manage', $context);
 
         if (!$assessment = get_record("workshop_assessments", "id", $aid)) {
             error("workshop assessment is misconfigured");
@@ -352,9 +352,7 @@
     /*********************** admin list of asssessments (of a submission) (by teachers)**************/
     elseif ($action == 'adminlist') {
 
-        if (!isteacher($course->id)) {
-            error("Only teachers can look at this page");
-            }
+        require_capability('mod/workshop:manage', $context);
 
         if (empty($sid)) {
             error ("Workshop asssessments: adminlist called with no sid");
@@ -368,9 +366,7 @@
     /*********************** admin list of asssessments by a student (used by teachers only )******************/
     elseif ($action == 'adminlistbystudent') {
 
-        if (!isteacher($course->id)) {
-            error("Only teachers can look at this page");
-            }
+        require_capability('mod/workshop:manage', $context);
 
         if (empty($userid)) {
             error ("Workshop asssessments: adminlistbystudent called with no userid");
@@ -450,9 +446,7 @@
     /*********************** edit assessment elements (for teachers) ***********************/
     elseif ($action == 'editelements') {
 
-        if (!isteacher($course->id)) {
-            error("Only teachers can look at this page");
-        }
+        require_capability('mod/workshop:manage', $context);
 
         $count = count_records("workshop_grades", "workshopid", $workshop->id);
         if ($count) {
@@ -635,9 +629,7 @@
     /*************** grade all assessments (by teacher) ***************************/
     elseif ($action == 'gradeallassessments') {
 
-        if (!isteacher($course->id)) {
-            error("Only teachers can look at this page");
-        }
+        require_capability('mod/workshop:manage', $context);
 
         print_heading(get_string("gradingallassessments", "workshop"));
         workshop_grade_assessments($workshop);
@@ -648,9 +640,7 @@
     /*************** grade (student's) assessment (by teacher) ***************************/
     elseif ($action == 'gradeassessment') {
 
-        if (!isteacher($course->id)) {
-            error("Only teachers can look at this page");
-        }
+        require_capability('mod/workshop:manage', $context);
 
         print_heading_with_help(get_string("gradeassessment", "workshop"), "gradingassessments", "workshop");
         // get assessment record
@@ -704,9 +694,7 @@
     /*********************** insert/update assignment elements (for teachers)***********************/
     elseif ($action == 'insertelements') {
 
-        if (!isteacher($course->id)) {
-            error("Only teachers can look at this page");
-        }
+        require_capability('mod/workshop:manage', $context);
 
         $form = data_submitted();
 
@@ -821,9 +809,8 @@
     /*********************** list assessments for grading (Student submissions)(by teachers)***********************/
     elseif ($action == 'listungradedstudentsubmissions') {
 
-        if (!isteacher($course->id)) {
-            error("Only teachers can look at this page");
-            }
+        require_capability('mod/workshop:manage', $context);
+
         workshop_list_ungraded_assessments($workshop, "student");
         print_continue("view.php?id=$cm->id");
         }
@@ -832,9 +819,8 @@
     /*********************** list assessments for grading (Teacher submissions) (by teachers)***********************/
     elseif ($action == 'listungradedteachersubmissions') {
 
-        if (!isteacher($course->id)) {
-            error("Only teachers can look at this page");
-            }
+        require_capability('mod/workshop:manage', $context);
+
         workshop_list_ungraded_assessments($workshop, "teacher");
         print_continue("view.php?id=$cm->id");
         }
@@ -852,9 +838,7 @@
     elseif ($action == 'regradestudentassessments' ) {
 
         $timenow = time();
-        if (!isteacher($course->id)) {
-            error("Only teachers can look at this page");
-        }
+        require_capability('mod/workshop:manage', $context);
         // get all the submissions...
         if ($submissions = get_records("workshop_submissions", "workshopid", $workshop->id)) {
             foreach ($submissions as $submission) {
@@ -879,9 +863,7 @@
             error("Workshop Assessment id and/or Stock Comment id missing");
         }
 
-        if (!isteacher($course->id)) {
-            error("Only teachers can look at this page");
-        }
+        require_capability('mod/workshop:manage', $context);
 
         if (!$assessment = get_record("workshop_assessments", "id", $aid)) {
             error("workshop assessment is misconfigured");
@@ -1250,12 +1232,12 @@
             workshop_grade_assessments($workshop);
         } else { // it could be self assessment....
             // now see if there's a corresponding assessment so that the gradinggrade can be set
-            if (isteacher($course->id)) {
+            if (workshop_is_teacher($workshop)) {
                 // see if there's are student assessments, if so set their gradinggrade
                 if ($assessments = workshop_get_assessments($submission)) {
                     foreach($assessments as $studentassessment) {
                         // skip if it's not a student assessment
-                        if (!isstudent($course->id, $studentassessment->userid)) {
+                        if (!workshop_is_student($workshop, $studentassessment->userid)) {
                             continue;
                         }
                         $gradinggrade = workshop_compare_assessments($workshop, $assessment, $studentassessment);
@@ -1266,7 +1248,7 @@
             } else { //it's a student assessment, see if there's a corresponding teacher's assessment
                 if ($assessments = workshop_get_assessments($submission)) {
                     foreach($assessments as $teacherassessment) {
-                        if (isteacher($course->id, $teacherassessment->userid)) {
+                        if (workshop_is_teacher($workshop, $teacherassessment->userid)) {
                             $gradinggrade = workshop_compare_assessments($workshop, $assessment, $teacherassessment);
                             set_field("workshop_assessments", "timegraded", $timenow, "id", $assessment->id);
                             set_field("workshop_assessments", "gradinggrade", $gradinggrade, "id", $assessment->id);
@@ -1335,9 +1317,7 @@
     elseif ($action == 'updategrading') {
         $timenow = time();
 
-        if (!isteacher($course->id)) {
-            error("Only teachers can look at this page");
-        }
+        require_capability('mod/workshop:manage', $context);
 
         $form = (object)$_POST;
 

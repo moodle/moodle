@@ -4,7 +4,7 @@ function workshop_upgrade($oldversion) {
 // This function does anything necessary to upgrade
 // older versions to match current functionality
 
-    global $CFG;
+    global $CFG, $db;
 
     if ($oldversion < 2003050400) {
         execute_sql(" ALTER TABLE `{$CFG->prefix}workshop` CHANGE `graded` `agreeassessments` TINYINT(2) UNSIGNED DEFAULT '0' NOT NULL");
@@ -207,6 +207,14 @@ function workshop_upgrade($oldversion) {
         include_once( "$CFG->dirroot/lib/wiki_to_markdown.php" );
         $wtm = new WikiToMarkdown();
         $wtm->update( 'workshop','description','format' );
+    }
+
+    if ($oldversion < 2006090500) {
+        $columns = $db->MetaColumns($CFG->prefix.'workshop_assessments');
+        $columns = array_change_key_case($columns, CASE_LOWER);
+        if (!isset($columns['teachergraded'])) {
+            table_column('workshop_assessments', '', 'teachergraded', 'INTEGER', '4', 'UNSIGNED', '0', 'NOT NULL', 'gradinggrade');
+        }
     }
 
     return true;

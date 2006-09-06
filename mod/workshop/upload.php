@@ -18,6 +18,8 @@
     }
 
     require_login($course->id, false, $cm);
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    require_capability('mod/workshop:view', $context);
 
     $strworkshops = get_string('modulenameplural', 'workshop');
     $strworkshop = get_string('modulename', 'workshop');
@@ -38,7 +40,7 @@
 
     // check that this is not a "rapid" second submission, caused by using the back button
     // only check if a student, teachers may want to submit a set of workshop examples rapidly
-    if (isstudent($course->id)) {
+    if (workshop_is_student($workshop)) {
         if ($submissions = workshop_get_user_submissions($workshop, $USER)) {
             // returns all submissions, newest on first
             foreach ($submissions as $submission) {

@@ -11,6 +11,7 @@
     }
 
     require_course_login($course);
+
     add_to_log($course->id, "workshop", "view all", "index.php?id=$course->id", "");
 
     $strworkshops = get_string("modulenameplural", "workshop");
@@ -18,11 +19,7 @@
     $strweek = get_string("week");
     $strtopic = get_string("topic");
     $strname = get_string("name");
-    if (isstudent($course->id)) {
-        $strinfo = get_string("grade");
-    } else {
-        $strinfo = get_string("phase", "workshop");
-    }
+    $strinfo = get_string("grade")."/".$strinfo = get_string("phase", "workshop");
     $strdeadline = get_string("deadline", "workshop");
     $strsubmitted = get_string("submitted", "assignment");
 
@@ -47,7 +44,7 @@
     }
 
     foreach ($workshops as $workshop) {
-        if (isteacher($course->id, $USER->id)) { // teacher see info (students see grade)
+        if (workshop_is_teacher($workshop, $USER->id)) { // teacher see info (students see grade)
             $info = workshop_phase($workshop, 'short');
             if (time() > $workshop->submissionstart) {
                 if ($num = workshop_count_student_submissions_for_assessment($workshop, $USER)) {
@@ -73,7 +70,7 @@
                     //Show normal if the mod is visible
                     $link = "<a href=\"view.php?id=$workshop->coursemodule\">".format_string($workshop->name,true)."</a><br />";
                 }
-                if (isstudent($course->id)) {
+                if (workshop_is_student($workshop)) {
                     $link .= " ($submission->title)"; // show students the title of their submission(s)
                     $gradinggrade = workshop_gradinggrade($workshop, $USER);
                     $grade = workshop_submission_grade($workshop, $submission);
@@ -100,7 +97,7 @@
                 else {
                     $table->data[] = array ($link, $info, $submitted, $due);
                 }
-                if (isteacher($course->id)) {
+                if (workshop_is_teacher($workshop)) {
                     // teacher only needs to see one "submission"
                     break;
                 }
@@ -115,7 +112,7 @@
                 //Show normal if the mod is visible
                 $link = "<a href=\"view.php?id=$workshop->coursemodule\">".format_string($workshop->name,true)."</a>";
             }
-            if (isstudent($course->id)) {
+            if (workshop_is_student($workshop)) {
                 $info = '0';
             }
             if ($course->format == "weeks" or $course->format == "topics") {

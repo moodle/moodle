@@ -255,7 +255,7 @@ function workshop_count_peer_assessments($workshop, $user) {
             if ($assessments = workshop_get_assessments($submission)) {
                 foreach ($assessments as $assessment) {
                     // ignore teacher assessments
-                    if (!isteacher($workshop->course, $assessment->userid)) {
+                    if (!workshop_is_teacher($workshop, $assessment->userid)) {
                         $n++;
                         }
                     }
@@ -292,12 +292,19 @@ function workshop_count_student_submissions($workshop) {
     if ($workshop->course == SITEID) {
         $select = '';
     }
+    if (!$students = workshop_get_students($workshop)) {
+        return 0;
+    }
+    $list = "(";
+    foreach ($students as $student) {
+        $list .= "$student->id,";
+    }
+    $list = rtrim($list, ',').")";
 
-    return count_records_sql("SELECT count(*) FROM {$CFG->prefix}workshop_submissions s, 
-                            {$CFG->prefix}user_students u
-                            WHERE $select s.userid = u.userid
-                              AND s.workshopid = $workshop->id
-                              AND timecreated > 0");
+    return count_records_sql("SELECT count(*) FROM {$CFG->prefix}workshop_submissions s
+                              WHERE $select s.userid IN $list
+                                AND s.workshopid = $workshop->id
+                                AND timecreated > 0");
     }
 
 
@@ -348,13 +355,19 @@ function workshop_count_teacher_assessments($courseid, $submission) {
 // Return count of (cold) teacher assessments of a submission
     global $CFG;
     
+    if (!$teachers = workshop_get_teachers($submission->workshopid)) {
+        return 0;
+    }
+    $list = "(";
+    foreach ($teachers as $teacher) {
+        $list .= "$teacher->id,";
+    }
+    $list = rtrim($list, ',').")";
     $timenow = time();
-    return count_records_sql("SELECT count(*) FROM {$CFG->prefix}workshop_assessments a, 
-                            {$CFG->prefix}user_teachers u
-                            WHERE u.course = $courseid
-                              AND a.userid = u.userid
-                              AND a.submissionid = $submission->id
-                              AND $timenow > (a.timecreated + $CFG->maxeditingtime)");
+    return count_records_sql("SELECT count(*) FROM {$CFG->prefix}workshop_assessments a
+                              WHERE a.userid IN $list
+                                AND a.submissionid = $submission->id
+                                AND $timenow > (a.timecreated + $CFG->maxeditingtime)");
 }
 
 
@@ -368,7 +381,7 @@ function workshop_count_teacher_assessments_by_user($workshop, $user) {
             if ($assessments = workshop_get_assessments($submission)) {
                 foreach ($assessments as $assessment) {
                     // count only teacher assessments
-                    if (isteacher($workshop->course, $assessment->userid)) {
+                    if (workshop_is_teacher($workshop, $assessment->userid)) {
                         $n++;
                         }
                     }
@@ -382,12 +395,20 @@ function workshop_count_teacher_assessments_by_user($workshop, $user) {
 //////////////////////////////////////////////////////////////////////////////////////
 function workshop_count_teacher_submissions($workshop) {
     global $CFG;
+    if (!$teachers = workshop_get_teachers($workshop)) {
+        return 0;
+    }
+    $list = "(";
+    foreach ($teachers as $teacher) {
+        $list .= "$teacher->id,";
+    }
+    $list = rtrim($list, ',').")";
+    $timenow = time();
     
-     return count_records_sql("SELECT count(*) FROM {$CFG->prefix}workshop_submissions s, 
-                     {$CFG->prefix}user_teachers u
-                            WHERE u.course = $workshop->course
-                              AND s.userid = u.userid
-                              AND s.workshopid = $workshop->id");
+    return count_records_sql("SELECT count(*)
+                              FROM {$CFG->prefix}workshop_submissions s
+                              WHERE s.userid IN $list
+                                AND s.workshopid = $workshop->id");
     }
 
 
@@ -415,7 +436,7 @@ function workshop_count_ungraded_assessments_student($workshop) {
                 foreach ($assessments as $assessment) {
                     if ($assessment->timegraded == 0) {
                         // ignore teacher assessments
-                        if (!isteacher($workshop->course, $assessment->userid)) {
+                        if (!workshop_is_teacher($workshop, $assessment->userid)) {
                             $n++;
                             }
                         }
@@ -440,7 +461,7 @@ function workshop_count_ungraded_assessments_teacher($workshop) {
                 foreach ($assessments as $assessment) {
                     if ($assessment->timegraded == 0) {
                         // ignore teacher assessments
-                        if (!isteacher($workshop->course, $assessment->userid)) {
+                        if (!workshop_is_teacher($workshop, $assessment->userid)) {
                             // must have created a little time ago
                             if (($timenow - $assessment->timecreated) > $CFG->maxeditingtime) {
                                 $n++;
@@ -471,13 +492,13 @@ function workshop_count_user_assessments($workshop, $user, $stype = "all") {
                     break;
                 case "student" :
                      $submission = get_record("workshop_submissions", "id", $assessment->submissionid);
-                    if (isstudent($workshop->course, $submission->userid)) {
+                    if (workshop_is_student($workshop, $submission->userid)) {
                         $n++;
                         }
                     break;
                 case "teacher" :
                      $submission = get_record("workshop_submissions", "id", $assessment->submissionid);
-                    if (isteacher($workshop->course, $submission->userid)) {
+                    if (workshop_is_teacher($workshop, $submission->userid)) {
                         $n++;
                         }
                     break;
@@ -562,13 +583,19 @@ function workshop_delete_user_files($workshop, $user, $exception) {
 function workshop_get_all_teacher_assessments($workshop) {
 // Return all teacher assessments, ordered by timecreated, oldest first
     global $CFG;
+    if (!$teachers = workshop_get_teachers($workshop)) {
+        return false;
+    }
+    $list = "(";
+    foreach ($teachers as $teacher) {
+        $list .= "$teacher->id,";
+    }
+    $list = rtrim($list, ',').")";
     
-    return get_records_sql("SELECT a.* FROM {$CFG->prefix}workshop_assessments a, 
-                            {$CFG->prefix}user_teachers u
-                            WHERE u.course = $workshop->course
-                              AND a.userid = u.userid
+    return get_records_sql("SELECT a.* FROM {$CFG->prefix}workshop_assessments a
+                            WHERE a.userid IN $list
                               AND a.workshopid = $workshop->id 
-                              ORDER BY a.timecreated");
+                            ORDER BY a.timecreated");
 }
 
 
@@ -587,20 +614,15 @@ function workshop_get_student_assessments($workshop, $user) {
 // Return all assessments on the student submissions by a user, order by youngest first, oldest last
     global $CFG;
 
-    // make sure it works on the site course
-    $select = "u.course = '$workshop->course' AND";
-    if ($workshop->course == SITEID) {
-        $select = '';
+    if (!workshop_is_student($workshop, $user->id)) {
+        return false;
     }
 
-    return get_records_sql("SELECT a.* FROM {$CFG->prefix}workshop_submissions s, 
-                            {$CFG->prefix}user_students u,
-                            {$CFG->prefix}workshop_assessments a
-                            WHERE $select s.userid = u.userid
-                              AND s.workshopid = $workshop->id
+    return get_records_sql("SELECT a.* FROM {$CFG->prefix}workshop_submissions s, {$CFG->prefix}workshop_assessments a
+                            WHERE s.workshopid = $workshop->id
                               AND a.submissionid = s.id
                               AND a.userid = $user->id
-                              ORDER BY a.timecreated DESC");
+                            ORDER BY a.timecreated DESC");
 }
 
 
@@ -609,15 +631,18 @@ function workshop_get_student_submission_assessments($workshop) {
 // Return all assessments on the student submissions, order by youngest first, oldest last
     global $CFG;
 
-    // make sure it works on the site course
-    $select = "u.course = '$workshop->course' AND";
-    if ($workshop->course == SITEID) {
-        $select = '';
-    }
 
-    return get_records_sql("SELECT a.* FROM {$CFG->prefix}workshop_submissions s, 
-                            {$CFG->prefix}user_students u, {$CFG->prefix}workshop_assessments a
-                            WHERE $select s.userid = u.userid
+    if (!$students = workshop_get_students($workshop)) {
+        return false;
+    }
+    $list = "(";
+    foreach ($students as $student) {
+        $list .= "$student->id,";
+    }
+    $list = rtrim($list, ',').")";
+
+    return get_records_sql("SELECT a.* FROM {$CFG->prefix}workshop_submissions s, {$CFG->prefix}workshop_assessments a
+                            WHERE s.userid IN $list
                               AND s.workshopid = $workshop->id
                               AND a.submissionid = s.id
                               ORDER BY a.timecreated DESC");
@@ -639,12 +664,18 @@ function workshop_get_teacher_assessments($courseid, $submission) {
 // Return teacher assessments of a submission, ordered by timecreated, oldest first
     global $CFG;
     
-    return get_records_sql("SELECT a.* FROM {$CFG->prefix}workshop_assessments a, 
-                            {$CFG->prefix}user_teachers u
-                            WHERE u.course = $courseid
-                              AND a.userid = u.userid
+    if (!$teachers = workshop_get_teachers($submission->workshopid)) {
+        return false;
+    }
+    $list = "(";
+    foreach ($teachers as $teacher) {
+        $list .= "$teacher->id,";
+    }
+    $list = rtrim($list, ',').")";
+    return get_records_sql("SELECT a.* FROM {$CFG->prefix}workshop_assessments a
+                            WHERE a.userid IN $list
                               AND a.submissionid = $submission->id 
-                              ORDER BY a.timecreated");
+                            ORDER BY a.timecreated");
 }
 
 
@@ -653,13 +684,19 @@ function workshop_get_teacher_submission_assessments($workshop) {
 // Return all assessments on the teacher submissions, order by youngest first, oldest last
     global $CFG;
     
-    return get_records_sql("SELECT a.* FROM {$CFG->prefix}workshop_submissions s, 
-                            {$CFG->prefix}user_teachers u, {$CFG->prefix}workshop_assessments a
-                            WHERE u.course = $workshop->course
-                              AND s.userid = u.userid
+    if (!$teachers = workshop_get_teachers($workshop)) {
+        return false;
+    }
+    $list = "(";
+    foreach ($teachers as $teacher) {
+        $list .= "$teacher->id,";
+    }
+    $list = rtrim($list, ',').")";
+    return get_records_sql("SELECT a.* FROM {$CFG->prefix}workshop_submissions s, {$CFG->prefix}workshop_assessments a
+                            WHERE s.userid IN $list
                               AND s.workshopid = $workshop->id
                               AND a.submissionid = s.id
-                              ORDER BY a.timecreated DESC");
+                            ORDER BY a.timecreated DESC");
 }
 
 
@@ -668,12 +705,18 @@ function workshop_get_teacher_submissions($workshop) {
 // Return all  teacher submissions, ordered by title
     global $CFG;
     
-    return get_records_sql("SELECT s.* FROM {$CFG->prefix}workshop_submissions s, 
-                            {$CFG->prefix}user_teachers u
-                            WHERE u.course = $workshop->course
-                              AND s.userid = u.userid
+    if (!$teachers = workshop_get_teachers($workshop)) {
+        return false;
+    }
+    $list = "(";
+    foreach ($teachers as $teacher) {
+        $list .= "$teacher->id,";
+    }
+    $list = rtrim($list, ',').")";
+    return get_records_sql("SELECT s.* FROM {$CFG->prefix}workshop_submissions s
+                            WHERE s.userid IN $list
                               AND s.workshopid = $workshop->id 
-                              ORDER BY s.title");
+                            ORDER BY s.title");
 }
 
 
@@ -692,16 +735,18 @@ function workshop_get_ungraded_assessments_student($workshop) {
     global $CFG;
     // Return all assessments which have not been graded or just graded of student's submissions
 
-    // make sure it works on the site course
-    $select = "u.course = '$workshop->course' AND";
-    if ($workshop->course == SITEID) {
-        $select = '';
-    }
-
     $cutofftime = time() - $CFG->maxeditingtime;
-    return get_records_sql("SELECT a.* FROM {$CFG->prefix}workshop_submissions s, 
-                            {$CFG->prefix}user_students u, {$CFG->prefix}workshop_assessments a
-                            WHERE $select s.userid = u.userid
+
+    if (!$students = workshop_get_students($workshop)) {
+        return false;
+    }
+    $list = "(";
+    foreach ($students as $student) {
+        $list .= "$student->id,";
+    }
+    $list = rtrim($list, ',').")";
+    return get_records_sql("SELECT a.* FROM {$CFG->prefix}workshop_submissions s, {$CFG->prefix}workshop_assessments a
+                            WHERE s.userid IN $list
                               AND s.workshopid = $workshop->id
                               AND a.submissionid = s.id
                               AND (a.timegraded = 0 OR a.timegraded > $cutofftime)
@@ -716,10 +761,16 @@ function workshop_get_ungraded_assessments_teacher($workshop) {
     // Return all assessments which have not been graded or just graded of teacher's submissions
     
     $cutofftime =time() - $CFG->maxeditingtime;
-    return get_records_sql("SELECT a.* FROM {$CFG->prefix}workshop_submissions s, 
-                            {$CFG->prefix}user_teachers u, {$CFG->prefix}workshop_assessments a
-                            WHERE u.course = $workshop->course
-                              AND s.userid = u.userid
+    if (!$teachers = workshop_get_teachers($workshop)) {
+        return false;
+    }
+    $list = "(";
+    foreach ($teachers as $teacher) {
+        $list .= "$teacher->id,";
+    }
+    $list = rtrim($list, ',').")";
+    return get_records_sql("SELECT a.* FROM {$CFG->prefix}workshop_submissions s, {$CFG->prefix}workshop_assessments a
+                            WHERE s.userid IN $list
                               AND s.workshopid = $workshop->id
                               AND a.submissionid = s.id
                               AND (a.timegraded = 0 OR a.timegraded > $cutofftime)
@@ -749,12 +800,19 @@ function workshop_get_users_done($workshop) {
         $select = '';
     }
 
-    return get_records_sql("SELECT u.* 
-                    FROM {$CFG->prefix}user u, {$CFG->prefix}user_students s, 
-                         {$CFG->prefix}workshop_submissions a
-                    WHERE $select s.user = u.id
-                    AND u.id = a.user AND a.workshop = '$workshop->id'
-                    ORDER BY a.timemodified DESC");
+    if (!$students = workshop_get_students($workshop)) {
+        return false;
+    }
+    $list = "(";
+    foreach ($students as $student) {
+        $list .= "$student->id,";
+    }
+    $list = rtrim($list, ',').")";
+
+    return get_records_sql("SELECT u.* FROM {$CFG->prefix}user u, {$CFG->prefix}workshop_submissions a
+                            WHERE $select u.user IN $list
+                              AND u.id = a.user AND a.workshop = '$workshop->id'
+                            ORDER BY a.timemodified DESC");
 }
 
 
@@ -885,7 +943,7 @@ function workshop_list_all_ungraded_assessments($workshop) {
     
     if ($assessments = workshop_get_ungraded_assessments($workshop)) {
         foreach ($assessments as $assessment) {
-            if (!isteacher($workshop->course, $assessment->userid)) {
+            if (!workshop_is_teacher($workshop, $assessment->userid)) {
                 if (($timenow - $assessment->timegraded) < $CFG->maxeditingtime) {
                     $action = "<a href=\"viewassessment.php?&amp;id=$cm->id&amp;aid=$assessment->id\">".
                         get_string("edit", "workshop")."</a>";
@@ -1022,7 +1080,7 @@ function workshop_list_peer_assessments($workshop, $user) {
             if ($assessments = workshop_get_assessments($submission)) {
                 foreach ($assessments as $assessment) {
                     // assessments by students only and exclude any self assessments
-                    if (isstudent($workshop->course, $assessment->userid) and 
+                    if (workshop_is_student($workshop, $assessment->userid) and 
                             ($assessment->userid != $user->id)) { 
                         $timenow = time();
                         if (($timenow - $assessment->timecreated) > $CFG->maxeditingtime) {
@@ -1041,7 +1099,7 @@ function workshop_list_peer_assessments($workshop, $user) {
                                     $comment .= "; ".get_string("thisisadroppedassessment", "workshop");
                                 }
                             }
-                            if (isteacher($workshop->course, $assessment->userid) and $workshop->teacherweight) {
+                            if (workshop_is_teacher($workshop, $assessment->userid) and $workshop->teacherweight) {
                                 $comment .= "; ".get_string("thisisadroppedassessment", "workshop");
                             }
                             // if peer agreements show whether agreement has been reached
@@ -1219,7 +1277,7 @@ function workshop_list_student_submissions($workshop, $user) {
                 error ("workshop_list_student_submissions: unable to get submission");
                 }
             // submission from a student?
-            if (isstudent($workshop->course, $submission->userid)) {
+            if (workshop_is_student($workshop, $submission->userid)) {
                 $comment = '';
                 // user assessment has three states: record created but not assessed (date created in the future) [hot]; 
                 // just assessed but still editable [warm]; and "static" (may or may not have been graded by teacher, that
@@ -1271,7 +1329,7 @@ function workshop_list_submissions_for_admin($workshop, $order) {
     
     workshop_print_assignment_info($workshop);
 
-    if (isteacheredit($course->id)) {
+    if (workshop_is_teacheredit($workshop)) {
         // list any teacher submissions
         $table->head = array (get_string("title", "workshop"), get_string("submittedby", "workshop"), 
                 get_string("action", "workshop"));
@@ -1309,7 +1367,7 @@ function workshop_list_submissions_for_admin($workshop, $order) {
                     $action .= " | <a href=\"assessments.php?action=adminlist&amp;id=$cm->id&amp;sid=$submission->id\">".
                         get_string("listassessments", "workshop")."</a>";
                 }
-                if (isteacheredit($course->id)) {
+                if (workshop_is_teacheredit($workshop)) {
                     $action .= " | <a href=\"submissions.php?action=confirmdelete&amp;id=$cm->id&amp;sid=$submission->id\">".
                         get_string("delete", "workshop")."</a>";
                 }
@@ -1322,7 +1380,7 @@ function workshop_list_submissions_for_admin($workshop, $order) {
 
     // list student assessments
     // Get all the students...
-    if ($users = get_course_students($course->id, "u.lastname, u.firstname")) {
+    if ($users = workshop_get_students($workshop, "u.lastname, u.firstname")) {
         $timenow = time();
         unset($table);
         $table->head = array(get_string("name"), get_string("title", "workshop"), get_string("action", "workshop"));
@@ -1348,7 +1406,7 @@ function workshop_list_submissions_for_admin($workshop, $order) {
                     }
                     $title .= $submission->title;
                     if ($workshop->agreeassessments and !$assessment->timeagreed and 
-                            isstudent($workshop->course, $submission->userid)) { // agreements for student work only
+                            workshop_is_student($workshop, $submission->userid)) { // agreements for student work only
                         $title .= " &lt;&lt;".number_format($assessment->grade * $workshop->grade / 100, 0)." (".
                             number_format($assessment->gradinggrade * $workshop->gradinggrade / 100, 0).")&gt;&gt; ";
                     } elseif ($assessment->timegraded) {
@@ -1519,7 +1577,7 @@ function workshop_list_teacher_assessments_by_user($workshop, $user) {
             // get the assessments
             if ($assessments = workshop_get_assessments($submission)) {
                 foreach ($assessments as $assessment) {
-                    if (isteacher($workshop->course, $assessment->userid)) { // assessments by teachers only
+                    if (workshop_is_teacher($workshop, $assessment->userid)) { // assessments by teachers only
                         $action = "<a href=\"viewassessment.php?id=$cm->id&amp;aid=$assessment->id\">".
                             get_string("view", "workshop")."</a>";
                         // has teacher commented on teacher's assessment? shouldn't happen but leave test in
@@ -1612,7 +1670,7 @@ function workshop_list_teacher_submissions($workshop, $user) {
                 error ("workshop_list_teacher_submissions: unable to get submission");
             }
             // submission from a teacher?
-            if (isteacher($workshop->course, $submission->userid)) {
+            if (workshop_is_teacher($workshop, $submission->userid)) {
                 $comment = '';
                 // user assessment has two states: record created but not assessed (date created in the future); 
                 // assessed but always available for re-assessment 
@@ -1789,7 +1847,7 @@ function workshop_list_ungraded_assessments($workshop, $stype) {
         }
     if ($assessments) {
         foreach ($assessments as $assessment) {
-            if (!isteacher($workshop->course, $assessment->userid)) { // don't let teacher grade their own assessments
+            if (!workshop_is_teacher($workshop, $assessment->userid)) { // don't let teacher grade their own assessments
                 if (($timenow - $assessment->timegraded) < $CFG->maxeditingtime) {
                     $action = "<a href=\"viewassessment.php?&amp;id=$cm->id&amp;stype=$stype&amp;aid=$assessment->id\">".
                         get_string("edit", "workshop")."</a>";
@@ -1941,7 +1999,7 @@ function workshop_print_assessment($workshop, $assessment = false, $allowchanges
             foreach ($comments as $comment) {
                 echo "<tr valign=\"top\"><td class=\"workshopassessmentheading\"><p><b>".
                     get_string("commentby","workshop")." ";
-                if (isteacher($workshop->course, $comment->userid)) {
+                if (workshop_is_teacher($workshop, $comment->userid)) {
                     echo $course->teacher;
                 }
                 elseif ($assessment->userid == $comment->userid) {
@@ -1956,7 +2014,7 @@ function workshop_print_assessment($workshop, $assessment = false, $allowchanges
                 if ($firstcomment and $showcommentlinks and !$assessment->timeagreed) {
                     // show links depending on who doing the viewing
                     $firstcomment = FALSE;
-                    if (isteacher($workshop->course, $USER->id) and ($comment->userid != $USER->id)) {
+                    if (workshop_is_teacher($workshop, $USER->id) and ($comment->userid != $USER->id)) {
                         echo "<p align=\"right\"><a href=\"assessments.php?action=addcomment&amp;id=$cm->id&amp;aid=$assessment->id\">".
                             get_string("reply", "workshop")."</a></p>\n";
                     }
@@ -2002,7 +2060,7 @@ function workshop_print_assessment($workshop, $assessment = false, $allowchanges
     <?php
     echo "<tr valign=\"top\">\n";
     echo "  <td colspan=\"2\" class=\"workshopassessmentheading\"><center><b>";
-    if ($assessment and isteacher($course->id)) {
+    if ($assessment and workshop_is_teacher($workshop)) {
         $user = get_record('user', 'id', $assessment->userid);
         print_string("assessmentby", "workshop", fullname($user));
     } else {
@@ -2077,7 +2135,7 @@ function workshop_print_assessment($workshop, $assessment = false, $allowchanges
                 echo "</tr>\n";
 
                 // if active and the teacher show stock comments...
-                if ($allowchanges and isteacher($course->id, $USER->id)) {
+                if ($allowchanges and workshop_is_teacher($workshop, $USER->id)) {
                     echo "<tr><td valign=\"top\" align=\"right\"><input type=\"button\" value=\"".
                         get_string("addcomment", "workshop")."\" 
                         onclick=\"document.assessmentform.action.value='addstockcomment';
@@ -2089,7 +2147,7 @@ function workshop_print_assessment($workshop, $assessment = false, $allowchanges
                         foreach ($stockcomments as $stockcomment) {
                             echo "<a onclick=\"document.assessmentform.feedback_$i.value+=' '+'".
                                 addslashes($stockcomment->comments)."';\">&lt;&lt;$stockcomment->comments&gt;&gt;</a>\n";
-                            if (isteacheredit($course->id, $USER->id)) {
+                            if (workshop_is_teacheredit($workshop, $USER->id)) {
                                 echo " <a onclick=\"document.assessmentform.action.value='removestockcomment';document.assessmentform.stockcommentid.value=$stockcomment->id;document.assessmentform.submit();\"> <small><i>&lt;--".get_string("delete","workshop")."</i></small></a>\n";
                             }
                             echo "<br />\n";
@@ -2181,7 +2239,7 @@ function workshop_print_assessment($workshop, $assessment = false, $allowchanges
                 echo "</tr>\n";
                 
                 // if active and the teacher show stock comments...
-                if ($allowchanges and isteacher($course->id, $USER->id)) {
+                if ($allowchanges and workshop_is_teacher($workshop, $USER->id)) {
                     echo "<tr><td valign=\"top\" align=\"right\"><input type=\"button\" value=\"".
                         get_string("addcomment", "workshop")."\" 
                         onclick=\"document.assessmentform.action.value='addstockcomment';
@@ -2194,7 +2252,7 @@ function workshop_print_assessment($workshop, $assessment = false, $allowchanges
                             echo "<a onclick=\"document.assessmentform.feedback_$i.value+=' '+'".
                                 addslashes($stockcomment->comments).
                                 "';\">&lt;&lt;$stockcomment->comments&gt;&gt;</a>\n";
-                            if (isteacheredit($course->id, $USER->id)) {
+                            if (workshop_is_teacheredit($workshop, $USER->id)) {
                                 echo " <a onclick=\"document.assessmentform.action.value='removestockcomment';document.assessmentform.stockcommentid.value=$stockcomment->id;document.assessmentform.submit();\"> <small><i>&lt;--".get_string("delete","workshop")."</i></small></a>\n";
                             }
                             echo "<br />\n";
@@ -2286,7 +2344,7 @@ function workshop_print_assessment($workshop, $assessment = false, $allowchanges
                 echo "</tr>\n";
 
                 // if active and the teacher show stock comments...
-                if ($allowchanges and isteacher($course->id, $USER->id)) {
+                if ($allowchanges and workshop_is_teacher($workshop, $USER->id)) {
                     echo "<tr><td valign=\"top\" align=\"right\"><input type=\"button\" value=\"".
                         get_string("addcomment", "workshop")."\" 
                         onclick=\"document.assessmentform.action.value='addstockcomment';
@@ -2299,7 +2357,7 @@ function workshop_print_assessment($workshop, $assessment = false, $allowchanges
                             echo "<a onclick=\"document.assessmentform.feedback_$i.value+=' '+'".
                                 addslashes($stockcomment->comments).
                                 "';\">&lt;&lt;$stockcomment->comments&gt;&gt;</a>\n";
-                            if (isteacheredit($course->id, $USER->id)) {
+                            if (workshop_is_teacheredit($workshop, $USER->id)) {
                                 echo " <a onclick=\"document.assessmentform.action.value='removestockcomment';document.assessmentform.stockcommentid.value=$stockcomment->id;document.assessmentform.submit();\"> <small><i>&lt;--".get_string("delete","workshop")."</i></small></a>\n";
                             }
                             echo "<br />\n";
@@ -2449,7 +2507,7 @@ function workshop_print_assessment($workshop, $assessment = false, $allowchanges
                     echo "</tr>\n";
 
                     // if active and the teacher show stock comments...
-                    if ($allowchanges and isteacher($course->id, $USER->id)) {
+                    if ($allowchanges and workshop_is_teacher($workshop, $USER->id)) {
                     echo "<tr><td valign=\"top\" align=\"right\"><input type=\"button\" value=\"".
                         get_string("addcomment", "workshop")."\" 
                         onclick=\"document.assessmentform.action.value='addstockcomment';
@@ -2462,7 +2520,7 @@ function workshop_print_assessment($workshop, $assessment = false, $allowchanges
                                 echo "<a onclick=\"document.assessmentform.feedback_$i.value+=' '+'".
                                     addslashes($stockcomment->comments).
                                     "';\">&lt;&lt;$stockcomment->comments&gt;&gt;</a>\n";
-                                if (isteacheredit($course->id, $USER->id)) {
+                                if (workshop_is_teacheredit($workshop, $USER->id)) {
                                     echo " <a onclick=\"document.assessmentform.action.value='removestockcomment';document.assessmentform.stockcommentid.value=$stockcomment->id;document.assessmentform.submit();\"> <small><i>&lt;--".get_string("delete","workshop")."</i></small></a>\n";
                                 }
                                 echo "<br />\n";
@@ -2510,7 +2568,7 @@ function workshop_print_assessment($workshop, $assessment = false, $allowchanges
     echo "&nbsp;</td>\n";
     echo "</tr>\n";
     // if active and the teacher show stock comments...
-    if ($allowchanges and isteacher($course->id, $USER->id)) {
+    if ($allowchanges and workshop_is_teacher($workshop, $USER->id)) {
         echo "<tr><td valign=\"top\" align=\"right\"><input type=\"button\" value=\"".
             get_string("addcomment", "workshop")."\" 
             onclick=\"document.assessmentform.action.value='addstockcomment';
@@ -2522,7 +2580,7 @@ function workshop_print_assessment($workshop, $assessment = false, $allowchanges
             foreach ($stockcomments as $stockcomment) {
                 echo "<a onclick=\"document.assessmentform.generalcomment.value+=' '+'".
                     addslashes($stockcomment->comments)."';\">&lt;&lt;$stockcomment->comments&gt;&gt;</a>\n";
-                if (isteacheredit($course->id, $USER->id)) {
+                if (workshop_is_teacheredit($workshop, $USER->id)) {
                     echo " <a onclick=\"document.assessmentform.action.value='removestockcomment';document.assessmentform.stockcommentid.value=$stockcomment->id;document.assessmentform.submit();\"> <small><i>&lt;--".get_string("delete","workshop")."</i></small></a>\n";
                 }
                 echo "<br />\n";
@@ -2662,7 +2720,7 @@ function workshop_print_assignment_info($workshop) {
     echo "(<a href=\"assessments.php?id=$cm->id&amp;action=displaygradingform\">".
         get_string("specimenassessmentform", "workshop")."</a>";
     // print edit icon
-    if (isteacheredit($course->id) and $workshop->nelements) {
+    if (workshop_is_teacheredit($workshop) and $workshop->nelements) {
         echo " <a href=\"assessments.php?id=$cm->id&amp;action=editelements\">".
              "<img src=\"$CFG->pixpath/t/edit.gif\" ".
              'height="11" width="11" border="0" alt="'.get_string('amendassessmentelements', 'workshop').'" /></a>';
@@ -2723,7 +2781,7 @@ function workshop_print_league_table($workshop) {
     }
  
     $nentries = $workshop->showleaguetable;
-    if ($workshop->anonymous and isstudent($course->id)) {
+    if ($workshop->anonymous and workshop_is_student($workshop)) {
         $table->head = array (get_string("title", "workshop"), 
             get_string("teacherassessments", "workshop", $course->teacher),  
             get_string("studentassessments", "workshop",    $course->student), get_string("overallgrade", "workshop"));
@@ -2760,7 +2818,7 @@ function workshop_print_league_table($workshop) {
             if (!$user = get_record("user", "id", $submission->userid)) {
                 error("Print league table: user not found");
             }
-            if ($workshop->anonymous and isstudent($course->id)) {
+            if ($workshop->anonymous and workshop_is_student($workshop)) {
                 $table->data[] = array(workshop_print_submission_title($workshop, $submission),
                         workshop_print_submission_assessments($workshop, $submission, "teacher"),
                         workshop_print_submission_assessments($workshop, $submission, "student"), $grade);
@@ -2822,22 +2880,24 @@ function workshop_print_submission($workshop, $submission) {
 function workshop_print_submission_assessments($workshop, $submission, $type) {
     global $USER, $CFG;
     // Returns the teacher or peer grade and a hyperlinked list of grades for this submission
- 
+    if (! $cm = get_coursemodule_from_instance("workshop", $workshop->id, $workshop->course)) {
+        error("Course Module ID was incorrect");
+    }
     $str = '';
     // get the assessments in grade order, highest first
     if ($assessments = workshop_get_assessments($submission, "", "grade DESC")) {
         if ($type == 'teacher' or $type == 'all') {
             // students can see teacher assessments only if the release date has passed
             $timenow = time();
-            if (isteacher($workshop->course, $USER->id) or ($timenow > $workshop->releasegrades)) {
+            if (workshop_is_teacher($workshop, $USER->id) or ($timenow > $workshop->releasegrades)) {
                 foreach ($assessments as $assessment) {
-                    if (isteacher($workshop->course, $assessment->userid)) {
+                    if (workshop_is_teacher($workshop, $assessment->userid)) {
                         if ($type == 'all') {
                             $str .= workshop_fullname($assessment->userid, $workshop->course).': ';
                         }
                         $str .= "<a href=\"viewassessment.php?aid=$assessment->id\">"
                              . "[".number_format($assessment->grade *$workshop->grade / 100, 0)."]</a>";
-                        if (isteacher($workshop->course, $USER->id)) {
+                        if (workshop_is_teacher($workshop, $USER->id)) {
                             $str .= ' <a title="'.get_string('reassess', 'workshop').
                                 "\" href=\"assess.php?id=$cm->id&amp;sid=$submission->id\"><img src=\"$CFG->pixpath/t/edit.gif\" ".
                                 ' height="11" width="11" border="0" alt="'.get_string('reassess', 'workshop').'" /></a>';
@@ -2851,13 +2911,13 @@ function workshop_print_submission_assessments($workshop, $submission, $type) {
         }
         if ($type == 'student' or $type == 'all') {
             foreach ($assessments as $assessment) {
-                if (isstudent($workshop->course, $assessment->userid)) {
+                if (workshop_is_student($workshop, $assessment->userid)) {
                     if ($type == 'all') {
                         $str .= workshop_fullname($assessment->userid, $workshop->course).': ';
                     }
                     $str .= "<a href=\"viewassessment.php?aid=$assessment->id\">";
                     if ($workshop->agreeassessments and !$assessment->timeagreed and 
-                            isstudent($workshop->course, $submission->userid)) { // agreement on student work only
+                            workshop_is_student($workshop, $submission->userid)) { // agreement on student work only
                         $str .= "&lt;&lt;".number_format($assessment->grade * $workshop->grade / 100, 0)." (".
                             number_format($assessment->gradinggrade * $workshop->gradinggrade / 100, 0).
                             ")&gt;&gt;</a> ";

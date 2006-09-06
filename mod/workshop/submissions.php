@@ -44,6 +44,8 @@
     }
 
     require_login($course->id, false, $cm);
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    require_capability('mod/workshop:view', $context);
 
     $strworkshops = get_string("modulenameplural", "workshop");
     $strworkshop  = get_string("modulename", "workshop");
@@ -64,9 +66,7 @@
 /******************* admin amend title ************************************/
     elseif ($action == 'adminamendtitle' ) {
 
-        if (!isteacher($course->id)) {
-            error("Only teachers can look at this page");
-        }
+        require_capability('mod/workshop:manage', $context);
         if (empty($sid)) {
             error("Admin Amend Title: submission id missing");
         }
@@ -98,9 +98,7 @@
     /******************* admin clear late (flag) ************************************/
     elseif ($action == 'adminclearlate' ) {
 
-        if (!isteacher($course->id)) {
-            error("Only teachers can look at this page");
-        }
+        require_capability('mod/workshop:manage', $context);
         if (empty($sid)) {
             error("Admin clear late flag: submission id missing");
         }
@@ -141,7 +139,7 @@
         }
 
         // students are only allowed to delete their own submission and only up to the deadline
-        if (!(isteacher($course->id) or
+        if (!(workshop_is_teacher($workshop) or
                (($USER->id = $submission->userid) and ($timenow < $workshop->submissionend)
                    and (($timenow < $workshop->assessmentstart) or ($timenow < $submission->timecreated + $CFG->maxeditingtime))))) {
             error("You are not authorized to delete this submission");
@@ -171,9 +169,7 @@
     /******************* admin (confirm) late flag ************************************/
     elseif ($action == 'adminlateflag' ) {
 
-        if (!isteacher($course->id)) {
-            error("Only teachers can look at this page");
-        }
+        require_capability('mod/workshop:manage', $context);
         if (empty($sid)) {
             error("Admin confirm late flag: submission id missing");
         }
@@ -190,9 +186,7 @@
     /******************* list all submissions ************************************/
     elseif ($action == 'adminlist' ) {
 
-        if (!isteacher($course->id)) {
-            error("Only teachers can look at this page");
-        }
+        require_capability('mod/workshop:manage', $context);
 
         workshop_list_submissions_for_admin($workshop, $order);
         print_continue("view.php?id=$cm->id");
@@ -203,9 +197,7 @@
     /******************* admin update title ************************************/
     elseif ($action == 'adminupdatetitle' ) {
 
-        if (!isteacher($course->id)) {
-            error("Only teachers can look at this page");
-        }
+        require_capability('mod/workshop:manage', $context);
         if (empty($sid)) {
             error("Admin Update Title: submission id missing");
         }
@@ -306,7 +298,7 @@
 
     /******************* list all submissions ************************************/
     elseif ($action == 'listallsubmissions' ) {
-        if (!$users = get_course_students($course->id)) {
+        if (!$users = workshop_get_students($workshop)) {
             print_heading(get_string("nostudentsyet"));
             print_footer($course);
             exit;
@@ -320,7 +312,7 @@
 
     /******************* list for assessment student (submissions) ************************************/
     elseif ($action == 'listforassessmentstudent' ) {
-        if (!$users = get_course_students($course->id)) {
+        if (!$users = workshop_get_students($workshop)) {
             print_heading(get_string("nostudentsyet"));
             print_footer($course);
             exit;
@@ -334,9 +326,7 @@
     /******************* list for assessment teacher (submissions) ************************************/
     elseif ($action == 'listforassessmentteacher' ) {
 
-        if (!isteacher($course->id)) {
-            error("Only teachers can look at this page");
-        }
+        require_capability('mod/workshop:manage', $context);
 
         workshop_list_unassessed_teacher_submissions($workshop, $USER);
         print_continue("view.php?id=$cm->id");
@@ -356,7 +346,7 @@
         $submission = get_record("workshop_submissions", "id", $form->sid);
 
         // students are only allowed to remove their own attachments and only up to the deadline
-        if (!(isteacher($course->id) or
+        if (!(workshop_is_teacher($workshop) or
                (($USER->id = $submission->userid) and ($timenow < $workshop->submissionend)
                    and (($timenow < $workshop->assessmentstart) or ($timenow < $submission->timecreated + $CFG->maxeditingtime))))) {
             error("You are not authorized to delete these attachments");
@@ -387,7 +377,7 @@
 
         $submission = get_record("workshop_submissions", "id", $sid);
         $title = '"'.$submission->title.'" ';
-        if (isteacher($course->id)) {
+        if (workshop_is_teacher($workshop)) {
             $title .= get_string('by', 'workshop').' '.workshop_fullname($submission->userid, $course->id);
         }
         print_heading($title);
@@ -400,9 +390,7 @@
     /*************** update (league table options teacher) ***************************/
     elseif ($action == 'updateleaguetable') {
 
-        if (!isteacher($course->id)) {
-            error("Only teachers can look at this page");
-        }
+        require_capability('mod/workshop:manage', $context);
 
         // save number of entries in showleaguetable option
         if ($nentries == 'All') {
@@ -427,7 +415,7 @@
         $submission = get_record("workshop_submissions", "id", $sid);
 
         // students are only allowed to update their own submission and only up to the deadline
-        if (!(isteacher($course->id) or
+        if (!(workshop_is_teacher($workshop) or
                (($USER->id = $submission->userid) and ($timenow < $workshop->submissionend)
                    and (($timenow < $workshop->assessmentstart) or ($timenow < $submission->timecreated + $CFG->maxeditingtime))))) {
             error("You are not authorized to update your submission");
