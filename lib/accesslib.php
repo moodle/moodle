@@ -464,11 +464,11 @@ function load_user_capability($capability='', $context ='', $userid='') {
                      SUM(rc.permission) AS sum
                      FROM
                      {$CFG->prefix}role_assignments AS ra, 
-					 {$CFG->prefix}role_capabilities AS rc,
-					 {$CFG->prefix}context AS c1
+                     {$CFG->prefix}role_capabilities AS rc,
+                     {$CFG->prefix}context AS c1
                      WHERE
-					 ra.contextid=c1.id AND
-					 ra.roleid=rc.roleid AND
+                     ra.contextid=c1.id AND
+                     ra.roleid=rc.roleid AND
                      ra.userid=$userid AND
                      $searchcontexts1
                      rc.contextid=$siteinstance->id 
@@ -487,10 +487,10 @@ function load_user_capability($capability='', $context ='', $userid='') {
                      {$CFG->prefix}context AS c1,
                      {$CFG->prefix}context AS c2
                      WHERE
-					 ra.contextid=c1.id AND
-					 ra.roleid=rc.roleid AND 
-					 ra.userid=$userid AND		 
-					 rc.contextid=c2.id AND             
+                     ra.contextid=c1.id AND
+                     ra.roleid=rc.roleid AND 
+                     ra.userid=$userid AND         
+                     rc.contextid=c2.id AND             
                      $searchcontexts1
                      $searchcontexts2
                      rc.contextid != $siteinstance->id
