@@ -96,7 +96,7 @@ print_simple_box_start('','100%','',5,'generalbox','');
 
 echo $root->output_html();
 
-echo '<center><input type="submit" value="Save Changes" /></center>';
+echo '<center><input type="submit" value="' . get_string('savechanges','admin') . '" /></center>';
 print_simple_box_end();
 echo '</form>';
 echo '</td></tr></table>';
