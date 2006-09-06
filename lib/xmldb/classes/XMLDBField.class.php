@@ -89,7 +89,7 @@ class XMLDBField extends XMLDBObject {
             /// trim each value quotes
                 $value = trim($value, "'");
             /// add them back
-                $valus = "'" . $value . "'";
+                $value = "'" . $value . "'";
                 $this->enumvalues[] = $value;
             }
         }
@@ -209,10 +209,19 @@ class XMLDBField extends XMLDBObject {
     }
 
     /**
-     * Set the field enumvalues
+     * Set the field enumvalues, quoting unquoted values
      */
     function setEnumValues($enumvalues) {
-        $this->enumvalues = $enumvalues;
+        if (is_array($enumvalues)) {
+            $this->enumvalues = array();
+            foreach ($enumvalues as $value) {
+            /// trim each value quotes
+                $value = trim($value, "'");
+            /// add them back
+                $value = "'" . $value . "'";
+                $this->enumvalues[] = $value;
+            }
+        }
     }
 
     /**
@@ -706,6 +715,107 @@ class XMLDBField extends XMLDBObject {
     /// Some more fields
         $this->loaded = true;
         $this->changed = true;
+    }
+
+    /**
+     * Returns the PHP code needed to define one XMLDBField
+     */
+    function getPHP($includeprevious=true) {
+
+        $result = '';
+
+    /// The XMLDBTYPE
+        switch ($this->getType()) {
+            case XMLDB_TYPE_INTEGER:
+                $result .= 'XMLDB_TYPE_INTEGER' . ', ';
+                break;
+            case XMLDB_TYPE_NUMBER:
+                $result .= 'XMLDB_TYPE_NUMBER' . ', ';
+                break;
+            case XMLDB_TYPE_FLOAT:
+                $result .= 'XMLDB_TYPE_FLOAT' . ', ';
+                break;
+            case XMLDB_TYPE_CHAR:
+                $result .= 'XMLDB_TYPE_CHAR' . ', ';
+                break;
+            case XMLDB_TYPE_TEXT:
+                $result .= 'XMLDB_TYPE_TEXT' . ', ';
+                break;
+            case XMLDB_TYPE_BINARY:
+                $result .= 'XMLDB_TYPE_BINARY' . ', ';
+                break;
+            case XMLDB_TYPE_DATETIME:
+                $result .= 'XMLDB_TYPE_DATETIME' . ', ';
+                break;
+            case XMLDB_TYPE_TIMESTAMP:
+                $result .= 'XMLDB_TYPE_TIMESTAMP' . ', ';
+                break;
+        }
+    /// The length
+        $length = $this->getLength();
+        $decimals = $this->getDecimals();
+        if (!empty($length)) {
+            $result .= "'" . $length;
+            if (!empty($decimals)) {
+                $result .= ', ' . $decimals;
+            }
+            $result .= "', ";
+        } else {
+            $result .= 'null, ';
+        }
+    /// Unsigned
+        $unsigned = $this->getUnsigned();
+        if (!empty($unsigned)) {
+            $result .= 'XMLDB_UNSIGNED' . ', ';
+        } else {
+            $result .= 'null, ';
+        }
+    /// Not Null
+        $notnull = $this->getNotnull();
+        if (!empty($notnull)) {
+            $result .= 'XMLDB_NOTNULL' . ', ';
+        } else {
+            $result .= 'null, ';
+        }
+    /// Sequence
+        $sequence = $this->getSequence();
+        if (!empty($sequence)) {
+            $result .= 'XMLDB_SEQUENCE' . ', ';
+        } else {
+            $result .= 'null, ';
+        }
+    /// Enum
+        $enum = $this->getEnum();
+        if (!empty($enum)) {
+            $result .= 'XMLDB_ENUM' . ', ';
+        } else {
+            $result .= 'null, ';
+        }
+    /// Enumvalues
+        $enumvalues = $this->getEnumValues();
+        if (!empty($enumvalues)) {
+            $result .= 'array(' . implode(', ', $enumvalues) . '), ';
+        } else {
+            $result .= 'null, ';
+        }
+    /// Default
+        $default =  $this->getDefault();
+        if (!$default !== null & !$this->getSequence()) {
+            $result .= "'" . $default . "'";
+        } else {
+            $result .= 'null';
+        }
+    /// Previous (decided by parameter)
+        if ($includeprevious) {
+            $previous = $this->getPrevious();
+            if (!empty($previous)) {
+                $result .= ", '" . $previous . "'";
+            } else {
+                $result .= ', null';
+            }
+        }
+    /// Return result
+        return $result;
     }
 
     /**
