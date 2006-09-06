@@ -156,11 +156,62 @@ class view_structure_php extends XMLDBAction {
 
         $result = '';
     /// Validate if we can do it
+        if (!$table = $structure->getTable($table)) {
+            return false;
+        }
+        if ($table->getAllErrors()) {
+            return false;
+        }
 
     /// Add the standard PHP header
         $result .= XMLDB_PHP_HEADER;
 
     /// Add contents
+        $result .= XMLDB_LINEFEED;
+        $result .= '    /// Create table ' . $table->getName() . XMLDB_LINEFEED;
+        $result .= '        $table = new XMLDBTable(' . "'" . $table->getName() . "'" . ');' . XMLDB_LINEFEED;
+        $result .= XMLDB_LINEFEED;
+        $result .= '    /// Adding fields to table ' . $table->getName() . XMLDB_LINEFEED;
+    /// Iterate over each field
+        foreach ($table->getFields() as $field) {
+        /// The field header, with name
+            $result .= '        $table->addFieldInfo(' . "'" . $field->getName() . "', ";
+        /// The field PHP specs
+            $result .= $field->getPHP(false);
+        /// The end of the line
+            $result .= ');' . XMLDB_LINEFEED;
+        }
+    /// Iterate over each key
+        if ($keys = $table->getKeys()) {
+            $result .= XMLDB_LINEFEED;
+            $result .= '    /// Adding keys to table ' . $table->getName() . XMLDB_LINEFEED;
+            foreach ($keys as $key) {
+            /// The key header, with name
+                $result .= '        $table->addKeyInfo(' . "'" . $key->getName() . "', ";
+            /// The key PHP specs
+                $result .= $key->getPHP();
+            /// The end of the line
+                $result .= ');' . XMLDB_LINEFEED;
+            }
+        }
+    /// Iterate over each index
+        if ($indexes = $table->getIndexes()) {
+            $result .= XMLDB_LINEFEED;
+            $result .= '    /// Adding indexes to table ' . $table->getName() . XMLDB_LINEFEED;
+            foreach ($indexes as $index) {
+            /// The index header, with name
+                $result .= '        $table->addIndexInfo(' . "'" . $index->getName() . "', ";
+            /// The index PHP specs
+                $result .= $index->getPHP();
+            /// The end of the line
+                $result .= ');' . XMLDB_LINEFEED;
+            }
+        }
+
+    /// Launch the proper DDL
+        $result .= XMLDB_LINEFEED;
+        $result .= '    /// Launch create table for ' . $table->getName() . XMLDB_LINEFEED;
+        $result .= '        $status = $status && create_table($table);' . XMLDB_LINEFEED;
 
     /// Add standard PHP footer
         $result .= XMLDB_PHP_FOOTER;
@@ -180,6 +231,12 @@ class view_structure_php extends XMLDBAction {
 
         $result = '';
     /// Validate if we can do it
+        if (!$table = $structure->getTable($table)) {
+            return false;
+        }
+        if ($table->getAllErrors()) {
+            return false;
+        }
 
     /// Add the standard PHP header
         $result .= XMLDB_PHP_HEADER;
@@ -204,6 +261,12 @@ class view_structure_php extends XMLDBAction {
 
         $result = '';
     /// Validate if we can do it
+        if (!$table = $structure->getTable($table)) {
+            return false;
+        }
+        if ($table->getAllErrors()) {
+            return false;
+        }
 
     /// Add the standard PHP header
         $result .= XMLDB_PHP_HEADER;
