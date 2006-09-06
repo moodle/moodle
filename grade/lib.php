@@ -1063,7 +1063,7 @@ function grade_set_preferences($course, $newprefs) {
 
 function grade_preferences_menu($action, $course, $group=0) {
 
-    has_capability('moodle/course:managegrades', get_context_instance(CONTEXT_COURSE, $courseid)) {
+    if (!has_capability('moodle/course:managegrades', get_context_instance(CONTEXT_COURSE, $course->id))) {
         return;
     }
 
