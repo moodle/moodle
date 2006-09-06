@@ -1559,7 +1559,7 @@ function glossary_print_comment($course, $cm, $glossary, $entry, $comment) {
 
     $user = get_record('user', 'id', $comment->userid);
     $strby = get_string('writtenby','glossary');
-    $fullname = fullname($user, isteacher($course->id));
+    $fullname = fullname($user, has_capability('moodle/site:viewfullnames', get_context_instance(CONTEXT_COURSE, $course->id)));
 
     echo '<center>';
     echo '<table class="glossarycomment" cellspacing="0">';
@@ -1569,7 +1569,7 @@ function glossary_print_comment($course, $cm, $glossary, $entry, $comment) {
     echo '</td>';
     echo '<td class="entryheader">';
 
-    $fullname = fullname($user, isteacher($course->id));
+    $fullname = fullname($user, has_capability('moodle/site:viewfullnames', get_context_instance(CONTEXT_COURSE, $course->id)));
     $by->name = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.$course->id.'">'.$fullname.'</a>';
     $by->date = userdate($comment->timemodified);
     echo '<span class="author">'.get_string('bynameondate', 'forum', $by).'</span>';
