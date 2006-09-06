@@ -1,11 +1,6 @@
-<?php
+<?php // $Id$
 
 /******************* delete ************************************/
-
-     if (!isteacher($course->id)) {
-        error("Only teachers can look at this page");
-    }
-
     confirm_sesskey();
 
     $pageid = required_param('pageid', PARAM_INT);
@@ -13,7 +8,6 @@
         error("Delete: page record not found");
     }
 
-    print_string("deleting", "lesson");
     // first delete all the associated records...
     delete_records("lesson_attempts", "pageid", $pageid);
     // ...now delete the answers...

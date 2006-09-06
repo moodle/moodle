@@ -4,88 +4,53 @@
 
     confirm_sesskey();
 
+    $messages = array();
+
     // left menu code
     // check to see if the user can see the left menu
     if (!isteacher($course->id)) {
         $lesson->displayleft = lesson_displayleftif($lesson);
     }
-    if ($lesson->displayleft) {
-       if($firstpageid = get_field('lesson_pages', 'id', 'lessonid', $lesson->id, 'prevpageid', 0)) {
-            // print the pages
-            echo '<table><tr valign="top"><td>';
-            // skip navigation link
-            echo '<a href="#maincontent" class="skip">'.get_string('skip', 'lesson').'</a>';
-            echo "<div class=\"leftmenu_container\">\n";
-                echo '<div class="leftmenu_title">'.get_string('lessonmenu', 'lesson')."</div>\n";
-                echo "<div class=\"leftmenu_courselink\">\n";
-                echo "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">".get_string("mainmenu", "lesson")."</a>\n";
-                echo "</div>\n";
-                echo "<div class=\"leftmenu_links\">\n";
-                lesson_print_tree_menu($lesson->id, $firstpageid, $cm->id);
-                echo "</div>\n";
-            echo "</div>\n";
-            echo '</td><td align="center" width="100%">';
-            // skip to anchor
-            echo '<a name="maincontent" id="maincontent" title="'.get_string('anchortitle', 'lesson').'"></a>';
-        }
-    }
-
+    
     // This is the warning msg for teachers to inform them that cluster and unseen does not work while logged in as a teacher
-    if(isteacher($course->id)) {
-        if (lesson_display_teacher_warning($lesson->id)) {
-            $warningvars->cluster = get_string("clusterjump", "lesson");
-            $warningvars->unseen = get_string("unseenpageinbranch", "lesson");
-            echo "<p align=\"center\">".get_string("teacherjumpwarning", "lesson", $warningvars)."</p>";
-        }
-    }        
+    if(isteacher($course->id) and lesson_display_teacher_warning($lesson->id)) {
+        $warningvars->cluster = get_string("clusterjump", "lesson");
+        $warningvars->unseen = get_string("unseenpageinbranch", "lesson");
+        $messages[] = get_string("teacherjumpwarning", "lesson", $warningvars);
+    }
 
     // This is the code updates the lesson time for a timed test
     // get time information for this user
+    $outoftime = false;
     if (!isteacher($course->id)) {
         if (!$timer = get_records_select('lesson_timer', "lessonid = $lesson->id AND userid = $USER->id", 'starttime')) {
             error('Error: could not find records');
         } else {
             $timer = array_pop($timer); // this will get the latest start time record
         }
-    }
-    $outoftime = false;
-    if($lesson->timed) {
-        if(isteacher($course->id)) {
-            echo "<p align=\"center\">".get_string("teachertimerwarning", "lesson")."</p>";
-        } else {
-            if ((($timer->starttime + $lesson->maxtime * 60) - time()) > 0) {
-                // code for the clock
-                print_simple_box_start("right", "150px", "#ffffff", 0);
-                echo "<table border=\"0\" valign=\"top\" align=\"center\" class=\"generaltable\" width=\"100%\" cellspacing=\"0\">".
-                    "<tr><th valign=\"top\" class=\"generaltableheader\">".get_string("timeremaining", "lesson").
-                    "</th></tr><tr><td align=\"center\" class=\"generaltablecell\">";
-                echo "<script language=\"javascript\">\n";
-                    echo "var starttime = ". $timer->starttime . ";\n";
-                    echo "var servertime = ". time() . ";\n";
-                    echo "var testlength = ". $lesson->maxtime * 60 .";\n";
-                    echo "document.write('<SCRIPT LANGUAGE=\"JavaScript\" SRC=\"timer.js\"><\/SCRIPT>');\n";
-                    echo "window.onload = function () { show_clock(); }\n";
-                echo "</script>\n";
-                echo "</td></tr></table>";
-                print_simple_box_end();
-                echo "<br /><br /><br /><br />";
-            } else {
-                redirect("view.php?id=$cm->id&action=navigation&pageid=".LESSON_EOL."&outoftime=normal", get_string("outoftime", "lesson"));
-            }
+        
+        if ($lesson->timed) {
             if ((($timer->starttime + $lesson->maxtime * 60) - time()) < 60 && !((($timer->starttime + $lesson->maxtime * 60) - time()) < 0)) {
-                echo "<p align=\"center\">".get_string("studentoneminwarning", "lesson")."</p>";
-            } elseif (($timer->starttime + $lesson->maxtime * 60) < time()) {
-                echo "<p align=\"center\">".get_string("studentoutoftime", "lesson")."</p>";
+                $messages[] = get_string("studentoneminwarning", "lesson");
+            } else if (($timer->starttime + $lesson->maxtime * 60) < time()) {
+                $messages[] = get_string("studentoutoftime", "lesson");
                 $outoftime = true;
             }
+            if ((($timer->starttime + $lesson->maxtime * 60) - time()) <= 0) {
+                // Out of time
+                redirect("view.php?id=$cm->id&action=navigation&pageid=".LESSON_EOL."&outoftime=normal", get_string("outoftime", "lesson"));
+            }
         }
-    }
-    // update the clock
-    if (!isteacher($course->id)) {
+        
         $timer->lessontime = time();
         if (!update_record("lesson_timer", $timer)) {
             error("Error: could not update lesson_timer table");
         }
+    }
+    
+    // Inform teacher that s/he will not see the timer
+    if ($lesson->timed and isteacher($course->id)) {
+        $messages[] = get_string("teachertimerwarning", "lesson");
     }
 
     // record answer (if necessary) and show response (if none say if answer is correct or not)
@@ -594,8 +559,6 @@
             }
             // no need to record anything in lesson_attempts            
             redirect("view.php?id=$cm->id&amp;action=navigation&amp;pageid=$newpageid");
-            print_footer($course);
-            exit();
             break;
         
     }
@@ -605,7 +568,6 @@
 
     if ($noanswer) {
         $newpageid = $pageid; // display same page again
-        print_simple_box(get_string("noanswer", "lesson"), "center");
     } else {
         $nretakes = count_records("lesson_grades", "lessonid", $lesson->id, "userid", $USER->id); 
         if (isstudent($course->id)) {
@@ -703,28 +665,24 @@
                 $newpageid = LESSON_EOL;
             }
         }
-    
-        // This calculates and prints the ongoing score message
-        if ($lesson->ongoing) {
-            lesson_print_ongoing_score($lesson);
-        }
 
         // display response (if there is one - there should be!)
         // display: lesson title, page title, question text, student's answer(s) before feedback message
-        if ($response) {
+        
+        if ($noanswer) {
+            $feedback = get_string("noanswer", "lesson");
+        } else if ($response) {
             //optionally display question page title
             //if ($title = get_field("lesson_pages", "title", "id", $pageid)) {
             //    print_heading($title);
             //}
-            echo "<table width=\"80%\" border=\"0\" align=\"center\"><tr><td>\n";
             if ($lesson->review && !$correctanswer && !$isessayquestion) {
                 $nretakes = count_records("lesson_grades", "lessonid", $lesson->id, "userid", $USER->id); 
                 $qattempts = count_records("lesson_attempts", "userid", $USER->id, "retry", $nretakes, "pageid", $pageid);
-                echo "<br /><br />";
                 if ($qattempts == 1) {
-                    print_simple_box(get_string("firstwrong", "lesson"), "center");
+                    $feedback = get_string("firstwrong", "lesson");
                 } else {
-                    print_simple_box(get_string("secondpluswrong", "lesson"), "center");
+                    $feedback = get_string("secondpluswrong", "lesson");
                 }
             } else {
                 if ($correctanswer) {
@@ -737,12 +695,10 @@
                 $options = new stdClass;
                 $options->noclean = true;
                 $options->para = false;
-                print_simple_box(format_text($page->contents, FORMAT_MOODLE, $options), 'center');
-                echo '<br />';
-                print_simple_box('<em>'.get_string("youranswer", "lesson").'</em> : '.format_text($studentanswer, FORMAT_MOODLE, $options).
-                                 "<div class=\"$class\">".format_text($response, FORMAT_MOODLE, $options), 'center').'</div>';
+                $feedback = format_text($page->contents, FORMAT_MOODLE, $options);
+                $feedback .= '<em>'.get_string("youranswer", "lesson").'</em> : '.format_text($studentanswer, FORMAT_MOODLE, $options).
+                                 "<div class=\"$class\">".format_text($response, FORMAT_MOODLE, $options).'</div>';
             }
-            echo "</td></tr></table>\n";
         }
     }
 
@@ -812,44 +768,17 @@
             $newpageid = lesson_cluster_jump($lesson->id, $USER->id, $pageid);
         }
     }
-
-    // NOTE:  Should this code be coverted from form/javascript to just longer links with the variables in the url?
-    echo "<form name=\"pageform\" method =\"post\" action=\"view.php\">\n";
-    echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\">\n";
-    echo "<input type=\"hidden\" name=\"action\" value=\"navigation\">\n";
-    echo "<input type=\"hidden\" name=\"pageid\" value=\"$newpageid\">\n";
-
-    if (isset($USER->modattempts[$lesson->id])) {
-        echo "<p align=\"center\">".
-            get_string("savechangesandeol", "lesson")."<br /><br />".
-            "<div align=\"center\" class=\"lessonbutton standardbutton\"><a href=\"javascript:document.pageform.pageid.value=".LESSON_EOL.";document.pageform.submit();\">".
-            get_string("savechanges", "lesson")."</a></div></p>\n";
-        echo "<p align=\"center\">".get_string("or", "lesson")."<br /><br />".
-            get_string("continuetoanswer", "lesson")."</p>\n";
-    }
-
-    if ($lesson->review && !$correctanswer && !$noanswer && !$isessayquestion) {
-        echo "<p><div align=\"center\" class=\"lessonbutton standardbutton\"><a href=\"javascript:document.pageform.pageid.value=$pageid;document.pageform.submit();\">".
-            get_string("reviewquestionback", "lesson")."</a></div></p>\n";
-        echo "<p><div align=\"center\" class=\"lessonbutton standardbutton\"><a href=\"javascript:document.pageform.submit();\">".
-            get_string("reviewquestioncontinue", "lesson")."</a></div></p>\n";
-    } else {
-        echo "<p><div align=\"center\" class=\"lessonbutton standardbutton\"><a href=\"javascript:document.pageform.submit();\">".
-            get_string("continue", "lesson")."</a></div></p>\n";
-    }
-    echo "</form>\n";
     
-/// Report attempts remaining
+    // Report attempts remaining
     if ($attemptsremaining != 0) {
-        echo "<p align=\"center\">".get_string('attemptsremaining', 'lesson', $attemptsremaining);
+        $messages[] = get_string('attemptsremaining', 'lesson', $attemptsremaining);
     }
-/// Report if max attempts reached
-    if ($maxattemptsreached != 0) {
-        echo "<p align=\"center\">(".get_string("maximumnumberofattemptsreached", "lesson").")</p>\n";
-    }
-
-    if ($lesson->displayleft) {
-        echo "</td></tr></table>";
+    // Report if max attempts reached
+    if ($maxattemptsreached != 0) { 
+        $messages[] = '('.get_string("maximumnumberofattemptsreached", "lesson").')';
     }
     
+    lesson_print_header($cm, $course, $lesson, 'navigation', false);
+    
+    include($CFG->wwwroot.'/mod/lesson/action/continue.html');
 ?>

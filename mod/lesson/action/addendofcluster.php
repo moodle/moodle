@@ -1,10 +1,6 @@
-<?php
+<?php // $Id$
 
 /************** add end of cluster ************************************/
-
-       if (!isteacher($course->id)) {
-        error("Only teachers can look at this page");
-    }
 
     confirm_sesskey();
 

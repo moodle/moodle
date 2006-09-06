@@ -1,12 +1,8 @@
-<?php
+<?php // $Id$
 
 /************** add page ************************************/
     $CFG->pagepath = 'mod/lesson/addpage';
     
-    if (!isteacher($course->id)) {
-        error("Only teachers can look at this page");
-    }
-
     // first get the preceeding page
     $pageid = required_param('pageid', PARAM_INT);
     $qtype = optional_param('qtype', LESSON_MULTICHOICE, PARAM_INT);

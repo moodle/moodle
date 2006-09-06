@@ -1,11 +1,7 @@
-<?php
+<?php // $Id$
 
 /****************** moveit ************************************/
    
-    if (!isteacher($course->id)) {
-        error("Only teachers can look at this page");
-    }
-
     confirm_sesskey();
 
     $pageid = required_param('pageid', PARAM_INT); //  page to move
@@ -14,8 +10,6 @@
     }
     $after = required_param('after', PARAM_INT); // target page
 
-    print_heading(get_string("moving", "lesson", format_string($page->title)));
-    
     // first step. determine the new first page
     // (this is done first as the current first page will be lost in the next step)
     if (!$after) {

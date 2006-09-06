@@ -1,11 +1,7 @@
-<?php
+<?php // $Id$
 
 /****************** update page ************************************/
     
-    if (!isteacher($course->id)) {
-        error("Only teachers can look at this page");
-    }
-
     confirm_sesskey();
     
     $redirect = optional_param('redirect', '', PARAM_ALPHA);

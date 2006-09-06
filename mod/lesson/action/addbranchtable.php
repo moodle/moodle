@@ -1,11 +1,7 @@
-<?php
+<?php // $Id$
 /************** add branch table ************************************/
     $CFG->pagepath = 'mod/lesson/addbranchtable';
     
-    if (!isteacher($course->id)) {
-        error("Only teachers can look at this page");
-    }
-
     // first get the preceeding page
     $pageid = required_param('pageid', PARAM_INT);
     

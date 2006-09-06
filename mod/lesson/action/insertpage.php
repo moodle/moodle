@@ -1,11 +1,7 @@
-<?php
+<?php // $Id$
 
 /****************** insert page ************************************/
         
-    if (!isteacher($course->id)) {
-        error("Only teachers can look at this page");
-    }
-
     confirm_sesskey();
 
     // check to see if the cancel button was pushed

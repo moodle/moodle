@@ -1,0 +1,107 @@
+<?php // $Id$
+/**
+ * HTML template for continue.php
+ *
+ * @version $Id$
+ * @package lesson
+ **/
+?>
+
+<?php
+if ($lesson->displayleft) {
+   if($firstpageid = get_field('lesson_pages', 'id', 'lessonid', $lesson->id, 'prevpageid', 0)) {
+?>
+<table>
+    <tr valign="top">
+        <td>
+            <a href="#maincontent" class="skip"><?php print_string('skip', 'lesson') ?></a>
+            <div class="leftmenu_container">
+            <div class="leftmenu_title"><?php print_string('lessonmenu', 'lesson') ?></div>
+            <div class="leftmenu_courselink">
+            <a href="<?php echo "$CFG->wwwroot/course/view.php?id=$course->id"; ?>"><?php print_string("mainmenu", "lesson") ?></a>
+            </div>
+            <div class="leftmenu_links">
+            <?php lesson_print_tree_menu($lesson->id, $firstpageid, $cm->id) ?>
+            </div>
+            </div>
+        </td>
+        <td align="center" width="100%">';
+        <a name="maincontent" id="maincontent" title="<?php print_string('anchortitle', 'lesson') ?>"></a>
+<?php 
+    }  // End if($firstpageid = get...
+} // End if ($lesson->displayleft)
+?>
+
+<?php if($lesson->timed and !isteacher($course->id)) {
+        // code for the clock
+        print_simple_box_start("right", "150px", "#ffffff", 0);
+?>
+        <table border="0" valign="top" align="center" class="generaltable" width="100%" cellspacing="0">
+            <tr>
+                <th valign="top" class="generaltableheader"><?php print_string("timeremaining", "lesson") ?></th>
+            </tr>
+            <tr>
+                <td align="center" class="generaltablecell">
+                    <script language="javascript">
+                        var starttime  = "<?php echo $timer->starttime ?>";
+                        var servertime = "<?php echo time()?>";
+                        var testlength = "<?php echo $lesson->maxtime * 60 ?>";
+                        document.write('<SCRIPT LANGUAGE="JavaScript" SRC="timer.js"></SCRIPT>');
+                        window.onload = function () { show_clock(); }
+                    </script>
+                </td>
+            </tr>
+        </table>";
+        <?php print_simple_box_end(); ?>
+        <br /><br /><br /><br />
+<?php } //end if($lesson->timed) {
+
+// This calculates and prints the ongoing score message
+if ($lesson->ongoing) {
+    lesson_print_ongoing_score($lesson);
+}
+?>
+<table border="0" align="center">
+    <tr>
+        <td><?php echo $feedback ?></td>
+    </tr>
+</table>
+<form name="pageform" method ="post" action="view.php">
+<input type="hidden" name="id" value="<?php echo $cm->id ?>" />
+<input type="hidden" name="action" value="navigation" />
+<input type="hidden" name="pageid" value="<?php $newpageid ?>" />
+
+<?php if (isset($USER->modattempts[$lesson->id])) { ?>
+<p align="center"><?php print_string("savechangesandeol", "lesson") ?> <br /><br />
+    <div align="center" class="lessonbutton standardbutton">
+        <a href="javascript:document.pageform.pageid.value=<?php echo LESSON_EOL ?>;document.pageform.submit();"><?php print_string("savechanges", "lesson") ?></a>
+    </div>
+</p>
+<p align="center">
+    <?php print_string("or", "lesson") ?>
+    <br /><br />
+    <?php print_string("continuetoanswer", "lesson") ?>
+</p>
+<?php }
+    if ($lesson->review && !$correctanswer && !$noanswer && !$isessayquestion) { ?>
+        <p>
+            <div align="center" class="lessonbutton standardbutton">
+                <a href="javascript:document.pageform.pageid.value=<?php echo $pageid ?>;document.pageform.submit();"><?php print_string("reviewquestionback", "lesson") ?></a>
+            </div>
+        </p>
+        <p><div align="center" class="lessonbutton standardbutton">
+            <a href="javascript:document.pageform.submit();"><?php print_string("reviewquestioncontinue", "lesson") ?></a>
+            </div>
+        </p>
+<?php } else { ?>
+<p>
+    <div align="center" class="lessonbutton standardbutton">
+        <a href="javascript:document.pageform.submit();"><?php print_string("continue", "lesson") ?></a>
+    </div>
+</p>
+<?php } ?>
+</form>
+
+<?php if ($lesson->displayleft) { ?>
+</td></tr></table>
+<?php } ?>

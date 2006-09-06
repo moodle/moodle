@@ -1,11 +1,7 @@
-<?php
+<?php // $Id$
 
 /************** add cluster ************************************/
 
-    if (!isteacher($course->id)) {
-        error("Only teachers can look at this page");
-    }
-    
     confirm_sesskey();
 
     // first get the preceeding page

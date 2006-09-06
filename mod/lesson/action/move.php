@@ -1,11 +1,7 @@
-<?php
+<?php // $Id$
 
 /****************** move ************************************/
    
-    if (!isteacher($course->id)) {
-        error("Only teachers can look at this page");
-    }
-
     $pageid = required_param('pageid', PARAM_INT);
     $title = get_field("lesson_pages", "title", "id", $pageid);
     print_heading(get_string("moving", "lesson", format_string($title)));

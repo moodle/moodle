@@ -1,10 +1,6 @@
-<?php
+<?php // $Id$
 
 /******************* confirm delete ************************************/
-
-    if (!isteacher($course->id)) {
-        error("Only teachers can look at this page");
-    }
 
     confirm_sesskey();
 

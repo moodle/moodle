@@ -1,10 +1,6 @@
-<?php
+<?php // $Id$
 
 /************** edit page ************************************/
-
-    if (!isteacher($course->id)) {
-        error("Only teachers can look at this page");
-    }
 
     // get the page
     $pageid = required_param('pageid', PARAM_INT);
