@@ -44,6 +44,18 @@ $string['themeselector'] = 'Theme Selector';
 $string['nonewsettings'] = 'No new settings were added during this upgrade.';
 $string['upgradesettings'] = 'New Settings';
 $string['upgradesettingsintro'] = 'The settings shown below were added during your last Moodle upgrade. Make any changes necessary to the defaults and then click &quot;Save Settings&quot; at the bottom of this page.';
+
+$string['nonexistentbookmark'] = 'The bookmark you requested does not exist.';
+$string['bookmarkdeleted'] = 'Bookmark deleted.';
+$string['nobookmarksforuser'] = 'You do not have any bookmarks.';
+$string['invalidsection'] = 'Invalid section.';
+$string['bookmarkalreadyexists'] = 'You have already bookmarked this page.';
+$string['bookmarkadded'] = 'Bookmark added.';
+$string['unbookmarkthispage'] = 'unbookmark this page';
+$string['bookmarkthispage'] = 'bookmark this page';
+
+$string['savechanges'] = 'Save Changes';
+
 // end {added with admin cleanup}
 
 $string['adminseesallevents'] = 'Administrators see all events';
