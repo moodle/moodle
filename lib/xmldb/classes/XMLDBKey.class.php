@@ -374,6 +374,53 @@ class XMLDBKey extends XMLDBObject {
         $this->changed = true;
     }
 
+    /**
+     * Returns the PHP code needed to define one XMLDBKey
+     */
+    function getPHP() {
+
+        $result = '';
+
+    /// The type
+        switch ($this->getType()) {
+            case XMLDB_KEY_PRIMARY:
+                $result .= 'XMLDB_KEY_PRIMARY' . ', ';
+                break;
+            case XMLDB_KEY_UNIQUE:
+                $result .= 'XMLDB_KEY_UNIQUE' . ', ';
+                break;
+            case XMLDB_KEY_FOREIGN:
+                $result .= 'XMLDB_KEY_FOREIGN' . ', ';
+                break;
+        }       
+    /// The fields
+        $keyfields = $this->getFields();
+        if (!empty($keyfields)) {
+            $result .= 'array(' . "'".  implode("', '", $keyfields) . "')";
+        } else {
+            $result .= 'null';
+        }   
+    /// The FKs attributes
+        if ($this->getType() == XMLDB_KEY_FOREIGN) {
+        /// The reftable
+            $reftable = $this->getRefTable();
+            if (!empty($reftable)) {
+                $result .= ", '" . $reftable . "', ";
+            } else {
+                $result .= 'null, ';
+            }   
+        /// The reffields
+            $reffields = $this->getRefFields();
+            if (!empty($reffields)) {
+                $result .= 'array(' . "'".  implode("', '", $reffields) . "')";
+            } else {
+                $result .= 'null';
+            }
+        }
+    /// Return result
+        return $result;
+    }
+
     /**     
      * Shows info in a readable format
      */ 
