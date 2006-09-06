@@ -325,6 +325,7 @@ class block_base {
             $this->str->hide      = get_string('hide');
             $this->str->show      = get_string('show');
             $this->str->configure = get_string('configuration');
+            $this->str->assignroles = get_string('assignroles', 'role');
         }
 
         $movebuttons = '<div class="commands">';
@@ -348,8 +349,8 @@ class block_base {
         $script = $page->url_get_full(array('instanceid' => $this->instance->id, 'sesskey' => $USER->sesskey));
      
      	// place holder for roles button
-     	$movebuttons .= '<a class="icon roles" title="'. $title .'" href="'.$CFG->wwwroot.'/admin/roles/assign.php?contextid='.$blockcontext->id.'">' .
-                        '<img src="'.$CFG->pixpath.'/i/users.gif" alt="'.get_string('roles').'" /></a>';
+     	$movebuttons .= '<a class="icon roles" title="'. $this->str->assignroles .'" href="'.$CFG->wwwroot.'/admin/roles/assign.php?contextid='.$blockcontext->id.'">' .
+                        '<img src="'.$CFG->pixpath.'/i/roles.gif" alt="'.$this->str->assignroles.'" /></a>';
      
         $movebuttons .= '<a class="icon hide" title="'. $title .'" href="'.$script.'&amp;blockaction=toggle">' .
                         '<img src="'. $CFG->pixpath.$icon .'" alt="'.$title.'" /></a>';

@@ -135,7 +135,7 @@ class block_admin extends block_list {
             /// always need a role assignment link
             if (has_capability('moodle/role:assign', $context)) { 
                 $this->content->items[]='<a href="'.$CFG->wwwroot.'/admin/roles/assign.php?contextid='.$context->id.'">'.get_string('assignroles', 'role').'</a>';
-                $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/users.gif" alt="" />';         
+                $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/roles.gif" alt="" />';         
             }
             
             if ($course->metacourse) {
