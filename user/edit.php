@@ -304,7 +304,7 @@
         if ($newaccount) {
             $userfullname = $strnewuser;
         } else {
-            $userfullname = fullname($user, isteacher($course->id));
+            $userfullname = fullname($user, has_capability('moodle/site:viewfullnames', get_context_instance(CONTEXT_COURSE, $course->id)));
         }
         if ($course->category) {
             print_header("$course->shortname: $streditmyprofile", "$course->fullname: $streditmyprofile",

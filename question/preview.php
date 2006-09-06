@@ -41,6 +41,7 @@
 
     require_login();
 
+    // this might break things in the future
     if (!isteacherinanycourse()) {
         error('This page is for teachers only');
     }
@@ -81,7 +82,7 @@
         error("This question doesn't belong to a valid category!");
     }
 
-    if (!isteacher($category->course) and !$category->publish) {
+    if (!has_capability('moodle/question:manage', get_context_instance(CONTEXT_COURSE, $category->course)) and !$category->publish) {
         error("You can't preview these questions!");
     }
     $quiz->course = $category->course;

@@ -112,7 +112,7 @@ function resource_base($cmid=0) {
             $this->navigation = "<a target=\"{$CFG->framename}\" href=\"index.php?id={$this->course->id}\">$this->strresources</a> ->";
         }
 
-        if (!$this->cm->visible and !isteacher($this->course->id)) {
+        if (!$this->cm->visible and !has_capability('moodle/course:viewhiddenactivities', get_context_instance(CONTEXT_MODULE, $this->cm->id))) {
             $pagetitle = strip_tags($this->course->shortname.': '.$this->strresource);
             print_header($pagetitle, $this->course->fullname, "$this->navigation $this->strresource", "", "", true, '', navmenu($this->course, $this->cm));
             notice(get_string("activityiscurrentlyhidden"), "$CFG->wwwroot/course/view.php?id={$this->course->id}");

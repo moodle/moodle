@@ -14,9 +14,7 @@
         error("Course ID was incorrect");
     }
 
-    if (!isteacher($course->id)) {
-        error("Only teachers can use this page!");
-    }
+    require_capability('moodle/course:viewcoursegrades', get_context_instance(CONTEXT_COURSE, $id));
 
     $strgrades = get_string("grades");
     $strgrade = get_string("grade");

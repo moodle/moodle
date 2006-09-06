@@ -361,7 +361,7 @@
 
                         $user = get_record("user","id",$entry->uid);
                         print_user_picture($user->id, $course->id, $user->picture);
-                        $pivottoshow = fullname($user, isteacher($course->id));;
+                        $pivottoshow = fullname($user, has_capability('moodle/site:viewfullnames', get_context_instance(CONTEXT_COURSE, $course->id)));
                     } else {
                         echo '<td align="center">';
                     }

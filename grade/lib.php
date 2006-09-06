@@ -1003,7 +1003,7 @@ function grade_get_preferences($courseid) {
 
     // Construct some other ones about which fields are shown
 
-    $isteacher = isteacher($courseid);
+    $isteacher = has_capability('moodle/course:managegrades', get_context_instance(CONTEXT_COURSE, $courseid));
 
     $preferences->show_weighted = (($preferences->display_weighted > 0  && $isteacher) || 
                                    ($preferences->display_weighted > 1 && !$isteacher));
@@ -1063,7 +1063,7 @@ function grade_set_preferences($course, $newprefs) {
 
 function grade_preferences_menu($action, $course, $group=0) {
 
-    if (!isteacher($course->id)) {
+    has_capability('moodle/course:managegrades', get_context_instance(CONTEXT_COURSE, $courseid)) {
         return;
     }
 
@@ -1133,7 +1133,7 @@ function grade_nav($course, $action='grades') {
     $strgrades = get_string('grades', 'grades');
     $gradenav = "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a>";
 
-    if (isteacher($course->id)) {
+    if (has_capability('moodle/course:managegrades', get_context_instance(CONTEXT_COURSE, $course->id))) {
         switch ($action) {
             case 'prefs':
             case 'set_grade_preferences':

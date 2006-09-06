@@ -58,7 +58,7 @@
     require_capability('moodle/course:viewparticipants', $context);
 
     if (!$course->category) {
-        if (!$CFG->showsiteparticipantslist and !isteacher(SITEID)) {
+        if (!$CFG->showsiteparticipantslist and !has_capability('moodle/course:viewparticipants', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
             print_header("$course->shortname: ".get_string('participants'), $course->fullname,
                          get_string('participants'), "", "", true, "&nbsp;", navmenu($course));
             notice(get_string('sitepartlist0'));
@@ -110,7 +110,7 @@
     }
 
     $isseparategroups = ($course->groupmode == SEPARATEGROUPS and $course->groupmodeforce and
-                         !isteacheredit($course->id));
+                         !has_capability('moodle/site:accessallgroups', get_context_instance(CONTEXT_COURSE, $course->id)));
 
     if ($isseparategroups and (!$currentgroup) ) {  //XXX
         print_heading(get_string("notingroup", "forum"));
@@ -195,7 +195,7 @@
     popup_form($CFG->wwwroot.'/user/index.php?contextid='.$context->id.'&amp;roleid='.$roleid.'&amp;id=',$my_course,'courseform',$course->id);
     echo '</td>';
     
-    if ($groupmode == VISIBLEGROUPS or ($groupmode and isteacheredit($course->id))) {
+    if ($groupmode == VISIBLEGROUPS or ($groupmode and has_capability('moodle/site:accessallgroups', get_context_instance(CONTEXT_COURSE, $course->id)))) {
         if ($groups = get_records_menu("groups", "courseid", $course->id, "name ASC", "id,name")) {
             echo '<td class="left">';
             print_group_menu($groups, $groupmode, $currentgroup, $baseurl);
@@ -257,14 +257,14 @@
     echo popup_form($baseurl.'&amp;mode=', $formatmenu, 'formatmenu', $fullmode, '', '', '', true);
     echo '</td></tr></table>';
 
-    if ($currentgroup and (!$isseparategroups or isteacheredit($course->id))) {    /// Display info about the group
+    if ($currentgroup and (!$isseparategroups or has_capability('moodle/site:accessallgroups', get_context_instance(CONTEXT_COURSE, $course->id)))) {    /// Display info about the group
         if ($group = get_record('groups', 'id', $currentgroup)) {              
             if (!empty($group->description) or (!empty($group->picture) and empty($group->hidepicture))) { 
                 echo '<table class="groupinfobox"><tr><td class="left side picture">';
                 print_group_picture($group, $course->id, true, false, false);
                 echo '</td><td class="content">';
                 echo '<h3>'.$group->name;
-                if (isteacheredit($course->id)) {
+                if (has_capability('moodle/course:managegroups', get_context_instance(CONTEXT_COURSE, $course->id))) {
                     echo '&nbsp;<a title="'.get_string('editgroupprofile').'" href="../course/groups.php?id='.$course->id.'&amp;group='.$group->id.'">';
                     echo '<img src="'.$CFG->pixpath.'/t/edit.gif" alt="" border="0">';
                     echo '</a>';
@@ -431,7 +431,7 @@ function checkchecked(form) {
         $a->count = $totalcount;
         $a->items = $currentrole->name;
         echo '<h2>'.get_string('counteditems', '', $a);
-        if (isteacheredit($course->id)) {
+        if (user_can_assign($context, $roleid)) {
             echo ' <a href="'.$CFG->wwwroot.'/admin/roles/assign.php?roleid='.$roleid.'&amp;contextid='.$context->id.'">';
             echo '<img src="'.$CFG->pixpath.'/i/edit.gif" height="16" width="16" alt="" /></a>';
         }

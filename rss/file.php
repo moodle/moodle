@@ -70,18 +70,18 @@
         rss_not_found();
     }
 
-    $isstudent = isstudent($courseid,$userid);
-    $isteacher = isteacher($courseid,$userid);
-
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    $isuser = has_capability('moodle/course:view', $context, $userid);
+    
     //Check for "security" if !course->guest or course->password
     if ($course->id != SITEID) {
-        if ((!$course->guest || $course->password) && (!($isstudent || $isteacher))) {
+        if ((!$course->guest || $course->password) && (!$isuser)) {
             rss_not_found();
         }
     }
 
     //Check for "security" if the course is hidden or the activity is hidden
-    if (!$isblog and (!$course->visible || !$cm->visible) && (!$isteacher)) {
+    if (!$isblog and (!$course->visible || !$cm->visible) && (!has_capability('moodle/course:viewhiddenactivities', $context))) {
         rss_not_found();
     }
 

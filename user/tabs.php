@@ -85,7 +85,7 @@
         if (isset($userid)) {
             $user = get_record('user','id', $userid);
         }
-        print_heading(fullname($user, isteacher($course->id)));
+        print_heading(fullname($user, has_capability('moodle/site:viewfullnames', get_context_instance(CONTEXT_COURSE, $course->id))));
 
         $toprow[] = new tabobject('profile', $CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.$course->id, get_string('profile'));
 

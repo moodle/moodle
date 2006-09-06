@@ -45,7 +45,7 @@
         }
     }
 
-    $fullname = fullname($user, isteacher($course->id));
+    $fullname = fullname($user, has_capability('moodle/site:viewfullnames', get_context_instance(CONTEXT_COURSE, $course->id)));
     $personalprofile = get_string("personalprofile");
     $participants = get_string("participants");
 
@@ -55,7 +55,7 @@
        $currentuser = ($user->id == $USER->id);
     }
 
-    if (groupmode($course) == SEPARATEGROUPS and !isteacheredit($course->id)) {   // Groups must be kept separate
+    if (groupmode($course) == SEPARATEGROUPS and !has_capability('moodle/course:managegroups', get_context_instance(CONTEXT_COURSE, $course->id))) {   // Groups must be kept separate
         require_login();
 
         ///this is changed because of mygroupid
@@ -106,7 +106,7 @@
 
 
     if ($course->category and ! isguest() ) {   // Need to have access to a course to see that info
-        if (!isstudent($course->id, $user->id) && !isteacher($course->id, $user->id)) {
+        if (!has_capability('moodle/course:view', get_context_instance(CONTEXT_COURSE, $course->id))) {
             print_heading(get_string("notenrolled", "", $fullname));
             print_footer($course);
             die;
@@ -117,8 +117,8 @@
         print_heading(get_string("userdeleted"));
     }
 
-/// Get the hidden field list
-    if (isteacher($course->id) || isadmin()) {
+/// Get the hidden field list (user must have update capability to see hidden files?)
+    if (has_capability('moodle/user:update', get_context_instance(CONTEXT_COURSE, $course->id))) {
         $hiddenfields = array();  // teachers and admins are allowed to see everything
     } else {
         $hiddenfields = array_flip(explode(',', $CFG->hiddenuserfields));
@@ -165,7 +165,7 @@
         print_row(get_string("location").":", $location);
     }
 
-    if (isteacher($course->id)) {
+    if (has_capability('moodle/user:update', get_context_instance(CONTEXT_COURSE, $course->id))) {
         if ($user->address) {
             print_row(get_string("address").":", "$user->address");
         }
@@ -279,7 +279,7 @@
 
 /// Printing groups
     $isseparategroups = ($course->groupmode == SEPARATEGROUPS and $course->groupmodeforce and
-                             !isteacheredit($course->id));
+                             !has_capability('moodle/site:accessallgroups', get_context_instance(CONTEXT_COURSE, $course->id)));
     if (!$isseparategroups){
         if ($usergroups = user_group($course->id, $user->id)){
             $groupstr = '';

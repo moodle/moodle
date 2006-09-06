@@ -11,10 +11,10 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate='today'
         $showcourses = 1;
     }
    
+    $context = get_context_instance(CONTEXT_COURSE, $course->id);
+   
     /// Setup for group handling.
-    $isteacher = isteacher($course->id);
-    $isteacheredit = isteacheredit($course->id);
-    if ($course->groupmode == SEPARATEGROUPS and !$isteacheredit) {
+    if ($course->groupmode == SEPARATEGROUPS and !has_capability('moodle/site:accessallgroups', $context)) {
         $selectedgroup = get_current_group($course->id);
         $showgroups = false;
     }
@@ -47,7 +47,7 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate='today'
     if ($showusers) {
         if ($courseusers) {
             foreach ($courseusers as $courseuser) {
-                $users[$courseuser->id] = fullname($courseuser, $isteacher);
+                $users[$courseuser->id] = fullname($courseuser, has_capability('moodle/site:viewfullnames', $context));
             }
         }
         if ($guest = get_guest()) {

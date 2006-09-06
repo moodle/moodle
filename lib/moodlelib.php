@@ -1535,7 +1535,7 @@ function require_login($courseid=0, $autologinguest=true, $cm=null) {
     // Next, check if the user can be in a particular course
     if ($courseid) {
         if ($courseid == SITEID) { // Anyone can be in the site course
-            if (isset($cm) and !$cm->visible and !isteacher(SITEID)) { // Not allowed to see module, send to course page
+            if (isset($cm) and !$cm->visible and !has_capability('moodle/course:viewhiddenactivities', get_context_instance(CONTEXT_SYSTEM, SITEID))) { // Not allowed to see module, send to course page
                 redirect($CFG->wwwroot.'/course/view.php?id='.$cm->course, get_string('activityiscurrentlyhidden'));
             }
             return;
@@ -1552,12 +1552,12 @@ function require_login($courseid=0, $autologinguest=true, $cm=null) {
 
         if (has_capability('moodle/course:view', $context)) {
             if (isset($USER->realuser)) {   // Make sure the REAL person can also access this course
-                if (!isteacher($courseid, $USER->realuser)) {
+                if (!has_capability('moodle/course:view', $context, $USER->realuser)) {
                     print_header();
                     notice(get_string('studentnotallowed', '', fullname($USER, true)), $CFG->wwwroot .'/');
                 }
             }
-            if (isset($cm) and !$cm->visible and !isteacher($courseid)) { // Not allowed to see module, send to course page
+            if (isset($cm) and !$cm->visible and !has_capability('moodle/course:viewhiddenactivities', $context)) { // Not allowed to see module, send to course page
                 redirect($CFG->wwwroot.'/course/view.php?id='.$cm->course, get_string('activityiscurrentlyhidden'));
             }
             return;   // user is a member of this course.
@@ -1950,7 +1950,7 @@ function isediting($courseid, $user=NULL) {
     if (empty($user->editing)) {
         return false;
     }
-    return ($user->editing and isteacher($courseid, $user->id));
+    return ($user->editing and has_capability('moodle/course:manageactivities', get_context_instance(CONTEXT_COURSE, $courseid)));
 }
 
 /**
@@ -2972,7 +2972,7 @@ function get_current_group($courseid, $full=false) {
     global $SESSION, $USER;
 
     if (!isset($SESSION->currentgroup[$courseid])) {
-        if (empty($USER->groupmember[$courseid]) or isteacheredit($courseid)) {
+        if (empty($USER->groupmember[$courseid]) or has_capability('moodle/site:accessallgroups', get_context_instance(CONTEXT_COURSE, $courseid))) {
 
             return 0;
         } else {
@@ -3016,7 +3016,7 @@ function get_and_set_current_group($course, $groupmode, $groupid=-1) {
 
     if ($groupid) {      // Try to change the current group to this groupid
         if ($group = get_record('groups', 'id', $groupid, 'courseid', $course->id)) { // Exists
-            if (isteacheredit($course->id)) {          // Sets current default group
+            if (has_capability('moodle/site:accessallgroups', get_context_instance(CONTEXT_COURSE, $course->id))) {          // Sets current default group
                 $currentgroupid = set_current_group($course->id, $group->id);
 
             } else if ($groupmode == VISIBLEGROUPS) {
@@ -3037,7 +3037,7 @@ function get_and_set_current_group($course, $groupmode, $groupid=-1) {
         }
     } else {             // When groupid = 0 it means show ALL groups
         //this is changed, non editting teacher needs access to group 0 as well, for viewing work in visible groups (need to set current group for multiple pages)
-        if (isteacheredit($course->id) OR (isteacher($course->id) AND ($groupmode == VISIBLEGROUPS))) {          // Sets current default group
+        if (has_capability('moodle/site:accessallgroups', get_context_instance(CONTEXT_COURSE, $course->id)) AND ($groupmode == VISIBLEGROUPS)) {          // Sets current default group
             $currentgroupid = set_current_group($course->id, 0);
 
         } else if ($groupmode == VISIBLEGROUPS) {  // All groups are visible
@@ -3075,7 +3075,7 @@ function setup_and_print_groups($course, $groupmode, $urlroot) {
         return false;
     }
 
-    if ($groupmode == SEPARATEGROUPS and !isteacheredit($course->id) and !$currentgroup) {
+    if ($groupmode == SEPARATEGROUPS and !has_capability('moodle/site:accessallgroups', get_context_instance(CONTEXT_COURSE, $course->id)) and !$currentgroup) {
         //we are in separate groups and the current group is group 0, as last set.
         //this can mean that either, this guy has no group
         //or, this guy just came from a visible all forum, and he left when he set his current group to 0 (show all)
@@ -3092,7 +3092,7 @@ function setup_and_print_groups($course, $groupmode, $urlroot) {
         }
     }
 
-    if ($groupmode == VISIBLEGROUPS or ($groupmode and isteacheredit($course->id))) {
+    if ($groupmode == VISIBLEGROUPS or ($groupmode and has_capability('moodle/site:accessallgroups', get_context_instance(CONTEXT_COURSE, $course->id)))) {
         if ($groups = get_records_menu('groups', 'courseid', $course->id, 'name ASC', 'id,name')) {
             echo '<div align="center">';
             print_group_menu($groups, $groupmode, $currentgroup, $urlroot);
@@ -3100,7 +3100,7 @@ function setup_and_print_groups($course, $groupmode, $urlroot) {
         }
     }//added code here to allow non-editting teacher to swap in-between his own groups
     //added code for students in separategrous to swtich groups
-    else if ($groupmode == SEPARATEGROUPS and (isteacher($course->id) or isstudent($course->id))) {
+    else if ($groupmode == SEPARATEGROUPS and has_capability('moodle/course:view', get_context_instance(CONTEXT_COURSE, $course->id))) {
         $validgroups = array();
         //get all the groups this guy is in in this course
         if ($p = user_group($course->id,$USER->id)){
