@@ -1182,7 +1182,8 @@ function forum_get_child_posts($parent, $forumid) {
          $timelimit = " AND (d.userid = $USER->id OR ((d.timestart = 0 OR d.timestart <= $now) AND (d.timeend = 0 OR d.timeend > $now)))";
      }
 
-     $limit = sql_paging_limit($page, $recordsperpage);
+     $limitfrom = $page;
+     $limitnum = $recordsperpage;
 
      /// Some differences in syntax for PostgreSQL
      if ($CFG->dbtype == "postgres7") {
@@ -1190,9 +1191,9 @@ function forum_get_child_posts($parent, $forumid) {
          $NOTLIKE = "NOT ILIKE";   // case-insensitive
          $REGEXP = "~*";
          $NOTREGEXP = "!~*";
-     } else {
-         $LIKE = "LIKE";
-         $NOTLIKE = "NOT LIKE";
+     } else {                       //Note the LIKE are casesensitive for Oracle. Oracle 10g is required to use 
+         $LIKE = "LIKE";            //the caseinsensitive search using regexp_like() or NLS_COMP=LINGUISTIC :-(
+         $NOTLIKE = "NOT LIKE";     //See http://docs.moodle.org/en/XMLDB_Problems#Case-insensitive_searches
          $REGEXP = "REGEXP";
          $NOTREGEXP = "NOT REGEXP";
      }
@@ -1228,7 +1229,7 @@ function forum_get_child_posts($parent, $forumid) {
      $totalcount = count_records_sql("SELECT COUNT(*) FROM $selectsql");
 
      return get_records_sql("SELECT p.*,d.forum, u.firstname,u.lastname,u.email,u.picture FROM
-                             $selectsql ORDER BY p.modified DESC $limit");
+                             $selectsql ORDER BY p.modified DESC", $limitfrom, $limitnum);
  }
 
 
