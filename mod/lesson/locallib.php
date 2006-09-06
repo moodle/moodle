@@ -1,4 +1,4 @@
-<?php
+<?php // $Id$
 /// mnielsen
 /// locallib.php is the new lib file for lesson module.
 /// including locallib.php is the same as including the old lib.php
@@ -206,6 +206,81 @@ if (!defined("LESSON_RESPONSE_EDITOR")) {
 //////////////////////////////////////////////////////////////////////////////////////
 /// Any other lesson functions go here.  Each of them must have a name that 
 /// starts with lesson_
+
+/**
+ * Print the standard header for lesson module
+ *
+ * @param object $cm Course module record object
+ * @param object $course Couse record object
+ * @param object $lesson Lesson module record object
+ * @param string $currenttab Current tab for the lesson tabs
+ * @param boolean $printheading Print the a heading with the lesson name
+ * @return void
+ **/
+function lesson_print_header($cm, $course, $lesson, $currenttab = '', $printheading = true) {
+    global $CFG, $USER;
+    
+/// Header setup
+    if ($course->category) {
+        $navigation = "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\" title=\"$course->fullname\">$course->shortname</a> ->";
+    } else {
+        $navigation = '';
+    }
+
+    $strlessons = get_string('modulenameplural', 'lesson');
+    $strlesson  = get_string('modulename', 'lesson');
+    $strname    = format_string($lesson->name, true);
+
+/// Print header, heading, tabs and messages
+    print_header("$course->shortname: $strname", $course->fullname,
+                 "$navigation <a href=\"index.php?id=$course->id\" title=\"$strlessons\">$strlessons</a> -> $strname", 
+                  '', '', true, update_module_button($cm->id, $course->id, $strlesson),
+                  navmenu($course, $cm));
+                  
+    if ($printheading) {
+        print_heading_with_help(format_string($lesson->name, true), "overview", "lesson");
+    }
+    
+    if (!empty($currenttab) and isteacher($course->id)) {
+        include($CFG->dirroot.'/mod/lesson/tabs.php');
+    }
+}
+
+/**
+ * Returns course module, course and module instance given 
+ * either the course module ID or a lesson module ID.
+ *
+ * @param int $cmid Course Module ID
+ * @param int $lessonid Lesson module instance ID
+ * @return array array($cm, $course, $lesson)
+ **/
+function lesson_get_basics($cmid = 0, $lessonid = 0) {
+    if ($cmid) {
+        if (!$cm = get_record('course_modules', 'id', $cmid)) {
+            error('Course Module ID was incorrect');
+        }
+        if (!$course = get_record('course', 'id', $cm->course)) {
+            error('Course is misconfigured');
+        }
+        if (!$lesson = get_record('lesson', 'id', $cm->instance)) {
+            error('Course module is incorrect');
+        }
+    } else if ($lessonid) {
+        if (!$lesson = get_record('lesson', 'id', $lessonid)) {
+            error('Course module is incorrect');
+        }
+        if (!$course = get_record('course', 'id', $lesson->course)) {
+            error('Course is misconfigured');
+        }
+        if (!$cm = get_coursemodule_from_instance('lesson', $lesson->id, $course->id)) {
+            error('Course Module ID was incorrect');
+        }
+    } else {
+        error('No course module ID or lesson ID were passed');
+    }
+    
+    return array($cm, $course, $lesson);
+}
 
 /**
  * Given some question info and some data about the the answers
