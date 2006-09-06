@@ -19,7 +19,6 @@ define('AN_REASON_NOACHTYPE2', 246);
 
 require_once($CFG->dirroot.'/enrol/authorize/const.php');
 require_once($CFG->dirroot.'/enrol/authorize/localfuncs.php');
-require_once($CFG->dirroot.'/enrol/authorize/enrol.php');
 
 /**
  * Gets settlement date and time
