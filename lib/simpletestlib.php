@@ -172,7 +172,7 @@ class CheckSpecifiedFieldsExpectation extends SimpleExpectation {
  * @param object $db an AdoDB database connection.
  * @param int $strlen the width to use for string fields.
  */
-function load_test_table($tablename, $data, $db, $strlen = 255) {
+function load_test_table($tablename, $data, $db = null, $strlen = 255) {
     $colnames = array_shift($data);
     $coldefs = array();
     foreach (array_combine($colnames, $data[0]) as $colname => $value) {
@@ -200,22 +200,27 @@ function load_test_table($tablename, $data, $db, $strlen = 255) {
  *
  * @param string $tablename the name of the table to populate. E.g. 'mdl_unittest_user'.
  * @param array $data a two-dimensional array of data, in the format described.
- * @param object $db an AdoDB database connection.
+ * @param object $localdb an AdoDB database connection.
  */
-function load_test_data($tablename, $data, $db) {
+function load_test_data($tablename, $data, $localdb = null) {
     global $CFG;
+
+    if (null == $localdb) {
+        global $db;
+        $localdb = $db;
+    }    
     $colnames = array_shift($data);
     $idcol = array_search('id', $colnames);
     $maxid = -1;
     foreach ($data as $row) {
-        _private_execute_sql($db->GetInsertSQL($tablename, array_combine($colnames, $row)), $db);
+        _private_execute_sql($localdb->GetInsertSQL($tablename, array_combine($colnames, $row)), $localdb);
         if ($idcol !== false && $row[$idcol] > $maxid) {
             $maxid = $row[$idcol];
         }
     }
     if ($CFG->dbtype == 'postgres7' && $idcol !== false) {
         $maxid += 1;
-        _private_execute_sql("ALTER SEQUENCE {$tablename}_id_seq RESTART WITH $maxid;", $db);
+        _private_execute_sql("ALTER SEQUENCE {$tablename}_id_seq RESTART WITH $maxid;", $localdb);
     }
 }
 
@@ -322,6 +327,8 @@ function wipe_tables($prefix, $db) {
  * @param object $db an AdoDB database connection.
  */
 function wipe_sequences($prefix, $db) {
+    global $CFG;
+
     if ($CFG->dbtype == 'postgres7') {
         $sequences = $db->GetCol("SELECT relname FROM pg_class WHERE relname LIKE '$prefix%_id_seq' AND relkind = 'S';");
         if ($sequences) {
@@ -336,9 +343,14 @@ function _private_has_id_column($table, $db) {
     return in_array('id', $db->MetaColumnNames($table));
 }
 
-function _private_execute_sql($sql, $db) {
-    if (!$rs = $db->Execute($sql)) {
-        echo '<p>SQL ERROR: ', $db->ErrorMsg(), ". STATEMENT: $sql</p>";
+function _private_execute_sql($sql, $localdb = null) {
+
+    if (null == $localdb) {
+        global $db;
+        $localdb = $db;
+    }
+    if (!$rs = $localdb->Execute($sql)) {
+        echo '<p>SQL ERROR: ', $localdb->ErrorMsg(), ". STATEMENT: $sql</p>";
     }
     return $rs;
 }
