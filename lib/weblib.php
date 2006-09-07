@@ -4579,7 +4579,9 @@ function redirect($url, $message='', $delay=-1) {
         $delay = 3;  // if no delay specified wait 3 seconds
     }
     if (! defined('HEADER_PRINTED')) {
+        // this type of redirect might not be working in some browsers - such as lynx :-(
         print_header('', '', '', '', '<meta http-equiv="refresh" content="'. $delay .'; url='. $encodedurl .'" />');
+        $delay += 3; // double redirect prevention, it was sometimes breaking upgrades before 1.7
     }
     echo '<center>';
     echo '<p>'. $message .'</p>';
@@ -4593,7 +4595,7 @@ function redirect($url, $message='', $delay=-1) {
   function redirect() {
       document.location.replace('<?php echo $surl ?>');
   }
-  setTimeout("redirect()", <?php echo (($delay * 1000) + 300) ?>);
+  setTimeout("redirect()", <?php echo ($delay * 1000) ?>);
 -->
 </script>
 <?php
