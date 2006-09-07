@@ -80,7 +80,7 @@ class XMLDBField extends XMLDBObject {
         $this->precision = $type;
         $this->unsigned = !empty($unsigned) ? true : false;
         $this->notnull = !empty($notnull) ? true : false;
-        $this->sequence = !empty($secuence) ? true : false;
+        $this->sequence = !empty($sequence) ? true : false;
         $this->enum = !empty($enum) ? true : false;
     /// Accept both quoted and non-quoted vales (quoting them)a
         if (is_array($enumvalues)) {

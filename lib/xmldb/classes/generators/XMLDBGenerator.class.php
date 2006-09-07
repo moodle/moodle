@@ -157,7 +157,7 @@ class XMLDBgenerator {
         }
     /// Add enum extra code if needed
         if ($this->enum_extra_code) {
-        /// Iterate over fields looking for sequences
+        /// Iterate over fields looking for enums
             foreach ($xmldb_fields as $xmldb_field) {
                 if ($xmldb_field->getEnum()) {
                     $table .= "\n" . $this->getEnumExtraSQL($xmldb_table, $xmldb_field) . ',';
@@ -424,7 +424,7 @@ class XMLDBgenerator {
 
     /// TODO, call to getRenameTableExtraSQL() if $rename_table_extra_code is enabled. It will add sequence regeneration code.
         if ($this->rename_table_extra_code) {
-            $extra_sentences = getDropTableExtraSQL();
+            $extra_sentences = $this->getRenameTableExtraSQL();
             $results = array_merge($results, $extra_sentences);
         }
 
@@ -439,15 +439,16 @@ class XMLDBgenerator {
 
         $results = array();  //Array where all the sentences will be stored
 
-        $rename = str_replace('TABLENAME', $this->getEncQuoted($this->prefix . $xmldb_table->getName()), $this->drop_table_sql);
+        $drop = str_replace('TABLENAME', $this->getEncQuoted($this->prefix . $xmldb_table->getName()), $this->drop_table_sql);
 
-        $results[] = $rename;
+        $results[] = $drop;
 
     /// TODO, call to getDropTableExtraSQL() if $rename_table_extra_code is enabled. It will add sequence/trigger drop code.
         if ($this->drop_table_extra_code) {
-            $extra_sentences = getDropTableExtraSQL();
+            $extra_sentences = $this->getDropTableExtraSQL($xmldb_table);
             $results = array_merge($results, $extra_sentences);
         }
+
 
         return $results;
     }
@@ -659,28 +660,28 @@ class XMLDBgenerator {
      * to create one sequence for the xmldb_table and xmldb_field passes
      */
     function getCreateSequenceSQL ($xmldb_table, $xmldb_field) {
-        return 'Code for extra sequence SQL goes to getCreateSequenceSQL(). Can be disabled with sequence_extra_code=false';
+        return array('Code for extra sequence SQL goes to getCreateSequenceSQL(). Can be disabled with sequence_extra_code=false');
     }
 
     /**
      * Returns the code (array of statements) needed to add one comment to the table
      */
     function getCommentSQL ($xmldb_table) {
-        return 'Code for table comment goes to getCommentSQL(). Can be disabled with add_table_comments=false;';
+        return array('Code for table comment goes to getCommentSQL(). Can be disabled with add_table_comments=false;');
     }
 
     /**
      * Returns the code (array of statements) needed to execute extra statements on table rename
      */
     function getRenameTableExtraSQL ($xmldb_table) {
-        return 'Code for table rename goes to getRenameTableExtraSQL(). Can be disabled with rename_table_extra_code=false;';
+        return array('Code for table rename goes to getRenameTableExtraSQL(). Can be disabled with rename_table_extra_code=false;');
     }
 
     /**
      * Returns the code (array of statements) needed to execute extra statements on table drop
      */
     function getDropTableExtraSQL ($xmldb_table) {
-        return 'Code for table drop goes to getDropTableExtraSQL(). Can be disabled with drop_table_extra_code=false;';
+        return array('Code for table drop goes to getDropTableExtraSQL(). Can be disabled with drop_table_extra_code=false;');
     }
 
     /**

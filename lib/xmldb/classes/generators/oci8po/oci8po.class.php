@@ -52,6 +52,8 @@ class XMLDBoci8po extends XMLDBgenerator {
     var $sequence_extra_code = true; //Does the generator need to add extra code to generate the sequence fields
     var $sequence_name = ''; //Particular name for inline sequences in this generator
 
+    var $drop_table_extra_code = true; //Does the generatos need to add code after table drop
+
     var $enum_inline_code = false; //Does the generator need to add inline code in the column definition
 
     /**
@@ -149,16 +151,46 @@ class XMLDBoci8po extends XMLDBgenerator {
         return array($sequence, $trigger);
     }
 
-     /**
-      * Returns the code (in array) needed to add one comment to the table
-      */
-     function getCommentSQL ($xmldb_table) {
+    /**
+     * Returns the code needed to drop one sequence for the xmldb_table and xmldb_field passed
+     * Can, optionally, specify if the underlying trigger will be also dropped
+     */
+    function getDropSequenceSQL ($xmldb_table, $xmldb_field, $include_trigger=false) {
 
-         $comment = "COMMENT ON TABLE " . $this->getEncQuoted($this->prefix . $xmldb_table->getName());
-         $comment.= " IS '" . substr($xmldb_table->getComment(), 0, 250) . "'";
+        $sequence_name = $this->getNameForObject($xmldb_table->getName(), $xmldb_field->getName(), 'seq');
+        
+        $sequence = "DROP SEQUENCE " . $sequence_name;
 
-         return array($comment);
-     }
+        $trigger_name = $this->getNameForObject($xmldb_table->getName(), $xmldb_field->getName(), 'trg');
+ 
+        $trigger = "DROP TRIGGER " . $trigger_name;
+
+        if ($include_trigger) {
+            $result =  array($sequence, $trigger);
+        } else {
+            $result = array($sequence);
+        }
+        return $result;
+    }
+
+    /**
+     * Returns the code (in array) needed to add one comment to the table
+     */
+    function getCommentSQL ($xmldb_table) {
+
+        $comment = "COMMENT ON TABLE " . $this->getEncQuoted($this->prefix . $xmldb_table->getName());
+        $comment.= " IS '" . substr($xmldb_table->getComment(), 0, 250) . "'";
+
+        return array($comment);
+    }
+
+    /**
+     * Returns the code (array of statements) needed to execute extra statements on table drop
+     */
+    function getDropTableExtraSQL ($xmldb_table) {
+        $xmldb_field = new XMLDBField('id'); // Fields having sequences should be exclusively, id.
+        return $this->getDropSequenceSQL($xmldb_table, $xmldb_field, false);
+    }
 
     /**
      * Returns an array of reserved words (lowercase) for this DB
