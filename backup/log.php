@@ -8,9 +8,7 @@
 
     require_login();
 
-    if (!isadmin()) {
-        error("Only an admin can use this page");
-    }
+    require_capability('moodle/site:backup', get_context_instance(CONTEXT_SYSTEM, SITEID));
 
     if (!$site = get_site()) {
         error("Site isn't defined!");

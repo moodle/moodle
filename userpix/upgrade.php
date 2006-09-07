@@ -7,10 +7,7 @@
 
     require_login();
 
-    if (!isadmin()) {
-        error("Currently only the administrator can access this page!");
-    }
-
+    require_capability('moodle/site:config', get_context_instance(CONTEXT_SITE, SITEID));
     
     if (!$users = get_records("user", "picture", "1", "lastaccess DESC", "id,firstname,lastname")) {
         error("no users!");

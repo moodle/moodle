@@ -23,11 +23,11 @@
 
     //Check admin
     if (!empty($id)) {
-        if (!isteacheredit($id)) {
+        if (!has_capability('moodle/site:restore', get_context_instance(CONTEXT_COUESE, $id))) {
             error("You need to be a teacher or admin user to use this page.", "$CFG->wwwroot/login/index.php");
         }
     } else {
-        if (!isadmin()) {
+        if (!has_capability('moodle/site:restore', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
             error("You need to be an admin user to use this page.", "$CFG->wwwroot/login/index.php");   
         }
     }
@@ -92,10 +92,10 @@
         }
 
     if (!isset($restore_restoreto)) {
-        if (isteacheredit($id) and !isadmin()) {
+        if (!has_capability('moodle/site:restore', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
             $restore_restoreto = 1;
         }
-        if (isadmin()) {
+        if (has_capability('moodle/site:restore', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
             $restore_restoreto = 2;
         }
     }
@@ -157,7 +157,7 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
     echo "<td align=\"right\"><b>";
     echo get_string("restoreto").":</b>";
     echo "</td><td colspan=\"3\">";
-    if (isteacheredit($id) and !iscreator()) {
+    if (!has_capability('moodle/course:create', get_context_instance(CONTEXT_COUESE, $id))) {
         $restore_restoreto_options[0] = get_string("currentcoursedeleting");
         $restore_restoreto_options[1] = get_string("currentcourseadding");
     } 

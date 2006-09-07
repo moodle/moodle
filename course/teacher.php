@@ -1,6 +1,8 @@
 <?php // $Id$
       // Admin-only script to assign teachers to courses
 
+    /// This page is deprecated
+
     require_once("../config.php");
 
     define("MAX_USERS_PER_PAGE", 50);

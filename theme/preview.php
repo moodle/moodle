@@ -14,9 +14,7 @@
 
     require_login();
 
-    if (!isadmin()) {
-        error("You must be an administrator to change themes.");
-    }
+    require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM, SITEID));
 
     $CFG->theme = $preview;
 

@@ -1332,7 +1332,7 @@ function print_whole_category_list($category=NULL, $displaylist=NULL, $parentsli
     }
 
     if ($category) {
-        if ($category->visible or iscreator()) {
+        if ($category->visible or has_capability('moodle/course:update', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
             print_category_info($category, $depth, $files);
         } else {
             return;  // Don't bother printing children of invisible categories

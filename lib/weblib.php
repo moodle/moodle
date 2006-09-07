@@ -3003,6 +3003,7 @@ function print_user($user, $course, $messageselect=false, $return=false) {
     static $isteacher;
     static $isadmin;
 
+    $context = get_context_instance(CONTEXT_COURSE, $course->id);
     if (empty($string)) {     // Cache all the strings for the rest of the page
 
         $string->email       = get_string('email');
@@ -3044,7 +3045,7 @@ function print_user($user, $course, $messageselect=false, $return=false) {
     $output .= print_user_picture($user->id, $course->id, $user->picture, true, true);
     $output .= '</td>';
     $output .= '<td class="content">';
-    $output .= '<div class="username">'.fullname($user, $isteacher).'</div>';
+    $output .= '<div class="username">'.fullname($user, has_capability('moodle/site:viewfullnames', $context)).'</div>';
     $output .= '<div class="info">';
     if (!empty($user->role) and ($user->role <> $course->teacher)) {
         $output .= $string->role .': '. $user->role .'<br />';
@@ -3141,16 +3142,16 @@ function print_group_picture($group, $courseid, $large=false, $return=false, $li
     }
 
     static $isteacheredit;
-
+    $context = get_context_instance(CONTEXT_COURSE, $courseid);
     if (!isset($isteacheredit)) {
         $isteacheredit = isteacheredit($courseid);
     }
 
-    if ($group->hidepicture and !$isteacheredit) {
+    if ($group->hidepicture and !has_capability('moodle/course:managegroups', $context)) {
         return '';
     }
 
-    if ($link or $isteacheredit) {
+    if ($link or has_capability('moodle/site:accessallgroups', $context)) {
         $output = '<a href="'. $CFG->wwwroot .'/user/index.php?id='. $courseid .'&amp;group='. $group->id .'">';
     } else {
         $output = '';
@@ -3171,7 +3172,7 @@ function print_group_picture($group, $courseid, $large=false, $return=false, $li
                        ' border="0" width="'.$size.'" height="'.$size.'" alt="" title="'.s($group->name).'"/>';
         }
     }
-    if ($link or $isteacheredit) {
+    if ($link or has_capability('moodle/site:accessallgroups', $context)) {
         $output .= '</a>';
     }
 
@@ -3664,7 +3665,7 @@ function update_course_icon($courseid) {
 
     global $CFG, $USER;
 
-    if (isteacheredit($courseid)) {
+    if (has_capability('moodle/course:manageactivities', get_context_instance(CONTEXT_COURSE, $courseid))) {
         if (!empty($USER->editing)) {
             $string = get_string('turneditingoff');
             $edit = '0';
@@ -3717,7 +3718,7 @@ function update_module_button($moduleid, $courseid, $string) {
     global $CFG, $USER;
 
 
-    if (isteacheredit($courseid)) {
+    if (has_capability('moodle/course:manageactivities', get_context_instance(CONTEXT_MODULE, $moduleid))) {
         $string = get_string('updatethis', '', $string);
         return "<form target=\"$CFG->framename\" method=\"get\" action=\"$CFG->wwwroot/course/mod.php\">".
                "<input type=\"hidden\" name=\"update\" value=\"$moduleid\" />".
@@ -3741,7 +3742,7 @@ function update_module_button($moduleid, $courseid, $string) {
 function update_category_button($categoryid) {
     global $CFG, $USER;
 
-    if (iscreator()) {
+    if (has_capability('moodle/category:update', get_context_instance(CONTEXT_COURSECAT, $categoryid))) {
         if (!empty($USER->categoryediting)) {
             $string = get_string('turneditingoff');
             $edit = 'off';
@@ -3767,7 +3768,7 @@ function update_category_button($categoryid) {
 function update_categories_button() {
     global $CFG, $USER;
 
-    if (isadmin()) {
+    if (has_capability('moodle/category:update', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
         if (!empty($USER->categoryediting)) {
             $string = get_string('turneditingoff');
             $categoryedit = 'off';
@@ -3790,7 +3791,8 @@ function update_categories_button() {
 function update_categories_search_button($search,$page,$perpage) {
     global $CFG, $USER;
 
-    if (isadmin()) {
+    // not sure if this capability is the best  here
+    if (has_capability('moodle/category:update', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
         if (!empty($USER->categoryediting)) {
             $string = get_string("turneditingoff");
             $edit = "off";
@@ -3821,7 +3823,7 @@ function update_categories_search_button($search,$page,$perpage) {
 function update_group_button($courseid, $groupid) {
     global $CFG, $USER;
 
-    if (isteacheredit($courseid)) {
+    if (has_capability('moodle/course:managegroups', get_context_instance(CONTEXT_GROUP, $groupid))) {
         $string = get_string('editgroupprofile');
         return "<form target=\"$CFG->framename\" method=\"get\" action=\"$CFG->wwwroot/course/group.php\">".
                '<input type="hidden" name="id" value="'. $courseid .'" />'.
@@ -3843,7 +3845,7 @@ function update_group_button($courseid, $groupid) {
 function update_groups_button($courseid) {
     global $CFG, $USER;
 
-    if (isteacheredit($courseid)) {
+    if (has_capability('moodle/course:managegroups', get_context_instance(CONTEXT_COURSE, $courseid))) {
         if (!empty($USER->groupsediting)) {
             $string = get_string('turneditingoff');
             $edit = 'off';
@@ -3969,7 +3971,7 @@ function navmenu($course, $cm=NULL, $targetwindow='self') {
         if ($mod->section > 0 and $section <> $mod->section) {
             $thissection = $sections[$mod->section];
 
-            if ($thissection->visible or !$course->hiddensections or $isteacher) {
+            if ($thissection->visible or !$course->hiddensections or has_capability('moodle/course:viewhiddensections', get_context_instance(CONTEXT_COURSE, $course->id))) {
                 $thissection->summary = strip_tags(format_string($thissection->summary,true));
                 if ($course->format == 'weeks' or empty($thissection->summary)) {
                     $menu[] = '-------------- '. $strsection ." ". $mod->section .' --------------';
@@ -3986,7 +3988,7 @@ function navmenu($course, $cm=NULL, $targetwindow='self') {
         $section = $mod->section;
 
         //Only add visible or teacher mods to jumpmenu
-        if ($mod->visible or $isteacher) {
+        if ($mod->visible or has_capability('moodle/course:viewhiddenactivities', get_context_instance(CONTEXT_MODULE, $mod->id))) {
             $url = $mod->mod .'/view.php?id='. $mod->cm;
             if ($flag) { // the current mod is the "next" mod
                 $nextmod = $mod;
@@ -4012,7 +4014,7 @@ function navmenu($course, $cm=NULL, $targetwindow='self') {
             $previousmod = $mod;
         }
     }
-    if ($selectmod and $isteacher) {
+    if ($selectmod and has_capability('moodle/site:viewreports', get_context_instance(CONTEXT_COURSE, $course->id))) {
         $logslink = "<td><a target=\"$CFG->framename\" href=".
                     "\"$CFG->wwwroot/course/report/log/index.php?chooselog=1&amp;user=0&amp;date=0&amp;id=$course->id&amp;modid=$selectmod->cm\">".
                     "<img border=\"0\" height=\"16\" width=\"16\" src=\"$CFG->pixpath/i/log.gif\" alt=\"\" /></a></td>";
@@ -4098,7 +4100,7 @@ function navmenulist($course, $sections, $modinfo, $isteacher, $strsection, $str
         $section = $mod->section;
 
         //Only add visible or teacher mods to jumpmenu
-        if ($mod->visible or $isteacher) {
+        if ($mod->visible or has_capability('moodle/course:viewhiddenactivities', get_context_instance(CONTEXT_MODULE, $mod->id))) {
             $url = $mod->mod .'/view.php?id='. $mod->cm;
             if ($flag) { // the current mod is the "next" mod
                 $nextmod = $mod;

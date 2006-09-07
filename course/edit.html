@@ -54,7 +54,7 @@
 ?>
 <form method="post" action="edit.php" name="form">
 <table cellpadding="9" cellspacing="0" >
-<?php if (iscreator()) { ?>
+<?php if (has_capability('moodle/course:create', get_context_instance(CONTEXT_COURSECAT, $form->category))) { ?>
 <tr valign="top">
     <td align="right"><?php  print_string("category") ?>:</td>
     <td><?php
@@ -453,7 +453,7 @@
     <td><input type="submit" value="<?php  print_string("savechanges") ?>" /></td>
 </tr>
 </table>
-<?php if(!iscreator()) { ?>
+<?php if(!has_capability('moodle/course:create', get_context_instance(CONTEXT_COURSECAT, $form->category))) { ?>
 <input type="hidden" name="category" value="<?php echo $form->category ?>" />
 <?php } ?>
 <input type="hidden" name="id" value="<?php echo $form->id ?>" />

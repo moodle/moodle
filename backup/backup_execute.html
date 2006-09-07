@@ -5,7 +5,7 @@
     require_login();
 
     if (!empty($course->id)) {
-        if (!isteacheredit($course->id)) {
+        if (!has_capability('moodle/site:backup', get_context_instance(CONTEXT_COURSE, $course->id))) {
             if (empty($to)) {
                 error("You need to be a teacher or admin user to use this page.", "$CFG->wwwroot/login/index.php");
             } else {
@@ -15,7 +15,7 @@
             }
         }
     } else {
-        if (!isadmin()) {
+        if (!has_capability('moodle/site:backup', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
             error("You need to be an admin user to use this page.", "$CFG->wwwroot/login/index.php");
         }
     }

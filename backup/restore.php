@@ -50,17 +50,17 @@
     }
 
     if (!empty($id)) {
-        if (!isteacheredit($id)) {
+        if (!has_capability('moodle/site:restore', get_context_instance(CONTEXT_COURSE, $id))) {
             if (empty($to)) {
                 error("You need to be a teacher or admin user to use this page.", "$CFG->wwwroot/login/index.php");
             } else {
-                if (!isteacheredit($to)) {
+                if (!has_capability('moodle/site:restore', get_context_instance(CONTEXT_COURSE, $to))) {
                     error("You need to be a teacher or admin user to use this page.", "$CFG->wwwroot/login/index.php");
                 }
             }
         }
     } else {
-        if (!isadmin()) {
+        if (!has_capability('moodle/site:restore', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
             error("You need to be an admin user to use this page.", "$CFG->wwwroot/login/index.php");
         }
     }
@@ -117,7 +117,7 @@
     }
 
     //Print header
-    if (isadmin()) {
+    if (has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
         print_header("$site->shortname: $strcourserestore", $site->fullname,
                      "<a href=\"$CFG->wwwroot/$CFG->admin/index.php\">$stradministration</a> ->
                       $strcourserestore -> ".basename($file));

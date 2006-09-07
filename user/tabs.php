@@ -96,7 +96,7 @@
             $mainadmin->id = 0; /// Weird - no primary admin!
         }
         if ((!empty($USER->id) and ($USER->id == $user->id) and !isguest()) or
-            (isadmin() and ($user->id != $mainadmin->id)) ) {
+            (has_capability('moodle/user:editprofile', get_context_instance(CONTEXT_USERID, $user->id)) and ($user->id != $mainadmin->id)) ) {
 
             if(empty($CFG->loginhttps)) {
                 $wwwroot = $CFG->wwwroot;

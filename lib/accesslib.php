@@ -1041,19 +1041,32 @@ function create_role($name, $description, $legacy='') {
     
     $role->name = $name;
     $role->description = $description;
-                                
+    
+    $context = get_context_instance(CONTEXT_SYSTEM, SITEID);                           
+    
     if ($id = insert_record('role', $role)) {
-        if ($legacy) {
-            $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
+        if ($legacy) {        
             assign_capability($legacy, CAP_ALLOW, $id, $context->id);            
         }
+        
+        /// By default, users with role:manage at site level
+        /// should be able to assign users to this new role, and override this new role's capabilities
+        
+        // find all admin roles
+        $adminroles = get_roles_with_capability('moodle/role:manage', CAP_ALLOW, $context);
+        // foreach admin role
+        foreach ($adminroles as $arole) {
+            // write allow_assign and allow_overrid
+            allow_assign($arole->id, $id);
+            allow_override($arole->id, $id);  
+        }
+        
         return $id;
     } else {
         return false;  
     }
   
 }
-
 
 /**
  * Function to write context specific overrides, or default capabilities.
@@ -1109,15 +1122,27 @@ function unassign_capability($capability, $roleid, $contextid=NULL) {
  *                      either CAP_ALLOW, CAP_PREVENT or CAP_PROHIBIT
  * @return array or role objects
  */
-function get_roles_with_capability($capability, $permission=NULL) {
-    
+function get_roles_with_capability($capability, $permission=NULL, $context='') {
+
     global $CFG;
+    
+    if ($context) {
+        if ($contexts = get_parent_contexts($context)) {
+            $listofcontexts = '('.implode(',', $contexts).')';
+        } else {
+            $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
+            $listofcontexts = '('.$sitecontext->id.')'; // must be site  
+        }  
+        $contextstr = "AND (rc.contextid = '.$context->id.' OR  rc.contextid IN $listofcontexts)";
+    } else {
+        $contextstr = '';
+    }
     
     $selectroles = "SELECT r.* 
                       FROM {$CFG->prefix}role AS r,
                            {$CFG->prefix}role_capabilities AS rc
                      WHERE rc.capability = '$capability'
-                       AND rc.roleid = r.id";
+                       AND rc.roleid = r.id $contextstr";
 
     if (isset($permission)) {
         $selectroles .= " AND rc.permission = '$permission'";
@@ -2008,7 +2033,7 @@ function get_users_by_capability($context, $capability, $fields='u.*', $sort='',
     global $CFG;
     
     // first get all roles with this capability in this context, or above
-    $possibleroles = get_roles_with_capability($capability, CAP_ALLOW);
+    $possibleroles = get_roles_with_capability($capability, CAP_ALLOW, $context);
     $validroleids = array();
     foreach ($possibleroles as $prole) {
         $caps = role_context_capabilities($prole->id, $context, $capability); // resolved list
@@ -2017,6 +2042,7 @@ function get_users_by_capability($context, $capability, $fields='u.*', $sort='',
         }
     }
     
+    /// the following few lines may not be needed
     if ($usercontexts = get_parent_contexts($context)) {
         $listofcontexts = '('.implode(',', $usercontexts).')';
     } else {
@@ -2028,7 +2054,7 @@ function get_users_by_capability($context, $capability, $fields='u.*', $sort='',
     
     $select = ' SELECT '.$fields;
     $from   = ' FROM '.$CFG->prefix.'user u LEFT JOIN '.$CFG->prefix.'role_assignments ra ON ra.userid = u.id ';
-    $where  = ' WHERE (ra.contextid = '.$context->id.' OR ra.contextid in '.$listofcontexts.') AND u.deleted = 0 AND ra.roleid in '.$roleids.' ';    
+    $where  = ' WHERE (ra.contextid = '.$context->id.' OR ra.contextid in '.$listofcontexts.') AND u.deleted = 0 AND ra.roleid in '.$roleids.' ';
 
     return get_records_sql($select.$from.$where.$sort, $limitfrom, $limitnum);  
 

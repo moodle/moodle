@@ -22,17 +22,17 @@
 
     //Check admin
     if (!empty($id)) {
-        if (!isteacheredit($id)) {
+        if (!has_capability('moodle/site:restore', get_context_instance(CONTEXT_COUESE, $id))) {
             if (empty($to)) {
                 error("You need to be a teacher or admin user to use this page.", "$CFG->wwwroot/login/index.php");
             } else {
-                if (!isteacheredit($to)) {
+                if (!has_capability('moodle/site:restore', get_context_instance(CONTEXT_COUESE, $to))) {
                     error("You need to be a teacher or admin user to use this page.", "$CFG->wwwroot/login/index.php");
                 }
             }
         }
     } else {
-        if (!isadmin()) {
+        if (!has_capability('moodle/site:restore', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
             error("You need to be an admin user to use this page.", "$CFG->wwwroot/login/index.php");
         }
     }

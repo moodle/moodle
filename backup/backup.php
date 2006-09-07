@@ -17,17 +17,17 @@
     require_login();
 
     if (!empty($id)) {
-        if (!isteacheredit($id)) {
+        if (!has_capability('moodle/site:backup', get_context_instance(CONTEXT_COURSE, $id))) {
             error("You need to be a teacher or admin user to use this page.", "$CFG->wwwroot/login/index.php");
         }
     } else {
-        if (!isadmin()) {
+        if (!has_capability('moodle/site:backup', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
             error("You need to be an admin user to use this page.", "$CFG->wwwroot/login/index.php");
         }
     }
 
     if (!empty($to)) {
-        if (!isteacheredit($to)) {
+        if (!has_capability('moodle/site:backup', get_context_instance(CONTEXT_COURSE, $to))) {
             error("You need to be a teacher or admin user to use this page.", "$CFG->wwwroot/login/index.php");
         }
     }
@@ -95,7 +95,7 @@
     }
 
     //Print header
-    if (isadmin()) {
+    if (has_capability('moodle/site:backup', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
         print_header("$site->shortname: $strcoursebackup", $site->fullname,
                      "<a href=\"$CFG->wwwroot/$CFG->admin/index.php\">$stradministration</a> ->
                       <a href=\"backup.php\">$strcoursebackup</a> -> $course->fullname ($course->shortname)");

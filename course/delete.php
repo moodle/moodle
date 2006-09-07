@@ -8,9 +8,7 @@
 
     require_login();
 
-    if (!isadmin()) {
-        error("You must be an administrator to use this page.");
-    }
+    require_capability('moodle/course:delete', get_context_instance(CONTEXT_SYSTEM, SITEID));
 
     if (!$site = get_site()) {
         error("Site not found!");

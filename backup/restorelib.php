@@ -634,7 +634,7 @@
         //Second shot. Try to obtain any concordant category and check its publish status and editing rights
         } else if ($fcats = get_records('question_categories', $searchfield, $searchvalue, 'id', 'id, publish, course')) {
             foreach ($fcats as $fcat) {
-                if ($fcat->publish == 1 && isteacheredit($fcat->course)) {
+                if ($fcat->publish == 1 && has_capability('moodle/site:restore', get_context_instance(CONTEXT_COURSE, $fcat->course))) {
                     $found = $fcat->id;
                     break;
                 }

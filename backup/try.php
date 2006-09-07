@@ -7,9 +7,7 @@
 
     require_login();
 
-    if (!isadmin()) {
-        error("You need to be an admin user to use this page.", "$CFG->wwwroot/login/index.php");
-    }
+    require_capability('moodle/site:restore', get_context_instance(CONTEXT_SYSTEM, SITEID));
 
     //Check site
     if (!$site = get_site()) {
