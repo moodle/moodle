@@ -85,6 +85,7 @@ $string['configopentogoogle'] = 'If you enable this setting, then Google will be
 $string['configpathtoclam'] = 'Path to clam AV.  Probably something like /usr/bin/clamscan or /usr/bin/clamdscan. You need this in order for clam AV to run.';
 $string['configpathtodu'] = 'Path to du. Probably something like /usr/bin/du. If you enter this, pages that display directory contents will run much faster for directories with a lot of files.';
 $string['configperfdebug'] = 'If you turn this on, performance info will be printed in the footer of the standard theme';
+$string['configprotectusernames'] = 'By default forget_password.php does not display any hints that would allow guessing of usernames or email addresses.';
 $string['configproxyhost'] = 'If this <b>server</b> needs to use a proxy computer (eg a firewall) to access the Internet, then provide the proxy hostname and port here.  Otherwise leave it blank.';
 $string['configquarantinedir'] = 'If you want clam AV to move infected files to a quarantine directory, enter it here. It must be writable by the webserver.  If you leave this blank, or if you enter a directory that doesn\'t exit or isn\'t writable, infected files will be deleted.  Do not include a trailing slash.';
 $string['configrequestedteachername'] = 'Word for teacher used in requested courses';
@@ -130,6 +131,7 @@ $string['configzip'] = 'Indicate the location of your zip program (Unix only, op
 $string['confirmation'] = 'Confirmation';
 $string['confirminstall'] = 'You are about to install language pack ($a), are you sure?';
 $string['cronwarning'] = 'The <a href=\"cron.php\">cron.php maintenance script</a> has not been run for at least 24 hours.';
+$string['datarootsecuritywarning'] = 'Your site configuration might not be secure. Please make sure that your dataroot directory ($a) is not directly accessible via web.';
 $string['dbmigrate'] = 'Moodle Database Migration';
 $string['dbmigrationdeprecateddb'] = '<font color=\"#ff0000\">This database is migrated to a new UTF8 database and deprecated. Please edit your config.php and use the new database for this moodle.</font>';
 $string['dbmigrationdupfailed'] = 'Database duplication failed with possible error:<font color=\"#ff0000\"><pre>$a</pre></font>';

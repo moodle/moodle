@@ -450,6 +450,9 @@ class configvarrss extends configvar {
     $security['notifyloginthreshold'] = new configvar (get_string('confignotifyloginthreshold', 'admin'),
         choose_from_menu($options, 'notifyloginthreshold', $config->notifyloginthreshold, '', '', '', true) );
 
+    $security['protectusernames'] = new configvar (get_string('configprotectusernames', 'admin'),
+        choose_from_menu($noyesoptions, 'protectusernames', $config->protectusernames, '', '', '', true) );
+
 /// secureforms
     $security['secureforms'] = new configvar (get_string('configsecureforms', 'admin'),
         choose_from_menu ($noyesoptions, 'secureforms', $config->secureforms, '', '', '', true) );

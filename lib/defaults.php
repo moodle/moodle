@@ -77,6 +77,7 @@
        'pathtodu'                 => '',
        'prefix'                   => '',
        'perfdebug'                => 0,
+       'protectusernames'         => 1,       
        'proxyhost'                => '',
        'proxyport'                => '',
        'quarantinedir'            => '',

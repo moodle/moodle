@@ -164,6 +164,12 @@ if ($param->action=='find' and confirm_sesskey()) {
     if (empty($param->username) and empty($param->email)) {
         $errors[] = 'no email or username';
     }
+
+    if ($page != 'external' and !empty($CFG->protectusernames)) {
+        // do not give any hints about usernames or email!
+        $errors = array();
+        $page = 'emailmaybeconfirmed';
+    }
 }
 
 // ACTION = AUTHENTICATE
@@ -204,15 +210,10 @@ if (!empty($param->p) and !empty($param->s)) {
 print_header( $txt->forgotten, $txt->forgotten,
     "<a href=\"{$CFG->wwwroot}/login/index.php\">{$txt->login}</a>->{$txt->forgotten}",
     'form.email' );
-print_simple_box_start('center');
 
-// display any errors
-if (count($errors)) {
-    echo "<ul class=\"errors\">\n";
-    foreach ($errors as $error) {
-        echo "    <li>$error</li>\n";
-    }
-    echo "</ul>\n";
+if ($page=='emailmaybeconfirmed') {
+    // Print general confirmation message
+    notice(get_string('emailpasswordconfirmmaybesent'),$CFG->wwwroot.'/index.php'); 
 }
 
 // check $page for appropriate page to display
@@ -244,6 +245,18 @@ elseif ($page=='duplicateemail') {
 }
 
 else {
+    echo '<br />';
+    print_simple_box_start('center','50%','','20');
+
+    // display any errors
+    if (count($errors)) {
+        echo "<ul class=\"errors\">\n";
+        foreach ($errors as $error) {
+            echo "    <li>$error</li>\n";
+        }
+        echo "</ul>\n";
+    }
+
 ?>
 
 <p><?php echo $txt->forgotteninstructions; ?></p>
