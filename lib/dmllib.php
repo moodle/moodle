@@ -420,6 +420,13 @@ function get_record_sql($sql, $expectmultiple=false, $nolimit=false) {
         return false; 
 
     } else if ($recordcount == 1) {    // Found one record
+    /// DIRTY HACK to retrieve all the ' ' (1 space) fields converted back
+    /// to '' (empty string) for Oracle. It's the only way to work with
+    /// all those NOT NULL DEFAULT '' fields until we definetively delete them
+        if ($CFG->dbtype == 'oci8po') {
+            array_walk($rs->fields, 'onespace2empty');
+        }
+    /// End od DIRTY HACK
         return (object)$rs->fields;
 
     } else {                          // Error: found more than one record
@@ -617,6 +624,9 @@ function get_recordset_sql($sql, $limitfrom=null, $limitnum=null) {
  * @return mixed mixed an array of objects, or false if an error occured or the RecordSet was empty.
  */
 function recordset_to_array($rs) {
+
+    global $CFG;
+
     if ($rs && $rs->RecordCount() > 0) {
     /// First of all, we are going to get the name of the first column
     /// to introduce it back after transforming the recordset to assoc array
@@ -625,6 +635,12 @@ function recordset_to_array($rs) {
     /// Get the whole associative array
         if ($records = $rs->GetAssoc(true)) {
             foreach ($records as $key => $record) {
+            /// Really DIRTY HACK for Oracle, but it's the only way to make it work
+            /// until we got all those NOT NULL DEFAULT '' out from Moodle
+                if ($CFG->dbtype == 'oci8po') {
+                    array_walk($record, 'onespace2empty');
+                }
+            /// End of DIRTY HACK
                 $record[$firstcolumn->name] = $key;/// Re-add the assoc field
                 $objects[$key] = (object) $record; /// To object
             }
@@ -636,6 +652,18 @@ function recordset_to_array($rs) {
         return false;
     }
 }
+
+/** 
+ * This function is used to convert all the Oracle 1-space defaults to the empty string
+ * like a really DIRTY HACK to allow it to work better until all those NOT NULL DEFAULT ''
+ * fields will be out from Moodle.
+ * @param string the string to be converted to '' (empty string) if it's ' ' (one space)
+ */
+function onespace2empty(&$item, $key) {
+    $item = $item == ' ' ? '' : $item;
+    return true;
+}
+
 
 /**
  * Get a number of records as an array of objects.
@@ -966,11 +994,12 @@ function insert_record($table, $dataobject, $returnid=true, $primarykey='id') {
 
     global $db, $CFG, $empty_rs_cache;
 
-/// Implement one cache to store meta data (needed by Oracle inserts)
+/// DIRTY HACK: Implement one cache to store meta data (needed by Oracle inserts)
 /// TODO: Possibly make it global to benefit other functions needing it (update_record...)
     if (!isset($metadatacache)) {
         $metadatacache = array();
     }
+/// End DIRTY HACK
 
     if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++; };
 
@@ -1024,7 +1053,7 @@ function insert_record($table, $dataobject, $returnid=true, $primarykey='id') {
 /// such data in the best form possible ("0" for booleans and numbers and " " for the
 /// rest of strings. It isn't optimal, but the only way to do so. 
 /// In the oppsite, when retrieving records from Oracle, we'll decode " " back to
-/// empty strings to allow everything to work properly.
+/// empty strings to allow everything to work properly. DIRTY HACK.
     if ( $CFG->dbtype === 'oci8po') {
     /// Get Meta info to know what to change, using the cached meta if exists
         if (!isset($metadatacache[$table])) {
@@ -1064,6 +1093,7 @@ function insert_record($table, $dataobject, $returnid=true, $primarykey='id') {
             }
         }
     }
+/// End of DIRTY HACK
 
 /// Get the correct SQL from adoDB
     if (!$insertSQL = $db->GetInsertSQL($rs, (array)$dataobject, true)) {
