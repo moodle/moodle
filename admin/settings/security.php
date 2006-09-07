@@ -52,7 +52,6 @@ $temp->add(new admin_setting_configmultiselect('hiddenuserfields', get_string('h
 																																								          'aimid' => get_string('aimid'),
 																																								          'msnid' => get_string('msnid'),
 																																								          'lastaccess' => get_string('lastaccess'))));
-$temp->add(new admin_setting_configcheckbox('allowunenroll', get_string('allowunenroll', 'admin'), get_string('configallowunenroll', 'admin'), 1));
 $temp->add(new admin_setting_configcheckbox('allusersaresitestudents', get_string('allusersaresitestudents', 'admin'), get_string('configallusersaresitestudents','admin'), 1));
 $temp->add(new admin_setting_special_adminseesall());
 $ADMIN->add('security', $temp);

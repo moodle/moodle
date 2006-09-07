@@ -297,6 +297,19 @@ $moodle_capabilities = array(
             'admin' => CAP_ALLOW
         )
     ),
+
+    'moodle/role:unassignself' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'legacy' => array(
+            'guest' => CAP_PREVENT,
+            'student' => (empty($CFG->allowunenrol)) ? CAP_PREVENT : CAP_ALLOW,
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'coursecreator' => CAP_ALLOW,
+            'admin' => CAP_ALLOW
+        )
+    ),
     
     'moodle/category:create' => array(
     
@@ -729,7 +742,7 @@ $moodle_capabilities = array(
         )
     ),
     
-    'moodle/question:managecateory' => array(
+    'moodle/question:managecategory' => array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
         'legacy' => array(
@@ -845,6 +858,7 @@ $moodle_capabilities = array(
             'admin' => CAP_ALLOW
         )
     )
+
 );
 
 ?>
