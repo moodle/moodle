@@ -463,9 +463,9 @@ function load_user_capability($capability='', $context ='', $userid='') {
     $SQL = " SELECT  rc.capability, c1.id, (c1.aggregatelevel * 100) AS aggrlevel,
                      SUM(rc.permission) AS sum
                      FROM
-                     {$CFG->prefix}role_assignments AS ra, 
-                     {$CFG->prefix}role_capabilities AS rc,
-                     {$CFG->prefix}context AS c1
+                     {$CFG->prefix}role_assignments ra, 
+                     {$CFG->prefix}role_capabilities rc,
+                     {$CFG->prefix}context c1
                      WHERE
                      ra.contextid=c1.id AND
                      ra.roleid=rc.roleid AND
@@ -482,10 +482,10 @@ function load_user_capability($capability='', $context ='', $userid='') {
               SELECT rc.capability, c1.id, (c1.aggregatelevel * 100 + c2.aggregatelevel) AS aggrlevel,
                      SUM(rc.permission) AS sum
                      FROM
-                     {$CFG->prefix}role_assignments AS ra,
-                     {$CFG->prefix}role_capabilities AS rc,
-                     {$CFG->prefix}context AS c1,
-                     {$CFG->prefix}context AS c2
+                     {$CFG->prefix}role_assignments ra,
+                     {$CFG->prefix}role_capabilities rc,
+                     {$CFG->prefix}context c1,
+                     {$CFG->prefix}context c2
                      WHERE
                      ra.contextid=c1.id AND
                      ra.roleid=rc.roleid AND 
@@ -1133,14 +1133,14 @@ function get_roles_with_capability($capability, $permission=NULL, $context='') {
             $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
             $listofcontexts = '('.$sitecontext->id.')'; // must be site  
         }  
-        $contextstr = "AND (rc.contextid = '.$context->id.' OR  rc.contextid IN $listofcontexts)";
+        $contextstr = "AND (rc.contextid = '$context->id' OR  rc.contextid IN $listofcontexts)";
     } else {
         $contextstr = '';
     }
     
     $selectroles = "SELECT r.* 
-                      FROM {$CFG->prefix}role AS r,
-                           {$CFG->prefix}role_capabilities AS rc
+                      FROM {$CFG->prefix}role r,
+                           {$CFG->prefix}role_capabilities rc
                      WHERE rc.capability = '$capability'
                        AND rc.roleid = r.id $contextstr";
 
