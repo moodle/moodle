@@ -971,11 +971,11 @@ function get_main_teacher_lang($courseid) {
             
             $context = get_context_instance(CONTEXT_COURSE, $courseid);
             $teachers = get_users_by_capability($context, 'moodle/legacy:editingteacher', 'u.id, u.lang', ' ORDER BY ra.id ASC ', 0, 1); // only need first one
-            $teacher = reset($teachers);
-            $mainteachercache[$courseid] = $teacher->lang;
-            
-            return $teacher->lang;
-            
+            if (is_array($teachers)) {
+                $teacher = reset($teachers);
+                $mainteachercache[$courseid] = $teacher->lang;
+                return $teacher->lang;
+            }
         /// this is a better guess
         } else {
       
@@ -991,12 +991,13 @@ function get_main_teacher_lang($courseid) {
             if ($teacher = get_record_sql($SQL, true)) {
                 $mainteachercache[$courseid] = $teacher->lang;
                 return $teacher->lang;
-            } else {
-                $admin = get_admin();
-                $mainteachercache[$courseid] = $admin->lang;
-                return $admin->lang;
             }
         }
+    /// Arriving here we haven't been able to select any teacher lang
+    /// so use the admin lang
+        $admin = get_admin();
+        $mainteachercache[$courseid] = $admin->lang;
+        return $admin->lang;
     } else {
         return $mainteachercache[$courseid];
     }
