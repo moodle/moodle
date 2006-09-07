@@ -7,7 +7,7 @@
     require_once($CFG->libdir.'/tablelib.php');
 
     $adminroot = admin_get_root();
-    admin_externalpage_setup('filtermanagement', $adminroot);
+    admin_externalpage_setup('managefilters', $adminroot);
 
     // get parameters
     $param = new Object;
