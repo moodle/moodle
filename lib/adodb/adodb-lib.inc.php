@@ -437,7 +437,7 @@ function &_adodb_pageexecute_all_rows(&$zthis, $sql, $nrows, $page,
 	return $rsreturn;
 }
 
-// Iván Oliva version
+// Ivï¿½n Oliva version
 function &_adodb_pageexecute_no_last_page(&$zthis, $sql, $nrows, $page, $inputarr=false, $secs2cache=0) 
 {
 
@@ -893,7 +893,19 @@ function _adodb_column_sql(&$zthis, $action, $type, $fname, $fnameq, $arrFields,
 			$val = $zthis->DBTimeStamp($arrFields[$fname]);
 			break;
 
-		default:
+// moodle change start
+        case "L": //Integer field suitable for storing booleans (0 or 1)
+        case "I": //Integer
+            $val = (int)$arrFields[$fname];
+            break;
+
+        case "F": //Floating point number
+        case "N": //Numeric or decimal number
+            $val = (float)$arrFields[$fname];
+            break;
+// moodle change end
+
+        default:
 			$val = $arrFields[$fname];
 			if (empty($val)) $val = '0';
 			break;
