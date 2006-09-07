@@ -38,7 +38,8 @@ if ($data = data_submitted()) {
         }
 
         if (empty($errors)) {
-            redirect($CFG->wwwroot . '/' . $CFG->admin . '/index.php', get_string('changessaved'),1);
+            // there must be either redirect without message or continue button or else upgrade would be sometimes broken
+            redirect($CFG->wwwroot . '/' . $CFG->admin . '/index.php');
             die;
         } else {
             error(get_string('errorwithsettings', 'admin') . ' <br />' . $errors);
