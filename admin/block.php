@@ -5,7 +5,7 @@
     require_once('../config.php');
     require_once($CFG->libdir.'/adminlib.php');
     $adminroot = admin_get_root();
-    admin_externalpage_setup('blockmanagement', $adminroot);
+    admin_externalpage_setup('manageblocks', $adminroot);
     require_once($CFG->libdir.'/blocklib.php');
 
     $blockid = required_param('block', PARAM_INT);
