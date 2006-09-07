@@ -299,4 +299,29 @@ function create_table($table) {
     return execute_sql_arr($sqlarr);
 }
 
+/**
+ * This function will drop the table passed as argument
+ * and all the associated objects (keys, indexes, constaints, sequences, triggers)
+ * will be dropped too.
+ *
+ * @param XMLDBtable table object containing the basic table info
+ * @return boolean true on success, false on error
+ */
+function drop_table($table) {
+
+    global $CFG, $db;
+
+    $status = true;
+
+    if (strtolower(get_class($table)) != 'xmldbtable') {
+        return false;
+    }
+
+    if(!$sqlarr = $table->getDropTableSQL($CFG->dbtype, $CFG->prefix, false)) {
+        return false;
+    }
+
+    return execute_sql_arr($sqlarr);
+}
+
 ?>

@@ -81,7 +81,12 @@ class XMLDBgenerator {
     var $rename_table_sql = 'ALTER TABLE OLDNAME RENAME TO NEWNAME'; //SQL sentence to rename one table, both
                                   //OLDNAME and NEWNAME are dinamically replaced
 
-    var $rename_table_extra_code = false; //Does the generatos need to add code after table renaming
+    var $rename_table_extra_code = false; //Does the generatos need to add code after table rename
+
+    var $drop_table_sql = 'DROP TABLE TABLENAME'; //SQL sentence to drop one table
+                                  //TABLENAME is dinamically replaced
+
+    var $drop_table_extra_code = false; //Does the generatos need to add code after table drop
 
     var $prefix;         // Prefix to be used for all the DB objects
 
@@ -412,12 +417,37 @@ class XMLDBgenerator {
 
         $results = array();  //Array where all the sentences will be stored
 
-        $rename = str_replace('OLDNAME', $this->getEncQuoted($this->prefix . $xmldb_table->getName), $rename_table_sql);
+        $rename = str_replace('OLDNAME', $this->getEncQuoted($this->prefix . $xmldb_table->getName()), $this->rename_table_sql);
         $rename = str_replace('NEWNAME', $this->getEncQuoted($this->prefix . $newname), $rename_table_sql);
 
         $results[] = $rename;
 
     /// TODO, call to getRenameTableExtraSQL() if $rename_table_extra_code is enabled. It will add sequence regeneration code.
+        if ($this->rename_table_extra_code) {
+            $extra_sentences = getDropTableExtraSQL();
+            $results = array_merge($results, $extra_sentences);
+        }
+
+        return $results;
+    }
+
+    /**
+     * Given one correct XMLDBTable and the new name, returns the SQL statements
+     * to drop it (inside one array)
+     */ 
+    function getDropTableSQL($xmldb_table) {
+
+        $results = array();  //Array where all the sentences will be stored
+
+        $rename = str_replace('TABLENAME', $this->getEncQuoted($this->prefix . $xmldb_table->getName()), $this->drop_table_sql);
+
+        $results[] = $rename;
+
+    /// TODO, call to getDropTableExtraSQL() if $rename_table_extra_code is enabled. It will add sequence/trigger drop code.
+        if ($this->drop_table_extra_code) {
+            $extra_sentences = getDropTableExtraSQL();
+            $results = array_merge($results, $extra_sentences);
+        }
 
         return $results;
     }
@@ -643,7 +673,14 @@ class XMLDBgenerator {
      * Returns the code (array of statements) needed to execute extra statements on table rename
      */
     function getRenameTableExtraSQL ($xmldb_table) {
-        return 'Code for table comment goes to getCommentSQL(). Can be disabled with add_table_comments=false;';
+        return 'Code for table rename goes to getRenameTableExtraSQL(). Can be disabled with rename_table_extra_code=false;';
+    }
+
+    /**
+     * Returns the code (array of statements) needed to execute extra statements on table drop
+     */
+    function getDropTableExtraSQL ($xmldb_table) {
+        return 'Code for table drop goes to getDropTableExtraSQL(). Can be disabled with drop_table_extra_code=false;';
     }
 
     /**
