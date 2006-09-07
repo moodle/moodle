@@ -3,6 +3,8 @@
 
     require_once('../config.php');
 
+    $installing = optional_param('installing', 0, PARAM_BOOL);
+
     $focus = '';
 
     if ($site = get_site()) {   // If false then this is a new installation
@@ -63,8 +65,16 @@
                     }
                 }
             }
-            redirect('index.php', get_string('changessaved'), 1);
-            exit;
+            if ($installing) {
+                print_header();
+                notify(get_string('changessaved'), 'notifysuccess');
+                print_continue('index.php');
+                exit;
+            } else {
+                // the following redirect was randomly breaking upgrades because it did double redirects,
+                // we must not use it during install/upgrade
+                redirect('index.php', get_string('changessaved'), 1);
+            }
 
         } else {
             foreach ($err as $key => $value) {
@@ -143,6 +153,7 @@
 
     }
     echo '<center>';
+    echo '<input type="hidden" name="installing" value="'.$installing.'" />';
     echo '<input type="hidden" name="sesskey" value="'.$sesskey.'" />';
     echo '<input type="submit" value="'.get_string('savechanges').'" />';
     echo '</center>';

@@ -222,7 +222,7 @@
 /// If any new configurations were found then send to the config page to check
 
     if (!empty($configchange)) {
-        redirect("config.php");
+        redirect("config.php?installing=1");
     }
 
 /// Find and check all main modules and load them up or upgrade them if necessary
@@ -323,6 +323,9 @@
         print_simple_box(get_string('globalsquoteswarning', 'admin'), 'center', '60%');
     }
 
+    if (is_dataroot_insecure()) {
+        print_simple_box(get_string('datarootsecuritywarning', 'admin', $CFG->dataroot), 'center', '60%');
+    }
 
 /// If no recently cron run
     $lastcron = get_field_sql('SELECT max(lastcron) FROM ' . $CFG->prefix . 'modules');
