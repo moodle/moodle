@@ -1428,7 +1428,7 @@ function capabilities_cleanup($component, $newcapdef=NULL) {
                 // Delete from roles.
                 if($roles = get_roles_with_capability($cachedcap->name)) {
                     foreach($roles as $role) {
-                        if (!unassign_capability($role->id, $cachedcap->name)) {
+                        if (!unassign_capability($cachedcap->name, $role->id)) {
                             error('Could not unassign deprecated capability '.
                                     $cachedcap->name.' from role '.$role->name);
                         }
