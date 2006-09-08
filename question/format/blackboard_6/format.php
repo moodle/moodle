@@ -414,7 +414,7 @@ function process_block($cur_block, &$block) {
 						//print_object($cur_block);
                     }
                 }
-                foreach($sub_blocks['#']['flow_mat'] as $sub_block) {\
+                foreach($sub_blocks['#']['flow_mat'] as $sub_block) {
 					//echo "Calling process_block from line 404<br>";
 					//$block = null;			// Reset $block to NULL because process_block is expecting an object
 												// for the second argument and not a string, which is what is was set as
