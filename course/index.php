@@ -66,7 +66,7 @@
         if (iscreator()) {       // Print link to create a new course
             print_single_button("edit.php", NULL, get_string("addnewcourse"), "get");
         }
-        if (has_capability('moodle/site:approvecourse' get_context_instance(CONTEXT_SYSTEM, SITEID)),  and !empty($CFG->enablecourserequests)) {
+        if (has_capability('moodle/site:approvecourse', get_context_instance(CONTEXT_SYSTEM, SITEID))  and !empty($CFG->enablecourserequests)) {
             print_single_button('pending.php',NULL, get_string('coursespending'),"get");
         }
         echo "</center>";
