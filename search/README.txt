@@ -1,3 +1,12 @@
+2006/09/08
+----------
+Google Summer of Code is finished, spent a couple of weeks away from
+the project to think about it and also to take a break. Working on it
+now I discovered bugs in the query parser (now fixed), and I also
+un-convoluted the querylib logic (well slighlty).
+
+Updated ZFS files to latest SVN.
+
 2006/08/21
 ----------
 Fixed index document count, and created new config variable to store

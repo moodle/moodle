@@ -41,6 +41,9 @@
       //otherwise we are dealing with a new advanced query
       unset($_SESSION['search_advanced_query']);
       session_unregister('search_advanced_query');
+
+      //chars to strip from strings (whitespace)
+      $chars = " \t\n\r\0\x0B,-+";
             
       //retrieve advanced query variables
       $adv->mustappear  = trim(optional_param('mustappear', '', PARAM_CLEAN), $chars);
@@ -55,8 +58,6 @@
       //parse the advanced variables into a query string
       //TODO: move out to external query class (QueryParse?)
                   
-      //chars to strip from strings (whitespace)
-      $chars = ' \t\n\r\0\x0B,;';
       $query_string = '';      
       
       //get all available module types
@@ -105,7 +106,7 @@
     } //if    
     
     //run the query against the index
-    $sq = new SearchQuery($query_string, $page_number, 10, true);  
+    $sq = new SearchQuery($query_string, $page_number, 10, false);  
   } //if
   
   if (!$site = get_site()) {

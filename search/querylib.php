@@ -93,7 +93,8 @@
             $validquery,
             $validindex,            
             $results,
-            $results_per_page;
+            $results_per_page,
+            $total_results;
     
     public function __construct($term='', $page=1, $results_per_page=10, $cache=false) {
       global $CFG;
@@ -140,37 +141,52 @@
     } //set_query
     
     public function results() {
-      if ($this->validquery and $this->validindex) {
-        return $this->get_subset_results();
-      } else {
-        return array();
-      } //else
+      return $this->results;
     } //results
-    
-    private function get_subset_results() {
-      if ($this->count() < $this->results_per_page) {
-        $this->pagenumber = 1;
-      } else if ($this->pagenumber > $this->total_pages()) {
-        $this->pagenumber = $this->total_pages();
-      } //if
-    
-      $start  = ($this->pagenumber - 1) * $this->results_per_page;
-                     
-      return array_slice($this->results, $start, $this->results_per_page);    
-    } //get_results
-    
-    private function get_all_results() {
+        
+    private function process_results($all=false) {
       global $USER;
+
+      $term = strtolower($this->term);         
+      
+      //experimental - return more results
+      $strip_arr = array('author:', 'title:', '+', '-', 'doctype:');   
+      $stripped_term = str_replace($strip_arr, '', $term);
+      
+      $hits = $this->index->find($term." title:".$stripped_term." author:".$stripped_term);
+      //--
+      
+      $hitcount = count($hits);
+      $this->total_results = $hitcount; 
+            
+      if ($hitcount == 0) return array();
+      
+      $totalpages = ceil($hitcount/$this->results_per_page);
+      
+      if (!$all) {
+        if ($hitcount < $this->results_per_page) {
+          $this->pagenumber = 1;
+        } else if ($this->pagenumber > $totalpages) {
+          $this->pagenumber  =$totalpages;
+        } //if      
+        
+        $start = ($this->pagenumber - 1) * $this->results_per_page;
+        $end = $start + $this->results_per_page;
+        
+        if ($end > $hitcount) {
+          $end = $hitcount;
+        } //if        
+      } else {
+        $start = 0;
+        $end = $hitcount;
+      } //else
       
       $resultdoc  = new SearchResult();
-      $resultdocs = array();
-      $i = 0;
-      
-      $term = strtolower($this->term);
-      
-      $hits = $this->index->find($term." title:".$term." author:".$term);
-            
-      foreach ($hits as $hit) {            
+      $resultdocs = array();      
+                  
+      for ($i = $start; $i < $end; $i++) {
+        $hit = $hits[$i];
+                           
         //check permissions on each result
         if ($this->can_display($USER, $hit->id, $hit->doctype, $hit->course_id, $hit->group_id)) {
           $resultdoc->number  = $i;
@@ -181,21 +197,19 @@
           $resultdoc->author  = $hit->author;
         
           //and store it
-          $resultdocs[] = clone($resultdoc);
-          
-          $i++;
+          $resultdocs[] = clone($resultdoc);          
         } //if
       } //foreach
-      
+            
       return $resultdocs;
-    } //get_all_results
+    } //process_results
               
     private function get_results() {
       $cache = new SearchCache();
       
       if ($this->cache and $cache->can_cache()) {        
         if (!($resultdocs = $cache->cache($this->term))) {
-          $resultdocs = $this->get_all_results();
+          $resultdocs = $this->process_results();
           //cache the results so we don't have to compute this on every page-load
           $cache->cache($this->term, $resultdocs);          
           //print "Using new results.";
@@ -206,7 +220,7 @@
       } else {
         //no caching :(
         //print "Caching disabled!";
-        $resultdocs = $this->get_all_results();
+        $resultdocs = $this->process_results();
       } //else
 
       return $resultdocs;
@@ -271,13 +285,8 @@
     } //can_display
     
     public function count() {
-      return count($this->results);
+      return $this->total_results;
     } //count
-    
-    //this shouldn't be in this class
-    //public function index_count() {
-    //  return $this->index->count();
-    //} //index_count    
     
     public function is_valid() {
       return ($this->validquery and $this->validindex);

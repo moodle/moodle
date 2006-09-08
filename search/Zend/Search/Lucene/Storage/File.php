@@ -20,6 +20,11 @@
  */
 
 
+
+/** Zend_Search_Lucene_Exception */
+require_once 'Zend/Search/Lucene/Exception.php';
+
+
 /**
  * @category   Zend
  * @package    Zend_Search_Lucene
@@ -157,46 +162,74 @@ abstract class Zend_Search_Lucene_Storage_File
      * and advances the file pointer.
      *
      * @return integer
+     * @throws Zend_Search_Lucene_Exception
      */
     public function readLong()
     {
         $str = $this->_fread(8);
 
         /**
-         * PHP uses long as largest integer. fseek() uses long for offset.
-         * long has 4 bytes in a lot of systems. 4 bytes are discarded to prevent
-         * conversion to float.
-         * So, largest index segment file is 2Gb
+         * Check, that we work in 64-bit mode.
+         * fseek() uses long for offset. Thus, largest index segment file size in 32bit mode is 2Gb
          */
-        return  /* ord($str{0}) << 56  | */
-                /* ord($str{1}) << 48  | */
-                /* ord($str{2}) << 40  | */
-                /* ord($str{3}) << 32  | */
-                ord($str{4}) << 24  |
-                ord($str{5}) << 16  |
-                ord($str{6}) << 8   |
-                ord($str{7});
+        if (PHP_INT_SIZE > 4) {
+            return  ord($str{0}) << 56  |
+                    ord($str{1}) << 48  |
+                    ord($str{2}) << 40  |
+                    ord($str{3}) << 32  |
+                    ord($str{4}) << 24  |
+                    ord($str{5}) << 16  |
+                    ord($str{6}) << 8   |
+                    ord($str{7});
+        } else {
+            if ((ord($str{0})          != 0) ||
+                (ord($str{1})          != 0) ||
+                (ord($str{2})          != 0) ||
+                (ord($str{3})          != 0) ||
+                ((ord($str{0}) & 0x80) != 0)) {
+                     throw new Zend_Search_Lucene_Exception('Largest supported segment size (for 32-bit mode) is 2Gb');
+                 }
+
+            return  ord($str{4}) << 24  |
+                    ord($str{5}) << 16  |
+                    ord($str{6}) << 8   |
+                    ord($str{7});
+        }
     }
 
     /**
      * Writes long integer to the end of file
      *
      * @param integer $value
+     * @throws Zend_Search_Lucene_Exception
      */
     public function writeLong($value)
     {
         /**
-         * PHP uses long as largest integer. fseek() uses long for offset.
-         * long has 4 bytes in a lot of systems. 4 bytes are discarded to prevent
-         * conversion to float.
-         * So, largest index segment file is 2Gb
+         * Check, that we work in 64-bit mode.
+         * fseek() and ftell() use long for offset. Thus, largest index segment file size in 32bit mode is 2Gb
          */
-        settype($value, 'integer');
-        $this->_fwrite( "\x00\x00\x00\x00"     .
-                        chr($value>>24 & 0xFF) .
-                        chr($value>>16 & 0xFF) .
-                        chr($value>>8  & 0xFF) .
-                        chr($value     & 0xFF),   8  );
+        if (PHP_INT_SIZE > 4) {
+            settype($value, 'integer');
+            $this->_fwrite( chr($value>>56 & 0xFF) .
+                            chr($value>>48 & 0xFF) .
+                            chr($value>>40 & 0xFF) .
+                            chr($value>>32 & 0xFF) .
+                            chr($value>>24 & 0xFF) .
+                            chr($value>>16 & 0xFF) .
+                            chr($value>>8  & 0xFF) .
+                            chr($value     & 0xFF),   8  );
+        } else {
+            if ($value > 0x7FFFFFFF) {
+                throw new Zend_Search_Lucene_Exception('Largest supported segment size (for 32-bit mode) is 2Gb');
+            }
+
+            $this->_fwrite( "\x00\x00\x00\x00"     .
+                            chr($value>>24 & 0xFF) .
+                            chr($value>>16 & 0xFF) .
+                            chr($value>>8  & 0xFF) .
+                            chr($value     & 0xFF),   8  );
+        }
     }
 
 
