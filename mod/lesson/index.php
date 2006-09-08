@@ -68,6 +68,8 @@
             //Show normal if the mod is visible
             $link = "<a href=\"view.php?id=$lesson->coursemodule\">".format_string($lesson->name,true)."</a>";
         }
+        $cm = get_coursemodule_from_instance('lesson', $lesson->id);
+        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
         if ($lesson->deadline > $timenow) {
             $due = userdate($lesson->deadline);
@@ -76,7 +78,7 @@
         }
 
         if ($course->format == "weeks" or $course->format == "topics") {
-            if (isteacher($course->id)) {
+            if (has_capability('mod/lesson:manage', $context)) {
                 $grade_value = $lesson->grade;
             } else {
                 // it's a student, show their mean or maximum grade

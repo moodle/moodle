@@ -219,6 +219,7 @@ if (!defined("LESSON_RESPONSE_EDITOR")) {
  **/
 function lesson_print_header($cm, $course, $lesson, $currenttab = '', $printheading = true) {
     global $CFG, $USER;
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     
 /// Header setup
     if ($course->category) {
@@ -241,7 +242,7 @@ function lesson_print_header($cm, $course, $lesson, $currenttab = '', $printhead
         print_heading_with_help(format_string($lesson->name, true), "overview", "lesson");
     }
     
-    if (!empty($currenttab) and isteacher($course->id)) {
+    if (!empty($currenttab) and has_capability('mod/lesson:manage', $context)) {
         include($CFG->dirroot.'/mod/lesson/tabs.php');
     }
 }
@@ -280,6 +281,56 @@ function lesson_get_basics($cmid = 0, $lessonid = 0) {
     }
     
     return array($cm, $course, $lesson);
+}
+
+/**
+ * Sets a message to be printed.  Messages are printed
+ * by calling {@link lesson_print_messages()}.
+ *
+ * @uses $SESSION
+ * @param string $message The message to be printed
+ * @param string $class Class to be passed to {@link notify()}.  Usually notifyproblem or notifysuccess.
+ * @param string $align Alignment of the message
+ * @return boolean
+ **/
+function lesson_set_message($message, $class="notifyproblem", $align='center') {
+    global $SESSION;
+    
+    if (empty($SESSION->lesson_messages) or !is_array($SESSION->lesson_messages)) {
+        $SESSION->lesson_messages = array();
+    }
+    
+    $SESSION->lesson_messages[] = array($message, $class, $align);
+    
+    return true;
+}
+
+/**
+ * Print all set messages.
+ *
+ * See {@link lesson_set_message()} for setting messages.
+ *
+ * Uses {@link notify()} to print the messages.
+ *
+ * @uses $SESSION
+ * @return boolean
+ **/
+function lesson_print_messages() {
+    global $SESSION;
+    
+    if (empty($SESSION->lesson_messages)) {
+        // No messages to print
+        return true;
+    }
+    
+    foreach($SESSION->lesson_messages as $message) {
+        notify($message[0], $message[1], $message[2]);
+    }
+    
+    // Reset
+    unset($SESSION->lesson_messages);
+    
+    return true;
 }
 
 /**
@@ -1217,6 +1268,7 @@ function lesson_print_tree_link_menu($page, $id, $showpages=false) {
  */
 function lesson_print_tree($pageid, $lesson, $cmid) {
     global $USER, $CFG;
+    $context = get_context_instance(CONTEXT_MODULE, $cmid);
 
     if(!$pages = get_records_select("lesson_pages", "lessonid = $lesson->id")) {
         error("Error: could not find lesson pages");
@@ -1260,7 +1312,7 @@ function lesson_print_tree($pageid, $lesson, $cmid) {
         }
         
         echo $output;        
-        if (isteacheredit($lesson->course)) {
+        if (has_capability('mod/lesson:edit', $context)) {
           if (count($pages) > 1) {
               echo "<a title=\"move\" href=\"lesson.php?id=$cmid&action=move&pageid=".$pages[$pageid]->id."\">\n".
                   "<img src=\"$CFG->pixpath/t/move.gif\" hspace=\"2\" height=11 width=11 alt=\"move\" border=0></a>\n";
@@ -1409,8 +1461,10 @@ function lesson_grade($lesson, $ntries, $userid = 0) {
  **/
 function lesson_print_ongoing_score($lesson) {
     global $USER;
-    
-    if (isteacher($lesson->course)) {
+    $cm = get_coursemodule_from_instance('lesson', $lesson->id);
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+
+    if (has_capability('mod/lesson:manage', $context)) {
         echo "<p align=\"center\">".get_string('teacherongoingwarning', 'lesson').'</p>';
     } else {
         $ntries = count_records("lesson_grades", "lessonid", $lesson->id, "userid", $USER->id);
@@ -1489,14 +1543,16 @@ function lesson_check_nickname($name) {
  **/
 function lesson_print_progress_bar($lesson, $course) {
     global $CFG, $USER;
-    
+    $cm = get_coursemodule_from_instance('lesson', $lesson->id);
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+
     // lesson setting to turn progress bar on or off
     if (!$lesson->progressbar) {
         return false;
     }
     
     // catch teachers
-    if (isteacher($course->id)) {
+    if (has_capability('mod/lesson:manage', $context)) {
         notify(get_string('progressbarteacherwarning', 'lesson', $course->teachers));
         return false;
     }

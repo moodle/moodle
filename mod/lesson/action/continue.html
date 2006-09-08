@@ -32,7 +32,7 @@ if ($lesson->displayleft) {
 } // End if ($lesson->displayleft)
 ?>
 
-<?php if($lesson->timed and !isteacher($course->id)) {
+<?php if($lesson->timed and !has_capability('mod/lesson:manage', $context)) {
         // code for the clock
         print_simple_box_start("right", "150px", "#ffffff", 0);
 ?>
@@ -69,7 +69,7 @@ if ($lesson->ongoing) {
 <form name="pageform" method ="post" action="view.php">
 <input type="hidden" name="id" value="<?php echo $cm->id ?>" />
 <input type="hidden" name="action" value="navigation" />
-<input type="hidden" name="pageid" value="<?php $newpageid ?>" />
+<input type="hidden" name="pageid" value="<?php echo $newpageid ?>" />
 
 <?php if (isset($USER->modattempts[$lesson->id])) { ?>
 <p align="center"><?php print_string("savechangesandeol", "lesson") ?> <br /><br />

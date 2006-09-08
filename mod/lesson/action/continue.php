@@ -8,12 +8,12 @@
 
     // left menu code
     // check to see if the user can see the left menu
-    if (!isteacher($course->id)) {
+    if (!has_capability('mod/lesson:manage', $context)) {
         $lesson->displayleft = lesson_displayleftif($lesson);
     }
     
     // This is the warning msg for teachers to inform them that cluster and unseen does not work while logged in as a teacher
-    if(isteacher($course->id) and lesson_display_teacher_warning($lesson->id)) {
+    if(has_capability('mod/lesson:manage', $context) and lesson_display_teacher_warning($lesson->id)) {
         $warningvars->cluster = get_string("clusterjump", "lesson");
         $warningvars->unseen = get_string("unseenpageinbranch", "lesson");
         $messages[] = get_string("teacherjumpwarning", "lesson", $warningvars);
@@ -22,7 +22,7 @@
     // This is the code updates the lesson time for a timed test
     // get time information for this user
     $outoftime = false;
-    if (!isteacher($course->id)) {
+    if (!has_capability('mod/lesson:manage', $context)) {
         if (!$timer = get_records_select('lesson_timer', "lessonid = $lesson->id AND userid = $USER->id", 'starttime')) {
             error('Error: could not find records');
         } else {
@@ -49,7 +49,7 @@
     }
     
     // Inform teacher that s/he will not see the timer
-    if ($lesson->timed and isteacher($course->id)) {
+    if ($lesson->timed and has_capability('mod/lesson:manage', $context)) {
         $messages[] = get_string("teachertimerwarning", "lesson");
     }
 
@@ -536,7 +536,7 @@
 
             //  this is called when jumping to random from a branch table
             if($newpageid == LESSON_UNSEENBRANCHPAGE) {
-                if (isteacher($course->id)) {
+                if (has_capability('mod/lesson:manage', $context)) {
                      $newpageid = LESSON_NEXTPAGE;
                 } else {
                      $newpageid = lesson_unseen_question_jump($lesson->id, $USER->id, $pageid);  // this may return 0
@@ -570,7 +570,7 @@
         $newpageid = $pageid; // display same page again
     } else {
         $nretakes = count_records("lesson_grades", "lessonid", $lesson->id, "userid", $USER->id); 
-        if (isstudent($course->id)) {
+        if (!has_capability('mod/lesson:manage', $context)) {
             // record student's attempt
             $attempt = new stdClass;
             $attempt->lessonid = $lesson->id;
@@ -744,7 +744,7 @@
             }
         }
     } elseif ($newpageid == LESSON_UNSEENBRANCHPAGE) {
-        if (isteacher($course->id)) {
+        if (has_capability('mod/lesson:manage', $context)) {
             if ($page->nextpageid == 0) {
                 $newpageid = LESSON_EOL;
             } else {
@@ -758,7 +758,7 @@
     } elseif ($newpageid == LESSON_RANDOMPAGE) {
         $newpageid = lesson_random_question_jump($lesson->id, $pageid);
     } elseif ($newpageid == LESSON_CLUSTERJUMP) {
-        if (isteacher($course->id)) {
+        if (has_capability('mod/lesson:manage', $context)) {
             if ($page->nextpageid == 0) {  // if teacher, go to next page
                 $newpageid = LESSON_EOL;
             } else {
@@ -779,6 +779,6 @@
     }
     
     lesson_print_header($cm, $course, $lesson, 'navigation', false);
-    
+
     include($CFG->wwwroot.'/mod/lesson/action/continue.html');
 ?>

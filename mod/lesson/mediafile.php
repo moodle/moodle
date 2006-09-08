@@ -34,6 +34,8 @@
     }
 
     require_login($course->id, false, $cm);
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    require_capability('mod/lesson:view', $context);
     
     // get the mimetype
     //$path_parts = pathinfo('http://www.apple.com');  //$lesson->mediafile

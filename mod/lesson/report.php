@@ -35,13 +35,11 @@
     
 // make sure people are where they should be
     require_login($course->id, false);
-
-    if (!isteacher($course->id)) {
-        error("Must be teacher to view Reports");
-    }
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    require_capability('mod/lesson:manage', $context);
 
 /// Process any form data before fetching attempts, grades and times
-    if ($form = data_submitted()) {
+    if (has_capability('mod/lesson:edit', $context) and $form = data_submitted()) {
         confirm_sesskey();
                 
     /// Cycle through array of userids with nested arrays of tries
@@ -222,8 +220,13 @@
                 $studentname = "{$student->lastname},&nbsp;$student->firstname";
                 foreach ($tries as $try) {
                 // start to build up the checkbox and link
-                    $temp = '<input type="checkbox" id="attempts" name="attempts['.$try['userid'].']['.$try['try'].']" /> '.
-                            "<a href=\"report.php?id=$cm->id&amp;action=detail&amp;userid=".$try['userid'].'&amp;try='.$try['try'].'">';
+                    if (has_capability('mod/lesson:edit', $context)) {
+                        $temp = '<input type="checkbox" id="attempts" name="attempts['.$try['userid'].']['.$try['try'].']" /> ';
+                    } else {
+                        $temp = '';
+                    }
+                    
+                    $temp .= "<a href=\"report.php?id=$cm->id&amp;action=detail&amp;userid=".$try['userid'].'&amp;try='.$try['try'].'">';
                     if ($try["grade"] !== NULL) { // if NULL then not done yet
                         // this is what the link does when the user has completed the try
                         $timetotake = $try["timeend"] - $try["timestart"];
@@ -270,23 +273,26 @@
             }
         }
         // print it all out !
-        echo  "<form id=\"theform\" name=\"theform\" method=\"post\" action=\"report.php\">\n
-               <input type=\"hidden\" name=\"sesskey\" value=\"".sesskey()."\" />\n
-               <input type=\"hidden\" name=\"id\" value=\"$cm->id\" />\n
-               <input type=\"hidden\" name=\"id\" value=\"$cm->id\" />\n";
-        
+        if (has_capability('mod/lesson:edit', $context)) {
+            echo  "<form id=\"theform\" name=\"theform\" method=\"post\" action=\"report.php\">\n
+                   <input type=\"hidden\" name=\"sesskey\" value=\"".sesskey()."\" />\n
+                   <input type=\"hidden\" name=\"id\" value=\"$cm->id\" />\n
+                   <input type=\"hidden\" name=\"id\" value=\"$cm->id\" />\n";
+        }
         print_table($table);
         
-        echo '<br /><table width="90%" align="center"><tr><td>'.
-             '<a href="javascript: checkall();">'.get_string('selectall').'</a> / '.
-             '<a href="javascript: checknone();">'.get_string('deselectall').'</a> ';
+        if (has_capability('mod/lesson:edit', $context)) {
+            echo '<br /><table width="90%" align="center"><tr><td>'.
+                 '<a href="javascript: checkall();">'.get_string('selectall').'</a> / '.
+                 '<a href="javascript: checknone();">'.get_string('deselectall').'</a> ';
              
-        $options = array();
-        $options['delete'] = get_string('deleteselected');
-        choose_from_menu($options, 'attemptaction', 0, 'choose', 'submitFormById(\'theform\')');
+            $options = array();
+            $options['delete'] = get_string('deleteselected');
+            choose_from_menu($options, 'attemptaction', 0, 'choose', 'submitFormById(\'theform\')');
         
-        echo '</td></tr></table></form>';
-
+            echo '</td></tr></table></form>';
+        }
+        
         // some stat calculations
         if ($numofattempts == 0) {
             $avescore = get_string("notcompleted", "lesson");

@@ -27,6 +27,19 @@
     }
 
     require_login($course->id, false, $cm);
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    
+    switch ($action) {
+        case 'essayview':
+        case 'essaygrade':
+        case 'updategrade':
+        case 'emailessay':
+            require_capability('mod/lesson:edit', $context);
+            break;
+        default:
+            require_capability('mod/lesson:view', $context);
+            break;
+    }
 
 /// Print the page header
 
@@ -41,7 +54,7 @@
     
     // moved the action up because I needed to know what the action will be before the header is printed
     if (empty($action)) {
-        if (isteacher($course->id)) {
+        if (has_capability('mod/lesson:manage', $context)) {
             $action = 'teacherview';
         } elseif  (time() < $lesson->available) {
             print_header($course->shortname .': '. format_string($lesson->name), $course->fullname,
@@ -76,7 +89,7 @@
     } 
 
     // changed the update_module_button and added another button when a teacher is checking the navigation of the lesson
-    if (isteacheredit($course->id)) {
+    if (has_capability('mod/lesson:edit', $context)) {
         $button = '<table><tr><td>';
         $button .= '<form target="'. $CFG->framename .'" method="get" action="'. $CFG->wwwroot .'/course/mod.php">'.
                '<input type="hidden" name="sesskey" value="'. $USER->sesskey .'" />'.
@@ -108,7 +121,7 @@
                  $button, // took out update_module_button($cm->id, $course->id, $strlesson) and replaced it with $button
                   navmenu($course, $cm));
 
-    if (isteacher($course->id)) {
+    if (has_capability('mod/lesson:manage', $context)) {
         
         if ($action == 'teacherview' and $display) {
             // teacherview tab not selected when displaying a single page/question
@@ -126,7 +139,7 @@
     /************** navigation **************************************/
     if ($action == 'navigation') {
         // password protected lesson code
-        if ($lesson->usepassword && !isteacher($course->id)) {
+        if ($lesson->usepassword && !has_capability('mod/lesson:manage', $context)) {
             $correctpass = false;
             if ($password = optional_param('userpassword', '', PARAM_CLEAN)) {
                 if ($lesson->password == md5(trim($password))) {
@@ -170,7 +183,7 @@
         if (empty($pageid)) {
             // make sure there are pages to view
             if (!get_field('lesson_pages', 'id', 'lessonid', $lesson->id, 'prevpageid', 0)) {
-                if (isstudent($course->id)) {
+                if (!has_capability('mod/lesson:manage', $context)) {
                     notify(get_string('lessonnotready', 'lesson', $course->teacher)); // a nice message to the student
                 } else {
                     if (!count_records('lesson_pages', 'lessonid', $lesson->id)) {
@@ -184,7 +197,7 @@
             }
             
             // check for dependencies
-            if ($lesson->dependency and !isteacher($course->id)) {
+            if ($lesson->dependency and !has_capability('mod/lesson:manage', $context)) {
                 if ($dependentlesson = get_record('lesson', 'id', $lesson->dependency)) {
                     // lesson exists, so we can proceed            
                     $conditions = unserialize($lesson->conditions);
@@ -376,7 +389,7 @@
                     error('Navigation: first page not found');
             }
             /// This is the code for starting a timed test
-            if(!isset($USER->startlesson[$lesson->id]) && !isteacher($course->id)) {
+            if(!isset($USER->startlesson[$lesson->id]) && !has_capability('mod/lesson:manage', $context)) {
                 $USER->startlesson[$lesson->id] = true;
                 $startlesson = new stdClass;
                 $startlesson->lessonid = $lesson->id;
@@ -430,7 +443,7 @@
             }
 
             if ($page->qtype == LESSON_CLUSTER) {  //this only gets called when a user starts up a new lesson and the first page is a cluster page
-                if (!isteacher($course->id)) {
+                if (!has_capability('mod/lesson:manage', $context)) {
                     // get new id
                     $pageid = lesson_cluster_jump($lesson->id, $USER->id, $pageid);
                     // get new page info
@@ -456,7 +469,7 @@
             
             
             // check to see if the user can see the left menu
-            if (!isteacher($course->id)) {
+            if (!has_capability('mod/lesson:manage', $context)) {
                 $lesson->displayleft = lesson_displayleftif($lesson);
             }
             
@@ -516,7 +529,7 @@
             }
             // clock code
             // get time information for this user
-            if(!isteacher($course->id)) {
+            if(!has_capability('mod/lesson:manage', $context)) {
                 if (!$timer = get_records_select('lesson_timer', "lessonid = $lesson->id AND userid = $USER->id", 'starttime')) {
                     error('Error: could not find records');
                 } else {
@@ -536,7 +549,7 @@
                 
             // for timed lessons, display clock
             if ($lesson->timed) {
-                if(isteacher($course->id)) {
+                if(has_capability('mod/lesson:manage', $context)) {
                     echo '<p align="center">'. get_string('teachertimerwarning', 'lesson') .'<p>';
                 } else {
                     if ((($timer->starttime + $lesson->maxtime * 60) - time()) > 0) {
@@ -570,7 +583,7 @@
             }
 
             // update the clock
-            if (!isteacher($course->id)) {
+            if (!has_capability('mod/lesson:manage', $context)) {
                 $timer->lessontime = time();
                 if (!update_record('lesson_timer', $timer)) {
                     error('Error: could not update lesson_timer table');
@@ -591,7 +604,7 @@
                         if ($answer->jumpto == LESSON_RANDOMBRANCH) {
                             $answer->jumpto = lesson_unseen_branch_jump($lesson->id, $USER->id);
                         } elseif ($answer->jumpto == LESSON_CLUSTERJUMP) {
-                            if (!isteacher($course->id)) {
+                            if (!has_capability('mod/lesson:manage', $context)) {
                                 $answer->jumpto = lesson_cluster_jump($lesson->id, $USER->id, $pageid);
                             } else {
                                 if ($page->nextpageid == 0) {  
@@ -622,7 +635,7 @@
             }
                         
              ///  This is the warning msg for teachers to inform them that cluster and unseen does not work while logged in as a teacher
-            if(isteacher($course->id)) {
+            if(has_capability('mod/lesson:manage', $context)) {
                 if (lesson_display_teacher_warning($lesson->id)) {
                     $warningvars->cluster = get_string('clusterjump', 'lesson');
                     $warningvars->unseen = get_string('unseenpageinbranch', 'lesson');
@@ -636,7 +649,7 @@
             }
             
             if ($page->qtype == LESSON_BRANCHTABLE) {
-                if ($lesson->minquestions and isstudent($course->id)) {
+                if ($lesson->minquestions and !has_capability('mod/lesson:manage', $context)) {
                     // tell student how many questions they have seen, how many are required and their grade
                     $ntries = count_records("lesson_grades", "lessonid", $lesson->id, "userid", $USER->id);
                     
@@ -973,14 +986,14 @@
             
             // check to see if the student ran out of time
             $outoftime = optional_param('outoftime', '', PARAM_ALPHA);
-            if ($lesson->timed && !isteacher($course->id)) {
+            if ($lesson->timed && !has_capability('mod/lesson:manage', $context)) {
                 if ($outoftime == 'normal') {
                     print_simple_box(get_string("eolstudentoutoftime", "lesson"), "center");
                 }
             }
 
             // Update the clock / get time information for this user
-            if (!isteacher($course->id)) {
+            if (!has_capability('mod/lesson:manage', $context)) {
                 unset($USER->startlesson[$lesson->id]);
                 if (!$timer = get_records_select('lesson_timer', "lessonid = $lesson->id AND userid = $USER->id", 'starttime')) {
                     error('Error: could not find records');
@@ -1001,7 +1014,7 @@
             if (isset($USER->modattempts[$lesson->id])) {
                 $ntries--;  // need to look at the old attempts :)
             }
-            if (isstudent($course->id)) {
+            if (!has_capability('mod/lesson:manage', $context)) {
                 
                 $gradeinfo = lesson_grade($lesson, $ntries);
                 
@@ -1089,7 +1102,7 @@
             }
 
             // high scores code
-            if ($lesson->highscores && !isteacher($course->id) && !$lesson->practice) {
+            if ($lesson->highscores && !has_capability('mod/lesson:manage', $context) && !$lesson->practice) {
                 echo "<div align=\"center\"><br>";
                 if (!$grades = get_records_select("lesson_grades", "lessonid = $lesson->id", "completed")) {
                     echo get_string("youmadehighscore", "lesson", $lesson->maxhighscores)."<br>";
@@ -1120,7 +1133,7 @@
                 echo "</div>";                            
             }
 
-            if ($lesson->modattempts && !isteacher($course->id)) {
+            if ($lesson->modattempts && !has_capability('mod/lesson:manage', $context)) {
                 // make sure if the student is reviewing, that he/she sees the same pages/page path that he/she saw the first time
                 // look at the attempt records to find the first QUESTION page that the user answered, then use that page id
                 // to pass to view again.  This is slick cause it wont call the empty($pageid) code
@@ -1135,7 +1148,7 @@
                 $lastattempt = end($attempts);
                 $USER->modattempts[$lesson->id] = $lastattempt->pageid;
                 echo "<div align=\"center\" style=\"padding: 5px;\" class=\"lessonbutton standardbutton\"><a href=\"view.php?id=$cm->id&amp;pageid=$pageid\">".get_string("reviewlesson", "lesson")."</a></div>\n"; 
-            } elseif ($lesson->modattempts && isteacher($course->id)) {
+            } elseif ($lesson->modattempts && has_capability('mod/lesson:manage', $context)) {
                 echo "<p align=\"center\">".get_string("modattemptsnoteacher", "lesson")."</p>";                
             }
             
@@ -1177,7 +1190,7 @@
         if (!$page = get_record_select("lesson_pages", "lessonid = $lesson->id AND prevpageid = 0")) {
             // if there are no pages give teacher the option to create a new page or a new branch table
             echo "<div align=\"center\">";
-            if (isteacheredit($course->id)) {
+            if (has_capability('mod/lesson:edit', $context)) {
                 print_simple_box( "<table cellpadding=\"5\" border=\"0\">\n<tr><th>".get_string("whatdofirst", "lesson")."</th></tr><tr><td>".
                     "<a href=\"import.php?id=$cm->id&amp;pageid=0\">".
                     get_string("importquestions", "lesson")."</a></td></tr><tr><td>".
@@ -1226,7 +1239,7 @@
                         }
                     }
                     echo "<table align=\"center\" cellpadding=\"5\" border=\"0\" width=\"80%\">\n";
-                    if (isteacheredit($course->id)) {
+                    if (has_capability('mod/lesson:edit', $context)) {
                         echo "<tr><td align=\"left\"><small><a href=\"import.php?id=$cm->id&amp;pageid=$page->prevpageid\">".
                             get_string("importquestions", "lesson")."</a> | ".
                             "<a href=\"lesson.php?id=$cm->id&amp;sesskey=".$USER->sesskey."&amp;action=addcluster&amp;pageid=$page->prevpageid\">".
@@ -1241,7 +1254,7 @@
                     }                  
                 } else {   
                     echo "<table align=\"center\" cellpadding=\"5\" border=\"0\" width=\"80%\">\n";
-                    if (isteacheredit($course->id)) {
+                    if (has_capability('mod/lesson:edit', $context)) {
                         echo "<tr><td align=\"left\"><small><a href=\"import.php?id=$cm->id&amp;pageid=0\">".
                             get_string("importquestions", "lesson")."</a> | ".
                             "<a href=\"lesson.php?id=$cm->id&amp;sesskey=".$USER->sesskey."&amp;action=addcluster&amp;pageid=0\">".
@@ -1257,7 +1270,7 @@
             while (true) {
                 echo "<tr><td>\n";
                 echo "<table width=\"100%\" border=\"1\" class=\"generalbox\"><tr><th colspan=\"2\">".format_string($page->title)."&nbsp;&nbsp;\n";
-                if (isteacheredit($course->id)) {
+                if (has_capability('mod/lesson:edit', $context)) {
                     if ($npages > 1) {
                         echo "<a title=\"".get_string("move")."\" href=\"lesson.php?id=$cm->id&amp;action=move&amp;pageid=$page->id\">\n".
                             "<img src=\"$CFG->pixpath/t/move.gif\" hspace=\"2\" height=\"11\" width=\"11\" border=\"0\" alt=\"move\" /></a>\n";
@@ -1472,7 +1485,7 @@
                     echo "&nbsp;</td></tr>\n";
                 }
                 echo "</table></td></tr>\n";
-                if (isteacheredit($course->id)) {
+                if (has_capability('mod/lesson:edit', $context)) {
                     echo "<tr><td align=\"left\"><small><a href=\"import.php?id=$cm->id&amp;pageid=$page->id\">".
                         get_string("importquestions", "lesson")."</a> | ".    
                          "<a href=\"lesson.php?id=$cm->id&amp;sesskey=".$USER->sesskey."&amp;action=addcluster&amp;pageid=$page->id\">".
@@ -1882,7 +1895,7 @@
             print_table($table);
         }
         
-        if (!isteacher($course->id)) {  // teachers don't need the links
+        if (!has_capability('mod/lesson:manage', $context)) {  // teachers don't need the links
             echo '<div align="center">';
             if (optional_param('link', 0, PARAM_INT)) {
                 echo "<br /><div class=\"lessonbutton standardbutton\"><a href=\"../../course/view.php?id=$course->id\">".get_string("returntocourse", "lesson")."</a></div>";

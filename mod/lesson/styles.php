@@ -7,6 +7,22 @@
 }
 
 /***
+ *** Style for essay.php
+ ***/
+
+#mod-lesson-essay .graded {
+    color:#DF041E;
+}
+
+#mod-lesson-essay .sent {
+    color:#006600;
+}
+
+#mod-lesson-essay .ungraded {
+    color:#999999;
+}
+
+/***
  *** Style for responses
  ***/
 

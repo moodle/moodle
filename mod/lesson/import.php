@@ -23,10 +23,8 @@
 
 
     require_login($course->id, false);
-
-    if (!isteacher($course->id)) {
-        error("Only the teacher can import questions!");
-    }
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    require_capability('mod/lesson:edit', $context);
 
     $strimportquestions = get_string("importquestions", "lesson");
     $strlessons = get_string("modulenameplural", "lesson");

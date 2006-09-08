@@ -19,6 +19,7 @@
     }
     if (!isset($cm)) {
         $cm = get_coursemodule_from_instance('lesson', $lesson->id);
+        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     }
     if (!isset($course)) {
         $course = get_record('course', 'id', $lesson->course);
@@ -34,11 +35,12 @@
     $counts->attempts = count_records('lesson_grades', 'lessonid', $lesson->id);
     $counts->student  = $course->student;
 
+
     $row[] = new tabobject('teacherview', "$CFG->wwwroot/mod/lesson/view.php?id=$cm->id", get_string('edit'), get_string('editlesson', 'lesson', format_string($lesson->name)));
     $row[] = new tabobject('navigation', "$CFG->wwwroot/mod/lesson/view.php?id=$cm->id&amp;action=navigation", get_string('preview', 'lesson'), get_string('previewlesson', 'lesson', format_string($lesson->name)));
     $row[] = new tabobject('reports', "$CFG->wwwroot/mod/lesson/report.php?id=$cm->id", get_string('reports', 'lesson'), get_string('viewreports', 'lesson', $counts));
-    if (isteacheredit($course->id)) {
-        $row[] = new tabobject('essayview', "$CFG->wwwroot/mod/lesson/view.php?id=$cm->id&amp;action=essayview", get_string('manualgrading', 'lesson')); 
+    if (has_capability('mod/lesson:edit', $context)) {
+        $row[] = new tabobject('essayview', "$CFG->wwwroot/mod/lesson/view.php?id=$cm->id&amp;action=essayview", get_string('manualgrading', 'lesson'));
     }
     if ($lesson->highscores) {
         $row[] = new tabobject('highscores', "$CFG->wwwroot/mod/lesson/view.php?id=$cm->id&amp;action=highscores", get_string('highscores', 'lesson'));

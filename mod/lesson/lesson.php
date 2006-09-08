@@ -28,6 +28,7 @@
     list($cm, $course, $lesson) = lesson_get_basics($id);
 
     require_login($course->id);
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     
 /// Set up some general variables
     $usehtmleditor = can_use_html_editor();
@@ -47,9 +48,7 @@
         case 'insertpage':
         case 'updatepage':
         case 'moveit':
-            if (!isteacheredit($course->id)) {
-                error('You must be a teacher with editing privileges to access this page.');
-            }
+            require_capability('mod/lesson:edit', $context);
         case 'continue':
             include($CFG->dirroot.'/mod/lesson/action/'.$action.'.php');
             break;
