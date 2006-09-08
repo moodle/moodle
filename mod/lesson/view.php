@@ -28,6 +28,17 @@
 
     require_login($course->id, false, $cm);
 
+    switch ($action) {
+        case 'essayview':
+        case 'essaygrade':
+        case 'updategrade':
+        case 'emailessay':
+            if (!isteacheredit($course->id)) {
+                error('You must be a teacher with editing rights to view this page');
+            }
+            break;
+    }
+
 /// Print the page header
 
     if ($course->category) {
