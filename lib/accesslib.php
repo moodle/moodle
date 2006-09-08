@@ -977,10 +977,11 @@ function get_context_instance($aggregatelevel=NULL, $instance=SITEID) {
         $context = get_record('context', 'aggregatelevel', $aggregatelevel, 'instanceid', $instance);
     }
 
-/// Update the cache
-    $context_cache[$aggregatelevel][$instance] = $context;    // Cache it for later
-    $context_cache_id[$context->id] = $context;      // Cache it for later
-
+/// Only add to cache if context isn't empty.
+    if (!empty($context)) {
+        $context_cache[$aggregatelevel][$instance] = $context;    // Cache it for later
+        $context_cache_id[$context->id] = $context;      // Cache it for later
+    }
 
     return $context;
 }
