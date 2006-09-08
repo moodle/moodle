@@ -140,10 +140,10 @@ function validate_form($frm, &$err) {
     if (empty($frm->username)){
         $err->username = get_string('missingusername');
     } else {
-        if (!isadmin() and empty($frm->password)){
+        if (!has_capability('moodle/user:update',get_context_instance(CONTEXT_SYSTEM, SITEID)) and empty($frm->password)){
             $err->password = get_string('missingpassword');
         } else {  
-            if (!isadmin()) {
+            if (!has_capability('moodle/user:update',get_context_instance(CONTEXT_SYSTEM, SITEID))) {
                 //require non adminusers to give valid password
                 if(!$validpw) {
                     $err->password = get_string('wrongpassword');
@@ -169,7 +169,7 @@ function validate_form($frm, &$err) {
         if ($frm->newpassword1 <> $frm->newpassword2) {
             $err->newpassword2 = get_string('passwordsdiffer');
         } else {
-            if(!isadmin() and ($frm->password === $frm->newpassword1)){
+            if(!has_capability('moodle/user:update',get_context_instance(CONTEXT_SYSTEM, SITEID)) and ($frm->password === $frm->newpassword1)){
                 $err->newpassword1 = get_string('mustchangepassword');
             }
         }

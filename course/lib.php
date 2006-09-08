@@ -43,7 +43,7 @@ function print_recent_selector_form($course, $advancedfilter=0, $selecteduser=0,
             $users[$guest->id] = fullname($guest);
         }
 
-        if (isadmin()) {
+        if (has_capability('moodle/course:update', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
             if ($ccc = get_records("course", "", "", "fullname")) {
                 foreach ($ccc as $cc) {
                     if ($cc->category) {
@@ -144,7 +144,7 @@ function print_recent_selector_form($course, $advancedfilter=0, $selecteduser=0,
         echo "<center>";
         echo "<table>";
 
-        if (isadmin()) {
+        if (has_capability('moodle/course:update', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
             echo "<tr><td><b>" . get_string("courses") . "</b></td><td>";
             choose_from_menu ($courses, "id", $course->id, "");
             echo "</td></tr>";
@@ -2090,7 +2090,9 @@ function course_allowed_module($course,$mod) {
     if (empty($course->restrictmodules)) {
         return true;
     }
-    if (isadmin()) {
+    
+    // i am not sure this capability is correct
+    if (has_capability('moodle/course:update', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
         return true;
     }
     if (is_numeric($mod)) {

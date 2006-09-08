@@ -1734,7 +1734,7 @@ function count_login_failures($mode, $username, $lastlogin) {
 
     $select = 'module=\'login\' AND action=\'error\' AND time > '. $lastlogin;
 
-    if (isadmin()) {    // Return information about all accounts
+    if (has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM, SITEID))) {    // Return information about all accounts
         if ($count->attempts = count_records_select('log', $select)) {
             $count->accounts = count_records_select('log', $select, 'COUNT(DISTINCT info)');
             return $count;

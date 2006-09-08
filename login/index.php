@@ -180,7 +180,7 @@
             }
 
           /// Go to my-moodle page instead of homepage if mymoodleredirect enabled
-            if (!isadmin() and !empty($CFG->mymoodleredirect) and !isguest()) {
+            if (!has_capability('moodle/site:config',get_context_instance(CONTEXT_SYSTEM, SITEID)) and !empty($CFG->mymoodleredirect) and !isguest()) {
                 if ($urltogo == $CFG->wwwroot or $urltogo == $CFG->wwwroot.'/' or $urltogo == $CFG->wwwroot.'/index.php') {
                     $urltogo = $CFG->wwwroot.'/my/';
                 }

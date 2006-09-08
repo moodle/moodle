@@ -1,5 +1,7 @@
 <?php
 
+    // all queries on teacher table will break (i mean already broken)
+
     $courses = get_courses('all','c.shortname','c.id,c.shortname,c.fullname');
     $courseoptions = array();
 
@@ -24,7 +26,7 @@
             $param = stats_get_parameters($time,null,$course->id,$mode); // we only care about the table and the time string.
             $sql =  'SELECT DISTINCT s.userid,s.roleid,u.firstname,u.lastname,u.idnumber  FROM '.$CFG->prefix.'stats_user_'.$param->table.' s JOIN '.$CFG->prefix.'user u ON u.id = s.userid '
                 .'WHERE courseid = '.$course->id.' AND timeend >= '.$param->timeafter  . ((!empty($param->stattype)) ? ' AND stattype = \''.$param->stattype.'\'' : '');
-            if (!isadmin()) {
+            if (!has_capability('moodle/site:viewreports', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
                 $sql .= ' AND (s.roleid = 1 OR s.userid = '.$USER->id .")";
             }
             $sql .= " ORDER BY s.roleid ";
@@ -47,7 +49,7 @@
             $users[$u->userid] = $role.' - '.fullname($u,true);
         }
         if (empty($time)) {
-            if (isadmin()) {
+            if (has_capability('moodle/site:viewreports', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
                 $sql = 'SELECT t.userid,u.firstname,u.lastname,u.idnumber,1 AS roleid FROM '.$CFG->prefix.'user_teachers t JOIN '.$CFG->prefix.'user u ON u.id = t.userid WHERE course = '.$course->id;
                 $moreusers = get_records_sql($sql);
                 foreach ($moreusers as $u) {

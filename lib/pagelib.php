@@ -301,7 +301,7 @@ class page_base {
 
     // is this  page always editable, regardless of anything else?
     function edit_always() {
-        return (isadmin() &&  defined('ADMIN_STICKYBLOCKS'));
+        return (has_capability('moodle/site:manageblocks', get_context_instance(CONTEXT_SYSTEM, SITEID)) &&  defined('ADMIN_STICKYBLOCKS'));
     }
 }
 
@@ -352,7 +352,7 @@ class page_course extends page_base {
     // When is a user said to have "editing rights" in this page? This would have something
     // to do with roles, in the future.
     function user_allowed_editing() {
-        if (isadmin() && defined('ADMIN_STICKYBLOCKS')) {
+        if (has_capability('moodle/site:manageblocks', get_context_instance(CONTEXT_SYSTEM, SITEID)) && defined('ADMIN_STICKYBLOCKS')) {
             return true;
         }
         return isteacheredit($this->id);
@@ -361,7 +361,7 @@ class page_course extends page_base {
     // Is the user actually editing this page right now? This would have something
     // to do with roles, in the future.
     function user_is_editing() {
-        if (isadmin() && defined('ADMIN_STICKYBLOCKS')) {
+        if (has_capability('moodle/site:manageblocks', get_context_instance(CONTEXT_SYSTEM, SITEID)) && defined('ADMIN_STICKYBLOCKS')) {
             return true;
         }
         return isediting($this->id);

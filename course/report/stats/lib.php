@@ -21,7 +21,7 @@
         $options = array();
         $options[STATS_MODE_GENERAL] = get_string('statsmodegeneral');
         $options[STATS_MODE_DETAILED] = get_string('statsmodedetailed');
-        if (isadmin()) {
+        if (has_capability('moodle/site:viewreports', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
             $options[STATS_MODE_RANKED] = get_string('reports');
         }
 

@@ -8,9 +8,7 @@
 
     require_login();
 
-    if (!isadmin()) {
-        error("Only the admin can use this page");
-    }
+    require_capability('moodle/site:approvecourse', get_context_instance(CONTEXT_SYSTEM, SITEID));
 
     $approve      = optional_param('approve', 0, PARAM_INT);
     $reject       = optional_param('reject', 0, PARAM_INT);

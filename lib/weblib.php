@@ -2109,7 +2109,7 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
                     } else {
                         $menu .= get_string('failedloginattemptsall', '', $count);
                     }
-                    if (isadmin()) {
+                    if (has_capability('moodle/site:viewreports', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
                         $menu .= ' (<a href="'.$CFG->wwwroot.'/course/report/log/index.php'.
                                              '?chooselog=1&amp;id=1&amp;modid=site_errors">'.get_string('logs').'</a>)';
                     }
@@ -2635,7 +2635,7 @@ function print_navigation ($navigation, $return=false) {
         }
         $navigation = '<li title="'.$nav_text.'"><img src="'.$CFG->pixpath.'/a/r_breadcrumb.gif" class="resize" alt="" /> '
             .str_replace('->', '</li><li title="'.$nav_text.'"><img src="'.$CFG->pixpath.'/a/r_breadcrumb.gif" class="resize" alt="" /> ', $navigation)."</li>\n";
-        $output .= '<li class="first"><a target="'. $CFG->framename .'" href="'. $CFG->wwwroot.((!isadmin() && !empty($USER->id) && !empty($CFG->mymoodleredirect) && !isguest())
+        $output .= '<li class="first"><a target="'. $CFG->framename .'" href="'. $CFG->wwwroot.((!has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM, SITEID)) && !empty($USER->id) && !empty($CFG->mymoodleredirect) && !isguest())
                                                                        ? '/my' : '') .'/">'. $site->shortname ."</a></li>\n". $navigation;
         $output .= "</ul>\n";  
     }

@@ -10,7 +10,8 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate='today'
     if ($numcourses < COURSE_MAX_COURSES_PER_DROPDOWN && !$showcourses) {
         $showcourses = 1;
     }
-   
+    
+    $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
     $context = get_context_instance(CONTEXT_COURSE, $course->id);
    
     /// Setup for group handling.
@@ -55,7 +56,7 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate='today'
         }
     }
 
-    if (isadmin() && $showcourses) {
+    if (has_capability('moodle/site:viewreports', $sitecontext) && $showcourses) {
         if ($ccc = get_records("course", "", "", "fullname","id,fullname,category")) {
             foreach ($ccc as $cc) {
                 if ($cc->category) {
@@ -102,7 +103,7 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate='today'
         }
     }
 
-    if (isadmin() && !$course->category) {
+    if (has_capability('moodle/site:viewreports', $sitecontext) && !$course->category) {
         $activities["site_errors"] = get_string("siteerrors");
         if ($modid === "site_errors") {
             $selectedactivity = "site_errors";
@@ -156,14 +157,14 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate='today'
     echo "<input type=\"hidden\" name=\"chooselog\" value=\"1\" />\n";
     echo "<input type=\"hidden\" name=\"showusers\" value=\"$showusers\" />\n";
     echo "<input type=\"hidden\" name=\"showcourses\" value=\"$showcourses\" />\n";
-    if (isadmin() && $showcourses) { 
+    if (has_capability('moodle/site:viewreports', $sitecontext) && $showcourses) { 
         choose_from_menu ($courses, "id", $course->id, "");
     } else {
         //        echo '<input type="hidden" name="id" value="'.$course->id.'" />';
         $courses = array();
         $courses[$course->id] = $course->fullname . ((empty($course->category)) ? ' (Site) ' : '');
         choose_from_menu($courses,"id",$course->id,false);
-        if (isadmin()) {
+        if (has_capability('moodle/site:viewreports', $sitecontext)) {
             $a->url = "$CFG->wwwroot/course/report/log/index.php?chooselog=0&group=$selectedgroup&user=$selecteduser"
                 ."&id=$course->id&date=$selecteddate&modid=$selectedactivity&showcourses=1&showusers=$showusers";
             print_string('logtoomanycourses','moodle',$a);

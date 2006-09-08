@@ -67,7 +67,7 @@ function string_file_picture_algebra($imagefile, $tex= "", $height="", $width=""
     $width = "width=\"$width\"";
   }
   if ($imagefile) {
-    if (!file_exists("$CFG->dataroot/$CFG->algebrafilterdir/$imagefile") && isadmin()) {
+    if (!file_exists("$CFG->dataroot/$CFG->algebrafilterdir/$imagefile") && has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
       $output .= "<a href=\"$CFG->wwwroot/$CFG->algebrafilterdir/algebradebug.php\">";
     } else {
       $output .= "<a target=\"popup\" title=\"TeX\" href=";

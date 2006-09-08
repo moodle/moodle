@@ -37,7 +37,7 @@
         $navbaritem = update_category_button($category->id);
 
         $creatorediting = !empty($USER->categoryediting);
-        $adminediting = (isadmin() and $creatorediting);
+        $adminediting = (has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM, SITEID)) and $creatorediting);
 
     } else {
         if (!$category->visible) {
@@ -49,7 +49,7 @@
     }
 
 
-    if (isadmin()) {
+    if (has_capability('moodle/category:update', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
         /// Rename the category if requested
         if (!empty($rename) and confirm_sesskey()) {
             $category->name = $rename;
@@ -412,7 +412,7 @@
 
 
     echo '<center>';
-    if (isadmin() and $numcourses > 1) {           /// Print button to re-sort courses by name
+    if (has_capability('moodle/category:update', get_context_instance(CONTEXT_SYSTEM, SITEID)) and $numcourses > 1) {           /// Print button to re-sort courses by name
         unset($options);
         $options['id'] = $category->id;
         $options['resort'] = 'name';

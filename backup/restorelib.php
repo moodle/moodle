@@ -5349,7 +5349,7 @@
             $course = get_record("course","id",$restore->course_id); 
             fix_course_sortorder();
             //Make the user a teacher if the course hasn't teachers (bug 2381)
-            if (!isadmin()) {
+            if (!has_capability('moodle/site:restore', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
                 if (!$checktea = get_records('user_teachers','course', $restore->course_id)) {
                     //Add the teacher to the course
                     $status = add_teacher($USER->id, $restore->course_id);
