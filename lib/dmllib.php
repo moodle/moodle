@@ -1312,6 +1312,31 @@ function sql_as() {
     }
 }
 
+/**
+ * Returns the SQL text to be used to order by one TEXT (clob) column, because
+ * some RDBMS doesn't support direct ordering of such fields. 
+ * Note that the use or queries being ordered by TEXT columns must be minimised,
+ * because it's really slooooooow.
+ * @param string fieldname the name of the TEXT field we need to order by
+ * @param string number of chars to use for the ordering (defaults to 32)
+ * @return string the piece of SQL code to be used in your statement.
+ */
+function sql_order_by_text($fieldname, $numchars=32) {
+
+    global $CFG;
+
+    switch ($CFG->dbtype) {
+        case 'mssql':
+            return 'CONVERT(varchar, ' . $fieldname . ', ' . $numchars . ')';
+            break;
+        case 'oci8po':
+            return 'dbms_lob.substr(' . $fieldname . ', ' . $numchars . ',1)';
+            break;
+        default:
+            return $fieldname;
+    }
+}
+
 /** 
  * Prepare a SQL WHERE clause to select records where the given fields match the given values.
  * 
