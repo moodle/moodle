@@ -4,8 +4,6 @@
 
     confirm_sesskey();
 
-    $messages = array();
-
     // left menu code
     // check to see if the user can see the left menu
     if (!has_capability('mod/lesson:manage', $context)) {
@@ -16,7 +14,7 @@
     if(has_capability('mod/lesson:manage', $context) and lesson_display_teacher_warning($lesson->id)) {
         $warningvars->cluster = get_string("clusterjump", "lesson");
         $warningvars->unseen = get_string("unseenpageinbranch", "lesson");
-        $messages[] = get_string("teacherjumpwarning", "lesson", $warningvars);
+        lesson_set_message(get_string("teacherjumpwarning", "lesson", $warningvars));
     }
 
     // This is the code updates the lesson time for a timed test
@@ -31,9 +29,9 @@
         
         if ($lesson->timed) {
             if ((($timer->starttime + $lesson->maxtime * 60) - time()) < 60 && !((($timer->starttime + $lesson->maxtime * 60) - time()) < 0)) {
-                $messages[] = get_string("studentoneminwarning", "lesson");
+                lesson_set_message(get_string("studentoneminwarning", "lesson"));
             } else if (($timer->starttime + $lesson->maxtime * 60) < time()) {
-                $messages[] = get_string("studentoutoftime", "lesson");
+                lesson_set_message(get_string("studentoutoftime", "lesson"));
                 $outoftime = true;
             }
             if ((($timer->starttime + $lesson->maxtime * 60) - time()) <= 0) {
@@ -50,7 +48,7 @@
     
     // Inform teacher that s/he will not see the timer
     if ($lesson->timed and has_capability('mod/lesson:manage', $context)) {
-        $messages[] = get_string("teachertimerwarning", "lesson");
+        lesson_set_message(get_string("teachertimerwarning", "lesson"));
     }
 
     // record answer (if necessary) and show response (if none say if answer is correct or not)
@@ -771,11 +769,11 @@
     
     // Report attempts remaining
     if ($attemptsremaining != 0) {
-        $messages[] = get_string('attemptsremaining', 'lesson', $attemptsremaining);
+        lesson_set_message(get_string('attemptsremaining', 'lesson', $attemptsremaining));
     }
     // Report if max attempts reached
     if ($maxattemptsreached != 0) { 
-        $messages[] = '('.get_string("maximumnumberofattemptsreached", "lesson").')';
+        lesson_set_message('('.get_string("maximumnumberofattemptsreached", "lesson").')');
     }
     
     lesson_print_header($cm, $course, $lesson, 'navigation', false);
