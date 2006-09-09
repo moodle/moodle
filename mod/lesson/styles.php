@@ -22,6 +22,14 @@
     color:#999999;
 }
 
+#mod-lesson-essay .gradetable {
+    margin-bottom: 20px;
+}
+
+#mod-lesson-essay .buttons {
+    text-align: center;
+}
+
 /***
  *** Style for responses
  ***/

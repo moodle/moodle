@@ -40,7 +40,7 @@
     $row[] = new tabobject('navigation', "$CFG->wwwroot/mod/lesson/view.php?id=$cm->id&amp;action=navigation", get_string('preview', 'lesson'), get_string('previewlesson', 'lesson', format_string($lesson->name)));
     $row[] = new tabobject('reports', "$CFG->wwwroot/mod/lesson/report.php?id=$cm->id", get_string('reports', 'lesson'), get_string('viewreports', 'lesson', $counts));
     if (has_capability('mod/lesson:edit', $context)) {
-        $row[] = new tabobject('essayview', "$CFG->wwwroot/mod/lesson/view.php?id=$cm->id&amp;action=essayview", get_string('manualgrading', 'lesson'));
+        $row[] = new tabobject('essay', "$CFG->wwwroot/mod/lesson/essay.php?id=$cm->id", get_string('manualgrading', 'lesson'));
     }
     if ($lesson->highscores) {
         $row[] = new tabobject('highscores', "$CFG->wwwroot/mod/lesson/view.php?id=$cm->id&amp;action=highscores", get_string('highscores', 'lesson'));

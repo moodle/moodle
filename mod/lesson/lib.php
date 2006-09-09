@@ -458,7 +458,7 @@ function lesson_get_view_actions() {
 }
 
 function lesson_get_post_actions() {
-    return array('end','start');
+    return array('end','start', 'update grade attempt');
 }
 
 ?>

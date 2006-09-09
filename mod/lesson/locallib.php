@@ -245,6 +245,8 @@ function lesson_print_header($cm, $course, $lesson, $currenttab = '', $printhead
     if (!empty($currenttab) and has_capability('mod/lesson:manage', $context)) {
         include($CFG->dirroot.'/mod/lesson/tabs.php');
     }
+    
+    lesson_print_messages();
 }
 
 /**
@@ -257,7 +259,7 @@ function lesson_print_header($cm, $course, $lesson, $currenttab = '', $printhead
  **/
 function lesson_get_basics($cmid = 0, $lessonid = 0) {
     if ($cmid) {
-        if (!$cm = get_record('course_modules', 'id', $cmid)) {
+        if (!$cm = get_coursemodule_from_id('lesson', $cmid)) {
             error('Course Module ID was incorrect');
         }
         if (!$course = get_record('course', 'id', $cm->course)) {
