@@ -593,7 +593,7 @@
                 $newpageid = lesson_unseen_branch_jump($lesson->id, $USER->id);
             }
             // no need to record anything in lesson_attempts            
-            redirect("view.php?id=$cm->id&amp;action=navigation&amp;pageid=$newpageid");
+            redirect("view.php?id=$cm->id&amp;action=navigation&amp;pageid=$newpageid", '', 0);
             print_footer($course);
             exit();
             break;
