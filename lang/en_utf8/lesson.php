@@ -53,6 +53,7 @@ $string['continuetoanswer'] = 'Continue to change answers.';
 $string['correctanswerjump'] = 'Correct answer jump';
 $string['correctanswerscore'] = 'Correct answer score';
 $string['correctresponse'] = 'Correct response';
+$string['credit'] = 'Credit';
 $string['customscoring'] = 'Custom scoring';
 $string['deadline'] = 'Deadline';
 $string['defaultessayresponse'] = 'Your essay will be graded by the course instructor.';
@@ -79,7 +80,7 @@ $string['editpagecontent'] = 'Edit page contents';
 $string['email'] = 'Email';
 $string['emailallgradedessays'] = 'Email ALL<br />graded essays';
 $string['emailgradedessays'] = 'Email graded essays';
-$string['emailsuccess'] = 'Email(s) successful';
+$string['emailsuccess'] = 'Emails sent successfully';
 $string['endofbranch'] = 'End of branch';
 $string['endofclustertitle'] = 'End of cluster';
 $string['endoflesson'] = 'End of lesson';
@@ -162,6 +163,7 @@ $string['noanswer'] = 'No answer given.  Please go back and submit an answer.';
 $string['noattemptrecordsfound'] = 'No attempt records found: no grade given';
 $string['nocommentyet'] = 'No comment yet.';
 $string['nocoursemods'] = 'No activities found';
+$string['nocredit'] = 'No credit';
 $string['noessayquestionsfound'] = 'No essay questions found in this lesson.';
 $string['nohighscores'] = 'No high scores';
 $string['nolessonattempts'] = 'No attempts have been made on this lesson.';
@@ -285,6 +287,7 @@ $string['yourcurrentgradeis'] = 'Your current grade is $a';
 $string['yourgradeisnow'] = 'Your grade for the lesson has been changed to $a';
 $string['yourresponse'] = 'Your response';
 $string['youshouldview'] = 'You should answer at least: $a';
+
 
 
 
