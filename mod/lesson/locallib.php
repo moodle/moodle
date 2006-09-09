@@ -377,7 +377,7 @@ function lesson_print_submit_link($name, $form, $align = 'center', $class='stand
  * @param boolean $return Return output switch
  * @return mixed boolean/string
  **/
-function print_time_remaining($starttime, $maxtime, $return = false) {
+function lesson_print_time_remaining($starttime, $maxtime, $return = false) {
     // Calculate hours, minutes and seconds
     $timeleft = $starttime + $maxtime * 60 - time();
     $hours = floor($timeleft/3600);

@@ -555,7 +555,7 @@
                             echo "document.write('<script type=\"text/javascript\" src=\"$CFG->wwwroot/mod/lesson/timer.js\"><\/script>');\n";
                             echo "window.onload = function () { show_clock(); }\n";
                         echo "</script>\n";
-                        echo '<noscript>'.print_time_remaining($timer->starttime, $lesson->maxtime, true)."</noscript>\n";
+                        echo '<noscript>'.lesson_print_time_remaining($timer->starttime, $lesson->maxtime, true)."</noscript>\n";
                         echo "</td></tr></table>";
                         echo "<br /><br /><br />";
                     } else {
