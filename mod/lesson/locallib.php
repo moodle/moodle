@@ -370,6 +370,43 @@ function lesson_print_submit_link($name, $form, $align = 'center', $class='stand
 }
 
 /**
+ * Prints a time remaining in the following format: H:MM:SS
+ *
+ * @param int $starttime Time when the lesson started
+ * @param int $maxtime Length of the lesson
+ * @param boolean $return Return output switch
+ * @return mixed boolean/string
+ **/
+function print_time_remaining($starttime, $maxtime, $return = false) {
+    // Calculate hours, minutes and seconds
+    $timeleft = $starttime + $maxtime * 60 - time();
+    $hours = floor($timeleft/3600);
+    $timeleft = $timeleft - ($hours * 3600);
+    $minutes = floor($timeleft/60);
+    $secs = $timeleft - ($minutes * 60);
+    
+    if ($minutes < 10) {
+        $minutes = "0$minutes";
+    }
+    if ($secs < 10) {
+        $secs = "0$secs";
+    }
+    $output   = array();
+    $output[] = $hours;
+    $output[] = $minutes;
+    $output[] = $secs;
+    
+    $output = implode(':', $output);
+    
+    if ($return) {
+        return $output;
+    } else {
+        echo $output;
+        return true;
+    }
+}
+
+/**
  * Given some question info and some data about the the answers
  * this function parses, organises and saves the question
  *

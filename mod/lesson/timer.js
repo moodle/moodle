@@ -77,16 +77,12 @@
             if (secs < 10) {
                 secs = "0"+secs;
             }
-            
+            if (minutes < 10) {
+                minutes = "0"+minutes;
+            }
             myclock = '';
             myclock += '<font style="color:'+myfont_color+'; font-family:'+myfont_face+'; font-size:'+myfont_size+'pt;">';
-            if (hours > 0) {
-                myclock += hours+":";
-                if (minutes < 10) {
-                    minutes = "0"+minutes;
-                }
-            }
-            myclock += minutes+":"+secs;
+            myclock += hours+":"+minutes+":"+secs;
             myclock += '</font>';
         }
         

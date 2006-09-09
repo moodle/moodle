@@ -545,19 +545,18 @@
                 } else {
                     if ((($timer->starttime + $lesson->maxtime * 60) - time()) > 0) {
                         // code for the clock
-                        print_simple_box_start("right", "150px", "#ffffff", 0);
-                        echo "<table border=\"0\" valign=\"top\" align=\"center\" class=\"generaltable\" width=\"100%\" cellspacing=\"0\">".
-                            "<tr><th valign=\"top\" class=\"generaltableheader\">".get_string("timeremaining", "lesson").
-                            "</th></tr><tr><td align=\"center\" class=\"generaltablecell\">";
+                        echo '<table align="right" width="150px" class="generaltable generalbox" cellspacing="0" cellpadding="5px" border="0" valign="top">'.
+                            "<tr><th valign=\"top\" class=\"header\">".get_string("timeremaining", "lesson").
+                            "</th></tr><tr><td align=\"center\" class=\"c0\">";
                         echo "<script language=\"javascript\">\n";
                             echo "var starttime = ". $timer->starttime . ";\n";
                             echo "var servertime = ". time() . ";\n";
                             echo "var testlength = ". $lesson->maxtime * 60 .";\n";
-                            echo "document.write('<SCRIPT LANGUAGE=\"JavaScript\" SRC=\"timer.js\"><\/SCRIPT>');\n";
+                            echo "document.write('<script type=\"text/javascript\" src=\"$CFG->wwwroot/mod/lesson/timer.js\"><\/script>');\n";
                             echo "window.onload = function () { show_clock(); }\n";
                         echo "</script>\n";
+                        echo '<noscript>'.print_time_remaining($timer->starttime, $lesson->maxtime, true)."</noscript>\n";
                         echo "</td></tr></table>";
-                        print_simple_box_end();
                         echo "<br /><br /><br />";
                     } else {
                         redirect("view.php?id=$cm->id&amp;action=navigation&amp;pageid=".LESSON_EOL."&amp;outoftime=normal", get_string("outoftime", "lesson"));

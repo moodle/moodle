@@ -134,6 +134,9 @@ if ($lesson->displayleft) {
                             window.onload = function () { show_clock(); };
                         // -->
                         </script>
+                        <noscript>
+                            <?php print_time_remaining($timer->starttime, $lesson->maxtime); ?>
+                        </noscript>
                     </td>
                 </tr>
             </table>
