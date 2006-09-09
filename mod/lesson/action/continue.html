@@ -7,12 +7,15 @@
  **/
 ?>
 
+<!-- Primary layout table -->
+<table width="100%" border="0" cellpadding="0" cellspacing="0">
+    <tr valign="top">
+
 <?php
 if ($lesson->displayleft) {
-   if($firstpageid = get_field('lesson_pages', 'id', 'lessonid', $lesson->id, 'prevpageid', 0)) {
-?>
-<table>
-    <tr valign="top">
+// Displaying left menu
+   if($firstpageid = get_field('lesson_pages', 'id', 'lessonid', $lesson->id, 'prevpageid', 0)) { ?>
+
         <td>
             <a href="#maincontent" class="skip"><?php print_string('skip', 'lesson') ?></a>
             <div class="leftmenu_container">
@@ -25,84 +28,118 @@ if ($lesson->displayleft) {
             </div>
             </div>
         </td>
-        <td align="center" width="100%">
-        <a name="maincontent" id="maincontent" title="<?php print_string('anchortitle', 'lesson') ?>"></a>
+        
 <?php 
     }  // End if($firstpageid = get...
 } // End if ($lesson->displayleft)
 ?>
+        <!-- Start Primary column -->
+        <td>
+    
+<?php if ($lesson->displayleft) { // Skip navigation anchor ?>
+        
+        <a name="maincontent" id="maincontent" title="<?php print_string('anchortitle', 'lesson') ?>"></a>
+        
+<?php } ?>
 
-<?php if($lesson->timed and !has_capability('mod/lesson:manage', $context)) {
-        // code for the clock
-        print_simple_box_start("right", "150px", "#ffffff", 0);
+<?php
+    // This calculates and prints the ongoing score message
+    if ($lesson->ongoing) {
+        lesson_print_ongoing_score($lesson);
+    }
 ?>
-        <table border="0" valign="top" align="center" class="generaltable" width="100%" cellspacing="0">
-            <tr>
-                <th valign="top" class="generaltableheader"><?php print_string("timeremaining", "lesson") ?></th>
-            </tr>
-            <tr>
-                <td align="center" class="generaltablecell">
-                    <script language="javascript">
-                        var starttime  = "<?php echo $timer->starttime ?>";
-                        var servertime = "<?php echo time()?>";
-                        var testlength = "<?php echo $lesson->maxtime * 60 ?>";
-                        document.write('<SCRIPT LANGUAGE="JavaScript" SRC="timer.js"></SCRIPT>');
-                        window.onload = function () { show_clock(); }
-                    </script>
-                </td>
-            </tr>
-        </table>
-        <?php print_simple_box_end(); ?>
-        <br /><br /><br /><br />
-<?php } //end if($lesson->timed) {
 
-// This calculates and prints the ongoing score message
-if ($lesson->ongoing) {
-    lesson_print_ongoing_score($lesson);
-}
-?>
-<table border="0" align="center">
-    <tr>
-        <td><?php echo $feedback ?></td>
+            <table border="0" align="center">
+                <tr>
+                    <td class="c0"><?php echo $feedback ?></td>
+                </tr>
+            </table>
+
+<?php if (isset($USER->modattempts[$lesson->id])) { // User is modifying attempts - save button and some instructions ?>
+
+            <form name="endoflesson" method ="post" action="view.php">
+            <input type="hidden" name="id" value="<?php echo $cm->id ?>" />
+            <input type="hidden" name="action" value="navigation" />
+            <input type="hidden" name="pageid" value="<?php echo LESSON_EOL; ?>" />
+    
+            <p align="center">
+                <?php print_string("savechangesandeol", "lesson") ?>
+            </p>
+            <p align="center">
+                <?php lesson_print_submit_link(get_string('savechanges', 'lesson'), 'endoflesson'); ?>
+            </p>
+            <p align="center">
+                <?php print_string("or", "lesson") ?>
+            </p>
+            <p align="center">
+                <?php print_string("continuetoanswer", "lesson") ?>
+            </p>
+    
+            </form>
+<?php } ?>
+
+<?php if ($lesson->review && !$correctanswer && !$noanswer && !$isessayquestion) { // Review button back ?>
+    
+            <form name="reviewback" method ="post" action="view.php">
+            <input type="hidden" name="id" value="<?php echo $cm->id ?>" />
+            <input type="hidden" name="action" value="navigation" />
+            <input type="hidden" name="pageid" value="<?php echo $pageid; ?>" />
+    
+            <p>
+                <?php lesson_print_submit_link(get_string('reviewquestionback', 'lesson'), 'reviewback'); ?>
+            </p>
+    
+            </form>
+            
+<?php } ?>
+
+            <form name="pageform" method ="post" action="view.php">
+            <input type="hidden" name="id" value="<?php echo $cm->id ?>" />
+            <input type="hidden" name="action" value="navigation" />
+            <input type="hidden" name="pageid" value="<?php echo $newpageid ?>" />
+
+<?php if ($lesson->review && !$correctanswer && !$noanswer && !$isessayquestion) { // Review button continue ?>
+
+            <p>
+                <?php lesson_print_submit_link(get_string('reviewquestioncontinue', 'lesson'), 'pageform'); ?>
+            </p>
+
+<?php } else { // Normal continue button ?>
+
+            <p>
+                <?php lesson_print_submit_link(get_string('continue', 'lesson'), 'pageform'); ?>
+            </p>
+
+<?php } ?>
+
+            </form>
+        </td>
+        <!-- End primary column -->
+
+<?php if($lesson->timed and !has_capability('mod/lesson:manage', $context)) { // Display for timed lessons and for students only ?>
+    
+        <td>
+            <table align="right" width="150px" class="generaltable generalbox" cellspacing="0" cellpadding="5px" border="0" valign="top">
+                <tr>
+                    <th class="header"><?php print_string("timeremaining", "lesson") ?></th>
+                </tr>
+                <tr class="r0">
+                    <td align="center" class="c0">
+                        <script type="text/javascript" charset="utf-8">
+                        <!--
+                            var starttime  = <?php echo $timer->starttime ?>;
+                            var servertime = <?php echo time() ?>;
+                            var testlength = <?php echo $lesson->maxtime * 60 ?>;
+                            document.write('<script type="text/javascript" src="<?php echo $CFG->wwwroot ?>/mod/lesson/timer.js" charset="utf-8"><\/script>');
+                            window.onload = function () { show_clock(); };
+                        // -->
+                        </script>
+                    </td>
+                </tr>
+            </table>
+        </td>
+<?php } //end if($lesson->timed) { ?>
+
+<!-- End primary layout table -->
     </tr>
 </table>
-
-<form name="pageform" method ="post" action="view.php">
-<input type="hidden" name="id" value="<?php echo $cm->id ?>" />
-<input type="hidden" name="action" value="navigation" />
-<input type="hidden" name="pageid" value="<?php echo $newpageid ?>" />
-
-<?php if (isset($USER->modattempts[$lesson->id])) { ?>
-<p align="center"><?php print_string("savechangesandeol", "lesson") ?> <br /><br />
-    <div align="center" class="lessonbutton standardbutton">
-        <a href="javascript:document.pageform.pageid.value=<?php echo LESSON_EOL ?>;document.pageform.submit();"><?php print_string("savechanges", "lesson") ?></a>
-    </div>
-</p>
-<p align="center">
-    <?php print_string("or", "lesson") ?>
-    <br /><br />
-    <?php print_string("continuetoanswer", "lesson") ?>
-</p>
-<?php }
-    if ($lesson->review && !$correctanswer && !$noanswer && !$isessayquestion) { ?>
-        <p>
-            <div align="center" class="lessonbutton standardbutton">
-                <a href="javascript:document.pageform.pageid.value=<?php echo $pageid ?>;document.pageform.submit();"><?php print_string("reviewquestionback", "lesson") ?></a>
-            </div>
-        </p>
-        <p><div align="center" class="lessonbutton standardbutton">
-            <a href="javascript:document.pageform.submit();"><?php print_string("reviewquestioncontinue", "lesson") ?></a>
-            </div>
-        </p>
-<?php } else { ?>
-<p>
-    <div align="center" class="lessonbutton standardbutton">
-        <a href="javascript:document.pageform.submit();"><?php print_string("continue", "lesson") ?></a>
-    </div>
-</p>
-<?php } ?>
-</form>
-
-<?php if ($lesson->displayleft) { ?>
-</td></tr></table>
-<?php } ?>

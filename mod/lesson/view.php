@@ -141,6 +141,7 @@
             }
 
             if (!$correctpass) {
+                echo "<div class=\"password-form\">\n";
                 print_simple_box_start('center');
                 echo '<form name="password" method="post" action="view.php">' . "\n";
                 echo '<input type="hidden" name="id" value="'. $cm->id .'" />' . "\n";
@@ -148,14 +149,14 @@
                 if (optional_param('userpassword', 0, PARAM_CLEAN)) {
                     notify(get_string('loginfail', 'lesson'));
                 }
-                echo "<div align=\"center\">\n".
-                    get_string('passwordprotectedlesson', 'lesson', format_string($lesson->name))."<br /><br />\n".
-                    get_string('enterpassword', 'lesson')." <input type=\"password\" name=\"userpassword\" /><br /><br />\n";
-
-                echo '<span class="lessonbutton standardbutton"><a href="'.$CFG->wwwroot.'/course/view.php?id='. $course->id .'">'. get_string('cancel', 'lesson') .'</a></span> '.
-                    ' <span class="lessonbutton standardbutton"><a href="javascript:document.password.submit();">'. get_string('continue', 'lesson') .'</a></span>'.
-                    "</div>\n";
+                
+                echo get_string('passwordprotectedlesson', 'lesson', format_string($lesson->name))."<br /><br />\n".
+                     get_string('enterpassword', 'lesson')." <input type=\"password\" name=\"userpassword\" /><br /><br />\n".
+                     '<span class="lessonbutton standardbutton"><a href="'.$CFG->wwwroot.'/course/view.php?id='. $course->id .'">'. get_string('cancel', 'lesson') .'</a></span> ';
+                
+                lesson_print_submit_link(get_string('continue', 'lesson'), 'password', 'center', 'standardbutton submitbutton');
                 print_simple_box_end();
+                echo "</div>\n";
                 exit();
             }
         }
@@ -719,8 +720,7 @@
                             ": <input type=\"text\" id=\"answer\" name=\"answer\" size=\"50\" maxlength=\"200\" $value />\n";
                         echo '</table>';
                         print_simple_box_end();
-                        echo "<div align=\"center\" class=\"lessonbutton standardbutton\"><a href=\"javascript:document.answerform.submit();\">".
-                             get_string("pleaseenteryouranswerinthebox", "lesson")."</a></div></p>\n";
+                        lesson_print_submit_link(get_string('pleaseenteryouranswerinthebox', 'lesson'), 'answerform');
                         break;
                     case LESSON_TRUEFALSE :
                         shuffle($answers);
@@ -743,8 +743,7 @@
                         }
                         echo '</table>';
                         print_simple_box_end();
-                        echo "<div align=\"center\" class=\"lessonbutton standardbutton\"><a href=\"javascript:document.answerform.submit();\">".
-                            get_string("pleasecheckoneanswer", "lesson")."</a></div>\n"; 
+                        lesson_print_submit_link(get_string('pleasecheckoneanswer', 'lesson'), 'answerform');
                         break;
                     case LESSON_MULTICHOICE :
                         $i = 0;
@@ -784,12 +783,11 @@
                         echo '</table>';
                         print_simple_box_end();
                         if ($page->qoption) {
-                            echo "<div align=\"center\" class=\"lessonbutton standardbutton\"><a href=\"javascript:document.answerform.submit();\">".
-                                get_string("pleasecheckoneormoreanswers", "lesson")."</a></div>\n";
+                            $linkname = get_string('pleasecheckoneormoreanswers', 'lesson');
                         } else {
-                            echo "<div align=\"center\" class=\"lessonbutton standardbutton\"><a href=\"javascript:document.answerform.submit();\">".
-                                get_string("pleasecheckoneanswer", "lesson")."</a></div>\n";
+                            $linkname = get_string('pleasecheckoneanswer', 'lesson');
                         }
+                        lesson_print_submit_link($linkname, 'answerform');
                         break;
                         
                     case LESSON_MATCHING :
@@ -835,8 +833,7 @@
                         }
                         echo '</table></table>';
                         print_simple_box_end();
-                        echo "<div align=\"center\" class=\"lessonbutton standardbutton\"><a href=\"javascript:document.answerform.submit();\">".
-                            get_string("pleasematchtheabovepairs", "lesson")."</a></div>\n";
+                        lesson_print_submit_link(get_string('pleasematchtheabovepairs', 'lesson'), 'answerform');
                         break;
                     case LESSON_BRANCHTABLE :                        
                         $options = new stdClass;
@@ -910,8 +907,7 @@
                              '<textarea id="answer" name="answer" rows="15" cols="60">'.$value."</textarea>\n";
                         echo '</td></tr></table>';
                         print_simple_box_end();
-                        echo '<div align="center" class="lessonbutton standardbutton"><a href="javascript:document.answerform.submit();">'.
-                             get_string("pleaseenteryouranswerinthebox", "lesson")."</a></div>\n";
+                        lesson_print_submit_link(get_string('pleaseenteryouranswerinthebox', 'lesson'), 'answerform');
                         break;
                 }
                 echo "</form>\n"; 

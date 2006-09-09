@@ -336,6 +336,40 @@ function lesson_print_messages() {
 }
 
 /**
+ * Prints a lesson link that submits a form.
+ *
+ * If Javascript is disabled, then a regular submit button is printed
+ *
+ * @return mixed boolean/html
+ **/
+function lesson_print_submit_link($name, $form, $align = 'center', $class='standardbutton', $title = '', $id = '', $return = false) {
+    if (!empty($id)) {
+        $id = " id=\"$id\"";
+    }
+    if (empty($title)) {
+        $title = $name;
+    }
+    
+    $output = "<div align=\"$align\" class=\"lessonbutton $class\">\n";
+    $output .= "<script type=\"text/javascript\" charset=\"utf-8\">
+                <!--
+                    document.write('<a href=\"javascript: document.$form.submit();\" title=\"$title\"$id>$name</a>');
+                // -->
+                </script>
+                <noscript>
+                <input type=\"submit\" value=\"$name\" align=\"$align\"$id />
+                </noscript>\n";
+    $output .= "</div>\n";
+    
+    if ($return) {
+        return $output;
+    } else {
+        echo $output;
+        return true;
+    }
+}
+
+/**
  * Given some question info and some data about the the answers
  * this function parses, organises and saves the question
  *

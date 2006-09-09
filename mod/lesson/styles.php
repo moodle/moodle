@@ -7,6 +7,19 @@
 }
 
 /***
+ *** Style for view.php
+ ***/
+
+#mod-lesson-view .password-form {
+    text-align: center;
+    margin-top: 20px;
+}
+
+#mod-lesson-view .password-form .submitbutton {
+    display: inline;
+}
+
+/***
  *** Style for essay.php
  ***/
 
