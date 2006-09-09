@@ -402,7 +402,7 @@ function rss_display_feeds($courseid='', $userid='', $rssid='') {
 
     $table->setup();
 
-    $feeds = get_records_select('block_rss_client', $select, 'title');
+    $feeds = get_records_select('block_rss_client', $select, sql_order_by_text('title'));
 
     if(!empty($feeds)) {
         foreach($feeds as $feed) {
