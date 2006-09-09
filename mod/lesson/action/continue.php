@@ -694,8 +694,8 @@
                 }
                 $options = new stdClass;
                 $options->noclean = true;
-                $options->para = false;
-                $feedback = format_text($page->contents, FORMAT_MOODLE, $options);
+                $options->para = true;
+                $feedback = print_simple_box(format_text($page->contents, FORMAT_MOODLE, $options), 'center', '', '', 5, 'generalbox', '', true);
                 $feedback .= '<em>'.get_string("youranswer", "lesson").'</em> : '.format_text($studentanswer, FORMAT_MOODLE, $options).
                                  "<div class=\"$class\">".format_text($response, FORMAT_MOODLE, $options).'</div>';
             }

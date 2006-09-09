@@ -25,7 +25,7 @@ if ($lesson->displayleft) {
             </div>
             </div>
         </td>
-        <td align="center" width="100%">';
+        <td align="center" width="100%">
         <a name="maincontent" id="maincontent" title="<?php print_string('anchortitle', 'lesson') ?>"></a>
 <?php 
     }  // End if($firstpageid = get...
@@ -51,7 +51,7 @@ if ($lesson->displayleft) {
                     </script>
                 </td>
             </tr>
-        </table>";
+        </table>
         <?php print_simple_box_end(); ?>
         <br /><br /><br /><br />
 <?php } //end if($lesson->timed) {
@@ -66,6 +66,7 @@ if ($lesson->ongoing) {
         <td><?php echo $feedback ?></td>
     </tr>
 </table>
+
 <form name="pageform" method ="post" action="view.php">
 <input type="hidden" name="id" value="<?php echo $cm->id ?>" />
 <input type="hidden" name="action" value="navigation" />
