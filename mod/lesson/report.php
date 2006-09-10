@@ -9,20 +9,10 @@
 
     $id     = required_param('id', PARAM_INT);    // Course Module ID
     $pageid = optional_param('pageid', NULL, PARAM_INT);    // Lesson Page ID
-    $action = optional_param('action', 'view', PARAM_ALPHA);  // action to take
+    $action = optional_param('action', 'reportoverview', PARAM_ALPHA);  // action to take
     $nothingtodisplay = false;
 
-    if (! $cm = get_coursemodule_from_id('lesson', $id)) {
-        error('Course Module ID was incorrect');
-    }
-
-    if (! $course = get_record('course', 'id', $cm->course)) {
-        error('Course is misconfigured');
-    }
-
-    if (! $lesson = get_record('lesson', 'id', $cm->instance)) {
-        error('Course module is incorrect');
-    }
+    list($cm, $course, $lesson) = lesson_get_basics($id);
 
     if (! $students = get_records_sql("SELECT DISTINCT u.*
                                  FROM {$CFG->prefix}user u,
@@ -95,39 +85,8 @@
         $times = array();
     }
 
-/// Print the page header
-    $strlessons = get_string('modulenameplural', 'lesson');
+    lesson_print_header($cm, $course, $lesson, $action);
 
-    if ($course->category) {
-        $navigation = '<a href="../../course/view.php?id='. $course->id .'">'. $course->shortname .'</a> ->';
-    }
-    $button = '<form target="'. $CFG->framename .'" method="get" action="'. $CFG->wwwroot .'/course/mod.php">'.
-           '<input type="hidden" name="update" value="'. $cm->id .'" />'.
-           '<input type="hidden" name="sesskey" value="'. $USER->sesskey .'" />'.
-           '<input type="hidden" name="return" value="true" />'.
-           '<input type="submit" value="'. get_string('editlessonsettings', 'lesson') .'" /></form>';
-
-    if ($action == 'view') {
-        $navigationend = get_string("reports", "lesson");
-    } else if ($action == 'detail' and !optional_param('userid', 0, PARAM_INT)) {
-        $navigationend = "<a href=\"report.php?id=$cm->id\">".get_string("reports", "lesson").'</a> -> '.get_string('detailedstats', 'lesson');
-    } else {
-        $navigationend = "<a href=\"report.php?id=$cm->id\">".get_string("reports", "lesson").'</a> -> '.get_string('review', 'lesson');
-    }
-
-    print_header($course->shortname .': '. format_string($lesson->name), $course->fullname,
-                 "$navigation <A HREF=index.php?id=$course->id>$strlessons</A> -> <a href=\"view.php?id=$cm->id\">".format_string($lesson->name,true)."</a>
-                 -> $navigationend", '', '', true, $button, navmenu($course, $cm));
-    
-
-    if (!optional_param('userid', 0, PARAM_INT)) {
-        $currenttab = 'reports';
-        $mode = $action;
-    }
-    include('tabs.php');
-    
-    print_heading_with_help(format_string($lesson->name,true), "overview", "lesson");
-    
     if ($nothingtodisplay) {
         notify(get_string('nolessonattempts', 'lesson'));
         print_footer($course);
@@ -137,7 +96,7 @@
     /**************************************************************************
     this action is for default view and overview view
     **************************************************************************/
-    if ($action == 'view') {
+    if ($action == 'reportoverview') {
         $studentdata = array();
 
         // build an array for output
@@ -226,7 +185,7 @@
                         $temp = '';
                     }
                     
-                    $temp .= "<a href=\"report.php?id=$cm->id&amp;action=detail&amp;userid=".$try['userid'].'&amp;try='.$try['try'].'">';
+                    $temp .= "<a href=\"report.php?id=$cm->id&amp;action=reportdetail&amp;userid=".$try['userid'].'&amp;try='.$try['try'].'">';
                     if ($try["grade"] !== NULL) { // if NULL then not done yet
                         // this is what the link does when the user has completed the try
                         $timetotake = $try["timeend"] - $try["timestart"];
@@ -349,7 +308,7 @@
         4.  Print out the object which contains all the try info
 
     **************************************************************************/
-    else if ($action == 'detail') {
+    else if ($action == 'reportdetail') {
 
         $formattextdefoptions->para = false;  //I'll use it widely in this page
 

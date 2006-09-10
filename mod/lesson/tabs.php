@@ -49,14 +49,16 @@
     $tabs[] = $row;
 
 /// sub tabs for reports (overview and detail)
-    if ($currenttab == 'reports' and isset($mode)) {
-        $inactive[] = 'reports';
-        $currenttab = $mode;
-        
-        $row    = array();
-        $row[]  = new tabobject('view', "$CFG->wwwroot/mod/lesson/report.php?id=$cm->id&amp;action=view", get_string('overview', 'lesson'));
-        $row[]  = new tabobject('detail', "$CFG->wwwroot/mod/lesson/report.php?id=$cm->id&amp;action=detail", get_string('detailedstats', 'lesson'));
-        $tabs[] = $row;
+    switch ($currenttab) {
+        case 'reportoverview':
+        case 'reportdetail':
+            $inactive[] = 'reports';
+
+            $row    = array();
+            $row[]  = new tabobject('reportoverview', "$CFG->wwwroot/mod/lesson/report.php?id=$cm->id&amp;action=reportoverview", get_string('overview', 'lesson'));
+            $row[]  = new tabobject('reportdetail', "$CFG->wwwroot/mod/lesson/report.php?id=$cm->id&amp;action=reportdetail", get_string('detailedstats', 'lesson'));
+            $tabs[] = $row;
+            break;
     }
     
 /// sub tabs for teacher view (collapsed and expanded aka full)
