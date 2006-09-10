@@ -171,8 +171,8 @@ class XMLDBgenerator {
     /// Add the CREATE TABLE to results
         $results[] = $table;
 
-    /// Add comments if specified
-        if ($this->add_table_comments) {
+    /// Add comments if specified and it exists
+        if ($this->add_table_comments && $xmldb_table->getComment()) {
             $comment = $this->getCommentSQL ($xmldb_table);
         /// Add the COMMENT to results
             $results = array_merge($results, $comment);
