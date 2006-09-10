@@ -36,6 +36,7 @@
             }
             if ((($timer->starttime + $lesson->maxtime * 60) - time()) <= 0) {
                 // Out of time
+                lesson_set_message(get_string('eolstudentoutoftime', 'lesson'));
                 redirect("view.php?id=$cm->id&action=navigation&pageid=".LESSON_EOL."&outoftime=normal", get_string("outoftime", "lesson"));
             }
         }

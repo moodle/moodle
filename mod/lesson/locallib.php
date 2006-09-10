@@ -251,6 +251,20 @@ function lesson_print_header($cm, $course, $lesson, $currenttab = '') {
         $button = '';
     }
     
+    if (!optional_param('pageid', 0, PARAM_INT) and !empty($lesson->mediafile)) {
+        // open our pop-up
+        $url = '/mod/lesson/mediafile.php?id='.$cm->id;
+        $name = 'lessonmediafile';
+        $options = 'menubar=0,location=0,left=5,top=5,scrollbars,resizable,width='. $lesson->mediawidth .',height='. $lesson->mediaheight;
+        $meta = "\n<script language=\"javascript\" type=\"text/javascript\">";
+        $meta .= "\n<!--\n";
+        $meta .= "     openpopup('$url', '$name', '$options', 0);";
+        $meta .= "\n-->\n";
+        $meta .= '</script>';
+    } else {
+        $meta = '';
+    }
+    
 /// Header setup
     if ($course->category) {
         $navigation = "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\" title=\"$course->fullname\">$course->shortname</a> ->";
@@ -262,7 +276,7 @@ function lesson_print_header($cm, $course, $lesson, $currenttab = '') {
 /// Print header, heading, tabs and messages
     print_header("$course->shortname: $strname", $course->fullname,
                  "$navigation <a href=\"index.php?id=$course->id\" title=\"$strlessons\">$strlessons</a> -> $strname", 
-                  '', '', true, $button, navmenu($course, $cm));
+                  '', $meta, true, $button, navmenu($course, $cm));
                   
     if (has_capability('mod/lesson:manage')) {
         print_heading_with_help(format_string($lesson->name, true), "overview", "lesson");

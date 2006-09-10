@@ -1,7 +1,13 @@
-<?PHP  // $Id$
-
-/// This page prints a particular instance of lesson
-/// (Replace lesson with the name of your module)
+<?php  // $Id$
+/**
+ * This page prints a particular instance of lesson
+ *
+ * @version $Id$
+ * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+ * @package lesson
+ * @todo Remove action param from other pages (this page no longer processes params)
+ *       Clean up this code!
+ **/
 
     require_once('../../config.php');
     require_once('locallib.php');
@@ -9,7 +15,6 @@
 
     $id      = required_param('id', PARAM_INT);             // Course Module ID
     $pageid  = optional_param('pageid', NULL, PARAM_INT);   // Lesson Page ID
-    $action  = optional_param('action', '', PARAM_ALPHA);
     
     list($cm, $course, $lesson) = lesson_get_basics($id);
 
@@ -18,9 +23,10 @@
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     require_capability('mod/lesson:view', $context);
 
-/// Check these for students only
+/// Check these for students only TODO: Find a better method for doing this!
 ///     Check lesson availability
 ///     Check for password
+///     Check dependencies
 ///     Check for high scores
     if (!has_capability('mod/lesson:manage', $context)) {
 
@@ -62,6 +68,7 @@
             }
 
             if (!$correctpass) {
+                lesson_print_header($cm, $course, $lesson);
                 echo "<div class=\"password-form\">\n";
                 print_simple_box_start('center');
                 echo '<form name="password" method="post" action="view.php">' . "\n";
@@ -78,47 +85,11 @@
                 lesson_print_submit_link(get_string('continue', 'lesson'), 'password', 'center', 'standardbutton submitbutton');
                 print_simple_box_end();
                 echo "</div>\n";
+                print_footer($course);
                 exit();
             }
-        } else if ($lesson->highscores and !$lesson->practice and !optional_param('viewed', 0)) {
-            // Display high scores before starting lesson
-            redirect("$CFG->wwwroot/mod/lesson/highscores.php?id=$cm->id");
-        }
-    }
-    
-    lesson_print_header($cm, $course, $lesson, 'view');
-    
-    // set up some general variables
-    $path = $CFG->wwwroot .'/course';
-
-    // this is called if a student leaves during a lesson
-    if($pageid == LESSON_UNSEENBRANCHPAGE) {
-        $pageid = lesson_unseen_question_jump($lesson->id, $USER->id, $pageid);
-    }
-    
-    // display individual pages and their sets of answers
-    // if pageid is EOL then the end of the lesson has been reached
-           // for flow, changed to simple echo for flow styles, michaelp, moved lesson name and page title down
-   $timedflag = false;
-   $attemptflag = false;
-    if (empty($pageid)) {
-        // make sure there are pages to view
-        if (!get_field('lesson_pages', 'id', 'lessonid', $lesson->id, 'prevpageid', 0)) {
-            if (!has_capability('mod/lesson:manage', $context)) {
-                notify(get_string('lessonnotready', 'lesson', $course->teacher)); // a nice message to the student
-            } else {
-                if (!count_records('lesson_pages', 'lessonid', $lesson->id)) {
-                    redirect('view.php?id='.$cm->id); // no pages - redirect to add pages
-                } else {
-                    notify(get_string('lessonpagelinkingbroken', 'lesson'));  // ok, bad mojo
-                }
-            }
-            print_footer($course);
-            exit();
-        }
         
-        // check for dependencies
-        if ($lesson->dependency and !has_capability('mod/lesson:manage', $context)) {
+        } else if ($lesson->dependency) { // check for dependencies
             if ($dependentlesson = get_record('lesson', 'id', $lesson->dependency)) {
                 // lesson exists, so we can proceed            
                 $conditions = unserialize($lesson->conditions);
@@ -140,7 +111,7 @@
                 } else {
                     $timespent = true; // there isn't one set
                 }
-                
+
                 // check for the gradebetterthan condition
                 if($conditions->gradebetterthan) {
                     if ($studentgrades = get_records_select('lesson_grades', "userid = $USER->id AND lessonid = $dependentlesson->id")) {
@@ -154,7 +125,7 @@
                 } else {
                     $gradebetterthan = true; // there isn't one set
                 }
-            
+
                 // check for the completed condition
                 if ($conditions->completed) {
                     if (count_records('lesson_grades', 'userid', $USER->id, 'lessonid', $dependentlesson->id)) {
@@ -163,7 +134,7 @@
                 } else {
                     $completed = true; // not set
                 }
-            
+
                 $errors = array();
                 // collect all of our error statements
                 if (!$timespent) {
@@ -176,6 +147,7 @@
                     $errors[] = get_string('gradebetterthanerror', 'lesson', $conditions->gradebetterthan);
                 }
                 if (!empty($errors)) {  // print out the errors if any
+                    lesson_print_header($cm, $course, $lesson);
                     echo '<p>';
                     print_simple_box_start('center');
                     print_string('completethefollowingconditions', 'lesson', $dependentlesson->name);
@@ -186,8 +158,41 @@
                     exit();
                 } 
             }
+    
+        } else if ($lesson->highscores and !$lesson->practice and !optional_param('viewed', 0)) { // TODO: THIS DOES NOT WORK!!!!
+            // Display high scores before starting lesson
+            redirect("$CFG->wwwroot/mod/lesson/highscores.php?id=$cm->id");
         }
+    }
+    
+    // set up some general variables
+    $path = $CFG->wwwroot .'/course';
+
+    // this is called if a student leaves during a lesson
+    if($pageid == LESSON_UNSEENBRANCHPAGE) {
+        $pageid = lesson_unseen_question_jump($lesson->id, $USER->id, $pageid);
+    }
+    
+    // display individual pages and their sets of answers
+    // if pageid is EOL then the end of the lesson has been reached
+           // for flow, changed to simple echo for flow styles, michaelp, moved lesson name and page title down
+   $attemptflag = false;
+    if (empty($pageid)) {
+        // make sure there are pages to view
+        if (!get_field('lesson_pages', 'id', 'lessonid', $lesson->id, 'prevpageid', 0)) {
+            if (!has_capability('mod/lesson:manage', $context)) {
+                lesson_set_message(get_string('lessonnotready', 'lesson', $course->teacher)); // a nice message to the student
+            } else {
+                if (!count_records('lesson_pages', 'lessonid', $lesson->id)) {
+                    redirect("$CFG->wwwroot/mod/lesson/lesson.php?id=$cm->id&amp;action=addpage&amp;pageid=0"); // no pages - redirect to add pages
+                } else {
+                    lesson_set_message(get_string('lessonpagelinkingbroken', 'lesson'));  // ok, bad mojo
+                }
+            }
+        }
+        
         add_to_log($course->id, 'lesson', 'start', 'view.php?id='. $cm->id, $lesson->id, $cm->id);
+        
         // if no pageid given see if the lesson has been started
         if ($grades = get_records_select('lesson_grades', 'lessonid = '. $lesson->id .' AND userid = '. $USER->id,
                     'grade DESC')) {
@@ -252,6 +257,7 @@
                         'prevpageid', 0)) {
                 error('Navigation: first page not found');
             }
+            lesson_print_header($cm, $course, $lesson);
             if ($lesson->timed) {
                 if ($lesson->retake) {
                     print_simple_box('<p align="center">'. get_string('leftduringtimed', 'lesson') .'</p>', 'center');
@@ -290,6 +296,7 @@
                 break;
             }
             if (!$lesson->retake) {
+                lesson_print_header($cm, $course, $lesson, 'view');
                 print_simple_box_start('center');
                 echo "<div align=\"center\">";
                 echo get_string("noretake", "lesson");
@@ -322,20 +329,8 @@
                 error('Error: could not insert row into lesson_timer table');
             }
             if ($lesson->timed) {
-                $timedflag = true;
+                lesson_set_message(get_string('maxtimewarning', 'lesson', $lesson->maxtime), 'center');
             }
-        }
-        
-        if (!empty($lesson->mediafile)) {
-            // open our pop-up
-            $url = '/mod/lesson/mediafile.php?id='.$cm->id;
-            $name = 'lessonmediafile';
-            $options = 'menubar=0,location=0,left=5,top=5,scrollbars,resizable,width='. $lesson->mediawidth .',height='. $lesson->mediaheight;
-            echo "\n<script language=\"javascript\" type=\"text/javascript\">";
-            echo "\n<!--\n";
-            echo "     openpopup('$url', '$name', '$options', 0);";
-            echo "\n-->\n";
-            echo '</script>';
         }
     }
     
@@ -359,6 +354,7 @@
         }
         
         add_to_log($course->id, 'lesson', 'view', 'view.php?id='. $cm->id, $pageid, $cm->id);
+        
         if (!$page = get_record('lesson_pages', 'id', $pageid)) {
             error('Navigation: the page record not found');
         }
@@ -394,48 +390,6 @@
             $lesson->displayleft = lesson_displayleftif($lesson);
         }
         
-        // start of left menu
-        if ($lesson->displayleft) {
-           echo '<table><tr valign="top"><td>';
-           // skip navigation link
-           echo '<a href="#maincontent" class="skip">'.get_string('skip', 'lesson').'</a>';
-           if($firstpageid = get_field('lesson_pages', 'id', 'lessonid', $lesson->id, 'prevpageid', 0)) {
-                    // print the pages
-                    echo "<div class=\"leftmenu_container\">\n";
-                        echo '<div class="leftmenu_title">'.get_string('lessonmenu', 'lesson')."</div>\n";
-                        echo '<div class="leftmenu_courselink">';
-                        echo "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">".get_string("mainmenu", "lesson")."</a>\n";
-                        echo "</div>\n";
-                        echo "<div class=\"leftmenu_links\">\n";
-                        lesson_print_tree_menu($lesson->id, $firstpageid, $cm->id);
-                        echo "</div>\n";
-                    echo "</div>\n";
-            }
-            if ($page->qtype == LESSON_BRANCHTABLE) {
-                $width = '';
-            } else {
-                $width = ' width="100%" ';
-            }
-            echo '</td><td align="center" '.$width.'>';
-            // skip to anchor
-            echo '<a name="maincontent" id="maincontent" title="'.get_string('anchortitle', 'lesson').'"></a>';
-        } elseif ($lesson->slideshow && $page->qtype == LESSON_BRANCHTABLE) {
-            echo '<table align="center"><tr><td>';  // only want this if no left menu
-        }
-
-        // starts the slideshow div
-        if($lesson->slideshow && $page->qtype == LESSON_BRANCHTABLE) { 
-            echo "<table align=\"center\" width=\"100%\" border=\"0\"><tr><td>\n".
-                 "<div class=\"slideshow\" style=\"
-                    background-color: $lesson->bgcolor;
-                    height: ".$lesson->height."px;
-                    width: ".$lesson->width."px;
-                    \">\n";
-        } else {
-            echo "<table align=\"center\" width=\"100%\" border=\"0\"><tr><td>\n";
-            $lesson->slideshow = false; // turn off slide show for all pages other than LESSON_BRANTCHTABLE
-        }
-
         // This is where several messages (usually warnings) are displayed
         // all of this is displayed above the actual page
         
@@ -443,10 +397,10 @@
             $url = '/mod/lesson/mediafile.php?id='.$cm->id;
             $options = 'menubar=0,location=0,left=5,top=5,scrollbars,resizable,width='. $lesson->mediawidth .',height='. $lesson->mediaheight;
             $name = 'lessonmediafile';
-            echo '<div align="right">';
-            link_to_popup_window ($url, $name, get_string('mediafilepopup', 'lesson'), '', '', get_string('mediafilepopup', 'lesson'), $options);
-            helpbutton("mediafilestudent", get_string("mediafile", "lesson"), "lesson");
-            echo '</div>';
+            $medialink = link_to_popup_window ($url, $name, get_string('mediafilepopup', 'lesson'), '', '', get_string('mediafilepopup', 'lesson'), $options, true);
+            $medialink .= helpbutton("mediafilestudent", get_string("mediafile", "lesson"), "lesson", true, false, '', true);
+        } else {
+            $medialink = '';
         }
         // clock code
         // get time information for this user
@@ -471,34 +425,16 @@
         // for timed lessons, display clock
         if ($lesson->timed) {
             if(has_capability('mod/lesson:manage', $context)) {
-                echo '<p align="center">'. get_string('teachertimerwarning', 'lesson') .'<p>';
+                lesson_set_message(get_string('teachertimerwarning', 'lesson'));
             } else {
-                if ((($timer->starttime + $lesson->maxtime * 60) - time()) > 0) {
-                    // code for the clock
-                    echo '<table align="right" width="150px" class="generaltable generalbox" cellspacing="0" cellpadding="5px" border="0" valign="top">'.
-                        "<tr><th valign=\"top\" class=\"header\">".get_string("timeremaining", "lesson").
-                        "</th></tr><tr><td align=\"center\" class=\"c0\">";
-                    echo "<script language=\"javascript\">\n";
-                        echo "var starttime = ". $timer->starttime . ";\n";
-                        echo "var servertime = ". time() . ";\n";
-                        echo "var testlength = ". $lesson->maxtime * 60 .";\n";
-                        echo "document.write('<script type=\"text/javascript\" src=\"$CFG->wwwroot/mod/lesson/timer.js\"><\/script>');\n";
-                        echo "window.onload = function () { show_clock(); }\n";
-                    echo "</script>\n";
-                    echo '<noscript>'.lesson_print_time_remaining($timer->starttime, $lesson->maxtime, true)."</noscript>\n";
-                    echo "</td></tr></table>";
-                    echo "<br /><br /><br />";
-                } else {
+                if ((($timer->starttime + $lesson->maxtime * 60) - time()) <= 0) {
+                    lesson_set_message(get_string('eolstudentoutoftime', 'lesson'));
                     redirect("view.php?id=$cm->id&amp;action=navigation&amp;pageid=".LESSON_EOL."&amp;outoftime=normal", get_string("outoftime", "lesson"));
                 }
                 // update clock when viewing a new page... no special treatment
                 if ((($timer->starttime + $lesson->maxtime * 60) - time()) < 60) {
-                    echo "<p align=\"center\">".get_string('studentoneminwarning', 'lesson')."</p>";
+                    lesson_set_message(get_string('studentoneminwarning', 'lesson'));
                 }    
-                
-                if ($timedflag) {
-                    print_simple_box(get_string('maxtimewarning', 'lesson', $lesson->maxtime), 'center');
-                }
             }
         }
 
@@ -508,10 +444,6 @@
             if (!update_record('lesson_timer', $timer)) {
                 error('Error: could not update lesson_timer table');
             }
-        }
-        
-        if ($attemptflag) {
-            print_heading(get_string('attempt', 'lesson', $retries + 1));
         }
                     
         // before we output everything check to see if the page is a EOB, if so jump directly 
@@ -544,11 +476,9 @@
                     } else if ($answer->jumpto == LESSON_PREVIOUSPAGE) {
                         $answer->jumpto = $page->prevpageid;                            
                     }
-                    redirect("view.php?id=$cm->id&amp;action=navigation&amp;pageid=$answer->jumpto");// REMOVED: , get_string("endofbranch", "lesson")
+                    redirect("view.php?id=$cm->id&amp;action=navigation&amp;pageid=$answer->jumpto");
                     break;
                 } 
-                print_footer($course);
-                exit();
             } else {
                 error('Navigation: No answers on EOB');
             }
@@ -559,13 +489,8 @@
             if (lesson_display_teacher_warning($lesson->id)) {
                 $warningvars->cluster = get_string('clusterjump', 'lesson');
                 $warningvars->unseen = get_string('unseenpageinbranch', 'lesson');
-                echo '<p align="center">'. get_string('teacherjumpwarning', 'lesson', $warningvars) .'</p>';
+                lesson_set_message(get_string('teacherjumpwarning', 'lesson', $warningvars));
             }
-        }
-        
-        /// This calculates and prints the ongoing score
-        if ($lesson->ongoing and !empty($pageid)) {
-            lesson_print_ongoing_score($lesson);
         }
         
         if ($page->qtype == LESSON_BRANCHTABLE) {
@@ -576,29 +501,30 @@
                 $gradeinfo = lesson_grade($lesson, $ntries);
                 
                 if ($gradeinfo->attempts) {
-                    echo "<p align=\"center\">".get_string("numberofpagesviewed", "lesson", $gradeinfo->nquestions).
-                            "; (".get_string("youshouldview", "lesson", $lesson->minquestions).")<br />";
-                    // count the number of distinct correct pages
                     if ($gradeinfo->nquestions < $lesson->minquestions) {
-                        $gradeinfo->nquestions = $lesson->minquestions;
+                        $a = new stdClass;
+                        $a->nquestions   = $gradeinfo->nquestions;
+                        $a->minquestions = $lesson->minquestions;
+                        lesson_set_message(get_string('numberofpagesviewednotice', 'lesson', $a));
                     }
-                    echo get_string("numberofcorrectanswers", "lesson", $gradeinfo->earned)."<br />\n";
-                    echo get_string("yourcurrentgradeis", "lesson", 
-                            number_format($gradeinfo->grade * $lesson->grade / 100, 1)).
-                        " (".get_string("outof", "lesson", $lesson->grade).")</p>\n";
+                    lesson_set_message(get_string("numberofcorrectanswers", "lesson", $gradeinfo->earned), 'notify');
+                    $a = new stdClass;
+                    $a->grade = number_format($gradeinfo->grade * $lesson->grade / 100, 1);
+                    $a->total = $lesson->grade;
+                    lesson_set_message(get_string('yourcurrentgradeisoutof', 'lesson', $a), 'notify');
                 }
             }
         }
-           
+         
+        lesson_print_header($cm, $course, $lesson, 'view');
+        require($CFG->dirroot.'/mod/lesson/viewstart.html');
+
         // now starting to print the page's contents   
-        echo "<div align=\"center\">";            
-        echo "<em><strong>";
-        echo format_string($lesson->name) . "</strong></em>";
         if ($page->qtype == LESSON_BRANCHTABLE) {
-            echo ":<br />";
             print_heading(format_string($page->title));
+        } else {
+            $lesson->slideshow = false; // turn off slide show for all pages other than LESSON_BRANTCHTABLE
         }
-        echo "</div><br />";
         
         if (!$lesson->slideshow) {
             $options = new stdClass;
@@ -607,7 +533,6 @@
                             format_text($page->contents, FORMAT_MOODLE, $options).
                             '</div>', 'center');
         }
-        echo "<br />\n";
         
         // this is for modattempts option.  Find the users previous answer to this page,
         //   and then display it below in answer processing
@@ -894,18 +819,15 @@
                  get_string("continue", "lesson")."\" /></p>\n";
             echo "</form>\n";
         }
+        
+        // Finish of the page
         lesson_print_progress_bar($lesson, $course);
-        echo "</table>\n"; 
+        require($CFG->dirroot.'/mod/lesson/viewend.html');
     } else {
         // end of lesson reached work out grade
         
-        // check to see if the student ran out of time
+        // Used to check to see if the student ran out of time
         $outoftime = optional_param('outoftime', '', PARAM_ALPHA);
-        if ($lesson->timed && !has_capability('mod/lesson:manage', $context)) {
-            if ($outoftime == 'normal') {
-                print_simple_box(get_string("eolstudentoutoftime", "lesson"), "center");
-            }
-        }
 
         // Update the clock / get time information for this user
         if (!has_capability('mod/lesson:manage', $context)) {
@@ -923,6 +845,8 @@
         }
         
         add_to_log($course->id, "lesson", "end", "view.php?id=$cm->id", "$lesson->id", $cm->id);
+        
+        lesson_print_header($cm, $course, $lesson, 'view');
         print_heading(get_string("congratulations", "lesson"));
         print_simple_box_start("center");
         $ntries = count_records("lesson_grades", "lessonid", $lesson->id, "userid", $USER->id);
@@ -1087,10 +1011,6 @@
         echo "<div align=\"center\" style=\"padding: 5px;\" class=\"lessonbutton standardbutton\"><a href=\"../../course/view.php?id=$course->id\">".get_string("mainmenu", "lesson")."</a></div>\n"; // Back to the menu (course view).
         echo "<div align=\"center\" style=\"padding: 5px;\" class=\"lessonbutton standardbutton\"><a href=\"../../grade/index.php?id=$course->id\">".get_string("viewgrades", "lesson")."</a></div>\n"; //view grades
     }
-    
-    if ($lesson->displayleft || $lesson->slideshow) {  // this ends the table cell and table for the leftmenu or for slideshow
-        echo "</td></tr></table>";
-    } 
 
 /// Finish the page
     print_footer($course);
