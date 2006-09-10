@@ -55,7 +55,12 @@ $CFG->pagepath = 'admin/setting/'.$section;
 
 if ($data = data_submitted()) {
     if (confirm_sesskey()) {
+        $olddbsessions = !empty($CFG->dbsessions);
         $errors = $root->write_settings((array)$data);
+        //force logout if dbsession setting changes
+        if ($olddbsessions != !empty($CFG->dbsessions)) {
+            require_logout();
+        }
         if (empty($errors)) {
             switch ($return) {
                 case 'site':
