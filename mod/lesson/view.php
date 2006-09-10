@@ -5,8 +5,7 @@
  * @version $Id$
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package lesson
- * @todo Remove action param from other pages (this page no longer processes params)
- *       Clean up this code!
+ * @todo Clean up this code!
  **/
 
     require_once('../../config.php');
@@ -811,8 +810,7 @@
                 }
             }
             echo "<input type=\"hidden\" name=\"pageid\" value=\"$newpageid\" />\n";
-            echo "<p align=\"center\"><input type=\"submit\" name=\"continue\" value=\"".
-                 get_string("continue", "lesson")."\" /></p>\n";
+            lesson_print_submit_link(get_string('continue', 'lesson'), 'pageform');
             echo "</form>\n";
         }
         
@@ -877,9 +875,10 @@
                 } else {
                     echo "<div align=\"center\">".get_string("displayscorewithoutessays", "lesson", $a)."</div>";                        
                 }
-                echo "<p align=\"center\">".get_string("gradeis", "lesson", 
-                        number_format($gradeinfo->grade * $lesson->grade / 100, 1)).
-                    " (".get_string("outof", "lesson", $lesson->grade).")</p>\n";
+                $a = new stdClass;
+                $a->grade = number_format($gradeinfo->grade * $lesson->grade / 100, 1);
+                $a->total = $lesson->grade;
+                echo "<p align=\"center\">".get_string('yourcurrentgradeisoutof', 'lesson', $a)."</p>\n";
                     
                 $grade->lessonid = $lesson->id;
                 $grade->userid = $USER->id;
