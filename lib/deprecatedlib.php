@@ -554,4 +554,358 @@ function get_user_info_from_db($field, $value) {  // For backward compatibility
     return get_complete_user_data($field, $value);
 }
 
+
+/**
+ * Get the guest user information from the database
+ *
+ * @return object(user) An associative array with the details of the guest user account.
+ * @todo Is object(user) a correct return type? Or is array the proper return type with a note that the contents include all details for a user.
+ */
+function get_guest() {
+    return get_complete_user_data('username', 'guest');
+}
+
+
+/**
+ * Returns list of all creators
+ *
+ * @uses $CFG
+ * @return object
+ */
+function get_creators() {
+
+    global $CFG;
+
+    return get_records_sql("SELECT u.*
+                              FROM {$CFG->prefix}user u,
+                                   {$CFG->prefix}user_coursecreators a
+                             WHERE a.userid = u.id
+                             ORDER BY u.id ASC");
+}
+
+/**
+ * Returns $user object of the main teacher for a course
+ *
+ * @uses $CFG
+ * @param int $courseid The course in question.
+ * @return user|false  A {@link $USER} record of the main teacher for the specified course or false if error.
+ * @todo Finish documenting this function
+ */
+function get_teacher($courseid) {
+
+    global $CFG;
+
+    if ( $teachers = get_course_teachers($courseid, 't.authority ASC')) {
+        foreach ($teachers as $teacher) {
+            if ($teacher->authority) {
+                return $teacher;   // the highest authority teacher
+            }
+        }
+    } else {
+        return false;
+    }
+}
+
+/**
+ * Searches logs to find all enrolments since a certain date
+ *
+ * used to print recent activity
+ *
+ * @uses $CFG
+ * @param int $courseid The course in question.
+ * @return object|false  {@link $USER} records or false if error.
+ * @todo Finish documenting this function
+ */
+function get_recent_enrolments($courseid, $timestart) {
+
+    global $CFG;
+
+    return get_records_sql("SELECT DISTINCT u.id, u.firstname, u.lastname, l.time
+                            FROM {$CFG->prefix}user u,
+                                 {$CFG->prefix}user_students s,
+                                 {$CFG->prefix}log l
+                            WHERE l.time > '$timestart'
+                              AND l.course = '$courseid'
+                              AND l.module = 'course'
+                              AND l.action = 'enrol'
+                              AND l.info = u.id
+                              AND u.id = s.userid
+                              AND s.course = '$courseid'
+                              ORDER BY l.time ASC");
+}
+
+/**
+ * Returns array of userinfo of all students in this course
+ * or on this site if courseid is id of site
+ *
+ * @uses $CFG
+ * @uses SITEID
+ * @param int $courseid The course in question.
+ * @param string $sort ?
+ * @param string $dir ?
+ * @param int $page ?
+ * @param int $recordsperpage ?
+ * @param string $firstinitial ?
+ * @param string $lastinitial ?
+ * @param ? $group ?
+ * @param string $search ?
+ * @param string $fields A comma separated list of fields to be returned from the chosen table.
+ * @param string $exceptions ?
+ * @return object
+ * @todo Finish documenting this function
+ */
+function get_course_students($courseid, $sort='s.timeaccess', $dir='', $page=0, $recordsperpage=99999,
+                             $firstinitial='', $lastinitial='', $group=NULL, $search='', $fields='', $exceptions='') {
+
+    global $CFG;
+
+    if ($courseid == SITEID and $CFG->allusersaresitestudents) {
+        // return users with confirmed, undeleted accounts who are not site teachers
+        // the following is a mess because of different conventions in the different user functions
+        $sort = str_replace('s.timeaccess', 'lastaccess', $sort); // site users can't be sorted by timeaccess
+        $sort = str_replace('timeaccess', 'lastaccess', $sort); // site users can't be sorted by timeaccess
+        $sort = str_replace('u.', '', $sort); // the get_user function doesn't use the u. prefix to fields
+        $fields = str_replace('u.', '', $fields);
+        if ($sort) {
+            $sort = $sort .' '. $dir;
+        }
+        // Now we have to make sure site teachers are excluded
+        if ($teachers = get_records('user_teachers', 'course', SITEID)) {
+            foreach ($teachers as $teacher) {
+                $exceptions .= ','. $teacher->userid;
+            }
+            $exceptions = ltrim($exceptions, ',');
+        }
+        return get_users(true, $search, true, $exceptions, $sort, $firstinitial, $lastinitial,
+                          $page, $recordsperpage, $fields ? $fields : '*');
+    }
+
+    $limit     = sql_paging_limit($page, $recordsperpage);
+    $LIKE      = sql_ilike();
+    $fullname  = sql_fullname('u.firstname','u.lastname');
+
+    $groupmembers = '';
+
+    // make sure it works on the site course
+    $select = 's.course = \''. $courseid .'\' AND ';
+    if ($courseid == SITEID) {
+        $select = '';
+    }
+
+    $select .= 's.userid = u.id AND u.deleted = \'0\' ';
+
+    if (!$fields) {
+        $fields = 'u.id, u.confirmed, u.username, u.firstname, u.lastname, '.
+                  'u.maildisplay, u.mailformat, u.maildigest, u.email, u.city, '.
+                  'u.country, u.picture, u.idnumber, u.department, u.institution, '.
+                  'u.emailstop, u.lang, u.timezone, s.timeaccess as lastaccess';
+    }
+
+    if ($search) {
+        $search = ' AND ('. $fullname .' '. $LIKE .'\'%'. $search .'%\' OR email '. $LIKE .'\'%'. $search .'%\') ';
+    }
+
+    if ($firstinitial) {
+        $select .= ' AND u.firstname '. $LIKE .'\''. $firstinitial .'%\' ';
+    }
+
+    if ($lastinitial) {
+        $select .= ' AND u.lastname '. $LIKE .'\''. $lastinitial .'%\' ';
+    }
+
+    if ($group === 0) {   /// Need something here to get all students not in a group
+        return array();
+
+    } else if ($group !== NULL) {
+        $groupmembers = ', '. $CFG->prefix .'groups_members gm ';
+        $select .= ' AND u.id = gm.userid AND gm.groupid = \''. $group .'\'';
+    }
+
+    if (!empty($exceptions)) {
+        $select .= ' AND u.id NOT IN ('. $exceptions .')';
+    }
+
+    if ($sort) {
+        $sort = ' ORDER BY '. $sort .' ';
+    }
+
+    $students = get_records_sql("SELECT $fields
+                            FROM {$CFG->prefix}user u,
+                                 {$CFG->prefix}user_students s
+                                 $groupmembers
+                            WHERE $select $search $sort $dir $limit");
+
+    if ($courseid != SITEID) {
+        return $students;
+    }
+
+    // We are here because we need the students for the site.
+    // These also include teachers on real courses minus those on the site
+    if ($teachers = get_records('user_teachers', 'course', SITEID)) {
+        foreach ($teachers as $teacher) {
+            $exceptions .= ','. $teacher->userid;
+        }
+        $exceptions = ltrim($exceptions, ',');
+        $select .= ' AND u.id NOT IN ('. $exceptions .')';
+    }
+    if (!$teachers = get_records_sql("SELECT $fields
+                            FROM {$CFG->prefix}user u,
+                                 {$CFG->prefix}user_teachers s
+                                 $groupmembers
+                            WHERE $select $search $sort $dir $limit")) {
+        return $students;
+    }
+    if (!$students) {
+        return $teachers;
+    }
+    return $teachers + $students;
+}
+
+
+/**
+ * Counts the students in a given course (or site), or a subset of them
+ *
+ * @param object $course The course in question as a course object.
+ * @param string $search ?
+ * @param string $firstinitial ? 
+ * @param string $lastinitial ?
+ * @param ? $group ?
+ * @param string $exceptions ? 
+ * @return int
+ * @todo Finish documenting this function
+ */
+function count_course_students($course, $search='', $firstinitial='', $lastinitial='', $group=NULL, $exceptions='') {
+
+    if ($students = get_course_students($course->id, '', '', 0, 999999, $firstinitial, $lastinitial, $group, $search, '', $exceptions)) {
+        return count($students);
+    }
+    return 0;
+}
+
+
+/**
+ * Returns list of all teachers in this course
+ *
+ * If $courseid matches the site id then this function
+ * returns a list of all teachers for the site.
+ *
+ * @uses $CFG
+ * @param int $courseid The course in question.
+ * @param string $sort ?
+ * @param string $exceptions ? 
+ * @return object
+ * @todo Finish documenting this function
+ */
+function get_course_teachers($courseid, $sort='t.authority ASC', $exceptions='') {
+
+    global $CFG;
+
+    if (!empty($exceptions)) {
+        $exceptions = ' AND u.id NOT IN ('. $exceptions .') ';
+    }
+
+    if (!empty($sort)) {
+        $sort = ' ORDER by '.$sort;
+    }
+
+    return get_records_sql("SELECT u.id, u.username, u.firstname, u.lastname, u.maildisplay, u.mailformat, u.maildigest,
+                                   u.email, u.city, u.country, u.lastlogin, u.picture, u.lang, u.timezone,
+                                   u.emailstop, t.authority,t.role,t.editall,t.timeaccess as lastaccess
+                            FROM {$CFG->prefix}user u,
+                                 {$CFG->prefix}user_teachers t
+                            WHERE t.course = '$courseid' AND t.userid = u.id
+                              AND u.deleted = '0' AND u.confirmed = '1' $exceptions $sort");
+}
+
+/**
+ * Returns all the users of a course: students and teachers
+ *
+ * @param int $courseid The course in question.
+ * @param string $sort ?
+ * @param string $exceptions ?
+ * @param string $fields A comma separated list of fields to be returned from the chosen table.
+ * @return object
+ * @todo Finish documenting this function
+ */
+function get_course_users($courseid, $sort='timeaccess DESC', $exceptions='', $fields='') {
+
+    /// Using this method because the single SQL is too inefficient
+    // Note that this has the effect that teachers and students are
+    // sorted individually. Returns first all teachers, then all students
+
+    if (!$teachers = get_course_teachers($courseid, $sort, $exceptions)) {
+        $teachers = array();
+    }
+    if (!$students = get_course_students($courseid, $sort, '', 0, 99999, '', '', NULL, '', $fields, $exceptions)) {
+        $students = array();
+    }
+
+    return $teachers + $students;
+
+}
+
+
+
+/**
+ * Returns an array of user objects
+ *
+ * @uses $CFG
+ * @param int $groupid The group(s) in question.
+ * @param string $sort How to sort the results
+ * @return object (changed to groupids)
+ */
+function get_group_students($groupids, $sort='u.lastaccess DESC') {
+
+    global $CFG;
+
+    if (is_array($groupids)){
+        $groups = $groupids;
+        $groupstr = '(m.groupid = '.array_shift($groups);
+        foreach ($groups as $index => $value){
+            $groupstr .= ' OR m.groupid = '.$value;
+        }
+        $groupstr .= ')';
+    }
+    else {
+        $groupstr = 'm.groupid = '.$groupids;
+    }
+
+    return get_records_sql("SELECT DISTINCT u.*
+                              FROM {$CFG->prefix}user u,
+                                   {$CFG->prefix}groups_members m,
+                                   {$CFG->prefix}groups g,
+                                   {$CFG->prefix}user_students s
+                             WHERE $groupstr
+                               AND m.userid = u.id
+                               AND m.groupid = g.id
+                               AND g.courseid = s.course
+                               AND s.userid = u.id
+                          ORDER BY $sort");
+}
+
+/**
+ * Returns list of all the teachers who can access a group
+ *
+ * @uses $CFG
+ * @param int $courseid The course in question.
+ * @param int $groupid The group in question.
+ * @return object
+ */
+function get_group_teachers($courseid, $groupid) {
+/// Returns a list of all the teachers who can access a group
+    if ($teachers = get_course_teachers($courseid)) {
+        foreach ($teachers as $key => $teacher) {
+            if ($teacher->editall) {             // These can access anything
+                continue;
+            }
+            if (($teacher->authority > 0) and ismember($groupid, $teacher->id)) {  // Specific group teachers
+                continue;
+            }
+            unset($teachers[$key]);
+        }
+    }
+    return $teachers;
+}
+
+
 ?>
