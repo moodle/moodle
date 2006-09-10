@@ -17,7 +17,7 @@
         error("Course id is incorrect.");
     }
 
-    require_capability('moodle/site:viewreports', get_context_instance(CONTEXT_COURSE, $courseid));
+    require_capability('moodle/site:viewreports', get_context_instance(CONTEXT_COURSE, $course->id));
 
     add_to_log($course->id, "course", "report outline", "report/outline/index.php?id=$course->id", $course->id); 
 
