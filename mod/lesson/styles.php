@@ -1,9 +1,13 @@
 /***
- *** Style for page contents (display to student)
+ *** General styles (scope: all of lesson)
  ***/
  
 .mod-lesson .contents {
     text-align: left;
+}
+
+.mod-lesson .addlinks {
+    font-size: .8em;
 }
 
 /***

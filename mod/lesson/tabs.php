@@ -61,6 +61,7 @@
             break;
         case 'collapsed':
         case 'full':
+        case 'single':
         /// sub tabs for edit view (collapsed and expanded aka full)
             $inactive[] = 'edit';
             

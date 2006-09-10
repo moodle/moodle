@@ -210,12 +210,13 @@ if (!defined("LESSON_RESPONSE_EDITOR")) {
 /**
  * Print the standard header for lesson module
  *
+ * @uses $CFG
+ * @uses $USER
  * @param object $cm Course module record object
  * @param object $course Couse record object
  * @param object $lesson Lesson module record object
  * @param string $currenttab Current tab for the lesson tabs
- * @param boolean $printheading Print the a heading with the lesson name
- * @return void
+ * @return boolean
  **/
 function lesson_print_header($cm, $course, $lesson, $currenttab = '') {
     global $CFG, $USER;
@@ -289,6 +290,8 @@ function lesson_print_header($cm, $course, $lesson, $currenttab = '') {
     }
     
     lesson_print_messages();
+    
+    return true;
 }
 
 /**
@@ -382,6 +385,13 @@ function lesson_print_messages() {
  *
  * If Javascript is disabled, then a regular submit button is printed
  *
+ * @param string $name Name of the link or button
+ * @param string $form The name of the form to be submitted
+ * @param string $align Alignment of the button
+ * @param string $class Class names to add to the div wrapper
+ * @param string $title Title for the link (Not used if javascript is disabled)
+ * @param string $id ID tag
+ * @param boolean $return Return flag
  * @return mixed boolean/html
  **/
 function lesson_print_submit_link($name, $form, $align = 'center', $class='standardbutton', $title = '', $id = '', $return = false) {
@@ -446,6 +456,169 @@ function lesson_print_time_remaining($starttime, $maxtime, $return = false) {
         echo $output;
         return true;
     }
+}
+
+/**
+ * Prints the page action buttons
+ *
+ * Move/Edit/Preview/Delete
+ *
+ * @uses $CFG
+ * @param int $cmid Course Module ID
+ * @param int $pageid Page record ID for which the actions affect
+ * @param boolean $printmove Flag to print the move button or not
+ * @param boolean $return Return flag
+ * @return mixed boolean/string
+ **/
+function lesson_print_page_actions($cmid, $pageid, $printmove, $return = false) {
+    global $CFG;
+    
+    $context = get_context_instance(CONTEXT_MODULE, $cmid);
+    $actions = array();
+    
+    if (has_capability('mod/lesson:edit', $context)) {
+        if ($printmove) {
+            $actions[] = "<a title=\"".get_string('move')."\" href=\"$CFG->wwwroot/mod/lesson/lesson.php?id=$cmid&action=move&pageid=$pageid\">
+                          <img src=\"$CFG->pixpath/t/move.gif\" height=\"11\" width=\"11\" alt=\"".get_string('move')."\" border=\"0\" /></a>\n";
+        }
+        $actions[] = "<a title=\"".get_string('update')."\" href=\"$CFG->wwwroot/mod/lesson/lesson.php?id=$cmid&amp;action=editpage&amp;pageid=$pageid\">
+                      <img src=\"$CFG->pixpath/t/edit.gif\" height=\"11\" width=\"11\" alt=\"".get_string('update')."\" border=\"0\" /></a>\n";
+        
+        $actions[] = "<a title=\"".get_string('preview')."\" href=\"$CFG->wwwroot/mod/lesson/view.php?id=$cmid&amp;pageid=$pageid\">
+                      <img src=\"$CFG->pixpath/t/preview.gif\" height=\"11\" width=\"11\" alt=\"".get_string('preview')."\" border=\"0\" /></a>\n";
+        
+        $actions[] = "<a title=\"".get_string('delete')."\" href=\"$CFG->wwwroot/mod/lesson/lesson.php?id=$cmid&amp;sesskey=".sesskey()."&amp;action=confirmdelete&amp;pageid=$pageid\">
+                      <img src=\"$CFG->pixpath/t/delete.gif\" height=\"11\" width=\"11\" alt=\"".get_string('delete')."\" border=\"0\" /></a>\n";
+        
+    }
+    
+    $actions = implode(' ', $actions);
+    
+    if ($return) {
+        return $actions;
+    } else {
+        echo $actions;
+        return false;
+    }
+}
+
+/**
+ * Prints the add links in expanded view or single view when editing
+ *
+ * @uses $CFG
+ * @param int $cmid Course Module ID
+ * @param int $prevpageid Previous page id
+ * @param boolean $return Return flag
+ * @return mixed boolean/string
+ * @todo &amp;pageid does not make sense, it is prevpageid
+ **/
+function lesson_print_add_links($cmid, $prevpageid, $return = false) {
+    global $CFG;
+    
+    $context = get_context_instance(CONTEXT_MODULE, $cmid);
+    
+    $links = '';
+    if (has_capability('mod/lesson:edit', $context)) {
+        $links = array();
+        $links[] = "<a href=\"$CFG->wwwroot/mod/lesson/import.php?id=$cmid&amp;pageid=$prevpageid\">".
+                    get_string('importquestions', 'lesson').'</a>';
+        
+        $links[] = "<a href=\"$CFG->wwwroot/mod/lesson/lesson.php?id=$cmid&amp;sesskey=".sesskey()."&amp;action=addcluster&amp;pageid=$prevpageid\">".
+                    get_string('addcluster', 'lesson').'</a>';
+        
+        if ($prevpageid != 0) {
+            $links[] = "<a href=\"$CFG->wwwroot/mod/lesson/lesson.php?id=$cmid&amp;sesskey=".sesskey()."&amp;action=addendofcluster&amp;pageid=$prevpageid\">".
+                        get_string('addendofcluster', 'lesson').'</a>';
+        }
+        $links[] = "<a href=\"$CFG->wwwroot/mod/lesson/lesson.php?id=$cmid&amp;action=addbranchtable&amp;pageid=$prevpageid\">".
+                    get_string('addabranchtable', 'lesson').'</a>';
+        
+        if ($prevpageid != 0) {
+            $links[] = "<a href=\"$CFG->wwwroot/mod/lesson/lesson.php?id=$cmid&amp;sesskey=".sesskey()."&amp;action=addendofbranch&amp;pageid=$prevpageid\">".
+                        get_string('addanendofbranch', 'lesson').'</a>';
+        }
+        
+        $links[] = "<a href=\"$CFG->wwwroot/mod/lesson/lesson.php?id=$cmid&amp;action=addpage&amp;pageid=$prevpageid\">".
+                    get_string('addaquestionpagehere', 'lesson').'</a>';
+        
+        $links = implode(" | \n", $links);
+        $links = "\n<div class=\"addlinks\">\n$links\n</div>\n";
+    }
+
+    if ($return) {
+        return $links;
+    } else {
+        echo $links;
+        return true;
+    }
+}
+
+/**
+ * Returns the string for a page type
+ *
+ * @uses $LESSON_QUESTION_TYPE
+ * @param int $qtype Page type
+ * @return string
+ **/
+function lesson_get_qtype_name($qtype) {
+    global $LESSON_QUESTION_TYPE;
+    switch ($qtype) {
+        case LESSON_ESSAY :
+        case LESSON_SHORTANSWER :
+        case LESSON_MULTICHOICE :
+        case LESSON_MATCHING :
+        case LESSON_TRUEFALSE :
+        case LESSON_NUMERICAL :
+            return $LESSON_QUESTION_TYPE[$qtype];
+            break;
+        case LESSON_BRANCHTABLE :    
+            return get_string("branchtable", "lesson");
+            break;
+        case LESSON_ENDOFBRANCH :
+            return get_string("endofbranch", "lesson");
+            break;
+        case LESSON_CLUSTER :
+            return get_string("clustertitle", "lesson");
+            break;
+        case LESSON_ENDOFCLUSTER :
+            return get_string("endofclustertitle", "lesson");
+            break;
+        default:
+            return '';
+            break;
+    }
+}
+
+/**
+ * Returns the string for a jump name
+ *
+ * @param int $jumpto Jump code or page ID
+ * @return string
+ **/
+function lesson_get_jump_name($jumpto) {
+    if ($jumpto == 0) {
+        $jumptitle = get_string('thispage', 'lesson');
+    } elseif ($jumpto == LESSON_NEXTPAGE) {
+        $jumptitle = get_string('nextpage', 'lesson');
+    } elseif ($jumpto == LESSON_EOL) {
+        $jumptitle = get_string('endoflesson', 'lesson');
+    } elseif ($jumpto == LESSON_UNSEENBRANCHPAGE) {
+        $jumptitle = get_string('unseenpageinbranch', 'lesson');
+    } elseif ($jumpto == LESSON_PREVIOUSPAGE) {
+        $jumptitle = get_string('previouspage', 'lesson');
+    } elseif ($jumpto == LESSON_RANDOMPAGE) {
+        $jumptitle = get_string('randompageinbranch', 'lesson');
+    } elseif ($jumpto == LESSON_RANDOMBRANCH) {
+        $jumptitle = get_string('randombranch', 'lesson');
+    } elseif ($jumpto == LESSON_CLUSTERJUMP) {
+        $jumptitle = get_string('clusterjump', 'lesson');
+    } else {
+        if (!$jumptitle = get_field('lesson_pages', 'title', 'id', $jumpto)) {
+            $jumptitle = '<strong>'.get_string('notdefined', 'lesson').'</strong>';
+        }
+    }
+    
+    return format_string($jumptitle,true);
 }
 
 /**
@@ -1362,85 +1535,6 @@ function lesson_print_tree_link_menu($page, $id, $showpages=false) {
     $output .= "</li>";     
 
     echo $output;
-} 
-
-/**
- * Prints out the tree view list.
- *
- * Each page in the lesson is printed out as a link.  If the page is a branch table
- * or an end of branch then the link color changes and the answer jumps are also printed
- * alongside the links.  Also, the editing buttons (move, update, delete) are printed
- * next to the links.
- * 
- * @uses $USER
- * @uses $CFG
- * @param int $pageid Page id of the first page of the lesson.
- * @param object $lesson Object of the current lesson.
- * @param int $cmid The course module id of the lesson.
- * @param string $pixpath Path to the pictures.
- * @todo $pageid does not need to be passed.  Can be found in the function.
- *       This function is only called once.  It should be removed and the code inside it moved to view.php
- */
-function lesson_print_tree($pageid, $lesson, $cmid) {
-    global $USER, $CFG;
-    $context = get_context_instance(CONTEXT_MODULE, $cmid);
-
-    if(!$pages = get_records_select("lesson_pages", "lessonid = $lesson->id")) {
-        error("Error: could not find lesson pages");
-    }
-    echo "<table>";
-    while ($pageid != 0) {
-        echo "<tr><td>";
-        if(($pages[$pageid]->qtype != LESSON_BRANCHTABLE) && ($pages[$pageid]->qtype != LESSON_ENDOFBRANCH)) {
-            $output = "<a style='color:#DF041E;' href=\"$CFG->wwwroot/mod/lesson/edit.php?id=$cmid&display=".$pages[$pageid]->id."\">".format_string($pages[$pageid]->title,true)."</a>\n";
-        } else {
-            $output = "<a href=\"$CFG->wwwroot/mod/lesson/edit.php?id=$cmid&display=".$pages[$pageid]->id."\">".format_string($pages[$pageid]->title,true)."</a>\n";
-            
-            if($answers = get_records_select("lesson_answers", "lessonid = $lesson->id and pageid = $pageid")) {
-                $output .= "Jumps to: ";
-                $end = end($answers);
-                foreach ($answers as $answer) {
-                    if ($answer->jumpto == 0) {
-                        $output .= get_string("thispage", "lesson");
-                    } elseif ($answer->jumpto == LESSON_NEXTPAGE) {
-                        $output .= get_string("nextpage", "lesson");
-                    } elseif ($answer->jumpto == LESSON_EOL) {
-                        $output .= get_string("endoflesson", "lesson");
-                    } elseif ($answer->jumpto == LESSON_UNSEENBRANCHPAGE) {
-                        $output .= get_string("unseenpageinbranch", "lesson");  
-                    } elseif ($answer->jumpto == LESSON_PREVIOUSPAGE) {
-                        $output .= get_string("previouspage", "lesson");
-                    } elseif ($answer->jumpto == LESSON_RANDOMPAGE) {
-                        $output .= get_string("randompageinbranch", "lesson");
-                    } elseif ($answer->jumpto == LESSON_RANDOMBRANCH) {
-                        $output .= get_string("randombranch", "lesson");
-                    } elseif ($answer->jumpto == LESSON_CLUSTERJUMP) {
-                        $output .= get_string("clusterjump", "lesson");            
-                    } else {
-                        $output .= format_string($pages[$answer->jumpto]->title);
-                    }
-                    if ($answer->id != $end->id) {
-                        $output .= ", ";
-                    }
-                }
-            }
-        }
-        
-        echo $output;        
-        if (has_capability('mod/lesson:edit', $context)) {
-          if (count($pages) > 1) {
-              echo "<a title=\"move\" href=\"lesson.php?id=$cmid&action=move&pageid=".$pages[$pageid]->id."\">\n".
-                  "<img src=\"$CFG->pixpath/t/move.gif\" hspace=\"2\" height=11 width=11 alt=\"move\" border=0></a>\n";
-          }
-          echo "<a title=\"update\" href=\"lesson.php?id=$cmid&amp;action=editpage&amp;pageid=".$pages[$pageid]->id."\">\n".
-              "<img src=\"$CFG->pixpath/t/edit.gif\" hspace=\"2\" height=11 width=11 alt=\"edit\" border=0></a>\n".
-              "<a title=\"delete\" href=\"lesson.php?id=$cmid&amp;sesskey=".$USER->sesskey."&amp;action=confirmdelete&amp;pageid=".$pages[$pageid]->id."\">\n".
-              "<img src=\"$CFG->pixpath/t/delete.gif\" hspace=\"2\" height=11 width=11 alt=\"delete\" border=0></a>\n";
-        }
-        echo "</tr></td>";
-        $pageid = $pages[$pageid]->nextpageid;
-    }
-    echo "</table>";
 }
 
 /**
@@ -1654,7 +1748,6 @@ function lesson_check_nickname($name) {
  * @param object $lesson The lesson that the user is currently taking.
  * @param object $course The course that the to which the lesson belongs.
  * @return boolean The return is not significant as of yet.  Will return true/false.
- * @author Mark Nielsen
  **/
 function lesson_print_progress_bar($lesson, $course) {
     global $CFG, $USER;
@@ -1763,7 +1856,6 @@ function lesson_print_progress_bar($lesson, $course) {
  *
  * @param object $lesson Lesson object of the current lesson
  * @return boolean 0 if the user cannot see, or $lesson->displayleft to keep displayleft unchanged
- * @author Mark Nielsen
  **/
 function lesson_displayleftif($lesson) {
     global $CFG, $USER;
