@@ -55,9 +55,8 @@
         echo '</div>';
     } else {
         // print the pages
-        echo "<form name=\"lessonpages\" method=\"post\" action=\"view.php\">\n";
+        echo "<form name=\"lessonpages\" method=\"post\" action=\"$CFG->wwwroot/mod/lesson/view.php\">\n";
         echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\" />\n";
-        echo "<input type=\"hidden\" name=\"action\" value=\"navigation\" />\n";
         echo "<input type=\"hidden\" name=\"pageid\" />\n";
         $branch = false;
         $singlePage = false;

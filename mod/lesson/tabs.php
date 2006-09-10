@@ -35,7 +35,7 @@
     $counts->attempts = count_records('lesson_grades', 'lessonid', $lesson->id);
     $counts->student  = $course->student;
     
-    $row[] = new tabobject('view', "$CFG->wwwroot/mod/lesson/view.php?id=$cm->id&amp;action=navigation", get_string('preview', 'lesson'), get_string('previewlesson', 'lesson', format_string($lesson->name)));
+    $row[] = new tabobject('view', "$CFG->wwwroot/mod/lesson/view.php?id=$cm->id", get_string('preview', 'lesson'), get_string('previewlesson', 'lesson', format_string($lesson->name)));
     $row[] = new tabobject('edit', "$CFG->wwwroot/mod/lesson/edit.php?id=$cm->id", get_string('edit'), get_string('editlesson', 'lesson', format_string($lesson->name)));
     $row[] = new tabobject('reports', "$CFG->wwwroot/mod/lesson/report.php?id=$cm->id", get_string('reports', 'lesson'), get_string('viewreports', 'lesson', $counts));
     if (has_capability('mod/lesson:edit', $context)) {

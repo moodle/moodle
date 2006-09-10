@@ -57,9 +57,8 @@ if ($lesson->displayleft) {
 
 <?php if (isset($USER->modattempts[$lesson->id])) { // User is modifying attempts - save button and some instructions ?>
 
-            <form name="endoflesson" method ="post" action="view.php">
+            <form name="endoflesson" method ="post" action="<?php echo $CFG->wwwroot ?>/mod/lesson/view.php">
             <input type="hidden" name="id" value="<?php echo $cm->id ?>" />
-            <input type="hidden" name="action" value="navigation" />
             <input type="hidden" name="pageid" value="<?php echo LESSON_EOL; ?>" />
     
             <p align="center">
@@ -80,9 +79,8 @@ if ($lesson->displayleft) {
 
 <?php if ($lesson->review && !$correctanswer && !$noanswer && !$isessayquestion) { // Review button back ?>
     
-            <form name="reviewback" method ="post" action="view.php">
+            <form name="reviewback" method ="post" action="<?php echo $CFG->wwwroot ?>/mod/lesson/view.php">
             <input type="hidden" name="id" value="<?php echo $cm->id ?>" />
-            <input type="hidden" name="action" value="navigation" />
             <input type="hidden" name="pageid" value="<?php echo $pageid; ?>" />
     
             <p>
@@ -93,9 +91,8 @@ if ($lesson->displayleft) {
             
 <?php } ?>
 
-            <form name="pageform" method ="post" action="view.php">
+            <form name="pageform" method ="post" action="<?php echo $CFG->wwwroot ?>/mod/lesson/view.php">
             <input type="hidden" name="id" value="<?php echo $cm->id ?>" />
-            <input type="hidden" name="action" value="navigation" />
             <input type="hidden" name="pageid" value="<?php echo $newpageid ?>" />
 
 <?php if ($lesson->review && !$correctanswer && !$noanswer && !$isessayquestion) { // Review button continue ?>

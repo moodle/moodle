@@ -37,7 +37,7 @@
             if ((($timer->starttime + $lesson->maxtime * 60) - time()) <= 0) {
                 // Out of time
                 lesson_set_message(get_string('eolstudentoutoftime', 'lesson'));
-                redirect("view.php?id=$cm->id&action=navigation&pageid=".LESSON_EOL."&outoftime=normal", get_string("outoftime", "lesson"));
+                redirect("$CFG->wwwroot/mod/lesson/view.php?id=$cm->id&amp;pageid=".LESSON_EOL."&outoftime=normal", get_string("outoftime", "lesson"));
             }
         }
         
@@ -557,7 +557,7 @@
                 $newpageid = lesson_unseen_branch_jump($lesson->id, $USER->id);
             }
             // no need to record anything in lesson_attempts            
-            redirect("view.php?id=$cm->id&amp;action=navigation&amp;pageid=$newpageid");
+            redirect("$CFG->wwwroot/mod/lesson/view.php?id=$cm->id&amp;pageid=$newpageid");
             break;
         
     }

@@ -1357,7 +1357,7 @@ function lesson_print_tree_link_menu($page, $id, $showpages=false) {
     
     $output .= '<li>';
     
-    $output .= "<a $class href=\"view.php?id=$id&amp;action=navigation&amp;pageid=$page->id\">".format_string($page->title,true)."</a>\n"; 
+    $output .= "<a $class href=\"view.php?id=$id&amp;pageid=$page->id\">".format_string($page->title,true)."</a>\n"; 
       
     $output .= "</li>";     
 

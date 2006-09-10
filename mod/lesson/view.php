@@ -52,28 +52,25 @@
             print_footer($course);
             exit();
         
-        } else if ($lesson->usepassword) { // Password protected lesson code
+        } else if ($lesson->usepassword and empty($USER->lessonloggedin[$lesson->id])) { // Password protected lesson code
             $correctpass = false;
             if ($password = optional_param('userpassword', '', PARAM_CLEAN)) {
                 if ($lesson->password == md5(trim($password))) {
                     $USER->lessonloggedin[$lesson->id] = true;
                     $correctpass = true;
                     if ($lesson->highscores) {
-                        // Logged in, now we can show high scores
-                        redirect("$CFG->wwwroot/mod/lesson/highscores.php?id=$cm->id", '', 0);
+                        // Logged in - redirect so we go through all of these checks before starting the lesson.
+                        redirect("$CFG->wwwroot/mod/lesson/view.php?id=$cm->id");
                     }
                 }
-            } elseif (isset($USER->lessonloggedin[$lesson->id])) {
-                $correctpass = true;
             }
 
             if (!$correctpass) {
                 lesson_print_header($cm, $course, $lesson);
                 echo "<div class=\"password-form\">\n";
                 print_simple_box_start('center');
-                echo '<form name="password" method="post" action="view.php">' . "\n";
+                echo '<form name="password" method="post" action="'.$CFG->wwwroot.'/mod/lesson/view.php">' . "\n";
                 echo '<input type="hidden" name="id" value="'. $cm->id .'" />' . "\n";
-                echo '<input type="hidden" name="action" value="navigation" />' . "\n";
                 if (optional_param('userpassword', 0, PARAM_CLEAN)) {
                     notify(get_string('loginfail', 'lesson'));
                 }
@@ -159,7 +156,7 @@
                 } 
             }
     
-        } else if ($lesson->highscores and !$lesson->practice and !optional_param('viewed', 0)) { // TODO: THIS DOES NOT WORK!!!!
+        } else if ($lesson->highscores and !$lesson->practice and !optional_param('viewed', 0) and empty($pageid)) { // TODO: THIS DOES NOT WORK!!!!
             // Display high scores before starting lesson
             redirect("$CFG->wwwroot/mod/lesson/highscores.php?id=$cm->id");
         }
@@ -262,7 +259,7 @@
                 if ($lesson->retake) {
                     print_simple_box('<p align="center">'. get_string('leftduringtimed', 'lesson') .'</p>', 'center');
                     echo '<div align="center" class="lessonbutton standardbutton">'.
-                              '<a href="view.php?id='.$cm->id.'&amp;action=navigation&amp;pageid='.$firstpageid.'&amp;startlastseen=no">'.
+                              '<a href="view.php?id='.$cm->id.'&amp;pageid='.$firstpageid.'&amp;startlastseen=no">'.
                                 get_string('continue', 'lesson').'</a></div>';
                 } else {
                     print_simple_box_start('center');
@@ -279,10 +276,10 @@
                 
                 echo '<div align="center">';
                 echo '<span class="lessonbutton standardbutton">'.
-                        '<a href="view.php?id='.$cm->id.'&amp;action=navigation&amp;pageid='.$lastpageseen.'&amp;startlastseen=yes">'.
+                        '<a href="view.php?id='.$cm->id.'&amp;pageid='.$lastpageseen.'&amp;startlastseen=yes">'.
                         get_string('yes').'</a></span>&nbsp;&nbsp;&nbsp;';
                 echo '<span class="lessonbutton standardbutton">'.
-                        '<a href="view.php?id='.$cm->id.'&amp;action=navigation&amp;pageid='.$firstpageid.'&amp;startlastseen=no">'.
+                        '<a href="view.php?id='.$cm->id.'&amp;pageid='.$firstpageid.'&amp;startlastseen=no">'.
                         get_string('no').'</a></div>';
                 echo '</span>';
             }
@@ -381,7 +378,7 @@
             } else {
                 $nextpageid = $page->nextpageid;
             }
-            redirect("view.php?id=$cm->id&amp;action=navigation&amp;pageid=$nextpageid", get_string('endofclustertitle', 'lesson'));
+            redirect("$CFG->wwwroot/mod/lesson/view.php?id=$cm->id&amp;pageid=$nextpageid");
         }
         
         
@@ -429,7 +426,7 @@
             } else {
                 if ((($timer->starttime + $lesson->maxtime * 60) - time()) <= 0) {
                     lesson_set_message(get_string('eolstudentoutoftime', 'lesson'));
-                    redirect("view.php?id=$cm->id&amp;action=navigation&amp;pageid=".LESSON_EOL."&amp;outoftime=normal", get_string("outoftime", "lesson"));
+                    redirect("$CFG->wwwroot/mod/lesson/view.php?id=$cm->id&amp;pageid=".LESSON_EOL."&amp;outoftime=normal", get_string("outoftime", "lesson"));
                 }
                 // update clock when viewing a new page... no special treatment
                 if ((($timer->starttime + $lesson->maxtime * 60) - time()) < 60) {
@@ -476,7 +473,7 @@
                     } else if ($answer->jumpto == LESSON_PREVIOUSPAGE) {
                         $answer->jumpto = $page->prevpageid;                            
                     }
-                    redirect("view.php?id=$cm->id&amp;action=navigation&amp;pageid=$answer->jumpto");
+                    redirect("$CFG->wwwroot/mod/lesson/view.php?id=$cm->id&amp;pageid=$answer->jumpto");
                     break;
                 } 
             } else {
@@ -767,9 +764,8 @@
             echo "</form>\n"; 
         } else {
             // a page without answers - find the next (logical) page
-            echo "<form name=\"pageform\" method =\"post\" action=\"view.php\">\n";
+            echo "<form name=\"pageform\" method =\"post\" action=\"$CFG->wwwroot/mod/lesson/view.php\">\n";
             echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\" />\n";
-            echo "<input type=\"hidden\" name=\"action\" value=\"navigation\" />\n";
             if ($lesson->nextpagedefault) {
                 // in Flash Card mode...
                 // ...first get number of retakes
