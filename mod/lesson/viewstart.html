@@ -34,7 +34,7 @@ if ($lesson->displayleft) {
 } // End if ($lesson->displayleft)
 ?>
         <!-- Start main column -->
-        <td width="100%">
+        <td width="100%" align="center">
             
             <?php if ($lesson->displayleft) { ?>
             
@@ -44,7 +44,7 @@ if ($lesson->displayleft) {
 
 <?php if($lesson->slideshow && $page->qtype == LESSON_BRANCHTABLE) { // Starts the slideshow div ?>
     
-            <div class="slideshow\" style="background-color: <?php echo $lesson->bgcolor?>; height: <?php echo $lesson->height ?>px; width: <?php echo $lesson->width?>px;">
+            <div class="slideshow" style="background-color: <?php echo $lesson->bgcolor?>; height: <?php echo $lesson->height ?>px; width: <?php echo $lesson->width?>px;">
                 
 <?php } ?>
 

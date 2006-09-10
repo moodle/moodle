@@ -9,13 +9,6 @@
     if (!has_capability('mod/lesson:manage', $context)) {
         $lesson->displayleft = lesson_displayleftif($lesson);
     }
-    
-    // This is the warning msg for teachers to inform them that cluster and unseen does not work while logged in as a teacher
-    if(has_capability('mod/lesson:manage', $context) and lesson_display_teacher_warning($lesson->id)) {
-        $warningvars->cluster = get_string("clusterjump", "lesson");
-        $warningvars->unseen = get_string("unseenpageinbranch", "lesson");
-        lesson_set_message(get_string("teacherjumpwarning", "lesson", $warningvars));
-    }
 
     // This is the code updates the lesson time for a timed test
     // get time information for this user
@@ -45,11 +38,6 @@
         if (!update_record("lesson_timer", $timer)) {
             error("Error: could not update lesson_timer table");
         }
-    }
-    
-    // Inform teacher that s/he will not see the timer
-    if ($lesson->timed and has_capability('mod/lesson:manage', $context)) {
-        lesson_set_message(get_string("teachertimerwarning", "lesson"));
     }
 
     // record answer (if necessary) and show response (if none say if answer is correct or not)
@@ -768,6 +756,18 @@
         }
     }
     
+/// Set Messages
+
+    // This is the warning msg for teachers to inform them that cluster and unseen does not work while logged in as a teacher
+    if(has_capability('mod/lesson:manage', $context) and lesson_display_teacher_warning($lesson->id)) {
+        $warningvars->cluster = get_string("clusterjump", "lesson");
+        $warningvars->unseen = get_string("unseenpageinbranch", "lesson");
+        lesson_set_message(get_string("teacherjumpwarning", "lesson", $warningvars));
+    }
+    // Inform teacher that s/he will not see the timer
+    if ($lesson->timed and has_capability('mod/lesson:manage', $context)) {
+        lesson_set_message(get_string("teachertimerwarning", "lesson"));
+    }
     // Report attempts remaining
     if ($attemptsremaining != 0) {
         lesson_set_message(get_string('attemptsremaining', 'lesson', $attemptsremaining));
