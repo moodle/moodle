@@ -1,6 +1,12 @@
-<?PHP // $Id$ 
-      // lesson.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005020101)
-
+<?php  // $Id$
+/**
+ * Language entries for Lesson Module
+ *
+ * @version $Id$
+ * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+ * @package lesson
+ **/
+ 
 $string['accesscontrol'] = 'Access control';
 $string['actionaftercorrectanswer'] = 'Action after correct answer';
 $string['activitylink'] = 'Link to an activity';
@@ -23,6 +29,7 @@ $string['answersfornumerical'] = 'Answers for Numerical questions should be matc
 $string['arrangebuttonshorizontally'] = 'Arrange Branch buttons horizontally in slideshow mode?';
 $string['attempt'] = 'Attempt: $a';
 $string['attempts'] = 'Attempts';
+$string['attemptsdeleted'] = 'Deleted attempts';
 $string['attemptsremaining'] = 'You have $a attempt(s) remaining';
 $string['available'] = 'Available from';
 $string['averagescore'] = 'Average score';
