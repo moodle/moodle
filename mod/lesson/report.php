@@ -32,9 +32,9 @@
     require_capability('mod/lesson:manage', $context);
 
 /// Process any form data before fetching attempts, grades and times
-    if (confirm_sesskey() and 
-        has_capability('mod/lesson:edit', $context) and 
-        $form = data_submitted($CFG->wwwroot.'/mod/lesson/report.php')) {
+    if (has_capability('mod/lesson:edit', $context) and 
+        $form = data_submitted($CFG->wwwroot.'/mod/lesson/report.php') and 
+        confirm_sesskey()) {
     /// Cycle through array of userids with nested arrays of tries
         if (!empty($form->attempts)) {
             foreach ($form->attempts as $userid => $tries) {
