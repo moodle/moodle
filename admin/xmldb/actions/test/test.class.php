@@ -107,7 +107,8 @@ class test extends XMLDBAction {
         $table->addIndexInfo('rsstype', XMLDB_INDEX_UNIQUE, array('rsstype'));
 
     /// Get SQL code and execute it
-        $test->sql = $table->getCreateTableSQL($CFG->dbtype, $CFG->prefix, false);
+        $test = new stdClass;
+        $test->sql = $table->getCreateTableSQL($CFG->dbtype, $CFG->prefix, true);
         $test->status = create_table($table, false, false);
         if (!$test->status) {
             $test->error = $db->ErrorMsg();
@@ -117,7 +118,8 @@ class test extends XMLDBAction {
     /// 2nd test. drop table
         if ($test->status) {
         /// Get SQL code and execute it
-            $test->sql = $table->getDropTableSQL($CFG->dbtype, $CFG->prefix, false);
+            $test = new stdClass;
+            $test->sql = $table->getDropTableSQL($CFG->dbtype, $CFG->prefix, true);
             $test->status = drop_table($table, false, false);
             if (!$test->status) {
                 $test->error = $db->ErrorMsg();
@@ -133,7 +135,8 @@ class test extends XMLDBAction {
             $table->addKeyInfo('primary', XMLDB_KEY_PRIMARY, array('id'));
             $table->addKeyInfo('course', XMLDB_KEY_FOREIGN, array('course'), 'course', array('id'));
         /// Get SQL code and execute it
-            $test->sql = $table->getCreateTableSQL($CFG->dbtype, $CFG->prefix, false);
+            $test = new stdClass;
+            $test->sql = $table->getCreateTableSQL($CFG->dbtype, $CFG->prefix, true);
             $test->status = create_table($table, false, false);
             if (!$test->status) {
                 $test->error = $db->ErrorMsg();
@@ -148,7 +151,8 @@ class test extends XMLDBAction {
         foreach ($tests as $key => $test) {
             $o .= '<li>' . $key . ($test->status ? '<font color="green"> Ok</font>' : ' <font color="red">Error</font>');
             if (!$test->status) {
-                $o .= '<pre>' . $test->sql . '</pre>';
+                $o .= '<br/><font color="red">' . $test->error . '</font>';
+                $o .= '<pre>' . implode('<br/>', $test->sql) . '</pre>';
             }
             $o .= '</li>';
         }
