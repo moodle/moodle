@@ -55,10 +55,6 @@
                 "</a></td></tr></table>\n", 'center');
         }
     } else {
-        
-        
-        // TODO: Check to make sure pages is set?
-        
         // Set some standard variables
         $pageid = $firstpage->id;
         $prevpageid = 0;
@@ -97,6 +93,7 @@
                 
                 print_table($table);
                 break;
+                
             case 'single':
                 // Only viewing a single page in full - change some variables to display just one
                 $prevpageid = $singlepage->prevpageid;
@@ -104,6 +101,7 @@
                 
                 $pages = array();
                 $pages[$singlepage->id] = $singlepage;
+                
             case 'full':
                 echo '<table align="center" cellpadding="5" border="0" width="80%">
                          <tr>
