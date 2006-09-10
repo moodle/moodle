@@ -76,6 +76,7 @@ $string['statementtable'] = 'Statement Table:';
 $string['statementtype'] = 'Statement Type:';
 $string['table'] = 'Table';
 $string['tables'] = 'Tables';
+$string['test'] = 'Test';
 $string['textincorrectlength'] = 'Incorrect length for text field';
 $string['unload'] = 'Unload';
 $string['up'] = 'Up';
