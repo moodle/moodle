@@ -195,10 +195,10 @@
             if (!has_capability('mod/lesson:manage', $context)) {  // teachers don't need the links
                 echo '<div align="center">';
                 if ($link) {
-                    echo "<br /><div class=\"lessonbutton standardbutton\"><a href=\"../../course/view.php?id=$course->id\">".get_string("returntocourse", "lesson")."</a></div>";
+                    echo "<br /><div class=\"lessonbutton standardbutton\"><a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">".get_string("returntocourse", "lesson")."</a></div>";
                 } else {
-                    echo "<br /><span class=\"lessonbutton standardbutton\"><a href=\"../../course/view.php?id=$course->id\">".get_string("cancel", "lesson").'</a></span> '.
-                        " <span class=\"lessonbutton standardbutton\"><a href=\"view.php?id=$cm->id&amp;action=navigation\">".get_string("startlesson", "lesson").'</a></span>';
+                    echo "<br /><span class=\"lessonbutton standardbutton\"><a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">".get_string("cancel", "lesson").'</a></span> '.
+                        " <span class=\"lessonbutton standardbutton\"><a href=\"$CFG->wwwroot/mod/lesson/view.php?id=$cm->id&amp;viewed=1\">".get_string("startlesson", "lesson").'</a></span>';
                 }
                 echo "</div>";
             }

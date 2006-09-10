@@ -219,7 +219,37 @@ if (!defined("LESSON_RESPONSE_EDITOR")) {
  **/
 function lesson_print_header($cm, $course, $lesson, $currenttab = '') {
     global $CFG, $USER;
+    
+    $strlessons = get_string('modulenameplural', 'lesson');
+    $strlesson  = get_string('modulename', 'lesson');
+    $strname    = format_string($lesson->name, true);
+    
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    
+    // Changed the update_module_button and added another button when a teacher is checking the navigation of the lesson
+    if (has_capability('mod/lesson:edit', $context)) {
+        
+        $button = update_module_button($cm->id, $course->id, $strlesson);
+
+        if ($currenttab == 'view') {
+            if (!$pageid = optional_param('pageid', 0, PARAM_INT)) {
+                $pageid = get_field('lesson_pages', 'id', 'lessonid', $lesson->id, 'prevpageid', 0);
+            }
+            if (!empty($pageid) and $pageid != LESSON_EOL) {
+                $button =  '<table><tr><td>'.$button.
+                           '</td><td>'.
+                           '<form target="'. $CFG->framename .'" method="get" action="'. $CFG->wwwroot .'/mod/lesson/lesson.php">'.
+                           '<input type="hidden" name="id" value="'. $cm->id .'" />'.
+                           '<input type="hidden" name="action" value="editpage" />'.
+                           '<input type="hidden" name="redirect" value="navigation" />'.
+                           '<input type="hidden" name="pageid" value="'. $pageid .'" />'.
+                           '<input type="submit" value="'. get_string('editpagecontent', 'lesson') .'" /></form>
+                           </td></tr></table>';
+            }
+        }
+    } else {
+        $button = '';
+    }
     
 /// Header setup
     if ($course->category) {
@@ -228,15 +258,11 @@ function lesson_print_header($cm, $course, $lesson, $currenttab = '') {
         $navigation = '';
     }
 
-    $strlessons = get_string('modulenameplural', 'lesson');
-    $strlesson  = get_string('modulename', 'lesson');
-    $strname    = format_string($lesson->name, true);
 
 /// Print header, heading, tabs and messages
     print_header("$course->shortname: $strname", $course->fullname,
                  "$navigation <a href=\"index.php?id=$course->id\" title=\"$strlessons\">$strlessons</a> -> $strname", 
-                  '', '', true, update_module_button($cm->id, $course->id, $strlesson),
-                  navmenu($course, $cm));
+                  '', '', true, $button, navmenu($course, $cm));
                   
     if (has_capability('mod/lesson:manage')) {
         print_heading_with_help(format_string($lesson->name, true), "overview", "lesson");

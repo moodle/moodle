@@ -11,8 +11,8 @@
     require_once('locallib.php');
     require_once('lib.php');
 
-    $id      = required_param('id', PARAM_INT);             // Course Module ID
-    $mode    = optional_param('mode', 'display', PARAM_ALPHA);     // for eacherview action todo use user pref
+    $id   = required_param('id', PARAM_INT);             // Course Module ID
+    $mode = optional_param('mode', 'display', PARAM_ALPHA);
 
     list($cm, $course, $lesson) = lesson_get_basics($id);
     
