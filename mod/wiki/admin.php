@@ -38,6 +38,8 @@
     }
 
     require_login($course->id, false, $cm);
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    require_capability('mod/wiki:manage', $context);
 
     /// Build the ewsiki script constant
     $ewbase = 'view.php?id='.$id;
@@ -73,7 +75,7 @@
     $canedit = wiki_can_edit_entry($wiki_entry, $wiki, $USER, $course);
     # Check for dangerous events (hacking) !
     if(in_array($action,array("removepages","strippages","revertpages"))) {
-      if(!($wiki->wtype=="student" || ($wiki->wtype=="group" and $canedit) || isteacher($course->id))) {
+      if(!($wiki->wtype=="student" || ($wiki->wtype=="group" and $canedit) || wiki_is_teacher($wiki))) {
         add_to_log($course->id, "wiki", "hack", "", $wiki->name.": Tried to trick admin.php with action=$action.");
         error("Hack attack detected !");
       }

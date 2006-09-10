@@ -49,6 +49,8 @@
     }
 
     require_course_login($course, true, $cm);
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    require_capability('mod/wiki:view', $context);
 
     /// Add the course module 'groupmode' to the wiki object, for easy access.
     $wiki->groupmode = $cm->groupmode;

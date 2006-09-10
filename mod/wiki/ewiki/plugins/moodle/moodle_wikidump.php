@@ -108,7 +108,7 @@ function moodle_ewiki_page_wiki_dump($id=0, $data=0, $action=0) {
         "  </TR>\n";
   /// Destination
   $exportdestinations=array("0" => get_string("downloadaszip","wiki"));
-  if(isteacher($course->id)) {
+  if(wiki_is_teacher($wiki)) {
     // Get Directory List
     $rawdirs = get_directory_list("$CFG->dataroot/$course->id", 'moddata', true, true, false);
     
@@ -229,7 +229,7 @@ function ewiki_page_wiki_dump_send($exportbinaries=0, $exportformats=0, $withvir
     /// Create/Set Directory
     $wname=clean_filename(strip_tags(format_string($wiki->name,true)));
     if($exportdestinations) {
-      if(isteacher($course->id)) {
+      if(wiki_is_teacher($wiki)) {
         $exportdir=$CFG->dataroot."/".$course->id."/".$exportdestinations;
       } else {
         add_to_log($course->id, "wiki", "hack", "", format_string($wiki->name,true).": Tried to export a wiki as non-teacher into $exportdestinations.");
