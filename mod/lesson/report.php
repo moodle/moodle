@@ -1,8 +1,11 @@
-<?PHP
-
-    /**************************************************************************
-    this file displays the lesson statistics.
-    **************************************************************************/
+<?php  // $Id$
+/**
+ * Displays the lesson statistics.
+ *
+ * @version $Id$
+ * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+ * @package lesson
+ **/
 
     require_once('../../config.php');
     require_once('locallib.php');
@@ -29,47 +32,50 @@
     require_capability('mod/lesson:manage', $context);
 
 /// Process any form data before fetching attempts, grades and times
-    if (has_capability('mod/lesson:edit', $context) and $form = data_submitted()) {
-        confirm_sesskey();
-                
+    if (confirm_sesskey() and 
+        has_capability('mod/lesson:edit', $context) and 
+        $form = data_submitted($CFG->wwwroot.'/mod/lesson/report.php')) {
     /// Cycle through array of userids with nested arrays of tries
-        foreach ($form->attempts as $userid => $tries) {
-            // Modifier IS VERY IMPORTANT!  What does it do?
-            //      Well, it is for when you delete multiple attempts for the same user.
-            //      If you delete try 1 and 3 for a user, then after deleting try 1, try 3 then
-            //      becomes try 2 (because try 1 is gone and all tries after try 1 get decremented).
-            //      So, the modifier makes sure that the submitted try refers to the current try in the
-            //      database - hope this all makes sense :)
-            $modifier = 0;
+        if (!empty($form->attempts)) {
+            foreach ($form->attempts as $userid => $tries) {
+                // Modifier IS VERY IMPORTANT!  What does it do?
+                //      Well, it is for when you delete multiple attempts for the same user.
+                //      If you delete try 1 and 3 for a user, then after deleting try 1, try 3 then
+                //      becomes try 2 (because try 1 is gone and all tries after try 1 get decremented).
+                //      So, the modifier makes sure that the submitted try refers to the current try in the
+                //      database - hope this all makes sense :)
+                $modifier = 0;
             
-            foreach ($tries as $try => $junk) {
-                $try -= $modifier;
+                foreach ($tries as $try => $junk) {
+                    $try -= $modifier;
                 
-            /// Clean up the timer table
-                $timeid = get_field_sql("SELECT id FROM {$CFG->prefix}lesson_timer 
-                                         WHERE userid = $userid AND lessonid = $lesson->id 
-                                         ORDER BY starttime ".sql_paging_limit($try, 1));
+                /// Clean up the timer table
+                    $timeid = get_field_sql("SELECT id FROM {$CFG->prefix}lesson_timer 
+                                             WHERE userid = $userid AND lessonid = $lesson->id 
+                                             ORDER BY starttime ".sql_paging_limit($try, 1));
                 
-                delete_records('lesson_timer', 'id', $timeid);
+                    delete_records('lesson_timer', 'id', $timeid);
             
-            /// Remove the grade from the grades and high_scores tables
-                $gradeid = get_field_sql("SELECT id FROM {$CFG->prefix}lesson_grades 
-                                          WHERE userid = $userid AND lessonid = $lesson->id 
-                                          ORDER BY completed ".sql_paging_limit($try, 1));
+                /// Remove the grade from the grades and high_scores tables
+                    $gradeid = get_field_sql("SELECT id FROM {$CFG->prefix}lesson_grades 
+                                              WHERE userid = $userid AND lessonid = $lesson->id 
+                                              ORDER BY completed ".sql_paging_limit($try, 1));
                 
-                delete_records('lesson_grades', 'id', $gradeid);
-                delete_records('lesson_high_scores', 'gradeid', $gradeid, 'lessonid', $lesson->id, 'userid', $userid);
+                    delete_records('lesson_grades', 'id', $gradeid);
+                    delete_records('lesson_high_scores', 'gradeid', $gradeid, 'lessonid', $lesson->id, 'userid', $userid);
             
-            /// Remove attempts and update the retry number
-                delete_records('lesson_attempts', 'userid', $userid, 'lessonid', $lesson->id, 'retry', $try);
-                execute_sql("UPDATE {$CFG->prefix}lesson_attempts SET retry = retry - 1 WHERE userid = $userid AND lessonid = $lesson->id AND retry > $try", false);
+                /// Remove attempts and update the retry number
+                    delete_records('lesson_attempts', 'userid', $userid, 'lessonid', $lesson->id, 'retry', $try);
+                    execute_sql("UPDATE {$CFG->prefix}lesson_attempts SET retry = retry - 1 WHERE userid = $userid AND lessonid = $lesson->id AND retry > $try", false);
             
-            /// Remove seen branches and update the retry number    
-                delete_records('lesson_branch', 'userid', $userid, 'lessonid', $lesson->id, 'retry', $try);
-                execute_sql("UPDATE {$CFG->prefix}lesson_branch SET retry = retry - 1 WHERE userid = $userid AND lessonid = $lesson->id AND retry > $try", false);
+                /// Remove seen branches and update the retry number    
+                    delete_records('lesson_branch', 'userid', $userid, 'lessonid', $lesson->id, 'retry', $try);
+                    execute_sql("UPDATE {$CFG->prefix}lesson_branch SET retry = retry - 1 WHERE userid = $userid AND lessonid = $lesson->id AND retry > $try", false);
                 
-                $modifier++;
+                    $modifier++;
+                }
             }
+            lesson_set_message(get_string('attemptsdeleted', 'lesson'), 'notifysuccess');
         }
     }
 
