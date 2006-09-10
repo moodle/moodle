@@ -46,6 +46,7 @@ class main_view extends XMLDBAction {
             'unload' => 'xmldb',
             'delete' => 'xmldb',
             'reservedwords' => 'xmldb',
+            'test' => 'xmldb',
             'gotolastused' => 'xmldb'
         ));
     }
@@ -81,6 +82,8 @@ class main_view extends XMLDBAction {
         $b = '<p align="center" class="buttons">';
     /// The reserved_words button
         $b .= '&nbsp;<a href="index.php?action=view_reserved_words">[' . $this->str['reservedwords'] . ']</a>';
+    /// The test button
+        $b .= '&nbsp;<a href="index.php?action=test">[' . $this->str['test'] . ']</a>';
         $b .= '</p>';
     /// Send buttons to output
         $o .= $b;
