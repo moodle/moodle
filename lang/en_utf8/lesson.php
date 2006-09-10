@@ -147,6 +147,7 @@ $string['mediafilepopup'] = 'Click here to view this lesson\'s media file.';
 $string['mediaheight'] = 'Window height: ';
 $string['mediawidth'] = ' width: ';
 $string['minimumnumberofquestions'] = 'Minimum number of questions';
+$string['missingname'] = 'Please enter a nickname';
 $string['modattempts'] = 'Allow student review';
 $string['modattemptsnoteacher'] = 'Student review only works for students.';
 $string['modulename'] = 'Lesson';
@@ -273,7 +274,6 @@ $string['usepassword'] = 'Password protected lesson';
 $string['viewgrades'] = 'View grades';
 $string['viewhighscores'] = 'View high scores list';
 $string['viewreports'] = 'View $a->attempts completed $a->student attempts';
-$string['waitpostscore'] = 'Please wait while posting high score...';
 $string['welldone'] = 'Well done!';
 $string['whatdofirst'] = 'What would you like to do first?';
 $string['wronganswerjump'] = 'Wrong answer jump';
@@ -287,8 +287,5 @@ $string['yourcurrentgradeis'] = 'Your current grade is $a';
 $string['yourgradeisnow'] = 'Your grade for the lesson has been changed to $a';
 $string['yourresponse'] = 'Your response';
 $string['youshouldview'] = 'You should answer at least: $a';
-
-
-
 
 ?>
