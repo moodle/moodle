@@ -1395,8 +1395,8 @@ function column_type($table, $column) {
  * It's widely used by all the ddllib.php functions
  *
  * @param array sqlarr array of sql statements to execute
- * @param boolean continue to specify if must continue on error (true) or stop (false
- * @param boolean feedback to specify to show debug info (true) or not (false
+ * @param boolean continue to specify if must continue on error (true) or stop (false)
+ * @param boolean feedback to specify to show status info (true) or not (false)
  * @param boolean true if everything was ok, false if some error was found
  */
 function execute_sql_arr($sqlarr, $continue=true, $feedback=true) {
