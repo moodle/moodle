@@ -16,9 +16,9 @@
     if (optional_param('cancel', '', PARAM_ALPHA)) {
         if ($redirect == 'navigation') {
             // redirect to viewing the page
-            redirect("view.php?id=$cm->id&amp;action=navigation&amp;pageid=$page->id");
+            redirect("$CFG->wwwroot/mod/lesson/view.php?id=$cm->id&amp;action=navigation&amp;pageid=$page->id");
         } else {
-            redirect("view.php?id=$cm->id");
+            redirect("$CFG->wwwroot/mod/lesson/edit.php?id=$cm->id");
         }
     }
 
@@ -169,11 +169,11 @@
     }
 
     if ($form->redisplay) {
-        redirect("lesson.php?id=$cm->id&amp;action=editpage&amp;pageid=$page->id&amp;redirect=$redirect");
+        redirect("$CFG->wwwroot/mod/lesson/lesson.php?id=$cm->id&amp;action=editpage&amp;pageid=$page->id&amp;redirect=$redirect");
     } else if ($redirect == 'navigation') {
         // takes us back to viewing the page
-        redirect("view.php?id=$cm->id&amp;action=navigation&amp;pageid=$page->id", get_string('updatedpage', 'lesson'));
+        redirect("$CFG->wwwroot/mod/lesson/view.php?id=$cm->id&amp;action=navigation&amp;pageid=$page->id", get_string('updatedpage', 'lesson'));
     } else {
-        redirect("view.php?id=$cm->id", get_string('updatedpage', 'lesson'));
+        redirect("$CFG->wwwroot/mod/lesson/edit.php?id=$cm->id", get_string('updatedpage', 'lesson'));
     }
 ?>

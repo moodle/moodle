@@ -46,4 +46,4 @@
     if(!$newanswerid = insert_record("lesson_answers", $newanswer)) {
         error("Add end of cluster: answer record not inserted");
     }
-    redirect("view.php?id=$cm->id", get_string('addedendofcluster', 'lesson'));
+    redirect("$CFG->wwwroot/mod/lesson/edit.php?id=$cm->id", get_string('addedendofcluster', 'lesson'));

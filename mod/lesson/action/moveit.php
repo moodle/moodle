@@ -92,5 +92,5 @@
     if (!set_field("lesson_pages", "nextpageid", 0, "id", $newlastpageid)) {
             error("Moveit: unable to update link");
     }
-    redirect("view.php?id=$cm->id", get_string('movedpage', 'lesson'));
+    redirect("$CFG->wwwroot/mod/lesson/edit.php?id=$cm->id", get_string('movedpage', 'lesson'));
 ?>

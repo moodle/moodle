@@ -59,5 +59,5 @@
     if(!$newanswerid = insert_record("lesson_answers", $newanswer)) {
         error("Add cluster: answer record not inserted");
     }
-    redirect("view.php?id=$cm->id", get_string('addedcluster', 'lesson'));
+    redirect("$CFG->wwwroot/mod/lesson/edit.php?id=$cm->id", get_string('addedcluster', 'lesson'));
 ?>

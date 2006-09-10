@@ -55,7 +55,7 @@
         if(!$newanswerid = insert_record("lesson_answers", $newanswer)) {
             error("Add end of branch: answer record not inserted");
         }
-        redirect("view.php?id=$cm->id", get_string('addedanendofbranch', 'lesson'));
+        redirect("$CFG->wwwroot/mod/lesson/edit.php?id=$cm->id", get_string('addedanendofbranch', 'lesson'));
     } else {
         notice(get_string("nobranchtablefound", "lesson"), "view.php?id=$cm->id");
     }

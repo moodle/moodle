@@ -6,7 +6,7 @@
 
     // check to see if the cancel button was pushed
     if (optional_param('cancel', '', PARAM_ALPHA)) {
-        redirect("view.php?id=$cm->id");
+        redirect("$CFG->wwwroot/mod/lesson/edit.php?id=$cm->id");
     }
 
     $timenow = time();
@@ -182,5 +182,5 @@
         }
     }
 
-    redirect("view.php?id=$cm->id", get_string('insertedpage', 'lesson'));
+    redirect("$CFG->wwwroot/mod/lesson/edit.php?id=$cm->id", get_string('insertedpage', 'lesson'));
 ?>

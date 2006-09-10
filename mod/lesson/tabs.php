@@ -36,7 +36,7 @@
     $counts->student  = $course->student;
 
 
-    $row[] = new tabobject('teacherview', "$CFG->wwwroot/mod/lesson/view.php?id=$cm->id", get_string('edit'), get_string('editlesson', 'lesson', format_string($lesson->name)));
+    $row[] = new tabobject('edit', "$CFG->wwwroot/mod/lesson/edit.php?id=$cm->id", get_string('edit'), get_string('editlesson', 'lesson', format_string($lesson->name)));
     $row[] = new tabobject('navigation', "$CFG->wwwroot/mod/lesson/view.php?id=$cm->id&amp;action=navigation", get_string('preview', 'lesson'), get_string('previewlesson', 'lesson', format_string($lesson->name)));
     $row[] = new tabobject('reports', "$CFG->wwwroot/mod/lesson/report.php?id=$cm->id", get_string('reports', 'lesson'), get_string('viewreports', 'lesson', $counts));
     if (has_capability('mod/lesson:edit', $context)) {
@@ -48,10 +48,11 @@
 
     $tabs[] = $row;
 
-/// sub tabs for reports (overview and detail)
+
     switch ($currenttab) {
         case 'reportoverview':
         case 'reportdetail':
+        /// sub tabs for reports (overview and detail)
             $inactive[] = 'reports';
 
             $row    = array();
@@ -59,24 +60,16 @@
             $row[]  = new tabobject('reportdetail', "$CFG->wwwroot/mod/lesson/report.php?id=$cm->id&amp;action=reportdetail", get_string('detailedstats', 'lesson'));
             $tabs[] = $row;
             break;
-    }
-    
-/// sub tabs for teacher view (collapsed and expanded aka full)
-    if ($currenttab == 'teacherview') {
-        // use user preferences to remember which edit mode the user has selected
-        if (empty($mode)) {
-            $mode = get_user_preferences('lesson_view', 'collapsed');
-        } else {
-            set_user_preference('lesson_view', $mode);
-        }
-        
-        $inactive[] = 'teacherview';
-        $currenttab = $mode;
-        
-        $row    = array();
-        $row[]  = new tabobject('collapsed', "$CFG->wwwroot/mod/lesson/view.php?id=$cm->id&amp;action=teacherview&amp;mode=collapsed", get_string('collapsed', 'lesson'));
-        $row[]  = new tabobject('full', "$CFG->wwwroot/mod/lesson/view.php?id=$cm->id&amp=teacherview&amp;mode=full", get_string('full', 'lesson'));
-        $tabs[] = $row;
+        case 'collapsed':
+        case 'full':
+        /// sub tabs for edit view (collapsed and expanded aka full)
+            $inactive[] = 'edit';
+            
+            $row    = array();
+            $row[]  = new tabobject('collapsed', "$CFG->wwwroot/mod/lesson/edit.php?id=$cm->id&amp;mode=collapsed", get_string('collapsed', 'lesson'));
+            $row[]  = new tabobject('full', "$CFG->wwwroot/mod/lesson/edit.php?id=$cm->id&amp;mode=full", get_string('full', 'lesson'));
+            $tabs[] = $row;
+            break;
     }
 
     print_tabs($tabs, $currenttab, $inactive);
