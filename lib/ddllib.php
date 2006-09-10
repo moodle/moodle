@@ -280,9 +280,11 @@ function install_from_xmldb_file($file) {
  * fields/keys/indexes/sequences, everything based in the XMLDB object
  *
  * @param XMLDBtable table object containing all the table info
+ * @param boolean continue to specify if must continue on error (true) or stop (false)
+ * @param boolean feedback to specify to show status info (true) or not (false)
  * @return boolean true on success, false on error
  */
-function create_table($table) {
+function create_table($table, $continue=true, $feedback=true) {
 
     global $CFG, $db;
 
@@ -296,7 +298,7 @@ function create_table($table) {
         return false;
     }
 
-    return execute_sql_arr($sqlarr);
+    return execute_sql_arr($sqlarr, $continue, $feedback);
 }
 
 /**
@@ -305,9 +307,11 @@ function create_table($table) {
  * will be dropped too.
  *
  * @param XMLDBtable table object containing the basic table info
+ * @param boolean continue to specify if must continue on error (true) or stop (false)
+ * @param boolean feedback to specify to show status info (true) or not (false)
  * @return boolean true on success, false on error
  */
-function drop_table($table) {
+function drop_table($table, $continue=true, $feedback=true) {
 
     global $CFG, $db;
 
@@ -321,7 +325,7 @@ function drop_table($table) {
         return false;
     }
 
-    return execute_sql_arr($sqlarr);
+    return execute_sql_arr($sqlarr, $continue, $feedback);
 }
 
 ?>
