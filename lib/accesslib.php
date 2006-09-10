@@ -1054,12 +1054,13 @@ function create_role($name, $description, $legacy='') {
         /// should be able to assign users to this new role, and override this new role's capabilities
         
         // find all admin roles
-        $adminroles = get_roles_with_capability('moodle/role:manage', CAP_ALLOW, $context);
-        // foreach admin role
-        foreach ($adminroles as $arole) {
-            // write allow_assign and allow_overrid
-            allow_assign($arole->id, $id);
-            allow_override($arole->id, $id);  
+        if ($adminroles = get_roles_with_capability('moodle/role:manage', CAP_ALLOW, $context)) {
+            // foreach admin role
+            foreach ($adminroles as $arole) {
+                // write allow_assign and allow_overrid
+                allow_assign($arole->id, $id);
+                allow_override($arole->id, $id);  
+            }
         }
         
         return $id;
