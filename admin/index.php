@@ -109,6 +109,10 @@
 
     $linktoscrolltoerrors = '<script type="text/javascript" src="' . $CFG->wwwroot . '/lib/scroll_to_errors.js"></script>';
     if (! $maintables) {
+    /// hide errors from headers in case debug enabled in config.php
+        $origdebug = $CFG->debug;
+        $CFG->debug = 5;
+        error_reporting($CFG->debug);
         if (empty($agreelicence)) {
             $strlicense = get_string("license");
             print_header($strlicense, $strlicense, $strlicense, "", "", false, "&nbsp;", "&nbsp;");
@@ -127,6 +131,9 @@
         $strdatabasesuccess  = get_string("databasesuccess");
         print_header($strdatabasesetup, $strdatabasesetup, $strdatabasesetup,
                         "", $linktoscrolltoerrors, false, "&nbsp;", "&nbsp;");
+    /// return to original debugging level
+        $CFG->debug = $origdebug;
+        error_reporting($CFG->debug);
         upgrade_log_start();
         $db->debug = true;
 
@@ -204,6 +211,16 @@
             $a->newversion = "$release ($version)";
             $strdatabasechecking = get_string("databasechecking", "", $a);
 
+            // hide errors from headers in case debug is enabled
+            $origdebug = $CFG->debug;
+            $CFG->debug = 5;
+            error_reporting($CFG->debug);
+
+            // logout in case we are upgrading from pre 1.7 version - prevention of weird session problems
+            if ($CFG->version < 2006050600) {
+                require_logout();
+            }
+
             if (empty($confirmupgrade)) {
                 print_header($strdatabasechecking, $stradministration, $strdatabasechecking,
                         "", "", false, "&nbsp;", "&nbsp;");
@@ -214,6 +231,9 @@
                 $strdatabasesuccess  = get_string("databasesuccess");
                 print_header($strdatabasechecking, $stradministration, $strdatabasechecking,
                         "", $linktoscrolltoerrors, false, "&nbsp;", "&nbsp;");
+            /// return to original debugging level
+                $CFG->debug = $origdebug;
+                error_reporting($CFG->debug);
                 upgrade_log_start();
                 print_heading($strdatabasechecking);
                 $db->debug=true;

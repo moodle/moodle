@@ -192,6 +192,14 @@ global $HTTPSPAGEREQUIRED;
 
     raise_memory_limit('64M');    // We should never NEED this much but just in case...
 
+/// Disable errors for now - needed for installation when debug enabled in config.php
+    if (isset($CFG->debug)) {
+        $originalconfigdebug = $CFG->debug;
+        unset($CFG->debug);
+    } else {
+        $originalconfigdebug = -1;
+    }
+
 /// If $CFG->unicodedb is not set, get it from database or calculate it because we need
 /// to know it to "set names" properly.
 /// (this is the only database interaction before "set names")
@@ -220,12 +228,13 @@ global $HTTPSPAGEREQUIRED;
         $db->LogSQL();
     }
 
-
-/// Set error reporting back to normal
-    if (!isset($CFG->debug)) { // empty() would override 0 or false from config.php
-        $CFG->debug = 5;
+/// Prevent warnings from roles when upgrading with debug on
+    if (isset($CFG->debug)) {
+        $originaldatabasedebug = $CFG->debug;
+        unset($CFG->debug);
+    } else {
+        $originaldatabasedebug = -1;
     }
-    error_reporting($CFG->debug);
 
 
 //// Defining the site
@@ -245,6 +254,20 @@ global $HTTPSPAGEREQUIRED;
         $COURSE = new object;  // no site created yet
         $COURSE->id = 1;
     }
+
+
+/// Set error reporting back to normal
+    if ($originaldatabasedebug == -1) {
+        $CFG->debug = 5;
+    } else {
+        $CFG->debug = $originaldatabasedebug;
+    }
+    if ($originalconfigdebug !== -1) {
+        $CFG->debug = $originalconfigdebug; 
+    }
+    unset($originalconfigdebug);
+    unset($originaldatabasedebug);
+    error_reporting($CFG->debug);
 
 
 /// Set a default enrolment configuration (see bug 1598)
