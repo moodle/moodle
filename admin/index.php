@@ -384,6 +384,9 @@
         if ($admintree = get_record('block', 'name', 'admin_tree')) {
             $page = page_create_object(PAGE_COURSE_VIEW, SITEID);
             blocks_execute_action($page, blocks_get_by_page($page), 'add', (int)$admintree->id, false, false);
+            if ($admintreeinstance = get_record('block_instance', 'pagetype', $page->type, 'pageid', SITEID, 'blockid', $admintree->id)) {
+                blocks_execute_action($page, blocks_get_by_page($page), 'moveleft', $admintreeinstance, false, false);
+            } 
         }
 
         set_config('adminblocks_initialised', 1);
