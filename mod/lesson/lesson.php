@@ -40,7 +40,7 @@
         case 'confirmdelete':
         case 'editpage':
         case 'move':
-            lesson_print_header($cm, $course, $lesson, '', false);
+            lesson_print_header($cm, $course, $lesson);
         case 'addcluster':
         case 'addendofbranch':
         case 'addendofcluster':

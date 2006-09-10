@@ -217,7 +217,7 @@ if (!defined("LESSON_RESPONSE_EDITOR")) {
  * @param boolean $printheading Print the a heading with the lesson name
  * @return void
  **/
-function lesson_print_header($cm, $course, $lesson, $currenttab = '', $printheading = true) {
+function lesson_print_header($cm, $course, $lesson, $currenttab = '') {
     global $CFG, $USER;
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     
@@ -238,8 +238,10 @@ function lesson_print_header($cm, $course, $lesson, $currenttab = '', $printhead
                   '', '', true, update_module_button($cm->id, $course->id, $strlesson),
                   navmenu($course, $cm));
                   
-    if ($printheading) {
+    if (has_capability('mod/lesson:manage')) {
         print_heading_with_help(format_string($lesson->name, true), "overview", "lesson");
+    } else {
+        print_heading($lesson->name);
     }
     
     if (!empty($currenttab) and has_capability('mod/lesson:manage', $context)) {

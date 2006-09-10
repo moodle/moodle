@@ -776,7 +776,7 @@
         lesson_set_message('('.get_string("maximumnumberofattemptsreached", "lesson").')');
     }
     
-    lesson_print_header($cm, $course, $lesson, 'navigation', false);
+    lesson_print_header($cm, $course, $lesson, 'navigation');
 
     include($CFG->wwwroot.'/mod/lesson/action/continue.html');
 ?>

@@ -71,8 +71,13 @@
             print_simple_box_end();
             print_footer($course);
             exit();
-        } elseif ($lesson->highscores && !$lesson->practice) {
-            $action = 'highscores';
+        } elseif ($lesson->highscores and !$lesson->practice) {
+            if ($lesson->usepassword and empty($USER->lessonloggedin[$lesson->id])) {
+                // User needs to be logged in
+                $action = 'navigation';
+            } else {
+                redirect("$CFG->wwwroot/mod/lesson/highscores.php?id=$cm->id");
+            }
         } else {
             $action = 'navigation';
         }
@@ -135,6 +140,10 @@
                 if ($lesson->password == md5(trim($password))) {
                     $USER->lessonloggedin[$lesson->id] = true;
                     $correctpass = true;
+                    if ($lesson->highscores) {
+                        // Logged in, now we can show high scores
+                        redirect("$CFG->wwwroot/mod/lesson/highscores.php?id=$cm->id", '', 0);
+                    }
                 }
             } elseif (isset($USER->lessonloggedin[$lesson->id])) {
                 $correctpass = true;
@@ -1089,14 +1098,9 @@
             // high scores code
             if ($lesson->highscores && !has_capability('mod/lesson:manage', $context) && !$lesson->practice) {
                 echo "<div align=\"center\"><br>";
-                if (!$grades = get_records_select("lesson_grades", "lessonid = $lesson->id", "completed")) {
-                    echo get_string("youmadehighscore", "lesson", $lesson->maxhighscores)."<br>";
-                    echo "<a href=\"view.php?id=$cm->id&amp;action=nameforhighscores\">".get_string("clicktopost", "lesson")."</a><br>";
-                } else {
-                    if (!$highscores = get_records_select("lesson_high_scores", "lessonid = $lesson->id")) {
-                        echo get_string("youmadehighscore", "lesson", $lesson->maxhighscores)."<br>";
-                        echo "<div class=\"lessonbutton standardbutton\"><a href=\"view.php?id=$cm->id&amp;action=nameforhighscores\">".get_string("clicktopost", "lesson")."</a></div><br/>";
-                    } else {
+                if ($grades = get_records_select("lesson_grades", "lessonid = $lesson->id", "completed")) {
+                    $madeit = false;
+                    if ($highscores = get_records_select("lesson_high_scores", "lessonid = $lesson->id")) {
                         // get all the high scores into an array
                         foreach ($highscores as $highscore) {
                             $grade = $grades[$highscore->gradeid]->grade;
@@ -1106,15 +1110,26 @@
                         sort($topscores);
                         $lowscore = $topscores[0];
                         
-                        if ($thegrade >= $lowscore || count($topscores) <= $lesson->maxhighscores) {
-                            echo get_string("youmadehighscore", "lesson", $lesson->maxhighscores)."<br>";
-                            echo "<div class=\"lessonbutton standardbutton\"><a href=\"view.php?id=$cm->id&amp;action=nameforhighscores\">".get_string("clicktopost", "lesson")."</a></div><br />";
-                        } else {
-                            echo get_string("nothighscore", "lesson", $lesson->maxhighscores)."<br>";
+                        if ($gradeinfo->grade >= $lowscore || count($topscores) <= $lesson->maxhighscores) {
+                            $madeit = true;
                         }
                     }
+                    if (!$highscores or $madeit) {
+                        echo '<p>'.get_string("youmadehighscore", "lesson", $lesson->maxhighscores).
+                             '</p><p>
+                              <form method="post" name="highscores" action="'.$CFG->wwwroot.'/mod/lesson/highscores.php">
+                              <input type="hidden" name="mode" value="add" />
+                              <input type="hidden" name="id" value="'.$cm->id.'" />
+                              <input type="hidden" name="sesskey" value="'.sesskey().'" />
+                              <p>';
+                              lesson_print_submit_link(get_string('clicktopost', 'lesson'), 'highscores');
+                        echo '</p>
+                              </form>';
+                    } else {
+                        echo get_string("nothighscore", "lesson", $lesson->maxhighscores)."<br>";
+                    }
                 }
-                echo "<br /><div style=\"padding: 5px;\" class=\"lessonbutton standardbutton\"><a href=\"view.php?id=$cm->id&amp;action=highscores&link=1\">".get_string("viewhighscores", "lesson").'</a></div>';
+                echo "<br /><div style=\"padding: 5px;\" class=\"lessonbutton standardbutton\"><a href=\"$CFG->wwwroot/mod/lesson/highscores.php?id=$cm->id&amp;link=1\">".get_string("viewhighscores", "lesson").'</a></div>';
                 echo "</div>";                            
             }
 
@@ -1525,162 +1540,7 @@
             echo "</table></form>\n";
         } 
     }
-
-    /*******************high scores **************************************/
-    elseif ($action == 'highscores') {
-        print_heading_with_help(format_string($lesson->name,true), "overview", "lesson");
-
-        if (!$grades = get_records_select("lesson_grades", "lessonid = $lesson->id", "completed")) {
-            $grades = array();
-        }
         
-        print_heading(get_string("topscorestitle", "lesson", $lesson->maxhighscores), 'center', 4);
-
-        if (!$highscores = get_records_select("lesson_high_scores", "lessonid = $lesson->id")) {
-            print_heading(get_string("nohighscores", "lesson"), 'center', 3);
-        } else {
-            foreach ($highscores as $highscore) {
-                $grade = $grades[$highscore->gradeid]->grade;
-                $topscores[$grade][] = $highscore->nickname;
-            }
-            krsort($topscores);
-                       
-            $table = new stdClass;
-            $table->align = array('center', 'left', 'right');
-            $table->wrap = array();
-            $table->width = "30%";
-            $table->cellspacing = '10px';
-            $table->size = array('*', '*', '*');
-            
-            $table->head = array(get_string("rank", "lesson"), $course->students, get_string("scores", "lesson"));
-            
-            $printed = 0;
-            while (true) {
-                $temp = current($topscores);
-                $score = key($topscores);
-                $rank = $printed + 1;
-                sort($temp); 
-                foreach ($temp as $student) {
-                    $table->data[] = array($rank, $student, $score);
-                }
-                $printed++;
-                if (!next($topscores) || !($printed < $lesson->maxhighscores)) { 
-                    break;
-                }
-            }
-            print_table($table);
-        }
-        
-        if (!has_capability('mod/lesson:manage', $context)) {  // teachers don't need the links
-            echo '<div align="center">';
-            if (optional_param('link', 0, PARAM_INT)) {
-                echo "<br /><div class=\"lessonbutton standardbutton\"><a href=\"../../course/view.php?id=$course->id\">".get_string("returntocourse", "lesson")."</a></div>";
-            } else {
-                echo "<br /><span class=\"lessonbutton standardbutton\"><a href=\"../../course/view.php?id=$course->id\">".get_string("cancel", "lesson").'</a></span> '.
-                    " <span class=\"lessonbutton standardbutton\"><a href=\"view.php?id=$cm->id&amp;action=navigation\">".get_string("startlesson", "lesson").'</a></span>';
-            }
-            echo "</div>";
-        }
-    }
-    /*******************update high scores **************************************/
-    elseif ($action == 'updatehighscores') {
-        print_heading_with_help(format_string($lesson->name,true), "overview", "lesson");
-    
-        confirm_sesskey();
-
-        if (!$grades = get_records_select("lesson_grades", "lessonid = $lesson->id", "completed")) {
-            error("Error: could not find grades");
-        }
-        if (!$usergrades = get_records_select("lesson_grades", "lessonid = $lesson->id and userid = $USER->id", "completed DESC")) {
-            error("Error: could not find grades");
-        }
-        echo "<div align=\"center\">";
-        echo get_string("waitpostscore", "lesson")."<br>";
-        
-        foreach ($usergrades as $usergrade) {
-            // get their latest grade
-            $newgrade = $usergrade;
-            break;
-        }
-        
-        if ($pasthighscore = get_record_select("lesson_high_scores", "lessonid = $lesson->id and userid = $USER->id")) {
-            $pastgrade = $grades[$pasthighscore->gradeid]->grade;
-            if ($pastgrade >= $newgrade->grade) {
-                redirect("view.php?id=$cm->id&amp;action=highscores&amp;link=1", "Update Successful");
-            } else {
-                // delete old and find out where new one goes
-                if (!delete_records("lesson_high_scores", "id", $pasthighscore->id)) {
-                    error("Error: could not delete old high score");
-                }
-            }
-        }
-        // find out if we need to delete any records
-        if ($highscores = get_records_select("lesson_high_scores", "lessonid = $lesson->id")) {  // if no high scores... then just insert our new one
-            foreach ($highscores as $highscore) {
-                $grade = $grades[$highscore->gradeid]->grade;
-                $topscores[$grade][] = $highscore->userid;
-            }
-            if (!(count($topscores) < $lesson->maxhighscores)) { // if the top scores list is not full then dont need to worry about removing old scores
-                $scores = array_keys($topscores);
-                $flag = true;                
-                // see if the new score is already listed in the top scores list
-                // if it is listed, then dont need to delete any records
-                foreach ($scores as $score) {
-                    if ($score = $newgrade->grade) {
-                        $flag = false;
-                    }
-                }    
-                if ($flag) { // if the score does not exist in the top scores list, then the lowest scores get thrown out.
-                    ksort($topscores); // sort so the lowest score is first element
-                    $lowscore = current($topscores);
-                    // making a delete statement to delete all users with the lowest score
-                    $deletestmt = 'lessonid = '. $lesson->id .' and userid = ';
-                    $deletestmt .= current($lowscore);
-                    while (next($lowscore)) {
-                        $deletestmt .= " or userid = ".current($lowscore);
-                    }
-                    if (!delete_records_select('lesson_high_scores', $deletestmt)) {
-                        /// not a big deal...
-                        error('Did not delete extra high score(s)');
-                    }
-                }
-            }
-        }
-        
-        $newhighscore = new stdClass;
-        $newhighscore->lessonid = $lesson->id;
-        $newhighscore->userid = $USER->id;
-        $newhighscore->gradeid = $newgrade->id;
-        $newhighscore->nickname = optional_param('name', '', PARAM_CLEAN);
-        
-        if (!insert_record("lesson_high_scores", $newhighscore)) {
-            error("Insert of new high score Failed!");
-        }
-        
-        redirect("view.php?id=$cm->id&amp;action=highscores&amp;link=1", get_string("postsuccess", "lesson"));
-        echo "</div>";
-    }
-    /*******************name for highscores **************************************/
-    elseif ($action == 'nameforhighscores') {
-        print_heading_with_help(format_string($lesson->name,true), "overview", "lesson");
-        echo "<div align=\"center\">";
-        if ($name = trim(optional_param('name', '', PARAM_CLEAN))) {
-            if (lesson_check_nickname($name)) {
-                redirect("view.php?id=$cm->id&amp;action=updatehighscores&amp;name=$name&amp;sesskey=".$USER->sesskey, get_string("nameapproved", "lesson"));
-            } else {
-                echo get_string("namereject", "lesson")."<br /><br />";
-            }
-        }
-                
-        echo "<form name=\"nickname\" method =\"post\" action=\"view.php\">";
-        echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\" />";
-        echo "<input type=\"hidden\" name=\"action\" value=\"nameforhighscores\" />";
-        
-        echo get_string("entername", "lesson").": <input type=\"text\" name=\"name\" maxlength=\"5\"><br />";
-        echo "<input type=\"submit\" value=\"".get_string("submitname", "lesson")."\" />";
-        echo "</form>";
-        echo "</div>";
-    }    
     /*************** no man's land **************************************/
     else {
         error("Fatal Error: Unknown Action: ".$action."\n");
