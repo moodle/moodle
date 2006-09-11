@@ -71,6 +71,7 @@ $string['revert_changes'] = 'Revert Changes';
 $string['save'] = 'Save';
 $string['selectaction'] = 'Select Action:';
 $string['selectdb'] = 'Select Database:';
+$string['selectonefieldkeyindex'] = 'Please, select one Field/Key/Index from the list to see the PHP code';
 $string['selecttable'] = 'Select Table:';
 $string['selectfieldkeyindex'] = 'Select Field/Key/Index:';
 $string['sentences'] = 'Sentences';
