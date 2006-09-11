@@ -38,20 +38,8 @@ function wiki_is_student($wiki, $userid=NULL) {
     return has_capability('mod/wiki:participate', wiki_context($wiki), $userid);
 }
 
-function wiki_get_users($wiki, $capability, $groupid=-1, $sort='u.lastaccess', $fields='u.*') {
-    if ($users = get_users_by_capability(wiki_context($wiki), $capability, $fields, $sort) and $groupid != -1) {
-        $result = array();
-        foreach ($users as $key=>$user) {
-            if (!ismember($groupid, $user->id)) {
-                unset($users[$key]);
-            }
-        }
-        return $users;
-    }
-}
-
-function wiki_get_students($wiki, $groupid=-1, $sort='u.lastaccess', $fields='u.*') {
-    return wiki_get_users($wiki, 'mod/wiki:participate', $groupid, $sort, $fields);
+function wiki_get_students($wiki, $groups='', $sort='u.lastaccess', $fields='u.*') {
+    return $users = get_users_by_capability(wiki_context($wiki), 'mod/wiki:participate', $fields, $sort, '', '', $groups);
 }
 
 /* end of compatibility functions */
