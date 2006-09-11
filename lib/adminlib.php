@@ -1243,8 +1243,18 @@ class admin_setting_configtext extends admin_setting {
     }
     
     function write_setting($data) {
-        $data = clean_param($data, $this->paramtype);
+        if (is_string($this->paramtype)) {
+            if (!$this->validate($data)) {
+                return get_string('validateerror', 'admin') . $this->visiblename . '<br />';
+            }
+        } else {
+            $data = clean_param($data, $this->paramtype);
+        }
         return (set_config($this->name,$data) ? '' : get_string('errorsetting', 'admin') . $this->visiblename . '<br />');
+    }
+
+    function validate($data) {
+        return preg_match($this->paramtype, $data);
     }
 
     function output_html() {
