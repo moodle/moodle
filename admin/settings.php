@@ -64,11 +64,13 @@ if ($data = data_submitted()) {
         if (empty($errors)) {
             switch ($return) {
                 case 'site':
-                    redirect("$CFG->wwwroot/", get_string('changessaved'),1);
+                    redirect("$CFG->wwwroot/");
                 case 'admin':
-                    redirect("$CFG->wwwroot/admin/", get_string('changessaved'),1);
+                    redirect("$CFG->wwwroot/admin/");
                 default:
-                    redirect("$CFG->wwwroot/admin/settings.php?section=" . $PAGE->section, get_string('changessaved'),1);
+                    // following redirect should display confirmation message because it redirects
+                    // to the same page, user might not know if save button worked
+                    redirect("$CFG->wwwroot/admin/settings.php?section=" . $PAGE->section, get_string('changessaved'),2);
             }
         } else {
             error(get_string('errorwithsettings', 'admin') . ' <br />' . $errors);

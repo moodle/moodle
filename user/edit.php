@@ -261,20 +261,19 @@
                     if (isset($USER->newadminuser)) {
                         unset($USER->newadminuser);
                         // redirect to admin/ to continue with installation
-                        redirect("$CFG->wwwroot/$CFG->admin/", get_string('changessaved'));
+                        redirect("$CFG->wwwroot/$CFG->admin/");
                     }
                     if (!empty($SESSION->wantsurl)) {  // User may have been forced to edit account, so let's 
                                                        // send them to where they wanted to go originally
                         $wantsurl = $SESSION->wantsurl;
                         $SESSION->wantsurl = '';       // In case unset doesn't work as expected
                         unset($SESSION->wantsurl);
-                        redirect($wantsurl, get_string('changessaved'));
+                        redirect($wantsurl);
                     } else {
-                        redirect("$CFG->wwwroot/user/view.php?id=$user->id&course=$course->id", 
-                                  get_string("changessaved"));
+                        redirect("$CFG->wwwroot/user/view.php?id=$user->id&course=$course->id");
                     }
                 } else {
-                    redirect("$CFG->wwwroot/$CFG->admin/user.php", get_string("changessaved"));
+                    redirect("$CFG->wwwroot/$CFG->admin/user.php");
                 }
             } else {
                 error("Could not update the user record ($user->id)");

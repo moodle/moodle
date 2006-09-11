@@ -430,7 +430,7 @@
 
 /// check that site is properly customized
     if (empty($site->shortname) or empty($site->shortname)) {
-        redirect('settings.php?section=frontpage&return=site');
+        redirect('settings.php?section=frontpage&amp;return=site');
     }
 
 /// Check if we are returning from moodle.org registration and if so, we mark that fact to remove reminders
