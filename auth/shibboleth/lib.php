@@ -1,6 +1,7 @@
 <?PHP  // $Id$
 //CHANGELOG:
 //28.10.2004 SHIBBOLETH Authentication functions v.0.1
+//2005-2006 Various extensions and fixes by Lukas Haemmerle
 //Distributed under GPL (c)Markus Hagman 2004-
 
 function auth_user_login($username, $password) {
@@ -41,9 +42,9 @@ function auth_get_userinfo($username) {
   
     foreach ($attrmap as $key=>$value) {
         if (!empty($CFG->unicodedb)) {
-            $result[$key]=$_SERVER[$value];
+            $result[$key]=get_first_string($_SERVER[$value]);
         } else {
-            $result[$key]=utf8_decode($_SERVER[$value]);
+            $result[$key]=utf8_decode(get_first_string($_SERVER[$value]));
         }
     }
 
@@ -84,4 +85,15 @@ function auth_shib_attributes(){
 
     return $moodleattributes;
 }
+
+
+function get_first_string($string){
+// Cleans and returns first of potential many values (multi-valued attributes)
+
+    $list = split( ';', $string);
+    $clean_string = rtrim($list[0]);
+
+    return $clean_string;
+}
+
 ?>
