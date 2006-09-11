@@ -535,15 +535,18 @@ $CFG->os = PHP_OS;
 /// in the language file.  Otherwise, if the admin hasn't specified a locale
 /// then use the one from the default language.  Otherwise (and this is the
 /// majority of cases), use the stored locale specified by admin.
-
-    if ($lang = optional_param('lang', PARAM_SAFEDIR)) {
-        if (!detect_munged_arguments($lang, 0) and (file_exists($CFG->dataroot .'/lang/'. $lang) or 
-                                                    file_exists($CFG->dirroot .'/lang/'. $lang))) {
+    if ($SESSION !== NULL and $lang = optional_param('lang', false, PARAM_SAFEDIR)) {
+        if (file_exists($CFG->dataroot .'/lang/'. $lang) or file_exists($CFG->dirroot .'/lang/'. $lang)) {
             $SESSION->lang = $lang;
         }
     }
+    unset($lang);
     if (empty($CFG->lang)) {
-        $CFG->lang = !empty($CFG->unicodedb) ? 'en_utf8' : 'en';
+        if (empty($SESSION->lang)) {
+            $CFG->lang = !empty($CFG->unicodedb) ? 'en_utf8' : 'en';
+        } else {
+            $CFG->lang = $SESSION->lang;
+        }
     }
 
     // set default locale - might be changed again later in require_login()
