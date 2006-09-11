@@ -68,7 +68,7 @@ CREATE INDEX prefix_scorm_scoes_track_element_idx ON prefix_scorm_scoes_track (e
 # Dumping data for table `log_display`
 #
 
-INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('resource', 'view', 'resource', 'name');
-INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('resource', 'review', 'resource', 'name');
-INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('resource', 'update', 'resource', 'name');
-INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('resource', 'add', 'resource', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('scorm', 'view', 'scorm', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('scorm', 'review', 'scorm', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('scorm', 'update', 'scorm', 'name');
+INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('scorm', 'add', 'scorm', 'name');
