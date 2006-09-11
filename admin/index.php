@@ -363,7 +363,7 @@
             $cat = new Object();
             $cat->name = get_string('miscellaneous');
             if (insert_record('course_categories', $cat)) {
-                  print_continue("index.php");
+                  redirect('index.php');
             } else {
                  error("Serious Error! Could not set up a default course category!");
             }
@@ -418,7 +418,7 @@
 
 /// Set up the admin user
     if (empty($CFG->rolesactive)) {
-        redirect("user.php");
+        redirect('user.php');
     }
 
 /// Check for valid admin user
