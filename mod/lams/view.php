@@ -22,6 +22,7 @@ if (! $lams = get_record("lams", "id", $cm->instance)) {
 }
 
 require_login($course->id);
+$context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
 add_to_log($course->id, "lams", "view", "view.php?id=$cm->id", "$lams->id");
 
@@ -47,7 +48,7 @@ print_heading(format_string($lams->name));
 //              navmenu($course, $cm));
 
 /// Print the main part of the page
-if(isteacher($course->id,$USER->id)||isteacheredit($course->id,$USER->id)){
+if(has_capability('mod/lams:manage', $context)){
     $datetime =    date("F d,Y g:i a");
     $plaintext = trim($datetime).trim($USER->username).trim($LAMSCONSTANTS->monitor_method).trim($CFG->lams_serverid).trim($CFG->lams_serverkey);
     $hash = sha1(strtolower($plaintext));
@@ -76,7 +77,7 @@ if(isteacher($course->id,$USER->id)||isteacheredit($course->id,$USER->id)){
     print_simple_box_start('center');
     echo '<a target="LAMS Learner" title="LAMS Learner" href="'.$url.'">'.get_string("openlearner", "lams").'</a>';
     print_simple_box_end();
-}else if(isstudent($course->id,$USER->id)){
+}else if(has_capability('mod/lams:participate', $context)){
     $datetime =    date("F d,Y g:i a");
     $plaintext = trim($datetime).trim($USER->username).trim($LAMSCONSTANTS->learner_method).trim($CFG->lams_serverid).trim($CFG->lams_serverkey);
     $hash = sha1(strtolower($plaintext));
