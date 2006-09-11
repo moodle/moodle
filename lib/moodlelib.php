@@ -2469,14 +2469,20 @@ function get_complete_user_data($field, $value) {
     if (!($plugins = explode(',', $CFG->enrol_plugins_enabled))) {
         $plugins = array($CFG->enrol);
     }
+
     require_once($CFG->dirroot .'/enrol/enrol.class.php');
+
     foreach ($plugins as $p) {
         $enrol = enrolment_factory::factory($p);
-        if (method_exists($enrol, 'get_student_courses')) {
-            $enrol->get_student_courses($user);
-        }
-        if (method_exists($enrol, 'get_teacher_courses')) {
-            $enrol->get_teacher_courses($user);
+        if (method_exists($enrol, 'setup_enrolments')) {  /// Plugin supports Roles (Moodle 1.7 and later)
+            $enrol->setup_enrolments($user);
+        } else {                                          /// Run legacy enrolment methods
+            if (method_exists($enrol, 'get_student_courses')) {
+                $enrol->get_student_courses($user);
+            }
+            if (method_exists($enrol, 'get_teacher_courses')) {
+                $enrol->get_teacher_courses($user);
+            }
         }
         unset($enrol);
     }
