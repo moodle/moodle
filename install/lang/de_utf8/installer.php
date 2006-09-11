@@ -134,7 +134,7 @@ $string['phpversionhelp'] = '<p>Moodle erwartet PHP mindestens in der Version 4.
 <p>Sie müssen Ihre PHP-Verson aktualisieren oder auf einen Rechner wechseln, der eine neuere Version von PHP nutzt.<br />
 (Im Falle von 5.0.x könnten Sie auch zu einer Version 4.4.x downgraden)</p>';
 $string['previous'] = 'Frühere';
-$string['remotedownloadnotallowed'] = 'Der Download von Komponenten auf Ihren Server ist nicht erlaubt (allow_url_fopen ist deaktiviert). <br /><br /> Die Datei <a href=\"$a->url\">$a->url</a> muss manuell heruntergeladen werden. Kopieren Sie die Datei nach \"$a->dest\" auf dem Server und entpacken Sie sie dort. ';
+$string['remotedownloadnotallowed'] = 'Der Download von Komponenten auf Ihren Server ist nicht erlaubt (allow_url_fopen ist deaktiviert). <br /><br /> Die Datei <a href=\"$a->url\">$a->url</a> muss manuell heruntergeladen werden. Kopieren Sie die Datei nach \"$a->dest\" auf dem Server und entpacken Sie sie dort.';
 $string['report'] = 'Bericht';
 $string['restricted'] = 'eingeschränkt';
 $string['safemode'] = 'Safe Mode';
