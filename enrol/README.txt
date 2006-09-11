@@ -16,40 +16,56 @@ the functionality they are after.
 
 
 Mandatory methods
------------------
+=================
 
-  config_form
-  process_config
+  config_form()
+  process_config()
 
 
 Login-time methods
-------------------
+==================
 
-  get_student_courses
-  get_teacher_courses
+  Before Moodle 1.7
+  -----------------
 
-You probably will want to offer at least get_student_courses().
+      get_student_courses()
+      get_teacher_courses()
+  
+  You probably will want to offer at least get_student_courses().
+  
+  These methods are triggered when a user logs in successfully,
+  and they are expected to populate $USER->student and 
+  $USER->teacher arrays and maintain (add/delete) entries from
+  user_students and user_teachers.
+  
+  These methods are relevant for most plugins, and are the main
+  interest for plugins that work with a read-only backend such
+  as LDAP or a database.
+  
+  Note that with the multi-enrol infrastructure two things have 
+  changed. We now have an 'enrol' field in those tables, and 
+  each plugin must maintain only its own enrolment records. 
+  Conversely, the $USER->student and ->teacher arrays have the
+  enrolment type as value, like
+  
+     $USER->student = array ( $courseid => $plugintype );
+  
 
-These methods are triggered when a user logs in successfully,
-and they are expected to populate $USER->student and 
-$USER->teacher arrays and maintain (add/delete) entries from
-user_students and user_teachers.
+  Moodle 1.7 and later
+  --------------------
 
-These methods are relevant for most plugins, and are the main
-interest for plugins that work with a read-only backend such
-as LDAP or a database. You probably will want to offer at 
-least get_student_courses().
+      setup_enrolments()
 
-Note that with the multi-enrol infrastructure two things have 
-changed. We now have an 'enrol' field in those tables, and 
-each plugin must maintain only its own enrolment records. 
-Conversely, the $USER->student and ->teacher arrays have the
-enrolment type as value, like
-
-   $USER->student = array ( $courseid => $plugintype );
-
+  With the advent of roles, there could well not be students and 
+  teachers any more, so enrolment plugins have to be more flexible
+  about how they map outside data to the internal roles.
+  
+  This one method should do everything, calling functions from 
+  lib/accesslib.php as necessary to set up relationships.
+  
+  
 Interactive enrolment methods
------------------------------
+=============================
 
   print_entry()
   check_entry()
@@ -68,7 +84,7 @@ set to specific interactive enrolment methods.
 
 
 Cron
-----
+====
 
 If your class offers a cron() method, it will be invoked by
 the standard Moodle cron every 5 minutes. Note that if the
