@@ -14,7 +14,6 @@
     $confirm = optional_param('confirm',0,PARAM_INT);
     
     
-    
     if (isguest()) {
         $wwwroot = $CFG->wwwroot.'/login/index.php';
         if (!empty($CFG->loginhttps)) {
@@ -41,8 +40,7 @@
         }
         
         if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $course->id)) { // For the logs
-            // Teacher forum?
-            $cm->id = 0;
+            error('Could not get the course module for the forum instance.');
         } else {
             $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
         }
@@ -92,7 +90,7 @@
         $post->attachment = isset($_FILES['attachment']) ? $_FILES['attachment'] : NULL;
 
         if (!$cm = get_coursemodule_from_instance("forum", $post->forum, $course->id)) { // For the logs
-            $cm->id = 0;
+            error('Could not get the course module for the forum instance.');
         }
         $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
         trusttext_after_edit($post->message, $modcontext);
@@ -382,10 +380,6 @@
         if (! $post = forum_get_post_full($edit)) {
             error("Post ID was incorrect");
         }
-        if (($post->userid <> $USER->id) and
-                    !has_capability('mod/forum:editanypost', $modcontext)) {
-            error("You can't edit other people's posts!");
-        }
         if ($post->parent) {
             if (! $parent = forum_get_post_full($post->parent)) {
                 error("Parent post ID was incorrect ($post->parent)");
@@ -406,9 +400,17 @@
         if (! $course = get_record("course", "id", $discussion->course)) {
             error("The course number was incorrect ($discussion->course)");
         }
+        if (!$cm = get_coursemodule_from_instance("forum", $forum->id, $course->i)) {
+            error('Could not get the course module for the forum instance.');
+        } else {
+            $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
+        }
+        if (($post->userid <> $USER->id) and
+                    !has_capability('mod/forum:editanypost', $modcontext)) {
+            error("You can't edit other people's posts!");
+        }
 
         // Load up the $post variable.
-
         $post->edit = $edit;
 
         $post->course  = $course->id;
@@ -429,7 +431,7 @@
             error("The forum number was incorrect ($discussion->forum)");
         }
         if (!$cm = get_coursemodule_from_instance("forum", $forum->id, $forum->course)) {
-            $cm->id = 0;
+            error('Could not get the course module for the forum instance.');
         } else {
             $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
         }
@@ -489,7 +491,7 @@
             forum_set_return();
 
             if ($replycount) {
-                if (!has_capability('mof/forum:deleteanypost', $modcontext)) {
+                if (!has_capability('mod/forum:deleteanypost', $modcontext)) {
                     error(get_string("couldnotdeletereplies", "forum"),
                           forum_go_back_to("discuss.php?d=$post->discussion"));
                 }
@@ -520,7 +522,7 @@
         die;
 
 
-    } else if (!empty($prune)) {  // Teacher is pruning
+    } else if (!empty($prune)) {  // Pruning
 
         if (!$post = forum_get_post_full($prune)) {
             error("Post ID was incorrect");
@@ -531,14 +533,16 @@
         if (!$forum = get_record("forum", "id", $discussion->forum)) {
             error("The forum number was incorrect ($discussion->forum)");
         }
-        if (!has_capability('mod/forum:splitdiscussions', $modcontext)) {
-            error("You can't split discussions!");
-        }
         if (!$post->parent) {
             error('This is already the first post in the discussion');
         }
         if (!$cm = get_coursemodule_from_instance("forum", $forum->id, $forum->course)) { // For the logs
-            $cm->id = 0;
+            error('Could not get the course module for the forum instance.');
+        } else {
+            $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
+        }
+        if (!has_capability('mod/forum:splitdiscussions', $modcontext)) {
+            error("You can't split discussions!");
         }
 
         if (!empty($name)) {    // User has confirmed the prune
