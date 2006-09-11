@@ -10,6 +10,10 @@
 
     $jump = optional_param('jump', '', PARAM_RAW);
 
+    if (!confirm_sesskey()) {
+        print_error('confirmsesskeybad');
+    }
+
     if (strpos($jump, $CFG->wwwroot) === 0) {            // Anything on this site
         redirect(urldecode($jump));
     } else if (preg_match('/^[a-z]+\.php\?/', $jump)) { 
