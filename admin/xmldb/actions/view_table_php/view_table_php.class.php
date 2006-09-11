@@ -42,6 +42,8 @@ class view_table_php extends XMLDBAction {
             'selectaction' => 'xmldb',
             'selectfieldkeyindex' => 'xmldb',
             'view' => 'xmldb',
+            'table' => 'xmldb',
+            'selectonefieldkeyindex' => 'xmldb',
             'back' => 'xmldb'
         ));
     }
@@ -86,18 +88,24 @@ class view_table_php extends XMLDBAction {
         $field = reset($fields);
         $defaultfieldkeyindex = null;
         if ($field) {
-            $defaultfieldkeyindex = $field->getName();
+            $defaultfieldkeyindex = 'f#' . $field->getName();
         }
+        $keys = $table->getKeys();
+        $indexes = $table->getIndexes();
 
     /// Get parameters
         $commandparam = optional_param('command', 'add_field', PARAM_PATH);
         $fieldkeyindexparam = optional_param('fieldkeyindex', $defaultfieldkeyindex, PARAM_PATH);
+        $fieldkeyindexparam = preg_replace('/[fki]#/i', '', $fieldkeyindexparam); ///Strip the initials
 
     /// The back to edit xml button
         $b = ' <p align="center" class="buttons">';
-        $b .= '<a href="index.php?action=edit_xml_file&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['back'] . ']</a>';
+        $b .= '<a href="index.php?action=edit_table&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '&amp;table=' . $tableparam . '">[' . $this->str['back'] . ']</a>';
         $b .= '</p>';
         $o = $b;
+
+    /// The table currently being edited
+        $o .= '<h3 class="main">' . $this->str['table'] . ': ' . s($tableparam) . '</h3>';
 
     /// Calculate the popup of commands
         $commands = array('add_field', 
@@ -106,32 +114,56 @@ class view_table_php extends XMLDBAction {
         foreach ($commands as $command) {
             $popcommands[$command] = str_replace('_', ' ', $command);
         }
-    /// Calculate the popup of tables
-        foreach ($fields as $field) {
-            $poptables[$field->getName()] = $field->getName();
+    /// Calculate the popup of fields/keys/indexes
+        $optionspacer = '&nbsp;&nbsp;&nbsp;';
+        if ($fields) {
+            $poptables['fieldshead'] = 'Fields';
+            foreach ($fields as $field) {
+                $poptables['f#' . $field->getName()] = $optionspacer . $field->getName();
+            }
         }
+        if ($keys) {
+            $poptables['keyshead'] = 'Keys';
+            foreach ($keys as $key) {
+                $poptables['k#' . $key->getName()] = $optionspacer . $key->getName();
+            }
+        }
+        if ($indexes) {
+            $poptables['indexeshead'] = 'Indexes';
+            foreach ($indexes as $index) {
+                $poptables['i#' . $index->getName()] = $optionspacer . $index->getName();
+            }
+        }
+
     /// Now build the form
         $o.= '<form id="form" action="index.php" method="post">';
         $o.= '    <input type="hidden" name ="dir" value="' . str_replace($CFG->dirroot, '', $dirpath) . '" />';
+        $o.= '    <input type="hidden" name ="table" value="' . s($tableparam) . '" />';
         $o.= '    <input type="hidden" name ="action" value="view_table_php" />';
         $o.= '    <table id="formelements" align="center" cellpadding="5">';
-        $o.= '      <tr><td><label for="action" accesskey="c">' . $this->str['selectaction'] .' </label>' . choose_from_menu($popcommands, 'command', $commandparam, '', '', 0, true) . '&nbsp;<label for="table" accesskey="t">' . $this->str['selectfieldkeyindex'] . ' </label>' .choose_from_menu($poptables, 'table', $tableparam, '', '', 0, true) . '</td></tr>';
+        $o.= '      <tr><td><label for="action" accesskey="c">' . $this->str['selectaction'] .' </label>' . choose_from_menu($popcommands, 'command', $commandparam, '', '', 0, true) . '&nbsp;<label for="fieldkeyindex" accesskey="f">' . $this->str['selectfieldkeyindex'] . ' </label>' .choose_from_menu($poptables, 'fieldkeyindex', 'f#' . $fieldkeyindexparam, '', '', 0, true) . '</td></tr>';
         $o.= '      <tr><td colspan="2" align="center"><input type="submit" value="' .$this->str['view'] . '" /></td></tr>';
         $o.= '    </table>';
         $o.= '</form>';
+
         $o.= '    <table id="phpcode" align="center" cellpadding="5">';
         $o.= '      <tr><td><textarea cols="80" rows="32">';
-    /// Based on current params, call the needed function
-        switch ($commandparam) {
-            case 'create_table':
-                $o.= s($this->create_table_php($structure, $tableparam));
-                break;
-            case 'drop_table':
-                $o.= s($this->drop_table_php($structure, $tableparam));
-                break;
-            case 'rename_table':
-                $o.= s($this->rename_table_php($structure, $tableparam));
-                break;
+    /// Check we have selected some field/key/index from the popup
+        if ($fieldkeyindexparam == 'fieldshead' || $fieldkeyindexparam == 'keyshead' || $fieldkeyindexparam == 'indexeshead') {
+            $o.= s($this->str['selectonefieldkeyindex']);
+         } else {
+        /// Based on current params, call the needed function
+            switch ($commandparam) {
+                case 'create_table':
+                    $o.= s($this->create_table_php($structure, $tableparam));
+                    break;
+                case 'drop_table':
+                    $o.= s($this->drop_table_php($structure, $tableparam));
+                    break;
+                case 'rename_table':
+                    $o.= s($this->rename_table_php($structure, $tableparam));
+                    break;
+            }
         }
         $o.= '</textarea></td></tr>';
         $o.= '    </table>';
