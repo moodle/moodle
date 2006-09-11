@@ -699,7 +699,7 @@ function get_courses_search($searchterms, $sort='fullname ASC', $page=0, $record
     if ($courses) {  /// Remove unavailable courses from the list
         foreach ($courses as $key => $course) {
             if (!$course->visible) {
-                if (!isteacher($course->id)) {
+                if (!has_capability('moodle/course:viewhiddencourses', get_context_instance(CONTEXT_COURSE, $course->id))) {
                     unset($courses[$key]);
                     $totalcount--;
                 }
@@ -1066,7 +1066,7 @@ function get_all_instances_in_courses($modulename,$courses) {
 
     foreach ($courses as $course) {
         // Hide non-visible instances from students
-        if (isteacher($course->id)) {
+        if (has_capability('moodle/course:viewhiddencourses', get_context_instance(CONTEXT_COURSE, $course->id))) {
             $invisible = -1;
         } else {
             $invisible = 0;
@@ -1125,7 +1125,7 @@ function get_all_instances_in_course($modulename, $course) {
     }
 
     // Hide non-visible instances from students
-    if (isteacher($course->id)) {
+    if (has_capability('moodle/course:viewhiddencourses', get_context_instance(CONTEXT_COURSE, $course->id))) {
         $invisible = -1;
     } else {
         $invisible = 0;
@@ -1246,6 +1246,8 @@ function add_to_log($courseid, $module, $action, $url='', $info='', $cm=0, $user
                      WHERE id = \''. $userid .'\' ');
         if ($courseid != SITEID && !empty($courseid)) { // logins etc dont't have a courseid and isteacher will break without it.
             if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++;};
+            
+            /// since we are quering the log table for lastaccess time now, can stop doing this? tables are gone
             if (isstudent($courseid)) {
                 $db->Execute('UPDATE '. $CFG->prefix .'user_students SET timeaccess = \''. $timenow .'\' '.
                              'WHERE course = \''. $courseid .'\' AND userid = \''. $userid .'\'');

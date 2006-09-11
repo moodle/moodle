@@ -3034,7 +3034,7 @@ function print_user($user, $course, $messageselect=false, $return=false) {
     }
 
 /// Get the hidden field list
-    if ($isteacher || $isadmin) {
+    if (has_capability('moodle/course:viewhiddenuserfields', get_context_instance(CONTEXT_COURSE, $course->id))) {
         $hiddenfields = array();
     } else {
         $hiddenfields = array_flip(explode(',', $CFG->hiddenuserfields));
@@ -3522,8 +3522,8 @@ function print_textarea($usehtmleditor, $rows, $cols, $width, $height, $name, $v
         }
 
         if ($usehtmleditor) {
-
-            if (!empty($courseid) and isteacher($courseid)) {
+            // not sure if this capability is appropriate
+            if (!empty($courseid) and has_capability('moodle/course:update', get_context_instance(CONTEXT_COURSE, $courseid))) {
                 $str .= ($scriptcount < 1) ? '<script type="text/javascript" src="'.
                 $CFG->wwwroot .'/lib/editor/htmlarea/htmlarea.php?id='. $courseid .'"></script>'."\n" : '';
             } else {
@@ -4078,7 +4078,7 @@ function navmenulist($course, $sections, $modinfo, $isteacher, $strsection, $str
         if ($mod->section >= 0 and $section <> $mod->section) {
             $thissection = $sections[$mod->section];
 
-            if ($thissection->visible or !$course->hiddensections or $isteacher) {
+            if ($thissection->visible or !$course->hiddensections or has_capability('moodle/course:viewhiddensections', get_context_instance(CONTEXT_COURSE, $course->id))) {
                 $thissection->summary = strip_tags(format_string($thissection->summary,true));
                 if (!empty($doneheading)) {
                     $menu[] = '</ul></li>';

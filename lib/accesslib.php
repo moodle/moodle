@@ -2029,10 +2029,25 @@ function get_overridable_roles ($context) {
  * @param $sort - the sort order
  * @param $limitfrom - number of records to skip (offset)
  * @param $limitnum - number of records to fetch 
+ * @param $groups - single group or array of groups - group(s) user is in
  */
-function get_users_by_capability($context, $capability, $fields='u.*', $sort='', $limitfrom='', $limitnum='') {
+function get_users_by_capability($context, $capability, $fields='u.*', $sort='', $limitfrom='', $limitnum='', $groups='') {
     
     global $CFG;
+    
+    if ($groups) {
+      
+        $groupjoin = 'LEFT JOIN '.$CFG->prefix.'groups_members gm ON gm.userid = ra.userid';
+        
+        if (is_array($groups)) {
+            $groupsql = 'AND gm.id IN ('.implode(',', $groups).')';
+        } else {
+            $groupsql = 'AND gm.id = '.$groups; 
+        }
+    } else {
+        $groupjoin = '';
+        $groupsql = '';  
+    }
     
     // first get all roles with this capability in this context, or above
     $possibleroles = get_roles_with_capability($capability, CAP_ALLOW, $context);
@@ -2055,8 +2070,8 @@ function get_users_by_capability($context, $capability, $fields='u.*', $sort='',
     $roleids =  '('.implode(',', $validroleids).')';
     
     $select = ' SELECT '.$fields;
-    $from   = ' FROM '.$CFG->prefix.'user u LEFT JOIN '.$CFG->prefix.'role_assignments ra ON ra.userid = u.id ';
-    $where  = ' WHERE (ra.contextid = '.$context->id.' OR ra.contextid in '.$listofcontexts.') AND u.deleted = 0 AND ra.roleid in '.$roleids.' ';
+    $from   = ' FROM '.$CFG->prefix.'user u LEFT JOIN '.$CFG->prefix.'role_assignments ra ON ra.userid = u.id '.$groupjoin;
+    $where  = ' WHERE (ra.contextid = '.$context->id.' OR ra.contextid in '.$listofcontexts.') AND u.deleted = 0 AND ra.roleid in '.$roleids.' '.$groupsql;
 
     return get_records_sql($select.$from.$where.$sort, $limitfrom, $limitnum);  
 

@@ -188,8 +188,6 @@ function chat_print_recent_activity($course, $isteacher, $timestart) {
         return false;
     }
 
-    $isteacher = isteacher($course->id);
-
     $outputstarted = false;
     $current = 0;
     foreach ($chatusers as $chatuser) {
@@ -211,7 +209,6 @@ function chat_print_recent_activity($course, $isteacher, $timestart) {
               
                 // needs to be fixed
                 if (!(has_capability('mod/chat:readlog', $context) or instance_is_visible('chat', $chat))) {  // Chat hidden to students
-                //if (!($isteacher or instance_is_visible('chat', $chat))) {  // Chat hidden to students
                     continue;
                 }
                 if (!$outputstarted) {
@@ -222,7 +219,7 @@ function chat_print_recent_activity($course, $isteacher, $timestart) {
             }
             $current = $chatuser->chatid;
         }
-        $fullname = fullname($chatuser, $isteacher);
+        $fullname = fullname($chatuser, has_capability('moodle/site:viewfullnames', get_context_instance(CONTEXT_MODULE, $cm->id)));
         echo '<li class="info name">'.$fullname.'</li>';
     }
 

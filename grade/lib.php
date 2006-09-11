@@ -675,7 +675,7 @@ function grade_get_grades() {
     if ($mods) {
         foreach ($mods as $mod)    {
             // hidden is a gradebook setting for an assignment and visible is a course_module setting 
-            if (($mod->hidden != 1 && $mod->visible==1) or (isteacher($course->id) && $preferences->show_hidden==1)) {
+            if (($mod->hidden != 1 && $mod->visible==1) or (has_capability('moodle/course:viewhiddenactivities', get_context_instance(CONTEXT_MODULE, $mod->id)) && $preferences->show_hidden==1)) {
                 $libfile = "$CFG->dirroot/mod/$mod->modname/lib.php";
                 if (file_exists($libfile)) {
                     require_once($libfile);
@@ -1195,9 +1195,7 @@ function grade_download($download, $id) {
         error("Course ID was incorrect");
     }
 
-    if (!isteacher($course->id)) {
-        error("Only teachers can use this page!");
-    }
+    require_capability('moodle/course:viewcoursegrades', get_context_instance(CONTEXT_COURSE, $id));
 
     $strgrades = get_string("grades");
     $strgrade = get_string("grade");
@@ -1681,7 +1679,10 @@ function grade_view_category_grades($view_by_student) {
     global $USER;
     global $preferences;
     global $group;
-    if (!isteacher($course->id)) {
+    
+    $context = get_context_instance(CONTEXT_COURSE, $course->id);
+    
+    if (!has_capability('moodle/course:viewcoursegrades', $context)) {
         $view_by_student = $USER->id;
     }
 
@@ -1714,7 +1715,7 @@ function grade_view_category_grades($view_by_student) {
             //$maxpoints = 0;
             $maxpercent = 0;
             $reprint = 0;
-            if (isteacher($course->id)) {
+            if (has_capability('moodle/course:viewcoursegrades', $context)) {
                 $student_heading_link = get_string('student','grades');
                 //only set sorting links if more than one student displayed.
                 if ($view_by_student == -1) {
@@ -1726,7 +1727,7 @@ function grade_view_category_grades($view_by_student) {
                 }
             }
             echo '<table align="center" class="grades">';
-            if (isteacher($course->id)) {
+            if (has_capability('moodle/course:viewcoursegrades', $context)) {
                 $header = '<tr class="header"><th rowspan="2">'.$student_heading_link.'</th>';
             }
             else {
@@ -1778,7 +1779,7 @@ function grade_view_category_grades($view_by_student) {
 
                     
                 // set the links to student information based on multiview or individual... if individual go to student info... if many go to individual grades view.
-                if (isteacher($course->id)) {
+                if (has_capability('moodle/course:viewcoursegrades', $context)) {
                     if ($view_by_student != -1) {
                         $student_link = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$student.'&amp;course='.$course->id.'">';
                     }
@@ -1867,7 +1868,7 @@ function grade_view_category_grades($view_by_student) {
                 }
                 
                 if ($first == 0) {
-                    if (isteacher($course->id) && $view_by_student == -1) {
+                    if (has_capability('moodle/course:viewcoursegrades', $context) && $view_by_student == -1) {
                         $total_sort_link = '<a href="?id='.$course->id.'&amp;group='.$group.'&amp;action=vcats&amp;cview='.$cview.'&amp;sort=highgrade_category"><img src="'.$CFG->wwwroot.'/pix/t/down.gif" alt="'.get_string('highgradedescending','grades').'" /></a>';
                         $total_sort_link .= '<a href="?id='.$course->id.'&amp;group='.$group.'&amp;action=vcats&amp;cview='.$cview.'&amp;sort=highgrade_category_asc"><img src="'.$CFG->wwwroot.'/pix/t/up.gif" alt="'.get_string('highgradeascending','grades').'" /></a>';
                     }
@@ -1899,7 +1900,7 @@ function grade_view_category_grades($view_by_student) {
                         $header1 .= '<th class="'.$class.'">'.$all_categories[$cview]['stats']['weight'].get_string('pctoftotalgrade','grades').'</th>';
                     }
                     
-                    if (isteacher($course->id) ) {
+                    if (has_capability('moodle/course:viewcoursegrades', $context)) {
                         $header .= '<th rowspan="2">'.$student_heading_link.'</th></tr>';
                     }
                     else {
@@ -1917,7 +1918,7 @@ function grade_view_category_grades($view_by_student) {
                         echo  get_string('grades','grades');
                     }
 
-                    if (isteacher($course->id)) {
+                    if (has_capability('moodle/course:viewcoursegrades', $context)) {
                         helpbutton('teacher', get_string('gradehelp','grades'), 'grade');
                     }
                     else {
@@ -1951,7 +1952,7 @@ function grade_view_category_grades($view_by_student) {
                     $row .= '<td class="'.$class.'">'.$grades_by_student[$student][$cview]['stats']['weighted'].'%</td>';
                 }
 
-                if (isteacher($course->id) ) {
+                if (has_capability('moodle/course:viewcoursegrades', $context)) {
                     $row .= '<td class="fullname">'.$student_link.'</td>';
                 }
                 $row .= '</tr>';
@@ -1977,7 +1978,9 @@ function grade_view_all_grades($view_by_student) { // if mode=='grade' then we a
     global $group; // yu: fix for 5814
     global $preferences;
     
-    if (!isteacher($course->id)) {
+    $context = get_context_instance(CONTEXT_COURSE, $course->id);
+    
+    if (!has_capability('moodle/course:viewcoursegrades', $context)) {
         $view_by_student = $USER->id;    
     }
     
@@ -2005,7 +2008,7 @@ function grade_view_all_grades($view_by_student) { // if mode=='grade' then we a
         $reprint=0;
         
         echo  '<table align="center" class="grades">';
-        if (isteacher($course->id) ) {
+        if (has_capability('moodle/course:viewcoursegrades', $context)) {
             $student_heading_link = get_string('student','grades');
             if ($view_by_student == -1) {
                 $student_heading_link .='<a href="?id='.$course->id.'&amp;action=grades&amp;sort=lastname&amp;group='.$group.'"><br /><font size="-2">'.get_string('sortbylastname','grades').'</font></a>';
@@ -2040,7 +2043,7 @@ function grade_view_all_grades($view_by_student) { // if mode=='grade' then we a
             $oddrow = !$oddrow;
             
             // set the links to student information based on multiview or individual... if individual go to student info... if many go to individual grades view.
-            if (isteacher($course->id)) {
+            if (has_capability('moodle/course:viewcoursegrades', $context)) {
                 if ($view_by_student != -1) {
                     $studentviewlink = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$student.'&amp;course='.$course->id.'">'.$grades_by_student[$student]['student_data']['lastname'].', '.$grades_by_student[$student]['student_data']['firstname'].'</a>';
                 }
@@ -2113,7 +2116,7 @@ function grade_view_all_grades($view_by_student) { // if mode=='grade' then we a
                     $total_columns = $grade_columns;
                 }
                 
-                if (isteacher($course->id) && $view_by_student == -1) {
+                if (has_capability('moodle/course:viewcoursegrades', $context) && $view_by_student == -1) {
                     $grade_sort_link = '<a href="?id='.$course->id.'&amp;action=grades&amp;sort=highgrade&amp;group='.$group.'"><img src="'.$CFG->wwwroot.'/pix/t/down.gif" alt="'.get_string('highgradedescending','grades').'" /></a>';
                     $grade_sort_link .= '<a href="?id='.$course->id.'&amp;action=grades&amp;sort=highgrade_asc&amp;group='.$group.'"><img src="'.$CFG->wwwroot.'/pix/t/up.gif" alt="'.get_string('highgradeascending','grades').'" /></a>';
                     $points_sort_link = '<a href="?id='.$course->id.'&amp;action=grades&amp;sort=points&amp;group='.$group.'"><img src="'.$CFG->wwwroot.'/pix/t/down.gif" alt="'.get_string('pointsdescending','grades').'" /></a>';
@@ -2125,7 +2128,7 @@ function grade_view_all_grades($view_by_student) { // if mode=='grade' then we a
                 }
                 $stats_link = '<a href="javascript:void(0)"onclick="window.open(\'?id='.$course->id.'&amp;action=stats&amp;category=all\',\''.get_string('statslink','grades').'\',\'height=200,width=300,scrollbars=no\')"><font size=-2>'.get_string('statslink','grades').'</font></a>';
                 $header .= '<th colspan="'.$total_columns.'">'.get_string('total','grades').'&nbsp;'.$stats_link.'</th>';
-                if (isteacher($course->id) && $view_by_student == -1) {
+                if (has_capability('moodle/course:viewcoursegrades', $context) && $view_by_student == -1) {
                     if ($preferences->show_points) {
                         $header1 .= '<th>'.get_string('points','grades').'('.$all_categories['stats']['totalpoints'].')';
                         if ($category != 'student_data' && $all_categories[$category]['stats']['bonus_points'] != 0) {
@@ -2164,14 +2167,14 @@ function grade_view_all_grades($view_by_student) { // if mode=='grade' then we a
                     }
                     $header1 .= '</tr>';
                 }
-                if (isteacher($course->id)) {
+                if (has_capability('moodle/course:viewcoursegrades', $context)) {
                     $header .= '<th rowspan="2">'.$student_heading_link.'</th></tr>';
                 }
                 // adjust colcount to reflect actual number of columns output
                 $colcount = $colcount * $grade_columns + $total_columns + 2;
   
                 echo  '<tr><th colspan="'.$colcount.'"><font size="+1">'.get_string('allgrades','grades').'</font>';
-                if (isteacher($course->id)) {
+                if (has_capability('moodle/course:viewcoursegrades', $context)) {
                     helpbutton('teacher', get_string('gradehelp','grades'), 'grade');
                 }
                 else {
@@ -2214,7 +2217,7 @@ function grade_view_all_grades($view_by_student) { // if mode=='grade' then we a
                     }
                 }
             }
-            if (isteacher($course->id)) {
+            if (has_capability('moodle/course:viewcoursegrades', $context)) {
                 $row .= '<td>'. $studentviewlink .'</td></tr>';
             }
             else {
@@ -2887,7 +2890,7 @@ function grade_download_form($type='both') {
         $type = 'both';
     }
     
-    if (isteacher($course->id)) {
+    if (has_capability('moodle/course:viewcoursegrades', get_context_instance(CONTEXT_COURSE, $course->id))) {
         echo '<table align="center"><tr>';
         $options['id'] = $course->id;
         $options['sesskey'] = $USER->sesskey;

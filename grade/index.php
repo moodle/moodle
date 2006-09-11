@@ -14,7 +14,7 @@
 
     require_login($course->id);
     
-    if (isteacher($course->id)) {
+    if (has_capability('moodle/site:accessallgroups', get_context_instance(CONTEXT_COURSE, $course->id))) {
         $group = get_and_set_current_group($course, $course->groupmode, $group);
     } else {
         $group = get_current_group($course->id);
@@ -50,7 +50,7 @@
 
     grade_set_uncategorized();
 
-    if (isteacher($course->id)) {
+    if (has_capability('moodle/course:viewcoursegrades', get_context_instance(CONTEXT_COURSE, $course->id))) {
         switch ($action) {
             case "cats":
                 grade_set_categories();

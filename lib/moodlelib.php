@@ -1543,7 +1543,7 @@ function require_login($courseid=0, $autologinguest=true, $cm=null) {
         if (! $course = get_record('course', 'id', $courseid)) {
             error('That course doesn\'t exist');
         }
-        if (!isteacher($courseid) && !($course->visible && course_parent_visible($course))) {
+        if (!has_capability('moodle/course:viewhiddencourses', get_context_instance(CONTEXT_COURSE, $courseid)) && !($course->visible && course_parent_visible($course))) {
             print_header();
             notice(get_string('coursehidden'), $CFG->wwwroot .'/');
         }    

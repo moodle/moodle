@@ -28,7 +28,6 @@ function print_recent_selector_form($course, $advancedfilter=0, $selecteduser=0,
 
     global $USER, $CFG;
 
-    $isteacher = isteacher($course->id);
     if ($advancedfilter) {
 
         // Get all the possible users
@@ -36,7 +35,7 @@ function print_recent_selector_form($course, $advancedfilter=0, $selecteduser=0,
 
         if ($courseusers = get_course_users($course->id, '', '', 'u.id, u.firstname, u.lastname')) {
             foreach ($courseusers as $courseuser) {
-                $users[$courseuser->id] = fullname($courseuser, $isteacher);
+                $users[$courseuser->id] = fullname($courseuser, has_capability('moodle/site:viewfullnames', get_context_instance(CONTEXT_COURSE, $course->id)));
             }
         }
         if ($guest = get_guest()) {
@@ -267,9 +266,7 @@ function build_logs_array($course, $user=0, $date=0, $order="l.time ASC", $limit
     global $db;
 
     /// Setup for group handling.
-    $isteacher = isteacher($course->id);
-    $isteacheredit = isteacheredit($course->id);
-
+    
     /// If the group mode is separate, and this user does not have editing privileges,
     /// then only the user's group can be viewed.
     if ($course->groupmode == SEPARATEGROUPS and !has_capability('moodle/course:managegroups', get_context_instance(CONTEXT_COURSE, $course->id))) {
@@ -373,7 +370,6 @@ function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $per
     $today = mktime (0, 0, 0, $tt["mon"], $tt["mday"], $tt["year"]);
 
     $strftimedatetime = get_string("strftimedatetime");
-    $isteacher = isteacher($course->id);
 
     echo "<p align=\"center\">\n";
     print_string("displayingrecords", "", $totalcount);
@@ -431,7 +427,7 @@ function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $per
         echo "<td class=\"r$row c2\" nowrap=\"nowrap\">\n";
         link_to_popup_window("/iplookup/index.php?ip=$log->ip&amp;user=$log->userid", 'iplookup',$log->ip, 400, 700);
         echo "</td>\n";
-        $fullname = fullname($log, $isteacher);
+        $fullname = fullname($log, has_capability('moodle/site:viewfullnames', get_context_instance(CONTEXT_COURSE, $course->id)));
         echo "<td class=\"r$row c3\" nowrap=\"nowrap\">\n";
         echo "    <a href=\"$CFG->wwwroot/user/view.php?id={$log->userid}&amp;course={$log->course}\">$fullname</a>\n";
         echo "</td>\n";
@@ -473,7 +469,6 @@ function print_log_csv($course, $user, $date, $order='l.time DESC', $modname,
     $today = mktime (0, 0, 0, $tt["mon"], $tt["mday"], $tt["year"]);
 
     $strftimedatetime = get_string("strftimedatetime");
-    $isteacher = isteacher($course->id);
 
     $filename = 'logs_'.userdate(time(),get_string('backupnameformat'),99,false);
     $filename .= '.txt';
@@ -510,7 +505,7 @@ function print_log_csv($course, $user, $date, $order='l.time DESC', $modname,
         $log->url  = str_replace('&', '&amp;', $log->url); // XHTML compatibility
 
         $firstField = $courses[$log->course];
-        $fullname = fullname($log, $isteacher);
+        $fullname = fullname($log, has_capability('moodle/site:viewfullnames', get_context_instance(CONTEXT_COURSE, $course->id)));
         $row = array($firstField, userdate($log->time, $strftimedatetime), $log->ip, $fullname, $log->module.' '.$log->action, $log->info);
         $text = implode("\t", $row);
         echo $text." \n";
@@ -546,7 +541,6 @@ function print_log_xls($course, $user, $date, $order='l.time DESC', $modname,
     $today = mktime (0, 0, 0, $tt["mon"], $tt["mday"], $tt["year"]);
 
     $strftimedatetime = get_string("strftimedatetime");
-    $isteacher = isteacher($course->id);
 
     $nroPages = ceil(count($logs)/(EXCELROWS-FIRSTUSEDEXCELROW+1));
     $filename = 'logs_'.userdate(time(),get_string('backupnameformat'),99,false);
@@ -612,7 +606,7 @@ function print_log_xls($course, $user, $date, $order='l.time DESC', $modname,
         $excelTime=25569+$log->time/(3600*24);
         $myxls->write($row, 1, $excelTime, $formatDate);
         $myxls->write($row, 2, $log->ip, '');
-        $fullname = fullname($log, $isteacher);
+        $fullname = fullname($log, has_capability('moodle/site:viewfullnames', get_context_instance(CONTEXT_COURSE, $course->id)));
         $myxls->write($row, 3, $fullname, '');
         $myxls->write($row, 4, $log->module.' '.$log->action, '');
         $myxls->write($row, 5, $log->info, '');
@@ -654,7 +648,6 @@ function print_log_ooo($course, $user, $date, $order='l.time DESC', $modname,
     $today = mktime (0, 0, 0, $tt["mon"], $tt["mday"], $tt["year"]);
 
     $strftimedatetime = get_string("strftimedatetime");
-    $isteacher = isteacher($course->id);
 
     $filename = 'logs_'.userdate(time(),get_string('backupnameformat'),99,false);
     $filename .= '.sxw';
@@ -708,7 +701,7 @@ function print_log_ooo($course, $user, $date, $order='l.time DESC', $modname,
         $log->url  = str_replace('&', '&amp;', $log->url); // XHTML compatibility
 
         $firstField = $courses[$log->course];
-        $fullname = fullname($log, $isteacher);
+        $fullname = fullname($log, has_capability('moodle/site:viewfullnames', get_context_instance(CONTEXT_COURSE, $course->id)));
         $row = array($firstField, userdate($log->time, $strftimedatetime), $log->ip, $fullname, $log->module.' '.$log->action, $log->info);
 
         $data[] = $row;
@@ -771,7 +764,7 @@ function print_recent_activity($course) {
 
     global $CFG, $USER, $SESSION;
 
-    $isteacher = isteacher($course->id);
+    $isteacher = has_capability('moodle/site:viewfullnames', get_context_instance(CONTEXT_COURSE, $course->id));
 
     $timestart = time() - COURSE_MAX_RECENT_PERIOD;
 
@@ -809,7 +802,7 @@ function print_recent_activity($course) {
         echo "<ol class=\"list\">\n";
         foreach ($users as $user) {
             
-            $fullname = fullname($user, $isteacher);
+            $fullname = fullname($user, has_capability('moodle/site:viewfullnames', get_context_instance(CONTEXT_COURSE, $course->id)));
             echo '<li class="name"><a href="'.$CFG->wwwroot."/user/view.php?id=$user->id&amp;course=$course->id\">$fullname</a></li>\n";
         }
         echo "</ol>\n</div>\n";
@@ -1068,7 +1061,6 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
     if (!isset($isteacher)) {
         $groupbuttons     = ($course->groupmode or (!$course->groupmodeforce));
         $groupbuttonslink = (!$course->groupmodeforce);
-        $isteacher = isteacher($course->id);
         $isediting = isediting($course->id);
         $ismoving = $isediting && ismoving($course->id);
         if ($ismoving) {
@@ -1540,7 +1532,7 @@ function print_course($course, $width="100%") {
                 if (!$teacher->role) {
                     $teacher->role = $course->teacher;
                 }
-                $fullname = fullname($teacher, isteacher($course->id)); // is the USER a teacher of that course
+                $fullname = fullname($teacher, has_capability('moodle/site:viewfullnames', get_context_instance(CONTEXT_COURSE, $course->id))); // is the USER a teacher of that course
                 echo $teacher->role.': <a href="'.$CFG->wwwroot.'/user/view.php?id='.$teacher->id.
                      '&amp;course='.SITEID.'">'.$fullname.'</a><br />';
             }
