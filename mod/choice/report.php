@@ -107,37 +107,39 @@
         if ($users) {
             foreach ($users as $user) {        
                 // this needs fixing
-                if (!empty($answers[$user->id]) && !($answers[$user->id]->optionid==0 && isadmin($user->id)) && 
-                    (!($answers[$user->id]->optionid==0 && isteacher($course->id, $user->id) && !(isteacheredit($course->id, $user->id)) ) ) &&  
-                    !($choice->showunanswered==0 && $answers[$user->id]->optionid==0)  ) { // make sure admins and hidden teachers are not shown in not answered yet column, and not answered only shown if set in config page.
+                
+                if (!($optionid==0 && has_capability('mod/choice:readresponses', $context, $user->id))) {
+                
+                    if (!empty($answers[$user->id]) && !($answers[$user->id]->optionid==0 && has_capability('mod/choice:readresponses', $context, $user->id) && $choice->showunanswered==0)) { // make sure admins and hidden teachers are not shown in not answered yet column, and not answered only shown if set in config page.
 
-                    $myxls->write_string($row,0,$user->lastname);
-                    $myxls->write_string($row,1,$user->firstname);
-                    $studentid=(!empty($user->idnumber) ? $user->idnumber : " ");
-                    $myxls->write_string($row,2,$studentid);
-                    $ug2 = '';
-                    if ($usergrps = user_group($course->id, $user->id)) {
-                        foreach ($usergrps as $ug) {
-                            $ug2 = $ug2. $ug->name;
+                        $myxls->write_string($row,0,$user->lastname);
+                        $myxls->write_string($row,1,$user->firstname);
+                        $studentid=(!empty($user->idnumber) ? $user->idnumber : " ");
+                        $myxls->write_string($row,2,$studentid);
+                        $ug2 = '';
+                        if ($usergrps = user_group($course->id, $user->id)) {
+                            foreach ($usergrps as $ug) {
+                                $ug2 = $ug2. $ug->name;
+                            }
                         }
-                    }
-                    $myxls->write_string($row,3,$ug2);
+                        $myxls->write_string($row,3,$ug2);
                     
-                    $useroption = choice_get_option_text($choice, $answers[$user->id]->optionid);
-                    if (isset($useroption)) {
-                        $myxls->write_string($row,4,format_string($useroption,true));
-                    }                 
-                    $row++;
+                        $useroption = choice_get_option_text($choice, $answers[$user->id]->optionid);
+                        if (isset($useroption)) {
+                            $myxls->write_string($row,4,format_string($useroption,true));
+                        }                 
+                        $row++;
+                    }
+                    $pos=4;
                 }
-                $pos=4;
             }
-        }
 
     /// Close the workbook
-        $workbook->close();
+            $workbook->close();
 
-        exit;
-    } 
+            exit;
+        } 
+    }
     // print text file  
     if ($download == "txt" && has_capability('mod/choice:downloadresponses', $context)) {
         $filename = clean_filename("$course->shortname ".strip_tags(format_string($choice->name,true))).'.txt';
@@ -158,9 +160,7 @@
         $i=0;  
         $row=1;
         if ($users) foreach ($users as $user) {
-            if (!empty($answers[$user->id]) && !($answers[$user->id]->optionid==0 && isadmin($user->id)) && 
-                    (!($answers[$user->id]->optionid==0 && isteacher($course->id, $user->id) && !(isteacheredit($course->id, $user->id)) ) ) &&  
-                    !($choice->showunanswered==0 && $answers[$user->id]->optionid==0)  ) { //make sure admins and hidden teachers are not shown in not answered yet column, and not answered only shown if set in config page.
+            if (!empty($answers[$user->id]) && !($answers[$user->id]->optionid==0 && has_capability('mod/choice:readresponses', $context, $user->id) && $choice->showunanswered==0)) { // make sure admins and hidden teachers are not shown in not answered yet column, and not answered only shown if set in config page.
 
                 echo $user->lastname;
                 echo "\t".$user->firstname;
@@ -183,7 +183,6 @@
         exit;
     }
 
-
     choice_show_results($choice, $course, $cm, $format); //show table with students responses.
    
    //now give links for downloading spreadsheets. 
@@ -199,7 +198,6 @@
     print_single_button("report.php", $options, get_string("downloadtext"));
 
     echo "</td></tr></table>";
-print_footer($course);
-
+    print_footer($course);
 
 ?>
