@@ -1867,8 +1867,9 @@ function get_component_string($component, $contextlevel) {
     switch ($contextlevel) {
 
         case CONTEXT_SYSTEM:
-            if ($component == 'enrol/authorize') {
-                $string = get_string('enrolname', 'enrol_authorize');
+            if (preg_match('|^enrol/|', $component)) {
+                $langname = str_replace('/', '_', $component);
+                $string = get_string('enrolname', $langname);
             } else {
                 $string = get_string('coresystem');
             }
