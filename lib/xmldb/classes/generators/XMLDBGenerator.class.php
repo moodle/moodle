@@ -72,6 +72,8 @@ class XMLDBgenerator {
 
     var $add_table_comments  = true;  // Does the generator need to add code for table comments
 
+    var $add_after_clause = false; // Does the generator need to add the after clause for fields
+
     var $prefix_on_names = true; //Does the generator need to prepend the prefix to all the key/index/sequence/trigger/check names
 
     var $names_max_length = 30; //Max length for key/index/sequence/trigger/check names (keep 30 for all!)
@@ -137,7 +139,8 @@ class XMLDBgenerator {
         }
     /// Add the fields, separated by commas
         foreach ($xmldb_fields as $xmldb_field) {
-            $table .= "\n    " . $this->getFieldSQL($xmldb_field) . ',';
+            $table .= "\n    " . $this->getFieldSQL($xmldb_field);
+            $table .= ',';
         }
     /// Add the keys, separated by commas
         if ($xmldb_keys = $xmldb_table->getKeys()) {
@@ -464,7 +467,12 @@ class XMLDBgenerator {
         $tablename = $this->getEncQuoted($this->prefix . $xmldb_table->getName());
 
     /// Build the standard alter table add
-        $results[] = 'ALTER TABLE ' . $tablename . ' ADD ' . $this->getFieldSQL($xmldb_field);
+        $altertable = 'ALTER TABLE ' . $tablename . ' ADD ' . $this->getFieldSQL($xmldb_field);
+    /// Add the after clause if necesary
+        if ($this->add_after_clause && $xmldb_field->getPrevious()) {
+            $altertable .= ' after ' . $this->getEncQuoted($xmldb_field->getPrevious());
+        }
+        $results[] = $altertable;
 
     /// If the DB has extra enum code
         if ($this->enum_extra_code) {
