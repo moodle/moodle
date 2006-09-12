@@ -123,9 +123,7 @@
 
     $existinguserarray = array();
 
-    $SQL = "select u.* from {$CFG->prefix}role_assignments r, {$CFG->prefix}user u where contextid = $context->id and roleid = $roleid and u.id = r.userid"; // join now so that we can just use fullname() later
-
-    if (!$contextusers = get_records_sql($SQL)) {
+    if (!$contextusers = get_role_users($roleid, $context)) {
         $contextusers = array();  
     }
 
