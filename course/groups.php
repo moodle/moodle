@@ -30,6 +30,7 @@
 
     $courseid      = required_param('id', PARAM_INT);           // Course id
     $selectedgroup = optional_param('group', NULL, PARAM_INT);  // Current group id
+    $roleid        = optional_param('roleid', 0, PARAM_INT);  // Current group id
 
     if (! $course = get_record('course', 'id', $courseid) ) {
         error("That's an invalid course id");
@@ -170,23 +171,12 @@
 
 /// First, get everyone into the nonmembers array
 
-    if ($students = get_course_students($course->id)) {
-        foreach ($students as $student) {
-            $nonmembers[$student->id] = fullname($student, true);
+    if ($contextusers = get_role_users($roleid, $context)) {
+        foreach ($contextusers as $contextuser) {
+            $nonmembers[$contextuser->id] = fullname($contextuser, true);
         }
-        unset($students);
     }
-
-    if ($teachers = get_course_teachers($course->id)) {
-        foreach ($teachers as $teacher) {
-            $prefix = '- ';
-            if (isteacheredit($course->id, $teacher->id)) {
-                $prefix = '# ';
-            }
-            $nonmembers[$teacher->id] = $prefix.fullname($teacher, true);
-        }
-        unset($teachers);
-    }
+    unset($contextusers);
 
 /// Pull out all the members into little arrays
 
@@ -195,12 +185,17 @@
             $countusers = 0;
             $listmembers[$group->id] = array();
             if ($groupusers = get_group_users($group->id)) {
-                foreach ($groupusers as $groupuser) {
-                    $listmembers[$group->id][$groupuser->id] = $nonmembers[$groupuser->id];
-                    //we do not remove people from $nonmembers, everyone is displayed
-                    //this is to enable people to be registered in multiple groups
-                    //unset($nonmembers[$groupuser->id]);
-                    $countusers++;
+                foreach ($groupusers as $key=>$groupuser) {
+                    if (!array_key_exists($groupuser->id, $nonmembers)) {
+                        // group member with another role
+                        unset($groupusers[$key]);
+                    } else {
+                        $listmembers[$group->id][$groupuser->id] = $nonmembers[$groupuser->id];
+                        //we do not remove people from $nonmembers, everyone is displayed
+                        //this is to enable people to be registered in multiple groups
+                        //unset($nonmembers[$groupuser->id]);
+                        $countusers++;
+                    }
                 }
                 natcasesort($listmembers[$group->id]);
             }

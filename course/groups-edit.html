@@ -1,6 +1,12 @@
 <script type="text/javascript">
 <!-- Begin
 <?php 
+    $roles = get_records('role');
+    $roleoptions = array();
+    foreach ($roles as $rolex) {
+        $roleoptions[$rolex->id] = $rolex->name;
+    }
+
     foreach ($listmembers as $groupid => $listmember) {
         echo "group$groupid = new Object();\n";
         $useridstring = "group$groupid.userid = new Array(";
@@ -87,6 +93,7 @@ function groupWindow(selectgroup) {
           <input type="hidden" name="id" value="<?php p($course->id) ?>" />
           <input type="hidden" name="groupid" value="<?php p($selectedgroup) ?>" />
           <input type="hidden" name="sesskey" value="<?php p($sesskey) ?>">
+          <input type="hidden" name="roleid" value="<?php p($roleid) ?>">
           
           <select name="nonmembers[]" size="15" multiple="multiple">
             <?php 
@@ -116,11 +123,17 @@ function groupWindow(selectgroup) {
                    onclick="return userWindow(document.form1['nonmembers[]']);" />
           </p>
         </form>
+        <form name="rolesform1" action="groups.php" method="get">
+        <input type="hidden" name="id" value="<?php echo $courseid ?>">
+        <div align="center"><?php echo get_string('selectrole') ?>: 
+            <?php choose_from_menu ($roleoptions, 'roleid', $roleid, 'choose', $script='rolesform1.submit()') ?>
+        </div></form>
       </td>
       <td class="generalboxcontent"><p>
         <form name="form2" id="form2" method="post" action="groups.php">
           <input type="hidden" name="id" value="<?php p($course->id) ?>" />
           <input type="hidden" name="sesskey" value="<?php p($sesskey) ?>">
+          <input type="hidden" name="roleid" value="<?php p($roleid) ?>">
           <select name="groups" size="15" onChange="updateMembers(this)">
             <?php 
                 if (!empty($listgroups)) {
@@ -155,6 +168,7 @@ function groupWindow(selectgroup) {
           <input type="hidden" name="id" value="<?php p($course->id) ?>" />
           <input type="hidden" name="groupid" value="<?php p($selectedgroup) ?>" />
           <input type="hidden" name="sesskey" value="<?php p($sesskey) ?>">
+          <input type="hidden" name="roleid" value="<?php p($roleid) ?>">
           <select name="members[]" size="15" multiple="multiple">
             <?php 
                 if (!empty($members)) {
