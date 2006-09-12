@@ -1001,6 +1001,17 @@ CREATE TABLE prefix_role_names (
   PRIMARY KEY (`id`) 
 ) TYPE=MYISAM COMMENT ='role names in native strings';
 
+CREATE TABLE prefix_user_lastaccess ( 
+  `id` int(10) unsigned NOT NULL auto_increment, 
+  `userid` int(10) unsigned NOT NULL default '0',
+  `courseid` int(10) unsigned NOT NULL default '0', 
+  `timeaccess` int(10) unsigned NOT NULL default '0', 
+  KEY `userid` (`userid`),
+  KEY `courseid` (`courseid`),
+  UNIQUE KEY `userid-courseid` (`userid`, `courseid`),
+  PRIMARY KEY (`id`) 
+) TYPE=MYISAM COMMENT ='time user last accessed any page in a course';
+
 INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('user', 'view', 'user', 'CONCAT(firstname," ",lastname)');
 INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('course', 'user report', 'user', 'CONCAT(firstname," ",lastname)');
 INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('course', 'view', 'course', 'fullname');

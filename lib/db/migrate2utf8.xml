@@ -8,7 +8,7 @@
         <FIELD name="tracer" method="NO_CONV" type="text" length="0" />
       </FIELDS>
     </TABLE>
- 
+    <TABLE name="user_lastaccess" />
     <TABLE name="role">
 	  <FIELDS>
 	    <FIELD name="name" method="PHP_FUNCTION" type="varchar" length="255">

@@ -764,6 +764,17 @@ CREATE INDEX prefix_role_names_roleid_idx ON prefix_role_names (roleid);
 CREATE INDEX prefix_role_names_contextid_idx ON prefix_role_names (contextid);
 CREATE UNIQUE INDEX prefix_role_names_roleidcontextid_idx ON prefix_role_names (roleid, contextid);
        
+CREATE TABLE prefix_user_lastaccess ( 
+  id SERIAL PRIMARY KEY,     
+  userid integer NOT NULL default 0,
+  courseid integer NOT NULL default 0, 
+  timeaccess integer NOT NULL default 0
+);
+
+CREATE INDEX prefix_user_lastaccess_userid_idx ON prefix_user_lastaccess (userid);
+CREATE INDEX prefix_user_lastaccess_courseid_idx ON prefix_user_lastaccess (courseid);
+CREATE UNIQUE INDEX prefix_user_lastaccess_useridcourseid_idx ON prefix_user_lastaccess (userid, courseid);
+      
 INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('user', 'view', 'user', 'firstname||\' \'||lastname');
 INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('course', 'user report', 'user', 'firstname||\' \'||lastname');
 INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('course', 'view', 'course', 'fullname');

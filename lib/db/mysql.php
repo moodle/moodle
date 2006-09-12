@@ -2186,6 +2186,20 @@ function main_upgrade($oldversion=0) {
         execute_sql("ALTER TABLE {$CFG->prefix}course_sections CHANGE sequence sequence text NULL AFTER section");
     }
 
+    // table to keep track of course page access times, used in online participants block, and participants list
+    if ($oldversion < 2006091200) {
+        execute_sql("CREATE TABLE {$CFG->prefix}user_lastaccess ( 
+                    `id` int(10) unsigned NOT NULL auto_increment, 
+                    `userid` int(10) unsigned NOT NULL default '0',
+                    `courseid` int(10) unsigned NOT NULL default '0', 
+                    `timeaccess` int(10) unsigned NOT NULL default '0', 
+                    KEY `userid` (`userid`),
+                    KEY `courseid` (`courseid`),
+                    UNIQUE KEY `userid-courseid` (`userid`, `courseid`),
+                    PRIMARY KEY (`id`) 
+                    )TYPE=MYISAM COMMENT ='time user last accessed any page in a course';", true);
+    }
+    
     return $result;
 }
 

@@ -1786,6 +1786,20 @@ function main_upgrade($oldversion=0) {
         execute_sql("ALTER TABLE {$CFG->prefix}course_sections ALTER COLUMN sequence DROP DEFAULT");
     }
 
+    // table to keep track of course page access times, used in online participants block, and participants list
+    if ($oldversion < 2006091200) {
+        execute_sql("CREATE TABLE {$CFG->prefix}user_lastaccess ( 
+                    id SERIAL PRIMARY KEY,     
+                    userid integer NOT NULL default 0,
+                    courseid integer NOT NULL default 0, 
+                    timeaccess integer NOT NULL default 0
+                    );", true);
+
+        execute_sql("CREATE INDEX {$CFG->prefix}user_lastaccess_userid_idx ON {$CFG->prefix}user_lastaccess (userid);", true);
+        execute_sql("CREATE INDEX {$CFG->prefix}user_lastaccess_courseid_idx ON {$CFG->prefix}user_lastaccess (courseid);", true);
+        execute_sql("CREATE UNIQUE INDEX {$CFG->prefix}user_lastaccess_useridcourseid_idx ON {$CFG->prefix}user_lastaccess (userid, courseid);", true);
+    
+    }
     return $result;
 }
 
