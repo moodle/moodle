@@ -144,7 +144,31 @@ class test extends XMLDBAction {
             $tests['create table - 2'] = $test;
         }
 
+    /// 4th test. Adding one complex enum field
+        if ($test->status) {
+        /// Create a new field with complex specs (enums are good candidates)
+            $field = new XMLDBField('type');
+            $field->setAttributes(XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, XMLDB_ENUM, array('single', 'news', 'general', 'social', 'eachuser', 'teacher', 'qanda'), 'general', 'course');
+            $test = new stdClass;
+            $test->sql = $table->getAddFieldSQL($CFG->dbtype, $CFG->prefix, $field, true);
+            $test->status = add_field($table, $field, false, false);
+            if (!$test->status) {
+                $test->error = $db->ErrorMsg();
+            }
+            $tests['add field'] = $test;
+        }
 
+    /// 5th test. Dropping one complex enum field
+        if ($test->status) {
+        /// Create a new field with complex specs (enums are good candidates)
+            $test = new stdClass;
+            $test->sql = $table->getDropFieldSQL($CFG->dbtype, $CFG->prefix, $field, true);
+            $test->status = drop_field($table, $field, false, false);
+            if (!$test->status) {
+                $test->error = $db->ErrorMsg();
+            }
+            $tests['drop field'] = $test;
+        }
 
     /// Iterate over tests, showing information as needed
         $o .= '<ol>';
