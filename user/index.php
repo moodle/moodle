@@ -375,13 +375,22 @@ function checkchecked(form) {
             $listofcontexts = '('.$sitecontext->id.')'; // must be site  
         }
         $select = 'SELECT u.id, u.username, u.firstname, u.lastname, u.email, u.city, u.country, 
-                          u.picture, u.lang, u.timezone, u.emailstop, u.maildisplay, u.lastaccess AS lastaccess '; // s.lastaccess
+                          u.picture, u.lang, u.timezone, u.emailstop, u.maildisplay, ul.timeaccess AS lastaccess '; // s.lastaccess
         //$select .= $course->enrolperiod?', s.timeend ':'';
-        $from   = 'FROM '.$CFG->prefix.'user u LEFT JOIN '.$CFG->prefix.'role_assignments r ON r.userid = u.id ';
-        $where  = 'WHERE (r.contextid = '.$context->id.' OR r.contextid in '.$listofcontexts.') AND u.deleted = 0 AND r.roleid = '.$roleid.' ';   
+        $from   = "FROM {$CFG->prefix}user u,
+                        {$CFG->prefix}role_assignments r,
+                        {$CFG->prefix}user_lastaccess ul ";
+        $where  = "WHERE 
+                    r.userid = u.id
+                    AND u.id = ul.userid
+                    AND (r.contextid = $context->id OR r.contextid in $listofcontexts) 
+                    AND u.deleted = 0 
+                    AND r.roleid = $roleid 
+                    AND ul.courseid = $course->id ";   
         $where .= get_lastaccess_sql($accesssince);
+        
         $wheresearch = '';
-    
+
         if (!empty($search)) {
             $LIKE = sql_ilike();
             $fullname  = sql_fullname('u.firstname','u.lastname');
@@ -421,9 +430,9 @@ function checkchecked(form) {
         } else {
             $limit = '';
         }    
-    
+
         $students = get_records_sql($select.$from.$where.$wheresearch.$sort.$limit);
-    
+
         if (!$currentrole = get_record('role','id',$roleid)) {
             error('That role does not exist');
         }
@@ -591,9 +600,9 @@ function get_lastaccess_sql($accesssince='') {
         return '';
     }
     if ($accesssince == -1) { // never
-        return ' AND lastaccess = 0';
+        return ' AND ul.timeaccess = 0';
     } else {
-        return ' AND lastaccess != 0 AND lastaccess < '.$accesssince;
+        return ' AND il.tomeaccess != 0 AND timeaccess < '.$accesssince;
     }
 }
 
