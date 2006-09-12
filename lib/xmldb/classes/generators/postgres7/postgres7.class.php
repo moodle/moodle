@@ -120,7 +120,7 @@ class XMLDBpostgres7 extends XMLDBgenerator {
     function getEnumExtraSQL ($xmldb_table, $xmldb_field) {
         
         $sql = 'CONSTRAINT ' . $this->getNameForObject($xmldb_table->getName(), $xmldb_field->getName(), 'ck');
-        $sql.= ' CHECK (' . $this->getEncQuoted($xmldb_field->getName()) . ' IN (' . implode(', ', $xmldb_field->getEnumValues()) . ')),';
+        $sql.= ' CHECK (' . $this->getEncQuoted($xmldb_field->getName()) . ' IN (' . implode(', ', $xmldb_field->getEnumValues()) . '))';
 
         return $sql;
     }
