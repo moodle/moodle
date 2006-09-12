@@ -56,34 +56,31 @@ class block_online_users extends block_base {
 
         if ($COURSE->id == SITEID) {  // Site-level
             $courseselect = '';
-            $timeselect = "AND timeaccess > $timefrom OR u.lastaccess > $timefrom)";
+            $timeselect = "AND ul.timeaccess > $timefrom OR u.lastaccess > $timefrom)";
         } else {
-            $courseselect = "AND s.course = '".$COURSE->id."'";
-            $timeselect = "AND s.timeaccess > $timefrom";
+            $courseselect = "AND ul.courseid = '".$COURSE->id."'";
+            $timeselect = "AND ul.timeaccess > $timefrom";
         }
 
         $users = array();
 
-        $SQL1 = "SELECT DISTINCT userid, userid FROM {$CFG->prefix}log WHERE course=$COURSE->id AND time>$timefrom";
-        if ($records = get_records_sql($SQL1)) {
-            $possibleusers = '(';
-            foreach ($records as $record) {
-                $possibleusers .= $record->userid.',';
+        $SQL = "SELECT u.id, u.username, u.firstname, u.lastname, u.picture
+                FROM {$CFG->prefix}user_lastaccess ul,
+                     {$CFG->prefix}user u
+                     $groupmembers
+                WHERE 
+                      ul.userid = u.id
+                      $courseselect
+                      $timeselect
+                      $groupselect ".sql_paging_limit(0,20);
+        
+        if ($pusers = get_records_sql($SQL)) {
+            foreach ($pusers as $puser) {
+                $puser->fullname = fullname($puser);
+                $users[$puser->id] = $puser;  
             }
-            $possibleusers = rtrim($possibleusers, ',').')';
-            $SQL2 = "SELECT u.id, u.username, u.firstname, u.lastname, u.picture, u.lastaccess
-                    FROM {$CFG->prefix}user u
-                    $groupmembers
-                    WHERE u.id IN $possibleusers $groupselect ".sql_paging_limit(0,20);
-        
-            if ($pusers = get_records_sql($SQL2)) {
-                foreach ($pusers as $puser) {
-                    $puser->fullname = fullname($puser);
-                    $users[$puser->id] = $puser;  
-                }
-            }  
-        }   
-        
+        }  
+           
         //Calculate minutes
         $minutes  = floor($timetoshowusers/60);
 
