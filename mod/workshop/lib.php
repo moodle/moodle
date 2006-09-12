@@ -44,10 +44,10 @@ function workshop_context($workshop) {
 function workshop_is_teacher($workshop, $userid=NULL) {
     return has_capability('mod/workshop:manage', workshop_context($workshop), $userid);
 }
-
-//TODO: should we make new role for it and fix the code or wait for new workshop? 
+ 
 function workshop_is_teacheredit($workshop, $userid=NULL) {
-    return has_capability('mod/workshop:manage', workshop_context($workshop), $userid);
+    return has_capability('mod/workshop:manage', workshop_context($workshop), $userid)
+       and has_capability('moodle/site:accessallgroups', workshop_context($workshop), $userid);
 }
 
 function workshop_is_student($workshop, $userid=NULL) {
