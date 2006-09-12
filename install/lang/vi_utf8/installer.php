@@ -25,7 +25,7 @@ $string['dbhost'] = 'Host Server';
 $string['dbprefix'] = 'Các bảng cố định trước';
 $string['dbtype'] = 'Type';
 $string['dirroot'] = 'Thư mục Moodle';
-$string['dirrooterror'] = '  Thiết lập \'Thư mục Moodle\' dường như không đúng - chúng tôi không thể tìm thấy một sự cài đặt Moodle ở đó. Giá trị dưới đây được đặt lại.';
+$string['dirrooterror'] = '  Thiết lập \'Thư mục Moodle\' dường như không đúng - chúng tôi không thể tìm thấy các file cài đặt Moodle ở đó. Giá trị dưới đây được đặt lại.';
 $string['download'] = 'Tải xuống';
 $string['error'] = 'Lỗi';
 $string['fail'] = 'Thất bại';
@@ -34,7 +34,7 @@ $string['fileuploadserror'] = 'Điều này sẽ là';
 $string['gdversion'] = 'Phiên bản GD';
 $string['gdversionerror'] = 'Thư viện GD nên được cho phép để xử lý và tạo các hình ảnh';
 $string['help'] = 'Trợ giúp';
-$string['installation'] = 'Sự cài đặt';
+$string['installation'] = 'Cài đặt';
 $string['language'] = 'Ngôn ngữ';
 $string['magicquotesruntime'] = 'Magic Quotes Run Time';
 $string['magicquotesruntimeerror'] = 'Điều này nên là off';
@@ -60,7 +60,7 @@ $string['memorylimithelp'] = '<p> PHP thiết lập giới hạn bộ nhớ cho 
     (bạn sẽ nhìn thấy các lỗi khi bạn xem xét những trang này )vì thế bạn sẽ pahỉ di chuyền file .htaccess.</p></li>
 </ol>';
 $string['mysqlextensionisnotpresentinphp'] = 'PHP chưa được cấu hình thuộc tính với đuôi mở rộng MySQL với mục đích là để nó có thể làm việc tốt với MySQL. Vui lòng kiểm tra file php.ini hoặc biên dịch lại PHP.';
-$string['name'] = ' Tiêu đề';
+$string['name'] = 'Tiêu đề';
 $string['next'] = 'Tiếp theo';
 $string['ok'] = 'Đồng ý';
 $string['pass'] = 'Pass';
@@ -80,5 +80,5 @@ $string['thischarset'] = 'UTF-8';
 $string['thislanguage'] = 'Vietnamese';
 $string['user'] = 'Người dùng';
 $string['wwwroot'] = 'Địa chỉ web';
-$string['wwwrooterror'] = ' Địa chỉ web không xuất hiện hợp lệ - sự cài đặt Moodle không xuất hiện ở đó.';
+$string['wwwrooterror'] = ' Địa chỉ web không xuất hiện hợp lệ - Các file cài đặt Moodle không xuất hiện ở đó.';
 ?>
