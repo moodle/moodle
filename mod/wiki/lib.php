@@ -31,7 +31,8 @@ function wiki_is_teacher($wiki, $userid=NULL) {
 }
 
 function wiki_is_teacheredit($wiki, $userid=NULL) {
-    return has_capability('mod/wiki:manageallgroups', wiki_context($wiki), $userid);
+    return has_capability('mod/wiki:manage', wiki_context($wiki), $userid)
+       and has_capability('moodle/site:accessallgroups', wiki_context($wiki), $userid);
 }
 
 function wiki_is_student($wiki, $userid=NULL) {
