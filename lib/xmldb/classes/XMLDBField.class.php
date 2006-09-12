@@ -94,6 +94,8 @@ class XMLDBField extends XMLDBObject {
             }
         }
         $this->default = $default;
+
+        $this->previous = $previous;
     }
 
     /**
