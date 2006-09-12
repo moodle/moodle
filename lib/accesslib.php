@@ -1435,6 +1435,9 @@ function update_capabilities($component='moodle') {
         if (!insert_record('capabilities', $capability, false, 'id')) {
             return false;
         }
+        
+        global $db;
+        $db->debug= 999;
         // Do we need to assign the new capabilities to roles that have the
         // legacy capabilities moodle/legacy:* as well?
         if (isset($capdef['legacy']) && is_array($capdef['legacy']) &&
@@ -2122,6 +2125,36 @@ function get_users_by_capability($context, $capability, $fields='u.*', $sort='',
 
     return get_records_sql($select.$from.$where.$sort, $limitfrom, $limitnum);  
 
+}
+
+/**
+ * gets all the users assigned this role in this context or higher
+ * @param int roleid
+ * @param int contextid
+ * @param bool parent if true, get list of users assigned in higher context too
+ * @return array()
+ */
+function get_role_users($roleid, $context, $parent=false) {
+    global $CFG;
+    
+    if ($parent) {
+        if ($contexts = get_parent_contexts($context)) {
+            $parentcontexts = 'r.contextid IN ('.implode(',', $contexts).')';
+        } else {
+            $parentcontexts = ''; 
+        }
+    } else {
+        $parentcontexts = '';  
+    }
+    
+    $SQL = "select u.* 
+            from {$CFG->prefix}role_assignments r, 
+                 {$CFG->prefix}user u 
+            where (r.contextid = $context->id $parentcontexts) 
+            and r.roleid = $roleid 
+            and u.id = r.userid"; // join now so that we can just use fullname() later
+    
+    return get_records_sql($SQL);
 }
 
 ?>
