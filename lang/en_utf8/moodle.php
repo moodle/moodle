@@ -1155,6 +1155,7 @@ $string['selectacountry'] = 'Select a country';
 $string['selectamodule'] = 'Please select an activity module';
 $string['selectednowmove'] = '$a files selected for moving. Now go to the destination and press \'Move files to here\'';
 $string['selectnos'] = 'Select all \'no\'';
+$string['selectrole'] = 'Select a Role';
 $string['senddetails'] = 'Send my details via email';
 $string['separateandconnected'] = 'Separate and Connected ways of knowing';
 $string['serverlocaltime'] = 'Server\'s local time';

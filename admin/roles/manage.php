@@ -164,7 +164,7 @@
         
         // prints a form to swap roles
         print ('<form name="rolesform1" action="manage.php" method="post">');
-        print ('<div align="center">Select a Role: ');
+        print ('<div align="center">'.get_string('selectrole').': ');
         choose_from_menu ($roleoptions, 'roleid', $roleid, 'choose', $script='rolesform1.submit()');
         print ('</div></form>');
               
