@@ -1638,6 +1638,24 @@ function fetch_context_capabilities($context) {
     }
 
     $records = get_records_sql($SQL.' '.$sort);
+
+    // special sorting of core system capabiltites and enrollments
+    if ($context->aggregatelevel == CONTEXT_SYSTEM) {
+        $first = array();
+        foreach ($records as $key=>$record) {
+            if (preg_match('|^moodle/|', $record->name) and $record->contextlevel == CONTEXT_SYSTEM) {
+                $first[$key] = $record;
+                unset($records[$key]);
+            } else if (count($first)){
+                break;
+            }
+        }
+        if (count($first)) {
+           $records = $first + $records; // merge the two arrays keeping the keys
+        }
+    }
+    // end of special sorting
+
     return $records;
     
 }
@@ -1849,7 +1867,11 @@ function get_component_string($component, $contextlevel) {
     switch ($contextlevel) {
 
         case CONTEXT_SYSTEM:
-            $string = get_string('coresystem');
+            if ($component == 'enrol/authorize') {
+                $string = get_string('enrolname', 'enrol_authorize');
+            } else {
+                $string = get_string('coresystem');
+            }
         break;
 
         case CONTEXT_PERSONAL:
