@@ -17,15 +17,19 @@ require_once(MAGPIE_DIR .'rss_fetch.inc');
 require_login();
 global $USER;
 
-//ensure that the logged in user is not using the guest account
+
 if (isset($_SERVER['HTTP_REFERER'])) {
     $referrer = $_SERVER['HTTP_REFERER'];
 } else {
     $referrer = $CFG->wwwroot;
 }
+
+
+// Ensure that the logged in user is not using the guest account
 if (isguest()) {
     error(get_string('noguestpost', 'forum'), $referrer);
 }
+
 
 $url = optional_param('url','',PARAM_URL);
 
@@ -44,6 +48,8 @@ $rssid          = optional_param('rssid', NULL, PARAM_INT);
 $id             = optional_param('id', SITEID, PARAM_INT);
 //$url            = clean_param($url, PARAM_URL);
 $preferredtitle = optional_param('preferredtitle', '', PARAM_ALPHA);
+$shared         = optional_param('shared', 0, PARAM_INT);
+
 
 if (!defined('MAGPIE_OUTPUT_ENCODING')) {
     define('MAGPIE_OUTPUT_ENCODING', current_charset());  // see bug 3107
@@ -56,10 +62,8 @@ if (!empty($id)) {
 }
 
 $straddedit = get_string('feedsaddedit', 'block_rss_client');
-if ( isadmin() ) {
-    $navigation = '<a href="'.$CFG->wwwroot.'/'.$CFG->admin.'/index.php">'.get_string('administration').'</a> -> '.
-        '<a href="'.$CFG->wwwroot.'/'.$CFG->admin.'/configure.php">'.get_string('configuration').'</a> -> '.$straddedit;
-} else if (!empty($course)) {
+
+if (!empty($course)) {
     $navigation = '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$id.'">'.$course->shortname.'</a> -> '.$straddedit;
 } else {
     $navigation = $straddedit;
@@ -67,21 +71,10 @@ if ( isadmin() ) {
 
 print_header($straddedit, $straddedit, $navigation);
 
-//check to make sure that the user is allowed to post new feeds
-$submitters = $CFG->block_rss_client_submitters;
-if (empty($course)) {
-    $isteacher = false;
-} else {
-    if ($id == SITEID) {
-        $isteacher = has_capability('moodle/site:manageblocks', get_context_instance(CONTEXT_SITE, SITEID));
-    } else {
-        $isteacher = has_capability('moodle/site:manageblocks', get_context_instance(CONTEXT_COURSE, $id));
-    }
-}
 
 if ( !isset($act) ) {
-    rss_display_feeds($id);
-    rss_print_form($act, $url, $rssid, $preferredtitle, $id);
+    rss_display_feeds($id, $USER->id, '', $context);
+    rss_print_form($act, $url, $rssid, $preferredtitle, $shared, $id, $context);
     print_footer();
     die();
 }
@@ -90,17 +83,29 @@ if ( isset($rssid) ) {
     $rss_record = get_record('block_rss_client', 'id', $rssid);
 }
 
-//if the user is an admin or course teacher then allow the user to
-//assign categories to other uses than personal
-if (isset($rss_record) && !( has_capability('moodle/site:manageblocks', get_context_instance(CONTEXT_SYSTEM, SITEID)) || $submitters == SUBMITTERS_ALL_ACCOUNT_HOLDERS || 
-        ($submitters == SUBMITTERS_ADMIN_AND_TEACHER && $isteacher) || 
-            ( ($act == 'rssedit' || $act == 'delfeed' || $act == 'updfeed') && $USER->id == $rss_record->userid)  ) ) {
-        error(get_string('noguestpost', 'forum').' You are not allowed to make modifications to this RSS feed at this time.', $referrer);
+
+$block = get_record('block', 'name', 'rss_client');
+$blockinstance = get_record('block_instance', 'blockid', $block->id, 'pagetype', 'course-view', 'pageid', id);
+$context = get_context_instance(CONTEXT_BLOCK, $blockinstance->id);
+
+
+if (isset($rss_record)) {
+    $managefeeds = ($rss_record->userid == $USER->id && has_capability('block/rss_client:manageownfeeds', $context))
+                || ($rss_record->userid != $USER->id && has_capability('block/rss_client:manageanyfeeds', $context));
 }
 
+
 if ($act == 'updfeed') {
+    
+    if (!$managefeeds) {
+        error(get_string('noguestpost', 'forum').
+                ' You are not allowed to make modifications to this RSS feed at this time.',
+                $referrer);
+    }
+    
+    
     if (empty($url)) {
-        error( 'url not defined for rss feed' );
+        error( 'URL not defined for rss feed' );
     }
 
     // By capturing the output from fetch_rss this way
@@ -114,15 +119,23 @@ if ($act == 'updfeed') {
     }
     ob_end_clean();
 
+    $canaddsharedfeeds = has_capability('block/rss_client:createsharedfeeds', $context);
+
     $dataobject->id = $rssid;
     if ($rss === false) {
         $dataobject->description = '';
         $dataobject->title = '';
         $dataobject->preferredtitle = '';
+        $dataobject->shared = 0;
     } else {
         $dataobject->description = addslashes($rss->channel['description']);
         $dataobject->title = addslashes($rss->channel['title']);
         $dataobject->preferredtitle = addslashes($preferredtitle);
+        if ($shared == 1 && $canaddsharedfeeds) {
+            $dataobject->shared = 1;
+        } else {
+            $dataobject->shared = 0;
+        }
     }
     $dataobject->url = addslashes($url);
 
@@ -134,16 +147,29 @@ if ($act == 'updfeed') {
     redirect($referrer, $message);
 
 } else if ($act == 'addfeed' ) {
+    
+    $canaddprivfeeds = has_capability('block/rss_client:createprivatefeeds', $context);
+    $canaddsharedfeeds = has_capability('block/rss_client:createsharedfeeds', $context);
+    
+    if (!$canaddprivfeeds && !$canaddsharedfeeds) {
+        error('You do not have the permission to add RSS feeds');
+    }
 
     if (empty($url)) {
-        error('url not defined for rss feed');
+        error('URL not defined for rss feed');
     }
     $dataobject->userid = $USER->id;
     $dataobject->description = '';
     $dataobject->title = '';
     $dataobject->url = addslashes($url);
     $dataobject->preferredtitle = addslashes($preferredtitle);
-
+    
+    if ($shared == 1 && $canaddsharedfeeds) {
+        $dataobject->shared = 1;
+    } else {
+        $dataobject->shared = 0;
+    }
+    
     $rssid = insert_record('block_rss_client', $dataobject);
     if (!$rssid) {
         error('There was an error trying to add a new rss feed:'. $url);
@@ -178,8 +204,8 @@ if ($act == 'updfeed') {
     }
     redirect($referrer, $message);
 /*
-        rss_display_feeds($id);
-        rss_print_form($act, $dataobject->url, $dataobject->id, $dataobject->preferredtitle, $id);
+        rss_display_feeds($id, $USER->id, '', $context);
+        rss_print_form($act, $dataobject->url, $dataobject->id, $dataobject->preferredtitle, $shared, $id, $context);
 */
 } else if ( isset($rss_record) && $act == 'rssedit' ) {
 
@@ -188,10 +214,17 @@ if ($act == 'updfeed') {
         $preferredtitle = stripslashes_safe($rss_record->title);
     }
     $url = stripslashes_safe($rss_record->url);
-    rss_display_feeds($id, '', $rssid);
-    rss_print_form($act, $url, $rssid, $preferredtitle, $id);
+    $shared = stripslashes_safe($rss_record->shared);
+    rss_display_feeds($id, '', $rssid, $context);
+    rss_print_form($act, $url, $rssid, $preferredtitle, $shared, $id, $context);
 
 } else if ($act == 'delfeed') {
+    
+    if (!$managefeeds) {
+        error(get_string('noguestpost', 'forum').
+                ' You are not allowed to make modifications to this RSS feed at this time.',
+                $referrer);
+    }
 
     $file = $CFG->dataroot .'/cache/rsscache/'. $rssid .'.xml';
     if (file_exists($file)) {
@@ -251,8 +284,8 @@ if ($act == 'updfeed') {
         print '</table>'."\n";
     }
 } else {
-    rss_display_feeds($id);
-    rss_print_form($act, $url, $rssid, $preferredtitle, $id);
+    rss_display_feeds($id, $USER->id, '', $context);
+    rss_print_form($act, $url, $rssid, $preferredtitle, $shared, $id, $context);
 }
 print_footer();
 ?>

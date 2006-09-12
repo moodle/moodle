@@ -19,7 +19,7 @@
 
     function init() {
         $this->title = get_string('feedstitle', 'block_rss_client');
-        $this->version = 2005111400;
+        $this->version = 2006091100;
     }
 
     function preferred_width() {
@@ -42,7 +42,11 @@
     }
 
     function get_content() {
-        global $CFG, $editing, $COURSE;
+        global $CFG, $editing, $COURSE, $USER;
+        
+        if (!empty($COURSE)) {
+            $this->courseid = $COURSE->id;
+        }
 
         require_once($CFG->libdir .'/rsslib.php');
 
@@ -65,14 +69,14 @@
         if (isset($CFG->block_rss_client_num_entries) && is_numeric($CFG->block_rss_client_num_entries) ) {
             $shownumentries = intval($CFG->block_rss_client_num_entries);
         } else {
-            $shownumentries = 5; //default to 5 entries is not specified by admin or instance
+            $shownumentries = 5; //default to 5 entries is not specified in admin section or instance
         }
 
         if (!empty($this->config)) {
             if (!empty($this->config->rssid)) {
                 if (is_array($this->config->rssid)) { 
                     $rssidarray = $this->config->rssid;
-                } else {     // Make an array of the single value 
+                } else {     // Make an array of the single value
                     $rssidarray = array($this->config->rssid);
                 }
             }
@@ -83,38 +87,37 @@
                 $shownumentries = intval($this->config->shownumentries);
             }
         }
-
-        $submitters = $CFG->block_rss_client_submitters;
-
-        $isteacher = false;
-        $this->courseid = SITEID;
-        if ($this->instance->pagetype == PAGE_COURSE_VIEW) {
-            $this->courseid = $COURSE->id;
-            $isteacher = has_capability('moodle/site:manageblocks', get_context_instance(CONTEXT_BLOCK, $this->instance->id));
-        }
-
-        //if the user is an admin, course teacher, or all users are allowed
-        // then allow the user to add rss feeds
-        global $USER;
-        $userisloggedin = false;
-        if (isset($USER) && !empty($USER->id) && $USER->id && !isguest()) {
-            $userisloggedin = true;
-        }
         
-        if ( $userisloggedin && ($submitters == SUBMITTERS_ALL_ACCOUNT_HOLDERS || ($submitters == SUBMITTERS_ADMIN_AND_TEACHER && $isteacher)) ) {
+        $context = get_context_instance(CONTEXT_BLOCK, $this->instance->id);
+        
+        if (has_capability('block/rss_client:createsharedfeeds', $context)) {
 
             $page = page_create_object($this->instance->pagetype, $this->instance->pageid);
-            if ($page->user_allowed_editing()) { // for SUBMITTERS_ALL_ACCOUNT_HOLDERS we're going to run into trouble later if we show it and then they don't have write access to the page.
-                if (isset($this->config)) {
-                    // this instance is configured - show Add/Edit feeds link
-                    $script = $page->url_get_full(array('instanceid' => $this->instance->id, 'sesskey' => $USER->sesskey, 'blockaction' => 'config', 'currentaction' => 'managefeeds', 'id' => $this->courseid));
-                    $output .= '<div align="center"><a title="'. get_string('feedsaddedit', 'block_rss_client') .'" href="'. $script .'">'. get_string('feedsaddedit', 'block_rss_client') .'</a></div>';
-                } else {
-                    // this instance has not been configured yet - show configure link
-                    $script = $page->url_get_full(array('instanceid' => $this->instance->id, 'sesskey' => $USER->sesskey, 'blockaction' => 'config', 'currentaction' => 'configblock', 'id' => $this->courseid));
+            //if ($page->user_allowed_editing()) { // for SUBMITTERS_ALL_ACCOUNT_HOLDERS we're going to run into trouble later if we show it and then they don't have write access to the page.
+            if (isset($this->config)) {
+                // This instance is configured - show Add/Edit feeds link.
+                $script = $page->url_get_full(
+                                    array('instanceid' => $this->instance->id,
+                                          'sesskey' => $USER->sesskey,
+                                          'blockaction' => 'config',
+                                          'currentaction' => 'managefeeds',
+                                          'id' => $this->courseid
+                                          ));
+                $output .= '<div align="center"><a title="'. get_string('feedsaddedit', 'block_rss_client') .'" href="'. $script .'">'. get_string('feedsaddedit', 'block_rss_client') .'</a></div>';
+            } else {
+                // This instance has not been configured yet - show configure link?
+                if (has_capability('block/rss_client:manageanyfeeds', $context)) {
+                    $script = $page->url_get_full(
+                                    array('instanceid' => $this->instance->id,
+                                          'sesskey' => $USER->sesskey,
+                                          'blockaction' => 'config',
+                                          'currentaction' => 'configblock',
+                                          'id' => $this->courseid
+                                          ));
                     $output .= '<div align="center"><a title="'. get_string('feedsconfigurenewinstance', 'block_rss_client') .'" href="'. $script.'">'. get_string('feedsconfigurenewinstance', 'block_rss_client') .'</a></div>';
                 }
             }
+            //}
         }
 
         // Daryl Hawes note: if count of rssidarray is greater than 1 
@@ -181,7 +184,7 @@
                     return '<a href="'. $CFG->wwwroot .'/blocks/rss_client/block_rss_client_error.php?error='. urlencode($rsserror) .'">Error loading a feed.</a><br />'; //Daryl Hawes note: localize this line
                 }
             }
-
+            
             if ($shownumentries > 0 && $shownumentries < count($rss->items) ) {
                 $rss->items = array_slice($rss->items, 0, $shownumentries);
             }

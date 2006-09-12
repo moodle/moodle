@@ -367,26 +367,28 @@ define('SUBMITTERS_ADMIN_AND_TEACHER', 2);
 
 /**
  * @param int $courseid The id of the course the user is currently viewing
- * @param int $userid If present only entries added by this userid will be displayed
+ * @param int $userid We need this to know which feeds the user is allowed to manage
  * @param int $rssid If present the rss entry matching this id alone will be displayed
+ *            as long as the user is allowed to manage this feed
+ * @param object $context we need the context object to check what the user is allowed to do.
  */
-function rss_display_feeds($courseid='', $userid='', $rssid='') {
+function rss_display_feeds($courseid, $userid, $rssid='', $context) {
     global $db, $USER, $CFG;
     global $blogid; //hackish, but if there is a blogid it would be good to preserve it
 
     require_once($CFG->libdir.'/tablelib.php');
 
     $select = '';
-
-    if (!isadmin()) {
-        $userid = $USER->id;
+    $managesharedfeeds = has_capability('block/rss_client:managesharedfeeds', $context);
+    $manageownfeeds = has_capability('block/rss_client:manageownfeeds', $context);
+    
+    if ($rssid != '') {
+        $select = 'id = '.$rssid.' AND ';
     }
-
-    if ($userid != '' && is_numeric($userid)) {
-        // if a user is specified and not an admin then only show their own feeds
-        $select = 'userid='. $userid;
-    } else if ($rssid != ''){
-        $select = 'id='. $rssid;
+    if ($managesharedfeeds) {
+        $select .= '(userid = '.$userid.' OR shared = 1)';
+    } else if ($manageownfeeds) {
+        $select .= 'userid = '.$userid;
     }
 
     $table = new flexible_table('rss-display-feeds');
@@ -413,12 +415,13 @@ function rss_display_feeds($courseid='', $userid='', $rssid='') {
                 $feedtitle =  stripslashes_safe($feed->title);
             }
 
-            if ($feed->userid == $USER->id || isadmin()) {
+            if ( ($feed->userid == $USER->id && $manageownfeeds)
+                    || ($feed->shared && $managesharedfeeds) ) {
                 
-                $feedicons = '<a href="'. $CFG->wwwroot .'/blocks/rss_client/block_rss_client_action.php?id='. $courseid .'&amp;act=rssedit&amp;rssid='. $feed->id .'&blogid='. $blogid .'">'.
+                $feedicons = '<a href="'. $CFG->wwwroot .'/blocks/rss_client/block_rss_client_action.php?id='. $courseid .'&amp;act=rssedit&amp;rssid='. $feed->id .'&amp;shared='.$feed->shared.'&amp;blogid='. $blogid .'">'.
                              '<img src="'. $CFG->pixpath .'/t/edit.gif" alt="'. get_string('edit').'" title="'. get_string('edit') .'" /></a>&nbsp;'.
                              
-                             '<a href="'. $CFG->wwwroot .'/blocks/rss_client/block_rss_client_action.php?id='. $courseid .'&amp;act=delfeed&amp;rssid='. $feed->id.'&amp;blogid='. $blogid .'" 
+                             '<a href="'. $CFG->wwwroot .'/blocks/rss_client/block_rss_client_action.php?id='. $courseid .'&amp;act=delfeed&amp;rssid='. $feed->id.'&amp;shared='.$feed->shared.'blogid='. $blogid .'" 
                 onclick="return confirm(\''. get_string('deletefeedconfirm', 'block_rss_client') .'\');">'.
                              '<img src="'. $CFG->pixpath .'/t/delete.gif" alt="'. get_string('delete').'" title="'. get_string('delete') .'" /></a>';
             }
@@ -433,15 +436,14 @@ function rss_display_feeds($courseid='', $userid='', $rssid='') {
     }
 
     $table->print_html();
-
 }
 
 
 /**
  * Wrapper function for rss_get_form
  */
-function rss_print_form($act='none', $url='', $rssid='', $preferredtitle='', $courseid='') {
-    print rss_get_form($act, $url, $rssid, $preferredtitle, $courseid);
+function rss_print_form($act='none', $url='', $rssid='', $preferredtitle='', $shared=0, $courseid='', $context) {
+    print rss_get_form($act, $url, $rssid, $preferredtitle, $shared, $courseid, $context);
 }
 
 
@@ -450,10 +452,13 @@ function rss_print_form($act='none', $url='', $rssid='', $preferredtitle='', $co
  * @param string $act The current action. If "rssedit" then and "update" button is used, otherwise "add" is used.
  * @param string $url The url of the feed that is being updated or NULL
  * @param int $rssid The dataabse id of the feed that is being updated or NULL
- * @param int $id The id of the course that is currently being viewed if applicable
+ * @param string $preferredtitle The preferred title to display for this feed
+ * @param int $shared Whether this feed is to be shared or not
+ * @param int $courseid The id of the course that is currently being viewed if applicable
+ * @param object $context The context that we will use to check for permissions
  * @return string Either the form is printed directly and nothing is returned or the form is returned as a string
  */
-function rss_get_form($act='none', $url='', $rssid='', $preferredtitle='', $courseid='') {
+function rss_get_form($act='none', $url='', $rssid='', $preferredtitle='', $shared=0, $courseid='', $context) {
     global $USER, $CFG, $_SERVER, $blockid, $blockaction;
     global $blogid; //hackish, but if there is a blogid it would be good to preserve it
     $stredit = get_string('edit');
@@ -477,7 +482,6 @@ function rss_get_form($act='none', $url='', $rssid='', $preferredtitle='', $cour
 
     $returnstring .= '" />'."\n";
     $returnstring .= '<br />'. get_string('customtitlelabel', 'block_rss_client');
-//    $returnstring .= '<br /><input type="text" size="60" maxlength="64" name="preferredtitle" value="';
     $returnstring .= '<br /><input type="text" size="60" maxlength="128" name="preferredtitle" value="';
 
     if ($act == 'rssedit') { 
@@ -485,6 +489,17 @@ function rss_get_form($act='none', $url='', $rssid='', $preferredtitle='', $cour
     }
 
     $returnstring .= '" />'."\n";
+
+    if (has_capability('block/rss_client:createsharedfeeds', $context)) {
+        $returnstring .= '<br /><input type="checkbox" name="shared" value="1" ';
+        if ($shared) {
+            $returnstring .= 'checked="checked" ';
+        }
+        $returnstring .= '/> ';
+        $returnstring .= get_string('sharedfeed', 'block_rss_client');
+        $returnstring .= '<br />'."\n";
+    }
+    
     $returnstring .= '<input type="hidden" name="act" value="';
 
     if ($act == 'rssedit') {

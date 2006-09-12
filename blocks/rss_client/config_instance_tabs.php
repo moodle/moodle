@@ -5,9 +5,14 @@
 global $USER;
 $tabs = $row = array();
 
-$script = $page->url_get_full(array('instanceid' => $this->instance->id, 'sesskey' => $USER->sesskey, 'blockaction' => 'config', 'currentaction' => 'configblock', 'id' => $id));
-$row[] = new tabobject('configblock', $script, 
-            get_string('configblock', 'block_rss_client'));
+
+$context = get_context_instance(CONTEXT_BLOCK, $this->instance->id);
+
+if (has_capability('moodle/site:manageblocks', $context)) {
+    $script = $page->url_get_full(array('instanceid' => $this->instance->id, 'sesskey' => $USER->sesskey, 'blockaction' => 'config', 'currentaction' => 'configblock', 'id' => $id));
+    $row[] = new tabobject('configblock', $script, 
+                get_string('configblock', 'block_rss_client'));
+}
 
 $script = $page->url_get_full(array('instanceid' => $this->instance->id, 'sesskey' => $USER->sesskey, 'blockaction' => 'config', 'currentaction' => 'managefeeds', 'id' => $id));
 $row[] = new tabobject('managefeeds', $script, 

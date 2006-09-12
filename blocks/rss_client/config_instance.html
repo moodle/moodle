@@ -1,10 +1,11 @@
 <?php // $Id$ //
 require_once($CFG->libdir .'/rsslib.php');
 
-$id       = optional_param('id', SITEID, PARAM_INT);
+$id = optional_param('id', SITEID, PARAM_INT);
 
 //create a page object for url_get_full()
 $page = page_create_object($this->instance->pagetype, $this->instance->pageid);
+
 
 /// Print tabs at top
 $currentaction = optional_param('currentaction', '', PARAM_ALPHA);
@@ -75,14 +76,8 @@ if ($currentaction == 'configblock') {
                 }
             }
             global $USER;
-            $admins = get_admins();
-            $adminsql = '';
-            if (!empty($admins)) {
-                foreach ($admins as $admin) {
-                    $adminsql = ' OR userid = '.$admin->id;
-                }
-            }
-            if ($rssfeeds = get_records_select('block_rss_client','userid = '.$USER->id . $adminsql)) {
+            
+            if ($rssfeeds = get_records_select('block_rss_client', 'userid = '.$USER->id.' OR shared = 1')) {
                 foreach($rssfeeds as $rssfeed) {
                     if (!empty($rssfeed->preferredtitle)) {
                         $feedtitle = stripslashes_safe($rssfeed->preferredtitle);
@@ -100,8 +95,10 @@ if ($currentaction == 'configblock') {
                 print_string('nofeeds', 'block_rss_client');
                 if ( isadmin() ) {
                     $addrsspage = $page->url_get_full(array('instanceid' => $this->instance->id, 
-                                                      'sesskey' => $USER->sesskey, 'blockaction' => 'config', 
-                                                      'currentaction' => 'managefeeds', 'id' => $id));
+                                                            'sesskey' => $USER->sesskey,
+                                                            'blockaction' => 'config', 
+                                                            'currentaction' => 'managefeeds',
+                                                            'id' => $id));
                     print '&nbsp;<a href="'.$addrsspage.'">'. get_string('editnewsfeeds', 'block_rss_client') .'</a><br />';
                 }
             }
@@ -163,11 +160,12 @@ if ($currentaction == 'configblock') {
 </table>
 <?php
 } else {
-    global $act, $url, $rssid, $preferredtitle;
+    global $act, $url, $rssid, $preferredtitle, $shared;
     print '<table cellpadding="9" cellspacing="0" class="blockconfigtable">';
     print '<tr valign="top"><td>';
-    rss_display_feeds($id,$USER->id);
+    $context = get_context_instance(CONTEXT_BLOCK, $this->instance->id);
+    rss_display_feeds($id, $USER->id, '', $context);
     print '</form>'; //not sure that this is needed
-    rss_print_form($act, $url, $rssid, $preferredtitle, $id);
+    rss_print_form($act, $url, $rssid, $preferredtitle, $shared, $id, $context);
     print '</td></tr></table>';
 } ?>

@@ -15,5 +15,6 @@ CREATE TABLE prefix_block_rss_client (
  title text NOT NULL default '',
  preferredtitle varchar(64) NOT NULL default '',
  description text NOT NULL default '',
+ shared INTEGER NOT NULL default '0',
  url varchar(255) NOT NULL default ''
 );
