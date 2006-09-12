@@ -2201,7 +2201,7 @@ function main_upgrade($oldversion=0) {
                     )TYPE=MYISAM COMMENT ='time user last accessed any page in a course';", true);
     }
 
-    if ($oldversion < 2006091211) {   // Reload the guest roles completely with new defaults
+    if ($oldversion < 2006091212) {   // Reload the guest roles completely with new defaults
         if ($guestroles = get_roles_with_capability('moodle/legacy:guest', CAP_ALLOW)) {
             delete_records('capabilities');
             $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
