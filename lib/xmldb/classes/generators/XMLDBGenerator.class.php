@@ -454,6 +454,47 @@ class XMLDBgenerator {
     }
 
     /**
+     * Given one XMLDBTable and one XMLDBField, return the SQL statements needded to add the field to the table
+     */
+    function getAddFieldSQL($xmldb_table, $xmldb_field) {
+
+        $results = array();
+
+    /// Get the quoted name of the table and field
+        $tablename = $this->getEncQuoted($this->prefix . $xmldb_table->getName());
+
+    /// Build the standard alter table add
+        $results[] = 'ALTER TABLE ' . $tablename . ' ADD ' . $this->getFieldSQL($xmldb_field);
+
+    /// If the DB has extra enum code
+        if ($this->enum_extra_code) {
+        /// If it's enum add the extra code
+            if ($xmldb_field->getEnum()) {
+                $results[] = 'ALTER TABLE ' . $tablename . ' ADD ' . $this->getEnumExtraSQL($xmldb_table, $xmldb_field);
+            }
+        }
+
+        return $results;
+    }
+
+    /**
+     * Given one XMLDBTable and one XMLDBField, return the SQL statements needded to drop the field from the table
+     */
+    function getDropFieldSQL($xmldb_table, $xmldb_field) {
+
+        $results = array();
+
+    /// Get the quoted name of the table and field
+        $tablename = $this->getEncQuoted($this->prefix . $xmldb_table->getName());
+        $fieldname = $this->getEncQuoted($xmldb_field->getName());
+
+    /// Build the standard alter table drop
+        $results[] = 'ALTER TABLE ' . $tablename . ' DROP COLUMN ' . $fieldname;
+
+        return $results;
+    }
+
+    /**
      * Given three strings (table name, list of fields (comma separated) and suffix), create the proper object name
      * quoting it if necessary
      */
