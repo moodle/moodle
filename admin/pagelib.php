@@ -4,6 +4,11 @@ require_once($CFG->libdir.'/pagelib.php');
 
 define('PAGE_ADMIN', 'admin');
 
+define('BLOCK_L_MIN_WIDTH',160);
+define('BLOCK_L_MAX_WIDTH',210);
+define('BLOCK_R_MIN_WIDTH',160);
+define('BLOCK_R_MAX_WIDTH',210);
+
 page_map_class(PAGE_ADMIN, 'page_admin');
 
 class page_admin extends page_base {
@@ -77,11 +82,20 @@ class page_admin extends page_base {
     }
 
     function blocks_get_positions() { 
-        return array(BLOCK_POS_LEFT);
+        return array(BLOCK_POS_LEFT, BLOCK_POS_RIGHT);
     }
 
     function blocks_default_position() { 
         return BLOCK_POS_LEFT;
+    }
+
+    function blocks_move_position(&$instance, $move) {
+        if($instance->position == BLOCK_POS_LEFT && $move == BLOCK_MOVE_RIGHT) {
+            return BLOCK_POS_RIGHT;
+        } else if ($instance->position == BLOCK_POS_RIGHT && $move == BLOCK_MOVE_LEFT) {
+            return BLOCK_POS_LEFT;
+        }
+        return $instance->position;
     }
 
     // does anything need to be done here?
@@ -105,7 +119,8 @@ class page_admin extends page_base {
             $buttons = '&nbsp;';
         }
         
-        print_header("$SITE->shortname: " . implode(": ",$this->visiblepathtosection), $SITE->fullname, implode(" -> ",$this->visiblepathtosection),'', '', true, $buttons, '');
+        print_header("$SITE->shortname: " . implode(": ",$this->visiblepathtosection), $SITE->fullname, 
+                       implode(" -> ",$this->visiblepathtosection),'', '', true, $buttons, '');
     }
 
     function get_type() {

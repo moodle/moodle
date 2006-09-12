@@ -630,8 +630,6 @@
         echo '</div>';
     }
 
-    print_simple_box_end();
-
     
     if (optional_param('dbmigrate')) {               // ??? Is this actually used?
         print_simple_box_start('center','60%');

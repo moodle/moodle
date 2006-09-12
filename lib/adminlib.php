@@ -2240,26 +2240,41 @@ function admin_externalpage_setup($section, $adminroot) {
 
 function admin_externalpage_print_header($adminroot) {
 
-    global $CFG, $PAGE;
+    global $CFG, $PAGE, $SITE;
     
-    $pageblocks = blocks_setup($PAGE);
+    if (!empty($SITE->fullname)) {
+        $pageblocks = blocks_setup($PAGE);
 
-    $preferred_width_left = bounded_number(BLOCK_L_MIN_WIDTH, blocks_preferred_width($pageblocks[BLOCK_POS_LEFT]), BLOCK_L_MAX_WIDTH);
-
-    $PAGE->print_header();
-    echo '<table id="layout-table"><tr>';
-    echo '<td style="width: ' . $preferred_width_left . 'px;" id="left-column">';
-    blocks_print_group($PAGE, $pageblocks, BLOCK_POS_LEFT);
-    echo '</td>';
-    echo '<td id="middle-column" width="*">';
+        $preferred_width_left = bounded_number(BLOCK_L_MIN_WIDTH, blocks_preferred_width($pageblocks[BLOCK_POS_LEFT]), 
+                                               BLOCK_L_MAX_WIDTH);
+    
+        $PAGE->print_header();
+        echo '<table id="layout-table"><tr>';
+        echo '<td style="width: ' . $preferred_width_left . 'px;" id="left-column">';
+        blocks_print_group($PAGE, $pageblocks, BLOCK_POS_LEFT);
+        echo '</td>';
+        echo '<td id="middle-column" width="*">';
+    } else {
+        print_header();
+    }
 
 }
 
 function admin_externalpage_print_footer($adminroot) {
 
-    echo '</td></tr></table>';
+    global $CFG, $PAGE, $SITE;
+
+    if (!empty($SITE->fullname)) {
+        $pageblocks = blocks_setup($PAGE);
+        $preferred_width_right = bounded_number(BLOCK_R_MIN_WIDTH, blocks_preferred_width($pageblocks[BLOCK_POS_RIGHT]),
+                                                BLOCK_R_MAX_WIDTH);
+        echo '</td>';
+        echo '<td style="width: ' . $preferred_width_right . 'px;" id="right-column">';
+        blocks_print_group($PAGE, $pageblocks, BLOCK_POS_RIGHT);
+        echo '</td></tr></table>';
+    }
+
     print_footer();
-    
 }
 
 function admin_get_root() {

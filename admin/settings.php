@@ -9,8 +9,6 @@ if ($site = get_site()) {
     require_login();
 } 
 
-define('BLOCK_L_MIN_WIDTH',160);
-define('BLOCK_L_MAX_WIDTH',210);
 
 page_map_class(PAGE_ADMIN, 'page_admin');
 
@@ -83,17 +81,30 @@ if ($data = data_submitted()) {
 
 // ---------------------------------------------------------------------------------------------------------------
 
-$pageblocks = blocks_setup($PAGE);
 
-$preferred_width_left = bounded_number(BLOCK_L_MIN_WIDTH, blocks_preferred_width($pageblocks[BLOCK_POS_LEFT]), BLOCK_L_MAX_WIDTH);
+if (!empty($SITE->fullname)) {
+    $pageblocks = blocks_setup($PAGE);
 
-// print header stuff
-$PAGE->print_header();
-echo '<table id="layout-table"><tr>';
-echo '<td style="width: ' . $preferred_width_left . 'px;" id="left-column">';
-blocks_print_group($PAGE, $pageblocks, BLOCK_POS_LEFT);
-echo '</td>';
-echo '<td id="middle-column" width="*">';
+    $preferred_width_left  = bounded_number(BLOCK_L_MIN_WIDTH, blocks_preferred_width($pageblocks[BLOCK_POS_LEFT]), 
+                                            BLOCK_L_MAX_WIDTH);
+    $preferred_width_right = bounded_number(BLOCK_R_MIN_WIDTH, blocks_preferred_width($pageblocks[BLOCK_POS_RIGHT]), 
+                                            BLOCK_R_MAX_WIDTH);
+    
+    // print header stuff
+    $PAGE->print_header();
+
+    echo '<table id="layout-table"><tr>';
+    echo '<td style="width: ' . $preferred_width_left . 'px;" id="left-column">';
+    blocks_print_group($PAGE, $pageblocks, BLOCK_POS_LEFT);
+    echo '</td>';
+    echo '<td id="middle-column" width="*">';
+} else {
+
+    print_header();
+    print_simple_box(get_string('configintrosite', 'admin'), 'center', '50%');
+
+}
+
 echo '<form action="settings.php" method="post" name="mainform">';
 echo '<input type="hidden" name="section" value="' . $PAGE->section . '" />';
 echo '<input type="hidden" name="sesskey" value="' . $USER->sesskey . '" />';
@@ -106,7 +117,13 @@ echo $root->output_html();
 echo '<center><input type="submit" value="' . get_string('savechanges','admin') . '" /></center>';
 print_simple_box_end();
 echo '</form>';
-echo '</td></tr></table>';
+
+if (!empty($SITE->fullname)) {
+    echo '</td>';
+    echo '<td style="width: ' . $preferred_width_right . 'px;" id="right-column">';
+    blocks_print_group($PAGE, $pageblocks, BLOCK_POS_RIGHT);
+    echo '</td></tr></table>';
+}
 
 print_footer();
 
