@@ -934,14 +934,12 @@ function assign_legacy_capabilities($capability, $legacyperms) {
         //   'moodle/legacy:coursecreator'
         //   'moodle/legacy:admin'
         
-        if (!$roles = get_roles_with_capability('moodle/legacy:'.$type, CAP_ALLOW)) {
-            return false;
-        }
-        
-        foreach ($roles as $role) {
-            // Assign a site level capability.
-            if (!assign_capability($capability, $perm, $role->id, $systemcontext->id)) {
-                return false;
+        if ($roles = get_roles_with_capability('moodle/legacy:'.$type, CAP_ALLOW)) {
+            foreach ($roles as $role) {
+                // Assign a site level capability.
+                if (!assign_capability($capability, $perm, $role->id, $systemcontext->id)) {
+                    return false;
+                }
             }
         }
     }
@@ -1125,7 +1123,7 @@ function assign_capability($capability, $permission, $roleid, $contextid, $overw
         unassign_capability($capability, $roleid, $contextid);      
     }
     
-    $existing = get_record('role_capabilities', 'contextid', $contextid, 'roleid', $capability, $capability);
+    $existing = get_record('role_capabilities', 'contextid', $contextid, 'roleid', $roleid, 'capability', $capability);
 
     if ($existing and !$overwrite) {   // We want to keep whatever is there already
         return true;
@@ -1441,8 +1439,7 @@ function update_capabilities($component='moodle') {
         // legacy capabilities moodle/legacy:* as well?
         if (isset($capdef['legacy']) && is_array($capdef['legacy']) &&
                     !assign_legacy_capabilities($capname, $capdef['legacy'])) {
-            error('Could not assign legacy capabilities');
-            return false;
+            notify('Could not assign legacy capabilities for '.$capname);
         }
     }
     // Are there any capabilities that have been removed from the file
