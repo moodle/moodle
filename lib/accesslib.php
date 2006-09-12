@@ -34,6 +34,45 @@ $context_cache_id = array();    // Index to above cache by id
 
 
 /**
+ * Loads the capabilities for the default guest role to the current user in a specific context
+ * @return object
+ */
+function load_guest_role($context=NULL) {
+    global $USER;
+
+    static $guestrole;
+
+    if (!isloggedin()) {
+        return false;
+    }
+
+    if (!$sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID)) {
+        return false;
+    }
+
+    if (empty($context)) {
+        $context = $sitecontext;
+    }
+
+    if (empty($guestrole)) {
+        if ($roles = get_roles_with_capability('moodle/legacy:guest', CAP_ALLOW)) {
+            $guestrole = array_shift($roles);   // Pick the first one
+        } else {
+            return false;
+        }
+    }
+
+    if ($capabilities = get_records_select('role_capabilities', 
+                                           "roleid = $guestrole->id AND contextid = $sitecontext->id")) {
+        foreach ($capabilities as $capability) {
+            $USER->capabilities[$context->id][$capability->capability] = $capability->permission;     
+        }
+    }
+
+    return true;
+}
+
+/**
  * Load default not logged in role capabilities when user is not logged in
  * @return bool 
  */
@@ -901,7 +940,7 @@ function assign_legacy_capabilities($capability, $legacyperms) {
         
         foreach ($roles as $role) {
             // Assign a site level capability.
-            if(!assign_capability($capability, $perm, $role->id, $systemcontext->id)) {
+            if (!assign_capability($capability, $perm, $role->id, $systemcontext->id)) {
                 return false;
             }
         }
@@ -1078,7 +1117,7 @@ function create_role($name, $description, $legacy='') {
  * @param roleid - role id
  * @param permission - int 1,-1 or -1000
  */
-function assign_capability($capability, $permission, $roleid, $contextid) {
+function assign_capability($capability, $permission, $roleid, $contextid, $overwrite=false) {
     
     global $USER;
     
@@ -1086,6 +1125,12 @@ function assign_capability($capability, $permission, $roleid, $contextid) {
         unassign_capability($capability, $roleid, $contextid);      
     }
     
+    $existing = get_record('role_capabilities', 'contextid', $contextid, 'roleid', $capability, $capability);
+
+    if ($existing and !$overwrite) {   // We want to keep whatever is there already
+        return true;
+    }
+
     $cap = new object;
     $cap->contextid = $contextid;
     $cap->roleid = $roleid;
@@ -1093,8 +1138,13 @@ function assign_capability($capability, $permission, $roleid, $contextid) {
     $cap->permission = $permission;
     $cap->timemodified = time();
     $cap->modifierid = empty($USER->id) ? 0 : $USER->id;
-    
-    return insert_record('role_capabilities', $cap);
+
+    if ($existing) {
+        $cap->id = $existing->id;
+        return update_record('role_capabilities', $cap);
+    } else {
+        return insert_record('role_capabilities', $cap);
+    }
 }
 
 
