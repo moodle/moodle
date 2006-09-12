@@ -1164,7 +1164,7 @@ function upgrade_blocks_plugins($continueto) {
                     if (! update_record('block', $block)) {
                         error('Could not update block '. $block->name .' record in block table!');
                     }
-                    if (!update_capabilities('block/'.$block->name)) {
+                    if (!update_capabilities('blocks/'.$block->name)) {
                         error('Could not update '.$block->name.' capabilities!');
                     }
                     notify(get_string('blocksuccess', '', $blocktitle), 'notifysuccess');
@@ -1220,7 +1220,7 @@ function upgrade_blocks_plugins($continueto) {
             if ($status) {
                 if ($block->id = insert_record('block', $block)) {
                     $blockobj->after_install();
-                    if (!update_capabilities('block', $block->name)) {
+                    if (!update_capabilities('blocks/', $block->name)) {
                         notify('Could not set up '.$block->name.' capabilities!');
                     }
                     notify(get_string('blocksuccess', '', $blocktitle), 'notifysuccess');
