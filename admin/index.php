@@ -608,15 +608,14 @@
     
         print_table($table);
     
-    } else {
-        print_simple_box('The old admin menu has been replaced by a new system, make sure the administration block is showing on this page.   If you want to, you can can also <a href="index.php?oldmenu=true">temporarily display the old menu</a>' , 'center', '60%');
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////////
-    ////  IT IS ILLEGAL AND A VIOLATION OF THE GPL TO REMOVE OR MODIFY THE COPYRIGHT NOTICE BELOW ////
+    ////  IT IS ILLEGAL AND A VIOLATION OF THE GPL TO HIDE, REMOVE OR MODIFY THIS COPYRIGHT NOTICE ///
     $copyrighttext = '<a href="http://moodle.org/">Moodle</a> '.
                      '<a href="http://docs.moodle.org/en/Release">'.$CFG->release.'</a> ('.$CFG->version.')<br />'.
                      'Copyright &copy; 1999 onwards, Martin Dougiamas<br />'.
+                     'and <a href="http://docs.moodle.org/en/Credits">many other contributors</a>.<br />'.
                      '<a href="http://docs.moodle.org/en/License">GNU Public License</a>';
     echo '<p class="copyright">'.$copyrighttext.'</p>';
     //////////////////////////////////////////////////////////////////////////////////////////////////
