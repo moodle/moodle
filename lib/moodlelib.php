@@ -1452,7 +1452,7 @@ function require_login($courseid=0, $autologinguest=true, $cm=null) {
 
     global $CFG, $SESSION, $USER, $COURSE, $FULLME, $MoodleSession;
 
-    // Redefine global $COURSE if we can
+/// Redefine global $COURSE if we can
     global $course;  // We use the global hack once here so it doesn't need to be used again
     if (is_object($course) and !empty($course->id) and ($courseid == 0 || $course->id == $courseid)) {
         $COURSE = clone($course);
@@ -1465,14 +1465,15 @@ function require_login($courseid=0, $autologinguest=true, $cm=null) {
         moodle_setlocale();
     }
 
-    // First check that the user is logged in to the site.
-    if (! (isset($USER->loggedin) and $USER->confirmed and ($USER->site == $CFG->wwwroot)) ) { // They're not
+/// If the user is not even logged in yet then make sure they are
+    if (! (isset($USER->loggedin) and $USER->confirmed and ($USER->site == $CFG->wwwroot)) ) {
         $SESSION->wantsurl = $FULLME;
         if (!empty($_SERVER['HTTP_REFERER'])) {
             $SESSION->fromurl  = $_SERVER['HTTP_REFERER'];
         }
         $USER = NULL;
-        if ($autologinguest and $CFG->autologinguests and $courseid and ($courseid == SITEID or get_field('course','guest','id',$courseid)) ) {
+        if ($autologinguest && $CFG->autologinguests and 
+            $courseid and ($courseid == SITEID or get_field('course','guest','id',$courseid)) ) {
             $loginguest = '?loginguest=true';
         } else {
             $loginguest = '';
@@ -1486,8 +1487,7 @@ function require_login($courseid=0, $autologinguest=true, $cm=null) {
         exit;
     }
 
-    // check whether the user should be changing password
-    // reload_user_preferences();    // Why is this necessary?  Seems wasteful.  - MD
+/// check whether the user should be changing password
     if (!empty($USER->preference['auth_forcepasswordchange'])){
         if (is_internal_auth() || $CFG->{'auth_'.$USER->auth.'_stdchangepassword'}){
             $SESSION->wantsurl = $FULLME;
@@ -1500,20 +1500,20 @@ function require_login($courseid=0, $autologinguest=true, $cm=null) {
                    Please contact your Moodle Administrator.');
         }
     }
-    // Check that the user account is properly set up
+/// Check that the user account is properly set up
     if (user_not_fully_set_up($USER)) {
         $SESSION->wantsurl = $FULLME;
         redirect($CFG->wwwroot .'/user/edit.php?id='. $USER->id .'&amp;course='. SITEID);
     }
 
-    // Make sure current IP matches the one for this session (if required)
+/// Make sure current IP matches the one for this session (if required)
     if (!empty($CFG->tracksessionip)) {
         if ($USER->sessionIP != md5(getremoteaddr())) {
             error(get_string('sessionipnomatch', 'error'));
         }
     }
 
-    // Make sure the USER has a sesskey set up.  Used for checking script parameters.
+/// Make sure the USER has a sesskey set up.  Used for checking script parameters.
     sesskey();
 
     // Check that the user has agreed to a site policy if there is one
@@ -1524,7 +1524,7 @@ function require_login($courseid=0, $autologinguest=true, $cm=null) {
         }
     }
 
-    // If the site is currently under maintenance, then print a message
+/// If the site is currently under maintenance, then print a message
     if (!isadmin()) {
         if (file_exists($CFG->dataroot.'/'.SITEID.'/maintenance.html')) {
             print_maintenance_message();
@@ -1532,77 +1532,99 @@ function require_login($courseid=0, $autologinguest=true, $cm=null) {
         }
     }
 
-    // Next, check if the user can be in a particular course
+/// Next, check if the user can be in a particular course
     if ($courseid) {
-        if ($courseid == SITEID) { // Anyone can be in the site course
-            if (isset($cm) and !$cm->visible and !has_capability('moodle/course:viewhiddenactivities', get_context_instance(CONTEXT_SYSTEM, SITEID))) { // Not allowed to see module, send to course page
-                redirect($CFG->wwwroot.'/course/view.php?id='.$cm->course, get_string('activityiscurrentlyhidden'));
+
+    /// Sanity check on the courseid
+
+        if ($courseid == $COURSE->id) {     /// Pretty much always true but let's be sure
+            $course = $COURSE;
+        } else if (! $course = get_record('course', 'id', $courseid)) {
+            error('That course doesn\'t exist');
+        }
+
+    /// We can eliminate hidden site activities straight away
+
+        if ($course->id == SITEID) {
+            if (!empty($cm) && !$cm->visible and !has_capability('moodle/course:viewhiddenactivities', 
+                                                          get_context_instance(CONTEXT_SYSTEM, SITEID))) {
+                redirect($CFG->wwwroot, get_string('activityiscurrentlyhidden'));
             }
             return;
         }
-        if (! $course = get_record('course', 'id', $courseid)) {
-            error('That course doesn\'t exist');
-        }
-        if (!has_capability('moodle/course:viewhiddencourses', get_context_instance(CONTEXT_COURSE, $courseid)) && !($course->visible && course_parent_visible($course))) {
+ 
+    /// If the whole course is hidden from us then we can stop now
+
+        if (!($course->visible && course_parent_visible($course)) &&
+               !has_capability('moodle/course:viewhiddencourses', get_context_instance(CONTEXT_COURSE, $course->id)) ){
             print_header();
             notice(get_string('coursehidden'), $CFG->wwwroot .'/');
         }    
         
-        $context = get_context_instance(CONTEXT_COURSE, $courseid);
+        if (!$context = get_context_instance(CONTEXT_COURSE, $course->id)) {
+            print_error('nocontext');
+        }
 
-        if (has_capability('moodle/course:view', $context)) {
-            if (isset($USER->realuser)) {   // Make sure the REAL person can also access this course
+    /// If the user is a guest then treat them according to the course policy about guests
+
+        if (has_capability('moodle/legacy:guest', $context, NULL, false)) {
+            switch ($course->guest) {    /// Check course policy about guest access
+
+                case 1:    /// Guests always allowed 
+                    if (!has_capability('moodle/course:view', $context)) {    // Prohibited by capability
+                        print_header_simple();
+                        notice(get_string('guestsnotallowed', '', $course->fullname), "$CFG->wwwroot/login/index.php");
+                    }
+                    if (!empty($cm) and !$cm->visible) { // Not allowed to see module, send to course page
+                        redirect($CFG->wwwroot.'/course/view.php?id='.$cm->course, 
+                                 get_string('activityiscurrentlyhidden'));
+                    }
+
+                    return;   // User is allowed to see this course
+
+                    break;
+
+                case 2:    /// Guests allowed with key (drop through to logic below)
+                    break;
+
+                default:    /// Guests not allowed
+                    print_header_simple();
+                    notice(get_string('guestsnotallowed', '', $course->fullname), "$CFG->wwwroot/login/index.php");
+                    break;
+            }
+
+    /// For non-guests, check if they have course view access
+
+        } else if (has_capability('moodle/course:view', $context)) {
+            if (!empty($USER->realuser)) {   // Make sure the REAL person can also access this course
                 if (!has_capability('moodle/course:view', $context, $USER->realuser)) {
-                    print_header();
+                    print_header_simple();
                     notice(get_string('studentnotallowed', '', fullname($USER, true)), $CFG->wwwroot .'/');
                 }
             }
-            if (isset($cm) and !$cm->visible and !has_capability('moodle/course:viewhiddenactivities', $context)) { // Not allowed to see module, send to course page
+
+        /// Make sure they can read this activity too, if specified
+
+            if (!empty($cm) and !$cm->visible and !has_capability('moodle/course:viewhiddenactivities', $context)) { 
                 redirect($CFG->wwwroot.'/course/view.php?id='.$cm->course, get_string('activityiscurrentlyhidden'));
             }
-            return;   // user is a member of this course.
-        }
-        if ($USER->username == 'guest') {
-            switch ($course->guest) {
-                case 0: // Guests not allowed
-                    print_header();
+            return;   // User is allowed to see this course
+
+    /// Otherwise, for non-guests who don't currently have access, check if they can be allowed in as a guest
+
+        } else {
+
+            if ($course->guest == 1) {    // Temporarily assign them guest role for this context
+                 if (!load_guest_role($context)) {
+                    print_header_simple();
                     notice(get_string('guestsnotallowed', '', $course->fullname), "$CFG->wwwroot/login/index.php");
-                    break;
-                case 1: // Guests allowed
-                    if (isset($cm) and !$cm->visible) { // Not allowed to see module, send to course page
-                        redirect($CFG->wwwroot.'/course/view.php?id='.$cm->course, get_string('activityiscurrentlyhidden'));
-                    }
-                    return;
-                case 2: // Guests allowed with key (drop through)
-                    break;
+                 }
+                 return;
             }
         }
 
-        //User is not enrolled in the course, wants to access course content
-        //as a guest, and course setting allow unlimited guest access;
-        //do not autologin as guest when $autologinguest is false
-        //Code cribbed from course/loginas.php
-        if (strstr($FULLME,"username=guest") and ($course->guest==1) and $autologinguest) {
-            $realuser = $USER->id;
-            $realname = fullname($USER, true);
-            $USER = guest_user();
-            $USER->loggedin = true;
-            $USER->site = $CFG->wwwroot;
-            $USER->realuser = $realuser;
-            $USER->sessionIP = md5(getremoteaddr());   // Store the current IP in the session
-            if (isset($SESSION->currentgroup)) {    // Remember current cache setting for later
-                $SESSION->oldcurrentgroup = $SESSION->currentgroup;
-                unset($SESSION->currentgroup);
-            }
-            $guest_name = fullname($USER, true);
-            add_to_log($course->id, "course", "loginas", "../user/view.php?id=$course->id&$USER->id$", "$realname -> $guest_name");
-            if (isset($cm) and !$cm->visible) { // Not allowed to see module, send to course page
-                redirect($CFG->wwwroot.'/course/view.php?id='.$cm->course, get_string('activityiscurrentlyhidden'));
-            }
-            return;
-        }
 
-        // Currently not enrolled in the course, so see if they want to enrol
+    /// Currently not enrolled in the course, so see if they want to enrol
         $SESSION->wantsurl = $FULLME;
         redirect($CFG->wwwroot .'/course/enrol.php?id='. $courseid);
         die;
