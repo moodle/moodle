@@ -155,10 +155,8 @@ class XMLDBmssql extends XMLDBgenerator {
                                        FROM syscolumns
                                        WHERE id = object_id('{$tablename}') AND
                                              name = '$fieldname'")) {
-            echo "DEFAULT FOUND";
             $results[] = 'ALTER TABLE ' . $tablename . ' DROP CONSTRAINT ' . $default->defaultconstraint;
         }
-            echo "DEFAULT NOT FOUND";
 
     /// Build the standard alter table drop
         $results[] = 'ALTER TABLE ' . $tablename . ' DROP COLUMN ' . $fieldname;
