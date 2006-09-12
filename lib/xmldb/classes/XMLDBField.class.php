@@ -800,7 +800,7 @@ class XMLDBField extends XMLDBObject {
         }
     /// Default
         $default =  $this->getDefault();
-        if (!$default !== null & !$this->getSequence()) {
+        if ($default !== null && !$this->getSequence()) {
             $result .= "'" . $default . "'";
         } else {
             $result .= 'null';
