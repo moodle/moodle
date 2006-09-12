@@ -818,6 +818,61 @@ class XMLDBTable extends XMLDBObject {
         }
         return $results;
     }
+
+    /** 
+     * This function will return the SQL code needed to add one field to the table for the specified DB and
+     * prefix. Just one simple wrapper over generators.
+     */
+    function getAddFieldSQL ($dbtype, $prefix, $xmldb_field, $statement_end=true) {
+
+        $results = array();
+
+        $classname = 'XMLDB' . $dbtype;
+        $generator = new $classname();
+        $generator->setPrefix($prefix);
+        $results = $generator->getAddFieldSQL($this, $xmldb_field);
+        if ($statement_end) {
+            $results = $generator->getEndedStatements($results);
+        }
+        return $results;
+    }
+
+    /** 
+     * This function will return the SQL code needed to drop one field from the table for the specified DB and
+     * prefix. Just one simple wrapper over generators.
+     */
+    function getDropFieldSQL ($dbtype, $prefix, $xmldb_field, $statement_end=true) {
+
+        $results = array();
+
+        $classname = 'XMLDB' . $dbtype;
+        $generator = new $classname();
+        $generator->setPrefix($prefix);
+        $results = $generator->getDropFieldSQL($this, $xmldb_field);
+        if ($statement_end) {
+            $results = $generator->getEndedStatements($results);
+        }
+        return $results;
+    }
+
+    /** 
+     * This function will return the SQL code needed to rename one field from the table for the specified DB and
+     * prefix. Just one simple wrapper over generators.
+     */
+    function getRenameFieldSQL ($dbtype, $prefix, $xmldb_field, $newname, $statement_end=true) {
+
+        $results = array();
+
+        $classname = 'XMLDB' . $dbtype;
+        $generator = new $classname();
+        $generator->setPrefix($prefix);
+        $results = $generator->getRenameFieldSQL($this, $xmldb_field, $newname);
+        if ($statement_end) {
+            $results = $generator->getEndedStatements($results);
+        }
+        return $results;
+    }
+
 }
 
 ?>
