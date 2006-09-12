@@ -1800,6 +1800,18 @@ function main_upgrade($oldversion=0) {
         execute_sql("CREATE UNIQUE INDEX {$CFG->prefix}user_lastaccess_useridcourseid_idx ON {$CFG->prefix}user_lastaccess (userid, courseid);", true);
     
     }
+
+    if ($oldversion < 2006091211) {   // Reload the guest roles completely with new defaults
+        if ($guestroles = get_roles_with_capability('moodle/legacy:guest', CAP_ALLOW)) {
+            delete_records('capabilities');
+            $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
+            foreach ($guestroles as $guestrole) {
+                delete_records('role_capabilities', 'roleid', $guestrole->id);
+                assign_capability('moodle/legacy:guest', CAP_ALLOW, $guestrole->id, $sitecontext->id);
+            }
+        }
+    }
+
     return $result;
 }
 
