@@ -100,7 +100,7 @@ function cas_authenticate_user_login ($username, $password) {
    global $CFG;
    $cas_validate=true;
 
-   phpCAS::client($CFG->cas_version,$CFG->cas_hostname,(Integer)$CFG->cas_port,$CFG->cas_baseuri);
+   phpCAS::client($CFG->cas_version,$CFG->cas_hostname,(integer)$CFG->cas_port,$CFG->cas_baseuri);
    phpCAS::setLang($CFG->cas_language);
    if (!phpCAS::isAuthenticated()){
       phpCAS::authenticateIfNeeded();
