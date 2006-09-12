@@ -31,10 +31,13 @@ class block_calendar_upcoming extends block_base {
             $this->content->footer = '<br /><a href="'.$CFG->wwwroot.
                                      '/calendar/view.php?view=upcoming&amp;course='.$courseshown.'">'.
                                       get_string('gotocalendar', 'calendar').'</a>...';
-            $this->content->footer .= '<br /><a href="'.$CFG->wwwroot.
-                                      '/calendar/event.php?action=new&amp;course='.$courseshown.'">'.
-                                       get_string('newevent', 'calendar').'</a>...';
-            
+            $context = get_context_instance(CONTEXT_COURSE, $courseshown);
+            if (has_capability('moodle/calendar:manageentries', $context) ||
+                has_capability('moodle/calendar:manageownentries', $context)) {
+                $this->content->footer .= '<br /><a href="'.$CFG->wwwroot.
+                                          '/calendar/event.php?action=new&amp;course='.$courseshown.'">'.
+                                           get_string('newevent', 'calendar').'</a>...';
+            } 
             if ($courseshown == SITEID) {
                 // Being displayed at site level. This will cause the filter to fall back to auto-detecting
                 // the list of courses it will be grabbing events from.
