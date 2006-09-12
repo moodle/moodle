@@ -244,7 +244,7 @@ function table_column($table, $oldfield, $field, $type='integer', $size='10',
  * SQL statements, specific for each RDBMS ($CFG->dbtype) and, finally, it
  * will execute all those statements against the DB.
  *
- * @uses $CFG 
+ * @uses $CFG, $db 
  * @param $file full path to the XML file to be used
  * @return boolean (true on success, false on error)
  */
@@ -279,7 +279,8 @@ function install_from_xmldb_file($file) {
  * This function will create the table passed as argument with all its
  * fields/keys/indexes/sequences, everything based in the XMLDB object
  *
- * @param XMLDBtable table object containing all the table info
+ * @uses $CFG, $db 
+ * @param XMLDBTable table object (full specs are required)
  * @param boolean continue to specify if must continue on error (true) or stop (false)
  * @param boolean feedback to specify to show status info (true) or not (false)
  * @return boolean true on success, false on error
@@ -306,7 +307,8 @@ function create_table($table, $continue=true, $feedback=true) {
  * and all the associated objects (keys, indexes, constaints, sequences, triggers)
  * will be dropped too.
  *
- * @param XMLDBtable table object containing the basic table info
+ * @uses $CFG, $db 
+ * @param XMLDBTable table object (just the name is mandatory)
  * @param boolean continue to specify if must continue on error (true) or stop (false)
  * @param boolean feedback to specify to show status info (true) or not (false)
  * @return boolean true on success, false on error
@@ -322,6 +324,66 @@ function drop_table($table, $continue=true, $feedback=true) {
     }
 
     if(!$sqlarr = $table->getDropTableSQL($CFG->dbtype, $CFG->prefix, false)) {
+        return false;
+    }
+
+    return execute_sql_arr($sqlarr, $continue, $feedback);
+}
+
+/**
+ * This function will add the field to the table passed as arguments
+ *
+ * @uses $CFG, $db 
+ * @param XMLDBTable table object (just the name is mandatory)
+ * @param XMLDBField field object (full specs are required)
+ * @param boolean continue to specify if must continue on error (true) or stop (false)
+ * @param boolean feedback to specify to show status info (true) or not (false)
+ * @return boolean true on success, false on error
+ */
+function add_field($table, $field, $continue=true, $feedback=true) {
+
+    global $CFG, $db;
+
+    $status = true;
+
+    if (strtolower(get_class($table)) != 'xmldbtable') {
+        return false;
+    }
+    if (strtolower(get_class($field)) != 'xmldbfield') {
+        return false;
+    }
+
+    if(!$sqlarr = $table->getAddFieldSQL($CFG->dbtype, $CFG->prefix, $field, false)) {
+        return false;
+    }
+
+    return execute_sql_arr($sqlarr, $continue, $feedback);
+}
+
+/**
+ * This function will drop the field from the table passed as arguments
+ *
+ * @uses $CFG, $db 
+ * @param XMLDBTable table object (just the name is mandatory)
+ * @param XMLDBField field object (just the name is mandatory)
+ * @param boolean continue to specify if must continue on error (true) or stop (false)
+ * @param boolean feedback to specify to show status info (true) or not (false)
+ * @return boolean true on success, false on error
+ */
+function drop_field($table, $field, $continue=true, $feedback=true) {
+
+    global $CFG, $db;
+
+    $status = true;
+
+    if (strtolower(get_class($table)) != 'xmldbtable') {
+        return false;
+    }
+    if (strtolower(get_class($field)) != 'xmldbfield') {
+        return false;
+    }
+
+    if(!$sqlarr = $table->getDropFieldSQL($CFG->dbtype, $CFG->prefix, $field, false)) {
         return false;
     }
 
