@@ -137,6 +137,36 @@ class XMLDBmssql extends XMLDBgenerator {
     }
 
     /**
+     * Given one XMLDBTable and one XMLDBField, return the SQL statements needded to drop the field from the table
+     * MSSQL overwrites the standard sentence because it needs to do some extra work dropping the default constraints
+     */
+    function getDropFieldSQL($xmldb_table, $xmldb_field) {
+
+        global $db;
+
+        $results = array();
+
+    /// Get the quoted name of the table and field
+        $tablename = $this->getEncQuoted($this->prefix . $xmldb_table->getName());
+        $fieldname = $this->getEncQuoted($xmldb_field->getName());
+    
+    /// Look for any default constraint in this field and drop it
+        if ($default = get_record_sql("SELECT id, object_name(cdefault) AS defaultconstraint
+                                       FROM syscolumns
+                                       WHERE id = object_id('{$tablename}') AND
+                                             name = '$fieldname'")) {
+            echo "DEFAULT FOUND";
+            $results[] = 'ALTER TABLE ' . $tablename . ' DROP CONSTRAINT ' . $default->defaultconstraint;
+        }
+            echo "DEFAULT NOT FOUND";
+
+    /// Build the standard alter table drop
+        $results[] = 'ALTER TABLE ' . $tablename . ' DROP COLUMN ' . $fieldname;
+
+        return $results;
+    }
+
+    /**
      * Returns an array of reserved words (lowercase) for this DB
      */
     function getReservedWords() {
