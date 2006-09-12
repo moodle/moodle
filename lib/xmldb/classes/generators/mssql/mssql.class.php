@@ -131,7 +131,7 @@ class XMLDBmssql extends XMLDBgenerator {
     function getEnumExtraSQL ($xmldb_table, $xmldb_field) {
         
         $sql = 'CONSTRAINT ' . $this->getNameForObject($xmldb_table->getName(), $xmldb_field->getName(), 'ck');
-        $sql.= ' CHECK (' . $this->getEncQuoted($xmldb_field->getName()) . ' IN (' . implode(', ', $xmldb_field->getEnumValues()) . ')),';
+        $sql.= ' CHECK (' . $this->getEncQuoted($xmldb_field->getName()) . ' IN (' . implode(', ', $xmldb_field->getEnumValues()) . '))';
 
         return $sql;
     }
@@ -149,15 +149,24 @@ class XMLDBmssql extends XMLDBgenerator {
     /// Get the quoted name of the table and field
         $tablename = $this->getEncQuoted($this->prefix . $xmldb_table->getName());
         $fieldname = $this->getEncQuoted($xmldb_field->getName());
-    
+
+        $checkconsname = $this->getNameForObject($xmldb_table->getName(), $xmldb_field->getName(), 'ck');
+
     /// Look for any default constraint in this field and drop it
         if ($default = get_record_sql("SELECT id, object_name(cdefault) AS defaultconstraint
                                        FROM syscolumns
                                        WHERE id = object_id('{$tablename}') AND
-                                             name = '$fieldname'")) {
+                                             name = '{$fieldname}'")) {
             $results[] = 'ALTER TABLE ' . $tablename . ' DROP CONSTRAINT ' . $default->defaultconstraint;
         }
 
+    /// Look for any check constraint in this field and drop it
+        if ($check = get_record_sql("SELECT id, object_name(constid) AS checkconstraint
+                                     FROM sysconstraints
+                                     WHERE id = object_id('{$tablename}') AND
+                                           object_name(constid) = '$checkconsname'")) {
+            $results[] = 'ALTER TABLE ' . $tablename . ' DROP CONSTRAINT ' . $check->checkconstraint;
+        }
     /// Build the standard alter table drop
         $results[] = 'ALTER TABLE ' . $tablename . ' DROP COLUMN ' . $fieldname;
 
