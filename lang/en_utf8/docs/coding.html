@@ -27,7 +27,7 @@
     add your own if necessary.</li>
   <li class="spaced">Each file should include the main config.php file.</li>
   <li class="spaced">Each file should check that the user is authenticated correctly, 
-    using require_login() and isadmin(), isteacher(), iscreator() or isstudent().</li>
+    using the correct has_capability() or required_capability() checks.</li>
   <li class="spaced">All access to databases should use the functions in lib/datalib.php 
     whenever possible - this allows compatibility across a wide range of databases. 
     You should find that almost anything is possible using these functions. If you must write SQL code then make sure it is: cross-platform; restricted to specific functions 

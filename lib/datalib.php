@@ -502,7 +502,7 @@ function get_courses($categoryid="all", $sort="c.sortorder ASC", $fields="c.*") 
         $sqland = "AND ";
     }
     if (!empty($USER->id)) {  // May need to check they are a teacher
-        if (!iscreator()) {
+        if (!has_capability('moodle/course:create', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
             $visiblecourses = "$sqland ((c.visible > 0) OR t.userid = '$USER->id')";
             $teachertable = "LEFT JOIN {$CFG->prefix}user_teachers t ON t.course = c.id";
         }
@@ -555,7 +555,7 @@ function get_courses_page($categoryid="all", $sort="c.sortorder ASC", $fields="c
         $sqland = "AND ";
     }
     if (!empty($USER) and !empty($USER->id)) {  // May need to check they are a teacher
-        if (!iscreator()) {
+        if (!has_capability('moodle/course:create', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
             $visiblecourses = "$sqland ((c.visible > 0) OR t.userid = '$USER->id')";
             $teachertable = "LEFT JOIN {$CFG->prefix}user_teachers t ON t.course=c.id";
         }
@@ -726,7 +726,7 @@ function get_categories($parent='none', $sort='sortorder ASC') {
         $categories = get_records('course_categories', 'parent', $parent, $sort);
     }
     if ($categories) {  /// Remove unavailable categories from the list
-        $creator = iscreator();
+        $creator = has_capability('moodle/course:create', get_context_instance(CONTEXT_SYSTEM, SITEID));
         foreach ($categories as $key => $category) {
             if (!$category->visible) {
                 if (!$creator) {
@@ -1248,12 +1248,15 @@ function add_to_log($courseid, $module, $action, $url='', $info='', $cm=0, $user
             if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++;};
             
             /// since we are quering the log table for lastaccess time now, can stop doing this? tables are gone
-            if (isstudent($courseid)) {
-                $db->Execute('UPDATE '. $CFG->prefix .'user_students SET timeaccess = \''. $timenow .'\' '.
-                             'WHERE course = \''. $courseid .'\' AND userid = \''. $userid .'\'');
-            } else if (isteacher($courseid, false, false)) {
-                $db->Execute('UPDATE '. $CFG->prefix .'user_teachers SET timeaccess = \''. $timenow .'\' '.
-                             'WHERE course = \''. $courseid .'\' AND userid = \''. $userid .'\'');
+            if (!$record = get_record('user_lastaccess', 'userid', $userid, 'courseid', $courseid)) {
+                $record = new object;
+                $record->userid = $userid;
+                $record->courseid = $courseid;
+                $record->timeaccess = $timenow;
+                return insert_record('user_lastaccess', $record);  
+            } else {
+                $record->timeaccess = $timenow;
+                return update_record('user_lastaccess', $record);
             }
         }
     }

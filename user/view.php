@@ -336,7 +336,13 @@
         echo "</form></td>";
     }
 */
-    if ((isadmin() and !isadmin($user->id)) or (isteacher($course->id) and isstudent($course->id, $user->id) and ($USER->id != $user->id) and !iscreator($user->id))) {
+    if ((isadmin() 
+        and !isadmin($user->id)) or 
+        (isteacher($course->id) 
+        and isstudent($course->id, $user->id) 
+        and ($USER->id != $user->id) 
+        and !has_capability('moodle/course:create', get_context_instance(CONTEXT_SYSTEM, SITEID,$user->id)))) {
+          
         echo "<td nowrap=\"nowrap\"><form action=\"../course/loginas.php\" method=\"get\">";
         echo "<input type=\"hidden\" name=\"id\" value=\"$course->id\" />";
         echo "<input type=\"hidden\" name=\"user\" value=\"$user->id\" />";

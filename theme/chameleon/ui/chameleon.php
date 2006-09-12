@@ -2,7 +2,7 @@
 
    
 if (isset($THEME->chameleonenabled) && $THEME->chameleonenabled) {
-    $chameleon_isadmin = isadmin();
+    $chameleon_isadmin = has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM, SITEID));
     $chameleon_isteacher = false;
     if (isset($course->id)) {
         $chameleon_courseparam = '?id=' . $course->id;

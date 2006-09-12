@@ -14,7 +14,7 @@ if ($chameleon_id != 0 && !empty($CFG->allowcoursethemes) && !empty($THEME->cham
     if (!isteacheredit($chameleon_id)) {
         die('CHAMELEON_ERROR Either you are not logged in or you are not allowed to edit this theme');
     }
-} else if (!isadmin()) {
+} else if (!has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
     die('CHAMELEON_ERROR Either you are not logged in or you are not allowed to edit this theme');
 }
 

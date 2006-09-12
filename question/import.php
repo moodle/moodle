@@ -185,7 +185,7 @@
     print_heading_with_help($txt->importquestions, "import", "quiz");
 
     /// Get all the existing categories now
-    if (isadmin()) { // the admin can import into all categories
+    if (has_capability('moodle/course:managequestions', get_context_instance(CONTEXT_SYSTEM, SITEID))) { // the admin can import into all categories
         if (!$categories = get_records_select("question_categories", "course = '{$course->id}' OR publish = '1'", "parent, sortorder, name ASC")) {
             error("Could not find any question categories!"); // Something is really wrong
         }

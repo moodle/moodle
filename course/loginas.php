@@ -83,11 +83,11 @@
         }
     }
 
-    if ($course->category and !isstudent($course->id, $user) and !isadmin()) {
+    if ($course->category and !has_capability('moodle/course:view', get_context_instance(CONTEXT_COURSE, $course->id), $user) and !isadmin()) {
         error("This student is not in this course!");
     }
 
-    if (iscreator($user)) {
+    if (has_capability('moodle/course:create', get_context_instance(CONTEXT_SYSTEM, SITEID, $user))) {
         error("You can not login as this person!");
     }
 

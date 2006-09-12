@@ -30,7 +30,7 @@
         error("Category not known!");
     }
 
-    if (iscreator()) {
+    if (has_capability('moodle/course:create', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
         if ($categoryedit !== -1) {
             $USER->categoryediting = $categoryedit;
         }
@@ -205,7 +205,7 @@
     if ($subcategories = get_records("course_categories", "parent", $category->id, "sortorder ASC")) {
         $firstentry = true;
         foreach ($subcategories as $subcategory) {
-            if ($subcategory->visible or iscreator()) {
+            if ($subcategory->visible or has_capability('moodle/course:create', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
                 $subcategorieswereshown = true;
                 if ($firstentry) {
                     echo '<table align="center" border="0" cellspacing="2" cellpadding="4" class="generalbox">';

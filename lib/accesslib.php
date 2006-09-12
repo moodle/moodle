@@ -1805,7 +1805,7 @@ function get_role_context_capability($contextid, $capability, $capabilities) {
  * @param $capabilityname - e.g. mod/choice:readresponses
  */
 function get_capability_string($capabilityname) {
-
+    
     // Typical capabilityname is mod/choice:readresponses
 
     $names = split('/', $capabilityname);

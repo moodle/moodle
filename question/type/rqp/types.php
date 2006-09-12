@@ -13,9 +13,7 @@
 
     // Check user admin
     require_login();
-    if (!isadmin()) {
-        error('You need to be an admin user to use this page.', $CFG->wwwroot . '/login/index.php');
-    }
+    require_capability('moodle/course:managequestions', get_context_instance(CONTEXT_SYSTEM, SITEID));
 
     if (!$site = get_site()) {
         error('Site isn\'t defined!');

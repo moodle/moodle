@@ -3085,7 +3085,7 @@ function print_user($user, $course, $messageselect=false, $return=false) {
     if ($isteacher) {
         $timemidnight = usergetmidnight(time());
         $output .= '<a href="'. $CFG->wwwroot .'/course/user.php?id='. $course->id .'&amp;user='. $user->id .'">'. $string->activity .'</a><br />';
-        if (!iscreator($user->id) or ($isadmin and !isadmin($user->id))) {  // Includes admins
+        if (!has_capability('moodle/course:create', get_context_instance(CONTEXT_SYSTEM, SITEID, $user->id)) or ($isadmin and !isadmin($user->id))) {  // Includes admins
             if ($course->category and isteacheredit($course->id) and isstudent($course->id, $user->id)) {  // Includes admins
                 $output .= '<a href="'. $CFG->wwwroot .'/course/unenrol.php?id='. $course->id .'&amp;user='. $user->id .'">'. $string->unenrol .'</a><br />';
             }

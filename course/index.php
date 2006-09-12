@@ -63,7 +63,7 @@
         if (isloggedin() and !isguest() and !has_capability('moodle/course:create', get_context_instance(CONTEXT_SYSTEM, SITEID))) {  // Print link to request a new course
             print_single_button("request.php", NULL, get_string("courserequest"), "get");
         }
-        if (iscreator()) {       // Print link to create a new course
+        if (has_capability('moodle/course:create', get_context_instance(CONTEXT_SYSTEM, SITEID))) {       // Print link to create a new course
             print_single_button("edit.php", NULL, get_string("addnewcourse"), "get");
         }
         if (has_capability('moodle/site:approvecourse', get_context_instance(CONTEXT_SYSTEM, SITEID))  and !empty($CFG->enablecourserequests)) {

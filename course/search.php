@@ -31,7 +31,7 @@
         require_login();
     }
 
-    if (iscreator()) {
+    if (has_capability('moodle/course:create', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
         if ($edit !== -1) {
             $USER->categoryediting = $edit;
             // If the edit mode we are leaving has higher per page than the one we are entering,
@@ -123,7 +123,7 @@
 
     $searchform = print_course_search($search, true, "navbar");
 
-    if (!empty($courses) && iscreator()) {
+    if (!empty($courses) && has_capability('moodle/course:create', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
         $searchform .= update_categories_search_button($search,$page,$perpage);
     }
  

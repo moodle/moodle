@@ -18,7 +18,7 @@
         error("Course ID was incorrect (can't find it)");
     }
 
-    if (!(isteacheredit($course->id) and iscreator()) and 
+    if (!(isteacheredit($course->id) and has_capability('moodle/course:create', get_context_instance(CONTEXT_SYSTEM, SITEID))) and 
         !(isteacheredit($course->id) and !empty($CFG->teacherassignteachers) ) ) {
         error("You must be an administrator or course creator to use this page.");
     }

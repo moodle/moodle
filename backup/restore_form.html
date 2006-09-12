@@ -161,7 +161,7 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
         $restore_restoreto_options[0] = get_string("currentcoursedeleting");
         $restore_restoreto_options[1] = get_string("currentcourseadding");
     } 
-    if (iscreator()) {
+    if (has_capability('moodle/course:create', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
         $restore_restoreto_options[0] = get_string("existingcoursedeleting");
         $restore_restoreto_options[1] = get_string("existingcourseadding");
         $restore_restoreto_options[2] = get_string("newcourse"); 
