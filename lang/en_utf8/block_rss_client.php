@@ -30,6 +30,7 @@ $string['nofeeds'] = 'There are no RSS feeds defined for this site.';
 $string['pickfeed'] = 'Pick a news feed';
 $string['remotenewsfeed'] = 'Remote News Feed';
 $string['seeallfeeds'] = 'See all feeds';
+$string['sharedfeed'] = 'Shared feed';
 $string['shownumentrieslabel'] = 'Max number entries to show per block.';
 $string['submitters'] = 'Who will be allowed to define new rss feeds? Defined feeds are available for any page on your site.';
 $string['timeout'] = 'blockrsstimeout';
