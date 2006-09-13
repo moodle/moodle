@@ -1,7 +1,24 @@
 <?PHP
 function hotpot_upgrade($oldversion) {
-	global $CFG;
+	global $db, $CFG;
 	$ok = true;
+
+    // some versions of HotPot v2.0 were advanced past the beginning of the start of HotPot v2.1
+
+    // if the version number indicates this could be an early HotPot v2.1 (Moodle 1.6),
+    // check this is not actually HotPot v2.0 (Moodle 1.5) with an overly advanced version number
+    if ($oldversion>2005031400 && $oldversion<=2006082899) {
+        $columns = $db->MetaColumns($CFG->prefix.'hotpot_attempts');
+        foreach ($columns as $column) {
+            if ($column->name=='details') {
+                // the "hotpot_attempts" table has a "details" field so this is actually HotPot v2.0
+                // reset the version number in order to trigger the correct order of updates
+                print "HotPot v2.0 detected<br>";
+                $oldversion = 2005031400;
+                break;
+            }
+        }
+    }
 
 	if ($oldversion < 2004021400) {
 		execute_sql(" ALTER TABLE `{$CFG->prefix}hotpot_events` ADD `starttime` INT(10) unsigned NOT NULL DEFAULT '0' AFTER `time`");
