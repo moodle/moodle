@@ -593,6 +593,10 @@ function get_recordset_sql($sql, $limitfrom=null, $limitnum=null) {
 
     global $CFG, $db;
 
+    if (empty($db)) {
+        return false;
+    }
+
     if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++; };
 
     if ($limitfrom || $limitnum) {
@@ -993,6 +997,10 @@ function delete_records_select($table, $select='') {
 function insert_record($table, $dataobject, $returnid=true, $primarykey='id') {
 
     global $db, $CFG, $empty_rs_cache;
+
+    if (empty($db)) {
+        return false;
+    }
 
 /// DIRTY HACK: Implement one cache to store meta data (needed by Oracle inserts)
 /// TODO: Possibly make it global to benefit other functions needing it (update_record...)
