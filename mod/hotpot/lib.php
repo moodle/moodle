@@ -1889,13 +1889,13 @@ function hotpot_add_attempt_details(&$attempt) {
 					hotpot_add_response($attempt, $question, $response);
 
 					// initialize question object
-					$question = NULL;
+					$question = new stdClass();
 					$question->name = '';
 					$question->text = '';
 					$question->hotpot = $attempt->hotpot;
 
 					// initialize response object
-					$response = NULL;
+					$response = new stdClass();
 					$response->attempt = $attempt->id;
 
 					// update question number
@@ -1927,7 +1927,7 @@ function hotpot_add_attempt_details(&$attempt) {
 					case 'hints':
 					case 'clues':
 					case 'checks':
-						$response->$name = intval($data);
+						$response->$name = round($data);
 						break;
 				}
 
@@ -1936,9 +1936,9 @@ function hotpot_add_attempt_details(&$attempt) {
 				// adjust field name and value
 				hotpot_adjust_response_field($quiztype, $question, $num='', $name, $data);
 
-				// add $data to the attempt details
-				if ($name=='penalties') {
-					$attempt->$name = intval($data);
+				// allow only positive integers for penalties and score
+				if ($name=='penalties' || $name=='score') {
+					$attempt->$name = max(0, round($data));
 				}
 			}
 		}
@@ -2032,12 +2032,15 @@ function hotpot_adjust_response_field($quiztype, &$question, &$num, &$name, &$da
 			break;
 		case 'jcross':
 			$question->type = HOTPOT_JCROSS;
-			$question->name = $num;
+			if (empty($question->name)) {
+				$question->name = $num;
+			}
 			switch ($name) {
 				case '': // HotPot v2.0.x
 					$name = 'correct';
 					break;
 				case 'clue':
+				case 'clue_text':
 					$name = 'text';
 					break;
 			}
@@ -2189,6 +2192,45 @@ if (!function_exists('set_user_preference')) {
 	// add this function for Moodle 1.x
 	function set_user_preference($name, $value, $otheruser=NULL) {
 		return false;
+	}
+}
+if (!function_exists('get_coursemodule_from_id')) {
+	// add this function for Moodle < 1.6
+	function get_coursemodule_from_id($modulename, $cmid, $courseid=0) {
+		global $CFG;
+		return get_record_sql("
+			SELECT 
+				cm.*, m.name, md.name as modname
+			FROM 
+				{$CFG->prefix}course_modules cm,
+				{$CFG->prefix}modules md,
+				{$CFG->prefix}$modulename m
+			WHERE 
+				".($courseid ? "cm.course = '$courseid' AND " : '')."
+				cm.id = '$cmid' AND
+				cm.instance = m.id AND
+				md.name = '$modulename' AND
+				md.id = cm.module
+		");
+	}
+}
+if (!function_exists('get_coursemodule_from_instance')) {
+	function get_coursemodule_from_instance($modulename, $instance, $courseid=0) {
+		global $CFG;
+		return get_record_sql("
+			SELECT 
+				cm.*, m.name, md.name as modname
+			FROM 
+				{$CFG->prefix}course_modules cm,
+				{$CFG->prefix}modules md,
+				{$CFG->prefix}$modulename m
+			WHERE 
+				".($courseid ? "cm.course = '$courseid' AND" : '')."
+				cm.instance = m.id AND
+				md.name = '$modulename' AND
+				md.id = cm.module AND
+				m.id = '$instance'
+		");
 	}
 }
 function hotpot_utf8_to_html_entity($char) {
