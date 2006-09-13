@@ -82,9 +82,7 @@ div.informationbox {
   border-color: #FFFFFF #DDDDDD #DDDDDD #FFFFFF;
 }
 table.userinfobox {
-  border-width: 1px;
-  border-style: solid;
-  border-color: #DDDDDD;
+  border: 1px solid #DDDDDD;
 }
 p.copyright {
   text-align: center;
@@ -114,6 +112,7 @@ div.navbar {
   padding: 3px 0;
   background-color: #EEFFDD;
   margin-top: 5px;
+  clear: both;
   border-style: none;
 }
 div#footer {
@@ -129,6 +128,7 @@ div#content {
   font-size: 0.75em;
   line-height: 1.6em;
   margin-top: 0px;
+  clear: both;
   border-top-width: 1px;
   border-bottom-width: 1px;
   border-top-style: solid;
@@ -143,7 +143,7 @@ div.sideblock div.content * {
   text-align: left;
 }
 div.sideblock ul.list span.c1 {
-  padding-left: 0.3em;
+  padding-left: 0;
 }
 div.sideblock div.title h2 {
   font-size: 1em;
@@ -165,9 +165,6 @@ div.sideblock div.content {
   border-bottom-color: #DDDDDD;
   border-left-color: #FFFFFF;
 }
-div.sideblock table.calendar-controls td.current {
-  text-align: center;
-}
 div.sideblock table.minicalendar td.day {
   text-align: center;
   font-size: 0.9em;
@@ -187,9 +184,7 @@ body#course-index table.generalbox {
 }
 table.minicalendar td.today {
   line-height: 1.4em;
-  border-width: 2px;
-  border-style: solid;
-  border-color: #88DD55;
+  border: 2px solid #88DD55;
 }
 div.sideblock table.minicalendar tr.weekdays {
   font-size: 0.8em;
@@ -207,9 +202,7 @@ td.courseboxcontent {
   border-color: #FFFFFF #DDDDDD #DDDDDD #FFFFFF;
 }
 .tabrow td {
-  border-width: 1px;
-  border-style: solid;
-  border-color: #88DD55;
+  border: 1px solid #88DD55;
 }
 .tabrow td.selected {
   border-top-width: 1px;
@@ -280,4 +273,42 @@ td.courseboxcontent {
 .block_calendar_month .event_user {
   background-color: #DCE7EC;
   border-color: #DCE7EC;
+}
+div.sideblock div.calendar-controls span.current {
+  text-align: center;
+}
+table.generaltable td.cell {
+  white-space: normal;
+}
+body.admin table.generaltable {
+  width: 100%;
+}
+body#course-view tr.section td.side {
+  border-style: none;
+}
+body#course-view tr.section td.content {
+  border-style: none;
+}
+div.que {
+  border-style: none;
+}
+td.sitetopiccontent {
+  border-style: none;
+}
+body#site-index td.categoryboxcontent {
+  border-style: none;
+}
+div.sideblock span.icon {
+  display: block;
+  float: left;
+  margin-right: 0.3em;
+}
+div.sideblock ul.list li {
+  clear: left;
+}
+td.categoryboxcontent {
+  background-color: #EEEEEE;
+  border-width: 1px;
+  border-style: solid;
+  border-color: #FFFFFF #DDDDDD #DDDDDD #FFFFFF;
 }
