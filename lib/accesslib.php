@@ -1342,8 +1342,18 @@ function load_capability_def($component) {
         $defpath = $CFG->libdir.'/db/access.php';
         $varprefix = 'moodle';
     } else {
-        $defpath = $CFG->dirroot.'/'.$component.'/db/access.php';
-        $varprefix = str_replace('/', '_', $component);
+        $compparts = explode('/', $component);
+        
+        if ($compparts[0] == 'block') {
+            // Blocks are an exception. Blocks directory is 'blocks', and not
+            // 'block'. So we need to jump through hoops.
+            $defpath = $CFG->dirroot.'/'.$compparts[0].
+                                's/'.$compparts[1].'/db/access.php';
+            $varprefix = $compparts[0].'_'.$compparts[1];
+        } else {
+            $defpath = $CFG->dirroot.'/'.$component.'/db/access.php';
+            $varprefix = str_replace('/', '_', $component);
+        }
     }
     $capabilities = array();
     
