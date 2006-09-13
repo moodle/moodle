@@ -1464,6 +1464,12 @@ function main_upgrade($oldversion=0) {
         execute_sql(" CREATE INDEX coursesection ON {$CFG->prefix}course_sections (course,section) ", false);
     }
 
+    if ($oldversion < 2005060242) { // Fix bad Hotpot version change MDL-6508
+        if ((int)get_field('modules', 'version', 'name', 'hotpot') == 2006082800) {
+            set_field('modules', 'version', 2005031422, 'name', 'hotpot');
+        }
+    }
+
     return $result;
 }
 
