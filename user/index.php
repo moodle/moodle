@@ -185,16 +185,20 @@
     echo '<table class="controls" cellspacing="0"><tr>';
 
 /// Print my course menus
-    echo '<td class="left">';
-    print_string('mycourses');
-    echo ': ';
-    $mycourses = get_my_courses($USER->id);
-    foreach ($mycourses as $mycourse) {
-        $my_course[$mycourse->id] = $mycourse->shortname;
-    }
-    popup_form($CFG->wwwroot.'/user/index.php?contextid='.$context->id.'&amp;roleid='.$roleid.'&amp;id=',$my_course,'courseform',$course->id);
-    echo '</td>';
+    if ($mycourses = get_my_courses($USER->id)) {
+        echo '<td class="left">';
+        print_string('mycourses');
+        echo ': ';
     
+        $courselist = array();
+        foreach ($mycourses as $mycourse) {
+            $courselist[$mycourse->id] = $mycourse->shortname;
+        }
+        popup_form($CFG->wwwroot.'/user/index.php?contextid='.$context->id.'&amp;roleid='.$roleid.'&amp;id=',
+                   $courselist, 'courseform',$course->id);
+        echo '</td>';
+    }
+        
     if ($groupmode == VISIBLEGROUPS or ($groupmode and has_capability('moodle/site:accessallgroups', get_context_instance(CONTEXT_COURSE, $course->id)))) {
         if ($groups = get_records_menu("groups", "courseid", $course->id, "name ASC", "id,name")) {
             echo '<td class="left">';
@@ -602,7 +606,7 @@ function get_lastaccess_sql($accesssince='') {
     if ($accesssince == -1) { // never
         return ' AND ul.timeaccess = 0';
     } else {
-        return ' AND il.tomeaccess != 0 AND timeaccess < '.$accesssince;
+        return ' AND ul.timeaccess != 0 AND timeaccess < '.$accesssince;
     }
 }
 
