@@ -6630,15 +6630,28 @@ function loadeditor($args) {
 
 /**
  * Returns true if the current enviromental debuggin settings (user+site)
- * are equal to the specified level: DEBUG_NORMAL or DEBUG_DETAILED
- * @param int $level DEBUG_NORMAL or DEBUG_DETAILED
+ * are equal to the specified level: E_NOTICE, E_ALL, E_STRICT etc
+ * eg use like this:
+ *
+ * if (debugging()) { echo "some normal debug info" } 
+ *
+ * debugging("something really picky", E_STRICT);
+ *
+ * @param int $level the level at which this debugging statement should show
+ * @param string $message a message to print if possible
  * @return bool
  */
-function debugging($level=DEBUG_NORMAL) {
+function debugging($message='', $level=E_NOTICE) {
 
-    if ($CFG->debug > 7) {     // Temporary code
+    global $CFG;
+
+    if ($CFG->debug >= $level) {
+        if ($message) {
+            notify($message);
+        }
         return true;
     }
+    return false;
 }
 
 // vim:autoindent:expandtab:shiftwidth=4:tabstop=4:tw=140:
