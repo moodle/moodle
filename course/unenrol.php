@@ -25,7 +25,6 @@
         print_error('cantunenrollfrommetacourse');
     } else {
         require_capability('moodle/role:unassignself', $context, NULL, false);
-function has_capability($capability, $context=NULL, $userid=NULL, $doanything='true') {
     }
 
     if ($confirm and confirm_sesskey()) {
