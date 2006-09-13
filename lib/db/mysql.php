@@ -1983,6 +1983,12 @@ function main_upgrade($oldversion=0) {
         table_column('grade_letter', 'grade_high', 'grade_high', 'decimal(5,2)', '', '', '100.00', 'not null', '');
         table_column('grade_letter', 'grade_low', 'grade_low', 'decimal(5,2)', '', '', '0.00', 'not null', '');
     }
+
+    if ($oldversion < 2006050521) { // Fix bad Hotpot version change MDL-6508
+        if ((int)get_field('modules', 'version', 'name', 'hotpot') == 2006082800) {
+            set_field('modules', 'version', 2005031422, 'name', 'hotpot');
+        }
+    }
     
     return $result;
 }

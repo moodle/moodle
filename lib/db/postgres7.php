@@ -1601,6 +1601,12 @@ function main_upgrade($oldversion=0) {
         //Not needed unded PG because it stores fieldnames lowecase by default
         //table_column("user", "lastIP", "lastip", "varchar", "15", "", "", "", "currentlogin");
     }
+
+    if ($oldversion < 2006050521) { // Fix bad Hotpot version change MDL-6508
+        if ((int)get_field('modules', 'version', 'name', 'hotpot') == 2006082800) {
+            set_field('modules', 'version', 2005031422, 'name', 'hotpot');
+        }
+    }
     
     return $result;
 }
