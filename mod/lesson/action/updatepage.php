@@ -170,10 +170,13 @@
 
     if ($form->redisplay) {
         redirect("$CFG->wwwroot/mod/lesson/lesson.php?id=$cm->id&amp;action=editpage&amp;pageid=$page->id&amp;redirect=$redirect");
-    } else if ($redirect == 'navigation') {
+    }
+    
+    lesson_set_message(get_string('updatedpage', 'lesson').': '.format_string($page->title, true), 'notifysuccess');
+    if ($redirect == 'navigation') {
         // takes us back to viewing the page
-        redirect("$CFG->wwwroot/mod/lesson/view.php?id=$cm->id&amp;pageid=$page->id", get_string('updatedpage', 'lesson'));
+        redirect("$CFG->wwwroot/mod/lesson/view.php?id=$cm->id&amp;pageid=$page->id");
     } else {
-        redirect("$CFG->wwwroot/mod/lesson/edit.php?id=$cm->id", get_string('updatedpage', 'lesson'));
+        redirect("$CFG->wwwroot/mod/lesson/edit.php?id=$cm->id");
     }
 ?>

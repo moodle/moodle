@@ -86,7 +86,7 @@
                     $table->data[] = array("<a href=\"$CFG->wwwroot/mod/lesson/edit.php?id=$cm->id&amp;mode=single&amp;pageid=".$page->id."\">".format_string($pages[$pageid]->title,true).'</a>',
                                            lesson_get_qtype_name($page->qtype),
                                            implode("<br />\n", $jumps),
-                                           lesson_print_page_actions($cm->id, $page->id, $npages, true)
+                                           lesson_print_page_actions($cm->id, $page, $npages, true, true)
                                           );
                     $pageid = $page->nextpageid;
                 }
@@ -115,7 +115,7 @@
 
                     echo "<tr><td>\n";
                     echo "<table width=\"100%\" border=\"1\" class=\"generalbox\"><tr><th colspan=\"2\">".format_string($page->title)."&nbsp;&nbsp;\n";
-                    lesson_print_page_actions($cm->id, $page->id, $npages);
+                    lesson_print_page_actions($cm->id, $page, $npages);
                     echo "</th></tr>\n";             
                     echo "<tr><td colspan=\"2\">\n";
                     $options = new stdClass;

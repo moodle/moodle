@@ -296,8 +296,7 @@
         $stattable->align = array("center", "center", "center", "center", "center", "center");
         $stattable->wrap = array("nowrap", "nowrap", "nowrap", "nowrap", "nowrap", "nowrap");
         $stattable->width = "90%";
-        $stattable->size = array("*", "*", "*", "*", "*", "*");
-        $stattable->data[] = array($avescore, $avetime, $highscore, $lowscore, $hightime, $lowtime);
+        $stattable->data[] = array($avescore.'%', $avetime, $highscore.'%', $lowscore.'%', $hightime, $lowtime);
 
         print_table($stattable);
 }
@@ -326,14 +325,6 @@
         }
         if (! $pageid = get_field("lesson_pages", "id", "lessonid", $lesson->id, "prevpageid", 0)) {
             error("Could not find first page");
-        }
-
-        if (!empty($userid)) {
-            // print out users name
-            $headingobject->lastname = $students[$userid]->lastname;
-            $headingobject->firstname = $students[$userid]->firstname;
-            $headingobject->attempt = $try + 1;
-            print_heading(get_string("studentattemptlesson", "lesson", $headingobject));
         }
 
         // now gather the stats into an object
@@ -846,9 +837,17 @@
 
         if (!empty($userid)) {
             // if looking at a students try, print out some basic stats at the top
+            
+                // print out users name
+                //$headingobject->lastname = $students[$userid]->lastname;
+                //$headingobject->firstname = $students[$userid]->firstname;
+                //$headingobject->attempt = $try + 1;
+                //print_heading(get_string("studentattemptlesson", "lesson", $headingobject));
+            print_heading(get_string('attempt', 'lesson', $try+1));
+            
             $table->head = array();
             $table->align = array("right", "left");
-            $table->size = array("*", "*");
+            $table->class = 'generaltable userinfotable';
 
             if (!$grades = get_records_select("lesson_grades", "lessonid = $lesson->id and userid = $userid", "completed", "*", $try, 1)) {
                 $grade = -1;
@@ -867,18 +866,23 @@
 
             if ($timetotake == -1 || $completed == -1 || $grade == -1) {
                 $table->align = array("center");
-                $table->size = array("*");
 
                 $table->data[] = array(get_string("notcompleted", "lesson"));
             } else {
-                $table->align = array("right", "left");
-                $table->size = array("*", "*");
-
+                $user = $students[$userid];
+                
+                $gradeinfo = lesson_grade($lesson, $try, $user->id);
+                
+                $table->data[] = array($course->student.':', print_user_picture($user->id, $course->id, $user->picture, 0, true).fullname($user, true));
                 $table->data[] = array(get_string("timetaken", "lesson").":", format_time($timetotake));
                 $table->data[] = array(get_string("completed", "lesson").":", userdate($completed));
+                $table->data[] = array(get_string('rawgrade', 'lesson').':', $gradeinfo->earned.'/'.$gradeinfo->total);
                 $table->data[] = array(get_string("grade", "lesson").":", $grade."%");
             }
             print_table($table);
+            
+            // Don't want this class for later tables
+            unset($table->class);
             echo "<br />";
         }
 

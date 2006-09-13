@@ -10,6 +10,11 @@
     font-size: .8em;
 }
 
+.mod-lesson .userinfotable .cell,
+.mod-lesson .userinfotable .userpicture {
+    vertical-align: middle;
+}
+
 /***
  *** Style for view.php
  ***/

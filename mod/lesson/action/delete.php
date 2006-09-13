@@ -47,5 +47,6 @@
             error("Delete: unable to set prev link");
         }
     }
-    redirect("$CFG->wwwroot/mod/lesson/edit.php?id=$cm->id", get_string('deletedpage', 'lesson'));
+    lesson_set_message(get_string('deletedpage', 'lesson').': '.format_string($thispage->title, true), 'notifysuccess');
+    redirect("$CFG->wwwroot/mod/lesson/edit.php?id=$cm->id");
 ?>

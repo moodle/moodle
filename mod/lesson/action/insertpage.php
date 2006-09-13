@@ -181,6 +181,7 @@
             }
         }
     }
-
-    redirect("$CFG->wwwroot/mod/lesson/edit.php?id=$cm->id", get_string('insertedpage', 'lesson'));
+    
+    lesson_set_message(get_string('insertedpage', 'lesson').': '.format_string($newpage->title, true), 'notifysuccess');
+    redirect("$CFG->wwwroot/mod/lesson/edit.php?id=$cm->id");
 ?>

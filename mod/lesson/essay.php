@@ -110,10 +110,11 @@
                     // Log it
                     add_to_log($course->id, 'lesson', 'update grade', "essay.php?id=$cm->id", $lesson->name, $cm->id);
                     
-                    redirect("$CFG->wwwroot/mod/lesson/essay.php?id=$cm->id", get_string('updatesuccess', 'lesson'));
+                    lesson_set_message(get_string('changessaved'), 'notifysuccess');
                 } else {
-                    redirect("$CFG->wwwroot/mod/lesson/essay.php?id=$cm->id", get_string('updatefailed', 'lesson'));
+                    lesson_set_message(get_string('updatefailed', 'lesson'));
                 }
+                redirect("$CFG->wwwroot/mod/lesson/essay.php?id=$cm->id");
             } else {
                 error('Something is wrong with the form data');
             }
@@ -158,32 +159,37 @@
             
             foreach ($attempts as $attempt) {
                 $essayinfo = unserialize($attempt->useranswer);
-                if ($essayinfo->graded and !$essayinfo->sent) {                
-                    $subject = get_string('essayemailsubject', 'lesson', format_string($pages[$attempt->pageid]->title,true));
-                    $message = get_string('question', 'lesson').':<br>';
-                    $message .= format_text($pages[$attempt->pageid]->contents, FORMAT_MOODLE, $options);
-                    $message .= '<br><br>';
-                    $message .= get_string('yourresponse', 'lesson').':<br>';
-                    $message .= format_text(stripslashes($essayinfo->answer));
-                    $message .= '<br><br>';
-                    $message .= get_string('commentswithname', 'lesson', $USER).':<br>';
-                    $message .= format_text(stripslashes($essayinfo->response), FORMAT_MOODLE, $options);
-                    $message .= '<br><br>';
+                if ($essayinfo->graded and !$essayinfo->sent) {
+                    // Holds values for the essayemailsubject string for the email message
+                    $a = new stdClass;
+                    
+                    // Set the grade
                     $grades = get_records_select('lesson_grades', "lessonid = $lesson->id and userid = $attempt->userid", 'completed', '*', $attempt->retry, 1);
-                    $grade = current($grades);
+                    $grade  = current($grades);
+                    $a->newgrade = $grade->grade;
+                    
+                    // Set the points
                     if ($lesson->custom) {
-                        $points->score = $essayinfo->score;
-                        $points->outof = $answers[$attempt->pageid]->score;
-                        $message .= get_string('youhavereceived', 'lesson', $points);
+                        $a->earned = $essayinfo->score;
+                        $a->outof  = $answers[$attempt->pageid]->score;
                     } else {
-                        $points->score = $essayinfo->score;
-                        $points->outof = 1;
-                        $message .= get_string('youhavereceived', 'lesson', $points);
+                        $a->earned = $essayinfo->score;
+                        $a->outof  = 1;
                     }
-                    $message .= '<br><br>';
-                    $message .= get_string('yourgradeisnow', 'lesson', $grade->grade).'%.';
-
+                    
+                    // Set rest of the message values
+                    $a->question = format_text($pages[$attempt->pageid]->contents, FORMAT_MOODLE, $options);
+                    $a->response = format_text(stripslashes($essayinfo->answer));
+                    $a->teacher  = $course->teacher;
+                    $a->comment  = format_text(stripslashes($essayinfo->response), FORMAT_MOODLE, $options);
+                    
+                    
+                    // Fetch message HTML and plain text formats
+                    $message  = get_string('essayemailmessage', 'lesson', $a);
                     $plaintxt = format_text_email($message, FORMAT_HTML);
+
+                    // Subject
+                    $subject = get_string('essayemailsubject', 'lesson', format_string($pages[$attempt->pageid]->title,true));
 
                     if(email_to_user($users[$attempt->userid], $USER, $subject, $plaintxt, $message)) {
                         $essayinfo->sent = 1;
@@ -196,7 +202,8 @@
                     }
                 }
             }
-            redirect("$CFG->wwwroot/mod/lesson/essay.php?id=$cm->id", get_string('emailsuccess', 'lesson'));
+            lesson_set_message(get_string('emailsuccess', 'lesson'), 'notifysuccess');
+            redirect("$CFG->wwwroot/mod/lesson/essay.php?id=$cm->id");
             break;
     }
     

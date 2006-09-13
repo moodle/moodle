@@ -465,12 +465,13 @@ function lesson_print_time_remaining($starttime, $maxtime, $return = false) {
  *
  * @uses $CFG
  * @param int $cmid Course Module ID
- * @param int $pageid Page record ID for which the actions affect
+ * @param object $page Page record
  * @param boolean $printmove Flag to print the move button or not
+ * @param boolean $printaddpage Flag to print the add page drop-down or not
  * @param boolean $return Return flag
  * @return mixed boolean/string
  **/
-function lesson_print_page_actions($cmid, $pageid, $printmove, $return = false) {
+function lesson_print_page_actions($cmid, $page, $printmove, $printaddpage = false, $return = false) {
     global $CFG;
     
     $context = get_context_instance(CONTEXT_MODULE, $cmid);
@@ -478,18 +479,31 @@ function lesson_print_page_actions($cmid, $pageid, $printmove, $return = false) 
     
     if (has_capability('mod/lesson:edit', $context)) {
         if ($printmove) {
-            $actions[] = "<a title=\"".get_string('move')."\" href=\"$CFG->wwwroot/mod/lesson/lesson.php?id=$cmid&action=move&pageid=$pageid\">
+            $actions[] = "<a title=\"".get_string('move')."\" href=\"$CFG->wwwroot/mod/lesson/lesson.php?id=$cmid&action=move&pageid=$page->id\">
                           <img src=\"$CFG->pixpath/t/move.gif\" height=\"11\" width=\"11\" alt=\"".get_string('move')."\" border=\"0\" /></a>\n";
         }
-        $actions[] = "<a title=\"".get_string('update')."\" href=\"$CFG->wwwroot/mod/lesson/lesson.php?id=$cmid&amp;action=editpage&amp;pageid=$pageid\">
+        $actions[] = "<a title=\"".get_string('update')."\" href=\"$CFG->wwwroot/mod/lesson/lesson.php?id=$cmid&amp;action=editpage&amp;pageid=$page->id\">
                       <img src=\"$CFG->pixpath/t/edit.gif\" height=\"11\" width=\"11\" alt=\"".get_string('update')."\" border=\"0\" /></a>\n";
         
-        $actions[] = "<a title=\"".get_string('preview')."\" href=\"$CFG->wwwroot/mod/lesson/view.php?id=$cmid&amp;pageid=$pageid\">
+        $actions[] = "<a title=\"".get_string('preview')."\" href=\"$CFG->wwwroot/mod/lesson/view.php?id=$cmid&amp;pageid=$page->id\">
                       <img src=\"$CFG->pixpath/t/preview.gif\" height=\"11\" width=\"11\" alt=\"".get_string('preview')."\" border=\"0\" /></a>\n";
         
-        $actions[] = "<a title=\"".get_string('delete')."\" href=\"$CFG->wwwroot/mod/lesson/lesson.php?id=$cmid&amp;sesskey=".sesskey()."&amp;action=confirmdelete&amp;pageid=$pageid\">
+        $actions[] = "<a title=\"".get_string('delete')."\" href=\"$CFG->wwwroot/mod/lesson/lesson.php?id=$cmid&amp;sesskey=".sesskey()."&amp;action=confirmdelete&amp;pageid=$page->id\">
                       <img src=\"$CFG->pixpath/t/delete.gif\" height=\"11\" width=\"11\" alt=\"".get_string('delete')."\" border=\"0\" /></a>\n";
         
+        if ($printaddpage) {
+            // Add page drop-down
+            $options = array();
+            $options['addcluster&amp;sesskey='.sesskey()]      = get_string('clustertitle', 'lesson');
+            $options['addendofcluster&amp;sesskey='.sesskey()] = get_string('endofclustertitle', 'lesson');
+            $options['addbranchtable']                         = get_string('branchtable', 'lesson');
+            $options['addendofbranch&amp;sesskey='.sesskey()]  = get_string('endofbranch', 'lesson');
+            $options['addpage']                                = get_string('question', 'lesson');
+            // Base url
+            $common = "$CFG->wwwroot/mod/lesson/lesson.php?id=$cmid&amp;pageid=$page->id&amp;action=";
+        
+            $actions[] = popup_form($common, $options, "addpage_$page->id", '', get_string('addpage', 'lesson').'...', '', '', true);
+        }
     }
     
     $actions = implode(' ', $actions);
