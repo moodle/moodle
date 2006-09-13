@@ -381,13 +381,10 @@ function checkchecked(form) {
         $select = 'SELECT u.id, u.username, u.firstname, u.lastname, u.email, u.city, u.country, 
                           u.picture, u.lang, u.timezone, u.emailstop, u.maildisplay, ul.timeaccess AS lastaccess '; // s.lastaccess
         //$select .= $course->enrolperiod?', s.timeend ':'';
-        $from   = "FROM {$CFG->prefix}user u,
-                        {$CFG->prefix}role_assignments r,
-                        {$CFG->prefix}user_lastaccess ul ";
-        $where  = "WHERE 
-                    r.userid = u.id
-                    AND u.id = ul.userid
-                    AND (r.contextid = $context->id OR r.contextid in $listofcontexts) 
+        $from   = "FROM {$CFG->prefix}user u INNER JOIN
+                        {$CFG->prefix}role_assignments r on u.id=r.userid LEFT JOIN
+                        {$CFG->prefix}user_lastaccess ul on u.id=ul.userid ";
+        $where  = "WHERE (r.contextid = $context->id OR r.contextid in $listofcontexts) 
                     AND u.deleted = 0 
                     AND r.roleid = $roleid 
                     AND ul.courseid = $course->id ";   
