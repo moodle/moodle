@@ -290,11 +290,16 @@ function hotpot_restore_record(&$restore, $status, &$xml, $table, $foreign_keys,
 
     // maintain a cache of info on table columns
     static $table_columns = array();
+    global $CFG, $db; //move outside if - increase scope 
     if (empty($table_columns[$table])) {
-        global $CFG, $db;
         $table_columns[$table] = $db->MetaColumns("$CFG->prefix$table");
     }
-
+    //First, we check to "course_id" folder exists and create is as necessary in CFG->dataroot
+    //global $CFG;
+    $dest_dir = $CFG->dataroot."/".$restore->course_id;
+    check_dir_exists($dest_dir,true);
+    $file = $dest_dir."/restorelog.html";
+    $restorelog_file = fopen($file,"a");
     // get values for fields in this record
     $record = new stdClass();
     $TAGS = array_keys($xml);
@@ -302,6 +307,14 @@ function hotpot_restore_record(&$restore, $status, &$xml, $table, $foreign_keys,
         $value = $xml[$TAG][0]['#'];
         if (is_string($value)) {
             $tag = strtolower($TAG);
+            if ($TAG == "TIMEOPEN" || $TAG == "TIMECLOSE" || $TAG == "TIMECREATED" ||$TAG == "TIMEMODIFIED"){
+                $date = usergetdate($value);
+                fwrite ($restorelog_file,"<br>The Hotpot - ".$record->name." <br>");
+                fwrite ($restorelog_file,"The date was ". $date['weekday'].", ".$date['mday']." ".$date['month']." ".$date['year']."");
+                $value += $restore->course_startdateoffset;
+                $date = usergetdate($value);
+                fwrite ($restorelog_file,"&nbsp;&nbsp;&nbsp;the date is now ". $date['weekday'].", ".$date['mday']." ".$date['month']." ".$date['year']."<br>");
+            }
             $record->$tag = backup_todb($value);
         }
     }

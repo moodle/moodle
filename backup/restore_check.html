@@ -19,10 +19,10 @@
 
     if ($form1 = data_submitted()); {
         $currentcourseshortname = $course_header->course_shortname; //"store_ShortName";
-        $course_header->course_shortname =  $form1->shortname;  //"update_ShortName";       
-        $course_header->course_fullname =   $form1->fullname;   //"update_FullName";   
+        $course_header->course_shortname =  $form1->shortname;  //"update_ShortName";    
+        $course_header->course_fullname =   $form1->fullname;   //"update_FullName";  
         $form1->startdate = make_timestamp($form1->startyear, $form1->startmonth, $form1->startday);          
-        $currentcoursestartdate = $course_header->course_startdate; 
+        $currentcoursestartdate = $course_header->course_startdate;
         $coursestartdatedateoffset = $form1->startdate - $currentcoursestartdate;
         $restore->course_startdateoffset = $coursestartdatedateoffset; //change to restore
     } 
@@ -116,7 +116,7 @@
         $restore->course_files=$restore_course_files;
         $restore->messages=$restore_messages;
         $restore->course_id=$course_id;
-//add new vars to restore object 
+        //add new vars to restore object 
         $restore->course_startdateoffset = $coursestartdatedateoffset;
         $restore->course_shortname = $currentcourseshortname;
 

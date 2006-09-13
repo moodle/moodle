@@ -34,6 +34,11 @@
         if ($data) {
             //Now get completed xmlized object
             $info = $data->info;
+            //First, we check to "course_id" folder exists and create is as necessary in CFG->dataroot
+            $dest_dir = $CFG->dataroot."/".$restore->course_id;
+            check_dir_exists($dest_dir,true);
+            $file = $dest_dir."/restorelog.html";
+            $restorelog_file = fopen($file,"a");            
             //traverse_xmlize($info);                                                                     //Debug
             //print_object ($GLOBALS['traverse_array']);                                                  //Debug
             //$GLOBALS['traverse_array']="";                                                              //Debug
@@ -54,6 +59,12 @@
             $wiki->revertchanges = backup_todb($info['MOD']['#']['REVERTCHANGES']['0']['#']);
             $wiki->initialcontent = backup_todb($info['MOD']['#']['INITIALCONTENT']['0']['#']);
             $wiki->timemodified = backup_todb($info['MOD']['#']['TIMEMODIFIED']['0']['#']);
+            $date = usergetdate($wiki->timemodified);
+            fwrite ($restorelog_file,"The Wiki - ".$wiki->name." <br>");
+            $status = fwrite ($restorelog_file,"The Wiki TIMEMODIFIED was " .$date['weekday'].", ".$date['mday']." ".$date['month']." ".$date['year']."");
+            $wiki->timemodified += $restore->course_startdateoffset;
+            $date = usergetdate($wiki->timemodified);
+            fwrite ($restorelog_file,"&nbsp;&nbsp;&nbsp;the Wiki TIMEMODIFIED is now  " .$date['weekday'].",  ".$date['mday']." ".$date['month']." ".$date['year']."<br>");
 
             //The structure is equal to the db, so insert the wiki
             $newid = insert_record ("wiki",$wiki);
@@ -92,7 +103,11 @@
 
         //Get the entries array
         $entries = $info['MOD']['#']['ENTRIES']['0']['#']['ENTRY'];
-
+        //First, we check to "course_id" folder exists and create is as necessary in CFG->dataroot 
+        $dest_dir = $CFG->dataroot."/".$restore->course_id;
+        check_dir_exists($dest_dir,true);
+        $file = $dest_dir."/restorelog.html";
+        $restorelog_file = fopen($file,"a");
         //Iterate over entries
         for($i = 0; $i < sizeof($entries); $i++) {
             $ent_info = $entries[$i];
@@ -110,7 +125,11 @@
             $entry->groupid = backup_todb($ent_info['#']['GROUPID']['0']['#']);
             $entry->pagename = backup_todb($ent_info['#']['PAGENAME']['0']['#']);
             $entry->timemodified = backup_todb($ent_info['#']['TIMEMODIFIED']['0']['#']);
-
+            $date = usergetdate($entry->timemodified);
+            fwrite ($restorelog_file,"The Entry TIMEMODIFIED was " .$date['weekday'].", ".$date['mday']." ".$date['month']." ".$date['year']."");
+            $entry->timemodified += $restore->course_startdateoffset;
+            $date = usergetdate($entry->timemodified);
+            fwrite ($restorelog_file,"&nbsp;&nbsp;&nbsp;The Entry TIMEMODIFIED is now  " .$date['weekday'].",  ".$date['mday']." ".$date['month']." ".$date['year']."<br><br>");
             //We have to recode the userid field
             $user = backup_getid($restore->backup_unique_code,"user",$entry->userid);
             if ($user) {
@@ -181,7 +200,9 @@
             $page->author = backup_todb($pag_info['#']['AUTHOR']['0']['#']);
             $page->userid = backup_todb($pag_info['#']['USERID']['0']['#']);
             $page->created = backup_todb($pag_info['#']['CREATED']['0']['#']);
+            $page->created += $restore->course_startdateoffset;
             $page->lastmodified = backup_todb($pag_info['#']['LASTMODIFIED']['0']['#']);
+            $page->lastmodified += $restore->course_startdateoffset;
             $page->refs = str_replace("$@LINEFEED@$","\n",backup_todb($pag_info['#']['REFS']['0']['#']));
             $page->meta = backup_todb($pag_info['#']['META']['0']['#']);
             $page->hits = backup_todb($pag_info['#']['HITS']['0']['#']);

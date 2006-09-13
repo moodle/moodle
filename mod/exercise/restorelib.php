@@ -48,7 +48,12 @@
 
         if ($data) {
             //Now get completed xmlized object   
-            $info = $data->info;
+            $info = $data->info; 
+            //First, we check to "course_id" exists and create is as necessary in CFG->dataroot
+            $dest_dir = $CFG->dataroot."/".$restore->course_id;
+            check_dir_exists($dest_dir,true);
+            $file = $dest_dir."/restorelog.html";
+            $restorelog_file = fopen($file,"a");            
             //traverse_xmlize($info);                                                              //Debug
             //print_object ($GLOBALS['traverse_array']);                                           //Debug
             //$GLOBALS['traverse_array']="";                                                       //Debug
@@ -62,8 +67,14 @@
             $exercise->usemaximum = backup_todb($info['MOD']['#']['USEMAXIMUM']['0']['#']);
             $exercise->assessmentcomps = backup_todb($info['MOD']['#']['ASSESSMENTCOMPS']['0']['#']);
             $exercise->anonymous = backup_todb($info['MOD']['#']['ANONYMOUS']['0']['#']);
-            $exercise->maxbytes = backup_todb($info['MOD']['#']['MAXBYTES']['0']['#']);
+            $exercise->maxbytes = backup_todb($info['MOD']['#']['MAXBYTES']['0']['#']); 
             $exercise->deadline = backup_todb($info['MOD']['#']['DEADLINE']['0']['#']);
+            $date = usergetdate($exercise->deadline);
+            fwrite ($restorelog_file,"<br>The Exercise - ".$exercise->name." <br>");
+            fwrite ($restorelog_file,"The DEADLINE was  " .$date['weekday'].", ".$date['mday']." ".$date['month']." ".$date['year']."");            
+            $exercise->deadline += $restore->course_startdateoffset;
+            $date = usergetdate($exercise->deadline);
+            fwrite ($restorelog_file,"&nbsp;&nbsp;&nbsp;the DEADLINE is now  " .$date['weekday'].",  ".$date['mday']." ".$date['month']." ".$date['year']."<br>");         
             $exercise->timemodified = backup_todb($info['MOD']['#']['TIMEMODIFIED']['0']['#']);
             $exercise->grade = backup_todb($info['MOD']['#']['GRADE']['0']['#']);
             $exercise->gradinggrade = backup_todb($info['MOD']['#']['GRADINGGRADE']['0']['#']);

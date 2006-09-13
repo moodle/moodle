@@ -33,7 +33,12 @@
 
         if ($data) {
             //Now get completed xmlized object   
-            $info = $data->info;
+            $info = $data->info; 
+            //First, we check to "course_id" exists and create is as necessary in CFG->dataroot
+            $dest_dir = $CFG->dataroot."/".$restore->course_id;
+            check_dir_exists($dest_dir,true);
+            $file = $dest_dir."/restorelog.html";
+            $restorelog_file = fopen($file,"a");
             //traverse_xmlize($info);                                                                     //Debug
             //print_object ($GLOBALS['traverse_array']);                                                  //Debug
             //$GLOBALS['traverse_array']="";                                                              //Debug
@@ -46,6 +51,12 @@
             $chat->studentlogs = backup_todb($info['MOD']['#']['STUDENTLOGS']['0']['#']);
             $chat->schedule = backup_todb($info['MOD']['#']['SCHEDULE']['0']['#']);
             $chat->chattime = backup_todb($info['MOD']['#']['CHATTIME']['0']['#']);
+            $date = usergetdate($chat->chattime);
+            fwrite ($restorelog_file,"The Chat - ".$chat->name." <br>");
+            fwrite ($restorelog_file,"The CHATTIME was  " .$date['weekday'].", ".$date['mday']." ".$date['month']." ".$date['year']."");
+            $chat->chattime += $restore->course_startdateoffset;
+            $date = usergetdate($chat->chattime);
+            fwrite ($restorelog_file,"&nbsp;&nbsp;&nbsp;the CHATTIME is now  " .$date['weekday'].",  ".$date['mday']." ".$date['month']." ".$date['year']."<br><br>");
             $chat->timemodified = backup_todb($info['MOD']['#']['TIMEMODIFIED']['0']['#']);
 
             //The structure is equal to the db, so insert the chat

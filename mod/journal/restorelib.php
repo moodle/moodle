@@ -34,6 +34,11 @@
         if ($data) {
             //Now get completed xmlized object
             $info = $data->info;
+            //First, we check to "course_id" folder exists and create is as necessary in CFG->dataroot
+            $dest_dir = $CFG->dataroot."/".$restore->course_id;
+            check_dir_exists($dest_dir,true);
+            $file = $dest_dir."/restorelog.html";
+            $restorelog_file = fopen($file,"a");
             //traverse_xmlize($info);                                                                     //Debug
             //print_object ($GLOBALS['traverse_array']);                                                  //Debug
             //$GLOBALS['traverse_array']="";                                                              //Debug
@@ -46,6 +51,12 @@
             $journal->days = backup_todb($info['MOD']['#']['DAYS']['0']['#']);
             $journal->assessed = backup_todb($info['MOD']['#']['ASSESSED']['0']['#']);
             $journal->timemodified = backup_todb($info['MOD']['#']['TIMEMODIFIED']['0']['#']);
+            $date = usergetdate($journal->timemodified);
+            fwrite ($restorelog_file,"<br>The Journal - ".$journal->name." <br>");
+            fwrite ($restorelog_file,"The Journal TIMEMODIFIED was " .$date['weekday'].", ".$date['mday']." ".$date['month']." ".$date['year']."");
+            $journal->timemodified += $restore->course_startdateoffset;
+            $date = usergetdate($journal->timemodified);
+            fwrite ($restorelog_file,"&nbsp;&nbsp;&nbsp;the Journal TTIMEMODIFIED is now  " .$date['weekday'].",  ".$date['mday']." ".$date['month']." ".$date['year']."<br>");
 
             //We have to recode the assessed field if it is <0 (scale)
             if ($journal->assessed < 0) {
@@ -93,7 +104,11 @@
 
         //Get the entries array
         $entries = $info['MOD']['#']['ENTRIES']['0']['#']['ENTRY'];
-
+        //First, we check to "course_id" folder exists and create is as necessary in CFG->dataroot 
+        $dest_dir = $CFG->dataroot."/".$restore->course_id;
+        check_dir_exists($dest_dir,true);
+        $file = $dest_dir."/restorelog.html";
+        $restorelog_file = fopen($file,"a");
         //Iterate over entries
         for($i = 0; $i < sizeof($entries); $i++) {
             $entry_info = $entries[$i];
@@ -107,14 +122,24 @@
 
             //Now, build the JOURNAL_ENTRIES record structure
             $entry->journal = $new_journal_id;
-            $entry->userid = backup_todb($entry_info['#']['USERID']['0']['#']);
+            $entry->userid = backup_todb($entry_info['#']['USERID']['0']['#']);  
             $entry->modified = backup_todb($entry_info['#']['MODIFIED']['0']['#']);
+            $date = usergetdate($entry->modified);
+            fwrite ($restorelog_file,"The Entry -".$entry->journal."- MODIFIED was " .$date['weekday'].", ".$date['mday']." ".$date['month']." ".$date['year']."");
+            $entry->modified += $restore->course_startdateoffset;
+            $date = usergetdate($entry->modified);
+            fwrite ($restorelog_file,"&nbsp;&nbsp;&nbsp;the Entry MODIFIED is now  " .$date['weekday'].",  ".$date['mday']." ".$date['month']." ".$date['year']."<br>");
             $entry->text = backup_todb($entry_info['#']['TEXT']['0']['#']);
             $entry->format = backup_todb($entry_info['#']['FORMAT']['0']['#']);
             $entry->rating = backup_todb($entry_info['#']['RATING']['0']['#']);
             $entry->comment = backup_todb($entry_info['#']['COMMENT']['0']['#']);
             $entry->teacher = backup_todb($entry_info['#']['TEACHER']['0']['#']);
             $entry->timemarked = backup_todb($entry_info['#']['TIMEMARKED']['0']['#']);
+            $date = usergetdate($entry->timemarked);
+            fwrite ($restorelog_file,"The Entry -".$entry->journal."- TIMEMARKED was " .$date['weekday'].", ".$date['mday']." ".$date['month']." ".$date['year']."");
+            $entry->timemarked += $restore->course_startdateoffset;
+            $date = usergetdate($entry->timemarked);
+            fwrite ($restorelog_file,"&nbsp;&nbsp;&nbsp;the Entry TIMEMARKED is now  " .$date['weekday'].",  ".$date['mday']." ".$date['month']." ".$date['year']."<br>");
             $entry->mailed = backup_todb($entry_info['#']['MAILED']['0']['#']);
 
             //We have to recode the userid field

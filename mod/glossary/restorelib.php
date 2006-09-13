@@ -41,6 +41,11 @@
         if ($data) {
             //Now get completed xmlized object
             $info = $data->info;
+            //First, we check to "course_id" folder exists and create is as necessary in CFG->dataroot
+            $dest_dir = $CFG->dataroot."/".$restore->course_id;
+            check_dir_exists($dest_dir,true);
+            $file = $dest_dir."/restorelog.html";
+            $restorelog_file = fopen($file,"a");            
             //traverse_xmlize($info);                                                                     //Debug
             //print_object ($GLOBALS['traverse_array']);                                                  //Debug
             //$GLOBALS['traverse_array']="";                                                              //Debug
@@ -70,7 +75,18 @@
 
             $glossary->assessed = backup_todb($info['MOD']['#']['ASSESSED']['0']['#']);
             $glossary->assesstimestart = backup_todb($info['MOD']['#']['ASSESSTIMESTART']['0']['#']);
+            $date = usergetdate($glossary->assesstimestart);
+            fwrite ($restorelog_file,"<br>The Glossary - ".$glossary->name." <br>");
+            fwrite ($restorelog_file,"The Glossary ASSESSTIMESTART was  " .$date['weekday'].", ".$date['mday']." ".$date['month']." ".$date['year']."");
+            $glossary->assesstimestart += $restore->course_startdateoffset;
+            $date = usergetdate($glossary->assesstimestart);
+            fwrite ($restorelog_file,"&nbsp;&nbsp;&nbsp;the Glossary ASSESSTIMESTART is now  " .$date['weekday'].",  ".$date['mday']." ".$date['month']." ".$date['year']."<br>");
             $glossary->assesstimefinish = backup_todb($info['MOD']['#']['ASSESSTIMEFINISH']['0']['#']);
+            $date = usergetdate($glossary->assesstimefinish);
+            fwrite ($restorelog_file,"The Glossary ASSESSTIMEFINISH was  " .$date['weekday'].", ".$date['mday']." ".$date['month']." ".$date['year']."");
+            $glossary->assesstimefinish += $restore->course_startdateoffset;
+            $date = usergetdate($glossary->assesstimefinish);
+            fwrite ($restorelog_file,"&nbsp;&nbsp;&nbsp;the Glossary ASSESSTIMEFINISH is now  " .$date['weekday'].",  ".$date['mday']." ".$date['month']." ".$date['year']."<br>");
             $glossary->scale = backup_todb($info['MOD']['#']['SCALE']['0']['#']);
 
             //We have to recode the scale field if it's <0 (positive is a grade, not a scale)

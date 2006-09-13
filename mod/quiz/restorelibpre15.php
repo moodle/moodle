@@ -1226,6 +1226,11 @@
         if ($data) {
             //Now get completed xmlized object
             $info = $data->info;
+            //First, we check to "course_id" folder exists and create is as necessary in CFG->dataroot
+            $dest_dir = $CFG->dataroot."/".$restore->course_id;
+            check_dir_exists($dest_dir,true);
+            $file = $dest_dir."/restorelog.html";
+            $restorelog_file = fopen($file,"a");            
             //traverse_xmlize($info);                                                                     //Debug
             //print_object ($GLOBALS['traverse_array']);                                                  //Debug
             //$GLOBALS['traverse_array']="";                                                              //Debug
@@ -1235,7 +1240,18 @@
             $quiz->name = backup_todb($info['MOD']['#']['NAME']['0']['#']);
             $quiz->intro = backup_todb($info['MOD']['#']['INTRO']['0']['#']);
             $quiz->timeopen = backup_todb($info['MOD']['#']['TIMEOPEN']['0']['#']);
+            $date = usergetdate($quiz->timeopen);
+            fwrite ($restorelog_file,"The Quiz Named - ".$quiz->name." <br>");
+            fwrite ($restorelog_file,"The Original Time Open was " .$date['weekday'].", ".$date['mday']." ".$date['month']." ".$date['year']."");
+            $quiz->timeopen += $restore->course_startdateoffset;
+            $date = usergetdate($quiz->timeopen);
+            fwrite ($restorelog_file,"&nbsp;&nbsp;&nbsp;Time Open is now  " .$date['weekday'].",  ".$date['mday']." ".$date['month']." ".$date['year']."<br>");
             $quiz->timeclose = backup_todb($info['MOD']['#']['TIMECLOSE']['0']['#']);
+            $date = usergetdate($quiz->timeclose);
+            fwrite ($restorelog_file,"The Original Time Close was " .$date['weekday'].", ".$date['mday']." ".$date['month']." ".$date['year']."");
+            $quiz->timeclose += $restore->course_startdateoffset;
+            $date = usergetdate($quiz->timeclose);
+            fwrite ($restorelog_file,"&nbsp;&nbsp;&nbsp;Time Close is now " .$date['weekday'].", ".$date['mday']." ".$date['month']." ".$date['year']."<br><br>");
             $quiz->attempts = backup_todb($info['MOD']['#']['ATTEMPTS_NUMBER']['0']['#']);
             $quiz->attemptonlast = backup_todb($info['MOD']['#']['ATTEMPTONLAST']['0']['#']);
             $quiz->feedback = backup_todb($info['MOD']['#']['FEEDBACK']['0']['#']);

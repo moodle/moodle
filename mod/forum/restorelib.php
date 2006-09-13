@@ -44,6 +44,11 @@
         if ($data) {
             //Now get completed xmlized object
             $info = $data->info;
+            //First, we check to "course_id" exists and create is as necessary in CFG->dataroot
+            $dest_dir = $CFG->dataroot."/".$restore->course_id;
+            check_dir_exists($dest_dir,true);
+            $file = $dest_dir."/restorelog.html";
+            $restorelog_file = fopen($file,"a");            
             //traverse_xmlize($info);                                                                     //Debug
             //print_object ($GLOBALS['traverse_array']);                                                  //Debug
             //$GLOBALS['traverse_array']="";                                                              //Debug
@@ -65,9 +70,20 @@
                 $forum->assesspublic = backup_todb($info['MOD']['#']['ASSESSPUBLIC']['0']['#']);
             }
             
-            $forum->assessed = backup_todb($info['MOD']['#']['ASSESSED']['0']['#']);
+            $forum->assessed = backup_todb($info['MOD']['#']['ASSESSED']['0']['#']);  
             $forum->assesstimestart = backup_todb($info['MOD']['#']['ASSESSTIMESTART']['0']['#']);
+            $date = usergetdate($forum->assesstimestart);
+            fwrite ($restorelog_file,"<br>The Forum - ".$forum->name." <br>");
+            fwrite ($restorelog_file,"The ASSESSTIMESTART was  " .$date['weekday'].", ".$date['mday']." ".$date['month']." ".$date['year'].""); 
+            $forum->assesstimestart += $restore->course_startdateoffset;
+            $date = usergetdate($forum->assesstimestart);
+            fwrite ($restorelog_file,"&nbsp;&nbsp;&nbsp;the ASSESSTIMESTART is now  " .$date['weekday'].",  ".$date['mday']." ".$date['month']." ".$date['year']."<br>");         
             $forum->assesstimefinish = backup_todb($info['MOD']['#']['ASSESSTIMEFINISH']['0']['#']);
+            $date = usergetdate($forum->assesstimefinish);
+            fwrite ($restorelog_file,"The ASSESSTIMEFINISH was  " .$date['weekday'].", ".$date['mday']." ".$date['month']." ".$date['year'].""); 
+            $forum->assesstimefinish += $restore->course_startdateoffset;
+            $date = usergetdate($forum->assesstimefinish);
+            fwrite ($restorelog_file,"&nbsp;&nbsp;&nbsp;the ASSESSTIMEFINISH is now  " .$date['weekday'].",  ".$date['mday']." ".$date['month']." ".$date['year']."<br>");
             $forum->maxbytes = backup_todb($info['MOD']['#']['MAXBYTES']['0']['#']);
             $forum->scale = backup_todb($info['MOD']['#']['SCALE']['0']['#']);
             $forum->forcesubscribe = backup_todb($info['MOD']['#']['FORCESUBSCRIBE']['0']['#']);
@@ -250,7 +266,11 @@
 
         //Get the discussions array
         $discussions = $info['MOD']['#']['DISCUSSIONS']['0']['#']['DISCUSSION'];
-
+        //First, we check that "course_id" folder exists and create is as necessary in CFG->dataroot
+        $dest_dir = $CFG->dataroot."/".$restore->course_id;
+        check_dir_exists($dest_dir,true);
+        $file = $dest_dir."/restorelog.html";
+        $restorelog_file = fopen($file,"a");
         //Iterate over discussions
         for($i = 0; $i < sizeof($discussions); $i++) {
             $dis_info = $discussions[$i];
@@ -271,10 +291,17 @@
             $discussion->groupid = backup_todb($dis_info['#']['GROUPID']['0']['#']);
             $discussion->assessed = backup_todb($dis_info['#']['ASSESSED']['0']['#']);
             $discussion->timemodified = backup_todb($dis_info['#']['TIMEMODIFIED']['0']['#']);
-            $discussion->usermodified = backup_todb($dis_info['#']['USERMODIFIED']['0']['#']);
+            $date = usergetdate($discussion->timemodified);
+            fwrite ($restorelog_file,"<br>The Discussion - ".$discussion->name." <br>");
+            fwrite ($restorelog_file,"The Discussion TIMEMODIFIED was  " .$date['weekday'].", ".$date['mday']." ".$date['month']." ".$date['year'].""); 
+            $discussion->timemodified += $restore->course_startdateoffset;
+            $date = usergetdate($discussion->timemodified);
+            fwrite ($restorelog_file,"&nbsp;&nbsp;&nbsp;the Discussion TIMEMODIFIED is now  " .$date['weekday'].",  ".$date['mday']." ".$date['month']." ".$date['year']."<br>");
+            $discussion->usermodified = backup_todb($dis_info['#']['USERMODIFIED']['0']['#']);  
             $discussion->timestart = backup_todb($dis_info['#']['TIMESTART']['0']['#']);
+            $discussion->timestart += $restore->course_startdateoffset;
             $discussion->timeend = backup_todb($dis_info['#']['TIMEEND']['0']['#']);
-
+            $discussion->timeend += $restore->course_startdateoffset;
             //We have to recode the userid field
             $user = backup_getid($restore->backup_unique_code,"user",$discussion->userid);
             if ($user) {
@@ -453,9 +480,11 @@
             //Now, build the FORUM_POSTS record structure
             $post->discussion = $discussion_id;
             $post->parent = backup_todb($pos_info['#']['PARENT']['0']['#']);
-            $post->userid = backup_todb($pos_info['#']['USERID']['0']['#']);
+            $post->userid = backup_todb($pos_info['#']['USERID']['0']['#']);   
             $post->created = backup_todb($pos_info['#']['CREATED']['0']['#']);
+            $post->created += $restore->course_startdateoffset;
             $post->modified = backup_todb($pos_info['#']['MODIFIED']['0']['#']);
+            $post->modified += $restore->course_startdateoffset;             
             $post->mailed = backup_todb($pos_info['#']['MAILED']['0']['#']);
             $post->subject = backup_todb($pos_info['#']['SUBJECT']['0']['#']);
             $post->message = backup_todb($pos_info['#']['MESSAGE']['0']['#']);
