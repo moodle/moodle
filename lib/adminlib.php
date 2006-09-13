@@ -2077,27 +2077,36 @@ class admin_setting_special_backupdays extends admin_setting {
     }
 }
 
-class admin_setting_special_debug extends admin_setting_configcheckbox {
+class admin_setting_special_debug extends admin_setting_configselect {
 
     function admin_setting_special_debug() {
         $name = 'debug';
         $visiblename = get_string('debug', 'admin');
         $description = get_string('configdebug', 'admin');
-        parent::admin_setting_configcheckbox($name, $visiblename, $description, '');
+        $choices = array( 0         => get_string('debugnone', 'admin'),
+                          E_ERROR   => get_string('debugerror', 'admin'),
+                          E_WARNING => get_string('debugwarning', 'admin'),
+                          E_PARSE   => get_string('debugparse', 'admin'),
+                          E_NOTICE  => get_string('debugnotice', 'admin'),
+                          E_ALL     => get_string('debugall', 'admin'),
+                          E_STRICT  => get_string('debugstrict', 'admin')
+                        );
+        parent::admin_setting_configselect($name, $visiblename, $description, '', $choices);
+    }
+
+    function get_setting() {
+        global $CFG;
+        if ($CFG->debug == 7) {   // Old values
+            return 1;
+        }
+        if ($CFG->debug == 15) {  // Old values
+            return 16;
+        }
+        return $CFG->debug;
     }
 
     function write_setting($data) {
-        if ($data == '1') {
-            return (set_config($this->name,15) ? '' : get_string('errorsetting', 'admin') . $this->visiblename . '<br />');
-        } else {
-            return (set_config($this->name,7) ? '' : get_string('errorsetting', 'admin') . $this->visiblename . '<br />');
-        }
-    }
-
-    function output_html() {
-        return '<tr><td width="100" align="right" valign="top">' . $this->visiblename . '</td>' .
-            '<td align="left"><input type="checkbox" size="50" name="s_'. $this->name .'" value="1" ' . ($this->get_setting() == 15 ? 'checked="checked"' : '') . ' /></td></tr>' .
-            '<tr><td>&nbsp;</td><td align="left">' . $this->description . '</td></tr>';
+        return (set_config($this->name,$data) ? '' : get_string('errorsetting', 'admin') . $this->visiblename . '<br />');
     }
 
 }
