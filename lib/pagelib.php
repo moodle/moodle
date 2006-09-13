@@ -69,9 +69,7 @@ function page_create_object($type, $id = NULL) {
 
     if ($object->get_type() !== $type) {
         // Somehow somewhere someone made a mistake
-        if ($CFG->debug > 7) {
-            error('Page object\'s type ('. $object->get_type() .') does not match requested type ('. $type .')');
-        }
+        debugging('Page object\'s type ('. $object->get_type() .') does not match requested type ('. $type .')');
     }
 
     $object->init_quick($data);
@@ -99,15 +97,11 @@ function page_map_class($type, $classname = NULL) {
     }
 
     if (!isset($mappings[$type])) {
-        if ($CFG->debug > 7) {
-            error('Page class mapping requested for unknown type: '.$type);
-        }
+        debugging('Page class mapping requested for unknown type: '.$type);
     }
 
     if (empty($classname) && !class_exists($mappings[$type])) {
-        if ($CFG->debug > 7) {
-            error('Page class mapping for id "'.$type.'" exists but class "'.$mappings[$type].'" is not defined');
-        }
+        debugging('Page class mapping for id "'.$type.'" exists but class "'.$mappings[$type].'" is not defined');
     }
 
     return $mappings[$type];

@@ -402,7 +402,7 @@ function get_record_sql($sql, $expectmultiple=false, $nolimit=false) {
     } else if ($expectmultiple) {
         $limitfrom = 0;
         $limitnum  = 1;
-    } else if (isset($CFG->debug) && $CFG->debug > 7) {
+    } else if (debugging()) {
         // Debugging mode - don't use a limit of 1, but do change the SQL, because sometimes that
         // causes errors, and in non-debug mode you don't see the error message and it is 
         // impossible to know what's wrong.
@@ -608,9 +608,7 @@ function get_recordset_sql($sql, $limitfrom=null, $limitnum=null) {
         $rs = $db->Execute($sql);
     }
     if (!$rs) {
-        if (isset($CFG->debug) and $CFG->debug > 7) {
-            notify($db->ErrorMsg() .'<br /><br />'. $sql);
-        }
+        debugging($db->ErrorMsg() .'<br /><br />'. $sql);
         if (!empty($CFG->dblogerror)) {
             $debug=array_shift(debug_backtrace());
             error_log("SQL ".$db->ErrorMsg()." in {$debug['file']} on line {$debug['line']}. STATEMENT:  $sql with limits ($limitfrom, $limitnum)");
@@ -884,9 +882,7 @@ function get_fieldset_sql($sql) {
 
     $rs = $db->Execute($sql);
     if (!$rs) {
-        if (isset($CFG->debug) and $CFG->debug > 7) {
-            notify($db->ErrorMsg() .'<br /><br />'. $sql);
-        }
+        debugging($db->ErrorMsg() .'<br /><br />'. $sql);
         if (!empty($CFG->dblogerror)) {
             $debug=array_shift(debug_backtrace());
             error_log("SQL ".$db->ErrorMsg()." in {$debug['file']} on line {$debug['line']}. STATEMENT:  $sql");
@@ -1110,9 +1106,7 @@ function insert_record($table, $dataobject, $returnid=true, $primarykey='id') {
 
 /// Run the SQL statement
     if (!$rs = $db->Execute($insertSQL)) {
-        if (isset($CFG->debug) and $CFG->debug > 7) {
-            notify($db->ErrorMsg() .'<br /><br />'.$insertSQL);
-        }
+        debugging($db->ErrorMsg() .'<br /><br />'.$insertSQL);
         if (!empty($CFG->dblogerror)) {
             $debug=array_shift(debug_backtrace());
             error_log("SQL ".$db->ErrorMsg()." in {$debug['file']} on line {$debug['line']}. STATEMENT:  $insertSQL");
@@ -1207,9 +1201,7 @@ function update_record($table, $dataobject) {
     if ($rs = $db->Execute('UPDATE '. $CFG->prefix . $table .' SET '. $update .' WHERE id = \''. $dataobject->id .'\'')) {
         return true;
     } else {
-        if (isset($CFG->debug) and $CFG->debug > 7) {
-            notify($db->ErrorMsg() .'<br /><br />UPDATE '. $CFG->prefix . $table .' SET '. $update .' WHERE id = \''. $dataobject->id .'\'');
-        }
+        debugging($db->ErrorMsg() .'<br /><br />UPDATE '. $CFG->prefix . $table .' SET '. $update .' WHERE id = \''. $dataobject->id .'\'');
         if (!empty($CFG->dblogerror)) {
             $debug=array_shift(debug_backtrace());
             error_log("SQL ".$db->ErrorMsg()." in {$debug['file']} on line {$debug['line']}. STATEMENT:  UPDATE $CFG->prefix$table SET $update WHERE id = '$dataobject->id'");

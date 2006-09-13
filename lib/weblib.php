@@ -333,9 +333,7 @@ function data_submitted($url='') {
         if (match_referer($url)) {
             return (object)$_POST;
         } else {
-            if ($CFG->debug > 10) {
-                notice('The form did not come from this page! (referer = '. get_referer() .')');
-            }
+            debugging('The form did not come from this page! (referer = '. get_referer() .')');
             return false;
         }
     }
@@ -2021,9 +2019,7 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
 
 /// This makes sure that the header is never repeated twice on a page
     if (defined('HEADER_PRINTED')) {
-        if ($CFG->debug > 7) {
-            notify('print_header() was called more than once - this should not happen.  Please check the code for this page closely. Note: error() and redirect() are now safe to call after print_header().');
-        }
+        debugging('print_header() was called more than once - this should not happen.  Please check the code for this page closely. Note: error() and redirect() are now safe to call after print_header().');
         return;
     }
     define('HEADER_PRINTED', 'true');
@@ -2324,7 +2320,7 @@ function print_footer($course=NULL, $usercourse=NULL, $return=false) {
         if (defined('MDL_PERFTOLOG')) {
             error_log("PERF: " . $perf['txt']);
         }
-        if (defined('MDL_PERFTOFOOT') || $CFG->debug > 7 || $CFG->perfdebug > 7) {
+        if (defined('MDL_PERFTOFOOT') || debugging() || $CFG->perfdebug > 7) {
             $performanceinfo = $perf['html'];
         }
     }

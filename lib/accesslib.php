@@ -361,9 +361,7 @@ function capability_search($capability, $context, $capabilities) {
     global $USER, $CFG;
 
     if (isset($capabilities[$context->id][$capability])) {
-        if ($CFG->debug > 15) {
-            notify("Found $capability in context $context->id at level $context->aggregatelevel: ".$capabilities[$context->id][$capability], 'notifytiny');
-        }
+        debugging("Found $capability in context $context->id at level $context->aggregatelevel: ".$capabilities[$context->id][$capability], E_ALL);
         return ($capabilities[$context->id][$capability]);
     }
 
@@ -425,9 +423,7 @@ function capability_search($capability, $context, $capabilities) {
             error ('This is an unknown context!');
         return false;
     }
-    if ($CFG->debug > 15) {
-        notify("Found $capability recursively from context $context->id at level $context->aggregatelevel: $permission", 'notifytiny');
-    }
+    debugging("Found $capability recursively from context $context->id at level $context->aggregatelevel: $permission", E_ALL);
 
     return $permission;
 }
@@ -1012,9 +1008,7 @@ function get_context_instance($aggregatelevel=NULL, $instance=SITEID) {
 /// If no level is supplied then return the current global context if there is one
     if (empty($aggregatelevel)) {
         if (empty($CONTEXT)) {
-            if ($CFG->debug > 7) {
-                notify("Error: get_context_instance() called without a context");
-            }
+            debugging("Error: get_context_instance() called without a context");
         } else {
             return $CONTEXT;
         }
@@ -1232,9 +1226,7 @@ function get_roles_with_capability($capability, $permission=NULL, $context='') {
 function role_assign($roleid, $userid, $groupid, $contextid, $timestart=0, $timeend=0, $hidden=0, $enrol='manual') {
     global $USER, $CFG;
 
-    if ($CFG->debug > 7) {
-        notify("Assign roleid $roleid userid $userid contextid $contextid", 'notifytiny');
-    }
+    debugging("Assign roleid $roleid userid $userid contextid $contextid", E_ALL);
 
 /// Do some data validation
 

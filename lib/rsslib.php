@@ -354,11 +354,7 @@ define('MAGPIE_CACHE_DIR', $CFG->dataroot .'/cache/rsscache');
 define('MAGPIE_CACHE_ON', true); //might want to expose as an admin config option, but perhaps this is something that should truly just be on unless the code is tweaked
 define('MAGPIE_CACHE_FRESH_ONLY', false); //should be exposed as an admin config option
 define('MAGPIE_CACHE_AGE', $CFG->block_rss_timeout);
-if ($CFG->debug) {
-    define('MAGPIE_DEBUG', $CFG->debug); // magpie, like moodle, takes an integer debug
-} else {
-    define('MAGPIE_DEBUG', 0); // 0 is DEBUG off for magpie
-}
+define('MAGPIE_DEBUG', $CFG->debug); // magpie, like moodle, takes an integer debug
 
 // defines for config var block_rss_client_submitters
 define('SUBMITTERS_ALL_ACCOUNT_HOLDERS', 0);

@@ -3242,7 +3242,7 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml='', $a
 
     } else {
         $mail->IsSMTP();                               // use SMTP directly
-        if ($CFG->debug > 7) {
+        if (debugging()) {
             echo '<pre>' . "\n";
             $mail->SMTPDebug = true;
         }
@@ -6645,9 +6645,13 @@ function debugging($message='', $level=E_NOTICE) {
 
     global $CFG;
 
+    if (empty($CFG->debug)) {
+        return false;
+    }
+
     if ($CFG->debug >= $level) {
         if ($message) {
-            notify($message);
+            notify($message, 'notifytiny');
         }
         return true;
     }
