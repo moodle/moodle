@@ -209,9 +209,9 @@
 
     if (!empty($isteacher)) {
         // get minimum lastaccess for this course and display a dropbox to filter by lastaccess going back this far.
-        $minlastaccess = get_field_sql('SELECT min(timeaccess) FROM '.$CFG->prefix.'user_students WHERE course = '.$course->id.' AND timeaccess != 0');
+        $minlastaccess = get_field_sql('SELECT min(timeaccess) FROM '.$CFG->prefix.'user_lastaccess WHERE courseid = '.$course->id.' AND timeaccess != 0');
         
-        $lastaccess0exists = record_exists('user_students','course',$course->id,'timeaccess',0);
+        $lastaccess0exists = record_exists('user_lastaccess','courseid',$course->id,'timeaccess',0);
         $now = usergetmidnight(time());
         $timeaccess = array();
         
