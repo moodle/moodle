@@ -2241,14 +2241,14 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
 function print_header_simple($title='', $heading='', $navigation='', $focus='', $meta='',
                        $cache=true, $button='&nbsp;', $menu='', $usexml=false, $bodytags='', $return=false) {
 
-    global $course,$CFG;                // The same hack is used in print_header
+    global $COURSE, $CFG;   
 
     $shortname ='';
-    if ($course->category) {
-        $shortname = '<a href="'.$CFG->wwwroot.'/course/view.php?id='. $course->id .'">'. $course->shortname .'</a> ->';
+    if ($COURSE->category) {
+        $shortname = '<a href="'.$CFG->wwwroot.'/course/view.php?id='. $COURSE->id .'">'. $COURSE->shortname .'</a> ->';
     }
 
-    $output = print_header($course->shortname .': '. $title, $course->fullname .' '. $heading, $shortname .' '. $navigation, $focus, $meta,
+    $output = print_header($COURSE->shortname .': '. $title, $course->fullname .' '. $heading, $shortname .' '. $navigation, $focus, $meta,
                            $cache, $button, $menu, $usexml, $bodytags, true);
 
     if ($return) {
