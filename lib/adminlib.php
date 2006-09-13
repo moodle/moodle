@@ -2193,9 +2193,6 @@ function admin_externalpage_setup($section, $adminroot) {
     require_once($CFG->libdir . '/blocklib.php');
     require_once($CFG->dirroot . '/'.$CFG->admin.'/pagelib.php');
     
-    define('BLOCK_L_MIN_WIDTH',160);
-    define('BLOCK_L_MAX_WIDTH',210);
-
     page_map_class(PAGE_ADMIN, 'page_admin');
 
     $PAGE = page_create_object(PAGE_ADMIN, 0); // there must be any constant id number
