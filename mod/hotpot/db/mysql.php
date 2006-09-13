@@ -3,13 +3,22 @@ function hotpot_upgrade($oldversion) {
     global $CFG;
     $ok = true;
 
+    // set path to update functions
+    $update_to_v2 = "$CFG->dirroot/mod/hotpot/db/update_to_v2.php";
+
+    // if the version number indicates this could be an early HotPot v2.1 (Moodle 1.6),
+    // check this is not actually HotPot v2.0 (Moodle 1.5) with an overly advanced version number
+    if ($oldversion>2005031400 && $oldversion<=2006082899) {
+        require_once $update_to_v2;
+        if (hotpot_db_field_exists('hotpot_attempts', 'details')) {
+            $oldversion = 2005031400;
+        }
+    }
+
     if ($oldversion < 2004021400) {
         execute_sql(" ALTER TABLE `{$CFG->prefix}hotpot_events` ADD `starttime` INT(10) unsigned NOT NULL DEFAULT '0' AFTER `time`");
         execute_sql(" ALTER TABLE `{$CFG->prefix}hotpot_events` ADD `endtime` INT(10) unsigned NOT NULL DEFAULT '0' AFTER `time`");
     }
-
-    // set path to update functions
-    $update_to_v2 = "$CFG->dirroot/mod/hotpot/db/update_to_v2.php";
 
     // update from HotPot v1 to HotPot v2
     if ($oldversion < 2005031400) {
