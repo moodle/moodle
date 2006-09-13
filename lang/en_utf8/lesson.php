@@ -7,6 +7,7 @@
  * @package lesson
  **/
  
+
 $string['accesscontrol'] = 'Access control';
 $string['actionaftercorrectanswer'] = 'Action after correct answer';
 $string['actions'] = 'Actions';
@@ -23,6 +24,7 @@ $string['addedaquestionpage'] = 'Added a Question Page';
 $string['addedcluster'] = 'Added a Cluster';
 $string['addedendofcluster'] = 'Added an End of Cluster';
 $string['addendofcluster'] = 'Add an End of Cluster';
+$string['addpage'] = 'Add a page';
 $string['anchortitle'] = 'Start of main content';
 $string['and'] = 'AND';
 $string['answer'] = 'Answer';
@@ -50,7 +52,6 @@ $string['clusterjump'] = 'Unseen question within a cluster';
 $string['clustertitle'] = 'Cluster';
 $string['collapsed'] = 'Collapsed';
 $string['comments'] = 'Your comments';
-$string['commentswithname'] = '$a->firstname {$a->lastname}\'s comments';
 $string['completed'] = 'Completed';
 $string['completederror'] = 'Complete the lesson';
 $string['completethefollowingconditions'] = 'You must complete the following condition(s) in <b>$a</b> lesson before you can proceed.';
@@ -99,6 +100,7 @@ $string['enterpassword'] = 'Please enter the password:';
 $string['eolstudentoutoftime'] = 'Attention:  You ran out of time for this lesson.  Your last answer may not have counted if it was answered after the time was up.';
 $string['eolstudentoutoftimenoanswers'] = 'You did not answer any questions.  You have received a 0 for this lesson.';
 $string['essay'] = 'Essay';
+$string['essayemailmessage'] = '<p>Essay prompt:<blockquote>$a->question</blockquote></p><p>Your response:<blockquote><em>$a->response</em></blockquote></p><p>$a->teacher\'s comments:<blockquote><em>$a->comment</em></blockquote></p><p>You have received $a->earned out of $a->outof for this essay question.</p><p>Your grade for the lesson has been changed to $a->newgrade&#37;.</p>';  // &#37; = %
 $string['essayemailsubject'] = 'Your grade for $a question';
 $string['essays'] = 'Essays';
 $string['essayscore'] = 'Essay score';
@@ -172,6 +174,7 @@ $string['namereject'] = 'Sorry, your name has been rejected by the filter.<br />
 $string['nextpage'] = 'Next page';
 $string['noanswer'] = 'No answer given.  Please go back and submit an answer.';
 $string['noattemptrecordsfound'] = 'No attempt records found: no grade given';
+$string['nobranchtablefound'] = 'No Branch Table found';
 $string['nocommentyet'] = 'No comment yet.';
 $string['nocoursemods'] = 'No activities found';
 $string['nocredit'] = 'No credit';
@@ -228,6 +231,7 @@ $string['questiontype'] = 'Question type';
 $string['randombranch'] = 'Random branch page';
 $string['randompageinbranch'] = 'Random question within a branch';
 $string['rank'] = 'Rank';
+$string['rawgrade'] = 'Raw grade';
 $string['receivedcredit'] = 'Received credit';
 $string['redisplaypage'] = 'Redisplay page';
 $string['report'] = 'Report';
@@ -278,7 +282,6 @@ $string['unseenpageinbranch'] = 'Unseen question within a branch';
 $string['unsupportedqtype'] = 'Unsupported question type ($a)!';
 $string['updatedpage'] = 'Updated page';
 $string['updatefailed'] = 'Update failed';
-$string['updatesuccess'] = 'Update successful';
 $string['useeditor'] = 'Use editor';
 $string['usemaximum'] = 'Use maximum';
 $string['usemean'] = 'Use mean';
@@ -291,14 +294,11 @@ $string['whatdofirst'] = 'What would you like to do first?';
 $string['wronganswerjump'] = 'Wrong answer jump';
 $string['wronganswerscore'] = 'Wrong answer score';
 $string['wrongresponse'] = 'Wrong response';
-$string['youhavereceived'] = 'You have received $a->score out of $a->outof points for this essay question.';
 $string['youhaveseen'] = 'You have seen more than one page of this lesson already.<br />Do you want to start at the last page you saw?';
 $string['youmadehighscore'] = 'You made it on the top $a high scores list.';
 $string['youranswer'] = 'Your answer';
 $string['yourcurrentgradeis'] = 'Your current grade is $a';
 $string['yourcurrentgradeisoutof'] = 'Your current grade is $a->grade out of $a->total';
-$string['yourgradeisnow'] = 'Your grade for the lesson has been changed to $a';
-$string['yourresponse'] = 'Your response';
 $string['youshouldview'] = 'You should answer at least: $a';
 
 ?>
