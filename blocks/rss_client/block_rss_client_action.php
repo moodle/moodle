@@ -85,7 +85,7 @@ if ( isset($rssid) ) {
 
 
 $block = get_record('block', 'name', 'rss_client');
-$blockinstance = get_record('block_instance', 'blockid', $block->id, 'pagetype', 'course-view', 'pageid', id);
+$blockinstance = get_record('block_instance', 'blockid', $block->id, 'pagetype', 'course-view', 'pageid', $id);
 $context = get_context_instance(CONTEXT_BLOCK, $blockinstance->id);
 
 
