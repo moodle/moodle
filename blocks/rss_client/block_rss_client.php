@@ -90,7 +90,8 @@
         
         $context = get_context_instance(CONTEXT_BLOCK, $this->instance->id);
         
-        if (has_capability('block/rss_client:createsharedfeeds', $context)) {
+        if (has_capability('block/rss_client:createsharedfeeds', $context)
+                    || has_capability('block/rss_client:createprivatefeeds', $context)) {
 
             $page = page_create_object($this->instance->pagetype, $this->instance->pageid);
             //if ($page->user_allowed_editing()) { // for SUBMITTERS_ALL_ACCOUNT_HOLDERS we're going to run into trouble later if we show it and then they don't have write access to the page.
