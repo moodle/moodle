@@ -38,10 +38,8 @@
     add_to_log($course->id, "user", "view", "view.php?id=$user->id&course=$course->id", "$user->id");
 
     if ($course->id != SITEID) {
-        if ($student = get_record("user_students", "userid", $user->id, "course", $course->id)) {
-            $user->lastaccess = $student->timeaccess;
-        } else if ($teacher = get_record("user_teachers", "userid", $user->id, "course", $course->id)) {
-            $user->lastaccess = $teacher->timeaccess;
+        if ($lastaccess = get_record('user_lastaccess', 'userid', $user->id, 'course', $course->id)) {
+            $user->lastaccess = $lastaccess->timeaccess;
         }
     }
 
@@ -97,11 +95,6 @@
     } else {
         print_header("$course->fullname: $personalprofile: $fullname", "$course->fullname",
                      "$fullname", "", "", true, "&nbsp;", navmenu($course));
-    }
-
-    if ($CFG->debug && $USER->id == $user->id) {   // TEMPORARY in DEV!
-        print_heading('DEBUG MODE:  User session variables');
-        print_object($USER);
     }
 
 
@@ -274,8 +267,9 @@
     }
 /// printing roles
     
-    $rolestring = get_user_roles_in_context($id, $coursecontext->id);
-    print_row(get_string("roles").":", $rolestring);
+    if ($rolestring = get_user_roles_in_context($id, $coursecontext->id)) {
+        print_row(get_string('roles').':', $rolestring);
+    }
 
 /// Printing groups
     $isseparategroups = ($course->groupmode == SEPARATEGROUPS and $course->groupmodeforce and
@@ -376,6 +370,14 @@
     }
     echo "<td></td>";
     echo "</tr></table></div>\n";
+
+
+    if ($CFG->debug && $USER->id == $user->id) {   // TEMPORARY in DEV!   XXX TODO
+        echo '<hr />';
+        print_heading('DEBUG MODE:  User session variables');
+        print_object($USER);
+    }
+
 
     print_footer($course);
 
