@@ -128,22 +128,6 @@ class ExHtmlReporter extends HtmlReporter {
     }
 
     /**
-     * Return extra CSS that is added to the results page.
-     */
-    function _getCss() {
-        // Don't call the parent, do our own thing instead.
-        return
-            ' span.notice { color: teal; }' .
-            ' b.pass { color: green; }' .
-            ' b.fail, b.exception { color: red; }' .
-            ' .exception, .exception pre { background: #fdd; }' .
-            ' .exception pre { padding: 8px; }' .
-            ' .unittestsummary { padding: 8px; margin-top: 1em; color: white; }' .
-            ' .unittestsummary.fail { background-color: red; } ' .
-            ' .unittestsummary.pass { background-color: green; } ';
-    }
-
-    /**
      * Output anything that should appear above all the test output.
      */
     function paintHeader($test_name) {

@@ -276,6 +276,34 @@ table.flexible .r1 {
   background-color: #fafafa;
 }
 
+#admin-report-simpletest-index span.notice {
+  color: teal;
+}
+
+#admin-report-simpletest-index b.pass {
+  color: green;
+}
+
+#admin-report-simpletest-index b.fail, b.exception {
+  color: red;
+}
+
+#admin-report-simpletest-index .exception, .exception pre {
+  background-color: #fdd;
+}
+
+#admin-report-simpletest-index .unittestsummary {
+  color: white;
+}
+
+#admin-report-simpletest-index .unittestsummary.fail {
+  background-color: red;
+}
+
+#admin-report-simpletest-index .unittestsummary.pass {
+  background-color: green;
+}
+
 /***
  *** Blocks
  ***/

@@ -428,6 +428,15 @@ body#admin-roles-manage table.generalbox {
   margin: auto;
 }
 
+#admin-report-simpletest-index .exception pre {
+  padding: 8px;
+}
+
+#admin-report-simpletest-index .unittestsummary {
+  padding: 8px;
+  margin-top: 1em;
+}
+
 /***
  *** Blocks
  ***/
