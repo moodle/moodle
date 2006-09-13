@@ -2248,7 +2248,7 @@ function print_header_simple($title='', $heading='', $navigation='', $focus='', 
         $shortname = '<a href="'.$CFG->wwwroot.'/course/view.php?id='. $COURSE->id .'">'. $COURSE->shortname .'</a> ->';
     }
 
-    $output = print_header($COURSE->shortname .': '. $title, $course->fullname .' '. $heading, $shortname .' '. $navigation, $focus, $meta,
+    $output = print_header($COURSE->shortname .': '. $title, $COURSE->fullname .' '. $heading, $shortname .' '. $navigation, $focus, $meta,
                            $cache, $button, $menu, $usexml, $bodytags, true);
 
     if ($return) {
