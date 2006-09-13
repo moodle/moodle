@@ -3521,6 +3521,30 @@ function forum_update_subscriptions_button($courseid, $forumid) {
            "<input type=\"submit\" value=\"$string\" /></form>";
 }
 
+/*
+ * This function gets run whenever a role is assigned to a user in a context
+ *
+ * @param integer $userid 
+ * @param object $context 
+ * @return bool
+ */
+function forum_role_assign($userid, $context) {
+    return forum_add_user_default_subscriptions($userid, $context);
+}
+
+
+/*
+ * This function gets run whenever a role is assigned to a user in a context
+ *
+ * @param integer $userid 
+ * @param object $context 
+ * @return bool
+ */
+function forum_role_unassign($userid, $context) {
+    return forum_remove_user_subscriptions($userid, $context);
+}
+
+
 function forum_add_user_default_subscriptions($userid, $context) {
 /// Add subscriptions for new users
 
