@@ -100,6 +100,18 @@
         }
     }
 
+    if(!isset($form1->startdate)) {
+        $form1->startdate = $course_header->course_startdate; //$course_header->course_startdate;    
+    }
+
+    if (empty($form1->shortname)) {
+       $form1->shortname = $course_header->course_shortname; //'_shortname'; //$course_header->course_shortname; 
+    }
+
+    if (empty($form1->fullname)) {
+      $form1->fullname = $course_header->course_fullname; // '_fullname';   //$course_header->course_fullname; 
+    }
+
     if ($count == 0) {
         notice("No restorable modules are installed!");
     }
@@ -168,6 +180,30 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
     }
     choose_from_menu($restore_restoreto_options, "restore_restoreto", $restore_restoreto, "");
     echo "</td></tr>";
+    if (iscreator()) {  //display these fields conditionally
+        echo "<tr valign=\"top\" >";
+        echo "<td align=\"right\">";
+        print_string("shortname");
+        echo " :</td>";
+        echo "<td><input type=\"text\" name=\"shortname\" maxlength=\"15\"  size=\"10\" value=\"$form1->shortname\" alt=\" print_string(\"shortname\")\"  />" ;
+        helpbutton("courseshortname", get_string("shortname")) ;
+        if (isset($err["shortname"])) formerr($err["shortname"]); 
+        echo "<tr valign=\"top\" >";
+        echo "<td align=\"right\">";
+        print_string("fullname");
+        echo " :</td>";
+        echo "<td><input type=\"text\" name=\"fullname\" maxlength=\"254\" size=\"50\" value=\"$form1->fullname\" alt=\" print_string(\"fullname\") \"  />" ;
+        helpbutton("coursefullname", get_string("fullname")) ;
+        if (isset($err["fullname"])) formerr($err["fullname"]); 
+        echo"</td></tr>";
+        echo "<tr valign=\"top\"> ";
+        echo "<td align=\"right\"> ";
+        print_string("startdate"); 
+        echo ":</td><td>"; 
+        print_date_selector("startday", "startmonth", "startyear", $form1->startdate);
+        helpbutton("coursestartdate", get_string("startdate"));
+        echo "</td></tr>";
+    }
     //Line
     echo "<tr><td colspan=\"4\"><hr /></td></tr>";
     //Now, check modules and info and show posibilities

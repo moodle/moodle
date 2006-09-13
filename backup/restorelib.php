@@ -543,6 +543,7 @@
             $course->students = addslashes($course_header->course_students);
             $course->guest = addslashes($course_header->course_guest);
             $course->startdate = addslashes($course_header->course_startdate);
+            $course->startdate += $restore->course_startdateoffset;
             $course->enrolperiod = addslashes($course_header->course_enrolperiod);
             $course->numsections = addslashes($course_header->course_numsections);
             //$course->showrecent = addslashes($course_header->course_showrecent);   INFO: This is out in 1.3
@@ -2154,6 +2155,11 @@
         $admin = get_admin();
         $adminid = $admin->id;
 
+        $dest_dir = $CFG->dataroot."/".$restore->course_id;
+        check_dir_exists($dest_dir,true);
+        $file = $dest_dir."/restorelog.html";
+        $restorelog_file = fopen($file,"a");
+
         //Now, if we have anything in events, we have to restore that
         //events
         if ($events) {
@@ -2182,8 +2188,13 @@
                         $eve->repeatid = backup_todb($info['EVENT']['#']['REPEATID']['0']['#']);
                         $eve->modulename = "";
                         $eve->instance = 0;
-                        $eve->eventtype = backup_todb($info['EVENT']['#']['EVENTTYPE']['0']['#']);
+                        $eve->eventtype = backup_todb($info['EVENT']['#']['EVENTTYPE']['0']['#']);  
                         $eve->timestart = backup_todb($info['EVENT']['#']['TIMESTART']['0']['#']);
+                        $date = usergetdate($eve->timestart);
+                        fwrite ($restorelog_file,"The Event - ".$eve->name. " - TIMESTART was " .$date['weekday'].", ".$date['mday']." ".$date['month']." ".$date['year']."");
+                        $eve->timestart +=  $restore->course_startdateoffset;
+                        $date = usergetdate($eve->timestart);
+                        fwrite ($restorelog_file,"&nbsp;&nbsp;&nbsp;the Event TIMESTART is now " .$date['weekday'].", ".$date['mday']." ".$date['month']." ".$date['year']."<br>");
                         $eve->timeduration = backup_todb($info['EVENT']['#']['TIMEDURATION']['0']['#']);
                         $eve->visible = backup_todb($info['EVENT']['#']['VISIBLE']['0']['#']);
                         $eve->timemodified = backup_todb($info['EVENT']['#']['TIMEMODIFIED']['0']['#']);
@@ -4906,6 +4917,11 @@
                 }
                 $restore->course_id = $course_header->course_id;
             }
+
+            if ($status = restore_open_html($restore,$course_header)){
+                echo "<li>Creating the Restorelog.html in the course Files folder</li>";
+            }
+
         } else {
             $course = get_record("course","id",$restore->course_id);
             if ($course) {
@@ -5372,6 +5388,10 @@
             }
         }
 
+        if ($status = restore_close_html($restore)){
+            echo "<li>Closing the Restorelog.html file.<li>";
+        }
+
         if (!defined('RESTORE_SILENTLY')) {
             //End the main ul
             echo "</ul>";
@@ -5382,6 +5402,63 @@
         }
 
         return $status;
+    }
+    //Create, open and write header of the html log file
+    function restore_open_html($restore,$course_header) {
+
+        global $CFG;
+        
+        $status = true;
+
+        //Open file for writing    
+        //First, we check the "course_id" folder exists and create it as necessary in CFG->dataroot
+        $dest_dir = $CFG->dataroot."/".$restore->course_id;
+        $status = check_dir_exists($dest_dir,true);
+        $file = $dest_dir."/restorelog.html";
+        $restorelog_file = fopen($file,"a");
+        //Write the header in the new logging file
+        fwrite ($restorelog_file,"<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\"");
+        fwrite ($restorelog_file," \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">  ");
+        fwrite ($restorelog_file,"<html dir=\"ltr\" lang=\"en\" xml:lang=\"en\">");
+        fwrite ($restorelog_file,"<head><link rel=\"stylesheet\" type=\"text/css\" href=\"http://at4737.vledev.open.ac.uk/moodle/theme/standard/styles.php\" />");
+        fwrite ($restorelog_file,"<title>".$course_header->course_shortname." Restored </title>");
+        fwrite ($restorelog_file,"</head><body><br><h1>The following changes were made during the Restoration of this Course.</h1><br><br>");
+        fwrite ($restorelog_file,"The Course ShortName is now - ".$course_header->course_shortname." The FullName is now - ".$course_header->course_fullname."<br><br>");
+        $startdate = addslashes($course_header->course_startdate);
+        $date = usergetdate($startdate);
+        fwrite ($restorelog_file,"The Originating Courses Start Date was " .$date['weekday'].", ".$date['mday']." ".$date['month']." ".$date['year']."");
+        $startdate += $restore->course_startdateoffset;
+        $date = usergetdate($startdate);
+        fwrite ($restorelog_file,"&nbsp;&nbsp;&nbsp;This Courses Start Date is now  " .$date['weekday'].",  ".$date['mday']." ".$date['month']." ".$date['year']."<br><br>");       
+
+        if ($status) {
+            return $restorelog_file;
+        } else {
+            return false;
+        }
+    }
+    //Create & close footer of the html log file
+    function restore_close_html($restore) {
+
+        global $CFG;
+        
+        $status = true;
+
+        //Open file for writing    
+        //First, check that "course_id" folder exists
+        $dest_dir = $CFG->dataroot."/".$restore->course_id;
+        $status = check_dir_exists($dest_dir,true);
+        $file = $dest_dir."/restorelog.html";
+        $restorelog_file = fopen($file,"a");
+        //Write the footer to close the logging file
+        fwrite ($restorelog_file,"<br>This file was written to directly by each modules restore process.");
+        fwrite ($restorelog_file,"<br><br>Log complete.</body></html>");
+       
+        if ($status) {
+            return $restorelog_file;
+        } else {
+            return false;
+        }
     }
 
 ?>

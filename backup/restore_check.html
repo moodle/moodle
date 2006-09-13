@@ -17,6 +17,16 @@
     //Detect if we are coming from the restore form
     $fromform = optional_param ('fromform', 0, PARAM_INT);
 
+    if ($form1 = data_submitted()); {
+        $currentcourseshortname = $course_header->course_shortname; //"store_ShortName";
+        $course_header->course_shortname =  $form1->shortname;  //"update_ShortName";       
+        $course_header->course_fullname =   $form1->fullname;   //"update_FullName";   
+        $form1->startdate = make_timestamp($form1->startyear, $form1->startmonth, $form1->startday);          
+        $currentcoursestartdate = $course_header->course_startdate; 
+        $coursestartdatedateoffset = $form1->startdate - $currentcoursestartdate;
+        $restore->course_startdateoffset = $coursestartdatedateoffset; //change to restore
+    } 
+
     //If restore session info exists, but we are coming from the form
     //it has prioriry
     if (isset($restore) and !empty($fromform)) {
@@ -106,6 +116,10 @@
         $restore->course_files=$restore_course_files;
         $restore->messages=$restore_messages;
         $restore->course_id=$course_id;
+//add new vars to restore object 
+        $restore->course_startdateoffset = $coursestartdatedateoffset;
+        $restore->course_shortname = $currentcourseshortname;
+
     } else {
         //We have the object, so check if we have a new course_id
         //passed as parammeter
