@@ -5217,41 +5217,6 @@ function page_doc_link($text='', $iconpath='') {
     return $str;
 }
 
-function moodle_error_handler($errno, $errstr, $errfile, $errline) {
-    global $CFG;
-
-    switch ($errno) {
-        case E_USER_ERROR:
-            if ($CFG->debug > E_USER_ERROR) {
-                echo "<b>FATAL ERROR:</b> [$errno] $errstr<br />\n";
-                echo "  Fatal error in line $errline of file $errfile";
-                echo ", PHP " . PHP_VERSION . " (" . PHP_OS . ")<br />\n";
-                echo "Stack trace...<br />\n";
-                if (function_exists('debug_print_backtrace')) {
-                    debug_print_backtrace();
-                } else {
-                    print_object(debug_backtrace());
-                }
-                echo "<p>Aborting...</p>\n";
-                exit(1);
-            }
-            break;
-        case E_USER_WARNING:
-            if ($CFG->debug > E_USER_WARNING) {
-                echo "<b>WARNING</b> [$errno] $errstr<br />\n";
-            }
-            break;
-        case E_USER_NOTICE:
-            if ($CFG->debug > E_USER_NOTICE) {
-                echo "<b>NOTICE</b> [$errno] $errstr<br />\n";
-            }
-            break;
-        default:
-            echo "Unknown error type: [$errno] $errstr<br />\n";
-            break;
-    }
-}
-
 
 // vim:autoindent:expandtab:shiftwidth=4:tabstop=4:tw=140:
 ?>
