@@ -3530,6 +3530,31 @@ function forum_add_user_default_subscriptions($userid, $context) {
 
     switch ($context->aggregatelevel) {
 
+        case CONTEXT_SYSTEM:   // For the whole site
+             if ($courses = get_record('course')) {
+                 foreach ($courses as $course) {
+                     $subcontext = get_context_instance(CONTEXT_COURSE, $course->id);
+                     forum_add_user_default_subscriptions($userid, $subcontext);
+                 }
+             }
+             break;
+
+        case CONTEXT_CATEGORY:   // For a whole category
+             if ($courses = get_record('course', 'category', $context->instanceid)) {
+                 foreach ($courses as $course) {
+                     $subcontext = get_context_instance(CONTEXT_COURSE, $course->id);
+                     forum_add_user_default_subscriptions($userid, $subcontext);
+                 }
+             }
+             if ($categories = get_record('course_categories', 'parent', $context->instanceid)) {
+                 foreach ($categories as $category) {
+                     $subcontext = get_context_instance(CONTEXT_CATEGORY, $category->id);
+                     forum_add_user_default_subscriptions($userid, $subcontext);
+                 }
+             }
+             break;
+    
+
         case CONTEXT_COURSE:   // For a whole course
              if ($course = get_record('course', 'id', $context->instanceid)) {
                  if ($forums = get_all_instances_in_course('forum', $course)) {
@@ -3556,6 +3581,62 @@ function forum_add_user_default_subscriptions($userid, $context) {
                      if (has_capability('mod/forum:viewdiscussion', $context, $userid)) {
                          forum_subscribe($userid, $forum->id);
                      }
+                 }
+             }
+             break;
+    }
+
+    return true;
+}
+
+
+function forum_remove_user_subscriptions($userid, $context) {
+/// Remove subscriptions for a user in a context
+
+    if (empty($context->aggregatelevel)) {
+        return false;
+    }
+
+    switch ($context->aggregatelevel) {
+
+        case CONTEXT_SYSTEM:   // For the whole site
+             if ($courses = get_record('course')) {
+                 foreach ($courses as $course) {
+                     $subcontext = get_context_instance(CONTEXT_COURSE, $course->id);
+                     forum_remove_user_subscriptions($userid, $subcontext);
+                 }
+             }
+             break;
+
+        case CONTEXT_CATEGORY:   // For a whole category
+             if ($courses = get_record('course', 'category', $context->instanceid)) {
+                 foreach ($courses as $course) {
+                     $subcontext = get_context_instance(CONTEXT_COURSE, $course->id);
+                     forum_remove_user_subscriptions($userid, $subcontext);
+                 }
+             }
+             if ($categories = get_record('course_categories', 'parent', $context->instanceid)) {
+                 foreach ($categories as $category) {
+                     $subcontext = get_context_instance(CONTEXT_CATEGORY, $category->id);
+                     forum_remove_user_subscriptions($userid, $subcontext);
+                 }
+             }
+             break;
+
+        case CONTEXT_COURSE:   // For a whole course
+             if ($course = get_record('course', 'id', $context->instanceid)) {
+                 if ($forums = get_all_instances_in_course('forum', $course)) {
+                     foreach ($forums as $forum) {
+                         forum_unsubscribe($userid, $forum->id);
+                     }
+                 }
+             }
+             break;
+         
+        case CONTEXT_MODULE:   // Just one forum
+             if ($cm = get_coursemodule_from_id('forum', $context->instanceid)) {
+                 if ($forum = get_record('forum', 'id', $cm->instance)) { 
+                     forum_unsubscribe($userid, $forum->id);
                  }
              }
              break;
