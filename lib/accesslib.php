@@ -1300,9 +1300,19 @@ function role_assign($roleid, $userid, $groupid, $contextid, $timestart=0, $time
             load_user_capability();
         }
 
-    /// Make sure the user is subscribed to any appropriate forums in this context
-        require_once($CFG->dirroot.'/mod/forum/lib.php');
-        forum_add_user_default_subscriptions($userid, $context);
+    /// Ask all the modules if anything needs to be done for this user
+        if ($mods = get_list_of_plugins('mod')) {
+            foreach ($mods as $mod) {
+                include_once($CFG->dirroot.'/mod/'.$mod.'/lib.php');
+                $functionname = $mod.'_role_assign';
+                if (function_exists($functionname)) {
+                    $functionname($userid, $context);
+                }
+            }
+        }
+
+    /// Make sure they have an entry in user_lastaccess for courses they can access
+    //    role_add_lastaccess_entries($userid, $context);
     }
 
     return $success;
@@ -1337,15 +1347,96 @@ function role_unassign($roleid=0, $userid=0, $groupid=0, $contextid=0) {
                 load_user_capability();
             }
     
-        /// Make sure the user is unsubscribed from any appropriate forums in this context
-            require_once($CFG->dirroot.'/mod/forum/lib.php');
-            forum_remove_user_subscriptions($userid, $context);
+            if ($contextid) {
+                if ($context = get_record('context', 'id', $contextid)) {
+
+                /// Ask all the modules if anything needs to be done for this user
+                    if ($mods = get_list_of_plugins('mod')) {
+                        foreach ($mods as $mod) {
+                            include_once($CFG->dirroot.'/mod/'.$mod.'/lib.php');
+                            $functionname = $mod.'_role_unassign';
+                            if (function_exists($functionname)) {
+                                $functionname($userid, $context);
+                            }
+                        }
+                    }
+        
+                /// Remove entries from user_lastaccess for courses they can no longer access
+                    //role_add_lastaccess_entries($userid, $context);
+                }
+            }
 
             return true;
         }
         return false;
     }
     return true;
+}
+
+/**
+ * Add last access times to user_lastaccess as required
+ * @param $userid
+ * @param $context
+ * @return boolean - success or failure
+ */
+function role_add_lastaccess_entries($userid, $context) {
+
+    global $USER, $CFG;
+
+    if (empty($context->aggregatelevel)) {
+        return false;
+    }
+
+    $lastaccess = new object;        // Reusable object below
+    $lastaccess->userid = $userid;
+    $lastaccess->timeaccess = 0;
+
+    switch ($context->aggregatelevel) {
+
+        case CONTEXT_SYSTEM:   // For the whole site
+             if ($courses = get_record('course')) {
+                 foreach ($courses as $course) {
+                     $lastaccess->courseid = $course->id;
+                     role_set_lastaccess($lastaccess);
+                 }
+             }
+             break;
+
+        case CONTEXT_CATEGORY:   // For a whole category
+             if ($courses = get_record('course', 'category', $context->instanceid)) {
+                 foreach ($courses as $course) {
+                     $lastaccess->courseid = $course->id;
+                     role_set_lastaccess($lastaccess);
+                 }
+             }
+             if ($categories = get_record('course_categories', 'parent', $context->instanceid)) {
+                 foreach ($categories as $category) {
+                     $subcontext = get_context_instance(CONTEXT_CATEGORY, $category->id);
+                     role_add_lastaccess_entries($userid, $subcontext);
+                 }
+             }
+             break;
+    
+
+        case CONTEXT_COURSE:   // For a whole course
+             if ($course = get_record('course', 'id', $context->instanceid)) {
+                 $lastaccess->courseid = $course->id;
+                 role_set_lastaccess($lastaccess);
+             }
+             break;
+    }
+}
+
+/**
+ * Delete last access times from user_lastaccess as required
+ * @param $userid
+ * @param $context
+ * @return boolean - success or failure
+ */
+function role_remove_lastaccess_entries($userid, $context) {
+
+    global $USER, $CFG;
+
 }
 
 
