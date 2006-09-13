@@ -215,7 +215,7 @@ if ($act == 'updfeed') {
     }
     $url = stripslashes_safe($rss_record->url);
     $shared = stripslashes_safe($rss_record->shared);
-    rss_display_feeds($id, '', $rssid, $context);
+    rss_display_feeds($id, $USER->id, $rssid, $context);
     rss_print_form($act, $url, $rssid, $preferredtitle, $shared, $id, $context);
 
 } else if ($act == 'delfeed') {
