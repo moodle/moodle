@@ -79,9 +79,7 @@
 
     require_login($course->id, false);
 
-    if (!isteacheredit($course->id)) {
-        error( $txt->onlyteachersimport );
-    }
+    require_capability('moodle/question:import', get_context_instance(CONTEXT_COURSE, $course->id));
 
     // ensure the files area exists for this course
     make_upload_directory( "$course->id" );
@@ -92,7 +90,7 @@
     //==========
 
     if (isset($SESSION->modform->instance) and $quiz = get_record('quiz', 'id', $SESSION->modform->instance)) {
-        $strupdatemodule = isteacheredit($course->id)
+        $strupdatemodule = has_capability('moodle/course:manageactivities', get_context_instance(CONTEXT_COURSE, $course->id))
             ? update_module_button($SESSION->modform->cmid, $course->id, $txt->modulename)
             : "";
         print_header_simple($txt->importquestions, '',

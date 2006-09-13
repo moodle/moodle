@@ -18,10 +18,7 @@
     }
 
     require_login($course->id, false);
-
-    if (!isteacheredit($course->id)) {
-        error("Only the teacher can import quiz questions!");
-    }
+    require_capability('moodle/question:import', get_context_instance(CONTEXT_COURSE, $course->id));
 
     $DATASET_TYPES = array('1' => get_string('literal', 'quiz'),
                            '2' => get_string('file', 'quiz'),

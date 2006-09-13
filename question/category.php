@@ -48,7 +48,7 @@
 
     // TODO: generalise this to any activity
     if (isset($SESSION->modform->instance) and $quiz = get_record('quiz', 'id', $SESSION->modform->instance)) {
-        $strupdatemodule = isteacheredit($course->id)
+        $strupdatemodule = has_capability('moodle/course:manageactivities', get_context_instance(CONTEXT_COURSE, $course->id))
             ? update_module_button($SESSION->modform->cmid, $course->id, get_string('modulename', 'quiz'))
             : "";
         print_header_simple(get_string('editcategories', 'quiz'), '',

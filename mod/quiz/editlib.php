@@ -229,7 +229,7 @@ function quiz_print_question_list($quiz, $allowdelete=true, $showbreaks=true, $r
             continue;
         }
         $question = $questions[$qnum];
-        $canedit = isteacheredit($question->course);
+        $canedit = has_capability('moodle/question:manage', get_context_instance(CONTEXT_COURSE, $question->course));
 
         echo "<td>";
         if ($count != 0) {

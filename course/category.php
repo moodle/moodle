@@ -366,7 +366,7 @@
                     echo '<input type="checkbox" name="c'.$acourse->id.'" />';
                     $abletomovecourses = true;
 
-                } else if (isteacheredit($acourse->id)) {
+                } else if (has_capability('moodle/course:update', get_context_instance(CONTEXT_COURSE, $acourse->id))) {
                     echo '<td>';
                     echo '<a title="'.$strsettings.'" href="'.$CFG->wwwroot.'/course/edit.php?id='.$acourse->id.'">'.
                          '<img src="'.$CFG->pixpath.'/t/edit.gif" height="11" width="11" border="0" alt="'.$strsettings.'" /></a> ';

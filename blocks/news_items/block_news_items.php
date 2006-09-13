@@ -35,7 +35,7 @@ class block_news_items extends block_base {
 
         /// First work out whether we can post to this group and if so, include a link
 
-            if (isteacheredit($COURSE->id)) {     /// Teachers can always post
+            if (has_capability('moodle/site:accessallgroups', get_context_instance(CONTEXT_COURSE, $COURSE->id))) {     /// Teachers can always post
                 $visiblegroups = -1; 
 
                 $text .= '<div align="center" class="newlink"><a href="'.$CFG->wwwroot.'/mod/forum/post.php?forum='.$forum->id.'">'.

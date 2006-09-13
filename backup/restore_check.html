@@ -175,7 +175,7 @@
             print_heading(get_string("choosecourse"));
             print_simple_box_start("center");
             foreach ($courses as $course) {
-                if (!isteacheredit($course->id)) {
+                if (!has_capability('moodle/site:restore', get_context_instance(CONTEXT_COURSE, $course->id))) {
                     continue;
                 }
                 if (empty($course->visible)) {
@@ -195,7 +195,7 @@
         //Final access control check
         if ($restore->course_id == 0 and !has_capability('moodle/course:create', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
             error("You need to be a creator or admin to restore into new course!");
-        } else if ($restore->course_id != 0 and !isteacheredit($restore->course_id)) {
+        } else if ($restore->course_id != 0 and !has_capability('moodle/site:backup', get_context_instance(CONTEXT_COURSE, $restore->course_id))) {
             error("You need to be an edit teacher or admin to restore into selected course!");
         }
         $show_continue_button = true;

@@ -35,9 +35,7 @@
 
     require_login($course->id);
 
-    if (! isteacheredit($course->id) ) {
-        error("You need to be a teacher with editing privileges");
-    }
+    require_capability('moodle/course:update', get_context_instance(CONTEXT_COURSE, $course->id));
 
     function html_footer() {
         global $course, $choose;
@@ -798,7 +796,7 @@ function displaydir ($wdir) {
             } else if ($icon == "zip.gif") {
                 $edittext .= "<a href=\"index.php?id=$id&amp;wdir=$wdir&amp;file=$fileurl&amp;action=unzip&amp;sesskey=$USER->sesskey&amp;choose=$choose\">$strunzip</a>&nbsp;";
                 $edittext .= "<a href=\"index.php?id=$id&amp;wdir=$wdir&amp;file=$fileurl&amp;action=listzip&amp;sesskey=$USER->sesskey&amp;choose=$choose\">$strlist</a> ";
-                if (!empty($CFG->backup_version) and isteacheredit($id)) {
+                if (!empty($CFG->backup_version) and has_capability('moodle/site:restore', get_context_instance(CONTEXT_COURSE, $id))) {
                     $edittext .= "<a href=\"index.php?id=$id&amp;wdir=$wdir&amp;file=$filesafe&amp;action=restore&amp;sesskey=$USER->sesskey&amp;choose=$choose\">$strrestore</a> ";
                 }
             }

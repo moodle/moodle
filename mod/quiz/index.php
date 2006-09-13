@@ -25,7 +25,7 @@
 // Print the header
 
     $strquizzes = get_string("modulenameplural", "quiz");
-    $streditquestions = isteacheredit($course->id)
+    $streditquestions = has_capability('moodle/question:manage', get_context_instance(CONTEXT_COURSE, $course->id))
                         ? "<form target=\"_parent\" method=\"get\" "
                            ." action=\"$CFG->wwwroot/question/edit.php\">"
                            ."<input type=\"hidden\" name=\"courseid\" "

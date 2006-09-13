@@ -32,9 +32,7 @@
 
     require_login($course->id);
 
-    if (! isteacheredit($course->id) ) {
-        error("Only teachers can edit files");
-    }
+    require_capability('moodle/course:managefiles', get_context_instance(CONTEXT_COURSE, $id));
 
     function html_footer() {
         echo "\n\n</body>\n</html>";

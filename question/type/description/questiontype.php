@@ -36,7 +36,7 @@ class description_qtype extends default_questiontype {
 
         // For editing teachers print a link to an editing popup window
         $editlink = '';
-        if (isteacheredit($cmoptions->course)) {
+        if (has_capability('moodle/question:manage', get_context_instance(CONTEXT_COURSE, $cmoptions->course))) {
             $stredit = get_string('edit');
             $linktext = '<img src="'.$CFG->pixpath.'/t/edit.gif" border="0" alt="'.$stredit.'" />';
             $editlink = link_to_popup_window('/question/question.php?id='.$question->id, $stredit, $linktext, 450, 550, $stredit, '', true);

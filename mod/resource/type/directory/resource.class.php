@@ -65,7 +65,7 @@ function display() {
             "", "", true, update_module_button($cm->id, $course->id, $this->strresource),
             navmenu($course, $cm));
 
-    if (isteacheredit($course->id)) {
+    if (has_capabilities('moodle/course:managefiles', get_context_instance(CONTEXT_COURSE, $course->id))) {
         echo "<div align=\"right\"><img src=\"$CFG->pixpath/i/files.gif\" height=\"16\" width=\"16\" alt=\"\" />&nbsp".
             "<a href=\"$CFG->wwwroot/files/index.php?id={$course->id}&amp;wdir=/{$resource->reference}$subdir\">".
             get_string("editfiles")."...</a></div>";

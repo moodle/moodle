@@ -850,6 +850,13 @@ function moodle_install_roles() {
     if (in_array($CFG->prefix.'user_teachers', $dbtables)) {
         if ($userteachers = get_records('user_teachers')) {
             foreach ($userteachers as $teacher) {
+                // populate the user_lastaccess table
+                unset($access);
+                $access->timeaccess = $teacher->timeaccess;
+                $access->userid = $teacher->userid;
+                $access->courseid = $teacher->course;
+                insert_record('user_lastaccess', $access);
+                // assign the default student role
                 $coursecontext = get_context_instance(CONTEXT_COURSE, $teacher->course); // needs cache
                 if ($teacher->editall) { // editting teacher
                     role_assign($editteacherrole, $teacher->userid, 0, $coursecontext->id);
@@ -866,7 +873,14 @@ function moodle_install_roles() {
      */
     if (in_array($CFG->prefix.'user_students', $dbtables)) {
         if ($userstudents = get_records('user_students')) {
-            foreach ($userstudents as $student) {
+            foreach ($userstudents as $student) {  
+                // populate the user_lastaccess table
+                unset($access);
+                $access->timeaccess = $student->timeaccess;
+                $access->userid = $student->userid;
+                $access->courseid = $student->course;
+                insert_record('user_lastaccess', $access);
+                // assign the default student role
                 $coursecontext = get_context_instance(CONTEXT_COURSE, $student->course);
                 role_assign($studentrole, $student->userid, 0, $coursecontext->id);
             }

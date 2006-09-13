@@ -319,7 +319,7 @@
         if ($scales = get_records("scale", "courseid", "$course->id", "name ASC")) {
             print_heading($strcustomscales);
 
-            if (isteacheredit($course->id)) {
+            if (has_capability('moodle/course:managescales', get_context_instance(CONTEXT_COURSE, $course->id))) {
                 echo "<p align=\"center\">(";
                 print_string("scalestip");
                 echo ")</p>";

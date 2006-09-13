@@ -263,7 +263,7 @@ function question_list($course, $categoryid, $quizid=0,
     echo '<table><tr>';
 
     // check if editing of this category is allowed
-    if (isteacheredit($category->course)) {
+    if (has_capability('moodle/question:managecateory', $context)) {
         echo "<td valign=\"top\"><b>$strcreatenewquestion:</b></td>";
         echo '<td valign="top" align="right">';
         popup_form ("$CFG->wwwroot/question/question.php?category=$category->id&amp;qtype=", $qtypemenu, "addquestion",
@@ -323,7 +323,7 @@ function question_list($course, $categoryid, $quizid=0,
     print_paging_bar($totalnumber, $page, $perpage,
                 "edit.php?courseid={$course->id}&amp;perpage=$perpage&amp;");
 
-    $canedit = isteacheredit($category->course);
+    $canedit = has_capability('moodle/question:manage', $context);
 
     echo '<form method="post" action="edit.php?courseid='.$course->id.'">';
     echo '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';

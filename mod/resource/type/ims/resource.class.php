@@ -334,7 +334,7 @@ class resource_ims extends resource_base {
 
     /// If there are any error, show it instead of the resource page
         if ($errorcode) {
-            if (!isteacheredit($course->id)) {
+            if (!has_capabilities('moodle/course:activityvisibility', get_context_instance(CONTEXT_COURSE, $course->id))) {
             /// Resource not available page
                 $errortext = get_string('resourcenotavailable','resource');
             } else {

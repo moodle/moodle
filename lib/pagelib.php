@@ -355,7 +355,7 @@ class page_course extends page_base {
         if (has_capability('moodle/site:manageblocks', get_context_instance(CONTEXT_SYSTEM, SITEID)) && defined('ADMIN_STICKYBLOCKS')) {
             return true;
         }
-        return isteacheredit($this->id);
+        return has_capability('moodle/site:manageblocks', get_context_instance(CONTEXT_COURSE, $this->id));
     }
 
     // Is the user actually editing this page right now? This would have something
@@ -580,7 +580,7 @@ class page_generic_activity extends page_base {
 
     function user_allowed_editing() {
         $this->init_full();
-        return isteacheredit($this->modulerecord->course);
+        return has_capability('moodle/site:manageblocks', get_context_instance(CONTEXT_COURSE, $this->modulerecord->course));
     }
 
     function user_is_editing() {

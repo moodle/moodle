@@ -1,6 +1,6 @@
 <?php // $Id$
       // Script to assign students to courses
-
+    //deprecated, should use admin/roles/assign.php now
     require_once("../config.php");
 
     define("MAX_USERS_PER_PAGE", 5000);
