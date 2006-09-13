@@ -431,7 +431,7 @@ function checkchecked(form) {
         } else {
             $limit = '';
         }    
-global $db;
+
         $students = get_records_sql($select.$from.$where.$wheresearch.$sort.$limit);
         if (!$currentrole = get_record('role','id',$roleid)) {
             error('That role does not exist');
