@@ -202,7 +202,7 @@ class quiz_report extends quiz_default_report {
                 $headers[] = get_string('grade', 'quiz').'/'.$quiz->grade;
             }
             if($detailedmarks) {
-                foreach ($questionids as $key=>$id) {
+                foreach ($questionids as $id) {
                     $headers[] = '#'.$questions[$id]->number;
                 }
             }
@@ -230,8 +230,8 @@ class quiz_report extends quiz_default_report {
                 $headers .= "\t".get_string('grade', 'quiz')."/".$quiz->grade;
             }
             if($detailedmarks) {
-                foreach ($questions as $question) {
-                    $headers .= "\t#".$question->number;
+                foreach ($questionids as $id) {
+                    $headers .= "\t#".$questions[$id]->number;
                 }
             }
             if ($hasfeedback) {
