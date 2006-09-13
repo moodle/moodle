@@ -1219,7 +1219,7 @@ function add_to_log($courseid, $module, $action, $url='', $info='', $cm=0, $user
     if ($user) {
         $userid = $user;
     } else {
-        if (isset($USER->realuser)) {  // Don't log
+        if (!empty($USER->realuser)) {  // Don't log
             return;
         }
         $userid = empty($USER->id) ? '0' : $USER->id;
@@ -1241,22 +1241,25 @@ function add_to_log($courseid, $module, $action, $url='', $info='', $cm=0, $user
     if (!$result and ($CFG->debug > 7)) {
         echo '<p>Error: Could not insert a new entry to the Moodle log</p>';  // Don't throw an error
     }
-    if ( isset($USER) && (empty($user) || $user==$USER->id) ) {
-        $db->Execute('UPDATE '. $CFG->prefix .'user SET lastip=\''. $REMOTE_ADDR .'\', lastaccess=\''. $timenow .'\'
-                     WHERE id = \''. $userid .'\' ');
-        if ($courseid != SITEID && !empty($courseid)) { // logins etc dont't have a courseid and isteacher will break without it.
+
+/// Store lastaccess times for the current user 
+
+    if (!empty($USER->id) && ($userid == $USER->id) ) {
+        $db->Execute('UPDATE '. $CFG->prefix .'user 
+                         SET lastip=\''. $REMOTE_ADDR .'\', lastaccess=\''. $timenow .'\'
+                       WHERE id = \''. $userid .'\' ');
+        if ($courseid != SITEID && !empty($courseid)) {
             if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++;};
             
-            /// since we are quering the log table for lastaccess time now, can stop doing this? tables are gone
-            if (!$record = get_record('user_lastaccess', 'userid', $userid, 'courseid', $courseid)) {
+            if ($record = get_record('user_lastaccess', 'userid', $userid, 'courseid', $courseid)) {
+                $record->timeaccess = $timenow;
+                return update_record('user_lastaccess', $record);
+            } else {
                 $record = new object;
                 $record->userid = $userid;
                 $record->courseid = $courseid;
                 $record->timeaccess = $timenow;
                 return insert_record('user_lastaccess', $record);  
-            } else {
-                $record->timeaccess = $timenow;
-                return update_record('user_lastaccess', $record);
             }
         }
     }
