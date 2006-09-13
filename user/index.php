@@ -382,12 +382,12 @@ function checkchecked(form) {
                           u.picture, u.lang, u.timezone, u.emailstop, u.maildisplay, ul.timeaccess AS lastaccess '; // s.lastaccess
         //$select .= $course->enrolperiod?', s.timeend ':'';
         $from   = "FROM {$CFG->prefix}user u INNER JOIN
-                        {$CFG->prefix}role_assignments r on u.id=r.userid LEFT JOIN
-                        {$CFG->prefix}user_lastaccess ul on u.id=ul.userid ";
+                        {$CFG->prefix}role_assignments r on u.id=r.userid LEFT OUTER JOIN
+                        {$CFG->prefix}user_lastaccess ul on r.userid=ul.userid ";
         $where  = "WHERE (r.contextid = $context->id OR r.contextid in $listofcontexts) 
                     AND u.deleted = 0 
                     AND r.roleid = $roleid 
-                    AND ul.courseid = $course->id ";   
+                    AND (ul.courseid = $course->id OR ISNULL(ul.courseid))";   
         $where .= get_lastaccess_sql($accesssince);
         
         $wheresearch = '';
@@ -431,9 +431,8 @@ function checkchecked(form) {
         } else {
             $limit = '';
         }    
-
+global $db;
         $students = get_records_sql($select.$from.$where.$wheresearch.$sort.$limit);
-
         if (!$currentrole = get_record('role','id',$roleid)) {
             error('That role does not exist');
         }
