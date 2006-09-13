@@ -175,9 +175,12 @@ function get_parent_cats($context, $type) {
  * @param string $capability - name of the capability
  * @param object $context - a context object (record from context table)
  * @param integer $userid - a userid number
+ * @param bool $doanything - if false, ignore do anything
  * @param string $errorstring - an errorstring
+ * @param string $stringfile - which stringfile to get it from
  */
-function require_capability($capability, $context=NULL, $userid=NULL, $errormessage="nopermissions", $stringfile='') {
+function require_capability($capability, $context=NULL, $userid=NULL, $doanything=true, 
+                            $errormessage="nopermissions", $stringfile='') {
 
     global $USER;
 
@@ -193,7 +196,7 @@ function require_capability($capability, $context=NULL, $userid=NULL, $errormess
    
 /// OK, if they still don't have the capability then print a nice error message
 
-    if (!has_capability($capability, $context, $userid)) {
+    if (!has_capability($capability, $context, $userid, $doanything)) {
         $capabilityname = get_capability_string($capability);
         print_error($errormessage, $stringfile, '', $capabilityname);
     }
@@ -212,7 +215,7 @@ function require_capability($capability, $context=NULL, $userid=NULL, $errormess
  * @param bool $doanything - if false, ignore do anything
  * @return bool
  */
-function has_capability($capability, $context=NULL, $userid=NULL, $doanything='true') {
+function has_capability($capability, $context=NULL, $userid=NULL, $doanything=true) {
 
     global $USER, $CONTEXT, $CFG;
 
@@ -1315,6 +1318,9 @@ function role_assign($roleid, $userid, $groupid, $contextid, $timestart=0, $time
  * @return boolean - success or failure
  */
 function role_unassign($roleid=0, $userid=0, $groupid=0, $contextid=0) {
+
+    global $USER, $CFG;
+
     $args = array('roleid', 'userid', 'groupid', 'contextid');
     $select = array();
     foreach ($args as $arg) {
@@ -1322,10 +1328,24 @@ function role_unassign($roleid=0, $userid=0, $groupid=0, $contextid=0) {
             $select[] = $arg.' = '.$$arg;
         }
     }
+
     if ($select) {
-        return delete_records_select('role_assignments', implode(' AND ', $select)); 
+        if (delete_records_select('role_assignments', implode(' AND ', $select))) {
+
+        /// If the user is the current user, then reload the capabilities too.
+            if (!empty($USER->id) && $USER->id == $userid) {
+                load_user_capability();
+            }
+    
+        /// Make sure the user is unsubscribed from any appropriate forums in this context
+            require_once($CFG->dirroot.'/mod/forum/lib.php');
+            forum_remove_user_subscriptions($userid, $context);
+
+            return true;
+        }
+        return false;
     }
-    return false;
+    return true;
 }
 
 
