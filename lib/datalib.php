@@ -111,7 +111,6 @@ function get_courses_notin_metacourse($metacourseid,$count=false) {
  * @param string $sort ?
  * @param string $exceptions ? 
  * @return object
- * @todo XXX Convert to Roles
  */
 function search_users($courseid, $groupid, $searchtext, $sort='', $exceptions='') {
     global $CFG;
@@ -149,24 +148,16 @@ function search_users($courseid, $groupid, $searchtext, $sort='', $exceptions=''
                               AND ($fullname $LIKE '%$searchtext%' OR u.email $LIKE '%$searchtext%')
                               $except $order");
         } else {
-            if (!$teachers = get_records_sql("SELECT u.id, u.firstname, u.lastname, u.email
+            $context = get_context_instance(CONTEXT_COURSE, $courseid);
+            $contextlists = get_related_contexts_string($context);
+            $users = get_records_sql("SELECT u.id, u.firstname, u.lastname, u.email
                           FROM {$CFG->prefix}user u,
-                               {$CFG->prefix}user_teachers s
-                          WHERE $select AND s.course = '$courseid' AND s.userid = u.id
+                               {$CFG->prefix}role_assignments ra
+                          WHERE $select AND ra.contextid $contextlists AND ra.userid = u.id
                               AND ($fullname $LIKE '%$searchtext%' OR u.email $LIKE '%$searchtext%')
-                              $except $order")) {
-                $teachers = array();
-            }
-            if (!$students = get_records_sql("SELECT u.id, u.firstname, u.lastname, u.email
-                          FROM {$CFG->prefix}user u,
-                               {$CFG->prefix}user_students s
-                          WHERE $select AND s.course = '$courseid' AND s.userid = u.id
-                              AND ($fullname $LIKE '%$searchtext%' OR u.email $LIKE '%$searchtext%')
-                              $except $order")) {
-                $students = array();
-            }
-            return $teachers + $students;
+                              $except $order");
         }
+        return $users;
     }
 }
 

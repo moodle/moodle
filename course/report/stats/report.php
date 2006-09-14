@@ -31,7 +31,13 @@
             }
             $sql .= " ORDER BY s.roleid ";
         } else {
-            $sql = 'SELECT s.userid,u.firstname,u.lastname,u.idnumber,1 AS roleid FROM '.$CFG->prefix.'user_students s JOIN '.$CFG->prefix.'user u ON u.id = s.userid WHERE course = '.$course->id;
+            $context = get_context_instance(CONTEXT_COURSE, $course->id);
+            
+            $sql = 'SELECT ra.userid,u.firstname,u.lastname,u.idnumber,1 AS roleid 
+                    FROM '.$CFG->prefix.'role_assignments ra, 
+                         '.$CFG->prefix.'user u
+                    WHERE u.id = ra.userid 
+                          AND ra.contextid '.get_related_contexts_string($context);
         }
 
         if (!$us = get_records_sql($sql)) {

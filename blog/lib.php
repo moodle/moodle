@@ -459,16 +459,11 @@
                     
                     // all users with a role assigned
                     $context = get_context_instance(CONTEXT_COURSE, $filterselect);
-                    if ($parents = get_parent_contexts($context)) {
-                        $contextlists = 'OR ra.contextid IN ('.implode(',', $parents).'))';  
-                    } else {
-                        $contextlists = ')';
-                    }      
                     
                     $SQL = '(SELECT '.$requiredfields.' FROM '.$CFG->prefix.'post p, '.$tagtablesql
                             .$CFG->prefix.'role_assignments ra, '.$CFG->prefix.'user u
                             WHERE p.userid = ra.userid '.$tagquerysql.'
-                            AND (ra.contextid = '.$context->id.' '.$contextlists.'
+                            AND ra.contextid '.get_related_contexts_string($context).'
                             AND u.id = p.userid
                             AND (p.publishstate = \'site\' OR p.publishstate = \'public\' OR p.userid = '.$USER->id.'))';
                 } else {

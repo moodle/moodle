@@ -118,7 +118,32 @@
             // add students next
 
         case 'students':
-            $student_ids = get_records_select_menu('user_students', "course IN ($course_ids)", 'course', 'id, userid');
+        
+            $contexts = array();
+            // first find all applicable contextids, put them in a bit array
+            foreach ($course_ids as $course_id) {
+                
+                $context = get_context_instance(CONTEXT_COURSE, $course_id);
+                
+                // first add self to list
+                if (!in_array($context->id, $contexts)) {
+                    $contexts[] = $context->id;
+                }
+               
+                // then add all parent contexts               
+                if ($parents = get_parent_contexts($context)) {
+                    foreach ($parents as $parent) {
+                        if (!in_array($parent->id, $contexts)) {
+                            $contexts[] = $parent->id;
+                        }
+                    }
+                }
+            }
+            
+            $contextlists = implode(',', $contexts);
+            
+            // this sort order might not make sense
+            $student_ids = get_records_select_menu('role_assignments', "contextid IN ($contextlists)", 'contextid', 'id, userid');
             if (is_array($student_ids)) {
                 $users = array_merge($users, $student_ids);
             }
@@ -439,17 +464,10 @@ function hotpot_print_report_selector(&$course, &$hotpot, &$formdata) {
         'all' => get_string('allparticipants'),
         'students' => get_string('students')
     );
-    $users = get_records_sql("
-        SELECT 
-            u.*
-        FROM 
-            {$CFG->prefix}user AS u,
-            {$CFG->prefix}user_students AS us
-        WHERE
-            u.id = us.userid AND us.course=$course->id
-        ORDER BY
-            u.lastname
-    ");
+    
+    $context = get_context_instance(CONTEXT_COURSE, $course->id);
+    $users = get_users_by_capability($context, 'mod/hotpot:attempt', 'u.*', $sort='u.lastname');
+
     if ($users) {
         $menus['reportusers'][''] = '------'; // separator
         foreach ($users as $id=>$user) {

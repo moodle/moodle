@@ -2129,7 +2129,17 @@ function assignment_log_info($log) {
 function assignment_get_unmailed_submissions($starttime, $endtime) {
 
     global $CFG;
+    
     return get_records_sql("SELECT s.*, a.course, a.name
+                              FROM {$CFG->prefix}assignment_submissions s, 
+                                   {$CFG->prefix}assignment a,
+                             WHERE s.mailed = 0 
+                               AND s.timemarked <= $endtime 
+                               AND s.timemarked >= $starttime
+                               AND s.assignment = a.id
+                               AND s.userid = us.userid");
+
+    /* return get_records_sql("SELECT s.*, a.course, a.name
                               FROM {$CFG->prefix}assignment_submissions s, 
                                    {$CFG->prefix}assignment a,
                                    {$CFG->prefix}user_students us
@@ -2139,6 +2149,7 @@ function assignment_get_unmailed_submissions($starttime, $endtime) {
                                AND s.assignment = a.id
                                AND s.userid = us.userid
                                AND a.course = us.course");
+    */
 }
 
 /**
@@ -2202,11 +2213,20 @@ function assignment_get_all_submissions($assignment, $sort="", $dir="DESC") {
         $sort = "a.$sort $dir";
     }
 
+    /* not sure this is needed at all since assignmenet already has a course define, so this join?
     $select = "s.course = '$assignment->course' AND";
     if ($assignment->course == SITEID) {
         $select = '';
-    }
+    }*/
+    
     return get_records_sql("SELECT a.* 
+                              FROM {$CFG->prefix}assignment_submissions a, 
+                                   {$CFG->prefix}user u
+                             WHERE u.id = a.userid
+                               AND a.assignment = '$assignment->id' 
+                          ORDER BY $sort");
+    
+    /* return get_records_sql("SELECT a.* 
                               FROM {$CFG->prefix}assignment_submissions a, 
                                    {$CFG->prefix}user_students s,
                                    {$CFG->prefix}user u
@@ -2214,6 +2234,7 @@ function assignment_get_all_submissions($assignment, $sort="", $dir="DESC") {
                                AND u.id = a.userid
                                AND $select a.assignment = '$assignment->id' 
                           ORDER BY $sort");
+    */
 }
 
 
@@ -2367,16 +2388,16 @@ function assignment_print_overview($courses, &$htmlarray) {
 
         $context = get_context_instance(CONTEXT_MODULE,$this->cm->id);
         if (has_capability('mod/assignment:grade', $context)) {
-            $submissions = count_records_sql("SELECT COUNT(*)
-                              FROM {$CFG->prefix}assignment_submissions a, 
-                                   {$CFG->prefix}user_students s,
-                                   {$CFG->prefix}user u
-                             WHERE a.userid = s.userid
-                               AND u.id = a.userid
-                               AND s.course = '{$assignment->course}'
-                               AND a.assignment = '{$assignment->id}'
-                               AND a.teacher = 0
-                               AND a.timemarked = 0");
+            
+            // count how many people can submit
+            $submissions = 0; // init
+            $students = get_users_by_capability($context, 'mod/assignment:submit');
+            foreach ($student as $student) {
+                if (get_record('assignment_submissions', 'assignment', $assignment->id, 'userid', $student->id)) {
+                    $submissions++;  
+                }
+            }
+            
             if ($submissions) {
                 $str .= get_string('submissionsnotgraded', 'assignment', $submissions);
             }

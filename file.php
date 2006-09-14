@@ -13,8 +13,7 @@
         $lifetime = 86400;     // Seconds for files to remain in caches
     } else {
         $lifetime = $CFG->filelifetime;
-    }
-    
+    } 
 
     $relativepath = get_file_argument('file.php');
     $forcedownload = optional_param('forcedownload', 0, PARAM_BOOL);

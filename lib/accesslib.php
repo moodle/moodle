@@ -1834,7 +1834,6 @@ function role_context_capabilities($roleid, $context, $cap='') {
     return $capabilities;
 }
 
-
 /**
  * Recursive function which, given a context, find all parent context ids, 
  * and return the array in reverse order, i.e. parent first, then grand
@@ -1930,7 +1929,18 @@ function get_parent_contexts($context) {
     }
 }
 
-
+/** gets a string for sql calls, searching for stuff
+ * in this context or above
+ * @param object $context
+ * @return string
+ */
+function get_related_contexts_string($context) {
+    if ($parents = get_parent_contexts($context)) {
+        return (' IN ('.$context->id.','.implode(',', $parents).')');    
+    } else {
+        return (' ='.$context->id);
+    }
+}
 /**
  * This function gets the capability of a role in a given context.
  * It is needed when printing override forms.

@@ -122,14 +122,25 @@
     echo "<input type=\"hidden\" name=\"users\" value=\"$count\">\n";
     echo '<br />';
 
-    $count = count_records('user_students');
-    echo get_string("enrolments").": ".$count;
-    echo "<input type=\"hidden\" name=\"enrolments\" value=\"$count\">\n";
+    // total number of role assignments
+    $count = count_records('role_assignments'); 
+    echo get_string("roleassignments").": ".$count;
+    echo "<input type=\"hidden\" name=\"roleassignments\" value=\"$count\">\n";
     echo '<br />';
 
-    $count = count_records('user_teachers');
-    echo get_string("teachers").": ".$count;
-    echo "<input type=\"hidden\" name=\"teachers\" value=\"$count\">\n";
+    // first find all distinct roles with mod/course:update
+    // please change the name and strings to something appropriate to reflect the new data collected
+    $sql = "SLECT COUNT(DISTINCT u.id)
+            FROM {$CFG->prefix}role_capabilities rc, 
+                 {$CFG->prefix}role_assignments ra,
+                 {$CFG->prefix}user u
+            WHERE (rc.capability = 'mod/course:update' or rc.capability='moodle/site:doanything')
+                   AND rc.roleid = ra.roleid
+                   AND u.id = ra.userid";
+    
+    $count = count_records_sql($sql);
+    echo get_string("courseupdates").": ".$count;
+    echo "<input type=\"hidden\" name=\"courseupdates\" value=\"$count\">\n";
     echo '<br />';
 
     $count = count_records('forum_posts');

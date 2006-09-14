@@ -2750,6 +2750,11 @@ function remove_course_contents($courseid, $showfeedback=true) {
     include_once($CFG->libdir.'/questionlib.php');
     question_delete_course($course, $showfeedback);
 
+    // deletes all role assignments, and local override, these have no courseid in table and needs separate process
+    $context = get_context_instance(CONTEXT_COUSE, $course->id);
+    delect_records('role_assignments', 'contextid', $context->id);
+    delect_records('role_role_capabilities', 'contextid', $context->id);
+
     return $result;
 
 }
@@ -2863,6 +2868,11 @@ function reset_course_userdata($data, $showfeedback=true) {
         }
     }
 
+    // deletes all role assignments, and local override, these have no courseid in table and needs separate process
+    $context = get_context_instance(CONTEXT_COUSE, $data->courseid);
+    delect_records('role_assignments', 'contextid', $context->id);
+    delect_records('role_role_capabilities', 'contextid', $context->id);
+   
     return $result;
 }
 
