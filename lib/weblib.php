@@ -2355,6 +2355,11 @@ function theme_setup($theme = '', $params=NULL) {
         $theme = current_theme();
     }
 
+/// If the theme doesn't exist for some reason then revert to standardwhite
+    if (!file_exists($CFG->themedir. $theme .'/config.php')) {
+        $CFG->theme = $theme = 'standardwhite';
+    }
+
 /// Load up the theme config
     $THEME = NULL;   // Just to be sure
     include($CFG->themedir. $theme .'/config.php');  // Main config for current theme
