@@ -1200,7 +1200,6 @@ function forum_get_readable_forums($userid, $courseid=0) {
 
 /**
  * Returns a list of posts found using an array of search terms.
- * e.g.  word  +word -word
  * @param $searchterms - array of search terms, e.g. word +word -word
  * @param $courseid - if 0, we search through the whole site
  * @param $page
@@ -1295,8 +1294,6 @@ function forum_search_posts($searchterms, $courseid=0, $page=0, $recordsperpage=
                    FROM $fromsql
                   WHERE $selectsql";
 
-    $totalcount = count_records_sql($countsql);
-
     $searchsql = "SELECT p.*,
                          d.forum,
                          u.firstname,
@@ -1307,9 +1304,9 @@ function forum_search_posts($searchterms, $courseid=0, $page=0, $recordsperpage=
                    WHERE $selectsql
                 ORDER BY p.modified DESC";
 
-    //print_object($countsql);  // Debug.
-    //print_object($searchsql);
+    //print_object($searchsql);  // Debug.
 
+    $totalcount = count_records_sql($countsql);
     return get_records_sql($searchsql, $page, $recordsperpage);
 }
 
