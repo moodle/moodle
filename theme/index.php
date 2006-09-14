@@ -138,11 +138,6 @@
     }
     echo "</table>";
 
-    echo "<br /><div align=\"center\">";
-    $options["frame"] = "developer.html";
-    $options["sub"] = "themes";
-    print_single_button("$CFG->wwwroot/doc/index.php", $options, get_string("howtomakethemes"));
-    echo "</div>";
     print_footer();
 
 ?>
