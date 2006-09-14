@@ -121,7 +121,9 @@ function load_defaultuser_role() {
     if ($capabilities = get_records_select('role_capabilities', 
                                      "roleid = $CFG->defaultuserroleid AND contextid = $sitecontext->id")) {
         foreach ($capabilities as $capability) {
-            $USER->capabilities[$sitecontext->id][$capability->capability] = $capability->permission;     
+            if (!isset($USER->capabilities[$sitecontext->id][$capability->capability])) {  // Don't overwrite
+                $USER->capabilities[$sitecontext->id][$capability->capability] = $capability->permission;     
+            }
         }
 
         // SPECIAL EXCEPTION:  If the default user role is actually a guest role, then 
