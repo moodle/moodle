@@ -81,13 +81,3 @@
   list-style-type: none;
   white-space: nowrap;
 }
-.scormtextbox {
-border-style: solid;
-border-width: 1;
-padding-left: 5;
-}
-.scormtableheader{
-font-face: Arial;
-color: #000066;
-font-weight: bold;
-}
