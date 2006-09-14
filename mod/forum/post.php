@@ -136,7 +136,7 @@
 
             $message = '';
 
-            if (get_field('forum', 'type', 'id', $forum) == 'news' && !$oldpost->parent) {
+            if (get_field('forum', 'type', 'id', $forum->id) == 'news' && !$oldpost->parent) {
                 $updatediscussion = new object;
                 $updatediscussion->id = $oldpost->discussion;
                 if (empty($post->timestartdisabled)) {
@@ -274,7 +274,7 @@
             }
 
             $newstopic = false;
-            if (get_field('forum', 'type', 'id', $forum) == 'news') {
+            if (get_field('forum', 'type', 'id', $forum->id) == 'news') {
                 $newstopic = true;
             }
             if ($newstopic && empty($post->timestartdisabled)) {
