@@ -2134,7 +2134,7 @@ function hotpot_string_id($str) {
     if (isset($str) && $str<>'') {
 
         // get the id from the table if it is already there
-		$md5key = md5($str);
+        $md5key = md5($str);
         if (!$id = get_field('hotpot_strings', 'id', 'md5key', $md5key, 'string', $str)) {
 
             // create a string record
@@ -2193,6 +2193,46 @@ if (!function_exists('set_user_preference')) {
     // add this function for Moodle 1.x
     function set_user_preference($name, $value, $otheruser=NULL) {
         return false;
+    }
+}
+if (!function_exists('get_coursemodule_from_id')) {
+    // add this function for Moodle < 1.5.4
+    function get_coursemodule_from_id($modulename, $cmid, $courseid=0) {
+        global $CFG;
+        return get_record_sql("
+            SELECT 
+                cm.*, m.name, md.name as modname
+            FROM 
+                {$CFG->prefix}course_modules cm,
+                {$CFG->prefix}modules md,
+                {$CFG->prefix}$modulename m
+            WHERE 
+                ".($courseid ? "cm.course = '$courseid' AND " : '')."
+                cm.id = '$cmid' AND
+                cm.instance = m.id AND
+                md.name = '$modulename' AND
+                md.id = cm.module
+        ");
+    }
+}
+if (!function_exists('get_coursemodule_from_instance')) {
+    // add this function for Moodle < 1.5.4
+    function get_coursemodule_from_instance($modulename, $instance, $courseid=0) {
+        global $CFG;
+        return get_record_sql("
+            SELECT 
+                cm.*, m.name, md.name as modname
+            FROM 
+                {$CFG->prefix}course_modules cm,
+                {$CFG->prefix}modules md,
+                {$CFG->prefix}$modulename m
+            WHERE 
+                ".($courseid ? "cm.course = '$courseid' AND" : '')."
+                cm.instance = m.id AND
+                md.name = '$modulename' AND
+                md.id = cm.module AND
+                m.id = '$instance'
+        ");
     }
 }
 function hotpot_utf8_to_html_entity($char) {
