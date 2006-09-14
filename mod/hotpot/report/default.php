@@ -625,11 +625,13 @@ class hotpot_default_report {
             // Moodle >= 1.6
             require_once("$CFG->libdir/excellib.class.php");
             $wb = new MoodleExcelWorkbook("-");
+            $wsnamelimit = 0; // no limit
         } else {
             // Moodle <= 1.5
             require_once("$CFG->libdir/excel/Worksheet.php");
             require_once("$CFG->libdir/excel/Workbook.php");
             $wb = new Workbook("-");
+            $wsnamelimit = 31; // max length in chars
         }
 
         // send HTTP headers
@@ -638,7 +640,16 @@ class hotpot_default_report {
         // create one worksheet for each table
         foreach($tables as $table) {
             unset($ws);
-            $ws = &$wb->add_worksheet(empty($table->caption) ? '' : strip_tags($table->caption)); 
+            if (empty($table->caption)) {
+                $wsname = '';
+            } else {
+                $wsname = strip_tags($table->caption);
+                if ($wsnamelimit && strlen($wsname) > $wsnamelimit) {
+                    $wsname = substr($wsname, -$wsnamelimit); // end of string
+                    // $wsname = substr($wsname, 0, $wsnamelimit); // start of string
+                }
+            }
+            $ws = &$wb->add_worksheet($wsname);
 
             $row = 0;
             $this->print_excel_head($wb, $ws, $table, $row, $options);
