@@ -106,7 +106,7 @@
     // warning: it may break backwards compatibility
     if ((!empty($CFG->preventaccesstohiddenfiles)) 
         and (count($args) >= 2)
-        and (!has_capability('moodle/course:viewhiddenactivities', get_context_instance(CONTEXT_COURSE, $course->id))) {
+        and (!has_capability('moodle/course:viewhiddenactivities', get_context_instance(CONTEXT_COURSE, $course->id)))) {
 
         $reference = ltrim($relativepath, "/{$args[0]}/");
 
