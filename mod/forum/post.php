@@ -13,7 +13,7 @@
     $name = optional_param('name','',PARAM_CLEAN);
     $confirm = optional_param('confirm',0,PARAM_INT);
     
-    
+
     if (isguest()) {
         $wwwroot = $CFG->wwwroot.'/login/index.php';
         if (!empty($CFG->loginhttps)) {
@@ -113,7 +113,8 @@
                 error("You can not update this post");
             }
 
-            if (get_field('forum', 'type', 'id', $forum) == 'news' && !$post->parent) {
+            if (get_field('forum', 'type', 'id', $forum->id) == 'news' && !$post->parent) {
+                $updatediscussion = new object;
                 $updatediscussion->id = $post->discussion;
                 if (empty($post->timestartdisabled)) {
                     $updatediscussion->timestart = make_timestamp($post->timestartyear, $post->timestartmonth, $post->timestartday);
@@ -191,7 +192,8 @@
             $discussion->name  = $post->subject;
             $discussion->intro = $post->message;
             $newstopic = false;
-            if (get_field('forum', 'type', 'id', $forum) == 'news' && !$post->parent) {
+
+            if (get_field('forum', 'type', 'id', $forum->id) == 'news' && !$post->parent) {
                 $newstopic = true;
             }
             if ($newstopic && empty($post->timestartdisabled)) {
