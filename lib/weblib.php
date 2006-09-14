@@ -5213,6 +5213,35 @@ function page_doc_link($text='', $iconpath='') {
     return $str;
 }
 
+/**
+ * Returns true if the current site debugging settings are equal 
+ * to the specified level: E_NOTICE, E_ALL, E_STRICT etc
+ * eg use like this:
+ *
+ * if (debugging()) { echo "some normal debug info" } 
+ *
+ * debugging("something really picky", E_STRICT);
+ *
+ * @param int $level the level at which this debugging statement should show
+ * @param string $message a message to print if possible
+ * @return bool
+ */
+function debugging($message='', $level=E_NOTICE) {
+
+    global $CFG;
+
+    if (empty($CFG->debug)) {
+        return false;
+    }
+
+    if ($CFG->debug >= $level) {
+        if ($message) {
+            notify($message, 'notifytiny');
+        }
+        return true;
+    }
+    return false;
+}
 
 // vim:autoindent:expandtab:shiftwidth=4:tabstop=4:tw=140:
 ?>
