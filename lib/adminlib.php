@@ -2089,7 +2089,7 @@ class admin_setting_special_debug extends admin_setting_configselect {
                           E_PARSE   => get_string('debugparse', 'admin'),
                           E_NOTICE  => get_string('debugnotice', 'admin'),
                           E_ALL     => get_string('debugall', 'admin'),
-                          E_STRICT  => get_string('debugstrict', 'admin')
+                          2048      => get_string('debugstrict', 'admin')   //  E_STRICT is php5 only
                         );
         parent::admin_setting_configselect($name, $visiblename, $description, '', $choices);
     }
