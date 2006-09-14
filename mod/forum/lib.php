@@ -1112,31 +1112,219 @@ function forum_get_child_posts($parent, $forumid) {
 }
 
 /**
+ * An array of forum objects that the user is allowed to read/search through.
+ * @param $userid
+ * @param $courseid - if 0, we look for forums throughout the whole site.
+ * @return array of forum objects, or false if no matches
+ *         Forum objects have the following attributes:
+ *         id, type, course, cmid, cmvisible, cmgroupmode, accessallgroups,
+ *         viewhiddentimedposts
+ */
+function forum_get_readable_forums($userid, $courseid=0) {
+    
+    global $CFG;
+    
+    if (!$forummod = get_record('modules', 'name', 'forum')) {
+        error('The forum module is not installed');
+    }
+    
+    if ($courseid) {
+        $courses = get_records('course', 'id', $courseid);
+    } else {
+        $courses = get_records('course');
+    }
+    if (!$courses) {
+        return false;
+    }
+
+    $readableforums = array();
+    
+    foreach($courses as $course) {
+        $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
+        
+        if (has_capability('moodle/course:viewhiddenactivities', $coursecontext)) {
+            $selecthidden = ' AND cm.visible = 1';
+        } else {
+            $selecthidden = '';
+        }
+        
+        $selectforums = "SELECT DISTINCT(f.id) AS id,
+                                f.type AS type,
+                                f.course AS course,
+                                cm.id AS cmid,
+                                cm.visible AS cmvisible,
+                                cm.groupmode AS cmgroupmode
+                           FROM {$CFG->prefix}course_modules AS cm,
+                                {$CFG->prefix}forum AS f
+                          WHERE cm.instance = f.id
+                            AND cm.course = {$course->id}
+                            AND cm.module = {$forummod->id}
+                                $selecthidden";
+        
+        if ($forums = get_records_sql($selectforums)) {
+            
+            $group = user_group($course->id, $userid);
+            
+            foreach ($forums as $forum) {
+                $forumcontext = get_context_instance(CONTEXT_MODULE, $forum->cmid);
+            
+                // Evaluate groupmode.
+                $cm = new object;
+                $cm->id = $forum->cmid;
+                $cm->groupmode = $forum->cmgroupmode;
+                $forum->cmgroupmode = groupmode($course, $cm);
+                
+                if ($forum->cmgroupmode == SEPARATEGROUPS
+                        && !has_capability('moodle/site:accessallgroups', $forumcontext)) {
+                    $forum->accessallgroups = false;
+                    $forum->accessgroup = $group->id;  // The user can only access
+                                                       // discussions for this group.
+                } else {
+                    $forum->accessallgroups = true;
+                }
+                
+                if (has_capability('mod/forum:viewforum', $forumcontext)
+                        && has_capability('mod/forum:viewdiscussion', $forumcontext)) {
+                    
+                    $forum->viewhiddentimedposts
+                        = has_capability('mod/forum:viewhiddentimedposts', $forumcontext);
+                    
+                    array_push($readableforums, $forum);
+                }
+            }
+        }
+    } // End foreach $courses
+    
+    return $readableforums;
+}
+
+/**
  * Returns a list of posts found using an array of search terms.
  * e.g.  word  +word -word
- * @param $searchterms
- * @param $courseid
+ * @param $searchterms - array of search terms, e.g. word +word -word
+ * @param $courseid - if 0, we search through the whole site
  * @param $page
  * @param $recordsperpage=50
  * @param &$totalcount
- * @param $groupid - either a single groupid or an array of groupids.
- *                   this specifies the groups the search is to be carried
- *                   for. However, please note that, unless the user has
- *                   the capability 'moodle/site:accessallgroups',
- *                   we will restrict the search to a subset of groups from 
- *                   $groupid. The subset consists of the groups the user
- *                   really is in.
  * @param $extrasql
+ * @return array of posts found
  */
- //
- //
- // TODO: This function needs to be converted to use has_capability().
- //
- //
- function forum_search_posts($searchterms, $courseid, $page=0, $recordsperpage=50, &$totalcount, $sepgroups=0, $extrasql='') {
- /// Returns a list of posts found using an array of search terms
- /// eg   word  +word -word
- ///
+function forum_search_posts($searchterms, $courseid=0, $page=0, $recordsperpage=50, 
+                            &$totalcount, $extrasql='') {
+    global $CFG, $USER;
+    require_once($CFG->libdir.'/searchlib.php');
+
+    $forums = forum_get_readable_forums($USER->id, $courseid);
+
+
+    for ($i=0; $i<count($forums); $i++) {
+        if ($i == 0) {
+            $selectdiscussion = " ((d.forum = {$forums[$i]->id}";
+        } else {
+            $selectdiscussion .= " OR (d.forum = {$forums[$i]->id}";
+        }
+        if (!empty($CFG->forum_enabletimedposts) && !$forums[$i]->viewhiddentimedposts) {
+            $now = time();
+            $selectdiscussion .= " AND ( d.userid = {$USER->id}
+                                   OR ((d.timestart = 0 OR d.timestart <= $now)
+                                   AND (d.timeend = 0 OR d.timeend > $now)) )";
+        }
+        if (!$forums[$i]->accessallgroups) {
+            if (!empty($forums[$i]->accessgroup)) {
+                $selectdiscussion .= " AND (d.groupid = {$forums[$i]->accessgroup}";
+                $selectdiscussion .= ' OR d.groupid = -1)';  // -1 means open for all groups.
+            } else {
+                // User isn't in any group. Only search discussions that are
+                // open to all groups.
+                $selectdiscussion .= ' AND d.groupid = -1';
+            }
+        }
+        $selectdiscussion .= ")\n";
+    }
+    $selectdiscussion .= ")";
+
+
+    // Some differences in syntax for PostgreSQL.
+    if ($CFG->dbtype == 'postgres7') {
+        $LIKE = 'ILIKE';           // Case-insensitive
+        $NOTLIKE = 'NOT ILIKE';    // Case-insensitive
+        $REGEXP = '~*';
+        $NOTREGEXP = '!~*';
+    } else {                       // Note the LIKE are casesensitive for Oracle. Oracle 10g is required to use 
+        $LIKE = 'LIKE';            // the caseinsensitive search using regexp_like() or NLS_COMP=LINGUISTIC :-(
+        $NOTLIKE = 'NOT LIKE';     // See http://docs.moodle.org/en/XMLDB_Problems#Case-insensitive_searches
+        $REGEXP = 'REGEXP';
+        $NOTREGEXP = 'NOT REGEXP';
+    }
+
+    $messagesearch = '';
+    $searchstring = '';
+    
+    // Need to concat these back together for parser to work.
+    foreach($searchterms as $searchterm){
+        if ($searchstring != '') {
+            $searchstring .= ' ';
+        }
+        $searchstring .= $searchterm;
+    }
+
+    // We need to allow quoted strings for the search. The quotes *should* be stripped
+    // by the parser, but this should be examined carefully for security implications.
+    $searchstring = str_replace("\\\"","\"",$searchstring);
+    $parser = new search_parser();
+    $lexer = new search_lexer($parser);
+
+    if ($lexer->parse($searchstring)) {
+        $parsearray = $parser->get_parsed_array();
+        $messagesearch = search_generate_SQL($parsearray, 'p.message', 'p.subject',
+                                             'p.userid', 'u.id', 'u.firstname',
+                                             'u.lastname', 'p.modified', 'd.forum');
+    }
+
+    $fromsql = "{$CFG->prefix}forum_posts p,
+                  {$CFG->prefix}forum_discussions d,
+                  {$CFG->prefix}user u";
+
+    $selectsql = " $messagesearch
+               AND p.discussion = d.id
+               AND p.userid = u.id
+               AND $selectdiscussion
+                   $extrasql";
+
+    $countsql = "SELECT COUNT(*)
+                   FROM $fromsql
+                  WHERE $selectsql";
+
+    $totalcount = count_records_sql($countsql);
+
+    $searchsql = "SELECT p.*,
+                         d.forum,
+                         u.firstname,
+                         u.lastname,
+                         u.email,
+                         u.picture
+                    FROM $fromsql
+                   WHERE $selectsql
+                ORDER BY p.modified DESC";
+
+    //print_object($countsql);  // Debug.
+    //print_object($searchsql);
+
+    return get_records_sql($searchsql, $page, $recordsperpage);
+}
+
+
+/**
+ *
+ * PRE-ROLES VERSION.
+ * TODO: Remove this after testing. This is left here for convenience so that
+ *       we can compare with new implementation above.
+ * Note that the argument $sepgroups has been removed in the new version.
+ */
+/*
+ function forum_search_posts($searchterms, $courseid, $page=0, $recordsperpage=50, 
+                             &$totalcount, $sepgroups=0, $extrasql='') {
+
      global $CFG, $USER;
      require_once($CFG->libdir.'/searchlib.php');
 
@@ -1230,7 +1418,7 @@ function forum_get_child_posts($parent, $forumid) {
 
      return get_records_sql("SELECT p.*,d.forum, u.firstname,u.lastname,u.email,u.picture FROM
                              $selectsql ORDER BY p.modified DESC", $limitfrom, $limitnum);
- }
+ }*/
 
 
 function forum_get_ratings($postid, $sort="u.firstname ASC") {
@@ -2015,6 +2203,8 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
 
     return $ratingsmenuused;
 }
+
+
 /**
 * This function prints the overview of a discussion in the forum listing.
 * It needs some discussion information and some post information, these

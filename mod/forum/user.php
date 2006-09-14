@@ -52,23 +52,6 @@
     $showroles = 1;
     include($CFG->dirroot.'/user/tabs.php');   /// Prints out tabs as part of user page
 
-    $isseparategroups = /*
-                         NOTE: isteacheredit is deprecated.
-                         
-                         (($course->groupmode == SEPARATEGROUPS and
-                         $course->groupmodeforce and
-                         !isteacheredit($course->id))*/forum_get_separate_modules($course->id);
-
-    /*
-    NOTE: isteacheredit is deprecated.
-    
-    //editting teacher can view everything so do not pass in groupid
-    if (isteacheredit ($course->id)){
-        $isseparategroups = false;
-    }
-    */
-
-    $groupid = $isseparategroups ? /*get_current_group*/mygroupid($course->id) : NULL;
 
     switch ($mode) {
         case 'posts' :
@@ -85,7 +68,7 @@
     echo '<div class="user-content">';
     // Get the posts regardless of group first.
     if ($posts = forum_search_posts($searchterms, $course->id, $page*$perpage, $perpage, 
-                                    $totalcount, $groupid, $extrasql)) {
+                                    $totalcount, $extrasql)) {
         
         print_paging_bar($totalcount, $page, $perpage, 
                          "user.php?id=$user->id&amp;course=$course->id&amp;mode=$mode&amp;perpage=$perpage&amp;");
