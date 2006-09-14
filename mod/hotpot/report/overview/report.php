@@ -51,7 +51,7 @@ class hotpot_report extends hotpot_default_report {
 				$picture = print_user_picture($u->userid, $course->id, $u->picture, false, true);
 				$name = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$u->userid.'&course='.$course->id.'">'.$name.'</a>';
 			}
-			$grade = isset($user->grade) ? $user->grade : $spacer;
+			$grade = isset($user->grade) && $user->grade<>'&nbsp;' ? $user->grade : $spacer;
 			$attemptcount = count($user->attempts);
 			if ($attemptcount>1) {
 				$text = $name;
