@@ -4,9 +4,9 @@ require_once($CFG->libdir.'/pagelib.php');
 
 define('PAGE_ADMIN', 'admin');
 
-define('BLOCK_L_MIN_WIDTH',160);
+define('BLOCK_L_MIN_WIDTH',0);
 define('BLOCK_L_MAX_WIDTH',210);
-define('BLOCK_R_MIN_WIDTH',160);
+define('BLOCK_R_MIN_WIDTH',0);
 define('BLOCK_R_MAX_WIDTH',210);
 
 page_map_class(PAGE_ADMIN, 'page_admin');
