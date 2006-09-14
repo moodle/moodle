@@ -8,6 +8,11 @@
     require_once('../../config.php');
 /// check capabilities here
 
+    require_once($CFG->libdir.'/adminlib.php');
+    $adminroot = admin_get_root();
+    admin_externalpage_setup('defineroles', $adminroot);
+
+
     $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
     require_capability('moodle/roles:manage', $sitecontext);
 
@@ -47,43 +52,41 @@
     }
 /// displaying form here
 
-    print_header("$site->shortname: $strmanageroles", 
-                 "$site->fullname", 
-                 "<a href=\"../index.php\">$stradministration</a> -> <a href=\"manage.php\">$strmanageroles</a>
-                 ");
+    admin_externalpage_print_header($adminroot);
                  
     $currenttab='allowoverride';
     require_once('managetabs.php');
 
     $table->tablealign = "center";
-    $table->align = array ("middle", "left");
-    $table->wrap = array ("nowrap", "nowrap");
     $table->cellpadding = 5;
     $table->cellspacing = 0;
-    $table->width = '40%';
+    $table->width = '90%';
+    $table->align[] = 'right';
     
 /// get all the roles identifier
     foreach ($roles as $role) {
         $rolesname[] = $role->name;  
         $roleids[] = $role->id;
+        $table->align[] = 'center';
+        $table->wrap[] = 'nowrap';
     }    
     
-    $table->data[] = array_merge(array(''), $rolesname);
+    $table->head = array_merge(array(''), $rolesname);
     
     foreach ($roles as $role) {
-        
         $beta = get_box_list($role->id, $roleids);
-    
         $table->data[] = array_merge(array($role->name), $beta);
     }
+
+    print_simple_box(get_string('configallowoverride', 'admin'), 'center');
     
     echo '<form action="allowoverride.php" method="post">';
     print_table($table);
-    echo '<div align="center"><input type="submit" value="submit"/></div>';
+    echo '<div class="singlebutton"><input type="submit" value="'.get_string('savechanges').'"/></div>';
     echo '<input type="hidden" name="dummy" value="1" />'; // this is needed otherwise we do not know a form has been submitted
     echo '</form>';
 
-    print_footer();
+    admin_externalpage_print_footer($adminroot);
 
 // returns array
 function get_box_list($roleid, $arraylist){

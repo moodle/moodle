@@ -437,6 +437,13 @@ body#admin-roles-manage table.generalbox {
   margin-top: 1em;
 }
 
+#admin-roles-manage .singlebutton,
+#admin-roles-allowoverride .singlebutton,
+#admin-roles-allowassign .singlebutton {
+  padding: 10px;
+  text-align:center;
+}
+
 /***
  *** Blocks
  ***/

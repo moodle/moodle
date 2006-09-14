@@ -1,12 +1,11 @@
 <?php //$Id$
-///dummy field names are used to help adding and dropping indexes. There's only 1 case now, in scorm_scoes_track
-//testing
+
     require_once('../../config.php');
 
     require_once($CFG->libdir.'/adminlib.php');
     $adminroot = admin_get_root();
+
     admin_externalpage_setup('defineroles', $adminroot);
-//    require_login();
 
     $roleid      = optional_param('roleid', 0, PARAM_INT); // if set, we are editing a role
     $action      = optional_param('action', '', PARAM_ALPHA);
@@ -15,34 +14,28 @@
     $confirm     = optional_param('confirm', 0, PARAM_BOOL);
 
     $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
-    
+
     $stradministration = get_string('administration');
     $strmanageroles = get_string('manageroles');
 
     if ($roleid && $action!='delete') {
-          $role = get_record('role', 'id', $roleid);
-      
+        $role = get_record('role', 'id', $roleid);
         $editingstr = '-> '.get_string('editinga', '', $role->name);  
     } else {
         $editingstr ='';  
     }
-    
+
     admin_externalpage_print_header($adminroot);
-//    print_header("$site->shortname: $strmanageroles", 
-//                 "$site->fullname", 
-//                 "<a href=\"../index.php\">$stradministration</a> -> <a href=\"manage.php\">$strmanageroles</a>
-//                 $editingstr
-//                 ");
 
     $currenttab = 'manage';
     include_once('managetabs.php');
 
     // form processing, editing a role, adding a role or deleting a role
     if ($action && confirm_sesskey()) {
-        
+
         switch ($action) {
             case 'add':
-                                                
+
                 $newrole = create_role($name, $description);        
 
                 $ignore = array('roleid', 'sesskey', 'action', 'name', 'description', 'contextid');
@@ -57,15 +50,15 @@
                     assign_capability($capname, $value, $newrole, $sitecontext->id);
 
                 }
-            
-            break;
-            
+
+                break;
+
             case 'edit':
-                
+
                 $ignore = array('roleid', 'sesskey', 'action', 'name', 'description', 'contextid');
-                
+
                 $data = data_submitted();
-                
+
                 foreach ($data as $capname => $value) {
                     if (in_array($capname, $ignore)) { 
                         continue;
@@ -73,7 +66,7 @@
 
                     // edit default caps
                     $SQL = "select * from {$CFG->prefix}role_capabilities where
-                            roleid = $roleid and capability = '$capname' and contextid = $sitecontext->id";
+                        roleid = $roleid and capability = '$capname' and contextid = $sitecontext->id";
 
                     $localoverride = get_record_sql($SQL);
 
@@ -99,112 +92,117 @@
                     }
 
                 }
-            
+
                 // update normal role settings
-                
+
                 $role->id = $roleid;
                 $role->name = $name;
                 $role->description = $description;    
-                
+
                 update_record('role', $role);
-            
-            break;
-            
+
+                break;
+
             case 'delete':
                 if ($confirm) { // deletes a role 
                     echo ('deleting...');
-                                            
+
                     // check for depedencies
-                      
-                      // delete all associated role-assignments?
-                      delete_records('role', 'id', $roleid);
-                
+
+                    // delete all associated role-assignments?
+                    delete_records('role', 'id', $roleid);
+
                 } else {
-                      echo ('<form action="manage.php" method="POST">');
-                      echo ('<input type="hidden" name="action" value="delete">');
-                      echo ('<input type="hidden" name="roleid" value="'.$roleid.'">');
-                      echo ('<input type="hidden" name="sesskey" value="'.sesskey().'">');
-                      echo ('<input type="hidden" name="confirm" value="1">');
-                      echo ('are you sure?');
-                      echo ('<input type="submit" value="yes">');
-                      admin_externalpage_print_footer($adminroot);
-//                      print_footer($course);
-                      exit;
-                      
-                      // prints confirmation form
+                    echo ('<form action="manage.php" method="POST">');
+                    echo ('<input type="hidden" name="action" value="delete">');
+                    echo ('<input type="hidden" name="roleid" value="'.$roleid.'">');
+                    echo ('<input type="hidden" name="sesskey" value="'.sesskey().'">');
+                    echo ('<input type="hidden" name="confirm" value="1">');
+                    echo ('are you sure?');
+                    echo ('<input type="submit" value="yes">');
+                    admin_externalpage_print_footer($adminroot);
+                    //                      print_footer($course);
+                    exit;
+
+                    // prints confirmation form
                 }
-            
-            break;      
-            
-            /// add possible positioning switch here
-            
+
+                break;      
+
+                /// add possible positioning switch here
+
             default:
-            break;      
-                      
+                break;      
+
         }
-        
+
     }
 
     $roles = get_records('role');
 
     if (($roleid && $action!='delete') || $action=='new') { // load the role if id is present
-              
+
         if ($roleid) {
-              $action='edit';
-              $role = get_record('role', 'id', $roleid);
+            $action='edit';
+            $role = get_record('role', 'id', $roleid);
         } else {    
-              $action='add';              
+            $action='add';              
             $role->name='';
             $role->description='';
         }
-        
+
         foreach ($roles as $rolex) {
             $roleoptions[$rolex->id] = $rolex->name;
         }
-        
+
         // prints a form to swap roles
         print ('<form name="rolesform1" action="manage.php" method="post">');
         print ('<div align="center">'.get_string('selectrole').': ');
         choose_from_menu ($roleoptions, 'roleid', $roleid, 'choose', $script='rolesform1.submit()');
         print ('</div></form>');
-              
+
         // this is the array holding capabilities of this role sorted till this context
         $r_caps = role_context_capabilities($roleid, $sitecontext);
-              
+
         // this is the available capabilities assignable in this context
         $capabilities = fetch_context_capabilities($sitecontext);
-        
+
         print_simple_box_start();
         include_once('manage.html');
         print_simple_box_end();
-    
+
     } else {
-        
-        $table->tablealign = "center";
-        $table->align = array ("middle", "left");
-        $table->wrap = array ("nowrap", "nowrap");
+
+        $table = new object;
+
+        $table->tablealign = 'center';
+        $table->align = array('middle', 'left', 'left');
+        $table->wrap = array('nowrap', '', 'nowrap');
         $table->cellpadding = 5;
         $table->cellspacing = 0;
-        $table->width = '40%';
+        $table->width = '90%';
+
+        $table->head = array(get_string('roles', 'role'), 
+                             get_string('description'), 
+                             get_string('delete'));
+
         /*************************
          * List all current roles *
          **************************/
-        
-        $table->data[] = array('roles', 'description', 'delete');
+
         foreach ($roles as $role) {
-      
-              $table->data[] = array('<a href="manage.php?roleid='.$role->id.'&amp;sesskey='.sesskey().'">'.$role->name.'</a>', $role->description, '<a href="manage.php?action=delete&roleid='.$role->id.'&sesskey='.sesskey().'">delete</a>');
-      
-        }    
-          print_table($table);
-          
-          echo ('<form action="manage.php" method="POST">');
-          echo ('<input type="hidden" name="sesskey" value="'.sesskey().'">');
-          echo ('<input type="hidden" name="action" value="new">');
-          echo ('<input type="submit" value="add new role">');
+
+            $table->data[] = array('<a href="manage.php?roleid='.$role->id.'&amp;sesskey='.sesskey().'">'.$role->name.'</a>', $role->description, '<a href="manage.php?action=delete&roleid='.$role->id.'&sesskey='.sesskey().'">delete</a>');
+
+        } 
+        print_table($table);
+
+        $options = new object;
+        $options->sesskey = sesskey();
+        $options->action = 'new';
+        print_single_button('manage.php', $options, get_string('addrole', 'role'), 'POST');
     }
 
-    use_html_editor("description");
+    use_html_editor('description');
     admin_externalpage_print_footer($adminroot);
-//    print_footer($course);
 ?>
