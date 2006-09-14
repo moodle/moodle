@@ -4799,7 +4799,7 @@ function print_side_block($heading='', $content='', $list=NULL, $icons=NULL, $fo
         $skip_text = get_string('skipblock', 'access').' '.$block_id;
     }
     else {
-        $skip_text = get_string('skipa', 'access', $title);
+        $skip_text = get_string('skipa', 'access', strip_tags($title));
     }
     $skip_link = '<a href="#sb-'.$block_id.'" class="skip-block" title="'.$skip_text.'"><span class="accesshide">'.$skip_text.'</span></a>';
     $skip_dest = '<span id="sb-'.$block_id.'" class="skip-block-to"></span>';
