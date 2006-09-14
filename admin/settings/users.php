@@ -7,20 +7,6 @@ $ADMIN->add('users', new admin_externalpage('userauthentication', get_string('au
 
 // "userpolicies" settingpage
 $temp = new admin_settingpage('userpolicies', get_string('userpolicies', 'admin'));
-$temp->add(new admin_setting_configcheckbox('autologinguests', get_string('autologinguests', 'admin'), get_string('configautologinguests', 'admin'), 0));
-$temp->add(new admin_setting_configmultiselect('hiddenuserfields', get_string('hiddenuserfields', 'admin'), get_string('confighiddenuserfields', 'admin'), array(), array('none' => get_string('none'),
-                                                                                                                                                                          'description' => get_string('description'),
-																																								          'city' => get_string('city'),
-																																								          'country' => get_string('country'),
-																																								          'webpage' => get_string('webpage'),
-																																								          'icqnumber' => get_string('icqnumber'),
-																																								          'skypeid' => get_string('skypeid'),
-																																								          'yahooid' => get_string('yahooid'),
-																																								          'aimid' => get_string('aimid'),
-																																								          'msnid' => get_string('msnid'),
-																																								          'lastaccess' => get_string('lastaccess'))));
-$temp->add(new admin_setting_configcheckbox('allusersaresitestudents', get_string('allusersaresitestudents', 'admin'), get_string('configallusersaresitestudents','admin'), 1));
-$temp->add(new admin_setting_special_adminseesall());
 
 $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
 if (!$guestrole = get_guest_role()) {
@@ -30,6 +16,24 @@ $temp->add(new admin_setting_configselect('notloggedinroleid', get_string('notlo
               get_string('confignotloggedinroleid', 'admin'), $guestrole->id, get_assignable_roles($context)));
 $temp->add(new admin_setting_configselect('defaultuserroleid', get_string('defaultuserroleid', 'admin'), 
               get_string('configdefaultuserroleid', 'admin'), $guestrole->id, get_assignable_roles($context)));
+
+//$temp->add(new admin_setting_configcheckbox('autologinguests', get_string('autologinguests', 'admin'), get_string('configautologinguests', 'admin'), 0));
+//$temp->add(new admin_setting_configcheckbox('allusersaresitestudents', get_string('allusersaresitestudents', 'admin'), get_string('configallusersaresitestudents','admin'), 1));
+$temp->add(new admin_setting_configmultiselect('hiddenuserfields', get_string('hiddenuserfields', 'admin'), 
+           get_string('confighiddenuserfields', 'admin'), array(), 
+               array('none' => get_string('none'),
+                     'description' => get_string('description'),
+                     'city' => get_string('city'),
+                     'country' => get_string('country'),
+                     'webpage' => get_string('webpage'),
+                     'icqnumber' => get_string('icqnumber'),
+                     'skypeid' => get_string('skypeid'),
+                     'yahooid' => get_string('yahooid'),
+                     'aimid' => get_string('aimid'),
+                     'msnid' => get_string('msnid'),
+                     'lastaccess' => get_string('lastaccess'))));
+//$temp->add(new admin_setting_special_adminseesall());
+
 
 $ADMIN->add('users', $temp);
 
