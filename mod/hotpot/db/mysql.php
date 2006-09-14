@@ -1,6 +1,6 @@
 <?PHP
 function hotpot_upgrade($oldversion) {
-    global $db, $CFG;
+    global $CFG;
     $ok = true;
 
     // set path to update functions
