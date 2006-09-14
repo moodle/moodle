@@ -584,14 +584,29 @@ function get_courses_page($categoryid="all", $sort="c.sortorder ASC", $fields="c
  * @param int $userid The user of interest
  * @param string $sort ?
  * @return object {@link $COURSE} records
- * @todo XXX Convert to Roles
  */
 function get_my_courses($userid, $sort='visible DESC,sortorder ASC') {
 
     global $CFG, $USER;
 
-    $course = array();
+    $mycourses = array();
+    $SQL = "SELECT * from {$CFG->prefix}course WHERE 1 ORDER BY $sort";
+    $courses = get_records_sql($SQL);
+    
+    foreach ($courses as $course) {
+        if ($course->id != SITEID) {
+            // users with moodle/course:view are considered course participants
+            // the course needs to be visible, or user must have moodle/course:viewhiddencourses capability set to view
+            // hidden courses  
+            if (has_capability('moodle/course:view', get_context_instance(CONTEXT_COURSE, $course->id), $userid)
+                && ($course->visible || has_capability('moodle/course:viewhiddencourses', get_context_instance(CONTEXT_COURSE, $course->id), $userid))) {
+                $mycourses[] = $course;
+            }
+        }
+    }
 
+    return $mycourses;
+/*
     if ($students = get_records('user_students', 'userid', $userid, '', 'id, course')) {
         foreach ($students as $student) {
             $course[$student->course] = $student->course;
@@ -620,7 +635,7 @@ function get_my_courses($userid, $sort='visible DESC,sortorder ASC') {
     $courseids = implode(',', $course);
 
     return get_records_list('course', 'id', $courseids, $sort);
-
+*/
 //  The following is correct but VERY slow with large datasets
 //
 //    return get_records_sql("SELECT c.*
