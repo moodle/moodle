@@ -176,7 +176,7 @@
         $table = new object;
 
         $table->tablealign = 'center';
-        $table->align = array('middle', 'left', 'left');
+        $table->align = array('right', 'left', 'left');
         $table->wrap = array('nowrap', '', 'nowrap');
         $table->cellpadding = 5;
         $table->cellspacing = 0;
