@@ -456,21 +456,21 @@
 
             case 'course':
                 if ($filterselect != SITEID) {
+                    
+                    // all users with a role assigned
+                    $context = get_context_instance(CONTEXT_COURSE, $filterselect);
+                    if ($parents = get_parent_contexts($context)) {
+                        $contextlists = 'OR ra.contextid IN ('.implode(',', $parents).'))';  
+                    } else {
+                        $contextlists = ')';
+                    }      
+                    
                     $SQL = '(SELECT '.$requiredfields.' FROM '.$CFG->prefix.'post p, '.$tagtablesql
-                            .$CFG->prefix.'user_students s, '.$CFG->prefix.'user u
-                            WHERE p.userid = s.userid '.$tagquerysql.'
-                            AND s.course = '.$filterselect.'
+                            .$CFG->prefix.'role_assignments ra, '.$CFG->prefix.'user u
+                            WHERE p.userid = ra.userid '.$tagquerysql.'
+                            AND (ra.contextid = '.$context->id.' '.$contextlists.'
                             AND u.id = p.userid
-                            AND (p.publishstate = \'site\' OR p.publishstate = \'public\' OR p.userid = '.$USER->id.'))
-
-                            UNION
-
-                            (SELECT '.$requiredfields.' FROM '.$CFG->prefix.'post p, '.$tagtablesql
-                            .$CFG->prefix.'user_teachers t, '.$CFG->prefix.'user u
-                            WHERE p.userid = t.userid '.$tagquerysql.'
-                            AND t.course = '.$filterselect.'
-                            AND u.id = p.userid
-                            AND (p.publishstate = \'site\' OR p.publishstate = \'public\' OR p.userid = '.$USER->id.'))';    //this will break for postgres, i think
+                            AND (p.publishstate = \'site\' OR p.publishstate = \'public\' OR p.userid = '.$USER->id.'))';
                 } else {
 
                     if (isloggedin()) {
