@@ -119,19 +119,14 @@ function hotpot_restore_mods($mod, $restore) {
             fwrite ($restorelog, "<br>Hotpot - ".$xml['NAME'][0]['#']." <br>");
 
             // loop through time fields
-            $TAGS = array('TIMEOPEN'=>1, 'TIMECLOSE'=>1, 'TIMECREATED'=>0, 'TIMEMODIFIED'=>0);
-            foreach ($TAGS as $TAG=>$ignoreifempty) {
+            $TAGS = array('TIMEOPEN', 'TIMECLOSE', 'TIMECREATED', 'TIMEMODIFIED');
+            foreach ($TAGS as $TAG) {
 
-                // get $TAG value
-                if (isset($xml[$TAG][0]['#'])) {
-                    $value = $xml[$TAG][0]['#'];
-                } else {
-                    $value = 0;
-                }
-                if (empty($value) && $ignoreifempty) {
-                    // do nothing
-                } else {
+                // check $TAG has a sensible value
+                if (!empty($xml[$TAG][0]['#']) && is_string($xml[$TAG][0]['#'])) {
+
                     // write old date to $restorelog
+                    $value = $xml[$TAG][0]['#'];
                     $date = usergetdate($value);
                     fwrite ($restorelog, "$TAG was ". $date['weekday'].", ".$date['mday']." ".$date['month']." ".$date['year']);
 
@@ -144,7 +139,6 @@ function hotpot_restore_mods($mod, $restore) {
                     $xml[$TAG][0]['#'] = $value;
                 }
             }
-            fclose($restorelog);
         }
 
         $status = hotpot_restore_records(
