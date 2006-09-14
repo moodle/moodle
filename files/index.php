@@ -385,6 +385,7 @@
             html_header($course, $wdir);
             if (($text != '') and confirm_sesskey()) {
                 $fileptr = fopen($basedir.'/'.$file,"w");
+                $text = preg_replace('/\x0D/', '', $text);  // http://moodle.org/mod/forum/discuss.php?d=38860
                 fputs($fileptr, stripslashes($text));
                 fclose($fileptr);
                 displaydir($wdir);
