@@ -56,7 +56,7 @@ class block_online_users extends block_base {
 
         if ($COURSE->id == SITEID) {  // Site-level
             $courseselect = '';
-            $timeselect = "AND ul.timeaccess > $timefrom OR u.lastaccess > $timefrom)";
+            $timeselect = "AND (ul.timeaccess > $timefrom OR u.lastaccess > $timefrom)";
         } else {
             $courseselect = "AND ul.courseid = '".$COURSE->id."'";
             $timeselect = "AND ul.timeaccess > $timefrom";
@@ -64,7 +64,7 @@ class block_online_users extends block_base {
 
         $users = array();
 
-        $SQL = "SELECT u.id, u.username, u.firstname, u.lastname, u.picture
+        $SQL = "SELECT u.id, u.username, u.firstname, u.lastname, u.picture, u.lastaccess, ul.timeaccess
                 FROM {$CFG->prefix}user_lastaccess ul,
                      {$CFG->prefix}user u
                      $groupmembers
