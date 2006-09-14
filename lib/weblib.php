@@ -5218,12 +5218,12 @@ function page_doc_link($text='', $iconpath='') {
  * to the specified level: E_NOTICE, E_ALL, E_STRICT etc
  * eg use like this:
  *
- * if (debugging()) { echo "some normal debug info" } 
+ * 1)  debugging('a normal notice');
+ * 2)  debugging('something really picky', E_STRICT);
+ * 3)  if (debugging()) { echo "a bunch of commands could be here" } 
  *
- * debugging("something really picky", E_STRICT);
- *
+ * @param string $message a message to print
  * @param int $level the level at which this debugging statement should show
- * @param string $message a message to print if possible
  * @return bool
  */
 function debugging($message='', $level=E_NOTICE) {
