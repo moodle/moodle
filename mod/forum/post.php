@@ -72,6 +72,12 @@
         if (!$course = get_record('course', 'id', $post->course)) {
             error('Could not find specified course!');
         }
+
+        if (!empty($forum)) {     // Check the forum id and change it to a full object
+            if (! $forum = get_record('forum', 'id', $forum)) {
+                error('The forum number was incorrect');
+            }
+        }
         
         if (!empty($course->lang)) {           // Override current language
             $CFG->courselang = $course->lang;
@@ -113,7 +119,7 @@
                 error("You can not update this post");
             }
 
-            if (get_field('forum', 'type', 'id', $forum->id) == 'news' && !$post->parent) {
+            if ($forum->type == 'news' && !$post->parent) {
                 $updatediscussion = new object;
                 $updatediscussion->id = $post->discussion;
                 if (empty($post->timestartdisabled)) {
@@ -193,7 +199,7 @@
             $discussion->intro = $post->message;
             $newstopic = false;
 
-            if (get_field('forum', 'type', 'id', $forum->id) == 'news' && !$post->parent) {
+            if ($forum->type == 'news' && !$post->parent) {
                 $newstopic = true;
             }
             if ($newstopic && empty($post->timestartdisabled)) {
