@@ -35,10 +35,8 @@ class qformat_blackboard_6 extends qformat_default {
     }
     
     function clean_temp_dir($dir='') {
-        // this needs to be reworked
-        
-        
-        // for now we will just say everything happened okay note that a mess may be piling up in $CFG->dataroot/temp/bbquiz_import
+        // for now we will just say everything happened okay note 
+        // that a mess may be piling up in $CFG->dataroot/temp/bbquiz_import
         return true;
         
         if ($dir == '') {
@@ -210,14 +208,12 @@ class qformat_blackboard_6 extends qformat_default {
     $xml = xmlize($text, 0);
 
     $raw_questions = $xml['questestinterop']['#']['assessment'][0]['#']['section'][0]['#']['item'];
-	//echo "Line 213: Raw Questions <br>";
-	//print_object($raw_questions);
     $questions = array();
 
     foreach($raw_questions as $quest) {
         $question = $this->create_raw_question($quest);
-		
-		switch($question->qtype) {
+
+        switch($question->qtype) {
             case "Matching":
                 $this->process_matching($question, $questions);
                 break;
@@ -242,8 +238,6 @@ class qformat_blackboard_6 extends qformat_default {
         }
 
     }
-    //echo "readquestions:";
-	//print_object ($questions);
     return $questions;
   }
 
@@ -252,24 +246,24 @@ class qformat_blackboard_6 extends qformat_default {
 // the object created is NOT a moodle question object
 function create_raw_question($quest) {
     
-	$question = $this->defaultquestion();
+    $question = $this->defaultquestion();
     $question->qtype = $quest['#']['itemmetadata'][0]['#']['bbmd_questiontype'][0]['#'];
     $presentation->blocks = $quest['#']['presentation'][0]['#']['flow'][0]['#']['flow'];
-	
-	foreach($presentation->blocks as $pblock) {
+
+    foreach($presentation->blocks as $pblock) {
         
         $block = NULL;
         $block->type = $pblock['@']['class'];
-		
+
         switch($block->type) {
             case 'QUESTION_BLOCK':
                 $sub_blocks = $pblock['#']['flow'];
                 foreach($sub_blocks as $sblock) {
-					//echo "Calling process_block from line 263<br>";
+                    //echo "Calling process_block from line 263<br>";
                     $this->process_block($sblock, $block);  
                 }
                 break;
-				
+
             case 'RESPONSE_BLOCK':
                 $choices = NULL;
                 switch($question->qtype) {
@@ -277,9 +271,8 @@ function create_raw_question($quest) {
                         $bb_subquestions = $pblock['#']['flow'];
                         $sub_questions = array();
                         foreach($bb_subquestions as $bb_subquestion) {
-							$sub_question = NULL;
+                            $sub_question = NULL;
                             $sub_question->ident = $bb_subquestion['#']['response_lid'][0]['@']['ident'];
-							//echo "Calling process_block from line 277<br>";
                             $this->process_block($bb_subquestion['#']['flow'][0], $sub_question);
                             $bb_choices = $bb_subquestion['#']['response_lid'][0]['#']['render_choice'][0]['#']['flow_label'][0]['#']['response_label'];
                             $choices = array();
@@ -295,23 +288,17 @@ function create_raw_question($quest) {
                         $bb_choices = $pblock['#']['response_lid'][0]['#']['render_choice'][0]['#']['flow_label'];
                         $choices = array();
                         $this->process_choices($bb_choices, $choices);
-						$block->choices = $choices;
-						
-						break;
+                        $block->choices = $choices;
+                        break;
                     case 'Essay':
                         // Doesn't apply since the user responds with text input
                         break;
                     case 'Multiple Choice':
                         $mc_choices = $pblock['#']['response_lid'][0]['#']['render_choice'][0]['#']['flow_label'];
-                        
-						foreach($mc_choices as $mc_choice) {
+                            foreach($mc_choices as $mc_choice) {
                             $choices = NULL;
-							
-							
-							
-							//echo "Calling process_block from line 307<br>";
-							$choices = $this->process_block($mc_choice, $choices);
-							$block->choices[] = $choices;             
+                            $choices = $this->process_block($mc_choice, $choices);
+                            $block->choices[] = $choices;             
                         }
                         break;
                     case 'Fill in the Blank':
@@ -328,7 +315,6 @@ function create_raw_question($quest) {
                 $matching_answerset = $pblock['#']['flow'];
                 $answerset = array();
                 foreach($matching_answerset as $answer) {
-					//echo "Calling process_block from line 235<br>";
                     $this->process_block($answer, $bb_answer);
                     $answerset[] = $bb_answer;
                 }
@@ -344,12 +330,8 @@ function create_raw_question($quest) {
     // determine response processing 
     // there is a section called 'outcomes' that I don't know what to do with
     $resprocessing = $quest['#']['resprocessing'];
-	
-	$respconditions = $resprocessing[0]['#']['respcondition'];
-	//echo "Line 347: respconditions<br>";
-	//print_object ($respconditions);
-	
-	$reponses = array();
+    $respconditions = $resprocessing[0]['#']['respcondition'];
+    $reponses = array();
     if ($question->qtype == 'Matching') {
         $this->process_matching_responses($respconditions, $responses);
     }
@@ -357,35 +339,26 @@ function create_raw_question($quest) {
         $this->process_responses($respconditions, $responses);
     }
     $question->responses = $responses;
-    	
     $feedbackset = $quest['#']['itemfeedback'];
-	
-	$feedbacks = array();
-	
-	//echo "Line 362: Calling Process Feedback:<br>";
-	$this->process_feedback($feedbackset, $feedbacks);
+    $feedbacks = array();
+    $this->process_feedback($feedbackset, $feedbacks);
     $question->feedback = $feedbacks;
-		
-	//echo "Line 358: ";
-	//print_object($question);
     return $question;
 }
 
 function process_block($cur_block, &$block) {
-	
+    global $course, $CFG;
+
     $cur_type = $cur_block['@']['class'];
-		
-	global $course, $CFG;
     switch($cur_type) {
         case 'FORMATTED_TEXT_BLOCK':
             $block->text = $this->strip_applet_tags_get_mathml($cur_block['#']['material'][0]['#']['mat_extension'][0]['#']['mat_formattedtext'][0]['#']); 
-			//echo "Line 378: " . $block->text . '<br>';
-			break;
+            break;
         case 'FILE_BLOCK':
             //revisit this to make sure it is working correctly
-			
-			// Commented out ['matapplication']..., etc. because I noticed that when I imported a new Blackboard 6 file
-			// and printed out the block, the tree did not extend past ['material'][0]['#'] - CT 8/3/06
+            // Commented out ['matapplication']..., etc. because I 
+            // noticed that when I imported a new Blackboard 6 file
+            // and printed out the block, the tree did not extend past ['material'][0]['#'] - CT 8/3/06
             $block->file = $cur_block['#']['material'][0]['#'];//['matapplication'][0]['@']['uri'];
             if ($block->file != '') {
                 // if we have a file copy it to the course dir and adjust its name to be visible over the web.
@@ -394,12 +367,8 @@ function process_block($cur_block, &$block) {
             }
             break;
         case 'Block':
-			
-			if (isset($cur_block['#']['material'][0]['#']['mattext'][0]['#'])) {
-               	$block->text = $cur_block['#']['material'][0]['#']['mattext'][0]['#'];
-				
-				 //echo "line 379 - isset:" . isset($block->text);
-				 //echo "Type: " . $cur_type . " Is Object:" . is_object($block) . "<br>\r\n";
+            if (isset($cur_block['#']['material'][0]['#']['mattext'][0]['#'])) {
+            $block->text = $cur_block['#']['material'][0]['#']['mattext'][0]['#'];
             }
             else if (isset($cur_block['#']['material'][0]['#']['mat_extension'][0]['#']['mat_formattedtext'][0]['#'])) {
                 $block->text = $cur_block['#']['material'][0]['#']['mat_extension'][0]['#']['mat_formattedtext'][0]['#'];
@@ -410,16 +379,9 @@ function process_block($cur_block, &$block) {
                 if(!isset($block->ident)) {
                     if(isset($sub_blocks['@']['ident'])) {
                         $block->ident = $sub_blocks['@']['ident'];
-						//echo "Line 409: <br>";
-						//print_object($cur_block);
                     }
                 }
                 foreach($sub_blocks['#']['flow_mat'] as $sub_block) {
-					//echo "Calling process_block from line 404<br>";
-					//$block = null;			// Reset $block to NULL because process_block is expecting an object
-												// for the second argument and not a string, which is what is was set as
-												// originally
-					
                     $this->process_block($sub_block, $block);   
                 }
             }
@@ -433,7 +395,6 @@ function process_block($cur_block, &$block) {
                     }
                    foreach ($sub_blocks as $sblock) {
                         // this will recursively grab the sub blocks which should be of one of the other types
-						//echo "Calling process_block from line 419<br>";
                         $this->process_block($sblock, $block);
                     }
                 }
@@ -449,33 +410,30 @@ function process_block($cur_block, &$block) {
             }
             break;    
     }    
-	//echo "Line 446: " . $block->text . '<br>';
-	return $block;
+    return $block;
 }
 
 function process_choices($bb_choices, &$choices) {
-	
-	foreach($bb_choices as $choice) {
-		if (isset($choice['@']['ident'])) {
+    foreach($bb_choices as $choice) {
+            if (isset($choice['@']['ident'])) {
             $cur_choice = $choice['@']['ident'];
         }
-        else {		//for multiple answer
+        else { //for multiple answer
             $cur_choice = $choice['#']['response_label'][0];//['@']['ident'];
-			//echo "['#']['response_label'][0]['@']['ident']<br>\r\n";
         }
-        if (isset($choice['#']['flow_mat'][0])) {	//for multiple answer
+        if (isset($choice['#']['flow_mat'][0])) { //for multiple answer
             $cur_block = $choice['#']['flow_mat'][0];
-			$cur_choice = null;		// Reset $cur_choice to NULL because process_block is expecting an object
-									// for the second argument and not a string, which is what is was set as
-									// originally - CT 8/7/06
-			//echo "Calling process_block from line 448<br>";
-			$this->process_block($cur_block, $cur_choice);
+            // Reset $cur_choice to NULL because process_block is expecting an object
+            // for the second argument and not a string, which is what is was set as
+            // originally - CT 8/7/06
+            $cur_choice = null; 
+            $this->process_block($cur_block, $cur_choice);
         }
         elseif (isset($choice['#']['response_label'])) {
-			$cur_choice = null;		// Reset $cur_choice to NULL because process_block is expecting an object
-									// for the second argument and not a string, which is what is was set as
-									// originally - CT 8/7/06
-			//echo "Calling process_block from line 452<br>";
+            // Reset $cur_choice to NULL because process_block is expecting an object
+            // for the second argument and not a string, which is what is was set as
+            // originally - CT 8/7/06
+            $cur_choice = null; 
             $this->process_block($choice, $cur_choice);
         }
         $choices[] = $cur_choice;
@@ -483,8 +441,6 @@ function process_choices($bb_choices, &$choices) {
 }
 
 function process_matching_responses($bb_responses, &$responses) {
-	//echo "Line 486: Matching!<br>";
-    //print_object($bb_responses);
     foreach($bb_responses as $bb_response) {
         $response = NULL;
         if (isset($bb_response['#']['conditionvar'][0]['#']['varequal'])) {
@@ -501,15 +457,12 @@ function process_matching_responses($bb_responses, &$responses) {
 }
 
 function process_responses($bb_responses, &$responses) {
-		
-		foreach($bb_responses as $bb_response) {
-			$response = null;		//Added this line to instantiate $response.
-									// Without instantiating the $response variable, the same object
-									// gets added to the array
-			//echo "Line 504: bb_response<br>";
-			//print_object ($bb_response);
-			
-			if (isset($bb_response['@']['title'])) {
+    foreach($bb_responses as $bb_response) {
+        //Added this line to instantiate $response.
+        // Without instantiating the $response variable, the same object
+        // gets added to the array
+        $response = null;
+        if (isset($bb_response['@']['title'])) {
                 $response->title = $bb_response['@']['title'];    
             }
             else {
@@ -543,7 +496,8 @@ function process_responses($bb_responses, &$responses) {
                         $response->fraction = 1;
                         break;
                     default:
-                        // I have only seen this being 0 or unset  there are probably fractional values of SCORE.max, but I'm not sure what they look like
+                        // I have only seen this being 0 or unset  
+                        // there are probably fractional values of SCORE.max, but I'm not sure what they look like
                         $response->fraction = 0;
                         break;
                 }
@@ -553,40 +507,24 @@ function process_responses($bb_responses, &$responses) {
                $response->fraction = 0;
             }
             
-			
-		
             $responses[] = $response;
-			//echo "Line 554: $responses<br>";
-			//print_object ($responses);
         }
 }
 
 function process_feedback($feedbackset, &$feedbacks) {
-	//echo "Line 551: In Process Feedback<br>";
-	//echo "Line 552: feedbacks<br>";
-	//print_object($feedbacks);
     foreach($feedbackset as $bb_feedback) {
-		$feedback = null;  // Added line $feedback=null so that $feedback does not get reused in the loop
-						   // and added the the $feedbacks[] array multiple times
-		$feedback->ident = $bb_feedback['@']['ident'];
-		//echo "Line 558: " . $feedback->ident . "<br>\r\n";
+        // Added line $feedback=null so that $feedback does not get reused in the loop
+        // and added the the $feedbacks[] array multiple times
+        $feedback = null;  
+        $feedback->ident = $bb_feedback['@']['ident'];
         if (isset($bb_feedback['#']['flow_mat'][0])) {
-			//echo "Calling process_block from line 531<br>";
             $this->process_block($bb_feedback['#']['flow_mat'][0], $feedback);
-			
         }
         elseif (isset($bb_feedback['#']['solution'][0]['#']['solutionmaterial'][0]['#']['flow_mat'][0])) {
-			//echo "Calling process_block from line 535<br>";
             $this->process_block($bb_feedback['#']['solution'][0]['#']['solutionmaterial'][0]['#']['flow_mat'][0], $feedback);
         }
         $feedbacks[] = $feedback;
-		
-		//echo "Line 568: feedbacks<br>";
-		//print_object($feedbacks);
     }
-	//echo "Line 571: feedbacks<br>";
-	//print_object($feedbacks);
-	
 }
 
 //----------------------------------------
@@ -597,9 +535,9 @@ function process_tf($quest, &$questions) {
 
     $question->qtype = TRUEFALSE;
     $question->defaultgrade = 1;
-    $question->single = 1;	// Only one answer is allowed
-    $question->image = "";	// No images with this format
-	$question->questiontext = addslashes($quest->QUESTION_BLOCK->text);
+    $question->single = 1; // Only one answer is allowed
+    $question->image = ""; // No images with this format
+    $question->questiontext = addslashes($quest->QUESTION_BLOCK->text);
     // put name in question object
     $question->name = $question->questiontext;
 
@@ -632,11 +570,7 @@ function process_tf($quest, &$questions) {
 // Process Fill in the Blank
 //----------------------------------------
 function process_fblank($quest, &$questions) {
-    
-	//echo "Line 633: Quest<br>";
-	//print_object($quest);
-	
-	$question = $this->defaultquestion();
+    $question = $this->defaultquestion();
     $question->qtype = SHORTANSWER;
     $question->defaultgrade = 1;
     $question->single = 1;
@@ -652,56 +586,45 @@ function process_fblank($quest, &$questions) {
     $feedback = array();
     foreach($quest->feedback as $fback) {
         if (isset($fback->ident)) {
-            if ($fback->ident == 'correct' || $fback->ident == 'incorrect')
-			{
-				$feedback[$fback->ident] = $fback->text;
-			}
+            if ($fback->ident == 'correct' || $fback->ident == 'incorrect') {
+                $feedback[$fback->ident] = $fback->text;
+            }
         }
     }
     
     foreach($quest->responses as $response) {
         if(isset($response->title)) {
-		
-		    if (isset($response->ident[0]['varequal'][0]['#']))
-			{
-				//for BB Fill in the Blank, only interested in correct answers
-				if ($response->feedback = 'correct')
-				{
-					$answers[] = addslashes($response->ident[0]['varequal'][0]['#']);
-					$fractions[] = 1;
-					 if (isset($feedback['correct'])) 
-					 {
-				     	$feedbacks[] = addslashes($feedback['correct']);
-				     }
-					 else
-					{
-						$feedbacks[] = '';
-					}
-				}
-			}
+            if (isset($response->ident[0]['varequal'][0]['#'])) {
+                //for BB Fill in the Blank, only interested in correct answers
+                if ($response->feedback = 'correct') {
+                    $answers[] = addslashes($response->ident[0]['varequal'][0]['#']);
+                    $fractions[] = 1;
+                    if (isset($feedback['correct'])) {
+                        $feedbacks[] = addslashes($feedback['correct']);
+                    }
+                    else {
+                        $feedbacks[] = '';
+                    }
+                }
+            }
   
         }
     }
-	
-	//Adding catchall to so that students can see feedback for incorrect answers when they enter something the 
-	//instructor did not enter
-	
-	$answers[] = '*';
-	$fractions[] = 0;
-	if (isset($feedback['incorrect'])) 
-	{
-		$feedbacks[] = addslashes($feedback['incorrect']);
-	}
-	else
-	{
-		$feedbacks[] = '';
-	}
+
+    //Adding catchall to so that students can see feedback for incorrect answers when they enter something the 
+    //instructor did not enter
+    $answers[] = '*';
+    $fractions[] = 0;
+    if (isset($feedback['incorrect'])) {
+        $feedbacks[] = addslashes($feedback['incorrect']);
+    }
+    else {
+        $feedbacks[] = '';
+    }
     
     $question->answer = $answers;
     $question->fraction = $fractions;
-	$question->feedback = $feedbacks;				// Changed to assign $feedbacks to $question->feedback instead of
-													// $feedback - CT 8/10/06
-//    $question->feedback = $feedback;
+    $question->feedback = $feedbacks; // Changed to assign $feedbacks to $question->feedback instead of
 
     if (!empty($question)) {
         $questions[] = $question;
@@ -713,10 +636,7 @@ function process_fblank($quest, &$questions) {
 // Process Multiple Choice Questions
 //----------------------------------------
 function process_mc($quest, &$questions) {
-	//echo "Line 667: Quest<br>";
-	//print_object($quest);
-	
-	$question = $this->defaultquestion();
+    $question = $this->defaultquestion();
     $question->qtype = MULTICHOICE;
     $question->defaultgrade = 1;
     $question->single = 1;
@@ -728,16 +648,12 @@ function process_mc($quest, &$questions) {
     foreach($quest->feedback as $fback) {
         $feedback[$fback->ident] = addslashes($fback->text);
     }
-	
-	//echo "Line 683: feedback<br>";
-	//print_object($feedback);
  
     foreach($quest->responses as $response) {
-	
         if (isset($response->title)) {
             if ($response->title == 'correct') {
                 // only one answer possible for this qtype so first index is correct answer
-                $correct = $response->ident[0]['varequal'][0]['#'];	// added [0]['varequal'][0]['#'] to $response->ident - CT 8/9/06
+                $correct = $response->ident[0]['varequal'][0]['#'];
             }
         }
         else {
@@ -748,13 +664,10 @@ function process_mc($quest, &$questions) {
             }
         }
     }
-	
-	//echo "Line 706: Correct:" . $correct . "<br>";
 
     $i = 0;
     foreach($quest->RESPONSE_BLOCK->choices as $response) {
-		
-		$question->answer[$i] = addslashes($response->text);
+        $question->answer[$i] = addslashes($response->text);
         if ($correct == $response->ident) {
             $question->fraction[$i] = 1;
             // this is a bit of a hack to catch the feedback... first we see if a 'correct' feedback exists
@@ -796,29 +709,21 @@ function process_mc($quest, &$questions) {
 // Process Multiple Choice Questions With Multiple Answers
 //----------------------------------------
 function process_ma($quest, &$questions) {
-
-	//echo "Line 763: Quest<br>";
-	//print_object($quest);
-	
-	$question = $this->defaultquestion();	// copied this from process_mc
-											// noticed it was missing - CT 8/8/06
+    $question = $this->defaultquestion(); // copied this from process_mc
     $question->questiontext = addslashes($quest->QUESTION_BLOCK->text);
     $question->name = $question->questiontext; 
     $question->qtype = MULTICHOICE;
     $question->defaultgrade = 1;
-    $question->single = 0;	// More than one answer allowed
-    $question->image = "";	// No images with this format
+    $question->single = 0; // More than one answer allowed
+    $question->image = ""; // No images with this format
 
     $answers = $quest->responses;
     $correct_answers = array();
     foreach($answers as $answer) {
-	
-	//echo 'Line 779: $answer<br>';
-	//print_object($answer);
         if($answer->title == 'correct') {
-            $answerset = $answer->ident[0]['and'][0]['#']['varequal'];  // added [0]['and'][0]['#']['varequal'] to $answer->ident - CT 8/9/06
+            $answerset = $answer->ident[0]['and'][0]['#']['varequal'];
             foreach($answerset as $ans) {
-                $correct_answers[] = $ans['#'];							// added ['#'] to $ans - CT 8/9/06
+                $correct_answers[] = $ans['#'];
             }
         }
     }
@@ -846,8 +751,6 @@ function process_ma($quest, &$questions) {
     }
 
     $questions[] = $question;
-	//echo "Line 807: question<br>";
-	//print_object($question);
 }
 
 //----------------------------------------
@@ -856,18 +759,13 @@ function process_ma($quest, &$questions) {
 function process_essay($quest, &$questions) {
 // this should be rewritten to accomodate moodle 1.6 essay question type eventually
 
-	//echo "Line 822: Quest<br>";
-	//print_object($quest);
-	
     if (defined("ESSAY")) {
         // treat as short answer
-		
-		$question = $this->defaultquestion();	// copied this from process_mc
-											// noticed it was missing - CT 8/8/06
+        $question = $this->defaultquestion(); // copied this from process_mc
         $question->qtype = ESSAY;
         $question->defaultgrade = 1;
-        $question->usecase = 0;	// Ignore case
-        $question->image = "";	// No images with this format
+        $question->usecase = 0; // Ignore case
+        $question->image = ""; // No images with this format
         $question->questiontext = addslashes(trim($quest->QUESTION_BLOCK->text));
         $question->name = $question->questiontext;
     
@@ -876,24 +774,18 @@ function process_essay($quest, &$questions) {
         $question->feedback = array();
         // not sure where to get the correct answer from
         foreach($quest->feedback as $feedback) {
-			
-			// Added this code to put the possible solution that the instructor gives as the Moodle answer for an essay question
-			// - CT 8/9/06
-			if ($feedback->ident == 'solution') 
-			{	
-				$question->feedback = $feedback->text;
-			}
-			
-		
+            // Added this code to put the possible solution that the
+            // instructor gives as the Moodle answer for an essay question
+            if ($feedback->ident == 'solution') {
+                $question->feedback = $feedback->text;
+            }
         }
-		
-		$question->fraction[] = 1;		//Added because essay/questiontype.php:save_question_option is expecting a 
-										//fraction property - CT 8/10/06
+        //Added because essay/questiontype.php:save_question_option is expecting a 
+        //fraction property - CT 8/10/06
+        $question->fraction[] = 1; 
         if (!empty($question)) {
             $questions[]=$question;
         }
-		
-		
     }
     else {
         print "Essay question types are not handled because the quiz question type 'Essay' does not exist in this installation of Moodle<br/>";
@@ -905,10 +797,6 @@ function process_essay($quest, &$questions) {
 // Process Matching Questions
 //----------------------------------------
 function process_matching($quest, &$questions) {
-
-	//echo "Line 910: Quest<br>";
-	//print_object($quest);
-	
     if (defined("RENDEREDMATCH")) {
         $question = $this->defaultquestion($this->defaultquestion());
         $question->valid = true;
