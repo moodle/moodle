@@ -1,7 +1,7 @@
 <?php // $Id$
 
 // "locations" settingpage
-$temp = new admin_settingpage('locationsettings', get_string('settings'));
+$temp = new admin_settingpage('locationsettings', get_string('locationsettings', 'admin'));
 $options = get_list_of_timezones();
 $options[99] = get_string('serverlocaltime');
 $temp->add(new admin_setting_configselect('timezone', get_string('timezone','admin'), get_string('configtimezone', 'admin'), 99, $options));

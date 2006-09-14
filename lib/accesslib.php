@@ -55,9 +55,7 @@ function load_guest_role($context=NULL) {
     }
 
     if (empty($guestrole)) {
-        if ($roles = get_roles_with_capability('moodle/legacy:guest', CAP_ALLOW)) {
-            $guestrole = array_shift($roles);   // Pick the first one
-        } else {
+        if (!$guestrole = get_guest_role()) {
             return false;
         }
     }
@@ -84,8 +82,7 @@ function load_notloggedin_role() {
     }
 
     if (empty($CFG->notloggedinroleid)) {    // Let's set the default to the guest role
-        if ($roles = get_roles_with_capability('moodle/legacy:guest', CAP_ALLOW)) {
-            $role = array_shift($roles);   // Pick the first one
+        if ($role = get_guest_role()) {
             set_config('notloggedinroleid', $role->id);
         } else {
             return false;
@@ -101,6 +98,56 @@ function load_notloggedin_role() {
 
     return true;
 }
+
+/**
+ * Load default not logged in role capabilities when user is not logged in
+ * @return bool 
+ */
+function load_defaultuser_role() {
+    global $CFG, $USER;
+
+    if (!$sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID)) {
+        return false;
+    }
+
+    if (empty($CFG->defaultuserroleid)) {    // Let's set the default to the guest role
+        if ($role = get_guest_role()) {
+            set_config('defaultuserroleid', $role->id);
+        } else {
+            return false;
+        }
+    }
+
+    if ($capabilities = get_records_select('role_capabilities', 
+                                     "roleid = $CFG->defaultuserroleid AND contextid = $sitecontext->id")) {
+        foreach ($capabilities as $capability) {
+            $USER->capabilities[$sitecontext->id][$capability->capability] = $capability->permission;     
+        }
+
+        // SPECIAL EXCEPTION:  If the default user role is actually a guest role, then 
+        // remove some capabilities so this user doesn't get confused with a REAL guest
+        if (isset($USER->capabilities[$sitecontext->id]['moodle/legacy:guest'])) {
+            unset($USER->capabilities[$sitecontext->id]['moodle/legacy:guest']); 
+            unset($USER->capabilities[$sitecontext->id]['moodle/course:view']);  // No access to courses by default
+        }
+    }
+
+    return true;
+}
+
+
+/**
+ * Get the default guest role
+ * @return object role
+ */
+function get_guest_role() {
+    if ($roles = get_roles_with_capability('moodle/legacy:guest', CAP_ALLOW)) {
+        return array_shift($roles);   // Pick the first one
+    } else {
+        return false;
+    }
+}
+
 
 /**
  * This functions get all the course categories in proper order
@@ -164,11 +211,6 @@ function get_parent_cats($context, $type) {
 
 
 
-/*************************************
- * Functions for Roles & Capabilites *
- *************************************/
-
-
 /**
  * This function checks for a capability assertion being true.  If it isn't
  * then the page is terminated neatly with a standard error message
@@ -219,8 +261,12 @@ function has_capability($capability, $context=NULL, $userid=NULL, $doanything=tr
 
     global $USER, $CONTEXT, $CFG;
 
-    if (empty($userid) && !isloggedin() && !isset($USER->capabilities)) {
-        load_notloggedin_role();
+    if (empty($userid) && empty($USER->capabilities)) {   // Real user, first time here
+        if (isloggedin()) {
+            load_defaultuser_role();    // All users get this by default
+        } else {
+            load_notloggedin_role();    // others get this by default
+        }
     }
 
     if ($userid && $userid != $USER->id) {
@@ -453,9 +499,8 @@ function load_user_capability($capability='', $context ='', $userid='') {
         if (empty($USER->id)) {               // We have no user to get capabilities for
             return false;
         }
-        if (!empty($USER->capabilities)) {    // make sure it's cleaned when loaded (again)
-            unset($USER->capabilities);  
-        }
+        unset($USER->capabilities);           // make sure it's cleaned when loaded (again)
+
         $userid = $USER->id;
         $otheruserid = false;
     } else {

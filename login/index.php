@@ -209,6 +209,7 @@
             reset_login_count();
             if (!empty($CFG->rolesactive)) {
                 load_user_capability(); // load user's capabilities
+                load_defaultuser_role();    // All users get this by default
             }
             redirect($urltogo);
 

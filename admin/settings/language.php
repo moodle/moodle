@@ -3,7 +3,7 @@
 // This file defines settingpages and externalpages under the "appearance" category
 
 // "languageandlocation" settingpage
-$temp = new admin_settingpage('langsettings', get_string('settings'));
+$temp = new admin_settingpage('langsettings', get_string('languagesettings', 'admin'));
 $temp->add(new admin_setting_configselect('lang', get_string('lang', 'admin'), get_string('configlang', 'admin'), $CFG->lang, get_list_of_languages())); // $CFG->lang might be set in installer already, default en or en_utf8 is in setup.php
 $temp->add(new admin_setting_configcheckbox('langmenu', get_string('langmenu', 'admin'), get_string('configlangmenu', 'admin'), 1));
 $temp->add(new admin_setting_configtext('langlist', get_string('langlist', 'admin'), get_string('configlanglist', 'admin'), '', PARAM_NOTAGS));

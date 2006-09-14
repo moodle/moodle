@@ -2098,7 +2098,7 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
     if (isset($SESSION->justloggedin)) {
         unset($SESSION->justloggedin);
         if (!empty($CFG->displayloginfailures)) {
-            if (!empty($USER->username) and !isguest()) {
+            if (!empty($USER->username) and $USER->username != 'guest') {
                 if ($count = count_login_failures($CFG->displayloginfailures, $USER->username, $USER->lastlogin)) {
                     $menu .= '&nbsp;<font size="1">';
                     if (empty($count->accounts)) {
@@ -2603,7 +2603,7 @@ function user_login_string($course=NULL, $user=NULL) {
     if (isset($user->id) and $user->id) {
         $fullname = fullname($user, true);
         $username = "<a target=\"{$CFG->framename}\" href=\"$CFG->wwwroot/user/view.php?id=$user->id&amp;course=$course->id\">$fullname</a>";
-        if (isguest($user->id)) {
+        if (isset($user->username) && $user->username == 'guest') {
             $loggedinas = $realuserinfo.get_string('loggedinasguest').
                       " (<a target=\"{$CFG->framename}\" href=\"$wwwroot/login/index.php\">".get_string('login').'</a>)';
         } else {

@@ -4,7 +4,7 @@
 
 $ADMIN->add('appearance', new admin_category('themes', get_string('themes')));
 // "themesettings" settingpage
-$temp = new admin_settingpage('themesettings', get_string('settings'));
+$temp = new admin_settingpage('themesettings', get_string('themesettings', 'admin'));
 $temp->add(new admin_setting_configtext('themelist', get_string('themelist', 'admin'), get_string('configthemelist','admin'), '', PARAM_NOTAGS));
 $temp->add(new admin_setting_configcheckbox('allowuserthemes', get_string('allowuserthemes', 'admin'), get_string('configallowuserthemes', 'admin'), 0));
 $temp->add(new admin_setting_configcheckbox('allowcoursethemes', get_string('allowcoursethemes', 'admin'), get_string('configallowcoursethemes', 'admin'), 0));

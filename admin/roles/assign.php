@@ -35,6 +35,7 @@
 
     require_capability('moodle/role:assign', $context);
 
+    $assignableroles = get_assignable_roles($context);
     
     $strassignusers = get_string('assignusers', 'role');
     $strpotentialusers = get_string('potentialusers', 'role');
@@ -45,8 +46,6 @@
     $strsearch = get_string('search');
     $strshowall = get_string('showall');
 
-    $context = get_record('context', 'id', $contextid);
-    $assignableroles = get_assignable_roles($context);
     
 
 /// Make sure this user can assign that role
