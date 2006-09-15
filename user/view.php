@@ -8,9 +8,6 @@
     $enable  = optional_param('enable', '');                  // enable email
     $disable = optional_param('disable', '');                 // disable email
 
-    if ($course) {
-        $coursecontext = get_context_instance(CONTEXT_COURSE, $course); 
-    }
     if (empty($id)) {         // See your own profile by default
         require_login();
         $id = $USER->id;
@@ -28,6 +25,8 @@
         require_login($course->id);
     }
 
+    $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);   // Course context
+
     if (!empty($CFG->forceloginforprofiles)) {
         require_login();
         if (isguest()) {
@@ -43,7 +42,7 @@
         }
     }
 
-    $fullname = fullname($user, has_capability('moodle/site:viewfullnames', get_context_instance(CONTEXT_COURSE, $course->id)));
+    $fullname = fullname($user, has_capability('moodle/site:viewfullnames', $coursecontext));
     $personalprofile = get_string("personalprofile");
     $participants = get_string("participants");
 
@@ -53,7 +52,7 @@
        $currentuser = ($user->id == $USER->id);
     }
 
-    if (groupmode($course) == SEPARATEGROUPS and !has_capability('moodle/course:managegroups', get_context_instance(CONTEXT_COURSE, $course->id))) {   // Groups must be kept separate
+    if (groupmode($course) == SEPARATEGROUPS and !has_capability('moodle/course:managegroups', $coursecontext)) {   // Groups must be kept separate
         require_login();
 
         ///this is changed because of mygroupid
@@ -99,20 +98,20 @@
 
 
     if ($course->category and ! isguest() ) {   // Need to have access to a course to see that info
-        if (!has_capability('moodle/course:view', get_context_instance(CONTEXT_COURSE, $course->id))) {
-            print_heading(get_string("notenrolled", "", $fullname));
+        if (!has_capability('moodle/course:view', $coursecontext)) {
+            print_heading(get_string('notenrolled', '', $fullname));
             print_footer($course);
             die;
         }
     }
 
     if ($user->deleted) {
-        print_heading(get_string("userdeleted"));
+        print_heading(get_string('userdeleted'));
     }
 
-/// Get the hidden field list (user must have update capability to see hidden files?)
-    if (has_capability('moodle/user:update', get_context_instance(CONTEXT_COURSE, $course->id))) {
-        $hiddenfields = array();  // teachers and admins are allowed to see everything
+/// Get the hidden field list
+    if (has_capability('moodle/user:viewhiddendetails', $coursecontext)) {
+        $hiddenfields = array();
     } else {
         $hiddenfields = array_flip(explode(',', $CFG->hiddenuserfields));
     }
@@ -122,7 +121,7 @@
 ///     /user/view.php
 ///     /user/edit.php
 ///     /course/user.php
-    $context = get_context_instance(CONTEXT_USERID, $user->id);
+
     $currenttab = 'profile';
     $showroles = 1;
     include('tabs.php');
@@ -158,7 +157,7 @@
         print_row(get_string("location").":", $location);
     }
 
-    if (has_capability('moodle/user:update', get_context_instance(CONTEXT_COURSE, $course->id))) {
+    if (has_capability('moodle/user:viewhiddendetails', $coursecontext)) {
         if ($user->address) {
             print_row(get_string("address").":", "$user->address");
         }
@@ -273,7 +272,7 @@
 
 /// Printing groups
     $isseparategroups = ($course->groupmode == SEPARATEGROUPS and $course->groupmodeforce and
-                             !has_capability('moodle/site:accessallgroups', get_context_instance(CONTEXT_COURSE, $course->id)));
+                             !has_capability('moodle/site:accessallgroups', $coursecontext));
     if (!$isseparategroups){
         if ($usergroups = user_group($course->id, $user->id)){
             $groupstr = '';
@@ -313,35 +312,33 @@
             echo "</form></td>";
         }
     }
-    if ($course->category and
-        ((isstudent($course->id) and ($user->id == $USER->id) and !isguest() and $CFG->allowunenroll) or
-        (isteacheredit($course->id) and isstudent($course->id, $user->id))) ) {
-        echo "<td nowrap=\"nowrap\"><form action=\"../course/unenrol.php\" method=\"get\" />";
-        echo "<input type=\"hidden\" name=\"id\" value=\"$course->id\" />";
-        echo "<input type=\"hidden\" name=\"user\" value=\"$user->id\" />";
-        echo "<input type=\"submit\" value=\"".get_string("unenrolme", "", $course->shortname)."\">";
-        echo "</form></td>";
+
+    if ($course->id != SITEID && empty($course->metacourse)) {   // Mostly only useful at course level
+
+        if (($user->id == $USER->id &&                                               // Myself
+             has_capability('moodle/course:view', $coursecontext, NULL) &&           // Course participant
+             has_capability('moodle/role:unassignself', $coursecontext, NULL, false)) // Can unassign myself
+             ||
+            (has_capability('moodle/role:assign', $coursecontext, NULL) &&           // I can assign roles
+             get_user_roles($coursecontext, $user->id)) ) {                          // This user has roles
+
+            echo '<td nowrap="nowrap"><form action="../course/unenrol.php" method="get" />';
+            echo '<input type="hidden" name="id" value="'.$course->id.'" />';
+            echo '<input type="hidden" name="user" value="'.$user->id.'" />';
+            echo '<input type="submit" value="'.get_string('unenrolme', '', $course->shortname).'">';
+            echo '</form></td>';
+        }
     }
-/*    if (isteacher($course->id) or ($course->showreports and $USER->id == $user->id)) {
-        echo "<td nowrap=\"nowrap\"><form action=\"../course/user.php\" method=\"get\">";
-        echo "<input type=\"hidden\" name=\"id\" value=\"$course->id\" />";
-        echo "<input type=\"hidden\" name=\"user\" value=\"$user->id\" />";
-        echo "<input type=\"submit\" value=\"".get_string("activityreport")."\" />";
-        echo "</form></td>";
-    }
-*/
-    if ((isadmin() 
-        and !isadmin($user->id)) or 
-        (isteacher($course->id) 
-        and isstudent($course->id, $user->id) 
-        and ($USER->id != $user->id) 
-        and !has_capability('moodle/course:create', get_context_instance(CONTEXT_SYSTEM, SITEID,$user->id)))) {
+
+    if ($USER->id != $user->id  &&
+        has_capability('moodle/user:loginas', get_context_instance(CONTEXT_USER, $user->id)) &&
+        !has_capability('moodle/site:doanything', $coursecontext) )  {
           
-        echo "<td nowrap=\"nowrap\"><form action=\"../course/loginas.php\" method=\"get\">";
-        echo "<input type=\"hidden\" name=\"id\" value=\"$course->id\" />";
-        echo "<input type=\"hidden\" name=\"user\" value=\"$user->id\" />";
-        echo "<input type=\"submit\" value=\"".get_string("loginas")."\" />";
-        echo "</form></td>";
+        echo '<td nowrap="nowrap"><form action="'.$CFG->wwwroot.'/course/loginas.php" method="get">';
+        echo '<input type="hidden" name="id" value="'.$course->id.'" />';
+        echo '<input type="hidden" name="user" value="'.$user->id.'" />';
+        echo '<input type="submit" value="'.get_string('loginas').'" />';
+        echo '</form></td>';
     }
     if (!empty($CFG->messaging) and !isguest()) {
         if (!empty($USER->id) and ($USER->id == $user->id)) {
@@ -372,7 +369,7 @@
     echo "</tr></table></div>\n";
 
 
-    if ($CFG->debug && $USER->id == $user->id) {   // TEMPORARY in DEV!   XXX TODO
+    if (debugging() && $USER->id == $user->id) {   // TEMPORARY in DEV!   XXX TODO
         echo '<hr />';
         print_heading('DEBUG MODE:  User session variables');
         print_object($USER);

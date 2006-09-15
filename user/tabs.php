@@ -90,6 +90,7 @@
         $toprow[] = new tabobject('profile', $CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.$course->id, get_string('profile'));
 
         $personalcontext = get_context_instance(CONTEXT_USER, $user->id);
+
     /// Can only edit profile if it belongs to user or current user is admin and not editing primary admin
 
         if (($mainadmin = get_admin()) === false) {
