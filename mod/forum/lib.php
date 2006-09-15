@@ -1195,6 +1195,9 @@ function forum_get_readable_forums($userid, $courseid=0) {
         }
     } // End foreach $courses
     
+    //print_object($courses);
+    //print_object($readableforums);
+    
     return $readableforums;
 }
 
@@ -1208,13 +1211,16 @@ function forum_get_readable_forums($userid, $courseid=0) {
  * @param $extrasql
  * @return array of posts found
  */
-function forum_search_posts($searchterms, $courseid=0, $page=0, $recordsperpage=50, 
+function forum_search_posts($searchterms, $courseid=0, $limitfrom=0, $limitnum=50, 
                             &$totalcount, $extrasql='') {
     global $CFG, $USER;
     require_once($CFG->libdir.'/searchlib.php');
 
     $forums = forum_get_readable_forums($USER->id, $courseid);
-
+    
+    if (count($forums) == 0) {
+        return false;
+    }
 
     for ($i=0; $i<count($forums); $i++) {
         if ($i == 0) {
@@ -1294,7 +1300,7 @@ function forum_search_posts($searchterms, $courseid=0, $page=0, $recordsperpage=
                    FROM $fromsql
                   WHERE $selectsql";
 
-    $searchsql = "SELECT p.*,
+    $searchsql = "SELECT DISTINCT(p.id), p.*,
                          d.forum,
                          u.firstname,
                          u.lastname,
@@ -1304,10 +1310,9 @@ function forum_search_posts($searchterms, $courseid=0, $page=0, $recordsperpage=
                    WHERE $selectsql
                 ORDER BY p.modified DESC";
 
-    //print_object($searchsql);  // Debug.
-
     $totalcount = count_records_sql($countsql);
-    return get_records_sql($searchsql, $page, $recordsperpage);
+    
+    return get_records_sql($searchsql, $limitfrom, $limitnum);
 }
 
 

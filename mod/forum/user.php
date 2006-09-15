@@ -66,12 +66,23 @@
     }
     
     echo '<div class="user-content">';
-    // Get the posts regardless of group first.
-    if ($posts = forum_search_posts($searchterms, $course->id, $page*$perpage, $perpage, 
+    
+    
+    if ($course->id == SITEID) {
+        // Search throughout the whole site.
+        $searchcourse = 0;
+    } else {
+        // Search only for posts the user made in this course.
+        $searchcourse = $course->id;
+    }
+    
+    // Get the posts.
+    if ($posts = forum_search_posts($searchterms, $searchcourse, $page*$perpage, $perpage, 
                                     $totalcount, $extrasql)) {
         
         print_paging_bar($totalcount, $page, $perpage, 
                          "user.php?id=$user->id&amp;course=$course->id&amp;mode=$mode&amp;perpage=$perpage&amp;");
+        
         foreach ($posts as $post) {
     
             if (! $discussion = get_record('forum_discussions', 'id', $post->discussion)) {
@@ -101,7 +112,6 @@
                          get_string("postincontext", "forum")."</a>";
 
             forum_print_post($post, $course->id, false, false, false, false, $fulllink);
-
             echo "<br />";
         }
     
@@ -114,4 +124,3 @@
     print_footer($course);
 
 ?>
-
