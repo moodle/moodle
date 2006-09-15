@@ -154,28 +154,45 @@
 
     }
     
-    // prints a form to swap roles
-    print ('<form name="rolesform" action="assign.php" method="post">');
-    print ('<div align="center">'.$strcurrentcontext.': '.print_context_name($context).'<br/>');
-    if ($userid) {
-        print ('<input type="hidden" name="userid" value="'.$userid.'" />');
-    }
-    if ($courseid) {
-        print ('<input type="hidden" name="courseid" value="'.$courseid.'" />');
-    }
-    print ('<input type="hidden" name="contextid" value="'.$context->id.'" />'.$strroletoassign.': ');
-    choose_from_menu ($assignableroles, 'roleid', $roleid, 'choose', $script='rolesform.submit()');
-    print ('</div></form>');
-    
     if ($roleid) {
+    /// prints a form to swap roles
+        echo '<form name="rolesform" action="assign.php" method="post">';
+        echo '<div align="center">'.$strcurrentcontext.': '.print_context_name($context).'<br/>';
+        if ($userid) {
+            echo '<input type="hidden" name="userid" value="'.$userid.'" />';
+        }
+        if ($courseid) {
+            echo '<input type="hidden" name="courseid" value="'.$courseid.'" />';
+        }
+        echo '<input type="hidden" name="contextid" value="'.$context->id.'" />'.$strroletoassign.': ';
+        choose_from_menu ($assignableroles, 'roleid', $roleid, 'choose', $script='rolesform.submit()');
+        echo '</div></form>';
 
         print_simple_box_start("center");
-    
         include('assign.html');
-
         print_simple_box_end();
 
+    } else {   // Print overview table
+       
+        $table->tablealign = 'center';
+        $table->cellpadding = 5;
+        $table->cellspacing = 0;
+        $table->width = '20%';
+        $table->head = array(get_string('roles', 'role'), get_string('users'));
+        $table->wrap = array('nowrap', 'nowrap');
+        $table->align = array('right', 'center');
+        
+        foreach ($assignableroles as $roleid => $rolename) {
+            $countusers = 0;
+            if ($contextusers = get_role_users($roleid, $context)) {
+                $countusers = count($contextusers);
+            }
+            $table->data[] = array('<a href="assign.php?contextid='.$context->id.'&amp;roleid='.$roleid.'">'.$rolename.'</a>', $countusers);
+        }
+    
+        print_table($table);
     }
+
     print_footer($course);
 
 ?>

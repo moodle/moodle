@@ -1,69 +1,70 @@
-<?php
-// this deals with tabs, as well as print_headers for navigation
+<?php // $Id$
+
+// Handles headers and tabs for the roles control at any level apart from SYSTEM level
 
 if ($currenttab != 'update') {
     switch ($context->aggregatelevel) {
-      
+
         case CONTEXT_SYSTEM:
             $stradministration = get_string('administration');
             print_header($site->fullname, "$site->fullname","<a href=\"../index.php\">$stradministration</a> -> $straction");
-        break;
-    
+            break;
+
         case CONTEXT_PERSONAL:
-        break;
-    
+            break;
+
         case CONTEXT_USERID:
             print_header();
-        break;
-    
+            break;
+
         case CONTEXT_COURSECAT:
             $category = get_record('course_categories', 'id', $context->instanceid);
             $strcategories = get_string("categories");
             $strcategory = get_string("category");
             $strcourses = get_string("courses");
             print_header("$site->shortname: $category->name", "$site->fullname: $strcourses",
-                         "<a href=\"$CFG->wwwroot/course/index.php\">$strcategories</a> -> <a href=\"$CFG->wwwroot/course/category.php?id=$category->id\">$category->name</a> -> $straction", "", "", true);
-        break;
-    
+                    "<a href=\"$CFG->wwwroot/course/index.php\">$strcategories</a> -> <a href=\"$CFG->wwwroot/course/category.php?id=$category->id\">$category->name</a> -> $straction", "", "", true);
+            break;
+
         case CONTEXT_COURSE:
             $streditcoursesettings = get_string("editcoursesettings");
-            
+
             $course = get_record('course', 'id', $context->instanceid);
             print_header($streditcoursesettings, "$course->fullname",
-                         "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a>
-                          -> <a href=\"$CFG->wwwroot/course/edit.php?id=$course->id\">$streditcoursesettings</a> -> $straction");
-        break;
-    
+                    "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a>
+                    -> <a href=\"$CFG->wwwroot/course/edit.php?id=$course->id\">$streditcoursesettings</a> -> $straction");
+            break;
+
         case CONTEXT_GROUP:
-        break;
-    
+            break;
+
         case CONTEXT_MODULE:
             // get module type?
             $cm = get_record('course_modules','id',$context->instanceid);
             $module = get_record('modules','id',$cm->module); //$module->name;
             $course = get_record('course','id',$cm->course);
-            
+
             if (! $form = get_record($module->name, "id", $cm->instance)) {
                 error("The required instance of this module doesn't exist");
             }
-    
+
             $strnav = "<a href=\"$CFG->wwwroot/mod/$module->name/view.php?id=$cm->id\">$form->name</a> ->";
             $fullmodulename = get_string("modulename", $module->name);
             $streditinga = get_string("editinga", "moodle", $fullmodulename);
             $strmodulenameplural = get_string("modulenameplural", $module->name);
-    
+
             if ($module->name == "label") {
                 $focuscursor = "";
             } else {
                 $focuscursor = "form.name";
             }
-    
+
             print_header_simple($streditinga, '',
-             "<a href=\"$CFG->wwwroot/mod/$module->name/index.php?id=$course->id\">$strmodulenameplural</a> ->
-             $strnav <a href=\"$CFG->wwwroot/course/mod.php?update=$cm->id&sesskey=".sesskey()."\">$streditinga</a> -> $straction", $focuscursor, "", false);
-    
-        break;
-    
+                    "<a href=\"$CFG->wwwroot/mod/$module->name/index.php?id=$course->id\">$strmodulenameplural</a> ->
+                    $strnav <a href=\"$CFG->wwwroot/course/mod.php?update=$cm->id&sesskey=".sesskey()."\">$streditinga</a> -> $straction", $focuscursor, "", false);
+
+            break;
+
         case CONTEXT_BLOCK:
             if ($blockinstance = get_record('block_instance', 'id', $context->instanceid)) {
                 if ($block = get_record('block', 'id', $blockinstance->blockid)) {
@@ -74,86 +75,90 @@ if ($currenttab != 'update') {
                         case 'course-view':
                             if ($course = get_record('course', 'id', $blockinstance->pageid)) {
                                 if ($course->id != SITEID) {
-                                     $navigation = "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> -> $navigation";
+                                    $navigation = "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> -> $navigation";
                                 }
                                 print_header("$straction: $blockname", $course->fullname, $navigation);
                             }
-                        break;
+                            break;
 
                         case 'blog-view':
                             $strblogs = get_string('blogs','blog');
                             $navigation = '<a href="'.$CFG->wwwroot.'/blog/index.php">'.
-                                          $strblogs.'</a> -> '.$navigation;
+                                $strblogs.'</a> -> '.$navigation;
                             print_header("$straction: $strblogs", $SITE->fullname, $navigation);
-                        break;
+                            break;
 
                         default:
                             print_header("$straction: $blockname", $SITE->fullname, $navigation);
-                        break;
+                            break;
                     }
                 }
             }
-        break;
-    
+            break;
+
         default:
             error ('This is an unknown context!');
-        return false;
-       
+            return false;
+
     }
 }
 
 
-    // Printing the tabs
+if ($context->aggregatelevel != CONTEXT_SYSTEM) {    // Print tabs for anything except SYSTEM context
+
     if ($context->aggregatelevel == CONTEXT_MODULE) { // only show update button if module?
-    
-        $toprow[] = new tabobject('update', $CFG->wwwroot.'/course/mod.php?update='.$context->instanceid.'&amp;return=true&amp;sesskey='.sesskey(), get_string('update'));
-        
+
+        $toprow[] = new tabobject('update', $CFG->wwwroot.'/course/mod.php?update='.
+                       $context->instanceid.'&amp;return=true&amp;sesskey='.sesskey(), get_string('update'));
+
     }    
-    
-    $toprow[] = new tabobject('roles', $CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php?contextid='.$context->id, get_string('roles')); 
+
+    $toprow[] = new tabobject('roles', $CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php?contextid='.
+                               $context->id, get_string('roles')); 
 
     if (isset($tabsmode)) {
-      
+
         if (!isset($assignableroles)) {
             $assignableroles = get_assignable_roles($context);          
         }
         if (!isset($overridableroles)) {
             $overridableroles = get_overridable_roles($context); 
-        }    
-    
-      
+        }
+
         $inactive[] = 'roles';
         if (!empty($assignableroles)) {
-            $secondrow[] = new tabobject('assign', $CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php?contextid='.$context->id, get_string('assignroles', 'role')); 
+            $secondrow[] = new tabobject('assign', 
+                                         $CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php?contextid='.$context->id, 
+                                         get_string('assignroles', 'role'), 
+                                         get_string('showallroles', 'role'), 
+                                         true); 
         }
-             
+
         if (!empty($overridableroles)) {  
-            if ($context->aggregatelevel == CONTEXT_SYSTEM) {
-                $secondrow[] = new tabobject('override', '', get_string('overrideroles', 'role'));         
-            } else {
-                $secondrow[] = new tabobject('override', $CFG->wwwroot.'/'.$CFG->admin.'/roles/override.php?contextid='.$context->id,
-                                          get_string('overrideroles', 'role'));         
-            }
+            $secondrow[] = new tabobject('override', 
+                               $CFG->wwwroot.'/'.$CFG->admin.'/roles/override.php?contextid='.$context->id,
+                               get_string('overrideroles', 'role'), 
+                               get_string('showallroles', 'role'),  
+                               true);         
         }
-        
+
         if ($tabsmode == 'override') {
             $currenttab = 'override';  
         } elseif ($tabsmode == 'assign') {
             $currenttab = 'assign';  
         }
-        
+
     } else {
         $inactive[] = '';  
     }
-    
+
     if (!empty($secondrow)) {
         $tabs = array($toprow, $secondrow);
     } else {
         $tabs = array($toprow);
     }
-    
-    if ($context->aggregatelevel != CONTEXT_SYSTEM) { // do not show tabs otherwise
-        print_tabs($tabs, $currenttab, $inactive);
-    }
+
+    print_tabs($tabs, $currenttab, $inactive);
+}
 
 ?>

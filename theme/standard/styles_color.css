@@ -954,3 +954,7 @@ body#mod-quiz-report table#attempts .r1 {
   color:#ff0000;
 }
 
+#admin-roles-override .capcurrent {
+  background-color:#FFFFFF;
+  border: 1px solid #cecece;
+}
