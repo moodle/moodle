@@ -32,8 +32,7 @@
     $strheading = get_string('adminhelpstickyblocks');
     
     print_header($strtitle,$strtitle,'<a href="'.$CFG->wwwroot.'/'.$CFG->admin.'/index.php">'.
-                 get_string('admin').'</a> -> <a href="'.$CFG->wwwroot.'/'.$CFG->admin.'/misc.php">'.
-                 get_string('miscellaneous').'</a> ->'.$strtitle);
+                 get_string('administration').'</a> -> '.$strtitle);
 
     echo '<table border="0" cellpadding="3" cellspacing="0" width="100%" id="layout-table">';
     echo '<tr valign="top">';
