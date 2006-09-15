@@ -73,7 +73,7 @@ if (!isset($frm->acceptechecktypes)) {
     <td align="right">loginhttps:</td>
     <td><?php
           echo (empty($CFG->loginhttps) ? "<font color=\"red\"><b>off</b></font>" : "<font color=\"green\">on</font>");
-          $a->url = "$CFG->wwwroot/$CFG->admin/config.php#configsectionsecurity";
+          $a->url = "$CFG->wwwroot/$CFG->admin/settings.php?section=httpsecurity";
           echo '<br />'; print_string("logindesc", "enrol_authorize", $a);
         ?>
     </td>
