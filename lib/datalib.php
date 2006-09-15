@@ -581,7 +581,7 @@ function get_my_courses($userid, $sort='visible DESC,sortorder ASC') {
     global $CFG, $USER;
 
     $mycourses = array();
-    $SQL = "SELECT * from {$CFG->prefix}course WHERE 1 ORDER BY $sort";
+    $SQL = "SELECT * from {$CFG->prefix}course ORDER BY $sort";
     $courses = get_records_sql($SQL);
     
     foreach ($courses as $course) {
