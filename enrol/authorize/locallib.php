@@ -26,8 +26,7 @@ function authorize_print_orders()
     $perpage = 10;
     $status = optional_param('status', AN_STATUS_NONE, PARAM_INT);
 
-    $context = get_context_instance(CONTEXT_COURSE, $courseid);
-    if (! has_capability('enrol/authorize:managepayments', $context)) {
+    if (! has_capability('enrol/authorize:managepayments', get_context_instance(CONTEXT_COURSE, $courseid))) {
         $userid = $USER->id;
     }
 
@@ -73,39 +72,39 @@ function authorize_print_orders()
     $table->pageable(true);
     $table->setup();
 
-    $select = "SELECT E.id, E.paymentmethod, E.transid, E.courseid, E.userid, E.status, E.ccname, E.timecreated, E.settletime ";
-    $from   = "FROM {$CFG->prefix}enrol_authorize E ";
+    $select = "SELECT e.id, e.paymentmethod, e.transid, e.courseid, e.userid, e.status, e.ccname, e.timecreated, e.settletime ";
+    $from   = "FROM {$CFG->prefix}enrol_authorize e ";
     $where  = "WHERE (1=1) ";
 
     if ($status > AN_STATUS_NONE) {
         switch ($status)
         {
             case AN_STATUS_CREDIT:
-                $from .= "INNER JOIN {$CFG->prefix}enrol_authorize_refunds R ON E.id = R.orderid ";
-                $where .= "AND (E.status = '" . AN_STATUS_AUTHCAPTURE . "') ";
+                $from .= "INNER JOIN {$CFG->prefix}enrol_authorize_refunds R ON e.id = R.orderid ";
+                $where .= "AND (e.status = '" . AN_STATUS_AUTHCAPTURE . "') ";
                 break;
 
             case AN_STATUS_TEST:
                 $newordertime = time() - 120; // -2 minutes. Order may be still in process.
-                $where .= "AND (E.status = '" . AN_STATUS_NONE . "') AND (E.transid = '0') AND (E.timecreated < $newordertime) ";
+                $where .= "AND (e.status = '" . AN_STATUS_NONE . "') AND (e.transid = '0') AND (e.timecreated < $newordertime) ";
                 break;
 
             default:
-                $where .= "AND (E.status = '$status') ";
+                $where .= "AND (e.status = '$status') ";
                 break;
         }
     }
     else {
         if (empty($CFG->an_test)) {
-            $where .= "AND (E.status != '" . AN_STATUS_NONE . "') ";
+            $where .= "AND (e.status != '" . AN_STATUS_NONE . "') ";
         }
     }
 
     if ($userid > 0) {
-        $where .= "AND (E.userid = '" . $userid . "') ";
+        $where .= "AND (e.userid = '" . $userid . "') ";
     }
     if ($courseid != SITEID) {
-        $where .= "AND (E.courseid = '" . $courseid . "') ";
+        $where .= "AND (e.courseid = '" . $courseid . "') ";
     }
 
     if ($sort = $table->get_sql_sort()) {
@@ -184,8 +183,7 @@ function authorize_print_order_details($orderno)
     }
 
     if ($USER->id != $order->userid) { // Current user viewing someone else's order
-        $context = get_context_instance(CONTEXT_COURSE, $order->courseid);
-        if (! has_capability('enrol/authorize:managepayments', $context)) {
+        if (! has_capability('enrol/authorize:managepayments', get_context_instance(CONTEXT_COURSE, $order->courseid))) {
            error("You don't have access rights on this order.");
         }
     }
@@ -532,11 +530,11 @@ function authorize_get_status_action($order)
     $ret = new stdClass();
     $ret->actions = array();
 
-    $context = get_context_instance(CONTEXT_COURSE, $order->courseid);
+    $canmanage = has_capability('enrol/authorize:managepayments', get_context_instance(CONTEXT_COURSE, $order->courseid));
 
     if (intval($order->transid) == 0) { // test transaction or new order
         if ($order->timecreated < $newordertime) {
-            if (has_capability('enrol/authorize:managepayments', $context)) {
+            if ($canmanage) {
                 $ret->actions = array(ORDER_DELETE);
             }
             $ret->status = 'tested';
@@ -550,13 +548,13 @@ function authorize_get_status_action($order)
     switch ($order->status) {
     case AN_STATUS_AUTH:
         if (authorize_expired($order)) {
-            if (has_capability('enrol/authorize:managepayments', $context)) {
+            if ($canmanage) {
                 $ret->actions = array(ORDER_DELETE);
             }
             $ret->status = 'expired';
         }
         else {
-            if (has_capability('enrol/authorize:managepayments', $context)) {
+            if ($canmanage) {
                 $ret->actions = array(ORDER_CAPTURE, ORDER_VOID);
             }
             $ret->status = 'authorizedpendingcapture';
@@ -565,15 +563,14 @@ function authorize_get_status_action($order)
 
     case AN_STATUS_AUTHCAPTURE:
         if (authorize_settled($order)) {
-            if (has_capability('enrol/authorize:managepayments', $context)) {
+            if ($canmanage) {
                 $ret->actions = array(ORDER_REFUND);
             }
             $ret->status = 'capturedsettled';
         }
         else {
-            if ($order->paymentmethod == AN_METHOD_CC &&
-                has_capability('enrol/authorize:managepayments', $context)) {
-                    $ret->actions = array(ORDER_VOID);
+            if ($order->paymentmethod == AN_METHOD_CC && $canmanage) {
+                $ret->actions = array(ORDER_VOID);
             }
             $ret->status = 'capturedpendingsettle';
         }
@@ -584,8 +581,7 @@ function authorize_get_status_action($order)
             $ret->status = 'settled';
         }
         else {
-            if ($order->paymentmethod == AN_METHOD_CC &&
-                has_capability('enrol/authorize:managepayments', $context)) {
+            if ($order->paymentmethod == AN_METHOD_CC && $canmanage) {
                 $ret->actions = array(ORDER_VOID);
             }
             $ret->status = 'refunded';
@@ -597,7 +593,7 @@ function authorize_get_status_action($order)
         return $ret;
 
     case AN_STATUS_EXPIRE:
-        if (has_capability('enrol/authorize:managepayments', $context)) {
+        if ($canmanage) {
             $ret->actions = array(ORDER_DELETE);
         }
         $ret->status = 'expired';
