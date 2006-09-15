@@ -115,7 +115,7 @@ switch ($filtertype) {
         /// check if user is editting teacher, or if spg, is member
     break;
     case 'user':
-        $context = get_context_instance(CONTEXT_USERID, $userid);
+        $context = get_context_instance(CONTEXT_USER, $userid);
         if ($CFG->bloglevel < BLOG_USER_LEVEL) {
             error ('Blogs is not enabled');
         }

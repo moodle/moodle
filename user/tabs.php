@@ -89,14 +89,14 @@
 
         $toprow[] = new tabobject('profile', $CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.$course->id, get_string('profile'));
 
-        $personalcontext = get_context_instance(CONTEXT_USERID, $user->id);
+        $personalcontext = get_context_instance(CONTEXT_USER, $user->id);
     /// Can only edit profile if it belongs to user or current user is admin and not editing primary admin
 
         if (($mainadmin = get_admin()) === false) {
             $mainadmin->id = 0; /// Weird - no primary admin!
         }
         if ((!empty($USER->id) and ($USER->id == $user->id) and !isguest()) or
-            (has_capability('moodle/user:editprofile', get_context_instance(CONTEXT_USERID, $user->id)) and ($user->id != $mainadmin->id)) ) {
+            (has_capability('moodle/user:editprofile', get_context_instance(CONTEXT_USER, $user->id)) and ($user->id != $mainadmin->id)) ) {
 
             if(empty($CFG->loginhttps)) {
                 $wwwroot = $CFG->wwwroot;
@@ -176,7 +176,7 @@
     /// this needs permission checkings
 
     if (!empty($showroles)) { // this variable controls whether this roles is showed, or not, so only user/view page should set this flag
-        $usercontext = get_context_instance(CONTEXT_USERID, $user->id);
+        $usercontext = get_context_instance(CONTEXT_USER, $user->id);
         $toprow[] = new tabobject('roles', $CFG->wwwroot.'/admin/roles/assign.php?contextid='.$usercontext->id.'&amp;userid='.$user->id.'&amp;courseid='.$course->id
                               ,get_string('roles'));
                               

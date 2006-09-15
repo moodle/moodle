@@ -23,7 +23,7 @@ define('CAP_PROHIBIT', -1000);
 // context definitions
 define('CONTEXT_SYSTEM', 10);
 define('CONTEXT_PERSONAL', 20);
-define('CONTEXT_USERID', 30);
+define('CONTEXT_USER', 30);
 define('CONTEXT_COURSECAT', 40);
 define('CONTEXT_COURSE', 50);
 define('CONTEXT_GROUP', 60);
@@ -381,7 +381,7 @@ function has_capability($capability, $context=NULL, $userid=NULL, $doanything=tr
             break;
 
             default:
-                // CONTEXT_SYSTEM: CONTEXT_PERSONAL: CONTEXT_USERID:
+                // CONTEXT_SYSTEM: CONTEXT_PERSONAL: CONTEXT_USER:
                 // Do nothing.
             break;
         }
@@ -428,7 +428,7 @@ function capability_search($capability, $context, $capabilities) {
             $permission = capability_search($capability, $parentcontext, $capabilities);
         break;
 
-        case CONTEXT_USERID:
+        case CONTEXT_USER:
             $parentcontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
             $permission = capability_search($capability, $parentcontext, $capabilities);
         break;
@@ -746,7 +746,7 @@ function capability_prohibits($capability, $context, $sum='', $array='') {
             return capability_prohibits($capability, $parent);
         break;
 
-        case CONTEXT_USERID:
+        case CONTEXT_USER:
             $parent = get_context_instance(CONTEXT_SYSTEM, SITEID);
             return capability_prohibits($capability, $parent);
         break;
@@ -1690,7 +1690,7 @@ function print_context_name($context) {
             $name = get_string('personal');
             break;
 
-        case CONTEXT_USERID:
+        case CONTEXT_USER:
             if ($user = get_record('user', 'id', $context->instanceid)) {
                 $name = get_string('user').': '.fullname($user);
             }
@@ -1777,8 +1777,8 @@ function fetch_context_capabilities($context) {
             $SQL = "select * from {$CFG->prefix}capabilities where contextlevel = ".CONTEXT_PERSONAL;
         break;
         
-        case CONTEXT_USERID:
-            $SQL = "select * from {$CFG->prefix}capabilities where contextlevel = ".CONTEXT_USERID;
+        case CONTEXT_USER:
+            $SQL = "select * from {$CFG->prefix}capabilities where contextlevel = ".CONTEXT_USER;
         break;
         
         case CONTEXT_COURSECAT: // all
@@ -1905,7 +1905,7 @@ function get_parent_contexts($context) {
             }
         break;
         
-        case CONTEXT_USERID:
+        case CONTEXT_USER:
             if (!$parent = get_context_instance(CONTEXT_SYSTEM, SITEID)) {
                 return array();
             } else {
@@ -2064,7 +2064,7 @@ function get_component_string($component, $contextlevel) {
             $string = get_string('personal');
         break;
 
-        case CONTEXT_USERID:
+        case CONTEXT_USER:
             $string = get_string('users');
         break;
 

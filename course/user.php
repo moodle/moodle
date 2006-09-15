@@ -24,7 +24,7 @@
     }
 
     $coursecontext = get_context_instance(CONTEXT_COURSE, $id);
-    $personalcontext = get_context_instance(CONTEXT_USERID, $user->id);
+    $personalcontext = get_context_instance(CONTEXT_USER, $user->id);
 
     // if in either context, we can read report, then we can proceed
     if (!(has_capability('moodle/site:viewreports', $coursecontext) or ($course->showreports and $USER->id == $user->id) or has_capability('moodle/user:viewuseractivitiesreport', $personalcontext))) {

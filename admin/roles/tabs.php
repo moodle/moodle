@@ -13,7 +13,7 @@ if ($currenttab != 'update') {
         case CONTEXT_PERSONAL:
             break;
 
-        case CONTEXT_USERID:
+        case CONTEXT_USER:
             print_header();
             break;
 

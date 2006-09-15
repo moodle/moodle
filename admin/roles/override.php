@@ -48,7 +48,7 @@
     
     
     // we got a few tabs there
-    if ($context->aggregatelevel == CONTEXT_USERID) {
+    if ($context->aggregatelevel == CONTEXT_USER) {
       
         /// course header
         if ($courseid!= SITEID) {

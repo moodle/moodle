@@ -63,7 +63,7 @@
 
 /// Print the header and tabs
 
-    if ($context->aggregatelevel == CONTEXT_USERID) {
+    if ($context->aggregatelevel == CONTEXT_USER) {
         /// course header
         if ($courseid!= SITEID) {
             print_header("$fullname", "$fullname",

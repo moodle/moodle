@@ -735,7 +735,7 @@ $moodle_capabilities = array(
     // since the next level up is site. These are more for the parent role
     'moodle/user:readuserposts' => array(
         'captype' => 'read',
-        'contextlevel' => CONTEXT_USERID,
+        'contextlevel' => CONTEXT_USER,
         'legacy' => array(
             'guest' => CAP_PREVENT,
             'student' => CAP_ALLOW,
@@ -748,7 +748,7 @@ $moodle_capabilities = array(
     
     'moodle/user:readuserblogs' => array(
         'captype' => 'read',
-        'contextlevel' => CONTEXT_USERID,
+        'contextlevel' => CONTEXT_USER,
         'legacy' => array(
             'guest' => CAP_PREVENT,
             'student' => CAP_ALLOW,
@@ -761,7 +761,7 @@ $moodle_capabilities = array(
     
     'moodle/user:viewuseractivitiesreport' => array(
         'captype' => 'read',
-        'contextlevel' => CONTEXT_USERID,
+        'contextlevel' => CONTEXT_USER,
         'legacy' => array(
             'guest' => CAP_PREVENT,
             'student' => CAP_PREVENT,
@@ -774,7 +774,7 @@ $moodle_capabilities = array(
     
     'moodle/user:editprofile' => array(
         'captype' => 'read',
-        'contextlevel' => CONTEXT_USERID,
+        'contextlevel' => CONTEXT_USER,
         'legacy' => array(
             'guest' => CAP_PREVENT,
             'student' => CAP_PREVENT,
