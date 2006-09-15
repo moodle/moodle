@@ -590,7 +590,6 @@ function get_recordset_list($table, $field='', $values='', $sort='', $fields='*'
  * @return mixed an ADODB RecordSet object, or false if an error occured.
  */
 function get_recordset_sql($sql, $limitfrom=null, $limitnum=null) {
-
     global $CFG, $db;
 
     if (empty($db)) {
@@ -736,7 +735,7 @@ function get_records_list($table, $field='', $values='', $sort='', $fields='*', 
  * @return mixed an array of objects, or false if no records were found or an error occured.
  */
 function get_records_sql($sql, $limitfrom='', $limitnum='') {
-    $rs = get_recordset_sql($sql, $limitfrom='', $limitnum='');
+    $rs = get_recordset_sql($sql, $limitfrom, $limitnum);
     return recordset_to_array($rs);
 }
 
