@@ -31,7 +31,7 @@ if ($courseid) {
           <?php 
               foreach ($contextusers as $contextuser) {
                   $fullname = fullname($contextuser, true);
-                  echo "<option value=\"$contextuser->id\">".$fullname.", ".$student->email."</option>\n";
+                  echo "<option value=\"$contextuser->id\">".$fullname.", ".$contextuser->email."</option>\n";
               }
           ?>
           
