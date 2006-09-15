@@ -1112,7 +1112,10 @@ function get_all_instances_in_course($modulename, $course) {
 
     global $CFG;
 
-/// Casting $course->modinfo to string prevents one notice when the field is null
+    if (empty($course->modinfo)) {
+        return array();
+    }
+
     if (!$modinfo = unserialize((string)$course->modinfo)) {
         return array();
     }
