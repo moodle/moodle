@@ -272,11 +272,25 @@ $moodle_capabilities = array(
     
     'moodle/user:viewdetails' => array(
     
-        'captype' => 'write',
+        'captype' => 'read',
         'contextlevel' => CONTEXT_SYSTEM,
         'legacy' => array(
             'guest' => CAP_PREVENT,
             'student' => CAP_ALLOW,
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'coursecreator' => CAP_ALLOW,
+            'admin' => CAP_ALLOW
+        )
+    ),
+
+    'moodle/user:viewhiddendetails' => array(
+    
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'legacy' => array(
+            'guest' => CAP_PREVENT,
+            'student' => CAP_PREVENT,
             'teacher' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW,
             'coursecreator' => CAP_ALLOW,
