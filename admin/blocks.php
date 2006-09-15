@@ -4,10 +4,10 @@
 
     require_once('../config.php');
     require_once($CFG->libdir.'/adminlib.php');
-    $adminroot = admin_get_root();
-    admin_externalpage_setup('manageblocks', $adminroot);
     require_once($CFG->libdir.'/blocklib.php');
     require_once($CFG->libdir.'/tablelib.php');
+    $adminroot = admin_get_root();
+    admin_externalpage_setup('manageblocks', $adminroot);
 
     $confirm  = optional_param('confirm', 0, PARAM_BOOL);
     $hide     = optional_param('hide', 0, PARAM_INT);
