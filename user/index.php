@@ -8,6 +8,7 @@
     define('USER_SMALL_CLASS', 20);   // Below this is considered small
     define('USER_LARGE_CLASS', 200);  // Above this is considered large
     define('DEFAULT_PAGE_SIZE', 20);
+    define('SHOW_ALL_PAGE_SIZE', 5000);
 
     $group        = optional_param('group', -1, PARAM_INT);                   // Group to show
     $page         = optional_param('page', 0, PARAM_INT);                     // which page to show
@@ -387,7 +388,7 @@ function checkchecked(form) {
         $where  = "WHERE (r.contextid = $context->id OR r.contextid in $listofcontexts) 
                     AND u.deleted = 0 
                     AND r.roleid = $roleid 
-                    AND (ul.courseid = $course->id OR ISNULL(ul.courseid))";   
+                    AND (ul.courseid = $course->id OR ul.courseid IS NULL)";   
         $where .= get_lastaccess_sql($accesssince);
         
         $wheresearch = '';
@@ -584,11 +585,11 @@ function checkchecked(form) {
             echo '<input type="text" name="search" value="'.$search.'" />&nbsp;<input type="submit" value="'.get_string('search').'" /></p></form>'."\n";
         }
     
-        if ($perpage == 99999) {
+        if ($perpage == SHOW_ALL_PAGE_SIZE) {
             echo '<div id="showall"><a href="'.$baseurl.'&amp;perpage='.DEFAULT_PAGE_SIZE.'">'.get_string('showperpage', '', DEFAULT_PAGE_SIZE).'</a></div>';
         }
         else if ($matchcount > 0 && $perpage < $matchcount) {
-            echo '<div id="showall"><a href="'.$baseurl.'&amp;perpage=99999">'.get_string('showall', '', $matchcount).'</a></div>';
+            echo '<div id="showall"><a href="'.$baseurl.'&amp;perpage='.SHOW_ALL_PAGE_SIZE.'">'.get_string('showall', '', $matchcount).'</a></div>';
         }
     } // end of if ($roleid);
     

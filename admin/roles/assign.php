@@ -133,23 +133,22 @@
     $existinguserlist = implode(',', $existinguserarray);
     unset($existinguserarray);
 
+    $usercount = get_users(false, '', true, $existinguserlist);
+
 /// Get search results excluding any users already in this course
     if (($searchtext != '') and $previoussearch) {
         $searchusers = get_users(true, $searchtext, true, $existinguserlist, 'firstname ASC, lastname ASC',
-                                      '', '', 0, 99999, 'id, firstname, lastname, email');
-        $usercount = get_users(false, '', true, $existinguserlist);
+                                      '', '', 0, MAX_USERS_PER_PAGE, 'id, firstname, lastname, email');
     }
 
 /// If no search results then get potential students for this course excluding users already in course
     if (empty($searchusers)) {
-
-        $usercount = get_users(false, '', true, $existinguserlist, 'firstname ASC, lastname ASC', '', '',
-                              0, 99999, 'id, firstname, lastname, email') ;
         $users = array();
-
         if ($usercount <= MAX_USERS_PER_PAGE) {
-            $users = get_users(true, '', true, $existinguserlist, 'firstname ASC, lastname ASC', '', '',
-                               0, 99999, 'id, firstname, lastname, email');
+            if (!$users = get_users(true, '', true, $existinguserlist, 'firstname ASC, lastname ASC', '', '',
+                               0, MAX_USERS_PER_PAGE, 'id, firstname, lastname, email')) {
+                $users = array();
+            }
         }
 
     }

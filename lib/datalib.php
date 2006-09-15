@@ -194,11 +194,17 @@ function get_site_users($sort='u.lastaccess DESC', $fields='*', $exceptions='') 
  * @return object|false|int  {@link $USER} records unless get is false in which case the integer count of the records found is returned. False is returned if an error is encountered.
  */
 function get_users($get=true, $search='', $confirmed=false, $exceptions='', $sort='firstname ASC',
-                   $firstinitial='', $lastinitial='', $page=0, $recordsperpage=99999, $fields='*') {
+                   $firstinitial='', $lastinitial='', $page='', $recordsperpage='', $fields='*') {
 
     global $CFG;
+    
+    if ($get && !$recordsperpage) {
+        debugging('Call to get_users with $get = true no $recordsperpage limit. ' .
+                'On large installations, this will probably cause an out of memory error. ' .
+                'Please think again and change your code so that it does not try to ' .
+                'load so much data into memory.', E_USER_WARNING);
+    }
 
-    $limit     = sql_paging_limit($page, $recordsperpage);
     $LIKE      = sql_ilike();
     $fullname  = sql_fullname();
 
@@ -224,16 +230,10 @@ function get_users($get=true, $search='', $confirmed=false, $exceptions='', $sor
         $select .= ' AND lastname '. $LIKE .' \''. $lastinitial .'%\'';
     }
 
-    if ($sort and $get) {
-        $sort = ' ORDER BY '. $sort .' ';
-    } else {
-        $sort = '';
-    }
-
     if ($get) {
-        return get_records_select('user', $select .' '. $sort .' '. $limit, '', $fields);
+        return get_records_select('user', $select, $sort, $fields, $page, $recordsperpage);
     } else {
-        return count_records_select('user', $select .' '. $sort .' '. $limit);
+        return count_records_select('user', $select);
     }
 }
 
@@ -255,12 +255,16 @@ function get_users($get=true, $search='', $confirmed=false, $exceptions='', $sor
  * @todo Finish documenting this function
  */
 
-function get_users_listing($sort='lastaccess', $dir='ASC', $page=0, $recordsperpage=99999,
+function get_users_listing($sort='lastaccess', $dir='ASC', $page=0, $recordsperpage=0,
                            $search='', $firstinitial='', $lastinitial='') {
 
     global $CFG;
 
-    $limit     = sql_paging_limit($page, $recordsperpage);
+    if ($recordsperpage) {
+        $limit = sql_paging_limit($page, $recordsperpage);
+    } else {
+        $limit = '';
+    }
     $LIKE      = sql_ilike();
     $fullname  = sql_fullname();
 

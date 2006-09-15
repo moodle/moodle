@@ -641,7 +641,7 @@ function get_recent_enrolments($courseid, $timestart) {
  * @return object
  * @todo Finish documenting this function
  */
-function get_course_students($courseid, $sort='ul.timeaccess', $dir='', $page=0, $recordsperpage=99999,
+function get_course_students($courseid, $sort='ul.timeaccess', $dir='', $page='', $recordsperpage='',
                              $firstinitial='', $lastinitial='', $group=NULL, $search='', $fields='', $exceptions='') {
 
     global $CFG;
@@ -671,7 +671,6 @@ function get_course_students($courseid, $sort='ul.timeaccess', $dir='', $page=0,
                           $page, $recordsperpage, $fields ? $fields : '*');
     }
 
-    $limit     = sql_paging_limit($page, $recordsperpage);
     $LIKE      = sql_ilike();
     $fullname  = sql_fullname('u.firstname','u.lastname');
 
@@ -679,7 +678,7 @@ function get_course_students($courseid, $sort='ul.timeaccess', $dir='', $page=0,
 
     // make sure it works on the site course
     $context = get_context_instance(CONTEXT_COURSE, $courseid);
-    $select = "(ul.courseid = '$courseid' OR ISNULL(ul.courseid)) AND ";
+    $select = "(ul.courseid = '$courseid' OR ul.courseid IS NULL) AND ";
     if ($courseid == SITEID) {
         $select = '';
     }
@@ -723,10 +722,10 @@ function get_course_students($courseid, $sort='ul.timeaccess', $dir='', $page=0,
 
     $students = get_records_sql("SELECT $fields
                             FROM {$CFG->prefix}user u INNER JOIN
-                                 {$CFG->prefix}role_assignment ra on u.id=ra.userid LEFT OUTER JOIN
+                                 {$CFG->prefix}role_assignments ra on u.id=ra.userid LEFT OUTER JOIN
                                  {$CFG->prefix}user_lastaccess ul on ul.userid=ra.userid
                                  $groupmembers
-                            WHERE $select $search $sort $dir $limit");
+                            WHERE $select $search $sort $dir", $page, $recordsperpage);
 
     //if ($courseid != SITEID) {
     return $students;

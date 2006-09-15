@@ -5,7 +5,7 @@
     
     require_once('../config.php');
 
-    define("MAX_USERS_PER_PAGE", 50);
+    define("MAX_USERS_PER_PAGE", 5000);
 
     if (! $site = get_site()) {
         redirect("$CFG->wwwroot/$CFG->admin/index.php");
@@ -86,21 +86,23 @@
 
     unset($creatorarray);
 
+    $usercount = get_users(false, '', true, $creatorlist);
 
 /// Get search results excluding any current admins
     if (!empty($frm->searchtext) and $previoussearch) {
         $searchusers = get_users(true, $frm->searchtext, true, $creatorlist, 'firstname ASC, lastname ASC',
-                                      '', '', 0, 99999, 'id, firstname, lastname, email');
-        $usercount = get_users(false, '', true, $creatorlist);
+                                      '', '', 0, MAX_USERS_PER_PAGE, 'id, firstname, lastname, email');
     }
 
 /// If no search results then get potential users excluding current creators
     if (empty($searchusers)) {
-        if (!$users = get_users(true, '', true, $creatorlist, 'firstname ASC, lastname ASC', '', '',
-                                0, 99999, 'id, firstname, lastname, email') ) {
-            $users = array();
+        $users = array();
+        if ($usercount <= MAX_USERS_PER_PAGE) {
+            if (!$users = get_users(true, '', true, $creatorlist, 'firstname ASC, lastname ASC', '', '',
+                                    0, MAX_USERS_PER_PAGE, 'id, firstname, lastname, email') ) {
+                $users = array();
+            }
         }
-        $usercount = count($users);
     }
 
     $searchtext = (isset($frm->searchtext)) ? $frm->searchtext : "";

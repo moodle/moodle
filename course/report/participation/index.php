@@ -3,6 +3,7 @@
     require_once('../../../config.php');
 
     define('DEFAULT_PAGE_SIZE', 20);
+    define('SHOW_ALL_PAGE_SIZE', 5000);
     
     $id         = required_param('id', PARAM_INT); // course id.
     $moduleid   = optional_param('moduleid', 0, PARAM_INT); // module id.
@@ -338,11 +339,11 @@ function checknos() {
 
         $table->print_html();
 
-        if ($perpage == 99999) {
+        if ($perpage == SHOW_ALL_PAGE_SIZE) {
             echo '<div id="showall"><a href="'.$baseurl.'&amp;perpage='.DEFAULT_PAGE_SIZE.'">'.get_string('showperpage', '', DEFAULT_PAGE_SIZE).'</a></div>';
         }
         else if ($matchcount > 0 && $perpage < $matchcount) {
-            echo '<div id="showall"><a href="'.$baseurl.'&amp;perpage=99999">'.get_string('showall', '', $matchcount).'</a></div>';
+            echo '<div id="showall"><a href="'.$baseurl.'&amp;perpage='.SHOW_ALL_PAGE_SIZE.'">'.get_string('showall', '', $matchcount).'</a></div>';
         }
     
         echo '<br /><center>';
