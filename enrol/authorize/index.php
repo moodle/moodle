@@ -16,6 +16,10 @@
         error("Guests cannot use this page.");
     }
 
+    if (!$course = get_record('course', 'id', $courseid)) {
+        error('Could not find that course');
+    }
+
 /// Load strings. All strings should be defined here. locallib.php uses these strings.
     $strs = get_strings(array('status','action','time','course','confirm','no','all','none','error'));
     $authstrs = get_strings(array('orderid','nameoncard','echeckfirslasttname','void','capture','refund','delete',
@@ -25,15 +29,11 @@
 
 /// Print header
     $strpaymentmanagement = get_string('paymentmanagement', 'enrol_authorize');
-    if (!$course = get_record('course', 'id', $courseid)) {
-        error('Could not find that course');
-    }
     print_header_simple("$strpaymentmanagement", "", "<a href=\"index.php\">$strpaymentmanagement</a>");
 
-
-/// If orderid is empty, user wants to see all orders
+/// If orderid is empty, print orders
     if (empty($orderid)) {
-        authorize_print_orders();
+        authorize_print_orders($courseid, $userid);
     } else {
         authorize_print_order_details($orderid);
     }

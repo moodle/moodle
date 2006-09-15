@@ -16,11 +16,10 @@ define('ORDER_VOID',    'void');
  * authorize_print_orders
  *
  */
-function authorize_print_orders()
+function authorize_print_orders($courseid, $userid)
 {
     global $CFG, $USER;
     global $strs, $authstrs;
-    global $courseid, $userid;
     require_once($CFG->libdir.'/tablelib.php');
 
     $perpage = 10;
