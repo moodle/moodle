@@ -1527,14 +1527,12 @@ function print_course($course, $width="100%") {
     if ($teachers = get_course_teachers($course->id)) {
         echo "<span class=\"teachers\">\n";
         foreach ($teachers as $teacher) {
-            if ($teacher->authority > 0) {
-                if (!$teacher->role) {
-                    $teacher->role = $course->teacher;
-                }
-                $fullname = fullname($teacher, has_capability('moodle/site:viewfullnames', get_context_instance(CONTEXT_COURSE, $course->id))); // is the USER a teacher of that course
-                echo $teacher->role.': <a href="'.$CFG->wwwroot.'/user/view.php?id='.$teacher->id.
-                     '&amp;course='.SITEID.'">'.$fullname.'</a><br />';
+            if (empty($teacher->role)) {
+                $teacher->role = $course->teacher;
             }
+            $fullname = fullname($teacher, has_capability('moodle/site:viewfullnames', get_context_instance(CONTEXT_COURSE, $course->id))); // is the USER a teacher of that course
+            echo $teacher->role.': <a href="'.$CFG->wwwroot.'/user/view.php?id='.$teacher->id.
+                '&amp;course='.SITEID.'">'.$fullname.'</a><br />';
         }
         echo "</span>\n";
     }
