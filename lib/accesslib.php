@@ -2315,7 +2315,7 @@ function get_users_by_capability($context, $capability, $fields='u.*, ul.timeacc
     }
     
     /// if context is a course, then constrct sql for ul
-    if ($context->aggregatelevel == COURSE_CONTEXT) {
+    if ($context->aggregatelevel == CONTEXT_COURSE) {
         $courseid = $context->instanceid;
         $coursesql = "AND (ul.courseid = $courseid OR ISNULL(ul.courseid)";
     }
