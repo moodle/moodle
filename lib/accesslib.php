@@ -2205,7 +2205,7 @@ function get_user_roles($context, $userid=0) {
     }
 
     if ($parents = get_parent_contexts($context)) {
-        $contexts = ' AND ra.contextid IN ('.implode(',' , $parents).')';
+        $contexts = ' AND ra.contextid IN ('.implode(',' , $parents).','.$context->id.')';
     } else {
         $contexts = ' AND ra.contextid = \''.$context->id.'\'';
     }
