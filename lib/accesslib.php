@@ -2288,14 +2288,16 @@ function get_overridable_roles ($context) {
  * @param $limitfrom - number of records to skip (offset)
  * @param $limitnum - number of records to fetch 
  * @param $groups - single group or array of groups - group(s) user is in
+ * @param $exceptions - list of users to exclude
  */
-function get_users_by_capability($context, $capability, $fields='u.*', $sort='', $limitfrom='', $limitnum='', $groups='') {
+function get_users_by_capability($context, $capability, $fields='u.*, ul.timeaccess as lastaccess', $sort='ul.timeaccess', $limitfrom='', $limitnum='', $groups='', $exceptions='') {
     
     global $CFG;
     
+    /// sorting out groups
     if ($groups) {
       
-        $groupjoin = 'LEFT JOIN '.$CFG->prefix.'groups_members gm ON gm.userid = ra.userid';
+        $groupjoin = 'INNER JOIN '.$CFG->prefix.'groups_members gm ON gm.userid = ra.userid';
         
         if (is_array($groups)) {
             $groupsql = 'AND gm.id IN ('.implode(',', $groups).')';
@@ -2307,7 +2309,18 @@ function get_users_by_capability($context, $capability, $fields='u.*', $sort='',
         $groupsql = '';  
     }
     
-    // first get all roles with this capability in this context, or above
+    /// sorting out exceptions
+    if ($exceptions) {
+        $exceptionsql = "AND u.id NOT IN ($exceptions)";
+    }
+    
+    /// if context is a course, then constrct sql for ul
+    if ($context->aggregatelevel == COURSE_CONTEXT) {
+        $courseid = $context->instanceid;
+        $coursesql = "AND (ul.courseid = $courseid OR ISNULL(ul.courseid)";
+    }
+    
+    /// sorting out roles with this capability set
     $possibleroles = get_roles_with_capability($capability, CAP_ALLOW, $context);
     $validroleids = array();
     foreach ($possibleroles as $prole) {
@@ -2315,23 +2328,30 @@ function get_users_by_capability($context, $capability, $fields='u.*', $sort='',
         if ($caps[$capability] > 0) { // resolved capability > 0
             $validroleids[] = $prole->id;
         }
-    }
-    
-    /// the following few lines may not be needed
-    if ($usercontexts = get_parent_contexts($context)) {
-        $listofcontexts = '('.implode(',', $usercontexts).')';
-    } else {
-        $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
-        $listofcontexts = '('.$sitecontext->id.')'; // must be site  
-    }
-    
+    }  
     $roleids =  '('.implode(',', $validroleids).')';
     
-    $select = ' SELECT '.$fields;
-    $from   = ' FROM '.$CFG->prefix.'user u LEFT JOIN '.$CFG->prefix.'role_assignments ra ON ra.userid = u.id '.$groupjoin;
-    $where  = ' WHERE (ra.contextid = '.$context->id.' OR ra.contextid in '.$listofcontexts.') AND u.deleted = 0 AND ra.roleid in '.$roleids.' '.$groupsql;
+    /// sorting out the sort order
+    if ($sort) {
+        $sortby = " ORDER BY $sort ";  
+    } else {
+        $sortby = "";  
+    }
+    
+    /// Construct the main SQL
+    $select = " SELECT $fields";
+    $from   = " FROM {$CFG->prefix}user u 
+                INNER JOIN {$CFG->prefix}role_assignments ra ON ra.userid = u.id 
+                LEFT OUTER JOIN {$CFG->prefix}user_lastaccess ul ON ul.userid = u.id
+                $groupjoin";
+    $where  = " WHERE ra.contextid ".get_related_contexts_string($context)." 
+                      AND u.deleted = 0 
+                      AND ra.roleid in $roleids 
+                      $exceptionsql
+                      $coursesql
+                      $groupsql";
 
-    return get_records_sql($select.$from.$where.$sort, $limitfrom, $limitnum);  
+    return get_records_sql($select.$from.$where.$sortby, $limitfrom, $limitnum);  
 
 }
 

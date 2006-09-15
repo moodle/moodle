@@ -510,24 +510,9 @@ function remove_creator($userid) {
  * @uses SITEID
  * @param int $userid The id of the user that is being tested against.
  * @return bool
+ * @TODO: remove from cvs
  */
 function add_admin($userid) {
-
-    if (!record_exists('user_admins', 'userid', $userid)) {
-        if (record_exists('user', 'id', $userid)) {
-            $admin->userid = $userid;
-
-            // any admin is also a teacher on the site course
-            if (!record_exists('user_teachers', 'course', SITEID, 'userid', $userid)) {
-                if (!add_teacher($userid, SITEID)) {
-                    return false;
-                }
-            }
-
-            return insert_record('user_admins', $admin);
-        }
-        return false;
-    }
     return true;
 }
 
@@ -619,18 +604,20 @@ function get_teacher($courseid) {
 function get_recent_enrolments($courseid, $timestart) {
 
     global $CFG;
+    
+    $context = get_context_instance(CONTEXT_COURSE, $courseid);
 
     return get_records_sql("SELECT DISTINCT u.id, u.firstname, u.lastname, l.time
                             FROM {$CFG->prefix}user u,
-                                 {$CFG->prefix}user_students s,
+                                 {$CFG->prefix}role_assignments ra,
                                  {$CFG->prefix}log l
                             WHERE l.time > '$timestart'
                               AND l.course = '$courseid'
                               AND l.module = 'course'
                               AND l.action = 'enrol'
                               AND l.info = u.id
-                              AND u.id = s.userid
-                              AND s.course = '$courseid'
+                              AND u.id = ra.userid
+                              AND ra.contextid ".get_related_contexts_string($context)."
                               ORDER BY l.time ASC");
 }
 
@@ -654,7 +641,7 @@ function get_recent_enrolments($courseid, $timestart) {
  * @return object
  * @todo Finish documenting this function
  */
-function get_course_students($courseid, $sort='s.timeaccess', $dir='', $page=0, $recordsperpage=99999,
+function get_course_students($courseid, $sort='ul.timeaccess', $dir='', $page=0, $recordsperpage=99999,
                              $firstinitial='', $lastinitial='', $group=NULL, $search='', $fields='', $exceptions='') {
 
     global $CFG;
@@ -670,12 +657,16 @@ function get_course_students($courseid, $sort='s.timeaccess', $dir='', $page=0, 
             $sort = $sort .' '. $dir;
         }
         // Now we have to make sure site teachers are excluded
-        if ($teachers = get_records('user_teachers', 'course', SITEID)) {
+
+        $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
+        if ($teachers = get_users_by_capability($sitecontext, 'moodle/course:update')) {
             foreach ($teachers as $teacher) {
                 $exceptions .= ','. $teacher->userid;
             }
-            $exceptions = ltrim($exceptions, ',');
-        }
+            $exceptions = ltrim($exceptions, ','); 
+          
+        }        
+
         return get_users(true, $search, true, $exceptions, $sort, $firstinitial, $lastinitial,
                           $page, $recordsperpage, $fields ? $fields : '*');
     }
@@ -687,18 +678,19 @@ function get_course_students($courseid, $sort='s.timeaccess', $dir='', $page=0, 
     $groupmembers = '';
 
     // make sure it works on the site course
-    $select = 's.course = \''. $courseid .'\' AND ';
+    $context = get_context_instance(CONTEXT_COURSE, $courseid);
+    $select = "(ul.courseid = '$courseid' OR ISNULL(ul.courseid)) AND ";
     if ($courseid == SITEID) {
         $select = '';
     }
 
-    $select .= 's.userid = u.id AND u.deleted = \'0\' ';
+    $select .= ' u.deleted = \'0\' ';
 
     if (!$fields) {
         $fields = 'u.id, u.confirmed, u.username, u.firstname, u.lastname, '.
                   'u.maildisplay, u.mailformat, u.maildigest, u.email, u.city, '.
                   'u.country, u.picture, u.idnumber, u.department, u.institution, '.
-                  'u.emailstop, u.lang, u.timezone, s.timeaccess as lastaccess';
+                  'u.emailstop, u.lang, u.timezone, ul.timeaccess as lastaccess';
     }
 
     if ($search) {
@@ -717,8 +709,8 @@ function get_course_students($courseid, $sort='s.timeaccess', $dir='', $page=0, 
         return array();
 
     } else if ($group !== NULL) {
-        $groupmembers = ', '. $CFG->prefix .'groups_members gm ';
-        $select .= ' AND u.id = gm.userid AND gm.groupid = \''. $group .'\'';
+        $groupmembers = "INNER JOIN {$CFG->prefix}groups_members gm on u.id=gm.userid";
+        $select .= ' AND gm.groupid = \''. $group .'\'';
     }
 
     if (!empty($exceptions)) {
@@ -730,15 +722,16 @@ function get_course_students($courseid, $sort='s.timeaccess', $dir='', $page=0, 
     }
 
     $students = get_records_sql("SELECT $fields
-                            FROM {$CFG->prefix}user u,
-                                 {$CFG->prefix}user_students s
+                            FROM {$CFG->prefix}user u INNER JOIN
+                                 {$CFG->prefix}role_assignment ra on u.id=ra.userid LEFT OUTER JOIN
+                                 {$CFG->prefix}user_lastaccess ul on ul.userid=ra.userid
                                  $groupmembers
                             WHERE $select $search $sort $dir $limit");
 
-    if ($courseid != SITEID) {
-        return $students;
-    }
-
+    //if ($courseid != SITEID) {
+    return $students;
+    //}
+/*
     // We are here because we need the students for the site.
     // These also include teachers on real courses minus those on the site
     if ($teachers = get_records('user_teachers', 'course', SITEID)) {
@@ -759,6 +752,7 @@ function get_course_students($courseid, $sort='s.timeaccess', $dir='', $page=0, 
         return $teachers;
     }
     return $teachers + $students;
+    */
 }
 
 
@@ -799,15 +793,14 @@ function count_course_students($course, $search='', $firstinitial='', $lastiniti
 function get_course_teachers($courseid, $sort='t.authority ASC', $exceptions='') {
 
     global $CFG;
-
-    if (!empty($exceptions)) {
-        $exceptions = ' AND u.id NOT IN ('. $exceptions .') ';
-    }
-
-    if (!empty($sort)) {
-        $sort = ' ORDER by '.$sort;
-    }
-
+    
+    $sort = 'ul.timeaccess DESC';
+    
+    $context = get_context_instance(CONTEXT_COURSE, $courseid);
+    return get_users_by_capability($context, 'moodle/course:update', 'u.*, ul.timeaccess as lastaccess', $sort, '','','',$exceptions);
+    
+    /// some fields will be missing, like authority, editall
+    /*
     return get_records_sql("SELECT u.id, u.username, u.firstname, u.lastname, u.maildisplay, u.mailformat, u.maildigest,
                                    u.email, u.city, u.country, u.lastlogin, u.picture, u.lang, u.timezone,
                                    u.emailstop, t.authority,t.role,t.editall,t.timeaccess as lastaccess
@@ -815,6 +808,7 @@ function get_course_teachers($courseid, $sort='t.authority ASC', $exceptions='')
                                  {$CFG->prefix}user_teachers t
                             WHERE t.course = '$courseid' AND t.userid = u.id
                               AND u.deleted = '0' AND u.confirmed = '1' $exceptions $sort");
+    */
 }
 
 /**
@@ -827,20 +821,10 @@ function get_course_teachers($courseid, $sort='t.authority ASC', $exceptions='')
  * @return object
  * @todo Finish documenting this function
  */
-function get_course_users($courseid, $sort='timeaccess DESC', $exceptions='', $fields='') {
+function get_course_users($courseid, $sort='ul.timeaccess DESC', $exceptions='', $fields='') {
 
-    /// Using this method because the single SQL is too inefficient
-    // Note that this has the effect that teachers and students are
-    // sorted individually. Returns first all teachers, then all students
-
-    if (!$teachers = get_course_teachers($courseid, $sort, $exceptions)) {
-        $teachers = array();
-    }
-    if (!$students = get_course_students($courseid, $sort, '', 0, 99999, '', '', NULL, '', $fields, $exceptions)) {
-        $students = array();
-    }
-
-    return $teachers + $students;
+    $context = get_context_instance(CONTEXT_COURSE, $courseid);
+    return get_users_by_capability($context, 'moodle/course:view', 'u.*, ul.timeaccess as lastaccess', $sort, '','','',$exceptions);
 
 }
 

@@ -330,7 +330,6 @@ function get_users_unconfirmed($cutofftime=2000000000) {
  * @uses $CFG
  * @param string $cutofftime ?
  * @return object  {@link $USER} records
- * @todo XXX  Update for Roles
  */
 function get_users_longtimenosee($cutofftime) {
     global $CFG;
@@ -475,7 +474,6 @@ function get_site() {
  *
  * @param    type description
  *
- * @todo XXX Convert to Roles
  */
 function get_courses($categoryid="all", $sort="c.sortorder ASC", $fields="c.*") {
 
@@ -483,9 +481,32 @@ function get_courses($categoryid="all", $sort="c.sortorder ASC", $fields="c.*") 
     
     $categoryselect = "";
     if ($categoryid != "all" && is_numeric($categoryid)) {
-        $categoryselect = "c.category = '$categoryid'";
+        $categoryselect = "WHERE c.category = '$categoryid'";
+    } else {
+        $categoryselect = "";  
+    }  
+    
+    // pull out all course matching the cat
+    $courses = get_records_sql("SELECT $fields 
+                                FROM {$CFG->prefix}course c 
+                                $categoryselect
+                                ORDER BY $sort");
+    $visiblecourses = array();
+    
+    // loop throught them
+    foreach ($courses as $course) {
+        if ($course->visible <= 0) {
+            // for hidden courses, require visibility check
+            if (has_capability('moodle/course:viewhiddencourses', get_context_instance(CONTEXT_COURSE, $course->id))) {
+                $visiblecourses [] = $course;  
+            }
+        } else {
+            $visiblecourses [] = $course;  
+        } 
     }
+    return $visiblecourses;
 
+/*
     $teachertable = "";
     $visiblecourses = "";
     $sqland = "";
@@ -514,6 +535,7 @@ function get_courses($categoryid="all", $sort="c.sortorder ASC", $fields="c.*") 
         $extrafield = ','.$extrafield;
     }
     return get_records_sql("SELECT ".((!empty($teachertable)) ? " DISTINCT " : "")." $fields $extrafield FROM $selectsql ".((!empty($sort)) ? "ORDER BY $sort" : ""));
+    */
 }
 
 
@@ -527,12 +549,56 @@ function get_courses($categoryid="all", $sort="c.sortorder ASC", $fields="c.*") 
  *
  * @param    type description
  *
- * @todo XXX Convert to Roles
  */
 function get_courses_page($categoryid="all", $sort="c.sortorder ASC", $fields="c.*",
                           &$totalcount, $limitfrom="", $limitnum="") {
 
     global $USER, $CFG;
+    
+    $categoryselect = "";
+    if ($categoryid != "all" && is_numeric($categoryid)) {
+        $categoryselect = "WHERE c.category = '$categoryid'";
+    } else {
+        $categoryselect = "";  
+    }  
+    
+    // pull out all course matching the cat
+    $courses = get_records_sql("SELECT $fields 
+                                FROM {$CFG->prefix}course c 
+                                $categoryselect
+                                ORDER BY $sort");
+    $visiblecourses = array();
+    $totalcount = 0;
+    
+    if (!$limitnum) {
+        $limitnum = count($courses);  
+    }
+    
+    if (!limitfrom) {
+        $limitfrom = 0;  
+    }
+    
+    // iteration will have to be done inside loop to keep track of the limitfrom and limitnum
+    foreach ($courses as $course) {
+        if ($course->visible <= 0) {
+            // for hidden courses, require visibility check
+            if (has_capability('moodle/course:viewhiddencourses', get_context_instance(CONTEXT_COURSE, $course->id))) {
+                $totalcount++;
+                if ($totalcount > $limitfrom && count($visiblecourses) < $limitnum) {
+                    $visiblecourses [] = $course;
+                }
+            }
+        } else {
+            $totalcount++;
+            if ($totalcount > $limitfrom && count($visiblecourses) < $limitnum) {
+                $visiblecourses [] = $course;
+            }
+        } 
+    }
+    
+    return $visiblecourses;
+
+/**
 
     $categoryselect = "";
     if ($categoryid != "all" && is_numeric($categoryid)) {
@@ -565,6 +631,7 @@ function get_courses_page($categoryid="all", $sort="c.sortorder ASC", $fields="c
     $totalcount = count_records_sql("SELECT COUNT(DISTINCT c.id) FROM $selectsql");
 
     return get_records_sql("SELECT $fields FROM $selectsql ".((!empty($sort)) ? "ORDER BY $sort" : "")." $limit");
+    */
 }
 
 
@@ -1213,7 +1280,6 @@ function instance_is_visible($moduletype, $module) {
  * @param    string  $info    Additional description information
  * @param    string  $cm      The course_module->id if there is one
  * @param    string  $user    If log regards $user other than $USER
- * @todo XXX Convert to Roles
  */
 function add_to_log($courseid, $module, $action, $url='', $info='', $cm=0, $user=0) {
     // Note that this function intentionally does not follow the normal Moodle DB access idioms.
