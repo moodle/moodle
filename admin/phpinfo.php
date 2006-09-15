@@ -2,36 +2,31 @@
        // phpinfo.php - shows phpinfo for the current server
 
     require_once("../config.php");
+    require_once($CFG->libdir.'/adminlib.php');
 
-    $topframe    = optional_param('topframe', false, PARAM_BOOL);
-    $bottomframe = optional_param('bottomframe', false, PARAM_BOOL);
+    $adminroot = admin_get_root();
+    admin_externalpage_setup('phpinfo', $adminroot);
 
     require_login();
 
     require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM, SITEID));
 
-    if (!$topframe && !$bottomframe) {
-        ?>
+    admin_externalpage_print_header($adminroot);
 
-        <head>
-        <title>PHP info</title>
-        </head>
+    echo '<div class="phpinfo">';
 
-        <frameset rows="80,*">
-           <frame src="phpinfo.php?topframe=true&amp;sesskey=<?php echo $USER->sesskey ?>">
-           <frame src="phpinfo.php?bottomframe=true&amp;sesskey=<?php echo $USER->sesskey ?>">
-        </frameset>
+    ob_start();
+    phpinfo(INFO_GENERAL + INFO_CONFIGURATION + INFO_MODULES);
+    $html = ob_get_contents();
+    ob_end_clean();
 
-        <?php
-    } else if ($topframe && confirm_sesskey()) {
-        $stradministration = get_string("administration");
-        $site = get_site();
+    $html = preg_replace('#(\n?<style[^>]*?>.*?</style[^>]*?>)|(\n?<style[^>]*?/>)#is', '', $html);
+    $html = preg_replace('#(\n?<head[^>]*?>.*?</head[^>]*?>)|(\n?<head[^>]*?/>)#is', '', $html);
 
-        print_header("$site->shortname: phpinfo", "$site->fullname",
-                     "<a target=\"$CFG->framename\" href=\"index.php\">$stradministration</a> -> PHP info");
-        exit;
-    } else if ($bottomframe && confirm_sesskey()) {
-        phpinfo();
-        exit;
-    }
+    echo $html;
+
+    echo '</div>';
+
+    admin_externalpage_print_footer();
+
 ?>

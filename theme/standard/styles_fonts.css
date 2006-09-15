@@ -763,3 +763,31 @@ body#mod-forum-index .generalbox .cell {
   font-size:0.8em;
 }
 
+
+/***
+ *** Phpinfo display
+ ***/
+.phpinfo table {
+  border-collapse: collapse;
+}
+.phpinfo .center {
+  text-align: center;
+}
+.phpinfo .e, .v, .h { 
+  border: 1px solid #000000; 
+  font-size: 0.8em; 
+  vertical-align: baseline;
+}
+.phpinfo .e {
+  background-color: #ccccff; 
+  font-weight: bold; 
+  color: #000000;
+}
+.phpinfo .h {
+  background-color: #9999cc; 
+  font-weight: bold; color: #000000;
+}
+.phpinfo .v {
+  background-color: #cccccc; 
+  color: #000000;
+}
