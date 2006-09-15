@@ -80,7 +80,7 @@ function authorize_print_orders()
         switch ($status)
         {
             case AN_STATUS_CREDIT:
-                $from .= "INNER JOIN {$CFG->prefix}enrol_authorize_refunds R ON e.id = R.orderid ";
+                $from .= "INNER JOIN {$CFG->prefix}enrol_authorize_refunds r ON e.id = r.orderid ";
                 $where .= "AND (e.status = '" . AN_STATUS_AUTHCAPTURE . "') ";
                 break;
 
@@ -172,9 +172,9 @@ function authorize_print_order_details($orderno)
     $table->size = array('30%', '70%');
     $table->align = array('right', 'left');
 
-    $sql = "SELECT E.*, C.shortname, C.enrolperiod FROM {$CFG->prefix}enrol_authorize E " .
-           "INNER JOIN {$CFG->prefix}course C ON C.id = E.courseid " .
-           "WHERE E.id = '$orderno'";
+    $sql = "SELECT e.*, c.shortname, c.enrolperiod FROM {$CFG->prefix}enrol_authorize e " .
+           "INNER JOIN {$CFG->prefix}course c ON c.id = e.courseid " .
+           "WHERE e.id = '$orderno'";
 
     $order = get_record_sql($sql);
     if (!$order) {
@@ -367,9 +367,9 @@ function authorize_print_order_details($orderno)
             }
         }
         else { // cancel refunded transaction
-            $sql = "SELECT R.*, E.courseid, E.paymentmethod FROM {$CFG->prefix}enrol_authorize_refunds R " .
-                   "INNER JOIN {$CFG->prefix}enrol_authorize E ON R.orderid = E.id " .
-                   "WHERE R.id = '$suborderno' AND R.orderid = '$orderno' AND R.status = '" .AN_STATUS_CREDIT. "'";
+            $sql = "SELECT r.*, e.courseid, e.paymentmethod FROM {$CFG->prefix}enrol_authorize_refunds r " .
+                   "INNER JOIN {$CFG->prefix}enrol_authorize e ON r.orderid = e.id " .
+                   "WHERE r.id = '$suborderno' AND r.orderid = '$orderno' AND r.status = '" .AN_STATUS_CREDIT. "'";
 
             $suborder = get_record_sql($sql);
             if (!$suborder) { // not found
@@ -467,9 +467,9 @@ function authorize_print_order_details($orderno)
                               $strs->action,
                               $authstrs->amount);
 
-            $sql = "SELECT R.*, E.courseid, E.paymentmethod FROM {$CFG->prefix}enrol_authorize_refunds R " .
-                   "INNER JOIN {$CFG->prefix}enrol_authorize E ON R.orderid = E.id " .
-                   "WHERE R.orderid = '$orderno'";
+            $sql = "SELECT r.*, e.courseid, e.paymentmethod FROM {$CFG->prefix}enrol_authorize_refunds r " .
+                   "INNER JOIN {$CFG->prefix}enrol_authorize e ON r.orderid = e.id " .
+                   "WHERE r.orderid = '$orderno'";
 
             $refunds = get_records_sql($sql);
             if ($refunds) {
