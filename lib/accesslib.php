@@ -15,6 +15,7 @@
   */
 
 // permission definitions
+define('CAP_INHERIT', 0);
 define('CAP_ALLOW', 1);
 define('CAP_PREVENT', -1);
 define('CAP_PROHIBIT', -1000);
