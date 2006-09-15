@@ -37,8 +37,8 @@
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 <head>
-<meta http-equiv="content-type" content="text/html; charset=<?php print_string("thischarset");?>" />
-<title><?php print_string('insertsmile', 'editor') ?></title>
+<meta http-equiv="content-type" content="text/html; charset=<?php print_string('thischarset'); ?>" />
+<title><?php print_string('insertsmile', 'editor'); ?></title>
 <link rel="stylesheet" href="dialog.css" type="text/css" />
 <script language="javascript" type="text/javascript" src="popup.js"></script>
 <script language="javascript" type="text/javascript">
@@ -70,7 +70,7 @@ function cancel() {
 </head>
 <body onload="Init()">
 <table class="dlg" cellpadding="0" cellspacing="2" width="100%">
-<tr><td><table width="100%"><tr><td class="title" nowrap><?php print_string("chooseicon","editor") ?></td></tr></table></td></tr>
+<tr><td><table width="100%"><tr><td class="title" nowrap="nowrap"><?php print_string('chooseicon', 'editor'); ?></td></tr></table></td></tr>
 <tr>
 <td>
     <table border="0" align="center" cellpadding="5">
@@ -117,9 +117,9 @@ function cancel() {
 
     </td>
   </tr>
-<tr><td><table width="100%"><tr><td valign="middle" width="90%"><hr width="100%"></td></tr></table></td></tr>
+<tr><td><table width="100%"><tr><td valign="middle" width="90%"><hr width="100%" /></td></tr></table></td></tr>
 <tr><td align="right">
-    <button type="button" onclick="return cancel();"><?php print_string("close","editor") ?></button></td></tr>
+    <button type="button" onclick="return cancel();"><?php print_string('close', 'editor'); ?></button></td></tr>
 </table>
 </body>
 </html>
