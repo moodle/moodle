@@ -129,7 +129,7 @@ function load_defaultuser_role() {
 
         // SPECIAL EXCEPTION:  If the default user role is actually a guest role, then 
         // remove some capabilities so this user doesn't get confused with a REAL guest
-        if (isset($USER->capabilities[$sitecontext->id]['moodle/legacy:guest'])) {
+        if (isset($USER->capabilities[$sitecontext->id]['moodle/legacy:guest']) and $USER->username != 'guest') {
             unset($USER->capabilities[$sitecontext->id]['moodle/legacy:guest']); 
             unset($USER->capabilities[$sitecontext->id]['moodle/course:view']);  // No access to courses by default
         }
