@@ -33,7 +33,7 @@
 // This is an improved version of the original multilang filter by Gaetan Frenoy. 
 // It should be 100% compatible with the original one. Some new features are:
 //   - Supports a new "short" syntax to make things easier. Simply use:
-//         <lang lang="XX">
+//         <span lang="XX">
 //   - Needs less resources and executes faster.
 //   - Allows any type of content to be used. No restrictions at all!
 
