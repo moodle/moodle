@@ -3747,7 +3747,7 @@ function forum_add_user_default_subscriptions($userid, $context) {
     switch ($context->aggregatelevel) {
 
         case CONTEXT_SYSTEM:   // For the whole site
-             if ($courses = get_record('course')) {
+             if ($courses = get_records('course')) {
                  foreach ($courses as $course) {
                      $subcontext = get_context_instance(CONTEXT_COURSE, $course->id);
                      forum_add_user_default_subscriptions($userid, $subcontext);
@@ -3755,16 +3755,16 @@ function forum_add_user_default_subscriptions($userid, $context) {
              }
              break;
 
-        case CONTEXT_CATEGORY:   // For a whole category
-             if ($courses = get_record('course', 'category', $context->instanceid)) {
+        case CONTEXT_COURSECAT:   // For a whole category
+             if ($courses = get_records('course', 'category', $context->instanceid)) {
                  foreach ($courses as $course) {
                      $subcontext = get_context_instance(CONTEXT_COURSE, $course->id);
                      forum_add_user_default_subscriptions($userid, $subcontext);
                  }
              }
-             if ($categories = get_record('course_categories', 'parent', $context->instanceid)) {
+             if ($categories = get_records('course_categories', 'parent', $context->instanceid)) {
                  foreach ($categories as $category) {
-                     $subcontext = get_context_instance(CONTEXT_CATEGORY, $category->id);
+                     $subcontext = get_context_instance(CONTEXT_COURSECAT, $category->id);
                      forum_add_user_default_subscriptions($userid, $subcontext);
                  }
              }
@@ -3816,7 +3816,7 @@ function forum_remove_user_subscriptions($userid, $context) {
     switch ($context->aggregatelevel) {
 
         case CONTEXT_SYSTEM:   // For the whole site
-             if ($courses = get_record('course')) {
+             if ($courses = get_records('course')) {
                  foreach ($courses as $course) {
                      $subcontext = get_context_instance(CONTEXT_COURSE, $course->id);
                      forum_remove_user_subscriptions($userid, $subcontext);
@@ -3824,23 +3824,23 @@ function forum_remove_user_subscriptions($userid, $context) {
              }
              break;
 
-        case CONTEXT_CATEGORY:   // For a whole category
-             if ($courses = get_record('course', 'category', $context->instanceid)) {
+        case CONTEXT_COURSECAT:   // For a whole category
+             if ($courses = get_records('course', 'category', $context->instanceid)) {
                  foreach ($courses as $course) {
                      $subcontext = get_context_instance(CONTEXT_COURSE, $course->id);
                      forum_remove_user_subscriptions($userid, $subcontext);
                  }
              }
-             if ($categories = get_record('course_categories', 'parent', $context->instanceid)) {
+             if ($categories = get_records('course_categories', 'parent', $context->instanceid)) {
                  foreach ($categories as $category) {
-                     $subcontext = get_context_instance(CONTEXT_CATEGORY, $category->id);
+                     $subcontext = get_context_instance(CONTEXT_COURSECAT, $category->id);
                      forum_remove_user_subscriptions($userid, $subcontext);
                  }
              }
              break;
 
         case CONTEXT_COURSE:   // For a whole course
-             if ($course = get_record('course', 'id', $context->instanceid)) {
+             if ($course = get_records('course', 'id', $context->instanceid)) {
                  if ($forums = get_all_instances_in_course('forum', $course)) {
                      foreach ($forums as $forum) {
                          forum_unsubscribe($userid, $forum->id);
