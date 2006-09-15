@@ -2310,16 +2310,14 @@ function get_users_by_capability($context, $capability, $fields='u.*, ul.timeacc
     }
     
     /// sorting out exceptions
-    if ($exceptions) {
-        $exceptionsql = "AND u.id NOT IN ($exceptions)";
-    } else {
-        $exceptionsql = '';
-    }
+    $exceptionsql = $exceptions ? "AND u.id NOT IN ($exceptions)" : '';
     
     /// if context is a course, then construct sql for ul
     if ($context->aggregatelevel == CONTEXT_COURSE) {
         $courseid = $context->instanceid;
         $coursesql = "AND (ul.courseid = $courseid OR ISNULL(ul.courseid))";
+    } else {
+        $coursesql = '';
     }
     
     /// sorting out roles with this capability set
@@ -2334,11 +2332,7 @@ function get_users_by_capability($context, $capability, $fields='u.*, ul.timeacc
     $roleids =  '('.implode(',', $validroleids).')';
     
     /// sorting out the sort order
-    if ($sort) {
-        $sortby = " ORDER BY $sort ";  
-    } else {
-        $sortby = "";  
-    }
+    $sortby = $sort ? " ORDER BY $sort " : '';  
     
     /// Construct the main SQL
     $select = " SELECT $fields";

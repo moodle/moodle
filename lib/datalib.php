@@ -65,7 +65,7 @@ function get_admins() {
     
     $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
 
-    return get_users_by_capability($context, 'moodle/legacy:admin', 'u.*, ra.id as adminid', ' ORDER BY ra.id ASC '); // only need first one
+    return get_users_by_capability($context, 'moodle/legacy:admin', 'u.*, ra.id as adminid', 'ra.id ASC'); // only need first one
                              
 }
 
