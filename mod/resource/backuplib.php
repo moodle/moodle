@@ -145,10 +145,16 @@
             $newbit .= $bits[$i].'/';
             $status = $status && check_dir_exists($CFG->dataroot.'/temp/backup/'.$preferences->backup_unique_code.'/course_files/'.$newbit,true);
         }
-        
-        $status = $status && backup_copy_file($CFG->dataroot."/".$preferences->backup_course."/".$resource->reference,
-                                              $CFG->dataroot."/temp/backup/".$preferences->backup_unique_code."/course_files/".$resource->reference);
 
+        if ($resource->reference === '') {
+            $status = $status && backup_copy_course_files($preferences); // copy while ignoring backupdata and moddata!!!
+        } else if (strpos($resource->reference, 'backupdata') === 0 or strpos($resource->reference, $CFG->moddata) === 0) {
+            // no copying - these directories must not be shared anyway!
+        } else {
+            $status = $status && backup_copy_file($CFG->dataroot."/".$preferences->backup_course."/".$resource->reference,
+                                                  $CFG->dataroot."/temp/backup/".$preferences->backup_unique_code."/course_files/".$resource->reference);
+        }
+         
         // now, just in case we check moddata ( going forwards, resources should use this )
         $status = $status && check_and_create_moddata_dir($preferences->backup_unique_code);
         $status = $status && check_dir_exists($CFG->dataroot."/temp/backup/".$preferences->backup_unique_code."/".$CFG->moddata."/resource/",true);
