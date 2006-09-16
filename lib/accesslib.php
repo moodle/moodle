@@ -2236,7 +2236,7 @@ function user_can_assign($context, $targetroleid) {
  * @param int $userid
  * @return array
  */
-function get_user_roles($context, $userid=0) {
+function get_user_roles($context, $userid=0, $checkparentcontexts=true) {
 
     global $USER, $CFG, $db;
 
@@ -2247,16 +2247,19 @@ function get_user_roles($context, $userid=0) {
         $userid = $USER->id;
     }
 
-    if ($parents = get_parent_contexts($context)) {
-        $contexts = ' AND ra.contextid IN ('.implode(',' , $parents).','.$context->id.')';
+    if ($checkparentcontexts && ($parents = get_parent_contexts($context))) {
+        $contexts = ' ra.contextid IN ('.implode(',' , $parents).','.$context->id.')';
     } else {
-        $contexts = ' AND ra.contextid = \''.$context->id.'\'';
+        $contexts = ' ra.contextid = \''.$context->id.'\'';
     }
 
-    return get_records_sql('SELECT *
-                             FROM '.$CFG->prefix.'role_assignments ra
+    return get_records_sql('SELECT ra.*, r.name
+                             FROM '.$CFG->prefix.'role_assignments ra,
+                                  '.$CFG->prefix.'role r
                              WHERE ra.userid = '.$userid.
-                             $contexts);
+                           '   AND ra.roleid = r.id
+                               AND '.$contexts. 
+                           ' ORDER BY r.sortorder ASC');
 }
 
 /**
@@ -2356,7 +2359,7 @@ function get_users_by_capability($context, $capability, $fields='', $sort='',
 
 /// Set up default fields
     if (empty($fields)) {
-        $fields = 'u.*, ul.timeaccess as lastaccess';
+        $fields = 'u.*, ul.timeaccess as lastaccess, ra.hidden';
     }
 
 /// Set up default sort
