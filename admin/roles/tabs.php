@@ -7,7 +7,7 @@ if ($currenttab != 'update') {
 
         case CONTEXT_SYSTEM:
             $stradministration = get_string('administration');
-            print_header($site->fullname, "$site->fullname","<a href=\"../index.php\">$stradministration</a> -> $straction");
+            print_header($SITE->fullname, "$SITE->fullname","<a href=\"../index.php\">$stradministration</a> -> $straction");
             break;
 
         case CONTEXT_PERSONAL:
@@ -22,7 +22,7 @@ if ($currenttab != 'update') {
             $strcategories = get_string("categories");
             $strcategory = get_string("category");
             $strcourses = get_string("courses");
-            print_header("$site->shortname: $category->name", "$site->fullname: $strcourses",
+            print_header("$SITE->shortname: $category->name", "$SITE->fullname: $strcourses",
                     "<a href=\"$CFG->wwwroot/course/index.php\">$strcategories</a> -> <a href=\"$CFG->wwwroot/course/category.php?id=$category->id\">$category->name</a> -> $straction", "", "", true);
             break;
 

@@ -71,26 +71,18 @@
                     $localoverride = get_record_sql($SQL);
 
                     if ($localoverride) { // update current overrides
-
                         if ($value == 0) { // inherit = delete
-
                             unassign_capability($capname, $roleid, $sitecontext->id);
 
                         } else {
-
                             $localoverride->permission = $value;
                             $localoverride->timemodified = time();
                             $localoverride->modifierid = $USER->id;
                             update_record('role_capabilities', $localoverride);    
-
                         }
-
                     } else { // insert a record
-
                         assign_capability($capname, $value, $roleid, $sitecontext->id);
-
                     }
-
                 }
 
                 // update normal role settings
@@ -99,18 +91,22 @@
                 $role->name = $name;
                 $role->description = $description;    
 
-                update_record('role', $role);
+                if (!update_record('role', $role)) {
+                    error('Could not update role!');
+                }
 
                 break;
 
             case 'delete':
                 if ($confirm) { // deletes a role 
-                    echo ('deleting...');
 
-                    // check for depedencies
+                    // check for depedencies  XXX TODO
 
-                    // delete all associated role-assignments?
-                    delete_records('role', 'id', $roleid);
+                    // delete all associated role-assignments?  XXX TODO
+
+                    if (!delete_records('role', 'id', $roleid)) {
+                        error('Could not delete role!');
+                    }
 
                 } else {
                     echo ('<form action="manage.php" method="POST">');
@@ -118,13 +114,10 @@
                     echo ('<input type="hidden" name="roleid" value="'.$roleid.'">');
                     echo ('<input type="hidden" name="sesskey" value="'.sesskey().'">');
                     echo ('<input type="hidden" name="confirm" value="1">');
-                    echo ('are you sure?');
-                    echo ('<input type="submit" value="yes">');
+                    notice_yesno(get_string('deleterolesure', 'role'), 
+                       'manage.php?action=delete&roleid='.$roleid.'&sesskey='.sesskey().'&confirm=1', 'manage.php');
                     admin_externalpage_print_footer($adminroot);
-                    //                      print_footer($course);
                     exit;
-
-                    // prints confirmation form
                 }
 
                 break;      
@@ -138,7 +131,7 @@
 
     }
 
-    $roles = get_records('role');
+    $roles = get_records('role', '', '', 'sortorder ASC, id ASC');
 
     if (($roleid && $action!='delete') || $action=='new') { // load the role if id is present
 
