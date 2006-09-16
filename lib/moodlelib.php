@@ -2455,7 +2455,7 @@ function update_internal_user_password(&$user, $password, $storeindb=true) {
 
 /**
  * Get a complete user record, which includes all the info
- * in the user record, as well as membership information
+ * in the user record
  * Intended for setting as $USER session variable
  *
  * @uses $CFG
@@ -2476,37 +2476,6 @@ function get_complete_user_data($field, $value) {
 
     if (! $user = get_record_select('user', $field .' = \''. $value .'\' AND deleted <> \'1\'')) {
         return false;
-    }
-
-/// Add membership information
-
-    if ($admins = get_records('user_admins', 'userid', $user->id)) {
-        $user->admin = true;
-    }
-
-    $user->student[SITEID] = isstudent(SITEID, $user->id);
-
-/// Load the list of enrolment plugin enabled
-
-    if (!($plugins = explode(',', $CFG->enrol_plugins_enabled))) {
-        $plugins = array($CFG->enrol);
-    }
-
-    require_once($CFG->dirroot .'/enrol/enrol.class.php');
-
-    foreach ($plugins as $p) {
-        $enrol = enrolment_factory::factory($p);
-        if (method_exists($enrol, 'setup_enrolments')) {  /// Plugin supports Roles (Moodle 1.7 and later)
-            $enrol->setup_enrolments($user);
-        } else {                                          /// Run legacy enrolment methods
-            if (method_exists($enrol, 'get_student_courses')) {
-                $enrol->get_student_courses($user);
-            }
-            if (method_exists($enrol, 'get_teacher_courses')) {
-                $enrol->get_teacher_courses($user);
-            }
-        }
-        unset($enrol);
     }
 
 /// Get various settings and preferences
@@ -2547,8 +2516,8 @@ function get_complete_user_data($field, $value) {
     $user->sessionIP = md5(getremoteaddr());   // Store the current IP in the session
 
     return $user;
-
 }
+
 
 
 /*

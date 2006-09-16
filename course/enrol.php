@@ -12,69 +12,59 @@
 
     require_login();
 
-    if (! $course = get_record("course", "id", $id) ) {
+    if (! $course = get_record('course', 'id', $id) ) {
         error("That's an invalid course id");
     }
 
-    if (! $site = get_site()) {
-        error("Could not find a site!");
+    if (! $context = get_context_instance(CONTEXT_COURSE, $course->id) ) {
+        error("That's an invalid course id");
     }
 
-
-/// Refreshing enrolment data in the USER session
-    if (!($plugins = explode(',', $CFG->enrol_plugins_enabled))) {
-        $plugins = array($CFG->enrol);
-    }
-    require_once($CFG->dirroot .'/enrol/enrol.class.php');
-    foreach ($plugins as $p) {
-        $enrol = enrolment_factory::factory($p);
-        if (method_exists($enrol, 'get_student_courses')) {
-            $enrol->get_student_courses($USER);
-        }
-        if (method_exists($enrol, 'get_teacher_courses')) {
-            $enrol->get_teacher_courses($USER);
-        }
-        unset($enrol);
+    if (! $enrol = enrolment_factory::factory($course->enrol)) {
+        error("Could not determine course enrolment method!");
     }
 
-    $enrol = enrolment_factory::factory($course->enrol);
+/// Refreshing all current role assignments for the current user
 
-/// Double check just in case they are actually enrolled already 
-/// This might occur if they were enrolled during this session
-/// also happens when course is unhidden after student logs in
+    load_user_capability();
 
-    if ( !empty($USER->student[$course->id]) or !empty($USER->teacher[$course->id]) ) {
+/// Double check just in case they are actually enrolled already and 
+/// thus got to this script by mistake.  This might occur if enrolments 
+/// changed during this session or something
 
+    if (has_capability('moodle/course:view', $context)) {
         if ($SESSION->wantsurl) {
             $destination = $SESSION->wantsurl;
             unset($SESSION->wantsurl);
         } else {
             $destination = "$CFG->wwwroot/course/view.php?id=$course->id";
         }
-
-        redirect($destination);
+        redirect($destination);   // Bye!
     }
 
-/// Check if the course is a meta course
-/// moved here to fix bug 5734
+/// Check if the course is a meta course  (bug 5734)
     if ($course->metacourse) {
         print_header_simple();
         notice(get_string('coursenotaccessible'), "$CFG->wwwroot/index.php");
     }
     
 /// Users can't enroll to site course
-    if (!$course->category) {
+    if ($course->id == SITEID) {
         print_header_simple();
         notice(get_string('enrollfirst'), "$CFG->wwwroot/index.php");
     }
 
 /// Double check just in case they are enrolled to start in the future 
 
-    if ($student = get_record('user_students', 'userid', $USER->id, 'course', $course->id)) { 
-        if ($course->enrolperiod and $student->timestart and ($student->timestart >= time())) {
-            $message = get_string('enrolmentnotyet', '', userdate($student->timestart));
-            print_header();
-            notice($message, "$CFG->wwwroot/index.php");
+    if ($course->enrolperiod) {   // Only active if the course has an enrolment period in effect
+        if ($roles = get_user_roles($context, $USER->id)) {
+            foreach ($roles as $role) {
+                if ($role->timestart and ($role->timestart >= time())) {
+                    $message = get_string('enrolmentnotyet', '', userdate($student->timestart));
+                    print_header();
+                    notice($message, "$CFG->wwwroot/index.php");
+                }
+            }
         }
     }
 
@@ -92,30 +82,13 @@
         notice(get_string('notenrollable'), "$CFG->wwwroot/index.php");
     }
 
-/// Check the submitted enrollment key if there is one
+/// Check the submitted enrolment information if there is any (eg could be enrolment key)
 
     if ($form = data_submitted()) {
-      //User is not enrolled in the course, wants to access course content
-      //as a guest, and course setting allow unlimited guest access
-      //
-      //the original idea was to use "loginas" feature, but require_login() would have to be changed
-      //and we would have to explain it to all users - it is now plain login action
-      if ($loginasguest and !empty($CFG->guestloginbutton) and ($course->guest==1 or $course->guest==2)) {
-        if (isset($SESSION->currentgroup)) {
-            unset($SESSION->currentgroup);
-        }
-        $USER = get_complete_user_data('username', 'guest');    // get full guest user data
-        add_to_log(SITEID, 'user', 'login', "view.php?id=$USER->id&course=".SITEID, $USER->id, 0, $USER->id);
-        if ($SESSION->wantsurl) {
-            $destination = $SESSION->wantsurl;
-            unset($SESSION->wantsurl);
-        } else {
-            $destination = "$CFG->wwwroot/course/view.php?id=$course->id";
-        }
-        redirect($destination);
-      }
-      $enrol->check_entry($form, $course);
+        $enrol->check_entry($form, $course);   // Should terminate/redirect in here if it's all OK
     }
+
+/// Otherwise, we print the entry form.
 
     $enrol->print_entry($course);
 
