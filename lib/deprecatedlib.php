@@ -338,6 +338,8 @@ function enrol_student($userid, $courseid, $timestart=0, $timeend=0, $enrol='man
  */
 function unenrol_student($userid, $courseid=0) {
     global $CFG;
+    
+    $status = true;
 
     if ($courseid) {
         /// First delete any crucial stuff that might still send mail
@@ -351,23 +353,34 @@ function unenrol_student($userid, $courseid=0) {
                 delete_records('groups_members', 'groupid', $group->id, 'userid', $userid);
             }
         }
-        // unenrol the student from any parent meta courses...
+        /// unenroll from all parent metacourses
         if ($parents = get_records('course_meta','child_course',$courseid)) {
             foreach ($parents as $parent) {
-                if (!record_exists_sql('SELECT us.id FROM '.$CFG->prefix.'user_students us, '
-                                       .$CFG->prefix.'course_meta cm WHERE cm.child_course = us.course
-                                        AND us.userid = '.$userid .' AND us.course != '.$courseid)) {
-                    unenrol_student($userid, $parent->parent_course);
-                }
+                $status = $status and unenrol_student($userid, $parent->parent_course);
             }
         }
-        return delete_records('user_students', 'userid', $userid, 'course', $courseid);
-
+        /// remove from all student roles
+        if ($courseid == SITEID) {
+            $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
+        } else if (!$context = get_context_instance(CONTEXT_COURSE, $courseid)) {
+            return false;
+        }
+        if (!$roles = get_roles_with_capability('moodle/legacy:student', CAP_ALLOW)) {
+            return false;
+        }
+        foreach($roles as $role) {
+            $status = $status and role_unassign($role->id, $userid, 0, $context);
+        }
     } else {
-        delete_records('forum_subscriptions', 'userid', $userid);
-        delete_records('groups_members', 'userid', $userid);
-        return delete_records('user_students', 'userid', $userid);
+        // recursivelly unenroll student from all course
+        if ($courses = get_records('course')) {
+            foreach($courses as $course) {
+                $status = $status and unenrol_student($userid, $course->id);
+            }
+        }
     }
+
+    return $status;
 }
 
 /**
