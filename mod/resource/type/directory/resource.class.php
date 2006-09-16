@@ -39,6 +39,9 @@ function display() {
             error("The value for 'subdir' contains illegal characters!");
         }
         $relativepath = "$relativepath$subdir";
+        if (stripos($relativepath, 'backupdata') !== FALSE) {
+            error("Access not allowed!");
+        }
 
         $subs = explode('/', $subdir);
         array_shift($subs);
@@ -99,7 +102,9 @@ function display() {
          "<th align=\"right\" class=\"header date\">$strmodified</th>".
          "</tr>";
     foreach ($files as $file) {
-        if (is_dir("$CFG->dataroot/$relativepath/$file")) {          // Must be a directory
+        if ($file == 'backupdata') {
+            continue;
+        } else if (is_dir("$CFG->dataroot/$relativepath/$file")) {          // Must be a directory
             $icon = "folder.gif";
             $relativeurl = "/view.php?blah";
             $filesize = display_size(get_directory_size("$CFG->dataroot/$relativepath/$file"));

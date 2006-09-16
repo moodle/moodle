@@ -54,11 +54,12 @@
     }
 
     // security: only editing teachers can access backups
-    if ((!isteacheredit($course->id))
-        and (count($args) >= 2)
-        and (strtolower($args[1]) == 'backupdata')) {
-
-        error('Access not allowed');
+    if ((count($args) >= 2) and (strtolower($args[1]) == 'backupdata')) {
+        if (!isteacheredit($course->id)) {
+            error('Access not allowed');
+        } else {
+            $lifetime = 0; //disable browser caching for backups 
+        }
     }
 
     if (is_dir($pathname)) {
