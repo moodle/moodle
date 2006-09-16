@@ -837,33 +837,21 @@ function get_course_users($courseid, $sort='ul.timeaccess DESC', $exceptions='',
  * @param string $sort How to sort the results
  * @return object (changed to groupids)
  */
-function get_group_students($groupids, $sort='u.lastaccess DESC') {
-
-    global $CFG;
-
+function get_group_students($groupids, $sort='ul.timeaccess DESC') {
+    
     if (is_array($groupids)){
         $groups = $groupids;
-        $groupstr = '(m.groupid = '.array_shift($groups);
-        foreach ($groups as $index => $value){
-            $groupstr .= ' OR m.groupid = '.$value;
-        }
-        $groupstr .= ')';
+        // all groups must be from one course anyway...
+        $group = get_record('groups', 'id', array_shift($groups));
+    } else {
+        $group = get_record('groups', 'id', $groupids);
     }
-    else {
-        $groupstr = 'm.groupid = '.$groupids;
+    if (!$group) {
+        return NULL;
     }
 
-    return get_records_sql("SELECT DISTINCT u.*
-                              FROM {$CFG->prefix}user u,
-                                   {$CFG->prefix}groups_members m,
-                                   {$CFG->prefix}groups g,
-                                   {$CFG->prefix}user_students s
-                             WHERE $groupstr
-                               AND m.userid = u.id
-                               AND m.groupid = g.id
-                               AND g.courseid = s.course
-                               AND s.userid = u.id
-                          ORDER BY $sort");
+    $context = get_context_instance(CONTEXT_COURSE, $group->courseid);
+    return get_users_by_capability($context, 'moodle/legacy:student', 'u.*, ul.timeaccess as lastaccess', $sort, '','',$groupids);
 }
 
 /**
