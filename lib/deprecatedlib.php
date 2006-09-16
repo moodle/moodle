@@ -593,15 +593,17 @@ function get_teacher($courseid) {
 
     global $CFG;
 
-    if ( $teachers = get_course_teachers($courseid, 't.authority ASC')) {
-        foreach ($teachers as $teacher) {
-            if ($teacher->authority) {
-                return $teacher;   // the highest authority teacher
+    $context = get_context_instance(CONTEXT_COURSE, $courseid);
+
+    if ($users = get_users_by_capability($context, 'moodle/course:update', 'u.*,ra.hidden', 'sortorder ASC')) {
+        foreach ($users as $user) {
+            if (!$user->hidden || has_capability('moodle/role:viewhiddenassigns', $context)) {
+                return $user;
             }
         }
-    } else {
-        return false;
     }
+
+    return false;
 }
 
 /**
