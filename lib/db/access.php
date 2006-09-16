@@ -352,6 +352,19 @@ $moodle_capabilities = array(
             'admin' => CAP_ALLOW
         )
     ),
+
+    'moodle/role:viewhiddenassigns' => array(
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'legacy' => array(
+            'guest' => CAP_PREVENT,
+            'student' => CAP_PREVENT,
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'coursecreator' => CAP_ALLOW,
+            'admin' => CAP_ALLOW
+        )
+    ),
     
     'moodle/category:create' => array(
     
