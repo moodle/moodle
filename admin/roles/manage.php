@@ -17,6 +17,7 @@
 
     $stradministration = get_string('administration');
     $strmanageroles = get_string('manageroles');
+    $strdelete = get_string('delete');
 
     if ($roleid && $action!='delete') {
         $role = get_record('role', 'id', $roleid);
@@ -185,7 +186,7 @@
 
         foreach ($roles as $role) {
 
-            $table->data[] = array('<a href="manage.php?roleid='.$role->id.'&amp;sesskey='.sesskey().'">'.$role->name.'</a>', $role->description, '<a href="manage.php?action=delete&roleid='.$role->id.'&sesskey='.sesskey().'">delete</a>');
+            $table->data[] = array('<a href="manage.php?roleid='.$role->id.'&amp;sesskey='.sesskey().'">'.$role->name.'</a>', $role->description, '<a href="manage.php?action=delete&roleid='.$role->id.'&sesskey='.sesskey().'">'.$strdelete.'</a>');
 
         } 
         print_table($table);
