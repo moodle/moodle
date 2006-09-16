@@ -119,6 +119,11 @@ if ($um->preprocess_files() && confirm_sesskey()) {
             "type3" => 1,
             "type4" => 1,
             "type5" => 1,
+            "role1" => 1,
+            "role2" => 1,
+            "role3" => 1,
+            "role4" => 1,
+            "role5" => 1,
             "password" => $createpassword,
             "oldusername" => $allowrenames);
 
@@ -206,6 +211,11 @@ if ($um->preprocess_files() && confirm_sesskey()) {
                     $addtype[2] = $user->type3;
                     $addtype[3] = $user->type4;
                     $addtype[4] = $user->type5;
+                    $addrole[0] = $user->role1;
+                    $addrole[1] = $user->role2;
+                    $addrole[2] = $user->role3;
+                    $addrole[3] = $user->role4;
+                    $addrole[4] = $user->role5;
 
                     for ($i=0; $i<5; $i++) {
                         $course[$i]=NULL;
@@ -306,7 +316,13 @@ if ($um->preprocess_files() && confirm_sesskey()) {
                     }
                     for ($i=0; $i<5; $i++) {   /// Enrol into courses if necessary
                         if ($course[$i]) {
-                            if (isset($addtype[$i])) {
+                            if (isset($addrole[$i])) {
+                                $coursecontext = get_context_instance(CONTEXT_COURSE, $course[$i]->id);
+                                if (!user_can_assign($coursecontext, $addrole[$i])) {
+                                    notify('--> Can not eroll into course'); //TODO: localize
+                                }
+                                $ret = role_assign($addrole[$i], $user->id, 0, $coursecontext->id);
+                            } else if (isset($addtype[$i])) {
                                 switch ($addtype[$i]) {
                                     case 2:   // teacher
                                         $ret = add_teacher($user->id, $course[$i]->id, 1);
@@ -332,8 +348,8 @@ if ($um->preprocess_files() && confirm_sesskey()) {
                     }
                     for ($i=0; $i<5; $i++) {   // Add user to groups if necessary
                         if ($course[$i] && $groupid[$i]) {
-                            if (record_exists('user_students','userid',$user->id,'course',$course[$i]->id) ||
-                                    record_exists('user_teachers','userid',$user->id,'course',$course[$i]->id)) {
+                            $coursecontext = get_context_instance(CONTEXT_COURSE, $course[$i]->id);
+                            if (count(get_user_roles($coursecontext, $user->id))) {
                                 if (add_user_to_group($groupid[$i], $user->id)) {
                                     notify('-->' . get_string('addedtogroup','',$addgroup[$i]));
                                 } else {
