@@ -356,7 +356,7 @@ function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $per
     
     if ($course->id == SITEID) {
         $courses[0] = '';
-        if ($ccc = get_courses('all', 'c.id ASC', 'c.id,c.shortname')) {
+        if ($ccc = get_courses('all', 'c.id ASC', 'c.id,c.shortname,c.visible')) {
             foreach ($ccc as $cc) {
                 $courses[$cc->id] = $cc->shortname;
             }
