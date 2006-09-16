@@ -53,11 +53,12 @@
     }
 
     // security: only editing teachers can access backups
-    if ((!has_capability('moodle/site:backup', get_context_instance(CONTEXT_COURSE, $course->id)))
-        and (count($args) >= 2)
-        and (strtolower($args[1]) == 'backupdata')) {
-
-        error('Access not allowed');
+    if ((count($args) >= 2) and (strtolower($args[1]) == 'backupdata')) {
+        if (!has_capability('moodle/site:backup', get_context_instance(CONTEXT_COURSE, $course->id))) {
+            error('Access not allowed');
+        } else {
+            $lifetime = 0; //disable browser caching for backups 
+        }
     }
 
     if (is_dir($pathname)) {
