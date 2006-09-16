@@ -497,24 +497,28 @@ function load_user_capability($capability='', $context ='', $userid='') {
 
     global $USER, $CFG;
 
-    
     if (empty($userid)) {
         if (empty($USER->id)) {               // We have no user to get capabilities for
+            debugging('User not logged in for load_user_capability!');
             return false;
         }
-        unset($USER->capabilities);           // make sure it's cleaned when loaded (again)
+        unset($USER->capabilities);           // We don't want possible older capabilites hanging around
+
+        check_enrolment_plugins($USER);       // Call "enrol" system to ensure that we have the correct picture
 
         $userid = $USER->id;
         $otheruserid = false;
     } else {
+        if (!$user = get_record('user', 'id', $userid)) {
+            debugging('Non-existent userid in load_user_capability!');
+            return false;
+        }
+
+        check_enrolment_plugins($user);       // Ensure that we have the correct picture
+
         $otheruserid = $userid;
     }
 
-    if ($capability) {
-        $capsearch = " AND rc.capability = '$capability' ";
-    } else {
-        $capsearch ="";  
-    }
 
 /// First we generate a list of all relevant contexts of the user
 
@@ -538,6 +542,12 @@ function load_user_capability($capability='', $context ='', $userid='') {
         $searchcontexts2 = "c2.id IN $listofcontexts AND";
     } else {
         $listofcontexts = $searchcontexts1 = $searchcontexts2 = '';
+    }
+
+    if ($capability) {
+        $capsearch = " AND rc.capability = '$capability' ";
+    } else {
+        $capsearch ="";  
     }
 
 /// Then we use 1 giant SQL to bring out all relevant capabilities.
@@ -698,6 +708,39 @@ function load_user_capability($capability='', $context ='', $userid='') {
     }
     // see array in session to see what it looks like
 
+}
+
+/*
+ * Check all the login enrolment information for the given user object
+ * by querying the enrolment plugins 
+ */
+function check_enrolment_plugins(&$user) {
+    global $CFG;
+
+    require_once($CFG->dirroot .'/enrol/enrol.class.php');
+   
+    if (!($plugins = explode(',', $CFG->enrol_plugins_enabled))) {
+        $plugins = array($CFG->enrol);
+    }
+
+    foreach ($plugins as $plugin) {
+        $enrol = enrolment_factory::factory($plugin);
+        if (method_exists($enrol, 'setup_enrolments')) {  /// Plugin supports Roles (Moodle 1.7 and later)
+            $enrol->setup_enrolments($user);
+        } else {                                          /// Run legacy enrolment methods
+            if (method_exists($enrol, 'get_student_courses')) {
+                $enrol->get_student_courses($user);
+            }
+            if (method_exists($enrol, 'get_teacher_courses')) {
+                $enrol->get_teacher_courses($user);
+            }
+
+        /// deal with $user->students and $user->teachers stuff
+            unset($user->student);
+            unset($user->teacher);
+        }
+        unset($enrol);
+    }
 }
 
 
@@ -2290,13 +2333,12 @@ function get_overridable_roles ($context) {
  * @param $groups - single group or array of groups - group(s) user is in
  * @param $exceptions - list of users to exclude
  */
-function get_users_by_capability($context, $capability, $fields='u.*, ul.timeaccess as lastaccess', $sort='ul.timeaccess', $limitfrom='', $limitnum='', $groups='', $exceptions='') {
-    
+function get_users_by_capability($context, $capability, $fields='', $sort='', 
+                                 $limitfrom='', $limitnum='', $groups='', $exceptions='') {
     global $CFG;
     
-    /// sorting out groups
+/// Sorting out groups
     if ($groups) {
-      
         $groupjoin = 'INNER JOIN '.$CFG->prefix.'groups_members gm ON gm.userid = ra.userid';
         
         if (is_array($groups)) {
@@ -2309,18 +2351,30 @@ function get_users_by_capability($context, $capability, $fields='u.*, ul.timeacc
         $groupsql = '';  
     }
     
-    /// sorting out exceptions
+/// Sorting out exceptions
     $exceptionsql = $exceptions ? "AND u.id NOT IN ($exceptions)" : '';
+
+/// Set up default fields
+    if (empty($fields)) {
+        $fields = 'u.*, ul.timeaccess as lastaccess';
+    }
+
+/// Set up default sort
+    if (empty($sort)) {
+        $sort = 'ul.timeaccess';
+    }
+
+    $sortby = $sort ? " ORDER BY $sort " : '';  
     
-    /// if context is a course, then construct sql for ul
+/// If context is a course, then construct sql for ul
     if ($context->aggregatelevel == CONTEXT_COURSE) {
         $courseid = $context->instanceid;
         $coursesql = "AND (ul.courseid = $courseid OR ul.courseid IS NULL)";
     } else {
         $coursesql = '';
     }
-    
-    /// sorting out roles with this capability set
+
+/// Sorting out roles with this capability set
     $possibleroles = get_roles_with_capability($capability, CAP_ALLOW, $context);
     $validroleids = array();
     foreach ($possibleroles as $prole) {
@@ -2330,25 +2384,21 @@ function get_users_by_capability($context, $capability, $fields='u.*, ul.timeacc
         }
     }  
     $roleids =  '('.implode(',', $validroleids).')';
-    
-    /// sorting out the sort order
-    $sortby = $sort ? " ORDER BY $sort " : '';  
-    
-    /// Construct the main SQL
+
+/// Construct the main SQL
     $select = " SELECT $fields";
     $from   = " FROM {$CFG->prefix}user u 
                 INNER JOIN {$CFG->prefix}role_assignments ra ON ra.userid = u.id 
                 LEFT OUTER JOIN {$CFG->prefix}user_lastaccess ul ON ul.userid = u.id
                 $groupjoin";
     $where  = " WHERE ra.contextid ".get_related_contexts_string($context)." 
-                      AND u.deleted = 0 
-                      AND ra.roleid in $roleids 
+                  AND u.deleted = 0 
+                  AND ra.roleid in $roleids 
                       $exceptionsql
                       $coursesql
                       $groupsql";
 
     return get_records_sql($select.$from.$where.$sortby, $limitfrom, $limitnum);  
-
 }
 
 /**
