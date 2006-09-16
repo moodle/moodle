@@ -22,21 +22,21 @@
 
     if ($courseid) {
         $course = get_record('course', 'id', $courseid);  
+    } else {
+        $course = $SITE;
     }
     
-    if (! $site = get_site()) {
-        redirect("$CFG->wwwroot/$CFG->admin/index.php");
-    }
-
     if (! $context = get_context_instance_by_id($contextid)) {
         error("Context ID was incorrect (can't find it)");
     }
-
 
     require_capability('moodle/role:assign', $context);
 
     $assignableroles = get_assignable_roles($context);
     
+
+/// Get some language strings
+
     $strassignusers = get_string('assignusers', 'role');
     $strpotentialusers = get_string('potentialusers', 'role');
     $strexistingusers = get_string('existingusers', 'role');
@@ -45,6 +45,7 @@
     $strcurrentcontext = get_string('currentcontext', 'role');
     $strsearch = get_string('search');
     $strshowall = get_string('showall');
+    $strparticipants = get_string("participants");
 
     
 
@@ -55,10 +56,11 @@
             error ('you can not override this role in this context');
         }  
     }
-    
-    $participants = get_string("participants");
-    $user = get_record('user', 'id', $userid);
-    $fullname = fullname($user, has_capability('moodle/site:viewfullnames', $context));
+
+    if ($userid) {
+        $user = get_record('user', 'id', $userid);
+        $fullname = fullname($user, has_capability('moodle/site:viewfullnames', $context));
+    }
 
 
 /// Print the header and tabs
@@ -68,7 +70,7 @@
         if ($courseid!= SITEID) {
             print_header("$fullname", "$fullname",
                      "<a href=\"../course/view.php?id=$course->id\">$course->shortname</a> ->
-                      <a href=\"".$CFG->wwwroot."/user/index.php?id=$course->id\">$participants</a> -> <a href=\"".$CFG->wwwroot."/user/view.php?id=".$userid."&course=".$courseid."\">$fullname</a> ->".$straction,
+                      <a href=\"".$CFG->wwwroot."/user/index.php?id=$course->id\">$strparticipants</a> -> <a href=\"".$CFG->wwwroot."/user/view.php?id=".$userid."&course=".$courseid."\">$fullname</a> ->".$straction,
                       "", "", true, "&nbsp;", navmenu($course));      
         
         /// site header  
@@ -173,6 +175,8 @@
 
     } else {   // Print overview table
        
+        $userparam = (!empty($userid)) ? '&amp;userid='.$userid : '';
+
         $table->tablealign = 'center';
         $table->cellpadding = 5;
         $table->cellspacing = 0;
@@ -186,7 +190,7 @@
             if ($contextusers = get_role_users($roleid, $context)) {
                 $countusers = count($contextusers);
             }
-            $table->data[] = array('<a href="assign.php?contextid='.$context->id.'&amp;roleid='.$roleid.'">'.$rolename.'</a>', $countusers);
+            $table->data[] = array('<a href="assign.php?contextid='.$context->id.'&amp;roleid='.$roleid.$userparam.'">'.$rolename.'</a>', $countusers);
         }
     
         print_table($table);

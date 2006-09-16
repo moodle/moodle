@@ -9,6 +9,8 @@
     
     if ($courseid) {
         $course = get_record('course', 'id', $courseid);  
+    } else {
+        $course = $SITE;
     }
     
     $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
@@ -16,9 +18,7 @@
         error ('can not override base role capabilities');
     }
 
-    if (! $site = get_site()) {
-        redirect("$CFG->wwwroot/$CFG->admin/index.php");
-    }
+/// Get some language strings
 
     $strroletooverride = get_string('roletooverride', 'role');
     $stroverrideusers = get_string('overrideusers', 'role');
@@ -29,38 +29,39 @@
     $strcurrentcontext = get_string('currentcontext', 'role');
     $strsearch = get_string('search');
     $strshowall = get_string('showall');
+    $strparticipants = get_string("participants");
+    $straction = get_string('overrideroles', 'role');
 
     $context = get_record('context', 'id', $contextid);
     $overridableroles = get_overridable_roles($context);
     
-    // role overriding permission checking
+/// Make sure this user can override that role
     if ($roleid) {
         if (!user_can_override($context, $roleid)) {
             error ('you can not override this role in this context');
         }  
     }
     
-    $participants = get_string("participants");
-    $user = get_record('user', 'id', $userid);
-    $fullname = fullname($user, has_capability('moodle/site:viewfullnames', $context));
-    $straction = get_string('overrideroles', 'role');
+    if ($userid) {
+        $user = get_record('user', 'id', $userid);
+        $fullname = fullname($user, has_capability('moodle/site:viewfullnames', $context));
+    }
+    
+/// Print the header and tabs
 
-    
-    
-    // we got a few tabs there
     if ($context->aggregatelevel == CONTEXT_USER) {
       
         /// course header
-        if ($courseid!= SITEID) {
+        if ($course->id != SITEID) {
             print_header("$fullname", "$fullname",
                      "<a href=\"../course/view.php?id=$course->id\">$course->shortname</a> ->
-                      <a href=\"".$CFG->wwwroot."/user/index.php?id=$course->id\">$participants</a> -> <a href=\"".$CFG->wwwroot."/user/view.php?id=".$userid."&course=".$courseid."\">$fullname</a> -> $straction",
+                      <a href=\"".$CFG->wwwroot."/user/index.php?id=$course->id\">$strparticipants</a> -> <a href=\"".$CFG->wwwroot."/user/view.php?id=".$userid."&course=".$course->id."\">$fullname</a> -> $straction",
                       "", "", true, "&nbsp;", navmenu($course));      
         
         /// site header  
         } else {
             print_header("$course->fullname: $fullname", "$course->fullname",
-                        "<a href=\"".$CFG->wwwroot."/user/view.php?id=".$userid."&course=".$courseid."\">$fullname</a> -> $straction", "", "", true, "&nbsp;", navmenu($course));     
+                        "<a href=\"".$CFG->wwwroot."/user/view.php?id=".$userid."&course=".$course->id."\">$fullname</a> -> $straction", "", "", true, "&nbsp;", navmenu($course));     
         }
         $showroles = 1;
         $currenttab = 'override';
@@ -72,11 +73,8 @@
     }
 
 
-     /*************************
-      * form processing here  *
-      *************************/
+/// Process incoming role override
      if ($data = data_submitted()) {
-
 
         $localoverrides = get_records_select('role_capabilities', "roleid = $roleid AND contextid = $context->id", 
                                              '', 'capability, permission, id');
@@ -151,6 +149,8 @@
         }
 
     } else {   // Print overview table
+
+        $userparam = (!empty($userid)) ? '&amp;userid='.$userid : '';
        
         $table->tablealign = 'center';
         $table->cellpadding = 5;
@@ -163,7 +163,7 @@
         foreach ($overridableroles as $roleid => $rolename) {
             $countusers = 0;
             $overridecount = count_records_select('role_capabilities', "roleid = $roleid AND contextid = $context->id");
-            $table->data[] = array('<a href="override.php?contextid='.$context->id.'&amp;roleid='.$roleid.'">'.$rolename.'</a>', $overridecount);
+            $table->data[] = array('<a href="override.php?contextid='.$context->id.'&amp;roleid='.$roleid.$userparam.'">'.$rolename.'</a>', $overridecount);
         }
     
         print_table($table);
