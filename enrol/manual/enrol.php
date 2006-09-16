@@ -35,75 +35,6 @@ class enrolment_plugin_manual {
 
 var $errormsg;
 
-
-
-/**
-* Returns information about the courses a student has access to
-*
-* Set the $user->student course array
-* Set the $user->timeaccess course array
-*
-* @param    user  referenced object, must contain $user->id already set
-*/
-function get_student_courses(&$user) {
-
-    if ($students = get_records("user_students", "userid", $user->id)) {
-        $currenttime = time();
-        foreach ($students as $student) {
-
-        /// Is course visible?
-
-            if (get_field("course", "visible", "id", $student->course)) {
-
-            /// Is the student enrolment active right now?
-
-                if ( ( $student->timestart == 0 or ( $currenttime > $student->timestart )) and 
-                     ( $student->timeend   == 0 or ( $currenttime < $student->timeend )) ) {
-                    $user->student[$student->course] = $student->enrol;
-                    $user->timeaccess[$student->course] = $student->timeaccess;
-                }
-            }
-        }
-    }   
-}
-
-
-
-/**
-* Returns information about the courses a student has access to
-*
-* Set the $user->teacher course array
-* Set the $user->teacheredit course array
-* Set the $user->timeaccess course array
-*
-* @param    user  referenced object, must contain $user->id already set
-*/
-function get_teacher_courses(&$user) {
-
-    if ($teachers = get_records("user_teachers", "userid", $user->id)) {
-        $currenttime = time();
-        foreach ($teachers as $teacher) {
-
-        /// Is teacher only teaching this course for a specific time period?
-
-            if ( ( $teacher->timestart == 0 or ( $currenttime > $teacher->timestart )) and 
-                 ( $teacher->timeend   == 0 or ( $currenttime < $teacher->timeend )) ) {
-
-                $user->teacher[$teacher->course] = $teacher->enrol;
-
-                if ($teacher->editall) {
-                    $user->teacheredit[$teacher->course] = true;
-                }   
-
-                $user->timeaccess[$teacher->course] = $teacher->timeaccess;
-            }
-        }   
-    }
-}
-
-
-
-
 /**
 * Prints the entry form/page for this enrolment
 *
@@ -117,10 +48,8 @@ function get_teacher_courses(&$user) {
 function print_entry($course) {
     global $CFG, $USER, $SESSION, $THEME;
 
-    $strloginto = get_string("loginto", "", $course->shortname);
-    $strcourses = get_string("courses");
-
-
+    $strloginto = get_string('loginto', '', $course->shortname);
+    $strcourses = get_string('courses');
 
 /// Automatically enrol into courses without password
 
