@@ -2300,9 +2300,9 @@ function get_users_by_capability($context, $capability, $fields='u.*, ul.timeacc
         $groupjoin = 'INNER JOIN '.$CFG->prefix.'groups_members gm ON gm.userid = ra.userid';
         
         if (is_array($groups)) {
-            $groupsql = 'AND gm.id IN ('.implode(',', $groups).')';
+            $groupsql = 'AND gm.groupid IN ('.implode(',', $groups).')';
         } else {
-            $groupsql = 'AND gm.id = '.$groups; 
+            $groupsql = 'AND gm.groupid = '.$groups; 
         }
     } else {
         $groupjoin = '';
