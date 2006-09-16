@@ -319,7 +319,7 @@ if ($um->preprocess_files() && confirm_sesskey()) {
                             if (isset($addrole[$i])) {
                                 $coursecontext = get_context_instance(CONTEXT_COURSE, $course[$i]->id);
                                 if (!user_can_assign($coursecontext, $addrole[$i])) {
-                                    notify('--> Can not eroll into course'); //TODO: localize
+                                    notify('--> Can not assign role in course'); //TODO: localize
                                 }
                                 $ret = role_assign($addrole[$i], $user->id, 0, $coursecontext->id);
                             } else if (isset($addtype[$i])) {
