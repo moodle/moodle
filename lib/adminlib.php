@@ -1575,16 +1575,27 @@ class admin_setting_sitesettext extends admin_setting_configtext {
         $site = get_site();
         return (isset($site->{$this->name}) ? $site->{$this->name} : NULL);
     }
-    
+
     function write_setting($data) {
+        if (is_string($this->paramtype)) {
+            if (!$this->validate($data)) {
+                return get_string('validateerror', 'admin') . $this->visiblename . '<br />';
+            }
+        } else {
+            $data = clean_param($data, $this->paramtype);
+        }
+        
         $record = new stdClass();
         $record->id = $this->id;
-        $temp = $this->name;
-        $record->$temp = $data;
+        $record->{$this->name} = $data;
         $record->timemodified = time();
         return (update_record('course', $record) ? '' : get_string('errorsetting', 'admin') . $this->visiblename . '<br />');
     }
-    
+
+    function validate($data) {
+        return preg_match($this->paramtype, $data);
+    }
+        
 }
 
 class admin_setting_special_frontpagedesc extends admin_setting {
