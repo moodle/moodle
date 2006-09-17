@@ -30,33 +30,33 @@ var onload = new onload_class();
 
 //main page object
 function main_class(){
-       this.portal = new php_portal_class();
+    this.portal = new php_portal_class();
    
-        this.blocks = new Array();
+    this.blocks = new Array();
     this.sections = new Array();
       
-        this.leftcolumn = null;
- this.rightcolumn = null;        
-        this.adminBlock = null; 
+    this.leftcolumn = null;
+    this.rightcolumn = null;        
+    this.adminBlock = null; 
     
     //if you use firefox the firebug extension will show log contents otherwise uncomment to view
-   //this.logview = new YAHOO.widget.LogReader(document.body.appendChild(document.createElement('div'))); 
+   //this.logview = new YAHOO.widget.LogReader('header'); 
  
 
         
-        this.icons = [];
-        this.marker = null;
+    this.icons = [];
+    this.marker = null;
      
         //things to process onload
-      onload.add('main.process_document();');
- onload.add("document.getElementById('content').style.display='block';");
+    onload.add('main.process_document();');
+    onload.add("document.getElementById('content').style.display='block';");
         
         //connection queue allows xhttp requests to be sent in order
     this.connectQueue = [];
- this.connectQueueHead = 0;
-      this.connectQueueConnection = null;
+    this.connectQueueHead = 0;
+    this.connectQueueConnection = null;
      
-        this.debug = true;
+    this.debug = true;
 }
 
 
