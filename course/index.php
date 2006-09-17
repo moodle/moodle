@@ -265,7 +265,7 @@
     }
 
 /// Find any orphan courses that don't yet have a valid category and set to default
-    if ($courses = get_courses(NULL,NULL,'c.id, c.category, c.sortorder')) {
+    if ($courses = get_courses(NULL,NULL,'c.id, c.category, c.sortorder, c.visible')) {
         foreach ($courses as $course) {
             if ($course->category and !isset($categories[$course->category])) {
                 set_field("course", "category", $default, "id", $course->id);

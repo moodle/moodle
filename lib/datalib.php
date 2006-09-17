@@ -483,30 +483,38 @@ function get_courses($categoryid="all", $sort="c.sortorder ASC", $fields="c.*") 
 
     global $USER, $CFG;
     
-    $categoryselect = "";
     if ($categoryid != "all" && is_numeric($categoryid)) {
         $categoryselect = "WHERE c.category = '$categoryid'";
     } else {
         $categoryselect = "";  
-    }  
-    
-    // pull out all course matching the cat
-    $courses = get_records_sql("SELECT $fields 
-                                FROM {$CFG->prefix}course c 
-                                $categoryselect
-                                ORDER BY $sort");
+    }
+
+    if (empty($sort)) {
+        $sortstatement = "";
+    } else {
+        $sortstatement = "ORDER BY $sort";
+    }
+
     $visiblecourses = array();
     
-    // loop throught them
-    foreach ($courses as $course) {
-        if ($course->visible <= 0) {
-            // for hidden courses, require visibility check
-            if (has_capability('moodle/course:viewhiddencourses', get_context_instance(CONTEXT_COURSE, $course->id))) {
+    // pull out all course matching the cat
+    if ($courses = get_records_sql("SELECT $fields 
+                                FROM {$CFG->prefix}course c 
+                                $categoryselect
+                                $sortstatement")) {
+
+        // loop throught them
+        foreach ($courses as $course) {
+
+            if ($course->visible <= 0) {
+                // for hidden courses, require visibility check
+                if (has_capability('moodle/course:viewhiddencourses', get_context_instance(CONTEXT_COURSE, $course->id))) {
+                    $visiblecourses [] = $course;  
+                }
+            } else {
                 $visiblecourses [] = $course;  
-            }
-        } else {
-            $visiblecourses [] = $course;  
-        } 
+            } 
+        }
     }
     return $visiblecourses;
 
