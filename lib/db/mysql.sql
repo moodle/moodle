@@ -86,6 +86,7 @@ CREATE TABLE `prefix_course` (
   `enrolstartdate` int(10) unsigned NOT NULL default '0',
   `enrolenddate` int(10) unsigned NOT NULL default '0',
   `enrol` varchar(20) NOT NULL default '',
+  `defaultrole` int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (`id`),
   KEY `category` (`category`),
   KEY `idnumber` (`idnumber`),

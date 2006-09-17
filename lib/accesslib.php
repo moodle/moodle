@@ -1009,6 +1009,11 @@ function moodle_install_roles() {
     allow_override($adminrole, $studentrole);
     allow_override($adminrole, $guestrole);    
 
+
+    /// Upgrade course table with defaultrole values
+    execute_sql('UPDATE '.$CFG->prefix.'course SET defaultrole = '.$studentrole);
+
+
     // Should we delete the tables after we are done? Not yet.
 }
 
