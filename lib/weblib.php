@@ -2600,7 +2600,10 @@ function user_login_string($course=NULL, $user=NULL) {
         $wwwroot = str_replace('http:','https:',$CFG->wwwroot);
     }
 
-    if (isset($user->id) and $user->id) {
+    if (empty($course->id)) {
+        // $course->id is not defined during installation
+        return '';
+    } else if (isset($user->id) and $user->id) { 
         $fullname = fullname($user, true);
         $username = "<a target=\"{$CFG->framename}\" href=\"$CFG->wwwroot/user/view.php?id=$user->id&amp;course=$course->id\">$fullname</a>";
         if (isset($user->username) && $user->username == 'guest') {
