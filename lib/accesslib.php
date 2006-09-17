@@ -2288,45 +2288,49 @@ function allow_override($sroleid, $troleid) {
  * @return int - id or false
  */
 function allow_assign($sroleid, $troleid) {
+    $record = new object;
     $record->roleid = $sroleid;
     $record->allowassign = $troleid;
     return insert_record('role_allow_assign', $record);
 }
 
 /**
- * gets a list of roles assignalbe in this context for this user
+ * Gets a list of roles that this user can assign in this context
  * @param object $context
  * @return array
  */
 function get_assignable_roles ($context) {
 
-    $role = get_records('role');
     $options = array();
-    foreach ($role as $rolex) {
-        if (user_can_assign($context, $rolex->id)) {
-            $options[$rolex->id] = $rolex->name;
+
+    if ($roles = get_records('role')) {
+        foreach ($roles as $role) {
+            if (user_can_assign($context, $role->id)) {
+                $options[$role->id] = $role->name;
+            }
         }
     }
     return $options;
 }
 
 /**
- * gets a list of roles that can be overriden in this context by this user
+ * Gets a list of roles that this user can override in this context
  * @param object $context
  * @return array
  */
 function get_overridable_roles ($context) {
 
-    $role = get_records('role');
     $options = array();
-    foreach ($role as $rolex) {
-        if (user_can_override($context, $rolex->id)) {
-            $options[$rolex->id] = $rolex->name;
+
+    if ($roles = get_records('role')) {
+        foreach ($roles as $role) {
+            if (user_can_override($context, $role->id)) {
+                $options[$role->id] = $role->name;
+            }
         }
-    } 
+    }
     
     return $options;  
-  
 }
 
 
