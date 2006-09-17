@@ -1504,6 +1504,38 @@ function role_unassign($roleid=0, $userid=0, $groupid=0, $contextid=0) {
     return $success;
 }
 
+/* 
+ * A convenience function to take care of the common case where you 
+ * just want to enrol someone using the default role into a course
+ *
+ * @param object $course
+ * @param object $user
+ * @param string $enrol - the plugin used to do this enrolment
+ */
+function enrol_into_course($course, $user, $enrol) {
+
+    if ($course->enrolperiod) {
+        $timestart = time();
+        $timeend = time() + $course->enrolperiod;
+    } else {
+        $timestart = $timeend = 0;
+    }
+
+    if ($role = get_default_course_role($course)) {
+        if (role_assign($role->id, $user->id, 0, $context->id, $timestart, $timeend, 0, $enrol)) {
+            return false;
+        }
+    
+        email_welcome_message_to_user($course, $user);
+    
+        add_to_log($course->id, 'course', 'enrol', 'view.php?id='.$course->id, $user->id);
+
+        return true;
+    }
+
+    return false;
+}
+
 /**
  * Add last access times to user_lastaccess as required
  * @param $userid
@@ -2360,6 +2392,38 @@ function get_overridable_roles ($context) {
     }
     
     return $options;  
+}
+
+/*
+ *  Returns a role object that is the default role for new enrolments
+ *  in a given course
+ *
+ *  @param object $course 
+ *  @return object $role
+ */
+function get_default_course_role($course) {
+    global $CFG;
+
+/// First let's take the default role the course may have
+    if (!empty($course->defaultrole)) {
+        if ($role = get_record('role', 'id', $course->defaultrole)) {
+            return $role;
+        }
+    }
+
+/// Otherwise the site setting should tell us
+    if ($CFG->defaultcourseroleid) {
+        if ($role = get_record('role', 'id', $CFG->defaultcourseroleid)) {
+            return $role;
+        }
+    }
+
+/// It's unlikely we'll get here, but just in case, try and find a student role
+    if ($studentroles = get_roles_with_capability('moodle/legacy:student', CAP_ALLOW)) {
+        return array_shift($studentroles);   /// Take the first one
+    }
+
+    return NULL;
 }
 
 
