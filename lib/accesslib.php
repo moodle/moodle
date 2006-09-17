@@ -2255,11 +2255,13 @@ function get_user_roles($context, $userid=0, $checkparentcontexts=true) {
 
     return get_records_sql('SELECT ra.*, r.name
                              FROM '.$CFG->prefix.'role_assignments ra,
-                                  '.$CFG->prefix.'role r
+                                  '.$CFG->prefix.'role r,
+                                  '.$CFG->prefix.'context c
                              WHERE ra.userid = '.$userid.
                            '   AND ra.roleid = r.id
+                               AND ra.contextid = c.id
                                AND '.$contexts. 
-                           ' ORDER BY r.sortorder ASC');
+                           ' ORDER BY c.aggregatelevel DESC');
 }
 
 /**
