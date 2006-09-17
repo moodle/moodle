@@ -53,43 +53,27 @@ function print_entry($course) {
 
 /// Automatically enrol into courses without password
 
-    if ($course->password == "") {   // no password, so enrol
+    $context = get_context_instance(CONTEXT_SYSTEM, SITEID);  
 
-        if (isguest()) {
-            add_to_log($course->id, "course", "guest", "view.php?id=$course->id", "$USER->id");
+    if ($course->password == '') {   // no password, so enrol
+
+        if (has_capability('moodle/legacy:guest', $context, $USER->id, false)) {
+            add_to_log($course->id, 'course', 'guest', 'view.php?id='.$course->id, getremoteaddr());
 
         } else if (empty($_GET['confirm']) && empty($_GET['cancel'])) {
 
             print_header($strloginto, $course->fullname, "<a href=\".\">$strcourses</a> -> $strloginto");
-            echo "<br />";
-            notice_yesno(get_string("enrolmentconfirmation"), "enrol.php?id=$course->id&amp;confirm=1", "enrol.php?id=$course->id&amp;cancel=1");
+            echo '<br />';
+            notice_yesno(get_string('enrolmentconfirmation'), "enrol.php?id=$course->id&amp;confirm=1", 
+                                                              "enrol.php?id=$course->id&amp;cancel=1");
             print_footer();
             exit;
 
-        } elseif (!empty($_GET['confirm'])) {
-            if ($course->enrolperiod) {
-                $timestart = time();
-                $timeend = time() + $course->enrolperiod;
-            } else {
-                $timestart = $timeend = 0;
+        } else if (!empty($_GET['confirm'])) {
+
+            if (!enrol_into_course($course, $USER, 'manual')) {
+                print_error('couldnotassignrole');
             }
-
-            if (! enrol_student($USER->id, $course->id, $timestart, $timeend, 'manual')) {
-                error("An error occurred while trying to enrol you.");
-            }
-
-            $subject = get_string("welcometocourse", "", $course->fullname);
-            $a->coursename = $course->fullname;
-            $a->profileurl = "$CFG->wwwroot/user/view.php?id=$USER->id&course=$course->id";
-            $message = get_string("welcometocoursetext", "", $a);
-            if (! $teacher = get_teacher($course->id)) {
-                $teacher = get_admin();
-            }
-            email_to_user($USER, $teacher, $subject, $message);
-
-            add_to_log($course->id, "course", "enrol", "view.php?id=$course->id", "$USER->id");
-
-            $USER->student[$course->id] = true;
 
             if ($SESSION->wantsurl) {
                 $destination = $SESSION->wantsurl;
@@ -99,7 +83,8 @@ function print_entry($course) {
             }
 
             redirect($destination);
-        } elseif (!empty($_GET['cancel'])) {
+
+        } else if (!empty($_GET['cancel'])) {
             unset($SESSION->wantsurl);
             redirect($CFG->wwwroot);
         }
@@ -107,9 +92,8 @@ function print_entry($course) {
 
     $teacher = get_teacher($course->id);
     if (!isset($password)) {
-        $password = "";
+        $password = '';
     }
-
 
     print_header($strloginto, $course->fullname, "<a href=\".\">$strcourses</a> -> $strloginto", "form.password");
 
@@ -142,65 +126,40 @@ function check_entry($form, $course) {
     if (empty($course->password)) {
         // do not allow entry when no course password set
         // automatic login when manual primary, no login when secondary at all!!
-        error("illegal enrolment attempted");
+        error('illegal enrolment attempted');
     }
 
     $groupid = $this->check_group_entry($course->id, $form->password);
+
     if (($form->password == $course->password) or ($groupid !== false) ) {
 
-        if (isguest()) {
-        
-            add_to_log($course->id, "course", "guest", "view.php?id=$course->id", $_SERVER['REMOTE_ADDR']);
-            
+        if (has_capability('moodle/legacy:guest', $context, $USER->id, false)) {
+            add_to_log($course->id, 'course', 'guest', 'view.php?id='.$course->id, getremoteaddr());
+
         } else {  /// Update or add new enrolment
-
-            if ($course->enrolperiod) {
-                $timestart = time();
-                $timeend   = $timestart + $course->enrolperiod;
-            } else {
-                $timestart = $timeend = 0;
-            }
-
-            if (! enrol_student($USER->id, $course->id, $timestart, $timeend, 'manual')) {
-                error("An error occurred while trying to enrol you.");
-            }
-
-            if ($groupid !== false) {
-                if (add_user_to_group($groupid, $USER->id)) {
-                    $USER->groupmember[$course->id] = $groupid;
-                } else {
-                    error("An error occurred while trying to add you to a group");
+            if (enrol_into_course($course, $USER, 'manual')) {
+                if ($groupid !== false) {
+                    if (!add_user_to_group($groupid, $USER->id)) {
+                        print_error('couldnotassigngroup');
+                    }
                 }
+            } else {
+                print_error('couldnotassignrole');
             }
-
-            $subject = get_string("welcometocourse", "", $course->fullname);
-            $a->coursename = $course->fullname;
-            $a->profileurl = "$CFG->wwwroot/user/view.php?id=$USER->id&course=$course->id";
-            $message = get_string("welcometocoursetext", "", $a);
-            
-            if (! $teacher = get_teacher($course->id)) {
-                $teacher = get_admin();
-            }
-            
-            email_to_user($USER, $teacher, $subject, $message);
-            add_to_log($course->id, "course", "enrol", "view.php?id=$course->id", "$USER->id");
         }
-        
-        $USER->student[$course->id] = true;
-        
+
         if ($SESSION->wantsurl) {
             $destination = $SESSION->wantsurl;
             unset($SESSION->wantsurl);
         } else {
             $destination = "$CFG->wwwroot/course/view.php?id=$course->id";
         }
-        
+
         redirect($destination);
 
     } else {
-        $this->errormsg = get_string("enrolmentkeyhint", "", substr($course->password,0,1));
+        $this->errormsg = get_string('enrolmentkeyhint', '', substr($course->password,0,1));
     }
-                        
 }
 
 
@@ -212,10 +171,13 @@ function check_entry($form, $course) {
 */
 function check_group_entry ($courseid, $password) {
     $ingroup = false;
-    if ( ($groups = get_groups($courseid)) !== false ) {
-        foreach ($groups as $group) 
-            if ( !empty($group->password) and ($password == $group->password) )
+
+    if (($groups = get_groups($courseid)) !== false) {
+        foreach ($groups as $group) {
+            if ( !empty($group->password) and ($password == $group->password) ) {
                 $ingroup = $group->id;
+            }
+        }
     }
     return $ingroup;
 }
@@ -262,33 +224,39 @@ function process_config($config) {
 *
 */
 function cron() {
-    // Delete students from all courses where their enrolment period has expired
+    global $CFG;
+
+    // Delete all assignments from the database that have expired
     
-    $select = "timeend > '0' AND timeend < '" . time() . "'";
-    
-    if ($students = get_records_select('user_students', $select)) {
-        foreach ($students as $student) {
-            if ($course = get_record('course', 'id', $student->course)) {
+    $timenow = time();
+
+    if ($assignments = get_records_sql("SELECT ra.*, c.instanceid as courseid FROM 
+                                          {$CFG->prefix}role_assignments ra,
+                                          {$CFG->prefix}context c
+                                         WHERE ra.enrol = 'manual'
+                                           AND ra.timeend > 0 
+                                           AND ra.timeend < $timenow
+                                           AND ra.contextid = c.id 
+                                           AND c.aggregatelevel = ".CONTEXT_COURSE)) {
+        foreach ($assignments as $assignment) {
+            if ($course = get_record('course', 'id', $assignment->courseid)) {
                 if (empty($course->enrolperiod)) {   // This overrides student timeend
                     continue;
                 }
             }
-            unenrol_student($student->userid, $student->course);
-        }
-    }
-    if ($teachers = get_records_select('user_teachers', $select)) {
-        foreach ($teachers as $teacher) {
-            remove_teacher($teacher->userid, $teacher->course);
+            role_unassign($assignment->roleid, $assignment->userid, 0, $assignment->contextid);
         }
     }
 
-    // Notify teachers/students about students who's enrolment are going to expire
-    global $CFG;
+    // Notify users about enrolments that are going to expire
     if (empty($CFG->lastexpirynotify)) {
         $CFG->lastexpirynotify = 0;
     }
     
-    if ($CFG->lastexpirynotify < date('Ymd') && ($courses = get_records_select('course', 'enrolperiod > 0 AND expirynotify > 0 AND expirythreshold > 0'))) {
+/// Sigh ... the following is a pile of poo and needs to be rewritten for 1.7     XXX TODO
+
+    if ($CFG->lastexpirynotify < date('Ymd') && 
+        ($courses = get_records_select('course', 'enrolperiod > 0 AND expirynotify > 0 AND expirythreshold > 0'))) {
         $site = get_site();
         $admin = get_admin();
         $strexpirynotify = get_string('expirynotify');
@@ -344,16 +312,20 @@ function cron() {
 function get_access_icons($course) {
     global $CFG;
 
-    $str = '';
+    global $strallowguests;
+    global $strrequireskey;
+
+    if (empty($strallowguests)) {
+        $strallowguests = get_string('allowguests');
+        $strrequireskey = get_string('requireskey');
+    }
 
     if (!empty($course->guest)) {
-        $strallowguests = get_string("allowguests");
         $str .= '<a title="'.$strallowguests.'" href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">';
         $str .= '<img vspace="4" alt="'.$strallowguests.'" height="16" width="16" border="0" '.
                 'src="'.$CFG->pixpath.'/i/guest.gif" /></a>&nbsp;&nbsp;';
     }
     if (!empty($course->password)) {
-        $strrequireskey = get_string("requireskey");
         $str .= '<a title="'.$strrequireskey.'" href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">';
         $str .= '<img vspace="4" alt="'.$strrequireskey.'" height="16" width="16" border="0" src="'.$CFG->pixpath.'/i/key.gif" /></a>';
     }
