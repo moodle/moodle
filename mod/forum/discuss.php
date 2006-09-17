@@ -57,27 +57,19 @@
             if (!forum_move_attachments($discussion, $move)) {
                 notify("Errors occurred while moving attachment directories - check your file permissions");
             }
-            
-            if (!$fromforum = get_record("forum", "id", $discussion->forum)) {
-                notify('Bad forum ID stored in this discussion');
-            }
+            set_field("forum_discussions", "forum", $forum->id, "id", $discussion->id);
             $discussion->forum = $forum->id;
-            // Had to comment out the following line because the timemodified field is used to sort the list
-            // of discussions and also to provide the "Last post" date. It should really be renamed to timelastpost.
-            // $discussion->timemodified = time();
-            
-            if (update_record('forum_discussions', $discussion)) {
-                // Update RSS feeds for both from and to forums.
-                require_once('rsslib.php');
-                require_once($CFG->libdir.'/rsslib.php');
-                
-                // Delete the RSS files for the 2 forums because we want to force
-                // the regeneration of the feeds since the discussions have been
-                // moved.
-                if (!forum_rss_delete_file($forum) || !forum_rss_delete_file($fromforum)) {
-                    notify('Could not purge the cached RSS feeds for the source and/or'.
-                           'destination forum(s) - check your file permissionsforums');
-                }
+
+            // Update RSS feeds for both from and to forums.
+            require_once('rsslib.php');
+            require_once($CFG->libdir.'/rsslib.php');
+
+            // Delete the RSS files for the 2 forums because we want to force
+            // the regeneration of the feeds since the discussions have been
+            // moved.
+            if (!forum_rss_delete_file($forum) || !forum_rss_delete_file($fromforum)) {
+                notify('Could not purge the cached RSS feeds for the source and/or'.
+                       'destination forum(s) - check your file permissionsforums');
             }
             
             if ($cm = get_coursemodule_from_instance("forum", $forum->id, $course->id)) {
