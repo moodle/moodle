@@ -111,7 +111,7 @@ class upload_manager {
                     // this shouldn't cause everything to stop.. modules should be responsible for knowing which if any are compulsory.
                     continue; 
                 }
-                if ($this->status && $CFG->runclamonupload) {
+                if ($this->status && !empty($CFG->runclamonupload)) {
                     $this->status = clam_scan_file($this->files[$name],$this->course);
                 }
                 if (!$this->status) {
