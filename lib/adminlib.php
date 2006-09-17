@@ -1239,7 +1239,7 @@ class admin_setting_configtext extends admin_setting {
 
     function get_setting() {
         global $CFG;
-        return (isset($CFG->{$this->name}) ? $CFG->{$this->name} : $this->defaultsetting);
+        return (isset($CFG->{$this->name}) ? $CFG->{$this->name} : NULL);
     }
     
     function write_setting($data) {
@@ -1258,8 +1258,13 @@ class admin_setting_configtext extends admin_setting {
     }
 
     function output_html() {
+        if ($this->get_setting() === NULL) {
+            $current = $this->defaultsetting;
+        } else {
+            $current = $this->get_setting();
+        }
         return '<tr><td width="100" align="right" valign="top">' . $this->visiblename . '</td>' .
-            '<td align="left"><input type="text" size="50" name="s_'. $this->name .'" value="'. $this->get_setting() .'" /></td></tr>' .
+            '<td align="left"><input type="text" size="50" name="s_'. $this->name .'" value="'. $current .'" /></td></tr>' .
             '<tr><td>&nbsp;</td><td align="left">' . $this->description . '</td></tr>';
     }
 
@@ -1285,8 +1290,13 @@ class admin_setting_configcheckbox extends admin_setting {
     }
 
     function output_html() {
+        if ($this->get_setting() === NULL) {
+            $current = $this->defaultsetting;
+        } else {
+            $current = $this->get_setting();
+        }
         return '<tr><td width="100" align="right" valign="top">' . $this->visiblename . '</td>' .
-            '<td align="left"><input type="checkbox" size="50" name="s_'. $this->name .'" value="1" ' . ($this->get_setting() == true ? 'checked="checked"' : '') . ' /></td></tr>' .
+            '<td align="left"><input type="checkbox" size="50" name="s_'. $this->name .'" value="1" ' . ($current == true ? 'checked="checked"' : '') . ' /></td></tr>' .
             '<tr><td>&nbsp;</td><td align="left">' . $this->description . '</td></tr>';
     }
 
@@ -1317,9 +1327,14 @@ class admin_setting_configselect extends admin_setting {
     }
     
     function output_html() {
+        if ($this->get_setting() === NULL) {
+            $current = $this->defaultsetting;
+        } else {
+            $current = $this->get_setting();
+        }
         $return = '<tr><td width="100" align="right" valign="top">' . $this->visiblename . '</td><td align="left"><select name="s_' . $this->name .'">';
         foreach ($this->choices as $key => $value) {
-            $return .= '<option value="' . $key . '"' . ($key == $this->get_setting() ? ' selected="selected"' : '') . '>' . $value . '</option>';
+            $return .= '<option value="' . $key . '"' . ($key == $current ? ' selected="selected"' : '') . '>' . $value . '</option>';
         }
         $return .= '</select></td></tr><tr><td>&nbsp;</td><td align="left">' . $this->description . '</td></tr>';
         return $return;
@@ -1364,6 +1379,7 @@ class admin_setting_configtime extends admin_setting {
     }
     
     function output_html() {
+        //TO DO: fix handling of default values here!
         $setvalue = $this->get_setting();
         if (!is_array($setvalue)) {
             $setvalue = array(0,0);
@@ -1404,6 +1420,7 @@ class admin_setting_configmultiselect extends admin_setting_configselect {
     }
     
     function output_html() {
+        //TO DO: fix handling of default values here!
         $currentsetting = $this->get_setting();
         if (!is_array($currentsetting)) {
             $currentsetting = array();
@@ -1505,6 +1522,7 @@ class admin_setting_courselist_frontpage extends admin_setting_configselect {
     }
     
     function output_html() {
+        //TO DO: fix handling of default values here!
         
         $currentsetting = $this->get_setting();
         if (!is_array($currentsetting)) {
