@@ -343,19 +343,20 @@ class page_course extends page_base {
 
     // USER-RELATED THINGS
 
-    // When is a user said to have "editing rights" in this page? This would have something
-    // to do with roles, in the future.
+    // Can user edit the course page or "sticky page"?
+    // This is also about editting of blocks BUT mainly activities in course page layout, see
+    // update_course_icon() - it must use the same capability
     function user_allowed_editing() {
         if (has_capability('moodle/site:manageblocks', get_context_instance(CONTEXT_SYSTEM, SITEID)) && defined('ADMIN_STICKYBLOCKS')) {
             return true;
         }
-        return has_capability('moodle/site:manageblocks', get_context_instance(CONTEXT_COURSE, $this->id));
+        return has_capability('moodle/course:manageactivities', get_context_instance(CONTEXT_COURSE, $this->id));
     }
 
-    // Is the user actually editing this page right now? This would have something
-    // to do with roles, in the future.
+    // Is the user actually editing this course page or "sticky page" right now?
     function user_is_editing() {
         if (has_capability('moodle/site:manageblocks', get_context_instance(CONTEXT_SYSTEM, SITEID)) && defined('ADMIN_STICKYBLOCKS')) {
+            //always in edit mode on sticky page
             return true;
         }
         return isediting($this->id);
