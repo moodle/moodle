@@ -39,7 +39,7 @@ function display() {
             error("The value for 'subdir' contains illegal characters!");
         }
         $relativepath = "$relativepath$subdir";
-        if (stripos($relativepath, 'backupdata') !== FALSE) {
+        if (stripos($relativepath, 'backupdata') !== FALSE or stripos($relativepath, $CFG->moddata) !== FALSE) {
             error("Access not allowed!");
         }
 
@@ -68,7 +68,7 @@ function display() {
             "", "", true, update_module_button($cm->id, $course->id, $this->strresource),
             navmenu($course, $cm));
 
-    if (has_capabilities('moodle/course:managefiles', get_context_instance(CONTEXT_COURSE, $course->id))) {
+    if (has_capability('moodle/course:managefiles', get_context_instance(CONTEXT_COURSE, $course->id))) {
         echo "<div align=\"right\"><img src=\"$CFG->pixpath/i/files.gif\" height=\"16\" width=\"16\" alt=\"\" />&nbsp".
             "<a href=\"$CFG->wwwroot/files/index.php?id={$course->id}&amp;wdir=/{$resource->reference}$subdir\">".
             get_string("editfiles")."...</a></div>";
@@ -80,7 +80,7 @@ function display() {
         print_spacer(10,10);
     }
 
-    $files = get_directory_list("$CFG->dataroot/$relativepath", 'moddata', false, true, true);
+    $files = get_directory_list("$CFG->dataroot/$relativepath", array($CFG->moddata, 'backupdata'), false, true, true);
 
 
     if (!$files) {
@@ -102,9 +102,7 @@ function display() {
          "<th align=\"right\" class=\"header date\">$strmodified</th>".
          "</tr>";
     foreach ($files as $file) {
-        if ($file == 'backupdata') {
-            continue;
-        } else if (is_dir("$CFG->dataroot/$relativepath/$file")) {          // Must be a directory
+        if (is_dir("$CFG->dataroot/$relativepath/$file")) {          // Must be a directory
             $icon = "folder.gif";
             $relativeurl = "/view.php?blah";
             $filesize = display_size(get_directory_size("$CFG->dataroot/$relativepath/$file"));
@@ -157,7 +155,7 @@ function setup($form) {
 
     parent::setup($form);
     
-    $rawdirs = get_directory_list("$CFG->dataroot/{$this->course->id}", 'moddata', true, true, false);
+    $rawdirs = get_directory_list("$CFG->dataroot/{$this->course->id}", array($CFG->moddata, 'backupdata'), true, true, false);
     $dirs = array();
     foreach ($rawdirs as $rawdir) {
         $dirs[$rawdir] = $rawdir;

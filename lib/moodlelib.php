@@ -3781,7 +3781,7 @@ function check_potential_filename($destination,$filename,$files) {
  * all subdirectories, relative to the given rootdir
  * @todo Finish documenting this function. Add examples of $excludefile usage.
  */
-function get_directory_list($rootdir, $excludefile='', $descend=true, $getdirs=false, $getfiles=true) {
+function get_directory_list($rootdir, $excludefiles='', $descend=true, $getdirs=false, $getfiles=true) {
 
     $dirs = array();
 
@@ -3797,9 +3797,13 @@ function get_directory_list($rootdir, $excludefile='', $descend=true, $getdirs=f
         return $dirs;
     }
 
+    if (!is_array($excludefiles)) {
+        $excludefiles = array($excludefiles);
+    }
+
     while (false !== ($file = readdir($dir))) {
         $firstchar = substr($file, 0, 1);
-        if ($firstchar == '.' or $file == 'CVS' or $file == $excludefile) {
+        if ($firstchar == '.' or $file == 'CVS' or in_array($file, $excludefiles)) {
             continue;
         }
         $fullfile = $rootdir .'/'. $file;
@@ -3808,7 +3812,7 @@ function get_directory_list($rootdir, $excludefile='', $descend=true, $getdirs=f
                 $dirs[] = $file;
             }
             if ($descend) {
-                $subdirs = get_directory_list($fullfile, $excludefile, $descend, $getdirs, $getfiles);
+                $subdirs = get_directory_list($fullfile, $excludefiles, $descend, $getdirs, $getfiles);
                 foreach ($subdirs as $subdir) {
                     $dirs[] = $file .'/'. $subdir;
                 }
