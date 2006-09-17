@@ -3535,6 +3535,30 @@ function email_is_not_allowed($email) {
     return false;
 }
 
+function email_welcome_message_to_user($course, $user=NULL) {
+    global $CFG, $USER;
+
+    if (empty($user)) {
+        if (!isloggedin()) {
+            return false;
+        }
+        $user = $USER;
+    }
+
+    if (!empty($course->welcomemessage)) {
+        $subject = get_string('welcometocourse', '', $course->fullname);
+
+        $a->coursename = $course->fullname;
+        $a->profileurl = "$CFG->wwwroot/user/view.php?id=$USER->id&course=$course->id";
+        //$message = get_string("welcometocoursetext", "", $a);
+        $message = $course->welcomemessage;
+
+        if (! $teacher = get_teacher($course->id)) {
+            $teacher = get_admin();
+        }
+        email_to_user($user, $teacher, $subject, $message);
+    }
+}
 
 /// FILE HANDLING  /////////////////////////////////////////////
 
