@@ -1042,6 +1042,13 @@ body#course-view .headingblock {
   padding-top: 20px;
 }
 
+.courseboxcontent ul.teachers li {
+  list-style-type:none;
+  padding:0;
+  margin:0;
+  text-indent:0;
+}
+
 
 /***
  *** Doc
