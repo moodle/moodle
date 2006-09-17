@@ -1813,11 +1813,7 @@ function main_upgrade($oldversion=0) {
     }
 
     if ($oldversion < 2006091700) {
-        table_column('course','','defaultrole','int','10');
-        if ($studentroles = get_roles_with_capability('moodle/legacy:student', CAP_ALLOW)) {
-            $studentrole = array_shift($studentroles);   /// Take the first one
-            execute_sql('UPDATE '.$CFG->prefix.'course SET defaultrole = '.$studentrole->id);
-        }
+        table_column('course','','defaultrole','integer','10', 'unsigned', '0', 'not null');
     }
 
     return $result;
