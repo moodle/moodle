@@ -3045,7 +3045,7 @@ function sql_ilike() {
 
 
 /**
- * Returns the proper SQL to do LIKE in a case-insensitive way
+ * Returns the proper SQL (for the dbms in use) to concatenate $firstname and $lastname
  *
  * @uses $CFG
  * @param string $firstname User's first name
