@@ -14,6 +14,7 @@ $string['coursegroupunknown'] = 'Course corresponding to group $a not specified'
 $string['cmunknown'] = 'Couldn\'t find this course module';
 $string['componentisuptodate'] = 'Component is up to date.';
 $string['confirmsesskeybad'] = 'Sorry, but your session key could not be confirmed to carry out this action.  This security feature prevents against accidental or malicious execution of important functions in your name.  Please make sure you really wanted to execute this function.';
+$string['couldnotassignrole'] = 'A serious but unspecified error occurred while trying to assign a role to you';
 $string['downloadedfilecheckfailed'] = 'Downloaded file check failed.';
 $string['errorcleaningdirectory'] = 'Error cleaning directory \"$a\"';
 $string['errorcopyingfiles'] = 'Error copying files';
