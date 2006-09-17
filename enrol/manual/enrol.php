@@ -320,6 +320,8 @@ function get_access_icons($course) {
         $strrequireskey = get_string('requireskey');
     }
 
+    $str = '';
+
     if (!empty($course->guest)) {
         $str .= '<a title="'.$strallowguests.'" href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">';
         $str .= '<img vspace="4" alt="'.$strallowguests.'" height="16" width="16" border="0" '.
