@@ -15,11 +15,11 @@
     $focus = "";
 
     if ($id) {
-        if (! $course = get_record("course", "id", $id)) {
-            error("Course ID was incorrect");
+        if (! $course = get_record('course', 'id', $id)) {
+            error('Course ID was incorrect');
         }
 
-		$context = get_context_instance(CONTEXT_COURSE, $id);
+		$context = get_context_instance(CONTEXT_COURSE, $course->id);
 		
         if (!has_capability('moodle/course:update', $context)) {
             error("You do not currently have editing privileges!");
@@ -73,6 +73,12 @@
         }
 
         $form->format = optional_param('format', 'social', PARAM_ALPHA);
+
+        $form->defaultrole = optional_param('defaultrole', 0, PARAM_INT);
+        if ($form->defaultrole == -1) {   // Just leave it however it is
+            unset($form->defaultrole);
+        }
+
 
         validate_form($course, $form, $err);
 

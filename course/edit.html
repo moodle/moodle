@@ -51,6 +51,9 @@
     if(!isset($form->restrictmodules)) {
         $form->restrictmodules = 0;
     }
+    if(!isset($form->defaultrole)) {
+        $form->defaultrole = 0;  // Use site default
+    }
 ?>
 <form method="post" action="edit.php" name="form">
 <table cellpadding="9" cellspacing="0" >
@@ -126,9 +129,36 @@
             }
             asort($choices);
             $choices = array_flip($choices);
-            $choices = array_merge(array('' => get_string('sitedefault').' ('.get_string("enrolname", "enrol_$CFG->enrol").')'), $choices);
+            $choices = array('' => get_string('sitedefault').' ('.get_string("enrolname", "enrol_$CFG->enrol").')') + $choices;
             choose_from_menu ($choices, "enrol", "$form->enrol", "");
             helpbutton("courseenrolmentplugins", get_string("enrolmentplugins"));
+    ?></td>
+</tr>
+<tr valign="top">
+    <td align="right"><?php  print_string("defaultrole") ?>:</td>
+    <td><?php
+            $roles = get_assignable_roles($context);
+            asort($roles);
+            $choices = array();
+
+            if ($form->defaultrole && !isset($roles[$form->defaultrole])) {  // Existing setting is one we can't choose
+                if ($coursedefaultrole = get_record('role', 'id', $form->defaultrole)) {
+                    $choices[-1] = get_string('currentrole', 'role').' ('.$coursedefaultrole->name.')';
+                } else {
+                    $choices[-1] = get_string('currentrole', 'role');
+                }
+            }
+
+            if ($sitedefaultrole = get_record('role', 'id', $CFG->defaultcourseroleid)) {
+                $choices[0] = get_string('sitedefault').' ('.$sitedefaultrole->name.')';
+            } else {
+                $choices[0] = get_string('sitedefault');
+            }
+
+            $choices = $choices + $roles;
+
+            choose_from_menu ($choices, 'defaultrole', $form->defaultrole, '');
+            helpbutton("coursedefaultrole", get_string("defaultrole"));
     ?></td>
 </tr>
 <tr valign="top">
