@@ -316,15 +316,6 @@ function enrol_student($userid, $courseid, $timestart=0, $timeend=0, $enrol='man
         return false;
     }
 
-/// Enrol the student in any parent meta courses...
-    if ($parents = get_records('course_meta', 'child_course', $courseid)) {
-        foreach ($parents as $parent) {
-            if ($metacontext = get_context_instance(CONTEXT_COURSE, $parent->parent_course)) {
-                role_assign($role->id, $user->id, 0, $metacontext->id, $timestart, $timeend, 0, 'metacourse');
-            }
-        }
-    }
-
     return role_assign($role->id, $user->id, 0, $context->id, $timestart, $timeend, 0, $enrol);
 }
 
@@ -348,18 +339,7 @@ function unenrol_student($userid, $courseid=0) {
                 delete_records('forum_subscriptions', 'forum', $forum->id, 'userid', $userid);
             }
         }
-        if ($groups = get_groups($courseid, $userid)) {
-            foreach ($groups as $group) {
-                delete_records('groups_members', 'groupid', $group->id, 'userid', $userid);
-            }
-        }
-        /// unenroll from all parent metacourses
-        if ($parents = get_records('course_meta','child_course',$courseid)) {
-            foreach ($parents as $parent) {
-                $status = $status and unenrol_student($userid, $parent->parent_course);
-            }
-        }
-        /// remove from all student roles
+        /// remove from all legacy student roles
         if ($courseid == SITEID) {
             $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
         } else if (!$context = get_context_instance(CONTEXT_COURSE, $courseid)) {
@@ -369,13 +349,13 @@ function unenrol_student($userid, $courseid=0) {
             return false;
         }
         foreach($roles as $role) {
-            $status = $status and role_unassign($role->id, $userid, 0, $context);
+            $status = role_unassign($role->id, $userid, 0, $context) and $status;
         }
     } else {
-        // recursivelly unenroll student from all course
+        // recursivelly unenroll student from all courses
         if ($courses = get_records('course')) {
             foreach($courses as $course) {
-                $status = $status and unenrol_student($userid, $course->id);
+                $status = unenrol_student($userid, $course->id) and $status;
             }
         }
     }

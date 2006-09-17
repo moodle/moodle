@@ -1416,6 +1416,18 @@ function role_assign($roleid, $userid, $groupid, $contextid, $timestart=0, $time
     /// Make sure they have an entry in user_lastaccess for courses they can access
     //    role_add_lastaccess_entries($userid, $context);
     }
+    
+    /// now handle metacourse role assignments if in course context
+    if ($success and $context->aggregatelevel == CONTEXT_COURSE) {
+        if ($parents = get_records('course_meta', 'child_course', $context->instanceid)) {
+            foreach ($parents as $parent) {
+                if ($metacontext = get_context_instance(CONTEXT_COURSE, $parent->parent_course)) {
+                    // try it even when something failed
+                    $success = $success and role_assign($roleid, $userid, $groupid, $metacontext->id, $timestart, $timeend, $hidden, $enrol);
+                }
+            }
+        }
+    }
 
     return $success;
 }
@@ -1432,6 +1444,8 @@ function role_assign($roleid, $userid, $groupid, $contextid, $timestart=0, $time
 function role_unassign($roleid=0, $userid=0, $groupid=0, $contextid=0) {
 
     global $USER, $CFG;
+    
+    $success = true;
 
     $args = array('roleid', 'userid', 'groupid', 'contextid');
     $select = array();
@@ -1442,37 +1456,51 @@ function role_unassign($roleid=0, $userid=0, $groupid=0, $contextid=0) {
     }
 
     if ($select) {
-        if (delete_records_select('role_assignments', implode(' AND ', $select))) {
-
-        /// If the user is the current user, then reload the capabilities too.
-            if (!empty($USER->id) && $USER->id == $userid) {
-                load_user_capability();
-            }
-    
-            if ($contextid) {
-                if ($context = get_record('context', 'id', $contextid)) {
+        if ($ras = get_records_select('role_assignments', implode(' AND ', $select))) {
+            $mods = get_list_of_plugins('mod');
+            foreach($ras as $ra) {
+                $success = delete_records('role_assignments', 'id', $ra->id) and $success;
+                /// If the user is the current user, then reload the capabilities too.
+                if (!empty($USER->id) && $USER->id == $ra->userid) {
+                    load_user_capability();
+                }
+                $context = get_record('context', 'id', $ra->contextid);
 
                 /// Ask all the modules if anything needs to be done for this user
-                    if ($mods = get_list_of_plugins('mod')) {
-                        foreach ($mods as $mod) {
-                            include_once($CFG->dirroot.'/mod/'.$mod.'/lib.php');
-                            $functionname = $mod.'_role_unassign';
-                            if (function_exists($functionname)) {
-                                $functionname($userid, $context);
+                foreach ($mods as $mod) {
+                    include_once($CFG->dirroot.'/mod/'.$mod.'/lib.php');
+                    $functionname = $mod.'_role_unassign';
+                    if (function_exists($functionname)) {
+                        $functionname($ra->userid, $context); // watch out, $context might be NULL if something goes wrong
+                    }
+                }
+
+                /// now handle metacourse role unassigment and removing from goups if in course context
+                if (!empty($context) and $context->aggregatelevel == CONTEXT_COURSE) {
+                    //remove from groups when user has no role
+                    $roles = get_user_roles($context, $ra->userid, true);
+                    if (empty($roles)) {
+                        if ($groups = get_groups($context->instanceid, $ra->userid)) {
+                            foreach ($groups as $group) {
+                                delete_records('groups_members', 'groupid', $group->id, 'userid', $ra->userid);
                             }
                         }
                     }
-        
-                /// Remove entries from user_lastaccess for courses they can no longer access
-                    //role_add_lastaccess_entries($userid, $context);
+                    //unassign roles in metacourses too
+                    if ($parents = get_records('course_meta', 'child_course', $context->instanceid)) {
+                        foreach ($parents as $parent) {
+                            if ($metacontext = get_context_instance(CONTEXT_COURSE, $parent->parent_course)) {
+                                // ignore errors in metacourses in case they are not properly synchronized
+                                role_unassign($roleid, $userid, $groupid, $metacontext->id);
+                            }
+                        }
+                    }
                 }
             }
-
-            return true;
         }
-        return false;
     }
-    return true;
+
+    return $success;
 }
 
 /**
