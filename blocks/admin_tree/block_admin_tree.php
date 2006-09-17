@@ -120,7 +120,7 @@ class block_admin_tree extends block_base {
 	
         if ($this->tempcontent !== '') {
             $this->content = new stdClass;
-            $this->content->text = '<script language="JavaScript">' . "\n\n";
+            $this->content->text = '<script type="text/javascript">' . "\n\n";
             $this->content->text .= 'var vh_numspans = ' . ($this->spancounter - 1) . ';' . "\n";
             $this->content->text .= 'var vh_content = new Array();' . "\n";
             $this->content->text .= 'function getspan(spanid) {' . "\n";
@@ -174,7 +174,7 @@ class block_admin_tree extends block_base {
             $this->content->text .= $this->tempcontent;
   
             $this->content->text .= '</div>' . "\n";
-            $this->content->text .= '<script language="JavaScript">' . "\n";
+            $this->content->text .= '<script type="text/javascript">' . "\n";
             $this->content->text .= 'collapseall();' . "\n";
             $this->content->text .= $this->expandjavascript;
 
