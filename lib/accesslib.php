@@ -1459,7 +1459,12 @@ function role_unassign($roleid=0, $userid=0, $groupid=0, $contextid=0) {
         if ($ras = get_records_select('role_assignments', implode(' AND ', $select))) {
             $mods = get_list_of_plugins('mod');
             foreach($ras as $ra) {
+                /// infinite loop protection when deleting recursively
+                if (!$ra = get_record('role_assignments', 'id', $ra->id)) {
+                    continue;
+                }
                 $success = delete_records('role_assignments', 'id', $ra->id) and $success;
+
                 /// If the user is the current user, then reload the capabilities too.
                 if (!empty($USER->id) && $USER->id == $ra->userid) {
                     load_user_capability();
