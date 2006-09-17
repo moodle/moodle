@@ -64,6 +64,16 @@
                 add_to_log($course->id, "forum", "move discussion", "discuss.php?d=$discussion->id", "$discussion->id");
             }
             $discussionmoved = true;
+            require_once('rsslib.php');
+            require_once($CFG->libdir.'/rsslib.php');
+
+            // Delete the RSS files for the 2 forums because we want to force
+            // the regeneration of the feeds since the discussions have been
+            // moved.
+            if (!forum_rss_delete_file($forum) || !forum_rss_delete_file($fromforum)) {
+                notify('Could not purge the cached RSS feeds for the source and/or'.
+                       'destination forum(s) - check your file permissionsforums');
+            }
         } else {
             error("You can't move to that forum - it doesn't exist!");
         }
