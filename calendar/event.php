@@ -378,7 +378,7 @@
                     $form->timestart = make_timestamp($cal_y, $cal_m, 1, 0, 0, 0);
                 }
             }
-            if($form->timestart < 0) {
+            if(!isset($form->timestart) or $form->timestart < 0) {
                 $form->timestart = time();
             }
 
