@@ -1596,7 +1596,7 @@ function require_login($courseid=0, $autologinguest=true, $cm=null) {
         if (! $course = get_record('course', 'id', $courseid)) {
             error('That course doesn\'t exist');
         }
-        if (!isteacher($courseid) && !($course->visible && course_parent_visible($course))) {
+        if (!isteacher($courseid, 0, true, true) && !($course->visible && course_parent_visible($course))) {
             print_header();
             notice(get_string('coursehidden'), $CFG->wwwroot .'/');
         }
@@ -2039,9 +2039,10 @@ function isadmin($userid=0) {
  * @param int $courseid The id of the course that is being viewed, if any
  * @param int $userid The id of the user that is being tested against. Set this to 0 if you would just like to test against the currently logged in user.
  * @param bool $includeadmin If true this function will return true when it encounters an admin user.
+ * @param bool $ignorestudentview true = don't do check for studentview mode
  * @return bool
  */
-function isteacher($courseid=0, $userid=0, $includeadmin=true) {
+function isteacher($courseid=0, $userid=0, $includeadmin=true, $ignorestudentview=false) {
 /// Is the user able to access this course as a teacher?
     global $USER, $CFG;
 
@@ -2049,7 +2050,7 @@ function isteacher($courseid=0, $userid=0, $includeadmin=true) {
         if (empty($USER) or empty($USER->id)) {     // not logged in so can't be a teacher
             return false;
         }
-        if (!empty($USER->studentview)) {
+        if (!empty($USER->studentview) and !$ignorestudentview) {
             return false;
         }
         if (!empty($USER->teacher) and $courseid) {   // look in session cache
