@@ -1813,97 +1813,98 @@ function sync_metacourses() {
 
     global $CFG;
 
-    if (!$courses = get_records_sql("SELECT DISTINCT parent_course,1 FROM {$CFG->prefix}course_meta")) {
+    if (!$courses = get_records('course', 'metacourse', 1)) {
         return;
     }
 
     foreach ($courses as $course) {
-        sync_metacourse($course->parent_course);
+        sync_metacourse($course);
     }
 }
-
 
 /**
  * Goes through all enrolment records for the courses inside the metacourse and sync with them.
  */
 
-function sync_metacourse($metacourseid) {
-
+function sync_metacourse($course) {
     global $CFG;
+    $status = true;
 
-    if (!$metacourse = get_record("course","id",$metacourseid)) {
-        return false;
-    }
-
-    if (count_records('course_meta','parent_course',$metacourseid) == 0) {
-        // if there are no child courses for this meta course, nuke the enrolments
-        if ($enrolments = get_records('user_students','course',$metacourseid,'','userid,1')) {
-            foreach ($enrolments as $enrolment) {
-                unenrol_student($enrolment->userid,$metacourseid);
-            }
-        }
-        return true;
-    }
-
-    // first get the list of child courses
-    $c_courses = get_records('course_meta','parent_course',$metacourseid);
-    $instr = '';
-    foreach ($c_courses as $c) {
-        $instr .= $c->child_course.',';
-    }
-    $instr = substr($instr,0,-1);
-
-    // now get the list of valid enrolments in the child courses
-    $sql = 'SELECT DISTINCT userid,1 FROM '.$CFG->prefix.'user_students WHERE course IN ('.$instr.')';
-    $enrolments = get_records_sql($sql);
-
-    // put it into a nice array we can happily use array_diff on.
-    $ce = array();
-    if (!empty($enrolments)) {
-        foreach ($enrolments as $en) {
-            $ce[] = $en->userid;
+    if (!is_object($course)) {
+        if (!$course = get_record('course', 'id', $course)) {
+            return false; // invalid course id
         }
     }
+    
+    if (empty($course->metacourse)) {
+        return false; // can not sync normal course or not $course object
+    }
 
-    // now get the list of current enrolments in the meta course.
-    $sql = 'SELECT userid,1 FROM '.$CFG->prefix.'user_students WHERE course = '.$metacourseid;
-    $enrolments = get_records_sql($sql);
+    $context = get_context_instance(CONTEXT_COURSE, $course->id); // SITEID can not be a metacourse
 
-    $me = array();
-    if (!empty($enrolments)) {
-        foreach ($enrolments as $en) {
-            $me[] = $en->userid;
+    if (!$roles = get_records('role')) {
+        return false; // hmm, there should be always at least one role
+    }
+    
+    // always keep metacourse managers
+    if ($users = get_users_by_capability($context, 'moodle/course:managemetacourses')) {
+        $managers = array_keys($users);
+    } else {
+        $managers = array();
+    }
+
+    // find all role users in child courses + build list of current metacourse assignments
+    $in_childs = array(); 
+    foreach ($roles as $role) {
+        if ($users = get_role_users($role->id, $context, false)) {
+            $current[$role->id] = array_keys($users);
+        } else {
+            $current[$role->id] = array();
         }
+        $in_childs[$role->id] = array(); //initialze array
     }
+    if ($children = get_records('course_meta', 'parent_course', $course->id)) {
+        foreach ($children as $child) {
+            $ch_context = get_context_instance(CONTEXT_COURSE, $child->child_course);
+            foreach ($roles as $role) {
+                if ($users = get_role_users($role->id, $ch_context, false)) {
 
-    $enrolmentstodelete = array_diff($me,$ce);
-    $userstoadd = array_diff($ce,$me);
-
-    foreach ($enrolmentstodelete as $userid) {
-        unenrol_student($userid,$metacourseid);
-    }
-    foreach ($userstoadd as $userid) {
-        enrol_student($userid,$metacourseid,0,0,'metacourse');
-    }
-
-    // and next make sure that we have the right start time and end time (ie max and min) for them all.
-    if ($enrolments = get_records('user_students','course',$metacourseid,'','id,userid')) {
-        foreach ($enrolments as $enrol) {
-            if ($maxmin = get_record_sql("SELECT min(timestart) AS timestart, max(timeend) AS timeend
-               FROM {$CFG->prefix}user_students u,
-                    {$CFG->prefix}course_meta mc
-               WHERE u.course = mc.child_course
-               AND userid = $enrol->userid
-               AND mc.parent_course = $metacourseid")) {
-                $enrol->timestart = $maxmin->timestart;
-                $enrol->timeend = $maxmin->timeend;
-                $enrol->enrol = 'metacourse'; // just in case it wasn't there earlier.
-                update_record('user_students',$enrol);
+                    $users = array_keys($users);
+                    $in_childs[$role->id] = array_merge($in_childs[$role->id], $users);
+                }
             }
         }
     }
+    
+    foreach ($roles as $role) {
+        //clean up the duplicates from cuncurrent assignments in child courses
+        $in_childs[$role->id] = array_unique($in_childs[$role->id]);
+        //make a list of all potentially affected users
+    }
+
+    foreach ($roles as $role) {
+        foreach ($current[$role->id] as $userid) {
+            if (in_array($userid, $in_childs[$role->id])) {
+                // ok - no need to change anything
+                unset($in_childs[$role->id][array_search($userid, $in_childs[$role->id])]);
+            } else {
+                // unassign if not metacourse manager
+                if (!in_array($userid, $managers)) {
+                    //echo "unassigning uid: $userid from role: $role->id in context: $context->id <br>\n";
+                    role_unassign($role->id, $userid, 0, $context->id);
+                }
+            }
+        }
+        // now assign roles to those left in $in_childs  
+        foreach ($in_childs[$role->id] as $userid) {
+            //echo "  assigning uid: $userid from role: $role->id in context: $context->id <br>\n";
+            role_assign($role->id, $userid, 0, $context->id);
+        }        
+    }
+
+// TODO: finish timeend and timestart
+// maybe we could rely on cron job to do the cleaning from time to time
     return true;
-
 }
 
 /**

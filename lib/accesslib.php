@@ -1417,10 +1417,7 @@ function role_assign($roleid, $userid, $groupid, $contextid, $timestart=0, $time
     if ($success and $context->aggregatelevel == CONTEXT_COURSE) {
         if ($parents = get_records('course_meta', 'child_course', $context->instanceid)) {
             foreach ($parents as $parent) {
-                if ($metacontext = get_context_instance(CONTEXT_COURSE, $parent->parent_course)) {
-                    // try it even when something failed
-                    $success = $success and role_assign($roleid, $userid, $groupid, $metacontext->id, $timestart, $timeend, $hidden, $enrol);
-                }
+                sync_metacourse($parent->parent_course);
             }
         }
     }
@@ -1487,13 +1484,10 @@ function role_unassign($roleid=0, $userid=0, $groupid=0, $contextid=0) {
                             }
                         }
                     }
-                    //unassign roles in metacourses too
+                    //unassign roles in metacourses if needed
                     if ($parents = get_records('course_meta', 'child_course', $context->instanceid)) {
                         foreach ($parents as $parent) {
-                            if ($metacontext = get_context_instance(CONTEXT_COURSE, $parent->parent_course)) {
-                                // ignore errors in metacourses in case they are not properly synchronized
-                                role_unassign($roleid, $userid, $groupid, $metacontext->id);
-                            }
+                            sync_metacourse($parent->parent_course);
                         }
                     }
                 }
