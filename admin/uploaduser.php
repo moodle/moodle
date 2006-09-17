@@ -155,7 +155,7 @@ if ($um->preprocess_files() && confirm_sesskey()) {
 
             // Will use this course array a lot
             // so fetch it early and keep it in memory
-            $courses = get_courses('all','c.sortorder','c.id,c.shortname,c.fullname,c.sortorder,c.teacher');
+            $courses = get_courses('all','c.sortorder','c.id,c.shortname,c.fullname,c.sortorder,c.teacher,c.visible');
 
             while (!feof ($fp)) {
                 foreach ($optionalDefaults as $key => $value) {
@@ -196,26 +196,26 @@ if ($um->preprocess_files() && confirm_sesskey()) {
                     $user->timemodified = time();
                     $linenum++;
                     $username = $user->username;
-                    $addcourse[0] = $user->course1;
-                    $addcourse[1] = $user->course2;
-                    $addcourse[2] = $user->course3;
-                    $addcourse[3] = $user->course4;
-                    $addcourse[4] = $user->course5;
-                    $addgroup[0] = $user->group1;
-                    $addgroup[1] = $user->group2;
-                    $addgroup[2] = $user->group3;
-                    $addgroup[3] = $user->group4;
-                    $addgroup[4] = $user->group5;
-                    $addtype[0] = $user->type1;
-                    $addtype[1] = $user->type2;
-                    $addtype[2] = $user->type3;
-                    $addtype[3] = $user->type4;
-                    $addtype[4] = $user->type5;
-                    $addrole[0] = $user->role1;
-                    $addrole[1] = $user->role2;
-                    $addrole[2] = $user->role3;
-                    $addrole[3] = $user->role4;
-                    $addrole[4] = $user->role5;
+                    $addcourse[0] = isset($user->course1) ? $user->course1 : NULL;
+                    $addcourse[1] = isset($user->course2) ? $user->course2 : NULL;
+                    $addcourse[2] = isset($user->course3) ? $user->course3 : NULL;
+                    $addcourse[3] = isset($user->course4) ? $user->course4 : NULL;
+                    $addcourse[4] = isset($user->course5) ? $user->course5 : NULL;
+                    $addgroup[0] = isset($user->group1) ? $user->group1 : NULL;
+                    $addgroup[1] = isset($user->group2) ? $user->group2 : NULL;
+                    $addgroup[2] = isset($user->group3) ? $user->group3 : NULL;
+                    $addgroup[3] = isset($user->group4) ? $user->group4 : NULL;
+                    $addgroup[4] = isset($user->group5) ? $user->group5 : NULL;
+                    $addtype[0] = isset($user->type1) ? $user->type1 : NULL;
+                    $addtype[1] = isset($user->type2) ? $user->type2 : NULL;
+                    $addtype[2] = isset($user->type3) ? $user->type3 : NULL;
+                    $addtype[3] = isset($user->type4) ? $user->type4 : NULL;
+                    $addtype[4] = isset($user->type5) ? $user->type5 : NULL;
+                    $addrole[0] = isset($user->role1) ? $user->role1 : NULL;
+                    $addrole[1] = isset($user->role2) ? $user->role2 : NULL;
+                    $addrole[2] = isset($user->role3) ? $user->role3 : NULL;
+                    $addrole[3] = isset($user->role4) ? $user->role4 : NULL;
+                    $addrole[4] = isset($user->role5) ? $user->role5 : NULL;
 
                     for ($i=0; $i<5; $i++) {
                         $course[$i]=NULL;
@@ -407,7 +407,7 @@ echo '<input type="submit" value="'.$struploadusers.'">';
 echo '</form><br />';
 echo '</center>';
 
-print_footer($course);
+print_footer();
 
 
 
