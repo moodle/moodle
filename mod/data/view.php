@@ -84,7 +84,7 @@
     require_course_login($course, true, $cm);
     
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-    require_capability('mod/data:readentry', $context);
+    require_capability('mod/data:viewentry', $context);
 
 /// If it's hidden then it's don't show anything.  :)
     if (empty($cm->visible) and !has_capability('mod/data:managetemplates', $context)) {

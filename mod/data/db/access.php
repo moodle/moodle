@@ -33,13 +33,27 @@
 
 $mod_data_capabilities = array(
     
-    'mod/data:readentry' => array(
+    'mod/data:viewentry' => array(
     
         'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
-            'guest' => CAP_ALLOW,
+            'guest' => CAP_PREVENT,
             'student' => CAP_ALLOW,
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'coursecreator' => CAP_ALLOW,
+            'admin' => CAP_ALLOW
+        )
+    ),
+    
+    'mod/data:viewentriesfromallgrous' => array(
+    
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_MODULE,
+        'legacy' => array(
+            'guest' => CAP_PREVENT,
+            'student' => CAP_PREVENT,
             'teacher' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW,
             'coursecreator' => CAP_ALLOW,
@@ -68,6 +82,20 @@ $mod_data_capabilities = array(
         'legacy' => array(
             'guest' => CAP_PREVENT,
             'student' => CAP_ALLOW,
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'coursecreator' => CAP_ALLOW,
+            'admin' => CAP_ALLOW
+        )
+    ),
+    
+    'mod/data:viewrating' => array(
+    
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_MODULE,
+        'legacy' => array(
+            'guest' => CAP_PREVENT,
+            'student' => CAP_PREVENT,
             'teacher' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW,
             'coursecreator' => CAP_ALLOW,
