@@ -467,24 +467,6 @@ function remove_teacher($userid, $courseid=0) {
 }
 
 /**
- * Add a creator to the site
- *
- * @param int $userid The id of the user that is being tested against.
- * @return bool
- */
-function add_creator($userid) {
-
-    if (!record_exists('user_admins', 'userid', $userid)) {
-        if (record_exists('user', 'id', $userid)) {
-            $creator->userid = $userid;
-            return insert_record('user_coursecreators', $creator);
-        }
-        return false;
-    }
-    return true;
-}
-
-/**
  * Remove a creator from a site
  *
  * @uses $db
