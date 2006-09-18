@@ -15,6 +15,7 @@ if ($courseid) {
                 <td><?php print_string('allow','role') ?></td>
                 <td><?php print_string('prevent','role') ?></td>
                 <td><?php print_string('prohibit','role') ?></td>
+                <td><?php print_string('risks','role') ?></td>
             </tr>
             <?php 
             
@@ -83,6 +84,23 @@ if ($courseid) {
                        if ($localpermission == CAP_PROHIBIT) {echo ' checked="checked"';} 
                        if ($isdisabled)                      {echo ' disabled="disabled"';}?>>
                  </td>
+                 <td><?php
+                    if (RISK_MANAGETRUST & (int)$capability->riskbitmask) {
+                        echo "T";
+                    }
+                    if (RISK_ADMIN & (int)$capability->riskbitmask) {
+                        echo "A";
+                    }
+                    if (RISK_XSS & (int)$capability->riskbitmask) {
+                        echo "X";
+                    }
+                    if (RISK_PERSONAL & (int)$capability->riskbitmask) {
+                        echo "P";
+                    }
+                    if (RISK_SPAM & (int)$capability->riskbitmask) {
+                        echo "S";
+                    }
+                 ?></td>
             </tr>
             
             <?php } ?>    

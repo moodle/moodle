@@ -18,6 +18,7 @@ Role short name (ASCII): <input type="text" name="shortname" value="<?php echo $
 <td><?php print_string('allow','role') ?></td>
 <td><?php print_string('prevent','role') ?></td>
 <td><?php print_string('prohibit','role') ?></td>
+<td><?php print_string('risks','role') ?></td>
 </tr>
 
 <?php 
@@ -50,6 +51,23 @@ foreach ($capabilities as $capability) {
         <td><INPUT TYPE=radio NAME="<?php echo $capability->name; ?>" VALUE="1" <?php if (isset($localoverride->permission) && $localoverride->permission==1){ echo 'checked="checked"'; }?>></td>
         <td ><INPUT TYPE=radio NAME="<?php echo $capability->name; ?>" VALUE="-1" <?php if (isset($localoverride->permission) && $localoverride->permission==-1){ echo 'checked="checked"'; }?>></td>
         <td ><INPUT TYPE=radio NAME="<?php echo $capability->name; ?>" VALUE="-1000" <?php if (isset($localoverride->permission) && $localoverride->permission==-1000){ echo 'checked="checked"'; }?>></td>
+        <td><?php
+            if (RISK_MANAGETRUST & (int)$capability->riskbitmask) {
+                echo "T";
+            }
+            if (RISK_ADMIN & (int)$capability->riskbitmask) {
+                echo "A";
+            }
+            if (RISK_XSS & (int)$capability->riskbitmask) {
+                echo "X";
+            }
+            if (RISK_PERSONAL & (int)$capability->riskbitmask) {
+                echo "P";
+            }
+            if (RISK_SPAM & (int)$capability->riskbitmask) {
+                echo "S";
+            }
+        ?></td>
         </tr>
 
         <?php } ?>    

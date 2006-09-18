@@ -22,6 +22,8 @@ $mod_wiki_capabilities = array(
 
     'mod/wiki:participate' => array(
 
+        'riskbitmask' => RISK_SPAM,
+
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
@@ -35,6 +37,8 @@ $mod_wiki_capabilities = array(
     ),
 
     'mod/wiki:manage' => array(
+
+        'riskbitmask' => RISK_SPAM,
 
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,

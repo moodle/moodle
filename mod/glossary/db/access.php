@@ -49,6 +49,8 @@ $mod_glossary_capabilities = array(
     
     'mod/glossary:write' => array(
     
+        'riskbitmask' => RISK_SPAM,
+
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
@@ -91,6 +93,8 @@ $mod_glossary_capabilities = array(
     
     'mod/glossary:comment' => array(
     
+        'riskbitmask' => RISK_SPAM,
+
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
@@ -119,6 +123,8 @@ $mod_glossary_capabilities = array(
     
     'mod/glossary:import' => array(
     
+        'riskbitmask' => RISK_SPAM,
+
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(

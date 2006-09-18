@@ -77,7 +77,9 @@ $mod_forum_capabilities = array(
     
     'mod/forum:startdiscussion' => array(
     
-        'captype' => 'read',
+        'riskbitmask' => RISK_SPAM,
+
+        'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
             'guest' => CAP_PREVENT,
@@ -91,7 +93,9 @@ $mod_forum_capabilities = array(
     
     'mod/forum:replypost' => array(
     
-        'captype' => 'read',
+        'riskbitmask' => RISK_SPAM,
+
+        'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
             'guest' => CAP_PREVENT,
@@ -133,7 +137,7 @@ $mod_forum_capabilities = array(
     
     'mod/forum:rate' => array(
     
-        'captype' => 'read',
+        'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
             'guest' => CAP_PREVENT,
@@ -147,7 +151,9 @@ $mod_forum_capabilities = array(
     
     'mod/forum:createattachment' => array(
     
-        'captype' => 'read',
+        'riskbitmask' => RISK_SPAM,
+
+        'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
             'guest' => CAP_PREVENT,
@@ -217,7 +223,9 @@ $mod_forum_capabilities = array(
     
     'mod/forum:editanypost' => array(
     
-        'captype' => 'read',
+        'riskbitmask' => RISK_SPAM,
+
+        'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
             'guest' => CAP_PREVENT,

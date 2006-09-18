@@ -22,6 +22,8 @@ $mod_lesson_capabilities = array(
 
     'mod/lesson:edit' => array(
     
+        'riskbitmask' => RISK_XSS,
+
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(

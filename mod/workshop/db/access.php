@@ -22,6 +22,8 @@ $mod_workshop_capabilities = array(
 
     'mod/workshop:participate' => array(
     
+        'riskbitmask' => RISK_SPAM,
+
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
@@ -36,6 +38,8 @@ $mod_workshop_capabilities = array(
 
     'mod/workshop:manage' => array(
     
+        'riskbitmask' => RISK_SPAM,
+
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(

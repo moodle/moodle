@@ -35,6 +35,8 @@ $mod_chat_capabilities = array(
     
     'mod/chat:chat' => array(
     
+        'riskbitmask' => RISK_SPAM,
+
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
