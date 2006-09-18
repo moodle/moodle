@@ -54,41 +54,69 @@ class block_blog_menu extends block_base {
         //if ( blog_isLoggedIn() && !isguest() ) {
             $courseviewlink = '';
             $addentrylink = '';
-                            
             $coursearg = '';
-            if((isloggedin() && !isguest()) && isset($course) && isset($course->id) && $course->id !=0 && $course->id!=SITEID && $CFG->bloglevel >= BLOG_COURSE_LEVEL) {
-                $coursearg = '&amp;courseid='. $course->id;
+            
+            $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
+            
+            if (isset($course) && isset($course->id)
+                    && $course->id != 0 && $course->id != SITEID) {
+                
+                $incoursecontext = true;
+                $curcontext = get_context_instance(CONTEXT_COURSE, $course->id);
+            } else {
+                $incoursecontext = false;
+                $curcontext = $sitecontext;
+            }
+            
+            $canviewblogs = has_capability('moodle/blog:view', $curcontext);
+            
+            
+            if ( (isloggedin() && !isguest()) && $incoursecontext
+                    && $CFG->bloglevel >= BLOG_COURSE_LEVEL && $canviewblogs) {
+                    
+                $coursearg = '&amp;courseid='.$course->id;
                 // a course is specified
                 
                 $courseviewlink = '<a href="'. $CFG->wwwroot .'/blog/index.php?filtertype=course&amp;filterselect='. $course->id .'">';
                 $courseviewlink .= get_string('viewcourseentries', 'blog') .'</a><br />';
             }
-                
+            
             $blogmodon = false;
 
-                if ((isloggedin() && !isguest()) && (isadmin() || !$blogmodon || ($blogmodon && $coursearg != '')) && $CFG->bloglevel >= BLOG_USER_LEVEL) {
+            if ( (isloggedin() && !isguest())
+                        && (!$blogmodon || ($blogmodon && $coursearg != ''))
+                        && $CFG->bloglevel >= BLOG_USER_LEVEL ) {
 
-                    // show Add entry link - user is not admin, moderation is off, or moderation is on and the user is viewing the block within the context of a course
-                    $addentrylink = '<a href="'. $CFG->wwwroot. '/blog/edit.php?userid='. $userBlog->userid . $coursearg .'">'. get_string('addnewentry', 'blog') .'</a><br />';
+                // show Add entry link - moderation is off, or moderation is on and the user is viewing the block within the context of a course
+                if (has_capability('moodle/blog:create', $curcontext)) {
+                    $addentrylink = '<a href="'. $CFG->wwwroot. '/blog/edit.php?userid='.
+                                    $userBlog->userid . $coursearg .'">'.
+                                    get_string('addnewentry', 'blog') .'</a><br />';
+                }
+                // show View my entries link
+                $addentrylink .= '<a href="'. $CFG->wwwroot .'/blog/index.php?userid='.
+                                 $userBlog->userid.'">'.get_string('viewmyentries', 'blog').
+                                 '</a><br />';
+                
+                // show link to manage blog prefs
+                $addentrylink .= '<a href="'. $CFG->wwwroot. '/blog/preferences.php?userid='.
+                                 $userBlog->userid . $coursearg .'">'.
+                                 get_string('blogpreferences', 'blog').'</a><br />';
 
-                    // show View my entries link
-                    $addentrylink .= '<a href="'. $CFG->wwwroot .'/blog/index.php?userid='. $userBlog->userid.'">';
-                    $addentrylink .= get_string('viewmyentries', 'blog') .'</a><br />';
-                    // show link to manage blog prefs
-                    $addentrylink .= '<a href="'. $CFG->wwwroot. '/blog/preferences.php?userid='. $userBlog->userid . $coursearg .'">'. get_string('blogpreferences', 'blog') .'</a><br />';
-
-                    $output = $addentrylink;
-                    $output .= $courseviewlink;
-
+                $output = $addentrylink;
+                $output .= $courseviewlink;
             }
 
             // show View site entries link
-            if ($CFG->bloglevel >= BLOG_SITE_LEVEL) {
+            if ($CFG->bloglevel >= BLOG_SITE_LEVEL && $canviewblogs) {
                 $output .= '<a href="'. $CFG->wwwroot .'/blog/index.php?filtertype=site&amp;">';
-                $output .= get_string('viewsiteentries', 'blog') .'</a><br />';
+                $output .= get_string('viewsiteentries', 'blog').'</a><br />';
             }
             
-            if (isloggedin() && (!isguest())) {
+            if (isloggedin() && !isguest()
+                    && (has_capability('moodle/blog:manageofficialtags', $sitecontext)
+                    || has_capability('moodle/blog:managepersonaltags', $curcontext))) {
+
                 $output .= link_to_popup_window("/blog/tags.php",'popup',get_string('tagmanagement'), 400, 500, 'Popup window', 'none', true);
             }
             
@@ -103,4 +131,5 @@ class block_blog_menu extends block_base {
         return $this->content;
     }
 }
+
 ?>
