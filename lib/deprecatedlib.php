@@ -493,24 +493,6 @@ function get_guest() {
     return get_complete_user_data('username', 'guest');
 }
 
-
-/**
- * Returns list of all creators
- *
- * @uses $CFG
- * @return object
- */
-function get_creators() {
-
-    global $CFG;
-
-    return get_records_sql("SELECT u.*
-                              FROM {$CFG->prefix}user u,
-                                   {$CFG->prefix}user_coursecreators a
-                             WHERE a.userid = u.id
-                             ORDER BY u.id ASC");
-}
-
 /**
  * Returns $user object of the main teacher for a course
  *
