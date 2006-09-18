@@ -61,9 +61,17 @@ class block_admin extends block_list {
             $this->content->items[]='<a href="'.$CFG->wwwroot.'/admin/roles/assign.php?contextid='.$context->id.'">'.get_string('assignroles', 'role').'</a>';
             $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/roles.gif" alt="" />';         
             
-            if ($course->metacourse) {
+        }
+
+    /// Manage metacourses
+        if ($course->metacourse) {
+            if (has_capability('moodle/course:managemetacourses', $context)) { 
                 $strchildcourses = get_string('childcourses');
                 $this->content->items[]='<a href="importstudents.php?id='.$this->instance->pageid.'">'.$strchildcourses.'</a>';
+                $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/course.gif" alt="" />';
+            } else if (has_capability('moodle/role:assign', $context)) {
+                $strchildcourses = get_string('childcourses');
+                $this->content->items[]='<span class="dimmed_text">'.$strchildcourses.'</span>';
                 $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/course.gif" alt="" />';
             }
         }
