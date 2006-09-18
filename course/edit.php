@@ -144,22 +144,14 @@
 
                     } else {         // Add current teacher and send to course
 
-                        $newteacher = NULL;
-                        $newteacher->userid = $USER->id;
-                        $newteacher->course = $newcourseid;
-                        $newteacher->authority = 1;   // First teacher is the main teacher
-                        $newteacher->editall = 1;     // Course creator can edit their own course
-                        $newteacher->enrol = 'manual';// enrol the teacher too - bug #6120
-
-                        if (!$newteacher->id = insert_record("user_teachers", $newteacher)) {
-                            error("Could not add you to this new course!");
+                        // find a role with legacy:edittingteacher
+                        
+                        if ($teacherroles = get_roles_with_capability('moodle/legacy:editingteacher', CAP_ALLOW, $context)) {
+                            // assign the role to this user
+                            $teachereditrole = array_shift($teacherroles);
+                            role_assign($teachereditrole->id, $USER->id, 0, $context->id);
                         }
-
-                        $USER->teacher[$newcourseid] = true;
-                        $USER->teacheredit[$newcourseid] = true;
-
-                        fix_course_sortorder();
-
+                        
                         redirect("view.php?id=$newcourseid", get_string("changessaved"));
                     }
 
