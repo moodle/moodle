@@ -15,16 +15,17 @@ class block_participants extends block_list {
 			return '';  
 		}
 		
-		$sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
 		
 		// only 2 possible contexts, site or course
 		if ($this->instance->pageid == SITEID) { // site context
-		  	$currentcontext = $sitecontext;
+		  	$currentcontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
+		  	$canviewparticipants = has_capability('moodle/site:viewparticipants', $currentcontext);
 		} else { // course context
 			$currentcontext = get_context_instance(CONTEXT_COURSE, $this->instance->pageid);
+			$canviewparticipants = has_capability('moodle/course:viewparticipants', $currentcontext);
 		}
 		
-		if (!has_capability('moodle/course:viewparticipants', $currentcontext)) {
+		if (!$canviewparticipants) {
 		  	$this->context = '';
 		  	return $this->content;
 		}
@@ -48,7 +49,7 @@ class block_participants extends block_list {
         }
 
         if ($this->instance->pageid != SITEID
-                || has_capability('moodle/course:viewparticipants', $sitecontext)) {
+                || $canviewparticipants) {
 
             $this->content->items[] = '<a title="'.get_string('listofallpeople').'" href="'.
                                       $CFG->wwwroot.'/user/index.php?contextid='.$currentcontext->id.'">'.get_string('participants').'</a>';
