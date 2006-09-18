@@ -231,6 +231,11 @@ function lesson_upgrade($oldversion) {
         table_column('lesson_default', '', 'mediawidth', 'int', '10', 'unsigned', '650', 'not null', 'retake');
     }
     
+    if ($oldversion < 2006091202) {
+        table_column('lesson', '', 'feedback', 'int', '3', 'unsigned', '1', 'not null', 'nextpagedefault'); 
+        table_column('lesson_default', '', 'feedback', 'int', '3', 'unsigned', '1', 'not null', 'nextpagedefault'); 
+    }
+    
     return true;
 }
 

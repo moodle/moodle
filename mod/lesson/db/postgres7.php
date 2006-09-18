@@ -352,6 +352,11 @@ function lesson_upgrade($oldversion) {
         modify_database('', 'ALTER TABLE prefix_lesson_high_scores
             ALTER COLUMN userid SET DEFAULT 0');
     }
+    
+    if ($oldversion < 2006091202) {
+        table_column('lesson', '', 'feedback', 'int', '3', 'unsigned', '1', 'not null', 'nextpagedefault'); 
+        table_column('lesson_default', '', 'feedback', 'int', '3', 'unsigned', '1', 'not null', 'nextpagedefault'); 
+    }
 
    return true;
 }

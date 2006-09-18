@@ -73,6 +73,7 @@
             $lesson->maxattempts = backup_todb($info['MOD']['#']['MAXATTEMPTS']['0']['#']);
             $lesson->review = backup_todb($info['MOD']['#']['REVIEW']['0']['#']);
             $lesson->nextpagedefault = backup_todb($info['MOD']['#']['NEXTPAGEDEFAULT']['0']['#']);
+            $lesson->feedback = backup_todb($info['MOD']['#']['FEEDBACK']['0']['#']);
             $lesson->minquestions = backup_todb($info['MOD']['#']['MINQUESTIONS']['0']['#']);
             $lesson->maxpages = backup_todb($info['MOD']['#']['MAXPAGES']['0']['#']);
             $lesson->timed = backup_todb($info['MOD']['#']['TIMED']['0']['#']);
@@ -664,6 +665,7 @@
                 $default->maxattempts = backup_todb($default_info['#']['MAXATTEMPTS']['0']['#']);
                 $default->review = backup_todb($default_info['#']['REVIEW']['0']['#']);
                 $default->nextpagedefault = backup_todb($default_info['#']['NEXTPAGEDEFAULT']['0']['#']);
+                $default->feedback = backup_todb($default_info['#']['FEEDBACK']['0']['#']);
                 $default->minquestions = backup_todb($default_info['#']['MINQUESTIONS']['0']['#']);
                 $default->maxpages = backup_todb($default_info['#']['MAXPAGES']['0']['#']);
                 $default->timed = backup_todb($default_info['#']['TIMED']['0']['#']);

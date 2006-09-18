@@ -83,6 +83,7 @@
         fwrite ($bf,full_tag("MAXATTEMPTS",4,false,$lesson->maxattempts));
         fwrite ($bf,full_tag("REVIEW",4,false,$lesson->review));
         fwrite ($bf,full_tag("NEXTPAGEDEFAULT",4,false,$lesson->nextpagedefault));
+        fwrite ($bf,full_tag("FEEDBACK",4,false,$lesson->feedback));
         fwrite ($bf,full_tag("MINQUESTIONS",4,false,$lesson->minquestions));
         fwrite ($bf,full_tag("MAXPAGES",4,false,$lesson->maxpages));
         fwrite ($bf,full_tag("TIMED",4,false,$lesson->timed));
@@ -405,6 +406,7 @@
             fwrite ($bf,full_tag("MAXATTEMPTS",5,false,$default->maxattempts));
             fwrite ($bf,full_tag("REVIEW",5,false,$default->review));
             fwrite ($bf,full_tag("NEXTPAGEDEFAULT",5,false,$default->nextpagedefault));
+            fwrite ($bf,full_tag("FEEDBACK",5,false,$default->feedback));
             fwrite ($bf,full_tag("MINQUESTIONS",5,false,$default->minquestions));
             fwrite ($bf,full_tag("MAXPAGES",5,false,$default->maxpages));
             fwrite ($bf,full_tag("TIMED",5,false,$default->timed));

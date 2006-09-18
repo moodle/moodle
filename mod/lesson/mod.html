@@ -31,6 +31,9 @@ if ($form->mode == "add") {
     if (!isset($form->nextpagedefault)) {
         $form->nextpagedefault = 0;
     }
+    if (!isset($form->feedback)) {
+        $form->feedback = 1;
+    }
     if (!isset($form->minquestions)) {
         $form->minquestions = 0;
     }
@@ -316,6 +319,18 @@ if ($form->mode == "add") {
     <?php 
         choose_from_menu($LESSON_NEXTPAGE_ACTION, "nextpagedefault", $form->nextpagedefault, "");
         helpbutton("nextpageaction", get_string("actionaftercorrectanswer", "lesson"), "lesson");
+    ?>
+    </td>
+</tr>
+
+<tr>
+    <td align="right"><strong><?php print_string('displaydefaultfeedback', 'lesson'); ?>:</strong></td>
+    <td>
+    <?php
+        $options = array();
+        $options[0] = get_string('no'); $options[1] = get_string('yes');
+        choose_from_menu($options, 'feedback', $form->feedback, '');
+        helpbutton('feedback', get_string('displaydefaultfeedback', 'lesson'), 'lesson');
     ?>
     </td>
 </tr>

@@ -65,7 +65,6 @@
                 error("Continue: No answers found");
             }
             $correctanswer = false;
-            $response = get_string('defaultessayresponse', 'lesson');
             foreach ($answers as $answer) {
                 $answerid = $answer->id;
                 $newpageid = $answer->jumpto;
@@ -181,13 +180,6 @@
                     break; // quit answer analysis immediately after a match has been found
                 }
             }
-            if (!isset($response)) { //if no feedback message provided, use default message
-                if ($correctanswer) {
-                    $response = get_string("thatsthecorrectanswer", "lesson");
-                } else {
-                    $response = get_string("thatsthewronganswer", "lesson");
-                }
-            }
             $studentanswer = $useranswer;
             break;
         
@@ -211,13 +203,7 @@
                 }
             }
             $newpageid = $answer->jumpto;
-            if (!$response = trim($answer->response)) {
-                if ($correctanswer) {
-                    $response = get_string("thatsthecorrectanswer", "lesson");
-                } else {
-                    $response = get_string("thatsthewronganswer", "lesson");
-                }
-            }
+            $response  = trim($answer->response);
             $studentanswer = $answer->answer;
             break;
         
@@ -318,14 +304,10 @@
                 }
                 if ((count($useranswers) == $ncorrect) and ($nhits == $ncorrect)) {
                     $correctanswer = true;
-                    if (!$response = $correctresponse) {
-                        $response = get_string("thatsthecorrectanswer", "lesson");
-                    }
+                    $response  = $correctresponse;
                     $newpageid = $correctpageid;
                 } else {
-                    if (!$response = $wrongresponse) {
-                        $response = get_string("thatsthewronganswer", "lesson");
-                    }
+                    $response  = $wrongresponse;
                     $newpageid = $wrongpageid;
                 }
             } else {
@@ -349,13 +331,7 @@
                     }
                 }
                 $newpageid = $answer->jumpto;
-                if (!$response = trim($answer->response)) {
-                    if ($correctanswer) {
-                        $response = get_string("thatsthecorrectanswer", "lesson");
-                    } else {
-                        $response = get_string("thatsthewronganswer", "lesson");
-                    }
-                }
+                $response  = trim($answer->response);
                 $studentanswer = $answer->answer;
             }
             break;
@@ -409,7 +385,6 @@
             $userresponse = implode(",", $userresponse);
 
             if ($ncorrect == count($answers)-2) {  // dont count correct/wrong responses in the total.
-                $response = get_string("thatsthecorrectanswer", "lesson");
                 foreach ($answers as $answer) {
                     if ($answer->response == NULL && $answer->answer != NULL) {
                         $response = $answer->answer;
@@ -424,7 +399,6 @@
                 }
                 $correctanswer = true;
             } else {
-                $response = get_string("thatsthewronganswer", "lesson");
                 $t = 0;
                 foreach ($answers as $answer) {
                     if ($answer->response == NULL && $answer->answer != NULL) {
@@ -483,15 +457,6 @@
                     break;
                 }
             }
-            if ($correctanswer) {
-                if (!$response) {
-                    $response = get_string("thatsthecorrectanswer", "lesson");
-                }
-            } else {
-                if (!$response) {
-                    $response = get_string("thatsthewronganswer", "lesson");
-                }
-            }           
             break;
 
         case LESSON_BRANCHTABLE:
@@ -600,7 +565,7 @@
                 }
             }
         }
-        // convert jumpto page into a proper page id
+        // TODO: merge this code with the jump code below.  Convert jumpto page into a proper page id
         if ($newpageid == 0) {
             $newpageid = $pageid;
         } elseif ($newpageid == LESSON_NEXTPAGE) {
@@ -653,17 +618,37 @@
             }
         }
 
+        // Determine default feedback if necessary
+        $nodefaultresponse = false;  // Flag for redirecting when default feedback is turned off
+        if (empty($response)) {
+            if (!$lesson->feedback and !$noanswer and !($lesson->review and !$correctanswer and !$isessayquestion)) {
+                // These conditions have been met:
+                //  1. The lesson manager has not supplied feedback to the student
+                //  2. Not displaying default feedback
+                //  3. The user did provide an answer
+                //  4. We are not reviewing with an incorrect answer (and not reviewing an essay question)
+                
+                $nodefaultresponse = true;  // This will cause a redirect below
+            } else if ($isessayquestion) {
+                $response = get_string('defaultessayresponse', 'lesson');
+            } else if ($correctanswer) {
+                $response = get_string('thatsthecorrectanswer', 'lesson');
+            } else {
+                $response = get_string('thatsthewronganswer', 'lesson');
+            }
+        }
+
         // display response (if there is one - there should be!)
         // display: lesson title, page title, question text, student's answer(s) before feedback message
         
         if ($noanswer) {
-            $feedback = get_string("noanswer", "lesson");
+            $feedback = get_string('noanswer', 'lesson');
         } else if ($response) {
             //optionally display question page title
             //if ($title = get_field("lesson_pages", "title", "id", $pageid)) {
             //    print_heading($title);
             //}
-            if ($lesson->review && !$correctanswer && !$isessayquestion) {
+            if ($lesson->review and !$correctanswer and !$isessayquestion) {
                 $nretakes = count_records("lesson_grades", "lessonid", $lesson->id, "userid", $USER->id); 
                 $qattempts = count_records("lesson_attempts", "userid", $USER->id, "retry", $nretakes, "pageid", $pageid);
                 if ($qattempts == 1) {
@@ -689,7 +674,7 @@
         }
     }
 
-    // this is where some jump numbers are interpreted
+    // TODO: merge with the jump code above.  This is where some jump numbers are interpreted
     if($outoftime) {
         $newpageid = LESSON_EOL;  // ran out of time for the test, so go to eol
     } elseif (isset($USER->modattempts[$lesson->id])) {
@@ -754,6 +739,11 @@
         } else {
             $newpageid = lesson_cluster_jump($lesson->id, $USER->id, $pageid);
         }
+    }
+    
+    if ($nodefaultresponse) {
+        // Don't display feedback
+        redirect("$CFG->wwwroot/mod/lesson/view.php?id=$cm->id&amp;pageid=$newpageid");
     }
     
 /// Set Messages

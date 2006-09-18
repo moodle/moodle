@@ -19,8 +19,9 @@
         <FIELD NAME="maxanswers" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="4" SEQUENCE="false" ENUM="false" PREVIOUS="usemaxgrade" NEXT="maxattempts"/>
         <FIELD NAME="maxattempts" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="5" SEQUENCE="false" ENUM="false" PREVIOUS="maxanswers" NEXT="review"/>
         <FIELD NAME="review" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="maxattempts" NEXT="nextpagedefault"/>
-        <FIELD NAME="nextpagedefault" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="review" NEXT="minquestions"/>
-        <FIELD NAME="minquestions" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="nextpagedefault" NEXT="maxpages"/>
+        <FIELD NAME="nextpagedefault" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="review" NEXT="feedback"/>
+        <FIELD NAME="feedback" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" ENUM="false" PREVIOUS="nextpagedefault" NEXT="minquestions"/>
+        <FIELD NAME="minquestions" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="feedback" NEXT="maxpages"/>
         <FIELD NAME="maxpages" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="minquestions" NEXT="timed"/>
         <FIELD NAME="timed" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="maxpages" NEXT="maxtime"/>
         <FIELD NAME="maxtime" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="timed" NEXT="retake"/>
@@ -145,8 +146,9 @@
         <FIELD NAME="maxanswers" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="4" SEQUENCE="false" ENUM="false" PREVIOUS="usemaxgrade" NEXT="maxattempts"/>
         <FIELD NAME="maxattempts" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="5" SEQUENCE="false" ENUM="false" PREVIOUS="maxanswers" NEXT="review"/>
         <FIELD NAME="review" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="maxattempts" NEXT="nextpagedefault"/>
-        <FIELD NAME="nextpagedefault" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="review" NEXT="minquestions"/>
-        <FIELD NAME="minquestions" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="nextpagedefault" NEXT="maxpages"/>
+        <FIELD NAME="nextpagedefault" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="review" NEXT="feedback"/>
+        <FIELD NAME="feedback" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" ENUM="false" PREVIOUS="nextpagedefault" NEXT="minquestions"/>
+        <FIELD NAME="minquestions" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="feedback" NEXT="maxpages"/>
         <FIELD NAME="maxpages" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="minquestions" NEXT="timed"/>
         <FIELD NAME="timed" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="maxpages" NEXT="maxtime"/>
         <FIELD NAME="maxtime" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="timed" NEXT="retake"/>
