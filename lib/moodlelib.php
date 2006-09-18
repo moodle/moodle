@@ -137,6 +137,11 @@ define('PARAM_FORMAT',   0x0004);
  */
 define('PARAM_NOTAGS',   0x0008);
 
+ /**
+ * PARAM_MULTILANG - general plain text compatible with multilang filter, no other html tags.
+ */
+define('PARAM_MULTILANG',  0x0009);
+
 /**
  * PARAM_FILE - safe file name, all dangerous chars are stripped, protects against XSS, SQL injections and directory traversals
  */
@@ -367,6 +372,9 @@ function clean_param($param, $type) {
 
         case PARAM_NOTAGS:       // Strip all tags
             return strip_tags($param);
+
+        case PARAM_MULTILANG:    // leave only tags needed for multilang
+            return clean_param(strip_tags($param, '<lang><span>'), PARAM_CLEAN);
 
         case PARAM_SAFEDIR:      // Remove everything not a-zA-Z0-9_-
             return eregi_replace('[^a-zA-Z0-9_-]', '', $param);

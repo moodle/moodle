@@ -3,6 +3,8 @@
 <input type="hidden" name="sesskey" value="<?php print (sesskey()); ?>">
 <input type="hidden" name="action" value="<?php echo $action; ?>">
 <br/>Role Name: <input type="text" name="name" value="<?php echo $role->name; ?>">
+&nbsp;
+Role short name (ASCII): <input type="text" name="shortname" value="<?php echo $role->shortname; ?>" />
 <br/>Role Description: 
 
 <?php print_textarea($CFG->htmleditor, 10, 50, 50, 10, 'description', "$role->description"); ?>

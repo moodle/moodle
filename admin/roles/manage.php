@@ -7,10 +7,11 @@
 
     admin_externalpage_setup('defineroles', $adminroot);
 
-    $roleid      = optional_param('roleid', 0, PARAM_INT); // if set, we are editing a role
+    $roleid      = optional_param('roleid', 0, PARAM_INT);             // if set, we are editing a role
+    $name        = optional_param('name', '', PARAM_MULTILANG);        // new role name
+    $shortname   = optional_param('shortname', '', PARAM_SAFEDIR);     // new role shortname
+    $description = optional_param('description', '', PARAM_MULTILANG); // new role desc
     $action      = optional_param('action', '', PARAM_ALPHA);
-    $name        = optional_param('name', '', PARAM_ALPHA); // new role name
-    $description = optional_param('description', '', PARAM_NOTAGS); // new role desc
     $confirm     = optional_param('confirm', 0, PARAM_BOOL);
 
     $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
@@ -37,7 +38,7 @@
         switch ($action) {
             case 'add':
 
-                $newrole = create_role($name, $description);        
+                $newrole = create_role($name, $shortname, $description);        
 
                 $ignore = array('roleid', 'sesskey', 'action', 'name', 'description', 'contextid');
 
@@ -142,6 +143,7 @@
         } else {    
             $action='add';              
             $role->name='';
+            $role->shortname='';
             $role->description='';
         }
 

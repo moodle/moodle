@@ -887,15 +887,15 @@ function moodle_install_roles() {
 
     // Create default/legacy roles and capabilities.
     // (1 legacy capability per legacy role at system level).
-    $adminrole = create_role(get_string('administrator'), get_string('administratordescription'), 'moodle/legacy:admin');   
+    $adminrole = create_role(get_string('administrator'), 'admin', get_string('administratordescription'), 'moodle/legacy:admin');   
     if (!assign_capability('moodle/site:doanything', CAP_ALLOW, $adminrole, $systemcontext->id)) {
         error('Could not assign moodle/site:doanything to the admin role');
     }
-    $coursecreatorrole = create_role(get_string('coursecreators'), get_string('coursecreatorsdescription'), 'moodle/legacy:coursecreator');   
-    $noneditteacherrole = create_role(get_string('noneditingteacher'), get_string('noneditingteacherdescription'), 'moodle/legacy:teacher');    
-    $editteacherrole = create_role(get_string('defaultcourseteacher'), get_string('defaultcourseteacherdescription'), 'moodle/legacy:editingteacher');    
-    $studentrole = create_role(get_string('defaultcoursestudent'), get_string('defaultcoursestudentdescription'), 'moodle/legacy:student');
-    $guestrole = create_role(get_string('guest'), get_string('guestdescription'), 'moodle/legacy:guest');
+    $coursecreatorrole = create_role(get_string('coursecreators'), 'coursecreator', get_string('coursecreatorsdescription'), 'moodle/legacy:coursecreator');   
+    $editteacherrole = create_role(get_string('defaultcourseteacher'), 'editingteacher', get_string('defaultcourseteacherdescription'), 'moodle/legacy:editingteacher');    
+    $noneditteacherrole = create_role(get_string('noneditingteacher'), 'teacher', get_string('noneditingteacherdescription'), 'moodle/legacy:teacher');    
+    $studentrole = create_role(get_string('defaultcoursestudent'), 'student', get_string('defaultcoursestudentdescription'), 'moodle/legacy:student');
+    $guestrole = create_role(get_string('guest'), 'guest', get_string('guestdescription'), 'moodle/legacy:guest');
 
 
     // Look inside user_admin, user_creator, user_teachers, user_students and
@@ -1168,11 +1168,12 @@ function get_local_override($roleid, $contextid, $capability) {
 /**
  * function that creates a role
  * @param name - role name
+ * @param shortname - role short name
  * @param description - role description
  * @param legacy - optional legacy capability
  * @return id or false
  */
-function create_role($name, $description, $legacy='') {
+function create_role($name, $shortname, $description, $legacy='') {
           
     // check for duplicate role name
                 
@@ -1180,7 +1181,12 @@ function create_role($name, $description, $legacy='') {
         error('there is already a role with this name!');  
     }
     
+    if ($role = get_record('role','shortname', $shortname)) {
+        error('there is already a role with this shortname!');  
+    }
+
     $role->name = $name;
+    $role->shortname = $shortname;
     $role->description = $description;
     
     $context = get_context_instance(CONTEXT_SYSTEM, SITEID);                           
@@ -2207,7 +2213,7 @@ function get_roles_used_in_context($context) {
 
     global $CFG;
 
-    return get_records_sql('SELECT distinct r.id, r.name 
+    return get_records_sql('SELECT distinct r.id, r.name, r.shortname
                               FROM '.$CFG->prefix.'role_assignments ra,
                                    '.$CFG->prefix.'role r 
                              WHERE r.id = ra.roleid 
@@ -2313,7 +2319,7 @@ function get_user_roles($context, $userid=0, $checkparentcontexts=true) {
         $contexts = ' ra.contextid = \''.$context->id.'\'';
     }
 
-    return get_records_sql('SELECT ra.*, r.name
+    return get_records_sql('SELECT ra.*, r.name, r.shortname
                              FROM '.$CFG->prefix.'role_assignments ra,
                                   '.$CFG->prefix.'role r,
                                   '.$CFG->prefix.'context c

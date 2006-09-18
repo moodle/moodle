@@ -681,6 +681,7 @@ CREATE INDEX prefix_bti_tagid_idx ON prefix_blog_tag_instance (tagid);
 CREATE TABLE prefix_role (   
   id SERIAL PRIMARY KEY,     
   name varchar(255) NOT NULL default '',     
+  shortname varchar(100) NOT NULL default '',     
   description text NOT NULL default '',      
   sortorder integer NOT NULL default '0'     
 );   
