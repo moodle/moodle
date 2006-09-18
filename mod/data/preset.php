@@ -130,7 +130,7 @@ switch ($action) {
      foreach ($presets as $id => $preset) {
 	 echo "<tr><form action='' method='POST'>";
 	 echo "<input type='hidden' name='file' value=\"$preset->path\">";
-	 echo "<input type='hidden' name='action' value='beginimport'>";
+	 echo "<input type='hidden' name='action' value='importpreset'>";
 	 echo "<input type='hidden' name='d' value='$data->id'>";
 	 echo "<input type='hidden' name='sesskey' value='$sesskey'>";
 	 echo "<td>";
@@ -225,12 +225,12 @@ switch ($action) {
 
 
      /***************** Importing *****************/
- case 'beginimport' :
+ case 'importpreset' :
      if (!confirm_sesskey()) {
 	 error("Sesskey Invalid");
      }
 
-     $pimporter = new PresetImporter($course, $cm, $data, $file);
+     $pimporter = new PresetImporter($course, $cm, $data, $CFG->dirroot.$file);
      $pimporter->import_options();
      break;
 
@@ -240,9 +240,16 @@ switch ($action) {
 	 error("Sesskey Invalid");
      }
 
-     if (!unzip_file($CFG->dataroot."/$course->id/$file", $CFG->dataroot."/temp/data/".$USER->id, false)) 
-	 error("Can't unzip file");
+     if (!make_upload_directory('temp/data/'.$USER->id)) {
+	 error("Can't Create Directory");
+     }
+
      $presetfile = $CFG->dataroot."/temp/data/".$USER->id;
+     clean_preset($presetfile);
+
+     if (!unzip_file($CFG->dataroot."/$course->id/$file", 
+		     $presetfile, false)) 
+	 error("Can't unzip file");
 
      $pimporter = new PresetImporter($course, $cm, $data, $presetfile);
      $pimporter->import_options();
@@ -514,34 +521,6 @@ function data_presets_export($course, $cm, $data) {
 }
 
 
-function data_presets_import_zip($course, $cm, $data, $file) {
-    global $CFG;
-
-    /*
-     * Now need to move file to temp directory for unzipping.
-     */
-    $tempfolder = $CFG->dataroot.'/temp';
-
-    if (!file_exists($file)) {
-        error('No such file '.$file);
-    }
-
-    if (file_exists($tempfolder.'/template.zip')) {
-        unlink($tempfolder.'/template.zip');
-    }
-
-    if (!copy($file, $tempfolder.'/template.zip')) {
-        error("Can't copy file");
-    }
-
-    /* Unzip. */
-    clean_preset($tempfolder);
-    if (!unzip_file($tempfolder.'/template.zip', '', false)) {
-        error("Can't unzip file");
-    }
-
-    return data_presets_import_options($course, $cm, $data, $tempfolder);
-}
 
 class PresetImporter {   
     function PresetImporter($course, $cm, $data, $folder) {
@@ -549,7 +528,7 @@ class PresetImporter {
         $this->course = $course;
         $this->cm = $cm;
         $this->data = $data;
-        $this->folder = $CFG->dirroot.$folder;
+        $this->folder = $folder;
         $this->postfolder = $folder;
     }
 
@@ -669,7 +648,6 @@ class PresetImporter {
         global $CFG;
 
         list($settings, $newfields, $currentfields) = $this->get_settings();
-	print_r($settings);
         $preservedfields = array();
 
         /* Maps fields and makes new ones */
