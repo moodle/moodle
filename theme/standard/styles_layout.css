@@ -570,6 +570,16 @@ ul.list, ul.list li, ol.list, ol.list li {
   margin-top: 10px;
 }
 
+.sideblock .icon {
+  display: block;
+  float: left;
+  margin-right: 0.3em;
+}
+
+.sideblock .list li {
+  clear: left;
+}
+
 .blockconfigtable {
   margin-top: 0;
 }
