@@ -181,8 +181,10 @@ function authorize_print_order_details($orderno)
         return;
     }
 
+    $coursecontext = get_context_instance(CONTEXT_COURSE, $order->courseid);
+
     if ($USER->id != $order->userid) { // Current user viewing someone else's order
-        if (! has_capability('enrol/authorize:managepayments', get_context_instance(CONTEXT_COURSE, $order->courseid))) {
+        if (! has_capability('enrol/authorize:managepayments', $coursecontext)) {
            error("You don't have access rights on this order.");
         }
     }
@@ -314,7 +316,8 @@ function authorize_print_order_details($orderno)
                         }
                         else {
                             if (!empty($unenrol)) {
-                                unenrol_student($order->userid, $order->courseid);
+                                role_unassign(0, $order->userid, 0, $coursecontext->id);
+                                //unenrol_student($order->userid, $order->courseid);
                             }
                             redirect("index.php?order=$orderno");
                         }
@@ -403,7 +406,8 @@ function authorize_print_order_details($orderno)
                     if ($success) {
                         if (empty($CFG->an_test)) {
                             if (!empty($unenrol)) {
-                                unenrol_student($order->userid, $order->courseid);
+                                role_unassign(0, $order->userid, 0, $coursecontext->id);
+                                //unenrol_student($order->userid, $order->courseid);
                             }
                             redirect("index.php?order=$orderno");
                         }
@@ -437,7 +441,8 @@ function authorize_print_order_details($orderno)
         }
         else {
             if (!empty($unenrol)) {
-                unenrol_student($order->userid, $order->courseid);
+                role_unassign(0, $order->userid, 0, $coursecontext->id);
+                //unenrol_student($order->userid, $order->courseid);
             }
             delete_records('enrol_authorize', 'id', $orderno);
             redirect("index.php");
