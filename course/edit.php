@@ -27,14 +27,16 @@
         
         if (course_in_meta($course)) {
             $disable_meta = get_string('metaalreadyinmeta');
-        }
-        else if ($course->metacourse) {
+
+        } else if ($course->metacourse) {
             if (count_records("course_meta","parent_course",$course->id) > 0) {
                 $disable_meta = get_string('metaalreadyhascourses');
             }
-        }
-        else {
-            if (count_records("user_students","course",$course->id) > 0) {
+
+        } else {
+            $managers = count(get_users_by_capability($context, 'moodle/course:managemetacourses'));
+            $participants = count(get_users_by_capability($context, 'moodle/course:view'));
+            if ($participants > $managers) {
                 $disable_meta = get_string('metaalreadyhasenrolments');
             }
         }
@@ -79,7 +81,7 @@
             unset($form->defaultrole);
         }
 
-
+        $err = array();
         validate_form($course, $form, $err);
 
         if (count($err) == 0) {
@@ -105,7 +107,8 @@
                         update_restricted_mods($course,$allowedmods);
                     }
                     fix_course_sortorder();
-                    redirect($page->url_get_full(), get_string('changessaved'));
+                    // everything ok, no need to display any message in redirect
+                    redirect("view.php?id=$course->id");
                 } else {
                     error("Serious Error! Could not update the course record! (id = $form->id)");
                 }
@@ -118,6 +121,11 @@
                 if (empty($form->sortorder)) {
                     $form->sortorder = 100;
                 }
+                // fill in default teacher and student names to keep backwards compatibility
+                $form->teacher = addslashes(get_string('defaultcourseteacher'));
+                $form->teachers = addslashes(get_string('defaultcourseteachers'));
+                $form->student = addslashes(get_string('defaultcoursestudent'));
+                $form->students = addslashes(get_string('defaultcoursestudents'));
 
                 if ($newcourseid = insert_record('course', $form)) {  // Set up new course
                     
@@ -139,8 +147,11 @@
                     add_to_log(SITEID, "course", "new", "view.php?id=$newcourseid", "$form->fullname (ID $newcourseid)")        ;
                     $context = get_context_instance(CONTEXT_COURSE, $newcourseid);
 
-                    if (has_capability('moodle/role:assign', $context)) { // Redirect users with assign capability to assign users to different roles
-                        redirect($CFG->wwwroot."/admin/roles/assign.php?contextid=$context->id", get_string("changessaved"));
+                    if ($form->metacourse and has_capability('moodle/course:managemetacourses', $context)) { // Redirect users with metacourse capability to student import
+                        redirect($CFG->wwwroot."/course/importstudents.php?id=$newcourseid");
+
+                    } else if (has_capability('moodle/role:assign', $context)) { // Redirect users with assign capability to assign users to different roles
+                        redirect($CFG->wwwroot."/$CFG->admin/roles/assign.php?contextid=$context->id");
 
                     } else {         // Add current teacher and send to course
 
@@ -151,7 +162,7 @@
                             role_assign($teachereditrole->id, $USER->id, 0, $context->id);
                         }
                         
-                        redirect("view.php?id=$newcourseid", get_string("changessaved"));
+                        redirect("view.php?id=$newcourseid");
                     }
 
                 } else {
@@ -192,17 +203,6 @@
             $form->id = "";
             $form->visible = 1;
 
-            if (current_language() == $CFG->lang) {
-                $form->teacher  = $site->teacher;
-                $form->teachers = $site->teachers;
-                $form->student  = $site->student;
-                $form->students = $site->students;
-            } else {
-                $form->teacher = get_string("defaultcourseteacher");
-                $form->teachers = get_string("defaultcourseteachers");
-                $form->student = get_string("defaultcoursestudent");
-                $form->students = get_string("defaultcoursestudents");
-            }
         }
     } else {
         $form = stripslashes_safe($form);
@@ -304,12 +304,6 @@ function validate_form($course, &$form, &$err) {
 
     if (empty($form->summary))
         $err["summary"] = get_string("missingsummary");
-
-    //if (empty($form->teacher))
-    //    $err["teacher"] = get_string("missingteacher");
-
-    //if (empty($form->student))
-    //    $err["student"] = get_string("missingstudent");
 
     if (! $form->category)
         $err["category"] = get_string("missingcategory");
