@@ -1237,18 +1237,22 @@ class admin_setting_configtext extends admin_setting {
         parent::admin_setting($name, $visiblename, $description, $defaultsetting);
     }
 
+    // returns a string or NULL
     function get_setting() {
         global $CFG;
         return (isset($CFG->{$this->name}) ? $CFG->{$this->name} : NULL);
     }
     
+    // $data is a string
     function write_setting($data) {
         if (is_string($this->paramtype)) {
             if (!$this->validate($data)) {
                 return get_string('validateerror', 'admin') . $this->visiblename . '<br />';
             }
         } else {
-            $data = clean_param($data, $this->paramtype);
+            if ($data != clean_param($data, $this->paramtype)) {
+                return get_string('validateerror', 'admin') . $this->visiblename . '<br />';
+            }
         }
         return (set_config($this->name,$data) ? '' : get_string('errorsetting', 'admin') . $this->visiblename . '<br />');
     }
@@ -1349,7 +1353,6 @@ class admin_setting_configtime extends admin_setting {
     var $name2;
     var $choices;
     var $choices2;
-    var $defaultsetting2;
 
     function admin_setting_configtime($hoursname, $minutesname, $visiblename, $description, $defaultsetting) {
         $this->name2 = $minutesname;
@@ -1366,7 +1369,7 @@ class admin_setting_configtime extends admin_setting {
 
     function get_setting() {
         global $CFG;
-        return (isset($CFG->{$this->name}) && isset($CFG->{$this->name2}) ? array($CFG->{$this->name}, $CFG->{$this->name2}) : NULL);
+        return (isset($CFG->{$this->name}) && isset($CFG->{$this->name2}) ? array('h' => $CFG->{$this->name}, 'm' => $CFG->{$this->name2}) : NULL);
     }
     
     function write_setting($data) {
@@ -1379,18 +1382,18 @@ class admin_setting_configtime extends admin_setting {
     }
     
     function output_html() {
-        //TO DO: fix handling of default values here!
-        $setvalue = $this->get_setting();
-        if (!is_array($setvalue)) {
-            $setvalue = array(0,0);
+        if ($this->get_setting() === NULL) {
+          $currentsetting = $this->defaultsetting;
+        } else {
+          $currentsetting = $this->get_setting();
         }
         $return = '<tr><td width="100" align="right" valign="top">' . $this->visiblename . '</td><td align="left"><select name="s_' . $this->name .'[h]">';
         foreach ($this->choices as $key => $value) {
-            $return .= '<option value="' . $key . '"' . ($key == $setvalue[0] ? ' selected="selected"' : '') . '>' . $value . '</option>';
+            $return .= '<option value="' . $key . '"' . ($key == $currentsetting['h'] ? ' selected="selected"' : '') . '>' . $value . '</option>';
         }
         $return .= '</select>&nbsp;&nbsp;&nbsp;<select name="s_' . $this->name . '[m]">';
         foreach ($this->choices2 as $key => $value) {
-            $return .= '<option value="' . $key . '"' . ($key == $setvalue[1] ? ' selected="selected"' : '') . '>' . $value . '</option>';
+            $return .= '<option value="' . $key . '"' . ($key == $currentsetting['m'] ? ' selected="selected"' : '') . '>' . $value . '</option>';
         }        
         $return .= '</select></td></tr><tr><td>&nbsp;</td><td align="left">' . $this->description . '</td></tr>';
         return $return;
@@ -1420,10 +1423,10 @@ class admin_setting_configmultiselect extends admin_setting_configselect {
     }
     
     function output_html() {
-        //TO DO: fix handling of default values here!
-        $currentsetting = $this->get_setting();
-        if (!is_array($currentsetting)) {
-            $currentsetting = array();
+        if ($this->get_setting() === NULL) {
+          $currentsetting = $this->defaultsetting;
+        } else {
+          $currentsetting = $this->get_setting();
         }
         $return = '<tr><td width="100" align="right" valign="top">' . $this->visiblename . '</td><td align="left"><select name="s_' . $this->name .'[]" size="10" multiple="multiple">';
         foreach ($this->choices as $key => $value) {
@@ -1522,11 +1525,10 @@ class admin_setting_courselist_frontpage extends admin_setting_configselect {
     }
     
     function output_html() {
-        //TO DO: fix handling of default values here!
-        
-        $currentsetting = $this->get_setting();
-        if (!is_array($currentsetting)) {
-            $currentsetting = array();
+        if ($this->get_setting() === NULL) {
+            $currentsetting = $this->defaultsetting;
+        } else {
+            $currentsetting = $this->get_setting();
         }
         for ($i = 0; $i < count($this->choices) - 1; $i++) {
             if (!isset($currentsetting[$i])) {
@@ -1546,8 +1548,6 @@ class admin_setting_courselist_frontpage extends admin_setting_configselect {
         }
         $return .= '</td></tr><tr><td>&nbsp;</td><td align="left">' . $this->description . '</td></tr>';
         return $return;    
-    
-    
     }
 }
 
@@ -1630,13 +1630,19 @@ class admin_setting_special_frontpagedesc extends admin_setting {
 
     function output_html() {
     
+        if ($this->get_setting() === NULL) {
+            $currentsetting = $this->defaultsetting;
+        } else {
+            $currentsetting = $this->get_setting();
+        }
+    
         $usehtmleditor = can_use_html_editor();
     
         $return = '<tr><td width="100" align="right" valign="top">' . $this->visiblename . '</td>' .
                    '<td>';
                    
         ob_start();  // double-check the number of columns below... might overrun some screen resolutions
-        print_textarea($usehtmleditor, 20, 40, 0, 0, 's_' . $this->name, $this->get_setting());
+        print_textarea($usehtmleditor, 20, 40, 0, 0, 's_' . $this->name, $currentsetting);
         
         if ($usehtmleditor) {
             use_html_editor();
@@ -1681,17 +1687,6 @@ class admin_setting_special_editorfontlist extends admin_setting {
         $name = 'editorfontlist';
         $visiblename = get_string('editorfontlist', 'admin');
         $description = get_string('configeditorfontlist', 'admin');
-        if (isset($CFG->editorfontlist)) {
-            $items = explode(';', $CFG->editorfontlist);
-            $this->items = array();
-            foreach ($items as $item) {
-              $item = explode(':', $item);
-              $this->items[$item[0]] = $item[1];
-            }
-        } else {
-            $items = NULL;
-        }
-        unset($defaults);
         $defaults = array('k0' => 'Trebuchet',
                           'v0' => 'Trebuchet MS,Verdana,Arial,Helvetica,sans-serif',
                           'k1' => 'Arial',
@@ -1714,7 +1709,21 @@ class admin_setting_special_editorfontlist extends admin_setting {
     }
     
     function get_setting() {
-        return $this->items;
+        global $CFG;
+        if (isset($CFG->editorfontlist)) {
+            $i = 0;
+            $currentsetting = array();
+            $items = explode(';', $CFG->editorfontlist);
+            foreach ($items as $item) {
+              $item = explode(':', $item);
+              $currentsetting['k' . $i] = $item[0];
+              $currentsetting['v' . $i] = $item[1];
+              $i++;
+            }
+            return $currentsetting;
+        } else {
+            return NULL;
+        }
     }
     
     function write_setting($data) {
@@ -1747,24 +1756,25 @@ class admin_setting_special_editorfontlist extends admin_setting {
     }
     
     function output_html() {
+        
+        if ($this->get_setting() === NULL) {
+            $currentsetting = $this->defaultsetting;
+        } else {
+            $currentsetting = $this->get_setting();
+        }
+        
         $return = '<tr><td width="100" align="right" valign="top">' . $this->visiblename . '</td><td align="left">';
-        $count = 0;
-        $currentsetting = $this->items;
-        if (!is_array($currentsetting)) {
-            $currentsetting = NULL;
-        }
-        foreach ($currentsetting as $key => $value) {
-            $return .= '<input type="text" name="s_editorfontlist[k' . $count . ']" value="' . $key . '" size="20" />';
+        for ($i = 0; $i < count($currentsetting) / 2; $i++) {
+            $return .= '<input type="text" name="s_editorfontlist[k' . $i . ']" value="' . $currentsetting['k' . $i] . '" size="20" />';
             $return .= '&nbsp;&nbsp;';
-            $return .= '<input type="text" name="s_editorfontlist[v' . $count . ']" value="' . $value . '" size="40" /><br />';
-            $count++;
+            $return .= '<input type="text" name="s_editorfontlist[v' . $i . ']" value="' . $currentsetting['v' . $i] . '" size="40" /><br />';
         }
-        $return .= '<input type="text" name="s_editorfontlist[k' . $count . ']" value="" size="20" />';
+        $return .= '<input type="text" name="s_editorfontlist[k' . $i . ']" value="" size="20" />';
         $return .= '&nbsp;&nbsp;';
-        $return .= '<input type="text" name="s_editorfontlist[v' . $count . ']" value="" size="40" /><br />';
-        $return .= '<input type="text" name="s_editorfontlist[k' . ($count + 1) . ']" value="" size="20" />';
+        $return .= '<input type="text" name="s_editorfontlist[v' . $i . ']" value="" size="40" /><br />';
+        $return .= '<input type="text" name="s_editorfontlist[k' . ($i + 1) . ']" value="" size="20" />';
         $return .= '&nbsp;&nbsp;';
-        $return .= '<input type="text" name="s_editorfontlist[v' . ($count + 1) . ']" value="" size="40" />';
+        $return .= '<input type="text" name="s_editorfontlist[v' . ($i + 1) . ']" value="" size="40" />';
         $return .= '</td></tr><tr><td>&nbsp;</td><td align="left">' . $this->description . '</td></tr>';    
         return $return;
     }
@@ -1924,9 +1934,10 @@ class admin_setting_special_editorhidebuttons extends admin_setting {
         // checkboxes with input name="$this->name[$key]" value="1"
         // we do 15 fields per column
         
-        $currentsetting = $this->get_setting();
-        if (!is_array($currentsetting)) {
-            $currentsetting = array();
+        if ($this->get_setting() === NULL) {
+            $currentsetting = $this->defaultsetting;
+        } else {
+            $currentsetting = $this->get_setting();
         }
         
         $return = '<tr><td width="100" align="right" valign="top">' . $this->visiblename . '</td><td align="left">';
@@ -2064,15 +2075,31 @@ class admin_setting_special_backupdays extends admin_setting {
     
     function get_setting() {
         $backup_config =  backup_get_config();
-        return (isset($backup_config->{$this->name}) ? $backup_config->{$this->name} : NULL);
+        if (isset($backup_config->{$this->name})) {
+            $currentsetting = $backup_config->{$this->name};
+            return array('u' => substr($currentsetting, 0, 1),
+                         'm' => substr($currentsetting, 1, 1),
+                         't' => substr($currentsetting, 2, 1),
+                         'w' => substr($currentsetting, 3, 1),
+                         'r' => substr($currentsetting, 4, 1),
+                         'f' => substr($currentsetting, 5, 1),
+                         's' => substr($currentsetting, 6, 1));
+        } else {
+            return NULL;
+        }
     }
     
     function output_html() {
     
-        $currentsetting = $this->get_setting();
-        if ($currentsetting === NULL) {
-            $currentsetting = '0000000';
+        if ($this->get_setting() === NULL) {
+            $currentsetting = $this->defaultsetting;
+        } else {
+            $currentsetting = $this->get_setting();
         }
+        
+        // rewrite for simplicity
+        $currentsetting = $currentsetting['u'] . $currentsetting['m'] . $currentsetting['t'] . $currentsetting['w'] . 
+                          $currentsetting['r'] . $currentsetting['f'] . $currentsetting['s'];
         
         return '<tr><td width="100" align="right" valign="top">' . $this->visiblename . '</td><td align="left">' .
         '<table><tr><td><div align="center">&nbsp;&nbsp;' . get_string('sunday', 'calendar') . '&nbsp;&nbsp;</div></td><td><div align="center">&nbsp;&nbsp;' . 
@@ -2125,13 +2152,17 @@ class admin_setting_special_debug extends admin_setting_configselect {
 
     function get_setting() {
         global $CFG;
-        if ($CFG->debug == 7) {   // Old values
-            return 1;
+        if (isset($CFG->debug)) {
+            if ($CFG->debug == 7) {   // Old values
+                return 1;
+            }
+            if ($CFG->debug == 15) {  // Old values
+                return 16;
+            }
+            return $CFG->debug;
+        } else {
+            return NULL;
         }
-        if ($CFG->debug == 15) {  // Old values
-            return 16;
-        }
-        return $CFG->debug;
     }
 
     function write_setting($data) {
@@ -2173,10 +2204,12 @@ class admin_setting_special_calendar_weekend extends admin_setting {
     
     function output_html() {
 
-        $currentsetting = $this->get_setting();
-        if (!is_array($currentsetting)) {
-            $currentsetting = array('u' => 0, 'm' => 0, 't' => 0, 'w' => 0, 'r' => 0, 'f' => 0, 's' => 0);
+        if ($this->get_setting() === NULL) {
+            $currentsetting = $this->defaultsetting;
+        } else {
+            $currentsetting = $this->get_setting();
         }
+
         return '<tr><td width="100" align="right" valign="top">' . $this->visiblename . '</td><td align="left">' .
         '<table><tr><td><div align="center">&nbsp;&nbsp;' . get_string('sunday', 'calendar') . '&nbsp;&nbsp;</div></td><td><div align="center">&nbsp;&nbsp;' . 
         get_string('monday', 'calendar') . '&nbsp;&nbsp;</div></td><td><div align="center">&nbsp;&nbsp;' . get_string('tuesday', 'calendar') . '&nbsp;&nbsp;</div></td><td><div align="center">&nbsp;&nbsp;' .
@@ -2215,8 +2248,14 @@ class admin_setting_special_perfdebug extends admin_setting_configcheckbox {
     }
 
     function output_html() {
+        if ($this->get_setting() === NULL) {
+            $currentsetting = $this->defaultsetting;
+        } else {
+            $currentsetting = $this->get_setting();
+        }
+    
         return '<tr><td width="100" align="right" valign="top">' . $this->visiblename . '</td>' .
-            '<td align="left"><input type="checkbox" size="50" name="s_'. $this->name .'" value="1" ' . ($this->get_setting() == 15 ? 'checked="checked"' : '') . ' /></td></tr>' .
+            '<td align="left"><input type="checkbox" size="50" name="s_'. $this->name .'" value="1" ' . ($currentsetting == 15 ? 'checked="checked"' : '') . ' /></td></tr>' .
             '<tr><td>&nbsp;</td><td align="left">' . $this->description . '</td></tr>';
     }
 
