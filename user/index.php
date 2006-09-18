@@ -56,7 +56,10 @@
         }
     }
 
-    require_capability('moodle/course:viewparticipants', $context);
+    if (!has_capability('moodle/course:viewparticipants', $context)
+            && !has_capability('moodle/site:viewparticipants', $context)) {
+        print_error('nopermissions');
+    }    
 
     if (!$course->category) {
         if (!has_capability('moodle/course:viewparticipants', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
