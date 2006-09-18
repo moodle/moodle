@@ -53,9 +53,7 @@
         global $CFG, $SITE;
 
         if (empty($CFG->enablerssfeeds)) {
-            if ($CFG->debug > 7) {
-                notify('Sorry, RSS feeds are disabled on this site');
-            }
+            debugging('Sorry, RSS feeds are disabled on this site');
             return '';
         }
 

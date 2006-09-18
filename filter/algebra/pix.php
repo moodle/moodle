@@ -73,7 +73,7 @@
                     break;
 
                     default:      /// Nothing was found, so tell them how to fix it.
-                        if ($CFG->debug > 7) {
+                        if (debugging()) {
                             echo "Make sure you have an appropriate MimeTeX binary here:\n\n";
                             echo "    $CFG->dirroot/$CFG->texfilterdir/mimetex\n\n";
                             echo "and that it has the right permissions set on it as executable program.\n\n";

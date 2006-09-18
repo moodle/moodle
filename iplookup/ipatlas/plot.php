@@ -11,12 +11,6 @@ if (isset($user)) {
     $username = "";
 }
 
-if ($CFG->debug > 1) {
-error_reporting(E_ALL);
-} else {
-error_reporting(E_ERROR);
-}
-
 // cleanup
 if (isset($HTTP_GET_VARS["lastquery"])) {
     $HTTP_GET_VARS["lastquery"] = clean_param($HTTP_GET_VARS["lastquery"], PARAM_HOST);

@@ -1385,9 +1385,7 @@
                     $grade_item->module_name = $rec_module->name;
                     $inc_grade_items[] = $grade_item;
                 } else {
-                    if ($CFG->debug > 7) {
-                        echo "skipping $grade_item->modid"."-"."$rec_module->name<br />";
-                    }
+                    debugging("skipping $grade_item->modid"."-"."$rec_module->name<br />");
                 }
             }
         }
@@ -1443,9 +1441,7 @@
                     //Add it
                     $inc_grade_exceptions[] = $grade_exception;
                 } else {
-                    if ($CFG->debug > 7) {
-                        echo "skipping $grade_exception->userid"."-user<br />";
-                    }
+                    debugging("skipping $grade_exception->userid"."-user<br />");
                 }
             }
         }
@@ -1729,9 +1725,9 @@
             }
         }
 
-        if ($result != $content && $CFG->debug>7) {                                  //Debug
-            echo '<br /><hr />'.s($content).'<br />changed to<br />'.s($result).'<hr /><br />';        //Debug
-        }                                                                            //Debug
+        if ($result != $content) {
+            debugging('<br /><hr />'.s($content).'<br />changed to<br />'.s($result).'<hr /><br />');
+        }
 
         return $result;
     }

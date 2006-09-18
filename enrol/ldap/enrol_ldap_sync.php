@@ -14,7 +14,8 @@
     require_once($CFG->dirroot . "/enrol/ldap/enrol.php");
 
     // ensure errors are well explained
-    $CFG->debug=10;
+    $CFG->debug = E_NOTICE;
+
     // update enrolments -- these handlers should autocreate courses if required
     $enrol = new enrolment_plugin_ldap();
     $enrol->enrol_ldap_connect();    

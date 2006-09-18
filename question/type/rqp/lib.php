@@ -119,7 +119,7 @@ function question_rqp_print_serverinfo($serverinfo) {
 
 function question_rqp_debug_soap($item) {
     global $CFG;
-    if ($CFG->debug) {
+    if (debugging()) {
         echo 'Here is the dump of the soap fault:<pre>';
         var_dump($item);
         echo '<pre>';

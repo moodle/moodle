@@ -73,7 +73,7 @@
                                    'ajaxcourse_blocks','ajaxcourse_sections','ajaxcourse_topic'));
             
             //javascript logging facilities
-            if ($CFG->debug > 7)  {
+            if (debugging())  {
                 print_require_js(Array('yui_logger'));
             }
         }

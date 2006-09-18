@@ -114,7 +114,7 @@ if ($act == 'updfeed') {
     $message = '';
     ob_start();
     $rss = fetch_rss($url);
-    if ($CFG->debug) {
+    if (debugging()) {
         $message .= ob_get_contents();
     }
     ob_end_clean();
@@ -181,7 +181,7 @@ if ($act == 'updfeed') {
     $message = '';
     ob_start();
     $rss = fetch_rss($url);
-    if ($CFG->debug) {
+    if (debugging()) {
         $message .= ob_get_contents();
     }
     ob_end_clean();

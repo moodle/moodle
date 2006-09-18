@@ -2287,7 +2287,7 @@
     
         $result = str_replace($search,$replace,$content);
 
-        if ($result != $content && $CFG->debug>7) {                                  //Debug
+        if ($result != $content && debugging()) {                                  //Debug
             if (!defined('RESTORE_SILENTLY')) {
                 echo '<br /><hr />'.s($content).'<br />changed to<br />'.s($result).'<hr /><br />';        //Debug
             }

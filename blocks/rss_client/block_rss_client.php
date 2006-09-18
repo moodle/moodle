@@ -180,7 +180,7 @@
             ob_end_clean();
 
             if ($rss === false) {
-                if ($CFG->debug && !empty($rsserror)) {
+                if (debugging() && !empty($rsserror)) {
                     // There was a failure in loading the rss feed, print link to full error text
                     return '<a href="'. $CFG->wwwroot .'/blocks/rss_client/block_rss_client_error.php?error='. urlencode($rsserror) .'">Error loading a feed.</a><br />'; //Daryl Hawes note: localize this line
                 }

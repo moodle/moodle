@@ -14,7 +14,7 @@
     require_once($CFG->dirroot . "/enrol/" . $CFG->enrol . "/enrol.php");
 
     // ensure errors are well explained
-    $CFG->debug=10;
+    $CFG->debug=E_ALL;
     // update enrolments -- these handlers should autocreate courses if required
     $enrol = new enrolment_plugin();
     $enrol->sync_enrolments('student', true);
