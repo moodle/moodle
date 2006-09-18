@@ -1,10 +1,9 @@
-<?php  //
-       // 
+<?php
 
 /**
  * adminlib.php - Contains functions that only administrators will ever need to use
  *
- * @author Martin Dougiamas
+ * @author Martin Dougiamas and many others
  * @version  $Id$
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package moodlecore
