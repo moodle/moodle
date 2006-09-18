@@ -408,7 +408,7 @@
         if (! $course = get_record("course", "id", $discussion->course)) {
             error("The course number was incorrect ($discussion->course)");
         }
-        if (!$cm = get_coursemodule_from_instance("forum", $forum->id, $course->i)) {
+        if (!$cm = get_coursemodule_from_instance("forum", $forum->id, $course->id)) {
             error('Could not get the course module for the forum instance.');
         } else {
             $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
