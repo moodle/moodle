@@ -12,10 +12,6 @@ $temp = new admin_settingpage('courserequest', get_string('courserequest'));
 $temp->add(new admin_setting_configcheckbox('enablecourserequests', get_string('enablecourserequests', 'admin'), get_string('configenablecourserequests', 'admin'), 0));
 require_once($CFG->dirroot.'/course/lib.php');
 $temp->add(new admin_setting_configselect('defaultrequestcategory', get_string('defaultrequestcategory', 'admin'), get_string('configdefaultrequestcategory', 'admin'), 1, make_categories_options()));
-$temp->add(new admin_setting_configtext('requestedteachername', get_string('requestedteachername', 'admin'), get_string('configrequestedteachername', 'admin'), get_string("defaultcourseteacher"), PARAM_RAW));
-$temp->add(new admin_setting_configtext('requestedteachersname', get_string('requestedteachersname', 'admin'), get_string('configrequestedteachersname', 'admin'), get_string("defaultcourseteachers"), PARAM_RAW));
-$temp->add(new admin_setting_configtext('requestedstudentname', get_string('requestedstudentname', 'admin'), get_string('configrequestedstudentname', 'admin'), get_string("defaultcoursestudent"), PARAM_RAW));
-$temp->add(new admin_setting_configtext('requestedstudentsname', get_string('requestedstudentsname', 'admin'), get_string('configrequestedstudentsname', 'admin'), get_string("defaultcoursestudents"), PARAM_RAW));
 $ADMIN->add('courses', $temp);
 
 

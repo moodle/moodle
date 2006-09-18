@@ -178,6 +178,7 @@ function reset_to_defaults ($editor) {
 /// Reset the values to default
 
     global $CFG;
+    //TO DO: fix defaults now that lib/defaults.php is about to be removed
     include_once($CFG->dirroot .'/lib/defaults.php');
 
     $updatedata = array();

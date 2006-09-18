@@ -1816,6 +1816,14 @@ function main_upgrade($oldversion=0) {
         table_column('course','','defaultrole','integer','10', 'unsigned', '0', 'not null');
     }
 
+    if ($oldversion < 2006091800) {
+        delete_records('config', 'name', 'showsiteparticipantslist');
+        delete_records('config', 'name', 'requestedteachername');
+        delete_records('config', 'name', 'requestedteachersname');
+        delete_records('config', 'name', 'requestedstudentname');
+        delete_records('config', 'name', 'requestedstudentsname');
+    }
+
     return $result;
 }
 

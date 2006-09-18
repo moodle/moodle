@@ -36,21 +36,9 @@
             $teacherid = $course->requester;
             unset($course->requester);
             $course->teacher = get_string("defaultcourseteacher");
-            if (!empty($CFG->requestedteachername)) {
-                $course->teacher = $CFG->requestedteachername;
-            }
             $course->teachers = get_string("defaultcourseteachers");
-            if (!empty($CFG->requestedteachersname)) {
-                $course->teachers = $CFG->requestedteachersname;
-            }
             $course->student = get_string("defaultcoursestudent");
-            if (!empty($CFG->requestedstudentname)) {
-                $course->student = $CFG->requestedstudentname;
-            }
             $course->students = get_string("defaultcoursestudents");
-            if (!empty($CFG->requestedstudentsname)) {
-                $course->students = $CFG->requestedstudentsname;
-            }
             if (!empty($CFG->restrictmodulesfor) && $CFG->restrictmodulesfor != 'none' && !empty($CFG->restrictbydefault)) {
                 $course->restrictmodules = 1;
             }
