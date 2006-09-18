@@ -51,8 +51,6 @@
         error(get_string('nostatstodisplay'), $CFG->wwwroot.'/course/view.php?id='.$course->id);
     }
 
-    print_header($strcourseoverview, $strcourseoverview, $strnav,'','',true,'&nbsp');
-
     echo '<form action="index.php" method="post">'."\n";
 
     $table->width = '*';
