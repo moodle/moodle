@@ -221,7 +221,7 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
                               //table/field/recordid)
 
     global $db, $CFG, $dbtablename, $fieldname, $record, $processedrecords;
-    $debug = ($CFG->debug > 7);
+    $debug = debugging();
 
     if ($CFG->dbtype == 'mysql') {
         check_and_create_backup_dir(BACKUP_UNIQUE_CODE);  //Create the backup temp dir

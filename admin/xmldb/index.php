@@ -130,7 +130,7 @@
     }
 
     if ($xmldb_action->getDoesGenerate() != ACTION_GENERATE_XML) {  
-        if ($CFG->debug > 7) {
+        if (debugging()) {
             ///print_object($XMLDB);
         }
     }
