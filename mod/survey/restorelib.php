@@ -286,7 +286,7 @@
                     //Update record
                     $survey->intro = addslashes($result);
                     $status = update_record("survey",$survey);
-                    if ($CFG->debug>7) {
+                    if (debugging()) {
                         if (!defined('RESTORE_SILENTLY')) {
                             echo '<br /><hr />'.s($content).'<br />changed to<br />'.s($result).'<hr /><br />';
                         }

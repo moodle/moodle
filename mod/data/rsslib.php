@@ -13,17 +13,11 @@
 
         // Check CFG->enablerssfeeds.
         if (empty($CFG->enablerssfeeds)) {
-            //Some debug...
-            if ($CFG->debug > 7) {
-                echo "DISABLED (admin variables)";
-            }
+            debugging("DISABLED (admin variables)");
         }
         // Check CFG->data_enablerssfeeds.
         else if (empty($CFG->data_enablerssfeeds)) {
-            //Some debug...
-            if ($CFG->debug > 7) {
-                echo "DISABLED (module configuration)";
-            }
+            debugging("DISABLED (module configuration)");
         }
         // It's working so we start...
         else {

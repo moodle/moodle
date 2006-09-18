@@ -81,7 +81,7 @@
                     //Update record
                     $label->content = addslashes($result);
                     $status = update_record("label", $label);
-                    if ($CFG->debug>7) {
+                    if (debugging()) {
                         if (!defined('RESTORE_SILENTLY')) {
                             echo '<br /><hr />'.s($content).'<br />changed to<br />'.s($result).'<hr /><br />';
                         }

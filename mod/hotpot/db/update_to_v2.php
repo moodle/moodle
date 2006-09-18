@@ -1076,7 +1076,7 @@ function hotpot_db_object_exists($table, $field='', $feedback=false) {
     // restore SQL message echo setting
     $db->debug = $debug;
     // report error if required
-    if (empty($rs) && isset($CFG->debug) and $CFG->debug > 7) {
+    if (empty($rs) && debugging()) {
         notify($db->ErrorMsg()."<br /><br />$sql");
     }
     return ($rs && $rs->RecordCount()>0);
@@ -1336,9 +1336,7 @@ function hotpot_db_update_record($table, $record, $forcenull=false) {
             $rs = $db->Execute($sql);
             if (empty($rs)) {
                 $ok = false;
-                if (isset($CFG->debug) and $CFG->debug > 7) {
-                    notify($db->ErrorMsg()."<br /><br />$sql");
-                }
+                debugging($db->ErrorMsg()."<br /><br />$sql");
             }
         }
     }

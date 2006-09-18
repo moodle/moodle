@@ -632,7 +632,7 @@
                     //Update record
                     $entry->definition = addslashes($result);
                     $status = update_record("glossary_entries",$entry);
-                    if ($CFG->debug>7) {
+                    if (debugging()) {
                         if (!defined('RESTORE_SILENTLY')) {
                             echo '<br /><hr />'.s($content).'<br />changed to<br />'.s($result).'<hr /><br />';
                         }
@@ -666,7 +666,7 @@
                     //Update record
                     $glossary->intro = addslashes($result);
                     $status = update_record("glossary",$glossary);
-                    if ($CFG->debug>7) {
+                    if (debugging()) {
                         if (!defined('RESTORE_SILENTLY')) {
                             echo '<br /><hr />'.s($content).'<br />changed to<br />'.s($result).'<hr /><br />';
                         }

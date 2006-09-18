@@ -231,7 +231,7 @@
                     //Update record
                     $chat->intro = addslashes($result);
                     $status = update_record("chat",$chat);
-                    if ($CFG->debug>7) {
+                    if (debugging()) {
                         if (!defined('RESTORE_SILENTLY')) {
                             echo '<br /><hr />'.s($content).'<br />changed to<br />'.s($result).'<hr /><br />';
                         }

@@ -272,9 +272,7 @@
                     if ($page->prevpageid != $prevpageid) {
                         // fix it
                         set_field("lesson_pages", "prevpageid", $prevpageid, "id", $page->id);
-                        if ($CFG->debug) {
-                            echo "<p>***prevpageid of page $page->id set to $prevpageid***";
-                        }
+                        debugging("<p>***prevpageid of page $page->id set to $prevpageid***");
                     }
                     
                     if (count($pages) == 1) {

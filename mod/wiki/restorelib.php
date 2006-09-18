@@ -376,7 +376,7 @@
                     //Update record
                     $page->content = addslashes($result);
                     $status = update_record("wiki_pages",$page);
-                    if ($CFG->debug>7) {
+                    if (debugging()) {
                         if (!defined('RESTORE_SILENTLY')) {
                             echo '<br /><hr />'.s($content).'<br />changed to<br />'.s($result).'<hr /><br />';
                         }
@@ -410,7 +410,7 @@
                     //Update record
                     $wiki->summary = addslashes($result);
                     $status = update_record("wiki",$wiki);
-                    if ($CFG->debug>7) {
+                    if (debugging()) {
                         if (!defined('RESTORE_SILENTLY')) {
                             echo '<br /><hr />'.s($content).'<br />changed to<br />'.s($result).'<hr /><br />';
                         }

@@ -27,7 +27,6 @@
 
     require_login($course->id);
 
-    $CFG->debug = 0;    /// Temporarily
     $returntoview = false;
 
     if (!$data = data_submitted("$CFG->wwwroot/mod/forum/discuss.php")) {    // form submitted

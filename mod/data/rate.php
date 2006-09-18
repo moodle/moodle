@@ -14,8 +14,6 @@
         error("Guests are not allowed to rate posts.", $_SERVER["HTTP_REFERER"]);
     }
 
-    $CFG->debug = 0;    /// Temporarily
-
     $returntoview = false;
 
     if (($data = data_submitted($CFG->wwwroot.'/mod/data/view.php')) and confirm_sesskey()) {

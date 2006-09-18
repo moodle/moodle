@@ -363,7 +363,7 @@ function choice_options_restore_mods($choiceid,$info,$restore) {
                     //Update record
                     $choice->text = addslashes($result);
                     $status = update_record("choice",$choice);
-                    if ($CFG->debug>7) {
+                    if (debugging()) {
                         if (!defined('RESTORE_SILENTLY')) {
                             echo '<br /><hr />'.s($content).'<br />changed to<br />'.s($result).'<hr /><br />';
                         }

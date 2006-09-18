@@ -1134,7 +1134,7 @@
                     //Update record
                     $post->message = addslashes($result);
                     $status = update_record("forum_posts",$post);
-                    if ($CFG->debug>7) {
+                    if (debugging()) {
                         if (!defined('RESTORE_SILENTLY')) {
                             echo '<br /><hr />'.s($content).'<br />changed to<br />'.s($result).'<hr /><br />';
                         }
@@ -1168,7 +1168,7 @@
                     //Update record
                     $forum->intro = addslashes($result);
                     $status = update_record("forum",$forum);
-                    if ($CFG->debug>7) {
+                    if (debugging()) {
                         if (!defined('RESTORE_SILENTLY')) {
                             echo '<br /><hr />'.s($content).'<br />changed to<br />'.s($result).'<hr /><br />';
                         }

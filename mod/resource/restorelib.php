@@ -200,7 +200,7 @@
                     $resource->summary = addslashes($result2);
                     $resource->reference = addslashes($result3);
                     $status = update_record("resource",$resource);
-                    if ($CFG->debug>7) {
+                    if (debugging()) {
                         if (!defined('RESTORE_SILENTLY')) {
                             echo '<br /><hr />'.s($content1).'<br />changed to<br />'.s($result1).'<hr /><br />';
                             echo '<br /><hr />'.s($content2).'<br />changed to<br />'.s($result2).'<hr /><br />';

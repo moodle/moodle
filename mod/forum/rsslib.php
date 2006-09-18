@@ -12,16 +12,10 @@
 
         //Check CFG->enablerssfeeds
         if (empty($CFG->enablerssfeeds)) {
-            //Some debug...
-            if ($CFG->debug > 7) {
-                echo "DISABLED (admin variables)";
-            }
+            debugging('DISABLED (admin variables)');
         //Check CFG->forum_enablerssfeeds
         } else if (empty($CFG->forum_enablerssfeeds)) {
-            //Some debug...
-            if ($CFG->debug > 7) {
-                echo "DISABLED (module configuration)";
-            }
+            debugging('DISABLED (module configuration)');
         //It's working so we start...
         } else {
             //Iterate over all forums
@@ -50,25 +44,20 @@
 
                         mtrace("Updating RSS feed for ".format_string($forum->name,true).", ID: $forum->id");
 
-                        //Some debug...
-                        if ($CFG->debug > 7) {
-                            echo "ID: $forum->id->";
-                        }
                         //Get the XML contents
                         $result = forum_rss_feed($forum);
                         //Save the XML contents to file
                         if (!empty($result)) {
                             $status = rss_save_file("forum",$forum,$result);
                         }
-                        //Some debug...
-                        if ($CFG->debug > 7) {
+                        if (debugging()) {
                             if (empty($result)) {
-                                echo "(empty) ";
+                                echo "ID: $forum->id-> (empty) ";
                             } else {
                                 if (!empty($status)) {
-                                    echo "OK ";
+                                    echo "ID: $forum->id-> OK ";
                                 } else {
-                                    echo "FAIL ";
+                                    echo "ID: $forum->id-> FAIL ";
                                 }
                             }
                         }
@@ -100,16 +89,10 @@
 
         //Check CFG->enablerssfeeds
         if (empty($CFG->enablerssfeeds)) {
-            //Some debug...
-            if ($CFG->debug > 7) {
-                echo "DISABLED (admin variables)";
-            }
+            debugging("DISABLED (admin variables)");
         //Check CFG->forum_enablerssfeeds
         } else if (empty($CFG->forum_enablerssfeeds)) {
-            //Some debug...
-            if ($CFG->debug > 7) {
-                echo "DISABLED (module configuration)";
-            }
+            debugging("DISABLED (module configuration)");
         //It's working so we start...
         } else {
             //Check the forum has rss activated

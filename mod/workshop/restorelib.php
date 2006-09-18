@@ -790,7 +790,7 @@
                     //Update record
                     $workshop->description = addslashes($result);
                     $status = update_record("workshop",$workshop);
-                    if ($CFG->debug>7) {
+                    if (debugging()) {
                         if (!defined('RESTORE_SILENTLY')) {
                             echo '<br /><hr />'.s($content).'<br />changed to<br />'.s($result).'<hr /><br />';
                         }

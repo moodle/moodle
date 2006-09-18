@@ -12,16 +12,10 @@
 
         //Check CFG->enablerssfeeds
         if (empty($CFG->enablerssfeeds)) {
-            //Some debug...
-            if ($CFG->debug > 7) {
-                echo "DISABLED (admin variables)";
-            }
+            debugging("DISABLED (admin variables)");
         //Check CFG->glossary_enablerssfeeds
         } else if (empty($CFG->glossary_enablerssfeeds)) {
-            //Some debug...
-            if ($CFG->debug > 7) {
-                echo "DISABLED (module configuration)";
-            }
+            debugging("DISABLED (module configuration)");
         //It's working so we start...
         } else {
             //Iterate over all glossaries
@@ -50,10 +44,6 @@
 
                         mtrace("Updating RSS feed for ".format_string($glossary->name,true).", ID: $glossary->id");
 
-                        //Some debug...
-                        if ($CFG->debug > 7) {
-                            echo "ID: $glossary->id->";
-                        }
                         //Get the XML contents
                         $result = glossary_rss_feed($glossary);
                         //Save the XML contents to file
@@ -61,14 +51,14 @@
                             $status = rss_save_file("glossary",$glossary,$result);
                         }
                         //Some debug...
-                        if ($CFG->debug > 7) {
+                        if (debugging()) {
                             if (empty($result)) {
-                                echo "(empty) ";
+                                echo "ID: $glossary->id-> (empty) ";
                             } else {
                                 if (!empty($status)) {
-                                    echo "OK ";
+                                    echo "ID: $glossary->id-> OK ";
                                 } else {
-                                    echo "FAIL ";
+                                    echo "ID: $glossary->id-> FAIL ";
                                 }
                             }
                         }
@@ -100,16 +90,10 @@
 
         //Check CFG->enablerssfeeds
         if (empty($CFG->enablerssfeeds)) {
-            //Some debug...
-            if ($CFG->debug > 7) {
-                echo "DISABLED (admin variables)";
-            }
+            debugging("DISABLED (admin variables)");
         //Check CFG->glossary_enablerssfeeds
         } else if (empty($CFG->glossary_enablerssfeeds)) {
-            //Some debug...
-            if ($CFG->debug > 7) {
-                echo "DISABLED (module configuration)";
-            }
+            debugging("DISABLED (module configuration)");
         //It's working so we start...
         } else {
             //Check the glossary has rss activated
