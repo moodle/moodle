@@ -75,7 +75,7 @@ $block_rss_client_capabilities = array(
         )
     ),
     
-    'block/rss_client:managesharedfeeds' => array(
+    'block/rss_client:manageanyfeeds' => array(
     
         'captype' => 'write',
         'contextlevel' => CONTEXT_SYSTEM,
