@@ -24,15 +24,12 @@
     }
 
     require_login($course->id);
+    $context = get_context_instance(CONTEXT_COURSE, $course->id);
+    require_capability('moodle/course:managemetacourses', $context);
 
     if (!$course->metacourse) {
-        redirect("$CFG->wwwroot/course/student.php?id=$course->id");
+        redirect("$CFG->wwwroot/course/view.php?id=$course->id");
     }
-
-    if (!isadmin() && !isteacheredit($course->id)) {
-        error("You must be an admin or a teacher of this course");
-    }
-
 
     $strassigncourses = get_string('metaassigncourses');
     $stralreadycourses = get_string('metaalreadycourses');
