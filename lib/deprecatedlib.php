@@ -467,19 +467,6 @@ function remove_teacher($userid, $courseid=0) {
 }
 
 /**
- * Remove a creator from a site
- *
- * @uses $db
- * @param int $userid The id of the user that is being tested against.
- * @return bool
- */
-function remove_creator($userid) {
-    global $db;
-
-    return delete_records('user_coursecreators', 'userid', $userid);
-}
-
-/**
  * Add an admin to a site
  *
  * @uses SITEID
