@@ -145,7 +145,6 @@
                     } else {         // Add current teacher and send to course
 
                         // find a role with legacy:edittingteacher
-                        
                         if ($teacherroles = get_roles_with_capability('moodle/legacy:editingteacher', CAP_ALLOW, $context)) {
                             // assign the role to this user
                             $teachereditrole = array_shift($teacherroles);
@@ -306,11 +305,11 @@ function validate_form($course, &$form, &$err) {
     if (empty($form->summary))
         $err["summary"] = get_string("missingsummary");
 
-    if (empty($form->teacher))
-        $err["teacher"] = get_string("missingteacher");
+    //if (empty($form->teacher))
+    //    $err["teacher"] = get_string("missingteacher");
 
-    if (empty($form->student))
-        $err["student"] = get_string("missingstudent");
+    //if (empty($form->student))
+    //    $err["student"] = get_string("missingstudent");
 
     if (! $form->category)
         $err["category"] = get_string("missingcategory");
