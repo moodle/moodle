@@ -76,6 +76,7 @@ $string['description'] = 'Description';
 $string['detailedstats'] = 'Detailed statistics';
 $string['didnotanswerquestion'] = 'Did not answer this question.';
 $string['didnotreceivecredit'] = 'Did not receive credit';
+$string['displaydefaultfeedback'] = 'Display default feedback';
 $string['displayhighscores'] = 'Display high scores';
 $string['displayinleftmenu'] = 'Display in left menu?';
 $string['displayleftif'] = 'and only display if $a has grade greater than: ';
@@ -300,5 +301,6 @@ $string['youranswer'] = 'Your answer';
 $string['yourcurrentgradeis'] = 'Your current grade is $a';
 $string['yourcurrentgradeisoutof'] = 'Your current grade is $a->grade out of $a->total';
 $string['youshouldview'] = 'You should answer at least: $a';
+
 
 ?>
