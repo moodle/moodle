@@ -47,11 +47,8 @@ class block_participants extends block_list {
             $this->instance->pageid = SITEID;
         }
 
-        // $CFG->showsiteparticipantslist == 1  <-- this is deprecated.
-        if ($this->instance->pageid != SITEID || 
-            $CFG->showsiteparticipantslist > 1 || 
-            ($CFG->showsiteparticipantslist == 1 && isteacherinanycourse()) || 
-            has_capability('moodle/course:viewparticipants', $sitecontext)) {
+        if ($this->instance->pageid != SITEID
+                || has_capability('moodle/course:viewparticipants', $sitecontext)) {
 
             $this->content->items[] = '<a title="'.get_string('listofallpeople').'" href="'.
                                       $CFG->wwwroot.'/user/index.php?contextid='.$currentcontext->id.'">'.get_string('participants').'</a>';
