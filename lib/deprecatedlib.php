@@ -491,25 +491,6 @@ function add_admin($userid) {
     return true;
 }
 
-/**
- * Removes an admin from a site
- *
- * @uses $db
- * @uses SITEID
- * @param int $userid The id of the user that is being tested against.
- * @return bool
- */
-function remove_admin($userid) {
-    global $db;
-
-    // remove also from the list of site teachers
-    remove_teacher($userid, SITEID);
-
-    return delete_records('user_admins', 'userid', $userid);
-}
-
-
-
 function get_user_info_from_db($field, $value) {  // For backward compatibility
     return get_complete_user_data($field, $value);
 }
