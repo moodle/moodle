@@ -59,15 +59,10 @@
     require_capability('moodle/course:viewparticipants', $context);
 
     if (!$course->category) {
-        if (!$CFG->showsiteparticipantslist and !has_capability('moodle/course:viewparticipants', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
+        if (!has_capability('moodle/course:viewparticipants', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
             print_header("$course->shortname: ".get_string('participants'), $course->fullname,
                          get_string('participants'), "", "", true, "&nbsp;", navmenu($course));
-            notice(get_string('sitepartlist0'));
-        }
-        if ($CFG->showsiteparticipantslist < 2 and !isteacherinanycourse()) {
-            print_header("$course->shortname: ".get_string('participants'), $course->fullname,
-                         get_string('participants'), "", "", true, "&nbsp;", navmenu($course));
-            notice(get_string('sitepartlist1'));
+            notice(get_string('sitepartlist'));
         }
     }
 

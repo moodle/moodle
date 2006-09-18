@@ -35,8 +35,8 @@
         
         if ($CFG->bloglevel >= 4) {
             if (isteacher(SITEID) || 
-                ($CFG->showsiteparticipants == 1 && isteacherinanycourse()) || 
-                ($CFG->showsiteparticipantslist == 2)) {
+                ( $CFG->showsiteparticipants == 1
+                        && has_capability('moodle/course:viewparticipants', get_context_instance(CONTEXT_SYSTEM, SITEID)) ) {
                 $toprow[] = new tabobject('participants', $CFG->wwwroot.'/user/index.php?id='.SITEID,
                     get_string('participants'));
             }
