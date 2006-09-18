@@ -113,7 +113,7 @@
     if (file_exists($pathname)) {
         send_file($pathname, $image);
     } else {
-        if ($CFG->debug > 7) {
+        if (debugging()) {
             echo "The shell command<br />$cmd<br />returned status = $status<br />\n";
             echo "Image not found!<br />";
             echo "Please try the <a href=\"$CFG->wwwroot/$CFG->texfilterdir/texdebug.php\">debugging script</a>";
