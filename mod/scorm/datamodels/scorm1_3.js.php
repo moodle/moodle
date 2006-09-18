@@ -186,7 +186,7 @@ function SCORMapi1_3() {
         if (param == "") {
             if ((!Initialized) && (!Terminated)) {
                 <?php 
-                    if (($CFG->debug > 7) && (isadmin())) {
+                    if (debugging()) {
                         echo 'alert("Initialized SCORM 1.3");';
                     }
                 ?>
@@ -211,7 +211,7 @@ function SCORMapi1_3() {
         if (param == "") {
             if ((Initialized) && (!Terminated)) {
                 <?php 
-                    if (($CFG->debug > 7) && (isadmin())) {
+                    if (debugging()) {
                         echo 'alert("Terminated SCORM 1.3");';
                     }
                 ?>
@@ -262,7 +262,7 @@ function SCORMapi1_3() {
                         if (subelement == element) {
                             errorCode = "0";
                             <?php 
-                                if (($CFG->debug > 7) && (isadmin())) {
+                                if (debugging()) {
                                     echo 'alert(element+": "+eval(element));';
                                 }
                             ?>
@@ -377,7 +377,7 @@ function SCORMapi1_3() {
                                             eval(element+'="'+value+'";');
                                             errorCode = "0";
                                             <?php 
-                                                if (($CFG->debug > 7) && (isadmin())) {
+                                                if (debugging()) {
                                                     echo 'alert(element+":= "+value);';
                                                 }
                                             ?>
@@ -392,7 +392,7 @@ function SCORMapi1_3() {
                                     eval(element+'="'+value+'";');
                                     errorCode = "0";
                                     <?php 
-                                        if (($CFG->debug > 7) && (isadmin())) {
+                                        if (debugging()) {
                                             echo 'alert(element+":= "+value);';
                                         }
                                     ?>
@@ -429,7 +429,7 @@ function SCORMapi1_3() {
             if ((Initialized) && (!Terminated)) {
                 result = StoreData(cmi,false);
                 <?php 
-                    if (($CFG->debug > 7) && (isadmin())) {
+                    if (debugging()) {
                         echo 'alert("Data Commited");';
                     }
                 ?>

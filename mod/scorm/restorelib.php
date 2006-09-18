@@ -482,7 +482,7 @@
                     //Update record
                     $scorm->summary = addslashes($result);
                     $status = update_record("scorm",$scorm);
-                    if ($CFG->debug>7) {
+                    if (debugging()) {
                         if (!defined('RESTORE_SILENTLY')) {
                             echo '<br /><hr />'.htmlentities($content).'<br />changed to<br />'.htmlentities($result).'<hr /><br />';
                         }
