@@ -65,8 +65,7 @@
                 $table = new stdClass;
                 $table->head = array(get_string('pagetitle', 'lesson'), get_string('qtype', 'lesson'), get_string('jumps', 'lesson'), get_string('actions', 'lesson'));
                 $table->align = array('left', 'left', 'left', 'center');
-                //$table->wrap = array();
-                $table->width = '70%';
+                $table->wrap = array('', 'nowrap', '', 'nowrap');
                 $table->tablealign = 'center';
                 $table->cellspacing = 0;
                 $table->cellpadding = '2px';
