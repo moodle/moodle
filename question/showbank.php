@@ -163,7 +163,7 @@ if (empty($SESSION->questioncat) or !count_records_select("question_categories",
     }
 
     // starts with category selection form
-    if (has_capability('moodle/question:managecategories', $context)) {
+    if (has_capability('moodle/question:managecategory', $context)) {
         print_simple_box_start("center", "100%");
         question_category_form($course, $SESSION->questioncat, $SESSION->questionrecurse, $SESSION->questionshowhidden);
         print_simple_box_end();
