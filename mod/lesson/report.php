@@ -626,7 +626,7 @@
                                     $answerdata->answers[] = array(get_string("nooneansweredthisquestion", "lesson"), " ");
                                 }
                                 $i++;
-                            } else if ($answer->id == $useranswer->answerid && $useranswer != NULL) {
+                            } else if ($useranswer != NULL and $answer->id == $useranswer->answerid) {
                                 // get in here when a user answer matches one of the answers to the page
                                 $data = "<input type=\"text\" size=\"50\" disabled=\"disabled\" readonly=\"readonly\" value=\"$useranswer->useranswer\">";
                                 if (isset($pagestats[$page->id][$useranswer->useranswer])) {
