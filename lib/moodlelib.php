@@ -2729,9 +2729,9 @@ function remove_course_contents($courseid, $showfeedback=true) {
     question_delete_course($course, $showfeedback);
 
     // deletes all role assignments, and local override, these have no courseid in table and needs separate process
-    $context = get_context_instance(CONTEXT_COUSE, $course->id);
-    delect_records('role_assignments', 'contextid', $context->id);
-    delect_records('role_role_capabilities', 'contextid', $context->id);
+    $context = get_context_instance(CONTEXT_COURSE, $course->id);
+    delete_records('role_assignments', 'contextid', $context->id);
+    delete_records('role_role_capabilities', 'contextid', $context->id);
 
     return $result;
 
