@@ -1,5 +1,12 @@
 <?php // $Id$
-/************** add branch table ************************************/
+/**
+ *  Action for adding a branch table.  Prints an HTML form.
+ *
+ * @version $Id$
+ * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+ * @package lesson
+ **/
+
     $CFG->pagepath = 'mod/lesson/addbranchtable';
     
     // first get the preceeding page
@@ -38,8 +45,8 @@
     <center><table class="generalbox" cellpadding=5 border=1>
     <tr valign="top">
     <td><b><?php print_string("pagetitle", "lesson"); ?>:</b><br />
-    <!-- hidden-label added.--><label for="title" class="hidden-label">Title</label><input type="text" id="title" name="title" size="80" maxsize="255" value="" /></td></tr>
-    <?PHP
+    <label for="title" class="hidden-label"><?php print_string('pagetitle', 'lesson'); ?></label><input type="text" id="title" name="title" size="80" maxsize="255" value="" /></td></tr>
+    <?php
     echo "<tr><td><b>";
     echo get_string("pagecontents", "lesson").":</b><br />\n";
     print_textarea($usehtmleditor, 25,70, 630, 400, "contents");
