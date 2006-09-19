@@ -272,6 +272,10 @@ function has_capability($capability, $context=NULL, $userid=NULL, $doanything=tr
 
     global $USER, $CONTEXT, $CFG;
 
+    if (debugging() && !record_exists('capabilities', 'name', $capability)) {
+        debugging("Checking for unknown cabability '$capability' in context {$context->id}.");
+    }
+
     if (empty($userid) && empty($USER->capabilities)) {   // Real user, first time here
         if (isloggedin()) {
             load_defaultuser_role();    // All users get this by default
