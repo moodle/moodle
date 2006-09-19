@@ -9,8 +9,6 @@
     require_once(dirname(dirname(dirname(__FILE__))).'/config.php'); // global moodle config file.
 
     require_once($CFG->dirroot . '/course/lib.php');
-    require_once($CFG->dirroot . '/lib/moodlelib.php');
-    require_once($CFG->dirroot . '/lib/datalib.php');
     require_once($CFG->dirroot . "/enrol/" . $CFG->enrol . "/enrol.php");
 
     // ensure errors are well explained

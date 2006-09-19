@@ -95,6 +95,9 @@ function setup_enrolments(&$user) {
 /// sync enrolments with database, create courses if required.
 ///
 /// NOTE: we are currently  ignoring $type, as enrol/database only deasl with student enrolment
+///
+/// This function still needs to be converted to Roles!   XXX TODO
+///
 function sync_enrolments($type='student') {
     global $CFG;
     global $db;
