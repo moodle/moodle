@@ -27,9 +27,8 @@
     }
     if (!optional_param('firstpage', 0, PARAM_INT)) {
         $linkadd = "";      
-        if (!$apageid = get_field("lesson_pages", "id", "lessonid", $lesson->id, "prevpageid", 0)) {
-            error("Add page: first page not found");
-        }
+        $apageid = get_field("lesson_pages", "id", "lessonid", $lesson->id, "prevpageid", 0)) {
+        
         while (true) {
             if ($apageid) {
                 $title = get_field("lesson_pages", "title", "id", $apageid);
