@@ -81,7 +81,7 @@
     }
     $hotpotids = implode(',', $hotpotids);
 
-    if (isadmin()) {
+    if (has_capability('mod/hotpot:grade', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
 
         // get regrade settings, if any
         $regrade = optional_param("regrade");
@@ -248,7 +248,7 @@
         $select .= " AND a.userid='$USER->id'";
     }
     $usejoin = 1;
-    if (isadmin() && $usejoin) {
+    if (has_capability('mod/hotpot:grade', get_context_instance(CONTEXT_SYSTEM, SITEID)) && $usejoin) {
         // join attempts table and details table
         $tables .= ",{$CFG->prefix}hotpot_details AS d";
         $fields .= ',COUNT(DISTINCT d.id) AS detailcount';
@@ -259,7 +259,7 @@
     }
     $totals = get_records_sql("SELECT $fields FROM $tables WHERE $select GROUP BY a.hotpot");
 
-    if (isadmin() && empty($usejoin)) {
+    if (ihas_capability('mod/hotpot:grade', get_context_instance(CONTEXT_SYSTEM, SITEID)) && empty($usejoin)) {
         foreach ($hotpots as $hotpot) {
             $totals[$hotpot->id]->detailcount = 0;
             if ($ids = get_records('hotpot_attempts', 'hotpot', $hotpot->id)) {
@@ -368,7 +368,7 @@
             }
         }
 
-        if (isadmin()) {
+        if (has_capability('mod/hotpot:grade', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
             if (in_array($hotpot->id, $regradehotpots)) {
                 $report .= ' <font color="red">'.$strregraderequired.'</font>';
             }
@@ -393,7 +393,7 @@
 
         array_push($data, $quizname, $quizclose, $bestscore, $report);
 
-        if (isadmin()) {
+        if (has_capability('mod/hotpot:grade', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
             if (empty($totals[$hotpot->id]->detailcount)) {
                 // no details records for this hotpot, so disable regrade
                 $regradebutton = '&nbsp;';

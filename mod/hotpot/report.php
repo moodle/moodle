@@ -48,7 +48,7 @@
     // assemble array of form data
     $formdata = array(
         'mode' => $mode,
-        'reportcourse'     => isadmin() ? optional_param('reportcourse', get_user_preferences('hotpot_reportcourse', 'this')) : 'this',
+        'reportcourse'     => has_capability('mod/hotpot:viewreport', get_context_instance(CONTEXT_SYSTEM, SITEID)) ? optional_param('reportcourse', get_user_preferences('hotpot_reportcourse', 'this')) : 'this',
         'reportusers'      => has_capability('mod/hotpot:viewreport',$context) ? optional_param('reportusers', get_user_preferences('hotpot_reportusers', 'all')) : 'this',
         'reportattempts'   => optional_param('reportattempts', get_user_preferences('hotpot_reportattempts', 'all')),
         'reportformat'     => optional_param('reportformat', 'htm'),
@@ -457,7 +457,7 @@ function hotpot_print_report_selector(&$course, &$hotpot, &$formdata) {
             $menus['mode'][$name] = get_string("report$name", $module);
         }
     }
-    if (isadmin()) {
+    if (has_capability('mod/hotpot:viewreport', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
         $menus['reportcourse'] = array(
             'this' => get_string('thiscourse', 'hotpot'), // $course->shortname,
             'all' => get_string('allmycourses', 'hotpot')

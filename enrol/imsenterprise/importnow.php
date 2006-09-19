@@ -1,13 +1,10 @@
 <?php
 require_once(dirname(dirname(dirname(__FILE__))) . '/config.php');
 require_login();
+require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM, SITEID));
 
 if (!$site = get_site()) {
     redirect("index.php");
-}
-
-if (!isadmin()) {
-    error("Only the admin can use this page");
 }
 
 /// get language strings

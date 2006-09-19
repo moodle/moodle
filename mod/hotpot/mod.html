@@ -120,8 +120,7 @@ $text_source_options = array(
         </td>
         <td align="left"><?PHP
 
-
-            if (isadmin()) {
+            if (has_capability('moodle/course:managefiles', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
                 $site = get_site();
                 if ($course->id==$site->id) {
                     $id = $site->id;

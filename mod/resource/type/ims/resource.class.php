@@ -184,7 +184,8 @@ class resource_ims extends resource_base {
         
         /// If teacheredit, make, hash check. It's the md5 of the name of the file 
         /// plus its size and modification date
-            if (isteacheredit($course->id)) {
+        /// not sure if this capability is suitable
+            if (has_capability('moodle/course:manageactivities', get_context_instance(CONTEXT_COURSE, $course->id))) {
                 if (!$this->checkpackagehash($file, $course, $resource)) {
                     return 4;
                 }
@@ -360,7 +361,7 @@ class resource_ims extends resource_base {
             print_simple_box_start('center', '60%');
             echo '<p align="center">'.$errortext.'</p>';
         /// If errors were 3 or 4 and isteacheredit(), show the deploy button
-            if (isteacheredit($course->id) && ($errorcode == 3 || $errorcode == 4)) {
+            if (has_capability('moodle/course:manageactivities', get_context_instance(CONTEXT_COURSE, $course->id)) && ($errorcode == 3 || $errorcode == 4)) {
                 $link = 'type/ims/deploy.php';
                 $options['courseid'] = $course->id;
                 $options['cmid'] = $cm->id;

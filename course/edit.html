@@ -413,7 +413,7 @@
       helpbutton("metacourse", get_string("metacourse"));?>
     </td>
 </tr>
-<?php if (isadmin() && ((!empty($course->requested) && $CFG->restrictmodulesfor == 'requested') || $CFG->restrictmodulesfor == 'all')) { ?>
+<?php if (has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM, SITEID)) && ((!empty($course->requested) && $CFG->restrictmodulesfor == 'requested') || $CFG->restrictmodulesfor == 'all')) { ?>
 <tr valign="top">
     <td align="right"><?php print_string("restrictmodules") ?>:</td>
     <td valign="top"><table cellpadding="0" border="0"><tr valign="top"><td>

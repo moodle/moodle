@@ -12,7 +12,7 @@
     if (!has_capability('mod/hotpot:viewreport',get_context_instance(CONTEXT_COURSE, $params->course))) {
         error("You are not allowed to view this page!");
     }
-    if (isadmin()) {
+    if (has_capability('mod/hotpot:viewreport', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
         $params->location = optional_param('location', HOTPOT_LOCATION_COURSEFILES);
     } else {
         $params->location = HOTPOT_LOCATION_COURSEFILES;
