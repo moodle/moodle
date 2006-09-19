@@ -263,7 +263,7 @@ function question_list($course, $categoryid, $quizid=0,
     echo '<table><tr>';
 
     // check if editing of this category is allowed
-    if (has_capability('moodle/question:managecateory', $context)) {
+    if (has_capability('moodle/question:managecategory', $context)) {
         echo "<td valign=\"top\"><b>$strcreatenewquestion:</b></td>";
         echo '<td valign="top" align="right">';
         popup_form ("$CFG->wwwroot/question/question.php?category=$category->id&amp;qtype=", $qtypemenu, "addquestion",
