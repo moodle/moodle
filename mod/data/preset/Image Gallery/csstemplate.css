@@ -1,0 +1,41 @@
+/******  List View CSS ******/
+
+#pictures {
+  width: 750px;
+}
+
+.picture {
+  padding: 5px;
+  border-style: solid;
+  border-width: thin;
+  border-color: #779;
+  background-color: white;
+
+  display:table-cell;display:inline-table;display:inline-block;
+}
+
+.pictureframe {
+  padding: 5px;
+
+  display:table-cell;display:inline-table;display:inline-block;
+}
+
+.picturediv {
+  display: inline;
+  width: 150px;
+  height: 200px;
+}
+
+.inline {
+  display: inline;
+}
+
+/*****  Single View CSS *****/
+
+.caption {
+  font-style: italic;
+}
+
+#singleimage {
+  width: 700px;
+}
