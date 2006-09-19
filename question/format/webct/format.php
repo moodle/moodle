@@ -108,13 +108,13 @@ class qformat_webct_modified_calculated_qtype extends question_calculated_qtype 
 
             // Set items and retrieve ->itemcout
             $item->definition = $datasetdef->id;
-            for ($item->number=1 ; isset($datasetdata->items["$item->number"]) ; ++$item->number) {
-                $item->value = $datasetdata->items["$item->number"];
+            for ($item->itemnumber=1 ; isset($datasetdata->items["$item->itemnumber"]) ; ++$item->itemnumber) {
+                $item->value = $datasetdata->items["$item->itemnumber"];
                 if (!insert_record('question_dataset_items', $item)) {
-                    error("Unable to insert dataset item $item->number with $item->value for $datasetdef->name");
+                    error("Unable to insert dataset item $item->itemnumber with $item->value for $datasetdef->name");
                 }
             }
-            $datasetdef->itemcount = $item->number - 1;
+            $datasetdef->itemcount = $item->itemnumber - 1;
 
             // Retrieve ->options
             if (is_numeric($datasetdata->min) && is_numeric($datasetdata->max)

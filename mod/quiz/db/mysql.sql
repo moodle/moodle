@@ -187,7 +187,7 @@ CREATE TABLE prefix_question_dataset_definitions (
 CREATE TABLE prefix_question_dataset_items (
   id int(10) unsigned NOT NULL auto_increment,
   definition int(10) unsigned NOT NULL default '0',
-  number int(10) unsigned NOT NULL default '0',
+  itemnumber int(10) unsigned NOT NULL default '0',
   value varchar(255) NOT NULL default '',
   PRIMARY KEY  (id),
   KEY definition (definition)

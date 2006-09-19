@@ -50,7 +50,7 @@
 // Handle adding and removing of dataset items
     // This twisted condition should effectively stop resubmits caused by reloads
     if (isset($form->addbutton) && $maxnumber + 1 == $form->numbertoadd) {
-        $addeditem->number = $form->numbertoadd;
+        $addeditem->itemnumber = $form->numbertoadd;
         foreach ($form->definition as $key => $defid) {
             $addeditem->definition = $datasetdefs[$defid]->id;
             $addeditem->value = $form->value[$key];
@@ -76,7 +76,7 @@
             }
         }
         // else Success:
-        $maxnumber = $addeditem->number;
+        $maxnumber = $addeditem->itemnumber;
 
     } else if (isset($form->deletebutton)
                && $maxnumber == $form->numbertodelete)  {
@@ -107,7 +107,7 @@
     foreach ($datasetdefs as $defid => $datasetdef) {
         if (isset($datasetdef->id)) {
             $datasetdefs[$defid]->items = get_records_sql( // Use number as key!!
-                    " SELECT number, definition, id, value
+                    " SELECT itemnumber, definition, id, value
                       FROM {$CFG->prefix}question_dataset_items
                       WHERE definition = $datasetdef->id ");
         }
@@ -123,7 +123,7 @@
             $datasetitem->id =
              isset($datasetdefs[$defid]->items[$maxnumber + 1]->id)
              ? $datasetdefs[$defid]->items[$maxnumber + 1]->id : '';
-            $datasetitem->number = $maxnumber + 1;
+            $datasetitem->itemnumber = $maxnumber + 1;
             if ($this->supports_dataset_item_generation()) {
                 if (!empty($form->addbutton) || // If we added an item
                     !isset($form->value) ||     // If we don't have a value

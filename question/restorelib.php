@@ -568,7 +568,7 @@
             //Now, build the question_dataset_ITEMS record structure
             $dataset_item = new stdClass;
             $dataset_item->definition = $definitionid;
-            $dataset_item->number = backup_todb($di_info['#']['NUMBER']['0']['#']);
+            $dataset_item->itemnumber = backup_todb($di_info['#']['NUMBER']['0']['#']);
             $dataset_item->value = backup_todb($di_info['#']['VALUE']['0']['#']);
 
             //The structure is equal to the db, so insert the question_dataset_items

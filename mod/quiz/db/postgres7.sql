@@ -176,7 +176,7 @@ CREATE INDEX prefix_question_dataset_definitions_category_idx ON prefix_question
 CREATE TABLE prefix_question_dataset_items (
     id SERIAL8 PRIMARY KEY,
     definition INT8  NOT NULL default '0',
-    number INT8  NOT NULL default '0',
+    itemnumber INT8  NOT NULL default '0',
     value varchar(255) NOT NULL default ''
 );
 CREATE INDEX prefix_question_dataset_items_definition_idx  ON prefix_question_dataset_items (definition);

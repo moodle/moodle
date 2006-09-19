@@ -277,7 +277,7 @@
             foreach ($dataset_items as $dataset_item) {
                 $status = $status &&fwrite ($bf,start_tag("DATASET_ITEM",$level+1,true));
                 //Print question_dataset contents
-                fwrite ($bf,full_tag("NUMBER",$level+2,false,$dataset_item->number));
+                fwrite ($bf,full_tag("NUMBER",$level+2,false,$dataset_item->itemnumber));
                 fwrite ($bf,full_tag("VALUE",$level+2,false,$dataset_item->value));
                 //End dataset definition
                 $status = $status &&fwrite ($bf,end_tag("DATASET_ITEM",$level+1,true));

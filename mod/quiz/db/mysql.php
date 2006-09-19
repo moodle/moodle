@@ -1136,6 +1136,10 @@ function quiz_upgrade($oldversion) {
         $success = $success && table_column('question_sessions', 'comment', 'manualcomment', 'text', '', '', '');
     }
 
+    if ($success && $oldversion < 2006091900) {
+        $success = $success && table_column('question_dataset_items', 'number', 'itemnumber', 'text', '', '', '');
+    }
+
     return $success;
 }
 

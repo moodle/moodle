@@ -461,7 +461,7 @@ class question_dataset_dependent_questiontype extends default_questiontype {
                         WHERE q.question = $question->id
                         AND q.datasetdefinition = d.id
                         AND d.id = i.definition
-                        AND i.number = $datasetitem")) {
+                        AND i.itemnumber = $datasetitem")) {
             error("Couldn't get the specified dataset for a dataset dependent " .
                   "question! (question: {$question->id}, " .
                   "datasetitem: {$datasetitem})");
