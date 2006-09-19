@@ -27,7 +27,7 @@
     }
     if (!optional_param('firstpage', 0, PARAM_INT)) {
         $linkadd = "";      
-        $apageid = get_field("lesson_pages", "id", "lessonid", $lesson->id, "prevpageid", 0)) {
+        $apageid = get_field("lesson_pages", "id", "lessonid", $lesson->id, "prevpageid", 0);
         
         while (true) {
             if ($apageid) {
