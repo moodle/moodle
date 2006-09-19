@@ -9,9 +9,9 @@ if ($courseid) {
     print ('<input type="hidden" name="courseid" value="'.$courseid.'" />');
 }
 ?>
-<input type="hidden" name="sesskey" value="<?php echo sesskey() ?>" />
-<input type="hidden" name="contextid" value="<?php echo $contextid ?>" />
-<input type="hidden" name="roleid" value="<?php echo $roleid ?>" />
+<input type="hidden" name="sesskey" value="<?php p(sesskey()) ?>" />
+<input type="hidden" name="contextid" value="<?php p($contextid) ?>" />
+<input type="hidden" name="roleid" value="<?php p($roleid) ?>" />
   <table align="center" border="0" cellpadding="5" cellspacing="0">
     <tr>
       <td valign="top">

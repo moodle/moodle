@@ -1,15 +1,23 @@
+<?php  //$Id$
+
+    switch ($action) {
+        case 'add': $submitlabel = get_string('addrole', 'role'); break;
+        case 'edit':
+        default:  $submitlabel = get_string('savechanges');
+    }
+?>
 <form name="rolesform" action="manage.php" method="post">
-<input type="hidden" name="roleid" value="<?php echo $roleid; ?>">
-<input type="hidden" name="sesskey" value="<?php print (sesskey()); ?>">
-<input type="hidden" name="action" value="<?php echo $action; ?>">
-<br/>Role Name: <input type="text" name="name" value="<?php echo $role->name; ?>">
-&nbsp;
-Role short name (ASCII): <input type="text" name="shortname" value="<?php echo $role->shortname; ?>" />
-<br/>Role Description: 
+<input type="hidden" name="roleid" value="<?php p($roleid) ?>" />
+<input type="hidden" name="sesskey" value="<?php p(sesskey()) ?>" />
+<input type="hidden" name="action" value="<?php p($action) ?>" />
+<input type="hidden" name="contextid" value="<?php p($contextid) ?>" />
 
-<?php print_textarea($CFG->htmleditor, 10, 50, 50, 10, 'description', "$role->description"); ?>
-
-<input type="hidden" name="contextid" value="<?php echo $contextid; ?>">
+<br />
+<?php print_string('rolename', 'role'); ?>: <input type="text" name="name" value="<?php p($role->name) ?>" />&nbsp;
+<?php print_string('roleshortname', 'role'); ?>: <input type="text" name="shortname" value="<?php p($role->shortname) ?>" />
+<br />
+<?php print_string('roledescription', 'role'); ?>:
+<?php print_textarea($usehtmleditor, 10, 50, 50, 10, 'description', $role->description); ?>
 <p>            
 <table>
 <tr>
@@ -30,8 +38,8 @@ $component = '';
 foreach ($capabilities as $capability) {
     // prints a breaker if component or name or context level  
     if ($capability->component != $component or $capability->contextlevel != $contextlevel) {
-        echo ('<tr><td colspan="4"><b>'.
-               get_component_string($capability->component, $capability->contextlevel).'</b></td></tr>');  
+        echo ('<tr><td colspan="4"><strong>'.
+               get_component_string($capability->component, $capability->contextlevel).'</strong></td></tr>');  
     }
 
     // these 2 are used to see to group same mod/core capabilities together
@@ -47,10 +55,10 @@ foreach ($capabilities as $capability) {
 
         <tr>
         <td><span title="<?php echo $capability->name ?>"><?php echo get_capability_string($capability->name); ?></span></td>
-        <td><INPUT TYPE=radio NAME="<?php echo $capability->name; ?>" VALUE="0" <?php if (!isset($localoverride->permission) || $localoverride->permission==0){ echo 'checked="checked"'; }?>></td>
-        <td><INPUT TYPE=radio NAME="<?php echo $capability->name; ?>" VALUE="1" <?php if (isset($localoverride->permission) && $localoverride->permission==1){ echo 'checked="checked"'; }?>></td>
-        <td ><INPUT TYPE=radio NAME="<?php echo $capability->name; ?>" VALUE="-1" <?php if (isset($localoverride->permission) && $localoverride->permission==-1){ echo 'checked="checked"'; }?>></td>
-        <td ><INPUT TYPE=radio NAME="<?php echo $capability->name; ?>" VALUE="-1000" <?php if (isset($localoverride->permission) && $localoverride->permission==-1000){ echo 'checked="checked"'; }?>></td>
+        <td><input TYPE="radio" name="<?php echo $capability->name; ?>" value="0" <?php if (!isset($localoverride->permission) || $localoverride->permission==0){ echo 'checked="checked"'; }?> /></td>
+        <td><input TYPE="radio" name="<?php echo $capability->name; ?>" value="1" <?php if (isset($localoverride->permission) && $localoverride->permission==1){ echo 'checked="checked"'; }?> /></td>
+        <td ><input TYPE="radio" name="<?php echo $capability->name; ?>" value="-1" <?php if (isset($localoverride->permission) && $localoverride->permission==-1){ echo 'checked="checked"'; }?> /></td>
+        <td ><input TYPE="radio" name="<?php echo $capability->name; ?>" value="-1000" <?php if (isset($localoverride->permission) && $localoverride->permission==-1000){ echo 'checked="checked"'; }?> /></td>
         <td><?php
             if (RISK_MANAGETRUST & (int)$capability->riskbitmask) {
                 echo "T";
@@ -70,8 +78,9 @@ foreach ($capabilities as $capability) {
         ?></td>
         </tr>
 
-        <?php } ?>    
-        </table>     
+<?php } ?>    
+</table>     
 </p>
-<br/><input type="submit" value="<?php print_string($action);?>">
+<br />
+<input type="submit" value="<?php p($submitlabel); ?>" />
 </form>

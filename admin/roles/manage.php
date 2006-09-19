@@ -10,7 +10,7 @@
     $roleid      = optional_param('roleid', 0, PARAM_INT);             // if set, we are editing a role
     $name        = optional_param('name', '', PARAM_MULTILANG);        // new role name
     $shortname   = optional_param('shortname', '', PARAM_SAFEDIR);     // new role shortname
-    $description = optional_param('description', '', PARAM_MULTILANG); // new role desc
+    $description = optional_param('description', '', PARAM_CLEAN);     // new role desc
     $action      = optional_param('action', '', PARAM_ALPHA);
     $confirm     = optional_param('confirm', 0, PARAM_BOOL);
 
@@ -148,13 +148,13 @@
         }
 
         foreach ($roles as $rolex) {
-            $roleoptions[$rolex->id] = $rolex->name;
+            $roleoptions[$rolex->id] = format_string($rolex->name);
         }
 
         // prints a form to swap roles
         print ('<form name="rolesform1" action="manage.php" method="post">');
-        print ('<div align="center">'.get_string('selectrole').': ');
-        choose_from_menu ($roleoptions, 'roleid', $roleid, 'choose', $script='rolesform1.submit()');
+        print ('<div align="center">'.get_string('selectrole', 'role').': ');
+        choose_from_menu ($roleoptions, 'roleid', $roleid, get_string('listallroles', 'role'), $script='rolesform1.submit()');
         print ('</div></form>');
 
         // this is the array holding capabilities of this role sorted till this context
@@ -163,9 +163,14 @@
         // this is the available capabilities assignable in this context
         $capabilities = fetch_context_capabilities($sitecontext);
 
+        $usehtmleditor = can_use_html_editor();
         print_simple_box_start();
         include_once('manage.html');
         print_simple_box_end();
+
+        if ($usehtmleditor) {
+            use_html_editor('description');
+        }
 
     } else {
 
@@ -188,7 +193,7 @@
 
         foreach ($roles as $role) {
 
-            $table->data[] = array('<a href="manage.php?roleid='.$role->id.'&amp;sesskey='.sesskey().'">'.$role->name.'</a>', $role->description, '<a href="manage.php?action=delete&roleid='.$role->id.'&sesskey='.sesskey().'">'.$strdelete.'</a>');
+            $table->data[] = array('<a href="manage.php?roleid='.$role->id.'&amp;sesskey='.sesskey().'">'.format_string($role->name).'</a>', format_text($role->description, FORMAT_HTML), '<a href="manage.php?action=delete&roleid='.$role->id.'&sesskey='.sesskey().'">'.$strdelete.'</a>');
 
         } 
         print_table($table);
@@ -199,6 +204,5 @@
         print_single_button('manage.php', $options, get_string('addrole', 'role'), 'POST');
     }
 
-    use_html_editor('description');
     admin_externalpage_print_footer($adminroot);
 ?>

@@ -65,7 +65,7 @@
     
 /// get all the roles identifier
     foreach ($roles as $role) {
-        $rolesname[] = $role->name;  
+        $rolesname[] = format_string($role->name);
         $roleids[] = $role->id;
         $table->align[] = 'center';
         $table->wrap[] = 'nowrap';
@@ -75,7 +75,7 @@
     
     foreach ($roles as $role) {
         $beta = get_box_list($role->id, $roleids);
-        $table->data[] = array_merge(array($role->name), $beta);
+        $table->data[] = array_merge(array(format_string($role->name)), $beta);
     }
 
     print_simple_box(get_string('configallowoverride', 'admin'), 'center');

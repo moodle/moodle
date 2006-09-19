@@ -130,7 +130,7 @@
             echo '<input type="hidden" name="courseid" value="'.$courseid.'" />';
         }
         echo '<input type="hidden" name="contextid" value="'.$context->id.'" />'.$strroletooverride.': ';
-        choose_from_menu ($overridableroles, 'roleid', $roleid, 'choose', $script='rolesform.submit()');
+        choose_from_menu ($overridableroles, 'roleid', $roleid, get_string('listallroles', 'role'), $script='rolesform.submit()');
         echo '</div></form>';
 
         $r_caps = role_context_capabilities($roleid, $context);
@@ -145,7 +145,7 @@
             print_simple_box_end();
         } else {
             notice(get_string('nocapabilitiesincontext', 'role'),
-                    $CFG->wwwroot.'/admin/roles/override.php?contextid='.$contextid);
+                    $CFG->wwwroot.'/'.$CFG->admin.'/roles/override.php?contextid='.$contextid);
         }
 
     } else {   // Print overview table

@@ -125,7 +125,7 @@ function groupWindow(selectgroup) {
         </form>
         <form name="rolesform1" action="groups.php" method="get">
         <input type="hidden" name="id" value="<?php echo $courseid ?>">
-        <div align="center"><?php echo get_string('selectrole') ?>: 
+        <div align="center"><?php echo get_string('selectrole', 'role') ?>: 
             <?php choose_from_menu ($roleoptions, 'roleid', $roleid, 'choose', $script='rolesform1.submit()') ?>
         </div></form>
       </td>

@@ -1,6 +1,6 @@
             <form action="override.php" method="post">     
-            <input type="hidden" name="contextid" value="<?php echo $contextid; ?>">
-            <input type="hidden" name="roleid" value="<?php echo $roleid; ?>">
+            <input type="hidden" name="contextid" value="<?php p($contextid) ?>">
+            <input type="hidden" name="roleid" value="<?php p($roleid) ?>">
 <?php
 if ($userid) {
     print ('<input type="hidden" name="userid" value="'.$userid.'"/>');
@@ -61,28 +61,28 @@ if ($courseid) {
                  <input type="radio" name="<?php echo $capability->name; ?>" value="0" 
                     <?php 
                         if ($localpermission == 0) {echo 'checked="checked"';} 
-                        if ($isdisabled)           {echo 'disabled="disabled"';}?>>
+                        if ($isdisabled)           {echo 'disabled="disabled"';}?> />
                  </td>
 
                  <td align="center" <?php if ($isallow) {echo 'class="capcurrent"';} ?>>
                  <input type="radio" name="<?php echo $capability->name; ?>"
                     <?php echo ' value="'.CAP_ALLOW.'"';
                        if ($localpermission == CAP_ALLOW) {echo ' checked="checked"';} 
-                       if ($isdisabled)                   {echo ' disabled="disabled"';}?>>
+                       if ($isdisabled)                   {echo ' disabled="disabled"';}?> />
                  </td>
 
                  <td align="center" <?php if ($isprevent) {echo 'class="capcurrent"';} ?>>
                  <input type="radio" name="<?php echo $capability->name; ?>" 
                     <?php echo ' value="'.CAP_PREVENT.'"';
                        if ($localpermission == CAP_PREVENT) {echo ' checked="checked"';} 
-                       if ($isdisabled)                     {echo ' disabled="disabled"';}?>>
+                       if ($isdisabled)                     {echo ' disabled="disabled"';}?> />
                  </td>
 
                  <td align="center" <?php if ($isprohibit) {echo 'class="capcurrent"';} ?>>
                  <input type="radio" name="<?php echo $capability->name; ?>"
                     <?php echo ' value="'.CAP_PROHIBIT.'"';
                        if ($localpermission == CAP_PROHIBIT) {echo ' checked="checked"';} 
-                       if ($isdisabled)                      {echo ' disabled="disabled"';}?>>
+                       if ($isdisabled)                      {echo ' disabled="disabled"';}?> />
                  </td>
                  <td><?php
                     if (RISK_MANAGETRUST & (int)$capability->riskbitmask) {
@@ -106,5 +106,5 @@ if ($courseid) {
             <?php } ?>    
             </table>     
             <br />
-            <div align="center"><input type="submit" value="<?php print_string('savechanges') ?>"></div>
+            <div align="center"><input type="submit" value="<?php print_string('savechanges') ?>" /></div>
             </form>
