@@ -286,7 +286,7 @@ function question_list($course, $categoryid, $quizid=0,
         echo ' | ';
     }
     
-    if (has_capability('moodle/question:import', $context)) {
+    if (has_capability('moodle/question:export', $context)) {
         echo "<a href=\"$CFG->wwwroot/question/export.php?category={$category->id}&amp;courseid={$course->id}\">$strexportquestions</a>";
         helpbutton("export", $strexportquestions, "quiz");
     }  
