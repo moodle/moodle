@@ -943,15 +943,18 @@
                 $madeit = false;
                 if ($highscores = get_records_select("lesson_high_scores", "lessonid = $lesson->id")) {
                     // get all the high scores into an array
+                    $topscores = array();
+                    $uniquescores = array();
                     foreach ($highscores as $highscore) {
                         $grade = $grades[$highscore->gradeid]->grade;
                         $topscores[] = $grade;
+                        $uniquescores[$grade] = 1;
                     }
                     // sort to find the lowest score
                     sort($topscores);
                     $lowscore = $topscores[0];
                     
-                    if ($gradeinfo->grade >= $lowscore || count($topscores) <= $lesson->maxhighscores) {
+                    if ($gradeinfo->grade >= $lowscore || count($uniquescores) <= $lesson->maxhighscores) {
                         $madeit = true;
                     }
                 }
