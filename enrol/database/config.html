@@ -123,7 +123,29 @@
 
 <tr>
    <th colspan="2">
-        <?php print_string("enrol_ldap_autocreation_settings", "enrol_ldap") ?>
+        <?php print_string('roles', 'role') ?>
+   </th>
+</tr>
+<tr valign="top">
+    <td align="right">enrol_db_defaultcourseroleid:</td>
+    <td>
+    <?php
+        $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
+        $assignableroles = get_assignable_roles($sitecontext);
+        $assignableroles = array('' => get_string('default')) + $assignableroles;
+    
+        choose_from_menu($assignableroles, 'enrol_db_defaultcourseroleid', $frm->enrol_db_defaultcourseroleid, '');
+        if (isset($err['enrol_db_defaultcourseroleid'])) formerr($err['enrol_db_defaultcourseroleid']); 
+    ?>
+    </td>
+    <td>
+    <?php  print_string("defaultcourseroleid","enrol_database") ?>
+    </td>
+</tr>
+
+<tr>
+   <th colspan="2">
+        <?php print_string("enrol_database_autocreation_settings", "enrol_database") ?>
    </td>
 </tr>
 <tr valign="top">

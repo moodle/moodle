@@ -1,66 +1,91 @@
 <?php  // $Id$
 
-require_once("$CFG->dirroot/enrol/enrol.class.php");
-require_once("$CFG->dirroot/course/lib.php");
-require_once("$CFG->dirroot/lib/blocklib.php");
-require_once("$CFG->dirroot/lib/pagelib.php");
+require_once($CFG->dirroot.'/enrol/enrol.class.php');
 
 class enrolment_plugin_database {
 
     var $log;    
 
-/// Overide the base get_student_courses() function
-function get_student_courses(&$user) {
+/*
+ * For the given user, let's go out and look in an external database
+ * for an authoritative list of enrolments, and then adjust the 
+ * local Moodle assignments to match.
+ */
+function setup_enrolments(&$user) {
     global $CFG;
 
     // NOTE: if $this->enrol_connect() succeeds you MUST remember to call
     // $this->enrol_disconnect() as it is doing some nasty vodoo with $CFG->prefix
     if ($enroldb = $this->enrol_connect()) {
 
-        $courselist = array();      /// Initialise new array
-        $newstudent = array();
+        /// Get the authoritative list of enrolments from the external database table
+        /// We're using the ADOdb functions natively here and not our datalib functions
+        /// because we didn't want to mess with the $db global
 
-        /// Get the authoritative list of enrolments from the database
-
-        $useridnumber = $user->{$CFG->enrol_localuserfield};   
-
+        $useridfield = $user->{$CFG->enrol_localuserfield};   
 
         if ($rs = $enroldb->Execute("SELECT $CFG->enrol_remotecoursefield 
                                        FROM $CFG->enrol_dbtable 
-                                      WHERE $CFG->enrol_remoteuserfield = '$useridnumber' ")) {
+                                      WHERE $CFG->enrol_remoteuserfield = '$useridfield' ")) {
 
-            if ($rs->RecordCount() > 0) {
-                while (!$rs->EOF) {
+            $existing = get_my_courses($user->id, '', 'id');  // We'll use this to see what to add and remove
+
+            if ($rs->RecordCount() > 0) {   // We found some courses
+
+                $courselist = array();
+                while (!$rs->EOF) {         // Make a nice little array of courses to process
                     $courselist[] = $rs->fields[0];
                     $rs->MoveNext();
                 }
 
-                foreach ($courselist as $coursefield) {
+                foreach ($courselist as $coursefield) {   /// Check the list of courses against existing
                     if ($course = get_record('course', $CFG->enrol_localcoursefield, $coursefield)) {
-                        $newstudent[$course->id] = 'database';             /// Add it to new list
-                        if (isset($user->student[$course->id])) {   /// We have it already
-                            unset($user->student[$course->id]);       /// Remove from old list
-                        } else {
-                            enrol_student($user->id, $course->id, 0, 0, 'database');   /// Enrol the student
+                    
+                        if (isset($existing[$course->id])) {   // Already enrolled so remove from checklist
+                            unset($existing[$course->id]);
+
+                        } else {  /// Not enrolled yet so let's do enrol them
+
+                            if ($context = get_context_instance(CONTEXT_COURSE, $course->id)) {  // Get the context
+                                $role = NULL;
+
+                            /// Check if a particular role has been forced by the plugin site-wide
+                                if ($CFG->enrol_db_defaultcourseroleid) {  
+                                    $role = get_record('role', 'id', $CFG->enrol_db_defaultcourseroleid);
+                                }
+
+                            /// Otherwise, we get the default course role (usually student)
+                                if (empty($role)) {
+                                    $role = get_default_course_role($course);
+                                }
+                                
+                            /// If we have a role now then assign it
+                                if ($role) {
+                                    role_assign($role->id, $user->id, 0, $context->id, 0, 0, 0, 'database');
+                                }
+                            }
+                        }
+                    }
+                }
+            } // We've processed all external courses found
+
+            if (!empty($existing)) {    
+
+                /// We have some courses left that we might need to unenrol from
+                /// Note: we only process enrolments that we (ie 'database' plugin) made
+
+                foreach ($existing as $course) {
+                    if ($context = get_context_instance(CONTEXT_COURSE, $course->id)) {  // Get the context
+                        if ($roles = get_user_roles($context, $user->id, false)) {       // User has some roles here
+                            foreach ($roles as $role) {
+                                if ($role->enrol == 'database') {                        // Yes! It's one of ours
+                                    role_unassign($role->id, $user->id, '', $context->id);
+                                }
+                            }
                         }
                     }
                 }
             }
-
-            if (!empty($user->student)) {    /// We have some courses left that we need to unenrol from
-                foreach ($user->student as $courseid => $value) {
-
-                    // unenrol only if it's a record pulled from external db
-                    if ($value == 'database') {
-                        unenrol_student($user->id, $courseid);       /// Unenrol the student
-                        unset($user->student[$course->id]);           /// Remove from old list
-                    } else {
-                        $newstudent[$courseid] = $value;
-                    }
-                }
-            }
-
-            $user->student = $newstudent;    /// Overwrite the array with the new one
         }
         $this->enrol_disconnect($enroldb);
     } // end if (enroldb=connect)
@@ -363,8 +388,13 @@ function process_config($config) {
         $config->enrol_db_template = '';
     }
     set_config('enrol_db_template', $config->enrol_db_template);
-    return true;
 
+    if (!isset($config->enrol_db_defaultcourseroleid)) {
+        $config->enrol_db_defaultcourseroleid = '';
+    }
+    set_config('enrol_db_defaultcourseroleid', $config->enrol_db_defaultcourseroleid);
+
+    return true;
 }
 
 // will create the moodle course from the template
