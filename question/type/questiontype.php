@@ -107,10 +107,10 @@ class default_questiontype {
             $question->image = $form->image;
         }
 
-        if (empty($form->commentarytext)) {
-            $question->commentarytext = '';
+        if (empty($form->generalfeedback)) {
+            $question->generalfeedback = '';
         } else {
-            $question->commentarytext = trim($form->commentarytext);
+            $question->generalfeedback = trim($form->generalfeedback);
         }
 
         if (empty($question->name)) {
@@ -535,9 +535,9 @@ class default_questiontype {
             $editlink = link_to_popup_window('/question/question.php?id='.$question->id, $stredit, $linktext, 450, 550, $stredit, '', true);
         }
 
-        $commentary = '';
-        if ($isgraded && $options->commentary) {
-            $commentary = $this->format_text($question->commentarytext,
+        $generalfeedback = '';
+        if ($isgraded && $options->generalfeedback) {
+            $generalfeedback = $this->format_text($question->generalfeedback,
                     $question->questiontextformat, $cmoptions);
         }
 
@@ -1069,7 +1069,7 @@ class default_questiontype {
 
     /**
      * Print the start of the question editing form, including the question category,
-     * questionname, questiontext, image, defaultgrade, penalty and commentary fields.
+     * questionname, questiontext, image, defaultgrade, penalty and generalfeedback fields.
      * 
      * Three of the fields, image, defaultgrade, penalty, are optional, and
      * can be removed from the from using the $hidefields argument. 

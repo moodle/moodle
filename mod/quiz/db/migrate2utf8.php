@@ -354,7 +354,7 @@ function migrate2utf8_question_questiontext($recordid){
     return $result;
 }
 
-function migrate2utf8_question_commentarytext($recordid){
+function migrate2utf8_question_generalfeedback($recordid){
     global $CFG, $globallang;
 
 /// Some trivial checks
@@ -393,11 +393,11 @@ function migrate2utf8_question_commentarytext($recordid){
     
 /// Convert the text
     if (($fromenc != 'utf-8') && ($fromenc != 'UTF-8')) {
-        $result = utfconvert($quizquestions->commentarytext, $fromenc);
+        $result = utfconvert($quizquestions->generalfeedback, $fromenc);
 
         $newquizquestion = new object;
         $newquizquestion->id = $recordid;
-        $newquizquestion->commentarytext = $result;
+        $newquizquestion->generalfeedback = $result;
         update_record('question',$newquizquestion);
     }
 /// And finally, just return the converted field

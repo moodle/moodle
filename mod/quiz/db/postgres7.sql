@@ -128,7 +128,7 @@ CREATE TABLE prefix_question (
   questiontext text NOT NULL default '',
   questiontextformat integer NOT NULL default '0',
   image varchar(255) NOT NULL default '',
-  commentarytext text NOT NULL default '',
+  generalfeedback text NOT NULL default '',
   defaultgrade integer NOT NULL default '1',
   penalty real NOT NULL default '0.1',
   qtype varchar(20) NOT NULL default '0',

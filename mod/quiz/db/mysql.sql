@@ -134,7 +134,7 @@ CREATE TABLE prefix_question (
   questiontext text NOT NULL,
   questiontextformat tinyint(2) NOT NULL default '0',
   image varchar(255) NOT NULL default '',
-  commentarytext text NOT NULL,
+  generalfeedback text NOT NULL,
   defaultgrade int(10) unsigned NOT NULL default '1',
   penalty float NOT NULL default '0.1',
   qtype varchar(20) NOT NULL default '',

@@ -1283,7 +1283,7 @@ body#message-messages {
 .que .grading,
 .que .comment,
 .que .commentlink,
-.que .commentary,
+.que .generalfeedback,
 .que .history {
   float: right;
   margin: 5px;

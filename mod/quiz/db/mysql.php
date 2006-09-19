@@ -1100,16 +1100,16 @@ function quiz_upgrade($oldversion) {
     }
 
     if ($oldversion < 2006081000) {
-        // Add a column to the the question table to store the question commentary.
+        // Add a column to the the question table to store the question general feedback.
         $success = $success && table_column('question', '', 'commentarytext', 'text', '', '', '', 'not null', 'image');
 
-        // Adjust the quiz review options so that commentary is displayed whenever feedback is.
+        // Adjust the quiz review options so that general feedback is displayed whenever feedback is.
         $success = $success && execute_sql('UPDATE ' . $CFG->prefix . 'quiz SET review = ' .
-                '(review & ~' . QUIZ_REVIEW_COMMENTARY . ') | ' . // Clear any existing junk from the commenary bits.
-                '((review & ' . QUIZ_REVIEW_FEEDBACK . ') * 8)'); // Set the commentary bits to be the same as the feedback ones.
+                '(review & ~' . QUIZ_REVIEW_GENERALFEEDBACK . ') | ' . // Clear any existing junk from the commenary bits.
+                '((review & ' . QUIZ_REVIEW_FEEDBACK . ') * 8)'); // Set the general feedback bits to be the same as the feedback ones.
 
         // Same adjustment to the defaults for new quizzes.
-        $success = $success && set_config('quiz_review', ($CFG->quiz_review & ~QUIZ_REVIEW_COMMENTARY) |
+        $success = $success && set_config('quiz_review', ($CFG->quiz_review & ~QUIZ_REVIEW_GENERALFEEDBACK) |
                 (($CFG->quiz_review & QUIZ_REVIEW_FEEDBACK) << 3));
     }
     
@@ -1137,7 +1137,11 @@ function quiz_upgrade($oldversion) {
     }
 
     if ($success && $oldversion < 2006091900) {
-        $success = $success && table_column('question_dataset_items', 'number', 'itemnumber', 'text', '', '', '');
+        $success = $success && table_column('question_dataset_items', 'number', 'itemnumber', 'integer');
+    }
+
+    if ($success && $oldversion < 2006091901) {
+        $success = $success && table_column('question', 'commentarytext', 'generalfeedback', 'text', '', '', '');
     }
 
     return $success;

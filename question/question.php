@@ -283,8 +283,8 @@
     if (!isset($question->defaultgrade)) {
         $question->defaultgrade = 1;
     }
-    if (empty($question->commentarytext)) {
-        $question->commentarytext = "";
+    if (empty($question->generalfeedback)) {
+        $question->generalfeedback = "";
     }
 
     // Set up some Richtext editing if necessary

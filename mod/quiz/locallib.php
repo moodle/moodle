@@ -619,8 +619,8 @@ function quiz_get_renderoptions($reviewoptions, $state) {
     // Show correct responses in readonly mode if the quiz allows it
     $options->correct_responses = $options->readonly && ($reviewoptions & QUIZ_REVIEW_ANSWERS & QUIZ_REVIEW_IMMEDIATELY);
 
-    // Show commentary if the question has been graded and the quiz allows it.
-    $options->commentary = question_state_is_graded($state) && ($reviewoptions & QUIZ_REVIEW_COMMENTARY & QUIZ_REVIEW_IMMEDIATELY);
+    // Show general feedback if the question has been graded and the quiz allows it.
+    $options->generalfeedback = question_state_is_graded($state) && ($reviewoptions & QUIZ_REVIEW_GENERALFEEDBACK & QUIZ_REVIEW_IMMEDIATELY);
 
     // Always show responses and scores
     $options->responses = true;
@@ -639,7 +639,7 @@ function quiz_get_renderoptions($reviewoptions, $state) {
  *          normally the context for the quiz module instance.
  * 
  * @return object an object with boolean fields responses, scores, feedback,
- *          correct_responses, solutions and commentary
+ *          correct_responses, solutions and general feedback
  */
 function quiz_get_reviewoptions($quiz, $attempt, $context=null) {
 
@@ -656,7 +656,7 @@ function quiz_get_reviewoptions($quiz, $attempt, $context=null) {
         $options->feedback = true;
         $options->correct_responses = true;
         $options->solutions = false;
-        $options->commentary = true;
+        $options->generalfeedback = true;
         
         // Show a link to the comment box only for closed attempts
         if ($attempt->timefinish) {
@@ -675,7 +675,7 @@ function quiz_get_reviewoptions($quiz, $attempt, $context=null) {
         $options->feedback = ($quiz->review & $quiz_state_mask & QUIZ_REVIEW_FEEDBACK) ? 1 : 0;
         $options->correct_responses = ($quiz->review & $quiz_state_mask & QUIZ_REVIEW_ANSWERS) ? 1 : 0;
         $options->solutions = ($quiz->review & $quiz_state_mask & QUIZ_REVIEW_SOLUTIONS) ? 1 : 0;
-        $options->commentary = ($quiz->review & $quiz_state_mask & QUIZ_REVIEW_COMMENTARY) ? 1 : 0;
+        $options->generalfeedback = ($quiz->review & $quiz_state_mask & QUIZ_REVIEW_GENERALFEEDBACK) ? 1 : 0;
     }
     
     return $options;

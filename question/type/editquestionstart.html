@@ -100,19 +100,19 @@
   ?>
 
   <tr valign="top">
-    <td align="right"><b><?php print_string("commentary", "quiz") ?>:</b>
+    <td align="right"><b><?php print_string("generalfeedback", "quiz") ?>:</b>
       <br /><br /><br />
       <?php
-      helpbutton("commentary", get_string("commentary", "quiz"), "quiz", true, true);
+      helpbutton("generalfeedback", get_string("generalfeedback", "quiz"), "quiz", true, true);
       ?>
     </td>
     <td align="left">
       <?php
-      if (isset($err["commentarytext"])) {
-        formerr($err["commentarytext"]);
+      if (isset($err["generalfeedback"])) {
+        formerr($err["generalfeedback"]);
         echo "<br />";
       }
-      print_textarea(false, 10, 60, 630, 200, "commentarytext", $question->commentarytext);
+      print_textarea(false, 10, 60, 630, 200, "generalfeedback", $question->generalfeedback);
       ?>
     </td>
   </tr>

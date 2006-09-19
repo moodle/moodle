@@ -16,7 +16,7 @@
       <td align="center"><?php print_string('feedback', 'quiz') ?></td>
       <td align="center"><?php print_string('answers', 'quiz') ?></td>
 <!--      <td align="center"><?php print_string('solutions', 'quiz') ?></td>-->
-      <td align="center"><?php print_string('commentary', 'quiz') ?></td>
+      <td align="center"><?php print_string('generalfeedback', 'quiz') ?></td>
       <td>
         <?php helpbutton("review2", get_string("allowreview","quiz"), "quiz"); ?>
       </td>
@@ -40,7 +40,7 @@
       </td>
 -->
       <td align="center">
-        <input type="checkbox" name="commentaryimmediately" value="Yes" <?php echo ($form->review & QUIZ_REVIEW_COMMENTARY & QUIZ_REVIEW_IMMEDIATELY) ? 'checked="checked"' : '' ?> />
+        <input type="checkbox" name="generalfeedbackimmediately" value="Yes" <?php echo ($form->review & QUIZ_REVIEW_GENERALFEEDBACK & QUIZ_REVIEW_IMMEDIATELY) ? 'checked="checked"' : '' ?> />
       </td>
     </tr>
     <tr>
@@ -62,7 +62,7 @@
       </td>
 -->
       <td align="center">
-        <input type="checkbox" name="commentaryopen" value="Yes" <?php echo ($form->review & QUIZ_REVIEW_COMMENTARY & QUIZ_REVIEW_OPEN) ? 'checked="checked"' : '' ?> />
+        <input type="checkbox" name="generalfeedbackopen" value="Yes" <?php echo ($form->review & QUIZ_REVIEW_GENERALFEEDBACK & QUIZ_REVIEW_OPEN) ? 'checked="checked"' : '' ?> />
       </td>
     </tr>
     <tr>
@@ -84,7 +84,7 @@
       </td>
 -->
       <td align="center">
-        <input type="checkbox" name="commentaryclosed" value="Yes" <?php echo ($form->review & QUIZ_REVIEW_COMMENTARY & QUIZ_REVIEW_CLOSED) ? 'checked="checked"' : '' ?> />
+        <input type="checkbox" name="generalfeedbackclosed" value="Yes" <?php echo ($form->review & QUIZ_REVIEW_GENERALFEEDBACK & QUIZ_REVIEW_CLOSED) ? 'checked="checked"' : '' ?> />
       </td>
     </tr>
   </table>

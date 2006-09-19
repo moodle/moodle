@@ -142,7 +142,7 @@
                 fwrite ($bf,full_tag("QUESTIONTEXT",6,false,$question->questiontext));
                 fwrite ($bf,full_tag("QUESTIONTEXTFORMAT",6,false,$question->questiontextformat));
                 fwrite ($bf,full_tag("IMAGE",6,false,$question->image));
-                fwrite ($bf,full_tag("COMMENTARYTEXT",6,false,$question->commentarytext));
+                fwrite ($bf,full_tag("GENERALFEEDBACK",6,false,$question->generalfeedback));
                 fwrite ($bf,full_tag("DEFAULTGRADE",6,false,$question->defaultgrade));
                 fwrite ($bf,full_tag("PENALTY",6,false,$question->penalty));
                 fwrite ($bf,full_tag("QTYPE",6,false,$question->qtype));

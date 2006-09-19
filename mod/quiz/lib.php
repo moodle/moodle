@@ -40,7 +40,7 @@ define('QUIZ_REVIEW_ANSWERS',     8*0x1041); // Show correct answers
 // Some handling of worked solutions is already in the code but not yet fully supported
 // and not switched on in the user interface.
 define('QUIZ_REVIEW_SOLUTIONS',  16*0x1041); // Show solutions
-define('QUIZ_REVIEW_COMMENTARY', 32*0x1041); // Show commentary
+define('QUIZ_REVIEW_GENERALFEEDBACK', 32*0x1041); // Show general feedback
 /**#@-*/
 
 /**
@@ -625,16 +625,16 @@ function quiz_process_options(&$quiz) {
         unset($quiz->solutionsclosed);
     }
 
-    if (isset($quiz->commentaryimmediately)) {
-        $review += (QUIZ_REVIEW_COMMENTARY & QUIZ_REVIEW_IMMEDIATELY);
+    if (isset($quiz->generalfeedbackimmediately)) {
+        $review += (QUIZ_REVIEW_GENERALFEEDBACK & QUIZ_REVIEW_IMMEDIATELY);
         unset($quiz->solutionsimmediately);
     }
-    if (isset($quiz->commentaryopen)) {
-        $review += (QUIZ_REVIEW_COMMENTARY & QUIZ_REVIEW_OPEN);
+    if (isset($quiz->generalfeedbackopen)) {
+        $review += (QUIZ_REVIEW_GENERALFEEDBACK & QUIZ_REVIEW_OPEN);
         unset($quiz->solutionsopen);
     }
-    if (isset($quiz->commentaryclosed)) {
-        $review += (QUIZ_REVIEW_COMMENTARY & QUIZ_REVIEW_CLOSED);
+    if (isset($quiz->generalfeedbackclosed)) {
+        $review += (QUIZ_REVIEW_GENERALFEEDBACK & QUIZ_REVIEW_CLOSED);
         unset($quiz->solutionsclosed);
     }
 
