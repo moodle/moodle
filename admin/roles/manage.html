@@ -55,7 +55,7 @@ foreach ($capabilities as $capability) {
             if (RISK_MANAGETRUST & (int)$capability->riskbitmask) {
                 echo "T";
             }
-            if (RISK_ADMIN & (int)$capability->riskbitmask) {
+            if (RISK_CONFIG & (int)$capability->riskbitmask) {
                 echo "A";
             }
             if (RISK_XSS & (int)$capability->riskbitmask) {

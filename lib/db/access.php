@@ -34,7 +34,7 @@
 $moodle_capabilities = array(
     
     'moodle/site:doanything' => array(
-        'riskbitmask' => RISK_SPAM | RISK_PERSONAL | RISK_XSS | RISK_ADMIN,
+        'riskbitmask' => RISK_SPAM | RISK_PERSONAL | RISK_XSS | RISK_CONFIG,
         'captype' => 'admin',
         'contextlevel' => CONTEXT_SYSTEM
     ),
@@ -74,7 +74,7 @@ $moodle_capabilities = array(
     
     
     'moodle/legacy:admin' => array(
-        'riskbitmask' => RISK_SPAM | RISK_PERSONAL | RISK_XSS | RISK_ADMIN,
+        'riskbitmask' => RISK_SPAM | RISK_PERSONAL | RISK_XSS | RISK_CONFIG,
         'captype' => 'legacy',
         'contextlevel' => CONTEXT_SYSTEM
     ),
@@ -82,7 +82,7 @@ $moodle_capabilities = array(
     
     'moodle/site:config' => array(
     
-        'riskbitmask' => RISK_SPAM | RISK_PERSONAL | RISK_XSS | RISK_ADMIN,
+        'riskbitmask' => RISK_SPAM | RISK_PERSONAL | RISK_XSS | RISK_CONFIG,
 
         'captype' => 'write',
         'contextlevel' => CONTEXT_SYSTEM,

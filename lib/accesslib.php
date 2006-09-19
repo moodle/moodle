@@ -32,7 +32,7 @@ define('CONTEXT_BLOCK', 80);
 
 // capability risks - see http://docs.moodle.org/en/Hardening_new_Roles_system
 define('RISK_MANAGETRUST', 0x0001);
-define('RISK_ADMIN',       0x0002);
+define('RISK_CONFIG',      0x0002);
 define('RISK_XSS',         0x0004);
 define('RISK_PERSONAL',    0x0008);
 define('RISK_SPAM',        0x0010);
