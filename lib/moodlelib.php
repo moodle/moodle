@@ -1855,7 +1855,7 @@ function sync_metacourse($course) {
     }
     
     // always keep metacourse managers
-    if ($users = get_users_by_capability($context, 'moodle/course:managemetacourses')) {
+    if ($users = get_users_by_capability($context, 'moodle/course:managemetacourse')) {
         $managers = array_keys($users);
     } else {
         $managers = array();

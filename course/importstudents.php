@@ -25,7 +25,7 @@
 
     require_login($course->id);
     $context = get_context_instance(CONTEXT_COURSE, $course->id);
-    require_capability('moodle/course:managemetacourses', $context);
+    require_capability('moodle/course:managemetacourse', $context);
 
     if (!$course->metacourse) {
         redirect("$CFG->wwwroot/course/view.php?id=$course->id");

@@ -614,7 +614,7 @@ $moodle_capabilities = array(
         )
     ),
     
-    'moodle/course:managemetacourses' => array(
+    'moodle/course:managemetacourse' => array(
     
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,

@@ -34,7 +34,7 @@
             }
 
         } else {
-            $managers = count(get_users_by_capability($context, 'moodle/course:managemetacourses'));
+            $managers = count(get_users_by_capability($context, 'moodle/course:managemetacourse'));
             $participants = count(get_users_by_capability($context, 'moodle/course:view'));
             if ($participants > $managers) {
                 $disable_meta = get_string('metaalreadyhasenrolments');
@@ -147,7 +147,7 @@
                     add_to_log(SITEID, "course", "new", "view.php?id=$newcourseid", "$form->fullname (ID $newcourseid)")        ;
                     $context = get_context_instance(CONTEXT_COURSE, $newcourseid);
 
-                    if ($form->metacourse and has_capability('moodle/course:managemetacourses', $context)) { // Redirect users with metacourse capability to student import
+                    if ($form->metacourse and has_capability('moodle/course:managemetacourse', $context)) { // Redirect users with metacourse capability to student import
                         redirect($CFG->wwwroot."/course/importstudents.php?id=$newcourseid");
 
                     } else if (has_capability('moodle/role:assign', $context)) { // Redirect users with assign capability to assign users to different roles

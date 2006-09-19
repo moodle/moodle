@@ -65,7 +65,7 @@ class block_admin extends block_list {
 
     /// Manage metacourses
         if ($course->metacourse) {
-            if (has_capability('moodle/course:managemetacourses', $context)) { 
+            if (has_capability('moodle/course:managemetacourse', $context)) { 
                 $strchildcourses = get_string('childcourses');
                 $this->content->items[]='<a href="importstudents.php?id='.$this->instance->pageid.'">'.$strchildcourses.'</a>';
                 $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/course.gif" alt="" />';
