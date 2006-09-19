@@ -5,10 +5,8 @@
 if ($userid) {
     print ('<input type="hidden" name="userid" value="'.$userid.'"/>');
 }
-if ($courseid) {
-    print ('<input type="hidden" name="courseid" value="'.$courseid.'" />');
-}
 ?>
+<input type="hidden" name="courseid" value="<?php p($courseid) ?>" />
 <input type="hidden" name="sesskey" value="<?php p(sesskey()) ?>" />
 <input type="hidden" name="contextid" value="<?php p($contextid) ?>" />
 <input type="hidden" name="roleid" value="<?php p($roleid) ?>" />

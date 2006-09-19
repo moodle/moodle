@@ -20,20 +20,34 @@
     $userid         = optional_param('userid', 0, PARAM_INT); // needed for user tabs
     $courseid       = optional_param('courseid', 0, PARAM_INT); // needed for user tabs
 
-    if ($courseid) {
-        $course = get_record('course', 'id', $courseid);  
-    } else {
-        $course = $SITE;
-    }
-    
+    $errors = array();
+
     if (! $context = get_context_instance_by_id($contextid)) {
         error("Context ID was incorrect (can't find it)");
     }
 
+
+    $inmeta = 0;
+    if ($context->aggregatelevel == CONTEXT_COURSE) {
+        $courseid = $context->instanceid;
+        if ($course = get_record('course', 'id', $courseid)) {
+            $inmeta = $course->metacourse;
+        } else {
+            error('Invalid course id');
+        }
+    } else if (!empty($courseid)){ // we need this for user tabs in user context
+        if (!$course = get_record('course', 'id', $courseid)) {
+            error('Invalid course id');
+        }
+    } else {
+        $courseid = SITEID;
+        $course = get_site();
+    }
+
+    require_login($courseid);
     require_capability('moodle/role:assign', $context);
 
     $assignableroles = get_assignable_roles($context);
-    
 
 /// Get some language strings
 
@@ -45,7 +59,7 @@
     $strcurrentcontext = get_string('currentcontext', 'role');
     $strsearch = get_string('search');
     $strshowall = get_string('showall');
-    $strparticipants = get_string("participants");
+    $strparticipants = get_string('participants');
 
     
 
@@ -99,8 +113,23 @@
 
             foreach ($frm->addselect as $adduser) {
                 $adduser = clean_param($adduser, PARAM_INT);
-                if (! role_assign($roleid, $adduser, 0, $context->id, $timestart, $timeend, $hidden)) {
-                    error("Could not add user with id $adduser to this role!");
+                $allow = true;
+                if ($inmeta) {
+                    if (has_capability('moodle/course:managemetacourse', $context, $adduser)) {
+                        //ok
+                    } else {
+                        $managerroles = get_roles_with_capability('moodle/course:managemetacourse', CAP_ALLOW, $context);
+                        if (!empty($managerroles) and !array_key_exists($roleid, $managerroles)) {
+                            $erruser = get_record('user', 'id', $adduser, '','','','', 'id, firstname, lastname');
+                            $errors[] = get_string('metaassignerror', 'role', fullname($erruser));
+                            $allow = false;
+                        }
+                    }
+                }
+                if ($allow) {
+                    if (! role_assign($roleid, $adduser, 0, $context->id, $timestart, $timeend, $hidden)) {
+                        $errors[] = "Could not add user with id $adduser to this role!";
+                    }
                 }
             }
 
@@ -109,7 +138,15 @@
             foreach ($frm->removeselect as $removeuser) {
                 $removeuser = clean_param($removeuser, PARAM_INT);
                 if (! role_unassign($roleid, $removeuser, 0, $context->id)) {
-                    error("Could not remove user with id $removeuser from this role!");
+                    $errors[] = "Could not remove user with id $removeuser from this role!";
+                } else if ($inmeta) {
+                    sync_metacourse($courseid);
+                    $newroles = get_user_roles($context, $removeuser, false);
+                    if (!empty($newroles) and !array_key_exists($roleid, $newroles)) {
+                        $erruser = get_record('user', 'id', $removeuser, '','','','', 'id, firstname, lastname');
+                        $errors[] = get_string('metaunassignerror', 'role', fullname($erruser));
+                        $allow = false;
+                    }
                 }
             }
 
@@ -162,9 +199,7 @@
         if ($userid) {
             echo '<input type="hidden" name="userid" value="'.$userid.'" />';
         }
-        if ($courseid) {
-            echo '<input type="hidden" name="courseid" value="'.$courseid.'" />';
-        }
+        echo '<input type="hidden" name="courseid" value="'.$courseid.'" />';
         echo '<input type="hidden" name="contextid" value="'.$context->id.'" />'.$strroletoassign.': ';
         choose_from_menu ($assignableroles, 'roleid', $roleid, get_string('listallroles', 'role'), $script='rolesform.submit()');
         echo '</div></form>';
@@ -173,8 +208,20 @@
         include('assign.html');
         print_simple_box_end();
 
+        if (!empty($errors)) {
+            print_simple_box_start("center");
+            foreach ($errors as $error) {
+                notify($error);
+            }
+            print_simple_box_end();
+        }
+
     } else {   // Print overview table
-       
+
+        // sync metacourse enrolments if needed
+        if ($inmeta) {
+            sync_metacourse($course);
+        }
         $userparam = (!empty($userid)) ? '&amp;userid='.$userid : '';
 
         $table->tablealign = 'center';
