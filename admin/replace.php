@@ -49,6 +49,10 @@ foreach ($tables as $table) {
         }
     }
 }
+
+/// Clear course cache which might be corrupted now
+execute_sql("UPDATE ".$CFG->prefix."course SET modinfo = '' WHERE id <> ".SITEID);
+
 print_simple_box_end();
 
 print_continue('index.php');
