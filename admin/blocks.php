@@ -133,7 +133,7 @@
 
     foreach ($blocks as $block) {
         if(!block_is_compatible($block->name)) {
-            notify('Block '. $block->name .' is not compatible with the current version of Mooodle and needs to be updated by a programmer.');
+            notify('Block '. $block->name .' is not compatible with the current version of Moodle and needs to be updated by a programmer.');
             $incompatible[] = $block;
             continue;
         }
