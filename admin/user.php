@@ -185,9 +185,9 @@
                 $updateuser->idnumber = "";               // Clear this field to free it up
                 $updateuser->timemodified = time();
                 if (update_record("user", $updateuser)) {
-                    unenrol_student($user->id);  // From all courses
-                    remove_teacher($user->id);   // From all courses
-                    remove_admin($user->id);
+                    // not sure if this is needed. unenrol_student($user->id);  // From all courses
+                    delete_records('role_assignments', 'userid', $user->id); // unassign all roles
+                    // remove all context assigned on this user?              
                     notify(get_string("deletedactivity", "", fullname($user, true)) );
                 } else {
                     notify(get_string("deletednot", "", fullname($user, true)));

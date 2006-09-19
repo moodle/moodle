@@ -2665,8 +2665,8 @@ function remove_course_contents($courseid, $showfeedback=true) {
     // This array stores the tables that need to be cleared, as
     // table_name => column_name that contains the course id.
     $tablestoclear = array(
-        'user_students' => 'course', // Delete any user stuff
-        'user_teachers' => 'course',
+        //'user_students' => 'course', // Delete any user stuff
+        //'user_teachers' => 'course',
         'event' => 'courseid', // Delete events
         'log' => 'course', // Delete logs
         'course_sections' => 'course', // Delete any course stuff
@@ -2788,6 +2788,7 @@ function reset_course_userdata($data, $showfeedback=true) {
         } else {
             $result = false;
         }
+
         /// Delete group members (but keep the groups)
         if ($groups = get_records('groups', 'courseid', $data->courseid)) {
             foreach ($groups as $group) {

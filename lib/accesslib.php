@@ -2546,4 +2546,28 @@ function get_role_users($roleid, $context, $parent=false) {
     return get_records_sql($SQL);
 }
 
+/** 
+ * This function gets the list of courses that this user has a particular capability in
+ * This is not the most efficient way of doing this
+ * @param string capability
+ * @param int $userid
+ * @return array
+ */
+function get_user_capability_course($capability, $userid='') {
+    
+    global $USER;
+    if (!$userid) {
+        $userid = $USER->id;  
+    }
+    
+    $usercourses = array();
+    $courses = get_records_select('course', '', '', 'id, id');
+    
+    foreach ($courses as $course) {
+        if (has_capability($capability, get_context_capability(CONTEXT_COURSE, $course->id))) {
+            $usercourses[] = $course;
+        }
+    }
+    return $usercourses;  
+}
 ?>

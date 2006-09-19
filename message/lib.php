@@ -232,12 +232,12 @@ function message_print_search() {
         message_print_search_results($frm);
         
     } else {
-        if ($teachers = get_records('user_teachers', 'userid', $USER->id, '', 'id, course')) {
-        
+        // find all courses this use has readallmessages capabilities in
+        if ($teachers = get_user_capability_course('moodle/site:readallmessages')) {
             $courses = get_courses('all', 'c.sortorder ASC', 'c.id, c.shortname');
             $cs = '<select name="courseselect">';
             foreach ($teachers as $tcourse) {
-                $cs .= "<option value=\"$tcourse->course\">".$courses[$tcourse->course]->shortname."</option>\n";
+                $cs .= "<option value=\"$tcourse->course\">".$courses[$tcourse->id]->shortname."</option>\n";
             }
             $cs .= '</select>';
         }
@@ -701,24 +701,20 @@ function message_search_users($courseid, $searchtext, $sort='', $exceptions='') 
                           $except $order");
     } else {
 
+        $context = get_context_instance(CONTEXT_COURSE, $courseid);
+        $contextlists = get_related_contexts_string($context);
+        
+        // everyone who has a role assignement in this course or higher
+        $users = get_records_sql("SELECT $fields
+                                 FROM {$CFG->prefix}user u,
+                                      {$CFG->prefix}role_assignments ra
+                                 WHERE $select 
+                                       AND ra.contextid $contextlists
+                                       AND u.id = ra.userid
+                                       AND ($fullname $LIKE '%$searchtext%')
+                                       $except $order");
 
-        if (!$teachers = get_records_sql("SELECT $fields
-                      FROM {$CFG->prefix}user u,
-                           {$CFG->prefix}user_teachers s
-                      WHERE $select AND s.course = '$courseid' AND s.userid = u.id
-                          AND ($fullname $LIKE '%$searchtext%')
-                          $except $order")) {
-            $teachers = array();
-        }
-        if (!$students = get_records_sql("SELECT $fields
-                      FROM {$CFG->prefix}user u,
-                           {$CFG->prefix}user_students s
-                      WHERE $select AND s.course = '$courseid' AND s.userid = u.id
-                          AND ($fullname $LIKE '%$searchtext%')
-                          $except $order")) {
-            $students = array();
-        }
-        return $teachers + $students;
+        return $users;
     }
 }
 

@@ -37,7 +37,7 @@
 
 
 
-      
+
 /**
  * Ensure that a variable is set
  *
@@ -56,7 +56,6 @@ function require_variable($var) {
     }
 }
 
-
 /**
  * Ensure that a variable is set
  *
@@ -74,8 +73,6 @@ function optional_variable(&$var, $default=0) {
         $var = $default;
     }
 }
-
-
 
 /**
  * Determines if a user an admin
@@ -192,7 +189,6 @@ function isteacherinanycourse($userid=0, $includeadmin=true) {
     return false;
 }
 
-
 /**
  * Determines if a user is allowed to edit a given course
  *
@@ -282,8 +278,6 @@ function isguest($userid=0) {
     return has_capability('moodle/legacy:guest', $context, $userid, false);
 }
 
-
-
 /**
  * Enrols (or re-enrols) a student in a given course
  *
@@ -318,7 +312,6 @@ function enrol_student($userid, $courseid, $timestart=0, $timeend=0, $enrol='man
 
     return role_assign($role->id, $user->id, 0, $context->id, $timestart, $timeend, 0, $enrol);
 }
-
 
 /**
  * Unenrols a student from a given course
@@ -681,7 +674,6 @@ function get_course_students($courseid, $sort='ul.timeaccess', $dir='', $page=''
     */
 }
 
-
 /**
  * Counts the students in a given course (or site), or a subset of them
  *
@@ -701,7 +693,6 @@ function count_course_students($course, $search='', $firstinitial='', $lastiniti
     }
     return 0;
 }
-
 
 /**
  * Returns list of all teachers in this course
@@ -753,8 +744,6 @@ function get_course_users($courseid, $sort='ul.timeaccess DESC', $exceptions='',
     return get_users_by_capability($context, 'moodle/course:view', 'u.*, ul.timeaccess as lastaccess', $sort, '','','',$exceptions);
 
 }
-
-
 
 /**
  * Returns an array of user objects

@@ -87,7 +87,8 @@
             $hotpot_ids = $hotpot->id;
             break;
         case 'all' :
-            $records = get_records_select_menu('user_teachers', "userid='$USER->id'", 'course', 'id, course');
+            $records = get_user_capability_course('mod/hotpot:viewreport');
+            //$records = get_records_select_menu('user_teachers', "userid='$USER->id'", 'course', 'id, course');
             $course_ids = join(',', array_values($records));
 
             $records = get_records_select_menu('hotpot', "reference='$hotpot->reference'", 'reference', 'id, reference');
@@ -99,6 +100,7 @@
     $users = array();
     switch ($formdata['reportusers']) {
         case 'all':
+            /*
             $admin_ids = get_records_select_menu('user_admins');
             if (is_array($admin_ids)) {
                 $users = array_merge($users, $admin_ids);
@@ -115,6 +117,7 @@
             if (is_array($guest_id)) {
                 $users = array_merge($users, $guest_id);
             }
+            */
             // add students next
 
         case 'students':

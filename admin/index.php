@@ -98,7 +98,7 @@
         $maintables = true;
         $mtables = array("config", "course", "course_categories", "course_modules",
                          "course_sections", "log", "log_display", "modules",
-                         "user", "user_admins", "user_students", "user_teachers");
+                         "user");
         foreach ($mtables as $mtable) {
             if (!in_array($CFG->prefix.$mtable, $tables)) {
                 $maintables = false;

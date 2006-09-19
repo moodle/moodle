@@ -706,16 +706,6 @@ function get_my_courses($userid, $sort='visible DESC,sortorder ASC') {
 
     return get_records_list('course', 'id', $courseids, $sort);
 */
-//  The following is correct but VERY slow with large datasets
-//
-//    return get_records_sql("SELECT c.*
-//                              FROM {$CFG->prefix}course c,
-//                                   {$CFG->prefix}user_students s,
-//                                   {$CFG->prefix}user_teachers t
-//                             WHERE (s.userid = '$userid' AND s.course = c.id)
-//                                OR (t.userid = '$userid' AND t.course = c.id)
-//                             GROUP BY c.id
-//                             ORDER BY $sort");
 }
 
 

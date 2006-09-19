@@ -18,10 +18,10 @@
  
     $tcourseids = '';
  
-    if ($teachers = get_records_select('user_teachers', "userid = $USER->id AND editall = 1",'','id,course')) {
+    if ($teachers = get_user_capability_course('moodle/course:edit')) {
         foreach ($teachers as $teacher) {
-            if ($teacher->course != $course->id && $teacher->course != SITEID){
-                $tcourseids .= $teacher->course.',';
+            if ($teacher->id != $course->id && $teacher->id != SITEID){
+                $tcourseids .= $teacher->id',';
             }
         }
     }

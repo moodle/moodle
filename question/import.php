@@ -188,15 +188,14 @@
             error("Could not find any question categories!"); // Something is really wrong
         }
     } else { // select only the categories to which the teacher has write access
-        $sql = "SELECT c.*
-              FROM {$CFG->prefix}question_categories AS c,
-                   {$CFG->prefix}user_teachers AS t
-             WHERE t.userid = '$USER->id'
-               AND t.course = c.course
-               AND (c.course = '$course->id' 
-                   OR (c.publish = '1' AND t.editall = '1'))
-          ORDER BY c.parent ASC, c.sortorder ASC, c.name ASC";
-        if (!$categories = get_records_sql($sql)) {
+        $cats = get_records('question_categories');
+        $categories = array();
+        foreach ($cats as $cat) {
+            if (has_capability('moodle/question:managecateory', get_context_instance(CONTEXT_COURSE, $cat->course))) {
+                $categories[] = $cat;
+            }      
+        }
+        if (empty($categories)) {
             error("Could not find any question categories!");
         }
     }
