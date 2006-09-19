@@ -102,7 +102,7 @@
                 // Update with the new data
                 if (update_record('course', $form)) {
                     add_to_log($course->id, "course", "update", "edit.php?id=$id", "");
-                    if (isadmin()) {
+                    if (has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
                         $course->restrictmodules = $form->restrictmodules;
                         update_restricted_mods($course,$allowedmods);
                     }
@@ -133,7 +133,7 @@
                     $page = page_create_object(PAGE_COURSE_VIEW, $newcourseid);
                     blocks_repopulate_page($page); // Return value not checked because you can always edit later
 
-                    if (isadmin()) {
+                    if (has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
                         $course = get_record("course","id",$newcourseid);
                         update_restricted_mods($course,$allowedmods);
                     }

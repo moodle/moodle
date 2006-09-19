@@ -68,7 +68,7 @@ function glossary_add_instance($glossary) {
 
     if ( !isset($glossary->globalglossary) ) {
         $glossary->globalglossary = 0;
-    } elseif ( !isadmin() ) {
+    } elseif (!has_capability('mod/glossary:manageentries', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
         $glossary->globalglossary = 0;
     }
 
@@ -92,8 +92,9 @@ function glossary_update_instance($glossary) {
 /// Given an object containing all the necessary data,
 /// (defined by the form in mod.html) this function
 /// will update an existing instance with new data.
-global $CFG;
-    if ( !isadmin() ) {
+    global $CFG;
+    
+    if (!has_capability('mod/glossary:manageentries', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
         unset($glossary->globalglossary);
     }
     if (empty($glossary->globalglossary)) {
@@ -498,7 +499,7 @@ function glossary_get_entries_search($concept, $courseid) {
 
     //Check if the user is an admin 
     $bypassadmin = 1; //This means NO (by default)
-    if (isadmin()) {
+    if (has_capability('moodle/course:viewhiddenactivities', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
         $bypassadmin = 0; //This means YES
     } 
 

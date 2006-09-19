@@ -39,17 +39,11 @@
             // modes, set page to 0.
             $page = 0;
         }
-        $creatorediting = !empty($USER->categoryediting);
-        $adminediting = (isadmin() and $creatorediting);
-
-    } else {
-        $adminediting = false;
-        $creatorediting = false;
-    }
+    } 
 
 /// Editing functions
 
-    if ($adminediting) {
+    if (has_capablity('moodle/course:visibility', get_context_instance(CONTEXT_SITE, SITEID))) {
 
     /// Hide or show a course
 
@@ -70,7 +64,7 @@
 
     }
 
-    if ($adminediting && $perpage != 99999) {
+    if (has_capability('moodle/course:create', get_context_instance(CONTEXT_SYSTEM, SITEID)) && $perpage != 99999) {
         $perpage = 30;
     }
 
@@ -146,7 +140,7 @@
             echo "</p></center>";
         }
 
-        if (!$adminediting) {
+        if (!has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
             foreach ($courses as $course) {
                 $course->fullname = highlight("$search", $course->fullname);
                 $course->summary = highlight("$search", $course->summary);

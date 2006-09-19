@@ -1527,7 +1527,7 @@ HTMLArea.prototype._insertImage = function(image) {
         f_height : image.height
     };
     this._popupDialog("<?php
-    if(!empty($id) and isteacher($id)) {
+    if(!empty($id) and has_capability('moodle/course:managefiles', get_context_instance(CONTEXT_COURSE, $id))) {
         echo "insert_image.php?id=$id";
     } else {
         echo "insert_image_std.php?id=$id";

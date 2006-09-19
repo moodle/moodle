@@ -39,10 +39,7 @@
     }
 
     require_login($course->id, false, $cm);
-
-    if (!isteacher($course->id)) {
-        error("You are not allowed to use this script");
-    }
+    require_capability('mod/scorm:viewgrades', get_context_instance(COTNEXT_MODULE, $cm->id));
 
     add_to_log($course->id, "scorm", "report", "cofficientsetting.php?id=$cm->id", "$scorm->id");
 

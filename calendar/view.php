@@ -554,7 +554,7 @@ function calendar_course_filter_selector($getvars = '') {
         return '';
     }
 
-    if (isadmin() && !empty($CFG->calendar_adminseesall)) {
+    if (has_capability('moodle/calendar:manageentries', get_context_instance(CONTEXT_SYSTEM, SITEID)) && !empty($CFG->calendar_adminseesall)) {
         $courses = get_courses('all', 'c.shortname','c.id,c.shortname');
     } else {
         $courses = get_my_courses($USER->id, 'shortname');

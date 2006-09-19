@@ -101,7 +101,7 @@ if (!isset($form->assesstimefinish)) {
 
 <!-- More rows go in here... -->
 <?php
-if (isadmin() ) {
+if (has_capability('mod/glossary:manageentries', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
 ?>
 <tr valign="top">
     <td align="right"><b><?php echo get_string("isglobal", "glossary") ?>:</b></td>

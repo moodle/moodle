@@ -1533,7 +1533,7 @@ function require_login($courseid=0, $autologinguest=true, $cm=null) {
     }
 
 /// If the site is currently under maintenance, then print a message
-    if (!isadmin()) {
+    if (!has_capability('moodle/site:config',get_context_instance(CONTEXT_SYSTEM, SITEID))) {
         if (file_exists($CFG->dataroot.'/'.SITEID.'/maintenance.html')) {
             print_maintenance_message();
             exit;

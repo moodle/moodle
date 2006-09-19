@@ -1113,7 +1113,8 @@ function calendar_set_filters(&$courses, &$group, &$user, $courseeventsfrom = NU
             $groupcourses = array_keys($groupeventsfrom);
         }
 
-        if(isadmin() && !empty($CFG->calendar_adminseesall)) {
+        // XXX TODO: not sure how to replace $CFG->calendar_adminseesall
+        if(has_capability('moodle/calendar:manageentries', get_context_instance(CONTEXT_SYSTEM, SITEID)) && !empty($CFG->calendar_adminseesall)) {
             $group = true;
         }
         else {
@@ -1204,7 +1205,7 @@ function calendar_get_default_courses($ignoreref = false) {
     }
 
     $courses = array();
-    if(isadmin($USER->id)) {
+    if(has_capability('moodle/calendar:manageentries', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
         if(!empty($CFG->calendar_adminseesall)) {
             $courses = get_records_sql('SELECT id, 1 FROM '.$CFG->prefix.'course');
             return $courses;

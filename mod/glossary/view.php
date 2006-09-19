@@ -429,7 +429,8 @@
     echo '<br />';
     echo '</center>';
     glossary_print_tabbed_table_end();
-    if ( !empty($debug) and isadmin() ) {
+    
+    if (debugging() and has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
         echo '<p>';
         print_simple_box("$sqlselect<br /> $sqlfrom<br /> $sqlwhere<br /> $sqlorderby<br /> $sqllimit","center","85%");
 

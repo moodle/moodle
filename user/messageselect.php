@@ -16,9 +16,8 @@
         error("Invalid course id");
     }
 
-    if (!isteacher($course->id)) {
-        error("Only teachers can use this page");
-    }
+    require_login();
+    require_capability('moodle/site:readallmessages', get_context_instance(CONTEXT_COURSE, $id));
 
     if (empty($SESSION->emailto)) {
         $SESSION->emailto = array();
