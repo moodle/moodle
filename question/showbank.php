@@ -171,11 +171,9 @@ if (empty($SESSION->questioncat) or !count_records_select("question_categories",
         print_spacer(5,1);
     }
     
-    if (has_capability('moodle/question:manage', $context)) {
-        // continues with list of questions
-        print_simple_box_start("center", "100%");
-        question_list($course, $SESSION->questioncat, isset($modform->instance) ? $modform->instance : 0, $SESSION->questionrecurse, $page, $perpage, $SESSION->questionshowhidden, $sortorder);
-        print_simple_box_end();
-    }
+    // continues with list of questions
+    print_simple_box_start("center", "100%");
+    question_list($course, $SESSION->questioncat, isset($modform->instance) ? $modform->instance : 0, $SESSION->questionrecurse, $page, $perpage, $SESSION->questionshowhidden, $sortorder);
+    print_simple_box_end();
 
 ?>
