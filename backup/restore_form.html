@@ -169,7 +169,7 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
     echo "<td align=\"right\"><b>";
     echo get_string("restoreto").":</b>";
     echo "</td><td colspan=\"3\">";
-    if (!has_capability('moodle/course:create', get_context_instance(CONTEXT_COUESE, $id))) {
+    if (!has_capability('moodle/course:create', get_context_instance(CONTEXT_COURSE, $id))) {
         $restore_restoreto_options[0] = get_string("currentcoursedeleting");
         $restore_restoreto_options[1] = get_string("currentcourseadding");
     } 
