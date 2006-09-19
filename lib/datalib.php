@@ -653,14 +653,15 @@ function get_courses_page($categoryid="all", $sort="c.sortorder ASC", $fields="c
  *
  * @uses $CFG
  * @param int $userid The user of interest
- * @param string $sort ?
- * @return object {@link $COURSE} records
+ * @param string $sort the sortorder in the course table
+ * @param string $fields  the fields to return
+ * @return array {@link $COURSE} of course objects
  */
-function get_my_courses($userid, $sort='visible DESC,sortorder ASC') {
+function get_my_courses($userid, $sort='visible DESC,sortorder ASC', $fields='*') {
 
     $mycourses = array();
 
-    $rs = get_recordset('course', '', '', $sort, '*');
+    $rs = get_recordset('course', '', '', $sort, $fields);
 
     if ($rs && $rs->RecordCount() > 0) {
         while (!$rs->EOF) {
@@ -673,7 +674,7 @@ function get_my_courses($userid, $sort='visible DESC,sortorder ASC') {
                 $context = get_context_instance(CONTEXT_COURSE, $course->id);
                 if (has_capability('moodle/course:view', $context, $userid) && 
                     ($course->visible || has_capability('moodle/course:viewhiddencourses', $context, $userid))) {
-                    $mycourses[] = $course;
+                    $mycourses[$course->id] = $course;
                 }
             }
 
