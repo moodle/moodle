@@ -5,7 +5,6 @@
  * @version $Id$
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package lesson
- * @todo Clean up this code!
  **/
 
     require_once('../../config.php');
@@ -156,7 +155,7 @@
                 } 
             }
     
-        } else if ($lesson->highscores and !$lesson->practice and !optional_param('viewed', 0) and empty($pageid)) { // TODO: THIS DOES NOT WORK!!!!
+        } else if ($lesson->highscores and !$lesson->practice and !optional_param('viewed', 0) and empty($pageid)) {
             // Display high scores before starting lesson
             redirect("$CFG->wwwroot/mod/lesson/highscores.php?id=$cm->id");
         }
