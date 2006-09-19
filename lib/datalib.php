@@ -506,9 +506,10 @@ function get_courses($categoryid="all", $sort="c.sortorder ASC", $fields="c.*") 
         // loop throught them
         foreach ($courses as $course) {
 
-            if ($course->visible <= 0) {
+            if (isset($course->visible) && $course->visible <= 0) {
                 // for hidden courses, require visibility check
-                if (has_capability('moodle/course:viewhiddencourses', get_context_instance(CONTEXT_COURSE, $course->id))) {
+                if (has_capability('moodle/course:viewhiddencourses',
+                        get_context_instance(CONTEXT_COURSE, $course->id))) {
                     $visiblecourses [] = $course;  
                 }
             } else {
@@ -586,7 +587,7 @@ function get_courses_page($categoryid="all", $sort="c.sortorder ASC", $fields="c
         $limitnum = count($courses);  
     }
     
-    if (!limitfrom) {
+    if (!$limitfrom) {
         $limitfrom = 0;  
     }
     
