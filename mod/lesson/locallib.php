@@ -948,63 +948,6 @@ function lesson_save_question_options($question) {
 }
 
 /**
- * Given an array of value, creates a popup menu to be part of a form.
- * 
- * @param array $options Used to create the popup menu values ( $options["value"]["label"] ).
- * @param string $name Name of the select form element.
- * @param string $selected Current value selected in the popup menu.
- * @param string $nothing If set, used as the first value in the popup menu.
- * @param string $script OnChange javascript code.
- * @param string|int $nothingvalue Value of the $nothing parameter.
- * @param boolean $return False: Print out the popup menu automatically  True: Return the popup menu.
- * @return string May return the popup menu as a string.
- * @todo replace the use of this function with choose_from_menu in lib/weblib.php
- **/
-function lesson_choose_from_menu ($options, $name, $selected="", $nothing="choose", $script="", $nothingvalue="0", $return=false) {    
-    if ($nothing == "choose") {
-        $nothing = get_string("choose")."...";
-    }
-
-    if ($script) {
-        $javascript = "onChange=\"$script\"";
-    } else {
-        $javascript = "";
-    }
-
-    $output = "<label for=$name class=hidden-label>$name</label><SELECT id=$name NAME=$name $javascript>\n";
-    if ($nothing) {
-        $output .= "   <OPTION VALUE=\"$nothingvalue\"\n";
-        if ($nothingvalue == $selected) {
-            $output .= " SELECTED";
-        }
-        $output .= ">$nothing</OPTION>\n";
-    }
-    if (!empty($options)) {
-        foreach ($options as $value => $label) {
-            $output .= "   <OPTION VALUE=\"$value\"";
-            if ($value == $selected) {
-                $output .= " SELECTED";
-            }
-            // stop zero label being replaced by array index value
-            // if ($label) {
-            //    $output .= ">$label</OPTION>\n";
-            // } else {
-            //     $output .= ">$value</OPTION>\n";
-            //  }
-            $output .= ">$label</OPTION>\n";
-            
-        }
-    }
-    $output .= "</SELECT>\n";
-
-    if ($return) {
-        return $output;
-    } else {
-        echo $output;
-    }
-}   
-
-/**
  * Determins if a jumpto value is correct or not.
  *
  * returns true if jumpto page is (logically) after the pageid page or

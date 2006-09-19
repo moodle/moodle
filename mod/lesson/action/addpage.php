@@ -94,10 +94,10 @@
                 echo "<tr><td><B>".get_string("jump", "lesson")." $iplus1:</b> \n";
                 if ($i) {
                     // answers 2, 3, 4... jumpto this page
-                    lesson_choose_from_menu($jump, "jumpto[$i]", 0, "");
+                    choose_from_menu($jump, "jumpto[$i]", 0, "");
                 } else {
                     // answer 1 jumpto next page
-                    lesson_choose_from_menu($jump, "jumpto[$i]", LESSON_NEXTPAGE, "");
+                    choose_from_menu($jump, "jumpto[$i]", LESSON_NEXTPAGE, "");
                 }
                 helpbutton("jumpto", get_string("jump", "lesson"), "lesson");
                 if($lesson->custom) {
@@ -112,7 +112,7 @@
             break;
         case LESSON_ESSAY :
                 echo "<tr><td><B>".get_string("jump", "lesson").":</b> \n";
-                lesson_choose_from_menu($jump, "jumpto[0]", LESSON_NEXTPAGE, "");
+                choose_from_menu($jump, "jumpto[0]", LESSON_NEXTPAGE, "");
                 helpbutton("jumpto", get_string("jump", "lesson"), "lesson");
                 if ($lesson->custom) {
                     echo get_string("score", "lesson").": <input type=\"text\" name=\"score[0]\" value=\"1\" size=\"5\">";
@@ -140,7 +140,7 @@
                 }
                 if ($i == 2) {
                     echo "<tr><td><B>".get_string("correctanswerjump", "lesson").":</b> \n";
-                    lesson_choose_from_menu($jump, "jumpto[$i]", LESSON_NEXTPAGE, "");
+                    choose_from_menu($jump, "jumpto[$i]", LESSON_NEXTPAGE, "");
                     helpbutton("jumpto", get_string("jump", "lesson"), "lesson");
                     if($lesson->custom) {
                         echo get_string("correctanswerscore", "lesson").": <input type=\"text\" name=\"score[$i]\" value=\"1\" size=\"5\">";
@@ -148,7 +148,7 @@
                     echo "</td></tr>\n";
                 } elseif ($i == 3) {
                     echo "<tr><td><B>".get_string("wronganswerjump", "lesson").":</b> \n";
-                    lesson_choose_from_menu($jump, "jumpto[$i]", 0, "");
+                    choose_from_menu($jump, "jumpto[$i]", 0, "");
                     helpbutton("jumpto", get_string("jump", "lesson"), "lesson");
                     if($lesson->custom) {
                         echo get_string("wronganswerscore", "lesson").": <input type=\"text\" name=\"score[$i]\" value=\"0\" size=\"5\">";
@@ -172,10 +172,10 @@
                 echo "<tr><td><B>".get_string("jump", "lesson")." $iplus1:</b> \n";
                 if ($i) {
                     // answers 2, 3, 4... jumpto this page
-                    lesson_choose_from_menu($jump, "jumpto[$i]", 0, "");
+                    choose_from_menu($jump, "jumpto[$i]", 0, "");
                 } else {
                     // answer 1 jumpto next page
-                    lesson_choose_from_menu($jump, "jumpto[$i]", LESSON_NEXTPAGE, "");
+                    choose_from_menu($jump, "jumpto[$i]", LESSON_NEXTPAGE, "");
                 }
                 helpbutton("jumpto", get_string("jump", "lesson"), "lesson");
                 if($lesson->custom) {
