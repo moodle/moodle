@@ -769,26 +769,7 @@
                             break;
                         case LESSON_BRANCHTABLE :
                             $data = "<input type=\"button\" name=\"$answer->id\" value=\"".strip_tags(format_text($answer->answer, FORMAT_MOODLE,$formattextdefoptions))."\" disabled=\"disabled\"> ";
-                            $data .= get_string("jumptsto", "lesson").": ";
-                            if ($answer->jumpto == 0) {
-                                $data .= get_string("thispage", "lesson");
-                            } elseif ($answer->jumpto == LESSON_NEXTPAGE) {
-                                $data .= get_string("nextpage", "lesson");
-                            } elseif ($answer->jumpto == LESSON_EOL) {
-                                $data .= get_string("endoflesson", "lesson");
-                            } elseif ($answer->jumpto == LESSON_UNSEENBRANCHPAGE) {
-                                $data .= get_string("unseenpageinbranch", "lesson");
-                            } elseif ($answer->jumpto == LESSON_PREVIOUSPAGE) {
-                                $data .= get_string("previouspage", "lesson");
-                            } elseif ($answer->jumpto == LESSON_RANDOMPAGE) {
-                                $data .= get_string("randompageinbranch", "lesson");
-                            } elseif ($answer->jumpto == LESSON_RANDOMBRANCH) {
-                                $data .= get_string("randombranch", "lesson");
-                            } elseif ($answer->jumpto == LESSON_CLUSTERJUMP) {
-                                $data .= get_string("clusterjump", "lesson");
-                            } else {
-                                $data .= format_string($lessonpages[$answer->jumpto]->title)." ".get_string("page", "lesson");
-                            }
+                            $data .= get_string('jumpsto', 'lesson', lesson_get_jump_name($answer->jumpto));
 
                             $answerdata->answers[] = array($data, "");
                             $answerpage->grayout = 1; // always grayed out
@@ -796,26 +777,8 @@
                         case LESSON_ENDOFBRANCH :
                         case LESSON_CLUSTER :
                         case LESSON_ENDOFCLUSTER :
-                            $data = get_string("jumptsto", "lesson").": ";
-                            if ($answer->jumpto == 0) {
-                                $data .= get_string("thispage", "lesson");
-                            } elseif ($answer->jumpto == LESSON_NEXTPAGE) {
-                                $data .= get_string("nextpage", "lesson");
-                            } elseif ($answer->jumpto == LESSON_EOL) {
-                                $data .= get_string("endoflesson", "lesson");
-                            } elseif ($answer->jumpto == LESSON_UNSEENBRANCHPAGE) {
-                                $data .= get_string("unseenpageinbranch", "lesson");
-                            } elseif ($answer->jumpto == LESSON_PREVIOUSPAGE) {
-                                $data .= get_string("previouspage", "lesson");
-                            } elseif ($answer->jumpto == LESSON_RANDOMPAGE) {
-                                $data .= get_string("randompageinbranch", "lesson");
-                            } elseif ($answer->jumpto == LESSON_RANDOMBRANCH) {
-                                $data .= get_string("randombranch", "lesson");
-                            } elseif ($answer->jumpto == LESSON_CLUSTERJUMP) {
-                                $data .= get_string("clusterjump", "lesson");
-                            } else {
-                                $data .= format_string($lessonpages[$answer->jumpto]->title)." ".get_string("page", "lesson");
-                            }
+                            $data = get_string('jumpsto', 'lesson', lesson_get_jump_name($answer->jumpto));
+
                             $answerdata->answers[] = array($data, "");
                             $answerpage->grayout = 1; // always grayed out
                             break;
