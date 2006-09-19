@@ -658,55 +658,30 @@ function get_courses_page($categoryid="all", $sort="c.sortorder ASC", $fields="c
  */
 function get_my_courses($userid, $sort='visible DESC,sortorder ASC') {
 
-    global $CFG, $USER;
-
     $mycourses = array();
-    $SQL = "SELECT * from {$CFG->prefix}course ORDER BY $sort";
-    $courses = get_records_sql($SQL);
-    
-    foreach ($courses as $course) {
-        if ($course->id != SITEID) {
-            // users with moodle/course:view are considered course participants
-            // the course needs to be visible, or user must have moodle/course:viewhiddencourses capability set to view
-            // hidden courses  
-            if (has_capability('moodle/course:view', get_context_instance(CONTEXT_COURSE, $course->id), $userid)
-                && ($course->visible || has_capability('moodle/course:viewhiddencourses', get_context_instance(CONTEXT_COURSE, $course->id), $userid))) {
-                $mycourses[] = $course;
+
+    $rs = get_recordset('course', '', '', $sort, '*');
+
+    if ($rs && $rs->RecordCount() > 0) {
+        while (!$rs->EOF) {
+            $course = (object)$rs->fields;
+
+            if ($course->id != SITEID) {
+                // users with moodle/course:view are considered course participants
+                // the course needs to be visible, or user must have moodle/course:viewhiddencourses 
+                // capability set to view hidden courses  
+                $context = get_context_instance(CONTEXT_COURSE, $course->id);
+                if (has_capability('moodle/course:view', $context, $userid) && 
+                    ($course->visible || has_capability('moodle/course:viewhiddencourses', $context, $userid))) {
+                    $mycourses[] = $course;
+                }
             }
+
+            $rs->MoveNext();
         }
     }
 
     return $mycourses;
-/*
-    if ($students = get_records('user_students', 'userid', $userid, '', 'id, course')) {
-        foreach ($students as $student) {
-            $course[$student->course] = $student->course;
-        }
-    }
-    if (count($course) > 0 && empty($USER->admin)) {
-        if ($courses = get_records_list('course', 'id', implode(',', $course), '', 'id,visible')) {
-            foreach ($courses as $k => $c) {
-                if (!$c->visible) {
-                    unset($course[$c->id]);
-                }
-            }
-        }
-    }
-
-    if ($teachers = get_records('user_teachers', 'userid', $userid, '', 'id, course')) {
-        foreach ($teachers as $teacher) {
-            $course[$teacher->course] = $teacher->course;
-        }
-    }
-
-    if (empty($course)) {
-        return $course;
-    }
-
-    $courseids = implode(',', $course);
-
-    return get_records_list('course', 'id', $courseids, $sort);
-*/
 }
 
 
