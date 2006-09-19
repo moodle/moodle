@@ -64,22 +64,23 @@
         if (isteacher($course->id)) {
             $trackedusers = get_record('scorm_scoes_track', 'scormid', $scorm->id, '', '', '', '', 'count(distinct(userid)) as c');
             if ($trackedusers->c > 0) {
-                $report = '<a href="report.php?a='.$scorm->id.'">'.get_string('viewallreports','scorm',$trackedusers->c).'</a></div>';
+                $reportshow = '<a href="report.php?id='.$scorm->coursemodule.'">'.get_string('viewallreports','scorm',$trackedusers->c).'</a></div>';
             } else {
-                $report = get_string('noreports','scorm');
+                $reportshow = get_string('noreports','scorm');
             }
         } else if (isstudent($course->id)) {
-           require_once('locallib.php');
-           $report = scorm_grade_user(get_records('scorm_scoes','scorm',$scorm->id), $USER->id, $scorm->grademethod);
+            require_once('locallib.php');
+            $report = scorm_grade_user($scorm, $USER->id);
+            $reportshow = get_string('score','scorm').": ".$report;       
         }
         if (!$scorm->visible) {
            //Show dimmed if the mod is hidden
            $table->data[] = array ($tt, "<a class=\"dimmed\" href=\"view.php?id=$scorm->coursemodule\">".format_string($scorm->name,true)."</a>",
-                                   format_text($scorm->summary), $report);
+                                   format_text($scorm->summary), $reportshow);
         } else {
            //Show normal if the mod is visible
            $table->data[] = array ($tt, "<a href=\"view.php?id=$scorm->coursemodule\">".format_string($scorm->name,true)."</a>",
-                                   format_text($scorm->summary), $report);
+                                   format_text($scorm->summary), $reportshow);
         }
     }
 
@@ -88,7 +89,6 @@
     print_table($table);
 
     print_footer($course);
-
 
 ?>
 

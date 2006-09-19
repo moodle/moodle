@@ -1,5 +1,5 @@
 <?php
-    require_once($CFG->dirroot.'/mod/scorm/lib.php');
+    require_once($CFG->dirroot.'/mod/scorm/locallib.php');
     if (!isset($form->name)) {
         $form->name = '';
     }
@@ -26,12 +26,13 @@
     }
     if (!isset($form->grademethod)) {
         $form->grademethod = 0;
+        $form->whatgrade = 0;
+    } else {
+        $form->whatgrade = intval($form->grademethod / 10);
+        $form->grademethod = $form->grademethod % 10;
     }
     if (!isset($form->maxattempt)) {
         $form->maxattempt = 1;
-    }
-    if (!isset($form->whatgrade)) {
-        $form->whatgrade = 0;
     }
     if (!isset($form->hidebrowse)) {
         $form->hidebrowse = 0;
@@ -63,6 +64,9 @@
         list($element,$value) = explode('=',$option);
         $element = trim($element);
         $window->$element = trim($value)==1?'checked':''; 
+    }
+    if (!isset($form->pkgtype)) {
+        $form->pkgtype = '';
     }
     $scormid = '';
     if (!empty($form->instance)) {

@@ -2,12 +2,64 @@
 
 /// Local Library of functions and constants for module scorm
 
+define('GRADESCOES', '0');
+define('GRADEHIGHEST', '1');
+define('GRADEAVERAGE', '2');
+define('GRADESUM', '3');
+$SCORM_GRADE_METHOD = array (GRADESCOES => get_string('gradescoes', 'scorm'),
+                             GRADEHIGHEST => get_string('gradehighest', 'scorm'),
+                             GRADEAVERAGE => get_string('gradeaverage', 'scorm'),
+                             GRADESUM => get_string('gradesum', 'scorm'));
+
+define('HIGHESTATTEMPT', '0');
+define('AVERAGEATTEMPT', '1');
+define('FIRSTATTEMPT', '2');
+define('LASTATTEMPT', '3');
+$SCORM_WHAT_GRADE = array (HIGHESTATTEMPT => get_string('highestattempt', 'scorm'),
+                           AVERAGEATTEMPT => get_string('averageattempt', 'scorm'),
+                           FIRSTATTEMPT => get_string('firstattempt', 'scorm'),
+                           LASTATTEMPT => get_string('lastattempt', 'scorm'));
+
+$SCORM_POPUP_OPTIONS = array('resizable'=>1, 
+                             'scrollbars'=>1, 
+                             'directories'=>0, 
+                             'location'=>0,
+                             'menubar'=>0, 
+                             'toolbar'=>0, 
+                             'status'=>0);
+$stdoptions = '';
+foreach ($SCORM_POPUP_OPTIONS as $popupopt => $value) {
+    $stdoptions .= $popupopt.'='.$value;
+    if ($popupopt != 'status') {
+        $stdoptions .= ',';
+    }
+}
+
+if (!isset($CFG->scorm_maxattempts)) {
+    set_config('scorm_maxattempts','6');
+}
+
+if (!isset($CFG->scorm_frameheight)) {
+    set_config('scorm_frameheight','500');
+}
+
+if (!isset($CFG->scorm_framewidth)) {
+    set_config('scorm_framewidth','100%');
+}
+
+if (!isset($CFG->scorm_advancedsettings)) {
+    set_config('scorm_advancedsettings','0');
+}
+
+if (!isset($CFG->scorm_windowsettings)) {
+    set_config('scorm_windowsettings','0');
+}
+
 //
 // Repository configurations
 //
 $repositoryconfigfile = $CFG->dirroot.'/mod/resource/type/ims/repository_config.php';
 $repositorybrowser = '/mod/resource/type/ims/finder.php';
-
 
 /// Local Library of functions and constants for module scorm
 
@@ -390,48 +442,129 @@ function scorm_external_link($link) {
     return $result;
 }
 
-function scorm_grade_user($scoes, $userid, $grademethod=VALUESCOES) {
-    $scores = NULL; 
-    $scores->scoes = 0;
-    $scores->values = 0;
-    $scores->max = 0;
-    $scores->sum = 0;
-
-    if (!$scoes) {
-        return '';
+function scorm_grade_user_attempt($scorm, $userid, $attempt=1, $time=false) {
+    $attemptscore = NULL; 
+    $attemptscore->scoes = 0;
+    $attemptscore->values = 0;
+    $attemptscore->max = 0;
+    $attemptscore->sum = 0;
+    $attemptscore->lastmodify = 0;
+    
+    if (!$scoes = get_records('scorm_scoes','scorm',$scorm->id)) {
+        return NULL;
     }
 
-    $current = current($scoes);
-    $attempt = scorm_get_last_attempt($current->scorm, $userid);
+    $grademethod = $scorm->grademethod % 10;
+
     foreach ($scoes as $sco) { 
         if ($userdata=scorm_get_tracks($sco->id, $userid,$attempt)) {
             if (($userdata->status == 'completed') || ($userdata->status == 'passed')) {
-                $scores->scoes++;
+                $attemptscore->scoes++;
             }       
             if (!empty($userdata->score_raw)) {
-                $scores->values++;
-                $scores->sum += $userdata->score_raw;
-                $scores->max = ($userdata->score_raw > $scores->max)?$userdata->score_raw:$scores->max;
+                $attemptscore->values++;
+                $attemptscore->sum += $userdata->score_raw;
+                $attemptscore->max = ($userdata->score_raw > $attemptscore->max)?$userdata->score_raw:$attemptscore->max;
+                if (isset($userdata->timemodified) && ($userdata->timemodified > $attemptscore->lastmodify)) {
+                    $attemptscore->lastmodify = $userdata->timemodified;
+                } else {
+                    $attemptscore->lastmodify = 0;
+                }
             }       
         }       
     }
     switch ($grademethod) {
-        case VALUEHIGHEST:
-            return $scores->max;
+        case GRADEHIGHEST:
+            $score = $attemptscore->max;
         break;  
-        case VALUEAVERAGE:
-            if ($scores->values > 0) {
-                return $scores->sum/$scores->values;
+        case GRADEAVERAGE:
+            if ($attemptscore->values > 0) {
+                $score = $attemptscore->sum/$attemptscore->values;
             } else {
-                return 0;
+                $score = 0;
             }       
         break;  
-        case VALUESUM:
-            return $scores->sum;
+        case GRADESUM:
+            $score = $attemptscore->sum;
         break;  
-        case VALUESCOES:
-            return $scores->scoes;
+        case GRADESCOES:
+            $score = $attemptscore->scoes;
         break;  
+    }
+
+    if ($time) {
+        $result = new stdClass();
+        $result->score = $score;
+        $result->time = $attemptscore->lastmodify;
+    } else {
+        $result = $score;
+    }
+
+    return $result;
+}
+
+function scorm_grade_user($scorm, $userid, $time=false) {
+
+    $whatgrade = intval($scorm->grademethod / 10);
+
+    switch ($whatgrade) {
+        case FIRSTATTEMPT:
+            return scorm_grade_user_attempt($scorm, $userid, 1, $time);
+        break;    
+        case LASTATTEMPT:
+            return scorm_grade_user_attempt($scorm, $userid, scorm_get_last_attempt($scorm->id, $userid), $time);
+        break;
+        case HIGHESTATTEMPT:
+            $lastattempt = scorm_get_last_attempt($scorm->id, $userid);
+            $maxscore = 0;
+            $attempttime = 0;
+            for ($attempt = 1; $attempt <= $lastattempt; $attempt++) {
+                $attemptscore = scorm_grade_user_attempt($scorm, $userid, $attempt, $time);
+                if ($time) {
+                    if ($attemptscore->score > $maxscore) {
+                        $maxscore = $attemptscore->score;
+                        $attempttime = $attemptscore->time;
+                    }
+                } else {
+                    $maxscore = $attemptscore > $maxscore ? $attemptscore: $maxscore;
+                }
+            }
+            if ($time) {
+                $result = new stdClass();
+                $result->score = $maxscore;
+                $result->time = $attempttime;
+                return $result;
+            } else {
+               return $maxscore;
+            }
+        break;
+        case AVERAGEATTEMPT:
+            $lastattempt = scorm_get_last_attempt($scorm->id, $userid);
+            $sumscore = 0;
+            for ($attempt = 1; $attempt <= $lastattempt; $attempt++) {
+                $attemptscore = scorm_grade_user_attempt($scorm, $userid, $attempt, $time);
+                if ($time) {
+                    $sumscore += $attemptscore->score;
+                } else {
+                    $sumscore += $attemptscore;
+                }
+            }
+
+            if ($lastattempt > 0) {
+                $score = $sumscore / $lastattempt;
+            } else {
+                $score = 0;
+            }
+
+            if ($time) {
+                $result = new stdClass();
+                $result->score = $score;
+                $result->time = $attemptscore->time;
+                return $result;
+            } else {
+               return $score;
+            }
+        break;
     }
 }
 
@@ -676,6 +809,7 @@ function scorm_get_tracks($scoid,$userid,$attempt='') {
     if ($tracks = get_records_select('scorm_scoes_track',"userid=$userid AND scoid=$scoid".$attemptsql,'element ASC')) {
         $usertrack->userid = $userid;
         $usertrack->scoid = $scoid; 
+        // Defined in order to unify scorm1.2 and scorm2004
         $usertrack->score_raw = '';
         $usertrack->status = '';
         $usertrack->total_time = '00:00:00';
@@ -1260,7 +1394,7 @@ function scorm_course_format_display($user,$course) {
     } else {
         if (isteacheredit($course->id, $user->id)) {
             // Create a new activity
-            redirect('mod.php?id='.$course->id.'&amp;section=0&sesskey='.sesskey().'&amp;add=scorm');
+            redirect($CFG->wwwroot.'/course/mod.php?id='.$course->id.'&amp;section=0&sesskey='.sesskey().'&amp;add=scorm');
         } else {
             notify('Could not find a scorm course here');
         }
@@ -1268,12 +1402,12 @@ function scorm_course_format_display($user,$course) {
     echo '</div>';
 }
 
-function scorm_view_display ($user, $scorm, $action, $cm, $blockwidth='') {
+function scorm_view_display ($user, $scorm, $action, $cm, $boxwidth='') {
     global $CFG;
 
     $organization = optional_param('organization', '', PARAM_INT);
 
-    print_simple_box_start('center',$blockwidth);
+    print_simple_box_start('center',$boxwidth);
 ?>
         <div class="structurehead"><?php print_string('coursestruct','scorm') ?></div>
 <?php

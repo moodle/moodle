@@ -48,7 +48,7 @@
     if ($course->category != 0) {
         $navigation = "<a target=\"{$CFG->framename}\" href=\"../../course/view.php?id=$course->id\">$course->shortname</a> ->";
         if ($scorms = get_all_instances_in_course('scorm', $course)) {
-            // The module SCORM activity with the least id is the course  
+            // The module SCORM/AICC activity with the first id is the course  
             $firstscorm = current($scorms);
             if (!(($course->format == 'scorm') && ($firstscorm->id == $scorm->id))) {
                 $navigation .= "<a target=\"{$CFG->framename}\" href=\"index.php?id=$course->id\">$strscorms</a> ->";
@@ -73,6 +73,7 @@
     $attempt = scorm_get_last_attempt($scorm->id, $USER->id);
     if (($newattempt=='on') && (($attempt < $scorm->maxattempt) || ($scorm->maxattempt == 0))) {
         $attempt++;
+        $mode = 'normal';
     }
     $attemptstr = '&amp;attempt=' . $attempt;
 
@@ -107,7 +108,7 @@
     $SESSION->scorm_scoid = $sco->id;
     $SESSION->scorm_status = 'Not Initialized';
     $SESSION->scorm_mode = $mode;
-    $SESSION->attempt = $attempt;
+    $SESSION->scorm_attempt = $attempt;
 
     //
     // Print the page header
@@ -172,7 +173,7 @@
                        ($sco->next == 0)       // Moodle must manage the next link
                    ) 
                )
-           ) || ($scorm->hidetoc == 2)      // Teacher want to display toc in a small popup menu 
+           ) || ($scorm->hidetoc == 2)      // Teacher want to display toc in a small dropdown menu 
        ) {
 ?>
             <div id="scormtop">
@@ -191,7 +192,7 @@
                 echo '<a href="'.$url.'">&lt; '.get_string('prev','scorm').'</a>';
             }
             if ($scorm->hidetoc == 2) {
- 	        echo $result->tocmenu;
+                echo $result->tocmenu;
             }
             if (($scorm->hidenav == 0) && ($sco->nextid != 0) && ($sco->next == 0)) {
                 /// Print the next LO link
