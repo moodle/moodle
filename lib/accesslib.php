@@ -2214,19 +2214,21 @@ function get_component_string($component, $contextlevel) {
 }
 
 /** gets the list of roles assigned to this context
+ * and up (parents)
  * @param object $context
  * @return array
  */
 function get_roles_used_in_context($context) {
 
     global $CFG;
-
-    return get_records_sql('SELECT distinct r.id, r.name, r.shortname
-                              FROM '.$CFG->prefix.'role_assignments ra,
-                                   '.$CFG->prefix.'role r 
+    
+    $contextlist = get_related_contexts_string($context);
+    return get_records_sql("SELECT distinct r.id, r.name, r.shortname
+                              FROM {$CFG->prefix}role_assignments ra,
+                                   {$CFG->prefix}role r 
                              WHERE r.id = ra.roleid 
-                               AND ra.contextid = '.$context->id.' 
-                             ORDER BY r.sortorder ASC');
+                               AND ra.contextid $contextlist
+                             ORDER BY r.sortorder ASC");
 }
 
 /** this function is used to print roles column in user profile page. 
