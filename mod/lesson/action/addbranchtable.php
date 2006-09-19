@@ -44,8 +44,8 @@
     <input type="hidden" name="sesskey" value="<?PHP echo $USER->sesskey ?>" />
     <center><table class="generalbox" cellpadding=5 border=1>
     <tr valign="top">
-    <td><b><?php print_string("pagetitle", "lesson"); ?>:</b><br />
-    <label for="title" class="hidden-label"><?php print_string('pagetitle', 'lesson'); ?></label><input type="text" id="title" name="title" size="80" maxsize="255" value="" /></td></tr>
+    <td><b><label for="title"><?php print_string("pagetitle", "lesson"); ?>:</label></b><br />
+    <input type="text" id="title" name="title" size="80" maxsize="255" value="" /></td></tr>
     <?php
     echo "<tr><td><b>";
     echo get_string("pagecontents", "lesson").":</b><br />\n";

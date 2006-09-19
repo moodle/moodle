@@ -1,6 +1,11 @@
 <?php // $Id$
-
-/************** add page ************************************/
+/**
+ *  Action for adding a question page.  Prints an HTML form.
+ *
+ * @version $Id$
+ * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+ * @package lesson
+ **/
     $CFG->pagepath = 'mod/lesson/addpage';
     
     // first get the preceeding page
@@ -43,10 +48,10 @@
     print_heading_with_help(get_string("addaquestionpage", "lesson"), "overview", "lesson");
     ?>
     <form name="form" method="post" action="lesson.php">
-    <input type="hidden" name="id" value="<?PHP echo $cm->id ?>">
+    <input type="hidden" name="id" value="<?php echo $cm->id ?>">
     <input type="hidden" name="action" value="insertpage">
-    <input type="hidden" name="pageid" value="<?PHP echo $pageid ?>">
-    <input type="hidden" name="sesskey" value="<?PHP echo $USER->sesskey ?>">
+    <input type="hidden" name="pageid" value="<?php echo $pageid ?>">
+    <input type="hidden" name="sesskey" value="<?php echo $USER->sesskey ?>">
     <center>
       <?php
         echo '<b>'.get_string("questiontype", "lesson").":</b> \n";
@@ -57,20 +62,20 @@
         if ( $qtype == LESSON_SHORTANSWER || $qtype == LESSON_MULTICHOICE ) {  // only display this option for Multichoice and shortanswer
             echo '<p>';
             if ($qtype == LESSON_SHORTANSWER) {
-                echo "<b>".get_string("casesensitive", "lesson").":</b> \n";
+                $qoptionstr = get_string('casesensitive', 'lesson');
             } else {
-                echo "<b>".get_string("multianswer", "lesson").":</b> \n";
+                $qoptionstr = get_string('multianswer', 'lesson');
             }
-            echo " <label for=\"qoption\" class=\"hidden-label\">Question Option</label><input type=\"checkbox\" id=\"qoption\" name=\"qoption\" value=\"1\"/>";
+            echo "<label for=\"qoption\"><strong>$qoptionstr</strong></label><input type=\"checkbox\" id=\"qoption\" name=\"qoption\" value=\"1\"/>";
             helpbutton("questionoption", get_string("questionoption", "lesson"), "lesson");
             echo '</p>';
         }
     ?>
     <table cellpadding="5" class="generalbox" border="1">
     <tr valign="top">
-    <td><b><?php print_string("pagetitle", "lesson"); ?>:</b><br />
-    <!-- hidden-label added --><label for="title" class="hidden-label">Title</label><input type="text" id="title" name="title" size="80" maxsize="255" value=""></td></tr>
-    <?PHP
+    <td><b><label for="title"><?php print_string("pagetitle", "lesson"); ?>:</label></b><br />
+    <input type="text" id="title" name="title" size="80" maxsize="255" value=""></td></tr>
+    <?php
     echo "<tr><td><b>";
     echo get_string("pagecontents", "lesson").":</b><br />\n";
     print_textarea($usehtmleditor, 25,70, 630, 400, "contents");
