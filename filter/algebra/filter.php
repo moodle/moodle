@@ -125,8 +125,6 @@ function algebra_filter ($courseid, $text) {
         $replacement = str_replace('@','&#x00040;',$matches[1][$i]).$matches[2][$i];
         $text = str_replace($matches[0][$i],$replacement,$text);
     }
-
-    //if (isadmin()) { error_reporting (E_ALL); }; //for debugging
      
     // <algebra> some algebraic input expression </algebra>
     // or @@ some algebraic input expression @@
