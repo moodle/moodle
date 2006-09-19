@@ -19,8 +19,8 @@
     $search       = optional_param('search','',PARAM_CLEAN);
     $roleid       = optional_param('roleid', 0, PARAM_INT);                 // optional roleid
 
-    $contextid    = optional_param('contextid', PARAM_INT);                 // one of this or
-    $courseid     = optional_param('id', PARAM_INT);                        // this are required
+    $contextid    = optional_param('contextid', 0, PARAM_INT);                 // one of this or
+    $courseid     = optional_param('id', 0, PARAM_INT);                        // this are required
 
     $showteachers = $showteachers && empty($search); // if we're searching, we just want students.
 
