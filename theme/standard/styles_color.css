@@ -196,6 +196,10 @@ table.formtable tbody th {
  *** Header
  ***/
 
+.breadcrumb .sep {
+  color:#aaa;
+}
+
 .headerskip a:link,
 .headerskip a:visited,
 .headerskip a:hover {

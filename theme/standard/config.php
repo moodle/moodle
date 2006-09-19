@@ -121,8 +121,21 @@ $THEME->custompix = false;
 /// files from the moodle/pix directory, plus a
 /// "pix/mod" directory containing all the icons 
 /// for all the activity modules.
-////////////////////////////////////////////////////////////////////////////////
 
+
+///$THEME->rarrow = '&#x25BA;' //OR '&rarr;';
+///$THEME->larrow = '&#x25C4;' //OR '&larr;';
+///$CFG->block_search_button = $THEME->rarrow .'<span class="accesshide">'.get_string('search').'</span>';
+///
+/// Accessibility: Right and left arrow-like characters are
+/// used in the breadcrumb trail, course navigation menu 
+/// (previous/next activity), calendar, and search forum block.
+///
+/// If the theme does not set characters, appropriate defaults
+/// are set by (lib/weblib.php:check_theme_arrows). The suggestions
+/// above are 'silent' in a screen-reader like JAWS. Please DO NOT
+/// use &lt; &gt; &raquo; - these are confusing for blind users.
+////////////////////////////////////////////////////////////////////////////////
 
 
 // These colours are not used anymore, so I've set them to 

@@ -2621,25 +2621,56 @@ function user_login_string($course=NULL, $user=NULL) {
 }
 
 /**
- * Prints breadcrumbs links
+ * Tests whether $THEME->rarrow, $THEME->larrow have been set (theme/-/config.php).
+ * If not it applies sensible defaults.
+ *
+ * Accessibility: right and left arrow Unicode characters for breadcrumb, calendar,
+ * search forum block, etc. Important: these are 'silent' in a screen-reader 
+ * (unlike &gt; &raquo;), and must be accompanied by text.
+ * @uses $THEME
+ */
+function check_theme_arrows() {
+    global $THEME;
+    
+    if (!isset($THEME->rarrow) and !isset($THEME->larrow)) {
+        $THEME->rarrow = '&#x25BA;';
+        $THEME->larrow = '&#x25C4;';
+        if (FALSE !== strpos($_SERVER['HTTP_USER_AGENT'], 'Opera')) {
+            $THEME->rarrow = '&#x25B6;';
+            $THEME->larrow = '&#x25C0;';
+       }
+    }
+}
+
+/**
+ * Prints breadcrumb trail of links, called in theme/-/header.html
  *
  * @uses $CFG
- * @param string $navigation The breadcrumbs string to be printed
+ * @param string $navigation The breadcrumb navigation string to be printed
+ * @param string $separator The breadcrumb trail separator. The default 0 leads to the use
+ *  of $THEME->rarrow, themes could use '&rarr;', '/', or '' for a style-sheet solution.
+ * @param boolean $return False to echo the breadcrumb string (default), true to return it.
  */
-function print_navigation ($navigation, $return=false) {
-    global $CFG, $USER;
-
+function print_navigation ($navigation, $separator=0, $return=false) {
+    global $CFG, $THEME;
     $output = '';
+    
+    check_theme_arrows();
+    if (0 === $separator) {
+        $separator = $THEME->rarrow;
+    }
+    if (!empty($separator)) {
+        $separator = '<span class="sep">'. $separator .'</span>';
+    }
 
     if ($navigation) {
-        //Accessibility: breadcrumb links now in a list, &raquo; replaced with image.
+        //Accessibility: breadcrumb links now in a list, &raquo; replaced with a 'silent' character.
         $nav_text = get_string('youarehere','access');
-        $output .= '<h2 class="accesshide">'.$nav_text.",</h2><ul>\n";
+        $output .= '<h2 class="accesshide">'.$nav_text."</h2><ul>\n";
         if (! $site = get_site()) {
             $site->shortname = get_string('home');
         }
-        $navigation = '<li title="'.$nav_text.'"><img src="'.$CFG->pixpath.'/a/r_breadcrumb.gif" class="resize" alt="" /> '
-            .str_replace('->', '</li><li title="'.$nav_text.'"><img src="'.$CFG->pixpath.'/a/r_breadcrumb.gif" class="resize" alt="" /> ', $navigation)."</li>\n";
+        $navigation = "<li>$separator ". str_replace('->', "</li>\n<li>$separator", $navigation) ."</li>\n";
         $output .= '<li class="first"><a target="'. $CFG->framename .'" href="'. $CFG->wwwroot.((!has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM, SITEID)) && !empty($USER->id) && !empty($CFG->mymoodleredirect) && !isguest())
                                                                        ? '/my' : '') .'/">'. $site->shortname ."</a></li>\n". $navigation;
         $output .= "</ul>\n";  
@@ -4019,27 +4050,33 @@ function navmenu($course, $cm=NULL, $targetwindow='self') {
             $previousmod = $mod;
         }
     }
+    //Accessibility: added Alt text, replaced &gt; &lt; with 'silent' character and 'accesshide' text.
+    check_theme_arrows();
+    
     if ($selectmod and has_capability('moodle/site:viewreports', get_context_instance(CONTEXT_COURSE, $course->id))) {
-        $logslink = "<td><a target=\"$CFG->framename\" href=".
+        $logstext = get_string('alllogs');
+        $logslink = "<a title=\"$logstext\" target=\"$CFG->framename\" href=".
                     "\"$CFG->wwwroot/course/report/log/index.php?chooselog=1&amp;user=0&amp;date=0&amp;id=$course->id&amp;modid=$selectmod->cm\">".
-                    "<img border=\"0\" height=\"16\" width=\"16\" src=\"$CFG->pixpath/i/log.gif\" alt=\"\" /></a></td>";
+                    "<img class=\"icon log\" src=\"$CFG->pixpath/i/log.gif\" alt=\"$logstext\" /></a>";
 
     }
     if ($backmod) {
+        $backtext= get_string('activityprev', 'access');
         $backmod = "<form action=\"$CFG->wwwroot/mod/$backmod->mod/view.php\" target=\"$CFG->framename\">".
                    "<input type=\"hidden\" name=\"id\" value=\"$backmod->cm\" />".
-                   "<input type=\"submit\" value=\"&lt;\" /></form>";
+                   "<button type=\"submit\" title=\"$backtext\">$THEME->larrow<span class=\"accesshide\">$backtext</span></button></form>";
     }
     if ($nextmod) {
+        $nexttext= get_string('activitynext', 'access');
         $nextmod = "<form action=\"$CFG->wwwroot/mod/$nextmod->mod/view.php\" target=\"$CFG->framename\">".
                    "<input type=\"hidden\" name=\"id\" value=\"$nextmod->cm\" />".
-                   "<input type=\"submit\" value=\"&gt;\" /></form>";
+                   "<button type=\"submit\" title=\"$nexttext\">$THEME->rarrow<span class=\"accesshide\">$nexttext</span></button></form>";
     }
 
-    return '<table><tr>'.$logslink .'<td>'. $backmod .'</td><td>' .
+    return "<table><tr>\n<td>".$logslink .'</td><td>'. $backmod .'</td><td>' .
             popup_form($CFG->wwwroot .'/mod/', $menu, 'navmenu', $selected, $strjumpto,
                        '', '', true, $targetwindow).
-            '</td><td>'. $nextmod .'</td></tr></table>';
+            '</td><td>'. $nextmod ."</td>\n</tr></table>";
 }
 
 /**
