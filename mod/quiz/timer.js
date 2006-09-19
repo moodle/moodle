@@ -21,6 +21,7 @@ function countdown_clock(theTimer) {
 	        ourForm.onsubmit();
 	    }
         ourForm.submit();
+        return;
     }
 
     now = quizTimerValue;
