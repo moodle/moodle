@@ -75,10 +75,11 @@
                 }
 
                 echo get_string('passwordprotectedlesson', 'lesson', format_string($lesson->name))."<br /><br />\n".
-                     get_string('enterpassword', 'lesson')." <input type=\"password\" name=\"userpassword\" /><br /><br />\n".
+                     get_string('enterpassword', 'lesson')." <input type=\"password\" name=\"userpassword\" /><br /><br />\n<center>".
                      '<span class="lessonbutton standardbutton"><a href="'.$CFG->wwwroot.'/course/view.php?id='. $course->id .'">'. get_string('cancel', 'lesson') .'</a></span> ';
 
                 lesson_print_submit_link(get_string('continue', 'lesson'), 'password', 'center', 'standardbutton submitbutton');
+                echo '</center>';
                 print_simple_box_end();
                 echo "</div>\n";
                 print_footer($course);
