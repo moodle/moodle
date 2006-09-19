@@ -2224,7 +2224,7 @@ function main_upgrade($oldversion=0) {
         delete_records('config', 'name', 'requestedstudentsname');
     }
 
-    if ($oldversion < 2006091804) {
+    if ($oldversion < 2006091901) {
         $roles = get_records('role');
         $first = array_shift($roles);
         if (!empty($first->shortname)) {
@@ -2248,6 +2248,7 @@ function main_upgrade($oldversion=0) {
             }
         }
     }
+
     return $result;
 }
 
