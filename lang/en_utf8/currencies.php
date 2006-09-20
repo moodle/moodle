@@ -114,6 +114,7 @@ $string['SDP'] = 'Sudanese Pound';
 $string['SEK'] = 'Swedish Krona';
 $string['SGD'] = 'Singapore Dollar';
 $string['SHP'] = 'St. Helena Pound';
+$string['SKK'] = 'Slovak Koruna';
 $string['SLL'] = 'Sierra Leone Leone';
 $string['SOS'] = 'Somali Schilling';
 $string['SRG'] = 'Suriname Guilder';
