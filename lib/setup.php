@@ -111,7 +111,7 @@ global $HTTPSPAGEREQUIRED;
 /// Connect to the database using adodb
 
 /// Some defines required BEFORE including AdoDB library
-    define ('ADODB_ASSOC_CASE', 0); //Use lowercase fieldnames for ADODB_FETCH_BOTH
+    define ('ADODB_ASSOC_CASE', 0); //Use lowercase fieldnames for ADODB_FETCH_ASSOC
                                     //(only meaningful for oci8po, it's the default
                                     //for other DB drivers so this won't affect them)
 
@@ -153,10 +153,7 @@ global $HTTPSPAGEREQUIRED;
         die;
     }
 
-/// Force fetchmode of records for Execute() and SelectLimit() to BOTH
-/// (it isn't default in all the DB drivers. With the time we should
-/// try to migrate to FETCH_ASSOC, possible with some tricks in the 
-/// recordset_to_array() function to maintain the id field properly.
+/// Forcing ASSOC mode for ADOdb (some DBs default to FETCH_BOTH)
     $db->SetFetchMode(ADODB_FETCH_ASSOC);
 
 /// Starting here we have a correct DB conection but me must avoid
