@@ -265,7 +265,12 @@
         $status = true;
 
         //Get the discussions array
-        $discussions = $info['MOD']['#']['DISCUSSIONS']['0']['#']['DISCUSSION'];
+        $discussions = array();
+        
+        if (!empty($info['MOD']['#']['DISCUSSIONS']['0']['#']['DISCUSSION'])) {
+            $discussions = $info['MOD']['#']['DISCUSSIONS']['0']['#']['DISCUSSION'];
+        }
+        
         //First, we check that "course_id" folder exists and create is as necessary in CFG->dataroot
         $dest_dir = $CFG->dataroot."/".$restore->course_id;
         check_dir_exists($dest_dir,true);
