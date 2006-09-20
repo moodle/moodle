@@ -334,7 +334,7 @@ function count_records_sql($sql) {
     $rs = get_recordset_sql($sql);
     
     if ($rs) {
-        return $rs->fields[0];
+        return reset($rs->fields);
     } else {
         return 0;   
     }
@@ -747,8 +747,11 @@ function get_records_sql($sql, $limitfrom='', $limitnum='') {
  */
 function recordset_to_menu($rs) {
     if ($rs && $rs->RecordCount() > 0) {
+        $keys = array_keys($rs->fields);
+        $key0=$keys[0];
+        $key1=$keys[1];
         while (!$rs->EOF) {
-            $menu[$rs->fields[0]] = $rs->fields[1];
+            $menu[$rs->fields[$key0]] = $rs->fields[$key1];
             $rs->MoveNext();
         }
         return $menu;
@@ -857,7 +860,7 @@ function get_field_sql($sql) {
     $rs = get_recordset_sql($sql);
 
     if ($rs && $rs->RecordCount() == 1) {
-        return $rs->fields[0];
+        return reset($rs->fields);
     } else {
         return false;
     }
@@ -890,9 +893,11 @@ function get_fieldset_sql($sql) {
     }
 
     if ( $rs->RecordCount() > 0 ) {
+        $keys = array_keys($rs->fields);
+        $key0 = $keys[0];
         $results = array();
         while (!$rs->EOF) {
-            array_push($results, $rs->fields[0]);
+            array_push($results, $rs->fields[$key0]);
             $rs->MoveNext();
         }
         return $results;
@@ -1134,7 +1139,7 @@ function insert_record($table, $dataobject, $returnid=true, $primarykey='id') {
         if ( ($rs = $db->Execute('SELECT '. $primarykey .' FROM '. $CFG->prefix . $table .' WHERE oid = '. $id))
              && ($rs->RecordCount() == 1) ) {
             trigger_error("Retrieved $primarykey from oid on table $table because we could not find the sequence.");
-            return (integer)$rs->fields[0];
+            return (integer)reset($rs->fields);
         } 
         trigger_error('Failed to retrieve primary key after insert: SELECT '. $primarykey .
                       ' FROM '. $CFG->prefix . $table .' WHERE oid = '. $id);
