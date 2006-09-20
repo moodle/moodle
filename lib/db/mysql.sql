@@ -1030,3 +1030,37 @@ INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('message'
 INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('message', 'remove contact', 'user', 'CONCAT(firstname," ",lastname)');
 INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('message', 'block contact', 'user', 'CONCAT(firstname," ",lastname)');
 INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('message', 'unblock contact', 'user', 'CONCAT(firstname," ",lastname)');
+
+CREATE TABLE prefix_user_info_field (
+    id BIGINT(10) NOT NULL auto_increment,
+    name VARCHAR(255) NOT NULL default '',
+    datatype VARCHAR(255) NOT NULL default '',
+    categoryid BIGINT(10) unsigned NOT NULL default 0,
+    sortorder BIGINT(10) unsigned NOT NULL default 0,
+    required TINYINT(2) unsigned NOT NULL default 0,
+    locked TINYINT(2) unsigned NOT NULL default 0,
+    visible SMALLINT(4) unsigned NOT NULL default 0,
+    defaultdata LONGTEXT,
+CONSTRAINT  PRIMARY KEY (id)
+);
+
+ALTER TABLE prefix_user_info_field COMMENT='Customisable user profile fields';
+
+CREATE TABLE prefix_user_info_category (
+    id BIGINT(10) NOT NULL auto_increment,
+    name VARCHAR(255) NOT NULL default '',
+    sortorder BIGINT(10) unsigned NOT NULL default 0,
+CONSTRAINT  PRIMARY KEY (id)
+);
+
+ALTER TABLE prefix_user_info_category COMMENT='Customisable fields categories';
+
+CREATE TABLE prefix_user_info_data (
+    id BIGINT(10) NOT NULL auto_increment,
+    userid BIGINT(10) unsigned NOT NULL default 0,
+    fieldid BIGINT(10) unsigned NOT NULL default 0,
+    data LONGTEXT NOT NULL,
+CONSTRAINT  PRIMARY KEY (id)
+);
+
+ALTER TABLE prefix_user_info_data COMMENT='Data for the customisable user fields';

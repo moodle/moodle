@@ -793,3 +793,38 @@ INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('message'
 INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('message', 'remove contact', 'user', 'firstname||\' \'||lastname');
 INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('message', 'block contact', 'user', 'firstname||\' \'||lastname');
 INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('message', 'unblock contact', 'user', 'firstname||\' \'||lastname');
+
+
+CREATE TABLE prefix_user_info_field (
+    id BIGSERIAL,
+    name VARCHAR(255) NOT NULL default '',
+    datatype VARCHAR(255) NOT NULL default '',
+    categoryid BIGINT NOT NULL default 0,
+    sortorder BIGINT NOT NULL default 0,
+    required SMALLINT NOT NULL default 0,
+    locked SMALLINT NOT NULL default 0,
+    visible SMALLINT NOT NULL default 0,
+    defaultdata TEXT,
+CONSTRAINT prefix_userinfofiel_id_pk PRIMARY KEY (id)
+);
+
+COMMENT ON TABLE prefix_user_info_field IS 'Customisable user profile fields';
+
+CREATE TABLE prefix_user_info_category (
+    id BIGSERIAL,
+    name VARCHAR(255) NOT NULL default '',
+    sortorder BIGINT NOT NULL default 0,
+CONSTRAINT prefix_userinfocate_id_pk PRIMARY KEY (id)
+);
+
+COMMENT ON TABLE prefix_user_info_category IS 'Customisable fields categories';
+
+CREATE TABLE prefix_user_info_data (
+    id BIGSERIAL,
+    userid BIGINT NOT NULL default 0,
+    fieldid BIGINT NOT NULL default 0,
+    data TEXT NOT NULL,
+CONSTRAINT prefix_userinfodata_id_pk PRIMARY KEY (id)
+);
+
+COMMENT ON TABLE prefix_user_info_data IS 'Data for the customisable user fields';

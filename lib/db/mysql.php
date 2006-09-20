@@ -2249,6 +2249,43 @@ function main_upgrade($oldversion=0) {
         }
     }
 
+    /// Tables for customisable user profile fields
+    if ($oldversion < 2006092000) {
+        execute_sql("CREATE TABLE {$CFG->prefix}user_info_field (
+                        id BIGINT(10) NOT NULL auto_increment,
+                        name VARCHAR(255) NOT NULL default '',
+                        datatype VARCHAR(255) NOT NULL default '',
+                        categoryid BIGINT(10) unsigned NOT NULL default 0,
+                        sortorder BIGINT(10) unsigned NOT NULL default 0,
+                        required TINYINT(2) unsigned NOT NULL default 0,
+                        locked TINYINT(2) unsigned NOT NULL default 0,
+                        visible SMALLINT(4) unsigned NOT NULL default 0,
+                        defaultdata LONGTEXT,
+                        CONSTRAINT  PRIMARY KEY (id));", true);
+
+        execute_sql("ALTER TABLE {$CFG->prefix}user_info_field COMMENT='Customisable user profile fields';", true);
+
+        execute_sql("CREATE TABLE {$CFG->prefix}user_info_category (
+                        id BIGINT(10) NOT NULL auto_increment,
+                        name VARCHAR(255) NOT NULL default '',
+                        sortorder BIGINT(10) unsigned NOT NULL default 0,
+                        CONSTRAINT  PRIMARY KEY (id));", true);
+
+        execute_sql("ALTER TABLE {$CFG->prefix}user_info_category COMMENT='Customisable fields categories';", true);
+
+        execute_sql("CREATE TABLE {$CFG->prefix}user_info_data (
+                        id BIGINT(10) NOT NULL auto_increment,
+                        userid BIGINT(10) unsigned NOT NULL default 0,
+                        fieldid BIGINT(10) unsigned NOT NULL default 0,
+                        data LONGTEXT NOT NULL,
+                        CONSTRAINT  PRIMARY KEY (id));", true);
+
+        execute_sql("ALTER TABLE {$CFG->prefix}user_info_data COMMENT='Data for the customisable user fields';", true);
+
+
+    }
+
+
     return $result;
 }
 

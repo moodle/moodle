@@ -1849,6 +1849,42 @@ function main_upgrade($oldversion=0) {
         }
     }
 
+    /// Tables for customisable user profile fields
+    if ($oldversion < 2006092000) {
+        execute_sql("CREATE TABLE {$CFG->prefix}user_info_field (
+                        id BIGSERIAL,
+                        name VARCHAR(255) NOT NULL default '',
+                        datatype VARCHAR(255) NOT NULL default '',
+                        categoryid BIGINT NOT NULL default 0,
+                        sortorder BIGINT NOT NULL default 0,
+                        required SMALLINT NOT NULL default 0,
+                        locked SMALLINT NOT NULL default 0,
+                        visible SMALLINT NOT NULL default 0,
+                        defaultdata TEXT,
+                        CONSTRAINT {$CFG->prefix}userinfofiel_id_pk PRIMARY KEY (id));", true);
+
+        execute_sql("COMMENT ON TABLE {$CFG->prefix}user_info_field IS 'Customisable user profile fields';", true);
+
+        execute_sql("CREATE TABLE {$CFG->prefix}user_info_category (
+                        id BIGSERIAL,
+                        name VARCHAR(255) NOT NULL default '',
+                        sortorder BIGINT NOT NULL default 0,
+                        CONSTRAINT {$CFG->prefix}userinfocate_id_pk PRIMARY KEY (id));", true);
+
+        execute_sql("COMMENT ON TABLE {$CFG->prefix}user_info_category IS 'Customisable fields categories';", true);
+
+        execute_sql("CREATE TABLE {$CFG->prefix}user_info_data (
+                        id BIGSERIAL,
+                        userid BIGINT NOT NULL default 0,
+                        fieldid BIGINT NOT NULL default 0,
+                        data TEXT NOT NULL,
+                        CONSTRAINT {$CFG->prefix}userinfodata_id_pk PRIMARY KEY (id));", true);
+
+        execute_sql("COMMENT ON TABLE {$CFG->prefix}user_info_data IS 'Data for the customisable user fields';", true);
+
+    }
+
+
     return $result;
 }
 
