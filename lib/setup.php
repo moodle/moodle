@@ -157,7 +157,7 @@ global $HTTPSPAGEREQUIRED;
 /// (it isn't default in all the DB drivers. With the time we should
 /// try to migrate to FETCH_ASSOC, possible with some tricks in the 
 /// recordset_to_array() function to maintain the id field properly.
-    $db->SetFetchMode(ADODB_FETCH_BOTH);
+    $db->SetFetchMode(ADODB_FETCH_ASSOC);
 
 /// Starting here we have a correct DB conection but me must avoid
 /// to execute any DB transaction until "set names" has been executed
@@ -626,6 +626,5 @@ $CFG->os = PHP_OS;
             require ($customscript);
         }
     }
-
 
 ?>
