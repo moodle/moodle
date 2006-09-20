@@ -55,7 +55,7 @@
         if (!$tocategory = get_record('question_categories', 'id', $tocategoryid)) {
             error('Invalid category');
         }
-        if (!has_capability('moodle/question:managecateory', get_context_instance(CONTEXT_COURSE, $tocategory->course))){
+        if (!has_capability('moodle/question:managecategory', get_context_instance(CONTEXT_COURSE, $tocategory->course))){
             error(get_string('categorynoedit', 'quiz', $tocategory->name), 'edit.php?courseid=$course->id');
         }
         foreach ($_POST as $key => $value) {    // Parse input for question ids

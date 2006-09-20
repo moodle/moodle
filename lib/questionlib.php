@@ -1481,7 +1481,7 @@ function question_category_select_menu($courseid, $published = false, $only_edit
         if ($cid==$selected) {
             $seltxt = "selected=\"selected\"";
         }
-        if ((!$only_editable) || has_capability('moodle/question:managecateory', get_context_instance(CONTEXT_COURSE, $category->course))) {
+        if ((!$only_editable) || has_capability('moodle/question:managecategory', get_context_instance(CONTEXT_COURSE, $category->course))) {
             echo "    <option value=\"$cid\" $seltxt>$cname</option>\n";
         }
     }

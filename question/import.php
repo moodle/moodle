@@ -191,7 +191,7 @@
         $cats = get_records('question_categories');
         $categories = array();
         foreach ($cats as $cat) {
-            if (has_capability('moodle/question:managecateory', get_context_instance(CONTEXT_COURSE, $cat->course))) {
+            if (has_capability('moodle/question:managecategory', get_context_instance(CONTEXT_COURSE, $cat->course))) {
                 $categories[] = $cat;
             }      
         }
