@@ -171,9 +171,7 @@ function get_parent_cats($context, $type) {
     $parents = array();
     
     switch ($type) {
-
         case CONTEXT_COURSECAT:
-            
             if (!$cat = get_record('course_categories','id',$context->instanceid)) {
                 break;
             }
@@ -185,11 +183,9 @@ function get_parent_cats($context, $type) {
                 $parents[] = $context->id;
                 $cat = get_record('course_categories','id',$cat->parent);
             }
-
         break;
         
         case CONTEXT_COURSE:
-        
             if (!$course = get_record('course', 'id', $context->instanceid)) {
                 break;
             }
@@ -214,9 +210,7 @@ function get_parent_cats($context, $type) {
         
         default:
         break;
-
     }
-    
     return array_reverse($parents);
 }
 
@@ -418,7 +412,7 @@ function has_capability($capability, $context=NULL, $userid=NULL, $doanything=tr
  * @return permission (int)
  */
 function capability_search($capability, $context, $capabilities) {
-   
+
     global $USER, $CFG;
 
     if (isset($capabilities[$context->id][$capability])) {
@@ -1287,7 +1281,9 @@ function unassign_capability($capability, $roleid, $contextid=NULL) {
 
 
 /**
- * Get the roles that have a given capability.
+ * Get the roles that have a given capability assigned to it. This function
+ * does not resolve the actual permission of the capability. It just checks
+ * for assignment only.
  * @param $capability - capability name (string)
  * @param $permission - optional, the permission defined for this capability
  *                      either CAP_ALLOW, CAP_PREVENT or CAP_PROHIBIT
@@ -1937,6 +1933,8 @@ function fetch_context_capabilities($context) {
     }
 
     $records = get_records_sql($SQL.' '.$sort);
+    $contextindependentcaps = fetch_context_independent_capabilities();
+    $records = array_merge($records, $contextindependentcaps);
 
     // special sorting of core system capabiltites and enrollments
     if ($context->aggregatelevel == CONTEXT_SYSTEM) {
@@ -1954,15 +1952,35 @@ function fetch_context_capabilities($context) {
         }
     }
     // end of special sorting
-
     return $records;
     
 }
 
 
 /**
+ * Gets the context-independent capabilities that should be overrridable in
+ * any context.
+ * @return array of capability records from the capabilities table.
+ */
+function fetch_context_independent_capabilities() {
+    
+    $contextindependentcaps = array(
+        'moodle/site:accessallgroups'
+        );
+
+    $records = array();
+    
+    foreach ($contextindependentcaps as $capname) {
+        $record = get_record('capabilities', 'name', $capname);
+        array_push($records, $record);
+    }
+    return $records;
+}
+
+
+/**
  * This function pulls out all the resolved capabilities (overrides and
- * defaults) of a role used in capability overrieds in contexts at a given
+ * defaults) of a role used in capability overrides in contexts at a given
  * context.
  * @param obj $context
  * @param int $roleid
@@ -1986,7 +2004,7 @@ function role_context_capabilities($roleid, $context, $cap='') {
             and rc.roleid = $roleid
             and rc.contextid = c.id $search
             ORDER BY c.aggregatelevel DESC, rc.capability DESC";
-  
+
     $capabilities = array();
     
     if ($records = get_records_sql($SQL)) {
@@ -2009,7 +2027,7 @@ function role_context_capabilities($roleid, $context, $cap='') {
  * @return array()
  */
 function get_parent_contexts($context) {
-  
+
     switch ($context->aggregatelevel) {
 
         case CONTEXT_SYSTEM: // no parent
@@ -2096,8 +2114,9 @@ function get_parent_contexts($context) {
     }
 }
 
-/** gets a string for sql calls, searching for stuff
- * in this context or above
+
+/**
+ * Gets a string for sql calls, searching for stuff in this context or above
  * @param object $context
  * @return string
  */
@@ -2108,6 +2127,8 @@ function get_related_contexts_string($context) {
         return (' ='.$context->id);
     }
 }
+
+
 /**
  * This function gets the capability of a role in a given context.
  * It is needed when printing override forms.
@@ -2117,7 +2138,12 @@ function get_related_contexts_string($context) {
  * @return int (allow, prevent, prohibit, inherit)
  */
 function get_role_context_capability($contextid, $capability, $capabilities) {
-    return $capabilities[$contextid][$capability];
+    if (isset($capabilities[$contextid][$capability])) {
+        return $capabilities[$contextid][$capability];
+    }
+    else {
+        return false;
+    }
 }
 
 
@@ -2215,22 +2241,27 @@ function get_component_string($component, $contextlevel) {
     return $string;
 }
 
-/** gets the list of roles assigned to this context
- * and up (parents)
+/**
+ * Gets the list of roles assigned to this context and up (parents)
  * @param object $context
  * @return array
  */
 function get_roles_used_in_context($context) {
 
     global $CFG;
-    
     $contextlist = get_related_contexts_string($context);
-    return get_records_sql("SELECT distinct r.id, r.name, r.shortname
-                              FROM {$CFG->prefix}role_assignments ra,
-                                   {$CFG->prefix}role r 
-                             WHERE r.id = ra.roleid 
-                               AND ra.contextid $contextlist
-                             ORDER BY r.sortorder ASC");
+    
+    $sql = "SELECT DISTINCT r.id,
+                   r.name,
+                   r.shortname,
+                   r.sortorder
+              FROM {$CFG->prefix}role_assignments ra,
+                   {$CFG->prefix}role r 
+             WHERE r.id = ra.roleid 
+               AND ra.contextid $contextlist
+          ORDER BY r.sortorder ASC";
+    
+    return get_records_sql($sql);
 }
 
 /** this function is used to print roles column in user profile page. 
@@ -2574,4 +2605,3 @@ function get_user_capability_course($capability, $userid='') {
     }
     return $usercourses;  
 }
-?>
