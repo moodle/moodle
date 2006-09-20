@@ -52,7 +52,7 @@
        $currentuser = ($user->id == $USER->id);
     }
 
-    if (groupmode($course) == SEPARATEGROUPS and !has_capability('moodle/course:managegroups', $coursecontext)) {   // Groups must be kept separate
+    if (groupmode($course) == SEPARATEGROUPS and !has_capability('moodle/site:accessallgroups', $coursecontext)) {   // Groups must be kept separate
         require_login();
 
         ///this is changed because of mygroupid
@@ -64,8 +64,9 @@
                 }
             }
         }
-        
-        if (!$currentuser && !isteacheredit($course->id, $user->id) && !$gtrue) {
+        // took the teacheredit check out because teacheredit will have moodle/site:accessallgroups capability
+        // which was already checked
+        if (!$currentuser && !$gtrue) {
             print_header("$personalprofile: ", "$personalprofile: ",
                          "<a href=\"../course/view.php?id=$course->id\">$course->shortname</a> ->
                           <a href=\"index.php?id=$course->id\">$participants</a>",
@@ -175,7 +176,7 @@
 
         $emailswitch = '';
 
-        if (isteacheredit($course->id) or $currentuser) {   /// Can use the enable/disable email stuff
+        if (has_capability('moodle/course:useremail', get_context_instance(CONTEXT_COURSE, $course->id)) or $currentuser) {   /// Can use the enable/disable email stuff
             if (!empty($enable)) {     /// Recieved a parameter to enable the email address
                 set_field('user', 'emailstop', 0, 'id', $user->id);
                 $user->emailstop = 0;
@@ -186,7 +187,7 @@
             }
         }
 
-        if (isteacheredit($course->id)) {   /// Can use the enable/disable email stuff
+        if (has_capability('moodle/course:useremail', get_context_instance(CONTEXT_COURSE, $course->id))) {   /// Can use the enable/disable email stuff
             if ($user->emailstop) {
                 $switchparam = 'enable';
                 $switchtitle = get_string('emaildisable');

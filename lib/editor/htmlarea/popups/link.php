@@ -79,14 +79,14 @@ form { margin-bottom: 1px; margin-top: 1px; }
     <tr>
       <td width="450" valign="top"><fieldset>
         <legend><?php
-        if(isteacher($id)) {
+        if(has_capability('moodle/course:managefiles', get_context_instance(CONTEXT_COURSE, $id))) {
             print_string("filebrowser","editor");
         } else {
             print "";
         }?></legend>
 
         <div class="space"></div>
-        <?php print(isteacher($id))?
+        <?php print(has_capability('moodle/course:managefiles', get_context_instance(CONTEXT_COURSE, $id)))?
         "<iframe id=\"fbrowser\" name=\"fbrowser\" src=\"../coursefiles.php?id=".$course->id."\" width=\"420\" height=\"180\"></iframe>":
         ""; ?>
         <p>
@@ -124,7 +124,7 @@ form { margin-bottom: 1px; margin-top: 1px; }
     <table border="0" cellpadding="1" cellspacing="1">
     <tr>
       <td height="22"><?php
-      if(isteacher($id)) { ?>
+      if(has_capability('moodle/course:managefiles', get_context_instance(CONTEXT_COURSE, $id))) { ?>
           <form name="cfolder" id="cfolder" action="../coursefiles.php" method="post" target="fbrowser">
           <input type="hidden" name="id" value="<?php print($course->id);?>" />
           <input type="hidden" name="wdir" value="" />

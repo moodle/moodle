@@ -21,7 +21,9 @@
     if (!$site = get_site()) {
         error("Site isn't defined!");
     }
-
+    
+    $context = get_context_instance(CONTEXT_COURSECAT, $id);
+    
     if ($CFG->forcelogin) {
         require_login();
     }
@@ -103,6 +105,9 @@
         print_header("$site->shortname: $category->name", "$site->fullname: $strcourses",
                      "<a href=\"index.php\">$strcategories</a> -> $category->name", "", "", true, $navbaritem);
     }
+
+/// Print link to roles
+    print('<a href="'.$CFG->wwwroot.'/admin/roles/assign.php?contextid='.$context->id.'">'.get_string('roles').'</a>');
 
 /// Print the category selector
 

@@ -262,12 +262,12 @@ form { margin-bottom: 0px; margin-top: 0px; }
   <table width="100%" border="0" cellspacing="0" cellpadding="0">
     <tr>
       <td width="55%" valign="top"><?php
-      if(isteacher($id)) {
+      if(has_capability('moodle/course:managefiles', get_context_instance(CONTEXT_COURSE, $id))) {
           print_string("filebrowser","editor");
       } else {
           print "";
       }?><br />
-      <?php print(isteacher($id))?
+      <?php has_capability('moodle/course:managefiles', get_context_instance(CONTEXT_COURSE, $id))?
       "<iframe id=\"ibrowser\" name=\"ibrowser\" src=\"".$CFG->wwwroot."/lib/editor/htmlarea/coursefiles.php?usecheckboxes=1&id=".$course->id."\" style=\"width: 100%; height: 200px;\"></iframe>":
       "";?>
       </td>
@@ -279,7 +279,7 @@ form { margin-bottom: 0px; margin-top: 0px; }
     <table width="100%" border="0" cellspacing="0" cellpadding="0">
       <tr>
         <td width="55%"><div class="space"></div>
-        <?php if(isteacher($id)) { ?>
+        <?php if(has_capability('moodle/course:managefiles', get_context_instance(CONTEXT_COURSE, $id))) { ?>
         <table border="0" cellpadding="2" cellspacing="0">
           <tr><td><?php print_string("selection","editor");?>: </td>
           <td><form name="idelete" id="idelete">
@@ -315,7 +315,7 @@ form { margin-bottom: 0px; margin-top: 0px; }
     </tr>
     <tr>
       <td height="22"><?php
-      if(isteacher($id)) { ?>
+      if(has_capability('moodle/course:managefiles', get_context_instance(CONTEXT_COURSE, $id))) { ?>
           <form name="cfolder" id="cfolder" action="../coursefiles.php" method="post" target="ibrowser">
           <input type="hidden" name="id" value="<?php print($course->id);?>" />
           <input type="hidden" name="wdir" value="" />

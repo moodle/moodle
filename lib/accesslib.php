@@ -1984,10 +1984,11 @@ function fetch_context_independent_capabilities() {
  * context.
  * @param obj $context
  * @param int $roleid
+ * @param bool self - if set to true, resolve till this level, else stop at immediate parent level
  * @return array
  */
 function role_context_capabilities($roleid, $context, $cap='') {
-    global $CFG; 
+    global $CFG;
     
     $contexts = get_parent_contexts($context);
     $contexts[] = $context->id;
@@ -1999,11 +2000,14 @@ function role_context_capabilities($roleid, $context, $cap='') {
         $search = '';  
     }
     
-    $SQL = "SELECT rc.* FROM {$CFG->prefix}role_capabilities rc, {$CFG->prefix}context c
-            where rc.contextid in $contexts
-            and rc.roleid = $roleid
-            and rc.contextid = c.id $search
-            ORDER BY c.aggregatelevel DESC, rc.capability DESC";
+    $SQL = "SELECT rc.* 
+            FROM {$CFG->prefix}role_capabilities rc, 
+                 {$CFG->prefix}context c
+            WHERE rc.contextid in $contexts
+                 AND rc.roleid = $roleid
+                 AND rc.contextid = c.id $search
+            ORDER BY c.aggregatelevel DESC, 
+                     rc.capability DESC";  
 
     $capabilities = array();
     

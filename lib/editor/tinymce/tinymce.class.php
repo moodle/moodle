@@ -95,7 +95,7 @@ class tinymce extends editorObject {
                               $this->cfg->tinymcepopupcss : '',
             "editor_css"   => !empty($this->cfg->tinymceeditorcss) ?
                               $this->cfg->tinymceeditorcss : '',
-            "file_browser_callback" => $isteacher ? 'moodleFileBrowser' : '',
+            "file_browser_callback" => has_capability('moodle/course:managefiles', get_context_instance(CONTEXT_COURSE, $courseid)) ? 'moodleFileBrowser' : '',
             "convert_urls"  => false,
             "relative_urls" => false);
 
@@ -112,7 +112,7 @@ class tinymce extends editorObject {
                 $this->defaults['theme_advanced_resize_horizontal'] = true;
             }
 
-            $this->printdialogs = $isteacher ? true : false;
+            $this->printdialogs = has_capability('moodle/course:managefiles', get_context_instance(CONTEXT_COURSE, $courseid)) ? true : false;
     }
 
     /**

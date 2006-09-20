@@ -976,7 +976,20 @@ $moodle_capabilities = array(
             'admin' => CAP_ALLOW
         )
     ),
-    
+   
+    'moodle/course:useremail' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+        'legacy' => array(
+            'guest' => CAP_PREVENT,
+            'student' => CAP_PREVENT,
+            'teacher' => CAP_PREVENT,
+            'editingteacher' => CAP_ALLOW,
+            'coursecreator' => CAP_PREVENT,
+            'admin' => CAP_ALLOW
+        )
+    ),
+      
     'moodle/course:viewhiddensections' => array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,

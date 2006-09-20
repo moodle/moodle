@@ -10,10 +10,7 @@
     }
 
     require_login($course->id);
-
-    if (!isteacher($course->id)) {
-        error("Only teachers can use this functionality");
-    }
+    require_capability('moodle/course:managefiles', get_context_instance(CONTEXT_COURSE, $course->id));
 
     $imagetag = clean_text('<img src="'.htmlSpecialChars(stripslashes_safe($imageurl)).'" alt="" />');
 

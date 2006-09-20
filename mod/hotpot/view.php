@@ -429,16 +429,7 @@
 ///////////////////////////////////
 function hotpot_feedback_teachers(&$course, &$hotpot) {
     global $CFG;
-    $teachers = get_records_sql("
-        SELECT 
-            u.*
-        FROM 
-            {$CFG->prefix}user AS u, 
-            {$CFG->prefix}user_teachers AS t
-        WHERE 
-            t.userid = u.id
-            AND t.course = $course->id 
-    ");
+    $teachers = get_users_by_capability(get_context_instance(CONTEXT_COURSE, $course->id), 'mod/hotpot:grade');
     $teacherdetails = '';
     if (!empty($teachers)) {
         $details = array();

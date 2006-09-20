@@ -132,12 +132,19 @@
     exit;
     
 function grade_get_grade_item_exceptions($id) {
-    global $CFG;
-    global $course;
     
-    $sql = "SELECT ge.id, ge.userid FROM {$CFG->prefix}grade_exceptions ge, {$CFG->prefix}user_students us WHERE us.course=$course->id AND grade_itemid=$id AND ge.userid = us.userid AND us.course=ge.courseid";
-    $grade_exceptions = get_records_sql($sql);
-    return $grade_exceptions;
+    global $CFG, $course;
+
+    $contextlists = get_related_contexts_string(get_context_instance(CONTEXT_COURSE, $course->id));
+    
+    $sql = "SELECT ge.id, ge.userid 
+            FROM {$CFG->prefix}grade_exceptions ge,
+                 {$CFG->prefix}role_assignments ra 
+            WHERE grade_itemid = $id 
+                  AND ge.userid = ra.userid 
+                  AND ra.contextid $contextlists";
+    
+    return get_records_sql($sql);
 }
 
 ?>

@@ -3036,8 +3036,8 @@ function print_user($user, $course, $messageselect=false, $return=false) {
     static $string;
     static $datestring;
     static $countries;
-    static $isteacher;
     static $isadmin;
+    static $isteacher;
 
     $context = get_context_instance(CONTEXT_COURSE, $course->id);
     if (empty($string)) {     // Cache all the strings for the rest of the page
@@ -3063,7 +3063,6 @@ function print_user($user, $course, $messageselect=false, $return=false) {
         $datestring->secs    = get_string('secs');
 
         $countries = get_list_of_countries();
-
         $isteacher = isteacher($course->id);
         $isadmin   = isadmin();
     }
@@ -3086,7 +3085,7 @@ function print_user($user, $course, $messageselect=false, $return=false) {
     if (!empty($user->role) and ($user->role <> $course->teacher)) {
         $output .= $string->role .': '. $user->role .'<br />';
     }
-    if ($user->maildisplay == 1 or ($user->maildisplay == 2 and $course->category and !isguest()) or $isteacher) {
+    if ($user->maildisplay == 1 or ($user->maildisplay == 2 and $course->category and !isguest()) or has_capability('moodle/course:viewhiddenuserfields', get_context_instance(CONTEXT_COURSE, $course->id))) {
         $output .= $string->email .': <a href="mailto:'. $user->email .'">'. $user->email .'</a><br />';
     }
     if (($user->city or $user->country) and (!isset($hiddenfields['city']) or !isset($hiddenfields['country']))) {
@@ -3117,7 +3116,7 @@ function print_user($user, $course, $messageselect=false, $return=false) {
         $output .= '<a href="'.$CFG->wwwroot.'/blog/index.php?userid='.$user->id.'">'.get_string('blogs','blog').'</a><br />';
     }
 
-    if ($isteacher) {
+    if (has_capability('moodle/site:viewreports', get_context_instance(CONTEXT_COURSE, $course->id))) {
         $timemidnight = usergetmidnight(time());
         $output .= '<a href="'. $CFG->wwwroot .'/course/user.php?id='. $course->id .'&amp;user='. $user->id .'">'. $string->activity .'</a><br />';
         if (!has_capability('moodle/course:create', get_context_instance(CONTEXT_SYSTEM, SITEID, $user->id)) or ($isadmin and !isadmin($user->id))) {  // Includes admins
@@ -3177,11 +3176,7 @@ function print_group_picture($group, $courseid, $large=false, $return=false, $li
         }
     }
 
-    static $isteacheredit;
     $context = get_context_instance(CONTEXT_COURSE, $courseid);
-    if (!isset($isteacheredit)) {
-        $isteacheredit = isteacheredit($courseid);
-    }
 
     if ($group->hidepicture and !has_capability('moodle/course:managegroups', $context)) {
         return '';

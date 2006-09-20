@@ -144,7 +144,7 @@ switch ($action) {
 	 }
 	 echo "</td><td><input type='submit' value='$strchoose'></td></form>";
 	 echo "<td>";
-	 if ($preset->user == $USER->id || isadmin()) {
+	 if ($preset->user == $USER->id || has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
 	     echo "<form action='' method='POST'>";
 	     echo "<input type='hidden' name='d' value='$data->id' />";
 	     echo "<input type='hidden' name='action' value='confirmdelete' />";

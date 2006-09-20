@@ -3,10 +3,7 @@
 
     $id = required_param('id', PARAM_INT);
 
-    if ($course = get_record("course", "id", $id)) {
-        $isteacher = isteacher($course->id);
-    } else {
-        $isteacher = false;
+    if (!$course = get_record("course", "id", $id)) {
         $course->fullname = "";   // Just to keep display happy, though browsing may fail
     }
 ?>
@@ -177,7 +174,7 @@ border-bottom: 1px solid black; letter-spacing: 2px;
 </table>
 
 <div id="buttons">
-  <?php if ($isteacher) {
+  <?php if (has_capability('moodle/course:managefiles', get_context_instance(CONTEXT_COURSE, $id))) {
             echo "<button type=\"button\" name=\"browse\" onclick=\"return onBrowse();\">".get_string("browse","editor")."...</button>";
         }
   ?>
