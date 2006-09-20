@@ -289,7 +289,6 @@
             
             break;
     }
-
     print_footer($course);
 
 ?>

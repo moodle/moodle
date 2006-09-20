@@ -237,6 +237,11 @@ function forum_upgrade($oldversion) {
       
       if ($forums = get_records('forum')) {
           
+          if (!$teacherroles = get_roles_with_capability('moodle/legacy:teacher', CAP_ALLOW)) {
+              notify('Default teacher role was not found. Roles and permissions '.
+                     'for all your forums will have to be manually set after '.
+                     'this upgrade.');
+          }
           if (!$studentroles = get_roles_with_capability('moodle/legacy:student', CAP_ALLOW)) {
               notify('Default student role was not found. Roles and permissions '.
                      'for all your forums will have to be manually set after '.
@@ -248,8 +253,8 @@ function forum_upgrade($oldversion) {
                      'this upgrade.');
           }
           foreach ($forums as $forum) {
-              if (!forum_convert_to_roles($forum, $forummod->id,
-                        $studentroles, $guestroles)) {
+              if (!forum_convert_to_roles($forum, $forummod->id, $teacherroles,
+                                          $studentroles, $guestroles)) {
                   notify('Forum with id '.$forum->id.' was not upgraded');
               }
           }

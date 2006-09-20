@@ -171,11 +171,15 @@
             // we need to convert the forum to use Roles. It means the backup
             // was made pre Moodle 1.7. We check the backup_version to make
             // sure.
-            if ($restore->backup_version < 2006082300 &&
-                            isset($forum->open) && isset($forum->assesspublic)) {
+            if (($restore->backup_version < 2006082300) ||
+                            (isset($forum->open) && isset($forum->assesspublic))) {
                 
                 $forummod = get_record('modules', 'name', 'forum');
                 
+                if (!$teacherroles = get_roles_with_capability('moodle/legacy:teacher', CAP_ALLOW)) {
+                      notice('Default teacher role was not found. Roles and permissions '.
+                             'for all your forums will have to be manually set.');
+                }
                 if (!$studentroles = get_roles_with_capability('moodle/legacy:student', CAP_ALLOW)) {
                       notice('Default student role was not found. Roles and permissions '.
                              'for all your forums will have to be manually set.');
@@ -186,7 +190,7 @@
                 }
                 require_once($CFG->dirroot.'/mod/forum/lib.php');
                 forum_convert_to_roles($forum, $forummod->id,
-                                       $studentroles, $guestroles,
+                                       $teacherroles, $studentroles, $guestroles,
                                        $restore->mods['forum']->instances[$mod->id]->restored_as_course_module);
             }
             

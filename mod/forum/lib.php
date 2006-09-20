@@ -4455,7 +4455,7 @@ function forum_reset_course_form($course) {
  * @param $cmid         - the course_module id for this forum instance
  * @return boolean      - forum was converted or not
  */
-function forum_convert_to_roles($forum, $forummodid, $studentroles=array(), $guestroles=array(), $cmid=NULL) {
+function forum_convert_to_roles($forum, $forummodid, $teacherroles=array(), $studentroles=array(), $guestroles=array(), $cmid=NULL) {
     
     global $CFG;
     
@@ -4598,11 +4598,17 @@ function forum_convert_to_roles($forum, $forummodid, $studentroles=array(), $gue
                 foreach ($studentroles as $studentrole) {
                     assign_capability('mod/forum:rate', CAP_ALLOW, $studentrole->id, $context->id);
                 }
-                // The legacy teacher role can already rate forum posts by default.
+                foreach ($teacherroles as $teacherrole) {
+                    assign_capability('mod/forum:rate', CAP_ALLOW, $teacherrole->id, $context->id);
+                }
                 break;
             case 2:
-                // The legacy student role cannot rate forum posts by default.
-                // The legacy teacher role can already rate forum posts by default.
+                foreach ($studentroles as $studentrole) {
+                    assign_capability('mod/forum:rate', CAP_PREVENT, $studentrole->id, $context->id);
+                }
+                foreach ($teacherroles as $teacherrole) {
+                    assign_capability('mod/forum:rate', CAP_ALLOW, $teacherrole->id, $context->id);
+                }
                 break;
         }
 
@@ -4612,10 +4618,20 @@ function forum_convert_to_roles($forum, $forummodid, $studentroles=array(), $gue
         //   1 = Students can see everyone's ratings
         switch ($forum->assesspublic) {
             case 0:
-                // This is already the behavior of the default legacy roles.
+                foreach ($studentroles as $studentrole) {
+                    assign_capability('mod/forum:viewanyrating', CAP_PREVENT, $studentrole->id, $context->id);
+                }
+                foreach ($teacherroles as $teacherrole) {
+                    assign_capability('mod/forum:viewanyrating', CAP_ALLOW, $teacherrole->id, $context->id);
+                }
                 break;
             case 1:
-                assign_capability('mod/forum:viewanyrating', CAP_ALLOW, $studentrole->id, $context->id);
+                foreach ($studentroles as $studentrole) {
+                    assign_capability('mod/forum:viewanyrating', CAP_ALLOW, $studentrole->id, $context->id);
+                }
+                foreach ($teacherroles as $teacherrole) {
+                    assign_capability('mod/forum:viewanyrating', CAP_ALLOW, $teacherrole->id, $context->id);
+                }
                 break;
         }
     }

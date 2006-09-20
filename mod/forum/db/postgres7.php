@@ -182,52 +182,16 @@ function forum_upgrade($oldversion) {
   if ($oldversion < 2006081800) {
       // Upgrades for new roles and capabilities support.
       require_once($CFG->dirroot.'/mod/forum/lib.php');
-      
+
       $forummod = get_record('modules', 'name', 'forum');
-      
+
       if ($forums = get_records('forum')) {
-          
-          if (!$studentroles = get_roles_with_capability('moodle/legacy:student', CAP_ALLOW)) {
-              notify('Default student role was not found. Roles and permissions '.
+
+          if (!$teacherroles = get_roles_with_capability('moodle/legacy:teacher', CAP_ALLOW)) {
+              notify('Default teacher role was not found. Roles and permissions '.
                      'for all your forums will have to be manually set after '.
                      'this upgrade.');
           }
-          if (!$guestroles = get_roles_with_capability('moodle/legacy:guest', CAP_ALLOW)) {
-              notify('Default guest role was not found. Roles and permissions '.
-                     'for teacher forums will have to be manually set after '.
-                     'this upgrade.');
-          }
-          
-          foreach ($forums as $forum) {
-              if (!forum_convert_to_roles($forum, $forummod->id,
-                        $studentroles, $guestroles)) {
-                  notify('Forum with id '.$forum->id.' was not upgraded');
-              }
-          }
-          
-          // Drop column forum.open.
-          modify_database('', 'ALTER TABLE prefix_forum DROP COLUMN open;');
-          
-          // Drop column forum.assesspublic.
-          modify_database('', 'ALTER TABLE prefix_forum DROP COLUMN assesspublic;');
-          
-          // We need to rebuild all the course caches to refresh the state of
-          // the forum modules.
-          include_once( "$CFG->dirroot/course/lib.php" );
-          rebuild_course_cache();
-          
-      } // End if.
-  }
-
-
-  if ($oldversion < 2006081800) {
-      // Upgrades for new roles and capabilities support.
-      require_once($CFG->dirroot.'/mod/forum/lib.php');
-
-      $forummod = get_record('modules', 'name', 'forum');
-
-      if ($forums = get_records('forum')) {
-
           if (!$studentroles = get_roles_with_capability('moodle/legacy:student', CAP_ALLOW)) {
               notify('Default student role was not found. Roles and permissions '.
                      'for all your forums will have to be manually set after '.
@@ -239,8 +203,8 @@ function forum_upgrade($oldversion) {
                      'this upgrade.');
           }
           foreach ($forums as $forum) {
-              if (!forum_convert_to_roles($forum, $forummod->id,
-                        $studentroles, $guestroles)) {
+              if (!forum_convert_to_roles($forum, $forummod->id, $teacherroles,
+                                          $studentroles, $guestroles)) {
                   notify('Forum with id '.$forum->id.' was not upgraded');
               }
           }
