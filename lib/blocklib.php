@@ -923,7 +923,7 @@ function upgrade_blocks_db($continueto) {
     /// Both old .sql files and new install.xml are supported
     /// but we priorize install.xml (XMLDB) if present
         $status = false;
-        if (file_exists($CFG->dirroot . '/blocks/db/install.xml') && $CFG->xmldb_enabled) {
+        if (file_exists($CFG->dirroot . '/blocks/db/install.xml')) {
             $status = install_from_xmldb_file($CFG->dirroot . '/blocks/db/install.xml'); //New method
         } else if (file_exists($CFG->dirroot . '/blocks/db/' . $CFG->dbtype . '.sql')) {
             $status = modify_database($CFG->dirroot . '/blocks/db/' . $CFG->dbtype . '.sql'); //Old method
@@ -951,7 +951,7 @@ function upgrade_blocks_db($continueto) {
         include_once($CFG->dirroot . '/blocks/db/' . $CFG->dbtype . '.php');  // defines old upgrading function
         $oldupgrade = true;
     }
-    if (is_readable($CFG->dirroot . '/blocks/db/upgrade.php')  && $CFG->xmldb_enabled) {
+    if (is_readable($CFG->dirroot . '/blocks/db/upgrade.php')) {
         include_once($CFG->dirroot . '/blocks/db/upgrade.php');  // defines new upgrading function
         $newupgrade = true;
     }
@@ -1209,7 +1209,7 @@ function upgrade_blocks_plugins($continueto) {
         /// Both old .sql files and new install.xml are supported
         /// but we priorize install.xml (XMLDB) if present
             $status = false;
-            if (file_exists($fullblock . '/db/install.xml') && $CFG->xmldb_enabled) {
+            if (file_exists($fullblock . '/db/install.xml')) {
                 $status = install_from_xmldb_file($fullblock . '/db/install.xml'); //New method
             } else if (file_exists($fullblock .'/db/'. $CFG->dbtype .'.sql')) {
                 $status = modify_database($fullblock .'/db/'. $CFG->dbtype .'.sql'); //Old method

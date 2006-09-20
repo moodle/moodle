@@ -336,7 +336,7 @@
         /// Both old .sql files and new install.xml are supported
         /// but we priorize install.xml (XMLDB) if present
             $status = false;
-            if (file_exists($CFG->dirroot . '/backup/db/install.xml') && $CFG->xmldb_enabled) {
+            if (file_exists($CFG->dirroot . '/backup/db/install.xml')) {
                 $status = install_from_xmldb_file($CFG->dirroot . '/backup/db/install.xml'); //New method
             } else if (file_exists($CFG->dirroot . '/backup/db/' . $CFG->dbtype . '.sql')) {
                 $status = modify_database($CFG->dirroot . '/backup/db/' . $CFG->dbtype . '.sql'); //Old method
@@ -367,7 +367,7 @@
             include_once($CFG->dirroot . '/backup/db/' . $CFG->dbtype . '.php');  // defines old upgrading function
             $oldupgrade = true;
         }
-        if (is_readable($CFG->dirroot . '/backup/db/upgrade.php')  && $CFG->xmldb_enabled) {
+        if (is_readable($CFG->dirroot . '/backup/db/upgrade.php')) {
             include_once($CFG->dirroot . '/backup/db/upgrade.php');  // defines new upgrading function
             $newupgrade = true;
         }

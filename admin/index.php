@@ -30,12 +30,6 @@
     $agreelicence = optional_param('agreelicence',0, PARAM_BOOL);
     $ignoreupgradewarning = optional_param('ignoreupgradewarning', 0, PARAM_BOOL);
 
-/// Interim solution to keep the XMLDB installation disabled
-/// can be enabled by hand in the config.php, of course
-    if (!isset($CFG->xmldb_enabled)) {
-        $CFG->xmldb_enabled = false;
-    }
-
 /// check upgrade status first
     if ($ignoreupgradewarning and !empty($_SESSION['upgraderunning'])) {
         $_SESSION['upgraderunning'] = 0;
@@ -140,7 +134,7 @@
     /// Both old .sql files and new install.xml are supported
     /// But we priorize install.xml (XMLDB) if present
         $status = false;
-        if (file_exists("$CFG->libdir/db/install.xml") && $CFG->xmldb_enabled) {
+        if (file_exists("$CFG->libdir/db/install.xml")) {
             $status = install_from_xmldb_file("$CFG->libdir/db/install.xml"); //New method
         } else if (file_exists("$CFG->libdir/db/$CFG->dbtype.sql")) {
             $status = modify_database("$CFG->libdir/db/$CFG->dbtype.sql"); //Old method
@@ -198,7 +192,7 @@
     if (file_exists("$CFG->dirroot/lib/db/$CFG->dbtype.php")) {
         include_once("$CFG->dirroot/lib/db/$CFG->dbtype.php");  # defines old upgrades
     }
-    if (file_exists("$CFG->dirroot/lib/db/upgrade.php") && $CFG->xmldb_enabled) {
+    if (file_exists("$CFG->dirroot/lib/db/upgrade.php")) {
         include_once("$CFG->dirroot/lib/db/upgrade.php");  # defines new upgrades
     }
 

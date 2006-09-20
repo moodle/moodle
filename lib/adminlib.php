@@ -46,7 +46,7 @@ function upgrade_plugins($type, $dir, $return) {
             include_once($fullplug . '/db/'. $CFG->dbtype . '.php');  // defines old upgrading function
             $oldupgrade = true;
         }
-        if (is_readable($fullplug . '/db/upgrade.php')  && $CFG->xmldb_enabled) {
+        if (is_readable($fullplug . '/db/upgrade.php')) {
             include_once($fullplug . '/db/upgrade.php');  // defines new upgrading function
             $newupgrade = true;
         }
@@ -100,7 +100,7 @@ function upgrade_plugins($type, $dir, $return) {
             /// Both old .sql files and new install.xml are supported
             /// but we priorize install.xml (XMLDB) if present
                 $status = false;
-                if (file_exists($fullplug . '/db/install.xml') && $CFG->xmldb_enabled) {
+                if (file_exists($fullplug . '/db/install.xml')) {
                     $status = install_from_xmldb_file($fullplug . '/db/install.xml'); //New method
                 } else if (file_exists($fullplug .'/db/'. $CFG->dbtype .'.sql')) {
                     $status = modify_database($fullplug .'/db/'. $CFG->dbtype .'.sql'); //Old method
@@ -215,7 +215,7 @@ function upgrade_activity_modules($return) {
             include_once($fullmod .'/db/' . $CFG->dbtype . '.php');  // defines old upgrading function
             $oldupgrade = true;
         }
-        if ( is_readable($fullmod . '/db/upgrade.php') && $CFG->xmldb_enabled) {
+        if ( is_readable($fullmod . '/db/upgrade.php')) {
             include_once($fullmod . '/db/upgrade.php');  // defines new upgrading function
             $newupgrade = true;
         }
@@ -328,7 +328,7 @@ function upgrade_activity_modules($return) {
 
         /// Both old .sql files and new install.xml are supported
         /// but we priorize install.xml (XMLDB) if present
-            if (file_exists($fullmod . '/db/install.xml') && $CFG->xmldb_enabled) {
+            if (file_exists($fullmod . '/db/install.xml')) {
                 $status = install_from_xmldb_file($fullmod . '/db/install.xml'); //New method
             } else {
                 $status = modify_database($fullmod .'/db/'. $CFG->dbtype .'.sql'); //Old method
