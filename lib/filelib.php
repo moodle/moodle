@@ -216,10 +216,12 @@ function get_mimetype_description($mimetype,$capitalise=false) {
 function send_file($path, $filename, $lifetime=86400 , $filter=0, $pathisstring=false, $forcedownload=false, $mimetype='') {
     global $CFG;
 
-    // Use given MIME type if specified, otherwise guess it using mimeinfo. 
-    // Always use application/x-forcedownload if that's requested.
-    $mimetype     = $forcedownload ? 'application/x-forcedownload' : 
-                        ($mimetype ? $mimetype : mimeinfo('type', $filename));
+    // Use given MIME type if specified, otherwise guess it using mimeinfo.
+    // IE, Konqueror and Opera open html file directly in browser from web even when directed to save it to disk :-O
+    // only Firefox saves all files locally before opening when content-disposition: attachment stated
+    $isFF         = check_browser_version('Firefox', '1.5'); // only FF > 1.5 properly tested
+    $mimetype     = ($forcedownload and !$isFF) ? 'application/x-forcedownload' : 
+                         ($mimetype ? $mimetype : mimeinfo('type', $filename));
     $lastmodified = $pathisstring ? time() : filemtime($path);
     $filesize     = $pathisstring ? strlen($path) : filesize($path);
 

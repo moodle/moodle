@@ -34,9 +34,7 @@
     }
 
     // security: limit access to existing course subdirectories
-    // note: course ID must be specified
-    // note: the lang field is needed for the course language switching hack in weblib.php
-    if (!$course = get_record_sql("SELECT id, lang FROM {$CFG->prefix}course WHERE id='".(int)$args[0]."'")) {
+    if (!$course = get_record_sql("SELECT * FROM {$CFG->prefix}course WHERE id='".(int)$args[0]."'")) {
         error('Invalid course ID');
     }
 
