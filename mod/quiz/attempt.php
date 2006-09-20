@@ -59,8 +59,9 @@
     require_login($course->id, false, $cm);
     $isteacher = has_capability('mod/quiz:grade', get_context_instance(CONTEXT_MODULE, $cm->id));
     
-    $coursecontext = get_context_instance(CONTEXT_COURSE, $id); // course context
+    $coursecontext = get_context_instance(CONTEXT_COURSE, $cm->course); // course context
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    
     // if no questions have been set up yet redirect to edit.php
     if (!$quiz->questions and has_capability('mod/quiz:manage', $context)) {
         redirect('edit.php?quizid=' . $quiz->id);
@@ -378,7 +379,6 @@
 
     // We have now finished processing form data
     }
-
 
 /// Finish attempt if requested
     if ($finishattempt) {
