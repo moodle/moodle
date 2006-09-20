@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/data/db" VERSION="20060817" COMMENT="XMLDB file for Moodle mod/data">
+<XMLDB PATH="mod/data/db" VERSION="20060921" COMMENT="XMLDB file for Moodle mod/data"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
   <TABLES>
     <TABLE NAME="data" COMMENT="Defines settings for each Database activity" NEXT="data_fields">
       <FIELDS>
@@ -12,9 +15,8 @@
         <FIELD NAME="timeavailablefrom" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="comments" NEXT="timeavailableto"/>
         <FIELD NAME="timeavailableto" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="timeavailablefrom" NEXT="timeviewfrom"/>
         <FIELD NAME="timeviewfrom" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="timeavailableto" NEXT="timeviewto"/>
-        <FIELD NAME="timeviewto" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="timeviewfrom" NEXT="participants"/>
-        <FIELD NAME="participants" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="timeviewto" NEXT="requiredentries"/>
-        <FIELD NAME="requiredentries" TYPE="int" LENGTH="8" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="participants" NEXT="requiredentriestoview"/>
+        <FIELD NAME="timeviewto" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="timeviewfrom" NEXT="requiredentries"/>
+        <FIELD NAME="requiredentries" TYPE="int" LENGTH="8" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="timeviewto" NEXT="requiredentriestoview"/>
         <FIELD NAME="requiredentriestoview" TYPE="int" LENGTH="8" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="requiredentries" NEXT="maxentries"/>
         <FIELD NAME="maxentries" TYPE="int" LENGTH="8" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="requiredentriestoview" NEXT="rssarticles"/>
         <FIELD NAME="rssarticles" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="maxentries" NEXT="singletemplate"/>
@@ -29,9 +31,8 @@
         <FIELD NAME="jstemplate" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="csstemplate" NEXT="approval"/>
         <FIELD NAME="approval" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="jstemplate" NEXT="scale"/>
         <FIELD NAME="scale" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="approval" NEXT="assessed"/>
-        <FIELD NAME="assessed" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="scale" NEXT="assesspublic"/>
-        <FIELD NAME="assesspublic" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="assessed" NEXT="defaultsort"/>
-        <FIELD NAME="defaultsort" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="assesspublic" NEXT="defaultsortdir"/>
+        <FIELD NAME="assessed" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="scale" NEXT="defaultsort"/>
+        <FIELD NAME="defaultsort" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="assessed" NEXT="defaultsortdir"/>
         <FIELD NAME="defaultsortdir" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="defaultsort" NEXT="editany"/>
         <FIELD NAME="editany" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="defaultsortdir"/>
       </FIELDS>
