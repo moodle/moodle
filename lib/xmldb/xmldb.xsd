@@ -19,7 +19,7 @@
      <xs:pattern value='[0-9a-z_]{1,30}'/>
     </xs:restriction >
   </xs:simpleType >
-  
+
   <xs:simpleType name="fieldType">
     <xs:restriction base="xs:NMTOKEN">
       <xs:enumeration value="int" />
@@ -43,7 +43,7 @@
      <xs:pattern value='[0-9a-z_, ]+'/>
     </xs:restriction >
   </xs:simpleType >
-  
+
   <xs:simpleType name="keyType">
     <xs:restriction base="xs:NMTOKEN">
       <xs:enumeration value="primary" />

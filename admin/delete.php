@@ -64,5 +64,5 @@ function delete_subdirectories($rootdir) {
     }
     closedir($dir);
 }
-  
+
 ?>

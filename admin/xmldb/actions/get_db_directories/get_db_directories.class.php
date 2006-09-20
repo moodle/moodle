@@ -24,12 +24,12 @@
 //                                                                       //
 ///////////////////////////////////////////////////////////////////////////
 
-/// This class will check all the db directories existing under the 
+/// This class will check all the db directories existing under the
 /// current Moodle installation, sending them to the SESSION->dbdirs array
 
 class get_db_directories extends XMLDBAction {
 
-    /** 
+    /**
      * Init method, every subclass will have its own
      */
     function init() {
@@ -89,7 +89,7 @@ class get_db_directories extends XMLDBAction {
                 $XMLDB->dbdirs[$dbdir->path]->path_exists = file_exists($dbdir->path);  //Update status
             }
         }
-        
+
     /// Now, question types (question/type/xxx/db)
         if ($plugins = get_list_of_plugins('question/type')) {
             foreach ($plugins as $plugin) {
@@ -101,7 +101,7 @@ class get_db_directories extends XMLDBAction {
                 $XMLDB->dbdirs[$dbdir->path]->path_exists = file_exists($dbdir->path);  //Update status
             }
         }
-        
+
     /// Now, backup/restore stuff (backup/db)
         $dbdir = new stdClass;
         $dbdir->path = $CFG->dirroot . '/backup/db';
@@ -129,7 +129,7 @@ class get_db_directories extends XMLDBAction {
                 $XMLDB->dbdirs[$dbdir->path]->path_exists = file_exists($dbdir->path);  //Update status
             }
         }
-        
+
     /// Now, enrolment plugins (enrol/xxx/db)
         if ($plugins = get_list_of_plugins('enrol', 'db')) {
             foreach ($plugins as $plugin) {
@@ -143,7 +143,7 @@ class get_db_directories extends XMLDBAction {
         }
     /// Sort by key
         ksort($XMLDB->dbdirs);
-        
+
     /// Return ok if arrived here
         return true;
     }

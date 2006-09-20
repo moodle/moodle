@@ -22,9 +22,9 @@
 
     if ($roleid && $action!='delete') {
         $role = get_record('role', 'id', $roleid);
-        $editingstr = '-> '.get_string('editinga', '', $role->name);  
+        $editingstr = '-> '.get_string('editinga', '', $role->name);
     } else {
-        $editingstr ='';  
+        $editingstr ='';
     }
 
     admin_externalpage_print_header($adminroot);
@@ -38,14 +38,14 @@
         switch ($action) {
             case 'add':
 
-                $newrole = create_role($name, $shortname, $description);        
+                $newrole = create_role($name, $shortname, $description);
 
                 $ignore = array('roleid', 'sesskey', 'action', 'name', 'description', 'contextid');
 
                 $data = data_submitted();
 
                 foreach ($data as $capname => $value) {
-                    if (in_array($capname, $ignore)) { 
+                    if (in_array($capname, $ignore)) {
                         continue;
                     }
 
@@ -62,7 +62,7 @@
                 $data = data_submitted();
 
                 foreach ($data as $capname => $value) {
-                    if (in_array($capname, $ignore)) { 
+                    if (in_array($capname, $ignore)) {
                         continue;
                     }
 
@@ -80,7 +80,7 @@
                             $localoverride->permission = $value;
                             $localoverride->timemodified = time();
                             $localoverride->modifierid = $USER->id;
-                            update_record('role_capabilities', $localoverride);    
+                            update_record('role_capabilities', $localoverride);
                         }
                     } else { // insert a record
                         assign_capability($capname, $value, $roleid, $sitecontext->id);
@@ -91,7 +91,7 @@
 
                 $role->id = $roleid;
                 $role->name = $name;
-                $role->description = $description;    
+                $role->description = $description;
 
                 if (!update_record('role', $role)) {
                     error('Could not update role!');
@@ -100,7 +100,7 @@
                 break;
 
             case 'delete':
-                if ($confirm) { // deletes a role 
+                if ($confirm) { // deletes a role
 
                     // check for depedencies  XXX TODO
 
@@ -116,18 +116,18 @@
                     echo ('<input type="hidden" name="roleid" value="'.$roleid.'">');
                     echo ('<input type="hidden" name="sesskey" value="'.sesskey().'">');
                     echo ('<input type="hidden" name="confirm" value="1">');
-                    notice_yesno(get_string('deleterolesure', 'role'), 
+                    notice_yesno(get_string('deleterolesure', 'role'),
                        'manage.php?action=delete&roleid='.$roleid.'&sesskey='.sesskey().'&confirm=1', 'manage.php');
                     admin_externalpage_print_footer($adminroot);
                     exit;
                 }
 
-                break;      
+                break;
 
                 /// add possible positioning switch here
 
             default:
-                break;      
+                break;
 
         }
 
@@ -140,8 +140,8 @@
         if ($roleid) {
             $action='edit';
             $role = get_record('role', 'id', $roleid);
-        } else {    
-            $action='add';              
+        } else {
+            $action='add';
             $role->name='';
             $role->shortname='';
             $role->description='';
@@ -183,8 +183,8 @@
         $table->cellspacing = 0;
         $table->width = '90%';
 
-        $table->head = array(get_string('roles', 'role'), 
-                             get_string('description'), 
+        $table->head = array(get_string('roles', 'role'),
+                             get_string('description'),
                              get_string('delete'));
 
         /*************************
@@ -195,7 +195,7 @@
 
             $table->data[] = array('<a href="manage.php?roleid='.$role->id.'&amp;sesskey='.sesskey().'">'.format_string($role->name).'</a>', format_text($role->description, FORMAT_HTML), '<a href="manage.php?action=delete&roleid='.$role->id.'&sesskey='.sesskey().'">'.$strdelete.'</a>');
 
-        } 
+        }
         print_table($table);
 
         $options = new object;

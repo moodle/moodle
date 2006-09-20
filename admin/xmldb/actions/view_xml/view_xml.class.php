@@ -28,7 +28,7 @@
 
 class view_xml extends XMLDBAction {
 
-    /** 
+    /**
      * Init method, every subclass will have its own
      */
     function init() {
@@ -66,7 +66,7 @@ class view_xml extends XMLDBAction {
     /// Get the file parameter
         $file = required_param('file', PARAM_PATH);
         $file = $CFG->dirroot . stripslashes_safe($file);
-    /// File must be under $CFG->wwwroot and 
+    /// File must be under $CFG->wwwroot and
     ///  under one db directory (simple protection)
         if (substr($file, 0, strlen($CFG->dirroot)) == $CFG->dirroot &&
             substr(dirname($file), -2, 2) == 'db') {

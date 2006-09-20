@@ -32,9 +32,9 @@
 
 
 $mod_chat_capabilities = array(
-    
+
     'mod/chat:chat' => array(
-    
+
         'riskbitmask' => RISK_SPAM,
 
         'captype' => 'write',
@@ -48,9 +48,9 @@ $mod_chat_capabilities = array(
             'admin' => CAP_ALLOW
         )
     ),
-    
+
     'mod/chat:readlog' => array(
-    
+
         'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
@@ -62,9 +62,9 @@ $mod_chat_capabilities = array(
             'admin' => CAP_ALLOW
         )
     ),
-    
+
     'mod/chat:deletelog' => array(
-    
+
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
@@ -76,7 +76,7 @@ $mod_chat_capabilities = array(
             'admin' => CAP_ALLOW
         )
     )
-    
+
 );
 
 ?>

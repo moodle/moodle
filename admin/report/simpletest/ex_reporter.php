@@ -25,24 +25,24 @@ class ExHtmlReporter extends HtmlReporter {
 
     // Options set when the class is created.
     var $showpasses;
-    
+
     // Lang strings. Set in the constructor.
     var $strrunonlyfolder;
     var $strrunonlyfile;
-    
+
     var $strseparator;
-    
+
     /**
      * Constructor.
-     * 
+     *
      * @param bool $showpasses Whether this reporter should output anything for passes.
      */
     function ExHtmlReporter($showpasses) {
         global $CFG;
-        
+
         $this->HtmlReporter();
         $this->showpasses = $showpasses;
-        
+
         $this->strrunonlyfolder = $this->get_string('runonlyfolder');
         $this->strrunonlyfile = $this->get_string('runonlyfile');
         $this->strseparator = ' <img src="' . $CFG->pixpath . '/a/r_breadcrumb.gif" class="resize" alt="" /> ';
@@ -82,7 +82,7 @@ class ExHtmlReporter extends HtmlReporter {
      */
     function _paintPassFail($passorfail, $message) {
         global $FULLME, $CFG;
-        
+
         print_simple_box_start('', '100%', '', 5, $passorfail . ' generalbox');
         $url = $this->_htmlEntities($this->_stripParameterFromUrl($FULLME, 'path'));
         echo '<b class="', $passorfail, '">', $this->get_string($passorfail), '</b>: ';
@@ -102,7 +102,7 @@ class ExHtmlReporter extends HtmlReporter {
         print_simple_box_end();
         flush();
     }
-   
+
     /**
      * Called when a notice needs to be output.
      */
@@ -154,25 +154,25 @@ class ExHtmlReporter extends HtmlReporter {
         echo $this->get_string('summary', $summarydata);
         echo '</div>';
 
-        echo '<div class="performanceinfo">', 
+        echo '<div class="performanceinfo">',
                 $this->get_string('runat', date('<b>d-m-Y H:i T</b>')),
                 $this->get_string('version', SimpleTestOptions::getVersion()),
                 '</div>';
     }
-    
+
     /**
      * Strip a specified parameter from the query string of a URL, if present.
-     * Adds a separator to the end of the URL, so that a new parameter 
+     * Adds a separator to the end of the URL, so that a new parameter
      * can easily be appended. For example (assuming $param = 'frog'):
-     * 
+     *
      * http://example.com/index.php               -> http://example.com/index.php?
      * http://example.com/index.php?frog=1        -> http://example.com/index.php?
      * http://example.com/index.php?toad=1        -> http://example.com/index.php?toad=1&
      * http://example.com/index.php?frog=1&toad=1 -> http://example.com/index.php?toad=1&
-     * 
+     *
      * @param string $url the URL to modify.
      * @param string $param the parameter to strip from the URL, if present.
-     * 
+     *
      * @return string The modified URL.
      */
     function _stripParameterFromUrl($url, $param) {

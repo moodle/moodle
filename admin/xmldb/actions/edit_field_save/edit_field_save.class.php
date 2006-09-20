@@ -28,7 +28,7 @@
 
 class edit_field_save extends XMLDBAction {
 
-    /** 
+    /**
      * Init method, every subclass will have its own
      */
     function init() {
@@ -152,7 +152,7 @@ class edit_field_save extends XMLDBAction {
                   $length > 0 && $length <= 20)) {
                 $errors[] = $this->str['integerincorrectlength'];
             }
-            if (!(empty($default) || (is_numeric($default) && 
+            if (!(empty($default) || (is_numeric($default) &&
                                        !empty($default) &&
                                        intval($default)==floatval($default)))) {
                 $errors[] = $this->str['defaultincorrect'];
@@ -164,35 +164,35 @@ class edit_field_save extends XMLDBAction {
                   $length > 0 && $length <= 20)) {
                 $errors[] = $this->str['numberincorrectlength'];
             }
-            if (!(empty($decimals) || (is_numeric($decimals) && 
-                                       !empty($decimals) && 
+            if (!(empty($decimals) || (is_numeric($decimals) &&
+                                       !empty($decimals) &&
                                        intval($decimals)==floatval($decimals) &&
-                                       $decimals >= 0 && 
+                                       $decimals >= 0 &&
                                        $decimals < $length))) {
                 $errors[] = $this->str['numberincorrectdecimals'];
             }
-            if (!(empty($default) || (is_numeric($default) && 
+            if (!(empty($default) || (is_numeric($default) &&
                                        !empty($default)))) {
                 $errors[] = $this->str['defaultincorrect'];
             }
         }
     /// Float checks
         if ($type == XMLDB_TYPE_FLOAT) {
-            if (!(empty($length) || (is_numeric($length) && 
-                                     !empty($length) && 
+            if (!(empty($length) || (is_numeric($length) &&
+                                     !empty($length) &&
                                      intval($length)==floatval($length) &&
-                                     $length > 0 && 
+                                     $length > 0 &&
                                      $length <= 20))) {
                 $errors[] = $this->str['floatincorrectlength'];
             }
-            if (!(empty($decimals) || (is_numeric($decimals) && 
-                                       !empty($decimals) && 
+            if (!(empty($decimals) || (is_numeric($decimals) &&
+                                       !empty($decimals) &&
                                        intval($decimals)==floatval($decimals) &&
-                                       $decimals >= 0 && 
+                                       $decimals >= 0 &&
                                        $decimals < $length))) {
                 $errors[] = $this->str['floatincorrectdecimals'];
             }
-            if (!(empty($default) || (is_numeric($default) && 
+            if (!(empty($default) || (is_numeric($default) &&
                                        !empty($default)))) {
                 $errors[] = $this->str['defaultincorrect'];
             }
@@ -259,7 +259,7 @@ class edit_field_save extends XMLDBAction {
                 }
             } else {
                 $enumerr = true;
-            } 
+            }
             if ($enumerr) {
                 $errors[] = $this->str['enumvaluesincorrect'];
             } else {
@@ -283,8 +283,8 @@ class edit_field_save extends XMLDBAction {
             $tempfield->setDefault($default);
         /// Prepare the output
             $site = get_site();
-            print_header("$site->shortname: XMLDB", 
-                         "$site->fullname", 
+            print_header("$site->shortname: XMLDB",
+                         "$site->fullname",
                          "<a href=\"../index.php\">" . $this->str['administration'] . "</a> -> <a href=\"index.php\">XMLDB</a>");
             notice ('<p>' .implode(', ', $errors) . '</p>
                      <p>' . $tempfield->readableInfo(),
@@ -309,8 +309,8 @@ class edit_field_save extends XMLDBAction {
                     $next->setChanged(true);
                 }
             }
-    
-        /// Set comment 
+
+        /// Set comment
             $field->setComment($comment);
 
         /// Set the rest of fields
@@ -323,7 +323,7 @@ class edit_field_save extends XMLDBAction {
             $field->setEnum($enum);
             $field->setEnumValues($enumvalues);
             $field->setDefault($default);
-     
+
         /// If the hash has changed from the old one, change the version
         /// and mark the structure as changed
             $field->calculateHash(true);
@@ -338,7 +338,7 @@ class edit_field_save extends XMLDBAction {
             }
 
         /// Launch postaction if exists (leave this here!)
-            if ($this->getPostAction() && $result) { 
+            if ($this->getPostAction() && $result) {
                 return $this->launch($this->getPostAction());
             }
         }

@@ -28,7 +28,7 @@
 
 class delete_sentence extends XMLDBAction {
 
-    /** 
+    /**
      * Init method, every subclass will have its own
      */
     function init() {
@@ -108,7 +108,7 @@ class delete_sentence extends XMLDBAction {
 
                     /// Recalculate the hash
                         $structure->calculateHash(true);
-                
+
                     /// If the hash has changed from the original one, change the version
                     /// and mark the structure as changed
                         $origstructure =& $dbdir->xml_file->getStructure();
@@ -122,7 +122,7 @@ class delete_sentence extends XMLDBAction {
         }
 
     /// Launch postaction if exists (leave this here!)
-        if ($this->getPostAction() && $result) { 
+        if ($this->getPostAction() && $result) {
             return $this->launch($this->getPostAction());
         }
 

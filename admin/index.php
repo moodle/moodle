@@ -386,7 +386,7 @@
             blocks_execute_action($page, blocks_get_by_page($page), 'add', (int)$admintree->id, false, false);
             if ($admintreeinstance = get_record('block_instance', 'pagetype', $page->type, 'pageid', SITEID, 'blockid', $admintree->id)) {
                 blocks_execute_action($page, blocks_get_by_page($page), 'moveleft', $admintreeinstance, false, false);
-            } 
+            }
         }
 
         set_config('adminblocks_initialised', 1);
@@ -457,7 +457,7 @@
     }
 
 /// Check for any special upgrades that might need to be run
-    if (!empty($CFG->upgrade)) {  
+    if (!empty($CFG->upgrade)) {
         print_simple_box(get_string("upgrade$CFG->upgrade", "admin",
                                     "$CFG->wwwroot/$CFG->admin/upgrade$CFG->upgrade.php"), "center", '60%');
         print_spacer(10,10);
@@ -490,7 +490,7 @@
     }
 
 /// Print slightly annoying registration button every six months   ;-)
-/// You can set the "registered" variable to something far in the future 
+/// You can set the "registered" variable to something far in the future
 /// if you really want to prevent this.   eg  9999999999
     if (!isset($CFG->registered) || $CFG->registered < (time() - 3600*24*30*6)) {
         $options = array();
@@ -512,7 +512,7 @@
         $table->cellpadding = 5;
         $table->cellspacing = 0;
         $table->width = '40%';
-    
+
         $configdata  = '<div class="adminlink"><a href="config.php">'.get_string('configvariables', 'admin').
             '</a> - <span class="explanation">'.get_string('adminhelpconfigvariables').'</span></div>';
         $configdata .= '<div class="adminlink"><a href="site.php">'.get_string('sitesettings').
@@ -537,9 +537,9 @@
             '</a> - <span class="explanation">'.get_string('helpcalendarsettings', 'admin').'</span></div>';
         $configdata .= '<div class="adminlink"><a href="maintenance.php">'.get_string('sitemaintenancemode', 'admin').
             '</a> - <span class="explanation">'.get_string('helpsitemaintenance', 'admin').'</span></div>';
-    
+
         $table->data[] = array('<strong>'.get_string('configuration').'</strong>', $configdata);
-    
+
         $userdata =  '<div class="adminlink"><a href="auth.php?sesskey='.$USER->sesskey.'">'.get_string("authentication").
             '</a> - <span class="explanation">'.get_string('adminhelpauthentication').'</span></div>';
         $userdata .= '<div class="adminlink"><a href="user.php">'.get_string('edituser').
@@ -554,17 +554,17 @@
         $userdata .= '<div class="adminlink"><a href="roles/assign.php?contextid='.$context->id.'">'.
             get_string('assignsiteroles').'</a> - <span class="explanation">'.get_string('adminhelpassignsiteroles').
             '</span></div>';
-    
+
         $table->data[] = array('<strong>'.get_string('users').'</strong>', $userdata);
-    
+
         $coursedata = '<div class="adminlink"><a href="../course/index.php?edit=on&amp;sesskey='.$USER->sesskey.'">'.get_string('managecourses').
             '</a> - <span class="explanation">'.get_string('adminhelpcourses').'</span></div>';
         $coursedata .= '<div class="adminlink"><a href="enrol.php?sesskey='.$USER->sesskey.'">'.get_string('enrolmentplugins').
             '</a> - <span class="explanation">'.get_string('adminhelpenrolments').'</span></div>';
-    
-    
+
+
         $table->data[] = array('<strong>'.get_string('courses').'</strong>', $coursedata);
-    
+
         $miscdata = '<div class="adminlink"><a href="../files/index.php?id='.$site->id.'">'.get_string('sitefiles').
             '</a> - <span class="explanation">'.get_string('adminhelpsitefiles').'</span></div>';
         $miscdata .= '<div class="adminlink"><a href="stickyblocks.php">'.get_string('stickyblocks','admin').
@@ -586,28 +586,28 @@
             $miscdata .= '<div class="adminlink"><a href="xmldb/index.php">'.get_string('xmldbeditor').
                 '</a> - <span class="explanation">'.get_string('adminhelpxmldbeditor').'</span></div>';
         }
-    
+
         $table->data[] = array('<strong>'.get_string('miscellaneous').'</strong>', $miscdata);
-    
-/*    
-        /// Hooks for Matt Oquists contrib code for repositories and portfolio.  
+
+/*
+        /// Hooks for Matt Oquists contrib code for repositories and portfolio.
         /// The eventual official versions may not look like this
         if (isset($CFG->portfolio) && file_exists("$CFG->dirroot/$CFG->portfolio")) {
             $table->data[] = array("<strong><a href=\"../portfolio/\">".get_string('portfolio','portfolio').'</a></
                     strong>',
                     '<div class="explanation">'.get_string('adminhelpportfolio','portfolio').'</div>');
         }
-    
+
         if (isset($CFG->repo) && file_exists("$CFG->dirroot/$CFG->repo")) {
             $table->data[] = array("<strong><a href=\"../repository/?repoid=1&action=list\">".get_string('repository','
                         repository').'</a></strong>',
                     '<div class="explanation">'.get_string('adminhelprepository','repository').'</div>');
         }
-*/   
-    
-    
+*/
+
+
         print_table($table);
-    
+
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -629,7 +629,7 @@
         echo '</div>';
     }
 
-    
+
     if (optional_param('dbmigrate')) {               // ??? Is this actually used?
         print_simple_box_start('center','60%');
         require_once($CFG->dirroot.'/admin/utfdbmigrate.php');

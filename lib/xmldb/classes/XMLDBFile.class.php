@@ -94,7 +94,7 @@ class XMLDBFile extends XMLDBObject {
         return $structure;
     }
 
-    /** 
+    /**
      * This function saves the whole XMLDBStructure to its file
      */
     function saveXMLFile() {

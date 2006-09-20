@@ -23,7 +23,7 @@
 //                                                                       //
 ///////////////////////////////////////////////////////////////////////////
 
-/// This library contains all the Data Manipulation Language (DML) functions 
+/// This library contains all the Data Manipulation Language (DML) functions
 /// used to interact with the DB. All the dunctions in this library must be
 /// generic and work against the major number of RDBMS possible. This is the
 /// list of currently supported and tested DBs: mysql, postresql, mssql, oracle
@@ -101,7 +101,7 @@ function begin_sql() {
     return true;
 }
 /**
-* on DBs that support it, commit the transaction 
+* on DBs that support it, commit the transaction
 */
 function rollback_sql() {
 /// Completely general function - it just runs some SQL and reports success.
@@ -132,7 +132,7 @@ function db_lowercase() {
 }
 
 /**
-* on DBs that support it, commit the transaction 
+* on DBs that support it, commit the transaction
 */
 function commit_sql() {
 /// Completely general function - it just runs some SQL and reports success.
@@ -155,7 +155,7 @@ function commit_sql() {
  *
  * @uses $CFG
  * @param string $sqlfile The path where a file with sql commands can be found on the server.
- * @param string $sqlstring If no path is supplied then a string with semicolon delimited sql 
+ * @param string $sqlstring If no path is supplied then a string with semicolon delimited sql
  * commands can be supplied in this argument.
  * @return bool Returns true if databse was modified successfully.
  */
@@ -332,11 +332,11 @@ function count_records_select($table, $select='', $countitem='COUNT(*)') {
  */
 function count_records_sql($sql) {
     $rs = get_recordset_sql($sql);
-    
+
     if ($rs) {
         return reset($rs->fields);
     } else {
-        return 0;   
+        return 0;
     }
 }
 
@@ -370,12 +370,12 @@ function get_record($table, $field1, $value1, $field2='', $value2='', $field3=''
  * The SQL statement should normally only return one record. In debug mode
  * you will get a warning if more record is returned (unless you
  * set $expectmultiple to true). In non-debug mode, it just returns
- * the first record. 
+ * the first record.
  *
  * @uses $CFG
  * @uses $db
  * @param string $sql The SQL string you wish to be executed, should normally only return one record.
- * @param bool $expectmultiple If the SQL cannot be written to conviniently return just one record, 
+ * @param bool $expectmultiple If the SQL cannot be written to conviniently return just one record,
  *      set this to true to hide the debug message.
  * @param bool $nolimit sometimes appending ' LIMIT 1' to the SQL causes an error. Set this to true
  *      to stop your SQL being modified. This argument should probably be deprecated.
@@ -392,7 +392,7 @@ function get_record_sql($sql, $expectmultiple=false, $nolimit=false) {
 /// Only a few uses of the 2nd and 3rd parameter have been found
 /// I think that we should avoid to use them completely, one
 /// record is one record, and everything else should return error.
-/// So the proposal is to change all the uses, (4-5 inside Moodle 
+/// So the proposal is to change all the uses, (4-5 inside Moodle
 /// Core), drop them from the definition and delete the next two
 /// "if" sentences. (eloy, 2006-08-19)
 
@@ -404,20 +404,20 @@ function get_record_sql($sql, $expectmultiple=false, $nolimit=false) {
         $limitnum  = 1;
     } else if (debugging()) {
         // Debugging mode - don't use a limit of 1, but do change the SQL, because sometimes that
-        // causes errors, and in non-debug mode you don't see the error message and it is 
+        // causes errors, and in non-debug mode you don't see the error message and it is
         // impossible to know what's wrong.
         $limitfrom = 0;
         $limitnum  = 100;
     }
 
     if (!$rs = get_recordset_sql($sql, $limitfrom, $limitnum)) {
-        return false;   
+        return false;
     }
-    
+
     $recordcount = $rs->RecordCount();
 
     if ($recordcount == 0) {          // Found no records
-        return false; 
+        return false;
 
     } else if ($recordcount == 1) {    // Found one record
     /// DIRTY HACK to retrieve all the ' ' (1 space) fields converted back
@@ -467,23 +467,23 @@ function get_record_select($table, $select='', $fields='*') {
  * Get a number of records as an ADODB RecordSet.
  *
  * Selects records from the table $table.
- * 
+ *
  * If specified, only records where the field $field has value $value are retured.
- * 
+ *
  * If specified, the results will be sorted as specified by $sort. This
  * is added to the SQL as "ORDER BY $sort". Example values of $sort
  * mightbe "time ASC" or "time DESC".
- * 
+ *
  * If $fields is specified, only those fields are returned.
  *
- * This function is internal to datalib, and should NEVER should be called directly 
+ * This function is internal to datalib, and should NEVER should be called directly
  * from general Moodle scripts.  Use get_record, get_records etc.
- * 
+ *
  * If you only want some of the records, specify $limitfrom and $limitnum.
  * The query will skip the first $limitfrom records (according to the sort
  * order) and then return the next $limitnum records. If either of $limitfrom
  * or $limitnum is specified, both must be present.
- * 
+ *
  * The return value is an ADODB RecordSet object
  * @link http://phplens.com/adodb/reference.functions.adorecordset.html
  * if the query succeeds. If an error occurrs, false is returned.
@@ -504,7 +504,7 @@ function get_recordset($table, $field='', $value='', $sort='', $fields='*', $lim
     } else {
         $select = '';
     }
-    
+
     return get_recordset_select($table, $select, $sort, $fields, $limitfrom, $limitnum);
 }
 
@@ -513,8 +513,8 @@ function get_recordset($table, $field='', $value='', $sort='', $fields='*', $lim
  *
  * If given, $select is used as the SELECT parameter in the SQL query,
  * otherwise all records from the table are returned.
- * 
- * Other arguments and the return type as for @see function get_recordset. 
+ *
+ * Other arguments and the return type as for @see function get_recordset.
  *
  * @uses $CFG
  * @param string $table the table to query.
@@ -552,8 +552,8 @@ function get_recordset_select($table, $select='', $sort='', $fields='*', $limitf
  * Only records where $field takes one of the values $values are returned.
  * $values should be a comma-separated list of values, for example "4,5,6,10"
  * or "'foo','bar','baz'".
- * 
- * Other arguments and the return type as for @see function get_recordset. 
+ *
+ * Other arguments and the return type as for @see function get_recordset.
  *
  * @param string $table the table to query.
  * @param string $field a field to check (optional).
@@ -577,10 +577,10 @@ function get_recordset_list($table, $field='', $values='', $sort='', $fields='*'
 
 /**
  * Get a number of records as an ADODB RecordSet.  $sql must be a complete SQL query.
- * This function is internal to datalib, and should NEVER should be called directly 
+ * This function is internal to datalib, and should NEVER should be called directly
  * from general Moodle scripts.  Use get_record, get_records etc.
- *  
- * The return type is as for @see function get_recordset. 
+ *
+ * The return type is as for @see function get_recordset.
  *
  * @uses $CFG
  * @uses $db
@@ -620,7 +620,7 @@ function get_recordset_sql($sql, $limitfrom=null, $limitnum=null) {
 
 /**
  * Utility function used by the following 4 methods.
- * 
+ *
  * @param object an ADODB RecordSet object.
  * @return mixed mixed an array of objects, or false if an error occured or the RecordSet was empty.
  */
@@ -654,7 +654,7 @@ function recordset_to_array($rs) {
     }
 }
 
-/** 
+/**
  * This function is used to convert all the Oracle 1-space defaults to the empty string
  * like a really DIRTY HACK to allow it to work better until all those NOT NULL DEFAULT ''
  * fields will be out from Moodle.
@@ -671,7 +671,7 @@ function onespace2empty(&$item, $key) {
  *
  * If the query succeeds and returns at least one record, the
  * return value is an array of objects, one object for each
- * record found. The array key is the value from the first 
+ * record found. The array key is the value from the first
  * column of the result set. The object associated with that key
  * has a member variable for each column of the results.
  *
@@ -728,7 +728,7 @@ function get_records_list($table, $field='', $values='', $sort='', $fields='*', 
  * Get a number of records as an array of objects.
  *
  * Return value as for @see function get_records.
- * 
+ *
  * @param string $sql the SQL select query to execute.
  * @param int $limitfrom return a subset of records, starting at this point (optional, required if $limitnum is set).
  * @param int $limitnum return a subset comprising this many records (optional, required if $limitfrom is set).
@@ -741,7 +741,7 @@ function get_records_sql($sql, $limitfrom='', $limitnum='') {
 
 /**
  * Utility function used by the following 3 methods.
- * 
+ *
  * @param object an ADODB RecordSet object with two columns.
  * @return mixed an associative array, or false if an error occured or the RecordSet was empty.
  */
@@ -764,7 +764,7 @@ function recordset_to_menu($rs) {
  * Get the first two columns from a number of records as an associative array.
  *
  * Arguments as for @see function get_recordset.
- * 
+ *
  * If no errors occur, and at least one records is found, the return value
  * is an associative whose keys come from the first field of each record,
  * and whose values are the corresponding second fields. If no records are found,
@@ -867,7 +867,7 @@ function get_field_sql($sql) {
 }
 
 /**
- * Get an array of data from one or more fields from a database 
+ * Get an array of data from one or more fields from a database
  * use to get a column, or a series of distinct values
  *
  * @uses $CFG
@@ -1027,16 +1027,16 @@ function insert_record($table, $dataobject, $returnid=true, $primarykey='id') {
 
 /// Postgres doesn't have the concept of primary key built in
 /// and will return the OID which isn't what we want.
-/// The efficient and transaction-safe strategy is to 
+/// The efficient and transaction-safe strategy is to
 /// move the sequence forward first, and make the insert
 /// with an explicit id.
     if ( $CFG->dbtype === 'postgres7' && $returnid == true ) {
         if ($nextval = (int)get_field_sql("SELECT NEXTVAL('{$CFG->prefix}{$table}_{$primarykey}_seq')")) {
-            $dataobject->{$primarykey} = $nextval;            
-        } 
+            $dataobject->{$primarykey} = $nextval;
+        }
     }
 
-/// First basic support of insert for Oracle. As it doesn't 
+/// First basic support of insert for Oracle. As it doesn't
 /// support autogenerated fields, we rely on the corresponding
 /// sequence. It will work automatically, unless we need to
 /// return the primary from the function, in this case we
@@ -1049,7 +1049,7 @@ function insert_record($table, $dataobject, $returnid=true, $primarykey='id') {
         $generator->setPrefix($CFG->prefix);
         $seqname = $generator->getNameForObject($table, $primarykey, 'seq');
         if ($nextval = (int)get_field_sql("SELECT $seqname.NEXTVAL from dual")) {
-            $dataobject->{$primarykey} = $nextval;            
+            $dataobject->{$primarykey} = $nextval;
         }
     }
 /// Also, for Oracle DB, empty strings are converted to NULLs in DB
@@ -1059,7 +1059,7 @@ function insert_record($table, $dataobject, $returnid=true, $primarykey='id') {
 /// What we are going to do is to examine all the data being inserted and if it's
 /// an empty string (NULL for Oracle) and the field is defined as NOT NULL, we'll modify
 /// such data in the best form possible ("0" for booleans and numbers and " " for the
-/// rest of strings. It isn't optimal, but the only way to do so. 
+/// rest of strings. It isn't optimal, but the only way to do so.
 /// In the oppsite, when retrieving records from Oracle, we'll decode " " back to
 /// empty strings to allow everything to work properly. DIRTY HACK.
     if ( $CFG->dbtype === 'oci8po') {
@@ -1130,9 +1130,9 @@ function insert_record($table, $dataobject, $returnid=true, $primarykey='id') {
     }
 
 /// This only gets triggered with non-Postgres databases
-/// however we have some postgres fallback in case we failed 
+/// however we have some postgres fallback in case we failed
 /// to find the sequence.
-    $id = $db->Insert_ID();  
+    $id = $db->Insert_ID();
 
     if ($CFG->dbtype === 'postgres7') {
         // try to get the primary key based on id
@@ -1140,7 +1140,7 @@ function insert_record($table, $dataobject, $returnid=true, $primarykey='id') {
              && ($rs->RecordCount() == 1) ) {
             trigger_error("Retrieved $primarykey from oid on table $table because we could not find the sequence.");
             return (integer)reset($rs->fields);
-        } 
+        }
         trigger_error('Failed to retrieve primary key after insert: SELECT '. $primarykey .
                       ' FROM '. $CFG->prefix . $table .' WHERE oid = '. $id);
         return false;
@@ -1257,7 +1257,7 @@ function sql_ilike() {
 
 /**
  * Returns the proper SQL (for the dbms in use) to concatenate $firstname and $lastname
- * 
+ *
  * @uses $CFG
  * @param string $firstname User's first name
  * @param string $lastname User's last name
@@ -1295,7 +1295,7 @@ function sql_isnull($fieldname) {
     }
 }
 
-/** 
+/**
  * Returns the proper AS keyword to be used to aliase columns
  * SQL defines the keyword as optional and nobody but PG
  * seems to require it. This function should be used inside all
@@ -1318,7 +1318,7 @@ function sql_as() {
 
 /**
  * Returns the SQL text to be used to order by one TEXT (clob) column, because
- * some RDBMS doesn't support direct ordering of such fields. 
+ * some RDBMS doesn't support direct ordering of such fields.
  * Note that the use or queries being ordered by TEXT columns must be minimised,
  * because it's really slooooooow.
  * @param string fieldname the name of the TEXT field we need to order by
@@ -1341,13 +1341,13 @@ function sql_order_by_text($fieldname, $numchars=32) {
     }
 }
 
-/** 
+/**
  * Prepare a SQL WHERE clause to select records where the given fields match the given values.
- * 
+ *
  * Prepares a where clause of the form
  *     WHERE field1 = value1 AND field2 = value2 AND field3 = value3
  * except that you need only specify as many arguments (zero to three) as you need.
- * 
+ *
  * @param string $field1 the first field to check (optional).
  * @param string $value1 the value field1 must have (requred if field1 is given, else optional).
  * @param string $field2 the second field to check (optional).

@@ -28,7 +28,7 @@
 
 class edit_table extends XMLDBAction {
 
-    /** 
+    /**
      * Init method, every subclass will have its own
      */
     function init() {
@@ -167,7 +167,7 @@ class edit_table extends XMLDBAction {
         $table->deleteIndex('changeme');
 
     /// Add the fields list
-        $fields =& $table->getFields(); 
+        $fields =& $table->getFields();
         if (!empty($fields)) {
             $o .= '<h3 class="main">' . $this->str['fields'] . '</h3>';
             $o .= '<table id="listfields" border="0" align="center"  cellpadding="5" cellspacing="1" class="flexible">';
@@ -197,7 +197,7 @@ class edit_table extends XMLDBAction {
                 }
                 $b .= '</td><td class="button cell">';
             /// The delete button (if we have more than one and it isn't used
-                if (count($fields) > 1 && 
+                if (count($fields) > 1 &&
                 !$structure->getFieldUses($table->getName(), $field->getName())) {
                     $b .= '<a href="index.php?action=delete_field&amp;field=' . $field->getName() . '&amp;table=' . $table->getName() . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['delete'] . ']</a>';
                 } else {
@@ -210,13 +210,13 @@ class edit_table extends XMLDBAction {
             /// The readable info
                 $r = '</td><td class="readableinfo cell">' . $field->readableInfo() . '</td>';
             /// Print table row
-            $o .= '<tr class="r' . $row . '"><td class="table cell"><a href="index.php?action=view_field_xml&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '&amp;field=' . $field->getName() . '&amp;table=' . $table->getName() . '&amp;select=edited" target="_blank">' . $field->getName() . '</a>' . $b . $r . '</tr>'; 
+            $o .= '<tr class="r' . $row . '"><td class="table cell"><a href="index.php?action=view_field_xml&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '&amp;field=' . $field->getName() . '&amp;table=' . $table->getName() . '&amp;select=edited" target="_blank">' . $field->getName() . '</a>' . $b . $r . '</tr>';
                 $row = ($row + 1) % 2;
             }
             $o .= '</table>';
         }
     /// Add the keys list
-        $keys =& $table->getKeys(); 
+        $keys =& $table->getKeys();
         if (!empty($keys)) {
             $o .= '<h3 class="main">' . $this->str['keys'] . '</h3>';
             $o .= '<table id="listkeys" border="0" align="center"  cellpadding="5" cellspacing="1" class="flexible">';
@@ -254,13 +254,13 @@ class edit_table extends XMLDBAction {
             /// The readable info
                 $r = '</td><td class="readableinfo cell">' . $key->readableInfo() . '</td>';
             /// Print table row
-            $o .= '<tr class="r' . $row . '"><td class="table cell"><a href="index.php?action=view_key_xml&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '&amp;key=' . $key->getName() . '&amp;table=' . $table->getName() . '&amp;select=edited" target="_blank">' . $key->getName() . '</a>' . $b . $r .'</tr>'; 
+            $o .= '<tr class="r' . $row . '"><td class="table cell"><a href="index.php?action=view_key_xml&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '&amp;key=' . $key->getName() . '&amp;table=' . $table->getName() . '&amp;select=edited" target="_blank">' . $key->getName() . '</a>' . $b . $r .'</tr>';
                 $row = ($row + 1) % 2;
             }
             $o .= '</table>';
         }
    /// Add the indexes list
-        $indexes =& $table->getIndexes(); 
+        $indexes =& $table->getIndexes();
         if (!empty($indexes)) {
             $o .= '<h3 class="main">' . $this->str['indexes'] . '</h3>';
             $o .= '<table id="listindexes" border="0" align="center"  cellpadding="5" cellspacing="1" class="flexible">';
@@ -290,7 +290,7 @@ class edit_table extends XMLDBAction {
             /// The readable info
                 $r = '</td><td class="readableinfo cell">' . $index->readableInfo() . '</td>';
             /// Print table row
-            $o .= '<tr class="r' . $row . '"><td class="table cell"><a href="index.php?action=view_index_xml&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '&amp;index=' . $index->getName() . '&amp;table=' . $table->getName() . '&amp;select=edited" target="_blank">' . $index->getName() . '</a>' . $b . $r .'</tr>'; 
+            $o .= '<tr class="r' . $row . '"><td class="table cell"><a href="index.php?action=view_index_xml&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '&amp;index=' . $index->getName() . '&amp;table=' . $table->getName() . '&amp;select=edited" target="_blank">' . $index->getName() . '</a>' . $b . $r .'</tr>';
                 $row = ($row + 1) % 2;
             }
             $o .= '</table>';
@@ -299,7 +299,7 @@ class edit_table extends XMLDBAction {
         $this->output = $o;
 
     /// Launch postaction if exists (leave this here!)
-        if ($this->getPostAction() && $result) { 
+        if ($this->getPostAction() && $result) {
             return $this->launch($this->getPostAction());
         }
 

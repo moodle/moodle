@@ -7,7 +7,7 @@
 
     $enrol = optional_param('enrol', $CFG->enrol, PARAM_SAFEDIR);
     $CFG->pagepath = 'enrol';
-    
+
     $adminroot = admin_get_root();
     admin_externalpage_setup('enrolment', $adminroot);
 
@@ -20,7 +20,7 @@
     if ($frm = data_submitted()) {
         if (!confirm_sesskey()) {
             error(get_string('confirmsesskeybad', 'error'));
-        }    
+        }
         if (empty($frm->enable)) {
             $frm->enable = array();
         }

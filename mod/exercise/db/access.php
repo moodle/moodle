@@ -32,9 +32,9 @@
 
 
 $mod_exercise_capabilities = array(
-    
+
     'mod/exercise:assess' => array(
-    
+
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
@@ -46,7 +46,7 @@ $mod_exercise_capabilities = array(
             'admin' => CAP_ALLOW
         )
     )
-    
+
 );
 
 ?>

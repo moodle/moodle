@@ -1,13 +1,13 @@
 <?php // $Id$
 /**
  * Capability definitions for the lesson module.
- * 
+ *
  * For naming conventions, see lib/db/access.php.
  */
 $mod_lesson_capabilities = array(
 
     'mod/lesson:view' => array(
-    
+
         'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
@@ -21,7 +21,7 @@ $mod_lesson_capabilities = array(
     ),
 
     'mod/lesson:edit' => array(
-    
+
         'riskbitmask' => RISK_XSS,
 
         'captype' => 'write',
@@ -37,7 +37,7 @@ $mod_lesson_capabilities = array(
     ),
 
     'mod/lesson:manage' => array(
-    
+
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(

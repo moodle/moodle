@@ -16,7 +16,7 @@
 
     print_heading(get_string('chooselogs') .':');
 
-    print_log_selector_form($course); 
+    print_log_selector_form($course);
 
     echo '<br />';
     print_heading(get_string('chooselivelogs') .':');

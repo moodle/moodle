@@ -4,7 +4,7 @@
 
     require_once("../config.php");
     require_once($CFG->libdir.'/adminlib.php');
-    
+
     $adminroot = admin_get_root();
     admin_externalpage_setup('enrolment', $adminroot);
 
@@ -21,7 +21,7 @@
     if ($frm = data_submitted()) {
         if (!confirm_sesskey()) {
             error(get_string('confirmsesskeybad', 'error'));
-        }    
+        }
         if ($enrolment->process_config($frm)) {
             redirect("enrol.php?sesskey=$USER->sesskey", get_string("changessaved"), 1);
         }
@@ -55,8 +55,8 @@
                       "document.location='enrol_config.php?enrol='+document.enrolmenu.enrol.options[document.enrolmenu.enrol.selectedIndex].value", "");
 
     echo "</b></p></div>";
-    
-/// Print current enrolment type description    
+
+/// Print current enrolment type description
     print_simple_box_start("center", "80%");
     print_heading($options[$enrol]);
 
@@ -65,7 +65,7 @@
     print_simple_box_end();
 
     echo "<hr />";
-    
+
     $enrolment->config_form($frm);
 
     echo "<center><p><input type=\"submit\" value=\"".get_string("savechanges")."\"></p></center>\n";

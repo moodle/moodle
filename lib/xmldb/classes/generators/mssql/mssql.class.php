@@ -125,11 +125,11 @@ class XMLDBmssql extends XMLDBgenerator {
         return $dbtype;
     }
 
-    /**         
+    /**
      * Returns the code needed to create one enum for the xmldb_table and xmldb_field passes
-     */     
+     */
     function getEnumExtraSQL ($xmldb_table, $xmldb_field) {
-        
+
         $sql = 'CONSTRAINT ' . $this->getNameForObject($xmldb_table->getName(), $xmldb_field->getName(), 'ck');
         $sql.= ' CHECK (' . $this->getEncQuoted($xmldb_field->getName()) . ' IN (' . implode(', ', $xmldb_field->getEnumValues()) . '))';
 
@@ -180,36 +180,36 @@ class XMLDBmssql extends XMLDBgenerator {
     /// This file contains the reserved words for MSSQL databases
     /// from http://msdn2.microsoft.com/en-us/library/ms189822.aspx
         $reserved_words = array (
-            'add', 'all', 'alter', 'and', 'any', 'as', 'asc', 'authorization', 
-            'avg', 'backup', 'begin', 'between', 'break', 'browse', 'bulk', 
-            'by', 'cascade', 'case', 'check', 'checkpoint', 'close', 'clustered', 
-            'coalesce', 'collate', 'column', 'commit', 'committed', 'compute', 
-            'confirm', 'constraint', 'contains', 'containstable', 'continue', 
-            'controlrow', 'convert', 'count', 'create', 'cross', 'current', 
-            'current_date', 'current_time', 'current_timestamp', 'current_user', 
-            'cursor', 'database', 'dbcc', 'deallocate', 'declare', 'default', 'delete', 
-            'deny', 'desc', 'disk', 'distinct', 'distributed', 'double', 'drop', 'dummy', 
-            'dump', 'else', 'end', 'errlvl', 'errorexit', 'escape', 'except', 'exec', 
-            'execute', 'exists', 'exit', 'fetch', 'file', 'fillfactor', 'floppy', 
-            'for', 'foreign', 'freetext', 'freetexttable', 'from', 'full', 'function', 
-            'goto', 'grant', 'group', 'having', 'holdlock', 'identity', 'identitycol', 
-            'identity_insert', 'if', 'in', 'index', 'inner', 'insert', 'intersect', 'into', 
-            'is', 'isolation', 'join', 'key', 'kill', 'left', 'level', 'like', 'lineno', 
-            'load', 'max', 'min', 'mirrorexit', 'national', 'nocheck', 'nonclustered', 
-            'not', 'null', 'nullif', 'of', 'off', 'offsets', 'on', 'once', 'only', 'open', 
-            'opendatasource', 'openquery', 'openrowset', 'openxml', 'option', 'or', 'order', 
-            'outer', 'over', 'percent', 'perm', 'permanent', 'pipe', 'plan', 'precision', 
-            'prepare', 'primary', 'print', 'privileges', 'proc', 'procedure', 'processexit', 
-            'public', 'raiserror', 'read', 'readtext', 'reconfigure', 'references', 
-            'repeatable', 'replication', 'restore', 'restrict', 'return', 'revoke', 
-            'right', 'rollback', 'rowcount', 'rowguidcol', 'rule', 'save', 'schema', 
-            'select', 'serializable', 'session_user', 'set', 'setuser', 'shutdown', 'some', 
-            'statistics', 'sum', 'system_user', 'table', 'tape', 'temp', 'temporary', 
-            'textsize', 'then', 'to', 'top', 'tran', 'transaction', 'trigger', 'truncate', 
-            'tsequal', 'uncommitted', 'union', 'unique', 'update', 'updatetext', 'use', 
-            'user', 'values', 'varying', 'view', 'waitfor', 'when', 'where', 'while', 
+            'add', 'all', 'alter', 'and', 'any', 'as', 'asc', 'authorization',
+            'avg', 'backup', 'begin', 'between', 'break', 'browse', 'bulk',
+            'by', 'cascade', 'case', 'check', 'checkpoint', 'close', 'clustered',
+            'coalesce', 'collate', 'column', 'commit', 'committed', 'compute',
+            'confirm', 'constraint', 'contains', 'containstable', 'continue',
+            'controlrow', 'convert', 'count', 'create', 'cross', 'current',
+            'current_date', 'current_time', 'current_timestamp', 'current_user',
+            'cursor', 'database', 'dbcc', 'deallocate', 'declare', 'default', 'delete',
+            'deny', 'desc', 'disk', 'distinct', 'distributed', 'double', 'drop', 'dummy',
+            'dump', 'else', 'end', 'errlvl', 'errorexit', 'escape', 'except', 'exec',
+            'execute', 'exists', 'exit', 'fetch', 'file', 'fillfactor', 'floppy',
+            'for', 'foreign', 'freetext', 'freetexttable', 'from', 'full', 'function',
+            'goto', 'grant', 'group', 'having', 'holdlock', 'identity', 'identitycol',
+            'identity_insert', 'if', 'in', 'index', 'inner', 'insert', 'intersect', 'into',
+            'is', 'isolation', 'join', 'key', 'kill', 'left', 'level', 'like', 'lineno',
+            'load', 'max', 'min', 'mirrorexit', 'national', 'nocheck', 'nonclustered',
+            'not', 'null', 'nullif', 'of', 'off', 'offsets', 'on', 'once', 'only', 'open',
+            'opendatasource', 'openquery', 'openrowset', 'openxml', 'option', 'or', 'order',
+            'outer', 'over', 'percent', 'perm', 'permanent', 'pipe', 'plan', 'precision',
+            'prepare', 'primary', 'print', 'privileges', 'proc', 'procedure', 'processexit',
+            'public', 'raiserror', 'read', 'readtext', 'reconfigure', 'references',
+            'repeatable', 'replication', 'restore', 'restrict', 'return', 'revoke',
+            'right', 'rollback', 'rowcount', 'rowguidcol', 'rule', 'save', 'schema',
+            'select', 'serializable', 'session_user', 'set', 'setuser', 'shutdown', 'some',
+            'statistics', 'sum', 'system_user', 'table', 'tape', 'temp', 'temporary',
+            'textsize', 'then', 'to', 'top', 'tran', 'transaction', 'trigger', 'truncate',
+            'tsequal', 'uncommitted', 'union', 'unique', 'update', 'updatetext', 'use',
+            'user', 'values', 'varying', 'view', 'waitfor', 'when', 'where', 'while',
             'with', 'work', 'writetext'
-        );  
+        );
         return $reserved_words;
     }
 }

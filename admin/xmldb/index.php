@@ -46,7 +46,7 @@
     require_once('../../lib/xmldb/classes/XMLDBIndex.class.php');
     require_once('../../lib/xmldb/classes/XMLDBStatement.class.php');
 
-/// Add Moodle config script (this is loaded AFTER all the rest 
+/// Add Moodle config script (this is loaded AFTER all the rest
 /// of classes because it starts the SESSION and classes to be
 /// stored there MUST be declared before in order to avoid
 /// getting "incomplete" objects
@@ -81,7 +81,7 @@
     $stradministration = get_string('administration');
 
 /// Body of the script, based on action, we delegate the work
-    $action = optional_param ('action', 'main_view', PARAM_ALPHAEXT); 
+    $action = optional_param ('action', 'main_view', PARAM_ALPHAEXT);
 
 /// Get the action path and invoke it
     $actionsroot = "$CFG->dirroot/$CFG->admin/xmldb/actions";
@@ -98,14 +98,14 @@
             /// Based on getDoesGenerate()
                 switch ($xmldb_action->getDoesGenerate()) {
                     case ACTION_GENERATE_HTML:
-                    /// Define $CFG->javascript to use our custom javascripts. 
+                    /// Define $CFG->javascript to use our custom javascripts.
                     /// Save the original one to add it from ours. Global too! :-(
                         global $standard_javascript;
                         $standard_javascript = $CFG->javascript;  // Save original javascript file
                         $CFG->javascript = $CFG->dirroot.'/admin/xmldb/javascript.php';  //Use our custom javascript code
                     /// Go with standard header
-                        print_header("$site->shortname: XMLDB", 
-                                     "$site->fullname", 
+                        print_header("$site->shortname: XMLDB",
+                                     "$site->fullname",
                                      "<a href=\"../index.php\">$stradministration</a> -> <a href=\"index.php\">XMLDB</a>");
                         print_heading($xmldb_action->getTitle());
                         echo $xmldb_action->getOutput();
@@ -126,7 +126,7 @@
         error ("Error: wrong action specified ($action)");
     }
 
-    if ($xmldb_action->getDoesGenerate() != ACTION_GENERATE_XML) {  
+    if ($xmldb_action->getDoesGenerate() != ACTION_GENERATE_XML) {
         if (debugging()) {
             ///print_object($XMLDB);
         }

@@ -28,7 +28,7 @@
 /// are defined
 
 class XMLDBObject {
- 
+
     var $name;
     var $comment;
     var $previous;
@@ -66,14 +66,14 @@ class XMLDBObject {
         return $this->changed;
     }
 
-    /** 
+    /**
      * This function returns the comment of one XMLDBObject
      */
     function getComment() {
         return $this->comment;
     }
 
-    /** 
+    /**
      * This function returns the hash of one XMLDBObject
      */
     function getHash() {
@@ -189,7 +189,7 @@ class XMLDBObject {
         return $result;
     }
 
-    /** 
+    /**
      * This function will check that all the elements in one array
      * have a consistent info in their previous/next fields
      */
@@ -316,9 +316,9 @@ class XMLDBObject {
     function &findObjectInArray($objectname, $arr) {
         foreach ($arr as $i => $object) {
             if ($objectname == $object->getName()) {
-                return $i; 
-            }   
-        }   
+                return $i;
+            }
+        }
         $null = NULL;
         return $null;
     }
@@ -332,7 +332,7 @@ class XMLDBObject {
     }
 
     /**
-     * Returns one array of elements from one comma separated string, 
+     * Returns one array of elements from one comma separated string,
      * supporting quoted strings containing commas and concat function calls
      */
     function comma2array($string) {

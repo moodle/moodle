@@ -27,7 +27,7 @@
 /// This class represent one XMLDB Key
 
 class XMLDBKey extends XMLDBObject {
- 
+
     var $type;
     var $fields;
     var $reftable;
@@ -94,7 +94,7 @@ class XMLDBKey extends XMLDBObject {
         $this->reffields = $reffields;
     }
 
-    /** 
+    /**
      * Get the key fields
      */
     function &getFields() {
@@ -127,7 +127,7 @@ class XMLDBKey extends XMLDBObject {
     /// print_object ($GLOBALS['traverse_array']);  //Debug
     /// $GLOBALS['traverse_array']="";              //Debug
 
-    /// Process key attributes (name, type, fields, reftable, 
+    /// Process key attributes (name, type, fields, reftable,
     /// reffields, comment, previous, next)
         if (isset($xmlarr['@']['NAME'])) {
             $this->name = trim($xmlarr['@']['NAME']);
@@ -175,8 +175,8 @@ class XMLDBKey extends XMLDBObject {
 
         if (isset($xmlarr['@']['REFTABLE'])) {
         /// Check we are in a FK
-            if ($this->type == XMLDB_KEY_FOREIGN || 
-                $this->type == XMLDB_KEY_FOREIGN_UNIQUE) { 
+            if ($this->type == XMLDB_KEY_FOREIGN ||
+                $this->type == XMLDB_KEY_FOREIGN_UNIQUE) {
                 $reftable = strtolower(trim($xmlarr['@']['REFTABLE']));
                 if (!$reftable) {
                     $this->errormsg = 'Empty REFTABLE attribute';
@@ -258,7 +258,7 @@ class XMLDBKey extends XMLDBObject {
     function getXMLDBKeyType($type) {
 
         $result = XMLDB_KEY_INCORRECT;
-        
+
         switch (strtolower($type)) {
             case 'primary':
                 $result = XMLDB_KEY_PRIMARY;
@@ -287,7 +287,7 @@ class XMLDBKey extends XMLDBObject {
     function getXMLDBKeyName($type) {
 
         $result = '';
-        
+
         switch (strtolower($type)) {
             case XMLDB_KEY_PRIMARY:
                 $result = 'primary';
@@ -326,7 +326,7 @@ class XMLDBKey extends XMLDBObject {
         }
     }
 
-    /** 
+    /**
      *This function will output the XML text for one key
      */
     function xmlOutput() {
@@ -392,14 +392,14 @@ class XMLDBKey extends XMLDBObject {
             case XMLDB_KEY_FOREIGN:
                 $result .= 'XMLDB_KEY_FOREIGN' . ', ';
                 break;
-        }       
+        }
     /// The fields
         $keyfields = $this->getFields();
         if (!empty($keyfields)) {
             $result .= 'array(' . "'".  implode("', '", $keyfields) . "')";
         } else {
             $result .= 'null';
-        }   
+        }
     /// The FKs attributes
         if ($this->getType() == XMLDB_KEY_FOREIGN) {
         /// The reftable
@@ -408,7 +408,7 @@ class XMLDBKey extends XMLDBObject {
                 $result .= ", '" . $reftable . "', ";
             } else {
                 $result .= 'null, ';
-            }   
+            }
         /// The reffields
             $reffields = $this->getRefFields();
             if (!empty($reffields)) {
@@ -421,9 +421,9 @@ class XMLDBKey extends XMLDBObject {
         return $result;
     }
 
-    /**     
+    /**
      * Shows info in a readable format
-     */ 
+     */
     function readableInfo() {
         $o = '';
     /// type

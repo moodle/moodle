@@ -28,7 +28,7 @@
 
 class revert_changes extends XMLDBAction {
 
-    /** 
+    /**
      * Init method, every subclass will have its own
      */
     function init() {
@@ -106,7 +106,7 @@ class revert_changes extends XMLDBAction {
         }
 
     /// Launch postaction if exists (leave this here!)
-        if ($this->getPostAction() && $result) { 
+        if ($this->getPostAction() && $result) {
             return $this->launch($this->getPostAction());
         }
 

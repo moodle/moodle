@@ -28,7 +28,7 @@
 
 class edit_key extends XMLDBAction {
 
-    /** 
+    /**
      * Init method, every subclass will have its own
      */
     function init() {
@@ -160,7 +160,7 @@ class edit_key extends XMLDBAction {
         $this->output = $o;
 
     /// Launch postaction if exists (leave this here!)
-        if ($this->getPostAction() && $result) { 
+        if ($this->getPostAction() && $result) {
             return $this->launch($this->getPostAction());
         }
 

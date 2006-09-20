@@ -32,9 +32,9 @@
 
 
 $mod_forum_capabilities = array(
-    
+
     'mod/forum:viewforum' => array(
-    
+
         'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
@@ -46,9 +46,9 @@ $mod_forum_capabilities = array(
             'admin' => CAP_ALLOW
         )
     ),
-    
+
     'mod/forum:viewdiscussion' => array(
-    
+
         'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
@@ -60,9 +60,9 @@ $mod_forum_capabilities = array(
             'admin' => CAP_ALLOW
         )
     ),
-    
+
     'mod/forum:viewhiddentimedposts' => array(
-    
+
         'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
@@ -74,9 +74,9 @@ $mod_forum_capabilities = array(
             'admin' => CAP_ALLOW
         )
     ),
-    
+
     'mod/forum:startdiscussion' => array(
-    
+
         'riskbitmask' => RISK_SPAM,
 
         'captype' => 'write',
@@ -90,9 +90,9 @@ $mod_forum_capabilities = array(
             'admin' => CAP_ALLOW
         )
     ),
-    
+
     'mod/forum:replypost' => array(
-    
+
         'riskbitmask' => RISK_SPAM,
 
         'captype' => 'write',
@@ -106,9 +106,9 @@ $mod_forum_capabilities = array(
             'admin' => CAP_ALLOW
         )
     ),
-    
+
     'mod/forum:viewrating' => array(
-    
+
         'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
@@ -120,9 +120,9 @@ $mod_forum_capabilities = array(
             'admin' => CAP_ALLOW
         )
     ),
-    
+
     'mod/forum:viewanyrating' => array(
-    
+
         'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
@@ -134,9 +134,9 @@ $mod_forum_capabilities = array(
             'admin' => CAP_ALLOW
         )
     ),
-    
+
     'mod/forum:rate' => array(
-    
+
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
@@ -148,9 +148,9 @@ $mod_forum_capabilities = array(
             'admin' => CAP_ALLOW
         )
     ),
-    
+
     'mod/forum:createattachment' => array(
-    
+
         'riskbitmask' => RISK_SPAM,
 
         'captype' => 'write',
@@ -164,9 +164,9 @@ $mod_forum_capabilities = array(
             'admin' => CAP_ALLOW
         )
     ),
-    
+
     'mod/forum:deleteownpost' => array(
-    
+
         'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
@@ -178,9 +178,9 @@ $mod_forum_capabilities = array(
             'admin' => CAP_ALLOW
         )
     ),
-    
+
     'mod/forum:deleteanypost' => array(
-    
+
         'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
@@ -192,9 +192,9 @@ $mod_forum_capabilities = array(
             'admin' => CAP_ALLOW
         )
     ),
-    
+
     'mod/forum:splitdiscussions' => array(
-    
+
         'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
@@ -206,9 +206,9 @@ $mod_forum_capabilities = array(
             'admin' => CAP_ALLOW
         )
     ),
-    
+
     'mod/forum:movediscussions' => array(
-    
+
         'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
@@ -220,9 +220,9 @@ $mod_forum_capabilities = array(
             'admin' => CAP_ALLOW
         )
     ),
-    
+
     'mod/forum:editanypost' => array(
-    
+
         'riskbitmask' => RISK_SPAM,
 
         'captype' => 'write',
@@ -236,9 +236,9 @@ $mod_forum_capabilities = array(
             'admin' => CAP_ALLOW
         )
     ),
-    
+
     'mod/forum:viewqandawithoutposting' => array(
-    
+
         'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
@@ -250,9 +250,9 @@ $mod_forum_capabilities = array(
             'admin' => CAP_ALLOW
         )
     ),
-    
+
     'mod/forum:viewsubscribers' => array(
-    
+
         'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
@@ -264,9 +264,9 @@ $mod_forum_capabilities = array(
             'admin' => CAP_ALLOW
         )
     ),
-    
+
     'mod/forum:managesubscriptions' => array(
-    
+
         'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
@@ -278,9 +278,9 @@ $mod_forum_capabilities = array(
             'admin' => CAP_ALLOW
         )
     ),
-    
+
     'mod/forum:throttlingapplies' => array(
-    
+
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(

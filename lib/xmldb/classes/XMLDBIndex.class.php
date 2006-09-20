@@ -27,7 +27,7 @@
 /// This class represent one XMLDB Index
 
 class XMLDBIndex extends XMLDBObject {
- 
+
     var $unique;
     var $fields;
 
@@ -72,7 +72,7 @@ class XMLDBIndex extends XMLDBObject {
         $this->fields = $fields;
     }
 
-    /** 
+    /**
      * Get the index fields
      */
     function &getFields() {
@@ -113,7 +113,7 @@ class XMLDBIndex extends XMLDBObject {
                 $this->errormsg = 'Undefined UNIQUE attribute';
                 $result = false;
         }
-          
+
         if (isset($xmlarr['@']['FIELDS'])) {
             $fields = strtolower(trim($xmlarr['@']['FIELDS']));
             if ($fields) {
@@ -169,7 +169,7 @@ class XMLDBIndex extends XMLDBObject {
         }
     }
 
-    /** 
+    /**
      *This function will output the XML text for one index
      */
     function xmlOutput() {
@@ -236,7 +236,7 @@ class XMLDBIndex extends XMLDBObject {
         return $result;
     }
 
-    /**     
+    /**
      * Shows info in a readable format
      */
     function readableInfo() {

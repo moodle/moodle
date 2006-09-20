@@ -18,7 +18,7 @@
 <br />
 <?php print_string('roledescription', 'role'); ?>:
 <?php print_textarea($usehtmleditor, 10, 50, 50, 10, 'description', $role->description); ?>
-<p>            
+<p>
 <table>
 <tr>
 <td><?php print_string('capability','role') ?></td>
@@ -29,17 +29,17 @@
 <td><?php print_string('risks','role') ?></td>
 </tr>
 
-<?php 
+<?php
 
 // init these 2
 $contextlevel = 0;
 $component = '';
 
 foreach ($capabilities as $capability) {
-    // prints a breaker if component or name or context level  
+    // prints a breaker if component or name or context level
     if ($capability->component != $component or $capability->contextlevel != $contextlevel) {
         echo ('<tr><td colspan="4"><strong>'.
-               get_component_string($capability->component, $capability->contextlevel).'</strong></td></tr>');  
+               get_component_string($capability->component, $capability->contextlevel).'</strong></td></tr>');
     }
 
     // these 2 are used to see to group same mod/core capabilities together
@@ -78,8 +78,8 @@ foreach ($capabilities as $capability) {
         ?></td>
         </tr>
 
-<?php } ?>    
-</table>     
+<?php } ?>
+</table>
 </p>
 <br />
 <input type="submit" value="<?php p($submitlabel); ?>" />

@@ -29,7 +29,7 @@
 
 class view_table_php extends XMLDBAction {
 
-    /** 
+    /**
      * Init method, every subclass will have its own
      */
     function init() {
@@ -82,7 +82,7 @@ class view_table_php extends XMLDBAction {
     /// ADD YOUR CODE HERE
 
         $tableparam = required_param('table', PARAM_PATH);
-      
+
         $table =& $structure->getTable($tableparam);
         $fields = $table->getFields();
         $field = reset($fields);
@@ -108,7 +108,7 @@ class view_table_php extends XMLDBAction {
         $o .= '<h3 class="main">' . $this->str['table'] . ': ' . s($tableparam) . '</h3>';
 
     /// Calculate the popup of commands
-        $commands = array('add_field', 
+        $commands = array('add_field',
                          'drop_field',
                          'rename_field');
         foreach ($commands as $command) {
@@ -171,7 +171,7 @@ class view_table_php extends XMLDBAction {
         $this->output = $o;
 
     /// Launch postaction if exists (leave this here!)
-        if ($this->getPostAction() && $result) { 
+        if ($this->getPostAction() && $result) {
             return $this->launch($this->getPostAction());
         }
 
@@ -180,9 +180,9 @@ class view_table_php extends XMLDBAction {
     }
 
     /**
-     * This function will generate all the PHP code needed to 
+     * This function will generate all the PHP code needed to
      * create one field using XMLDB objects and functions
-     * 
+     *
      * @param XMLDBStructure structure object containing all the info
      * @param string table table name
      * @param string field field name to be created
@@ -224,9 +224,9 @@ class view_table_php extends XMLDBAction {
     }
 
     /**
-     * This function will generate all the PHP code needed to 
+     * This function will generate all the PHP code needed to
      * drop one field using XMLDB objects and functions
-     * 
+     *
      * @param XMLDBStructure structure object containing all the info
      * @param string table table name
      * @param string field field name to be dropped
@@ -267,9 +267,9 @@ class view_table_php extends XMLDBAction {
     }
 
     /**
-     * This function will generate all the PHP code needed to 
+     * This function will generate all the PHP code needed to
      * rename one field using XMLDB objects and functions
-     * 
+     *
      * @param XMLDBStructure structure object containing all the info
      * @param string table table name
      * @param string field field name to be renamed

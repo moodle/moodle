@@ -1,7 +1,7 @@
 <?PHP // $Id$
       // Allows the admin to manage questiontypes
       // This page is adapted from modules.php
-      
+
       // This page is not yet in service, the whole plug-in architecture
       // for question types is still under construction.
 
@@ -35,12 +35,12 @@
     $strquestions = get_string("questions");
     $strquestiontype = get_string("questiontype", 'quiz');
 
-    print_header("$site->shortname: $strquestions", "$site->fullname", 
+    print_header("$site->shortname: $strquestions", "$site->fullname",
                  "<a href=\"index.php\">$stradministration</a> -> ".
                  "<a href=\"configure.php\">$strconfiguration</a> -> $strquestions");
 
     print_heading($strquestions);
-   
+
 
 /// If data submitted, then process and store.
 
@@ -59,12 +59,12 @@
     }
 
     if (!empty($delete) and confirm_sesskey()) {
-      
+
         $strqtypename = get_string("qtypename", "qtype_$delete");
 
         if (!$confirm) {
-            notice_yesno(get_string("qtypedeleteconfirm", "admin", $strqtypename), 
-                         "questiontypes.php?delete=$delete&amp;confirm=1&amp;sesskey=$USER->sesskey", 
+            notice_yesno(get_string("qtypedeleteconfirm", "admin", $strqtypename),
+                         "questiontypes.php?delete=$delete&amp;confirm=1&amp;sesskey=$USER->sesskey",
                          "questiontypes.php");
             print_footer();
             exit;
@@ -104,7 +104,7 @@
                         }
                     }
                 }
-            }  
+            }
 
             $a->qtype = $strqtypename;
             $a->directory = "$CFG->dirroot/qtype/$delete";
@@ -145,7 +145,7 @@
         $count = count_records('quiz_questions', 'qtype', $qtype->id);
 
         $delete = $count ? '' : "<a href=\"questiontypes.php?delete=$qtype->name&amp;sesskey=$USER->sesskey\">$strdelete</a>";
-        
+
         if ($qtype->visible) {
             $visible = "<a href=\"questiontypes.php?hide=$qtype->name&amp;sesskey=$USER->sesskey\" title=\"$strhide\">".
                        "<img src=\"$CFG->pixpath/i/hide.gif\" align=\"middle\" height=\"16\" width=\"16\" border=\"0\" alt=\"\" /></a>";

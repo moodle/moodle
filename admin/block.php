@@ -9,7 +9,7 @@
     require_once($CFG->libdir.'/blocklib.php');
 
     $blockid = required_param('block', PARAM_INT);
-   
+
     if(($blockrecord = blocks_get_record($blockid)) === false) {
         error('This block does not exist');
     }
@@ -51,11 +51,11 @@
     $strconfiguration = get_string('configuration');
     $strmanageblocks = get_string('manageblocks');
     $strblockname = $block->get_title();
-    
+
     // $CFG->pagepath is used to generate the body and id attributes for the body tag
     // of the page. It is also used to generate the link to the Moodle Docs for this view.
     $CFG->pagepath = 'block/' . $block->name() . '/config';
-    
+
 
     admin_externalpage_print_header($adminroot);
 

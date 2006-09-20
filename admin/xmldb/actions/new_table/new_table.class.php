@@ -28,7 +28,7 @@
 
 class new_table extends XMLDBAction {
 
-    /** 
+    /**
      * Init method, every subclass will have its own
      */
     function init() {
@@ -110,7 +110,7 @@ class new_table extends XMLDBAction {
             $structure->addTable($table);
         }
     /// Launch postaction if exists (leave this here!)
-        if ($this->getPostAction() && $result) { 
+        if ($this->getPostAction() && $result) {
             return $this->launch($this->getPostAction());
         }
 

@@ -28,7 +28,7 @@
 
 class load_xml_files extends XMLDBAction {
 
-    /** 
+    /**
      * Init method, every subclass will have its own
      */
     function init() {

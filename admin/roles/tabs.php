@@ -71,7 +71,7 @@ if ($currenttab != 'update') {
                     $blockname = print_context_name($context);
                     $navigation = $blockname. ' -> '.$straction;
 
-                    switch ($blockinstance->pagetype) { 
+                    switch ($blockinstance->pagetype) {
                         case 'course-view':
                             if ($course = get_record('course', 'id', $blockinstance->pageid)) {
                                 if ($course->id != SITEID) {
@@ -111,45 +111,45 @@ if ($context->aggregatelevel != CONTEXT_SYSTEM) {    // Print tabs for anything 
         $toprow[] = new tabobject('update', $CFG->wwwroot.'/course/mod.php?update='.
                        $context->instanceid.'&amp;return=true&amp;sesskey='.sesskey(), get_string('update'));
 
-    }    
+    }
 
     $toprow[] = new tabobject('roles', $CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php?contextid='.
-                               $context->id, get_string('roles')); 
+                               $context->id, get_string('roles'));
 
     if (isset($tabsmode)) {
 
         if (!isset($assignableroles)) {
-            $assignableroles = get_assignable_roles($context);          
+            $assignableroles = get_assignable_roles($context);
         }
         if (!isset($overridableroles)) {
-            $overridableroles = get_overridable_roles($context); 
+            $overridableroles = get_overridable_roles($context);
         }
 
         $inactive[] = 'roles';
         if (!empty($assignableroles)) {
-            $secondrow[] = new tabobject('assign', 
-                                         $CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php?contextid='.$context->id, 
-                                         get_string('assignroles', 'role'), 
-                                         get_string('showallroles', 'role'), 
-                                         true); 
+            $secondrow[] = new tabobject('assign',
+                                         $CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php?contextid='.$context->id,
+                                         get_string('assignroles', 'role'),
+                                         get_string('showallroles', 'role'),
+                                         true);
         }
 
-        if (!empty($overridableroles)) {  
-            $secondrow[] = new tabobject('override', 
+        if (!empty($overridableroles)) {
+            $secondrow[] = new tabobject('override',
                                $CFG->wwwroot.'/'.$CFG->admin.'/roles/override.php?contextid='.$context->id,
-                               get_string('overrideroles', 'role'), 
-                               get_string('showallroles', 'role'),  
-                               true);         
+                               get_string('overrideroles', 'role'),
+                               get_string('showallroles', 'role'),
+                               true);
         }
 
         if ($tabsmode == 'override') {
-            $currenttab = 'override';  
+            $currenttab = 'override';
         } elseif ($tabsmode == 'assign') {
-            $currenttab = 'assign';  
+            $currenttab = 'assign';
         }
 
     } else {
-        $inactive[] = '';  
+        $inactive[] = '';
     }
 
     if (!empty($secondrow)) {

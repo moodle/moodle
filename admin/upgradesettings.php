@@ -1,6 +1,6 @@
 <?php // $Id$
 
-// detects settings that were added during an upgrade, displays a screen for the admin to 
+// detects settings that were added during an upgrade, displays a screen for the admin to
 // modify them, and then processes modifications
 
 require_once('../config.php');
@@ -18,7 +18,7 @@ $newsettingshtml = output_new_settings_by_page(admin_get_root());
 
 // first we deal with the case where there are no new settings to be set
 if ($newsettingshtml == '') {
-    redirect($CFG->wwwroot . '/' . $CFG->admin . '/index.php');    
+    redirect($CFG->wwwroot . '/' . $CFG->admin . '/index.php');
     die;
 }
 
@@ -74,7 +74,7 @@ admin_externalpage_print_footer($adminroot);
 
 /**
  * Find settings that have not been initialized (e.g. during initial install or an upgrade).
- * 
+ *
  * Tests each setting's get_setting() method. If the result is NULL, we consider the setting
  * to be uninitialized.
  *
@@ -90,9 +90,9 @@ function find_new_settings(&$node) {
             $return = array_merge($return, find_new_settings($node->children[$entry]));
         }
         return $return;
-    } 
+    }
 
-    if (is_a($node, 'admin_settingpage')) { 
+    if (is_a($node, 'admin_settingpage')) {
         $return = array();
         foreach ($node->settings as $setting) {
             if ($setting->get_setting() === NULL) {
@@ -117,9 +117,9 @@ function output_new_settings_by_page(&$node) {
             $return .= output_new_settings_by_page($node->children[$entry]);
         }
         return $return;
-    } 
+    }
 
-    if (is_a($node, 'admin_settingpage')) { 
+    if (is_a($node, 'admin_settingpage')) {
         $newsettings = array();
         foreach ($node->settings as $setting) {
             if ($setting->get_setting() === NULL) {
@@ -133,7 +133,7 @@ function output_new_settings_by_page(&$node) {
             $return = '<tr><td colspan="2"><strong>' . $node->visiblename . '</strong></td></tr>';
             foreach ($newsettings as $newsetting) {
                 $return .= $newsetting->output_html();
-            }        
+            }
         }
         return $return;
     }

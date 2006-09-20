@@ -11,7 +11,7 @@
     require_login();
 
     require_capability('moodle/site:viewreports', get_context_instance(CONTEXT_SYSTEM, SITEID));
-    
+
     stats_check_uptodate($course->id);
 
     $param = stats_get_parameters($time,$report,SITEID,STATS_MODE_RANKED);
@@ -22,13 +22,13 @@
         .$param->extras
         ." ORDER BY ".$param->orderby
         ." LIMIT ".$numcourses;
-    
+
     $courses = get_records_sql($sql);
-    
+
     if (empty($courses)) {
         error(get_string('statsnodata'),$CFG->wwwroot.'/'.$CFG->admin.'/report/course/index.php');
     }
-    
+
 
     $graph = new graph(750,400);
 
@@ -48,5 +48,5 @@
     $graph->y_format['bar1'] = array('colour' => 'blue','bar' => 'fill','legend' => $param->{$param->graphline});
 
     $graph->draw_stack();
-    
+
 ?>

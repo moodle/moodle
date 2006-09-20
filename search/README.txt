@@ -16,7 +16,7 @@ current value for the index - this is to take into account the fact that
 deleted documents are in fact not removed from the index, but instead just
 marked as deleted and not returned in search results. The actual document
 still features in the index, and skews sizes. When the index optimiser is
-completed in ZFS, then these deleted documents will be pruned, thus 
+completed in ZFS, then these deleted documents will be pruned, thus
 correctly modifying the index size.
 
 Additional commenting added.

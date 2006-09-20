@@ -22,10 +22,10 @@ $temp->add(new admin_setting_sitesettext('shortname', get_string('shortsitename'
 $temp->add(new admin_setting_special_frontpagedesc());
 $temp->add(new admin_setting_courselist_frontpage(false)); // non-loggedin version of the setting (that's what the parameter is for :) )
 $temp->add(new admin_setting_courselist_frontpage(true)); // loggedin version of the setting
-$temp->add(new admin_setting_sitesetcheckbox('numsections', get_string('sitesection'), 
+$temp->add(new admin_setting_sitesetcheckbox('numsections', get_string('sitesection'),
                get_string('sitesectionhelp','admin'), 1));
-$temp->add(new admin_setting_sitesetselect('newsitems', get_string('newsitemsnumber'), 
-     '', 3, 
+$temp->add(new admin_setting_sitesetselect('newsitems', get_string('newsitemsnumber'),
+     '', 3,
      array('0' => '0',
            '1' => '1',
            '2' => '2',

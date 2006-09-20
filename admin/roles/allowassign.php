@@ -1,7 +1,7 @@
 <?php
 /**
- * this page defines what roles can access (grant user that role and override that roles' 
- * capabilities in different context. For example, we can say that Teachers can only grant 
+ * this page defines what roles can access (grant user that role and override that roles'
+ * capabilities in different context. For example, we can say that Teachers can only grant
  * student role or modify student role's capabilities. Note that you need both the right
  * capability moodle/roles:assign or moodle/roles:manage and this database table roles_deny_grant
  * to be able to grant roles. If a user has moodle/roles:manage at site level assignment
@@ -21,20 +21,20 @@
     $site = get_site();
     $stradministration = get_string('administration');
     $strmanageroles = get_string('manageroles');
-    
+
 /// form processiong here
 
 /// get all roles
- 
+
     $roles = get_records('role');
 
     if ($grant = data_submitted()) {
-      
+
         foreach ($grant as $grole => $val) {
             if ($grole == 'dummy') {
-                continue;  
+                continue;
             }
-          
+
             $string = explode('_', $grole);
             $temp[$string[1]][$string[2]] = 1; // if set, means can access
         }
@@ -48,7 +48,7 @@
                     }
                 } else { //if set, means can access, attempt to remove it from db
                     delete_records('role_allow_assign', 'roleid', $srole->id, 'allowassign', $trole->id);
-                }  
+                }
             }
         }
     }
@@ -64,41 +64,41 @@
     $table->cellspacing = 0;
     $table->width = '90%';
     $table->align[] = 'right';
-    
+
 /// get all the roles identifier
     foreach ($roles as $role) {
         $rolesname[] = format_string($role->name);
         $roleids[] = $role->id;
         $table->align[] = 'center';
         $table->wrap[] = 'nowrap';
-    }    
-    
+    }
+
     $table->head = array_merge(array(''), $rolesname);
-    
+
     foreach ($roles as $role) {
         $beta = get_box_list($role->id, $roleids);
         $table->data[] = array_merge(array(format_string($role->name)), $beta);
     }
 
     print_simple_box(get_string('configallowassign', 'admin'), 'center');
-    
+
     echo '<form action="allowassign.php" method="post">';
     print_table($table);
     echo '<div class="singlebutton"><input type="submit" value="'.get_string('savechanges').'"/></div>';
     echo '<input type="hidden" name="dummy" value="1" />'; // this is needed otherwise we do not know a form has been submitted
     echo '</form>';
-    
+
     admin_externalpage_print_footer($adminroot);
 
 
 
 function get_box_list($roleid, $arraylist){
-    
+
     foreach ($arraylist as $targetid) {
         if (get_record('role_allow_assign', 'roleid', $roleid, 'allowassign', $targetid)) {
             $array[] = '<input type="checkbox" name="s_'.$roleid.'_'.$targetid.'" value="1" checked="checked"/>';
         } else {
-            $array[] = '<input type="checkbox" name="s_'.$roleid.'_'.$targetid.'" value="1" />';              
+            $array[] = '<input type="checkbox" name="s_'.$roleid.'_'.$targetid.'" value="1" />';
         }
     }
     return $array;

@@ -29,9 +29,9 @@
     admin_externalpage_print_header($adminroot);
 
     print_heading($stractivities);
-   
+
     $coursesaffected = false;
-    
+
 
 /// If data submitted, then process and store.
 
@@ -56,12 +56,12 @@
     }
 
     if (!empty($delete) and confirm_sesskey()) {
-      
+
         $strmodulename = get_string("modulename", "$delete");
 
         if (!$confirm) {
-            notice_yesno(get_string("moduledeleteconfirm", "", $strmodulename), 
-                         "modules.php?delete=$delete&amp;confirm=1&amp;sesskey=$USER->sesskey", 
+            notice_yesno(get_string("moduledeleteconfirm", "", $strmodulename),
+                         "modules.php?delete=$delete&amp;confirm=1&amp;sesskey=$USER->sesskey",
                          "modules.php");
             admin_externalpage_print_footer($adminroot);
             exit;
@@ -90,7 +90,7 @@
                 notify("Error occurred while deleting all $strmodulename records in course_modules table");
             }
 
-            // Then delete all the logs 
+            // Then delete all the logs
             if (!delete_records("log", "module", $module->name)) {
                 notify("Error occurred while deleting all $strmodulename records in log table");
             }
@@ -116,10 +116,10 @@
                         }
                     }
                 }
-            }  
+            }
             // Delete the capabilities that were defined by this module
             capabilities_cleanup('mod/'.$module->name);
-            
+
             // rebuild_course_cache();  // Because things have changed
             $coursesaffected = true;
 
@@ -128,11 +128,11 @@
             notice(get_string("moduledeletefiles", "", $a), "modules.php");
         }
     }
-    
+
     if ($coursesaffected) {
         rebuild_course_cache();  // Because things have changed
     }
-    
+
 
 /// Get and sort the existing modules
 

@@ -32,9 +32,9 @@
 
 
 $mod_choice_capabilities = array(
-    
+
     'mod/choice:choose' => array(
-    
+
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
@@ -46,9 +46,9 @@ $mod_choice_capabilities = array(
             'admin' => CAP_ALLOW
         )
     ),
-    
+
     'mod/choice:readresponses' => array(
-    
+
         'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
@@ -60,9 +60,9 @@ $mod_choice_capabilities = array(
             'admin' => CAP_ALLOW
         )
     ),
-    
+
     'mod/choice:deleteresponses' => array(
-    
+
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
@@ -74,9 +74,9 @@ $mod_choice_capabilities = array(
             'admin' => CAP_ALLOW
         )
     ),
-    
+
     'mod/choice:downloadresponses' => array(
-    
+
         'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(

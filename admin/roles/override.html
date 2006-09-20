@@ -1,4 +1,4 @@
-            <form action="override.php" method="post">     
+            <form action="override.php" method="post">
             <input type="hidden" name="contextid" value="<?php p($contextid) ?>">
             <input type="hidden" name="roleid" value="<?php p($roleid) ?>">
 <?php
@@ -17,22 +17,22 @@ if ($courseid) {
                 <td><?php print_string('prohibit','role') ?></td>
                 <td><?php print_string('risks','role') ?></td>
             </tr>
-            <?php 
-            
+            <?php
+
             // init these 2
             $contextlevel = 0;
             $component = '';
 
             foreach ($capabilities as $capability) {
-            // prints a breaker if component or name or context level  
+            // prints a breaker if component or name or context level
                 if ($capability->component != $component or $capability->contextlevel != $contextlevel) {
-                    echo ('<tr><td colspan="5"><b>'.get_component_string($capability->component, $capability->contextlevel).'</b></td></tr>');  
+                    echo ('<tr><td colspan="5"><b>'.get_component_string($capability->component, $capability->contextlevel).'</b></td></tr>');
                 }
-                
+
                 // these 2 are used to see to group same mod/core capabilities together
                 $contextlevel = $capability->contextlevel;
                 $component = $capability->component;
-                
+
                 // check the capability override for this cap, this role in this context
                 if (isset($localoverrides[$capability->name])) {
                     $localpermission = $localoverrides[$capability->name]->permission;
@@ -47,41 +47,41 @@ if ($courseid) {
                 } else {
                     $isallow = 0;
                     $isprevent = 0;
-                    $isprohibit = 0;  
+                    $isprohibit = 0;
                 }
 
                 $isdisabled = $isprohibit || islegacy($capability->name);
-                
+
             ?>
-                
+
             <tr>
               <td><?php echo get_capability_string($capability->name); ?></td>
 
                  <td align="center">
-                 <input type="radio" name="<?php echo $capability->name; ?>" value="0" 
-                    <?php 
-                        if ($localpermission == 0) {echo 'checked="checked"';} 
+                 <input type="radio" name="<?php echo $capability->name; ?>" value="0"
+                    <?php
+                        if ($localpermission == 0) {echo 'checked="checked"';}
                         if ($isdisabled)           {echo 'disabled="disabled"';}?> />
                  </td>
 
                  <td align="center" <?php if ($isallow) {echo 'class="capcurrent"';} ?>>
                  <input type="radio" name="<?php echo $capability->name; ?>"
                     <?php echo ' value="'.CAP_ALLOW.'"';
-                       if ($localpermission == CAP_ALLOW) {echo ' checked="checked"';} 
+                       if ($localpermission == CAP_ALLOW) {echo ' checked="checked"';}
                        if ($isdisabled)                   {echo ' disabled="disabled"';}?> />
                  </td>
 
                  <td align="center" <?php if ($isprevent) {echo 'class="capcurrent"';} ?>>
-                 <input type="radio" name="<?php echo $capability->name; ?>" 
+                 <input type="radio" name="<?php echo $capability->name; ?>"
                     <?php echo ' value="'.CAP_PREVENT.'"';
-                       if ($localpermission == CAP_PREVENT) {echo ' checked="checked"';} 
+                       if ($localpermission == CAP_PREVENT) {echo ' checked="checked"';}
                        if ($isdisabled)                     {echo ' disabled="disabled"';}?> />
                  </td>
 
                  <td align="center" <?php if ($isprohibit) {echo 'class="capcurrent"';} ?>>
                  <input type="radio" name="<?php echo $capability->name; ?>"
                     <?php echo ' value="'.CAP_PROHIBIT.'"';
-                       if ($localpermission == CAP_PROHIBIT) {echo ' checked="checked"';} 
+                       if ($localpermission == CAP_PROHIBIT) {echo ' checked="checked"';}
                        if ($isdisabled)                      {echo ' disabled="disabled"';}?> />
                  </td>
                  <td><?php
@@ -102,9 +102,9 @@ if ($courseid) {
                     }
                  ?></td>
             </tr>
-            
-            <?php } ?>    
-            </table>     
+
+            <?php } ?>
+            </table>
             <br />
             <div align="center"><input type="submit" value="<?php print_string('savechanges') ?>" /></div>
             </form>

@@ -29,7 +29,7 @@
 
 class view_structure_php extends XMLDBAction {
 
-    /** 
+    /**
      * Init method, every subclass will have its own
      */
     function init() {
@@ -78,7 +78,7 @@ class view_structure_php extends XMLDBAction {
             $structure =& $editeddir->xml_file->getStructure();
         }
     /// ADD YOUR CODE HERE
-      
+
         $tables =& $structure->getTables();
         $table = reset($tables);
         $defaulttable = null;
@@ -97,7 +97,7 @@ class view_structure_php extends XMLDBAction {
         $o = $b;
 
     /// Calculate the popup of commands
-        $commands = array('create_table', 
+        $commands = array('create_table',
                          'drop_table',
                          'rename_table');
         foreach ($commands as $command) {
@@ -136,7 +136,7 @@ class view_structure_php extends XMLDBAction {
         $this->output = $o;
 
     /// Launch postaction if exists (leave this here!)
-        if ($this->getPostAction() && $result) { 
+        if ($this->getPostAction() && $result) {
             return $this->launch($this->getPostAction());
         }
 
@@ -145,9 +145,9 @@ class view_structure_php extends XMLDBAction {
     }
 
     /**
-     * This function will generate all the PHP code needed to 
+     * This function will generate all the PHP code needed to
      * create one table using XMLDB objects and functions
-     * 
+     *
      * @param XMLDBStructure structure object containing all the info
      * @param string table table code to be created
      * @return string PHP code to be used to create the table
@@ -220,9 +220,9 @@ class view_structure_php extends XMLDBAction {
     }
 
     /**
-     * This function will generate all the PHP code needed to 
+     * This function will generate all the PHP code needed to
      * drop one table using XMLDB objects and functions
-     * 
+     *
      * @param XMLDBStructure structure object containing all the info
      * @param string table table code to be dropped
      * @return string PHP code to be used to drop the table
@@ -258,9 +258,9 @@ class view_structure_php extends XMLDBAction {
     }
 
     /**
-     * This function will generate all the PHP code needed to 
+     * This function will generate all the PHP code needed to
      * rename one table using XMLDB objects and functions
-     * 
+     *
      * @param XMLDBStructure structure object containing all the info
      * @param string table table code to be renamed
      * @return string PHP code to be used to rename the table

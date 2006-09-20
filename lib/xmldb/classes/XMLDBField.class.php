@@ -27,7 +27,7 @@
 /// This class represent one XMLDB Field
 
 class XMLDBField extends XMLDBObject {
- 
+
     var $type;
     var $length;
     var $unsigned;
@@ -395,7 +395,7 @@ class XMLDBField extends XMLDBObject {
         if (isset($xmlarr['@']['DECIMALS'])) {
             $decimals = trim($xmlarr['@']['DECIMALS']);
         /// Check for integer values
-            if ($this->type == XMLDB_TYPE_NUMBER || 
+            if ($this->type == XMLDB_TYPE_NUMBER ||
                 $this->type == XMLDB_TYPE_FLOAT) {
                 if (!(is_numeric($decimals)&&(intval($decimals)==floatval($decimals)))) {
                     $this->errormsg = 'Incorrect DECIMALS attribute for number field';
@@ -446,7 +446,7 @@ class XMLDBField extends XMLDBObject {
     function getXMLDBFieldType($type) {
 
         $result = XMLDB_TYPE_INCORRECT;
-        
+
         switch (strtolower($type)) {
             case 'int':
                 $result = XMLDB_TYPE_INTEGER;
@@ -481,7 +481,7 @@ class XMLDBField extends XMLDBObject {
     function getXMLDBTypeName($type) {
 
         $result = "";
-        
+
         switch (strtolower($type)) {
             case XMLDB_TYPE_INTEGER:
                 $result = 'int';
@@ -526,7 +526,7 @@ class XMLDBField extends XMLDBObject {
         }
     }
 
-    /** 
+    /**
      *This function will output the XML text for one field
      */
     function xmlOutput() {
@@ -642,7 +642,7 @@ class XMLDBField extends XMLDBObject {
                 $this->type = XMLDB_TYPE_TEXT;
         }
     /// Calculate the length of the field
-        if ($adofield->max_length > 0 && 
+        if ($adofield->max_length > 0 &&
                ($this->type == XMLDB_TYPE_INTEGER ||
                 $this->type == XMLDB_TYPE_NUMBER  ||
                 $this->type == XMLDB_TYPE_FLOAT   ||
@@ -683,13 +683,13 @@ class XMLDBField extends XMLDBObject {
         }
     /// Calculate the decimals of the field
         if ($adofield->max_length > 0 &&
-            $adofield->scale && 
+            $adofield->scale &&
                ($this->type == XMLDB_TYPE_NUMBER ||
                 $this->type == XMLDB_TYPE_FLOAT)) {
             $this->decimals = $adofield->scale;
         }
     /// Calculate the unsigned field
-        if ($adofield->unsigned && 
+        if ($adofield->unsigned &&
                ($this->type == XMLDB_TYPE_INTEGER ||
                 $this->type == XMLDB_TYPE_NUMBER  ||
                 $this->type == XMLDB_TYPE_FLOAT)) {
@@ -702,7 +702,7 @@ class XMLDBField extends XMLDBObject {
     /// Calculate the default field
         if ($adofield->has_default) {
             $this->default = $adofield->default_value;
-        } 
+        }
     /// Calculate the sequence field
         if ($adofield->auto_increment) {
             $this->sequence = true;

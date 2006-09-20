@@ -7,7 +7,7 @@ require_once($CFG->dirroot.'/'.$CFG->admin.'/pagelib.php');
 
 if ($site = get_site()) {
     require_login();
-} 
+}
 
 
 page_map_class(PAGE_ADMIN, 'page_admin');
@@ -20,7 +20,7 @@ $PAGE->init_extra($section); // hack alert!
 
 $adminediting = optional_param('adminedit', -1, PARAM_BOOL);
 $return       = optional_param('return','', PARAM_ALPHA);
-   
+
 if (!isset($USER->adminediting)) {
     $USER->adminediting = false;
 }
@@ -85,11 +85,11 @@ if ($data = data_submitted()) {
 if (!empty($SITE->fullname)) {
     $pageblocks = blocks_setup($PAGE);
 
-    $preferred_width_left  = bounded_number(BLOCK_L_MIN_WIDTH, blocks_preferred_width($pageblocks[BLOCK_POS_LEFT]), 
+    $preferred_width_left  = bounded_number(BLOCK_L_MIN_WIDTH, blocks_preferred_width($pageblocks[BLOCK_POS_LEFT]),
                                             BLOCK_L_MAX_WIDTH);
-    $preferred_width_right = bounded_number(BLOCK_R_MIN_WIDTH, blocks_preferred_width($pageblocks[BLOCK_POS_RIGHT]), 
+    $preferred_width_right = bounded_number(BLOCK_R_MIN_WIDTH, blocks_preferred_width($pageblocks[BLOCK_POS_RIGHT]),
                                             BLOCK_R_MAX_WIDTH);
-    
+
     // print header stuff
     $PAGE->print_header();
 

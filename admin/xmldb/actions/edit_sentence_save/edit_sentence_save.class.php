@@ -28,7 +28,7 @@
 
 class edit_sentence_save extends XMLDBAction {
 
-    /** 
+    /**
      * Init method, every subclass will have its own
      */
     function init() {
@@ -116,12 +116,12 @@ class edit_sentence_save extends XMLDBAction {
         if ($result && count($fields) != count($values)) {
             $errors[] = $this->str['wrongnumberoffieldsorvalues'];
         }
-        
+
         if (!empty($errors)) {
         /// Prepare the output
             $site = get_site();
-            print_header("$site->shortname: XMLDB", 
-                         "$site->fullname", 
+            print_header("$site->shortname: XMLDB",
+                         "$site->fullname",
                          "<a href=\"../index.php\">" . $this->str['administration'] . "</a> -> <a href=\"index.php\">XMLDB</a>");
             notice ('<p>' .implode(', ', $errors) . '</p>
                      <p>' . s($sentence),
@@ -132,7 +132,7 @@ class edit_sentence_save extends XMLDBAction {
     /// Continue if we aren't under errors
         if (empty($errors)) {
             $sentences[$sentenceparam] = $sentence;
-     
+
         /// If the sentence has changed from the old one, change the version
         /// and mark the statement and structure as changed
             if ($oldsentence != $sentence) {
@@ -143,7 +143,7 @@ class edit_sentence_save extends XMLDBAction {
             }
 
         /// Launch postaction if exists (leave this here!)
-            if ($this->getPostAction() && $result) { 
+            if ($this->getPostAction() && $result) {
                 return $this->launch($this->getPostAction());
             }
         }

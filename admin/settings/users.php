@@ -33,17 +33,17 @@ if ($studentroles = get_roles_with_capability('moodle/legacy:student', CAP_ALLOW
 }
 $assignableroles  = get_assignable_roles($context);
 
-$temp->add(new admin_setting_configselect('notloggedinroleid', get_string('notloggedinroleid', 'admin'), 
+$temp->add(new admin_setting_configselect('notloggedinroleid', get_string('notloggedinroleid', 'admin'),
               get_string('confignotloggedinroleid', 'admin'), $guestrole->id, $assignableroles ));
-$temp->add(new admin_setting_configselect('defaultuserroleid', get_string('defaultuserroleid', 'admin'), 
+$temp->add(new admin_setting_configselect('defaultuserroleid', get_string('defaultuserroleid', 'admin'),
               get_string('configdefaultuserroleid', 'admin'), $guestrole->id, $assignableroles));
-$temp->add(new admin_setting_configselect('defaultcourseroleid', get_string('defaultcourseroleid', 'admin'), 
+$temp->add(new admin_setting_configselect('defaultcourseroleid', get_string('defaultcourseroleid', 'admin'),
               get_string('configdefaultcourseroleid', 'admin'), $studentrole->id, $assignableroles));
 
 //$temp->add(new admin_setting_configcheckbox('autologinguests', get_string('autologinguests', 'admin'), get_string('configautologinguests', 'admin'), 0));
 //$temp->add(new admin_setting_configcheckbox('allusersaresitestudents', get_string('allusersaresitestudents', 'admin'), get_string('configallusersaresitestudents','admin'), 1));
-$temp->add(new admin_setting_configmultiselect('hiddenuserfields', get_string('hiddenuserfields', 'admin'), 
-           get_string('confighiddenuserfields', 'admin'), array(), 
+$temp->add(new admin_setting_configmultiselect('hiddenuserfields', get_string('hiddenuserfields', 'admin'),
+           get_string('confighiddenuserfields', 'admin'), array(),
                array('none' => get_string('none'),
                      'description' => get_string('description'),
                      'city' => get_string('city'),

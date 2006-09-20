@@ -28,7 +28,7 @@
 
 class move_updown_key extends XMLDBAction {
 
-    /** 
+    /**
      * Init method, every subclass will have its own
      */
     function init() {
@@ -119,7 +119,7 @@ class move_updown_key extends XMLDBAction {
 
     /// Table has changed
         $table->setChanged(true);
-        
+
     /// Reorder the keys
         $table->orderKeys($keys);
 
@@ -135,7 +135,7 @@ class move_updown_key extends XMLDBAction {
         }
 
     /// Launch postaction if exists (leave this here!)
-        if ($this->getPostAction() && $result) { 
+        if ($this->getPostAction() && $result) {
             return $this->launch($this->getPostAction());
         }
 

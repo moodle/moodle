@@ -32,9 +32,9 @@
 
 
 $block_rss_client_capabilities = array(
-    
+
     'block/rss_client:createprivatefeeds' => array(
-    
+
         'captype' => 'write',
         'contextlevel' => CONTEXT_SYSTEM,
         'legacy' => array(
@@ -46,9 +46,9 @@ $block_rss_client_capabilities = array(
             'admin' => CAP_ALLOW
         )
     ),
-    
+
     'block/rss_client:createsharedfeeds' => array(
-    
+
         'captype' => 'write',
         'contextlevel' => CONTEXT_SYSTEM,
         'legacy' => array(
@@ -60,9 +60,9 @@ $block_rss_client_capabilities = array(
             'admin' => CAP_ALLOW
         )
     ),
-    
+
     'block/rss_client:manageownfeeds' => array(
-    
+
         'captype' => 'write',
         'contextlevel' => CONTEXT_SYSTEM,
         'legacy' => array(
@@ -74,9 +74,9 @@ $block_rss_client_capabilities = array(
             'admin' => CAP_ALLOW
         )
     ),
-    
+
     'block/rss_client:manageanyfeeds' => array(
-    
+
         'captype' => 'write',
         'contextlevel' => CONTEXT_SYSTEM,
         'legacy' => array(
@@ -88,7 +88,7 @@ $block_rss_client_capabilities = array(
             'admin' => CAP_ALLOW
         )
     )
-    
+
 );
 
 ?>

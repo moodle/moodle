@@ -32,9 +32,9 @@
 
 
 $mod_hotpot_capabilities = array(
-    
+
     'mod/hotpot:attempt' => array(
-    
+
         'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
@@ -46,9 +46,9 @@ $mod_hotpot_capabilities = array(
             'admin' => CAP_ALLOW
         )
     ),
-    
+
     'mod/hotpot:viewreport' => array(
-    
+
         'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
@@ -60,9 +60,9 @@ $mod_hotpot_capabilities = array(
             'admin' => CAP_ALLOW
         )
     ),
-    
+
     'mod/hotpot:grade' => array(
-    
+
         'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
@@ -74,9 +74,9 @@ $mod_hotpot_capabilities = array(
             'admin' => CAP_ALLOW
         )
     ),
-    
+
     'mod/hotpot:deleteattempt' => array(
-    
+
         'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
@@ -88,7 +88,7 @@ $mod_hotpot_capabilities = array(
             'admin' => CAP_ALLOW
         )
     )
-    
+
 );
 
 ?>

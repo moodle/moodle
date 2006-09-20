@@ -30,7 +30,7 @@
 
 class new_sentence extends XMLDBAction {
 
-    /** 
+    /**
      * Init method, every subclass will have its own
      */
     function init() {
@@ -109,7 +109,7 @@ class new_sentence extends XMLDBAction {
         $structure->setChanged(true);
 
     /// Launch postaction if exists (leave this here!)
-        if ($this->getPostAction() && $result) { 
+        if ($this->getPostAction() && $result) {
             return $this->launch($this->getPostAction());
         }
 

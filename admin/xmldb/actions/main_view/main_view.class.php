@@ -28,7 +28,7 @@
 
 class main_view extends XMLDBAction {
 
-    /** 
+    /**
      * Init method, every subclass will have its own
      */
     function init() {

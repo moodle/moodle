@@ -27,7 +27,7 @@
 /// This class represent one XMLDB structure
 
 class XMLDBStructure extends XMLDBObject {
- 
+
     var $path;
     var $version;
     var $tables;
@@ -63,7 +63,7 @@ class XMLDBStructure extends XMLDBObject {
      */
     function &getTable($tablename) {
         $i = $this->findTableInArray($tablename);
-        if ($i !== NULL) { 
+        if ($i !== NULL) {
             return $this->tables[$i];
         }
         $null = NULL;
@@ -134,7 +134,7 @@ class XMLDBStructure extends XMLDBObject {
      */
     function &getStatement($statementname) {
         $i = $this->findStatementInArray($statementname);
-        if ($i !== NULL) { 
+        if ($i !== NULL) {
             return $this->statements[$i];
         }
         $null = NULL;
@@ -148,7 +148,7 @@ class XMLDBStructure extends XMLDBObject {
         return $this->statements;
     }
 
-    /** 
+    /**
      * Set the structure version
      */
     function setVersion($version) {
@@ -311,14 +311,14 @@ class XMLDBStructure extends XMLDBObject {
         }
     }
 
-    /** 
+    /**
      * Set the tables
      */
     function setTables(&$tables) {
         $this->tables = $tables;
     }
 
-    /** 
+    /**
      * Set the statements
      */
     function setStatements(&$statements) {
@@ -412,7 +412,7 @@ class XMLDBStructure extends XMLDBObject {
                 }
             }
         }
-    
+
     /// Perform some general checks over statements
         if ($result && $this->statements) {
         /// Check statements names are ok (lowercase, a-z _-)
@@ -470,7 +470,7 @@ class XMLDBStructure extends XMLDBObject {
         }
     }
 
-    /** 
+    /**
      * This function will output the XML text for one structure
      */
     function xmlOutput() {
@@ -508,7 +508,7 @@ class XMLDBStructure extends XMLDBObject {
 
     /**
      * This function returns the number of uses of one table inside
-     * a whole XMLDStructure. Useful to detect if the table must be 
+     * a whole XMLDStructure. Useful to detect if the table must be
      * locked. Return false if no uses are found.
      */
     function getTableUses($tablename) {
@@ -543,7 +543,7 @@ class XMLDBStructure extends XMLDBObject {
 
     /**
      * This function returns the number of uses of one field inside
-     * a whole XMLDBStructure. Useful to detect if the field must be 
+     * a whole XMLDBStructure. Useful to detect if the field must be
      * locked. Return false if no uses are found.
      */
     function getFieldUses($tablename, $fieldname) {
@@ -558,7 +558,7 @@ class XMLDBStructure extends XMLDBObject {
                     in_array($fieldname, $key->getRefFields())) {
                         $uses[] = 'table ' . $table->getName() . ' key ' . $key->getName();
                 }
-            }          
+            }
         }
     /// Check if any index in the table is using it
         $table = $this->getTable($tablename);
@@ -567,7 +567,7 @@ class XMLDBStructure extends XMLDBObject {
                 if (in_array($fieldname, $index->getFields())) {
                     $uses[] = 'table ' . $table->getName() . ' index ' . $index->getName();
                 }
-            }          
+            }
         }
     /// Check if some foreign key in the whole structure is using it
     /// By comparing the reftable and refields with the field)
@@ -600,7 +600,7 @@ class XMLDBStructure extends XMLDBObject {
 
     /**
      * This function returns the number of uses of one key inside
-     * a whole XMLDBStructure. Useful to detect if the key must be 
+     * a whole XMLDBStructure. Useful to detect if the key must be
      * locked. Return false if no uses are found.
      */
     function getKeyUses($tablename, $keyname) {
@@ -639,7 +639,7 @@ class XMLDBStructure extends XMLDBObject {
 
     /**
      * This function returns the number of uses of one index inside
-     * a whole XMLDBStructure. Useful to detect if the index must be 
+     * a whole XMLDBStructure. Useful to detect if the index must be
      * locked. Return false if no uses are found.
      */
     function getIndexUses($tablename, $indexname) {
@@ -657,7 +657,7 @@ class XMLDBStructure extends XMLDBObject {
         }
     }
 
-    /** 
+    /**
      * This function will return all the errors found in one structure
      * looking recursively inside each table/statement. Returns
      * an array of errors or false
@@ -673,7 +673,7 @@ class XMLDBStructure extends XMLDBObject {
         if ($tables = $this->getTables()) {
             foreach ($tables as $table) {
                 if ($tableerrors = $table->getAllErrors()) {
-    
+
                 }
             }
         /// Add them to the errors array
@@ -697,14 +697,14 @@ class XMLDBStructure extends XMLDBObject {
         }
     }
 
-    /** 
+    /**
      * This function will return the SQL code needed to create the table for the specified DB and
      * prefix. Just one simple wrapper over generators.
      */
     function getCreateStructureSQL ($dbtype, $prefix, $statement_end=true) {
 
         $results = array();
-        
+
         if ($tables = $this->getTables()) {
             foreach ($tables as $table) {
                 $results = array_merge($results, $table->getCreateTableSQL($dbtype, $prefix, $statement_end));

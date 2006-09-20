@@ -31,7 +31,7 @@
 
 class view_reserved_words extends XMLDBAction {
 
-    /** 
+    /**
      * Init method, every subclass will have its own
      */
     function init() {
@@ -93,7 +93,7 @@ class view_reserved_words extends XMLDBAction {
                         }
                     }
                     $wronguses[] = $this->str['table'] . ' - ' . $table . ' (' . implode(', ',$list_of_db) . ')';
-                    
+
                 }
                 $dbfields = $db->MetaColumns($dbtable);
                 if ($dbfields) {
@@ -142,7 +142,7 @@ class view_reserved_words extends XMLDBAction {
         $this->output = $o;
 
     /// Launch postaction if exists (leave this here!)
-        if ($this->getPostAction() && $result) { 
+        if ($this->getPostAction() && $result) {
             return $this->launch($this->getPostAction());
         }
 

@@ -17,7 +17,7 @@
  * @param string $type The type of plugins that should be updated (e.g. 'enrol', 'qtype')
  * @param string $dir  The directory where the plugins are located (e.g. 'question/questiontypes')
  * @param string $return The url to prompt the user to continue to
- */ 
+ */
 function upgrade_plugins($type, $dir, $return) {
     global $CFG, $db;
 
@@ -62,7 +62,7 @@ function upgrade_plugins($type, $dir, $return) {
                 $info->currentmoodle = $CFG->version;
                 $info->requiremoodle = $plugin->requires;
                 if (!$updated_plugins) {
-                    print_header($strpluginsetup, $strpluginsetup, $strpluginsetup, '', 
+                    print_header($strpluginsetup, $strpluginsetup, $strpluginsetup, '',
                         '<script type="text/javascript" src="' . $CFG->wwwroot . '/lib/scroll_to_errors.js"></script>',
                         false, '&nbsp;', '&nbsp;');
                 }
@@ -81,12 +81,12 @@ function upgrade_plugins($type, $dir, $return) {
         if (!isset($CFG->$pluginversion)) {
             set_config($pluginversion, 0);
         }
-        
+
         if ($CFG->$pluginversion == $plugin->version) {
             // do nothing
         } else if ($CFG->$pluginversion < $plugin->version) {
             if (!$updated_plugins) {
-                print_header($strpluginsetup, $strpluginsetup, $strpluginsetup, '', 
+                print_header($strpluginsetup, $strpluginsetup, $strpluginsetup, '',
                         '<script type="text/javascript" src="' . $CFG->wwwroot . '/lib/scroll_to_errors.js"></script>',
                         false, '&nbsp;', '&nbsp;');
             }
@@ -104,12 +104,12 @@ function upgrade_plugins($type, $dir, $return) {
                     $status = install_from_xmldb_file($fullplug . '/db/install.xml'); //New method
                 } else if (file_exists($fullplug .'/db/'. $CFG->dbtype .'.sql')) {
                     $status = modify_database($fullplug .'/db/'. $CFG->dbtype .'.sql'); //Old method
-                } else { 
+                } else {
                     $status = true;
                 }
 
                 $db->debug = false;
-            /// Continue with the instalation, roles and other stuff 
+            /// Continue with the instalation, roles and other stuff
                 if ($status) {
                     // OK so far, now update the plugins record
                     set_config($pluginversion, $plugin->version);
@@ -180,7 +180,7 @@ function upgrade_plugins($type, $dir, $return) {
  * @uses $CFG
  * @param string $return The url to prompt the user to continue to
  * @todo Finish documenting this function
- */ 
+ */
 function upgrade_activity_modules($return) {
 
     global $CFG, $db;
@@ -231,7 +231,7 @@ function upgrade_activity_modules($return) {
                 $info->currentmoodle = $CFG->version;
                 $info->requiremoodle = $module->requires;
                 if (!$updated_modules) {
-                    print_header($strmodulesetup, $strmodulesetup, $strmodulesetup, '', 
+                    print_header($strmodulesetup, $strmodulesetup, $strmodulesetup, '',
                             '<script type="text/javascript" src="' . $CFG->wwwroot . '/lib/scroll_to_errors.js"></script>',
                             false, '&nbsp;', '&nbsp;');
                 }
@@ -244,7 +244,7 @@ function upgrade_activity_modules($return) {
         }
 
         $module->name = $mod;   // The name MUST match the directory
-        
+
         if ($currmodule = get_record('modules', 'name', $module->name)) {
             if ($currmodule->version == $module->version) {
                 // do nothing
@@ -256,7 +256,7 @@ function upgrade_activity_modules($return) {
                     continue;
                 }
                 if (!$updated_modules) {
-                    print_header($strmodulesetup, $strmodulesetup, $strmodulesetup, '', 
+                    print_header($strmodulesetup, $strmodulesetup, $strmodulesetup, '',
                             '<script type="text/javascript" src="' . $CFG->wwwroot . '/lib/scroll_to_errors.js"></script>',
                             false, '&nbsp;', '&nbsp;');
                 }
@@ -308,15 +308,15 @@ function upgrade_activity_modules($return) {
                 }
 
                 $updated_modules = true;
-                
+
             } else {
                 upgrade_log_start();
                 error('Version mismatch: '. $module->name .' can\'t downgrade '. $currmodule->version .' -> '. $module->version .' !');
             }
-    
+
         } else {    // module not installed yet, so install it
             if (!$updated_modules) {
-                print_header($strmodulesetup, $strmodulesetup, $strmodulesetup, '', 
+                print_header($strmodulesetup, $strmodulesetup, $strmodulesetup, '',
                         '<script type="text/javascript" src="' . $CFG->wwwroot . '/lib/scroll_to_errors.js"></script>',
                         false, '&nbsp;', '&nbsp;');
             }
@@ -346,7 +346,7 @@ function upgrade_activity_modules($return) {
                 } else {
                     error($module->name .' module could not be added to the module list!');
                 }
-            } else { 
+            } else {
                 error($module->name .' tables could NOT be set up successfully!');
             }
         }
@@ -366,7 +366,7 @@ function upgrade_activity_modules($return) {
         if ( is_readable($fullmod .'/defaults.php')) {
             // Insert default values for any important configuration variables
             unset($defaults);
-            include_once($fullmod .'/defaults.php'); 
+            include_once($fullmod .'/defaults.php');
             if (!empty($defaults)) {
                 foreach ($defaults as $name => $value) {
                     if (!isset($CFG->$name)) {
@@ -386,7 +386,7 @@ function upgrade_activity_modules($return) {
     }
 }
 
-/** 
+/**
  * This function will return FALSE if the lock fails to be set (ie, if it's already locked)
  *
  * @param string  $name ?
@@ -620,12 +620,12 @@ function is_dataroot_insecure() {
 /// This file performs the following tasks:
 ///  -it defines the necessary objects and interfaces to build the Moodle
 ///   admin hierarchy
-///  -it defines the admin_externalpage_setup(), admin_externalpage_print_header(), 
+///  -it defines the admin_externalpage_setup(), admin_externalpage_print_header(),
 ///   and admin_externalpage_print_footer() functions used on admin pages
 
 /// ADMIN_SETTING OBJECTS
 
-/// Moodle settings are represented by objects that inherit from the admin_setting 
+/// Moodle settings are represented by objects that inherit from the admin_setting
 /// class. These objects encapsulate how to read a setting, how to write a new value
 /// to a setting, and how to appropriately display the HTML to modify the setting.
 
@@ -648,7 +648,7 @@ function is_dataroot_insecure() {
 /// admin/settings/first.php (at the end of the file) or to some other file in
 /// admin/settings:
 
-///    $ADMIN->add('userinterface', new admin_externalpage('foo', get_string('foo'), 
+///    $ADMIN->add('userinterface', new admin_externalpage('foo', get_string('foo'),
 ///        $CFG->wwwdir . '/' . '$CFG->admin . '/foo.php', 'some_role_permission'));
 
 /// Next, in foo.php, your file structure would resemble the following:
@@ -733,9 +733,9 @@ class part_of_admin_tree {
      * @param string $name The internal name of the part_of_admin_tree we're searching for.
      * @return mixed An object reference or a NULL reference.
      */
-    function &locate($name) { 
-        trigger_error('Admin class does not implement method <strong>locate()</strong>', E_USER_WARNING); 
-        return; 
+    function &locate($name) {
+        trigger_error('Admin class does not implement method <strong>locate()</strong>', E_USER_WARNING);
+        return;
     }
 
     /**
@@ -745,9 +745,9 @@ class part_of_admin_tree {
      * @return boolean success.
      */
     function prune($name) {
-        trigger_error('Admin class does not implement method <strong>prune()</strong>', E_USER_WARNING); 
+        trigger_error('Admin class does not implement method <strong>prune()</strong>', E_USER_WARNING);
         return;
-    } 
+    }
 
     /**
      * Verifies current user's access to this part_of_admin_tree.
@@ -761,11 +761,11 @@ class part_of_admin_tree {
      *
      * @return bool True if the user has access, false if she doesn't.
      */
-    function check_access() { 
-        trigger_error('Admin class does not implement method <strong>check_access()</strong>', E_USER_WARNING); 
-        return; 
+    function check_access() {
+        trigger_error('Admin class does not implement method <strong>check_access()</strong>', E_USER_WARNING);
+        return;
     }
-    
+
     /**
      * Determines the path to $name in the admin tree.
      *
@@ -785,9 +785,9 @@ class part_of_admin_tree {
      * @param array $path Not used on external calls. Defaults to empty array.
      * @return mixed If found, an array containing the internal names of each part_of_admin_tree that leads to $name. If not found, NULL.
      */
-    function path($name, $path = array()) { 
-        trigger_error('Admin class does not implement method <strong>path()</strong>', E_USER_WARNING); 
-        return; 
+    function path($name, $path = array()) {
+        trigger_error('Admin class does not implement method <strong>path()</strong>', E_USER_WARNING);
+        return;
     }
 }
 
@@ -796,14 +796,14 @@ class part_of_admin_tree {
  *
  * The pseudointerface implemented by any part_of_admin_tree that can be a parent
  * to other part_of_admin_tree's. (For now, this only includes admin_category.) Apart
- * from ensuring part_of_admin_tree compliancy, it also ensures inheriting methods 
+ * from ensuring part_of_admin_tree compliancy, it also ensures inheriting methods
  * include an add method for adding other part_of_admin_tree objects as children.
  *
  * @author Vincenzo K. Marcovecchio
  * @package admin
  */
 class parentable_part_of_admin_tree extends part_of_admin_tree {
-    
+
     /**
      * Adds a part_of_admin_tree object to the admin tree.
      *
@@ -816,16 +816,16 @@ class parentable_part_of_admin_tree extends part_of_admin_tree {
      * @param part_of_admin_tree &$something The object to be added.
      * @return bool True on success, false on failure.
      */
-    function add($destinationname, &$something) { 
-        trigger_error('Admin class does not implement method <strong>add()</strong>', E_USER_WARNING); 
-        return; 
+    function add($destinationname, &$something) {
+        trigger_error('Admin class does not implement method <strong>add()</strong>', E_USER_WARNING);
+        return;
     }
-    
+
 }
 
 /**
  * The object used to represent folders (a.k.a. categories) in the admin tree block.
- * 
+ *
  * Each admin_category object contains a number of part_of_admin_tree objects.
  *
  * @author Vincenzo K. Marcovecchio
@@ -837,17 +837,17 @@ class admin_category extends parentable_part_of_admin_tree {
      * @var mixed An array of part_of_admin_tree objects that are this object's children
      */
     var $children;
-    
+
     /**
      * @var string An internal name for this category. Must be unique amongst ALL part_of_admin_tree objects
      */
     var $name;
-    
+
     /**
      * @var string The displayed name for this category. Usually obtained through get_string()
      */
     var $visiblename;
-    
+
     // constructor for an empty admin category
     // $name is the internal name of the category. it MUST be unique in the entire hierarchy
     // $visiblename is the displayed name of the category. use a get_string for this
@@ -864,7 +864,7 @@ class admin_category extends parentable_part_of_admin_tree {
         $this->name = $name;
         $this->visiblename = $visiblename;
     }
-    
+
     /**
      * Finds the path to the part_of_admin_tree called $name.
      *
@@ -873,21 +873,21 @@ class admin_category extends parentable_part_of_admin_tree {
      * @return mixed An array of internal names that leads to $name, or NULL if not found.
      */
     function path($name, $path = array()) {
-    
+
         $path[count($path)] = $this->name;
-    
+
         if ($this->name == $name) {
             return $path;
         }
-        
+
         foreach($this->children as $child) {
             if ($return = $child->path($name, $path)) {
                 return $return;
             }
         }
-        
+
         return NULL;
-    
+
     }
 
     /**
@@ -897,11 +897,11 @@ class admin_category extends parentable_part_of_admin_tree {
      * @return mixed A reference to the object with internal name $name if found, otherwise a reference to NULL.
      */
     function &locate($name) {
-        
+
         if ($this->name == $name) {
             return $this;
         }
-    
+
         foreach($this->children as $child) {
             if ($return =& $child->locate($name)) {
                 return $return;
@@ -926,7 +926,7 @@ class admin_category extends parentable_part_of_admin_tree {
         foreach($this->children as $precedence => $child) {
             if ($child->name == $name) {
                 // found it!
-                unset($this->children[$precedence]); 
+                unset($this->children[$precedence]);
                 return true;
             }
             if ($this->children[$precedence]->prune($name)) {
@@ -945,7 +945,7 @@ class admin_category extends parentable_part_of_admin_tree {
      * @return bool True if successfully added, false if &$something is not a part_of_admin_tree or if $name is not found.
      */
     function add($destinationname, &$something, $precedence = '') {
-    
+
         if (!is_a($something, 'part_of_admin_tree')) {
             return false;
         }
@@ -961,11 +961,11 @@ class admin_category extends parentable_part_of_admin_tree {
             }
             return true;
         }
-        
+
         unset($entries);
-        
+
         $entries = array_keys($this->children);
-        
+
         foreach($entries as $entry) {
             $child =& $this->children[$entry];
             if (is_a($child, 'parentable_part_of_admin_tree')) {
@@ -974,27 +974,27 @@ class admin_category extends parentable_part_of_admin_tree {
                 }
             }
         }
-        
+
         return false;
-        
+
     }
-    
+
     /**
      * Checks if the user has access to anything in this category.
      *
      * @return bool True if the user has access to atleast one child in this category, false otherwise.
      */
     function check_access() {
-    
+
         $return = false;
         foreach ($this->children as $child) {
             $return = $return || $child->check_access();
         }
-    
+
         return $return;
-    
+
     }
-    
+
 }
 
 /**
@@ -1007,26 +1007,26 @@ class admin_category extends parentable_part_of_admin_tree {
  */
 class admin_externalpage extends part_of_admin_tree {
 
-    /** 
+    /**
      * @var string An internal name for this external page. Must be unique amongst ALL part_of_admin_tree objects
      */
     var $name;
-    
+
     /**
      * @var string The displayed name for this external page. Usually obtained through get_string().
      */
     var $visiblename;
-    
+
     /**
      * @var string The external URL that we should link to when someone requests this external page.
      */
     var $url;
-    
+
     /**
      * @var string The role capability/permission a user must have to access this external page.
      */
     var $role;
-    
+
     /**
      * Constructor for adding an external page into the admin tree.
      *
@@ -1041,7 +1041,7 @@ class admin_externalpage extends part_of_admin_tree {
         $this->url = $url;
         $this->role = $role;
     }
-    
+
     /**
      * Finds the path to the part_of_admin_tree called $name.
      *
@@ -1057,7 +1057,7 @@ class admin_externalpage extends part_of_admin_tree {
             return NULL;
         }
     }
-    
+
     /**
      * Returns a reference to the part_of_admin_tree object with internal name $name.
      *
@@ -1084,7 +1084,7 @@ class admin_externalpage extends part_of_admin_tree {
         if (!get_site()) {
             return true; // no access check before site is fully set up
         }
-        $context = get_context_instance(CONTEXT_SYSTEM, SITEID); 
+        $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
         return has_capability($this->role, $context);
     }
 
@@ -1098,11 +1098,11 @@ class admin_externalpage extends part_of_admin_tree {
  */
 class admin_settingpage extends part_of_admin_tree {
 
-    /** 
+    /**
      * @var string An internal name for this external page. Must be unique amongst ALL part_of_admin_tree objects
      */
     var $name;
-    
+
     /**
      * @var string The displayed name for this external page. Usually obtained through get_string().
      */
@@ -1111,12 +1111,12 @@ class admin_settingpage extends part_of_admin_tree {
      * @var mixed An array of admin_setting objects that are part of this setting page.
      */
     var $settings;
-    
+
     /**
      * @var string The role capability/permission a user must have to access this external page.
      */
     var $role;
-    
+
     // see admin_category
     function path($name, $path = array()) {
         if ($name == $this->name) {
@@ -1126,7 +1126,7 @@ class admin_settingpage extends part_of_admin_tree {
             return NULL;
         }
     }
-    
+
     // see admin_category
     function &locate($name) {
         $return = ($this->name == $name ? $this : NULL);
@@ -1145,7 +1145,7 @@ class admin_settingpage extends part_of_admin_tree {
         $this->visiblename = $visiblename;
         $this->role = $role;
     }
-    
+
     // not the same as add for admin_category. adds an admin_setting to this admin_settingpage. settings appear (on the settingpage) in the order in which they're added
     // n.b. each admin_setting in an admin_settingpage must have a unique internal name
     // &$setting is the admin_setting object you want to add
@@ -1157,16 +1157,16 @@ class admin_settingpage extends part_of_admin_tree {
         }
         return false;
     }
-    
+
     // see admin_externalpage
     function check_access() {
         if (!get_site()) {
             return true; // no access check before site is fully set up
         }
-        $context = get_context_instance(CONTEXT_SYSTEM, SITEID); 
+        $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
         return has_capability($this->role, $context);
     }
-    
+
     // outputs this page as html in a table (suitable for inclusion in an admin pagetype)
     // returns a string of the html
     function output_html() {
@@ -1211,19 +1211,19 @@ class admin_setting {
         $this->description = $description;
         $this->defaultsetting = $defaultsetting;
     }
-    
+
     function get_setting() {
         return NULL; // has to be overridden
     }
-    
+
     function write_setting($data) {
         return; // has to be overridden
     }
-    
+
     function output_html() {
         return; // has to be overridden
     }
-        
+
 }
 
 
@@ -1241,7 +1241,7 @@ class admin_setting_configtext extends admin_setting {
         global $CFG;
         return (isset($CFG->{$this->name}) ? $CFG->{$this->name} : NULL);
     }
-    
+
     // $data is a string
     function write_setting($data) {
         if (is_string($this->paramtype)) {
@@ -1283,7 +1283,7 @@ class admin_setting_configcheckbox extends admin_setting {
         global $CFG;
         return (isset($CFG->{$this->name}) ? $CFG->{$this->name} : NULL);
     }
-    
+
     function write_setting($data) {
         if ($data == '1') {
             return (set_config($this->name,1) ? '' : get_string('errorsetting', 'admin') . $this->visiblename . '<br />');
@@ -1308,7 +1308,7 @@ class admin_setting_configcheckbox extends admin_setting {
 class admin_setting_configselect extends admin_setting {
 
     var $choices;
-    
+
     function admin_setting_configselect($name, $visiblename, $description, $defaultsetting, $choices) {
         $this->choices = $choices;
         parent::admin_setting($name, $visiblename, $description, $defaultsetting);
@@ -1318,17 +1318,17 @@ class admin_setting_configselect extends admin_setting {
         global $CFG;
         return (isset($CFG->{$this->name}) ? $CFG->{$this->name} : NULL);
     }
-    
+
     function write_setting($data) {
          // check that what we got was in the original choices
          // or that the data is the default setting - needed during install when choices can not be constructed yet
          if ($data != $this->defaultsetting and ! in_array($data, array_keys($this->choices))) {
              return 'Error setting ' . $this->visiblename . '<br />';
          }
-         
+
          return (set_config($this->name, $data) ? '' : get_string('errorsetting', 'admin') . $this->visiblename . '<br />');
     }
-    
+
     function output_html() {
         if ($this->get_setting() === NULL) {
             $current = $this->defaultsetting;
@@ -1370,16 +1370,16 @@ class admin_setting_configtime extends admin_setting {
         global $CFG;
         return (isset($CFG->{$this->name}) && isset($CFG->{$this->name2}) ? array('h' => $CFG->{$this->name}, 'm' => $CFG->{$this->name2}) : NULL);
     }
-    
+
     function write_setting($data) {
          // check that what we got was in the original choices
          if (!(in_array($data['h'], array_keys($this->choices)) && in_array($data['m'], array_keys($this->choices2)))) {
              return get_string('errorsetting', 'admin') . $this->visiblename . '<br />';
          }
-         
+
          return (set_config($this->name, $data['h']) && set_config($this->name2, $data['m']) ? '' : get_string('errorsetting', 'admin') . $this->visiblename . '<br />');
     }
-    
+
     function output_html() {
         if ($this->get_setting() === NULL) {
           $currentsetting = $this->defaultsetting;
@@ -1393,7 +1393,7 @@ class admin_setting_configtime extends admin_setting {
         $return .= '</select>&nbsp;&nbsp;&nbsp;<select name="s_' . $this->name . '[m]">';
         foreach ($this->choices2 as $key => $value) {
             $return .= '<option value="' . $key . '"' . ($key == $currentsetting['m'] ? ' selected="selected"' : '') . '>' . $value . '</option>';
-        }        
+        }
         $return .= '</select></td></tr><tr><td>&nbsp;</td><td align="left">' . $this->description . '</td></tr>';
         return $return;
     }
@@ -1410,17 +1410,17 @@ class admin_setting_configmultiselect extends admin_setting_configselect {
         global $CFG;
         return (isset($CFG->{$this->name}) ? explode(',', $CFG->{$this->name}) : NULL);;
     }
-    
+
     function write_setting($data) {
         foreach ($data as $datum) {
             if (! in_array($datum, array_keys($this->choices))) {
                 return get_string('errorsetting', 'admin') . $this->visiblename . '<br />';
             }
         }
-        
+
         return (set_config($this->name, implode(',',$data)) ? '' : get_string('errorsetting', 'admin') . $this->visiblename . '<br />');
     }
-    
+
     function output_html() {
         if ($this->get_setting() === NULL) {
           $currentsetting = $this->defaultsetting;
@@ -1438,7 +1438,7 @@ class admin_setting_configmultiselect extends admin_setting_configselect {
 }
 
 class admin_setting_special_adminseesall extends admin_setting_configcheckbox {
-    
+
     function admin_setting_special_adminseesall() {
         $name = 'calendar_adminseesall';
         $visiblename = get_string('adminseesall', 'admin');
@@ -1461,14 +1461,14 @@ class admin_setting_sitesetselect extends admin_setting_configselect {
 
         $this->id = SITEID;
         parent::admin_setting_configselect($name, $visiblename, $description, $defaultsetting, $choices);
-    
+
     }
-    
+
     function get_setting() {
         $site = get_site();
         return (isset($site->{$this->name}) ? $site->{$this->name} : NULL);
     }
-    
+
     function write_setting($data) {
         if (!in_array($data, array_keys($this->choices))) {
             return get_string('errorsetting', 'admin') . $this->visiblename . '<br />';
@@ -1480,7 +1480,7 @@ class admin_setting_sitesetselect extends admin_setting_configselect {
         $record->timemodified = time();
         return (update_record('course', $record) ? '' : get_string('errorsetting', 'admin') . $this->visiblename . '<br />');
     }
-    
+
 }
 
 
@@ -1503,12 +1503,12 @@ class admin_setting_courselist_frontpage extends admin_setting_configselect {
         $defaults = FRONTPAGECOURSELIST.',,,';
         parent::admin_setting_configselect($name, $visiblename, $description, $defaults, $choices);
     }
-    
+
     function get_setting() {
         global $CFG;
         return (isset($CFG->{$this->name}) ? explode(',', $CFG->{$this->name}) : NULL);
     }
-    
+
     function write_setting($data) {
         if (empty($data)) {
             $data = array();
@@ -1522,7 +1522,7 @@ class admin_setting_courselist_frontpage extends admin_setting_configselect {
         }
         return (set_config($this->name, implode(',', $data)) ? '' : get_string('errorsetting', 'admin') . $this->visiblename . '<br />');
     }
-    
+
     function output_html() {
         if ($this->get_setting() === NULL) {
             $currentsetting = $this->defaultsetting;
@@ -1536,7 +1536,7 @@ class admin_setting_courselist_frontpage extends admin_setting_configselect {
         }
         $return = '<tr><td width="100" align="right" valign="top">' . $this->visiblename . '</td><td align="left">';
         for ($i = 0; $i < count($this->choices) - 1; $i++) {
-            $return .='<select name="s_' . $this->name .'[]">';        
+            $return .='<select name="s_' . $this->name .'[]">';
             foreach ($this->choices as $key => $value) {
                 $return .= '<option value="' . $key . '"' . ($key == $currentsetting[$i] ? ' selected="selected"' : '') . '>' . $value . '</option>';
             }
@@ -1546,7 +1546,7 @@ class admin_setting_courselist_frontpage extends admin_setting_configselect {
             }
         }
         $return .= '</td></tr><tr><td>&nbsp;</td><td align="left">' . $this->description . '</td></tr>';
-        return $return;    
+        return $return;
     }
 }
 
@@ -1558,14 +1558,14 @@ class admin_setting_sitesetcheckbox extends admin_setting_configcheckbox {
 
         $this->id = SITEID;
         parent::admin_setting_configcheckbox($name, $visiblename, $description, $defaultsetting);
-    
+
     }
-    
+
     function get_setting() {
         $site = get_site();
         return (isset($site->{$this->name}) ? $site->{$this->name} : NULL);
     }
-    
+
     function write_setting($data) {
         $record = new stdClass();
         $record->id = $this->id;
@@ -1574,7 +1574,7 @@ class admin_setting_sitesetcheckbox extends admin_setting_configcheckbox {
         $record->timemodified = time();
         return (update_record('course', $record) ? '' : get_string('errorsetting', 'admin') . $this->visiblename . '<br />');
     }
-    
+
 }
 
 class admin_setting_sitesettext extends admin_setting_configtext {
@@ -1585,9 +1585,9 @@ class admin_setting_sitesettext extends admin_setting_configtext {
 
         $this->id = SITEID;
         parent::admin_setting_configtext($name, $visiblename, $description, $defaultsetting, $paramtype);
-    
+
     }
-    
+
     function get_setting() {
         $site = get_site();
         return (isset($site->{$this->name}) ? $site->{$this->name} : NULL);
@@ -1601,7 +1601,7 @@ class admin_setting_sitesettext extends admin_setting_configtext {
         } else {
             $data = clean_param($data, $this->paramtype);
         }
-        
+
         $record = new stdClass();
         $record->id = $this->id;
         $record->{$this->name} = $data;
@@ -1612,13 +1612,13 @@ class admin_setting_sitesettext extends admin_setting_configtext {
     function validate($data) {
         return preg_match($this->paramtype, $data);
     }
-        
+
 }
 
 class admin_setting_special_frontpagedesc extends admin_setting {
 
     var $id;
-    
+
     function admin_setting_special_frontpagedesc() {
         $this->id = SITEID;
         $name = 'summary';
@@ -1628,50 +1628,50 @@ class admin_setting_special_frontpagedesc extends admin_setting {
     }
 
     function output_html() {
-    
+
         if ($this->get_setting() === NULL) {
             $currentsetting = $this->defaultsetting;
         } else {
             $currentsetting = $this->get_setting();
         }
-    
+
         $usehtmleditor = can_use_html_editor();
-    
+
         $return = '<tr><td width="100" align="right" valign="top">' . $this->visiblename . '</td>' .
                    '<td>';
-                   
+
         ob_start();  // double-check the number of columns below... might overrun some screen resolutions
         print_textarea($usehtmleditor, 20, 40, 0, 0, 's_' . $this->name, $currentsetting);
-        
+
         if ($usehtmleditor) {
             use_html_editor();
-        }    
+        }
         $return .= ob_get_contents();
-        ob_end_clean();        
+        ob_end_clean();
         $return .= '</td></tr><tr><td>&nbsp;</td><td>' . $this->description . '</td></tr>';
         return $return;
-    
+
     }
-    
+
     function get_setting() {
-    
+
         $site = get_site();
         return (isset($site->{$this->name}) ? $site->{$this->name} : NULL);
-    
+
     }
-    
+
     function write_setting($data) {
-    
+
         $data = addslashes(clean_param($data, PARAM_CLEANHTML));
-        
+
         $record = new stdClass();
         $record->id = $this->id;
         $temp = $this->name;
         $record->$temp = $data;
         $record->timemodified = time();
-        
+
         return(update_record('course', $record) ? '' : get_string('errorsetting', 'admin') . $this->visiblename . '<br />');
-    
+
     }
 
 }
@@ -1706,7 +1706,7 @@ class admin_setting_special_editorfontlist extends admin_setting {
                           'v8' => 'wingdings');
         parent::admin_setting($name, $visiblename, $description, $defaults);
     }
-    
+
     function get_setting() {
         global $CFG;
         if (isset($CFG->editorfontlist)) {
@@ -1724,16 +1724,16 @@ class admin_setting_special_editorfontlist extends admin_setting {
             return NULL;
         }
     }
-    
+
     function write_setting($data) {
-    
+
         // there miiight be an easier way to do this :)
         // if this is changed, make sure the $defaults array above is modified so that this
         // function processes it correctly
-        
+
         $keys = array();
         $values = array();
-        
+
         foreach ($data as $key => $value) {
             if (substr($key,0,1) == 'k') {
                 $keys[substr($key,1)] = $value;
@@ -1741,27 +1741,27 @@ class admin_setting_special_editorfontlist extends admin_setting {
                 $values[substr($key,1)] = $value;
             }
         }
-        
+
         $result = '';
         for ($i = 0; $i < count($keys); $i++) {
             if (($keys[$i] !== '') && ($values[$i] !== '')) {
                 $result .= clean_param($keys[$i],PARAM_NOTAGS) . ':' . clean_param($values[$i], PARAM_NOTAGS) . ';';
             }
         }
-        
+
         $result = substr($result, 0, -1); // trim the last semicolon
-        
+
         return (set_config($this->name, $result) ? '' : get_string('errorsetting', 'admin') . $this->visiblename . '<br />');
     }
-    
+
     function output_html() {
-        
+
         if ($this->get_setting() === NULL) {
             $currentsetting = $this->defaultsetting;
         } else {
             $currentsetting = $this->get_setting();
         }
-        
+
         $return = '<tr><td width="100" align="right" valign="top">' . $this->visiblename . '</td><td align="left">';
         for ($i = 0; $i < count($currentsetting) / 2; $i++) {
             $return .= '<input type="text" name="s_editorfontlist[k' . $i . ']" value="' . $currentsetting['k' . $i] . '" size="20" />';
@@ -1774,10 +1774,10 @@ class admin_setting_special_editorfontlist extends admin_setting {
         $return .= '<input type="text" name="s_editorfontlist[k' . ($i + 1) . ']" value="" size="20" />';
         $return .= '&nbsp;&nbsp;';
         $return .= '<input type="text" name="s_editorfontlist[v' . ($i + 1) . ']" value="" size="40" />';
-        $return .= '</td></tr><tr><td>&nbsp;</td><td align="left">' . $this->description . '</td></tr>';    
+        $return .= '</td></tr><tr><td>&nbsp;</td><td align="left">' . $this->description . '</td></tr>';
         return $return;
     }
-    
+
 }
 
 class admin_setting_special_editordictionary extends admin_setting_configselect {
@@ -1790,7 +1790,7 @@ class admin_setting_special_editordictionary extends admin_setting_configselect 
         if (! is_array($choices)) {
             $choices = array('');
         }
-    
+
         parent::admin_setting_configselect($name, $visiblename, $description, '', $choices);
     }
 
@@ -1799,7 +1799,7 @@ class admin_setting_special_editordictionary extends admin_setting_configselect 
     /// Get all installed dictionaries in the system
 
         global $CFG;
-    
+
 //        error_reporting(E_ALL); // for debug, final version shouldn't have this...
         clearstatcache();
 
@@ -1812,7 +1812,7 @@ class admin_setting_special_editordictionary extends admin_setting_configselect 
         if (!function_exists('popen')) {
             return 'Popen function disabled!';
         }
-    
+
         $cmd          = $CFG->aspellpath;
         $output       = '';
         $dictionaries = array();
@@ -1848,7 +1848,7 @@ class admin_setting_special_editordictionary extends admin_setting_configselect 
         return 'Error! Check your aspell installation!';
     }
 
-    
+
 
 }
 
@@ -1927,29 +1927,29 @@ class admin_setting_special_editorhidebuttons extends admin_setting {
     }
 
     function output_html() {
-    
+
         global $CFG;
-        
+
         // checkboxes with input name="$this->name[$key]" value="1"
         // we do 15 fields per column
-        
+
         if ($this->get_setting() === NULL) {
             $currentsetting = $this->defaultsetting;
         } else {
             $currentsetting = $this->get_setting();
         }
-        
+
         $return = '<tr><td width="100" align="right" valign="top">' . $this->visiblename . '</td><td align="left">';
-        
+
         $return .= '<table><tr><td valign="top" align="right">';
-        
+
         $count = 0;
-        
+
         foreach($this->items as $key => $value) {
             if ($count % 15 == 0) {
                 $return .= '</div></td><td valign="top" align="right">';
             }
-            
+
             $return .= ($value == '' ? get_string($key,'editor') : '<img width="18" height="18" src="' . $CFG->wwwroot . '/lib/editor/htmlarea/images/' . $value . '" alt="' . get_string($key,'editor') . '" title="' . get_string($key,'editor') . '" />') . '&nbsp;';
             $return .= '<input type="checkbox" value="1" name="s_' . $this->name . '[' . $key . ']"' . (in_array($key,$currentsetting) ? ' checked="checked"' : '') . ' />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
             $count++;
@@ -1957,8 +1957,8 @@ class admin_setting_special_editorhidebuttons extends admin_setting {
                 $return .= '<br /><br />';
             }
         }
-        
-        $return .= '</td></tr>';    
+
+        $return .= '</td></tr>';
         $return .= '</table>';
         $return .= '</td></tr><tr><td>&nbsp;</td><td align="left">' . $this->description . '</td></tr>';
 
@@ -1977,13 +1977,13 @@ class admin_setting_backupselect extends admin_setting_configselect {
         $backup_config =  backup_get_config();
         return (isset($backup_config->{$this->name}) ? $backup_config->{$this->name} : NULL);
     }
-    
+
     function write_setting($data) {
          // check that what we got was in the original choices
          if (! in_array($data, array_keys($this->choices))) {
              return get_string('errorsetting', 'admin') . $this->visiblename . '<br />';
          }
-         
+
          return (backup_set_config($this->name, $data) ? '' : get_string('errorsetting', 'admin') . $this->visiblename . '<br />');
     }
 
@@ -1997,12 +1997,12 @@ class admin_setting_special_backupsaveto extends admin_setting_configtext {
         $description = get_string('backupsavetohelp');
         parent::admin_setting_configtext($name, $visiblename, $description, '', PARAM_PATH);
     }
-    
+
     function get_setting() {
         $backup_config =  backup_get_config();
         return (isset($backup_config->{$this->name}) ? $backup_config->{$this->name} : NULL);
     }
-    
+
     function write_setting($data) {
         $data = clean_param($data, PARAM_PATH);
         if (!empty($data) and (substr($data,-1) == '/' or substr($data,-1) == '\\')) {
@@ -2028,7 +2028,7 @@ class admin_setting_backupcheckbox extends admin_setting_configcheckbox {
             return (backup_set_config($this->name, 0) ? '' : get_string('errorsetting', 'admin') . $this->visiblename . '<br />');
         }
     }
-    
+
     function get_setting() {
         $backup_config =  backup_get_config();
         return (isset($backup_config->{$this->name}) ? $backup_config->{$this->name} : NULL);
@@ -2046,21 +2046,21 @@ class admin_setting_special_backuptime extends admin_setting_configtime {
         $default = array('h' => 0, 'm' => 0);
         parent::admin_setting_configtime($name, $name2, $visiblename, $description, $default);
     }
-    
+
     function get_setting() {
         $backup_config =  backup_get_config();
         return (isset($backup_config->{$this->name}) && isset($backup_config->{$this->name}) ? array($backup_config->{$this->name}, $backup_config->{$this->name2}) : NULL);
     }
-    
+
     function write_setting($data) {
          // check that what we got was in the original choices
          if (!(in_array($data['h'], array_keys($this->choices)) && in_array($data['m'], array_keys($this->choices2)))) {
              return get_string('errorsetting', 'admin') . $this->visiblename . '<br />';
          }
-         
-         return (backup_set_config($this->name, $data['h']) && backup_set_config($this->name2, $data['m']) ? '' : get_string('errorsetting', 'admin') . $this->visiblename . '<br />');    
+
+         return (backup_set_config($this->name, $data['h']) && backup_set_config($this->name2, $data['m']) ? '' : get_string('errorsetting', 'admin') . $this->visiblename . '<br />');
     }
-    
+
 }
 
 class admin_setting_special_backupdays extends admin_setting {
@@ -2071,7 +2071,7 @@ class admin_setting_special_backupdays extends admin_setting {
         $description = get_string('backupschedulehelp');
         parent::admin_setting($name, $visiblename, $description, array());
     }
-    
+
     function get_setting() {
         $backup_config =  backup_get_config();
         if (isset($backup_config->{$this->name})) {
@@ -2087,36 +2087,36 @@ class admin_setting_special_backupdays extends admin_setting {
             return NULL;
         }
     }
-    
+
     function output_html() {
-    
+
         if ($this->get_setting() === NULL) {
             $currentsetting = $this->defaultsetting;
         } else {
             $currentsetting = $this->get_setting();
         }
-        
+
         // rewrite for simplicity
-        $currentsetting = $currentsetting['u'] . $currentsetting['m'] . $currentsetting['t'] . $currentsetting['w'] . 
+        $currentsetting = $currentsetting['u'] . $currentsetting['m'] . $currentsetting['t'] . $currentsetting['w'] .
                           $currentsetting['r'] . $currentsetting['f'] . $currentsetting['s'];
-        
+
         return '<tr><td width="100" align="right" valign="top">' . $this->visiblename . '</td><td align="left">' .
-        '<table><tr><td><div align="center">&nbsp;&nbsp;' . get_string('sunday', 'calendar') . '&nbsp;&nbsp;</div></td><td><div align="center">&nbsp;&nbsp;' . 
+        '<table><tr><td><div align="center">&nbsp;&nbsp;' . get_string('sunday', 'calendar') . '&nbsp;&nbsp;</div></td><td><div align="center">&nbsp;&nbsp;' .
         get_string('monday', 'calendar') . '&nbsp;&nbsp;</div></td><td><div align="center">&nbsp;&nbsp;' . get_string('tuesday', 'calendar') . '&nbsp;&nbsp;</div></td><td><div align="center">&nbsp;&nbsp;' .
         get_string('wednesday', 'calendar') . '&nbsp;&nbsp;</div></td><td><div align="center">&nbsp;&nbsp;' . get_string('thursday', 'calendar') . '&nbsp;&nbsp;</div></td><td><div align="center">&nbsp;&nbsp;' .
         get_string('friday', 'calendar') . '&nbsp;&nbsp;</div></td><td><div align="center">&nbsp;&nbsp;' . get_string('saturday', 'calendar') . '&nbsp;&nbsp;</div></td></tr><tr>' .
-        '<td><div align="center"><input type="checkbox" name="s_'. $this->name .'[u]" value="1" ' . (substr($currentsetting,0,1) == '1' ? 'checked="checked"' : '') . ' /></div></td>' . 
-        '<td><div align="center"><input type="checkbox" name="s_'. $this->name .'[m]" value="1" ' . (substr($currentsetting,1,1) == '1' ? 'checked="checked"' : '') . ' /></div></td>' . 
-        '<td><div align="center"><input type="checkbox" name="s_'. $this->name .'[t]" value="1" ' . (substr($currentsetting,2,1) == '1' ? 'checked="checked"' : '') . ' /></div></td>' . 
-        '<td><div align="center"><input type="checkbox" name="s_'. $this->name .'[w]" value="1" ' . (substr($currentsetting,3,1) == '1' ? 'checked="checked"' : '') . ' /></div></td>' . 
-        '<td><div align="center"><input type="checkbox" name="s_'. $this->name .'[r]" value="1" ' . (substr($currentsetting,4,1) == '1' ? 'checked="checked"' : '') . ' /></div></td>' . 
-        '<td><div align="center"><input type="checkbox" name="s_'. $this->name .'[f]" value="1" ' . (substr($currentsetting,5,1) == '1' ? 'checked="checked"' : '') . ' /></div></td>' . 
-        '<td><div align="center"><input type="checkbox" name="s_'. $this->name .'[s]" value="1" ' . (substr($currentsetting,6,1) == '1' ? 'checked="checked"' : '') . ' /></div></td>' . 
-        '</tr></table>' .                                                 
+        '<td><div align="center"><input type="checkbox" name="s_'. $this->name .'[u]" value="1" ' . (substr($currentsetting,0,1) == '1' ? 'checked="checked"' : '') . ' /></div></td>' .
+        '<td><div align="center"><input type="checkbox" name="s_'. $this->name .'[m]" value="1" ' . (substr($currentsetting,1,1) == '1' ? 'checked="checked"' : '') . ' /></div></td>' .
+        '<td><div align="center"><input type="checkbox" name="s_'. $this->name .'[t]" value="1" ' . (substr($currentsetting,2,1) == '1' ? 'checked="checked"' : '') . ' /></div></td>' .
+        '<td><div align="center"><input type="checkbox" name="s_'. $this->name .'[w]" value="1" ' . (substr($currentsetting,3,1) == '1' ? 'checked="checked"' : '') . ' /></div></td>' .
+        '<td><div align="center"><input type="checkbox" name="s_'. $this->name .'[r]" value="1" ' . (substr($currentsetting,4,1) == '1' ? 'checked="checked"' : '') . ' /></div></td>' .
+        '<td><div align="center"><input type="checkbox" name="s_'. $this->name .'[f]" value="1" ' . (substr($currentsetting,5,1) == '1' ? 'checked="checked"' : '') . ' /></div></td>' .
+        '<td><div align="center"><input type="checkbox" name="s_'. $this->name .'[s]" value="1" ' . (substr($currentsetting,6,1) == '1' ? 'checked="checked"' : '') . ' /></div></td>' .
+        '</tr></table>' .
         '</td></tr><tr><td>&nbsp;</td><td align="left">' . $this->description . '</td></tr>';
-    
+
     }
-    
+
     // we're using the array trick (see http://ca.php.net/manual/en/faq.html.php#faq.html.arrays) to get the data passed to use without having to modify
     // admin_settingpage (note that admin_settingpage only calls write_setting with the data that matches $this->name... so if we have multiple form fields,
     // they MUST go into an array named $this->name, or else we won't receive them here
@@ -2124,7 +2124,7 @@ class admin_setting_special_backupdays extends admin_setting {
         $week = 'umtwrfs';
         $result = array(0 => 0, 1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 0);
         foreach($data as $key => $value) {
-          if ($value == '1') { 
+          if ($value == '1') {
               $result[strpos($week, $key)] = 1;
           }
         }
@@ -2189,18 +2189,18 @@ class admin_setting_special_calendar_weekend extends admin_setting {
             return NULL;
         }
     }
-    
+
     function write_setting($data) {
         $week = 'umtwrfs';
         $result = array(0 => 0, 1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 0);
         foreach($data as $key => $value) {
-          if ($value == '1') { 
+          if ($value == '1') {
               $result[strpos($week, $key)] = 1;
           }
         }
         return (set_config($this->name, bindec(implode('',$result))) ? '' : get_string('errorsetting', 'admin') . $this->visiblename . '<br />');
     }
-    
+
     function output_html() {
 
         if ($this->get_setting() === NULL) {
@@ -2210,20 +2210,20 @@ class admin_setting_special_calendar_weekend extends admin_setting {
         }
 
         return '<tr><td width="100" align="right" valign="top">' . $this->visiblename . '</td><td align="left">' .
-        '<table><tr><td><div align="center">&nbsp;&nbsp;' . get_string('sunday', 'calendar') . '&nbsp;&nbsp;</div></td><td><div align="center">&nbsp;&nbsp;' . 
+        '<table><tr><td><div align="center">&nbsp;&nbsp;' . get_string('sunday', 'calendar') . '&nbsp;&nbsp;</div></td><td><div align="center">&nbsp;&nbsp;' .
         get_string('monday', 'calendar') . '&nbsp;&nbsp;</div></td><td><div align="center">&nbsp;&nbsp;' . get_string('tuesday', 'calendar') . '&nbsp;&nbsp;</div></td><td><div align="center">&nbsp;&nbsp;' .
         get_string('wednesday', 'calendar') . '&nbsp;&nbsp;</div></td><td><div align="center">&nbsp;&nbsp;' . get_string('thursday', 'calendar') . '&nbsp;&nbsp;</div></td><td><div align="center">&nbsp;&nbsp;' .
         get_string('friday', 'calendar') . '&nbsp;&nbsp;</div></td><td><div align="center">&nbsp;&nbsp;' . get_string('saturday', 'calendar') . '&nbsp;&nbsp;</div></td></tr><tr>' .
-        '<td><div align="center"><input type="checkbox" name="s_'. $this->name .'[u]" value="1" ' . ($currentsetting['u'] ? 'checked="checked"' : '') . ' /></div></td>' . 
-        '<td><div align="center"><input type="checkbox" name="s_'. $this->name .'[m]" value="1" ' . ($currentsetting['m'] ? 'checked="checked"' : '') . ' /></div></td>' . 
-        '<td><div align="center"><input type="checkbox" name="s_'. $this->name .'[t]" value="1" ' . ($currentsetting['t'] ? 'checked="checked"' : '') . ' /></div></td>' . 
-        '<td><div align="center"><input type="checkbox" name="s_'. $this->name .'[w]" value="1" ' . ($currentsetting['w'] ? 'checked="checked"' : '') . ' /></div></td>' . 
-        '<td><div align="center"><input type="checkbox" name="s_'. $this->name .'[r]" value="1" ' . ($currentsetting['r'] ? 'checked="checked"' : '') . ' /></div></td>' . 
-        '<td><div align="center"><input type="checkbox" name="s_'. $this->name .'[f]" value="1" ' . ($currentsetting['f'] ? 'checked="checked"' : '') . ' /></div></td>' . 
-        '<td><div align="center"><input type="checkbox" name="s_'. $this->name .'[s]" value="1" ' . ($currentsetting['s'] ? 'checked="checked"' : '') . ' /></div></td>' . 
-        '</tr></table>' .                                                 
+        '<td><div align="center"><input type="checkbox" name="s_'. $this->name .'[u]" value="1" ' . ($currentsetting['u'] ? 'checked="checked"' : '') . ' /></div></td>' .
+        '<td><div align="center"><input type="checkbox" name="s_'. $this->name .'[m]" value="1" ' . ($currentsetting['m'] ? 'checked="checked"' : '') . ' /></div></td>' .
+        '<td><div align="center"><input type="checkbox" name="s_'. $this->name .'[t]" value="1" ' . ($currentsetting['t'] ? 'checked="checked"' : '') . ' /></div></td>' .
+        '<td><div align="center"><input type="checkbox" name="s_'. $this->name .'[w]" value="1" ' . ($currentsetting['w'] ? 'checked="checked"' : '') . ' /></div></td>' .
+        '<td><div align="center"><input type="checkbox" name="s_'. $this->name .'[r]" value="1" ' . ($currentsetting['r'] ? 'checked="checked"' : '') . ' /></div></td>' .
+        '<td><div align="center"><input type="checkbox" name="s_'. $this->name .'[f]" value="1" ' . ($currentsetting['f'] ? 'checked="checked"' : '') . ' /></div></td>' .
+        '<td><div align="center"><input type="checkbox" name="s_'. $this->name .'[s]" value="1" ' . ($currentsetting['s'] ? 'checked="checked"' : '') . ' /></div></td>' .
+        '</tr></table>' .
         '</td></tr><tr><td>&nbsp;</td><td align="left">' . $this->description . '</td></tr>';
-    
+
     }
 
 }
@@ -2252,7 +2252,7 @@ class admin_setting_special_perfdebug extends admin_setting_configcheckbox {
         } else {
             $currentsetting = $this->get_setting();
         }
-    
+
         return '<tr><td width="100" align="right" valign="top">' . $this->visiblename . '</td>' .
             '<td align="left"><input type="checkbox" size="50" name="s_'. $this->name .'" value="1" ' . ($currentsetting == 15 ? 'checked="checked"' : '') . ' /></td></tr>' .
             '<tr><td>&nbsp;</td><td align="left">' . $this->description . '</td></tr>';
@@ -2265,10 +2265,10 @@ class admin_setting_special_perfdebug extends admin_setting_configcheckbox {
 function admin_externalpage_setup($section, $adminroot) {
 
     global $CFG, $PAGE, $USER;
-    
+
     require_once($CFG->libdir . '/blocklib.php');
     require_once($CFG->dirroot . '/'.$CFG->admin.'/pagelib.php');
-    
+
     page_map_class(PAGE_ADMIN, 'page_admin');
 
     $PAGE = page_create_object(PAGE_ADMIN, 0); // there must be any constant id number
@@ -2294,13 +2294,13 @@ function admin_externalpage_setup($section, $adminroot) {
         error(get_string('accessdenied', 'admin'));
         die;
     }
-    
+
     $adminediting = optional_param('adminedit', -1, PARAM_BOOL);
-    
+
     if (!isset($USER->adminediting)) {
         $USER->adminediting = false;
     }
-    
+
     if ($PAGE->user_allowed_editing()) {
         if ($adminediting == 1) {
             $USER->adminediting = true;
@@ -2308,19 +2308,19 @@ function admin_externalpage_setup($section, $adminroot) {
             $USER->adminediting = false;
         }
     }
-    
+
 }
 
 function admin_externalpage_print_header($adminroot) {
 
     global $CFG, $PAGE, $SITE;
-    
+
     if (!empty($SITE->fullname)) {
         $pageblocks = blocks_setup($PAGE);
 
-        $preferred_width_left = bounded_number(BLOCK_L_MIN_WIDTH, blocks_preferred_width($pageblocks[BLOCK_POS_LEFT]), 
+        $preferred_width_left = bounded_number(BLOCK_L_MIN_WIDTH, blocks_preferred_width($pageblocks[BLOCK_POS_LEFT]),
                                                BLOCK_L_MAX_WIDTH);
-    
+
         $PAGE->print_header();
         echo '<table id="layout-table"><tr>';
         echo '<td style="width: ' . $preferred_width_left . 'px;" id="left-column">';
@@ -2369,7 +2369,7 @@ function admin_get_root() {
             }
         }
     }
-    
+
     return $ADMIN;
 }
 
@@ -2386,9 +2386,9 @@ function apply_default_settings(&$node) {
             apply_default_settings($node->children[$entry]);
         }
         return;
-    } 
+    }
 
-    if (is_a($node, 'admin_settingpage')) { 
+    if (is_a($node, 'admin_settingpage')) {
         foreach ($node->settings as $setting) {
                 $CFG->{$setting->name} = $setting->defaultsetting;
                 $setting->write_setting($setting->defaultsetting);

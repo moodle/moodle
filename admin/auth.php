@@ -26,7 +26,7 @@
         // extract and sanitize the auth key explicitly
         $modules = get_list_of_plugins("auth");
         if (in_array($config['auth'], $modules)) {
-            $auth = $config['auth'];            
+            $auth = $config['auth'];
         } else {
             notify("Error defining the authentication method");
         }
@@ -44,10 +44,10 @@
                 if (preg_match('/^pluginconfig_(.+?)$/', $name, $matches)) {
                     $plugin = "auth/$auth";
                     $name   = $matches[1];
-                    if (! set_config($name, $value, $plugin)) {                        
+                    if (! set_config($name, $value, $plugin)) {
                         notify("Problem saving config $name as $value for plugin $plugin");
                     }
-                } else { // normal handling for 
+                } else { // normal handling for
                     if (! set_config($name, $value)) {
                         notify("Problem saving config $name as $value");
                     }
@@ -128,7 +128,7 @@
     echo "<form target=\"{$CFG->framename}\" name=\"authmenu\" method=\"post\" action=\"auth.php\">";
     echo "<input type=\"hidden\" name=\"sesskey\" value=\"".$USER->sesskey."\" />";
     print_string("chooseauthmethod","auth");
-    
+
     echo '&nbsp;&nbsp;';
 
     choose_from_menu ($options, "auth", $auth, "","document.location='auth.php?sesskey=$USER->sesskey&auth='+document.authmenu.auth.options[document.authmenu.auth.selectedIndex].value", "");
@@ -150,7 +150,7 @@
 
     require_once("$CFG->dirroot/auth/$auth/config.html");
     $CFG->pagepath = 'auth/' . $auth;
-    
+
     echo '<tr><td colspan="3">';
     print_heading(get_string('auth_common_settings', 'auth'));
     echo '<td/></tr>';
@@ -241,7 +241,7 @@
 // Good enough for most auth plugins
 // but some may want a custom one if they are offering
 // other options
-// Note: pluginconfig_ fields have special handling. 
+// Note: pluginconfig_ fields have special handling.
 function print_auth_lock_options ($auth, $user_fields, $helptext, $retrieveopts, $updateopts) {
 
     echo '<tr><td colspan="3">';
@@ -259,9 +259,9 @@ function print_auth_lock_options ($auth, $user_fields, $helptext, $retrieveopts,
                                 'onlogin'   => get_string('update_onlogin', 'auth'));
     $updateextoptions = array('0'  => get_string('update_never', 'auth'),
                               '1'   => get_string('update_onupdate', 'auth'));
-    
+
     $pluginconfig = get_config("auth/$auth");
-    
+
     // helptext is on a field with rowspan
     if (empty($helptext)) {
                 $helptext = '&nbsp;';
@@ -275,7 +275,7 @@ function print_auth_lock_options ($auth, $user_fields, $helptext, $retrieveopts,
         }
         if(empty($pluginconfig->{"field_updatelocal_$field"})) {
             $pluginconfig->{"field_updatelocal_$field"} = '';
-        }  
+        }
         if (empty($pluginconfig->{"field_updateremote_$field"})) {
             $pluginconfig->{"field_updateremote_$field"} = '';
         }

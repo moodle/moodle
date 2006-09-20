@@ -39,20 +39,20 @@ admin_externalpage_print_header($adminroot);
 if (!is_null($path)) {
     // Create the group of tests.
     $test =& new AutoGroupTest($showsearch, $thorough);
-    
-    // OU specific. We use the _nonproject folder for stuff we want to 
+
+    // OU specific. We use the _nonproject folder for stuff we want to
     // keep in CVS, but which is not really relevant. It does no harm
     // to leave this here.
     $test->addIgnoreFolder($CFG->dirroot . '/_nonproject');
-    
+
     // Make the reporter, which is what displays the results.
     $reporter = new ExHtmlReporter($showpasses);
-    
+
     if ($showsearch) {
         print_heading('Searching for test cases');
     }
     flush();
-    
+
     // Work out what to test.
     if (substr($path, 0, 1) == '/') {
         $path = substr($path, 1);
@@ -71,7 +71,7 @@ if (!is_null($path)) {
         print_simple_box(get_string('pathdoesnotexist', $langfile, $path), '', '', '', '', 'errorbox');
         $ok = false;
     }
-    
+
     // If we have something to test, do it.
     if ($ok) {
         if ($path == $CFG->dirroot) {

@@ -114,11 +114,11 @@ class XMLDBoci8po extends XMLDBgenerator {
         return $dbtype;
     }
 
-    /**         
+    /**
      * Returns the code needed to create one enum for the xmldb_table and xmldb_field passes
-     */     
+     */
     function getEnumExtraSQL ($xmldb_table, $xmldb_field) {
-        
+
         $sql = 'CONSTRAINT ' . $this->getNameForObject($xmldb_table->getName(), $xmldb_field->getName(), 'ck');
         $sql.= ' CHECK (' . $this->getEncQuoted($xmldb_field->getName()) . ' IN (' . implode(', ', $xmldb_field->getEnumValues()) . '))';
 
@@ -131,14 +131,14 @@ class XMLDBoci8po extends XMLDBgenerator {
     function getCreateSequenceSQL ($xmldb_table, $xmldb_field) {
 
         $sequence_name = $this->getNameForObject($xmldb_table->getName(), $xmldb_field->getName(), 'seq');
-        
+
         $sequence = "CREATE SEQUENCE " . $sequence_name;
         $sequence.= "\n    START WITH 1";
         $sequence.= "\n    INCREMENT BY 1";
         $sequence.= "\n    NOMAXVALUE";
 
         $trigger_name = $this->getNameForObject($xmldb_table->getName(), $xmldb_field->getName(), 'trg');
- 
+
         $trigger = "CREATE OR REPLACE TRIGGER " . $trigger_name;
         $trigger.= "\n    BEFORE INSERT";
         $trigger.= "\nON " . $this->getEncQuoted($this->prefix . $xmldb_table->getName());
@@ -158,11 +158,11 @@ class XMLDBoci8po extends XMLDBgenerator {
     function getDropSequenceSQL ($xmldb_table, $xmldb_field, $include_trigger=false) {
 
         $sequence_name = $this->getNameForObject($xmldb_table->getName(), $xmldb_field->getName(), 'seq');
-        
+
         $sequence = "DROP SEQUENCE " . $sequence_name;
 
         $trigger_name = $this->getNameForObject($xmldb_table->getName(), $xmldb_field->getName(), 'trg');
- 
+
         $trigger = "DROP TRIGGER " . $trigger_name;
 
         if ($include_trigger) {
@@ -222,7 +222,7 @@ class XMLDBoci8po extends XMLDBgenerator {
             'unique', 'update', 'user', 'validate', 'values',
             'varchar', 'varchar2', 'view', 'whenever',
             'where', 'with'
-        );  
+        );
         return $reserved_words;
     }
 }

@@ -29,7 +29,7 @@
 
 class edit_table_save extends XMLDBAction {
 
-    /** 
+    /**
      * Init method, every subclass will have its own
      */
     function init() {
@@ -127,11 +127,11 @@ class edit_table_save extends XMLDBAction {
             }
         }
 
-    /// Set comment 
+    /// Set comment
         $table->setComment($comment);
 
     /// Launch postaction if exists (leave this here!)
-        if ($this->getPostAction() && $result) { 
+        if ($this->getPostAction() && $result) {
             return $this->launch($this->getPostAction());
         }
 

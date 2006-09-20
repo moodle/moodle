@@ -24,7 +24,7 @@
 //                                                                       //
 ///////////////////////////////////////////////////////////////////////////
 
-/// This file contains all the constants and variables used 
+/// This file contains all the constants and variables used
 /// by the XMLDB interface
 
 /// First, some constants to be used by actions
@@ -35,9 +35,9 @@
 
 /// Now the allowed DB Field Types
     define ('XMLDB_TYPE_INCORRECT',   0);  //Wrong DB Type
-    define ('XMLDB_TYPE_INTEGER',     1);  //Integer 
-    define ('XMLDB_TYPE_NUMBER',      2);  //Decimal number 
-    define ('XMLDB_TYPE_FLOAT',       3);  //Floating Point number 
+    define ('XMLDB_TYPE_INTEGER',     1);  //Integer
+    define ('XMLDB_TYPE_NUMBER',      2);  //Decimal number
+    define ('XMLDB_TYPE_FLOAT',       3);  //Floating Point number
     define ('XMLDB_TYPE_CHAR',        4);  //String
     define ('XMLDB_TYPE_TEXT',        5);  //Text
     define ('XMLDB_TYPE_BINARY',      6);  //Binary
@@ -46,9 +46,9 @@
 
 /// Now the allowed DB Keys
     define ('XMLDB_KEY_INCORRECT',     0);  //Wrong DB Key
-    define ('XMLDB_KEY_PRIMARY',       1);  //Primary Keys 
+    define ('XMLDB_KEY_PRIMARY',       1);  //Primary Keys
     define ('XMLDB_KEY_UNIQUE',        2);  //Unique Keys
-    define ('XMLDB_KEY_FOREIGN',       3);  //Foreign Keys 
+    define ('XMLDB_KEY_FOREIGN',       3);  //Foreign Keys
     define ('XMLDB_KEY_CHECK',         4);  //Check Constraints - NOT USED!
     define ('XMLDB_KEY_FOREIGN_UNIQUE',5);  //Foreign Key + Unique Key
 

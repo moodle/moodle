@@ -28,7 +28,7 @@
 
 class view_key_xml extends XMLDBAction {
 
-    /** 
+    /**
      * Init method, every subclass will have its own
      */
     function init() {

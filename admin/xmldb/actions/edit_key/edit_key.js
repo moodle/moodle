@@ -27,7 +27,7 @@
 
 /// Register the needed events
 
-    onload=function() { 
+    onload=function() {
     /// Adjust the form on load
         transformForm();
 

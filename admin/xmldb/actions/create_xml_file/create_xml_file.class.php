@@ -24,11 +24,11 @@
 //                                                                       //
 ///////////////////////////////////////////////////////////////////////////
 
-/// This class will 
+/// This class will
 
 class create_xml_file extends XMLDBAction {
 
-    /** 
+    /**
      * Init method, every subclass will have its own
      */
     function init() {
@@ -75,7 +75,7 @@ class create_xml_file extends XMLDBAction {
         $xmlcomment = 'XMLDB file for Moodle ' . dirname($xmlpath);
 
         $xmltable = strtolower(basename(dirname($xmlpath)));
-        
+
     /// Initial contents
         $c = '<?xml version="1.0" encoding="UTF-8" ?>' . "\n";
         $c.= '  <XMLDB PATH="' . $xmlpath . '" VERSION="' . $xmlversion .'" COMMENT="' . $xmlcomment .'">' . "\n";

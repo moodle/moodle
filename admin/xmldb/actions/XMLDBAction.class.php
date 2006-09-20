@@ -24,7 +24,7 @@
 //                                                                       //
 ///////////////////////////////////////////////////////////////////////////
 
-/// This is the main action class. It implements all the basic 
+/// This is the main action class. It implements all the basic
 /// functionalities to be shared by each action.
 
 class XMLDBAction {
@@ -58,11 +58,11 @@ class XMLDBAction {
      * Constructor to keep PHP5 happy
      */
     function __construct() {
-        $this->XMLDBAction();  
+        $this->XMLDBAction();
     }
 
-    /** 
-     * Init method, every subclass will have its own, 
+    /**
+     * Init method, every subclass will have its own,
      * always calling the parent one
      */
     function init() {
@@ -73,7 +73,7 @@ class XMLDBAction {
         $this->errormsg  = NULL;
         $this->subaction = NULL;
     }
-    
+
     /**
      * returns the type of output of the file
      */
@@ -98,14 +98,14 @@ class XMLDBAction {
     }
 
     /**
-     * getPostAtion method, returns the action to launch after executing 
+     * getPostAtion method, returns the action to launch after executing
      * another one
      */
     function getPostAction() {
         return $this->postaction;
     }
 
-    /** 
+    /**
      * getTitle method returns the title of the action (that is part
      * of the $str array attribute
      */
@@ -131,18 +131,18 @@ class XMLDBAction {
 
     /**
      * main invoke method, it simply sets the postaction attribute
-     * if possible 
+     * if possible
      */
     function invoke() {
 
         global $SESSION;
-    
+
     /// If we are used any dir, save it in the lastused session object
     /// Some actions can use it to perform positioning
         if ($lastused = optional_param ('dir', NULL, PARAM_PATH)) {
             $SESSION->lastused = stripslashes_safe($lastused);
         }
-        
+
         $this->postaction = optional_param ('postaction', NULL, PARAM_ALPHAEXT);
     /// Avoid being recursive
         if ($this->title == $this->postaction) {
@@ -166,7 +166,7 @@ class XMLDBAction {
         $result = false;
         if (file_exists($actionpath) && is_readable($actionpath)) {
             require_once($actionpath);
-            if ($xmldb_action = new $action) { 
+            if ($xmldb_action = new $action) {
                 $result = $xmldb_action->invoke();
                 if ($result) {
                     if ($xmldb_action->does_generate != ACTION_NONE &&

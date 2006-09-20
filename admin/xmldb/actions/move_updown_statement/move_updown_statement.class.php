@@ -28,7 +28,7 @@
 
 class move_updown_statement extends XMLDBAction {
 
-    /** 
+    /**
      * Init method, every subclass will have its own
      */
     function init() {
@@ -112,7 +112,7 @@ class move_updown_statement extends XMLDBAction {
 
     /// Statement has changed
         $statement->setChanged(true);
-        
+
     /// Reorder the structure
         $structure->orderStatements($statements);
     /// Send statements back to structure (the order above break refs)
@@ -129,7 +129,7 @@ class move_updown_statement extends XMLDBAction {
         }
 
     /// Launch postaction if exists (leave this here!)
-        if ($this->getPostAction() && $result) { 
+        if ($this->getPostAction() && $result) {
             return $this->launch($this->getPostAction());
         }
 

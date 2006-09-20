@@ -27,7 +27,7 @@
 /// This class represent one XMLDB table
 
 class XMLDBTable extends XMLDBObject {
- 
+
     var $fields;
     var $keys;
     var $indexes;
@@ -625,7 +625,7 @@ class XMLDBTable extends XMLDBObject {
         }
     }
 
-    /** 
+    /**
      * This function will output the XML text for one table
      */
     function xmlOutput() {
@@ -706,7 +706,7 @@ class XMLDBTable extends XMLDBObject {
         $key->setAttributes($type, $fields, $reftable, $reffields);
         $this->addKey($key);
     }
-    
+
     /**
      * This function will add one new index to the table with all
      * its attributes defined
@@ -720,8 +720,8 @@ class XMLDBTable extends XMLDBObject {
         $index->setAttributes($type, $fields);
         $this->addIndex($index);
     }
-    
-    /** 
+
+    /**
      * This function will return all the errors found in one table
      * looking recursively inside each field/key/index. Returns
      * an array of errors or false
@@ -765,7 +765,7 @@ class XMLDBTable extends XMLDBObject {
         }
     }
 
-    /** 
+    /**
      * This function will return the SQL code needed to create the table for the specified DB and
      * prefix. Just one simple wrapper over generators.
      */
@@ -783,7 +783,7 @@ class XMLDBTable extends XMLDBObject {
         return $results;
     }
 
-    /** 
+    /**
      * This function will return the SQL code needed to create the table for the specified DB and
      * prefix. Just one simple wrapper over generators.
      */
@@ -801,7 +801,7 @@ class XMLDBTable extends XMLDBObject {
         return $results;
     }
 
-    /** 
+    /**
      * This function will return the SQL code needed to drop the table for the specified DB and
      * prefix. Just one simple wrapper over generators.
      */
@@ -819,7 +819,7 @@ class XMLDBTable extends XMLDBObject {
         return $results;
     }
 
-    /** 
+    /**
      * This function will return the SQL code needed to add one field to the table for the specified DB and
      * prefix. Just one simple wrapper over generators.
      */
@@ -837,7 +837,7 @@ class XMLDBTable extends XMLDBObject {
         return $results;
     }
 
-    /** 
+    /**
      * This function will return the SQL code needed to drop one field from the table for the specified DB and
      * prefix. Just one simple wrapper over generators.
      */
@@ -855,7 +855,7 @@ class XMLDBTable extends XMLDBObject {
         return $results;
     }
 
-    /** 
+    /**
      * This function will return the SQL code needed to rename one field from the table for the specified DB and
      * prefix. Just one simple wrapper over generators.
      */

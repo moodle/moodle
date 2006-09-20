@@ -29,7 +29,7 @@
 
 class new_statement extends XMLDBAction {
 
-    /** 
+    /**
      * Init method, every subclass will have its own
      */
     function init() {
@@ -116,7 +116,7 @@ class new_statement extends XMLDBAction {
             $this->output = $o;
 
 
-    /// If table, retrofit information and, if everything works, 
+    /// If table, retrofit information and, if everything works,
     /// go to the table edit action
         } else {
         /// Get some params (table is mandatory here)
@@ -150,7 +150,7 @@ class new_statement extends XMLDBAction {
         }
 
     /// Launch postaction if exists (leave this here!)
-        if ($this->getPostAction() && $result) { 
+        if ($this->getPostAction() && $result) {
             return $this->launch($this->getPostAction());
         }
 

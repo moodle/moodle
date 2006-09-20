@@ -1,7 +1,7 @@
 <?php // $Id$
 /**
  * Capability definitions for the wiki module.
- * 
+ *
  * For naming conventions, see lib/db/access.php.
  */
 $mod_wiki_capabilities = array(

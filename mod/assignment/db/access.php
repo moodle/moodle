@@ -32,9 +32,9 @@
 
 
 $mod_assignment_capabilities = array(
-    
+
     'mod/assignment:view' => array(
-    
+
         'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
@@ -46,9 +46,9 @@ $mod_assignment_capabilities = array(
             'admin' => CAP_ALLOW
         )
     ),
-    
+
     'mod/assignment:submit' => array(
-    
+
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
@@ -60,9 +60,9 @@ $mod_assignment_capabilities = array(
             'admin' => CAP_ALLOW
         )
     ),
-    
+
     'mod/assignment:grade' => array(
-    
+
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(

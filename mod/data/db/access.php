@@ -32,9 +32,9 @@
 
 
 $mod_data_capabilities = array(
-    
+
     'mod/data:viewentry' => array(
-    
+
         'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
@@ -46,9 +46,9 @@ $mod_data_capabilities = array(
             'admin' => CAP_ALLOW
         )
     ),
-    
+
     'mod/data:writeentry' => array(
-    
+
         'riskbitmask' => RISK_SPAM,
 
         'captype' => 'write',
@@ -62,9 +62,9 @@ $mod_data_capabilities = array(
             'admin' => CAP_ALLOW
         )
     ),
-    
+
     'mod/data:comment' => array(
-    
+
         'riskbitmask' => RISK_SPAM,
 
         'captype' => 'write',
@@ -78,9 +78,9 @@ $mod_data_capabilities = array(
             'admin' => CAP_ALLOW
         )
     ),
-    
+
     'mod/data:viewrating' => array(
-    
+
         'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
@@ -92,9 +92,9 @@ $mod_data_capabilities = array(
             'admin' => CAP_ALLOW
         )
     ),
-    
+
     'mod/data:rate' => array(
-    
+
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
@@ -106,9 +106,9 @@ $mod_data_capabilities = array(
             'admin' => CAP_ALLOW
         )
     ),
-    
+
     'mod/data:approve' => array(
-    
+
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
@@ -120,9 +120,9 @@ $mod_data_capabilities = array(
             'admin' => CAP_ALLOW
         )
     ),
-    
+
     'mod/data:manageentries' => array(
-    
+
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
@@ -134,9 +134,9 @@ $mod_data_capabilities = array(
             'admin' => CAP_ALLOW
         )
     ),
-    
+
     'mod/data:managecomments' => array(
-    
+
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
@@ -148,9 +148,9 @@ $mod_data_capabilities = array(
             'admin' => CAP_ALLOW
         )
     ),
-    
+
     'mod/data:managetemplates' => array(
-    
+
         'riskbitmask' => RISK_SPAM,
 
         'captype' => 'write',
@@ -164,7 +164,7 @@ $mod_data_capabilities = array(
             'admin' => CAP_ALLOW
         )
     )
-    
+
 );
 
 ?>

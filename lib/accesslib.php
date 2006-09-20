@@ -69,10 +69,10 @@ function load_guest_role($context=NULL) {
         }
     }
 
-    if ($capabilities = get_records_select('role_capabilities', 
+    if ($capabilities = get_records_select('role_capabilities',
                                            "roleid = $guestrole->id AND contextid = $sitecontext->id")) {
         foreach ($capabilities as $capability) {
-            $USER->capabilities[$context->id][$capability->capability] = $capability->permission;     
+            $USER->capabilities[$context->id][$capability->capability] = $capability->permission;
         }
     }
 
@@ -81,7 +81,7 @@ function load_guest_role($context=NULL) {
 
 /**
  * Load default not logged in role capabilities when user is not logged in
- * @return bool 
+ * @return bool
  */
 function load_notloggedin_role() {
     global $CFG, $USER;
@@ -98,10 +98,10 @@ function load_notloggedin_role() {
         }
     }
 
-    if ($capabilities = get_records_select('role_capabilities', 
+    if ($capabilities = get_records_select('role_capabilities',
                                      "roleid = $CFG->notloggedinroleid AND contextid = $sitecontext->id")) {
         foreach ($capabilities as $capability) {
-            $USER->capabilities[$sitecontext->id][$capability->capability] = $capability->permission;     
+            $USER->capabilities[$sitecontext->id][$capability->capability] = $capability->permission;
         }
     }
 
@@ -110,7 +110,7 @@ function load_notloggedin_role() {
 
 /**
  * Load default not logged in role capabilities when user is not logged in
- * @return bool 
+ * @return bool
  */
 function load_defaultuser_role() {
     global $CFG, $USER;
@@ -127,18 +127,18 @@ function load_defaultuser_role() {
         }
     }
 
-    if ($capabilities = get_records_select('role_capabilities', 
+    if ($capabilities = get_records_select('role_capabilities',
                                      "roleid = $CFG->defaultuserroleid AND contextid = $sitecontext->id")) {
         foreach ($capabilities as $capability) {
             if (!isset($USER->capabilities[$sitecontext->id][$capability->capability])) {  // Don't overwrite
-                $USER->capabilities[$sitecontext->id][$capability->capability] = $capability->permission;     
+                $USER->capabilities[$sitecontext->id][$capability->capability] = $capability->permission;
             }
         }
 
-        // SPECIAL EXCEPTION:  If the default user role is actually a guest role, then 
+        // SPECIAL EXCEPTION:  If the default user role is actually a guest role, then
         // remove some capabilities so this user doesn't get confused with a REAL guest
         if (isset($USER->capabilities[$sitecontext->id]['moodle/legacy:guest']) and $USER->username != 'guest') {
-            unset($USER->capabilities[$sitecontext->id]['moodle/legacy:guest']); 
+            unset($USER->capabilities[$sitecontext->id]['moodle/legacy:guest']);
             unset($USER->capabilities[$sitecontext->id]['moodle/course:view']);  // No access to courses by default
         }
     }
@@ -167,9 +167,9 @@ function get_guest_role() {
  * @return array of contextids
  */
 function get_parent_cats($context, $type) {
-    
+
     $parents = array();
-    
+
     switch ($type) {
         case CONTEXT_COURSECAT:
             if (!$cat = get_record('course_categories','id',$context->instanceid)) {
@@ -184,7 +184,7 @@ function get_parent_cats($context, $type) {
                 $cat = get_record('course_categories','id',$cat->parent);
             }
         break;
-        
+
         case CONTEXT_COURSE:
             if (!$course = get_record('course', 'id', $context->instanceid)) {
                 break;
@@ -207,7 +207,7 @@ function get_parent_cats($context, $type) {
                 $cat = get_record('course_categories','id',$cat->parent);
             }
         break;
-        
+
         default:
         break;
     }
@@ -226,7 +226,7 @@ function get_parent_cats($context, $type) {
  * @param string $errorstring - an errorstring
  * @param string $stringfile - which stringfile to get it from
  */
-function require_capability($capability, $context=NULL, $userid=NULL, $doanything=true, 
+function require_capability($capability, $context=NULL, $userid=NULL, $doanything=true,
                             $errormessage="nopermissions", $stringfile='') {
 
     global $USER;
@@ -240,7 +240,7 @@ function require_capability($capability, $context=NULL, $userid=NULL, $doanythin
             require_login();
         }
     }
-   
+
 /// OK, if they still don't have the capability then print a nice error message
 
     if (!has_capability($capability, $context, $userid, $doanything)) {
@@ -306,9 +306,9 @@ function has_capability($capability, $context=NULL, $userid=NULL, $doanything=tr
         if (isset($capabilities[$sitecontext->id]['moodle/site:doanything'])) {
             return (0 < $capabilities[$sitecontext->id]['moodle/site:doanything']);
         }
-    
+
         switch ($context->aggregatelevel) {
-        
+
             case CONTEXT_COURSECAT:
                 // Check parent cats.
                 $parentcats = get_parent_cats($context, CONTEXT_COURSECAT);
@@ -531,7 +531,7 @@ function load_user_capability($capability='', $context ='', $userid='') {
     $usercontexts = array();
 
     if ($context) { // if context is specified
-        $usercontexts = get_parent_contexts($context);          
+        $usercontexts = get_parent_contexts($context);
     } else { // else, we load everything
         if ($userroles = get_records('role_assignments','userid',$userid)) {
             foreach ($userroles as $userrole) {
@@ -553,7 +553,7 @@ function load_user_capability($capability='', $context ='', $userid='') {
     if ($capability) {
         $capsearch = " AND rc.capability = '$capability' ";
     } else {
-        $capsearch ="";  
+        $capsearch ="";
     }
 
 /// Then we use 1 giant SQL to bring out all relevant capabilities.
@@ -565,7 +565,7 @@ function load_user_capability($capability='', $context ='', $userid='') {
     $SQL = " SELECT  rc.capability, c1.id, (c1.aggregatelevel * 100) AS aggrlevel,
                      SUM(rc.permission) AS sum
                      FROM
-                     {$CFG->prefix}role_assignments ra, 
+                     {$CFG->prefix}role_assignments ra,
                      {$CFG->prefix}role_capabilities rc,
                      {$CFG->prefix}context c1
                      WHERE
@@ -573,7 +573,7 @@ function load_user_capability($capability='', $context ='', $userid='') {
                      ra.roleid=rc.roleid AND
                      ra.userid=$userid AND
                      $searchcontexts1
-                     rc.contextid=$siteinstance->id 
+                     rc.contextid=$siteinstance->id
                      $capsearch
               GROUP BY
                      rc.capability, (c1.aggregatelevel * 100), c1.id
@@ -590,14 +590,14 @@ function load_user_capability($capability='', $context ='', $userid='') {
                      {$CFG->prefix}context c2
                      WHERE
                      ra.contextid=c1.id AND
-                     ra.roleid=rc.roleid AND 
-                     ra.userid=$userid AND         
-                     rc.contextid=c2.id AND             
+                     ra.roleid=rc.roleid AND
+                     ra.userid=$userid AND
+                     rc.contextid=c2.id AND
                      $searchcontexts1
                      $searchcontexts2
                      rc.contextid != $siteinstance->id
                      $capsearch
-                  
+
               GROUP BY
                      rc.capability, (c1.aggregatelevel * 100 + c2.aggregatelevel), c1.id
                      HAVING
@@ -615,7 +615,7 @@ function load_user_capability($capability='', $context ='', $userid='') {
         while (!$rs->EOF) {
             $array = $rs->fields;
             $temprecord = new object;
-              
+
             foreach ($array as $key=>$val) {
                 if ($key == 'aggrlevel') {
                     $temprecord->aggregatelevel = $val;
@@ -627,14 +627,14 @@ function load_user_capability($capability='', $context ='', $userid='') {
             $rs->MoveNext();
         }
     }
-    
+
     /* so up to this point we should have somethign like this
      * $capabilities[1]    ->aggregatelevel = 1000
                            ->module = SITEID
                            ->capability = do_anything
                            ->id = 1 (id is the context id)
                            ->sum = 0
-                           
+
      * $capabilities[2]     ->aggregatelevel = 1000
                             ->module = SITEID
                             ->capability = post_messages
@@ -652,7 +652,7 @@ function load_user_capability($capability='', $context ='', $userid='') {
                             ->capability = view_course_activities
                             ->id = 26
                             ->sum = 0 (this is another course)
-                            
+
      * $capabilities[5]     ->aggregatelevel = 3050
                             ->module = course
                             ->capability = view_course_activities
@@ -680,21 +680,21 @@ function load_user_capability($capability='', $context ='', $userid='') {
         $context = get_context_instance_by_id($capability->id);
 
         if (!empty($otheruserid)) { // we are pulling out other user's capabilities, do not write to session
-            
+
             if (capability_prohibits($capability->capability, $context, $capability->sum, $usercap)) {
                 $usercap[$capability->id][$capability->capability] = -9000;
                 continue;
             }
 
-            $usercap[$capability->id][$capability->capability] = $capability->sum;          
-          
+            $usercap[$capability->id][$capability->capability] = $capability->sum;
+
         } else {
 
             if (capability_prohibits($capability->capability, $context, $capability->sum)) { // if any parent or parent's parent is set to prohibit
                 $USER->capabilities[$capability->id][$capability->capability] = -9000;
                 continue;
             }
-    
+
             // if no parental prohibit set
             // just write to session, i am not sure this is correct yet
             // since 3050 shows up after 3000, and 3070 shows up after 3050,
@@ -705,12 +705,12 @@ function load_user_capability($capability='', $context ='', $userid='') {
             $USER->capabilities[$capability->id][$capability->capability] = $capability->sum;
         }
     }
-    
+
     // now we don't care about the huge array anymore, we can dispose it.
     unset($capabilities);
-    
+
     if (!empty($otheruserid)) {
-        return $usercap; // return the array  
+        return $usercap; // return the array
     }
     // see array in session to see what it looks like
 
@@ -718,13 +718,13 @@ function load_user_capability($capability='', $context ='', $userid='') {
 
 /*
  * Check all the login enrolment information for the given user object
- * by querying the enrolment plugins 
+ * by querying the enrolment plugins
  */
 function check_enrolment_plugins(&$user) {
     global $CFG;
 
     require_once($CFG->dirroot .'/enrol/enrol.class.php');
-   
+
     if (!($plugins = explode(',', $CFG->enrol_plugins_enabled))) {
         $plugins = array($CFG->enrol);
     }
@@ -770,21 +770,21 @@ function capability_prohibits($capability, $context, $sum='', $array='') {
         // If this capability is set to prohibit.
         return true;
     }
-    
+
     if (isset($array)) {
-        if (isset($array[$context->id][$capability]) 
+        if (isset($array[$context->id][$capability])
                 && $array[$context->id][$capability] < -8000) {
             return true;
-        }    
+        }
     } else {
         // Else if set in session.
-        if (isset($USER->capabilities[$context->id][$capability]) 
+        if (isset($USER->capabilities[$context->id][$capability])
                 && $USER->capabilities[$context->id][$capability] < -8000) {
             return true;
         }
     }
     switch ($context->aggregatelevel) {
-        
+
         case CONTEXT_SYSTEM:
             // By now it's a definite an inherit.
             return 0;
@@ -858,7 +858,7 @@ function capability_prohibits($capability, $context, $sum='', $array='') {
  */
 function print_capabilities($modid=0) {
     global $CFG;
-    
+
     $capabilities = array();
 
     if ($modid) {
@@ -868,7 +868,7 @@ function print_capabilities($modid=0) {
         // Call the function that grabs the file and parse.
         $cm = get_record('course_modules', 'id', $modid);
         $module = get_record('modules', 'id', $cm->module);
-        
+
     } else {
         // Print all capabilities.
         foreach ($capabilities as $capability) {
@@ -886,20 +886,20 @@ function print_capabilities($modid=0) {
 function moodle_install_roles() {
 
     global $CFG, $db;
-    
+
     // Create a system wide context for assignemnt.
     $systemcontext = $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
 
 
     // Create default/legacy roles and capabilities.
     // (1 legacy capability per legacy role at system level).
-    $adminrole = create_role(get_string('administrator'), 'admin', get_string('administratordescription'), 'moodle/legacy:admin');   
+    $adminrole = create_role(get_string('administrator'), 'admin', get_string('administratordescription'), 'moodle/legacy:admin');
     if (!assign_capability('moodle/site:doanything', CAP_ALLOW, $adminrole, $systemcontext->id)) {
         error('Could not assign moodle/site:doanything to the admin role');
     }
-    $coursecreatorrole = create_role(get_string('coursecreators'), 'coursecreator', get_string('coursecreatorsdescription'), 'moodle/legacy:coursecreator');   
-    $editteacherrole = create_role(get_string('defaultcourseteacher'), 'editingteacher', get_string('defaultcourseteacherdescription'), 'moodle/legacy:editingteacher');    
-    $noneditteacherrole = create_role(get_string('noneditingteacher'), 'teacher', get_string('noneditingteacherdescription'), 'moodle/legacy:teacher');    
+    $coursecreatorrole = create_role(get_string('coursecreators'), 'coursecreator', get_string('coursecreatorsdescription'), 'moodle/legacy:coursecreator');
+    $editteacherrole = create_role(get_string('defaultcourseteacher'), 'editingteacher', get_string('defaultcourseteacherdescription'), 'moodle/legacy:editingteacher');
+    $noneditteacherrole = create_role(get_string('noneditingteacher'), 'teacher', get_string('noneditingteacherdescription'), 'moodle/legacy:teacher');
     $studentrole = create_role(get_string('defaultcoursestudent'), 'student', get_string('defaultcoursestudentdescription'), 'moodle/legacy:student');
     $guestrole = create_role(get_string('guest'), 'guest', get_string('guestdescription'), 'moodle/legacy:guest');
 
@@ -908,14 +908,14 @@ function moodle_install_roles() {
     // assign above new roles. If a user has both teacher and student role,
     // only teacher role is assigned. The assignment should be system level.
     $dbtables = $db->MetaTables('TABLES');
-    
+
 
     /**
      * Upgrade the admins.
      * Sort using id ASC, first one is primary admin.
      */
     if (in_array($CFG->prefix.'user_admins', $dbtables)) {
-        if ($useradmins = get_records_sql('SELECT * from '.$CFG->prefix.'user_admins ORDER BY ID ASC')) { 
+        if ($useradmins = get_records_sql('SELECT * from '.$CFG->prefix.'user_admins ORDER BY ID ASC')) {
             foreach ($useradmins as $admin) {
                 role_assign($adminrole, $admin->userid, 0, $systemcontext->id);
             }
@@ -966,7 +966,7 @@ function moodle_install_roles() {
      */
     if (in_array($CFG->prefix.'user_students', $dbtables)) {
         if ($userstudents = get_records('user_students')) {
-            foreach ($userstudents as $student) {  
+            foreach ($userstudents as $student) {
                 // populate the user_lastaccess table
                 unset($access);
                 $access->timeaccess = $student->timeaccess;
@@ -989,31 +989,31 @@ function moodle_install_roles() {
     }
 
     /**
-     * Insert the correct records for legacy roles 
+     * Insert the correct records for legacy roles
      */
     allow_assign($adminrole, $adminrole);
     allow_assign($adminrole, $coursecreatorrole);
     allow_assign($adminrole, $noneditteacherrole);
-    allow_assign($adminrole, $editteacherrole);   
+    allow_assign($adminrole, $editteacherrole);
     allow_assign($adminrole, $studentrole);
     allow_assign($adminrole, $guestrole);
-    
+
     allow_assign($coursecreatorrole, $noneditteacherrole);
     allow_assign($coursecreatorrole, $editteacherrole);
-    allow_assign($coursecreatorrole, $studentrole);     
+    allow_assign($coursecreatorrole, $studentrole);
     allow_assign($coursecreatorrole, $guestrole);
-    
-    allow_assign($editteacherrole, $noneditteacherrole);     
-    allow_assign($editteacherrole, $studentrole);      
+
+    allow_assign($editteacherrole, $noneditteacherrole);
+    allow_assign($editteacherrole, $studentrole);
     allow_assign($editteacherrole, $guestrole);
-    
+
     /// overrides
     allow_override($adminrole, $adminrole);
     allow_override($adminrole, $coursecreatorrole);
     allow_override($adminrole, $noneditteacherrole);
-    allow_override($adminrole, $editteacherrole);   
+    allow_override($adminrole, $editteacherrole);
     allow_override($adminrole, $studentrole);
-    allow_override($adminrole, $guestrole);    
+    allow_override($adminrole, $guestrole);
 
 
     // Should we delete the tables after we are done? Not yet.
@@ -1032,11 +1032,11 @@ function moodle_install_roles() {
  * @return boolean - success or failure.
  */
 function assign_legacy_capabilities($capability, $legacyperms) {
-    
+
     foreach ($legacyperms as $type => $perm) {
-        
+
         $systemcontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
-        
+
         // The legacy capabilities are:
         //   'moodle/legacy:guest'
         //   'moodle/legacy:student'
@@ -1044,7 +1044,7 @@ function assign_legacy_capabilities($capability, $legacyperms) {
         //   'moodle/legacy:editingteacher'
         //   'moodle/legacy:coursecreator'
         //   'moodle/legacy:admin'
-        
+
         if ($roles = get_roles_with_capability('moodle/legacy:'.$type, CAP_ALLOW)) {
             foreach ($roles as $role) {
                 // Assign a site level capability.
@@ -1065,9 +1065,9 @@ function assign_legacy_capabilities($capability, $legacyperms) {
  */
 function islegacy($capabilityname) {
     if (strstr($capabilityname, 'legacy') === false) {
-        return false;  
+        return false;
     } else {
-        return true;  
+        return true;
     }
 }
 
@@ -1180,46 +1180,46 @@ function get_local_override($roleid, $contextid, $capability) {
  * @return id or false
  */
 function create_role($name, $shortname, $description, $legacy='') {
-          
+
     // check for duplicate role name
-                
+
     if ($role = get_record('role','name', $name)) {
-        error('there is already a role with this name!');  
+        error('there is already a role with this name!');
     }
-    
+
     if ($role = get_record('role','shortname', $shortname)) {
-        error('there is already a role with this shortname!');  
+        error('there is already a role with this shortname!');
     }
 
     $role->name = $name;
     $role->shortname = $shortname;
     $role->description = $description;
-    
-    $context = get_context_instance(CONTEXT_SYSTEM, SITEID);                           
-    
+
+    $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
+
     if ($id = insert_record('role', $role)) {
-        if ($legacy) {        
-            assign_capability($legacy, CAP_ALLOW, $id, $context->id);            
+        if ($legacy) {
+            assign_capability($legacy, CAP_ALLOW, $id, $context->id);
         }
-        
+
         /// By default, users with role:manage at site level
         /// should be able to assign users to this new role, and override this new role's capabilities
-        
+
         // find all admin roles
         if ($adminroles = get_roles_with_capability('moodle/role:manage', CAP_ALLOW, $context)) {
             // foreach admin role
             foreach ($adminroles as $arole) {
                 // write allow_assign and allow_overrid
                 allow_assign($arole->id, $id);
-                allow_override($arole->id, $id);  
+                allow_override($arole->id, $id);
             }
         }
-        
+
         return $id;
     } else {
-        return false;  
+        return false;
     }
-  
+
 }
 
 /**
@@ -1231,13 +1231,13 @@ function create_role($name, $shortname, $description, $legacy='') {
  * @param permission - int 1,-1 or -1000
  */
 function assign_capability($capability, $permission, $roleid, $contextid, $overwrite=false) {
-    
+
     global $USER;
-    
+
     if (empty($permission) || $permission == 0) { // if permission is not set
-        unassign_capability($capability, $roleid, $contextid);      
+        unassign_capability($capability, $roleid, $contextid);
     }
-    
+
     $existing = get_record('role_capabilities', 'contextid', $contextid, 'roleid', $roleid, 'capability', $capability);
 
     if ($existing and !$overwrite) {   // We want to keep whatever is there already
@@ -1268,7 +1268,7 @@ function assign_capability($capability, $permission, $roleid, $contextid, $overw
  * @return boolean - success or failure
  */
 function unassign_capability($capability, $roleid, $contextid=NULL) {
-    
+
     if (isset($contextid)) {
         $status = delete_records('role_capabilities', 'capability', $capability,
                 'roleid', $roleid, 'contextid', $contextid);
@@ -1292,20 +1292,20 @@ function unassign_capability($capability, $roleid, $contextid=NULL) {
 function get_roles_with_capability($capability, $permission=NULL, $context='') {
 
     global $CFG;
-    
+
     if ($context) {
         if ($contexts = get_parent_contexts($context)) {
             $listofcontexts = '('.implode(',', $contexts).')';
         } else {
             $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
-            $listofcontexts = '('.$sitecontext->id.')'; // must be site  
-        }  
+            $listofcontexts = '('.$sitecontext->id.')'; // must be site
+        }
         $contextstr = "AND (rc.contextid = '$context->id' OR  rc.contextid IN $listofcontexts)";
     } else {
         $contextstr = '';
     }
-    
-    $selectroles = "SELECT r.* 
+
+    $selectroles = "SELECT r.*
                       FROM {$CFG->prefix}role r,
                            {$CFG->prefix}role_capabilities rc
                      WHERE rc.capability = '$capability'
@@ -1345,7 +1345,7 @@ function role_assign($roleid, $userid, $groupid, $contextid, $timestart=0, $time
         notify('Either userid or groupid must be provided');
         return false;
     }
-    
+
     if ($userid && !record_exists('user', 'id', $userid)) {
         notify('User does not exist!');
         return false;
@@ -1426,7 +1426,7 @@ function role_assign($roleid, $userid, $groupid, $contextid, $timestart=0, $time
     /// Make sure they have an entry in user_lastaccess for courses they can access
     //    role_add_lastaccess_entries($userid, $context);
     }
-    
+
     /// now handle metacourse role assignments if in course context
     if ($success and $context->aggregatelevel == CONTEXT_COURSE) {
         if ($parents = get_records('course_meta', 'child_course', $context->instanceid)) {
@@ -1451,7 +1451,7 @@ function role_assign($roleid, $userid, $groupid, $contextid, $timestart=0, $time
 function role_unassign($roleid=0, $userid=0, $groupid=0, $contextid=0) {
 
     global $USER, $CFG;
-    
+
     $success = true;
 
     $args = array('roleid', 'userid', 'groupid', 'contextid');
@@ -1512,8 +1512,8 @@ function role_unassign($roleid=0, $userid=0, $groupid=0, $contextid=0) {
     return $success;
 }
 
-/* 
- * A convenience function to take care of the common case where you 
+/*
+ * A convenience function to take care of the common case where you
  * just want to enrol someone using the default role into a course
  *
  * @param object $course
@@ -1536,9 +1536,9 @@ function enrol_into_course($course, $user, $enrol) {
         if (role_assign($role->id, $user->id, 0, $context->id, $timestart, $timeend, 0, $enrol)) {
             return false;
         }
-    
+
         email_welcome_message_to_user($course, $user);
-    
+
         add_to_log($course->id, 'course', 'enrol', 'view.php?id='.$course->id, $user->id);
 
         return true;
@@ -1590,7 +1590,7 @@ function role_add_lastaccess_entries($userid, $context) {
                  }
              }
              break;
-    
+
 
         case CONTEXT_COURSE:   // For a whole course
              if ($course = get_record('course', 'id', $context->instanceid)) {
@@ -1628,7 +1628,7 @@ function load_capability_def($component) {
         $varprefix = 'moodle';
     } else {
         $compparts = explode('/', $component);
-        
+
         if ($compparts[0] == 'block') {
             // Blocks are an exception. Blocks directory is 'blocks', and not
             // 'block'. So we need to jump through hoops.
@@ -1641,7 +1641,7 @@ function load_capability_def($component) {
         }
     }
     $capabilities = array();
-    
+
     if (file_exists($defpath)) {
         require_once($defpath);
         $capabilities = ${$varprefix.'_capabilities'};
@@ -1675,13 +1675,13 @@ function get_cached_capabilities($component='moodle') {
  *
  * Note that the absence of the db/access.php capabilities definition file
  * will cause any stored capabilities for the component to be removed from
- * the database. 
+ * the database.
  *
  * @param $component - examples: 'moodle', 'mod/forum', 'block/quiz_results'
  * @return boolean
  */
 function update_capabilities($component='moodle') {
-    
+
     $storedcaps = array();
 
     $filecaps = load_capability_def($component);
@@ -1708,9 +1708,9 @@ function update_capabilities($component='moodle') {
 
     // Are there new capabilities in the file definition?
     $newcaps = array();
-    
+
     foreach ($filecaps as $filecap => $def) {
-        if (!$storedcaps || 
+        if (!$storedcaps ||
                 ($storedcaps && in_array($filecap, $storedcaps) === false)) {
             if (!array_key_exists('riskbitmask', $def)) {
                 $def['riskbitmask'] = 0; // no risk if not specified
@@ -1726,11 +1726,11 @@ function update_capabilities($component='moodle') {
         $capability->contextlevel = $capdef['contextlevel'];
         $capability->component = $component;
         $capability->riskbitmask = $capdef['riskbitmask'];
-        
+
         if (!insert_record('capabilities', $capability, false, 'id')) {
             return false;
         }
-        
+
         global $db;
         $db->debug= 999;
         // Do we need to assign the new capabilities to roles that have the
@@ -1744,7 +1744,7 @@ function update_capabilities($component='moodle') {
     // definition that we need to delete from the stored capabilities and
     // role assignments?
     capabilities_cleanup($component, $filecaps);
-    
+
     return true;
 }
 
@@ -1758,14 +1758,14 @@ function update_capabilities($component='moodle') {
  * @return int - number of deprecated capabilities that have been removed
  */
 function capabilities_cleanup($component, $newcapdef=NULL) {
-    
+
     $removedcount = 0;
-    
+
     if ($cachedcaps = get_cached_capabilities($component)) {
         foreach ($cachedcaps as $cachedcap) {
             if (empty($newcapdef) ||
                         array_key_exists($cachedcap->name, $newcapdef) === false) {
-            
+
                 // Remove from capabilities cache.
                 if (!delete_records('capabilities', 'name', $cachedcap->name)) {
                     error('Could not delete deprecated capability '.$cachedcap->name);
@@ -1868,7 +1868,7 @@ function print_context_name($context) {
 
 
 /**
- * Extracts the relevant capabilities given a contextid. 
+ * Extracts the relevant capabilities given a contextid.
  * All case based, example an instance of forum context.
  * Will fetch all forum related capabilities, while course contexts
  * Will fetch all capabilities
@@ -1882,11 +1882,11 @@ function print_context_name($context) {
  * `component` varchar(100) NOT NULL,
  */
 function fetch_context_capabilities($context) {
-      
+
     global $CFG;
 
     $sort = 'ORDER BY contextlevel,component,id';   // To group them sensibly for display
-      
+
     switch ($context->aggregatelevel) {
 
         case CONTEXT_SYSTEM: // all
@@ -1896,11 +1896,11 @@ function fetch_context_capabilities($context) {
         case CONTEXT_PERSONAL:
             $SQL = "select * from {$CFG->prefix}capabilities where contextlevel = ".CONTEXT_PERSONAL;
         break;
-        
+
         case CONTEXT_USER:
             $SQL = "select * from {$CFG->prefix}capabilities where contextlevel = ".CONTEXT_USER;
         break;
-        
+
         case CONTEXT_COURSECAT: // all
             $SQL = "select * from {$CFG->prefix}capabilities";
         break;
@@ -1915,7 +1915,7 @@ function fetch_context_capabilities($context) {
         case CONTEXT_MODULE: // mod caps
             $cm = get_record('course_modules', 'id', $context->instanceid);
             $module = get_record('modules', 'id', $cm->module);
-        
+
             $SQL = "select * from {$CFG->prefix}capabilities where contextlevel = ".CONTEXT_MODULE."
                     and component = 'mod/$module->name'";
         break;
@@ -1923,7 +1923,7 @@ function fetch_context_capabilities($context) {
         case CONTEXT_BLOCK: // block caps
             $cb = get_record('block_instance', 'id', $context->instanceid);
             $block = get_record('block', 'id', $cb->blockid);
-        
+
             $SQL = "select * from {$CFG->prefix}capabilities where contextlevel = ".CONTEXT_BLOCK."
                     and component = 'block/$block->name'";
         break;
@@ -1953,7 +1953,7 @@ function fetch_context_capabilities($context) {
     }
     // end of special sorting
     return $records;
-    
+
 }
 
 
@@ -1963,13 +1963,13 @@ function fetch_context_capabilities($context) {
  * @return array of capability records from the capabilities table.
  */
 function fetch_context_independent_capabilities() {
-    
+
     $contextindependentcaps = array(
         'moodle/site:accessallgroups'
         );
 
     $records = array();
-    
+
     foreach ($contextindependentcaps as $capname) {
         $record = get_record('capabilities', 'name', $capname);
         array_push($records, $record);
@@ -1989,42 +1989,42 @@ function fetch_context_independent_capabilities() {
  */
 function role_context_capabilities($roleid, $context, $cap='') {
     global $CFG;
-    
+
     $contexts = get_parent_contexts($context);
     $contexts[] = $context->id;
     $contexts = '('.implode(',', $contexts).')';
-    
+
     if ($cap) {
         $search = " AND rc.capability = '$cap' ";
     } else {
-        $search = '';  
+        $search = '';
     }
-    
-    $SQL = "SELECT rc.* 
-            FROM {$CFG->prefix}role_capabilities rc, 
+
+    $SQL = "SELECT rc.*
+            FROM {$CFG->prefix}role_capabilities rc,
                  {$CFG->prefix}context c
             WHERE rc.contextid in $contexts
                  AND rc.roleid = $roleid
                  AND rc.contextid = c.id $search
-            ORDER BY c.aggregatelevel DESC, 
-                     rc.capability DESC";  
+            ORDER BY c.aggregatelevel DESC,
+                     rc.capability DESC";
 
     $capabilities = array();
-    
+
     if ($records = get_records_sql($SQL)) {
         // We are traversing via reverse order.
         foreach ($records as $record) {
             // If not set yet (i.e. inherit or not set at all), or currently we have a prohibit
             if (!isset($capabilities[$record->capability]) || $record->permission<-500) {
                 $capabilities[$record->capability] = $record->permission;
-            }  
+            }
         }
     }
     return $capabilities;
 }
 
 /**
- * Recursive function which, given a context, find all parent context ids, 
+ * Recursive function which, given a context, find all parent context ids,
  * and return the array in reverse order, i.e. parent first, then grand
  * parent, etc.
  * @param object $context
@@ -2045,7 +2045,7 @@ function get_parent_contexts($context) {
                 return array($parent->id);
             }
         break;
-        
+
         case CONTEXT_USER:
             if (!$parent = get_context_instance(CONTEXT_SYSTEM, SITEID)) {
                 return array();
@@ -2053,7 +2053,7 @@ function get_parent_contexts($context) {
                 return array($parent->id);
             }
         break;
-        
+
         case CONTEXT_COURSECAT: // Coursecat -> coursecat or site
             if (!$coursecat = get_record('course_categories','id',$context->instanceid)) {
                 return array();
@@ -2126,7 +2126,7 @@ function get_parent_contexts($context) {
  */
 function get_related_contexts_string($context) {
     if ($parents = get_parent_contexts($context)) {
-        return (' IN ('.$context->id.','.implode(',', $parents).')');    
+        return (' IN ('.$context->id.','.implode(',', $parents).')');
     } else {
         return (' ='.$context->id);
     }
@@ -2157,19 +2157,19 @@ function get_role_context_capability($contextid, $capability, $capabilities) {
  * @param $capabilityname - e.g. mod/choice:readresponses
  */
 function get_capability_string($capabilityname) {
-    
+
     // Typical capabilityname is mod/choice:readresponses
 
     $names = split('/', $capabilityname);
     $stringname = $names[1];                 // choice:readresponses
-    $components = split(':', $stringname);   
+    $components = split(':', $stringname);
     $componentname = $components[0];               // choice
 
     switch ($names[0]) {
         case 'mod':
             $string = get_string($stringname, $componentname);
         break;
-        
+
         case 'block':
             $string = get_string($stringname, 'block_'.$componentname);
         break;
@@ -2177,15 +2177,15 @@ function get_capability_string($capabilityname) {
         case 'moodle':
             $string = get_string($stringname, 'role');
         break;
-        
+
         case 'enrol':
             $string = get_string($stringname, 'enrol_'.$componentname);
-        break;  
-        
+        break;
+
         default:
             $string = get_string($stringname);
-        break;  
-      
+        break;
+
     }
     return $string;
 }
@@ -2240,7 +2240,7 @@ function get_component_string($component, $contextlevel) {
         default:
             error ('This is an unknown context!');
         return false;
-      
+
     }
     return $string;
 }
@@ -2254,35 +2254,35 @@ function get_roles_used_in_context($context) {
 
     global $CFG;
     $contextlist = get_related_contexts_string($context);
-    
+
     $sql = "SELECT DISTINCT r.id,
                    r.name,
                    r.shortname,
                    r.sortorder
               FROM {$CFG->prefix}role_assignments ra,
-                   {$CFG->prefix}role r 
-             WHERE r.id = ra.roleid 
+                   {$CFG->prefix}role r
+             WHERE r.id = ra.roleid
                AND ra.contextid $contextlist
           ORDER BY r.sortorder ASC";
-    
+
     return get_records_sql($sql);
 }
 
-/** this function is used to print roles column in user profile page. 
+/** this function is used to print roles column in user profile page.
  * @param int userid
  * @param int contextid
  * @return string
  */
 function get_user_roles_in_context($userid, $contextid){
     global $CFG;
-    
+
     $rolestring = '';
     $SQL = 'select * from '.$CFG->prefix.'role_assignments ra, '.$CFG->prefix.'role r where ra.userid='.$userid.' and ra.contextid='.$contextid.' and ra.roleid = r.id';
     if ($roles = get_records_sql($SQL)) {
         foreach ($roles as $userrole) {
             $rolestring .= '<a href="'.$CFG->wwwroot.'/user/index.php?contextid='.$userrole->contextid.'&amp;roleid='.$userrole->roleid.'">'.$userrole->name.'</a>, ';
-        }   
-        
+        }
+
     }
     return rtrim($rolestring, ', ');
 }
@@ -2298,7 +2298,7 @@ function user_can_override($context, $targetroleid) {
     // first check if user has override capability
     // if not return false;
     if (!has_capability('moodle/role:override', $context)) {
-        return false;  
+        return false;
     }
     // pull out all active roles of this user from this context(or above)
     if ($userroles = get_user_roles($context)) {
@@ -2309,9 +2309,9 @@ function user_can_override($context, $targetroleid) {
             }
         }
     }
-    
+
     return false;
-  
+
 }
 
 /**
@@ -2321,11 +2321,11 @@ function user_can_override($context, $targetroleid) {
  * @return boolean
  */
 function user_can_assign($context, $targetroleid) {
-    
+
     // first check if user has override capability
     // if not return false;
     if (!has_capability('moodle/role:assign', $context)) {
-        return false;  
+        return false;
     }
     // pull out all active roles of this user from this context(or above)
     if ($userroles = get_user_roles($context)) {
@@ -2336,8 +2336,8 @@ function user_can_assign($context, $targetroleid) {
             }
         }
     }
-    
-    return false; 
+
+    return false;
 }
 
 /**
@@ -2373,12 +2373,12 @@ function get_user_roles($context, $userid=0, $checkparentcontexts=true) {
                              WHERE ra.userid = '.$userid.
                            '   AND ra.roleid = r.id
                                AND ra.contextid = c.id
-                               AND '.$contexts. 
+                               AND '.$contexts.
                            ' ORDER BY c.aggregatelevel DESC');
 }
 
 /**
- * Creates a record in the allow_override table 
+ * Creates a record in the allow_override table
  * @param int sroleid - source roleid
  * @param int troleid - target roleid
  * @return int - id or false
@@ -2390,7 +2390,7 @@ function allow_override($sroleid, $troleid) {
 }
 
 /**
- * Creates a record in the allow_assign table 
+ * Creates a record in the allow_assign table
  * @param int sroleid - source roleid
  * @param int troleid - target roleid
  * @return int - id or false
@@ -2437,15 +2437,15 @@ function get_overridable_roles ($context) {
             }
         }
     }
-    
-    return $options;  
+
+    return $options;
 }
 
 /*
  *  Returns a role object that is the default role for new enrolments
  *  in a given course
  *
- *  @param object $course 
+ *  @param object $course
  *  @return object $role
  */
 function get_default_course_role($course) {
@@ -2483,28 +2483,28 @@ function get_default_course_role($course) {
  * @param $fields - fields to be pulled
  * @param $sort - the sort order
  * @param $limitfrom - number of records to skip (offset)
- * @param $limitnum - number of records to fetch 
+ * @param $limitnum - number of records to fetch
  * @param $groups - single group or array of groups - group(s) user is in
  * @param $exceptions - list of users to exclude
  */
-function get_users_by_capability($context, $capability, $fields='', $sort='', 
+function get_users_by_capability($context, $capability, $fields='', $sort='',
                                  $limitfrom='', $limitnum='', $groups='', $exceptions='') {
     global $CFG;
-    
+
 /// Sorting out groups
     if ($groups) {
         $groupjoin = 'INNER JOIN '.$CFG->prefix.'groups_members gm ON gm.userid = ra.userid';
-        
+
         if (is_array($groups)) {
             $groupsql = 'AND gm.groupid IN ('.implode(',', $groups).')';
         } else {
-            $groupsql = 'AND gm.groupid = '.$groups; 
+            $groupsql = 'AND gm.groupid = '.$groups;
         }
     } else {
         $groupjoin = '';
-        $groupsql = '';  
+        $groupsql = '';
     }
-    
+
 /// Sorting out exceptions
     $exceptionsql = $exceptions ? "AND u.id NOT IN ($exceptions)" : '';
 
@@ -2518,8 +2518,8 @@ function get_users_by_capability($context, $capability, $fields='', $sort='',
         $sort = 'ul.timeaccess';
     }
 
-    $sortby = $sort ? " ORDER BY $sort " : '';  
-    
+    $sortby = $sort ? " ORDER BY $sort " : '';
+
 /// If context is a course, then construct sql for ul
     if ($context->aggregatelevel == CONTEXT_COURSE) {
         $courseid = $context->instanceid;
@@ -2536,23 +2536,23 @@ function get_users_by_capability($context, $capability, $fields='', $sort='',
         if ($caps[$capability] > 0) { // resolved capability > 0
             $validroleids[] = $prole->id;
         }
-    }  
+    }
     $roleids =  '('.implode(',', $validroleids).')';
 
 /// Construct the main SQL
     $select = " SELECT $fields";
-    $from   = " FROM {$CFG->prefix}user u 
-                INNER JOIN {$CFG->prefix}role_assignments ra ON ra.userid = u.id 
+    $from   = " FROM {$CFG->prefix}user u
+                INNER JOIN {$CFG->prefix}role_assignments ra ON ra.userid = u.id
                 LEFT OUTER JOIN {$CFG->prefix}user_lastaccess ul ON ul.userid = u.id
                 $groupjoin";
-    $where  = " WHERE ra.contextid ".get_related_contexts_string($context)." 
-                  AND u.deleted = 0 
-                  AND ra.roleid in $roleids 
+    $where  = " WHERE ra.contextid ".get_related_contexts_string($context)."
+                  AND u.deleted = 0
+                  AND ra.roleid in $roleids
                       $exceptionsql
                       $coursesql
                       $groupsql";
 
-    return get_records_sql($select.$from.$where.$sortby, $limitfrom, $limitnum);  
+    return get_records_sql($select.$from.$where.$sortby, $limitfrom, $limitnum);
 }
 
 /**
@@ -2564,28 +2564,28 @@ function get_users_by_capability($context, $capability, $fields='', $sort='',
  */
 function get_role_users($roleid, $context, $parent=false) {
     global $CFG;
-    
+
     if ($parent) {
         if ($contexts = get_parent_contexts($context)) {
             $parentcontexts = 'r.contextid IN ('.implode(',', $contexts).')';
         } else {
-            $parentcontexts = ''; 
+            $parentcontexts = '';
         }
     } else {
-        $parentcontexts = '';  
+        $parentcontexts = '';
     }
-    
-    $SQL = "select u.* 
-            from {$CFG->prefix}role_assignments r, 
-                 {$CFG->prefix}user u 
-            where (r.contextid = $context->id $parentcontexts) 
-            and r.roleid = $roleid 
+
+    $SQL = "select u.*
+            from {$CFG->prefix}role_assignments r,
+                 {$CFG->prefix}user u
+            where (r.contextid = $context->id $parentcontexts)
+            and r.roleid = $roleid
             and u.id = r.userid"; // join now so that we can just use fullname() later
-    
+
     return get_records_sql($SQL);
 }
 
-/** 
+/**
  * This function gets the list of courses that this user has a particular capability in
  * This is not the most efficient way of doing this
  * @param string capability
@@ -2593,19 +2593,19 @@ function get_role_users($roleid, $context, $parent=false) {
  * @return array
  */
 function get_user_capability_course($capability, $userid='') {
-    
+
     global $USER;
     if (!$userid) {
-        $userid = $USER->id;  
+        $userid = $USER->id;
     }
-    
+
     $usercourses = array();
     $courses = get_records_select('course', '', '', 'id, id');
-    
+
     foreach ($courses as $course) {
         if (has_capability($capability, get_context_capability(CONTEXT_COURSE, $course->id))) {
             $usercourses[] = $course;
         }
     }
-    return $usercourses;  
+    return $usercourses;
 }

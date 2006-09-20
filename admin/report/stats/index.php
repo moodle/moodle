@@ -44,12 +44,12 @@
     }
 
     require_capability('moodle/site:viewreport', get_context_instance(CONTEXT_COURSE, $course->id));
-    
-    add_to_log($course->id, "course", "report stats", "report/stats/index.php?course=$course->id", $course->id); 
+
+    add_to_log($course->id, "course", "report stats", "report/stats/index.php?course=$course->id", $course->id);
 
     stats_check_uptodate($course->id);
-    
-    
+
+
 //    $strreports = get_string("reports");
 //    $strstats = get_string('stats');
 //
@@ -60,12 +60,12 @@
 //             <a href=\"{$CFG->wwwroot}/admin/report.php\">$strreports</a> ->
 //             $strstats";
 
-//    print_header("$course->shortname: $strstats", "$course->fullname", 
+//    print_header("$course->shortname: $strstats", "$course->fullname",
 //                  $crumb, '', '', true, '&nbsp', $menu);
-    
-    
+
+
     require_once($CFG->dirroot.'/course/report/stats/report.php');
-    
+
     admin_externalpage_print_footer($adminroot);
 
 ?>

@@ -28,7 +28,7 @@
     $strcourseoverview = get_string('courseoverview');
 
     $strnav = '<a href="'.$CFG->wwwroot.'/'.$CFG->admin.'/index.php">'.get_string('administration').'</a> -> <a href="'.$CFG->wwwroot.'/'.$CFG->admin.'/report.php">'.$strreports.'</a> -> '.$strcourseoverview;
-    
+
     $reportoptions = stats_get_report_options($course->id,STATS_MODE_RANKED);
 
     $tableprefix = $CFG->prefix.'stats_';
@@ -36,7 +36,7 @@
     $earliestday = get_field_sql('SELECT timeend FROM '.$tableprefix.'daily ORDER BY timeend LIMIT 1');
     $earliestweek = get_field_sql('SELECT timeend FROM '.$tableprefix.'weekly ORDER BY timeend LIMIT 1');
     $earliestmonth = get_field_sql('SELECT timeend FROM '.$tableprefix.'monthly ORDER BY timeend LIMIT 1');
-    
+
     if (empty($earliestday)) $earliestday = time();
     if (empty($earliestweek)) $earliestweek = time();
     if (empty($earliestmonth)) $earliestmonth = time();
@@ -66,14 +66,14 @@
 
     if (!empty($report) && !empty($time)) {
         $param = stats_get_parameters($time,$report,SITEID,STATS_MODE_RANKED);
-        
+
         $sql = "SELECT courseid,".$param->fields." FROM ".$CFG->prefix.'stats_'.$param->table
             ." WHERE timeend >= ".$param->timeafter
             ." GROUP BY courseid "
             .$param->extras
             ." ORDER BY ".$param->orderby
             ." LIMIT ".$numcourses;
-        
+
         $courses = get_records_sql($sql);
 
         if (empty($courses)) {
@@ -81,17 +81,17 @@
         }
 
         echo '<center><img src="'.$CFG->wwwroot.'/'.$CFG->admin.'/report/courseoverview/reportsgraph.php?time='.$time.'&report='.$report.'&numcourses='.$numcourses.'" /></center>';
-        
+
         $table = new object();
         $table->align = array('left','center','center','center');
         $table->head = array(get_string('course'),$param->line1);
         if (!empty($param->line2)) {
-            $table->head[] = $param->line2; 
+            $table->head[] = $param->line2;
         }
         if (!empty($param->line3)) {
             $table->head[] = $param->line3;
         }
-        
+
         foreach  ($courses as $c) {
             $a = array();
             $a[] = '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$c->courseid.'">'.get_field('course','shortname','id',$c->courseid).'</a>';
@@ -107,7 +107,7 @@
         }
         print_table($table);
     }
-    
+
     admin_externalpage_print_footer($adminroot);
 
 ?>

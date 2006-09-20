@@ -25,14 +25,14 @@
 ///////////////////////////////////////////////////////////////////////////
 
 /// This class represent the base generator class where all the
-/// needed functions to generate proper SQL are defined. 
+/// needed functions to generate proper SQL are defined.
 
 /// The rest of classes will inherit, by default, the same logic.
 /// Functions will be overriden as needed to generate correct SQL.
 
 class XMLDBgenerator {
 
-/// Please, avoid editing this defaults in this base class! 
+/// Please, avoid editing this defaults in this base class!
 /// It could change the behaviour of the rest of generators
 /// that, by default, inherit this configuration.
 /// To change any of them, do it in extended classes instead.
@@ -403,7 +403,7 @@ class XMLDBgenerator {
         } else {
         /// We force default '' for not null char columns without proper default
         /// some day this should be out!
-            if ($this->default_for_char !== NULL && 
+            if ($this->default_for_char !== NULL &&
                 $xmldb_field->getType() == XMLDB_TYPE_CHAR &&
                 $xmldb_field->getNotNull()) {
                 $default .= ' default ' . "'" . $this->default_for_char . "'";
@@ -415,7 +415,7 @@ class XMLDBgenerator {
     /**
      * Given one correct XMLDBTable and the new name, returns the SQL statements
      * to rename it (inside one array)
-     */ 
+     */
     function getRenameTableSQL($xmldb_table, $newname) {
 
         $results = array();  //Array where all the sentences will be stored
@@ -437,7 +437,7 @@ class XMLDBgenerator {
     /**
      * Given one correct XMLDBTable and the new name, returns the SQL statements
      * to drop it (inside one array)
-     */ 
+     */
     function getDropTableSQL($xmldb_table) {
 
         $results = array();  //Array where all the sentences will be stored
@@ -607,7 +607,7 @@ class XMLDBgenerator {
                  foreach($values as $key => $value) {
                  /// Trim single quotes
                      $value = trim($value,"'");
-                     if (stristr($value, 'CONCAT') !== false){ 
+                     if (stristr($value, 'CONCAT') !== false){
                      /// Look for data between parentesis
                          preg_match("/CONCAT\s*\((.*)\)$/is", trim($value), $matches);
                          if (isset($matches[1])) {
@@ -665,7 +665,7 @@ class XMLDBgenerator {
         }
     }
 
-    /** 
+    /**
      * Given one string (or one array), ends it with statement_end
      */
     function getEndedStatements ($input) {
@@ -674,7 +674,7 @@ class XMLDBgenerator {
             foreach ($input as $key=>$content) {
                 $input[$key] = $this->getEndedStatements($content);
             }
-            return $input; 
+            return $input;
         } else {
             $input = trim($input) . $this->statement_end;
             return $input;
@@ -705,7 +705,7 @@ class XMLDBgenerator {
     }
 
     /**
-     * Returns the code (array of statements) needed 
+     * Returns the code (array of statements) needed
      * to create one sequence for the xmldb_table and xmldb_field passes
      */
     function getCreateSequenceSQL ($xmldb_table, $xmldb_field) {
@@ -741,7 +741,7 @@ class XMLDBgenerator {
     /// Some well-know reserved words
         $reserved_words = array (
             'user', 'scale', 'type', 'comment', 'view', 'value', 'table', 'index', 'key', 'sequence', 'trigger'
-        );  
+        );
         return $reserved_words;
     }
 
@@ -753,7 +753,7 @@ class XMLDBgenerator {
     /// Some well-known tables to be created without prefix
         $tables = array (
             'adodb_logsql'
-        );  
+        );
         return $tables;
     }
 }

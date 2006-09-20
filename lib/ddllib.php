@@ -26,10 +26,10 @@
 
 // This library includes all the required functions used to handle the DB
 // structure (DDL) independently of the underlying RDBMS in use. All the functions
-// rely on the XMLDBDriver classes to be able to generate the correct SQL 
+// rely on the XMLDBDriver classes to be able to generate the correct SQL
 // syntax needed by each DB.
 //
-// To define any structure to be created we'll use the schema defined 
+// To define any structure to be created we'll use the schema defined
 // by the XMLDB classes, for tables, fields, indexes, keys and other
 // statements instead of direct handling of SQL sentences.
 //
@@ -59,7 +59,7 @@
 
 /// Add other libraries
     require_once($CFG->libdir . '/xmlize.php');
-    
+
 
 /**
  * Add a new field to a table, or modify an existing one (if oldfield is defined).
@@ -244,7 +244,7 @@ function table_column($table, $oldfield, $field, $type='integer', $size='10',
  * SQL statements, specific for each RDBMS ($CFG->dbtype) and, finally, it
  * will execute all those statements against the DB.
  *
- * @uses $CFG, $db 
+ * @uses $CFG, $db
  * @param $file full path to the XML file to be used
  * @return boolean (true on success, false on error)
  */
@@ -279,7 +279,7 @@ function install_from_xmldb_file($file) {
  * This function will create the table passed as argument with all its
  * fields/keys/indexes/sequences, everything based in the XMLDB object
  *
- * @uses $CFG, $db 
+ * @uses $CFG, $db
  * @param XMLDBTable table object (full specs are required)
  * @param boolean continue to specify if must continue on error (true) or stop (false)
  * @param boolean feedback to specify to show status info (true) or not (false)
@@ -307,7 +307,7 @@ function create_table($table, $continue=true, $feedback=true) {
  * and all the associated objects (keys, indexes, constaints, sequences, triggers)
  * will be dropped too.
  *
- * @uses $CFG, $db 
+ * @uses $CFG, $db
  * @param XMLDBTable table object (just the name is mandatory)
  * @param boolean continue to specify if must continue on error (true) or stop (false)
  * @param boolean feedback to specify to show status info (true) or not (false)
@@ -333,7 +333,7 @@ function drop_table($table, $continue=true, $feedback=true) {
 /**
  * This function will add the field to the table passed as arguments
  *
- * @uses $CFG, $db 
+ * @uses $CFG, $db
  * @param XMLDBTable table object (just the name is mandatory)
  * @param XMLDBField field object (full specs are required)
  * @param boolean continue to specify if must continue on error (true) or stop (false)
@@ -363,7 +363,7 @@ function add_field($table, $field, $continue=true, $feedback=true) {
 /**
  * This function will drop the field from the table passed as arguments
  *
- * @uses $CFG, $db 
+ * @uses $CFG, $db
  * @param XMLDBTable table object (just the name is mandatory)
  * @param XMLDBField field object (just the name is mandatory)
  * @param boolean continue to specify if must continue on error (true) or stop (false)

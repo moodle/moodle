@@ -419,7 +419,7 @@ class problem_000010 extends problem_base {
     }
     function exists() {
         if (!$this->is_enabled()) {
-            return true;   
+            return true;
         }
         if ($this->status() < 1) {
             return true;
@@ -429,7 +429,7 @@ class problem_000010 extends problem_base {
     function severity() {
         if ($this->is_enabled() and $this->status() == 0) {
             return SEVERITY_SIGNIFICANT;
-        } else { 
+        } else {
             return SEVERITY_ANNOYANCE;
         }
     }
@@ -437,9 +437,9 @@ class problem_000010 extends problem_base {
         global $CFG;
         $desc = 'Slasharguments are needed for relative linking in uploaded resources:<ul>';
         if (!$this->is_enabled()) {
-            $desc .= '<li>slasharguments are <strong>disabled</strong> in Moodle configuration</li>';   
+            $desc .= '<li>slasharguments are <strong>disabled</strong> in Moodle configuration</li>';
         } else {
-            $desc .= '<li>slasharguments are enabled in Moodle configuration</li>';   
+            $desc .= '<li>slasharguments are enabled in Moodle configuration</li>';
         }
         if ($this->status() == -1) {
             $desc .= '<li>can not run automatic test, you can verify it <a href="'.$CFG->wwwroot.'/file.php/testslasharguments" target="_blank">here</a> manually</li>';
@@ -470,9 +470,9 @@ class problem_000010 extends problem_base {
             $solution .= 'Congratulations - everything seems OK now :-D';
         }
         if ($status < 1) {
-            $solution .= '<p>IIS:<ul><li>try to add <code>cgi.fix_pathinfo=1</code> to php.ini</li><li>do NOT enable AllowPathInfoForScriptMappings !!!</li><li>slasharguments may not work when using ISAPI and PHP 4.3.10 and older</li></ul></p>'; 
-            $solution .= '<p>Apache 1:<ul><li>try to add <code>cgi.fix_pathinfo=1</code> to php.ini</li></ul></p>'; 
-            $solution .= '<p>Apache 2:<ul><li>you must add <code>AcceptPathInfo on</code> to php.ini or .htaccess</li><li>try to add <code>cgi.fix_pathinfo=1</code> to php.ini</li></ul></p>'; 
+            $solution .= '<p>IIS:<ul><li>try to add <code>cgi.fix_pathinfo=1</code> to php.ini</li><li>do NOT enable AllowPathInfoForScriptMappings !!!</li><li>slasharguments may not work when using ISAPI and PHP 4.3.10 and older</li></ul></p>';
+            $solution .= '<p>Apache 1:<ul><li>try to add <code>cgi.fix_pathinfo=1</code> to php.ini</li></ul></p>';
+            $solution .= '<p>Apache 2:<ul><li>you must add <code>AcceptPathInfo on</code> to php.ini or .htaccess</li><li>try to add <code>cgi.fix_pathinfo=1</code> to php.ini</li></ul></p>';
         }
         return $solution;
     }

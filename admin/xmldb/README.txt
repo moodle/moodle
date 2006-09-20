@@ -34,7 +34,7 @@ Ciao, Eloy Lafuente (stronk7)
 
 2006-07-11 - Important notes
 
-I've just discovered this some seconds ago, in order 
+I've just discovered this some seconds ago, in order
 to test properly the XMLDB classes and editor:
 
 1.- PHP 5 required for now. Will change this soon.
@@ -48,8 +48,8 @@ Ciao, Eloy Lafuente (stronk7)
 
 2006-07-11 - Initial commit
 
-This directory contains the XMLDB classes to be used 
-under Moodle > 1.7 to store all the DB info in a 
+This directory contains the XMLDB classes to be used
+under Moodle > 1.7 to store all the DB info in a
 neutral form (classes dir). Also it contains one simple
 interface to edit all those structures.
 
@@ -58,7 +58,7 @@ under your moodle/admin dir and point your browser (as admin)
 to http://your.server/moodle/admin/xmldb
 
 The edition interface isn't completed yet (it laks 3 more forms
-to edit fields, keys and indexes) and there isn't any lang file 
+to edit fields, keys and indexes) and there isn't any lang file
 (although I hope everything is really clear).
 
 The edition interface includes one reverse-engineering tool that
@@ -69,10 +69,10 @@ Once the XMLDB format was approved, we'll be able to build all the
 "generators" needed in order to use it to create Moodle DB structures
 for each RDBMS flavour.
 
-Once the interface was finished (2-3 days from now) related documentation 
-will be sent to http://docs.moodle.org/en/XML_database_schema in order 
+Once the interface was finished (2-3 days from now) related documentation
+will be sent to http://docs.moodle.org/en/XML_database_schema in order
 to comment/modify/approve the final XML format.
 
-All the code is, obviously GPL, with its copyrights and so on... 
+All the code is, obviously GPL, with its copyrights and so on...
 
 Ciao, Eloy Lafuente (stronk7) :-)

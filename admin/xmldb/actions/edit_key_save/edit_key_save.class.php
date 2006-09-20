@@ -28,7 +28,7 @@
 
 class edit_key_save extends XMLDBAction {
 
-    /** 
+    /**
      * Init method, every subclass will have its own
      */
     function init() {
@@ -187,11 +187,11 @@ class edit_key_save extends XMLDBAction {
             /// Check reftable is not empty
                 if (empty($reftable)) {
                     $errors[] = $this->str['noreftablespecified'];
-                } else 
+                } else
             /// Check reffields are not empty
                 if (empty($reffieldsarr[0])) {
                     $errors[] = $this->str['noreffieldsspecified'];
-                } else  
+                } else
             /// Check the number of fields is correct
                 if (count($fieldsarr) != count($reffieldsarr)) {
                     $errors[] = $this->str['wrongnumberofreffields'];
@@ -240,8 +240,8 @@ class edit_key_save extends XMLDBAction {
             }
         /// Prepare the output
             $site = get_site();
-            print_header("$site->shortname: XMLDB", 
-                         "$site->fullname", 
+            print_header("$site->shortname: XMLDB",
+                         "$site->fullname",
                          "<a href=\"../index.php\">" . $this->str['administration'] . "</a> -> <a href=\"index.php\">XMLDB</a>");
             notice ('<p>' .implode(', ', $errors) . '</p>
                      <p>' . $tempkey->readableInfo(),
@@ -266,8 +266,8 @@ class edit_key_save extends XMLDBAction {
                     $next->setChanged(true);
                 }
             }
-    
-        /// Set comment 
+
+        /// Set comment
             $key->setComment($comment);
 
         /// Set the rest of fields
@@ -278,7 +278,7 @@ class edit_key_save extends XMLDBAction {
                 $key->setRefTable($reftable);
                 $key->setRefFields($reffieldsarr);
             }
-     
+
         /// If the hash has changed from the old one, change the version
         /// and mark the structure as changed
             $key->calculateHash(true);
@@ -293,7 +293,7 @@ class edit_key_save extends XMLDBAction {
             }
 
         /// Launch postaction if exists (leave this here!)
-            if ($this->getPostAction() && $result) { 
+            if ($this->getPostAction() && $result) {
                 return $this->launch($this->getPostAction());
             }
         }

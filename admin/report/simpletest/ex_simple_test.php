@@ -57,7 +57,7 @@ class AutoGroupTest extends GroupTest {
                 if ($file != 'CVS' && !in_array($file_path, $this->ignorefolders)) {
                     $this->_recurseFolders($file_path);
                 }
-            } elseif (preg_match('/simpletest(\/|\\\\)test.*\.php$/', $file_path) || 
+            } elseif (preg_match('/simpletest(\/|\\\\)test.*\.php$/', $file_path) ||
                     ($this->thorough && preg_match('/simpletest(\/|\\\\)slowtest.*\.php$/', $file_path))) {
 
                 $s_count++;

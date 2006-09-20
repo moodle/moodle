@@ -28,7 +28,7 @@
 
 class edit_statement extends XMLDBAction {
 
-    /** 
+    /**
      * Init method, every subclass will have its own
      */
     function init() {
@@ -138,7 +138,7 @@ class edit_statement extends XMLDBAction {
         ///$statement->deleteSentence('changeme');
 
     /// Add the fields list
-        $sentences =& $statement->getSentences(); 
+        $sentences =& $statement->getSentences();
         if (!empty($sentences)) {
             $o .= '<h3 class="main">' . $this->str['sentences'] . '</h3>';
             $o .= '<table id="listfields" border="0" align="center"  cellpadding="5" cellspacing="1" class="flexible">';
@@ -162,7 +162,7 @@ class edit_statement extends XMLDBAction {
                 $b .= '<a href="index.php?action=delete_sentence&amp;sentence=' . $key . '&amp;statement=' . urlencode($statement->getName()) . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['delete'] . ']</a>';
                 $b .= '</td>';
             /// Print table row
-            $o .= '<tr class="r' . $row . '"><td class="table cell">' . $p . $sentence . $b . '</tr>'; 
+            $o .= '<tr class="r' . $row . '"><td class="table cell">' . $p . $sentence . $b . '</tr>';
                 $row = ($row + 1) % 2;
             }
             $o .= '</table>';
@@ -171,7 +171,7 @@ class edit_statement extends XMLDBAction {
         $this->output = $o;
 
     /// Launch postaction if exists (leave this here!)
-        if ($this->getPostAction() && $result) { 
+        if ($this->getPostAction() && $result) {
             return $this->launch($this->getPostAction());
         }
 

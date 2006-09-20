@@ -32,9 +32,9 @@
 
 
 $mod_scorm_capabilities = array(
-    
+
     'mod/scorm:view' => array(
-    
+
         'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
@@ -46,9 +46,9 @@ $mod_scorm_capabilities = array(
             'admin' => CAP_ALLOW
         )
     ),
-    
+
     'mod/scorm:viewreport' => array(
-    
+
         'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
@@ -60,9 +60,9 @@ $mod_scorm_capabilities = array(
             'admin' => CAP_ALLOW
         )
     ),
-    
+
     'mod/scorm:savetrack' => array(
-    
+
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
@@ -74,9 +74,9 @@ $mod_scorm_capabilities = array(
             'admin' => CAP_PREVENT
         )
     ),
-    
+
     'mod/scorm:viewscores' => array(
-    
+
         'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
@@ -88,7 +88,7 @@ $mod_scorm_capabilities = array(
             'admin' => CAP_PREVENT
         )
     )
-    
+
 );
 
 ?>

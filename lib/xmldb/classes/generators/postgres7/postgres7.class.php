@@ -114,11 +114,11 @@ class XMLDBpostgres7 extends XMLDBgenerator {
         return $dbtype;
     }
 
-    /**         
+    /**
      * Returns the code needed to create one enum for the xmldb_table and xmldb_field passes
-     */     
+     */
     function getEnumExtraSQL ($xmldb_table, $xmldb_field) {
-        
+
         $sql = 'CONSTRAINT ' . $this->getNameForObject($xmldb_table->getName(), $xmldb_field->getName(), 'ck');
         $sql.= ' CHECK (' . $this->getEncQuoted($xmldb_field->getName()) . ' IN (' . implode(', ', $xmldb_field->getEnumValues()) . '))';
 
@@ -143,21 +143,21 @@ class XMLDBpostgres7 extends XMLDBgenerator {
     /// This file contains the reserved words for PostgreSQL databases
     /// http://www.postgresql.org/docs/current/static/sql-keywords-appendix.html
         $reserved_words = array (
-            'all', 'analyse', 'analyze', 'and', 'any', 'array', 'as', 'asc', 
-            'asymmetric', 'authorization', 'between', 'binary', 'both', 'case', 
-            'cast', 'check', 'collate', 'column', 'constraint', 'create', 'cross', 
-            'current_date', 'current_role', 'current_time', 'current_timestamp', 
-            'current_user', 'default', 'deferrable', 'desc', 'distinct', 'do', 
-            'else', 'end', 'except', 'false', 'for', 'foreign', 'freeze', 'from', 
-            'full', 'grant', 'group', 'having', 'ilike', 'in', 'initially', 'inner', 
-            'intersect', 'into', 'is', 'isnull', 'join', 'leading', 'left', 'like', 
-            'limit', 'localtime', 'localtimestamp', 'natural', 'new', 'not', 
-            'notnull', 'null', 'off', 'offset', 'old', 'on', 'only', 'or', 'order', 
-            'outer', 'overlaps', 'placing', 'primary', 'references', 'right', 'select', 
-            'session_user', 'similar', 'some', 'symmetric', 'table', 'then', 'to', 
-            'trailing', 'true', 'union', 'unique', 'user', 'using', 'verbose', 
+            'all', 'analyse', 'analyze', 'and', 'any', 'array', 'as', 'asc',
+            'asymmetric', 'authorization', 'between', 'binary', 'both', 'case',
+            'cast', 'check', 'collate', 'column', 'constraint', 'create', 'cross',
+            'current_date', 'current_role', 'current_time', 'current_timestamp',
+            'current_user', 'default', 'deferrable', 'desc', 'distinct', 'do',
+            'else', 'end', 'except', 'false', 'for', 'foreign', 'freeze', 'from',
+            'full', 'grant', 'group', 'having', 'ilike', 'in', 'initially', 'inner',
+            'intersect', 'into', 'is', 'isnull', 'join', 'leading', 'left', 'like',
+            'limit', 'localtime', 'localtimestamp', 'natural', 'new', 'not',
+            'notnull', 'null', 'off', 'offset', 'old', 'on', 'only', 'or', 'order',
+            'outer', 'overlaps', 'placing', 'primary', 'references', 'right', 'select',
+            'session_user', 'similar', 'some', 'symmetric', 'table', 'then', 'to',
+            'trailing', 'true', 'union', 'unique', 'user', 'using', 'verbose',
             'when', 'where'
-        );  
+        );
         return $reserved_words;
     }
 }

@@ -28,7 +28,7 @@
 
 class save_xml_file extends XMLDBAction {
 
-    /** 
+    /**
      * Init method, every subclass will have its own
      */
     function init() {
@@ -64,7 +64,7 @@ class save_xml_file extends XMLDBAction {
         $dirpath = required_param('dir', PARAM_PATH);
         $dirpath = $CFG->dirroot . stripslashes_safe($dirpath);
 
-    /// Get the edited dir 
+    /// Get the edited dir
         if (!empty($XMLDB->editeddirs)) {
             if (isset($XMLDB->editeddirs[$dirpath])) {
                 $editeddir =& $XMLDB->editeddirs[$dirpath];
@@ -102,7 +102,7 @@ class save_xml_file extends XMLDBAction {
         }
 
     /// Launch postaction if exists (leave this here!)
-        if ($this->getPostAction() && $result) { 
+        if ($this->getPostAction() && $result) {
             return $this->launch($this->getPostAction());
         }
 

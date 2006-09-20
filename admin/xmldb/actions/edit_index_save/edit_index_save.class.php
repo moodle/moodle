@@ -28,7 +28,7 @@
 
 class edit_index_save extends XMLDBAction {
 
-    /** 
+    /**
      * Init method, every subclass will have its own
      */
     function init() {
@@ -164,8 +164,8 @@ class edit_index_save extends XMLDBAction {
             $tempindex->setFields($fieldsarr);
         /// Prepare the output
             $site = get_site();
-            print_header("$site->shortname: XMLDB", 
-                         "$site->fullname", 
+            print_header("$site->shortname: XMLDB",
+                         "$site->fullname",
                          "<a href=\"../index.php\">" . $this->str['administration'] . "</a> -> <a href=\"index.php\">XMLDB</a>");
             notice ('<p>' .implode(', ', $errors) . '</p>
                      <p>' . $tempindex->readableInfo(),
@@ -190,14 +190,14 @@ class edit_index_save extends XMLDBAction {
                     $next->setChanged(true);
                 }
             }
-    
-        /// Set comment 
+
+        /// Set comment
             $index->setComment($comment);
 
         /// Set the rest of fields
             $index->setUnique($unique);
             $index->setFields($fieldsarr);
-     
+
         /// If the hash has changed from the old one, change the version
         /// and mark the structure as changed
             $index->calculateHash(true);
@@ -212,7 +212,7 @@ class edit_index_save extends XMLDBAction {
             }
 
         /// Launch postaction if exists (leave this here!)
-            if ($this->getPostAction() && $result) { 
+            if ($this->getPostAction() && $result) {
                 return $this->launch($this->getPostAction());
             }
         }

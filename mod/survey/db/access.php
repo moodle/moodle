@@ -32,9 +32,9 @@
 
 
 $mod_survey_capabilities = array(
-    
+
     'mod/survey:participate' => array(
-    
+
         'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
@@ -46,9 +46,9 @@ $mod_survey_capabilities = array(
             'admin' => CAP_ALLOW
         )
     ),
-    
+
     'mod/survey:readresponses' => array(
-    
+
         'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
@@ -60,9 +60,9 @@ $mod_survey_capabilities = array(
             'admin' => CAP_ALLOW
         )
     ),
-    
+
     'mod/survey:download' => array(
-    
+
         'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
@@ -74,7 +74,7 @@ $mod_survey_capabilities = array(
             'admin' => CAP_ALLOW
         )
     )
-    
+
 );
 
 ?>

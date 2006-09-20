@@ -28,7 +28,7 @@
 
 class move_updown_field extends XMLDBAction {
 
-    /** 
+    /**
      * Init method, every subclass will have its own
      */
     function init() {
@@ -119,7 +119,7 @@ class move_updown_field extends XMLDBAction {
 
     /// Table has changed
         $table->setChanged(true);
-        
+
     /// Reorder the fields
         $table->orderFields($fields);
 
@@ -135,7 +135,7 @@ class move_updown_field extends XMLDBAction {
         }
 
     /// Launch postaction if exists (leave this here!)
-        if ($this->getPostAction() && $result) { 
+        if ($this->getPostAction() && $result) {
             return $this->launch($this->getPostAction());
         }
 

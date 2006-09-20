@@ -28,7 +28,7 @@
 
 class edit_sentence extends XMLDBAction {
 
-    /** 
+    /**
      * Init method, every subclass will have its own
      */
     function init() {
@@ -137,12 +137,12 @@ class edit_sentence extends XMLDBAction {
             $b .= '&nbsp;<a href="index.php?action=edit_statement&amp;statement=' . urlencode($statementparam) . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['back'] . ']</a>';
             $b .= '</p>';
             $o .= $b;
-    
+
             $this->output = $o;
         }
-    
+
     /// Launch postaction if exists (leave this here!)
-        if ($this->getPostAction() && $result) { 
+        if ($this->getPostAction() && $result) {
             return $this->launch($this->getPostAction());
         }
 

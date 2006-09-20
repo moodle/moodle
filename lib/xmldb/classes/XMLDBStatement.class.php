@@ -29,7 +29,7 @@
 /// (only INSERT is allowed for now)
 
 class XMLDBStatement extends XMLDBObject {
- 
+
     var $table;     // Table we are handling
     var $type;      // XMLDB_STATEMENT_TYPE
     var $sentences; // Collection of sentences in the statement
@@ -136,7 +136,7 @@ class XMLDBStatement extends XMLDBObject {
                 }
             }
         }
-          
+
     /// Finally, set the array of sentences
         $this->sentences = $sentencesarr;
 
@@ -200,7 +200,7 @@ class XMLDBStatement extends XMLDBObject {
     function getXMLDBStatementType($type) {
 
         $result = XMLDB_STATEMENT_INCORRECT;
-        
+
         switch (strtolower($type)) {
             case 'insert':
                 $result = XMLDB_STATEMENT_INSERT;
@@ -218,7 +218,7 @@ class XMLDBStatement extends XMLDBObject {
     /// Return the normalized XMLDB_STATEMENT
         return $result;
     }
-    
+
     /**
      * This function returns the correct name value for the
      * XMLDB_STATEMENT_XXX passed as argument
@@ -226,7 +226,7 @@ class XMLDBStatement extends XMLDBObject {
     function getXMLDBStatementName($type) {
 
         $result = '';
-        
+
         switch (strtolower($type)) {
             case XMLDB_STATEMENT_INSERT:
                 $result = 'insert';
@@ -257,7 +257,7 @@ class XMLDBStatement extends XMLDBObject {
         }
     }
 
-    /** 
+    /**
      * This function will output the XML text for one statement
      */
     function xmlOutput() {
@@ -302,7 +302,7 @@ class XMLDBStatement extends XMLDBObject {
         $this->changed = true;
     }
 
-    /**     
+    /**
      * Shows info in a readable format
      */
     function readableInfo() {
@@ -323,7 +323,7 @@ class XMLDBStatement extends XMLDBObject {
      * This function will return an array of fields from one INSERT sentence
      */
     function getFieldsFromInsertSentence($sentence) {
-        
+
         $fields = array();
 
     /// Get first part from the sentence (before VALUES)
@@ -344,7 +344,7 @@ class XMLDBStatement extends XMLDBObject {
      * This function will return an array of values from one INSERT sentence
      */
     function getValuesFromInsertSentence($sentence) {
-        
+
         $values = array();
 
     /// Get second part from the sentence (after VALUES)
@@ -364,7 +364,7 @@ class XMLDBStatement extends XMLDBObject {
     /**
      * This function will return the code needed to execute a collection
      * of sentences present inside one statement for the specified BD
-     * and prefix. 
+     * and prefix.
      * For now it only supports INSERT statements
      */
     function getExecuteStatementSQL ($dbtype, $prefix, $statement_end=true) {

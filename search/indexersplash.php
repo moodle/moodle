@@ -3,27 +3,27 @@
    * it is in place to prevent accidental reindexing which can lead to a loss
    * of time, amongst other things.
    * */
-  
+
   require_once('../config.php');
-  require_once("$CFG->dirroot/search/lib.php");  
+  require_once("$CFG->dirroot/search/lib.php");
 
   require_login();
 
   if (!isadmin()) {
     error("You need to be an admin user to use this page.", "$CFG->wwwroot/login/index.php");
   } //if
-  
+
   //check for php5 (lib.php)
   if (!search_check_php5()) {
     $phpversion = phpversion();
     mtrace("Sorry, global search requires PHP 5.0.0 or later (currently using version $phpversion)");
     exit(0);
   } //if
-  
-  require_once("$CFG->dirroot/search/indexlib.php");    
+
+  require_once("$CFG->dirroot/search/indexlib.php");
   $indexinfo = new IndexInfo();
-    
-  if ($indexinfo->valid()) {    
+
+  if ($indexinfo->valid()) {
     mtrace("<pre>The data directory ($indexinfo->path) contains $indexinfo->filecount files, and\n"
           ."there are ".$indexinfo->dbcount." records in the <em>search_documents</em> table.\n"
           ."\n"
@@ -40,5 +40,5 @@
           ."</pre>");
   } else {
     header('Location: indexer.php?areyousure=yes');
-  } //else    
+  } //else
 ?>

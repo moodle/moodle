@@ -161,7 +161,7 @@ class XMLDBmysql extends XMLDBGenerator {
     function getCommentSQL ($xmldb_table) {
 
         $comment = '';
-        
+
         if ($xmldb_table->getComment()) {
             $comment .= 'ALTER TABLE ' . $this->getEncQuoted($this->prefix . $xmldb_table->getName());
             $comment .= " COMMENT='" . substr($xmldb_table->getComment(), 0, 250) . "'";
@@ -216,7 +216,7 @@ class XMLDBmysql extends XMLDBGenerator {
             'utc_timestamp', 'values', 'varbinary', 'varchar', 'varcharacter',
             'varying', 'when', 'where', 'while', 'with', 'write', 'x509',
             'xor', 'year_month', 'zerofill'
-        );  
+        );
         return $reserved_words;
     }
 }

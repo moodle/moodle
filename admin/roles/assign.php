@@ -61,14 +61,14 @@
     $strshowall = get_string('showall');
     $strparticipants = get_string('participants');
 
-    
+
 
 /// Make sure this user can assign that role
 
     if ($roleid) {
         if (!user_can_assign($context, $roleid)) {
             error ('you can not override this role in this context');
-        }  
+        }
     }
 
     if ($userid) {
@@ -85,14 +85,14 @@
             print_header("$fullname", "$fullname",
                      "<a href=\"../course/view.php?id=$course->id\">$course->shortname</a> ->
                       <a href=\"".$CFG->wwwroot."/user/index.php?id=$course->id\">$strparticipants</a> -> <a href=\"".$CFG->wwwroot."/user/view.php?id=".$userid."&course=".$courseid."\">$fullname</a> ->".$straction,
-                      "", "", true, "&nbsp;", navmenu($course));      
-        
-        /// site header  
+                      "", "", true, "&nbsp;", navmenu($course));
+
+        /// site header
         } else {
             print_header("$course->fullname: $fullname", "$course->fullname",
-                        "<a href=\"".$CFG->wwwroot."/user/view.php?id=".$userid."&course=".$courseid."\">$fullname</a> -> $straction", "", "", true, "&nbsp;", navmenu($course));     
+                        "<a href=\"".$CFG->wwwroot."/user/view.php?id=".$userid."&course=".$courseid."\">$fullname</a> -> $straction", "", "", true, "&nbsp;", navmenu($course));
         }
-        
+
         $showroles = 1;
         $currenttab = 'assign';
         include_once($CFG->dirroot.'/user/tabs.php');
@@ -162,13 +162,13 @@
     $existinguserarray = array();
 
     if (!$contextusers = get_role_users($roleid, $context)) {
-        $contextusers = array();  
+        $contextusers = array();
     }
 
     foreach ($contextusers as $contextuser) {
         $existinguserarray[] = $contextuser->id;
     }
-    
+
     $existinguserlist = implode(',', $existinguserarray);
     unset($existinguserarray);
 
@@ -191,7 +191,7 @@
         }
 
     }
-    
+
     if ($roleid) {
     /// prints a form to swap roles
         echo '<form name="rolesform" action="assign.php" method="post">';
@@ -231,7 +231,7 @@
         $table->head = array(get_string('roles', 'role'), get_string('users'));
         $table->wrap = array('nowrap', 'nowrap');
         $table->align = array('right', 'center');
-        
+
         foreach ($assignableroles as $roleid => $rolename) {
             $countusers = 0;
             if ($contextusers = get_role_users($roleid, $context)) {
@@ -239,7 +239,7 @@
             }
             $table->data[] = array('<a href="assign.php?contextid='.$context->id.'&amp;roleid='.$roleid.$userparam.'">'.$rolename.'</a>', $countusers);
         }
-    
+
         print_table($table);
     }
 

@@ -4,8 +4,8 @@
 
 // "systempaths" settingpage
 $temp = new admin_settingpage('systempaths', get_string('systempaths','admin'));
-$temp->add(new admin_setting_configselect('gdversion', get_string('gdversion','admin'), get_string('configgdversion', 'admin'), check_gd_version(), array('0' => get_string('gdnot'), 
-                                                                                                                                                          '1' => get_string('gd1'), 
+$temp->add(new admin_setting_configselect('gdversion', get_string('gdversion','admin'), get_string('configgdversion', 'admin'), check_gd_version(), array('0' => get_string('gdnot'),
+                                                                                                                                                          '1' => get_string('gd1'),
                                                                                                                                                           '2' => get_string('gd2'))));
 $temp->add(new admin_setting_configtext('zip', get_string('pathtozip','admin'), get_string('configzip', 'admin'), '', PARAM_PATH));
 $temp->add(new admin_setting_configtext('unzip', get_string('pathtounzip','admin'), get_string('configunzip', 'admin'), '', PARAM_PATH));
@@ -23,29 +23,29 @@ $temp->add(new admin_setting_configtext('smtppass', get_string('smtppass', 'admi
 $temp->add(new admin_setting_configtext('noreplyaddress', get_string('noreplyaddress', 'admin'), get_string('confignoreplyaddress', 'admin'), 'noreply@' . $_SERVER['HTTP_HOST'], PARAM_NOTAGS));
 $temp->add(new admin_setting_configtext('allowemailaddresses', get_string('allowemailaddresses', 'admin'), get_string('configallowemailaddresses', 'admin'), '', PARAM_NOTAGS));
 $temp->add(new admin_setting_configtext('denyemailaddresses', get_string('denyemailaddresses', 'admin'), get_string('configdenyemailaddresses', 'admin'), '', PARAM_NOTAGS));
-$temp->add(new admin_setting_configselect('digestmailtime', get_string('digestmailtime', 'admin'), get_string('configdigestmailtime', 'admin'), 17, array('00' => '00', 
-                                                                                                                                                          '01' => '01', 
-                                                                                                                                                          '02' => '02', 
-                                                                                                                                                          '03' => '03', 
-                                                                                                                                                          '04' => '04', 
-                                                                                                                                                          '05' => '05', 
-                                                                                                                                                          '06' => '06', 
-                                                                                                                                                          '07' => '07', 
-                                                                                                                                                          '08' => '08', 
-                                                                                                                                                          '09' => '09', 
-                                                                                                                                                          '10' => '10', 
-                                                                                                                                                          '11' => '11', 
-                                                                                                                                                          '12' => '12', 
-                                                                                                                                                          '13' => '13', 
-                                                                                                                                                          '14' => '14', 
-                                                                                                                                                          '15' => '15', 
-                                                                                                                                                          '16' => '16', 
-                                                                                                                                                          '17' => '17', 
-                                                                                                                                                          '18' => '18', 
-                                                                                                                                                          '19' => '19', 
-                                                                                                                                                          '20' => '20', 
-                                                                                                                                                          '21' => '21', 
-                                                                                                                                                          '22' => '22', 
+$temp->add(new admin_setting_configselect('digestmailtime', get_string('digestmailtime', 'admin'), get_string('configdigestmailtime', 'admin'), 17, array('00' => '00',
+                                                                                                                                                          '01' => '01',
+                                                                                                                                                          '02' => '02',
+                                                                                                                                                          '03' => '03',
+                                                                                                                                                          '04' => '04',
+                                                                                                                                                          '05' => '05',
+                                                                                                                                                          '06' => '06',
+                                                                                                                                                          '07' => '07',
+                                                                                                                                                          '08' => '08',
+                                                                                                                                                          '09' => '09',
+                                                                                                                                                          '10' => '10',
+                                                                                                                                                          '11' => '11',
+                                                                                                                                                          '12' => '12',
+                                                                                                                                                          '13' => '13',
+                                                                                                                                                          '14' => '14',
+                                                                                                                                                          '15' => '15',
+                                                                                                                                                          '16' => '16',
+                                                                                                                                                          '17' => '17',
+                                                                                                                                                          '18' => '18',
+                                                                                                                                                          '19' => '19',
+                                                                                                                                                          '20' => '20',
+                                                                                                                                                          '21' => '21',
+                                                                                                                                                          '22' => '22',
                                                                                                                                                           '23' => '23')));
 if (!empty($CFG->unicodedb)) { // These options are only available if running under unicodedb
     unset($options);
@@ -88,7 +88,7 @@ $ADMIN->add('server', $temp);
 $temp = new admin_settingpage('debugging', get_string('debugging', 'admin'));
 $temp->add(new admin_setting_special_debug());
 $temp->add(new admin_setting_special_perfdebug());
-$ADMIN->add('server', $temp); 
+$ADMIN->add('server', $temp);
 
 
 // "stats" settingpage
@@ -116,7 +116,7 @@ $temp->add(new admin_setting_configselect('statsmaxruntime', get_string('statsma
                                                                                                                                                             60*60*8 => '8 '.get_string('hours') )));
 $temp->add(new admin_setting_configtime('statsruntimestarthour', 'statsruntimestartminute', get_string('statsruntimestart', 'admin'), get_string('configstatsruntimestart', 'admin'), array('h' => 0, 'm' => 0)));
 $temp->add(new admin_setting_configtext('statsuserthreshold', get_string('statsuserthreshold', 'admin'), get_string('configstatsuserthreshold', 'admin'), 0, PARAM_INT));
-$ADMIN->add('server', $temp);                                                                                                                                                   
+$ADMIN->add('server', $temp);
 
 
 // "http" settingpage
@@ -125,7 +125,7 @@ $temp->add(new admin_setting_configtext('framename', get_string('framename', 'ad
 $temp->add(new admin_Setting_configcheckbox('slasharguments', get_string('slasharguments', 'admin'), get_string('configslasharguments', 'admin'), 1));
 $temp->add(new admin_setting_configtext('proxyhost', get_string('proxyhost', 'admin'), get_string('configproxyhost', 'admin'), '', PARAM_HOST));
 $temp->add(new admin_setting_configtext('proxyport', get_string('proxyport', 'admin'), get_string('configproxyport', 'admin'), '', PARAM_INT));
-$ADMIN->add('server', $temp); 
+$ADMIN->add('server', $temp);
 
 $ADMIN->add('server', new admin_externalpage('sitefiles', get_string('sitefiles'), $CFG->wwwroot . '/files/index.php?id=' . SITEID));
 

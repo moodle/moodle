@@ -26,13 +26,13 @@ if ($userid) {
                   onFocus="document.studentform.add.disabled=true;
                            document.studentform.remove.disabled=false;
                            document.studentform.addselect.selectedIndex=-1;" />
-          <?php 
+          <?php
               foreach ($contextusers as $contextuser) {
                   $fullname = fullname($contextuser, true);
                   echo "<option value=\"$contextuser->id\">".$fullname.", ".$contextuser->email."</option>\n";
               }
           ?>
-          
+
           </select></td>
       <td valign="top">
         <br />
@@ -47,7 +47,7 @@ if ($userid) {
                            document.studentform.remove.disabled=true;
                            document.studentform.removeselect.selectedIndex=-1;">
           <?php
-      
+
               if (!empty($searchusers)) {
                   echo "<optgroup label=\"$strsearchresults (" . count($searchusers) . ")\">\n";
                   foreach ($searchusers as $user) {
@@ -73,7 +73,7 @@ if ($userid) {
           ?>
          </select>
          <br />
-         <input type="text" name="searchtext" size="30" value="<?php p($searchtext, true) ?>" 
+         <input type="text" name="searchtext" size="30" value="<?php p($searchtext, true) ?>"
                   onFocus ="document.studentform.add.disabled=true;
                             document.studentform.remove.disabled=true;
                             document.studentform.removeselect.selectedIndex=-1;

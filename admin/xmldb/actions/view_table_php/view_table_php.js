@@ -33,13 +33,13 @@
 /**
  * This function disables some elements from the fields/keys/indexes drop down
  */
-function disablePopupHeads() {    
-    var popup = document.getElementById("menufieldkeyindex");    
-    var i = popup.length;    
-    while (i--) {        
-        option = popup[i];        
-        if (option.value == "fieldshead" || option.value == "keyshead" || option.value == "indexeshead") { 
-            popup[i].disabled = true;        
-        }    
+function disablePopupHeads() {
+    var popup = document.getElementById("menufieldkeyindex");
+    var i = popup.length;
+    while (i--) {
+        option = popup[i];
+        if (option.value == "fieldshead" || option.value == "keyshead" || option.value == "indexeshead") {
+            popup[i].disabled = true;
+        }
     }
 }

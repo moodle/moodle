@@ -32,9 +32,9 @@
 
 
 $mod_glossary_capabilities = array(
-    
+
     'mod/glossary:view' => array(
-    
+
         'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
@@ -46,9 +46,9 @@ $mod_glossary_capabilities = array(
             'admin' => CAP_ALLOW
         )
     ),
-    
+
     'mod/glossary:write' => array(
-    
+
         'riskbitmask' => RISK_SPAM,
 
         'captype' => 'write',
@@ -62,9 +62,9 @@ $mod_glossary_capabilities = array(
             'admin' => CAP_ALLOW
         )
     ),
-    
+
     'mod/glossary:manageentries' => array(
-    
+
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
@@ -76,9 +76,9 @@ $mod_glossary_capabilities = array(
             'admin' => CAP_ALLOW
         )
     ),
-    
+
     'mod/glossary:managecategories' => array(
-    
+
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
@@ -90,9 +90,9 @@ $mod_glossary_capabilities = array(
             'admin' => CAP_ALLOW
         )
     ),
-    
+
     'mod/glossary:comment' => array(
-    
+
         'riskbitmask' => RISK_SPAM,
 
         'captype' => 'write',
@@ -106,9 +106,9 @@ $mod_glossary_capabilities = array(
             'admin' => CAP_ALLOW
         )
     ),
-    
+
     'mod/glossary:managecomments' => array(
-    
+
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
@@ -120,9 +120,9 @@ $mod_glossary_capabilities = array(
             'admin' => CAP_ALLOW
         )
     ),
-    
+
     'mod/glossary:import' => array(
-    
+
         'riskbitmask' => RISK_SPAM,
 
         'captype' => 'write',
@@ -136,9 +136,9 @@ $mod_glossary_capabilities = array(
             'admin' => CAP_ALLOW
         )
     ),
-    
+
     'mod/glossary:export' => array(
-    
+
         'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
@@ -150,9 +150,9 @@ $mod_glossary_capabilities = array(
             'admin' => CAP_ALLOW
         )
     ),
-    
+
     'mod/glossary:approve' => array(
-    
+
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
@@ -164,9 +164,9 @@ $mod_glossary_capabilities = array(
             'admin' => CAP_ALLOW
         )
     ),
-    
+
     'mod/glossary:rate' => array(
-    
+
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
@@ -178,9 +178,9 @@ $mod_glossary_capabilities = array(
             'admin' => CAP_ALLOW
         )
     ),
-    
+
     'mod/glossary:viewrating' => array(
-    
+
         'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
@@ -192,7 +192,7 @@ $mod_glossary_capabilities = array(
             'admin' => CAP_ALLOW
         )
     ),
-    
+
 );
 
 ?>

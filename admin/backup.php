@@ -23,7 +23,7 @@
 
         //First of all we check that everything is correct
         //Check for trailing slash and backslash in backup_sche_destination
-        if (!empty($backup_sche_destination) and 
+        if (!empty($backup_sche_destination) and
             (substr($backup_sche_destination,-1) == "/" or substr($backup_sche_destination,-1) == "\\")) {
             $error = true;
             $sche_destination_error = get_string("pathslasherror");
@@ -43,7 +43,7 @@
             if (isset($a_config[$tocheck])) {
                 $temp .= "1";
             } else {
-                $temp .= "0"; 
+                $temp .= "0";
             }
             unset($a_config[$tocheck]);
             $i++;
@@ -76,7 +76,7 @@
                 foreach ($courses as $course) {
                     //We check if the course exists in backup_course
                     $backup_course = get_record("backup_courses","courseid",$course->id);
-                    //If it doesn't exist, create 
+                    //If it doesn't exist, create
                     if (!$backup_course) {
                         $temp_backup_course->courseid = $course->id;
                         $newid = insert_record("backup_courses",$temp_backup_course);
@@ -120,7 +120,7 @@
     //Check for required functions...
     if (!function_exists('utf8_encode')) {
         notify("You need to add XML support to your PHP installation");
-    } 
+    }
     include ("$CFG->dirroot/backup/config.html");
 
     print_simple_box_end();

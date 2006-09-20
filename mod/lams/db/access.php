@@ -1,7 +1,7 @@
 <?php // $Id$
 /**
  * Capability definitions for the lams module.
- * 
+ *
  * For naming conventions, see lib/db/access.php.
  */
 $mod_lams_capabilities = array(

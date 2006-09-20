@@ -28,7 +28,7 @@
 
 class edit_xml_file extends XMLDBAction {
 
-    /** 
+    /**
      * Init method, every subclass will have its own
      */
     function init() {
@@ -155,7 +155,7 @@ class edit_xml_file extends XMLDBAction {
                 sort($reserved_words);
                 $reserved_words = array_unique($reserved_words);
             /// Add the tables list
-                $tables =& $structure->getTables(); 
+                $tables =& $structure->getTables();
                 if ($tables) {
                     $o .= '<h3 class="main">' . $this->str['tables'] . '</h3>';
                     $o .= '<table id="listtables" border="0" align="center"  cellpadding="5" cellspacing="1" class="flexible">';
@@ -194,13 +194,13 @@ class edit_xml_file extends XMLDBAction {
                          }
                         $b .= '</td>';
                     /// Print table row
-                        $o .= '<tr class="r' . $row . '"><td class="table cell"><a href="index.php?action=view_table_xml&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '&amp;table=' . $table->getName() . '&amp;select=edited" target="_blank">' . $table->getName() . '</a>' . $b . '</tr>'; 
+                        $o .= '<tr class="r' . $row . '"><td class="table cell"><a href="index.php?action=view_table_xml&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '&amp;table=' . $table->getName() . '&amp;select=edited" target="_blank">' . $table->getName() . '</a>' . $b . '</tr>';
                         $row = ($row + 1) % 2;
                     }
                     $o .= '</table>';
                 }
             ///Add the statements list
-                $statements =& $structure->getStatements(); 
+                $statements =& $structure->getStatements();
                 if ($statements) {
                     $o .= '<h3 class="main">' . $this->str['statements'] . '</h3>';
                     $o .= '<table id="liststatements" border="0" align="center"  cellpadding="5" cellspacing="1" class="flexible">';
@@ -229,7 +229,7 @@ class edit_xml_file extends XMLDBAction {
                         $b .= '<a href="index.php?action=delete_statement&amp;statement=' . $statement->getName() . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['delete'] . ']</a>';
                         $b .= '</td>';
                     /// Print statement row
-                        $o .= '<tr class="r' . $row . '"><td class="statement cell"><a href="index.php?action=view_statement_xml&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '&amp;statement=' . $statement->getName() . '&amp;select=edited" target="_blank">' . $statement->getName() . '</a>' . $b . '</tr>'; 
+                        $o .= '<tr class="r' . $row . '"><td class="statement cell"><a href="index.php?action=view_statement_xml&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '&amp;statement=' . $statement->getName() . '&amp;select=edited" target="_blank">' . $statement->getName() . '</a>' . $b . '</tr>';
                         $row = ($row + 1) % 2;
                     }
                     $o .= '</table>';

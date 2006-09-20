@@ -12,14 +12,14 @@ $temp->add(new admin_setting_configtext('maxbytes', get_string('maxbytes', 'admi
 $temp->add(new admin_setting_configcheckbox('messaging', get_string('messaging', 'admin'), get_string('configmessaging','admin'), 1));
 $temp->add(new admin_setting_configcheckbox('allowobjectembed', get_string('allowobjectembed', 'admin'), get_string('configallowobjectembed', 'admin'), 0));
 $temp->add(new admin_setting_configcheckbox('enabletrusttext', get_string('enabletrusttext', 'admin'), get_string('configenabletrusttext', 'admin'), 0));
-$temp->add(new admin_setting_configselect('maxeditingtime', get_string('maxeditingtime','admin'), get_string('configmaxeditingtime','admin'), 1800, 
+$temp->add(new admin_setting_configselect('maxeditingtime', get_string('maxeditingtime','admin'), get_string('configmaxeditingtime','admin'), 1800,
              array(60 => get_string('numminutes', '', 1),
                    300 => get_string('numminutes', '', 5),
                    900 => get_string('numminutes', '', 15),
                    1800 => get_string('numminutes', '', 30),
                    2700 => get_string('numminutes', '', 45),
                    3600 => get_string('numminutes', '', 60))));
-$temp->add(new admin_setting_configselect('fullnamedisplay', get_string('fullnamedisplay', 'admin'), get_string('configfullnamedisplay', 'admin'), 
+$temp->add(new admin_setting_configselect('fullnamedisplay', get_string('fullnamedisplay', 'admin'), get_string('configfullnamedisplay', 'admin'),
               'firstname lastname', array('language' => get_string('language'),
               'firstname lastname' => get_string('firstname') . ' + ' . get_string('lastname'),
               'lastname firstname' => get_string('lastname') . ' + ' . get_string('firstname'),
@@ -50,7 +50,7 @@ $temp = new admin_settingpage('modulesecurity', get_string('modulesecurity', 'ad
 $temp->add(new admin_setting_configselect('restrictmodulesfor', get_string('restrictmodulesfor', 'admin'), get_string('configrestrictmodulesfor', 'admin'), 'none', array('none' => 'No courses',
                                                                                                                                                                           'all' => 'All courses',
                                                                                                                                                                           'requested' => 'Requested courses')));
-$temp->add(new admin_setting_configcheckbox('restrictbydefault', get_string('restrictbydefault', 'admin'), get_string('configrestrictbydefault', 'admin'), 0));                                                                                                                                                                  
+$temp->add(new admin_setting_configcheckbox('restrictbydefault', get_string('restrictbydefault', 'admin'), get_string('configrestrictbydefault', 'admin'), 0));
 if (!$options = get_records("modules")) {
     $options = array();
 }

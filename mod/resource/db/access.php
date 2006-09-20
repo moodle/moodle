@@ -32,9 +32,9 @@
 
 
 $mod_resource_capabilities = array(
-    
+
     'mod/resource:view' => array(
-    
+
         'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
@@ -46,7 +46,7 @@ $mod_resource_capabilities = array(
             'admin' => CAP_ALLOW
         )
     )
-    
+
 );
 
 ?>
