@@ -151,7 +151,7 @@ div.sideblock div.title h2 {
 }
 div.sideblock div.header {
   background-color: #EEEEEE;
-  padding: 0.3em 0.3em 0;
+  padding: 0 0.3em 0.3em;
   border-width: 1px;
   border-style: solid;
   border-color: #DDDDDD #CCCCCC #88DD55 #DDDDDD;
@@ -311,4 +311,19 @@ td.categoryboxcontent {
   border-width: 1px;
   border-style: solid;
   border-color: #FFFFFF #DDDDDD #DDDDDD #FFFFFF;
+}
+body#admin-roles-manage td.generalboxcontent table td {
+  padding-left: 0.5em;
+  padding-right: 0.5em;
+}
+div.breadcrumb span.sep {
+  font-family: verdana, arial, helvetica, sans-serif;
+  color: #449900;
+}
+div.calendar-controls span.previous {
+  font-family: verdana, arial, helvetica, sans-serif;
+}
+div.calendar-controls span.next {
+  font-family: verdana, arial, helvetica, sans-serif;
+  text-align: right;
 }
