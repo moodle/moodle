@@ -5,8 +5,8 @@
 
     $data = optional_param('data', '', PARAM_CLEAN);  // Formatted as:  secret/username
 
-    $p = optional_param('p', '', PARAM_ALPHA);        // Old parameter:  secret
-    $s = optional_param('s', '', PARAM_CLEAN);                     // Old parameter:  username
+    $p = optional_param('p', '', PARAM_ALPHANUM);     // Old parameter:  secret
+    $s = optional_param('s', '', PARAM_CLEAN);        // Old parameter:  username
 
     if (!empty($data) || (!empty($p) && !empty($s))) {    
 
