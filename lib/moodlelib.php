@@ -562,6 +562,27 @@ function get_config($plugin=NULL, $name=NULL) {
     }
 }
 
+/**
+ * Removes a key from global configuration
+ *
+ * @param string $name the key to set
+ * @param string $plugin (optional) the plugin scope
+ * @uses $CFG
+ * @return bool
+ */
+function unset_config($name, $plugin=NULL) {
+
+    global $CFG;
+
+    unset($CFG->$name);
+
+    if (empty($plugin)) {
+        return delete_records('config', 'name', $name);
+    } else { 
+        return delete_records('config_plugins', 'name', $name, 'plugin', $plugin);
+    }
+}
+
 
 /**
  * Refresh current $USER session global variable with all their current preferences.
