@@ -171,9 +171,8 @@
             // we need to convert the forum to use Roles. It means the backup
             // was made pre Moodle 1.7. We check the backup_version to make
             // sure.
-            if (($restore->backup_version < 2006082300) ||
-                            (isset($forum->open) && isset($forum->assesspublic))) {
-                
+            if (isset($forum->open) && isset($forum->assesspublic)) {
+            
                 $forummod = get_record('modules', 'name', 'forum');
                 
                 if (!$teacherroles = get_roles_with_capability('moodle/legacy:teacher', CAP_ALLOW)) {

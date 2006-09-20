@@ -4448,14 +4448,14 @@ function forum_reset_course_form($course) {
  * @param $forum        - a forum object with the same attributes as a record
  *                        from the forum database table
  * @param $forummodid   - the id of the forum module, from the modules table
- * @param $studentroles - array of roles that have the moodle/legacy:student
- *                        capability
- * @param $guestroles   - array of roles that have the moodle/legacy:guest
- *                        capability
+ * @param $teacherroles - array of roles that have moodle/legacy:teacher
+ * @param $studentroles - array of roles that have moodle/legacy:student
+ * @param $guestroles   - array of roles that have moodle/legacy:guest
  * @param $cmid         - the course_module id for this forum instance
  * @return boolean      - forum was converted or not
  */
-function forum_convert_to_roles($forum, $forummodid, $teacherroles=array(), $studentroles=array(), $guestroles=array(), $cmid=NULL) {
+function forum_convert_to_roles($forum, $forummodid, $teacherroles=array(),
+                                $studentroles=array(), $guestroles=array(), $cmid=NULL) {
     
     global $CFG;
     
@@ -4631,6 +4631,35 @@ function forum_convert_to_roles($forum, $forummodid, $teacherroles=array(), $stu
                 }
                 foreach ($teacherroles as $teacherrole) {
                     assign_capability('mod/forum:viewanyrating', CAP_ALLOW, $teacherrole->id, $context->id);
+                }
+                break;
+        }
+        
+        if (empty($cm)) {
+            $cm = get_record('course_modules', 'id', $cmid);
+        }
+
+        // $cm->groupmode:
+        // 0 - No groups
+        // 1 - Separate groups
+        // 2 - Visible groups
+        switch ($cm->groupmode) {
+            case 0:
+                break;
+            case 1:
+                foreach ($studentroles as $studentrole) {
+                    assign_capability('moodle/site:accessallgroups', CAP_PREVENT, $studentrole->id, $context->id);
+                }
+                foreach ($teacherroles as $teacherrole) {
+                    assign_capability('moodle/site:accessallgroups', CAP_ALLOW, $teacherrole->id, $context->id);
+                }
+                break;
+            case 2:
+                foreach ($studentroles as $studentrole) {
+                    assign_capability('moodle/site:accessallgroups', CAP_ALLOW, $studentrole->id, $context->id);
+                }
+                foreach ($teacherroles as $teacherrole) {
+                    assign_capability('moodle/site:accessallgroups', CAP_ALLOW, $teacherrole->id, $context->id);
                 }
                 break;
         }
