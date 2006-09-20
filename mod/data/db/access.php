@@ -47,20 +47,6 @@ $mod_data_capabilities = array(
         )
     ),
     
-    'mod/data:viewentriesfromallgrous' => array(
-    
-        'captype' => 'read',
-        'contextlevel' => CONTEXT_MODULE,
-        'legacy' => array(
-            'guest' => CAP_PREVENT,
-            'student' => CAP_PREVENT,
-            'teacher' => CAP_ALLOW,
-            'editingteacher' => CAP_ALLOW,
-            'coursecreator' => CAP_ALLOW,
-            'admin' => CAP_ALLOW
-        )
-    ),
-    
     'mod/data:writeentry' => array(
     
         'riskbitmask' => RISK_SPAM,

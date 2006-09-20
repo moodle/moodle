@@ -106,7 +106,7 @@ function data_restore_mods($mod,$restore) {
         $database->assessed = backup_todb($info['MOD']['#']['ASSESSED']['0']['#']);
         $database->assesspublic = backup_todb($info['MOD']['#']['ASSESSPUBLIC']['0']['#']);
         
-        $newid = insert_record ("data",$database);
+        $newid = insert_record ('data', $database);
 
         //Do some output
         if (!defined('RESTORE_SILENTLY')) {
@@ -131,6 +131,30 @@ function data_restore_mods($mod,$restore) {
                 $status = $status and data_records_restore_mods ($mod->id, $newid, $info, $restore);
 
             }
+
+            // If the backup contained $data->participants, $data->assesspublic
+            // and $data->groupmode, we need to convert the data to use Roles.
+            // It means the backup was made pre Moodle 1.7. We check the
+            // backup_version to make sure.
+            if (isset($database->participants) && isset($database->assesspublic)) {
+                            
+                if (!$teacherroles = get_roles_with_capability('moodle/legacy:teacher', CAP_ALLOW)) {
+                      notice('Default teacher role was not found. Roles and permissions '.
+                             'for your database modules will have to be manually set.');
+                }
+                if (!$studentroles = get_roles_with_capability('moodle/legacy:student', CAP_ALLOW)) {
+                      notice('Default student role was not found. Roles and permissions '.
+                             'for all your database modules will have to be manually set.');
+                }
+                if (!$guestroles = get_roles_with_capability('moodle/legacy:guest', CAP_ALLOW)) {
+                      notice('Default guest role was not found. Roles and permissions '.
+                             'for all your database modules will have to be manually set.');
+                }
+                require_once($CFG->dirroot.'/mod/data/lib.php');
+                data_convert_to_roles($database, $teacherroles, $studentroles,
+                                      $restore->mods['data']->instances[$mod->id]->restored_as_course_module);
+            }
+            
         } else {
             $status = false;
         }

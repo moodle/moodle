@@ -1290,4 +1290,147 @@ function data_fields_print_header($course,$cm,$data,$showtabs=true) {
     }
 }
 
+
+/**
+ * Converts a database (module instance) to use the Roles System
+ * @param $data         - a data object with the same attributes as a record
+ *                        from the data database table
+ * @param $datamodid    - the id of the data module, from the modules table
+ * @param $teacherroles - array of roles that have moodle/legacy:teacher
+ * @param $studentroles - array of roles that have moodle/legacy:student
+ * @param $guestroles   - array of roles that have moodle/legacy:guest
+ * @param $cmid         - the course_module id for this data instance
+ * @return boolean      - data module was converted or not
+ */
+function data_convert_to_roles($data, $teacherroles=array(), $studentroles=array(), $cmid=NULL) {
+    
+    global $CFG;
+    
+    if (!isset($data->participants) && !isset($data->assesspublic)
+            && !isset($data->groupmode)) {
+        // We assume that this database has already been converted to use the
+        // Roles System. above fields get dropped the data module has been
+        // upgraded to use Roles.
+        return false;
+    }
+    
+    if (empty($cmid)) {
+        // We were not given the course_module id. Try to find it.
+        if (!$cm = get_coursemodule_from_instance('forum', $forum->id)) {
+            notify('Could not get the course module for the forum');
+            return false;
+        } else {
+            $cmid = $cm->id;
+        }
+    }
+    $context = get_context_instance(CONTEXT_MODULE, $cmid);
+    
+    
+    // $data->participants:
+    // 1 - Only teachers can add entries
+    // 3 - Teachers and students can add entries
+    switch ($data->participants) {
+        case 1:
+            foreach ($studentroles as $studentrole) {
+                assign_capability('mod/data:writeentry', CAP_PREVENT, $studentrole->id, $context->id);
+            }
+            foreach ($teacherroles as $teacherrole) {
+                assign_capability('mod/data:writeentry', CAP_ALLOW, $teacherrole->id, $context->id);
+            }
+            break;
+        case 3:
+            foreach ($studentroles as $studentrole) {
+                assign_capability('mod/data:writeentry', CAP_ALLOW, $studentrole->id, $context->id);
+            }
+            foreach ($teacherroles as $teacherrole) {
+                assign_capability('mod/data:writeentry', CAP_ALLOW, $teacherrole->id, $context->id);
+            }
+            break;
+    }
+    
+    // $data->assessed:
+    // 2 - Only teachers can rate posts
+    // 1 - Everyone can rate posts
+    // 0 - No one can rate posts
+    switch ($data->assessed) {
+        case 0:
+            foreach ($studentroles as $studentrole) {
+                assign_capability('mod/data:rate', CAP_PREVENT, $studentrole->id, $context->id);
+            }
+            foreach ($teacherroles as $teacherrole) {
+                assign_capability('mod/data:rate', CAP_PREVENT, $teacherrole->id, $context->id);
+            }
+            break;
+        case 1:
+            foreach ($studentroles as $studentrole) {
+                assign_capability('mod/data:rate', CAP_ALLOW, $studentrole->id, $context->id);
+            }
+            foreach ($teacherroles as $teacherrole) {
+                assign_capability('mod/data:rate', CAP_ALLOW, $teacherrole->id, $context->id);
+            }
+            break;
+        case 2:
+            foreach ($studentroles as $studentrole) {
+                assign_capability('mod/data:rate', CAP_PREVENT, $studentrole->id, $context->id);
+            }
+            foreach ($teacherroles as $teacherrole) {
+                assign_capability('mod/data:rate', CAP_ALLOW, $teacherrole->id, $context->id);
+            }
+            break;
+    }
+    
+    // $data->assesspublic:
+    // 0 - Students can only see their own ratings
+    // 1 - Students can see everyone's ratings
+    switch ($data->assesspublic) {
+        case 0:
+            foreach ($studentroles as $studentrole) {
+                assign_capability('mod/data:viewrating', CAP_PREVENT, $studentrole->id, $context->id);
+            }
+            foreach ($teacherroles as $teacherrole) {
+                assign_capability('mod/data:viewrating', CAP_ALLOW, $teacherrole->id, $context->id);
+            }
+            break;
+        case 1:
+            foreach ($studentroles as $studentrole) {
+                assign_capability('mod/data:viewrating', CAP_ALLOW, $studentrole->id, $context->id);
+            }
+            foreach ($teacherroles as $teacherrole) {
+                assign_capability('mod/data:viewrating', CAP_ALLOW, $teacherrole->id, $context->id);
+            }
+            break;
+    }
+
+    if (empty($cm)) {
+        $cm = get_record('course_modules', 'id', $cmid);
+    }
+    
+    // $cm->groupmode:
+    // 0 - No groups
+    // 1 - Separate groups
+    // 2 - Visible groups
+    switch ($cm->groupmode) {
+        case 0:
+            break;
+        case 1:
+            foreach ($studentroles as $studentrole) {
+                assign_capability('moodle/site:accessallgroups', CAP_PREVENT, $studentrole->id, $context->id);
+            }
+            foreach ($teacherroles as $teacherrole) {
+                assign_capability('moodle/site:accessallgroups', CAP_ALLOW, $teacherrole->id, $context->id);
+            }
+            break;
+        case 2:
+            foreach ($studentroles as $studentrole) {
+                assign_capability('moodle/site:accessallgroups', CAP_ALLOW, $studentrole->id, $context->id);
+            }
+            foreach ($teacherroles as $teacherrole) {
+                assign_capability('moodle/site:accessallgroups', CAP_ALLOW, $teacherrole->id, $context->id);
+            }
+            break;
+    }
+    return true;
+}
+
+
 ?>

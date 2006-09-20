@@ -155,7 +155,43 @@ function data_upgrade($oldversion) {
     if ($oldversion < 2006081700) {
         table_column('data', '', 'jstemplate', 'text', '', '', '', 'not null', 'csstemplate');
     }
-    
+    /*
+    if ($oldversion < 2006092000) {
+        // Upgrades for new roles and capabilities support.
+        require_once($CFG->dirroot.'/mod/data/lib.php');
+
+        $datamod = get_record('modules', 'name', 'data');
+
+        if ($data = get_records('data')) {
+
+            if (!$teacherroles = get_roles_with_capability('moodle/legacy:teacher', CAP_ALLOW)) {
+                notify('Default teacher role was not found. Roles and permissions '.
+                       'for all your forums will have to be manually set after '.
+                       'this upgrade.');
+            }
+            if (!$studentroles = get_roles_with_capability('moodle/legacy:student', CAP_ALLOW)) {
+                notify('Default student role was not found. Roles and permissions '.
+                       'for all your forums will have to be manually set after '.
+                       'this upgrade.');
+            }
+            foreach ($data as $d) {
+                if (!data_convert_to_roles($d $teacherroles, $studentroles)) {
+                    notify('Data with id '.$d->id.' was not upgraded');
+                }
+            }
+            // We need to rebuild all the course caches to refresh the state of
+            // the forum modules.
+            include_once( "$CFG->dirroot/course/lib.php" );
+            rebuild_course_cache();
+
+        } // End if.
+
+        modify_database('', 'ALTER TABLE prefix_data DROP COLUMN participants;');
+        modify_database('', 'ALTER TABLE prefix_data DROP COLUMN assesspublic;');
+        modify_database('', 'ALTER TABLE prefix_data DROP COLUMN groupmode;');
+        
+    }
+    */
     return true;
 }
 
