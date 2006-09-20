@@ -138,7 +138,7 @@ $string['phpversionhelp'] = '<p>무들은 적어도 PHP4.3.0 혹은 5.1.0. 이�
 <p>현재 구동되고 있는 PHP버전은 $a 입니다.</p>
 <p>PHP를 업그레이드 하시거나 새버전을 제공하는 웹호스팅 업체로 이전하기를 권합니다!<br />(만일 5.0.x버전을 사용 중이라면 4.4.x 버전으로 다운그레이드 할 수 있습니다)</p>';
 $string['previous'] = '이전으로';
-$string['remotedownloadnotallowed'] = '서버로 구성요소를 내려받는 것이 허용되지 않습니다. (allow_url_fopen 이 비활성화 됨).<br /><br /> 수동으로  <a href=\"$a->url\">$a->url</a> 파일을 다운로드 하고,  서버의 \"$a->dest\" 에 복사한 후 압축을 푸셔야 합니다.';
+$string['remotedownloadnotallowed'] = '서버로 구성요소를 내려받는 것이 허용되지 않습니다. (allow_url_fopen 이 비활성화 됨).<br /><br /> 수동으로 <a href=\"$a->url\">$a->url</a> 파일을 다운로드 하고, 서버의 \"$a->dest\" 에 복사한 후 압축을 푸셔야 합니다.';
 $string['report'] = '보고';
 $string['restricted'] = '제한됨';
 $string['safemode'] = 'Safe Mode';
