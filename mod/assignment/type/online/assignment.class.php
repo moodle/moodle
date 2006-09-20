@@ -13,11 +13,11 @@ class assignment_online extends assignment_base {
     function view() {
 
         global $USER;
-		
-		$context = get_context_instance(CONTEXT_MODULE,$this->cm->id);
+        
+        $context = get_context_instance(CONTEXT_MODULE,$this->cm->id);
         require_capability('mod/assignment:view', $context);
         
-		$submission = $this->get_submission();
+        $submission = $this->get_submission();
 
         //Guest can not submit nor edit an assignment (bug: 4604)
         if (!has_capability('mod/assignment:submit', $context)) {
@@ -59,29 +59,29 @@ class assignment_online extends assignment_base {
             notify(get_string('submissionsaved', 'assignment'));
         }
 
-		if (has_capability('mod/assignment:submit', $context)) {
-	        print_simple_box_start('center', '70%', '', '', 'generalbox', 'online');
-	        if ($editmode) {
-	            $this->view_edit_form($submission);
-	        } else {
-	            if ($submission) {
-	                echo format_text($submission->data1, $submission->data2);
-	            } else if (!has_capability('mod/assignment:submit', $context)) { //fix for #4604
-	                echo '<center>'. get_string('guestnosubmit', 'assignment').'</center>';
-	            } else if ($this->isopen()){    //fix for #4206
-	                echo '<center>'.get_string('emptysubmission', 'assignment').'</center>';
-	            }
-	            if ($editable) {
-	                print_single_button('view.php', array('id'=>$this->cm->id,'edit'=>'1'), 
-	                                     get_string('editmysubmission', 'assignment'));
-	            }
-	        }
-	        print_simple_box_end();
-	
-	        if ($editmode and $this->usehtmleditor) {
-	            use_html_editor();   // MUst be at the end of the page
-	        }
-	    }
+        if (has_capability('mod/assignment:submit', $context)) {
+            print_simple_box_start('center', '70%', '', '', 'generalbox', 'online');
+            if ($editmode) {
+                $this->view_edit_form($submission);
+            } else {
+                if ($submission) {
+                    echo format_text($submission->data1, $submission->data2);
+                } else if (!has_capability('mod/assignment:submit', $context)) { //fix for #4604
+                    echo '<center>'. get_string('guestnosubmit', 'assignment').'</center>';
+                } else if ($this->isopen()){    //fix for #4206
+                    echo '<center>'.get_string('emptysubmission', 'assignment').'</center>';
+                }
+                if ($editable) {
+                    print_single_button('view.php', array('id'=>$this->cm->id,'edit'=>'1'), 
+                                         get_string('editmysubmission', 'assignment'));
+                }
+            }
+            print_simple_box_end();
+    
+            if ($editmode and $this->usehtmleditor) {
+                use_html_editor();   // MUst be at the end of the page
+            }
+        }
 
         $this->view_feedback();
 

@@ -74,7 +74,7 @@
             //If the module is being restored
             if ($info->restore == 1) {
                 //Check if the xxxx_decode_content_links_caller exists
-	            include_once("$CFG->dirroot/mod/$name/restorelib.php");
+                include_once("$CFG->dirroot/mod/$name/restorelib.php");
                 $function_name = $name."_decode_content_links_caller";
                 if (function_exists($function_name)) {
                     if (!defined('RESTORE_SILENTLY')) {
@@ -904,7 +904,7 @@
                                         $course_module->instance = 0;
                                         //NOTE: The instance (new) is calculated and updated in db in the
                                         //      final step of the restore. We don't know it yet.
-                                        //print_object($course_module);					//Debug
+                                        //print_object($course_module);                    //Debug
                                         //Save it to db
                                         $newidmod = insert_record("course_modules",$course_module); 
                                         if ($newidmod) {
@@ -2932,7 +2932,7 @@
                         if ($instance) {
                             //We have the new instance, so update the record in course_modules
                             $module->instance = $instance->new_id;
-                            //print_object ($module); 							//Debug
+                            //print_object ($module);                             //Debug
                             $status = update_record("course_modules",$module);
                         } else {
                             $status = false;

@@ -4,131 +4,131 @@
 
 $string['admindirerror'] = 'El directorio especificado para admin es incorrecto';
 $string['admindirname'] = 'Directorio Admin';
-$string['admindirsetting'] = '<p>Muy pocos servidores web usan /admin como URL especial para permitirle acceder a un panel de control o similar. Desgraciadamente, esto entra en conflicto con la ubicación estándar de las páginas de administración de Moodle Usted puede corregir esto renombrando el directorio admin en su instalación, y poniendo aquí ese nuevo nombre. Por ejemplo: <blockquote> moodleadmin</blockquote>.
-Así se corregirán los enlaces admin en Moodle.</p>';
-$string['caution'] = 'Precaución';
+$string['admindirsetting'] = '<p>Muy pocos servidores web usan /admin como URL especial para permitirle acceder a un panel de control o similar. Desgraciadamente, esto entra en conflicto con la ubicaciï¿½n estï¿½ndar de las pï¿½ginas de administraciï¿½n de Moodle Usted puede corregir esto renombrando el directorio admin en su instalaciï¿½n, y poniendo aquï¿½ ese nuevo nombre. Por ejemplo: <blockquote> moodleadmin</blockquote>.
+Asï¿½ se corregirï¿½n los enlaces admin en Moodle.</p>';
+$string['caution'] = 'Precauciï¿½n';
 $string['chooselanguage'] = 'Seleccionar idioma';
 $string['compatibilitysettings'] = 'Comprobando sus ajustes PHP...';
-$string['configfilenotwritten'] = 'El script instalador no ha podido crear automáticamente un archivo config.php con las especificaciones elegidas. Por favor, copie el siguiente código en un archivo llamado config.php y coloque ese archivo en el directorio raíz de Moodle.';
-$string['configfilewritten'] = 'config.php se ha creado con éxito';
-$string['configurationcomplete'] = 'Configuración completa';
+$string['configfilenotwritten'] = 'El script instalador no ha podido crear automï¿½ticamente un archivo config.php con las especificaciones elegidas. Por favor, copie el siguiente cï¿½digo en un archivo llamado config.php y coloque ese archivo en el directorio raï¿½z de Moodle.';
+$string['configfilewritten'] = 'config.php se ha creado con ï¿½xito';
+$string['configurationcomplete'] = 'Configuraciï¿½n completa';
 $string['database'] = 'Base de datos';
 $string['databasecreationsettings'] = '<p>Ahora necesita configurar los ajustes de la base de datos 
-    donde se almacenarán la mayoría de los datos de Moodle. La base de datos será creada automáticamente
-	por el instalador con los valores por defecto o los que especifique en los campos editables más abajo. Si
-	la seguridad de su ordenador es importante debería definir una contraseña en el campo \"Contraseña\".</p>
+    donde se almacenarï¿½n la mayorï¿½a de los datos de Moodle. La base de datos serï¿½ creada automï¿½ticamente
+    por el instalador con los valores por defecto o los que especifique en los campos editables mï¿½s abajo. Si
+    la seguridad de su ordenador es importante deberï¿½a definir una contraseï¿½a en el campo \"Contraseï¿½a\".</p>
       <p><b>Tipo:</b> el valor por defecto es \"mysql\"<br />
       <b>Servidor:</b> el valor por defecto es \"localhost\"<br />
       <b>Nombre:</b> nombre de la base de datos, e.g., moodle<br />
       <b>Usuario:</b> el valor por defecto es  \"root\"<br />
-      <b>Contraseña:</b> contraseña de la base de datos<br />
+      <b>Contraseï¿½a:</b> contraseï¿½a de la base de datos<br />
       <b>Prefijo de tablas:</b> prefijo opcional para todas las tablas</p>';
-$string['databasesettings'] = 'Ahora necesita configurar la base de datos en la que se almacenará la mayor parte de datos de Moodle. Esta base de datos debe haber sido ya creada, y disponer de un nombre de usuario y de una contraseña de acceso.<br />
+$string['databasesettings'] = 'Ahora necesita configurar la base de datos en la que se almacenarï¿½ la mayor parte de datos de Moodle. Esta base de datos debe haber sido ya creada, y disponer de un nombre de usuario y de una contraseï¿½a de acceso.<br />
 <br /> <br />
 <b>Tipo:</b> mysql o postgres7<br />
 <b>Servidor:</b> e.g., localhost or db.isp.com<br />
 <b>Nombre:</b> Nombre de la base de datos, e.g., moodle<br />
 <b>Usuario:</b> nombre de usuario de la base de datos<br />
-<b>Contraseña:</b> contraseña de la base de datos<br />
+<b>Contraseï¿½a:</b> contraseï¿½a de la base de datos<br />
 <b>Prefijo de tablas:</b> prefijo a utilizar en todos los nombres de tabla';
 $string['dataroot'] = 'Datos';
 $string['datarooterror'] = 'El ajuste \'Data\' es incorrecto';
-$string['dbconnectionerror'] = 'Error de conexión con la base de datos. Por favor, compruebe los ajustes de la base de datos';
+$string['dbconnectionerror'] = 'Error de conexiï¿½n con la base de datos. Por favor, compruebe los ajustes de la base de datos';
 $string['dbcreationerror'] = 'Error al crear la base de datos. No se ha podido crear la base de datos con el nombre y ajustes suministrados';
 $string['dbhost'] = 'Servidor';
-$string['dbpass'] = 'Contraseña';
+$string['dbpass'] = 'Contraseï¿½a';
 $string['dbprefix'] = 'Prefijo de tablas';
 $string['dbtype'] = 'Tipo';
 $string['directorysettings'] = ' <p><b>WWW:</b>
-Necesita decir a Moodle dónde está localizado. Especifique la dirección web completa en la que se ha instalado Moodle. Si su sitio web es accesible a través de varias URLs, seleccione la que resulte de acceso más natural a sus estudiantes. No incluya la última barra</p>
+Necesita decir a Moodle dï¿½nde estï¿½ localizado. Especifique la direcciï¿½n web completa en la que se ha instalado Moodle. Si su sitio web es accesible a travï¿½s de varias URLs, seleccione la que resulte de acceso mï¿½s natural a sus estudiantes. No incluya la ï¿½ltima barra</p>
 <p><b>Directorio:</b>
-Especifique la ruta OS completa a esta misma ubicación
-Asegúrese de que escribe correctamente mayúsculas y minúsculas</p>
+Especifique la ruta OS completa a esta misma ubicaciï¿½n
+Asegï¿½rese de que escribe correctamente mayï¿½sculas y minï¿½sculas</p>
 <p><b>Datos:</b>
-Usted necesita un lugar en el que Moodle pueda guardar los archivos subidos. Este directorio debe ser legible Y ESCRIBIBLE por el usuario del servidor web (normalmente \'nobody\' o \'apache\'), pero no debería ser directamente accesible desde la web.</p>';
+Usted necesita un lugar en el que Moodle pueda guardar los archivos subidos. Este directorio debe ser legible Y ESCRIBIBLE por el usuario del servidor web (normalmente \'nobody\' o \'apache\'), pero no deberï¿½a ser directamente accesible desde la web.</p>';
 $string['dirroot'] = 'Directorio';
-$string['dirrooterror'] = 'El ajuste de \'Directorio\' es incorrecto. Inténtelo con el siguiente';
+$string['dirrooterror'] = 'El ajuste de \'Directorio\' es incorrecto. Intï¿½ntelo con el siguiente';
 $string['download'] = 'Descargar';
 $string['fail'] = 'Fallo';
 $string['fileuploads'] = 'Subidas de archivos';
 $string['fileuploadserror'] = 'Debe estar activado';
 $string['fileuploadshelp'] = '<p>La subida de archivos parece estar desactivada en su servidor.</p>
 
-<p>Moodle aún puede ser instalado, pero usted no podrá subir archivos a un curso ni imágenes de los usuarios.</p>
+<p>Moodle aï¿½n puede ser instalado, pero usted no podrï¿½ subir archivos a un curso ni imï¿½genes de los usuarios.</p>
 
 <p>Para posibilitar la subida de archivos, usted (o el administrador del sistema) necesita editar el archivo php.ini principal y cambiar el ajuste de <b>file_uploads</b> a \'1\'.</p>';
-$string['gdversion'] = 'Versión GD';
-$string['gdversionerror'] = 'La librería GD debería estar presente para procesar y crear imágenes';
+$string['gdversion'] = 'Versiï¿½n GD';
+$string['gdversionerror'] = 'La librerï¿½a GD deberï¿½a estar presente para procesar y crear imï¿½genes';
 $string['gdversionhelp'] = '<p>Su servidor parece no tener el GD instalado.</p>
 
-<p>GD es una librería que PHP necesita para que Moodle procese imágenes (tales como los iconos de los usuarios) y para crear imágenes nuevas (e.g., logos). Moodle puede trabajar sin GD, pero usted no dispondrá de las características mencionadas.</p>
+<p>GD es una librerï¿½a que PHP necesita para que Moodle procese imï¿½genes (tales como los iconos de los usuarios) y para crear imï¿½genes nuevas (e.g., logos). Moodle puede trabajar sin GD, pero usted no dispondrï¿½ de las caracterï¿½sticas mencionadas.</p>
 
-<p>Para agregar GD a PHP en entorno Unix, compile PHP usando el parámetro --with-gd.</p>
+<p>Para agregar GD a PHP en entorno Unix, compile PHP usando el parï¿½metro --with-gd.</p>
 
-<p>En un entorno Windows, puede editar php.ini y quitar los comentarios de la línea referida a libgd.dll.</p>';
-$string['installation'] = 'Instalación';
+<p>En un entorno Windows, puede editar php.ini y quitar los comentarios de la lï¿½nea referida a libgd.dll.</p>';
+$string['installation'] = 'Instalaciï¿½n';
 $string['magicquotesruntime'] = 'Magic Quotes Run Time';
 $string['magicquotesruntimeerror'] = 'Debe estar desactivado';
 $string['magicquotesruntimehelp'] = '<p>Magic quotes runtime debe estar desactivado para que Moodle funcione adecuadamente.</p>
 
-<p>Normalmente está desactivado por defecto... Vea el ajuste <b>magic_quotes_runtime</b> en su archivo php.ini.</p>
+<p>Normalmente estï¿½ desactivado por defecto... Vea el ajuste <b>magic_quotes_runtime</b> en su archivo php.ini.</p>
 
-<p>Si usted no tiene acceso a php.ini, debería poder escribir la siguiente línea en un archivo denominado .htaccess dentro del directorio Moodle:
+<p>Si usted no tiene acceso a php.ini, deberï¿½a poder escribir la siguiente lï¿½nea en un archivo denominado .htaccess dentro del directorio Moodle:
 <blockquote>php_value magic_quotes_runtime Off</blockquote>
 </p>';
-$string['memorylimit'] = 'Límite de memoria';
-$string['memorylimiterror'] = 'El límite de memoria PHP es demasiado bajo... Puede tener problemas más tarde.';
-$string['memorylimithelp'] = '<p>El límite de memoria PHP en su servidor es actualmente $a.</p>
+$string['memorylimit'] = 'Lï¿½mite de memoria';
+$string['memorylimiterror'] = 'El lï¿½mite de memoria PHP es demasiado bajo... Puede tener problemas mï¿½s tarde.';
+$string['memorylimithelp'] = '<p>El lï¿½mite de memoria PHP en su servidor es actualmente $a.</p>
 
-<p>Esto puede ocasionar que Moodle tenga problemas de memoria más adelante, especialmente si usted tiene activados muchos módulos y/o muchos usuarios.</p>
+<p>Esto puede ocasionar que Moodle tenga problemas de memoria mï¿½s adelante, especialmente si usted tiene activados muchos mï¿½dulos y/o muchos usuarios.</p>
 
-<p>Recomendamos que configure PHP con el límite más alto posible, e.g. 16M.
+<p>Recomendamos que configure PHP con el lï¿½mite mï¿½s alto posible, e.g. 16M.
 Hay varias formas de hacer esto:</p>
 <ol>
 <li>Si puede hacerlo, recompile PHP con <i>--enable-memory-limit</i>.
-Esto hace que Moodle fije por sí mismo el límite de memoria.</li>
+Esto hace que Moodle fije por sï¿½ mismo el lï¿½mite de memoria.</li>
 <li>Si usted tiene acceso al archivo php.ini, puede cambiar el ajuste <b>memory_limit</b>
 a, digamos, 16M. Si no lo tiene, pida a su administrador que lo haga por usted.</li>
-<li>En algunos servidores PHP usted puede crear en el directorio Moodle un archivo .htaccess que contenga esta línea:
+<li>En algunos servidores PHP usted puede crear en el directorio Moodle un archivo .htaccess que contenga esta lï¿½nea:
 <p><blockquote>php_value memory_limit 16M</blockquote></p>
-<p>Sin embargo, en algunos servidores esto hace que <b>todas</b> las páginas PHP dejen de funcionar
-(podrá ver los errores cuando mire las páginas) de modo que tendrá que eliminar el archivo .htaccess.</p></li>
+<p>Sin embargo, en algunos servidores esto hace que <b>todas</b> las pï¿½ginas PHP dejen de funcionar
+(podrï¿½ ver los errores cuando mire las pï¿½ginas) de modo que tendrï¿½ que eliminar el archivo .htaccess.</p></li>
 </ol>';
-$string['mysqlextensionisnotpresentinphp'] = 'PHP no ha sido adecuadamente configurado con la extensión MySQL de modo que pueda comunicarse con MySQL. Por favor, compruebe el archivo php.ini o recompile PHP.';
+$string['mysqlextensionisnotpresentinphp'] = 'PHP no ha sido adecuadamente configurado con la extensiï¿½n MySQL de modo que pueda comunicarse con MySQL. Por favor, compruebe el archivo php.ini o recompile PHP.';
 $string['pass'] = 'Pass';
-$string['phpversion'] = 'Versión PHP';
-$string['phpversionerror'] = 'La versión PHP debe ser 4.1.0 o superior';
-$string['phpversionhelp'] = '<p>Moodle requiere una versión de PHP 4.1.0 o superior.</p>
-<p>Su versión es $a</p>
-<p>Debe actualizar PHP o acudir a otro servidor con una versión más reciente de PHP</p>';
+$string['phpversion'] = 'Versiï¿½n PHP';
+$string['phpversionerror'] = 'La versiï¿½n PHP debe ser 4.1.0 o superior';
+$string['phpversionhelp'] = '<p>Moodle requiere una versiï¿½n de PHP 4.1.0 o superior.</p>
+<p>Su versiï¿½n es $a</p>
+<p>Debe actualizar PHP o acudir a otro servidor con una versiï¿½n mï¿½s reciente de PHP</p>';
 $string['safemode'] = 'Safe Mode';
 $string['safemodeerror'] = 'Moodle puede tener problemas con \'safe mode\' activado';
 $string['safemodehelp'] = '<p>Moodle puede tener varios problemas con \'safe mode\' activado, y probablemente no pueda crear nuevos archivos.</p>
 
-<p>Normalmente el \'safe mode\' sólo es activado por servidores web públicos paranoides, así que lo que usted debe hacer es encontrar otra compañía para su sitio Moodle.</p>
+<p>Normalmente el \'safe mode\' sï¿½lo es activado por servidores web pï¿½blicos paranoides, asï¿½ que lo que usted debe hacer es encontrar otra compaï¿½ï¿½a para su sitio Moodle.</p>
 
-<p>Si lo desea, puede seguir con la instalación, pero experimentará problemas más adelante.</p>';
-$string['sessionautostart'] = 'Autocomienzo de sesión';
+<p>Si lo desea, puede seguir con la instalaciï¿½n, pero experimentarï¿½ problemas mï¿½s adelante.</p>';
+$string['sessionautostart'] = 'Autocomienzo de sesiï¿½n';
 $string['sessionautostarterror'] = 'Deb e estar desactivado';
-$string['sessionautostarthelp'] = '<p>Moodle requiere apoyo de sesión y no funcionará sin él.</p>
+$string['sessionautostarthelp'] = '<p>Moodle requiere apoyo de sesiï¿½n y no funcionarï¿½ sin ï¿½l.</p>
 
-<p>Las sesiones deben estar activadas en el archhivo php.ini para el parámetro session.auto_start.</p>';
+<p>Las sesiones deben estar activadas en el archhivo php.ini para el parï¿½metro session.auto_start.</p>';
 $string['wwwroot'] = 'WWW';
 $string['wwwrooterror'] = 'El ajuste \'WWW\' es incorrecto';
 $string['welcomep10'] = '$a->installername ($a->installerversion)';
-$string['welcomep20'] = 'Si está viendo esta página es porque ha podido ejecutar el paquete 
+$string['welcomep20'] = 'Si estï¿½ viendo esta pï¿½gina es porque ha podido ejecutar el paquete 
     <strong>$a->packname $a->packversion</strong> en su ordenador. !Enhorabuena!';
-$string['welcomep30'] = 'Esta versión de <strong>$a->installername</strong> incluye las 
+$string['welcomep30'] = 'Esta versiï¿½n de <strong>$a->installername</strong> incluye las 
     aplicaciones necesarias para que <strong>Moodle</strong> funcione en su ordenador,
-	principalmente:';
-$string['welcomep40'] = 'El paquete también incluye <strong>Moodle $a->moodlerelease ($a->moodleversion)</strong>.';
-$string['welcomep50'] = 'El uso de todas las aplicaciones del paquete está gobernado por sus respectivas 
+    principalmente:';
+$string['welcomep40'] = 'El paquete tambiï¿½n incluye <strong>Moodle $a->moodlerelease ($a->moodleversion)</strong>.';
+$string['welcomep50'] = 'El uso de todas las aplicaciones del paquete estï¿½ gobernado por sus respectivas 
     licencias. El programa <strong>$a->installername</strong> es 
-	<a href=\"http://www.opensource.org/docs/definition_plain.html\">código abierto</a> y se distribuye 
-	bajo licencia <a href=\"http://www.gnu.org/copyleft/gpl.html\">GPL</a>.';
-$string['welcomep60'] = 'Las siguientes páginas le guiarán a traves de algunos sencillos pasos para configurar
+    <a href=\"http://www.opensource.org/docs/definition_plain.html\">cï¿½digo abierto</a> y se distribuye 
+    bajo licencia <a href=\"http://www.gnu.org/copyleft/gpl.html\">GPL</a>.';
+$string['welcomep60'] = 'Las siguientes pï¿½ginas le guiarï¿½n a traves de algunos sencillos pasos para configurar
     y ajustar <strong>Moodle</strong> en su ordenador. Puede utilizar los valores por defecto sugeridos o,
-	de forma opcional, modificarlos para que se ajusten a sus necesidades.';
-$string['welcomep70'] = 'Pulse en el botón \"Siguiente\" para continuar con la configuración de <strong>Moodle</strong>.';
+    de forma opcional, modificarlos para que se ajusten a sus necesidades.';
+$string['welcomep70'] = 'Pulse en el botï¿½n \"Siguiente\" para continuar con la configuraciï¿½n de <strong>Moodle</strong>.';
 
 ?>

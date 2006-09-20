@@ -29,13 +29,13 @@ if (defined("EWIKI_ACTION_ATTACHMENTS") && EWIKI_ACTION_ATTACHMENTS) {
 
 #-- icons (best given absolute to www root)
 /*$ewiki_binary_icons = array(
-   ".bin"	=> "/icons/exec.gif",
+   ".bin"    => "/icons/exec.gif",
    "application/" => "/icons/exec.gif",
    "application/octet-stream" => "/icons/exec.gif",
-   ".ogg"	=> "/icons/son.gif",
-   ".jpeg"	=> "/icons/pic.gif",
-   "text/"	=> "/icons/txt.gif",
-   ".pdf"	=> "/icons/txt.gif",
+   ".ogg"    => "/icons/son.gif",
+   ".jpeg"    => "/icons/pic.gif",
+   "text/"    => "/icons/txt.gif",
+   ".pdf"    => "/icons/txt.gif",
 );*/
 
 
@@ -61,7 +61,7 @@ $ewiki_t["en"]["of"] = "of";
 $ewiki_t["en"]["comment"] = "Comment";
 $ewiki_t["en"]["dwnl_section"] = "download section";
 $ewiki_t["en"]["DWNL_ENTRY_FORMAT"] =
-	'<div class="download"><a href="$url">$icon$title</a><small>$size<br />'.
+    '<div class="download"><a href="$url">$icon$title</a><small>$size<br />'.
         'uploaded on <b>$time</b>, downloaded <tt>$hits</tt> times<br />'.
         '(<a href="$url">$id</a>)<br />'.
         '$section'.'file is of type <tt>$type</tt>'.
@@ -70,10 +70,10 @@ $ewiki_t["en"]["DWNL_ENTRY_FORMAT"] =
 $ewiki_t["de"]["UPLOAD0"] = "Mit diesem Formular kannst du beliebige Dateien in das Wiki abspeichern:<br />";
 $ewiki_t["de"]["UPL_NEWNAM"] = "Mit unterschiedlichem Dateinamen speichern";
 $ewiki_t["de"]["UPL_INSECT"] = "Hochladen in Bereich:";
-$ewiki_t["de"]["UPL_TOOLARGE"] = "Deine Datei wurde nicht aufgenommen, weil sie zu groß war!";
-$ewiki_t["de"]["UPL_REJSECT"] = 'Der angegebene Download-Bereich "$sect" wird nicht verwendet. Bitte verwende einen von den voreingestellten Bereichen, damit Andere die Datei später auch finden können, oder frag den Administrator das Hochladen für beliebige Seiten zu aktivieren.<br /><br />';
+$ewiki_t["de"]["UPL_TOOLARGE"] = "Deine Datei wurde nicht aufgenommen, weil sie zu groï¿½ war!";
+$ewiki_t["de"]["UPL_REJSECT"] = 'Der angegebene Download-Bereich "$sect" wird nicht verwendet. Bitte verwende einen von den voreingestellten Bereichen, damit Andere die Datei spï¿½ter auch finden kï¿½nnen, oder frag den Administrator das Hochladen fï¿½r beliebige Seiten zu aktivieren.<br /><br />';
 $ewiki_t["de"]["UPL_OK"] = "Deine Datei wurde korrekt hochgeladen, sehe einfach auf der <a href=\"\$script".EWIKI_PAGE_DOWNLOAD."\">".EWIKI_PAGE_DOWNLOAD."</a> nach.<br /><br />";
-$ewiki_t["de"]["UPL_ERROR"] = "'Tschuldige, aber irgend etwas ist während des Hochladens gründlich schief gelaufen.<br /><br />";
+$ewiki_t["de"]["UPL_ERROR"] = "'Tschuldige, aber irgend etwas ist wï¿½hrend des Hochladens grï¿½ndlich schief gelaufen.<br /><br />";
 $ewiki_t["de"]["DWNL_SEEUPL"] = 'Siehe auch <a href="$script'.EWIKI_PAGE_UPLOAD.'">DateiHochladen</a>, auf dieser Seite stehen nur die Downloads.<br /><br />';
 $ewiki_t["de"]["DWNL_NOFILES"] = "Noch keine Dateien hochgeladen.<br />\n";
 $ewiki_t["de"]["file"] = "Datei";
@@ -81,7 +81,7 @@ $ewiki_t["de"]["of"] = "von";
 $ewiki_t["de"]["comment"] = "Kommentar";
 $ewiki_t["de"]["dwnl_section"] = "Download Bereich";
 $ewiki_t["de"]["DWNL_ENTRY_FORMAT"] =
-	'<div class="download"><a href="$url">$icon$title</a><small>$size<br />'.
+    '<div class="download"><a href="$url">$icon$title</a><small>$size<br />'.
         'am <b>$time</b> hochgeladen, <tt>$hits</tt> mal abgerufen<br />'.
         '(<a href="$url">$id</a>)<br />'.
         '$section'.'Datei ist vom Typ <tt>$type</tt>'.

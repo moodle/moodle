@@ -66,7 +66,7 @@ $temp->add(new admin_setting_configselect('cachetext', get_string('cachetext', '
                                                                                                                                        0 => get_string('no'))));
 $temp->add(new admin_setting_configselect('filteruploadedfiles', get_string('filteruploadedfiles', 'admin'), get_string('configfilteruploadedfiles', 'admin'), 0, array('0' => get_string('none'),
                                                                                                                                                                      '1' => get_string('allfiles'),
-                                                                               																						 '2' => get_string('htmlfilesonly'))));
+                                                                                                                                                                        '2' => get_string('htmlfilesonly'))));
 $temp->add(new admin_setting_configcheckbox('filtermatchoneperpage', get_string('filtermatchoneperpage', 'admin'), get_string('configfiltermatchoneperpage', 'admin'), 0));
 $temp->add(new admin_setting_configcheckbox('filtermatchonepertext', get_string('filtermatchonepertext', 'admin'), get_string('configfiltermatchonepertext', 'admin'), 0));
 $temp->add(new admin_setting_configcheckbox('filterall', get_string('filterall', 'admin'), get_string('configfilterall', 'admin'), 0));

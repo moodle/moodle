@@ -13,62 +13,62 @@ $rid     = optional_param('rid', 0, PARAM_INT);    //record id
 
 
 if ($rid) {
-	if (! $record = get_record('data_records', 'id', $rid)) {
-		error('Record ID is incorrect');
-	}
-	if (! $data = get_record('data', 'id', $record->dataid)) {
-		error('Data ID is incorrect');
-	}
-	if (! $course = get_record('course', 'id', $data->course)) {
-		error('Course is misconfigured');
-	}
-	if (! $cm = get_coursemodule_from_instance('data', $data->id, $course->id)) {
-		error('Course Module ID was incorrect');
-	}
-	if (! $field = get_record('data_fields', 'id', $fieldid)) {
-		error('Field ID is incorrect');
-	}
-	if (! $field->type == 'latlong') { // Make sure we're looking at a latlong data type!
-		error('Field ID is incorrect');
-	}
-	if (! $content = get_record('data_content', 'fieldid', $fieldid, 'recordid', $rid)) {
-		error('Field content not found');
-	}
+    if (! $record = get_record('data_records', 'id', $rid)) {
+        error('Record ID is incorrect');
+    }
+    if (! $data = get_record('data', 'id', $record->dataid)) {
+        error('Data ID is incorrect');
+    }
+    if (! $course = get_record('course', 'id', $data->course)) {
+        error('Course is misconfigured');
+    }
+    if (! $cm = get_coursemodule_from_instance('data', $data->id, $course->id)) {
+        error('Course Module ID was incorrect');
+    }
+    if (! $field = get_record('data_fields', 'id', $fieldid)) {
+        error('Field ID is incorrect');
+    }
+    if (! $field->type == 'latlong') { // Make sure we're looking at a latlong data type!
+        error('Field ID is incorrect');
+    }
+    if (! $content = get_record('data_content', 'fieldid', $fieldid, 'recordid', $rid)) {
+        error('Field content not found');
+    }
 } else {   // We must have $d
-	if (! $data = get_record('data', 'id', $d)) {
-		error('Data ID is incorrect');
-	}
-	if (! $course = get_record('course', 'id', $data->course)) {
-		error('Course is misconfigured');
-	}
-	if (! $cm = get_coursemodule_from_instance('data', $data->id, $course->id)) {
-		error('Course Module ID was incorrect');
-	}
-	if (! $field = get_record('data_fields', 'id', $fieldid)) {
-		error('Field ID is incorrect');
-	}
-	if (! $field->type == 'latlong') { // Make sure we're looking at a latlong data type!
-		error('Field ID is incorrect');
-	}
-	$record = NULL;
+    if (! $data = get_record('data', 'id', $d)) {
+        error('Data ID is incorrect');
+    }
+    if (! $course = get_record('course', 'id', $data->course)) {
+        error('Course is misconfigured');
+    }
+    if (! $cm = get_coursemodule_from_instance('data', $data->id, $course->id)) {
+        error('Course Module ID was incorrect');
+    }
+    if (! $field = get_record('data_fields', 'id', $fieldid)) {
+        error('Field ID is incorrect');
+    }
+    if (! $field->type == 'latlong') { // Make sure we're looking at a latlong data type!
+        error('Field ID is incorrect');
+    }
+    $record = NULL;
 }
 
 require_course_login($course, true, $cm);
 
 /// If it's hidden then it's don't show anything.  :)
 if (empty($cm->visible) and !has_capability('moodle/course:viewhiddenactivities',get_context_instance(CONTEXT_MODULE, $cm->id))) {
-	$strdatabases = get_string("modulenameplural", "data");
-	$navigation = "<a href=\"index.php?id=$course->id\">$strdatabases</a> ->";
-	print_header_simple(format_string($data->name), "",
-			 "$navigation ".format_string($data->name), "", "", true, '', navmenu($course, $cm));
-	notice(get_string("activityiscurrentlyhidden"));
+    $strdatabases = get_string("modulenameplural", "data");
+    $navigation = "<a href=\"index.php?id=$course->id\">$strdatabases</a> ->";
+    print_header_simple(format_string($data->name), "",
+             "$navigation ".format_string($data->name), "", "", true, '', navmenu($course, $cm));
+    notice(get_string("activityiscurrentlyhidden"));
 }
 
 /// If we have an empty Database then redirect because this page is useless without data
 if (has_capability('mod/data:managetemplates', $context)) {
-	if (!record_exists('data_fields','dataid',$data->id)) {      // Brand new database!
-		redirect($CFG->wwwroot.'/mod/data/field.php?d='.$data->id);  // Redirect to field entry
-	}
+    if (!record_exists('data_fields','dataid',$data->id)) {      // Brand new database!
+        redirect($CFG->wwwroot.'/mod/data/field.php?d='.$data->id);  // Redirect to field entry
+    }
 }
 
 
@@ -95,10 +95,10 @@ if($rid) { // List one single item
 
     foreach($contents as $content) {
         $pm->name = data_latlong_kml_get_item_name($content, $field);
-		$pm->description = "&lt;a href='$CFG->wwwroot/mod/data/view.php?d=$d&amp;rid=$content->recordid'&gt;Item #$content->recordid&lt;/a&gt; in Moodle data activity";
-		$pm->long = $content->content1;
-		$pm->lat = $content->content;
-		echo data_latlong_kml_placemark($pm);
+        $pm->description = "&lt;a href='$CFG->wwwroot/mod/data/view.php?d=$d&amp;rid=$content->recordid'&gt;Item #$content->recordid&lt;/a&gt; in Moodle data activity";
+        $pm->long = $content->content1;
+        $pm->lat = $content->content;
+        echo data_latlong_kml_placemark($pm);
     }
 
     echo '</Document>';
@@ -143,19 +143,19 @@ function data_latlong_kml_bottom() {
 }
 
 function data_latlong_kml_get_item_name($content, $field) {
-	// $field->param2 contains the user-specified labelling method
-	
-	$name = '';
-	
-	if($field->param2 > 0) {
-		$name = htmlspecialchars(get_field('data_content', 'content', 'fieldid', $field->param2, 'recordid', $content->recordid));
-	}elseif($field->param2 == -2) {
-	    $name = $content->content . ', ' . $content->content1;
-	}
-	if($name=='') { // Done this way so that "item #" is the default that catches any problems
-		$name = get_string('entry', 'data') . " #$content->recordid";
-	}
-	
-	
-	return $name;
+    // $field->param2 contains the user-specified labelling method
+    
+    $name = '';
+    
+    if($field->param2 > 0) {
+        $name = htmlspecialchars(get_field('data_content', 'content', 'fieldid', $field->param2, 'recordid', $content->recordid));
+    }elseif($field->param2 == -2) {
+        $name = $content->content . ', ' . $content->content1;
+    }
+    if($name=='') { // Done this way so that "item #" is the default that catches any problems
+        $name = get_string('entry', 'data') . " #$content->recordid";
+    }
+    
+    
+    return $name;
 }

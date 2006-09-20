@@ -13,17 +13,17 @@
 
     switch ($paymentmethod)
     {
-    	case AN_METHOD_CC:
-    	{
-    	    print_cc_form($this);
-    	    break;
-    	}
+        case AN_METHOD_CC:
+        {
+            print_cc_form($this);
+            break;
+        }
 
-    	case AN_METHOD_ECHECK:
-    	{
-    	    print_echeck_form($this);
-    	    break;
-    	}
+        case AN_METHOD_ECHECK:
+        {
+            print_echeck_form($this);
+            break;
+        }
     }
 
 function print_cc_form($classreference)

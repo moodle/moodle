@@ -792,7 +792,7 @@ class resource_ims extends resource_base {
             /// Add item
                 $contents .= '<li>';
                 if (!empty($item->href)) {
-                	if ($item->id == $selected_page) $contents .= '<div id="ims-toc-selected">';
+                    if ($item->id == $selected_page) $contents .= '<div id="ims-toc-selected">';
                     $contents .= '<a href="'.$fullurl.$item->id.'" target="_parent">'.$item->title.'</a>';
                     if ($item->id == $selected_page) $contents .= '</div>';
                 } else {

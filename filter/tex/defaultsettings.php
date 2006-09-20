@@ -5,7 +5,7 @@
 
     function tex_defaultsettings( $force=false  ) {
 
-	global $CFG;
+    global $CFG;
 
         if (!isset($CFG->filter_tex_latexpreamble) or $force) {
             set_config( 'filter_tex_latexpreamble', " \\usepackage[latin1]{inputenc}\n \\usepackage{amsmath}\n \\usepackage{amsfonts}\n \\RequirePackage{amsmath,amssymb,latexsym}\n");
@@ -36,9 +36,9 @@
                 set_config( 'filter_tex_pathconvert',"{$binpath}convert" );
             }
             elseif (PHP_OS=='WINNT' or PHP_OS=='WIN32' or PHP_OS=='Windows') {
-	        // note: you need Ghostscript installed (standard), miktex (standard)
-	        // and ImageMagick (install at c:\ImageMagick)
-	        set_config( 'filter_tex_pathlatex',"\"c:\\texmf\\miktex\\bin\\latex.exe\" " );
+            // note: you need Ghostscript installed (standard), miktex (standard)
+            // and ImageMagick (install at c:\ImageMagick)
+            set_config( 'filter_tex_pathlatex',"\"c:\\texmf\\miktex\\bin\\latex.exe\" " );
                 set_config( 'filter_tex_pathdvips',"\"c:\\texmf\\miktex\\bin\\dvips.exe\" " );
                 set_config( 'filter_tex_pathconvert',"\"c:\\imagemagick\\convert.exe\" " );
             }    

@@ -490,11 +490,11 @@ function output_quiz_options_fields($form, $showfixed) {
          <td align="left">
          <?php
             $options = array(
-            		0 => '0',
-            		1 => '1',
-            		2 => '2',
-            		3 => '3'
-			);
+                    0 => '0',
+                    1 => '1',
+                    2 => '2',
+                    3 => '3'
+            );
             choose_from_menu($options, "decimalpoints", "$form->decimalpoints", "");
             helpbutton("decimalpoints", get_string("decimaldigits","quiz"), "quiz");
          ?>

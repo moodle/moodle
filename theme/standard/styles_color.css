@@ -633,23 +633,23 @@ table.message_search_results td {
  ***/
 
 .que {
-	border-color: #DDD;
+    border-color: #DDD;
 }
 .que .r0 {
-	background-color: #F5F5F5;
+    background-color: #F5F5F5;
 }
 .que .r1 {
-	background-color: #EEE;
+    background-color: #EEE;
 }
 .calculated .answer,
 .numerical .answer,
 .shortanswer .answer,
 .truefalse .answer {
-	background-color: #EEE;
+    background-color: #EEE;
 }
 .que .feedback {
   border-color: #DDD;
-}	
+}    
 .que.multianswer .incorrect {
     background-color: #faa;
 }

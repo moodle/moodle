@@ -297,7 +297,7 @@
 
         foreach ($courses as $acourse) {
           
-          	$context = get_context_instance(CONTEXT_COURSE, $acourse->id);
+              $context = get_context_instance(CONTEXT_COURSE, $acourse->id);
           
             $count++;
             $up = ($count > 1 || !$atfirstpage);
@@ -315,12 +315,12 @@
                     echo '<a title="'.$strassignteachers.'" href="'.$CFG->wwwroot.'/course/teacher.php?id='.
                          $acourse->id.'">'.
                          '<img src="'.$CFG->pixpath.'/t/user.gif" height="11" width="11" border="0" alt="'.$strassignteachers.'" /></a> ';
-					if (has_capability('moodle/course:delete', $context)) {
+                    if (has_capability('moodle/course:delete', $context)) {
                         echo '<a title="'.$strdelete.'" href="delete.php?id='.$acourse->id.'">'.
                              '<img src="'.$CFG->pixpath.'/t/delete.gif" height="11" width="11" border="0" alt="'.$strdelete.'" /></a> ';
                     }
 
-					if (has_capability('moodle/course:visibility', $context)) {
+                    if (has_capability('moodle/course:visibility', $context)) {
                         if (!empty($acourse->visible)) {
                             echo '<a title="'.$strhide.'" href="category.php?id='.$category->id.'&amp;page='.$page.
                                 '&amp;perpage='.$perpage.'&amp;hide='.$acourse->id.'&amp;sesskey='.$USER->sesskey.'">'.
@@ -332,15 +332,15 @@
                         }
                     }
 
-					if (has_capability('moodle/site:backup', $context)) {
-	                    echo '<a title="'.$strbackup.'" href="../backup/backup.php?id='.$acourse->id.'">'.
-	                         '<img src="'.$CFG->pixpath.'/t/backup.gif" height="11" width="11" border="0" alt="" /></a> ';
-					}
-					
-					if (has_capability('moodle/site:restore', $context)) {
-	                    echo '<a title="'.$strrestore.'" href="../files/index.php?id='.$acourse->id.
-	                             '&amp;wdir=/backupdata">'.
-	                             '<img src="'.$CFG->pixpath.'/t/restore.gif" height="11" width="11" border="0" alt="" /></a> ';
+                    if (has_capability('moodle/site:backup', $context)) {
+                        echo '<a title="'.$strbackup.'" href="../backup/backup.php?id='.$acourse->id.'">'.
+                             '<img src="'.$CFG->pixpath.'/t/backup.gif" height="11" width="11" border="0" alt="" /></a> ';
+                    }
+                    
+                    if (has_capability('moodle/site:restore', $context)) {
+                        echo '<a title="'.$strrestore.'" href="../files/index.php?id='.$acourse->id.
+                                 '&amp;wdir=/backupdata">'.
+                                 '<img src="'.$CFG->pixpath.'/t/restore.gif" height="11" width="11" border="0" alt="" /></a> ';
                     }
 
                     echo '<a title="'.$strbackup.'" href="../backup/backup.php?id='.$acourse->id.'">'.
@@ -425,7 +425,7 @@
         print_single_button('category.php', $options, get_string('resortcoursesbyname'), 'get');
     }
 
-	$context = get_context_instance(CONTEXT_SYSTEM, SITEID);
+    $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
     if (has_capability('moodle/course:create', $context)) {         /// Print button to create a new course
         unset($options);
         $options['category'] = $category->id;
@@ -433,7 +433,7 @@
         echo '<br />';
     }
 
-	$context = get_context_instance(CONTEXT_COURSECAT, $id);
+    $context = get_context_instance(CONTEXT_COURSECAT, $id);
     if (has_capability('moodle/category:update', $context)) {           /// Print form to rename the category
         $strrename= get_string('rename');
         echo '<form name="renameform" action="category.php" method="post">';
@@ -443,9 +443,9 @@
         echo '<input type="submit" value="'.$strrename.'" />';
         echo "</form>";
         echo "<br />";
-	}
+    }
     
-	print_course_search();
+    print_course_search();
     
     echo "</center>";
     

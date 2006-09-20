@@ -55,14 +55,14 @@ have the moodle debugging option turned on in the moodle admin configuration pag
 
 "There are 3 things I have set differently (as far as I can remember!)
     in the Moodle install process I set the debuging to be "on"
-    in php.ini file,Ê
+    in php.ini file,ï¿½
         error_reporting = E_ALL
     and in my browser [Ed. I assume he is on a windows machine likely using some form of IE],
         internet options > advanced 
         under the browsing section
         display a notification about every script error selected
         disable Script debugging unselected."
-			 --Dan Marsden, 2004
+             --Dan Marsden, 2004
 
 
 =================================================

@@ -36,15 +36,15 @@
 
 <tr valign="top" class="required">
 
-	<td align="right">auth_fchost:</td>
+    <td align="right">auth_fchost:</td>
 
-	<td>
+    <td>
 
         <input name="auth_fchost" type="text" size="30" value="<?php echo $config->auth_fchost?>" />
 
-	<?php  if (isset($err["auth_fchost"])) formerr($err["auth_fchost"]); ?>
+    <?php  if (isset($err["auth_fchost"])) formerr($err["auth_fchost"]); ?>
 
-	</td>
+    </td>
 
     <td>
 
@@ -58,15 +58,15 @@
 
 <tr valign="top" class="required">
 
-	<td align="right">auth_fcfppport:</td>
+    <td align="right">auth_fcfppport:</td>
 
-	<td>
+    <td>
 
         <input name="auth_fcfppport" type="text" size="30" value="<?php echo $config->auth_fcfppport?>" />
 
-	<?php  if (isset($err["auth_fcfppport"])) formerr($err["auth_fchost"]); ?>
+    <?php  if (isset($err["auth_fcfppport"])) formerr($err["auth_fchost"]); ?>
 
-	</td>
+    </td>
 
     <td>
 
@@ -80,15 +80,15 @@
 
 <tr valign="top" class="required">
 
-	<td align="right">auth_fcuserid:</td>
+    <td align="right">auth_fcuserid:</td>
 
-	<td>
+    <td>
 
         <input name="auth_fcuserid" type="text" size="30" maxlength="15" value="<?php echo $config->auth_fcuserid?>" />
 
-	<?php  if (isset($err["auth_fcuserid"])) formerr($err["auth_fcuserid"]); ?>
+    <?php  if (isset($err["auth_fcuserid"])) formerr($err["auth_fcuserid"]); ?>
 
-	</td>
+    </td>
 
     <td>
 
@@ -102,15 +102,15 @@
 
 <tr valign="top" class="required">
 
-	<td align="right">auth_fcpasswd:</td>
+    <td align="right">auth_fcpasswd:</td>
 
-	<td>
+    <td>
 
         <input name="auth_fcpasswd" type="password" size="30" maxlength="12" value="<?php echo $config->auth_fcpasswd?>" />
 
-	<?php  if (isset($err["auth_fcpasswd"])) formerr($err["auth_fcpasswd"]); ?>
+    <?php  if (isset($err["auth_fcpasswd"])) formerr($err["auth_fcpasswd"]); ?>
 
-	</td>
+    </td>
 
     <td>
 
@@ -124,15 +124,15 @@
 
 <tr valign="top" class="required">
 
-	<td align="right">auth_fccreators:</td>
+    <td align="right">auth_fccreators:</td>
 
-	<td>
+    <td>
 
         <input name="auth_fccreators" type="text" size="30" value="<?php echo $config->auth_fccreators?>" />
 
-	<?php  if (isset($err["auth_fccreators"])) formerr($err["auth_fccreators"]); ?>
+    <?php  if (isset($err["auth_fccreators"])) formerr($err["auth_fccreators"]); ?>
 
-	</td>
+    </td>
 
     <td>
 
@@ -148,9 +148,9 @@
 
 <tr valign="top">
 
-	<td align="right"><?php  print_string("instructions", "auth") ?>:</td>
+    <td align="right"><?php  print_string("instructions", "auth") ?>:</td>
 
-	<td>
+    <td>
 
     <textarea name="auth_instructions" cols="30" rows="10" wrap="virtual"><?php  p($config->auth_instructions) ?></textarea> 
 

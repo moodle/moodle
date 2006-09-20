@@ -218,7 +218,7 @@ class block_base {
      * Display the block!
      */
     function _print_block() {
-    	global $COURSE;
+        global $COURSE;
 
         // is_empty() includes a call to get_content()
         if ($this->is_empty() && empty($COURSE->javascriptportal)) {
@@ -240,7 +240,7 @@ class block_base {
             
             //make a record of the block for the ajax course format to use
             if (!empty($COURSE->javascriptportal)) {
-                $COURSE->javascriptportal->block_add('inst'.$this->instance->id,!$this->instance->visible);	
+                $COURSE->javascriptportal->block_add('inst'.$this->instance->id,!$this->instance->visible);    
             }
         }
     }
@@ -290,32 +290,32 @@ class block_base {
     function _add_edit_controls($options) {
       
         global $CFG, $USER, $PAGE;
-		
-		// this is the context relevant to this particular block instance
-		$blockcontext = get_context_instance(CONTEXT_BLOCK, $this->instance->id);
-		
-		// context for site or course, i.e. participant list etc
-		// check to see if user can edit site or course blocks.
-		// blocks can appear on other pages such as mod and blog pages...
-		
-		switch ($this->instance->pagetype) {
-			case 'course-view':
-				if ($this->instance->pageid == SITEID) {
-				  	$context = get_context_instance(CONTEXT_SYSTEM, $this->instance->pageid);
-				} else {
-					$context = get_context_instance(CONTEXT_COURSE, $this->instance->pageid);
-				}
-				
-				if (!has_capability('moodle/site:manageblocks', $context)) {
-					return null;
-				}
-			break;
-			default:
-			
-			break;  
-		}
-		
-		
+        
+        // this is the context relevant to this particular block instance
+        $blockcontext = get_context_instance(CONTEXT_BLOCK, $this->instance->id);
+        
+        // context for site or course, i.e. participant list etc
+        // check to see if user can edit site or course blocks.
+        // blocks can appear on other pages such as mod and blog pages...
+        
+        switch ($this->instance->pagetype) {
+            case 'course-view':
+                if ($this->instance->pageid == SITEID) {
+                      $context = get_context_instance(CONTEXT_SYSTEM, $this->instance->pageid);
+                } else {
+                    $context = get_context_instance(CONTEXT_COURSE, $this->instance->pageid);
+                }
+                
+                if (!has_capability('moodle/site:manageblocks', $context)) {
+                    return null;
+                }
+            break;
+            default:
+            
+            break;  
+        }
+        
+        
         if (!isset($this->str)) {
             $this->str->delete    = get_string('delete');
             $this->str->moveup    = get_string('moveup');
@@ -348,8 +348,8 @@ class block_base {
         }
         $script = $page->url_get_full(array('instanceid' => $this->instance->id, 'sesskey' => $USER->sesskey));
      
-     	// place holder for roles button
-     	$movebuttons .= '<a class="icon roles" title="'. $this->str->assignroles .'" href="'.$CFG->wwwroot.'/admin/roles/assign.php?contextid='.$blockcontext->id.'">' .
+         // place holder for roles button
+         $movebuttons .= '<a class="icon roles" title="'. $this->str->assignroles .'" href="'.$CFG->wwwroot.'/admin/roles/assign.php?contextid='.$blockcontext->id.'">' .
                         '<img src="'.$CFG->pixpath.'/i/roles.gif" alt="'.$this->str->assignroles.'" /></a>';
      
         $movebuttons .= '<a class="icon hide" title="'. $title .'" href="'.$script.'&amp;blockaction=toggle">' .
@@ -677,7 +677,7 @@ class block_list extends block_base {
     }
 
     function _print_block() {
-    	global $COURSE;
+        global $COURSE;
 
         // is_empty() includes a call to get_content()
         if ($this->is_empty() && empty($COURSE->javascriptportal)) {
@@ -701,7 +701,7 @@ class block_list extends block_base {
             
             //make a record of the block for the ajax course format to use
             if (!empty($COURSE->javascriptportal)) {
-                $COURSE->javascriptportal->block_add('inst'.$this->instance->id,!$this->instance->visible);	
+                $COURSE->javascriptportal->block_add('inst'.$this->instance->id,!$this->instance->visible);    
             }
         }
     }

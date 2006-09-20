@@ -15,11 +15,11 @@ if ($section = optional_param('section', '', PARAM_ALPHAEXT)) {
 
         if ($key === false) {
                     error(get_string('nonexistentbookmark','admin'));
-			die;
-		}
+            die;
+        }
 
-		unset($bookmarks[$key]);
-		$bookmarks = implode(',',$bookmarks);
+        unset($bookmarks[$key]);
+        $bookmarks = implode(',',$bookmarks);
         set_user_preference('admin_bookmarks', $bookmarks);
         
         $temp = $adminroot->locate($section);
@@ -31,17 +31,17 @@ if ($section = optional_param('section', '', PARAM_ALPHAEXT)) {
         } else {
             redirect($CFG->wwwroot, get_string('bookmarkdeleted', 'admin'),1);
         }
-		die;
+        die;
 
 
-	}
-	
+    }
+    
         error(get_string('nobookmarksforuser','admin'));
-	die;
+    die;
 
 } else {
     error(get_string('invalidsection', 'admin'));
-	die;
+    die;
 }
 
 ?>

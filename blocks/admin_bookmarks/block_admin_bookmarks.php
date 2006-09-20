@@ -26,41 +26,41 @@ class block_admin_bookmarks extends block_base {
     function get_content() {
 
         global $CFG, $USER, $PAGE;
-		
+        
         require_once($CFG->libdir.'/adminlib.php');
         $adminroot = admin_get_root();
-		
+        
         if ($this->content !== NULL) {
             return $this->content;
         }
 
         $this->content = new stdClass;
         $this->content->text = '';
-		if (isset($USER->preference['admin_bookmarks'])) {
+        if (isset($USER->preference['admin_bookmarks'])) {
             $bookmarks = explode(',',$USER->preference['admin_bookmarks']);
-			// hmm... just a liiitle (potentially) processor-intensive
-			// (recall that $adminroot->locate is a huge recursive call... and we're calling it repeatedly here
+            // hmm... just a liiitle (potentially) processor-intensive
+            // (recall that $adminroot->locate is a huge recursive call... and we're calling it repeatedly here
             foreach($bookmarks as $bookmark) {
-			    $temp = $adminroot->locate($bookmark);
-			    if (is_a($temp, 'admin_settingpage')) {
+                $temp = $adminroot->locate($bookmark);
+                if (is_a($temp, 'admin_settingpage')) {
                     $this->content->text .= '<a href="' . $CFG->wwwroot . '/' . $CFG->admin . '/settings.php?section=' . $bookmark . '">' . $temp->visiblename . '</a>' . '<br />';
                 } elseif (is_a($temp, 'admin_externalpage')) {
                     $this->content->text .= '<a href="' . $temp->url . '">' . $temp->visiblename . '</a>' . '<br />';
                 }                
-    		}
-		} else {
-			$bookmarks = array();
-		}
-		
+            }
+        } else {
+            $bookmarks = array();
+        }
+        
         if (($section = (isset($PAGE->section) ? $PAGE->section : '')) && (in_array($section, $bookmarks))) {
-            $this->content->footer = '<a href="' . $CFG->wwwroot . '/blocks/admin_bookmarks/delete.php?section=' . $section . '&returnurl=' . $CFG->wwwroot . '">' . get_string('unbookmarkthispage','admin') . '</a>';	
-		} elseif ($section = (isset($PAGE->section) ? $PAGE->section : '')) {
-    	    $this->content->footer = '<a href="' . $CFG->wwwroot . '/blocks/admin_bookmarks/create.php?section=' . $section . '">' . get_string('bookmarkthispage','admin') . '</a>';		
-		} else {
-		    $this->content->footer = '';
-		}
-	
-	    return $this->content;
+            $this->content->footer = '<a href="' . $CFG->wwwroot . '/blocks/admin_bookmarks/delete.php?section=' . $section . '&returnurl=' . $CFG->wwwroot . '">' . get_string('unbookmarkthispage','admin') . '</a>';    
+        } elseif ($section = (isset($PAGE->section) ? $PAGE->section : '')) {
+            $this->content->footer = '<a href="' . $CFG->wwwroot . '/blocks/admin_bookmarks/create.php?section=' . $section . '">' . get_string('bookmarkthispage','admin') . '</a>';        
+        } else {
+            $this->content->footer = '';
+        }
+    
+        return $this->content;
 
     }
 }

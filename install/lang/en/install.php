@@ -30,7 +30,7 @@ $string['databasesettings'] = '    Now you need to configure the database where 
 $string['databasecreationsettings'] = '<p>Now you need to configure the database settings where most Moodle data
     will be stored.  The database will be created automatically by the installer
     with the default settings below or others that you specify in the editable 
-	fields below. If security is an issue you may want to specify a password in the \"Password\" field.</p>
+    fields below. If security is an issue you may want to specify a password in the \"Password\" field.</p>
        <p><b>Type:</b> fixed to \"mysql\" by the installer<br />
        <b>Host:</b> fixed to \"localhost\" by the installer<br />
        <b>Name:</b> database name, eg moodle<br />
@@ -152,10 +152,10 @@ $string['welcomep30'] = 'This release of the <strong>$a->installername</strong> 
 $string['welcomep40'] = 'The package also includes <strong>Moodle $a->moodlerelease ($a->moodleversion)</strong>.';
 $string['welcomep50'] = 'The use of all the applications in this package is governed by their respective 
     licences. The complete <strong>$a->installername</strong> package is 
-	<a href=\"http://www.opensource.org/docs/definition_plain.html\">open source</a> and is distributed 
-	under the <a href=\"http://www.gnu.org/copyleft/gpl.html\">GPL</a> license.';
+    <a href=\"http://www.opensource.org/docs/definition_plain.html\">open source</a> and is distributed 
+    under the <a href=\"http://www.gnu.org/copyleft/gpl.html\">GPL</a> license.';
 $string['welcomep60'] = 'The following pages will lead you through some easy to follow steps to 
     configure and set up <strong>Moodle</strong> on your computer. You may accept the default 
-	settings or, optionally, amend them to suit your own needs.';
+    settings or, optionally, amend them to suit your own needs.';
 $string['welcomep70'] = 'Click the \"Next\" button below to continue with the set up of <strong>Moodle</strong>.';
 ?>

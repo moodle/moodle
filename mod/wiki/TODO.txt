@@ -1,8 +1,8 @@
 ToDo
 Mike:
  - Group Handling (Mike)
-	> deal with changing group mode on active wikis
-	> handle group mode for teacher wikis
+    > deal with changing group mode on active wikis
+    > handle group mode for teacher wikis
  - Rating
  - Commenting
  - Grading

@@ -28,7 +28,7 @@ $ewiki_t["c"]["EWIKIDUMPCSS"] = '
   body {
     background-color:#eeeeff;
     padding:2px;
-  }	
+  }    
   
   H2 {
     background:#000000;

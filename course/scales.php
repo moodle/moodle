@@ -16,7 +16,7 @@
     }
 
     require_login($course->id);
-	$context = get_context_instance(CONTEXT_COURSE, $course->id);
+    $context = get_context_instance(CONTEXT_COURSE, $course->id);
 
     $strscale = get_string("scale");
     $strscales = get_string("scales");
@@ -94,8 +94,8 @@
     //If action is details, show the popup info
     if ($action == "details") {
         //Check for teacher edit
-       	require_capability('moodle/course:managescales', $context);
-	   
+           require_capability('moodle/course:managescales', $context);
+       
         //Check for scale
         if (! $scale = get_record("scale", "id", $scaleid)) {
             error("Scale ID was incorrect");
@@ -130,8 +130,8 @@
 
         $sesskey = !empty($USER->id) ? $USER->sesskey : '';
 
-       	require_capability('moodle/course:managescales', $context);
-       	
+           require_capability('moodle/course:managescales', $context);
+           
         //Check for scale if action = edit
         if ($action == "edit") {
             if (! $scale = get_record("scale", "id", $scaleid)) {
@@ -235,7 +235,7 @@
     //If action is delete, do it
     if ($action == "delete" and confirm_sesskey()) {
         //Check for teacher edit
-       	require_capability('moodle/course:managescales', $context);
+           require_capability('moodle/course:managescales', $context);
         //Check for scale if action = edit
         if (! $scale = get_record("scale", "id", $scaleid)) {
             error("Scale ID was incorrect");
@@ -266,7 +266,7 @@
     //If action is down or up, do it
     if (($action == "down" || $action == "up") and confirm_sesskey()) {
         //Check for teacher edit
-       	require_capability('moodle/course:managescales', $context);
+           require_capability('moodle/course:managescales', $context);
         //Check for scale if action = edit
         if (! $scale = get_record("scale", "id", $scaleid)) {
             error("Scale ID was incorrect");
@@ -296,7 +296,7 @@
     }
 
     if ($list) {       /// Just list the scales (in a helpwindow)
-       	require_capability('moodle/course:viewscales', $context);
+           require_capability('moodle/course:viewscales', $context);
         print_header($strscales);
 
         if (!empty($scaleid)) {

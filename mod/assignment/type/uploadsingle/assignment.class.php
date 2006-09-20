@@ -45,10 +45,10 @@ class assignment_uploadsingle extends assignment_base {
     }
 
     function view() {
-	
+    
         global $USER;
-		
-		$context = get_context_instance(CONTEXT_MODULE,$this->cm->id);
+        
+        $context = get_context_instance(CONTEXT_MODULE,$this->cm->id);
         require_capability('mod/assignment:view', $context);
         
         add_to_log($this->course->id, "assignment", "view", "view.php?id={$this->cm->id}", $this->assignment->id, $this->cm->id);

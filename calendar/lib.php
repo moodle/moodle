@@ -106,12 +106,12 @@ function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_y
 
     if (get_user_timezone_offset() < 99) {
         // We 'll keep these values as GMT here, and offset them when the time comes to query the db
-	    $display->tstart = gmmktime(0, 0, 0, $m, 1, $y); // This is GMT
-	    $display->tend = gmmktime(23, 59, 59, $m, $display->maxdays, $y); // GMT
+        $display->tstart = gmmktime(0, 0, 0, $m, 1, $y); // This is GMT
+        $display->tend = gmmktime(23, 59, 59, $m, $display->maxdays, $y); // GMT
     } else {
         // no timezone info specified
-	    $display->tstart = mktime(0, 0, 0, $m, 1, $y);
-	    $display->tend = mktime(23, 59, 59, $m, $display->maxdays, $y);
+        $display->tstart = mktime(0, 0, 0, $m, 1, $y);
+        $display->tend = mktime(23, 59, 59, $m, $display->maxdays, $y);
     }
 
     $startwday = dayofweek(1, $m, $y);

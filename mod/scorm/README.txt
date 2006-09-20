@@ -23,7 +23,7 @@ Moodle 1.6
 A popup window display mode.             DONE
 New Moodle course format: SCORM.         DONE
 Add prerequisites support to SCORM 1.2.  DONE
-Customizable player page.		 DONE
+Customizable player page.         DONE
 Multiple attempt management.
 Complete AICC conformance.
 

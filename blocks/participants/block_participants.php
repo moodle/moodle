@@ -7,28 +7,28 @@ class block_participants extends block_list {
     }
 
     function get_content() {
-      	
+          
         global $USER, $CFG;
-	
-		// the following 3 lines is need to pass _self_test();
-		if (empty($this->instance->pageid)) {
-			return '';  
-		}
-		
-		
-		// only 2 possible contexts, site or course
-		if ($this->instance->pageid == SITEID) { // site context
-		  	$currentcontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
-		  	$canviewparticipants = has_capability('moodle/site:viewparticipants', $currentcontext);
-		} else { // course context
-			$currentcontext = get_context_instance(CONTEXT_COURSE, $this->instance->pageid);
-			$canviewparticipants = has_capability('moodle/course:viewparticipants', $currentcontext);
-		}
-		
-		if (!$canviewparticipants) {
-		  	$this->context = '';
-		  	return $this->content;
-		}
+    
+        // the following 3 lines is need to pass _self_test();
+        if (empty($this->instance->pageid)) {
+            return '';  
+        }
+        
+        
+        // only 2 possible contexts, site or course
+        if ($this->instance->pageid == SITEID) { // site context
+              $currentcontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
+              $canviewparticipants = has_capability('moodle/site:viewparticipants', $currentcontext);
+        } else { // course context
+            $currentcontext = get_context_instance(CONTEXT_COURSE, $this->instance->pageid);
+            $canviewparticipants = has_capability('moodle/course:viewparticipants', $currentcontext);
+        }
+        
+        if (!$canviewparticipants) {
+              $this->context = '';
+              return $this->content;
+        }
 
         if ($this->content !== NULL) {
             return $this->content;

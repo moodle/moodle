@@ -62,7 +62,7 @@ class assignment_upload extends assignment_base {
                 print_simple_box($this->print_user_files($USER->id, true), 'center');
             }
             //from upload&review. check if there are responses from teacher  
-	    if ($submission->data2 != NULL) {
+        if ($submission->data2 != NULL) {
                 print_heading(get_string('responsesfromteacher', 'assignment'));
                 $this->print_response_students(true);
             }
@@ -107,7 +107,7 @@ class assignment_upload extends assignment_base {
         upload_print_form_fragment(1,array('newfile'),false,null,0,$this->assignment->maxbytes,false);
         //upload files
         echo '<input type="submit" name="save" value="'.get_string('attachfile','assignment').'" />';
-	    echo "<p><b>".get_string('step2','assignment')."</b>".get_string('submitformarking','assignment')."</p>";
+        echo "<p><b>".get_string('step2','assignment')."</b>".get_string('submitformarking','assignment')."</p>";
         //final submit
         echo '<input type="submit" name="save" value="'.get_string('sendformarking','assignment').'" />';
         echo "<p>".get_string('onceassignmentsent','assignment')."</p>";
@@ -124,7 +124,7 @@ class assignment_upload extends assignment_base {
         $userid = required_param('userid');
 
         echo '<center>';
-	    echo get_string('choosereviewfile','assignment').'<br>';
+        echo get_string('choosereviewfile','assignment').'<br>';
 
         echo '<form enctype="multipart/form-data" method="post" '.
              "action=\"$CFG->wwwroot/mod/assignment/upload.php\">";
@@ -491,7 +491,7 @@ class assignment_upload extends assignment_base {
         }
        
         $newsubmission = $this->get_submission($feedback->userid, true);  // Get or make one
-	    $newsubmission->grade      = $feedback->grade;
+        $newsubmission->grade      = $feedback->grade;
         $newsubmission->comment    = $feedback->comment;
         $newsubmission->format     = $feedback->format;
         $newsubmission->teacher    = $USER->id;
@@ -1033,29 +1033,29 @@ class assignment_upload extends assignment_base {
                         $ffurl = "$CFG->wwwroot/file.php?file=/$filearea/$file";
                     } 
                     if (has_capability('mod/assignment:grade', get_context_instance(CONTEXT_MODULE, $this->course->id))) {
-		                $output .= '<img align="middle" src="'.$CFG->pixpath.'/f/'.$icon.'" height="16" width="16" alt="'.$icon.'" />'.
-                		           '<a href="'.$ffurl.'" >'.$file.'</a> ['.$filesize.'] <br />';
-		            } else {
-            	        if (!empty($USER->id)) {
-		                    if ($submission = $this->get_submission($USER->id)) { 
+                        $output .= '<img align="middle" src="'.$CFG->pixpath.'/f/'.$icon.'" height="16" width="16" alt="'.$icon.'" />'.
+                                   '<a href="'.$ffurl.'" >'.$file.'</a> ['.$filesize.'] <br />';
+                    } else {
+                        if (!empty($USER->id)) {
+                            if ($submission = $this->get_submission($USER->id)) { 
                                     //i have changed timemodified=0 for Draft assignments, thats' why we remove this condition 
                                     //otherwise student's dont' se etheir own submissions
-//                 		        if ($submission->timemodified) { 
-		                        if ($submission->timemodified <= $this->assignment->timedue || empty($this->assignment->timedue)) {
+//                                 if ($submission->timemodified) { 
+                                if ($submission->timemodified <= $this->assignment->timedue || empty($this->assignment->timedue)) {
                                             //remove link shouldn't be displayed if file was marked or submited for marking
                                     $remove_link = ''; 
-					                if ($submission->data1 == get_string("submissionstatusdraft", "assignment") || $submission->data1 == get_string("submissionstatusreturned", "assignment")) {
+                                    if ($submission->data1 == get_string("submissionstatusdraft", "assignment") || $submission->data1 == get_string("submissionstatusreturned", "assignment")) {
                                         $course_mod_id=$this->cm->id;  
                                         $deleteurl="$CFG->wwwroot/mod/assignment/type/upload/deleteonesubmission.php?confirm=0&view=student&userid=$userid&id=$course_mod_id&name=$file&file=".$basedir."/".$file;
                                         $remove_link= '[<a href="'.$deleteurl.'">'.get_string("removelink", "assignment").'</a>]'; //students of the course
                                     } 
-                			        $output .= '<img align="middle" src="'.$CFG->pixpath.'/f/'.$icon.'" height="16" width="16" alt="'.$icon.'" />'.$file.' ['.$filesize.']'.$remove_link.'<br />';
-		                        } else {
-                			        $output .= '';
+                                    $output .= '<img align="middle" src="'.$CFG->pixpath.'/f/'.$icon.'" height="16" width="16" alt="'.$icon.'" />'.$file.' ['.$filesize.']'.$remove_link.'<br />';
+                                } else {
+                                    $output .= '';
                                 }
-             		        }
+                             }
                         }
-        	        }
+                    }
                 }
             }
         }
@@ -1154,11 +1154,11 @@ class assignment_upload extends assignment_base {
         if ($currentgroup) {
             $users = get_group_users($currentgroup);
         } else {
-	        $users = get_course_users($course->id);
+            $users = get_course_users($course->id);
         }
 
         if (!$teacherattempts) {
-	        $teachers = get_course_teachers($course->id);
+            $teachers = get_course_teachers($course->id);
             if (!empty($teachers)) {
                 $keys = array_keys($teachers);
             }
@@ -1469,11 +1469,11 @@ class assignment_upload extends assignment_base {
             }
         } else if ($CFG->fullnamedisplay == 'textuid') {
             if ( $override ) {
-	           return get_string('fullnamedisplay', '', $user) . $user_id;
+               return get_string('fullnamedisplay', '', $user) . $user_id;
             } else if (isset($user->username)) {
-	           return $user->username . $user_id;
+               return $user->username . $user_id;
             } else {
-	           return $user->firstname . $user_id;
+               return $user->firstname . $user_id;
             }
         }
 

@@ -23,9 +23,9 @@
 
 
 #-- config
-define("EWIKI_DB_STORE_DIRECTORY", "/tmp");	// where to save binary files
-define("EWIKI_DB_STORE_MINSIZE", 0);		// send smaller files into db
-define("EWIKI_DB_STORE_MAXSIZE", 32 <<20);	// 32MB max per file (but
+define("EWIKI_DB_STORE_DIRECTORY", "/tmp");    // where to save binary files
+define("EWIKI_DB_STORE_MINSIZE", 0);        // send smaller files into db
+define("EWIKI_DB_STORE_MAXSIZE", 32 <<20);    // 32MB max per file (but
           // there is actually no way to upload such large files via HTTP)
 
 #  define("EWIKI_DB_STORE_URL", "http://example.com/wiki/files/store/");

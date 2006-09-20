@@ -396,7 +396,7 @@
         /// Some packages are poorly done and use \ in roots. This makes them 
         /// not display since the URLs are not valid.
             if (!empty($obj_resource->href)) {
-            	$obj_resource->href = strtr($obj_resource->href, "\\", '/');	
+                $obj_resource->href = strtr($obj_resource->href, "\\", '/');    
             }
             
         /// Only if the resource has everything

@@ -80,7 +80,7 @@ bloglastmodified
 __________
 REGULAR TODO:
 
-						MOODLE BLOG TODO
+                        MOODLE BLOG TODO
 =================================================
 NEEDS TESTING
  (NOTE: If you decide to test these items please
@@ -113,55 +113,55 @@ ACTIVE WORK / TO BE COMPLETED
    (bug fixes and other things targeted for first release)
 =================================================
 
-¥rss_client - during upgrade check for fopen() (or whatever is required) and disable the block if it cannot function on the server? How to properly introspect this functionality?
+ï¿½rss_client - during upgrade check for fopen() (or whatever is required) and disable the block if it cannot function on the server? How to properly introspect this functionality?
 
-¥ Elimiate admin.php file - move one remaining function into category block
+ï¿½ Elimiate admin.php file - move one remaining function into category block
 
-¥ Calendar Block Bug: Cal is showing link to dates with blog entries which are not found in the current blog! It should only show links to dates that have entries which the user can see given their blogFilter constraints. (Odd - in testing on my local site I cannot reproduce this error).
+ï¿½ Calendar Block Bug: Cal is showing link to dates with blog entries which are not found in the current blog! It should only show links to dates that have entries which the user can see given their blogFilter constraints. (Odd - in testing on my local site I cannot reproduce this error).
 
-¥ Martin suggested that the "Enable blog" step should occur on first attempt at new entry - eliminating one step. I'm not thoroughly convinced that this is the best, it needs more discussion. If you enable the blog just because they click "post new entry" then you are adding extra blogs for the curious who may not use it after first investigation. The best compromise is to show the'learning text' on the edit form itself and enable the blog when they submit their first entry, but the edit form doesn't lend itself well to this approach and the edit form would be pretty far down the page.
+ï¿½ Martin suggested that the "Enable blog" step should occur on first attempt at new entry - eliminating one step. I'm not thoroughly convinced that this is the best, it needs more discussion. If you enable the blog just because they click "post new entry" then you are adding extra blogs for the curious who may not use it after first investigation. The best compromise is to show the'learning text' on the edit form itself and enable the blog when they submit their first entry, but the edit form doesn't lend itself well to this approach and the edit form would be pretty far down the page.
 (One possible solution is to add a bool column to the blog_list table enabled/disabled. If the user hits the edit page and they have no blog then create one in the db for them and use that blogid for the remainder of the page. If their blog is disabled (default) then add a link to the top of the page suggesting that they read the help file on "About Blogs" before posting.)
 
-¥ Martin makes a good point about eliminating jargon for the end user experience. Look through blocks and links and comb out overly cryptic wording.
+ï¿½ Martin makes a good point about eliminating jargon for the end user experience. Look through blocks and links and comb out overly cryptic wording.
 
-¥ Continue work on help pages for trackback and pingback. Explain what they are and why you would want to send or not send them from a post. (posted discussion topic requesting assistance with this text on using moodle blog forum)
+ï¿½ Continue work on help pages for trackback and pingback. Explain what they are and why you would want to send or not send them from a post. (posted discussion topic requesting assistance with this text on using moodle blog forum)
 
-¥ phase out the use of BlogEntry->entryCategoryIds since BlogEntry->entryCategories now contains both the id and name in a single associative array.
+ï¿½ phase out the use of BlogEntry->entryCategoryIds since BlogEntry->entryCategories now contains both the id and name in a single associative array.
 
 RSS (server): feeds NOW support args of blogid=# or catid=#. As we integrate further with moodle we may want a courseid=# option. This applies to rss, rss2 and atom.php. Courseid may not be useful except on courses which allow guest access. 
 I do not know for sure that rss feeds can be authenticated. The current rss feeds do not do any form of authentication. How would a news reader client handle authentication of the feed? Page re: authenticated feeds: http://labs.silverorange.com/archives/2003/july/privaterss
 
-¥ On edit.php indent the send trackback option and make it dependent on pingback being enabled
+ï¿½ On edit.php indent the send trackback option and make it dependent on pingback being enabled
 for reference on how to do this see  code for "when adding a Resource" (I'm not positive that tb/pb are quite this neatly related with tb dependant on pb being enabled. I believe that tb could be enabled without pb and it will work. This requires more research and better help file explanations of feature functionality. It might seem appropriate to simply allow trackback as it seems to be built on top of pb, but I believe pb is supported because some remote servers do not support tb.)
 
-¥ SECURITY - ADMIN CONFIG OPTION - I'm thinking lately that it might be nice during install time (and as an admin blog config option) to present the user with a choice - "use blogs" <yes/no> -  that way any "security" concerns are negated since it can be completely disabled.
+ï¿½ SECURITY - ADMIN CONFIG OPTION - I'm thinking lately that it might be nice during install time (and as an admin blog config option) to present the user with a choice - "use blogs" <yes/no> -  that way any "security" concerns are negated since it can be completely disabled.
 
-¥ Check to see if guest users who have joined the course with an enrollment key can post comments when anon comments disabled/enabled - maybe extra setting in config - "allow guests who enter with enrolment key to post comments"
+ï¿½ Check to see if guest users who have joined the course with an enrollment key can post comments when anon comments disabled/enabled - maybe extra setting in config - "allow guests who enter with enrolment key to post comments"
 
-¥ Convert archive.php into view.php which will be a permalink page for viewing single entries only.
+ï¿½ Convert archive.php into view.php which will be a permalink page for viewing single entries only.
 
 =================================================
 ONGOING / STYLE
 =================================================
-¥ Examine database usage and attempt to optimize: (note from Jon: you can say "EXPLAIN (your query here)" and MySQL will tell you what it's doing to execute the query for example, how many rows it will have to consider, what indexes it will be using and stuff)
+ï¿½ Examine database usage and attempt to optimize: (note from Jon: you can say "EXPLAIN (your query here)" and MySQL will tell you what it's doing to execute the query for example, how many rows it will have to consider, what indexes it will be using and stuff)
 
-¥ if you're worried about memory bloat - just don't keep the objects around any longer than you need to -  e.g. after done with it call "unset($page)"
+ï¿½ if you're worried about memory bloat - just don't keep the objects around any longer than you need to -  e.g. after done with it call "unset($page)"
 
-¥ Add phpdoc comments to files, classes and functions.
+ï¿½ Add phpdoc comments to files, classes and functions.
 
-¥ SQL: Convert more sql calls to moodle functions rather than raw sql.
+ï¿½ SQL: Convert more sql calls to moodle functions rather than raw sql.
 
-¥ LOCALIZATION: Review code occasionally to localize any hard coded text
+ï¿½ LOCALIZATION: Review code occasionally to localize any hard coded text
 
-¥ MOODLE INTEGRATION/CLEANUP: enforce integer values before using them in db calls:     
+ï¿½ MOODLE INTEGRATION/CLEANUP: enforce integer values before using them in db calls:     
 // Make sure that the GET variables are correct
     $day = intval($_GET['cal_d']);
 
-¥ MOODLE INTEGRATION/CLEANUP: Use p() when showing vars in html forms
+ï¿½ MOODLE INTEGRATION/CLEANUP: Use p() when showing vars in html forms
 <input name="block_online_users_timetosee" type="text" size="5" value="<?php if(isset($CFG->block_online_users_timetosee)) {p($CFG->block_online_users_timetosee);} else {p(5);} ?>"
 actually p(0 and s() just pass the argument though strip_chars and htmlspecialchars to remove < > special characters - making sure it's just text.
 
-¥ from Jon: $motto = "always use empty() UNLESS there is a specific reason not to"
+ï¿½ from Jon: $motto = "always use empty() UNLESS there is a specific reason not to"
 and the specific reasons may be two:
 1) you care to differentiate between NULL and ''
 2) you want to see if an object exists before starting to pull out its properties
@@ -169,37 +169,37 @@ and the specific reasons may be two:
 =======================================================================
 FEATURE REQUESTS (not targeted for first release, order means nothing)
 =======================================================================
-¥ http://wordpress.org/about/shots/1.5/moderation.png - comment moderation for the blog owner themselves
+ï¿½ http://wordpress.org/about/shots/1.5/moderation.png - comment moderation for the blog owner themselves
 
-¥ RSS 2.0's enclosure capabilities would be a nice addition for podcasting.
+ï¿½ RSS 2.0's enclosure capabilities would be a nice addition for podcasting.
 
-¥ From Martin's bug regarding blogging:
+ï¿½ From Martin's bug regarding blogging:
 "3) Blog entries appear as usual, and can have a discussion attached to them for feedback and comments. Each entry can also have a "grade", which is the average of a number of ratings. Normally this might just be the teacher, but it could be the whole class rating each other's entries."
 
-¥ find a way to moderate based on the category and course rather than the site. Would allow one teacher to moderate their own course entries while another chooses not to
+ï¿½ find a way to moderate based on the category and course rather than the site. Would allow one teacher to moderate their own course entries while another chooses not to
 
-¥ RSS_CLIENT: 
+ï¿½ RSS_CLIENT: 
 define('MAGPIE_CACHE_FRESH_ONLY', false); //should be exposed as an admin config option - if true then it will not display stale cache contents when remote feed cannot be refreshed.
 
-¥ PINGBACK/TRACKBACK: PingBacks and TrackBacks should be logged in moodle logs as they are saved/executed.
+ï¿½ PINGBACK/TRACKBACK: PingBacks and TrackBacks should be logged in moodle logs as they are saved/executed.
 
-¥ Handle deletion of user
+ï¿½ Handle deletion of user
    BlogServer class has function deleteBlogById($blogid). This is not currently called by any blog code. It might be a good function to be used by moodle. However, moodle's delete user simply marks the user as deleted - allowing the user to be easily reactivated. Should we be checking for ($user->deleted != 1) before displaying blog information?
    
-¥ Possibly re-enable weblogs.com RPC option
+ï¿½ Possibly re-enable weblogs.com RPC option
 //below is a section removed from edit.php.
 <?php
 if($CFG->blog_useweblog_rpc) {
 echo "<input type=checkbox name=weblogrpc value=\"1\">Send update notice to weblogs.com<br>(may cause longer load time)&nbsp;";
 }?>
 
-¥ DH - RSS - All rss/atom scripts should use a blogFilter with arguments passed in to be used in loading correct blogEntries. Either the news page or a new function in BlogFilter should build the cache filename. Create a new page that has full drop down menu options to select a specific feed type (filter news feeds by category, user, date to start with)
+ï¿½ DH - RSS - All rss/atom scripts should use a blogFilter with arguments passed in to be used in loading correct blogEntries. Either the news page or a new function in BlogFilter should build the cache filename. Create a new page that has full drop down menu options to select a specific feed type (filter news feeds by category, user, date to start with)
 
-¥ RSS: Single page where users can go to access rss links (xml image and link) which are available to them on the moodle server - instead of only being available in blocks. When working with our own published feeds add links for administrator to "Validate" remote feed. Should integrate with new news page that lists all available local feeds. ( http://feeds.archive.org/validator/check?url=<BLOGRSSURL>) (NEWS/RSS: add new index_news.php file. should list all possible feeds for the site. including blogids, catids and moodle links. At the top should be "My RSS Feeds" for logged in users to quickly find their own links. RSS Feeds side block and the user admin section should have links to this new page.)
+ï¿½ RSS: Single page where users can go to access rss links (xml image and link) which are available to them on the moodle server - instead of only being available in blocks. When working with our own published feeds add links for administrator to "Validate" remote feed. Should integrate with new news page that lists all available local feeds. ( http://feeds.archive.org/validator/check?url=<BLOGRSSURL>) (NEWS/RSS: add new index_news.php file. should list all possible feeds for the site. including blogids, catids and moodle links. At the top should be "My RSS Feeds" for logged in users to quickly find their own links. RSS Feeds side block and the user admin section should have links to this new page.)
 
-¥ API.PHP: Add support for media upload api metaweblog call. Would allow a user to post a blog entry complete with pictures. "Finally, the ability of students to include pictures and other media is very useful." Should target this ASAP. Right now I'm waiting for moodle to have a comprehensive file management system that would allow a student to upload their own files to the server.
+ï¿½ API.PHP: Add support for media upload api metaweblog call. Would allow a user to post a blog entry complete with pictures. "Finally, the ability of students to include pictures and other media is very useful." Should target this ASAP. Right now I'm waiting for moodle to have a comprehensive file management system that would allow a student to upload their own files to the server.
 
-¥ Add entry/comment view counters
+ï¿½ Add entry/comment view counters
     COUNTERS: Add view counters to simplog tables (or create blog_log table). How many times has the full body of an entry been viewed, how many times have comments on an entry been viewed? (member vs. guest views should be counted) Should be a new template markup option --showguestviews-- --showmemberviews-- --showtotalviews--. 
 
 
@@ -215,9 +215,9 @@ CALENDAR: It would be nice if Blog entries that have been marked 'published' app
 From email with Jon P. :
     Is it possible to create an event in the calendar programmatically
 that
-	1) is NOT tied to a courseid, an event for the user, not for a course
+    1) is NOT tied to a courseid, an event for the user, not for a course
 they are in
-	2) is not editable by the user
+    2) is not editable by the user
 
 "OK, your question has two parts and a two-sided answer. First of all, you
 could add fields to mdl_event that make the recognition of a fifth type of
@@ -265,10 +265,10 @@ ______________________________
 RSS:
 Notes from: http://www.learningcircuits.org/2004/may2004/0405_trends.htm
 
-And what about other technologies? Could RSS be integrated with other new tools, such as the ones described in ÒWe LearningÓ, parts I and II? Consider
-¥ a social networking tool that sends you a feed informing you of the new people who just joined the network
-¥ an expert management system that uses feeds to tell you when a new expert is added to the system in your area of interest, or when an expert has created a new document you might be interested in
-¥ collaborative workspaces that use feeds to bring in information people in the group need to complete a project
-¥ a problem-based RSS feed integrated with a social networking or expert management tool in which you could subscribe to a problem, for example Òreluctant learners,Ó and then receive updates whenever someone writes on that topic.
+And what about other technologies? Could RSS be integrated with other new tools, such as the ones described in ï¿½We Learningï¿½, parts I and II? Consider
+ï¿½ a social networking tool that sends you a feed informing you of the new people who just joined the network
+ï¿½ an expert management system that uses feeds to tell you when a new expert is added to the system in your area of interest, or when an expert has created a new document you might be interested in
+ï¿½ collaborative workspaces that use feeds to bring in information people in the group need to complete a project
+ï¿½ a problem-based RSS feed integrated with a social networking or expert management tool in which you could subscribe to a problem, for example ï¿½reluctant learners,ï¿½ and then receive updates whenever someone writes on that topic.
 
-   ¥ RSS Server: Create RSS feed of member joins for each course.
+   ï¿½ RSS Server: Create RSS feed of member joins for each course.

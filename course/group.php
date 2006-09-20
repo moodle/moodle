@@ -17,16 +17,16 @@
 
     require_login($course->id);
     
-	if (! $group = get_record("groups", "id", $group, "courseid", $course->id)) {
+    if (! $group = get_record("groups", "id", $group, "courseid", $course->id)) {
         notice('Specified group could not be found!', "#");
         close_window_button();
     }  
     
-	// this is fine since group inherits course settings, this allows 1) teacher to edit all groups
-	// 2 someone with a role with a cap to modify a specific group
-	$context = get_context_instance(CONTEXT_GROUP, $group->id);
+    // this is fine since group inherits course settings, this allows 1) teacher to edit all groups
+    // 2 someone with a role with a cap to modify a specific group
+    $context = get_context_instance(CONTEXT_GROUP, $group->id);
 
-	// this is really weird
+    // this is really weird
     if (!has_capability('moodle/course:managegroups', $context)) {
         close_window();
     }

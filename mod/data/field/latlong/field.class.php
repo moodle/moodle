@@ -65,10 +65,10 @@ class data_field_latlong extends data_field_base {
         }
 
         $str = '<div title="'.$this->field->description.'">';
-		$str .= '<table><tr><td align="right">';
-		$str .= '<label for="field_'.$this->field->id.'_0">' . get_string('latitude', 'data') . '</label>:</td><td><input type="text" name="field_'.$this->field->id.'_0" id="field_'.$this->field->id.'_0" value="'.$lat.'" size="10" />°N</td></tr>';
-		$str .= '<tr><td align="right"><label for="field_'.$this->field->id.'_1">' . get_string('longitude', 'data') . '</label>:</td><td><input type="text" name="field_'.$this->field->id.'_1" id="field_'.$this->field->id.'_1" value="'.$long.'" size="10" />°E</td></tr>';
-		$str .= '</table>';
+        $str .= '<table><tr><td align="right">';
+        $str .= '<label for="field_'.$this->field->id.'_0">' . get_string('latitude', 'data') . '</label>:</td><td><input type="text" name="field_'.$this->field->id.'_0" id="field_'.$this->field->id.'_0" value="'.$lat.'" size="10" />°N</td></tr>';
+        $str .= '<tr><td align="right"><label for="field_'.$this->field->id.'_1">' . get_string('longitude', 'data') . '</label>:</td><td><input type="text" name="field_'.$this->field->id.'_1" id="field_'.$this->field->id.'_1" value="'.$long.'" size="10" />°E</td></tr>';
+        $str .= '</table>';
         $str .= '</div>';
         
         return $str;
@@ -84,17 +84,17 @@ class data_field_latlong extends data_field_base {
                 return '';
             }
             
-		  if($lat < 0) {
-		      $compasslat = "" . sprintf('%01.4f', 0 - $lat) . '°S';
-	       } else {
-		      $compasslat = "" . sprintf('%01.4f', $lat) . "°N";
-		  }
-		  if($long < 0) {
-		      $compasslong = "" . sprintf('%01.4f', 0 - $long) . '°W';
-	       } else {
-		      $compasslong = "" . sprintf('%01.4f', $long) . "°E";
-		  }
-		  
+          if($lat < 0) {
+              $compasslat = "" . sprintf('%01.4f', 0 - $lat) . '°S';
+           } else {
+              $compasslat = "" . sprintf('%01.4f', $lat) . "°N";
+          }
+          if($long < 0) {
+              $compasslong = "" . sprintf('%01.4f', 0 - $long) . '°W';
+           } else {
+              $compasslong = "" . sprintf('%01.4f', $long) . "°E";
+          }
+          
             $str = '<form style="display:inline;">';
             $str.= "$compasslat, $compasslong";
             
@@ -119,17 +119,17 @@ class data_field_latlong extends data_field_base {
                           . str_replace(array_keys($urlreplacements), array_values($urlreplacements), $this->linkoutservices[$servicesshown[0]])
                           ."'>$servicesshown[0]</a> ";
             } elseif (sizeof($servicesshown)>1) {
-				$str .= "\n<select name='jumpto'>";
-	
-				foreach($servicesshown as $servicename){
-					// Add a link to a service
-					$str .= "\n  <option value='"
-							   . str_replace(array_keys($urlreplacements), array_values($urlreplacements), $this->linkoutservices[$servicename])
-							   . "'>".htmlspecialchars($servicename)."</option>";
-				}
-				// NB! If you are editing this, make sure you don't break the javascript reference "previousSibling"
-				//   which allows the "Go" button to refer to the drop-down selector.
-				$str .= "\n</select><input type='button' value='" . get_string('go') . "' onclick='if(previousSibling.value){self.location=previousSibling.value}'/>";
+                $str .= "\n<select name='jumpto'>";
+    
+                foreach($servicesshown as $servicename){
+                    // Add a link to a service
+                    $str .= "\n  <option value='"
+                               . str_replace(array_keys($urlreplacements), array_values($urlreplacements), $this->linkoutservices[$servicename])
+                               . "'>".htmlspecialchars($servicename)."</option>";
+                }
+                // NB! If you are editing this, make sure you don't break the javascript reference "previousSibling"
+                //   which allows the "Go" button to refer to the drop-down selector.
+                $str .= "\n</select><input type='button' value='" . get_string('go') . "' onclick='if(previousSibling.value){self.location=previousSibling.value}'/>";
             }
             
             $str.= '</form>';

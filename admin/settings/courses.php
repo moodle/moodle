@@ -29,18 +29,18 @@ $temp->add(new admin_setting_backupcheckbox('backup_sche_coursefiles', get_strin
 $temp->add(new admin_setting_backupcheckbox('backup_sche_messages', get_string('messages', 'message'), get_string('backupmessageshelp','message'), 0));
 $temp->add(new admin_setting_backupselect('backup_sche_keep', get_string('keep'), get_string('backupkeephelp'), 1, array(0 => get_string('all'),
                                                                                                                          1 => '1',
-																													     2 => '2',
-																													     5 => '5',
-																													     10 => '10',
-																													     20 => '20',
-																													     30 => '30',
-																													     40 => '40',
-																													     50 => '50',
-																													     100 => '100',
-																													     200 => '200',
-																													     300 => '300',
-																													     400 => '400',
-																													     500 => '500')));
+                                                                                                                         2 => '2',
+                                                                                                                         5 => '5',
+                                                                                                                         10 => '10',
+                                                                                                                         20 => '20',
+                                                                                                                         30 => '30',
+                                                                                                                         40 => '40',
+                                                                                                                         50 => '50',
+                                                                                                                         100 => '100',
+                                                                                                                         200 => '200',
+                                                                                                                         300 => '300',
+                                                                                                                         400 => '400',
+                                                                                                                         500 => '500')));
 $temp->add(new admin_setting_backupcheckbox('backup_sche_active', get_string('active'), get_string('backupactivehelp'), 0));
 $temp->add(new admin_setting_special_backupdays());
 $temp->add(new admin_setting_special_backuptime());

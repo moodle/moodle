@@ -7,7 +7,7 @@ class block_admin_tree extends block_base {
     var $tempcontent;
     var $pathtosection;
     var $expandjavascript;
-	var $destination;
+    var $destination;
 
     function init() {
         global $PAGE;
@@ -16,7 +16,7 @@ class block_admin_tree extends block_base {
         $this->currentdepth = 0;
         $this->spancounter = 1;
         $this->tempcontent = '';
-		$this->section = (isset($PAGE->section) ? $PAGE->section : '');
+        $this->section = (isset($PAGE->section) ? $PAGE->section : '');
         $this->pathtosection = array();
         $this->expandjavascript = '';
     }
@@ -55,45 +55,45 @@ class block_admin_tree extends block_base {
     }
 
     function build_tree (&$content) {
-	    global $CFG;
-		if (is_a($content, 'admin_settingpage')) {
-		    if ($content->check_access()) {
-        		$this->create_item($content->visiblename,$CFG->wwwroot.'/'.$CFG->admin.'/settings.php?section=' . $content->name,$CFG->wwwroot .'/blocks/admin_tree/item.gif');
-			}
-		} else if (is_a($content, 'admin_externalpage')) {
-		    if ($content->check_access()) {
-		        $this->create_item($content->visiblename, $content->url, $CFG->wwwroot . '/blocks/admin_tree/item.gif');
-		    }
-		} else if (is_a($content, 'admin_category')) {
-		    if ($content->check_access()) {
-			
+        global $CFG;
+        if (is_a($content, 'admin_settingpage')) {
+            if ($content->check_access()) {
+                $this->create_item($content->visiblename,$CFG->wwwroot.'/'.$CFG->admin.'/settings.php?section=' . $content->name,$CFG->wwwroot .'/blocks/admin_tree/item.gif');
+            }
+        } else if (is_a($content, 'admin_externalpage')) {
+            if ($content->check_access()) {
+                $this->create_item($content->visiblename, $content->url, $CFG->wwwroot . '/blocks/admin_tree/item.gif');
+            }
+        } else if (is_a($content, 'admin_category')) {
+            if ($content->check_access()) {
+            
                 // check if the category we're currently printing is a parent category for the current page; if it is, we
-				// make a note (in the javascript) that it has to be expanded after the page has loaded
-        		if ($this->pathtosection[count($this->pathtosection) - 1] == $content->name) {
-        		    $this->expandjavascript .= 'expand("vh_span' . ($this->spancounter) . '");' . "\n";
-        			array_pop($this->pathtosection);
-        		}
+                // make a note (in the javascript) that it has to be expanded after the page has loaded
+                if ($this->pathtosection[count($this->pathtosection) - 1] == $content->name) {
+                    $this->expandjavascript .= 'expand("vh_span' . ($this->spancounter) . '");' . "\n";
+                    array_pop($this->pathtosection);
+                }
 
-			    $this->open_folder($content->visiblename);
+                $this->open_folder($content->visiblename);
                 
                 unset($entries);
                 
                 $entries = array_keys($content->children);
                 
-    		    foreach ($entries as $entry) {
-			        $this->build_tree($content->children[$entry]);
-    			}
+                foreach ($entries as $entry) {
+                    $this->build_tree($content->children[$entry]);
+                }
 
-				$this->close_folder();
-			}
-		}
+                $this->close_folder();
+            }
+        }
     }
 
     function get_content() {
 
         global $CFG, $ADMIN;
-		
-       	require_once($CFG->libdir.'/adminlib.php');
+        
+           require_once($CFG->libdir.'/adminlib.php');
         $adminroot = admin_get_root();
 
         if ($this->content !== NULL) {
@@ -102,22 +102,22 @@ class block_admin_tree extends block_base {
 
         if ($this->pathtosection = $adminroot->path($this->section)) {
             $this->pathtosection = array_reverse($this->pathtosection);
-    		array_pop($this->pathtosection);
-		}
+            array_pop($this->pathtosection);
+        }
 
         // we need to do this instead of $this->build_tree($adminroot) because the top-level folder
-		// is redundant (and ideally ignored). (the top-level folder is "administration".)
-		
-		unset($entries);
-		
-		$entries = array_keys($adminroot->children);
+        // is redundant (and ideally ignored). (the top-level folder is "administration".)
         
-        asort($entries);			    
+        unset($entries);
         
-	    foreach ($entries as $entry) {
+        $entries = array_keys($adminroot->children);
+        
+        asort($entries);                
+        
+        foreach ($entries as $entry) {
             $this->build_tree($adminroot->children[$entry]);
         }
-	
+    
         if ($this->tempcontent !== '') {
             $this->content = new stdClass;
             $this->content->text = '<script type="text/javascript">' . "\n\n";
@@ -161,7 +161,7 @@ class block_admin_tree extends block_base {
             $this->content->text .= '    expand("vh_span" + String(i));' . "\n";
             $this->content->text .= '  }' . "\n";
             $this->content->text .= '}' . "\n";
-	
+    
             $this->content->text .= 'function collapseall() {' . "\n";
             $this->content->text .= '  for (i = vh_numspans; i > 0; i--) {' . "\n";
             $this->content->text .= '    collapse("vh_span" + String(i));' . "\n";

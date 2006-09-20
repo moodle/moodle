@@ -2,19 +2,19 @@
 
 /// Bulk group creation registration script from a comma separated file
 
-	require_once('../../../config.php');
+    require_once('../../../config.php');
     require_once('../../lib.php');
-	
-	$mycourseid = required_param('id', PARAM_INT);    // Course id
     
-	if (! $course = get_record('course', 'id', $mycourseid) ) {
+    $mycourseid = required_param('id', PARAM_INT);    // Course id
+    
+    if (! $course = get_record('course', 'id', $mycourseid) ) {
         error("That's an invalid course id");
     }
-	
-	require_login($course->id);
-	$context = get_context_instance(CONTEXT_COURSE, $mycourseid);
-	
-	
+    
+    require_login($course->id);
+    $context = get_context_instance(CONTEXT_COURSE, $mycourseid);
+    
+    
     if (!has_capability('moodle/course:managegroups', $context)) {
         error("You do not have the required permissions to manage groups.");
     }
@@ -23,7 +23,7 @@
     //    error(get_string('confirmsesskeybad', 'error'));
     //}
 
-  	$strimportgroups = get_string("importgroups");
+      $strimportgroups = get_string("importgroups");
 
     $csv_encode = '/\&\#44/';
     if (isset($CFG->CSV_DELIMITER)) {        
@@ -43,7 +43,7 @@
     print_header("$course->shortname: $strimportgroups", "$course->fullname", 
                  "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> ".
                  "-> <a href=\"$CFG->wwwroot/course/import.php?id=$course->id\">".get_string('import')."</a> ".
-				 "-> $strimportgroups");
+                 "-> $strimportgroups");
 
 /// If a file has been uploaded, then process it
 
@@ -65,11 +65,11 @@
         $required = array("groupname" => 1, );
         $optionalDefaults = array("lang" => 1, );
         $optional = array("coursename" => 1, 
-						  "idnumber" =>1,
-						  "description" => 1,
-						  "password" => 1,
-						  "theme" => 1,
-			     		  "picture" => 1, 
+                          "idnumber" =>1,
+                          "description" => 1,
+                          "password" => 1,
+                          "theme" => 1,
+                           "picture" => 1, 
                           "hidepicture" => 1, );
 
         // --- get header (field names) ---
@@ -93,8 +93,8 @@
         $linenum = 2; // since header is line 1
 
         while (!feof ($fp)) {
-			
-			$newgroup = new object();//to make Martin happy
+            
+            $newgroup = new object();//to make Martin happy
             foreach ($optionalDefaults as $key => $value) {
                 $newgroup->$key = current_language(); //defaults to current language
             }
@@ -129,61 +129,61 @@
                         $newgroup->{$name} = addslashes($value);
                     }
                 }
-				///Find the courseid of the course with the given shortname
-				
-				//if idnumber is set, we use that.
-				//unset invalid courseid
-				if ($newgroup->idnumber){
-					if (!$mycourse = get_record('course', 'idnumber',$newgroup->idnumber)){
-						notify(get_string('unknowncourseidnumber', 'error', $newgroup->idnumber));
-						unset($newgroup->courseid);//unset so 0 doesnt' get written to database
-					}
-					$newgroup->courseid = $mycourse->id;		
-				}
-				//else use course short name to look up
-				//unset invalid coursename (if no id)
-							
-				else if ($newgroup->coursename){
-					if (!$mycourse = get_record('course', 'shortname',$newgroup->coursename)){
-						notify(get_string('unknowncourse', 'error', $newgroup->coursename));
-						unset($newgroup->courseid);//unset so 0 doesnt' get written to database
-					}
-					$newgroup->courseid = $mycourse->id;	
-				}
-				//else juse use current id
-				else{
-					$newgroup->courseid = $mycourseid;
-				}
-				
-				//if courseid is set
-				if (isset($newgroup->courseid)){
-															
-               		$newgroup->timecreated = time();
-                	$linenum++;
-                	$groupname = $newgroup->name;
-				    $newgrpcoursecontext = get_context_instance(CONTEXT_COURSE, $newgroup->courseid);
-				    
-					///Users cannot upload groups in courses they cannot update.
-					if (has_capability('moodle/course:update', $newgrpcoursecontext)){
-						notify("$newgroup->name ".get_string('notaddedto').$newgroup->coursename.get_string('notinyourcapacity'));
-					}
-					
-					else {
-						if (get_record("groups","name",$groupname,"courseid",$newgroup->courseid) || !($newgroup->id = insert_record("groups", $newgroup))) {
-	
-							//Record not added - probably because group is already registered
-							//In this case, output groupname from previous registration
-							if ($group = get_record("groups","name",$groupname)) {
-								notify("$newgroup->name ".get_string('groupexistforcourse', 'error', $groupname));
-							} else {
-								notify(get_string('groupnotaddederror', 'error', $groupname));
-							} 
-						}  
-						else {
-							notify(get_string('group')." $newgroup->name ".get_string('addedsuccessfully'));
-						}
-					}
-				} //close courseid validity check
+                ///Find the courseid of the course with the given shortname
+                
+                //if idnumber is set, we use that.
+                //unset invalid courseid
+                if ($newgroup->idnumber){
+                    if (!$mycourse = get_record('course', 'idnumber',$newgroup->idnumber)){
+                        notify(get_string('unknowncourseidnumber', 'error', $newgroup->idnumber));
+                        unset($newgroup->courseid);//unset so 0 doesnt' get written to database
+                    }
+                    $newgroup->courseid = $mycourse->id;        
+                }
+                //else use course short name to look up
+                //unset invalid coursename (if no id)
+                            
+                else if ($newgroup->coursename){
+                    if (!$mycourse = get_record('course', 'shortname',$newgroup->coursename)){
+                        notify(get_string('unknowncourse', 'error', $newgroup->coursename));
+                        unset($newgroup->courseid);//unset so 0 doesnt' get written to database
+                    }
+                    $newgroup->courseid = $mycourse->id;    
+                }
+                //else juse use current id
+                else{
+                    $newgroup->courseid = $mycourseid;
+                }
+                
+                //if courseid is set
+                if (isset($newgroup->courseid)){
+                                                            
+                       $newgroup->timecreated = time();
+                    $linenum++;
+                    $groupname = $newgroup->name;
+                    $newgrpcoursecontext = get_context_instance(CONTEXT_COURSE, $newgroup->courseid);
+                    
+                    ///Users cannot upload groups in courses they cannot update.
+                    if (has_capability('moodle/course:update', $newgrpcoursecontext)){
+                        notify("$newgroup->name ".get_string('notaddedto').$newgroup->coursename.get_string('notinyourcapacity'));
+                    }
+                    
+                    else {
+                        if (get_record("groups","name",$groupname,"courseid",$newgroup->courseid) || !($newgroup->id = insert_record("groups", $newgroup))) {
+    
+                            //Record not added - probably because group is already registered
+                            //In this case, output groupname from previous registration
+                            if ($group = get_record("groups","name",$groupname)) {
+                                notify("$newgroup->name ".get_string('groupexistforcourse', 'error', $groupname));
+                            } else {
+                                notify(get_string('groupnotaddederror', 'error', $groupname));
+                            } 
+                        }  
+                        else {
+                            notify(get_string('group')." $newgroup->name ".get_string('addedsuccessfully'));
+                        }
+                    }
+                } //close courseid validity check
                 unset ($newgroup);
             }//close if ($record[$header[0]])
         }//close while($fp)
@@ -193,7 +193,7 @@
     }
 
 /// Print the form
-	require('mod.php');
+    require('mod.php');
 
     print_footer($course);
 
