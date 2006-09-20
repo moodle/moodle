@@ -1971,13 +1971,8 @@ function fetch_context_capabilities($context) {
 function role_context_capabilities($roleid, $context, $cap='') {
     global $CFG; 
     
-    $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
-    if ($sitecontext->id == $context->id) {
-        $contexts = array($sitecontext->id);  
-    } else {
-        // first of all, figure out all parental contexts
-        $contexts = array_reverse(get_parent_contexts($context));
-    }
+    $contexts = get_parent_contexts($context);
+    $contexts[] = $context->id;
     $contexts = '('.implode(',', $contexts).')';
     
     if ($cap) {

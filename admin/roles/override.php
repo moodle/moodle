@@ -133,7 +133,15 @@
         choose_from_menu ($overridableroles, 'roleid', $roleid, get_string('listallroles', 'role'), $script='rolesform.submit()');
         echo '</div></form>';
 
-        $r_caps = role_context_capabilities($roleid, $context);
+        $parentcontexts = get_parent_contexts($context);
+        if (!empty($parentcontexts)) {
+            $parentcontext = array_shift($parentcontexts);
+            $parentcontext = get_context_instance_by_id($parentcontext);
+        } else {
+            $parentcontext = $context; // site level in override??
+        }
+        
+        $r_caps = role_context_capabilities($roleid, $parentcontext);
 
         $localoverrides = get_records_select('role_capabilities', "roleid = $roleid AND contextid = $context->id", 
                                              '', 'capability, permission, id');
