@@ -10,7 +10,6 @@ CREATE TABLE prefix_data (
   timeavailableto integer NOT NULL default '0',
   timeviewfrom integer NOT NULL default '0',
   timeviewto integer NOT NULL default '0',
-  participants integer NOT NULL default '0',
   requiredentries integer NOT NULL default '0',
   requiredentriestoview integer NOT NULL default '0',
   maxentries integer NOT NULL default '0',
@@ -27,7 +26,6 @@ CREATE TABLE prefix_data (
   approval integer NOT NULL default '0',
   scale integer NOT NULL default '0',
   assessed integer NOT NULL default '0',
-  assesspublic integer NOT NULL default '0',
   defaultsort integer NOT NULL default '0',
   defaultsortdir integer NOT NULL default '0',
   editany integer NOT NULL default '0'

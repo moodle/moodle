@@ -1316,8 +1316,8 @@ function data_convert_to_roles($data, $teacherroles=array(), $studentroles=array
     
     if (empty($cmid)) {
         // We were not given the course_module id. Try to find it.
-        if (!$cm = get_coursemodule_from_instance('forum', $forum->id)) {
-            notify('Could not get the course module for the forum');
+        if (!$cm = get_coursemodule_from_instance('data', $data->id)) {
+            notify('Could not get the course module for the data');
             return false;
         } else {
             $cmid = $cm->id;

@@ -155,7 +155,7 @@ function data_upgrade($oldversion) {
     if ($oldversion < 2006081700) {
         table_column('data', '', 'jstemplate', 'text', '', '', '', 'not null', 'csstemplate');
     }
-    /*
+    
     if ($oldversion < 2006092000) {
         // Upgrades for new roles and capabilities support.
         require_once($CFG->dirroot.'/mod/data/lib.php');
@@ -175,7 +175,7 @@ function data_upgrade($oldversion) {
                        'this upgrade.');
             }
             foreach ($data as $d) {
-                if (!data_convert_to_roles($d $teacherroles, $studentroles)) {
+                if (!data_convert_to_roles($d, $teacherroles, $studentroles)) {
                     notify('Data with id '.$d->id.' was not upgraded');
                 }
             }
@@ -188,10 +188,9 @@ function data_upgrade($oldversion) {
 
         modify_database('', 'ALTER TABLE prefix_data DROP COLUMN participants;');
         modify_database('', 'ALTER TABLE prefix_data DROP COLUMN assesspublic;');
-        modify_database('', 'ALTER TABLE prefix_data DROP COLUMN groupmode;');
         
     }
-    */
+    
     return true;
 }
 
