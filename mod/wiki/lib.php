@@ -593,8 +593,7 @@ function wiki_get_other_wikis(&$wiki, &$user, &$course, $currentid=0) {
             /// A user can see other student wikis if they are a member of the same
             /// group (for separate groups) or there are visible groups, or if this is
             /// a site-level wiki, and they are an administrator.
-            if (($groupmode == VISIBLEGROUPS) or
-                ((SITEID == $course->id) and isadmin())) {
+            if (($groupmode == VISIBLEGROUPS) or wiki_is_teacheredit($wiki)) {
                 $viewall = true;
             }
             else if ($groupmode == SEPARATEGROUPS) {
@@ -879,7 +878,7 @@ function wiki_can_add_entry(&$wiki, &$user, &$course, $userid=0, $groupid=0) {
     case 'teacher':
         /// If mode is 'nogroups', then all teachers can add wikis.
         if (!$groupmode) {
-            return (wiki_is_teacher($wiki, $user->id) or ((SITEID == $course->id) and isadmin()));
+            return wiki_is_teacher($wiki, $user->id);
         }
         /// If not requesting a group, must be a member of a group.
         else if ($groupid == 0) {
@@ -906,7 +905,7 @@ function wiki_can_edit_entry(&$wiki_entry, &$wiki, &$user, &$course) {
 
     /// Editing teacher's and admins can edit all wikis, non-editing teachers can edit wikis in their groups,
     /// or all wikis if group mode is 'no groups' or they don't belong to a group.
-    if (isadmin($user->id) or wiki_is_teacheredit($wiki, $user->id) or
+    if (wiki_is_teacheredit($wiki, $user->id) or
         ((!$groupmode or $mygroupid == 0) and wiki_is_teacher($wiki, $user->id))) {
         $can_edit = true;
     }
@@ -939,7 +938,7 @@ function wiki_can_edit_entry(&$wiki_entry, &$wiki, &$user, &$course) {
                 $can_edit = (wiki_is_teacher($wiki, $user->id) and ismember($wiki_entry->groupid, $user->id));
             }
             else {
-                $can_edit = (wiki_is_teacher($wiki, $user->id) or ((SITEID == $course->id) and isadmin()));
+                $can_edit = wiki_is_teacher($wiki, $user->id);
             }
             break;
         }
@@ -968,8 +967,7 @@ function wiki_user_can_access_student_wiki(&$wiki, $userid, &$course) {
     if (($userid and ($USER->id == $userid)) or ($groupmode == VISIBLEGROUPS) or
         (($groupmode == SEPARATEGROUPS) and ismember($usersgroup, $userid)) or
         (wiki_is_teacheredit($wiki, $USER->id)) or
-        (wiki_is_teacher($wiki, $USER->id) and (!$usersgroup or ($groupmode == NOGROUPS))) or
-        (isadmin())) {
+        (wiki_is_teacher($wiki, $USER->id) and (!$usersgroup or $groupmode == NOGROUPS))) {
         $can_access = true;
     }
     else {
