@@ -3,25 +3,16 @@
     // Allows the admin to configure calendar and date/time stuff
 
     require_once('../config.php');
+    require_once($CFG->libdir.'/adminlib.php');
+    $adminroot = admin_get_root();
+    admin_externalpage_setup('calendar', $adminroot);
 
-    require_login();
-
-    require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM, SITEID));
-
-    if (!$site = get_site()) {
-        error('Site isn\'t defined!');
-    }
 
 /// Print headings
 
-    $stradministration = get_string('administration');
-    $strconfiguration = get_string('configuration');
+    admin_externalpage_print_header($adminroot);
+
     $strcalendarsettings = get_string('calendarsettings', 'admin');
-
-    print_header("$site->shortname: $strcalendarsettings", "$site->fullname",
-                 "<a href=\"index.php\">$stradministration</a> -> ".
-                 "<a href=\"configure.php\">$strconfiguration</a> -> $strcalendarsettings");
-
     print_heading($strcalendarsettings);
 
 /// If data submitted, process and store
@@ -30,11 +21,6 @@
         if(isset($form->adminseesallcourses)) {
             set_config('calendar_adminseesall', intval($form->adminseesallcourses) != 0);
             unset($SESSION->cal_courses_shown);
-        }
-        if(isset($form->forcetimezone)) {
-            // To protect from SQL injections ...
-            $form->timezone = clean_param($form->timezone, PARAM_PATH); //not a path, but it looks like it anyway
-            set_config('forcetimezone', $form->forcetimezone);
         }
         if(isset($form->startwday)) {
             $startwday = intval($form->startwday);
@@ -66,14 +52,12 @@
                 set_config('calendar_maxevents', $maxevents);
             }
         }
-        redirect('index.php');
+        redirect('calendar.php', get_string('changessaved'));
     }
 
     // Include the calendar library AFTER modifying the data, so we read the latest values
     require_once($CFG->dirroot.'/calendar/lib.php');
 
-    // Populate some variables we 're going to need in calendar.html
-    $timezones = get_list_of_timezones();
 
     $weekdays = array(
         0 => get_string('sunday', 'calendar'),
@@ -91,6 +75,6 @@
     include('./calendar.html');
     print_simple_box_end();
 
-    print_footer();
+    admin_externalpage_print_footer($adminroot);
 
 ?>

@@ -9,15 +9,6 @@ $temp->add(new admin_setting_configcheckbox('langmenu', get_string('langmenu', '
 $temp->add(new admin_setting_configtext('langlist', get_string('langlist', 'admin'), get_string('configlanglist', 'admin'), '', PARAM_NOTAGS));
 $temp->add(new admin_setting_configcheckbox('langcache', get_string('langcache', 'admin'), get_string('configlangcache', 'admin'), 1));
 $temp->add(new admin_setting_configtext('locale', get_string('localetext', 'admin'), get_string('configlocale', 'admin'), '', PARAM_FILE));
-$options = get_list_of_timezones();
-$options[99] = get_string('serverlocaltime');
-$temp->add(new admin_setting_configselect('timezone', get_string('timezone','admin'), get_string('configtimezone', 'admin'), 99, $options));
-$options = get_list_of_timezones();
-$options[0] = get_string('choose') .'...';
-$temp->add(new admin_setting_configselect('country', get_string('country', 'admin'), get_string('configcountry', 'admin'), 0, $options));
-$options = get_list_of_timezones();
-$options[99] = get_string('timezonenotforced', 'admin');
-$temp->add(new admin_setting_configselect('forcetimezone', get_string('forcetimezone', 'admin'), get_string('helpforcetimezone', 'admin'), 99, $options));
 $ADMIN->add('language', $temp);
 
 

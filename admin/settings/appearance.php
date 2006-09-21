@@ -40,6 +40,8 @@ $temp->add(new admin_setting_sitesetselect('newsitems', get_string('newsitemsnum
 $temp->add(new admin_setting_configtext('coursesperpage', get_string('coursesperpage', 'admin'), get_string('configcoursesperpage', 'admin'), '20', PARAM_INT));
 $ADMIN->add('appearance', $temp);
 
+// calendar
+$ADMIN->add('appearance', new admin_externalpage('calendar', get_string('calendarsettings', 'admin'), $CFG->wwwroot.'/'.$CFG->admin.'/calendar.php'));
 
 // "filtersettings" settingpage
 $temp = new admin_settingpage('filtersettings', get_string('filtersettings', 'admin'));
