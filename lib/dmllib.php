@@ -1447,6 +1447,9 @@ function configure_dbconnection() {
         /// No need to set charset. It must be specified in the driver conf
         /// Allow quoted identifiers
             $db->Execute('SET QUOTED_IDENTIFIER ON');
+        /// Force ANSI nulls so the NULL check was done by IS NULL and NOT IS NULL
+        /// instead of equal(=) and distinct(<>) simbols
+            $db->Execute('SET ANSI_NULLS ON');
         /// Enable sybase quotes, so addslashes and stripslashes will use "'"
             ini_set('magic_quotes_sybase', '1');
         /// NOTE: Not 100% useful because GPC has been addslashed with the setting off
