@@ -556,6 +556,10 @@ function load_user_capability($capability='', $context ='', $userid='') {
         $capsearch ="";
     }
 
+/// Set up SQL fragments for timestart, timeend etc
+    $now = time();
+    $timesql = "AND ((ra.timestart = 0 || ra.timestart < $now) && (ra.timeend = 0 || ra.timeend > $now))";
+
 /// Then we use 1 giant SQL to bring out all relevant capabilities.
 /// The first part gets the capabilities of orginal role.
 /// The second part gets the capabilities of overriden roles.
@@ -575,6 +579,7 @@ function load_user_capability($capability='', $context ='', $userid='') {
                      $searchcontexts1
                      rc.contextid=$siteinstance->id
                      $capsearch
+                     $timesql
               GROUP BY
                      rc.capability, (c1.aggregatelevel * 100), c1.id
                      HAVING
@@ -597,6 +602,7 @@ function load_user_capability($capability='', $context ='', $userid='') {
                      $searchcontexts2
                      rc.contextid != $siteinstance->id
                      $capsearch
+                     $timesql
 
               GROUP BY
                      rc.capability, (c1.aggregatelevel * 100 + c2.aggregatelevel), c1.id
@@ -2608,4 +2614,21 @@ function get_user_capability_course($capability, $userid='') {
         }
     }
     return $usercourses;
+}
+
+
+/** This function finds the roles assigned directly to this context only
+ * i.e. no parents role
+ * @param object $context
+ * @return array
+ */
+function get_roles_on_exact_context($context) {
+    
+    global $CFG;
+    return get_records_sql("SELECT DISTINCT r.* 
+                            FROM {$CFG->prefix}role_assignments ra,
+                                 {$CFG->prefix}role r
+                            WHERE ra.roleid = r.id
+                                  AND ra.contextid = $context->id");
+  
 }
