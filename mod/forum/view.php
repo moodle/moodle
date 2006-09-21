@@ -78,7 +78,7 @@
         notice(get_string("activityiscurrentlyhidden"));
     }
     
-    if (!has_capability('mod/forum:viewforum', $context)) {
+    if (!has_capability('mod/forum:viewdiscussions', $context)) {
         notice(get_string('noviewdiscussionspermission', 'forum'));
     }
     

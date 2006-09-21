@@ -93,7 +93,7 @@
             $cm = get_coursemodule_from_instance("forum", $forum->id, $course->id);
             $context = get_context_instance(CONTEXT_MODULE, $cm->id);
             
-            if (!has_capability('mod/forum:viewforum', $context)) {
+            if (!has_capability('mod/forum:viewdiscussions', $context)) {
                 if (isset($forum->keyreference)) {
                     unset($learningforums[$forum->keyreference]);
                 }

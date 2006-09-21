@@ -1183,8 +1183,7 @@ function forum_get_readable_forums($userid, $courseid=0) {
                     $forum->accessallgroups = true;
                 }
                 
-                if (has_capability('mod/forum:viewforum', $forumcontext)
-                        && has_capability('mod/forum:viewdiscussion', $forumcontext)) {
+                if (has_capability('mod/forum:viewdiscussion', $forumcontext)) {
                     
                     $forum->viewhiddentimedposts
                         = has_capability('mod/forum:viewhiddentimedposts', $forumcontext);
@@ -4513,7 +4512,6 @@ function forum_convert_to_roles($forum, $forummodid, $teacherroles=array(),
 
             // Create overrides for default student and guest roles (prevent).
             foreach ($studentroles as $studentrole) {
-                assign_capability('mod/forum:viewforum', CAP_PREVENT, $studentrole->id, $context->id);
                 assign_capability('mod/forum:viewdiscussion', CAP_PREVENT, $studentrole->id, $context->id);
                 assign_capability('mod/forum:viewhiddentimedposts', CAP_PREVENT, $studentrole->id, $context->id);
                 assign_capability('mod/forum:startdiscussion', CAP_PREVENT, $studentrole->id, $context->id);
@@ -4533,7 +4531,6 @@ function forum_convert_to_roles($forum, $forummodid, $teacherroles=array(),
                 assign_capability('mod/forum:throttlingapplies', CAP_PREVENT, $studentrole->id, $context->id);
             }
             foreach ($guestroles as $guestrole) {
-                assign_capability('mod/forum:viewforum', CAP_PREVENT, $guestrole->id, $context->id);
                 assign_capability('mod/forum:viewdiscussion', CAP_PREVENT, $guestrole->id, $context->id);
                 assign_capability('mod/forum:viewhiddentimedposts', CAP_PREVENT, $guestrole->id, $context->id);
                 assign_capability('mod/forum:startdiscussion', CAP_PREVENT, $guestrole->id, $context->id);
