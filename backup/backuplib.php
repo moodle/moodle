@@ -12,8 +12,8 @@
 
         global $CFG;
         global $db;
-        
-        $context = get_context_instance(CONTEXT_COURSE, $course->id);
+
+        $context = get_context_instance(CONTEXT_COURSE, $course);
         $count_users = 0;
 
         //If we've selected none, simply return 0
@@ -51,6 +51,7 @@
                 //Iterate over users putting their roles
                 foreach ($backupable_users as $backupable_user) {
                     $backupable_user->info = "";
+                    /*
                     // writing all the applicable role assignments
                     if ($userroles = get_records_sql("SELECT DISTINCT r.* 
                                                   FROM {$CFG->prefix}role_assignments ra,
@@ -58,11 +59,12 @@
                                                   WHERE ra.userid = $backupable_user->id
                                                         AND r.id = ra.roleid
                                                         AND ra.contextid = $context->id")) {
-                                                                                                      
+                                                                    
                         foreach ($userroles as $userrole) {
                             $backupable_user->info .= $userrole->shortname.",";  
                         }
                     }
+                    */
                     /*
                     if (record_exists("user_admins","userid",$backupable_user->id)) {
                         $backupable_user->info .= "admin";
@@ -613,35 +615,36 @@
         }
         //The mode of writing the block data
         fwrite ($bf,full_tag('BLOCKFORMAT',3,false,'instances'));
+        fwrite ($bf,end_tag("DETAILS",2,true));
         
-        // for now we put the roles here, maybe they need to go somewhere else
-        fwrite ($bf, start_tag('ROLES', 3, true));
-        $roles = backup_fetch_roles($preferences,1);
+        $status = fwrite ($bf,end_tag("INFO",1,true)); 
+        
+        ///Roles stuff goes in here
+        
+        fwrite ($bf, start_tag('ROLES', 1, true));
+        $roles = backup_fetch_roles($preferences);
         
         $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
         
         foreach ($roles as $role) {
-            fwrite ($bf,full_tag('NAME',4,false,$role->name));
-            fwrite ($bf,full_tag('SHORTNAME',4,false,$role->shortname));
+            fwrite ($bf,start_tag('ROLE',2,true));
+            fwrite ($bf,full_tag('NAME',3,false,$role->name));
+            fwrite ($bf,full_tag('SHORTNAME',3,false,$role->shortname));
             // find and write all default capabilities
-            fwrite ($bf,start_tag('CAPABILITIES',4,true));
+            fwrite ($bf,start_tag('CAPABILITIES',3,true));
             // pull out all default (site context) capabilities
             if ($capabilities = role_context_capabilities($role->id, $sitecontext)) {
                 foreach ($capabilities as $capability=>$value) {
-                    fwrite ($bf,start_tag('CAPABILITY',5,true));
-                    fwrite ($bf,full_tag('NAME', 6, false, $capability));
-                    fwrite ($bf,full_tag('PERMISSION', 6, false, $value));
-                    fwrite ($bf,end_tag('CAPABILITY',5,true));  
+                    fwrite ($bf,start_tag('CAPABILITY',4,true));
+                    fwrite ($bf,full_tag('NAME', 5, false, $capability));
+                    fwrite ($bf,full_tag('PERMISSION', 5, false, $value));
+                    fwrite ($bf,end_tag('CAPABILITY',4,true));  
                 }                                  
             }
-            fwrite ($bf,end_tag('CAPABILITIES',4,true));
+            fwrite ($bf,end_tag('CAPABILITIES',3,true));
+            fwrite ($bf,end_tag('ROLE',2,true));
         }
-        fwrite ($bf,end_tag('ROLES', 3, true));
-        
-        fwrite ($bf,end_tag("DETAILS",2,true));
-
-        $status = fwrite ($bf,end_tag("INFO",1,true)); 
-
+        fwrite ($bf,end_tag('ROLES', 1, true));
         return $status;
     }
     
@@ -732,9 +735,8 @@
                 } 
             }
             fwrite ($bf, end_tag("ROLES_OVERRIDES", 3, true));
+            /// write role_assign code here
             //Print header end
-            
-
             fwrite ($bf,end_tag("HEADER",2,true));
         } else { 
            $status = false;
@@ -1104,6 +1106,9 @@
                    }
                }
                fwrite ($bf,end_tag("ROLES_OVERRIDES",6,true));
+               
+               /// write role_assign code here
+               
                fwrite ($bf,end_tag("MOD",5,true));
            }
            //check for next
@@ -1188,7 +1193,9 @@
                 fwrite ($bf,full_tag("AUTOSUBSCRIBE",4,false,$user_data->autosubscribe));
                 fwrite ($bf,full_tag("TRACKFORUMS",4,false,$user_data->trackforums));
                 fwrite ($bf,full_tag("TIMEMODIFIED",4,false,$user_data->timemodified));
-                
+
+                /// write assign/override code for context_userid
+
                 $user->isneeded = strpos($user->info,"needed");
                 //Output every user role (with its associated info) 
                 /*
@@ -2158,7 +2165,7 @@
      * @param object $course
      * @return array of role objects
      */ 
-    function backup_fetch_roles($preferences, $course) {
+    function backup_fetch_roles($preferences) {
     
         $contexts = array();
         $roles = array();

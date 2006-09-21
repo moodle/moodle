@@ -2634,11 +2634,11 @@ function get_roles_on_exact_context($context) {
   
 }
 
-
-
 // get any role that has an override on exact context
 function get_roles_with_override_on_context($context) {
+    
     global $CFG;
+    
     return get_records_sql("SELECT DISTINCT r.*
                             FROM {$CFG->prefix}role_capabilities rc,
                                  {$CFG->prefix}role r
@@ -2648,9 +2648,24 @@ function get_roles_with_override_on_context($context) {
 
 // get all capabilities for this role on this context (overrids)
 function get_capabilities_from_role_on_context($role, $context) {
+    
     global $CFG;
+    
     return get_records_sql("SELECT * 
                             FROM {$CFG->prefix}role_capabilities
                             WHERE contextid = $context->id
                                   AND roleid = $role->id");
 }
+
+/* find all user assignemnt of users for this role, on this context
+ */
+function get_users_from_role_on_context($role, $context) {
+    
+    global $CFG;
+    
+    return get_records_sql("SELECT *
+                            FROM {$CFG->prefix}role_assignments
+                            WHERE contextid = $context->id
+                                  AND roleid = $role->id");  
+}
+?>
