@@ -21,6 +21,19 @@ function config_form($frm) {
             $frm->$var = '';
         } 
     }
+
+    $roles = get_records('role', '', '', '', 'id, name, shortname');
+    $ffconfig = get_config('enrol_flatfile');
+
+    $frm->enrol_flatfilemapping = array();
+    foreach($roles as $id => $record) {
+
+        $frm->enrol_flatfilemapping[$id] = array(
+            $record->name,
+            isset($ffconfig->{"map_{$record->shortname}"}) ? $ffconfig->{"map_{$record->shortname}"} : $record->shortname
+        );
+    }
+    
     include ("$CFG->dirroot/enrol/flatfile/config.html");    
 }
 
@@ -47,6 +60,14 @@ function process_config($config) {
         $config->enrol_mailadmins = '';
     }
     set_config('enrol_mailadmins', $config->enrol_mailadmins);
+
+    foreach(get_records('role', '', '', '', 'id, shortname') as $id => $role) {
+        if (isset($config->{"enrol_flatfilemapping_{$id}"})) {
+            set_config('map_'.$role->shortname, $config->{"enrol_flatfilemapping_{$id}"}, 'enrol_flatfile');
+        } else {
+            set_config('map_'.$role->shortname, $role->shortname, 'enrol_flatfile');
+        }
+    }
 
     return true;
 
@@ -84,7 +105,9 @@ function get_access_icons($course) {
             $this->log .= "Flatfile enrol cron found file: $filename\n\n";
 
             if (($fh = fopen($filename, "r")) != false) {
-            
+
+                list($roles, $rolemap) = $this->get_roles();
+                
                 $line = 0;
                 while (!feof($fh)) {
                 
@@ -129,11 +152,10 @@ function get_access_icons($course) {
 
 
                 /// check correct formatting of role field
-                    if ($fields[1] != "student" and $fields[1] != "teacher" and $fields[1] != "teacheredit") {
+                    if (!isset($rolemap[$fields[1]]) && !isset($roles[$fields[1]])) {
                         $this->log .= "Unknown role in field2 - ignoring line\n";
                         continue;
                     }
-
 
                     if (! $user = get_record("user", "idnumber", $fields[2]) ) {
                         $this->log .= "Unknown user idnumber in field 3 - ignoring line\n";
@@ -153,6 +175,22 @@ function get_access_icons($course) {
 
 
                     unset($elog);
+
+                    // Either field[1] is a name that appears in the mapping,
+                    // or it's an actual short name. It has to be one or the
+                    // other, or we don't get to this point.
+                    $roleid = isset($rolemap[$fields[1]]) ? $roles[$rolemap[$fields[1]]] : $roles[$fields[1]];
+
+                    // Create/resurrect a context object
+                    $context = get_context_instance(CONTEXT_COURSE, $course->id);
+                    
+                    if ($fields[0] == 'add') {
+                        role_assign($roleid, $user->id, null, $context->id, $fields[4], $fields[5], 0, 'flatfile');
+                    } else {
+                        role_unassign($roleid, $user->id, null, $context->id);
+                    }
+                    
+                    /*
                     switch ($fields[1]) {
                         case "student":
                             if ($fields[0] == "add") {
@@ -192,20 +230,31 @@ function get_access_icons($course) {
 
                         default: // should never get here as checks made above for correct values of $fields[1]
 
-                    } // end of switch
+                    } // end of switch*/
 
 
 
                     if ( empty($elog) and ($fields[0] == "add") ) {
    
                         if ($fields[1] == "student") {
-                            if (! $teacher = get_teacher($course->id)) {
+
+                            if ($teachers = get_users_by_capability($context, 'moodle/course:update', 'u.*,ra.hidden', 'sortorder ASC')) {
+                                foreach ($teachers as $u) {
+                                    if (!$u->hidden || has_capability('moodle/role:viewhiddenassigns', $context)) {
+                                        $teacher = $u;
+                                        break;
+                                    }
+                                }
+                            }
+
+                            if (!isset($teacher)) {
                                 $teacher = get_admin();
                             }
                         } else {
                             $teacher = get_admin();
                         }
 
+                        
                         if (!empty($CFG->enrol_mailstudents)) {
                             $a->coursename = "$course->fullname";
                             $a->profileurl = "$CFG->wwwroot/user/view.php?id=$user->id&amp;course=$course->id";
@@ -213,11 +262,17 @@ function get_access_icons($course) {
                                           get_string('welcometocoursetext', '', $a));
                         }
 
-                        if (!empty($CFG->enrol_mailteachers)) {
-                            $a->course = "$course->fullname";
-                            $a->user = fullname($user);
-                            email_to_user($teacher, $user, get_string("enrolmentnew", '', $course->shortname), 
-                                          get_string('enrolmentnewuser', '', $a));
+                        if (!empty($CFG->enrol_mailteachers) && $teachers) {
+
+                            foreach($teachers as $teacher) {
+                            
+                                if (!$u->hidden || has_capability('moodle/role:viewhiddenassigns', $context)) {
+                                    $a->course = "$course->fullname";
+                                    $a->user = fullname($user);
+                                    email_to_user($teacher, $user, get_string("enrolmentnew", '', $course->shortname), 
+                                                  get_string('enrolmentnewuser', '', $a));
+                                }
+                            }
                         }
                     }
 
@@ -244,6 +299,30 @@ function get_access_icons($course) {
         } // end of if(file_exists)
 
     } // end of function
+
+    /**
+     * Returns a pair of arrays.  The first is the set of roleids, indexed by
+     * their shortnames.  The second is the set of shortnames that have
+     * mappings, indexed by those mappings.
+     *
+     * @return array ($roles, $rolemap)
+     */
+    function get_roles() {
+        // Get a list of all the roles in the database, indexed by their short names.
+        $roles = get_records('role', '', '', '', 'shortname, id');
+        array_walk($roles, create_function('&$value', '$value = $value->id;'));
+
+        // Get any name mappings. These will be of the form 'map_shortname' => 'flatfilename'.
+        $ffconfig = get_config('enrol_flatfile');
+        $rolemap = array();
+        foreach($ffconfig as $name => $value) {
+            if (strpos($name, 'map_') === 0 && isset($roles[$key = substr($name, 4)])) {
+                $rolemap[$value] = $key;
+            }
+        }
+
+        return array($roles, $rolemap);
+    }
 
 } // end of class
 
