@@ -346,7 +346,7 @@
                 }
                 $fullname = fullname($user, true);
                 
-                if (has_capability('moodle/user:edit', $context)) {
+                if (has_capability('moodle/user:editprofile', $context)) {
                 
                     $table->data[] = array ("<a href=\"../user/view.php?id=$user->id&amp;course=$site->id\">$fullname</a>",
                                         "$user->email",
