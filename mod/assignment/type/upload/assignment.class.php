@@ -223,7 +223,7 @@ class assignment_upload extends assignment_base {
                         }
                     }
                     
-                    $submission->comment = addslashes($submission->comment);
+                    $submission->submissioncomment = addslashes($submission->submissioncomment);
                     unset($submission->data1);  // Don't need to update this.
                     //unset($submission->data2);  // Don't need to update this.
                     if (update_record("assignment_submissions", $submission)) { 
@@ -492,7 +492,7 @@ class assignment_upload extends assignment_base {
        
         $newsubmission = $this->get_submission($feedback->userid, true);  // Get or make one
         $newsubmission->grade      = $feedback->grade;
-        $newsubmission->comment    = $feedback->comment;
+        $newsubmission->submissioncomment    = $feedback->submissioncomment;
         $newsubmission->format     = $feedback->format;
         $newsubmission->teacher    = $USER->id;
         $newsubmission->mailed     = 0;       // Make sure mail goes out (again, even)
@@ -558,8 +558,8 @@ class assignment_upload extends assignment_base {
                 $grading    = false;
                 $commenting = false;
                 $col        = false;
-                if (isset($_POST['comment'])) {
-                    $col = 'comment';
+                if (isset($_POST['submissioncomment'])) {
+                    $col = 'submissioncomment';
                     $commenting = true;
                 }
                 if (isset($_POST['menu'])) {
@@ -567,7 +567,7 @@ class assignment_upload extends assignment_base {
                     $grading = true;
                 }
                 if (!$col) {
-                    //both comment and grade columns collapsed..
+                    //both submissioncomment and grade columns collapsed..
                     $this->display_submissions();
                     break;
                 }
@@ -605,11 +605,11 @@ class assignment_upload extends assignment_base {
                          $submission->data1 = get_string("submissionstatusreturned", "assignment");
                     }
                     if ($commenting) {
-                        $commentvalue = trim($_POST['comment'][$id]);
-                        $updatedb = $updatedb || ($submission->comment != stripslashes($commentvalue));
-                        $submission->comment = $commentvalue;
+                        $commentvalue = trim($_POST['submissioncomment'][$id]);
+                        $updatedb = $updatedb || ($submission->submissioncomment != stripslashes($commentvalue));
+                        $submission->submissioncomment = $commentvalue;
                     } else {
-                        unset($submission->comment);  // Don't need to update this.
+                        unset($submission->submissioncomment);  // Don't need to update this.
                     }
 
                     $submission->teacher    = $USER->id;
@@ -617,7 +617,7 @@ class assignment_upload extends assignment_base {
                     $submission->timemarked = time();
 
                     //if it is not an update, we don't change the last modified time etc.
-                    //this will also not write into database if no comment and grade is entered.
+                    //this will also not write into database if no submissioncomment and grade is entered.
 
                     if ($updatedb) {
                         if ($newsubmission) {
@@ -678,13 +678,13 @@ class assignment_upload extends assignment_base {
 
         /// Run some Javascript to try and update the parent page
         echo '<script type="text/javascript">'."\n<!--\n";
-        if (empty($SESSION->flextable['mod-assignment-submissions']->collapse['comment'])) {
+        if (empty($SESSION->flextable['mod-assignment-submissions']->collapse['submissioncomment'])) {
             if ($quickgrade){
-                echo 'opener.document.getElementById("comment['.$submission->userid.']").value="'
-                .trim($submission->comment).'";'."\n";
+                echo 'opener.document.getElementById("submissioncomment['.$submission->userid.']").value="'
+                .trim($submission->submissioncomment).'";'."\n";
              } else {
                 echo 'opener.document.getElementById("com'.$submission->userid.
-                '").innerHTML="'.shorten_text(trim(strip_tags($submission->comment)), 15)."\";\n";
+                '").innerHTML="'.shorten_text(trim(strip_tags($submission->submissioncomment)), 15)."\";\n";
             }
         }
 
@@ -766,7 +766,7 @@ class assignment_upload extends assignment_base {
         }
 
         $select = 'SELECT u.id, u.id, u.firstname, u.lastname, u.picture,'.
-                  's.id AS submissionid, s.grade, s.comment, s.timemodified, s.timemarked, ((s.timemarked > 0) AND (s.timemarked >= s.timemodified)) AS status ';
+                  's.id AS submissionid, s.grade, s.submissioncomment, s.timemodified, s.timemarked, ((s.timemarked > 0) AND (s.timemarked >= s.timemodified)) AS status ';
         $sql = 'FROM '.$CFG->prefix.'user u '.
                'LEFT JOIN '.$CFG->prefix.'assignment_submissions s ON u.id = s.userid AND s.assignment = '.$this->assignment->id.' '.
                'WHERE u.id IN ('.implode(',', array_keys($users)).') AND s.data1 <> "Draft"  AND s.data1 <> ""';
@@ -851,7 +851,7 @@ class assignment_upload extends assignment_base {
         $this->preprocess_submission($submission);
 
         echo '<br />';
-        print_textarea($this->usehtmleditor, 14, 58, 0, 0, 'comment', $submission->comment, $this->course->id);
+        print_textarea($this->usehtmleditor, 14, 58, 0, 0, 'submissioncomment', $submission->submissioncomment, $this->course->id);
 
         if ($this->usehtmleditor) {
             echo '<input type="hidden" name="format" value="'.FORMAT_HTML.'" />';
@@ -1109,7 +1109,7 @@ class assignment_upload extends assignment_base {
         print_header_simple(format_string($this->assignment->name,true), "", '<a href="index.php?id='.$course->id.'">'.$this->strassignments.'</a> -> <a href="view.php?a='.$this->assignment->id.'">'.format_string($this->assignment->name,true).'</a> -> '. $this->strsubmissions, '', '', true, update_module_button($cm->id, $course->id, $this->strassignment), navmenu($course, $cm));
 
         //change column name to upload_status to allow ordering by upload_statuses
-        $tablecolumns = array('picture', 'fullname', 'grade', 'comment', 'timemodified', 'timemarked', 'upload_status');
+        $tablecolumns = array('picture', 'fullname', 'grade', 'submissioncomment', 'timemodified', 'timemarked', 'upload_status');
         $tableheaders = array('', get_string('fullname'), get_string('grade'), get_string('comment', 'assignment'), get_string('lastmodified').' ('.$course->student.')', get_string('lastmodified').' ('.$course->teacher.')', get_string('status'));
 
         require_once($CFG->libdir.'/tablelib.php');
@@ -1129,7 +1129,7 @@ class assignment_upload extends assignment_base {
         $table->column_class('picture', 'picture');
         $table->column_class('fullname', 'fullname');
         $table->column_class('grade', 'grade');
-        $table->column_class('comment', 'comment');
+        $table->column_class('submissioncomment', 'comment');
         $table->column_class('timemodified', 'timemodified');
         $table->column_class('timemarked', 'timemarked');
         $table->column_class('status', 'status');
@@ -1183,7 +1183,7 @@ class assignment_upload extends assignment_base {
         }
 
         //select has been modified. because we also need to get student id & assignment status == upload_status = {Draft, Submitted, Marked, Returned}
-        $select = 'SELECT u.id, u.id, u.firstname, u.lastname, u.picture, u.idnumber, s.id AS submissionid, s.grade, s.comment, s.timemodified, s.timemarked, ((s.timemarked > 0) AND (s.timemarked >= s.timemodified)) AS status, s.data1 as upload_status ';
+        $select = 'SELECT u.id, u.id, u.firstname, u.lastname, u.picture, u.idnumber, s.id AS submissionid, s.grade, s.submissioncomment, s.timemodified, s.timemarked, ((s.timemarked > 0) AND (s.timemarked >= s.timemodified)) AS status, s.data1 as upload_status ';
 
         // $select = 'SELECT u.id, u.id, u.firstname, u.lastname, u.picture, s.id AS submissionid, s.grade, s.comment, s.timemodified, s.timemarked, ((s.timemarked > 0) AND (s.timemarked >= s.timemodified)) AS status ';
         $sql = 'FROM '.$CFG->prefix.'user u '.
@@ -1254,9 +1254,9 @@ class assignment_upload extends assignment_base {
                     }
                     ///Print Comment
                     if ($quickgrade && $auser->upload_status != get_string("submissionstatusdraft", "assignment") &&  $auser->upload_status != get_string("submissionstatusblank", "assignment")) {
-                        $comment = '<div id="com'.$auser->id.'"><textarea tabindex="'.$tabindex++.'" name="comment['.$auser->id.']" id="comment['.$auser->id.']">'.($auser->comment).'</textarea></div>';
+                        $comment = '<div id="com'.$auser->id.'"><textarea tabindex="'.$tabindex++.'" name="submissioncomment['.$auser->id.']" id="submissioncomment['.$auser->id.']">'.($auser->submissioncomment).'</textarea></div>';
                     } else {
-                        $comment = '<div id="com'.$auser->id.'">'.shorten_text(strip_tags($auser->comment),15).'</div>';
+                        $comment = '<div id="com'.$auser->id.'">'.shorten_text(strip_tags($auser->submissioncomment),15).'</div>';
                     }
                 } else {
                     $studentmodified = '<div id="ts'.$auser->id.'">&nbsp;</div>';
@@ -1270,7 +1270,7 @@ class assignment_upload extends assignment_base {
                         $grade = '<div id="g'.$auser->id.'">-</div>';
                     }
                     if ($quickgrade && $auser->upload_status != get_string("submissionstatusdraft", "assignment") &&  $auser->upload_status != get_string("submissionstatusblank", "assignment") ){
-                        $comment = '<div id="com'.$auser->id.'"><textarea tabindex="'.$tabindex++.'" name="comment['.$auser->id.']" id="comment['.$auser->id.']">'.($auser->comment).'</textarea></div>';
+                        $comment = '<div id="com'.$auser->id.'"><textarea tabindex="'.$tabindex++.'" name="submissioncomment['.$auser->id.']" id="submissioncomment['.$auser->id.']">'.($auser->submissioncomment).'</textarea></div>';
                     } else {
                         $comment = '<div id="com'.$auser->id.'">&nbsp;</div>';
                     }

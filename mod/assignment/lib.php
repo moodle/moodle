@@ -209,7 +209,7 @@ class assignment_base {
      * Display the feedback to the student
      *
      * This default method prints the teacher picture and name, date when marked,
-     * grade and teacher comment.
+     * grade and teacher submissioncomment.
      *
      * @param $submission object The submission object or NULL in which case it will be loaded
      */
@@ -257,7 +257,7 @@ class assignment_base {
         }
 
         echo '<div class="comment">';
-        echo format_text($submission->comment, $submission->format);
+        echo format_text($submission->submissioncomment, $submission->format);
         echo '</div>';
         echo '</tr>';
 
@@ -582,8 +582,8 @@ class assignment_base {
                 $grading    = false;
                 $commenting = false;
                 $col        = false;
-                if (isset($_POST['comment'])) {
-                    $col = 'comment';
+                if (isset($_POST['submissioncomment'])) {
+                    $col = 'submissioncomment';
                     $commenting = true;
                 }
                 if (isset($_POST['menu'])) {
@@ -591,7 +591,7 @@ class assignment_base {
                     $grading = true;
                 }
                 if (!$col) {
-                    //both comment and grade columns collapsed..
+                    //both submissioncomment and grade columns collapsed..
                     $this->display_submissions();            
                     break;
                 }
@@ -620,11 +620,11 @@ class assignment_base {
                         }
                     }
                     if ($commenting) {
-                        $commentvalue = trim($_POST['comment'][$id]);
-                        $updatedb = $updatedb || ($submission->comment != stripslashes($commentvalue));
-                        $submission->comment = $commentvalue;
+                        $commentvalue = trim($_POST['submissioncomment'][$id]);
+                        $updatedb = $updatedb || ($submission->submissioncomment != stripslashes($commentvalue));
+                        $submission->submissioncomment = $commentvalue;
                     } else {
-                        unset($submission->comment);  // Don't need to update this.
+                        unset($submission->submissioncomment);  // Don't need to update this.
                     }
 
                     $submission->teacher    = $USER->id;
@@ -632,7 +632,7 @@ class assignment_base {
                     $submission->timemarked = time();
 
                     //if it is not an update, we don't change the last modified time etc.
-                    //this will also not write into database if no comment and grade is entered.
+                    //this will also not write into database if no submissioncomment and grade is entered.
 
                     if ($updatedb){
                         if ($newsubmission) {
@@ -698,13 +698,13 @@ class assignment_base {
         
         /// Run some Javascript to try and update the parent page
         $output .= '<script type="text/javascript">'."\n<!--\n";
-        if (empty($SESSION->flextable['mod-assignment-submissions']->collapse['comment'])) {
+        if (empty($SESSION->flextable['mod-assignment-submissions']->collapse['submissioncomment'])) {
             if ($quickgrade){
-                $output.= 'opener.document.getElementById("comment['.$submission->userid.']").value="'
-                .trim($submission->comment).'";'."\n";
+                $output.= 'opener.document.getElementById("submissioncomment['.$submission->userid.']").value="'
+                .trim($submission->submissioncomment).'";'."\n";
              } else {
                 $output.= 'opener.document.getElementById("com'.$submission->userid.
-                '").innerHTML="'.shorten_text(trim(strip_tags($submission->comment)), 15)."\";\n";
+                '").innerHTML="'.shorten_text(trim(strip_tags($submission->submissioncomment)), 15)."\";\n";
             }
         }
 
@@ -777,7 +777,7 @@ class assignment_base {
     /**
      *  Display a single submission, ready for grading on a popup window
      *
-     * This default method prints the teacher info and comment box at the top and
+     * This default method prints the teacher info and submissioncomment box at the top and
      * the student info and submission at the bottom.
      * This method also fetches the necessary data in order to be able to
      * provide a "Next submission" button.
@@ -825,7 +825,7 @@ class assignment_base {
         }
 
         $select = 'SELECT u.id, u.id, u.firstname, u.lastname, u.picture,'.
-                  's.id AS submissionid, s.grade, s.comment, s.timemodified, s.timemarked, ((s.timemarked > 0) AND (s.timemarked >= s.timemodified)) AS status ';
+                  's.id AS submissionid, s.grade, s.submissioncomment, s.timemodified, s.timemarked, ((s.timemarked > 0) AND (s.timemarked >= s.timemodified)) AS status ';
         $sql = 'FROM '.$CFG->prefix.'user u '.
                'LEFT JOIN '.$CFG->prefix.'assignment_submissions s ON u.id = s.userid AND s.assignment = '.$this->assignment->id.' '.
                'WHERE u.id IN ('.implode(',', array_keys($users)).') ';
@@ -901,7 +901,7 @@ class assignment_base {
         $this->preprocess_submission($submission);
 
         echo '<br />';
-        print_textarea($this->usehtmleditor, 14, 58, 0, 0, 'comment', $submission->comment, $this->course->id);
+        print_textarea($this->usehtmleditor, 14, 58, 0, 0, 'submissioncomment', $submission->submissioncomment, $this->course->id);
 
         if ($this->usehtmleditor) { 
             echo '<input type="hidden" name="format" value="'.FORMAT_HTML.'" />';
@@ -1018,7 +1018,7 @@ class assignment_base {
             $users = get_users_by_capability($context, 'mod/assignment:submit'); // everyone with this capability set to non-prohibit
         }
 
-        $tablecolumns = array('picture', 'fullname', 'grade', 'comment', 'timemodified', 'timemarked', 'status');
+        $tablecolumns = array('picture', 'fullname', 'grade', 'submissioncomment', 'timemodified', 'timemarked', 'status');
         $tableheaders = array('', get_string('fullname'), get_string('grade'), get_string('comment', 'assignment'), get_string('lastmodified').' ('.$course->student.')', get_string('lastmodified').' ('.$course->teacher.')', get_string('status'));
 
         require_once($CFG->libdir.'/tablelib.php');
@@ -1038,7 +1038,7 @@ class assignment_base {
         $table->column_class('picture', 'picture');
         $table->column_class('fullname', 'fullname');
         $table->column_class('grade', 'grade');
-        $table->column_class('comment', 'comment');
+        $table->column_class('submissioncomment', 'comment');
         $table->column_class('timemodified', 'timemodified');
         $table->column_class('timemarked', 'timemarked');
         $table->column_class('status', 'status');
@@ -1079,7 +1079,7 @@ class assignment_base {
             $sort = ' ORDER BY '.$sort;
         }
 
-        $select = 'SELECT u.id, u.id, u.firstname, u.lastname, u.picture, s.id AS submissionid, s.grade, s.comment, s.timemodified, s.timemarked, ((s.timemarked > 0) AND (s.timemarked >= s.timemodified)) AS status ';
+        $select = 'SELECT u.id, u.id, u.firstname, u.lastname, u.picture, s.id AS submissionid, s.grade, s.submissioncomment, s.timemodified, s.timemarked, ((s.timemarked > 0) AND (s.timemarked >= s.timemodified)) AS status ';
         $sql = 'FROM '.$CFG->prefix.'user u '.
                'LEFT JOIN '.$CFG->prefix.'assignment_submissions s ON u.id = s.userid AND s.assignment = '.$this->assignment->id.' '.
                'WHERE '.$where.'u.id IN ('.implode(',', array_keys($users)).') ';
@@ -1140,9 +1140,9 @@ class assignment_base {
                     }
                 ///Print Comment
                     if ($quickgrade){
-                        $comment = '<div id="com'.$auser->id.'"><textarea tabindex="'.$tabindex++.'" name="comment['.$auser->id.']" id="comment['.$auser->id.']">'.($auser->comment).'</textarea></div>';
+                        $comment = '<div id="com'.$auser->id.'"><textarea tabindex="'.$tabindex++.'" name="submissioncomment['.$auser->id.']" id="submissioncomment['.$auser->id.']">'.($auser->submissioncomment).'</textarea></div>';
                     } else {
-                        $comment = '<div id="com'.$auser->id.'">'.shorten_text(strip_tags($auser->comment),15).'</div>';
+                        $comment = '<div id="com'.$auser->id.'">'.shorten_text(strip_tags($auser->submissioncomment),15).'</div>';
                     }
                 } else {
                     $studentmodified = '<div id="ts'.$auser->id.'">&nbsp;</div>';
@@ -1155,7 +1155,7 @@ class assignment_base {
                         $grade = '<div id="g'.$auser->id.'">-</div>';
                     }
                     if ($quickgrade){
-                        $comment = '<div id="com'.$auser->id.'"><textarea tabindex="'.$tabindex++.'" name="comment['.$auser->id.']" id="comment['.$auser->id.']">'.($auser->comment).'</textarea></div>';
+                        $comment = '<div id="com'.$auser->id.'"><textarea tabindex="'.$tabindex++.'" name="submissioncomment['.$auser->id.']" id="submissioncomment['.$auser->id.']">'.($auser->submissioncomment).'</textarea></div>';
                     } else {
                         $comment = '<div id="com'.$auser->id.'">&nbsp;</div>';
                     }
@@ -1257,7 +1257,7 @@ class assignment_base {
         $submission = $this->get_submission($feedback->userid, true);  // Get or make one
 
         $submission->grade      = $feedback->grade;
-        $submission->comment    = $feedback->comment;
+        $submission->submissioncomment    = $feedback->submissioncomment;
         $submission->format     = $feedback->format;
         $submission->teacher    = $USER->id;
         $submission->mailed     = 0;       // Make sure mail goes out (again, even)
@@ -1325,7 +1325,7 @@ class assignment_base {
         $submission->data1        = '';
         $submission->data2        = '';
         $submission->grade        = -1;
-        $submission->comment      = '';
+        $submission->submissioncomment      = '';
         $submission->format       = 0;
         $submission->teacher      = 0;
         $submission->timemarked   = 0;

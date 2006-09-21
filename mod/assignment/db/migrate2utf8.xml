@@ -30,7 +30,7 @@
                  AND ass.id = RECORDID
           </SQL_DETECT_COURSE>
         </FIELD>
-        <FIELD name="comment" method="PLAIN_SQL_UPDATE" type="text" length="0">
+        <FIELD name="submissioncomment" method="PLAIN_SQL_UPDATE" type="text" length="0">
           <SQL_DETECT_USER>
            SELECT ass.teacher as userid
            FROM {$CFG->prefix}assignment_submissions ass

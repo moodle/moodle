@@ -112,7 +112,7 @@
                 fwrite ($bf,full_tag("DATA1",6,false,$ass_sub->data1));       
                 fwrite ($bf,full_tag("DATA2",6,false,$ass_sub->data2));       
                 fwrite ($bf,full_tag("GRADE",6,false,$ass_sub->grade));       
-                fwrite ($bf,full_tag("COMMENT",6,false,$ass_sub->comment));       
+                fwrite ($bf,full_tag("SUBMISSIONCOMMENT",6,false,$ass_sub->submissioncomment));       
                 fwrite ($bf,full_tag("FORMAT",6,false,$ass_sub->format));       
                 fwrite ($bf,full_tag("TEACHER",6,false,$ass_sub->teacher));       
                 fwrite ($bf,full_tag("TIMEMARKED",6,false,$ass_sub->timemarked));       

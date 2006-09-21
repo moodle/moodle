@@ -41,7 +41,7 @@ CREATE TABLE `prefix_assignment_submissions` (
   `data1` text NOT NULL default '',
   `data2` text NOT NULL default '',
   `grade` int(11) NOT NULL default '0',
-  `comment` text NOT NULL default '',
+  `submissioncomment` text NOT NULL default '',
   `format` tinyint(4) unsigned NOT NULL default '0',
   `teacher` int(10) unsigned NOT NULL default '0',
   `timemarked` int(10) unsigned NOT NULL default '0',

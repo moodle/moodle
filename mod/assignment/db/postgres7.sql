@@ -42,7 +42,7 @@ CREATE TABLE prefix_assignment_submissions (
   data1 text NOT NULL default '',
   data2 text NOT NULL default '',
   grade integer NOT NULL default '0',
-  comment text NOT NULL default '',
+  submissioncomment text NOT NULL default '',
   format integer NOT NULL default '0',
   teacher integer NOT NULL default '0',
   timemarked integer NOT NULL default '0',

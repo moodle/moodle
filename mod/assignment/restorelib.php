@@ -149,7 +149,11 @@
             $submission->data1 = backup_todb($sub_info['#']['DATA1']['0']['#']);
             $submission->data2 = backup_todb($sub_info['#']['DATA2']['0']['#']);
             $submission->grade = backup_todb($sub_info['#']['GRADE']['0']['#']);
-            $submission->comment = backup_todb($sub_info['#']['COMMENT']['0']['#']);
+            if (isset(backup_todb($sub_info['#']['COMMENT']['0']['#']))) {
+                $submission->submissioncomment = backup_todb($sub_info['#']['COMMENT']['0']['#']);
+            } else {
+                $submission->submissioncomment = backup_todb($sub_info['#']['SUBMISSIONCOMMENT']['0']['#']);
+            }
             $submission->format = backup_todb($sub_info['#']['FORMAT']['0']['#']);
             $submission->teacher = backup_todb($sub_info['#']['TEACHER']['0']['#']);
             $submission->timemarked = backup_todb($sub_info['#']['TIMEMARKED']['0']['#']);

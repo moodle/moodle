@@ -122,7 +122,7 @@ class assignment_uploadsingle extends assignment_base {
                 if ($submission) {
                     $submission->timemodified = time();
                     $submission->numfiles     = 1;
-                    $submission->comment = addslashes($submission->comment);
+                    $submission->submissioncomment = addslashes($submission->submissioncomment);
                     unset($submission->data1);  // Don't need to update this.
                     unset($submission->data2);  // Don't need to update this.
                     if (update_record("assignment_submissions", $submission)) {

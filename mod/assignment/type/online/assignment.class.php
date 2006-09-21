@@ -239,14 +239,14 @@ class assignment_online extends assignment_base {
     }
 
     function preprocess_submission(&$submission) {
-        if ($this->assignment->var1 && empty($submission->comment)) {  // comment inline
+        if ($this->assignment->var1 && empty($submission->submissioncomment)) {  // comment inline
             if ($this->usehtmleditor) {
                 // Convert to html, clean & copy student data to teacher
-                $submission->comment = format_text($submission->data1, $submission->data2);
+                $submission->submissioncomment = format_text($submission->data1, $submission->data2);
                 $submission->format  = FORMAT_HTML;
             } else {
                 // Copy student data to teacher
-                $submission->comment = $submission->data1;
+                $submission->submissioncomment = $submission->data1;
                 $submission->format  = $submission->data2;
             }
         }

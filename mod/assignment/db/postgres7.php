@@ -167,6 +167,10 @@ function assignment_upgrade($oldversion) {
         modify_database('','ALTER TABLE prefix_assignment_submissions ALTER format SET NOT NULL');
     }
 
+    if ($oldversion < 2006092100) {
+        table_column('assignment_submissions', 'comment', 'submissioncomment', 'text', '', '', '');
+    } 
+
 /// These lines ALWAYS need to be here at the end of this file.  Don't mess with them. :-)
     include_once("$CFG->dirroot/mod/assignment/lib.php");
     assignment_upgrade_submodules();
