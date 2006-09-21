@@ -1029,7 +1029,7 @@
                fwrite ($bf,start_tag("ROLE_CAPABILITIES",6,true));
                // foreach role that has an override in this context
                    foreach ($roles as $role) {
-                       fwrite ($bf, start_tag("ROLE", 7, true, array('name'=>$role->name);
+                       fwrite ($bf, start_tag("ROLE", 7, true, array('name'=>$role->name)));
                        $capabilities = get_records_sql("SELECT * 
                                                        FROM {$CFG->prefix}role_capabilities
                                                        WHERE contextid = $context->id
@@ -1038,7 +1038,7 @@
                            fwrite ($bf, full_tag("NAME", 8, $capability->capability));
                            fwrite ($bf, full_tag("VALUE", 8, $capability->value));
                        }
-                       fwrite ($bf, end_tag("ROLE", 7, true);
+                       fwrite ($bf, end_tag("ROLE", 7, true));
                    }
                fwrite ($bf,end_tag("ROLE_CAPABILITIES",6,true));
                fwrite ($bf,end_tag("MOD",5,true));
@@ -1147,17 +1147,17 @@
                     fwrite ($bf,start_tag("ROLES",4,true));
                     //PRINT ROLE INFO
                     //Admins
-                    $roles = explode(",", $user->info) {
-                        foreach ($roles as $role) {
-                            if ($role!="" && $role!="needed") {
-                                fwrite ($bf,start_tag("ROLE",5,true));
-                                //Print Role info
-                                fwrite ($bf,full_tag("TYPE",6,false,$role));
-                                //Print ROLE end
-                                fwrite ($bf,end_tag("ROLE",5,true)); 
-                            }  
-                        }
+                    $roles = explode(",", $user->info);
+                    foreach ($roles as $role) {
+                        if ($role!="" && $role!="needed") {
+                            fwrite ($bf,start_tag("ROLE",5,true));
+                            //Print Role info
+                            fwrite ($bf,full_tag("TYPE",6,false,$role));
+                            //Print ROLE end
+                            fwrite ($bf,end_tag("ROLE",5,true)); 
+                        }  
                     }
+
                     /*
                     if ($user->isadmin!==false) {
                         //Print ROLE start
