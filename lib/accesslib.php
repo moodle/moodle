@@ -561,7 +561,7 @@ function load_user_capability($capability='', $context ='', $userid='') {
 
 /// Set up SQL fragments for timestart, timeend etc
     $now = time();
-    $timesql = "AND ((ra.timestart = 0 || ra.timestart < $now) && (ra.timeend = 0 || ra.timeend > $now))";
+    $timesql = "AND ((ra.timestart = 0 OR ra.timestart < $now) && (ra.timeend = 0 OR ra.timeend > $now))";
 
 /// Then we use 1 giant SQL to bring out all relevant capabilities.
 /// The first part gets the capabilities of orginal role.
