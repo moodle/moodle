@@ -69,7 +69,6 @@ $string['existingsubscribers'] = 'Existing subscribers';
 $string['forcesubscribe'] = 'Force everyone to be subscribed';
 $string['forcesubscribeq'] = 'Force everyone to be subscribed?';
 $string['forum'] = 'Forum';
-$string['forum:viewforum'] = 'View forum';
 $string['forum:viewdiscussion'] = 'View discussions';
 $string['forum:viewhiddentimedposts'] = 'View hidden timed posts';
 $string['forum:startdiscussion'] = 'Start new discussions';
