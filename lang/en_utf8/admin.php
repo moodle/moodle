@@ -6,6 +6,7 @@
 $string['accounts'] = 'Accounts';
 $string['appearance'] = 'Appearance';
 $string['server'] = 'Server';
+$string['cleanup'] = 'Clean-up';
 $string['users'] = 'Users';
 $string['security'] = 'Security';
 $string['userlist'] = 'Browse list of users';
