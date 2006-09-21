@@ -1025,7 +1025,7 @@ class admin_externalpage extends part_of_admin_tree {
     /**
      * @var string The role capability/permission a user must have to access this external page.
      */
-    var $role;
+    var $req_capability;
 
     /**
      * Constructor for adding an external page into the admin tree.
@@ -1033,13 +1033,13 @@ class admin_externalpage extends part_of_admin_tree {
      * @param string $name The internal name for this external page. Must be unique amongst ALL part_of_admin_tree objects.
      * @param string $visiblename The displayed name for this external page. Usually obtained through get_string().
      * @param string $url The external URL that we should link to when someone requests this external page.
-     * @param string $role The role capability/permission a user must have to access this external page. Defaults to 'moodle/legacy:admin'.
+     * @param string $req_capability The role capability/permission a user must have to access this external page. Defaults to 'moodle/site:config'.
      */
-    function admin_externalpage($name, $visiblename, $url, $role = 'moodle/legacy:admin') {
+    function admin_externalpage($name, $visiblename, $url, $req_capability = 'moodle/site:config') {
         $this->name = $name;
         $this->visiblename = $visiblename;
         $this->url = $url;
-        $this->role = $role;
+        $this->req_capability = $req_capability;
     }
 
     /**
@@ -1074,7 +1074,7 @@ class admin_externalpage extends part_of_admin_tree {
     }
 
     /**
-     * Determines if the current user has access to this external page based on $this->role.
+     * Determines if the current user has access to this external page based on $this->req_capability.
      *
      * @uses CONTEXT_SYSTEM
      * @uses SITEID
@@ -1085,7 +1085,7 @@ class admin_externalpage extends part_of_admin_tree {
             return true; // no access check before site is fully set up
         }
         $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
-        return has_capability($this->role, $context);
+        return has_capability($this->req_capability, $context);
     }
 
 }
@@ -1115,7 +1115,7 @@ class admin_settingpage extends part_of_admin_tree {
     /**
      * @var string The role capability/permission a user must have to access this external page.
      */
-    var $role;
+    var $req_capability;
 
     // see admin_category
     function path($name, $path = array()) {
@@ -1138,12 +1138,12 @@ class admin_settingpage extends part_of_admin_tree {
     }
 
     // see admin_externalpage
-    function admin_settingpage($name, $visiblename, $role = 'moodle/legacy:admin') {
+    function admin_settingpage($name, $visiblename, $req_capability = 'moodle/site:config') {
         global $CFG;
         $this->settings = new stdClass();
         $this->name = $name;
         $this->visiblename = $visiblename;
-        $this->role = $role;
+        $this->req_capability = $req_capability;
     }
 
     // not the same as add for admin_category. adds an admin_setting to this admin_settingpage. settings appear (on the settingpage) in the order in which they're added
@@ -1164,7 +1164,7 @@ class admin_settingpage extends part_of_admin_tree {
             return true; // no access check before site is fully set up
         }
         $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
-        return has_capability($this->role, $context);
+        return has_capability($this->req_capability, $context);
     }
 
     // outputs this page as html in a table (suitable for inclusion in an admin pagetype)
