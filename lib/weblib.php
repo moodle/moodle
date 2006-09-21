@@ -2609,6 +2609,14 @@ function user_login_string($course=NULL, $user=NULL) {
         if (isset($user->username) && $user->username == 'guest') {
             $loggedinas = $realuserinfo.get_string('loggedinasguest').
                       " (<a target=\"{$CFG->framename}\" href=\"$wwwroot/login/index.php\">".get_string('login').'</a>)';
+        } else if (!empty($user->switchrole)) {
+            $rolename = '';
+            if ($role = get_record('role', 'id', $user->switchrole)) {
+                $rolename = ': '.format_string($role->name);
+            }
+            $loggedinas = get_string('loggedinas', 'moodle', $username).$rolename.
+                      " (<a target=\"{$CFG->framename}\"
+                      href=\"$CFG->wwwroot/course/view.php?id=$course->id&amp;switchrole=0&amp;sesskey=".sesskey()."\">".get_string('switchrolereturn').'</a>)';
         } else {
             $loggedinas = $realuserinfo.get_string('loggedinas', 'moodle', $username).' '.
                       " (<a target=\"{$CFG->framename}\" href=\"$CFG->wwwroot/login/logout.php\">".get_string('logout').'</a>)';
