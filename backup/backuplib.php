@@ -12,7 +12,8 @@
 
         global $CFG;
         global $db;
-
+        
+        $context = get_context_instance(CONTEXT_COURSE, $course->id);
         $count_users = 0;
 
         //If we've selected none, simply return 0
@@ -54,10 +55,12 @@
                     if ($userroles = get_records_sql("SELECT DISTINCT r.* 
                                                   FROM {$CFG->prefix}role_assignments ra,
                                                        {$CFG->prefix}role r
-                                                  WHERE ra.userid = $backupable_user->id;
-                                                        AND r.id = ra.roleid")) {
+                                                  WHERE ra.userid = $backupable_user->id
+                                                        AND r.id = ra.roleid
+                                                        AND ra.contextid = $context->id")) {
+                                                                                                      
                         foreach ($userroles as $userrole) {
-                            $backupable_user->info .= $role->shortname.",";  
+                            $backupable_user->info .= $userrole->shortname.",";  
                         }
                     }
                     /*
@@ -188,7 +191,12 @@
         global $CFG;
 
         $result = false;
-        
+              
+        // get all users with moodle/course:view capability, this will include people
+        // assigned at cat level, or site level
+        // but it should be ok if they have no direct assignment at course, mod, block level
+        return get_users_by_capability(get_context_instance(CONTEXT_COURSE, $courseid), 'moodle/course:view');
+        /*
         //Get teachers
         $teachers = get_records_sql("SELECT DISTINCT userid,userid
                      FROM {$CFG->prefix}user_teachers
@@ -210,7 +218,8 @@
             }
         }
 
-        return $result;
+        return $result; 
+        */
     }
 
     //Returns all users (every record in users table)
@@ -604,9 +613,32 @@
         }
         //The mode of writing the block data
         fwrite ($bf,full_tag('BLOCKFORMAT',3,false,'instances'));
-
+        
+        // for now we put the roles here, maybe they need to go somewhere else
+        fwrite ($bf, start_tag('ROLES', 3, true));
+        $roles = backup_fetch_roles($preferences,1);
+        
+        $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
+        
+        foreach ($roles as $role) {
+            fwrite ($bf,full_tag('NAME',4,false,$role->name));
+            fwrite ($bf,full_tag('SHORTNAME',4,false,$role->shortname));
+            // find and write all default capabilities
+            fwrite ($bf,start_tag('CAPABILITIES',4,true));
+            // pull out all default (site context) capabilities
+            if ($capabilities = role_context_capabilities($role->id, $sitecontext)) {
+                foreach ($capabilities as $capability=>$value) {
+                    fwrite ($bf,start_tag('CAPABILITY',5,true));
+                    fwrite ($bf,full_tag('NAME', 6, false, $capability));
+                    fwrite ($bf,full_tag('PERMISSION', 6, false, $value));
+                    fwrite ($bf,end_tag('CAPABILITY',5,true));  
+                }                                  
+            }
+            fwrite ($bf,end_tag('CAPABILITIES',4,true));
+        }
+        fwrite ($bf,end_tag('ROLES', 3, true));
+        
         fwrite ($bf,end_tag("DETAILS",2,true));
-
 
         $status = fwrite ($bf,end_tag("INFO",1,true)); 
 
@@ -627,6 +659,7 @@
 
         //Get info from course
         $course = get_record("course","id",$preferences->backup_course);
+        $context = get_context_instance(CONTEXT_COURSE, $course->id);
         if ($course) {
             //Prints course info
             fwrite ($bf,full_tag("ID",3,false,$course->id));
@@ -677,7 +710,31 @@
             } else {
                 $status = fwrite ($bf,full_tag("METACOURSE",3,false,$course->metacourse));
             }
+       
+            /// write local course overrides here?
+            fwrite ($bf, start_tag("ROLES_OVERRIDES", 3, true));
+            if ($roles = get_roles_with_override_on_context($context)) {
+                foreach ($roles as $role) {
+                    fwrite ($bf, start_tag("ROLE", 4, true));
+                    fwrite ($bf, full_tag("NAME", 5, false, $role->name));
+                    fwrite ($bf, full_tag("SHORTNAME", 5, false, $role->shortname));
+                    fwrite ($bf, start_tag("CAPABILITIES", 5, true));    
+                    if ($capabilities = get_capabilities_from_role_on_context($role, $context)) {
+                        foreach ($capabilities as $capability) {
+                            fwrite ($bf, start_tag("CAPABILITY", 6, true));
+                            fwrite ($bf, full_tag("NAME", 7, false, $capability->capability));
+                            fwrite ($bf, full_tag("PERMISSION", 7, false, $capability->permission));
+                            fwrite ($bf, end_tag("CAPABILITY", 6, true));     
+                       } 
+                    }
+                    fwrite ($bf, end_tag("CAPABILITIES", 5, true));
+                    fwrite ($bf, end_tag("ROLE", 4, true));
+                } 
+            }
+            fwrite ($bf, end_tag("ROLES_OVERRIDES", 3, true));
             //Print header end
+            
+
             fwrite ($bf,end_tag("HEADER",2,true));
         } else { 
            $status = false;
@@ -860,9 +917,7 @@
         return $status;
 
     }
-
-
-
+    
     //Prints course's blocks info (table block_instance)
     function backup_course_blocks ($bf,$preferences) {
 
@@ -1026,21 +1081,29 @@
                fwrite ($bf,full_tag("VISIBLE",6,false,$course_module[$tok]->visible));
                fwrite ($bf,full_tag("GROUPMODE",6,false,$course_module[$tok]->groupmode));
                // get all the role_capabilities overrides in this mod
-               fwrite ($bf,start_tag("ROLE_CAPABILITIES",6,true));
-               // foreach role that has an override in this context
+               fwrite ($bf,start_tag("ROLES_OVERRIDES",6,true));
+               
+               // foreach role that has an override in this context   
+
+               if ($roles = get_roles_with_override_on_context($context)) {
                    foreach ($roles as $role) {
-                       fwrite ($bf, start_tag("ROLE", 7, true, array('name'=>$role->name)));
-                       $capabilities = get_records_sql("SELECT * 
-                                                       FROM {$CFG->prefix}role_capabilities
-                                                       WHERE contextid = $context->id
-                                                       AND roleid = $role->id");
-                       foreach ($capabilities as $capability) {
-                           fwrite ($bf, full_tag("NAME", 8, $capability->capability));
-                           fwrite ($bf, full_tag("VALUE", 8, $capability->value));
+                       fwrite ($bf, start_tag("ROLE", 7, true));
+                       fwrite ($bf, full_tag("NAME", 8, false, $role->name));
+                       fwrite ($bf, full_tag("SHORTNAME", 8, false, $role->shortname));
+                       fwrite ($bf, start_tag("CAPABILITIES", 8, true));                       
+                       if ($capabilities = get_capabilities_from_role_on_context($role, $context)) {
+                            foreach ($capabilities as $capability) {
+                                fwrite ($bf, start_tag("CAPABILITY", 9, true));
+                                fwrite ($bf, full_tag("NAME", 10, false, $capability->capability));
+                                fwrite ($bf, full_tag("PERMISSION", 10, false, $capability->permission));
+                                fwrite ($bf, end_tag("CAPABILITY", 9, true));
+                            }
                        }
+                       fwrite ($bf, end_tag("CAPABILITIES", 8, true));
                        fwrite ($bf, end_tag("ROLE", 7, true));
                    }
-               fwrite ($bf,end_tag("ROLE_CAPABILITIES",6,true));
+               }
+               fwrite ($bf,end_tag("ROLES_OVERRIDES",6,true));
                fwrite ($bf,end_tag("MOD",5,true));
            }
            //check for next
@@ -2097,5 +2160,38 @@
      */ 
     function backup_fetch_roles($preferences, $course) {
     
+        $contexts = array();
+        $roles = array();
+        
+        /// adding course context
+        $coursecontext = get_context_instance(CONTEXT_COURSE, $preferences->backup_course);
+        $contexts[$coursecontext->id] = $coursecontext; 
+         
+        /// adding mod contexts
+        $mods = $preferences->mods;
+        foreach ($mods as $modname => $mod) {
+            $instances = $mod->instances;
+            foreach ($instances as $id => $instance) {
+                // if this type of mod is to be backed up
+                if ($instance->backup) {
+                    $cm = get_coursemodule_from_instance($modname, $id);
+                    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+                    // put context in array keys
+                    $contexts[$context->id] = $context;
+                }
+            }
+        }
+        
+        // foreach context, call get_roles_on_exact_context insert into array
+        foreach ($contexts as $context) {
+            if ($proles = get_roles_on_exact_context($context)) {
+                foreach ($proles as $prole) {
+                    $roles[$prole->id] = $prole;  
+                }
+            }
+        }
+
+        return $roles;
+            
     }
 ?>

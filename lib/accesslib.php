@@ -2625,10 +2625,32 @@ function get_user_capability_course($capability, $userid='') {
 function get_roles_on_exact_context($context) {
     
     global $CFG;
+
     return get_records_sql("SELECT DISTINCT r.* 
                             FROM {$CFG->prefix}role_assignments ra,
                                  {$CFG->prefix}role r
                             WHERE ra.roleid = r.id
                                   AND ra.contextid = $context->id");
   
+}
+
+
+
+// get any role that has an override on exact context
+function get_roles_with_override_on_context($context) {
+    global $CFG;
+    return get_records_sql("SELECT DISTINCT r.*
+                            FROM {$CFG->prefix}role_capabilities rc,
+                                 {$CFG->prefix}role r
+                            WHERE rc.roleid = r.id
+                            AND rc.contextid = $context->id");
+}
+
+// get all capabilities for this role on this context (overrids)
+function get_capabilities_from_role_on_context($role, $context) {
+    global $CFG;
+    return get_records_sql("SELECT * 
+                            FROM {$CFG->prefix}role_capabilities
+                            WHERE contextid = $context->id
+                                  AND roleid = $role->id");
 }
