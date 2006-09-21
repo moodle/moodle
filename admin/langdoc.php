@@ -27,8 +27,6 @@
 
     $currentfile = optional_param('currentfile', 'docs/README.txt', PARAM_PATH); 
 
-    $stradministration = get_string("administration");
-    $strconfiguration = get_string("configuration");
     $strlanguage = get_string("language");
     $strcurrentlanguage = get_string("currentlanguage");
     $strthislanguage = get_string("thislanguage");

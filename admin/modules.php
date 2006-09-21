@@ -15,8 +15,6 @@
 
 /// Print headings
 
-    $stradministration = get_string("administration");
-    $strconfiguration = get_string("configuration");
     $stractivities = get_string("activities");
     $strdelete = get_string("delete");
     $strversion = get_string("version");

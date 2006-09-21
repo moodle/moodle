@@ -45,9 +45,6 @@
     $module = required_param('module', PARAM_SAFEDIR);
     require_once("$CFG->dirroot/mod/$module/lib.php");
 
-    $stradmin = get_string("administration");
-    $strconfiguration = get_string("configuration");
-    $strmanagemodules = get_string("managemodules");
     $strmodulename = get_string("modulename", $module);
 
     // $CFG->pagepath is used to generate the body and id attributes for the body tag

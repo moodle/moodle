@@ -15,8 +15,6 @@
 
 /// Print headings
 
-    $stradministration = get_string('administration');
-    $strconfiguration = get_string('configuration');
     $strcalendarsettings = get_string('calendarsettings', 'admin');
     $strimporttimezones = get_string('importtimezones', 'admin');
 

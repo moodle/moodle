@@ -18,8 +18,6 @@
 
 /// Print headings
 
-    $stradministration = get_string('administration');
-    $strconfiguration = get_string('configuration');
     $strmanageblocks = get_string('manageblocks');
     $strdelete = get_string('delete');
     $strversion = get_string('version');

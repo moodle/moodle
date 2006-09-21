@@ -23,8 +23,6 @@
     
     $strlang = get_string('langimport','admin');
     
-    $stradministration = get_string("administration");
-    $strconfiguration = get_string("configuration");
     $strlanguage = get_string("language");
     $strthislanguage = get_string("thislanguage");
     $title = $strlang;

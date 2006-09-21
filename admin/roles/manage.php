@@ -16,7 +16,6 @@
 
     $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
 
-    $stradministration = get_string('administration');
     $strmanageroles = get_string('manageroles');
     $strdelete = get_string('delete');
 

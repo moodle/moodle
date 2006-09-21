@@ -58,8 +58,6 @@
         $SESSION->langtranslateintolocal = $uselocal;
     }
 
-    $stradministration = get_string("administration");
-    $strconfiguration = get_string("configuration");
     $strlanguage = get_string("language");
     $strcurrentlanguage = get_string("currentlanguage");
     $strmissingstrings = get_string("missingstrings");

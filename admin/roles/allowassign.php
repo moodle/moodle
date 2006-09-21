@@ -19,7 +19,6 @@
     require_capability('moodle/roles:manage', $sitecontext);
 
     $site = get_site();
-    $stradministration = get_string('administration');
     $strmanageroles = get_string('manageroles');
 
 /// form processiong here

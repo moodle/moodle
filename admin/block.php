@@ -47,8 +47,6 @@
 
     /// Otherwise print the form.
 
-    $stradmin = get_string('administration');
-    $strconfiguration = get_string('configuration');
     $strmanageblocks = get_string('manageblocks');
     $strblockname = $block->get_title();
 

@@ -116,7 +116,6 @@
     $createoptions[0] = get_string("no");
     $createoptions[1] = get_string("yes");
 
-    $stradministration        = get_string("administration");
     $strauthentication        = get_string("authentication");
     $strauthenticationoptions = get_string("authenticationoptions","auth");
     $strsettings = get_string("settings");
