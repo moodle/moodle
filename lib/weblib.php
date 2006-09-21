@@ -3729,27 +3729,25 @@ function switchroles_form($courseid) {
         return '';
     }
 
-    if (has_capability('moodle/role:switchroles', $context)) {
-        if (empty($USER->switchrole)) {   // Print a menu
+    if (empty($USER->switchrole)) {   // Try to print a menu
+        if (has_capability('moodle/role:switchroles', $context)) {
             if (!$roles = get_assignable_roles($context)) {
                 return '';   // Nothing to show!
             }
-
             return popup_form($CFG->wwwroot.'/course/view.php?id='.$courseid.'&sesskey='.sesskey().'&switchrole=', 
                               $roles, 'switchrole', '', get_string('switchroleto'), 'switchrole', '', true);
-        
-        } else {  // Just a button to return to normal
-            $options = array();
-            $options['id'] = $courseid;
-            $options['sesskey'] = sesskey();
-            $options['switchrole'] = 0;
-
-            return print_single_button($CFG->wwwroot.'/course/view.php', $options,  
-                                       get_string('switchrolereturn'), 'post', '_self', true);
+        } else {
+            return '';
         }
-    }
+    } else {  // Just a button to return to normal
+        $options = array();
+        $options['id'] = $courseid;
+        $options['sesskey'] = sesskey();
+        $options['switchrole'] = 0;
 
-    return '';
+        return print_single_button($CFG->wwwroot.'/course/view.php', $options,  
+                                   get_string('switchrolereturn'), 'post', '_self', true);
+    }
 }
 
 
