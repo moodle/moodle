@@ -3,7 +3,7 @@
         *   Library functions for using ajax with moodle
         **/
        
-   
+  
    /**
     *Print require statements for javascript libraries
     *Takes in an array of either full paths or shortnames and it will translate them to full paths
@@ -63,11 +63,12 @@
                 $blocksoutput.=",";
         }        
         
-                global $CFG;
+        global $CFG;       
         $output .="<script language='javascript'>\r";
-        $output .=" main.portal.id = ".$id."\r";
+        $output .=" 	main.portal.id = ".$id."\r";
         $output .="     main.portal.blocks = new Array(".$blocksoutput.");\r";        
-        $output .="     main.portal.wwwroot = '".$CFG->wwwroot."';\r";
+        $output .="     main.portal.strings['wwwroot']='".$CFG->wwwroot."';\r";        
+        $output .="     main.portal.strings['update']='".get_string('update')."';\r";  
         $output .="     onload.load()\r";
         $output .="     main.process_blocks();\r";        
         $output .="</script>";

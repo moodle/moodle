@@ -499,7 +499,7 @@ resource_class.prototype.init_buttons = function(){
        var updateButton = null;
        var buttons =  commandContainer.getElementsByTagName('a');
        for (var x=0;x<buttons.length;x++) {
-            if (buttons[x].title == '<?php print_string('update'); ?>') {
+            if (buttons[x].title == main.portal.strings['update']) {
                 updateButton = buttons[x];
             }
        }

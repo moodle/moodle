@@ -43,7 +43,6 @@ function main_class(){
    //this.logview = new YAHOO.widget.LogReader('header'); 
  
 
-        
     this.icons = [];
     this.marker = null;
      
@@ -138,7 +137,7 @@ main_class.prototype.mk_button = function(tag,imgSrc,attributes,imgAttributes){
         var container = document.createElement(tag);
         container.style.cursor = 'pointer';       
         var image = document.createElement('img');
-        image.setAttribute('src',main.portal.wwwroot+imgSrc);          
+        image.setAttribute('src',main.portal.strings['wwwroot']+imgSrc);          
         container.appendChild(image);
         
         if(attributes != null)
@@ -157,7 +156,7 @@ main_class.prototype.connect = function(method,urlStub,callback,body){
         if(callback == null){
             callback = {}
         }
-        return YAHOO.util.Connect.asyncRequest(method,this.portal.wwwroot+"/course/format/topics/commands.php?courseId="+main.portal.id+"&"+urlStub,callback,body);
+        return YAHOO.util.Connect.asyncRequest(method,this.portal.strings['wwwroot']+"/course/format/topics/commands.php?courseId="+main.portal.id+"&"+urlStub,callback,body);
         
 
     } 
@@ -219,6 +218,9 @@ function php_portal_class(){
     
     //flag for week fomat
     this.isWeek = false;
+
+	//strings    
+    this.strings = [];
        
     YAHOO.log("instantiated php_portal_class","info");
 }
