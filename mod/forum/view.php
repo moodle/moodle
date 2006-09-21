@@ -1,18 +1,22 @@
 <?php  // $Id$
 
-    require_once("../../config.php");
-    require_once("lib.php");
+    require_once('../../config.php');
+    require_once('lib.php');
     require_once("$CFG->libdir/rsslib.php");
 
-    $id      = optional_param('id', 0, PARAM_INT);        // Course Module ID
-    $f       = optional_param('f', 0, PARAM_INT);         // Forum ID
-    $mode    = optional_param('mode', 0, PARAM_INT);      // Display mode (for single forum)
-    $showall = optional_param('showall', '', PARAM_INT);  // show all discussions on one page
-    $changegroup = optional_param('group', -1, PARAM_INT);    // choose the current group
-    $page    = optional_param('page', 0, PARAM_INT);      // which page to show
-    $search  = optional_param('search', '');              // search string
+
+    $id          = optional_param('id', 0, PARAM_INT);       // Course Module ID
+    $f           = optional_param('f', 0, PARAM_INT);        // Forum ID
+    $mode        = optional_param('mode', 0, PARAM_INT);     // Display mode (for single forum)
+    $showall     = optional_param('showall', '', PARAM_INT); // show all discussions on one page
+    $changegroup = optional_param('group', -1, PARAM_INT);   // choose the current group
+    $page        = optional_param('page', 0, PARAM_INT);     // which page to show
+    $search      = optional_param('search', '');             // search string
+
+
 
     if ($id) {
+
         if (! $cm = get_coursemodule_from_id('forum', $id)) {
             error("Course Module ID was incorrect");
         }
@@ -22,13 +26,12 @@
         if (! $forum = get_record("forum", "id", $cm->instance)) {
             error("Forum ID was incorrect");
         }
-
         $strforums = get_string("modulenameplural", "forum");
         $strforum = get_string("modulename", "forum");
-
         $buttontext = update_module_button($cm->id, $course->id, $strforum);
 
     } else if ($f) {
+
         if (! $forum = get_record("forum", "id", $f)) {
             error("Forum ID was incorrect or no longer exists");
         }
@@ -49,64 +52,66 @@
         }
 
     } else {
-        error("Must specify a course module or a forum ID");
+        error('Must specify a course module or a forum ID');
     }
 
     if (!$buttontext) {
         $buttontext = forum_search_form($course, $search);
     }
 
+
     require_course_login($course, true, $cm);
 
+
+
+/// Print header.
     $navigation = "<a href=\"index.php?id=$course->id\">$strforums</a> ->";
+    print_header_simple(format_string($forum->name), "",
+                 "$navigation ".format_string($forum->name), "", "", true, $buttontext, navmenu($course, $cm));
+
 
 
 /// Check whether the user should be able to view this forum.
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     
-    if (!has_capability('mod/forum:viewforum', $context)) {
-        error('You do not have the permission to view this forum');
+    if (empty($cm->visible) and !has_capability('moodle/course:viewhiddenactivities', $context)) {
+        notice(get_string("activityiscurrentlyhidden"));
     }
     
+    if (!has_capability('mod/forum:viewforum', $context)) {
+        notice(get_string('noviewdiscussionspermission', 'forum'));
+    }
+    
+    $groupmode = groupmode($course, $cm);
+    $currentgroup = get_and_set_current_group($course, $groupmode, $changegroup);
+    
+    if ($groupmode and ($currentgroup === false) and
+            !has_capability('moodle/site:accessallgroups', $context)) {
+        notice(get_string('notingroup', 'forum'));
+    }
+
+
+
+/// Okay, we can show the discussions. Log the forum view.
     if ($cm->id) {
         add_to_log($course->id, "forum", "view forum", "view.php?id=$cm->id", "$forum->id", $cm->id);
     } else {
         add_to_log($course->id, "forum", "view forum", "view.php?f=$forum->id", "$forum->id");
     }
 
-    print_header_simple(format_string($forum->name), "",
-                 "$navigation ".format_string($forum->name), "", "", true, $buttontext, navmenu($course, $cm));
-
-    if (empty($cm->visible) and !has_capability('moodle/course:viewhiddenactivities', $context)) {
-        notice(get_string("activityiscurrentlyhidden"));
-    }
-
-
-    $groupmode = groupmode($course, $cm);
-    
-    $currentgroup = get_and_set_current_group($course, $groupmode, $changegroup);
-    
-    if ($groupmode and ($currentgroup === false) and
-            !has_capability('moodle/site:accessallgroups', $context)) {
-        
-        print_heading(get_string("notingroup", "forum"));
-        print_footer($course);
-        exit;
-    }
 
 
 /// Print settings and things in a table across the top
-
     echo '<table width="100%" border="0" cellpadding="3" cellspacing="0"><tr valign="top">';
 
-    ///2 ways to do this, 1. we can changed the setup_and_print_groups functions
-    ///in moodlelib, taking in 1 more parameter, and tell the function when to
-    ///allow student menus, 2, we can just use this code to explicitly print this
-    ///menu for students in forums.
+    /// 2 ways to do this, 1. we can changed the setup_and_print_groups functions
+    /// in moodlelib, taking in 1 more parameter, and tell the function when to
+    /// allow student menus, 2, we can just use this code to explicitly print this
+    /// menu for students in forums.
 
-    //now we need a menu for separategroups as well!
-    if ($groupmode == VISIBLEGROUPS or ($groupmode and
-            has_capability('moodle/site:accessallgroups', $context))) {
+    /// Now we need a menu for separategroups as well!
+    if ($groupmode == VISIBLEGROUPS || ($groupmode
+            && has_capability('moodle/site:accessallgroups', $context))) {
         
         //the following query really needs to change
         if ($groups = get_records_menu("groups", "courseid", $course->id, "name ASC", "id,name")) {
@@ -116,23 +121,22 @@
         }
     }
 
-    //only print menus the student is in any course
+    /// Only print menus the student is in any course
     else if ($groupmode == SEPARATEGROUPS){
         $validgroups = array();
-        //get all the groups this guy is in in this course
+        // Get all the groups this guy is in in this course
 
         if ($p = user_group($course->id,$USER->id)){
-            //extract the name and id for the group
+            /// Extract the name and id for the group
             foreach ($p as $index => $object){
                 $validgroups[$object->id] = $object->name;
             }
-            //print_r($validgroups);
             echo '<td>';
-            //print them in the menu
+            /// Print them in the menu
             print_group_menu($validgroups, $groupmode, $currentgroup, "view.php?id=$cm->id",0);
             echo '</td>';
         }
-     }
+    }
 
     if (!empty($USER->id)) {
         echo '<td align="right" class="subscription">';
@@ -196,7 +200,7 @@
         echo '</td>';
     }
 
-    //If rss are activated at site and forum level and this forum has rss defined, show link
+    /// If rss are activated at site and forum level and this forum has rss defined, show link
     if (isset($CFG->enablerssfeeds) && isset($CFG->forum_enablerssfeeds) &&
         $CFG->enablerssfeeds && $CFG->forum_enablerssfeeds && $forum->rsstype and $forum->rssarticles) {
         echo '</tr><tr><td align="right">';

@@ -31,10 +31,9 @@
     $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
     $canviewdiscussion = has_capability('mod/forum:viewdiscussion', $modcontext);
     
-    
     if ($forum->type == "news") {
-        if (!($canviewdiscussion || $USER->id == $discussion->userid
-            || (($discussion->timestart == 0 || $discussion->timestart <= time())
+        if (!($USER->id == $discussion->userid || (($discussion->timestart == 0
+            || $discussion->timestart <= time())
             && ($discussion->timeend == 0 || $discussion->timeend > time())))) {
             error('Discussion ID was incorrect or no longer exists', "$CFG->wwwroot/mod/forum/view.php?f=$forum->id");
         }
@@ -236,10 +235,16 @@
         notify(get_string("discussionmoved", "forum", format_string($forum->name,true)));
     }
 
-/// Print the actual discussion
-    $canrate = has_capability('mod/forum:rate', $modcontext);
-    forum_print_discussion($course, $forum, $discussion, $post, $displaymode, $canreply, $canrate);
 
+/// Print the actual discussion
+    if (!$canviewdiscussion) {
+        notice(get_string('noviewdiscussionspermission', 'forum'));
+    } else {
+        $canrate = has_capability('mod/forum:rate', $modcontext);
+        forum_print_discussion($course, $forum, $discussion, $post, $displaymode, $canreply, $canrate);
+    }
+    
     print_footer($course);
+    
 
 ?>
