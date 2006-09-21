@@ -4648,6 +4648,26 @@ function redirect($url, $message='', $delay=-1) {
 
 /// when no message and header printed yet, try to redirect
     if (empty($message) and !defined('HEADER_PRINTED')) {
+        
+        // Technically, HTTP/1.1 requires Location: header to contain
+        // the absolute path. (In practice browsers accept relative 
+        // paths - but still, might as well do it properly.)
+        // This code turns relative into absolute. 
+        if(!preg_match('/^[a-z]+:/',$url)) { 
+            // Add in the host etc. (from wwwroot) to the current folder
+            // from SCRIPT_NAME, then add the new target onto the end.
+            $url=preg_replace('/^(.*?[^:\/])\/.*$/','$1',$CFG->wwwroot).
+                rtrim(dirname($_SERVER['SCRIPT_NAME']),'/\\').'/'.$url;
+            // Replace all ..s
+            while(true) {
+                $newurl=preg_replace('/\/[^\/]*\/\.\.\//','/',$url);
+                if($newurl==$url) {
+                    break;
+                }
+                $url=$newurl;
+            }
+        }
+        
         $delay = 0;
         //try header redirection first
         @header('HTTP/1.x 303 See Other'); //302 might not work for POST requests, 303 is ignored by obsolete clients
