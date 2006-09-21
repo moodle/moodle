@@ -1188,7 +1188,7 @@ function get_local_override($roleid, $contextid, $capability) {
  * @param legacy - optional legacy capability
  * @return id or false
  */
-function create_role($name, $shortname, $description, $legacy='') {
+function create_role($name, $shortname, $description, $legacy='', $sortorder = -1) {
 
     // check for duplicate role name
 
@@ -1200,9 +1200,16 @@ function create_role($name, $shortname, $description, $legacy='') {
         error('there is already a role with this shortname!');
     }
 
+    $role = new object();
     $role->name = $name;
     $role->shortname = $shortname;
     $role->description = $description;
+
+    if ($sortorder = -1) {
+        $role->sortorder = count_records('role');
+    } else {
+        $role->sortorder = $sortorder;
+    }
 
     $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
 
@@ -2626,21 +2633,21 @@ function get_user_capability_course($capability, $userid='') {
  * @return array
  */
 function get_roles_on_exact_context($context) {
-    
+
     global $CFG;
 
-    return get_records_sql("SELECT DISTINCT r.* 
+    return get_records_sql("SELECT DISTINCT r.*
                             FROM {$CFG->prefix}role_assignments ra,
                                  {$CFG->prefix}role r
                             WHERE ra.roleid = r.id
                                   AND ra.contextid = $context->id");
-  
+
 }
 
-/* 
+/*
  * Switches the current user to another role for the current session and only
- * in the given context.  If roleid is not valid (eg 0) or the current user 
- * doesn't have permissions to be switching roles then the user's session 
+ * in the given context.  If roleid is not valid (eg 0) or the current user
+ * doesn't have permissions to be switching roles then the user's session
  * is compltely reset to have their normal roles.
  * @param integer $roleid
  * @param object $context
@@ -2652,7 +2659,7 @@ function role_switch($roleid, $context) {
     global $db;
 
 /// If we can't use this or are already using it or no role was specified then bail completely and reset
-    if (empty($roleid) || !has_capability('moodle/role:switchroles', $context) 
+    if (empty($roleid) || !has_capability('moodle/role:switchroles', $context)
         || !empty($USER->switchrole[$context->id])  || !confirm_sesskey()) {
         load_user_capability('', $context);   // Reset all permissions for this context to normal
         unset($USER->switchrole[$context->id]);  // Delete old capabilities
@@ -2695,9 +2702,9 @@ function role_switch($roleid, $context) {
 
 // get any role that has an override on exact context
 function get_roles_with_override_on_context($context) {
-    
+
     global $CFG;
-    
+
     return get_records_sql("SELECT DISTINCT r.*
                             FROM {$CFG->prefix}role_capabilities rc,
                                  {$CFG->prefix}role r
@@ -2707,10 +2714,10 @@ function get_roles_with_override_on_context($context) {
 
 // get all capabilities for this role on this context (overrids)
 function get_capabilities_from_role_on_context($role, $context) {
-    
+
     global $CFG;
-    
-    return get_records_sql("SELECT * 
+
+    return get_records_sql("SELECT *
                             FROM {$CFG->prefix}role_capabilities
                             WHERE contextid = $context->id
                                   AND roleid = $role->id");
@@ -2719,13 +2726,13 @@ function get_capabilities_from_role_on_context($role, $context) {
 /* find all user assignemnt of users for this role, on this context
  */
 function get_users_from_role_on_context($role, $context) {
-    
+
     global $CFG;
-    
+
     return get_records_sql("SELECT *
                             FROM {$CFG->prefix}role_assignments
                             WHERE contextid = $context->id
-                                  AND roleid = $role->id");  
+                                  AND roleid = $role->id");
 }
 
 ?>

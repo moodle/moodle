@@ -4600,7 +4600,7 @@ function notice ($message, $link='') {
  * @param string $linkyes The link to take the user to if they choose "Yes"
  * @param string $linkno The link to take the user to if they choose "No"
  */
-function notice_yesno ($message, $linkyes, $linkno) {
+function notice_yesno ($message, $linkyes, $linkno, $optionsyes=NULL, $optionsno=NULL, $methodyes='post', $methodno='post') {
 
     global $CFG;
 
@@ -4611,9 +4611,9 @@ function notice_yesno ($message, $linkyes, $linkno) {
     print_simple_box_start('center', '60%', '', 5, 'generalbox', 'notice');
     echo '<p align="center">'. $message .'</p>';
     echo '<table align="center" cellpadding="20"><tr><td>';
-    print_single_button($linkyes, NULL, get_string('yes'), 'post', $CFG->framename);
+    print_single_button($linkyes, $optionsyes, get_string('yes'), $methodyes, $CFG->framename);
     echo '</td><td>';
-    print_single_button($linkno, NULL, get_string('no'), 'post', $CFG->framename);
+    print_single_button($linkno, $optionsno, get_string('no'), $methodno, $CFG->framename);
     echo '</td></tr></table>';
     print_simple_box_end();
 }

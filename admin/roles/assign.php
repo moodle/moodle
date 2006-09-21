@@ -201,7 +201,7 @@
         }
         echo '<input type="hidden" name="courseid" value="'.$courseid.'" />';
         echo '<input type="hidden" name="contextid" value="'.$context->id.'" />'.$strroletoassign.': ';
-        choose_from_menu ($assignableroles, 'roleid', $roleid, get_string('listallroles', 'role'), $script='rolesform.submit()');
+        choose_from_menu ($assignableroles, 'roleid', $roleid, get_string('listallroles', 'role').'...', $script='rolesform.submit()');
         echo '</div></form>';
 
         print_simple_box_start("center");

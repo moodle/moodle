@@ -9,65 +9,143 @@
 
     $roleid      = optional_param('roleid', 0, PARAM_INT);             // if set, we are editing a role
     $name        = optional_param('name', '', PARAM_MULTILANG);        // new role name
-    $shortname   = optional_param('shortname', '', PARAM_SAFEDIR);     // new role shortname
+    $shortname   = optional_param('shortname', '', PARAM_RAW);         // new role shortname, special cleaning before storage
     $description = optional_param('description', '', PARAM_CLEAN);     // new role desc
     $action      = optional_param('action', '', PARAM_ALPHA);
     $confirm     = optional_param('confirm', 0, PARAM_BOOL);
+    $cancel      = optional_param('cancel', 0, PARAM_BOOL);
 
     $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
 
-    $strmanageroles = get_string('manageroles');
-    $strdelete = get_string('delete');
-
-    if ($roleid && $action!='delete') {
-        $role = get_record('role', 'id', $roleid);
-        $editingstr = '-> '.get_string('editinga', '', $role->name);
-    } else {
-        $editingstr ='';
+    if ($cancel) {
+        redirect('manage.php');
     }
 
-    admin_externalpage_print_header($adminroot);
+    $errors = array();
+    $newrole = false;
 
-    $currenttab = 'manage';
-    include_once('managetabs.php');
+    $roles = get_records('role', '', '', 'sortorder ASC, id ASC');
+    $rolescount = count($roles);
 
-    // form processing, editing a role, adding a role or deleting a role
-    if ($action && confirm_sesskey()) {
+/// fix sort order if needed
+    $rolesort = array();
+    $i = 0;
+    foreach ($roles as $rolex) {
+        $rolesort[] = $rolex->id;
+        if ($rolex->sortorder != $i) {
+            $r = new object();
+            $r->id = $rolex->id;
+            $r->sortorder = $i;
+            update_record('role', $r);
+            $roles[$rolex->id]->sortorder = $i;
+        }
+        $i++;
+    }
 
-        switch ($action) {
-            case 'add':
 
-                $newrole = create_role($name, $shortname, $description);
+/// form processing, editing a role, adding a role, deleting a role etc.
+    switch ($action) {
+        case 'add':
+            if ($data = data_submitted() and confirm_sesskey()) {
 
-                $ignore = array('roleid', 'sesskey', 'action', 'name', 'description', 'contextid');
+                $shortname = moodle_strtolower(clean_param(clean_filename($shortname), PARAM_SAFEDIR)); // only lowercase safe ASCII characters
 
-                $data = data_submitted();
+                if (empty($name)) {
+                    $errors['name'] = get_string('errorbadrolename', 'role');
+                } else if (count_records('role', 'name', $name)) {
+                    $errors['name'] = get_string('errorexistsrolename', 'role');
+                }
+
+                if (empty($shortname)) {
+                    $errors['shortname'] = get_string('errorbadroleshortname', 'role');
+                } else if (count_records('role', 'shortname', $shortname)) {
+                    $errors['shortname'] = get_string('errorexistsroleshortname', 'role');
+                }
+
+                if (empty($errors)) {
+                    $newrole = create_role($name, $shortname, $description, '', $rolescount);
+                } else {
+                    $newrole = new object();
+                    $newrole->name = $name;
+                    $newrole->shortname = $shortname;
+                    $newrole->description = $description;
+                }
+                $allowed_values = array(CAP_INHERIT, CAP_ALLOW, CAP_PREVENT, CAP_PROHIBIT);
 
                 foreach ($data as $capname => $value) {
-                    if (in_array($capname, $ignore)) {
+                    if (!preg_match('|^[a-z_]+/[a-z_]+:[a-z_]+$|', $capname)) {
+                        continue;
+                    }
+                    $value = (int)$value;
+                    if (!in_array($value, $allowed_values)) {
                         continue;
                     }
 
-                    assign_capability($capname, $value, $newrole, $sitecontext->id);
+                    if (empty($errors)) {
+                        assign_capability($capname, $value, $newrole, $sitecontext->id);
+                    } else {
+                        $newrole->$capname = $value;
+                    }
+                }
+                if (empty($errors)) {
+                    redirect('manage.php');
+                }
+            }
+            break;
 
+        case 'edit':
+            if ($data = data_submitted() and confirm_sesskey()) {
+
+                $shortname = moodle_strtolower(clean_param(clean_filename($shortname), PARAM_SAFEDIR)); // only lowercase safe ASCII characters
+
+                if (empty($name)) {
+                    $errors['name'] = get_string('errorbadrolename', 'role');
+                } else {
+                    if ($rs = get_records('role', 'name', $name)) {
+                        unset($rs[$roleid]);
+                        if (!empty($rs)) {
+                            $errors['name'] = get_string('errorexistsrolename', 'role');
+                        }
+                    }
                 }
 
-                break;
+                if (empty($shortname)) {
+                    $errors['shortname'] = get_string('errorbadroleshortname', 'role');
+                } else {
+                    if ($rs = get_records('role', 'shortname', $shortname)) {
+                        unset($rs[$roleid]);
+                        if (!empty($rs)) {
+                            $errors['shortname'] = get_string('errorexistsroleshortname', 'role');
+                        }
+                    }
+                }
+                if (!empty($errors)) {
+                    $newrole = new object();
+                    $newrole->name = $name;
+                    $newrole->shortname = $shortname;
+                    $newrole->description = $description;
+                }
 
-            case 'edit':
-
-                $ignore = array('roleid', 'sesskey', 'action', 'name', 'description', 'contextid');
-
-                $data = data_submitted();
+                $allowed_values = array(CAP_INHERIT, CAP_ALLOW, CAP_PREVENT, CAP_PROHIBIT);
 
                 foreach ($data as $capname => $value) {
-                    if (in_array($capname, $ignore)) {
+                    if (!preg_match('|^[a-z_]+/[a-z_]+:[a-z_]+$|', $capname)) {
+                        continue;
+                    }
+                    $value = (int)$value;
+                    if (!in_array($value, $allowed_values)) {
+                        continue;
+                    }
+
+                    if (!empty($errors)) {
+                        $newrole->$capname = $value;
                         continue;
                     }
 
                     // edit default caps
-                    $SQL = "select * from {$CFG->prefix}role_capabilities where
-                        roleid = $roleid and capability = '$capname' and contextid = $sitecontext->id";
+                    $SQL = "SELECT * FROM {$CFG->prefix}role_capabilities
+                            WHERE roleid = $roleid AND capability = '$capname'
+                              AND contextid = $sitecontext->id";
 
                     $localoverride = get_record_sql($SQL);
 
@@ -88,73 +166,160 @@
 
                 // update normal role settings
 
-                $role->id = $roleid;
-                $role->name = $name;
-                $role->description = $description;
+                if (empty($errors)) {
+                    $role->id = $roleid;
+                    $role->name = $name;
+                    $role->description = $description;
 
-                if (!update_record('role', $role)) {
-                    error('Could not update role!');
+                    if (!update_record('role', $role)) {
+                        error('Could not update role!');
+                    }
+                    redirect('manage.php');
+                }
+            }
+            break;
+
+        case 'delete':
+            if ($confirm and data_submitted() and confirm_sesskey()) {
+
+                // first unssign all users
+                if (!role_unassign($roleid)) {
+                    error("Error while unassigning all users from role with ID $roleid!");
                 }
 
-                break;
+                if (!delete_records('role', 'id', $roleid)) {
+                    error("Could not delete role with ID $roleid!");
+                }
 
-            case 'delete':
-                if ($confirm) { // deletes a role
+            } else if (confirm_sesskey()){
+                // show confirmation
+                admin_externalpage_print_header($adminroot);
+                $optionsyes = new object();
+                $optionsyes->action = 'delete';
+                $optionsyes->roleid = $roleid;
+                $optionsyes->sesskey = sesskey();
+                $optionsyes->confirm = 1;
+                $a = new object();
+                $a->id = $roleid;
+                $a->name = $roles[$roleid]->name;
+                $a->shortname = $roles[$roleid]->shortname;
+                $a->count = (int)count_records('role_assignments', 'roleid', $roleid);
+                notice_yesno(get_string('deleterolesure', 'role', $a), 'manage.php', 'manage.php', $optionsyes, NULL, 'post', 'get');
+                admin_externalpage_print_footer($adminroot);
+                die;
+            }
 
-                    // check for depedencies  XXX TODO
+            redirect('manage.php');
+            break;
 
-                    // delete all associated role-assignments?  XXX TODO
+        case 'moveup':
+            if (array_key_exists($roleid, $roles) and confirm_sesskey()) {
+                $role = $roles[$roleid];
+                if ($role->sortorder > 0) {
+                    $above = $roles[$rolesort[$role->sortorder - 1]];
+                    $r = new object();
 
-                    if (!delete_records('role', 'id', $roleid)) {
-                        error('Could not delete role!');
+                    $r->id = $role->id;
+                    $r->sortorder = $above->sortorder;
+                    if (!update_record('role', $r)) {
+                        $errors[] = "Can not update role with ID $r->id!";
                     }
 
-                } else {
-                    echo ('<form action="manage.php" method="POST">');
-                    echo ('<input type="hidden" name="action" value="delete">');
-                    echo ('<input type="hidden" name="roleid" value="'.$roleid.'">');
-                    echo ('<input type="hidden" name="sesskey" value="'.sesskey().'">');
-                    echo ('<input type="hidden" name="confirm" value="1">');
-                    notice_yesno(get_string('deleterolesure', 'role'),
-                       'manage.php?action=delete&roleid='.$roleid.'&sesskey='.sesskey().'&confirm=1', 'manage.php');
-                    admin_externalpage_print_footer($adminroot);
-                    exit;
+                    $r->id = $above->id;
+                    $r->sortorder = $role->sortorder;
+                    if (!update_record('role', $r)) {
+                        $errors[] = "Can not update role with ID $r->id!";
+                    }
+
+                    if (count($errors)) {
+                        $msg = '<p>';
+                        foreach ($errors as $e) {
+                            $msg .= $e.'<br />';
+                        }
+                        admin_externalpage_print_header($adminroot);
+                        notify($msg);
+                        print_continue('manage.php');
+                        admin_externalpage_print_footer($adminroot);
+                        die;
+                    }
                 }
+            }
 
-                break;
+            redirect('manage.php');
+            break;
 
-                /// add possible positioning switch here
+        case 'movedown':
+            if (array_key_exists($roleid, $roles) and confirm_sesskey()) {
+                $role = $roles[$roleid];
+                if ($role->sortorder + 1 < $rolescount) {
+                    $bellow = $roles[$rolesort[$role->sortorder + 1]];
+                    $r = new object();
 
-            default:
-                break;
+                    $r->id = $role->id;
+                    $r->sortorder = $bellow->sortorder;
+                    if (!update_record('role', $r)) {
+                        $errors[] = "Can not update role with ID $r->id!";
+                    }
 
-        }
+                    $r->id = $bellow->id;
+                    $r->sortorder = $role->sortorder;
+                    if (!update_record('role', $r)) {
+                        $errors[] = "Can not update role with ID $r->id!";
+                    }
+
+                    if (count($errors)) {
+                        $msg = '<p>';
+                        foreach ($errors as $e) {
+                            $msg .= $e.'<br />';
+                        }
+                        $msg .= '</p>';
+                        admin_externalpage_print_header($adminroot);
+                        notify($msg);
+                        print_continue('manage.php');
+                        admin_externalpage_print_footer($adminroot);
+                        die;
+                    }
+                }
+            }
+
+            redirect('manage.php');
+            break;
+
+        default:
+            break;
 
     }
 
-    $roles = get_records('role', '', '', 'sortorder ASC, id ASC');
+/// print UI now
 
-    if (($roleid && $action!='delete') || $action=='new') { // load the role if id is present
+    admin_externalpage_print_header($adminroot);
 
-        if ($roleid) {
-            $action='edit';
-            $role = get_record('role', 'id', $roleid);
+    $currenttab = 'manage';
+    include_once('managetabs.php');
+
+    if (($roleid and ($action == 'view' or $action == 'edit')) or $action == 'add') { // view or edit role details
+
+        if ($action == 'add') {
+            $roleid = 0;
+            if (empty($errors) or empty($newrole)) {
+                $role = new object();
+                $role->name='';
+                $role->shortname='';
+                $role->description='';
+            } else {
+                $role = stripslashes_safe($newrole);
+            }
+        } else if ($action == 'edit' and !empty($errors) and !empty($newrole)) {
+                $role = stripslashes_safe($newrole);
         } else {
-            $action='add';
-            $role->name='';
-            $role->shortname='';
-            $role->description='';
+            if(!$role = get_record('role', 'id', $roleid)) {
+                error('Incorrect role ID!');
+            }
         }
 
         foreach ($roles as $rolex) {
             $roleoptions[$rolex->id] = format_string($rolex->name);
         }
-
-        // prints a form to swap roles
-        print ('<form name="rolesform1" action="manage.php" method="post">');
-        print ('<div align="center">'.get_string('selectrole', 'role').': ');
-        choose_from_menu ($roleoptions, 'roleid', $roleid, get_string('listallroles', 'role'), $script='rolesform1.submit()');
-        print ('</div></form>');
 
         // this is the array holding capabilities of this role sorted till this context
         $r_caps = role_context_capabilities($roleid, $sitecontext);
@@ -163,7 +328,19 @@
         $capabilities = fetch_context_capabilities($sitecontext);
 
         $usehtmleditor = can_use_html_editor();
-        print_simple_box_start();
+
+        switch ($action) {
+            case 'add':
+                print_heading(get_string('addrole', 'role'));
+                break;
+            case 'view':
+                print_heading(get_string('viewrole', 'role'));
+                break;
+            case 'edit':
+                print_heading(get_string('editrole', 'role'));
+                break;
+        }
+        print_simple_box_start('center');
         include_once('manage.html');
         print_simple_box_end();
 
@@ -176,15 +353,17 @@
         $table = new object;
 
         $table->tablealign = 'center';
-        $table->align = array('right', 'left', 'left');
+        $table->align = array('right', 'left', 'middle');
         $table->wrap = array('nowrap', '', 'nowrap');
         $table->cellpadding = 5;
         $table->cellspacing = 0;
         $table->width = '90%';
+        $table->data = array();
 
-        $table->head = array(get_string('roles', 'role'),
+        $table->head = array(get_string('name'),
                              get_string('description'),
-                             get_string('delete'));
+                             get_string('shortname'),
+                             get_string('edit'));
 
         /*************************
          * List all current roles *
@@ -192,15 +371,40 @@
 
         foreach ($roles as $role) {
 
-            $table->data[] = array('<a href="manage.php?roleid='.$role->id.'&amp;sesskey='.sesskey().'">'.format_string($role->name).'</a>', format_text($role->description, FORMAT_HTML), '<a href="manage.php?action=delete&roleid='.$role->id.'&sesskey='.sesskey().'">'.$strdelete.'</a>');
+            $stredit     = get_string('edit');
+            $strdelete   = get_string('delete');
+            $strmoveup   = get_string('moveup');
+            $strmovedown = get_string('movedown');
+
+            $row = array();
+            $row[0] = '<a href="manage.php?roleid='.$role->id.'&amp;action=view">'.format_string($role->name).'</a>';
+            $row[1] = format_text($role->description, FORMAT_HTML);
+            $row[2] = s($role->shortname);
+            $row[3] = '<a title="'.$stredit.'" href="manage.php?action=edit&roleid='.$role->id.'">'.
+                         '<img src="'.$CFG->pixpath.'/t/edit.gif" height="11" width="11" border="0" alt="'.$stredit.'" /></a> ';
+            $row[3] .= '<a title="'.$strdelete.'" href="manage.php?action=delete&roleid='.$role->id.'&sesskey='.sesskey().'">'.
+                         '<img src="'.$CFG->pixpath.'/t/delete.gif" height="11" width="11" border="0" alt="'.$strdelete.'" /></a> ';
+            if ($role->sortorder != 0) {
+                $row[3] .= '<a title="'.$strmoveup.'" href="manage.php?action=moveup&roleid='.$role->id.'&sesskey='.sesskey().'">'.
+                     '<img src="'.$CFG->pixpath.'/t/up.gif" height="11" width="11" border="0" alt="'.$strmoveup.'" /></a> ';
+            } else {
+                $row[3] .= '<img src="'.$CFG->wwwroot.'/pix/spacer.gif" height="11" width="11" border="0" alt="" /> ';
+            }
+            if ($role->sortorder+1 < $rolescount) {
+                $row[3] .= '<a title="'.$strmovedown.'" href="manage.php?action=movedown&roleid='.$role->id.'&sesskey='.sesskey().'">'.
+                     '<img src="'.$CFG->pixpath.'/t/down.gif" height="11" width="11" border="0" alt="'.$strmovedown.'" /></a> ';
+            } else {
+                $row[3] .= '<img src="'.$CFG->wwwroot.'/pix/spacer.gif" height="11" width="11" border="0" alt="" /> ';
+            }
+
+            $table->data[] = $row;
 
         }
         print_table($table);
 
-        $options = new object;
-        $options->sesskey = sesskey();
-        $options->action = 'new';
-        print_single_button('manage.php', $options, get_string('addrole', 'role'), 'POST');
+        $options = new object();
+        $options->action = 'add';
+        print_single_button('manage.php', $options, get_string('addrole', 'role'), 'get');
     }
 
     admin_externalpage_print_footer($adminroot);

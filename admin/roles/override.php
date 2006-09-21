@@ -130,7 +130,7 @@
             echo '<input type="hidden" name="courseid" value="'.$courseid.'" />';
         }
         echo '<input type="hidden" name="contextid" value="'.$context->id.'" />'.$strroletooverride.': ';
-        choose_from_menu ($overridableroles, 'roleid', $roleid, get_string('listallroles', 'role'), $script='rolesform.submit()');
+        choose_from_menu ($overridableroles, 'roleid', $roleid, get_string('listallroles', 'role').'...', $script='rolesform.submit()');
         echo '</div></form>';
 
         $parentcontexts = get_parent_contexts($context);

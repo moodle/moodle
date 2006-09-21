@@ -1,25 +1,80 @@
 <?php  //$Id$
 
     switch ($action) {
-        case 'add': $submitlabel = get_string('addrole', 'role'); break;
+        case 'add':
+            $submitlabel = get_string('addrole', 'role');
+            break;
+        case 'view':
+            $submitlabel = get_string('listallroles', 'role');
+            break;
         case 'edit':
-        default:  $submitlabel = get_string('savechanges');
+        default:
+            $submitlabel = get_string('savechanges');
     }
 ?>
+<table cellpadding="9" cellspacing="0" >
+
+<?php
+    if ($action == 'view') { ?>
+      <tr valign="top">
+        <td align="right"><?php print_string('selectrole', 'role') ?>:</td>
+        <td><table><tr>
+            <td><form name="switchrole" action="manage.php" method="get">
+                <input type="hidden" name="action" value="view" />
+                <?php choose_from_menu ($roleoptions, 'roleid', $roleid, get_string('listallroles', 'role').'...', $script='switchrole.submit()') ?>
+            </form></td>
+            <td><form name="editrole" action="manage.php" method="get">
+                <input type="hidden" name="roleid" value="<?php p($roleid) ?>" />
+                <input type="hidden" name="action" value="edit" />
+                <input type="submit" value="<?php print_string('edit') ?>" />
+            </form></td>
+            </tr></table>
+        </td>
+      </tr>
+<?php
+    }
+?>
+
 <form name="rolesform" action="manage.php" method="post">
 <input type="hidden" name="roleid" value="<?php p($roleid) ?>" />
 <input type="hidden" name="sesskey" value="<?php p(sesskey()) ?>" />
-<input type="hidden" name="action" value="<?php p($action) ?>" />
-<input type="hidden" name="contextid" value="<?php p($contextid) ?>" />
+<input type="hidden" name="action" value="<?php if ($action != 'view') { echo p($action); } ?>" />
 
-<br />
-<?php print_string('rolename', 'role'); ?>: <input type="text" name="name" value="<?php p($role->name) ?>" />&nbsp;
-<?php print_string('roleshortname', 'role'); ?>: <input type="text" name="shortname" value="<?php p($role->shortname) ?>" />
-<br />
-<?php print_string('roledescription', 'role'); ?>:
-<?php print_textarea($usehtmleditor, 10, 50, 50, 10, 'description', $role->description); ?>
-<p>
-<table>
+<tr valign="top">
+    <td align="right"><?php print_string('name') ?>:</td>
+    <td><?php
+    if ($action == 'view') {
+        p($role->name);
+    } else {
+        echo '<input type="text" name="name" maxlength="254" size="50" value="'.s($role->name).'" />';
+        if (isset($errors["name"])) formerr($errors["name"]);
+    } ?></td>
+</tr>
+<tr valign="top">
+    <td align="right"><?php print_string('shortname') ?>:</td>
+    <td><?php
+    if ($action == 'view') {
+        p($role->shortname);
+    } else {
+        echo '<input type="text" name="shortname" maxlength="20" size="15" value="'.s($role->shortname).'" />';
+        if (isset($errors["shortname"])) formerr($errors["shortname"]);
+    } ?></td>
+</tr>
+<tr valign="top">
+    <td align="right"><?php print_string('description') ?>:</td>
+    <td><?php
+    if ($action == 'view') {
+        p($role->description);
+        $usehtmleditor = false;
+    } else {
+        print_textarea($usehtmleditor, 10, 50, 50, 10, 'description', $role->description);
+    } ?></td>
+</tr>
+
+<tr valign="top">
+    <td align="right"><?php print_string('permissions','role') ?> :</td>
+    <td><table>
+
 <tr>
 <td><?php print_string('capability','role') ?></td>
 <td><?php print_string('inherit','role') ?></td>
@@ -46,19 +101,23 @@ foreach ($capabilities as $capability) {
     $contextlevel = $capability->contextlevel;
     $component = $capability->component;
 
-   // check the capability override for this cap, this role in this context
-    $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
-
-    $localoverride = get_local_override($roleid, $sitecontext->id, $capability->name);
+    if (empty($errors)) {
+       // check the capability override for this cap, this role in this context
+        $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
+        $localoverride = get_local_override($roleid, $sitecontext->id, $capability->name);
+    } else {
+        $localoverride = new object();
+        $localoverride->permission = $role->{$capability->name};
+    }
 
     ?>
 
         <tr>
         <td><span title="<?php echo $capability->name ?>"><?php echo get_capability_string($capability->name); ?></span></td>
-        <td><input TYPE="radio" name="<?php echo $capability->name; ?>" value="0" <?php if (!isset($localoverride->permission) || $localoverride->permission==0){ echo 'checked="checked"'; }?> /></td>
-        <td><input TYPE="radio" name="<?php echo $capability->name; ?>" value="1" <?php if (isset($localoverride->permission) && $localoverride->permission==1){ echo 'checked="checked"'; }?> /></td>
-        <td ><input TYPE="radio" name="<?php echo $capability->name; ?>" value="-1" <?php if (isset($localoverride->permission) && $localoverride->permission==-1){ echo 'checked="checked"'; }?> /></td>
-        <td ><input TYPE="radio" name="<?php echo $capability->name; ?>" value="-1000" <?php if (isset($localoverride->permission) && $localoverride->permission==-1000){ echo 'checked="checked"'; }?> /></td>
+        <td><input type="radio" name="<?php echo $capability->name; ?>" value="<?php echo CAP_INHERIT ?>" <?php if (!isset($localoverride->permission) || $localoverride->permission==CAP_INHERIT){ echo 'checked="checked"'; }?> /></td>
+        <td><input type="radio" name="<?php echo $capability->name; ?>" value="<?php echo CAP_ALLOW ?>" <?php if (isset($localoverride->permission) && $localoverride->permission==CAP_ALLOW){ echo 'checked="checked"'; }?> /></td>
+        <td ><input type="radio" name="<?php echo $capability->name; ?>" value="<?php echo CAP_PREVENT ?>" <?php if (isset($localoverride->permission) && $localoverride->permission==CAP_PREVENT){ echo 'checked="checked"'; }?> /></td>
+        <td ><input type="radio" name="<?php echo $capability->name; ?>" value="<?php echo CAP_PROHIBIT ?>" <?php if (isset($localoverride->permission) && $localoverride->permission==CAP_PROHIBIT){ echo 'checked="checked"'; }?> /></td>
         <td><?php
             if (RISK_MANAGETRUST & (int)$capability->riskbitmask) {
                 echo "T";
@@ -79,8 +138,15 @@ foreach ($capabilities as $capability) {
         </tr>
 
 <?php } ?>
+</table></td></tr>
+
+<tr>
+    <td />
+    <td><input type="submit" value="<?php p($submitlabel) ?>" />
+<?php if ($action != 'view') { ?>
+<input type="submit" name="cancel" value="<?php print_string('cancel') ?>" />
+<?php } ?>
+    </form>
+    </td>
+</tr>
 </table>
-</p>
-<br />
-<input type="submit" value="<?php p($submitlabel); ?>" />
-</form>
