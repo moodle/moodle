@@ -301,10 +301,13 @@ function has_capability($capability, $context=NULL, $userid=NULL, $doanything=tr
     }
 
     if ($doanything) {
+
         // Check site
-        $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
-        if (isset($capabilities[$sitecontext->id]['moodle/site:doanything'])) {
-            return (0 < $capabilities[$sitecontext->id]['moodle/site:doanything']);
+        if (empty($USER->switchrole[$context->id])) {  // Ignore site setting if switchrole is active
+            $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
+            if (isset($capabilities[$sitecontext->id]['moodle/site:doanything'])) {
+                return (0 < $capabilities[$sitecontext->id]['moodle/site:doanything']);
+            }
         }
 
         switch ($context->aggregatelevel) {
@@ -2650,9 +2653,9 @@ function role_switch($roleid, $context) {
 
 /// If we can't use this or are already using it or no role was specified then bail completely and reset
     if (empty($roleid) || !has_capability('moodle/role:switchroles', $context) 
-        || !empty($USER->switchrole)  || !confirm_sesskey()) {
-        load_user_capability();   // Reset all permissions to normal
-        unset($USER->switchrole);  // Delete old capabilities
+        || !empty($USER->switchrole[$context->id])  || !confirm_sesskey()) {
+        load_user_capability('', $context);   // Reset all permissions for this context to normal
+        unset($USER->switchrole[$context->id]);  // Delete old capabilities
         return true;
     }
 
@@ -2671,7 +2674,7 @@ function role_switch($roleid, $context) {
 
 /// We have a valid roleid that this user can switch to, so let's set up the session
 
-    $USER->switchrole = $roleid;     // So we know later what state we are in
+    $USER->switchrole[$context->id] = $roleid;     // So we know later what state we are in
 
     unset($USER->capabilities[$context->id]);  // Delete old capabilities
 
@@ -2681,7 +2684,7 @@ function role_switch($roleid, $context) {
         }
     }
 
-/// Add some capabilities we are really going to always need, even if the role doesn't have them!
+/// Add some permissions we are really going to always need, even if the role doesn't have them!
 
     $USER->capabilities[$context->id]['moodle/course:view'] = CAP_ALLOW;
 

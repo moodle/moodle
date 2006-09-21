@@ -2604,14 +2604,16 @@ function user_login_string($course=NULL, $user=NULL) {
         // $course->id is not defined during installation
         return '';
     } else if (isset($user->id) and $user->id) { 
+        $context = get_context_instance(CONTEXT_COURSE, $course->id);
+
         $fullname = fullname($user, true);
         $username = "<a target=\"{$CFG->framename}\" href=\"$CFG->wwwroot/user/view.php?id=$user->id&amp;course=$course->id\">$fullname</a>";
         if (isset($user->username) && $user->username == 'guest') {
             $loggedinas = $realuserinfo.get_string('loggedinasguest').
                       " (<a target=\"{$CFG->framename}\" href=\"$wwwroot/login/index.php\">".get_string('login').'</a>)';
-        } else if (!empty($user->switchrole)) {
+        } else if (!empty($user->switchrole[$context->id])) {
             $rolename = '';
-            if ($role = get_record('role', 'id', $user->switchrole)) {
+            if ($role = get_record('role', 'id', $user->switchrole[$context->id])) {
                 $rolename = ': '.format_string($role->name);
             }
             $loggedinas = get_string('loggedinas', 'moodle', $username).$rolename.
