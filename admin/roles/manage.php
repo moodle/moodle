@@ -31,7 +31,7 @@
     $rolesort = array();
     $i = 0;
     foreach ($roles as $rolex) {
-        $rolesort[] = $rolex->id;
+        $rolesort[$i] = $rolex->id;
         if ($rolex->sortorder != $i) {
             $r = new object();
             $r->id = $rolex->id;
