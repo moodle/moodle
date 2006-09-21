@@ -141,6 +141,7 @@ $string['nosubscribers'] = 'There are no subscribers yet for this forum';
 $string['nothingnew'] = 'Nothing new for $a';
 $string['notingroup'] = 'Sorry, but you need to be part of a group to see this forum.';
 $string['notrackforum'] = 'Don\'t track unread messages';
+$string['noviewdiscussionspermission'] = 'You do not have the permission to view discussions in this forum';
 $string['nownotsubscribed'] = '$a->name will NOT receive copies of \'$a->forum\' by email.';
 $string['nownottracking'] = '$a->name is no longer tracking \'$a->forum\'.';
 $string['nowallsubscribed'] = 'All forums in $a are subscribed.';
