@@ -4,7 +4,6 @@ CREATE TABLE prefix_data (
   course integer NOT NULL default '0',
   name varchar(255) NOT NULL default '',
   intro text NOT NULL default '',
-  ratings integer NOT NULL default '0',
   comments integer NOT NULL default '0',
   timeavailablefrom integer NOT NULL default '0',
   timeavailableto integer NOT NULL default '0',

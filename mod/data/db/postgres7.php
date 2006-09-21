@@ -188,6 +188,7 @@ function data_upgrade($oldversion) {
 
         modify_database('', 'ALTER TABLE prefix_data DROP COLUMN participants;');
         modify_database('', 'ALTER TABLE prefix_data DROP COLUMN assesspublic;');
+        modify_database('', 'ALTER TABLE prefix_data DROP COLUMN ratings;');
         
     }
     

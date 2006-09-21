@@ -15,7 +15,6 @@ CREATE TABLE prefix_data (
   course int(10) unsigned NOT NULL default '0',
   name varchar(255) NOT NULL default '',
   intro text NOT NULL default '',
-  ratings int(10) NOT NULL default '0',
   comments int(4) unsigned NOT NULL default '0',
   timeavailablefrom int(10) unsigned NOT NULL default '0',
   timeavailableto int(10) unsigned NOT NULL default '0',
