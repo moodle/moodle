@@ -137,7 +137,7 @@
     //print_object($user);
     
         // add in logic to check course read report
-        if (has_capability('moodle/user:viewactivitiesreport', $personalcontext) || ($course->showreports and $USER->id == $user->id)) {
+        if (has_capability('moodle/user:viewuseractivitiesreport', $personalcontext) || ($course->showreports and $USER->id == $user->id)) {
 
             $toprow[] = new tabobject('reports', $CFG->wwwroot.'/course/user.php?id='.$course->id.
                                       '&amp;user='.$user->id.'&amp;mode=outline', get_string('activityreports'));
