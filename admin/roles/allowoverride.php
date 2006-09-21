@@ -2,7 +2,7 @@
 /**
  * this page defines what roles can override (override roles in different context. For example,
  * we can say that Admin can override teacher roles in a course
- * To be able to override roles. If a user has moodle/roles:overrde at context level
+ * To be able to override roles. If a user has moodle/role:override at context level
  * and be in the roles_allow_override table.
  */
     require_once('../../config.php');
@@ -14,7 +14,7 @@
 
 
     $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
-    require_capability('moodle/roles:manage', $sitecontext);
+    require_capability('moodle/role:manage', $sitecontext);
 
     $site = get_site();
     $strmanageroles = get_string('manageroles');

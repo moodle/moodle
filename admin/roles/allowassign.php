@@ -3,8 +3,8 @@
  * this page defines what roles can access (grant user that role and override that roles'
  * capabilities in different context. For example, we can say that Teachers can only grant
  * student role or modify student role's capabilities. Note that you need both the right
- * capability moodle/roles:assign or moodle/roles:manage and this database table roles_deny_grant
- * to be able to grant roles. If a user has moodle/roles:manage at site level assignment
+ * capability moodle/role:assign or moodle/role:manage and this database table roles_deny_grant
+ * to be able to grant roles. If a user has moodle/role:manage at site level assignment
  * then he can modify the roles_allow_assign table via this interface.
  */
     require_once('../../config.php');
@@ -16,7 +16,7 @@
 
 
     $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
-    require_capability('moodle/roles:manage', $sitecontext);
+    require_capability('moodle/role:manage', $sitecontext);
 
     $site = get_site();
     $strmanageroles = get_string('manageroles');
