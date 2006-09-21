@@ -664,6 +664,7 @@ function onespace2empty(&$item, $key) {
     $item = $item == ' ' ? '' : $item;
     return true;
 }
+///End DIRTY HACK
 
 
 /**
@@ -1002,13 +1003,6 @@ function insert_record($table, $dataobject, $returnid=true, $primarykey='id') {
         return false;
     }
 
-/// DIRTY HACK: Implement one cache to store meta data (needed by Oracle inserts)
-/// TODO: Possibly make it global to benefit other functions needing it (update_record...)
-    if (!isset($metadatacache)) {
-        $metadatacache = array();
-    }
-/// End DIRTY HACK
-
     if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++; };
 
 /// In Moodle we always use auto-numbering fields for the primary key
@@ -1052,57 +1046,13 @@ function insert_record($table, $dataobject, $returnid=true, $primarykey='id') {
             $dataobject->{$primarykey} = $nextval;
         }
     }
-/// Also, for Oracle DB, empty strings are converted to NULLs in DB
-/// and this breaks a lot of NOT NULL columns currenty Moodle. In the future it's
-/// planned to move some of them to NULL, if they must accept empty values and this
-/// piece of code will become less and less used. But, for now, we need it.
-/// What we are going to do is to examine all the data being inserted and if it's
-/// an empty string (NULL for Oracle) and the field is defined as NOT NULL, we'll modify
-/// such data in the best form possible ("0" for booleans and numbers and " " for the
-/// rest of strings. It isn't optimal, but the only way to do so.
-/// In the oppsite, when retrieving records from Oracle, we'll decode " " back to
-/// empty strings to allow everything to work properly. DIRTY HACK.
-    if ( $CFG->dbtype === 'oci8po') {
-    /// Get Meta info to know what to change, using the cached meta if exists
-        if (!isset($metadatacache[$table])) {
-            $metadatacache[$table] = array_change_key_case($db->MetaColumns($CFG->prefix . $table), CASE_LOWER);
-        }
-        $columns = $metadatacache[$table];
-    /// Iterate over all the fields in the insert, transforming values
-    /// in the best possible form
-        foreach ($dataobject as $fieldname => $fieldvalue) {
-        /// If the field doesn't exist in metadata, skip
-            if (!isset($columns[strtolower($fieldname)])) {
-                continue;
-            }
-        /// If the field ins't VARCHAR or CLOB, skip
-            if ($columns[strtolower($fieldname)]->type != 'VARCHAR2' && $columns[strtolower($fieldname)]->type != 'CLOB') {
-                continue;
-            }
-        /// If the field isn't NOT NULL, skip (it's nullable, so accept empty values)
-            if (!$columns[strtolower($fieldname)]->not_null) {
-                continue;
-            }
-        /// If the value isn't empty, skip
-            if (!empty($fieldvalue)) {
-                continue;
-            }
-        /// Now, we have one empty value, going to be inserted to one NOT NULL, VARCHAR2 or CLOB field
-        /// Try to get the best value to be inserted
-            if (gettype($fieldvalue) == 'boolean') {
-                $dataobject->$fieldname = '0'; /// Transform false to '0' that evaluates the same for PHP
-            } else if (gettype($fieldvalue) == 'integer') {
-                $dataobject->$fieldname = '0'; /// Transform 0 to '0' that evaluates the same for PHP
-            } else if (gettype($fieldvalue) == 'NULL') {
-                $dataobject->$fieldname = '0'; /// Transform NULL to '0' that evaluates the same for PHP
-            } else {
-                $dataobject->$fieldname = ' '; /// Transform '' to ' ' that DONT'T EVALUATE THE SAME
-                                               /// (we'll transform back again on get_records_XXX functions)!!
-            }
-        }
-    }
-/// End of DIRTY HACK
 
+/// Begin DIRTY HACK
+    if ($CFG->dbtype == 'oci8po') {
+        oracle_dirty_hack($table, $dataobject); // Convert object to the correct "empty" values for Oracle DB
+    }
+/// End DIRTY HACK
+    
 /// Get the correct SQL from adoDB
     if (!$insertSQL = $db->GetInsertSQL($rs, (array)$dataobject, true)) {
         return false;
@@ -1124,7 +1074,7 @@ function insert_record($table, $dataobject, $returnid=true, $primarykey='id') {
     }
 
 /// We already know the record PK if it's been passed explicitly,
-/// or if we've retrieved it from a sequence (Postgres).
+/// or if we've retrieved it from a sequence (Postgres and Oracle).
     if (!empty($dataobject->{$primarykey})) {
         return $dataobject->{$primarykey};
     }
@@ -1169,6 +1119,12 @@ function update_record($table, $dataobject) {
     if (! isset($dataobject->id) ) {
         return false;
     }
+
+/// Begin DIRTY HACK
+    if ($CFG->dbtype == 'oci8po') {
+        oracle_dirty_hack($table, $dataobject); // Convert object to the correct "empty" values for Oracle DB
+    }
+/// End DIRTY HACK
 
     // Determine all the fields in the table
     if (!$columns = $db->MetaColumns($CFG->prefix . $table)) {
@@ -1465,5 +1421,84 @@ function configure_dbconnection() {
     }
 }
 
+/**
+ * This function will handle all the records before being inserted/updated to DB for Oracle
+ * installations. This is because the "special feature" of Oracle where the empty string is
+ * equal to NULL and this presents a problem with all our currently NOT NULL default '' fields.
+ *
+ * Once Moodle DB will be free of this sort of false NOT NULLS, this hack could be removed safely
+ *
+ * Note that this function is 100% private and should be used, exclusively by DML functions
+ * in this file. Also, this is considered a DIRTY HACK to be removed when possible. (stronk7)
+ *
+ * @param $table string the table where the record is going to be inserted/updated (without prefix)
+ * @param $dataobject object the object to be inserted/updated
+ * @param $usecache boolean flag to determinate if we must use the per request cache of metadata
+ *        true to use it, false to ignore and delete it
+ */
+function oracle_dirty_hack ($table, &$dataobject, $usecache = true) {
+
+    global $CFG, $db;
+
+/// Init and delete metadata cache
+    if (!isset($metadatacache) || !$usecache) {
+        static $metadatacache = array();
+    }
+
+/// For Oracle DB, empty strings are converted to NULLs in DB
+/// and this breaks a lot of NOT NULL columns currenty Moodle. In the future it's
+/// planned to move some of them to NULL, if they must accept empty values and this
+/// piece of code will become less and less used. But, for now, we need it.
+/// What we are going to do is to examine all the data being inserted and if it's
+/// an empty string (NULL for Oracle) and the field is defined as NOT NULL, we'll modify
+/// such data in the best form possible ("0" for booleans and numbers and " " for the
+/// rest of strings. It isn't optimal, but the only way to do so.
+/// In the oppsite, when retrieving records from Oracle, we'll decode " " back to
+/// empty strings to allow everything to work properly. DIRTY HACK.
+
+/// If the db isn't Oracle, return without modif
+    if ( $CFG->dbtype != 'oci8po') {
+        return;
+    }
+
+/// Get Meta info to know what to change, using the cached meta if exists
+    if (!isset($metadatacache[$table])) {
+        $metadatacache[$table] = array_change_key_case($db->MetaColumns($CFG->prefix . $table), CASE_LOWER);
+    }
+    $columns = $metadatacache[$table];
+/// Iterate over all the fields in the insert, transforming values
+/// in the best possible form
+    foreach ($dataobject as $fieldname => $fieldvalue) {
+    /// If the field doesn't exist in metadata, skip
+        if (!isset($columns[strtolower($fieldname)])) {
+            continue;
+        }
+    /// If the field ins't VARCHAR or CLOB, skip
+        if ($columns[strtolower($fieldname)]->type != 'VARCHAR2' && $columns[strtolower($fieldname)]->type != 'CLOB') {
+            continue;
+        }
+    /// If the field isn't NOT NULL, skip (it's nullable, so accept empty values)
+        if (!$columns[strtolower($fieldname)]->not_null) {
+            continue;
+        }
+    /// If the value isn't empty, skip
+        if (!empty($fieldvalue)) {
+            continue;
+        }
+    /// Now, we have one empty value, going to be inserted to one NOT NULL, VARCHAR2 or CLOB field
+    /// Try to get the best value to be inserted
+        if (gettype($fieldvalue) == 'boolean') {
+            $dataobject->$fieldname = '0'; /// Transform false to '0' that evaluates the same for PHP
+        } else if (gettype($fieldvalue) == 'integer') {
+            $dataobject->$fieldname = '0'; /// Transform 0 to '0' that evaluates the same for PHP
+        } else if (gettype($fieldvalue) == 'NULL') {
+            $dataobject->$fieldname = '0'; /// Transform NULL to '0' that evaluates the same for PHP
+        } else {
+            $dataobject->$fieldname = ' '; /// Transform '' to ' ' that DONT'T EVALUATE THE SAME
+                                           /// (we'll transform back again on get_records_XXX functions and others)!!
+        }
+    }
+}
+/// End of DIRTY HACK
 
 ?>
