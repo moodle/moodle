@@ -39,6 +39,9 @@ class XMLDBmssql extends XMLDBgenerator {
     var $unsigned_allowed = false;    // To define in the generator must handle unsigned information
     var $default_for_char = '';      // To define the default to set for NOT NULLs CHARs without default (null=do nothing)
 
+    var $specify_nulls = true;  //To force the generator if NULL clauses must be specified. It shouldn't be necessary
+                                     //but some mssql drivers require them or everything is created as NOT NULL :-(
+
     var $foreign_keys = false; // Does the generator build foreign keys
 
     var $primary_index = false;// Does the generator need to build one index for primary keys

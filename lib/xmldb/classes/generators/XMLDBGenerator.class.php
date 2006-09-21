@@ -53,6 +53,9 @@ class XMLDBgenerator {
 
     var $default_after_null = true;  //To decide if the default clause of each field must go after the null clause
 
+    var $specify_nulls = false;  //To force the generator if NULL clauses must be specified. It shouldn't be necessary
+                                 //but some mssql drivers require them or everything is created as NOT NULL :-(
+
     var $primary_key_name = null; //To force primary key names to one string (null=no force)
 
     var $primary_keys = true;  // Does the generator build primary keys
@@ -326,6 +329,10 @@ class XMLDBgenerator {
         $notnull = '';
         if ($xmldb_field->getNotNull()) {
             $notnull = ' NOT NULL';
+        } else {
+            if ($this->specify_nulls) {
+                $notnull = ' NULL';
+            }
         }
     /// Calculate the default clause
         $default = $this->getDefaultClause($xmldb_field);
