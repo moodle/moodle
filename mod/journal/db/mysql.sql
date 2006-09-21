@@ -40,7 +40,7 @@ CREATE TABLE prefix_journal_entries (
   text text NOT NULL default '',
   format tinyint(2) NOT NULL default '0',
   rating int(10) default '0',
-  comment text default '',
+  entrycomment text default '',
   teacher int(10) unsigned NOT NULL default '0',
   timemarked int(10) unsigned NOT NULL default '0',
   mailed int(1) unsigned NOT NULL default '0',

@@ -52,5 +52,9 @@ function journal_upgrade($oldversion) {
         $wtm->update( 'journal_entries', 'text', 'format', $sql );
     }
 
+    if ($oldversion < 2006092100) {
+        table_column('journal_entries', 'comment', 'entrycomment', 'text', '', '', '');
+    } 
+
     return $result;
 }

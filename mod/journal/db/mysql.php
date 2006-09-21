@@ -76,6 +76,11 @@ function journal_upgrade($oldversion) {
         execute_sql("UPDATE {$CFG->prefix}journal SET intro='' WHERE intro IS NULL");
         table_column('journal','intro','intro','text','','','','not null');
     }
+
+    if ($oldversion < 2006092100) {
+        table_column('journal_entries', 'comment', 'entrycomment', 'text', '', '', '');
+    }
+
     return $result;
 }
 

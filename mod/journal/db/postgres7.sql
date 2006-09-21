@@ -41,7 +41,7 @@ CREATE TABLE prefix_journal_entries (
   text text NOT NULL default '',
   format integer NOT NULL default '0',
   rating integer default '0',
-  comment text,
+  entrycomment text,
   teacher integer NOT NULL default '0',
   timemarked integer NOT NULL default '0',
   mailed integer NOT NULL default '0'

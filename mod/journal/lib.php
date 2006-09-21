@@ -453,7 +453,7 @@ function journal_print_user_entry($course, $user, $entry, $teachers, $grades) {
             echo "&nbsp;&nbsp;<font size=\"1\">".userdate($entry->timemarked)."</font>";
         }
         echo "<br /><textarea name=\"c$entry->id\" rows=\"12\" cols=\"60\" wrap=\"virtual\">";
-        p($entry->comment);
+        p($entry->entrycomment);
         echo "</textarea><br />";
         echo "</td></tr>";
     }
@@ -541,7 +541,7 @@ function journal_print_feedback($course, $entry, $grades) {
     }
     echo '</div>';
 
-    echo format_text($entry->comment);
+    echo format_text($entry->entrycomment);
     echo '</td></tr></table>';
 }
 

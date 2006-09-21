@@ -94,7 +94,7 @@
                 fwrite ($bf,full_tag("TEXT",6,false,$jou_ent->text));
                 fwrite ($bf,full_tag("FORMAT",6,false,$jou_ent->format));
                 fwrite ($bf,full_tag("RATING",6,false,$jou_ent->rating));
-                fwrite ($bf,full_tag("COMMENT",6,false,$jou_ent->comment));
+                fwrite ($bf,full_tag("ENTRYCOMMENT",6,false,$jou_ent->entrycomment));
                 fwrite ($bf,full_tag("TEACHER",6,false,$jou_ent->teacher));
                 fwrite ($bf,full_tag("TIMEMARKED",6,false,$jou_ent->timemarked));
                 fwrite ($bf,full_tag("MAILED",6,false,$jou_ent->mailed));
