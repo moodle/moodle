@@ -95,6 +95,10 @@ a.autolink:visited {
   background-image:url(pix/tab/right_active_hover.gif);
 }
 
+.breadcrumb .sep {
+    color:#330000;
+}
+
 /** Styles to have the blocks showed and hidden properly **/
 
 #left-column .hidden .header,
@@ -154,6 +158,7 @@ h2.header,
 .sideblock .content,
 .loginbox .content,
 .generalboxcontent,
+.informationboxcontent,
 .noticeboxcontent,
 .entryboxheader,
 .entrybox,
