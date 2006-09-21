@@ -3712,6 +3712,46 @@ function update_course_icon($courseid) {
     }
 }
 
+/**
+ * Returns a little popup menu for switching roles
+ *
+ * @uses $CFG
+ * @uses $USER
+ * @param int $courseid The course  to update by id as found in 'course' table
+ * @return string
+ */
+function switchroles_form($courseid) {
+
+    global $CFG, $USER;
+
+
+    if (!$context = get_context_instance(CONTEXT_COURSE, $courseid)) {
+        return '';
+    }
+
+    if (has_capability('moodle/role:switchroles', $context)) {
+        if (empty($USER->switchrole)) {   // Print a menu
+            if (!$roles = get_assignable_roles($context)) {
+                return '';   // Nothing to show!
+            }
+
+            return popup_form($CFG->wwwroot.'/course/view.php?id='.$courseid.'&sesskey='.sesskey().'&switchrole=', 
+                              $roles, 'switchrole', '', get_string('switchroleto'), 'switchrole', '', true);
+        
+        } else {  // Just a button to return to normal
+            $options = array();
+            $options['id'] = $courseid;
+            $options['sesskey'] = sesskey();
+            $options['switchrole'] = 0;
+
+            return print_single_button($CFG->wwwroot.'/course/view.php', $options,  
+                                       get_string('switchrolereturn'), 'post', '_self', true);
+        }
+    }
+
+    return '';
+}
+
 
 /**
  * Returns a turn edit on/off button for course in a self contained form.

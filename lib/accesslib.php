@@ -2634,6 +2634,62 @@ function get_roles_on_exact_context($context) {
   
 }
 
+/* 
+ * Switches the current user to another role for the current session and only
+ * in the given context.  If roleid is not valid (eg 0) or the current user 
+ * doesn't have permissions to be switching roles then the user's session 
+ * is compltely reset to have their normal roles.
+ * @param integer $roleid
+ * @param object $context
+ * @return bool
+ */
+function role_switch($roleid, $context) {
+    global $USER;
+
+    global $db;
+
+/// If we can't use this or are already using it or no role was specified then bail completely and reset
+    if (empty($roleid) || !has_capability('moodle/role:switchroles', $context) 
+        || !empty($USER->switchrole)  || !confirm_sesskey()) {
+        load_user_capability();   // Reset all permissions to normal
+        unset($USER->switchrole);  // Delete old capabilities
+        return true;
+    }
+
+/// We're allowed to switch but can we switch to the specified role?  Use assignable roles to check.
+    if (!$roles = get_assignable_roles($context)) {
+        return false;
+    }
+
+    if (empty($roles[$roleid])) {   /// We can't switch to this particular role
+        return false;
+    }
+
+    if (!$sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID)) {
+        return false;
+    }
+
+/// We have a valid roleid that this user can switch to, so let's set up the session
+
+    $USER->switchrole = $roleid;     // So we know later what state we are in
+
+    unset($USER->capabilities[$context->id]);  // Delete old capabilities
+
+    if ($capabilities = get_records_select('role_capabilities', "roleid = $roleid AND contextid = $sitecontext->id")) {
+        foreach ($capabilities as $capability) {
+            $USER->capabilities[$context->id][$capability->capability] = $capability->permission;
+        }
+    }
+
+/// Add some capabilities we are really going to always need, even if the role doesn't have them!
+
+    $USER->capabilities[$context->id]['moodle/course:view'] = CAP_ALLOW;
+
+    return true;
+
+}
+
+
 // get any role that has an override on exact context
 function get_roles_with_override_on_context($context) {
     
@@ -2668,4 +2724,5 @@ function get_users_from_role_on_context($role, $context) {
                             WHERE contextid = $context->id
                                   AND roleid = $role->id");  
 }
+
 ?>

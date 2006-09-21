@@ -15,6 +15,8 @@
     $section     = optional_param('section', 0, PARAM_INT);
     $move        = optional_param('move', 0, PARAM_INT);
     $marker      = optional_param('marker',-1 , PARAM_INT);
+    $switchrole  = optional_param('switchrole',-1, PARAM_INT);
+
 
 
     if (empty($id) && empty($name) && empty($idnumber)) {
@@ -35,7 +37,16 @@
         }
     }
 
+    if (!$context = get_context_instance(CONTEXT_COURSE, $course->id)) {
+        print_error('nocontext');
+    }
+
     require_login($course->id);
+
+    if ($switchrole > -1) {
+        role_switch($switchrole, $context);
+        require_login($course->id);
+    }
 
     //If course is hosted on an external server, redirect to corresponding
     //url with appropriate authentication attached as parameter 
@@ -47,6 +58,7 @@
             }
         }
     }
+
 
     require_once($CFG->dirroot.'/calendar/lib.php');    /// This is after login because it needs $USER
 
