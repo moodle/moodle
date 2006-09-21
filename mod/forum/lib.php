@@ -4467,9 +4467,12 @@ function forum_convert_to_roles($forum, $forummodid, $teacherroles=array(),
     }
     
     if ($forum->type == 'teacher') {
-        
+
         // Teacher forums should be converted to normal forums that
         // use the Roles System to implement the old behavior.
+        // Note:
+        //   Seems that teacher forums were never backed up in 1.6 since they
+        //   didn't have an entry in the course_modules table.
         require_once($CFG->dirroot.'/course/lib.php');
 
         if (count_records('forum_discussions', 'forum', $forum->id) == 0) {
@@ -4483,8 +4486,8 @@ function forum_convert_to_roles($forum, $forummodid, $teacherroles=array(),
             $mod->module = $forummodid;
             $mod->instance = $forum->id;
             $mod->section = 0;
-            $mod->visible = 0;
-            $mod->visibleold = 0;
+            $mod->visible = 0;     // Hide the forum
+            $mod->visibleold = 0;  // Hide the forum
             $mod->groupmode = 0;
 
             if (!$cmid = add_course_module($mod)) {

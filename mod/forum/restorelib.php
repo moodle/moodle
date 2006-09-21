@@ -59,7 +59,6 @@
             $forum->name = backup_todb($info['MOD']['#']['NAME']['0']['#']);
             $forum->intro = backup_todb($info['MOD']['#']['INTRO']['0']['#']);
             
-            
             // These get dropped in Moodle 1.7 when the new Roles System gets
             // set up. Therefore they might or not be there depending on whether
             // we are restoring a 1.6+ forum or a 1.7 or later forum backup.
@@ -166,13 +165,12 @@
             } else {
                 $status = false;
             }
-            
+
             // If the backup contained $forum->open and $forum->assesspublic,
             // we need to convert the forum to use Roles. It means the backup
-            // was made pre Moodle 1.7. We check the backup_version to make
-            // sure.
+            // was made pre Moodle 1.7.
             if (isset($forum->open) && isset($forum->assesspublic)) {
-            
+
                 $forummod = get_record('modules', 'name', 'forum');
                 
                 if (!$teacherroles = get_roles_with_capability('moodle/legacy:teacher', CAP_ALLOW)) {
