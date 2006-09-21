@@ -22,9 +22,13 @@
     require_login($course->id);
 
     if ($course->metacourse) {
-        print_error('cantunenrollfrommetacourse');
+        print_error('cantunenrollfrommetacourse', '', $CFG->wwwroot.'/course/view.php?id='.$course->id);
     } else {
         require_capability('moodle/role:unassignself', $context, NULL, false);
+    }
+
+    if (!empty($USER->switchrole[$context->id])) {
+        print_error('cantunenrollinthisrole', '', $CFG->wwwroot.'/course/view.php?id='.$course->id);
     }
 
     if ($confirm and confirm_sesskey()) {
