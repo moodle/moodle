@@ -76,7 +76,7 @@
                     if (!preg_match('|^[a-z_]+/[a-z_]+:[a-z_]+$|', $capname)) {
                         continue;
                     }
-                    $value = (int)$value;
+                    $value = clean_param($value, PARAM_INT);
                     if (!in_array($value, $allowed_values)) {
                         continue;
                     }
@@ -100,23 +100,19 @@
 
                 if (empty($name)) {
                     $errors['name'] = get_string('errorbadrolename', 'role');
-                } else {
-                    if ($rs = get_records('role', 'name', $name)) {
-                        unset($rs[$roleid]);
-                        if (!empty($rs)) {
-                            $errors['name'] = get_string('errorexistsrolename', 'role');
-                        }
+                } else if ($rs = get_records('role', 'name', $name)) {
+                    unset($rs[$roleid]);
+                    if (!empty($rs)) {
+                        $errors['name'] = get_string('errorexistsrolename', 'role');
                     }
                 }
 
                 if (empty($shortname)) {
                     $errors['shortname'] = get_string('errorbadroleshortname', 'role');
-                } else {
-                    if ($rs = get_records('role', 'shortname', $shortname)) {
-                        unset($rs[$roleid]);
-                        if (!empty($rs)) {
-                            $errors['shortname'] = get_string('errorexistsroleshortname', 'role');
-                        }
+                } else if ($rs = get_records('role', 'shortname', $shortname)) {
+                    unset($rs[$roleid]);
+                    if (!empty($rs)) {
+                        $errors['shortname'] = get_string('errorexistsroleshortname', 'role');
                     }
                 }
                 if (!empty($errors)) {
@@ -132,7 +128,7 @@
                     if (!preg_match('|^[a-z_]+/[a-z_]+:[a-z_]+$|', $capname)) {
                         continue;
                     }
-                    $value = (int)$value;
+                    $value = clean_param($value, PARAM_INT);
                     if (!in_array($value, $allowed_values)) {
                         continue;
                     }
@@ -164,9 +160,8 @@
                     }
                 }
 
-                // update normal role settings
-
                 if (empty($errors)) {
+                    // update normal role settings
                     $role->id = $roleid;
                     $role->name = $name;
                     $role->description = $description;
