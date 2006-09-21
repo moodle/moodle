@@ -50,7 +50,17 @@
                 //Iterate over users putting their roles
                 foreach ($backupable_users as $backupable_user) {
                     $backupable_user->info = "";
-                    //Is Admin in tables (not is_admin()) !!
+                    // writing all the applicable role assignments
+                    if ($userroles = get_records_sql("SELECT DISTINCT r.* 
+                                                  FROM {$CFG->prefix}role_assignments ra,
+                                                       {$CFG->prefix}role r
+                                                  WHERE ra.userid = $backupable_user->id;
+                                                        AND r.id = ra.roleid")) {
+                        foreach ($userroles as $userrole) {
+                            $backupable_user->info .= $role->shortname.",";  
+                        }
+                    }
+                    /*
                     if (record_exists("user_admins","userid",$backupable_user->id)) {
                         $backupable_user->info .= "admin";
                     }
@@ -66,10 +76,13 @@
                     if (record_exists("user_students","course",$course,"userid",$backupable_user->id)) {
                         $backupable_user->info .= "student";
                     }
+                    */
+                    
                     //Is needed user (exists in needed_users) 
                     if (isset($needed_users[$backupable_user->id])) {
                         $backupable_user->info .= "needed";
                     }
+                    
                     //Now create the backup_id record
                     $backupids_rec->backup_code = $backup_unique_code;
                     $backupids_rec->table_name = "user";
@@ -981,6 +994,7 @@
            }
 
            if ($selected) {
+               $context = get_context_instance(CONTEXT_MODULE, $tok);
                //Gets course_module data from db
                $course_module = get_records ("course_modules","id",$tok);
                //If it's the first, pring MODS tag
@@ -996,6 +1010,10 @@
                    $tok = strtok(",");
                    continue;
                }
+               
+               // find all role values that has an override in this context
+               $roles = get_records('role_capabilities', 'contextid', $context->id);
+                
                //Print mod info from course_modules
                fwrite ($bf,start_tag("MOD",5,true));
                //Save neccesary info to backup_ids
@@ -1007,8 +1025,24 @@
                fwrite ($bf,full_tag("INDENT",6,false,$course_module[$tok]->indent));
                fwrite ($bf,full_tag("VISIBLE",6,false,$course_module[$tok]->visible));
                fwrite ($bf,full_tag("GROUPMODE",6,false,$course_module[$tok]->groupmode));
+               // get all the role_capabilities overrides in this mod
+               fwrite ($bf,start_tag("ROLE_CAPABILITIES",6,true));
+               // foreach role that has an override in this context
+                   foreach ($roles as $role) {
+                       fwrite ($bf, start_tag("ROLE", 7, true, array('name'=>$role->name);
+                       $capabilities = get_records_sql("SELECT * 
+                                                       FROM {$CFG->prefix}role_capabilities
+                                                       WHERE contextid = $context->id
+                                                       AND roleid = $role->id");
+                       foreach ($capabilities as $capability) {
+                           fwrite ($bf, full_tag("NAME", 8, $capability->capability));
+                           fwrite ($bf, full_tag("VALUE", 8, $capability->value));
+                       }
+                       fwrite ($bf, end_tag("ROLE", 7, true);
+                   }
+               fwrite ($bf,end_tag("ROLE_CAPABILITIES",6,true));
                fwrite ($bf,end_tag("MOD",5,true));
-            }
+           }
            //check for next
            $tok = strtok(",");
         }
@@ -1091,22 +1125,40 @@
                 fwrite ($bf,full_tag("AUTOSUBSCRIBE",4,false,$user_data->autosubscribe));
                 fwrite ($bf,full_tag("TRACKFORUMS",4,false,$user_data->trackforums));
                 fwrite ($bf,full_tag("TIMEMODIFIED",4,false,$user_data->timemodified));
-
+                
+                $user->isneeded = strpos($user->info,"needed");
                 //Output every user role (with its associated info) 
+                /*
                 $user->isadmin = strpos($user->info,"admin");
                 $user->iscoursecreator = strpos($user->info,"coursecreator");
                 $user->isteacher = strpos($user->info,"teacher");
                 $user->isstudent = strpos($user->info,"student");
-                $user->isneeded = strpos($user->info,"needed");
+                
+                
                 if ($user->isadmin!==false or 
                     $user->iscoursecreator!==false or 
                     $user->isteacher!==false or 
                     $user->isstudent!==false or
                     $user->isneeded!==false) {
+                */
+                
+                if ($user->info != "needed" && $user->info!="") {
                     //Begin ROLES tag
                     fwrite ($bf,start_tag("ROLES",4,true));
                     //PRINT ROLE INFO
                     //Admins
+                    $roles = explode(",", $user->info) {
+                        foreach ($roles as $role) {
+                            if ($role!="" && $role!="needed") {
+                                fwrite ($bf,start_tag("ROLE",5,true));
+                                //Print Role info
+                                fwrite ($bf,full_tag("TYPE",6,false,$role));
+                                //Print ROLE end
+                                fwrite ($bf,end_tag("ROLE",5,true)); 
+                            }  
+                        }
+                    }
+                    /*
                     if ($user->isadmin!==false) {
                         //Print ROLE start
                         fwrite ($bf,start_tag("ROLE",5,true));
@@ -1158,7 +1210,10 @@
                         fwrite ($bf,full_tag("ENROL",6,false,$stu->enrol));
                         //Print ROLE end
                         fwrite ($bf,end_tag("ROLE",5,true));   
-                    }
+                    }*/
+                    
+                    
+                    
                     //Needed
                     if ($user->isneeded!==false) {
                         //Print ROLE start
@@ -2028,12 +2083,19 @@
         $preferences->backup_course_files = optional_param('backup_course_files',1,PARAM_INT);
         $preferences->backup_messages = optional_param('backup_messages',1,PARAM_INT);
         $preferences->backup_course = $course->id;
-        $preferences->backup_name = required_param('backup_name',PARAM_FILE );
+        $preferences->backup_name = required_param('backup_name',PARAM_FILE);
         $preferences->backup_unique_code =  required_param('backup_unique_code');
 
         // put it (back) in the session
        $SESSION->backupprefs[$course->id] = $preferences;
     }
 
-
+    /* Finds all related roles used in course, mod and blocks context
+     * @param object $preferences
+     * @param object $course
+     * @return array of role objects
+     */ 
+    function backup_fetch_roles($preferences, $course) {
+    
+    }
 ?>
