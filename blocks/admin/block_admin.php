@@ -150,7 +150,7 @@ class block_admin extends block_list {
 
     /// View course grades (or just your own grades, same link)
         if (has_capability('moodle/course:viewcoursegrades', $context) or 
-            (has_capability('moodle/course:viewusergrades', $context) && $course->showgrades)) {
+            (has_capability('moodle/user:viewusergrades', $context) && $course->showgrades)) {
             $this->content->items[]='<a href="'.$CFG->wwwroot.'/grade/index.php?id='.$this->instance->pageid.'">'.get_string('grades').'</a>';
             $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/grades.gif" alt="" />';
         }
