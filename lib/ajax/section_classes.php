@@ -1,3 +1,19 @@
+<?php // $Id$
+
+/// Javascript file run through PHP so we can control it better
+
+    $nomoodlecookie = true;
+
+    include('../../config.php');
+
+    $lifetime = '86400';
+
+    @header('Content-type: text/javascript'); 
+    @header('Last-Modified: '. gmdate('D, d M Y H:i:s', time()) .' GMT');
+    @header('Cache-control: max-age='.$lifetime);
+    @header('Expires: '. gmdate('D, d M Y H:i:s', time() + $lifetime) .'GMT');
+    @header('Pragma: ');
+?>
 /*
  * library for ajaxcourse formats, the classes and related functions for sections and resources
  * this library requires a 'main' object created in calling document 
@@ -482,9 +498,11 @@ resource_class.prototype.init_buttons = function(){
        //find edit button
        var updateButton = null;
        var buttons =  commandContainer.getElementsByTagName('a');
-       for(var x=0;x<buttons.length;x++)
-            if(buttons[x].title == 'Update')
+       for (var x=0;x<buttons.length;x++) {
+            if (buttons[x].title == '<?php print_string('update'); ?>') {
                 updateButton = buttons[x];
+            }
+       }
                      
        if(updateButton == null)
         YAHOO.log('Cannot find updateButton for '+this.getEl().id,'error');                     

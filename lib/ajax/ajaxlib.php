@@ -20,8 +20,8 @@
         "yui_dragdrop" => "/lib/yui/dragdrop/dragdrop.js",
         "yui_logger" => "/lib/yui/logger/logger.js",
         "yui_connection" => "/lib/yui/connection/connection.js",        
-        "ajaxcourse_blocks" => "/lib/ajax/block_classes.js",
-        "ajaxcourse_sections" => "/lib/ajax/section-resource_classes.js",
+        "ajaxcourse_blocks" => "/lib/ajax/block_classes.php",
+        "ajaxcourse_sections" => "/lib/ajax/section_classes.php",
         "ajaxcourse_topic" => "/course/format/topics/ajaxcourse-topics.js",
         "ajaxcourse_week" => "/course/format/weeks/ajaxcourse-weeks.js"           
         );

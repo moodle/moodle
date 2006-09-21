@@ -1,3 +1,19 @@
+<?php // $Id$
+
+/// Javascript file run through PHP so we can control it better
+
+    $nomoodlecookie = true;
+
+    require_once('../../config.php');
+
+    $lifetime = '86400';
+
+    @header('Content-type: text/javascript'); 
+    @header('Last-Modified: '. gmdate('D, d M Y H:i:s', time()) .' GMT');
+    @header('Cache-control: max-age='.$lifetime);
+    @header('Expires: '. gmdate('D, d M Y H:i:s', time() + $lifetime) .'GMT');
+    @header('Pragma: ');
+?>
 /*
  * library for ajaxcourse formats, the classes and related functions for drag and drop blocks
  * 
