@@ -122,6 +122,14 @@ class block_base {
      */
     function before_delete() {
     }
+    
+    /**
+     * Function that can be overridden to do extra setup after a block instance has been
+     * restored from backup. For example, it may need to alter any dates that the block
+     * stores, if the $restore->course_startdateoffset is set.  
+     */
+    function after_restore($restore) {
+    }
 
     /**
      * Returns the block name, as present in the class name,

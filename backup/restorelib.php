@@ -797,6 +797,11 @@
                         $status = false;
                         break;
                     }
+                    
+                    //Get an object for the block and tell it it's been restored so it can update dates
+                    //etc. if necessary
+                    $blockobj=block_instance($instance->name,$instance);
+                    $blockobj->after_restore($restore);
     
                     //Now we can increment the weight counter
                     ++$maxweights[$instance->position];
