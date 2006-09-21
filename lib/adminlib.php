@@ -1506,7 +1506,7 @@ class admin_setting_courselist_frontpage extends admin_setting_configselect {
 
     function get_setting() {
         global $CFG;
-        return (isset($CFG->{$this->name}) ? explode(',', $CFG->{$this->name}) : NULL);
+        return (isset($CFG->{$this->name}) ? explode(',', $CFG->{$this->name}) : ',1,,');
     }
 
     function write_setting($data) {
@@ -1641,7 +1641,7 @@ class admin_setting_special_frontpagedesc extends admin_setting {
                    '<td>';
 
         ob_start();  // double-check the number of columns below... might overrun some screen resolutions
-        print_textarea($usehtmleditor, 20, 40, 0, 0, 's_' . $this->name, $currentsetting);
+        print_textarea($usehtmleditor, 15, 60, 0, 0, 's_' . $this->name, $currentsetting);
 
         if ($usehtmleditor) {
             use_html_editor();
