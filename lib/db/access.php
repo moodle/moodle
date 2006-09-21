@@ -406,6 +406,20 @@ $moodle_capabilities = array(
         )
     ),
 
+    'moodle/role:switchroles' => array(
+        'riskbitmask' => RISK_XSS,
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'legacy' => array(
+            'guest' => CAP_PREVENT,
+            'student' => CAP_PREVENT,
+            'teacher' => CAP_PREVENT,
+            'editingteacher' => CAP_ALLOW,
+            'coursecreator' => CAP_PREVENT,
+            'admin' => CAP_ALLOW
+        )
+    ),
+
     'moodle/category:create' => array(
 
         'captype' => 'write',
