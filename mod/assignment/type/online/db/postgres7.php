@@ -80,7 +80,7 @@ function assignment_online_upgrade($oldversion)  {
                         $submission->data1         = addslashes($entry->text);
                         $submission->data2         = $entry->format;
                         $submission->grade         = $entry->rating;
-                        $submission->submissioncomment       = addslashes($entry->submissioncomment);
+                        $submission->submissioncomment       = addslashes($entry->comment);
                         $submission->format        = FORMAT_MOODLE;
                         $submission->teacher       = $entry->teacher;
                         $submission->timemarked    = $entry->timemarked;
