@@ -51,7 +51,7 @@ $string['memorylimithelp'] = '<p>PHP limit pamäte pre Váš server je momentál
 <li>Ak máte prístup k Vášmu php.ini súboru, môžete zmeniť <b>memory_limit</b> nastavenie, napr. na 16M. Ak nemáte prístup k súboru, môžete sa na to spýtať Vášho administrátora.</li>
 Na niektorých PHP serveroch, si môžete vytvoriť súbor .htaccess v Adresári Moodle, ktorý bude obsahovať tento riadok: <p><blockquote>php_value memory_limit 16M</blockquote></p>
 <p>Avšak, na niektorých serveroch bude toto brániť <b>všetkým</b> PHP stránkam v práci (budete vidieť chyby, keď sa pozriete na stránky), takže budete musieť odstrániť súbor .htaccess.</p></li>
-</ol>     ';
+</ol> 	';
 $string['mysqlextensionisnotpresentinphp'] = 'PHP nebolo správne nakonfigurované s MySQL rozšírením a tak nemôže komunikovať s MySQL. Prosím, skontrolujte si Váš php.ini súbor alebo znovu vytvorte PHP.';
 $string['name'] = 'Meno';
 $string['next'] = 'Ďalší';
