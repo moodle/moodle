@@ -80,7 +80,7 @@
                                              '', 'capability, permission, id');
 
          foreach ($data as $capname => $value) {
-             if ($capname == 'contextid' || $capname == 'roleid') {        // ignore contextid and roleid
+             if ($capname == 'contextid' || $capname == 'roleid' || $capname == 'userid') {        // ignore contextid and roleid
                  continue;
              }
 
