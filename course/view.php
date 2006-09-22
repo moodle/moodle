@@ -41,11 +41,15 @@
         print_error('nocontext');
     }
 
+    if ($switchrole == 0) {  // Remove any switched roles before checking login
+        role_switch($switchrole, $context);
+    }
+
     require_login($course->id);
 
-    if ($switchrole > -1) {
+    if ($switchrole > 0) {
         role_switch($switchrole, $context);
-        require_login($course->id);
+        require_login($course->id);   // Double check that this role is allowed here
     }
 
     //If course is hosted on an external server, redirect to corresponding
