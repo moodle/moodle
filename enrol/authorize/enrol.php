@@ -634,14 +634,18 @@ class enrolment_plugin_authorize
                     $timestart = $timenow;
                     $timeend = $order->settletime + $order->enrolperiod;
                 }
-                if (enrol_student($order->userid, $order->courseid, $timestart, $timeend, 'manual')) {
+                $user = get_record('user', 'id', $order->userid);
+                $course = get_record('course', 'id', $order->courseid);
+                $role = get_default_course_role($course);
+                $context = get_context_instance(CONTEXT_COURSE, $course->id);
+                if (role_assign($role->id, $user->id, 0, $context->id, $timestart, $timeend, 0, 'manual')) {
+                /// enrol_student($order->userid, $order->courseid, $timestart, $timeend, 'manual');
                     $this->log .= "User($order->userid) has been enrolled to course($order->courseid).\n";
                     if (!empty($CFG->enrol_mailstudents)) {
                         $sendem[] = $order->id;
                     }
                 }
                 else {
-                    $user = get_record('user', 'id', $order->userid);
                     $faults .= "Error while trying to enrol ".fullname($user)." in '$order->fullname' \n";
                     foreach ($order as $okey => $ovalue) {
                         $faults .= "   $okey = $ovalue\n";
