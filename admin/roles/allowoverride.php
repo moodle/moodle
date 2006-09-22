@@ -16,9 +16,6 @@
     $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
     require_capability('moodle/role:manage', $sitecontext);
 
-    $site = get_site();
-    $strmanageroles = get_string('manageroles');
-
 /// form processiong here
 
 /// get all roles
@@ -56,7 +53,7 @@
     $currenttab='allowoverride';
     require_once('managetabs.php');
 
-    $table->tablealign = "center";
+    $table->tablealign = 'center';
     $table->cellpadding = 5;
     $table->cellspacing = 0;
     $table->width = '90%';

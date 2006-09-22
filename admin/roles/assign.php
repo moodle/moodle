@@ -3,6 +3,7 @@
 
     require_once('../../config.php');
     require_once($CFG->dirroot.'/mod/forum/lib.php');
+    require_once($CFG->libdir.'/adminlib.php');
 
     define("MAX_USERS_PER_PAGE", 5000);
 
@@ -52,7 +53,12 @@
         $course = get_site();
     }
 
-    require_login($courseid);
+    if ($context->contextlevel == CONTEXT_COURSE) {
+        require_login($context->instanceid);
+    } else {
+        require_login();
+    }
+
     require_capability('moodle/role:assign', $context);
 
     $assignableroles = get_assignable_roles($context);
@@ -104,6 +110,11 @@
         $showroles = 1;
         $currenttab = 'assign';
         include_once($CFG->dirroot.'/user/tabs.php');
+    } else if ($context->contextlevel == CONTEXT_SYSTEM) {
+        $adminroot = admin_get_root();
+        admin_externalpage_setup('assignroles', $adminroot);
+        admin_externalpage_print_header($adminroot);
+        print_heading($straction);
     } else {
         $currenttab = '';
         $tabsmode = 'assign';
@@ -253,6 +264,10 @@
         print_table($table);
     }
 
-    print_footer($course);
+    if ($context->contextlevel == CONTEXT_SYSTEM) {
+        admin_externalpage_print_footer($adminroot);
+    } else {
+        print_footer($course);
+    }
 
 ?>
