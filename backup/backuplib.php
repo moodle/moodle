@@ -638,6 +638,10 @@
                     fwrite ($bf,start_tag('CAPABILITY',4,true));
                     fwrite ($bf,full_tag('NAME', 5, false, $capability));
                     fwrite ($bf,full_tag('PERMISSION', 5, false, $value));
+                    // use this to pull out the other info (timemodified and modifierid)
+                    $cap = get_record('role_capabilities', 'capability', $capability, 'contextid', $sitecontext->id);
+                    fwrite ($bf, full_tag("TIMEMODIFIED", 5, false, $cap->timemodified));
+                    fwrite ($bf, full_tag("MODIFIERID", 5, false, $cap->modifierid));
                     fwrite ($bf,end_tag('CAPABILITY',4,true));  
                 }                                  
             }
@@ -715,49 +719,9 @@
             }
        
             /// write local course overrides here?
-            fwrite ($bf, start_tag("ROLES_OVERRIDES", 3, true));
-            if ($roles = get_roles_with_override_on_context($context)) {
-                foreach ($roles as $role) {
-                    fwrite ($bf, start_tag("ROLE", 4, true));
-                    fwrite ($bf, full_tag("NAME", 5, false, $role->name));
-                    fwrite ($bf, full_tag("SHORTNAME", 5, false, $role->shortname));
-                    fwrite ($bf, start_tag("CAPABILITIES", 5, true));    
-                    if ($capabilities = get_capabilities_from_role_on_context($role, $context)) {
-                        foreach ($capabilities as $capability) {
-                            fwrite ($bf, start_tag("CAPABILITY", 6, true));
-                            fwrite ($bf, full_tag("NAME", 7, false, $capability->capability));
-                            fwrite ($bf, full_tag("PERMISSION", 7, false, $capability->permission));
-                            fwrite ($bf, end_tag("CAPABILITY", 6, true));     
-                       } 
-                    }
-                    fwrite ($bf, end_tag("CAPABILITIES", 5, true));
-                    fwrite ($bf, end_tag("ROLE", 4, true));
-                } 
-            }
-            fwrite ($bf, end_tag("ROLES_OVERRIDES", 3, true));
-            
+            write_role_overrides_xml($bf, $context, 3);
             /// write role_assign code here
-            fwrite ($bf, start_tag("ROLES_ASSIGNMENTS", 3, true));
-            if ($roles = get_roles_with_assignment_on_context($context)) {
-                foreach ($roles as $role) {
-                    fwrite ($bf, start_tag("ROLE", 4, true));
-                    fwrite ($bf, full_tag("NAME", 5, false, $role->name));
-                    fwrite ($bf, full_tag("SHORTNAME", 5, false, $role->shortname)); 
-                    fwrite ($bf, start_tag("ASSIGNMENTS", 5, true));
-                    if ($assignments = get_users_from_role_on_context($role, $context)) {
-                        foreach ($assignments as $assignment) {
-                            fwrite ($bf, start_tag("ASSIGNMENT", 6, true));
-                            fwrite ($bf, full_tag("USERID", 7, false, $assignment->userid));
-                            fwrite ($bf, full_tag("TIMESTART", 7, false, $assignment->timestart));
-                            fwrite ($bf, full_tag("TIMEEND", 7, false, $assignment->timeend));
-                            fwrite ($bf, end_tag("ASSIGNMENT", 6, true));     
-                       } 
-                    }
-                    fwrite ($bf, end_tag("ASSIGNMENTS", 5, true));
-                    fwrite ($bf, end_tag("ROLE", 4, true));   
-                }  
-            }   
-            fwrite ($bf, end_tag("ROLES_ASSIGNMENTS", 3, true));
+            write_role_assignments_xml($bf, $context, 3);
             //Print header end
             fwrite ($bf,end_tag("HEADER",2,true));
         } else { 
@@ -993,6 +957,7 @@
                             continue;
                         }
                         //Begin Block
+                        
                         fwrite ($bf,start_tag('BLOCK',3,true));
                         fwrite ($bf,full_tag('NAME',4,false,$blocks[$instance->blockid]->name));
                         fwrite ($bf,full_tag('PAGEID',4,false,$instance->pageid));
@@ -1001,52 +966,11 @@
                         fwrite ($bf,full_tag('WEIGHT',4,false,$instance->weight));
                         fwrite ($bf,full_tag('VISIBLE',4,false,$instance->visible));
                         fwrite ($bf,full_tag('CONFIGDATA',4,false,$instance->configdata));
-                        
-                        
-                        $context = get_context_instance(CONTEXT_BLOCK, $instance->blockid);
-                        fwrite ($bf, start_tag("ROLES_OVERRIDES", 4, true));
-                        if ($roles = get_roles_with_override_on_context($context)) {
-                            foreach ($roles as $role) {
-                                fwrite ($bf, start_tag("ROLE", 5, true));
-                                fwrite ($bf, full_tag("NAME", 6, false, $role->name));
-                                fwrite ($bf, full_tag("SHORTNAME", 6, false, $role->shortname));
-                                fwrite ($bf, start_tag("CAPABILITIES", 6, true));    
-                                if ($capabilities = get_capabilities_from_role_on_context($role, $context)) {
-                                    foreach ($capabilities as $capability) {
-                                        fwrite ($bf, start_tag("CAPABILITY", 7, true));
-                                        fwrite ($bf, full_tag("NAME", 8, false, $capability->capability));
-                                        fwrite ($bf, full_tag("PERMISSION", 8, false, $capability->permission));
-                                        fwrite ($bf, end_tag("CAPABILITY", 7, true));     
-                                } 
-                                }
-                                fwrite ($bf, end_tag("CAPABILITIES", 6, true));
-                                fwrite ($bf, end_tag("ROLE", 5, true));
-                            } 
-                        }
-                        fwrite ($bf, end_tag("ROLES_OVERRIDES", 4, true));
-            
+                                             
+                        $context = get_context_instance(CONTEXT_BLOCK, $instance->id);
+                        write_role_overrides_xml($bf, $context, 4);
                         /// write role_assign code here
-                        fwrite ($bf, start_tag("ROLES_ASSIGNMENTS", 4, true));
-                        if ($roles = get_roles_with_assignment_on_context($context)) {
-                            foreach ($roles as $role) {
-                                fwrite ($bf, start_tag("ROLE", 5, true));
-                                fwrite ($bf, full_tag("NAME", 6, false, $role->name));
-                                fwrite ($bf, full_tag("SHORTNAME", 6, false, $role->shortname)); 
-                                fwrite ($bf, start_tag("ASSIGNMENTS", 6, true));
-                                if ($assignments = get_users_from_role_on_context($role, $context)) {
-                                    foreach ($assignments as $assignment) {
-                                        fwrite ($bf, start_tag("ASSIGNMENT", 7, true));
-                                        fwrite ($bf, full_tag("USERID", 8, false, $assignment->userid));
-                                        fwrite ($bf, full_tag("TIMESTART", 8, false, $assignment->timestart));
-                                        fwrite ($bf, full_tag("TIMEEND", 8, false, $assignment->timeend));
-                                        fwrite ($bf, end_tag("ASSIGNMENT", 7, true));     
-                                    }     
-                                }
-                                fwrite ($bf, end_tag("ASSIGNMENTS", 6, true));
-                                fwrite ($bf, end_tag("ROLE", 5, true));   
-                            }  
-                        }   
-                        fwrite ($bf, end_tag("ROLES_ASSIGNMENTS", 4, true));
+                        write_role_assignments_xml($bf, $context, 4);
                         //End Block
                         fwrite ($bf,end_tag('BLOCK',3,true));
                     }
@@ -1151,58 +1075,12 @@
                fwrite ($bf,full_tag("VISIBLE",6,false,$course_module[$tok]->visible));
                fwrite ($bf,full_tag("GROUPMODE",6,false,$course_module[$tok]->groupmode));
                // get all the role_capabilities overrides in this mod
-               fwrite ($bf,start_tag("ROLES_OVERRIDES",6,true));
-               
-               // foreach role that has an override in this context   
-
-               if ($roles = get_roles_with_override_on_context($context)) {
-                   foreach ($roles as $role) {
-                       fwrite ($bf, start_tag("ROLE", 7, true));
-                       fwrite ($bf, full_tag("NAME", 8, false, $role->name));
-                       fwrite ($bf, full_tag("SHORTNAME", 8, false, $role->shortname));
-                       fwrite ($bf, start_tag("CAPABILITIES", 8, true));                       
-                       if ($capabilities = get_capabilities_from_role_on_context($role, $context)) {
-                            foreach ($capabilities as $capability) {
-                                fwrite ($bf, start_tag("CAPABILITY", 9, true));
-                                fwrite ($bf, full_tag("NAME", 10, false, $capability->capability));
-                                fwrite ($bf, full_tag("PERMISSION", 10, false, $capability->permission));
-                                fwrite ($bf, end_tag("CAPABILITY", 9, true));
-                            }
-                       }
-                       fwrite ($bf, end_tag("CAPABILITIES", 8, true));
-                       fwrite ($bf, end_tag("ROLE", 7, true));
-                   }
-               }
-               fwrite ($bf,end_tag("ROLES_OVERRIDES",6,true));
-   
-               /// write role_assign code here
-               fwrite ($bf, start_tag("ROLES_ASSIGNMENTS", 6, true));
-               if ($roles = get_roles_with_assignment_on_context($context)) {
-                    foreach ($roles as $role) {
-                        fwrite ($bf, start_tag("ROLE", 7, true));
-                        fwrite ($bf, full_tag("NAME", 8, false, $role->name));
-                        fwrite ($bf, full_tag("SHORTNAME", 8, false, $role->shortname)); 
-                        fwrite ($bf, start_tag("ASSIGNMENTS", 8, true));
-                        if ($assignments = get_users_from_role_on_context($role, $context)) {
-                            foreach ($assignments as $assignment) {
-                                fwrite ($bf, start_tag("ASSIGNMENT", 9, true));
-                                fwrite ($bf, full_tag("USERID", 10, false, $assignment->userid));
-                                fwrite ($bf, full_tag("TIMESTART", 10, false, $assignment->timestart));
-                                fwrite ($bf, full_tag("TIMEEND", 10, false, $assignment->timeend));
-                                fwrite ($bf, end_tag("ASSIGNMENT", 9, true));     
-                            } 
-                        }
-                        fwrite ($bf, end_tag("ASSIGNMENTS", 8, true));
-                        fwrite ($bf, end_tag("ROLE", 7, true));   
-                    }  
-                }   
-                fwrite ($bf, end_tag("ROLES_ASSIGNMENTS", 6, true));
-        
-               
-               
+               write_role_overrides_xml($bf, $context, 6);
+                /// write role_assign code here
+               write_role_assignments_xml($bf, $context, 6);         
                 /// write role_assign code here
                
-                fwrite ($bf,end_tag("MOD",5,true));
+               fwrite ($bf,end_tag("MOD",5,true));
            }
            //check for next
            $tok = strtok(",");
@@ -1304,10 +1182,10 @@
                     $user->isstudent!==false or
                     $user->isneeded!==false) {
                 */
-                
+                fwrite ($bf,start_tag("ROLES",4,true));
                 if ($user->info != "needed" && $user->info!="") {
                     //Begin ROLES tag
-                    fwrite ($bf,start_tag("ROLES",4,true));
+                    
                     //PRINT ROLE INFO
                     //Admins
                     $roles = explode(",", $user->info);
@@ -1320,7 +1198,7 @@
                             fwrite ($bf,end_tag("ROLE",5,true)); 
                         }  
                     }
-
+                }
                     /*
                     if ($user->isadmin!==false) {
                         //Print ROLE start
@@ -1378,81 +1256,39 @@
                     
                     
                     //Needed
-                    if ($user->isneeded!==false) {
-                        //Print ROLE start
-                        fwrite ($bf,start_tag("ROLE",5,true));
-                        //Print Role info
-                        fwrite ($bf,full_tag("TYPE",6,false,"needed"));
-                        //Print ROLE end
-                        fwrite ($bf,end_tag("ROLE",5,true));
-                    }
+                if ($user->isneeded!==false) {
+                    //Print ROLE start
+                    fwrite ($bf,start_tag("ROLE",5,true));
+                    //Print Role info
+                    fwrite ($bf,full_tag("TYPE",6,false,"needed"));
+                    //Print ROLE end
+                    fwrite ($bf,end_tag("ROLE",5,true));
+                }
 
                     //End ROLES tag
-                    fwrite ($bf,end_tag("ROLES",4,true));
+                fwrite ($bf,end_tag("ROLES",4,true));
  
-                    //Check if we have user_preferences to backup
-                    if ($preferences_data = get_records("user_preferences","userid",$user->old_id)) {
-                        //Start USER_PREFERENCES tag
-                        fwrite ($bf,start_tag("USER_PREFERENCES",4,true));
-                        //Write each user_preference
-                        foreach ($preferences_data as $user_preference) {
-                            fwrite ($bf,start_tag("USER_PREFERENCE",5,true));
-                            fwrite ($bf,full_tag("NAME",6,false,$user_preference->name));
-                            fwrite ($bf,full_tag("VALUE",6,false,$user_preference->value));
-                            fwrite ($bf,end_tag("USER_PREFERENCE",5,true));
-                        }
+                //Check if we have user_preferences to backup
+                if ($preferences_data = get_records("user_preferences","userid",$user->old_id)) {
+                    //Start USER_PREFERENCES tag
+                    fwrite ($bf,start_tag("USER_PREFERENCES",4,true));
+                    //Write each user_preference
+                    foreach ($preferences_data as $user_preference) {
+                        fwrite ($bf,start_tag("USER_PREFERENCE",5,true));
+                        fwrite ($bf,full_tag("NAME",6,false,$user_preference->name));
+                        fwrite ($bf,full_tag("VALUE",6,false,$user_preference->value));
+                        fwrite ($bf,end_tag("USER_PREFERENCE",5,true));
+                    }
                         //End USER_PREFERENCES tag
-                        fwrite ($bf,end_tag("USER_PREFERENCES",4,true));
-                    }
-                    
-                    $context = get_context_instance(CONTEXT_USERID, $user->old_id);
-                    
-                    fwrite ($bf, start_tag("ROLES_OVERRIDES", 4, true));
-                    if ($roles = get_roles_with_override_on_context($context)) {
-                        foreach ($roles as $role) {
-                            fwrite ($bf, start_tag("ROLE", 5, true));
-                            fwrite ($bf, full_tag("NAME", 6, false, $role->name));
-                            fwrite ($bf, full_tag("SHORTNAME", 6, false, $role->shortname));
-                            fwrite ($bf, start_tag("CAPABILITIES", 6, true));    
-                            if ($capabilities = get_capabilities_from_role_on_context($role, $context)) {
-                                foreach ($capabilities as $capability) {
-                                    fwrite ($bf, start_tag("CAPABILITY", 7, true));
-                                    fwrite ($bf, full_tag("NAME", 8, false, $capability->capability));
-                                    fwrite ($bf, full_tag("PERMISSION", 8, false, $capability->permission));
-                                    fwrite ($bf, end_tag("CAPABILITY", 7, true));     
-                                } 
-                            }
-                            fwrite ($bf, end_tag("CAPABILITIES", 6, true));
-                            fwrite ($bf, end_tag("ROLE", 5, true));
-                        } 
-                    }
-                    fwrite ($bf, end_tag("ROLES_OVERRIDES", 4, true));
-            
-                    /// write role_assign code here
-                    fwrite ($bf, start_tag("ROLES_ASSIGNMENTS", 4, true));
-                    if ($roles = get_roles_with_assignment_on_context($context)) {
-                        foreach ($roles as $role) {
-                            fwrite ($bf, start_tag("ROLE", 5, true));
-                            fwrite ($bf, full_tag("NAME", 6, false, $role->name));
-                            fwrite ($bf, full_tag("SHORTNAME", 6, false, $role->shortname)); 
-                            fwrite ($bf, start_tag("ASSIGNMENTS", 6, true));
-                            if ($assignments = get_users_from_role_on_context($role, $context)) {
-                                foreach ($assignments as $assignment) {
-                                    fwrite ($bf, start_tag("ASSIGNMENT", 7, true));
-                                    fwrite ($bf, full_tag("USERID", 8, false, $assignment->userid));
-                                    fwrite ($bf, full_tag("TIMESTART", 8, false, $assignment->timestart));
-                                    fwrite ($bf, full_tag("TIMEEND", 8, false, $assignment->timeend));
-                                    fwrite ($bf, end_tag("ASSIGNMENT", 7, true));     
-                                }     
-                            }
-                            fwrite ($bf, end_tag("ASSIGNMENTS", 6, true));
-                            fwrite ($bf, end_tag("ROLE", 5, true));   
-                        }  
-                    }   
-                    fwrite ($bf, end_tag("ROLES_ASSIGNMENTS", 4, true));               
-                                     
+                    fwrite ($bf,end_tag("USER_PREFERENCES",4,true));
                 }
-                //End User tag
+                    
+                $context = get_context_instance(CONTEXT_USER, $user->old_id);
+                    
+                write_role_overrides_xml($bf, $context, 4);
+                /// write role_assign code here
+                write_role_assignments_xml($bf, $context, 4);
+              //End User tag
                 fwrite ($bf,end_tag("USER",3,true));
                 //Do some output
                 $counter++;
@@ -2341,7 +2177,7 @@
     }
     
     /* function to print xml for overrides */    
-    function write_role_override_xml($context, $startlevel) {
+    function write_role_overrides_xml($bf, $context, $startlevel) {
         fwrite ($bf, start_tag("ROLES_OVERRIDES", $startlevel, true));
         if ($roles = get_roles_with_override_on_context($context)) {
             foreach ($roles as $role) {
@@ -2354,6 +2190,8 @@
                         fwrite ($bf, start_tag("CAPABILITY", $startlevel+3, true));
                         fwrite ($bf, full_tag("NAME", $startlevel+4, false, $capability->capability));
                         fwrite ($bf, full_tag("PERMISSION", $startlevel+4, false, $capability->permission));
+                        fwrite ($bf, full_tag("TIMEMODIFIED", $startlevel+4, false, $capability->timemodified));
+                        fwrite ($bf, full_tag("MODIFIERID", $startlevel+4, false, $capability->modifierid));
                         fwrite ($bf, end_tag("CAPABILITY", $startlevel+3, true));     
                     } 
                 }
@@ -2365,7 +2203,7 @@
     }
     
     /* function to print xml for assignment */
-    function write_role_assignment_xml($context, $startlevel) {
+    function write_role_assignments_xml($bf, $context, $startlevel) {
      /// write role_assign code here
         fwrite ($bf, start_tag("ROLES_ASSIGNMENTS", $startlevel, true));
         if ($roles = get_roles_with_assignment_on_context($context)) {
@@ -2378,8 +2216,13 @@
                     foreach ($assignments as $assignment) {
                         fwrite ($bf, start_tag("ASSIGNMENT", $startlevel+3, true));
                         fwrite ($bf, full_tag("USERID", $startlevel+4, false, $assignment->userid));
+                        fwrite ($bf, full_tag("HIDDEN", $startlevel+4, false, $assignment->hidden));
                         fwrite ($bf, full_tag("TIMESTART", $startlevel+4, false, $assignment->timestart));
                         fwrite ($bf, full_tag("TIMEEND", $startlevel+4, false, $assignment->timeend));
+                        fwrite ($bf, full_tag("TIMEMODIFIED", $startlevel+4, false, $assignment->timemodified));
+                        fwrite ($bf, full_tag("MODIFIERID", $startlevel+4, false, $assignment->modifierid));
+                        fwrite ($bf, full_tag("ENROL", $startlevel+4, false, $assignment->enrol));
+                        fwrite ($bf, full_tag("SORTORDER", $startlevel+4, false, $assignment->sortorder));
                         fwrite ($bf, end_tag("ASSIGNMENT", $startlevel+3, true));     
                     }     
                 }
