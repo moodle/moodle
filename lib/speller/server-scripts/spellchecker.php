@@ -20,6 +20,9 @@ if(!($lang = check_language($aspell_prog))) {
 }
 
 $aspell_opts = '-a -H --lang='. $lang .' --encoding=utf-8';
+if (!empty($CFG->aspellextradicts)) {   // eg /usr/bin/.aspell.en.pws
+    $aspell_opts .= ' --add-extra-dicts='.$CFG->aspellextradicts;
+}
 $tempfiledir = './';
 $input_separator = 'A';
 
