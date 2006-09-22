@@ -1263,6 +1263,9 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
     if (!isset($options->noclean)) {
         $options->noclean=false;
     }
+    if (!isset($options->nocache)) {
+        $options->nocache=false;
+    }
     if (!isset($options->smiley)) {
         $options->smiley=true;
     }
@@ -1282,7 +1285,7 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
         }
     }
 
-    if (!empty($CFG->cachetext)) {
+    if (!empty($CFG->cachetext) and empty($options->nocache)) {
         $time = time() - $CFG->cachetext;
         $md5key = md5($text.'-'.$courseid.$options->noclean.$options->smiley.$options->filter.$options->para.$options->newlines.$format.current_language().$courseid.$options->trusttext);
         if ($oldcacheitem = get_record_sql('SELECT * FROM '.$CFG->prefix.'cache_text WHERE md5key = \''.$md5key.'\'', true)) {

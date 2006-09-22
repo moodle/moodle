@@ -329,7 +329,9 @@ function send_file($path, $filename, $lifetime=86400 , $filter=0, $pathisstring=
             $courseid = SITEID;
         }
         if ($mimetype == 'text/html') {
+            $options = new object();
             $options->noclean = true;
+            $options->nocache = true; // temporary workaround for MDL-5136
             $text = $pathisstring ? $path : implode('', file($path));
             $output = format_text($text, FORMAT_HTML, $options, $courseid);
             if (!empty($CFG->usesid) && empty($_COOKIE['MoodleSession'.$CFG->sessioncookie])) {
