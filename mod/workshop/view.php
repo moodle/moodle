@@ -37,7 +37,6 @@
 
     require_login($course->id, false, $cm);
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-    require_capability('mod/workshop:view', $context);
 
     $strworkshops = get_string("modulenameplural", "workshop");
     $strworkshop  = get_string("modulename", "workshop");
@@ -525,8 +524,6 @@
 
     /****************** show description  ************/
     elseif ($action == 'showdescription') {
-        require_capability('mod/workshop:view', $context);
-
         workshop_print_assignment_info($workshop);
         print_simple_box(format_text($workshop->description, $workshop->format), 'center', '70%', '', 5, 'generalbox', 'intro');
         if (isset($_SERVER["HTTP_REFERER"])) {
