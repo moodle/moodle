@@ -2597,6 +2597,13 @@ function delete_course($courseid, $showfeedback = true) {
         $result = false;
     }
 
+    if (!delete_records('context', 'contextlevel', CONTEXT_COURSE, 'instance', $courseid)) {
+        if ($showfeedback) {
+            notify("An error occurred while deleting the main context record.");
+        }
+        $result = false;
+    }
+
     if (!fulldelete($CFG->dataroot.'/'.$courseid)) {
         if ($showfeedback) {
             notify("An error occurred while deleting the course files.");
@@ -2644,8 +2651,12 @@ function remove_course_contents($courseid, $showfeedback=true) {
                 if (function_exists($moddelete)) {
                     if ($instances = get_records($modname, 'course', $course->id)) {
                         foreach ($instances as $instance) {
+                            if ($cm = get_coursemodule_from_instance($modname, $instance->id, $course->id)) {
+                                delete_records('context', 'contextlevel', CONTEXT_MODULE, 'instance', $cm->id);
+                            }
                             if ($moddelete($instance->id)) {
                                 $count++;
+
                             } else {
                                 notify('Could not delete '. $modname .' instance '. $instance->id .' ('. format_string($instance->name) .')');
                                 $result = false;
@@ -2674,20 +2685,23 @@ function remove_course_contents($courseid, $showfeedback=true) {
     notify_local_delete_course($courseid, $showfeedback);
 
     // Delete course blocks
-    if (delete_records('block_instance', 'pagetype', PAGE_COURSE_VIEW, 'pageid', $course->id)) {
-        if ($showfeedback) {
-            notify($strdeleted .' block_instance');
+    if ($blocks = get_records('block_instance', 'pagetype', PAGE_COURSE_VIEW, 'pageid', $course->id)) {
+        foreach ($blocks as $block) {
+            delete_records('context', 'contextlevel', CONTEXT_BLOCK, 'instance', $block->id);
         }
-    } else {
-        $result = false;
+        if (delete_records('block_instance', 'pagetype', PAGE_COURSE_VIEW, 'pageid', $course->id)) {
+            if ($showfeedback) {
+                notify($strdeleted .' block_instance');
+            }
+        } else {
+            $result = false;
+        }
     }
 
     // Delete Other stuff.
     // This array stores the tables that need to be cleared, as
     // table_name => column_name that contains the course id.
     $tablestoclear = array(
-        //'user_students' => 'course', // Delete any user stuff
-        //'user_teachers' => 'course',
         'event' => 'courseid', // Delete events
         'log' => 'course', // Delete logs
         'course_sections' => 'course', // Delete any course stuff
