@@ -15,9 +15,7 @@ function print_entry($course) {
     $strloginto = get_string("loginto", "", $course->shortname);
     $strcourses = get_string("courses");
 
-
     $teacher = get_teacher($course->id);
-
 
     if ( (float) $course->cost < 0 ) {
         $cost = (float) $CFG->enrol_cost;
@@ -44,7 +42,7 @@ function print_entry($course) {
 
         print_simple_box_start("center");
 
-        if (isguest()) {
+        if (has_capability('moodle/legacy:guest', get_context_instance(CONTEXT_SYSTEM, SITEID), NULL, false)) {
             if (empty($CFG->loginhttps)) {
                 $wwwroot = $CFG->wwwroot;
             } else {
@@ -206,19 +204,6 @@ function check_entry($form, $course) {
     if (isset($manual->errormsg)) {
         $this->errormsg = $manual->errormsg;
     }
-}
-
-/**
-* Returns information about the courses a student has access to
-*
-* Set the $user->student course array
-* Set the $user->timeaccess course array
-*
-* @param    user  referenced object, must contain $user->id already set
-*/
-function get_student_courses(&$user) {
-    $manual = enrolment_factory::factory('manual');
-    $manual->get_student_courses($user);
 }
 
 } // end of class definition

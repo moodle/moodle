@@ -9,11 +9,14 @@
         redirect($CFG->wwwroot);
     }
 
+    if (! $context = get_context_instance(CONTEXT_COURSE, $course->id)) {
+        redirect($CFG->wwwroot);
+    }
+
     require_login();
 
 /// Refreshing enrolment data in the USER session
-    $enrol = new enrolment_plugin_paypal();
-    $enrol->get_student_courses($USER);
+    load_user_capability();
 
     if ($SESSION->wantsurl) {
         $destination = $SESSION->wantsurl;
@@ -22,13 +25,12 @@
         $destination = "$CFG->wwwroot/course/view.php?id=$course->id";
     }
     
-    if (isstudent($course->id) or isteacher($course->id)) {
+    if (has_capability('moodle/course:view', $context)) {
         redirect($destination, get_string('paymentthanks', '', $course->fullname));
 
     } else {   /// Somehow they aren't enrolled yet!  :-(
         print_header();
         notice(get_string('paymentsorry', '', $course), $destination);
     }
-    
 
 ?>
