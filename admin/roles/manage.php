@@ -70,13 +70,16 @@
                     $newrole->shortname = $shortname;
                     $newrole->description = $description;
                 }
-                $allowed_values = array(CAP_INHERIT, CAP_ALLOW, CAP_PREVENT, CAP_PROHIBIT);
 
-                foreach ($data as $capname => $value) {
-                    if (!preg_match('|^[a-z_]+/[a-z_]+:[a-z_]+$|', $capname)) {
+                $allowed_values = array(CAP_INHERIT, CAP_ALLOW, CAP_PREVENT, CAP_PROHIBIT);
+                $capabilities = fetch_context_capabilities($sitecontext); // capabilities applicable in this context
+
+                foreach ($capabilities as $cap) {
+                    if (!isset($data->{$cap->name})) {
                         continue;
                     }
-                    $value = clean_param($value, PARAM_INT);
+                    $capname = $cap->name;
+                    $value = clean_param($data->{$cap->name}, PARAM_INT);
                     if (!in_array($value, $allowed_values)) {
                         continue;
                     }
@@ -123,12 +126,14 @@
                 }
 
                 $allowed_values = array(CAP_INHERIT, CAP_ALLOW, CAP_PREVENT, CAP_PROHIBIT);
+                $capabilities = fetch_context_capabilities($sitecontext); // capabilities applicable in this context
 
-                foreach ($data as $capname => $value) {
-                    if (!preg_match('|^[a-z_]+/[a-z_]+:[a-z_]+$|', $capname)) {
+                foreach ($capabilities as $cap) {
+                    if (!isset($data->{$cap->name})) {
                         continue;
                     }
-                    $value = clean_param($value, PARAM_INT);
+                    $capname = $cap->name;
+                    $value = clean_param($data->{$cap->name}, PARAM_INT);
                     if (!in_array($value, $allowed_values)) {
                         continue;
                     }
@@ -231,6 +236,7 @@
                         foreach ($errors as $e) {
                             $msg .= $e.'<br />';
                         }
+                        $msg .= '</p>';
                         admin_externalpage_print_header($adminroot);
                         notify($msg);
                         print_continue('manage.php');

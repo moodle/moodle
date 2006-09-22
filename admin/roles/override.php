@@ -1,11 +1,12 @@
-<?php
+<?php  //$Id$
 
-    require_once("../../config.php");
+    require_once('../../config.php');
 
-    $contextid      = required_param('contextid',PARAM_INT); // context id
-    $roleid         = optional_param('roleid', 0, PARAM_INT); // required role id
-    $userid         = optional_param('userid', 0, PARAM_INT); // needed for user tabs
-    $courseid       = optional_param('courseid', 0, PARAM_INT); // needed for user tabs
+    $contextid = required_param('contextid',PARAM_INT);    // context id
+    $roleid    = optional_param('roleid', 0, PARAM_INT);   // requested role id
+    $userid    = optional_param('userid', 0, PARAM_INT);   // needed for user tabs
+    $courseid  = optional_param('courseid', 0, PARAM_INT); // needed for user tabs
+    $cancel    = optional_param('cancel', 0, PARAM_BOOL);
 
     if ($courseid) {
         $course = get_record('course', 'id', $courseid);
@@ -13,27 +14,39 @@
         $course = $SITE;
     }
 
+    $context = get_record('context', 'id', $contextid);
     $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
     if ($contextid == $sitecontext->id) {
-        error ('can not override base role capabilities');
+        error ('Can not override base role capabilities');
     }
+
+    if ($context->contextlevel == CONTEXT_COURSE) {
+        require_login($context->instanceid);
+    } else {
+        require_login();
+    }
+
+    $baseurl = 'override.php?contextid='.$contextid;
+    if (!empty($userid)) {
+        $baseurl .= '&amp;userid='.$userid;
+    }
+    if (!empty($courseid)) {
+        $baseurl .= '&amp;courseid='.$courseid;
+    }
+
+    if ($cancel) {
+        redirect($baseurl);
+    }
+
 
 /// Get some language strings
 
     $strroletooverride = get_string('roletooverride', 'role');
-    $stroverrideusers = get_string('overrideusers', 'role');
-    $strpotentialusers = get_string('potentialusers', 'role');
-    $strexistingusers = get_string('existingusers', 'role');
-    $straction = get_string('overrideroles', 'role');
-    $strcurrentrole = get_string('currentrole', 'role');
+    $stroverrideusers  = get_string('overrideusers', 'role');
+    $straction         = get_string('overrideroles', 'role');
+    $strcurrentrole    = get_string('currentrole', 'role');
     $strcurrentcontext = get_string('currentcontext', 'role');
-    $strsearch = get_string('search');
-    $strshowall = get_string('showall');
-    $strparticipants = get_string("participants");
-    $straction = get_string('overrideroles', 'role');
-
-    $context = get_record('context', 'id', $contextid);
-    $overridableroles = get_overridable_roles($context);
+    $strparticipants   = get_string('participants');
 
 /// Make sure this user can override that role
     if ($roleid) {
@@ -47,6 +60,58 @@
         $fullname = fullname($user, has_capability('moodle/site:viewfullnames', $context));
     }
 
+/// Process incoming role override
+    if ($data = data_submitted() and confirm_sesskey()) {
+        $allowed_values = array(CAP_INHERIT, CAP_ALLOW, CAP_PREVENT, CAP_PROHIBIT);
+        $capabilities = fetch_context_capabilities($context); // capabilities applicable in this context
+
+        $localoverrides = get_records_select('role_capabilities', "roleid = $roleid AND contextid = $context->id",
+                                             '', 'capability, permission, id');
+
+        foreach ($capabilities as $cap) {
+            if (!isset($data->{$cap->name})) {
+                continue;
+            }
+            $capname = $cap->name;
+            $value = clean_param($data->{$cap->name}, PARAM_INT);
+            if (!in_array($value, $allowed_values)) {
+                 continue;
+            }
+
+            if (isset($localoverrides[$capname])) {    // Something exists, so update it
+                if ($value == CAP_INHERIT) {       // inherit = delete
+                    delete_records('role_capabilities', 'roleid', $roleid, 'contextid', $contextid,
+                                                        'capability', $capname);
+                } else {
+                    $localoverride = new object();
+                    $localoverride->id = $localoverrides[$capname]->id;
+                    $localoverride->permission = $value;
+                    $localoverride->timemodified = time();
+                    $localoverride->modifierid = $USER->id;
+                    if (!update_record('role_capabilities', $localoverride)) {
+                        error('Could not update a capability!');
+                    }
+                }
+
+            } else { // insert a record
+                if ($value != CAP_INHERIT) {    // Ignore inherits
+                    $localoverride = new object();
+                    $localoverride->capability = $capname;
+                    $localoverride->contextid = $contextid;
+                    $localoverride->roleid = $roleid;
+                    $localoverride->permission = $value;
+                    $localoverride->timemodified = time();
+                    $localoverride->modifierid = $USER->id;
+                    if (!insert_record('role_capabilities', $localoverride)) {
+                        error('Could not insert a capability!');
+                    }
+                }
+            }
+        }
+        redirect($baseurl);
+    }
+
+
 /// Print the header and tabs
 
     if ($context->contextlevel == CONTEXT_USER) {
@@ -54,14 +119,14 @@
         /// course header
         if ($course->id != SITEID) {
             print_header("$fullname", "$fullname",
-                     "<a href=\"../course/view.php?id=$course->id\">$course->shortname</a> ->
-                      <a href=\"".$CFG->wwwroot."/user/index.php?id=$course->id\">$strparticipants</a> -> <a href=\"".$CFG->wwwroot."/user/view.php?id=".$userid."&course=".$course->id."\">$fullname</a> -> $straction",
+                     "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> ->
+                      <a href=\"$CFG->wwwroot/user/index.php?id=$course->id\">$strparticipants</a> -> <a href=\"$CFG->wwwroot/user/view.php?id=$userid&amp;course=$course->id\">$fullname</a> -> $straction",
                       "", "", true, "&nbsp;", navmenu($course));
 
         /// site header
         } else {
             print_header("$course->fullname: $fullname", "$course->fullname",
-                        "<a href=\"".$CFG->wwwroot."/user/view.php?id=".$userid."&course=".$course->id."\">$fullname</a> -> $straction", "", "", true, "&nbsp;", navmenu($course));
+                        "<a href=\"$CFG->wwwroot/user/view.php?id=$userid&amp;course=$course->id\">$fullname</a> -> $straction", "", "", true, "&nbsp;", navmenu($course));
         }
         $showroles = 1;
         $currenttab = 'override';
@@ -73,55 +138,11 @@
     }
 
 
-/// Process incoming role override
-     if ($data = data_submitted()) {
-
-        $localoverrides = get_records_select('role_capabilities', "roleid = $roleid AND contextid = $context->id",
-                                             '', 'capability, permission, id');
-
-         foreach ($data as $capname => $value) {
-             if ($capname == 'contextid' || $capname == 'roleid' || $capname == 'userid') {        // ignore contextid and roleid
-                 continue;
-             }
-
-             if (isset($localoverrides[$capname])) {    // Something exists, so update it
-
-                 if ($value == CAP_INHERIT) {       // inherit = delete
-                     delete_records('role_capabilities', 'roleid', $roleid, 'contextid', $contextid,
-                                                         'capability', $capname);
-                 } else {
-                     $localoverride = new object;
-                     $localoverride->id = $localoverrides[$capname]->id;
-                     $localoverride->permission = $value;
-                     $localoverride->timemodified = time();
-                     $localoverride->modifierid = $USER->id;
-
-                     if (!update_record('role_capabilities', $localoverride)) {
-                         debugging('Could not update a capability!');
-                     }
-                 }
-
-            } else { // insert a record
-
-                if ($value != CAP_INHERIT) {    // Ignore inherits
-                    $override->capability = $capname;
-                    $override->contextid = $contextid;
-                    $override->roleid = $roleid;
-                    $override->permission = $value;
-                    $override->timemodified = time();
-                    $override->modifierid = $USER->id;
-                    if (!insert_record('role_capabilities', $override)) {
-                        debugging('Could not insert a capability!');
-                    }
-                }
-            }
-        }
-    }
-
+    $overridableroles = get_overridable_roles($context);
 
     if ($roleid) {
     /// prints a form to swap roles
-        echo '<form name="rolesform" action="override.php" method="post">';
+        echo '<form name="rolesform" action="override.php" method="get">';
         echo '<div align="center">'.$strcurrentcontext.': '.print_context_name($context).'<br/>';
         if ($userid) {
             echo '<input type="hidden" name="userid" value="'.$userid.'" />';
@@ -148,17 +169,15 @@
 
         // Get the capabilities overrideable in this context
         if ($capabilities = fetch_context_capabilities($context)) {
-            print_simple_box_start("center");
+            print_simple_box_start('center');
             include_once('override.html');
             print_simple_box_end();
         } else {
             notice(get_string('nocapabilitiesincontext', 'role'),
-                    $CFG->wwwroot.'/'.$CFG->admin.'/roles/override.php?contextid='.$contextid);
+                    $CFG->wwwroot.'/'.$CFG->admin.'/roles/'.$baseurl);
         }
 
     } else {   // Print overview table
-
-        $userparam = (!empty($userid)) ? '&amp;userid='.$userid : '';
 
         $table->tablealign = 'center';
         $table->cellpadding = 5;
@@ -171,7 +190,7 @@
         foreach ($overridableroles as $roleid => $rolename) {
             $countusers = 0;
             $overridecount = count_records_select('role_capabilities', "roleid = $roleid AND contextid = $context->id");
-            $table->data[] = array('<a href="override.php?contextid='.$context->id.'&amp;roleid='.$roleid.$userparam.'">'.$rolename.'</a>', $overridecount);
+            $table->data[] = array('<a href="'.$baseurl.'&amp;roleid='.$roleid.'">'.$rolename.'</a>', $overridecount);
         }
 
         print_table($table);

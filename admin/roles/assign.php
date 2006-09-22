@@ -1,7 +1,7 @@
 <?php // $Id$
       // Script to assign users to contexts
 
-    require_once("../../config.php");
+    require_once('../../config.php');
     require_once($CFG->dirroot.'/mod/forum/lib.php');
 
     define("MAX_USERS_PER_PAGE", 5000);
@@ -21,6 +21,14 @@
     $courseid       = optional_param('courseid', 0, PARAM_INT); // needed for user tabs
 
     $errors = array();
+
+    $baseurl = 'assign.php?contextid='.$contextid;
+    if (!empty($userid)) {
+        $baseurl .= '&amp;userid='.$userid;
+    }
+    if (!empty($courseid)) {
+        $baseurl .= '&amp;courseid='.$courseid;
+    }
 
     if (! $context = get_context_instance_by_id($contextid)) {
         error("Context ID was incorrect (can't find it)");
@@ -81,16 +89,16 @@
 
     if ($context->contextlevel == CONTEXT_USER) {
         /// course header
-        if ($courseid!= SITEID) {
+        if ($courseid != SITEID) {
             print_header("$fullname", "$fullname",
-                     "<a href=\"../course/view.php?id=$course->id\">$course->shortname</a> ->
-                      <a href=\"".$CFG->wwwroot."/user/index.php?id=$course->id\">$strparticipants</a> -> <a href=\"".$CFG->wwwroot."/user/view.php?id=".$userid."&course=".$courseid."\">$fullname</a> ->".$straction,
+                     "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> ->
+                      <a href=\"$CFG->wwwroot/user/index.php?id=$course->id\">$strparticipants</a> -> <a href=\"$CFG->wwwroot/user/view.php?id=$userid&course=$courseid\">$fullname</a> ->".$straction,
                       "", "", true, "&nbsp;", navmenu($course));
 
         /// site header
         } else {
             print_header("$course->fullname: $fullname", "$course->fullname",
-                        "<a href=\"".$CFG->wwwroot."/user/view.php?id=".$userid."&course=".$courseid."\">$fullname</a> -> $straction", "", "", true, "&nbsp;", navmenu($course));
+                        "<a href=\"$CFG->wwwroot/user/view.php?id=$userid&course=$courseid\">$fullname</a> -> $straction", "", "", true, "&nbsp;", navmenu($course));
         }
 
         $showroles = 1;
@@ -204,15 +212,18 @@
         choose_from_menu ($assignableroles, 'roleid', $roleid, get_string('listallroles', 'role').'...', $script='rolesform.submit()');
         echo '</div></form>';
 
-        print_simple_box_start("center");
+        print_simple_box_start('center');
         include('assign.html');
         print_simple_box_end();
 
         if (!empty($errors)) {
-            print_simple_box_start("center");
-            foreach ($errors as $error) {
-                notify($error);
+            $msg = '<p>';
+            foreach ($errors as $e) {
+                $msg .= $e.'<br />';
             }
+            $msg .= '</p>';
+            print_simple_box_start('center');
+            notify($msg);
             print_simple_box_end();
         }
 
@@ -222,7 +233,6 @@
         if ($inmeta) {
             sync_metacourse($course);
         }
-        $userparam = (!empty($userid)) ? '&amp;userid='.$userid : '';
 
         $table->tablealign = 'center';
         $table->cellpadding = 5;
@@ -237,7 +247,7 @@
             if ($contextusers = get_role_users($roleid, $context)) {
                 $countusers = count($contextusers);
             }
-            $table->data[] = array('<a href="assign.php?contextid='.$context->id.'&amp;roleid='.$roleid.$userparam.'">'.$rolename.'</a>', $countusers);
+            $table->data[] = array('<a href="'.$baseurl.'&amp;roleid='.$roleid.'">'.$rolename.'</a>', $countusers);
         }
 
         print_table($table);
