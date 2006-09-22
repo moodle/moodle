@@ -121,9 +121,18 @@ function setup_is_unicodedb() {
         /// MSSQL only runs under UTF8 + the proper ODBTP driver (both for Unix and Win32)
             $unicodedb = true;
             break;
+        case 'oci8po':
+        /// Get Oracle DB character set value
+            $rs = $db->Execute("SELECT parameter, value FROM nls_database_parameters where parameter = 'NLS_CHARACTERSET'");
+            if ($rs && $rs->RecordCount() > 0) {
+                $encoding = $rs->fields['value'];
+                if (strtoupper($encoding) == 'AL32UTF8') {
+                    $unicodedb = true;
+                }
+            }
+            break;
     }
     return $unicodedb;
 }
-
 
 ?>
