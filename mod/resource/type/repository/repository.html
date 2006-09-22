@@ -52,6 +52,11 @@
         button_to_popup_window ('/mod/resource/type/repository/hive/openlitesearch.php',
                                 'LiteSearch', 'Search for content in Hive ', 500, 750,
                                 'Search for content in the HarvestRoad Hive repository', $options);
+				// wobble.
+        button_to_popup_window ('/mod/resource/type/repository/hive/openlitepublish.php',
+                               'LitePublish', 'Add new item to Hive ', 500, 750,
+                                'Add new content to the HarvestRoad Hive repository', $options);
+
         helpbutton("hive", "HarvestRoad Hive", "resource/type", true);
     ?>
     </td>
@@ -208,3 +213,4 @@ for ($i=0; $i < $this->maxparameters; $i++) {
 </td></tr>
 
 <?php print_visible_setting($form); ?>
+
