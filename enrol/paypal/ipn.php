@@ -50,6 +50,10 @@
         die;
     }
 
+    if (! $context = get_context_instance(CONTEXT_COURSE, $course->id)) {
+        email_paypal_error_to_admin("Not a valid context id", $data);
+        die;
+    }
 
 /// Open a connection back to PayPal to validate the data
 
@@ -82,7 +86,7 @@
             // and notify admin
 
             if ($data->payment_status != "Completed" and $data->payment_status != "Pending") {
-                unenrol_student($data->userid, $data->courseid);
+                role_unassign(0, $data->userid, 0, $context->id);
                 email_paypal_error_to_admin("Status not completed or pending. User unenrolled from course", $data);
                 die;
             }
@@ -150,14 +154,7 @@
                 email_paypal_error_to_admin("Error while trying to insert valid transaction", $data);
             }
 
-            if ($course->enrolperiod) {
-                $timestart = time();
-                $timeend = time() + $course->enrolperiod;
-            } else {
-                $timestart = $timeend = 0;
-            }
-
-            if (!enrol_student($user->id, $course->id, $timestart, $timeend, 'manual')) {
+            if (enrol_into_course($course, $user, 'paypal')) {
                 email_paypal_error_to_admin("Error while trying to enrol ".fullname($user)." in '$course->fullname'", $data);
                 die;
             } else {
