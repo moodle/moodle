@@ -598,7 +598,8 @@ class enrolment_plugin_authorize
         $sql = "SELECT * FROM {$CFG->prefix}enrol_authorize
                 WHERE (status = '" .AN_STATUS_AUTH. "')
                   AND (timecreated < '$timediffcnf')
-                  AND (timecreated > '$timediff30')";
+                  AND (timecreated > '$timediff30')
+                ORDER BY courseid";
 
         if (!$orders = get_records_sql($sql)) {
             mtrace("no pending orders");
@@ -623,20 +624,24 @@ class enrolment_plugin_authorize
         @set_time_limit(0);
         $this->log = "AUTHORIZE.NET AUTOCAPTURE CRON: " . userdate($timenow) . "\n";
 
+        $lastcourseid = 0;
         foreach ($orders as $order) {
             $message = '';
             $extra = NULL;
             $success = authorize_action($order, $message, $extra, AN_ACTION_PRIOR_AUTH_CAPTURE);
             if ($success) {
-                $user = get_record('user', 'id', $order->userid);
-                $course = get_record('course', 'id', $order->courseid);
-                $role = get_default_course_role($course);
-                $context = get_context_instance(CONTEXT_COURSE, $course->id);
+                if ($lastcourseid != $order->courseid) {
+                    $lastcourseid = $order->courseid;
+                    $course = get_record('course', 'id', $lastcourseid);
+                    $role = get_default_course_role($course);
+                    $context = get_context_instance(CONTEXT_COURSE, $lastcourseid);
+                }
                 $timestart = $timeend = 0;
                 if ($course->enrolperiod) {
                     $timestart = $timenow;
                     $timeend = $order->settletime + $course->enrolperiod;
                 }
+                $user = get_record('user', 'id', $order->userid);
                 if (role_assign($role->id, $user->id, 0, $context->id, $timestart, $timeend, 0, 'manual')) {
                 /// enrol_student($order->userid, $order->courseid, $timestart, $timeend, 'manual');
                     $this->log .= "User($user->id) has been enrolled to course($course->id).\n";
