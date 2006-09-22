@@ -54,7 +54,7 @@
 
 function stats_cron_daily () {
     global $CFG;
-
+    
     if (empty($CFG->enablestats)) {
         return STATS_RUN_ABORTED;
     }
