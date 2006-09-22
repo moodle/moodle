@@ -880,6 +880,15 @@ function print_recent_activity($course) {
         include_once($CFG->dirroot.'/mod/'.$mod->name.'/lib.php');
         $print_recent_activity = $mod->name.'_print_recent_activity';
         if (function_exists($print_recent_activity)) {
+            //
+            // NOTE:
+            //   $isteacher is to be deprecated!
+            //
+            // TODO:
+            //   1) Make sure that all _print_recent_activity functions are not
+            //      using the $isteacher value.
+            //   2) Remove the $isteacher parameter from the function calls.
+            //
             $modcontent = $print_recent_activity($course, $isteacher, $timestart);
             if ($modcontent) {
                 $content = true;
