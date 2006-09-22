@@ -757,7 +757,7 @@
                     fwrite ($bf, end_tag("ROLE", 4, true));   
                 }  
             }   
-            fwrite ($bf, close_tag("ROLES_ASSIGNMENTS", 3, true));
+            fwrite ($bf, end_tag("ROLES_ASSIGNMENTS", 3, true));
             //Print header end
             fwrite ($bf,end_tag("HEADER",2,true));
         } else { 
@@ -1046,7 +1046,7 @@
                                 fwrite ($bf, end_tag("ROLE", 5, true));   
                             }  
                         }   
-                        fwrite ($bf, close_tag("ROLES_ASSIGNMENTS", 4, true));
+                        fwrite ($bf, end_tag("ROLES_ASSIGNMENTS", 4, true));
                         //End Block
                         fwrite ($bf,end_tag('BLOCK',3,true));
                     }
@@ -1196,7 +1196,7 @@
                         fwrite ($bf, end_tag("ROLE", 7, true));   
                     }  
                 }   
-                fwrite ($bf, close_tag("ROLES_ASSIGNMENTS", 6, true));
+                fwrite ($bf, end_tag("ROLES_ASSIGNMENTS", 6, true));
         
                
                
@@ -1449,7 +1449,7 @@
                             fwrite ($bf, end_tag("ROLE", 5, true));   
                         }  
                     }   
-                    fwrite ($bf, close_tag("ROLES_ASSIGNMENTS", 4, true));               
+                    fwrite ($bf, end_tag("ROLES_ASSIGNMENTS", 4, true));               
                                      
                 }
                 //End User tag
@@ -2387,6 +2387,6 @@
                 fwrite ($bf, end_tag("ROLE", $startlevel+1, true));   
             }  
         }   
-        fwrite ($bf, close_tag("ROLES_ASSIGNMENTS", $startlevel, true));     
+        fwrite ($bf, end_tag("ROLES_ASSIGNMENTS", $startlevel, true));     
     }
 ?>
