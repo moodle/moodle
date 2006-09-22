@@ -1946,7 +1946,9 @@ function fetch_context_capabilities($context) {
         return false;
     }
 
-    $records = get_records_sql($SQL.' '.$sort);
+    if (!$records = get_records_sql($SQL.' '.$sort)) {
+        $records = array();
+    }
     $contextindependentcaps = fetch_context_independent_capabilities();
     $records = array_merge($records, $contextindependentcaps);
 
