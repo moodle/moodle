@@ -39,6 +39,11 @@ function rss_client_upgrade($oldversion) {
             if ($rssfeeds = get_records_select('block_rss_client', $adminsql)) {
                 foreach ($rssfeeds as $rssfeed) {
                     $rssfeed->shared = 1;
+                    $rssfeed->title = addslashes($rssfeed->title);
+                    $rssfeed->preferredtitle = addslashes($rssfeed->preferredtitle);
+                    $rssfeed->description = addslashes($rssfeed->description);
+                    $rssfeed->url = addslashes($rssfeed->url);
+                    
                     if (!update_record('block_rss_client', $rssfeed)) {
                         notice('Could not set '.$rssfeed->title.' as a shared RSS feed.');
                     }
