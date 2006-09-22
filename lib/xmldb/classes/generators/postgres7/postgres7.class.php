@@ -96,7 +96,7 @@ class XMLDBpostgres7 extends XMLDBgenerator {
                 break;
             case XMLDB_TYPE_CHAR:
                 $dbtype = 'VARCHAR';
-                if (!empty($xmldb_length)) {
+                if (empty($xmldb_length)) {
                     $xmldb_length='255';
                 }
                 $dbtype .= '(' . $xmldb_length . ')';
