@@ -1760,6 +1760,9 @@ function replace_smilies(&$text) {
         'V-.'  => 'thoughtful',
         ':-P'  => 'tongueout',
         'B-)'  => 'cool',
+        'B)'   => 'cool',
+        '8-)'  => 'cool',
+        '8)'   => 'cool',
         '^-)'  => 'approve',
         '8-)'  => 'wideeyes',
         ':o)'  => 'clown',
@@ -1774,6 +1777,11 @@ function replace_smilies(&$text) {
         'xx-P' => 'dead',
         '|-.'  => 'sleepy',
         '}-]'  => 'evil',
+        '(h)'  => 'heart',
+        '(heart)'  => 'heart',
+        '(y)'  => 'yes',
+        '(n)'  => 'no',
+        '(martin)'  => 'martin'
         );
 
     if ($runonce == false) {  /// After the first time this is not run again
