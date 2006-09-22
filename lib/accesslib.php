@@ -1353,32 +1353,32 @@ function role_assign($roleid, $userid, $groupid, $contextid, $timestart=0, $time
 /// Do some data validation
 
     if (empty($roleid)) {
-        notify('Role ID not provided');
+        debugging('Role ID not provided');
         return false;
     }
 
     if (empty($userid) && empty($groupid)) {
-        notify('Either userid or groupid must be provided');
+        debugging('Either userid or groupid must be provided');
         return false;
     }
 
     if ($userid && !record_exists('user', 'id', $userid)) {
-        notify('User does not exist!');
+        debugging('User does not exist!');
         return false;
     }
 
     if ($groupid && !record_exists('groups', 'id', $groupid)) {
-        notify('Group does not exist!');
+        debugging('Group does not exist!');
         return false;
     }
 
     if (!$context = get_context_instance_by_id($contextid)) {
-        notify('A valid context must be provided');
+        debugging('A valid context must be provided');
         return false;
     }
 
     if (($timestart and $timeend) and ($timestart > $timeend)) {
-        notify('The end time can not be earlier than the start time');
+        debugging('The end time can not be earlier than the start time');
         return false;
     }
 
@@ -2545,15 +2545,18 @@ function get_users_by_capability($context, $capability, $fields='', $sort='',
     }
 
 /// Sorting out roles with this capability set
-    $possibleroles = get_roles_with_capability($capability, CAP_ALLOW, $context);
-    $validroleids = array();
-    foreach ($possibleroles as $prole) {
-        $caps = role_context_capabilities($prole->id, $context, $capability); // resolved list
-        if ($caps[$capability] > 0) { // resolved capability > 0
-            $validroleids[] = $prole->id;
+    if ($possibleroles = get_roles_with_capability($capability, CAP_ALLOW, $context)) {
+        $validroleids = array();
+        foreach ($possibleroles as $prole) {
+            $caps = role_context_capabilities($prole->id, $context, $capability); // resolved list
+            if ($caps[$capability] > 0) { // resolved capability > 0
+                $validroleids[] = $prole->id;
+            }
         }
+        $roleids =  '('.implode(',', $validroleids).')';
+    } else {
+        return false;  // No need to continue, since no roles have this capability set
     }
-    $roleids =  '('.implode(',', $validroleids).')';
 
 /// Construct the main SQL
     $select = " SELECT $fields";
