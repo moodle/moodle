@@ -27,35 +27,6 @@ class enrolment_plugin_authorize
 
 
     /**
-     * Returns information about the courses a student has access to
-     *
-     * Set the $user->student course array
-     * Set the $user->timeaccess course array
-     *
-     * @param object &$user must contain $user->id already set
-     */
-    function get_student_courses(&$user) {
-        $manual = enrolment_factory::factory('manual');
-        $manual->get_student_courses($user);
-    }
-
-
-    /**
-     * Returns information about the courses a teacher has access to
-     *
-     * Set the $user->teacher course array
-     * Set the $user->teacheredit course array
-     * Set the $user->timeaccess course array
-     *
-     * @param object &$user must contain $user->id already set
-     */
-    function get_teacher_courses(&$user) {
-        $manual = enrolment_factory::factory('manual');
-        $manual->get_teacher_courses($user);
-    }
-
-
-    /**
      * Shows a credit card form for registration.
      *
      * @param object $course Course info
