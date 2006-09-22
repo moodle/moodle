@@ -4665,10 +4665,17 @@ function redirect($url, $message='', $delay=-1) {
         // paths - but still, might as well do it properly.)
         // This code turns relative into absolute. 
         if(!preg_match('/^[a-z]+:/',$url)) { 
-            // Add in the host etc. (from wwwroot) to the current folder
-            // from SCRIPT_NAME, then add the new target onto the end.
-            $url=preg_replace('/^(.*?[^:\/])\/.*$/','$1',$CFG->wwwroot).
-                rtrim(dirname($_SERVER['SCRIPT_NAME']),'/\\').'/'.$url;
+            // Get host name http://www.wherever.com
+            $hostpart=preg_replace('/^(.*?[^:\/])\/.*$/','$1',$CFG->wwwroot);
+            if(preg_match('/^\//',$url)) {
+                // URLs beginning with / are relative to web server root so
+                // we just add them in
+                $url=$hostpart.$url;
+            } else {
+                // URLs not beginning with / are relative to path of current
+                // script, so add that on.
+                $url=$hostpart.rtrim(dirname($_SERVER['SCRIPT_NAME']),'/\\').'/'.$url;
+            }
             // Replace all ..s
             while(true) {
                 $newurl=preg_replace('/\/[^\/]*\/\.\.\//','/',$url);
