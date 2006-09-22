@@ -515,6 +515,7 @@ ul.list, ul.list li, ol.list, ol.list li {
 .sideblock .header .commands {
   margin-top: 0.3em;
   clear: both;
+  height: 16px;
 }
 
 .sideblock .header .commands a {
