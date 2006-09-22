@@ -2723,6 +2723,20 @@ function get_capabilities_from_role_on_context($role, $context) {
                                   AND roleid = $role->id");
 }
 
+// find out which roles has assignment on this context
+function get_roles_with_assignment_on_context($context) {
+    
+    global $CFG;
+    
+    return get_records_sql("SELECT DISTINCT r.*
+                            FROM {$CFG->prefix}role_assignments ra,
+                                 {$CFG->prefix}role r
+                            WHERE ra.roleid = r.id
+                            AND ra.contextid = $context->id");
+}
+
+
+
 /* find all user assignemnt of users for this role, on this context
  */
 function get_users_from_role_on_context($role, $context) {
