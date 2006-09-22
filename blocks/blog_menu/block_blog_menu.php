@@ -70,6 +70,7 @@ class block_blog_menu extends block_base {
             
             $canviewblogs = has_capability('moodle/blog:view', $curcontext);
             
+            /// Accessibility: markup as a list.
             
             if ( (isloggedin() && !isguest()) && $incoursecontext
                     && $CFG->bloglevel >= BLOG_COURSE_LEVEL && $canviewblogs) {
@@ -77,8 +78,8 @@ class block_blog_menu extends block_base {
                 $coursearg = '&amp;courseid='.$course->id;
                 // a course is specified
                 
-                $courseviewlink = '<a href="'. $CFG->wwwroot .'/blog/index.php?filtertype=course&amp;filterselect='. $course->id .'">';
-                $courseviewlink .= get_string('viewcourseentries', 'blog') .'</a><br />';
+                $courseviewlink = '<li><a href="'. $CFG->wwwroot .'/blog/index.php?filtertype=course&amp;filterselect='. $course->id .'">';
+                $courseviewlink .= get_string('viewcourseentries', 'blog') ."</a></li>\n";
             }
             
             $blogmodon = false;
@@ -89,19 +90,19 @@ class block_blog_menu extends block_base {
 
                 // show Add entry link - moderation is off, or moderation is on and the user is viewing the block within the context of a course
                 if (has_capability('moodle/blog:create', $curcontext)) {
-                    $addentrylink = '<a href="'. $CFG->wwwroot. '/blog/edit.php?userid='.
+                    $addentrylink = '<li><a href="'. $CFG->wwwroot. '/blog/edit.php?userid='.
                                     $userBlog->userid . $coursearg .'">'.
-                                    get_string('addnewentry', 'blog') .'</a><br />';
+                                    get_string('addnewentry', 'blog') ."</a></li>\n";
                 }
                 // show View my entries link
-                $addentrylink .= '<a href="'. $CFG->wwwroot .'/blog/index.php?userid='.
+                $addentrylink .= '<li><a href="'. $CFG->wwwroot .'/blog/index.php?userid='.
                                  $userBlog->userid.'">'.get_string('viewmyentries', 'blog').
-                                 '</a><br />';
+                                 "</a></li>\n";
                 
                 // show link to manage blog prefs
-                $addentrylink .= '<a href="'. $CFG->wwwroot. '/blog/preferences.php?userid='.
+                $addentrylink .= '<li><a href="'. $CFG->wwwroot. '/blog/preferences.php?userid='.
                                  $userBlog->userid . $coursearg .'">'.
-                                 get_string('blogpreferences', 'blog').'</a><br />';
+                                 get_string('blogpreferences', 'blog')."</a></li>\n";
 
                 $output = $addentrylink;
                 $output .= $courseviewlink;
@@ -109,25 +110,25 @@ class block_blog_menu extends block_base {
 
             // show View site entries link
             if ($CFG->bloglevel >= BLOG_SITE_LEVEL && $canviewblogs) {
-                $output .= '<a href="'. $CFG->wwwroot .'/blog/index.php?filtertype=site&amp;">';
-                $output .= get_string('viewsiteentries', 'blog').'</a><br />';
+                $output .= '<li><a href="'. $CFG->wwwroot .'/blog/index.php?filtertype=site&amp;">';
+                $output .= get_string('viewsiteentries', 'blog')."</a></li>\n";
             }
             
             if (isloggedin() && !isguest()
                     && (has_capability('moodle/blog:manageofficialtags', $sitecontext)
                     || has_capability('moodle/blog:managepersonaltags', $curcontext))) {
 
-                $output .= link_to_popup_window("/blog/tags.php",'popup',get_string('tagmanagement'), 400, 500, 'Popup window', 'none', true);
+                $output .= '<li>'. link_to_popup_window("/blog/tags.php",'popup',get_string('tagmanagement'), 400, 500, 'Popup window', 'none', true) ."</li>\n";
             }
             
             // show Help with blogging link
-            //$output .= '<a href="'. $CFG->wwwroot .'/help.php?module=blog&amp;file=user.html">';
-            //$output .= get_string('helpblogging', 'blog') .'</a>';
+            //$output .= '<li><a href="'. $CFG->wwwroot .'/help.php?module=blog&amp;file=user.html">';
+            //$output .= get_string('helpblogging', 'blog') ."</a></li>\n";
         //} else {
         //    $output = ''; //guest users and users who are not logged in do not get menus
         //}
 
-        $this->content->text = $output;
+        $this->content->text = '<ul class="list">'. $output ."</ul>\n";
         return $this->content;
     }
 }

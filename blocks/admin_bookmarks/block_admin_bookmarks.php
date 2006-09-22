@@ -40,14 +40,19 @@ class block_admin_bookmarks extends block_base {
             $bookmarks = explode(',',$USER->preference['admin_bookmarks']);
             // hmm... just a liiitle (potentially) processor-intensive
             // (recall that $adminroot->locate is a huge recursive call... and we're calling it repeatedly here
+            
+            /// Accessibility: markup as a list.
+            $this->content->text .= '<ol class="list">'."\n";
+            
             foreach($bookmarks as $bookmark) {
                 $temp = $adminroot->locate($bookmark);
                 if (is_a($temp, 'admin_settingpage')) {
-                    $this->content->text .= '<a href="' . $CFG->wwwroot . '/' . $CFG->admin . '/settings.php?section=' . $bookmark . '">' . $temp->visiblename . '</a>' . '<br />';
+                    $this->content->text .= '<li><a href="' . $CFG->wwwroot . '/' . $CFG->admin . '/settings.php?section=' . $bookmark . '">' . $temp->visiblename . "</a></li>\n";
                 } elseif (is_a($temp, 'admin_externalpage')) {
-                    $this->content->text .= '<a href="' . $temp->url . '">' . $temp->visiblename . '</a>' . '<br />';
+                    $this->content->text .= '<li><a href="' . $temp->url . '">' . $temp->visiblename . "</a></li>\n";
                 }                
             }
+            $this->content->text .= "</ol>\n";
         } else {
             $bookmarks = array();
         }

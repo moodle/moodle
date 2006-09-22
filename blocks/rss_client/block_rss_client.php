@@ -200,7 +200,7 @@
                     isset($this->config->block_rss_client_show_channel_image) && 
                         $this->config->block_rss_client_show_channel_image &&
                             isset($rss->image) && isset($rss->image['link']) && isset($rss->image['title']) && isset($rss->image['url']) ) {
-                $returnstring .= '<div class="image"><a href="'. $rss->image['link'] .'"><img src="'. $rss->image['url'] .'" title="'. $rss->image['title'] .'" alt="'. $rss->image['title'] .'"/></a></div>';
+                $returnstring .= '<div class="image" title="'. $rss->image['title'] .'"><a href="'. $rss->image['link'] .'"><img src="'. $rss->image['url'] .'" alt="'. $rss->image['title'] .'"/></a></div>';
             }
 
             if ($showtitle) {
@@ -214,6 +214,9 @@
             if (empty($rss) || empty($rss->items)) {
                 return '';
             }
+
+            /// Accessibility: markup as a list.
+            $returnstring .= '<ul class="list">'."\n";
 
             foreach ($rss->items as $item) {
                 if ($item['title'] == '') {
@@ -229,17 +232,21 @@
 
                 $item['link'] = str_replace('&', '&amp;', $item['link']);
 
-                $returnstring .= '<div class="link"><a href="'. $item['link'] .'" target="_blank">'. $item['title'] . '</a></div>' ."\n";
+                $returnstring .= '<li><div class="link"><a href="'. $item['link'] .'" target="_blank">'. $item['title'] . "</a></div>\n";
 
                 if ($display_description && !empty($item['description'])) {
                     $item['description'] = break_up_long_words($item['description'], 30);
                     $returnstring .= '<div class="description">'.
                                      format_text($item['description'], FORMAT_MOODLE, $formatoptions, $this->courseid) . 
-                                     '</div>' ."\n";
+                                     '</div>';
                 }
+                $returnstring .= "</li>\n";
             }
+            $returnstring .= "</ul>\n";
 
             if (!empty($rss->channel['link'])) {
+                $rss->channel['link'] = str_replace('&', '&amp;', $rss->channel['link']);
+            
                 if (!empty($this->config) && isset($this->config->block_rss_client_show_channel_link) && $this->config->block_rss_client_show_channel_link) {
                     $this->content->footer =  '<a href="'. $rss->channel['link'] .'">'. get_string('clientchannellink', 'block_rss_client') .'</a>';
                 } 
