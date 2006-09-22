@@ -45,7 +45,6 @@
     }
 
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-    require_capability('mod/glossary:view', $context); // kill the page if user can't even read
 
     if ($CFG->forcelogin) {
         require_login();

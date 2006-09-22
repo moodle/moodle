@@ -33,20 +33,6 @@
 
 $mod_glossary_capabilities = array(
 
-    'mod/glossary:view' => array(
-
-        'captype' => 'read',
-        'contextlevel' => CONTEXT_MODULE,
-        'legacy' => array(
-            'guest' => CAP_ALLOW,
-            'student' => CAP_ALLOW,
-            'teacher' => CAP_ALLOW,
-            'editingteacher' => CAP_ALLOW,
-            'coursecreator' => CAP_ALLOW,
-            'admin' => CAP_ALLOW
-        )
-    ),
-
     'mod/glossary:write' => array(
 
         'riskbitmask' => RISK_SPAM,

@@ -30,7 +30,6 @@
 
     require_login($course->id, false, $cm);
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-    require_capability('mod/glossary:view', $context);
     $manageentries = has_capability('mod/glossary:manageentries', $context); 
     
     if (! $glossary = get_record("glossary", "id", $cm->instance)) {

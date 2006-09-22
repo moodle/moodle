@@ -56,10 +56,7 @@
         $table->align = array ("LEFT", "CENTER");
     }
 
-    $can_subscribe = has_capability('mod/glossary:view', $context);
-
-    if ($show_rss = (($can_subscribe || $course->id == SITEID) &&
-                     isset($CFG->enablerssfeeds) && isset($CFG->glossary_enablerssfeeds) &&
+    if ($show_rss = (isset($CFG->enablerssfeeds) && isset($CFG->glossary_enablerssfeeds) &&
                      $CFG->enablerssfeeds && $CFG->glossary_enablerssfeeds)) {
         $table->head[] = $strrss;
         $table->align[] = "CENTER";
@@ -68,12 +65,15 @@
     $currentsection = "";
 
     foreach ($glossarys as $glossary) {
-        if (!$glossary->visible) {
-            //Show dimmed if the mod is hidden
+        if (!$glossary->visible && has_capability('moodle/course:viewhiddenactivities', $context)) {
+            // Show dimmed if the mod is hidden.
             $link = "<a class=\"dimmed\" href=\"view.php?id=$glossary->coursemodule\">".format_string($glossary->name,true)."</a>";
-        } else {
-            //Show normal if the mod is visible
+        } else if ($glossary->visible) {
+            // Show normal if the mod is visible.
             $link = "<a href=\"view.php?id=$glossary->coursemodule\">".format_string($glossary->name,true)."</a>";
+        } else {
+            // Don't show the glossary.
+            continue;
         }
         $printsection = "";
         if ($glossary->section !== $currentsection) {
