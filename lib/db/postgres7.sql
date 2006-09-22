@@ -530,17 +530,12 @@ CREATE TABLE adodb_logsql (
 CREATE TABLE prefix_stats_daily (
    id SERIAL PRIMARY KEY,
    courseid INTEGER NOT NULL default 0,
+   roleid INTEGER NOT NULL default 0,
    timeend INTEGER NOT NULL default 0,
-   students INTEGER NOT NULL default 0,
-   teachers INTEGER NOT NULL default 0,
-   activestudents INTEGER NOT NULL default 0,
-   activeteachers INTEGER NOT NULL default 0,
-   studentreads INTEGER NOT NULL default 0,
-   studentwrites INTEGER NOT NULL default 0,
-   teacherreads INTEGER NOT NULL default 0,
-   teacherwrites INTEGER NOT NULL default 0,
-   logins INTEGER NOT NULL default 0,
-   uniquelogins INTEGER NOT NULL default 0
+   stattype varchar(20) NOT NULL default 'logins',
+   stat1 INTEGER NOT NULL default 0,
+   stat2 INTEGER NOT NULL default 0,
+   CHECK (stattype::text = 'enrolments' OR stattype::text = 'activity' OR stattype::text = 'logins')
 );
 
 CREATE INDEX prefix_stats_daily_courseid_idx ON prefix_stats_daily (courseid);
@@ -549,17 +544,12 @@ CREATE INDEX prefix_stats_daily_timeend_idx ON prefix_stats_daily (timeend);
 CREATE TABLE prefix_stats_weekly (
    id SERIAL PRIMARY KEY,
    courseid INTEGER NOT NULL default 0,
+   roleid INTEGER NOT NULL default 0,
    timeend INTEGER NOT NULL default 0,
-   students INTEGER NOT NULL default 0,
-   teachers INTEGER NOT NULL default 0,
-   activestudents INTEGER NOT NULL default 0,
-   activeteachers INTEGER NOT NULL default 0,
-   studentreads INTEGER NOT NULL default 0,
-   studentwrites INTEGER NOT NULL default 0,
-   teacherreads INTEGER NOT NULL default 0,
-   teacherwrites INTEGER NOT NULL default 0,
-   logins INTEGER NOT NULL default 0,
-   uniquelogins INTEGER NOT NULL default 0
+   stattype varchar(20) NOT NULL default '',
+   stat1 INTEGER NOT NULL default 0,
+   stat2 INTEGER NOT NULL default 0,
+   CHECK (stattype::text = 'enrolments' OR stattype::text = 'activity' OR stattype::text = 'logins')
 );
 
 CREATE INDEX prefix_stats_weekly_courseid_idx ON prefix_stats_weekly (courseid);
@@ -568,17 +558,12 @@ CREATE INDEX prefix_stats_weekly_timeend_idx ON prefix_stats_weekly (timeend);
 CREATE TABLE prefix_stats_monthly (
    id SERIAL PRIMARY KEY,
    courseid INTEGER NOT NULL default 0,
+   roleid INTEGER NOT NULL default 0,
    timeend INTEGER NOT NULL default 0,
-   students INTEGER NOT NULL default 0,
-   teachers INTEGER NOT NULL default 0,
-   activestudents INTEGER NOT NULL default 0,
-   activeteachers INTEGER NOT NULL default 0,
-   studentreads INTEGER NOT NULL default 0,
-   studentwrites INTEGER NOT NULL default 0,
-   teacherreads INTEGER NOT NULL default 0,
-   teacherwrites INTEGER NOT NULL default 0,
-   logins INTEGER NOT NULL default 0,
-   uniquelogins INTEGER NOT NULL default 0
+   stattype varchar(20) NOT NULL default '',
+   stat1 INTEGER NOT NULL default 0,
+   stat2 INTEGER NOT NULL default 0,
+   CHECK (stattype::text = 'enrolments' OR stattype::text = 'activity' OR stattype::text = 'logins')
 );
 
 CREATE INDEX prefix_stats_monthly_courseid_idx ON prefix_stats_monthly (courseid);
