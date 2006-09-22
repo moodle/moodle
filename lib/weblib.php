@@ -1781,7 +1781,8 @@ function replace_smilies(&$text) {
         '(heart)'  => 'heart',
         '(y)'  => 'yes',
         '(n)'  => 'no',
-        '(martin)'  => 'martin'
+        '(martin)'  => 'martin',
+        '()'  => 'egg'
         );
 
     if ($runonce == false) {  /// After the first time this is not run again
