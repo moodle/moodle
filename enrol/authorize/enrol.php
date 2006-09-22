@@ -201,9 +201,7 @@ class enrolment_plugin_authorize
                 redirect($CFG->wwwroot, get_string("reviewnotify", "enrol_authorize"), '30');
             }
             else {
-                $timestart = $timenow;
-                $timeend = $timestart + (3600 * 24); // just enrol for 1 days :)
-                enrol_student($USER->id, $course->id, $timestart, $timeend, 'manual');
+                enrol_into_course($course, $USER, 'manual');
                 redirect("$CFG->wwwroot/course/view.php?id=$course->id");
             }
             return;
@@ -236,24 +234,8 @@ class enrolment_plugin_authorize
         }
 
         // Credit card captured, ENROL student now...
-        if ($course->enrolperiod) {
-            $timestart = $timenow;
-            $timeend = $timestart + $course->enrolperiod;
-        } else {
-            $timestart = $timeend = 0;
-        }
-
-        if (enrol_student($USER->id, $course->id, $timestart, $timeend, 'manual')) {
+        if (enrol_into_course($course, $USER, 'manual')) {
             $teacher = get_teacher($course->id);
-            if (!empty($CFG->enrol_mailstudents)) {
-                $a = new stdClass;
-                $a->coursename = "$course->fullname";
-                $a->profileurl = "$CFG->wwwroot/user/view.php?id=$USER->id";
-                email_to_user($USER,
-                              $teacher,
-                              get_string("enrolmentnew", '', $course->shortname),
-                              get_string('welcometocoursetext', '', $a));
-            }
             if (!empty($CFG->enrol_mailteachers)) {
                 $a = new stdClass;
                 $a->course = "$course->fullname";
@@ -355,31 +337,13 @@ class enrolment_plugin_authorize
 
         $SESSION->ccpaid = 1; // security check: don't duplicate payment
         if ($order->transid == 0) { // TEST MODE
-            $timestart = $timenow;
-            $timeend = $timestart + (3600 * 24); // just enrol for 1 days :)
-            enrol_student($USER->id, $course->id, $timestart, $timeend, 'manual');
+            enrol_into_course($course, $USER, 'manual');
             redirect("$CFG->wwwroot/course/view.php?id=$course->id");
         }
 
         // ENROL student now ...
-        if ($course->enrolperiod) {
-            $timestart = $timenow;
-            $timeend = $timestart + $course->enrolperiod;
-        } else {
-            $timestart = $timeend = 0;
-        }
-
-        if (enrol_student($USER->id, $course->id, $timestart, $timeend, 'manual')) {
+        if (enrol_into_course($course, $USER, 'manual')) {
             $teacher = get_teacher($course->id);
-            if (!empty($CFG->enrol_mailstudents)) {
-                $a = new stdClass;
-                $a->coursename = "$course->fullname";
-                $a->profileurl = "$CFG->wwwroot/user/view.php?id=$USER->id";
-                email_to_user($USER,
-                              $teacher,
-                              get_string("enrolmentnew", '', $course->shortname),
-                              get_string('welcometocoursetext', '', $a));
-            }
             if (!empty($CFG->enrol_mailteachers)) {
                 $a = new stdClass;
                 $a->course = "$course->fullname";
