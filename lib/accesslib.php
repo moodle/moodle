@@ -1747,8 +1747,6 @@ function update_capabilities($component='moodle') {
             return false;
         }
 
-        global $db;
-        $db->debug= 999;
         // Do we need to assign the new capabilities to roles that have the
         // legacy capabilities moodle/legacy:* as well?
         if (isset($capdef['legacy']) && is_array($capdef['legacy']) &&
