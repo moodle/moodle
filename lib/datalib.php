@@ -576,11 +576,13 @@ function get_courses_page($categoryid="all", $sort="c.sortorder ASC", $fields="c
     }  
     
     // pull out all course matching the cat
-    $courses = get_records_sql("SELECT $fields 
+    $visiblecourses = array();
+    if (!($courses = get_records_sql("SELECT $fields 
                                 FROM {$CFG->prefix}course c 
                                 $categoryselect
-                                ORDER BY $sort");
-    $visiblecourses = array();
+                                ORDER BY $sort"))) {
+        return $visiblecourses;
+    }
     $totalcount = 0;
     
     if (!$limitnum) {
