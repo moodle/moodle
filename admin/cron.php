@@ -129,10 +129,12 @@
 
         if ($CFG->longtimenosee) { // value in days
             $longtime = $timenow - ($CFG->longtimenosee * 3600 * 24);
-            if ($students = get_users_longtimenosee($longtime)) {
-                foreach ($students as $student) {
-                    if (unenrol_student($student->userid, $student->course)) {
-                        mtrace("Deleted student enrolment for user $student->userid from course $student->course");
+            if ($assigns = get_users_longtimenosee($longtime)) {
+                foreach ($assigns as $assign) {
+                    if ($context = get_context_instance(CONTEXT_COURSE, $assign->courseid)) {
+                        if (role_unassign(0, $assign->userid, 0, $context->id)) {
+                            mtrace("Deleted student enrolment for user $assign->userid from course $assign->courseid");
+                        }
                     }
                 }
             }
