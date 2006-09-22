@@ -103,51 +103,20 @@ function stats_cron_daily () {
         $timesql = " (l.time > $timestart AND l.time < $nextmidnight) ";
         begin_sql();
         foreach ($courses as $course) {
-
-            $stat->students = count_records('user_students','course',$course->id);
-            $stat->teachers = count_records('user_teachers','course',$course->id);
-            
-            $sql = 'SELECT COUNT(DISTINCT(l.userid)) FROM '.$CFG->prefix.'log l JOIN '.$CFG->prefix
-                .'user_students us ON us.userid = l.userid WHERE l.course = '.$course->id.' AND us.course = '.$course->id.' AND '.$timesql;
-            $stat->activestudents = count_records_sql($sql);
-            
-            $sql = str_replace('students','teachers',$sql);
-            $stat->activeteachers = count_records_sql($sql);
-            
-            $sql = 'SELECT COUNT(l.id) FROM '.$CFG->prefix.'log l JOIN '.$CFG->prefix
-                .'user_students us ON us.userid = l.userid WHERE l.course = '.$course->id.' AND us.course = '.$course->id
-                .' AND '.$timesql .' '.stats_get_action_sql_in('view');
-            $stat->studentreads = count_records_sql($sql);
-            
-            $sql = str_replace('students','teachers',$sql);
-            $stat->teacherreads = count_records_sql($sql);
-
-            $sql = 'SELECT COUNT(l.id) FROM '.$CFG->prefix.'log l JOIN '.$CFG->prefix
-                .'user_students us ON us.userid = l.userid WHERE l.course = '.$course->id.' AND us.course = '.$course->id
-                .' AND '.$timesql.' '.stats_get_action_sql_in('post');
-            $stat->studentwrites = count_records_sql($sql);
-            
-            $sql = str_replace('students','teachers',$sql);
-            $stat->teacherwrites = count_records_sql($sql);
-
-            $stat->logins = 0;
-            $stat->uniquelogins = 0;
+            //do this first.
             if ($course->id == SITEID) {
+                $stat = new StdClass;
+                $stat->courseid = $course->id;
+                $stat->timeend = $nextmidnight;
+                $stat->roleid = 0; // all users
+                $stat->stattype = 'logins';
                 $sql = 'SELECT count(l.id) FROM '.$CFG->prefix.'log l WHERE l.action = \'login\' AND '.$timesql;
-                $stat->logins = count_records_sql($sql);
+                $stat->stat1 = count_records_sql($sql);
                 $sql = 'SELECT COUNT(DISTINCT(l.userid)) FROM '.$CFG->prefix.'log l WHERE l.action = \'login\' AND '.$timesql;
-                $stat->uniquelogins = count_records_sql($sql);
-            }
+                $stat->stat2 = count_records_sql($sql);
+                insert_record('stats_daily',$stat,false); // don't worry about the return id, we don't need it.
 
-            $stat->courseid = $course->id;
-            $stat->timeend = $nextmidnight;
-            insert_record('stats_daily',$stat,false); // don't worry about the return id, we don't need it.
-
-            $students = array();
-            $teachers = array();
-
-            // now do logins.
-            if ($course->id == SITEID) {
+                // and now user logins...
                 $sql = 'SELECT l.userid,count(l.id) as count FROM '.$CFG->prefix.'log l WHERE action = \'login\' AND '.$timesql.' GROUP BY userid';
                 
                 if ($logins = get_records_sql($sql)) {
@@ -158,20 +127,110 @@ function stats_cron_daily () {
                         $stat->courseid = SITEID;
                         $stat->statswrites = 0;
                         $stat->stattype = 'logins';
-                        $stat->roleid = 1; 
+                        $stat->roleid = 0;
                         insert_record('stats_user_daily',$stat,false);
                     }
                 }
             }
 
 
-            stats_get_course_users($course,$timesql,$students,$teachers);
-
-            foreach ($students as $user) {
-                stats_do_daily_user_cron($course,$user,1,$timesql,$nextmidnight,$daily_modules);
+            if (!$roles = get_roles_used_in_context($course,CONTEXT_COURSE)) {
+                // no roles.. nothing to log.
+                continue;
             }
-            foreach ($teachers as $user) {
-                stats_do_daily_user_cron($course,$user,2,$timesql,$nextmidnight,$daily_modules);
+            
+            foreach ($roles as $role) {
+                // ENROLMENT FIRST....
+                // ALL users with this role...
+                $stat = new StdClass;
+                $stat->courseid = $course->id;
+                $stat->roleid = $role->id;
+                $stat->timeend = $nextmidnight;
+                $stat->stattype = 'enrolment';
+                $sql = 'SELECT COUNT(DISTINCT ra.userid)
+                   FROM '.$CFG->prefix.'role_assignments ra 
+                   INNER JOIN '.$CFG->prefix.'role r_outmost ON (ra.roleid=r_outmost.id)
+                   INNER JOIN '.$CFG->prefix.'context c ON ra.contextid = c.id
+                   WHERE roleid='.$role->id.' AND c.instanceid='.$course->id.' AND c.aggregatelevel = '.CONTEXT_COURSE.'
+                   AND NOT EXISTS
+                   (SELECT 1 
+                       FROM '.$CFG->prefix.'role_assignments 
+                       INNER JOIN '.$CFG->prefix.'role ON ('.$CFG->prefix.'role.id=roleid)
+                       INNER JOIN '.$CFG->prefix.'context ON contextid = c.id
+                       WHERE instanceid='.$course->id.' AND userid=ra.userid AND c.aggregatelevel = '.CONTEXT_COURSE.'
+                       AND '.$CFG->prefix.'role.sortorder < r_outmost.sortorder
+                   )';
+
+                $stat->stat1 = count_records_sql($sql);               
+                
+                $sql = 'SELECT COUNT(DISTINCT ra.userid)
+                   FROM '.$CFG->prefix.'role_assignments ra
+                   INNER JOIN '.$CFG->prefix.'role r_outmost ON (ra.roleid=r_outmost.id)
+                   INNER JOIN '.$CFG->prefix.'context c ON ra.contextid = c.id
+                   INNER JOIN '.$CFG->prefix.'log l ON (ra.userid=l.userid AND course=instanceid)
+                   WHERE roleid='.$role->id.' AND instanceid='.$course->id.' AND '.$timesql.' AND c.aggregatelevel = '.CONTEXT_COURSE.'
+                   AND NOT EXISTS
+                   (SELECT 1 
+                       FROM '.$CFG->prefix.'role_assignments
+                       INNER JOIN '.$CFG->prefix.'role ON (mdl_role.id=roleid)
+                       INNER JOIN '.$CFG->prefix.'context c ON contextid = c.id
+                       WHERE instanceid='.$course->id.' AND userid=ra.userid AND c.aggregatelevel = '.CONTEXT_COURSE.'
+                       AND '.$CFG->prefix.'role.sortorder < r_outmost.sortorder
+                   )';
+                
+                $stat->stat2 = count_records_sql($sql);               
+                insert_record('stats_daily',$stat,false); // don't worry about the return id, we don't need it.
+
+                // ACTIVITY
+                
+                $stat = new StdClass;
+                $stat->courseid = $course->id;
+                $stat->roleid = $role->id;
+                $stat->timeend = $nextmidnight;
+                $stat->stattype = 'activity';
+                
+
+                $sql = 'SELECT COUNT(DISTINCT ra.userid)
+                   FROM '.$CFG->prefix.'role_assignments ra
+                   INNER JOIN '.$CFG->prefix.'role r_outmost ON (ra.roleid=r_outmost.id)
+                   INNER JOIN '.$CFG->prefix.'context c ON ra.contextid = c.id
+                   INNER JOIN '.$CFG->prefix.'log l ON (ra.userid=l.userid AND course=instanceid)
+                   WHERE roleid='.$role->id.' AND instanceid='.$course->id.' AND c.aggregatelevel = '.CONTEXT_COURSE.'
+                   AND '.$timesql.' '.stats_get_action_sql_in('view').'
+                   AND NOT EXISTS
+                   (SELECT 1 
+                       FROM '.$CFG->prefix.'role_assignments
+                       INNER JOIN '.$CFG->prefix.'role ON (mdl_role.id=roleid)
+                       INNER JOIN '.$CFG->prefix.'context c ON contextid = c.id
+                       WHERE instanceid='.$course->id.' AND userid=ra.userid  AND c.aggregatelevel = '.CONTEXT_COURSE.'
+                       AND '.$CFG->prefix.'role.sortorder < r_outmost.sortorder
+                   )';
+                
+                $stat->stat1 = count_records_sql($sql);       
+                $sql = 'SELECT COUNT(DISTINCT ra.userid)
+                   FROM '.$CFG->prefix.'role_assignments ra
+                   INNER JOIN '.$CFG->prefix.'role r_outmost ON (ra.roleid=r_outmost.id)
+                   INNER JOIN '.$CFG->prefix.'context c ON ra.contextid = c.id
+                   INNER JOIN '.$CFG->prefix.'log l ON (ra.userid=l.userid AND course=instanceid)
+                   WHERE roleid='.$role->id.' AND instanceid='.$course->id.' AND c.aggregatelevel = '.CONTEXT_COURSE.'
+                   AND '.$timesql.' '.stats_get_action_sql_in('post').'
+                   AND NOT EXISTS
+                   (SELECT 1 
+                       FROM '.$CFG->prefix.'role_assignments
+                       INNER JOIN '.$CFG->prefix.'role ON (mdl_role.id=roleid)
+                       INNER JOIN '.$CFG->prefix.'context c ON contextid = c.id
+                       WHERE instanceid='.$course->id.' AND userid=ra.userid  AND c.aggregatelevel = '.CONTEXT_COURSE.'
+                       AND '.$CFG->prefix.'role.sortorder < r_outmost.sortorder
+                   )';
+                $stat->stat2 = count_records_sql($sql);       
+                insert_record('stats_daily',$stat,false); // don't worry about the return id, we don't need it.
+
+
+            }
+            
+            $users = stats_get_course_users($course,$timesql);
+            foreach ($users as $user) {
+                stats_do_daily_user_cron($course,$user,$user->primaryrole,$timesql,$nextmidnight,$daily_modules);
             }
         }
         commit_sql();
@@ -244,45 +303,62 @@ function stats_cron_weekly () {
         begin_sql();
         foreach ($courses as $course) {
             
-            $sql = 'SELECT ceil(avg(students)) as students, ceil(avg(teachers)) as teachers, 
-                       ceil(avg(activestudents)) as activestudents,ceil(avg(activeteachers)) as activeteachers,
-                       sum(studentreads) as studentreads, sum(studentwrites) as studentwrites,
-                       sum(teacherreads) as teacherreads, sum(teacherwrites) as teacherwrites,
-                       sum(logins) as logins FROM '.$CFG->prefix.'stats_daily WHERE courseid = '.$course->id.' AND '.$timesql;
-
-            $stat = get_record_sql($sql);
+            // enrolment first
+            $sql = 'SELECT roleid, ceil(avg(stat1)) AS stat1, ceil(avg(stat2)) AS stat2
+                    FROM '.$CFG->prefix.'stats_daily 
+                    WHERE courseid = '.$course->id.' AND '.$timesql.' AND stattype = \'enrolment\'
+                    GROUP BY roleid';
             
-            $stat->uniquelogins = 0;
-            if ($course->id == SITEID) {
-                $sql = 'SELECT COUNT(DISTINCT(l.userid)) FROM '.$CFG->prefix.'log l WHERE l.action = \'login\' AND '
-                    .str_replace('timeend','time',$timesql);
-                $stat->uniquelogins = count_records_sql($sql);
+            if ($rolestats = get_records_sql($sql)) {
+                foreach ($rolestats as $stat) {
+                    $stat->courseid = $course->id;
+                    $stat->timeend = $nextsunday;
+                    $stat->stattype = 'enrolment';
+                    
+                    insert_record('stats_weekly',$stat,false); // don't worry about the return id, we don't need it.
+                }
             }
             
-            $stat->courseid = $course->id;
-            $stat->timeend = $nextsunday;
-
-            foreach (array_keys((array)$stat) as $key) {
-                if (!isset($stat->$key)) {
-                    $stat->$key = 0; // we don't want nulls , so avoid them.
+            // activity
+            $sql = 'SELECT roleid, sum(stat1) AS stat1, sum(stat2) as stat2
+                    FROM '.$CFG->prefix.'stats_daily 
+                    WHERE courseid = '.$course->id.' AND '.$timesql.' AND stattype = \'activity\'
+                    GROUP BY roleid';
+            
+            if ($rolestats = get_records_sql($sql)) {
+                foreach ($rolestats as $stat) {
+                    $stat->courseid = $course->id;
+                    $stat->timeend = $nextsunday;
+                    $stat->stattype = 'activity';
+                    unset($stat->id);
+                    
+                    insert_record('stats_weekly',$stat,false); // don't worry about the return id, we don't need it.
+                }
+            }
+            
+            // logins
+            if ($course->id == SITEID) {
+                $sql = 'SELECT sum(stat1) AS stat1
+                    FROM '.$CFG->prefix.'stats_daily 
+                    WHERE courseid = '.$course->id.' AND '.$timesql.' AND stattype = \'logins\'';
+                
+                if ($stat = get_record_sql($sql)) {
+                    $stat->courseid = $course->id;
+                    $stat->roleid = 0;
+                    $stat->timeend = $nextsunday;
+                    $stat->stattype = 'logins';
+                    $sql = 'SELECT COUNT(DISTINCT(l.userid)) FROM '.$CFG->prefix.'log l WHERE l.action = \'login\' AND '
+                        .str_replace('timeend','time',$timesql);
+                    $stat->stat2 = count_records_sql($sql);
+                    
+                    insert_record('stats_weekly',$stat,false); // don't worry about the return id, we don't need it.
                 }
             }
 
-            insert_record('stats_weekly',$stat,false); // don't worry about the return id, we don't need it.
-
-            $students = array();
-            $teachers = array();
-
-            stats_get_course_users($course,$timesql,$students,$teachers);
-
-            foreach ($students as $user) {
-                stats_do_aggregate_user_cron($course,$user,1,$timesql,$nextsunday,'weekly',$weekly_modules);
+            $users = stats_get_course_users($course,$timesql);
+            foreach ($users as $user) {
+                stats_do_aggregate_user_cron($course,$user,$user->primaryrole,$timesql,$nextsunday,'weekly',$weekly_modules);
             }
-
-            foreach ($teachers as $user) {
-                stats_do_aggregate_user_cron($course,$user,2,$timesql,$nextsunday,'weekly',$weekly_modules);
-            }
-
         }
         stats_do_aggregate_user_login_cron($timesql,$nextsunday,'weekly');
         commit_sql();
@@ -352,42 +428,64 @@ function stats_cron_monthly () {
         $timesql = " (timeend > $timestart AND timeend < $nextmonthend) ";
         begin_sql();
         foreach ($courses as $course) {
-
-            $sql = 'SELECT ceil(avg(students)) as students, ceil(avg(teachers)) as teachers, ceil(avg(activestudents)) as activestudents,ceil(avg(activeteachers)) as activeteachers,
-                       sum(studentreads) as studentreads, sum(studentwrites) as studentwrites, sum(teacherreads) as teacherreads, sum(teacherwrites) as teacherwrites,
-                       sum(logins) as logins FROM '.$CFG->prefix.'stats_daily WHERE courseid = '.$course->id.' AND '.$timesql;
-
-            $stat = get_record_sql($sql);
             
-            $stat->uniquelogins = 0;
-            if ($course->id == SITEID) {
-                $sql = 'SELECT COUNT(DISTINCT(l.userid)) FROM '.$CFG->prefix.'log l WHERE l.action = \'login\' AND '.str_replace('timeend','time',$timesql);
-                $stat->uniquelogins = count_records_sql($sql);
+            // enrolment first
+            $sql = 'SELECT roleid, ceil(avg(stat1)) AS stat1, ceil(avg(stat2)) AS stat2
+                    FROM '.$CFG->prefix.'stats_daily 
+                    WHERE courseid = '.$course->id.' AND '.$timesql.' AND stattype = \'enrolment\'
+                    GROUP BY roleid';
+            
+            if ($rolestats = get_records_sql($sql)) {
+                foreach ($rolestats as $stat) {
+                    $stat->courseid = $course->id;
+                    $stat->timeend = $nextmonthend;
+                    $stat->stattype = 'enrolment';
+                    
+                    insert_record('stats_monthly',$stat,false); // don't worry about the return id, we don't need it.
+                }
             }
             
-            $stat->courseid = $course->id;
-            $stat->timeend = $nextmonthend;
-
-            foreach (array_keys((array)$stat) as $key) {
-                if (!isset($stat->$key)) {
-                    $stat->$key = 0; // we don't want nulls , so avoid them.
+            // activity
+            $sql = 'SELECT roleid, sum(stat1) AS stat1, sum(stat2) as stat2
+                    FROM '.$CFG->prefix.'stats_daily 
+                    WHERE courseid = '.$course->id.' AND '.$timesql.' AND stattype = \'activity\'
+                    GROUP BY roleid';
+            
+            if ($rolestats = get_records_sql($sql)) {
+                foreach ($rolestats as $stat) {
+                    $stat->courseid = $course->id;
+                    $stat->timeend = $nextmonthend;
+                    $stat->stattype = 'activity';
+                    unset($stat->id);
+                    
+                    insert_record('stats_monthly',$stat,false); // don't worry about the return id, we don't need it.
+                }
+            }
+            
+            // logins
+            if ($course->id == SITEID) {
+                $sql = 'SELECT sum(stat1) AS stat1
+                    FROM '.$CFG->prefix.'stats_daily 
+                    WHERE courseid = '.$course->id.' AND '.$timesql.' AND stattype = \'logins\'';
+                
+                if ($stat = get_record_sql($sql)) {
+                    $stat->courseid = $course->id;
+                    $stat->roleid = 0;
+                    $stat->timeend = $nextmonthend;
+                    $stat->stattype = 'logins';
+                    $sql = 'SELECT COUNT(DISTINCT(l.userid)) FROM '.$CFG->prefix.'log l WHERE l.action = \'login\' AND '
+                        .str_replace('timeend','time',$timesql);
+                    $stat->stat2 = count_records_sql($sql);
+                    
+                    insert_record('stats_monthly',$stat,false); // don't worry about the return id, we don't need it.
                 }
             }
 
-            insert_record('stats_monthly',$stat,false); // don't worry about the return id, we don't need it.
+            $users = stats_get_course_users($course,$timesql);
+            foreach ($users as $user) {
+                stats_do_aggregate_user_cron($course,$user,$user->primaryrole,$timesql,$nextmonthend,'monthly',$monthly_modules);
+            }
 
-            $students = array();
-            $teachers = array();
-            
-            stats_get_course_users($course,$timesql,$students,$teachers);
-            
-            foreach ($students as $user) {
-                stats_do_aggregate_user_cron($course,$user,1,$timesql,$nextmonthend,'monthly',$monthly_modules);
-            }
-            
-            foreach ($teachers as $user) {
-                stats_do_aggregate_user_cron($course,$user,2,$timesql,$nextmonthend,'monthly',$monthly_modules);
-            }
         }
         stats_do_aggregate_user_login_cron($timesql,$nextmonthend,'monthly');
         commit_sql();
@@ -647,23 +745,27 @@ function stats_get_action_sql_in($str) {
 }
 
 
-function stats_get_course_users($course,$timesql,&$students, &$teachers) {
+function stats_get_course_users($course,$timesql) {
     global $CFG;
     
     $timesql = str_replace('timeend','l.time',$timesql);
+    $sql = 'SELECT active_course_users.userid,
+           (SELECT roleid FROM '.$CFG->prefix.'role_assignments INNER JOIN '.$CFG->prefix.'role a_u_r ON roleid=a_u_r.id
+            INNER JOIN '.$CFG->prefix.'context c ON contextid = c.id
+            WHERE instanceid='.$course->id.' AND c.aggregatelevel = '.CONTEXT_COURSE.' AND userid=active_course_users.userid
+            AND NOT EXISTS (SELECT 1 FROM '.$CFG->prefix.'role_assignments o_r_a 
+                                     INNER JOIN '.$CFG->prefix.'role o_r ON o_r_a.roleid = o_r.id 
+                                     INNER JOIN '.$CFG->prefix.'context c on contextid = c.id  
+                                     WHERE o_r.sortorder < a_u_r.sortorder  AND c.instanceid = '.$course->id.'
+                                     AND c.aggregatelevel = '.CONTEXT_COURSE.' AND o_r_a.userid = active_course_users.userid
+                            )
+            ) AS primaryrole
+            FROM (SELECT DISTINCT userid FROM '.$CFG->prefix.'log l WHERE course='.$course->id.' AND '.$timesql.') active_course_users';
+    if (!$users = get_records_sql($sql)) {
+        $users = array();
+    } 
 
-    $sql = 'SELECT DISTINCT(l.userid) as userid,1 as roleid FROM '.$CFG->prefix.'log l JOIN '.$CFG->prefix
-        .'user_students us ON us.userid = l.userid WHERE l.course = '.$course->id.' AND us.course = '.$course->id.' AND '.$timesql;
-    if (!$students = get_records_sql($sql)) {
-        $students = array(); // avoid warnings;
-    }
-
-    $sql = str_replace('students','teachers',$sql);
-    $sql = str_replace(',1',',2',$sql);
-
-    if (!$teachers = get_records_sql($sql)) {
-        $teachers = array(); // avoid warnings
-    }
+    return $users;
 
 }
 
@@ -965,5 +1067,179 @@ function stats_getdate($time, $timezone=99) {
     return $getdate;
 }
 
+
+function stats_upgrade_for_roles_wrapper() {
+    global $CFG;
+    if (!empty($CFG->statsrolesupgraded)) {
+        return true;
+    }
+
+    $result = begin_sql();
+    
+    $result = $result && stats_upgrade_user_table_for_roles('daily');
+    $result = $result && stats_upgrade_user_table_for_roles('weekly');
+    $result = $result && stats_upgrade_user_table_for_roles('monthly');
+    
+    $result = $result && stats_upgrade_table_for_roles('daily');
+    $result = $result && stats_upgrade_table_for_roles('weekly');
+    $result = $result && stats_upgrade_table_for_roles('monthly');
+
+    
+    $result = $result && commit_sql();
+
+    if (!empty($result)) {
+        set_config('statsrolesupgraded',time());
+    }
+
+    return $result;
+}
+
+/**
+ * Upgrades a prefix_stats_user_* table for the new role based permission
+ * system.
+ *
+ * @param string $period  daily, weekly or monthly: the stat period to upgrade
+ * @return boolean @todo maybe something else (error message) depending on
+ * how this will be called.
+ */
+function stats_upgrade_user_table_for_roles ($period) {
+    global $CFG;
+    static $teacher_role_id, $student_role_id;
+
+    if (!in_array($period, array('daily', 'weekly', 'monthly'))) {
+        error_log('stats upgrade:  invalid period: ' . $period);
+        return false;
+    }
+
+    if (!$teacher_role_id) {
+        $role            = get_roles_with_capability('moodle/legacy:teacher', CAP_ALLOW);
+        $role            = array_keys($role);
+        $teacher_role_id = $role[0];
+        $role            = get_roles_with_capability('moodle/legacy:student', CAP_ALLOW);
+        $role            = array_keys($role);
+        $student_role_id = $role[0];
+    }
+
+    if (empty($teacher_role_id) || empty($student_role_id)) {
+        error_log("Couldn't find legacy roles for teacher or student");
+        return false;
+    }
+
+    $status = true;
+
+    $status = $status && execute_sql("UPDATE {$CFG->prefix}stats_user_{$period}
+        SET roleid = $teacher_role_id
+        WHERE roleid = 1");
+    $status = $status && execute_sql("UPDATE {$CFG->prefix}stats_user_{$period}
+        SET roleid = $student_role_id
+        WHERE roleid = 2");
+
+    return $status;
+}
+
+/**
+ * Upgrades a prefix_stats_* table for the new role based permission system.
+ *
+ * @param string $period  daily, weekly or monthly: the stat period to upgrade
+ * @return boolean        @todo depends on how this will be called
+ */
+function stats_upgrade_table_for_roles ($period) {
+    global $CFG;
+    static $teacher_role_id, $student_role_id;
+
+    if (!in_array($period, array('daily', 'weekly', 'monthly'))) {
+        return false;
+    }
+    
+    if (!$teacher_role_id) {
+        $role            = get_roles_with_capability('moodle/legacy:teacher', CAP_ALLOW);
+        $role            = array_keys($role);
+        $teacher_role_id = $role[0];
+        $role            = get_roles_with_capability('moodle/legacy:student', CAP_ALLOW);
+        $role            = array_keys($role);
+        $student_role_id = $role[0];
+    }
+
+    if (empty($teacher_role_id) || empty($student_role_id)) {
+        error_log("Couldn't find legacy roles for teacher or student");
+        return false;
+    }
+
+    execute_sql("CREATE TABLE {$CFG->prefix}stats_{$period}_tmp AS
+        SELECT * FROM {$CFG->prefix}stats_{$period}");
+
+    $table = new XMLDBTable('stats_' . $period);
+    if (!drop_table($table)) {
+        return false;
+    }
+
+    // Create a new stats table
+    // @todo this definition I have made blindly by looking at how definitions are
+    // made, it needs work to make sure it works properly
+    require_once("$CFG->libdir/xmldb/classes/XMLDBTable.class.php");
+
+    $table = new XMLDBTable('stats_' . $period);
+    $table->addFieldInfo('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED,
+        XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+
+    $table->addFieldInfo('courseid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED,
+        XMLDB_NOTNULL, null, null, null, null);
+
+    $table->addFieldInfo('roleid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED,
+        XMLDB_NOTNULL, null, null, null, null);
+    $table->addFieldInfo('timeend', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED,
+        XMLDB_NOTNULL, null, null, null, null);
+    $table->addFieldInfo('stattype', XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL,
+        null, XMLDB_ENUM, array('enrolments', 'activity', 'logins'), null);
+    $table->addFieldInfo('stat1', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED,
+        XMLDB_NOTNULL, null, null, null, null);
+    $table->addFieldInfo('stat2', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED,
+        XMLDB_NOTNULL, null, null, null, null);
+    if (!create_table($table)) {
+        return false;
+    }
+
+    //
+    // Now insert the data from the temporary table into the new one
+    //
+
+    // Student enrolments
+    execute_sql("INSERT INTO {$CFG->prefix}stats_{$period}
+       (courseid, roleid, timeend, stattype, stat1, stat2)
+       SELECT courseid, $student_role_id, timeend, 'enrolments', students, activestudents
+       FROM {$CFG->prefix}stats_{$period}_tmp");
+
+    // Teacher enrolments
+    execute_sql("INSERT INTO {$CFG->prefix}stats_{$period}
+       (courseid, roleid, timeend, stattype, stat1, stat2)
+       SELECT courseid, $teacher_role_id, timeend, 'enrolments', teachers, activeteachers
+       FROM {$CFG->prefix}stats_{$period}_tmp");
+
+    // Student activity
+    execute_sql("INSERT INTO {$CFG->prefix}stats_{$period}
+       (courseid, roleid, timeend, stattype, stat1, stat2)
+       SELECT courseid, $student_role_id, timeend, 'activity', studentreads, studentwrites
+       FROM {$CFG->prefix}stats_{$period}_tmp");
+
+    // Teacher activity
+    execute_sql("INSERT INTO {$CFG->prefix}stats_{$period}
+       (courseid, roleid, timeend, stattype, stat1, stat2)
+       SELECT courseid, $teacher_role_id, timeend, 'activity', teacherreads, teacherwrites
+       FROM {$CFG->prefix}stats_{$period}_tmp");
+
+    // Logins
+    execute_sql("INSERT INTO {$CFG->prefix}stats_{$period}
+       (courseid, roleid, timeend, stattype, stat1, stat2)
+       SELECT courseid, 0, timeend, 'logins', logins, uniquelogins
+       FROM {$CFG->prefix}stats_{$period}_tmp");
+
+    // Drop the temporary table
+    $table = new XMLDBTable('stats_' . $period . '_tmp');
+    if (!drop_table($table)) {
+        return false;
+    }
+
+    return true;
+}
 
 ?>
