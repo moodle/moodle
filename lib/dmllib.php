@@ -86,34 +86,57 @@ function execute_sql($command, $feedback=true) {
         return false;
     }
 }
+
 /**
 * on DBs that support it, switch to transaction mode and begin a transaction
-* you'll need to ensure you call commit_sql() or your changes *will* be lost
+* you'll need to ensure you call commit_sql() or your changes *will* be lost.
+*
+* Now using ADOdb standard transactions. Some day, we should switch to
+* Smart Transactions (http://phplens.com/adodb/tutorial.smart.transactions.html)
+* as they autodetect errors and are nestable and easier to write
+*
 * this is _very_ useful for massive updates
 */
 function begin_sql() {
-/// Completely general function - it just runs some SQL and reports success.
 
-    global $CFG;
-    if ($CFG->dbtype === 'postgres7') {
-        return execute_sql('BEGIN', false);
-    }
+    global $db;
+
+    $db->BeginTrans();
+
     return true;
 }
+
 /**
 * on DBs that support it, commit the transaction
+*
+* Now using ADOdb standard transactions. Some day, we should switch to
+* Smart Transactions (http://phplens.com/adodb/tutorial.smart.transactions.html)
+* as they autodetect errors and are nestable and easier to write
 */
-function rollback_sql() {
-/// Completely general function - it just runs some SQL and reports success.
+function commit_sql() {
 
-    global $CFG;
-    if ($CFG->dbtype === 'postgres7') {
-        return execute_sql('ROLLBACK', false);
-    }
+    global $db;
+
+    $db->CommitTrans();
+
     return true;
 }
 
+/**
+* on DBs that support it, rollback the transaction
+*
+* Now using ADOdb standard transactions. Some day, we should switch to
+* Smart Transactions (http://phplens.com/adodb/tutorial.smart.transactions.html)
+* as they autodetect errors and are nestable and easier to write
+*/
+function rollback_sql() {
 
+    global $db;
+
+    $db->RollbackTrans();
+
+    return true;
+}
 
 /**
  * returns db specific uppercase function
@@ -131,18 +154,6 @@ function db_lowercase() {
     return "lower";
 }
 
-/**
-* on DBs that support it, commit the transaction
-*/
-function commit_sql() {
-/// Completely general function - it just runs some SQL and reports success.
-
-    global $CFG;
-    if ($CFG->dbtype === 'postgres7') {
-        return execute_sql('COMMIT', false);
-    }
-    return true;
-}
 
 /**
  * Run an arbitrary sequence of semicolon-delimited SQL commands
