@@ -21,8 +21,7 @@
     
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     
-    require_capability('mod/lesson:view', $context);
-
+    
     switch ($mode) {
         case 'add':
             // Ensure that we came from view.php

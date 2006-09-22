@@ -19,7 +19,6 @@
     require_login($course->id, false, $cm);
     
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-    require_capability('mod/lesson:view', $context);
 
 /// Check these for students only TODO: Find a better method for doing this!
 ///     Check lesson availability
