@@ -378,7 +378,7 @@ if ($INSTALL['stage'] == DATABASE) {
 if ($nextstage == ADMIN or $INSTALL['stage'] == ADMIN) {
     if (!ini_get('allow_url_fopen')) {
         $nextstage = ($goforward) ? ENVIRONMENT : DATABASE;
-    } else if (($fh = @fopen($INSTALL['wwwrootform'].'/'.$INSTALL['admindirname'].'/site.html', 'r')) !== false) {
+    } else if (($fh = @fopen($INSTALL['wwwrootform'].'/'.$INSTALL['admindirname'].'/environment.xml', 'r')) !== false) {
         $nextstage = ($goforward) ? ENVIRONMENT : DATABASE;
         fclose($fh);
     } else {
