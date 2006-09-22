@@ -1549,7 +1549,7 @@ function enrol_into_course($course, $user, $enrol) {
 
         $context = get_context_instance(CONTEXT_COURSE, $course->id);
 
-        if (role_assign($role->id, $user->id, 0, $context->id, $timestart, $timeend, 0, $enrol)) {
+        if (!role_assign($role->id, $user->id, 0, $context->id, $timestart, $timeend, 0, $enrol)) {
             return false;
         }
 
