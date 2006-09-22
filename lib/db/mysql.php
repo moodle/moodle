@@ -2291,6 +2291,11 @@ function main_upgrade($oldversion=0) {
         execute_sql("ALTER TABLE `{$CFG->prefix}context` ADD UNIQUE INDEX `contextlevel-instanceid` (`contextlevel`, `instanceid`)",false);
     }
 
+    if ($oldversion < 2006092201) {
+        execute_sql('TRUNCATE TABLE '.$CFG->prefix.'cache_text', true);
+        table_column('cache_text','formattedtext','formattedtext','longtext','','','','not null');
+    }
+
 
     return $result;
 }

@@ -274,7 +274,7 @@ CREATE TABLE `prefix_cache_filters` (
 CREATE TABLE `prefix_cache_text` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `md5key` varchar(32) NOT NULL default '',
-  `formattedtext` longblob NOT NULL default '',
+  `formattedtext` longtext NOT NULL default '',
   `timemodified` int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (`id`),
   KEY `md5key` (`md5key`)
