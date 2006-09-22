@@ -45,6 +45,8 @@ class enrolment_plugin_authorize
             return;
         }
 
+        httpsrequired();
+
         if (empty($_SERVER['HTTPS']) || $_SERVER['HTTPS'] == 'off') {
             if (empty($CFG->loginhttps)) {
                 error(get_string('httpsrequired', 'enrol_authorize'));
@@ -54,8 +56,6 @@ class enrolment_plugin_authorize
                 exit;
             }
         }
-
-        httpsrequired();
 
         $strcourses = get_string('courses');
         $strloginto = get_string('loginto', '', $course->shortname);
@@ -70,7 +70,7 @@ class enrolment_plugin_authorize
         }
 
         print_simple_box_start('center');
-        if (isguest()) {
+        if (has_capability('moodle/legacy:guest', get_context_instance(CONTEXT_SYSTEM, SITEID), $USER->id, false)) {
             $curcost = get_course_cost($course);
             echo '<div align="center">';
             echo '<p>'.get_string('paymentrequired').'</p>';
