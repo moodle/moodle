@@ -228,7 +228,7 @@ class XMLDBTable extends XMLDBObject {
      * This function will reorder the array of fields
      */
     function orderFields() {
-        $result =& $this->orderElements($this->fields);
+        $result = $this->orderElements($this->fields);
         if ($result) {
             $this->setFields($result);
             return true;
@@ -266,7 +266,7 @@ class XMLDBTable extends XMLDBObject {
      * This function will reorder the array of keys
      */
     function orderKeys() {
-        $result =& $this->orderElements($this->keys);
+        $result = $this->orderElements($this->keys);
         if ($result) {
             $this->setKeys($result);
             return true;
@@ -304,7 +304,7 @@ class XMLDBTable extends XMLDBObject {
      * This function will reorder the array of indexes
      */
     function orderIndexes() {
-        $result =& $this->orderElements($this->indexes);
+        $result = $this->orderElements($this->indexes);
         if ($result) {
             $this->setIndexes($result);
             return true;

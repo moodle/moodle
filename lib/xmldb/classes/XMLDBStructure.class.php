@@ -100,7 +100,7 @@ class XMLDBStructure extends XMLDBObject {
      * This function will reorder the array of tables
      */
     function orderTables() {
-        $result =& $this->orderElements($this->tables);
+        $result = $this->orderElements($this->tables);
         if ($result) {
             $this->setTables($result);
             return true;
@@ -113,7 +113,7 @@ class XMLDBStructure extends XMLDBObject {
      * This function will reorder the array of statements
      */
     function orderStatements() {
-        $result =& $this->orderElements($this->statements);
+        $result = $this->orderElements($this->statements);
         if ($result) {
             $this->setStatements($result);
             return true;
