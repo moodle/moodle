@@ -447,18 +447,31 @@ class XMLDBgenerator {
      */
     function getDropTableSQL($xmldb_table) {
 
+        $tempprefix = '';
+    /// If the table needs to be created without prefix
+        if (in_array($xmldb_table->getName(), $this->getTablesWithoutPrefix())) {
+        /// Save current prefix to be restore later
+            $tempprefix = $this->prefix;
+        /// Empty prefix
+            $this->prefix = '';
+        }
+
         $results = array();  //Array where all the sentences will be stored
 
         $drop = str_replace('TABLENAME', $this->getEncQuoted($this->prefix . $xmldb_table->getName()), $this->drop_table_sql);
 
         $results[] = $drop;
 
-    /// TODO, call to getDropTableExtraSQL() if $rename_table_extra_code is enabled. It will add sequence/trigger drop code.
+    /// call to getDropTableExtraSQL() if $rename_table_extra_code is enabled. It will add sequence/trigger drop code.
         if ($this->drop_table_extra_code) {
             $extra_sentences = $this->getDropTableExtraSQL($xmldb_table);
             $results = array_merge($results, $extra_sentences);
         }
 
+    /// Re-set the original prefix if it has changed
+        if ($tempprefix) {
+            $this->prefix = $tempprefix;
+        }
 
         return $results;
     }
