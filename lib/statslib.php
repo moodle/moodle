@@ -133,8 +133,8 @@ function stats_cron_daily () {
                 }
             }
 
-
-            if (!$roles = get_roles_used_in_context($course,CONTEXT_COURSE)) {
+            $context = get_record('context','instanceid',$course->id,'contextlevel',CONTEXT_COURSE);
+            if (!$roles = get_roles_used_in_context($context)) {
                 // no roles.. nothing to log.
                 continue;
             }
@@ -146,7 +146,7 @@ function stats_cron_daily () {
                 $stat->courseid = $course->id;
                 $stat->roleid = $role->id;
                 $stat->timeend = $nextmidnight;
-                $stat->stattype = 'enrolment';
+                $stat->stattype = 'enrolments';
                 $sql = 'SELECT COUNT(DISTINCT ra.userid)
                    FROM '.$CFG->prefix.'role_assignments ra 
                    INNER JOIN '.$CFG->prefix.'role r_outmost ON (ra.roleid=r_outmost.id)
@@ -306,14 +306,14 @@ function stats_cron_weekly () {
             // enrolment first
             $sql = 'SELECT roleid, ceil(avg(stat1)) AS stat1, ceil(avg(stat2)) AS stat2
                     FROM '.$CFG->prefix.'stats_daily 
-                    WHERE courseid = '.$course->id.' AND '.$timesql.' AND stattype = \'enrolment\'
+                    WHERE courseid = '.$course->id.' AND '.$timesql.' AND stattype = \'enrolments\'
                     GROUP BY roleid';
             
             if ($rolestats = get_records_sql($sql)) {
                 foreach ($rolestats as $stat) {
                     $stat->courseid = $course->id;
                     $stat->timeend = $nextsunday;
-                    $stat->stattype = 'enrolment';
+                    $stat->stattype = 'enrolments';
                     
                     insert_record('stats_weekly',$stat,false); // don't worry about the return id, we don't need it.
                 }
@@ -432,14 +432,14 @@ function stats_cron_monthly () {
             // enrolment first
             $sql = 'SELECT roleid, ceil(avg(stat1)) AS stat1, ceil(avg(stat2)) AS stat2
                     FROM '.$CFG->prefix.'stats_daily 
-                    WHERE courseid = '.$course->id.' AND '.$timesql.' AND stattype = \'enrolment\'
+                    WHERE courseid = '.$course->id.' AND '.$timesql.' AND stattype = \'enrolments\'
                     GROUP BY roleid';
             
             if ($rolestats = get_records_sql($sql)) {
                 foreach ($rolestats as $stat) {
                     $stat->courseid = $course->id;
                     $stat->timeend = $nextmonthend;
-                    $stat->stattype = 'enrolment';
+                    $stat->stattype = 'enrolments';
                     
                     insert_record('stats_monthly',$stat,false); // don't worry about the return id, we don't need it.
                 }
@@ -1195,6 +1195,15 @@ function stats_upgrade_table_for_roles ($period) {
         XMLDB_NOTNULL, null, null, null, null);
     $table->addFieldInfo('stat2', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED,
         XMLDB_NOTNULL, null, null, null, null);
+
+    /// Adding keys to table stats_daily
+    $table->addKeyInfo('primary', XMLDB_KEY_PRIMARY, array('id'));
+
+    /// Adding indexes to table stats_daily
+    $table->addIndexInfo('courseid', XMLDB_INDEX_NOTUNIQUE, array('courseid'));
+    $table->addIndexInfo('timeend', XMLDB_INDEX_NOTUNIQUE, array('timeend'));
+    $table->addIndexInfo('roleid', XMLDB_INDEX_NOTUNIQUE, array('roleid'));
+
     if (!create_table($table)) {
         return false;
     }
