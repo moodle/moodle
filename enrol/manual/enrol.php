@@ -237,7 +237,7 @@ function cron() {
                                            AND ra.timeend > 0 
                                            AND ra.timeend < $timenow
                                            AND ra.contextid = c.id 
-                                           AND c.aggregatelevel = ".CONTEXT_COURSE)) {
+                                           AND c.contextlevel = ".CONTEXT_COURSE)) {
         foreach ($assignments as $assignment) {
             if ($course = get_record('course', 'id', $assignment->courseid)) {
                 if (empty($course->enrolperiod)) {   // This overrides student timeend
