@@ -749,18 +749,22 @@ function stats_get_course_users($course,$timesql) {
     global $CFG;
     
     $timesql = str_replace('timeend','l.time',$timesql);
-    $sql = 'SELECT active_course_users.userid,
-           (SELECT roleid FROM '.$CFG->prefix.'role_assignments INNER JOIN '.$CFG->prefix.'role a_u_r ON roleid=a_u_r.id
-            INNER JOIN '.$CFG->prefix.'context c ON contextid = c.id
-            WHERE instanceid='.$course->id.' AND c.contextlevel = '.CONTEXT_COURSE.' AND userid=active_course_users.userid
-            AND NOT EXISTS (SELECT 1 FROM '.$CFG->prefix.'role_assignments o_r_a 
-                                     INNER JOIN '.$CFG->prefix.'role o_r ON o_r_a.roleid = o_r.id 
-                                     INNER JOIN '.$CFG->prefix.'context c on contextid = c.id  
-                                     WHERE o_r.sortorder < a_u_r.sortorder  AND c.instanceid = '.$course->id.'
-                                     AND c.contextlevel = '.CONTEXT_COURSE.' AND o_r_a.userid = active_course_users.userid
-                            )
-            ) AS primaryrole
-            FROM (SELECT DISTINCT userid FROM '.$CFG->prefix.'log l WHERE course='.$course->id.' AND '.$timesql.') active_course_users';
+
+    $sql = "SELECT userid, primaryrole FROM (
+                SELECT active_course_users.userid,
+                    (SELECT roleid FROM mdl_role_assignments outer_r_a INNER JOIN mdl_role outer_r ON outer_r_a.roleid=outer_r.id
+                        INNER JOIN mdl_context c ON outer_r_a.contextid = c.id
+                        WHERE c.instanceid=".$course->id." AND c.contextlevel = ".CONTEXT_COURSE." AND outer_r_a.userid=active_course_users.userid
+                        AND NOT EXISTS (SELECT 1 FROM mdl_role_assignments inner_r_a
+                            INNER JOIN mdl_role inner_r ON inner_r_a.roleid = inner_r.id
+                            WHERE inner_r.sortorder < outer_r.sortorder
+                            AND inner_r_a.userid = outer_r_a.userid
+                            AND inner_r_a.contextid = outer_r_a.contextid
+                        )
+                    ) AS primaryrole
+                    FROM (SELECT DISTINCT userid FROM mdl_log l WHERE course=".$course->id." AND ".$timesql." )
+                    active_course_users
+                ) foo WHERE primaryrole IS NOT NULL";
     if (!$users = get_records_sql($sql)) {
         $users = array();
     } 
