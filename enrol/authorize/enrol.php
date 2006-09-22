@@ -595,11 +595,10 @@ class enrolment_plugin_authorize
         }
 
         $timediffcnf = $settlementtime - (intval($CFG->an_capture_day) * $oneday);
-        $sql = "SELECT E.*, C.fullname, C.enrolperiod " .
-               "FROM {$CFG->prefix}enrol_authorize E " .
-               "INNER JOIN {$CFG->prefix}course C ON C.id = E.courseid " .
-               "WHERE (E.status = '" .AN_STATUS_AUTH. "') " .
-               "  AND (E.timecreated < '$timediffcnf') AND (E.timecreated > '$timediff30')";
+        $sql = "SELECT * FROM {$CFG->prefix}enrol_authorize
+                WHERE (status = '" .AN_STATUS_AUTH. "')
+                  AND (timecreated < '$timediffcnf')
+                  AND (timecreated > '$timediff30')";
 
         if (!$orders = get_records_sql($sql)) {
             mtrace("no pending orders");
@@ -629,24 +628,24 @@ class enrolment_plugin_authorize
             $extra = NULL;
             $success = authorize_action($order, $message, $extra, AN_ACTION_PRIOR_AUTH_CAPTURE);
             if ($success) {
-                $timestart = $timeend = 0;
-                if ($order->enrolperiod) {
-                    $timestart = $timenow;
-                    $timeend = $order->settletime + $order->enrolperiod;
-                }
                 $user = get_record('user', 'id', $order->userid);
                 $course = get_record('course', 'id', $order->courseid);
                 $role = get_default_course_role($course);
                 $context = get_context_instance(CONTEXT_COURSE, $course->id);
+                $timestart = $timeend = 0;
+                if ($course->enrolperiod) {
+                    $timestart = $timenow;
+                    $timeend = $order->settletime + $course->enrolperiod;
+                }
                 if (role_assign($role->id, $user->id, 0, $context->id, $timestart, $timeend, 0, 'manual')) {
                 /// enrol_student($order->userid, $order->courseid, $timestart, $timeend, 'manual');
-                    $this->log .= "User($order->userid) has been enrolled to course($order->courseid).\n";
+                    $this->log .= "User($user->id) has been enrolled to course($course->id).\n";
                     if (!empty($CFG->enrol_mailstudents)) {
                         $sendem[] = $order->id;
                     }
                 }
                 else {
-                    $faults .= "Error while trying to enrol ".fullname($user)." in '$order->fullname' \n";
+                    $faults .= "Error while trying to enrol ".fullname($user)." in '$course->fullname' \n";
                     foreach ($order as $okey => $ovalue) {
                         $faults .= "   $okey = $ovalue\n";
                     }
