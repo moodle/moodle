@@ -532,7 +532,7 @@ CREATE TABLE prefix_stats_daily (
    courseid INTEGER NOT NULL default 0,
    roleid INTEGER NOT NULL default 0,
    timeend INTEGER NOT NULL default 0,
-   stattype varchar(20) NOT NULL default 'logins',
+   stattype varchar(20) NOT NULL default 'activity',
    stat1 INTEGER NOT NULL default 0,
    stat2 INTEGER NOT NULL default 0,
    CHECK (stattype::text = 'enrolments' OR stattype::text = 'activity' OR stattype::text = 'logins')
@@ -546,7 +546,7 @@ CREATE TABLE prefix_stats_weekly (
    courseid INTEGER NOT NULL default 0,
    roleid INTEGER NOT NULL default 0,
    timeend INTEGER NOT NULL default 0,
-   stattype varchar(20) NOT NULL default '',
+   stattype varchar(20) NOT NULL default 'activity',
    stat1 INTEGER NOT NULL default 0,
    stat2 INTEGER NOT NULL default 0,
    CHECK (stattype::text = 'enrolments' OR stattype::text = 'activity' OR stattype::text = 'logins')
@@ -560,7 +560,7 @@ CREATE TABLE prefix_stats_monthly (
    courseid INTEGER NOT NULL default 0,
    roleid INTEGER NOT NULL default 0,
    timeend INTEGER NOT NULL default 0,
-   stattype varchar(20) NOT NULL default '',
+   stattype varchar(20) NOT NULL default 'activity',
    stat1 INTEGER NOT NULL default 0,
    stat2 INTEGER NOT NULL default 0,
    CHECK (stattype::text = 'enrolments' OR stattype::text = 'activity' OR stattype::text = 'logins')

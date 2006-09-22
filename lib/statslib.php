@@ -1190,7 +1190,7 @@ function stats_upgrade_table_for_roles ($period) {
     $table->addFieldInfo('timeend', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED,
         XMLDB_NOTNULL, null, null, null, null);
     $table->addFieldInfo('stattype', XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL,
-        null, XMLDB_ENUM, array('enrolments', 'activity', 'logins'), null);
+        null, XMLDB_ENUM, array('enrolments', 'activity', 'logins'), 'activity');
     $table->addFieldInfo('stat1', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED,
         XMLDB_NOTNULL, null, null, null, null);
     $table->addFieldInfo('stat2', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED,
