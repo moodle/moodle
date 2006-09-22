@@ -18,8 +18,9 @@
     }
 
     require_course_login($course);
-
     $currentgroup = get_current_group($course->id);
+    $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
+    
 
     unset($SESSION->fromdiscussion);
 
@@ -59,7 +60,7 @@
         $generaltable->align[] = 'center';
     }
 
-    if ($can_subscribe = (isstudent($course->id) or isteacher($course->id) or isadmin())) {
+    if ($can_subscribe = has_capability('moodle/course:view', $coursecontext)) {
         $generaltable->head[] = $strsubscribed;
         $generaltable->align[] = 'center';
     }
@@ -116,14 +117,6 @@
                         unset($learningforums[$forum->keyreference]);
                     }
                     break;
-                /*
-                case "teacher":
-                    if (isteacher($course->id)) {
-                        $forum->visible = true;
-                        $generalforums[] = $forum;
-                    }
-                    break;
-                */
                 default:
                     if (!$course->category or empty($forum->section)) {   // Site level or section 0
                         $generalforums[] = $forum;
@@ -256,7 +249,8 @@
                             $subscribed = $strno;
                             $subtitle = get_string("subscribe", "forum");
                         }
-                        if ($forum->forcesubscribe == FORUM_DISALLOWSUBSCRIBE && !isteacher($forum->course)) {
+                        if ($forum->forcesubscribe == FORUM_DISALLOWSUBSCRIBE
+                                    && !has_capability('mod/forum:managesubscriptions', $context)) {
                             $sublink = '-';
                         } else {
                             $sublink = "<a title=\"$subtitle\" href=\"subscribe.php?id=$forum->id\">$subscribed</a>";
@@ -300,7 +294,7 @@
         $learningtable->align[] = 'center';
     }
 
-    if ($can_subscribe = (isstudent($course->id) or isteacher($course->id) or isadmin())) {
+    if ($can_subscribe) {
         $learningtable->head[] = $strsubscribed;
         $learningtable->align[] = 'center';
     }
@@ -324,8 +318,11 @@
             $currentsection = "";
             foreach ($learningforums as $key => $forum) {
                 $groupmode = groupmode($course, $forum);  /// Can do this because forum->groupmode is defined
-                $forum->visible = instance_is_visible("forum", $forum);
+                $forum->visible = instance_is_visible("forum", $forum)
+                                    || has_capability('moodle/course:view', $coursecontext);
+                
                 $cm = get_coursemodule_from_instance("forum", $forum->id, $course->id);
+                $context = get_context_instance(CONTEXT_MODULE, $cm->id);
  
                 if ($groupmode == SEPARATEGROUPS and !has_capability('moodle/site:accessallgroups', $context)) {
                     $count = count_records("forum_discussions", "forum", "$forum->id", "groupid", $currentgroup);
@@ -336,7 +333,9 @@
                 if ($usetracking) {
                     if (($forum->trackingtype == FORUM_TRACKING_ON) || 
                         !isset($untracked[$forum->id])) {
-                        $groupid = ($groupmode==SEPARATEGROUPS && !isteacheredit($course->id)) ? $currentgroup : false;
+                        $groupid = ($groupmode==SEPARATEGROUPS
+                                    && !has_capability('modforum:viewdiscussionsfromallgroups', $context))
+                                    ? $currentgroup : false;
                         $unread = forum_tp_count_forum_unread_posts($USER->id, $forum->id, $groupid);
                         if ($unread > 0) {
                             $unreadlink = '<span class="unread"><a href="view.php?f='.$forum->id.'">'.$unread.'</a>';
@@ -400,7 +399,8 @@
                     if (forum_is_forcesubscribed($forum->id)) {
                         $sublink = $stryes;
                     } else {
-                        if ($groupmode and !isteacheredit($course->id) and !mygroupid($course->id)) {
+                        if ($groupmode and !has_capability('mod/forum:viewdiscussionsfromallgroups', $context)
+                                    and !mygroupid($course->id)) {
                             $sublink = $strno;   // Can't subscribe to a group forum (not in a group)
                             if ($groupmode == SEPARATEGROUPS) {
                                 $forumlink = format_string($forum->name,true);
