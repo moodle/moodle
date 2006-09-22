@@ -1363,17 +1363,17 @@ function role_assign($roleid, $userid, $groupid, $contextid, $timestart=0, $time
     }
 
     if ($userid && !record_exists('user', 'id', $userid)) {
-        debugging('User does not exist!');
+        debugging('User ID '.intval($userid).' does not exist!');
         return false;
     }
 
     if ($groupid && !record_exists('groups', 'id', $groupid)) {
-        debugging('Group does not exist!');
+        debugging('Group ID '.intval($groupid).' does not exist!');
         return false;
     }
 
     if (!$context = get_context_instance_by_id($contextid)) {
-        debugging('A valid context must be provided');
+        debugging('Context ID '.intval($contextid).' does not exist!');
         return false;
     }
 
