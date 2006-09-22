@@ -28,7 +28,7 @@
 
 
     $inmeta = 0;
-    if ($context->aggregatelevel == CONTEXT_COURSE) {
+    if ($context->contextlevel == CONTEXT_COURSE) {
         $courseid = $context->instanceid;
         if ($course = get_record('course', 'id', $courseid)) {
             $inmeta = $course->metacourse;
@@ -79,7 +79,7 @@
 
 /// Print the header and tabs
 
-    if ($context->aggregatelevel == CONTEXT_USER) {
+    if ($context->contextlevel == CONTEXT_USER) {
         /// course header
         if ($courseid!= SITEID) {
             print_header("$fullname", "$fullname",

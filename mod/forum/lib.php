@@ -3739,11 +3739,11 @@ function forum_role_unassign($userid, $context) {
 function forum_add_user_default_subscriptions($userid, $context) {
 /// Add subscriptions for new users
 
-    if (empty($context->aggregatelevel)) {
+    if (empty($context->contextlevel)) {
         return false;
     }
 
-    switch ($context->aggregatelevel) {
+    switch ($context->contextlevel) {
 
         case CONTEXT_SYSTEM:   // For the whole site
              if ($courses = get_records('course')) {
@@ -3808,11 +3808,11 @@ function forum_add_user_default_subscriptions($userid, $context) {
 function forum_remove_user_subscriptions($userid, $context) {
 /// Remove subscriptions for a user in a context
 
-    if (empty($context->aggregatelevel)) {
+    if (empty($context->contextlevel)) {
         return false;
     }
 
-    switch ($context->aggregatelevel) {
+    switch ($context->contextlevel) {
 
         case CONTEXT_SYSTEM:   // For the whole site
              if ($courses = get_records('course')) {

@@ -929,16 +929,16 @@
     </TABLE>
     <TABLE NAME="context" COMMENT="one of these must be set" PREVIOUS="role" NEXT="capabilities">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="aggregatelevel"/>
-        <FIELD NAME="aggregatelevel" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="instanceid"/>
-        <FIELD NAME="instanceid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="aggregatelevel"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="contextlevel"/>
+        <FIELD NAME="contextlevel" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="instanceid"/>
+        <FIELD NAME="instanceid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="contextlevel"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for context"/>
       </KEYS>
       <INDEXES>
-        <INDEX NAME="aggregatelevel-instanceid" UNIQUE="true" FIELDS="aggregatelevel, instanceid" NEXT="instanceid"/>
-        <INDEX NAME="instanceid" UNIQUE="false" FIELDS="instanceid" PREVIOUS="aggregatelevel-instanceid"/>
+        <INDEX NAME="contextlevel-instanceid" UNIQUE="true" FIELDS="contextlevel, instanceid" NEXT="instanceid"/>
+        <INDEX NAME="instanceid" UNIQUE="false" FIELDS="instanceid" PREVIOUS="contextlevel-instanceid"/>
       </INDEXES>
     </TABLE>
     <TABLE NAME="capabilities" COMMENT="this defines all capabilities" PREVIOUS="context" NEXT="role_allow_assign">

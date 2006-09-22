@@ -3,7 +3,7 @@
 // Handles headers and tabs for the roles control at any level apart from SYSTEM level
 
 if ($currenttab != 'update') {
-    switch ($context->aggregatelevel) {
+    switch ($context->contextlevel) {
 
         case CONTEXT_SYSTEM:
             $stradministration = get_string('administration');
@@ -104,9 +104,9 @@ if ($currenttab != 'update') {
 }
 
 
-if ($context->aggregatelevel != CONTEXT_SYSTEM) {    // Print tabs for anything except SYSTEM context
+if ($context->contextlevel != CONTEXT_SYSTEM) {    // Print tabs for anything except SYSTEM context
 
-    if ($context->aggregatelevel == CONTEXT_MODULE) { // only show update button if module?
+    if ($context->contextlevel == CONTEXT_MODULE) { // only show update button if module?
 
         $toprow[] = new tabobject('update', $CFG->wwwroot.'/course/mod.php?update='.
                        $context->instanceid.'&amp;return=true&amp;sesskey='.sesskey(), get_string('update'));

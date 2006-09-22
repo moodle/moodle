@@ -49,7 +49,7 @@
 
 /// Print the header and tabs
 
-    if ($context->aggregatelevel == CONTEXT_USER) {
+    if ($context->contextlevel == CONTEXT_USER) {
 
         /// course header
         if ($course->id != SITEID) {

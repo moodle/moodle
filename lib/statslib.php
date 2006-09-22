@@ -151,13 +151,13 @@ function stats_cron_daily () {
                    FROM '.$CFG->prefix.'role_assignments ra 
                    INNER JOIN '.$CFG->prefix.'role r_outmost ON (ra.roleid=r_outmost.id)
                    INNER JOIN '.$CFG->prefix.'context c ON ra.contextid = c.id
-                   WHERE roleid='.$role->id.' AND c.instanceid='.$course->id.' AND c.aggregatelevel = '.CONTEXT_COURSE.'
+                   WHERE roleid='.$role->id.' AND c.instanceid='.$course->id.' AND c.contextlevel = '.CONTEXT_COURSE.'
                    AND NOT EXISTS
                    (SELECT 1 
                        FROM '.$CFG->prefix.'role_assignments 
                        INNER JOIN '.$CFG->prefix.'role ON ('.$CFG->prefix.'role.id=roleid)
                        INNER JOIN '.$CFG->prefix.'context ON contextid = c.id
-                       WHERE instanceid='.$course->id.' AND userid=ra.userid AND c.aggregatelevel = '.CONTEXT_COURSE.'
+                       WHERE instanceid='.$course->id.' AND userid=ra.userid AND c.contextlevel = '.CONTEXT_COURSE.'
                        AND '.$CFG->prefix.'role.sortorder < r_outmost.sortorder
                    )';
 
@@ -168,13 +168,13 @@ function stats_cron_daily () {
                    INNER JOIN '.$CFG->prefix.'role r_outmost ON (ra.roleid=r_outmost.id)
                    INNER JOIN '.$CFG->prefix.'context c ON ra.contextid = c.id
                    INNER JOIN '.$CFG->prefix.'log l ON (ra.userid=l.userid AND course=instanceid)
-                   WHERE roleid='.$role->id.' AND instanceid='.$course->id.' AND '.$timesql.' AND c.aggregatelevel = '.CONTEXT_COURSE.'
+                   WHERE roleid='.$role->id.' AND instanceid='.$course->id.' AND '.$timesql.' AND c.contextlevel = '.CONTEXT_COURSE.'
                    AND NOT EXISTS
                    (SELECT 1 
                        FROM '.$CFG->prefix.'role_assignments
                        INNER JOIN '.$CFG->prefix.'role ON (mdl_role.id=roleid)
                        INNER JOIN '.$CFG->prefix.'context c ON contextid = c.id
-                       WHERE instanceid='.$course->id.' AND userid=ra.userid AND c.aggregatelevel = '.CONTEXT_COURSE.'
+                       WHERE instanceid='.$course->id.' AND userid=ra.userid AND c.contextlevel = '.CONTEXT_COURSE.'
                        AND '.$CFG->prefix.'role.sortorder < r_outmost.sortorder
                    )';
                 
@@ -195,14 +195,14 @@ function stats_cron_daily () {
                    INNER JOIN '.$CFG->prefix.'role r_outmost ON (ra.roleid=r_outmost.id)
                    INNER JOIN '.$CFG->prefix.'context c ON ra.contextid = c.id
                    INNER JOIN '.$CFG->prefix.'log l ON (ra.userid=l.userid AND course=instanceid)
-                   WHERE roleid='.$role->id.' AND instanceid='.$course->id.' AND c.aggregatelevel = '.CONTEXT_COURSE.'
+                   WHERE roleid='.$role->id.' AND instanceid='.$course->id.' AND c.contextlevel = '.CONTEXT_COURSE.'
                    AND '.$timesql.' '.stats_get_action_sql_in('view').'
                    AND NOT EXISTS
                    (SELECT 1 
                        FROM '.$CFG->prefix.'role_assignments
                        INNER JOIN '.$CFG->prefix.'role ON (mdl_role.id=roleid)
                        INNER JOIN '.$CFG->prefix.'context c ON contextid = c.id
-                       WHERE instanceid='.$course->id.' AND userid=ra.userid  AND c.aggregatelevel = '.CONTEXT_COURSE.'
+                       WHERE instanceid='.$course->id.' AND userid=ra.userid  AND c.contextlevel = '.CONTEXT_COURSE.'
                        AND '.$CFG->prefix.'role.sortorder < r_outmost.sortorder
                    )';
                 
@@ -212,14 +212,14 @@ function stats_cron_daily () {
                    INNER JOIN '.$CFG->prefix.'role r_outmost ON (ra.roleid=r_outmost.id)
                    INNER JOIN '.$CFG->prefix.'context c ON ra.contextid = c.id
                    INNER JOIN '.$CFG->prefix.'log l ON (ra.userid=l.userid AND course=instanceid)
-                   WHERE roleid='.$role->id.' AND instanceid='.$course->id.' AND c.aggregatelevel = '.CONTEXT_COURSE.'
+                   WHERE roleid='.$role->id.' AND instanceid='.$course->id.' AND c.contextlevel = '.CONTEXT_COURSE.'
                    AND '.$timesql.' '.stats_get_action_sql_in('post').'
                    AND NOT EXISTS
                    (SELECT 1 
                        FROM '.$CFG->prefix.'role_assignments
                        INNER JOIN '.$CFG->prefix.'role ON (mdl_role.id=roleid)
                        INNER JOIN '.$CFG->prefix.'context c ON contextid = c.id
-                       WHERE instanceid='.$course->id.' AND userid=ra.userid  AND c.aggregatelevel = '.CONTEXT_COURSE.'
+                       WHERE instanceid='.$course->id.' AND userid=ra.userid  AND c.contextlevel = '.CONTEXT_COURSE.'
                        AND '.$CFG->prefix.'role.sortorder < r_outmost.sortorder
                    )';
                 $stat->stat2 = count_records_sql($sql);       
@@ -752,12 +752,12 @@ function stats_get_course_users($course,$timesql) {
     $sql = 'SELECT active_course_users.userid,
            (SELECT roleid FROM '.$CFG->prefix.'role_assignments INNER JOIN '.$CFG->prefix.'role a_u_r ON roleid=a_u_r.id
             INNER JOIN '.$CFG->prefix.'context c ON contextid = c.id
-            WHERE instanceid='.$course->id.' AND c.aggregatelevel = '.CONTEXT_COURSE.' AND userid=active_course_users.userid
+            WHERE instanceid='.$course->id.' AND c.contextlevel = '.CONTEXT_COURSE.' AND userid=active_course_users.userid
             AND NOT EXISTS (SELECT 1 FROM '.$CFG->prefix.'role_assignments o_r_a 
                                      INNER JOIN '.$CFG->prefix.'role o_r ON o_r_a.roleid = o_r.id 
                                      INNER JOIN '.$CFG->prefix.'context c on contextid = c.id  
                                      WHERE o_r.sortorder < a_u_r.sortorder  AND c.instanceid = '.$course->id.'
-                                     AND c.aggregatelevel = '.CONTEXT_COURSE.' AND o_r_a.userid = active_course_users.userid
+                                     AND c.contextlevel = '.CONTEXT_COURSE.' AND o_r_a.userid = active_course_users.userid
                             )
             ) AS primaryrole
             FROM (SELECT DISTINCT userid FROM '.$CFG->prefix.'log l WHERE course='.$course->id.' AND '.$timesql.') active_course_users';
