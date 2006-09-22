@@ -171,7 +171,7 @@ function authorize_print_order_details($orderno)
     $table->size = array('30%', '70%');
     $table->align = array('right', 'left');
 
-    $sql = "SELECT e.*, c.shortname, c.enrolperiod FROM {$CFG->prefix}enrol_authorize e " .
+    $sql = "SELECT e.*, c.shortname FROM {$CFG->prefix}enrol_authorize e " .
            "INNER JOIN {$CFG->prefix}course c ON c.id = e.courseid " .
            "WHERE e.id = '$orderno'";
 
@@ -181,7 +181,8 @@ function authorize_print_order_details($orderno)
         return;
     }
 
-    $coursecontext = get_context_instance(CONTEXT_COURSE, $order->courseid);
+    $course = get_record('course', 'id', $order->courseid);
+    $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
 
     if ($USER->id != $order->userid) { // Current user viewing someone else's order
         if (! has_capability('enrol/authorize:managepayments', $coursecontext)) {
@@ -240,26 +241,13 @@ function authorize_print_order_details($orderno)
             }
             else {
                 if (empty($CFG->an_test)) {
-                    $timestart = $timeend = 0;
-                    if ($order->enrolperiod) {
-                        $timestart = time(); // early start
-                        $timeend = $order->settletime + $order->enrolperiod; // lately end
-                    }
-                    if (enrol_student($order->userid, $order->courseid, $timestart, $timeend, 'manual')) {
-                        $user = get_record('user', 'id', $order->userid);
-                        $teacher = get_teacher($order->courseid);
-                        $a = new stdClass;
-                        $a->coursename = $order->shortname;
-                        $a->profileurl = "$CFG->wwwroot/user/view.php?id=$user->id";
-                        email_to_user($user,
-                                      $teacher,
-                                      get_string("enrolmentnew", '', $order->shortname),
-                                      get_string('welcometocoursetext', '', $a));
+                    $user = get_record('user', 'id', $order->userid);
+                    if (enrol_into_course($course, $user, 'manual')) {
                         redirect("index.php?order=$orderno");
                     }
                     else {
-                         $table->data[] = array("<b><font color=red>$strs->error:</font></b>",
-                         "Error while trying to enrol ".fullname($user)." in '$order->shortname'");
+                        $table->data[] = array("<b><font color=red>$strs->error:</font></b>",
+                        "Error while trying to enrol ".fullname($user)." in '$order->shortname'");
                     }
                 }
                 else {

@@ -16,7 +16,7 @@
         error("Guests cannot use this page.");
     }
 
-    if (!$course = get_record('course', 'id', $courseid)) {
+    if (! $course = get_record('course', 'id', $courseid)) {
         error('Could not find that course');
     }
 
