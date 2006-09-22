@@ -249,7 +249,7 @@
                     }
                     require_once($CFG->libdir.'/statslib.php');
                     if (!stats_upgrade_for_roles_wrapper()) {
-                        error('Couldn\'t upgrade the stats tables to use the new roles system');
+                        notify('Couldn\'t upgrade the stats tables to use the new roles system');
                     }
                     if (!update_capabilities()) {
                         error('Had trouble upgrading the core capabilities for the Roles System');
