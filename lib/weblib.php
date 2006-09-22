@@ -1782,7 +1782,7 @@ function replace_smilies(&$text) {
         '(y)'  => 'yes',
         '(n)'  => 'no',
         '(martin)'  => 'martin',
-        '()'  => 'egg'
+        '( )'  => 'egg'
         );
 
     if ($runonce == false) {  /// After the first time this is not run again
