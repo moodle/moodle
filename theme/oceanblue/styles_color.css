@@ -186,6 +186,9 @@ table.formtable tbody th {
  *** Header
  ***/
 
+.breadcrumb .sep {
+  color:#6666CC;
+}
 /***
  *** Footer
  ***/
@@ -296,6 +299,23 @@ table.flexible .r1 {
   border-right:1px solid;
   border-bottom:1px solid;
   border-color:#AAAAAA;
+}
+
+
+/***
+ *** Blogs
+ ***/
+
+.blogpost.blogdraft .content {
+  background-color:#EEEEEE;
+}
+
+.block_blog_tags .official {
+  color: #0000FF;
+}
+
+.block_blog_tags .personal {
+  color: #0066CC;
 }
 
 
