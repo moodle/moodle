@@ -1424,7 +1424,7 @@ function text_format_name( $key ) {
  */
 function format_string ($string, $striplinks = false, $courseid=NULL ) {
 
-    global $CFG, $course;
+    global $CFG, $COURSE;
 
     //We'll use a in-memory cache here to speed up repeated strings
     static $strcache;
@@ -1438,8 +1438,8 @@ function format_string ($string, $striplinks = false, $courseid=NULL ) {
     }
 
     if (empty($courseid)) {
-        if (!empty($course->id)) {         // An ugly hack for better compatibility
-            $courseid = $course->id;       // (copied from format_text)
+        if (!empty($COURSE->id)) {         // An ugly hack for better compatibility
+            $courseid = $COURSE->id;       // (copied from format_text)
         }
     }
 

@@ -2476,7 +2476,7 @@ function get_assignable_roles ($context) {
     if ($roles = get_records('role', '', '', 'sortorder ASC')) {
         foreach ($roles as $role) {
             if (user_can_assign($context, $role->id)) {
-                $options[$role->id] = $role->name;
+                $options[$role->id] = strip_tags(format_string($role->name, true));
             }
         }
     }
@@ -2495,7 +2495,7 @@ function get_overridable_roles ($context) {
     if ($roles = get_records('role', '', '', 'sortorder ASC')) {
         foreach ($roles as $role) {
             if (user_can_override($context, $role->id)) {
-                $options[$role->id] = $role->name;
+                $options[$role->id] = strip_tags(format_string($role->name, true));
             }
         }
     }
