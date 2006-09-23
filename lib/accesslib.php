@@ -1087,8 +1087,7 @@ function islegacy($capabilityname) {
  **********************************/
 
 /**
- * This should be called prolly everytime a user, group, module, course,
- * coursecat or site is set up maybe?
+ * Create a new context record for use by all roles-related stuff
  * @param $level
  * @param $instanceid
  */
@@ -1099,6 +1098,20 @@ function create_context($contextlevel, $instanceid) {
         $context->instanceid = $instanceid;
         return insert_record('context',$context);
     }
+}
+
+/**
+ * Create a new context record for use by all roles-related stuff
+ * @param $level
+ * @param $instanceid
+ */
+function delete_context($contextlevel, $instanceid) {
+    if ($context = get_context_instance($contextlevel, $instanceid)) {
+        return delete_records('context', 'id', $context->id) &&
+               delete_records('role_assignments', 'contextid', $context->id) &&
+               delete_records('role_role_capabilities', 'contextid', $context->id);
+    }
+    return true;
 }
 
 

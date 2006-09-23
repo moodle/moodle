@@ -2597,7 +2597,7 @@ function delete_course($courseid, $showfeedback = true) {
         $result = false;
     }
 
-    if (!delete_records('context', 'contextlevel', CONTEXT_COURSE, 'instance', $courseid)) {
+    if (!delete_records('context', 'contextlevel', CONTEXT_COURSE, 'instanceid', $courseid)) {
         if ($showfeedback) {
             notify("An error occurred while deleting the main context record.");
         }
@@ -2637,7 +2637,7 @@ function remove_course_contents($courseid, $showfeedback=true) {
 
     $strdeleted = get_string('deleted');
 
-    // First delete every instance of every module
+/// First delete every instance of every module
 
     if ($allmods = get_records('modules') ) {
         foreach ($allmods as $mod) {
@@ -2652,7 +2652,7 @@ function remove_course_contents($courseid, $showfeedback=true) {
                     if ($instances = get_records($modname, 'course', $course->id)) {
                         foreach ($instances as $instance) {
                             if ($cm = get_coursemodule_from_instance($modname, $instance->id, $course->id)) {
-                                delete_records('context', 'contextlevel', CONTEXT_MODULE, 'instance', $cm->id);
+                                delete_context(CONTEXT_MODULE, $cm->id);
                             }
                             if ($moddelete($instance->id)) {
                                 $count++;
@@ -2680,27 +2680,50 @@ function remove_course_contents($courseid, $showfeedback=true) {
         error('No modules are installed!');
     }
 
-    // Give local code a chance to delete its references to this course.
+/// Give local code a chance to delete its references to this course.
     require_once('locallib.php');
     notify_local_delete_course($courseid, $showfeedback);
 
-    // Delete course blocks
+/// Delete course blocks
     if ($blocks = get_records('block_instance', 'pagetype', PAGE_COURSE_VIEW, 'pageid', $course->id)) {
-        foreach ($blocks as $block) {
-            delete_records('context', 'contextlevel', CONTEXT_BLOCK, 'instance', $block->id);
-        }
         if (delete_records('block_instance', 'pagetype', PAGE_COURSE_VIEW, 'pageid', $course->id)) {
             if ($showfeedback) {
                 notify($strdeleted .' block_instance');
+            }
+            foreach ($blocks as $block) {  /// Delete any associated contexts for this block
+                delete_context(CONTEXT_BLOCK, $block->id);
             }
         } else {
             $result = false;
         }
     }
 
-    // Delete Other stuff.
-    // This array stores the tables that need to be cleared, as
-    // table_name => column_name that contains the course id.
+/// Delete any groups
+    if ($groups = get_records('groups', 'courseid', $course->id)) {
+        if (delete_records('groups', 'courseid', $course->id)) {
+            if ($showfeedback) {
+                notify($strdeleted .' groups');
+            }
+            foreach ($groups as $group) {
+                if (delete_records('groups_members', 'groupid', $group->id)) {
+                    if ($showfeedback) {
+                        notify($strdeleted .' groups_members');
+                    }
+                } else {
+                    $result = false;
+                }
+                /// Delete any associated context for this group
+                delete_context(CONTEXT_GROUP, $group->id);
+            }
+        } else {
+            $result = false;
+        }
+    }
+
+/// Delete all related records in other tables that may have a courseid
+/// This array stores the tables that need to be cleared, as
+/// table_name => column_name that contains the course id.
+
     $tablestoclear = array(
         'event' => 'courseid', // Delete events
         'log' => 'course', // Delete logs
@@ -2722,25 +2745,8 @@ function remove_course_contents($courseid, $showfeedback=true) {
         }
     }
 
-    // Delete any groups
-    if ($groups = get_records('groups', 'courseid', $course->id)) {
-        foreach ($groups as $group) {
-            if (delete_records('groups_members', 'groupid', $group->id)) {
-                if ($showfeedback) {
-                    notify($strdeleted .' groups_members');
-                }
-            } else {
-                $result = false;
-            }
-            if (delete_records('groups', 'id', $group->id)) {
-                if ($showfeedback) {
-                    notify($strdeleted .' groups');
-                }
-            } else {
-                $result = false;
-            }
-        }
-    }
+
+/// Clean up metacourse stuff
 
     if ($course->metacourse) {
         delete_records("course_meta","parent_course",$course->id);
@@ -2759,17 +2765,17 @@ function remove_course_contents($courseid, $showfeedback=true) {
         }
     }
 
-    // Delete questions and question categories
+/// Delete questions and question categories
     include_once($CFG->libdir.'/questionlib.php');
     question_delete_course($course, $showfeedback);
 
-    // deletes all role assignments, and local override, these have no courseid in table and needs separate process
-    $context = get_context_instance(CONTEXT_COURSE, $course->id);
-    delete_records('role_assignments', 'contextid', $context->id);
-    delete_records('role_role_capabilities', 'contextid', $context->id);
+/// Delete all roles and overiddes in the course context (but keep the course context)
+    if ($context = get_context_instance(CONTEXT_COURSE, $course->id)) {
+        delete_records('role_assignments', 'contextid', $context->id);
+        delete_records('role_capabilities', 'contextid', $context->id);
+    }
 
     return $result;
-
 }
 
 
