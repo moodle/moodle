@@ -138,6 +138,26 @@ function stats_cron_daily () {
                 continue;
             }
             
+            $primary_roles = 'SELECT ra.userid,
+                                     ra.roleid AS primary_roleid,
+                                     ra.contextid,
+                                     r.sortorder,
+                                     r.name,
+                                     r.description,
+                                     r.shortname,
+                                     c.instanceid AS courseid,
+                                     c.contextlevel
+                              FROM '.$CFG->prefix.'role_assignments ra
+                               INNER JOIN '.$CFG->prefix.'role r ON ra.roleid = r.id
+                               INNER JOIN '.$CFG->prefix.'context c ON ra.contextid = c.id
+                              WHERE NOT EXISTS ( 
+                               SELECT 1
+                               FROM '.$CFG->prefix.'role_assignments i_ra
+                                INNER JOIN '.$CFG->prefix.'role i_r ON i_ra.roleid = i_r.id
+                               WHERE ra.userid = i_ra.userid AND 
+                                     ra.contextid = i_ra.contextid AND 
+                                     i_r.sortorder < r.sortorder) ';
+
             foreach ($roles as $role) {
                 // ENROLMENT FIRST....
                 // ALL users with this role...
@@ -146,37 +166,15 @@ function stats_cron_daily () {
                 $stat->roleid = $role->id;
                 $stat->timeend = $nextmidnight;
                 $stat->stattype = 'enrolments';
-                $sql = 'SELECT COUNT(DISTINCT ra.userid)
-                   FROM '.$CFG->prefix.'role_assignments ra 
-                   INNER JOIN '.$CFG->prefix.'role r_outmost ON (ra.roleid=r_outmost.id)
-                   INNER JOIN '.$CFG->prefix.'context c ON ra.contextid = c.id
-                   WHERE roleid='.$role->id.' AND c.instanceid='.$course->id.' AND c.contextlevel = '.CONTEXT_COURSE.'
-                   AND NOT EXISTS
-                   (SELECT 1 
-                       FROM '.$CFG->prefix.'role_assignments 
-                       INNER JOIN '.$CFG->prefix.'role ON ('.$CFG->prefix.'role.id=roleid)
-                       INNER JOIN '.$CFG->prefix.'context ON contextid = c.id
-                       WHERE instanceid='.$course->id.' AND userid=ra.userid AND c.contextlevel = '.CONTEXT_COURSE.'
-                       AND '.$CFG->prefix.'role.sortorder < r_outmost.sortorder
-                   )';
-
+                $sql = 'SELECT COUNT(DISTINCT prs.userid) FROM ('.$primary_roles.') prs WHERE prs.primary_roleid='.$role->id.
+                    ' AND prs.courseid='.$course->id.' AND prs.contextlevel = '.CONTEXT_COURSE;
                 $stat->stat1 = count_records_sql($sql);               
                 
-                $sql = 'SELECT COUNT(DISTINCT ra.userid)
-                   FROM '.$CFG->prefix.'role_assignments ra
-                   INNER JOIN '.$CFG->prefix.'role r_outmost ON (ra.roleid=r_outmost.id)
-                   INNER JOIN '.$CFG->prefix.'context c ON ra.contextid = c.id
-                   INNER JOIN '.$CFG->prefix.'log l ON (ra.userid=l.userid AND course=instanceid)
-                   WHERE roleid='.$role->id.' AND instanceid='.$course->id.' AND '.$timesql.' AND c.contextlevel = '.CONTEXT_COURSE.'
-                   AND NOT EXISTS
-                   (SELECT 1 
-                       FROM '.$CFG->prefix.'role_assignments
-                       INNER JOIN '.$CFG->prefix.'role ON (mdl_role.id=roleid)
-                       INNER JOIN '.$CFG->prefix.'context c ON contextid = c.id
-                       WHERE instanceid='.$course->id.' AND userid=ra.userid AND c.contextlevel = '.CONTEXT_COURSE.'
-                       AND '.$CFG->prefix.'role.sortorder < r_outmost.sortorder
-                   )';
-                
+                $sql = 'SELECT COUNT(DISTINCT prs.userid) FROM ('.$primary_roles.') prs 
+                        INNER JOIN '.$CFG->prefix.'log l ON (prs.userid=l.userid AND l.course=prs.courseid) 
+                        WHERE prs.primary_roleid='.$role->id.' AND prs.courseid='.$course->id.' 
+                        AND prs.contextlevel = '.CONTEXT_COURSE.' AND '.$timesql;
+
                 $stat->stat2 = count_records_sql($sql);               
                 insert_record('stats_daily',$stat,false); // don't worry about the return id, we don't need it.
 
@@ -188,43 +186,18 @@ function stats_cron_daily () {
                 $stat->timeend = $nextmidnight;
                 $stat->stattype = 'activity';
                 
-
-                $sql = 'SELECT COUNT(DISTINCT ra.userid)
-                   FROM '.$CFG->prefix.'role_assignments ra
-                   INNER JOIN '.$CFG->prefix.'role r_outmost ON (ra.roleid=r_outmost.id)
-                   INNER JOIN '.$CFG->prefix.'context c ON ra.contextid = c.id
-                   INNER JOIN '.$CFG->prefix.'log l ON (ra.userid=l.userid AND course=instanceid)
-                   WHERE roleid='.$role->id.' AND instanceid='.$course->id.' AND c.contextlevel = '.CONTEXT_COURSE.'
-                   AND '.$timesql.' '.stats_get_action_sql_in('view').'
-                   AND NOT EXISTS
-                   (SELECT 1 
-                       FROM '.$CFG->prefix.'role_assignments
-                       INNER JOIN '.$CFG->prefix.'role ON (mdl_role.id=roleid)
-                       INNER JOIN '.$CFG->prefix.'context c ON contextid = c.id
-                       WHERE instanceid='.$course->id.' AND userid=ra.userid  AND c.contextlevel = '.CONTEXT_COURSE.'
-                       AND '.$CFG->prefix.'role.sortorder < r_outmost.sortorder
-                   )';
-                
+                $sql = 'SELECT COUNT(DISTINCT prs.userid) FROM ('.$primary_roles.') prs 
+                        INNER JOIN '.$CFG->prefix.'log l ON (prs.userid=l.userid
+                        AND l.course=prs.courseid) WHERE prs.primary_roleid='.$role->id.' 
+                        AND prs.courseid='.$course->id.' AND prs.contextlevel = '.CONTEXT_COURSE.'
+                         AND '.$timesql.' '.stats_get_action_sql_in('view');
                 $stat->stat1 = count_records_sql($sql);       
-                $sql = 'SELECT COUNT(DISTINCT ra.userid)
-                   FROM '.$CFG->prefix.'role_assignments ra
-                   INNER JOIN '.$CFG->prefix.'role r_outmost ON (ra.roleid=r_outmost.id)
-                   INNER JOIN '.$CFG->prefix.'context c ON ra.contextid = c.id
-                   INNER JOIN '.$CFG->prefix.'log l ON (ra.userid=l.userid AND course=instanceid)
-                   WHERE roleid='.$role->id.' AND instanceid='.$course->id.' AND c.contextlevel = '.CONTEXT_COURSE.'
-                   AND '.$timesql.' '.stats_get_action_sql_in('post').'
-                   AND NOT EXISTS
-                   (SELECT 1 
-                       FROM '.$CFG->prefix.'role_assignments
-                       INNER JOIN '.$CFG->prefix.'role ON (mdl_role.id=roleid)
-                       INNER JOIN '.$CFG->prefix.'context c ON contextid = c.id
-                       WHERE instanceid='.$course->id.' AND userid=ra.userid  AND c.contextlevel = '.CONTEXT_COURSE.'
-                       AND '.$CFG->prefix.'role.sortorder < r_outmost.sortorder
-                   )';
+                $sql = 'SELECT COUNT(DISTINCT prs.userid) FROM ('.$primary_roles.') prs 
+                        INNER JOIN '.$CFG->prefix.'log l ON (prs.userid=l.userid  AND l.course=prs.courseid) 
+                        WHERE prs.primary_roleid='.$role->id.' AND prs.courseid='.$course->id.' 
+                        AND prs.contextlevel = '.CONTEXT_COURSE.' AND '.$timesql.' '.stats_get_action_sql_in('post');
                 $stat->stat2 = count_records_sql($sql);       
                 insert_record('stats_daily',$stat,false); // don't worry about the return id, we don't need it.
-
-
             }
             
             $users = stats_get_course_users($course,$timesql);
