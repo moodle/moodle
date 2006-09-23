@@ -1136,7 +1136,7 @@ function stats_upgrade_user_table_for_roles ($period) {
     }
 
     if (!$teacher_role_id) {
-        $role            = get_roles_with_capability('moodle/legacy:teacher', CAP_ALLOW);
+        $role            = get_roles_with_capability('moodle/legacy:editingteacher', CAP_ALLOW);
         $role            = array_keys($role);
         $teacher_role_id = $role[0];
         $role            = get_roles_with_capability('moodle/legacy:student', CAP_ALLOW);
