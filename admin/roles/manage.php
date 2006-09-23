@@ -269,7 +269,7 @@
         }
 
         foreach ($roles as $rolex) {
-            $roleoptions[$rolex->id] = format_string($rolex->name);
+            $roleoptions[$rolex->id] = strip_tags(format_string($rolex->name));
         }
 
         // this is the array holding capabilities of this role sorted till this context
