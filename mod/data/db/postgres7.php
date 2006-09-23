@@ -191,6 +191,80 @@ function data_upgrade($oldversion) {
         modify_database('', 'ALTER TABLE prefix_data DROP COLUMN ratings;');
         
     }
+
+    if ($oldversion < 2006092302) { // Changing some TEXT fields to NULLable and no default
+        execute_sql("ALTER TABLE {$CFG->prefix}data ALTER COLUMN singletemplate DROP NOT NULL");
+        execute_sql("ALTER TABLE {$CFG->prefix}data ALTER COLUMN singletemplate DROP DEFAULT");
+
+        execute_sql("ALTER TABLE {$CFG->prefix}data ALTER COLUMN listtemplate DROP NOT NULL");
+        execute_sql("ALTER TABLE {$CFG->prefix}data ALTER COLUMN listtemplate DROP DEFAULT");
+
+        execute_sql("ALTER TABLE {$CFG->prefix}data ALTER COLUMN listtemplateheader DROP NOT NULL");
+        execute_sql("ALTER TABLE {$CFG->prefix}data ALTER COLUMN listtemplateheader DROP DEFAULT");
+
+        execute_sql("ALTER TABLE {$CFG->prefix}data ALTER COLUMN listtemplatefooter DROP NOT NULL");
+        execute_sql("ALTER TABLE {$CFG->prefix}data ALTER COLUMN listtemplatefooter DROP DEFAULT");
+
+        execute_sql("ALTER TABLE {$CFG->prefix}data ALTER COLUMN addtemplate DROP NOT NULL");
+        execute_sql("ALTER TABLE {$CFG->prefix}data ALTER COLUMN addtemplate DROP DEFAULT");
+
+        execute_sql("ALTER TABLE {$CFG->prefix}data ALTER COLUMN rsstemplate DROP NOT NULL");
+        execute_sql("ALTER TABLE {$CFG->prefix}data ALTER COLUMN rsstemplate DROP DEFAULT");
+
+        execute_sql("ALTER TABLE {$CFG->prefix}data ALTER COLUMN rsstitletemplate DROP NOT NULL");
+        execute_sql("ALTER TABLE {$CFG->prefix}data ALTER COLUMN rsstitletemplate DROP DEFAULT");
+
+        execute_sql("ALTER TABLE {$CFG->prefix}data ALTER COLUMN csstemplate DROP NOT NULL");
+        execute_sql("ALTER TABLE {$CFG->prefix}data ALTER COLUMN csstemplate DROP DEFAULT");
+
+        execute_sql("ALTER TABLE {$CFG->prefix}data ALTER COLUMN jstemplate DROP NOT NULL");
+        execute_sql("ALTER TABLE {$CFG->prefix}data ALTER COLUMN jstemplate DROP DEFAULT");
+
+        execute_sql("ALTER TABLE {$CFG->prefix}data_fields ALTER COLUMN param1 DROP NOT NULL");
+        execute_sql("ALTER TABLE {$CFG->prefix}data_fields ALTER COLUMN param1 DROP DEFAULT");
+
+        execute_sql("ALTER TABLE {$CFG->prefix}data_fields ALTER COLUMN param2 DROP NOT NULL");
+        execute_sql("ALTER TABLE {$CFG->prefix}data_fields ALTER COLUMN param2 DROP DEFAULT");
+
+        execute_sql("ALTER TABLE {$CFG->prefix}data_fields ALTER COLUMN param3 DROP NOT NULL");
+        execute_sql("ALTER TABLE {$CFG->prefix}data_fields ALTER COLUMN param3 DROP DEFAULT");
+
+        execute_sql("ALTER TABLE {$CFG->prefix}data_fields ALTER COLUMN param4 DROP NOT NULL");
+        execute_sql("ALTER TABLE {$CFG->prefix}data_fields ALTER COLUMN param4 DROP DEFAULT");
+
+        execute_sql("ALTER TABLE {$CFG->prefix}data_fields ALTER COLUMN param5 DROP NOT NULL");
+        execute_sql("ALTER TABLE {$CFG->prefix}data_fields ALTER COLUMN param5 DROP DEFAULT");
+
+        execute_sql("ALTER TABLE {$CFG->prefix}data_fields ALTER COLUMN param6 DROP NOT NULL");
+        execute_sql("ALTER TABLE {$CFG->prefix}data_fields ALTER COLUMN param6 DROP DEFAULT");
+
+        execute_sql("ALTER TABLE {$CFG->prefix}data_fields ALTER COLUMN param7 DROP NOT NULL");
+        execute_sql("ALTER TABLE {$CFG->prefix}data_fields ALTER COLUMN param7 DROP DEFAULT");
+
+        execute_sql("ALTER TABLE {$CFG->prefix}data_fields ALTER COLUMN param8 DROP NOT NULL");
+        execute_sql("ALTER TABLE {$CFG->prefix}data_fields ALTER COLUMN param8 DROP DEFAULT");
+
+        execute_sql("ALTER TABLE {$CFG->prefix}data_fields ALTER COLUMN param9 DROP NOT NULL");
+        execute_sql("ALTER TABLE {$CFG->prefix}data_fields ALTER COLUMN param9 DROP DEFAULT");
+
+        execute_sql("ALTER TABLE {$CFG->prefix}data_fields ALTER COLUMN param10 DROP NOT NULL");
+        execute_sql("ALTER TABLE {$CFG->prefix}data_fields ALTER COLUMN param10 DROP DEFAULT");
+
+        execute_sql("ALTER TABLE {$CFG->prefix}data_content ALTER COLUMN content DROP NOT NULL");
+        execute_sql("ALTER TABLE {$CFG->prefix}data_content ALTER COLUMN content DROP DEFAULT");
+
+        execute_sql("ALTER TABLE {$CFG->prefix}data_content ALTER COLUMN content1 DROP NOT NULL");
+        execute_sql("ALTER TABLE {$CFG->prefix}data_content ALTER COLUMN content1 DROP DEFAULT");
+
+        execute_sql("ALTER TABLE {$CFG->prefix}data_content ALTER COLUMN content2 DROP NOT NULL");
+        execute_sql("ALTER TABLE {$CFG->prefix}data_content ALTER COLUMN content2 DROP DEFAULT");
+
+        execute_sql("ALTER TABLE {$CFG->prefix}data_content ALTER COLUMN content3 DROP NOT NULL");
+        execute_sql("ALTER TABLE {$CFG->prefix}data_content ALTER COLUMN content3 DROP DEFAULT");
+
+        execute_sql("ALTER TABLE {$CFG->prefix}data_content ALTER COLUMN content4 DROP NOT NULL");
+        execute_sql("ALTER TABLE {$CFG->prefix}data_content ALTER COLUMN content4 DROP DEFAULT");
+    }
     
     return true;
 }

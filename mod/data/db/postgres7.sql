@@ -13,15 +13,15 @@ CREATE TABLE prefix_data (
   requiredentriestoview integer NOT NULL default '0',
   maxentries integer NOT NULL default '0',
   rssarticles integer NOT NULL default '0',
-  singletemplate text NOT NULL default '',
-  listtemplate text NOT NULL default '',
-  listtemplateheader text NOT NULL default '',
-  listtemplatefooter text NOT NULL default '',
-  addtemplate text NOT NULL default '',
-  rsstemplate text NOT NULL default '',
-  rsstitletemplate text NOT NULL default '',
-  csstemplate text NOT NULL default '',
-  jstemplate text NOT NULL default '',
+  singletemplate text,
+  listtemplate text,
+  listtemplateheader text,
+  listtemplatefooter text,
+  addtemplate text,
+  rsstemplate text,
+  rsstitletemplate text,
+  csstemplate text,
+  jstemplate text,
   approval integer NOT NULL default '0',
   scale integer NOT NULL default '0',
   assessed integer NOT NULL default '0',
@@ -36,11 +36,11 @@ CREATE TABLE prefix_data_content (
   id SERIAL PRIMARY KEY,
   fieldid integer NOT NULL default '0',
   recordid integer NOT NULL default '0',
-  content text NOT NULL default '',
-  content1 text NOT NULL default '',
-  content2 text NOT NULL default '',
-  content3 text NOT NULL default '',
-  content4 text NOT NULL default ''
+  content text,
+  content1 text,
+  content2 text,
+  content3 text,
+  content text4
 );
 
 
@@ -50,16 +50,16 @@ CREATE TABLE prefix_data_fields (
   type varchar(255) NOT NULL default '',
   name varchar(255) NOT NULL default '',
   description text NOT NULL default '',
-  param1  text NOT NULL default '',
-  param2  text NOT NULL default '',
-  param3  text NOT NULL default '',
-  param4  text NOT NULL default '',
-  param5  text NOT NULL default '',
-  param6  text NOT NULL default '',
-  param7  text NOT NULL default '',
-  param8  text NOT NULL default '',
-  param9  text NOT NULL default '',
-  param10 text NOT NULL default ''
+  param1 text,
+  param2 text,
+  param3 text,
+  param4 text,
+  param5 text,
+  param6 text,
+  param7 text,
+  param8 text,
+  param9 text,
+  param10 text
 );
 
 CREATE TABLE prefix_data_records (

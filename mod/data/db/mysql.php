@@ -107,6 +107,35 @@ function data_upgrade($oldversion) {
         modify_database('', 'ALTER TABLE prefix_data DROP COLUMN ratings;');
         
     }
+
+    if ($oldversion < 2006092302) { // Changing some TEXT fields to NULLable and no default
+        execute_sql("ALTER TABLE {$CFG->prefix}data CHANGE singletemplate singletemplate text NULL AFTER rssarticles");
+        execute_sql("ALTER TABLE {$CFG->prefix}data CHANGE listtemplate listtemplate text NULL AFTER singletemplate");
+        execute_sql("ALTER TABLE {$CFG->prefix}data CHANGE listtemplateheader listtemplateheader text NULL AFTER listtemplate");
+        execute_sql("ALTER TABLE {$CFG->prefix}data CHANGE listtemplatefooter listtemplatefooter text NULL AFTER listtemplateheader");
+        execute_sql("ALTER TABLE {$CFG->prefix}data CHANGE addtemplate addtemplate text NULL AFTER listtemplatefooter");
+        execute_sql("ALTER TABLE {$CFG->prefix}data CHANGE rsstemplate rsstemplate text NULL AFTER addtemplate");
+        execute_sql("ALTER TABLE {$CFG->prefix}data CHANGE rsstitletemplate rsstitletemplate text NULL AFTER rsstemplate");
+        execute_sql("ALTER TABLE {$CFG->prefix}data CHANGE csstemplate csstemplate text NULL AFTER rsstitletemplate");
+        execute_sql("ALTER TABLE {$CFG->prefix}data CHANGE jstemplate jstemplate text NULL AFTER csstemplate");
+
+        execute_sql("ALTER TABLE {$CFG->prefix}data_fields CHANGE param1 param1 text NULL AFTER description");
+        execute_sql("ALTER TABLE {$CFG->prefix}data_fields CHANGE param2 param2 text NULL AFTER param1");
+        execute_sql("ALTER TABLE {$CFG->prefix}data_fields CHANGE param3 param3 text NULL AFTER param2");
+        execute_sql("ALTER TABLE {$CFG->prefix}data_fields CHANGE param4 param4 text NULL AFTER param3");
+        execute_sql("ALTER TABLE {$CFG->prefix}data_fields CHANGE param5 param5 text NULL AFTER param4");
+        execute_sql("ALTER TABLE {$CFG->prefix}data_fields CHANGE param6 param6 text NULL AFTER param5");
+        execute_sql("ALTER TABLE {$CFG->prefix}data_fields CHANGE param7 param7 text NULL AFTER param6");
+        execute_sql("ALTER TABLE {$CFG->prefix}data_fields CHANGE param8 param8 text NULL AFTER param7");
+        execute_sql("ALTER TABLE {$CFG->prefix}data_fields CHANGE param9 param9 text NULL AFTER param8");
+        execute_sql("ALTER TABLE {$CFG->prefix}data_fields CHANGE param10 param10 text NULL AFTER param9");
+
+        execute_sql("ALTER TABLE {$CFG->prefix}data_content CHANGE content content longtext NULL AFTER recordid");
+        execute_sql("ALTER TABLE {$CFG->prefix}data_content CHANGE content1 content1 longtext NULL AFTER content");
+        execute_sql("ALTER TABLE {$CFG->prefix}data_content CHANGE content2 content2 longtext NULL AFTER content1");
+        execute_sql("ALTER TABLE {$CFG->prefix}data_content CHANGE content3 content3 longtext NULL AFTER content2");
+        execute_sql("ALTER TABLE {$CFG->prefix}data_content CHANGE content4 content4 longtext NULL AFTER content3");
+    }
     
     return true;
 }
