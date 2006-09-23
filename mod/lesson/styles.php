@@ -90,14 +90,6 @@
 }
 
 /***
- *** Hide Label Class
- ***/
-
-.mod-lesson .hidden-label {
-  display: none;
-}
-
-/***
  *** Left Menu Styles
  ***/
 
@@ -126,11 +118,9 @@
 }
 
 .mod-lesson .leftmenu_selected_link {
-    
 }
 
 .mod-lesson .leftmenu_not_selected_link {
-    
 }
 
 .mod-lesson .skip {
@@ -177,59 +167,43 @@
  ***  Or just comment out all of lessonbutton class definitions and start from scratch below
  ***/
 
-/* for branch tables only */
+/* for previous branch buttons only */
 .mod-lesson .previousbutton {
 }
 
-/* for branch tables only */
+/* for next branch buttons only */
 .mod-lesson .nextbutton {
 }
 
-/* All other buttons */
+/* All other branch buttons */
 .mod-lesson .standardbutton {
 }
 
-/* Next three classes are for branch table buttons when displayed horizontally */
-.mod-lesson .prevhorizontal {
+/* Next classes are for branch table buttons when displayed horizontally */
+.mod-lesson .prevhorizontal,
+.mod-lesson .prevhorizontal .lessonbutton,
+.mod-lesson .nexthorizontal,
+.mod-lesson .nexthorizontal .lessonbutton,
+.mod-lesson .standardhorizontal,
+.mod-lesson .standardhorizontal .lessonbutton {
+    display: inline;
 }
 
-.mod-lesson .nexthorizontal {
-}
-
-.mod-lesson .standardhorizontal {
-}
-
-/* Next three classes are for branch table buttons when displayed vertically */
-.mod-lesson .prevvertical {
-}
-
-.mod-lesson .nextvertical {
-}
-
-.mod-lesson .standardvertical {
+/* Next classes are for branch table buttons when displayed vertically */
+.mod-lesson .prevvertical .lessonbutton,
+.mod-lesson .nextvertical .lessonbutton,
+.mod-lesson .standardvertical .lessonbutton {
+    padding: 5px;
 }
 
 /*  branchbuttoncontainer wraps around branch table buttons */
 .mod-lesson .branchbuttoncontainer {
     text-align: center;
-    padding: 3px;
+    padding: 13px 3px 3px 3px;
 }
 
-/*  branchslidetop and branchslidebottom classes are wrapped around the branch buttons (branchslidetop around 
-    top ones and branchslidebottom around the bottom ones)
-    that are printed out with the branch table in slide show mode. */
-.mod-lesson .branchslidetop {
-    /*  You could float them out of the slide
-    position: absolute;
-    top: 60px;*/
-    /*  You may choose to not show them at all */
-    display: none;
-}
-
-.mod-lesson .branchslidebottom {
-    /*  You may choose to not show them at all
-    display: none; */
-    padding-top: 10px;
+.mod-lesson .branchbuttoncontainer form {
+    display: inline;
 }
 
 /***

@@ -395,6 +395,9 @@ function lesson_print_messages() {
  * @return mixed boolean/html
  **/
 function lesson_print_submit_link($name, $form, $align = 'center', $class='standardbutton', $title = '', $id = '', $return = false) {
+    if (!empty($align)) {
+        $align = " align=\"$align\"";
+    }
     if (!empty($id)) {
         $id = " id=\"$id\"";
     }
@@ -402,7 +405,7 @@ function lesson_print_submit_link($name, $form, $align = 'center', $class='stand
         $title = $name;
     }
 
-    $output = "<div align=\"$align\" class=\"lessonbutton $class\">\n";
+    $output = "<div class=\"lessonbutton $class\"$align>\n";
     $output .= "<script type=\"text/javascript\" charset=\"utf-8\">
                 <!--
                     document.write('<a href=\"javascript: document.$form.submit();\" title=\"".addslashes($title)."\"$id>".addslashes($name)."</a>');

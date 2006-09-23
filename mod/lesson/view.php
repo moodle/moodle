@@ -546,7 +546,7 @@
             echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\" />";
             echo "<input type=\"hidden\" name=\"action\" value=\"continue\" />";
             echo "<input type=\"hidden\" name=\"pageid\" value=\"$pageid\" />";
-            echo "<input type=\"hidden\" name=\"sesskey\" value=\"".$USER->sesskey."\" />";
+            echo "<input type=\"hidden\" name=\"sesskey\" value=\"".sesskey()."\" />";
             if (!$lesson->slideshow) {
                 if ($page->qtype != LESSON_BRANCHTABLE) {
                     print_simple_box_start("center");
@@ -684,65 +684,62 @@
                     print_simple_box_end();
                     lesson_print_submit_link(get_string('pleasematchtheabovepairs', 'lesson'), 'answerform');
                     break;
-                case LESSON_BRANCHTABLE :                        
+                case LESSON_BRANCHTABLE :
+                    echo '</form>';
                     $options = new stdClass;
                     $options->para = false;
                     $buttons = array('next' => array(), 'prev' => array(), 'other' => array());
                 /// seperate out next and previous jumps from the other jumps 
+                    $i = 0;
                     foreach ($answers as $answer) {
                         if ($answer->jumpto == LESSON_NEXTPAGE) {
-                            $type = 'next';
+                            $type  = 'next';
+                            $class = 'nextbutton';
                         } else if ($answer->jumpto == LESSON_PREVIOUSPAGE) {
-                            $type = 'prev';
+                            $type  = 'prev';
+                            $class = 'prevbutton';
                         } else {
-                            $type = 'other';
+                            $type  = 'other';
+                            $class = 'standardbutton';
                         }
-                        $buttons[$type][] = '<a href="javascript:document.answerform.jumpto.value='.$answer->jumpto.';document.answerform.submit();">'.
-                                strip_tags(format_text($answer->answer, FORMAT_MOODLE, $options)).'</a>';
+                        // Each button must have its own form inorder for it to work with JavaScript turned off
+                        $button  = "<form name=\"answerform$i\" method=\"post\" action=\"$CFG->wwwroot/mod/lesson/lesson.php\">\n".
+                                   "<input type=\"hidden\" name=\"id\" value=\"$cm->id\" />\n".
+                                   "<input type=\"hidden\" name=\"action\" value=\"continue\" />\n".
+                                   "<input type=\"hidden\" name=\"pageid\" value=\"$pageid\" />\n".
+                                   "<input type=\"hidden\" name=\"sesskey\" value=\"".sesskey()."\" />\n".
+                                   "<input type=\"hidden\" name=\"jumpto\" value=\"$answer->jumpto\" />\n".
+                                   lesson_print_submit_link(strip_tags(format_text($answer->answer, FORMAT_MOODLE, $options)), "answerform$i", '', $class, '', '', true).
+                                   '</form>';
+                        
+                        $buttons[$type][] = $button;
+                        $i++;
                     }
-                
-                /// set the order and orientation (order is very important for the divs to work for horizontal!)
+                    
+                /// Set the orientation
                     if ($page->layout) {
                         $orientation = 'horizontal';
-                        $a = 'a';
-                        $b = 'b';
-                        $c = 'c';
-                        $implode = ' ';
-                        $implode2 = "\n    ";
-                        if (empty($buttons['other'])) {
-                            $buttons['other'][] = '&nbsp;';  // very critical! If nothing is in the middle, 
-                                                             // then the div style float left/right will not 
-                                                             // render properly with next/previous buttons
-                        }
                     } else {
                         $orientation = 'vertical';
-                        $a = 'c';
-                        $b = 'a';
-                        $c = 'b';
-                        $implode = '<br /><br />';
-                        $implode2 = "<br /><br />\n    ";
                     }
-                    $buttonsarranged = array();
-                    $buttonsarranged[$a] = '<span class="lessonbutton prevbutton prev'.$orientation.'">'.implode($implode, $buttons['prev']).'</span>';
-                    $buttonsarranged[$b] = '<span class="lessonbutton nextbutton next'.$orientation.'">'.implode($implode, $buttons['next']).'</span>';
-                    $buttonsarranged[$c] = '<span class="lessonbutton standardbutton standard'.$orientation.'">'.implode($implode, $buttons['other']).'</span>';
-                    ksort($buttonsarranged); // sort by key
                     
-                    $fullbuttonhtml = "\n<div class=\"branchbuttoncontainer\">\n    " . implode($implode2, $buttonsarranged). "\n</div>\n";
+                    $fullbuttonhtml = "\n<div class=\"branchbuttoncontainer\">\n    " .
+                                      "<div class=\"prev$orientation\">".implode("\n", $buttons['prev']).'</div>'.
+                                      "<div class=\"next$orientation\">".implode("\n", $buttons['other']).'</div>'.
+                                      "<div class=\"standard$orientation\">".implode("\n", $buttons['next']).'</div>'.
+                                      "\n</div>\n";
                 
                     if ($lesson->slideshow) {
-                        echo '<div class="branchslidetop">' . $fullbuttonhtml . '</div>';
                         $options = new stdClass;
                         $options->noclean = true;
                         echo '<div class="contents">'.format_text($page->contents, FORMAT_MOODLE, $options)."</div>\n";
                         echo '</div><!--end slideshow div-->';
-                        echo '<div class="branchslidebottom">' . $fullbuttonhtml . '</div>';
+                        echo $fullbuttonhtml;
                     } else {
                         echo '<tr><td>';
                         print_simple_box($fullbuttonhtml, 'center');
                         echo '</td></tr></table>'; // ends the answers table
                     }
-                    echo '<input type="hidden" name="jumpto" />';
                     
                     break;
                 case LESSON_ESSAY :
