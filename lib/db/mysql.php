@@ -2296,6 +2296,24 @@ function main_upgrade($oldversion=0) {
         table_column('cache_text','formattedtext','formattedtext','longtext','','','','not null');
     }
 
+    if ($oldversion < 2006092302) {
+        // fix sortorder first if needed
+        if ($roles = get_all_roles()) {
+            $i = 0;
+            foreach ($roles as $rolex) {
+                if ($rolex->sortorder != $i) {
+                    $r = new object();
+                    $r->id = $rolex->id;
+                    $r->sortorder = $i;
+                    update_record('role', $r);
+                }
+                $i++;
+            }
+        }
+        execute_sql("ALTER TABLE {$CFG->prefix}role DROP INDEX {$CFG->prefix}role_sor_ix;", false);
+        execute_sql("ALTER TABLE {$CFG->prefix}role ADD UNIQUE INDEX {$CFG->prefix}role_sor_uix (sortorder)", false);
+    }
+
 
     return $result;
 }

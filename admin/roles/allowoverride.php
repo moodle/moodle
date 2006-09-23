@@ -20,7 +20,7 @@
 
 /// get all roles
 
-    $roles = get_records('role');
+    $roles = get_all_roles();
 
     if ($grant = data_submitted()) {
 

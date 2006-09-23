@@ -24,7 +24,7 @@
     $errors = array();
     $newrole = false;
 
-    $roles = get_records('role', '', '', 'sortorder ASC, id ASC');
+    $roles = get_all_roles();
     $rolescount = count($roles);
 
 /// fix sort order if needed
@@ -211,31 +211,9 @@
                 $role = $roles[$roleid];
                 if ($role->sortorder > 0) {
                     $above = $roles[$rolesort[$role->sortorder - 1]];
-                    $r = new object();
 
-                    $r->id = $role->id;
-                    $r->sortorder = $above->sortorder;
-                    if (!update_record('role', $r)) {
-                        $errors[] = "Can not update role with ID $r->id!";
-                    }
-
-                    $r->id = $above->id;
-                    $r->sortorder = $role->sortorder;
-                    if (!update_record('role', $r)) {
-                        $errors[] = "Can not update role with ID $r->id!";
-                    }
-
-                    if (count($errors)) {
-                        $msg = '<p>';
-                        foreach ($errors as $e) {
-                            $msg .= $e.'<br />';
-                        }
-                        $msg .= '</p>';
-                        admin_externalpage_print_header($adminroot);
-                        notify($msg);
-                        print_continue('manage.php');
-                        admin_externalpage_print_footer($adminroot);
-                        die;
+                    if (!switch_roles($role, $above)) {
+                        error("Cannot move role with ID $roleid");
                     }
                 }
             }
@@ -248,31 +226,9 @@
                 $role = $roles[$roleid];
                 if ($role->sortorder + 1 < $rolescount) {
                     $bellow = $roles[$rolesort[$role->sortorder + 1]];
-                    $r = new object();
 
-                    $r->id = $role->id;
-                    $r->sortorder = $bellow->sortorder;
-                    if (!update_record('role', $r)) {
-                        $errors[] = "Can not update role with ID $r->id!";
-                    }
-
-                    $r->id = $bellow->id;
-                    $r->sortorder = $role->sortorder;
-                    if (!update_record('role', $r)) {
-                        $errors[] = "Can not update role with ID $r->id!";
-                    }
-
-                    if (count($errors)) {
-                        $msg = '<p>';
-                        foreach ($errors as $e) {
-                            $msg .= $e.'<br />';
-                        }
-                        $msg .= '</p>';
-                        admin_externalpage_print_header($adminroot);
-                        notify($msg);
-                        print_continue('manage.php');
-                        admin_externalpage_print_footer($adminroot);
-                        die;
+                    if (!switch_roles($role, $bellow)) {
+                        error("Cannot move role with ID $roleid");
                     }
                 }
             }
@@ -403,4 +359,43 @@
     }
 
     admin_externalpage_print_footer($adminroot);
+    die;
+
+
+/// ================ some internal functions ====================////
+
+function switch_roles($first, $second) {
+    $status = true;
+    //first find temorary sortorder number
+    $tempsort = count_records('role') + 3;
+    while (get_record('role','sortorder', $tempsort)) {
+        $tempsort += 3;
+    }
+
+    $r1 = new object();
+    $r1->id = $first->id;
+    $r1->sortorder = $tempsort;
+    $r2 = new object();
+    $r2->id = $second->id;
+    $r2->sortorder = $first->sortorder;
+
+    if (!update_record('role', $r1)) {
+        debugging("Can not update role with ID $r1->id!");
+        $status = false;
+    }
+
+    if (!update_record('role', $r2)) {
+        debugging("Can not update role with ID $r2->id!");
+        $status = false;
+    }
+
+    $r1->sortorder = $second->sortorder;
+    if (!update_record('role', $r1)) {
+        debugging("Can not update role with ID $r1->id!");
+        $status = false;
+    }
+
+    return $status;
+}
+
 ?>

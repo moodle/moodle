@@ -953,7 +953,7 @@ function moodle_install_roles() {
         if ($userteachers = get_records('user_teachers')) {
             foreach ($userteachers as $teacher) {
                 // populate the user_lastaccess table
-                unset($access);
+                $access = new object();
                 $access->timeaccess = $teacher->timeaccess;
                 $access->userid = $teacher->userid;
                 $access->courseid = $teacher->course;
@@ -1277,7 +1277,7 @@ function delete_role($roleid) {
 
 // finally delete the role itself
     if ($success and !delete_records('role', 'id', $roleid)) {
-        debugging("Could not delete role with ID $roleid!");
+        debugging("Could not delete role record with ID $roleid!");
         $success = false;
     }
 
@@ -2402,6 +2402,13 @@ function user_can_assign($context, $targetroleid) {
     return false;
 }
 
+/** Returns all site roles in correct sort order.
+ *
+ */
+function get_all_roles() {
+    return get_records('role', '', '', 'sortorder ASC');
+}
+
 /**
  * gets all the user roles assigned in this context, or higher contexts
  * this is mainly used when checking if a user can assign a role, or overriding a role
@@ -2436,7 +2443,7 @@ function get_user_roles($context, $userid=0, $checkparentcontexts=true) {
                            '   AND ra.roleid = r.id
                                AND ra.contextid = c.id
                                AND '.$contexts.
-                           ' ORDER BY c.contextlevel DESC');
+                           ' ORDER BY c.contextlevel DESC, r.sortorder ASC');
 }
 
 /**
@@ -2446,6 +2453,7 @@ function get_user_roles($context, $userid=0, $checkparentcontexts=true) {
  * @return int - id or false
  */
 function allow_override($sroleid, $troleid) {
+    $record = new object();
     $record->roleid = $sroleid;
     $record->allowoverride = $troleid;
     return insert_record('role_allow_override', $record);
@@ -2473,7 +2481,7 @@ function get_assignable_roles ($context) {
 
     $options = array();
 
-    if ($roles = get_records('role', '', '', 'sortorder ASC')) {
+    if ($roles = get_all_roles()) {
         foreach ($roles as $role) {
             if (user_can_assign($context, $role->id)) {
                 $options[$role->id] = strip_tags(format_string($role->name, true));
@@ -2492,7 +2500,7 @@ function get_overridable_roles ($context) {
 
     $options = array();
 
-    if ($roles = get_records('role', '', '', 'sortorder ASC')) {
+    if ($roles = get_all_roles()) {
         foreach ($roles as $role) {
             if (user_can_override($context, $role->id)) {
                 $options[$role->id] = strip_tags(format_string($role->name, true));
@@ -2774,9 +2782,9 @@ function get_capabilities_from_role_on_context($role, $context) {
 
 // find out which roles has assignment on this context
 function get_roles_with_assignment_on_context($context) {
-    
+
     global $CFG;
-    
+
     return get_records_sql("SELECT DISTINCT r.*
                             FROM {$CFG->prefix}role_assignments ra,
                                  {$CFG->prefix}role r

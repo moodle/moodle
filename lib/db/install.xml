@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20060922" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20060923" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -909,7 +909,7 @@
         <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for role"/>
       </KEYS>
       <INDEXES>
-        <INDEX NAME="sortorder" UNIQUE="false" FIELDS="sortorder"/>
+        <INDEX NAME="sortorder" UNIQUE="true" FIELDS="sortorder"/>
       </INDEXES>
     </TABLE>
     <TABLE NAME="context" COMMENT="one of these must be set" PREVIOUS="role" NEXT="capabilities">
