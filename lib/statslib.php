@@ -6,9 +6,8 @@
     define('STATS_REPORT_READS',2); // double impose student reads and teacher reads on a line graph. 
     define('STATS_REPORT_WRITES',3); // double impose student writes and teacher writes on a line graph.
     define('STATS_REPORT_ACTIVITY',4); // 2+3 added up, teacher vs student.
-    define('STATS_REPORT_STUDENTACTIVITY',5); // all student activity, reads vs writes
-    define('STATS_REPORT_TEACHERACTIVITY',6); // all teacher activity, reads vs writes
-
+    define('STATS_REPORT_ACTIVITYBYROLE',5); // all activity, reads vs writes, seleted by role.
+    
     // user level stats reports.
     define('STATS_REPORT_USER_ACTIVITY',7);
     define('STATS_REPORT_USER_ALLACTIVITY',8);
@@ -134,7 +133,7 @@ function stats_cron_daily () {
             }
 
             $context = get_record('context','instanceid',$course->id,'contextlevel',CONTEXT_COURSE);
-            if (!$roles = get_roles_used_in_context($context)) {
+            if (!$roles = get_roles_on_exact_context($context)) {
                 // no roles.. nothing to log.
                 continue;
             }
@@ -582,8 +581,8 @@ function stats_clean_old() {
     // don't delete monthlies
 }
 
-function stats_get_parameters($time,$report,$courseid,$mode) {
-    global $CFG;
+function stats_get_parameters($time,$report,$courseid,$mode,$roleid=0) {
+    global $CFG,$db;
     if ($time < 10) { // dailies
         // number of days to go back = 7* time
         $param->table = 'daily';
@@ -607,35 +606,39 @@ function stats_get_parameters($time,$report,$courseid,$mode) {
     }
 
     switch ($report) {
-    case STATS_REPORT_LOGINS:
-        $param->fields = 'logins as line1,uniquelogins as line2';
+    case STATS_REPORT_LOGINS: // done
+        $param->fields = 'stat1 as line1,stat2 as line2';
+        $param->stattype = 'logins';
         $param->line1 = get_string('statslogins');
         $param->line2 = get_string('statsuniquelogins');
         break;
-    case STATS_REPORT_READS:
-        $param->fields = 'studentreads as line1,teacherreads as line2';
-        $param->line1 = get_string('statsstudentreads');
-        $param->line2 = get_string('statsteacherreads');
+    case STATS_REPORT_READS: // done
+        $param->fields = $db->Concat('timeend','roleid').' AS UNIQUE, timeend, roleid, stat1 as line1';
+        $param->fieldscomplete = true; // set this to true to avoid anything adding stuff to the list and breaking complex queries.
+        $param->stattype = 'activity';
+        $param->crosstab = true;
+        $param->extras = 'GROUP BY timeend,roleid,stat1';
         break;
-    case STATS_REPORT_WRITES:
-        $param->fields = 'studentwrites as line1,teacherwrites as line2';
-        $param->line1 = get_string('statsstudentwrites');
-        $param->line2 = get_string('statsteacherwrites');
+    case STATS_REPORT_WRITES: //done
+        $param->fields = $db->Concat('timeend','roleid').' AS UNIQUE, timeend, roleid, stat2 as line1';
+        $param->fieldscomplete = true; // set this to true to avoid anything adding stuff to the list and breaking complex queries.
+        $param->stattype = 'activity';
+        $param->crosstab = true;
+        $param->extras = 'GROUP BY timeend,roleid,stat2';
         break;
-    case STATS_REPORT_ACTIVITY:
-        $param->fields = 'studentreads+studentwrites as line1, teacherreads+teacherwrites as line2';
-        $param->line1 = get_string('statsstudentactivity');
-        $param->line2 = get_string('statsteacheractivity');
+    case STATS_REPORT_ACTIVITY: //done 
+        $param->fields = $db->Concat('timeend','roleid').' AS UNIQUE, timeend, roleid, sum(stat1+stat2) as line1';
+        $param->fieldscomplete = true; // set this to true to avoid anything adding stuff to the list and breaking complex queries.
+        $param->stattype = 'activity';
+        $param->crosstab = true;
+        $param->extras = 'GROUP BY timeend,roleid';
         break;
-    case STATS_REPORT_STUDENTACTIVITY:
-        $param->fields = 'studentreads as line1,studentwrites as line2';
-        $param->line1 = get_string('statsstudentreads');
-        $param->line2 = get_string('statsstudentwrites');
-        break;
-    case STATS_REPORT_TEACHERACTIVITY:
-        $param->fields = 'teacherreads as line1,teacherwrites as line2';
-        $param->line1 = get_string('statsteacherreads');
-        $param->line2 = get_string('statsteacherwrites');
+    case STATS_REPORT_ACTIVITYBYROLE;
+        $param->fields = 'stat1 AS line1, stat2 AS line2';
+        $param->stattype = 'activity';
+        $rolename = get_field('role','name','id',$roleid);
+        $param->line1 = $rolename . get_string('statsreads');
+        $param->line2 = $rolename . get_string('statswrites');
         break;
     case STATS_REPORT_USER_ACTIVITY:
         $param->fields = 'statsreads as line1, statswrites as line2';
@@ -704,7 +707,6 @@ function stats_get_parameters($time,$report,$courseid,$mode) {
         $param->graphline = 'line3';
         break;
     }
-
     if ($courseid == SITEID && $mode != STATS_MODE_RANKED) { // just aggregate all courses.
         $param->fields = preg_replace('/([a-zA-Z0-9+_]*)\W+as\W+([a-zA-Z0-9_]*)/','sum($1) as $2',$param->fields);
         $param->extras = ' GROUP BY timeend';
@@ -908,14 +910,21 @@ function stats_get_time_options($now,$lastweekend,$lastmonthend,$earliestday,$ea
 }
 
 function stats_get_report_options($courseid,$mode) {
+    global $CFG;
     
     $reportoptions = array();
 
     switch ($mode) {
     case STATS_MODE_GENERAL:
         $reportoptions[STATS_REPORT_ACTIVITY] = get_string('statsreport'.STATS_REPORT_ACTIVITY);
-        $reportoptions[STATS_REPORT_STUDENTACTIVITY] = get_string('statsreport'.STATS_REPORT_STUDENTACTIVITY);
-        $reportoptions[STATS_REPORT_TEACHERACTIVITY] = get_string('statsreport'.STATS_REPORT_TEACHERACTIVITY);
+        if ($context = get_record('context','instanceid',$courseid,'contextlevel',CONTEXT_COURSE)) {
+            $sql = 'SELECT r.id,r.name FROM '.$CFG->prefix.'role r JOIN '.$CFG->prefix.'stats_daily s ON s.roleid = r.id WHERE s.courseid = '.$courseid;
+            if ($roles = get_records_sql($sql)) {
+                foreach ($roles as $role) {
+                    $reportoptions[STATS_REPORT_ACTIVITYBYROLE.$role->id] = get_string('statsreport'.STATS_REPORT_ACTIVITYBYROLE). ' '.$role->name;
+                }
+            }
+        }
         $reportoptions[STATS_REPORT_READS] = get_string('statsreport'.STATS_REPORT_READS);
         $reportoptions[STATS_REPORT_WRITES] = get_string('statsreport'.STATS_REPORT_WRITES);
         if ($courseid == SITEID) {
@@ -957,7 +966,10 @@ function stats_fix_zeros($stats,$timeafter,$timestr,$line2=true,$line3=false) {
 
     $times = array();
     // add something to timeafter since it is our absolute base
-    $actualtimes = array_keys($stats);
+    $actualtimes = array();
+    foreach ($stats as $s) {
+        $actualtimes[] = $s->timeend;
+    }
     $timeafter = array_pop($actualtimes);
 
     while ($timeafter < $now) {
@@ -973,8 +985,8 @@ function stats_fix_zeros($stats,$timeafter,$timestr,$line2=true,$line3=false) {
         }
     }
 
-    foreach ($times as $time) {
-        if (!array_key_exists($time,$stats)) {
+    foreach ($times as $count => $time) {
+        if (!in_array($time,$actualtimes) && $count != count($times) -1) {
             $newobj = new StdClass;
             $newobj->timeend = $time;
             $newobj->id = 0;
@@ -985,13 +997,21 @@ function stats_fix_zeros($stats,$timeafter,$timestr,$line2=true,$line3=false) {
             if (!empty($line3)) {
                 $newobj->line3 = 0;
             }
-            $stats[$time] = $newobj;
+            $stats[] = $newobj;
         }
     }
     
-    krsort($stats);
+    usort($stats,"stats_compare_times");
     return $stats;
 
+}
+
+// helper function to sort arrays by $obj->timeend
+function stats_compare_times($a,$b) {
+   if ($a->timeend == $b->timeend) {
+       return 0;
+   }
+   return ($a->timeend > $b->timeend) ? -1 : 1;
 }
 
 function stats_check_runtime() {
@@ -1244,7 +1264,7 @@ function stats_upgrade_table_for_roles ($period) {
     execute_sql("INSERT INTO {$CFG->prefix}stats_{$period}
        (courseid, roleid, timeend, stattype, stat1, stat2)
        SELECT courseid, 0, timeend, 'logins', logins, uniquelogins
-       FROM {$CFG->prefix}stats_{$period}_tmp");
+       FROM {$CFG->prefix}stats_{$period}_tmp WHERE course = ".SITEID);
 
     // Drop the temporary table
     $table = new XMLDBTable('stats_' . $period . '_tmp');

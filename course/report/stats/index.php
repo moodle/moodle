@@ -14,6 +14,11 @@
     $mode     = optional_param('mode', STATS_MODE_GENERAL, PARAM_INT);
     $userid   = optional_param('userid', 0, PARAM_INT);
 
+    if ($report > 50) {
+        $roleid = substr($report,1);
+        $report = 5;
+    }
+
     if ($report == STATS_REPORT_USER_LOGINS) {
         $courseid = SITEID; //override
     }
