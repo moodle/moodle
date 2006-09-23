@@ -109,8 +109,9 @@
             .((!empty($roleid)) ? ' roleid = '.$roleid.' AND ' : '')
             . ((!empty($param->stattype)) ? ' stattype = \''.$param->stattype.'\' AND ' : '')
             .' timeend >= '.$param->timeafter
-            .$param->extras
+            .' '.$param->extras
             .' ORDER BY timeend DESC';
+        error_log($sql);
         $stats = get_records_sql($sql);
 
         if (empty($stats)) {
@@ -144,13 +145,8 @@
                 $table->head[] = $param->line2; 
             }
         }
-        $lasttime = null; // used for crosstab
-        $lastrecord = null;
-        $lastlink = null;
-        $headerdone = false;
-
-        foreach  ($stats as $stat) {
-            if (empty($param->crosstab)) {
+        if (empty($param->crosstab)) {
+            foreach  ($stats as $stat) {
                 $a = array(userdate($stat->timeend-(60*60*24),get_string('strftimedate'),$CFG->timezone),$stat->line1);
                 if (isset($stat->line2)) {
                     $a[] = $stat->line2;
@@ -162,30 +158,33 @@
                         .get_string('course').' ' .get_string('logs').'</a>&nbsp;';
                 }
                 $table->data[] = $a;
-            } else {
-                if ($stat->timeend == $lasttime) {
-                    $lastrecord[] = $stat->line1;
-                    if (empty($headerdone)) {
-                        $table->head[] = get_field('role','name','id',$stat->roleid);
-                    }
-                } else {
-                    if (!empty($lastrecord)) { // we won't have one if this is the first time round...
-                        $lastrecord[] = $lastlink;
-                        $table->data[] = $lastrecord;
-                        $headerdone = true;
-                    } else {
-                        $table->head[] = get_field('role','name','id',$stat->roleid);
-                    }
-                    $lastrecord = array(userdate($stat->timeend-(60*60*24),get_string('strftimedate'),$CFG->timezone),$stat->line1);
-                    if (empty($CFG->loglifetime) || ($stat->timeend-(60*60*24)) >= (time()-60*60*24*$CFG->loglifetime)) {
-                        $lastlink = '<a href="'.$CFG->wwwroot.'/course/report/log/index.php?id='
-                            .$course->id.'&chooselog=1&showusers=1&showcourses=1&user='.$userid
-                            .'&date='.usergetmidnight($stat->timeend-(60*60*24)).'">'
-                            .get_string('course').' ' .get_string('logs').'</a>&nbsp;';
-                    }
-                    $lasttime = $stat->timeend;
+            }
+        } else {
+            $data = array();
+            $roles = array();
+            $times = array();
+            foreach ($stats as $stat) {
+                $data[$stat->timeend][$stat->roleid] = $stat->line1;
+                if (!array_key_exists($stat->roleid,$roles)) {
+                    $roles[$stat->roleid] = get_field('role','name','id',$stat->roleid);
+                }
+                if (!array_key_exists($stat->timeend,$times)) {
+                    $times[$stat->timeend] = userdate($stat->timeend,get_string('strftimedate'),$CFG->timezone);
                 }
             }
+            foreach ($data as $time => $rolesdata) {
+                krsort($rolesdata); 
+                $row = array_merge(array($times[$time]),$rolesdata);
+                if (empty($CFG->loglifetime) || ($stat->timeend-(60*60*24)) >= (time()-60*60*24*$CFG->loglifetime)) {
+                    $row[] = '<a href="'.$CFG->wwwroot.'/course/report/log/index.php?id='
+                        .$course->id.'&chooselog=1&showusers=1&showcourses=1&user='.$userid
+                        .'&date='.usergetmidnight($time-(60*60*24)).'">'
+                        .get_string('course').' ' .get_string('logs').'</a>&nbsp;';
+                }
+                $table->data[] = $row;
+            }
+            krsort($roles); 
+            $table->head = array_merge($table->head,$roles);
         }
         $table->head[] = get_string('logs');
         if (!empty($lastrecord)) {

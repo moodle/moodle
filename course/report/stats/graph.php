@@ -43,10 +43,8 @@
      .((!empty($roleid)) ? ' roleid = '.$roleid.' AND ' : '')
      . ((!empty($param->stattype)) ? ' stattype = \''.$param->stattype.'\' AND ' : '')
      .' timeend >= '.$param->timeafter
-    .$param->extras
+    .' '.$param->extras
     .' ORDER BY timeend DESC';
-
-error_log($sql);
 
     $stats = get_records_sql($sql);
 
@@ -87,6 +85,7 @@ error_log($sql);
             $graph->y_format['line3'] = array('colour' => $c[3],'line' => 'line','legend' => $param->line3); 
         }
     } else {
+        $data = array();
         $times = array();
         $roles = array();
         foreach ($stats as $stat) {
@@ -98,7 +97,6 @@ error_log($sql);
                 $times[$stat->timeend] = userdate($stat->timeend,get_string('strftimedate'),$CFG->timezone);
             }
         }
-
         foreach (array_keys($data) as $roleid) {
             $graph->y_order[] = $roleid;
             $graph->y_format[$roleid] = array('colour' => $c[$roleid], 'line' => 'line','legend' => $roles[$roleid]);

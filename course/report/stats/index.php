@@ -13,6 +13,7 @@
     $time     = optional_param('time', 0, PARAM_INT);
     $mode     = optional_param('mode', STATS_MODE_GENERAL, PARAM_INT);
     $userid   = optional_param('userid', 0, PARAM_INT);
+    $roleid   = 0;
 
     if ($report > 50) {
         $roleid = substr($report,1);
