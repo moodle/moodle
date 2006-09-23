@@ -149,9 +149,9 @@ if ($form->mode == "add") {
 </tr>
 
 <tr valign="top">
-    <td align="right"><b><?php  print_string("name") ?>:</b></td>
+    <td align="right"><b><label for="name"><?php  print_string("name") ?>:</label></b></td>
     <td>
-        <!-- hidden label added. --><label for="name" class="hidden-label">Name</label><input type="text" id="name" name="name" size="30" value="<?php  p($form->name) ?>" />
+        <input type="text" id="name" name="name" size="30" value="<?php  p($form->name) ?>" />
     </td>
 </tr>
 
