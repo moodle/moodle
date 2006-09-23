@@ -110,7 +110,14 @@ class view_table_php extends XMLDBAction {
     /// Calculate the popup of commands
         $commands = array('add_field',
                          'drop_field',
-                         'rename_field');
+                         'rename_field (not imp!)',
+                         'change_field_type (not imp!)',
+                         'change_field_precision',
+                         'change_field_unsigned',
+                         'change_field_notnull',
+                         'change_field_sequence (not imp!)',
+                         'change_field_enum (not imp!)',
+                         'change_field_default');
         foreach ($commands as $command) {
             $popcommands[$command] = str_replace('_', ' ', $command);
         }
@@ -162,6 +169,18 @@ class view_table_php extends XMLDBAction {
                     break;
                 case 'rename_field':
                     $o.= s($this->rename_field_php($structure, $tableparam, $fieldkeyindexparam));
+                    break;
+                case 'change_field_precision':
+                    $o.= s($this->change_field_precision_php($structure, $tableparam, $fieldkeyindexparam));
+                    break;
+                case 'change_field_unsigned':
+                    $o.= s($this->change_field_unsigned_php($structure, $tableparam, $fieldkeyindexparam));
+                    break;
+                case 'change_field_notnull':
+                    $o.= s($this->change_field_notnull_php($structure, $tableparam, $fieldkeyindexparam));
+                    break;
+                case 'change_field_default':
+                    $o.= s($this->change_field_default_php($structure, $tableparam, $fieldkeyindexparam));
                     break;
             }
         }
@@ -302,6 +321,194 @@ class view_table_php extends XMLDBAction {
         $result .= XMLDB_LINEFEED;
         $result .= '    /// Launch rename field ' . $field->getName() . XMLDB_LINEFEED;
         $result .= '        $status = $status && rename_field($table, $field, ' . "'" . 'NEWNAMEGOESHERE' . "'" . ');' . XMLDB_LINEFEED;
+
+    /// Add standard PHP footer
+        $result .= XMLDB_PHP_FOOTER;
+
+        return $result;
+    }
+
+    /**
+     * This function will generate all the PHP code needed to
+     * change the precision of one field using XMLDB objects and functions
+     *
+     * @param XMLDBStructure structure object containing all the info
+     * @param string table table name
+     * @param string field field name to change precision
+     */
+    function change_field_precision_php($structure, $table, $field) {
+
+        $result = '';
+    /// Validate if we can do it
+        if (!$table = $structure->getTable($table)) {
+            return false;
+        }
+        if (!$field = $table->getField($field)) {
+            return false;
+        }
+        if ($table->getAllErrors()) {
+            return false;
+        }
+
+    /// Calculate the precision tip text
+        $precision = '(' . $field->getLength();
+        if ($field->getDecimals()) {
+            $precision .= ', ' . $field->getDecimals();
+        }
+        $precision .= ')';
+
+    /// Add the standard PHP header
+        $result .= XMLDB_PHP_HEADER;
+
+    /// Add contents
+        $result .= XMLDB_LINEFEED;
+        $result .= '    /// Changing precision of field ' . $field->getName() . ' on table ' . $table->getName() . ' to ' . $precision . XMLDB_LINEFEED;
+        $result .= '        $table = new XMLDBTable(' . "'" . $table->getName() . "'" . ');' . XMLDB_LINEFEED;
+        $result .= '        $field = new XMLDBField(' . "'" . $field->getName() . "'" . ');' . XMLDB_LINEFEED;
+        $result .= '        $field->setAttributes(' . $field->getPHP(true) . ');' . XMLDB_LINEFEED;
+
+    /// Launch the proper DDL
+        $result .= XMLDB_LINEFEED;
+        $result .= '    /// Launch change of precision for field ' . $field->getName() . XMLDB_LINEFEED;
+        $result .= '        $status = $status && change_field_precision($table, $field);' . XMLDB_LINEFEED;
+
+    /// Add standard PHP footer
+        $result .= XMLDB_PHP_FOOTER;
+
+        return $result;
+    }
+
+    /**
+     * This function will generate all the PHP code needed to
+     * change the unsigned/signed of one field using XMLDB objects and functions
+     *
+     * @param XMLDBStructure structure object containing all the info
+     * @param string table table name
+     * @param string field field name to change unsigned/signed
+     */
+    function change_field_unsigned_php($structure, $table, $field) {
+
+        $result = '';
+    /// Validate if we can do it
+        if (!$table = $structure->getTable($table)) {
+            return false;
+        }
+        if (!$field = $table->getField($field)) {
+            return false;
+        }
+        if ($table->getAllErrors()) {
+            return false;
+        }
+
+    /// Calculate the unsigned tip text
+        $unsigned = $field->getUnsigned() ? 'unsigned' : 'signed';
+
+    /// Add the standard PHP header
+        $result .= XMLDB_PHP_HEADER;
+
+    /// Add contents
+        $result .= XMLDB_LINEFEED;
+        $result .= '    /// Changing sign of field ' . $field->getName() . ' on table ' . $table->getName() . ' to ' . $unsigned . XMLDB_LINEFEED;
+        $result .= '        $table = new XMLDBTable(' . "'" . $table->getName() . "'" . ');' . XMLDB_LINEFEED;
+        $result .= '        $field = new XMLDBField(' . "'" . $field->getName() . "'" . ');' . XMLDB_LINEFEED;
+        $result .= '        $field->setAttributes(' . $field->getPHP(true) . ');' . XMLDB_LINEFEED;
+
+    /// Launch the proper DDL
+        $result .= XMLDB_LINEFEED;
+        $result .= '    /// Launch change of sign for field ' . $field->getName() . XMLDB_LINEFEED;
+        $result .= '        $status = $status && change_field_unsigned($table, $field);' . XMLDB_LINEFEED;
+
+    /// Add standard PHP footer
+        $result .= XMLDB_PHP_FOOTER;
+
+        return $result;
+    }
+
+    /**
+     * This function will generate all the PHP code needed to
+     * change the nullability of one field using XMLDB objects and functions
+     *
+     * @param XMLDBStructure structure object containing all the info
+     * @param string table table name
+     * @param string field field name to change null/not null
+     */
+    function change_field_notnull_php($structure, $table, $field) {
+
+        $result = '';
+    /// Validate if we can do it
+        if (!$table = $structure->getTable($table)) {
+            return false;
+        }
+        if (!$field = $table->getField($field)) {
+            return false;
+        }
+        if ($table->getAllErrors()) {
+            return false;
+        }
+
+    /// Calculate the notnull tip text
+        $notnull = $field->getNotnull() ? 'not null' : 'null';
+
+    /// Add the standard PHP header
+        $result .= XMLDB_PHP_HEADER;
+
+    /// Add contents
+        $result .= XMLDB_LINEFEED;
+        $result .= '    /// Changing nullability of field ' . $field->getName() . ' on table ' . $table->getName() . ' to ' . $notnull . XMLDB_LINEFEED;
+        $result .= '        $table = new XMLDBTable(' . "'" . $table->getName() . "'" . ');' . XMLDB_LINEFEED;
+        $result .= '        $field = new XMLDBField(' . "'" . $field->getName() . "'" . ');' . XMLDB_LINEFEED;
+        $result .= '        $field->setAttributes(' . $field->getPHP(true) . ');' . XMLDB_LINEFEED;
+
+    /// Launch the proper DDL
+        $result .= XMLDB_LINEFEED;
+        $result .= '    /// Launch change of nullability for field ' . $field->getName() . XMLDB_LINEFEED;
+        $result .= '        $status = $status && change_field_notnull($table, $field);' . XMLDB_LINEFEED;
+
+    /// Add standard PHP footer
+        $result .= XMLDB_PHP_FOOTER;
+
+        return $result;
+    }
+
+    /**
+     * This function will generate all the PHP code needed to
+     * change the default of one field using XMLDB objects and functions
+     *
+     * @param XMLDBStructure structure object containing all the info
+     * @param string table table name
+     * @param string field field name to change null/not null
+     */
+    function change_field_default_php($structure, $table, $field) {
+
+        $result = '';
+    /// Validate if we can do it
+        if (!$table = $structure->getTable($table)) {
+            return false;
+        }
+        if (!$field = $table->getField($field)) {
+            return false;
+        }
+        if ($table->getAllErrors()) {
+            return false;
+        }
+
+    /// Calculate the default tip text
+        $default = $field->getDefault() === null ? 'drop it' : $field->getDefault();
+
+    /// Add the standard PHP header
+        $result .= XMLDB_PHP_HEADER;
+
+    /// Add contents
+        $result .= XMLDB_LINEFEED;
+        $result .= '    /// Changing the default of field ' . $field->getName() . ' on table ' . $table->getName() . ' to ' . $default . XMLDB_LINEFEED;
+        $result .= '        $table = new XMLDBTable(' . "'" . $table->getName() . "'" . ');' . XMLDB_LINEFEED;
+        $result .= '        $field = new XMLDBField(' . "'" . $field->getName() . "'" . ');' . XMLDB_LINEFEED;
+        $result .= '        $field->setAttributes(' . $field->getPHP(true) . ');' . XMLDB_LINEFEED;
+
+    /// Launch the proper DDL
+        $result .= XMLDB_LINEFEED;
+        $result .= '    /// Launch change of default for field ' . $field->getName() . XMLDB_LINEFEED;
+        $result .= '        $status = $status && change_field_default($table, $field);' . XMLDB_LINEFEED;
 
     /// Add standard PHP footer
         $result .= XMLDB_PHP_FOOTER;
