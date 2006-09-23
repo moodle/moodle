@@ -165,7 +165,6 @@ function lesson_update_instance($lesson) {
     if ($lesson->lessondefault) {
         $default = new stdClass;
         $default = clone($lesson);
-        $default = $lesson;
         unset($default->lessondefault);
         unset($default->name);
         unset($default->timemodified);
@@ -215,7 +214,7 @@ function lesson_update_instance($lesson) {
     }
 
     add_event($event);
-    
+
     return update_record("lesson", $lesson);
 }
 
