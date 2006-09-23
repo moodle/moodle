@@ -132,6 +132,9 @@ class test extends XMLDBAction {
             $table = new XMLDBTable ('anothertest');
             $table->addFieldInfo('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
             $table->addFieldInfo('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+            $table->addFieldInfo('name', XMLDB_TYPE_CHAR, '30', null, XMLDB_NOTNULL, null, null, null, 'Moodle');
+            $table->addFieldInfo('intro', XMLDB_TYPE_TEXT, 'small', null, XMLDB_NOTNULL, null, null, null, null);
+            $table->addFieldInfo('grade', XMLDB_TYPE_NUMBER, '20,10', null, null, null, null, null, '');
             $table->addKeyInfo('primary', XMLDB_KEY_PRIMARY, array('id'));
             $table->addKeyInfo('course', XMLDB_KEY_FOREIGN, array('course'), 'course', array('id'));
         /// Get SQL code and execute it
@@ -149,6 +152,7 @@ class test extends XMLDBAction {
         /// Create a new field with complex specs (enums are good candidates)
             $field = new XMLDBField('type');
             $field->setAttributes(XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, XMLDB_ENUM, array('single', 'news', 'general', 'social', 'eachuser', 'teacher', 'qanda'), 'general', 'course');
+        /// Get SQL code and execute it
             $test = new stdClass;
             $test->sql = $table->getAddFieldSQL($CFG->dbtype, $CFG->prefix, $field, true);
             $test->status = add_field($table, $field, false, false);
@@ -170,14 +174,122 @@ class test extends XMLDBAction {
             $tests['drop field'] = $test;
         }
 
+    /// 6th test. Change the precision of one text field
+        if ($test->status) {
+        /// Get SQL code and execute it
+            $test = new stdClass;
+            $field = new XMLDBField('intro');
+            $field->setAttributes(XMLDB_TYPE_TEXT, 'big', null, XMLDB_NOTNULL, null, null, null, null);
+            
+            $test->sql = $table->getAlterFieldSQL($CFG->dbtype, $CFG->prefix, $field, true);
+            $test->status = change_field_precision($table, $field, false, false);
+            if (!$test->status) {
+                $test->error = $db->ErrorMsg();
+            }
+            $tests['change field precision (text)'] = $test;
+        }
+
+    /// 7th test. Change the precision of one char field
+        if ($test->status) {
+        /// Get SQL code and execute it
+            $test = new stdClass;
+            $field = new XMLDBField('name');
+            $field->setAttributes(XMLDB_TYPE_CHAR, '10', null, XMLDB_NOTNULL, null, null, null, 'Moodle');
+            
+            $test->sql = $table->getAlterFieldSQL($CFG->dbtype, $CFG->prefix, $field, true);
+            $test->status = change_field_precision($table, $field, false, false);
+            if (!$test->status) {
+                $test->error = $db->ErrorMsg();
+            }
+            $tests['change field precision (char)'] = $test;
+        }
+
+    /// 8th test. Change the precision of one numeric field
+        if ($test->status) {
+        /// Get SQL code and execute it
+            $test = new stdClass;
+            $field = new XMLDBField('grade');
+            $field->setAttributes(XMLDB_TYPE_NUMBER, '10,2', null, null, null, null, null, null);
+            
+            $test->sql = $table->getAlterFieldSQL($CFG->dbtype, $CFG->prefix, $field, true);
+            $test->status = change_field_precision($table, $field, false, false);
+            if (!$test->status) {
+                $test->error = $db->ErrorMsg();
+            }
+            $tests['change field precision (number)'] = $test;
+        }
+
+    /// 9th test. Change the sign of one numeric field to unsigned
+        if ($test->status) {
+        /// Get SQL code and execute it
+            $test = new stdClass;
+            $field = new XMLDBField('grade');
+            $field->setAttributes(XMLDB_TYPE_NUMBER, '10,2', XMLDB_UNSIGNED, null, null, null, null, null);
+            
+            $test->sql = $table->getAlterFieldSQL($CFG->dbtype, $CFG->prefix, $field, true);
+            $test->status = change_field_unsigned($table, $field, false, false);
+            if (!$test->status) {
+                $test->error = $db->ErrorMsg();
+            }
+            $tests['change field sign (unsigned)'] = $test;
+        }
+
+    /// 10th test. Change the sign of one numeric field to signed
+        if ($test->status) {
+        /// Get SQL code and execute it
+            $test = new stdClass;
+            $field = new XMLDBField('grade');
+            $field->setAttributes(XMLDB_TYPE_NUMBER, '10,2', null, null, null, null, null, null);
+            
+            $test->sql = $table->getAlterFieldSQL($CFG->dbtype, $CFG->prefix, $field, true);
+            $test->status = change_field_unsigned($table, $field, false, false);
+            if (!$test->status) {
+                $test->error = $db->ErrorMsg();
+            }
+            $tests['change field sign (signed)'] = $test;
+        }
+
+    /// 11th test. Change the nullability of one char field to null
+        if ($test->status) {
+        /// Get SQL code and execute it
+            $test = new stdClass;
+            $field = new XMLDBField('name');
+            $field->setAttributes(XMLDB_TYPE_CHAR, '10', null, null, null, null, null, 'Moodle');
+            
+            $test->sql = $table->getAlterFieldSQL($CFG->dbtype, $CFG->prefix, $field, true);
+            $test->status = change_field_notnull($table, $field, false, false);
+            if (!$test->status) {
+                $test->error = $db->ErrorMsg();
+            }
+            $tests['change field nullability (null)'] = $test;
+        }
+
+    /// 12th test. Change the nullability of one char field to not null
+        if ($test->status) {
+        /// Get SQL code and execute it
+            $test = new stdClass;
+            $field = new XMLDBField('name');
+            $field->setAttributes(XMLDB_TYPE_CHAR, '10', null, XMLDB_NOTNULL, null, null, null, 'Moodle');
+            
+            $test->sql = $table->getAlterFieldSQL($CFG->dbtype, $CFG->prefix, $field, true);
+            $test->status = change_field_notnull($table, $field, false, false);
+            if (!$test->status) {
+                $test->error = $db->ErrorMsg();
+            }
+            $tests['change field nullability (not null)'] = $test;
+        }
+
+
+
+
     /// Iterate over tests, showing information as needed
         $o .= '<ol>';
         foreach ($tests as $key => $test) {
             $o .= '<li>' . $key . ($test->status ? '<font color="green"> Ok</font>' : ' <font color="red">Error</font>');
             if (!$test->status) {
                 $o .= '<br/><font color="red">' . $test->error . '</font>';
-                $o .= '<pre>' . implode('<br/>', $test->sql) . '</pre>';
             }
+            $o .= '<pre>' . implode('<br/>', $test->sql) . '</pre>';
             $o .= '</li>';
         }
         $o .= '</ol>';
