@@ -21,6 +21,9 @@
 
     $lifetime = 3600;  // Seconds for files to remain in caches - 1 hour
 
+    // disable moodle specific debug messages
+    disable_debugging();
+
     $relativepath = get_file_argument('file.php');
 
 

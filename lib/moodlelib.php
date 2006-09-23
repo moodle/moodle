@@ -213,6 +213,17 @@ define('PARAM_SEQUENCE',  0x8000);
  */
 define('PAGE_COURSE_VIEW', 'course-view');
 
+/// Debug levels ///
+/** no warnings at all */
+define ('DEBUG_NONE', 0);
+/** E_ERROR | E_PARSE */
+define ('DEBUG_MINIMAL', 5);
+/** E_ERROR | E_PARSE | E_WARNING | E_NOTICE */
+define ('DEBUG_NORMAL', 15);
+/** E_ALL without E_STRICT and E_RECOVERABLE_ERROR for now */
+define ('DEBUG_ALL', 2047);
+/** DEBUG_ALL with extra Moodle debug messages - (DEBUG_ALL | 32768) */
+define ('DEBUG_DEVELOPER', 34815);
 
 /// PARAMETER HANDLING ////////////////////////////////////////////////////
 

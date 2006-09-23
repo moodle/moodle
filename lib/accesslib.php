@@ -419,7 +419,7 @@ function capability_search($capability, $context, $capabilities) {
     global $USER, $CFG;
 
     if (isset($capabilities[$context->id][$capability])) {
-        debugging("Found $capability in context $context->id at level $context->contextlevel: ".$capabilities[$context->id][$capability], E_ALL);
+        debugging("Found $capability in context $context->id at level $context->contextlevel: ".$capabilities[$context->id][$capability], DEBUG_DEVELOPER);
         return ($capabilities[$context->id][$capability]);
     }
 
@@ -481,7 +481,7 @@ function capability_search($capability, $context, $capabilities) {
             error ('This is an unknown context!');
         return false;
     }
-    debugging("Found $capability recursively from context $context->id at level $context->contextlevel: $permission", E_ALL);
+    debugging("Found $capability recursively from context $context->id at level $context->contextlevel: $permission", DEBUG_DEVELOPER);
 
     return $permission;
 }
@@ -1361,7 +1361,7 @@ function get_roles_with_capability($capability, $permission=NULL, $context='') {
 function role_assign($roleid, $userid, $groupid, $contextid, $timestart=0, $timeend=0, $hidden=0, $enrol='manual') {
     global $USER, $CFG;
 
-    debugging("Assign roleid $roleid userid $userid contextid $contextid", E_ALL);
+    debugging("Assign roleid $roleid userid $userid contextid $contextid", DEBUG_DEVELOPER);
 
 /// Do some data validation
 

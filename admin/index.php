@@ -105,7 +105,7 @@
     if (! $maintables) {
     /// hide errors from headers in case debug enabled in config.php
         $origdebug = $CFG->debug;
-        $CFG->debug = 5;
+        $CFG->debug = DEBUG_MINIMAL;
         error_reporting($CFG->debug);
         if (empty($agreelicence)) {
             $strlicense = get_string("license");
@@ -208,7 +208,7 @@
 
             // hide errors from headers in case debug is enabled
             $origdebug = $CFG->debug;
-            $CFG->debug = 5;
+            $CFG->debug = DEBUG_MINIMAL;
             error_reporting($CFG->debug);
 
             // logout in case we are upgrading from pre 1.7 version - prevention of weird session problems

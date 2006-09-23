@@ -255,7 +255,7 @@ global $HTTPSPAGEREQUIRED;
 
 /// Set error reporting back to normal
     if ($originaldatabasedebug == -1) {
-        $CFG->debug = E_PARSE;
+        $CFG->debug = DEBUG_MINIMAL;
     } else {
         $CFG->debug = $originaldatabasedebug;
     }

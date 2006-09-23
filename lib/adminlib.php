@@ -2137,13 +2137,11 @@ class admin_setting_special_debug extends admin_setting_configselect {
         $name = 'debug';
         $visiblename = get_string('debug', 'admin');
         $description = get_string('configdebug', 'admin');
-        $choices = array( 0         => get_string('debugnone', 'admin'),
-                          E_ERROR   => get_string('debugerror', 'admin'),
-                          E_WARNING => get_string('debugwarning', 'admin'),
-                          E_PARSE   => get_string('debugparse', 'admin'),
-                          E_NOTICE  => get_string('debugnotice', 'admin'),
-                          E_ALL     => get_string('debugall', 'admin'),
-                          2048      => get_string('debugstrict', 'admin')   //  E_STRICT is php5 only
+        $choices = array( DEBUG_NONE      => get_string('debugnone', 'admin'),
+                          DEBUG_MINIMAL   => get_string('debugminimal', 'admin'),
+                          DEBUG_NORMAL    => get_string('debugnormal', 'admin'),
+                          DEBUG_ALL       => get_string('debugall', 'admin'), 
+                          DEBUG_DEVELOPER => get_string('debugdeveloper', 'admin') 
                         );
         parent::admin_setting_configselect($name, $visiblename, $description, '', $choices);
     }
@@ -2151,12 +2149,6 @@ class admin_setting_special_debug extends admin_setting_configselect {
     function get_setting() {
         global $CFG;
         if (isset($CFG->debug)) {
-            if ($CFG->debug == 7) {   // Old values
-                return 1;
-            }
-            if ($CFG->debug == 15) {  // Old values
-                return 16;
-            }
             return $CFG->debug;
         } else {
             return NULL;

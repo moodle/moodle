@@ -8,6 +8,9 @@
     require_once('../config.php');
     require_once($CFG->libdir.'/filelib.php');
 
+    // disable moodle specific debug messages
+    disable_debugging();
+
     $relativepath = get_file_argument('pix.php');
 
     $args = explode('/', trim($relativepath, '/'));

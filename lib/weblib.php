@@ -5341,19 +5341,19 @@ function page_doc_link($text='', $iconpath='') {
 }
 
 /**
- * Returns true if the current site debugging settings are equal 
- * to the specified level: E_NOTICE, E_ALL, E_STRICT etc
+ * Returns true if the current site debugging settings are equal or above specified level.
  * eg use like this:
  *
- * 1)  debugging('a normal notice');
- * 2)  debugging('something really picky', E_STRICT);
- * 3)  if (debugging()) { echo "a bunch of commands could be here" } 
+ * 1)  debugging('a normal debug notice');
+ * 2)  debugging('something really picky', DEBUG_ALL);
+ * 3)  debugging('annoying debug message only for develpers', DEBUG_DEVELOPER);
+ * 4)  if (debugging()) { echo "a bunch of commands could be here" } 
  *
  * @param string $message a message to print
  * @param int $level the level at which this debugging statement should show
  * @return bool
  */
-function debugging($message='', $level=E_NOTICE) {
+function debugging($message='', $level=DEBUG_NORMAL) {
 
     global $CFG;
 
@@ -5368,6 +5368,14 @@ function debugging($message='', $level=E_NOTICE) {
         return true;
     }
     return false;
+}
+
+/**
+ * Disable debug messages from debugging(), while keeping PHP error reporting level as is.
+ */
+function disable_debugging() {
+    global $CFG;
+    $CFG->debug = $CFG->debug | 0x80000000; // switch the sign bit in integer number ;-)
 }
 
 // vim:autoindent:expandtab:shiftwidth=4:tabstop=4:tw=140:

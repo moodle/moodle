@@ -16,6 +16,9 @@
         }
     }
 
+    // disable moodle specific debug messages
+    disable_debugging();
+
     require_once($CFG->libdir.'/filelib.php');
     require_once('defaultsettings.php' );
     require_once('latex.php');

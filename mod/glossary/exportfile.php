@@ -3,6 +3,9 @@
     require_once("../../config.php");
     require_once("lib.php");
 
+    // disable moodle specific debug messages
+    disable_debugging();
+
     $id = required_param('id', PARAM_INT);      // Course Module ID
 
     $l   = optional_param('l','', PARAM_ALPHANUM);
