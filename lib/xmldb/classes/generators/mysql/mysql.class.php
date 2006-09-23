@@ -53,6 +53,8 @@ class XMLDBmysql extends XMLDBGenerator {
     var $concat_character = null; //Characters to be used as concatenation operator. If not defined
                                   //MySQL CONCAT function will be use
 
+    var $alter_column_sql = 'ALTER TABLE TABLENAME MODIFY COLUMN COLUMNSPECS'; //The SQL template to alter columns
+
     /**
      * Creates one new XMLDBmysql
      */
