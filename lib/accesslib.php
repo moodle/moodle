@@ -1201,7 +1201,7 @@ function get_local_override($roleid, $contextid, $capability) {
  * @param legacy - optional legacy capability
  * @return id or false
  */
-function create_role($name, $shortname, $description, $legacy='', $sortorder = -1) {
+function create_role($name, $shortname, $description, $legacy='') {
 
     // check for duplicate role name
 
@@ -1218,10 +1218,10 @@ function create_role($name, $shortname, $description, $legacy='', $sortorder = -
     $role->shortname = $shortname;
     $role->description = $description;
 
-    if ($sortorder = -1) {
-        $role->sortorder = count_records('role');
-    } else {
-        $role->sortorder = $sortorder;
+    //find free sortorder number
+    $role->sortorder = count_records('role');
+    while (get_record('role','sortorder', $role->sortorder)) {
+        $role->sortorder += 1;
     }
 
     $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
@@ -1249,6 +1249,39 @@ function create_role($name, $shortname, $description, $legacy='', $sortorder = -
         return false;
     }
 
+}
+
+/**
+ * function that deletes a role and cleanups up after it
+ * @param roleid - id of role to delete
+ * @return success
+ */
+function delete_role($roleid) {
+    $success = true;
+
+// first unssign all users
+    if (!role_unassign($roleid)) {
+        debugging("Error while unassigning all users from role with ID $roleid!");
+        $success = false;
+    }
+
+// cleanup all references to this role, ignore errors
+    if ($success) {
+        delete_records('role_capabilities', 'roleid', $roleid);
+        delete_records('role_allow_assign', 'roleid', $roleid);
+        delete_records('role_allow_assign', 'allowassign', $roleid);
+        delete_records('role_allow_override', 'roleid', $roleid);
+        delete_records('role_allow_override', 'allowoverride', $roleid);
+        delete_records('role_names', 'roleid', $roleid);
+    }
+
+// finally delete the role itself
+    if ($success and !delete_records('role', 'id', $roleid)) {
+        debugging("Could not delete role with ID $roleid!");
+        $success = false;
+    }
+
+    return $success;
 }
 
 /**

@@ -63,7 +63,7 @@
                 }
 
                 if (empty($errors)) {
-                    $newrole = create_role($name, $shortname, $description, '', $rolescount);
+                    $newrole = create_role($name, $shortname, $description);
                 } else {
                     $newrole = new object();
                     $newrole->name = $name;
@@ -181,14 +181,8 @@
 
         case 'delete':
             if ($confirm and data_submitted() and confirm_sesskey()) {
-
-                // first unssign all users
-                if (!role_unassign($roleid)) {
-                    error("Error while unassigning all users from role with ID $roleid!");
-                }
-
-                if (!delete_records('role', 'id', $roleid)) {
-                    error("Could not delete role with ID $roleid!");
+                if (!delete_role($roleid)) {
+                    error('Could not delete role with ID '.$roleid);
                 }
 
             } else if (confirm_sesskey()){
