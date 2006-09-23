@@ -873,6 +873,42 @@ class XMLDBTable extends XMLDBObject {
         return $results;
     }
 
+    /**
+     * This function will return the SQL code needed to alter one field in the table for the specified DB and
+     * prefix. Just one simple wrapper over generators.
+     */
+    function getAlterFieldSQL ($dbtype, $prefix, $xmldb_field, $statement_end=true) {
+
+        $results = array();
+
+        $classname = 'XMLDB' . $dbtype;
+        $generator = new $classname();
+        $generator->setPrefix($prefix);
+        $results = $generator->getAlterFieldSQL($this, $xmldb_field);
+        if ($statement_end) {
+            $results = $generator->getEndedStatements($results);
+        }
+        return $results;
+    }
+
+    /**
+     * This function will return the SQL code needed to modify the default of one field in the table for the specified DB and
+     * prefix. Just one simple wrapper over generators.
+     */
+    function getModifyDefaultSQL ($dbtype, $prefix, $xmldb_field, $statement_end=true) {
+
+        $results = array();
+
+        $classname = 'XMLDB' . $dbtype;
+        $generator = new $classname();
+        $generator->setPrefix($prefix);
+        $results = $generator->getModifyDefaultSQL($this, $xmldb_field);
+        if ($statement_end) {
+            $results = $generator->getEndedStatements($results);
+        }
+        return $results;
+    }
+
 }
 
 ?>

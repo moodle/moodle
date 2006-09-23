@@ -390,4 +390,97 @@ function drop_field($table, $field, $continue=true, $feedback=true) {
     return execute_sql_arr($sqlarr, $continue, $feedback);
 }
 
+/**
+ * This function will change the precision of the field in the table passed as arguments
+ *
+ * @uses $CFG, $db
+ * @param XMLDBTable table object (just the name is mandatory)
+ * @param XMLDBField field object (full specs are required)
+ * @param boolean continue to specify if must continue on error (true) or stop (false)
+ * @param boolean feedback to specify to show status info (true) or not (false)
+ * @return boolean true on success, false on error
+ */
+function change_field_precision($table, $field, $continue=true, $feedback=true) {
+
+    global $CFG, $db;
+
+    $status = true;
+
+    if (strtolower(get_class($table)) != 'xmldbtable') {
+        return false;
+    }
+    if (strtolower(get_class($field)) != 'xmldbfield') {
+        return false;
+    }
+
+    if(!$sqlarr = $table->getAlterFieldSQL($CFG->dbtype, $CFG->prefix, $field, false)) {
+        return false;
+    }
+
+    return execute_sql_arr($sqlarr, $continue, $feedback);
+}
+
+/**
+ * This function will change the unsigned/signed of the field in the table passed as arguments
+ *
+ * @uses $CFG, $db
+ * @param XMLDBTable table object (just the name is mandatory)
+ * @param XMLDBField field object (full specs are required)
+ * @param boolean continue to specify if must continue on error (true) or stop (false)
+ * @param boolean feedback to specify to show status info (true) or not (false)
+ * @return boolean true on success, false on error
+ */
+function change_field_unsigned($table, $field, $continue=true, $feedback=true) {
+
+/// Just a wrapper over change_field_precision. Does exactly the same processing
+    return change_field_precision($table, $field, $continue, $feedback);
+}
+
+/**
+ * This function will change the nullability of the field in the table passed as arguments
+ *
+ * @uses $CFG, $db
+ * @param XMLDBTable table object (just the name is mandatory)
+ * @param XMLDBField field object (full specs are required)
+ * @param boolean continue to specify if must continue on error (true) or stop (false)
+ * @param boolean feedback to specify to show status info (true) or not (false)
+ * @return boolean true on success, false on error
+ */
+function change_field_notnull($table, $field, $continue=true, $feedback=true) {
+
+/// Just a wrapper over change_field_precision. Does exactly the same processing
+    return change_field_precision($table, $field, $continue, $feedback);
+}
+
+/**
+ * This function will change the default of the field in the table passed as arguments
+ * One null value in the default field means delete the default
+ *
+ * @uses $CFG, $db
+ * @param XMLDBTable table object (just the name is mandatory)
+ * @param XMLDBField field object (full specs are required)
+ * @param boolean continue to specify if must continue on error (true) or stop (false)
+ * @param boolean feedback to specify to show status info (true) or not (false)
+ * @return boolean true on success, false on error
+ */
+function change_field_default($table, $field, $continue=true, $feedback=true) {
+
+    global $CFG, $db;
+
+    $status = true;
+
+    if (strtolower(get_class($table)) != 'xmldbtable') {
+        return false;
+    }
+    if (strtolower(get_class($field)) != 'xmldbfield') {
+        return false;
+    }
+
+    if(!$sqlarr = $table->getModifyDefaultSQL($CFG->dbtype, $CFG->prefix, $field, false)) {
+        return false;
+    }
+
+    return execute_sql_arr($sqlarr, $continue, $feedback);
+}
+
 ?>

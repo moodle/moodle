@@ -93,6 +93,10 @@ class XMLDBgenerator {
 
     var $drop_table_extra_code = false; //Does the generatos need to add code after table drop
 
+    var $alter_column_sql = 'ALTER TABLE TABLENAME ALTER COLUMN COLUMNSPECS'; //The SQL template to alter columns
+
+    var $alter_column_skip_default = false; //The generator will skip the default clause on alter columns
+
     var $prefix;         // Prefix to be used for all the DB objects
 
     var $reserved_words; // List of reserved words (in order to quote them properly)
@@ -293,7 +297,7 @@ class XMLDBgenerator {
     /**
      * Given one correct XMLDBField, returns the complete SQL line to create it
      */
-    function getFieldSQL($xmldb_field) {
+    function getFieldSQL($xmldb_field, $skip_default_clause = false)  {
 
     /// First of all, convert integers to numbers if defined
         if ($this->integer_to_number) {
@@ -335,7 +339,11 @@ class XMLDBgenerator {
             }
         }
     /// Calculate the default clause
-        $default = $this->getDefaultClause($xmldb_field);
+        if (!$skip_default_clause) { //Only if we don't want to skip it
+            $default = $this->getDefaultClause($xmldb_field);
+        } else {
+            $default = '';
+        }
     /// Based on default_after_null, set both clauses properly
         if ($this->default_after_null) {
             $field .= $notnull . $default;
@@ -520,6 +528,51 @@ class XMLDBgenerator {
         $results[] = 'ALTER TABLE ' . $tablename . ' DROP COLUMN ' . $fieldname;
 
         return $results;
+    }
+
+    /**
+     * Given one XMLDBTable and one XMLDBField, return the SQL statements needded to alter the field in the table
+     */
+    function getAlterFieldSQL($xmldb_table, $xmldb_field) {
+
+        $results = array();
+
+    /// Get the quoted name of the table and field
+        $tablename = $this->getEncQuoted($this->prefix . $xmldb_table->getName());
+        $fieldname = $this->getEncQuoted($xmldb_field->getName());
+
+    /// Build de alter sentence using the alter_column_sql template
+        $alter = str_replace('TABLENAME', $this->getEncQuoted($this->prefix . $xmldb_table->getName()), $this->alter_column_sql);
+        $alter = str_replace('COLUMNSPECS', $this->getFieldSQL($xmldb_field, $this->alter_column_skip_default), $alter);
+
+    /// Build the standard alter table modify
+        $results[] = $alter;
+
+    /// Add the after clause if necesary
+        if ($this->add_after_clause && $xmldb_field->getPrevious()) {
+            $altertable .= ' after ' . $this->getEncQuoted($xmldb_field->getPrevious());
+        }
+
+        return $results;
+    }
+
+    /**
+     * Given one XMLDBTable and one XMLDBField, return the SQL statements needded to modify the default of the field in the table
+     */
+    function getModifyDefaultSQL($xmldb_table, $xmldb_field) {
+
+        $results = array();
+
+    /// Get the quoted name of the table and field
+        $tablename = $this->getEncQuoted($this->prefix . $xmldb_table->getName());
+        $fieldname = $this->getEncQuoted($xmldb_field->getName());
+
+    /// Decide if we are going to create/modify or to drop the default
+        if ($xmldb_field->getDefault() === null) {
+            return $this->getDropDefaultSQL($xmldb_table, $xmldb_field); //Drop
+        } else {
+            return $this->getCreateDefaultSQL($xmldb_table, $xmldb_field); //Create/modify
+        }
     }
 
     /**
