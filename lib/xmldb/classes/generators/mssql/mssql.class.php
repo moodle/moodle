@@ -59,6 +59,8 @@ class XMLDBmssql extends XMLDBgenerator {
     var $concat_character = '+'; //Characters to be used as concatenation operator. If not defined
                                   //MySQL CONCAT function will be use
 
+    var $alter_column_skip_default = true; //The generator will skip the default clause on alter column
+
     /**
      * Creates one new XMLDBmssql
      */
