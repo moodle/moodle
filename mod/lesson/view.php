@@ -370,14 +370,49 @@
                     error('Navigation: the page record not found');
                 }
             }
-        } elseif ($page->qtype == LESSON_ENDOFCLUSTER) {
+        } elseif ($page->qtype == LESSON_ENDOFCLUSTER) { // Check for endofclusters
             if ($page->nextpageid == 0) {
                 $nextpageid = LESSON_EOL;
             } else {
                 $nextpageid = $page->nextpageid;
             }
             redirect("$CFG->wwwroot/mod/lesson/view.php?id=$cm->id&amp;pageid=$nextpageid");
+        } else if ($page->qtype == LESSON_ENDOFBRANCH) { // Check for endofbranches
+            if ($answers = get_records('lesson_answers', 'pageid', $page->id, 'id')) {
+                // print_heading(get_string('endofbranch', 'lesson'));
+                foreach ($answers as $answer) {
+                    // just need the first answer
+                    if ($answer->jumpto == LESSON_RANDOMBRANCH) {
+                        $answer->jumpto = lesson_unseen_branch_jump($lesson->id, $USER->id);
+                    } elseif ($answer->jumpto == LESSON_CLUSTERJUMP) {
+                        if (!has_capability('mod/lesson:manage', $context)) {
+                            $answer->jumpto = lesson_cluster_jump($lesson->id, $USER->id, $pageid);
+                        } else {
+                            if ($page->nextpageid == 0) {  
+                                $answer->jumpto = LESSON_EOL;
+                            } else {
+                                $answer->jumpto = $page->nextpageid;
+                            }
+                        }
+                    } else if ($answer->jumpto == LESSON_NEXTPAGE) {
+                        if ($page->nextpageid == 0) {  
+                            $answer->jumpto = LESSON_EOL;
+                        } else {
+                            $answer->jumpto = $page->nextpageid;
+                        }
+                    } else if ($answer->jumpto == 0) {
+                        $answer->jumpto = $page->id;
+                    } else if ($answer->jumpto == LESSON_PREVIOUSPAGE) {
+                        $answer->jumpto = $page->prevpageid;                            
+                    }
+                    redirect("$CFG->wwwroot/mod/lesson/view.php?id=$cm->id&amp;pageid=$answer->jumpto");
+                    break;
+                } 
+            } else {
+                error('Navigation: No answers on EOB');
+            }
         }
+        
         
         
         // check to see if the user can see the left menu
@@ -440,45 +475,7 @@
                 error('Error: could not update lesson_timer table');
             }
         }
-                    
-        // before we output everything check to see if the page is a EOB, if so jump directly 
-        // to it's associated branch table
-        if ($page->qtype == LESSON_ENDOFBRANCH) {
-            if ($answers = get_records('lesson_answers', 'pageid', $page->id, 'id')) {
-                // print_heading(get_string('endofbranch', 'lesson'));
-                foreach ($answers as $answer) {
-                    // just need the first answer
-                    if ($answer->jumpto == LESSON_RANDOMBRANCH) {
-                        $answer->jumpto = lesson_unseen_branch_jump($lesson->id, $USER->id);
-                    } elseif ($answer->jumpto == LESSON_CLUSTERJUMP) {
-                        if (!has_capability('mod/lesson:manage', $context)) {
-                            $answer->jumpto = lesson_cluster_jump($lesson->id, $USER->id, $pageid);
-                        } else {
-                            if ($page->nextpageid == 0) {  
-                                $answer->jumpto = LESSON_EOL;
-                            } else {
-                                $answer->jumpto = $page->nextpageid;
-                            }
-                        }
-                    } else if ($answer->jumpto == LESSON_NEXTPAGE) {
-                        if ($page->nextpageid == 0) {  
-                            $answer->jumpto = LESSON_EOL;
-                        } else {
-                            $answer->jumpto = $page->nextpageid;
-                        }
-                    } else if ($answer->jumpto == 0) {
-                        $answer->jumpto = $page->id;
-                    } else if ($answer->jumpto == LESSON_PREVIOUSPAGE) {
-                        $answer->jumpto = $page->prevpageid;                            
-                    }
-                    redirect("$CFG->wwwroot/mod/lesson/view.php?id=$cm->id&amp;pageid=$answer->jumpto");
-                    break;
-                } 
-            } else {
-                error('Navigation: No answers on EOB');
-            }
-        }
-                    
+
          ///  This is the warning msg for teachers to inform them that cluster and unseen does not work while logged in as a teacher
         if(has_capability('mod/lesson:manage', $context)) {
             if (lesson_display_teacher_warning($lesson->id)) {
