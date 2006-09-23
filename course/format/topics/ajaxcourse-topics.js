@@ -152,11 +152,11 @@ main_class.prototype.mk_button = function(tag,imgSrc,attributes,imgAttributes){
     }
     
 main_class.prototype.connect = function(method,urlStub,callback,body){
-        if(this.debug)YAHOO.log("Making "+method+" connection to /course/format/topics/commands.php?courseId="+main.portal.id+"&"+urlStub);
+        if(this.debug)YAHOO.log("Making "+method+" connection to /course/rest.php?courseId="+main.portal.id+"&"+urlStub);
         if(callback == null){
             callback = {}
         }
-        return YAHOO.util.Connect.asyncRequest(method,this.portal.strings['wwwroot']+"/course/format/topics/commands.php?courseId="+main.portal.id+"&"+urlStub,callback,body);
+        return YAHOO.util.Connect.asyncRequest(method,this.portal.strings['wwwroot']+"/course/rest.php?courseId="+main.portal.id+"&"+urlStub,callback,body);
         
 
     } 
