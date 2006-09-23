@@ -535,6 +535,9 @@ $CFG->os = PHP_OS;
     if ($SESSION !== NULL and $lang = optional_param('lang', false, PARAM_SAFEDIR)) {
         if (file_exists($CFG->dataroot .'/lang/'. $lang) or file_exists($CFG->dirroot .'/lang/'. $lang)) {
             $SESSION->lang = $lang;
+        } else if (file_exists($CFG->dataroot.'/lang/'.$lang.'_utf8') or 
+                   file_exists($CFG->dirroot .'/lang/'.$lang.'_utf8')) {
+            $SESSION->lang = $lang.'_utf8';
         }
     }
     unset($lang);
