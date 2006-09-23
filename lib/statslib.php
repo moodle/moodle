@@ -607,31 +607,49 @@ function stats_get_parameters($time,$report,$courseid,$mode,$roleid=0) {
 
     switch ($report) {
     case STATS_REPORT_LOGINS: // done
-        $param->fields = 'stat1 as line1,stat2 as line2';
+        $param->fields = 'timeend,sum(stat1) as line1,sum(stat2) as line2';
+        $param->fieldscomplete = true;
         $param->stattype = 'logins';
         $param->line1 = get_string('statslogins');
         $param->line2 = get_string('statsuniquelogins');
+        if ($courseid == SITEID) {
+            $param->extras = 'GROUP BY timeend';
+        }
         break;
     case STATS_REPORT_READS: // done
         $param->fields = $db->Concat('timeend','roleid').' AS UNIQUE, timeend, roleid, stat1 as line1';
         $param->fieldscomplete = true; // set this to true to avoid anything adding stuff to the list and breaking complex queries.
+        $param->aggregategroupby = 'roleid';
         $param->stattype = 'activity';
         $param->crosstab = true;
         $param->extras = 'GROUP BY timeend,roleid,stat1';
+        if ($courseid == SITEID) {
+            $param->fields = $db->Concat('timeend','roleid').' AS UNIQUE, timeend, roleid, sum(stat1) as line1';
+            $param->extras = 'GROUP BY timeend,roleid';
+        }
         break;
     case STATS_REPORT_WRITES: //done
         $param->fields = $db->Concat('timeend','roleid').' AS UNIQUE, timeend, roleid, stat2 as line1';
         $param->fieldscomplete = true; // set this to true to avoid anything adding stuff to the list and breaking complex queries.
+        $param->aggregategroupby = 'roleid';
         $param->stattype = 'activity';
         $param->crosstab = true;
         $param->extras = 'GROUP BY timeend,roleid,stat2';
+        if ($courseid == SITEID) {
+            $param->fields = $db->Concat('timeend','roleid').' AS UNIQUE, timeend, roleid, sum(stat2) as line1';
+            $param->extras = 'GROUP BY timeend,roleid';
+        }
         break;
     case STATS_REPORT_ACTIVITY: //done 
         $param->fields = $db->Concat('timeend','roleid').' AS UNIQUE, timeend, roleid, sum(stat1+stat2) as line1';
         $param->fieldscomplete = true; // set this to true to avoid anything adding stuff to the list and breaking complex queries.
+        $param->aggregategroupby = 'roleid';
         $param->stattype = 'activity';
         $param->crosstab = true;
         $param->extras = 'GROUP BY timeend,roleid';
+        if ($courseid == SITEID) {
+            $param->extras = 'GROUP BY timeend,roleid';
+        }
         break;
     case STATS_REPORT_ACTIVITYBYROLE;
         $param->fields = 'stat1 AS line1, stat2 AS line2';
@@ -707,11 +725,13 @@ function stats_get_parameters($time,$report,$courseid,$mode,$roleid=0) {
         $param->graphline = 'line3';
         break;
     }
+    /*
     if ($courseid == SITEID && $mode != STATS_MODE_RANKED) { // just aggregate all courses.
-        $param->fields = preg_replace('/([a-zA-Z0-9+_]*)\W+as\W+([a-zA-Z0-9_]*)/','sum($1) as $2',$param->fields);
-        $param->extras = ' GROUP BY timeend';
+        $param->fields = preg_replace('/(?:sum)([a-zA-Z0-9+_]*)\W+as\W+([a-zA-Z0-9_]*)/i','sum($1) as $2',$param->fields);
+        $param->extras = ' GROUP BY timeend'.((!empty($param->aggregategroupby)) ? ','.$param->aggregategroupby : '');
     }
-    
+    */
+    //TODO must add the SITEID reports to the rest of the reports.
     return $param;
 } 
 
