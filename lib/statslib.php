@@ -1264,7 +1264,7 @@ function stats_upgrade_table_for_roles ($period) {
     execute_sql("INSERT INTO {$CFG->prefix}stats_{$period}
        (courseid, roleid, timeend, stattype, stat1, stat2)
        SELECT courseid, 0, timeend, 'logins', logins, uniquelogins
-       FROM {$CFG->prefix}stats_{$period}_tmp WHERE course = ".SITEID);
+       FROM {$CFG->prefix}stats_{$period}_tmp WHERE courseid = ".SITEID);
 
     // Drop the temporary table
     $table = new XMLDBTable('stats_' . $period . '_tmp');
