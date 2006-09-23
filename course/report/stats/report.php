@@ -103,7 +103,7 @@
             $param->table = 'user_'.$param->table;
         }
         $sql = 'SELECT '.((empty($param->fieldscomplete)) ? 'id,roleid,timeend,' : '').$param->fields
-            .' FROM '.$CFG->prefix.'stats_'.$param->table.'_tmp WHERE '
+            .' FROM '.$CFG->prefix.'stats_'.$param->table.' WHERE '
             .(($course->id == SITEID) ? '' : ' courseid = '.$course->id.' AND ')
             .((!empty($userid)) ? ' userid = '.$userid.' AND ' : '')
             .((!empty($roleid)) ? ' roleid = '.$roleid.' AND ' : '')
