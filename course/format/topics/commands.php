@@ -13,8 +13,8 @@ $class    = required_param('class', PARAM_ALPHA);
 
 $field      = optional_param('field', '', PARAM_ALPHA);
 $instanceid = optional_param('instanceId', 0, PARAM_INT);
-$sectionid = optional_param('sectionId', 0, PARAM_INT);
-$beforeid = optional_param('beforeId', 0, PARAM_INT);
+$sectionid  = optional_param('sectionId', 0, PARAM_INT);
+$beforeid   = optional_param('beforeId', 0, PARAM_INT);
 $value      = optional_param('value', 0, PARAM_INT);
 $column     = optional_param('column', 0, PARAM_ALPHA);
 $id         = optional_param('id', 0, PARAM_INT);
@@ -24,15 +24,20 @@ $visible    = optional_param('visible', 0, PARAM_INT);
 
 // Authorise the user and verify some incoming data
 
-if (!$course = get_record('course', 'id', $courseid)) {     
-    error('Course does not exist');    
-}   
+if (!$course = get_record('course', 'id', $courseid)) {
+    error_log('AJAX commands.php: Course does not exist');
+    die;
+}
 
 $PAGE = page_create_object(PAGE_COURSE_VIEW, $course->id);
 $pageblocks = blocks_setup($PAGE,BLOCKS_PINNED_BOTH);
 
-if(!empty($instanceid)){
-      $instance = blocks_find_instance($instanceid, $pageblocks);         
+if (!empty($instanceid)) {
+    $blockinstance = blocks_find_instance($instanceid, $pageblocks);
+    if (!$blockinstance || $blockinstance->pageid != $course->id || $blockinstance->pagetype != 'course-view') {
+        error_log('AJAX commands.php: Bad block ID '.$instanceid);
+        die;
+    }
 }
 
 require_login($course->id);
@@ -44,66 +49,73 @@ require_capability('moodle/course:update', $context);
 
 // OK, now let's process the parameters and do stuff
 
-$dataobject = NULL;
-switch($_SERVER['REQUEST_METHOD']){                              
-    case 'POST':    
+switch($_SERVER['REQUEST_METHOD']) {
+    case 'POST':
         switch ($class) {
             case 'block':                  
             switch ($field) {
-                    case 'visible':   
-                        blocks_execute_action($PAGE, $pageblocks, 'toggle', $instance);   
-                        break;
-        
-                    case 'position':  
-                        $dataobject->id = $instanceid;
-                        $dataobject->position = $column;
-                        $dataobject->weight = $value;
-                        if (!update_record('block_instance',$dataobject)) {
-                            error('Failed to update block!');
-                        }
-                        break;                            
+                case 'visible':   
+                    blocks_execute_action($PAGE, $pageblocks, 'toggle', $blockinstance);
+                    break;
+     
+                case 'position':  
+                    $newblockinstance = new object;
+                    $newblockinstance->id = $blockinstance->id;
+                    $newblockinstance->position = $column;
+                    $newblockinstance->weight = $value;
+                    if (!update_record('block_instance',$newblockinstance)) {
+                        error_log('AJAX commands.php: Failed to update block with ID '.$blockinstance->id);
+                        die;
+                    }
+                    break;
+            }
+            break;
+ 
+
+            case 'section':
+ 
+                if (!record_exists('course_sections','course',$course->id,'section',$id)) {
+                    error_log('AJAX commands.php: Bad Section ID '.$id);
+                    die;
                 }
-                break;
-        
-        
-            case 'section': 
-        
-                if (!$dataobject->id = get_field('course_sections','id','course',$course->id,'section',$id)) {
-                    error('Bad Section ID');
-                }
-        
+ 
                 switch ($field) {
-        
                     case 'visible':
                         set_section_visible($course->id, $id, $value);
-                        break;                 
-                        
+                        break;
+
                     case 'move':
                         move_section($course, $id, $value);
-                        break;                  
-                        
-                        
+                        break;
                 }
                 break;
-        
+
             case 'resource':
-                switch($field) {
+                if (!$mod = get_record('course_modules', 'id', $id, 'course', $course->id)) {
+                    error_log('AJAX commands.php: Bad course module ID '.$id);
+                    die;
+                }
+                switch ($field) {
                     case 'visible':
-                        set_coursemodule_visible($id, $value);
+                        set_coursemodule_visible($mod->id, $value);
                         break;
-        
+
                     case 'groupmode':
-                        set_coursemodule_groupmode($id, $value);
-                        break;        
-                        
+                        set_coursemodule_groupmode($mod->id, $value);
+                        break;
+
                     case 'move':
-                        $section = get_record('course_sections','course',$course->id,'section',$sectionid);
-                        $mod = get_record('course_modules', 'id', $id);
-                        
-                        if($beforeid > 0){
-                            $beforemod = get_record('course_modules', 'id', $beforeid);
+                        if (!$section = get_record('course_sections','course',$course->id,'section',$sectionid)) {
+                            error_log('AJAX commands.php: Bad section ID '.$sectionid);
+                            die;
                         }
                         
+                        if ($beforeid > 0){
+                            $beforemod = get_record('course_modules', 'id', $beforeid);
+                        } else {
+                            $beforemod = NULL;
+                        }
+
                         moveto_module($mod, $section, $beforemod);
                         break;
                 }
@@ -112,29 +124,34 @@ switch($_SERVER['REQUEST_METHOD']){
             case 'course': 
                 switch($field) {
                     case 'marker':
-                        $dataobject->id = $course->id;
-                        $dataobject->marker = $value;
-                        if (!update_record('course',$dataobject)) {
-                            error('Failed to update course');
+                        $newcourse = new object;
+                        $newcourse->id = $course->id;
+                        $newcourse->marker = $value;
+                        if (!update_record('course',$newcourse)) {
+                            error_log('AJAX commands.php: Failed to update course marker for course '.$newcourse->id);
+                            die;
                         }
                         break;
                 }
                 break;
         }
         break;
-        
+
     case 'DELETE':
         switch ($class) {
-            case 'block':   
-                blocks_execute_action($PAGE, $pageblocks, 'delete', $instance);                    
+            case 'block':
+                blocks_execute_action($PAGE, $pageblocks, 'delete', $blockinstance);
                 break; 
                 
             case 'resource':
-                delete_course_module($id);                           
-                break;          
+                if (!$mod = get_record('course_modules', 'id', $id, 'course', $course->id)) {
+                    error_log('AJAX commands.php: Bad course module ID '.$id);
+                    die;
+                }
+                delete_course_module($id);
+                break;
         }
         break;
-            
-}       
+}
 
 ?>
