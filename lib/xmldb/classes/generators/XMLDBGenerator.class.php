@@ -505,7 +505,10 @@ class XMLDBgenerator {
         $tablename = $this->getEncQuoted($this->prefix . $xmldb_table->getName());
 
     /// Build the standard alter table add
-        $altertable = 'ALTER TABLE ' . $tablename . ' ADD ' . $this->getFieldSQL($xmldb_field);
+        $altertable = 'ALTER TABLE ' . $tablename . ' ADD ' . 
+                           $this->getFieldSQL($xmldb_field, $this->alter_column_skip_type,
+                                                            $this->alter_column_skip_default,
+                                                            $this->alter_column_skip_notnull);
     /// Add the after clause if necesary
         if ($this->add_after_clause && $xmldb_field->getPrevious()) {
             $altertable .= ' after ' . $this->getEncQuoted($xmldb_field->getPrevious());
