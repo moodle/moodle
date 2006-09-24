@@ -37,7 +37,7 @@
     }
 
     $sql = 'SELECT '.((empty($param->fieldscomplete)) ? 'id,roleid,timeend,' : '').$param->fields
-    .' FROM '.$CFG->prefix.'stats_'.$param->table.' WHERE '
+    .' FROM '.$CFG->prefix.'stats_'.$param->table.'_tmp WHERE '
     .(($course->id == SITEID) ? '' : ' courseid = '.$course->id.' AND ')
      .((!empty($userid)) ? ' userid = '.$userid.' AND ' : '')
      .((!empty($roleid)) ? ' roleid = '.$roleid.' AND ' : '')
@@ -88,23 +88,37 @@
         $data = array();
         $times = array();
         $roles = array();
+        $missedlines = array();
         foreach ($stats as $stat) {
             $data[$stat->roleid][$stat->timeend] = $stat->line1;
-            if (!array_key_exists($stat->roleid,$roles)) {
-                $roles[$stat->roleid] = get_field('role','name','id',$stat->roleid);
+            if (!empty($stat->zerofixed)) {
+                $missedlines[] = $stat->timeend;
+            }
+            if ($stat->roleid != 0) {
+                if (!array_key_exists($stat->roleid,$roles)) {
+                    $roles[$stat->roleid] = get_field('role','name','id',$stat->roleid);
+                }
             }
             if (!array_key_exists($stat->timeend,$times)) {
                 $times[$stat->timeend] = userdate($stat->timeend,get_string('strftimedate'),$CFG->timezone);
             }
         }
+        $nonzeroroleid = 0;
         foreach (array_keys($data) as $roleid) {
+            if ($roleid == 0) {
+                continue;
+            }
             $graph->y_order[] = $roleid;
             $graph->y_format[$roleid] = array('colour' => $c[$roleid], 'line' => 'line','legend' => $roles[$roleid]);
+            $nonzeroroleid = $roleid;
         }
-        foreach (array_keys($data[$roleid]) as $time) {
+        foreach (array_keys($data[$nonzeroroleid]) as $time) {
             $graph->x_data[] = $times[$time];
         }
         foreach ($data as $roleid => $t) {
+            if ($roleid == 0) {
+                continue;
+            }
             foreach ($t as $time => $data) {
                 $graph->y_data[$roleid][] = $data;
             }

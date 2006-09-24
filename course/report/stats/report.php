@@ -41,7 +41,6 @@
                     WHERE u.id = ra.userid 
                           AND ra.contextid '.get_related_contexts_string($context);
         }
-
         if (!$us = get_records_sql($sql)) {
             error('Cannot enter detailed view: No users found for this course.');
         }
@@ -103,7 +102,7 @@
             $param->table = 'user_'.$param->table;
         }
         $sql = 'SELECT '.((empty($param->fieldscomplete)) ? 'id,roleid,timeend,' : '').$param->fields
-            .' FROM '.$CFG->prefix.'stats_'.$param->table.' WHERE '
+            .' FROM '.$CFG->prefix.'stats_'.$param->table.'_tmp WHERE '
             .(($course->id == SITEID) ? '' : ' courseid = '.$course->id.' AND ')
             .((!empty($userid)) ? ' userid = '.$userid.' AND ' : '')
             .((!empty($roleid)) ? ' roleid = '.$roleid.' AND ' : '')
@@ -111,7 +110,7 @@
             .' timeend >= '.$param->timeafter
             .' '.$param->extras
             .' ORDER BY timeend DESC';
-        error_log($sql);
+
         $stats = get_records_sql($sql);
 
         if (empty($stats)) {
@@ -163,16 +162,31 @@
             $data = array();
             $roles = array();
             $times = array();
+            $missedlines = array();
             foreach ($stats as $stat) {
+                if (!empty($stat->zerofixed)) {
+                    $missedlines[] = $stat->timeend;
+                }
                 $data[$stat->timeend][$stat->roleid] = $stat->line1;
-                if (!array_key_exists($stat->roleid,$roles)) {
-                    $roles[$stat->roleid] = get_field('role','name','id',$stat->roleid);
+                if ($stat->roleid != 0) {
+                    if (!array_key_exists($stat->roleid,$roles)) {
+                        $roles[$stat->roleid] = get_field('role','name','id',$stat->roleid);
+                    }
                 }
                 if (!array_key_exists($stat->timeend,$times)) {
                     $times[$stat->timeend] = userdate($stat->timeend,get_string('strftimedate'),$CFG->timezone);
                 }
             }
             foreach ($data as $time => $rolesdata) {
+                if (in_array($time,$missedlines)) {
+                    $rolesdata = array();
+                    foreach ($roles as $roleid => $guff) {
+                        if ($roleid == 0 ) {
+                            continue;
+                        }
+                        $rolesdata[$roleid] = 0;
+                    }
+                }
                 krsort($rolesdata); 
                 $row = array_merge(array($times[$time]),$rolesdata);
                 if (empty($CFG->loglifetime) || ($stat->timeend-(60*60*24)) >= (time()-60*60*24*$CFG->loglifetime)) {

@@ -963,6 +963,7 @@ function stats_fix_zeros($stats,$timeafter,$timestr,$line2=true,$line3=false) {
     foreach ($stats as $s) {
         $actualtimes[] = $s->timeend;
     }
+
     $timeafter = array_pop($actualtimes);
 
     while ($timeafter < $now) {
@@ -983,6 +984,7 @@ function stats_fix_zeros($stats,$timeafter,$timestr,$line2=true,$line3=false) {
             $newobj = new StdClass;
             $newobj->timeend = $time;
             $newobj->id = 0;
+            $newobj->roleid = 0;
             $newobj->line1 = 0;
             if (!empty($line2)) {
                 $newobj->line2 = 0;
@@ -990,6 +992,7 @@ function stats_fix_zeros($stats,$timeafter,$timestr,$line2=true,$line3=false) {
             if (!empty($line3)) {
                 $newobj->line3 = 0;
             }
+            $newobj->zerofixed = true;
             $stats[] = $newobj;
         }
     }
