@@ -13,7 +13,7 @@ $THEME->sheets = array('gradients');
 ////////////////////////////////////////////////////////////////////////////////
 
 
-$THEME->standardsheets = array('styles_layout','styles_fonts','styles_color','styles_moz');  
+$THEME->standardsheets = array('styles_layout','styles_fonts','styles_color','styles_moz','styles_form');  
 
 /// This variable can be set to an array containing
 /// filenames from the *STANDARD* theme.  If the 

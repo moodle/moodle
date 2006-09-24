@@ -1,0 +1,62 @@
+/*******************************************************************
+ styles_form.css
+  
+ This CSS file contains all css required for new css and xhtml only 
+ moodleforms.
+*/
+form.mform {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+form.mform fieldset {
+    border: 1px solid black;
+    padding: 10px 0;
+    margin: 0;
+    width:100%;
+}
+form.mform fieldset.hidden {
+    border: 0;
+}
+form.mform fieldset legend {
+    font-weight: bold;
+}
+form.mform label {
+    margin: 0 0 0 5px;
+}
+form.mform label.qflabel {
+    display: block;
+    float: left;
+    width: 40%;
+    padding: 0;
+    margin: 5px 0 0 0;
+    text-align: right;
+}
+
+form.mform input, form.mform select {
+    width: auto;
+}
+form.mform textarea {
+ }
+form.mform br {
+    clear: left;
+}
+form.mform div.qfelement {
+    display: inline;
+    float: left;
+    margin: 5px 0 0 10px;
+    padding: 0;
+}
+
+form.mform div.qfelementwide {
+    margin: 0 10% 10px 10%;
+}
+
+form.mform span.error, form.mform span.required {
+    color: red;
+}
+form.mform div.error {
+    border: 1px solid red;
+    padding: 5px;
+    color: inherit;
+}
