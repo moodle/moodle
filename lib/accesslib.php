@@ -236,6 +236,12 @@ function require_capability($capability, $context=NULL, $userid=NULL, $doanythin
     if (empty($userid) and empty($USER->id)) {
         if ($context && ($context->contextlevel == CONTEXT_COURSE)) {
             require_login($context->instanceid);
+        } else if ($context && ($context->contextlevel == CONTEXT_MODULE)) {
+            if ($cm = get_record('course_modules','id',$context->instanceid)) {
+                require_login($cm->course, true, $cm);
+            } else {
+                require_login();
+            }
         } else {
             require_login();
         }
@@ -417,6 +423,10 @@ function has_capability($capability, $context=NULL, $userid=NULL, $doanything=tr
 function capability_search($capability, $context, $capabilities) {
 
     global $USER, $CFG;
+
+    if (!isset($context->id)) {
+        return 0;
+    }
 
     if (isset($capabilities[$context->id][$capability])) {
         debugging("Found $capability in context $context->id at level $context->contextlevel: ".$capabilities[$context->id][$capability], DEBUG_DEVELOPER);
