@@ -2066,7 +2066,7 @@ class admin_setting_special_backuptime extends admin_setting_configtime {
 
     function get_setting() {
         $backup_config =  backup_get_config();
-        return (isset($backup_config->{$this->name}) && isset($backup_config->{$this->name}) ? array($backup_config->{$this->name}, $backup_config->{$this->name2}) : NULL);
+        return (isset($backup_config->{$this->name}) && isset($backup_config->{$this->name}) ? array('h'=>$backup_config->{$this->name}, 'm'=>$backup_config->{$this->name2}) : NULL);
     }
 
     function write_setting($data) {
@@ -2140,10 +2140,12 @@ class admin_setting_special_backupdays extends admin_setting {
     function write_setting($data) {
         $week = 'umtwrfs';
         $result = array(0 => 0, 1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 0);
-        foreach($data as $key => $value) {
-          if ($value == '1') {
-              $result[strpos($week, $key)] = 1;
-          }
+        if (!empty($data)) {
+            foreach($data as $key => $value) {
+              if ($value == '1') {
+                  $result[strpos($week, $key)] = 1;
+                }
+            }
         }
         return (backup_set_config($this->name, implode('',$result)) ? '' : get_string('errorsetting', 'admin') . $this->visiblename . '<br />');
     }
