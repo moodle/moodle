@@ -24,65 +24,23 @@
     $table->width = '*';
 
     if ($mode == STATS_MODE_DETAILED) {
-        // if we have time, 
-        //    get all users from the stats table, joining on user, where they are smaller than us... or ourselves (or all, if admins) where timestuff.
-        // else
-        //    get all users in this course (role_assignments)
-        
-        
+        $param = stats_get_parameters($time,null,$course->id,$mode); // we only care about the table and the time string (if we have time)
 
-        if (!empty($time)) {
-            $param = stats_get_parameters($time,null,$course->id,$mode); // we only care about the table and the time string.
-            $sql =  'SELECT DISTINCT s.userid,s.roleid,u.firstname,u.lastname,u.idnumber 
-                     FROM '.$CFG->prefix.'stats_user_'.$param->table.' s JOIN '.$CFG->prefix.'user u ON u.id = s.userid 
-                     WHERE courseid = '.$course->id.' AND timeend >= '.$param->timeafter 
-                . ((!empty($param->stattype)) ? ' AND stattype = \''.$param->stattype.'\'' : '');
-            if (!has_capability('moodle/site:viewreports', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
-                $sql .= ' AND (s.roleid = 1 OR s.userid = '.$USER->id .")";
-            }
-            $sql .= " ORDER BY s.roleid ";
-        } else {
-            $context = get_context_instance(CONTEXT_COURSE, $course->id);
-            
-            $sql = 'SELECT ra.userid,u.firstname,u.lastname,u.idnumber,1 AS roleid 
-                    FROM '.$CFG->prefix.'role_assignments ra, 
-                         '.$CFG->prefix.'user u
-                    WHERE u.id = ra.userid 
-                          AND ra.contextid '.get_related_contexts_string($context);
-        }
+        $sql = 'SELECT DISTINCT s.userid,s.roleid,r.name AS rolename,r.sortorder,u.firstname,u.lastname,u.idnumber 
+                     FROM '.$CFG->prefix.'stats_user_'.$param->table.' s 
+                     JOIN '.$CFG->prefix.'user u ON u.id = s.userid 
+                     JoIN '.$CFG->prefix.'role r ON s.roleid = r.id
+                     WHERE courseid = '.$course->id
+            . ((!empty($param->stattype)) ? ' AND stattype = \''.$param->stattype.'\'' : '')
+            . ((!empty($time)) ? ' AND timeend >= '.$param->timeafter : '')
+            .' ORDER BY r.sortorder';
+        
         if (!$us = get_records_sql($sql)) {
             error('Cannot enter detailed view: No users found for this course.');
         }
-        $admins = get_admins();
-        foreach ($us as $u) {
-            $role = $course->student;
-            if ($u->roleid == 2) {
-                $role = $course->teacher;
-            }
-            if (array_key_exists($u->userid,$admins)) {
-                $role = get_string('admin');
-            }
-            $users[$u->userid] = $role.' - '.fullname($u,true);
-        }
-        if (empty($time)) {
-            if (has_capability('moodle/site:viewreports', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
-                $sql = 'SELECT t.userid,u.firstname,u.lastname,u.idnumber,1 AS roleid 
-                        FROM '.$CFG->prefix.'user_teachers t 
-                        JOIN '.$CFG->prefix.'user u ON u.id = t.userid WHERE course = '.$course->id;
-                $moreusers = get_records_sql($sql);
-                foreach ($moreusers as $u) {
-                    $users[$u->userid] = $course->teacher .' - '.fullname($u,true);
-                }
-            } else {
-                $users[$USER->id] = $course->teacher.' - '.fullname($USER,true);
-            }
-        }
 
-        // make sure we sort so teachers are at the top.
-        if (strcmp($course->student,$course->teacher) < 0) {
-            arsort($users);
-        } else {
-            asort($users);
+        foreach ($us as $u) {
+            $users[$u->userid] = $u->rolename.' - '.fullname($u,true);
         }
         
         $table->align = array('left','left','left','left','left','left','left','left');
