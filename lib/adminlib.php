@@ -1541,7 +1541,7 @@ class admin_setting_courselist_frontpage extends admin_setting_configselect {
             }
             $return .= '</select>';
             if ($i !== count($this->choices) - 2) {
-              $return .= '&nbsp;&nbsp;' . get_string('then') . '&nbsp;&nbsp;';
+                $return .= '<br />';
             }
         }
         $return .= '</td></tr><tr><td>&nbsp;</td><td align="left">' . $this->description . '</td></tr>';
