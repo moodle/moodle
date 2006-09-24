@@ -24,10 +24,19 @@
     $table->width = '*';
 
     if ($mode == STATS_MODE_DETAILED) {
+        // if we have time, 
+        //    get all users from the stats table, joining on user, where they are smaller than us... or ourselves (or all, if admins) where timestuff.
+        // else
+        //    get all users in this course (role_assignments)
+        
+        
+
         if (!empty($time)) {
             $param = stats_get_parameters($time,null,$course->id,$mode); // we only care about the table and the time string.
-            $sql =  'SELECT DISTINCT s.userid,s.roleid,u.firstname,u.lastname,u.idnumber  FROM '.$CFG->prefix.'stats_user_'.$param->table.' s JOIN '.$CFG->prefix.'user u ON u.id = s.userid '
-                .'WHERE courseid = '.$course->id.' AND timeend >= '.$param->timeafter  . ((!empty($param->stattype)) ? ' AND stattype = \''.$param->stattype.'\'' : '');
+            $sql =  'SELECT DISTINCT s.userid,s.roleid,u.firstname,u.lastname,u.idnumber 
+                     FROM '.$CFG->prefix.'stats_user_'.$param->table.' s JOIN '.$CFG->prefix.'user u ON u.id = s.userid 
+                     WHERE courseid = '.$course->id.' AND timeend >= '.$param->timeafter 
+                . ((!empty($param->stattype)) ? ' AND stattype = \''.$param->stattype.'\'' : '');
             if (!has_capability('moodle/site:viewreports', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
                 $sql .= ' AND (s.roleid = 1 OR s.userid = '.$USER->id .")";
             }
@@ -57,7 +66,9 @@
         }
         if (empty($time)) {
             if (has_capability('moodle/site:viewreports', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
-                $sql = 'SELECT t.userid,u.firstname,u.lastname,u.idnumber,1 AS roleid FROM '.$CFG->prefix.'user_teachers t JOIN '.$CFG->prefix.'user u ON u.id = t.userid WHERE course = '.$course->id;
+                $sql = 'SELECT t.userid,u.firstname,u.lastname,u.idnumber,1 AS roleid 
+                        FROM '.$CFG->prefix.'user_teachers t 
+                        JOIN '.$CFG->prefix.'user u ON u.id = t.userid WHERE course = '.$course->id;
                 $moreusers = get_records_sql($sql);
                 foreach ($moreusers as $u) {
                     $users[$u->userid] = $course->teacher .' - '.fullname($u,true);
@@ -80,7 +91,12 @@
                                get_string('statsreporttype'),choose_from_menu($reportoptions,'report',($report == 5) ? $report.$roleid : $report,'','','',true),
                                get_string('statstimeperiod'),choose_from_menu($timeoptions,'time',$time,'','','',true),
                                '<input type="submit" value="'.get_string('view').'" />') ;
-    } else {
+    } else if ($mode == STATS_MODE_RANKED) {
+        $table->align = array('left','left','left','left','left','left');
+        $table->data[] = array(get_string('statsreporttype'),choose_from_menu($reportoptions,'report',($report == 5) ? $report.$roleid : $report,'','','',true),
+                               get_string('statstimeperiod'),choose_from_menu($timeoptions,'time',$time,'','','',true),
+                               '<input type="submit" value="'.get_string('view').'" />') ;
+    } else if ($mode == STATS_MODE_GENERAL) {
         $table->align = array('left','left','left','left','left','left','left');
         $table->data[] = array(get_string('course'),choose_from_menu($courseoptions,'course',$course->id,'','','',true),
                                get_string('statsreporttype'),choose_from_menu($reportoptions,'report',($report == 5) ? $report.$roleid : $report,'','','',true),
@@ -96,20 +112,25 @@
         if ($report == STATS_REPORT_LOGINS && $course->id != SITEID) {
             error("This type of report is only available for the site course");
         }
+        $timesql = 
         $param = stats_get_parameters($time,$report,$course->id,$mode);
 
         if ($mode == STATS_MODE_DETAILED) {
             $param->table = 'user_'.$param->table;
         }
-        $sql = 'SELECT '.((empty($param->fieldscomplete)) ? 'id,roleid,timeend,' : '').$param->fields
-            .' FROM '.$CFG->prefix.'stats_'.$param->table.'_tmp WHERE '
-            .(($course->id == SITEID) ? '' : ' courseid = '.$course->id.' AND ')
-            .((!empty($userid)) ? ' userid = '.$userid.' AND ' : '')
-            .((!empty($roleid)) ? ' roleid = '.$roleid.' AND ' : '')
-            . ((!empty($param->stattype)) ? ' stattype = \''.$param->stattype.'\' AND ' : '')
-            .' timeend >= '.$param->timeafter
-            .' '.$param->extras
-            .' ORDER BY timeend DESC';
+        if (!empty($param->sql)) {
+            $sql = $param->sql;
+        } else {
+            $sql = 'SELECT '.((empty($param->fieldscomplete)) ? 'id,roleid,timeend,' : '').$param->fields
+                .' FROM '.$CFG->prefix.'stats_'.$param->table.' WHERE '
+                .(($course->id == SITEID) ? '' : ' courseid = '.$course->id.' AND ')
+                .((!empty($userid)) ? ' userid = '.$userid.' AND ' : '')
+                .((!empty($roleid)) ? ' roleid = '.$roleid.' AND ' : '')
+                . ((!empty($param->stattype)) ? ' stattype = \''.$param->stattype.'\' AND ' : '')
+                .' timeend >= '.$param->timeafter
+                .' '.$param->extras
+                .' ORDER BY timeend DESC';
+        }
 
         $stats = get_records_sql($sql);
 

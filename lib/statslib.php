@@ -579,7 +579,8 @@ function stats_get_parameters($time,$report,$courseid,$mode,$roleid=0) {
     }
 
     switch ($report) {
-    case STATS_REPORT_LOGINS: // done
+    // ******************** STATS_MODE_GENERAL ******************** //
+    case STATS_REPORT_LOGINS:
         $param->fields = 'timeend,sum(stat1) as line1,sum(stat2) as line2';
         $param->fieldscomplete = true;
         $param->stattype = 'logins';
@@ -589,7 +590,8 @@ function stats_get_parameters($time,$report,$courseid,$mode,$roleid=0) {
             $param->extras = 'GROUP BY timeend';
         }
         break;
-    case STATS_REPORT_READS: // done
+
+    case STATS_REPORT_READS:
         $param->fields = $db->Concat('timeend','roleid').' AS UNIQUE, timeend, roleid, stat1 as line1';
         $param->fieldscomplete = true; // set this to true to avoid anything adding stuff to the list and breaking complex queries.
         $param->aggregategroupby = 'roleid';
@@ -601,7 +603,8 @@ function stats_get_parameters($time,$report,$courseid,$mode,$roleid=0) {
             $param->extras = 'GROUP BY timeend,roleid';
         }
         break;
-    case STATS_REPORT_WRITES: //done
+
+    case STATS_REPORT_WRITES: 
         $param->fields = $db->Concat('timeend','roleid').' AS UNIQUE, timeend, roleid, stat2 as line1';
         $param->fieldscomplete = true; // set this to true to avoid anything adding stuff to the list and breaking complex queries.
         $param->aggregategroupby = 'roleid';
@@ -613,7 +616,8 @@ function stats_get_parameters($time,$report,$courseid,$mode,$roleid=0) {
             $param->extras = 'GROUP BY timeend,roleid';
         }
         break;
-    case STATS_REPORT_ACTIVITY: //done 
+
+    case STATS_REPORT_ACTIVITY:
         $param->fields = $db->Concat('timeend','roleid').' AS UNIQUE, timeend, roleid, sum(stat1+stat2) as line1';
         $param->fieldscomplete = true; // set this to true to avoid anything adding stuff to the list and breaking complex queries.
         $param->aggregategroupby = 'roleid';
@@ -624,29 +628,38 @@ function stats_get_parameters($time,$report,$courseid,$mode,$roleid=0) {
             $param->extras = 'GROUP BY timeend,roleid';
         }
         break;
+
     case STATS_REPORT_ACTIVITYBYROLE;
         $param->fields = 'stat1 AS line1, stat2 AS line2';
         $param->stattype = 'activity';
         $rolename = get_field('role','name','id',$roleid);
         $param->line1 = $rolename . get_string('statsreads');
         $param->line2 = $rolename . get_string('statswrites');
+        if ($courseid == SITEID) {
+            $param->extras = 'GROUP BY timeend';
+        }
         break;
+
+    // ******************** STATS_MODE_DETAILED ******************** //
     case STATS_REPORT_USER_ACTIVITY:
         $param->fields = 'statsreads as line1, statswrites as line2';
         $param->line1 = get_string('statsuserreads');
         $param->line2 = get_string('statsuserwrites');
         $param->stattype = 'activity';
         break;
+
     case STATS_REPORT_USER_ALLACTIVITY:
         $param->fields = 'statsreads+statswrites as line1';
         $param->line1 = get_string('statsuseractivity');
         $param->stattype = 'activity';
         break;
+
     case STATS_REPORT_USER_LOGINS:
         $param->fields = 'statsreads as line1';
         $param->line1 = get_string('statsuserlogins');
         $param->stattype = 'logins';
         break;
+
     case STATS_REPORT_USER_VIEW:
         $param->fields = 'statsreads as line1, statswrites as line2, statsreads+statswrites as line3';
         $param->line1 = get_string('statsuserreads');
@@ -654,50 +667,92 @@ function stats_get_parameters($time,$report,$courseid,$mode,$roleid=0) {
         $param->line3 = get_string('statsuseractivity');
         $param->stattype = 'activity';
         break;
+
+    // ******************** STATS_MODE_RANKED ******************** //
     case STATS_REPORT_ACTIVE_COURSES: 
-        $param->fields = 'sum(studentreads+studentwrites+teacherreads+teacherwrites) AS line1';
+        $param->fields = 'sum(stat1+stat2) AS line1';
+        $param->stattype = 'activity';
         $param->orderby = 'line1 DESC';
         $param->line1 = get_string('activity');
         $param->graphline = 'line1';
         break;
+
     case STATS_REPORT_ACTIVE_COURSES_WEIGHTED:
-        $param->fields = 'sum(studentreads+studentwrites+teacherreads+teacherwrites) AS line1,'
-            .'max(students+teachers) AS line2,'
-            .'sum(studentreads+studentwrites+teacherreads+teacherwrites)'.$real.'/max(students+teachers)'.$real.' AS line3';
-        $param->extras = 'HAVING max(students+teachers) != 0';
+        $threshold = 0;
         if (!empty($CFG->statsuserthreshold) && is_numeric($CFG->statsuserthreshold)) {
-            $param->extras .= ' AND max(students+teachers) > '.$CFG->statsuserthreshold;
+            $threshold = $CFG->statsuserthreshold;
         }
-        $param->orderby = 'line3 DESC';
+        $param->fields = '';
+        $param->sql = 'SELECT activity.courseid, activity.all_activity AS line1, enrolments.highest_enrolments AS line2,
+                        activity.all_activity / enrolments.highest_enrolments as line3 
+                       FROM (
+                            SELECT courseid, sum(stat1+stat2) AS all_activity 
+                            FROM '.$CFG->prefix.'stats_'.$param->table.'
+                            WHERE stattype=\'activity\' AND timeend >= '.$param->timeafter.'
+                            GROUP BY courseid
+                       ) activity
+                       INNER JOIN 
+                            (
+                            SELECT courseid, max(stat1) AS highest_enrolments 
+                            FROM '.$CFG->prefix.'stats_'.$param->table.'
+                            WHERE stattype=\'enrolments\' AND timeend >= '.$param->timeafter.'
+                            GROUP BY courseid
+                      ) enrolments
+                      ON (activity.courseid = enrolments.courseid)
+                      WhERE enrolments.highest_enrolments > '.$threshold.'
+                      ORDER BY line3 DESC';
         $param->line1 = get_string('activity');
         $param->line2 = get_string('users');
         $param->line3 = get_string('activityweighted');
         $param->graphline = 'line3';
         break;
+
     case STATS_REPORT_PARTICIPATORY_COURSES:
-        $param->fields = 'max(students+teachers) as line1,max(activestudents+activeteachers) AS line2,'
-            .'max(activestudents+activeteachers)'.$real.'/max(students+teachers)'.$real.' AS line3';
-        $param->extras = 'HAVING max(students+teachers) != 0';
+        $threshold = 0;
         if (!empty($CFG->statsuserthreshold) && is_numeric($CFG->statsuserthreshold)) {
-            $param->extras .= ' AND max(students+teachers) > '.$CFG->statsuserthreshold;
+            $threshold = $CFG->statsuserthreshold;
         }
-        $param->orderby = 'line3 DESC';
+        $param->fields = '';
+        $param->sql = 'SELECT courseid, ceil(avg(all_enrolments)) as line1,
+                         ceil(avg(active_enrolments)) as line2, avg(proportion_active) AS line3 
+                       FROM (
+                           SELECT courseid, timeend, sum(stat2) as active_enrolments, 
+                              sum(stat1) as all_enrolments, sum(stat2)'.$real.'/sum(stat1)'.$real.' as proportion_active 
+                           FROM '.$CFG->prefix.'stats_'.$param->table.' WHERE stattype=\'enrolments\' 
+                           GROUP BY courseid, timeend
+                           HAVING sum(stat1) > '.$threshold.'
+                       ) aq 
+                       WHERE timeend >= '.$param->timeafter.'
+                       GROUP BY courseid
+                       ORDER BY line3 DESC';
+
         $param->line1 = get_string('users');
         $param->line2 = get_string('activeusers');
         $param->line3 = get_string('participationratio');
         $param->graphline = 'line3';
         break;
+
     case STATS_REPORT_PARTICIPATORY_COURSES_RW:
-        $param->fields = 'sum(studentreads+teacherreads) as line1,sum(studentwrites+teacherwrites) AS line2,'
-            .'sum(studentwrites+teacherwrites)'.$real.'/sum(studentreads+teacherreads)'.$real.' AS line3';
-        $param->extras = 'HAVING sum(studentreads+teacherreads) != 0';
-        $param->orderby = 'line3 DESC';
+        $param->fields = '';
+        $param->sql =  'SELECT courseid, sum(views) AS line1, sum(posts) AS line2,
+                           avg(proportion_active) AS line3
+                         FROM (
+                           SELECT courseid, timeend,sum(stat1) as views, sum(stat2) AS posts,
+                            sum(stat2)'.$real.'/sum(stat1)'.$real.' as proportion_active 
+                           FROM '.$CFG->prefix.'stats_'.$param->table.' WHERE stattype=\'activity\' 
+                           GROUP BY courseid, timeend
+                           HAVING sum(stat1) > 0
+                       ) aq 
+                       WHERE timeend >= '.$param->timeafter.'
+                       GROUP BY courseid
+                       ORDER BY line3 DESC';
         $param->line1 = get_string('views');
         $param->line2 = get_string('posts');
         $param->line3 = get_string('participationratio');
         $param->graphline = 'line3';
         break;
     }
+
     /*
     if ($courseid == SITEID && $mode != STATS_MODE_RANKED) { // just aggregate all courses.
         $param->fields = preg_replace('/(?:sum)([a-zA-Z0-9+_]*)\W+as\W+([a-zA-Z0-9_]*)/i','sum($1) as $2',$param->fields);
@@ -910,7 +965,7 @@ function stats_get_report_options($courseid,$mode) {
     switch ($mode) {
     case STATS_MODE_GENERAL:
         $reportoptions[STATS_REPORT_ACTIVITY] = get_string('statsreport'.STATS_REPORT_ACTIVITY);
-        if ($context = get_record('context','instanceid',$courseid,'contextlevel',CONTEXT_COURSE)) {
+        if ($courseid != SITEID && $context = get_record('context','instanceid',$courseid,'contextlevel',CONTEXT_COURSE)) {
             $sql = 'SELECT r.id,r.name FROM '.$CFG->prefix.'role r JOIN '.$CFG->prefix.'stats_daily s ON s.roleid = r.id WHERE s.courseid = '.$courseid;
             if ($roles = get_records_sql($sql)) {
                 foreach ($roles as $role) {

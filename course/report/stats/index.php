@@ -25,7 +25,7 @@
     }
 
     if ($mode == STATS_MODE_RANKED) {
-        redirect($CFG->wwwroot.'/'.$CFG->admin.'/report.php?time='.$time);
+        redirect($CFG->wwwroot.'/'.$CFG->admin.'/report/stats/index.php?time='.$time);
     }
 
     if (!$course = get_record("course","id",$courseid)) {

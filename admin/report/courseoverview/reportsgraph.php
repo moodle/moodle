@@ -16,12 +16,16 @@
 
     $param = stats_get_parameters($time,$report,SITEID,STATS_MODE_RANKED);
 
-    $sql = "SELECT courseid,".$param->fields." FROM ".$CFG->prefix.'stats_'.$param->table
-        ." WHERE timeend >= ".$param->timeafter
-        ." GROUP BY courseid "
-        .$param->extras
-        ." ORDER BY ".$param->orderby
-        ." LIMIT ".$numcourses;
+    if (!empty($param->sql)) {
+        $sql = $param->sql ." LIMIT ".$numcourses;
+    } else {
+        $sql = "SELECT courseid,".$param->fields." FROM ".$CFG->prefix.'stats_'.$param->table
+            ." WHERE timeend >= ".$param->timeafter.' AND stattype = \'activity\''
+            ." GROUP BY courseid "
+            .$param->extras
+            ." ORDER BY ".$param->orderby
+            ." LIMIT ".$numcourses;
+    }
 
     $courses = get_records_sql($sql);
 

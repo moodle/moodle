@@ -18,13 +18,19 @@
     $time     = optional_param('time', 0, PARAM_INT);
     $mode     = optional_param('mode', STATS_MODE_GENERAL, PARAM_INT);
     $userid   = optional_param('userid', 0, PARAM_INT);
+    $roleid   = 0;
+
+    if ($report > 50) {
+        $roleid = substr($report,1);
+        $report = 5;
+    }
 
     if ($report == STATS_REPORT_USER_LOGINS) {
         $courseid = SITEID; //override
     }
 
     if ($mode == STATS_MODE_RANKED) {
-        redirect($CFG->wwwroot.'/'.$CFG->admin.'/report.php?time='.$time);
+        redirect($CFG->wwwroot.'/'.$CFG->admin.'/report/stats/index.php?time='.$time);
     }
 
     if (!$course = get_record("course","id",$courseid)) {

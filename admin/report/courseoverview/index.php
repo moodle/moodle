@@ -66,13 +66,18 @@
 
     if (!empty($report) && !empty($time)) {
         $param = stats_get_parameters($time,$report,SITEID,STATS_MODE_RANKED);
-
-        $sql = "SELECT courseid,".$param->fields." FROM ".$CFG->prefix.'stats_'.$param->table
-            ." WHERE timeend >= ".$param->timeafter
-            ." GROUP BY courseid "
-            .$param->extras
-            ." ORDER BY ".$param->orderby
-            ." LIMIT ".$numcourses;
+        
+        if (!empty($param->sql)) {
+            $sql = $param->sql ." LIMIT ".$numcourses;
+        } else {
+            $sql = "SELECT courseid,".$param->fields." FROM ".$CFG->prefix.'stats_'.$param->table
+                ." WHERE timeend >= ".$param->timeafter.' AND stattype = \'activity\''
+                ." GROUP BY courseid "
+                .$param->extras
+                ." ORDER BY ".$param->orderby
+                ." LIMIT ".$numcourses;
+        }
+        error_log($sql);
 
         $courses = get_records_sql($sql);
 
@@ -82,7 +87,7 @@
         } else {
             echo '<div align="center"><img src="'.$CFG->wwwroot.'/'.$CFG->admin.'/report/courseoverview/reportsgraph.php?time='.$time.'&report='.$report.'&numcourses='.$numcourses.'" /></div>';
 
-            $table = new object();
+            $table = new StdClass;
             $table->align = array('left','center','center','center');
             $table->head = array(get_string('course'),$param->line1);
             if (!empty($param->line2)) {
@@ -101,7 +106,7 @@
                     $a[] = $c->line2;
                 }
                 if (isset($c->line3)) {
-                    $a[] = $c->line3;
+                    $a[] = round($c->line3,2);
                 }
                 $table->data[] = $a;
             }
