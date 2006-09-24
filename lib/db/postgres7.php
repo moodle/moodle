@@ -1923,7 +1923,7 @@ function main_upgrade($oldversion=0) {
         execute_sql("CREATE UNIQUE INDEX {$CFG->prefix}role_sor_uix ON {$CFG->prefix}role (sortorder);", false);
     }
 
-    if ($oldversion < 2006092510) {
+    if ($oldversion < 2006092410) {
         /// Convert all the PG unique keys into their corresponding unique indexes
         /// we don't want such keys inside Moodle 1.7 and above
         /// Look for all the UNIQUE CONSTRAINSTS existing in DB
