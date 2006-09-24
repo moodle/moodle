@@ -4673,28 +4673,26 @@ function redirect($url, $message='', $delay=-1) {
         // the absolute path. (In practice browsers accept relative 
         // paths - but still, might as well do it properly.)
         // This code turns relative into absolute. 
-        if(!preg_match('/^[a-z]+:/',$url)) { 
+        if (!preg_match('|^[a-z]+:|', $url)) { 
             // Get host name http://www.wherever.com
-            $hostpart=preg_replace('/^(.*?[^:\/])\/.*$/','$1',$CFG->wwwroot);
-            if(preg_match('/^\//',$url)) {
-                // URLs beginning with / are relative to web server root so
-                // we just add them in
-                $url=$hostpart.$url;
+            $hostpart = preg_replace('|^(.*?[^:/])/.*$|', '$1', $CFG->wwwroot);
+            if (preg_match('|^/|', $url)) {
+                // URLs beginning with / are relative to web server root so we just add them in
+                $url = $hostpart.$url;
             } else {
-                // URLs not beginning with / are relative to path of current
-                // script, so add that on.
-                $url=$hostpart.rtrim(dirname($_SERVER['SCRIPT_NAME']),'/\\').'/'.$url;
+                // URLs not beginning with / are relative to path of current script, so add that on.
+                $url = $hostpart.me().'/../'.$url;
             }
             // Replace all ..s
-            while(true) {
-                $newurl=preg_replace('/\/[^\/]*\/\.\.\//','/',$url);
-                if($newurl==$url) {
+            while (true) {
+                $newurl = preg_replace('|/[^/]*/\.\./|', '/', $url);
+                if ($newurl == $url) {
                     break;
                 }
-                $url=$newurl;
+                $url = $newurl;
             }
         }
-        
+
         $delay = 0;
         //try header redirection first
         @header('HTTP/1.x 303 See Other'); //302 might not work for POST requests, 303 is ignored by obsolete clients
