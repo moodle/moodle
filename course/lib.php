@@ -1405,7 +1405,7 @@ function print_category_info($category, $depth, $files = false) {
     if ($files and $coursecount) {
         $courses = get_courses($category->id, 'c.sortorder ASC', 'c.id,c.sortorder,c.visible,c.fullname,c.shortname,c.password,c.summary,c.guest,c.cost,c.currency');
 
-        echo "<tr>";
+        echo '<tr>';
 
         if ($depth) {
             $indent = $depth*30;
@@ -1704,8 +1704,12 @@ function set_coursemodule_groupmode($id, $groupmode) {
 * the course module back to what it was originally.
 */
 function set_coursemodule_visible($id, $visible, $prevstateoverrides=false) {
-    $cm = get_record('course_modules', 'id', $id);
-    $modulename = get_field('modules', 'name', 'id', $cm->module);
+    if (!$cm = get_record('course_modules', 'id', $id)) {
+        return false;
+    }
+    if (!$modulename = get_field('modules', 'name', 'id', $cm->module)) {
+        return false;
+    }
     if ($events = get_records_select('event', "instance = '$cm->instance' AND modulename = '$modulename'")) {
         foreach($events as $event) {
             if ($visible) {
