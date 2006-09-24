@@ -37,10 +37,11 @@ class XMLDBpostgres7 extends XMLDBgenerator {
     var $unsigned_allowed = false;    // To define in the generator must handle unsigned information
     var $default_for_char = '';      // To define the default to set for NOT NULLs CHARs without default (null=do nothing)
 
+    var $unique_keys = false; // Does the generator build unique keys
     var $foreign_keys = false; // Does the generator build foreign keys
 
     var $primary_index = false;// Does the generator need to build one index for primary keys
-    var $unique_index = false;  // Does the generator need to build one index for unique keys
+    var $unique_index = true;  // Does the generator need to build one index for unique keys
     var $foreign_index = true; // Does the generator need to build one index for foreign keys
 
     var $sequence_extra_code = false; //Does the generator need to add extra code to generate the sequence fields
@@ -134,6 +135,53 @@ class XMLDBpostgres7 extends XMLDBgenerator {
          $comment.= " IS '" . substr($xmldb_table->getComment(), 0, 250) . "'";
 
          return array($comment);
+     }
+
+     /**
+      * Given one XMLDBTable and one XMLDBField, return the SQL statements needded to alter the field in the table
+      * PostgreSQL has some severe limits:
+      *     - Any change of type or precision requires a new temporary column to be created, values to
+      *       be transfered potentially casting them, to apply defaults if the column is not null and 
+      *       finally, to rename it
+      *     - Changes in null/not null require the SET/DROP NOT NULL clause
+      *     - Changes in default require the SET/DROP DEFAULT clause
+      */
+     function getAlterFieldSQL($xmldb_table, $xmldb_field) {
+
+         global $db;
+
+     /// Get the quoted name of the table and field
+         $tablename = $this->getEncQuoted($this->prefix . $xmldb_table->getName());
+         $fieldname = $this->getEncQuoted($xmldb_field->getName());
+
+     /// Take a look to field metadata
+         $meta = array_change_key_case($db->MetaColumns($tablename));
+         $metac = $meta[$fieldname];
+         print_object($metac);
+         $oldtype = strtolower($metac->type);
+         $oldlength = $metac->max_length;
+         $olddecimals = empty($metac->scale) ? null : $metac->scale;
+         $oldnotnull = empty($metac->not_null) ? false : $metac->not_null;
+         $olddefault = empty($metac->default_value) ? null : $metac->default_value;
+                                                                                                                                   /// If field is CLOB and new one is also XMLDB_TYPE_TEXT or 
+     /// if fiels is BLOB and new one is also XMLDB_TYPE_BINARY
+     /// prevent type to be specified, so only NULL and DEFAULT clauses are allowed
+         if (($oldtype = 'clob' && $xmldb_field->getType() == XMLDB_TYPE_TEXT) ||
+             ($oldtype = 'blob' && $xmldb_field->getType() == XMLDB_TYPE_BINARY)) {
+             $this->alter_column_skip_type = true;
+             $islob = true;
+         }
+
+     /// If field is NOT NULL and the new one too or
+     /// if field is NULL and the new one too
+     /// prevent null clause to be specified
+         if (($oldnotnull && $xmldb_field->getNotnull()) ||
+             (!$oldnotnull && !$xmldb_field->getNotnull())) {
+             $this->alter_column_skip_notnull = true;
+         }
+
+     /// In the rest of cases, use the general generator
+         return parent::getAlterFieldSQL($xmldb_table, $xmldb_field);
      }
 
     /**

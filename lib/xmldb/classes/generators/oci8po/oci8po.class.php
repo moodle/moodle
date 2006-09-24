@@ -43,10 +43,11 @@ class XMLDBoci8po extends XMLDBgenerator {
 
     var $default_after_null = false;  //To decide if the default clause of each field must go after the null clause
 
+    var $unique_keys = false; // Does the generator build unique keys
     var $foreign_keys = false; // Does the generator build foreign keys
 
     var $primary_index = false;// Does the generator need to build one index for primary keys
-    var $unique_index = false;  // Does the generator need to build one index for unique keys
+    var $unique_index = true;  // Does the generator need to build one index for unique keys
     var $foreign_index = true; // Does the generator need to build one index for foreign keys
 
     var $sequence_extra_code = true; //Does the generator need to add extra code to generate the sequence fields
