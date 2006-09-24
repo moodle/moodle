@@ -1923,6 +1923,37 @@ function main_upgrade($oldversion=0) {
         execute_sql("CREATE UNIQUE INDEX {$CFG->prefix}role_sor_uix ON {$CFG->prefix}role (sortorder);", false);
     }
 
+    if ($oldversion < 2006092510) {
+        /// Convert all the PG unique keys into their corresponding unique indexes
+        /// we don't want such keys inside Moodle 1.7 and above
+        /// Look for all the UNIQUE CONSTRAINSTS existing in DB
+        $uniquecons = get_records_sql ("SELECT conname, relname, conkey, clas.oid AS tableoid
+                                          FROM pg_constraint cons,
+                                               pg_class clas
+                                         WHERE cons.contype='u'
+                                           AND cons.conrelid = clas.oid");
+        /// Iterate over every unique constraint, calculating its fields
+        if ($uniquecons) {
+            foreach ($uniquecons as $uniquecon) {
+                $conscols = trim(trim($uniquecon->conkey, '}'), '{');
+                $conscols = explode(',', $conscols);
+            /// Iterate over each column to fetch its name
+                $indexcols = array();
+                foreach ($conscols as $conscol) {
+                    $column = get_record_sql ("SELECT attname, attname
+                                                 FROM pg_attribute
+                                                WHERE attrelid = $uniquecon->tableoid
+                                                  AND attnum   = $conscol");
+                    $indexcols[] = $column->attname;
+                }
+            /// Drop the old UNIQUE CONSTRAINT
+                execute_sql ("ALTER TABLE $uniquecon->relname DROP CONSTRAINT $uniquecon->conname", false);
+            /// Create the new UNIQUE INDEX
+                execute_sql ("CREATE UNIQUE INDEX {$uniquecon->relname}_".implode('_', $indexcols)."_uix ON $uniquecon->relname (".implode(', ', $indexcols).')', false);
+            }
+        }
+    }
+
 
     return $result;
 }
