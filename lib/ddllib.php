@@ -240,6 +240,45 @@ function table_column($table, $oldfield, $field, $type='integer', $size='10',
 }
 
 /**
+ * Given one XMLDBIndex, the function returns the name of the index in DB (if exists)
+ * of false if it doesn't exist
+ *
+ * @uses, $db
+ * @param XMLDBTable the table to be searched
+ * @param XMLDBIndex the index to be searched
+ * @return string index name of false
+ */
+function find_index_name($xmldb_table, $xmldb_index) {
+
+    global $CFG, $db;
+
+/// Extract index columns
+    $indcolumns = $xmldb_index->getFields();
+
+/// Get list of indexes in table
+    $indexes = array_change_key_case($db->MetaIndexes($CFG->prefix . $xmldb_table->getName(), CASE_LOWER));
+
+/// Iterate over them looking for columns coincidence
+    if ($indexes) {
+        foreach ($indexes as $indexname => $index) {
+            $columns = $index['columns'];
+        /// Lower case column names
+            $columns = array_flip($columns);
+            $columns = array_change_key_case($columns, CASE_LOWER);
+            $columns = array_flip($columns);
+        /// Check if index matchs queried index
+            $diferences = array_merge(array_diff($columns, $indcolumns), array_diff($indcolumns, $columns));
+        /// If no diferences, we have find the index
+            if (empty($diferences)) {
+                return $indexname;
+            }
+        }
+    }
+/// Arriving here, index not found
+    return false;
+}
+
+/**
  * This function will load one entire XMLDB file, generating all the needed
  * SQL statements, specific for each RDBMS ($CFG->dbtype) and, finally, it
  * will execute all those statements against the DB.
