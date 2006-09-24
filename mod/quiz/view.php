@@ -39,7 +39,6 @@
     // Check login and get context.
     require_login($course->id, false, $cm);
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-    require_capability('mod/quiz:view', $context);
 
     // if no questions have been set up yet redirect to edit.php
     if (!$quiz->questions and has_capability('mod/quiz:manage', $context)) {
@@ -79,34 +78,41 @@
     $currenttab = 'info';
     include('tabs.php');
 
-    // Print quiz name and description.
+    // Print quiz name 
+
     print_heading(format_string($quiz->name));
 
-    if (trim(strip_tags($quiz->intro))) {
-        $formatoptions->noclean = true;
-        print_simple_box(format_text($quiz->intro, FORMAT_MOODLE, $formatoptions), "center");
-    }
+    if (has_capability('mod/quiz:view', $context)) {
 
-    // Print information about number of attempts and grading method.
-    if ($quiz->attempts > 1) {
-        echo "<p align=\"center\">".get_string("attemptsallowed", "quiz").": $quiz->attempts</p>";
-    }
-    if ($quiz->attempts != 1) {
-        echo "<p align=\"center\">".get_string("grademethod", "quiz").": ".$QUIZ_GRADE_METHOD[$quiz->grademethod]."</p>";
-    }
-
-    // Print information about timings.
-    $timenow = time();
-    $available = ($quiz->timeopen < $timenow and ($timenow < $quiz->timeclose or !$quiz->timeclose));
-    if ($available) {
-        if ($quiz->timelimit) {
-            echo "<p align=\"center\">".get_string("quiztimelimit","quiz", format_time($quiz->timelimit * 60))."</p>";
+        // Print quiz description
+        if (trim(strip_tags($quiz->intro))) {
+            $formatoptions->noclean = true;
+            print_simple_box(format_text($quiz->intro, FORMAT_MOODLE, $formatoptions), "center");
         }
-        quiz_view_dates($quiz);
-    } else if ($timenow < $quiz->timeopen) {
-        echo "<p align=\"center\">".get_string("quiznotavailable", "quiz", userdate($quiz->timeopen));
+
+        // Print information about number of attempts and grading method.
+        if ($quiz->attempts > 1) {
+            echo "<p align=\"center\">".get_string("attemptsallowed", "quiz").": $quiz->attempts</p>";
+        }
+        if ($quiz->attempts != 1) {
+            echo "<p align=\"center\">".get_string("grademethod", "quiz").": ".$QUIZ_GRADE_METHOD[$quiz->grademethod]."</p>";
+        }
+
+        // Print information about timings.
+        $timenow = time();
+        $available = ($quiz->timeopen < $timenow and ($timenow < $quiz->timeclose or !$quiz->timeclose));
+        if ($available) {
+            if ($quiz->timelimit) {
+                echo "<p align=\"center\">".get_string("quiztimelimit","quiz", format_time($quiz->timelimit * 60))."</p>";
+            }
+            quiz_view_dates($quiz);
+        } else if ($timenow < $quiz->timeopen) {
+            echo "<p align=\"center\">".get_string("quiznotavailable", "quiz", userdate($quiz->timeopen));
+        } else {
+            echo "<p align=\"center\">".get_string("quizclosed", "quiz", userdate($quiz->timeclose));
+        }
     } else {
-        echo "<p align=\"center\">".get_string("quizclosed", "quiz", userdate($quiz->timeclose));
+        $available = false;
     }
 
     // Show number of attempts summary to those who can view reports.
