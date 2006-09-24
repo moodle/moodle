@@ -72,16 +72,16 @@
 </tr>
 
 <tr valign="top">
-    <td align="right"><?php print_string('permissions','role') ?> :</td>
-    <td><table>
+    <td align="right"><?php print_string('permissions','role') ?>:</td>
+    <td><table class="rolecap">
 
 <tr>
-<td><?php print_string('capability','role') ?></td>
-<td><?php print_string('inherit','role') ?></td>
-<td><?php print_string('allow','role') ?></td>
-<td><?php print_string('prevent','role') ?></td>
-<td><?php print_string('prohibit','role') ?></td>
-<td><?php print_string('risks','role') ?></td>
+<th class="name" align="left"><?php print_string('capability','role') ?></th>
+<th class="inherit"><?php print_string('inherit','role') ?></th>
+<th class="allow"><?php print_string('allow','role') ?></th>
+<th class="prevent"><?php print_string('prevent','role') ?></th>
+<th class="prohibit"><?php print_string('prohibit','role') ?></th>
+<th class="risk"><?php print_string('risks','role') ?></th>
 </tr>
 
 <?php
@@ -93,7 +93,7 @@ $component = '';
 foreach ($capabilities as $capability) {
     // prints a breaker if component or name or context level
     if ($capability->component != $component or $capability->contextlevel != $contextlevel) {
-        echo ('<tr><td colspan="4"><strong>'.
+        echo ('<tr class="rolecapheading"><td colspan="4"><strong>'.
                get_component_string($capability->component, $capability->contextlevel).'</strong></td></tr>');
     }
 
@@ -112,30 +112,39 @@ foreach ($capabilities as $capability) {
 
     $disabled = ($action != 'edit') ? ' disabled="disabled" ' : '';
 
+    $riskinfo = '';
+    $rowclasses = '';
+    if (RISK_MANAGETRUST & (int)$capability->riskbitmask) {
+        $riskinfo .= '<a title="'.get_string('riskmanagetrust', 'admin').'" href="'.$CFG->docroot.'/'.current_language().'/Risks">T</a>';
+        $rowclasses .= ' riskmanagetrust';
+    }
+    if (RISK_CONFIG & (int)$capability->riskbitmask) {
+        $riskinfo .= '<a title="'.get_string('riskconfig', 'admin').'" href="'.$CFG->docroot.'/'.current_language().'/Risks">C</a>';
+        $rowclasses .= ' riskconfig';
+    }
+    if (RISK_XSS & (int)$capability->riskbitmask) {
+        $riskinfo .= '<a title="'.get_string('riskxss', 'admin').'" href="'.$CFG->docroot.'/'.current_language().'/Risks">X</a>';
+        $rowclasses .= ' riskxss';
+    }
+    if (RISK_PERSONAL & (int)$capability->riskbitmask) {
+        $riskinfo .= '<a title="'.get_string('riskpersonal', 'admin').'" href="'.$CFG->docroot.'/'.current_language().'/Risks">P</a>';
+        $rowclasses .= ' riskpersonal';
+    }
+    if (RISK_SPAM & (int)$capability->riskbitmask) {
+        $riskinfo .= '<a title="'.get_string('riskspam', 'admin').'" href="'.$CFG->docroot.'/'.current_language().'/Risks">S</a>';
+        $rowclasses .= ' riskspam';
+    }
+
     ?>
 
-        <tr>
-        <td><span title="<?php echo $capability->name ?>"><?php echo get_capability_string($capability->name); ?></span></td>
-        <td><input type="radio" name="<?php echo $capability->name; ?>" value="<?php echo CAP_INHERIT ?>" <?php if (!isset($localoverride->permission) || $localoverride->permission==CAP_INHERIT){ echo 'checked="checked"'; }?> <?php echo $disabled; ?>/></td>
-        <td><input type="radio" name="<?php echo $capability->name; ?>" value="<?php echo CAP_ALLOW ?>" <?php if (isset($localoverride->permission) && $localoverride->permission==CAP_ALLOW){ echo 'checked="checked"'; }?> <?php echo $disabled; ?>/></td>
-        <td ><input type="radio" name="<?php echo $capability->name; ?>" value="<?php echo CAP_PREVENT ?>" <?php if (isset($localoverride->permission) && $localoverride->permission==CAP_PREVENT){ echo 'checked="checked"'; }?> <?php echo $disabled; ?>/></td>
-        <td ><input type="radio" name="<?php echo $capability->name; ?>" value="<?php echo CAP_PROHIBIT ?>" <?php if (isset($localoverride->permission) && $localoverride->permission==CAP_PROHIBIT){ echo 'checked="checked"'; }?> <?php echo $disabled; ?>/></td>
-        <td><?php
-            if (RISK_MANAGETRUST & (int)$capability->riskbitmask) {
-                echo "T";
-            }
-            if (RISK_CONFIG & (int)$capability->riskbitmask) {
-                echo "C";
-            }
-            if (RISK_XSS & (int)$capability->riskbitmask) {
-                echo "X";
-            }
-            if (RISK_PERSONAL & (int)$capability->riskbitmask) {
-                echo "P";
-            }
-            if (RISK_SPAM & (int)$capability->riskbitmask) {
-                echo "S";
-            }
+        <tr class="rolecap <?php echo $rowclasses; ?>">
+        <td class="name"><span title="<?php echo $capability->name ?>"><?php echo get_capability_string($capability->name); ?></span></td>
+        <td class="inherit"><input type="radio" name="<?php echo $capability->name; ?>" value="<?php echo CAP_INHERIT ?>" <?php if (!isset($localoverride->permission) || $localoverride->permission==CAP_INHERIT){ echo 'checked="checked"'; }?> <?php echo $disabled; ?>/></td>
+        <td class="allow"><input type="radio" name="<?php echo $capability->name; ?>" value="<?php echo CAP_ALLOW ?>" <?php if (isset($localoverride->permission) && $localoverride->permission==CAP_ALLOW){ echo 'checked="checked"'; }?> <?php echo $disabled; ?>/></td>
+        <td class="prevent" ><input type="radio" name="<?php echo $capability->name; ?>" value="<?php echo CAP_PREVENT ?>" <?php if (isset($localoverride->permission) && $localoverride->permission==CAP_PREVENT){ echo 'checked="checked"'; }?> <?php echo $disabled; ?>/></td>
+        <td class="prohibit" ><input type="radio" name="<?php echo $capability->name; ?>" value="<?php echo CAP_PROHIBIT ?>" <?php if (isset($localoverride->permission) && $localoverride->permission==CAP_PROHIBIT){ echo 'checked="checked"'; }?> <?php echo $disabled; ?>/></td>
+        <td class="risk"><?php 
+            echo $riskinfo; 
         ?></td>
         </tr>
 
