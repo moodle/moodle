@@ -15,7 +15,11 @@ if (!isset($CFG->hotpot_excelencodings)) {
 
 $CFG->hotpotroot = "$CFG->dirroot/mod/hotpot";
 $CFG->hotpottemplate = "$CFG->hotpotroot/template";
-$CFG->hotpotismobile = preg_match('/Alcatel|ATTWS|DoCoMo|Doris|Hutc3G|J-PHONE|Java|KDDI|KGT|LGE|MOT|Nokia|portalmmm|ReqwirelessWeb|SAGEM|SHARP|SIE-|SonyEricsson|Teleport|UP\.Browser|UPG1|Wapagsim/', $_SERVER['HTTP_USER_AGENT']);
+if (!empty($_SERVER['HTTP_USER_AGENT'])) {
+    $CFG->hotpotismobile = preg_match('/Alcatel|ATTWS|DoCoMo|Doris|Hutc3G|J-PHONE|Java|KDDI|KGT|LGE|MOT|Nokia|portalmmm|ReqwirelessWeb|SAGEM|SHARP|SIE-|SonyEricsson|Teleport|UP\.Browser|UPG1|Wapagsim/', $_SERVER['HTTP_USER_AGENT']);
+} else {
+    $CFG->hotpotismobile = false;
+}
 
 define("HOTPOT_JS", "$CFG->wwwroot/mod/hotpot/hotpot-full.js");
 
