@@ -12,29 +12,9 @@
             $submitlabel = get_string('savechanges');
     }
 ?>
-<table cellpadding="9" cellspacing="0" >
 
-<?php
-    if ($action == 'view') { ?>
-      <tr valign="top">
-        <td align="right"><?php print_string('selectrole', 'role') ?>:</td>
-        <td><table><tr>
-            <td><form name="switchrole" action="manage.php" method="get">
-                <input type="hidden" name="action" value="view" />
-                <?php choose_from_menu ($roleoptions, 'roleid', $roleid, get_string('listallroles', 'role').'...', $script='switchrole.submit()') ?>
-            </form></td>
-            <td><form name="editrole" action="manage.php" method="get">
-                <input type="hidden" name="roleid" value="<?php p($roleid) ?>" />
-                <input type="hidden" name="action" value="edit" />
-                <input type="submit" value="<?php print_string('edit') ?>" />
-            </form></td>
-            </tr></table>
-        </td>
-      </tr>
-<?php
-    }
-?>
 
+<table cellpadding="9" cellspacing="0" align="center">
 <form name="rolesform" action="manage.php" method="post">
 <input type="hidden" name="roleid" value="<?php p($roleid) ?>" />
 <input type="hidden" name="sesskey" value="<?php p(sesskey()) ?>" />
@@ -74,7 +54,7 @@
 
 <?php print_heading(get_string('permissions','role')) ?>
 
-<table class="rolecap">
+<table class="rolecap" align="center">
 
 <tr>
 <th class="name" align="left"><?php print_string('capability','role') ?></th>
