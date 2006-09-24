@@ -80,8 +80,14 @@ $string['maxbytes'] = 'Maximum uploaded file size';
 $string['messaging'] = 'Enable messaging system';
 $string['allowobjectembed'] = 'Allow EMBED and OBJECT tags';
 
-#$string['enabletrusttext'] = '';
-#$string['configenabletrusttext'] = '';
+$string['enabletrusttext'] = '';
+$string['configenabletrusttext'] = '';
+
+$string['riskmanagetrust'] = 'Users could change trust settings of other users';
+$string['riskconfig'] = 'Users could change site configuration and behaviour';
+$string['riskxss'] = 'Users could add files and texts that allow cross-site scripting (XSS)';
+$string['riskpersonal'] = 'Users could gain access to private information of other users';
+$string['riskspam'] = 'Users could send spam to site users or others';
 
 $string['maxeditingtime'] = 'Maximum time to edit posts';
 $string['fullnamedisplay'] = 'Full Name Format';
