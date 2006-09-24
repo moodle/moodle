@@ -108,28 +108,23 @@
 
         $closequiz = $quiz->timeclose ? userdate($quiz->timeclose) : '';
 
+        $gradecol = '';
+        $feedbackcol = '';
+
         if (has_capability('mod/quiz:viewreports', $context)) {
             if ($a->attemptnum = count_records('quiz_attempts', 'quiz', $quiz->id, 'preview', 0)) {
                 $a->studentnum = count_records_select('quiz_attempts', "quiz = '$quiz->id' AND preview = '0'", 'COUNT(DISTINCT userid)');
                 $a->studentstring  = $course->students;
                 $gradecol = "<a href=\"report.php?mode=overview&amp;q=$quiz->id\">".get_string('numattempts', 'quiz', $a).'</a>';
-            } else {
-                $gradecol = "";
             }
         } else {
             // If student has no grade for this quiz, 
             // or the quiz has no grade, display nothing in grade col
-            if ($bestgrade === NULL || $quiz->grade == 0) {
-                $gradecol = "";
-                $feedbackcol = '';
-            } else {
+            if ($bestgrade !== NULL && $quiz->grade != 0) {
                 //If all quiz's attempts have visible results, show bestgrade
-                if(all_attempt_results_visible($quiz, $USER)) {
+                if (all_attempt_results_visible($quiz, $USER)) {
                     $gradecol = "$bestgrade / $quiz->grade";
                     $feedbackcol = quiz_get_feedback($quiz, $bestgrade);
-                } else {
-                    $gradecol = "";
-                    $feedbackcol = '';
                 }
             }
         }
@@ -141,7 +136,7 @@
         }
     }
 
-    echo "<br />";
+    echo '<br />';
 
     print_table($table);
 
