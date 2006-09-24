@@ -132,7 +132,8 @@ class test extends XMLDBAction {
             $table = new XMLDBTable ('anothertest');
             $table->addFieldInfo('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
             $table->addFieldInfo('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
-            $table->addFieldInfo('name', XMLDB_TYPE_CHAR, '30', null, XMLDB_NOTNULL, null, null, null, 'Moodle');
+            $table->addFieldInfo('name', XMLDB_TYPE_CHAR, '30', null, null, null, null, null, 'Moodle');
+            $table->addFieldInfo('secondname', XMLDB_TYPE_CHAR, '30', null, XMLDB_NOTNULL, null, null, null, null);
             $table->addFieldInfo('intro', XMLDB_TYPE_TEXT, 'small', null, XMLDB_NOTNULL, null, null, null, null);
             $table->addFieldInfo('grade', XMLDB_TYPE_NUMBER, '20,10', null, null, null, null, null, '');
             $table->addKeyInfo('primary', XMLDB_KEY_PRIMARY, array('id'));
@@ -219,8 +220,8 @@ class test extends XMLDBAction {
         if ($test->status) {
         /// Get SQL code and execute it
             $test = new stdClass;
-            $field = new XMLDBField('name');
-            $field->setAttributes(XMLDB_TYPE_CHAR, '10', null, XMLDB_NOTNULL, null, null, null, 'Moodle');
+            $field = new XMLDBField('secondname');
+            $field->setAttributes(XMLDB_TYPE_CHAR, '10', null, XMLDB_NOT_NULL, null, null, null, null);
             
             $test->sql = $table->getAlterFieldSQL($CFG->dbtype, $CFG->prefix, $field, true);
             $test->status = change_field_precision($table, $field, false, false);
@@ -275,22 +276,7 @@ class test extends XMLDBAction {
             $tests['change field sign (signed)'] = $test;
         }
 
-    /// 13th test. Change the nullability of one char field to null
-        if ($test->status) {
-        /// Get SQL code and execute it
-            $test = new stdClass;
-            $field = new XMLDBField('name');
-            $field->setAttributes(XMLDB_TYPE_CHAR, '10', null, null, null, null, null, 'Moodle');
-            
-            $test->sql = $table->getAlterFieldSQL($CFG->dbtype, $CFG->prefix, $field, true);
-            $test->status = change_field_notnull($table, $field, false, false);
-            if (!$test->status) {
-                $test->error = $db->ErrorMsg();
-            }
-            $tests['change field nullability (null)'] = $test;
-        }
-
-    /// 14th test. Change the nullability of one char field to not null
+    /// 13th test. Change the nullability of one char field to not null
         if ($test->status) {
         /// Get SQL code and execute it
             $test = new stdClass;
@@ -305,6 +291,20 @@ class test extends XMLDBAction {
             $tests['change field nullability (not null)'] = $test;
         }
 
+    /// 14th test. Change the nullability of one char field to null
+        if ($test->status) {
+        /// Get SQL code and execute it
+            $test = new stdClass;
+            $field = new XMLDBField('name');
+            $field->setAttributes(XMLDB_TYPE_CHAR, '10', null, null, null, null, null, 'Moodle');
+            
+            $test->sql = $table->getAlterFieldSQL($CFG->dbtype, $CFG->prefix, $field, true);
+            $test->status = change_field_notnull($table, $field, false, false);
+            if (!$test->status) {
+                $test->error = $db->ErrorMsg();
+            }
+            $tests['change field nullability (null)'] = $test;
+        }
 
 
 
