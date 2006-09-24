@@ -240,6 +240,61 @@ function table_column($table, $oldfield, $field, $type='integer', $size='10',
 }
 
 /**
+ * This function IS NOT IMPLEMENTED. ONCE WE'LL BE USING RELATIONAL
+ * INTEGRITY IT WILL BECOME MORE USEFUL. FOR NOW, JUST CALCULATE "OFFICIAL"
+ * KEY NAMES WITHOUT ACCESSING TO DB AT ALL.
+ * Given one XMLDBKey, the function returns the name of the key in DB (if exists)
+ * of false if it doesn't exist
+ *
+ * @uses, $db
+ * @param XMLDBTable the table to be searched
+ * @param XMLDBKey the key to be searched
+ * @return string key name of false
+ */
+function find_key_name($xmldb_table, $xmldb_key) {
+
+    global $CFG, $db;
+
+/// Extract key columns
+    $keycolumns = $xmldb_key->getFields();
+
+/// Get list of keys in table
+/// first primaries (we aren't going to use this now, because the MetaPrimaryKeys is awful)
+    ///TODO: To implement when we advance in relational integrity
+/// then uniques (note that Moodle, for now, shouldn't have any UNIQUE KEY for now, but unique indexes)
+    ///TODO: To implement when we advance in relational integrity (note that AdoDB hasn't any MetaXXX for this.
+/// then foreign (note that Moodle, for now, shouldn't have any FOREIGN KEY for now, but indexes)
+    ///TODO: To implement when we advance in relational integrity (note that AdoDB has one MetaForeignKeys()
+    ///but it's far from perfect.
+/// TODO: To create the proper functions inside each generator to retrieve all the needed KEY info (name
+///       columns, reftable and refcolumns
+
+/// So all we do is to return the official name of the requested key without any confirmation!)
+    $classname = 'XMLDB' . $CFG->dbtype;
+    $generator = new $classname();
+    $generator->setPrefix($CFG->prefix);
+/// One exception, harcoded primary constraint names
+    if ($generator->primary_key_name && $xmldb_key->getType() == XMLDB_KEY_PRIMARY) {
+        return $generator->primary_key_name;
+    } else {
+    /// Calculate the name suffix
+        switch ($xmldb_key->getType()) {
+            case XMLDB_KEY_PRIMARY:
+                $suffix = 'pk';
+                break;
+            case XMLDB_KEY_UNIQUE:
+                $suffix = 'uk';
+                break;
+            case XMLDB_KEY_FOREIGN:
+                $suffix = 'fk';
+                break;
+        }
+    /// And simply, return the oficial name
+        return $generator->getNameForObject($xmldb_table->getName(), implode(', ', $xmldb_key->getFields()), $suffix);
+    }
+}
+
+/**
  * Given one XMLDBIndex, the function returns the name of the index in DB (if exists)
  * of false if it doesn't exist
  *
