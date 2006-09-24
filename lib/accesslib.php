@@ -2266,6 +2266,9 @@ function get_component_string($component, $contextlevel) {
             if (preg_match('|^enrol/|', $component)) {
                 $langname = str_replace('/', '_', $component);
                 $string = get_string('enrolname', $langname);
+            } else if (preg_match('|^block/|', $component)) {
+                $langname = str_replace('/', '_', $component);
+                $string = get_string('blockname', $langname);
             } else {
                 $string = get_string('coresystem');
             }
