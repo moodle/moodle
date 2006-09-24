@@ -15,7 +15,7 @@ $allowrenames   = optional_param('allowrenames', 0, PARAM_BOOL);
 
 require_login();
 
-require_capability('moodle/user:upload', get_context_instance(CONTEXT_SYSTEM, SITEID));
+require_capability('moodle/site:uploadusers', get_context_instance(CONTEXT_SYSTEM, SITEID));
 
 if (! $site = get_site()) {
     error("Could not find site-level course");

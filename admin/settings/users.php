@@ -10,7 +10,7 @@ $ADMIN->add('users', new admin_externalpage('userauthentication', get_string('au
 $ADMIN->add('users', new admin_category('accounts', get_string('accounts', 'admin')));
 $ADMIN->add('accounts', new admin_externalpage('editusers', get_string('userlist','admin'), "$CFG->wwwroot/$CFG->admin/user.php", array('moodle/user:update', 'moodle/user:delete')));
 $ADMIN->add('accounts', new admin_externalpage('addnewuser', get_string('addnewuser'), "$CFG->wwwroot/$CFG->admin/user.php?newuser=true", 'moodle/user:create'));
-$ADMIN->add('accounts', new admin_externalpage('uploadusers', get_string('uploadusers'), "$CFG->wwwroot/$CFG->admin/uploaduser.php", 'moodle/user:upload'));
+$ADMIN->add('accounts', new admin_externalpage('uploadusers', get_string('uploadusers'), "$CFG->wwwroot/$CFG->admin/uploaduser.php", 'moodle/site:uploadusers'));
 
 
 // stuff under the "roles" subcategory

@@ -262,6 +262,23 @@ $moodle_capabilities = array(
         )
     ),
 
+    'moodle/site:uploadusers' => array(
+
+        'riskbitmask' => RISK_SPAM | RISK_PERSONAL,
+
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'legacy' => array(
+            'guest' => CAP_PREVENT,
+            'student' => CAP_PREVENT,
+            'teacher' => CAP_PREVENT,
+            'editingteacher' => CAP_PREVENT,
+            'coursecreator' => CAP_PREVENT,
+            'admin' => CAP_ALLOW
+        )
+    ),
+
+
     'moodle/user:create' => array(
 
         'riskbitmask' => RISK_SPAM | RISK_PERSONAL,
@@ -293,22 +310,6 @@ $moodle_capabilities = array(
     ),
 
     'moodle/user:update' => array(
-
-        'riskbitmask' => RISK_SPAM | RISK_PERSONAL,
-
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_SYSTEM,
-        'legacy' => array(
-            'guest' => CAP_PREVENT,
-            'student' => CAP_PREVENT,
-            'teacher' => CAP_PREVENT,
-            'editingteacher' => CAP_PREVENT,
-            'coursecreator' => CAP_PREVENT,
-            'admin' => CAP_ALLOW
-        )
-    ),
-
-    'moodle/user:upload' => array(
 
         'riskbitmask' => RISK_SPAM | RISK_PERSONAL,
 
