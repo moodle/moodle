@@ -56,6 +56,8 @@ class XMLDBoci8po extends XMLDBgenerator {
 
     var $enum_inline_code = false; //Does the generator need to add inline code in the column definition
 
+    var $alter_column_sql = 'ALTER TABLE TABLENAME MODIFY (COLUMNSPECS)'; //The SQL template to alter columns
+
     /**
      * Creates one new XMLDBpostgres7
      */
@@ -190,6 +192,52 @@ class XMLDBoci8po extends XMLDBgenerator {
     function getDropTableExtraSQL ($xmldb_table) {
         $xmldb_field = new XMLDBField('id'); // Fields having sequences should be exclusively, id.
         return $this->getDropSequenceSQL($xmldb_table, $xmldb_field, false);
+    }
+
+    /**
+     * Given one XMLDBTable and one XMLDBField, return the SQL statements needded to alter the field in the table
+     * Oracle has some severe limits:
+     *     - clob and blob fields doesn't allow type to be specified
+     *     - error is dropped if the null/not null clause is specified and hasn't changed
+     */
+    function getAlterFieldSQL($xmldb_table, $xmldb_field) {
+
+         global $db;
+
+     /// Get the quoted name of the table and field
+         $tablename = $this->getEncQuoted($this->prefix . $xmldb_table->getName());
+         $fieldname = $this->getEncQuoted($xmldb_field->getName());
+
+     /// Take a look to field metadata
+         $meta = array_change_key_case($db->MetaColumns($tablename));
+         $metac = $meta[$fieldname];
+         $oldtype = strtolower($metac->type);
+         $oldlength = $metac->max_length;
+         $olddecimals = empty($metac->scale) ? null : $metac->scale;
+         $oldnotnull = empty($metac->not_null) ? false : $metac->not_null;
+         $olddefault = empty($metac->default_value) ? null : $metac->default_value;
+
+         $islob = false;
+
+     /// If field is CLOB and new one is also XMLDB_TYPE_TEXT or 
+     /// if fiels is BLOB and new one is also XMLDB_TYPE_BINARY
+     /// prevent type to be specified, so only NULL and DEFAULT clauses are allowed
+         if (($oldtype = 'clob' && $xmldb_field->getType() == XMLDB_TYPE_TEXT) ||
+             ($oldtype = 'blob' && $xmldb_field->getType() == XMLDB_TYPE_BINARY)) {
+             $this->alter_column_skip_type = true;
+             $islob = true;
+         }
+
+     /// If field is NOT NULL and the new one too or
+     /// if field is NULL and the new one too
+     /// prevent null clause to be specified
+         if (($oldnotnull && $xmldb_field->getNotnull()) ||
+             (!$oldnotnull && !$xmldb_field->getNotnull())) {
+             $this->alter_column_skip_notnull = true;
+         }
+
+    /// In the rest of cases, use the general generator
+         return parent::getAlterFieldSQL($xmldb_table, $xmldb_field);
     }
 
     /**

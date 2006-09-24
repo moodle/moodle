@@ -97,6 +97,10 @@ class XMLDBgenerator {
 
     var $alter_column_skip_default = false; //The generator will skip the default clause on alter columns
 
+    var $alter_column_skip_type = false; //The generator will skip the type clause on alter columns
+
+    var $alter_column_skip_notnull = false; //The generator will skip the null/notnull clause on alter columns
+
     var $prefix;         // Prefix to be used for all the DB objects
 
     var $reserved_words; // List of reserved words (in order to quote them properly)
@@ -297,7 +301,7 @@ class XMLDBgenerator {
     /**
      * Given one correct XMLDBField, returns the complete SQL line to create it
      */
-    function getFieldSQL($xmldb_field, $skip_default_clause = false)  {
+    function getFieldSQL($xmldb_field, $skip_type_clause = false, $skip_default_clause = false, $skip_notnull_clause = false)  {
 
     /// First of all, convert integers to numbers if defined
         if ($this->integer_to_number) {
@@ -314,12 +318,15 @@ class XMLDBgenerator {
 
     /// The name
         $field = $this->getEncQuoted($xmldb_field->getName());
-    /// The type and length (if the field isn't enum)
-        if (!$xmldb_field->getEnum() || $this->enum_inline_code == false) {
-            $field .= ' ' . $this->getTypeSQL($xmldb_field->getType(), $xmldb_field->getLength(), $xmldb_field->getDecimals());
-        } else {
-        /// call to custom function
-            $field .= ' ' . $this->getEnumSQL($xmldb_field);
+    /// The type and length only if we don't want to skip it
+        if (!$skip_type_clause) {
+        /// The type and length (if the field isn't enum)
+            if (!$xmldb_field->getEnum() || $this->enum_inline_code == false) {
+                $field .= ' ' . $this->getTypeSQL($xmldb_field->getType(), $xmldb_field->getLength(), $xmldb_field->getDecimals());
+            } else {
+            /// call to custom function
+                $field .= ' ' . $this->getEnumSQL($xmldb_field);
+            }
         }
     /// The unsigned if supported
         if ($this->unsigned_allowed && ($xmldb_field->getType() == XMLDB_TYPE_INTEGER ||
@@ -331,11 +338,14 @@ class XMLDBgenerator {
         }
     /// Calculate the not null clause
         $notnull = '';
-        if ($xmldb_field->getNotNull()) {
-            $notnull = ' NOT NULL';
-        } else {
-            if ($this->specify_nulls) {
-                $notnull = ' NULL';
+    /// Only if we don't want to skip it
+        if (!$skip_notnull_clause) {
+            if ($xmldb_field->getNotNull()) {
+                $notnull = ' NOT NULL';
+            } else {
+                if ($this->specify_nulls) {
+                    $notnull = ' NULL';
+                }
             }
         }
     /// Calculate the default clause
@@ -470,7 +480,7 @@ class XMLDBgenerator {
 
         $results[] = $drop;
 
-    /// call to getDropTableExtraSQL() if $rename_table_extra_code is enabled. It will add sequence/trigger drop code.
+    /// call to getDropTableExtraSQL() if $drop_table_extra_code is enabled. It will add sequence/trigger drop code.
         if ($this->drop_table_extra_code) {
             $extra_sentences = $this->getDropTableExtraSQL($xmldb_table);
             $results = array_merge($results, $extra_sentences);
@@ -537,13 +547,18 @@ class XMLDBgenerator {
 
         $results = array();
 
+    /// Always specify NULLs in alter fields because we can change not nulls to nulls
+        $this->specify_nulls = true;
+
     /// Get the quoted name of the table and field
         $tablename = $this->getEncQuoted($this->prefix . $xmldb_table->getName());
         $fieldname = $this->getEncQuoted($xmldb_field->getName());
 
     /// Build de alter sentence using the alter_column_sql template
         $alter = str_replace('TABLENAME', $this->getEncQuoted($this->prefix . $xmldb_table->getName()), $this->alter_column_sql);
-        $alter = str_replace('COLUMNSPECS', $this->getFieldSQL($xmldb_field, $this->alter_column_skip_default), $alter);
+        $alter = str_replace('COLUMNSPECS', $this->getFieldSQL($xmldb_field, $this->alter_column_skip_type,
+                                                                             $this->alter_column_skip_default,
+                                                                             $this->alter_column_skip_notnull), $alter);
 
     /// Build the standard alter table modify
         $results[] = $alter;
