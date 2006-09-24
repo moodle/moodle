@@ -1885,9 +1885,9 @@ function main_upgrade($oldversion=0) {
     }
 
     if ($oldversion < 2006092200) {
-        execute_sql("ALTER TABLE `{$CFG->prefix}context` DROP INDEX `aggregatelevel-instanceid`;",false);
+/*        execute_sql("ALTER TABLE `{$CFG->prefix}context` DROP INDEX `aggregatelevel-instanceid`;",false);
         table_column('context', 'aggregatelevel', 'contextlevel', 'int', '10', 'unsigned', '0', 'not null', '');
-        execute_sql("ALTER TABLE `{$CFG->prefix}context` ADD UNIQUE INDEX `contextlevel-instanceid` (`contextlevel`, `instanceid`)",false);
+        execute_sql("ALTER TABLE `{$CFG->prefix}context` ADD UNIQUE INDEX `contextlevel-instanceid` (`contextlevel`, `instanceid`)",false);*/
     }
 
     if ($oldversion < 2006092302) {
@@ -1904,12 +1904,23 @@ function main_upgrade($oldversion=0) {
                 $i++;
             }
         }
-        execute_sql("ALTER TABLE {$CFG->prefix}role DROP INDEX {$CFG->prefix}role_sor_ix;");
-        execute_sql("ALTER TABLE {$CFG->prefix}role ADD UNIQUE INDEX {$CFG->prefix}role_sor_uix (sortorder)");
+/*        execute_sql("ALTER TABLE {$CFG->prefix}role DROP INDEX {$CFG->prefix}role_sor_ix;");
+        execute_sql("ALTER TABLE {$CFG->prefix}role ADD UNIQUE INDEX {$CFG->prefix}role_sor_uix (sortorder)");*/
     }
 
     if ($oldversion < 2006092400) {
         table_column('user', '', 'trustbitmask', 'INTEGER', '10', 'unsigned', '0', 'not null', '');
+    }
+
+    if ($oldversion < 2006092409) {
+        // ok, once more and now correctly!
+        execute_sql("DROP INDEX \"aggregatelevel-instanceid\";", false);
+        execute_sql("DROP INDEX \"contextlevel-instanceid\";", false);
+        execute_sql("CREATE UNIQUE INDEX {$CFG->prefix}cont_conins_uix ON {$CFG->prefix}context (contextlevel, instanceid);", false);
+
+        execute_sql("DROP INDEX {$CFG->prefix}role_sor_ix;", false);
+        execute_sql("DROP INDEX {$CFG->prefix}role_sor_uix;", false);
+        execute_sql("CREATE UNIQUE INDEX {$CFG->prefix}role_sor_uix ON {$CFG->prefix}role (sortorder);", false);
     }
 
 
