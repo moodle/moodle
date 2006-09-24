@@ -174,7 +174,33 @@ class test extends XMLDBAction {
             $tests['drop field'] = $test;
         }
 
-    /// 6th test. Change the precision of one text field
+    /// 6th test. Adding one complex enum field
+        if ($test->status) {
+        /// Create a new field with complex specs (enums are good candidates)
+            $field = new XMLDBField('type');
+            $field->setAttributes(XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, XMLDB_ENUM, array('single', 'news', 'general', 'social', 'eachuser', 'teacher', 'qanda'), 'general', 'course');
+        /// Get SQL code and execute it
+            $test = new stdClass;
+            $test->sql = $table->getAddFieldSQL($CFG->dbtype, $CFG->prefix, $field, true);
+            $test->status = add_field($table, $field, false, false);
+            if (!$test->status) {
+                $test->error = $db->ErrorMsg();
+            }
+            $tests['add field again'] = $test;
+        }
+
+    /// 7th test. Dropping one complex enum field
+        if ($test->status) {
+        /// Create a new field with complex specs (enums are good candidates)
+            $test = new stdClass;
+            $test->sql = $table->getDropFieldSQL($CFG->dbtype, $CFG->prefix, $field, true);
+            $test->status = drop_field($table, $field, false, false);
+            if (!$test->status) {
+                $test->error = $db->ErrorMsg();
+            }
+            $tests['drop field again'] = $test;
+        }
+    /// 8th test. Change the precision of one text field
         if ($test->status) {
         /// Get SQL code and execute it
             $test = new stdClass;
@@ -189,7 +215,7 @@ class test extends XMLDBAction {
             $tests['change field precision (text)'] = $test;
         }
 
-    /// 7th test. Change the precision of one char field
+    /// 9th test. Change the precision of one char field
         if ($test->status) {
         /// Get SQL code and execute it
             $test = new stdClass;
@@ -204,7 +230,7 @@ class test extends XMLDBAction {
             $tests['change field precision (char)'] = $test;
         }
 
-    /// 8th test. Change the precision of one numeric field
+    /// 10th test. Change the precision of one numeric field
         if ($test->status) {
         /// Get SQL code and execute it
             $test = new stdClass;
@@ -219,7 +245,7 @@ class test extends XMLDBAction {
             $tests['change field precision (number)'] = $test;
         }
 
-    /// 9th test. Change the sign of one numeric field to unsigned
+    /// 11th test. Change the sign of one numeric field to unsigned
         if ($test->status) {
         /// Get SQL code and execute it
             $test = new stdClass;
@@ -234,7 +260,7 @@ class test extends XMLDBAction {
             $tests['change field sign (unsigned)'] = $test;
         }
 
-    /// 10th test. Change the sign of one numeric field to signed
+    /// 12th test. Change the sign of one numeric field to signed
         if ($test->status) {
         /// Get SQL code and execute it
             $test = new stdClass;
@@ -249,7 +275,7 @@ class test extends XMLDBAction {
             $tests['change field sign (signed)'] = $test;
         }
 
-    /// 11th test. Change the nullability of one char field to null
+    /// 13th test. Change the nullability of one char field to null
         if ($test->status) {
         /// Get SQL code and execute it
             $test = new stdClass;
@@ -264,7 +290,7 @@ class test extends XMLDBAction {
             $tests['change field nullability (null)'] = $test;
         }
 
-    /// 12th test. Change the nullability of one char field to not null
+    /// 14th test. Change the nullability of one char field to not null
         if ($test->status) {
         /// Get SQL code and execute it
             $test = new stdClass;
