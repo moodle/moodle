@@ -3511,21 +3511,23 @@ function make_table($table) {
     return $output;
 }
 
-function print_recent_activity_note($time, $user, $isteacher, $text, $link, $return=false) {
+function print_recent_activity_note($time, $user, $text, $link, $return=false) {
     static $strftimerecent;
-
     $output = '';
+
+    $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
+    $viewfullnames = has_capability('moodle/site:viewfullnames', $context);
 
     if (empty($strftimerecent)) {
         $strftimerecent = get_string('strftimerecent');
     }
 
     $date = userdate($time, $strftimerecent);
-    $name = fullname($user, $isteacher);
+    $name = fullname($user, $viewfullnames);
 
     $output .= '<div class="head">';
     $output .= '<div class="date">'.$date.'</div> '.
-         '<div class="name">'.fullname($user, $isteacher).'</div>';
+         '<div class="name">'.fullname($user, $viewfullnames).'</div>';
     $output .= '</div>';
     $output .= '<div class="info"><a href="'.$link.'">'.format_string($text,true).'</a></div>';
 
