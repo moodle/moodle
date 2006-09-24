@@ -5,6 +5,9 @@
 
 require_once('../config.php');
 require_once($CFG->libdir.'/uploadlib.php');
+require_once($CFG->libdir.'/adminlib.php');
+$adminroot = admin_get_root();
+admin_externalpage_setup('uploadusers', $adminroot);
 
 $createpassword = optional_param('createpassword', 0, PARAM_BOOL);
 $updateaccounts = optional_param('updateaccounts', 0, PARAM_BOOL);
@@ -12,7 +15,7 @@ $allowrenames   = optional_param('allowrenames', 0, PARAM_BOOL);
 
 require_login();
 
-require_capability('moodle/user:create', get_context_instance(CONTEXT_SYSTEM, SITEID));
+require_capability('moodle/user:upload', get_context_instance(CONTEXT_SYSTEM, SITEID));
 
 if (! $site = get_site()) {
     error("Could not find site-level course");
@@ -22,15 +25,12 @@ if (!$adminuser = get_admin()) {
     error("Could not find site admin");
 }
 
-$streditmyprofile = get_string("editmyprofile");
-$stradministration = get_string("administration");
-$strfile = get_string("file");
-$struser = get_string("user");
-$strusers = get_string("users");
-$strusersnew = get_string("usersnew");
-$strusersupdated = get_string("usersupdated");
-$struploadusers = get_string("uploadusers");
-$straddnewuser = get_string("importuser");
+$strfile = get_string('file');
+$struser = get_string('user');
+$strusersnew = get_string('usersnew');
+$strusersupdated = get_string('usersupdated');
+$struploadusers = get_string('uploadusers');
+$straddnewuser = get_string('importuser');
 
 $csv_encode = '/\&\#44/';
 if (isset($CFG->CSV_DELIMITER)) {
@@ -47,9 +47,7 @@ if (isset($CFG->CSV_DELIMITER)) {
 
 /// Print the header
 
-print_header("$site->shortname: $struploadusers", $site->fullname,
-        "<a href=\"index.php\">$stradministration</a> ->
-        <a href=\"users.php\">$strusers</a> -> $struploadusers");
+admin_externalpage_print_header($adminroot);
 
 
 /// If a file has been uploaded, then process it
@@ -407,7 +405,7 @@ echo '<input type="submit" value="'.$struploadusers.'">';
 echo '</form><br />';
 echo '</center>';
 
-print_footer();
+admin_externalpage_print_footer($adminroot);
 
 
 
