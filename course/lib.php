@@ -885,9 +885,10 @@ function print_recent_activity($course) {
             //   $isteacher is to be deprecated!
             //
             // TODO:
-            //   1) Make sure that all _print_recent_activity functions are not
-            //      using the $isteacher value.
-            //   2) Remove the $isteacher parameter from the function calls.
+            //   1) Make sure that all _print_recent_activity functions are
+            //      not using the $isteacher value.
+            //   2) Eventually, remove the $isteacher parameter from the
+            //      function calls.
             //
             $modcontent = $print_recent_activity($course, $isteacher, $timestart);
             if ($modcontent) {
