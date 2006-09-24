@@ -223,7 +223,7 @@ function journal_print_recent_activity($course, $isteacher, $timestart) {
         $content = true;
         print_headline(get_string('newjournalentries', 'journal').':');
         foreach ($journals as $journal) {
-            print_recent_activity_note($journal->time, $journal, $isteacher, $journal->name,
+            print_recent_activity_note($journal->time, $journal, $journal->name,
                                        $CFG->wwwroot.'/mod/journal/'.$journal->url);
         }
     }

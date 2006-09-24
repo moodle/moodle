@@ -890,40 +890,43 @@ function hotpot_print_recent_activity($course, $isteacher, $timestart) {
 /// Return true if there was output, or false is there was none.
 
     global $CFG;
-
     $result = false;
-    if($isteacher){
 
-        $records = get_records_sql("
-            SELECT
-                h.id AS id,
-                h.name AS name,
-                COUNT(*) AS count_attempts
-            FROM
-                {$CFG->prefix}hotpot AS h,
-                {$CFG->prefix}hotpot_attempts AS a
-            WHERE
-                h.course = $course->id
-                AND h.id = a.hotpot
-                AND a.id = a.clickreportid
-                AND a.starttime > $timestart
-            GROUP  BY
-                h.id, h.name
-        ");
-        // note that PostGreSQL requires h.name in the GROUP BY clause
+    $records = get_records_sql("
+        SELECT
+            h.id AS id,
+            h.name AS name,
+            COUNT(*) AS count_attempts
+        FROM
+            {$CFG->prefix}hotpot AS h,
+            {$CFG->prefix}hotpot_attempts AS a
+        WHERE
+            h.course = $course->id
+            AND h.id = a.hotpot
+            AND a.id = a.clickreportid
+            AND a.starttime > $timestart
+        GROUP BY
+            h.id, h.name
+    ");
+    // note that PostGreSQL requires h.name in the GROUP BY clause
 
-        if($records) {
-
-            $names = array();
-            foreach ($records as $id => $record){
-                $href = "$CFG->wwwroot/mod/hotpot/view.php?hp=$id";
-                $name = '&nbsp;<a href="'.$href.'">'.$record->name.'</a>';
-                if ($record->count_attempts > 1) {
-                    $name .= " ($record->count_attempts)";
+    if($records) {
+        $names = array();
+        foreach ($records as $id => $record){
+            if ($cm = get_coursemodule_from_instance('hotpot', $record->id, $course->id)) {
+                $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+                
+                if (has_capability('mod/hotpot:viewreport', $context)) {
+                    $href = "$CFG->wwwroot/mod/hotpot/view.php?hp=$id";
+                    $name = '&nbsp;<a href="'.$href.'">'.$record->name.'</a>';
+                    if ($record->count_attempts > 1) {
+                        $name .= " ($record->count_attempts)";
+                    }
+                    $names[] = $name;
                 }
-                $names[] = $name;
             }
-
+        }
+        if (count($names) > 0) {
             print_headline(get_string('modulenameplural', 'hotpot').':');
 
             if ($CFG->version >= 2005050500) { // Moodle 1.5+
@@ -931,7 +934,6 @@ function hotpot_print_recent_activity($course, $isteacher, $timestart) {
             } else { // Moodle 1.4.x (or less)
                 echo '<font size="1">'.implode('<br />', $names).'</font>';
             }
-
             $result = true;
         }
     }

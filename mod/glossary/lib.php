@@ -276,7 +276,7 @@ function glossary_print_recent_activity($course, $isteacher, $timestart) {
         foreach ($entries as $entry) {
             $user = get_record('user','id',$entry->userid, '','', '','', 'firstname,lastname');
 
-            print_recent_activity_note($entry->timemodified, $user, $isteacher, $entry->concept,
+            print_recent_activity_note($entry->timemodified, $user, $entry->concept,
                                        $CFG->wwwroot.'/mod/glossary/view.php?g='.$entry->glossaryid.
                                        '&amp;mode=entry&amp;hook='.$entry->id);
         }

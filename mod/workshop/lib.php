@@ -638,6 +638,10 @@ function workshop_is_recent_activity($course, $isteacher, $timestart) {//jlw1 ad
 
 
 ///////////////////////////////////////////////////////////////////////////////
+//
+// NOTE: $isteacher usage should be converted to use roles.
+// TODO: Fix this function.
+//
 function workshop_print_recent_activity($course, $isteacher, $timestart) {
     global $CFG;
 
@@ -669,7 +673,7 @@ function workshop_print_recent_activity($course, $isteacher, $timestart) {
                             $log->firstname = $course->student;
                             $log->lastname = '';
                         }
-                        print_recent_activity_note($log->time, $log, $isteacher, $log->name,
+                        print_recent_activity_note($log->time, $log, $log->name,
                                                    $CFG->wwwroot.'/mod/workshop/'.$log->url);
                     }
                 }
@@ -705,7 +709,7 @@ function workshop_print_recent_activity($course, $isteacher, $timestart) {
                             $log->firstname = $course->student;
                             $log->lastname = '';
                         }
-                        print_recent_activity_note($log->time, $log, $isteacher, $log->name,
+                        print_recent_activity_note($log->time, $log, $log->name,
                                                    $CFG->wwwroot.'/mod/workshop/'.$log->url);
                     }
                 }
@@ -738,7 +742,7 @@ function workshop_print_recent_activity($course, $isteacher, $timestart) {
                     if (instance_is_visible("workshop",$tempmod)) {
                         $log->firstname = $course->student;    // Keep anonymous
                         $log->lastname = '';
-                        print_recent_activity_note($log->time, $log, $isteacher, $log->name,
+                        print_recent_activity_note($log->time, $log, $log->name,
                                                    $CFG->wwwroot.'/mod/workshop/'.$log->url);
                     }
                 }
@@ -771,7 +775,7 @@ function workshop_print_recent_activity($course, $isteacher, $timestart) {
                 if (instance_is_visible("workshop",$tempmod)) {
                     $log->firstname = $course->teacher;    // Keep anonymous
                     $log->lastname = '';
-                    print_recent_activity_note($log->time, $log, $isteacher, $log->name,
+                    print_recent_activity_note($log->time, $log, $log->name,
                                                $CFG->wwwroot.'/mod/workshop/'.$log->url);
                 }
             }
@@ -802,7 +806,7 @@ function workshop_print_recent_activity($course, $isteacher, $timestart) {
                     $tempmod->id = $log->workshopid;
                     //Obtain the visible property from the instance
                     if (instance_is_visible("workshop",$tempmod)) {
-                        print_recent_activity_note($log->time, $log, $isteacher, $log->name,
+                        print_recent_activity_note($log->time, $log, $log->name,
                                                    $CFG->wwwroot.'/mod/workshop/'.$log->url);
                     }
                 }

@@ -164,7 +164,7 @@ function survey_print_recent_activity($course, $isteacher, $timestart) {
         $content = true;
         print_headline(get_string('newsurveyresponses', 'survey').':');
         foreach ($surveys as $survey) {
-            print_recent_activity_note($survey->time, $survey, $isteacher, $survey->name,
+            print_recent_activity_note($survey->time, $survey, $survey->name,
                                        $CFG->wwwroot.'/mod/survey/'.$survey->url);
         }
     }

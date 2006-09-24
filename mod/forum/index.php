@@ -20,7 +20,7 @@
     require_course_login($course);
     $currentgroup = get_current_group($course->id);
     $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
-    
+
 
     unset($SESSION->fromdiscussion);
 

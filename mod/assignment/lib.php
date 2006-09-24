@@ -1986,7 +1986,7 @@ function assignment_print_recent_activity($course, $isteacher, $timestart) {
     if ($assignments) {
         print_headline(get_string('newsubmissions', 'assignment').':');
         foreach ($assignments as $assignment) {
-            print_recent_activity_note($assignment->time, $assignment, $isteacher, $assignment->name,
+            print_recent_activity_note($assignment->time, $assignment, $assignment->name,
                                        $CFG->wwwroot.'/mod/assignment/'.$assignment->url);
         }
         $content = true;

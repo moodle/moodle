@@ -853,11 +853,6 @@ function forum_print_overview($courses,&$htmlarray) {
     }    
 }
 
-/**
- * NOTE:
- * $isteacher is to be deprecated. We will need to remove it from all
- * _print_recent_activity functions for all modules.
- */
 function forum_print_recent_activity($course, $isteacher, $timestart) {
 /// Given a course and a date, prints a summary of all the new
 /// messages posted in the course since that date
@@ -876,9 +871,7 @@ function forum_print_recent_activity($course, $isteacher, $timestart) {
 
     $strftimerecent = get_string('strftimerecent');
 
-    $isteacheredit = isteacheredit($course->id);
     $mygroupid     = mygroupid($course->id);
-
     $groupmode = array();   /// To cache group modes
 
     foreach ($logs as $log) {
@@ -888,28 +881,26 @@ function forum_print_recent_activity($course, $isteacher, $timestart) {
             $tempmod->course = $log->course;
             $tempmod->id = $post->forum;
             //Obtain the visible property from the instance
-            $modvisible = instance_is_visible('forum', $tempmod);
+            $coursecontext = get_context_instance(COURSE_CONTEXT, $tempmod->course);
+            $modvisible = instance_is_visible('forum', $tempmod)
+                            || has_capability('moodle/course:viewhiddenactivities', $coursecontext);
         }
 
         //Only if the post exists and mod is visible
         if ($post && $modvisible) {
-            /// Check whether this is for teachers only
-            $teacheronly = '';
-            if ($post->forumtype == 'teacher') {
-                if ($isteacher) {
-                    $teacheronly = 'class=\'teacheronly\'';
-                } else {
-                    continue;
-                }
+
+            if (!isset($cm[$post->forum])) {
+                $cm[$post->forum] = get_coursemodule_from_instance('forum', $post->forum, $course->id);
             }
+            $modcontext = get_context_instance(CONTEXT_MODULE, $cm[$post->forum]->id);
+
             /// Check whether this is belongs to a discussion in a group that
             /// should NOT be accessible to the current user
+            if (!has_capability('moodle/site:accessallgroups', $modcontext)
+                    && $post->groupid != -1) {   /// Open discussions have groupid -1
 
-            if (!$isteacheredit and $post->groupid != -1) {   /// Editing teachers or open discussions
-                if (!isset($cm[$post->forum])) {
-                    $cm[$post->forum] = get_coursemodule_from_instance('forum', $post->forum, $course->id);
-                    $groupmode[$post->forum] = groupmode($course, $cm[$post->forum]);
-                }
+                $groupmode[$post->forum] = groupmode($course, $cm[$post->forum]);
+                
                 if ($groupmode[$post->forum]) {
                     //hope i didn't break anything
                     if (!@in_array($mygroupid, $post->groupid))/*$mygroupid != $post->groupid*/{
@@ -927,9 +918,9 @@ function forum_print_recent_activity($course, $isteacher, $timestart) {
 
             $subjectclass = ($log->action == 'add discussion') ? ' bold' : '';
 
-            echo '<div class="head'.$teacheronly.'">'.
+            echo '<div class="head">'.
                    '<div class="date">'.$date.'</div>'.
-                   '<div class="name">'.fullname($post, $isteacher).'</div>'.
+                   '<div class="name">'.fullname($post, has_capability('moodle/site:viewfullnames', $coursecontext)).'</div>'.
                  '</div>';
             echo '<div class="info'.$subjectclass.'">';
             echo '"<a href="'.$CFG->wwwroot.'/mod/forum/'.str_replace('&', '&amp;', $log->url).'">';
@@ -938,7 +929,6 @@ function forum_print_recent_activity($course, $isteacher, $timestart) {
             echo '</a>"</div>';
         }
     }
-
     return $content;
 }
 
@@ -1149,6 +1139,7 @@ function forum_get_readable_forums($userid, $courseid=0) {
         }
         
         $selectforums = "SELECT DISTINCT(f.id) AS id,
+                                f.name AS name,
                                 f.type AS type,
                                 f.course AS course,
                                 cm.id AS cmid,
@@ -1159,7 +1150,8 @@ function forum_get_readable_forums($userid, $courseid=0) {
                           WHERE cm.instance = f.id
                             AND cm.course = {$course->id}
                             AND cm.module = {$forummod->id}
-                                $selecthidden";
+                                $selecthidden
+                                ORDER BY f.name ASC";
         
         if ($forums = get_records_sql($selectforums)) {
             
@@ -1313,114 +1305,6 @@ function forum_search_posts($searchterms, $courseid=0, $limitfrom=0, $limitnum=5
     
     return get_records_sql($searchsql, $limitfrom, $limitnum);
 }
-
-
-/**
- *
- * PRE-ROLES VERSION.
- * TODO: Remove this after testing. This is left here for convenience so that
- *       we can compare with new implementation above.
- * Note that the argument $sepgroups has been removed in the new version.
- */
-/*
- function forum_search_posts($searchterms, $courseid, $page=0, $recordsperpage=50, 
-                             &$totalcount, $sepgroups=0, $extrasql='') {
-
-     global $CFG, $USER;
-     require_once($CFG->libdir.'/searchlib.php');
-
-     if (!isteacher($courseid)) {
-         $notteacherforum = "AND f.type <> 'teacher'";
-         $forummodule = get_record("modules", "name", "forum");
-         $onlyvisible = "AND d.forum = f.id AND f.id = cm.instance AND cm.visible = 1 AND cm.module = $forummodule->id";
-         $onlyvisibletable = ", {$CFG->prefix}course_modules cm, {$CFG->prefix}forum f";
-         if (!empty($sepgroups)) {
-             $separategroups = SEPARATEGROUPS;
-             $selectgroup = " AND ( NOT (cm.groupmode='$separategroups'".
-                                       " OR (c.groupmode='$separategroups' AND c.groupmodeforce='1') )";//.
-             $selectgroup .= " OR d.groupid = '-1'"; //search inside discussions for all groups too
-             foreach ($sepgroups as $sepgroup){
-                 $selectgroup .= " OR d.groupid = '$sepgroup->id'";
-             }
-             $selectgroup .= ")";
-
-                                //  " OR d.groupid = '$groupid')";
-             $selectcourse = " AND d.course = '$courseid' AND c.id='$courseid'";
-             $coursetable = ", {$CFG->prefix}course c";
-         } else {
-             $selectgroup = '';
-             $selectcourse = " AND d.course = '$courseid'";
-             $coursetable = '';
-         }
-     } else {
-         $notteacherforum = "";
-         $selectgroup = '';
-         $onlyvisible = "";
-         $onlyvisibletable = "";
-         $coursetable = '';
-         if ($courseid == SITEID && isadmin()) {
-             $selectcourse = '';
-         } else {
-             $selectcourse = " AND d.course = '$courseid'";
-         }
-     }
-
-     $timelimit = '';
-     if (!empty($CFG->forum_enabletimedposts) && (!((isadmin() and !empty($CFG->admineditalways)) || isteacher($courseid)))) {
-         $now = time();
-         $timelimit = " AND (d.userid = $USER->id OR ((d.timestart = 0 OR d.timestart <= $now) AND (d.timeend = 0 OR d.timeend > $now)))";
-     }
-
-     $limitfrom = $page;
-     $limitnum = $recordsperpage;
-
-     /// Some differences in syntax for PostgreSQL
-     if ($CFG->dbtype == "postgres7") {
-         $LIKE = "ILIKE";   // case-insensitive
-         $NOTLIKE = "NOT ILIKE";   // case-insensitive
-         $REGEXP = "~*";
-         $NOTREGEXP = "!~*";
-     } else {                       //Note the LIKE are casesensitive for Oracle. Oracle 10g is required to use 
-         $LIKE = "LIKE";            //the caseinsensitive search using regexp_like() or NLS_COMP=LINGUISTIC :-(
-         $NOTLIKE = "NOT LIKE";     //See http://docs.moodle.org/en/XMLDB_Problems#Case-insensitive_searches
-         $REGEXP = "REGEXP";
-         $NOTREGEXP = "NOT REGEXP";
-     }
-
-     $messagesearch = "";
-     $searchstring = "";
-     // Need to concat these back together for parser to work.
-     foreach($searchterms as $searchterm){
-         if ($searchstring != "") {
-             $searchstring .= " ";
-         }
-         $searchstring .= $searchterm;
-     }
-
-     // We need to allow quoted strings for the search. The quotes *should* be stripped
-     // by the parser, but this should be examined carefully for security implications.
-     $searchstring = str_replace("\\\"","\"",$searchstring);
-     $parser = new search_parser();
-     $lexer = new search_lexer($parser);
-
-     if ($lexer->parse($searchstring)) {
-         $parsearray = $parser->get_parsed_array();
-         $messagesearch = search_generate_SQL($parsearray,'p.message','p.subject','p.userid','u.id','u.firstname','u.lastname','p.modified', 'd.forum');
-     }
-
-     $selectsql = "{$CFG->prefix}forum_posts p,
-                   {$CFG->prefix}forum_discussions d,
-                   {$CFG->prefix}user u $onlyvisibletable $coursetable
-              WHERE ($messagesearch)
-                AND p.userid = u.id
-                AND p.discussion = d.id $selectcourse $notteacherforum $onlyvisible $selectgroup $timelimit $extrasql";
-
-     $totalcount = count_records_sql("SELECT COUNT(*) FROM $selectsql");
-
-     return get_records_sql("SELECT p.*,d.forum, u.firstname,u.lastname,u.email,u.picture FROM
-                             $selectsql ORDER BY p.modified DESC", $limitfrom, $limitnum);
- }*/
-
 
 function forum_get_ratings($postid, $sort="u.firstname ASC") {
 /// Returns a list of ratings for a particular post - sorted.

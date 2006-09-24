@@ -357,7 +357,7 @@ function exercise_print_recent_activity($course, $isteacher, $timestart) {
                     $tempmod->id = $log->exerciseid;
                     //Obtain the visible property from the instance
                     if (instance_is_visible('exercise',$tempmod)) {
-                        print_recent_activity_note($log->time, $log, $isteacher, $log->name,
+                        print_recent_activity_note($log->time, $log, $log->name,
                                                    $CFG->wwwroot.'/mod/exercise/'.str_replace('&', '&amp;', $log->url));
                     }
                 }
@@ -388,7 +388,7 @@ function exercise_print_recent_activity($course, $isteacher, $timestart) {
                 $tempmod->id = $log->exerciseid;
                 //Obtain the visible property from the instance
                 if (instance_is_visible('exercise',$tempmod)) {
-                    print_recent_activity_note($log->time, $log, $isteacher, $log->name,
+                    print_recent_activity_note($log->time, $log, $log->name,
                                                $CFG->wwwroot.'/mod/exercise/'.str_replace('&', '&amp;', $log->url));
                 }
             }
@@ -419,7 +419,7 @@ function exercise_print_recent_activity($course, $isteacher, $timestart) {
                     $tempmod->id = $log->exerciseid;
                     //Obtain the visible property from the instance
                     if (instance_is_visible('exercise',$tempmod)) {
-                        print_recent_activity_note($log->time, $log, $isteacher, $log->name,
+                        print_recent_activity_note($log->time, $log, $log->name,
                                                    $CFG->wwwroot.'/mod/exercise/'.str_replace('&', '&amp;', $log->url));
                     }
                 }
