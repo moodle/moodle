@@ -281,7 +281,7 @@ class test extends XMLDBAction {
         /// Get SQL code and execute it
             $test = new stdClass;
             $field = new XMLDBField('name');
-            $field->setAttributes(XMLDB_TYPE_CHAR, '10', null, XMLDB_NOTNULL, null, null, null, 'Moodle');
+            $field->setAttributes(XMLDB_TYPE_CHAR, '30', null, XMLDB_NOTNULL, null, null, null, 'Moodle');
             
             $test->sql = $table->getAlterFieldSQL($CFG->dbtype, $CFG->prefix, $field, true);
             $test->status = change_field_notnull($table, $field, false, false);
@@ -296,7 +296,7 @@ class test extends XMLDBAction {
         /// Get SQL code and execute it
             $test = new stdClass;
             $field = new XMLDBField('name');
-            $field->setAttributes(XMLDB_TYPE_CHAR, '10', null, null, null, null, null, 'Moodle');
+            $field->setAttributes(XMLDB_TYPE_CHAR, '30', null, null, null, null, null, 'Moodle');
             
             $test->sql = $table->getAlterFieldSQL($CFG->dbtype, $CFG->prefix, $field, true);
             $test->status = change_field_notnull($table, $field, false, false);
