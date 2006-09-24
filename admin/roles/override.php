@@ -65,7 +65,7 @@
     }
 
 /// Process incoming role override
-    if ($data = data_submitted() and confirm_sesskey()) {
+    if ($data = data_submitted() and $roleid and confirm_sesskey()) {
         $allowed_values = array(CAP_INHERIT, CAP_ALLOW, CAP_PREVENT, CAP_PROHIBIT);
         $capabilities = fetch_context_capabilities($context); // capabilities applicable in this context
 
