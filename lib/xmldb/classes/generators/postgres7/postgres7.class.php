@@ -126,63 +126,145 @@ class XMLDBpostgres7 extends XMLDBgenerator {
         return $sql;
     }
 
-     /**
-      * Returns the code (in array) needed to add one comment to the table
-      */
-     function getCommentSQL ($xmldb_table) {
+    /**
+     * Returns the code (in array) needed to add one comment to the table
+     */
+    function getCommentSQL ($xmldb_table) {
 
-         $comment = "COMMENT ON TABLE " . $this->getEncQuoted($this->prefix . $xmldb_table->getName());
-         $comment.= " IS '" . substr($xmldb_table->getComment(), 0, 250) . "'";
+        $comment = "COMMENT ON TABLE " . $this->getEncQuoted($this->prefix . $xmldb_table->getName());
+        $comment.= " IS '" . substr($xmldb_table->getComment(), 0, 250) . "'";
 
-         return array($comment);
-     }
+        return array($comment);
+    }
 
-     /**
-      * Given one XMLDBTable and one XMLDBField, return the SQL statements needded to alter the field in the table
-      * PostgreSQL has some severe limits:
-      *     - Any change of type or precision requires a new temporary column to be created, values to
-      *       be transfered potentially casting them, to apply defaults if the column is not null and 
-      *       finally, to rename it
-      *     - Changes in null/not null require the SET/DROP NOT NULL clause
-      *     - Changes in default require the SET/DROP DEFAULT clause
-      */
-     function getAlterFieldSQL($xmldb_table, $xmldb_field) {
+    /**
+     * Given one XMLDBTable and one XMLDBField, return the SQL statements needded to alter the field in the table
+     * PostgreSQL has some severe limits:
+     *     - Any change of type or precision requires a new temporary column to be created, values to
+     *       be transfered potentially casting them, to apply defaults if the column is not null and 
+     *       finally, to rename it
+     *     - Changes in null/not null require the SET/DROP NOT NULL clause
+     *     - Changes in default require the SET/DROP DEFAULT clause
+     */
+    function getAlterFieldSQL($xmldb_table, $xmldb_field) {
 
-         global $db;
+        global $db;
 
-     /// Get the quoted name of the table and field
-         $tablename = $this->getEncQuoted($this->prefix . $xmldb_table->getName());
-         $fieldname = $this->getEncQuoted($xmldb_field->getName());
+        $results = array(); /// To store all the needed SQL commands
 
-     /// Take a look to field metadata
-         $meta = array_change_key_case($db->MetaColumns($tablename));
-         $metac = $meta[$fieldname];
-         print_object($metac);
-         $oldtype = strtolower($metac->type);
-         $oldlength = $metac->max_length;
-         $olddecimals = empty($metac->scale) ? null : $metac->scale;
-         $oldnotnull = empty($metac->not_null) ? false : $metac->not_null;
-         $olddefault = empty($metac->default_value) ? null : $metac->default_value;
-                                                                                                                                   /// If field is CLOB and new one is also XMLDB_TYPE_TEXT or 
-     /// if fiels is BLOB and new one is also XMLDB_TYPE_BINARY
-     /// prevent type to be specified, so only NULL and DEFAULT clauses are allowed
-         if (($oldtype = 'clob' && $xmldb_field->getType() == XMLDB_TYPE_TEXT) ||
-             ($oldtype = 'blob' && $xmldb_field->getType() == XMLDB_TYPE_BINARY)) {
-             $this->alter_column_skip_type = true;
-             $islob = true;
-         }
+    /// Get the quoted name of the table and field
+        $tablename = $this->getEncQuoted($this->prefix . $xmldb_table->getName());
+        $fieldname = $this->getEncQuoted($xmldb_field->getName());
 
-     /// If field is NOT NULL and the new one too or
-     /// if field is NULL and the new one too
-     /// prevent null clause to be specified
-         if (($oldnotnull && $xmldb_field->getNotnull()) ||
-             (!$oldnotnull && !$xmldb_field->getNotnull())) {
-             $this->alter_column_skip_notnull = true;
-         }
+    /// Take a look to field metadata
+        $meta = array_change_key_case($db->MetaColumns($tablename));
+        $metac = $meta[$fieldname];
+        $oldtype = strtolower($metac->type);
+        $oldmetatype = column_type($xmldb_table->getName(), $fieldname);
+        $oldlength = $metac->max_length;
+        $olddecimals = empty($metac->scale) ? null : $metac->scale;
+        $oldnotnull = empty($metac->not_null) ? false : $metac->not_null;
+        $olddefault = empty($metac->has_default) ? null : strtok($metac->default_value, ':');
 
-     /// In the rest of cases, use the general generator
-         return parent::getAlterFieldSQL($xmldb_table, $xmldb_field);
-     }
+        $typechanged = true;  //By default, assume that the column type has changed
+        $precisionchanged = true;  //By default, assume that the column precision has changed
+        $decimalchanged = true;  //By default, assume that the column decimal has changed
+        $defaultchanged = true;  //By default, assume that the column default has changed
+        $notnullchanged = true;  //By default, assume that the column notnull has changed
+
+        $from_temp_fields = false; //By default don't assume we are going to use temporal fields
+
+    /// Detect if we are changing the type of the column
+        if (($xmldb_field->getType() == XMLDB_TYPE_INTEGER && substr($oldmetatype, 0, 1) == 'I') ||
+            ($xmldb_field->getType() == XMLDB_TYPE_NUMBER  && $oldmetatype == 'N') ||
+            ($xmldb_field->getType() == XMLDB_TYPE_FLOAT   && $oldmetatype == 'F') ||
+            ($xmldb_field->getType() == XMLDB_TYPE_CHAR    && substr($oldmetatype, 0, 1) == 'C') ||
+            ($xmldb_field->getType() == XMLDB_TYPE_TEXT    && substr($oldmetatype, 0, 1) == 'X') ||
+            ($xmldb_field->getType() == XMLDB_TYPE_BINARY  && $oldmetatype == 'B')) {
+            $typechanged = false;
+        }
+    /// Detect if we are changing the precision 
+        if (($xmldb_field->getType() == XMLDB_TYPE_TEXT) ||
+            ($xmldb_field->getType() == XMLDB_TYPE_BINARY) ||
+            ($oldlength == -1) ||
+            ($xmldb_field->getLength() == $oldlength)) {
+            $precisionchanged = false;
+        }
+    /// Detect if we are changing the decimals
+        if (($xmldb_field->getType() == XMLDB_TYPE_INTEGER) ||
+            ($xmldb_field->getType() == XMLDB_TYPE_CHAR) ||
+            ($xmldb_field->getType() == XMLDB_TYPE_TEXT) ||
+            ($xmldb_field->getType() == XMLDB_TYPE_BINARY) ||
+            (!$xmldb_field->getDecimals()) ||
+            (!$olddecimals) ||
+            ($xmldb_field->getDecimals() == $olddecimals)) {
+            $decimalchanged = false;
+        }
+    /// Detect if we are changing the default
+        if (($xmldb_field->getDefault() === null && $olddefault === null) ||
+            ($xmldb_field->getDefault() === $olddefault) ||             //Check both equality and
+            ("'" . $xmldb_field->getDefault() . "'" === $olddefault)) {  //Equality with quotes because ADOdb returns the default with quotes
+            $defaultchanged = false;
+        }
+    /// Detect if we are changing the nullability
+        if (($xmldb_field->getNotnull() === $oldnotnull)) {
+            $notnullchanged = false;
+        }
+
+    /// If the type or the precision or the decimals have changed, then we need to:
+    ///     - create one temp column with the new specs
+    ///     - fill the new column with the values from the old one (casting if needed)
+    ///     - drop the old column
+    ///     - rename the temp column to the original name
+        if ($typechanged || $precisionchanged || $decimalchanged) {
+            $tempcolname = $xmldb_field->getName() . '_alter_column_tmp';
+        /// Prevent temp field to have both NULL/NOT NULL and DEFAULT constraints
+            $this->alter_column_skip_notnull = true;
+            $this->alter_column_skip_default = true;
+            $xmldb_field->setName($tempcolname);
+        /// Create the temporal column
+            $results = array_merge($results, $this->getAddFieldSQL($xmldb_table, $xmldb_field));
+        /// Detect some basic casting options
+            if ((substr($oldmetatype, 0, 1) == 'C' && $xmldb_field->getType() == XMLDB_TYPE_NUMBER) ||
+                (substr($oldmetatype, 0, 1) == 'C' && $xmldb_field->getType() == XMLDB_TYPE_FLOAT)) {
+                $copyorigin = 'CAST(CAST('.$fieldname.' AS TEXT) AS REAL)'; //From char to number or float
+            } else if ((substr($oldmetatype, 0, 1) == 'C' && $xmldb_field->getType() == XMLDB_TYPE_INTEGER)) {
+                $copyorigin = 'CAST(CAST('.$fieldname.' AS TEXT) AS INTEGER)'; //From char to integer
+            } else {
+                $copyorigin = $fieldname; //Direct copy between columns
+            }
+        /// Copy contents from original col to the temporal one
+            $results[] = 'UPDATE ' . $tablename . ' SET ' . $tempcolname . ' = ' . $copyorigin;
+        /// Drop the old column
+            $xmldb_field->setName($fieldname); //Set back the original field name
+            $results = array_merge($results, $this->getDropFieldSQL($xmldb_table, $xmldb_field));
+        /// Rename the temp column to the original one
+            $results[] = 'ALTER TABLE ' . $tablename . ' RENAME COLUMN ' . $tempcolname . ' TO ' . $fieldname;
+        /// Mark we have performed one change based in temp fields
+            $from_temp_fields = true;
+        }
+    /// If the default has changed or we have used one temp field
+        if ($defaultchanged || $from_temp_fields) {
+            if ($default_clause = $this->getDefaultClause($xmldb_field)) {
+                $results[] = 'ALTER TABLE ' . $tablename . ' ALTER COLUMN ' . $fieldname . ' SET' . $default_clause; /// Add default clause
+            } else {
+                if (!$from_temp_fields) { /// Only drop default if we haven't used the temp field, i.e. old column
+                    $results[] = 'ALTER TABLE ' . $tablename . ' ALTER COLUMN ' . $fieldname . ' DROP DEFAULT'; /// Drop default clause
+                }
+            }
+        }
+    /// If the not null has changed or we have used one temp field
+        if ($notnullchanged || $from_temp_fields) {
+            if ($xmldb_field->getNotnull()) {
+                $results[] = 'ALTER TABLE ' . $tablename . ' ALTER COLUMN ' . $fieldname . ' SET NOT NULL';
+            } else {
+                $results[] = 'ALTER TABLE ' . $tablename . ' ALTER COLUMN ' . $fieldname . ' DROP NOT NULL';
+            }
+        }
+
+    /// Return the results 
+        return $results;
+    }
 
     /**
      * Returns an array of reserved words (lowercase) for this DB
