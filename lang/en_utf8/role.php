@@ -58,6 +58,7 @@ $string['site:trustcontent'] = 'Trust submitted content';
 $string['site:doclinks'] = 'Show links to offsite docs';
 $string['site:viewreports'] = 'View reports';
 $string['site:viewparticipants'] = 'View participants';
+$string['site:uploadusers'] = 'Upload new users from file';
 $string['user:create'] = 'Create users';
 $string['user:delete'] = 'Delete users';
 $string['user:update'] = 'Update user profiles';
