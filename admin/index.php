@@ -291,8 +291,7 @@
         if (!set_config("release", $release)) {
             notify("ERROR: Could not update release version in database!!");
         }
-        notice(get_string('releasenoteslink', 'admin', 'http://docs.moodle.org/en/Release_Notes'), 'index.php');
-        exit;
+        notice(get_string('releasenoteslink', 'admin', 'http://docs.moodle.org/en/Release_Notes'), 'index.php', 'none');
     }
 
 /// Send $CFG->unicodedb to DB to have it available for next requests

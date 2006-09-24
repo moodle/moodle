@@ -4584,8 +4584,8 @@ function emoticonhelpbutton($form, $field) {
  * @param string $link ?
  * @todo Finish documenting this function
  */
-function notice ($message, $link='') {
-    global $CFG;
+function notice ($message, $link='', $course=NULL) {
+    global $CFG, $SITE;
 
     $message = clean_text($message);
     $link    = clean_text($link);
@@ -4601,8 +4601,12 @@ function notice ($message, $link='') {
     echo '<br />';
     print_simple_box($message, 'center', '50%', '', '20', 'generalbox', 'notice');
     print_continue($link);
-    print_footer(get_site());
-    die;
+    if (empty($course)) {
+        print_footer($SITE);
+    } else {
+        print_footer($course);
+    }
+    exit;
 }
 
 /**
