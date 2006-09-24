@@ -6,6 +6,12 @@ $string['modulename'] = 'Hot Potatoes Quiz';
 $string['modulenameplural'] = 'Hot Potatoes Quizzes';
 
 // for mod.html
+
+$string['hotpot:attempt'] = 'Attempt a quiz';
+$string['hotpot:viewreport'] = 'View reports';
+$string['hotpot:grade'] = 'Modify grades';
+$string['hotpot:deleteattempt'] = 'Delete quiz attempts';
+
 $string['textsourcequiz'] = 'Get from quiz';
 $string['textsourcefilename'] = 'Use file name';
 $string['textsourcefilepath'] = 'Use file path';

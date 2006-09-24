@@ -3,6 +3,7 @@
 $string['addfeed'] = 'Add a news feed URL: ';
 $string['addheadlineblock'] = 'Add RSS headline block';
 $string['addnew'] = 'Add New';
+$string['blockname'] = 'RSS Client';
 $string['choosefeedlabel'] = 'Choose the feeds which you would like to make available in this block:';
 $string['clientchannellink'] = 'Source site...';
 $string['clientnumentries'] = 'The default number of entries to show per feed.';
@@ -37,5 +38,10 @@ $string['timeout'] = 'blockrsstimeout';
 $string['timeoutdesc'] = 'Time in minutes for an RSS feed to live in cache.';
 $string['updatefeed'] = 'Update a news feed URL: ';
 $string['validatefeed'] = 'Validate feed';
+
+$string['rss_client:createprivatefeeds'] = 'Create private RSS feeds';
+$string['rss_client:createsharedfeeds'] = 'Create shared RSS feeds';
+$string['rss_client:manageownfeeds'] = 'Manage own RSS feeds';
+$string['rss_client:manageanyfeeds'] = 'Manage any RSS feeds';
 
 ?>
