@@ -23,9 +23,6 @@
 ///////////////////////////////////////////////////////////////////////////
 
 /// Some constants
-define ('DATA_TEACHERS_ONLY', 1);
-define ('DATA_STUDENTS_ONLY', 2);
-define ('DATA_TEACHERS_AND_STUDENTS', 3);
 define ('DATA_MAX_ENTRIES', 50);
 define ('DATA_PERPAGE_SINGLE', 1);
 
@@ -595,8 +592,8 @@ function data_tags_check($dataid, $template){
 function data_add_instance($data) {
     global $CFG;
 
-    if (empty($data->ratings)) {
-        $data->ratings = 0;
+    if (empty($data->assessed)) {
+        $data->assessed = 0;
     }
 
     $data->timemodified = time();
@@ -645,8 +642,8 @@ function data_update_instance($data) {
     
     $data->id = $data->instance;
     
-    if (empty($data->ratings)) {
-        $data->ratings = 0;
+    if (empty($data->assessed)) {
+        $data->assessed = 0;
     }
     
     $data->timemodified = time();
@@ -994,17 +991,16 @@ function data_print_ratings($data, $record) {
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     
     $ratingsmenuused = false;
-    if ($data->ratings and !empty($USER->id)) {
+    if ($data->assessed and !empty($USER->id)) {
         if ($ratings->scale = make_grades_menu($data->scale)) {
-            $ratings->assesspublic = $data->assesspublic;
-            $ratings->allow = ($data->assessed != 2 or has_capability('mod/data:rate', $context));
+            $ratings->allow = ($data->assessed and has_capability('mod/data:rate', $context));
             if ($ratings->allow) {
                 echo '<div class="ratings" align="center">';
                 echo '<form name="form" method="post" action="rate.php">';
                 $useratings = true;
 
                 if ($useratings) {
-                    if ((has_capability('mod/data:rate', $context) or $ratings->assesspublic) and !data_isowner($record->id)) {
+                    if (has_capability('mod/data:rate', $context) and !data_isowner($record->id)) {
                         data_print_ratings_mean($record->id, $ratings->scale, has_capability('mod/data:rate', $context));
                         if (!empty($ratings->allow)) {
                             echo '&nbsp;';

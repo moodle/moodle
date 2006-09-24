@@ -77,13 +77,11 @@ function data_backup_one_mod($bf,$preferences,$data) {
     fwrite ($bf,full_tag("MODTYPE",4,false,"data"));
     fwrite ($bf,full_tag("NAME",4,false,$data->name));
     fwrite ($bf,full_tag("INTRO",4,false,$data->intro));
-    fwrite ($bf,full_tag("RATINGS",4,false,$data->ratings));
     fwrite ($bf,full_tag("COMMENTS",4,false,$data->comments));
     fwrite ($bf,full_tag("TIMEAVAILABLEFROM",4,false,$data->timeavailablefrom));
     fwrite ($bf,full_tag("TIMEAVAILABLETO",4,false,$data->timeavailableto));
     fwrite ($bf,full_tag("TIMEVIEWFROM",4,false,$data->timeviewfrom));
     fwrite ($bf,full_tag("TIMEVIEWTO",4,false,$data->timeviewto));
-    fwrite ($bf,full_tag("PARTICIPANTS",4,false,$data->participants));
     fwrite ($bf,full_tag("REQUIREDENTRIES",4,false,$data->requiredentries));
     fwrite ($bf,full_tag("REQUIREDENTRIESTOVIEW",4,false,$data->requiredentriestoview));
     fwrite ($bf,full_tag("MAXENTRIES",4,false,$data->maxentries));
@@ -100,7 +98,6 @@ function data_backup_one_mod($bf,$preferences,$data) {
     fwrite ($bf,full_tag("APPROVAL",4,false,$data->approval));
     fwrite ($bf,full_tag("SCALE",4,false,$data->scale));
     fwrite ($bf,full_tag("ASSESSED",4,false,$data->assessed));
-    fwrite ($bf,full_tag("ASSESSPUBLIC",4,false,$data->assesspublic));
     
     // if we've selected to backup users info, then call any other functions we need
     // including backing up individual files

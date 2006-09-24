@@ -60,7 +60,10 @@ function data_restore_mods($mod,$restore) {
 
         $database->name = backup_todb($info['MOD']['#']['NAME']['0']['#']);
         $database->intro = backup_todb($info['MOD']['#']['INTRO']['0']['#']);
-        $database->ratings = backup_todb($info['MOD']['#']['RATINGS']['0']['#']);
+        // Only relevant for restoring backups from 1.6 in a 1.7 install.
+        if (isset($info['MOD']['#']['RATINGS']['0']['#'])) {
+            $database->ratings = backup_todb($info['MOD']['#']['RATINGS']['0']['#']);
+        }
         $database->comments = backup_todb($info['MOD']['#']['COMMENTS']['0']['#']);
         $database->timeavailablefrom = backup_todb($info['MOD']['#']['TIMEAVAILABLEFROM']['0']['#']);
         $date = usergetdate($database->timeavailablefrom);
@@ -87,7 +90,10 @@ function data_restore_mods($mod,$restore) {
         $database->timeviewto += $restore->course_startdateoffset;
         $date = usergetdate($database->timeviewto);
         fwrite ($restorelog_file,"&nbsp;&nbsp;&nbsp;the TIMEVIEWTO is now  " .$date['weekday'].",  ".$date['mday']." ".$date['month']." ".$date['year']."<br>");
-        $database->participants = backup_todb($info['MOD']['#']['PARTICIPANTS']['0']['#']);
+        // Only relevant for restoring backups from 1.6 in a 1.7 install.
+        if (isset($info['MOD']['#']['PARTICIPANTS']['0']['#'])) {
+            $database->participants = backup_todb($info['MOD']['#']['PARTICIPANTS']['0']['#']);
+        }
         $database->requiredentries = backup_todb($info['MOD']['#']['REQUIREDENTRIES']['0']['#']);
         $database->requiredentriestoview = backup_todb($info['MOD']['#']['REQUIREDENTRIESTOVIEW']['0']['#']);
         $database->maxentries = backup_todb($info['MOD']['#']['MAXENTRIES']['0']['#']);
@@ -104,7 +110,10 @@ function data_restore_mods($mod,$restore) {
         $database->approval = backup_todb($info['MOD']['#']['APPROVAL']['0']['#']);
         $database->scale = backup_todb($info['MOD']['#']['SCALE']['0']['#']);
         $database->assessed = backup_todb($info['MOD']['#']['ASSESSED']['0']['#']);
-        $database->assesspublic = backup_todb($info['MOD']['#']['ASSESSPUBLIC']['0']['#']);
+        // Only relevant for restoring backups from 1.6 in a 1.7 install.
+        if (isset($info['MOD']['#']['ASSESSPUBLIC']['0']['#'])) {
+            $database->assesspublic = backup_todb($info['MOD']['#']['ASSESSPUBLIC']['0']['#']);
+        }
         
         $newid = insert_record ('data', $database);
 

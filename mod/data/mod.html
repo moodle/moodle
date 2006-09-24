@@ -29,9 +29,6 @@
     if (!isset($form->schedule)) {
         $form->schedule = 0;
     }
-    if (!isset($form->participants)) {
-        $form->participants = DATA_TEACHERS_AND_STUDENTS;
-    }
     if (!isset($form->requiredentries)) {
         $form->requiredentries = 0;
     }
@@ -47,9 +44,6 @@
     if (!isset($form->comments)) {
         $form->comments = 0;
     }
-    if (!isset($form->ratings)) {
-        $form->ratings = 0;
-    }
     if (!isset($form->approval)) {
         $form->approval = 0;
     }
@@ -57,10 +51,7 @@
         $form->scale = 0;
     }
     if (!isset($form->assessed)) {
-        $form->assessed = 1;
-    }
-    if (!isset($form->assesspublic)) {
-        $form->assesspublic = 1;
+        $form->assessed = 0;
     }
 ?>
 
@@ -169,21 +160,6 @@
 
 
 <tr valign="top">
-    <td align="right"><b><?php print_string('participants', 'data') ?>:</b></td>
-    <td>
-    <?php
-        $a->teachers = $course->teachers;
-        $a->students = $course->students;
-        $options = array(DATA_TEACHERS_ONLY => $a->teachers,
-                         DATA_TEACHERS_AND_STUDENTS => get_string('teachersandstudents', 'data', $a));
-        choose_from_menu($options, 'participants', $form->participants, '');
-        helpbutton('participants', get_string('participants', 'data'), 'data');
-    ?>
-    </td>
-</tr>
-
-
-<tr valign="top">
     <td align="right"><b><?php print_string('requiredentries', 'data') ?>:</b></td>
     <td>
     <?php
@@ -258,18 +234,20 @@
             <td colspan="2">
         <?php
             echo '<script type="text/javascript">';
-            echo "  var subitemsall = ['assessed', 'assesspublic', 'scale'];";
+            echo "  var subitemsall = ['scale'];";
             echo '</script>';
 
-            echo '<input name="ratings" type="checkbox" alt="'.get_string('ratingsuse', 'data').'" value="1" ';
-            echo " onclick=\"return lockoptions('form','ratings', subitemsall)\" ";
-            if ($form->ratings) {
+            //echo '<input name="ratings" type="checkbox" alt="'.get_string('ratingsuse', 'data').'" value="1" ';
+            echo '<input name="assessed" type="checkbox" alt="'.get_string('ratingsuse', 'data').'" value="1" ';
+            echo " onclick=\"return lockoptions('form', 'assessed', subitemsall)\" ";
+            if ($form->assessed) {
                 echo ' checked="checked" ';
             }
             echo ' />';
             echo '&nbsp;'.get_string('ratingsuse', 'data').':';
             echo '</td></tr>';
 
+/*
             echo '<tr><td>';
             // The odd order below was to maintain backward compatibility
             unset($options);
@@ -279,16 +257,7 @@
             echo '</td><td>';
             choose_from_menu($options, 'assessed', $form->assessed, '');
             echo '</td></tr>';
-
-            echo '<tr><td>';
-            unset($options);
-            $options[0] = get_string('ratingpublicnot', 'data', $course->students);
-            $options[1] = get_string('ratingpublic', 'data', $course->students);
-            echo get_string('view').': ';
-            echo '</td><td>';
-            choose_from_menu($options, 'assesspublic', $form->assesspublic, '');
-            echo '</td></tr>';
-
+*/
             echo '<tr><td>';
             echo get_string('grade').': ';
             echo '</td><td>';
@@ -298,11 +267,10 @@
             echo '</td></tr></table>';
 
             echo '<input type="hidden" name="hassessed"     value="0" />';
-            echo '<input type="hidden" name="hassesspublic" value="0" />';
             echo '<input type="hidden" name="hscale"        value="0" />';
 
             echo '<script type="text/javascript">';
-            echo "lockoptions('form','ratings', subitemsall);";
+            echo "lockoptions('form','assessed', subitemsall);";
             echo '</script>';
 
         ?>
