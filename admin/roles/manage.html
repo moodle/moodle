@@ -93,7 +93,7 @@ $component = '';
 foreach ($capabilities as $capability) {
     // prints a breaker if component or name or context level
     if ($capability->component != $component or $capability->contextlevel != $contextlevel) {
-        echo ('<tr class="rolecapheading"><td colspan="4"><strong>'.
+        echo ('<tr class="rolecapheading header"><td colspan="6" class="header"><strong>'.
                get_component_string($capability->component, $capability->contextlevel).'</strong></td></tr>');
     }
 
