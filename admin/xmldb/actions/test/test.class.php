@@ -221,7 +221,7 @@ class test extends XMLDBAction {
         /// Get SQL code and execute it
             $test = new stdClass;
             $field = new XMLDBField('secondname');
-            $field->setAttributes(XMLDB_TYPE_CHAR, '10', null, XMLDB_NOT_NULL, null, null, null, null);
+            $field->setAttributes(XMLDB_TYPE_CHAR, '10', null, XMLDB_NOTNULL, null, null, null, null);
             
             $test->sql = $table->getAlterFieldSQL($CFG->dbtype, $CFG->prefix, $field, true);
             $test->status = change_field_precision($table, $field, false, false);
