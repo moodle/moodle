@@ -77,35 +77,36 @@
         $courses = get_records_sql($sql);
 
         if (empty($courses)) {
-            error(get_string('statsnodata'),$CFG->wwwroot.'/'.$CFG->admin.'/report/courseoverview/index.php');
-        }
+            notify(get_string('statsnodata'));
 
-        echo '<center><img src="'.$CFG->wwwroot.'/'.$CFG->admin.'/report/courseoverview/reportsgraph.php?time='.$time.'&report='.$report.'&numcourses='.$numcourses.'" /></center>';
+        } else {
+            echo '<div align="center"><img src="'.$CFG->wwwroot.'/'.$CFG->admin.'/report/courseoverview/reportsgraph.php?time='.$time.'&report='.$report.'&numcourses='.$numcourses.'" /></div>';
 
-        $table = new object();
-        $table->align = array('left','center','center','center');
-        $table->head = array(get_string('course'),$param->line1);
-        if (!empty($param->line2)) {
-            $table->head[] = $param->line2;
-        }
-        if (!empty($param->line3)) {
-            $table->head[] = $param->line3;
-        }
-
-        foreach  ($courses as $c) {
-            $a = array();
-            $a[] = '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$c->courseid.'">'.get_field('course','shortname','id',$c->courseid).'</a>';
-
-            $a[] = $c->line1;
-            if (isset($c->line2)) {
-                $a[] = $c->line2;
+            $table = new object();
+            $table->align = array('left','center','center','center');
+            $table->head = array(get_string('course'),$param->line1);
+            if (!empty($param->line2)) {
+                $table->head[] = $param->line2;
             }
-            if (isset($c->line3)) {
-                $a[] = $c->line3;
+            if (!empty($param->line3)) {
+                $table->head[] = $param->line3;
             }
-            $table->data[] = $a;
+
+            foreach  ($courses as $c) {
+                $a = array();
+                $a[] = '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$c->courseid.'">'.get_field('course','shortname','id',$c->courseid).'</a>';
+
+                $a[] = $c->line1;
+                if (isset($c->line2)) {
+                    $a[] = $c->line2;
+                }
+                if (isset($c->line3)) {
+                    $a[] = $c->line3;
+                }
+                $table->data[] = $a;
+            }
+            print_table($table);
         }
-        print_table($table);
     }
 
     admin_externalpage_print_footer($adminroot);
