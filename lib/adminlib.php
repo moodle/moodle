@@ -2405,4 +2405,12 @@ function apply_default_exception_settings($defaults) {
 
 }
 
+function format_admin_setting($name, $title='', $form='', $description='') {
+    $output = '<div class="adminsetting">';
+    $output .= 'etc';
+    $output .= '</div>';
+
+    return $output;
+}
+
 ?>
