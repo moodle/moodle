@@ -40,15 +40,20 @@ if ($currenttab != 'update') {
 
         case CONTEXT_MODULE:
             // get module type?
-            $cm = get_record('course_modules','id',$context->instanceid);
-            $module = get_record('modules','id',$cm->module); //$module->name;
-            $course = get_record('course','id',$cm->course);
-
-            if (! $form = get_record($module->name, "id", $cm->instance)) {
+            if (!$cm = get_record('course_modules','id',$context->instanceid)) {
+                error('Bad course module ID');
+            }
+            if (!$module = get_record('modules','id',$cm->module)) {  //$module->name;
+                error('Bad module ID');
+            }
+            if (!$course = get_record('course','id',$cm->course)) {
+                error('Bad course ID');
+            }
+            if (!$instance = get_record($module->name, 'id', $cm->instance)) {
                 error("The required instance of this module doesn't exist");
             }
 
-            $strnav = "<a href=\"$CFG->wwwroot/mod/$module->name/view.php?id=$cm->id\">$form->name</a> ->";
+            $strnav = "<a href=\"$CFG->wwwroot/mod/$module->name/view.php?id=$cm->id\">$instance->name</a> ->";
             $fullmodulename = get_string("modulename", $module->name);
             $streditinga = get_string("editinga", "moodle", $fullmodulename);
             $strmodulenameplural = get_string("modulenameplural", $module->name);
@@ -59,6 +64,7 @@ if ($currenttab != 'update') {
                 $focuscursor = "form.name";
             }
 
+            $COURSE = $course;
             print_header_simple($streditinga, '',
                     "<a href=\"$CFG->wwwroot/mod/$module->name/index.php?id=$course->id\">$strmodulenameplural</a> ->
                     $strnav <a href=\"$CFG->wwwroot/course/mod.php?update=$cm->id&sesskey=".sesskey()."\">$streditinga</a> -> $straction", $focuscursor, "", false);

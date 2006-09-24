@@ -8,25 +8,29 @@
     $courseid  = optional_param('courseid', 0, PARAM_INT); // needed for user tabs
     $cancel    = optional_param('cancel', 0, PARAM_BOOL);
 
+    if (!$context = get_record('context', 'id', $contextid)) {
+        error('Bad context ID');
+    }
+
+    if (!$sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID)) {
+        error('No site ID');
+    }
+
+    if ($context->id == $sitecontext->id) {
+        error ('Can not override base role capabilities');
+    }
+
+    require_capability('moodle/role:override', $context);   // Just to make sure
+
     if ($courseid) {
-        $course = get_record('course', 'id', $courseid);
+        if (!$course = get_record('course', 'id', $courseid)) {
+            error('Bad course ID');
+        }
     } else {
         $course = $SITE;
     }
 
-    $context = get_record('context', 'id', $contextid);
-    $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
-    if ($contextid == $sitecontext->id) {
-        error ('Can not override base role capabilities');
-    }
-
-    if ($context->contextlevel == CONTEXT_COURSE) {
-        require_login($context->instanceid);
-    } else {
-        require_login();
-    }
-
-    $baseurl = 'override.php?contextid='.$contextid;
+    $baseurl = 'override.php?contextid='.$context->id;
     if (!empty($userid)) {
         $baseurl .= '&amp;userid='.$userid;
     }
@@ -80,7 +84,7 @@
 
             if (isset($localoverrides[$capname])) {    // Something exists, so update it
                 if ($value == CAP_INHERIT) {       // inherit = delete
-                    delete_records('role_capabilities', 'roleid', $roleid, 'contextid', $contextid,
+                    delete_records('role_capabilities', 'roleid', $roleid, 'contextid', $context->id,
                                                         'capability', $capname);
                 } else {
                     $localoverride = new object();
@@ -97,7 +101,7 @@
                 if ($value != CAP_INHERIT) {    // Ignore inherits
                     $localoverride = new object();
                     $localoverride->capability = $capname;
-                    $localoverride->contextid = $contextid;
+                    $localoverride->contextid = $context->id;
                     $localoverride->roleid = $roleid;
                     $localoverride->permission = $value;
                     $localoverride->timemodified = time();
