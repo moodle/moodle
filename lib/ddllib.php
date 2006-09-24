@@ -308,7 +308,7 @@ function install_from_xmldb_file($file) {
     $structure = $xmldb_file->getStructure();
 
     if (!$sqlarr = $structure->getCreateStructureSQL($CFG->dbtype, $CFG->prefix, false)) {
-        return false;
+        return true; //Empty array = nothing to do = no error
     }
 
     return execute_sql_arr($sqlarr);
@@ -335,7 +335,7 @@ function create_table($table, $continue=true, $feedback=true) {
     }
 
     if(!$sqlarr = $table->getCreateTableSQL($CFG->dbtype, $CFG->prefix, false)) {
-        return false;
+        return true; //Empty array = nothing to do = no error
     }
 
     return execute_sql_arr($sqlarr, $continue, $feedback);
@@ -363,7 +363,7 @@ function drop_table($table, $continue=true, $feedback=true) {
     }
 
     if(!$sqlarr = $table->getDropTableSQL($CFG->dbtype, $CFG->prefix, false)) {
-        return false;
+        return true; //Empty array = nothing to do = no error
     }
 
     return execute_sql_arr($sqlarr, $continue, $feedback);
@@ -393,7 +393,7 @@ function add_field($table, $field, $continue=true, $feedback=true) {
     }
 
     if(!$sqlarr = $table->getAddFieldSQL($CFG->dbtype, $CFG->prefix, $field, false)) {
-        return false;
+        return true; //Empty array = nothing to do = no error
     }
 
     return execute_sql_arr($sqlarr, $continue, $feedback);
@@ -423,7 +423,7 @@ function drop_field($table, $field, $continue=true, $feedback=true) {
     }
 
     if(!$sqlarr = $table->getDropFieldSQL($CFG->dbtype, $CFG->prefix, $field, false)) {
-        return false;
+        return true; //Empty array = nothing to do = no error
     }
 
     return execute_sql_arr($sqlarr, $continue, $feedback);
@@ -453,7 +453,7 @@ function change_field_precision($table, $field, $continue=true, $feedback=true) 
     }
 
     if(!$sqlarr = $table->getAlterFieldSQL($CFG->dbtype, $CFG->prefix, $field, false)) {
-        return false;
+        return true; //Empty array = nothing to do = no error
     }
 
     return execute_sql_arr($sqlarr, $continue, $feedback);
@@ -516,7 +516,7 @@ function change_field_default($table, $field, $continue=true, $feedback=true) {
     }
 
     if(!$sqlarr = $table->getModifyDefaultSQL($CFG->dbtype, $CFG->prefix, $field, false)) {
-        return false;
+        return true; //Empty array = nothing to do = no error
     }
 
     return execute_sql_arr($sqlarr, $continue, $feedback);
