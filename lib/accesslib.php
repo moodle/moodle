@@ -2613,11 +2613,19 @@ function get_users_by_capability($context, $capability, $fields='', $sort='',
 
 /// Sorting out roles with this capability set
     if ($possibleroles = get_roles_with_capability($capability, CAP_ALLOW, $context)) {
+        if (!$sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID)) {  // Something is seriously wrong
+            return false;
+        }
+        $doanythingroles = get_roles_with_capability('moodle/site:doanything', CAP_ALLOW, $sitecontext);
+
         $validroleids = array();
-        foreach ($possibleroles as $prole) {
-            $caps = role_context_capabilities($prole->id, $context, $capability); // resolved list
+        foreach ($possibleroles as $possiblerole) {
+            if (isset($doanythingroles[$possiblerole->id])) {  // We don't want these included
+                continue;
+            }
+            $caps = role_context_capabilities($possiblerole->id, $context, $capability); // resolved list
             if ($caps[$capability] > 0) { // resolved capability > 0
-                $validroleids[] = $prole->id;
+                $validroleids[] = $possiblerole->id;
             }
         }
         $roleids =  '('.implode(',', $validroleids).')';
