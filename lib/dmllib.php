@@ -1352,7 +1352,7 @@ function column_type($table, $column) {
 
     if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++; };
 
-    if(!$rs = $db->Execute('SELECT '.$column.' FROM '.$CFG->prefix.$table.' LIMIT 0')) {
+    if(!$rs = $db->Execute('SELECT '.$column.' FROM '.$CFG->prefix.$table.' WHERE 1=2')) {
         return false;
     }
 
