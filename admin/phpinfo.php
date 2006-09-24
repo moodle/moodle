@@ -27,6 +27,6 @@
 
     echo '</div>';
 
-    admin_externalpage_print_footer();
+    admin_externalpage_print_footer($adminroot);
 
 ?>
