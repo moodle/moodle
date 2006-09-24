@@ -57,16 +57,16 @@ class block_admin_tree extends block_base {
     function build_tree (&$content) {
         global $CFG;
         if (is_a($content, 'admin_settingpage')) {
-            if ($content->check_access()) {
+            if ($content->check_access() and !$content->is_hidden()) {
                 $this->create_item($content->visiblename,$CFG->wwwroot.'/'.$CFG->admin.'/settings.php?section=' . $content->name,$CFG->wwwroot .'/blocks/admin_tree/item.gif');
             }
         } else if (is_a($content, 'admin_externalpage')) {
-            if ($content->check_access()) {
+            if ($content->check_access() and !$content->is_hidden()) {
                 $this->create_item($content->visiblename, $content->url, $CFG->wwwroot . '/blocks/admin_tree/item.gif');
             }
         } else if (is_a($content, 'admin_category')) {
-            if ($content->check_access()) {
-            
+            if ($content->check_access() and !$content->is_hidden()) {
+
                 // check if the category we're currently printing is a parent category for the current page; if it is, we
                 // make a note (in the javascript) that it has to be expanded after the page has loaded
                 if ($this->pathtosection[count($this->pathtosection) - 1] == $content->name) {
@@ -75,11 +75,11 @@ class block_admin_tree extends block_base {
                 }
 
                 $this->open_folder($content->visiblename);
-                
+
                 unset($entries);
-                
+
                 $entries = array_keys($content->children);
-                
+
                 foreach ($entries as $entry) {
                     $this->build_tree($content->children[$entry]);
                 }
@@ -92,7 +92,7 @@ class block_admin_tree extends block_base {
     function get_content() {
 
         global $CFG, $ADMIN;
-        
+
            require_once($CFG->libdir.'/adminlib.php');
         $adminroot = admin_get_root();
 
@@ -107,17 +107,17 @@ class block_admin_tree extends block_base {
 
         // we need to do this instead of $this->build_tree($adminroot) because the top-level folder
         // is redundant (and ideally ignored). (the top-level folder is "administration".)
-        
+
         unset($entries);
-        
+
         $entries = array_keys($adminroot->children);
-        
-        asort($entries);                
-        
+
+        asort($entries);
+
         foreach ($entries as $entry) {
             $this->build_tree($adminroot->children[$entry]);
         }
-    
+
         if ($this->tempcontent !== '') {
             $this->content = new stdClass;
             $this->content->text = '<script type="text/javascript">' . "\n\n";
@@ -131,7 +131,7 @@ class block_admin_tree extends block_base {
             $this->content->text .= '  }' . "\n";
             $this->content->text .= '  return null;' . "\n";
             $this->content->text .= '}' . "\n";
-    
+
             $this->content->text .= 'function toggle(spanid) {' . "\n";
             $this->content->text .= '  if (getspan(spanid).innerHTML == "") {' . "\n";
             $this->content->text .= '    getspan(spanid).innerHTML = vh_content[spanid];' . "\n";
@@ -155,13 +155,13 @@ class block_admin_tree extends block_base {
             $this->content->text .= '  getspan(spanid).innerHTML = vh_content[spanid];' . "\n";
             $this->content->text .= '  getspan(spanid + "indicator").innerHTML = "<img src=\"' . $CFG->wwwroot . '/blocks/admin_tree/open.gif\" border=\"0\" alt=\"[open folder]\" />";' . "\n";
             $this->content->text .= '}' . "\n";
-    
+
             $this->content->text .= 'function expandall() {' . "\n";
             $this->content->text .= '  for (i = 1; i <= vh_numspans; i++) {' . "\n";
             $this->content->text .= '    expand("vh_span" + String(i));' . "\n";
             $this->content->text .= '  }' . "\n";
             $this->content->text .= '}' . "\n";
-    
+
             $this->content->text .= 'function collapseall() {' . "\n";
             $this->content->text .= '  for (i = vh_numspans; i > 0; i--) {' . "\n";
             $this->content->text .= '    collapse("vh_span" + String(i));' . "\n";
@@ -170,9 +170,9 @@ class block_admin_tree extends block_base {
 
             $this->content->text .= '</script>' . "\n";
             $this->content->text .= '<div align="left">' . "\n";
-            
+
             $this->content->text .= $this->tempcontent;
-  
+
             $this->content->text .= '</div>' . "\n";
             $this->content->text .= '<script type="text/javascript">' . "\n";
             $this->content->text .= 'collapseall();' . "\n";

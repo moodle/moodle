@@ -741,7 +741,7 @@ class part_of_admin_tree {
      * Removes named part_of_admin_tree.
      *
      * @param string $name The internal name of the part_of_admin_tree we want to remove.
-     * @return boolean success.
+     * @return bool success.
      */
     function prune($name) {
         trigger_error('Admin class does not implement method <strong>prune()</strong>', E_USER_WARNING);
@@ -762,6 +762,16 @@ class part_of_admin_tree {
      */
     function check_access() {
         trigger_error('Admin class does not implement method <strong>check_access()</strong>', E_USER_WARNING);
+        return;
+    }
+
+    /**
+     * Mostly usefull for removing of some parts of the tree in admin tree block.
+     *
+     * @return True is hidden from normal list view
+     */
+    function is_hidden() {
+        trigger_error('Admin class does not implement method <strong>is_hidden()</strong>', E_USER_WARNING);
         return;
     }
 
@@ -847,6 +857,11 @@ class admin_category extends parentable_part_of_admin_tree {
      */
     var $visiblename;
 
+    /**
+     * @var bool Should this category be hidden in admin tree block?
+     */
+    var $hidden;
+
     // constructor for an empty admin category
     // $name is the internal name of the category. it MUST be unique in the entire hierarchy
     // $visiblename is the displayed name of the category. use a get_string for this
@@ -856,12 +871,14 @@ class admin_category extends parentable_part_of_admin_tree {
      *
      * @param string $name The internal name for this category. Must be unique amongst ALL part_of_admin_tree objects
      * @param string $visiblename The displayed named for this category. Usually obtained through get_string()
+     * @param bool $hidden hide category in admin tree block
      * @return mixed Returns the new object.
      */
-    function admin_category($name, $visiblename) {
+    function admin_category($name, $visiblename, $hidden = false) {
         $this->children = array();
         $this->name = $name;
         $this->visiblename = $visiblename;
+        $this->hidden = $hidden;
     }
 
     /**
@@ -914,7 +931,7 @@ class admin_category extends parentable_part_of_admin_tree {
      * Removes part_of_admin_tree object with internal name $name.
      *
      * @param string $name The internal name of the object we want to remove.
-     * @return boolean success
+     * @return bool success
      */
     function prune($name) {
 
@@ -994,6 +1011,14 @@ class admin_category extends parentable_part_of_admin_tree {
 
     }
 
+    /**
+     * Is this category hidden in admin tree block?
+     *
+     * @return bool True if hidden
+     */
+    function is_hidden() {
+        return $this->hidden;
+    }
 }
 
 /**
@@ -1027,6 +1052,11 @@ class admin_externalpage extends part_of_admin_tree {
     var $req_capability;
 
     /**
+     * @var bool hidden in admin tree block.
+     */
+    var $hidden;
+
+    /**
      * Constructor for adding an external page into the admin tree.
      *
      * @param string $name The internal name for this external page. Must be unique amongst ALL part_of_admin_tree objects.
@@ -1034,7 +1064,7 @@ class admin_externalpage extends part_of_admin_tree {
      * @param string $url The external URL that we should link to when someone requests this external page.
      * @param mixed $req_capability The role capability/permission a user must have to access this external page. Defaults to 'moodle/site:config'.
      */
-    function admin_externalpage($name, $visiblename, $url, $req_capability = 'moodle/site:config') {
+    function admin_externalpage($name, $visiblename, $url, $req_capability = 'moodle/site:config', $hidden=false) {
         $this->name = $name;
         $this->visiblename = $visiblename;
         $this->url = $url;
@@ -1043,6 +1073,7 @@ class admin_externalpage extends part_of_admin_tree {
         } else {
             $this->req_capability = array($req_capability);
         }
+        $this->hidden = $hidden;
     }
 
     /**
@@ -1096,6 +1127,15 @@ class admin_externalpage extends part_of_admin_tree {
         return false;
     }
 
+    /**
+     * Is this external page hidden in admin tree block?
+     *
+     * @return bool True if hidden
+     */
+    function is_hidden() {
+        return $this->hidden;
+    }
+
 }
 
 /**
@@ -1125,6 +1165,11 @@ class admin_settingpage extends part_of_admin_tree {
      */
     var $req_capability;
 
+    /**
+     * @var bool hidden in admin tree block.
+     */
+    var $hidden;
+
     // see admin_category
     function path($name, $path = array()) {
         if ($name == $this->name) {
@@ -1146,7 +1191,7 @@ class admin_settingpage extends part_of_admin_tree {
     }
 
     // see admin_externalpage
-    function admin_settingpage($name, $visiblename, $req_capability = 'moodle/site:config') {
+    function admin_settingpage($name, $visiblename, $req_capability = 'moodle/site:config', $hidden=false) {
         global $CFG;
         $this->settings = new stdClass();
         $this->name = $name;
@@ -1156,6 +1201,7 @@ class admin_settingpage extends part_of_admin_tree {
         } else {
             $this->req_capability = array($req_capability);
         }
+        $this->hidden = false;
     }
 
     // not the same as add for admin_category. adds an admin_setting to this admin_settingpage. settings appear (on the settingpage) in the order in which they're added
@@ -1209,6 +1255,15 @@ class admin_settingpage extends part_of_admin_tree {
             }
         }
         return $return;
+    }
+
+    /**
+     * Is this settigns page hidden in admin tree block?
+     *
+     * @return bool True if hidden
+     */
+    function is_hidden() {
+        return $this->hidden;
     }
 
 }
