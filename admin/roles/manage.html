@@ -110,14 +110,16 @@ foreach ($capabilities as $capability) {
         $localoverride->permission = $role->{$capability->name};
     }
 
+    $disabled = ($action != 'edit') ? ' disabled="disabled" ' : '';
+
     ?>
 
         <tr>
         <td><span title="<?php echo $capability->name ?>"><?php echo get_capability_string($capability->name); ?></span></td>
-        <td><input type="radio" name="<?php echo $capability->name; ?>" value="<?php echo CAP_INHERIT ?>" <?php if (!isset($localoverride->permission) || $localoverride->permission==CAP_INHERIT){ echo 'checked="checked"'; }?> /></td>
-        <td><input type="radio" name="<?php echo $capability->name; ?>" value="<?php echo CAP_ALLOW ?>" <?php if (isset($localoverride->permission) && $localoverride->permission==CAP_ALLOW){ echo 'checked="checked"'; }?> /></td>
-        <td ><input type="radio" name="<?php echo $capability->name; ?>" value="<?php echo CAP_PREVENT ?>" <?php if (isset($localoverride->permission) && $localoverride->permission==CAP_PREVENT){ echo 'checked="checked"'; }?> /></td>
-        <td ><input type="radio" name="<?php echo $capability->name; ?>" value="<?php echo CAP_PROHIBIT ?>" <?php if (isset($localoverride->permission) && $localoverride->permission==CAP_PROHIBIT){ echo 'checked="checked"'; }?> /></td>
+        <td><input type="radio" name="<?php echo $capability->name; ?>" value="<?php echo CAP_INHERIT ?>" <?php if (!isset($localoverride->permission) || $localoverride->permission==CAP_INHERIT){ echo 'checked="checked"'; }?> <?php echo $disabled; ?>/></td>
+        <td><input type="radio" name="<?php echo $capability->name; ?>" value="<?php echo CAP_ALLOW ?>" <?php if (isset($localoverride->permission) && $localoverride->permission==CAP_ALLOW){ echo 'checked="checked"'; }?> <?php echo $disabled; ?>/></td>
+        <td ><input type="radio" name="<?php echo $capability->name; ?>" value="<?php echo CAP_PREVENT ?>" <?php if (isset($localoverride->permission) && $localoverride->permission==CAP_PREVENT){ echo 'checked="checked"'; }?> <?php echo $disabled; ?>/></td>
+        <td ><input type="radio" name="<?php echo $capability->name; ?>" value="<?php echo CAP_PROHIBIT ?>" <?php if (isset($localoverride->permission) && $localoverride->permission==CAP_PROHIBIT){ echo 'checked="checked"'; }?> <?php echo $disabled; ?>/></td>
         <td><?php
             if (RISK_MANAGETRUST & (int)$capability->riskbitmask) {
                 echo "T";
