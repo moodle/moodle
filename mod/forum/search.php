@@ -199,6 +199,17 @@
         //Use highlight() with nonsense tags to spot search terms in the
         //actual text content first.          fiedorow - 9/2/2005
         $missing_terms = "";
+
+        // Hack for posts of format FORMAT_PLAIN. Otherwise html tags added by
+        // the highlight() call bellow get stripped out by forum_print_post().
+        if ($post->format == FORMAT_PLAIN) {
+            $post->message = s($post->message); 
+            $post->message = rebuildnolinktag($post->message); 
+            $post->message = str_replace(' ', '&nbsp; ', $post->message); 
+            $post->message = nl2br($post->message); 
+            $post->format = FORMAT_HTML;
+        }
+
         $options = new object();
         $options->trusttext = true;
         // detect TRUSTTEXT marker before first call to format_text
@@ -207,8 +218,9 @@
         } else {
             $ttpresent = false;
         }
-        $message = highlight($strippedsearch,format_text($post->message, $post->format, $options, $course->id),
-                0,'<fgw9sdpq4>','</fgw9sdpq4>');
+        $message = highlight($strippedsearch,
+                        format_text($post->message, $post->format, $options, $course->id),
+                        0, '<fgw9sdpq4>', '</fgw9sdpq4>');
 
         foreach ($searchterms as $searchterm) {
             if (preg_match("/$searchterm/i",$message) && !preg_match('/<fgw9sdpq4>'.$searchterm.'<\/fgw9sdpq4>/i',$message)) {
