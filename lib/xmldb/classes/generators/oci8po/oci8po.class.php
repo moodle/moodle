@@ -200,45 +200,146 @@ class XMLDBoci8po extends XMLDBgenerator {
      * Oracle has some severe limits:
      *     - clob and blob fields doesn't allow type to be specified
      *     - error is dropped if the null/not null clause is specified and hasn't changed
+     *     - changes in precision/decimals of numeric fields drop an ORA-1440 error
      */
     function getAlterFieldSQL($xmldb_table, $xmldb_field) {
 
-         global $db;
+        global $db;
 
-     /// Get the quoted name of the table and field
-         $tablename = $this->getEncQuoted($this->prefix . $xmldb_table->getName());
-         $fieldname = $this->getEncQuoted($xmldb_field->getName());
+        $results = array(); /// To store all the needed SQL commands
 
-     /// Take a look to field metadata
-         $meta = array_change_key_case($db->MetaColumns($tablename));
-         $metac = $meta[$fieldname];
-         $oldtype = strtolower($metac->type);
-         $oldlength = $metac->max_length;
-         $olddecimals = empty($metac->scale) ? null : $metac->scale;
-         $oldnotnull = empty($metac->not_null) ? false : $metac->not_null;
-         $olddefault = empty($metac->default_value) ? null : $metac->default_value;
+    /// Get the quoted name of the table and field
+        $tablename = $this->getEncQuoted($this->prefix . $xmldb_table->getName());
+        $fieldname = $this->getEncQuoted($xmldb_field->getName());
 
-         $islob = false;
+    /// Take a look to field metadata
+        $meta = array_change_key_case($db->MetaColumns($tablename));
+        $metac = $meta[$fieldname];
+        $oldtype = strtolower($metac->type);
+        $oldmetatype = column_type($xmldb_table->getName(), $fieldname);
+        $oldlength = $metac->max_length;
+    /// To calculate the oldlength if the field is numeric, we need to perform one extra query
+    /// because ADOdb has one bug here. http://phplens.com/lens/lensforum/msgs.php?id=15883
+        if ($oldmetatype == 'N') {
+            $uppertablename = strtoupper($tablename);
+            $upperfieldname = strtoupper($fieldname);
+            if ($col = get_record_sql("SELECT cname, precision
+                                   FROM col
+                                   WHERE tname = '$uppertablename'
+                                     AND cname = '$upperfieldname'")) {
+                $oldlength = $col->precision;
+            }
+        }
+        $olddecimals = empty($metac->scale) ? null : $metac->scale;
+        $oldnotnull = empty($metac->not_null) ? false : $metac->not_null;
+        $olddefault = empty($metac->default_value) ? null : $metac->default_value;
 
-     /// If field is CLOB and new one is also XMLDB_TYPE_TEXT or 
-     /// if fiels is BLOB and new one is also XMLDB_TYPE_BINARY
-     /// prevent type to be specified, so only NULL and DEFAULT clauses are allowed
-         if (($oldtype = 'clob' && $xmldb_field->getType() == XMLDB_TYPE_TEXT) ||
-             ($oldtype = 'blob' && $xmldb_field->getType() == XMLDB_TYPE_BINARY)) {
-             $this->alter_column_skip_type = true;
-             $islob = true;
-         }
+        $typechanged = true;  //By default, assume that the column type has changed
+        $precisionchanged = true;  //By default, assume that the column precision has changed
+        $decimalchanged = true;  //By default, assume that the column decimal has changed
+        $defaultchanged = true;  //By default, assume that the column default has changed
+        $notnullchanged = true;  //By default, assume that the column notnull has changed
 
-     /// If field is NOT NULL and the new one too or
-     /// if field is NULL and the new one too
-     /// prevent null clause to be specified
-         if (($oldnotnull && $xmldb_field->getNotnull()) ||
-             (!$oldnotnull && !$xmldb_field->getNotnull())) {
-             $this->alter_column_skip_notnull = true;
-         }
+        $from_temp_fields = false; //By default don't assume we are going to use temporal fields
 
-    /// In the rest of cases, use the general generator
-         return parent::getAlterFieldSQL($xmldb_table, $xmldb_field);
+    /// Detect if we are changing the type of the column
+        if (($xmldb_field->getType() == XMLDB_TYPE_INTEGER && substr($oldmetatype, 0, 1) == 'I') ||
+            ($xmldb_field->getType() == XMLDB_TYPE_NUMBER  && $oldmetatype == 'N') ||
+            ($xmldb_field->getType() == XMLDB_TYPE_FLOAT   && $oldmetatype == 'F') ||
+            ($xmldb_field->getType() == XMLDB_TYPE_CHAR    && substr($oldmetatype, 0, 1) == 'C') ||
+            ($xmldb_field->getType() == XMLDB_TYPE_TEXT    && substr($oldmetatype, 0, 1) == 'X') ||
+            ($xmldb_field->getType() == XMLDB_TYPE_BINARY  && $oldmetatype == 'B')) {
+            $typechanged = false;
+        } 
+    /// Detect if precision has changed
+        if (($xmldb_field->getType() == XMLDB_TYPE_TEXT) ||
+            ($xmldb_field->getType() == XMLDB_TYPE_BINARY) ||
+            ($oldlength == -1) ||
+            ($xmldb_field->getLength() == $oldlength)) {
+            $precisionchanged = false;
+        }
+    /// Detect if decimal has changed
+        if (($xmldb_field->getType() == XMLDB_TYPE_INTEGER) ||
+            ($xmldb_field->getType() == XMLDB_TYPE_CHAR) ||
+            ($xmldb_field->getType() == XMLDB_TYPE_TEXT) ||
+            ($xmldb_field->getType() == XMLDB_TYPE_BINARY) ||
+            (!$xmldb_field->getDecimals()) ||
+            (!$olddecimals) ||
+            ($xmldb_field->getDecimals() == $olddecimals)) {
+            $decimalchanged = false;
+        }
+    /// Detect if we are changing the default
+        if (($xmldb_field->getDefault() === null && $olddefault === null) ||
+            ($xmldb_field->getDefault() === $olddefault) ||             //Check both equality and
+            ("'" . $xmldb_field->getDefault() . "'" === $olddefault)) {  //Equality with quotes because ADOdb returns the default with quotes
+            $defaultchanged = false;
+        }
+    /// Detect if we are changing the nullability
+        if (($xmldb_field->getNotnull() === $oldnotnull)) {
+            $notnullchanged = false;
+        }
+
+    /// If type has changed or precision or decimal has changed and we are in one numeric field
+    ///     - create one temp column with the new specs
+    ///     - fill the new column with the values from the old one
+    ///     - drop the old column
+    ///     - rename the temp column to the original name
+        if (($typechanged) || ($oldmetatype == 'N' && ($precisionchanged || $decimalchanged))) {
+            $tempcolname = $xmldb_field->getName() . '_alter_column_tmp';
+        /// Prevent temp field to have both NULL/NOT NULL and DEFAULT constraints
+            $this->alter_column_skip_notnull = true;
+            $this->alter_column_skip_default = true;
+            $xmldb_field->setName($tempcolname);
+        /// Create the temporal column
+            $results = array_merge($results, $this->getAddFieldSQL($xmldb_table, $xmldb_field));
+        /// Copy contents from original col to the temporal one
+            $results[] = 'UPDATE ' . $tablename . ' SET ' . $tempcolname . ' = ' . $fieldname;
+        /// Drop the old column
+            $xmldb_field->setName($fieldname); //Set back the original field name
+            $results = array_merge($results, $this->getDropFieldSQL($xmldb_table, $xmldb_field));
+        /// Rename the temp column to the original one
+            $results[] = 'ALTER TABLE ' . $tablename . ' RENAME COLUMN ' . $tempcolname . ' TO ' . $fieldname;
+        /// Mark we have performed one change based in temp fields
+            $from_temp_fields = true;
+        /// Re-enable the notnull and default sections so the general AlterFieldSQL can use it
+            $this->alter_column_skip_notnull = false;
+            $this->alter_column_skip_default = false;
+        /// Dissavle the type section because we have done it with the temp field
+            $this->alter_column_skip_type = true;
+        }
+
+    /// If type and precision and decimals hasn't changed, prevent the type clause
+        if (!$typechanged && !$precisionchanged && !$decimalchanged) {
+            $this->alter_column_skip_type = true;
+        }
+
+    /// If NULL/NOT NULL hasn't changed
+    /// prevent null clause to be specified
+        if (!$notnullchanged) {
+            $this->alter_column_skip_notnull = true; /// Initially, prevent the notnull clause
+        /// But, if we have used the temp field and the new field is not null, then enforce the not null clause
+            if ($from_temp_fields &&  $xmldb_field->getNotnull()) {
+                $this->alter_column_skip_notnull = false;
+            }
+        }
+    /// If default hasn't changed
+    /// prevent default clause to be specified
+        if (!$defaultchanged) {
+            $this->alter_column_skip_default = true; /// Initially, prevent the default clause
+        /// But, if we have used the temp field and the new field has default clause, then enforce the default clause
+            if ($from_temp_fields && $default_clause = $this->getDefaultClause($xmldb_field)) {
+                $this->alter_column_skip_default = false;
+            }
+        }
+
+    /// If arriving here, something is not being skiped (type, notnull, default), calculate the standar AlterFieldSQL
+        if (!$this->alter_column_skip_type || !$this->alter_column_skip_notnull || !$this->alter_column_skip_default) {
+            $results = array_merge($results, parent::getAlterFieldSQL($xmldb_table, $xmldb_field));
+            return $results;
+        }
+
+    /// Finally return results
+        return $results;
     }
 
     /**
