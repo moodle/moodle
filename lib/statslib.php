@@ -186,17 +186,19 @@ function stats_cron_daily () {
                 $stat->timeend = $nextmidnight;
                 $stat->stattype = 'activity';
                 
-                $sql = 'SELECT COUNT(DISTINCT prs.userid) FROM ('.$primary_roles.') prs 
+                $sql = 'SELECT COUNT(DISTINCT l.id) FROM ('.$primary_roles.') prs 
                         INNER JOIN '.$CFG->prefix.'log l ON (prs.userid=l.userid
                         AND l.course=prs.courseid) WHERE prs.primary_roleid='.$role->id.' 
                         AND prs.courseid='.$course->id.' AND prs.contextlevel = '.CONTEXT_COURSE.'
                          AND '.$timesql.' '.stats_get_action_sql_in('view');
                 $stat->stat1 = count_records_sql($sql);       
-                $sql = 'SELECT COUNT(DISTINCT prs.userid) FROM ('.$primary_roles.') prs 
+
+                $sql = 'SELECT COUNT(DISTINCT l.id) FROM ('.$primary_roles.') prs 
                         INNER JOIN '.$CFG->prefix.'log l ON (prs.userid=l.userid  AND l.course=prs.courseid) 
                         WHERE prs.primary_roleid='.$role->id.' AND prs.courseid='.$course->id.' 
                         AND prs.contextlevel = '.CONTEXT_COURSE.' AND '.$timesql.' '.stats_get_action_sql_in('post');
                 $stat->stat2 = count_records_sql($sql);       
+
                 insert_record('stats_daily',$stat,false); // don't worry about the return id, we don't need it.
             }
             
