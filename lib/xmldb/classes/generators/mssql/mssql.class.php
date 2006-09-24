@@ -60,8 +60,6 @@ class XMLDBmssql extends XMLDBgenerator {
     var $concat_character = '+'; //Characters to be used as concatenation operator. If not defined
                                   //MySQL CONCAT function will be use
 
-    var $alter_column_skip_default = true; //The generator will skip the default clause on alter column
-
     /**
      * Creates one new XMLDBmssql
      */
@@ -177,6 +175,15 @@ class XMLDBmssql extends XMLDBgenerator {
         $results[] = 'ALTER TABLE ' . $tablename . ' DROP COLUMN ' . $fieldname;
 
         return $results;
+    }
+
+    /**
+     * Given one XMLDBTable and one XMLDBField, return the SQL statements needded to alter the field in the table
+     */
+    function getAlterFieldSQL($xmldb_table, $xmldb_field) {
+    /// Just prevent default clauses in this type of sentences for mssql and launch the parent one
+        $this->alter_column_skip_default = true;
+        return parent::getAlterFieldSQL($xmldb_table, $xmldb_field);
     }
 
     /**
