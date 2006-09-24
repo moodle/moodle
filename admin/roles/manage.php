@@ -188,11 +188,7 @@
             } else if (confirm_sesskey()){
                 // show confirmation
                 admin_externalpage_print_header($adminroot);
-                $optionsyes = new object();
-                $optionsyes->action = 'delete';
-                $optionsyes->roleid = $roleid;
-                $optionsyes->sesskey = sesskey();
-                $optionsyes->confirm = 1;
+                $optionsyes = array('action'=>'delete', 'roleid'=>$roleid, 'sesskey'=>sesskey(), 'confirm'=>1);
                 $a = new object();
                 $a->id = $roleid;
                 $a->name = $roles[$roleid]->name;

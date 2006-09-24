@@ -1,6 +1,7 @@
 <?php // $Id$
 
     require_once('../config.php');
+    require_once($CFG->libdir.'/adminlib.php');
 
     $newuser      = optional_param('newuser', 0, PARAM_BOOL);
     $delete       = optional_param('delete', 0, PARAM_INT);
@@ -10,40 +11,32 @@
     $dir          = optional_param('dir', 'ASC', PARAM_ALPHA);
     $page         = optional_param('page', 0, PARAM_INT);
     $perpage      = optional_param('perpage', 30, PARAM_INT);        // how many per page
-    $search       = optional_param('search', '', PARAM_RAW);
+    $search       = trim(optional_param('search', '', PARAM_RAW));
     $lastinitial  = optional_param('lastinitial', '', PARAM_CLEAN);  // only show students with this last initial
     $firstinitial = optional_param('firstinitial', '', PARAM_CLEAN); // only show students with this first initial
 
-    $search = trim($search);
-
-    $user    = new object();
-    $admin   = new object();
-    $teacher = new object();
-
-    if (!$context = get_context_instance(CONTEXT_SYSTEM, SITEID)) {  // Should never happen
+    if (!$sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID)) {  // Should never happen
         redirect('index.php');
     }
 
     if (!$CFG->rolesactive) {   // No admin user yet.
 
-        $user->firstname    = get_string("admin");
-        $user->lastname     = get_string("user");
-        $user->username     = "admin";
-        $user->password     = hash_internal_user_password("admin");
-        $user->email        = "root@localhost";
+        $user = new object();
+        $user->firstname    = get_string('admin');
+        $user->lastname     = get_string('user');
+        $user->username     = 'admin';
+        $user->password     = hash_internal_user_password('admin');
+        $user->email        = 'root@localhost';
         $user->confirmed    = 1;
         $user->lang         = $CFG->lang;
         $user->maildisplay  = 1;
         $user->timemodified = time();
 
-        if (! $user->id = insert_record("user", $user)) {
+        if (! $user->id = insert_record('user', $user)) {
             error("SERIOUS ERROR: Could not create admin user record !!!");
         }
 
-        
-        $admin->userid = $user->id;
-
-        if (! $user = get_record("user", "id", $user->id)) {   // Double check.
+        if (! $user = get_record('user', 'id', $user->id)) {   // Double check.
             error("User ID was incorrect (can't find it)");
         }
 
@@ -53,7 +46,7 @@
             error('No admin role could be found');
         }
         foreach ($adminroles as $adminrole) {
-            role_assign($adminrole->id, $user->id, 0, $context->id);
+            role_assign($adminrole->id, $user->id, 0, $sitecontext->id);
         }
         set_config('rolesactive', 1);
 
@@ -61,14 +54,13 @@
         if (! $site = get_site()) {
             error("Could not find site-level course");
         }
-        
+
         // Log the user in.
         $USER = $user;
         $USER->loggedin = true;
         $USER->sessionIP = md5(getremoteaddr());   // Store the current IP in the session
         $USER->site = $CFG->wwwroot;
         $USER->admin = true;
-        //$USER->teacher["$site->id"] = true;
         $USER->newadminuser = true;
 
         sesskey();   // For added security, used to check script parameters
@@ -86,16 +78,24 @@
 
     require_login();
 
-    
+    $adminroot = admin_get_root();
+
+    if ($newuser) {
+        admin_externalpage_setup('addnewuser', $adminroot);
+    } else {
+        admin_externalpage_setup('editusers', $adminroot);
+    }
+
+
     if ($newuser) {                 // Create a new user
-        
-        if (!has_capability('moodle/user:create', $context)) {
+
+        if (!has_capability('moodle/user:create', $sitecontext)) {
             error('You do not have the required permission to create new users.');
         }
 
         if (!$user = get_record('user', 'username', 'changeme')) {   // half finished user from another time
-        
-            $user = new object;
+
+            $user = new object();
             $user->auth         = 'manual';
             $user->firstname    = '';
             $user->lastname     = '';
@@ -114,33 +114,21 @@
         redirect("$CFG->wwwroot/user/edit.php?id=$user->id&amp;course=$site->id");
 
     } else {                        // List all users for editing
-        
-        if (!has_capability('moodle/user:update', $context)) {
-            error('You do not have the required permission to edit users.');
-        }
-        
-        $stredituser = get_string("edituser");
-        $stradministration = get_string("administration");
-        $strusers = get_string("users");
-        $stredit   = get_string("edit");
-        $strdelete = get_string("delete");
-        $strdeletecheck = get_string("deletecheck");
-        $strsearch = get_string("search");
-        $strshowallusers = get_string("showallusers");
 
-        if ($firstinitial or $lastinitial or $search or $page) {
-            print_header("$site->shortname: $stredituser", $site->fullname,
-                         "<a href=\"index.php\">$stradministration</a> -> ".
-                         "<a href=\"users.php\">$strusers</a> -> ".
-                         "<a href=\"user.php\">$stredituser</a>");
-        } else {
-            print_header("$site->shortname: $stredituser", $site->fullname,
-                         "<a href=\"index.php\">$stradministration</a> -> ".
-                         "<a href=\"users.php\">$strusers</a> -> $stredituser");
+        if (!has_capability('moodle/user:update', $sitecontext) and !has_capability('moodle/user:delete', $sitecontext)) {
+            error('You do not have the required permission to edit/delete users.');
         }
+
+        $stredit   = get_string('edit');
+        $strdelete = get_string('delete');
+        $strdeletecheck = get_string('deletecheck');
+        $strsearch = get_string('search');
+        $strshowallusers = get_string('showallusers');
+
+        admin_externalpage_print_header($adminroot);
 
         if ($confirmuser and confirm_sesskey()) {
-            if (!$user = get_record("user", "id", "$confirmuser")) {
+            if (!$user = get_record('user', 'id', $confirmuser)) {
                 error("No such user!");
             }
 
@@ -149,19 +137,19 @@
             $confirmeduser->confirmed = 1;
             $confirmeduser->timemodified = time();
 
-            if (update_record("user", $confirmeduser)) {
-                notify(get_string("userconfirmed", "", fullname($user, true)) );
+            if (update_record('user', $confirmeduser)) {
+                notify(get_string('userconfirmed', '', fullname($user, true)) );
             } else {
-                notify(get_string("usernotconfirmed", "", fullname($user, true)));
+                notify(get_string('usernotconfirmed', '', fullname($user, true)));
             }
 
         } else if ($delete and confirm_sesskey()) {              // Delete a selected user, after confirmation
-            
-            if (!has_capability('moodle/user:delete', $context)) {
+
+            if (!has_capability('moodle/user:delete', $sitecontext)) {
                 error('You do not have the required permission to delete a user.');
             }
-            
-            if (!$user = get_record("user", "id", "$delete")) {
+
+            if (!$user = get_record('user', 'id', $delete)) {
                 error("No such user!");
             }
 
@@ -172,25 +160,26 @@
 
             if ($confirm != md5($delete)) {
                 $fullname = fullname($user, true);
-                notice_yesno(get_string("deletecheckfull", "", "'$fullname'"),
-                     "user.php?delete=$delete&amp;confirm=".md5($delete)."&amp;sesskey=$USER->sesskey", "user.php");
-
-                exit;
-            } else if (!$user->deleted) {
+                print_heading(get_string('deleteuser', 'admin'));
+                $optionsyes = array('delete'=>$delete, 'confirm'=>md5($delete), 'sesskey'=>sesskey());
+                notice_yesno(get_string('deletecheckfull', '', "'$fullname'"), 'user.php', 'user.php', $optionsyes, NULL, 'post', 'get');
+                admin_externalpage_print_footer($adminroot);
+                die;
+            } else if (data_submitted() and !$user->deleted) {
                 $updateuser = new object();
                 $updateuser->id = $user->id;
-                $updateuser->deleted = "1";
+                $updateuser->deleted = 1;
                 $updateuser->username = "$user->email.".time();  // Remember it just in case
-                $updateuser->email = "";               // Clear this field to free it up
-                $updateuser->idnumber = "";               // Clear this field to free it up
+                $updateuser->email = '';               // Clear this field to free it up
+                $updateuser->idnumber = '';               // Clear this field to free it up
                 $updateuser->timemodified = time();
-                if (update_record("user", $updateuser)) {
+                if (update_record('user', $updateuser)) {
                     // not sure if this is needed. unenrol_student($user->id);  // From all courses
                     delete_records('role_assignments', 'userid', $user->id); // unassign all roles
-                    // remove all context assigned on this user?              
-                    notify(get_string("deletedactivity", "", fullname($user, true)) );
+                    // remove all context assigned on this user?
+                    notify(get_string('deletedactivity', '', fullname($user, true)) );
                 } else {
-                    notify(get_string("deletednot", "", fullname($user, true)));
+                    notify(get_string('deletednot', '', fullname($user, true)));
                 }
             }
         }
@@ -230,14 +219,14 @@
         $usersearchcount = get_users(false, $search, true, "", "", $firstinitial, $lastinitial);
 
         if ($search or $firstinitial or $lastinitial) {
-            print_heading("$usersearchcount / $usercount ".get_string("users"));
+            print_heading("$usersearchcount / $usercount ".get_string('users'));
             $usercount = $usersearchcount;
         } else {
-            print_heading("$usercount ".get_string("users"));
+            print_heading("$usercount ".get_string('users'));
         }
 
         $alphabet = explode(',', get_string('alphabet'));
-        $strall = get_string("all");
+        $strall = get_string('all');
 
 
         /// Bar of first initials
@@ -292,13 +281,13 @@
                $match[] = s($search);
             }
             if ($firstinitial) {
-               $match[] = get_string("firstname").": $firstinitial"."___";
+               $match[] = get_string('firstname').": $firstinitial"."___";
             }
             if ($lastinitial) {
-               $match[] = get_string("lastname").": $lastinitial"."___";
+               $match[] = get_string('lastname').": $lastinitial"."___";
             }
             $matchstring = implode(", ", $match);
-            print_heading(get_string("nousersmatching", "", $matchstring));
+            print_heading(get_string('nousersmatching', '', $matchstring));
 
             $table = NULL;
 
@@ -326,46 +315,51 @@
             $table->align = array ("left", "left", "left", "left", "left", "center", "center", "center");
             $table->width = "95%";
             foreach ($users as $user) {
-                if ($user->id == $USER->id or $user->username == "changeme") {
+                if ($user->username == 'changeme') {
+                    continue; // do not dispaly dummy new user
+                }
+
+                if ($user->id == $USER->id) {
                     $deletebutton = "";
                 } else {
-                      if (has_capability('moodle/user:delete', $context)) {
-                        $deletebutton = "<a href=\"user.php?delete=$user->id&amp;sesskey=$USER->sesskey\">$strdelete</a>";                    } else {
-                        $deletebutton ="";      
+                    if (has_capability('moodle/user:delete', $sitecontext)) {
+                        $deletebutton = "<a href=\"user.php?delete=$user->id&amp;sesskey=$USER->sesskey\">$strdelete</a>";
+                    } else {
+                        $deletebutton ="";
                     }
                 }
+
+                if (has_capability('moodle/user:update', $sitecontext)) {
+                    $editbutton = "<a href=\"../user/edit.php?id=$user->id&amp;course=$site->id\">$stredit</a>";
+                    if ($user->confirmed == 0) {
+                        $confirmbutton = "<a href=\"user.php?confirmuser=$user->id&amp;sesskey=$USER->sesskey\">" . get_string('confirm') . "</a>";
+                    } else {
+                        $confirmbutton = "";
+                    }
+                } else {
+                    $editbutton ="";
+                    if ($user->confirmed == 0) {
+                        $confirmbutton = "<span class=\"dimmed_text\">".get_string('confirm')."</span>";
+                    } else {
+                        $confirmbutton = "";
+                    }
+                }
+
                 if ($user->lastaccess) {
                     $strlastaccess = format_time(time() - $user->lastaccess);
                 } else {
-                    $strlastaccess = get_string("never");
-                }
-                if ($user->confirmed == 0) {
-                    $confirmbutton = "<a href=\"user.php?confirmuser=$user->id&amp;sesskey=$USER->sesskey\">" . get_string("confirm") . "</a>";
-                } else {
-                    $confirmbutton = "";
+                    $strlastaccess = get_string('never');
                 }
                 $fullname = fullname($user, true);
-                
-                if (has_capability('moodle/user:editprofile', $context)) {
-                
-                    $table->data[] = array ("<a href=\"../user/view.php?id=$user->id&amp;course=$site->id\">$fullname</a>",
-                                        "$user->email",
-                                        "$user->city",
-                                        "$user->country",
-                                        $strlastaccess,
-                                        "<a href=\"../user/edit.php?id=$user->id&amp;course=$site->id\">$stredit</a>",
-                                        $deletebutton,
-                                        $confirmbutton);
-                } else {
-                      $table->data[] = array ("<a href=\"../user/view.php?id=$user->id&amp;course=$site->id\">$fullname</a>",
-                                        "$user->email",
-                                        "$user->city",
-                                        "$user->country",
-                                        $strlastaccess,
-                                        $deletebutton,
-                                        $confirmbutton);
-                  
-                }
+
+                $table->data[] = array ("<a href=\"../user/view.php?id=$user->id&amp;course=$site->id\">$fullname</a>",
+                                    "$user->email",
+                                    "$user->city",
+                                    "$user->country",
+                                    $strlastaccess,
+                                    $editbutton,
+                                    $deletebutton,
+                                    $confirmbutton);
             }
         }
 
@@ -378,22 +372,22 @@
         }
         echo "</form>";
         echo "</td></tr></table>";
-        
-        if (has_capability('moodle/user:create', $context)) {
-            print_heading("<a href=\"user.php?newuser=true&amp;sesskey=$USER->sesskey\">".get_string("addnewuser")."</a>");    
+
+        if (has_capability('moodle/user:create', $sitecontext)) {
+            print_heading("<a href=\"user.php?newuser=true&amp;sesskey=$USER->sesskey\">".get_string('addnewuser')."</a>");
         }
         if (!empty($table)) {
             print_table($table);
             print_paging_bar($usercount, $page, $perpage,
                              "user.php?sort=$sort&amp;dir=$dir&amp;perpage=$perpage".
                              "&amp;firstinitial=$firstinitial&amp;lastinitial=$lastinitial&amp;search=".urlencode(stripslashes($search))."&amp;");
-            if (has_capability('moodle/user:create', $context)) {                
+            if (has_capability('moodle/user:create', $sitecontext)) {
                 print_heading("<a href=\"user.php?newuser=true&amp;sesskey=$USER->sesskey\">".get_string("addnewuser")."</a>");
             }
         }
 
 
-        print_footer();
+        admin_externalpage_print_footer($adminroot);
     }
 
 ?>
