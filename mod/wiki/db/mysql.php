@@ -171,7 +171,7 @@ CREATE TABLE prefix_wiki_locks
   lockedsince INT(10) NOT NULL DEFAULT 0,
   lockedseen INT(10) NOT NULL DEFAULT 0,
   PRIMARY KEY(id),
-  UNIQUE KEY wiki_locks_uk(wikiid,pagename),
+  UNIQUE INDEX wiki_locks_uk(wikiid,pagename),
   INDEX wiki_locks_ix(lockedseen)  
 );"); 
     }
