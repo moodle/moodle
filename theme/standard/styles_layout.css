@@ -461,6 +461,9 @@ fieldset.adminsettings {
 fieldset.adminsettings legend {
     display: none;
 }
+fieldset.adminsettings .form-group {
+    float: left;
+}
 fieldset.adminsettings .form-item {
     margin: 0;
 }
