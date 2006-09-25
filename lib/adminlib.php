@@ -1702,22 +1702,17 @@ class admin_setting_special_frontpagedesc extends admin_setting {
 
     function output_html() {
 
+        global $CFG;
+
         if ($this->get_setting() === NULL) {
             $currentsetting = $this->defaultsetting;
         } else {
             $currentsetting = $this->get_setting();
         }
 
-        $usehtmleditor = can_use_html_editor();
+        $CFG->adminusehtmleditor = can_use_html_editor();
 
-        ob_start();  // double-check the number of columns below... might overrun some screen resolutions
-        print_textarea($usehtmleditor, 15, 60, 0, 0, 's_' . $this->name, $currentsetting);
-
-        if ($usehtmleditor) {
-            use_html_editor();
-        }
-        $return = ob_get_contents();
-        ob_end_clean();
+        $return = print_textarea($CFG->adminusehtmleditor, 15, 60, 0, 0, 's_' . $this->name, $currentsetting, 0, true);
 
         return format_admin_setting('frontpagedesc', $this->name, $this->visiblename, $return, $this->description);
     }

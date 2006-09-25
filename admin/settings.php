@@ -110,12 +110,11 @@ echo '<input type="hidden" name="section" value="' . $PAGE->section . '" />';
 echo '<input type="hidden" name="sesskey" value="' . $USER->sesskey . '" />';
 echo '<input type="hidden" name="return" value="' . $return . '" />';
 print_heading($root->visiblename);
-print_simple_box_start('','100%','',5,'generalbox','');
 
 echo $root->output_html();
 
 echo '<center><input type="submit" value="' . get_string('savechanges','admin') . '" /></center>';
-print_simple_box_end();
+
 echo '</form>';
 
 if (!empty($SITE->fullname)) {
@@ -123,6 +122,10 @@ if (!empty($SITE->fullname)) {
     echo '<td style="width: ' . $preferred_width_right . 'px;" id="right-column">';
     blocks_print_group($PAGE, $pageblocks, BLOCK_POS_RIGHT);
     echo '</td></tr></table>';
+}
+
+if (!empty($CFG->adminusehtmleditor)) {
+    use_html_editor();
 }
 
 print_footer();
