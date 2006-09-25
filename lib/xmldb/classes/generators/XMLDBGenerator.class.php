@@ -440,7 +440,7 @@ class XMLDBgenerator {
             /// never applying defaults to TEXT and BINARY fields
                 if ($this->drop_default_clause_required &&
                     $xmldb_field->getType() != XMLDB_TYPE_TEXT &&
-                    $xmldb_field->getType() != XMLDB_TYPE_BINARY) {
+                    $xmldb_field->getType() != XMLDB_TYPE_BINARY && !$xmldb_field->getNotNull()) {
                     $default = ' DEFAULT ' . $this->drop_default_clause;
                 }
             }
