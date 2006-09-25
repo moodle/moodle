@@ -1714,8 +1714,8 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
 
     global $USER, $CFG, $SESSION;
 
-    static $stredit, $strdelete, $strreply, $strparent, $strprune, $strpruneheading, $threadedmode, $isteacher, $adminedit;
-
+    static $stredit, $strdelete, $strreply, $strparent, $strprune, $strpruneheading;
+    static $threadedmode, $isteacher, $adminedit;
     static $strmarkread, $strmarkunread, $istracked;
 
     if (!forum_user_can_see_post($post->forum,$post->discussion,$post)) {
@@ -1886,10 +1886,12 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
         }
     }
 
+    $forumtype = get_field('forum', 'type', 'id', $post->forum);
+    
     $age = time() - $post->created;
     /// Hack for allow to edit news posts those are not displayed yet until they are displayed
     if (!$post->parent
-        && get_field('forum', 'type', 'id', $post->forum) == 'news'
+        && $forumtype == 'news'
         && get_field_sql("SELECT id FROM {$CFG->prefix}forum_discussions WHERE id = $post->discussion AND timestart > ".time())) {
         $age = 0;
     }
@@ -1899,7 +1901,7 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
         }
     }
 
-    if (isteacheredit($courseid) and $post->parent) {
+    if (isteacheredit($courseid) && $post->parent && $forumtype != 'single') {
         $commands[] = '<a href="'.$CFG->wwwroot.'/mod/forum/post.php?prune='.$post->id.
                       '" title="'.$strpruneheading.'">'.$strprune.'</a>';
     }
@@ -3130,6 +3132,7 @@ function forum_print_discussion($course, $forum, $discussion, $post, $mode, $can
     }
 
     $post->forum = $forum->id;   // Add the forum id to the post object, later used by forum_print_post
+    $post->forumtype = $forum->type;
 
     $post->subject = format_string($post->subject);
 
