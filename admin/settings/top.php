@@ -26,10 +26,12 @@ $ADMIN->add('root', new admin_category('server', get_string('server','admin')));
 
 $ADMIN->add('root', new admin_category('reports', get_string('reports')));
 foreach(get_list_of_plugins('admin/report') as $plugin) {
-    $ADMIN->add('reports', new admin_externalpage('report' . $plugin, get_string($plugin, 'admin'), "$CFG->wwwroot/$CFG->admin/report/$plugin/index.php"));
+    $ADMIN->add('reports', new admin_externalpage('report'.$plugin, get_string($plugin, 'admin'), "$CFG->wwwroot/$CFG->admin/report/$plugin/index.php"));
 }
 
 $ADMIN->add('root', new admin_category('misc', get_string('miscellaneous')));
 
+// hidden unsupported category
+$ADMIN->add('root', new admin_category('unsupported', get_string('unsupported', 'admin'), true));
 
 ?>

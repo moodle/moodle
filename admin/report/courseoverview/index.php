@@ -27,8 +27,6 @@
     $strreports = get_string('reports');
     $strcourseoverview = get_string('courseoverview');
 
-    $strnav = '<a href="'.$CFG->wwwroot.'/'.$CFG->admin.'/index.php">'.get_string('administration').'</a> -> <a href="'.$CFG->wwwroot.'/'.$CFG->admin.'/report.php">'.$strreports.'</a> -> '.$strcourseoverview;
-
     $reportoptions = stats_get_report_options($course->id,STATS_MODE_RANKED);
 
     $tableprefix = $CFG->prefix.'stats_';
@@ -66,7 +64,7 @@
 
     if (!empty($report) && !empty($time)) {
         $param = stats_get_parameters($time,$report,SITEID,STATS_MODE_RANKED);
-        
+
         if (!empty($param->sql)) {
             $sql = $param->sql ." LIMIT ".$numcourses;
         } else {

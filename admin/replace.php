@@ -2,6 +2,10 @@
       /// Search and replace strings throughout all texts in the whole database
 
 require_once('../config.php');
+require_once($CFG->dirroot.'/course/lib.php');
+require_once($CFG->libdir.'/adminlib.php');
+$adminroot = admin_get_root();
+admin_externalpage_setup('replace', $adminroot);
 
 $search  = optional_param('search', '', PARAM_RAW);
 $replace = optional_param('replace', '', PARAM_RAW);
@@ -11,14 +15,16 @@ require_login();
 require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM, SITEID));
 
 ###################################################################
-print_header('Search and replace throughout the whole database', 'Replace text within the whole database');
+admin_externalpage_print_header($adminroot);
+
+print_heading('Search and replace text throughout the whole database');
 
 
-if (!$search or !$replace or !confirm_sesskey()) {   /// Print a form
+if (!data_submitted() or !$search or !$replace or !confirm_sesskey()) {   /// Print a form
 
     print_simple_box_start('center');
     echo '<div align="center">';
-    echo '<form action="replace.php">';
+    echo '<form action="replace.php" method="post">';
     echo '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'">';
     echo 'Search whole database for: <input type="text" name="search"><br />';
     echo 'Replace with this string: <input type="text" name="replace"><br /></br />';
@@ -26,6 +32,7 @@ if (!$search or !$replace or !confirm_sesskey()) {   /// Print a form
     echo '</form>';
     echo '</div>';
     print_simple_box_end();
+    admin_externalpage_print_footer($adminroot);
     die;
 }
 
@@ -35,6 +42,13 @@ if (!$tables = $db->Metatables() ) {    // No tables yet at all.
 }
 
 print_simple_box_start('center');
+
+/// Turn off time limits, sometimes upgrades can be slow.
+
+@set_time_limit(0);
+@ob_implicit_flush(true);
+while(@ob_end_flush());
+
 foreach ($tables as $table) {
     if (in_array($table, array($CFG->prefix.'config'))) {      // Don't process these
         continue;
@@ -50,11 +64,15 @@ foreach ($tables as $table) {
     }
 }
 
-/// Clear course cache which might be corrupted now
-execute_sql("UPDATE ".$CFG->prefix."course SET modinfo = '' WHERE id <> ".SITEID);
-
 print_simple_box_end();
 
+/// Rebuild course cache which might be incorrect now
+notify('Rebuilding course cache...');
+rebuild_course_cache();
+notify('...finished');
+
 print_continue('index.php');
+
+admin_externalpage_print_footer($adminroot);
 
 ?>

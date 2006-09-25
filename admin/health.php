@@ -7,10 +7,14 @@
     $extraws = '';
     while (true) {
         $extraws .= ob_get_contents();
-        if (!@ob_end_clean()) { //
+        if (!@ob_end_clean()) {
             break;
         }
     }
+
+    require_once($CFG->libdir.'/adminlib.php');
+    $adminroot = admin_get_root();
+    admin_externalpage_setup('healthcenter', $adminroot);
 
     define('SEVERITY_NOTICE',      'notice');
     define('SEVERITY_ANNOYANCE',   'annoyance');
@@ -23,13 +27,8 @@
     require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM, SITEID));
 
     $site = get_site();
-    $stradmin         = get_string('administration');
-    $strhealthcenter  = get_string('healthcenter');
-    $strmisc          = get_string('miscellaneous');
 
-    print_header($site->shortname.': '.$strhealthcenter, $site->fullname,
-                  '<a href="index.php">'.$stradmin.'</a> -> <a href="misc.php">'.$strmisc.'</a> ->'.
-                  $strhealthcenter);
+    admin_externalpage_print_header($adminroot);
 
 echo <<<STYLES
 <style type="text/css">
@@ -101,7 +100,7 @@ STYLES;
     }
 
 
-    print_footer();
+    admin_externalpage_print_footer($adminroot);
 
 
 function health_find_problems() {

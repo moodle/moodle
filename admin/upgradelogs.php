@@ -1,6 +1,9 @@
 <?PHP  //$Id$
 
     require_once('../config.php');
+    require_once($CFG->libdir.'/adminlib.php');
+    $adminroot = admin_get_root();
+    admin_externalpage_setup('upgradelogs', $adminroot);
 
     $confirm = optional_param('confirm', 0, PARAM_BOOL);
 
@@ -19,31 +22,29 @@
 /// Turn off time limits, sometimes upgrades can be slow.
 
     @set_time_limit(0);
+    @ob_implicit_flush(true);
+    while(@ob_end_flush());
 
 
 /// Print header
 
-    $stradministration = get_string("administration");
     $strupgradinglogs  = get_string("upgradinglogs", "admin");
+    admin_externalpage_print_header($adminroot);
+    print_heading($strupgradinglogs);
 
-    print_header("$site->shortname: $stradministration: $strupgradinglogs", "$site->fullname", 
-                 "<a href=\"index.php\">$stradministration</a> -> $strupgradinglogs");
-
-    if (empty($confirm)) {
-        notice_yesno(get_string("upgradelogsinfo", "admin"), 
-                     "upgradelogs.php?confirm=true&sesskey=$USER->sesskey", 
-                     "index.php");
-        print_footer();
+    if (!data_submitted() or empty($confirm) or !confirm_sesskey()) {
+        $optionsyes = array('confirm'=>'1', 'sesskey'=>sesskey());
+        notice_yesno(get_string('upgradeforumreadinfo', 'admin'),
+                    'upgradelogs.php', 'index.php', $optionsyes, NULL, 'post', 'get');
+        admin_externalpage_print_footer($adminroot);
         exit;
-    } else if (!confirm_sesskey()) {
-        error(get_string('confirmsesskeybad', 'error'));
     }
 
 
 /// Try and extract as many cmids as possible from the existing logs
 
-    if ($coursemodules = get_records_sql("SELECT cm.*, m.name 
-                                            FROM {$CFG->prefix}course_modules cm, 
+    if ($coursemodules = get_records_sql("SELECT cm.*, m.name
+                                            FROM {$CFG->prefix}course_modules cm,
                                                  {$CFG->prefix}modules m
                                             WHERE cm.module = m.id")) {
         $cmcount = count($coursemodules);
@@ -58,52 +59,52 @@
         }
 
         if ($cmcount > 10) {
-            print_simple_box('This process may take a very long time ... please be patient and let it finish.', 
+            print_simple_box('This process may take a very long time ... please be patient and let it finish.',
                              'center', '', '#ffcccc');
             $sleeptime = 1;
         }
         foreach ($coursemodules as $cm) {
 
-            switch ($cm->name) { 
+            switch ($cm->name) {
                 case "forum":
-                    execute_sql("UPDATE {$CFG->prefix}log SET cmid = '$cm->id' 
+                    execute_sql("UPDATE {$CFG->prefix}log SET cmid = '$cm->id'
                                  WHERE module = '$cm->name' AND url = 'view.php?id=$cm->id'", false);
 
-                    execute_sql("UPDATE {$CFG->prefix}log SET cmid = '$cm->id' 
+                    execute_sql("UPDATE {$CFG->prefix}log SET cmid = '$cm->id'
                                  WHERE module = '$cm->name' AND url = 'view.php?f=$cm->instance'", false);
-    
+
                     if ($discussions = get_records("forum_discussions", "forum", $cm->instance)) {
                         foreach ($discussions as $discussion) {
-                            execute_sql("UPDATE {$CFG->prefix}log SET cmid = '$cm->id' 
+                            execute_sql("UPDATE {$CFG->prefix}log SET cmid = '$cm->id'
                                          WHERE module = '$cm->name' AND url $LIKE 'discuss.php?d=$discussion->id%'", false);
                         }
                     }
                     break;
 
-                case "glossary": 
-                    execute_sql("UPDATE {$CFG->prefix}log SET cmid = '$cm->id' 
+                case "glossary":
+                    execute_sql("UPDATE {$CFG->prefix}log SET cmid = '$cm->id'
                                  WHERE module = '$cm->name' AND url $LIKE 'view.php?id=$cm->id%'", false);
                     break;
 
-                case "quiz": 
-                    execute_sql("UPDATE {$CFG->prefix}log SET cmid = '$cm->id' 
+                case "quiz":
+                    execute_sql("UPDATE {$CFG->prefix}log SET cmid = '$cm->id'
                                  WHERE module = '$cm->name' AND url = 'view.php?id=$cm->id'", false);
                     break;
 
-                case "assignment": 
-                    execute_sql("UPDATE {$CFG->prefix}log SET cmid = '$cm->id' 
+                case "assignment":
+                    execute_sql("UPDATE {$CFG->prefix}log SET cmid = '$cm->id'
                                  WHERE module = '$cm->name' AND url = 'view.php?id=$cm->id'", false);
-                    execute_sql("UPDATE {$CFG->prefix}log SET cmid = '$cm->id' 
+                    execute_sql("UPDATE {$CFG->prefix}log SET cmid = '$cm->id'
                                  WHERE module = '$cm->name' AND url = 'view.php?a=$cm->instance'", false);
-                    execute_sql("UPDATE {$CFG->prefix}log SET cmid = '$cm->id' 
+                    execute_sql("UPDATE {$CFG->prefix}log SET cmid = '$cm->id'
                                  WHERE module = '$cm->name' AND url = 'submissions.php?id=$cm->instance'", false);
                     break;
-                    
-                case "journal": 
-                    execute_sql("UPDATE {$CFG->prefix}log SET cmid = '$cm->id' 
+
+                case "journal":
+                    execute_sql("UPDATE {$CFG->prefix}log SET cmid = '$cm->id'
                                  WHERE module = '$cm->name' AND url = 'report.php?id=$cm->id'", false);
 
-                    execute_sql("UPDATE {$CFG->prefix}log SET cmid = '$cm->id' 
+                    execute_sql("UPDATE {$CFG->prefix}log SET cmid = '$cm->id'
                                  WHERE module = '$cm->name' AND url = 'view.php?id=$cm->id'", false);
                     break;
 
@@ -123,9 +124,10 @@
 
     delete_records("config", "name", "upgrade", "value", "logs");
 
-    notify("Log upgrading was successful!");
+    notify('Log upgrading was successful!', 'notifysuccess');
 
+    print_continue('index.php');
 
-    print_footer();
+    admin_externalpage_print_footer($adminroot);
 
 ?>

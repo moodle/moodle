@@ -3,38 +3,37 @@
     require_once('../config.php');
     require_once($CFG->dirroot.'/mod/forum/lib.php');
     require_once($CFG->libdir.'/adminlib.php');
+    $adminroot = admin_get_root();
+    admin_externalpage_setup('upgradeforumread', $adminroot);
 
     $confirm = optional_param('confirm', 0, PARAM_BOOL);
 
     require_login();
-    
+
     require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM, SITEID));
-    
+
     if ($CFG->version < 2005042300) {
         error("This script does not work with this old version of Moodle");
     }
 
     if (!$site = get_site()) {
-        redirect("index.php");
+        redirect('index.php');
     }
 
 
 /// Print header
 
-    $stradministration = get_string("administration");
-    $strupgradingdata  = get_string("upgradingdata", "admin");
+    $strupgradingdata  = get_string('upgradingdata', 'admin');
 
-    print_header("$site->shortname: $stradministration: $strupgradingdata", "$site->fullname", 
-                 "<a href=\"index.php\">$stradministration</a> -> $strupgradingdata");
+    admin_externalpage_print_header($adminroot);
+    print_heading($strupgradingdata);
 
-    if (empty($confirm)) {
-        notice_yesno(get_string("upgradeforumreadinfo", "admin"), 
-                     "upgradeforumread.php?confirm=true&sesskey=$USER->sesskey", 
-                     "index.php");
-        print_footer();
+    if (!data_submitted() or empty($confirm) or !confirm_sesskey()) {
+        $optionsyes = array('confirm'=>'1', 'sesskey'=>sesskey());
+        notice_yesno(get_string('upgradeforumreadinfo', 'admin'),
+                    'upgradeforumread.php', 'index.php', $optionsyes, NULL, 'post', 'get');
+        admin_externalpage_print_footer($adminroot);
         exit;
-    } else if (!confirm_sesskey()) {
-        error(get_string('confirmsesskeybad', 'error'));
     }
 
 
@@ -42,7 +41,7 @@
 
     @set_time_limit(0);
     @ob_implicit_flush(true);
-    @ob_end_flush();
+    while(@ob_end_flush());
 
     execute_sql('TRUNCATE TABLE '.$CFG->prefix.'forum_read;', false);   // Trash all old entries
 
@@ -63,7 +62,7 @@
                       'Please keep this window open until it completes', '', 3);
 
         $groups = array();
-    
+
         $currcourse = 0;
         $users = 0;
         $count = 0;
@@ -81,7 +80,7 @@
             /// If this course has users, and posts more than a day old, mark them for each user.
             if ($users &&
                     ($posts = get_records_select('forum_posts', 'discussion = '.$discussion->id.
-                                                 ' AND '.$dateafter.' < modified AND modified < '.$onedayago, 
+                                                 ' AND '.$dateafter.' < modified AND modified < '.$onedayago,
                                                  '', 'id,discussion,modified'))) {
                 foreach ($users as $user) {
                     /// If its a group discussion, make sure the user is in the group.
@@ -101,7 +100,7 @@
         }
         print_progress($dcount, $dtotal, 0);
     }
-    
+
 
     delete_records('config', 'name', 'upgrade', 'value', 'forumread');
 
@@ -109,9 +108,6 @@
 
     print_continue('index.php');
 
-    print_footer();
-
-    exit;
-
+    admin_externalpage_print_footer($adminroot);
 
 ?>

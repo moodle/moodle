@@ -3,16 +3,17 @@
 if (!isset($CFG)) {
 
     require('../config.php');
+    require_once($CFG->libdir.'/adminlib.php');
+    $adminroot = admin_get_root();
+    admin_externalpage_setup('oacleanup', $adminroot);
 
     require_login();
 
     require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM, SITEID));
 
-    print_header_simple('Online Assignment Cleanup','Online Assignment Cleanup', 'Admin');
-
+    admin_externalpage_print_header($adminroot);
     online_assignment_cleanup(true);
-
-    print_footer();
+    admin_externalpage_print_footer($adminroot);
 
 }
 
@@ -72,7 +73,7 @@ function online_assignment_cleanup($output=false) {
                 /// cycle through the instances
                 foreach ($instances as $instance) {
                     /// is this an instance of an online assignment
-                    $sql = "SELECT a.id 
+                    $sql = "SELECT a.id
                         FROM  {$CFG->prefix}course_modules cm,
                     {$CFG->prefix}assignment a
                     WHERE cm.id = '$instance' AND
@@ -137,7 +138,7 @@ function online_assignment_cleanup($output=false) {
 
                         set_field('course_sections', 'sequence', $section->sequence, 'id', $section->id);
 
-                        
+
                         if ($output) echo 'Online Assignment (instance '.$instance.') moved from section '.$section->id.': to section '.$newsection.'<br />';
 
                     }

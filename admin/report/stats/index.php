@@ -8,7 +8,7 @@
 
     $adminroot = admin_get_root();
 
-    admin_externalpage_setup('reportcourseoverview', $adminroot);
+    admin_externalpage_setup('reportstats', $adminroot);
 
     admin_externalpage_print_header($adminroot);
 

@@ -4,6 +4,9 @@
 // BE VERY CAREFUL USING THIS!
 
     require_once('../config.php');
+    require_once($CFG->libdir.'/adminlib.php');
+    $adminroot = admin_get_root();
+    admin_externalpage_setup('purgemoodledata', $adminroot);
 
     require_login();
 
@@ -14,13 +17,22 @@
 
     $deletedir = $CFG->dataroot;   // The directory to delete!
 
+    admin_externalpage_print_header($adminroot);
+    print_heading('Purge moodledata');
+
     if (empty($sure)) {
-        notice_yesno ('Are you completely sure you want to delete everything inside the directory '. $deletedir .' ?', 'delete.php?sure=yes&amp;sesskey='.sesskey(), 'index.php');
+        $optionsyes = array('sure'=>'yes', 'sesskey'=>sesskey());
+        notice_yesno ('Are you completely sure you want to delete everything inside the directory '. $deletedir .' ?',
+            'delete.php', 'index.php', $optionsyes, NULL, 'post', 'get');
+        admin_externalpage_print_footer($adminroot);
         exit;
     }
 
-    if (empty($reallysure)) {
-        notice_yesno ('Are you REALLY REALLY completely sure you want to delete everything inside the directory '. $deletedir .' (this includes all user images, and any other course files that have been created) ?', 'delete.php?sure=yes&amp;reallysure=yes&amp;sesskey='.sesskey(), 'index.php');
+    if (!data_submitted() or empty($reallysure)) {
+        $optionsyes = array('sure'=>'yes', 'sesskey'=>sesskey(), 'reallysure'=>'yes');
+        notice_yesno ('Are you REALLY REALLY completely sure you want to delete everything inside the directory '. $deletedir .' (this includes all user images, and any other course files that have been created) ?',
+            'delete.php', 'index.php', $optionsyes, NULL, 'post', 'get');
+        admin_externalpage_print_footer($adminroot);
         exit;
     }
 
@@ -34,6 +46,7 @@
 
     echo '<h1 align="center">Done!</h1>';
     print_continue($CFG->wwwroot);
+    admin_externalpage_print_footer($adminroot);
     exit;
 
 
