@@ -12,10 +12,10 @@ $WIKI_TYPES = array ('teacher' =>   get_string('defaultcourseteacher'),
 define("EWIKI_ESCAPE_AT", 0);       # For the algebraic filter
 
 // How long locks stay around without being confirmed (seconds)
-define(WIKI_LOCK_PERSISTENCE,60);
+define("WIKI_LOCK_PERSISTENCE",60);
 
 // How often to confirm that you still want a lock
-define(WIKI_LOCK_RECONFIRM,30);
+define("WIKI_LOCK_RECONFIRM",30);
 
 
 /*** Moodle 1.7 compatibility functions *****
