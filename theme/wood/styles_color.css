@@ -179,7 +179,8 @@ h2.header,
 .courseboxcontent,
 .categoryboxcontent,
 .cal_popup_fg,
-#course-view .section td.content {
+#course-view .section td.content,
+fieldset.adminsettings {
     border-top:1px solid #FFCC99;
     border-left:1px solid #FFCC99;
     border-bottom:1px solid #330000;
