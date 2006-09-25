@@ -48,16 +48,16 @@
         $blocks = blocks_setup($PAGE,BLOCKS_PINNED_TRUE);
         
         $blocks_preferred_width = bounded_number(180, blocks_preferred_width($blocks[BLOCK_POS_LEFT]), 210);
-        echo '<td style="vertical-align: top; width: '.$blocks_preferred_width.'px;" id="left-column">';
+        echo '<td valign="top" style="width: '.$blocks_preferred_width.'px;" id="left-column">';
         
         blocks_print_group($PAGE, $blocks, BLOCK_POS_LEFT);
     } else {
-        echo '<td style="vertical-align: top;" id="left-column">';
+        echo '<td valign="top" id="left-column">';
     }
     echo '</td>';
 
 
-    echo '<td valign="top" width="*" id="middle-column">';
+    echo '<td valign="top" id="middle-column">';
     print_simple_box_start('center');
     print_heading($strheading);
     echo '<form method="post" action="'.$CFG->wwwroot.'/'.$CFG->admin.'/stickyblocks.php">'
@@ -70,10 +70,10 @@
 
 
     if (!empty($pt)) {
-        echo '<td style="vertical-align: top; width: '.$blocks_preferred_width.'px;" id="left-column">';
+        echo '<td valign="top" style="width: '.$blocks_preferred_width.'px;" id="left-column">';
         blocks_print_group($PAGE, $blocks, BLOCK_POS_RIGHT);
     }
-    echo '<td style="vertical-align: top;" id="left-column">';
+    echo '<td valign="top" id="left-column">';
     echo '</td>';
   
     echo '</tr></table>';

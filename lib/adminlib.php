@@ -2386,7 +2386,7 @@ function admin_externalpage_print_header($adminroot) {
         echo '<td style="width: ' . $preferred_width_left . 'px;" id="left-column">';
         blocks_print_group($PAGE, $pageblocks, BLOCK_POS_LEFT);
         echo '</td>';
-        echo '<td id="middle-column" width="*">';
+        echo '<td id="middle-column">';
     } else {
         print_header();
     }

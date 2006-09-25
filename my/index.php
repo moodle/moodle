@@ -50,7 +50,7 @@
         echo '</td>';
     }
 
-    echo '<td valign="top" width="*" id="middle-column">';
+    echo '<td valign="top" id="middle-column">';
 
 /// The main overview in the middle of the page
     $courses = get_my_courses($USER->id);
