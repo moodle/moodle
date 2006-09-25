@@ -492,7 +492,7 @@ function get_teacher($courseid) {
 
     $context = get_context_instance(CONTEXT_COURSE, $courseid);
 
-    if ($users = get_users_by_capability($context, 'moodle/course:update', 'u.*,ra.hidden', 'sortorder ASC',
+    if ($users = get_users_by_capability($context, 'moodle/course:update', 'u.*,ra.hidden', 'r.sortorder ASC',
                                          '', '', '', '', false)) {
         foreach ($users as $user) {
             if (!$user->hidden || has_capability('moodle/role:viewhiddenassigns', $context)) {
