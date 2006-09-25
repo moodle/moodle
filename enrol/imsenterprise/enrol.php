@@ -43,18 +43,65 @@ for users and for courses.
 */
 
 
-
 class enrolment_plugin_imsenterprise {
 
     var $log;    
 
+// The "roles" hard-coded in the IMS specification are:
+public static $imsroles = array(
+'01'=>'Learner',
+'02'=>'Instructor',
+'03'=>'Content Developer',
+'04'=>'Member',
+'05'=>'Manager',
+'06'=>'Mentor',
+'07'=>'Administrator',
+'08'=>'TeachingAssistant',
+);
+// PLEASE NOTE: It may seem odd that "Content Developer" has a space in it
+// but "TeachingAssistant" doesn't. That's what the spec says though!!!
+
+
+/**
+* This function is only used when first setting up the plugin, to 
+* decide which role assignments to recommend by default.
+* For example, IMS role '01' is 'Learner', so may map to 'student' in Moodle.
+*/
+public static function determine_default_rolemapping($imscode) {
+    switch($imscode) {
+        case '01':
+        case '04':
+            $shortname = 'student';
+            break;
+        case '06':
+        case '08':
+            $shortname = 'teacher';
+            break;
+        case '02':
+        case '03':
+            $shortname = 'editingteacher';
+            break;
+        case '05':
+        case '07':
+            $shortname = 'admin';
+            break;
+        default:
+            return 0; // Zero for no match
+    }
+    return get_field('role', 'id', 'shortname', $shortname);
+}
+
+
+
 /// Override the base config_form() function
 function config_form($frm) {
-    global $CFG;
+    global $CFG, $imsroles;
 
     $vars = array('enrol_imsfilelocation', 'enrol_createnewusers', 'enrol_fixcaseusernames', 'enrol_fixcasepersonalnames', 'enrol_truncatecoursecodes', 
             'enrol_createnewcourses', 'enrol_createnewcategories', 'enrol_createnewusers', 'enrol_mailadmins', 
-            'enrol_imsunenrol', 'enrol_imssourcedidfallback', 'enrol_imscapitafix', 'enrol_imsrestricttarget', 'enrol_imsdeleteusers');
+            'enrol_imsunenrol', 'enrol_imssourcedidfallback', 'enrol_imscapitafix', 'enrol_imsrestricttarget', 'enrol_imsdeleteusers',
+            'enrol_imse_imsrolemap01','enrol_imse_imsrolemap02','enrol_imse_imsrolemap03','enrol_imse_imsrolemap04',
+            'enrol_imse_imsrolemap05','enrol_imse_imsrolemap06','enrol_imse_imsrolemap07','enrol_imse_imsrolemap08');
     foreach ($vars as $var) {
         if (!isset($frm->$var)) {
             $frm->$var = '';
@@ -143,6 +190,18 @@ function process_config($config) {
     }
     set_config('enrol_imsrestricttarget', $config->enrol_imsrestricttarget);
 
+
+
+    foreach(enrolment_plugin_imsenterprise::$imsroles as $imsrolenum=>$imsrolename){
+        $configref = 'enrol_imse_imsrolemap' . $imsrolenum;
+        if (!isset($config->$configref)) {
+            echo "<p>Resetting config->$configref</p>";
+            $config->$configref = 0;
+        }
+        set_config('enrol_imse_imsrolemap' . $imsrolenum, $config->$configref);
+    }
+
+
     set_config('enrol_ims_prev_md5',  ''); // Forget the MD5 - to force re-processing if we change the config setting
     set_config('enrol_ims_prev_time', ''); // Ditto
     return true;
@@ -183,6 +242,8 @@ function cron() {
         $this->log_line('Found file '.$filename);
         $this->xmlcache = '';
         
+        // Make sure we understand how to map the IMS-E roles to Moodle roles
+        $this->load_role_mappings();
 
         $md5 = md5_file($filename); // NB We'll write this value back to the database at the end of the cron
         $filemtime = filemtime($filename);
@@ -635,10 +696,8 @@ function process_person_tag($tagcontents){
 */
 function process_membership_tag($tagcontents){
     global $CFG;
-    $studentstally = 0;
-    $teacherstally = 0;
-    $studentsuntally = 0;
-    $teachersuntally = 0;
+    $memberstally = 0;
+    $membersuntally = 0;
     
     // In order to reduce the number of db queries required, group name/id associations are cached in this array:
     $groupids = array();
@@ -681,114 +740,82 @@ function process_membership_tag($tagcontents){
                 $member->groupname = trim($matches[1]);
                 // The actual processing (ensuring a group record exists, etc) occurs below, in the enrol-a-student clause
             }
-    
+            
+            $rolecontext = get_context_instance(CONTEXT_COURSE, $ship->courseid);
+            $rolecontext = $rolecontext->id; // All we really want is the ID
+//$this->log_line("Context instance for course $ship->courseid is...");
+//print_r($rolecontext);
+            
             // Add or remove this student or teacher to the course...
             $memberstoreobj->userid = get_field('user', 'id', 'idnumber', $member->idnumber);
             $memberstoreobj->enrol = 'imsenterprise';
             $memberstoreobj->course = $ship->courseid;
             $memberstoreobj->time = time();
             $memberstoreobj->timemodified = time();
-            if($memberstoreobj->userid)
-            switch($member->roletype){
-                case '01':
-                case 'Student':
-                    if(intval($member->status) == 1){
-                        // Enrol
-                        if ((!enrol_student($memberstoreobj->userid, $memberstoreobj->course, $timeframe->begin, $timeframe->end, 'imsenterprise')) && (trim($memberstoreobj->userid)!='')) {
-                            $this->log_line("Error enrolling $memberstoreobj->userid ($member->idnumber) in course $memberstoreobj->course");
-                        }else{
-                            $this->log_line("Enrolled student $memberstoreobj->userid ($member->idnumber) in course $memberstoreobj->course");
-                            $studentstally++;
-                            
-                            // At this point we can also ensure the group membership is recorded if present
-                            if(isset($member->groupname)){
-                                // Create the group if it doesn't exist - either way, make sure we know the group ID
-                                if(isset($groupids[$member->groupname])){
-                                    $member->groupid = $groupids[$member->groupname]; // Recall the group ID from cache if available
-                                }else{
-                                    if($groupid = get_field('groups', 'id', 'name', addslashes($member->groupname), 'courseid', $ship->courseid)){
-                                        $member->groupid = $groupid;
-                                        $groupids[$member->groupname] = $groupid; // Store ID in cache
-                                    }else{
-                                        // Attempt to create the group
-                                        $group->name = addslashes($member->groupname);
-                                        $group->courseid = $ship->courseid;
-                                        $group->timecreated = time();
-                                        $group->timemodified = time();
-                                        $groupid = insert_record('groups', $group);
-                                        $this->log_line('Added a new group for this course: '.$group->name);
-                                        $groupids[$member->groupname] = $groupid; // Store ID in cache
-                                        $member->groupid = $groupid;
-                                    }
-                                }
-                                // Add the user-to-group association if it doesn't already exist
-                                if($member->groupid && !get_field('groups_members', 'groupid', $member->groupid, 'userid', $memberstoreobj->userid)){
-                                    $gm->groupid = $member->groupid;
-                                    $gm->userid = $memberstoreobj->userid;
-                                    $gm->timeadded = time();
-                                    insert_record('groups_members', $gm);
-                                }
-                            } // End of group-enrolment (from member.role.extension.cohort tag)
-                            
-                        }
-                    }elseif($CFG->enrol_imsunenrol){
-                        // Unenrol
-                        if (! unenrol_student($memberstoreobj->userid, $memberstoreobj->course)) {
-                            $this->log_line('Error unenrolling from course');
-                        }else{
-                            $studentsuntally++;
-                            //$this->log_line('Unenrolled student '.$member->idnumber.' from course');
-                        }
-                    }
-                    break;
-                case '02':
-                case 'Instructor':
-                    if(intval($member->status) == 1){
-                        // Enrol
-                        if (! add_teacher($memberstoreobj->userid, $memberstoreobj->course, 0, '', $timeframe->begin, $timeframe->end, 'imsenterprise')) {
-                            $this->log_line("Error adding teacher $memberstoreobj->userid to course $memberstoreobj->course");
-                        }else{
-                            $this->log_line("Adding teacher $memberstoreobj->userid to course $memberstoreobj->course");
-                            $teacherstally++;
-                        }
-                    }elseif($CFG->enrol_imsunenrol){
-                        // Unenrol
-                        if (! remove_teacher($memberstoreobj->userid, $memberstoreobj->course)) {
-                            $this->log_line('Error removing teacher from course');
-                        }else{
-                            $teachersuntally++;
-                            //$this->log_line('Unenrolled teacher '.$member->idnumber.' from course');
-                        }
-                    }
-                    break;
-                case '03':
-                case 'ContentDeveloper':
-                    if(intval($member->status) == 1){
-                        // Enrol
-                        if (! add_teacher($memberstoreobj->userid, $memberstoreobj->course, 1, '', $timeframe->begin, $timeframe->end, 'imsenterprise')) {
-                            $this->log_line('Error adding teacher to course');
-                        }else{
-                            $teacherstally++;
-                        }
-                    }elseif($CFG->enrol_imsunenrol){
-                        // Unenrol
-                        if (! remove_teacher($memberstoreobj->userid, $memberstoreobj->course)) {
-                                $this->log_line('Error removing teacher from course');
-                        }else{
-                            $teachersuntally++;
-                            //$this->log_line('Unenrolled teacher '.$member->idnumber.' from course');
-                        }
-                    }
-                    break;
-                default:
-                    $this->log_line('ERROR - Unhandled role type detected. Role code is '.$member->roletype.'. Please contact the developer to fix this.');
-                    break;
-            }
+            if($memberstoreobj->userid){
             
+                // Decide the "real" role (i.e. the Moodle role) that this user should be assigned to.
+                // Zero means this roletype is supposed to be skipped.
+                $moodleroleid = $this->rolemappings[$member->roletype];
+                if(!$moodleroleid){
+                    $this->log_line("SKIPPING role $member->roletype for $memberstoreobj->userid ($member->idnumber) in course $memberstoreobj->course");
+                    continue;
+                }
+                
+                if(intval($member->status) == 1){
+
+                    // Enrol unsing the generic role_assign() function
+
+                    if ((!role_assign($moodleroleid, $memberstoreobj->userid, 0, $rolecontext, $timeframe->begin, $timeframe->end, 0, 'imsenterprise')) && (trim($memberstoreobj->userid)!='')) {
+                        $this->log_line("Error enrolling user #$memberstoreobj->userid ($member->idnumber) to role $member->roletype in course $memberstoreobj->course");
+                    }else{
+                        $this->log_line("Enrolled user #$memberstoreobj->userid ($member->idnumber) to role $member->roletype in course $memberstoreobj->course");
+                        $memberstally++;
+                        
+                        // At this point we can also ensure the group membership is recorded if present
+                        if(isset($member->groupname)){
+                            // Create the group if it doesn't exist - either way, make sure we know the group ID
+                            if(isset($groupids[$member->groupname])){
+                                $member->groupid = $groupids[$member->groupname]; // Recall the group ID from cache if available
+                            }else{
+                                if($groupid = get_field('groups', 'id', 'name', addslashes($member->groupname), 'courseid', $ship->courseid)){
+                                    $member->groupid = $groupid;
+                                    $groupids[$member->groupname] = $groupid; // Store ID in cache
+                                }else{
+                                    // Attempt to create the group
+                                    $group->name = addslashes($member->groupname);
+                                    $group->courseid = $ship->courseid;
+                                    $group->timecreated = time();
+                                    $group->timemodified = time();
+                                    $groupid = insert_record('groups', $group);
+                                    $this->log_line('Added a new group for this course: '.$group->name);
+                                    $groupids[$member->groupname] = $groupid; // Store ID in cache
+                                    $member->groupid = $groupid;
+                                }
+                            }
+                            // Add the user-to-group association if it doesn't already exist
+                            if($member->groupid) {
+                                add_user_to_group ($member->groupid, $memberstoreobj->userid);
+                            }
+                        } // End of group-enrolment (from member.role.extension.cohort tag)
+                        
+                    }
+                }elseif($CFG->enrol_imsunenrol){
+                    // Unenrol
+
+                    if (! role_unassign($moodleroleid, $memberstoreobj->userid, 0, $rolecontext)) {
+                        $this->log_line("Error unenrolling $memberstoreobj->userid from role $moodleroleid in course");
+                    }else{
+                        $membersuntally++;
+                        $this->log_line("Unenrolled $member->idnumber from role $moodleroleid in course");
+                    }
+                }
+                
+            }
         }
-        $this->log_line("Added $studentstally student(s) and $teacherstally teacher(s) to course $ship->coursecode");
-        if($studentsuntally + $teachersuntally > 0){
-            $this->log_line("Removed $studentsuntally student(s) and $teachersuntally teacher(s) from course $ship->coursecode");
+        $this->log_line("Added $memberstally users to course $ship->coursecode");
+        if($membersuntally > 0){
+            $this->log_line("Removed $membersuntally users from course $ship->coursecode");
         }
     }
 } // End process_membership_tag()
@@ -838,6 +865,18 @@ function decode_timeframe($string){ // Pass me the INNER CONTENTS of a <timefram
     }
     return $ret;
 } // End decode_timeframe
+
+/**
+* Load the role mappings (from the config), so we can easily refer to 
+* how an IMS-E role corresponds to a Moodle role
+*/
+function load_role_mappings() {
+    $this->rolemappings = array();
+    foreach(enrolment_plugin_imsenterprise::$imsroles as $imsrolenum=>$imsrolename) {
+        $this->rolemappings[$imsrolenum] = $this->rolemappings[$imsrolename]
+            = get_field('config', 'value', 'name', 'enrol_imse_imsrolemap' . $imsrolenum);
+    }
+}
 
 } // end of class
 
