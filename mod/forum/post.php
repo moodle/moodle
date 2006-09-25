@@ -541,6 +541,9 @@
         if (!$forum = get_record("forum", "id", $discussion->forum)) {
             error("The forum number was incorrect ($discussion->forum)");
         }
+        if ($forum->type == 'single') {
+            error('Discussions from this forum cannot be split');
+        }
         if (!$post->parent) {
             error('This is already the first post in the discussion');
         }
