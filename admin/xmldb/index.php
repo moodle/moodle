@@ -51,6 +51,9 @@
 /// stored there MUST be declared before in order to avoid
 /// getting "incomplete" objects
     require_once('../../config.php');
+    require_once($CFG->libdir.'/adminlib.php');
+    $adminroot = admin_get_root();
+    admin_externalpage_setup('xmldbeditor', $adminroot);
 
 /// Add other used libraries
     require_once($CFG->libdir . '/xmlize.php');
@@ -77,9 +80,6 @@
     require_login();
     require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM, SITEID));
 
-/// Fetch all the needed strings
-    $stradministration = get_string('administration');
-
 /// Body of the script, based on action, we delegate the work
     $action = optional_param ('action', 'main_view', PARAM_ALPHAEXT);
 
@@ -103,13 +103,11 @@
                         global $standard_javascript;
                         $standard_javascript = $CFG->javascript;  // Save original javascript file
                         $CFG->javascript = $CFG->dirroot.'/admin/xmldb/javascript.php';  //Use our custom javascript code
-                    /// Go with standard header
-                        print_header("$site->shortname: XMLDB",
-                                     "$site->fullname",
-                                     "<a href=\"../index.php\">$stradministration</a> -> <a href=\"index.php\">XMLDB</a>");
+                    /// Go with standard admin header
+                        admin_externalpage_print_header($adminroot);
                         print_heading($xmldb_action->getTitle());
                         echo $xmldb_action->getOutput();
-                        print_footer();
+                        admin_externalpage_print_footer($adminroot);
                         break;
                     case ACTION_GENERATE_XML:
                         header('Content-type: application/xhtml+xml');
