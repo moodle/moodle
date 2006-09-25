@@ -182,6 +182,11 @@ a.useredit, a:hover.useredit, .blink {
   font-size:0.8em;
 }
 
+/* Accessibility: only certain fonts support Unicode chars like &#x25BA; in IE6 */
+.breadcrumb .sep, .headermenu button,
+.calendar-controls .previous, .calendar-controls .next {
+  font-family:Arial, Helvetica, Courier, sans-serif;
+}
 
 /***
  *** Footer
