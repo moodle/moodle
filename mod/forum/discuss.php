@@ -47,9 +47,8 @@
 
 
     if (!empty($move)) {
-        if (!has_capability('mod/forum:movediscussions', $modcontext)) {
-            error("You do not have the permission to move this discussion!");
-        }
+        require_capability('mod/forum:movediscussions', $modcontext);
+
         if ($forum = get_record("forum", "id", $move)) {
             if (!forum_move_attachments($discussion, $move)) {
                 notify("Errors occurred while moving attachment directories - check your file permissions");
