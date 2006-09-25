@@ -1,10 +1,15 @@
 <?php // $Id$
 
-// This is the first file read by the admin.php script
-// We use it to create the categories, since they need to exist *before* settingpages and externalpages
-// are added to them
+// This is the first file read by the lib/adminlib.php script
+// We use it to create the categories in correct order,
+// since they need to exist *before* settingpages and externalpages
+// are added to them.
 
 $ADMIN->add('root', new admin_externalpage('adminnotifications', get_string('notifications'), "$CFG->wwwroot/$CFG->admin/index.php"));
+
+ // hidden upgrade script
+$ADMIN->add('root', new admin_externalpage('upgradesettings', get_string('upgradesettings', 'admin'), "$CFG->wwwroot/$CFG->admin/upgradesettings.php", 'moodle/site:config', true));
+
 $ADMIN->add('root', new admin_category('users', get_string('users','admin')));
 $ADMIN->add('root', new admin_category('courses', get_string('courses','admin')));
 $ADMIN->add('root', new admin_category('location', get_string('location','admin')));

@@ -7,7 +7,7 @@ require_once('../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 
 $adminroot = admin_get_root();
-admin_externalpage_setup('adminnotifications', $adminroot); // we pretend to be the adminnotifications page... don't wanna show up in the menu :)
+admin_externalpage_setup('upgradesettings', $adminroot); // now hidden page
 
 // a caveat: we're depending on only having one admin access this page at once. why? the following line
 // (the function call to find_new_settings) must have the EXACT SAME RETURN VALUE both times that this
