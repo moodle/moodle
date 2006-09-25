@@ -41,6 +41,9 @@ class XMLDBoci8po extends XMLDBgenerator {
     var $default_for_char = ' ';      // To define the default to set for NOT NULLs CHARs without default (null=do nothing)
                                       // Using this whitespace here because Oracle doesn't distinguish empty and null! :-(
 
+    var $drop_default_clause_required = true; //To specify if the generator must use some DEFAULT clause to drop defaults
+    var $drop_default_clause = 'NULL'; //The DEFAULT clause required to drop defaults
+
     var $default_after_null = false;  //To decide if the default clause of each field must go after the null clause
 
     var $unique_keys = false; // Does the generator build unique keys
@@ -232,7 +235,7 @@ class XMLDBoci8po extends XMLDBgenerator {
         }
         $olddecimals = empty($metac->scale) ? null : $metac->scale;
         $oldnotnull = empty($metac->not_null) ? false : $metac->not_null;
-        $olddefault = empty($metac->default_value) ? null : $metac->default_value;
+        $olddefault = empty($metac->default_value) || strtoupper($metac->default_value) == 'NULL' ? null : $metac->default_value;
 
         $typechanged = true;  //By default, assume that the column type has changed
         $precisionchanged = true;  //By default, assume that the column precision has changed
@@ -274,6 +277,7 @@ class XMLDBoci8po extends XMLDBgenerator {
             ("'" . $xmldb_field->getDefault() . "'" === $olddefault)) {  //Equality with quotes because ADOdb returns the default with quotes
             $defaultchanged = false;
         }
+
     /// Detect if we are changing the nullability
         if (($xmldb_field->getNotnull() === $oldnotnull)) {
             $notnullchanged = false;
@@ -304,7 +308,7 @@ class XMLDBoci8po extends XMLDBgenerator {
         /// Re-enable the notnull and default sections so the general AlterFieldSQL can use it
             $this->alter_column_skip_notnull = false;
             $this->alter_column_skip_default = false;
-        /// Dissavle the type section because we have done it with the temp field
+        /// Dissable the type section because we have done it with the temp field
             $this->alter_column_skip_type = true;
         }
 
@@ -341,6 +345,26 @@ class XMLDBoci8po extends XMLDBgenerator {
     /// Finally return results
         return $results;
     }
+
+    /**
+     * Given one XMLDBTable and one XMLDBField, return the SQL statements needded to create its default 
+     * (usually invoked from getModifyDefaultSQL()
+     */
+    function getCreateDefaultSQL($xmldb_table, $xmldb_field) {
+    /// Just a wrapper over the getAlterFieldSQL() function for Oracle that
+    /// is capable of handling defaults
+        return $this->getAlterFieldSQL($xmldb_table, $xmldb_field);
+    }
+                                                       
+    /**     
+     * Given one XMLDBTable and one XMLDBField, return the SQL statements needded to drop its default 
+     * (usually invoked from getModifyDefaultSQL()
+     */         
+    function getDropDefaultSQL($xmldb_table, $xmldb_field) {
+    /// Just a wrapper over the getAlterFieldSQL() function for Oracle that
+    /// is capable of handling defaults
+        return $this->getAlterFieldSQL($xmldb_table, $xmldb_field);
+    }   
 
     /**
      * Returns an array of reserved words (lowercase) for this DB

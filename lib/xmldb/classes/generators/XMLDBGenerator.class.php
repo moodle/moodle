@@ -51,6 +51,9 @@ class XMLDBgenerator {
     var $unsigned_allowed = true;    // To define in the generator must handle unsigned information
     var $default_for_char = null;      // To define the default to set for NOT NULLs CHARs without default (null=do nothing)
 
+    var $drop_default_clause_required = false; //To specify if the generator must use some DEFAULT clause to drop defaults
+    var $drop_default_clause = ''; //The DEFAULT clause required to drop defaults
+
     var $default_after_null = true;  //To decide if the default clause of each field must go after the null clause
 
     var $specify_nulls = false;  //To force the generator if NULL clauses must be specified. It shouldn't be necessary
@@ -418,7 +421,7 @@ class XMLDBgenerator {
         $default = '';
 
         if ($xmldb_field->getDefault() != NULL) {
-            $default = ' default ';
+            $default = ' DEFAULT ';
             if ($xmldb_field->getType() == XMLDB_TYPE_CHAR ||
                 $xmldb_field->getType() == XMLDB_TYPE_TEXT) {
                     $default .= "'" . addslashes($xmldb_field->getDefault()) . "'";
@@ -431,7 +434,15 @@ class XMLDBgenerator {
             if ($this->default_for_char !== NULL &&
                 $xmldb_field->getType() == XMLDB_TYPE_CHAR &&
                 $xmldb_field->getNotNull()) {
-                $default .= ' default ' . "'" . $this->default_for_char . "'";
+                $default = ' DEFAULT ' . "'" . $this->default_for_char . "'";
+            } else {
+            /// If the DB requires to explicity define some clause to drop one default, do it here
+            /// never applying defaults to TEXT and BINARY fields
+                if ($this->drop_default_clause_required &&
+                    $xmldb_field->getType() != XMLDB_TYPE_TEXT &&
+                    $xmldb_field->getType() != XMLDB_TYPE_BINARY) {
+                    $default = ' DEFAULT ' . $this->drop_default_clause;
+                }
             }
         }
         return $default;
@@ -592,6 +603,7 @@ class XMLDBgenerator {
             return $this->getCreateDefaultSQL($xmldb_table, $xmldb_field); //Create/modify
         }
     }
+
 
     /**
      * Given three strings (table name, list of fields (comma separated) and suffix), create the proper object name
@@ -822,6 +834,22 @@ class XMLDBgenerator {
      */
     function getDropTableExtraSQL ($xmldb_table) {
         return array('Code for table drop goes to getDropTableExtraSQL(). Can be disabled with drop_table_extra_code=false;');
+    }
+
+    /**
+     * Given one XMLDBTable and one XMLDBField, return the SQL statements needded to drop its default 
+     * (usually invoked from getModifyDefaultSQL()
+     */
+    function getDropDefaultSQL($xmldb_table, $xmldb_field) {
+        return array('Code to drop one default goes to getDropDefaultSQL()');
+    }
+
+    /**
+     * Given one XMLDBTable and one XMLDBField, return the SQL statements needded to add its default 
+     * (usually invoked from getModifyDefaultSQL()
+     */
+    function getCreateDefaultSQL($xmldb_table, $xmldb_field) {
+        return array('Code to create one default goes to getCreate()');
     }
 
     /**

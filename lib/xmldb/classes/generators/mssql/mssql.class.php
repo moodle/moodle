@@ -157,11 +157,8 @@ class XMLDBmssql extends XMLDBgenerator {
         $checkconsname = $this->getNameForObject($xmldb_table->getName(), $xmldb_field->getName(), 'ck');
 
     /// Look for any default constraint in this field and drop it
-        if ($default = get_record_sql("SELECT id, object_name(cdefault) AS defaultconstraint
-                                       FROM syscolumns
-                                       WHERE id = object_id('{$tablename}') AND
-                                             name = '{$fieldname}'")) {
-            $results[] = 'ALTER TABLE ' . $tablename . ' DROP CONSTRAINT ' . $default->defaultconstraint;
+        if ($defaultname = $this->getDefaultConstraintName($xmldb_table, $xmldb_field)) {
+            $results[] = 'ALTER TABLE ' . $tablename . ' DROP CONSTRAINT ' . $defaultname;
         }
 
     /// Look for any check constraint in this field and drop it
@@ -184,6 +181,66 @@ class XMLDBmssql extends XMLDBgenerator {
     /// Just prevent default clauses in this type of sentences for mssql and launch the parent one
         $this->alter_column_skip_default = true;
         return parent::getAlterFieldSQL($xmldb_table, $xmldb_field);
+    }
+
+    /**
+     * Given one XMLDBTable and one XMLDBField, return the SQL statements needded to create its default 
+     * (usually invoked from getModifyDefaultSQL()
+     */
+    function getCreateDefaultSQL($xmldb_table, $xmldb_field) {
+    /// This method does exactly the same than getDropDefaultSQL(), first trying to
+    /// drop the default if it exists and then, regenerating it, so we simply wrap over it
+        return $this->getDropDefaultSQL($xmldb_table, $xmldb_field);
+    }
+
+    /**
+     * Given one XMLDBTable and one XMLDBField, return the SQL statements needded to drop its default 
+     * (usually invoked from getModifyDefaultSQL()
+     */
+    function getDropDefaultSQL($xmldb_table, $xmldb_field) {
+    /// MSSQL is a bit special and it requires the corresponding DEFAULT CONSTRAINT to be dropped
+
+        $results = array();
+
+    /// Get the quoted name of the table and field
+        $tablename = $this->getEncQuoted($this->prefix . $xmldb_table->getName());
+        $fieldname = $this->getEncQuoted($xmldb_field->getName());
+
+    /// Look for the default contraint and, if found, drop it
+        if ($defaultname = $this->getDefaultConstraintName($xmldb_table, $xmldb_field)) {
+            $results[] = 'ALTER TABLE ' . $tablename . ' DROP CONSTRAINT ' . $defaultname;
+        }
+
+    /// Now, check if, with the current field attributes, we have to build one default
+        if ($default_clause = $this->getDefaultClause($xmldb_field)) {
+        /// We need to build the default (Moodle) default, so do it
+            $results[] = 'ALTER TABLE ' . $tablename . ' ADD' . $default_clause . ' FOR ' . $fieldname;
+        }
+        return $results;
+    }
+
+    /**
+     * Given one XMLDBTable and one XMLDBField, returns the name of its default constraint in DB
+     * or false if not found
+     * This function should be considered internal and never used outside from generator
+     */
+    function getDefaultConstraintName($xmldb_table, $xmldb_field) {
+
+        global $db;
+
+    /// Get the quoted name of the table and field
+        $tablename = $this->getEncQuoted($this->prefix . $xmldb_table->getName());
+        $fieldname = $this->getEncQuoted($xmldb_field->getName());
+
+    /// Look for any default constraint in this field and drop it
+        if ($default = get_record_sql("SELECT id, object_name(cdefault) AS defaultconstraint
+                                         FROM syscolumns
+                                        WHERE id = object_id('{$tablename}')
+                                          AND name = '{$fieldname}'")) {
+            return $default->defaultconstraint;
+        } else {
+            return false;
+        }
     }
 
     /**

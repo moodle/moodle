@@ -267,6 +267,26 @@ class XMLDBpostgres7 extends XMLDBgenerator {
     }
 
     /**
+     * Given one XMLDBTable and one XMLDBField, return the SQL statements needded to create its default 
+     * (usually invoked from getModifyDefaultSQL()
+     */
+    function getCreateDefaultSQL($xmldb_table, $xmldb_field) {
+    /// Just a wrapper over the getAlterFieldSQL() function for PostgreSQL that
+    /// is capable of handling defaults
+        return $this->getAlterFieldSQL($xmldb_table, $xmldb_field);
+    }
+
+    /**
+     * Given one XMLDBTable and one XMLDBField, return the SQL statements needded to drop its default 
+     * (usually invoked from getModifyDefaultSQL()
+     */
+    function getDropDefaultSQL($xmldb_table, $xmldb_field) {
+    /// Just a wrapper over the getAlterFieldSQL() function for PostgreSQL that
+    /// is capable of handling defaults
+        return $this->getAlterFieldSQL($xmldb_table, $xmldb_field);
+    }
+
+    /**
      * Returns an array of reserved words (lowercase) for this DB
      */
     function getReservedWords() {

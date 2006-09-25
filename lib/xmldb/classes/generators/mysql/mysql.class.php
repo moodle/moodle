@@ -36,6 +36,9 @@ class XMLDBmysql extends XMLDBGenerator {
 
     var $default_for_char = '';      // To define the default to set for NOT NULLs CHARs without default (null=do nothing)
 
+    var $drop_default_clause_required = true; //To specify if the generator must use some DEFAULT clause to drop defaults
+    var $drop_default_clause = 'NULL'; //The DEFAULT clause required to drop defaults
+
     var $primary_key_name = ''; //To force primary key names to one string (null=no force)
 
     var $unique_keys = false; // Does the generator build unique key
@@ -150,6 +153,26 @@ class XMLDBmysql extends XMLDBGenerator {
                 $dbtype = 'DATETIME';
         }
         return $dbtype;
+    }
+
+    /**
+     * Given one XMLDBTable and one XMLDBField, return the SQL statements needded to create its default 
+     * (usually invoked from getModifyDefaultSQL()
+     */
+    function getCreateDefaultSQL($xmldb_table, $xmldb_field) {
+    /// Just a wrapper over the getAlterFieldSQL() function for MySQL that
+    /// is capable of handling defaults
+        return $this->getAlterFieldSQL($xmldb_table, $xmldb_field);
+    }
+
+    /**
+     * Given one XMLDBTable and one XMLDBField, return the SQL statements needded to drop its default 
+     * (usually invoked from getModifyDefaultSQL()
+     */
+    function getDropDefaultSQL($xmldb_table, $xmldb_field) {
+    /// Just a wrapper over the getAlterFieldSQL() function for MySQL that
+    /// is capable of handling defaults
+        return $this->getAlterFieldSQL($xmldb_table, $xmldb_field);
     }
 
     /**
