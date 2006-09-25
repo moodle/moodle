@@ -1535,7 +1535,7 @@ function print_course($course, $width="100%") {
 
     if ($teachers = get_users_by_capability($context, 'moodle/course:update', 
                                             'u.*, ul.timeaccess as lastaccess, ra.hidden', 
-                                            $sort, '','','',$exceptions, false)) {
+                                            'r.sortorder ASC', '','','','', false)) {
         $canseehidden = has_capability('moodle/role:viewhiddenassigns', $context);
         $namesarray = array();
         foreach ($teachers as $teacher) {

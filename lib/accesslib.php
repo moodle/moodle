@@ -2654,6 +2654,7 @@ function get_users_by_capability($context, $capability, $fields='', $sort='',
     $select = " SELECT $fields";
     $from   = " FROM {$CFG->prefix}user u
                 INNER JOIN {$CFG->prefix}role_assignments ra ON ra.userid = u.id
+                INNER JOIN {$CFG->prefix}role r ON r.id = ra.roleid
                 LEFT OUTER JOIN {$CFG->prefix}user_lastaccess ul ON ul.userid = u.id
                 $groupjoin";
     $where  = " WHERE ra.contextid ".get_related_contexts_string($context)."
