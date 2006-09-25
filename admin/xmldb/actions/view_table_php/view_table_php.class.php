@@ -43,7 +43,11 @@ class view_table_php extends XMLDBAction {
             'selectfieldkeyindex' => 'xmldb',
             'view' => 'xmldb',
             'table' => 'xmldb',
+            'selectonecommand' => 'xmldb',
             'selectonefieldkeyindex' => 'xmldb',
+            'mustselectonefield' => 'xmldb',
+            'mustselectonekey' => 'xmldb',
+            'mustselectoneindex' => 'xmldb',
             'back' => 'xmldb'
         ));
     }
@@ -97,6 +101,7 @@ class view_table_php extends XMLDBAction {
         $commandparam = optional_param('command', 'add_field', PARAM_PATH);
         $origfieldkeyindexparam = optional_param('fieldkeyindex', $defaultfieldkeyindex, PARAM_PATH);
         $fieldkeyindexparam = preg_replace('/[fki]#/i', '', $origfieldkeyindexparam); ///Strip the initials
+        $fieldkeyindexinitial = substr($origfieldkeyindexparam, 0, 1); //To know what we have selected
 
     /// The back to edit xml button
         $b = ' <p align="center" class="buttons">';
@@ -107,22 +112,27 @@ class view_table_php extends XMLDBAction {
     /// The table currently being edited
         $o .= '<h3 class="main">' . $this->str['table'] . ': ' . s($tableparam) . '</h3>';
 
+    /// To indent the menu selections
+        $optionspacer = '&nbsp;&nbsp;&nbsp;';
+
     /// Calculate the popup of commands
-        $commands = array('add_field',
-                         'drop_field',
-                         'rename_field (not imp!)',
-                         'change_field_type (not imp!)',
-                         'change_field_precision',
-                         'change_field_unsigned',
-                         'change_field_notnull',
-                         'change_field_sequence (not imp!)',
-                         'change_field_enum (not imp!)',
-                         'change_field_default');
+        $commands = array('Fields',
+                         $optionspacer . 'add_field',
+                         $optionspacer . 'drop_field',
+                         $optionspacer . 'rename_field (not imp!)',
+                         $optionspacer . 'change_field_type (not imp!)',
+                         $optionspacer . 'change_field_precision',
+                         $optionspacer . 'change_field_unsigned',
+                         $optionspacer . 'change_field_notnull',
+                         $optionspacer . 'change_field_sequence (not imp!)',
+                         $optionspacer . 'change_field_enum (not imp!)',
+                         $optionspacer . 'change_field_default',
+                         'Keys',
+                         'Indexes');
         foreach ($commands as $command) {
-            $popcommands[$command] = str_replace('_', ' ', $command);
+            $popcommands[str_replace($optionspacer, '', $command)] = str_replace('_', ' ', $command);
         }
     /// Calculate the popup of fields/keys/indexes
-        $optionspacer = '&nbsp;&nbsp;&nbsp;';
         if ($fields) {
             $popfields['fieldshead'] = 'Fields';
             foreach ($fields as $field) {
@@ -158,29 +168,60 @@ class view_table_php extends XMLDBAction {
     /// Check we have selected some field/key/index from the popup
         if ($fieldkeyindexparam == 'fieldshead' || $fieldkeyindexparam == 'keyshead' || $fieldkeyindexparam == 'indexeshead') {
             $o.= s($this->str['selectonefieldkeyindex']);
-         } else {
+    /// Check we have selected some command from the popup
+        } else if ($commandparam == 'Fields' || $commandparam == 'Keys' || $commandparam == 'Indexes') {
+            $o.= s($this->str['selectonecommand']);
+        } else {
         /// Based on current params, call the needed function
             switch ($commandparam) {
                 case 'add_field':
-                    $o.= s($this->add_field_php($structure, $tableparam, $fieldkeyindexparam));
+                    if ($fieldkeyindexinitial == 'f') { //Only if we have got one field
+                        $o.= s($this->add_field_php($structure, $tableparam, $fieldkeyindexparam));
+                    } else {
+                        $o.= $this->str['mustselectonefield'];
+                    }
                     break;
                 case 'drop_field':
-                    $o.= s($this->drop_field_php($structure, $tableparam, $fieldkeyindexparam));
+                    if ($fieldkeyindexinitial == 'f') { //Only if we have got one field
+                        $o.= s($this->drop_field_php($structure, $tableparam, $fieldkeyindexparam));
+                    } else {
+                        $o.= $this->str['mustselectonefield'];
+                    }
                     break;
                 case 'rename_field':
-                    $o.= s($this->rename_field_php($structure, $tableparam, $fieldkeyindexparam));
+                    if ($fieldkeyindexinitial == 'f') { //Only if we have got one field
+                        $o.= s($this->rename_field_php($structure, $tableparam, $fieldkeyindexparam));
+                    } else {
+                        $o.= $this->str['mustselectonefield'];
+                    }
                     break;
                 case 'change_field_precision':
-                    $o.= s($this->change_field_precision_php($structure, $tableparam, $fieldkeyindexparam));
+                    if ($fieldkeyindexinitial == 'f') { //Only if we have got one field
+                        $o.= s($this->change_field_precision_php($structure, $tableparam, $fieldkeyindexparam));
+                    } else {
+                        $o.= $this->str['mustselectonefield'];
+                    }
                     break;
                 case 'change_field_unsigned':
-                    $o.= s($this->change_field_unsigned_php($structure, $tableparam, $fieldkeyindexparam));
+                    if ($fieldkeyindexinitial == 'f') { //Only if we have got one field
+                        $o.= s($this->change_field_unsigned_php($structure, $tableparam, $fieldkeyindexparam));
+                    } else {
+                        $o.= $this->str['mustselectonefield'];
+                    }
                     break;
                 case 'change_field_notnull':
-                    $o.= s($this->change_field_notnull_php($structure, $tableparam, $fieldkeyindexparam));
+                    if ($fieldkeyindexinitial == 'f') { //Only if we have got one field
+                        $o.= s($this->change_field_notnull_php($structure, $tableparam, $fieldkeyindexparam));
+                    } else {
+                        $o.= $this->str['mustselectonefield'];
+                    }
                     break;
                 case 'change_field_default':
-                    $o.= s($this->change_field_default_php($structure, $tableparam, $fieldkeyindexparam));
+                    if ($fieldkeyindexinitial == 'f') { //Only if we have got one field
+                        $o.= s($this->change_field_default_php($structure, $tableparam, $fieldkeyindexparam));
+                    } else {
+                        $o.= $this->str['mustselectonefield'];
+                    }
                     break;
             }
         }

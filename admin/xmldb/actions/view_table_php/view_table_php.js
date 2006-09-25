@@ -31,9 +31,17 @@
     }
 
 /**
- * This function disables some elements from the fields/keys/indexes drop down
+ * This function disables some elements from the command and from the fields/keys/indexes drop downs
  */
 function disablePopupHeads() {
+    var popup = document.getElementById("menucommand");
+    var i = popup.length;
+    while (i--) {
+        option = popup[i];
+        if (option.value == "Fields" || option.value == "Keys" || option.value == "Indexes") {
+            popup[i].disabled = true;
+        }
+    }
     var popup = document.getElementById("menufieldkeyindex");
     var i = popup.length;
     while (i--) {
