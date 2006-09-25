@@ -492,7 +492,8 @@ function get_teacher($courseid) {
 
     $context = get_context_instance(CONTEXT_COURSE, $courseid);
 
-    if ($users = get_users_by_capability($context, 'moodle/course:update', 'u.*,ra.hidden', 'sortorder ASC')) {
+    if ($users = get_users_by_capability($context, 'moodle/course:update', 'u.*,ra.hidden', 'sortorder ASC',
+                                         '', '', '', '', false)) {
         foreach ($users as $user) {
             if (!$user->hidden || has_capability('moodle/role:viewhiddenassigns', $context)) {
                 return $user;
@@ -570,8 +571,7 @@ function get_course_students($courseid, $sort='ul.timeaccess', $dir='', $page=''
         }
         // Now we have to make sure site teachers are excluded
 
-        $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
-        if ($teachers = get_users_by_capability($sitecontext, 'moodle/course:update')) {
+        if ($teachers = get_course_teachers(SITEID)) {
             foreach ($teachers as $teacher) {
                 $exceptions .= ','. $teacher->userid;
             }
@@ -706,8 +706,7 @@ function get_course_teachers($courseid, $sort='t.authority ASC', $exceptions='')
     $sort = 'ul.timeaccess DESC';
     
     $context = get_context_instance(CONTEXT_COURSE, $courseid);
-    return get_users_by_capability($context, 'moodle/course:update', 'u.*, ul.timeaccess as lastaccess', $sort, '','','',$exceptions);
-    
+    return get_users_by_capability($context, 'moodle/course:update', 'u.*, ul.timeaccess as lastaccess, ra.hidden', $sort, '','','',$exceptions, false);
     /// some fields will be missing, like authority, editall
     /*
     return get_records_sql("SELECT u.id, u.username, u.firstname, u.lastname, u.maildisplay, u.mailformat, u.maildigest,
@@ -733,7 +732,7 @@ function get_course_teachers($courseid, $sort='t.authority ASC', $exceptions='')
 function get_course_users($courseid, $sort='ul.timeaccess DESC', $exceptions='', $fields='') {
 
     $context = get_context_instance(CONTEXT_COURSE, $courseid);
-    return get_users_by_capability($context, 'moodle/course:view', 'u.*, ul.timeaccess as lastaccess', $sort, '','','',$exceptions);
+    return get_users_by_capability($context, 'moodle/course:view', 'u.*, ul.timeaccess as lastaccess', $sort, '','','',$exceptions, false);
 
 }
 
@@ -759,7 +758,7 @@ function get_group_students($groupids, $sort='ul.timeaccess DESC') {
     }
 
     $context = get_context_instance(CONTEXT_COURSE, $group->courseid);
-    return get_users_by_capability($context, 'moodle/legacy:student', 'u.*, ul.timeaccess as lastaccess', $sort, '','',$groupids);
+    return get_users_by_capability($context, 'moodle/legacy:student', 'u.*, ul.timeaccess as lastaccess', $sort, '','',$groupids, '', false);
 }
 
 /**

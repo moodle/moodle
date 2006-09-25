@@ -2581,7 +2581,7 @@ function get_default_course_role($course) {
  * @param $exceptions - list of users to exclude
  */
 function get_users_by_capability($context, $capability, $fields='', $sort='',
-                                 $limitfrom='', $limitnum='', $groups='', $exceptions='') {
+                                 $limitfrom='', $limitnum='', $groups='', $exceptions='', $doanything=true) {
     global $CFG;
 
 /// Sorting out groups
@@ -2623,20 +2623,27 @@ function get_users_by_capability($context, $capability, $fields='', $sort='',
 
 /// Sorting out roles with this capability set
     if ($possibleroles = get_roles_with_capability($capability, CAP_ALLOW, $context)) {
-        if (!$sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID)) {  // Something is seriously wrong
-            return false;
+        if (!$doanything) {
+            if (!$sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID)) {  
+                return false;    // Something is seriously wrong
+            }
+            $doanythingroles = get_roles_with_capability('moodle/site:doanything', CAP_ALLOW, $sitecontext);
         }
-        $doanythingroles = get_roles_with_capability('moodle/site:doanything', CAP_ALLOW, $sitecontext);
 
         $validroleids = array();
         foreach ($possibleroles as $possiblerole) {
-            if (isset($doanythingroles[$possiblerole->id])) {  // We don't want these included
-                continue;
+            if (!$doanything) {
+                if (isset($doanythingroles[$possiblerole->id])) {  // We don't want these included
+                    continue;
+                }
             }
             $caps = role_context_capabilities($possiblerole->id, $context, $capability); // resolved list
             if ($caps[$capability] > 0) { // resolved capability > 0
                 $validroleids[] = $possiblerole->id;
             }
+        }
+        if (empty($validroleids)) {
+            return false;
         }
         $roleids =  '('.implode(',', $validroleids).')';
     } else {

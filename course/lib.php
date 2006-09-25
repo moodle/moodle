@@ -1533,7 +1533,9 @@ function print_course($course, $width="100%") {
          $linkcss.' href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">'.
          $course->fullname.'</a></b><br />';
 
-    if ($teachers = get_users_by_capability($context, 'moodle/course:update')) {
+    if ($teachers = get_users_by_capability($context, 'moodle/course:update', 
+                                            'u.*, ul.timeaccess as lastaccess, ra.hidden', 
+                                            $sort, '','','',$exceptions, false)) {
         $canseehidden = has_capability('moodle/role:viewhiddenassigns', $context);
         $namesarray = array();
         foreach ($teachers as $teacher) {
