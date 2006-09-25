@@ -4066,17 +4066,23 @@ function current_language() {
     global $CFG, $USER, $SESSION;
 
     if (!empty($CFG->courselang)) {    // Course language can override all other settings for this page
-        return $CFG->courselang;
+        $return = $CFG->courselang;
 
     } else if (!empty($SESSION->lang)) {    // Session language can override other settings
-        return $SESSION->lang;
+        $return = $SESSION->lang;
 
     } else if (!empty($USER->lang)) {    // User language can override site language
-        return $USER->lang;
+        $return = $USER->lang;
 
     } else {
-        return $CFG->lang;
+        $return = $CFG->lang;
     }
+
+    if ($return == 'en') {
+        $return = 'en_utf8';
+    }
+
+    return $return;
 }
 
 /* Return the code of the current charset
