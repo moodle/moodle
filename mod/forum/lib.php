@@ -636,7 +636,7 @@ function forum_make_mail_text($course, $forum, $discussion, $post, $userfrom, $u
         error('Course Module ID was incorrect');
     }
     $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
-    $viewfullnames = has_capability('mod/site:viewfullnames', $modcontext);
+    $viewfullnames = has_capability('moodle/site:viewfullnames', $modcontext);
     
     $by = New stdClass;
     $by->name = fullname($userfrom, $viewfullnames);
@@ -3378,7 +3378,7 @@ function forum_print_posts_threaded($parent, $courseid, $depth, $ratings, $reply
             error('Course Module ID was incorrect');
         }
         $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
-        $canviewfullnames = has_capability('mod/site:viewfullnames', $modcontext);
+        $canviewfullnames = has_capability('moodle/site:viewfullnames', $modcontext);
         
         foreach ($posts as $post) {
 
