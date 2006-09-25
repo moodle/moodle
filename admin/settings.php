@@ -113,7 +113,7 @@ print_heading($root->visiblename);
 
 echo $root->output_html();
 
-echo '<center><input type="submit" value="' . get_string('savechanges','admin') . '" /></center>';
+echo '<center><input class="form-submit" type="submit" value="' . get_string('savechanges','admin') . '" /></center>';
 
 echo '</form>';
 
