@@ -1340,7 +1340,7 @@ class admin_setting_configtext extends admin_setting {
             $current = $this->get_setting();
         }
         return format_admin_setting('text', $this->name, $this->visiblename, 
-                '<input type="text" size="50" class="form-text" id="id_s_'.$this->name.'" name="s_'.$this->name.'" value="'.$current.'" />', 
+                '<input type="text" class="form-text" id="id_s_'.$this->name.'" name="s_'.$this->name.'" value="'.$current.'" />', 
                 $this->description);
     }
 
@@ -1372,7 +1372,7 @@ class admin_setting_configcheckbox extends admin_setting {
             $current = $this->get_setting();
         }
         return format_admin_setting('checkbox', $this->name, $this->visiblename, 
-                '<input type="checkbox" size="50" class="form-checkbox" id="id_s_'.$this->name.'" name="s_'. $this->name .'" value="1" ' . ($current == true ? 'checked="checked"' : '') . ' />',
+                '<input type="checkbox" class="form-checkbox" id="id_s_'.$this->name.'" name="s_'. $this->name .'" value="1" ' . ($current == true ? 'checked="checked"' : '') . ' />',
                 $this->description);
     }
 
@@ -1828,16 +1828,16 @@ class admin_setting_special_editorfontlist extends admin_setting {
 
         $return = '';
         for ($i = 0; $i < count($currentsetting) / 2; $i++) {
-            $return .= '<input type="text" class="form-text" name="s_editorfontlist[k' . $i . ']" value="' . $currentsetting['k' . $i] . '" size="20" />';
+            $return .= '<input type="text" class="form-text" name="s_editorfontlist[k' . $i . ']" value="' . $currentsetting['k' . $i] . '" />';
             $return .= '&nbsp;&nbsp;';
-            $return .= '<input type="text" class="form-text" name="s_editorfontlist[v' . $i . ']" value="' . $currentsetting['v' . $i] . '" size="40" /><br />';
+            $return .= '<input type="text" class="form-text" name="s_editorfontlist[v' . $i . ']" value="' . $currentsetting['v' . $i] . '" /><br />';
         }
-        $return .= '<input type="text" class="form-text" name="s_editorfontlist[k' . $i . ']" value="" size="20" />';
+        $return .= '<input type="text" class="form-text" name="s_editorfontlist[k' . $i . ']" value="" />';
         $return .= '&nbsp;&nbsp;';
-        $return .= '<input type="text" class="form-text" name="s_editorfontlist[v' . $i . ']" value="" size="40" /><br />';
-        $return .= '<input type="text" class="form-text" name="s_editorfontlist[k' . ($i + 1) . ']" value="" size="20" />';
+        $return .= '<input type="text" class="form-text" name="s_editorfontlist[v' . $i . ']" value="" /><br />';
+        $return .= '<input type="text" class="form-text" name="s_editorfontlist[k' . ($i + 1) . ']" value="" />';
         $return .= '&nbsp;&nbsp;';
-        $return .= '<input type="text" class="form-text" name="s_editorfontlist[v' . ($i + 1) . ']" value="" size="40" />';
+        $return .= '<input type="text" class="form-text" name="s_editorfontlist[v' . ($i + 1) . ']" value="" />';
 
         return format_admin_setting('editorfontlist', $this->name, $this->visiblename, $return, $this->description);
     }
@@ -2308,7 +2308,7 @@ class admin_setting_special_perfdebug extends admin_setting_configcheckbox {
             $currentsetting = $this->get_setting();
         }
 
-        $return = '<input type="checkbox" size="50" class="form-checkbox" id="id_s_'.$this->name.'" name="s_'. $this->name .'" value="1" ' . ($currentsetting == 15 ? 'checked="checked"' : '') . ' />';
+        $return = '<input type="checkbox" class="form-checkbox" id="id_s_'.$this->name.'" name="s_'. $this->name .'" value="1" ' . ($currentsetting == 15 ? 'checked="checked"' : '') . ' />';
         return format_admin_setting('checkbox', $this->name, $this->visiblename, $return, $this->description);
     }
 
