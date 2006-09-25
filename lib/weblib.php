@@ -4686,7 +4686,7 @@ function redirect($url, $message='', $delay=-1) {
                 $url = $hostpart.$url;
             } else {
                 // URLs not beginning with / are relative to path of current script, so add that on.
-                $url = $hostpart.me().'/../'.$url;
+                $url = $hostpart.preg_replace('|\?.*$|','',me()).'/../'.$url;
             }
             // Replace all ..s
             while (true) {
