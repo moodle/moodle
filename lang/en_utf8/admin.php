@@ -21,6 +21,7 @@ $string['log'] = 'Logs';
 $string['simpletest'] = 'Unit tests';
 $string['stats'] = 'Statistics';
 $string['mymoodle'] = 'My Moodle';
+$string['enabletrusttext'] = 'Enable Trusted Content';
 $string['locationsettings'] = 'Location settings';
 $string['languagesettings'] = 'Language settings';
 $string['themesettings'] = 'Theme settings';
@@ -79,9 +80,6 @@ $string['opentogoogle'] = 'Open to Google';
 $string['maxbytes'] = 'Maximum uploaded file size';
 $string['messaging'] = 'Enable messaging system';
 $string['allowobjectembed'] = 'Allow EMBED and OBJECT tags';
-
-$string['enabletrusttext'] = '';
-$string['configenabletrusttext'] = '';
 
 $string['riskmanagetrust'] = 'Users could change trust settings of other users';
 $string['riskconfig'] = 'Users could change site configuration and behaviour';
@@ -215,6 +213,7 @@ $string['configenablecourserequests'] = 'This will allow any user to request a c
 $string['configenablerssfeeds'] = 'This switch will enable RSS feeds from across the site.  To actually see any change you will need to enable RSS feeds in the individual modules too - go to the Modules settings under Admin Configuration.';
 $string['configenablerssfeedsdisabled'] = ' It is not available because RSS feeds are disabled in all the Site. To enable them, go to the Variables settings under Admin Configuration.';
 $string['configenablestats'] = 'If you choose \'yes\' here, Moodle\'s cronjob will process the logs and gather some statistics.  Depending on the amount of traffic on your site, this can take awhile. If you enable this, you will be able to see some interesting graphs and statistics about each of your courses, or on a sitewide basis.';
+$string['configenabletrusttext'] = 'By default Moodle will always thoroughly clean text that comes from users to remove any possible bad scripts, media etc that could be a security risk.  The Trusted Content system is a way of giving partcular users that you trust the ability to include these advanced features in their content without interference.  To enable this system, you need to first enable this setting, and then grant the Trusted Content permission to a specific Moodle role.  Texts created or uploaded by such users will be marked as trusted and will not be cleaned before display.';
 $string['configenrolmentplugins'] = 'Please choose the enrolment plugins you wish to use. Don\'t forget to configure the settings properly.<br /><br />You have to indicate which plugins are enabled, and <strong>one</strong> plugin can be set as the default plugin for <em>interactive</em> enrolment. To disable interactive enrolment, set \"enrollable\" to \"No\" in required courses.';
 $string['configerrorlevel'] = 'Choose the amount of PHP warnings that you want to be displayed.  Normal is usually the best choice.';
 $string['configextendedusernamechars'] = 'Enable this setting to allow students to use any characters in their usernames (note this does not affect their actual names).  The default is \"false\" which restricts usernames to be alphanumeric characters only';
