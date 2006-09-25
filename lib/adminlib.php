@@ -1339,7 +1339,7 @@ class admin_setting_configtext extends admin_setting {
         } else {
             $current = $this->get_setting();
         }
-        return format_admin_setting('text', $this->name, $this->visiblename, 
+        return format_admin_setting($this->name, $this->visiblename, 
                 '<input type="text" class="form-text" id="id_s_'.$this->name.'" name="s_'.$this->name.'" value="'.$current.'" />', 
                 $this->description);
     }
@@ -1371,7 +1371,7 @@ class admin_setting_configcheckbox extends admin_setting {
         } else {
             $current = $this->get_setting();
         }
-        return format_admin_setting('checkbox', $this->name, $this->visiblename, 
+        return format_admin_setting($this->name, $this->visiblename, 
                 '<input type="checkbox" class="form-checkbox" id="id_s_'.$this->name.'" name="s_'. $this->name .'" value="1" ' . ($current == true ? 'checked="checked"' : '') . ' />',
                 $this->description);
     }
@@ -1414,7 +1414,7 @@ class admin_setting_configselect extends admin_setting {
         }
         $return .= '</select>';
 
-        return format_admin_setting('select', $this->name, $this->visiblename, $return, $this->description);
+        return format_admin_setting($this->name, $this->visiblename, $return, $this->description);
     }
 
 }
@@ -1470,7 +1470,7 @@ class admin_setting_configtime extends admin_setting {
             $return .= '<option value="' . $key . '"' . ($key == $currentsetting['m'] ? ' selected="selected"' : '') . '>' . $value . '</option>';
         }
         $return .= '</select></div>';
-        return format_admin_setting('configtime', $this->name, $this->visiblename, $return, $this->description);
+        return format_admin_setting($this->name, $this->visiblename, $return, $this->description);
     }
 
 }
@@ -1507,7 +1507,7 @@ class admin_setting_configmultiselect extends admin_setting_configselect {
             $return .= '<option value="' . $key . '"' . (in_array($key,$currentsetting) ? ' selected="selected"' : '') . '>' . $value . '</option>';
         }
         $return .= '</select>';
-        return format_admin_setting('configmultiselect', $this->name, $this->visiblename, $return, $this->description);
+        return format_admin_setting($this->name, $this->visiblename, $return, $this->description);
     }
 
 }
@@ -1622,7 +1622,7 @@ class admin_setting_courselist_frontpage extends admin_setting_configselect {
         }
         $return .= '</div>';
 
-        return format_admin_setting('frontpage', $this->name, $this->visiblename, $return, $this->description);
+        return format_admin_setting($this->name, $this->visiblename, $return, $this->description);
     }
 }
 
@@ -1717,7 +1717,7 @@ class admin_setting_special_frontpagedesc extends admin_setting {
 
         $return = print_textarea($CFG->adminusehtmleditor, 15, 60, 0, 0, 's_' . $this->name, $currentsetting, 0, true);
 
-        return format_admin_setting('frontpagedesc', $this->name, $this->visiblename, $return, $this->description);
+        return format_admin_setting($this->name, $this->visiblename, $return, $this->description);
     }
 
     function get_setting() {
@@ -1842,7 +1842,7 @@ class admin_setting_special_editorfontlist extends admin_setting {
         $return .= '&nbsp;&nbsp;';
         $return .= '<input type="text" class="form-text" name="s_editorfontlist[v' . ($i + 1) . ']" value="" />';
 
-        return format_admin_setting('editorfontlist', $this->name, $this->visiblename, $return, $this->description);
+        return format_admin_setting($this->name, $this->visiblename, $return, $this->description);
     }
 
 }
@@ -2026,7 +2026,7 @@ class admin_setting_special_editorhidebuttons extends admin_setting {
         $return .= '</td></tr>';
         $return .= '</table>';
 
-        return format_admin_setting('editorhidebuttons', $this->name, $this->visiblename, $return, $this->description);
+        return format_admin_setting($this->name, $this->visiblename, $return, $this->description);
     }
 
 }
@@ -2177,7 +2177,7 @@ class admin_setting_special_backupdays extends admin_setting {
         '<td><div align="center"><input type="checkbox" class="form-checkbox" id="id_s_'.$this->name.'s" name="s_'. $this->name .'[s]" value="1" ' . (substr($currentsetting,6,1) == '1' ? 'checked="checked"' : '') . ' /></div></td>' .
         '</tr></table>';
 
-        return format_admin_setting('backupdays', $this->name, $this->visiblename, $return, $this->description);
+        return format_admin_setting($this->name, $this->visiblename, $return, $this->description);
 
     }
 
@@ -2280,7 +2280,7 @@ class admin_setting_special_calendar_weekend extends admin_setting {
         '<td><div align="center"><input type="checkbox" class="form-checkbox" id="id_s_'.$this->name.'s" name="s_'. $this->name .'[s]" value="1" ' . ($currentsetting['s'] ? 'checked="checked"' : '') . ' /></div></td>' .
         '</tr></table>';
 
-        return format_admin_setting('calendarweekend', $this->name, $this->visiblename, $return, $this->description);
+        return format_admin_setting($this->name, $this->visiblename, $return, $this->description);
 
     }
 
@@ -2312,7 +2312,7 @@ class admin_setting_special_perfdebug extends admin_setting_configcheckbox {
         }
 
         $return = '<input type="checkbox" class="form-checkbox" id="id_s_'.$this->name.'" name="s_'. $this->name .'" value="1" ' . ($currentsetting == 15 ? 'checked="checked"' : '') . ' />';
-        return format_admin_setting('checkbox', $this->name, $this->visiblename, $return, $this->description);
+        return format_admin_setting($this->name, $this->visiblename, $return, $this->description);
     }
 
 }
@@ -2471,9 +2471,9 @@ function apply_default_exception_settings($defaults) {
 
 }
 
-function format_admin_setting($class, $name, $title='', $form='', $description='') {
+function format_admin_setting($name, $title='', $form='', $description='') {
     return "\n".
-           '<div class="form-item admin-'.$class.'">'."\n".
+           '<div class="form-item" id="admin-'.$name.'">'."\n".
            '<label for="id_s_'.$name.'">'.$title."\n".
            '   <span class="form-shortname">'.$name.'</span>'."\n".
            '</label>'."\n".
