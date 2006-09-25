@@ -4419,7 +4419,15 @@ function print_scale_menu_helpbutton($courseid, $scale, $return=false) {
  * @param string $link The url where the user will be prompted to continue. If no url is provided the user will be directed to the site index page.
  */
 function error ($message, $link='') {
+
     global $CFG, $SESSION;
+    $message = clean_text($message);   // In case nasties are in here
+
+    if (defined('FULLME') && FULLME == 'cron') {
+        // Errors in cron should be mtrace'd.
+        mtrace($message);
+        die;
+    }
 
     if (! defined('HEADER_PRINTED')) {
         //header not yet printed
@@ -4428,9 +4436,6 @@ function error ($message, $link='') {
     }
 
     echo '<br />';
-
-    $message = clean_text($message);   // In case nasties are in here
-
     print_simple_box($message, '', '', '', '', 'errorbox');
 
     // in case we are logging upgrade in admin/index.php stop it
