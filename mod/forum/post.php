@@ -614,6 +614,9 @@
         if (!$forum = get_record("forum", "id", $discussion->forum)) {
             error("The forum number was incorrect ($discussion->forum)");
         }
+        if ($forum->type == 'single') {
+            error('Discussions from this forum cannot be split');
+        }
         if (!isteacher($forum->course)) {
             error("You can't split discussions!");
         }
