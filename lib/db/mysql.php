@@ -2286,9 +2286,9 @@ function main_upgrade($oldversion=0) {
     }
 
     if ($oldversion < 2006092200) {
+       table_column('context', 'aggregatelevel', 'contextlevel', 'int', '10', 'unsigned', '0', 'not null', '');
 /*        execute_sql("ALTER TABLE `{$CFG->prefix}context` DROP INDEX `aggregatelevel-instanceid`;",false);
-        table_column('context', 'aggregatelevel', 'contextlevel', 'int', '10', 'unsigned', '0', 'not null', '');
-        execute_sql("ALTER TABLE `{$CFG->prefix}context` ADD UNIQUE INDEX `contextlevel-instanceid` (`contextlevel`, `instanceid`)",false);*/
+        execute_sql("ALTER TABLE `{$CFG->prefix}context` ADD UNIQUE INDEX `contextlevel-instanceid` (`contextlevel`, `instanceid`)",false);   // see 2006092409 below  */
     }
 
     if ($oldversion < 2006092201) {
