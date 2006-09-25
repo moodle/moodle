@@ -148,6 +148,20 @@ class test extends XMLDBAction {
             $tests['create table - 2'] = $test;
         }
 
+    /// Insert two records to do the work with real data
+        $rec->course = 1;
+        $rec->name = 'Martin';
+        $rec->secondname = 'Dougiamas';
+        $rec->intro = 'The creator of Moodle';
+        $rec->grade = 10.0001;
+        insert_record('anothertest', $rec);
+        $rec->course = 2;
+        $rec->name = 'Eloy';
+        $rec->secondname = 'Lafuente';
+        $rec->intro = 'One poor developer';
+        $rec->grade = 9.99;
+        insert_record('anothertest', $rec);
+
     /// 4th test. Adding one complex enum field
         if ($test->status) {
         /// Create a new field with complex specs (enums are good candidates)
@@ -306,6 +320,68 @@ class test extends XMLDBAction {
             $tests['change field nullability (null)'] = $test;
         }
 
+    /// 15th test. Dropping the default of one field
+        if ($test->status) {
+        /// Get SQL code and execute it
+            $test = new stdClass;
+            $field = new XMLDBField('name');
+            $field->setAttributes(XMLDB_TYPE_CHAR, '30', null, null, null, null, null, null);
+            
+            $test->sql = $table->getModifyDefaultSQL($CFG->dbtype, $CFG->prefix, $field, true);
+            $test->status = change_field_default($table, $field, false, false);
+            if (!$test->status) {
+                $test->error = $db->ErrorMsg();
+            }
+            $tests['drop field default of NULL field'] = $test;
+        }
+
+    /// 16th test. Creating the default for one field
+        if ($test->status) {
+        /// Get SQL code and execute it
+            $test = new stdClass;
+            $field = new XMLDBField('name');
+            $field->setAttributes(XMLDB_TYPE_CHAR, '30', null, null, null, null, null, 'Moodle');
+            
+            $test->sql = $table->getModifyDefaultSQL($CFG->dbtype, $CFG->prefix, $field, true);
+            $test->status = change_field_default($table, $field, false, false);
+            if (!$test->status) {
+                $test->error = $db->ErrorMsg();
+            }
+            $tests['add field default of NULL field'] = $test;
+        }
+
+    /// 17th test. Creating the default for one field
+        if ($test->status) {
+        /// Get SQL code and execute it
+            $test = new stdClass;
+            $field = new XMLDBField('secondname');
+            $field->setAttributes(XMLDB_TYPE_CHAR, '10', null, XMLDB_NOTNULL, null, null, null, 'Moodle2');
+            
+            $test->sql = $table->getModifyDefaultSQL($CFG->dbtype, $CFG->prefix, $field, true);
+            $test->status = change_field_default($table, $field, false, false);
+            if (!$test->status) {
+                $test->error = $db->ErrorMsg();
+            }
+            $tests['add field default of NOT NULL field'] = $test;
+        }
+
+
+    /// 18th test. Dropping the default of one NOT NULL field
+        if ($test->status) {
+        /// Get SQL code and execute it
+            $test = new stdClass;
+            $field = new XMLDBField('secondname');
+            $field->setAttributes(XMLDB_TYPE_CHAR, '10', null, XMLDB_NOTNULL, null, null, null, null);
+            
+            $test->sql = $table->getModifyDefaultSQL($CFG->dbtype, $CFG->prefix, $field, true);
+            $test->status = change_field_default($table, $field, false, false);
+            if (!$test->status) {
+                $test->error = $db->ErrorMsg();
+            }
+            $tests['drop field default of NOT NULL field'] = $test;
+        }
+
+    /// TODO: Check here values of the inserted records to see that everything ha the correct value
 
 
     /// Iterate over tests, showing information as needed
@@ -326,7 +402,6 @@ class test extends XMLDBAction {
         if ($this->getPostAction() && $result) {
             return $this->launch($this->getPostAction());
         }
-
     /// Return ok if arrived here
         return $result;
     }
