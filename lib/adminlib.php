@@ -2480,7 +2480,7 @@ function format_admin_setting($class, $name, $title='', $form='', $description='
            '   <span class="form-shortname">'.$name.'</span>'."\n".
            '</label>'."\n".
            $form."\n".
-           '<div class="description">'.$description.'</div>'."\n";
+           '<div class="description">'.$description.'</div>'."\n".
            '</div>'.
            "\n\n";
 }
