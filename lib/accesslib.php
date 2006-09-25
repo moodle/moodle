@@ -744,11 +744,11 @@ function check_enrolment_plugins(&$user) {
 
     static $inprogress;  // To prevent this function being called more than once in an invocation
 
-    if (!empty($inprogress)) {
+    if (!empty($inprogress[$user->id])) {
         return;
     }
 
-    $inprogress = true;  // Set the flag
+    $inprogress[$user->id] = true;  // Set the flag
 
     require_once($CFG->dirroot .'/enrol/enrol.class.php');
 
@@ -775,7 +775,7 @@ function check_enrolment_plugins(&$user) {
         unset($enrol);
     }
 
-    $inprogress = false;  // Unset the flag
+    unset($inprogress[$user->id]);  // Unset the flag
 }
 
 
