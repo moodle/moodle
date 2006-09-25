@@ -246,7 +246,7 @@
             }
 
             //We have to recode the groupid field
-            $group = backup_getid($restore->backup_unique_code,"group",$discussion->groupid);
+            $group = backup_getid($restore->backup_unique_code, 'groups', $discussion->groupid);
             if ($group) {
                 $discussion->groupid = $group->new_id;
             }
