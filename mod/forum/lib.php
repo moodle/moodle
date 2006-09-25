@@ -869,7 +869,7 @@ function forum_print_recent_activity($course, $isteacher, $timestart) {
 
     $strftimerecent = get_string('strftimerecent');
 
-    $mygroupid     = mygroupid($course->id);
+    $mygroupid = mygroupid($course->id);
     $groupmode = array();   /// To cache group modes
 
     foreach ($logs as $log) {
@@ -879,7 +879,7 @@ function forum_print_recent_activity($course, $isteacher, $timestart) {
             $tempmod->course = $log->course;
             $tempmod->id = $post->forum;
             //Obtain the visible property from the instance
-            $coursecontext = get_context_instance(COURSE_CONTEXT, $tempmod->course);
+            $coursecontext = get_context_instance(CONTEXT_COURSE, $tempmod->course);
             $modvisible = instance_is_visible('forum', $tempmod)
                             || has_capability('moodle/course:viewhiddenactivities', $coursecontext);
         }
