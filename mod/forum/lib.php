@@ -274,8 +274,6 @@ function forum_cron() {
                 continue;
             }
 
-
-
             if (! $discussion = get_record("forum_discussions", "id", "$post->discussion")) {
                 mtrace("Could not find discussion $post->discussion");
                 continue;
@@ -341,7 +339,7 @@ function forum_cron() {
                     }
                     
                     // make sure we're allowed to see it...
-                    if (!forum_user_can_see_post($forum,$discussion,$post,$userto)) {
+                    if (!forum_user_can_see_post($forum, $discussion, $post, $userto)) {
                         continue;
                     }
 
@@ -1712,11 +1710,11 @@ function forum_make_mail_post(&$post, $user, $touser, $course,
     static $formattedtextid;      // The ID number of the post
 
 
-    if (!$forumid = get_record('discussion', 'id', $post->discussion)) {
-        error('Could not get the forum id for the discussion the post belongs to');
+    if (!$forum = get_record('forum', 'id', $post->discussion)) {
+        mtrace('Could not get the forum for the discussion the post belongs to');
     }
-    if (!$cm = get_coursemodule_from_instance('forum', $forumid)) {
-        error('Course Module ID was incorrect');
+    if (!$cm = get_coursemodule_from_instance('forum', $forum->id)) {
+        mtrace('Course Module ID was incorrect');
     }
     $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
 
