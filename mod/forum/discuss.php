@@ -73,7 +73,7 @@
                        'destination forum(s) - check your file permissionsforums');
             }
         } else {
-            error('You can't move to that forum - it doesn't exist!');
+            error('You can\'t move to that forum - it doesn\'t exist!');
         }
     }
 
