@@ -2,11 +2,12 @@
 /// Extended by Michael Schneider
 /// This page prints a particular instance of wiki
 
-    global $CFG;
+    global $CFG,$USER;
 
     require_once("../../config.php");
     require_once("lib.php");
-    #require_once("$CFG->dirroot/course/lib.php"); // For side-blocks
+    #require_once("$CFG->dirroot/course/lib.php"); // For side-blocks    
+    require_once(dirname(__FILE__).'/../../lib/ajax/ajaxlib.php');
 
     $ewiki_action = optional_param('ewiki_action', '', PARAM_ALPHA);     // Action on Wiki-Page
     $id           = optional_param('id', 0, PARAM_INT);                  // Course Module ID, or
@@ -20,6 +21,27 @@
 
     // Only want to add edit log entries if we have made some changes ie submitted a form
     $editsave = optional_param('thankyou', '');
+    
+    if($page) {
+        // Split page command into action and page
+        $actions = explode('/', $page,2);
+        if(count($actions)==2) {
+            $pagename=$actions[1];
+        }
+    } else {
+        $actions=array('');
+        $pagename='';
+    }
+    
+    // If true, we are 'really' on an editing page, not just on edit/something
+    $reallyedit=$actions[0]=='edit' && !$editsave && !$canceledit;
+    if(!$reallyedit && isset($_SESSION['lockid'])) {
+        if(!delete_records('wiki_locks','id',$_SESSION['lockid'])) {
+            unset($_SESSION['lockid']);
+            error("Unable to delete lock record. ".$_SESSION['lockid']);
+        }
+        unset($_SESSION['lockid']);
+    }
     
     if ($id) {
         if (! $cm = get_coursemodule_from_id('wiki', $id)) {
@@ -370,12 +392,100 @@
     /// actions will have the form [action]/[pagename]. If the action is 'view' or the  '/'
     /// isn't there (so the action defaults to 'view'), filter it.
     /// If the page does not yet exist, the display will default to 'edit'.
-    $actions = explode('/', $page);
     if((count($actions) < 2 || $actions[0] == "view") &&
         record_exists('wiki_pages', 'pagename', addslashes($page), 'wiki', $wiki_entry->id)) {
         print(format_text($content, $moodle_format));
+    } else if($actions[0]=='edit' && $reallyedit) {
+        // Check the page isn't locked before printing out standard wiki content. (Locking
+        // is implemented as a wrapper over the existing wiki.)
+        $goahead=true;
+        $alreadyownlock=false;
+        if($lock=get_record('wiki_locks','pagename',$pagename,'wikiid', $wiki->id)) {
+            // Consider the page locked if the lock has been confirmed within WIKI_LOCK_PERSISTENCE seconds
+            if($lock->lockedby==$USER->id) {
+                // Cool, it's our lock, do nothing
+                $alreadyownlock=true;
+                $lockid=$lock->id;
+            } else if(time()-$lock->lockedseen < WIKI_LOCK_PERSISTENCE) {
+                $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
+                $canoverridelock = has_capability('mod/wiki:overridelock', $modcontext);
+                
+                $a=new stdClass;
+                $a->since=userdate($lock->lockedsince);
+                $a->seen=userdate($lock->lockedseen);
+                $user=get_record('user','id',$lock->lockedby);
+                $a->name=fullname($user, 
+                  has_capability('moodle/site:viewfullnames', $modcontext));
+                
+                print_string('pagelocked','wiki',$a);
+                
+                if($canoverridelock) {
+                    $pageesc=htmlspecialchars($page);
+                    $stroverrideinfo=get_string('overrideinfo','wiki');
+                    $stroverridebutton=get_string('overridebutton','wiki');
+                    $sesskey=sesskey();
+                    print "
+<form id='overridelock' method='post' action='overridelock.php'>
+  <input type='hidden' name='sesskey' value='$sesskey' />
+  <input type='hidden' name='id' value='$id' />
+  <input type='hidden' name='page' value='$pageesc' />
+  $stroverrideinfo
+  <input type='submit' value='$stroverridebutton' />
+</form>
+";
+                }
+                $goahead=false;
+            } else {
+                // Not locked any more. Get rid of the lock record.
+                if(!delete_records('wiki_locks','pagename',$pagename,'wikiid', $wiki->id)) {
+                    error('Unable to delete lock record');
+                }
+            } 
+        } 
+        if($goahead) {
+            if(!$alreadyownlock) {
+                // Lock page
+                $newlock=new stdClass;
+                $newlock->lockedby=$USER->id;
+                $newlock->lockedsince=time();
+                $newlock->lockedseen=$newlock->lockedsince;
+                $newlock->wikiid=$wiki->id;
+                $newlock->pagename=$pagename;
+                if(!$lockid=insert_record('wiki_locks',$newlock)) {
+                    error('Unable to insert lock record');
+                }
+            }
+            $_SESSION['lockid']=$lockid;
+
+            // Require AJAX library            
+            print_require_js(array('yui_yahoo','yui_connection'));
+            $strlockcancelled=get_string('lockcancelled','wiki');
+            $intervalms=WIKI_LOCK_RECONFIRM*1000;
+            print "
+<script type='text/javascript'>
+var intervalID;
+function handleResponse(o) {
+    if(o.responseText=='cancel') {
+        document.forms['ewiki'].elements['preview'].disabled=true;
+        document.forms['ewiki'].elements['save'].disabled=true;
+        clearInterval(intervalID);
+        alert('$strlockcancelled');
     }
-    else {
+}
+function handleFailure(o) {
+    // Ignore for now
+}
+intervalID=setInterval(function() {
+    YAHOO.util.Connect.asyncRequest('POST','confirmlock.php',
+        {success:handleResponse,failure:handleFailure},'lockid=$lockid');    
+    },$intervalms);
+</script>
+";
+            
+            // Print editor etc
+            print $content;
+        }
+    } else {
         print $content;
     }
     print $content2;

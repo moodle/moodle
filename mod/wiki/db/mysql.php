@@ -160,7 +160,21 @@ function wiki_upgrade($oldversion) {
         execute_sql("UPDATE {$CFG->prefix}wiki SET initialcontent='' WHERE initialcontent IS NULL");
         table_column('wiki','initialcontent','initialcontent','varchar','255','','','not null');
     }
-
+    if ($oldversion < 2006092502) {
+        modify_database("","
+CREATE TABLE prefix_wiki_locks
+(
+  id INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  wikiid INT(10) UNSIGNED NOT NULL,
+  pagename VARCHAR(160) NOT NULL DEFAULT '',
+  lockedby INT(10) NOT NULL DEFAULT 0,
+  lockedsince INT(10) NOT NULL DEFAULT 0,
+  lockedseen INT(10) NOT NULL DEFAULT 0,
+  PRIMARY KEY(id),
+  UNIQUE KEY wiki_locks_uk(wikiid,pagename),
+  INDEX wiki_locks_ix(lockedseen)  
+);"); 
+    }
     return true;
 }
 

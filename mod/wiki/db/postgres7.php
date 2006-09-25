@@ -155,6 +155,21 @@ function wiki_upgrade($oldversion) {
         modify_database('', 'ALTER TABLE prefix_wiki_pages 
             ALTER COLUMN refs DROP NOT NULL');
     }
+    
+    if ($oldversion < 2006092502) {
+        modify_database("","
+CREATE TABLE prefix_wiki_locks
+(
+  id SERIAL PRIMARY KEY,
+  wikiid INTEGER NOT NULL,
+  pagename VARCHAR(160) NOT NULL DEFAULT '',
+  lockedby INTEGER NOT NULL DEFAULT 0,
+  lockedsince INTEGER NOT NULL DEFAULT 0,
+  lockedseen INTEGER NOT NULL DEFAULT 0
+);"); 
+        modify_database("","CREATE INDEX prefix_wikilock_loc_ix ON prefix_wiki_locks (lockedseen);"); 
+        modify_database("","CREATE UNIQUE INDEX prefix_wikilock_wikpag_uix ON prefix_wiki_locks (wikiid, pagename);");  
+    }
 
     return true;
 }

@@ -36,5 +36,21 @@ $mod_wiki_capabilities = array(
             'coursecreator' => CAP_PREVENT,
             'admin' => CAP_ALLOW
         )
+    ),
+    
+    'mod/wiki:overridelock' => array(
+
+        'riskbitmask' => 0,
+
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_MODULE,
+        'legacy' => array(
+            'guest' => CAP_PREVENT,
+            'student' => CAP_PREVENT,
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'coursecreator' => CAP_ALLOW,
+            'admin' => CAP_ALLOW
+        )
     )
 );

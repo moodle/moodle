@@ -11,6 +11,13 @@ $WIKI_TYPES = array ('teacher' =>   get_string('defaultcourseteacher'),
                      'student' =>   get_string('defaultcoursestudent') );
 define("EWIKI_ESCAPE_AT", 0);       # For the algebraic filter
 
+// How long locks stay around without being confirmed (seconds)
+define(WIKI_LOCK_PERSISTENCE,60);
+
+// How often to confirm that you still want a lock
+define(WIKI_LOCK_RECONFIRM,30);
+
+
 /*** Moodle 1.7 compatibility functions *****
  *
  ********************************************/
@@ -135,6 +142,10 @@ function wiki_delete_instance($id) {
     }
 
     # Delete any dependent records here #
+    if(!delete_records("wiki_locks","wikiid",$wiki->id)) {
+        $result = false;
+    }
+
     if (! delete_records("wiki", "id", $wiki->id)) {
         $result = false;
     }
@@ -225,9 +236,10 @@ function wiki_cron () {
 /// This function searches for things that need to be done, such
 /// as sending out mail, toggling flags etc ...
 
-    global $CFG;
+    // Delete expired locks
+    $result=delete_records_select('wiki_locks','lockedseen < '.(time()-WIKI_LOCK_PERSISTENCE)); 
 
-    return true;
+    return $result;
 }
 
 function wiki_grades($wikiid) {
