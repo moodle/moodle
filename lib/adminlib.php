@@ -1829,7 +1829,7 @@ class admin_setting_special_editorfontlist extends admin_setting {
             $currentsetting = $this->get_setting();
         }
 
-        $return = '';
+        $return = '<div class="form-group">';
         for ($i = 0; $i < count($currentsetting) / 2; $i++) {
             $return .= '<input type="text" class="form-text" name="s_editorfontlist[k' . $i . ']" value="' . $currentsetting['k' . $i] . '" />';
             $return .= '&nbsp;&nbsp;';
@@ -1841,6 +1841,7 @@ class admin_setting_special_editorfontlist extends admin_setting {
         $return .= '<input type="text" class="form-text" name="s_editorfontlist[k' . ($i + 1) . ']" value="" />';
         $return .= '&nbsp;&nbsp;';
         $return .= '<input type="text" class="form-text" name="s_editorfontlist[v' . ($i + 1) . ']" value="" />';
+        $return .= '</div>';
 
         return format_admin_setting($this->name, $this->visiblename, $return, $this->description);
     }
@@ -2006,7 +2007,8 @@ class admin_setting_special_editorhidebuttons extends admin_setting {
             $currentsetting = $this->get_setting();
         }
 
-        $return = '<table><tr><td valign="top" align="right">';
+        $return = '<div class="form-group">';
+        $return .= '<table><tr><td valign="top" align="right">';
 
         $count = 0;
 
@@ -2025,6 +2027,7 @@ class admin_setting_special_editorhidebuttons extends admin_setting {
 
         $return .= '</td></tr>';
         $return .= '</table>';
+        $return .= '</div>';
 
         return format_admin_setting($this->name, $this->visiblename, $return, $this->description);
     }
