@@ -124,6 +124,7 @@ h2.header,
 .sideblock .header,
 .forumpost,
 .navbar,
+table.files th,
 #footer-bar {
     border-top:1px solid #FFCC99;
     border-left:1px solid #FFCC99;
@@ -180,6 +181,7 @@ h2.header,
 .categoryboxcontent,
 .cal_popup_fg,
 #course-view .section td.content,
+table.files,
 fieldset.adminsettings {
     border-top:1px solid #FFCC99;
     border-left:1px solid #FFCC99;
