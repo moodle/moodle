@@ -558,11 +558,10 @@ function load_user_capability($capability='', $context ='', $userid='') {
     if ($usercontexts) {
         $listofcontexts = '('.implode(',', $usercontexts).')';
         $searchcontexts1 = "c1.id IN $listofcontexts AND";
-        $searchcontexts2 = "c2.id IN $listofcontexts AND";
     } else {
-        $listofcontexts = $searchcontexts1 = $searchcontexts2 = '';
+        $searchcontexts1 = '';
     }
-
+    
     if ($capability) {
         $capsearch = " AND rc.capability = '$capability' ";
     } else {
@@ -579,7 +578,7 @@ function load_user_capability($capability='', $context ='', $userid='') {
 
     $siteinstance = get_context_instance(CONTEXT_SYSTEM, SITEID);
 
-    $SQL = " SELECT  rc.capability, c1.id, (c1.contextlevel * 100) AS aggrlevel,
+    $SQL = "  SELECT rc.capability, c1.id, (c1.contextlevel * 100) AS aggrlevel,
                      SUM(rc.permission) AS sum
                      FROM
                      {$CFG->prefix}role_assignments ra,
@@ -599,7 +598,7 @@ function load_user_capability($capability='', $context ='', $userid='') {
                      SUM(rc.permission) != 0
               UNION
 
-              SELECT rc.capability, c1.id, (c1.contextlevel * 100 + c2.contextlevel) AS aggrlevel,
+              SELECT rc.capability, c2.id, (c1.contextlevel * 100 + c2.contextlevel) AS aggrlevel,
                      SUM(rc.permission) AS sum
                      FROM
                      {$CFG->prefix}role_assignments ra,
@@ -612,13 +611,12 @@ function load_user_capability($capability='', $context ='', $userid='') {
                      ra.userid=$userid AND
                      rc.contextid=c2.id AND
                      $searchcontexts1
-                     $searchcontexts2
                      rc.contextid != $siteinstance->id
                      $capsearch
                      $timesql
 
               GROUP BY
-                     rc.capability, (c1.contextlevel * 100 + c2.contextlevel), c1.id
+                     rc.capability, (c1.contextlevel * 100 + c2.contextlevel), c2.id, c1.id
                      HAVING
                      SUM(rc.permission) != 0
               ORDER BY
