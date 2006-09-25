@@ -317,6 +317,9 @@ function stats_cron_weekly () {
                     WHERE courseid = '.$course->id.' AND '.$timesql.' AND stattype = \'logins\'';
                 
                 if ($stat = get_record_sql($sql)) {
+                    if (empty($stat->stat1)) {
+                        $stat->stat1 = 0;
+                    }
                     $stat->courseid = $course->id;
                     $stat->roleid = 0;
                     $stat->timeend = $nextsunday;
@@ -443,6 +446,9 @@ function stats_cron_monthly () {
                     WHERE courseid = '.$course->id.' AND '.$timesql.' AND stattype = \'logins\'';
                 
                 if ($stat = get_record_sql($sql)) {
+                    if (empty($stat->stat1)) {
+                        $stat->stat1 = 0;
+                    }
                     $stat->courseid = $course->id;
                     $stat->roleid = 0;
                     $stat->timeend = $nextmonthend;
@@ -1021,7 +1027,7 @@ function stats_fix_zeros($stats,$timeafter,$timestr,$line2=true,$line3=false) {
         $actualtimes[] = $s->timeend;
     }
 
-    $timeafter = array_pop($actualtimes);
+    $timeafter = array_pop(array_values($actualtimes));
 
     while ($timeafter < $now) {
         $times[] = $timeafter;
