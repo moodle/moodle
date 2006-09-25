@@ -1,4 +1,4 @@
-﻿<?php // Library functions for using AJAX with Moodle
+<?php // Library functions for using AJAX with Moodle
 
 /**
  *Print require statements for javascript libraries
