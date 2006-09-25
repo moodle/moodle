@@ -39,7 +39,7 @@
 
     //Checks for the required files/functions to restore every mod
     $count = 0;
-    if ($allmods = get_records("modules") ) {
+    if ($allmods = get_records("modules") ) { 
         foreach ($allmods as $mod) {
             $modname = $mod->name;
             $modfile = "$CFG->dirroot/mod/$modname/restorelib.php";

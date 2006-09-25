@@ -42,6 +42,7 @@
         error("Site not found!");
     }
     $errorstr = '';
+
     $status = restore_execute($restore,$info,$course_header,$errorstr);
 
     if (!$status) {

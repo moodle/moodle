@@ -307,6 +307,13 @@
         return $info;
     }
 
+    function restore_read_xml_roles ($restore,$xml_file) {
+        //We call the main read_xml function, with todo = ROLES
+        $info = restore_read_xml ($xml_file,"ROLES",$restore);
+
+        return $info;  
+    }
+
     //This function prints the contents from the info parammeter passed
     function restore_print_info ($info) {
 
@@ -3000,6 +3007,21 @@
             //    echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;".$tagName."&gt;<br />\n";   //Debug
         }
 
+                //This is the startTag handler we use where we are reading the info zone (todo="INFO")
+        function startElementRoles($parser, $tagName, $attrs) {
+            //Refresh properties
+            $this->level++;
+            $this->tree[$this->level] = $tagName;
+
+            //Output something to avoid browser timeouts...
+            backup_flush();
+
+            //Check if we are into INFO zone
+            //if ($this->tree[2] == "INFO")                                                             //Debug
+            //    echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;".$tagName."&gt;<br />\n";   //Debug
+        }
+
+
         //This is the startTag handler we use where we are reading the course header zone (todo="COURSE_HEADER")
         function startElementCourseHeader($parser, $tagName, $attrs) {
             //Refresh properties
@@ -3398,7 +3420,82 @@
             $this->level--;
             $this->content = "";
 
-        }
+        }     
+        
+        function endElementRoles($parser, $tagName) {
+            //Check if we are into INFO zone
+            if ($this->tree[2] == "ROLES") {
+
+                if ($this->tree[3] == "ROLE") {
+                    if ($this->level == 4) {
+                        switch ($tagName) {
+                            case "NAME":
+                                $this->info->tempname = $this->getContents();
+                                
+                                break;
+                            case "SHORTNAME":
+                                $this->info->tempshortname = $this->getContents();
+                                break;
+                        }
+                    }
+                    if ($this->level == 6) {
+                        switch ($tagName) {
+                            case "NAME":
+                                $this->info->roles[$this->info->tempshortname]->name = $this->info->tempname;
+                                $this->info->roles[$this->info->tempshortname]->shortname = $this->info->tempshortname;
+                                
+                                $this->info->tempcapname = $this->getContents();
+                                $this->info->roles[$this->info->tempshortname]->capabilities[$this->info->tempcapname]->name = $this->getContents();
+                                break;
+                            case "PERMISSION":
+                                $this->info->roles[$this->info->tempshortname]->capabilities[$this->info->tempcapname]->permission = $this->getContents();
+                                break;
+                            case "TIMEMODIFIED":
+                                $this->info->roles[$this->info->tempshortname]->capabilities[$this->info->tempcapname]->timemodified = $this->getContents();
+                                break;
+                            case "MODIFIERID":
+                                $this->info->roles[$this->info->tempshortname]->capabilities[$this->info->tempcapname]->modifierid = $this->getContents();
+                                break;
+                        }
+                    }
+                }
+            }
+
+            //Stop parsing if todo = INFO and tagName = INFO (en of the tag, of course)
+            //Speed up a lot (avoid parse all)
+            if ($tagName == "ROLES") {
+                $this->finished = true;
+            }
+
+            //Clear things
+            $this->tree[$this->level] = "";
+            $this->level--;
+            $this->content = "";
+
+        }      
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
 
         //This is the endTag handler we use where we are reading the course_header zone (todo="COURSE_HEADER")
         function endElementCourseHeader($parser, $tagName) {
@@ -4535,6 +4632,9 @@
         if ($todo == "INFO") {
             //Define handlers to that zone
             xml_set_element_handler($xml_parser, "startElementInfo", "endElementInfo");
+        } else if ($todo == "ROLES") {
+            // Define handlers to that zone
+            xml_set_element_handler($xml_parser, "startElementRoles", "endElementRoles");
         } else if ($todo == "COURSE_HEADER") {
             //Define handlers to that zone
             xml_set_element_handler($xml_parser, "startElementCourseHeader", "endElementCourseHeader");
@@ -4864,8 +4964,10 @@
     }
 
     function restore_execute(&$restore,$info,$course_header,&$errorstr) {
+      
         global $CFG;
-        $status = true;
+        $status = true;        
+        
         //Checks for the required files/functions to restore every module
         //and include them
         if ($allmods = get_records("modules") ) {
@@ -4889,7 +4991,7 @@
         }
         
         //Localtion of the xml file
-        $xml_file  = $CFG->dataroot."/temp/backup/".$restore->backup_unique_code."/moodle.xml";
+        $xml_file = $CFG->dataroot."/temp/backup/".$restore->backup_unique_code."/moodle.xml";
         
         //If we've selected to restore into new course
         //create it (course)
@@ -5371,12 +5473,20 @@
             fix_course_sortorder();
             //Make the user a teacher if the course hasn't teachers (bug 2381)
             if (!has_capability('moodle/site:restore', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
+                /* this is not working
                 if (!$checktea = get_records('user_teachers','course', $restore->course_id)) {
                     //Add the teacher to the course
                     $status = add_teacher($USER->id, $restore->course_id);
-                }
+                } */
             }
         }
+
+        /*******************************************************************************
+         ************* Restore of Roles and Capabilities happens here ******************
+         *******************************************************************************/
+        restore_create_roles($restore, $xml_file);
+        restore_assign_roles($restore, $xml_file);
+        restore_override_roles($restore, $xml_file);
 
         //Cleanup temps (files and db)
         if ($status) {
@@ -5434,7 +5544,7 @@
         fwrite ($restorelog_file,"The Originating Courses Start Date was " .$date['weekday'].", ".$date['mday']." ".$date['month']." ".$date['year']."");
         $startdate += $restore->course_startdateoffset;
         $date = usergetdate($startdate);
-        fwrite ($restorelog_file,"&nbsp;&nbsp;&nbsp;This Courses Start Date is now  " .$date['weekday'].",  ".$date['mday']." ".$date['month']." ".$date['year']."<br><br>");       
+        fwrite ($restorelog_file,"&nbsp;&nbsp;&nbsp;This Courses Start Date is now  " .$date['weekday'].",  ".$date['mday']." ".$date['month']." ".$date['year']."<br><br>");
 
         if ($status) {
             return $restorelog_file;
@@ -5465,5 +5575,36 @@
             return false;
         }
     }
+    /* This function should check for duplicate roles first
+       It isn't now, just overwriting
+    */
+    function restore_create_roles($restore, $xmlfile) {
+        /*
+        $info = restore_read_xml_roles($restore, $xmlfile);
+        
+        $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
 
+        foreach ($info->roles as $rolename=>$roledata) {
+            $newroleid = create_role($roledata->name.'XYZ',$roledata->shortname.'XYZ','');
+            foreach ($roledata->capabilities as $capability) {
+                
+                $roleinfo = new object();
+                $roleinfo = (object)$capability;
+                $roleinfo->contextid = $sitecontext->id;
+                $roleinfo->capability = $capability->name;
+                $roleinfo->roleid = $newroleid;
+                
+                insert_record('role_capabilities', $roleinfo);
+            }
+        }*/
+    }
+    
+    function restore_assign_roles($restore, $xmlfile) {
+        // data pulls from course, mod, user, and blocks
+        $course = restore_read_xml_course_header($xmlfile);
+        print_object($course);
+    }
+    function restore_override_roles($restore, $xmlfile) {
+        // data pulls from course, mod, user, and blocks  
+    }
 ?>

@@ -150,7 +150,7 @@
         include_once("restore_check.html");
         //To avoid multiple restore executions...
         $SESSION->cancontinue = true;
-    } else if ($launch == "execute") {
+    } else if ($launch == "execute") { 
         //Prevent multiple restore executions...
         if (empty($SESSION->cancontinue)) {
             error("Multiple restore execution not allowed!");
