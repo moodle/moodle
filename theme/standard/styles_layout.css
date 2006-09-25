@@ -489,7 +489,7 @@ fieldset.adminsettings .description {
     margin: 10px 0 0 160px;
 }
 
-.form-text {
+.form-text input {
     width: 20em;
 }
 .form-textarea { }
