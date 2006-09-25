@@ -1233,11 +1233,12 @@ class admin_settingpage extends part_of_admin_tree {
     // outputs this page as html in a table (suitable for inclusion in an admin pagetype)
     // returns a string of the html
     function output_html() {
-        $return = '<table class="generaltable" width="100%" border="0" align="center" cellpadding="5" cellspacing="1">' . "\n";
+        $return = '<fieldset class="adminsettings">' . "\n";
+        $return .= '<div class="clearer"><!-- --></div>' . "\n";
         foreach($this->settings as $setting) {
           $return .= $setting->output_html();
         }
-        $return .= '</table>';
+        $return .= '</fieldset>';
         return $return;
     }
 
@@ -1338,9 +1339,9 @@ class admin_setting_configtext extends admin_setting {
         } else {
             $current = $this->get_setting();
         }
-        return '<tr><td width="100" align="right" valign="top">' . $this->visiblename . '</td>' .
-            '<td align="left"><input type="text" size="50" name="s_'. $this->name .'" value="'. $current .'" /></td></tr>' .
-            '<tr><td>&nbsp;</td><td align="left">' . $this->description . '</td></tr>';
+        return format_admin_setting('text', $this->name, $this->visiblename, 
+                '<input type="text" size="50" id="id_s_'.$this->name.'" name="s_'.$this->name.'" value="'.$current.'" />', 
+                $this->description);
     }
 
 }
@@ -1370,9 +1371,9 @@ class admin_setting_configcheckbox extends admin_setting {
         } else {
             $current = $this->get_setting();
         }
-        return '<tr><td width="100" align="right" valign="top">' . $this->visiblename . '</td>' .
-            '<td align="left"><input type="checkbox" size="50" name="s_'. $this->name .'" value="1" ' . ($current == true ? 'checked="checked"' : '') . ' /></td></tr>' .
-            '<tr><td>&nbsp;</td><td align="left">' . $this->description . '</td></tr>';
+        return format_admin_setting('checkbox', $this->name, $this->visiblename, 
+                '<input type="checkbox" size="50" id="id_s_'.$this->name.'" name="s_'. $this->name .'" value="1" ' . ($current == true ? 'checked="checked"' : '') . ' />',
+                $this->description);
     }
 
 }
@@ -1407,12 +1408,13 @@ class admin_setting_configselect extends admin_setting {
         } else {
             $current = $this->get_setting();
         }
-        $return = '<tr><td width="100" align="right" valign="top">' . $this->visiblename . '</td><td align="left"><select name="s_' . $this->name .'">';
+        $return = '<select id="id_s_'.$this->name.'" name="s_' . $this->name .'">';
         foreach ($this->choices as $key => $value) {
-            $return .= '<option value="' . $key . '"' . ($key == $current ? ' selected="selected"' : '') . '>' . $value . '</option>';
+            $return .= '<option value="'.$key.'"'.($key==$current ? ' selected="selected"' : '').'>'.$value.'</option>';
         }
-        $return .= '</select></td></tr><tr><td>&nbsp;</td><td align="left">' . $this->description . '</td></tr>';
-        return $return;
+        $return .= '</select>';
+
+        return format_admin_setting('select', $this->name, $this->visiblename, $return, $this->description);
     }
 
 }
@@ -1458,16 +1460,16 @@ class admin_setting_configtime extends admin_setting {
         } else {
           $currentsetting = $this->get_setting();
         }
-        $return = '<tr><td width="100" align="right" valign="top">' . $this->visiblename . '</td><td align="left"><select name="s_' . $this->name .'[h]">';
+        $return = '<select id="id_s_'.$this->name.'h" name="s_' . $this->name .'[h]">';
         foreach ($this->choices as $key => $value) {
             $return .= '<option value="' . $key . '"' . ($key == $currentsetting['h'] ? ' selected="selected"' : '') . '>' . $value . '</option>';
         }
-        $return .= '</select>&nbsp;&nbsp;&nbsp;<select name="s_' . $this->name . '[m]">';
+        $return .= '</select>&nbsp;&nbsp;&nbsp;<select id="id_s_'.$this->name.'m" name="s_' . $this->name . '[m]">';
         foreach ($this->choices2 as $key => $value) {
             $return .= '<option value="' . $key . '"' . ($key == $currentsetting['m'] ? ' selected="selected"' : '') . '>' . $value . '</option>';
         }
-        $return .= '</select></td></tr><tr><td>&nbsp;</td><td align="left">' . $this->description . '</td></tr>';
-        return $return;
+        $return .= '</select>';
+        return format_admin_setting('configtime', $this->name, $this->visiblename, $return, $this->description);
     }
 
 }
@@ -1499,12 +1501,12 @@ class admin_setting_configmultiselect extends admin_setting_configselect {
         } else {
           $currentsetting = $this->get_setting();
         }
-        $return = '<tr><td width="100" align="right" valign="top">' . $this->visiblename . '</td><td align="left"><select name="s_' . $this->name .'[]" size="10" multiple="multiple">';
+        $return = '<select id="id_s_'.$this->name.'" name="s_' . $this->name .'[]" size="10" multiple="multiple">';
         foreach ($this->choices as $key => $value) {
             $return .= '<option value="' . $key . '"' . (in_array($key,$currentsetting) ? ' selected="selected"' : '') . '>' . $value . '</option>';
         }
-        $return .= '</select></td></tr><tr><td>&nbsp;</td><td align="left">' . $this->description . '</td></tr>';
-        return $return;
+        $return .= '</select>';
+        return format_admin_setting('configmultiselect', $this->name, $this->visiblename, $return, $this->description);
     }
 
 }
@@ -1606,9 +1608,9 @@ class admin_setting_courselist_frontpage extends admin_setting_configselect {
                 $currentsetting[$i] = 0;
             }
         }
-        $return = '<tr><td width="100" align="right" valign="top">' . $this->visiblename . '</td><td align="left">';
+        $return = '';
         for ($i = 0; $i < count($this->choices) - 1; $i++) {
-            $return .='<select name="s_' . $this->name .'[]">';
+            $return .='<select id="id_s_'.$this->name.'" name="s_' . $this->name .'[]">';
             foreach ($this->choices as $key => $value) {
                 $return .= '<option value="' . $key . '"' . ($key == $currentsetting[$i] ? ' selected="selected"' : '') . '>' . $value . '</option>';
             }
@@ -1617,8 +1619,7 @@ class admin_setting_courselist_frontpage extends admin_setting_configselect {
                 $return .= '<br />';
             }
         }
-        $return .= '</td></tr><tr><td>&nbsp;</td><td align="left">' . $this->description . '</td></tr>';
-        return $return;
+        return format_admin_setting('frontpage', $this->name, $this->visiblename, $return, $this->description);
     }
 }
 
@@ -1709,20 +1710,16 @@ class admin_setting_special_frontpagedesc extends admin_setting {
 
         $usehtmleditor = can_use_html_editor();
 
-        $return = '<tr><td width="100" align="right" valign="top">' . $this->visiblename . '</td>' .
-                   '<td>';
-
         ob_start();  // double-check the number of columns below... might overrun some screen resolutions
         print_textarea($usehtmleditor, 15, 60, 0, 0, 's_' . $this->name, $currentsetting);
 
         if ($usehtmleditor) {
             use_html_editor();
         }
-        $return .= ob_get_contents();
+        $return = ob_get_contents();
         ob_end_clean();
-        $return .= '</td></tr><tr><td>&nbsp;</td><td>' . $this->description . '</td></tr>';
-        return $return;
 
+        return format_admin_setting('frontpagedesc', $this->name, $this->visiblename, $return, $this->description);
     }
 
     function get_setting() {
@@ -1834,7 +1831,7 @@ class admin_setting_special_editorfontlist extends admin_setting {
             $currentsetting = $this->get_setting();
         }
 
-        $return = '<tr><td width="100" align="right" valign="top">' . $this->visiblename . '</td><td align="left">';
+        $return = '';
         for ($i = 0; $i < count($currentsetting) / 2; $i++) {
             $return .= '<input type="text" name="s_editorfontlist[k' . $i . ']" value="' . $currentsetting['k' . $i] . '" size="20" />';
             $return .= '&nbsp;&nbsp;';
@@ -1846,8 +1843,8 @@ class admin_setting_special_editorfontlist extends admin_setting {
         $return .= '<input type="text" name="s_editorfontlist[k' . ($i + 1) . ']" value="" size="20" />';
         $return .= '&nbsp;&nbsp;';
         $return .= '<input type="text" name="s_editorfontlist[v' . ($i + 1) . ']" value="" size="40" />';
-        $return .= '</td></tr><tr><td>&nbsp;</td><td align="left">' . $this->description . '</td></tr>';
-        return $return;
+
+        return format_admin_setting('editorfontlist', $this->name, $this->visiblename, $return, $this->description);
     }
 
 }
@@ -2011,9 +2008,7 @@ class admin_setting_special_editorhidebuttons extends admin_setting {
             $currentsetting = $this->get_setting();
         }
 
-        $return = '<tr><td width="100" align="right" valign="top">' . $this->visiblename . '</td><td align="left">';
-
-        $return .= '<table><tr><td valign="top" align="right">';
+        $return = '<table><tr><td valign="top" align="right">';
 
         $count = 0;
 
@@ -2023,7 +2018,7 @@ class admin_setting_special_editorhidebuttons extends admin_setting {
             }
 
             $return .= ($value == '' ? get_string($key,'editor') : '<img width="18" height="18" src="' . $CFG->wwwroot . '/lib/editor/htmlarea/images/' . $value . '" alt="' . get_string($key,'editor') . '" title="' . get_string($key,'editor') . '" />') . '&nbsp;';
-            $return .= '<input type="checkbox" value="1" name="s_' . $this->name . '[' . $key . ']"' . (in_array($key,$currentsetting) ? ' checked="checked"' : '') . ' />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+            $return .= '<input type="checkbox" value="1" id="id_s_'.$this->name.$key.'" name="s_' . $this->name . '[' . $key . ']"' . (in_array($key,$currentsetting) ? ' checked="checked"' : '') . ' />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
             $count++;
             if ($count % 15 != 0) {
                 $return .= '<br /><br />';
@@ -2032,9 +2027,8 @@ class admin_setting_special_editorhidebuttons extends admin_setting {
 
         $return .= '</td></tr>';
         $return .= '</table>';
-        $return .= '</td></tr><tr><td>&nbsp;</td><td align="left">' . $this->description . '</td></tr>';
 
-        return $return;
+        return format_admin_setting('editorhidebuttons', $this->name, $this->visiblename, $return, $this->description);
     }
 
 }
@@ -2172,20 +2166,20 @@ class admin_setting_special_backupdays extends admin_setting {
         $currentsetting = $currentsetting['u'] . $currentsetting['m'] . $currentsetting['t'] . $currentsetting['w'] .
                           $currentsetting['r'] . $currentsetting['f'] . $currentsetting['s'];
 
-        return '<tr><td width="100" align="right" valign="top">' . $this->visiblename . '</td><td align="left">' .
-        '<table><tr><td><div align="center">&nbsp;&nbsp;' . get_string('sunday', 'calendar') . '&nbsp;&nbsp;</div></td><td><div align="center">&nbsp;&nbsp;' .
+        $return = '<table><tr><td><div align="center">&nbsp;&nbsp;' . get_string('sunday', 'calendar') . '&nbsp;&nbsp;</div></td><td><div align="center">&nbsp;&nbsp;' .
         get_string('monday', 'calendar') . '&nbsp;&nbsp;</div></td><td><div align="center">&nbsp;&nbsp;' . get_string('tuesday', 'calendar') . '&nbsp;&nbsp;</div></td><td><div align="center">&nbsp;&nbsp;' .
         get_string('wednesday', 'calendar') . '&nbsp;&nbsp;</div></td><td><div align="center">&nbsp;&nbsp;' . get_string('thursday', 'calendar') . '&nbsp;&nbsp;</div></td><td><div align="center">&nbsp;&nbsp;' .
         get_string('friday', 'calendar') . '&nbsp;&nbsp;</div></td><td><div align="center">&nbsp;&nbsp;' . get_string('saturday', 'calendar') . '&nbsp;&nbsp;</div></td></tr><tr>' .
-        '<td><div align="center"><input type="checkbox" name="s_'. $this->name .'[u]" value="1" ' . (substr($currentsetting,0,1) == '1' ? 'checked="checked"' : '') . ' /></div></td>' .
-        '<td><div align="center"><input type="checkbox" name="s_'. $this->name .'[m]" value="1" ' . (substr($currentsetting,1,1) == '1' ? 'checked="checked"' : '') . ' /></div></td>' .
-        '<td><div align="center"><input type="checkbox" name="s_'. $this->name .'[t]" value="1" ' . (substr($currentsetting,2,1) == '1' ? 'checked="checked"' : '') . ' /></div></td>' .
-        '<td><div align="center"><input type="checkbox" name="s_'. $this->name .'[w]" value="1" ' . (substr($currentsetting,3,1) == '1' ? 'checked="checked"' : '') . ' /></div></td>' .
-        '<td><div align="center"><input type="checkbox" name="s_'. $this->name .'[r]" value="1" ' . (substr($currentsetting,4,1) == '1' ? 'checked="checked"' : '') . ' /></div></td>' .
-        '<td><div align="center"><input type="checkbox" name="s_'. $this->name .'[f]" value="1" ' . (substr($currentsetting,5,1) == '1' ? 'checked="checked"' : '') . ' /></div></td>' .
-        '<td><div align="center"><input type="checkbox" name="s_'. $this->name .'[s]" value="1" ' . (substr($currentsetting,6,1) == '1' ? 'checked="checked"' : '') . ' /></div></td>' .
-        '</tr></table>' .
-        '</td></tr><tr><td>&nbsp;</td><td align="left">' . $this->description . '</td></tr>';
+        '<td><div align="center"><input type="checkbox" id="id_s_'.$this->name.'u" name="s_'. $this->name .'[u]" value="1" ' . (substr($currentsetting,0,1) == '1' ? 'checked="checked"' : '') . ' /></div></td>' .
+        '<td><div align="center"><input type="checkbox" id="id_s_'.$this->name.'m" name="s_'. $this->name .'[m]" value="1" ' . (substr($currentsetting,1,1) == '1' ? 'checked="checked"' : '') . ' /></div></td>' .
+        '<td><div align="center"><input type="checkbox" id="id_s_'.$this->name.'t" name="s_'. $this->name .'[t]" value="1" ' . (substr($currentsetting,2,1) == '1' ? 'checked="checked"' : '') . ' /></div></td>' .
+        '<td><div align="center"><input type="checkbox" id="id_s_'.$this->name.'w" name="s_'. $this->name .'[w]" value="1" ' . (substr($currentsetting,3,1) == '1' ? 'checked="checked"' : '') . ' /></div></td>' .
+        '<td><div align="center"><input type="checkbox" id="id_s_'.$this->name.'r" name="s_'. $this->name .'[r]" value="1" ' . (substr($currentsetting,4,1) == '1' ? 'checked="checked"' : '') . ' /></div></td>' .
+        '<td><div align="center"><input type="checkbox" id="id_s_'.$this->name.'f" name="s_'. $this->name .'[f]" value="1" ' . (substr($currentsetting,5,1) == '1' ? 'checked="checked"' : '') . ' /></div></td>' .
+        '<td><div align="center"><input type="checkbox" id="id_s_'.$this->name.'s" name="s_'. $this->name .'[s]" value="1" ' . (substr($currentsetting,6,1) == '1' ? 'checked="checked"' : '') . ' /></div></td>' .
+        '</tr></table>';
+
+        return format_admin_setting('backupdays', $this->name, $this->visiblename, $return, $this->description);
 
     }
 
@@ -2275,20 +2269,20 @@ class admin_setting_special_calendar_weekend extends admin_setting {
             $currentsetting = $this->get_setting();
         }
 
-        return '<tr><td width="100" align="right" valign="top">' . $this->visiblename . '</td><td align="left">' .
-        '<table><tr><td><div align="center">&nbsp;&nbsp;' . get_string('sunday', 'calendar') . '&nbsp;&nbsp;</div></td><td><div align="center">&nbsp;&nbsp;' .
+        $return = '<table><tr><td><div align="center">&nbsp;&nbsp;' . get_string('sunday', 'calendar') . '&nbsp;&nbsp;</div></td><td><div align="center">&nbsp;&nbsp;' .
         get_string('monday', 'calendar') . '&nbsp;&nbsp;</div></td><td><div align="center">&nbsp;&nbsp;' . get_string('tuesday', 'calendar') . '&nbsp;&nbsp;</div></td><td><div align="center">&nbsp;&nbsp;' .
         get_string('wednesday', 'calendar') . '&nbsp;&nbsp;</div></td><td><div align="center">&nbsp;&nbsp;' . get_string('thursday', 'calendar') . '&nbsp;&nbsp;</div></td><td><div align="center">&nbsp;&nbsp;' .
         get_string('friday', 'calendar') . '&nbsp;&nbsp;</div></td><td><div align="center">&nbsp;&nbsp;' . get_string('saturday', 'calendar') . '&nbsp;&nbsp;</div></td></tr><tr>' .
-        '<td><div align="center"><input type="checkbox" name="s_'. $this->name .'[u]" value="1" ' . ($currentsetting['u'] ? 'checked="checked"' : '') . ' /></div></td>' .
-        '<td><div align="center"><input type="checkbox" name="s_'. $this->name .'[m]" value="1" ' . ($currentsetting['m'] ? 'checked="checked"' : '') . ' /></div></td>' .
-        '<td><div align="center"><input type="checkbox" name="s_'. $this->name .'[t]" value="1" ' . ($currentsetting['t'] ? 'checked="checked"' : '') . ' /></div></td>' .
-        '<td><div align="center"><input type="checkbox" name="s_'. $this->name .'[w]" value="1" ' . ($currentsetting['w'] ? 'checked="checked"' : '') . ' /></div></td>' .
-        '<td><div align="center"><input type="checkbox" name="s_'. $this->name .'[r]" value="1" ' . ($currentsetting['r'] ? 'checked="checked"' : '') . ' /></div></td>' .
-        '<td><div align="center"><input type="checkbox" name="s_'. $this->name .'[f]" value="1" ' . ($currentsetting['f'] ? 'checked="checked"' : '') . ' /></div></td>' .
-        '<td><div align="center"><input type="checkbox" name="s_'. $this->name .'[s]" value="1" ' . ($currentsetting['s'] ? 'checked="checked"' : '') . ' /></div></td>' .
-        '</tr></table>' .
-        '</td></tr><tr><td>&nbsp;</td><td align="left">' . $this->description . '</td></tr>';
+        '<td><div align="center"><input type="checkbox" id="id_s_'.$this->name.'u" name="s_'. $this->name .'[u]" value="1" ' . ($currentsetting['u'] ? 'checked="checked"' : '') . ' /></div></td>' .
+        '<td><div align="center"><input type="checkbox" id="id_s_'.$this->name.'m" name="s_'. $this->name .'[m]" value="1" ' . ($currentsetting['m'] ? 'checked="checked"' : '') . ' /></div></td>' .
+        '<td><div align="center"><input type="checkbox" id="id_s_'.$this->name.'t" name="s_'. $this->name .'[t]" value="1" ' . ($currentsetting['t'] ? 'checked="checked"' : '') . ' /></div></td>' .
+        '<td><div align="center"><input type="checkbox" id="id_s_'.$this->name.'w" name="s_'. $this->name .'[w]" value="1" ' . ($currentsetting['w'] ? 'checked="checked"' : '') . ' /></div></td>' .
+        '<td><div align="center"><input type="checkbox" id="id_s_'.$this->name.'r" name="s_'. $this->name .'[r]" value="1" ' . ($currentsetting['r'] ? 'checked="checked"' : '') . ' /></div></td>' .
+        '<td><div align="center"><input type="checkbox" id="id_s_'.$this->name.'f" name="s_'. $this->name .'[f]" value="1" ' . ($currentsetting['f'] ? 'checked="checked"' : '') . ' /></div></td>' .
+        '<td><div align="center"><input type="checkbox" id="id_s_'.$this->name.'s" name="s_'. $this->name .'[s]" value="1" ' . ($currentsetting['s'] ? 'checked="checked"' : '') . ' /></div></td>' .
+        '</tr></table>';
+
+        return format_admin_setting('calendarweekend', $this->name, $this->visiblename, $return, $this->description);
 
     }
 
@@ -2319,9 +2313,8 @@ class admin_setting_special_perfdebug extends admin_setting_configcheckbox {
             $currentsetting = $this->get_setting();
         }
 
-        return '<tr><td width="100" align="right" valign="top">' . $this->visiblename . '</td>' .
-            '<td align="left"><input type="checkbox" size="50" name="s_'. $this->name .'" value="1" ' . ($currentsetting == 15 ? 'checked="checked"' : '') . ' /></td></tr>' .
-            '<tr><td>&nbsp;</td><td align="left">' . $this->description . '</td></tr>';
+        $return = '<input type="checkbox" size="50" id="id_s_'.$this->name.'" name="s_'. $this->name .'" value="1" ' . ($currentsetting == 15 ? 'checked="checked"' : '') . ' />';
+        return format_admin_setting('checkbox', $this->name, $this->visiblename, $return, $this->description);
     }
 
 }
@@ -2480,12 +2473,14 @@ function apply_default_exception_settings($defaults) {
 
 }
 
-function format_admin_setting($name, $title='', $form='', $description='') {
-    $output = '<div class="adminsetting">';
-    $output .= 'etc';
-    $output .= '</div>';
-
-    return $output;
+function format_admin_setting($class, $name, $title='', $form='', $description='') {
+    return "\n".
+           '<div class="adminsetting form-'.$class.'">'."\n".
+           '<label for="id_s_'.$name.'">'.$title."\n".
+           '   <span class="form-shortname">'.$name.'</span>'."\n".
+           '</label>'."\n".
+           $form."\n".
+           '<div class="description">'.$description.'</div>'."\n\n";
 }
 
 ?>

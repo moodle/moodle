@@ -451,6 +451,55 @@ body#admin-roles-manage table.generalbox {
   text-align:center;
 }
 
+fieldset.adminsettings {
+    margin-top: 1em;
+    padding: 1em 0.5em;
+    background-color: #EEE;
+    border-color: #BBB;
+    color: #000;
+}
+fieldset.adminsettings legend {
+    display: none;
+}
+fieldset.adminsettings .form-item {
+    margin: 0;
+}
+fieldset.adminsettings label {
+    display: block;
+    float: left;
+    width: 150px;
+    text-align: right;
+}
+fieldset.adminsettings .form-shortname {
+    display: block;
+    font-size: 75%;
+    color: #888;
+}
+fieldset.adminsettings select,
+fieldset.adminsettings input {
+    float: left;
+    margin: 0 0 0 10px;
+}
+fieldset.adminsettings .description {
+    clear: both;
+    margin: 0 1em 0 160px;
+    padding: 0.3em 0 1.5em 0;
+}
+.form-buttons {
+    margin: 10px 0 0 160px;
+}
+
+.form-text {
+    width: 20em;
+}
+.form-textarea { }
+.form-select { }
+.form-checkbox { }
+.form-radio { }
+.form-submit { }
+.form-reset { }
+
+
 /***
  *** Blocks
  ***/
