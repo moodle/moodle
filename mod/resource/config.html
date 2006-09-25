@@ -125,6 +125,34 @@
     <?php print_string("configparametersettings", "resource") ?>
     </td>
 </tr>
+<tr valign="top">
+    <td align="right">resource_autofilerename:</td>
+    <td>
+    <?php
+        unset($choices);
+        $choices["0"] = get_string("no");
+        $choices["1"] = get_string("yes");
+        choose_from_menu ($choices, "resource_autofilerename", $CFG->resource_autofilerename, "");
+    ?>
+    </td>
+    <td>
+    <?php print_string("configautofilerenamesettings", "resource") ?>
+    </td>
+</tr>
+<tr valign="top">
+    <td align="right">resource_blockdeletingfile:</td>
+    <td>
+    <?php
+        unset($choices);
+        $choices["0"] = get_string("no");
+        $choices["1"] = get_string("yes");
+        choose_from_menu ($choices, "resource_blockdeletingfile", $CFG->resource_blockdeletingfile, "");
+    ?>
+    </td>
+    <td>
+    <?php print_string("configblockdeletingfilesettings", "resource") ?>
+    </td>
+</tr>
 <tr>
     <td colspan="3" align="center">
         <input type="submit" value="<?php print_string("savechanges") ?>" /></td>

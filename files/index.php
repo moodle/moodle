@@ -223,27 +223,19 @@
                     print_simple_box_end();
                     echo "<br />";
 
-                    $resourcelist = false;
-                    foreach ($USER->filelist as $file) {
-                        // If file is specified in a resource, then delete that too.
-                        $clean_name = substr($file, 1);
-                        if (record_exists('resource', 'reference', $clean_name)) {
-                            if (!$resourcelist) {
-                                print_simple_box_start("center");
-                                $resourcelist = true;
-                            }
-                            $resource_id = files_get_cm_from_resource_name($clean_name);
-                            echo '<p>'.get_string('warningdeleteresource', '', $file)." <a href='$CFG->wwwroot/course/mod.php?update=$resource_id&sesskey=$USER->sesskey'>".get_string('update')."</a></p>";
-                        }
-                    }
-                    if ($resourcelist) {
-                        print_simple_box_end();
-                        echo "<br />";
-                    }
+                    require_once($CFG->dirroot.'/mod/resource/lib.php');
+                    $block = resource_delete_warning($course, $USER->filelist);
 
-                    notice_yesno (get_string("deletecheckfiles"),
-                                "index.php?id=$id&amp;wdir=$wdir&amp;action=delete&amp;confirm=1&amp;sesskey=$USER->sesskey&amp;choose=$choose",
-                                "index.php?id=$id&amp;wdir=$wdir&amp;action=cancel&amp;choose=$choose");
+                    if (empty($CFG->resource_blockdeletingfile) or $block == '') {
+                        $optionsyes = array('id'=>$id, 'wdir'=>$wdir, 'action'=>'delete', 'confirm'=>1, 'sesskey'=>sesskey(), 'choose'=>$choose);
+                        $optionsno  = array('id'=>$id, 'wdir'=>$wdir, 'action'=>'cancel', 'choose'=>$choose);
+                        notice_yesno (get_string('deletecheckfiles'), 'index.php', 'index.php', $optionsyes, $optionsno, 'post', 'get');
+                    } else {
+
+                        notify(get_string('warningblockingdelete', 'resource'));
+                        $options  = array('id'=>$id, 'wdir'=>$wdir, 'action'=>'cancel', 'choose'=>$choose);
+                        print_continue("index.php?id=$id&amp;wdir=$wdir&amp;action=cancel&amp;choose=$choose");
+                    }
                 } else {
                     displaydir($wdir);
                 }
@@ -289,23 +281,10 @@
                     echo "<center>Error: $name already exists!</center>";
                 } else if (!rename($basedir.$wdir."/".$oldname, $basedir.$wdir."/".$name)) {
                     echo "<p align=\"center\">Error: could not rename $oldname to $name</p>";
-                }
-
-                //if file is part of resource then update resource table as well
-                //this line only catch the root directory
-                if (record_exists('resource', 'reference', $oldname)) {
-                    set_field('resource', 'reference', $name, 'reference', $oldname);
-                }
-
-                if (get_dir_name_from_resource($oldname)) {
-                    $resources = get_dir_name_from_resource($oldname);
-                    print_simple_box_start("center");
-                    echo "<b>The following files might be referenced as a resource :</b><br>";
-                    foreach ($resources as $resource) {
-                        $resource_id = files_get_cm_from_resource_name($name);
-                        echo '<p align=\"center\">'. "$resource->reference :"."</align><a href='$CFG->wwwroot/course/mod.php?update=$resource_id&sesskey=$USER->sesskey'> ".get_string('update')."</a>";
-                    }
-                    print_simple_box_end();
+                } else {
+                    //file was renamed now update resources if needed
+                    require_once($CFG->dirroot.'/mod/resource/lib.php');
+                    resource_renamefiles($course, $wdir, $oldname, $name);
                 }
                 displaydir($wdir);
 
@@ -865,25 +844,6 @@ function displaydir ($wdir) {
     echo "</table>";
     echo "<hr width=\"640\" align=\"center\" noshade=\"noshade\" size=\"1\" />";
 
-}
-
-function files_get_cm_from_resource_name($clean_name) {
-    global $CFG;
-
-    $SQL =  'SELECT a.id  FROM '.$CFG->prefix.'course_modules a, '.$CFG->prefix.'resource b
-        WHERE a.instance = b.id AND b.reference = "'.$clean_name.'"';
-    $resource = get_record_sql($SQL);
-    return $resource->id;
-}
-
-function get_dir_name_from_resource($clean_name) {
-    global $CFG;
-
-    $LIKE    = sql_ilike();
-
-    $SQL  = 'SELECT * FROM '.$CFG->prefix.'resource WHERE reference '.$LIKE. "\"%$clean_name%\"";
-    $resource = get_records_sql($SQL);
-    return $resource;
 }
 
 ?>

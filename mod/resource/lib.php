@@ -40,6 +40,14 @@ if (!isset($CFG->resource_hide_repository)) {
     set_config("resource_hide_repository", "1");
 }
 
+if (!isset($CFG->resource_autofilerename)) {
+    set_config("resource_autofilerename", "1");
+}
+
+if (!isset($CFG->resource_blockdeletingfile)) {
+    set_config("resource_blockdeletingfile", "1");
+}
+
 define('RESOURCE_LOCALPATH', 'LOCALPATH');
 
 $RESOURCE_WINDOW_OPTIONS = array('resizable', 'scrollbars', 'directories', 'location',
@@ -643,6 +651,106 @@ function resource_get_view_actions() {
 
 function resource_get_post_actions() {
     return array();
+}
+
+function resource_renamefiles($course, $wdir, $oldname, $name) {
+    global $CFG;
+
+    $status = '<p align=\"center\"><strong>'.get_string('affectedresources', 'resource').':</strong><ul>';
+    $updates = false;
+
+    $old = trim($wdir.'/'.$oldname, '/');
+    $new = trim($wdir.'/'.$name, '/');
+
+    $sql = "SELECT r.id, r.reference, r.name, cm.id AS cmid
+             FROM {$CFG->prefix}resource r,
+                  {$CFG->prefix}course_modules cm,
+                  {$CFG->prefix}modules m
+             WHERE r.course    = '{$course->id}'
+               AND m.name      = 'resource'
+               AND cm.module   = m.id
+               AND cm.instance = r.id
+               AND (r.type = 'file' OR r.type = 'directory')
+               AND (r.reference LIKE '{$old}/%' OR r.reference = '{$old}')";
+    if ($resources = get_records_sql($sql)) {
+        foreach ($resources as $resource) {
+            $r = new object();
+            $r->id = $resource->id;
+            $r->reference = '';
+            if ($resource->reference == $old) {
+                $r->reference = addslashes($new);
+            } else {
+                $r->reference = addslashes(preg_replace('|^'.preg_quote($old, '|').'/|', $new.'/', $resource->reference));
+            }
+            if ($r->reference !== '') {
+                $updates = true;
+                $status .= "<li><a href=\"$CFG->wwwroot/mod/resource/view.php?id=$resource->cmid\" target=\"_blank\">$resource->name</a>: $resource->reference ==> $r->reference</li>";
+                if (!empty($CFG->resource_autofilerename)) {
+                    if (!update_record('resource', $r)) {
+                        error("Error updating resource with ID $r->id.");
+                    }
+                }
+            }
+        }
+    }
+    $status .= '</ul></p>';
+
+    if ($updates) {
+        echo $status;
+        if (empty($CFG->resource_autofilerename)) {
+            notify(get_string('warningdisabledrename', 'resource'));
+        }
+    }
+}
+
+function resource_delete_warning($course, $files) {
+    global $CFG;
+
+    $found = array();
+
+    foreach($files as $key=>$file) {
+        $files[$key] = trim($file, '/');
+    }
+    $sql = "SELECT r.id, r.reference, r.name, cm.id AS cmid
+             FROM {$CFG->prefix}resource r,
+                  {$CFG->prefix}course_modules cm,
+                  {$CFG->prefix}modules m
+             WHERE r.course    = '{$course->id}'
+               AND m.name      = 'resource'
+               AND cm.module   = m.id
+               AND cm.instance = r.id
+               AND (r.type = 'file' OR r.type = 'directory')";
+    if ($resources = get_records_sql($sql)) {
+        foreach ($resources as $resource) {
+            if ($resource->reference == '') {
+                continue; // top shared directory does not prevent anything
+            }
+            if (in_array($resource->reference, $files)) {
+                $found[$resource->id] = $resource;
+            } else {
+                foreach($files as $file) {
+                    if (preg_match('|^'.preg_quote($file, '|').'/|', $resource->reference)) {
+                        $found[$resource->id] = $resource;
+                    }
+                }
+            }
+        }
+    }
+
+    if (!empty($found)) {
+
+        print_simple_box_start("center");
+        echo '<p><strong>'.get_string('affectedresources', 'resource').':</strong><ul>';
+        foreach($found as $resource) {
+            echo "<li><a href=\"$CFG->wwwroot/mod/resource/view.php?id=$resource->cmid\" target=\"_blank\">$resource->name</a>: $resource->reference</li>";
+        }
+        echo '</ul></p>';
+        print_simple_box_end();
+
+        return true;
+    } else {
+        return false;
+    }
 }
 
 ?>

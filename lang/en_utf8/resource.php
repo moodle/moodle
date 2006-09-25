@@ -3,12 +3,15 @@
 
 
 $string['addresource'] = 'Add a resource';
+$string['affectedresources'] = 'Affected resources';
 $string['back'] = 'Back';
 $string['browserepository'] = 'Browse repository';
 $string['choose'] = 'Choose';
 $string['chooseafile'] = 'Choose or upload a file';
 $string['chooseparameter'] = 'Choose parameter';
 $string['configallowlocalfiles'] = 'When creating a new file resource, allow links to files on a local file system such as a CD drive or a hard drive. This may be useful in a classroom where all students have access to a common network drive or where files on a CD need to be accessed. Use of this feature may require changes to your browser\'s security settings.';
+$string['configautofilerenamesettings'] = 'Automatically update references to files and directories when renamed in file manager.';
+$string['configblockdeletingfilesettings'] = 'Block deleting of files and directories referenced by resources. Please note that images and other files referenced from html are not protected.';
 $string['configdefaulturl'] = 'This value is used to prefill the URL form when creating a new URL-based resource.';
 $string['configfilterexternalpages'] = 'Enabling this setting will cause all external resources (web pages, uploaded HTML files) to be processed by the currently defined site filters (such as glossary autolinks, for example).  Turning this option on may cause your course pages to slow down significantly - use with caution and only if you really need it.';
 $string['configframesize'] = 'When a web page or an uploaded file is displayed within a frame, this value is the size (in pixels) of the top frame (which contains the navigation).';
@@ -116,5 +119,7 @@ $string['upbutton'] = 'Up';
 $string['variablename'] = 'Variable name';
 $string['viewims'] = 'View IMS Content Package';
 $string['vol'] = 'Vol';
+$string['warningblockingdelete'] = 'Warning: Delete operation is blocked by existing resource. Either update your resources first or disable this safety mechanism in global Resource configuration.';
+$string['warningdisabledrename'] = 'Warning: The automatic renaming of references in resources is disabled. Please update affected resources manually if needed. Automatic renaming can be enabled in global Resource configuration.';
 
 ?>
