@@ -47,7 +47,7 @@
 
 
     if (!empty($move)) {
-        if (has_capability('mod/forum:movediscussions', $modcontext)) {
+        if (!has_capability('mod/forum:movediscussions', $modcontext)) {
             error("You do not have the permission to move this discussion!");
         }
         if ($forum = get_record("forum", "id", $move)) {
@@ -74,7 +74,7 @@
                        'destination forum(s) - check your file permissionsforums');
             }
         } else {
-            error("You can't move to that forum - it doesn't exist!");
+            error('You can't move to that forum - it doesn't exist!');
         }
     }
 
