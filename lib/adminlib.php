@@ -1608,7 +1608,7 @@ class admin_setting_courselist_frontpage extends admin_setting_configselect {
                 $currentsetting[$i] = 0;
             }
         }
-        $return = '';
+        $return = '<div class="form-group">';
         for ($i = 0; $i < count($this->choices) - 1; $i++) {
             $return .='<select class="form-select" id="id_s_'.$this->name.'" name="s_' . $this->name .'[]">';
             foreach ($this->choices as $key => $value) {
@@ -1619,6 +1619,8 @@ class admin_setting_courselist_frontpage extends admin_setting_configselect {
                 $return .= '<br />';
             }
         }
+        $return .= '</div>';
+
         return format_admin_setting('frontpage', $this->name, $this->visiblename, $return, $this->description);
     }
 }
