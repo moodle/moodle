@@ -499,6 +499,11 @@ fieldset.adminsettings .description {
 .form-submit { }
 .form-reset { }
 
+.admin-frontpagedesc .htmlarea {
+  margin: 0 auto 10px auto;
+  width : 600px;
+}
+
 
 /***
  *** Blocks
