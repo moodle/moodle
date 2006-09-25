@@ -107,9 +107,12 @@
     // warning: it may break backwards compatibility
     if ((!empty($CFG->preventaccesstohiddenfiles)) 
         and (count($args) >= 2)
+        and (!(strtolower($args[1]) == 'moddata' and strtolower($args[2]) != 'resource')) // do not block files from other modules!
         and (!has_capability('moodle/course:viewhiddenactivities', get_context_instance(CONTEXT_COURSE, $course->id)))) {
 
-        $reference = ltrim($relativepath, "/{$args[0]}/");
+        $rargs = $args;
+        array_shift($rargs);
+        $reference = implode('/', $rargs);
 
         $sql = "SELECT COUNT(r.id) " .
                  "FROM {$CFG->prefix}resource r, " .
