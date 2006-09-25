@@ -3,6 +3,9 @@
 
     require_once('../config.php');
 
+    // disable moodle specific debug messages that would be breaking the frames
+    disable_debugging();
+
     $topframe    = optional_param('topframe', 0, PARAM_BOOL);
     $bottomframe = optional_param('bottomframe', 0, PARAM_BOOL);
     $do          = optional_param('do', '', PARAM_ALPHA);
