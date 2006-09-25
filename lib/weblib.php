@@ -2403,7 +2403,7 @@ function style_sheet_setup($lastmodified=0, $lifetime=300, $themename='', $force
     header('Pragma: ');
     header('Content-type: text/css');  // Correct MIME type
 
-    $DEFAULT_SHEET_LIST = array('styles_layout', 'styles_fonts', 'styles_color');
+    $DEFAULT_SHEET_LIST = array('styles_layout', 'styles_fonts', 'styles_color', 'styles_form');
 
     if (empty($themename)) {
         $themename = current_theme();  // So we have something.  Normally not needed.
