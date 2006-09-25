@@ -1460,15 +1460,16 @@ class admin_setting_configtime extends admin_setting {
         } else {
           $currentsetting = $this->get_setting();
         }
-        $return = '<select class="form-select" id="id_s_'.$this->name.'h" name="s_' . $this->name .'[h]">';
+        $return = '<div class="form-group">'.
+                  '<select class="form-select" id="id_s_'.$this->name.'h" name="s_' . $this->name .'[h]">';
         foreach ($this->choices as $key => $value) {
             $return .= '<option value="' . $key . '"' . ($key == $currentsetting['h'] ? ' selected="selected"' : '') . '>' . $value . '</option>';
         }
-        $return .= '</select>&nbsp;&nbsp;&nbsp;<select class="form-select" id="id_s_'.$this->name.'m" name="s_' . $this->name . '[m]">';
+        $return .= '</select>:<select class="form-select" id="id_s_'.$this->name.'m" name="s_' . $this->name . '[m]">';
         foreach ($this->choices2 as $key => $value) {
             $return .= '<option value="' . $key . '"' . ($key == $currentsetting['m'] ? ' selected="selected"' : '') . '>' . $value . '</option>';
         }
-        $return .= '</select>';
+        $return .= '</select></div>';
         return format_admin_setting('configtime', $this->name, $this->visiblename, $return, $this->description);
     }
 
