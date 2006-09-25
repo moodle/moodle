@@ -454,58 +454,65 @@ body#admin-roles-manage table.generalbox {
 fieldset.adminsettings {
     margin-top: 1em;
     padding: 1em 0.5em;
-    background-color: #EEE;
-    border-color: #BBB;
-    color: #000;
 }
+
 fieldset.adminsettings legend {
     display: none;
 }
+
 fieldset.adminsettings .form-group {
     float: left;
 }
+
 fieldset.adminsettings .form-item {
     margin: 0;
 }
+
 fieldset.adminsettings label {
     display: block;
     float: left;
     width: 150px;
     text-align: right;
 }
+
 fieldset.adminsettings .form-shortname {
     display: block;
-    font-size: 75%;
-    color: #888;
 }
+
 fieldset.adminsettings select,
 fieldset.adminsettings input {
     float: left;
     margin: 0 0 0 10px;
 }
+
 fieldset.adminsettings textarea {
     float: left;
     margin: 0 0 0 10px;
     width: 65%;
 }
+
 fieldset.adminsettings .form-group select,
 fieldset.adminsettings .form-group input {
     display: inline;
     float: none;
 }
+
 /* fieldset.adminsettings .admin-configtime .form-select {
     display: inline;
     float: none;
 }
+
 fieldset.adminsettings div.admin-frontpage div.form-group select.form-select {
     display: inline;
     float: none;
 } */
+
 fieldset.adminsettings .description {
     clear: both;
     margin: 0 1em 0 160px;
     padding: 0.3em 0 1.5em 0;
 }
+
 .form-buttons {
     margin: 10px 0 0 160px;
 }

@@ -308,6 +308,16 @@ table.flexible .r1 {
   background-color: green;
 }
 
+fieldset.adminsettings {
+    background-color: #EEE;
+    border-color: #BBB;
+    color: #000;
+}
+
+fieldset.adminsettings .form-shortname {
+    color: #888;
+}
+
 /***
  *** Blocks
  ***/
