@@ -1242,7 +1242,7 @@ function forum_search_posts($searchterms, $courseid=0, $limitfrom=0, $limitnum=5
                                    OR ((d.timestart = 0 OR d.timestart <= $now)
                                    AND (d.timeend = 0 OR d.timeend > $now)) )";
         }
-        if (isset($forums[$i]->onlydiscussions)) {
+        if ($forums[$i]->type == 'qanda' && isset($forums[$i]->onlydiscussions)) {
             // This is a qanda forum.
             if (is_array($forums[$i]->onlydiscussions)) {
                 // Show question posts as well as posts from discussions in
