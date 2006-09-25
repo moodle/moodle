@@ -15,6 +15,10 @@ require_once 'HTML/QuickForm.php';
 require_once 'HTML/QuickForm/DHTMLRulesTableless.php';
 require_once 'HTML/QuickForm/Renderer/Tableless.php';
 
+if ($CFG->debug >= DEBUG_ALL){
+    PEAR::setErrorHandling(PEAR_ERROR_PRINT);
+}
+
 class moodleform extends HTML_QuickForm_DHTMLRulesTableless{
     /**
      * Class constructor - same parameters as HTML_QuickForm_DHTMLRulesTableless
@@ -174,8 +178,8 @@ class moodleform_renderer extends HTML_QuickForm_Renderer_Tableless{
     var $_elementTemplates;
     var $_htmleditors=array();
     function moodleform_renderer(){
-        $this->_elementTemplates=array('default'=>"\n\t\t<div class=\"qfrow\"><label class=\"qflabel\">{label}{help}<!-- BEGIN required -->{req}<!-- END required --></label><div class=\"qfelement<!-- BEGIN error --> error<!-- END error -->\"><!-- BEGIN error --><span class=\"error\">{error}</span><br /><!-- END error -->{element}</div></div><br />",
-        'wide'=>"\n\t\t<div class=\"qfrow\"><label class=\"qflabel\">{label}{help}<!-- BEGIN required -->{req}<!-- END required --></label><br /><div class=\"qfelementwide<!-- BEGIN error --> error<!-- END error -->\"><!-- BEGIN error --><span class=\"error\">{error}</span><br /><!-- END error -->{element}</span></div><br />");
+        $this->_elementTemplates=array('default'=>"\n\t\t<div class=\"qfrow\"><label class=\"qflabel\">{label}{help}<!-- BEGIN required -->{req}<!-- END required --></label><div class=\"qfelement<!-- BEGIN error --> error<!-- END error -->\"><!-- BEGIN error --><span class=\"error\">{error}</span><br /><!-- END error -->{element}</div></div>",
+        'wide'=>"\n\t\t<div class=\"qfrow\"><label class=\"qflabel\">{label}{help}<!-- BEGIN required -->{req}<!-- END required --></label><br /><div class=\"qfelementwide<!-- BEGIN error --> error<!-- END error -->\"><!-- BEGIN error --><span class=\"error\">{error}</span><br /><!-- END error -->{element}</span></div>");
 
         parent::HTML_QuickForm_Renderer_Tableless();
     }
@@ -273,7 +277,5 @@ moodleform::registerElementType('textarea', "$CFG->libdir/form/textarea.php", 'm
 moodleform::registerElementType('date_selector', "$CFG->libdir/form/dateselector.php", 'moodleform_date_selector');
 moodleform::registerElementType('htmleditor', "$CFG->libdir/form/htmleditor.php", 'moodleform_htmleditor');
 
-if ($CFG->debug >= DEBUG_ALL){
-    PEAR::setErrorHandling(PEAR_ERROR_PRINT);
-}
+
 ?>
