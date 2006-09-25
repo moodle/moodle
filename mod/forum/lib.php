@@ -1110,7 +1110,7 @@ function forum_get_child_posts($parent, $forumid) {
  */
 function forum_get_readable_forums($userid, $courseid=0) {
     
-    global $CFG;
+    global $CFG, $USER;
     
     if (!$forummod = get_record('modules', 'name', 'forum')) {
         error('The forum module is not installed');
@@ -1172,12 +1172,31 @@ function forum_get_readable_forums($userid, $courseid=0) {
                 } else {
                     $forum->accessallgroups = true;
                 }
-                
+
                 if (has_capability('mod/forum:viewdiscussion', $forumcontext)) {
-                    
+
                     $forum->viewhiddentimedposts
                         = has_capability('mod/forum:viewhiddentimedposts', $forumcontext);
                     
+                    if ($forum->type == 'qanda'
+                            && !has_capability('mod/forum:viewqandawithoutposting', $forumcontext)) {
+
+                        // We need to check whether the user has posted in the qanda forum.
+                        $haspostedsql = "SELECT DISTINCT(d.id) AS id,
+                                                d.name
+                                           FROM {$CFG->prefix}forum_posts AS p,
+                                                {$CFG->prefix}forum_discussions AS d
+                                          WHERE p.discussion = d.id
+                                            AND d.forum = {$forum->id}
+                                            AND p.userid = {$USER->id}";
+
+                        $discussionspostedin = get_records_sql($haspostedsql);
+                        $forum->onlydiscussions = array();  // Holds discussion ids for the discussions
+                                                            // the user is allowed to see in this forum.
+                        foreach ($discussionspostedin as $d) {
+                            array_push($forum->onlydiscussions, $d->id);
+                        }
+                    }
                     array_push($readableforums, $forum);
                 }
             }
@@ -1222,6 +1241,18 @@ function forum_search_posts($searchterms, $courseid=0, $limitfrom=0, $limitnum=5
             $selectdiscussion .= " AND ( d.userid = {$USER->id}
                                    OR ((d.timestart = 0 OR d.timestart <= $now)
                                    AND (d.timeend = 0 OR d.timeend > $now)) )";
+        }
+        if (isset($forums[$i]->onlydiscussions)) {
+            // This is a qanda forum.
+            if (is_array($forums[$i]->onlydiscussions)) {
+                // Show question posts as well as posts from discussions in
+                // which the user has posted a reply.
+                $onlydiscussions = implode(' OR d.id = ', $forums[$i]->onlydiscussions);
+                $selectdiscussion .= " AND ((d.id = $onlydiscussions) OR p.parent = 0)";
+            } else {
+                // Show only the question posts.
+                $selectdiscussion .= ' AND (p.parent = 0)';
+            }
         }
         if (!$forums[$i]->accessallgroups) {
             if (!empty($forums[$i]->accessgroup)) {
@@ -1300,7 +1331,7 @@ function forum_search_posts($searchterms, $courseid=0, $limitfrom=0, $limitnum=5
                 ORDER BY p.modified DESC";
 
     $totalcount = count_records_sql($countsql);
-    
+
     return get_records_sql($searchsql, $limitfrom, $limitnum);
 }
 
@@ -2830,7 +2861,7 @@ function forum_post_subscription($post) {
 
 
 function forum_user_has_posted_discussion($forumid, $userid) {
-    if ($discussions = forum_get_discussions($forumid, "", $userid)) {
+    if ($discussions = forum_get_discussions($forumid, '', $userid)) {
         return true;
     } else {
         return false;
