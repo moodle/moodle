@@ -1182,19 +1182,14 @@ function forum_get_readable_forums($userid, $courseid=0) {
                             && !has_capability('mod/forum:viewqandawithoutposting', $forumcontext)) {
 
                         // We need to check whether the user has posted in the qanda forum.
-                        $haspostedsql = "SELECT DISTINCT(d.id) AS id,
-                                                d.name
-                                           FROM {$CFG->prefix}forum_posts AS p,
-                                                {$CFG->prefix}forum_discussions AS d
-                                          WHERE p.discussion = d.id
-                                            AND d.forum = {$forum->id}
-                                            AND p.userid = {$USER->id}";
-
-                        $discussionspostedin = get_records_sql($haspostedsql);
                         $forum->onlydiscussions = array();  // Holds discussion ids for the discussions
                                                             // the user is allowed to see in this forum.
-                        foreach ($discussionspostedin as $d) {
-                            array_push($forum->onlydiscussions, $d->id);
+                        
+                        if ($discussionspostedin =
+                                    forum_discussions_user_has_posted_in($forum->id, $USER->id)) {
+                            foreach ($discussionspostedin as $d) {
+                                array_push($forum->onlydiscussions, $d->id);
+                            }
                         }
                     }
                     array_push($readableforums, $forum);
@@ -2866,6 +2861,20 @@ function forum_user_has_posted_discussion($forumid, $userid) {
     } else {
         return false;
     }
+}
+
+function forum_discussions_user_has_posted_in($forumid, $userid) {
+    global $CFG;
+
+    $haspostedsql = "SELECT DISTINCT(d.id) AS id,
+                            d.*
+                       FROM {$CFG->prefix}forum_posts AS p,
+                            {$CFG->prefix}forum_discussions AS d
+                      WHERE p.discussion = d.id
+                        AND d.forum = $forumid
+                        AND p.userid = $userid";
+
+    return get_records_sql($haspostedsql);
 }
 
 function forum_user_has_posted($forumid, $did, $userid) {
