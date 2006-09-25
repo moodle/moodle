@@ -2132,12 +2132,11 @@ function assignment_get_unmailed_submissions($starttime, $endtime) {
     
     return get_records_sql("SELECT s.*, a.course, a.name
                               FROM {$CFG->prefix}assignment_submissions s, 
-                                   {$CFG->prefix}assignment a,
+                                   {$CFG->prefix}assignment a
                              WHERE s.mailed = 0 
                                AND s.timemarked <= $endtime 
                                AND s.timemarked >= $starttime
-                               AND s.assignment = a.id
-                               AND s.userid = us.userid");
+                               AND s.assignment = a.id");
 
     /* return get_records_sql("SELECT s.*, a.course, a.name
                               FROM {$CFG->prefix}assignment_submissions s, 
