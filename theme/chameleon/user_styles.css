@@ -327,3 +327,17 @@ div.calendar-controls span.next {
   font-family: verdana, arial, helvetica, sans-serif;
   text-align: right;
 }
+div.sideblock div.header div.commands {
+  height: 16px;
+  background-color: #ffffff;
+}
+fieldset.adminsettings span.form-shortname {
+  color: #cccccc;
+  font-size: 90%;
+}
+fieldset.adminsettings {
+  background-color: #EEEEEE;
+  border-width: 1px;
+  border-style: solid;
+  border-color: #FFFFFF #DDDDDD #DDDDDD #FFFFFF;
+}
