@@ -488,18 +488,23 @@ fieldset.adminsettings textarea {
     margin: 0 0 0 10px;
     width: 65%;
 }
-fieldset.adminsettings .description {
-    clear: both;
-    margin: 0 1em 0 160px;
-    padding: 0.3em 0 1.5em 0;
+fieldset.adminsettings .form-group select,
+fieldset.adminsettings .form-group input {
+    display: inline;
+    float: none;
 }
-fieldset.adminsettings .admin-configtime .form-select {
+/* fieldset.adminsettings .admin-configtime .form-select {
     display: inline;
     float: none;
 }
 fieldset.adminsettings div.admin-frontpage div.form-group select.form-select {
     display: inline;
     float: none;
+} */
+fieldset.adminsettings .description {
+    clear: both;
+    margin: 0 1em 0 160px;
+    padding: 0.3em 0 1.5em 0;
 }
 .form-buttons {
     margin: 10px 0 0 160px;
