@@ -16,7 +16,7 @@ class enrolment_factory {
             return new $class;
         } else {
             trigger_error("$CFG->dirroot/enrol/$enrol/enrol.php does not exist");
-            error("$CFG->dirroot/enrol/$enrol/enrol.php does not exist");
+            notify("Enrolment file $enrol/enrol.php does not exist");
         }
     }
 }
