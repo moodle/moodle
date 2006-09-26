@@ -2197,6 +2197,9 @@
                         fwrite ($bf, full_tag("NAME", $startlevel+4, false, $capability->capability));
                         fwrite ($bf, full_tag("PERMISSION", $startlevel+4, false, $capability->permission));
                         fwrite ($bf, full_tag("TIMEMODIFIED", $startlevel+4, false, $capability->timemodified));
+                        if (!isset($capability->modifierid)) {
+                            $capability->modifierid = 0;  
+                        }
                         fwrite ($bf, full_tag("MODIFIERID", $startlevel+4, false, $capability->modifierid));
                         fwrite ($bf, end_tag("CAPABILITY", $startlevel+3, true));     
                     } 
@@ -2228,6 +2231,9 @@
                         fwrite ($bf, full_tag("TIMESTART", $startlevel+4, false, $assignment->timestart));
                         fwrite ($bf, full_tag("TIMEEND", $startlevel+4, false, $assignment->timeend));
                         fwrite ($bf, full_tag("TIMEMODIFIED", $startlevel+4, false, $assignment->timemodified));
+                        if (!isset($assignment->modifierid)) {
+                            $assignment->modifierid = 0;  
+                        }
                         fwrite ($bf, full_tag("MODIFIERID", $startlevel+4, false, $assignment->modifierid));
                         fwrite ($bf, full_tag("ENROL", $startlevel+4, false, $assignment->enrol));
                         fwrite ($bf, full_tag("SORTORDER", $startlevel+4, false, $assignment->sortorder));
