@@ -1250,6 +1250,31 @@ function sql_concat() {
 }
 
 /**
+ * Returns the proper SQL to do CONCAT between the elements passed
+ * with a given separator
+ *
+ * @uses $db
+ * @param string $separator
+ * @param array  $elements
+ * @return string
+ */
+function sql_concat_join($separator="' '", $elements=array()) {
+    global $db;
+ 
+    // copy to ensure pass by value
+    $elem = $elements;
+
+    // Intersperse $elements in the array.
+    // Add items to the array on the fly, walking it
+    // _backwards_ splicing the elements in. The loop definition
+    // should skip first and last positions.
+    for ($n=count($elem)-1; $n > 0 ; $n--) {
+        array_splice($elem, $n, 0, $separator);
+    }
+    return call_user_func_array(array('Concat', $db), $elem);
+}
+
+/**
  * Returns the proper SQL to do IS NULL
  * @uses $CFG
  * @param string $fieldname The field to add IS NULL to
