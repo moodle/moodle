@@ -410,6 +410,11 @@ function auth_sync_users ($bulk_insert_records = 1000, $do_updates=1) {
         
     print "connecting to ldap\n";
     $ldapconnection = auth_ldap_connect();
+    if (!$ldapconnection) {
+        @ldap_close($ldapconnection);
+        notify("LDAP-module cannot connect to server: $CFG->ldap_host_url");
+        return false;
+    }
 
     ////
     //// get user's list from ldap to sql in a scalable fashion
@@ -447,19 +452,20 @@ function auth_sync_users ($bulk_insert_records = 1000, $do_updates=1) {
                                      array($CFG->ldap_user_attribute));
         }
 
-        $entry = ldap_first_entry($ldapconnection, $ldap_result);
-        do {
-            $value = ldap_get_values_len($ldapconnection, $entry,$CFG->ldap_user_attribute);
-            $value = $value[0];
-            $count++;
-            array_push($fresult, $value);
-            if(count($fresult) >= $bulk_insert_records){
-                auth_ldap_bulk_insert($fresult);
-                //print var_dump($fresult);
-                $fresult=array();
-            }         
+        if ($entry = ldap_first_entry($ldapconnection, $ldap_result)) {
+            do {
+                $value = ldap_get_values_len($ldapconnection, $entry,$CFG->ldap_user_attribute);
+                $value = $value[0];
+                $count++;
+                array_push($fresult, $value);
+                if(count($fresult) >= $bulk_insert_records){
+                    auth_ldap_bulk_insert($fresult);
+                    //print var_dump($fresult);
+                    $fresult=array();
+                }         
+            }
+            while ($entry = ldap_next_entry($ldapconnection, $entry));
         }
-        while ($entry = ldap_next_entry($ldapconnection, $entry));
         
         // insert any remaining users and release mem
         if(count($fresult)){
