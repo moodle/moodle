@@ -761,11 +761,8 @@ class XMLDBgenerator {
             }
         }
 
-        if ($this->concat_character) {
-            return implode (' ' . $this->concat_character . ' ', $elements);
-        } else {
-            return 'CONCAT(' . implode(', ', $elements) . ')';
-        }
+    /// Now call the standard sql_concat() DML function
+        return call_user_func_array('sql_concat', $elements);
     }
 
     /**
