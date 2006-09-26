@@ -670,8 +670,11 @@ function recordset_to_array($rs) {
  * like a really DIRTY HACK to allow it to work better until all those NOT NULL DEFAULT ''
  * fields will be out from Moodle.
  * @param string the string to be converted to '' (empty string) if it's ' ' (one space)
+ * @param mixed the key of the array in case we are using this function from array_walk,
+ *              defaults to null for other (direct) uses
+ * @return boolean always true (the converted variable is returned by reference)
  */
-function onespace2empty(&$item, $key) {
+function onespace2empty(&$item, $key=null) {
     $item = $item == ' ' ? '' : $item;
     return true;
 }
@@ -885,7 +888,9 @@ function get_field_sql($sql) {
         /// to '' (empty string) for Oracle. It's the only way to work with
         /// all those NOT NULL DEFAULT '' fields until we definetively delete them
         if ($CFG->dbtype == 'oci8po') {
-            return onespace2empty(reset($rs->fields));
+            $value = reset($rs->fields);
+            onespace2empty($value);
+            return $value;
         }
         /// End of DIRTY HACK
         return reset($rs->fields);
