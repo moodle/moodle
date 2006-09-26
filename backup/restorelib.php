@@ -3638,7 +3638,7 @@
                             case "USERID":
                                 $this->info->roleassignments[$this->info->tempshortname]->name = $this->info->tempname;
                                 $this->info->roleassignments[$this->info->tempshortname]->shortname = $this->info->tempshortname;
-                                $this->info->tempuser = this->getContents();
+                                $this->info->tempuser = $this->getContents();
                                 $this->info->roleassignments[$this->info->tempshortname]->assignments[$this->info->tempuser]->userid = $this->getContents();
                             break;
                             case "HIDDEN":
@@ -3683,7 +3683,7 @@
                             case "NAME":
                                 $this->info->roleoverrides[$this->info->tempshortname]->name = $this->info->tempname;
                                 $this->info->roleoverrides[$this->info->tempshortname]->shortname = $this->info->tempshortname;
-                                $this->info->tempname = this->getContents(); // change to name of capability
+                                $this->info->tempname = $this->getContents(); // change to name of capability
                                 $this->info->roleoverrides[$this->info->tempshortname]->overrides[$this->info->tempname]->name = $this->getContents();
                             break;
                             case "PERMISSION":
