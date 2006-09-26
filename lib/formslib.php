@@ -91,7 +91,7 @@ class moodleform extends HTML_QuickForm_DHTMLRulesTableless{
         if (!empty($oldclass)){
             $this->updateAttributes(array('class'=>$oldclass.' mform'));
         }else {
-             $this->updateAttributes(array('class'=>'mform'));
+            $this->updateAttributes(array('class'=>'mform'));
         }
         $this->_helpImageURL="$CFG->wwwroot/lib/form/req.gif"; 
         $this->_reqHTML = 
@@ -110,14 +110,19 @@ class moodleform extends HTML_QuickForm_DHTMLRulesTableless{
      * 
      * @access   public
     */
-    function add_help_buttons($buttons, $suppresscheck=false){
+    function addHelpButtons($buttons, $suppresscheck=false){
         
         foreach ($this->_elements as $no => $element){
             if (array_key_exists($element->getName(), $buttons)){
 
-                //dynamically create a property so we don't have to modify element
-                //class :
-                $this->_elements[$no]->setHelpButton($buttons[$element->getName()]);
+                if (method_exists($element, 'setHelpButton')){
+                    $this->_elements[$no]->setHelpButton($buttons[$element->getName()]);
+                }else{
+                    $a=new object();
+                    $a->name=$element->getName();
+                    $a->classname=get_class($element);
+                    print_error('nomethodforaddinghelpbutton', 'form', '', $a);
+                }
                 unset($buttons[$element->getName()]);
             }
             
@@ -178,8 +183,8 @@ class moodleform_renderer extends HTML_QuickForm_Renderer_Tableless{
     var $_elementTemplates;
     var $_htmleditors=array();
     function moodleform_renderer(){
-        $this->_elementTemplates=array('default'=>"\n\t\t<div class=\"qfrow\"><label class=\"qflabel\">{label}{help}<!-- BEGIN required -->{req}<!-- END required --></label><div class=\"qfelement<!-- BEGIN error --> error<!-- END error -->\"><!-- BEGIN error --><span class=\"error\">{error}</span><br /><!-- END error -->{element}</div></div>",
-        'wide'=>"\n\t\t<div class=\"qfrow\"><label class=\"qflabel\">{label}{help}<!-- BEGIN required -->{req}<!-- END required --></label><br /><div class=\"qfelementwide<!-- BEGIN error --> error<!-- END error -->\"><!-- BEGIN error --><span class=\"error\">{error}</span><br /><!-- END error -->{element}</span></div>");
+        $this->_elementTemplates=array('default'=>"\n\t\t<div class=\"qfrow\"><label class=\"qflabel\">{label}{help}<!-- BEGIN required -->{req}<!-- END required --></label><div class=\"qfelement<!-- BEGIN error --> error<!-- END error --> {type}\"><!-- BEGIN error --><span class=\"error\">{error}</span><br /><!-- END error -->{element}</div></div>",
+        'wide'=>"\n\t\t<div class=\"qfrow\"><label class=\"qflabel\">{label}{help}<!-- BEGIN required -->{req}<!-- END required --></label><br /><div class=\"qfelementwide<!-- BEGIN error --> error<!-- END error --> {type}\"><!-- BEGIN error --><span class=\"error\">{error}</span><br /><!-- END error -->{element}</span></div>");
 
         parent::HTML_QuickForm_Renderer_Tableless();
     }
@@ -201,6 +206,8 @@ class moodleform_renderer extends HTML_QuickForm_Renderer_Tableless{
             $html =str_replace('{help}', '', $html);
             
         }
+        $html =str_replace('{type}', 'group', $html);
+        
         $this->_templates[$group->getName()]=$html;
         // Fix for bug in tableless quickforms that didn't allow you to stop a
         // fieldset before a group of elements.
@@ -220,6 +227,7 @@ class moodleform_renderer extends HTML_QuickForm_Renderer_Tableless{
             $html = $this->_elementTemplates['default'];
            
         }
+        $html =str_replace('{type}', $element->getType(), $html);
         if (method_exists($element, 'getHelpButton')){
             $html=str_replace('{help}', $element->getHelpButton(), $html);
         }else{

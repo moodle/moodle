@@ -292,7 +292,7 @@
     print_heading($streditcoursesettings);
 
     $mform->display();
-
+    
     print_footer($course);
 
 ?>

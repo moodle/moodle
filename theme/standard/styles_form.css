@@ -41,6 +41,7 @@ form.mform textarea {
 form.mform br {
     clear: left;
 }
+
 form.mform div.qfelement {
     display: inline;
     float: left;
@@ -48,9 +49,13 @@ form.mform div.qfelement {
     padding: 0;
 }
 
-form.mform div.qfelementwide {
-    margin: 0 10% 10px 10%;
+form.mform div.htmleditor {
+    margin: 0 auto 10px auto;
+    width : 600px;
+    clear:both;
+    float:none;
 }
+
 
 form.mform span.error, form.mform span.required {
     color: red;
@@ -59,4 +64,7 @@ form.mform div.error {
     border: 1px solid red;
     padding: 5px;
     color: inherit;
+}
+form.mform div.qfrow {
+    clear:both;
 }

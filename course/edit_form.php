@@ -213,7 +213,7 @@
     }else {
         $mform->addElement('hidden', 'restrictmodules', $default->restrictmodules);
     }
-    $mform->add_help_buttons(array('category'=>array("coursecategory", get_string("category")),
+    $mform->addHelpButtons(array('category'=>array("coursecategory", get_string("category")),
                              'fullname'=>array("coursefullname", get_string("fullname")),
                              'shortname'=>array("courseshortname", get_string("shortname")),
                              'idnumber'=>array("courseidnumber", get_string("idnumbercourse")),
