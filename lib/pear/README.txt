@@ -27,7 +27,7 @@ In detail, the libraries added here are:
 - PEAR HTML_Quickform:
     - Current version: 3.2.6
     - by Bertrand Mansion, Adam Daniel, Alexey Borzov
-    - License: PHP
+    - License: PHP (Permission given to Moodle to redistribute under GPL)
     - http://pear.php.net/package/HTML_Quickform
 - PEAR HTML_Quickform_Renderer_Tableless:
     - Current version: 0.3.4
@@ -37,7 +37,7 @@ In detail, the libraries added here are:
 - PEAR HTML_Common:
     - Current version: 1.2.2
     - by Adam Daniel, Bertrand Mansion, Klaus Guenther, Alexey Borzov,
-    - License: PHP 
+    - License: PHP  (Permission given to Moodle to redistribute under GPL)
     - http://pear.php.net/package/HTML
 - PEAR main class:
     - Current version: 1.4.5
@@ -85,9 +85,9 @@ we have sought special permission from the authors of these classes
 to allow us an exemption on this point so that we don't need to 
 change our nice clean GPL license.
 
-Xavier Noguer has given Moodle explicit permission to distribute 
-his OLE PEAR class in the Moodle distribution, and allows any
-body using this class ONLY as part of the Moodle distribution
+Several authors have given Moodle explicit permission to distribute 
+their PHP-licensed PEAR classes in the Moodle distribution, allowing 
+anybody using these classes ONLY as part of the Moodle distribution
 exemption from clauses of the PHP license that could cause
 conflict with the main GNU Public License that Moodle uses.
 
