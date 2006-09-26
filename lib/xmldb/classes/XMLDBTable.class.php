@@ -909,6 +909,41 @@ class XMLDBTable extends XMLDBObject {
         return $results;
     }
 
+    /**
+     * This function will return the SQL code needed to add one index to the table for the specified DB and
+     * prefix. Just one simple wrapper over generators.
+     */
+    function getAddIndexSQL ($dbtype, $prefix, $xmldb_index, $statement_end=true) {
+
+        $results = array();
+
+        $classname = 'XMLDB' . $dbtype;
+        $generator = new $classname();
+        $generator->setPrefix($prefix);
+        $results = $generator->getAddIndexSQL($this, $xmldb_index);
+        if ($statement_end) {
+            $results = $generator->getEndedStatements($results);
+        }
+        return $results;
+    }
+
+    /**
+     * This function will return the SQL code needed to drop one index from the table for the specified DB and
+     * prefix. Just one simple wrapper over generators.
+     */
+    function getDropIndexSQL ($dbtype, $prefix, $xmldb_index, $statement_end=true) {
+
+        $results = array();
+
+        $classname = 'XMLDB' . $dbtype;
+        $generator = new $classname();
+        $generator->setPrefix($prefix);
+        $results = $generator->getDropIndexSQL($this, $xmldb_index);
+        if ($statement_end) {
+            $results = $generator->getEndedStatements($results);
+        }
+        return $results;
+    }
 }
 
 ?>
