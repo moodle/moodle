@@ -1,5 +1,5 @@
 <?php
-    require_once($CFG->dirroot.'/mod/scorm/configurations.php');
+    require_once($CFG->dirroot.'/mod/scorm/locallib.php');
     if (!isset($form->name)) {
         $form->name = '';
     }
@@ -26,12 +26,13 @@
     }
     if (!isset($form->grademethod)) {
         $form->grademethod = 0;
+        $form->whatgrade = 0;
+    } else {
+        $form->whatgrade = intval($form->grademethod / 10);
+        $form->grademethod = $form->grademethod % 10;
     }
     if (!isset($form->maxattempt)) {
         $form->maxattempt = 1;
-    }
-    if (!isset($form->whatgrade)) {
-        $form->whatgrade = 0;
     }
     if (!isset($form->hidebrowse)) {
         $form->hidebrowse = 0;
@@ -107,7 +108,7 @@
         }
 
         var myRequest = NewHttpReq();
-        result = DoRequest(myRequest,"<?php p($CFG->wwwroot) ?>/mod/scorm/validate.php","id=<?php p($form->course) ?>&reference="+filename+"<?php echo $sessionkey.$scormid.$datadir ?>");
+        result = DoRequest(myRequest,"<?php p($CFG->wwwroot) ?>/mod/scorm/validate.php","id=<?php p($form->course) ?>&reference="+filename+"<?php echo $sessionkey.$scormid.$datadir ?>"+confirmedstr);
         //alert(result);
         results = result.split('\n');
         result = '';
@@ -444,7 +445,7 @@
     <input type="hidden" name="modulename"      value="<?php p($form->modulename) ?>" />
     <input type="hidden" name="instance"        value="<?php p($form->instance) ?>" />
     <center>
-        <input type="submit" value="<?php print_string('savechanges') ?>"/>
+        <input type="submit" value="<?php print_string('savechanges') ?>" />
         <input type="button" name="cancel" value="<?php print_string('cancel') ?>" onclick="document.location='view.php?id=<?php echo $form->course ?>'" />
     </center>
 </form>
