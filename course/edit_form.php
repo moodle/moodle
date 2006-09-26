@@ -1,7 +1,7 @@
 <?php
     include_once $CFG->libdir.'/formslib.php';
 
-    $mform = new moodleform('edit_course', 'post', 'edit2.php');
+    $mform =& new moodleform('edit_course', 'post', 'edit2.php');
     $mform->addElement('header','general', get_string("general"));
     if (has_capability('moodle/course:create', get_context_instance(CONTEXT_COURSECAT, $default->category))) { 
         $displaylist = array();
@@ -292,7 +292,7 @@
     }
     $mform->addFormRule('form_check');
 
-    $renderer=$mform->defaultRenderer();
+    $renderer =& $mform->defaultRenderer();
     $renderer->addStopFieldsetElements('submit');
 
 ?>
