@@ -228,7 +228,7 @@
         $table->setup();
         
 
-        $primary_roles = stats_get_primary_role_subselect();
+        $primary_roles = sql_primary_role_subselect();   // In dmllib.php
         $sql = 'SELECT DISTINCT prs.userid, u.firstname,u.lastname,u.idnumber,count(l.action) as count FROM ('.$primary_roles.') prs'
             .' JOIN '.$CFG->prefix.'user u ON u.id = prs.userid LEFT JOIN '.$CFG->prefix.'log l ON prs.userid = l.userid '
             .' AND prs.courseid = l.course AND l.time > '.$timefrom.' AND l.course = '.$course->id.' AND l.module = \''.$module->name.'\' '

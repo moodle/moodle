@@ -138,7 +138,7 @@ function stats_cron_daily () {
                 continue;
             }
             
-            $primary_roles = stats_get_primary_role_subselect();
+            $primary_roles = sql_primary_role_subselect();  // In dmllib.php
             foreach ($roles as $role) {
                 // ENROLMENT FIRST....
                 // ALL users with this role...
@@ -1313,30 +1313,6 @@ function stats_upgrade_table_for_roles ($period) {
     }
 
     return true;
-}
-
-function stats_get_primary_role_subselect() {
-    global $CFG;
-    return 'SELECT ra.userid,
-                ra.roleid AS primary_roleid,
-                ra.contextid,
-                r.sortorder,
-                r.name,
-                r.description,
-                r.shortname,
-                c.instanceid AS courseid,
-                c.contextlevel
-            FROM '.$CFG->prefix.'role_assignments ra
-            INNER JOIN '.$CFG->prefix.'role r ON ra.roleid = r.id
-            INNER JOIN '.$CFG->prefix.'context c ON ra.contextid = c.id
-            WHERE NOT EXISTS ( 
-                              SELECT 1
-                              FROM '.$CFG->prefix.'role_assignments i_ra
-                              INNER JOIN '.$CFG->prefix.'role i_r ON i_ra.roleid = i_r.id
-                              WHERE ra.userid = i_ra.userid AND 
-                                     ra.contextid = i_ra.contextid AND 
-                                     i_r.sortorder < r.sortorder
-                              ) ';
 }
 
 ?>
